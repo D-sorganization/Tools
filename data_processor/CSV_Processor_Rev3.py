@@ -170,7 +170,7 @@ class CSVProcessorApp(ctk.CTk):
 
     def create_setup_and_process_tab(self, parent_tab):
         parent_tab.grid_columnconfigure(1, weight=1); parent_tab.grid_rowconfigure(0, weight=1)
-        left_panel = ctk.CTkFrame(parent_tab, width=350)
+        left_panel = ctk.CTkFrame(parent_tab, width=450)
         left_panel.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
         left_panel.grid_rowconfigure(1, weight=1)
 
@@ -180,8 +180,12 @@ class CSVProcessorApp(ctk.CTk):
         ctk.CTkLabel(header_frame, text="Control Panel", font=ctk.CTkFont(size=16, weight="bold")).pack(side="left")
         ctk.CTkButton(header_frame, text="Help", width=70, command=self._show_setup_help).pack(side="right")
 
-        processing_tab_view = ctk.CTkTabview(left_panel)
-        processing_tab_view.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+        # Create a scrollable frame for the processing tab view
+        processing_scrollable_frame = ctk.CTkScrollableFrame(left_panel)
+        processing_scrollable_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+        
+        processing_tab_view = ctk.CTkTabview(processing_scrollable_frame)
+        processing_tab_view.pack(fill="both", expand=True)
         processing_tab_view.add("Setup"); processing_tab_view.add("Processing"); processing_tab_view.add("Custom Vars")
         self.populate_setup_sub_tab(processing_tab_view.tab("Setup"))
         self.populate_processing_sub_tab(processing_tab_view.tab("Processing"))
@@ -410,17 +414,58 @@ class CSVProcessorApp(ctk.CTk):
         resample_time_frame.grid_columnconfigure(0, weight=2); resample_time_frame.grid_columnconfigure(1, weight=1)
         self.resample_value_entry = ctk.CTkEntry(resample_time_frame, placeholder_text="e.g., 10"); self.resample_value_entry.grid(row=0, column=0, sticky="ew")
         self.resample_unit_menu = ctk.CTkOptionMenu(resample_time_frame, values=time_units); self.resample_unit_menu.grid(row=0, column=1, padx=(5,0), sticky="ew")
+        # NEW: Differentiation Frame with searchable signals
         deriv_frame = ctk.CTkFrame(tab); deriv_frame.grid(row=4, column=0, padx=10, pady=10, sticky="new"); deriv_frame.grid_columnconfigure(1, weight=1)
-        ctk.CTkLabel(deriv_frame, text="Derivatives", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(10,5), sticky="w")
-        ctk.CTkLabel(deriv_frame, text="Method:").grid(row=1, column=0, padx=10, pady=5, sticky="w")
-        self.deriv_method_var = ctk.StringVar(value="Spline (Acausal)"); ctk.CTkOptionMenu(deriv_frame, variable=self.deriv_method_var, values=["Spline (Acausal)", "Rolling Polynomial (Causal)"]).grid(row=1, column=1, padx=10, pady=5, sticky="ew")
+        ctk.CTkLabel(deriv_frame, text="Signal Differentiation", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(10,5), sticky="w")
+        ctk.CTkLabel(deriv_frame, text="Create derivative columns for signal analysis", justify="left").grid(row=1, column=0, columnspan=2, padx=10, pady=(0,5), sticky="w")
+        
+        # Differentiation method selection
+        ctk.CTkLabel(deriv_frame, text="Method:").grid(row=2, column=0, padx=10, pady=5, sticky="w")
+        self.deriv_method_var = ctk.StringVar(value="Spline (Acausal)")
+        ctk.CTkOptionMenu(deriv_frame, variable=self.deriv_method_var, values=["Spline (Acausal)", "Rolling Polynomial (Causal)"]).grid(row=2, column=1, padx=10, pady=5, sticky="ew")
+        
+        # Differentiation signals selection frame
+        deriv_signals_frame = ctk.CTkFrame(deriv_frame)
+        deriv_signals_frame.grid(row=3, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+        deriv_signals_frame.grid_columnconfigure(0, weight=1)
+        
+        ctk.CTkLabel(deriv_signals_frame, text="Signals to Differentiate:", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=5, pady=5, sticky="w")
+        
+        # Search bar for differentiation signals
+        self.deriv_search_entry = ctk.CTkEntry(deriv_signals_frame, placeholder_text="Search signals to differentiate...")
+        self.deriv_search_entry.grid(row=1, column=0, padx=5, pady=5, sticky="ew")
+        self.deriv_search_entry.bind("<KeyRelease>", self._filter_deriv_signals)
+        
+        ctk.CTkButton(deriv_signals_frame, text="X", width=28, command=self._clear_deriv_search).grid(row=1, column=1, padx=5, pady=5)
+        
+        # Scrollable frame for differentiation signal checkboxes
+        self.deriv_signals_frame = ctk.CTkScrollableFrame(deriv_signals_frame, height=100)
+        self.deriv_signals_frame.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky="ew")
+        
+        # Differentiation control buttons
+        deriv_buttons_frame = ctk.CTkFrame(deriv_frame, fg_color="transparent")
+        deriv_buttons_frame.grid(row=4, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+        
+        ctk.CTkButton(deriv_buttons_frame, text="Select All", command=self._deriv_select_all).grid(row=0, column=0, padx=5, pady=5)
+        ctk.CTkButton(deriv_buttons_frame, text="Deselect All", command=self._deriv_deselect_all).grid(row=0, column=1, padx=5, pady=5)
+        
+        # Derivative order selection
+        deriv_order_frame = ctk.CTkFrame(deriv_frame)
+        deriv_order_frame.grid(row=5, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+        ctk.CTkLabel(deriv_order_frame, text="Derivative Orders:", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=4, padx=10, pady=5, sticky="w")
+        
         self.derivative_vars = {}
         for i in range(1, 5):
-            var = tk.BooleanVar(value=False); cb = ctk.CTkCheckBox(deriv_frame, text=f"Order {i}", variable=var); cb.grid(row=i+1, column=0, columnspan=2, padx=10, pady=2, sticky="w")
+            var = tk.BooleanVar(value=False)
+            cb = ctk.CTkCheckBox(deriv_order_frame, text=f"Order {i}", variable=var)
+            cb.grid(row=1, column=i-1, padx=10, pady=2, sticky="w")
             self.derivative_vars[i] = var
         
+        # Initialize differentiation signal variables
+        self.deriv_signal_vars = {}
+        
         # NEW: Integration Frame
-        integrator_frame = ctk.CTkFrame(tab); integrator_frame.grid(row=5, column=0, padx=10, pady=10, sticky="new"); integrator_frame.grid_columnconfigure(1, weight=1)
+        integrator_frame = ctk.CTkFrame(tab); integrator_frame.grid(row=6, column=0, padx=10, pady=10, sticky="new"); integrator_frame.grid_columnconfigure(1, weight=1)
         ctk.CTkLabel(integrator_frame, text="Signal Integration", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(10,5), sticky="w")
         ctk.CTkLabel(integrator_frame, text="Create cumulative columns for flow calculations", justify="left").grid(row=1, column=0, columnspan=2, padx=10, pady=(0,5), sticky="w")
         
@@ -534,6 +579,80 @@ class CSVProcessorApp(ctk.CTk):
             df[cumulative_col_name] = cumulative
             
         return df
+    
+    def _apply_differentiation(self, df, time_col, signals_to_differentiate, method="Spline (Acausal)"):
+        """Applies differentiation to selected signals and adds derivative columns."""
+        if not signals_to_differentiate or df.empty:
+            return df
+        
+        # Ensure time column is datetime
+        if not pd.api.types.is_datetime64_any_dtype(df[time_col]):
+            df[time_col] = pd.to_datetime(df[time_col], errors='coerce')
+        
+        # Sort by time to ensure proper differentiation
+        df = df.sort_values(time_col).reset_index(drop=True)
+        
+        # Get selected derivative orders
+        selected_orders = [order for order, var in self.derivative_vars.items() if var.get()]
+        
+        for signal in signals_to_differentiate:
+            if signal not in df.columns:
+                continue
+                
+            signal_data = df[signal].dropna()
+            if len(signal_data) < 2:
+                continue
+            
+            for order in selected_orders:
+                if method == "Spline (Acausal)":
+                    # Use spline interpolation for acausal differentiation
+                    try:
+                        spline = UnivariateSpline(signal_data.index, signal_data, s=0, k=3)
+                        derivative = spline.derivative(n=order)
+                        derivative_values = derivative(signal_data.index)
+                    except:
+                        # Fallback to simple difference method
+                        derivative_values = signal_data.diff(order).fillna(0)
+                elif method == "Rolling Polynomial (Causal)":
+                    # Use rolling polynomial fit for causal differentiation
+                    window = min(20, len(signal_data) // 4)  # Adaptive window size
+                    if window < 3:
+                        window = 3
+                    derivative_values = _poly_derivative(signal_data, window, order + 2, order, 1.0)
+                
+                # Create the derivative column name
+                derivative_col_name = f"d{order}_{signal}"
+                
+                # Add the derivative column to the dataframe
+                df[derivative_col_name] = derivative_values
+        
+        return df
+    
+    # NEW: Differentiation Helper Methods
+    def _filter_deriv_signals(self, event=None):
+        """Filters the differentiation signal list based on the search entry."""
+        search_term = self.deriv_search_entry.get().lower()
+        for signal_name, data in self.deriv_signal_vars.items():
+            widget = data['widget']
+            if search_term in signal_name.lower():
+                widget.pack(anchor="w", padx=5, pady=2)
+            else:
+                widget.pack_forget()
+
+    def _clear_deriv_search(self):
+        """Clears the differentiation search entry and shows all signals."""
+        self.deriv_search_entry.delete(0, 'end')
+        self._filter_deriv_signals()
+
+    def _deriv_select_all(self):
+        """Selects all signals in the differentiation list."""
+        for data in self.deriv_signal_vars.values():
+            data['var'].set(True)
+
+    def _deriv_deselect_all(self):
+        """Deselects all signals in the differentiation list."""
+        for data in self.deriv_signal_vars.values():
+            data['var'].set(False)
     
     def populate_custom_var_sub_tab(self, tab):
         tab.grid_columnconfigure(0, weight=1)
@@ -1397,6 +1516,11 @@ class CSVProcessorApp(ctk.CTk):
         for widget in self.integrator_signals_frame.winfo_children():
             widget.destroy()
         self.integrator_signal_vars.clear()
+        
+        # Clear differentiation signals list
+        for widget in self.deriv_signals_frame.winfo_children():
+            widget.destroy()
+        self.deriv_signal_vars.clear()
 
 
         all_columns = set()
@@ -1420,6 +1544,7 @@ class CSVProcessorApp(ctk.CTk):
         self.search_entry.delete(0, 'end')
         self.custom_var_search_entry.delete(0, 'end')
         self.integrator_search_entry.delete(0, 'end')
+        self.deriv_search_entry.delete(0, 'end')
 
         for signal in sorted_columns:
             # 1. Populate Processing Tab Signal List
@@ -1442,7 +1567,14 @@ class CSVProcessorApp(ctk.CTk):
                 cb.pack(anchor="w", padx=5, pady=2)
                 self.integrator_signal_vars[signal] = {'var': var, 'widget': cb}
             
-        # 4. Update the sorting dropdown menu
+            # 4. Populate Differentiation Signal List (only numeric signals)
+            if signal not in self.deriv_signal_vars:
+                var = tk.BooleanVar(value=False)
+                cb = ctk.CTkCheckBox(self.deriv_signals_frame, text=signal, variable=var)
+                cb.pack(anchor="w", padx=5, pady=2)
+                self.deriv_signal_vars[signal] = {'var': var, 'widget': cb}
+            
+        # 5. Update the sorting dropdown menu
         self.sort_col_menu.configure(values=["default (no sort)"] + sorted_columns)
 
     def get_data_for_plotting(self, filename):
@@ -2580,6 +2712,12 @@ requires no Python installation on target computers.
         if signals_to_integrate:
             integration_method = self.integrator_method_var.get()
             processed_df = self._apply_integration(processed_df, time_col, signals_to_integrate, integration_method)
+        
+        # NEW: Apply differentiation if signals are selected
+        signals_to_differentiate = [s for s, data in self.deriv_signal_vars.items() if data['var'].get()]
+        if signals_to_differentiate:
+            differentiation_method = self.deriv_method_var.get()
+            processed_df = self._apply_differentiation(processed_df, time_col, signals_to_differentiate, differentiation_method)
         
         return processed_df
 
