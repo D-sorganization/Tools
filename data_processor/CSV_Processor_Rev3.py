@@ -128,11 +128,23 @@ class CSVProcessorApp(ctk.CTk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        # NEW: Layout persistence variables (must be initialized first)
+        self.layout_config_file = os.path.join(os.path.expanduser("~"), ".csv_processor_layout.json")
+        self.splitters = {}  # Store splitter widgets
+        self.layout_data = self._load_layout_config()
+
         self.title("Advanced CSV Processor & DAT Importer")
-        self.geometry("1350x900")
+        
+        # Set window size from saved layout or default
+        window_width = self.layout_data.get('window_width', 1350)
+        window_height = self.layout_data.get('window_height', 900)
+        self.geometry(f"{window_width}x{window_height}")
 
         self.grid_rowconfigure(0, weight=1); self.grid_columnconfigure(0, weight=1)
-
+        
+        # Set up closing handler
+        self.protocol("WM_DELETE_WINDOW", self._on_closing)
+        
         # --- App State Variables ---
         self.input_file_paths = []
         self.loaded_data_cache = {}
@@ -169,10 +181,19 @@ class CSVProcessorApp(ctk.CTk):
         self.status_label.configure(text="Ready. Select input files or import a DAT file.")
 
     def create_setup_and_process_tab(self, parent_tab):
-        parent_tab.grid_columnconfigure(1, weight=1); parent_tab.grid_rowconfigure(0, weight=1)
-        left_panel = ctk.CTkFrame(parent_tab, width=450)
-        left_panel.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+        parent_tab.grid_columnconfigure(0, weight=1); parent_tab.grid_rowconfigure(0, weight=1)
+        
+        # Create left panel
+        left_panel = ctk.CTkFrame(parent_tab)
         left_panel.grid_rowconfigure(1, weight=1)
+        
+        # Create right panel
+        right_panel = ctk.CTkFrame(parent_tab)
+        right_panel.grid_rowconfigure(2, weight=1)
+        right_panel.grid_columnconfigure(0, weight=1)
+        
+        # Create splitter between left and right panels
+        self._create_splitter(parent_tab, left_panel, right_panel, 'setup_left_width', 450)
 
         # --- NEW: Header with Help Button ---
         header_frame = ctk.CTkFrame(left_panel, fg_color="transparent")
@@ -193,11 +214,6 @@ class CSVProcessorApp(ctk.CTk):
         
         self.process_button = ctk.CTkButton(left_panel, text="Process & Batch Export Files", height=40, command=self.process_files)
         self.process_button.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
-        
-        right_panel = ctk.CTkFrame(parent_tab)
-        right_panel.grid(row=0, column=1, padx=(0, 10), pady=10, sticky="nsew")
-        right_panel.grid_rowconfigure(2, weight=1)
-        right_panel.grid_columnconfigure(0, weight=1)
 
         self.file_list_frame = ctk.CTkScrollableFrame(right_panel, label_text="Selected Input Files", height=120)
         self.file_list_frame.grid(row=0, column=0, padx=10, pady=(0, 10), sticky="new")
@@ -239,14 +255,26 @@ class CSVProcessorApp(ctk.CTk):
         # --- NEW: Help Button Added ---
         ctk.CTkButton(plot_control_frame, text="Help", width=70, command=self._show_plot_help).grid(row=0, column=4, padx=(10,5), pady=10)
 
-        # --- Main content frame ---
+        # --- Main content frame for splitter ---
         plot_main_frame = ctk.CTkFrame(tab)
         plot_main_frame.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="nsew")
         plot_main_frame.grid_rowconfigure(0, weight=1)
-        plot_main_frame.grid_columnconfigure(1, weight=1)
-          
+        plot_main_frame.grid_columnconfigure(0, weight=1)
+        
+        # Create left panel
+        left_panel = ctk.CTkFrame(plot_main_frame)
+        left_panel.grid_rowconfigure(1, weight=1)
+        
+        # Create right panel
+        right_panel = ctk.CTkFrame(plot_main_frame)
+        right_panel.grid_rowconfigure(1, weight=1)
+        right_panel.grid_columnconfigure(0, weight=1)
+        
+        # Create splitter between left and right panels
+        self._create_splitter(plot_main_frame, left_panel, right_panel, 'plotting_left_width', 350)
+        
         # --- Left-side panel container ---
-        plot_left_panel_outer = ctk.CTkFrame(plot_main_frame, width=350)
+        plot_left_panel_outer = ctk.CTkFrame(left_panel)
         plot_left_panel_outer.grid(row=0, column=0, padx=10, pady=10, sticky="ns")
         plot_left_panel_outer.grid_propagate(False)
         plot_left_panel_outer.grid_rowconfigure(0, weight=1)
@@ -351,8 +379,8 @@ class CSVProcessorApp(ctk.CTk):
         ctk.CTkButton(trim_frame, text="Trim & Save As...", command=self.trim_and_save).pack(fill="x", padx=10, pady=(0,10))
         
         # --- The plot canvas on the right ---
-        plot_canvas_frame = ctk.CTkFrame(plot_main_frame)
-        plot_canvas_frame.grid(row=0, column=1, sticky="nsew", padx=(0,10), pady=10)
+        plot_canvas_frame = ctk.CTkFrame(right_panel)
+        plot_canvas_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
         plot_canvas_frame.grid_rowconfigure(1, weight=1)
         plot_canvas_frame.grid_columnconfigure(0, weight=1)
         
@@ -812,157 +840,7 @@ class CSVProcessorApp(ctk.CTk):
         elif choice == "Savitzky-Golay":
             self.savgol_frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
 
-    def create_plotting_tab(self, tab):
-        tab.grid_columnconfigure(0, weight=1); tab.grid_rowconfigure(1, weight=1)
-        
-        # --- Top control bar (for file and axis selection) ---
-        plot_control_frame = ctk.CTkFrame(tab)
-        plot_control_frame.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
-        plot_control_frame.grid_columnconfigure(1, weight=1)
 
-        ctk.CTkLabel(plot_control_frame, text="File to Plot:").grid(row=0, column=0, padx=(10,5), pady=10)
-        self.plot_file_menu = ctk.CTkOptionMenu(plot_control_frame, values=["Select a file..."], command=self.on_plot_file_select)
-        self.plot_file_menu.grid(row=0, column=1, padx=5, pady=10, sticky="ew")
-        
-        ctk.CTkLabel(plot_control_frame, text="X-Axis:").grid(row=0, column=2, padx=(10,5), pady=10)
-        self.plot_xaxis_menu = ctk.CTkOptionMenu(plot_control_frame, values=["default time"], command=lambda e: self.update_plot())
-        self.plot_xaxis_menu.grid(row=0, column=3, padx=5, pady=10, sticky="ew")
-
-        # --- Main content frame ---
-        plot_main_frame = ctk.CTkFrame(tab)
-        plot_main_frame.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="nsew")
-        plot_main_frame.grid_rowconfigure(0, weight=1)
-        plot_main_frame.grid_columnconfigure(1, weight=1)
-          
-        # --- Left-side panel container ---
-        plot_left_panel_outer = ctk.CTkFrame(plot_main_frame, width=350)
-        plot_left_panel_outer.grid(row=0, column=0, padx=10, pady=10, sticky="ns")
-        plot_left_panel_outer.grid_propagate(False)
-        plot_left_panel_outer.grid_rowconfigure(1, weight=1) # The scrollable area will expand
-        plot_left_panel_outer.grid_columnconfigure(0, weight=1)
-
-        # --- NEW: Help Button moved here for visibility ---
-        help_button = ctk.CTkButton(plot_left_panel_outer, text="Help", width=70, command=self._show_plot_help)
-        help_button.grid(row=0, column=0, padx=5, pady=(0,5), sticky="ne")
-
-        # --- The scrollable area for controls ---
-        plot_left_panel = ctk.CTkScrollableFrame(plot_left_panel_outer, label_text="Plotting Controls", label_fg_color="#4C7F4C")
-        plot_left_panel.grid(row=1, column=0, sticky="nsew")
-        
-        # --- "Update Plot" button is now here, outside the scrollable area ---
-        ctk.CTkButton(plot_left_panel_outer, text="Update Plot", height=35, command=self.update_plot).grid(row=2, column=0, sticky="ew", padx=5, pady=10)
-
-        # --- Contents of the scrollable area ---
-        plot_left_panel.grid_columnconfigure(0, weight=1)
-
-        plot_signal_select_frame = ctk.CTkFrame(plot_left_panel)
-        plot_signal_select_frame.pack(fill="x", expand=True, pady=5, padx=5)
-        plot_signal_select_frame.grid_columnconfigure(0, weight=1)
-
-        self.plot_search_entry = ctk.CTkEntry(plot_signal_select_frame, placeholder_text="Search plot signals...")
-        self.plot_search_entry.pack(fill="x", padx=5, pady=5)
-        self.plot_search_entry.bind("<KeyRelease>", self._filter_plot_signals)
-
-        # --- MODIFIED: Using .pack() for button layout to ensure visibility ---
-        button_bar_frame = ctk.CTkFrame(plot_signal_select_frame, fg_color="transparent")
-        button_bar_frame.pack(fill="x", padx=5, pady=(0,5))
-
-        ctk.CTkButton(button_bar_frame, text="All", command=self._plot_select_all).pack(side="left", fill="x", expand=True, padx=2)
-        ctk.CTkButton(button_bar_frame, text="None", command=self._plot_select_none).pack(side="left", fill="x", expand=True, padx=2)
-        ctk.CTkButton(button_bar_frame, text="Show Selected", command=self._show_selected_signals).pack(side="left", fill="x", expand=True, padx=2)
-        ctk.CTkButton(button_bar_frame, text="X", width=28, command=self._plot_clear_search).pack(side="left", padx=2)
-        
-        self.plot_signal_frame = ctk.CTkScrollableFrame(plot_left_panel, label_text="Signals to Plot", height=150)
-        self.plot_signal_frame.pack(expand=True, fill="both", padx=5, pady=5)
-
-        appearance_frame = ctk.CTkFrame(plot_left_panel)
-        appearance_frame.pack(fill="x", expand=True, pady=5, padx=5)
-        ctk.CTkLabel(appearance_frame, text="Plot Appearance", font=ctk.CTkFont(weight="bold")).pack(anchor="w", padx=10, pady=5)
-        ctk.CTkLabel(appearance_frame, text="Chart Type:").pack(anchor="w", padx=10)
-        self.plot_type_var = ctk.StringVar(value="Line with Markers")
-        ctk.CTkOptionMenu(appearance_frame, variable=self.plot_type_var, values=["Line with Markers", "Line Only", "Markers Only (Scatter)"]).pack(fill="x", padx=10, pady=5)
-        self.plot_title_entry = ctk.CTkEntry(appearance_frame, placeholder_text="Plot Title")
-        self.plot_title_entry.pack(fill="x", padx=10, pady=5)
-        self.plot_xlabel_entry = ctk.CTkEntry(appearance_frame, placeholder_text="X-Axis Label")
-        self.plot_xlabel_entry.pack(fill="x", padx=10, pady=5)
-        self.plot_ylabel_entry = ctk.CTkEntry(appearance_frame, placeholder_text="Y-Axis Label")
-        self.plot_ylabel_entry.pack(fill="x", padx=10, pady=5)
-
-        plot_filter_frame = ctk.CTkFrame(plot_left_panel)
-        plot_filter_frame.pack(fill="x", expand=True, pady=5, padx=5)
-        ctk.CTkLabel(plot_filter_frame, text="Filter Preview", font=ctk.CTkFont(weight="bold")).pack(anchor="w", padx=10, pady=5)
-        self.plot_filter_type = ctk.StringVar(value="None")
-        self.plot_filter_menu = ctk.CTkOptionMenu(plot_filter_frame, variable=self.plot_filter_type, values=self.filter_names, command=self._update_plot_filter_ui)
-        self.plot_filter_menu.pack(fill="x", padx=10, pady=5)
-        time_units = ["ms", "s", "min", "hr"]
-        (self.plot_ma_frame, self.plot_ma_value_entry, self.plot_ma_unit_menu) = self._create_ma_param_frame(plot_filter_frame, time_units)
-        (self.plot_bw_frame, self.plot_bw_order_entry, self.plot_bw_cutoff_entry) = self._create_bw_param_frame(plot_filter_frame)
-        (self.plot_median_frame, self.plot_median_kernel_entry) = self._create_median_param_frame(plot_filter_frame)
-        (self.plot_savgol_frame, self.plot_savgol_window_entry, self.plot_savgol_polyorder_entry) = self._create_savgol_param_frame(plot_filter_frame)
-        self._update_plot_filter_ui("None")
-        ctk.CTkButton(plot_filter_frame, text="Copy Settings to Processing Tab", command=self._copy_plot_settings_to_processing).pack(fill="x", padx=10, pady=5)
-
-        trend_frame = ctk.CTkFrame(plot_left_panel)
-        trend_frame.pack(fill="x", expand=True, pady=5, padx=5)
-        ctk.CTkLabel(trend_frame, text="Trendline (plots 1st selected signal)", font=ctk.CTkFont(weight="bold")).pack(anchor="w", padx=10, pady=5)
-        self.trendline_type_var = ctk.StringVar(value="None")
-        ctk.CTkOptionMenu(trend_frame, variable=self.trendline_type_var, values=["None", "Linear", "Exponential", "Power", "Polynomial"]).pack(fill="x", padx=10, pady=5)
-        self.poly_order_entry = ctk.CTkEntry(trend_frame, placeholder_text="Polynomial Order (2-6)")
-        self.poly_order_entry.pack(fill="x", padx=10, pady=5)
-        self.trendline_textbox = ctk.CTkTextbox(trend_frame, height=70)
-        self.trendline_textbox.pack(fill="x", expand=True, padx=10, pady=5)
-
-        export_chart_frame = ctk.CTkFrame(plot_left_panel)
-        export_chart_frame.pack(fill="x", expand=True, pady=5, padx=5)
-        ctk.CTkLabel(export_chart_frame, text="Export Chart", font=ctk.CTkFont(weight="bold")).pack(anchor="w", padx=10, pady=5)
-        ctk.CTkButton(export_chart_frame, text="Save as PNG/PDF", command=self._export_chart_image).pack(fill="x", padx=10, pady=2)
-        ctk.CTkButton(export_chart_frame, text="Export to Excel with Chart", command=self._export_chart_excel).pack(fill="x", padx=10, pady=2)
-        
-        plot_range_frame = ctk.CTkFrame(plot_left_panel)
-        plot_range_frame.pack(fill="x", expand=True, pady=5, padx=5)
-        ctk.CTkLabel(plot_range_frame, text="Plot Time Range", font=ctk.CTkFont(weight="bold")).pack(anchor="w", padx=10, pady=5)
-        ctk.CTkLabel(plot_range_frame, text="Start Time (HH:MM:SS):").pack(fill="x", padx=10)
-        self.plot_start_entry = ctk.CTkEntry(plot_range_frame, placeholder_text="e.g., 09:30:00")
-        self.plot_start_entry.pack(fill="x", padx=10, pady=(0,5))
-        ctk.CTkLabel(plot_range_frame, text="End Time (HH:MM:SS):").pack(fill="x", padx=10)
-        self.plot_end_entry = ctk.CTkEntry(plot_range_frame, placeholder_text="e.g., 17:00:00")
-        self.plot_end_entry.pack(fill="x", padx=10, pady=(0,5))
-        ctk.CTkButton(plot_range_frame, text="Apply Time Range to Plot", command=self._apply_plot_time_range).pack(fill="x", padx=10, pady=5)
-        ctk.CTkButton(plot_range_frame, text="Reset to Full Range", command=self._reset_plot_range).pack(fill="x", padx=10, pady=(0,10))
-
-        trim_frame = ctk.CTkFrame(plot_left_panel)
-        trim_frame.pack(fill="x", expand=True, pady=5, padx=5)
-        ctk.CTkLabel(trim_frame, text="Trim & Export", font=ctk.CTkFont(weight="bold")).pack(anchor="w", padx=10, pady=5)
-        self.trim_date_range_label = ctk.CTkLabel(trim_frame, text="Data on date:", text_color="gray")
-        self.trim_date_range_label.pack(fill="x", padx=10)
-        self.trim_date_entry = ctk.CTkEntry(trim_frame, placeholder_text="Date (YYYY-MM-DD)")
-        self.trim_date_entry.pack(fill="x", padx=10, pady=5)
-        ctk.CTkLabel(trim_frame, text="Start Time (HH:MM:SS):").pack(fill="x", padx=10)
-        self.trim_start_entry = ctk.CTkEntry(trim_frame, placeholder_text="e.g., 09:30:00")
-        self.trim_start_entry.pack(fill="x", padx=10, pady=(0,5))
-        ctk.CTkLabel(trim_frame, text="End Time (HH:MM:SS):").pack(fill="x", padx=10)
-        self.trim_end_entry = ctk.CTkEntry(trim_frame, placeholder_text="e.g., 17:00:00")
-        self.trim_end_entry.pack(fill="x", padx=10, pady=(0,5))
-        ctk.CTkButton(trim_frame, text="Copy Times to Plot Range", command=self._copy_trim_to_plot_range).pack(fill="x", padx=10, pady=5)
-        self.trim_resample_var = tk.BooleanVar(value=False)
-        ctk.CTkCheckBox(trim_frame, text="Resample on Save", variable=self.trim_resample_var).pack(anchor="w", padx=10, pady=5)
-        ctk.CTkButton(trim_frame, text="Trim & Save As...", command=self.trim_and_save).pack(fill="x", padx=10, pady=(0,10))
-        
-        # --- The plot canvas on the right ---
-        plot_canvas_frame = ctk.CTkFrame(plot_main_frame)
-        plot_canvas_frame.grid(row=0, column=1, sticky="nsew", padx=(0,10), pady=10)
-        plot_canvas_frame.grid_rowconfigure(1, weight=1)
-        plot_canvas_frame.grid_columnconfigure(0, weight=1)
-        
-        self.plot_fig = Figure(figsize=(5, 4), dpi=100)
-        self.plot_ax = self.plot_fig.add_subplot(111)
-        self.plot_fig.tight_layout()
-        
-        self.plot_canvas = FigureCanvasTkAgg(self.plot_fig, master=plot_canvas_frame)
-        self.plot_canvas.get_tk_widget().grid(row=1, column=0, sticky="nsew")
-        
-        toolbar = NavigationToolbar2Tk(self.plot_canvas, plot_canvas_frame, pack_toolbar=False)
-        toolbar.grid(row=0, column=0, sticky="ew")
 
     def create_plots_list_tab(self, tab):
         """Creates the Plots List tab for managing predefined plot configurations."""
@@ -979,17 +857,23 @@ class CSVProcessorApp(ctk.CTk):
         # Help button
         ctk.CTkButton(top_frame, text="Help", width=70, command=self._show_plots_list_help).grid(row=0, column=2, padx=10, pady=10, sticky="e")
         
-        # Main content frame
+        # Main content frame for splitter
         main_frame = ctk.CTkFrame(tab)
         main_frame.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="nsew")
-        main_frame.grid_columnconfigure(1, weight=1)
+        main_frame.grid_columnconfigure(0, weight=1)
         main_frame.grid_rowconfigure(0, weight=1)
         
-        # Left panel - Plot configurations list
-        left_panel = ctk.CTkFrame(main_frame, width=300)
-        left_panel.grid(row=0, column=0, padx=10, pady=10, sticky="ns")
-        left_panel.grid_propagate(False)
+        # Create left panel
+        left_panel = ctk.CTkFrame(main_frame)
         left_panel.grid_rowconfigure(1, weight=1)
+        
+        # Create right panel
+        right_panel = ctk.CTkFrame(main_frame)
+        right_panel.grid_rowconfigure(0, weight=1)
+        right_panel.grid_columnconfigure(0, weight=1)
+        
+        # Create splitter between left and right panels
+        self._create_splitter(main_frame, left_panel, right_panel, 'plots_list_left_width', 300)
         
         # Plot list header
         list_header = ctk.CTkFrame(left_panel, fg_color="transparent")
@@ -1007,9 +891,7 @@ class CSVProcessorApp(ctk.CTk):
         ctk.CTkButton(list_buttons, text="Load Selected", command=self._load_plot_config).pack(side="left", padx=2)
         ctk.CTkButton(list_buttons, text="Delete Selected", command=self._delete_plot_config).pack(side="left", padx=2)
         
-        # Right panel - Plot configuration editor
-        right_panel = ctk.CTkFrame(main_frame)
-        right_panel.grid(row=0, column=1, padx=(0, 10), pady=10, sticky="nsew")
+        # Right panel - Plot configuration editor (already created by splitter)
         right_panel.grid_columnconfigure(0, weight=1)
         right_panel.grid_rowconfigure(1, weight=1)
         
@@ -2986,6 +2868,129 @@ WORKFLOW:
 This makes it easy to create standardized plots for reports and analysis.
 """
         self._show_help_window(title, content)
+
+    # NEW: Layout Persistence Methods
+    def _load_layout_config(self):
+        """Load layout configuration from file."""
+        default_layout = {
+            'setup_left_width': 450,
+            'plotting_left_width': 350,
+            'plots_list_left_width': 300,
+            'window_width': 1350,
+            'window_height': 900
+        }
+        
+        try:
+            if os.path.exists(self.layout_config_file):
+                with open(self.layout_config_file, 'r') as f:
+                    saved_layout = json.load(f)
+                    # Merge with defaults to handle missing keys
+                    for key, value in default_layout.items():
+                        if key not in saved_layout:
+                            saved_layout[key] = value
+                    return saved_layout
+        except Exception as e:
+            print(f"Could not load layout config: {e}")
+        
+        return default_layout
+
+    def _save_layout_config(self):
+        """Save current layout configuration to file."""
+        try:
+            layout_data = {
+                'setup_left_width': self.layout_data.get('setup_left_width', 450),
+                'plotting_left_width': self.layout_data.get('plotting_left_width', 350),
+                'plots_list_left_width': self.layout_data.get('plots_list_left_width', 300),
+                'window_width': self.winfo_width(),
+                'window_height': self.winfo_height()
+            }
+            
+            with open(self.layout_config_file, 'w') as f:
+                json.dump(layout_data, f, indent=2)
+        except Exception as e:
+            print(f"Could not save layout config: {e}")
+
+    def _create_splitter(self, parent, left_widget, right_widget, splitter_key, default_left_width):
+        """Create a splitter between left and right widgets."""
+        # Create a frame to hold the splitter
+        splitter_frame = ctk.CTkFrame(parent, fg_color="transparent")
+        splitter_frame.grid(row=0, column=0, sticky="nsew")
+        splitter_frame.grid_columnconfigure(1, weight=1)
+        splitter_frame.grid_rowconfigure(0, weight=1)
+        
+        # Get saved width or use default
+        left_width = self.layout_data.get(splitter_key, default_left_width)
+        
+        # Left widget
+        left_widget.grid(row=0, column=0, padx=10, pady=10, sticky="ns")
+        left_widget.configure(width=left_width)
+        
+        # Splitter handle
+        splitter_handle = ctk.CTkFrame(splitter_frame, width=4, fg_color="gray")
+        splitter_handle.grid(row=0, column=1, sticky="ns", padx=2)
+        splitter_handle.grid_propagate(False)
+        
+        # Right widget
+        right_widget.grid(row=0, column=2, padx=10, pady=10, sticky="nsew")
+        
+        # Store splitter info
+        self.splitters[splitter_key] = {
+            'frame': splitter_frame,
+            'left_widget': left_widget,
+            'right_widget': right_widget,
+            'handle': splitter_handle,
+            'current_width': left_width
+        }
+        
+        # Bind mouse events for dragging
+        splitter_handle.bind("<Button-1>", lambda e, key=splitter_key: self._start_splitter_drag(e, key))
+        splitter_handle.bind("<B1-Motion>", lambda e, key=splitter_key: self._drag_splitter(e, key))
+        splitter_handle.bind("<ButtonRelease-1>", lambda e, key=splitter_key: self._end_splitter_drag(e, key))
+        
+        # Change cursor on hover
+        splitter_handle.bind("<Enter>", lambda e: splitter_handle.configure(cursor="sb_h_double_arrow"))
+        splitter_handle.bind("<Leave>", lambda e: splitter_handle.configure(cursor=""))
+        
+        return splitter_frame
+
+    def _start_splitter_drag(self, event, splitter_key):
+        """Start dragging the splitter."""
+        if splitter_key in self.splitters:
+            self.splitters[splitter_key]['dragging'] = True
+            self.splitters[splitter_key]['start_x'] = event.x_root
+
+    def _drag_splitter(self, event, splitter_key):
+        """Drag the splitter."""
+        if splitter_key in self.splitters and self.splitters[splitter_key].get('dragging', False):
+            splitter_info = self.splitters[splitter_key]
+            delta_x = event.x_root - splitter_info['start_x']
+            
+            # Calculate new width
+            new_width = max(200, splitter_info['current_width'] + delta_x)
+            max_width = splitter_info['frame'].winfo_width() - 300  # Leave some space for right panel
+            new_width = min(new_width, max_width)
+            
+            # Update left widget width
+            splitter_info['left_widget'].configure(width=new_width)
+            splitter_info['current_width'] = new_width
+            splitter_info['start_x'] = event.x_root
+            
+            # Update layout data
+            self.layout_data[splitter_key] = new_width
+
+    def _end_splitter_drag(self, event, splitter_key):
+        """End dragging the splitter."""
+        if splitter_key in self.splitters:
+            self.splitters[splitter_key]['dragging'] = False
+            # Save layout immediately after drag ends
+            self._save_layout_config()
+
+    def _on_closing(self):
+        """Handle application closing."""
+        # Save layout configuration
+        self._save_layout_config()
+        # Destroy the window
+        self.destroy()
 
     def _export_chart_excel(self):
         """Export the current plot data and chart to Excel."""
