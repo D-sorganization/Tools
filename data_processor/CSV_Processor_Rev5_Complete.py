@@ -12,7 +12,7 @@
 # =============================================================================
 
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, simpledialog
 import customtkinter as ctk
 import pandas as pd
 import numpy as np
@@ -182,6 +182,10 @@ class CSVProcessorApp(ctk.CTk):
         self.plots_list = []
         self.current_plot_config = None
         
+        # Signal List Management variables
+        self.saved_signal_list = []
+        self.saved_signal_list_name = ""
+        
         # Integration and Differentiation variables
         self.integrator_signal_vars = {}
         self.deriv_signal_vars = {}
@@ -337,6 +341,22 @@ class CSVProcessorApp(ctk.CTk):
         sort_asc.grid(row=3, column=0, padx=10, pady=5, sticky="w")
         sort_desc = ctk.CTkRadioButton(export_frame, text="Descending", variable=self.sort_order_var, value="Descending")
         sort_desc.grid(row=3, column=1, padx=10, pady=5, sticky="w")
+        
+        # Signal List Management frame
+        signal_list_frame = ctk.CTkFrame(tab)
+        signal_list_frame.grid(row=3, column=0, padx=10, pady=10, sticky="new")
+        signal_list_frame.grid_columnconfigure(0, weight=1)
+        
+        ctk.CTkLabel(signal_list_frame, text="Signal List Management", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=3, padx=10, pady=(10, 5), sticky="w")
+        
+        # Buttons for signal list management
+        ctk.CTkButton(signal_list_frame, text="Save Current Signal List", command=self.save_signal_list).grid(row=1, column=0, padx=10, pady=5, sticky="ew")
+        ctk.CTkButton(signal_list_frame, text="Load Saved Signal List", command=self.load_signal_list).grid(row=1, column=1, padx=10, pady=5, sticky="ew")
+        ctk.CTkButton(signal_list_frame, text="Apply Saved Signals", command=self.apply_saved_signals).grid(row=1, column=2, padx=10, pady=5, sticky="ew")
+        
+        # Status label for signal list operations
+        self.signal_list_status_label = ctk.CTkLabel(signal_list_frame, text="No saved signal list loaded", font=ctk.CTkFont(size=11), text_color="gray")
+        self.signal_list_status_label.grid(row=2, column=0, columnspan=3, padx=10, pady=(5, 10), sticky="w")
 
     def populate_processing_sub_tab(self, tab):
         """Populate the processing sub-tab with all advanced features."""
@@ -895,6 +915,15 @@ class CSVProcessorApp(ctk.CTk):
         )
         if file_paths:
             self.input_file_paths = list(file_paths)
+            
+            # Set default output directory to the folder of the first selected file
+            if self.input_file_paths:
+                first_file_dir = os.path.dirname(self.input_file_paths[0])
+                self.output_directory = first_file_dir
+                # Update the output label to reflect the new default directory
+                if hasattr(self, 'output_label'):
+                    self.output_label.configure(text=f"Output: {self.output_directory}")
+            
             self.update_file_list()
             self.load_signals_from_files()
 
@@ -2160,6 +2189,142 @@ class CSVProcessorApp(ctk.CTk):
         """Load saved settings."""
         pass
 
+    def save_signal_list(self):
+        """Save the currently selected signals as a signal list."""
+        if not self.signal_vars:
+            messagebox.showwarning("Warning", "No signals available to save. Please load a file first.")
+            return
+        
+        # Get currently selected signals
+        selected_signals = [signal for signal, data in self.signal_vars.items() if data['var'].get()]
+        
+        if not selected_signals:
+            messagebox.showwarning("Warning", "No signals are currently selected. Please select signals to save.")
+            return
+        
+        # Ask user for a name for this signal list
+        signal_list_name = tk.simpledialog.askstring(
+            "Save Signal List", 
+            "Enter a name for this signal list:",
+            initialvalue="My Signal List"
+        )
+        
+        if not signal_list_name:
+            return  # User cancelled
+        
+        # Create the signal list data
+        signal_list_data = {
+            'name': signal_list_name,
+            'signals': selected_signals,
+            'created_date': pd.Timestamp.now().isoformat()
+        }
+        
+        # Save to file
+        try:
+            file_path = filedialog.asksaveasfilename(
+                title="Save Signal List",
+                defaultextension=".json",
+                filetypes=[("JSON files", "*.json"), ("All files", "*.*")],
+                initialname=f"{signal_list_name}.json"
+            )
+            
+            if file_path:
+                with open(file_path, 'w') as f:
+                    json.dump(signal_list_data, f, indent=2)
+                
+                messagebox.showinfo("Success", f"Signal list '{signal_list_name}' saved successfully!\n\nSaved signals: {len(selected_signals)}")
+                self.status_label.configure(text=f"Signal list saved: {signal_list_name}")
+        
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to save signal list:\n{e}")
+
+    def load_signal_list(self):
+        """Load a saved signal list from file."""
+        try:
+            file_path = filedialog.askopenfilename(
+                title="Load Signal List",
+                filetypes=[("JSON files", "*.json"), ("All files", "*.*")]
+            )
+            
+            if not file_path:
+                return  # User cancelled
+            
+            with open(file_path, 'r') as f:
+                signal_list_data = json.load(f)
+            
+            # Validate the loaded data
+            if not isinstance(signal_list_data, dict) or 'signals' not in signal_list_data:
+                messagebox.showerror("Error", "Invalid signal list file format.")
+                return
+            
+            # Store the loaded signal list
+            self.saved_signal_list = signal_list_data.get('signals', [])
+            self.saved_signal_list_name = signal_list_data.get('name', 'Unknown')
+            
+            # Update status
+            self.signal_list_status_label.configure(
+                text=f"Loaded: {self.saved_signal_list_name} ({len(self.saved_signal_list)} signals)",
+                text_color="green"
+            )
+            
+            messagebox.showinfo("Success", f"Signal list '{self.saved_signal_list_name}' loaded successfully!\n\nSignals: {len(self.saved_signal_list)}")
+            self.status_label.configure(text=f"Signal list loaded: {self.saved_signal_list_name}")
+        
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to load signal list:\n{e}")
+
+    def apply_saved_signals(self):
+        """Apply the saved signal list to the current file's signals."""
+        if not self.saved_signal_list:
+            messagebox.showwarning("Warning", "No saved signal list loaded. Please load a signal list first.")
+            return
+        
+        if not self.signal_vars:
+            messagebox.showwarning("Warning", "No signals available. Please load a file first.")
+            return
+        
+        # Get current available signals
+        available_signals = list(self.signal_vars.keys())
+        
+        # Find which saved signals are present and which are missing
+        present_signals = []
+        missing_signals = []
+        
+        for saved_signal in self.saved_signal_list:
+            if saved_signal in available_signals:
+                present_signals.append(saved_signal)
+            else:
+                missing_signals.append(saved_signal)
+        
+        # Apply the saved signals (select present ones, deselect others)
+        for signal, data in self.signal_vars.items():
+            if signal in present_signals:
+                data['var'].set(True)
+            else:
+                data['var'].set(False)
+        
+        # Show results to user
+        if missing_signals:
+            missing_text = "\n".join([f"• {signal}" for signal in missing_signals])
+            messagebox.showinfo(
+                "Signals Applied", 
+                f"Applied {len(present_signals)} signals from '{self.saved_signal_list_name}'.\n\n"
+                f"Missing signals ({len(missing_signals)}):\n{missing_text}"
+            )
+        else:
+            messagebox.showinfo(
+                "Signals Applied", 
+                f"Successfully applied all {len(present_signals)} signals from '{self.saved_signal_list_name}'."
+            )
+        
+        # Update status
+        self.signal_list_status_label.configure(
+            text=f"Applied: {self.saved_signal_list_name} ({len(present_signals)}/{len(self.saved_signal_list)} signals)",
+            text_color="blue"
+        )
+        
+        self.status_label.configure(text=f"Applied {len(present_signals)} signals from saved list")
+
     def _show_sharing_instructions(self):
         """Show sharing instructions."""
         messagebox.showinfo("Sharing Instructions", "To share this application, include all Python files and the requirements.txt file.")
@@ -2332,12 +2497,31 @@ class CSVProcessorApp(ctk.CTk):
         pass
 
     def _select_tag_file(self):
-        """Select tag file."""
-        pass
+        """Select tag file for DAT import."""
+        filepath = filedialog.askopenfilename(
+            title="Select Tag File",
+            filetypes=[("DBF files", "*.dbf"), ("All files", "*.*")]
+        )
+        if filepath:
+            self.dat_import_tag_file_path = filepath
+            self.tag_file_label.configure(text=os.path.basename(filepath))
 
     def _select_data_file(self):
-        """Select data file."""
-        pass
+        """Select data file for DAT import."""
+        filepath = filedialog.askopenfilename(
+            title="Select Data File",
+            filetypes=[("DAT files", "*.dat"), ("All files", "*.*")]
+        )
+        if filepath:
+            self.dat_import_data_file_path = filepath
+            self.data_file_label.configure(text=os.path.basename(filepath))
+            
+            # Set default output directory to the folder of the selected DAT file
+            dat_file_dir = os.path.dirname(filepath)
+            self.output_directory = dat_file_dir
+            # Update the output label to reflect the new default directory
+            if hasattr(self, 'output_label'):
+                self.output_label.configure(text=f"Output: {self.output_directory}")
 
     def _import_selected_tags(self):
         """Import selected tags."""
