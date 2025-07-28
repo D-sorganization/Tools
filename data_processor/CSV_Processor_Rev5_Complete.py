@@ -171,7 +171,7 @@ class CSVProcessorApp(ctk.CTk):
         self.output_directory = os.path.expanduser("~/Documents")
         self.signal_vars = {}
         self.plot_signal_vars = {}
-        self.filter_names = ["None", "Moving Average", "Median Filter", "Butterworth Low-pass", "Butterworth High-pass", "Savitzky-Golay"]
+        self.filter_names = ["None", "Moving Average", "Median Filter", "Hampel Filter", "Z-Score Filter", "Butterworth Low-pass", "Butterworth High-pass", "Savitzky-Golay"]
         self.custom_vars_list = []
         self.reference_signal_widgets = {}
         self.dat_import_tag_file_path = None
@@ -380,6 +380,8 @@ class CSVProcessorApp(ctk.CTk):
         (self.ma_frame, self.ma_value_entry, self.ma_unit_menu) = self._create_ma_param_frame(filter_frame, time_units)
         (self.bw_frame, self.bw_order_entry, self.bw_cutoff_entry) = self._create_bw_param_frame(filter_frame)
         (self.median_frame, self.median_kernel_entry) = self._create_median_param_frame(filter_frame)
+        (self.hampel_frame, self.hampel_window_entry, self.hampel_threshold_entry) = self._create_hampel_param_frame(filter_frame)
+        (self.zscore_frame, self.zscore_threshold_entry, self.zscore_method_menu) = self._create_zscore_param_frame(filter_frame)
         (self.savgol_frame, self.savgol_window_entry, self.savgol_polyorder_entry) = self._create_savgol_param_frame(filter_frame)
         self._update_filter_ui("None")
         
@@ -572,10 +574,42 @@ class CSVProcessorApp(ctk.CTk):
         
         return frame, window_entry, polyorder_entry
 
+    def _create_hampel_param_frame(self, parent):
+        """Create Hampel filter parameter frame."""
+        frame = ctk.CTkFrame(parent)
+        frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+        frame.grid_columnconfigure(1, weight=1)
+        
+        ctk.CTkLabel(frame, text="Window Size:").grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        window_entry = ctk.CTkEntry(frame, placeholder_text="7")
+        window_entry.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
+        
+        ctk.CTkLabel(frame, text="Threshold (σ):").grid(row=1, column=0, padx=10, pady=5, sticky="w")
+        threshold_entry = ctk.CTkEntry(frame, placeholder_text="3.0")
+        threshold_entry.grid(row=1, column=1, padx=10, pady=5, sticky="ew")
+        
+        return frame, window_entry, threshold_entry
+
+    def _create_zscore_param_frame(self, parent):
+        """Create Z-Score filter parameter frame."""
+        frame = ctk.CTkFrame(parent)
+        frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+        frame.grid_columnconfigure(1, weight=1)
+        
+        ctk.CTkLabel(frame, text="Threshold (σ):").grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        threshold_entry = ctk.CTkEntry(frame, placeholder_text="3.0")
+        threshold_entry.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
+        
+        ctk.CTkLabel(frame, text="Method:").grid(row=1, column=0, padx=10, pady=5, sticky="w")
+        method_menu = ctk.CTkOptionMenu(frame, values=["Remove Outliers", "Clip Outliers", "Replace with Median"])
+        method_menu.grid(row=1, column=1, padx=10, pady=5, sticky="ew")
+        
+        return frame, threshold_entry, method_menu
+
     def _update_filter_ui(self, filter_type):
         """Update filter UI based on selected filter type."""
         # Hide all frames
-        for frame in [self.ma_frame, self.bw_frame, self.median_frame, self.savgol_frame]:
+        for frame in [self.ma_frame, self.bw_frame, self.median_frame, self.hampel_frame, self.zscore_frame, self.savgol_frame]:
             frame.grid_remove()
         
         # Show relevant frame
@@ -585,13 +619,17 @@ class CSVProcessorApp(ctk.CTk):
             self.bw_frame.grid()
         elif filter_type == "Median Filter":
             self.median_frame.grid()
+        elif filter_type == "Hampel Filter":
+            self.hampel_frame.grid()
+        elif filter_type == "Z-Score Filter":
+            self.zscore_frame.grid()
         elif filter_type == "Savitzky-Golay":
             self.savgol_frame.grid()
 
     def _update_plot_filter_ui(self, filter_type):
         """Update plot filter UI based on selected filter type."""
         # Hide all frames
-        for frame in [self.plot_ma_frame, self.plot_bw_frame, self.plot_median_frame, self.plot_savgol_frame]:
+        for frame in [self.plot_ma_frame, self.plot_bw_frame, self.plot_median_frame, self.plot_hampel_frame, self.plot_zscore_frame, self.plot_savgol_frame]:
             frame.grid_remove()
         
         # Show relevant frame
@@ -601,6 +639,10 @@ class CSVProcessorApp(ctk.CTk):
             self.plot_bw_frame.grid()
         elif filter_type == "Median Filter":
             self.plot_median_frame.grid()
+        elif filter_type == "Hampel Filter":
+            self.plot_hampel_frame.grid()
+        elif filter_type == "Z-Score Filter":
+            self.plot_zscore_frame.grid()
         elif filter_type == "Savitzky-Golay":
             self.plot_savgol_frame.grid()
 
@@ -1074,6 +1116,10 @@ class CSVProcessorApp(ctk.CTk):
             'bw_order': int(self.bw_order_entry.get()) if self.bw_order_entry.get() else 3,
             'bw_cutoff': float(self.bw_cutoff_entry.get()) if self.bw_cutoff_entry.get() else 0.1,
             'median_kernel': int(self.median_kernel_entry.get()) if self.median_kernel_entry.get() else 5,
+            'hampel_window': int(self.hampel_window_entry.get()) if self.hampel_window_entry.get() else 7,
+            'hampel_threshold': float(self.hampel_threshold_entry.get()) if self.hampel_threshold_entry.get() else 3.0,
+            'zscore_threshold': float(self.zscore_threshold_entry.get()) if self.zscore_threshold_entry.get() else 3.0,
+            'zscore_method': self.zscore_method_menu.get() if hasattr(self, 'zscore_method_menu') else 'Remove Outliers',
             'savgol_window': int(self.savgol_window_entry.get()) if self.savgol_window_entry.get() else 11,
             'savgol_polyorder': int(self.savgol_polyorder_entry.get()) if self.savgol_polyorder_entry.get() else 2
         }
@@ -1176,6 +1222,51 @@ class CSVProcessorApp(ctk.CTk):
                         if kernel % 2 == 0: kernel += 1
                         if len(signal_data) > kernel:
                             processed_df[col] = pd.Series(medfilt(signal_data, kernel_size=kernel), index=signal_data.index)
+                    elif filter_type == "Hampel Filter":
+                        window = settings.get('hampel_window', 7)
+                        threshold = settings.get('hampel_threshold', 3.0)
+                        
+                        try:
+                            from scipy.signal import medfilt
+                            # Apply Hampel filter
+                            median_filtered = pd.Series(medfilt(signal_data, kernel_size=window), index=signal_data.index)
+                            mad = signal_data.rolling(window=window, center=True).apply(lambda x: np.median(np.abs(x - np.median(x))))
+                            threshold_value = threshold * 1.4826 * mad  # 1.4826 is the constant for normal distribution
+                            
+                            # Replace outliers with median
+                            outliers = np.abs(signal_data - median_filtered) > threshold_value
+                            processed_df[col] = signal_data.copy()
+                            processed_df[col].loc[outliers] = median_filtered.loc[outliers]
+                        except ImportError:
+                            # Fallback to simple median filter
+                            processed_df[col] = pd.Series(medfilt(signal_data, kernel_size=window), index=signal_data.index)
+                        except Exception as e:
+                            print(f"Error applying Hampel filter: {e}")
+                            # Fallback to simple median filter
+                            processed_df[col] = pd.Series(medfilt(signal_data, kernel_size=window), index=signal_data.index)
+                    elif filter_type == "Z-Score Filter":
+                        threshold = settings.get('zscore_threshold', 3.0)
+                        method = settings.get('zscore_method', 'Remove Outliers')
+                        
+                        mean_val = signal_data.mean()
+                        std_val = signal_data.std()
+                        z_scores = np.abs((signal_data - mean_val) / std_val)
+                        
+                        if method == "Remove Outliers":
+                            # Replace outliers with NaN
+                            processed_df[col] = signal_data.copy()
+                            processed_df[col].loc[z_scores > threshold] = np.nan
+                        elif method == "Clip Outliers":
+                            # Clip outliers to threshold
+                            processed_df[col] = signal_data.copy()
+                            upper_bound = mean_val + threshold * std_val
+                            lower_bound = mean_val - threshold * std_val
+                            processed_df[col] = processed_df[col].clip(lower=lower_bound, upper=upper_bound)
+                        elif method == "Replace with Median":
+                            # Replace outliers with median
+                            median_val = signal_data.median()
+                            processed_df[col] = signal_data.copy()
+                            processed_df[col].loc[z_scores > threshold] = median_val
                     elif filter_type == "Savitzky-Golay":
                         window = settings.get('savgol_window', 11)
                         polyorder = settings.get('savgol_polyorder', 2)
@@ -1544,11 +1635,17 @@ class CSVProcessorApp(ctk.CTk):
             (self.plot_ma_frame, self.plot_ma_value_entry, self.plot_ma_unit_menu) = self._create_ma_param_frame(plot_filter_frame, time_units)
             (self.plot_bw_frame, self.plot_bw_order_entry, self.plot_bw_cutoff_entry) = self._create_bw_param_frame(plot_filter_frame)
             (self.plot_median_frame, self.plot_median_kernel_entry) = self._create_median_param_frame(plot_filter_frame)
+            (self.plot_hampel_frame, self.plot_hampel_window_entry, self.plot_hampel_threshold_entry) = self._create_hampel_param_frame(plot_filter_frame)
+            (self.plot_zscore_frame, self.plot_zscore_threshold_entry, self.plot_zscore_method_menu) = self._create_zscore_param_frame(plot_filter_frame)
             (self.plot_savgol_frame, self.plot_savgol_window_entry, self.plot_savgol_polyorder_entry) = self._create_savgol_param_frame(plot_filter_frame)
             self._update_plot_filter_ui("None")
             
-            ctk.CTkButton(plot_filter_frame, text="Preview Filter", command=self.update_plot).grid(row=2, column=0, sticky="ew", padx=10, pady=5)
-            ctk.CTkButton(plot_filter_frame, text="Copy Settings to Processing Tab", command=self._copy_plot_settings_to_processing).grid(row=3, column=0, sticky="ew", padx=10, pady=5)
+            # Show both raw and filtered signals option
+            self.show_both_signals_var = tk.BooleanVar(value=False)
+            ctk.CTkCheckBox(plot_filter_frame, text="Show both raw and filtered signals", variable=self.show_both_signals_var, command=self.update_plot).grid(row=2, column=0, sticky="w", padx=10, pady=5)
+            
+            ctk.CTkButton(plot_filter_frame, text="Preview Filter", command=self.update_plot).grid(row=3, column=0, sticky="ew", padx=10, pady=5)
+            ctk.CTkButton(plot_filter_frame, text="Copy Settings to Processing Tab", command=self._copy_plot_settings_to_processing).grid(row=4, column=0, sticky="ew", padx=10, pady=5)
 
             # Time range controls
             time_range_frame = ctk.CTkFrame(plot_left_panel)
@@ -1986,11 +2083,10 @@ class CSVProcessorApp(ctk.CTk):
         if not signals_to_plot:
             self.plot_ax.text(0.5, 0.5, "Select one or more signals to plot", ha='center', va='center')
         else:
-            # Apply filter preview if selected
+            # Check if we should show both raw and filtered signals
+            show_both = self.show_both_signals_var.get()
             plot_filter = self.plot_filter_type.get()
-            if plot_filter != "None":
-                df = self._apply_plot_filter(df, signals_to_plot, x_axis_col)
-
+            
             # Chart customization
             plot_style = self.plot_type_var.get()
             style_args = {"linestyle": "-", "marker": ""}
@@ -2005,7 +2101,25 @@ class CSVProcessorApp(ctk.CTk):
                     continue
                 
                 plot_df = df[[x_axis_col, signal]].dropna()
-                self.plot_ax.plot(plot_df[x_axis_col], plot_df[signal], label=signal, **style_args)
+                
+                if show_both and plot_filter != "None":
+                    # Plot raw signal with dashed line
+                    raw_style = style_args.copy()
+                    raw_style["linestyle"] = "--"
+                    raw_style["alpha"] = 0.7
+                    self.plot_ax.plot(plot_df[x_axis_col], plot_df[signal], label=f"{signal} (Raw)", **raw_style)
+                    
+                    # Apply filter and plot filtered signal
+                    filtered_df = self._apply_plot_filter(df.copy(), [signal], x_axis_col)
+                    filtered_plot_df = filtered_df[[x_axis_col, signal]].dropna()
+                    self.plot_ax.plot(filtered_plot_df[x_axis_col], filtered_plot_df[signal], label=f"{signal} (Filtered)", **style_args)
+                else:
+                    # Apply filter if selected (but not showing both)
+                    if plot_filter != "None":
+                        filtered_df = self._apply_plot_filter(df.copy(), [signal], x_axis_col)
+                        plot_df = filtered_df[[x_axis_col, signal]].dropna()
+                    
+                    self.plot_ax.plot(plot_df[x_axis_col], plot_df[signal], label=signal, **style_args)
 
             # Add trendline if selected
             if self.trendline_type_var.get() != "None" and signals_to_plot:
@@ -2096,6 +2210,57 @@ class CSVProcessorApp(ctk.CTk):
             elif filter_type == "Median Filter":
                 kernel = int(self.plot_median_kernel_entry.get() or "5")
                 filtered_df[signal] = df[signal].rolling(window=kernel, center=True).median()
+                
+            elif filter_type == "Hampel Filter":
+                window = int(self.plot_hampel_window_entry.get() or "7")
+                threshold = float(self.plot_hampel_threshold_entry.get() or "3.0")
+                
+                try:
+                    from scipy.signal import medfilt
+                    signal_data = df[signal].fillna(method='ffill').fillna(method='bfill')
+                    
+                    # Apply Hampel filter
+                    median_filtered = pd.Series(medfilt(signal_data, kernel_size=window), index=signal_data.index)
+                    mad = signal_data.rolling(window=window, center=True).apply(lambda x: np.median(np.abs(x - np.median(x))))
+                    threshold_value = threshold * 1.4826 * mad  # 1.4826 is the constant for normal distribution
+                    
+                    # Replace outliers with median
+                    outliers = np.abs(signal_data - median_filtered) > threshold_value
+                    filtered_df[signal] = signal_data.copy()
+                    filtered_df[signal].loc[outliers] = median_filtered.loc[outliers]
+                    
+                except ImportError:
+                    # Fallback to simple median filter
+                    filtered_df[signal] = df[signal].rolling(window=window, center=True).median()
+                except Exception as e:
+                    print(f"Error applying Hampel filter: {e}")
+                    # Fallback to simple median filter
+                    filtered_df[signal] = df[signal].rolling(window=window, center=True).median()
+                
+            elif filter_type == "Z-Score Filter":
+                threshold = float(self.plot_zscore_threshold_entry.get() or "3.0")
+                method = self.plot_zscore_method_menu.get()
+                
+                signal_data = df[signal].fillna(method='ffill').fillna(method='bfill')
+                mean_val = signal_data.mean()
+                std_val = signal_data.std()
+                z_scores = np.abs((signal_data - mean_val) / std_val)
+                
+                if method == "Remove Outliers":
+                    # Replace outliers with NaN
+                    filtered_df[signal] = signal_data.copy()
+                    filtered_df[signal].loc[z_scores > threshold] = np.nan
+                elif method == "Clip Outliers":
+                    # Clip outliers to threshold
+                    filtered_df[signal] = signal_data.copy()
+                    upper_bound = mean_val + threshold * std_val
+                    lower_bound = mean_val - threshold * std_val
+                    filtered_df[signal] = filtered_df[signal].clip(lower=lower_bound, upper=upper_bound)
+                elif method == "Replace with Median":
+                    # Replace outliers with median
+                    median_val = signal_data.median()
+                    filtered_df[signal] = signal_data.copy()
+                    filtered_df[signal].loc[z_scores > threshold] = median_val
                 
             elif filter_type == "Savitzky-Golay":
                 window = int(self.plot_savgol_window_entry.get() or "11")
@@ -2405,10 +2570,21 @@ class CSVProcessorApp(ctk.CTk):
                 self.bw_order_entry.insert(0, self.plot_bw_order_entry.get())
                 self.bw_cutoff_entry.delete(0, tk.END)
                 self.bw_cutoff_entry.insert(0, self.plot_bw_cutoff_entry.get())
-        elif plot_filter == "Median":
+        elif plot_filter == "Median Filter":
             if hasattr(self, 'plot_median_kernel_entry'):
                 self.median_kernel_entry.delete(0, tk.END)
                 self.median_kernel_entry.insert(0, self.plot_median_kernel_entry.get())
+        elif plot_filter == "Hampel Filter":
+            if hasattr(self, 'plot_hampel_window_entry') and hasattr(self, 'plot_hampel_threshold_entry'):
+                self.hampel_window_entry.delete(0, tk.END)
+                self.hampel_window_entry.insert(0, self.plot_hampel_window_entry.get())
+                self.hampel_threshold_entry.delete(0, tk.END)
+                self.hampel_threshold_entry.insert(0, self.plot_hampel_threshold_entry.get())
+        elif plot_filter == "Z-Score Filter":
+            if hasattr(self, 'plot_zscore_threshold_entry') and hasattr(self, 'plot_zscore_method_menu'):
+                self.zscore_threshold_entry.delete(0, tk.END)
+                self.zscore_threshold_entry.insert(0, self.plot_zscore_threshold_entry.get())
+                self.zscore_method_menu.set(self.plot_zscore_method_menu.get())
         elif plot_filter == "Savitzky-Golay":
             if hasattr(self, 'plot_savgol_window_entry') and hasattr(self, 'plot_savgol_polyorder_entry'):
                 self.savgol_window_entry.delete(0, tk.END)
