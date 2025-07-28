@@ -1665,7 +1665,8 @@ class CSVProcessorApp(ctk.CTk):
     def _create_splitter(self, parent, left_creator, right_creator, splitter_key, default_left_width):
         """Create a splitter with left and right panels."""
         splitter_frame = ctk.CTkFrame(parent)
-        splitter_frame.grid_columnconfigure(1, weight=1)
+        # Make the right panel expandable rather than the splitter handle
+        splitter_frame.grid_columnconfigure(2, weight=1)
         splitter_frame.grid_rowconfigure(0, weight=1)
         
         # Get saved width or use default
