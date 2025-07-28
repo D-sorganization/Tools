@@ -285,7 +285,7 @@ class CSVProcessorApp(ctk.CTk):
             self.signal_list_frame.grid_columnconfigure(0, weight=1)
 
         # Create the splitter with the content creator functions
-        splitter_frame = self._create_splitter(parent_tab, create_left_content, create_right_content, 'setup_left_width', 450)
+        splitter_frame = self._create_splitter(parent_tab, create_left_content, create_right_content, 'setup_left_width', 350)
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
     def populate_setup_sub_tab(self, tab):
@@ -394,7 +394,7 @@ class CSVProcessorApp(ctk.CTk):
         integrator_frame.grid(row=2, column=0, padx=10, pady=10, sticky="new")
         integrator_frame.grid_columnconfigure(1, weight=1)
         
-        ctk.CTkLabel(integrator_frame, text="Signal Integration", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(10,5), sticky="w")
+        ctk.CTkLabel(integrator_frame, text="Signal Integration", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(5,3), sticky="w")
         ctk.CTkLabel(integrator_frame, text="Create cumulative columns for flow calculations", justify="left").grid(row=1, column=0, columnspan=2, padx=10, pady=(0,5), sticky="w")
         
         ctk.CTkLabel(integrator_frame, text="Integration Method:").grid(row=2, column=0, padx=10, pady=5, sticky="w")
@@ -428,7 +428,7 @@ class CSVProcessorApp(ctk.CTk):
         deriv_frame.grid(row=3, column=0, padx=10, pady=10, sticky="new")
         deriv_frame.grid_columnconfigure(1, weight=1)
         
-        ctk.CTkLabel(deriv_frame, text="Signal Differentiation", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(10,5), sticky="w")
+        ctk.CTkLabel(deriv_frame, text="Signal Differentiation", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(5,3), sticky="w")
         ctk.CTkLabel(deriv_frame, text="Create derivative columns for signal analysis", justify="left").grid(row=1, column=0, columnspan=2, padx=10, pady=(0,5), sticky="w")
         
         # Differentiation method selection
@@ -1337,24 +1337,25 @@ class CSVProcessorApp(ctk.CTk):
         def create_plot_left_content(left_panel):
             """Create the left panel content for plotting with all advanced features"""
             left_panel.grid_rowconfigure(1, weight=1)
+            left_panel.grid_columnconfigure(0, weight=1)
             
             # Plot controls header
             plot_left_panel_outer = ctk.CTkFrame(left_panel)
             plot_left_panel_outer.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-            plot_left_panel_outer.grid_propagate(False)
             plot_left_panel_outer.grid_rowconfigure(0, weight=1)
             plot_left_panel_outer.grid_columnconfigure(0, weight=1)
 
             # The scrollable area for controls
             plot_left_panel = ctk.CTkScrollableFrame(plot_left_panel_outer, label_text="Plotting Controls", label_fg_color="#4C7F4C")
             plot_left_panel.grid(row=0, column=0, sticky="nsew")
+            plot_left_panel.grid_columnconfigure(0, weight=1)
             
             # Update Plot button
             ctk.CTkButton(plot_left_panel_outer, text="Update Plot", height=35, command=self.update_plot).grid(row=1, column=0, sticky="ew", padx=5, pady=10)
 
             # Plot signal selection
             plot_signal_select_frame = ctk.CTkFrame(plot_left_panel)
-            plot_signal_select_frame.pack(fill="x", expand=True, pady=5, padx=5)
+            plot_signal_select_frame.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
             plot_signal_select_frame.grid_columnconfigure(0, weight=1)
 
             self.plot_search_entry = ctk.CTkEntry(plot_signal_select_frame, placeholder_text="Search plot signals...")
@@ -1367,40 +1368,46 @@ class CSVProcessorApp(ctk.CTk):
             ctk.CTkButton(plot_signal_select_frame, text="X", width=28, command=self._plot_clear_search).grid(row=1, column=3, sticky="w", padx=2, pady=5)
             
             self.plot_signal_frame = ctk.CTkScrollableFrame(plot_left_panel, label_text="Signals to Plot", height=150)
-            self.plot_signal_frame.pack(expand=True, fill="both", padx=5, pady=5)
+            self.plot_signal_frame.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
 
             # Plot appearance controls
             appearance_frame = ctk.CTkFrame(plot_left_panel)
-            appearance_frame.pack(fill="x", expand=True, pady=5, padx=5)
-            ctk.CTkLabel(appearance_frame, text="Plot Appearance", font=ctk.CTkFont(weight="bold")).pack(anchor="w", padx=10, pady=5)
-            ctk.CTkLabel(appearance_frame, text="Chart Type:").pack(anchor="w", padx=10)
+            appearance_frame.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
+            appearance_frame.grid_columnconfigure(0, weight=1)
+            
+            ctk.CTkLabel(appearance_frame, text="Plot Appearance", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, sticky="w", padx=10, pady=5)
+            ctk.CTkLabel(appearance_frame, text="Chart Type:").grid(row=1, column=0, sticky="w", padx=10)
             self.plot_type_var = ctk.StringVar(value="Line with Markers")
-            ctk.CTkOptionMenu(appearance_frame, variable=self.plot_type_var, values=["Line with Markers", "Line Only", "Markers Only (Scatter)"]).pack(fill="x", padx=10, pady=5)
+            ctk.CTkOptionMenu(appearance_frame, variable=self.plot_type_var, values=["Line with Markers", "Line Only", "Markers Only (Scatter)"]).grid(row=2, column=0, sticky="ew", padx=10, pady=5)
             
             self.plot_title_entry = ctk.CTkEntry(appearance_frame, placeholder_text="Plot Title")
-            self.plot_title_entry.pack(fill="x", padx=10, pady=5)
+            self.plot_title_entry.grid(row=3, column=0, sticky="ew", padx=10, pady=5)
             self.plot_xlabel_entry = ctk.CTkEntry(appearance_frame, placeholder_text="X-Axis Label")
-            self.plot_xlabel_entry.pack(fill="x", padx=10, pady=5)
+            self.plot_xlabel_entry.grid(row=4, column=0, sticky="ew", padx=10, pady=5)
             self.plot_ylabel_entry = ctk.CTkEntry(appearance_frame, placeholder_text="Y-Axis Label")
-            self.plot_ylabel_entry.pack(fill="x", padx=10, pady=5)
+            self.plot_ylabel_entry.grid(row=5, column=0, sticky="ew", padx=10, pady=5)
 
             # Trendline controls
             trend_frame = ctk.CTkFrame(plot_left_panel)
-            trend_frame.pack(fill="x", expand=True, pady=5, padx=5)
-            ctk.CTkLabel(trend_frame, text="Trendline (plots 1st selected signal)", font=ctk.CTkFont(weight="bold")).pack(anchor="w", padx=10, pady=5)
+            trend_frame.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
+            trend_frame.grid_columnconfigure(0, weight=1)
+            
+            ctk.CTkLabel(trend_frame, text="Trendline (plots 1st selected signal)", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, sticky="w", padx=10, pady=5)
             self.trendline_type_var = ctk.StringVar(value="None")
-            ctk.CTkOptionMenu(trend_frame, variable=self.trendline_type_var, values=["None", "Linear", "Exponential", "Power", "Polynomial"]).pack(fill="x", padx=10, pady=5)
+            ctk.CTkOptionMenu(trend_frame, variable=self.trendline_type_var, values=["None", "Linear", "Exponential", "Power", "Polynomial"]).grid(row=1, column=0, sticky="ew", padx=10, pady=5)
             self.poly_order_entry = ctk.CTkEntry(trend_frame, placeholder_text="Polynomial Order (2-6)")
-            self.poly_order_entry.pack(fill="x", padx=10, pady=5)
+            self.poly_order_entry.grid(row=2, column=0, sticky="ew", padx=10, pady=5)
             self.trendline_textbox = ctk.CTkTextbox(trend_frame, height=70)
-            self.trendline_textbox.pack(fill="x", expand=True, padx=10, pady=5)
+            self.trendline_textbox.grid(row=3, column=0, sticky="ew", padx=10, pady=5)
 
             # Export controls
             export_chart_frame = ctk.CTkFrame(plot_left_panel)
-            export_chart_frame.pack(fill="x", expand=True, pady=5, padx=5)
-            ctk.CTkLabel(export_chart_frame, text="Export Chart", font=ctk.CTkFont(weight="bold")).pack(anchor="w", padx=10, pady=5)
-            ctk.CTkButton(export_chart_frame, text="Save as PNG/PDF", command=self._export_chart_image).pack(fill="x", padx=10, pady=2)
-            ctk.CTkButton(export_chart_frame, text="Export to Excel with Chart", command=self._export_chart_excel).pack(fill="x", padx=10, pady=2)
+            export_chart_frame.grid(row=4, column=0, sticky="ew", padx=5, pady=5)
+            export_chart_frame.grid_columnconfigure(0, weight=1)
+            
+            ctk.CTkLabel(export_chart_frame, text="Export Chart", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, sticky="w", padx=10, pady=5)
+            ctk.CTkButton(export_chart_frame, text="Save as PNG/PDF", command=self._export_chart_image).grid(row=1, column=0, sticky="ew", padx=10, pady=2)
+            ctk.CTkButton(export_chart_frame, text="Export to Excel with Chart", command=self._export_chart_excel).grid(row=2, column=0, sticky="ew", padx=10, pady=2)
 
         def create_plot_right_content(right_panel):
             """Create the right panel content for plotting"""
@@ -1424,7 +1431,7 @@ class CSVProcessorApp(ctk.CTk):
             toolbar.grid(row=0, column=0, sticky="ew")
 
         # Create splitter for plotting tab
-        splitter_frame = self._create_splitter(plot_main_frame, create_plot_left_content, create_plot_right_content, 'plotting_left_width', 350)
+        splitter_frame = self._create_splitter(plot_main_frame, create_plot_left_content, create_plot_right_content, 'plotting_left_width', 400)
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
     def create_plots_list_tab(self, tab):
@@ -1446,7 +1453,7 @@ class CSVProcessorApp(ctk.CTk):
         main_frame.grid_rowconfigure(0, weight=1)
         
         # Create splitter
-        splitter_frame = self._create_splitter(main_frame, self._create_plots_list_left, self._create_plots_list_right, 'plots_list_left_width', 400)
+        splitter_frame = self._create_splitter(main_frame, self._create_plots_list_left, self._create_plots_list_right, 'plots_list_left_width', 300)
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
     def _create_plots_list_left(self, left_panel):
@@ -1563,7 +1570,7 @@ class CSVProcessorApp(ctk.CTk):
         main_frame.grid_rowconfigure(0, weight=1)
         
         # Create splitter
-        splitter_frame = self._create_splitter(main_frame, self._create_dat_import_left, self._create_dat_import_right, 'dat_import_left_width', 400)
+        splitter_frame = self._create_splitter(main_frame, self._create_dat_import_left, self._create_dat_import_right, 'dat_import_left_width', 300)
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
     def _create_dat_import_left(self, left_panel):
@@ -1666,8 +1673,10 @@ class CSVProcessorApp(ctk.CTk):
         
         # Create left panel
         left_panel = ctk.CTkFrame(splitter_frame, width=left_width)
-        left_panel.grid(row=0, column=0, sticky="nsew")
+        left_panel.grid(row=0, column=0, sticky="nsew", padx=(5, 0))
         left_panel.grid_propagate(False)
+        left_panel.grid_columnconfigure(0, weight=1)
+        left_panel.grid_rowconfigure(0, weight=1)
         left_creator(left_panel)
         
         # Create splitter handle
@@ -1679,7 +1688,7 @@ class CSVProcessorApp(ctk.CTk):
         
         # Create right panel
         right_panel = ctk.CTkFrame(splitter_frame)
-        right_panel.grid(row=0, column=2, sticky="nsew")
+        right_panel.grid(row=0, column=2, sticky="nsew", padx=(0, 5))
         right_panel.grid_columnconfigure(0, weight=1)
         right_panel.grid_rowconfigure(0, weight=1)
         right_creator(right_panel)
