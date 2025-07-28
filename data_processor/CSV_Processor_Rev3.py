@@ -162,6 +162,10 @@ class CSVProcessorApp(ctk.CTk):
         # NEW: Plots List variables
         self.plots_list = []  # List of plot configurations
         self.current_plot_config = None
+        
+        # NEW: Integration and Differentiation variables (must be initialized here)
+        self.integrator_signal_vars = {}
+        self.deriv_signal_vars = {}
 
         # --- Create Main UI ---
         self.main_tab_view = ctk.CTkTabview(self)
@@ -194,24 +198,42 @@ class CSVProcessorApp(ctk.CTk):
         right_panel.grid_columnconfigure(0, weight=1)
         
         # Create splitter between left and right panels
-        self._create_splitter(parent_tab, left_panel, right_panel, 'setup_left_width', 450)
+        splitter_frame = self._create_splitter(parent_tab, left_panel, right_panel, 'setup_left_width', 450)
+        splitter_frame.grid(row=0, column=0, sticky="nsew")
 
         # --- NEW: Header with Help Button ---
         header_frame = ctk.CTkFrame(left_panel, fg_color="transparent")
         header_frame.grid(row=0, column=0, padx=15, pady=10, sticky="ew")
-        ctk.CTkLabel(header_frame, text="Control Panel", font=ctk.CTkFont(size=16, weight="bold")).pack(side="left")
-        ctk.CTkButton(header_frame, text="Help", width=70, command=self._show_setup_help).pack(side="right")
+        header_frame.grid_columnconfigure(0, weight=1)
+        ctk.CTkLabel(header_frame, text="Control Panel", font=ctk.CTkFont(size=16, weight="bold")).grid(row=0, column=0, sticky="w")
+        ctk.CTkButton(header_frame, text="Help", width=70, command=self._show_setup_help).grid(row=0, column=1, sticky="e")
 
         # Create a scrollable frame for the processing tab view
         processing_scrollable_frame = ctk.CTkScrollableFrame(left_panel)
         processing_scrollable_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+        processing_scrollable_frame.grid_columnconfigure(0, weight=1)
         
         processing_tab_view = ctk.CTkTabview(processing_scrollable_frame)
-        processing_tab_view.pack(fill="both", expand=True)
+        processing_tab_view.grid(row=0, column=0, sticky="nsew")
+        processing_tab_view.grid_columnconfigure(0, weight=1)
         processing_tab_view.add("Setup"); processing_tab_view.add("Processing"); processing_tab_view.add("Custom Vars")
-        self.populate_setup_sub_tab(processing_tab_view.tab("Setup"))
-        self.populate_processing_sub_tab(processing_tab_view.tab("Processing"))
-        self.populate_custom_var_sub_tab(processing_tab_view.tab("Custom Vars"))
+        
+        # Configure each tab to expand properly
+        setup_tab = processing_tab_view.tab("Setup")
+        setup_tab.grid_columnconfigure(0, weight=1)
+        setup_tab.grid_rowconfigure(0, weight=1)
+        
+        processing_tab = processing_tab_view.tab("Processing")
+        processing_tab.grid_columnconfigure(0, weight=1)
+        processing_tab.grid_rowconfigure(0, weight=1)
+        
+        custom_vars_tab = processing_tab_view.tab("Custom Vars")
+        custom_vars_tab.grid_columnconfigure(0, weight=1)
+        custom_vars_tab.grid_rowconfigure(0, weight=1)
+        
+        self.populate_setup_sub_tab(setup_tab)
+        self.populate_processing_sub_tab(processing_tab)
+        self.populate_custom_var_sub_tab(custom_vars_tab)
         
         self.process_button = ctk.CTkButton(left_panel, text="Process & Batch Export Files", height=40, command=self.process_files)
         self.process_button.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
@@ -219,7 +241,7 @@ class CSVProcessorApp(ctk.CTk):
         self.file_list_frame = ctk.CTkScrollableFrame(right_panel, label_text="Selected Input Files", height=120)
         self.file_list_frame.grid(row=0, column=0, padx=10, pady=(0, 10), sticky="new")
         self.initial_file_label = ctk.CTkLabel(self.file_list_frame, text="Files you select will be listed here.")
-        self.initial_file_label.pack(padx=5, pady=5)
+        self.initial_file_label.grid(row=0, column=0, padx=5, pady=5)
         
         signal_control_frame = ctk.CTkFrame(right_panel)
         signal_control_frame.grid(row=1, column=0, padx=10, pady=0, sticky="ew")
@@ -397,17 +419,17 @@ class CSVProcessorApp(ctk.CTk):
 
     def populate_setup_sub_tab(self, tab):
         tab.grid_columnconfigure(0, weight=1)
-        file_frame = ctk.CTkFrame(tab); file_frame.grid(row=0, column=0, padx=10, pady=10, sticky="new"); file_frame.grid_columnconfigure(0, weight=1)
+        file_frame = ctk.CTkFrame(tab); file_frame.grid(row=0, column=0, padx=10, pady=10, sticky="new"); file_frame.grid_columnconfigure(0, weight=1); file_frame.grid_rowconfigure(0, weight=1)
         ctk.CTkLabel(file_frame, text="CSV File Selection", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, padx=10, pady=(10, 5), sticky="w")
         ctk.CTkButton(file_frame, text="Select Input CSV Files", command=self.select_files).grid(row=1, column=0, padx=10, pady=5, sticky="ew")
         ctk.CTkButton(file_frame, text="Select Output Folder", command=self.select_output_folder).grid(row=2, column=0, padx=10, pady=5, sticky="ew")
         self.output_label = ctk.CTkLabel(file_frame, text=f"Output: {self.output_directory}", wraplength=300, justify="left", font=ctk.CTkFont(size=11)); self.output_label.grid(row=3, column=0, padx=10, pady=(0, 10), sticky="w")
-        settings_frame = ctk.CTkFrame(tab); settings_frame.grid(row=1, column=0, padx=10, pady=10, sticky="new"); settings_frame.grid_columnconfigure(0, weight=1)
+        settings_frame = ctk.CTkFrame(tab); settings_frame.grid(row=1, column=0, padx=10, pady=10, sticky="new"); settings_frame.grid_columnconfigure(0, weight=1); settings_frame.grid_rowconfigure(0, weight=1)
         ctk.CTkLabel(settings_frame, text="Configuration Save and Load", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=3, padx=10, pady=(10, 5), sticky="w")
         ctk.CTkButton(settings_frame, text="Save Settings", command=self.save_settings).grid(row=1, column=0, padx=10, pady=5, sticky="ew")
         ctk.CTkButton(settings_frame, text="Load Settings", command=self.load_settings).grid(row=1, column=1, padx=10, pady=5, sticky="ew")
         ctk.CTkButton(settings_frame, text="How to Share App", command=self._show_sharing_instructions).grid(row=1, column=2, padx=10, pady=5, sticky="ew")        # FEATURE 5: Enhanced export options including multi-sheet Excel
-        export_frame = ctk.CTkFrame(tab); export_frame.grid(row=2, column=0, padx=10, pady=10, sticky="new"); export_frame.grid_columnconfigure(1, weight=1)
+        export_frame = ctk.CTkFrame(tab); export_frame.grid(row=2, column=0, padx=10, pady=10, sticky="new"); export_frame.grid_columnconfigure(1, weight=1); export_frame.grid_rowconfigure(0, weight=1)
         ctk.CTkLabel(export_frame, text="Export Options", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(10,5), sticky="w")
         ctk.CTkLabel(export_frame, text="Format:").grid(row=1, column=0, padx=10, pady=5, sticky="w")
         self.export_type_var = ctk.StringVar(value="CSV (Separate Files)")
@@ -425,7 +447,7 @@ class CSVProcessorApp(ctk.CTk):
 
     def populate_processing_sub_tab(self, tab):
         tab.grid_columnconfigure(0, weight=1); time_units = ["ms", "s", "min", "hr"]
-        filter_frame = ctk.CTkFrame(tab); filter_frame.grid(row=0, column=0, padx=10, pady=10, sticky="new"); filter_frame.grid_columnconfigure(1, weight=1)
+        filter_frame = ctk.CTkFrame(tab); filter_frame.grid(row=0, column=0, padx=10, pady=10, sticky="new"); filter_frame.grid_columnconfigure(1, weight=1); filter_frame.grid_rowconfigure(0, weight=1)
         ctk.CTkLabel(filter_frame, text="Signal Filtering", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 5), sticky="w")
         ctk.CTkLabel(filter_frame, text="Filter Type:").grid(row=1, column=0, padx=10, pady=5, sticky="w")
         self.filter_type_var = ctk.StringVar(value="None")
@@ -435,7 +457,7 @@ class CSVProcessorApp(ctk.CTk):
         (self.median_frame, self.median_kernel_entry) = self._create_median_param_frame(filter_frame)
         (self.savgol_frame, self.savgol_window_entry, self.savgol_polyorder_entry) = self._create_savgol_param_frame(filter_frame)
         self._update_filter_ui("None")
-        resample_frame = ctk.CTkFrame(tab); resample_frame.grid(row=3, column=0, padx=10, pady=10, sticky="new"); resample_frame.grid_columnconfigure(1, weight=1)
+        resample_frame = ctk.CTkFrame(tab); resample_frame.grid(row=3, column=0, padx=10, pady=10, sticky="new"); resample_frame.grid_columnconfigure(1, weight=1); resample_frame.grid_rowconfigure(0, weight=1)
         ctk.CTkLabel(resample_frame, text="Time Resampling", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 5), sticky="w")
         self.resample_var = tk.BooleanVar(value=False); ctk.CTkCheckBox(resample_frame, text="Enable Resampling", variable=self.resample_var).grid(row=1, column=0, columnspan=2, padx=10, pady=5, sticky="w")
         ctk.CTkLabel(resample_frame, text="Time Gap:").grid(row=2, column=0, padx=10, pady=5, sticky="w")
@@ -444,7 +466,7 @@ class CSVProcessorApp(ctk.CTk):
         self.resample_value_entry = ctk.CTkEntry(resample_time_frame, placeholder_text="e.g., 10"); self.resample_value_entry.grid(row=0, column=0, sticky="ew")
         self.resample_unit_menu = ctk.CTkOptionMenu(resample_time_frame, values=time_units); self.resample_unit_menu.grid(row=0, column=1, padx=(5,0), sticky="ew")
         # NEW: Differentiation Frame with searchable signals
-        deriv_frame = ctk.CTkFrame(tab); deriv_frame.grid(row=4, column=0, padx=10, pady=10, sticky="new"); deriv_frame.grid_columnconfigure(1, weight=1)
+        deriv_frame = ctk.CTkFrame(tab); deriv_frame.grid(row=4, column=0, padx=10, pady=10, sticky="new"); deriv_frame.grid_columnconfigure(1, weight=1); deriv_frame.grid_rowconfigure(0, weight=1)
         ctk.CTkLabel(deriv_frame, text="Signal Differentiation", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(10,5), sticky="w")
         ctk.CTkLabel(deriv_frame, text="Create derivative columns for signal analysis", justify="left").grid(row=1, column=0, columnspan=2, padx=10, pady=(0,5), sticky="w")
         
@@ -470,6 +492,7 @@ class CSVProcessorApp(ctk.CTk):
         # Scrollable frame for differentiation signal checkboxes
         self.deriv_signals_frame = ctk.CTkScrollableFrame(deriv_signals_frame, height=100)
         self.deriv_signals_frame.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky="ew")
+        self.deriv_signals_frame.grid_columnconfigure(0, weight=1)
         
         # Differentiation control buttons
         deriv_buttons_frame = ctk.CTkFrame(deriv_frame, fg_color="transparent")
@@ -490,11 +513,10 @@ class CSVProcessorApp(ctk.CTk):
             cb.grid(row=1, column=i-1, padx=10, pady=2, sticky="w")
             self.derivative_vars[i] = var
         
-        # Initialize differentiation signal variables
-        self.deriv_signal_vars = {}
+        # Differentiation signal variables are initialized in __init__
         
         # NEW: Integration Frame
-        integrator_frame = ctk.CTkFrame(tab); integrator_frame.grid(row=6, column=0, padx=10, pady=10, sticky="new"); integrator_frame.grid_columnconfigure(1, weight=1)
+        integrator_frame = ctk.CTkFrame(tab); integrator_frame.grid(row=6, column=0, padx=10, pady=10, sticky="new"); integrator_frame.grid_columnconfigure(1, weight=1); integrator_frame.grid_rowconfigure(0, weight=1)
         ctk.CTkLabel(integrator_frame, text="Signal Integration", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(10,5), sticky="w")
         ctk.CTkLabel(integrator_frame, text="Create cumulative columns for flow calculations", justify="left").grid(row=1, column=0, columnspan=2, padx=10, pady=(0,5), sticky="w")
         
@@ -520,6 +542,7 @@ class CSVProcessorApp(ctk.CTk):
         # Scrollable frame for integration signal checkboxes
         self.integrator_signals_frame = ctk.CTkScrollableFrame(integrator_signals_frame, height=100)
         self.integrator_signals_frame.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky="ew")
+        self.integrator_signals_frame.grid_columnconfigure(0, weight=1)
         
         # Integration control buttons
         integrator_buttons_frame = ctk.CTkFrame(integrator_frame, fg_color="transparent")
@@ -528,8 +551,7 @@ class CSVProcessorApp(ctk.CTk):
         ctk.CTkButton(integrator_buttons_frame, text="Select All", command=self._integrator_select_all).grid(row=0, column=0, padx=5, pady=5)
         ctk.CTkButton(integrator_buttons_frame, text="Deselect All", command=self._integrator_deselect_all).grid(row=0, column=1, padx=5, pady=5)
         
-        # Initialize integration variables
-        self.integrator_signal_vars = {}
+        # Integration variables are initialized in __init__
     
     def _filter_integrator_signals(self, event=None):
         """Filters the integrator signal list based on the search entry."""
@@ -700,11 +722,17 @@ class CSVProcessorApp(ctk.CTk):
         
         ctk.CTkButton(tab, text="Add Custom Variable", command=self._add_custom_variable).grid(row=6, column=0, padx=10, pady=10, sticky="ew")
         
+        # --- Custom Variables List ---
+        ctk.CTkLabel(tab, text="Current Custom Variables:", font=ctk.CTkFont(weight="bold")).grid(row=7, column=0, padx=10, pady=(10,5), sticky="w")
+        self.custom_vars_listbox = ctk.CTkTextbox(tab, height=100, state="disabled")
+        self.custom_vars_listbox.grid(row=8, column=0, padx=10, pady=5, sticky="ew")
+        
         # --- NEW SEARCHABLE REFERENCE LIST ---
         reference_frame = ctk.CTkFrame(tab)
-        reference_frame.grid(row=7, column=0, rowspan=2, padx=10, pady=5, sticky="nsew")
+        reference_frame.grid(row=9, column=0, rowspan=2, padx=10, pady=5, sticky="nsew")
         reference_frame.grid_columnconfigure(0, weight=1)
         reference_frame.grid_rowconfigure(1, weight=1)
+        reference_frame.grid_rowconfigure(0, weight=0)
 
         search_bar_frame = ctk.CTkFrame(reference_frame, fg_color="transparent")
         search_bar_frame.grid(row=0, column=0, padx=5, pady=5, sticky="ew")
@@ -719,72 +747,83 @@ class CSVProcessorApp(ctk.CTk):
 
         self.signal_reference_frame = ctk.CTkScrollableFrame(reference_frame, label_text="Available Signals Reference")
         self.signal_reference_frame.grid(row=1, column=0, padx=0, pady=5, sticky="nsew")
+        self.signal_reference_frame.grid_columnconfigure(0, weight=1)
 
     def _create_ma_param_frame(self, parent, time_units):
-        """Creates the parameter frame for Moving Average using .pack()"""
+        """Creates the parameter frame for Moving Average using .grid()"""
         frame = ctk.CTkFrame(parent)
+        frame.grid_columnconfigure(1, weight=1)
         
         inner_frame = ctk.CTkFrame(frame, fg_color="transparent")
-        inner_frame.pack(fill="x", padx=10, pady=5)
+        inner_frame.grid(row=0, column=0, columnspan=3, padx=10, pady=5, sticky="ew")
+        inner_frame.grid_columnconfigure(1, weight=1)
         
-        ctk.CTkLabel(inner_frame, text="Time Window:").pack(side="left")
+        ctk.CTkLabel(inner_frame, text="Time Window:").grid(row=0, column=0, sticky="w")
         
         entry = ctk.CTkEntry(inner_frame, placeholder_text="e.g., 30")
-        entry.pack(side="left", fill="x", expand=True, padx=5)
+        entry.grid(row=0, column=1, padx=5, sticky="ew")
         
         menu = ctk.CTkOptionMenu(inner_frame, values=time_units)
         menu.set(time_units[1])
-        menu.pack(side="left")
+        menu.grid(row=0, column=2, sticky="w")
         
         return frame, entry, menu
         
     def _create_bw_param_frame(self, parent):
-        """Creates the parameter frame for Butterworth filter using .pack()"""
+        """Creates the parameter frame for Butterworth filter using .grid()"""
         frame = ctk.CTkFrame(parent)
+        frame.grid_columnconfigure(1, weight=1)
 
         row1 = ctk.CTkFrame(frame, fg_color="transparent")
-        row1.pack(fill="x", padx=10, pady=5)
-        ctk.CTkLabel(row1, text="Filter Order:", width=110, anchor="w").pack(side="left")
+        row1.grid(row=0, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+        row1.grid_columnconfigure(1, weight=1)
+        ctk.CTkLabel(row1, text="Filter Order:", width=110, anchor="w").grid(row=0, column=0, sticky="w")
         entry_ord = ctk.CTkEntry(row1, placeholder_text="e.g., 3")
-        entry_ord.pack(side="left", fill="x", expand=True)
+        entry_ord.grid(row=0, column=1, sticky="ew")
         
         row2 = ctk.CTkFrame(frame, fg_color="transparent")
-        row2.pack(fill="x", padx=10, pady=5)
-        ctk.CTkLabel(row2, text="Cutoff Freq (Hz):", width=110, anchor="w").pack(side="left")
+        row2.grid(row=1, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+        row2.grid_columnconfigure(1, weight=1)
+        ctk.CTkLabel(row2, text="Cutoff Freq (Hz):", width=110, anchor="w").grid(row=0, column=0, sticky="w")
         entry_cut = ctk.CTkEntry(row2, placeholder_text="e.g., 0.1")
-        entry_cut.pack(side="left", fill="x", expand=True)
+        entry_cut.grid(row=0, column=1, sticky="ew")
 
         return frame, entry_ord, entry_cut
     
     def _create_median_param_frame(self, parent):
-        """Creates the parameter frame for Median filter using .pack()"""
+        """Creates the parameter frame for Median filter using .grid()"""
         frame = ctk.CTkFrame(parent)
+        frame.grid_columnconfigure(1, weight=1)
         
         inner_frame = ctk.CTkFrame(frame, fg_color="transparent")
-        inner_frame.pack(fill="x", padx=10, pady=5)
+        inner_frame.grid(row=0, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+        inner_frame.grid_columnconfigure(1, weight=1)
         
-        ctk.CTkLabel(inner_frame, text="Kernel Size:", width=110, anchor="w").pack(side="left")
+        ctk.CTkLabel(inner_frame, text="Kernel Size:", width=110, anchor="w").grid(row=0, column=0, sticky="w")
         entry = ctk.CTkEntry(inner_frame, placeholder_text="Odd integer, e.g., 5")
-        entry.pack(side="left", fill="x", expand=True)
+        entry.grid(row=0, column=1, sticky="ew")
         
         return frame, entry
         
     def _create_savgol_param_frame(self, parent):
-        """Creates the parameter frame for Savitzky-Golay filter using .pack()"""
+        """Creates the parameter frame for Savitzky-Golay filter using .grid()"""
         frame = ctk.CTkFrame(parent)
+        frame.grid_columnconfigure(1, weight=1)
 
         row1 = ctk.CTkFrame(frame, fg_color="transparent")
-        row1.pack(fill="x", padx=10, pady=5)
-        ctk.CTkLabel(row1, text="Window Len:", width=110, anchor="w").pack(side="left")
+        row1.grid(row=0, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+        row1.grid_columnconfigure(1, weight=1)
+        ctk.CTkLabel(row1, text="Window Len:", width=110, anchor="w").grid(row=0, column=0, sticky="w")
         entry_win = ctk.CTkEntry(row1, placeholder_text="Odd integer, e.g., 11")
-        entry_win.pack(side="left", fill="x", expand=True)
+        entry_win.grid(row=0, column=1, sticky="ew")
         
         # This row had the typo 'cтk' which is now corrected to 'ctk'
         row2 = ctk.CTkFrame(frame, fg_color="transparent")
-        row2.pack(fill="x", padx=10, pady=5)
-        ctk.CTkLabel(row2, text="Poly Order:", width=110, anchor="w").pack(side="left")
+        row2.grid(row=1, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+        row2.grid_columnconfigure(1, weight=1)
+        ctk.CTkLabel(row2, text="Poly Order:", width=110, anchor="w").grid(row=0, column=0, sticky="w")
         entry_poly = ctk.CTkEntry(row2, placeholder_text="e.g., 2 (< Window Len)")
-        entry_poly.pack(side="left", fill="x", expand=True)
+        entry_poly.grid(row=0, column=1, sticky="ew")
         
         return frame, entry_win, entry_poly
 
@@ -1875,77 +1914,7 @@ class CSVProcessorApp(ctk.CTk):
             messagebox.showerror("Conversion Error", f"Failed to convert DAT file.\n\nError: {e}")
             return None
 
-    def _run_dat_conversion(self):
-        """Orchestrates the DAT file conversion with tag selection and data reduction."""
-        if not self.dat_import_tag_file_path or not self.dat_import_data_file_path:
-            messagebox.showwarning("Files Missing", "Please select both a tag file and a data file.")
-            return
 
-        all_tags_from_file = self._get_tags_from_file()
-        if not all_tags_from_file:
-            return 
-        
-        self._populate_dat_tag_list(all_tags_from_file)
-        self.update_idletasks()
-
-        # --- MODIFIED: Correctly access the BooleanVar from the nested dictionary ---
-        selected_tags = [tag for tag, data_dict in self.dat_tag_vars.items() if data_dict['var'].get()]
-        
-        if not selected_tags:
-            messagebox.showwarning("No Tags Selected", "Please select at least one tag to include in the output.")
-            return
-
-        self.dat_log_textbox.configure(state="normal")
-        self.dat_log_textbox.delete("1.0", "end")
-        self.dat_log_textbox.insert("1.0", f"Starting conversion for {len(selected_tags)} selected tags...\n")
-        self.convert_dat_button.configure(state="disabled", text="Converting...")
-        self.update_idletasks()
-        
-        full_df = self._convert_dat_to_dataframe(all_tags_from_file)
-
-        if full_df is None:
-            self.dat_log_textbox.insert("end", "Conversion failed.")
-            self.convert_dat_button.configure(state="normal", text="Step 5: Convert and Load File")
-            self.dat_log_textbox.configure(state="disabled")
-            return
-
-        df = full_df[selected_tags]
-        self.dat_log_textbox.insert("end", f"- Original dimensions: {full_df.shape[0]} rows, {full_df.shape[1]} columns\n")
-        self.dat_log_textbox.insert("end", f"- Filtered to {df.shape[1]} selected columns\n")
-        
-        try:
-            factor_str = self.dat_reduction_entry.get()
-            if factor_str:
-                reduction_factor = int(factor_str)
-                if reduction_factor > 1:
-                    df = df.iloc[::reduction_factor].reset_index(drop=True)
-                    self.dat_log_textbox.insert("end", f"- Downsampled by factor of {reduction_factor}. New row count: {len(df)}\n")
-        except (ValueError, TypeError):
-            self.dat_log_textbox.insert("end", "- Invalid reduction factor. Skipping downsampling.\n")
-
-        try:
-            dat_filename_base = os.path.splitext(os.path.basename(self.dat_import_data_file_path))[0]
-            output_dir = os.path.dirname(self.dat_import_data_file_path)
-            temp_csv_path = os.path.join(output_dir, f"{dat_filename_base}_processed.csv")
-            
-            df.to_csv(temp_csv_path, index=False)
-            self.dat_log_textbox.insert("end", f"\nSuccessfully created processed file at:\n{temp_csv_path}\n")
-            
-            current_files = list(self.input_file_paths)
-            current_files.append(temp_csv_path)
-            self.input_file_paths = tuple(current_files)
-            
-            self._update_file_list_ui() 
-            
-            self.dat_log_textbox.insert("end", "\nFile is now loaded and available on the 'Setup & Process' tab.")
-            messagebox.showinfo("Success", "Successfully processed and loaded the DAT file.")
-
-        except Exception as e:
-            messagebox.showerror("File Save Error", f"Could not save the processed CSV file.\n\nError: {e}")
-            
-        finally:
-            self.dat_log_textbox.configure(state="disabled")
-            self.convert_dat_button.configure(state="normal", text="Step 5: Convert and Load File")
    
     def _show_help_window(self, title, content):
         """Creates a new Toplevel window to display help content."""
