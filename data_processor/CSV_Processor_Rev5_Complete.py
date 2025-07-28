@@ -980,6 +980,13 @@ class CSVProcessorApp(ctk.CTk):
         file_names = ["Select a file..."] + [os.path.basename(f) for f in self.input_file_paths]
         if hasattr(self, 'plot_file_menu'):
             self.plot_file_menu.configure(values=file_names)
+            
+            # Auto-select the file if there's only one
+            if len(self.input_file_paths) == 1:
+                single_file = os.path.basename(self.input_file_paths[0])
+                self.plot_file_menu.set(single_file)
+                # Trigger the file selection handler
+                self.on_plot_file_select(single_file)
 
     def update_signal_list(self, signals):
         """Update the signal list with checkboxes."""
@@ -1919,9 +1926,13 @@ class CSVProcessorApp(ctk.CTk):
             
         df = self.get_data_for_plotting(value)
         if df is not None and not df.empty:
-            # Update x-axis options
-            x_axis_options = ["default time"] + [col for col in df.columns if col != "default time"]
+            # Update x-axis options - use actual columns, not "default time"
+            x_axis_options = list(df.columns)
             self.plot_xaxis_menu.configure(values=x_axis_options)
+            
+            # Set the first column as default x-axis (usually time)
+            if x_axis_options:
+                self.plot_xaxis_menu.set(x_axis_options[0])
             
             # Update signal checkboxes
             self.plot_signal_vars = {}
