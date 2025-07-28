@@ -197,14 +197,16 @@ class CSVProcessorApp(ctk.CTk):
         self.main_tab_view.add("Plotting & Analysis")
         self.main_tab_view.add("Plots List")
         self.main_tab_view.add("DAT File Import")
+        self.main_tab_view.add("Help")
 
         self.create_setup_and_process_tab(self.main_tab_view.tab("Setup & Process"))
         self.create_plotting_tab(self.main_tab_view.tab("Plotting & Analysis"))
         self.create_plots_list_tab(self.main_tab_view.tab("Plots List"))
         self.create_dat_import_tab(self.main_tab_view.tab("DAT File Import"))
+        self.create_help_tab(self.main_tab_view.tab("Help"))
 
         self.create_status_bar()
-        self.status_label.configure(text="Ready. Select input files or import a DAT file.") 
+        self.status_label.configure(text="Ready. Select input files or import a DAT file.")
 
     def create_setup_and_process_tab(self, parent_tab):
         """Fixed version with proper splitter implementation and all advanced features."""
@@ -213,18 +215,12 @@ class CSVProcessorApp(ctk.CTk):
         
         def create_left_content(left_panel):
             """Create the left panel content"""
-            left_panel.grid_rowconfigure(1, weight=1)
+            left_panel.grid_rowconfigure(0, weight=1)
             left_panel.grid_columnconfigure(0, weight=1)
             
-            # Header with Help Button
-            header_frame = ctk.CTkFrame(left_panel, fg_color="transparent")
-            header_frame.grid(row=0, column=0, padx=15, pady=10, sticky="ew")
-            ctk.CTkLabel(header_frame, text="Control Panel", font=ctk.CTkFont(size=16, weight="bold")).pack(side="left")
-            ctk.CTkButton(header_frame, text="Help", width=70, command=self._show_setup_help).pack(side="right")
-
             # Create a scrollable frame for the processing tab view
             processing_scrollable_frame = ctk.CTkScrollableFrame(left_panel)
-            processing_scrollable_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+            processing_scrollable_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
             processing_scrollable_frame.grid_columnconfigure(0, weight=1)
             
             processing_tab_view = ctk.CTkTabview(processing_scrollable_frame)
@@ -253,7 +249,7 @@ class CSVProcessorApp(ctk.CTk):
             self.populate_custom_var_sub_tab(custom_vars_tab)
             
             self.process_button = ctk.CTkButton(left_panel, text="Process & Batch Export Files", height=40, command=self.process_files)
-            self.process_button.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
+            self.process_button.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
 
         def create_right_content(right_panel):
             """Create the right panel content"""
@@ -1326,8 +1322,6 @@ class CSVProcessorApp(ctk.CTk):
         self.plot_xaxis_menu = ctk.CTkOptionMenu(plot_control_frame, values=["default time"], command=lambda e: self.update_plot())
         self.plot_xaxis_menu.grid(row=0, column=3, padx=5, pady=10, sticky="ew")
 
-        ctk.CTkButton(plot_control_frame, text="Help", width=70, command=self._show_plot_help).grid(row=0, column=4, padx=(10,5), pady=10)
-
         # Main content frame for splitter
         plot_main_frame = ctk.CTkFrame(tab)
         plot_main_frame.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="nsew")
@@ -1444,7 +1438,6 @@ class CSVProcessorApp(ctk.CTk):
         header_frame.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
         
         ctk.CTkLabel(header_frame, text="Plots List Manager", font=ctk.CTkFont(size=16, weight="bold")).pack(side="left", padx=10, pady=10)
-        ctk.CTkButton(header_frame, text="Help", width=70, command=self._show_plots_list_help).pack(side="right", padx=10, pady=10)
         
         # Main content
         main_frame = ctk.CTkFrame(tab)
@@ -1561,7 +1554,6 @@ class CSVProcessorApp(ctk.CTk):
         header_frame.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
         
         ctk.CTkLabel(header_frame, text="DAT File Import", font=ctk.CTkFont(size=16, weight="bold")).pack(side="left", padx=10, pady=10)
-        ctk.CTkButton(header_frame, text="Help", width=70, command=self._show_dat_import_help).pack(side="right", padx=10, pady=10)
         
         # Main content
         main_frame = ctk.CTkFrame(tab)
@@ -1680,9 +1672,13 @@ class CSVProcessorApp(ctk.CTk):
         left_panel.grid_rowconfigure(0, weight=1)
         left_creator(left_panel)
         
-        # Create splitter handle
-        splitter_handle = ctk.CTkFrame(splitter_frame, width=5, fg_color="gray")
-        splitter_handle.grid(row=0, column=1, sticky="ns")
+        # Create splitter handle with better visual feedback
+        splitter_handle = ctk.CTkFrame(splitter_frame, width=8, fg_color="#666666")
+        splitter_handle.grid(row=0, column=1, sticky="ns", padx=1)
+        
+        # Bind events for dragging
+        splitter_handle.bind("<Enter>", lambda e, h=splitter_handle: self._on_splitter_enter(e, h))
+        splitter_handle.bind("<Leave>", lambda e, h=splitter_handle: self._on_splitter_leave(e, h))
         splitter_handle.bind("<Button-1>", lambda e, h=splitter_handle: self._start_splitter_drag(e, h, left_panel, splitter_key))
         splitter_handle.bind("<B1-Motion>", lambda e, h=splitter_handle: self._drag_splitter(e, h, left_panel, splitter_key))
         splitter_handle.bind("<ButtonRelease-1>", lambda e: self._end_splitter_drag())
@@ -1699,24 +1695,48 @@ class CSVProcessorApp(ctk.CTk):
         
         return splitter_frame
 
+    def _on_splitter_enter(self, event, handle):
+        """Handle mouse enter on splitter handle."""
+        handle.configure(fg_color="#888888")
+        handle.configure(cursor="sb_h_double_arrow")
+
+    def _on_splitter_leave(self, event, handle):
+        """Handle mouse leave on splitter handle."""
+        if not hasattr(self, 'dragging_splitter') or not self.dragging_splitter:
+            handle.configure(fg_color="#666666")
+
     def _start_splitter_drag(self, event, handle, left_panel, splitter_key):
         """Start dragging the splitter."""
         self.dragging_splitter = True
         self.drag_splitter_key = splitter_key
         self.drag_left_panel = left_panel
         self.drag_start_x = event.x_root
+        self.drag_start_width = left_panel.winfo_width()
+        handle.configure(fg_color="#AAAAAA")
 
     def _drag_splitter(self, event, handle, left_panel, splitter_key):
         """Drag the splitter."""
         if hasattr(self, 'dragging_splitter') and self.dragging_splitter:
             delta_x = event.x_root - self.drag_start_x
-            new_width = max(100, left_panel.winfo_width() + delta_x)
+            new_width = max(150, min(800, self.drag_start_width + delta_x))  # Min 150, Max 800
             left_panel.configure(width=new_width)
-            self.drag_start_x = event.x_root
 
     def _end_splitter_drag(self):
         """End dragging the splitter."""
+        if hasattr(self, 'dragging_splitter') and self.dragging_splitter:
+            # Save the current position
+            if hasattr(self, 'drag_splitter_key') and hasattr(self, 'drag_left_panel'):
+                self.layout_data[self.drag_splitter_key] = self.drag_left_panel.winfo_width()
+                # Auto-save layout
+                self._save_layout_config()
+        
         self.dragging_splitter = False
+        # Reset handle color
+        for splitter_key, splitter in self.splitters.items():
+            if hasattr(splitter, 'master') and hasattr(splitter.master, 'winfo_children'):
+                for child in splitter.master.winfo_children():
+                    if isinstance(child, ctk.CTkFrame) and child.winfo_width() == 8:
+                        child.configure(fg_color="#666666")
 
     def _on_closing(self):
         """Handle application closing."""
@@ -1844,6 +1864,184 @@ class CSVProcessorApp(ctk.CTk):
     def _add_trendline(self):
         """Add trendline to plot."""
         pass
+
+    def _create_dat_import_right(self, right_panel):
+        """Create right panel for DAT import."""
+        right_panel.grid_rowconfigure(0, weight=1)
+        right_panel.grid_columnconfigure(0, weight=1)
+        
+        # Preview frame
+        preview_frame = ctk.CTkFrame(right_panel)
+        preview_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+        preview_frame.grid_columnconfigure(0, weight=1)
+        preview_frame.grid_rowconfigure(1, weight=1)
+        
+        ctk.CTkLabel(preview_frame, text="Import Preview", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        
+        self.import_preview_text = ctk.CTkTextbox(preview_frame, height=200)
+        self.import_preview_text.grid(row=1, column=0, padx=10, pady=5, sticky="nsew")
+
+    def create_help_tab(self, tab):
+        """Create the help tab with comprehensive documentation."""
+        tab.grid_columnconfigure(0, weight=1)
+        tab.grid_rowconfigure(1, weight=1)
+        
+        # Header
+        header_frame = ctk.CTkFrame(tab)
+        header_frame.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
+        
+        ctk.CTkLabel(header_frame, text="Help & Documentation", font=ctk.CTkFont(size=16, weight="bold")).pack(side="left", padx=10, pady=10)
+        
+        # Main content with scrollable help
+        help_frame = ctk.CTkScrollableFrame(tab)
+        help_frame.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="nsew")
+        help_frame.grid_columnconfigure(0, weight=1)
+        
+        # Help content
+        help_content = """
+# Advanced CSV Processor & DAT Importer - Help Guide
+
+## Overview
+This application provides comprehensive tools for processing, analyzing, and visualizing time series data from CSV files and DAT files with DBF tag files.
+
+## Tab Descriptions
+
+### Setup & Process Tab
+**Purpose**: Configure file processing settings and batch export data.
+
+**Features**:
+- **Setup Sub-tab**:
+  - Select input CSV files and output directory
+  - Save/load processing configurations
+  - Configure export format (CSV, Excel, MAT)
+  - Set sorting options
+
+- **Processing Sub-tab**:
+  - **Signal Filtering**: Apply various filters (Moving Average, Butterworth, Median, Savitzky-Golay)
+  - **Time Resampling**: Resample data to different time intervals
+  - **Signal Integration**: Create cumulative columns for flow calculations
+  - **Signal Differentiation**: Calculate derivatives up to 5th order
+
+- **Custom Vars Sub-tab**:
+  - Create custom variables using mathematical formulas
+  - Reference existing signals using [SignalName] syntax
+  - Build complex calculations
+
+**Usage**:
+1. Select input CSV files
+2. Choose output directory
+3. Configure processing options
+4. Select signals to process
+5. Click "Process & Batch Export Files"
+
+### Plotting & Analysis Tab
+**Purpose**: Visualize and analyze processed data.
+
+**Features**:
+- Interactive plotting with matplotlib
+- Multiple chart types (Line, Scatter, etc.)
+- Trendline analysis (Linear, Exponential, Power, Polynomial)
+- Export plots as images or Excel files
+- Real-time signal filtering and selection
+
+**Usage**:
+1. Select file to plot from dropdown
+2. Choose signals to display
+3. Configure plot appearance
+4. Add trendlines if needed
+5. Export results
+
+### Plots List Tab
+**Purpose**: Save and manage plot configurations for batch processing.
+
+**Features**:
+- Save plot configurations with names and descriptions
+- Preview plots before saving
+- Batch export all saved plots
+- Manage plot library
+
+**Usage**:
+1. Configure a plot in Plotting & Analysis tab
+2. Add plot configuration to list
+3. Generate previews
+4. Export all plots at once
+
+### DAT File Import Tab
+**Purpose**: Import data from DAT files with DBF tag files.
+
+**Features**:
+- Import DAT files with associated DBF tag files
+- Select specific tags to import
+- Preview import data
+- Convert to CSV format
+
+**Usage**:
+1. Select DBF tag file (.dbf)
+2. Select DAT data file (.dat)
+3. Choose tags to import
+4. Preview and import data
+
+## Advanced Features
+
+### Signal Filtering
+- **Moving Average**: Smooth data using rolling average
+- **Butterworth**: Low-pass or high-pass filtering
+- **Median Filter**: Remove outliers
+- **Savitzky-Golay**: Preserve signal shape while smoothing
+
+### Signal Integration
+- **Trapezoidal**: Most accurate for most applications
+- **Rectangular**: Simple left-endpoint method
+- **Simpson**: Higher order accuracy
+
+### Signal Differentiation
+- **Spline (Acausal)**: Uses entire dataset for each point
+- **Rolling Polynomial (Causal)**: Uses only past data points
+
+### Custom Variables
+Use mathematical formulas with signal references:
+- Example: `([Temperature] * 1.8) + 32` (Celsius to Fahrenheit)
+- Example: `([Flow_Rate] * [Pressure]) / 1000` (Power calculation)
+
+## Tips & Best Practices
+
+1. **File Selection**: Use consistent time formats across files
+2. **Signal Selection**: Only select signals you need to reduce processing time
+3. **Filtering**: Start with "None" and add filters as needed
+4. **Integration**: Use Trapezoidal method for most accurate results
+5. **Custom Variables**: Test formulas with simple calculations first
+6. **Export**: Use "CSV (Separate Files)" for individual analysis, "CSV (Compiled)" for combined analysis
+
+## Troubleshooting
+
+**Common Issues**:
+- **Time parsing errors**: Ensure consistent datetime format
+- **Memory issues**: Process fewer files or signals at once
+- **Filter errors**: Check signal length vs. filter parameters
+- **Integration errors**: Verify time column is properly formatted
+
+**Performance Tips**:
+- Close other applications when processing large files
+- Use appropriate filter parameters for your data
+- Consider resampling for very large datasets
+
+## Keyboard Shortcuts
+
+- **Ctrl+O**: Select files (in file dialogs)
+- **Ctrl+S**: Save settings
+- **Ctrl+L**: Load settings
+- **F1**: Show this help (when help tab is active)
+
+## Support
+
+For additional support or feature requests, please refer to the application documentation or contact the development team.
+        """
+        
+        # Create help text widget
+        help_text = ctk.CTkTextbox(help_frame, wrap="word", font=ctk.CTkFont(size=12))
+        help_text.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+        help_text.insert("1.0", help_content)
+        help_text.configure(state="disabled")  # Make read-only
 
 # =============================================================================
 # MAIN EXECUTION
