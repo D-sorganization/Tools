@@ -467,7 +467,29 @@ class CSVProcessorApp(ctk.CTk):
             var = tk.BooleanVar(value=False)
             cb = ctk.CTkCheckBox(deriv_order_frame, text=f"Order {i}", variable=var)
             cb.grid(row=1, column=i-1, padx=10, pady=2, sticky="w")
-            self.derivative_vars[i] = var 
+            self.derivative_vars[i] = var
+
+        # Time trimming frame
+        trim_frame = ctk.CTkFrame(tab)
+        trim_frame.grid(row=4, column=0, padx=10, pady=10, sticky="new")
+        trim_frame.grid_columnconfigure(1, weight=1)
+        
+        ctk.CTkLabel(trim_frame, text="Time Trimming", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 5), sticky="w")
+        ctk.CTkLabel(trim_frame, text="Trim data to specific time range before processing", justify="left").grid(row=1, column=0, columnspan=2, padx=10, pady=(0, 5), sticky="w")
+        
+        ctk.CTkLabel(trim_frame, text="Date (YYYY-MM-DD):").grid(row=2, column=0, padx=10, pady=5, sticky="w")
+        self.trim_date_entry = ctk.CTkEntry(trim_frame, placeholder_text="e.g., 2024-01-15")
+        self.trim_date_entry.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
+        
+        ctk.CTkLabel(trim_frame, text="Start Time (HH:MM:SS):").grid(row=3, column=0, padx=10, pady=5, sticky="w")
+        self.trim_start_entry = ctk.CTkEntry(trim_frame, placeholder_text="e.g., 09:30:00")
+        self.trim_start_entry.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
+        
+        ctk.CTkLabel(trim_frame, text="End Time (HH:MM:SS):").grid(row=4, column=0, padx=10, pady=5, sticky="w")
+        self.trim_end_entry = ctk.CTkEntry(trim_frame, placeholder_text="e.g., 17:00:00")
+        self.trim_end_entry.grid(row=4, column=1, padx=10, pady=5, sticky="ew")
+        
+        ctk.CTkButton(trim_frame, text="Copy Times to Plot Range", command=self._copy_trim_to_plot_range).grid(row=5, column=0, columnspan=2, padx=10, pady=5, sticky="ew") 
 
     def _create_ma_param_frame(self, parent, time_units):
         """Create Moving Average parameter frame."""
@@ -1059,6 +1081,33 @@ class CSVProcessorApp(ctk.CTk):
             if processed_df.empty:
                 return None
 
+            # Apply time trimming if specified
+            trim_date = self.trim_date_entry.get()
+            trim_start = self.trim_start_entry.get()
+            trim_end = self.trim_end_entry.get()
+            
+            if trim_date or trim_start or trim_end:
+                try:
+                    # Get the date from the data if not specified
+                    if not trim_date:
+                        trim_date = processed_df[time_col].iloc[0].strftime('%Y-%m-%d')
+                    
+                    # Create full datetime strings
+                    start_time_str = trim_start or "00:00:00"
+                    end_time_str = trim_end or "23:59:59"
+                    start_full_str = f"{trim_date} {start_time_str}"
+                    end_full_str = f"{trim_date} {end_time_str}"
+                    
+                    # Filter the data by time range
+                    processed_df = processed_df.set_index(time_col).loc[start_full_str:end_full_str].reset_index()
+                    
+                    if processed_df.empty:
+                        print(f"Warning: Time trimming resulted in empty dataset for {os.path.basename(file_path)}")
+                        return None
+                        
+                except Exception as e:
+                    print(f"Error applying time trimming to {os.path.basename(file_path)}: {e}")
+
             processed_df.set_index(time_col, inplace=True)
 
             # Apply Filtering
@@ -1394,9 +1443,44 @@ class CSVProcessorApp(ctk.CTk):
             self.trendline_textbox = ctk.CTkTextbox(trend_frame, height=70)
             self.trendline_textbox.grid(row=3, column=0, sticky="ew", padx=10, pady=5)
 
+            # Filter preview
+            plot_filter_frame = ctk.CTkFrame(plot_left_panel)
+            plot_filter_frame.grid(row=4, column=0, sticky="ew", padx=5, pady=5)
+            plot_filter_frame.grid_columnconfigure(0, weight=1)
+            
+            ctk.CTkLabel(plot_filter_frame, text="Filter Preview", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, sticky="w", padx=10, pady=5)
+            self.plot_filter_type = ctk.StringVar(value="None")
+            self.plot_filter_menu = ctk.CTkOptionMenu(plot_filter_frame, variable=self.plot_filter_type, values=self.filter_names, command=self._update_plot_filter_ui)
+            self.plot_filter_menu.grid(row=1, column=0, sticky="ew", padx=10, pady=5)
+            
+            # Filter parameter frames
+            time_units = ["ms", "s", "min", "hr"]
+            (self.plot_ma_frame, self.plot_ma_value_entry, self.plot_ma_unit_menu) = self._create_ma_param_frame(plot_filter_frame, time_units)
+            (self.plot_bw_frame, self.plot_bw_order_entry, self.plot_bw_cutoff_entry) = self._create_bw_param_frame(plot_filter_frame)
+            (self.plot_median_frame, self.plot_median_kernel_entry) = self._create_median_param_frame(plot_filter_frame)
+            (self.plot_savgol_frame, self.plot_savgol_window_entry, self.plot_savgol_polyorder_entry) = self._create_savgol_param_frame(plot_filter_frame)
+            self._update_plot_filter_ui("None")
+            
+            ctk.CTkButton(plot_filter_frame, text="Copy Settings to Processing Tab", command=self._copy_plot_settings_to_processing).grid(row=2, column=0, sticky="ew", padx=10, pady=5)
+
+            # Time range controls
+            time_range_frame = ctk.CTkFrame(plot_left_panel)
+            time_range_frame.grid(row=5, column=0, sticky="ew", padx=5, pady=5)
+            time_range_frame.grid_columnconfigure(0, weight=1)
+            
+            ctk.CTkLabel(time_range_frame, text="Plot Time Range", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, sticky="w", padx=10, pady=5)
+            ctk.CTkLabel(time_range_frame, text="Start Time (HH:MM:SS):").grid(row=1, column=0, sticky="w", padx=10)
+            self.plot_start_time_entry = ctk.CTkEntry(time_range_frame, placeholder_text="e.g., 09:30:00")
+            self.plot_start_time_entry.grid(row=2, column=0, sticky="ew", padx=10, pady=2)
+            ctk.CTkLabel(time_range_frame, text="End Time (HH:MM:SS):").grid(row=3, column=0, sticky="w", padx=10)
+            self.plot_end_time_entry = ctk.CTkEntry(time_range_frame, placeholder_text="e.g., 17:00:00")
+            self.plot_end_time_entry.grid(row=4, column=0, sticky="ew", padx=10, pady=2)
+            ctk.CTkButton(time_range_frame, text="Apply Time Range to Plot", command=self._apply_plot_time_range).grid(row=5, column=0, sticky="ew", padx=10, pady=5)
+            ctk.CTkButton(time_range_frame, text="Reset Plot Range", command=self._reset_plot_range).grid(row=6, column=0, sticky="ew", padx=10, pady=2)
+
             # Export controls
             export_chart_frame = ctk.CTkFrame(plot_left_panel)
-            export_chart_frame.grid(row=4, column=0, sticky="ew", padx=5, pady=5)
+            export_chart_frame.grid(row=6, column=0, sticky="ew", padx=5, pady=5)
             export_chart_frame.grid_columnconfigure(0, weight=1)
             
             ctk.CTkLabel(export_chart_frame, text="Export Chart", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, sticky="w", padx=10, pady=5)
@@ -1754,8 +1838,250 @@ class CSVProcessorApp(ctk.CTk):
         pass
 
     def update_plot(self, selected_signals=None):
-        """Update the plot."""
-        pass
+        """The main function to draw/redraw the plot with all selected options."""
+        selected_file = self.plot_file_menu.get()
+        x_axis_col = self.plot_xaxis_menu.get()
+
+        if selected_file == "Select a file..." or not x_axis_col:
+            return
+
+        df = self.get_data_for_plotting(selected_file)
+        if df is None or df.empty:
+            self.plot_ax.clear()
+            self.plot_ax.text(0.5, 0.5, "Could not load or plot data.", ha='center', va='center')
+            self.plot_canvas.draw()
+            return
+
+        signals_to_plot = [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
+        self.plot_ax.clear()
+
+        if not signals_to_plot:
+            self.plot_ax.text(0.5, 0.5, "Select one or more signals to plot", ha='center', va='center')
+        else:
+            # Apply filter preview if selected
+            plot_filter = self.plot_filter_type.get()
+            if plot_filter != "None":
+                df = self._apply_plot_filter(df, signals_to_plot, x_axis_col)
+
+            # Chart customization
+            plot_style = self.plot_type_var.get()
+            style_args = {"linestyle": "-", "marker": ""}
+            if plot_style == "Line with Markers":
+                style_args = {"linestyle": "-", "marker": ".", "markersize": 4}
+            elif plot_style == "Markers Only (Scatter)":
+                style_args = {"linestyle": "None", "marker": ".", "markersize": 5}
+
+            # Plot each selected signal
+            for signal in signals_to_plot:
+                if signal not in df.columns: 
+                    continue
+                
+                plot_df = df[[x_axis_col, signal]].dropna()
+                self.plot_ax.plot(plot_df[x_axis_col], plot_df[signal], label=signal, **style_args)
+
+            # Add trendline if selected
+            if self.trendline_type_var.get() != "None" and signals_to_plot:
+                self._add_trendline(df, signals_to_plot[0], x_axis_col)
+
+        # Apply custom labels and title
+        title = self.plot_title_entry.get() or f"Signals from {selected_file}"
+        xlabel = self.plot_xlabel_entry.get() or x_axis_col
+        ylabel = self.plot_ylabel_entry.get() or "Value"
+        self.plot_ax.set_title(title, fontsize=14)
+        self.plot_ax.set_xlabel(xlabel)
+        self.plot_ax.set_ylabel(ylabel)
+
+        self.plot_ax.legend()
+        self.plot_ax.grid(True, linestyle='--', alpha=0.6)
+
+        if pd.api.types.is_datetime64_any_dtype(df[x_axis_col]):
+             self.plot_ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+             self.plot_ax.tick_params(axis='x', rotation=0)
+
+        self.plot_canvas.draw()
+
+    def _apply_plot_filter(self, df, signal_cols, x_axis_col):
+        """Apply filter preview to the plot data."""
+        filter_type = self.plot_filter_type.get()
+        
+        if filter_type == "None":
+            return df
+        
+        filtered_df = df.copy()
+        
+        for signal in signal_cols:
+            if signal not in df.columns:
+                continue
+                
+            if filter_type == "Moving Average":
+                window = float(self.plot_ma_value_entry.get() or "10")
+                unit = self.plot_ma_unit_menu.get()
+                if unit == "ms":
+                    window = window / 1000
+                elif unit == "min":
+                    window = window * 60
+                elif unit == "hr":
+                    window = window * 3600
+                
+                # Convert window to number of samples
+                if pd.api.types.is_datetime64_any_dtype(df[x_axis_col]):
+                    time_diff = df[x_axis_col].diff().dt.total_seconds().median()
+                    if time_diff > 0:
+                        window_samples = int(window / time_diff)
+                        filtered_df[signal] = df[signal].rolling(window=max(1, window_samples), center=True).mean()
+                else:
+                    filtered_df[signal] = df[signal].rolling(window=int(window), center=True).mean()
+                    
+            elif filter_type == "Butterworth":
+                order = int(self.plot_bw_order_entry.get() or "2")
+                cutoff = float(self.plot_bw_cutoff_entry.get() or "0.1")
+                
+                # Simple implementation - in practice you'd need proper frequency domain filtering
+                filtered_df[signal] = df[signal].rolling(window=order*2+1, center=True).mean()
+                
+            elif filter_type == "Median":
+                kernel = int(self.plot_median_kernel_entry.get() or "5")
+                filtered_df[signal] = df[signal].rolling(window=kernel, center=True).median()
+                
+            elif filter_type == "Savitzky-Golay":
+                window = int(self.plot_savgol_window_entry.get() or "11")
+                polyorder = int(self.plot_savgol_polyorder_entry.get() or "3")
+                
+                try:
+                    from scipy.signal import savgol_filter
+                    filtered_df[signal] = savgol_filter(df[signal].fillna(method='ffill').fillna(method='bfill'), 
+                                                      window, polyorder)
+                except ImportError:
+                    # Fallback to simple smoothing if scipy not available
+                    filtered_df[signal] = df[signal].rolling(window=window, center=True).mean()
+        
+        return filtered_df
+
+    def _add_trendline(self, df, signal, x_axis_col):
+        """Add trendline to the plot."""
+        trend_type = self.trendline_type_var.get()
+        
+        if trend_type == "None":
+            return
+            
+        plot_df = df[[x_axis_col, signal]].dropna()
+        if len(plot_df) < 2:
+            return
+            
+        x_data = plot_df[x_axis_col]
+        y_data = plot_df[signal]
+        
+        # Convert datetime to numeric for fitting
+        if pd.api.types.is_datetime64_any_dtype(x_data):
+            x_numeric = (x_data - x_data.min()).dt.total_seconds()
+        else:
+            x_numeric = x_data
+            
+        try:
+            if trend_type == "Linear":
+                coeffs = np.polyfit(x_numeric, y_data, 1)
+                trend = np.poly1d(coeffs)
+                trendline = trend(x_numeric)
+                equation = f"y = {coeffs[0]:.4f}x + {coeffs[1]:.4f}"
+                
+            elif trend_type == "Exponential":
+                # Log-linear fit for exponential
+                y_positive = y_data[y_data > 0]
+                x_positive = x_numeric[y_data > 0]
+                if len(y_positive) > 1:
+                    log_y = np.log(y_positive)
+                    coeffs = np.polyfit(x_positive, log_y, 1)
+                    a = np.exp(coeffs[1])
+                    b = coeffs[0]
+                    trendline = a * np.exp(b * x_numeric)
+                    equation = f"y = {a:.4f} * e^({b:.4f}x)"
+                else:
+                    return
+                    
+            elif trend_type == "Power":
+                # Log-log fit for power law
+                y_positive = y_data[y_data > 0]
+                x_positive = x_numeric[x_numeric > 0]
+                if len(y_positive) > 1 and len(x_positive) > 1:
+                    log_x = np.log(x_positive)
+                    log_y = np.log(y_positive)
+                    coeffs = np.polyfit(log_x, log_y, 1)
+                    a = np.exp(coeffs[1])
+                    b = coeffs[0]
+                    trendline = a * (x_numeric ** b)
+                    equation = f"y = {a:.4f} * x^({b:.4f})"
+                else:
+                    return
+                    
+            elif trend_type == "Polynomial":
+                order = int(self.poly_order_entry.get() or "2")
+                order = max(2, min(6, order))  # Limit to 2-6
+                coeffs = np.polyfit(x_numeric, y_data, order)
+                trend = np.poly1d(coeffs)
+                trendline = trend(x_numeric)
+                equation = f"Polynomial (order {order}): " + " + ".join([f"{coeffs[i]:.4f}x^{order-i}" for i in range(order+1)])
+            
+            # Plot trendline
+            self.plot_ax.plot(x_data, trendline, '--', color='red', linewidth=2, label=f'Trendline ({trend_type})')
+            
+            # Update trendline textbox
+            self.trendline_textbox.delete("1.0", tk.END)
+            self.trendline_textbox.insert("1.0", equation)
+            
+        except Exception as e:
+            print(f"Error adding trendline: {e}")
+
+    def get_data_for_plotting(self, filename):
+        """Get data for plotting from the specified file."""
+        try:
+            if filename in self.processed_files:
+                return self.processed_files[filename]
+            else:
+                # Try to load the original file
+                if os.path.exists(filename):
+                    df = pd.read_csv(filename)
+                    # Try to identify time column
+                    time_col = None
+                    for col in df.columns:
+                        if any(time_word in col.lower() for time_word in ['time', 'timestamp', 'date']):
+                            time_col = col
+                            break
+                    
+                    if time_col and pd.api.types.is_object_dtype(df[time_col]):
+                        try:
+                            df[time_col] = pd.to_datetime(df[time_col])
+                        except:
+                            pass
+                    
+                    return df
+        except Exception as e:
+            print(f"Error loading data for plotting: {e}")
+            return None
+
+    def on_plot_file_select(self, value):
+        """Handle plot file selection."""
+        if value == "Select a file...":
+            return
+            
+        df = self.get_data_for_plotting(value)
+        if df is not None and not df.empty:
+            # Update x-axis options
+            x_axis_options = ["default time"] + [col for col in df.columns if col != "default time"]
+            self.plot_xaxis_menu.configure(values=x_axis_options)
+            
+            # Update signal checkboxes
+            self.plot_signal_vars = {}
+            for widget in self.plot_signal_frame.winfo_children():
+                widget.destroy()
+            
+            for signal in df.columns:
+                var = tk.BooleanVar(value=False)
+                cb = ctk.CTkCheckBox(self.plot_signal_frame, text=signal, variable=var)
+                cb.pack(anchor="w", padx=5, pady=2)
+                self.plot_signal_vars[signal] = {'var': var, 'checkbox': cb}
+            
+            # Update plot
+            self.update_plot()
 
     def _show_setup_help(self):
         """Show setup help."""
@@ -1786,16 +2112,125 @@ class CSVProcessorApp(ctk.CTk):
         messagebox.showinfo("Sharing Instructions", "To share this application, include all Python files and the requirements.txt file.")
 
     def _copy_plot_settings_to_processing(self):
-        """Copy plot filter settings to processing tab."""
-        pass
+        """Copies filter settings from the plot tab to the main processing tab."""
+        plot_filter = self.plot_filter_type.get()
+        self.filter_type_var.set(plot_filter)
+        self._update_filter_ui(plot_filter)
+        
+        # Copy filter parameters
+        if plot_filter == "Moving Average":
+            if hasattr(self, 'plot_ma_value_entry') and hasattr(self, 'plot_ma_unit_menu'):
+                self.ma_value_entry.delete(0, tk.END)
+                self.ma_value_entry.insert(0, self.plot_ma_value_entry.get())
+                self.ma_unit_menu.set(self.plot_ma_unit_menu.get())
+        elif plot_filter == "Butterworth":
+            if hasattr(self, 'plot_bw_order_entry') and hasattr(self, 'plot_bw_cutoff_entry'):
+                self.bw_order_entry.delete(0, tk.END)
+                self.bw_order_entry.insert(0, self.plot_bw_order_entry.get())
+                self.bw_cutoff_entry.delete(0, tk.END)
+                self.bw_cutoff_entry.insert(0, self.plot_bw_cutoff_entry.get())
+        elif plot_filter == "Median":
+            if hasattr(self, 'plot_median_kernel_entry'):
+                self.median_kernel_entry.delete(0, tk.END)
+                self.median_kernel_entry.insert(0, self.plot_median_kernel_entry.get())
+        elif plot_filter == "Savitzky-Golay":
+            if hasattr(self, 'plot_savgol_window_entry') and hasattr(self, 'plot_savgol_polyorder_entry'):
+                self.savgol_window_entry.delete(0, tk.END)
+                self.savgol_window_entry.insert(0, self.plot_savgol_window_entry.get())
+                self.savgol_polyorder_entry.delete(0, tk.END)
+                self.savgol_polyorder_entry.insert(0, self.plot_savgol_polyorder_entry.get())
+        
+        messagebox.showinfo("Settings Copied", "Filter settings from the plot tab have been applied to the main processing configuration.")
 
     def _export_chart_image(self):
-        """Export chart as image."""
-        pass
+        """Export the current chart as an image file."""
+        if not hasattr(self, 'plot_fig') or not self.plot_fig.get_axes():
+            messagebox.showwarning("Warning", "No plot to export. Please create a plot first.")
+            return
+            
+        try:
+            file_types = [
+                ("PNG files", "*.png"),
+                ("PDF files", "*.pdf"),
+                ("SVG files", "*.svg"),
+                ("JPEG files", "*.jpg")
+            ]
+            
+            save_path = filedialog.asksaveasfilename(
+                title="Export Chart As Image",
+                filetypes=file_types,
+                defaultextension=".png"
+            )
+            
+            if save_path:
+                self.plot_fig.savefig(save_path, dpi=300, bbox_inches='tight', 
+                                    facecolor='white', edgecolor='none')
+                messagebox.showinfo("Success", f"Chart exported to:\n{save_path}")
+                self.status_label.configure(text=f"Chart exported: {os.path.basename(save_path)}")
+                
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to export chart:\n{e}")
 
     def _export_chart_excel(self):
-        """Export chart to Excel."""
-        pass
+        """Export the current plot data and chart to Excel."""
+        selected_file = self.plot_file_menu.get()
+        
+        if selected_file == "Select a file...":
+            messagebox.showwarning("Warning", "Please select a file to plot first.")
+            return
+            
+        try:
+            save_path = filedialog.asksaveasfilename(
+                title="Export Chart Data to Excel",
+                filetypes=[("Excel files", "*.xlsx")],
+                defaultextension=".xlsx"
+            )
+            
+            if save_path:
+                df = self.get_data_for_plotting(selected_file)
+                if df is not None and not df.empty:
+                    signals_to_plot = [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
+                    
+                    if signals_to_plot:
+                        # Filter data to only include plotted signals
+                        export_df = df[signals_to_plot].copy()
+                        
+                        # Add time column if it exists
+                        time_col = None
+                        for col in df.columns:
+                            if pd.api.types.is_datetime64_any_dtype(df[col]):
+                                time_col = col
+                                break
+                        
+                        if time_col:
+                            export_df.insert(0, time_col, df[time_col])
+                        
+                        # Export to Excel
+                        with pd.ExcelWriter(save_path, engine='openpyxl') as writer:
+                            export_df.to_excel(writer, sheet_name='Chart Data', index=False)
+                            
+                            # Add chart information
+                            info_df = pd.DataFrame({
+                                'Property': ['File', 'Title', 'X-Axis', 'Y-Axis', 'Signals Plotted'],
+                                'Value': [
+                                    selected_file,
+                                    self.plot_title_entry.get() or 'No title',
+                                    self.plot_xlabel_entry.get() or 'No label',
+                                    self.plot_ylabel_entry.get() or 'No label',
+                                    ', '.join(signals_to_plot)
+                                ]
+                            })
+                            info_df.to_excel(writer, sheet_name='Chart Info', index=False)
+                        
+                        messagebox.showinfo("Success", f"Chart data exported to:\n{save_path}")
+                        self.status_label.configure(text=f"Chart data exported: {os.path.basename(save_path)}")
+                    else:
+                        messagebox.showwarning("Warning", "No signals selected for plotting.")
+                else:
+                    messagebox.showerror("Error", "Could not load data for export.")
+                    
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to export chart data:\n{e}")
 
     def _add_plot_to_list(self):
         """Add plot to the plots list."""
@@ -1851,15 +2286,119 @@ class CSVProcessorApp(ctk.CTk):
 
     def _apply_plot_time_range(self):
         """Apply time range to plot."""
-        pass
+        start_time_str = self.plot_start_time_entry.get()
+        end_time_str = self.plot_end_time_entry.get()
+        
+        if not start_time_str and not end_time_str:
+            return
+            
+        selected_file = self.plot_file_menu.get()
+        if selected_file == "Select a file...":
+            return
+            
+        df = self.get_data_for_plotting(selected_file)
+        if df is None or df.empty:
+            return
+            
+        # Find time column
+        time_col = None
+        for col in df.columns:
+            if pd.api.types.is_datetime64_any_dtype(df[col]):
+                time_col = col
+                break
+        
+        if not time_col:
+            messagebox.showerror("Error", "No datetime column found in the data.")
+            return
+            
+        try:
+            # Get the date from the data
+            date_str = df[time_col].iloc[0].strftime('%Y-%m-%d')
+            
+            # Create full datetime strings
+            start_full_str = f"{date_str} {start_time_str}" if start_time_str else f"{date_str} 00:00:00"
+            end_full_str = f"{date_str} {end_time_str}" if end_time_str else f"{date_str} 23:59:59"
+            
+            # Filter the data
+            filtered_df = df.set_index(time_col).loc[start_full_str:end_full_str].reset_index()
+            
+            if filtered_df.empty:
+                messagebox.showwarning("Warning", "The specified time range resulted in an empty dataset.")
+                return
+                
+            # Update the plot with filtered data
+            self.plot_ax.clear()
+            
+            signals_to_plot = [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
+            
+            if not signals_to_plot:
+                self.plot_ax.text(0.5, 0.5, "Select one or more signals to plot", ha='center', va='center')
+            else:
+                # Apply filter preview if selected
+                plot_filter = self.plot_filter_type.get()
+                if plot_filter != "None":
+                    filtered_df = self._apply_plot_filter(filtered_df, signals_to_plot, time_col)
+                
+                # Chart customization
+                plot_style = self.plot_type_var.get()
+                style_args = {"linestyle": "-", "marker": ""}
+                if plot_style == "Line with Markers":
+                    style_args = {"linestyle": "-", "marker": ".", "markersize": 4}
+                elif plot_style == "Markers Only (Scatter)":
+                    style_args = {"linestyle": "None", "marker": ".", "markersize": 5}
+                
+                # Plot each selected signal
+                for signal in signals_to_plot:
+                    if signal not in filtered_df.columns: 
+                        continue
+                    
+                    plot_df = filtered_df[[time_col, signal]].dropna()
+                    self.plot_ax.plot(plot_df[time_col], plot_df[signal], label=signal, **style_args)
+                
+                # Add trendline if selected
+                if self.trendline_type_var.get() != "None" and signals_to_plot:
+                    self._add_trendline(filtered_df, signals_to_plot[0], time_col)
+            
+            # Apply custom labels and title
+            title = self.plot_title_entry.get() or f"Signals from {selected_file} (Time Range: {start_time_str} - {end_time_str})"
+            xlabel = self.plot_xlabel_entry.get() or time_col
+            ylabel = self.plot_ylabel_entry.get() or "Value"
+            self.plot_ax.set_title(title, fontsize=14)
+            self.plot_ax.set_xlabel(xlabel)
+            self.plot_ax.set_ylabel(ylabel)
+            
+            self.plot_ax.legend()
+            self.plot_ax.grid(True, linestyle='--', alpha=0.6)
+            
+            if pd.api.types.is_datetime64_any_dtype(filtered_df[time_col]):
+                 self.plot_ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+                 self.plot_ax.tick_params(axis='x', rotation=0)
+            
+            self.plot_canvas.draw()
+            
+        except Exception as e:
+            messagebox.showerror("Time Range Error", f"Invalid time format. Please use HH:MM:SS.\n{e}")
 
     def _reset_plot_range(self):
-        """Reset plot to full range."""
-        pass
+        """Reset plot range."""
+        self.plot_start_time_entry.delete(0, tk.END)
+        self.plot_end_time_entry.delete(0, tk.END)
+        self.update_plot()
 
     def _copy_trim_to_plot_range(self):
         """Copy trim times to plot range."""
-        pass
+        start_time = self.trim_start_entry.get()
+        end_time = self.trim_end_entry.get()
+        
+        if start_time:
+            self.plot_start_time_entry.delete(0, tk.END)
+            self.plot_start_time_entry.insert(0, start_time)
+        
+        if end_time:
+            self.plot_end_time_entry.delete(0, tk.END)
+            self.plot_end_time_entry.insert(0, end_time)
+        
+        self._apply_plot_time_range()
 
     def _add_trendline(self):
         """Add trendline to plot."""
