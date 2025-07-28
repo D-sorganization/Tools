@@ -167,6 +167,7 @@ class CSVProcessorApp(ctk.CTk):
         # App State Variables
         self.input_file_paths = []
         self.loaded_data_cache = {}
+        self.processed_files = {}  # Store processed data for plotting
         self.output_directory = os.path.expanduser("~/Documents")
         self.signal_vars = {}
         self.plot_signal_vars = {}
@@ -1077,6 +1078,9 @@ class CSVProcessorApp(ctk.CTk):
                 processed_df = self._process_single_file(file_path, settings)
                 if processed_df is not None:
                     processed_files.append((file_path, processed_df))
+                    # Store processed data for plotting
+                    filename = os.path.basename(file_path)
+                    self.processed_files[filename] = processed_df
             except Exception as e:
                 print(f"Error processing {file_path}: {e}")
         
