@@ -14,6 +14,7 @@
 # - Additional unified features (time range compilation, advanced filtering)
 # - Enhanced multi-file processing with trimming capabilities
 # - Comprehensive export options for compiled datasets
+# - RESTORED: All filtering, integration, and derivative capabilities
 #
 # Dependencies for Python 3.8+:
 # pip install customtkinter pandas numpy scipy matplotlib openpyxl Pillow simpledbf
@@ -205,16 +206,31 @@ def process_single_csv_file(file_path, settings):
         if derivative_config.get('enabled', False):
             signals_to_derive = derivative_config.get('signals', [])
             time_col = derivative_config.get('time_column')
+            orders = derivative_config.get('orders', [1])
+            method = derivative_config.get('method', 'Spline (Acausal)')
             
             if time_col and time_col in df.columns:
                 try:
                     df[time_col] = pd.to_datetime(df[time_col])
-                    time_diff = df[time_col].diff().dt.total_seconds()
+                    time_numeric = pd.to_numeric(df[time_col]) / 1e9  # Convert to seconds
+                    time_diff = time_numeric.diff().median()
                     
                     for signal in signals_to_derive:
                         if signal in df.columns:
-                            signal_diff = df[signal].diff()
-                            df[f"{signal}_derivative"] = signal_diff / time_diff
+                            for order in orders:
+                                try:
+                                    if method == "Spline (Acausal)":
+                                        spline = UnivariateSpline(time_numeric, df[signal], s=0, k=3)
+                                        derivative = spline.derivative(n=order)(time_numeric)
+                                    else:  # Rolling Polynomial (Causal)
+                                        derivative = _poly_derivative(df[signal], window=20, 
+                                                                    poly_order=3, deriv_order=order, 
+                                                                    delta_x=time_diff)
+                                    
+                                    df[f"d{order}_{signal}"] = derivative
+                                except Exception as e:
+                                    print(f"Derivative error for {signal}, order {order}: {e}")
+                                    
                 except Exception as e:
                     print(f"Differentiation error for {file_path}: {e}")
         
@@ -307,7 +323,6 @@ class CSVProcessorUnifiedApp(ctk.CTk):
         
         # Add all tabs in same order as earlier versions
         self.main_tab_view.add("Setup & Process")
-        self.main_tab_view.add("Compilation & Trimming")
         self.main_tab_view.add("Plotting & Analysis")
         self.main_tab_view.add("Custom Variables")
         self.main_tab_view.add("Plots List")
@@ -315,14 +330,13 @@ class CSVProcessorUnifiedApp(ctk.CTk):
         
         # Create tab content
         self.create_setup_and_process_tab(self.main_tab_view.tab("Setup & Process"))
-        self.create_compilation_tab(self.main_tab_view.tab("Compilation & Trimming"))
         self.create_plotting_tab(self.main_tab_view.tab("Plotting & Analysis"))
         self.create_custom_vars_tab(self.main_tab_view.tab("Custom Variables"))
         self.create_plots_list_tab(self.main_tab_view.tab("Plots List"))
         self.create_dat_import_tab(self.main_tab_view.tab("DAT File Import"))
 
     def create_setup_and_process_tab(self, tab):
-        """Create the setup and process tab matching earlier versions' format."""
+        """Create the setup and process tab matching earlier versions' format with ALL processing options."""
         tab.grid_columnconfigure(0, weight=1)
         
         # File selection frame
@@ -377,9 +391,111 @@ class CSVProcessorUnifiedApp(ctk.CTk):
         sort_asc.grid(row=3, column=0, padx=10, pady=2, sticky="w")
         sort_desc.grid(row=3, column=1, padx=10, pady=2, sticky="w")
         
+        # RESTORED: Multi-file compilation frame
+        compilation_frame = ctk.CTkFrame(tab)
+        compilation_frame.grid(row=3, column=0, padx=10, pady=10, sticky="new")
+        compilation_frame.grid_columnconfigure(1, weight=1)
+        
+        ctk.CTkLabel(compilation_frame, text="Multi-File Compilation", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(10,5), sticky="w")
+        
+        self.compilation_checkbox = ctk.CTkCheckBox(compilation_frame, text="Compile multiple files into single output", variable=self.compilation_enabled)
+        self.compilation_checkbox.grid(row=1, column=0, columnspan=2, padx=10, pady=5)
+        
+        ctk.CTkLabel(compilation_frame, text="Merge Method:").grid(row=2, column=0, padx=10, pady=5, sticky="w")
+        self.merge_method_var = ctk.StringVar(value="Concatenate")
+        merge_help_button = ctk.CTkButton(compilation_frame, text="❓", command=self._show_merge_methods_help, width=30)
+        merge_help_button.grid(row=2, column=1, padx=(0, 5), pady=5, sticky="e")
+        
+        merge_menu = ctk.CTkOptionMenu(compilation_frame, variable=self.merge_method_var, 
+                                      values=["Concatenate", "Interpolate & Align", "Common Time Base"])
+        merge_menu.grid(row=3, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+        
+        ctk.CTkLabel(compilation_frame, text="Time Range Trimming:").grid(row=4, column=0, padx=10, pady=5, sticky="w")
+        self.time_filtering_checkbox = ctk.CTkCheckBox(compilation_frame, text="Enable time range filtering", variable=self.time_filtering_enabled)
+        self.time_filtering_checkbox.grid(row=5, column=0, columnspan=2, padx=10, pady=5)
+        
+        ctk.CTkLabel(compilation_frame, text="Time Column:").grid(row=6, column=0, padx=10, pady=5, sticky="w")
+        self.time_column_var = ctk.StringVar(value="Time")
+        self.time_column_entry = ctk.CTkEntry(compilation_frame, textvariable=self.time_column_var)
+        self.time_column_entry.grid(row=6, column=1, padx=10, pady=5, sticky="ew")
+        
+        ctk.CTkLabel(compilation_frame, text="Start Time:").grid(row=7, column=0, padx=10, pady=5, sticky="w")
+        self.start_time_entry = ctk.CTkEntry(compilation_frame, placeholder_text="YYYY-MM-DD HH:MM:SS")
+        self.start_time_entry.grid(row=7, column=1, padx=10, pady=5, sticky="ew")
+        
+        ctk.CTkLabel(compilation_frame, text="End Time:").grid(row=8, column=0, padx=10, pady=5, sticky="w")
+        self.end_time_entry = ctk.CTkEntry(compilation_frame, placeholder_text="YYYY-MM-DD HH:MM:SS")
+        self.end_time_entry.grid(row=8, column=1, padx=10, pady=5, sticky="ew")
+        
+        # RESTORED: Processing options frame
+        processing_frame = ctk.CTkFrame(tab)
+        processing_frame.grid(row=4, column=0, padx=10, pady=10, sticky="new")
+        processing_frame.grid_columnconfigure(1, weight=1)
+        
+        ctk.CTkLabel(processing_frame, text="Advanced Processing Options", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(10,5), sticky="w")
+        
+        # Filtering options
+        ctk.CTkLabel(processing_frame, text="Signal Filtering:").grid(row=1, column=0, padx=10, pady=5, sticky="w")
+        self.filter_enabled_var = tk.BooleanVar(value=False)
+        self.filter_checkbox = ctk.CTkCheckBox(processing_frame, text="Enable filtering", variable=self.filter_enabled_var)
+        self.filter_checkbox.grid(row=1, column=1, padx=10, pady=5, sticky="w")
+        
+        ctk.CTkLabel(processing_frame, text="Filter Type:").grid(row=2, column=0, padx=10, pady=5, sticky="w")
+        self.filter_type_var = ctk.StringVar(value="None")
+        self.filter_menu = ctk.CTkOptionMenu(processing_frame, variable=self.filter_type_var, values=self.filter_names)
+        self.filter_menu.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
+        
+        ctk.CTkLabel(processing_frame, text="Filter Window:").grid(row=3, column=0, padx=10, pady=5, sticky="w")
+        self.filter_window_entry = ctk.CTkEntry(processing_frame, placeholder_text="5")
+        self.filter_window_entry.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
+        
+        # Integration options
+        ctk.CTkLabel(processing_frame, text="Integration:").grid(row=4, column=0, padx=10, pady=5, sticky="w")
+        self.integration_enabled_var = tk.BooleanVar(value=False)
+        self.integration_checkbox = ctk.CTkCheckBox(processing_frame, text="Enable integration", variable=self.integration_enabled_var)
+        self.integration_checkbox.grid(row=4, column=1, padx=10, pady=5, sticky="w")
+        
+        ctk.CTkLabel(processing_frame, text="Integration Method:").grid(row=5, column=0, padx=10, pady=5, sticky="w")
+        self.integration_method_var = ctk.StringVar(value="Trapezoidal")
+        self.integration_menu = ctk.CTkOptionMenu(processing_frame, variable=self.integration_method_var, 
+                                                 values=["Trapezoidal", "Simpson's", "Cumulative Sum"])
+        self.integration_menu.grid(row=5, column=1, padx=10, pady=5, sticky="ew")
+        
+        # Differentiation options
+        ctk.CTkLabel(processing_frame, text="Differentiation:").grid(row=6, column=0, padx=10, pady=5, sticky="w")
+        self.differentiation_enabled_var = tk.BooleanVar(value=False)
+        self.differentiation_checkbox = ctk.CTkCheckBox(processing_frame, text="Enable differentiation", variable=self.differentiation_enabled_var)
+        self.differentiation_checkbox.grid(row=6, column=1, padx=10, pady=5, sticky="w")
+        
+        ctk.CTkLabel(processing_frame, text="Differentiation Method:").grid(row=7, column=0, padx=10, pady=5, sticky="w")
+        self.differentiation_method_var = ctk.StringVar(value="Spline (Acausal)")
+        self.differentiation_menu = ctk.CTkOptionMenu(processing_frame, variable=self.differentiation_method_var, 
+                                                     values=["Spline (Acausal)", "Rolling Polynomial (Causal)"])
+        self.differentiation_menu.grid(row=7, column=1, padx=10, pady=5, sticky="ew")
+        
+        # Derivative orders
+        deriv_orders_frame = ctk.CTkFrame(processing_frame)
+        deriv_orders_frame.grid(row=8, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+        
+        ctk.CTkLabel(deriv_orders_frame, text="Derivative Orders:").grid(row=0, column=0, padx=5, pady=5, sticky="w")
+        for i in range(1, 5):
+            checkbox = ctk.CTkCheckBox(deriv_orders_frame, text=f"{i}st" if i == 1 else f"{i}nd" if i == 2 else f"{i}rd" if i == 3 else f"{i}th", 
+                                      variable=self.derivative_vars[i])
+            checkbox.grid(row=0, column=i, padx=5, pady=5)
+        
+        # Resampling options
+        ctk.CTkLabel(processing_frame, text="Resampling:").grid(row=9, column=0, padx=10, pady=5, sticky="w")
+        self.resampling_enabled_var = tk.BooleanVar(value=False)
+        self.resampling_checkbox = ctk.CTkCheckBox(processing_frame, text="Enable resampling", variable=self.resampling_enabled_var)
+        self.resampling_checkbox.grid(row=9, column=1, padx=10, pady=5, sticky="w")
+        
+        ctk.CTkLabel(processing_frame, text="Resample Frequency:").grid(row=10, column=0, padx=10, pady=5, sticky="w")
+        self.resample_frequency_entry = ctk.CTkEntry(processing_frame, placeholder_text="1min")
+        self.resample_frequency_entry.grid(row=10, column=1, padx=10, pady=5, sticky="ew")
+        
         # Signal selection frame
         signal_frame = ctk.CTkFrame(tab)
-        signal_frame.grid(row=3, column=0, padx=10, pady=10, sticky="new")
+        signal_frame.grid(row=5, column=0, padx=10, pady=10, sticky="new")
         signal_frame.grid_columnconfigure(0, weight=1)
         signal_frame.grid_rowconfigure(2, weight=1)
         
@@ -406,7 +522,7 @@ class CSVProcessorUnifiedApp(ctk.CTk):
         
         # Processing frame
         process_frame = ctk.CTkFrame(tab)
-        process_frame.grid(row=4, column=0, padx=10, pady=10, sticky="new")
+        process_frame.grid(row=6, column=0, padx=10, pady=10, sticky="new")
         process_frame.grid_columnconfigure(0, weight=1)
         
         ctk.CTkLabel(process_frame, text="Processing & Export", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, padx=10, pady=(10, 5), sticky="w")
@@ -417,87 +533,6 @@ class CSVProcessorUnifiedApp(ctk.CTk):
         self.progressbar = ctk.CTkProgressBar(process_frame)
         self.progressbar.grid(row=2, column=0, padx=10, pady=(0, 10), sticky="ew")
         self.progressbar.set(0)
-
-    def create_compilation_tab(self, tab):
-        """Create the compilation and trimming tab."""
-        tab.grid_columnconfigure(0, weight=1)
-        
-        # Main title
-        title_frame = ctk.CTkFrame(tab)
-        title_frame.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
-        title_frame.grid_columnconfigure(0, weight=1)
-        
-        ctk.CTkLabel(title_frame, text="Multi-File Compilation & Time Range Processing", 
-                    font=ctk.CTkFont(weight="bold", size=16)).grid(row=0, column=0, pady=15)
-        
-        # Enable compilation
-        enable_frame = ctk.CTkFrame(tab)
-        enable_frame.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
-        enable_frame.grid_columnconfigure(0, weight=1)
-        
-        self.compilation_checkbox = ctk.CTkCheckBox(enable_frame, text="Enable Multi-File Compilation", 
-                                                   variable=self.compilation_enabled, command=self._on_compilation_toggle)
-        self.compilation_checkbox.grid(row=0, column=0, padx=10, pady=15)
-        
-        # Time filtering frame
-        time_frame = ctk.CTkFrame(tab)
-        time_frame.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
-        time_frame.grid_columnconfigure(1, weight=1)
-        
-        ctk.CTkLabel(time_frame, text="Time Range Filtering", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 5), sticky="w")
-        
-        self.time_filtering_checkbox = ctk.CTkCheckBox(time_frame, text="Enable Time Range Filtering", variable=self.time_filtering_enabled)
-        self.time_filtering_checkbox.grid(row=1, column=0, columnspan=2, padx=10, pady=5)
-        
-        ctk.CTkLabel(time_frame, text="Time Column:").grid(row=2, column=0, padx=10, pady=5, sticky="w")
-        self.time_column_var = ctk.StringVar(value="Time")
-        self.time_column_entry = ctk.CTkEntry(time_frame, textvariable=self.time_column_var)
-        self.time_column_entry.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
-        
-        ctk.CTkLabel(time_frame, text="Start Time (YYYY-MM-DD HH:MM:SS):").grid(row=3, column=0, padx=10, pady=5, sticky="w")
-        self.start_time_entry = ctk.CTkEntry(time_frame, placeholder_text="2024-01-01 00:00:00")
-        self.start_time_entry.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
-        
-        ctk.CTkLabel(time_frame, text="End Time (YYYY-MM-DD HH:MM:SS):").grid(row=4, column=0, padx=10, pady=5, sticky="w")
-        self.end_time_entry = ctk.CTkEntry(time_frame, placeholder_text="2024-12-31 23:59:59")
-        self.end_time_entry.grid(row=4, column=1, padx=10, pady=5, sticky="ew")
-        
-        # Trimming options
-        trim_frame = ctk.CTkFrame(tab)
-        trim_frame.grid(row=3, column=0, padx=10, pady=10, sticky="ew")
-        trim_frame.grid_columnconfigure(1, weight=1)
-        
-        ctk.CTkLabel(trim_frame, text="Individual File Trimming", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 5), sticky="w")
-        
-        self.trim_before_compile_checkbox = ctk.CTkCheckBox(trim_frame, text="Trim each file before compilation", variable=self.trim_before_compile)
-        self.trim_before_compile_checkbox.grid(row=1, column=0, columnspan=2, padx=10, pady=5)
-        
-        # Compilation settings
-        comp_settings_frame = ctk.CTkFrame(tab)
-        comp_settings_frame.grid(row=4, column=0, padx=10, pady=10, sticky="ew")
-        comp_settings_frame.grid_columnconfigure(1, weight=1)
-        
-        ctk.CTkLabel(comp_settings_frame, text="Compilation Settings", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 5), sticky="w")
-        
-        ctk.CTkLabel(comp_settings_frame, text="Merge Method:").grid(row=1, column=0, padx=10, pady=5, sticky="w")
-        self.merge_method_var = ctk.StringVar(value="Concatenate")
-        merge_menu = ctk.CTkOptionMenu(comp_settings_frame, variable=self.merge_method_var, 
-                                      values=["Concatenate", "Interpolate & Align", "Common Time Base"])
-        merge_menu.grid(row=1, column=1, padx=10, pady=5, sticky="ew")
-        
-        ctk.CTkLabel(comp_settings_frame, text="Output Filename:").grid(row=2, column=0, padx=10, pady=5, sticky="w")
-        self.compiled_filename_var = ctk.StringVar(value="compiled_data")
-        compiled_entry = ctk.CTkEntry(comp_settings_frame, textvariable=self.compiled_filename_var)
-        compiled_entry.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
-        
-        # Execute button
-        execute_frame = ctk.CTkFrame(tab)
-        execute_frame.grid(row=5, column=0, padx=10, pady=10, sticky="ew")
-        execute_frame.grid_columnconfigure(0, weight=1)
-        
-        compile_button = ctk.CTkButton(execute_frame, text="Execute Multi-File Compilation", 
-                                      command=self.execute_compilation, height=35)
-        compile_button.grid(row=0, column=0, padx=10, pady=15, sticky="ew")
 
     def create_plotting_tab(self, tab):
         """Create plotting tab matching earlier versions' format."""
@@ -791,7 +826,7 @@ After installation, restart the application to access this feature."""
         self.status_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
     # =============================================================================
-    # CORE FUNCTIONALITY METHODS (Same as before but with format matching)
+    # CORE FUNCTIONALITY METHODS 
     # =============================================================================
 
     def select_files(self):
@@ -924,21 +959,65 @@ After installation, restart the application to access this feature."""
         """Prepare comprehensive processing settings dictionary."""
         settings = {
             'selected_signals': selected_signals,
-            'custom_variables': self.custom_vars_list.copy(),
-            'filtering': {
-                'enabled': False,
-                'type': 'None'
-            },
-            'resampling': {
-                'enabled': False,
-            },
-            'integration': {
-                'enabled': False,
-            },
-            'differentiation': {
-                'enabled': False,
-            }
+            'custom_variables': self.custom_vars_list.copy()
         }
+        
+        # Add filtering settings
+        if self.filter_enabled_var.get():
+            window_size = 5
+            try:
+                window_size = int(self.filter_window_entry.get() or "5")
+            except:
+                pass
+            
+            settings['filtering'] = {
+                'enabled': True,
+                'type': self.filter_type_var.get(),
+                'window': window_size,
+                'kernel_size': window_size,
+                'cutoff': 0.1,
+                'order': 4,
+                'poly_order': 2
+            }
+        else:
+            settings['filtering'] = {'enabled': False}
+        
+        # Add integration settings
+        if self.integration_enabled_var.get():
+            settings['integration'] = {
+                'enabled': True,
+                'signals': selected_signals,  # Apply to all selected signals
+                'time_column': self.time_column_var.get(),
+                'method': self.integration_method_var.get()
+            }
+        else:
+            settings['integration'] = {'enabled': False}
+        
+        # Add differentiation settings
+        if self.differentiation_enabled_var.get():
+            selected_orders = [order for order, var in self.derivative_vars.items() if var.get()]
+            if selected_orders:
+                settings['differentiation'] = {
+                    'enabled': True,
+                    'signals': selected_signals,  # Apply to all selected signals
+                    'time_column': self.time_column_var.get(),
+                    'method': self.differentiation_method_var.get(),
+                    'orders': selected_orders
+                }
+            else:
+                settings['differentiation'] = {'enabled': False}
+        else:
+            settings['differentiation'] = {'enabled': False}
+        
+        # Add resampling settings
+        if self.resampling_enabled_var.get():
+            settings['resampling'] = {
+                'enabled': True,
+                'time_column': self.time_column_var.get(),
+                'frequency': self.resample_frequency_entry.get() or '1min'
+            }
+        else:
+            settings['resampling'] = {'enabled': False}
         
         # Add time filtering if enabled
         if self.time_filtering_enabled.get():
@@ -973,15 +1052,61 @@ After installation, restart the application to access this feature."""
         if not compiled_data:
             raise Exception("No files were successfully processed")
         
-        # Combine all data
-        if self.merge_method_var.get() == "Concatenate":
+        # Combine all data using selected merge method
+        merge_method = self.merge_method_var.get()
+        
+        if merge_method == "Concatenate":
+            # Simply stack all files one after another
             combined_df = pd.concat(compiled_data, ignore_index=True, sort=False)
-        else:
-            # TODO: Implement interpolation and common time base methods
-            combined_df = pd.concat(compiled_data, ignore_index=True, sort=False)
+        elif merge_method == "Interpolate & Align":
+            # Align all files to a common time grid using interpolation
+            time_col = self.time_column_var.get()
+            if time_col and all(time_col in df.columns for df in compiled_data):
+                # Find common time range
+                min_time = max(df[time_col].min() for df in compiled_data)
+                max_time = min(df[time_col].max() for df in compiled_data)
+                
+                # Create common time grid
+                time_range = pd.date_range(start=min_time, end=max_time, freq='1min')
+                
+                # Interpolate all data to common grid
+                aligned_data = []
+                for df in compiled_data:
+                    df_copy = df.set_index(time_col)
+                    df_interpolated = df_copy.reindex(time_range).interpolate()
+                    df_interpolated = df_interpolated.reset_index()
+                    aligned_data.append(df_interpolated)
+                
+                combined_df = pd.concat(aligned_data, ignore_index=True, sort=False)
+            else:
+                # Fallback to concatenate
+                combined_df = pd.concat(compiled_data, ignore_index=True, sort=False)
+        elif merge_method == "Common Time Base":
+            # Find overlapping time periods and merge on matching timestamps
+            time_col = self.time_column_var.get()
+            if time_col and all(time_col in df.columns for df in compiled_data):
+                # Find common timestamps
+                common_times = set(compiled_data[0][time_col])
+                for df in compiled_data[1:]:
+                    common_times = common_times.intersection(set(df[time_col]))
+                
+                if common_times:
+                    # Filter each dataframe to common times
+                    filtered_data = []
+                    for df in compiled_data:
+                        df_filtered = df[df[time_col].isin(common_times)]
+                        filtered_data.append(df_filtered)
+                    
+                    combined_df = pd.concat(filtered_data, ignore_index=True, sort=False)
+                else:
+                    # No common times, fallback to concatenate
+                    combined_df = pd.concat(compiled_data, ignore_index=True, sort=False)
+            else:
+                # Fallback to concatenate
+                combined_df = pd.concat(compiled_data, ignore_index=True, sort=False)
         
         # Save compiled data
-        filename = self.compiled_filename_var.get() or "compiled_data"
+        filename = "compiled_data"
         
         if export_type == "CSV (Compiled)":
             output_path = os.path.join(self.output_directory, f"{filename}.csv")
@@ -1051,30 +1176,69 @@ After installation, restart the application to access this feature."""
             mat_dict = {col: df[col].values for col in df.columns}
             savemat(output_path, mat_dict)
 
-    def execute_compilation(self):
-        """Execute the multi-file compilation process."""
-        if not self.compilation_enabled.get():
-            messagebox.showwarning("Warning", "Please enable compilation first.")
-            return
+    # =============================================================================
+    # MERGE METHODS HELP
+    # =============================================================================
+
+    def _show_merge_methods_help(self):
+        """Show detailed explanation of merge methods."""
+        help_text = """MERGE METHODS EXPLAINED
+
+When compiling multiple CSV files, you can choose how to combine them:
+
+1. CONCATENATE (Recommended for most cases)
+   • Simply stacks all files one after another
+   • Preserves all original data points
+   • Fastest method
+   • Best when files have different time periods
+   • Example: File1 has data 9-10am, File2 has 10-11am
+   • Result: Combined file with 9-11am data
+
+2. INTERPOLATE & ALIGN
+   • Aligns all files to a common time grid
+   • Uses interpolation to fill missing values
+   • Good when files overlap but have different sampling rates
+   • Creates uniform time spacing
+   • Takes longer to process
+   • Example: File1 samples every 10s, File2 every 30s
+   • Result: All data aligned to common 1-minute grid
+
+3. COMMON TIME BASE
+   • Only keeps timestamps that exist in ALL files
+   • No interpolation - uses exact matching timestamps
+   • Smallest output file (only overlapping periods)
+   • Best when files cover same time period
+   • Example: File1 has 9-11am, File2 has 10-12pm
+   • Result: Only 10-11am data (the overlap)
+
+RECOMMENDATION:
+• Use "Concatenate" for most applications
+• Use "Common Time Base" only if you need exact timestamp matching
+• Use "Interpolate & Align" for advanced time series analysis
+"""
         
-        if not self.input_file_paths:
-            messagebox.showwarning("Warning", "Please select input files.")
-            return
+        # Create help window
+        help_window = ctk.CTkToplevel(self)
+        help_window.title("Merge Methods Help")
+        help_window.geometry("700x600")
+        help_window.transient(self)
+        help_window.grab_set()
         
-        self.status_label.configure(text="Executing compilation...")
+        # Center the window
+        help_window.update_idletasks()
+        x = (help_window.winfo_screenwidth() // 2) - (700 // 2)
+        y = (help_window.winfo_screenheight() // 2) - (600 // 2)
+        help_window.geometry(f"700x600+{x}+{y}")
         
-        # Use the processing system with compilation settings
-        selected_signals = [s for s, data in self.signal_vars.items() if data['var'].get()]
-        if selected_signals:
-            settings = self._prepare_processing_settings(selected_signals)
-            
-            try:
-                self._process_compiled_export(settings, "CSV (Compiled)")
-                messagebox.showinfo("Success", "Multi-file compilation completed successfully.")
-            except Exception as e:
-                messagebox.showerror("Error", f"Compilation failed: {str(e)}")
-        else:
-            messagebox.showwarning("Warning", "Please select signals to include.")
+        # Add scrollable text
+        textbox = ctk.CTkTextbox(help_window, wrap="word")
+        textbox.pack(fill="both", expand=True, padx=20, pady=20)
+        textbox.insert("1.0", help_text)
+        textbox.configure(state="disabled")
+        
+        # Add close button
+        close_button = ctk.CTkButton(help_window, text="Close", command=help_window.destroy)
+        close_button.pack(pady=(0, 20))
 
     # =============================================================================
     # PLOTTING METHODS
@@ -1528,13 +1692,23 @@ After installation, restart the application to access this feature."""
                 config['CustomVariables'][f'var_{i}_name'] = name
                 config['CustomVariables'][f'var_{i}_formula'] = formula
             
+            # Processing settings
+            config['Processing'] = {
+                'filter_enabled': str(self.filter_enabled_var.get()),
+                'filter_type': self.filter_type_var.get(),
+                'integration_enabled': str(self.integration_enabled_var.get()),
+                'integration_method': self.integration_method_var.get(),
+                'differentiation_enabled': str(self.differentiation_enabled_var.get()),
+                'differentiation_method': self.differentiation_method_var.get(),
+                'resampling_enabled': str(self.resampling_enabled_var.get())
+            }
+            
             # Compilation settings
             config['Compilation'] = {
                 'enabled': str(self.compilation_enabled.get()),
                 'time_filtering_enabled': str(self.time_filtering_enabled.get()),
                 'time_column': self.time_column_var.get(),
-                'merge_method': self.merge_method_var.get(),
-                'compiled_filename': self.compiled_filename_var.get()
+                'merge_method': self.merge_method_var.get()
             }
             
             # Save to file
@@ -1595,20 +1769,6 @@ After installation, restart the application to access this feature."""
                 
                 self._update_custom_vars_display()
             
-            # Load compilation settings
-            if 'Compilation' in config:
-                comp = config['Compilation']
-                if 'enabled' in comp:
-                    self.compilation_enabled.set(comp.getboolean('enabled'))
-                if 'time_filtering_enabled' in comp:
-                    self.time_filtering_enabled.set(comp.getboolean('time_filtering_enabled'))
-                if 'time_column' in comp:
-                    self.time_column_var.set(comp['time_column'])
-                if 'merge_method' in comp:
-                    self.merge_method_var.set(comp['merge_method'])
-                if 'compiled_filename' in comp:
-                    self.compiled_filename_var.set(comp['compiled_filename'])
-            
             messagebox.showinfo("Success", "Settings loaded successfully!")
             
         except Exception as e:
@@ -1642,10 +1802,6 @@ After installation, restart the application to access this feature."""
         self._save_layout_config()
         self.destroy()
 
-    def _on_compilation_toggle(self):
-        """Handle compilation checkbox toggle."""
-        pass
-
     def _show_sharing_instructions(self):
         """Show app sharing instructions."""
         instructions = """
@@ -1661,8 +1817,8 @@ INCLUDED FEATURES:
    • Multiple export formats (CSV, Excel, MAT, Parquet, HDF5)
    • Custom variable calculations
    • Multi-file compilation with time trimming
+   • Advanced signal processing (filtering, integration, derivatives)
    • DAT file import and conversion
-   • Advanced signal processing
 
 Note: The .exe version will be larger (~50-100MB) but 
 requires no Python installation on target computers.

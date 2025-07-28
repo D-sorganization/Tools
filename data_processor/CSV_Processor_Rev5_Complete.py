@@ -109,6 +109,9 @@ def process_single_csv_file(file_path, settings):
 
         processed_df.reset_index(inplace=True)
         return processed_df
+    except Exception as e:
+        print(f"Error processing {file_path}: {str(e)}")
+        return None
 
 # Helper function for causal derivative calculation
 def _poly_derivative(series, window, poly_order, deriv_order, delta_x):
@@ -695,6 +698,56 @@ class CSVProcessorApp(ctk.CTk):
         # Clear entries
         self.custom_var_name_entry.delete(0, tk.END)
         self.custom_var_formula_entry.delete(0, tk.END)
+
+    def populate_custom_var_sub_tab(self, tab):
+        """Fixed custom variables sub-tab with missing listbox."""
+        tab.grid_columnconfigure(0, weight=1)
+        tab.grid_rowconfigure(8, weight=1)
+
+        ctk.CTkLabel(tab, text="Custom Variables (Formula Engine)", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        ctk.CTkLabel(tab, text="Create new columns using exact signal names in [brackets].", justify="left").grid(row=1, column=0, padx=10, pady=(0, 5), sticky="w")
+        
+        ctk.CTkLabel(tab, text="New Variable Name:").grid(row=2, column=0, padx=10, pady=(5,0), sticky="w")
+        self.custom_var_name_entry = ctk.CTkEntry(tab, placeholder_text="e.g., Power_Ratio")
+        self.custom_var_name_entry.grid(row=3, column=0, padx=10, pady=5, sticky="ew")
+
+        ctk.CTkLabel(tab, text="Formula:").grid(row=4, column=0, padx=10, pady=(5,0), sticky="w")
+        self.custom_var_formula_entry = ctk.CTkEntry(tab, placeholder_text="e.g., ( [SignalA] + [SignalB] ) / 2")
+        self.custom_var_formula_entry.grid(row=5, column=0, padx=10, pady=5, sticky="ew")
+        
+        ctk.CTkButton(tab, text="Add Custom Variable", command=self._add_custom_variable).grid(row=6, column=0, padx=10, pady=10, sticky="ew")
+        
+        # FIXED: Add missing custom variables listbox
+        custom_vars_list_frame = ctk.CTkFrame(tab)
+        custom_vars_list_frame.grid(row=7, column=0, padx=10, pady=5, sticky="ew")
+        custom_vars_list_frame.grid_columnconfigure(0, weight=1)
+        
+        ctk.CTkLabel(custom_vars_list_frame, text="Current Custom Variables:", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        
+        self.custom_vars_listbox = ctk.CTkTextbox(custom_vars_list_frame, height=100)
+        self.custom_vars_listbox.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
+        
+        ctk.CTkButton(custom_vars_list_frame, text="Clear All Variables", command=self._clear_custom_variables).grid(row=2, column=0, padx=10, pady=5)
+        
+        # Searchable reference list
+        reference_frame = ctk.CTkFrame(tab)
+        reference_frame.grid(row=8, column=0, padx=10, pady=5, sticky="nsew")
+        reference_frame.grid_columnconfigure(0, weight=1)
+        reference_frame.grid_rowconfigure(1, weight=1)
+
+        search_bar_frame = ctk.CTkFrame(reference_frame, fg_color="transparent")
+        search_bar_frame.grid(row=0, column=0, padx=5, pady=5, sticky="ew")
+        search_bar_frame.grid_columnconfigure(0, weight=1)
+
+        self.custom_var_search_entry = ctk.CTkEntry(search_bar_frame, placeholder_text="Search available signals...")
+        self.custom_var_search_entry.grid(row=0, column=0, sticky="ew")
+        self.custom_var_search_entry.bind("<KeyRelease>", self._filter_reference_signals)
+
+        self.custom_var_clear_button = ctk.CTkButton(search_bar_frame, text="X", width=28, command=self._clear_reference_search)
+        self.custom_var_clear_button.grid(row=0, column=1, padx=(5,0))
+
+        self.signal_reference_frame = ctk.CTkScrollableFrame(reference_frame, label_text="Available Signals Reference")
+        self.signal_reference_frame.grid(row=1, column=0, padx=0, pady=5, sticky="nsew")
 
     def _update_custom_vars_display(self):
         """Update the custom variables display."""
