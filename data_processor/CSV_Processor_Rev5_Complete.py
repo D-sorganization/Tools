@@ -1547,7 +1547,8 @@ class CSVProcessorApp(ctk.CTk):
             (self.plot_savgol_frame, self.plot_savgol_window_entry, self.plot_savgol_polyorder_entry) = self._create_savgol_param_frame(plot_filter_frame)
             self._update_plot_filter_ui("None")
             
-            ctk.CTkButton(plot_filter_frame, text="Copy Settings to Processing Tab", command=self._copy_plot_settings_to_processing).grid(row=2, column=0, sticky="ew", padx=10, pady=5)
+            ctk.CTkButton(plot_filter_frame, text="Preview Filter", command=self.update_plot).grid(row=2, column=0, sticky="ew", padx=10, pady=5)
+            ctk.CTkButton(plot_filter_frame, text="Copy Settings to Processing Tab", command=self._copy_plot_settings_to_processing).grid(row=3, column=0, sticky="ew", padx=10, pady=5)
 
             # Time range controls
             time_range_frame = ctk.CTkFrame(plot_left_panel)
@@ -1967,6 +1968,18 @@ class CSVProcessorApp(ctk.CTk):
             self.plot_canvas.draw()
             return
 
+        # Safety check: ensure x_axis_col is a valid column
+        if x_axis_col not in df.columns:
+            # Try to set a valid x-axis column
+            if len(df.columns) > 0:
+                self.plot_xaxis_menu.set(df.columns[0])
+                x_axis_col = df.columns[0]
+            else:
+                self.plot_ax.clear()
+                self.plot_ax.text(0.5, 0.5, "No valid columns found for plotting.", ha='center', va='center')
+                self.plot_canvas.draw()
+                return
+
         signals_to_plot = [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
         self.plot_ax.clear()
 
@@ -2047,14 +2060,40 @@ class CSVProcessorApp(ctk.CTk):
                 else:
                     filtered_df[signal] = df[signal].rolling(window=int(window), center=True).mean()
                     
-            elif filter_type == "Butterworth":
+            elif filter_type in ["Butterworth Low-pass", "Butterworth High-pass"]:
                 order = int(self.plot_bw_order_entry.get() or "2")
                 cutoff = float(self.plot_bw_cutoff_entry.get() or "0.1")
                 
-                # Simple implementation - in practice you'd need proper frequency domain filtering
-                filtered_df[signal] = df[signal].rolling(window=order*2+1, center=True).mean()
+                try:
+                    from scipy.signal import butter, filtfilt
+                    # Calculate sampling frequency from time data
+                    if pd.api.types.is_datetime64_any_dtype(df[x_axis_col]):
+                        time_diff = df[x_axis_col].diff().dt.total_seconds()
+                        fs = 1.0 / time_diff.median() if time_diff.median() > 0 else 1.0
+                    else:
+                        # Assume uniform sampling
+                        fs = 1.0
+                    
+                    # Normalize cutoff frequency
+                    nyquist = fs / 2.0
+                    normalized_cutoff = cutoff / nyquist
+                    
+                    # Design filter
+                    b, a = butter(order, normalized_cutoff, btype='low' if filter_type == "Butterworth Low-pass" else 'high')
+                    
+                    # Apply filter
+                    signal_data = df[signal].fillna(method='ffill').fillna(method='bfill')
+                    filtered_df[signal] = filtfilt(b, a, signal_data)
+                    
+                except ImportError:
+                    # Fallback to simple smoothing if scipy not available
+                    filtered_df[signal] = df[signal].rolling(window=order*2+1, center=True).mean()
+                except Exception as e:
+                    print(f"Error applying Butterworth filter: {e}")
+                    # Fallback to simple smoothing
+                    filtered_df[signal] = df[signal].rolling(window=order*2+1, center=True).mean()
                 
-            elif filter_type == "Median":
+            elif filter_type == "Median Filter":
                 kernel = int(self.plot_median_kernel_entry.get() or "5")
                 filtered_df[signal] = df[signal].rolling(window=kernel, center=True).median()
                 
@@ -2064,10 +2103,14 @@ class CSVProcessorApp(ctk.CTk):
                 
                 try:
                     from scipy.signal import savgol_filter
-                    filtered_df[signal] = savgol_filter(df[signal].fillna(method='ffill').fillna(method='bfill'), 
-                                                      window, polyorder)
+                    signal_data = df[signal].fillna(method='ffill').fillna(method='bfill')
+                    filtered_df[signal] = savgol_filter(signal_data, window, polyorder)
                 except ImportError:
                     # Fallback to simple smoothing if scipy not available
+                    filtered_df[signal] = df[signal].rolling(window=window, center=True).mean()
+                except Exception as e:
+                    print(f"Error applying Savitzky-Golay filter: {e}")
+                    # Fallback to simple smoothing
                     filtered_df[signal] = df[signal].rolling(window=window, center=True).mean()
         
         return filtered_df
