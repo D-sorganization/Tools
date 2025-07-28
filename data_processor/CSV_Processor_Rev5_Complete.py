@@ -945,6 +945,11 @@ class CSVProcessorApp(ctk.CTk):
                 print(f"Error reading {file_path}: {e}")
         
         self.update_signal_list(sorted(all_signals))
+        
+        # Update plot file menu
+        file_names = ["Select a file..."] + [os.path.basename(f) for f in self.input_file_paths]
+        if hasattr(self, 'plot_file_menu'):
+            self.plot_file_menu.configure(values=file_names)
 
     def update_signal_list(self, signals):
         """Update the signal list with checkboxes."""
@@ -964,13 +969,8 @@ class CSVProcessorApp(ctk.CTk):
         sort_values = ["No Sorting"] + signals
         self.sort_col_menu.configure(values=sort_values)
         
-        # Update plot signal variables
-        self.plot_signal_vars.clear()
-        for signal in signals:
-            var = tk.BooleanVar(value=False)
-            cb = ctk.CTkCheckBox(self.plot_signal_frame, text=signal, variable=var)
-            cb.grid(sticky="w", padx=5, pady=2)
-            self.plot_signal_vars[signal] = {'var': var, 'widget': cb}
+        # Initialize plot signal variables (will be populated when file is selected in plotting tab)
+        self.plot_signal_vars = {}
         
         # Update integration signals
         for widget in self.integrator_signals_frame.winfo_children():
@@ -1245,16 +1245,26 @@ class CSVProcessorApp(ctk.CTk):
 
     def _export_csv_separate(self, processed_files):
         """Export each file as a separate CSV."""
+        exported_count = 0
         for file_path, df in processed_files:
             base_name = os.path.splitext(os.path.basename(file_path))[0]
             output_path = os.path.join(self.output_directory, f"{base_name}_processed.csv")
             
+            # Check for overwrite and get final path
+            final_path = self._check_file_overwrite(output_path)
+            if final_path is None:  # User cancelled
+                continue
+            
             # Apply sorting if specified
             df = self._apply_sorting(df)
             
-            df.to_csv(output_path, index=False)
+            df.to_csv(final_path, index=False)
+            exported_count += 1
         
-        messagebox.showinfo("Success", f"Exported {len(processed_files)} files to {self.output_directory}")
+        if exported_count > 0:
+            messagebox.showinfo("Success", f"Exported {exported_count} files to {self.output_directory}")
+        else:
+            messagebox.showinfo("Cancelled", "No files were exported.")
 
     def _export_csv_compiled(self, processed_files):
         """Export all files as a single compiled CSV."""
@@ -1271,15 +1281,26 @@ class CSVProcessorApp(ctk.CTk):
             compiled_df = self._apply_sorting(compiled_df)
             
             output_path = os.path.join(self.output_directory, "compiled_processed_data.csv")
-            compiled_df.to_csv(output_path, index=False)
             
-            messagebox.showinfo("Success", f"Exported compiled data to {output_path}")
+            # Check for overwrite and get final path
+            final_path = self._check_file_overwrite(output_path)
+            if final_path is None:  # User cancelled
+                return
+            
+            compiled_df.to_csv(final_path, index=False)
+            
+            messagebox.showinfo("Success", f"Exported compiled data to {final_path}")
 
     def _export_excel_multisheet(self, processed_files):
         """Export all files to a single Excel file with multiple sheets."""
         output_path = os.path.join(self.output_directory, "processed_data.xlsx")
         
-        with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
+        # Check for overwrite and get final path
+        final_path = self._check_file_overwrite(output_path)
+        if final_path is None:  # User cancelled
+            return
+        
+        with pd.ExcelWriter(final_path, engine='openpyxl') as writer:
             for file_path, df in processed_files:
                 base_name = os.path.splitext(os.path.basename(file_path))[0]
                 sheet_name = base_name[:31]  # Excel sheet name limit
@@ -1287,24 +1308,40 @@ class CSVProcessorApp(ctk.CTk):
                 df = self._apply_sorting(df)
                 df.to_excel(writer, sheet_name=sheet_name, index=False)
         
-        messagebox.showinfo("Success", f"Exported to Excel file: {output_path}")
+        messagebox.showinfo("Success", f"Exported to Excel file: {final_path}")
 
     def _export_excel_separate(self, processed_files):
         """Export each file as a separate Excel file."""
+        exported_count = 0
         for file_path, df in processed_files:
             base_name = os.path.splitext(os.path.basename(file_path))[0]
             output_path = os.path.join(self.output_directory, f"{base_name}_processed.xlsx")
             
+            # Check for overwrite and get final path
+            final_path = self._check_file_overwrite(output_path)
+            if final_path is None:  # User cancelled
+                continue
+            
             df = self._apply_sorting(df)
-            df.to_excel(output_path, index=False)
+            df.to_excel(final_path, index=False)
+            exported_count += 1
         
-        messagebox.showinfo("Success", f"Exported {len(processed_files)} Excel files to {self.output_directory}")
+        if exported_count > 0:
+            messagebox.showinfo("Success", f"Exported {exported_count} Excel files to {self.output_directory}")
+        else:
+            messagebox.showinfo("Cancelled", "No files were exported.")
 
     def _export_mat_separate(self, processed_files):
         """Export each file as a separate MAT file."""
+        exported_count = 0
         for file_path, df in processed_files:
             base_name = os.path.splitext(os.path.basename(file_path))[0]
             output_path = os.path.join(self.output_directory, f"{base_name}_processed.mat")
+            
+            # Check for overwrite and get final path
+            final_path = self._check_file_overwrite(output_path)
+            if final_path is None:  # User cancelled
+                continue
             
             df = self._apply_sorting(df)
             
@@ -1313,9 +1350,13 @@ class CSVProcessorApp(ctk.CTk):
             for col in df.columns:
                 mat_data[col] = df[col].values
             
-            savemat(output_path, mat_data)
+            savemat(final_path, mat_data)
+            exported_count += 1
         
-        messagebox.showinfo("Success", f"Exported {len(processed_files)} MAT files to {self.output_directory}")
+        if exported_count > 0:
+            messagebox.showinfo("Success", f"Exported {exported_count} MAT files to {self.output_directory}")
+        else:
+            messagebox.showinfo("Cancelled", "No files were exported.")
 
     def _export_mat_compiled(self, processed_files):
         """Export all files as a single compiled MAT file."""
@@ -1333,14 +1374,19 @@ class CSVProcessorApp(ctk.CTk):
             
             output_path = os.path.join(self.output_directory, "compiled_processed_data.mat")
             
+            # Check for overwrite and get final path
+            final_path = self._check_file_overwrite(output_path)
+            if final_path is None:  # User cancelled
+                return
+            
             # Convert to dictionary for MATLAB
             mat_data = {}
             for col in compiled_df.columns:
                 mat_data[col] = compiled_df[col].values
             
-            savemat(output_path, mat_data)
+            savemat(final_path, mat_data)
             
-            messagebox.showinfo("Success", f"Exported compiled MAT file to {output_path}")
+            messagebox.showinfo("Success", f"Exported compiled MAT file to {final_path}")
 
     def _apply_sorting(self, df):
         """Apply sorting to the dataframe."""
@@ -1835,10 +1881,35 @@ class CSVProcessorApp(ctk.CTk):
     # Placeholder methods for functionality that would be implemented
     def on_plot_file_select(self, value):
         """Handle plot file selection."""
-        pass
+        if value == "Select a file...":
+            return
+            
+        df = self.get_data_for_plotting(value)
+        if df is not None and not df.empty:
+            # Update x-axis options
+            x_axis_options = ["default time"] + [col for col in df.columns if col != "default time"]
+            self.plot_xaxis_menu.configure(values=x_axis_options)
+            
+            # Update signal checkboxes
+            self.plot_signal_vars = {}
+            for widget in self.plot_signal_frame.winfo_children():
+                widget.destroy()
+            
+            for signal in df.columns:
+                var = tk.BooleanVar(value=False)
+                cb = ctk.CTkCheckBox(self.plot_signal_frame, text=signal, variable=var, command=self.update_plot)
+                cb.pack(anchor="w", padx=5, pady=2)
+                self.plot_signal_vars[signal] = {'var': var, 'checkbox': cb}
+            
+            # Update plot
+            self.update_plot()
 
     def update_plot(self, selected_signals=None):
         """The main function to draw/redraw the plot with all selected options."""
+        # Check if plot canvas is initialized
+        if not hasattr(self, 'plot_canvas') or not hasattr(self, 'plot_ax'):
+            return
+            
         selected_file = self.plot_file_menu.get()
         x_axis_col = self.plot_xaxis_menu.get()
 
@@ -2034,54 +2105,36 @@ class CSVProcessorApp(ctk.CTk):
     def get_data_for_plotting(self, filename):
         """Get data for plotting from the specified file."""
         try:
+            # First check if it's in processed files
             if filename in self.processed_files:
                 return self.processed_files[filename]
-            else:
-                # Try to load the original file
-                if os.path.exists(filename):
-                    df = pd.read_csv(filename)
-                    # Try to identify time column
-                    time_col = None
-                    for col in df.columns:
-                        if any(time_word in col.lower() for time_word in ['time', 'timestamp', 'date']):
-                            time_col = col
-                            break
-                    
-                    if time_col and pd.api.types.is_object_dtype(df[time_col]):
-                        try:
-                            df[time_col] = pd.to_datetime(df[time_col])
-                        except:
-                            pass
-                    
-                    return df
+            
+            # Find the full path of the file
+            full_path = None
+            for file_path in self.input_file_paths:
+                if os.path.basename(file_path) == filename:
+                    full_path = file_path
+                    break
+            
+            if full_path and os.path.exists(full_path):
+                df = pd.read_csv(full_path)
+                # Try to identify time column
+                time_col = None
+                for col in df.columns:
+                    if any(time_word in col.lower() for time_word in ['time', 'timestamp', 'date']):
+                        time_col = col
+                        break
+                
+                if time_col and pd.api.types.is_object_dtype(df[time_col]):
+                    try:
+                        df[time_col] = pd.to_datetime(df[time_col])
+                    except:
+                        pass
+                
+                return df
         except Exception as e:
             print(f"Error loading data for plotting: {e}")
             return None
-
-    def on_plot_file_select(self, value):
-        """Handle plot file selection."""
-        if value == "Select a file...":
-            return
-            
-        df = self.get_data_for_plotting(value)
-        if df is not None and not df.empty:
-            # Update x-axis options
-            x_axis_options = ["default time"] + [col for col in df.columns if col != "default time"]
-            self.plot_xaxis_menu.configure(values=x_axis_options)
-            
-            # Update signal checkboxes
-            self.plot_signal_vars = {}
-            for widget in self.plot_signal_frame.winfo_children():
-                widget.destroy()
-            
-            for signal in df.columns:
-                var = tk.BooleanVar(value=False)
-                cb = ctk.CTkCheckBox(self.plot_signal_frame, text=signal, variable=var)
-                cb.pack(anchor="w", padx=5, pady=2)
-                self.plot_signal_vars[signal] = {'var': var, 'checkbox': cb}
-            
-            # Update plot
-            self.update_plot()
 
     def _show_setup_help(self):
         """Show setup help."""
@@ -2163,10 +2216,15 @@ class CSVProcessorApp(ctk.CTk):
             )
             
             if save_path:
-                self.plot_fig.savefig(save_path, dpi=300, bbox_inches='tight', 
+                # Check for overwrite and get final path
+                final_path = self._check_file_overwrite(save_path)
+                if final_path is None:  # User cancelled
+                    return
+                
+                self.plot_fig.savefig(final_path, dpi=300, bbox_inches='tight', 
                                     facecolor='white', edgecolor='none')
-                messagebox.showinfo("Success", f"Chart exported to:\n{save_path}")
-                self.status_label.configure(text=f"Chart exported: {os.path.basename(save_path)}")
+                messagebox.showinfo("Success", f"Chart exported to:\n{final_path}")
+                self.status_label.configure(text=f"Chart exported: {os.path.basename(final_path)}")
                 
         except Exception as e:
             messagebox.showerror("Error", f"Failed to export chart:\n{e}")
@@ -2187,6 +2245,11 @@ class CSVProcessorApp(ctk.CTk):
             )
             
             if save_path:
+                # Check for overwrite and get final path
+                final_path = self._check_file_overwrite(save_path)
+                if final_path is None:  # User cancelled
+                    return
+                
                 df = self.get_data_for_plotting(selected_file)
                 if df is not None and not df.empty:
                     signals_to_plot = [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
@@ -2206,7 +2269,7 @@ class CSVProcessorApp(ctk.CTk):
                             export_df.insert(0, time_col, df[time_col])
                         
                         # Export to Excel
-                        with pd.ExcelWriter(save_path, engine='openpyxl') as writer:
+                        with pd.ExcelWriter(final_path, engine='openpyxl') as writer:
                             export_df.to_excel(writer, sheet_name='Chart Data', index=False)
                             
                             # Add chart information
@@ -2222,8 +2285,8 @@ class CSVProcessorApp(ctk.CTk):
                             })
                             info_df.to_excel(writer, sheet_name='Chart Info', index=False)
                         
-                        messagebox.showinfo("Success", f"Chart data exported to:\n{save_path}")
-                        self.status_label.configure(text=f"Chart data exported: {os.path.basename(save_path)}")
+                        messagebox.showinfo("Success", f"Chart data exported to:\n{final_path}")
+                        self.status_label.configure(text=f"Chart data exported: {os.path.basename(final_path)}")
                     else:
                         messagebox.showwarning("Warning", "No signals selected for plotting.")
                 else:
@@ -2581,6 +2644,53 @@ For additional support or feature requests, please refer to the application docu
         help_text.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
         help_text.insert("1.0", help_content)
         help_text.configure(state="disabled")  # Make read-only
+
+    def _generate_unique_filename(self, base_path, extension):
+        """Generate a unique filename to prevent overwriting existing files."""
+        directory = os.path.dirname(base_path)
+        base_name = os.path.splitext(os.path.basename(base_path))[0]
+        
+        # Remove any existing suffix like _processed, _1, _2, etc.
+        if base_name.endswith('_processed'):
+            base_name = base_name[:-10]  # Remove '_processed'
+        
+        counter = 1
+        while True:
+            if counter == 1:
+                filename = f"{base_name}_processed{extension}"
+            else:
+                filename = f"{base_name}_processed_{counter}{extension}"
+            
+            full_path = os.path.join(directory, filename)
+            if not os.path.exists(full_path):
+                return full_path
+            counter += 1
+
+    def _check_file_overwrite(self, file_path):
+        """Check if file exists and prompt user for action."""
+        if os.path.exists(file_path):
+            filename = os.path.basename(file_path)
+            response = messagebox.askyesnocancel(
+                "File Already Exists",
+                f"The file '{filename}' already exists.\n\n"
+                f"Would you like to:\n"
+                f"• Yes: Overwrite the existing file\n"
+                f"• No: Generate a unique filename\n"
+                f"• Cancel: Cancel the operation",
+                icon='warning'
+            )
+            
+            if response is None:  # Cancel
+                return None
+            elif response:  # Yes - overwrite
+                return file_path
+            else:  # No - generate unique name
+                directory = os.path.dirname(file_path)
+                base_name = os.path.splitext(os.path.basename(file_path))[0]
+                extension = os.path.splitext(file_path)[1]
+                return self._generate_unique_filename(os.path.join(directory, base_name), extension)
+        
+        return file_path
 
 # =============================================================================
 # MAIN EXECUTION
