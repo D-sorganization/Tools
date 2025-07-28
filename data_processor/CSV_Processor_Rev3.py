@@ -186,6 +186,7 @@ class CSVProcessorApp(ctk.CTk):
         # Create left panel
         left_panel = ctk.CTkFrame(parent_tab)
         left_panel.grid_rowconfigure(1, weight=1)
+        left_panel.grid_columnconfigure(0, weight=1)  # Add column configuration
         
         # Create right panel
         right_panel = ctk.CTkFrame(parent_tab)
@@ -681,43 +682,6 @@ class CSVProcessorApp(ctk.CTk):
         """Deselects all signals in the differentiation list."""
         for data in self.deriv_signal_vars.values():
             data['var'].set(False)
-    
-    def populate_custom_var_sub_tab(self, tab):
-        tab.grid_columnconfigure(0, weight=1)
-        tab.grid_rowconfigure(8, weight=1) # Allow reference list to expand
-
-        ctk.CTkLabel(tab, text="Custom Variables (Formula Engine)", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, padx=10, pady=10, sticky="w")
-        ctk.CTkLabel(tab, text="Create new columns using exact signal names in [brackets].", justify="left").grid(row=1, column=0, padx=10, pady=(0, 5), sticky="w")
-        
-        ctk.CTkLabel(tab, text="New Variable Name:").grid(row=2, column=0, padx=10, pady=(5,0), sticky="w")
-        self.custom_var_name_entry = ctk.CTkEntry(tab, placeholder_text="e.g., Power_Ratio")
-        self.custom_var_name_entry.grid(row=3, column=0, padx=10, pady=5, sticky="ew")
-
-        ctk.CTkLabel(tab, text="Formula:").grid(row=4, column=0, padx=10, pady=(5,0), sticky="w")
-        self.custom_var_formula_entry = ctk.CTkEntry(tab, placeholder_text="e.g., ( [SignalA] + [SignalB] ) / 2")
-        self.custom_var_formula_entry.grid(row=5, column=0, padx=10, pady=5, sticky="ew")
-        
-        ctk.CTkButton(tab, text="Add Custom Variable", command=self._add_custom_variable).grid(row=6, column=0, padx=10, pady=10, sticky="ew")
-        
-        # --- NEW SEARCHABLE REFERENCE LIST ---
-        reference_frame = ctk.CTkFrame(tab)
-        reference_frame.grid(row=7, column=0, rowspan=2, padx=10, pady=5, sticky="nsew")
-        reference_frame.grid_columnconfigure(0, weight=1)
-        reference_frame.grid_rowconfigure(1, weight=1)
-
-        search_bar_frame = ctk.CTkFrame(reference_frame, fg_color="transparent")
-        search_bar_frame.grid(row=0, column=0, padx=5, pady=5, sticky="ew")
-        search_bar_frame.grid_columnconfigure(0, weight=1)
-
-        self.custom_var_search_entry = ctk.CTkEntry(search_bar_frame, placeholder_text="Search available signals...")
-        self.custom_var_search_entry.grid(row=0, column=0, sticky="ew")
-        self.custom_var_search_entry.bind("<KeyRelease>", self._filter_reference_signals)
-
-        self.custom_var_clear_button = ctk.CTkButton(search_bar_frame, text="X", width=28, command=self._clear_reference_search)
-        self.custom_var_clear_button.grid(row=0, column=1, padx=(5,0))
-
-        self.signal_reference_frame = ctk.CTkScrollableFrame(reference_frame, label_text="Available Signals Reference")
-        self.signal_reference_frame.grid(row=1, column=0, padx=0, pady=5, sticky="nsew")
     
     def populate_custom_var_sub_tab(self, tab):
         tab.grid_columnconfigure(0, weight=1)
