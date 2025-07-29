@@ -1660,7 +1660,13 @@ class CSVProcessorApp(ctk.CTk):
             line_width_menu.grid(row=9, column=0, sticky="ew", padx=10, pady=5)
             
             # Custom Legend Labels control
-            ctk.CTkLabel(appearance_frame, text="Custom Legend Labels:", font=ctk.CTkFont(weight="bold")).grid(row=10, column=0, sticky="w", padx=10, pady=(10,0))
+            legend_header_frame = ctk.CTkFrame(appearance_frame, fg_color="transparent")
+            legend_header_frame.grid(row=10, column=0, sticky="ew", padx=10, pady=(10,0))
+            legend_header_frame.grid_columnconfigure(0, weight=1)
+            
+            ctk.CTkLabel(legend_header_frame, text="Custom Legend Labels:", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, sticky="w")
+            ctk.CTkButton(legend_header_frame, text="?", width=25, height=25, command=self._show_legend_guide).grid(row=0, column=1, sticky="e", padx=(5,0))
+            
             ctk.CTkLabel(appearance_frame, text="For subscripts use: $H_2O$, $CO_2$, $v_{max}$ (LaTeX syntax)", font=ctk.CTkFont(size=10)).grid(row=11, column=0, sticky="w", padx=10, pady=(0,5))
             
             # Scrollable frame for legend customization
@@ -2538,6 +2544,111 @@ class CSVProcessorApp(ctk.CTk):
     def _show_dat_import_help(self):
         """Show DAT import help."""
         messagebox.showinfo("DAT Import Help", "This tab allows you to import DAT files with DBF tag files.")
+
+    def _show_legend_guide(self):
+        """Show comprehensive legend formatting guide."""
+        guide_window = ctk.CTkToplevel(self)
+        guide_window.title("Custom Legend Guide - LaTeX Formatting")
+        guide_window.geometry("600x700")
+        guide_window.transient(self)
+        guide_window.grab_set()
+        
+        # Make window resizable
+        guide_window.grid_columnconfigure(0, weight=1)
+        guide_window.grid_rowconfigure(0, weight=1)
+        
+        # Create scrollable frame
+        scrollable_frame = ctk.CTkScrollableFrame(guide_window)
+        scrollable_frame.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
+        scrollable_frame.grid_columnconfigure(0, weight=1)
+        
+        # Title
+        title_label = ctk.CTkLabel(scrollable_frame, text="Custom Legend Formatting Guide", 
+                                   font=ctk.CTkFont(size=18, weight="bold"))
+        title_label.grid(row=0, column=0, pady=(0,20), sticky="w")
+        
+        guide_text = """
+BASIC SUBSCRIPTS:
+• $H_2O$ → H₂O
+• $CO_2$ → CO₂
+• $CH_4$ → CH₄
+• $O_2$ → O₂
+
+MULTI-CHARACTER SUBSCRIPTS:
+• $v_{max}$ → vₘₐₓ
+• $P_{total}$ → Pₜₒₜₐₗ
+• $T_{ambient}$ → Tₐₘᵦᵢₑₙₜ
+• $Flow_{air}$ → Flowₐᵢᵣ
+
+SUPERSCRIPTS:
+• $x^2$ → x²
+• $m^3$ → m³
+• $T^{-1}$ → T⁻¹
+• $10^{-6}$ → 10⁻⁶
+
+COMBINED SUB & SUPERSCRIPTS:
+• $H_2O^+$ → H₂O⁺
+• $CO_2^{-}$ → CO₂⁻
+• $x_1^2$ → x₁²
+
+GREEK LETTERS:
+• $\\alpha$ → α (alpha)
+• $\\beta$ → β (beta)
+• $\\gamma$ → γ (gamma)
+• $\\delta$ → δ (delta)
+• $\\theta$ → θ (theta)
+• $\\lambda$ → λ (lambda)
+• $\\mu$ → μ (mu)
+• $\\pi$ → π (pi)
+• $\\sigma$ → σ (sigma)
+• $\\omega$ → ω (omega)
+• $\\Delta$ → Δ (Delta - capital)
+• $\\Omega$ → Ω (Omega - capital)
+
+ENGINEERING EXAMPLES:
+• $\\dot{m}_{air}$ → ṁₐᵢᵣ (mass flow rate)
+• $T_{in}$ → Tᵢₙ (inlet temperature)
+• $P_1$ → P₁ (pressure point 1)
+• $[CO_2]$ → [CO₂] (concentration)
+• $\\eta_{thermal}$ → ηₜₕₑᵣₘₐₗ (thermal efficiency)
+• $\\Delta P$ → ΔP (pressure difference)
+• $f_{Hz}$ → fₕᵨ (frequency in Hz)
+
+FRACTIONS & MATH:
+• $\\frac{m}{s}$ → m/s (as fraction)
+• $m/s^2$ → m/s² (acceleration)
+• $kg \\cdot m^2$ → kg·m² 
+• $\\pm$ → ± (plus-minus)
+
+TIPS:
+• Always wrap LaTeX in dollar signs: $...$
+• Use curly braces {} for multi-character sub/superscripts
+• Backslash \\ before Greek letters
+• Use \\dot{} for dot notation (derivatives)
+• Use \\frac{numerator}{denominator} for fractions
+
+COMMON MISTAKES TO AVOID:
+• Don't forget the $ symbols
+• Use {max} not just max for subscripts
+• Remember \\ before Greek letters
+• Close all braces properly
+        """
+        
+        # Create text widget for the guide
+        text_widget = ctk.CTkTextbox(scrollable_frame, width=550, height=500, wrap="word")
+        text_widget.grid(row=1, column=0, pady=10, sticky="ew")
+        text_widget.insert("1.0", guide_text)
+        text_widget.configure(state="disabled")
+        
+        # Close button
+        close_button = ctk.CTkButton(guide_window, text="Close", command=guide_window.destroy)
+        close_button.grid(row=1, column=0, pady=10)
+        
+        # Center the window
+        guide_window.update_idletasks()
+        x = (guide_window.winfo_screenwidth() // 2) - (600 // 2)
+        y = (guide_window.winfo_screenheight() // 2) - (700 // 2)
+        guide_window.geometry(f"600x700+{x}+{y}")
 
     def save_settings(self):
         """Save current settings."""
