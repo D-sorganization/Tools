@@ -1654,13 +1654,25 @@ class CSVProcessorApp(ctk.CTk):
             trend_frame.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
             trend_frame.grid_columnconfigure(0, weight=1)
             
-            ctk.CTkLabel(trend_frame, text="Trendline (plots 1st selected signal)", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, sticky="w", padx=10, pady=5)
+            ctk.CTkLabel(trend_frame, text="Trendline", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, sticky="w", padx=10, pady=5)
+            
+            ctk.CTkLabel(trend_frame, text="Signal:").grid(row=1, column=0, sticky="w", padx=10, pady=(5,0))
+            self.trendline_signal_var = ctk.StringVar(value="Select signal...")
+            self.trendline_signal_menu = ctk.CTkOptionMenu(trend_frame, variable=self.trendline_signal_var, values=["Select signal..."], command=self._on_plot_setting_change)
+            self.trendline_signal_menu.grid(row=2, column=0, sticky="ew", padx=10, pady=5)
+            
+            ctk.CTkLabel(trend_frame, text="Type:").grid(row=3, column=0, sticky="w", padx=10, pady=(5,0))
             self.trendline_type_var = ctk.StringVar(value="None")
-            ctk.CTkOptionMenu(trend_frame, variable=self.trendline_type_var, values=["None", "Linear", "Exponential", "Power", "Polynomial"]).grid(row=1, column=0, sticky="ew", padx=10, pady=5)
+            trendline_type_menu = ctk.CTkOptionMenu(trend_frame, variable=self.trendline_type_var, values=["None", "Linear", "Exponential", "Power", "Polynomial"], command=self._on_plot_setting_change)
+            trendline_type_menu.grid(row=4, column=0, sticky="ew", padx=10, pady=5)
+            
             self.poly_order_entry = ctk.CTkEntry(trend_frame, placeholder_text="Polynomial Order (2-6)")
-            self.poly_order_entry.grid(row=2, column=0, sticky="ew", padx=10, pady=5)
+            self.poly_order_entry.grid(row=5, column=0, sticky="ew", padx=10, pady=5)
+            self.poly_order_entry.bind("<KeyRelease>", self._on_plot_setting_change)
+            self.poly_order_entry.bind("<FocusOut>", self._on_plot_setting_change)
+            
             self.trendline_textbox = ctk.CTkTextbox(trend_frame, height=70)
-            self.trendline_textbox.grid(row=3, column=0, sticky="ew", padx=10, pady=5)
+            self.trendline_textbox.grid(row=6, column=0, sticky="ew", padx=10, pady=5)
 
             # Filter preview
             plot_filter_frame = ctk.CTkFrame(plot_left_panel)
@@ -1783,6 +1795,9 @@ class CSVProcessorApp(ctk.CTk):
         ctk.CTkLabel(config_frame, text="Signals to Include:").grid(row=5, column=0, padx=10, pady=(10,2), sticky="w")
         self.plots_signals_frame = ctk.CTkScrollableFrame(config_frame, height=100)
         self.plots_signals_frame.grid(row=6, column=0, padx=10, pady=2, sticky="ew")
+        
+        # Bind mouse wheel to the plots signals frame
+        self._bind_mousewheel_to_frame(self.plots_signals_frame)
         
         # Time range
         ctk.CTkLabel(config_frame, text="Time Range (HH:MM:SS):").grid(row=7, column=0, padx=10, pady=(10,2), sticky="w")
@@ -2084,12 +2099,15 @@ class CSVProcessorApp(ctk.CTk):
                 cb = ctk.CTkCheckBox(self.plot_signal_frame, text=signal, variable=var, command=self._on_plot_setting_change)
                 cb.pack(anchor="w", padx=5, pady=2)
                 self.plot_signal_vars[signal] = {'var': var, 'checkbox': cb}
-                
-                # Add mouse wheel binding to each checkbox
-                cb.bind("<Enter>", lambda event: self.plot_signal_frame._parent_canvas.bind_all("<MouseWheel>", 
-                        lambda e: self.plot_signal_frame._parent_canvas.yview_scroll(int(-1*(e.delta/120)), "units")))
-                cb.bind("<Leave>", lambda event: self.plot_signal_frame._parent_canvas.unbind_all("<MouseWheel>"))
             
+            # Re-bind mouse wheel to all new checkboxes
+            self._bind_mousewheel_to_frame(self.plot_signal_frame)
+            
+            # Update trendline signal options
+            signal_options = ["Select signal..."] + [col for col in df.columns if col != x_axis_options[0]]  # Exclude time column
+            self.trendline_signal_menu.configure(values=signal_options)
+            self.trendline_signal_var.set("Select signal...")
+                
             # Update plot
             self.update_plot()
 
@@ -2195,8 +2213,10 @@ class CSVProcessorApp(ctk.CTk):
                     self.plot_ax.plot(plot_df[x_axis_col], plot_df[signal], label=signal, **plot_style)
 
             # Add trendline if selected
-            if self.trendline_type_var.get() != "None" and signals_to_plot:
-                self._add_trendline(df, signals_to_plot[0], x_axis_col)
+            if self.trendline_type_var.get() != "None":
+                selected_trendline_signal = self.trendline_signal_var.get()
+                if selected_trendline_signal != "Select signal..." and selected_trendline_signal in df.columns:
+                    self._add_trendline(df, selected_trendline_signal, x_axis_col)
 
         # Apply custom labels and title
         title = self.plot_title_entry.get() or f"Signals from {selected_file}"
@@ -3144,8 +3164,10 @@ class CSVProcessorApp(ctk.CTk):
                     self.plot_ax.plot(plot_df[time_col], plot_df[signal], label=signal, **plot_style)
                 
                 # Add trendline if selected
-                if self.trendline_type_var.get() != "None" and signals_to_plot:
-                    self._add_trendline(filtered_df, signals_to_plot[0], time_col)
+                if self.trendline_type_var.get() != "None":
+                    selected_trendline_signal = self.trendline_signal_var.get()
+                    if selected_trendline_signal != "Select signal..." and selected_trendline_signal in filtered_df.columns:
+                        self._add_trendline(filtered_df, selected_trendline_signal, time_col)
             
             # Apply custom labels and title
             title = self.plot_title_entry.get() or f"Signals from {selected_file} (Time Range: {start_time_str} - {end_time_str})"
@@ -3448,6 +3470,8 @@ For additional support or feature requests, please refer to the application docu
             'color_scheme': self.color_scheme_var.get() if hasattr(self, 'color_scheme_var') else 'Auto (Matplotlib)',
             'line_width': self.line_width_var.get() if hasattr(self, 'line_width_var') else '1.0',
             'plot_type': self.plot_type_var.get() if hasattr(self, 'plot_type_var') else 'Line with Markers',
+            'trendline_signal': self.trendline_signal_var.get() if hasattr(self, 'trendline_signal_var') else 'Select signal...',
+            'trendline_type': self.trendline_type_var.get() if hasattr(self, 'trendline_type_var') else 'None',
             'created_date': pd.Timestamp.now().isoformat()
         }
         
@@ -3559,6 +3583,13 @@ For additional support or feature requests, please refer to the application docu
         if 'plot_type' in plot_config and hasattr(self, 'plot_type_var'):
             self.plot_type_var.set(plot_config.get('plot_type', 'Line with Markers'))
         
+        # Apply trendline settings
+        if 'trendline_signal' in plot_config and hasattr(self, 'trendline_signal_var'):
+            self.trendline_signal_var.set(plot_config.get('trendline_signal', 'Select signal...'))
+        
+        if 'trendline_type' in plot_config and hasattr(self, 'trendline_type_var'):
+            self.trendline_type_var.set(plot_config.get('trendline_type', 'None'))
+        
         # Update the plot
         self._on_plot_setting_change()
 
@@ -3597,6 +3628,9 @@ For additional support or feature requests, please refer to the application docu
                 cb = ctk.CTkCheckBox(self.plots_signals_frame, text=signal, variable=var)
                 cb.grid(sticky="w", padx=5, pady=2)
                 self.plots_signal_vars[signal] = var
+        
+        # Re-bind mouse wheel to all new checkboxes
+        self._bind_mousewheel_to_frame(self.plots_signals_frame)
 
     def _generate_plot_preview(self):
         """Generate plot preview."""
@@ -3783,29 +3817,29 @@ For additional support or feature requests, please refer to the application docu
         if hasattr(self, 'plot_signal_vars') and any(data['var'].get() for data in self.plot_signal_vars.values()):
             # Use after_idle to prevent too many rapid updates
             if hasattr(self, '_update_pending'):
-                self.root.after_cancel(self._update_pending)
-            self._update_pending = self.root.after_idle(self.update_plot)
+                self.after_cancel(self._update_pending)
+            self._update_pending = self.after_idle(self.update_plot)
 
     def _bind_mousewheel_to_frame(self, frame):
         """Bind mouse wheel events to a frame for proper scrolling."""
         def on_mousewheel(event):
-            # Only scroll if mouse is over this specific frame
-            frame._parent_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+            # Scroll the frame's canvas
+            try:
+                frame._parent_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+            except:
+                # Fallback for different systems
+                frame._parent_canvas.yview_scroll(int(-1 * event.delta), "units")
         
-        def bind_to_mousewheel(event):
-            frame._parent_canvas.bind_all("<MouseWheel>", on_mousewheel)
+        # Bind mousewheel to the frame and all its children
+        def bind_mousewheel(widget):
+            widget.bind("<MouseWheel>", on_mousewheel)
+            widget.bind("<Button-4>", lambda e: frame._parent_canvas.yview_scroll(-1, "units"))  # Linux
+            widget.bind("<Button-5>", lambda e: frame._parent_canvas.yview_scroll(1, "units"))   # Linux
+            
+            for child in widget.winfo_children():
+                bind_mousewheel(child)
         
-        def unbind_from_mousewheel(event):
-            frame._parent_canvas.unbind_all("<MouseWheel>")
-        
-        # Bind mouse enter/leave events to control scrolling
-        frame.bind("<Enter>", bind_to_mousewheel)
-        frame.bind("<Leave>", unbind_from_mousewheel)
-        
-        # Also bind to all child widgets in the frame
-        for child in frame.winfo_children():
-            child.bind("<Enter>", bind_to_mousewheel)
-            child.bind("<Leave>", unbind_from_mousewheel)
+        bind_mousewheel(frame)
 
 # =============================================================================
 # MAIN EXECUTION
