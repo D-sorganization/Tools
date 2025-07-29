@@ -165,6 +165,9 @@ class CSVProcessorApp(ctk.CTk):
         # Set up closing handler
         self.protocol("WM_DELETE_WINDOW", self._on_closing)
         
+        # Set up window resize handler to save layout
+        self.bind('<Configure>', self._on_window_configure)
+        
         # App State Variables
         self.input_file_paths = []
         self.loaded_data_cache = {}
@@ -194,6 +197,12 @@ class CSVProcessorApp(ctk.CTk):
         self.derivative_vars = {}
         for i in range(1, 6):  # Support up to 5th order derivatives
             self.derivative_vars[i] = tk.BooleanVar(value=False)
+        
+        # Plot view state management
+        self.saved_plot_view = None
+        
+        # Custom legend entries for plots
+        self.custom_legend_entries = {}
 
         # Create Main UI
         self.main_tab_view = ctk.CTkTabview(self)
@@ -368,9 +377,32 @@ class CSVProcessorApp(ctk.CTk):
         tab.grid_columnconfigure(0, weight=1)
         time_units = ["ms", "s", "min", "hr"]
         
+        # Time trimming frame - moved to top for better workflow
+        trim_frame = ctk.CTkFrame(tab)
+        trim_frame.grid(row=0, column=0, padx=10, pady=10, sticky="new")
+        trim_frame.grid_columnconfigure(1, weight=1)
+        
+        ctk.CTkLabel(trim_frame, text="Time Trimming", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 5), sticky="w")
+        ctk.CTkLabel(trim_frame, text="Trim data to specific time range before processing", justify="left").grid(row=1, column=0, columnspan=2, padx=10, pady=(0, 5), sticky="w")
+        
+        ctk.CTkLabel(trim_frame, text="Date (YYYY-MM-DD):").grid(row=2, column=0, padx=10, pady=5, sticky="w")
+        self.trim_date_entry = ctk.CTkEntry(trim_frame, placeholder_text="e.g., 2024-01-15")
+        self.trim_date_entry.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
+        
+        ctk.CTkLabel(trim_frame, text="Start Time (HH:MM:SS):").grid(row=3, column=0, padx=10, pady=5, sticky="w")
+        self.trim_start_entry = ctk.CTkEntry(trim_frame, placeholder_text="e.g., 09:30:00")
+        self.trim_start_entry.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
+        
+        ctk.CTkLabel(trim_frame, text="End Time (HH:MM:SS):").grid(row=4, column=0, padx=10, pady=5, sticky="w")
+        self.trim_end_entry = ctk.CTkEntry(trim_frame, placeholder_text="e.g., 17:00:00")
+        self.trim_end_entry.grid(row=4, column=1, padx=10, pady=5, sticky="ew")
+        
+        ctk.CTkButton(trim_frame, text="Copy Times to Plot Range", command=self._copy_trim_to_plot_range).grid(row=5, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+        ctk.CTkButton(trim_frame, text="Copy Plot Range to Times", command=self._copy_plot_range_to_trim).grid(row=6, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+        
         # Filter frame
         filter_frame = ctk.CTkFrame(tab)
-        filter_frame.grid(row=0, column=0, padx=10, pady=10, sticky="new")
+        filter_frame.grid(row=1, column=0, padx=10, pady=10, sticky="new")
         filter_frame.grid_columnconfigure(1, weight=1)
         
         ctk.CTkLabel(filter_frame, text="Signal Filtering", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 5), sticky="w")
@@ -391,7 +423,7 @@ class CSVProcessorApp(ctk.CTk):
         
         # Resample frame
         resample_frame = ctk.CTkFrame(tab)
-        resample_frame.grid(row=1, column=0, padx=10, pady=10, sticky="new")
+        resample_frame.grid(row=2, column=0, padx=10, pady=10, sticky="new")
         resample_frame.grid_columnconfigure(1, weight=1)
         
         ctk.CTkLabel(resample_frame, text="Time Resampling", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 5), sticky="w")
@@ -414,7 +446,7 @@ class CSVProcessorApp(ctk.CTk):
         
         # Integration frame
         integrator_frame = ctk.CTkFrame(tab)
-        integrator_frame.grid(row=2, column=0, padx=10, pady=10, sticky="new")
+        integrator_frame.grid(row=3, column=0, padx=10, pady=10, sticky="new")
         integrator_frame.grid_columnconfigure(1, weight=1)
         
         ctk.CTkLabel(integrator_frame, text="Signal Integration", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(5,3), sticky="w")
@@ -448,7 +480,7 @@ class CSVProcessorApp(ctk.CTk):
 
         # Differentiation Frame with searchable signals
         deriv_frame = ctk.CTkFrame(tab)
-        deriv_frame.grid(row=3, column=0, padx=10, pady=10, sticky="new")
+        deriv_frame.grid(row=4, column=0, padx=10, pady=10, sticky="new")
         deriv_frame.grid_columnconfigure(1, weight=1)
         
         ctk.CTkLabel(deriv_frame, text="Signal Differentiation", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(5,3), sticky="w")
@@ -495,28 +527,6 @@ class CSVProcessorApp(ctk.CTk):
             cb = ctk.CTkCheckBox(deriv_order_frame, text=f"Order {i}", variable=var)
             cb.grid(row=1, column=i-1, padx=10, pady=2, sticky="w")
             self.derivative_vars[i] = var
-
-        # Time trimming frame
-        trim_frame = ctk.CTkFrame(tab)
-        trim_frame.grid(row=4, column=0, padx=10, pady=10, sticky="new")
-        trim_frame.grid_columnconfigure(1, weight=1)
-        
-        ctk.CTkLabel(trim_frame, text="Time Trimming", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 5), sticky="w")
-        ctk.CTkLabel(trim_frame, text="Trim data to specific time range before processing", justify="left").grid(row=1, column=0, columnspan=2, padx=10, pady=(0, 5), sticky="w")
-        
-        ctk.CTkLabel(trim_frame, text="Date (YYYY-MM-DD):").grid(row=2, column=0, padx=10, pady=5, sticky="w")
-        self.trim_date_entry = ctk.CTkEntry(trim_frame, placeholder_text="e.g., 2024-01-15")
-        self.trim_date_entry.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
-        
-        ctk.CTkLabel(trim_frame, text="Start Time (HH:MM:SS):").grid(row=3, column=0, padx=10, pady=5, sticky="w")
-        self.trim_start_entry = ctk.CTkEntry(trim_frame, placeholder_text="e.g., 09:30:00")
-        self.trim_start_entry.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
-        
-        ctk.CTkLabel(trim_frame, text="End Time (HH:MM:SS):").grid(row=4, column=0, padx=10, pady=5, sticky="w")
-        self.trim_end_entry = ctk.CTkEntry(trim_frame, placeholder_text="e.g., 17:00:00")
-        self.trim_end_entry.grid(row=4, column=1, padx=10, pady=5, sticky="ew")
-        
-        ctk.CTkButton(trim_frame, text="Copy Times to Plot Range", command=self._copy_trim_to_plot_range).grid(row=5, column=0, columnspan=2, padx=10, pady=5, sticky="ew") 
 
     def _create_ma_param_frame(self, parent, time_units):
         """Create Moving Average parameter frame."""
@@ -1648,6 +1658,19 @@ class CSVProcessorApp(ctk.CTk):
             line_widths = ["0.5", "1.0", "1.5", "2.0", "2.5", "3.0"]
             line_width_menu = ctk.CTkOptionMenu(appearance_frame, variable=self.line_width_var, values=line_widths, command=self._on_plot_setting_change)
             line_width_menu.grid(row=9, column=0, sticky="ew", padx=10, pady=5)
+            
+            # Custom Legend Labels control
+            ctk.CTkLabel(appearance_frame, text="Custom Legend Labels:", font=ctk.CTkFont(weight="bold")).grid(row=10, column=0, sticky="w", padx=10, pady=(10,0))
+            ctk.CTkLabel(appearance_frame, text="For subscripts use: $H_2O$, $CO_2$, $v_{max}$ (LaTeX syntax)", font=ctk.CTkFont(size=10)).grid(row=11, column=0, sticky="w", padx=10, pady=(0,5))
+            
+            # Scrollable frame for legend customization
+            self.legend_frame = ctk.CTkScrollableFrame(appearance_frame, height=120)
+            self.legend_frame.grid(row=12, column=0, sticky="ew", padx=10, pady=5)
+            
+            ctk.CTkButton(appearance_frame, text="Refresh Legend Entries", command=self._refresh_legend_entries).grid(row=13, column=0, sticky="ew", padx=10, pady=5)
+
+            # Custom legend entries dictionary
+            self.custom_legend_entries = {}
 
             # Trendline controls
             trend_frame = ctk.CTkFrame(plot_left_panel)
@@ -1715,6 +1738,8 @@ class CSVProcessorApp(ctk.CTk):
             self.plot_end_time_entry.grid(row=4, column=0, sticky="ew", padx=10, pady=2)
             ctk.CTkButton(time_range_frame, text="Apply Time Range to Plot", command=self._apply_plot_time_range).grid(row=5, column=0, sticky="ew", padx=10, pady=5)
             ctk.CTkButton(time_range_frame, text="Reset Plot Range", command=self._reset_plot_range).grid(row=6, column=0, sticky="ew", padx=10, pady=2)
+            ctk.CTkButton(time_range_frame, text="Save Current View", command=self._save_current_plot_view).grid(row=7, column=0, sticky="ew", padx=10, pady=2)
+            ctk.CTkButton(time_range_frame, text="Copy Current View to Processing", command=self._copy_current_view_to_processing).grid(row=8, column=0, sticky="ew", padx=10, pady=2)
 
             # Export controls
             export_chart_frame = ctk.CTkFrame(plot_left_panel)
@@ -1745,6 +1770,9 @@ class CSVProcessorApp(ctk.CTk):
             
             toolbar = NavigationToolbar2Tk(self.plot_canvas, plot_canvas_frame, pack_toolbar=False)
             toolbar.grid(row=0, column=0, sticky="ew")
+            
+            # Store toolbar reference for custom functionality
+            self.plot_toolbar = toolbar
 
         # Create splitter for plotting tab
         splitter_frame = self._create_splitter(plot_main_frame, create_plot_left_content, create_plot_right_content, 'plotting_left_width', 400)
@@ -2068,6 +2096,15 @@ class CSVProcessorApp(ctk.CTk):
         self._save_layout_config()
         self.quit()
 
+    def _on_window_configure(self, event):
+        """Handle window resize events to save layout."""
+        # Only save if this is the main window being resized
+        if event.widget == self:
+            # Debounce the saving to avoid too frequent saves
+            if hasattr(self, '_resize_timer'):
+                self.after_cancel(self._resize_timer)
+            self._resize_timer = self.after(1000, self._save_layout_config)
+
     def create_status_bar(self):
         """Create the status bar."""
         self.status_label = ctk.CTkLabel(self, text="Ready", anchor="w")
@@ -2194,14 +2231,16 @@ class CSVProcessorApp(ctk.CTk):
                     raw_style["linestyle"] = "--"
                     raw_style["alpha"] = 0.7
                     raw_style["color"] = colors[i]
-                    self.plot_ax.plot(plot_df[x_axis_col], plot_df[signal], label=f"{signal} (Raw)", **raw_style)
+                    raw_label = f"{self.custom_legend_entries.get(signal, signal)} (Raw)"
+                    self.plot_ax.plot(plot_df[x_axis_col], plot_df[signal], label=raw_label, **raw_style)
                     
                     # Apply filter and plot filtered signal
                     filtered_df = self._apply_plot_filter(df.copy(), [signal], x_axis_col)
                     filtered_plot_df = filtered_df[[x_axis_col, signal]].dropna()
                     filtered_style = style_args.copy()
                     filtered_style["color"] = colors[i]
-                    self.plot_ax.plot(filtered_plot_df[x_axis_col], filtered_plot_df[signal], label=f"{signal} (Filtered)", **filtered_style)
+                    filtered_label = f"{self.custom_legend_entries.get(signal, signal)} (Filtered)"
+                    self.plot_ax.plot(filtered_plot_df[x_axis_col], filtered_plot_df[signal], label=filtered_label, **filtered_style)
                 else:
                     # Apply filter if selected (but not showing both)
                     if plot_filter != "None":
@@ -2210,7 +2249,8 @@ class CSVProcessorApp(ctk.CTk):
                     
                     plot_style = style_args.copy()
                     plot_style["color"] = colors[i]
-                    self.plot_ax.plot(plot_df[x_axis_col], plot_df[signal], label=signal, **plot_style)
+                    signal_label = self.custom_legend_entries.get(signal, signal)
+                    self.plot_ax.plot(plot_df[x_axis_col], plot_df[signal], label=signal_label, **plot_style)
 
             # Add trendline if selected
             if self.trendline_type_var.get() != "None":
@@ -3161,7 +3201,8 @@ class CSVProcessorApp(ctk.CTk):
                     plot_df = filtered_df[[time_col, signal]].dropna()
                     plot_style = style_args.copy()
                     plot_style["color"] = colors[i]
-                    self.plot_ax.plot(plot_df[time_col], plot_df[signal], label=signal, **plot_style)
+                    signal_label = self.custom_legend_entries.get(signal, signal)
+                    self.plot_ax.plot(plot_df[time_col], plot_df[signal], label=signal_label, **plot_style)
                 
                 # Add trendline if selected
                 if self.trendline_type_var.get() != "None":
@@ -3211,6 +3252,165 @@ class CSVProcessorApp(ctk.CTk):
             self.plot_end_time_entry.insert(0, end_time)
         
         self._apply_plot_time_range()
+
+    def _copy_plot_range_to_trim(self):
+        """Copy current plot x-axis range to time trimming fields."""
+        try:
+            # Check if plot exists and has data
+            if not hasattr(self, 'plot_ax') or not self.plot_ax.lines:
+                messagebox.showwarning("Warning", "No plot data available. Please create a plot first.")
+                return
+            
+            # Get current x-axis limits
+            xlim = self.plot_ax.get_xlim()
+            
+            # Convert matplotlib date numbers to datetime
+            start_datetime = mdates.num2date(xlim[0])
+            end_datetime = mdates.num2date(xlim[1])
+            
+            # Extract date and time components
+            date_str = start_datetime.strftime('%Y-%m-%d')
+            start_time_str = start_datetime.strftime('%H:%M:%S')
+            end_time_str = end_datetime.strftime('%H:%M:%S')
+            
+            # Update the trim fields
+            self.trim_date_entry.delete(0, tk.END)
+            self.trim_date_entry.insert(0, date_str)
+            
+            self.trim_start_entry.delete(0, tk.END)
+            self.trim_start_entry.insert(0, start_time_str)
+            
+            self.trim_end_entry.delete(0, tk.END)
+            self.trim_end_entry.insert(0, end_time_str)
+            
+            messagebox.showinfo("Success", f"Copied plot range to time trimming:\nDate: {date_str}\nStart: {start_time_str}\nEnd: {end_time_str}")
+            
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to copy plot range: {str(e)}")
+
+    def _save_current_plot_view(self):
+        """Save the current plot view state."""
+        try:
+            if not hasattr(self, 'plot_ax'):
+                messagebox.showwarning("Warning", "No plot available.")
+                return
+            
+            # Save current view limits
+            self.saved_plot_view = {
+                'xlim': self.plot_ax.get_xlim(),
+                'ylim': self.plot_ax.get_ylim()
+            }
+            
+            messagebox.showinfo("Success", "Current plot view saved! Use the Home button on the toolbar to return to this view.")
+            
+            # Override the home button functionality
+            self._override_home_button()
+            
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to save plot view: {str(e)}")
+
+    def _copy_current_view_to_processing(self):
+        """Copy current plot view range to processing tab time trimming."""
+        try:
+            # This is essentially the same as _copy_plot_range_to_trim but with a different message
+            if not hasattr(self, 'plot_ax') or not self.plot_ax.lines:
+                messagebox.showwarning("Warning", "No plot data available. Please create a plot first.")
+                return
+            
+            # Get current x-axis limits
+            xlim = self.plot_ax.get_xlim()
+            
+            # Convert matplotlib date numbers to datetime
+            start_datetime = mdates.num2date(xlim[0])
+            end_datetime = mdates.num2date(xlim[1])
+            
+            # Extract date and time components
+            date_str = start_datetime.strftime('%Y-%m-%d')
+            start_time_str = start_datetime.strftime('%H:%M:%S')
+            end_time_str = end_datetime.strftime('%H:%M:%S')
+            
+            # Update the trim fields
+            self.trim_date_entry.delete(0, tk.END)
+            self.trim_date_entry.insert(0, date_str)
+            
+            self.trim_start_entry.delete(0, tk.END)
+            self.trim_start_entry.insert(0, start_time_str)
+            
+            self.trim_end_entry.delete(0, tk.END)
+            self.trim_end_entry.insert(0, end_time_str)
+            
+            # Switch to the Setup & Process tab
+            self.main_tab_view.set("Setup & Process")
+            
+            messagebox.showinfo("Success", f"Copied current view to Processing tab time trimming:\nDate: {date_str}\nStart: {start_time_str}\nEnd: {end_time_str}")
+            
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to copy current view: {str(e)}")
+
+    def _override_home_button(self):
+        """Override the matplotlib toolbar home button to use saved view."""
+        if hasattr(self, 'plot_toolbar') and self.saved_plot_view:
+            # Store original home function
+            if not hasattr(self, '_original_home'):
+                self._original_home = self.plot_toolbar.home
+            
+            # Create custom home function
+            def custom_home():
+                try:
+                    if self.saved_plot_view:
+                        self.plot_ax.set_xlim(self.saved_plot_view['xlim'])
+                        self.plot_ax.set_ylim(self.saved_plot_view['ylim'])
+                        self.plot_canvas.draw()
+                    else:
+                        # Fall back to original home if no saved view
+                        self._original_home()
+                except:
+                    # Fall back to original home on any error
+                    self._original_home()
+            
+            # Replace the home function
+            self.plot_toolbar.home = custom_home
+
+    def _refresh_legend_entries(self):
+        """Refresh legend entries based on currently selected signals."""
+        # Clear existing legend widgets
+        for widget in self.legend_frame.winfo_children():
+            widget.destroy()
+        
+        # Get currently selected signals
+        selected_signals = []
+        if hasattr(self, 'plot_signal_vars'):
+            selected_signals = [signal for signal, data in self.plot_signal_vars.items() if data['var'].get()]
+        
+        if not selected_signals:
+            ctk.CTkLabel(self.legend_frame, text="Select signals to customize legend labels").pack(padx=5, pady=5)
+            ctk.CTkLabel(self.legend_frame, text="Tip: For subscripts use $H_2O$, $CO_2$, $v_{max}$", 
+                        font=ctk.CTkFont(size=10), text_color="gray").pack(padx=5, pady=2)
+            return
+        
+        # Create entry widgets for each selected signal
+        for signal in selected_signals:
+            signal_frame = ctk.CTkFrame(self.legend_frame)
+            signal_frame.pack(fill="x", padx=5, pady=2)
+            
+            # Signal name label
+            ctk.CTkLabel(signal_frame, text=f"{signal}:", width=100).pack(side="left", padx=5, pady=2)
+            
+            # Custom legend entry
+            current_value = self.custom_legend_entries.get(signal, signal)
+            legend_entry = ctk.CTkEntry(signal_frame, placeholder_text=f"Custom label for {signal}")
+            legend_entry.pack(side="right", fill="x", expand=True, padx=5, pady=2)
+            legend_entry.insert(0, current_value)
+            legend_entry.bind("<KeyRelease>", lambda e, s=signal: self._on_legend_change(s, e.widget.get()))
+            legend_entry.bind("<FocusOut>", lambda e, s=signal: self._on_legend_change(s, e.widget.get()))
+
+    def _on_legend_change(self, signal, new_label):
+        """Handle changes to legend labels."""
+        self.custom_legend_entries[signal] = new_label
+        # Trigger plot update if needed
+        if hasattr(self, '_update_pending'):
+            return
+        self._update_pending = self.after_idle(self.update_plot)
 
     def _add_trendline(self):
         """Add trendline to plot."""
@@ -3472,16 +3672,28 @@ For additional support or feature requests, please refer to the application docu
             'plot_type': self.plot_type_var.get() if hasattr(self, 'plot_type_var') else 'Line with Markers',
             'trendline_signal': self.trendline_signal_var.get() if hasattr(self, 'trendline_signal_var') else 'Select signal...',
             'trendline_type': self.trendline_type_var.get() if hasattr(self, 'trendline_type_var') else 'None',
+            'custom_legend_entries': dict(self.custom_legend_entries),  # Save custom legend labels
             'created_date': pd.Timestamp.now().isoformat()
         }
         
-        # Add filter-specific parameters
+        # Add filter-specific parameters for plot preview
         if plot_config['filter_type'] == "Moving Average":
             plot_config['ma_value'] = self.plot_ma_value_entry.get() if hasattr(self, 'plot_ma_value_entry') else ''
             plot_config['ma_unit'] = self.plot_ma_unit_menu.get() if hasattr(self, 'plot_ma_unit_menu') else ''
         elif plot_config['filter_type'] in ["Butterworth Low-pass", "Butterworth High-pass"]:
             plot_config['bw_order'] = self.plot_bw_order_entry.get() if hasattr(self, 'plot_bw_order_entry') else ''
             plot_config['bw_cutoff'] = self.plot_bw_cutoff_entry.get() if hasattr(self, 'plot_bw_cutoff_entry') else ''
+        elif plot_config['filter_type'] == "Median Filter":
+            plot_config['median_kernel'] = self.plot_median_kernel_entry.get() if hasattr(self, 'plot_median_kernel_entry') else ''
+        elif plot_config['filter_type'] == "Hampel Filter":
+            plot_config['hampel_window'] = self.plot_hampel_window_entry.get() if hasattr(self, 'plot_hampel_window_entry') else ''
+            plot_config['hampel_threshold'] = self.plot_hampel_threshold_entry.get() if hasattr(self, 'plot_hampel_threshold_entry') else ''
+        elif plot_config['filter_type'] == "Z-Score Filter":
+            plot_config['zscore_threshold'] = self.plot_zscore_threshold_entry.get() if hasattr(self, 'plot_zscore_threshold_entry') else ''
+            plot_config['zscore_method'] = self.plot_zscore_method_menu.get() if hasattr(self, 'plot_zscore_method_menu') else ''
+        elif plot_config['filter_type'] == "Savitzky-Golay":
+            plot_config['savgol_window'] = self.plot_savgol_window_entry.get() if hasattr(self, 'plot_savgol_window_entry') else ''
+            plot_config['savgol_polyorder'] = self.plot_savgol_polyorder_entry.get() if hasattr(self, 'plot_savgol_polyorder_entry') else ''
         
         # Add to plots list
         self.plots_list.append(plot_config)
@@ -3534,7 +3746,7 @@ For additional support or feature requests, please refer to the application docu
             self.plot_filter_type.set(plot_config['filter_type'])
             self._update_plot_filter_ui(plot_config['filter_type'])
         
-        # Apply filter parameters
+        # Apply filter parameters - enhanced with all filter types
         if plot_config.get('filter_type') == "Moving Average":
             if 'ma_value' in plot_config and hasattr(self, 'plot_ma_value_entry'):
                 self.plot_ma_value_entry.delete(0, tk.END)
@@ -3548,6 +3760,35 @@ For additional support or feature requests, please refer to the application docu
             if 'bw_cutoff' in plot_config and hasattr(self, 'plot_bw_cutoff_entry'):
                 self.plot_bw_cutoff_entry.delete(0, tk.END)
                 self.plot_bw_cutoff_entry.insert(0, plot_config['bw_cutoff'])
+        elif plot_config.get('filter_type') == "Median Filter":
+            if 'median_kernel' in plot_config and hasattr(self, 'plot_median_kernel_entry'):
+                self.plot_median_kernel_entry.delete(0, tk.END)
+                self.plot_median_kernel_entry.insert(0, plot_config['median_kernel'])
+        elif plot_config.get('filter_type') == "Hampel Filter":
+            if 'hampel_window' in plot_config and hasattr(self, 'plot_hampel_window_entry'):
+                self.plot_hampel_window_entry.delete(0, tk.END)
+                self.plot_hampel_window_entry.insert(0, plot_config['hampel_window'])
+            if 'hampel_threshold' in plot_config and hasattr(self, 'plot_hampel_threshold_entry'):
+                self.plot_hampel_threshold_entry.delete(0, tk.END)
+                self.plot_hampel_threshold_entry.insert(0, plot_config['hampel_threshold'])
+        elif plot_config.get('filter_type') == "Z-Score Filter":
+            if 'zscore_threshold' in plot_config and hasattr(self, 'plot_zscore_threshold_entry'):
+                self.plot_zscore_threshold_entry.delete(0, tk.END)
+                self.plot_zscore_threshold_entry.insert(0, plot_config['zscore_threshold'])
+            if 'zscore_method' in plot_config and hasattr(self, 'plot_zscore_method_menu'):
+                self.plot_zscore_method_menu.set(plot_config['zscore_method'])
+        elif plot_config.get('filter_type') == "Savitzky-Golay":
+            if 'savgol_window' in plot_config and hasattr(self, 'plot_savgol_window_entry'):
+                self.plot_savgol_window_entry.delete(0, tk.END)
+                self.plot_savgol_window_entry.insert(0, plot_config['savgol_window'])
+            if 'savgol_polyorder' in plot_config and hasattr(self, 'plot_savgol_polyorder_entry'):
+                self.plot_savgol_polyorder_entry.delete(0, tk.END)
+                self.plot_savgol_polyorder_entry.insert(0, plot_config['savgol_polyorder'])
+        
+        # Apply custom legend entries
+        if 'custom_legend_entries' in plot_config:
+            self.custom_legend_entries = dict(plot_config['custom_legend_entries'])
+            self._refresh_legend_entries()  # Refresh the legend UI
         
         # Apply other settings
         if 'show_both_signals' in plot_config and hasattr(self, 'show_both_signals_var'):
