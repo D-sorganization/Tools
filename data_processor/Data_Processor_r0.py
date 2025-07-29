@@ -2450,7 +2450,7 @@ class CSVProcessorApp(ctk.CTk):
                 title="Save Signal List",
                 defaultextension=".json",
                 filetypes=[("JSON files", "*.json"), ("All files", "*.*")],
-                initialname=f"{signal_list_name}.json"
+                initialfile=f"{signal_list_name}.json"
             )
             
             if file_path:
