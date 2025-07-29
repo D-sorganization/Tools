@@ -1686,21 +1686,29 @@ class CSVProcessorApp(ctk.CTk):
             line_width_menu = ctk.CTkOptionMenu(appearance_frame, variable=self.line_width_var, values=line_widths, command=self._on_plot_setting_change)
             line_width_menu.grid(row=10, column=0, sticky="ew", padx=10, pady=5)
             
+            # Legend placement control
+            ctk.CTkLabel(appearance_frame, text="Legend Position:").grid(row=11, column=0, sticky="w", padx=10, pady=(5,0))
+            self.legend_position_var = ctk.StringVar(value="best")
+            legend_positions = ["best", "upper right", "upper left", "lower left", "lower right", 
+                              "right", "center left", "center right", "lower center", "upper center", "center", "outside right"]
+            legend_position_menu = ctk.CTkOptionMenu(appearance_frame, variable=self.legend_position_var, values=legend_positions, command=self._on_plot_setting_change)
+            legend_position_menu.grid(row=12, column=0, sticky="ew", padx=10, pady=5)
+            
             # Custom Legend Labels control
             legend_header_frame = ctk.CTkFrame(appearance_frame, fg_color="transparent")
-            legend_header_frame.grid(row=11, column=0, sticky="ew", padx=10, pady=(10,0))
+            legend_header_frame.grid(row=13, column=0, sticky="ew", padx=10, pady=(10,0))
             legend_header_frame.grid_columnconfigure(0, weight=1)
             
             ctk.CTkLabel(legend_header_frame, text="Custom Legend Labels:", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, sticky="w")
             ctk.CTkButton(legend_header_frame, text="?", width=25, height=25, command=self._show_legend_guide).grid(row=0, column=1, sticky="e", padx=(5,0))
             
-            ctk.CTkLabel(appearance_frame, text="For subscripts use: $H_2O$, $CO_2$, $v_{max}$ (LaTeX syntax)", font=ctk.CTkFont(size=10)).grid(row=12, column=0, sticky="w", padx=10, pady=(0,5))
+            ctk.CTkLabel(appearance_frame, text="For subscripts use: $H_2O$, $CO_2$, $v_{max}$ (LaTeX syntax)", font=ctk.CTkFont(size=10)).grid(row=14, column=0, sticky="w", padx=10, pady=(0,5))
             
             # Scrollable frame for legend customization
             self.legend_frame = ctk.CTkScrollableFrame(appearance_frame, height=120)
-            self.legend_frame.grid(row=13, column=0, sticky="ew", padx=10, pady=5)
+            self.legend_frame.grid(row=15, column=0, sticky="ew", padx=10, pady=5)
             
-            ctk.CTkButton(appearance_frame, text="Refresh Legend Entries", command=self._refresh_legend_entries).grid(row=14, column=0, sticky="ew", padx=10, pady=5)
+            ctk.CTkButton(appearance_frame, text="Refresh Legend Entries", command=self._refresh_legend_entries).grid(row=16, column=0, sticky="ew", padx=10, pady=5)
 
             # Custom legend entries dictionary
             self.custom_legend_entries = {}
@@ -2305,7 +2313,14 @@ class CSVProcessorApp(ctk.CTk):
         self.plot_ax.set_xlabel(xlabel)
         self.plot_ax.set_ylabel(ylabel)
 
-        self.plot_ax.legend()
+        # Apply legend with custom position
+        legend_position = self.legend_position_var.get()
+        if legend_position == "outside right":
+            # For outside right, use bbox_to_anchor to place legend outside the plot area
+            self.plot_ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+        else:
+            self.plot_ax.legend(loc=legend_position)
+        
         self.plot_ax.grid(True, linestyle='--', alpha=0.6)
 
         if pd.api.types.is_datetime64_any_dtype(df[x_axis_col]):
@@ -3362,7 +3377,13 @@ COMMON MISTAKES TO AVOID:
             self.plot_ax.set_xlabel(xlabel)
             self.plot_ax.set_ylabel(ylabel)
             
-            self.plot_ax.legend()
+            # Apply legend with custom position
+            legend_position = self.legend_position_var.get()
+            if legend_position == "outside right":
+                # For outside right, use bbox_to_anchor to place legend outside the plot area
+                self.plot_ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+            else:
+                self.plot_ax.legend(loc=legend_position)
             self.plot_ax.grid(True, linestyle='--', alpha=0.6)
             
             if pd.api.types.is_datetime64_any_dtype(filtered_df[time_col]):
@@ -3813,6 +3834,7 @@ For additional support or feature requests, please refer to the application docu
             'end_time': self.plot_end_time_entry.get() if hasattr(self, 'plot_end_time_entry') else '',
             'color_scheme': self.color_scheme_var.get() if hasattr(self, 'color_scheme_var') else 'Auto (Matplotlib)',
             'line_width': self.line_width_var.get() if hasattr(self, 'line_width_var') else '1.0',
+            'legend_position': self.legend_position_var.get() if hasattr(self, 'legend_position_var') else 'best',
             'plot_type': self.plot_type_var.get() if hasattr(self, 'plot_type_var') else 'Line with Markers',
             'trendline_signal': self.trendline_signal_var.get() if hasattr(self, 'trendline_signal_var') else 'Select signal...',
             'trendline_type': self.trendline_type_var.get() if hasattr(self, 'trendline_type_var') else 'None',
@@ -3973,6 +3995,9 @@ For additional support or feature requests, please refer to the application docu
         
         if 'line_width' in plot_config and hasattr(self, 'line_width_var'):
             self.line_width_var.set(plot_config.get('line_width', '1.0'))
+        
+        if 'legend_position' in plot_config and hasattr(self, 'legend_position_var'):
+            self.legend_position_var.set(plot_config.get('legend_position', 'best'))
         
         if 'plot_type' in plot_config and hasattr(self, 'plot_type_var'):
             self.plot_type_var.set(plot_config.get('plot_type', 'Line with Markers'))
@@ -4146,7 +4171,14 @@ For additional support or feature requests, please refer to the application docu
             self.preview_ax.set_title(title, fontsize=14)
             self.preview_ax.set_xlabel(xlabel)
             self.preview_ax.set_ylabel(ylabel)
-            self.preview_ax.legend()
+            
+            # Use legend position from plot config if available, otherwise default to 'best'
+            legend_position = plot_config.get('legend_position', 'best')
+            if legend_position == "outside right":
+                self.preview_ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+            else:
+                self.preview_ax.legend(loc=legend_position)
+                
             self.preview_ax.grid(True, linestyle='--', alpha=0.6)
             
             # Format x-axis for time data
