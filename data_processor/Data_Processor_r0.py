@@ -32,6 +32,7 @@ import io
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
 
 # =============================================================================
 # WORKER FUNCTION FOR PARALLEL PROCESSING
@@ -212,6 +213,9 @@ class CSVProcessorApp(ctk.CTk):
 
         self.create_status_bar()
         self.status_label.configure(text="Ready. Select input files or import a DAT file.")
+        
+        # Load saved plots and other settings
+        self._load_plots_from_file()
 
     def create_setup_and_process_tab(self, parent_tab):
         """Fixed version with proper splitter implementation and all advanced features."""
@@ -523,10 +527,12 @@ class CSVProcessorApp(ctk.CTk):
         ctk.CTkLabel(frame, text="Window Size:").grid(row=0, column=0, padx=10, pady=5, sticky="w")
         value_entry = ctk.CTkEntry(frame, placeholder_text="10")
         value_entry.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
+        value_entry.insert(0, "10")  # Set default value
         
         ctk.CTkLabel(frame, text="Unit:").grid(row=0, column=2, padx=10, pady=5, sticky="w")
         unit_menu = ctk.CTkOptionMenu(frame, values=time_units)
         unit_menu.grid(row=0, column=3, padx=10, pady=5, sticky="ew")
+        unit_menu.set("s")  # Set default unit
         
         return frame, value_entry, unit_menu
 
@@ -1051,6 +1057,9 @@ class CSVProcessorApp(ctk.CTk):
         # Initialize plot signal variables (will be populated when file is selected in plotting tab)
         self.plot_signal_vars = {}
         
+        # Update plots list signals
+        self._update_plots_signals(signals)
+        
         # Update integration signals
         for widget in self.integrator_signals_frame.winfo_children():
             widget.destroy()
@@ -1228,15 +1237,17 @@ class CSVProcessorApp(ctk.CTk):
                         
                         try:
                             from scipy.signal import medfilt
+                            signal_data = df[signal].ffill().bfill()
+                            
                             # Apply Hampel filter
                             median_filtered = pd.Series(medfilt(signal_data, kernel_size=window), index=signal_data.index)
                             mad = signal_data.rolling(window=window, center=True).apply(lambda x: np.median(np.abs(x - np.median(x))))
                             threshold_value = threshold * 1.4826 * mad  # 1.4826 is the constant for normal distribution
                             
-                            # Replace outliers with median
+                            # Replace outliers with median using proper indexing
                             outliers = np.abs(signal_data - median_filtered) > threshold_value
-                            processed_df[col] = signal_data.copy()
-                            processed_df[col].loc[outliers] = median_filtered.loc[outliers]
+                            processed_df = processed_df.copy()  # Ensure we have a copy to avoid warnings
+                            processed_df.loc[outliers, signal] = median_filtered.loc[outliers]
                         except ImportError:
                             # Fallback to simple median filter
                             processed_df[col] = pd.Series(medfilt(signal_data, kernel_size=window), index=signal_data.index)
@@ -1547,6 +1558,14 @@ class CSVProcessorApp(ctk.CTk):
         ctk.CTkLabel(plot_control_frame, text="X-Axis:").grid(row=0, column=2, padx=(10,5), pady=10)
         self.plot_xaxis_menu = ctk.CTkOptionMenu(plot_control_frame, values=["default time"], command=lambda e: self.update_plot())
         self.plot_xaxis_menu.grid(row=0, column=3, padx=5, pady=10, sticky="ew")
+        
+        # Load Plot Configuration dropdown
+        ctk.CTkLabel(plot_control_frame, text="Load Config:").grid(row=0, column=4, padx=(10,5), pady=10)
+        self.load_plot_config_menu = ctk.CTkOptionMenu(plot_control_frame, values=["No saved plots"], command=self._on_load_plot_config_select)
+        self.load_plot_config_menu.grid(row=0, column=5, padx=5, pady=10, sticky="ew")
+        
+        # Save Plot Configuration button
+        ctk.CTkButton(plot_control_frame, text="Save Plot Config", height=35, command=self._save_current_plot_config).grid(row=0, column=6, padx=10, pady=10)
 
         # Main content frame for splitter
         plot_main_frame = ctk.CTkFrame(tab)
@@ -1556,23 +1575,14 @@ class CSVProcessorApp(ctk.CTk):
         
         def create_plot_left_content(left_panel):
             """Create the left panel content for plotting with all advanced features"""
-            left_panel.grid_rowconfigure(1, weight=1)
+            left_panel.grid_rowconfigure(0, weight=1)
             left_panel.grid_columnconfigure(0, weight=1)
             
-            # Plot controls header
-            plot_left_panel_outer = ctk.CTkFrame(left_panel)
-            plot_left_panel_outer.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-            plot_left_panel_outer.grid_rowconfigure(0, weight=1)
-            plot_left_panel_outer.grid_columnconfigure(0, weight=1)
-
-            # The scrollable area for controls
-            plot_left_panel = ctk.CTkScrollableFrame(plot_left_panel_outer, label_text="Plotting Controls", label_fg_color="#4C7F4C")
-            plot_left_panel.grid(row=0, column=0, sticky="nsew")
+            # The scrollable area for controls (removed title)
+            plot_left_panel = ctk.CTkScrollableFrame(left_panel)
+            plot_left_panel.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
             plot_left_panel.grid_columnconfigure(0, weight=1)
             
-            # Update Plot button
-            ctk.CTkButton(plot_left_panel_outer, text="Update Plot", height=35, command=self.update_plot).grid(row=1, column=0, sticky="ew", padx=5, pady=10)
-
             # Plot signal selection
             plot_signal_select_frame = ctk.CTkFrame(plot_left_panel)
             plot_signal_select_frame.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
@@ -1589,6 +1599,9 @@ class CSVProcessorApp(ctk.CTk):
             
             self.plot_signal_frame = ctk.CTkScrollableFrame(plot_left_panel, label_text="Signals to Plot", height=150)
             self.plot_signal_frame.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+            
+            # Bind mouse wheel to the signals frame for proper scrolling
+            self._bind_mousewheel_to_frame(self.plot_signal_frame)
 
             # Plot appearance controls
             appearance_frame = ctk.CTkFrame(plot_left_panel)
@@ -1598,14 +1611,43 @@ class CSVProcessorApp(ctk.CTk):
             ctk.CTkLabel(appearance_frame, text="Plot Appearance", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, sticky="w", padx=10, pady=5)
             ctk.CTkLabel(appearance_frame, text="Chart Type:").grid(row=1, column=0, sticky="w", padx=10)
             self.plot_type_var = ctk.StringVar(value="Line with Markers")
-            ctk.CTkOptionMenu(appearance_frame, variable=self.plot_type_var, values=["Line with Markers", "Line Only", "Markers Only (Scatter)"]).grid(row=2, column=0, sticky="ew", padx=10, pady=5)
+            plot_type_menu = ctk.CTkOptionMenu(appearance_frame, variable=self.plot_type_var, values=["Line with Markers", "Line Only", "Markers Only (Scatter)"], command=self._on_plot_setting_change)
+            plot_type_menu.grid(row=2, column=0, sticky="ew", padx=10, pady=5)
             
             self.plot_title_entry = ctk.CTkEntry(appearance_frame, placeholder_text="Plot Title")
             self.plot_title_entry.grid(row=3, column=0, sticky="ew", padx=10, pady=5)
+            self.plot_title_entry.bind("<KeyRelease>", self._on_plot_setting_change)
+            self.plot_title_entry.bind("<FocusOut>", self._on_plot_setting_change)
+            # Force placeholder to show
+            self.plot_title_entry.configure(placeholder_text="Plot Title")
+            
             self.plot_xlabel_entry = ctk.CTkEntry(appearance_frame, placeholder_text="X-Axis Label")
             self.plot_xlabel_entry.grid(row=4, column=0, sticky="ew", padx=10, pady=5)
+            self.plot_xlabel_entry.bind("<KeyRelease>", self._on_plot_setting_change)
+            self.plot_xlabel_entry.bind("<FocusOut>", self._on_plot_setting_change)
+            # Force placeholder to show
+            self.plot_xlabel_entry.configure(placeholder_text="X-Axis Label")
+            
             self.plot_ylabel_entry = ctk.CTkEntry(appearance_frame, placeholder_text="Y-Axis Label")
             self.plot_ylabel_entry.grid(row=5, column=0, sticky="ew", padx=10, pady=5)
+            self.plot_ylabel_entry.bind("<KeyRelease>", self._on_plot_setting_change)
+            self.plot_ylabel_entry.bind("<FocusOut>", self._on_plot_setting_change)
+            # Force placeholder to show
+            self.plot_ylabel_entry.configure(placeholder_text="Y-Axis Label")
+            
+            # Color scheme controls
+            ctk.CTkLabel(appearance_frame, text="Color Scheme:").grid(row=6, column=0, sticky="w", padx=10, pady=(10,0))
+            self.color_scheme_var = ctk.StringVar(value="Auto (Matplotlib)")
+            color_schemes = ["Auto (Matplotlib)", "Viridis", "Plasma", "Cool", "Warm", "Rainbow", "Custom Colors"]
+            color_scheme_menu = ctk.CTkOptionMenu(appearance_frame, variable=self.color_scheme_var, values=color_schemes, command=self._on_plot_setting_change)
+            color_scheme_menu.grid(row=7, column=0, sticky="ew", padx=10, pady=5)
+            
+            # Line width control
+            ctk.CTkLabel(appearance_frame, text="Line Width:").grid(row=8, column=0, sticky="w", padx=10, pady=(5,0))
+            self.line_width_var = ctk.StringVar(value="1.0")
+            line_widths = ["0.5", "1.0", "1.5", "2.0", "2.5", "3.0"]
+            line_width_menu = ctk.CTkOptionMenu(appearance_frame, variable=self.line_width_var, values=line_widths, command=self._on_plot_setting_change)
+            line_width_menu.grid(row=9, column=0, sticky="ew", padx=10, pady=5)
 
             # Trendline controls
             trend_frame = ctk.CTkFrame(plot_left_panel)
@@ -1640,12 +1682,12 @@ class CSVProcessorApp(ctk.CTk):
             (self.plot_savgol_frame, self.plot_savgol_window_entry, self.plot_savgol_polyorder_entry) = self._create_savgol_param_frame(plot_filter_frame)
             self._update_plot_filter_ui("None")
             
-            # Show both raw and filtered signals option
+            # Show both raw and filtered signals option (moved below parameter frames)
             self.show_both_signals_var = tk.BooleanVar(value=False)
-            ctk.CTkCheckBox(plot_filter_frame, text="Show both raw and filtered signals", variable=self.show_both_signals_var, command=self.update_plot).grid(row=2, column=0, sticky="w", padx=10, pady=5)
+            ctk.CTkCheckBox(plot_filter_frame, text="Show both raw and filtered signals", variable=self.show_both_signals_var).grid(row=10, column=0, sticky="w", padx=10, pady=5)
             
-            ctk.CTkButton(plot_filter_frame, text="Preview Filter", command=self.update_plot).grid(row=3, column=0, sticky="ew", padx=10, pady=5)
-            ctk.CTkButton(plot_filter_frame, text="Copy Settings to Processing Tab", command=self._copy_plot_settings_to_processing).grid(row=4, column=0, sticky="ew", padx=10, pady=5)
+            ctk.CTkButton(plot_filter_frame, text="Preview Filter", command=self.update_plot).grid(row=11, column=0, sticky="ew", padx=10, pady=5)
+            ctk.CTkButton(plot_filter_frame, text="Copy Settings to Processing Tab", command=self._copy_plot_settings_to_processing).grid(row=12, column=0, sticky="ew", padx=10, pady=5)
 
             # Time range controls
             time_range_frame = ctk.CTkFrame(plot_left_panel)
@@ -2039,9 +2081,14 @@ class CSVProcessorApp(ctk.CTk):
             
             for signal in df.columns:
                 var = tk.BooleanVar(value=False)
-                cb = ctk.CTkCheckBox(self.plot_signal_frame, text=signal, variable=var, command=self.update_plot)
+                cb = ctk.CTkCheckBox(self.plot_signal_frame, text=signal, variable=var, command=self._on_plot_setting_change)
                 cb.pack(anchor="w", padx=5, pady=2)
                 self.plot_signal_vars[signal] = {'var': var, 'checkbox': cb}
+                
+                # Add mouse wheel binding to each checkbox
+                cb.bind("<Enter>", lambda event: self.plot_signal_frame._parent_canvas.bind_all("<MouseWheel>", 
+                        lambda e: self.plot_signal_frame._parent_canvas.yview_scroll(int(-1*(e.delta/120)), "units")))
+                cb.bind("<Leave>", lambda event: self.plot_signal_frame._parent_canvas.unbind_all("<MouseWheel>"))
             
             # Update plot
             self.update_plot()
@@ -2094,9 +2141,30 @@ class CSVProcessorApp(ctk.CTk):
                 style_args = {"linestyle": "-", "marker": ".", "markersize": 4}
             elif plot_style == "Markers Only (Scatter)":
                 style_args = {"linestyle": "None", "marker": ".", "markersize": 5}
+            
+            # Apply line width
+            line_width = float(self.line_width_var.get())
+            style_args["linewidth"] = line_width
+            
+            # Get color scheme
+            color_scheme = self.color_scheme_var.get()
+            if color_scheme == "Auto (Matplotlib)":
+                colors = plt.cm.tab10(np.linspace(0, 1, len(signals_to_plot)))
+            elif color_scheme == "Viridis":
+                colors = plt.cm.viridis(np.linspace(0, 1, len(signals_to_plot)))
+            elif color_scheme == "Plasma":
+                colors = plt.cm.plasma(np.linspace(0, 1, len(signals_to_plot)))
+            elif color_scheme == "Cool":
+                colors = plt.cm.cool(np.linspace(0, 1, len(signals_to_plot)))
+            elif color_scheme == "Warm":
+                colors = plt.cm.autumn(np.linspace(0, 1, len(signals_to_plot)))
+            elif color_scheme == "Rainbow":
+                colors = plt.cm.rainbow(np.linspace(0, 1, len(signals_to_plot)))
+            else:  # Custom Colors - default to tab10
+                colors = plt.cm.Set1(np.linspace(0, 1, len(signals_to_plot)))
 
             # Plot each selected signal
-            for signal in signals_to_plot:
+            for i, signal in enumerate(signals_to_plot):
                 if signal not in df.columns: 
                     continue
                 
@@ -2107,19 +2175,24 @@ class CSVProcessorApp(ctk.CTk):
                     raw_style = style_args.copy()
                     raw_style["linestyle"] = "--"
                     raw_style["alpha"] = 0.7
+                    raw_style["color"] = colors[i]
                     self.plot_ax.plot(plot_df[x_axis_col], plot_df[signal], label=f"{signal} (Raw)", **raw_style)
                     
                     # Apply filter and plot filtered signal
                     filtered_df = self._apply_plot_filter(df.copy(), [signal], x_axis_col)
                     filtered_plot_df = filtered_df[[x_axis_col, signal]].dropna()
-                    self.plot_ax.plot(filtered_plot_df[x_axis_col], filtered_plot_df[signal], label=f"{signal} (Filtered)", **style_args)
+                    filtered_style = style_args.copy()
+                    filtered_style["color"] = colors[i]
+                    self.plot_ax.plot(filtered_plot_df[x_axis_col], filtered_plot_df[signal], label=f"{signal} (Filtered)", **filtered_style)
                 else:
                     # Apply filter if selected (but not showing both)
                     if plot_filter != "None":
                         filtered_df = self._apply_plot_filter(df.copy(), [signal], x_axis_col)
                         plot_df = filtered_df[[x_axis_col, signal]].dropna()
                     
-                    self.plot_ax.plot(plot_df[x_axis_col], plot_df[signal], label=signal, **style_args)
+                    plot_style = style_args.copy()
+                    plot_style["color"] = colors[i]
+                    self.plot_ax.plot(plot_df[x_axis_col], plot_df[signal], label=signal, **plot_style)
 
             # Add trendline if selected
             if self.trendline_type_var.get() != "None" and signals_to_plot:
@@ -2219,17 +2292,17 @@ class CSVProcessorApp(ctk.CTk):
                 
                 try:
                     from scipy.signal import medfilt
-                    signal_data = df[signal].fillna(method='ffill').fillna(method='bfill')
+                    signal_data = df[signal].ffill().bfill()
                     
                     # Apply Hampel filter
                     median_filtered = pd.Series(medfilt(signal_data, kernel_size=window), index=signal_data.index)
                     mad = signal_data.rolling(window=window, center=True).apply(lambda x: np.median(np.abs(x - np.median(x))))
                     threshold_value = threshold * 1.4826 * mad  # 1.4826 is the constant for normal distribution
                     
-                    # Replace outliers with median
+                    # Replace outliers with median using proper indexing
                     outliers = np.abs(signal_data - median_filtered) > threshold_value
-                    filtered_df[signal] = signal_data.copy()
-                    filtered_df[signal].loc[outliers] = median_filtered.loc[outliers]
+                    filtered_df = filtered_df.copy()  # Ensure we have a copy to avoid warnings
+                    filtered_df.loc[outliers, signal] = median_filtered.loc[outliers]
                     
                 except ImportError:
                     # Fallback to simple median filter
@@ -2733,39 +2806,213 @@ class CSVProcessorApp(ctk.CTk):
 
     def _add_plot_to_list(self):
         """Add plot to the plots list."""
-        pass
+        plot_name = self.plot_name_entry.get().strip()
+        plot_desc = self.plot_desc_entry.get().strip()
+        
+        if not plot_name:
+            messagebox.showerror("Error", "Please enter a plot name.")
+            return
+        
+        # Get selected signals from plots signals frame
+        selected_signals = []
+        if hasattr(self, 'plots_signal_vars'):
+            selected_signals = [signal for signal, var in self.plots_signal_vars.items() if var.get()]
+        
+        plot_config = {
+            'name': plot_name,
+            'description': plot_desc or f"Plot configuration created on {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            'signals': selected_signals,
+            'start_time': self.plot_start_time_entry.get(),
+            'end_time': self.plot_end_time_entry.get(),
+            'created_date': pd.Timestamp.now().isoformat()
+        }
+        
+        self.plots_list.append(plot_config)
+        self._update_plots_listbox()
+        self._save_plots_to_file()
+        self._clear_plot_form()
+        
+        messagebox.showinfo("Success", f"Plot '{plot_name}' added to list!")
 
     def _update_selected_plot(self):
         """Update selected plot in the list."""
-        pass
+        selection = self.plots_listbox.curselection()
+        if not selection:
+            messagebox.showwarning("Warning", "Please select a plot to update.")
+            return
+        
+        plot_name = self.plot_name_entry.get().strip()
+        if not plot_name:
+            messagebox.showerror("Error", "Please enter a plot name.")
+            return
+        
+        idx = selection[0]
+        selected_signals = []
+        if hasattr(self, 'plots_signal_vars'):
+            selected_signals = [signal for signal, var in self.plots_signal_vars.items() if var.get()]
+        
+        self.plots_list[idx].update({
+            'name': plot_name,
+            'description': self.plot_desc_entry.get().strip(),
+            'signals': selected_signals,
+            'start_time': self.plot_start_time_entry.get(),
+            'end_time': self.plot_end_time_entry.get(),
+            'modified_date': pd.Timestamp.now().isoformat()
+        })
+        
+        self._update_plots_listbox()
+        self._save_plots_to_file()
+        messagebox.showinfo("Success", "Plot configuration updated!")
 
     def _clear_plot_form(self):
         """Clear the plot form."""
-        pass
+        self.plot_name_entry.delete(0, tk.END)
+        self.plot_desc_entry.delete(0, tk.END)
+        self.plot_start_time_entry.delete(0, tk.END)
+        self.plot_end_time_entry.delete(0, tk.END)
+        
+        # Clear signal selections
+        if hasattr(self, 'plots_signal_vars'):
+            for var in self.plots_signal_vars.values():
+                var.set(False)
 
     def _on_plot_select(self, event):
         """Handle plot selection in listbox."""
-        pass
+        selection = self.plots_listbox.curselection()
+        if not selection:
+            return
+        
+        idx = selection[0]
+        plot_config = self.plots_list[idx]
+        
+        # Populate form with selected plot data
+        self.plot_name_entry.delete(0, tk.END)
+        self.plot_name_entry.insert(0, plot_config.get('name', ''))
+        
+        self.plot_desc_entry.delete(0, tk.END)
+        self.plot_desc_entry.insert(0, plot_config.get('description', ''))
+        
+        self.plot_start_time_entry.delete(0, tk.END)
+        self.plot_start_time_entry.insert(0, plot_config.get('start_time', ''))
+        
+        self.plot_end_time_entry.delete(0, tk.END)
+        self.plot_end_time_entry.insert(0, plot_config.get('end_time', ''))
+        
+        # Update signal selections
+        if hasattr(self, 'plots_signal_vars'):
+            saved_signals = plot_config.get('signals', [])
+            for signal, var in self.plots_signal_vars.items():
+                var.set(signal in saved_signals)
 
     def _load_selected_plot(self):
         """Load selected plot configuration."""
-        pass
+        selection = self.plots_listbox.curselection()
+        if not selection:
+            messagebox.showwarning("Warning", "Please select a plot to load.")
+            return
+        
+        idx = selection[0]
+        plot_config = self.plots_list[idx]
+        
+        # Apply to plotting tab
+        if 'file' in plot_config and plot_config['file']:
+            self.plot_file_menu.set(plot_config['file'])
+        
+        if 'x_axis' in plot_config and plot_config['x_axis']:
+            self.plot_xaxis_menu.set(plot_config['x_axis'])
+        
+        # Apply filter settings
+        if 'filter_type' in plot_config:
+            self.plot_filter_type.set(plot_config['filter_type'])
+            self._update_plot_filter_ui(plot_config['filter_type'])
+        
+        if 'show_both_signals' in plot_config:
+            self.show_both_signals_var.set(plot_config['show_both_signals'])
+        
+        # Apply plot labels
+        if 'plot_title' in plot_config and hasattr(self, 'plot_title_entry'):
+            self.plot_title_entry.delete(0, tk.END)
+            self.plot_title_entry.insert(0, plot_config.get('plot_title', ''))
+        
+        if 'plot_xlabel' in plot_config and hasattr(self, 'plot_xlabel_entry'):
+            self.plot_xlabel_entry.delete(0, tk.END)
+            self.plot_xlabel_entry.insert(0, plot_config.get('plot_xlabel', ''))
+        
+        if 'plot_ylabel' in plot_config and hasattr(self, 'plot_ylabel_entry'):
+            self.plot_ylabel_entry.delete(0, tk.END)
+            self.plot_ylabel_entry.insert(0, plot_config.get('plot_ylabel', ''))
+        
+        # Apply time range
+        if hasattr(self, 'plot_start_time_entry'):
+            self.plot_start_time_entry.delete(0, tk.END)
+            self.plot_start_time_entry.insert(0, plot_config.get('start_time', ''))
+        
+        if hasattr(self, 'plot_end_time_entry'):
+            self.plot_end_time_entry.delete(0, tk.END)
+            self.plot_end_time_entry.insert(0, plot_config.get('end_time', ''))
+        
+        # Apply signal selections
+        if hasattr(self, 'plot_signal_vars') and 'signals' in plot_config:
+            saved_signals = plot_config['signals']
+            for signal, data in self.plot_signal_vars.items():
+                data['var'].set(signal in saved_signals)
+        
+        messagebox.showinfo("Success", f"Plot configuration '{plot_config['name']}' loaded!")
 
     def _delete_selected_plot(self):
         """Delete selected plot from list."""
-        pass
+        selection = self.plots_listbox.curselection()
+        if not selection:
+            messagebox.showwarning("Warning", "Please select a plot to delete.")
+            return
+        
+        idx = selection[0]
+        plot_name = self.plots_list[idx]['name']
+        
+        if messagebox.askyesno("Confirm Delete", f"Are you sure you want to delete plot '{plot_name}'?"):
+            del self.plots_list[idx]
+            self._update_plots_listbox()
+            self._save_plots_to_file()
+            self._clear_plot_form()
+            messagebox.showinfo("Success", f"Plot '{plot_name}' deleted.")
 
     def _clear_all_plots(self):
         """Clear all plots from list."""
-        pass
+        if self.plots_list and messagebox.askyesno("Confirm Clear", "Are you sure you want to clear all plots?"):
+            self.plots_list.clear()
+            self._update_plots_listbox()
+            self._save_plots_to_file()
+            self._clear_plot_form()
+            messagebox.showinfo("Success", "All plots cleared.")
 
-    def _generate_plot_preview(self):
-        """Generate plot preview."""
-        pass
+    def _update_plots_listbox(self):
+        """Update the plots listbox with current plots."""
+        self.plots_listbox.delete(0, tk.END)
+        for plot in self.plots_list:
+            display_text = f"{plot['name']} ({len(plot.get('signals', []))} signals)"
+            self.plots_listbox.insert(tk.END, display_text)
 
-    def _export_all_plots(self):
-        """Export all plots."""
-        pass
+    def _save_plots_to_file(self):
+        """Save plots list to file."""
+        try:
+            plots_file = os.path.join(os.path.expanduser("~"), ".csv_processor_plots.json")
+            with open(plots_file, 'w') as f:
+                json.dump(self.plots_list, f, indent=2)
+        except Exception as e:
+            print(f"Error saving plots to file: {e}")
+
+    def _load_plots_from_file(self):
+        """Load plots list from file."""
+        try:
+            plots_file = os.path.join(os.path.expanduser("~"), ".csv_processor_plots.json")
+            if os.path.exists(plots_file):
+                with open(plots_file, 'r') as f:
+                    self.plots_list = json.load(f)
+                self._update_plots_listbox()
+                self._update_load_plot_config_menu()
+        except Exception as e:
+            print(f"Error loading plots from file: {e}")
+            self.plots_list = []
 
     def _select_tag_file(self):
         """Select tag file for DAT import."""
@@ -2865,13 +3112,36 @@ class CSVProcessorApp(ctk.CTk):
                 elif plot_style == "Markers Only (Scatter)":
                     style_args = {"linestyle": "None", "marker": ".", "markersize": 5}
                 
+                # Apply line width
+                line_width = float(self.line_width_var.get())
+                style_args["linewidth"] = line_width
+                
+                # Get color scheme
+                color_scheme = self.color_scheme_var.get()
+                if color_scheme == "Auto (Matplotlib)":
+                    colors = plt.cm.tab10(np.linspace(0, 1, len(signals_to_plot)))
+                elif color_scheme == "Viridis":
+                    colors = plt.cm.viridis(np.linspace(0, 1, len(signals_to_plot)))
+                elif color_scheme == "Plasma":
+                    colors = plt.cm.plasma(np.linspace(0, 1, len(signals_to_plot)))
+                elif color_scheme == "Cool":
+                    colors = plt.cm.cool(np.linspace(0, 1, len(signals_to_plot)))
+                elif color_scheme == "Warm":
+                    colors = plt.cm.autumn(np.linspace(0, 1, len(signals_to_plot)))
+                elif color_scheme == "Rainbow":
+                    colors = plt.cm.rainbow(np.linspace(0, 1, len(signals_to_plot)))
+                else:  # Custom Colors - default to tab10
+                    colors = plt.cm.Set1(np.linspace(0, 1, len(signals_to_plot)))
+                
                 # Plot each selected signal
-                for signal in signals_to_plot:
+                for i, signal in enumerate(signals_to_plot):
                     if signal not in filtered_df.columns: 
                         continue
                     
                     plot_df = filtered_df[[time_col, signal]].dropna()
-                    self.plot_ax.plot(plot_df[time_col], plot_df[signal], label=signal, **style_args)
+                    plot_style = style_args.copy()
+                    plot_style["color"] = colors[i]
+                    self.plot_ax.plot(plot_df[time_col], plot_df[signal], label=signal, **plot_style)
                 
                 # Add trendline if selected
                 if self.trendline_type_var.get() != "None" and signals_to_plot:
@@ -3148,6 +3418,394 @@ For additional support or feature requests, please refer to the application docu
                 return self._generate_unique_filename(os.path.join(directory, base_name), extension)
         
         return file_path
+
+    def _save_current_plot_config(self):
+        """Save the current plot configuration."""
+        # Get current plot settings
+        plot_name = simpledialog.askstring("Save Plot Configuration", "Enter a name for this plot configuration:")
+        if not plot_name:
+            return
+        
+        # Get currently selected signals for plotting
+        selected_signals = []
+        if hasattr(self, 'plot_signal_vars'):
+            selected_signals = [signal for signal, data in self.plot_signal_vars.items() if data['var'].get()]
+        
+        # Get current plot settings
+        plot_config = {
+            'name': plot_name,
+            'description': f"Plot configuration saved on {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            'file': self.plot_file_menu.get() if hasattr(self, 'plot_file_menu') else '',
+            'x_axis': self.plot_xaxis_menu.get() if hasattr(self, 'plot_xaxis_menu') else '',
+            'signals': selected_signals,
+            'filter_type': self.plot_filter_type.get() if hasattr(self, 'plot_filter_type') else 'None',
+            'show_both_signals': self.show_both_signals_var.get() if hasattr(self, 'show_both_signals_var') else False,
+            'plot_title': self.plot_title_entry.get() if hasattr(self, 'plot_title_entry') else '',
+            'plot_xlabel': self.plot_xlabel_entry.get() if hasattr(self, 'plot_xlabel_entry') else '',
+            'plot_ylabel': self.plot_ylabel_entry.get() if hasattr(self, 'plot_ylabel_entry') else '',
+            'start_time': self.plot_start_time_entry.get() if hasattr(self, 'plot_start_time_entry') else '',
+            'end_time': self.plot_end_time_entry.get() if hasattr(self, 'plot_end_time_entry') else '',
+            'color_scheme': self.color_scheme_var.get() if hasattr(self, 'color_scheme_var') else 'Auto (Matplotlib)',
+            'line_width': self.line_width_var.get() if hasattr(self, 'line_width_var') else '1.0',
+            'plot_type': self.plot_type_var.get() if hasattr(self, 'plot_type_var') else 'Line with Markers',
+            'created_date': pd.Timestamp.now().isoformat()
+        }
+        
+        # Add filter-specific parameters
+        if plot_config['filter_type'] == "Moving Average":
+            plot_config['ma_value'] = self.plot_ma_value_entry.get() if hasattr(self, 'plot_ma_value_entry') else ''
+            plot_config['ma_unit'] = self.plot_ma_unit_menu.get() if hasattr(self, 'plot_ma_unit_menu') else ''
+        elif plot_config['filter_type'] in ["Butterworth Low-pass", "Butterworth High-pass"]:
+            plot_config['bw_order'] = self.plot_bw_order_entry.get() if hasattr(self, 'plot_bw_order_entry') else ''
+            plot_config['bw_cutoff'] = self.plot_bw_cutoff_entry.get() if hasattr(self, 'plot_bw_cutoff_entry') else ''
+        
+        # Add to plots list
+        self.plots_list.append(plot_config)
+        self._update_plots_listbox()
+        self._update_load_plot_config_menu()
+        self._save_plots_to_file()
+        
+        messagebox.showinfo("Success", f"Plot configuration '{plot_name}' saved successfully!")
+
+    def _on_load_plot_config_select(self, selected_plot_name):
+        """Handle selection from the load plot config dropdown."""
+        if selected_plot_name == "No saved plots":
+            return
+        
+        # Find the plot config by name
+        plot_config = None
+        for config in self.plots_list:
+            if config['name'] == selected_plot_name:
+                plot_config = config
+                break
+        
+        if not plot_config:
+            messagebox.showerror("Error", f"Plot configuration '{selected_plot_name}' not found.")
+            return
+        
+        # Apply the plot configuration
+        self._apply_plot_config(plot_config)
+        messagebox.showinfo("Success", f"Plot configuration '{selected_plot_name}' loaded!")
+
+    def _apply_plot_config(self, plot_config):
+        """Apply a plot configuration to the current plotting tab."""
+        # Apply file selection
+        if 'file' in plot_config and plot_config['file'] and hasattr(self, 'plot_file_menu'):
+            self.plot_file_menu.set(plot_config['file'])
+            # Trigger file selection to populate signals
+            self.on_plot_file_select(plot_config['file'])
+        
+        # Apply x-axis selection
+        if 'x_axis' in plot_config and plot_config['x_axis'] and hasattr(self, 'plot_xaxis_menu'):
+            self.plot_xaxis_menu.set(plot_config['x_axis'])
+        
+        # Apply signal selections
+        if hasattr(self, 'plot_signal_vars') and 'signals' in plot_config:
+            saved_signals = plot_config['signals']
+            for signal, data in self.plot_signal_vars.items():
+                data['var'].set(signal in saved_signals)
+        
+        # Apply filter settings
+        if 'filter_type' in plot_config and hasattr(self, 'plot_filter_type'):
+            self.plot_filter_type.set(plot_config['filter_type'])
+            self._update_plot_filter_ui(plot_config['filter_type'])
+        
+        # Apply filter parameters
+        if plot_config.get('filter_type') == "Moving Average":
+            if 'ma_value' in plot_config and hasattr(self, 'plot_ma_value_entry'):
+                self.plot_ma_value_entry.delete(0, tk.END)
+                self.plot_ma_value_entry.insert(0, plot_config['ma_value'])
+            if 'ma_unit' in plot_config and hasattr(self, 'plot_ma_unit_menu'):
+                self.plot_ma_unit_menu.set(plot_config['ma_unit'])
+        elif plot_config.get('filter_type') in ["Butterworth Low-pass", "Butterworth High-pass"]:
+            if 'bw_order' in plot_config and hasattr(self, 'plot_bw_order_entry'):
+                self.plot_bw_order_entry.delete(0, tk.END)
+                self.plot_bw_order_entry.insert(0, plot_config['bw_order'])
+            if 'bw_cutoff' in plot_config and hasattr(self, 'plot_bw_cutoff_entry'):
+                self.plot_bw_cutoff_entry.delete(0, tk.END)
+                self.plot_bw_cutoff_entry.insert(0, plot_config['bw_cutoff'])
+        
+        # Apply other settings
+        if 'show_both_signals' in plot_config and hasattr(self, 'show_both_signals_var'):
+            self.show_both_signals_var.set(plot_config['show_both_signals'])
+        
+        if 'plot_title' in plot_config and hasattr(self, 'plot_title_entry'):
+            self.plot_title_entry.delete(0, tk.END)
+            self.plot_title_entry.insert(0, plot_config.get('plot_title', ''))
+        
+        if 'plot_xlabel' in plot_config and hasattr(self, 'plot_xlabel_entry'):
+            self.plot_xlabel_entry.delete(0, tk.END)
+            self.plot_xlabel_entry.insert(0, plot_config.get('plot_xlabel', ''))
+        
+        if 'plot_ylabel' in plot_config and hasattr(self, 'plot_ylabel_entry'):
+            self.plot_ylabel_entry.delete(0, tk.END)
+            self.plot_ylabel_entry.insert(0, plot_config.get('plot_ylabel', ''))
+        
+        if 'start_time' in plot_config and hasattr(self, 'plot_start_time_entry'):
+            self.plot_start_time_entry.delete(0, tk.END)
+            self.plot_start_time_entry.insert(0, plot_config.get('start_time', ''))
+        
+        if 'end_time' in plot_config and hasattr(self, 'plot_end_time_entry'):
+            self.plot_end_time_entry.delete(0, tk.END)
+            self.plot_end_time_entry.insert(0, plot_config.get('end_time', ''))
+        
+        # Apply color scheme and styling settings
+        if 'color_scheme' in plot_config and hasattr(self, 'color_scheme_var'):
+            self.color_scheme_var.set(plot_config.get('color_scheme', 'Auto (Matplotlib)'))
+        
+        if 'line_width' in plot_config and hasattr(self, 'line_width_var'):
+            self.line_width_var.set(plot_config.get('line_width', '1.0'))
+        
+        if 'plot_type' in plot_config and hasattr(self, 'plot_type_var'):
+            self.plot_type_var.set(plot_config.get('plot_type', 'Line with Markers'))
+        
+        # Update the plot
+        self._on_plot_setting_change()
+
+    def _update_load_plot_config_menu(self):
+        """Update the load plot config dropdown menu."""
+        if not hasattr(self, 'load_plot_config_menu'):
+            return
+        
+        if self.plots_list:
+            plot_names = [config['name'] for config in self.plots_list]
+            self.load_plot_config_menu.configure(values=plot_names)
+            self.load_plot_config_menu.set("Select a plot config...")
+        else:
+            self.load_plot_config_menu.configure(values=["No saved plots"])
+            self.load_plot_config_menu.set("No saved plots")
+
+    def _update_plots_signals(self, signals):
+        """Update signals available in plots list tab."""
+        if not hasattr(self, 'plots_signals_frame'):
+            return
+        
+        # Clear existing widgets
+        for widget in self.plots_signals_frame.winfo_children():
+            widget.destroy()
+        
+        # Initialize plots signal vars if not exists
+        if not hasattr(self, 'plots_signal_vars'):
+            self.plots_signal_vars = {}
+        
+        self.plots_signal_vars.clear()
+        
+        # Add checkboxes for each signal
+        for signal in signals:
+            if signal != signals[0]:  # Skip time column
+                var = tk.BooleanVar(value=False)
+                cb = ctk.CTkCheckBox(self.plots_signals_frame, text=signal, variable=var)
+                cb.grid(sticky="w", padx=5, pady=2)
+                self.plots_signal_vars[signal] = var
+
+    def _generate_plot_preview(self):
+        """Generate plot preview."""
+        selection = self.plots_listbox.curselection()
+        if not selection:
+            messagebox.showwarning("Warning", "Please select a plot to preview.")
+            return
+        
+        try:
+            # Clear previous plot
+            self.preview_ax.clear()
+            
+            idx = selection[0]
+            plot_config = self.plots_list[idx]
+            
+            # Get the actual data and plot it exactly like the main plotting tab
+            signals = plot_config.get('signals', [])
+            file_name = plot_config.get('file', '')
+            
+            if not signals:
+                self.preview_ax.text(0.5, 0.5, "No signals selected in this configuration", 
+                                   transform=self.preview_ax.transAxes, 
+                                   ha='center', va='center', fontsize=12)
+                self.preview_ax.set_title(f"Preview: {plot_config['name']}")
+                self.preview_canvas.draw()
+                return
+            
+            if not file_name or not hasattr(self, 'processed_files'):
+                self.preview_ax.text(0.5, 0.5, "Data file not available\nLoad the data file first", 
+                                   transform=self.preview_ax.transAxes, 
+                                   ha='center', va='center', fontsize=12)
+                self.preview_ax.set_title(f"Preview: {plot_config['name']}")
+                self.preview_canvas.draw()
+                return
+            
+            # Find the actual data - try multiple matching strategies
+            df = None
+            
+            # Strategy 1: Exact basename match
+            for file_path, data in self.processed_files.items():
+                if os.path.basename(file_path) == file_name:
+                    df = data
+                    break
+            
+            # Strategy 2: Try without extension
+            if df is None and '.' in file_name:
+                file_name_no_ext = os.path.splitext(file_name)[0]
+                for file_path, data in self.processed_files.items():
+                    if os.path.splitext(os.path.basename(file_path))[0] == file_name_no_ext:
+                        df = data
+                        break
+            
+            # Strategy 3: Try partial match
+            if df is None:
+                for file_path, data in self.processed_files.items():
+                    if file_name in os.path.basename(file_path) or os.path.basename(file_path) in file_name:
+                        df = data
+                        break
+            
+            if df is None:
+                # Show available files for debugging
+                available_files = [os.path.basename(fp) for fp in self.processed_files.keys()]
+                debug_text = f"Data file '{file_name}' not found\n\nAvailable files:\n" + "\n".join(available_files[:5])
+                if len(available_files) > 5:
+                    debug_text += f"\n... and {len(available_files)-5} more"
+                
+                self.preview_ax.text(0.5, 0.5, debug_text, 
+                                   transform=self.preview_ax.transAxes, 
+                                   ha='center', va='center', fontsize=10)
+                self.preview_ax.set_title(f"Preview: {plot_config['name']}")
+                self.preview_canvas.draw()
+                return
+            
+            # Get time column and available signals
+            time_col = df.columns[0]
+            available_signals = [s for s in signals if s in df.columns]
+            
+            if not available_signals:
+                self.preview_ax.text(0.5, 0.5, "None of the selected signals\nare available in the data", 
+                                   transform=self.preview_ax.transAxes, 
+                                   ha='center', va='center', fontsize=12)
+                self.preview_ax.set_title(f"Preview: {plot_config['name']}")
+                self.preview_canvas.draw()
+                return
+            
+            # Apply time range if specified
+            plot_df = df.copy()
+            start_time = plot_config.get('start_time', '')
+            end_time = plot_config.get('end_time', '')
+            
+            if start_time or end_time:
+                if pd.api.types.is_datetime64_any_dtype(plot_df[time_col]):
+                    if start_time:
+                        try:
+                            start_datetime = pd.to_datetime(f"{plot_df[time_col].dt.date.iloc[0]} {start_time}")
+                            plot_df = plot_df[plot_df[time_col] >= start_datetime]
+                        except:
+                            pass
+                    if end_time:
+                        try:
+                            end_datetime = pd.to_datetime(f"{plot_df[time_col].dt.date.iloc[0]} {end_time}")
+                            plot_df = plot_df[plot_df[time_col] <= end_datetime]
+                        except:
+                            pass
+            
+            # Plot all available signals
+            colors = plt.cm.tab10(np.linspace(0, 1, len(available_signals)))
+            for i, signal in enumerate(available_signals):
+                signal_data = plot_df[[time_col, signal]].dropna()
+                if len(signal_data) > 0:
+                    self.preview_ax.plot(signal_data[time_col], signal_data[signal], 
+                                       label=signal, linewidth=1, color=colors[i])
+            
+            # Apply plot configuration
+            title = plot_config.get('plot_title', '') or f"Preview: {plot_config['name']}"
+            xlabel = plot_config.get('plot_xlabel', '') or time_col
+            ylabel = plot_config.get('plot_ylabel', '') or "Value"
+            
+            self.preview_ax.set_title(title, fontsize=14)
+            self.preview_ax.set_xlabel(xlabel)
+            self.preview_ax.set_ylabel(ylabel)
+            self.preview_ax.legend()
+            self.preview_ax.grid(True, linestyle='--', alpha=0.6)
+            
+            # Format x-axis for time data
+            if pd.api.types.is_datetime64_any_dtype(plot_df[time_col]):
+                import matplotlib.dates as mdates
+                self.preview_ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+                self.preview_ax.tick_params(axis='x', rotation=0)
+            
+            self.preview_canvas.draw()
+            
+        except Exception as e:
+            self.preview_ax.clear()
+            self.preview_ax.text(0.5, 0.5, f"Error generating preview:\n{str(e)}", 
+                               transform=self.preview_ax.transAxes, 
+                               ha='center', va='center', fontsize=12)
+            self.preview_ax.set_title("Preview Error")
+            self.preview_canvas.draw()
+
+    def _export_all_plots(self):
+        """Export all plots."""
+        if not self.plots_list:
+            messagebox.showwarning("Warning", "No plots to export.")
+            return
+        
+        # Ask user for export directory
+        export_dir = filedialog.askdirectory(title="Select Export Directory")
+        if not export_dir:
+            return
+        
+        try:
+            exported_count = 0
+            for plot_config in self.plots_list:
+                # Create a simple text file with plot configuration
+                filename = f"{plot_config['name'].replace(' ', '_')}_config.txt"
+                filepath = os.path.join(export_dir, filename)
+                
+                with open(filepath, 'w') as f:
+                    f.write(f"Plot Configuration: {plot_config['name']}\n")
+                    f.write(f"Description: {plot_config.get('description', 'N/A')}\n")
+                    f.write(f"Created: {plot_config.get('created_date', 'N/A')}\n")
+                    f.write(f"Signals: {', '.join(plot_config.get('signals', []))}\n")
+                    f.write(f"Start Time: {plot_config.get('start_time', 'N/A')}\n")
+                    f.write(f"End Time: {plot_config.get('end_time', 'N/A')}\n")
+                    
+                    if 'filter_type' in plot_config:
+                        f.write(f"Filter: {plot_config['filter_type']}\n")
+                    
+                    f.write("\nFull Configuration:\n")
+                    for key, value in plot_config.items():
+                        f.write(f"  {key}: {value}\n")
+                
+                exported_count += 1
+            
+            messagebox.showinfo("Export Complete", f"Exported {exported_count} plot configurations to {export_dir}")
+            
+        except Exception as e:
+            messagebox.showerror("Export Error", f"Error exporting plots: {e}")
+
+    def _on_plot_setting_change(self, *args):
+        """Automatically update plot when appearance settings change."""
+        # Only update if we have data and signals selected
+        if hasattr(self, 'plot_signal_vars') and any(data['var'].get() for data in self.plot_signal_vars.values()):
+            # Use after_idle to prevent too many rapid updates
+            if hasattr(self, '_update_pending'):
+                self.root.after_cancel(self._update_pending)
+            self._update_pending = self.root.after_idle(self.update_plot)
+
+    def _bind_mousewheel_to_frame(self, frame):
+        """Bind mouse wheel events to a frame for proper scrolling."""
+        def on_mousewheel(event):
+            # Only scroll if mouse is over this specific frame
+            frame._parent_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+        
+        def bind_to_mousewheel(event):
+            frame._parent_canvas.bind_all("<MouseWheel>", on_mousewheel)
+        
+        def unbind_from_mousewheel(event):
+            frame._parent_canvas.unbind_all("<MouseWheel>")
+        
+        # Bind mouse enter/leave events to control scrolling
+        frame.bind("<Enter>", bind_to_mousewheel)
+        frame.bind("<Leave>", unbind_from_mousewheel)
+        
+        # Also bind to all child widgets in the frame
+        for child in frame.winfo_children():
+            child.bind("<Enter>", bind_to_mousewheel)
+            child.bind("<Leave>", unbind_from_mousewheel)
 
 # =============================================================================
 # MAIN EXECUTION
