@@ -12,7 +12,7 @@
 # =============================================================================
 
 import tkinter as tk
-from tkinter import filedialog, messagebox, simpledialog
+from tkinter import filedialog, messagebox, simpledialog, colorchooser
 import customtkinter as ctk
 import pandas as pd
 import numpy as np
@@ -203,6 +203,9 @@ class CSVProcessorApp(ctk.CTk):
         
         # Custom legend entries for plots
         self.custom_legend_entries = {}
+        
+        # Custom colors for plots
+        self.custom_colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]
 
         # Create Main UI
         self.main_tab_view = ctk.CTkTabview(self)
@@ -1649,31 +1652,55 @@ class CSVProcessorApp(ctk.CTk):
             ctk.CTkLabel(appearance_frame, text="Color Scheme:").grid(row=6, column=0, sticky="w", padx=10, pady=(10,0))
             self.color_scheme_var = ctk.StringVar(value="Auto (Matplotlib)")
             color_schemes = ["Auto (Matplotlib)", "Viridis", "Plasma", "Cool", "Warm", "Rainbow", "Custom Colors"]
-            color_scheme_menu = ctk.CTkOptionMenu(appearance_frame, variable=self.color_scheme_var, values=color_schemes, command=self._on_plot_setting_change)
+            color_scheme_menu = ctk.CTkOptionMenu(appearance_frame, variable=self.color_scheme_var, values=color_schemes, command=self._on_color_scheme_change)
             color_scheme_menu.grid(row=7, column=0, sticky="ew", padx=10, pady=5)
             
+            # Custom Colors Frame (initially hidden)
+            self.custom_colors_frame = ctk.CTkFrame(appearance_frame)
+            self.custom_colors_frame.grid(row=8, column=0, sticky="ew", padx=10, pady=5)
+            self.custom_colors_frame.grid_remove()  # Initially hidden
+            self.custom_colors_frame.grid_columnconfigure(0, weight=1)
+            
+            ctk.CTkLabel(self.custom_colors_frame, text="Custom Colors:", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, sticky="w", padx=10, pady=5)
+            
+            # Scrollable frame for color buttons
+            self.colors_scroll_frame = ctk.CTkScrollableFrame(self.custom_colors_frame, height=80)
+            self.colors_scroll_frame.grid(row=1, column=0, columnspan=2, sticky="ew", padx=10, pady=5)
+            
+            # Buttons for color management
+            colors_buttons_frame = ctk.CTkFrame(self.custom_colors_frame, fg_color="transparent")
+            colors_buttons_frame.grid(row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=5)
+            colors_buttons_frame.grid_columnconfigure(0, weight=1)
+            colors_buttons_frame.grid_columnconfigure(1, weight=1)
+            
+            ctk.CTkButton(colors_buttons_frame, text="Add Color", command=self._add_custom_color).grid(row=0, column=0, padx=5, sticky="ew")
+            ctk.CTkButton(colors_buttons_frame, text="Reset to Default", command=self._reset_custom_colors).grid(row=0, column=1, padx=5, sticky="ew")
+            
+            # Initialize custom colors display
+            self._update_custom_colors_display()
+            
             # Line width control
-            ctk.CTkLabel(appearance_frame, text="Line Width:").grid(row=8, column=0, sticky="w", padx=10, pady=(5,0))
+            ctk.CTkLabel(appearance_frame, text="Line Width:").grid(row=9, column=0, sticky="w", padx=10, pady=(5,0))
             self.line_width_var = ctk.StringVar(value="1.0")
             line_widths = ["0.5", "1.0", "1.5", "2.0", "2.5", "3.0"]
             line_width_menu = ctk.CTkOptionMenu(appearance_frame, variable=self.line_width_var, values=line_widths, command=self._on_plot_setting_change)
-            line_width_menu.grid(row=9, column=0, sticky="ew", padx=10, pady=5)
+            line_width_menu.grid(row=10, column=0, sticky="ew", padx=10, pady=5)
             
             # Custom Legend Labels control
             legend_header_frame = ctk.CTkFrame(appearance_frame, fg_color="transparent")
-            legend_header_frame.grid(row=10, column=0, sticky="ew", padx=10, pady=(10,0))
+            legend_header_frame.grid(row=11, column=0, sticky="ew", padx=10, pady=(10,0))
             legend_header_frame.grid_columnconfigure(0, weight=1)
             
             ctk.CTkLabel(legend_header_frame, text="Custom Legend Labels:", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, sticky="w")
             ctk.CTkButton(legend_header_frame, text="?", width=25, height=25, command=self._show_legend_guide).grid(row=0, column=1, sticky="e", padx=(5,0))
             
-            ctk.CTkLabel(appearance_frame, text="For subscripts use: $H_2O$, $CO_2$, $v_{max}$ (LaTeX syntax)", font=ctk.CTkFont(size=10)).grid(row=11, column=0, sticky="w", padx=10, pady=(0,5))
+            ctk.CTkLabel(appearance_frame, text="For subscripts use: $H_2O$, $CO_2$, $v_{max}$ (LaTeX syntax)", font=ctk.CTkFont(size=10)).grid(row=12, column=0, sticky="w", padx=10, pady=(0,5))
             
             # Scrollable frame for legend customization
             self.legend_frame = ctk.CTkScrollableFrame(appearance_frame, height=120)
-            self.legend_frame.grid(row=12, column=0, sticky="ew", padx=10, pady=5)
+            self.legend_frame.grid(row=13, column=0, sticky="ew", padx=10, pady=5)
             
-            ctk.CTkButton(appearance_frame, text="Refresh Legend Entries", command=self._refresh_legend_entries).grid(row=13, column=0, sticky="ew", padx=10, pady=5)
+            ctk.CTkButton(appearance_frame, text="Refresh Legend Entries", command=self._refresh_legend_entries).grid(row=14, column=0, sticky="ew", padx=10, pady=5)
 
             # Custom legend entries dictionary
             self.custom_legend_entries = {}
@@ -2221,7 +2248,13 @@ class CSVProcessorApp(ctk.CTk):
                 colors = plt.cm.autumn(np.linspace(0, 1, len(signals_to_plot)))
             elif color_scheme == "Rainbow":
                 colors = plt.cm.rainbow(np.linspace(0, 1, len(signals_to_plot)))
-            else:  # Custom Colors - default to tab10
+            elif color_scheme == "Custom Colors":
+                # Use custom colors, cycling through them if we have more signals than colors
+                colors = []
+                for i in range(len(signals_to_plot)):
+                    color_index = i % len(self.custom_colors)
+                    colors.append(self.custom_colors[color_index])
+            else:  # Fallback
                 colors = plt.cm.Set1(np.linspace(0, 1, len(signals_to_plot)))
 
             # Plot each selected signal
@@ -3784,6 +3817,7 @@ For additional support or feature requests, please refer to the application docu
             'trendline_signal': self.trendline_signal_var.get() if hasattr(self, 'trendline_signal_var') else 'Select signal...',
             'trendline_type': self.trendline_type_var.get() if hasattr(self, 'trendline_type_var') else 'None',
             'custom_legend_entries': dict(self.custom_legend_entries),  # Save custom legend labels
+            'custom_colors': list(self.custom_colors),  # Save custom colors
             'created_date': pd.Timestamp.now().isoformat()
         }
         
@@ -3901,6 +3935,11 @@ For additional support or feature requests, please refer to the application docu
             self.custom_legend_entries = dict(plot_config['custom_legend_entries'])
             self._refresh_legend_entries()  # Refresh the legend UI
         
+        # Apply custom colors if they exist in the config
+        if 'custom_colors' in plot_config and plot_config['custom_colors']:
+            self.custom_colors = list(plot_config['custom_colors'])
+            self._update_custom_colors_display()
+        
         # Apply other settings
         if 'show_both_signals' in plot_config and hasattr(self, 'show_both_signals_var'):
             self.show_both_signals_var.set(plot_config['show_both_signals'])
@@ -3927,7 +3966,10 @@ For additional support or feature requests, please refer to the application docu
         
         # Apply color scheme and styling settings
         if 'color_scheme' in plot_config and hasattr(self, 'color_scheme_var'):
-            self.color_scheme_var.set(plot_config.get('color_scheme', 'Auto (Matplotlib)'))
+            color_scheme = plot_config.get('color_scheme', 'Auto (Matplotlib)')
+            self.color_scheme_var.set(color_scheme)
+            # Trigger the color scheme change to show/hide custom colors frame
+            self._on_color_scheme_change(color_scheme)
         
         if 'line_width' in plot_config and hasattr(self, 'line_width_var'):
             self.line_width_var.set(plot_config.get('line_width', '1.0'))
@@ -4171,6 +4213,87 @@ For additional support or feature requests, please refer to the application docu
             if hasattr(self, '_update_pending'):
                 self.after_cancel(self._update_pending)
             self._update_pending = self.after_idle(self.update_plot)
+
+    def _on_color_scheme_change(self, scheme):
+        """Handle color scheme change and show/hide custom colors interface."""
+        if scheme == "Custom Colors":
+            self.custom_colors_frame.grid()
+        else:
+            self.custom_colors_frame.grid_remove()
+        
+        # Trigger plot update
+        self._on_plot_setting_change()
+
+    def _update_custom_colors_display(self):
+        """Update the display of custom colors with color preview buttons."""
+        # Clear existing widgets
+        for widget in self.colors_scroll_frame.winfo_children():
+            widget.destroy()
+        
+        for i, color in enumerate(self.custom_colors):
+            color_frame = ctk.CTkFrame(self.colors_scroll_frame)
+            color_frame.pack(fill="x", padx=5, pady=2)
+            
+            # Color preview button
+            color_button = ctk.CTkButton(
+                color_frame, 
+                text=f"Color {i+1}", 
+                width=80, 
+                height=30,
+                fg_color=color,
+                hover_color=color,
+                command=lambda idx=i: self._edit_custom_color(idx)
+            )
+            color_button.pack(side="left", padx=5, pady=5)
+            
+            # Color hex code label
+            color_label = ctk.CTkLabel(color_frame, text=color, font=ctk.CTkFont(size=10))
+            color_label.pack(side="left", padx=5, pady=5)
+            
+            # Remove button
+            remove_button = ctk.CTkButton(
+                color_frame, 
+                text="✕", 
+                width=30, 
+                height=30,
+                command=lambda idx=i: self._remove_custom_color(idx)
+            )
+            remove_button.pack(side="right", padx=5, pady=5)
+
+    def _add_custom_color(self):
+        """Add a new custom color using color picker."""
+        color = colorchooser.askcolor(title="Choose Color")[1]  # Get hex value
+        if color:
+            self.custom_colors.append(color)
+            self._update_custom_colors_display()
+            if self.color_scheme_var.get() == "Custom Colors":
+                self._on_plot_setting_change()
+
+    def _edit_custom_color(self, index):
+        """Edit an existing custom color."""
+        if 0 <= index < len(self.custom_colors):
+            current_color = self.custom_colors[index]
+            color = colorchooser.askcolor(color=current_color, title=f"Edit Color {index+1}")[1]
+            if color:
+                self.custom_colors[index] = color
+                self._update_custom_colors_display()
+                if self.color_scheme_var.get() == "Custom Colors":
+                    self._on_plot_setting_change()
+
+    def _remove_custom_color(self, index):
+        """Remove a custom color."""
+        if 0 <= index < len(self.custom_colors) and len(self.custom_colors) > 1:  # Keep at least one color
+            self.custom_colors.pop(index)
+            self._update_custom_colors_display()
+            if self.color_scheme_var.get() == "Custom Colors":
+                self._on_plot_setting_change()
+
+    def _reset_custom_colors(self):
+        """Reset custom colors to default set."""
+        self.custom_colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]
+        self._update_custom_colors_display()
+        if self.color_scheme_var.get() == "Custom Colors":
+            self._on_plot_setting_change()
 
     def _bind_mousewheel_to_frame(self, frame):
         """Bind mouse wheel events to a frame for proper scrolling."""
