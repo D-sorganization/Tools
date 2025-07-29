@@ -2492,11 +2492,46 @@ class CSVProcessorApp(ctk.CTk):
                 text_color="green"
             )
             
-            messagebox.showinfo("Success", f"Signal list '{self.saved_signal_list_name}' loaded successfully!\n\nSignals: {len(self.saved_signal_list)}")
+            # Automatically apply the loaded signals if we have signals available
+            if self.signal_vars:
+                self._apply_loaded_signals_internal()
+            
+            messagebox.showinfo("Success", f"Signal list '{self.saved_signal_list_name}' loaded and applied successfully!\n\nSignals: {len(self.saved_signal_list)}")
             self.status_label.configure(text=f"Signal list loaded: {self.saved_signal_list_name}")
         
         except Exception as e:
             messagebox.showerror("Error", f"Failed to load signal list:\n{e}")
+
+    def _apply_loaded_signals_internal(self):
+        """Internal method to apply loaded signals without showing message boxes."""
+        if not self.saved_signal_list or not self.signal_vars:
+            return
+        
+        # Get current available signals
+        available_signals = list(self.signal_vars.keys())
+        
+        # Find which saved signals are present
+        present_signals = []
+        missing_signals = []
+        
+        for saved_signal in self.saved_signal_list:
+            if saved_signal in available_signals:
+                present_signals.append(saved_signal)
+            else:
+                missing_signals.append(saved_signal)
+        
+        # Apply the saved signals (select present ones, deselect others)
+        for signal, data in self.signal_vars.items():
+            if signal in present_signals:
+                data['var'].set(True)
+            else:
+                data['var'].set(False)
+        
+        # Update status
+        self.signal_list_status_label.configure(
+            text=f"Applied: {self.saved_signal_list_name} ({len(present_signals)}/{len(self.saved_signal_list)} signals)",
+            text_color="blue"
+        )
 
     def apply_saved_signals(self):
         """Apply the saved signal list to the current file's signals."""
