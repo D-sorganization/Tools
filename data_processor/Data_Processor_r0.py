@@ -2137,10 +2137,10 @@ class CSVProcessorApp(ctk.CTk):
         self.plot_ax.grid(True, linestyle='--', alpha=0.6)
 
         if pd.api.types.is_datetime64_any_dtype(df[x_axis_col]):
-             # Include seconds in the time label to avoid duplicate minute-only labels
-             self.plot_ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
-             # Slight rotation improves readability with longer labels
-             self.plot_ax.tick_params(axis='x', rotation=45)
+             # Use simpler HH:MM format for cleaner plot appearance
+             self.plot_ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+             # Keep labels horizontal for better readability
+             self.plot_ax.tick_params(axis='x', rotation=0)
 
         self.plot_canvas.draw()
 
@@ -2889,10 +2889,10 @@ class CSVProcessorApp(ctk.CTk):
             self.plot_ax.grid(True, linestyle='--', alpha=0.6)
             
             if pd.api.types.is_datetime64_any_dtype(filtered_df[time_col]):
-                 # Include seconds in the time label to avoid duplicate minute-only labels
-                 self.plot_ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
-                 # Slight rotation improves readability with longer labels
-                 self.plot_ax.tick_params(axis='x', rotation=45)
+                 # Use simpler HH:MM format for cleaner plot appearance
+                 self.plot_ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+                 # Keep labels horizontal for better readability
+                 self.plot_ax.tick_params(axis='x', rotation=0)
             
             self.plot_canvas.draw()
             
