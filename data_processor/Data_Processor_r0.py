@@ -2358,31 +2358,41 @@ class CSVProcessorApp(ctk.CTk):
             return
         
         try:
+            print(f"DEBUG: on_plot_file_select called with: {value}")
+            
             # Ensure data is loaded
             if not self._ensure_data_loaded(value):
+                print(f"DEBUG: _ensure_data_loaded failed for: {value}")
                 messagebox.showerror("Error", f"Failed to load file: {value}")
                 return
             
             df = self.get_data_for_plotting(value)
             if df is not None and not df.empty:
+                print(f"DEBUG: Data loaded successfully in on_plot_file_select. Shape: {df.shape}")
+                
                 # Update x-axis options - use actual columns, not "default time"
                 x_axis_options = list(df.columns)
                 self.plot_xaxis_menu.configure(values=x_axis_options)
+                print(f"DEBUG: Updated x-axis options: {x_axis_options}")
                 
                 # Set the first column as default x-axis (usually time)
                 if x_axis_options:
                     self.plot_xaxis_menu.set(x_axis_options[0])
+                    print(f"DEBUG: Set default x-axis to: {x_axis_options[0]}")
                 
                 # Update signal checkboxes
                 self.plot_signal_vars = {}
                 for widget in self.plot_signal_frame.winfo_children():
                     widget.destroy()
                 
+                print(f"DEBUG: Creating checkboxes for {len(df.columns)} signals")
                 for signal in df.columns:
                     var = tk.BooleanVar(value=False)
                     cb = ctk.CTkCheckBox(self.plot_signal_frame, text=signal, variable=var, command=self._on_plot_setting_change)
                     cb.pack(anchor="w", padx=5, pady=2)
-                    self.plot_signal_vars[signal] = {'var': var, 'checkbox': cb}
+                    self.plot_signal_vars[signal] = {'var': var, 'widget': cb}
+                
+                print(f"DEBUG: Created plot_signal_vars with keys: {list(self.plot_signal_vars.keys())}")
                 
                 # Re-bind mouse wheel to all new checkboxes
                 self._bind_mousewheel_to_frame(self.plot_signal_frame)
@@ -2393,42 +2403,55 @@ class CSVProcessorApp(ctk.CTk):
                 self.trendline_signal_var.set("Select signal...")
                     
                 # Update plot
+                print("DEBUG: Calling update_plot from on_plot_file_select")
                 self.update_plot()
             else:
+                print(f"DEBUG: No data available for file: {value}")
                 messagebox.showerror("Error", f"No data available for file: {value}")
                 
         except Exception as e:
-            print(f"Error in on_plot_file_select: {e}")
+            print(f"ERROR in on_plot_file_select: {e}")
+            import traceback
+            traceback.print_exc()
             messagebox.showerror("Error", f"Failed to select file for plotting:\n{str(e)}")
 
     def update_plot(self, selected_signals=None):
         """The main function to draw/redraw the plot with all selected options."""
         if not hasattr(self, 'plot_canvas') or not hasattr(self, 'plot_ax'):
+            print("DEBUG: plot_canvas or plot_ax not found")
             return
         
         try:
             # Clear any previous error messages
             self.status_label.configure(text="Updating plot...")
+            print(f"DEBUG: Starting plot update. Selected signals: {selected_signals}")
             
             zoom_state = self._preserve_zoom_during_update()
                 
             selected_file = self.plot_file_menu.get()
             x_axis_col = self.plot_xaxis_menu.get()
+            print(f"DEBUG: Selected file: {selected_file}, X-axis: {x_axis_col}")
 
             if selected_file == "Select a file..." or not x_axis_col:
+                print("DEBUG: No file or x-axis selected")
                 return
 
             df = self.get_data_for_plotting(selected_file)
             if df is None or df.empty:
+                print("DEBUG: No data retrieved for plotting")
                 self.plot_ax.clear()
                 self.plot_ax.text(0.5, 0.5, "Could not load or plot data.", ha='center', va='center')
                 self.plot_canvas.draw()
                 return
+            
+            print(f"DEBUG: Data loaded successfully. Shape: {df.shape}, Columns: {list(df.columns)}")
 
             if x_axis_col not in df.columns:
+                print(f"DEBUG: X-axis column '{x_axis_col}' not in data columns")
                 if len(df.columns) > 0:
                     self.plot_xaxis_menu.set(df.columns[0])
                     x_axis_col = df.columns[0]
+                    print(f"DEBUG: Set x-axis to first column: {x_axis_col}")
                 else:
                     self.plot_ax.clear()
                     self.plot_ax.text(0.5, 0.5, "No valid columns found for plotting.", ha='center', va='center')
@@ -2436,6 +2459,9 @@ class CSVProcessorApp(ctk.CTk):
                     return
 
             signals_to_plot = selected_signals if selected_signals else [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
+            print(f"DEBUG: Signals to plot: {signals_to_plot}")
+            print(f"DEBUG: plot_signal_vars keys: {list(self.plot_signal_vars.keys())}")
+            
             self.plot_ax.clear()
 
             if not signals_to_plot:
@@ -2789,8 +2815,11 @@ class CSVProcessorApp(ctk.CTk):
     def get_data_for_plotting(self, filename):
         """Get data for plotting from the specified file."""
         try:
+            print(f"DEBUG: get_data_for_plotting called for: {filename}")
+            
             # First check if it's in processed files
             if filename in self.processed_files:
+                print(f"DEBUG: Found in processed_files")
                 df = self.processed_files[filename].copy()
                 # Ensure datetime columns are properly formatted
                 for col in df.columns:
@@ -2801,6 +2830,7 @@ class CSVProcessorApp(ctk.CTk):
                             pass
                 return df
             
+            print(f"DEBUG: Not in processed_files, checking input files")
             # Find the full path of the file
             full_path = None
             for file_path in self.input_file_paths:
@@ -2808,7 +2838,9 @@ class CSVProcessorApp(ctk.CTk):
                     full_path = file_path
                     break
             
+            print(f"DEBUG: Full path found: {full_path}")
             if full_path and os.path.exists(full_path):
+                print(f"DEBUG: Reading CSV from: {full_path}")
                 df = pd.read_csv(full_path, low_memory=False)
                 
                 # Try to convert datetime columns
@@ -2821,14 +2853,20 @@ class CSVProcessorApp(ctk.CTk):
                 
                 # Store in cache for future use
                 self.loaded_data_cache[filename] = df.copy()
+                print(f"DEBUG: Successfully loaded data. Shape: {df.shape}")
                 return df
                 
             # Check in loaded data cache
             if filename in self.loaded_data_cache:
+                print(f"DEBUG: Found in loaded_data_cache")
                 return self.loaded_data_cache[filename].copy()
                 
+            print(f"DEBUG: No data source found for {filename}")
+                
         except Exception as e:
-            print(f"Error loading data for plotting: {e}")
+            print(f"ERROR in get_data_for_plotting: {e}")
+            import traceback
+            traceback.print_exc()
             messagebox.showerror("Error", f"Failed to load data for plotting:\n{str(e)}")
             
         return None
