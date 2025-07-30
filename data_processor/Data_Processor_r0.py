@@ -211,13 +211,13 @@ class CSVProcessorApp(ctk.CTk):
         self.main_tab_view = ctk.CTkTabview(self)
         self.main_tab_view.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
         
-        self.main_tab_view.add("Setup & Process")
+        self.main_tab_view.add("Processing")
         self.main_tab_view.add("Plotting & Analysis")
         self.main_tab_view.add("Plots List")
         self.main_tab_view.add("DAT File Import")
         self.main_tab_view.add("Help")
 
-        self.create_setup_and_process_tab(self.main_tab_view.tab("Setup & Process"))
+        self.create_setup_and_process_tab(self.main_tab_view.tab("Processing"))
         self.create_plotting_tab(self.main_tab_view.tab("Plotting & Analysis"))
         self.create_plots_list_tab(self.main_tab_view.tab("Plots List"))
         self.create_dat_import_tab(self.main_tab_view.tab("DAT File Import"))
@@ -830,7 +830,7 @@ class CSVProcessorApp(ctk.CTk):
     def populate_custom_var_sub_tab(self, tab):
         """Fixed custom variables sub-tab with missing listbox."""
         tab.grid_columnconfigure(0, weight=1)
-        tab.grid_rowconfigure(8, weight=1)
+        tab.grid_rowconfigure(9, weight=1)
 
         ctk.CTkLabel(tab, text="Custom Variables (Formula Engine)", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, padx=10, pady=10, sticky="w")
         ctk.CTkLabel(tab, text="Create new columns using exact signal names in [brackets].", justify="left").grid(row=1, column=0, padx=10, pady=(0, 5), sticky="w")
@@ -845,9 +845,20 @@ class CSVProcessorApp(ctk.CTk):
         
         ctk.CTkButton(tab, text="Add Custom Variable", command=self._add_custom_variable).grid(row=6, column=0, padx=10, pady=10, sticky="ew")
         
+        # Save/Load custom variables
+        save_load_frame = ctk.CTkFrame(tab)
+        save_load_frame.grid(row=7, column=0, padx=10, pady=5, sticky="ew")
+        save_load_frame.grid_columnconfigure(0, weight=1)
+        save_load_frame.grid_columnconfigure(1, weight=1)
+        
+        ctk.CTkLabel(save_load_frame, text="Save/Load Custom Variables", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=5, sticky="w")
+        
+        ctk.CTkButton(save_load_frame, text="Save Variables", command=self._save_custom_variables).grid(row=1, column=0, padx=5, pady=5, sticky="ew")
+        ctk.CTkButton(save_load_frame, text="Load Variables", command=self._load_custom_variables).grid(row=1, column=1, padx=5, pady=5, sticky="ew")
+        
         # FIXED: Add missing custom variables listbox
         custom_vars_list_frame = ctk.CTkFrame(tab)
-        custom_vars_list_frame.grid(row=7, column=0, padx=10, pady=5, sticky="ew")
+        custom_vars_list_frame.grid(row=8, column=0, padx=10, pady=5, sticky="ew")
         custom_vars_list_frame.grid_columnconfigure(0, weight=1)
         
         ctk.CTkLabel(custom_vars_list_frame, text="Current Custom Variables:", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, padx=10, pady=5, sticky="w")
@@ -859,7 +870,7 @@ class CSVProcessorApp(ctk.CTk):
         
         # Searchable reference list
         reference_frame = ctk.CTkFrame(tab)
-        reference_frame.grid(row=8, column=0, padx=10, pady=5, sticky="nsew")
+        reference_frame.grid(row=9, column=0, padx=10, pady=5, sticky="nsew")
         reference_frame.grid_columnconfigure(0, weight=1)
         reference_frame.grid_rowconfigure(1, weight=1)
 
@@ -891,6 +902,74 @@ class CSVProcessorApp(ctk.CTk):
         """Clear all custom variables."""
         self.custom_vars_list.clear()
         self._update_custom_vars_display()
+
+    def _save_custom_variables(self):
+        """Save current custom variables to a JSON file."""
+        if not self.custom_vars_list:
+            messagebox.showwarning("Warning", "No custom variables to save.")
+            return
+        
+        file_path = filedialog.asksaveasfilename(
+            title="Save Custom Variables",
+            defaultextension=".json",
+            filetypes=[("JSON files", "*.json"), ("All files", "*.*")]
+        )
+        
+        if file_path:
+            try:
+                with open(file_path, 'w') as f:
+                    json.dump(self.custom_vars_list, f, indent=2)
+                messagebox.showinfo("Success", f"Custom variables saved to {file_path}")
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to save custom variables: {str(e)}")
+
+    def _load_custom_variables(self):
+        """Load custom variables from a JSON file."""
+        file_path = filedialog.askopenfilename(
+            title="Load Custom Variables",
+            filetypes=[("JSON files", "*.json"), ("All files", "*.*")]
+        )
+        
+        if file_path:
+            try:
+                with open(file_path, 'r') as f:
+                    loaded_vars = json.load(f)
+                
+                # Validate the loaded data
+                if not isinstance(loaded_vars, list):
+                    messagebox.showerror("Error", "Invalid file format. Expected a list of variables.")
+                    return
+                
+                # Check if variables have required fields
+                for var in loaded_vars:
+                    if not isinstance(var, dict) or 'name' not in var or 'formula' not in var:
+                        messagebox.showerror("Error", "Invalid variable format in file.")
+                        return
+                
+                # Ask if user wants to append or replace
+                if self.custom_vars_list:
+                    response = messagebox.askyesnocancel(
+                        "Load Variables",
+                        f"Found {len(loaded_vars)} variables in file.\n\n"
+                        "• Yes: Add to existing variables\n"
+                        "• No: Replace all existing variables\n"
+                        "• Cancel: Cancel operation"
+                    )
+                    
+                    if response is None:  # Cancel
+                        return
+                    elif response:  # Yes - append
+                        self.custom_vars_list.extend(loaded_vars)
+                    else:  # No - replace
+                        self.custom_vars_list = loaded_vars.copy()
+                else:
+                    self.custom_vars_list = loaded_vars.copy()
+                
+                self._update_custom_vars_display()
+                messagebox.showinfo("Success", f"Loaded {len(loaded_vars)} custom variables from {file_path}")
+                
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to load custom variables: {str(e)}")
 
     def _apply_integration(self, df, time_col, signals_to_integrate, method="Trapezoidal"):
         """Apply integration to selected signals."""
@@ -1892,6 +1971,7 @@ class CSVProcessorApp(ctk.CTk):
             zoom_frame.grid_columnconfigure(0, weight=1)
             zoom_frame.grid_columnconfigure(1, weight=1)
             zoom_frame.grid_columnconfigure(2, weight=1)
+            zoom_frame.grid_columnconfigure(3, weight=1)
             
             save_zoom_btn = ctk.CTkButton(zoom_frame, text="Save Zoom State", command=self._save_zoom_state)
             save_zoom_btn.grid(row=0, column=0, padx=2, pady=2, sticky="ew")
@@ -1899,8 +1979,11 @@ class CSVProcessorApp(ctk.CTk):
             restore_zoom_btn = ctk.CTkButton(zoom_frame, text="Restore Zoom", command=self._restore_zoom_state)
             restore_zoom_btn.grid(row=0, column=1, padx=2, pady=2, sticky="ew")
             
+            zoom_in_btn = ctk.CTkButton(zoom_frame, text="Zoom In 25%", command=self._zoom_in_25)
+            zoom_in_btn.grid(row=0, column=2, padx=2, pady=2, sticky="ew")
+            
             zoom_out_btn = ctk.CTkButton(zoom_frame, text="Zoom Out 25%", command=self._zoom_out_25)
-            zoom_out_btn.grid(row=0, column=2, padx=2, pady=2, sticky="ew")
+            zoom_out_btn.grid(row=0, column=3, padx=2, pady=2, sticky="ew")
 
         # Create splitter for plotting tab
         splitter_frame = self._create_splitter(plot_main_frame, create_plot_left_content, create_plot_right_content, 'plotting_left_width', 400)
@@ -2843,12 +2926,201 @@ COMMON MISTAKES TO AVOID:
         guide_window.geometry(f"600x700+{x}+{y}")
 
     def save_settings(self):
-        """Save current settings."""
-        pass
+        """Save current settings to a configuration file."""
+        try:
+            # Collect all current settings
+            settings = {
+                'filter_settings': {
+                    'filter_type': self.filter_type_var.get() if hasattr(self, 'filter_type_var') else "None",
+                    'ma_window': self.ma_value_entry.get() if hasattr(self, 'ma_value_entry') else "10",
+                    'ma_unit': self.ma_unit_menu.get() if hasattr(self, 'ma_unit_menu') else "s",
+                    'bw_order': self.bw_order_entry.get() if hasattr(self, 'bw_order_entry') else "3",
+                    'bw_cutoff': self.bw_cutoff_entry.get() if hasattr(self, 'bw_cutoff_entry') else "0.1",
+                    'median_kernel': self.median_kernel_entry.get() if hasattr(self, 'median_kernel_entry') else "5",
+                    'hampel_window': self.hampel_window_entry.get() if hasattr(self, 'hampel_window_entry') else "7",
+                    'hampel_threshold': self.hampel_threshold_entry.get() if hasattr(self, 'hampel_threshold_entry') else "3.0",
+                    'zscore_threshold': self.zscore_threshold_entry.get() if hasattr(self, 'zscore_threshold_entry') else "3.0",
+                    'zscore_method': self.zscore_method_menu.get() if hasattr(self, 'zscore_method_menu') else "Remove Outliers",
+                    'savgol_window': self.savgol_window_entry.get() if hasattr(self, 'savgol_window_entry') else "11",
+                    'savgol_polyorder': self.savgol_polyorder_entry.get() if hasattr(self, 'savgol_polyorder_entry') else "2"
+                },
+                'resample_settings': {
+                    'enabled': self.resample_var.get() if hasattr(self, 'resample_var') else False,
+                    'value': self.resample_value_entry.get() if hasattr(self, 'resample_value_entry') else "10",
+                    'unit': self.resample_unit_menu.get() if hasattr(self, 'resample_unit_menu') else "s"
+                },
+                'trim_settings': {
+                    'date': self.trim_date_entry.get() if hasattr(self, 'trim_date_entry') else "",
+                    'start_time': self.trim_start_entry.get() if hasattr(self, 'trim_start_entry') else "",
+                    'end_time': self.trim_end_entry.get() if hasattr(self, 'trim_end_entry') else ""
+                },
+                'integration_settings': {
+                    'method': self.integrator_method_var.get() if hasattr(self, 'integrator_method_var') else "Trapezoidal"
+                },
+                'differentiation_settings': {
+                    'method': self.deriv_method_var.get() if hasattr(self, 'deriv_method_var') else "Spline (Acausal)",
+                    'orders': {str(i): var.get() for i, var in self.derivative_vars.items()} if hasattr(self, 'derivative_vars') else {}
+                },
+                'export_settings': {
+                    'type': self.export_type_var.get() if hasattr(self, 'export_type_var') else "CSV (Separate Files)",
+                    'sort_column': self.sort_col_menu.get() if hasattr(self, 'sort_col_menu') else "No Sorting",
+                    'sort_order': self.sort_order_var.get() if hasattr(self, 'sort_order_var') else "Ascending"
+                },
+                'dataset_naming': {
+                    'mode': self.dataset_naming_var.get() if hasattr(self, 'dataset_naming_var') else "auto",
+                    'custom_name': self.custom_dataset_entry.get() if hasattr(self, 'custom_dataset_entry') else ""
+                },
+                'custom_variables': self.custom_vars_list if hasattr(self, 'custom_vars_list') else [],
+                'output_directory': self.output_directory,
+                'saved_at': pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')
+            }
+            
+            # Ask user for save location
+            file_path = filedialog.asksaveasfilename(
+                title="Save Configuration Settings",
+                defaultextension=".json",
+                filetypes=[("JSON Configuration", "*.json"), ("All files", "*.*")],
+                initialvalue="csv_processor_config.json"
+            )
+            
+            if file_path:
+                with open(file_path, 'w') as f:
+                    json.dump(settings, f, indent=2)
+                messagebox.showinfo("Success", f"Settings saved to:\n{file_path}")
+                
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to save settings:\n{str(e)}")
 
     def load_settings(self):
-        """Load saved settings."""
-        pass
+        """Load settings from a configuration file."""
+        try:
+            file_path = filedialog.askopenfilename(
+                title="Load Configuration Settings",
+                filetypes=[("JSON Configuration", "*.json"), ("All files", "*.*")]
+            )
+            
+            if not file_path:
+                return
+                
+            with open(file_path, 'r') as f:
+                settings = json.load(f)
+            
+            # Apply filter settings
+            if 'filter_settings' in settings:
+                fs = settings['filter_settings']
+                if hasattr(self, 'filter_type_var'):
+                    self.filter_type_var.set(fs.get('filter_type', 'None'))
+                    self._update_filter_ui(fs.get('filter_type', 'None'))
+                if hasattr(self, 'ma_value_entry'):
+                    self.ma_value_entry.delete(0, tk.END)
+                    self.ma_value_entry.insert(0, fs.get('ma_window', '10'))
+                if hasattr(self, 'ma_unit_menu'):
+                    self.ma_unit_menu.set(fs.get('ma_unit', 's'))
+                if hasattr(self, 'bw_order_entry'):
+                    self.bw_order_entry.delete(0, tk.END)
+                    self.bw_order_entry.insert(0, fs.get('bw_order', '3'))
+                if hasattr(self, 'bw_cutoff_entry'):
+                    self.bw_cutoff_entry.delete(0, tk.END)
+                    self.bw_cutoff_entry.insert(0, fs.get('bw_cutoff', '0.1'))
+                if hasattr(self, 'median_kernel_entry'):
+                    self.median_kernel_entry.delete(0, tk.END)
+                    self.median_kernel_entry.insert(0, fs.get('median_kernel', '5'))
+                if hasattr(self, 'hampel_window_entry'):
+                    self.hampel_window_entry.delete(0, tk.END)
+                    self.hampel_window_entry.insert(0, fs.get('hampel_window', '7'))
+                if hasattr(self, 'hampel_threshold_entry'):
+                    self.hampel_threshold_entry.delete(0, tk.END)
+                    self.hampel_threshold_entry.insert(0, fs.get('hampel_threshold', '3.0'))
+                if hasattr(self, 'zscore_threshold_entry'):
+                    self.zscore_threshold_entry.delete(0, tk.END)
+                    self.zscore_threshold_entry.insert(0, fs.get('zscore_threshold', '3.0'))
+                if hasattr(self, 'zscore_method_menu'):
+                    self.zscore_method_menu.set(fs.get('zscore_method', 'Remove Outliers'))
+                if hasattr(self, 'savgol_window_entry'):
+                    self.savgol_window_entry.delete(0, tk.END)
+                    self.savgol_window_entry.insert(0, fs.get('savgol_window', '11'))
+                if hasattr(self, 'savgol_polyorder_entry'):
+                    self.savgol_polyorder_entry.delete(0, tk.END)
+                    self.savgol_polyorder_entry.insert(0, fs.get('savgol_polyorder', '2'))
+            
+            # Apply resample settings
+            if 'resample_settings' in settings:
+                rs = settings['resample_settings']
+                if hasattr(self, 'resample_var'):
+                    self.resample_var.set(rs.get('enabled', False))
+                if hasattr(self, 'resample_value_entry'):
+                    self.resample_value_entry.delete(0, tk.END)
+                    self.resample_value_entry.insert(0, rs.get('value', '10'))
+                if hasattr(self, 'resample_unit_menu'):
+                    self.resample_unit_menu.set(rs.get('unit', 's'))
+            
+            # Apply trim settings
+            if 'trim_settings' in settings:
+                ts = settings['trim_settings']
+                if hasattr(self, 'trim_date_entry'):
+                    self.trim_date_entry.delete(0, tk.END)
+                    self.trim_date_entry.insert(0, ts.get('date', ''))
+                if hasattr(self, 'trim_start_entry'):
+                    self.trim_start_entry.delete(0, tk.END)
+                    self.trim_start_entry.insert(0, ts.get('start_time', ''))
+                if hasattr(self, 'trim_end_entry'):
+                    self.trim_end_entry.delete(0, tk.END)
+                    self.trim_end_entry.insert(0, ts.get('end_time', ''))
+            
+            # Apply integration settings
+            if 'integration_settings' in settings:
+                its = settings['integration_settings']
+                if hasattr(self, 'integrator_method_var'):
+                    self.integrator_method_var.set(its.get('method', 'Trapezoidal'))
+            
+            # Apply differentiation settings
+            if 'differentiation_settings' in settings:
+                ds = settings['differentiation_settings']
+                if hasattr(self, 'deriv_method_var'):
+                    self.deriv_method_var.set(ds.get('method', 'Spline (Acausal)'))
+                if hasattr(self, 'derivative_vars') and 'orders' in ds:
+                    for order_str, value in ds['orders'].items():
+                        order = int(order_str)
+                        if order in self.derivative_vars:
+                            self.derivative_vars[order].set(value)
+            
+            # Apply export settings
+            if 'export_settings' in settings:
+                es = settings['export_settings']
+                if hasattr(self, 'export_type_var'):
+                    self.export_type_var.set(es.get('type', 'CSV (Separate Files)'))
+                if hasattr(self, 'sort_col_menu'):
+                    self.sort_col_menu.set(es.get('sort_column', 'No Sorting'))
+                if hasattr(self, 'sort_order_var'):
+                    self.sort_order_var.set(es.get('sort_order', 'Ascending'))
+            
+            # Apply dataset naming settings
+            if 'dataset_naming' in settings:
+                dns = settings['dataset_naming']
+                if hasattr(self, 'dataset_naming_var'):
+                    self.dataset_naming_var.set(dns.get('mode', 'auto'))
+                    self._on_dataset_naming_change()
+                if hasattr(self, 'custom_dataset_entry'):
+                    self.custom_dataset_entry.delete(0, tk.END)
+                    self.custom_dataset_entry.insert(0, dns.get('custom_name', ''))
+            
+            # Apply custom variables
+            if 'custom_variables' in settings and hasattr(self, 'custom_vars_list'):
+                self.custom_vars_list = settings['custom_variables']
+                if hasattr(self, '_update_custom_vars_display'):
+                    self._update_custom_vars_display()
+            
+            # Apply output directory
+            if 'output_directory' in settings:
+                self.output_directory = settings['output_directory']
+                if hasattr(self, 'output_label'):
+                    self.output_label.configure(text=f"Output: {self.output_directory}")
+            
+            saved_at = settings.get('saved_at', 'Unknown time')
+            messagebox.showinfo("Success", f"Settings loaded successfully!\n\nConfiguration saved at: {saved_at}")
+                
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to load settings:\n{str(e)}")
 
     def save_signal_list(self):
         """Save the currently selected signals as a signal list."""
@@ -3406,11 +3678,88 @@ COMMON MISTAKES TO AVOID:
 
     def _import_selected_tags(self):
         """Import selected tags."""
-        pass
+        if not self.dat_import_data_file_path:
+            messagebox.showerror("Error", "Please select a data file first.")
+            return
+        
+        selected_tags = [tag for tag, var in self.dat_tag_vars.items() if var.get()]
+        if not selected_tags:
+            messagebox.showerror("Error", "Please select at least one tag to import.")
+            return
+        
+        try:
+            # Load and process the DAT file with selected tags
+            df = pd.read_csv(self.dat_import_data_file_path, sep='\t', low_memory=False)
+            
+            # Filter to only selected tags
+            if 'Time' in df.columns:
+                selected_columns = ['Time'] + [col for col in selected_tags if col in df.columns]
+            else:
+                selected_columns = [col for col in selected_tags if col in df.columns]
+            
+            filtered_df = df[selected_columns]
+            
+            # Save to CSV
+            output_path = filedialog.asksaveasfilename(
+                title="Save Imported DAT Data",
+                defaultextension=".csv",
+                filetypes=[("CSV files", "*.csv"), ("All files", "*.*")]
+            )
+            
+            if output_path:
+                filtered_df.to_csv(output_path, index=False)
+                messagebox.showinfo("Success", f"Data imported and saved to {output_path}")
+                
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to import data: {str(e)}")
 
     def trim_and_save(self):
         """Trim data and save."""
-        pass
+        if not self.input_file_paths:
+            messagebox.showerror("Error", "Please select input files first.")
+            return
+        
+        trim_date = self.trim_date_entry.get()
+        trim_start = self.trim_start_entry.get()
+        trim_end = self.trim_end_entry.get()
+        
+        if not any([trim_date, trim_start, trim_end]):
+            messagebox.showerror("Error", "Please specify at least one time parameter for trimming.")
+            return
+        
+        for file_path in self.input_file_paths:
+            try:
+                df = pd.read_csv(file_path, low_memory=False)
+                time_col = df.columns[0]
+                
+                # Convert time column
+                df[time_col] = pd.to_datetime(df[time_col], errors='coerce')
+                df.dropna(subset=[time_col], inplace=True)
+                
+                # Apply time trimming
+                if trim_date or trim_start or trim_end:
+                    # Get the date from the data if not specified
+                    if not trim_date:
+                        trim_date = df[time_col].iloc[0].strftime('%Y-%m-%d')
+                    
+                    # Create full datetime strings
+                    start_time_str = trim_start or "00:00:00"
+                    end_time_str = trim_end or "23:59:59"
+                    start_full_str = f"{trim_date} {start_time_str}"
+                    end_full_str = f"{trim_date} {end_time_str}"
+                    
+                    # Filter the data by time range
+                    df = df.set_index(time_col).loc[start_full_str:end_full_str].reset_index()
+                
+                # Save trimmed file
+                base_name = os.path.splitext(os.path.basename(file_path))[0]
+                output_path = os.path.join(self.output_directory, f"{base_name}_Trimmed.csv")
+                df.to_csv(output_path, index=False)
+                
+            except Exception as e:
+                print(f"Error trimming {file_path}: {e}")
+        
+        messagebox.showinfo("Success", f"Files trimmed and saved to {self.output_directory}")
 
     def _apply_plot_time_range(self):
         """Apply time range to plot."""
@@ -3648,8 +3997,8 @@ COMMON MISTAKES TO AVOID:
             self.trim_end_entry.delete(0, tk.END)
             self.trim_end_entry.insert(0, end_time_str)
             
-            # Switch to the Setup & Process tab
-            self.main_tab_view.set("Setup & Process")
+            # Switch to the Processing tab
+            self.main_tab_view.set("Processing")
             
             messagebox.showinfo("Success", f"Copied current view to Processing tab time trimming:\nDate: {date_str}\nStart: {start_time_str}\nEnd: {end_time_str}")
             
@@ -3721,7 +4070,88 @@ COMMON MISTAKES TO AVOID:
 
     def _add_trendline(self):
         """Add trendline to plot."""
-        pass
+        if not hasattr(self, 'plot_ax') or not self.plot_ax:
+            messagebox.showerror("Error", "No plot available. Please create a plot first.")
+            return
+        
+        trendline_signal = self.trendline_signal_var.get()
+        trendline_type = self.trendline_type_var.get()
+        
+        if trendline_signal == "Select signal..." or trendline_type == "None":
+            return
+        
+        try:
+            # Get current plot data
+            selected_file = self.plot_file_menu.get()
+            if selected_file == "Select a file...":
+                messagebox.showerror("Error", "Please select a file for plotting.")
+                return
+            
+            # Find the matching file path
+            file_path = None
+            for path in self.input_file_paths:
+                if os.path.basename(path) == selected_file:
+                    file_path = path
+                    break
+            
+            if not file_path:
+                messagebox.showerror("Error", "Selected file not found.")
+                return
+            
+            # Load data for trendline
+            df = self._load_data_for_plotting(file_path)
+            if df is None:
+                return
+            
+            # Get time and signal data
+            time_col = self.plot_xaxis_menu.get()
+            if time_col not in df.columns or trendline_signal not in df.columns:
+                messagebox.showerror("Error", "Selected columns not found in data.")
+                return
+            
+            x_data = df[time_col]
+            y_data = df[trendline_signal]
+            
+            # Remove NaN values
+            valid_mask = ~(pd.isna(x_data) | pd.isna(y_data))
+            x_clean = x_data[valid_mask]
+            y_clean = y_data[valid_mask]
+            
+            if len(x_clean) < 2:
+                messagebox.showerror("Error", "Not enough valid data points for trendline.")
+                return
+            
+            # Convert datetime to numeric for fitting if needed
+            if pd.api.types.is_datetime64_any_dtype(x_clean):
+                x_numeric = pd.to_numeric(x_clean)
+            else:
+                x_numeric = pd.to_numeric(x_clean, errors='coerce')
+            
+            y_numeric = pd.to_numeric(y_clean, errors='coerce')
+            
+            # Calculate trendline based on type
+            if trendline_type == "Linear":
+                coeffs = np.polyfit(x_numeric, y_numeric, 1)
+                trendline_y = np.polyval(coeffs, x_numeric)
+                label = f"Linear Trend: {trendline_signal}"
+            elif trendline_type == "Polynomial (2nd)":
+                coeffs = np.polyfit(x_numeric, y_numeric, 2)
+                trendline_y = np.polyval(coeffs, x_numeric)
+                label = f"Poly (2nd) Trend: {trendline_signal}"
+            elif trendline_type == "Polynomial (3rd)":
+                coeffs = np.polyfit(x_numeric, y_numeric, 3)
+                trendline_y = np.polyval(coeffs, x_numeric)
+                label = f"Poly (3rd) Trend: {trendline_signal}"
+            else:
+                return
+            
+            # Plot trendline
+            self.plot_ax.plot(x_clean, trendline_y, '--', linewidth=2, label=label, alpha=0.8)
+            self.plot_ax.legend()
+            self.plot_canvas.draw()
+            
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to add trendline: {str(e)}")
 
     def _create_dat_import_right(self, right_panel):
         """Create right panel for DAT import."""
@@ -3764,7 +4194,7 @@ This application provides comprehensive tools for processing, analyzing, and vis
 
 ## Tab Descriptions
 
-### Setup & Process Tab
+### Processing Tab
 **Purpose**: Configure file processing settings and batch export data.
 
 **Features**:
@@ -4034,17 +4464,25 @@ For additional support or feature requests, please refer to the application docu
 
     def _apply_plot_config(self, plot_config):
         """Apply a plot configuration to the current plotting tab."""
-        # Apply file selection
+        # Apply file selection first
         if 'file' in plot_config and plot_config['file'] and hasattr(self, 'plot_file_menu'):
             self.plot_file_menu.set(plot_config['file'])
             # Trigger file selection to populate signals
             self.on_plot_file_select(plot_config['file'])
-        
+            
+            # Give time for signals to load, then apply signal selections
+            self.after(100, lambda: self._apply_plot_config_signals(plot_config))
+        else:
+            # If no file, just apply what we can
+            self._apply_plot_config_signals(plot_config)
+    
+    def _apply_plot_config_signals(self, plot_config):
+        """Apply signal selections and other settings after file is loaded."""
         # Apply x-axis selection
         if 'x_axis' in plot_config and plot_config['x_axis'] and hasattr(self, 'plot_xaxis_menu'):
             self.plot_xaxis_menu.set(plot_config['x_axis'])
         
-        # Apply signal selections
+        # Apply signal selections - now that signals should be loaded
         if hasattr(self, 'plot_signal_vars') and 'signals' in plot_config:
             saved_signals = plot_config['signals']
             for signal, data in self.plot_signal_vars.items():
@@ -4096,63 +4534,58 @@ For additional support or feature requests, please refer to the application docu
         
         # Apply custom legend entries
         if 'custom_legend_entries' in plot_config:
-            self.custom_legend_entries = dict(plot_config['custom_legend_entries'])
-            self._refresh_legend_entries()  # Refresh the legend UI
+            self.custom_legend_entries = plot_config['custom_legend_entries']
         
-        # Apply custom colors if they exist in the config
-        if 'custom_colors' in plot_config and plot_config['custom_colors']:
-            self.custom_colors = list(plot_config['custom_colors'])
-            self._update_custom_colors_display()
+        # Apply custom colors
+        if 'custom_colors' in plot_config:
+            self.custom_colors = plot_config['custom_colors']
         
-        # Apply other settings
+        # Apply other plot settings
         if 'show_both_signals' in plot_config and hasattr(self, 'show_both_signals_var'):
             self.show_both_signals_var.set(plot_config['show_both_signals'])
         
         if 'plot_title' in plot_config and hasattr(self, 'plot_title_entry'):
             self.plot_title_entry.delete(0, tk.END)
-            self.plot_title_entry.insert(0, plot_config.get('plot_title', ''))
+            self.plot_title_entry.insert(0, plot_config['plot_title'])
         
         if 'plot_xlabel' in plot_config and hasattr(self, 'plot_xlabel_entry'):
             self.plot_xlabel_entry.delete(0, tk.END)
-            self.plot_xlabel_entry.insert(0, plot_config.get('plot_xlabel', ''))
+            self.plot_xlabel_entry.insert(0, plot_config['plot_xlabel'])
         
         if 'plot_ylabel' in plot_config and hasattr(self, 'plot_ylabel_entry'):
             self.plot_ylabel_entry.delete(0, tk.END)
-            self.plot_ylabel_entry.insert(0, plot_config.get('plot_ylabel', ''))
+            self.plot_ylabel_entry.insert(0, plot_config['plot_ylabel'])
         
         if 'start_time' in plot_config and hasattr(self, 'plot_start_time_entry'):
             self.plot_start_time_entry.delete(0, tk.END)
-            self.plot_start_time_entry.insert(0, plot_config.get('start_time', ''))
+            self.plot_start_time_entry.insert(0, plot_config['start_time'])
         
         if 'end_time' in plot_config and hasattr(self, 'plot_end_time_entry'):
             self.plot_end_time_entry.delete(0, tk.END)
-            self.plot_end_time_entry.insert(0, plot_config.get('end_time', ''))
+            self.plot_end_time_entry.insert(0, plot_config['end_time'])
         
-        # Apply color scheme and styling settings
         if 'color_scheme' in plot_config and hasattr(self, 'color_scheme_var'):
-            color_scheme = plot_config.get('color_scheme', 'Auto (Matplotlib)')
-            self.color_scheme_var.set(color_scheme)
-            # Trigger the color scheme change to show/hide custom colors frame
-            self._on_color_scheme_change(color_scheme)
+            self.color_scheme_var.set(plot_config['color_scheme'])
         
         if 'line_width' in plot_config and hasattr(self, 'line_width_var'):
-            self.line_width_var.set(plot_config.get('line_width', '1.0'))
+            self.line_width_var.set(plot_config['line_width'])
         
         if 'legend_position' in plot_config and hasattr(self, 'legend_position_var'):
-            self.legend_position_var.set(plot_config.get('legend_position', 'best'))
+            self.legend_position_var.set(plot_config['legend_position'])
         
         if 'plot_type' in plot_config and hasattr(self, 'plot_type_var'):
-            self.plot_type_var.set(plot_config.get('plot_type', 'Line with Markers'))
+            self.plot_type_var.set(plot_config['plot_type'])
         
-        # Apply trendline settings
         if 'trendline_signal' in plot_config and hasattr(self, 'trendline_signal_var'):
-            self.trendline_signal_var.set(plot_config.get('trendline_signal', 'Select signal...'))
+            self.trendline_signal_var.set(plot_config['trendline_signal'])
         
         if 'trendline_type' in plot_config and hasattr(self, 'trendline_type_var'):
-            self.trendline_type_var.set(plot_config.get('trendline_type', 'None'))
+            self.trendline_type_var.set(plot_config['trendline_type'])
         
+        # Finally, update the plot
+        self.update_plot()
         # Update the plot
-        self._on_plot_setting_change()
+        self.update_plot()
 
     def _update_load_plot_config_menu(self):
         """Update the load plot config dropdown menu."""
@@ -4227,62 +4660,16 @@ For additional support or feature requests, please refer to the application docu
                 self.preview_canvas.draw()
                 return
             
-            # Find the actual data - try multiple matching strategies and sources
-            df = None
+            # Get the actual data using the same method as main plotting
+            df = self.get_data_for_plotting(file_name)
             
-            # Strategy 1: Check processed files first
-            if hasattr(self, 'processed_files') and self.processed_files:
-                # Exact basename match
-                for file_path, data in self.processed_files.items():
-                    if os.path.basename(file_path) == file_name:
-                        df = data
-                        break
-                
-                # Try without extension
-                if df is None and '.' in file_name:
-                    file_name_no_ext = os.path.splitext(file_name)[0]
-                    for file_path, data in self.processed_files.items():
-                        if os.path.splitext(os.path.basename(file_path))[0] == file_name_no_ext:
-                            df = data
-                            break
-                
-                # Try partial match
-                if df is None:
-                    for file_path, data in self.processed_files.items():
-                        if file_name in os.path.basename(file_path) or os.path.basename(file_path) in file_name:
-                            df = data
-                            break
-            
-            # Strategy 2: Try to load from original files if not found in processed
-            if df is None and hasattr(self, 'selected_files') and self.selected_files:
-                for file_path in self.selected_files:
-                    basename = os.path.basename(file_path)
-                    if (basename == file_name or 
-                        (file_name in basename) or 
-                        (basename in file_name) or
-                        (os.path.splitext(basename)[0] == os.path.splitext(file_name)[0])):
-                        try:
-                            df = pd.read_csv(file_path, low_memory=False)
-                            # Basic processing
-                            if len(df.columns) > 0:
-                                time_col = df.columns[0]
-                                df[time_col] = pd.to_datetime(df[time_col], errors='coerce')
-                                df.dropna(subset=[time_col], inplace=True)
-                                for col in df.columns[1:]:
-                                    df[col] = pd.to_numeric(df[col], errors='coerce')
-                                df.set_index(time_col, inplace=True)
-                            break
-                        except Exception as e:
-                            print(f"Error loading file {file_path}: {e}")
-                            continue
-            
-            if df is None:
+            if df is None or df.empty:
                 # Show available files for debugging
                 available_files = []
                 if hasattr(self, 'processed_files') and self.processed_files:
                     available_files.extend([os.path.basename(fp) for fp in self.processed_files.keys()])
-                if hasattr(self, 'selected_files') and self.selected_files:
-                    available_files.extend([os.path.basename(fp) for fp in self.selected_files])
+                if hasattr(self, 'input_file_paths') and self.input_file_paths:
+                    available_files.extend([os.path.basename(fp) for fp in self.input_file_paths])
                 
                 if available_files:
                     debug_text = f"Data file '{file_name}' not found\n\nAvailable files:\n" + "\n".join(set(available_files)[:5])
@@ -4300,6 +4687,12 @@ For additional support or feature requests, please refer to the application docu
             
             # Get time column and available signals
             time_col = df.columns[0]
+            # Try to find a better time column if the first column doesn't look like time
+            for col in df.columns:
+                if any(time_word in col.lower() for time_word in ['time', 'timestamp', 'date']):
+                    time_col = col
+                    break
+            
             available_signals = [s for s in signals if s in df.columns]
             
             if not available_signals:
@@ -4657,6 +5050,27 @@ For additional support or feature requests, please refer to the application docu
             # Expand range by 25%
             new_x_range = x_range * 1.25
             new_y_range = y_range * 1.25
+            
+            # Set new limits
+            self.plot_ax.set_xlim(x_center - new_x_range/2, x_center + new_x_range/2)
+            self.plot_ax.set_ylim(y_center - new_y_range/2, y_center + new_y_range/2)
+            self.plot_canvas.draw()
+
+    def _zoom_in_25(self):
+        """Zoom in by 25% while maintaining center."""
+        if hasattr(self, 'plot_ax'):
+            xlim = self.plot_ax.get_xlim()
+            ylim = self.plot_ax.get_ylim()
+            
+            # Calculate current center and range
+            x_center = (xlim[0] + xlim[1]) / 2
+            y_center = (ylim[0] + ylim[1]) / 2
+            x_range = xlim[1] - xlim[0]
+            y_range = ylim[1] - ylim[0]
+            
+            # Shrink range by 25%
+            new_x_range = x_range * 0.75
+            new_y_range = y_range * 0.75
             
             # Set new limits
             self.plot_ax.set_xlim(x_center - new_x_range/2, x_center + new_x_range/2)
