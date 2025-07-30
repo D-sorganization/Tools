@@ -321,9 +321,37 @@ class CSVProcessorApp(ctk.CTk):
         self.output_label = ctk.CTkLabel(file_frame, text=f"Output: {self.output_directory}", wraplength=300, justify="left", font=ctk.CTkFont(size=11))
         self.output_label.grid(row=3, column=0, padx=10, pady=(0, 10), sticky="w")
         
+        # Custom dataset name frame
+        dataset_frame = ctk.CTkFrame(tab)
+        dataset_frame.grid(row=1, column=0, padx=10, pady=10, sticky="new")
+        dataset_frame.grid_columnconfigure(1, weight=1)
+        
+        ctk.CTkLabel(dataset_frame, text="Dataset Naming", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 5), sticky="w")
+        
+        # Default naming option
+        self.dataset_naming_var = ctk.StringVar(value="auto")
+        auto_radio = ctk.CTkRadioButton(dataset_frame, text="Auto-generate from file names", 
+                                       variable=self.dataset_naming_var, value="auto",
+                                       command=self._on_dataset_naming_change)
+        auto_radio.grid(row=1, column=0, columnspan=2, padx=10, pady=5, sticky="w")
+        
+        # Custom naming option
+        custom_radio = ctk.CTkRadioButton(dataset_frame, text="Custom dataset name:", 
+                                         variable=self.dataset_naming_var, value="custom",
+                                         command=self._on_dataset_naming_change)
+        custom_radio.grid(row=2, column=0, padx=10, pady=5, sticky="w")
+        
+        self.custom_dataset_entry = ctk.CTkEntry(dataset_frame, placeholder_text="Enter custom dataset name")
+        self.custom_dataset_entry.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
+        self.custom_dataset_entry.configure(state="disabled")  # Initially disabled
+        
+        # Warning label for file overwriting
+        self.overwrite_warning_label = ctk.CTkLabel(dataset_frame, text="", font=ctk.CTkFont(size=11), text_color="orange")
+        self.overwrite_warning_label.grid(row=3, column=0, columnspan=2, padx=10, pady=5, sticky="w")
+        
         # Settings frame
         settings_frame = ctk.CTkFrame(tab)
-        settings_frame.grid(row=1, column=0, padx=10, pady=10, sticky="new")
+        settings_frame.grid(row=2, column=0, padx=10, pady=10, sticky="new")
         settings_frame.grid_columnconfigure(0, weight=1)
         
         ctk.CTkLabel(settings_frame, text="Configuration Save and Load", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=3, padx=10, pady=(10, 5), sticky="w")
@@ -333,7 +361,7 @@ class CSVProcessorApp(ctk.CTk):
         
         # Export options frame
         export_frame = ctk.CTkFrame(tab)
-        export_frame.grid(row=2, column=0, padx=10, pady=10, sticky="new")
+        export_frame.grid(row=3, column=0, padx=10, pady=10, sticky="new")
         export_frame.grid_columnconfigure(1, weight=1)
         
         ctk.CTkLabel(export_frame, text="Export Options", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=2, padx=10, pady=(10,5), sticky="w")
@@ -361,7 +389,7 @@ class CSVProcessorApp(ctk.CTk):
         
         # Signal List Management frame
         signal_list_frame = ctk.CTkFrame(tab)
-        signal_list_frame.grid(row=3, column=0, padx=10, pady=10, sticky="new")
+        signal_list_frame.grid(row=4, column=0, padx=10, pady=10, sticky="new")
         signal_list_frame.grid_columnconfigure(0, weight=1)
         
         ctk.CTkLabel(signal_list_frame, text="Signal List Management", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=3, padx=10, pady=(10, 5), sticky="w")
@@ -1735,8 +1763,48 @@ class CSVProcessorApp(ctk.CTk):
             self.poly_order_entry.bind("<KeyRelease>", self._on_plot_setting_change)
             self.poly_order_entry.bind("<FocusOut>", self._on_plot_setting_change)
             
+            # Trendline time window controls
+            ctk.CTkLabel(trend_frame, text="Time Window:").grid(row=6, column=0, sticky="w", padx=10, pady=(5,0))
+            
+            # Time window selection method
+            self.trendline_window_mode = ctk.StringVar(value="Full Range")
+            trendline_window_menu = ctk.CTkOptionMenu(trend_frame, variable=self.trendline_window_mode, 
+                                                     values=["Full Range", "Manual Entry", "Visual Selection"], 
+                                                     command=self._on_trendline_window_mode_change)
+            trendline_window_menu.grid(row=7, column=0, sticky="ew", padx=10, pady=5)
+            
+            # Manual time window frame (initially hidden)
+            self.trendline_manual_frame = ctk.CTkFrame(trend_frame)
+            self.trendline_manual_frame.grid(row=8, column=0, sticky="ew", padx=10, pady=5)
+            self.trendline_manual_frame.grid_remove()  # Hide initially
+            self.trendline_manual_frame.grid_columnconfigure(0, weight=1)
+            self.trendline_manual_frame.grid_columnconfigure(1, weight=1)
+            
+            ctk.CTkLabel(self.trendline_manual_frame, text="Start:").grid(row=0, column=0, sticky="w", padx=5, pady=2)
+            self.trendline_start_entry = ctk.CTkEntry(self.trendline_manual_frame, placeholder_text="Start time")
+            self.trendline_start_entry.grid(row=0, column=1, sticky="ew", padx=5, pady=2)
+            self.trendline_start_entry.bind("<KeyRelease>", self._on_plot_setting_change)
+            
+            ctk.CTkLabel(self.trendline_manual_frame, text="End:").grid(row=1, column=0, sticky="w", padx=5, pady=2)
+            self.trendline_end_entry = ctk.CTkEntry(self.trendline_manual_frame, placeholder_text="End time")
+            self.trendline_end_entry.grid(row=1, column=1, sticky="ew", padx=5, pady=2)
+            self.trendline_end_entry.bind("<KeyRelease>", self._on_plot_setting_change)
+            
+            # Visual selection controls
+            self.trendline_visual_frame = ctk.CTkFrame(trend_frame)
+            self.trendline_visual_frame.grid(row=9, column=0, sticky="ew", padx=10, pady=5)
+            self.trendline_visual_frame.grid_remove()  # Hide initially
+            self.trendline_visual_frame.grid_columnconfigure(0, weight=1)
+            
+            self.trendline_select_button = ctk.CTkButton(self.trendline_visual_frame, text="Select Time Window on Plot", 
+                                                        command=self._start_trendline_selection)
+            self.trendline_select_button.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
+            
+            self.trendline_selected_range = ctk.CTkLabel(self.trendline_visual_frame, text="No range selected")
+            self.trendline_selected_range.grid(row=1, column=0, sticky="ew", padx=5, pady=2)
+            
             self.trendline_textbox = ctk.CTkTextbox(trend_frame, height=70)
-            self.trendline_textbox.grid(row=6, column=0, sticky="ew", padx=10, pady=5)
+            self.trendline_textbox.grid(row=10, column=0, sticky="ew", padx=10, pady=5)
 
             # Filter preview
             plot_filter_frame = ctk.CTkFrame(plot_left_panel)
@@ -1814,6 +1882,25 @@ class CSVProcessorApp(ctk.CTk):
             
             # Store toolbar reference for custom functionality
             self.plot_toolbar = toolbar
+            
+            # Initialize zoom state storage
+            self.saved_zoom_state = None
+            
+            # Add custom zoom controls
+            zoom_frame = ctk.CTkFrame(plot_canvas_frame)
+            zoom_frame.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
+            zoom_frame.grid_columnconfigure(0, weight=1)
+            zoom_frame.grid_columnconfigure(1, weight=1)
+            zoom_frame.grid_columnconfigure(2, weight=1)
+            
+            save_zoom_btn = ctk.CTkButton(zoom_frame, text="Save Zoom State", command=self._save_zoom_state)
+            save_zoom_btn.grid(row=0, column=0, padx=2, pady=2, sticky="ew")
+            
+            restore_zoom_btn = ctk.CTkButton(zoom_frame, text="Restore Zoom", command=self._restore_zoom_state)
+            restore_zoom_btn.grid(row=0, column=1, padx=2, pady=2, sticky="ew")
+            
+            zoom_out_btn = ctk.CTkButton(zoom_frame, text="Zoom Out 25%", command=self._zoom_out_25)
+            zoom_out_btn.grid(row=0, column=2, padx=2, pady=2, sticky="ew")
 
         # Create splitter for plotting tab
         splitter_frame = self._create_splitter(plot_main_frame, create_plot_left_content, create_plot_right_content, 'plotting_left_width', 400)
@@ -2194,6 +2281,9 @@ class CSVProcessorApp(ctk.CTk):
         # Check if plot canvas is initialized
         if not hasattr(self, 'plot_canvas') or not hasattr(self, 'plot_ax'):
             return
+        
+        # Preserve current zoom state
+        zoom_state = self._preserve_zoom_during_update()
             
         selected_file = self.plot_file_menu.get()
         x_axis_col = self.plot_xaxis_menu.get()
@@ -2328,6 +2418,10 @@ class CSVProcessorApp(ctk.CTk):
              self.plot_ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
              # Keep labels horizontal for better readability
              self.plot_ax.tick_params(axis='x', rotation=0)
+
+        # Restore zoom state if it was preserved
+        if zoom_state:
+            self._apply_zoom_state(zoom_state)
 
         self.plot_canvas.draw()
 
@@ -2478,6 +2572,56 @@ class CSVProcessorApp(ctk.CTk):
             
         plot_df = df[[x_axis_col, signal]].dropna()
         if len(plot_df) < 2:
+            return
+        
+        # Apply time window filtering based on selected mode
+        window_mode = self.trendline_window_mode.get()
+        
+        if window_mode == "Manual Entry":
+            start_str = self.trendline_start_entry.get().strip()
+            end_str = self.trendline_end_entry.get().strip()
+            
+            if start_str or end_str:
+                try:
+                    if pd.api.types.is_datetime64_any_dtype(plot_df[x_axis_col]):
+                        # Convert to datetime
+                        if start_str:
+                            start_time = pd.to_datetime(start_str)
+                            plot_df = plot_df[plot_df[x_axis_col] >= start_time]
+                        if end_str:
+                            end_time = pd.to_datetime(end_str)
+                            plot_df = plot_df[plot_df[x_axis_col] <= end_time]
+                    else:
+                        # Numeric data
+                        if start_str:
+                            start_val = float(start_str)
+                            plot_df = plot_df[plot_df[x_axis_col] >= start_val]
+                        if end_str:
+                            end_val = float(end_str)
+                            plot_df = plot_df[plot_df[x_axis_col] <= end_val]
+                except (ValueError, TypeError):
+                    messagebox.showwarning("Warning", "Invalid time window format. Using full range.")
+        
+        elif window_mode == "Visual Selection":
+            if hasattr(self, 'trendline_selection_start') and hasattr(self, 'trendline_selection_end'):
+                if self.trendline_selection_start is not None and self.trendline_selection_end is not None:
+                    try:
+                        if pd.api.types.is_datetime64_any_dtype(plot_df[x_axis_col]):
+                            # Convert numeric selection back to datetime
+                            x_min = plot_df[x_axis_col].min()
+                            start_time = x_min + pd.Timedelta(seconds=self.trendline_selection_start)
+                            end_time = x_min + pd.Timedelta(seconds=self.trendline_selection_end)
+                            plot_df = plot_df[(plot_df[x_axis_col] >= start_time) & (plot_df[x_axis_col] <= end_time)]
+                        else:
+                            # Numeric data
+                            plot_df = plot_df[(plot_df[x_axis_col] >= self.trendline_selection_start) & 
+                                            (plot_df[x_axis_col] <= self.trendline_selection_end)]
+                    except Exception as e:
+                        print(f"Error applying visual selection: {e}")
+        
+        # Check if we still have enough data after filtering
+        if len(plot_df) < 2:
+            messagebox.showwarning("Warning", "Not enough data points in selected time window for trendline.")
             return
             
         x_data = plot_df[x_axis_col]
@@ -3572,10 +3716,8 @@ COMMON MISTAKES TO AVOID:
     def _on_legend_change(self, signal, new_label):
         """Handle changes to legend labels."""
         self.custom_legend_entries[signal] = new_label
-        # Trigger plot update if needed
-        if hasattr(self, '_update_pending'):
-            return
-        self._update_pending = self.after_idle(self.update_plot)
+        # Trigger immediate plot update
+        self._on_plot_setting_change()
 
     def _add_trendline(self):
         """Add trendline to plot."""
@@ -4077,44 +4219,77 @@ For additional support or feature requests, please refer to the application docu
                 self.preview_canvas.draw()
                 return
             
-            if not file_name or not hasattr(self, 'processed_files'):
-                self.preview_ax.text(0.5, 0.5, "Data file not available\nLoad the data file first", 
+            if not file_name:
+                self.preview_ax.text(0.5, 0.5, "No data file specified\nin plot configuration", 
                                    transform=self.preview_ax.transAxes, 
                                    ha='center', va='center', fontsize=12)
                 self.preview_ax.set_title(f"Preview: {plot_config['name']}")
                 self.preview_canvas.draw()
                 return
             
-            # Find the actual data - try multiple matching strategies
+            # Find the actual data - try multiple matching strategies and sources
             df = None
             
-            # Strategy 1: Exact basename match
-            for file_path, data in self.processed_files.items():
-                if os.path.basename(file_path) == file_name:
-                    df = data
-                    break
-            
-            # Strategy 2: Try without extension
-            if df is None and '.' in file_name:
-                file_name_no_ext = os.path.splitext(file_name)[0]
+            # Strategy 1: Check processed files first
+            if hasattr(self, 'processed_files') and self.processed_files:
+                # Exact basename match
                 for file_path, data in self.processed_files.items():
-                    if os.path.splitext(os.path.basename(file_path))[0] == file_name_no_ext:
+                    if os.path.basename(file_path) == file_name:
                         df = data
                         break
+                
+                # Try without extension
+                if df is None and '.' in file_name:
+                    file_name_no_ext = os.path.splitext(file_name)[0]
+                    for file_path, data in self.processed_files.items():
+                        if os.path.splitext(os.path.basename(file_path))[0] == file_name_no_ext:
+                            df = data
+                            break
+                
+                # Try partial match
+                if df is None:
+                    for file_path, data in self.processed_files.items():
+                        if file_name in os.path.basename(file_path) or os.path.basename(file_path) in file_name:
+                            df = data
+                            break
             
-            # Strategy 3: Try partial match
-            if df is None:
-                for file_path, data in self.processed_files.items():
-                    if file_name in os.path.basename(file_path) or os.path.basename(file_path) in file_name:
-                        df = data
-                        break
+            # Strategy 2: Try to load from original files if not found in processed
+            if df is None and hasattr(self, 'selected_files') and self.selected_files:
+                for file_path in self.selected_files:
+                    basename = os.path.basename(file_path)
+                    if (basename == file_name or 
+                        (file_name in basename) or 
+                        (basename in file_name) or
+                        (os.path.splitext(basename)[0] == os.path.splitext(file_name)[0])):
+                        try:
+                            df = pd.read_csv(file_path, low_memory=False)
+                            # Basic processing
+                            if len(df.columns) > 0:
+                                time_col = df.columns[0]
+                                df[time_col] = pd.to_datetime(df[time_col], errors='coerce')
+                                df.dropna(subset=[time_col], inplace=True)
+                                for col in df.columns[1:]:
+                                    df[col] = pd.to_numeric(df[col], errors='coerce')
+                                df.set_index(time_col, inplace=True)
+                            break
+                        except Exception as e:
+                            print(f"Error loading file {file_path}: {e}")
+                            continue
             
             if df is None:
                 # Show available files for debugging
-                available_files = [os.path.basename(fp) for fp in self.processed_files.keys()]
-                debug_text = f"Data file '{file_name}' not found\n\nAvailable files:\n" + "\n".join(available_files[:5])
-                if len(available_files) > 5:
-                    debug_text += f"\n... and {len(available_files)-5} more"
+                available_files = []
+                if hasattr(self, 'processed_files') and self.processed_files:
+                    available_files.extend([os.path.basename(fp) for fp in self.processed_files.keys()])
+                if hasattr(self, 'selected_files') and self.selected_files:
+                    available_files.extend([os.path.basename(fp) for fp in self.selected_files])
+                
+                if available_files:
+                    debug_text = f"Data file '{file_name}' not found\n\nAvailable files:\n" + "\n".join(set(available_files)[:5])
+                    if len(set(available_files)) > 5:
+                        debug_text += f"\n... and {len(set(available_files))-5} more"
+                else:
+                    debug_text = f"No data files loaded\n\nPlease:\n1. Select CSV files on Setup tab\n2. Process files or plot directly"
                 
                 self.preview_ax.text(0.5, 0.5, debug_text, 
                                    transform=self.preview_ax.transAxes, 
@@ -4347,6 +4522,165 @@ For additional support or feature requests, please refer to the application docu
                 bind_mousewheel(child)
         
         bind_mousewheel(frame)
+
+    def _on_trendline_window_mode_change(self, mode):
+        """Handle trendline window mode change."""
+        if mode == "Manual Entry":
+            self.trendline_manual_frame.grid()
+            self.trendline_visual_frame.grid_remove()
+        elif mode == "Visual Selection":
+            self.trendline_manual_frame.grid_remove()
+            self.trendline_visual_frame.grid()
+        else:  # Full Range
+            self.trendline_manual_frame.grid_remove()
+            self.trendline_visual_frame.grid_remove()
+        
+        self._on_plot_setting_change()
+
+    def _start_trendline_selection(self):
+        """Start visual selection of trendline window."""
+        if not hasattr(self, 'plot_canvas') or not self.plot_canvas:
+            messagebox.showwarning("Warning", "Please generate a plot first.")
+            return
+            
+        # Enable selection mode
+        self.trendline_selection_active = True
+        self.trendline_selection_start = None
+        self.trendline_selection_end = None
+        
+        # Connect mouse events
+        self.plot_canvas.mpl_connect('button_press_event', self._on_trendline_selection_start)
+        self.plot_canvas.mpl_connect('button_release_event', self._on_trendline_selection_end)
+        
+        # Update button text
+        self.trendline_select_button.configure(text="Click and drag on plot to select range")
+        self.trendline_selected_range.configure(text="Selection active...")
+
+    def _on_trendline_selection_start(self, event):
+        """Handle start of trendline selection."""
+        if hasattr(self, 'trendline_selection_active') and self.trendline_selection_active and event.inaxes:
+            self.trendline_selection_start = event.xdata
+
+    def _on_trendline_selection_end(self, event):
+        """Handle end of trendline selection."""
+        if hasattr(self, 'trendline_selection_active') and self.trendline_selection_active and event.inaxes:
+            if self.trendline_selection_start is not None:
+                self.trendline_selection_end = event.xdata
+                
+                # Ensure start < end
+                if self.trendline_selection_start > self.trendline_selection_end:
+                    self.trendline_selection_start, self.trendline_selection_end = self.trendline_selection_end, self.trendline_selection_start
+                
+                # Update display
+                start_str = f"{self.trendline_selection_start:.2f}"
+                end_str = f"{self.trendline_selection_end:.2f}"
+                self.trendline_selected_range.configure(text=f"Range: {start_str} to {end_str}")
+                
+                # Disable selection mode
+                self.trendline_selection_active = False
+                self.trendline_select_button.configure(text="Select Time Window on Plot")
+                
+                # Update plot
+                self._on_plot_setting_change()
+
+    def _on_dataset_naming_change(self):
+        """Handle changes to dataset naming mode."""
+        if self.dataset_naming_var.get() == "custom":
+            self.custom_dataset_entry.configure(state="normal")
+            self.custom_dataset_entry.bind("<KeyRelease>", self._check_file_overwrite)
+        else:
+            self.custom_dataset_entry.configure(state="disabled")
+            self.overwrite_warning_label.configure(text="")
+
+    def _check_file_overwrite(self, event=None):
+        """Check if custom dataset name will cause file overwrite."""
+        if not hasattr(self, 'custom_dataset_entry') or not hasattr(self, 'output_directory'):
+            return
+            
+        custom_name = self.custom_dataset_entry.get().strip()
+        if not custom_name:
+            self.overwrite_warning_label.configure(text="")
+            return
+            
+        # Check for existing files with the custom name
+        output_dir = self.output_directory
+        if os.path.exists(output_dir):
+            # Check for various file extensions that might be created
+            extensions = ['.csv', '.xlsx', '.mat']
+            existing_files = []
+            
+            for ext in extensions:
+                potential_file = os.path.join(output_dir, f"{custom_name}{ext}")
+                if os.path.exists(potential_file):
+                    existing_files.append(f"{custom_name}{ext}")
+            
+            if existing_files:
+                warning_text = f"⚠️ Warning: Will overwrite existing files: {', '.join(existing_files)}"
+                self.overwrite_warning_label.configure(text=warning_text, text_color="orange")
+            else:
+                self.overwrite_warning_label.configure(text="✓ No file conflicts found", text_color="green")
+        else:
+            self.overwrite_warning_label.configure(text="")
+
+    def _save_zoom_state(self):
+        """Save current zoom/pan state of the plot."""
+        if hasattr(self, 'plot_ax'):
+            self.saved_zoom_state = {
+                'xlim': self.plot_ax.get_xlim(),
+                'ylim': self.plot_ax.get_ylim()
+            }
+            messagebox.showinfo("Zoom State", "Current zoom state saved!")
+
+    def _restore_zoom_state(self):
+        """Restore previously saved zoom/pan state."""
+        if hasattr(self, 'saved_zoom_state') and self.saved_zoom_state:
+            if hasattr(self, 'plot_ax'):
+                self.plot_ax.set_xlim(self.saved_zoom_state['xlim'])
+                self.plot_ax.set_ylim(self.saved_zoom_state['ylim'])
+                self.plot_canvas.draw()
+                messagebox.showinfo("Zoom State", "Zoom state restored!")
+        else:
+            messagebox.showwarning("Warning", "No saved zoom state found.")
+
+    def _zoom_out_25(self):
+        """Zoom out by 25% while maintaining center."""
+        if hasattr(self, 'plot_ax'):
+            xlim = self.plot_ax.get_xlim()
+            ylim = self.plot_ax.get_ylim()
+            
+            # Calculate current center and range
+            x_center = (xlim[0] + xlim[1]) / 2
+            y_center = (ylim[0] + ylim[1]) / 2
+            x_range = xlim[1] - xlim[0]
+            y_range = ylim[1] - ylim[0]
+            
+            # Expand range by 25%
+            new_x_range = x_range * 1.25
+            new_y_range = y_range * 1.25
+            
+            # Set new limits
+            self.plot_ax.set_xlim(x_center - new_x_range/2, x_center + new_x_range/2)
+            self.plot_ax.set_ylim(y_center - new_y_range/2, y_center + new_y_range/2)
+            self.plot_canvas.draw()
+
+    def _preserve_zoom_during_update(self):
+        """Store zoom state before plot update and restore after."""
+        zoom_state = None
+        if hasattr(self, 'plot_ax'):
+            zoom_state = {
+                'xlim': self.plot_ax.get_xlim(),
+                'ylim': self.plot_ax.get_ylim()
+            }
+        return zoom_state
+
+    def _apply_zoom_state(self, zoom_state):
+        """Apply stored zoom state after plot update."""
+        if zoom_state and hasattr(self, 'plot_ax'):
+            try:
+                self.plot_ax.set_xlim(zoom_state['xlim'])
+                self.plot_ax.set_ylim(zoom_state['ylim'])
+            except Exception as e:
+                print(f"Error restoring zoom state: {e}")
 
 # =============================================================================
 # MAIN EXECUTION
