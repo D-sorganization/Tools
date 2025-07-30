@@ -1555,7 +1555,7 @@ class CSVProcessorApp(ctk.CTk):
             if unit == "ms":
                 return f"{value}ms"
             elif unit == "s":
-                return f"{value}S"
+                return f"{value}s"  # Fixed: use 's' instead of deprecated 'S'
             elif unit == "min":
                 return f"{value}T"
             elif unit == "hr":
@@ -2392,7 +2392,21 @@ class CSVProcessorApp(ctk.CTk):
                     cb.pack(anchor="w", padx=5, pady=2)
                     self.plot_signal_vars[signal] = {'var': var, 'widget': cb}
                 
+                # Auto-select some common signals for better user experience
+                common_signals = ['co_pct', 'co2_pct', 'h2_pct', 'ch4_pct', 'o2_pct', 'n2_pct', 
+                                'temp', 'temperature', 'pressure', 'flow', 'level']
+                auto_selected = 0
+                for signal in df.columns:
+                    if auto_selected >= 4:  # Limit to 4 auto-selected signals
+                        break
+                    signal_lower = signal.lower()
+                    if any(common in signal_lower for common in common_signals):
+                        self.plot_signal_vars[signal]['var'].set(True)
+                        auto_selected += 1
+                        print(f"DEBUG: Auto-selected signal: {signal}")
+                
                 print(f"DEBUG: Created plot_signal_vars with keys: {list(self.plot_signal_vars.keys())}")
+                print(f"DEBUG: Auto-selected {auto_selected} signals for plotting")
                 
                 # Re-bind mouse wheel to all new checkboxes
                 self._bind_mousewheel_to_frame(self.plot_signal_frame)
