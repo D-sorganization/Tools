@@ -2579,45 +2579,47 @@ class CSVProcessorApp(ctk.CTk):
         if value == "Select a file...":
             return
         
-        # Direct execution like baseline - no async scheduling
-        df = self.get_data_for_plotting(value)
-        if df is not None and not df.empty:
-            # Update x-axis options - use actual columns, not "default time"
-            x_axis_options = list(df.columns)
-            self.plot_xaxis_menu.configure(values=x_axis_options)
-            
-            # Set the first column as default x-axis (usually time)
-            if x_axis_options:
-                self.plot_xaxis_menu.set(x_axis_options[0])
-            
-            # Update signal checkboxes - direct creation like baseline
-            self.plot_signal_vars = {}
-            for widget in self.plot_signal_frame.winfo_children():
-                widget.destroy()
-            
-            for signal in df.columns:
-                var = tk.BooleanVar(value=False)
-                cb = ctk.CTkCheckBox(self.plot_signal_frame, text=signal, variable=var, command=self._on_plot_setting_change)
-                cb.pack(anchor="w", padx=5, pady=2)
-                self.plot_signal_vars[signal] = {'var': var, 'checkbox': cb}
-            
-            # Re-bind mouse wheel to all new checkboxes
-            self._bind_mousewheel_to_frame(self.plot_signal_frame)
-            
-            # Update trendline signal options
-            signal_options = ["Select signal..."] + [col for col in df.columns if col != x_axis_options[0]]  # Exclude time column
-            self.trendline_signal_menu.configure(values=signal_options)
-            self.trendline_signal_var.set("Select signal...")
+        try:
+            # Direct execution like baseline - no async scheduling
+            df = self.get_data_for_plotting(value)
+            if df is not None and not df.empty:
+                # Update x-axis options - use actual columns, not "default time"
+                x_axis_options = list(df.columns)
+                self.plot_xaxis_menu.configure(values=x_axis_options)
                 
-            # Update plot immediately - no delays
-            self.update_plot()
+                # Set the first column as default x-axis (usually time)
+                if x_axis_options:
+                    self.plot_xaxis_menu.set(x_axis_options[0])
                 
+                # Update signal checkboxes - direct creation like baseline
+                self.plot_signal_vars = {}
+                for widget in self.plot_signal_frame.winfo_children():
+                    widget.destroy()
+                
+                for signal in df.columns:
+                    var = tk.BooleanVar(value=False)
+                    cb = ctk.CTkCheckBox(self.plot_signal_frame, text=signal, variable=var, command=self._on_plot_setting_change)
+                    cb.pack(anchor="w", padx=5, pady=2)
+                    self.plot_signal_vars[signal] = {'var': var, 'checkbox': cb}
+                
+                # Re-bind mouse wheel to all new checkboxes
+                self._bind_mousewheel_to_frame(self.plot_signal_frame)
+                
+                # Update trendline signal options
+                signal_options = ["Select signal..."] + [col for col in df.columns if col != x_axis_options[0]]  # Exclude time column
+                self.trendline_signal_menu.configure(values=signal_options)
+                self.trendline_signal_var.set("Select signal...")
+                    
+                # Update plot immediately - no delays
+                self.update_plot()
+                    
         except Exception as e:
             print(f"ERROR in on_plot_file_select: {e}")
             import traceback
             traceback.print_exc()
             messagebox.showerror("Error", f"Failed to select file for plotting:\n{str(e)}")
             if hasattr(self, 'status_label'):
+                self.status_label.configure(text="Error selecting file for plotting")
                 self.status_label.configure(text="Ready")
 
     def update_plot(self, selected_signals=None):
@@ -3376,7 +3378,7 @@ class CSVProcessorApp(ctk.CTk):
         
         info_text = f"""Performance Information:
 
- DATA:
+📁 DATA:
 • Processed Files: {processed_files_count}
 • Selected File: {current_file}
 • Plot Signals Available: {len(getattr(self, 'plot_signal_vars', {}))}
@@ -3394,54 +3396,6 @@ class CSVProcessorApp(ctk.CTk):
         text_widget.pack(fill="both", expand=True, padx=10, pady=10)
         text_widget.insert("1.0", info_text)
         text_widget.configure(state="disabled")
-            perf_window.title("Performance Monitor")
-            perf_window.geometry("500x600")
-            perf_window.transient(self)
-            perf_window.focus()
-            
-            # Add scrollable text
-            text_widget = ctk.CTkTextbox(perf_window, wrap="word")
-            text_widget.pack(fill="both", expand=True, padx=10, pady=10)
-            text_widget.insert("1.0", info_text)
-            text_widget.configure(state="disabled")
-            
-            # Add buttons
-            button_frame = ctk.CTkFrame(perf_window)
-            button_frame.pack(fill="x", padx=10, pady=5)
-            
-            def force_gc():
-                gc.collect()
-                memory_after = psutil.Process().memory_info().rss / (1024 * 1024)
-                messagebox.showinfo("Garbage Collection", f"Garbage collection completed.\nMemory after: {memory_after:.1f} MB")
-            
-            def clear_all_caches():
-                self._clear_data_cache()
-                perf_window.destroy()
-            
-            ctk.CTkButton(button_frame, text="Force Garbage Collection", command=force_gc).pack(side="left", padx=5)
-            ctk.CTkButton(button_frame, text="Clear All Caches", command=clear_all_caches).pack(side="left", padx=5)
-            ctk.CTkButton(button_frame, text="Close", command=perf_window.destroy).pack(side="right", padx=5)
-            
-        except ImportError:
-            # Fallback if psutil not available
-            basic_info = f"""Performance Information:
-
-📁 CACHED DATA:
-• Processed Files: {len(getattr(self, 'processed_files', {}))}
-• Loaded Data Cache: {len(getattr(self, 'loaded_data_cache', {}))}
-
-🎯 CURRENT STATE:
-• Selected File: {getattr(self.plot_file_menu, 'get', lambda: 'None')()}
-• Plot Signals Available: {len(getattr(self, 'plot_signal_vars', {}))}
-
-💡 TIP: Install 'psutil' package for detailed memory monitoring:
-pip install psutil"""
-            
-            messagebox.showinfo("Performance Info", basic_info)
-            
-        except Exception as e:
-            print(f"ERROR in _show_performance_info: {e}")
-            messagebox.showerror("Performance Error", f"Failed to get performance info:\n{str(e)}")
 
     def _show_setup_help(self):
         """Show setup help."""
