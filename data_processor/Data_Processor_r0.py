@@ -400,9 +400,6 @@ class CSVProcessorApp(ctk.CTk):
         ctk.CTkButton(signal_list_frame, text="Load Saved Signal List", command=self.load_signal_list).grid(row=1, column=1, padx=10, pady=5, sticky="ew")
         ctk.CTkButton(signal_list_frame, text="Apply Saved Signals", command=self.apply_saved_signals).grid(row=1, column=2, padx=10, pady=5, sticky="ew")
         
-        # Debug button for signal list testing
-        ctk.CTkButton(signal_list_frame, text="Debug Signal List", command=self._debug_signal_list).grid(row=2, column=0, columnspan=3, padx=10, pady=5, sticky="ew")
-        
         # Status label for signal list operations
         self.signal_list_status_label = ctk.CTkLabel(signal_list_frame, text="No saved signal list loaded", font=ctk.CTkFont(size=11), text_color="gray")
         self.signal_list_status_label.grid(row=2, column=0, columnspan=3, padx=10, pady=(5, 10), sticky="w")
@@ -1182,44 +1179,381 @@ class CSVProcessorApp(ctk.CTk):
             self.load_signals_from_files()
 
     def load_signals_from_files(self):
-        """Load signals from all selected files."""
+        """Load signals from all selected files (optimized)."""
         print("DEBUG: load_signals_from_files() called")
-        print(f"DEBUG: input_file_paths = {getattr(self, 'input_file_paths', 'NOT SET')}")
         
         if not self.input_file_paths:
             print("DEBUG: No input file paths, returning early")
             return
         
+        # Update status
+        if hasattr(self, 'status_label'):
+            self.status_label.configure(text="Reading signal names from files...")
+            self.update()
+        
         all_signals = set()
-        for file_path in self.input_file_paths:
+        total_files = len(self.input_file_paths)
+        
+        for i, file_path in enumerate(self.input_file_paths):
             try:
-                print(f"DEBUG: Reading header from: {file_path}")
-                df = pd.read_csv(file_path, nrows=1)  # Just read header
+                # Update progress
+                if hasattr(self, 'status_label'):
+                    self.status_label.configure(text=f"Reading file {i+1}/{total_files}: {os.path.basename(file_path)}")
+                    if i % 5 == 0:  # Update every 5 files to prevent UI freezing
+                        self.update()
+                
+                # Just read header for efficiency
+                df = pd.read_csv(file_path, nrows=1)
                 signals = df.columns.tolist()
-                print(f"DEBUG: Found signals: {signals}")
                 all_signals.update(signals)
+                
             except Exception as e:
                 print(f"Error reading {file_path}: {e}")
         
-        print(f"DEBUG: All signals collected: {sorted(all_signals)}")
+        print(f"DEBUG: All signals collected: {len(all_signals)} unique signals")
+        
+        # Update status
+        if hasattr(self, 'status_label'):
+            self.status_label.configure(text=f"Processing {len(all_signals)} signals...")
+            self.update()
+        
         self.update_signal_list(sorted(all_signals))
         
-        # Update plot file menu
+        # Update plot file menu with smart defaults
         file_names = ["Select a file..."] + [os.path.basename(f) for f in self.input_file_paths]
-        print(f"DEBUG: Updating plot file menu with: {file_names}")
         if hasattr(self, 'plot_file_menu'):
             self.plot_file_menu.configure(values=file_names)
-            print("DEBUG: plot_file_menu updated")
             
-            # Auto-select the file if there's only one
+            # Auto-select the first file if there's only one, or set up for manual selection
             if len(self.input_file_paths) == 1:
                 single_file = os.path.basename(self.input_file_paths[0])
                 self.plot_file_menu.set(single_file)
                 print(f"DEBUG: Auto-selected single file: {single_file}")
-                # Trigger the file selection handler
-                self.on_plot_file_select(single_file)
-        else:
-            print("DEBUG: plot_file_menu not found!")
+                
+                # Schedule the file selection handler for better performance
+                print("DEBUG: Scheduling auto-selection for single file")
+                self.after(500, lambda: self._auto_select_single_file(single_file))
+            elif len(self.input_file_paths) > 1:
+                # For multiple files, provide better user feedback
+                self.plot_file_menu.set("Select a file...")
+                print(f"DEBUG: Multiple files available ({len(self.input_file_paths)}), user can select")
+                # Optionally auto-select first file for convenience
+                if hasattr(self, 'status_label'):
+                    self.status_label.configure(text=f"Ready - {len(self.input_file_paths)} files loaded. Go to Plotting tab to visualize.")
+        
+        print("DEBUG: load_signals_from_files() completed")
+
+    def _auto_select_single_file(self, filename):
+        """Auto-select single file with optimized loading."""
+        try:
+            print(f"DEBUG: _auto_select_single_file called for: {filename}")
+            if hasattr(self, 'plot_file_menu'):
+                current_selection = self.plot_file_menu.get()
+                if current_selection == filename:  # Only proceed if still selected
+                    self.on_plot_file_select(filename)
+                else:
+                    print(f"DEBUG: File selection changed, skipping auto-selection")
+        except Exception as e:
+            print(f"ERROR in _auto_select_single_file: {e}")
+
+    def _ensure_data_loaded_optimized(self, filename):
+        """Optimized version of data loading check."""
+        # Quick check if data is already available
+        if (filename in getattr(self, 'processed_files', {}) or 
+            filename in getattr(self, 'loaded_data_cache', {})):
+            return True
+        
+        # If not available, try to load but with minimal processing
+        try:
+            full_path = None
+            if hasattr(self, 'input_file_paths'):
+                for file_path in self.input_file_paths:
+                    if os.path.basename(file_path) == filename:
+                        full_path = file_path
+                        break
+            
+            if full_path and os.path.exists(full_path):
+                # Just check if file is readable without loading full data
+                with open(full_path, 'r') as f:
+                    f.readline()  # Just read first line to check accessibility
+                return True
+            return False
+        except:
+            return False
+
+    def get_data_for_plotting_optimized(self, filename):
+        """Optimized data loading for plotting with smart caching."""
+        try:
+            print(f"DEBUG: get_data_for_plotting_optimized called for: {filename}")
+            
+            # First check if it's in processed files
+            if filename in getattr(self, 'processed_files', {}):
+                print(f"DEBUG: Found in processed_files")
+                df = self.processed_files[filename].copy()
+                print(f"DEBUG: Data shape from processed_files: {df.shape}")
+                return df
+            
+            # Check in loaded data cache
+            if hasattr(self, 'loaded_data_cache') and filename in self.loaded_data_cache:
+                print(f"DEBUG: Found in loaded_data_cache")
+                df = self.loaded_data_cache[filename].copy()
+                print(f"DEBUG: Data shape from cache: {df.shape}")
+                return df
+            
+            print(f"DEBUG: Loading from file system with optimization")
+            # Find the full path of the file
+            full_path = None
+            if hasattr(self, 'input_file_paths'):
+                for file_path in self.input_file_paths:
+                    if os.path.basename(file_path) == filename:
+                        full_path = file_path
+                        break
+            
+            if full_path and os.path.exists(full_path):
+                print(f"DEBUG: Reading CSV from: {full_path}")
+                
+                # Check file size for smart loading strategy
+                file_size = os.path.getsize(full_path)
+                print(f"DEBUG: File size: {file_size / (1024*1024):.1f} MB")
+                
+                # For large files, use chunked reading strategy
+                if file_size > 50 * 1024 * 1024:  # > 50MB
+                    print("DEBUG: Large file detected, using optimized loading...")
+                    return self._load_large_file_optimized(full_path)
+                else:
+                    # Standard loading for smaller files
+                    return self._load_standard_file_optimized(full_path, filename)
+                
+            print(f"DEBUG: No data source found for {filename}")
+            return None
+                
+        except Exception as e:
+            print(f"ERROR in get_data_for_plotting_optimized: {e}")
+            import traceback
+            traceback.print_exc()
+            return None
+
+    def _load_standard_file_optimized(self, full_path, filename):
+        """Load standard size files with enhanced error handling."""
+        try:
+            # Enhanced CSV reading with error recovery
+            df = None
+            try:
+                df = pd.read_csv(full_path, low_memory=False)
+            except UnicodeDecodeError:
+                print("DEBUG: UTF-8 failed, trying different encodings...")
+                for encoding in ['latin1', 'cp1252', 'iso-8859-1']:
+                    try:
+                        df = pd.read_csv(full_path, low_memory=False, encoding=encoding)
+                        print(f"DEBUG: Successfully read with {encoding} encoding")
+                        break
+                    except:
+                        continue
+                if df is None:
+                    raise Exception("Could not read file with any encoding")
+            
+            print(f"DEBUG: Successfully loaded CSV. Shape: {df.shape}")
+            
+            # Quick datetime conversion for first few columns only (performance optimization)
+            datetime_converted = 0
+            for col in df.columns[:5]:  # Only check first 5 columns for performance
+                if datetime_converted >= 2:  # Limit conversions
+                    break
+                    
+                col_lower = col.lower()
+                if any(time_word in col_lower for time_word in ['time', 'timestamp', 'date', 'datetime']):
+                    try:
+                        df[col] = pd.to_datetime(df[col], errors='coerce')
+                        print(f"DEBUG: Converted time column '{col}' to datetime")
+                        datetime_converted += 1
+                    except:
+                        print(f"DEBUG: Failed to convert time column '{col}'")
+            
+            # Store in cache for future use
+            if not hasattr(self, 'loaded_data_cache'):
+                self.loaded_data_cache = {}
+            self.loaded_data_cache[filename] = df.copy()
+            print(f"DEBUG: Cached data for future use")
+            return df
+            
+        except Exception as e:
+            print(f"ERROR in _load_standard_file_optimized: {e}")
+            return None
+
+    def _load_large_file_optimized(self, full_path):
+        """Optimized loading for large files using sampling strategy."""
+        try:
+            print("DEBUG: Using large file optimization - sampling strategy")
+            
+            # Read first chunk to get column structure
+            chunk_size = 10000
+            df_sample = pd.read_csv(full_path, nrows=chunk_size, low_memory=False)
+            print(f"DEBUG: Loaded sample with shape: {df_sample.shape}")
+            
+            # For plotting purposes, we can work with a representative sample
+            # This prevents UI freezing while still providing useful plotting capability
+            
+            # Get total file length for sampling
+            with open(full_path, 'r') as f:
+                total_lines = sum(1 for line in f) - 1  # Subtract header
+            
+            print(f"DEBUG: Total file has ~{total_lines} data rows")
+            
+            if total_lines > 100000:  # For very large files, use strategic sampling
+                # Sample every Nth row to get representative data
+                skip_rows = max(1, total_lines // 50000)  # Target ~50K rows max
+                
+                # Read with strategic row skipping
+                rows_to_read = list(range(1, total_lines, skip_rows))[:50000]  # Cap at 50K rows
+                df = pd.read_csv(full_path, skiprows=lambda x: x not in [0] + rows_to_read, low_memory=False)
+                print(f"DEBUG: Loaded optimized sample with shape: {df.shape} (every {skip_rows}th row)")
+            else:
+                # File is large but manageable, load normally
+                df = pd.read_csv(full_path, low_memory=False)
+                print(f"DEBUG: Loaded full file with shape: {df.shape}")
+            
+            # Quick datetime conversion for time columns
+            time_cols_converted = 0
+            for col in df.columns[:3]:  # Only first 3 columns for performance
+                if time_cols_converted >= 1:  # Only convert first time column found
+                    break
+                col_lower = col.lower()
+                if any(time_word in col_lower for time_word in ['time', 'timestamp', 'date']):
+                    try:
+                        df[col] = pd.to_datetime(df[col], errors='coerce')
+                        print(f"DEBUG: Converted time column '{col}' to datetime")
+                        time_cols_converted += 1
+                    except:
+                        pass
+            
+            return df
+            
+        except Exception as e:
+            print(f"ERROR in _load_large_file_optimized: {e}")
+            return None
+
+    def _create_signal_checkboxes_optimized(self, df):
+        """Create signal checkboxes with batch processing to prevent UI freezing."""
+        try:
+            print(f"DEBUG: Creating checkboxes for {len(df.columns)} signals (optimized)")
+            
+            # Clear existing checkboxes
+            self.plot_signal_vars = {}
+            for widget in self.plot_signal_frame.winfo_children():
+                widget.destroy()
+            
+            # Create checkboxes in batches to prevent UI freezing
+            batch_size = 25  # Smaller batches for better responsiveness
+            columns = list(df.columns)
+            
+            for batch_start in range(0, len(columns), batch_size):
+                batch_end = min(batch_start + batch_size, len(columns))
+                batch_columns = columns[batch_start:batch_end]
+                
+                for signal in batch_columns:
+                    var = tk.BooleanVar(value=False)
+                    cb = ctk.CTkCheckBox(self.plot_signal_frame, text=signal, variable=var, command=self._on_plot_setting_change)
+                    cb.pack(anchor="w", padx=5, pady=2)
+                    self.plot_signal_vars[signal] = {'var': var, 'widget': cb}
+                
+                # Update UI every batch to maintain responsiveness
+                if batch_start % (batch_size * 2) == 0:  # Every 2 batches
+                    self.update()
+            
+            print(f"DEBUG: Created {len(self.plot_signal_vars)} signal checkboxes")
+            
+            # Smart auto-selection with performance considerations
+            self._auto_select_signals_optimized(df)
+            
+            # Re-bind mouse wheel to all new checkboxes
+            self._bind_mousewheel_to_frame(self.plot_signal_frame)
+            
+        except Exception as e:
+            print(f"ERROR in _create_signal_checkboxes_optimized: {e}")
+
+    def _auto_select_signals_optimized(self, df):
+        """Optimized auto-selection of signals for plotting."""
+        try:
+            # Auto-select some common signals for better user experience
+            common_signals = ['co_pct', 'co2_pct', 'h2_pct', 'ch4_pct', 'o2_pct', 'n2_pct', 
+                            'temp', 'temperature', 'pressure', 'flow', 'level', 'voltage', 'current']
+            auto_selected = 0
+            max_auto_select = 3  # Limit auto-selection for performance
+            
+            for signal in df.columns:
+                if auto_selected >= max_auto_select:
+                    break
+                signal_lower = signal.lower()
+                if any(common in signal_lower for common in common_signals):
+                    if signal in self.plot_signal_vars:
+                        self.plot_signal_vars[signal]['var'].set(True)
+                        auto_selected += 1
+                        print(f"DEBUG: Auto-selected signal: {signal}")
+            
+            print(f"DEBUG: Auto-selected {auto_selected} signals for plotting")
+            
+            # Fallback selection if no auto-selection worked
+            if auto_selected == 0 and self.plot_signal_vars:
+                print("DEBUG: No signals auto-selected, using fallback selection")
+                # Select first 2 non-time numeric columns
+                selected_fallback = 0
+                for signal in df.columns:
+                    if selected_fallback >= 2:
+                        break
+                    if not any(word in signal.lower() for word in ['time', 'date', 'timestamp']):
+                        # Quick check if column is numeric
+                        if pd.api.types.is_numeric_dtype(df[signal]):
+                            if signal in self.plot_signal_vars:
+                                self.plot_signal_vars[signal]['var'].set(True)
+                                selected_fallback += 1
+                                print(f"DEBUG: Fallback selected numeric signal: {signal}")
+            
+            # Verify final selection
+            final_selected = [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
+            print(f"DEBUG: Final selected signals: {final_selected}")
+            
+            # Emergency fallback if still nothing selected
+            if not final_selected and len(self.plot_signal_vars) > 1:
+                # Select second column (first non-time column typically)
+                second_signal = list(self.plot_signal_vars.keys())[1]
+                self.plot_signal_vars[second_signal]['var'].set(True)
+                print(f"DEBUG: Emergency fallback - selected: {second_signal}")
+                
+        except Exception as e:
+            print(f"ERROR in _auto_select_signals_optimized: {e}")
+
+    def _delayed_plot_update(self, filename):
+        """Perform plot update after UI has had time to refresh."""
+        try:
+            print(f"DEBUG: _delayed_plot_update called for: {filename}")
+            
+            # Update status
+            if hasattr(self, 'status_label'):
+                self.status_label.configure(text="Generating plot...")
+                self.update()
+            
+            # Check if we still have selected signals
+            if hasattr(self, 'plot_signal_vars'):
+                selected = [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
+                print(f"DEBUG: Selected signals for delayed plot: {selected}")
+                
+                if selected:
+                    self.update_plot()
+                    if hasattr(self, 'status_label'):
+                        self.status_label.configure(text="Plot ready")
+                else:
+                    print("DEBUG: No signals selected for delayed plot update")
+                    if hasattr(self, 'status_label'):
+                        self.status_label.configure(text="Ready - please select signals to plot")
+            else:
+                print("DEBUG: plot_signal_vars not available for delayed plot")
+                if hasattr(self, 'status_label'):
+                    self.status_label.configure(text="Ready")
+                
+        except Exception as e:
+            print(f"ERROR in _delayed_plot_update: {e}")
+            if hasattr(self, 'status_label'):
+                self.status_label.configure(text="Plot error - see console")
 
     def _ensure_data_loaded(self, filename):
         """Ensure data is loaded for the given filename."""
@@ -1246,6 +1580,11 @@ class CSVProcessorApp(ctk.CTk):
         print(f"DEBUG: update_signal_list() called with {len(signals)} signals")
         print(f"DEBUG: Signals: {signals[:5]}{'...' if len(signals) > 5 else ''}")
         
+        # Update status to show loading
+        if hasattr(self, 'status_label'):
+            self.status_label.configure(text=f"Loading {len(signals)} signals...")
+            self.update()
+        
         # Clear existing widgets
         for widget in self.signal_list_frame.winfo_children():
             widget.destroy()
@@ -1254,13 +1593,23 @@ class CSVProcessorApp(ctk.CTk):
         self.signal_vars.clear()
         print("DEBUG: Cleared signal_vars dictionary")
         
-        for i, signal in enumerate(signals):
-            print(f"DEBUG: Creating checkbox {i+1}/{len(signals)} for signal: {signal}")
-            var = tk.BooleanVar(value=True)
-            cb = ctk.CTkCheckBox(self.signal_list_frame, text=signal, variable=var)
-            cb.grid(sticky="w", padx=5, pady=2)
-            self.signal_vars[signal] = {'var': var, 'widget': cb}
-            print(f"DEBUG: Checkbox created and gridded for signal: {signal}")
+        # Create checkboxes in batches to prevent UI freezing
+        batch_size = 50  # Process signals in batches
+        for batch_start in range(0, len(signals), batch_size):
+            batch_end = min(batch_start + batch_size, len(signals))
+            batch_signals = signals[batch_start:batch_end]
+            
+            print(f"DEBUG: Processing batch {batch_start}-{batch_end} ({len(batch_signals)} signals)")
+            
+            for i, signal in enumerate(batch_signals):
+                actual_index = batch_start + i
+                var = tk.BooleanVar(value=True)
+                cb = ctk.CTkCheckBox(self.signal_list_frame, text=signal, variable=var)
+                cb.grid(sticky="w", padx=5, pady=2)
+                self.signal_vars[signal] = {'var': var, 'widget': cb}
+            
+            # Update GUI periodically to prevent freezing
+            self.update()
         
         print(f"DEBUG: Created {len(self.signal_vars)} signal checkboxes")
         
@@ -1276,42 +1625,100 @@ class CSVProcessorApp(ctk.CTk):
         # Initialize plot signal variables (will be populated when file is selected in plotting tab)
         self.plot_signal_vars = {}
         
-        # Update plots list signals
+        # Update plots list signals (optimized)
+        print("DEBUG: Updating plots signals...")
         self._update_plots_signals(signals)
         
-        # Update integration signals
+        # Update integration signals (optimized)
+        print("DEBUG: Updating integration signals...")
+        self._update_integration_signals_optimized(signals)
+        
+        # Update differentiation signals (optimized)
+        print("DEBUG: Updating differentiation signals...")
+        self._update_differentiation_signals_optimized(signals)
+        
+        # Update reference signals for custom variables (optimized)
+        print("DEBUG: Updating reference signals...")
+        self._update_reference_signals_optimized(signals)
+        
+        # Update status
+        if hasattr(self, 'status_label'):
+            self.status_label.configure(text=f"Loaded {len(signals)} signals successfully")
+        
+        print("DEBUG: update_signal_list() completed")
+
+    def _update_integration_signals_optimized(self, signals):
+        """Optimized update of integration signals."""
+        # Clear existing widgets
         for widget in self.integrator_signals_frame.winfo_children():
             widget.destroy()
         self.integrator_signal_vars.clear()
         
-        for signal in signals:
-            if signal != signals[0]:  # Skip time column
+        # Process in batches for large signal lists
+        non_time_signals = [s for s in signals if s != signals[0]] if signals else []
+        batch_size = 50
+        
+        for batch_start in range(0, len(non_time_signals), batch_size):
+            batch_end = min(batch_start + batch_size, len(non_time_signals))
+            batch_signals = non_time_signals[batch_start:batch_end]
+            
+            for signal in batch_signals:
                 var = tk.BooleanVar(value=False)
                 cb = ctk.CTkCheckBox(self.integrator_signals_frame, text=signal, variable=var)
                 cb.pack(anchor="w", padx=5, pady=2)
                 self.integrator_signal_vars[signal] = {'var': var, 'widget': cb}
-        
-        # Update differentiation signals
+            
+            # Update GUI periodically for large lists
+            if len(non_time_signals) > 100:
+                self.update()
+
+    def _update_differentiation_signals_optimized(self, signals):
+        """Optimized update of differentiation signals."""
+        # Clear existing widgets
         for widget in self.deriv_signals_frame.winfo_children():
             widget.destroy()
         self.deriv_signal_vars.clear()
         
-        for signal in signals:
-            if signal != signals[0]:  # Skip time column
+        # Process in batches for large signal lists
+        non_time_signals = [s for s in signals if s != signals[0]] if signals else []
+        batch_size = 50
+        
+        for batch_start in range(0, len(non_time_signals), batch_size):
+            batch_end = min(batch_start + batch_size, len(non_time_signals))
+            batch_signals = non_time_signals[batch_start:batch_end]
+            
+            for signal in batch_signals:
                 var = tk.BooleanVar(value=False)
                 cb = ctk.CTkCheckBox(self.deriv_signals_frame, text=signal, variable=var)
                 cb.pack(anchor="w", padx=5, pady=2)
                 self.deriv_signal_vars[signal] = {'var': var, 'widget': cb}
-        
-        # Update reference signals for custom variables
+            
+            # Update GUI periodically for large lists
+            if len(non_time_signals) > 100:
+                self.update()
+
+    def _update_reference_signals_optimized(self, signals):
+        """Optimized update of reference signals for custom variables."""
+        # Clear existing widgets
         for widget in self.signal_reference_frame.winfo_children():
             widget.destroy()
         self.reference_signal_widgets.clear()
         
-        for signal in signals:
-            label = ctk.CTkLabel(self.signal_reference_frame, text=f"[{signal}]", font=ctk.CTkFont(size=11))
-            label.pack(anchor="w", padx=5, pady=2)
-            self.reference_signal_widgets[signal] = label
+        # Process in batches for large signal lists
+        batch_size = 50
+        
+        for batch_start in range(0, len(signals), batch_size):
+            batch_end = min(batch_start + batch_size, len(signals))
+            batch_signals = signals[batch_start:batch_end]
+            
+            for signal in batch_signals:
+                label = ctk.CTkLabel(self.signal_reference_frame, text=f"[{signal}]", font=ctk.CTkFont(size=11))
+                label.pack(anchor="w", padx=5, pady=2)
+                self.reference_signal_widgets[signal] = label
+            
+            # Update GUI periodically for large lists
+            if len(signals) > 100:
+                self.update()
 
     def select_all(self):
         """Select all signals."""
@@ -1886,8 +2293,17 @@ class CSVProcessorApp(ctk.CTk):
         # Manual Plot Update button for debugging
         ctk.CTkButton(plot_control_frame, text="🔄 Update Plot", height=35, command=lambda: self.update_plot()).grid(row=0, column=7, padx=5, pady=10)
         
+        # Test Plot button to verify canvas functionality
+        ctk.CTkButton(plot_control_frame, text="🧪 Test Plot", height=35, command=self._test_plot_canvas).grid(row=0, column=8, padx=5, pady=10)
+        
+        # Clear Cache button to force data reload
+        ctk.CTkButton(plot_control_frame, text="🗑️ Clear Cache", height=35, command=self._clear_data_cache).grid(row=0, column=9, padx=5, pady=10)
+        
         # Debug button for plotting
-        ctk.CTkButton(plot_control_frame, text="🔍 Debug", height=35, command=self.manual_plot_debug).grid(row=0, column=8, padx=5, pady=10)
+        ctk.CTkButton(plot_control_frame, text="🔍 Debug", height=35, command=self.manual_plot_debug).grid(row=0, column=10, padx=5, pady=10)
+        
+        # Performance Monitor button
+        ctk.CTkButton(plot_control_frame, text="⚡ Performance", height=35, command=self._show_performance_info).grid(row=0, column=11, padx=5, pady=10)
 
         # Main content frame for splitter
         plot_main_frame = ctk.CTkFrame(tab)
@@ -2532,110 +2948,113 @@ class CSVProcessorApp(ctk.CTk):
 
     # Placeholder methods for functionality that would be implemented
     def on_plot_file_select(self, value):
-        """Handle plot file selection."""
+        """Handle plot file selection with performance optimizations."""
         if value == "Select a file...":
             return
         
         try:
             print(f"DEBUG: on_plot_file_select called with: {value}")
             
-            # Ensure data is loaded
-            if not self._ensure_data_loaded(value):
-                print(f"DEBUG: _ensure_data_loaded failed for: {value}")
+            # Update status immediately for user feedback
+            if hasattr(self, 'status_label'):
+                self.status_label.configure(text=f"Loading file: {value}...")
+                self.update()
+            
+            # Ensure data is loaded (optimized)
+            if not self._ensure_data_loaded_optimized(value):
+                print(f"DEBUG: _ensure_data_loaded_optimized failed for: {value}")
                 messagebox.showerror("Error", f"Failed to load file: {value}")
+                if hasattr(self, 'status_label'):
+                    self.status_label.configure(text="Ready")
                 return
             
-            df = self.get_data_for_plotting(value)
+            # Load data with progress indication
+            if hasattr(self, 'status_label'):
+                self.status_label.configure(text="Reading data...")
+                self.update()
+            
+            df = self.get_data_for_plotting_optimized(value)
             if df is not None and not df.empty:
                 print(f"DEBUG: Data loaded successfully in on_plot_file_select. Shape: {df.shape}")
                 
-                # Update x-axis options - use actual columns, not "default time"
+                # Update status
+                if hasattr(self, 'status_label'):
+                    self.status_label.configure(text="Setting up plotting interface...")
+                    self.update()
+                
+                # Enhanced x-axis options - prioritize time-like columns
                 x_axis_options = list(df.columns)
                 self.plot_xaxis_menu.configure(values=x_axis_options)
-                print(f"DEBUG: Updated x-axis options: {x_axis_options}")
+                print(f"DEBUG: Updated x-axis options: {x_axis_options[:5]}...")
                 
-                # Set the first column as default x-axis (usually time)
+                # Smart x-axis selection: prioritize time-like columns
+                default_x_axis = None
                 if x_axis_options:
-                    self.plot_xaxis_menu.set(x_axis_options[0])
-                    print(f"DEBUG: Set default x-axis to: {x_axis_options[0]}")
-                
-                # Update signal checkboxes
-                self.plot_signal_vars = {}
-                for widget in self.plot_signal_frame.winfo_children():
-                    widget.destroy()
-                
-                print(f"DEBUG: Creating checkboxes for {len(df.columns)} signals")
-                for signal in df.columns:
-                    var = tk.BooleanVar(value=False)
-                    cb = ctk.CTkCheckBox(self.plot_signal_frame, text=signal, variable=var, command=self._on_plot_setting_change)
-                    cb.pack(anchor="w", padx=5, pady=2)
-                    self.plot_signal_vars[signal] = {'var': var, 'widget': cb}
-                
-                # Auto-select some common signals for better user experience
-                common_signals = ['co_pct', 'co2_pct', 'h2_pct', 'ch4_pct', 'o2_pct', 'n2_pct', 
-                                'temp', 'temperature', 'pressure', 'flow', 'level']
-                auto_selected = 0
-                for signal in df.columns:
-                    if auto_selected >= 4:  # Limit to 4 auto-selected signals
-                        break
-                    signal_lower = signal.lower()
-                    if any(common in signal_lower for common in common_signals):
-                        self.plot_signal_vars[signal]['var'].set(True)
-                        auto_selected += 1
-                        print(f"DEBUG: Auto-selected signal: {signal}")
-                
-                print(f"DEBUG: Created plot_signal_vars with keys: {list(self.plot_signal_vars.keys())}")
-                print(f"DEBUG: Auto-selected {auto_selected} signals for plotting")
-                
-                # CRITICAL FIX: Ensure at least one signal is selected if auto-selection didn't work
-                if auto_selected == 0 and self.plot_signal_vars:
-                    print("DEBUG: No signals auto-selected, manually selecting first non-time signal")
-                    for signal in df.columns:
-                        if not any(word in signal.lower() for word in ['time', 'date', 'timestamp']) and signal in self.plot_signal_vars:
-                            self.plot_signal_vars[signal]['var'].set(True)
-                            print(f"DEBUG: Manually selected signal: {signal}")
+                    # Strategy 1: Look for columns with time-related names
+                    time_keywords = ['time', 'timestamp', 'date', 'datetime', 'elapsed']
+                    for col in x_axis_options:
+                        col_lower = col.lower()
+                        if any(keyword in col_lower for keyword in time_keywords):
+                            default_x_axis = col
+                            print(f"DEBUG: Found time-like column for x-axis: {col}")
                             break
+                    
+                    # Strategy 2: Check if first column contains datetime data
+                    if not default_x_axis and len(df) > 0:
+                        first_col = x_axis_options[0]
+                        if pd.api.types.is_datetime64_any_dtype(df[first_col]):
+                            default_x_axis = first_col
+                            print(f"DEBUG: First column is datetime, using as x-axis: {first_col}")
+                        else:
+                            # Quick check on sample of first column (performance optimized)
+                            sample_size = min(5, len(df))
+                            sample_values = df[first_col].dropna().head(sample_size).astype(str)
+                            if any(len(str(val)) > 8 and (':' in str(val) or '-' in str(val)) 
+                                   for val in sample_values):
+                                default_x_axis = first_col
+                                print(f"DEBUG: First column looks like timestamps, using as x-axis: {first_col}")
+                    
+                    # Strategy 3: Fall back to first column
+                    if not default_x_axis:
+                        default_x_axis = x_axis_options[0]
+                        print(f"DEBUG: Using first column as default x-axis: {default_x_axis}")
+                    
+                    self.plot_xaxis_menu.set(default_x_axis)
+                    print(f"DEBUG: Set x-axis to: {default_x_axis}")
                 
-                # Verify final selection
-                final_selected = [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
-                print(f"DEBUG: Final selected signals after auto/manual selection: {final_selected}")
+                # Update signal checkboxes with batch processing for performance
+                if hasattr(self, 'status_label'):
+                    self.status_label.configure(text="Creating signal checkboxes...")
+                    self.update()
                 
-                # EMERGENCY FALLBACK: If still no signals selected, select first numeric column
-                if not final_selected and self.plot_signal_vars:
-                    print("DEBUG: EMERGENCY FALLBACK - selecting first available signal")
-                    first_signal = list(self.plot_signal_vars.keys())[1] if len(self.plot_signal_vars) > 1 else list(self.plot_signal_vars.keys())[0]
-                    self.plot_signal_vars[first_signal]['var'].set(True)
-                    print(f"DEBUG: Emergency selected: {first_signal}")
-                
-                # CRITICAL FIX: Ensure at least one signal is selected if auto-selection didn't work
-                if auto_selected == 0 and self.plot_signal_vars:
-                    print("DEBUG: No signals auto-selected, manually selecting first non-time signal")
-                    for signal in df.columns:
-                        if not any(word in signal.lower() for word in ['time', 'date', 'timestamp']) and signal in self.plot_signal_vars:
-                            self.plot_signal_vars[signal]['var'].set(True)
-                            print(f"DEBUG: Manually selected signal: {signal}")
-                            break
-                
-                # Re-bind mouse wheel to all new checkboxes
-                self._bind_mousewheel_to_frame(self.plot_signal_frame)
+                self._create_signal_checkboxes_optimized(df)
                 
                 # Update trendline signal options
-                signal_options = ["Select signal..."] + [col for col in df.columns if col != x_axis_options[0]]  # Exclude time column
+                signal_options = ["Select signal..."] + [col for col in df.columns if col != default_x_axis]  # Exclude x-axis column
                 self.trendline_signal_menu.configure(values=signal_options)
                 self.trendline_signal_var.set("Select signal...")
-                    
-                # Update plot
-                print("DEBUG: Calling update_plot from on_plot_file_select")
-                self.update_plot()
+                
+                # Update status to indicate plotting readiness
+                if hasattr(self, 'status_label'):
+                    self.status_label.configure(text="Ready to plot")
+                
+                # Schedule plot update after a brief delay to allow UI to update
+                print("DEBUG: Scheduling delayed plot update")
+                self.after(100, lambda: self._delayed_plot_update(value))
+                
             else:
                 print(f"DEBUG: No data available for file: {value}")
                 messagebox.showerror("Error", f"No data available for file: {value}")
+                if hasattr(self, 'status_label'):
+                    self.status_label.configure(text="Ready")
                 
         except Exception as e:
             print(f"ERROR in on_plot_file_select: {e}")
             import traceback
             traceback.print_exc()
             messagebox.showerror("Error", f"Failed to select file for plotting:\n{str(e)}")
+            if hasattr(self, 'status_label'):
+                self.status_label.configure(text="Ready")
 
     def update_plot(self, selected_signals=None):
         """The main function to draw/redraw the plot with all selected options."""
@@ -2710,10 +3129,65 @@ class CSVProcessorApp(ctk.CTk):
             self.plot_ax.clear()
 
             if not signals_to_plot:
-                self.plot_ax.text(0.5, 0.5, "Select one or more signals to plot", ha='center', va='center')
+                # Enhanced fallback: try to auto-select signals if none are selected
+                print("DEBUG: No signals to plot, attempting auto-selection...")
+                if self.plot_signal_vars:
+                    # Try to find common signal patterns
+                    common_patterns = ['pressure', 'temperature', 'flow', 'speed', 'power', 'voltage', 'current',
+                                     'co_pct', 'co2_pct', 'h2_pct', 'ch4_pct', 'o2_pct', 'n2_pct', 'level', 'signal']
+                    
+                    auto_selected = 0
+                    for signal, data in self.plot_signal_vars.items():
+                        if auto_selected >= 3:  # Limit auto-selection
+                            break
+                        signal_lower = signal.lower()
+                        # Skip obvious time columns
+                        if any(time_word in signal_lower for time_word in ['time', 'timestamp', 'date', 'datetime']):
+                            continue
+                        # Select if matches common patterns
+                        if any(pattern in signal_lower for pattern in common_patterns):
+                            data['var'].set(True)
+                            auto_selected += 1
+                            print(f"DEBUG: Auto-selected signal by pattern: {signal}")
+                    
+                    # If no pattern matches, select first few non-time signals
+                    if auto_selected == 0:
+                        count = 0
+                        for signal, data in self.plot_signal_vars.items():
+                            if count >= 2:  # Select up to 2 signals
+                                break
+                            signal_lower = signal.lower()
+                            # Skip time columns
+                            if any(time_word in signal_lower for time_word in ['time', 'timestamp', 'date', 'datetime']):
+                                continue
+                            data['var'].set(True)
+                            count += 1
+                            auto_selected += 1
+                            print(f"DEBUG: Auto-selected signal by position: {signal}")
+                    
+                    # Update signals_to_plot after auto-selection
+                    if auto_selected > 0:
+                        signals_to_plot = [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
+                        print(f"DEBUG: Auto-selected {auto_selected} signals: {signals_to_plot}")
+                
+                # If still no signals, show helpful message
+                if not signals_to_plot:
+                    message = "No signals selected for plotting.\n\n"
+                    if self.plot_signal_vars:
+                        message += "Available signals found but none selected.\nPlease select signals from the left panel."
+                    else:
+                        message += "No signals available. Please:\n1. Load CSV files\n2. Select a file to plot\n3. Wait for signals to load"
+                    
+                    self.plot_ax.text(0.5, 0.5, message, ha='center', va='center', fontsize=10, 
+                                    bbox=dict(boxstyle="round,pad=0.3", facecolor="lightgray", alpha=0.7))
+                    self.plot_canvas.draw()
+                    self.status_label.configure(text="No signals selected - please select signals to plot")
+                    return
             else:
+                print(f"DEBUG: Entering else block for plotting {len(signals_to_plot)} signals")
                 show_both = self.show_both_signals_var.get()
                 plot_filter = self.plot_filter_type.get()
+                print(f"DEBUG: show_both={show_both}, plot_filter={plot_filter}")
                 
                 plot_style = self.plot_type_var.get()
                 style_args = {"linestyle": "-", "marker": ""}
@@ -2724,71 +3198,120 @@ class CSVProcessorApp(ctk.CTk):
                 
                 line_width = float(self.line_width_var.get())
                 style_args["linewidth"] = line_width
+                print(f"DEBUG: plot_style={plot_style}, line_width={line_width}")
                 
                 color_scheme = self.color_scheme_var.get()
-                if color_scheme == "Custom Colors":
-                    colors = [self.custom_colors[i % len(self.custom_colors)] for i in range(len(signals_to_plot))]
-                else:
-                    cmap = plt.get_cmap(color_scheme.lower().replace(" ", "_") if color_scheme != "Auto (Matplotlib)" else "tab10")
-                    colors = cmap(np.linspace(0, 1, len(signals_to_plot)))
+                print(f"DEBUG: color_scheme={color_scheme}")
+                
+                try:
+                    if color_scheme == "Custom Colors":
+                        colors = [self.custom_colors[i % len(self.custom_colors)] for i in range(len(signals_to_plot))]
+                    else:
+                        # Safe color mapping
+                        color_scheme_name = color_scheme.lower().replace(" ", "_") if color_scheme != "Auto (Matplotlib)" else "tab10"
+                        print(f"DEBUG: Using colormap: {color_scheme_name}")
+                        cmap = plt.get_cmap(color_scheme_name)
+                        colors = [cmap(i / max(1, len(signals_to_plot) - 1)) for i in range(len(signals_to_plot))]
+                    print(f"DEBUG: Generated {len(colors)} colors for {len(signals_to_plot)} signals")
+                except Exception as color_error:
+                    print(f"DEBUG: Color mapping error: {color_error}")
+                    # Fallback to simple colors
+                    colors = ['blue', 'red', 'green', 'orange', 'purple', 'brown', 'pink', 'gray'] * (len(signals_to_plot) // 8 + 1)
+                    colors = colors[:len(signals_to_plot)]
+                    print(f"DEBUG: Using fallback colors: {colors[:len(signals_to_plot)]}")
 
+                print(f"DEBUG: Starting plotting loop for {len(signals_to_plot)} signals")
                 for i, signal in enumerate(signals_to_plot):
+                    print(f"DEBUG: Processing signal {i+1}/{len(signals_to_plot)}: {signal}")
+                    
                     if signal not in df.columns: 
+                        print(f"DEBUG: Signal {signal} not in dataframe columns")
                         continue
                     
-                    plot_df = df[[x_axis_col, signal]].dropna()
-                    
-                    if show_both and plot_filter != "None":
-                        raw_style = {**style_args, "linestyle": "--", "alpha": 0.7, "color": colors[i]}
-                        raw_label = f"{self.custom_legend_entries.get(signal, signal)} (Raw)"
-                        self.plot_ax.plot(plot_df[x_axis_col], plot_df[signal], label=raw_label, **raw_style)
+                    try:
+                        plot_df = df[[x_axis_col, signal]].dropna()
+                        print(f"DEBUG: Created plot_df for {signal}, shape: {plot_df.shape}")
                         
-                        filtered_df = self._apply_plot_filter(df.copy(), [signal], x_axis_col)
-                        filtered_plot_df = filtered_df[[x_axis_col, signal]].dropna()
-                        filtered_style = {**style_args, "color": colors[i]}
-                        filtered_label = f"{self.custom_legend_entries.get(signal, signal)} (Filtered)"
-                        self.plot_ax.plot(filtered_plot_df[x_axis_col], filtered_plot_df[signal], label=filtered_label, **filtered_style)
-                    else:
-                        if plot_filter != "None":
+                        if show_both and plot_filter != "None":
+                            print(f"DEBUG: Plotting both raw and filtered for {signal}")
+                            raw_style = {**style_args, "linestyle": "--", "alpha": 0.7, "color": colors[i]}
+                            raw_label = f"{self.custom_legend_entries.get(signal, signal)} (Raw)"
+                            self.plot_ax.plot(plot_df[x_axis_col], plot_df[signal], label=raw_label, **raw_style)
+                            print(f"DEBUG: Plotted raw data for {signal}")
+                            
                             filtered_df = self._apply_plot_filter(df.copy(), [signal], x_axis_col)
-                            plot_df = filtered_df[[x_axis_col, signal]].dropna()
+                            filtered_plot_df = filtered_df[[x_axis_col, signal]].dropna()
+                            filtered_style = {**style_args, "color": colors[i]}
+                            filtered_label = f"{self.custom_legend_entries.get(signal, signal)} (Filtered)"
+                            self.plot_ax.plot(filtered_plot_df[x_axis_col], filtered_plot_df[signal], label=filtered_label, **filtered_style)
+                            print(f"DEBUG: Plotted filtered data for {signal}")
+                        else:
+                            print(f"DEBUG: Plotting single line for {signal}")
+                            if plot_filter != "None":
+                                print(f"DEBUG: Applying filter {plot_filter} to {signal}")
+                                filtered_df = self._apply_plot_filter(df.copy(), [signal], x_axis_col)
+                                plot_df = filtered_df[[x_axis_col, signal]].dropna()
+                                print(f"DEBUG: Filtered plot_df shape: {plot_df.shape}")
+                            
+                            plot_style_final = {**style_args, "color": colors[i]}
+                            signal_label = self.custom_legend_entries.get(signal, signal)
+                            print(f"DEBUG: About to plot {signal} with style: {plot_style_final}")
+                            self.plot_ax.plot(plot_df[x_axis_col], plot_df[signal], label=signal_label, **plot_style_final)
+                            print(f"DEBUG: Successfully plotted {signal}")
+                            
+                    except Exception as plot_error:
+                        print(f"DEBUG: Error plotting signal {signal}: {plot_error}")
+                        import traceback
+                        traceback.print_exc()
+                        continue
                         
-                        plot_style_final = {**style_args, "color": colors[i]}
-                        signal_label = self.custom_legend_entries.get(signal, signal)
-                        self.plot_ax.plot(plot_df[x_axis_col], plot_df[signal], label=signal_label, **plot_style_final)
+                print(f"DEBUG: Completed plotting loop")
 
                 if self.trendline_type_var.get() != "None":
+                    print(f"DEBUG: Adding trendline")
                     selected_trendline_signal = self.trendline_signal_var.get()
                     if selected_trendline_signal != "Select signal..." and selected_trendline_signal in df.columns:
                         self._add_trendline(df, selected_trendline_signal, x_axis_col)
+                        print(f"DEBUG: Trendline added for {selected_trendline_signal}")
 
+            print(f"DEBUG: Setting plot labels and formatting")
             title = self.plot_title_entry.get() or f"Signals from {selected_file}"
             xlabel = self.plot_xlabel_entry.get() or x_axis_col
             ylabel = self.plot_ylabel_entry.get() or "Value"
             self.plot_ax.set_title(title, fontsize=14)
             self.plot_ax.set_xlabel(xlabel)
             self.plot_ax.set_ylabel(ylabel)
+            print(f"DEBUG: Set title='{title}', xlabel='{xlabel}', ylabel='{ylabel}'")
 
             legend_position = self.legend_position_var.get()
+            print(f"DEBUG: Setting legend position: {legend_position}")
             if legend_position == "outside right":
                 self.plot_ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
             else:
                 self.plot_ax.legend(loc=legend_position)
             
             self.plot_ax.grid(True, linestyle='--', alpha=0.6)
+            print(f"DEBUG: Grid added")
 
             if pd.api.types.is_datetime64_any_dtype(df[x_axis_col]):
-                 self.plot_ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
-                 self.plot_ax.tick_params(axis='x', rotation=0)
+                print(f"DEBUG: Formatting datetime x-axis")
+                self.plot_ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+                self.plot_ax.tick_params(axis='x', rotation=0)
 
             if zoom_state:
+                print(f"DEBUG: Applying zoom state")
                 self._apply_zoom_state(zoom_state)
 
+            print(f"DEBUG: About to draw canvas")
             self.plot_canvas.draw()
+            print(f"DEBUG: Canvas drawn successfully")
             self.status_label.configure(text="Plot updated successfully")
+            print(f"DEBUG: Status updated - plot update complete!")
             
         except Exception as e:
             print(f"Error in update_plot: {e}")
+            import traceback
+            traceback.print_exc()
             self.plot_ax.clear()
             self.plot_ax.text(0.5, 0.5, f"Error plotting data:\n{str(e)}", 
                              ha='center', va='center', wrap=True)
@@ -3087,72 +3610,8 @@ class CSVProcessorApp(ctk.CTk):
             traceback.print_exc()
 
     def get_data_for_plotting(self, filename):
-        """Get data for plotting from the specified file."""
-        try:
-            print(f"DEBUG: get_data_for_plotting called for: {filename}")
-            
-            # First check if it's in processed files
-            if filename in self.processed_files:
-                print(f"DEBUG: Found in processed_files")
-                df = self.processed_files[filename].copy()
-                print(f"DEBUG: Data shape from processed_files: {df.shape}")
-                # Ensure datetime columns are properly formatted
-                for col in df.columns:
-                    if pd.api.types.is_object_dtype(df[col]):
-                        try:
-                            df[col] = pd.to_datetime(df[col])
-                        except:
-                            pass
-                return df
-            
-            # Check in loaded data cache
-            if hasattr(self, 'loaded_data_cache') and filename in self.loaded_data_cache:
-                print(f"DEBUG: Found in loaded_data_cache")
-                df = self.loaded_data_cache[filename].copy()
-                print(f"DEBUG: Data shape from cache: {df.shape}")
-                return df
-            
-            print(f"DEBUG: Not in processed_files or cache, checking input files")
-            # Find the full path of the file
-            full_path = None
-            if hasattr(self, 'input_file_paths'):
-                for file_path in self.input_file_paths:
-                    if os.path.basename(file_path) == filename:
-                        full_path = file_path
-                        break
-            
-            print(f"DEBUG: Full path found: {full_path}")
-            if full_path and os.path.exists(full_path):
-                print(f"DEBUG: Reading CSV from: {full_path}")
-                df = pd.read_csv(full_path, low_memory=False)
-                
-                # Try to convert datetime columns
-                for col in df.columns:
-                    if any(time_word in col.lower() for time_word in ['time', 'timestamp', 'date']):
-                        try:
-                            df[col] = pd.to_datetime(df[col])
-                        except:
-                            pass
-                
-                # Store in cache for future use
-                if not hasattr(self, 'loaded_data_cache'):
-                    self.loaded_data_cache = {}
-                self.loaded_data_cache[filename] = df.copy()
-                print(f"DEBUG: Successfully loaded data. Shape: {df.shape}")
-                return df
-                
-            print(f"DEBUG: No data source found for {filename}")
-            print(f"DEBUG: Available in processed_files: {list(getattr(self, 'processed_files', {}).keys())}")
-            print(f"DEBUG: Available in loaded_data_cache: {list(getattr(self, 'loaded_data_cache', {}).keys())}")
-            print(f"DEBUG: Available input_file_paths: {getattr(self, 'input_file_paths', [])}")
-                
-        except Exception as e:
-            print(f"ERROR in get_data_for_plotting: {e}")
-            import traceback
-            traceback.print_exc()
-            messagebox.showerror("Error", f"Failed to load data for plotting:\n{str(e)}")
-            
-        return None
+        """Enhanced data loading for plotting - delegates to optimized version."""
+        return self.get_data_for_plotting_optimized(filename)
 
     def manual_plot_debug(self):
         """Manual debugging function to check plotting state"""
@@ -3232,6 +3691,187 @@ class CSVProcessorApp(ctk.CTk):
                         data['var'].set(True)
                         print(f"DEBUG: Force-selected signal: {signal}")
                         break
+
+    def _test_plot_canvas(self):
+        """Test the plotting canvas with a simple sine/cosine plot to verify functionality."""
+        print("\n🧪 Testing plot canvas functionality...")
+        
+        if not hasattr(self, 'plot_canvas') or not hasattr(self, 'plot_ax'):
+            messagebox.showerror("Test Plot Error", "Plot canvas not initialized. Please ensure the plotting tab is loaded.")
+            return
+        
+        try:
+            # Clear the plot
+            self.plot_ax.clear()
+            
+            # Create test data
+            import numpy as np
+            x = np.linspace(0, 4*np.pi, 100)
+            y1 = np.sin(x)
+            y2 = np.cos(x)
+            
+            # Plot test data
+            self.plot_ax.plot(x, y1, 'b-', label='sin(x)', linewidth=2)
+            self.plot_ax.plot(x, y2, 'r--', label='cos(x)', linewidth=2)
+            
+            # Add labels and formatting
+            self.plot_ax.set_xlabel('X Values')
+            self.plot_ax.set_ylabel('Y Values')
+            self.plot_ax.set_title('Canvas Test Plot - Sine and Cosine Functions')
+            self.plot_ax.legend()
+            self.plot_ax.grid(True, alpha=0.3)
+            
+            # Refresh the canvas
+            self.plot_canvas.draw()
+            
+            print("✓ Test plot created successfully!")
+            self.status_label.configure(text="Test plot created - canvas is working correctly")
+            messagebox.showinfo("Test Plot Success", "Canvas test completed successfully!\n\nYour plotting canvas is working correctly.")
+            
+        except Exception as e:
+            print(f"✗ Test plot failed: {e}")
+            import traceback
+            traceback.print_exc()
+            messagebox.showerror("Test Plot Error", f"Canvas test failed:\n{str(e)}")
+
+    def _clear_data_cache(self):
+        """Clear all cached data to force reload from files."""
+        print("\n🗑️ Clearing data cache...")
+        
+        try:
+            # Clear processed files cache
+            if hasattr(self, 'processed_files'):
+                old_count = len(self.processed_files)
+                self.processed_files.clear()
+                print(f"✓ Cleared {old_count} processed files from cache")
+            
+            # Clear loaded data cache  
+            if hasattr(self, 'loaded_data_cache'):
+                old_count = len(self.loaded_data_cache)
+                self.loaded_data_cache.clear()
+                print(f"✓ Cleared {old_count} loaded files from cache")
+            
+            # Clear any matplotlib caches
+            if hasattr(self, 'plot_ax'):
+                self.plot_ax.clear()
+                if hasattr(self, 'plot_canvas'):
+                    self.plot_canvas.draw()
+                    print("✓ Cleared plot canvas")
+            
+            self.status_label.configure(text="Data cache cleared - files will be reloaded on next plot")
+            
+            # Force garbage collection
+            import gc
+            gc.collect()
+            print("✓ Forced garbage collection for memory cleanup")
+            
+            messagebox.showinfo("Cache Cleared", "All cached data has been cleared.\n\nFiles will be reloaded from disk on the next plot update.\n\nMemory has been optimized.")
+            print("✓ Cache clearing completed successfully!")
+            
+        except Exception as e:
+            print(f"✗ Cache clearing failed: {e}")
+            import traceback
+            traceback.print_exc()
+            messagebox.showerror("Cache Clear Error", f"Failed to clear cache:\n{str(e)}")
+
+    def _show_performance_info(self):
+        """Show performance information and memory usage."""
+        try:
+            import psutil
+            import gc
+            
+            # Get memory info
+            process = psutil.Process()
+            memory_info = process.memory_info()
+            memory_mb = memory_info.rss / (1024 * 1024)
+            
+            # Get cache sizes
+            processed_files_count = len(getattr(self, 'processed_files', {}))
+            loaded_cache_count = len(getattr(self, 'loaded_data_cache', {}))
+            
+            # Get selected file info
+            current_file = getattr(self.plot_file_menu, 'get', lambda: 'None')()
+            
+            # Calculate cache memory estimate
+            cache_memory_estimate = 0
+            if hasattr(self, 'loaded_data_cache'):
+                for df in self.loaded_data_cache.values():
+                    cache_memory_estimate += df.memory_usage(deep=True).sum() / (1024 * 1024)
+            
+            info_text = f"""Performance Information:
+
+📊 MEMORY USAGE:
+• Application Memory: {memory_mb:.1f} MB
+• Data Cache Memory: ~{cache_memory_estimate:.1f} MB
+
+📁 CACHED DATA:
+• Processed Files: {processed_files_count}
+• Loaded Data Cache: {loaded_cache_count}
+
+🎯 CURRENT STATE:
+• Selected File: {current_file}
+• Plot Signals Available: {len(getattr(self, 'plot_signal_vars', {}))}
+
+💡 OPTIMIZATION TIPS:
+• Use "🗑️ Clear Cache" if memory usage is high
+• Large files (>50MB) are automatically sampled
+• Consider processing smaller time ranges for very large datasets
+• Use filtering to reduce data points for plotting
+
+🔧 ACTIONS:
+• Force garbage collection to free memory
+• Clear all caches to reset memory usage"""
+
+            # Create performance window
+            perf_window = ctk.CTkToplevel(self)
+            perf_window.title("Performance Monitor")
+            perf_window.geometry("500x600")
+            perf_window.transient(self)
+            perf_window.focus()
+            
+            # Add scrollable text
+            text_widget = ctk.CTkTextbox(perf_window, wrap="word")
+            text_widget.pack(fill="both", expand=True, padx=10, pady=10)
+            text_widget.insert("1.0", info_text)
+            text_widget.configure(state="disabled")
+            
+            # Add buttons
+            button_frame = ctk.CTkFrame(perf_window)
+            button_frame.pack(fill="x", padx=10, pady=5)
+            
+            def force_gc():
+                gc.collect()
+                memory_after = psutil.Process().memory_info().rss / (1024 * 1024)
+                messagebox.showinfo("Garbage Collection", f"Garbage collection completed.\nMemory after: {memory_after:.1f} MB")
+            
+            def clear_all_caches():
+                self._clear_data_cache()
+                perf_window.destroy()
+            
+            ctk.CTkButton(button_frame, text="Force Garbage Collection", command=force_gc).pack(side="left", padx=5)
+            ctk.CTkButton(button_frame, text="Clear All Caches", command=clear_all_caches).pack(side="left", padx=5)
+            ctk.CTkButton(button_frame, text="Close", command=perf_window.destroy).pack(side="right", padx=5)
+            
+        except ImportError:
+            # Fallback if psutil not available
+            basic_info = f"""Performance Information:
+
+📁 CACHED DATA:
+• Processed Files: {len(getattr(self, 'processed_files', {}))}
+• Loaded Data Cache: {len(getattr(self, 'loaded_data_cache', {}))}
+
+🎯 CURRENT STATE:
+• Selected File: {getattr(self.plot_file_menu, 'get', lambda: 'None')()}
+• Plot Signals Available: {len(getattr(self, 'plot_signal_vars', {}))}
+
+💡 TIP: Install 'psutil' package for detailed memory monitoring:
+pip install psutil"""
+            
+            messagebox.showinfo("Performance Info", basic_info)
+            
+        except Exception as e:
+            print(f"ERROR in _show_performance_info: {e}")
+            messagebox.showerror("Performance Error", f"Failed to get performance info:\n{str(e)}")
 
     def _show_setup_help(self):
         """Show setup help."""
@@ -3594,8 +4234,9 @@ COMMON MISTAKES TO AVOID:
                 with open(file_path, 'w') as f:
                     json.dump(signal_list_data, f, indent=2)
                 
-                messagebox.showinfo("Success", f"Signal list '{signal_list_name}' saved successfully!\n\nSaved signals: {len(selected_signals)}")
-                self.status_label.configure(text=f"Signal list saved: {signal_list_name}")
+                # No popup message - just update status bar for better user experience
+                self.status_label.configure(text=f"Signal list saved: {signal_list_name} ({len(selected_signals)} signals)")
+                print(f"DEBUG: Signal list '{signal_list_name}' saved successfully with {len(selected_signals)} signals")
         
         except Exception as e:
             messagebox.showerror("Error", f"Failed to save signal list:\n{e}")
@@ -3647,9 +4288,9 @@ COMMON MISTAKES TO AVOID:
                 print("DEBUG: Applying loaded signals internally")
                 self._apply_loaded_signals_internal()
             
-            print("DEBUG: Showing success message")
-            messagebox.showinfo("Success", f"Signal list '{self.saved_signal_list_name}' loaded and applied successfully!\n\nSignals: {len(self.saved_signal_list)}")
-            self.status_label.configure(text=f"Signal list loaded: {self.saved_signal_list_name}")
+            print("DEBUG: Signal list loaded successfully without popup")
+            # No popup message - just update status bar for better user experience
+            self.status_label.configure(text=f"Signal list loaded: {self.saved_signal_list_name} ({len(self.saved_signal_list)} signals)")
             print("DEBUG: load_signal_list() completed successfully")
         
         except Exception as e:
@@ -3697,53 +4338,6 @@ COMMON MISTAKES TO AVOID:
             text_color="blue"
         )
         print("DEBUG: _apply_loaded_signals_internal() completed")
-
-    def _debug_signal_list(self):
-        """Debug method to test signal list functionality without file dialog."""
-        print("DEBUG: _debug_signal_list() called")
-        try:
-            # Create a test signal list
-            test_signal_list = {
-                'name': 'Test Signal List',
-                'signals': ['signal1', 'signal2', 'signal3'] if self.signal_vars else []
-            }
-            
-            print(f"DEBUG: Test signal list: {test_signal_list}")
-            print(f"DEBUG: Current signal_vars keys: {list(self.signal_vars.keys())[:5] if self.signal_vars else 'None'}")
-            
-            # Store the test signal list
-            self.saved_signal_list = test_signal_list.get('signals', [])
-            self.saved_signal_list_name = test_signal_list.get('name', 'Unknown')
-            
-            # Update status
-            print("DEBUG: Updating status label")
-            self.signal_list_status_label.configure(
-                text=f"Debug Loaded: {self.saved_signal_list_name} ({len(self.saved_signal_list)} signals)",
-                text_color="orange"
-            )
-            
-            # Try to apply if signals exist
-            if self.signal_vars:
-                print("DEBUG: Applying test signals")
-                # Just select the first few available signals for testing
-                available_signals = list(self.signal_vars.keys())[:3]
-                for signal, data in self.signal_vars.items():
-                    if signal in available_signals:
-                        data['var'].set(True)
-                    else:
-                        data['var'].set(False)
-                
-                messagebox.showinfo("Debug Success", f"Applied selections to first 3 signals: {available_signals}")
-            else:
-                messagebox.showinfo("Debug Info", "No signals available - load files first")
-                
-            print("DEBUG: _debug_signal_list() completed successfully")
-        
-        except Exception as e:
-            print(f"DEBUG: Exception in _debug_signal_list: {e}")
-            import traceback
-            traceback.print_exc()
-            messagebox.showerror("Debug Error", f"Debug failed:\n{e}")
 
     def apply_saved_signals(self):
         """Apply the saved signal list to the current file's signals."""
@@ -5105,7 +5699,7 @@ For additional support or feature requests, please refer to the application docu
             self.load_plot_config_menu.set("No saved plots")
 
     def _update_plots_signals(self, signals):
-        """Update signals available in plots list tab."""
+        """Update signals available in plots list tab (optimized)."""
         if not hasattr(self, 'plots_signals_frame'):
             return
         
@@ -5119,13 +5713,23 @@ For additional support or feature requests, please refer to the application docu
         
         self.plots_signal_vars.clear()
         
-        # Add checkboxes for each signal
-        for signal in signals:
-            if signal != signals[0]:  # Skip time column
+        # Process non-time signals in batches
+        non_time_signals = [s for s in signals if s != signals[0]] if signals else []
+        batch_size = 50
+        
+        for batch_start in range(0, len(non_time_signals), batch_size):
+            batch_end = min(batch_start + batch_size, len(non_time_signals))
+            batch_signals = non_time_signals[batch_start:batch_end]
+            
+            for signal in batch_signals:
                 var = tk.BooleanVar(value=False)
                 cb = ctk.CTkCheckBox(self.plots_signals_frame, text=signal, variable=var)
                 cb.grid(sticky="w", padx=5, pady=2)
                 self.plots_signal_vars[signal] = var
+            
+            # Update GUI periodically for large lists
+            if len(non_time_signals) > 100:
+                self.update()
         
         # Re-bind mouse wheel to all new checkboxes
         self._bind_mousewheel_to_frame(self.plots_signals_frame)
