@@ -2994,14 +2994,14 @@ class CSVProcessorApp(ctk.CTk):
             messagebox.showwarning("Warning", "Not enough data points in selected time window for trendline.")
             return
             
-        x_data = plot_df[x_axis_col]
-        y_data = plot_df[signal]
+        x_data = plot_df[x_axis_col].values
+        y_data = plot_df[signal].values
         
         # Convert datetime to numeric for fitting
-        if pd.api.types.is_datetime64_any_dtype(x_data):
-            x_numeric = (x_data - x_data.min()).dt.total_seconds()
+        if pd.api.types.is_datetime64_any_dtype(plot_df[x_axis_col]):
+            x_numeric = (plot_df[x_axis_col] - plot_df[x_axis_col].min()).dt.total_seconds().values
         else:
-            x_numeric = x_data
+            x_numeric = x_data.astype(float)
             
         try:
             if trend_type == "Linear":
@@ -3022,13 +3022,15 @@ class CSVProcessorApp(ctk.CTk):
                     trendline = a * np.exp(b * x_numeric)
                     equation = f"y = {a:.4f} * e^({b:.4f}x)"
                 else:
+                    messagebox.showwarning("Warning", "Not enough positive values for exponential trendline.")
                     return
                     
             elif trend_type == "Power":
                 # Log-log fit for power law
-                y_positive = y_data[y_data > 0]
-                x_positive = x_numeric[x_numeric > 0]
-                if len(y_positive) > 1 and len(x_positive) > 1:
+                mask = (y_data > 0) & (x_numeric > 0)
+                y_positive = y_data[mask]
+                x_positive = x_numeric[mask]
+                if len(y_positive) > 1:
                     log_x = np.log(x_positive)
                     log_y = np.log(y_positive)
                     coeffs = np.polyfit(log_x, log_y, 1)
@@ -3037,6 +3039,7 @@ class CSVProcessorApp(ctk.CTk):
                     trendline = a * (x_numeric ** b)
                     equation = f"y = {a:.4f} * x^({b:.4f})"
                 else:
+                    messagebox.showwarning("Warning", "Not enough positive values for power trendline.")
                     return
                     
             elif trend_type == "Polynomial":
@@ -3045,17 +3048,43 @@ class CSVProcessorApp(ctk.CTk):
                 coeffs = np.polyfit(x_numeric, y_data, order)
                 trend = np.poly1d(coeffs)
                 trendline = trend(x_numeric)
-                equation = f"Polynomial (order {order}): " + " + ".join([f"{coeffs[i]:.4f}x^{order-i}" for i in range(order+1)])
+                # Build equation string
+                terms = []
+                for i in range(order+1):
+                    power = order - i
+                    coeff = coeffs[i]
+                    if power == 0:
+                        terms.append(f"{coeff:.4f}")
+                    elif power == 1:
+                        terms.append(f"{coeff:.4f}x")
+                    else:
+                        terms.append(f"{coeff:.4f}x^{power}")
+                equation = f"Polynomial (order {order}): " + " + ".join(terms)
             
-            # Plot trendline
-            self.plot_ax.plot(x_data, trendline, '--', color='red', linewidth=2, label=f'Trendline ({trend_type})')
+            # Plot trendline - use the original x_data for plotting
+            self.plot_ax.plot(plot_df[x_axis_col], trendline, '--', color='red', linewidth=2, 
+                            label=f'{signal} Trendline ({trend_type})', alpha=0.8)
+            
+            # Force redraw the legend
+            handles, labels = self.plot_ax.get_legend_handles_labels()
+            legend_position = self.legend_position_var.get()
+            if legend_position == "outside right":
+                self.plot_ax.legend(handles, labels, bbox_to_anchor=(1.05, 1), loc='upper left')
+            else:
+                self.plot_ax.legend(handles, labels, loc=legend_position)
             
             # Update trendline textbox
             self.trendline_textbox.delete("1.0", tk.END)
             self.trendline_textbox.insert("1.0", equation)
             
+            # Redraw the canvas
+            self.plot_canvas.draw()
+            
         except Exception as e:
+            messagebox.showerror("Trendline Error", f"Error adding trendline: {str(e)}")
             print(f"Error adding trendline: {e}")
+            import traceback
+            traceback.print_exc()
 
     def get_data_for_plotting(self, filename):
         """Get data for plotting from the specified file."""
