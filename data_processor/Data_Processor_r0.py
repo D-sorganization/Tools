@@ -1820,6 +1820,9 @@ class CSVProcessorApp(ctk.CTk):
         
         # Save Plot Configuration button
         ctk.CTkButton(plot_control_frame, text="Save Plot Config", height=35, command=self._save_current_plot_config).grid(row=0, column=6, padx=10, pady=10)
+        
+        # Manual Plot Update button for debugging
+        ctk.CTkButton(plot_control_frame, text="🔄 Update Plot", height=35, command=lambda: self.update_plot()).grid(row=0, column=7, padx=5, pady=10)
 
         # Main content frame for splitter
         plot_main_frame = ctk.CTkFrame(tab)
@@ -2512,6 +2515,15 @@ class CSVProcessorApp(ctk.CTk):
                 print(f"DEBUG: Created plot_signal_vars with keys: {list(self.plot_signal_vars.keys())}")
                 print(f"DEBUG: Auto-selected {auto_selected} signals for plotting")
                 
+                # CRITICAL FIX: Ensure at least one signal is selected if auto-selection didn't work
+                if auto_selected == 0 and self.plot_signal_vars:
+                    print("DEBUG: No signals auto-selected, manually selecting first non-time signal")
+                    for signal in df.columns:
+                        if not any(word in signal.lower() for word in ['time', 'date', 'timestamp']) and signal in self.plot_signal_vars:
+                            self.plot_signal_vars[signal]['var'].set(True)
+                            print(f"DEBUG: Manually selected signal: {signal}")
+                            break
+                
                 # Re-bind mouse wheel to all new checkboxes
                 self._bind_mousewheel_to_frame(self.plot_signal_frame)
                 
@@ -2580,12 +2592,22 @@ class CSVProcessorApp(ctk.CTk):
             print(f"DEBUG: Signals to plot: {signals_to_plot}")
             print(f"DEBUG: plot_signal_vars keys: {list(self.plot_signal_vars.keys())}")
             
+            # DEBUG: Add detailed state debugging
+            self._debug_plot_state()
+            
             # Debug: Check which signals are actually selected
             if not selected_signals:
                 print("DEBUG: Checking plot_signal_vars for selected signals:")
                 for signal, data in self.plot_signal_vars.items():
                     is_selected = data['var'].get()
                     print(f"  {signal}: {is_selected}")
+            
+            # Force signal selection if none selected for debugging
+            if not signals_to_plot:
+                print("DEBUG: No signals selected, attempting to force selection...")
+                self._force_signal_selection()
+                signals_to_plot = [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
+                print(f"DEBUG: After force selection, signals to plot: {signals_to_plot}")
             
             self.plot_ax.clear()
 
@@ -2946,6 +2968,7 @@ class CSVProcessorApp(ctk.CTk):
             if filename in self.processed_files:
                 print(f"DEBUG: Found in processed_files")
                 df = self.processed_files[filename].copy()
+                print(f"DEBUG: Data shape from processed_files: {df.shape}")
                 # Ensure datetime columns are properly formatted
                 for col in df.columns:
                     if pd.api.types.is_object_dtype(df[col]):
@@ -2955,13 +2978,21 @@ class CSVProcessorApp(ctk.CTk):
                             pass
                 return df
             
-            print(f"DEBUG: Not in processed_files, checking input files")
+            # Check in loaded data cache
+            if hasattr(self, 'loaded_data_cache') and filename in self.loaded_data_cache:
+                print(f"DEBUG: Found in loaded_data_cache")
+                df = self.loaded_data_cache[filename].copy()
+                print(f"DEBUG: Data shape from cache: {df.shape}")
+                return df
+            
+            print(f"DEBUG: Not in processed_files or cache, checking input files")
             # Find the full path of the file
             full_path = None
-            for file_path in self.input_file_paths:
-                if os.path.basename(file_path) == filename:
-                    full_path = file_path
-                    break
+            if hasattr(self, 'input_file_paths'):
+                for file_path in self.input_file_paths:
+                    if os.path.basename(file_path) == filename:
+                        full_path = file_path
+                        break
             
             print(f"DEBUG: Full path found: {full_path}")
             if full_path and os.path.exists(full_path):
@@ -2977,16 +3008,16 @@ class CSVProcessorApp(ctk.CTk):
                             pass
                 
                 # Store in cache for future use
+                if not hasattr(self, 'loaded_data_cache'):
+                    self.loaded_data_cache = {}
                 self.loaded_data_cache[filename] = df.copy()
                 print(f"DEBUG: Successfully loaded data. Shape: {df.shape}")
                 return df
                 
-            # Check in loaded data cache
-            if filename in self.loaded_data_cache:
-                print(f"DEBUG: Found in loaded_data_cache")
-                return self.loaded_data_cache[filename].copy()
-                
             print(f"DEBUG: No data source found for {filename}")
+            print(f"DEBUG: Available in processed_files: {list(getattr(self, 'processed_files', {}).keys())}")
+            print(f"DEBUG: Available in loaded_data_cache: {list(getattr(self, 'loaded_data_cache', {}).keys())}")
+            print(f"DEBUG: Available input_file_paths: {getattr(self, 'input_file_paths', [])}")
                 
         except Exception as e:
             print(f"ERROR in get_data_for_plotting: {e}")
@@ -2995,6 +3026,42 @@ class CSVProcessorApp(ctk.CTk):
             messagebox.showerror("Error", f"Failed to load data for plotting:\n{str(e)}")
             
         return None
+
+    def _debug_plot_state(self):
+        """Debug helper to print current plotting state."""
+        print("\n=== PLOT DEBUG STATE ===")
+        print(f"plot_file_menu: {getattr(self, 'plot_file_menu', None)}")
+        if hasattr(self, 'plot_file_menu'):
+            print(f"  selected file: {self.plot_file_menu.get()}")
+        
+        print(f"plot_xaxis_menu: {getattr(self, 'plot_xaxis_menu', None)}")
+        if hasattr(self, 'plot_xaxis_menu'):
+            print(f"  selected x-axis: {self.plot_xaxis_menu.get()}")
+        
+        print(f"plot_signal_vars: {getattr(self, 'plot_signal_vars', None)}")
+        if hasattr(self, 'plot_signal_vars'):
+            print(f"  number of signals: {len(self.plot_signal_vars)}")
+            selected = [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
+            print(f"  selected signals: {selected}")
+        
+        print(f"plot_canvas: {getattr(self, 'plot_canvas', None)}")
+        print(f"plot_ax: {getattr(self, 'plot_ax', None)}")
+        print(f"processed_files: {len(getattr(self, 'processed_files', {})) if hasattr(self, 'processed_files') else 'None'}")
+        print(f"loaded_data_cache: {len(getattr(self, 'loaded_data_cache', {})) if hasattr(self, 'loaded_data_cache') else 'None'}")
+        print("========================\n")
+
+    def _force_signal_selection(self):
+        """Force select at least one signal for debugging."""
+        if hasattr(self, 'plot_signal_vars') and self.plot_signal_vars:
+            # Check if any signals are selected
+            selected = [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
+            if not selected:
+                # Auto-select first non-time signal
+                for signal, data in self.plot_signal_vars.items():
+                    if not any(word in signal.lower() for word in ['time', 'date', 'timestamp']):
+                        data['var'].set(True)
+                        print(f"DEBUG: Force-selected signal: {signal}")
+                        break
 
     def _show_setup_help(self):
         """Show setup help."""
