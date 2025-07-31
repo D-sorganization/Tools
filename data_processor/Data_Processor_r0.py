@@ -5172,12 +5172,12 @@ For additional support or feature requests, please refer to the application docu
         """Handle changes to dataset naming mode."""
         if self.dataset_naming_var.get() == "custom":
             self.custom_dataset_entry.configure(state="normal")
-            self.custom_dataset_entry.bind("<KeyRelease>", self._check_file_overwrite)
+            self.custom_dataset_entry.bind("<KeyRelease>", self._check_custom_name_overwrite)
         else:
             self.custom_dataset_entry.configure(state="disabled")
             self.overwrite_warning_label.configure(text="")
 
-    def _check_file_overwrite(self, event=None):
+    def _check_custom_name_overwrite(self, event=None):
         """Check if custom dataset name will cause file overwrite."""
         if not hasattr(self, 'custom_dataset_entry') or not hasattr(self, 'output_directory'):
             return
