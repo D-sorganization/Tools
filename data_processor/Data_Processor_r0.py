@@ -2647,54 +2647,54 @@ class CSVProcessorApp(ctk.CTk):
             if not signals_to_plot:
                 # Enhanced fallback: try to auto-select signals if none are selected
                 if self.plot_signal_vars:
-                # Try to find common signal patterns
-                common_patterns = ['pressure', 'temperature', 'flow', 'speed', 'power', 'voltage', 'current',
-                                 'co_pct', 'co2_pct', 'h2_pct', 'ch4_pct', 'o2_pct', 'n2_pct', 'level', 'signal']
-                
-                auto_selected = 0
-                for signal, data in self.plot_signal_vars.items():
-                    if auto_selected >= 3:  # Limit auto-selection
-                        break
-                    signal_lower = signal.lower()
-                    # Skip obvious time columns
-                    if any(time_word in signal_lower for time_word in ['time', 'timestamp', 'date', 'datetime']):
-                        continue
-                    # Select if matches common patterns
-                    if any(pattern in signal_lower for pattern in common_patterns):
-                        data['var'].set(True)
-                        auto_selected += 1
-                
-                # If no pattern matches, select first few non-time signals
-                if auto_selected == 0:
-                    count = 0
+                    # Try to find common signal patterns
+                    common_patterns = ['pressure', 'temperature', 'flow', 'speed', 'power', 'voltage', 'current',
+                                     'co_pct', 'co2_pct', 'h2_pct', 'ch4_pct', 'o2_pct', 'n2_pct', 'level', 'signal']
+                    
+                    auto_selected = 0
                     for signal, data in self.plot_signal_vars.items():
-                        if count >= 2:  # Select up to 2 signals
+                        if auto_selected >= 3:  # Limit auto-selection
                             break
                         signal_lower = signal.lower()
-                        # Skip time columns
+                        # Skip obvious time columns
                         if any(time_word in signal_lower for time_word in ['time', 'timestamp', 'date', 'datetime']):
                             continue
-                        data['var'].set(True)
-                        count += 1
-                        auto_selected += 1
+                        # Select if matches common patterns
+                        if any(pattern in signal_lower for pattern in common_patterns):
+                            data['var'].set(True)
+                            auto_selected += 1
+                    
+                    # If no pattern matches, select first few non-time signals
+                    if auto_selected == 0:
+                        count = 0
+                        for signal, data in self.plot_signal_vars.items():
+                            if count >= 2:  # Select up to 2 signals
+                                break
+                            signal_lower = signal.lower()
+                            # Skip time columns
+                            if any(time_word in signal_lower for time_word in ['time', 'timestamp', 'date', 'datetime']):
+                                continue
+                            data['var'].set(True)
+                            count += 1
+                            auto_selected += 1
+                    
+                    # Update signals_to_plot after auto-selection
+                    if auto_selected > 0:
+                        signals_to_plot = [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
                 
-                # Update signals_to_plot after auto-selection
-                if auto_selected > 0:
-                    signals_to_plot = [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
-            
-            # If still no signals, show helpful message
-            if not signals_to_plot:
-                message = "No signals selected for plotting.\n\n"
-                if self.plot_signal_vars:
-                    message += "Available signals found but none selected.\nPlease select signals from the left panel."
-                else:
-                    message += "No signals available. Please:\n1. Load CSV files\n2. Select a file to plot\n3. Wait for signals to load"
-                
-                self.plot_ax.text(0.5, 0.5, message, ha='center', va='center', fontsize=10, 
-                                bbox=dict(boxstyle="round,pad=0.3", facecolor="lightgray", alpha=0.7))
-                self.plot_canvas.draw()
-                self.status_label.configure(text="No signals selected - please select signals to plot")
-                return
+                # If still no signals, show helpful message
+                if not signals_to_plot:
+                    message = "No signals selected for plotting.\n\n"
+                    if self.plot_signal_vars:
+                        message += "Available signals found but none selected.\nPlease select signals from the left panel."
+                    else:
+                        message += "No signals available. Please:\n1. Load CSV files\n2. Select a file to plot\n3. Wait for signals to load"
+                    
+                    self.plot_ax.text(0.5, 0.5, message, ha='center', va='center', fontsize=10, 
+                                    bbox=dict(boxstyle="round,pad=0.3", facecolor="lightgray", alpha=0.7))
+                    self.plot_canvas.draw()
+                    self.status_label.configure(text="No signals selected - please select signals to plot")
+                    return
             else:
                 show_both = self.show_both_signals_var.get()
                 plot_filter = self.plot_filter_type.get()
@@ -2709,7 +2709,7 @@ class CSVProcessorApp(ctk.CTk):
                 line_width = float(self.line_width_var.get())
                 style_args["linewidth"] = line_width
                 
-                    color_scheme = self.color_scheme_var.get()
+                color_scheme = self.color_scheme_var.get()
                 
                 try:
                     if color_scheme == "Custom Colors":
