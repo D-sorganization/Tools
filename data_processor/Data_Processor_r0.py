@@ -2053,11 +2053,11 @@ class CSVProcessorApp(ctk.CTk):
             
             ctk.CTkLabel(time_range_frame, text="Plot Time Range", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, sticky="w", padx=10, pady=5)
             ctk.CTkLabel(time_range_frame, text="Start Time (HH:MM:SS):").grid(row=1, column=0, sticky="w", padx=10)
-            self.plot_start_time_entry = ctk.CTkEntry(time_range_frame, placeholder_text="e.g., 09:30:00")
-            self.plot_start_time_entry.grid(row=2, column=0, sticky="ew", padx=10, pady=2)
+            self.plotting_start_time_entry = ctk.CTkEntry(time_range_frame, placeholder_text="e.g., 09:30:00")
+            self.plotting_start_time_entry.grid(row=2, column=0, sticky="ew", padx=10, pady=2)
             ctk.CTkLabel(time_range_frame, text="End Time (HH:MM:SS):").grid(row=3, column=0, sticky="w", padx=10)
-            self.plot_end_time_entry = ctk.CTkEntry(time_range_frame, placeholder_text="e.g., 17:00:00")
-            self.plot_end_time_entry.grid(row=4, column=0, sticky="ew", padx=10, pady=2)
+            self.plotting_end_time_entry = ctk.CTkEntry(time_range_frame, placeholder_text="e.g., 17:00:00")
+            self.plotting_end_time_entry.grid(row=4, column=0, sticky="ew", padx=10, pady=2)
             ctk.CTkButton(time_range_frame, text="Apply Time Range to Plot", command=self._apply_plot_time_range).grid(row=5, column=0, sticky="ew", padx=10, pady=5)
             ctk.CTkButton(time_range_frame, text="Reset Plot Range", command=self._reset_plot_range).grid(row=6, column=0, sticky="ew", padx=10, pady=2)
             ctk.CTkButton(time_range_frame, text="Save Current View", command=self._save_current_plot_view).grid(row=7, column=0, sticky="ew", padx=10, pady=2)
@@ -2180,11 +2180,11 @@ class CSVProcessorApp(ctk.CTk):
         time_range_frame.grid_columnconfigure(0, weight=1)
         time_range_frame.grid_columnconfigure(1, weight=1)
         
-        self.plot_start_time_entry = ctk.CTkEntry(time_range_frame, placeholder_text="Start time")
-        self.plot_start_time_entry.grid(row=0, column=0, padx=(0,5), pady=2, sticky="ew")
-        
-        self.plot_end_time_entry = ctk.CTkEntry(time_range_frame, placeholder_text="End time")
-        self.plot_end_time_entry.grid(row=0, column=1, padx=(5,0), pady=2, sticky="ew")
+        self.plots_list_start_time_entry = ctk.CTkEntry(time_range_frame, placeholder_text="Start time")
+        self.plots_list_start_time_entry.grid(row=0, column=0, padx=(0,5), pady=2, sticky="ew")
+
+        self.plots_list_end_time_entry = ctk.CTkEntry(time_range_frame, placeholder_text="End time")
+        self.plots_list_end_time_entry.grid(row=0, column=1, padx=(5,0), pady=2, sticky="ew")
         
         # Buttons
         button_frame = ctk.CTkFrame(config_frame, fg_color="transparent")
@@ -3649,8 +3649,8 @@ COMMON MISTAKES TO AVOID:
             'name': plot_name,
             'description': plot_desc or f"Plot configuration created on {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}",
             'signals': selected_signals,
-            'start_time': self.plot_start_time_entry.get(),
-            'end_time': self.plot_end_time_entry.get(),
+            'start_time': self.plots_list_start_time_entry.get(),
+            'end_time': self.plots_list_end_time_entry.get(),
             'created_date': pd.Timestamp.now().isoformat()
         }
         
@@ -3682,8 +3682,8 @@ COMMON MISTAKES TO AVOID:
             'name': plot_name,
             'description': self.plot_desc_entry.get().strip(),
             'signals': selected_signals,
-            'start_time': self.plot_start_time_entry.get(),
-            'end_time': self.plot_end_time_entry.get(),
+            'start_time': self.plots_list_start_time_entry.get(),
+            'end_time': self.plots_list_end_time_entry.get(),
             'modified_date': pd.Timestamp.now().isoformat()
         })
         
@@ -3695,8 +3695,8 @@ COMMON MISTAKES TO AVOID:
         """Clear the plot form."""
         self.plot_name_entry.delete(0, tk.END)
         self.plot_desc_entry.delete(0, tk.END)
-        self.plot_start_time_entry.delete(0, tk.END)
-        self.plot_end_time_entry.delete(0, tk.END)
+        self.plots_list_start_time_entry.delete(0, tk.END)
+        self.plots_list_end_time_entry.delete(0, tk.END)
         
         # Clear signal selections
         if hasattr(self, 'plots_signal_vars'):
@@ -3719,11 +3719,11 @@ COMMON MISTAKES TO AVOID:
         self.plot_desc_entry.delete(0, tk.END)
         self.plot_desc_entry.insert(0, plot_config.get('description', ''))
         
-        self.plot_start_time_entry.delete(0, tk.END)
-        self.plot_start_time_entry.insert(0, plot_config.get('start_time', ''))
-        
-        self.plot_end_time_entry.delete(0, tk.END)
-        self.plot_end_time_entry.insert(0, plot_config.get('end_time', ''))
+        self.plots_list_start_time_entry.delete(0, tk.END)
+        self.plots_list_start_time_entry.insert(0, plot_config.get('start_time', ''))
+
+        self.plots_list_end_time_entry.delete(0, tk.END)
+        self.plots_list_end_time_entry.insert(0, plot_config.get('end_time', ''))
         
         # Update signal selections
         if hasattr(self, 'plots_signal_vars'):
@@ -3770,13 +3770,13 @@ COMMON MISTAKES TO AVOID:
             self.plot_ylabel_entry.insert(0, plot_config.get('plot_ylabel', ''))
         
         # Apply time range
-        if hasattr(self, 'plot_start_time_entry'):
-            self.plot_start_time_entry.delete(0, tk.END)
-            self.plot_start_time_entry.insert(0, plot_config.get('start_time', ''))
-        
-        if hasattr(self, 'plot_end_time_entry'):
-            self.plot_end_time_entry.delete(0, tk.END)
-            self.plot_end_time_entry.insert(0, plot_config.get('end_time', ''))
+        if hasattr(self, 'plotting_start_time_entry'):
+            self.plotting_start_time_entry.delete(0, tk.END)
+            self.plotting_start_time_entry.insert(0, plot_config.get('start_time', ''))
+
+        if hasattr(self, 'plotting_end_time_entry'):
+            self.plotting_end_time_entry.delete(0, tk.END)
+            self.plotting_end_time_entry.insert(0, plot_config.get('end_time', ''))
         
         # Apply signal selections
         if hasattr(self, 'plot_signal_vars') and 'signals' in plot_config:
@@ -3955,8 +3955,8 @@ COMMON MISTAKES TO AVOID:
 
     def _apply_plot_time_range(self):
         """Apply time range to plot."""
-        start_time_str = self.plot_start_time_entry.get()
-        end_time_str = self.plot_end_time_entry.get()
+        start_time_str = self.plotting_start_time_entry.get()
+        end_time_str = self.plotting_end_time_entry.get()
         
         if not start_time_str and not end_time_str:
             return
@@ -4084,8 +4084,8 @@ COMMON MISTAKES TO AVOID:
 
     def _reset_plot_range(self):
         """Reset plot range."""
-        self.plot_start_time_entry.delete(0, tk.END)
-        self.plot_end_time_entry.delete(0, tk.END)
+        self.plotting_start_time_entry.delete(0, tk.END)
+        self.plotting_end_time_entry.delete(0, tk.END)
         self.update_plot()
 
     def _copy_trim_to_plot_range(self):
@@ -4094,12 +4094,12 @@ COMMON MISTAKES TO AVOID:
         end_time = self.trim_end_entry.get()
         
         if start_time:
-            self.plot_start_time_entry.delete(0, tk.END)
-            self.plot_start_time_entry.insert(0, start_time)
-        
+            self.plotting_start_time_entry.delete(0, tk.END)
+            self.plotting_start_time_entry.insert(0, start_time)
+
         if end_time:
-            self.plot_end_time_entry.delete(0, tk.END)
-            self.plot_end_time_entry.insert(0, end_time)
+            self.plotting_end_time_entry.delete(0, tk.END)
+            self.plotting_end_time_entry.insert(0, end_time)
         
         self._apply_plot_time_range()
 
@@ -4594,8 +4594,8 @@ For additional support or feature requests, please refer to the application docu
             'plot_title': self.plot_title_entry.get() if hasattr(self, 'plot_title_entry') else '',
             'plot_xlabel': self.plot_xlabel_entry.get() if hasattr(self, 'plot_xlabel_entry') else '',
             'plot_ylabel': self.plot_ylabel_entry.get() if hasattr(self, 'plot_ylabel_entry') else '',
-            'start_time': self.plot_start_time_entry.get() if hasattr(self, 'plot_start_time_entry') else '',
-            'end_time': self.plot_end_time_entry.get() if hasattr(self, 'plot_end_time_entry') else '',
+            'start_time': self.plotting_start_time_entry.get() if hasattr(self, 'plotting_start_time_entry') else '',
+            'end_time': self.plotting_end_time_entry.get() if hasattr(self, 'plotting_end_time_entry') else '',
             'color_scheme': self.color_scheme_var.get() if hasattr(self, 'color_scheme_var') else 'Auto (Matplotlib)',
             'line_width': self.line_width_var.get() if hasattr(self, 'line_width_var') else '1.0',
             'legend_position': self.legend_position_var.get() if hasattr(self, 'legend_position_var') else 'best',
@@ -4748,13 +4748,13 @@ For additional support or feature requests, please refer to the application docu
             self.plot_ylabel_entry.delete(0, tk.END)
             self.plot_ylabel_entry.insert(0, plot_config['plot_ylabel'])
         
-        if 'start_time' in plot_config and hasattr(self, 'plot_start_time_entry'):
-            self.plot_start_time_entry.delete(0, tk.END)
-            self.plot_start_time_entry.insert(0, plot_config['start_time'])
-        
-        if 'end_time' in plot_config and hasattr(self, 'plot_end_time_entry'):
-            self.plot_end_time_entry.delete(0, tk.END)
-            self.plot_end_time_entry.insert(0, plot_config['end_time'])
+        if 'start_time' in plot_config and hasattr(self, 'plotting_start_time_entry'):
+            self.plotting_start_time_entry.delete(0, tk.END)
+            self.plotting_start_time_entry.insert(0, plot_config['start_time'])
+
+        if 'end_time' in plot_config and hasattr(self, 'plotting_end_time_entry'):
+            self.plotting_end_time_entry.delete(0, tk.END)
+            self.plotting_end_time_entry.insert(0, plot_config['end_time'])
         
         if 'color_scheme' in plot_config and hasattr(self, 'color_scheme_var'):
             self.color_scheme_var.set(plot_config['color_scheme'])
