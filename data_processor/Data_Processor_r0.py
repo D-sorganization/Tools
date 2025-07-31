@@ -1919,18 +1919,6 @@ class CSVProcessorApp(ctk.CTk):
         
         # Manual Plot Update button for debugging
         ctk.CTkButton(plot_control_frame, text="🔄 Update Plot", height=35, command=lambda: self.update_plot()).grid(row=0, column=7, padx=5, pady=10)
-        
-        # Test Plot button to verify canvas functionality
-        ctk.CTkButton(plot_control_frame, text="🧪 Test Plot", height=35, command=self._test_plot_canvas).grid(row=0, column=8, padx=5, pady=10)
-        
-        # Clear Cache button to force data reload
-        ctk.CTkButton(plot_control_frame, text="🗑️ Clear Cache", height=35, command=self._clear_data_cache).grid(row=0, column=9, padx=5, pady=10)
-        
-        # Debug button for plotting
-        ctk.CTkButton(plot_control_frame, text="🔍 Debug", height=35, command=self.manual_plot_debug).grid(row=0, column=10, padx=5, pady=10)
-        
-        # Performance Monitor button
-        ctk.CTkButton(plot_control_frame, text="⚡ Performance", height=35, command=self._show_performance_info).grid(row=0, column=11, padx=5, pady=10)
 
         # Main content frame for splitter
         plot_main_frame = ctk.CTkFrame(tab)
@@ -2062,8 +2050,9 @@ class CSVProcessorApp(ctk.CTk):
             
             ctk.CTkButton(appearance_frame, text="Refresh Legend Entries", command=self._refresh_legend_entries).grid(row=16, column=0, sticky="ew", padx=10, pady=5)
 
-            # Custom legend entries dictionary
-            self.custom_legend_entries = {}
+            # Custom legend entries dictionary - only initialize if not already exists
+            if not hasattr(self, 'custom_legend_entries'):
+                self.custom_legend_entries = {}
 
             # Trendline controls
             trend_frame = ctk.CTkFrame(plot_left_panel)
@@ -3209,49 +3198,6 @@ class CSVProcessorApp(ctk.CTk):
             print(f"Error loading data for plotting: {e}")
             return None
 
-    def manual_plot_debug(self):
-        """Manual debugging function to check plotting state"""
-        print("\n" + "🔍" + "="*60)
-        print("MANUAL PLOT DEBUGGING")
-        print("="*60)
-        
-        # Check basic components
-        print(f"plot_canvas exists: {hasattr(self, 'plot_canvas')}")
-        print(f"plot_ax exists: {hasattr(self, 'plot_ax')}")
-        print(f"plot_fig exists: {hasattr(self, 'plot_fig')}")
-        
-        # Check file selection
-        if hasattr(self, 'plot_file_menu'):
-            current_file = self.plot_file_menu.get()
-            available_files = self.plot_file_menu._values if hasattr(self.plot_file_menu, '_values') else []
-            print(f"plot_file_menu: current='{current_file}', available={available_files}")
-        else:
-            print("plot_file_menu: NOT FOUND")
-        
-        # Check signal variables
-        if hasattr(self, 'plot_signal_vars'):
-            total_signals = len(self.plot_signal_vars)
-            selected_signals = [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
-            print(f"plot_signal_vars: {total_signals} total, {len(selected_signals)} selected")
-            print(f"Selected signals: {selected_signals[:5]}...")  # Show first 5
-        else:
-            print("plot_signal_vars: NOT FOUND")
-        
-        # Check data sources
-        print(f"input_file_paths: {len(getattr(self, 'input_file_paths', []))}")
-        print(f"processed_files: {len(getattr(self, 'processed_files', {}))}")
-        print(f"loaded_data_cache: {len(getattr(self, 'loaded_data_cache', {}))}")
-        
-        # Try to force a plot update
-        print("\nAttempting manual plot update...")
-        try:
-            self.update_plot()
-            print("✓ Manual update_plot() completed")
-        except Exception as e:
-            print(f"✗ Manual update_plot() failed: {e}")
-        
-        print("="*60)
-
     def _debug_plot_state(self):
         """Debug helper to print current plotting state."""
         print("\n=== PLOT DEBUG STATE ===")
@@ -3287,115 +3233,6 @@ class CSVProcessorApp(ctk.CTk):
                         data['var'].set(True)
                         print(f"DEBUG: Force-selected signal: {signal}")
                         break
-
-    def _test_plot_canvas(self):
-        """Test the plotting canvas with a simple sine/cosine plot to verify functionality."""
-        print("\n🧪 Testing plot canvas functionality...")
-        
-        if not hasattr(self, 'plot_canvas') or not hasattr(self, 'plot_ax'):
-            messagebox.showerror("Test Plot Error", "Plot canvas not initialized. Please ensure the plotting tab is loaded.")
-            return
-        
-        try:
-            # Clear the plot
-            self.plot_ax.clear()
-            
-            # Create test data
-            import numpy as np
-            x = np.linspace(0, 4*np.pi, 100)
-            y1 = np.sin(x)
-            y2 = np.cos(x)
-            
-            # Plot test data
-            self.plot_ax.plot(x, y1, 'b-', label='sin(x)', linewidth=2)
-            self.plot_ax.plot(x, y2, 'r--', label='cos(x)', linewidth=2)
-            
-            # Add labels and formatting
-            self.plot_ax.set_xlabel('X Values')
-            self.plot_ax.set_ylabel('Y Values')
-            self.plot_ax.set_title('Canvas Test Plot - Sine and Cosine Functions')
-            self.plot_ax.legend()
-            self.plot_ax.grid(True, alpha=0.3)
-            
-            # Refresh the canvas
-            self.plot_canvas.draw()
-            
-            print("✓ Test plot created successfully!")
-            self.status_label.configure(text="Test plot created - canvas is working correctly")
-            messagebox.showinfo("Test Plot Success", "Canvas test completed successfully!\n\nYour plotting canvas is working correctly.")
-            
-        except Exception as e:
-            print(f"✗ Test plot failed: {e}")
-            import traceback
-            traceback.print_exc()
-            messagebox.showerror("Test Plot Error", f"Canvas test failed:\n{str(e)}")
-
-    def _clear_data_cache(self):
-        """Clear all cached data to force reload from files."""
-        print("\n🗑️ Clearing data cache...")
-        
-        try:
-            # Clear processed files cache
-            if hasattr(self, 'processed_files'):
-                old_count = len(self.processed_files)
-                self.processed_files.clear()
-                print(f"✓ Cleared {old_count} processed files from cache")
-            
-            # Clear loaded data cache  
-            if hasattr(self, 'loaded_data_cache'):
-                old_count = len(self.loaded_data_cache)
-                self.loaded_data_cache.clear()
-                print(f"✓ Cleared {old_count} loaded files from cache")
-            
-            # Clear any matplotlib caches
-            if hasattr(self, 'plot_ax'):
-                self.plot_ax.clear()
-                if hasattr(self, 'plot_canvas'):
-                    self.plot_canvas.draw()
-                    print("✓ Cleared plot canvas")
-            
-            self.status_label.configure(text="Data cache cleared - files will be reloaded on next plot")
-            
-            # Force garbage collection
-            import gc
-            gc.collect()
-            print("✓ Forced garbage collection for memory cleanup")
-            
-            messagebox.showinfo("Cache Cleared", "All cached data has been cleared.\n\nFiles will be reloaded from disk on the next plot update.\n\nMemory has been optimized.")
-            print("✓ Cache clearing completed successfully!")
-            
-        except Exception as e:
-            print(f"✗ Cache clearing failed: {e}")
-            import traceback
-            traceback.print_exc()
-            messagebox.showerror("Cache Clear Error", f"Failed to clear cache:\n{str(e)}")
-
-    def _show_performance_info(self):
-        """Show simplified performance information."""
-        # Get basic info
-        processed_files_count = len(getattr(self, 'processed_files', {}))
-        current_file = getattr(self.plot_file_menu, 'get', lambda: 'None')()
-        
-        info_text = f"""Performance Information:
-
-📁 DATA:
-• Processed Files: {processed_files_count}
-• Selected File: {current_file}
-• Plot Signals Available: {len(getattr(self, 'plot_signal_vars', {}))}
-
-💡 TIPS:
-• For better performance, use smaller time ranges
-• Clear cache if experiencing slowdowns"""
-
-        # Create simple info window
-        perf_window = ctk.CTkToplevel(self)
-        perf_window.title("Performance Info")
-        perf_window.geometry("400x300")
-        
-        text_widget = ctk.CTkTextbox(perf_window, wrap="word")
-        text_widget.pack(fill="both", expand=True, padx=10, pady=10)
-        text_widget.insert("1.0", info_text)
-        text_widget.configure(state="disabled")
 
     def _show_setup_help(self):
         """Show setup help."""
@@ -4171,50 +4008,17 @@ COMMON MISTAKES TO AVOID:
         idx = selection[0]
         plot_config = self.plots_list[idx]
         
-        # Apply to plotting tab
-        if 'file' in plot_config and plot_config['file']:
-            self.plot_file_menu.set(plot_config['file'])
+        print(f"DEBUG: Loading plot config: {plot_config.get('name', 'Unknown')}")
+        print(f"DEBUG: File in config: '{plot_config.get('file', '')}'")
         
-        if 'x_axis' in plot_config and plot_config['x_axis']:
-            self.plot_xaxis_menu.set(plot_config['x_axis'])
+        # Apply the plot configuration using the same method as the main plotting tab
+        self._apply_plot_config(plot_config)
         
-        # Apply filter settings
-        if 'filter_type' in plot_config:
-            self.plot_filter_type.set(plot_config['filter_type'])
-            self._update_plot_filter_ui(plot_config['filter_type'])
+        # Switch to plotting tab to show the loaded configuration
+        if hasattr(self, 'tabview'):
+            self.tabview.set("Plotting")
         
-        if 'show_both_signals' in plot_config:
-            self.show_both_signals_var.set(plot_config['show_both_signals'])
-        
-        # Apply plot labels
-        if 'plot_title' in plot_config and hasattr(self, 'plot_title_entry'):
-            self.plot_title_entry.delete(0, tk.END)
-            self.plot_title_entry.insert(0, plot_config.get('plot_title', ''))
-        
-        if 'plot_xlabel' in plot_config and hasattr(self, 'plot_xlabel_entry'):
-            self.plot_xlabel_entry.delete(0, tk.END)
-            self.plot_xlabel_entry.insert(0, plot_config.get('plot_xlabel', ''))
-        
-        if 'plot_ylabel' in plot_config and hasattr(self, 'plot_ylabel_entry'):
-            self.plot_ylabel_entry.delete(0, tk.END)
-            self.plot_ylabel_entry.insert(0, plot_config.get('plot_ylabel', ''))
-        
-        # Apply time range
-        if hasattr(self, 'plotting_start_time_entry'):
-            self.plotting_start_time_entry.delete(0, tk.END)
-            self.plotting_start_time_entry.insert(0, plot_config.get('start_time', ''))
-
-        if hasattr(self, 'plotting_end_time_entry'):
-            self.plotting_end_time_entry.delete(0, tk.END)
-            self.plotting_end_time_entry.insert(0, plot_config.get('end_time', ''))
-        
-        # Apply signal selections
-        if hasattr(self, 'plot_signal_vars') and 'signals' in plot_config:
-            saved_signals = plot_config['signals']
-            for signal, data in self.plot_signal_vars.items():
-                data['var'].set(signal in saved_signals)
-        
-        messagebox.showinfo("Success", f"Plot configuration '{plot_config['name']}' loaded!")
+        messagebox.showinfo("Success", f"Plot configuration '{plot_config['name']}' loaded and applied to Plotting tab!")
 
     def _delete_selected_plot(self):
         """Delete selected plot from list."""
@@ -5276,6 +5080,8 @@ For additional support or feature requests, please refer to the application docu
             signals = plot_config.get('signals', [])
             file_name = plot_config.get('file', '')
             
+            print(f"DEBUG: Preview plot config - File: '{file_name}', Signals: {signals}")
+            
             if not signals:
                 self.preview_ax.text(0.5, 0.5, "No signals selected in this configuration", 
                                    transform=self.preview_ax.transAxes, 
@@ -5284,10 +5090,23 @@ For additional support or feature requests, please refer to the application docu
                 self.preview_canvas.draw()
                 return
             
-            if not file_name:
-                self.preview_ax.text(0.5, 0.5, "No data file specified\nin plot configuration", 
+            if not file_name or file_name == "Select a file...":
+                # Show available files for debugging
+                available_files = []
+                if hasattr(self, 'plot_file_menu') and hasattr(self.plot_file_menu, '_values'):
+                    available_files = [f for f in self.plot_file_menu._values if f != "Select a file..."]
+                
+                debug_text = f"No data file specified in plot configuration\n\nSaved file: '{file_name}'"
+                if available_files:
+                    debug_text += f"\n\nAvailable files:\n" + "\n".join(available_files[:3])
+                    if len(available_files) > 3:
+                        debug_text += f"\n... and {len(available_files)-3} more"
+                else:
+                    debug_text += f"\n\nNo files currently loaded.\nPlease load files on Setup tab first."
+                
+                self.preview_ax.text(0.5, 0.5, debug_text, 
                                    transform=self.preview_ax.transAxes, 
-                                   ha='center', va='center', fontsize=12)
+                                   ha='center', va='center', fontsize=10)
                 self.preview_ax.set_title(f"Preview: {plot_config['name']}")
                 self.preview_canvas.draw()
                 return
