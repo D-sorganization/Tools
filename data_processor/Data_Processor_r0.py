@@ -1095,23 +1095,33 @@ class CSVProcessorApp(ctk.CTk):
 
     def select_files(self):
         """Select input CSV files."""
+        print("DEBUG: select_files() called")
         file_paths = filedialog.askopenfilenames(
             title="Select CSV Files",
             filetypes=[("CSV files", "*.csv"), ("All files", "*.*")]
         )
+        print(f"DEBUG: File dialog returned: {file_paths}")
+        
         if file_paths:
             self.input_file_paths = list(file_paths)
+            print(f"DEBUG: Set input_file_paths to: {self.input_file_paths}")
             
             # Set default output directory to the folder of the first selected file
             if self.input_file_paths:
                 first_file_dir = os.path.dirname(self.input_file_paths[0])
                 self.output_directory = first_file_dir
+                print(f"DEBUG: Set output directory to: {self.output_directory}")
                 # Update the output label to reflect the new default directory
                 if hasattr(self, 'output_label'):
                     self.output_label.configure(text=f"Output: {self.output_directory}")
+                    print("DEBUG: Updated output label")
             
+            print("DEBUG: Calling update_file_list()")
             self.update_file_list()
+            print("DEBUG: Calling load_signals_from_files()")
             self.load_signals_from_files()
+        else:
+            print("DEBUG: No files selected (user cancelled)")
 
     def select_output_folder(self):
         """Select output directory for processed files."""
@@ -1122,22 +1132,43 @@ class CSVProcessorApp(ctk.CTk):
 
     def update_file_list(self):
         """Update the file list display."""
+        print("DEBUG: update_file_list() called")
+        print(f"DEBUG: input_file_paths = {getattr(self, 'input_file_paths', 'NOT SET')}")
+        
         # Clear existing widgets
         for widget in self.file_list_frame.winfo_children():
             widget.destroy()
+        print("DEBUG: Cleared existing widgets")
         
         if not self.input_file_paths:
-            ctk.CTkLabel(self.file_list_frame, text="Files you select will be listed here.").pack(padx=5, pady=5)
+            print("DEBUG: No input file paths, showing default message")
+            label = ctk.CTkLabel(self.file_list_frame, text="Files you select will be listed here.")
+            label.pack(padx=5, pady=5)
+            print("DEBUG: Default label created and packed")
             return
         
+        print(f"DEBUG: Creating display for {len(self.input_file_paths)} files")
         for i, file_path in enumerate(self.input_file_paths):
+            print(f"DEBUG: Creating widget for file {i+1}: {file_path}")
             file_frame = ctk.CTkFrame(self.file_list_frame)
             file_frame.pack(fill="x", padx=5, pady=2)
+            print(f"DEBUG: File frame created and packed for file {i+1}")
             
             filename = os.path.basename(file_path)
-            ctk.CTkLabel(file_frame, text=f"{i+1}. {filename}", font=ctk.CTkFont(size=11)).pack(side="left", padx=5, pady=2)
+            print(f"DEBUG: Filename: {filename}")
+            label = ctk.CTkLabel(file_frame, text=f"{i+1}. {filename}", font=ctk.CTkFont(size=11))
+            label.pack(side="left", padx=5, pady=2)
+            print(f"DEBUG: Label created and packed for file {i+1}")
             
-            ctk.CTkButton(file_frame, text="X", width=25, command=lambda f=file_path: self.remove_file(f)).pack(side="right", padx=5, pady=2)
+            button = ctk.CTkButton(file_frame, text="X", width=25, command=lambda f=file_path: self.remove_file(f))
+            button.pack(side="right", padx=5, pady=2)
+            print(f"DEBUG: Remove button created and packed for file {i+1}")
+        
+        print("DEBUG: update_file_list() completed")
+        
+        # Force GUI update
+        self.file_list_frame.update_idletasks()
+        print("DEBUG: Forced file_list_frame update_idletasks()")
 
     def remove_file(self, file_path):
         """Remove a file from the list."""
@@ -1148,30 +1179,43 @@ class CSVProcessorApp(ctk.CTk):
 
     def load_signals_from_files(self):
         """Load signals from all selected files."""
+        print("DEBUG: load_signals_from_files() called")
+        print(f"DEBUG: input_file_paths = {getattr(self, 'input_file_paths', 'NOT SET')}")
+        
         if not self.input_file_paths:
+            print("DEBUG: No input file paths, returning early")
             return
         
         all_signals = set()
         for file_path in self.input_file_paths:
             try:
+                print(f"DEBUG: Reading header from: {file_path}")
                 df = pd.read_csv(file_path, nrows=1)  # Just read header
-                all_signals.update(df.columns.tolist())
+                signals = df.columns.tolist()
+                print(f"DEBUG: Found signals: {signals}")
+                all_signals.update(signals)
             except Exception as e:
                 print(f"Error reading {file_path}: {e}")
         
+        print(f"DEBUG: All signals collected: {sorted(all_signals)}")
         self.update_signal_list(sorted(all_signals))
         
         # Update plot file menu
         file_names = ["Select a file..."] + [os.path.basename(f) for f in self.input_file_paths]
+        print(f"DEBUG: Updating plot file menu with: {file_names}")
         if hasattr(self, 'plot_file_menu'):
             self.plot_file_menu.configure(values=file_names)
+            print("DEBUG: plot_file_menu updated")
             
             # Auto-select the file if there's only one
             if len(self.input_file_paths) == 1:
                 single_file = os.path.basename(self.input_file_paths[0])
                 self.plot_file_menu.set(single_file)
+                print(f"DEBUG: Auto-selected single file: {single_file}")
                 # Trigger the file selection handler
                 self.on_plot_file_select(single_file)
+        else:
+            print("DEBUG: plot_file_menu not found!")
 
     def _ensure_data_loaded(self, filename):
         """Ensure data is loaded for the given filename."""
@@ -1195,21 +1239,35 @@ class CSVProcessorApp(ctk.CTk):
 
     def update_signal_list(self, signals):
         """Update the signal list with checkboxes."""
+        print(f"DEBUG: update_signal_list() called with {len(signals)} signals")
+        print(f"DEBUG: Signals: {signals[:5]}{'...' if len(signals) > 5 else ''}")
+        
         # Clear existing widgets
         for widget in self.signal_list_frame.winfo_children():
             widget.destroy()
+        print("DEBUG: Cleared existing signal widgets")
         
         self.signal_vars.clear()
+        print("DEBUG: Cleared signal_vars dictionary")
         
-        for signal in signals:
+        for i, signal in enumerate(signals):
+            print(f"DEBUG: Creating checkbox {i+1}/{len(signals)} for signal: {signal}")
             var = tk.BooleanVar(value=True)
             cb = ctk.CTkCheckBox(self.signal_list_frame, text=signal, variable=var)
             cb.grid(sticky="w", padx=5, pady=2)
             self.signal_vars[signal] = {'var': var, 'widget': cb}
+            print(f"DEBUG: Checkbox created and gridded for signal: {signal}")
+        
+        print(f"DEBUG: Created {len(self.signal_vars)} signal checkboxes")
+        
+        # Force GUI update
+        self.signal_list_frame.update_idletasks()
+        print("DEBUG: Forced signal_list_frame update_idletasks()")
         
         # Update sort column menu
         sort_values = ["No Sorting"] + signals
         self.sort_col_menu.configure(values=sort_values)
+        print("DEBUG: Updated sort column menu")
         
         # Initialize plot signal variables (will be populated when file is selected in plotting tab)
         self.plot_signal_vars = {}
@@ -1823,6 +1881,9 @@ class CSVProcessorApp(ctk.CTk):
         
         # Manual Plot Update button for debugging
         ctk.CTkButton(plot_control_frame, text="🔄 Update Plot", height=35, command=lambda: self.update_plot()).grid(row=0, column=7, padx=5, pady=10)
+        
+        # Debug button for plotting
+        ctk.CTkButton(plot_control_frame, text="🔍 Debug", height=35, command=self.manual_plot_debug).grid(row=0, column=8, padx=5, pady=10)
 
         # Main content frame for splitter
         plot_main_frame = ctk.CTkFrame(tab)
@@ -2092,6 +2153,13 @@ class CSVProcessorApp(ctk.CTk):
             
             self.plot_canvas = FigureCanvasTkAgg(self.plot_fig, master=plot_canvas_frame)
             self.plot_canvas.get_tk_widget().grid(row=1, column=0, sticky="nsew")
+            
+            # DEBUG: Test the plotting canvas
+            print("DEBUG: Plot canvas and axes created successfully")
+            self.plot_ax.text(0.5, 0.5, "Plotting ready - select a file", ha='center', va='center', transform=self.plot_ax.transAxes)
+            self.plot_ax.set_title("Select a file to begin plotting")
+            self.plot_canvas.draw()
+            print("DEBUG: Initial test plot drawn")
             
             toolbar = NavigationToolbar2Tk(self.plot_canvas, plot_canvas_frame, pack_toolbar=False)
             toolbar.grid(row=0, column=0, sticky="ew")
@@ -2524,6 +2592,26 @@ class CSVProcessorApp(ctk.CTk):
                             print(f"DEBUG: Manually selected signal: {signal}")
                             break
                 
+                # Verify final selection
+                final_selected = [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
+                print(f"DEBUG: Final selected signals after auto/manual selection: {final_selected}")
+                
+                # EMERGENCY FALLBACK: If still no signals selected, select first numeric column
+                if not final_selected and self.plot_signal_vars:
+                    print("DEBUG: EMERGENCY FALLBACK - selecting first available signal")
+                    first_signal = list(self.plot_signal_vars.keys())[1] if len(self.plot_signal_vars) > 1 else list(self.plot_signal_vars.keys())[0]
+                    self.plot_signal_vars[first_signal]['var'].set(True)
+                    print(f"DEBUG: Emergency selected: {first_signal}")
+                
+                # CRITICAL FIX: Ensure at least one signal is selected if auto-selection didn't work
+                if auto_selected == 0 and self.plot_signal_vars:
+                    print("DEBUG: No signals auto-selected, manually selecting first non-time signal")
+                    for signal in df.columns:
+                        if not any(word in signal.lower() for word in ['time', 'date', 'timestamp']) and signal in self.plot_signal_vars:
+                            self.plot_signal_vars[signal]['var'].set(True)
+                            print(f"DEBUG: Manually selected signal: {signal}")
+                            break
+                
                 # Re-bind mouse wheel to all new checkboxes
                 self._bind_mousewheel_to_frame(self.plot_signal_frame)
                 
@@ -2547,8 +2635,14 @@ class CSVProcessorApp(ctk.CTk):
 
     def update_plot(self, selected_signals=None):
         """The main function to draw/redraw the plot with all selected options."""
+        print("\n" + "="*50)
+        print("🔄 DEBUG: update_plot() CALLED")
+        print("="*50)
+        
         if not hasattr(self, 'plot_canvas') or not hasattr(self, 'plot_ax'):
-            print("DEBUG: plot_canvas or plot_ax not found")
+            print("❌ DEBUG: plot_canvas or plot_ax not found")
+            print(f"  plot_canvas exists: {hasattr(self, 'plot_canvas')}")
+            print(f"  plot_ax exists: {hasattr(self, 'plot_ax')}")
             return
         
         try:
@@ -3026,6 +3120,49 @@ class CSVProcessorApp(ctk.CTk):
             messagebox.showerror("Error", f"Failed to load data for plotting:\n{str(e)}")
             
         return None
+
+    def manual_plot_debug(self):
+        """Manual debugging function to check plotting state"""
+        print("\n" + "🔍" + "="*60)
+        print("MANUAL PLOT DEBUGGING")
+        print("="*60)
+        
+        # Check basic components
+        print(f"plot_canvas exists: {hasattr(self, 'plot_canvas')}")
+        print(f"plot_ax exists: {hasattr(self, 'plot_ax')}")
+        print(f"plot_fig exists: {hasattr(self, 'plot_fig')}")
+        
+        # Check file selection
+        if hasattr(self, 'plot_file_menu'):
+            current_file = self.plot_file_menu.get()
+            available_files = self.plot_file_menu._values if hasattr(self.plot_file_menu, '_values') else []
+            print(f"plot_file_menu: current='{current_file}', available={available_files}")
+        else:
+            print("plot_file_menu: NOT FOUND")
+        
+        # Check signal variables
+        if hasattr(self, 'plot_signal_vars'):
+            total_signals = len(self.plot_signal_vars)
+            selected_signals = [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
+            print(f"plot_signal_vars: {total_signals} total, {len(selected_signals)} selected")
+            print(f"Selected signals: {selected_signals[:5]}...")  # Show first 5
+        else:
+            print("plot_signal_vars: NOT FOUND")
+        
+        # Check data sources
+        print(f"input_file_paths: {len(getattr(self, 'input_file_paths', []))}")
+        print(f"processed_files: {len(getattr(self, 'processed_files', {}))}")
+        print(f"loaded_data_cache: {len(getattr(self, 'loaded_data_cache', {}))}")
+        
+        # Try to force a plot update
+        print("\nAttempting manual plot update...")
+        try:
+            self.update_plot()
+            print("✓ Manual update_plot() completed")
+        except Exception as e:
+            print(f"✗ Manual update_plot() failed: {e}")
+        
+        print("="*60)
 
     def _debug_plot_state(self):
         """Debug helper to print current plotting state."""
@@ -5066,12 +5203,23 @@ For additional support or feature requests, please refer to the application docu
 
     def _on_plot_setting_change(self, *args):
         """Automatically update plot when appearance settings change."""
+        print("DEBUG: _on_plot_setting_change called")
+        
         # Only update if we have data and signals selected
-        if hasattr(self, 'plot_signal_vars') and any(data['var'].get() for data in self.plot_signal_vars.values()):
-            # Use after_idle to prevent too many rapid updates
-            if hasattr(self, '_update_pending'):
-                self.after_cancel(self._update_pending)
-            self._update_pending = self.after_idle(self.update_plot)
+        if hasattr(self, 'plot_signal_vars'):
+            selected_count = sum(1 for data in self.plot_signal_vars.values() if data['var'].get())
+            print(f"DEBUG: plot_signal_vars exists with {selected_count} selected signals")
+            
+            if selected_count > 0:
+                # Use after_idle to prevent too many rapid updates
+                if hasattr(self, '_update_pending'):
+                    self.after_cancel(self._update_pending)
+                self._update_pending = self.after_idle(self.update_plot)
+                print("DEBUG: Scheduled plot update")
+            else:
+                print("DEBUG: No signals selected, not updating plot")
+        else:
+            print("DEBUG: plot_signal_vars does not exist")
 
     def _on_color_scheme_change(self, scheme):
         """Handle color scheme change and show/hide custom colors interface."""
