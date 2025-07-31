@@ -23,6 +23,7 @@ from scipy.io import savemat
 import os
 import configparser
 import json
+import traceback
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from simpledbf import Dbf5
 import re
@@ -398,6 +399,9 @@ class CSVProcessorApp(ctk.CTk):
         ctk.CTkButton(signal_list_frame, text="Save Current Signal List", command=self.save_signal_list).grid(row=1, column=0, padx=10, pady=5, sticky="ew")
         ctk.CTkButton(signal_list_frame, text="Load Saved Signal List", command=self.load_signal_list).grid(row=1, column=1, padx=10, pady=5, sticky="ew")
         ctk.CTkButton(signal_list_frame, text="Apply Saved Signals", command=self.apply_saved_signals).grid(row=1, column=2, padx=10, pady=5, sticky="ew")
+        
+        # Debug button for signal list testing
+        ctk.CTkButton(signal_list_frame, text="Debug Signal List", command=self._debug_signal_list).grid(row=2, column=0, columnspan=3, padx=10, pady=5, sticky="ew")
         
         # Status label for signal list operations
         self.signal_list_status_label = ctk.CTkLabel(signal_list_frame, text="No saved signal list loaded", font=ctk.CTkFont(size=11), text_color="gray")
@@ -3569,62 +3573,88 @@ COMMON MISTAKES TO AVOID:
 
     def load_signal_list(self):
         """Load a saved signal list from file."""
+        print("DEBUG: load_signal_list() called")
         try:
+            print("DEBUG: Opening file dialog")
             file_path = filedialog.askopenfilename(
                 title="Load Signal List",
                 filetypes=[("JSON files", "*.json"), ("All files", "*.*")]
             )
+            print(f"DEBUG: File dialog returned: {file_path}")
             
             if not file_path:
+                print("DEBUG: No file selected, returning")
                 return  # User cancelled
             
+            print(f"DEBUG: Loading file: {file_path}")
             with open(file_path, 'r') as f:
                 signal_list_data = json.load(f)
+            print(f"DEBUG: Successfully loaded JSON data: {signal_list_data}")
+            print(f"DEBUG: Successfully loaded JSON data: {signal_list_data}")
             
             # Validate the loaded data
+            print("DEBUG: Validating loaded data")
             if not isinstance(signal_list_data, dict) or 'signals' not in signal_list_data:
+                print("DEBUG: Invalid signal list file format")
                 messagebox.showerror("Error", "Invalid signal list file format.")
                 return
             
             # Store the loaded signal list
+            print("DEBUG: Storing loaded signal list")
             self.saved_signal_list = signal_list_data.get('signals', [])
             self.saved_signal_list_name = signal_list_data.get('name', 'Unknown')
+            print(f"DEBUG: Saved signal list: {len(self.saved_signal_list)} signals")
             
             # Update status
+            print("DEBUG: Updating status label")
             self.signal_list_status_label.configure(
                 text=f"Loaded: {self.saved_signal_list_name} ({len(self.saved_signal_list)} signals)",
                 text_color="green"
             )
             
             # Automatically apply the loaded signals if we have signals available
+            print(f"DEBUG: Checking if signal_vars exist: {bool(self.signal_vars)}")
             if self.signal_vars:
+                print("DEBUG: Applying loaded signals internally")
                 self._apply_loaded_signals_internal()
             
+            print("DEBUG: Showing success message")
             messagebox.showinfo("Success", f"Signal list '{self.saved_signal_list_name}' loaded and applied successfully!\n\nSignals: {len(self.saved_signal_list)}")
             self.status_label.configure(text=f"Signal list loaded: {self.saved_signal_list_name}")
+            print("DEBUG: load_signal_list() completed successfully")
         
         except Exception as e:
+            print(f"DEBUG: Exception in load_signal_list: {e}")
+            import traceback
+            traceback.print_exc()
             messagebox.showerror("Error", f"Failed to load signal list:\n{e}")
 
     def _apply_loaded_signals_internal(self):
         """Internal method to apply loaded signals without showing message boxes."""
+        print("DEBUG: _apply_loaded_signals_internal() called")
         if not self.saved_signal_list or not self.signal_vars:
+            print(f"DEBUG: Early return - saved_signal_list: {bool(self.saved_signal_list)}, signal_vars: {bool(self.signal_vars)}")
             return
         
         # Get current available signals
         available_signals = list(self.signal_vars.keys())
+        print(f"DEBUG: Available signals: {len(available_signals)}")
         
         # Find which saved signals are present
         present_signals = []
         missing_signals = []
         
+        print("DEBUG: Checking saved signals against available signals")
         for saved_signal in self.saved_signal_list:
             if saved_signal in available_signals:
                 present_signals.append(saved_signal)
             else:
                 missing_signals.append(saved_signal)
         
+        print(f"DEBUG: Present signals: {len(present_signals)}, Missing signals: {len(missing_signals)}")
+        
         # Apply the saved signals (select present ones, deselect others)
+        print("DEBUG: Applying signal selections")
         for signal, data in self.signal_vars.items():
             if signal in present_signals:
                 data['var'].set(True)
@@ -3632,10 +3662,59 @@ COMMON MISTAKES TO AVOID:
                 data['var'].set(False)
         
         # Update status
+        print("DEBUG: Updating status label")
         self.signal_list_status_label.configure(
             text=f"Applied: {self.saved_signal_list_name} ({len(present_signals)}/{len(self.saved_signal_list)} signals)",
             text_color="blue"
         )
+        print("DEBUG: _apply_loaded_signals_internal() completed")
+
+    def _debug_signal_list(self):
+        """Debug method to test signal list functionality without file dialog."""
+        print("DEBUG: _debug_signal_list() called")
+        try:
+            # Create a test signal list
+            test_signal_list = {
+                'name': 'Test Signal List',
+                'signals': ['signal1', 'signal2', 'signal3'] if self.signal_vars else []
+            }
+            
+            print(f"DEBUG: Test signal list: {test_signal_list}")
+            print(f"DEBUG: Current signal_vars keys: {list(self.signal_vars.keys())[:5] if self.signal_vars else 'None'}")
+            
+            # Store the test signal list
+            self.saved_signal_list = test_signal_list.get('signals', [])
+            self.saved_signal_list_name = test_signal_list.get('name', 'Unknown')
+            
+            # Update status
+            print("DEBUG: Updating status label")
+            self.signal_list_status_label.configure(
+                text=f"Debug Loaded: {self.saved_signal_list_name} ({len(self.saved_signal_list)} signals)",
+                text_color="orange"
+            )
+            
+            # Try to apply if signals exist
+            if self.signal_vars:
+                print("DEBUG: Applying test signals")
+                # Just select the first few available signals for testing
+                available_signals = list(self.signal_vars.keys())[:3]
+                for signal, data in self.signal_vars.items():
+                    if signal in available_signals:
+                        data['var'].set(True)
+                    else:
+                        data['var'].set(False)
+                
+                messagebox.showinfo("Debug Success", f"Applied selections to first 3 signals: {available_signals}")
+            else:
+                messagebox.showinfo("Debug Info", "No signals available - load files first")
+                
+            print("DEBUG: _debug_signal_list() completed successfully")
+        
+        except Exception as e:
+            print(f"DEBUG: Exception in _debug_signal_list: {e}")
+            import traceback
+            traceback.print_exc()
+            messagebox.showerror("Debug Error", f"Debug failed:\n{e}")
 
     def apply_saved_signals(self):
         """Apply the saved signal list to the current file's signals."""
