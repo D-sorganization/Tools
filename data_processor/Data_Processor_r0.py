@@ -2190,12 +2190,10 @@ class CSVProcessorApp(ctk.CTk):
             self.plot_canvas = FigureCanvasTkAgg(self.plot_fig, master=plot_canvas_frame)
             self.plot_canvas.get_tk_widget().grid(row=1, column=0, sticky="nsew")
             
-            # DEBUG: Test the plotting canvas
-            print("DEBUG: Plot canvas and axes created successfully")
+            # Initialize plot with welcome message
             self.plot_ax.text(0.5, 0.5, "Plotting ready - select a file", ha='center', va='center', transform=self.plot_ax.transAxes)
             self.plot_ax.set_title("Select a file to begin plotting")
             self.plot_canvas.draw()
-            print("DEBUG: Initial test plot drawn")
             
             toolbar = NavigationToolbar2Tk(self.plot_canvas, plot_canvas_frame, pack_toolbar=False)
             toolbar.grid(row=0, column=0, sticky="ew")
@@ -2613,136 +2611,93 @@ class CSVProcessorApp(ctk.CTk):
 
     def update_plot(self, selected_signals=None):
         """The main function to draw/redraw the plot with all selected options."""
-        print("\n" + "="*50)
-        print("🔄 DEBUG: update_plot() CALLED")
-        print("="*50)
-        
+        # Check if plot canvas is initialized
         if not hasattr(self, 'plot_canvas') or not hasattr(self, 'plot_ax'):
-            print("❌ DEBUG: plot_canvas or plot_ax not found")
-            print(f"  plot_canvas exists: {hasattr(self, 'plot_canvas')}")
-            print(f"  plot_ax exists: {hasattr(self, 'plot_ax')}")
             return
-        
-        try:
-            # Clear any previous error messages
-            self.status_label.configure(text="Updating plot...")
-            print(f"DEBUG: Starting plot update. Selected signals: {selected_signals}")
             
-            zoom_state = self._preserve_zoom_during_update()
-                
-            selected_file = self.plot_file_menu.get()
-            x_axis_col = self.plot_xaxis_menu.get()
-            print(f"DEBUG: Selected file: {selected_file}, X-axis: {x_axis_col}")
+        selected_file = self.plot_file_menu.get()
+        x_axis_col = self.plot_xaxis_menu.get()
 
-            if selected_file == "Select a file..." or not x_axis_col:
-                print("DEBUG: No file or x-axis selected")
-                return
+        if selected_file == "Select a file..." or not x_axis_col:
+            return
 
+        try:
             df = self.get_data_for_plotting(selected_file)
             if df is None or df.empty:
-                print("DEBUG: No data retrieved for plotting")
                 self.plot_ax.clear()
                 self.plot_ax.text(0.5, 0.5, "Could not load or plot data.", ha='center', va='center')
                 self.plot_canvas.draw()
                 return
-            
-            print(f"DEBUG: Data loaded successfully. Shape: {df.shape}, Columns: {list(df.columns)}")
 
+            # Safety check: ensure x_axis_col is a valid column
             if x_axis_col not in df.columns:
-                print(f"DEBUG: X-axis column '{x_axis_col}' not in data columns")
+                # Try to set a valid x-axis column
                 if len(df.columns) > 0:
                     self.plot_xaxis_menu.set(df.columns[0])
                     x_axis_col = df.columns[0]
-                    print(f"DEBUG: Set x-axis to first column: {x_axis_col}")
                 else:
                     self.plot_ax.clear()
-                    self.plot_ax.text(0.5, 0.5, "No valid columns found for plotting.", ha='center', va='center')
-                    self.plot_canvas.draw()
-                    return
+                self.plot_ax.text(0.5, 0.5, "No valid columns found for plotting.", ha='center', va='center')
+                self.plot_canvas.draw()
+                return
 
-            signals_to_plot = selected_signals if selected_signals else [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
-            print(f"DEBUG: Signals to plot: {signals_to_plot}")
-            print(f"DEBUG: plot_signal_vars keys: {list(self.plot_signal_vars.keys())}")
-            
-            # DEBUG: Add detailed state debugging
-            self._debug_plot_state()
-            
-            # Debug: Check which signals are actually selected
-            if not selected_signals:
-                print("DEBUG: Checking plot_signal_vars for selected signals:")
-                for signal, data in self.plot_signal_vars.items():
-                    is_selected = data['var'].get()
-                    print(f"  {signal}: {is_selected}")
-            
-            # Force signal selection if none selected for debugging
-            if not signals_to_plot:
-                print("DEBUG: No signals selected, attempting to force selection...")
-                self._force_signal_selection()
-                signals_to_plot = [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
-                print(f"DEBUG: After force selection, signals to plot: {signals_to_plot}")
-            
+            signals_to_plot = [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
             self.plot_ax.clear()
 
             if not signals_to_plot:
                 # Enhanced fallback: try to auto-select signals if none are selected
-                print("DEBUG: No signals to plot, attempting auto-selection...")
                 if self.plot_signal_vars:
-                    # Try to find common signal patterns
-                    common_patterns = ['pressure', 'temperature', 'flow', 'speed', 'power', 'voltage', 'current',
-                                     'co_pct', 'co2_pct', 'h2_pct', 'ch4_pct', 'o2_pct', 'n2_pct', 'level', 'signal']
-                    
-                    auto_selected = 0
+                # Try to find common signal patterns
+                common_patterns = ['pressure', 'temperature', 'flow', 'speed', 'power', 'voltage', 'current',
+                                 'co_pct', 'co2_pct', 'h2_pct', 'ch4_pct', 'o2_pct', 'n2_pct', 'level', 'signal']
+                
+                auto_selected = 0
+                for signal, data in self.plot_signal_vars.items():
+                    if auto_selected >= 3:  # Limit auto-selection
+                        break
+                    signal_lower = signal.lower()
+                    # Skip obvious time columns
+                    if any(time_word in signal_lower for time_word in ['time', 'timestamp', 'date', 'datetime']):
+                        continue
+                    # Select if matches common patterns
+                    if any(pattern in signal_lower for pattern in common_patterns):
+                        data['var'].set(True)
+                        auto_selected += 1
+                
+                # If no pattern matches, select first few non-time signals
+                if auto_selected == 0:
+                    count = 0
                     for signal, data in self.plot_signal_vars.items():
-                        if auto_selected >= 3:  # Limit auto-selection
+                        if count >= 2:  # Select up to 2 signals
                             break
                         signal_lower = signal.lower()
-                        # Skip obvious time columns
+                        # Skip time columns
                         if any(time_word in signal_lower for time_word in ['time', 'timestamp', 'date', 'datetime']):
                             continue
-                        # Select if matches common patterns
-                        if any(pattern in signal_lower for pattern in common_patterns):
-                            data['var'].set(True)
-                            auto_selected += 1
-                            print(f"DEBUG: Auto-selected signal by pattern: {signal}")
-                    
-                    # If no pattern matches, select first few non-time signals
-                    if auto_selected == 0:
-                        count = 0
-                        for signal, data in self.plot_signal_vars.items():
-                            if count >= 2:  # Select up to 2 signals
-                                break
-                            signal_lower = signal.lower()
-                            # Skip time columns
-                            if any(time_word in signal_lower for time_word in ['time', 'timestamp', 'date', 'datetime']):
-                                continue
-                            data['var'].set(True)
-                            count += 1
-                            auto_selected += 1
-                            print(f"DEBUG: Auto-selected signal by position: {signal}")
-                    
-                    # Update signals_to_plot after auto-selection
-                    if auto_selected > 0:
-                        signals_to_plot = [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
-                        print(f"DEBUG: Auto-selected {auto_selected} signals: {signals_to_plot}")
+                        data['var'].set(True)
+                        count += 1
+                        auto_selected += 1
                 
-                # If still no signals, show helpful message
-                if not signals_to_plot:
-                    message = "No signals selected for plotting.\n\n"
-                    if self.plot_signal_vars:
-                        message += "Available signals found but none selected.\nPlease select signals from the left panel."
-                    else:
-                        message += "No signals available. Please:\n1. Load CSV files\n2. Select a file to plot\n3. Wait for signals to load"
-                    
-                    self.plot_ax.text(0.5, 0.5, message, ha='center', va='center', fontsize=10, 
-                                    bbox=dict(boxstyle="round,pad=0.3", facecolor="lightgray", alpha=0.7))
-                    self.plot_canvas.draw()
-                    self.status_label.configure(text="No signals selected - please select signals to plot")
-                    return
+                # Update signals_to_plot after auto-selection
+                if auto_selected > 0:
+                    signals_to_plot = [s for s, data in self.plot_signal_vars.items() if data['var'].get()]
+            
+            # If still no signals, show helpful message
+            if not signals_to_plot:
+                message = "No signals selected for plotting.\n\n"
+                if self.plot_signal_vars:
+                    message += "Available signals found but none selected.\nPlease select signals from the left panel."
+                else:
+                    message += "No signals available. Please:\n1. Load CSV files\n2. Select a file to plot\n3. Wait for signals to load"
+                
+                self.plot_ax.text(0.5, 0.5, message, ha='center', va='center', fontsize=10, 
+                                bbox=dict(boxstyle="round,pad=0.3", facecolor="lightgray", alpha=0.7))
+                self.plot_canvas.draw()
+                self.status_label.configure(text="No signals selected - please select signals to plot")
+                return
             else:
-                print(f"DEBUG: Entering else block for plotting {len(signals_to_plot)} signals")
                 show_both = self.show_both_signals_var.get()
                 plot_filter = self.plot_filter_type.get()
-                print(f"DEBUG: show_both={show_both}, plot_filter={plot_filter}")
                 
                 plot_style = self.plot_type_var.get()
                 style_args = {"linestyle": "-", "marker": ""}
@@ -2753,10 +2708,8 @@ class CSVProcessorApp(ctk.CTk):
                 
                 line_width = float(self.line_width_var.get())
                 style_args["linewidth"] = line_width
-                print(f"DEBUG: plot_style={plot_style}, line_width={line_width}")
                 
-                color_scheme = self.color_scheme_var.get()
-                print(f"DEBUG: color_scheme={color_scheme}")
+                    color_scheme = self.color_scheme_var.get()
                 
                 try:
                     if color_scheme == "Custom Colors":
@@ -2764,104 +2717,75 @@ class CSVProcessorApp(ctk.CTk):
                     else:
                         # Safe color mapping
                         color_scheme_name = color_scheme.lower().replace(" ", "_") if color_scheme != "Auto (Matplotlib)" else "tab10"
-                        print(f"DEBUG: Using colormap: {color_scheme_name}")
                         cmap = plt.get_cmap(color_scheme_name)
                         colors = [cmap(i / max(1, len(signals_to_plot) - 1)) for i in range(len(signals_to_plot))]
-                    print(f"DEBUG: Generated {len(colors)} colors for {len(signals_to_plot)} signals")
                 except Exception as color_error:
-                    print(f"DEBUG: Color mapping error: {color_error}")
                     # Fallback to simple colors
                     colors = ['blue', 'red', 'green', 'orange', 'purple', 'brown', 'pink', 'gray'] * (len(signals_to_plot) // 8 + 1)
                     colors = colors[:len(signals_to_plot)]
-                    print(f"DEBUG: Using fallback colors: {colors[:len(signals_to_plot)]}")
 
-                print(f"DEBUG: Starting plotting loop for {len(signals_to_plot)} signals")
                 for i, signal in enumerate(signals_to_plot):
-                    print(f"DEBUG: Processing signal {i+1}/{len(signals_to_plot)}: {signal}")
-                    
                     if signal not in df.columns: 
-                        print(f"DEBUG: Signal {signal} not in dataframe columns")
                         continue
                     
                     try:
                         plot_df = df[[x_axis_col, signal]].dropna()
-                        print(f"DEBUG: Created plot_df for {signal}, shape: {plot_df.shape}")
                         
                         if show_both and plot_filter != "None":
-                            print(f"DEBUG: Plotting both raw and filtered for {signal}")
                             raw_style = {**style_args, "linestyle": "--", "alpha": 0.7, "color": colors[i]}
                             raw_label = f"{self.custom_legend_entries.get(signal, signal)} (Raw)"
                             self.plot_ax.plot(plot_df[x_axis_col], plot_df[signal], label=raw_label, **raw_style)
-                            print(f"DEBUG: Plotted raw data for {signal}")
                             
                             filtered_df = self._apply_plot_filter(df.copy(), [signal], x_axis_col)
                             filtered_plot_df = filtered_df[[x_axis_col, signal]].dropna()
                             filtered_style = {**style_args, "color": colors[i]}
                             filtered_label = f"{self.custom_legend_entries.get(signal, signal)} (Filtered)"
                             self.plot_ax.plot(filtered_plot_df[x_axis_col], filtered_plot_df[signal], label=filtered_label, **filtered_style)
-                            print(f"DEBUG: Plotted filtered data for {signal}")
                         else:
-                            print(f"DEBUG: Plotting single line for {signal}")
                             if plot_filter != "None":
-                                print(f"DEBUG: Applying filter {plot_filter} to {signal}")
                                 filtered_df = self._apply_plot_filter(df.copy(), [signal], x_axis_col)
                                 plot_df = filtered_df[[x_axis_col, signal]].dropna()
-                                print(f"DEBUG: Filtered plot_df shape: {plot_df.shape}")
                             
                             plot_style_final = {**style_args, "color": colors[i]}
                             signal_label = self.custom_legend_entries.get(signal, signal)
-                            print(f"DEBUG: About to plot {signal} with style: {plot_style_final}")
                             self.plot_ax.plot(plot_df[x_axis_col], plot_df[signal], label=signal_label, **plot_style_final)
-                            print(f"DEBUG: Successfully plotted {signal}")
                             
                     except Exception as plot_error:
-                        print(f"DEBUG: Error plotting signal {signal}: {plot_error}")
                         import traceback
                         traceback.print_exc()
                         continue
-                        
-                print(f"DEBUG: Completed plotting loop")
 
                 if self.trendline_type_var.get() != "None":
-                    print(f"DEBUG: Adding trendline")
                     selected_trendline_signal = self.trendline_signal_var.get()
                     if selected_trendline_signal != "Select signal..." and selected_trendline_signal in df.columns:
                         self._add_trendline(df, selected_trendline_signal, x_axis_col)
-                        print(f"DEBUG: Trendline added for {selected_trendline_signal}")
 
-            print(f"DEBUG: Setting plot labels and formatting")
             title = self.plot_title_entry.get() or f"Signals from {selected_file}"
             xlabel = self.plot_xlabel_entry.get() or x_axis_col
             ylabel = self.plot_ylabel_entry.get() or "Value"
             self.plot_ax.set_title(title, fontsize=14)
             self.plot_ax.set_xlabel(xlabel)
             self.plot_ax.set_ylabel(ylabel)
-            print(f"DEBUG: Set title='{title}', xlabel='{xlabel}', ylabel='{ylabel}'")
 
             legend_position = self.legend_position_var.get()
-            print(f"DEBUG: Setting legend position: {legend_position}")
             if legend_position == "outside right":
                 self.plot_ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
             else:
                 self.plot_ax.legend(loc=legend_position)
             
             self.plot_ax.grid(True, linestyle='--', alpha=0.6)
-            print(f"DEBUG: Grid added")
 
             if pd.api.types.is_datetime64_any_dtype(df[x_axis_col]):
-                print(f"DEBUG: Formatting datetime x-axis")
                 self.plot_ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
                 self.plot_ax.tick_params(axis='x', rotation=0)
 
+            # Preserve zoom state if available
+            zoom_state = getattr(self, 'saved_zoom_state', None)
             if zoom_state:
-                print(f"DEBUG: Applying zoom state")
                 self._apply_zoom_state(zoom_state)
 
-            print(f"DEBUG: About to draw canvas")
             self.plot_canvas.draw()
-            print(f"DEBUG: Canvas drawn successfully")
             self.status_label.configure(text="Plot updated successfully")
-            print(f"DEBUG: Status updated - plot update complete!")
             
         except Exception as e:
             print(f"Error in update_plot: {e}")
@@ -5027,7 +4951,7 @@ For additional support or feature requests, please refer to the application docu
             self.load_plot_config_menu.set("No saved plots")
 
     def _update_plots_signals(self, signals):
-        """Update signals available in plots list tab (optimized)."""
+        """Update signals available in plots list tab."""
         if not hasattr(self, 'plots_signals_frame'):
             return
         
@@ -5041,23 +4965,13 @@ For additional support or feature requests, please refer to the application docu
         
         self.plots_signal_vars.clear()
         
-        # Process non-time signals in batches
-        non_time_signals = [s for s in signals if s != signals[0]] if signals else []
-        batch_size = 50
-        
-        for batch_start in range(0, len(non_time_signals), batch_size):
-            batch_end = min(batch_start + batch_size, len(non_time_signals))
-            batch_signals = non_time_signals[batch_start:batch_end]
-            
-            for signal in batch_signals:
+        # Add checkboxes for each signal
+        for signal in signals:
+            if signal != signals[0]:  # Skip time column
                 var = tk.BooleanVar(value=False)
                 cb = ctk.CTkCheckBox(self.plots_signals_frame, text=signal, variable=var)
                 cb.grid(sticky="w", padx=5, pady=2)
                 self.plots_signal_vars[signal] = var
-            
-            # Update GUI periodically for large lists
-            if len(non_time_signals) > 100:
-                self.update()
         
         # Re-bind mouse wheel to all new checkboxes
         self._bind_mousewheel_to_frame(self.plots_signals_frame)
