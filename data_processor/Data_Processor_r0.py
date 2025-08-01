@@ -156,9 +156,15 @@ class CSVProcessorApp(ctk.CTk):
         self.title("Advanced CSV Processor & DAT Importer - Complete Version")
         
         # Set window size from saved layout or default
-        window_width = self.layout_data.get('window_width', 1350)
-        window_height = self.layout_data.get('window_height', 900)
+        window_width = self.layout_data.get('window_width', 1200)
+        window_height = self.layout_data.get('window_height', 800)
         self.geometry(f"{window_width}x{window_height}")
+        
+        # Center the window on screen
+        self.update_idletasks()
+        x = (self.winfo_screenwidth() // 2) - (window_width // 2)
+        y = (self.winfo_screenheight() // 2) - (window_height // 2)
+        self.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
@@ -1963,7 +1969,7 @@ class CSVProcessorApp(ctk.CTk):
             
             ctk.CTkLabel(appearance_frame, text="Plot Appearance", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, sticky="w", padx=10, pady=5)
             ctk.CTkLabel(appearance_frame, text="Chart Type:").grid(row=1, column=0, sticky="w", padx=10)
-            self.plot_type_var = ctk.StringVar(value="Line with Markers")
+            self.plot_type_var = ctk.StringVar(value="Line Only")
             plot_type_menu = ctk.CTkOptionMenu(appearance_frame, variable=self.plot_type_var, values=["Line with Markers", "Line Only", "Markers Only (Scatter)"], command=self._on_plot_setting_change)
             plot_type_menu.grid(row=2, column=0, sticky="ew", padx=10, pady=5)
             
@@ -4737,7 +4743,7 @@ COMMON MISTAKES TO AVOID:
             legend_entry = ctk.CTkEntry(signal_frame, placeholder_text=f"Custom label for {signal}")
             legend_entry.pack(side="right", fill="x", expand=True, padx=5, pady=2)
             legend_entry.insert(0, current_value)
-            legend_entry.bind("<KeyRelease>", lambda e, s=signal: self._on_legend_change(s, e.widget.get()))
+            legend_entry.bind("<Return>", lambda e, s=signal: self._on_legend_change(s, e.widget.get()))
             legend_entry.bind("<FocusOut>", lambda e, s=signal: self._on_legend_change(s, e.widget.get()))
 
     def _on_legend_change(self, signal, new_label):
@@ -4870,6 +4876,25 @@ COMMON MISTAKES TO AVOID:
 ## Overview
 This application provides comprehensive tools for processing, analyzing, and visualizing time series data from CSV files and DAT files with DBF tag files.
 
+## New Features (Latest Update)
+
+### 🎯 Smart Auto-Zoom System
+- **Auto-zoom Control**: Toggle "Auto-zoom on changes" in Filter Preview section
+- **Smart Detection**: Automatically detects new signals vs filter changes
+- **Manual Control**: "Fit to Data" button for manual auto-zoom
+- **Preserve Zoom**: Keeps your view when changing filters (if auto-zoom disabled)
+
+### 🔧 Configuration Management
+- **Manage Configurations**: New button in "Configuration Save and Load" section
+- **Delete Configurations**: Remove unwanted saved settings
+- **Load Configurations**: Direct loading from management window
+- **File Location**: Open folder containing configuration files
+
+### ⚡ Performance Improvements
+- **Smooth Typing**: Text boxes only update on Enter key (not every keystroke)
+- **Fast Signal Selection**: No automatic plot updates when clicking checkboxes
+- **Manual Updates**: Use "🔄 Update Plot" button when ready
+
 ## Tab Descriptions
 
 ### Processing Tab
@@ -4879,6 +4904,7 @@ This application provides comprehensive tools for processing, analyzing, and vis
 - **Setup Sub-tab**:
   - Select input CSV files and output directory
   - Save/load processing configurations
+  - Manage saved configurations (new!)
   - Configure export format (CSV, Excel, MAT)
   - Set sorting options
 
@@ -4905,7 +4931,8 @@ This application provides comprehensive tools for processing, analyzing, and vis
 
 **Features**:
 - Interactive plotting with matplotlib
-- Multiple chart types (Line, Scatter, etc.)
+- **Smart Auto-Zoom**: Intelligent zoom behavior (new!)
+- Multiple chart types (Line Only default, Scatter, etc.)
 - Trendline analysis (Linear, Exponential, Power, Polynomial)
 - Export plots as images or Excel files
 - Real-time signal filtering and selection
@@ -4949,6 +4976,18 @@ This application provides comprehensive tools for processing, analyzing, and vis
 
 ## Advanced Features
 
+### Smart Auto-Zoom System
+- **New Signal Detection**: Always auto-zoom when adding new signals
+- **Filter Change Control**: Respect user preference for filter changes
+- **Manual Override**: "Fit to Data" button for immediate reset
+- **Zoom Preservation**: Maintains user's zoom state when appropriate
+
+### Configuration Management
+- **View All Configurations**: See all saved settings in one place
+- **Delete Unwanted Configs**: Remove old or unused configurations
+- **Direct Loading**: Load configurations without file dialog
+- **File System Access**: Open folder to manage files directly
+
 ### Signal Filtering
 - **Moving Average**: Smooth data using rolling average
 - **Butterworth**: Low-pass or high-pass filtering
@@ -4977,6 +5016,8 @@ Use mathematical formulas with signal references:
 4. **Integration**: Use Trapezoidal method for most accurate results
 5. **Custom Variables**: Test formulas with simple calculations first
 6. **Export**: Use "CSV (Separate Files)" for individual analysis, "CSV (Compiled)" for combined analysis
+7. **Auto-Zoom**: Disable for stable filter comparison, enable for exploration
+8. **Configuration Management**: Regularly clean up old configurations
 
 ## Troubleshooting
 
@@ -4985,17 +5026,21 @@ Use mathematical formulas with signal references:
 - **Memory issues**: Process fewer files or signals at once
 - **Filter errors**: Check signal length vs. filter parameters
 - **Integration errors**: Verify time column is properly formatted
+- **Performance issues**: Use manual plot updates instead of live updates
 
 **Performance Tips**:
 - Close other applications when processing large files
 - Use appropriate filter parameters for your data
 - Consider resampling for very large datasets
+- Disable auto-zoom when comparing filters
+- Use "Fit to Data" button for quick overview
 
 ## Keyboard Shortcuts
 
 - **Ctrl+O**: Select files (in file dialogs)
 - **Ctrl+S**: Save settings
 - **Ctrl+L**: Load settings
+- **Enter**: Update plot (in text boxes)
 - **F1**: Show this help (when help tab is active)
 
 ## Support
