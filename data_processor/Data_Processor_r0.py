@@ -699,6 +699,26 @@ class CSVProcessorApp(ctk.CTk):
             self.plot_zscore_frame.grid()
         elif filter_type == "Savitzky-Golay":
             self.plot_savgol_frame.grid()
+    
+    def _update_compare_filter_ui(self, filter_type):
+        """Update comparison filter UI based on selected filter type."""
+        # Hide all comparison frames
+        for frame in [self.compare_ma_frame, self.compare_bw_frame, self.compare_median_frame, self.compare_hampel_frame, self.compare_zscore_frame, self.compare_savgol_frame]:
+            frame.grid_remove()
+        
+        # Show relevant frame
+        if filter_type == "Moving Average":
+            self.compare_ma_frame.grid(row=14, column=0, sticky="ew", padx=10, pady=5)
+        elif filter_type in ["Butterworth Low-pass", "Butterworth High-pass"]:
+            self.compare_bw_frame.grid(row=14, column=0, sticky="ew", padx=10, pady=5)
+        elif filter_type == "Median Filter":
+            self.compare_median_frame.grid(row=14, column=0, sticky="ew", padx=10, pady=5)
+        elif filter_type == "Hampel Filter":
+            self.compare_hampel_frame.grid(row=14, column=0, sticky="ew", padx=10, pady=5)
+        elif filter_type == "Z-Score Filter":
+            self.compare_zscore_frame.grid(row=14, column=0, sticky="ew", padx=10, pady=5)
+        elif filter_type == "Savitzky-Golay":
+            self.compare_savgol_frame.grid(row=14, column=0, sticky="ew", padx=10, pady=5)
 
     def _filter_signals(self, event=None):
         """Filter signals based on search text."""
@@ -1998,7 +2018,7 @@ class CSVProcessorApp(ctk.CTk):
             # Second filter for comparison
             ctk.CTkLabel(plot_filter_frame, text="Compare with filter:").grid(row=12, column=0, sticky="w", padx=10, pady=(10,0))
             self.compare_filter_type = ctk.StringVar(value="None")
-            self.compare_filter_menu = ctk.CTkOptionMenu(plot_filter_frame, variable=self.compare_filter_type, values=self.filter_names, command=self._on_plot_setting_change)
+            self.compare_filter_menu = ctk.CTkOptionMenu(plot_filter_frame, variable=self.compare_filter_type, values=self.filter_names, command=self._update_compare_filter_ui)
             self.compare_filter_menu.grid(row=13, column=0, sticky="ew", padx=10, pady=5)
             
             # Second filter parameter frames (initially hidden)
@@ -2744,6 +2764,18 @@ class CSVProcessorApp(ctk.CTk):
                     continue
                 
                 try:
+                    # Convert data to numeric if possible
+                    try:
+                        signal_data[signal] = pd.to_numeric(signal_data[signal], errors='coerce')
+                    except:
+                        print(f"Warning: Could not convert signal {signal} to numeric")
+                        continue
+                    
+                    # Skip if all values are NaN after conversion
+                    if signal_data[signal].isna().all():
+                        print(f"Warning: Signal {signal} has no valid numeric data")
+                        continue
+                    
                     # Get color
                     color_scheme = self.color_scheme_var.get()
                     if color_scheme == "Default":
@@ -2764,28 +2796,45 @@ class CSVProcessorApp(ctk.CTk):
                     
                     # Show both raw and filtered if requested
                     if show_both and plot_filter != "None":
-                        raw_label = f"{label} (raw)"
-                        self.plot_ax.plot(df[x_axis_col], df[signal], 
-                                         label=raw_label, color=color, alpha=0.3, 
-                                         linewidth=line_width*0.7)
+                        raw_data = pd.to_numeric(df[signal], errors='coerce')
+                        if not raw_data.isna().all():
+                            raw_label = f"{label} (raw)"
+                            self.plot_ax.plot(df[x_axis_col], raw_data, 
+                                             label=raw_label, color=color, alpha=0.3, 
+                                             linewidth=line_width*0.7)
                     
                     # Compare multiple filters if requested
                     if compare_filters and plot_filter != "None":
-                        # Plot raw data first
-                        raw_label = f"{label} (raw)"
-                        self.plot_ax.plot(df[x_axis_col], df[signal], 
-                                         label=raw_label, color=color, alpha=0.5, 
-                                         linewidth=line_width*0.8, linestyle='--')
+                        compare_filter = self.compare_filter_type.get()
                         
-                        # Plot current filter
+                        # Plot raw data first (ensure numeric)
+                        raw_data = pd.to_numeric(df[signal], errors='coerce')
+                        if not raw_data.isna().all():
+                            raw_label = f"{label} (raw)"
+                            self.plot_ax.plot(df[x_axis_col], raw_data, 
+                                             label=raw_label, color=color, alpha=0.5, 
+                                             linewidth=line_width*0.8, linestyle='--')
+                        
+                        # Plot main filter
                         try:
-                            filtered_df = self._apply_plot_filter(df.copy(), [signal], x_axis_col)
+                            filtered_df = self._apply_plot_filter(df.copy(), [signal], x_axis_col, plot_filter, False)
                             filtered_label = f"{label} ({plot_filter})"
                             self.plot_ax.plot(filtered_df[x_axis_col], filtered_df[signal], 
                                              label=filtered_label, color=color, 
                                              linewidth=line_width)
                         except Exception as e:
-                            print(f"Warning: Filter comparison failed - {e}")
+                            print(f"Warning: Main filter failed - {e}")
+                        
+                        # Plot comparison filter if different from main filter
+                        if compare_filter != "None" and compare_filter != plot_filter:
+                            try:
+                                compare_df = self._apply_plot_filter(df.copy(), [signal], x_axis_col, compare_filter, True)
+                                compare_label = f"{label} ({compare_filter})"
+                                self.plot_ax.plot(compare_df[x_axis_col], compare_df[signal], 
+                                                 label=compare_label, color=color, 
+                                                 linewidth=line_width, linestyle=':')
+                            except Exception as e:
+                                print(f"Warning: Comparison filter failed - {e}")
                         
                 except Exception as e:
                     print(f"Error plotting signal {signal}: {e}")
@@ -2896,7 +2945,129 @@ class CSVProcessorApp(ctk.CTk):
         if hasattr(self, 'plot_debug') and self.plot_debug:
             print(f"[PLOT DEBUG] {message}")
 
-    def _apply_plot_filter(self, df, signal_cols, x_axis_col):
+    def _apply_plot_filter(self, df, signal_cols, x_axis_col, filter_type=None, is_comparison=False):
+        """Apply filter to plot data with support for comparison filters."""
+        if filter_type is None:
+            filter_type = self.plot_filter_type.get()
+        
+        if filter_type == "None":
+            return df
+        
+        # Get filter parameters based on whether this is a comparison filter
+        if is_comparison:
+            # Use comparison filter parameters
+            if filter_type == "Moving Average":
+                window = int(self.compare_ma_value_entry.get())
+                unit = self.compare_ma_unit_menu.get()
+                # Convert to samples based on unit
+                if unit == "ms":
+                    window = int(window * self.sample_rate / 1000)
+                elif unit == "s":
+                    window = int(window * self.sample_rate)
+                elif unit == "min":
+                    window = int(window * self.sample_rate * 60)
+                elif unit == "hr":
+                    window = int(window * self.sample_rate * 3600)
+                
+                for col in signal_cols:
+                    if col in df.columns:
+                        df[col] = df[col].rolling(window=window, center=True).mean()
+            
+            elif filter_type in ["Butterworth Low-pass", "Butterworth High-pass"]:
+                order = int(self.compare_bw_order_entry.get())
+                cutoff = float(self.compare_bw_cutoff_entry.get())
+                
+                for col in signal_cols:
+                    if col in df.columns:
+                        if filter_type == "Butterworth Low-pass":
+                            df[col] = self._apply_butterworth_lowpass(df[col], cutoff, order)
+                        else:
+                            df[col] = self._apply_butterworth_highpass(df[col], cutoff, order)
+            
+            elif filter_type == "Median Filter":
+                kernel_size = int(self.compare_median_kernel_entry.get())
+                for col in signal_cols:
+                    if col in df.columns:
+                        df[col] = df[col].rolling(window=kernel_size, center=True).median()
+            
+            elif filter_type == "Hampel Filter":
+                window = int(self.compare_hampel_window_entry.get())
+                threshold = float(self.compare_hampel_threshold_entry.get())
+                for col in signal_cols:
+                    if col in df.columns:
+                        df[col] = self._apply_hampel_filter(df[col], window, threshold)
+            
+            elif filter_type == "Z-Score Filter":
+                threshold = float(self.compare_zscore_threshold_entry.get())
+                method = self.compare_zscore_method_menu.get()
+                for col in signal_cols:
+                    if col in df.columns:
+                        df[col] = self._apply_zscore_filter(df[col], threshold, method)
+            
+            elif filter_type == "Savitzky-Golay":
+                window = int(self.compare_savgol_window_entry.get())
+                polyorder = int(self.compare_savgol_polyorder_entry.get())
+                for col in signal_cols:
+                    if col in df.columns:
+                        df[col] = savgol_filter(df[col], window, polyorder)
+        else:
+            # Use main filter parameters (existing logic)
+            if filter_type == "Moving Average":
+                window = int(self.plot_ma_value_entry.get())
+                unit = self.plot_ma_unit_menu.get()
+                # Convert to samples based on unit
+                if unit == "ms":
+                    window = int(window * self.sample_rate / 1000)
+                elif unit == "s":
+                    window = int(window * self.sample_rate)
+                elif unit == "min":
+                    window = int(window * self.sample_rate * 60)
+                elif unit == "hr":
+                    window = int(window * self.sample_rate * 3600)
+                
+                for col in signal_cols:
+                    if col in df.columns:
+                        df[col] = df[col].rolling(window=window, center=True).mean()
+            
+            elif filter_type in ["Butterworth Low-pass", "Butterworth High-pass"]:
+                order = int(self.plot_bw_order_entry.get())
+                cutoff = float(self.plot_bw_cutoff_entry.get())
+                
+                for col in signal_cols:
+                    if col in df.columns:
+                        if filter_type == "Butterworth Low-pass":
+                            df[col] = self._apply_butterworth_lowpass(df[col], cutoff, order)
+                        else:
+                            df[col] = self._apply_butterworth_highpass(df[col], cutoff, order)
+            
+            elif filter_type == "Median Filter":
+                kernel_size = int(self.plot_median_kernel_entry.get())
+                for col in signal_cols:
+                    if col in df.columns:
+                        df[col] = df[col].rolling(window=kernel_size, center=True).median()
+            
+            elif filter_type == "Hampel Filter":
+                window = int(self.plot_hampel_window_entry.get())
+                threshold = float(self.plot_hampel_threshold_entry.get())
+                for col in signal_cols:
+                    if col in df.columns:
+                        df[col] = self._apply_hampel_filter(df[col], window, threshold)
+            
+            elif filter_type == "Z-Score Filter":
+                threshold = float(self.plot_zscore_threshold_entry.get())
+                method = self.plot_zscore_method_menu.get()
+                for col in signal_cols:
+                    if col in df.columns:
+                        df[col] = self._apply_zscore_filter(df[col], threshold, method)
+            
+            elif filter_type == "Savitzky-Golay":
+                window = int(self.plot_savgol_window_entry.get())
+                polyorder = int(self.plot_savgol_polyorder_entry.get())
+                for col in signal_cols:
+                    if col in df.columns:
+                        df[col] = savgol_filter(df[col], window, polyorder)
+        
+        return df
         """Apply filter preview to the plot data."""
         filter_type = self.plot_filter_type.get()
         
