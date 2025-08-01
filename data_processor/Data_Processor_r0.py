@@ -2039,7 +2039,7 @@ class CSVProcessorApp(ctk.CTk):
             ctk.CTkCheckBox(auto_zoom_frame, text="Auto-zoom on changes", variable=self.auto_zoom_var).grid(row=0, column=0, sticky="w", padx=5, pady=2)
             ctk.CTkButton(auto_zoom_frame, text="Fit to Data", command=self._auto_fit_plot, width=100).grid(row=0, column=1, sticky="e", padx=5, pady=2)
             
-            ctk.CTkButton(plot_filter_frame, text="Preview Filter", command=self.update_plot).grid(row=21, column=0, sticky="ew", padx=10, pady=5)
+            ctk.CTkButton(plot_filter_frame, text="Preview Filter/s", command=self.update_plot).grid(row=21, column=0, sticky="ew", padx=10, pady=5)
             ctk.CTkButton(plot_filter_frame, text="Copy Settings to Processing Tab", command=self._copy_plot_settings_to_processing).grid(row=22, column=0, sticky="ew", padx=10, pady=5)
 
             # Plot appearance controls
@@ -2057,22 +2057,25 @@ class CSVProcessorApp(ctk.CTk):
             self.plot_title_entry.grid(row=3, column=0, sticky="ew", padx=10, pady=5)
             self.plot_title_entry.bind("<Return>", self._on_plot_setting_change)
             self.plot_title_entry.bind("<FocusOut>", self._on_plot_setting_change)
-            # Force placeholder to show
-            self.plot_title_entry.configure(placeholder_text="Plot Title")
+            # Force placeholder to show immediately
+            self.plot_title_entry.delete(0, "end")
+            self.plot_title_entry.insert(0, "")
             
             self.plot_xlabel_entry = ctk.CTkEntry(appearance_frame, placeholder_text="X-Axis Label")
             self.plot_xlabel_entry.grid(row=4, column=0, sticky="ew", padx=10, pady=5)
             self.plot_xlabel_entry.bind("<Return>", self._on_plot_setting_change)
             self.plot_xlabel_entry.bind("<FocusOut>", self._on_plot_setting_change)
-            # Force placeholder to show
-            self.plot_xlabel_entry.configure(placeholder_text="X-Axis Label")
+            # Force placeholder to show immediately
+            self.plot_xlabel_entry.delete(0, "end")
+            self.plot_xlabel_entry.insert(0, "")
             
             self.plot_ylabel_entry = ctk.CTkEntry(appearance_frame, placeholder_text="Y-Axis Label")
             self.plot_ylabel_entry.grid(row=5, column=0, sticky="ew", padx=10, pady=5)
             self.plot_ylabel_entry.bind("<Return>", self._on_plot_setting_change)
             self.plot_ylabel_entry.bind("<FocusOut>", self._on_plot_setting_change)
-            # Force placeholder to show
-            self.plot_ylabel_entry.configure(placeholder_text="Y-Axis Label")
+            # Force placeholder to show immediately
+            self.plot_ylabel_entry.delete(0, "end")
+            self.plot_ylabel_entry.insert(0, "")
             
             # Color scheme controls
             ctk.CTkLabel(appearance_frame, text="Color Scheme:").grid(row=6, column=0, sticky="w", padx=10, pady=(10,0))
@@ -5497,10 +5500,36 @@ For additional support or feature requests, please refer to the application docu
             dialog.destroy()
             messagebox.showinfo("Success", f"Configuration '{selected_config['name']}' has been updated with current settings!")
         
+        def on_delete():
+            selection = listbox.curselection()
+            if not selection:
+                messagebox.showwarning("No Selection", "Please select a configuration to delete.")
+                return
+            
+            selected_index = selection[0]
+            selected_config = self.plots_list[selected_index]
+            
+            # Ask for confirmation
+            result = messagebox.askyesno("Confirm Delete", 
+                                       f"Are you sure you want to delete the configuration '{selected_config['name']}'?\n\nThis action cannot be undone.")
+            if result:
+                # Remove the configuration from the list
+                deleted_config = self.plots_list.pop(selected_index)
+                
+                # Update the listbox
+                listbox.delete(selection[0])
+                
+                # Update the plots listbox in the main UI if it exists
+                if hasattr(self, 'plots_listbox'):
+                    self._update_plots_listbox()
+                
+                messagebox.showinfo("Success", f"Configuration '{deleted_config['name']}' has been deleted!")
+        
         def on_cancel():
             dialog.destroy()
         
         ctk.CTkButton(button_frame, text="Modify Selected", command=on_modify).pack(side="left", padx=5)
+        ctk.CTkButton(button_frame, text="Delete Selected", command=on_delete, fg_color="red", hover_color="darkred").pack(side="left", padx=5)
         ctk.CTkButton(button_frame, text="Cancel", command=on_cancel).pack(side="right", padx=5)
 
     def _update_plot_config(self, config_index):
