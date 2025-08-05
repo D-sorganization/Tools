@@ -386,19 +386,23 @@ class CSVProcessorApp(ctk.CTk):
         signal_list_frame = ctk.CTkFrame(tab)
         signal_list_frame.grid(row=1, column=0, padx=10, pady=10, sticky="new")
         signal_list_frame.grid_columnconfigure(0, weight=1)
+        signal_list_frame.grid_columnconfigure(1, weight=1)
+        signal_list_frame.grid_columnconfigure(2, weight=1)
         
         ctk.CTkLabel(signal_list_frame, text="Signal List Management", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=3, padx=10, pady=(10, 5), sticky="w")
         
-        # Buttons for signal list management
+        # Buttons for signal list management - Row 1
         ctk.CTkButton(signal_list_frame, text="Save Current Signal List", command=self.save_signal_list).grid(row=1, column=0, padx=10, pady=5, sticky="ew")
         ctk.CTkButton(signal_list_frame, text="Load Saved Signal List", command=self.load_signal_list).grid(row=1, column=1, padx=10, pady=5, sticky="ew")
         ctk.CTkButton(signal_list_frame, text="Load Signals from Files", command=self._manual_load_signals).grid(row=1, column=2, padx=10, pady=5, sticky="ew")
+        
+        # Buttons for signal list management - Row 2
         ctk.CTkButton(signal_list_frame, text="Create Signal List", command=self._create_signal_list).grid(row=2, column=0, padx=10, pady=5, sticky="ew")
         ctk.CTkButton(signal_list_frame, text="Apply Saved Signals", command=self.apply_saved_signals).grid(row=2, column=1, padx=10, pady=5, sticky="ew")
         
-        # Status label for signal list operations
+        # Status label for signal list operations - Row 3
         self.signal_list_status_label = ctk.CTkLabel(signal_list_frame, text="No saved signal list loaded", font=ctk.CTkFont(size=11), text_color="gray")
-        self.signal_list_status_label.grid(row=2, column=0, columnspan=3, padx=10, pady=(5, 10), sticky="w")
+        self.signal_list_status_label.grid(row=3, column=0, columnspan=3, padx=10, pady=(5, 10), sticky="w")
         
         # Settings frame
         settings_frame = ctk.CTkFrame(tab)
