@@ -1,6 +1,20 @@
 # =============================================================================
-# Advanced CSV Time Series Processor & Analyzer - Complete Version
-#
+# Advanced CSV Time Series Processor & Analyzer - BACKUP VERSION (BEFORE 2025-01-27 CHANGES)
+# =============================================================================
+# 
+# ⚠️  BACKUP COPY - DO NOT MODIFY ⚠️
+# 
+# This is a backup copy of the data processor from BEFORE the changes made on 2025-01-27.
+# Changes made on 2025-01-27 include:
+# - Fixed bulk processing mode to be manual (not auto-loading signals)
+# - Added progress bar back to signal loading
+# - Changed "Use signals from first file only" from checkbox to button
+# - Fixed button text cutoff issues
+# - Clarified "Apply Signals" functionality
+# - Made signal loading manual instead of automatic
+# 
+# To restore this version, rename this file to Data_Processor_r0.py
+# 
 # Description:
 # A comprehensive GUI application for processing, analyzing, and visualizing
 # time series data from CSV files. This version combines all advanced features
@@ -321,13 +335,7 @@ class CSVProcessorApp(ctk.CTk):
         file_frame.grid(row=0, column=0, padx=10, pady=10, sticky="new")
         file_frame.grid_columnconfigure(0, weight=1)
         
-        # Header with help button
-        file_header_frame = ctk.CTkFrame(file_frame)
-        file_header_frame.grid(row=0, column=0, padx=10, pady=(10, 5), sticky="ew")
-        file_header_frame.grid_columnconfigure(0, weight=1)
-        
-        ctk.CTkLabel(file_header_frame, text="Input File Selection", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, padx=(0, 5), pady=5, sticky="w")
-        ctk.CTkButton(file_header_frame, text="?", width=25, command=self._show_input_file_help, fg_color="gray", hover_color="darkgray").grid(row=0, column=1, padx=(0, 0), pady=5, sticky="e")
+        ctk.CTkLabel(file_frame, text="Input File Selection", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, padx=10, pady=(10, 5), sticky="w")
         
         # File selection buttons in a horizontal frame
         file_buttons_frame = ctk.CTkFrame(file_frame)
@@ -336,7 +344,7 @@ class CSVProcessorApp(ctk.CTk):
         file_buttons_frame.grid_columnconfigure(1, weight=1)
         
         ctk.CTkButton(file_buttons_frame, text="Select Input Files", command=self.select_files).grid(row=0, column=0, padx=(0, 5), pady=5, sticky="ew")
-        ctk.CTkButton(file_buttons_frame, text="Clear All Files", command=self._clear_all_files).grid(row=0, column=1, padx=(5, 0), pady=5, sticky="ew")
+        ctk.CTkButton(file_buttons_frame, text="Clear All Files", command=self._clear_all_files, fg_color="red", hover_color="darkred").grid(row=0, column=1, padx=(5, 0), pady=5, sticky="ew")
         
         ctk.CTkButton(file_frame, text="Select Output Folder", command=self.select_output_folder).grid(row=2, column=0, padx=10, pady=5, sticky="ew")
         
@@ -345,7 +353,7 @@ class CSVProcessorApp(ctk.CTk):
         bulk_frame.grid(row=3, column=0, padx=10, pady=5, sticky="ew")
         bulk_frame.grid_columnconfigure(0, weight=1)
         
-        # Create a horizontal frame for checkbox
+        # Create a horizontal frame for checkbox and help button
         bulk_content_frame = ctk.CTkFrame(bulk_frame)
         bulk_content_frame.pack(fill="x", padx=5, pady=5)
         bulk_content_frame.grid_columnconfigure(0, weight=1)
@@ -359,8 +367,32 @@ class CSVProcessorApp(ctk.CTk):
         )
         bulk_checkbox.grid(row=0, column=0, padx=(0, 5), pady=5, sticky="w")
         
-        # First file only option will be moved to Signal List Management section
+        # Help button with question mark
+        help_button = ctk.CTkButton(
+            bulk_content_frame,
+            text="?",
+            width=25,
+            height=25,
+            command=self._show_bulk_mode_help,
+            fg_color="gray",
+            hover_color="darkgray"
+        )
+        help_button.grid(row=0, column=1, padx=(0, 5), pady=5, sticky="e")
+        
+        # First file only option as a button (only visible when bulk mode is enabled)
         self.first_file_only_var = ctk.BooleanVar(value=False)
+        self.first_file_only_button = ctk.CTkButton(
+            bulk_frame,
+            text="Load Signals from First File Only",
+            command=self._load_signals_from_first_file,
+            fg_color="blue",
+            hover_color="darkblue"
+        )
+        # Initially hidden, will be shown/hidden based on bulk mode state
+        self.first_file_only_button.pack_forget()
+        
+        # Show first file only button since bulk mode is enabled by default
+        self.first_file_only_button.pack(padx=10, pady=(0, 5), anchor="w")
         
         self.output_label = ctk.CTkLabel(file_frame, text=f"Output: {self.output_directory}", wraplength=300, justify="left", font=ctk.CTkFont(size=11))
         self.output_label.grid(row=4, column=0, padx=10, pady=(0, 10), sticky="w")
@@ -372,23 +404,16 @@ class CSVProcessorApp(ctk.CTk):
         signal_list_frame.grid_columnconfigure(1, weight=1)
         signal_list_frame.grid_columnconfigure(2, weight=1)
         
-        # Header with help button
-        header_frame = ctk.CTkFrame(signal_list_frame)
-        header_frame.grid(row=0, column=0, columnspan=3, padx=10, pady=(10, 5), sticky="ew")
-        header_frame.grid_columnconfigure(0, weight=1)
+        ctk.CTkLabel(signal_list_frame, text="Signal List Management", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=3, padx=10, pady=(10, 5), sticky="w")
         
-        ctk.CTkLabel(header_frame, text="Signal List Management", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, padx=(0, 5), pady=5, sticky="w")
-        ctk.CTkButton(header_frame, text="?", width=25, command=self._show_signal_list_help, fg_color="gray", hover_color="darkgray").grid(row=0, column=1, padx=(0, 0), pady=5, sticky="e")
-        
-        # Buttons for signal list management - Row 1
+        # Buttons for signal list management - Row 1 (shorter labels)
         ctk.CTkButton(signal_list_frame, text="Save Signal List", command=self.save_signal_list).grid(row=1, column=0, padx=10, pady=5, sticky="ew")
         ctk.CTkButton(signal_list_frame, text="Load Signal List", command=self.load_signal_list).grid(row=1, column=1, padx=10, pady=5, sticky="ew")
         ctk.CTkButton(signal_list_frame, text="Load from Files", command=self._manual_load_signals).grid(row=1, column=2, padx=10, pady=5, sticky="ew")
         
-        # Buttons for signal list management - Row 2
+        # Buttons for signal list management - Row 2 (shorter labels)
         ctk.CTkButton(signal_list_frame, text="Create Signal List", command=self._create_signal_list).grid(row=2, column=0, padx=10, pady=5, sticky="ew")
         ctk.CTkButton(signal_list_frame, text="Apply Signals", command=self.apply_saved_signals).grid(row=2, column=1, padx=10, pady=5, sticky="ew")
-        ctk.CTkButton(signal_list_frame, text="Load from First File", command=self._load_signals_from_first_file).grid(row=2, column=2, padx=10, pady=5, sticky="ew")
         
         # Status label for signal list operations - Row 3
         self.signal_list_status_label = ctk.CTkLabel(signal_list_frame, text="No saved signal list loaded", font=ctk.CTkFont(size=11), text_color="gray")
@@ -1459,9 +1484,18 @@ class CSVProcessorApp(ctk.CTk):
 
     def _on_bulk_mode_change(self):
         """Handle bulk processing mode toggle."""
-        # First file only option is now in Signal List Management section
-        # No need to show/hide it based on bulk mode state
-        pass
+        # Show/hide first file only option based on bulk mode state
+        if hasattr(self, 'bulk_mode_var') and self.bulk_mode_var.get():
+            # Show first file only option when bulk mode is enabled
+            if hasattr(self, 'first_file_only_button'):
+                self.first_file_only_button.pack(padx=10, pady=(0, 5), anchor="w")
+        else:
+            # Hide first file only option when bulk mode is disabled
+            if hasattr(self, 'first_file_only_button'):
+                self.first_file_only_button.pack_forget()
+                self.first_file_only_var.set(False)  # Uncheck when hidden
+                # Also uncheck it when bulk mode is disabled
+                self.first_file_only_var.set(False)
         
         if hasattr(self, 'input_file_paths') and self.input_file_paths:
             # Reload signals with new mode
@@ -1577,31 +1611,9 @@ class CSVProcessorApp(ctk.CTk):
         ctk.CTkButton(button_frame, text="Create Signal List", command=create_signal_list).pack(side="left", padx=5)
         ctk.CTkButton(button_frame, text="Cancel", command=cancel).pack(side="right", padx=5)
 
-    def _show_input_file_help(self):
-        """Show comprehensive help for Input File Selection section."""
-        help_text = """Input File Selection - Complete Guide
-
-This section helps you select and configure your input files for processing.
-
-📁 FILE SELECTION:
-
-• Select Input Files
-  - Opens file dialog to select CSV files for processing
-  - Supports multiple file selection
-  - Automatically sets output directory to first file's location
-  - Files are displayed in a summary view (for large selections)
-
-• Clear All Files
-  - Removes all selected files from the list
-  - Clears the signal list display
-  - Resets the file selection state
-
-• Select Output Folder
-  - Choose where processed files will be saved
-  - Defaults to the folder of the first selected file
-  - Can be changed at any time before processing
-
-⚙️ BULK PROCESSING MODE:
+    def _show_bulk_mode_help(self):
+        """Show help dialog for bulk processing mode."""
+        help_text = """Bulk Processing Mode
 
 When enabled (default):
 • Reads headers from only the first 3 files
@@ -1609,115 +1621,23 @@ When enabled (default):
 • Much faster for large datasets (10,000+ files)
 • Ideal when all files are from the same source/system
 
+"First File Only" Option (when bulk mode is enabled):
+• Reads headers from only the first file
+• Most conservative approach - assumes first file has the complete signal list
+• Fastest option for very large datasets
+• Use when you're confident the first file contains all possible signals
+
 When disabled:
 • Reads headers from all files (up to 100 for very large datasets)
 • More thorough but slower
 • Use when files might have different column structures
 
-This mode only affects signal detection, not data processing.
-
-🔄 TYPICAL WORKFLOW:
-
-1. Select Input Files → Choose your CSV files
-2. Configure Bulk Mode → Enable/disable based on your dataset
-3. Select Output Folder → Choose where to save results
-4. Load Signals → Use Signal List Management to load available signals
-5. Process Data → Apply filters, export, etc.
-
-💡 TIPS:
-
-• Use bulk mode for large, uniform datasets (same column structure)
-• Disable bulk mode if files might have different structures
-• The output folder can be changed anytime before processing
-• Large file selections (>50 files) show a summary view for performance
-        """
+This mode only affects signal detection, not data processing."""
         
         # Create help dialog
         help_dialog = ctk.CTkToplevel(self)
-        help_dialog.title("Input File Selection Help")
-        help_dialog.geometry("600x500")
-        help_dialog.resizable(True, True)
-        
-        # Make dialog modal
-        help_dialog.transient(self)
-        help_dialog.grab_set()
-        
-        # Create scrollable text widget
-        text_widget = ctk.CTkTextbox(help_dialog, wrap="word")
-        text_widget.pack(fill="both", expand=True, padx=10, pady=10)
-        
-        # Insert help text
-        text_widget.insert("1.0", help_text)
-        text_widget.configure(state="disabled")  # Make read-only
-        
-        # Add close button
-        close_button = ctk.CTkButton(help_dialog, text="Close", command=help_dialog.destroy)
-        close_button.pack(pady=10)
-
-    def _show_signal_list_help(self):
-        """Show comprehensive help for Signal List Management section."""
-        help_text = """Signal List Management - Complete Guide
-
-This section helps you manage which signals (columns) to process from your files.
-
-📋 ESSENTIAL BUTTONS:
-
-• Load from Files
-  - Reads headers from all selected files to find available signals
-  - Populates the "Available Signals to Process" list
-  - REQUIRED: Use this after selecting files to see available signals
-  - This is now manual since we removed automatic signal loading
-
-• Load from First File
-  - Reads headers from only the first file (bulk processing mode)
-  - Assumes all files have the same column structure
-  - Much faster for large datasets (10,000+ files)
-  - Use when you know all files have identical structure
-
-📁 SIGNAL LIST MANAGEMENT:
-
-• Save Signal List
-  - Saves your currently selected signals to a file
-  - Useful for reusing the same signal selection later
-  - Creates a .json file with your signal preferences
-
-• Load Signal List
-  - Loads a previously saved signal list
-  - Restores your signal selection from a saved file
-  - Useful for consistent processing across different datasets
-
-• Create Signal List
-  - Creates a signal list from a text file or manual input
-  - Option to load from text file (one signal per line)
-  - Option to manually enter signal names
-  - Useful when you know exactly which signals you want
-
-• Apply Signals
-  - Takes a loaded signal list and applies it to current files
-  - Selects signals present in both saved list and current files
-  - Deselects signals not in the saved list
-  - Shows which saved signals are missing from current files
-
-🔄 TYPICAL WORKFLOW:
-
-1. Select Files → Click "Select Input Files"
-2. Load Signals → Click "Load from Files" (or "Load from First File" for bulk mode)
-3. Select Signals → Choose which signals to process
-4. Save List → Optionally save your selection for future use
-5. Process Data → Apply filters, export, etc.
-
-💡 TIPS:
-
-• Use "Load from Files" for thorough signal detection
-• Use "Load from First File" for speed with large, uniform datasets
-• Save signal lists for consistent processing across multiple datasets
-• The status label below shows current signal list status
-        """
-        
-        # Create help dialog
-        help_dialog = ctk.CTkToplevel(self)
-        help_dialog.title("Signal List Management Help")
-        help_dialog.geometry("600x500")
+        help_dialog.title("Bulk Processing Mode Help")
+        help_dialog.geometry("500x300")
         help_dialog.resizable(True, True)
         
         # Make dialog modal
