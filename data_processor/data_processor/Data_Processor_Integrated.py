@@ -1715,6 +1715,428 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             new_path = os.path.join(parent, f"{filename} ({counter}){ext}")
         return new_path
 
+    def create_help_tab(self, tab):
+        """Create the help tab with comprehensive documentation for all integrated features."""
+        tab.grid_columnconfigure(0, weight=1)
+        tab.grid_rowconfigure(1, weight=1)
+        
+        # Header
+        header_frame = ctk.CTkFrame(tab)
+        header_frame.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
+        
+        ctk.CTkLabel(header_frame, text="Advanced Data Processor - Complete Help Guide", 
+                    font=ctk.CTkFont(size=18, weight="bold")).pack(side="left", padx=10, pady=10)
+        
+        # Main content with scrollable help
+        help_frame = ctk.CTkScrollableFrame(tab)
+        help_frame.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="nsew")
+        help_frame.grid_columnconfigure(0, weight=1)
+        
+        # Comprehensive help content
+        help_content = """
+# 🚀 Advanced Data Processor - Complete Feature Guide
+
+## 📋 Application Overview
+This integrated application combines multiple powerful tools for data processing, analysis, and visualization:
+
+1. **CSV Processor** - Original time series data processing
+2. **Format Converter** - Multi-format file conversion with batch processing
+3. **DAT File Import** - DAT file processing with DBF tag files
+4. **Folder Tool** - Comprehensive folder processing and organization
+5. **Help** - This comprehensive documentation
+
+---
+
+## 📊 CSV Processor Tab
+
+### Purpose
+Process, analyze, and visualize time series data from CSV files with advanced filtering and mathematical operations.
+
+### Setup Sub-tab
+**File Selection & Configuration**
+- **Input Files**: Select multiple CSV files for batch processing
+- **Output Directory**: Choose where processed files will be saved
+- **Configuration Management**: Save/load processing settings
+- **Export Format**: Choose output format (CSV, Excel, MAT, Parquet, HDF5, etc.)
+- **Sorting Options**: Configure data sorting preferences
+
+**Usage**:
+1. Click "Select Files" to choose input CSV files
+2. Click "Select Output Folder" to set destination
+3. Configure processing options in other sub-tabs
+4. Save configuration for future use
+5. Select signals to process
+6. Click "Process & Batch Export Files"
+
+### Processing Sub-tab
+**Signal Processing Operations**
+
+#### 🔧 Signal Filtering
+- **Moving Average**: Smooth data with configurable window size
+- **Butterworth Filter**: Low-pass, high-pass, band-pass filtering
+- **Median Filter**: Remove outliers with configurable window
+- **Savitzky-Golay**: Polynomial smoothing for noisy data
+- **Hampel Filter**: Robust outlier detection and removal
+- **Z-Score Filter**: Statistical outlier removal
+
+#### ⏱️ Time Resampling
+- **Resample Data**: Convert to different time intervals (1s, 1min, 1h, etc.)
+- **Interpolation Methods**: Linear, cubic, nearest neighbor
+- **Aggregation**: Mean, sum, min, max, median
+
+#### 📈 Signal Integration
+- **Trapezoidal Integration**: Calculate cumulative values
+- **Flow Calculations**: Convert rate data to total volumes
+- **Custom Integration**: User-defined integration methods
+
+#### 📉 Signal Differentiation
+- **Spline Differentiation**: Smooth derivative calculation
+- **Finite Difference**: Direct numerical differentiation
+- **Multiple Orders**: 1st through 5th order derivatives
+
+### Custom Variables Sub-tab
+**Mathematical Formula Creation**
+- **Formula Builder**: Create custom calculations using existing signals
+- **Signal Reference**: Use [SignalName] syntax to reference data
+- **Mathematical Functions**: sin, cos, exp, log, sqrt, etc.
+- **Conditional Logic**: if/else statements for complex calculations
+
+**Example Formulas**:
+- `[Flow] * 3600` - Convert flow rate to hourly volume
+- `sqrt([Pressure]^2 + [Temperature]^2)` - Calculate magnitude
+- `if([Value] > 100, [Value] * 2, [Value])` - Conditional processing
+
+---
+
+## 🔄 Format Converter Tab
+
+### Purpose
+Convert files between multiple formats with batch processing capabilities.
+
+### Supported Formats
+**Input Formats**: CSV, TSV, Parquet, Excel (.xlsx, .xls), JSON, HDF5, Pickle, NumPy (.npy), MATLAB (.mat), Feather, Arrow, SQLite
+
+**Output Formats**: CSV, TSV, Parquet, Excel (.xlsx), JSON, HDF5, Pickle, NumPy (.npy), MATLAB (.mat), Feather, Arrow, SQLite
+
+### Key Features
+
+#### 📁 File Selection
+- **Individual Files**: Select specific files for conversion
+- **Folder Import**: Import all supported files from a directory
+- **Batch Processing**: Process multiple files simultaneously
+- **File List Management**: Add, remove, and clear files
+
+#### ⚙️ Conversion Options
+- **Output Format**: Choose target file format
+- **Combine Files**: Merge multiple files into single output
+- **Column Selection**: Choose specific columns to include
+- **Batch Processing**: Enable for large file sets
+- **File Splitting**: Split large files into smaller chunks
+
+#### 📊 Parquet Analyzer
+- **Metadata Analysis**: View file structure and statistics
+- **Column Information**: Data types, null counts, memory usage
+- **File Properties**: Size, compression, row groups
+- **Schema Details**: Complete column schema information
+
+### Usage Workflow
+1. **Select Files**: Choose input files or import from folder
+2. **Configure Output**: Set output format and destination
+3. **Select Columns**: Choose which columns to include (optional)
+4. **Set Options**: Configure batch processing and splitting
+5. **Convert**: Start the conversion process
+6. **Monitor Progress**: Track conversion status and logs
+
+---
+
+## 📁 Folder Tool Tab
+
+### Purpose
+Comprehensive folder processing and organization with multiple operation modes.
+
+### Operation Modes
+
+#### 🔗 Combine & Copy
+**Purpose**: Copy all files from multiple source folders into a single destination folder.
+
+**Features**:
+- **Multi-source Support**: Process files from multiple source folders
+- **Automatic Renaming**: Handle naming conflicts with numbered suffixes
+- **File Filtering**: Filter by extension and file size
+- **Organization Options**: Organize by file type or date
+- **Progress Tracking**: Real-time progress with cancellation
+
+**Use Cases**:
+- Consolidating files from multiple backup locations
+- Combining photo collections from different devices
+- Merging document archives
+
+#### 📂 Flatten & Tidy
+**Purpose**: Copy files from deeply nested folder structures to a flat, organized structure.
+
+**Features**:
+- **Structure Flattening**: Remove nested folder hierarchy
+- **Conflict Resolution**: Handle duplicate filenames automatically
+- **File Filtering**: Include only specific file types or sizes
+- **Progress Monitoring**: Track operation progress
+
+**Use Cases**:
+- Organizing scattered files into a single location
+- Simplifying complex folder structures
+- Preparing files for backup or sharing
+
+#### ✂️ Copy & Prune Empty
+**Purpose**: Copy folder structure while skipping empty directories.
+
+**Features**:
+- **Structure Preservation**: Maintain relative folder paths
+- **Empty Folder Detection**: Automatically skip empty directories
+- **File Filtering**: Apply extension and size filters
+- **Efficient Processing**: Only copy non-empty folders
+
+**Use Cases**:
+- Cleaning up folder structures
+- Removing empty directories from backups
+- Organizing file collections
+
+#### 🗑️ Deduplicate Files
+**Purpose**: Remove renamed duplicate files (e.g., "file (1).txt", "file (2).txt").
+
+**Features**:
+- **Pattern Recognition**: Detect renamed duplicates using regex
+- **Newest File Retention**: Keep the most recent version
+- **Safe Operation**: Preview mode available
+- **In-place Processing**: Works directly on source folders
+
+**Use Cases**:
+- Cleaning up duplicate downloads
+- Removing system-generated duplicates
+- Organizing file collections
+
+#### 📊 Analyze & Report
+**Purpose**: Generate comprehensive analysis reports without modifying files.
+
+**Features**:
+- **File Statistics**: Count, size, and type analysis
+- **Size Distribution**: Largest files identification
+- **Type Breakdown**: File type distribution
+- **Detailed Reports**: Comprehensive analysis in dialog
+
+**Use Cases**:
+- Understanding folder contents before processing
+- Identifying large files for cleanup
+- Planning storage requirements
+
+### Advanced Features
+
+#### 🔍 File Filtering
+- **Extension Filtering**: Include only specific file extensions
+- **Size Filtering**: Filter by minimum and maximum file sizes
+- **Combined Filters**: Apply multiple filters simultaneously
+
+#### 📁 Organization Options
+- **By Type**: Organize files into type-based folders (Images, Documents, etc.)
+- **By Date**: Organize by creation/modification date (YYYY/MM structure)
+- **Combined Organization**: Use both type and date organization
+
+#### 🛡️ Safety Features
+- **Preview Mode**: Show what would be done without making changes
+- **Backup Creation**: Create backups before processing
+- **Cancellation**: Cancel operations at any time
+- **Progress Tracking**: Real-time progress updates
+
+### Usage Workflow
+1. **Select Source Folders**: Choose folders to process
+2. **Set Destination**: Choose output location (if applicable)
+3. **Configure Filters**: Set file type and size filters
+4. **Choose Operation**: Select the processing mode
+5. **Set Options**: Configure organization and safety options
+6. **Run Operation**: Start processing with progress monitoring
+
+---
+
+## 📈 Plotting & Analysis Tab
+
+### Purpose
+Interactive visualization and analysis of processed data.
+
+### Key Features
+
+#### 🎯 Smart Auto-Zoom System
+- **Auto-zoom Control**: Toggle automatic zoom behavior
+- **Smart Detection**: Distinguish between new signals and filter changes
+- **Manual Control**: "Fit to Data" button for manual zoom
+- **Zoom Preservation**: Maintain view when changing filters
+
+#### 📊 Plotting Capabilities
+- **Interactive Charts**: Zoom, pan, and explore data
+- **Multiple Chart Types**: Line, scatter, and combination plots
+- **Signal Selection**: Choose which signals to display
+- **Color Schemes**: Multiple color schemes and custom colors
+- **Legend Management**: Customize signal labels and order
+
+#### 📈 Trendline Analysis
+- **Linear Regression**: Straight line trend analysis
+- **Exponential Fit**: Exponential growth/decay trends
+- **Power Law**: Power function relationships
+- **Polynomial**: Higher-order polynomial fits
+- **R-squared Values**: Statistical fit quality indicators
+
+#### 💾 Export Options
+- **Image Export**: Save plots as PNG, JPG, PDF, SVG
+- **Excel Export**: Export data and plots to Excel
+- **Configuration Save**: Save plot settings for reuse
+
+### Usage Workflow
+1. **Select File**: Choose data file from dropdown
+2. **Select Signals**: Choose which signals to plot
+3. **Configure Display**: Set colors, styles, and layout
+4. **Add Analysis**: Include trendlines if needed
+5. **Export Results**: Save plots or data as needed
+
+---
+
+## 📋 Plots List Tab
+
+### Purpose
+Save and manage plot configurations for batch processing.
+
+### Features
+- **Configuration Save**: Save plot settings with names and descriptions
+- **Batch Export**: Generate all saved plots automatically
+- **Preview System**: Preview plots before saving
+- **Library Management**: Organize and manage plot collection
+
+### Usage
+1. **Create Plot**: Configure plot in Plotting tab
+2. **Save Configuration**: Add to plots library with name/description
+3. **Batch Export**: Generate all saved plots at once
+4. **Manage Library**: Edit, delete, or reorganize saved plots
+
+---
+
+## 📄 DAT File Import Tab
+
+### Purpose
+Process DAT files with associated DBF tag files for structured data import.
+
+### Features
+- **DAT File Selection**: Choose data files for processing
+- **DBF Tag Import**: Import tag information from DBF files
+- **Data Trimming**: Set time ranges for data extraction
+- **Export Options**: Save processed data in various formats
+
+### Usage
+1. **Select DAT File**: Choose the data file
+2. **Import Tags**: Load associated DBF tag file
+3. **Configure Trimming**: Set start/end times
+4. **Process & Export**: Generate output files
+
+---
+
+## ⚙️ Configuration Management
+
+### Save/Load Settings
+- **Configuration Save**: Save all current settings
+- **Configuration Load**: Restore previous settings
+- **Configuration Management**: Delete and organize saved configs
+- **File Location**: Access configuration files directly
+
+### Signal List Management
+- **Save Signal Lists**: Save selected signals for reuse
+- **Load Signal Lists**: Restore previous signal selections
+- **Apply Saved Lists**: Quickly apply saved signal configurations
+
+---
+
+## 🎨 User Interface Features
+
+### Responsive Design
+- **Splitter Panels**: Adjustable panel sizes
+- **Scrollable Content**: Handle large datasets efficiently
+- **Modern UI**: CustomTkinter-based modern interface
+- **Keyboard Shortcuts**: Efficient navigation and operation
+
+### Progress Tracking
+- **Real-time Updates**: Live progress indicators
+- **Status Messages**: Clear operation feedback
+- **Cancellation Support**: Stop operations at any time
+- **Error Handling**: Comprehensive error reporting
+
+---
+
+## 🚀 Performance Features
+
+### Optimization
+- **Background Processing**: Non-blocking operations
+- **Memory Management**: Efficient data handling
+- **Batch Operations**: Process multiple files efficiently
+- **Progress Feedback**: Real-time operation status
+
+### File Handling
+- **Large File Support**: Handle files of any size
+- **Multiple Formats**: Support for 15+ file formats
+- **Compression**: Built-in compression for output files
+- **Error Recovery**: Robust error handling and recovery
+
+---
+
+## 📚 Tips & Best Practices
+
+### Data Processing
+1. **Start Small**: Test with small datasets before processing large files
+2. **Use Preview Mode**: Always preview folder operations before execution
+3. **Save Configurations**: Save frequently used settings
+4. **Backup Data**: Create backups before major operations
+5. **Monitor Progress**: Watch progress indicators for large operations
+
+### File Organization
+1. **Use Descriptive Names**: Name configurations and plots clearly
+2. **Organize by Type**: Use folder tool's type organization
+3. **Regular Cleanup**: Use deduplication features regularly
+4. **Backup Important Data**: Always backup before major changes
+
+### Performance
+1. **Batch Processing**: Use batch modes for multiple files
+2. **Filter Early**: Apply filters early in the process
+3. **Monitor Memory**: Watch memory usage with large datasets
+4. **Use Appropriate Formats**: Choose efficient formats for your data
+
+---
+
+## 🔧 Troubleshooting
+
+### Common Issues
+- **File Not Found**: Check file paths and permissions
+- **Memory Errors**: Reduce batch size or use smaller datasets
+- **Format Errors**: Verify file format compatibility
+- **Permission Errors**: Check file and folder permissions
+
+### Getting Help
+- **Error Messages**: Read error messages carefully for clues
+- **Log Files**: Check application logs for detailed information
+- **Preview Mode**: Use preview features to test operations
+- **Small Tests**: Test with small datasets first
+
+---
+
+## 📞 Support Information
+
+This integrated application combines multiple powerful tools into a single, comprehensive data processing solution. All features are designed to work together seamlessly while maintaining the full functionality of the original standalone applications.
+
+For technical support or feature requests, please refer to the application documentation or contact the development team.
+"""
+        
+        # Create text widget for help content
+        help_text = ctk.CTkTextbox(help_frame, wrap="word", font=ctk.CTkFont(size=12))
+        help_text.pack(fill="both", expand=True, padx=10, pady=10)
+        
+        # Insert help content
+        help_text.insert("1.0", help_content)
+        
+        # Make text read-only
+        help_text.configure(state="disabled")
+
 class ColumnSelectionDialog(ctk.CTkToplevel):
     """Simple dialog for column selection."""
     
