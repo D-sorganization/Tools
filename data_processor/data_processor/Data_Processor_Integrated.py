@@ -417,13 +417,340 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         # We'll add it back at the end to ensure it's the rightmost tab
         self.main_tab_view.delete("Help")
         
+        # Remove the DAT File Import tab to reorder it
+        self.main_tab_view.delete("DAT File Import")
+        
         # Add the Format Converter tab
         self.main_tab_view.add("Format Converter")
         self.create_format_converter_tab(self.main_tab_view.tab("Format Converter"))
         
+        # Add DAT File Import tab back (now it will be before Help)
+        self.main_tab_view.add("DAT File Import")
+        self.create_dat_import_tab(self.main_tab_view.tab("DAT File Import"))
+        
         # Add Help tab back as the rightmost tab
         self.main_tab_view.add("Help")
         self.create_help_tab(self.main_tab_view.tab("Help"))
+
+    # Compiler converter methods - Define these BEFORE creating the UI
+    def converter_browse_files(self):
+        """Browse for input files."""
+        files = filedialog.askopenfilenames(
+            title="Select Input Files",
+            filetypes=[
+                ("All Supported", "*.csv *.tsv *.txt *.parquet *.pq *.xlsx *.xls *.json *.h5 *.hdf5 *.pkl *.pickle *.npy *.mat *.feather *.arrow *.db *.sqlite"),
+                ("CSV Files", "*.csv"),
+                ("TSV Files", "*.tsv *.txt"),
+                ("Parquet Files", "*.parquet *.pq"),
+                ("Excel Files", "*.xlsx *.xls"),
+                ("JSON Files", "*.json"),
+                ("HDF5 Files", "*.h5 *.hdf5"),
+                ("Pickle Files", "*.pkl *.pickle"),
+                ("NumPy Files", "*.npy"),
+                ("MATLAB Files", "*.mat"),
+                ("Feather Files", "*.feather"),
+                ("Arrow Files", "*.arrow"),
+                ("SQLite Files", "*.db *.sqlite"),
+                ("All Files", "*.*")
+            ]
+        )
+        
+        if files:
+            self.converter_input_files = list(files)
+            self.converter_update_file_list()
+            self.converter_input_label.configure(text=f"{len(files)} files selected")
+            self.converter_update_convert_button()
+
+    def converter_browse_folder(self):
+        """Browse for input folder."""
+        folder = filedialog.askdirectory(title="Select Input Folder")
+        if folder:
+            # Scan for supported files
+            supported_extensions = {
+                '.csv', '.tsv', '.txt', '.parquet', '.pq', '.xlsx', '.xls', 
+                '.json', '.h5', '.hdf5', '.pkl', '.pickle', '.npy', '.mat', 
+                '.feather', '.arrow', '.db', '.sqlite'
+            }
+            
+            files = []
+            for root, dirs, filenames in os.walk(folder):
+                for filename in filenames:
+                    if Path(filename).suffix.lower() in supported_extensions:
+                        files.append(os.path.join(root, filename))
+            
+            if files:
+                self.converter_input_files = files
+                self.converter_update_file_list()
+                self.converter_input_label.configure(text=f"{len(files)} files found in folder")
+                self.converter_update_convert_button()
+            else:
+                messagebox.showwarning("No Files Found", "No supported files found in the selected folder.")
+
+    def converter_clear_files(self):
+        """Clear all selected files."""
+        self.converter_input_files = []
+        self.converter_update_file_list()
+        self.converter_input_label.configure(text="No files selected")
+        self.converter_update_convert_button()
+
+    def converter_update_file_list(self):
+        """Update the file list display."""
+        # Clear existing widgets
+        for widget in self.converter_file_list_frame.winfo_children():
+            widget.destroy()
+        
+        if not self.converter_input_files:
+            ctk.CTkLabel(self.converter_file_list_frame, text="No files selected").pack(padx=5, pady=5)
+            return
+        
+        for i, file_path in enumerate(self.converter_input_files):
+            file_frame = ctk.CTkFrame(self.converter_file_list_frame)
+            file_frame.pack(fill="x", padx=5, pady=2)
+            
+            # File name (truncated if too long)
+            filename = os.path.basename(file_path)
+            if len(filename) > 40:
+                filename = filename[:37] + "..."
+            
+            ctk.CTkLabel(file_frame, text=filename).pack(side="left", padx=5, pady=2)
+            
+            # Remove button
+            ctk.CTkButton(file_frame, text="X", width=30, 
+                         command=lambda fp=file_path: self.converter_remove_file(fp)).pack(side="right", padx=5, pady=2)
+
+    def converter_remove_file(self, file_path):
+        """Remove a specific file from the list."""
+        if file_path in self.converter_input_files:
+            self.converter_input_files.remove(file_path)
+            self.converter_update_file_list()
+            self.converter_input_label.configure(text=f"{len(self.converter_input_files)} files selected")
+            self.converter_update_convert_button()
+
+    def converter_browse_output(self):
+        """Browse for output directory."""
+        folder = filedialog.askdirectory(title="Select Output Directory")
+        if folder:
+            self.converter_output_path = folder
+            self.converter_output_label.configure(text=folder)
+            self.converter_update_convert_button()
+
+    def converter_select_columns(self):
+        """Open column selection dialog."""
+        if not self.converter_input_files:
+            messagebox.showwarning("No Files", "Please select input files first to determine columns.")
+            return
+        
+        try:
+            first_file = self.converter_input_files[0]
+            format_type = FileFormatDetector.detect_format(first_file)
+            if not format_type:
+                messagebox.showerror("Error", "Could not detect format for the first file.")
+                return
+            
+            df = DataReader.read_file(first_file, format_type)
+            columns = df.columns.tolist()
+            
+            dialog = ColumnSelectionDialog(self, columns)
+            if dialog.result:
+                self.converter_selected_columns = set(dialog.result)
+                self.converter_use_all_columns_var.set(False)
+                self.converter_columns_label.configure(text=f"{len(dialog.result)} columns selected")
+                self._log_conversion_message(f"Selected {len(dialog.result)} columns: {', '.join(dialog.result[:5])}{'...' if len(dialog.result) > 5 else ''}")
+            
+        except Exception as e:
+            messagebox.showerror("Error", f"Error reading file: {str(e)}")
+
+    def converter_update_convert_button(self):
+        """Update the convert button state."""
+        if self.converter_input_files and self.converter_output_path:
+            self.converter_convert_button.configure(state="normal")
+        else:
+            self.converter_convert_button.configure(state="disabled")
+
+    def converter_start_conversion(self):
+        """Start the file conversion process."""
+        if not self.converter_input_files:
+            messagebox.showwarning("No Files", "Please select input files first.")
+            return
+        
+        if not self.converter_output_path:
+            messagebox.showwarning("No Output", "Please select an output directory.")
+            return
+        
+        # Get conversion parameters
+        output_format = self.converter_format_var.get()
+        combine_files = self.converter_combine_var.get()
+        use_all_columns = self.converter_use_all_columns_var.get()
+        batch_processing = self.converter_batch_var.get()
+        split_files = self.converter_split_var.get()
+        
+        # Start conversion in background thread
+        conversion_thread = threading.Thread(
+            target=self._perform_conversion,
+            args=(output_format, combine_files, use_all_columns, batch_processing, split_files)
+        )
+        conversion_thread.daemon = True
+        conversion_thread.start()
+
+    def _perform_conversion(self, output_format, combine_files, use_all_columns, batch_processing, split_files):
+        """Perform the actual file conversion in a background thread."""
+        try:
+            self.converter_status_label.configure(text="Converting files...")
+            self.converter_progress.set(0)
+            self.converter_convert_button.configure(state="disabled")
+            
+            total_files = len(self.converter_input_files)
+            processed_files = 0
+            
+            if combine_files:
+                # Combine all files into one
+                self._log_conversion_message(f"Starting conversion: combining {total_files} files into {output_format.upper()}")
+                
+                combined_data = []
+                for i, file_path in enumerate(self.converter_input_files):
+                    try:
+                        format_type = FileFormatDetector.detect_format(file_path)
+                        if not format_type:
+                            self._log_conversion_message(f"Warning: Could not detect format for {os.path.basename(file_path)}")
+                            continue
+                        
+                        df = DataReader.read_file(file_path, format_type)
+                        
+                        # Apply column selection
+                        if not use_all_columns and self.converter_selected_columns:
+                            available_columns = [col for col in self.converter_selected_columns if col in df.columns]
+                            if available_columns:
+                                df = df[available_columns]
+                            else:
+                                self._log_conversion_message(f"Warning: No selected columns found in {os.path.basename(file_path)}")
+                                continue
+                        
+                        combined_data.append(df)
+                        self._log_conversion_message(f"Loaded {os.path.basename(file_path)}: {len(df)} rows, {len(df.columns)} columns")
+                        
+                        processed_files += 1
+                        self.converter_progress.set(processed_files / total_files)
+                        
+                    except Exception as e:
+                        self._log_conversion_message(f"Error reading {os.path.basename(file_path)}: {str(e)}")
+                
+                if combined_data:
+                    try:
+                        combined_df = pd.concat(combined_data, ignore_index=True)
+                        output_filename = self._generate_output_filename(output_format, "combined_data")
+                        output_path = os.path.join(self.converter_output_path, output_filename)
+                        
+                        DataWriter.write_file(combined_df, output_path, output_format)
+                        self._log_conversion_message(f"Successfully created: {output_filename}")
+                        self._log_conversion_message(f"Combined data: {len(combined_df)} rows, {len(combined_df.columns)} columns")
+                        
+                    except Exception as e:
+                        self._log_conversion_message(f"Error writing combined file: {str(e)}")
+                else:
+                    self._log_conversion_message("No valid data to combine")
+            
+            else:
+                # Process files individually
+                self._log_conversion_message(f"Starting conversion: processing {total_files} files individually")
+                
+                for i, file_path in enumerate(self.converter_input_files):
+                    try:
+                        format_type = FileFormatDetector.detect_format(file_path)
+                        if not format_type:
+                            self._log_conversion_message(f"Warning: Could not detect format for {os.path.basename(file_path)}")
+                            continue
+                        
+                        df = DataReader.read_file(file_path, format_type)
+                        
+                        # Apply column selection
+                        if not use_all_columns and self.converter_selected_columns:
+                            available_columns = [col for col in self.converter_selected_columns if col in df.columns]
+                            if available_columns:
+                                df = df[available_columns]
+                            else:
+                                self._log_conversion_message(f"Warning: No selected columns found in {os.path.basename(file_path)}")
+                                continue
+                        
+                        # Generate output filename
+                        base_name = os.path.splitext(os.path.basename(file_path))[0]
+                        output_filename = self._generate_output_filename(output_format, base_name)
+                        output_path = os.path.join(self.converter_output_path, output_filename)
+                        
+                        DataWriter.write_file(df, output_path, output_format)
+                        self._log_conversion_message(f"Converted {os.path.basename(file_path)} -> {output_filename}")
+                        
+                        processed_files += 1
+                        self.converter_progress.set(processed_files / total_files)
+                        
+                    except Exception as e:
+                        self._log_conversion_message(f"Error converting {os.path.basename(file_path)}: {str(e)}")
+            
+            self.converter_status_label.configure(text=f"Conversion complete. {processed_files} files processed.")
+            self.converter_progress.set(1.0)
+            
+        except Exception as e:
+            self._log_conversion_message(f"Conversion error: {str(e)}")
+            self.converter_status_label.configure(text="Conversion failed")
+        finally:
+            self.converter_convert_button.configure(state="normal")
+
+    def _generate_output_filename(self, output_format, base_name=None):
+        """Generate output filename with proper extension."""
+        if not base_name:
+            base_name = "converted_data"
+        
+        extensions = {
+            "parquet": ".parquet",
+            "csv": ".csv",
+            "tsv": ".tsv",
+            "excel": ".xlsx",
+            "json": ".json",
+            "hdf5": ".h5",
+            "pickle": ".pkl",
+            "numpy": ".npy",
+            "matlab": ".mat",
+            "feather": ".feather",
+            "arrow": ".arrow",
+            "sqlite": ".db"
+        }
+        
+        extension = extensions.get(output_format, ".txt")
+        return f"{base_name}{extension}"
+
+    def _log_conversion_message(self, message):
+        """Add a message to the conversion log."""
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        log_message = f"[{timestamp}] {message}\n"
+        
+        # Update in main thread
+        self.after(0, lambda: self.converter_log_text.insert("end", log_message))
+        self.after(0, lambda: self.converter_log_text.see("end"))
+
+    def converter_clear_log(self):
+        """Clear the conversion log."""
+        self.converter_log_text.delete("1.0", "end")
+
+    def converter_save_log(self):
+        """Save the conversion log to a file."""
+        log_content = self.converter_log_text.get("1.0", "end")
+        if log_content.strip():
+            file_path = filedialog.asksaveasfilename(
+                title="Save Conversion Log",
+                defaultextension=".txt",
+                filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")]
+            )
+            if file_path:
+                try:
+                    with open(file_path, 'w') as f:
+                        f.write(log_content)
+                    messagebox.showinfo("Success", f"Log saved to {file_path}")
+                except Exception as e:
+                    messagebox.showerror("Error", f"Failed to save log: {str(e)}")
+
+    def show_parquet_analyzer(self):
+        """Show the parquet analyzer dialog."""
+        dialog = ParquetAnalyzerDialog(self)
+        dialog.grab_set()  # Make dialog modal
 
     def create_format_converter_tab(self, parent_tab):
         """Create the format converter tab."""
@@ -513,7 +840,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Convert button
             self.converter_convert_button = ctk.CTkButton(converter_scrollable_frame, 
                                                          text="Convert Files", 
-                                                         command=self.converter_start_conversion,
+                                                         command=lambda: self.converter_start_conversion(),
                                                          height=40)
             self.converter_convert_button.grid(row=4, column=0, sticky="ew", padx=5, pady=10)
             
@@ -560,137 +887,6 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         splitter_frame = self._create_splitter(parent_tab, create_converter_left_content, create_converter_right_content, 
                                               'converter_left_width', 400)
         splitter_frame.grid(row=0, column=0, sticky="nsew")
-
-    # Compiler converter methods
-    def converter_browse_files(self):
-        """Browse for input files."""
-        files = filedialog.askopenfilenames(
-            title="Select Input Files",
-            filetypes=[
-                ("All Supported", "*.csv *.tsv *.txt *.parquet *.pq *.xlsx *.xls *.json *.h5 *.hdf5 *.pkl *.pickle *.npy *.mat *.feather *.arrow *.db *.sqlite"),
-                ("CSV Files", "*.csv"),
-                ("TSV Files", "*.tsv *.txt"),
-                ("Parquet Files", "*.parquet *.pq"),
-                ("Excel Files", "*.xlsx *.xls"),
-                ("JSON Files", "*.json"),
-                ("HDF5 Files", "*.h5 *.hdf5"),
-                ("Pickle Files", "*.pkl *.pickle"),
-                ("NumPy Files", "*.npy"),
-                ("MATLAB Files", "*.mat"),
-                ("Feather Files", "*.feather"),
-                ("Arrow Files", "*.arrow"),
-                ("SQLite Files", "*.db *.sqlite"),
-                ("All Files", "*.*")
-            ]
-        )
-        
-        if files:
-            self.converter_input_files = list(files)
-            self.converter_update_file_list()
-            self.converter_input_label.configure(text=f"{len(files)} files selected")
-            self.converter_update_convert_button()
-
-    def converter_browse_folder(self):
-        """Browse for input folder."""
-        folder = filedialog.askdirectory(title="Select Input Folder")
-        if folder:
-            # Scan for supported files
-            supported_extensions = {
-                '.csv', '.tsv', '.txt', '.parquet', '.pq', '.xlsx', '.xls', 
-                '.json', '.h5', '.hdf5', '.pkl', '.pickle', '.npy', '.mat', 
-                '.feather', '.arrow', '.db', '.sqlite'
-            }
-            
-            files = []
-            for root, dirs, filenames in os.walk(folder):
-                for filename in filenames:
-                    if Path(filename).suffix.lower() in supported_extensions:
-                        files.append(os.path.join(root, filename))
-            
-            if files:
-                self.converter_input_files = files
-                self.converter_update_file_list()
-                self.converter_input_label.configure(text=f"{len(files)} files found in folder")
-                self.converter_update_convert_button()
-            else:
-                messagebox.showwarning("No Files Found", "No supported files found in the selected folder.")
-
-    def converter_clear_files(self):
-        """Clear selected files."""
-        self.converter_input_files = []
-        self.converter_update_file_list()
-        self.converter_input_label.configure(text="No files selected")
-        self.converter_update_convert_button()
-
-    def converter_update_file_list(self):
-        """Update the file list display."""
-        # Clear existing widgets
-        for widget in self.converter_file_list_frame.winfo_children():
-            widget.destroy()
-        
-        if not self.converter_input_files:
-            ctk.CTkLabel(self.converter_file_list_frame, text="No files selected").pack(padx=5, pady=5)
-            return
-        
-        for file_path in self.converter_input_files:
-            file_frame = ctk.CTkFrame(self.converter_file_list_frame)
-            file_frame.pack(fill="x", padx=5, pady=2)
-            
-            ctk.CTkLabel(file_frame, text=Path(file_path).name).pack(side="left", padx=5, pady=2)
-            ctk.CTkButton(file_frame, text="X", width=30, 
-                         command=lambda f=file_path: self.converter_remove_file(f)).pack(side="right", padx=5, pady=2)
-
-    def converter_remove_file(self, file_path):
-        """Remove a file from the list."""
-        if file_path in self.converter_input_files:
-            self.converter_input_files.remove(file_path)
-            self.converter_update_file_list()
-            self.converter_input_label.configure(text=f"{len(self.converter_input_files)} files selected")
-            self.converter_update_convert_button()
-
-    def converter_browse_output(self):
-        """Browse for output path."""
-        if self.converter_format_var.get() in ['csv', 'tsv', 'txt']:
-            path = filedialog.asksaveasfilename(
-                title="Save As",
-                defaultextension=f".{self.converter_format_var.get()}",
-                filetypes=[(f"{self.converter_format_var.get().upper()} Files", f"*.{self.converter_format_var.get()}")]
-            )
-        else:
-            path = filedialog.askdirectory(title="Select Output Directory")
-        
-        if path:
-            self.converter_output_path = path
-            self.converter_output_label.configure(text=Path(path).name)
-            self.converter_update_convert_button()
-
-    def converter_select_columns(self):
-        """Show column selection dialog."""
-        if not self.converter_input_files:
-            messagebox.showwarning("No Files", "Please select input files first.")
-            return
-        
-        # Get columns from first file
-        try:
-            first_file = self.converter_input_files[0]
-            format_type = FileFormatDetector.detect_format(first_file)
-            if not format_type:
-                messagebox.showerror("Error", "Could not detect format for the first file.")
-                return
-            
-            df = DataReader.read_file(first_file, format_type)
-            columns = df.columns.tolist()
-            
-            # Create simple column selection dialog
-            dialog = ColumnSelectionDialog(self, columns)
-            if dialog.result:
-                self.converter_selected_columns = set(dialog.result)
-                self.converter_use_all_columns_var.set(False)
-                self.converter_columns_label.configure(text=f"{len(dialog.result)} columns selected")
-                self._log_conversion_message(f"Selected {len(dialog.result)} columns: {', '.join(dialog.result[:5])}{'...' if len(dialog.result) > 5 else ''}")
-            
-        except Exception as e:
-            messagebox.showerror("Error", f"Error reading file: {str(e)}")
 
 class ColumnSelectionDialog(ctk.CTkToplevel):
     """Simple dialog for column selection."""
@@ -776,194 +972,6 @@ class ColumnSelectionDialog(ctk.CTkToplevel):
         """Handle Cancel button click."""
         self.result = None
         self.destroy()
-
-    def converter_update_convert_button(self):
-        """Update convert button state."""
-        can_convert = (len(self.converter_input_files) > 0 and 
-                      self.converter_output_path and 
-                      self.converter_format_var.get())
-        
-        if can_convert:
-            self.converter_convert_button.configure(state="normal")
-        else:
-            self.converter_convert_button.configure(state="disabled")
-
-    def converter_start_conversion(self):
-        """Start the conversion process."""
-        if not self.converter_input_files:
-            messagebox.showerror("Error", "Please select input files.")
-            return
-        
-        if not self.converter_output_path:
-            messagebox.showerror("Error", "Please select output path.")
-            return
-        
-        # Start conversion in a separate thread
-        self.converter_status_label.configure(text="Converting...")
-        self.converter_progress.set(0)
-        
-        # Get conversion parameters
-        output_format = self.converter_format_var.get()
-        combine_files = self.converter_combine_var.get()
-        use_all_columns = self.converter_use_all_columns_var.get()
-        batch_processing = self.converter_batch_var.get()
-        split_files = self.converter_split_var.get()
-        
-        # Start conversion in background thread
-        conversion_thread = threading.Thread(
-            target=self._perform_conversion,
-            args=(output_format, combine_files, use_all_columns, batch_processing, split_files)
-        )
-        conversion_thread.daemon = True
-        conversion_thread.start()
-    
-    def _perform_conversion(self, output_format, combine_files, use_all_columns, batch_processing, split_files):
-        """Perform the actual file conversion in a background thread."""
-        try:
-            total_files = len(self.converter_input_files)
-            processed_files = 0
-            
-            # Log start of conversion
-            self._log_conversion_message(f"Starting conversion of {total_files} files to {output_format} format")
-            
-            if combine_files:
-                # Combine all files into one
-                self._log_conversion_message("Combining all files into single output")
-                combined_df = None
-                
-                for i, file_path in enumerate(self.converter_input_files):
-                    try:
-                        # Detect format
-                        format_type = FileFormatDetector.detect_format(file_path)
-                        if not format_type:
-                            self._log_conversion_message(f"Warning: Could not detect format for {Path(file_path).name}")
-                            continue
-                        
-                        # Read file
-                        df = DataReader.read_file(file_path, format_type)
-                        
-                        # Select columns if needed
-                        if not use_all_columns and self.converter_selected_columns:
-                            available_columns = [col for col in self.converter_selected_columns if col in df.columns]
-                            if available_columns:
-                                df = df[available_columns]
-                        
-                        # Combine with existing data
-                        if combined_df is None:
-                            combined_df = df
-                        else:
-                            combined_df = pd.concat([combined_df, df], ignore_index=True)
-                        
-                        processed_files += 1
-                        progress = int((processed_files / total_files) * 100)
-                        self.converter_progress.set(progress / 100.0)
-                        self._log_conversion_message(f"Processed {Path(file_path).name}")
-                        
-                    except Exception as e:
-                        self._log_conversion_message(f"Error processing {Path(file_path).name}: {str(e)}")
-                
-                # Write combined file
-                if combined_df is not None:
-                    output_file = self._generate_output_filename(output_format)
-                    DataWriter.write_file(combined_df, output_file, output_format)
-                    self._log_conversion_message(f"Combined file saved as: {Path(output_file).name}")
-                else:
-                    raise Exception("No valid files could be processed")
-                    
-            else:
-                # Convert each file separately
-                for i, file_path in enumerate(self.converter_input_files):
-                    try:
-                        # Detect format
-                        format_type = FileFormatDetector.detect_format(file_path)
-                        if not format_type:
-                            self._log_conversion_message(f"Warning: Could not detect format for {Path(file_path).name}")
-                            continue
-                        
-                        # Read file
-                        df = DataReader.read_file(file_path, format_type)
-                        
-                        # Select columns if needed
-                        if not use_all_columns and self.converter_selected_columns:
-                            available_columns = [col for col in self.converter_selected_columns if col in df.columns]
-                            if available_columns:
-                                df = df[available_columns]
-                        
-                        # Generate output filename
-                        output_file = self._generate_output_filename(output_format, Path(file_path).stem)
-                        
-                        # Write file
-                        DataWriter.write_file(df, output_file, output_format)
-                        
-                        processed_files += 1
-                        progress = int((processed_files / total_files) * 100)
-                        self.converter_progress.set(progress / 100.0)
-                        self._log_conversion_message(f"Converted {Path(file_path).name} -> {Path(output_file).name}")
-                        
-                    except Exception as e:
-                        self._log_conversion_message(f"Error converting {Path(file_path).name}: {str(e)}")
-            
-            # Conversion completed
-            self.converter_progress.set(1.0)
-            self.converter_status_label.configure(text="Conversion completed")
-            self._log_conversion_message(f"Conversion completed successfully! {processed_files} files processed.")
-            
-            # Show completion message
-            self.after(0, lambda: messagebox.showinfo("Success", f"Conversion completed successfully!\n{processed_files} files processed."))
-            
-        except Exception as e:
-            self._log_conversion_message(f"Conversion failed: {str(e)}")
-            self.converter_status_label.configure(text="Conversion failed")
-            self.after(0, lambda: messagebox.showerror("Error", f"Conversion failed: {str(e)}"))
-    
-    def _generate_output_filename(self, output_format, base_name=None):
-        """Generate output filename based on format and settings."""
-        if base_name is None:
-            base_name = "combined_data"
-        
-        # Determine output directory and filename
-        if os.path.isdir(self.converter_output_path):
-            # Directory output
-            output_dir = self.converter_output_path
-            filename = f"{base_name}.{output_format}"
-            return os.path.join(output_dir, filename)
-        else:
-            # Single file output
-            return self.converter_output_path
-    
-    def _log_conversion_message(self, message):
-        """Log a message to the conversion log."""
-        timestamp = datetime.now().strftime("%H:%M:%S")
-        log_message = f"[{timestamp}] {message}"
-        
-        # Update log in main thread
-        self.after(0, lambda: self.converter_log_text.insert("end", log_message + "\n"))
-        self.after(0, lambda: self.converter_log_text.see("end"))
-
-    def converter_clear_log(self):
-        """Clear the conversion log."""
-        self.converter_log_text.delete("1.0", "end")
-
-    def converter_save_log(self):
-        """Save the conversion log."""
-        file_path = filedialog.asksaveasfilename(
-            title="Save Log",
-            defaultextension=".txt",
-            filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")]
-        )
-        
-        if file_path:
-            try:
-                with open(file_path, 'w') as f:
-                    f.write(self.converter_log_text.get("1.0", "end"))
-                messagebox.showinfo("Success", "Log saved successfully.")
-            except Exception as e:
-                messagebox.showerror("Error", f"Failed to save log: {str(e)}")
-
-    def show_parquet_analyzer(self):
-        """Show the parquet analyzer dialog."""
-        dialog = ParquetAnalyzerDialog(self)
-        dialog.focus_set()
 
 # =============================================================================
 # MAIN EXECUTION
