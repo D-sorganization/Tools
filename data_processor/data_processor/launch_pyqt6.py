@@ -5,32 +5,33 @@
 
 import sys
 import os
+import importlib
 
 # Add the current directory to the Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 def check_dependencies():
     """Check if all required dependencies are installed."""
-    required_packages = [
-        'PyQt6',
-        'pandas',
-        'numpy',
-        'scipy',
-        'matplotlib',
-        'openpyxl',
-        'Pillow',
-        'simpledbf',
-        'pyarrow'
-    ]
-    
+    package_modules = {
+        'PyQt6': 'PyQt6',
+        'pandas': 'pandas',
+        'numpy': 'numpy',
+        'scipy': 'scipy',
+        'matplotlib': 'matplotlib',
+        'openpyxl': 'openpyxl',
+        'Pillow': 'PIL',
+        'simpledbf': 'simpledbf',
+        'pyarrow': 'pyarrow',
+    }
+
     missing_packages = []
-    
-    for package in required_packages:
+
+    for package, module in package_modules.items():
         try:
-            __import__(package.lower().replace('-', '_'))
+            importlib.import_module(module)
         except ImportError:
             missing_packages.append(package)
-    
+
     if missing_packages:
         print("Missing required packages:")
         for package in missing_packages:
@@ -38,7 +39,7 @@ def check_dependencies():
         print("\nPlease install missing packages using:")
         print(f"pip install {' '.join(missing_packages)}")
         return False
-    
+
     return True
 
 def main():
