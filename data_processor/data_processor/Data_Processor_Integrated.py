@@ -394,6 +394,19 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
     """Extended application class with integrated compiler converter functionality."""
     
     def __init__(self, *args, **kwargs):
+        # Initialize converter variables BEFORE calling parent class
+        # This ensures they exist when parent class methods are called
+        self.converter_input_files = []
+        self.converter_output_path = ""
+        self.converter_output_format = "parquet"
+        self.converter_combine_files = True
+        self.converter_selected_columns = set()
+        self.converter_use_all_columns = True
+        self.converter_split_config = SplitConfig()
+        self.converter_batch_processing = False
+        self.converter_batch_size = 10
+        self.converter_chunk_size = 10000
+        
         # Initialize the parent class
         super().__init__(*args, **kwargs)
         
@@ -411,18 +424,6 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         # Add Help tab back as the rightmost tab
         self.main_tab_view.add("Help")
         self.create_help_tab(self.main_tab_view.tab("Help"))
-        
-        # Initialize converter variables
-        self.converter_input_files = []
-        self.converter_output_path = ""
-        self.converter_output_format = "parquet"
-        self.converter_combine_files = True
-        self.converter_selected_columns = set()
-        self.converter_use_all_columns = True
-        self.converter_split_config = SplitConfig()
-        self.converter_batch_processing = False
-        self.converter_batch_size = 10
-        self.converter_chunk_size = 10000
 
     def create_format_converter_tab(self, parent_tab):
         """Create the format converter tab."""
