@@ -40,9 +40,11 @@ import time
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import List, Dict, Optional, Tuple, Set, Any
+from typing import List, Dict, Optional, Tuple, Set, Any, Union
 import logging
 from datetime import datetime
+import gc
+import psutil
 
 # Additional ML-specific imports
 try:
@@ -67,7 +69,8 @@ except ImportError:
     PYARROW_AVAILABLE = False
 
 from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backends._backend_tk import NavigationToolbar2Tk
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 
@@ -83,6 +86,179 @@ try:
 except ImportError:
     FOLDER_TOOL_AVAILABLE = False
     print("Warning: Folder tool not available. Folder Tool tab will be disabled.")
+
+# =============================================================================
+# INPUT VALIDATION AND UTILITY CLASSES
+# =============================================================================
+
+class InputValidator:
+    """Handles input validation for file paths, user inputs, and data."""
+    
+    @staticmethod
+    def validate_file_path(file_path: str) -> Tuple[bool, str]:
+        """Validate file path exists and is accessible."""
+        if not file_path or not isinstance(file_path, str):
+            return False, "File path must be a non-empty string"
+        
+        if not os.path.exists(file_path):
+            return False, f"File does not exist: {file_path}"
+        
+        if not os.path.isfile(file_path):
+            return False, f"Path is not a file: {file_path}"
+        
+        if not os.access(file_path, os.R_OK):
+            return False, f"File is not readable: {file_path}"
+        
+        return True, "Valid file path"
+    
+    @staticmethod
+    def validate_directory_path(dir_path: str) -> Tuple[bool, str]:
+        """Validate directory path exists and is writable."""
+        if not dir_path or not isinstance(dir_path, str):
+            return False, "Directory path must be a non-empty string"
+        
+        if not os.path.exists(dir_path):
+            return False, f"Directory does not exist: {dir_path}"
+        
+        if not os.path.isdir(dir_path):
+            return False, f"Path is not a directory: {dir_path}"
+        
+        if not os.access(dir_path, os.W_OK):
+            return False, f"Directory is not writable: {dir_path}"
+        
+        return True, "Valid directory path"
+    
+    @staticmethod
+    def validate_file_size(file_path: str, max_size_mb: float = 1000.0) -> Tuple[bool, str]:
+        """Validate file size is within acceptable limits."""
+        try:
+            file_size = os.path.getsize(file_path)
+            max_size_bytes = max_size_mb * 1024 * 1024
+            
+            if file_size > max_size_bytes:
+                return False, f"File too large: {file_size / (1024*1024):.1f}MB > {max_size_mb}MB"
+            
+            return True, f"File size OK: {file_size / (1024*1024):.1f}MB"
+        except Exception as e:
+            return False, f"Error checking file size: {str(e)}"
+    
+    @staticmethod
+    def validate_numeric_input(value: str, min_val: Optional[float] = None, max_val: Optional[float] = None) -> Tuple[bool, str]:
+        """Validate numeric input within specified range."""
+        try:
+            num_val = float(value)
+            
+            if min_val is not None and num_val < min_val:
+                return False, f"Value {num_val} is below minimum {min_val}"
+            
+            if max_val is not None and num_val > max_val:
+                return False, f"Value {num_val} is above maximum {max_val}"
+            
+            return True, f"Valid numeric value: {num_val}"
+        except ValueError:
+            return False, f"Invalid numeric value: {value}"
+    
+    @staticmethod
+    def sanitize_filename(filename: str) -> str:
+        """Sanitize filename to remove invalid characters."""
+        # Remove or replace invalid characters
+        invalid_chars = '<>:"/\\|?*'
+        for char in invalid_chars:
+            filename = filename.replace(char, '_')
+        
+        # Remove leading/trailing spaces and dots
+        filename = filename.strip(' .')
+        
+        # Ensure filename is not empty
+        if not filename:
+            filename = "unnamed_file"
+        
+        return filename
+
+class MemoryManager:
+    """Handles memory management and monitoring."""
+    
+    @staticmethod
+    def get_memory_usage() -> Dict[str, float]:
+        """Get current memory usage statistics."""
+        try:
+            process = psutil.Process()
+            memory_info = process.memory_info()
+            
+            return {
+                'rss_mb': memory_info.rss / (1024 * 1024),  # Resident Set Size
+                'vms_mb': memory_info.vms / (1024 * 1024),  # Virtual Memory Size
+                'percent': process.memory_percent()
+            }
+        except Exception:
+            return {'rss_mb': 0, 'vms_mb': 0, 'percent': 0}
+    
+    @staticmethod
+    def check_memory_available(min_available_mb: float = 100.0) -> Tuple[bool, str]:
+        """Check if sufficient memory is available."""
+        try:
+            memory = psutil.virtual_memory()
+            available_mb = memory.available / (1024 * 1024)
+            
+            if available_mb < min_available_mb:
+                return False, f"Low memory: {available_mb:.1f}MB available, {min_available_mb}MB required"
+            
+            return True, f"Memory OK: {available_mb:.1f}MB available"
+        except Exception:
+            return True, "Memory check unavailable"
+    
+    @staticmethod
+    def force_garbage_collection():
+        """Force garbage collection to free memory."""
+        gc.collect()
+    
+    @staticmethod
+    def estimate_dataframe_memory(df: pd.DataFrame) -> float:
+        """Estimate memory usage of a DataFrame in MB."""
+        try:
+            return df.memory_usage(deep=True).sum() / (1024 * 1024)
+        except Exception:
+            # Fallback estimation
+            return len(df) * len(df.columns) * 8 / (1024 * 1024)  # Rough estimate
+
+class ThreadSafeUI:
+    """Provides thread-safe UI update methods."""
+    
+    def __init__(self, root_widget):
+        self.root_widget = root_widget
+        self._update_queue = queue.Queue()
+        self._running = True
+        
+        # Start UI update thread
+        self._ui_thread = threading.Thread(target=self._process_ui_updates, daemon=True)
+        self._ui_thread.start()
+    
+    def _process_ui_updates(self):
+        """Process UI updates from the queue."""
+        while self._running:
+            try:
+                # Get update from queue with timeout
+                update_func = self._update_queue.get(timeout=0.1)
+                if update_func:
+                    # Execute update in main thread
+                    self.root_widget.after(0, update_func)
+            except queue.Empty:
+                continue
+            except Exception as e:
+                print(f"Error in UI update thread: {e}")
+    
+    def safe_update(self, update_func):
+        """Safely update UI from any thread."""
+        try:
+            self._update_queue.put(update_func)
+        except Exception as e:
+            print(f"Error queuing UI update: {e}")
+    
+    def shutdown(self):
+        """Shutdown the UI update thread."""
+        self._running = False
+        if self._ui_thread.is_alive():
+            self._ui_thread.join(timeout=1.0)
 
 # =============================================================================
 # COMPILER CONVERTER CLASSES
@@ -120,78 +296,107 @@ class FileFormatDetector:
     @staticmethod
     def detect_format(file_path: str) -> Optional[str]:
         """Detect file format from path and content."""
-        if not os.path.exists(file_path):
+        try:
+            # Validate file path first
+            is_valid, error_msg = InputValidator.validate_file_path(file_path)
+            if not is_valid:
+                raise ValueError(error_msg)
+            
+            # Get file extension
+            _, ext = os.path.splitext(file_path.lower())
+            
+            # Extension-based detection
+            format_map = {
+                '.csv': 'csv',
+                '.tsv': 'tsv',
+                '.txt': 'tsv',  # Assume TSV for .txt files
+                '.parquet': 'parquet',
+                '.pq': 'parquet',
+                '.xlsx': 'excel',
+                '.xls': 'excel',
+                '.json': 'json',
+                '.h5': 'hdf5',
+                '.hdf5': 'hdf5',
+                '.pkl': 'pickle',
+                '.pickle': 'pickle',
+                '.npy': 'numpy',
+                '.mat': 'matlab',
+                '.feather': 'feather',
+                '.arrow': 'arrow',
+                '.db': 'sqlite',
+                '.sqlite': 'sqlite'
+            }
+            
+            if ext in format_map:
+                return format_map[ext]
+            
+            # Content-based detection for ambiguous extensions
+            if ext == '.txt':
+                # Try to detect CSV vs TSV by reading first few lines
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        first_line = f.readline().strip()
+                        if '\t' in first_line:
+                            return 'tsv'
+                        elif ',' in first_line:
+                            return 'csv'
+                except Exception:
+                    pass
+            
             return None
             
-        # Check by extension first
-        ext = Path(file_path).suffix.lower()
-        
-        # Extension-based detection
-        if ext in ['.csv']:
-            return 'csv'
-        elif ext in ['.tsv', '.txt']:
-            return 'tsv'
-        elif ext in ['.parquet', '.pq']:
-            return 'parquet'
-        elif ext in ['.xlsx', '.xls']:
-            return 'excel'
-        elif ext in ['.json']:
-            return 'json'
-        elif ext in ['.h5', '.hdf5']:
-            return 'hdf5'
-        elif ext in ['.pkl', '.pickle']:
-            return 'pickle'
-        elif ext in ['.npy']:
-            return 'numpy'
-        elif ext in ['.mat']:
-            return 'matlab'
-        elif ext in ['.feather']:
-            return 'feather'
-        elif ext in ['.arrow']:
-            return 'arrow'
-        elif ext in ['.db', '.sqlite']:
-            return 'sqlite'
-        
-        # Content-based detection for ambiguous extensions
-        try:
-            with open(file_path, 'rb') as f:
-                header = f.read(1024)
-                
-            # Check for CSV/TSV
-            if b',' in header and b'\n' in header:
-                return 'csv'
-            elif b'\t' in header and b'\n' in header:
-                return 'tsv'
-            elif header.startswith(b'{') or header.startswith(b'['):
-                return 'json'
-            elif header.startswith(b'PK'):
-                return 'excel'  # ZIP-based format
-                
-        except Exception:
-            pass
-            
-        return None
+        except Exception as e:
+            raise ValueError(f"Error detecting format for {file_path}: {str(e)}")
 
 class DataReader:
-    """Handles reading data from various file formats."""
+    """Handles reading data from various file formats with memory management."""
     
     @staticmethod
-    def read_file(file_path: str, format_type: str, **kwargs) -> pd.DataFrame:
-        """Read file based on format type."""
+    def read_file(file_path: str, format_type: str, chunk_size: Optional[int] = None, **kwargs) -> Union[pd.DataFrame, Any]:
+        """Read file based on format type with optional chunking."""
         try:
+            # Validate inputs
+            is_valid, error_msg = InputValidator.validate_file_path(file_path)
+            if not is_valid:
+                raise ValueError(error_msg)
+            
+            # Check memory availability
+            memory_ok, memory_msg = MemoryManager.check_memory_available()
+            if not memory_ok:
+                print(f"Warning: {memory_msg}")
+            
+            # Determine if chunking is needed
+            if chunk_size is None:
+                file_size = os.path.getsize(file_path)
+                if file_size > 100 * 1024 * 1024:  # 100MB threshold
+                    chunk_size = 10000  # Default chunk size for large files
+                else:
+                    chunk_size = None  # Load entire file
+            
+            # Read based on format with chunking support
             if format_type == 'csv':
-                return pd.read_csv(file_path, **kwargs)
+                if chunk_size:
+                    return pd.read_csv(file_path, chunksize=chunk_size, **kwargs)
+                else:
+                    return pd.read_csv(file_path, **kwargs)
             elif format_type == 'tsv':
-                return pd.read_csv(file_path, sep='\t', **kwargs)
+                if chunk_size:
+                    return pd.read_csv(file_path, sep='\t', chunksize=chunk_size, **kwargs)
+                else:
+                    return pd.read_csv(file_path, sep='\t', **kwargs)
             elif format_type == 'parquet':
                 if not PYARROW_AVAILABLE:
                     raise ImportError("PyArrow is required for parquet files")
+                # Parquet files are already optimized for memory, no chunking needed
                 return pd.read_parquet(file_path, **kwargs)
             elif format_type == 'excel':
+                # Excel files don't support chunking, load entirely
                 return pd.read_excel(file_path, **kwargs)
             elif format_type == 'json':
+                # JSON files don't support chunking, load entirely
                 return pd.read_json(file_path, **kwargs)
             elif format_type == 'hdf5':
+                # HDF5 supports chunking but requires different approach
                 return pd.read_hdf(file_path, **kwargs)
             elif format_type == 'pickle':
                 return pd.read_pickle(file_path)
@@ -226,6 +431,29 @@ class DataReader:
                 
         except Exception as e:
             raise Exception(f"Error reading {file_path}: {str(e)}")
+    
+    @staticmethod
+    def read_file_chunked(file_path: str, format_type: str, chunk_size: int = 10000, **kwargs) -> pd.io.parsers.TextFileReader:
+        """Read file in chunks for memory-efficient processing."""
+        try:
+            # Validate inputs
+            is_valid, error_msg = InputValidator.validate_file_path(file_path)
+            if not is_valid:
+                raise ValueError(error_msg)
+            
+            # Validate chunk size
+            is_valid, error_msg = InputValidator.validate_numeric_input(str(chunk_size), min_val=1, max_val=1000000)
+            if not is_valid:
+                raise ValueError(f"Invalid chunk size: {error_msg}")
+            
+            if format_type in ['csv', 'tsv']:
+                sep = '\t' if format_type == 'tsv' else ','
+                return pd.read_csv(file_path, sep=sep, chunksize=chunk_size, **kwargs)
+            else:
+                raise ValueError(f"Chunked reading not supported for format: {format_type}")
+                
+        except Exception as e:
+            raise Exception(f"Error reading {file_path} in chunks: {str(e)}")
 
 class DataWriter:
     """Handles writing data to various file formats."""
@@ -234,6 +462,29 @@ class DataWriter:
     def write_file(df: pd.DataFrame, file_path: str, format_type: str, **kwargs) -> None:
         """Write DataFrame to file based on format type."""
         try:
+            # Validate inputs
+            if df is None or df.empty:
+                raise ValueError("DataFrame is empty or None")
+            
+            # Validate and sanitize file path
+            dir_path = os.path.dirname(file_path)
+            if dir_path and not os.path.exists(dir_path):
+                os.makedirs(dir_path, exist_ok=True)
+            
+            filename = os.path.basename(file_path)
+            sanitized_filename = InputValidator.sanitize_filename(filename)
+            file_path = os.path.join(dir_path, sanitized_filename)
+            
+            # Check available disk space
+            try:
+                free_space = shutil.disk_usage(dir_path).free
+                estimated_size = MemoryManager.estimate_dataframe_memory(df) * 1024 * 1024 * 2  # Rough estimate
+                if free_space < estimated_size:
+                    raise ValueError(f"Insufficient disk space. Need ~{estimated_size/(1024*1024):.1f}MB, have {free_space/(1024*1024):.1f}MB")
+            except Exception:
+                pass  # Skip disk space check if it fails
+            
+            # Write based on format
             if format_type == 'csv':
                 df.to_csv(file_path, index=False, **kwargs)
             elif format_type == 'tsv':
@@ -440,6 +691,9 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         # Update title to reflect integration
         self.title("Advanced CSV Time Series Processor & Analyzer - Integrated")
         
+        # Initialize thread-safe UI manager
+        self.thread_safe_ui = ThreadSafeUI(self)
+        
         # Remove the Help tab that was added by parent class
         # We'll add it back at the end to ensure it's the rightmost tab
         self.main_tab_view.delete("Help")
@@ -463,6 +717,11 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         # Add Help tab back as the rightmost tab
         self.main_tab_view.add("Help")
         self.create_help_tab(self.main_tab_view.tab("Help"))
+    
+    def __del__(self):
+        """Cleanup when application is destroyed."""
+        if hasattr(self, 'thread_safe_ui'):
+            self.thread_safe_ui.shutdown()
 
     # Compiler converter methods - Define these BEFORE creating the UI
     def converter_browse_files(self):
@@ -489,10 +748,47 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             )
             
             if files:
-                self.converter_input_files = list(files)
-                self.converter_update_file_list()
-                self.converter_input_label.configure(text=f"{len(files)} files selected")
-                self.converter_update_convert_button()
+                # Validate each selected file
+                valid_files = []
+                invalid_files = []
+                
+                for file_path in files:
+                    # Validate file path
+                    is_valid, error_msg = InputValidator.validate_file_path(file_path)
+                    if not is_valid:
+                        invalid_files.append(f"{os.path.basename(file_path)}: {error_msg}")
+                        continue
+                    
+                    # Validate file size (max 1GB)
+                    is_valid, error_msg = InputValidator.validate_file_size(file_path, max_size_mb=1000.0)
+                    if not is_valid:
+                        invalid_files.append(f"{os.path.basename(file_path)}: {error_msg}")
+                        continue
+                    
+                    # Check if format is supported
+                    format_type = FileFormatDetector.detect_format(file_path)
+                    if not format_type:
+                        invalid_files.append(f"{os.path.basename(file_path)}: Unsupported file format")
+                        continue
+                    
+                    valid_files.append(file_path)
+                
+                # Report any invalid files
+                if invalid_files:
+                    error_message = "The following files were skipped:\n\n" + "\n".join(invalid_files[:10])  # Limit to first 10
+                    if len(invalid_files) > 10:
+                        error_message += f"\n... and {len(invalid_files) - 10} more files"
+                    messagebox.showwarning("Invalid Files", error_message)
+                
+                # Update with valid files only
+                if valid_files:
+                    self.converter_input_files = valid_files
+                    self.converter_update_file_list()
+                    self.converter_input_label.configure(text=f"{len(valid_files)} files selected")
+                    self.converter_update_convert_button()
+                else:
+                    messagebox.showwarning("No Valid Files", "No valid files were selected.")
+                    
         except Exception as e:
             messagebox.showerror("Error", f"Failed to browse files: {str(e)}")
 
@@ -630,26 +926,50 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
     def _perform_conversion(self, output_format, combine_files, use_all_columns, batch_processing, split_files):
         """Perform the actual file conversion in a background thread."""
         try:
-            self.converter_status_label.configure(text="Converting files...")
-            self.converter_progress.set(0)
-            self.converter_convert_button.configure(state="disabled")
+            # Use thread-safe UI updates
+            self.thread_safe_ui.safe_update(lambda: self.converter_status_label.configure(text="Converting files..."))
+            self.thread_safe_ui.safe_update(lambda: self.converter_progress.set(0))
+            self.thread_safe_ui.safe_update(lambda: self.converter_convert_button.configure(state="disabled"))
+            
+            # Validate output directory
+            is_valid, error_msg = InputValidator.validate_directory_path(self.converter_output_path)
+            if not is_valid:
+                self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Error: {error_msg}"))
+                return
             
             total_files = len(self.converter_input_files)
             processed_files = 0
             
+            # Check memory availability before starting
+            memory_ok, memory_msg = MemoryManager.check_memory_available(min_available_mb=200.0)
+            if not memory_ok:
+                self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Warning: {memory_msg}"))
+            
             if combine_files:
                 # Combine all files into one
-                self._log_conversion_message(f"Starting conversion: combining {total_files} files into {output_format.upper()}")
+                self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Starting conversion: combining {total_files} files into {output_format.upper()}"))
                 
                 combined_data = []
                 for i, file_path in enumerate(self.converter_input_files):
                     try:
-                        format_type = FileFormatDetector.detect_format(file_path)
-                        if not format_type:
-                            self._log_conversion_message(f"Warning: Could not detect format for {os.path.basename(file_path)}")
+                        # Validate file before processing
+                        is_valid, error_msg = InputValidator.validate_file_path(file_path)
+                        if not is_valid:
+                            self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Error: {os.path.basename(file_path)} - {error_msg}"))
                             continue
                         
-                        df = DataReader.read_file(file_path, format_type)
+                        format_type = FileFormatDetector.detect_format(file_path)
+                        if not format_type:
+                            self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Warning: Could not detect format for {os.path.basename(file_path)}"))
+                            continue
+                        
+                        # Use chunked reading for large files
+                        file_size = os.path.getsize(file_path)
+                        if file_size > 100 * 1024 * 1024:  # 100MB threshold
+                            self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Large file detected ({file_size/(1024*1024):.1f}MB), using chunked reading"))
+                            df = DataReader.read_file(file_path, format_type, chunk_size=10000)
+                        else:
+                            df = DataReader.read_file(file_path, format_type)
                         
                         # Apply column selection
                         if not use_all_columns and self.converter_selected_columns:
@@ -657,17 +977,20 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             if available_columns:
                                 df = df[available_columns]
                             else:
-                                self._log_conversion_message(f"Warning: No selected columns found in {os.path.basename(file_path)}")
+                                self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Warning: No selected columns found in {os.path.basename(file_path)}"))
                                 continue
                         
                         combined_data.append(df)
-                        self._log_conversion_message(f"Loaded {os.path.basename(file_path)}: {len(df)} rows, {len(df.columns)} columns")
+                        self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Loaded {os.path.basename(file_path)}: {len(df)} rows, {len(df.columns)} columns"))
                         
                         processed_files += 1
-                        self.converter_progress.set(processed_files / total_files)
+                        self.thread_safe_ui.safe_update(lambda: self.converter_progress.set(processed_files / total_files))
+                        
+                        # Force garbage collection after each file
+                        MemoryManager.force_garbage_collection()
                         
                     except Exception as e:
-                        self._log_conversion_message(f"Error reading {os.path.basename(file_path)}: {str(e)}")
+                        self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Error reading {os.path.basename(file_path)}: {str(e)}"))
                 
                 if combined_data:
                     try:
@@ -676,26 +999,38 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         output_path = os.path.join(self.converter_output_path, output_filename)
                         
                         DataWriter.write_file(combined_df, output_path, output_format)
-                        self._log_conversion_message(f"Successfully created: {output_filename}")
-                        self._log_conversion_message(f"Combined data: {len(combined_df)} rows, {len(combined_df.columns)} columns")
+                        self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Successfully created: {output_filename}"))
+                        self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Combined data: {len(combined_df)} rows, {len(combined_df.columns)} columns"))
                         
                     except Exception as e:
-                        self._log_conversion_message(f"Error writing combined file: {str(e)}")
+                        self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Error writing combined file: {str(e)}"))
                 else:
-                    self._log_conversion_message("No valid data to combine")
+                    self.thread_safe_ui.safe_update(lambda: self._log_conversion_message("No valid data to combine"))
             
             else:
                 # Process files individually
-                self._log_conversion_message(f"Starting conversion: processing {total_files} files individually")
+                self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Starting conversion: processing {total_files} files individually"))
                 
                 for i, file_path in enumerate(self.converter_input_files):
                     try:
-                        format_type = FileFormatDetector.detect_format(file_path)
-                        if not format_type:
-                            self._log_conversion_message(f"Warning: Could not detect format for {os.path.basename(file_path)}")
+                        # Validate file before processing
+                        is_valid, error_msg = InputValidator.validate_file_path(file_path)
+                        if not is_valid:
+                            self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Error: {os.path.basename(file_path)} - {error_msg}"))
                             continue
                         
-                        df = DataReader.read_file(file_path, format_type)
+                        format_type = FileFormatDetector.detect_format(file_path)
+                        if not format_type:
+                            self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Warning: Could not detect format for {os.path.basename(file_path)}"))
+                            continue
+                        
+                        # Use chunked reading for large files
+                        file_size = os.path.getsize(file_path)
+                        if file_size > 100 * 1024 * 1024:  # 100MB threshold
+                            self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Large file detected ({file_size/(1024*1024):.1f}MB), using chunked reading"))
+                            df = DataReader.read_file(file_path, format_type, chunk_size=10000)
+                        else:
+                            df = DataReader.read_file(file_path, format_type)
                         
                         # Apply column selection
                         if not use_all_columns and self.converter_selected_columns:
@@ -703,7 +1038,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             if available_columns:
                                 df = df[available_columns]
                             else:
-                                self._log_conversion_message(f"Warning: No selected columns found in {os.path.basename(file_path)}")
+                                self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Warning: No selected columns found in {os.path.basename(file_path)}"))
                                 continue
                         
                         # Generate output filename
@@ -712,22 +1047,25 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         output_path = os.path.join(self.converter_output_path, output_filename)
                         
                         DataWriter.write_file(df, output_path, output_format)
-                        self._log_conversion_message(f"Converted {os.path.basename(file_path)} -> {output_filename}")
+                        self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Converted {os.path.basename(file_path)} -> {output_filename}"))
                         
                         processed_files += 1
-                        self.converter_progress.set(processed_files / total_files)
+                        self.thread_safe_ui.safe_update(lambda: self.converter_progress.set(processed_files / total_files))
+                        
+                        # Force garbage collection after each file
+                        MemoryManager.force_garbage_collection()
                         
                     except Exception as e:
-                        self._log_conversion_message(f"Error converting {os.path.basename(file_path)}: {str(e)}")
+                        self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Error converting {os.path.basename(file_path)}: {str(e)}"))
             
-            self.converter_status_label.configure(text=f"Conversion complete. {processed_files} files processed.")
-            self.converter_progress.set(1.0)
+            self.thread_safe_ui.safe_update(lambda: self.converter_status_label.configure(text=f"Conversion complete. {processed_files} files processed."))
+            self.thread_safe_ui.safe_update(lambda: self.converter_progress.set(1.0))
             
         except Exception as e:
-            self._log_conversion_message(f"Conversion error: {str(e)}")
-            self.converter_status_label.configure(text="Conversion failed")
+            self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Conversion error: {str(e)}"))
+            self.thread_safe_ui.safe_update(lambda: self.converter_status_label.configure(text="Conversion failed"))
         finally:
-            self.converter_convert_button.configure(state="normal")
+            self.thread_safe_ui.safe_update(lambda: self.converter_convert_button.configure(state="normal"))
 
     def _generate_output_filename(self, output_format, base_name=None):
         """Generate output filename with proper extension."""
@@ -1207,6 +1545,25 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         try:
             mode = self.folder_operation_mode.get()
             
+            # Validate source folders
+            for folder in self.folder_source_folders:
+                is_valid, error_msg = InputValidator.validate_directory_path(folder)
+                if not is_valid:
+                    self.thread_safe_ui.safe_update(lambda: self.folder_status_var.set(f"Error: {error_msg}"))
+                    return
+            
+            # Validate destination folder if needed
+            if mode not in ["deduplicate", "analyze"]:
+                is_valid, error_msg = InputValidator.validate_directory_path(self.folder_destination)
+                if not is_valid:
+                    self.thread_safe_ui.safe_update(lambda: self.folder_status_var.set(f"Error: {error_msg}"))
+                    return
+            
+            # Check memory availability
+            memory_ok, memory_msg = MemoryManager.check_memory_available(min_available_mb=100.0)
+            if not memory_ok:
+                self.thread_safe_ui.safe_update(lambda: self.folder_status_var.set(f"Warning: {memory_msg}"))
+            
             if mode == "combine":
                 self._folder_combine_operation()
             elif mode == "flatten":
@@ -1219,15 +1576,15 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 self._folder_analyze_operation()
             
             # Complete
-            self.after(0, lambda: self.folder_status_var.set("Processing complete"))
-            self.after(0, lambda: self.folder_progress_bar.set(1.0))
-            self.after(0, lambda: self.folder_run_button.configure(state="normal"))
-            self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))
+            self.thread_safe_ui.safe_update(lambda: self.folder_status_var.set("Processing complete"))
+            self.thread_safe_ui.safe_update(lambda: self.folder_progress_bar.set(1.0))
+            self.thread_safe_ui.safe_update(lambda: self.folder_run_button.configure(state="normal"))
+            self.thread_safe_ui.safe_update(lambda: self.folder_cancel_button.configure(state="disabled"))
             
         except Exception as e:
-            self.after(0, lambda: self.folder_status_var.set(f"Error: {str(e)}"))
-            self.after(0, lambda: self.folder_run_button.configure(state="normal"))
-            self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))
+            self.thread_safe_ui.safe_update(lambda: self.folder_status_var.set(f"Error: {str(e)}"))
+            self.thread_safe_ui.safe_update(lambda: self.folder_run_button.configure(state="normal"))
+            self.thread_safe_ui.safe_update(lambda: self.folder_cancel_button.configure(state="disabled"))
 
     def _folder_combine_operation(self):
         """Perform combine operation - copy all files from source folders to destination."""
@@ -1246,7 +1603,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                     total_files += len(files)
             
             if total_files == 0:
-                self.after(0, lambda: self.folder_status_var.set("No files found in source folders"))
+                self.thread_safe_ui.safe_update(lambda: self.folder_status_var.set("No files found in source folders"))
                 return
             
             processed_files = 0
@@ -1264,6 +1621,14 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             break
                             
                         source_path = os.path.join(root, file)
+                        
+                        # Validate source file
+                        is_valid, error_msg = InputValidator.validate_file_path(source_path)
+                        if not is_valid:
+                            self.thread_safe_ui.safe_update(lambda: self.folder_status_var.set(f"Error: {error_msg}"))
+                            skipped_count += 1
+                            processed_files += 1
+                            continue
                         
                         # Apply file filters
                         if not self._folder_validate_file_filters(source_path):
