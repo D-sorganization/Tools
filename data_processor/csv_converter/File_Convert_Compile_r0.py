@@ -174,6 +174,28 @@ class ColumnSelectionDialog(QDialog):
             QListWidget::item:hover {
                 background-color: #ecf0f1;
             }
+            QListWidget::indicator {
+                width: 20px;
+                height: 20px;
+                border: 2px solid #bdc3c7;
+                border-radius: 4px;
+                background-color: white;
+            }
+            QListWidget::indicator:unchecked {
+                background-color: white;
+                border: 2px solid #bdc3c7;
+            }
+            QListWidget::indicator:checked {
+                background-color: #3498db;
+                border: 2px solid #3498db;
+            }
+            QListWidget::indicator:checked:hover {
+                background-color: #2980b9;
+                border: 2px solid #2980b9;
+            }
+            QListWidget::indicator:unchecked:hover {
+                border: 2px solid #3498db;
+            }
         """)
         
     def _populate_column_list(self):
@@ -205,10 +227,13 @@ class ColumnSelectionDialog(QDialog):
                 
     def _select_all(self):
         """Select all visible columns."""
+        checked_count = 0
         for i in range(self.column_list.count()):
             item = self.column_list.item(i)
             if not item.isHidden():
                 item.setCheckState(Qt.CheckState.Checked)
+                checked_count += 1
+        print(f"DEBUG: Set {checked_count} items to checked state")
         self._update_status()
         
     def _select_none(self):
@@ -248,6 +273,7 @@ class ColumnSelectionDialog(QDialog):
             item = self.column_list.item(i)
             if item.checkState() == Qt.CheckState.Checked:
                 selected_count += 1
+        print(f"DEBUG: Found {selected_count} checked items out of {self.column_list.count()} total")
         self.status_label.setText(f"{selected_count} columns selected")
         
     def _save_column_list(self):
