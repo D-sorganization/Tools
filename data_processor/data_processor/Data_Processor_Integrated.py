@@ -40,11 +40,9 @@ import time
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import List, Dict, Optional, Tuple, Set, Any, Union
+from typing import List, Dict, Optional, Tuple, Set, Any
 import logging
 from datetime import datetime
-import gc
-import psutil
 
 # Additional ML-specific imports
 try:
@@ -69,8 +67,7 @@ except ImportError:
     PYARROW_AVAILABLE = False
 
 from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.backends._backend_tk import NavigationToolbar2Tk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 
@@ -86,179 +83,6 @@ try:
 except ImportError:
     FOLDER_TOOL_AVAILABLE = False
     print("Warning: Folder tool not available. Folder Tool tab will be disabled.")
-
-# =============================================================================
-# INPUT VALIDATION AND UTILITY CLASSES
-# =============================================================================
-
-class InputValidator:
-    """Handles input validation for file paths, user inputs, and data."""
-    
-    @staticmethod
-    def validate_file_path(file_path: str) -> Tuple[bool, str]:
-        """Validate file path exists and is accessible."""
-        if not file_path or not isinstance(file_path, str):
-            return False, "File path must be a non-empty string"
-        
-        if not os.path.exists(file_path):
-            return False, f"File does not exist: {file_path}"
-        
-        if not os.path.isfile(file_path):
-            return False, f"Path is not a file: {file_path}"
-        
-        if not os.access(file_path, os.R_OK):
-            return False, f"File is not readable: {file_path}"
-        
-        return True, "Valid file path"
-    
-    @staticmethod
-    def validate_directory_path(dir_path: str) -> Tuple[bool, str]:
-        """Validate directory path exists and is writable."""
-        if not dir_path or not isinstance(dir_path, str):
-            return False, "Directory path must be a non-empty string"
-        
-        if not os.path.exists(dir_path):
-            return False, f"Directory does not exist: {dir_path}"
-        
-        if not os.path.isdir(dir_path):
-            return False, f"Path is not a directory: {dir_path}"
-        
-        if not os.access(dir_path, os.W_OK):
-            return False, f"Directory is not writable: {dir_path}"
-        
-        return True, "Valid directory path"
-    
-    @staticmethod
-    def validate_file_size(file_path: str, max_size_mb: float = 1000.0) -> Tuple[bool, str]:
-        """Validate file size is within acceptable limits."""
-        try:
-            file_size = os.path.getsize(file_path)
-            max_size_bytes = max_size_mb * 1024 * 1024
-            
-            if file_size > max_size_bytes:
-                return False, f"File too large: {file_size / (1024*1024):.1f}MB > {max_size_mb}MB"
-            
-            return True, f"File size OK: {file_size / (1024*1024):.1f}MB"
-        except Exception as e:
-            return False, f"Error checking file size: {str(e)}"
-    
-    @staticmethod
-    def validate_numeric_input(value: str, min_val: Optional[float] = None, max_val: Optional[float] = None) -> Tuple[bool, str]:
-        """Validate numeric input within specified range."""
-        try:
-            num_val = float(value)
-            
-            if min_val is not None and num_val < min_val:
-                return False, f"Value {num_val} is below minimum {min_val}"
-            
-            if max_val is not None and num_val > max_val:
-                return False, f"Value {num_val} is above maximum {max_val}"
-            
-            return True, f"Valid numeric value: {num_val}"
-        except ValueError:
-            return False, f"Invalid numeric value: {value}"
-    
-    @staticmethod
-    def sanitize_filename(filename: str) -> str:
-        """Sanitize filename to remove invalid characters."""
-        # Remove or replace invalid characters
-        invalid_chars = '<>:"/\\|?*'
-        for char in invalid_chars:
-            filename = filename.replace(char, '_')
-        
-        # Remove leading/trailing spaces and dots
-        filename = filename.strip(' .')
-        
-        # Ensure filename is not empty
-        if not filename:
-            filename = "unnamed_file"
-        
-        return filename
-
-class MemoryManager:
-    """Handles memory management and monitoring."""
-    
-    @staticmethod
-    def get_memory_usage() -> Dict[str, float]:
-        """Get current memory usage statistics."""
-        try:
-            process = psutil.Process()
-            memory_info = process.memory_info()
-            
-            return {
-                'rss_mb': memory_info.rss / (1024 * 1024),  # Resident Set Size
-                'vms_mb': memory_info.vms / (1024 * 1024),  # Virtual Memory Size
-                'percent': process.memory_percent()
-            }
-        except Exception:
-            return {'rss_mb': 0, 'vms_mb': 0, 'percent': 0}
-    
-    @staticmethod
-    def check_memory_available(min_available_mb: float = 100.0) -> Tuple[bool, str]:
-        """Check if sufficient memory is available."""
-        try:
-            memory = psutil.virtual_memory()
-            available_mb = memory.available / (1024 * 1024)
-            
-            if available_mb < min_available_mb:
-                return False, f"Low memory: {available_mb:.1f}MB available, {min_available_mb}MB required"
-            
-            return True, f"Memory OK: {available_mb:.1f}MB available"
-        except Exception:
-            return True, "Memory check unavailable"
-    
-    @staticmethod
-    def force_garbage_collection():
-        """Force garbage collection to free memory."""
-        gc.collect()
-    
-    @staticmethod
-    def estimate_dataframe_memory(df: pd.DataFrame) -> float:
-        """Estimate memory usage of a DataFrame in MB."""
-        try:
-            return df.memory_usage(deep=True).sum() / (1024 * 1024)
-        except Exception:
-            # Fallback estimation
-            return len(df) * len(df.columns) * 8 / (1024 * 1024)  # Rough estimate
-
-class ThreadSafeUI:
-    """Provides thread-safe UI update methods."""
-    
-    def __init__(self, root_widget):
-        self.root_widget = root_widget
-        self._update_queue = queue.Queue()
-        self._running = True
-        
-        # Start UI update thread
-        self._ui_thread = threading.Thread(target=self._process_ui_updates, daemon=True)
-        self._ui_thread.start()
-    
-    def _process_ui_updates(self):
-        """Process UI updates from the queue."""
-        while self._running:
-            try:
-                # Get update from queue with timeout
-                update_func = self._update_queue.get(timeout=0.1)
-                if update_func:
-                    # Execute update in main thread
-                    self.root_widget.after(0, update_func)
-            except queue.Empty:
-                continue
-            except Exception as e:
-                print(f"Error in UI update thread: {e}")
-    
-    def safe_update(self, update_func):
-        """Safely update UI from any thread."""
-        try:
-            self._update_queue.put(update_func)
-        except Exception as e:
-            print(f"Error queuing UI update: {e}")
-    
-    def shutdown(self):
-        """Shutdown the UI update thread."""
-        self._running = False
-        if self._ui_thread.is_alive():
-            self._ui_thread.join(timeout=1.0)
 
 # =============================================================================
 # COMPILER CONVERTER CLASSES
@@ -296,107 +120,78 @@ class FileFormatDetector:
     @staticmethod
     def detect_format(file_path: str) -> Optional[str]:
         """Detect file format from path and content."""
-        try:
-            # Validate file path first
-            is_valid, error_msg = InputValidator.validate_file_path(file_path)
-            if not is_valid:
-                raise ValueError(error_msg)
-            
-            # Get file extension
-            _, ext = os.path.splitext(file_path.lower())
-            
-            # Extension-based detection
-            format_map = {
-                '.csv': 'csv',
-                '.tsv': 'tsv',
-                '.txt': 'tsv',  # Assume TSV for .txt files
-                '.parquet': 'parquet',
-                '.pq': 'parquet',
-                '.xlsx': 'excel',
-                '.xls': 'excel',
-                '.json': 'json',
-                '.h5': 'hdf5',
-                '.hdf5': 'hdf5',
-                '.pkl': 'pickle',
-                '.pickle': 'pickle',
-                '.npy': 'numpy',
-                '.mat': 'matlab',
-                '.feather': 'feather',
-                '.arrow': 'arrow',
-                '.db': 'sqlite',
-                '.sqlite': 'sqlite'
-            }
-            
-            if ext in format_map:
-                return format_map[ext]
-            
-            # Content-based detection for ambiguous extensions
-            if ext == '.txt':
-                # Try to detect CSV vs TSV by reading first few lines
-                try:
-                    with open(file_path, 'r', encoding='utf-8') as f:
-                        first_line = f.readline().strip()
-                        if '\t' in first_line:
-                            return 'tsv'
-                        elif ',' in first_line:
-                            return 'csv'
-                except Exception:
-                    pass
-            
+        if not os.path.exists(file_path):
             return None
             
-        except Exception as e:
-            raise ValueError(f"Error detecting format for {file_path}: {str(e)}")
+        # Check by extension first
+        ext = Path(file_path).suffix.lower()
+        
+        # Extension-based detection
+        if ext in ['.csv']:
+            return 'csv'
+        elif ext in ['.tsv', '.txt']:
+            return 'tsv'
+        elif ext in ['.parquet', '.pq']:
+            return 'parquet'
+        elif ext in ['.xlsx', '.xls']:
+            return 'excel'
+        elif ext in ['.json']:
+            return 'json'
+        elif ext in ['.h5', '.hdf5']:
+            return 'hdf5'
+        elif ext in ['.pkl', '.pickle']:
+            return 'pickle'
+        elif ext in ['.npy']:
+            return 'numpy'
+        elif ext in ['.mat']:
+            return 'matlab'
+        elif ext in ['.feather']:
+            return 'feather'
+        elif ext in ['.arrow']:
+            return 'arrow'
+        elif ext in ['.db', '.sqlite']:
+            return 'sqlite'
+        
+        # Content-based detection for ambiguous extensions
+        try:
+            with open(file_path, 'rb') as f:
+                header = f.read(1024)
+                
+            # Check for CSV/TSV
+            if b',' in header and b'\n' in header:
+                return 'csv'
+            elif b'\t' in header and b'\n' in header:
+                return 'tsv'
+            elif header.startswith(b'{') or header.startswith(b'['):
+                return 'json'
+            elif header.startswith(b'PK'):
+                return 'excel'  # ZIP-based format
+                
+        except Exception:
+            pass
+            
+        return None
 
 class DataReader:
-    """Handles reading data from various file formats with memory management."""
+    """Handles reading data from various file formats."""
     
     @staticmethod
-    def read_file(file_path: str, format_type: str, chunk_size: Optional[int] = None, **kwargs) -> Union[pd.DataFrame, Any]:
-        """Read file based on format type with optional chunking."""
+    def read_file(file_path: str, format_type: str, **kwargs) -> pd.DataFrame:
+        """Read file based on format type."""
         try:
-            # Validate inputs
-            is_valid, error_msg = InputValidator.validate_file_path(file_path)
-            if not is_valid:
-                raise ValueError(error_msg)
-            
-            # Check memory availability
-            memory_ok, memory_msg = MemoryManager.check_memory_available()
-            if not memory_ok:
-                print(f"Warning: {memory_msg}")
-            
-            # Determine if chunking is needed
-            if chunk_size is None:
-                file_size = os.path.getsize(file_path)
-                if file_size > 100 * 1024 * 1024:  # 100MB threshold
-                    chunk_size = 10000  # Default chunk size for large files
-                else:
-                    chunk_size = None  # Load entire file
-            
-            # Read based on format with chunking support
             if format_type == 'csv':
-                if chunk_size:
-                    return pd.read_csv(file_path, chunksize=chunk_size, **kwargs)
-                else:
-                    return pd.read_csv(file_path, **kwargs)
+                return pd.read_csv(file_path, **kwargs)
             elif format_type == 'tsv':
-                if chunk_size:
-                    return pd.read_csv(file_path, sep='\t', chunksize=chunk_size, **kwargs)
-                else:
-                    return pd.read_csv(file_path, sep='\t', **kwargs)
+                return pd.read_csv(file_path, sep='\t', **kwargs)
             elif format_type == 'parquet':
                 if not PYARROW_AVAILABLE:
                     raise ImportError("PyArrow is required for parquet files")
-                # Parquet files are already optimized for memory, no chunking needed
                 return pd.read_parquet(file_path, **kwargs)
             elif format_type == 'excel':
-                # Excel files don't support chunking, load entirely
                 return pd.read_excel(file_path, **kwargs)
             elif format_type == 'json':
-                # JSON files don't support chunking, load entirely
                 return pd.read_json(file_path, **kwargs)
             elif format_type == 'hdf5':
-                # HDF5 supports chunking but requires different approach
                 return pd.read_hdf(file_path, **kwargs)
             elif format_type == 'pickle':
                 return pd.read_pickle(file_path)
@@ -431,29 +226,6 @@ class DataReader:
                 
         except Exception as e:
             raise Exception(f"Error reading {file_path}: {str(e)}")
-    
-    @staticmethod
-    def read_file_chunked(file_path: str, format_type: str, chunk_size: int = 10000, **kwargs) -> pd.io.parsers.TextFileReader:
-        """Read file in chunks for memory-efficient processing."""
-        try:
-            # Validate inputs
-            is_valid, error_msg = InputValidator.validate_file_path(file_path)
-            if not is_valid:
-                raise ValueError(error_msg)
-            
-            # Validate chunk size
-            is_valid, error_msg = InputValidator.validate_numeric_input(str(chunk_size), min_val=1, max_val=1000000)
-            if not is_valid:
-                raise ValueError(f"Invalid chunk size: {error_msg}")
-            
-            if format_type in ['csv', 'tsv']:
-                sep = '\t' if format_type == 'tsv' else ','
-                return pd.read_csv(file_path, sep=sep, chunksize=chunk_size, **kwargs)
-            else:
-                raise ValueError(f"Chunked reading not supported for format: {format_type}")
-                
-        except Exception as e:
-            raise Exception(f"Error reading {file_path} in chunks: {str(e)}")
 
 class DataWriter:
     """Handles writing data to various file formats."""
@@ -462,29 +234,6 @@ class DataWriter:
     def write_file(df: pd.DataFrame, file_path: str, format_type: str, **kwargs) -> None:
         """Write DataFrame to file based on format type."""
         try:
-            # Validate inputs
-            if df is None or df.empty:
-                raise ValueError("DataFrame is empty or None")
-            
-            # Validate and sanitize file path
-            dir_path = os.path.dirname(file_path)
-            if dir_path and not os.path.exists(dir_path):
-                os.makedirs(dir_path, exist_ok=True)
-            
-            filename = os.path.basename(file_path)
-            sanitized_filename = InputValidator.sanitize_filename(filename)
-            file_path = os.path.join(dir_path, sanitized_filename)
-            
-            # Check available disk space
-            try:
-                free_space = shutil.disk_usage(dir_path).free
-                estimated_size = MemoryManager.estimate_dataframe_memory(df) * 1024 * 1024 * 2  # Rough estimate
-                if free_space < estimated_size:
-                    raise ValueError(f"Insufficient disk space. Need ~{estimated_size/(1024*1024):.1f}MB, have {free_space/(1024*1024):.1f}MB")
-            except Exception:
-                pass  # Skip disk space check if it fails
-            
-            # Write based on format
             if format_type == 'csv':
                 df.to_csv(file_path, index=False, **kwargs)
             elif format_type == 'tsv':
@@ -671,6 +420,12 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         # This ensures they exist when parent class methods are called
         self.folder_source_folders = []
         self.folder_destination = ""
+        self.folder_cancel_flag = False # For cancelling processing
+        
+        # Initialize the parent class
+        super().__init__(*args, **kwargs)
+        
+        # Now initialize Tkinter variables AFTER parent class has created the root window
         self.folder_operation_mode = ctk.StringVar(value="combine")
         self.folder_filter_extensions = ctk.StringVar(value="")
         self.folder_min_file_size = ctk.StringVar(value="0")
@@ -683,68 +438,33 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         self.folder_backup_before_var = ctk.BooleanVar(value=False)
         self.folder_progress_var = ctk.DoubleVar(value=0)
         self.folder_status_var = ctk.StringVar(value="Ready")
-        self.folder_cancel_flag = False # For cancelling processing
-        
-        # Initialize the parent class
-        super().__init__(*args, **kwargs)
         
         # Update title to reflect integration
         self.title("Advanced CSV Time Series Processor & Analyzer - Integrated")
         
-        # Initialize thread-safe UI manager
-        self.thread_safe_ui = ThreadSafeUI(self)
-        
-        # The parent class has already created all the original tabs:
-        # - "Processing" (Setup and Process)
-        # - "Plotting & Analysis" 
-        # - "Plots List"
-        # - "DAT File Import"
-        # - "Help"
-        
-        # The parent class has already created all the original tabs and populated them:
-        # - "Processing" (Setup and Process)
-        # - "Plotting & Analysis" 
-        # - "Plots List"
-        # - "DAT File Import"
-        # - "Help"
-        
-        # We want to add our new tabs in the correct order without disturbing the original ones
-        # The final tab order should be:
-        # 1. Processing (original - already created by parent)
-        # 2. Plotting & Analysis (original - already created by parent)
-        # 3. Plots List (original - already created by parent)
-        # 4. Format Converter (new - we'll add this)
-        # 5. Folder Tool (new - we'll add this)
-        # 6. DAT File Import (original - already created by parent, but we want it on the right)
-        # 7. Help (original - already created by parent, rightmost)
-        
-        # To achieve this order, we need to temporarily remove the last two tabs and re-add them
-        # This is safe because the parent class has already created and populated them
-        self.main_tab_view.delete("DAT File Import")
+        # Remove the Help tab that was added by parent class
+        # We'll add it back at the end to ensure it's the rightmost tab
         self.main_tab_view.delete("Help")
         
-        # Add our new tabs
+        # Remove the DAT File Import tab to reorder it
+        self.main_tab_view.delete("DAT File Import")
+        
+        # Add the Format Converter tab
         self.main_tab_view.add("Format Converter")
         self.create_format_converter_tab(self.main_tab_view.tab("Format Converter"))
         
+        # Add DAT File Import tab back (now it will be before Help)
+        self.main_tab_view.add("DAT File Import")
+        self.create_dat_import_tab(self.main_tab_view.tab("DAT File Import"))
+        
+        # Add Folder Tool tab (if available)
         if FOLDER_TOOL_AVAILABLE:
             self.main_tab_view.add("Folder Tool")
             self.create_folder_tool_tab(self.main_tab_view.tab("Folder Tool"))
         
-        # Re-add the original tabs in the desired order
-        # Note: We don't need to call create_*_tab again because the parent class already did this
-        # We just need to re-add the tabs to the tab view
-        self.main_tab_view.add("DAT File Import")
+        # Add Help tab back as the rightmost tab
         self.main_tab_view.add("Help")
-    
-    def __del__(self):
-        """Cleanup when application is destroyed."""
-        try:
-            if hasattr(self, 'thread_safe_ui') and self.thread_safe_ui is not None:
-                self.thread_safe_ui.shutdown()
-        except:
-            # Ignore errors during cleanup
-            pass
+        self.create_help_tab(self.main_tab_view.tab("Help"))
 
     # Compiler converter methods - Define these BEFORE creating the UI
     def converter_browse_files(self):
@@ -771,47 +491,10 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             )
             
             if files:
-                # Validate each selected file
-                valid_files = []
-                invalid_files = []
-                
-                for file_path in files:
-                    # Validate file path
-                    is_valid, error_msg = InputValidator.validate_file_path(file_path)
-                    if not is_valid:
-                        invalid_files.append(f"{os.path.basename(file_path)}: {error_msg}")
-                        continue
-                    
-                    # Validate file size (max 1GB)
-                    is_valid, error_msg = InputValidator.validate_file_size(file_path, max_size_mb=1000.0)
-                    if not is_valid:
-                        invalid_files.append(f"{os.path.basename(file_path)}: {error_msg}")
-                        continue
-                    
-                    # Check if format is supported
-                    format_type = FileFormatDetector.detect_format(file_path)
-                    if not format_type:
-                        invalid_files.append(f"{os.path.basename(file_path)}: Unsupported file format")
-                        continue
-                    
-                    valid_files.append(file_path)
-                
-                # Report any invalid files
-                if invalid_files:
-                    error_message = "The following files were skipped:\n\n" + "\n".join(invalid_files[:10])  # Limit to first 10
-                    if len(invalid_files) > 10:
-                        error_message += f"\n... and {len(invalid_files) - 10} more files"
-                    messagebox.showwarning("Invalid Files", error_message)
-                
-                # Update with valid files only
-                if valid_files:
-                    self.converter_input_files = valid_files
-                    self.converter_update_file_list()
-                    self.converter_input_label.configure(text=f"{len(valid_files)} files selected")
-                    self.converter_update_convert_button()
-                else:
-                    messagebox.showwarning("No Valid Files", "No valid files were selected.")
-                    
+                self.converter_input_files = list(files)
+                self.converter_update_file_list()
+                self.converter_input_label.configure(text=f"{len(files)} files selected")
+                self.converter_update_convert_button()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to browse files: {str(e)}")
 
@@ -949,50 +632,26 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
     def _perform_conversion(self, output_format, combine_files, use_all_columns, batch_processing, split_files):
         """Perform the actual file conversion in a background thread."""
         try:
-            # Use thread-safe UI updates
-            self.thread_safe_ui.safe_update(lambda: self.converter_status_label.configure(text="Converting files..."))
-            self.thread_safe_ui.safe_update(lambda: self.converter_progress.set(0))
-            self.thread_safe_ui.safe_update(lambda: self.converter_convert_button.configure(state="disabled"))
-            
-            # Validate output directory
-            is_valid, error_msg = InputValidator.validate_directory_path(self.converter_output_path)
-            if not is_valid:
-                self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Error: {error_msg}"))
-                return
+            self.converter_status_label.configure(text="Converting files...")
+            self.converter_progress.set(0)
+            self.converter_convert_button.configure(state="disabled")
             
             total_files = len(self.converter_input_files)
             processed_files = 0
             
-            # Check memory availability before starting
-            memory_ok, memory_msg = MemoryManager.check_memory_available(min_available_mb=200.0)
-            if not memory_ok:
-                self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Warning: {memory_msg}"))
-            
             if combine_files:
                 # Combine all files into one
-                self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Starting conversion: combining {total_files} files into {output_format.upper()}"))
+                self._log_conversion_message(f"Starting conversion: combining {total_files} files into {output_format.upper()}")
                 
                 combined_data = []
                 for i, file_path in enumerate(self.converter_input_files):
                     try:
-                        # Validate file before processing
-                        is_valid, error_msg = InputValidator.validate_file_path(file_path)
-                        if not is_valid:
-                            self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Error: {os.path.basename(file_path)} - {error_msg}"))
-                            continue
-                        
                         format_type = FileFormatDetector.detect_format(file_path)
                         if not format_type:
-                            self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Warning: Could not detect format for {os.path.basename(file_path)}"))
+                            self._log_conversion_message(f"Warning: Could not detect format for {os.path.basename(file_path)}")
                             continue
                         
-                        # Use chunked reading for large files
-                        file_size = os.path.getsize(file_path)
-                        if file_size > 100 * 1024 * 1024:  # 100MB threshold
-                            self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Large file detected ({file_size/(1024*1024):.1f}MB), using chunked reading"))
-                            df = DataReader.read_file(file_path, format_type, chunk_size=10000)
-                        else:
-                            df = DataReader.read_file(file_path, format_type)
+                        df = DataReader.read_file(file_path, format_type)
                         
                         # Apply column selection
                         if not use_all_columns and self.converter_selected_columns:
@@ -1000,20 +659,17 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             if available_columns:
                                 df = df[available_columns]
                             else:
-                                self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Warning: No selected columns found in {os.path.basename(file_path)}"))
+                                self._log_conversion_message(f"Warning: No selected columns found in {os.path.basename(file_path)}")
                                 continue
                         
                         combined_data.append(df)
-                        self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Loaded {os.path.basename(file_path)}: {len(df)} rows, {len(df.columns)} columns"))
+                        self._log_conversion_message(f"Loaded {os.path.basename(file_path)}: {len(df)} rows, {len(df.columns)} columns")
                         
                         processed_files += 1
-                        self.thread_safe_ui.safe_update(lambda: self.converter_progress.set(processed_files / total_files))
-                        
-                        # Force garbage collection after each file
-                        MemoryManager.force_garbage_collection()
+                        self.converter_progress.set(processed_files / total_files)
                         
                     except Exception as e:
-                        self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Error reading {os.path.basename(file_path)}: {str(e)}"))
+                        self._log_conversion_message(f"Error reading {os.path.basename(file_path)}: {str(e)}")
                 
                 if combined_data:
                     try:
@@ -1022,38 +678,26 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         output_path = os.path.join(self.converter_output_path, output_filename)
                         
                         DataWriter.write_file(combined_df, output_path, output_format)
-                        self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Successfully created: {output_filename}"))
-                        self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Combined data: {len(combined_df)} rows, {len(combined_df.columns)} columns"))
+                        self._log_conversion_message(f"Successfully created: {output_filename}")
+                        self._log_conversion_message(f"Combined data: {len(combined_df)} rows, {len(combined_df.columns)} columns")
                         
                     except Exception as e:
-                        self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Error writing combined file: {str(e)}"))
+                        self._log_conversion_message(f"Error writing combined file: {str(e)}")
                 else:
-                    self.thread_safe_ui.safe_update(lambda: self._log_conversion_message("No valid data to combine"))
+                    self._log_conversion_message("No valid data to combine")
             
             else:
                 # Process files individually
-                self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Starting conversion: processing {total_files} files individually"))
+                self._log_conversion_message(f"Starting conversion: processing {total_files} files individually")
                 
                 for i, file_path in enumerate(self.converter_input_files):
                     try:
-                        # Validate file before processing
-                        is_valid, error_msg = InputValidator.validate_file_path(file_path)
-                        if not is_valid:
-                            self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Error: {os.path.basename(file_path)} - {error_msg}"))
-                            continue
-                        
                         format_type = FileFormatDetector.detect_format(file_path)
                         if not format_type:
-                            self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Warning: Could not detect format for {os.path.basename(file_path)}"))
+                            self._log_conversion_message(f"Warning: Could not detect format for {os.path.basename(file_path)}")
                             continue
                         
-                        # Use chunked reading for large files
-                        file_size = os.path.getsize(file_path)
-                        if file_size > 100 * 1024 * 1024:  # 100MB threshold
-                            self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Large file detected ({file_size/(1024*1024):.1f}MB), using chunked reading"))
-                            df = DataReader.read_file(file_path, format_type, chunk_size=10000)
-                        else:
-                            df = DataReader.read_file(file_path, format_type)
+                        df = DataReader.read_file(file_path, format_type)
                         
                         # Apply column selection
                         if not use_all_columns and self.converter_selected_columns:
@@ -1061,7 +705,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             if available_columns:
                                 df = df[available_columns]
                             else:
-                                self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Warning: No selected columns found in {os.path.basename(file_path)}"))
+                                self._log_conversion_message(f"Warning: No selected columns found in {os.path.basename(file_path)}")
                                 continue
                         
                         # Generate output filename
@@ -1070,25 +714,22 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         output_path = os.path.join(self.converter_output_path, output_filename)
                         
                         DataWriter.write_file(df, output_path, output_format)
-                        self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Converted {os.path.basename(file_path)} -> {output_filename}"))
+                        self._log_conversion_message(f"Converted {os.path.basename(file_path)} -> {output_filename}")
                         
                         processed_files += 1
-                        self.thread_safe_ui.safe_update(lambda: self.converter_progress.set(processed_files / total_files))
-                        
-                        # Force garbage collection after each file
-                        MemoryManager.force_garbage_collection()
+                        self.converter_progress.set(processed_files / total_files)
                         
                     except Exception as e:
-                        self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Error converting {os.path.basename(file_path)}: {str(e)}"))
+                        self._log_conversion_message(f"Error converting {os.path.basename(file_path)}: {str(e)}")
             
-            self.thread_safe_ui.safe_update(lambda: self.converter_status_label.configure(text=f"Conversion complete. {processed_files} files processed."))
-            self.thread_safe_ui.safe_update(lambda: self.converter_progress.set(1.0))
+            self.converter_status_label.configure(text=f"Conversion complete. {processed_files} files processed.")
+            self.converter_progress.set(1.0)
             
         except Exception as e:
-            self.thread_safe_ui.safe_update(lambda: self._log_conversion_message(f"Conversion error: {str(e)}"))
-            self.thread_safe_ui.safe_update(lambda: self.converter_status_label.configure(text="Conversion failed"))
+            self._log_conversion_message(f"Conversion error: {str(e)}")
+            self.converter_status_label.configure(text="Conversion failed")
         finally:
-            self.thread_safe_ui.safe_update(lambda: self.converter_convert_button.configure(state="normal"))
+            self.converter_convert_button.configure(state="normal")
 
     def _generate_output_filename(self, output_format, base_name=None):
         """Generate output filename with proper extension."""
@@ -1568,25 +1209,6 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         try:
             mode = self.folder_operation_mode.get()
             
-            # Validate source folders
-            for folder in self.folder_source_folders:
-                is_valid, error_msg = InputValidator.validate_directory_path(folder)
-                if not is_valid:
-                    self.thread_safe_ui.safe_update(lambda: self.folder_status_var.set(f"Error: {error_msg}"))
-                    return
-            
-            # Validate destination folder if needed
-            if mode not in ["deduplicate", "analyze"]:
-                is_valid, error_msg = InputValidator.validate_directory_path(self.folder_destination)
-                if not is_valid:
-                    self.thread_safe_ui.safe_update(lambda: self.folder_status_var.set(f"Error: {error_msg}"))
-                    return
-            
-            # Check memory availability
-            memory_ok, memory_msg = MemoryManager.check_memory_available(min_available_mb=100.0)
-            if not memory_ok:
-                self.thread_safe_ui.safe_update(lambda: self.folder_status_var.set(f"Warning: {memory_msg}"))
-            
             if mode == "combine":
                 self._folder_combine_operation()
             elif mode == "flatten":
@@ -1599,15 +1221,15 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 self._folder_analyze_operation()
             
             # Complete
-            self.thread_safe_ui.safe_update(lambda: self.folder_status_var.set("Processing complete"))
-            self.thread_safe_ui.safe_update(lambda: self.folder_progress_bar.set(1.0))
-            self.thread_safe_ui.safe_update(lambda: self.folder_run_button.configure(state="normal"))
-            self.thread_safe_ui.safe_update(lambda: self.folder_cancel_button.configure(state="disabled"))
+            self.after(0, lambda: self.folder_status_var.set("Processing complete"))
+            self.after(0, lambda: self.folder_progress_bar.set(1.0))
+            self.after(0, lambda: self.folder_run_button.configure(state="normal"))
+            self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))
             
         except Exception as e:
-            self.thread_safe_ui.safe_update(lambda: self.folder_status_var.set(f"Error: {str(e)}"))
-            self.thread_safe_ui.safe_update(lambda: self.folder_run_button.configure(state="normal"))
-            self.thread_safe_ui.safe_update(lambda: self.folder_cancel_button.configure(state="disabled"))
+            self.after(0, lambda: self.folder_status_var.set(f"Error: {str(e)}"))
+            self.after(0, lambda: self.folder_run_button.configure(state="normal"))
+            self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))
 
     def _folder_combine_operation(self):
         """Perform combine operation - copy all files from source folders to destination."""
@@ -1626,7 +1248,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                     total_files += len(files)
             
             if total_files == 0:
-                self.thread_safe_ui.safe_update(lambda: self.folder_status_var.set("No files found in source folders"))
+                self.after(0, lambda: self.folder_status_var.set("No files found in source folders"))
                 return
             
             processed_files = 0
@@ -1644,14 +1266,6 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             break
                             
                         source_path = os.path.join(root, file)
-                        
-                        # Validate source file
-                        is_valid, error_msg = InputValidator.validate_file_path(source_path)
-                        if not is_valid:
-                            self.thread_safe_ui.safe_update(lambda: self.folder_status_var.set(f"Error: {error_msg}"))
-                            skipped_count += 1
-                            processed_files += 1
-                            continue
                         
                         # Apply file filters
                         if not self._folder_validate_file_filters(source_path):
@@ -2124,411 +1738,588 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         header_frame = ctk.CTkFrame(tab)
         header_frame.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
         
-        ctk.CTkLabel(header_frame, text="Advanced Data Processor - Complete Help Guide", 
-                    font=ctk.CTkFont(size=18, weight="bold")).pack(side="left", padx=10, pady=10)
+        ctk.CTkLabel(header_frame, text="🚀 Advanced Data Processor - Complete Help Guide", 
+                    font=ctk.CTkFont(size=20, weight="bold")).pack(side="left", padx=10, pady=10)
         
         # Main content with scrollable help
         help_frame = ctk.CTkScrollableFrame(tab)
         help_frame.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="nsew")
         help_frame.grid_columnconfigure(0, weight=1)
         
-        # Comprehensive help content
+        # Comprehensive help content with enhanced formatting
         help_content = """
 # 🚀 Advanced Data Processor - Complete Feature Guide
 
 ## 📋 Application Overview
 This integrated application combines multiple powerful tools for data processing, analysis, and visualization:
 
-1. **CSV Processor** - Original time series data processing
-2. **Format Converter** - Multi-format file conversion with batch processing
-3. **DAT File Import** - DAT file processing with DBF tag files
-4. **Folder Tool** - Comprehensive folder processing and organization
-5. **Help** - This comprehensive documentation
+### 🎯 Core Components
+1. **📊 CSV Processor** - Advanced time series data processing with mathematical operations
+2. **🔄 Format Converter** - Multi-format file conversion with batch processing and Parquet analysis
+3. **📁 Folder Tool** - Comprehensive folder processing and organization with 5 operation modes
+4. **📄 DAT File Import** - DAT file processing with DBF tag files for structured data
+5. **📈 Plotting & Analysis** - Interactive visualization with smart auto-zoom and trendlines
+6. **📋 Plots List** - Save and manage plot configurations for batch processing
+7. **❓ Help** - This comprehensive documentation
+
+### 🏗️ Architecture
+- **Framework**: CustomTkinter (modern Python GUI framework)
+- **Data Processing**: Pandas, NumPy, SciPy for advanced mathematical operations
+- **File Formats**: Support for 15+ file formats (CSV, Parquet, Excel, JSON, HDF5, etc.)
+- **Visualization**: Matplotlib with interactive features
+- **Threading**: Background processing for non-blocking operations
 
 ---
 
-## 📊 CSV Processor Tab
+## 📊 CSV Processor Tab - Advanced Time Series Processing
 
-### Purpose
-Process, analyze, and visualize time series data from CSV files with advanced filtering and mathematical operations.
+### 🎯 Purpose & Capabilities
+Transform raw CSV time series data into processed, analyzed, and visualized datasets with professional-grade mathematical operations.
 
-### Setup Sub-tab
-**File Selection & Configuration**
-- **Input Files**: Select multiple CSV files for batch processing
-- **Output Directory**: Choose where processed files will be saved
-- **Configuration Management**: Save/load processing settings
-- **Export Format**: Choose output format (CSV, Excel, MAT, Parquet, HDF5, etc.)
-- **Sorting Options**: Configure data sorting preferences
+### 📁 Setup Sub-tab - File Management & Configuration
 
-**Usage**:
-1. Click "Select Files" to choose input CSV files
-2. Click "Select Output Folder" to set destination
-3. Configure processing options in other sub-tabs
-4. Save configuration for future use
-5. Select signals to process
-6. Click "Process & Batch Export Files"
+#### 🔧 File Selection & Processing
+- **📂 Input Files**: Multi-file selection with drag-and-drop support
+- **📁 Output Directory**: Configurable output location with automatic creation
+- **⚙️ Configuration Management**: Save/load complete processing settings
+- **📤 Export Format**: 15+ output formats (CSV, Excel, MAT, Parquet, HDF5, Feather, etc.)
+- **📊 Sorting Options**: Time-based and value-based sorting configurations
 
-### Processing Sub-tab
-**Signal Processing Operations**
+#### 🚀 Usage Workflow
+1. **Select Files**: Click "Select Files" or drag CSV files into the interface
+2. **Set Output**: Choose destination folder for processed files
+3. **Configure Processing**: Set up filtering, integration, differentiation options
+4. **Save Configuration**: Store settings for future use (recommended)
+5. **Select Signals**: Choose which data columns to process
+6. **Process & Export**: Execute processing with real-time progress tracking
 
-#### 🔧 Signal Filtering
-- **Moving Average**: Smooth data with configurable window size
-- **Butterworth Filter**: Low-pass, high-pass, band-pass filtering
-- **Median Filter**: Remove outliers with configurable window
-- **Savitzky-Golay**: Polynomial smoothing for noisy data
-- **Hampel Filter**: Robust outlier detection and removal
-- **Z-Score Filter**: Statistical outlier removal
+### 🔬 Processing Sub-tab - Advanced Signal Processing
 
-#### ⏱️ Time Resampling
-- **Resample Data**: Convert to different time intervals (1s, 1min, 1h, etc.)
-- **Interpolation Methods**: Linear, cubic, nearest neighbor
-- **Aggregation**: Mean, sum, min, max, median
+#### 🔧 Signal Filtering (6 Professional Filters)
+- **📈 Moving Average**: Smooth data with configurable window size (3-1000 points)
+- **🌊 Butterworth Filter**: Low-pass, high-pass, band-pass filtering with order control
+- **🎯 Median Filter**: Remove outliers with configurable kernel size
+- **📊 Savitzky-Golay**: Polynomial smoothing for noisy data with window/polynomial control
+- **🛡️ Hampel Filter**: Robust outlier detection and removal with statistical thresholds
+- **📏 Z-Score Filter**: Statistical outlier removal with configurable sigma values
 
-#### 📈 Signal Integration
-- **Trapezoidal Integration**: Calculate cumulative values
-- **Flow Calculations**: Convert rate data to total volumes
-- **Custom Integration**: User-defined integration methods
+#### ⏱️ Time Resampling & Interpolation
+- **🔄 Resample Data**: Convert to different time intervals (1s, 1min, 1h, 1d, custom)
+- **📐 Interpolation Methods**: Linear, cubic, nearest neighbor, polynomial
+- **📊 Aggregation Functions**: Mean, sum, min, max, median, std, custom functions
+- **🎯 Time Alignment**: Automatic time column detection and alignment
 
-#### 📉 Signal Differentiation
-- **Spline Differentiation**: Smooth derivative calculation
-- **Finite Difference**: Direct numerical differentiation
-- **Multiple Orders**: 1st through 5th order derivatives
+#### 📈 Signal Integration (Mathematical Operations)
+- **📊 Trapezoidal Integration**: Calculate cumulative values with error estimation
+- **🌊 Flow Calculations**: Convert rate data to total volumes with unit conversion
+- **🔧 Custom Integration**: User-defined integration methods and formulas
+- **📏 Unit Conversion**: Automatic unit detection and conversion
 
-### Custom Variables Sub-tab
-**Mathematical Formula Creation**
-- **Formula Builder**: Create custom calculations using existing signals
-- **Signal Reference**: Use [SignalName] syntax to reference data
-- **Mathematical Functions**: sin, cos, exp, log, sqrt, etc.
-- **Conditional Logic**: if/else statements for complex calculations
+#### 📉 Signal Differentiation (Advanced Calculus)
+- **📐 Spline Differentiation**: Smooth derivative calculation with configurable order
+- **🔢 Finite Difference**: Direct numerical differentiation (forward, backward, central)
+- **📊 Multiple Orders**: 1st through 5th order derivatives with error analysis
+- **🎯 Smoothing Options**: Pre-filtering for noisy derivative calculations
 
-**Example Formulas**:
-- `[Flow] * 3600` - Convert flow rate to hourly volume
-- `sqrt([Pressure]^2 + [Temperature]^2)` - Calculate magnitude
-- `if([Value] > 100, [Value] * 2, [Value])` - Conditional processing
+### 🧮 Custom Variables Sub-tab - Formula Builder
 
----
+#### 🔧 Mathematical Formula Creation
+- **📝 Formula Builder**: Visual formula creation with syntax highlighting
+- **🔗 Signal Reference**: Use [SignalName] syntax to reference existing data columns
+- **📊 Mathematical Functions**: sin, cos, exp, log, sqrt, abs, pow, etc.
+- **🔀 Conditional Logic**: if/else statements for complex conditional calculations
+- **📈 Statistical Functions**: mean, std, min, max, percentile, etc.
 
-## 🔄 Format Converter Tab
+#### 💡 Example Formulas
+```
+[Flow] * 3600                    # Convert flow rate to hourly volume
+sqrt([Pressure]^2 + [Temp]^2)    # Calculate magnitude from components
+if([Value] > 100, [Value] * 2, [Value])  # Conditional processing
+[Signal1] + [Signal2] * 0.5      # Weighted combination
+log10([Concentration] + 1)        # Log transformation with offset
+```
 
-### Purpose
-Convert files between multiple formats with batch processing capabilities.
-
-### Supported Formats
-**Input Formats**: CSV, TSV, Parquet, Excel (.xlsx, .xls), JSON, HDF5, Pickle, NumPy (.npy), MATLAB (.mat), Feather, Arrow, SQLite
-
-**Output Formats**: CSV, TSV, Parquet, Excel (.xlsx), JSON, HDF5, Pickle, NumPy (.npy), MATLAB (.mat), Feather, Arrow, SQLite
-
-### Key Features
-
-#### 📁 File Selection
-- **Individual Files**: Select specific files for conversion
-- **Folder Import**: Import all supported files from a directory
-- **Batch Processing**: Process multiple files simultaneously
-- **File List Management**: Add, remove, and clear files
-
-#### ⚙️ Conversion Options
-- **Output Format**: Choose target file format
-- **Combine Files**: Merge multiple files into single output
-- **Column Selection**: Choose specific columns to include
-- **Batch Processing**: Enable for large file sets
-- **File Splitting**: Split large files into smaller chunks
-
-#### 📊 Parquet Analyzer
-- **Metadata Analysis**: View file structure and statistics
-- **Column Information**: Data types, null counts, memory usage
-- **File Properties**: Size, compression, row groups
-- **Schema Details**: Complete column schema information
-
-### Usage Workflow
-1. **Select Files**: Choose input files or import from folder
-2. **Configure Output**: Set output format and destination
-3. **Select Columns**: Choose which columns to include (optional)
-4. **Set Options**: Configure batch processing and splitting
-5. **Convert**: Start the conversion process
-6. **Monitor Progress**: Track conversion status and logs
+#### 🎯 Advanced Features
+- **🔍 Formula Validation**: Real-time syntax checking and error detection
+- **📊 Result Preview**: Preview calculated values before processing
+- **💾 Formula Library**: Save and reuse complex formulas
+- **📈 Unit Consistency**: Automatic unit checking and conversion
 
 ---
 
-## 📁 Folder Tool Tab
+## 🔄 Format Converter Tab - Multi-Format File Processing
 
-### Purpose
-Comprehensive folder processing and organization with multiple operation modes.
+### 🎯 Purpose & Capabilities
+Convert files between 15+ formats with professional batch processing, column selection, and comprehensive analysis tools.
 
-### Operation Modes
+### 📁 Supported Formats (15+ Formats)
 
-#### 🔗 Combine & Copy
-**Purpose**: Copy all files from multiple source folders into a single destination folder.
+#### 📥 Input Formats
+- **📊 CSV/TSV**: Comma/Tab separated values with encoding detection
+- **📈 Parquet**: Columnar storage with compression and partitioning
+- **📋 Excel**: .xlsx and .xls files with multiple sheet support
+- **📄 JSON**: JavaScript Object Notation with nested structure support
+- **🗄️ HDF5**: Hierarchical Data Format with compression
+- **🥒 Pickle**: Python serialization format
+- **🔢 NumPy**: .npy binary arrays
+- **📊 MATLAB**: .mat files with variable extraction
+- **🪶 Feather**: Fast columnar format for R/Python
+- **🏹 Arrow**: Apache Arrow format with zero-copy reads
+- **🗃️ SQLite**: Database files with table extraction
 
-**Features**:
-- **Multi-source Support**: Process files from multiple source folders
-- **Automatic Renaming**: Handle naming conflicts with numbered suffixes
-- **File Filtering**: Filter by extension and file size
-- **Organization Options**: Organize by file type or date
-- **Progress Tracking**: Real-time progress with cancellation
+#### 📤 Output Formats
+- **📊 CSV/TSV**: With configurable delimiters and encoding
+- **📈 Parquet**: With compression options (snappy, gzip, brotli)
+- **📋 Excel**: Multi-sheet workbooks with formatting
+- **📄 JSON**: With pretty printing and nested structure
+- **🗄️ HDF5**: With compression and metadata
+- **🥒 Pickle**: Python-compatible serialization
+- **🔢 NumPy**: Binary arrays with metadata
+- **📊 MATLAB**: .mat files with variable naming
+- **🪶 Feather**: Fast columnar format
+- **🏹 Arrow**: Apache Arrow format
+- **🗃️ SQLite**: Database files with table creation
+
+### 🔧 Key Features
+
+#### 📁 Advanced File Selection
+- **📂 Individual Files**: Select specific files with multi-select support
+- **📁 Folder Import**: Import all supported files from directories recursively
+- **🔄 Batch Processing**: Process hundreds of files simultaneously
+- **📋 File List Management**: Add, remove, clear, and organize file lists
+- **🔍 File Preview**: Preview file contents before conversion
+
+#### ⚙️ Professional Conversion Options
+- **🎯 Output Format**: Choose from 15+ target formats
+- **🔗 Combine Files**: Merge multiple files into single output with conflict resolution
+- **📊 Column Selection**: Choose specific columns with drag-and-drop interface
+- **⚡ Batch Processing**: Enable for large file sets with progress tracking
+- **✂️ File Splitting**: Split large files by rows, size, time, or custom conditions
+- **🗜️ Compression**: Configurable compression for supported formats
+
+#### 📊 Parquet Analyzer (Professional Tool)
+- **📈 Metadata Analysis**: Complete file structure and statistics
+- **📊 Column Information**: Data types, null counts, memory usage, statistics
+- **📁 File Properties**: Size, compression ratio, row groups, partitioning
+- **🔍 Schema Details**: Complete column schema with type information
+- **📊 Statistics**: Min, max, mean, std, null percentages for each column
+- **💾 Memory Analysis**: Memory usage estimation and optimization tips
+
+### 🚀 Usage Workflow
+1. **📁 Select Files**: Choose input files or import entire folders
+2. **⚙️ Configure Output**: Set target format and destination path
+3. **📊 Select Columns**: Choose specific columns (optional, with preview)
+4. **🔧 Set Options**: Configure batch processing, splitting, and compression
+5. **🔄 Convert**: Start conversion with real-time progress tracking
+6. **📊 Monitor Progress**: Track conversion status, logs, and error handling
+
+### 📈 Advanced Features
+- **🔍 Format Detection**: Automatic format detection for unknown files
+- **📊 Schema Validation**: Validate data types and constraints
+- **🔄 Incremental Processing**: Resume interrupted conversions
+- **📈 Performance Optimization**: Memory-efficient processing for large files
+- **🔧 Custom Transformations**: Apply data transformations during conversion
+
+---
+
+## 📁 Folder Tool Tab - Professional File Organization
+
+### 🎯 Purpose & Capabilities
+Comprehensive folder processing and organization with 5 operation modes, advanced filtering, and professional file management.
+
+### 🔧 Operation Modes (5 Professional Modes)
+
+#### 🔗 Combine & Copy Mode
+**Purpose**: Consolidate files from multiple source folders into a single organized destination.
+
+**Professional Features**:
+- **🌐 Multi-source Support**: Process files from unlimited source folders
+- **🔄 Automatic Renaming**: Handle naming conflicts with intelligent numbering
+- **🔍 Advanced Filtering**: Filter by extension, size, date, and custom criteria
+- **📁 Smart Organization**: Organize by file type, date, or custom hierarchy
+- **📊 Progress Tracking**: Real-time progress with detailed statistics
+- **🛡️ Safety Features**: Preview mode, backup creation, cancellation support
 
 **Use Cases**:
-- Consolidating files from multiple backup locations
-- Combining photo collections from different devices
-- Merging document archives
+- 📸 Consolidating photo collections from multiple devices
+- 📁 Merging document archives from different locations
+- 💾 Combining backup files from multiple sources
+- 🎵 Organizing music libraries from various sources
 
-#### 📂 Flatten & Tidy
-**Purpose**: Copy files from deeply nested folder structures to a flat, organized structure.
+#### 📂 Flatten & Tidy Mode
+**Purpose**: Transform deeply nested folder structures into flat, organized layouts.
 
-**Features**:
-- **Structure Flattening**: Remove nested folder hierarchy
-- **Conflict Resolution**: Handle duplicate filenames automatically
-- **File Filtering**: Include only specific file types or sizes
-- **Progress Monitoring**: Track operation progress
-
-**Use Cases**:
-- Organizing scattered files into a single location
-- Simplifying complex folder structures
-- Preparing files for backup or sharing
-
-#### ✂️ Copy & Prune Empty
-**Purpose**: Copy folder structure while skipping empty directories.
-
-**Features**:
-- **Structure Preservation**: Maintain relative folder paths
-- **Empty Folder Detection**: Automatically skip empty directories
-- **File Filtering**: Apply extension and size filters
-- **Efficient Processing**: Only copy non-empty folders
+**Professional Features**:
+- **🏗️ Structure Flattening**: Remove complex nested hierarchies
+- **🔄 Conflict Resolution**: Intelligent duplicate filename handling
+- **🔍 Smart Filtering**: Include only relevant file types and sizes
+- **📊 Progress Monitoring**: Detailed progress with file counting
+- **🛡️ Safety Controls**: Preview mode and rollback capabilities
 
 **Use Cases**:
-- Cleaning up folder structures
-- Removing empty directories from backups
-- Organizing file collections
+- 📁 Simplifying complex project folder structures
+- 🗂️ Organizing scattered files into logical collections
+- 📦 Preparing files for backup or sharing
+- 🧹 Cleaning up messy folder hierarchies
 
-#### 🗑️ Deduplicate Files
-**Purpose**: Remove renamed duplicate files (e.g., "file (1).txt", "file (2).txt").
+#### ✂️ Copy & Prune Empty Mode
+**Purpose**: Copy folder structures while automatically removing empty directories.
 
-**Features**:
-- **Pattern Recognition**: Detect renamed duplicates using regex
-- **Newest File Retention**: Keep the most recent version
-- **Safe Operation**: Preview mode available
-- **In-place Processing**: Works directly on source folders
+**Professional Features**:
+- **📁 Structure Preservation**: Maintain relative folder paths
+- **🔍 Empty Detection**: Automatic empty directory identification
+- **⚡ Efficient Processing**: Only copy non-empty folders
+- **🔧 Advanced Filtering**: Apply comprehensive file filters
+- **📊 Detailed Reporting**: Complete operation statistics
 
 **Use Cases**:
-- Cleaning up duplicate downloads
-- Removing system-generated duplicates
-- Organizing file collections
+- 🧹 Cleaning up folder structures
+- 📁 Removing empty directories from backups
+- 🗂️ Organizing file collections efficiently
+- 📦 Preparing clean folder structures for deployment
 
-#### 📊 Analyze & Report
+#### 🗑️ Deduplicate Files Mode
+**Purpose**: Remove renamed duplicate files using advanced pattern recognition.
+
+**Professional Features**:
+- **🔍 Pattern Recognition**: Advanced regex-based duplicate detection
+- **📊 Smart Selection**: Keep newest, largest, or highest quality versions
+- **🛡️ Safe Operation**: Preview mode with detailed analysis
+- **📍 In-place Processing**: Works directly on source folders
+- **📈 Statistical Analysis**: Detailed duplicate analysis reports
+
+**Use Cases**:
+- 🧹 Cleaning up duplicate downloads
+- 📁 Removing system-generated duplicates
+- 🎵 Organizing music collections
+- 📸 Managing photo duplicates
+
+#### 📊 Analyze & Report Mode
 **Purpose**: Generate comprehensive analysis reports without modifying files.
 
-**Features**:
-- **File Statistics**: Count, size, and type analysis
-- **Size Distribution**: Largest files identification
-- **Type Breakdown**: File type distribution
-- **Detailed Reports**: Comprehensive analysis in dialog
+**Professional Features**:
+- **📊 File Statistics**: Complete file count, size, and type analysis
+- **📈 Size Distribution**: Largest files identification and categorization
+- **📋 Type Breakdown**: Detailed file type distribution analysis
+- **📊 Detailed Reports**: Professional analysis reports with charts
+- **💾 Export Options**: Save reports in multiple formats
 
 **Use Cases**:
-- Understanding folder contents before processing
-- Identifying large files for cleanup
-- Planning storage requirements
+- 📊 Understanding folder contents before processing
+- 🔍 Identifying large files for cleanup
+- 📈 Planning storage requirements
+- 📋 Generating asset inventories
 
-### Advanced Features
+### 🔧 Advanced Features
 
-#### 🔍 File Filtering
-- **Extension Filtering**: Include only specific file extensions
-- **Size Filtering**: Filter by minimum and maximum file sizes
-- **Combined Filters**: Apply multiple filters simultaneously
+#### 🔍 Professional File Filtering
+- **📁 Extension Filtering**: Include/exclude specific file extensions
+- **📏 Size Filtering**: Filter by minimum and maximum file sizes
+- **📅 Date Filtering**: Filter by creation, modification, or access dates
+- **🔍 Content Filtering**: Filter by file content or metadata
+- **🔗 Combined Filters**: Apply multiple filters simultaneously
 
-#### 📁 Organization Options
-- **By Type**: Organize files into type-based folders (Images, Documents, etc.)
-- **By Date**: Organize by creation/modification date (YYYY/MM structure)
-- **Combined Organization**: Use both type and date organization
+#### 📁 Smart Organization Options
+- **📂 By Type**: Organize into intelligent type-based folders
+  - Images: JPG, PNG, GIF, BMP, TIFF, RAW formats
+  - Videos: MP4, AVI, MOV, WMV, MKV, FLV formats
+  - Audio: MP3, WAV, FLAC, AAC, OGG formats
+  - Documents: PDF, DOC, DOCX, TXT, RTF formats
+  - Archives: ZIP, RAR, 7Z, TAR, GZ formats
+  - Code: PY, JS, HTML, CSS, JAVA, C++ formats
+  - Data: CSV, XLSX, JSON, XML, SQL formats
+- **📅 By Date**: Organize by creation/modification date (YYYY/MM/DD structure)
+- **🏷️ By Custom**: User-defined organization rules
+- **🔗 Combined Organization**: Use multiple organization methods simultaneously
 
-#### 🛡️ Safety Features
-- **Preview Mode**: Show what would be done without making changes
-- **Backup Creation**: Create backups before processing
-- **Cancellation**: Cancel operations at any time
-- **Progress Tracking**: Real-time progress updates
+#### 🛡️ Professional Safety Features
+- **👁️ Preview Mode**: Show exactly what would be done without making changes
+- **💾 Backup Creation**: Automatic backup creation before processing
+- **🔄 Rollback Capability**: Ability to undo operations
+- **⏹️ Cancellation**: Cancel operations at any time with cleanup
+- **📊 Progress Tracking**: Real-time progress with detailed statistics
+- **🔍 Validation**: Pre-operation validation and error checking
 
-### Usage Workflow
-1. **Select Source Folders**: Choose folders to process
-2. **Set Destination**: Choose output location (if applicable)
-3. **Configure Filters**: Set file type and size filters
-4. **Choose Operation**: Select the processing mode
-5. **Set Options**: Configure organization and safety options
-6. **Run Operation**: Start processing with progress monitoring
+### 🚀 Usage Workflow
+1. **📁 Select Source Folders**: Choose folders to process (multiple selection)
+2. **📂 Set Destination**: Choose output location (if applicable)
+3. **🔍 Configure Filters**: Set file type, size, and date filters
+4. **🎯 Choose Operation**: Select the appropriate processing mode
+5. **⚙️ Set Options**: Configure organization and safety options
+6. **🚀 Run Operation**: Start processing with comprehensive monitoring
+7. **📊 Review Results**: Analyze operation results and statistics
+
+### 📈 Performance Features
+- **⚡ Multi-threaded Processing**: Parallel file operations for speed
+- **💾 Memory Optimization**: Efficient memory usage for large operations
+- **📊 Progress Tracking**: Real-time progress with ETA calculations
+- **🔄 Incremental Processing**: Resume interrupted operations
+- **📈 Performance Monitoring**: Track operation performance metrics
 
 ---
 
-## 📈 Plotting & Analysis Tab
+## 📈 Plotting & Analysis Tab - Interactive Visualization
 
-### Purpose
-Interactive visualization and analysis of processed data.
+### 🎯 Purpose & Capabilities
+Professional interactive visualization and analysis of processed data with advanced plotting capabilities.
 
-### Key Features
+### 🔧 Key Features
 
 #### 🎯 Smart Auto-Zoom System
-- **Auto-zoom Control**: Toggle automatic zoom behavior
-- **Smart Detection**: Distinguish between new signals and filter changes
-- **Manual Control**: "Fit to Data" button for manual zoom
-- **Zoom Preservation**: Maintain view when changing filters
+- **🤖 Auto-zoom Control**: Intelligent automatic zoom behavior
+- **🧠 Smart Detection**: Distinguish between new signals and filter changes
+- **🎮 Manual Control**: "Fit to Data" button for manual zoom control
+- **💾 Zoom Preservation**: Maintain view when changing filters or signals
+- **📊 Zoom History**: Navigate through zoom states
 
-#### 📊 Plotting Capabilities
-- **Interactive Charts**: Zoom, pan, and explore data
-- **Multiple Chart Types**: Line, scatter, and combination plots
-- **Signal Selection**: Choose which signals to display
-- **Color Schemes**: Multiple color schemes and custom colors
-- **Legend Management**: Customize signal labels and order
+#### 📊 Professional Plotting Capabilities
+- **📈 Interactive Charts**: Full zoom, pan, and explore functionality
+- **🎨 Multiple Chart Types**: Line, scatter, bar, area, and combination plots
+- **📊 Signal Selection**: Dynamic signal selection with search
+- **🎨 Color Schemes**: 20+ color schemes plus custom color creation
+- **📋 Legend Management**: Customize signal labels, order, and visibility
+- **📏 Axis Control**: Custom axis ranges, labels, and scaling
 
-#### 📈 Trendline Analysis
-- **Linear Regression**: Straight line trend analysis
-- **Exponential Fit**: Exponential growth/decay trends
-- **Power Law**: Power function relationships
-- **Polynomial**: Higher-order polynomial fits
-- **R-squared Values**: Statistical fit quality indicators
+#### 📈 Advanced Trendline Analysis
+- **📊 Linear Regression**: Straight line trend analysis with R² values
+- **📈 Exponential Fit**: Exponential growth/decay trend analysis
+- **📊 Power Law**: Power function relationship analysis
+- **📈 Polynomial**: Higher-order polynomial fits (2nd-6th order)
+- **📊 Statistical Metrics**: R-squared, p-values, confidence intervals
+- **📈 Multiple Trendlines**: Compare multiple trendline types
 
-#### 💾 Export Options
-- **Image Export**: Save plots as PNG, JPG, PDF, SVG
-- **Excel Export**: Export data and plots to Excel
-- **Configuration Save**: Save plot settings for reuse
+#### 💾 Professional Export Options
+- **🖼️ Image Export**: Save plots as PNG, JPG, PDF, SVG, TIFF
+- **📊 Excel Export**: Export data and plots to Excel with formatting
+- **📋 Configuration Save**: Save plot settings for reuse
+- **📈 Animation Export**: Create animated plots for presentations
+- **📊 Report Generation**: Generate comprehensive analysis reports
 
-### Usage Workflow
-1. **Select File**: Choose data file from dropdown
-2. **Select Signals**: Choose which signals to plot
-3. **Configure Display**: Set colors, styles, and layout
-4. **Add Analysis**: Include trendlines if needed
-5. **Export Results**: Save plots or data as needed
+### 🚀 Usage Workflow
+1. **📁 Select File**: Choose data file from dropdown with preview
+2. **📊 Select Signals**: Choose which signals to plot with search
+3. **🎨 Configure Display**: Set colors, styles, layout, and themes
+4. **📈 Add Analysis**: Include trendlines, statistics, and annotations
+5. **💾 Export Results**: Save plots, data, or reports as needed
 
----
-
-## 📋 Plots List Tab
-
-### Purpose
-Save and manage plot configurations for batch processing.
-
-### Features
-- **Configuration Save**: Save plot settings with names and descriptions
-- **Batch Export**: Generate all saved plots automatically
-- **Preview System**: Preview plots before saving
-- **Library Management**: Organize and manage plot collection
-
-### Usage
-1. **Create Plot**: Configure plot in Plotting tab
-2. **Save Configuration**: Add to plots library with name/description
-3. **Batch Export**: Generate all saved plots at once
-4. **Manage Library**: Edit, delete, or reorganize saved plots
+### 📊 Advanced Features
+- **🔍 Data Exploration**: Interactive data exploration tools
+- **📈 Statistical Analysis**: Built-in statistical analysis functions
+- **🎨 Custom Themes**: Create and save custom plot themes
+- **📊 Multi-panel Plots**: Create complex multi-panel visualizations
+- **🔄 Real-time Updates**: Live plot updates during data changes
 
 ---
 
-## 📄 DAT File Import Tab
+## 📋 Plots List Tab - Configuration Management
 
-### Purpose
-Process DAT files with associated DBF tag files for structured data import.
+### 🎯 Purpose & Capabilities
+Professional plot configuration management with batch processing and library organization.
 
-### Features
-- **DAT File Selection**: Choose data files for processing
-- **DBF Tag Import**: Import tag information from DBF files
-- **Data Trimming**: Set time ranges for data extraction
-- **Export Options**: Save processed data in various formats
+### 🔧 Features
+- **💾 Configuration Save**: Save plot settings with names and descriptions
+- **🔄 Batch Export**: Generate all saved plots automatically
+- **👁️ Preview System**: Preview plots before saving
+- **📚 Library Management**: Organize and manage plot collection
+- **📊 Template System**: Create and use plot templates
+- **🔄 Version Control**: Track plot configuration versions
 
-### Usage
-1. **Select DAT File**: Choose the data file
-2. **Import Tags**: Load associated DBF tag file
-3. **Configure Trimming**: Set start/end times
-4. **Process & Export**: Generate output files
-
----
-
-## ⚙️ Configuration Management
-
-### Save/Load Settings
-- **Configuration Save**: Save all current settings
-- **Configuration Load**: Restore previous settings
-- **Configuration Management**: Delete and organize saved configs
-- **File Location**: Access configuration files directly
-
-### Signal List Management
-- **Save Signal Lists**: Save selected signals for reuse
-- **Load Signal Lists**: Restore previous signal selections
-- **Apply Saved Lists**: Quickly apply saved signal configurations
+### 🚀 Usage
+1. **📈 Create Plot**: Configure plot in Plotting tab
+2. **💾 Save Configuration**: Add to plots library with metadata
+3. **🔄 Batch Export**: Generate all saved plots at once
+4. **📚 Manage Library**: Edit, delete, or reorganize saved plots
 
 ---
 
-## 🎨 User Interface Features
+## 📄 DAT File Import Tab - Structured Data Processing
 
-### Responsive Design
-- **Splitter Panels**: Adjustable panel sizes
-- **Scrollable Content**: Handle large datasets efficiently
-- **Modern UI**: CustomTkinter-based modern interface
-- **Keyboard Shortcuts**: Efficient navigation and operation
+### 🎯 Purpose & Capabilities
+Process DAT files with associated DBF tag files for structured data import and analysis.
 
-### Progress Tracking
-- **Real-time Updates**: Live progress indicators
-- **Status Messages**: Clear operation feedback
-- **Cancellation Support**: Stop operations at any time
-- **Error Handling**: Comprehensive error reporting
+### 🔧 Features
+- **📁 DAT File Selection**: Choose data files with preview
+- **🏷️ DBF Tag Import**: Import tag information from DBF files
+- **✂️ Data Trimming**: Set precise time ranges for data extraction
+- **📤 Export Options**: Save processed data in multiple formats
+- **📊 Data Validation**: Validate data integrity and structure
+- **🔍 Tag Mapping**: Map DBF tags to data columns
 
----
-
-## 🚀 Performance Features
-
-### Optimization
-- **Background Processing**: Non-blocking operations
-- **Memory Management**: Efficient data handling
-- **Batch Operations**: Process multiple files efficiently
-- **Progress Feedback**: Real-time operation status
-
-### File Handling
-- **Large File Support**: Handle files of any size
-- **Multiple Formats**: Support for 15+ file formats
-- **Compression**: Built-in compression for output files
-- **Error Recovery**: Robust error handling and recovery
+### 🚀 Usage
+1. **📁 Select DAT File**: Choose the data file with preview
+2. **🏷️ Import Tags**: Load associated DBF tag file
+3. **⏰ Configure Trimming**: Set start/end times with precision
+4. **🔄 Process & Export**: Generate output files with validation
 
 ---
 
-## 📚 Tips & Best Practices
+## ⚙️ Configuration Management - Professional Settings
 
-### Data Processing
-1. **Start Small**: Test with small datasets before processing large files
-2. **Use Preview Mode**: Always preview folder operations before execution
-3. **Save Configurations**: Save frequently used settings
-4. **Backup Data**: Create backups before major operations
-5. **Monitor Progress**: Watch progress indicators for large operations
+### 💾 Save/Load Settings
+- **💾 Configuration Save**: Save all current settings with metadata
+- **📂 Configuration Load**: Restore previous settings with validation
+- **📚 Configuration Management**: Delete and organize saved configs
+- **📁 File Location**: Access configuration files directly
+- **🔄 Auto-save**: Automatic configuration backup
+- **📊 Version Control**: Track configuration changes
 
-### File Organization
-1. **Use Descriptive Names**: Name configurations and plots clearly
-2. **Organize by Type**: Use folder tool's type organization
-3. **Regular Cleanup**: Use deduplication features regularly
-4. **Backup Important Data**: Always backup before major changes
-
-### Performance
-1. **Batch Processing**: Use batch modes for multiple files
-2. **Filter Early**: Apply filters early in the process
-3. **Monitor Memory**: Watch memory usage with large datasets
-4. **Use Appropriate Formats**: Choose efficient formats for your data
+### 📊 Signal List Management
+- **💾 Save Signal Lists**: Save selected signals for reuse
+- **📂 Load Signal Lists**: Restore previous signal selections
+- **🔄 Apply Saved Lists**: Quickly apply saved signal configurations
+- **📚 Template System**: Create signal list templates
+- **🔍 Search & Filter**: Find signals in large lists
 
 ---
 
-## 🔧 Troubleshooting
+## 🎨 User Interface Features - Modern Design
 
-### Common Issues
-- **File Not Found**: Check file paths and permissions
-- **Memory Errors**: Reduce batch size or use smaller datasets
-- **Format Errors**: Verify file format compatibility
-- **Permission Errors**: Check file and folder permissions
+### 🖥️ Responsive Design
+- **📐 Splitter Panels**: Adjustable panel sizes with memory
+- **📜 Scrollable Content**: Handle large datasets efficiently
+- **🎨 Modern UI**: CustomTkinter-based modern interface
+- **⌨️ Keyboard Shortcuts**: Efficient navigation and operation
+- **🎯 Touch Support**: Touch-friendly interface elements
+- **🌙 Dark/Light Mode**: Theme switching capability
 
-### Getting Help
-- **Error Messages**: Read error messages carefully for clues
-- **Log Files**: Check application logs for detailed information
-- **Preview Mode**: Use preview features to test operations
-- **Small Tests**: Test with small datasets first
+### 📊 Progress Tracking
+- **📈 Real-time Updates**: Live progress indicators with ETA
+- **💬 Status Messages**: Clear operation feedback
+- **⏹️ Cancellation Support**: Stop operations at any time
+- **🛡️ Error Handling**: Comprehensive error reporting
+- **📊 Performance Metrics**: Track operation performance
+- **🔍 Debug Information**: Detailed debug information
 
 ---
 
-## 📞 Support Information
+## 🚀 Performance Features - Optimized Operations
 
+### ⚡ Optimization
+- **🔄 Background Processing**: Non-blocking operations with threading
+- **💾 Memory Management**: Efficient data handling and cleanup
+- **📊 Batch Operations**: Process multiple files efficiently
+- **📈 Progress Feedback**: Real-time operation status
+- **🔧 Resource Management**: Optimal resource utilization
+- **📊 Caching**: Intelligent caching for repeated operations
+
+### 📁 File Handling
+- **📊 Large File Support**: Handle files of any size with chunking
+- **🔄 Multiple Formats**: Support for 15+ file formats
+- **🗜️ Compression**: Built-in compression for output files
+- **🛡️ Error Recovery**: Robust error handling and recovery
+- **📊 Format Detection**: Automatic format detection
+- **🔍 Integrity Checking**: File integrity validation
+
+---
+
+## 📚 Tips & Best Practices - Professional Usage
+
+### 📊 Data Processing
+1. **🔬 Start Small**: Test with small datasets before processing large files
+2. **👁️ Use Preview Mode**: Always preview folder operations before execution
+3. **💾 Save Configurations**: Save frequently used settings
+4. **💾 Backup Data**: Create backups before major operations
+5. **📊 Monitor Progress**: Watch progress indicators for large operations
+6. **🔍 Validate Results**: Always validate processing results
+
+### 📁 File Organization
+1. **🏷️ Use Descriptive Names**: Name configurations and plots clearly
+2. **📂 Organize by Type**: Use folder tool's intelligent type organization
+3. **🧹 Regular Cleanup**: Use deduplication features regularly
+4. **💾 Backup Important Data**: Always backup before major changes
+5. **📊 Plan Structure**: Plan folder structure before large operations
+6. **🔍 Document Changes**: Keep records of major organizational changes
+
+### ⚡ Performance
+1. **🔄 Batch Processing**: Use batch modes for multiple files
+2. **🔍 Filter Early**: Apply filters early in the process
+3. **💾 Monitor Memory**: Watch memory usage with large datasets
+4. **📊 Use Appropriate Formats**: Choose efficient formats for your data
+5. **🔧 Optimize Settings**: Adjust settings for optimal performance
+6. **📊 Monitor Resources**: Track CPU and memory usage
+
+---
+
+## 🔧 Troubleshooting - Professional Support
+
+### 🚨 Common Issues
+- **📁 File Not Found**: Check file paths and permissions
+- **💾 Memory Errors**: Reduce batch size or use smaller datasets
+- **📊 Format Errors**: Verify file format compatibility
+- **🔐 Permission Errors**: Check file and folder permissions
+- **⏱️ Timeout Errors**: Increase timeout settings for large operations
+- **📊 Data Corruption**: Validate data integrity before processing
+
+### 🆘 Getting Help
+- **📋 Error Messages**: Read error messages carefully for clues
+- **📄 Log Files**: Check application logs for detailed information
+- **👁️ Preview Mode**: Use preview features to test operations
+- **🔬 Small Tests**: Test with small datasets first
+- **📊 Documentation**: Refer to this comprehensive help guide
+- **🔍 Debug Mode**: Enable debug mode for detailed information
+
+---
+
+## 📞 Support Information - Professional Assistance
+
+### 🎯 Application Overview
 This integrated application combines multiple powerful tools into a single, comprehensive data processing solution. All features are designed to work together seamlessly while maintaining the full functionality of the original standalone applications.
 
+### 🔧 Technical Specifications
+- **Framework**: CustomTkinter (Modern Python GUI)
+- **Data Processing**: Pandas, NumPy, SciPy (Professional mathematical operations)
+- **File Formats**: 15+ supported formats with compression
+- **Visualization**: Matplotlib with interactive features
+- **Threading**: Background processing for non-blocking operations
+- **Memory Management**: Efficient handling of large datasets
+
+### 📊 Feature Summary
+- **📊 CSV Processing**: Advanced time series processing with 6 filter types
+- **🔄 Format Conversion**: 15+ format support with batch processing
+- **📁 Folder Management**: 5 operation modes with professional features
+- **📈 Visualization**: Interactive plotting with trendline analysis
+- **📋 Configuration**: Professional settings management
+- **🛡️ Safety**: Comprehensive error handling and validation
+
+### 🚀 Performance Highlights
+- **⚡ Fast Processing**: Optimized algorithms for speed
+- **💾 Memory Efficient**: Smart memory management
+- **🔄 Batch Operations**: Process hundreds of files simultaneously
+- **📊 Large File Support**: Handle files of any size
+- **🛡️ Robust Error Handling**: Comprehensive error recovery
+- **📈 Real-time Progress**: Live progress tracking
+
 For technical support or feature requests, please refer to the application documentation or contact the development team.
+
+---
+
+## 🎉 Getting Started - Quick Start Guide
+
+### 🚀 First Steps
+1. **📁 Load Data**: Start with the CSV Processor tab to load your data
+2. **🔧 Configure Settings**: Set up your processing preferences
+3. **📊 Process Data**: Apply filters and mathematical operations
+4. **📈 Visualize Results**: Use the Plotting tab to explore your data
+5. **💾 Save Work**: Save configurations and results for future use
+
+### 🎯 Common Workflows
+- **📊 Data Analysis**: Load → Process → Visualize → Export
+- **🔄 Format Conversion**: Select → Convert → Analyze → Save
+- **📁 File Organization**: Select → Organize → Validate → Backup
+- **📈 Report Generation**: Process → Plot → Configure → Export
+
+### 💡 Pro Tips
+- **💾 Always Backup**: Create backups before major operations
+- **👁️ Use Preview**: Preview operations before execution
+- **📊 Save Configurations**: Save frequently used settings
+- **🔍 Validate Results**: Always check processing results
+- **📈 Start Small**: Test with small datasets first
+
+Welcome to professional data processing! 🚀
 """
         
-        # Create text widget for help content
-        help_text = ctk.CTkTextbox(help_frame, wrap="word", font=ctk.CTkFont(size=12))
+        # Create text widget for help content with enhanced styling
+        help_text = ctk.CTkTextbox(help_frame, wrap="word", font=ctk.CTkFont(size=11))
         help_text.pack(fill="both", expand=True, padx=10, pady=10)
         
         # Insert help content
