@@ -181,6 +181,33 @@ SUPPORTED_FORMATS = {
     }
 }
 
+# File splitting configuration
+class SplitMethod(Enum):
+    """Methods for splitting large files."""
+    ROWS = "rows"
+    SIZE = "size"
+    TIME = "time"
+    CUSTOM = "custom"
+
+@dataclass
+class SplitConfig:
+    """Configuration for file splitting."""
+    enabled: bool = False
+    method: SplitMethod = SplitMethod.ROWS
+    rows_per_file: int = 100000
+    max_file_size_mb: float = 100.0
+    time_column: str = ""
+    time_interval_hours: float = 24.0
+    custom_condition: str = ""
+    output_directory: str = ""
+    filename_pattern: str = "{base_name}_part_{part_number:04d}{extension}"
+    compression: str = "snappy"  # For parquet files
+    include_header: bool = True  # For CSV files
+    
+    def get_file_size_bytes(self) -> int:
+        """Convert MB to bytes."""
+        return int(self.max_file_size_mb * 1024 * 1024)
+
 class FileFormatDetector:
     """Detect file formats based on extension and content."""
     
@@ -720,7 +747,7 @@ class ConversionWorker(QThread):
     def __init__(self, input_files: List[str], output_path: str, 
                  output_format: str, combine_files: bool = True, 
                  chunk_size: int = 10000, selected_columns: Set[str] = None,
-                 format_options: Dict[str, Any] = None):
+                 format_options: Dict[str, Any] = None, split_config: SplitConfig = None):
         super().__init__()
         self.input_files = input_files
         self.output_path = output_path
@@ -729,6 +756,7 @@ class ConversionWorker(QThread):
         self.chunk_size = chunk_size
         self.selected_columns = selected_columns or set()
         self.format_options = format_options or {}
+        self.split_config = split_config or SplitConfig()
         self.is_cancelled = False
         
     def run(self):
@@ -806,8 +834,25 @@ class ConversionWorker(QThread):
         
         # Write the combined data
         self.status_updated.emit(f"Writing to {self.output_format} format...")
-        DataWriter.write_file(final_df, self.output_path, self.output_format, **self.format_options)
         
+        # Check if file splitting is enabled
+        if self.split_config.enabled:
+            self.status_updated.emit("Splitting large dataset into multiple files...")
+            output_files = self._split_dataframe(final_df, Path(self.output_path))
+            
+            if output_files:
+                self.status_updated.emit(f"Created {len(output_files)} split files")
+                # Update the output path to the directory containing split files
+                if self.split_config.output_directory:
+                    self.output_path = self.split_config.output_directory
+                else:
+                    self.output_path = str(Path(output_files[0]).parent)
+            else:
+                # Fallback to single file if splitting failed
+                DataWriter.write_file(final_df, self.output_path, self.output_format, **self.format_options)
+        else:
+            DataWriter.write_file(final_df, self.output_path, self.output_format, **self.format_options)
+                
     def _convert_to_multiple_files(self):
         """Convert files to multiple output files."""
         total_files = len(self.input_files)
@@ -857,6 +902,248 @@ class ConversionWorker(QThread):
         """Cancel the conversion process."""
         self.is_cancelled = True
 
+    def _split_dataframe(self, df: pd.DataFrame, base_path: Path) -> List[str]:
+        """Split a DataFrame into multiple files based on configuration."""
+        if not self.split_config.enabled:
+            return []
+            
+        output_files = []
+        total_rows = len(df)
+        
+        if self.split_config.method == SplitMethod.ROWS:
+            output_files = self._split_by_rows(df, base_path)
+        elif self.split_config.method == SplitMethod.SIZE:
+            output_files = self._split_by_size(df, base_path)
+        elif self.split_config.method == SplitMethod.TIME:
+            output_files = self._split_by_time(df, base_path)
+        elif self.split_config.method == SplitMethod.CUSTOM:
+            output_files = self._split_by_custom(df, base_path)
+            
+        return output_files
+        
+    def _split_by_rows(self, df: pd.DataFrame, base_path: Path) -> List[str]:
+        """Split DataFrame by row count."""
+        rows_per_file = self.split_config.rows_per_file
+        total_rows = len(df)
+        num_files = math.ceil(total_rows / rows_per_file)
+        
+        output_files = []
+        for i in range(num_files):
+            if self.is_cancelled:
+                break
+                
+            start_idx = i * rows_per_file
+            end_idx = min((i + 1) * rows_per_file, total_rows)
+            
+            chunk_df = df.iloc[start_idx:end_idx]
+            
+            # Generate filename
+            filename = self._generate_filename(base_path, i + 1, num_files)
+            output_file = str(filename)
+            
+            # Write chunk
+            self.status_updated.emit(f"Writing split file {i + 1}/{num_files}: {filename.name}")
+            self._write_chunk(chunk_df, output_file, i == 0)  # Include header only for first file
+            
+            output_files.append(output_file)
+            
+            # Update progress
+            progress = int((i + 1) / num_files * 100)
+            self.progress_updated.emit(progress)
+            
+        return output_files
+        
+    def _split_by_size(self, df: pd.DataFrame, base_path: Path) -> List[str]:
+        """Split DataFrame by target file size."""
+        max_size_bytes = self.split_config.get_file_size_bytes()
+        total_rows = len(df)
+        
+        # Estimate size per row (rough approximation)
+        sample_size = min(1000, total_rows)
+        sample_df = df.head(sample_size)
+        
+        # Create temporary file to measure size
+        with tempfile.NamedTemporaryFile(suffix=f'.{self.output_format}', delete=True) as temp_file:
+            self._write_chunk(sample_df, temp_file.name, True)
+            temp_size = temp_file.tell()
+            
+        if temp_size == 0:
+            # Fallback to row-based splitting
+            return self._split_by_rows(df, base_path)
+            
+        bytes_per_row = temp_size / sample_size
+        rows_per_file = max(1, int(max_size_bytes / bytes_per_row))
+        
+        # Use row-based splitting with calculated rows per file
+        self.split_config.rows_per_file = rows_per_file
+        return self._split_by_rows(df, base_path)
+        
+    def _split_by_time(self, df: pd.DataFrame, base_path: Path) -> List[str]:
+        """Split DataFrame by time intervals."""
+        time_column = self.split_config.time_column
+        interval_hours = self.split_config.time_interval_hours
+        
+        if time_column not in df.columns:
+            raise ValueError(f"Time column '{time_column}' not found in data")
+            
+        # Convert time column to datetime if needed
+        if not pd.api.types.is_datetime64_any_dtype(df[time_column]):
+            try:
+                df[time_column] = pd.to_datetime(df[time_column])
+            except Exception as e:
+                raise ValueError(f"Could not convert '{time_column}' to datetime: {str(e)}")
+                
+        # Sort by time column
+        df_sorted = df.sort_values(time_column).reset_index(drop=True)
+        
+        # Calculate time boundaries
+        min_time = df_sorted[time_column].min()
+        max_time = df_sorted[time_column].max()
+        
+        # Create time intervals
+        intervals = []
+        current_time = min_time
+        while current_time <= max_time:
+            next_time = current_time + pd.Timedelta(hours=interval_hours)
+            intervals.append((current_time, next_time))
+            current_time = next_time
+            
+        output_files = []
+        for i, (start_time, end_time) in enumerate(intervals):
+            if self.is_cancelled:
+                break
+                
+            # Filter data for this time interval
+            mask = (df_sorted[time_column] >= start_time) & (df_sorted[time_column] < end_time)
+            chunk_df = df_sorted[mask]
+            
+            if len(chunk_df) == 0:
+                continue
+                
+            # Generate filename with time information
+            time_str = start_time.strftime("%Y%m%d_%H%M")
+            filename = self._generate_filename(base_path, i + 1, len(intervals), time_str)
+            output_file = str(filename)
+            
+            # Write chunk
+            self.status_updated.emit(f"Writing time split {i + 1}/{len(intervals)}: {filename.name}")
+            self._write_chunk(chunk_df, output_file, True)  # Each time split gets its own header
+            
+            output_files.append(output_file)
+            
+            # Update progress
+            progress = int((i + 1) / len(intervals) * 100)
+            self.progress_updated.emit(progress)
+            
+        return output_files
+        
+    def _split_by_custom(self, df: pd.DataFrame, base_path: Path) -> List[str]:
+        """Split DataFrame by custom condition."""
+        custom_condition = self.split_config.custom_condition
+        
+        if not custom_condition:
+            return []
+            
+        # Create a safe environment for evaluating the condition
+        safe_dict = {
+            'row': None,
+            'previous_row': None,
+            'row_index': 0,
+            'pd': pd,
+            'np': np,
+            'math': math
+        }
+        
+        output_files = []
+        current_chunk = []
+        file_index = 1
+        
+        for index, row in df.iterrows():
+            if self.is_cancelled:
+                break
+                
+            # Update safe environment
+            safe_dict['row'] = row
+            safe_dict['row_index'] = index
+            
+            try:
+                # Evaluate the custom condition
+                should_split = eval(custom_condition, {"__builtins__": {}}, safe_dict)
+                
+                if should_split and current_chunk:
+                    # Write current chunk and start new one
+                    chunk_df = pd.DataFrame(current_chunk)
+                    filename = self._generate_filename(base_path, file_index, 0)
+                    output_file = str(filename)
+                    
+                    self.status_updated.emit(f"Writing custom split {file_index}: {filename.name}")
+                    self._write_chunk(chunk_df, output_file, True)
+                    
+                    output_files.append(output_file)
+                    current_chunk = []
+                    file_index += 1
+                    
+            except Exception as e:
+                self.error_occurred.emit(f"Error evaluating custom condition: {str(e)}")
+                break
+                
+            # Add current row to chunk
+            current_chunk.append(row.to_dict())
+            safe_dict['previous_row'] = row
+            
+        # Write remaining chunk
+        if current_chunk and not self.is_cancelled:
+            chunk_df = pd.DataFrame(current_chunk)
+            filename = self._generate_filename(base_path, file_index, 0)
+            output_file = str(filename)
+            
+            self.status_updated.emit(f"Writing final custom split: {filename.name}")
+            self._write_chunk(chunk_df, output_file, True)
+            output_files.append(output_file)
+            
+        return output_files
+        
+    def _generate_filename(self, base_path: Path, part_number: int, total_parts: int = 0, 
+                          time_suffix: str = "") -> Path:
+        """Generate filename for split files."""
+        # Get base name and extension
+        base_name = base_path.stem
+        extension = base_path.suffix
+        
+        # Create output directory if specified
+        if self.split_config.output_directory:
+            output_dir = Path(self.split_config.output_directory)
+            output_dir.mkdir(parents=True, exist_ok=True)
+        else:
+            output_dir = base_path.parent
+            
+        # Generate filename using pattern
+        filename = self.split_config.filename_pattern.format(
+            base_name=base_name,
+            part_number=part_number,
+            total_parts=total_parts,
+            extension=extension,
+            time_suffix=time_suffix
+        )
+        
+        return output_dir / filename
+        
+    def _write_chunk(self, df: pd.DataFrame, output_file: str, include_header: bool = True):
+        """Write a data chunk to file with appropriate options."""
+        # Prepare format options
+        write_options = self.format_options.copy()
+        
+        # Add splitting-specific options
+        if self.output_format == 'parquet':
+            write_options['compression'] = self.split_config.compression
+        elif self.output_format in ['csv', 'tsv']:
+            write_options['index'] = False
+            if not include_header and not self.split_config.include_header:
+                write_options['header'] = False
+                
+        # Write the file
+        DataWriter.write_file(df, output_file, self.output_format, **write_options)
+
 # Continue with the main converter interface...
 
 class UniversalFileConverter(QWidget):
@@ -870,6 +1157,7 @@ class UniversalFileConverter(QWidget):
         self.combine_files = True
         self.chunk_size = 10000
         self.format_options = {}
+        self.split_config = SplitConfig()
         
         self.setup_logging()
         self.setup_ui()
@@ -1019,6 +1307,20 @@ class UniversalFileConverter(QWidget):
         self.chunk_size_spin.setValue(10000)
         self.chunk_size_spin.setSuffix(" rows")
         output_layout.addRow("Chunk Size:", self.chunk_size_spin)
+        
+        # File splitting configuration
+        split_layout = QHBoxLayout()
+        
+        self.split_files_checkbox = QCheckBox("Split large files")
+        self.split_files_checkbox.toggled.connect(self._on_split_files_toggled)
+        split_layout.addWidget(self.split_files_checkbox)
+        
+        self.configure_splitting_btn = QPushButton("Configure Splitting")
+        self.configure_splitting_btn.clicked.connect(self._configure_file_splitting)
+        self.configure_splitting_btn.setEnabled(False)
+        split_layout.addWidget(self.configure_splitting_btn)
+        
+        output_layout.addRow("File Splitting:", split_layout)
         
         output_group.setLayout(output_layout)
         layout.addWidget(output_group)
@@ -1227,6 +1529,43 @@ class UniversalFileConverter(QWidget):
         """Handle combine files checkbox toggle."""
         self.combine_files = checked
         
+    def _on_split_files_toggled(self, checked: bool):
+        """Handle split files checkbox toggle."""
+        self.split_config.enabled = checked
+        self.configure_splitting_btn.setEnabled(checked)
+        
+    def _configure_file_splitting(self):
+        """Open the file splitting configuration dialog."""
+        dialog = FileSplittingDialog(self)
+        
+        # Pre-populate with current configuration
+        if self.split_config.enabled:
+            dialog.enable_splitting_checkbox.setChecked(True)
+            
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            self.split_config = dialog.get_split_config()
+            
+            # Update UI to reflect configuration
+            self.split_files_checkbox.setChecked(self.split_config.enabled)
+            self.configure_splitting_btn.setEnabled(self.split_config.enabled)
+            
+            # Show summary of configuration
+            if self.split_config.enabled:
+                method_names = {
+                    SplitMethod.ROWS: "Row Count",
+                    SplitMethod.SIZE: "File Size", 
+                    SplitMethod.TIME: "Time Intervals",
+                    SplitMethod.CUSTOM: "Custom Condition"
+                }
+                
+                method_name = method_names.get(self.split_config.method, "Unknown")
+                QMessageBox.information(
+                    self, "Splitting Configured",
+                    f"File splitting enabled:\n"
+                    f"Method: {method_name}\n"
+                    f"Output: {self.split_config.output_directory or 'Auto-created directory'}"
+                )
+                
     def _browse_output(self):
         """Browse for output path."""
         if self.combine_files:
@@ -1276,7 +1615,7 @@ class UniversalFileConverter(QWidget):
         self.conversion_worker = ConversionWorker(
             self.input_files, output_path, output_format,
             combine_files, chunk_size, self.selected_columns,
-            self.format_options
+            self.format_options, self.split_config
         )
         
         self.conversion_worker.progress_updated.connect(self.progress_bar.setValue)
@@ -1378,26 +1717,457 @@ class MainWindow(QMainWindow):
                 <li>Joblib</li>
             </ul>
             
-            <p><b>Version:</b> Enhanced v1.0</p>
+            <h4>Advanced Features:</h4>
+            <ul>
+                <li>Multi-format support with automatic detection</li>
+                <li>Advanced column selection and filtering</li>
+                <li>Large dataset file splitting</li>
+                <li>Memory-efficient chunked processing</li>
+                <li>Bulk file conversion</li>
+                <li>Progress tracking and detailed logging</li>
+            </ul>
+            
+            <h4>File Splitting Options:</h4>
+            <ul>
+                <li>Split by row count</li>
+                <li>Split by target file size</li>
+                <li>Split by time intervals</li>
+                <li>Custom splitting conditions</li>
+            </ul>
+            
+            <p><b>Version:</b> Enhanced v1.1 (with File Splitting)</p>
             <p><b>Author:</b> AI Assistant</p>
             """
         )
 
-def main():
-    """Main application entry point."""
-    app = QApplication(sys.argv)
+class FileSplittingDialog(QDialog):
+    """Dialog for configuring file splitting options."""
     
-    # Set application properties
-    app.setApplicationName("Universal File Format Converter")
-    app.setApplicationVersion("1.0")
-    app.setOrganizationName("Data Processing Tools")
-    
-    # Create and show main window
-    window = MainWindow()
-    window.show()
-    
-    # Start event loop
-    sys.exit(app.exec())
-
-if __name__ == "__main__":
-    main() 
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.split_config = SplitConfig()
+        self.setup_ui()
+        self._apply_styling()
+        
+    def setup_ui(self):
+        """Setup the user interface."""
+        self.setWindowTitle("File Splitting Configuration")
+        self.setModal(True)
+        self.resize(700, 600)
+        
+        layout = QVBoxLayout()
+        
+        # Enable splitting checkbox
+        self.enable_splitting_checkbox = QCheckBox("Enable File Splitting")
+        self.enable_splitting_checkbox.toggled.connect(self._on_enable_splitting_toggled)
+        layout.addWidget(self.enable_splitting_checkbox)
+        
+        # Create tab widget for different splitting methods
+        self.tab_widget = QTabWidget()
+        self.tab_widget.setEnabled(False)
+        
+        # Rows tab
+        self.rows_tab = self._create_rows_tab()
+        self.tab_widget.addTab(self.rows_tab, "By Row Count")
+        
+        # Size tab
+        self.size_tab = self._create_size_tab()
+        self.tab_widget.addTab(self.size_tab, "By File Size")
+        
+        # Time tab
+        self.time_tab = self._create_time_tab()
+        self.tab_widget.addTab(self.time_tab, "By Time")
+        
+        # Custom tab
+        self.custom_tab = self._create_custom_tab()
+        self.tab_widget.addTab(self.custom_tab, "Custom")
+        
+        layout.addWidget(self.tab_widget)
+        
+        # Output configuration
+        output_group = QGroupBox("Output Configuration")
+        output_layout = QFormLayout()
+        
+        # Output directory
+        output_dir_layout = QHBoxLayout()
+        self.output_dir_edit = QLineEdit()
+        self.output_dir_edit.setPlaceholderText("Auto-create in same directory")
+        output_dir_layout.addWidget(self.output_dir_edit)
+        
+        browse_dir_btn = QPushButton("Browse")
+        browse_dir_btn.clicked.connect(self._browse_output_directory)
+        output_dir_layout.addWidget(browse_dir_btn)
+        
+        output_layout.addRow("Output Directory:", output_dir_layout)
+        
+        # Filename pattern
+        self.filename_pattern_edit = QLineEdit("{base_name}_part_{part_number:04d}{extension}")
+        output_layout.addRow("Filename Pattern:", self.filename_pattern_edit)
+        
+        # Compression (for parquet)
+        self.compression_combo = QComboBox()
+        self.compression_combo.addItems(["snappy", "gzip", "brotli", "lz4", "zstd"])
+        output_layout.addRow("Compression:", self.compression_combo)
+        
+        # Include header (for CSV)
+        self.include_header_checkbox = QCheckBox("Include header in each file")
+        self.include_header_checkbox.setChecked(True)
+        output_layout.addRow("", self.include_header_checkbox)
+        
+        output_group.setLayout(output_layout)
+        layout.addWidget(output_group)
+        
+        # Preview section
+        preview_group = QGroupBox("Split Preview")
+        preview_layout = QVBoxLayout()
+        
+        self.preview_text = QTextBrowser()
+        self.preview_text.setMaximumHeight(150)
+        preview_layout.addWidget(self.preview_text)
+        
+        refresh_preview_btn = QPushButton("Refresh Preview")
+        refresh_preview_btn.clicked.connect(self._update_preview)
+        preview_layout.addWidget(refresh_preview_btn)
+        
+        preview_group.setLayout(preview_layout)
+        layout.addWidget(preview_group)
+        
+        # Dialog buttons
+        button_layout = QHBoxLayout()
+        
+        ok_btn = QPushButton("OK")
+        ok_btn.clicked.connect(self._accept)
+        button_layout.addWidget(ok_btn)
+        
+        cancel_btn = QPushButton("Cancel")
+        cancel_btn.clicked.connect(self._reject)
+        button_layout.addWidget(cancel_btn)
+        
+        layout.addLayout(button_layout)
+        
+        self.setLayout(layout)
+        
+    def _create_rows_tab(self):
+        """Create the rows splitting tab."""
+        widget = QWidget()
+        layout = QVBoxLayout()
+        
+        # Row count configuration
+        form_layout = QFormLayout()
+        
+        self.rows_per_file_spin = QSpinBox()
+        self.rows_per_file_spin.setRange(1000, 10000000)
+        self.rows_per_file_spin.setValue(100000)
+        self.rows_per_file_spin.setSuffix(" rows")
+        form_layout.addRow("Rows per file:", self.rows_per_file_spin)
+        
+        # Estimated files info
+        self.estimated_files_label = QLabel("Estimated files: --")
+        form_layout.addRow("", self.estimated_files_label)
+        
+        layout.addLayout(form_layout)
+        
+        # Help text
+        help_text = QTextBrowser()
+        help_text.setMaximumHeight(100)
+        help_text.setPlainText(
+            "Split files based on the number of rows. This is useful for:\n"
+            "• Managing memory usage during processing\n"
+            "• Creating files of consistent size\n"
+            "• Parallel processing of data chunks"
+        )
+        layout.addWidget(help_text)
+        
+        widget.setLayout(layout)
+        return widget
+        
+    def _create_size_tab(self):
+        """Create the file size splitting tab."""
+        widget = QWidget()
+        layout = QVBoxLayout()
+        
+        # File size configuration
+        form_layout = QFormLayout()
+        
+        self.max_file_size_spin = QDoubleSpinBox()
+        self.max_file_size_spin.setRange(1.0, 10000.0)
+        self.max_file_size_spin.setValue(100.0)
+        self.max_file_size_spin.setSuffix(" MB")
+        self.max_file_size_spin.setDecimals(1)
+        form_layout.addRow("Maximum file size:", self.max_file_size_spin)
+        
+        # Size slider
+        self.size_slider = QSlider(Qt.Orientation.Horizontal)
+        self.size_slider.setRange(1, 1000)
+        self.size_slider.setValue(100)
+        self.size_slider.valueChanged.connect(self._on_size_slider_changed)
+        form_layout.addRow("", self.size_slider)
+        
+        # Estimated files info
+        self.estimated_files_size_label = QLabel("Estimated files: --")
+        form_layout.addRow("", self.estimated_files_size_label)
+        
+        layout.addLayout(form_layout)
+        
+        # Help text
+        help_text = QTextBrowser()
+        help_text.setMaximumHeight(100)
+        help_text.setPlainText(
+            "Split files based on target file size. This is useful for:\n"
+            "• Managing storage constraints\n"
+            "• Optimizing transfer speeds\n"
+            "• Creating files suitable for specific systems"
+        )
+        layout.addWidget(help_text)
+        
+        widget.setLayout(layout)
+        return widget
+        
+    def _create_time_tab(self):
+        """Create the time-based splitting tab."""
+        widget = QWidget()
+        layout = QVBoxLayout()
+        
+        # Time configuration
+        form_layout = QFormLayout()
+        
+        self.time_column_edit = QLineEdit()
+        self.time_column_edit.setPlaceholderText("e.g., timestamp, date, created_at")
+        form_layout.addRow("Time column name:", self.time_column_edit)
+        
+        self.time_interval_spin = QDoubleSpinBox()
+        self.time_interval_spin.setRange(0.1, 8760.0)  # 0.1 hours to 1 year
+        self.time_interval_spin.setValue(24.0)
+        self.time_interval_spin.setSuffix(" hours")
+        self.time_interval_spin.setDecimals(1)
+        form_layout.addRow("Time interval:", self.time_interval_spin)
+        
+        # Time interval presets
+        preset_layout = QHBoxLayout()
+        preset_layout.addWidget(QLabel("Quick presets:"))
+        
+        hour_btn = QPushButton("1 Hour")
+        hour_btn.clicked.connect(lambda: self.time_interval_spin.setValue(1.0))
+        preset_layout.addWidget(hour_btn)
+        
+        day_btn = QPushButton("1 Day")
+        day_btn.clicked.connect(lambda: self.time_interval_spin.setValue(24.0))
+        preset_layout.addWidget(day_btn)
+        
+        week_btn = QPushButton("1 Week")
+        week_btn.clicked.connect(lambda: self.time_interval_spin.setValue(168.0))
+        preset_layout.addWidget(week_btn)
+        
+        month_btn = QPushButton("1 Month")
+        month_btn.clicked.connect(lambda: self.time_interval_spin.setValue(720.0))
+        preset_layout.addWidget(month_btn)
+        
+        form_layout.addRow("", preset_layout)
+        
+        layout.addLayout(form_layout)
+        
+        # Help text
+        help_text = QTextBrowser()
+        help_text.setMaximumHeight(100)
+        help_text.setPlainText(
+            "Split files based on time intervals. This is useful for:\n"
+            "• Time-series data analysis\n"
+            "• Creating daily/weekly/monthly reports\n"
+            "• Managing data retention policies"
+        )
+        layout.addWidget(help_text)
+        
+        widget.setLayout(layout)
+        return widget
+        
+    def _create_custom_tab(self):
+        """Create the custom splitting tab."""
+        widget = QWidget()
+        layout = QVBoxLayout()
+        
+        # Custom condition
+        form_layout = QFormLayout()
+        
+        self.custom_condition_edit = QTextEdit()
+        self.custom_condition_edit.setMaximumHeight(100)
+        self.custom_condition_edit.setPlaceholderText(
+            "Enter Python expression that returns True when a new file should start.\n"
+            "Example: row['category'] != previous_category\n"
+            "Available variables: row (current row), previous_row, row_index"
+        )
+        form_layout.addRow("Custom condition:", self.custom_condition_edit)
+        
+        layout.addLayout(form_layout)
+        
+        # Help text
+        help_text = QTextBrowser()
+        help_text.setMaximumHeight(150)
+        help_text.setPlainText(
+            "Split files based on custom conditions. This is useful for:\n"
+            "• Splitting by category changes\n"
+            "• Creating files for specific data ranges\n"
+            "• Complex business logic requirements\n\n"
+            "Examples:\n"
+            "• row['user_id'] != previous_row['user_id']\n"
+            "• row['status'] == 'completed'\n"
+            "• row_index % 50000 == 0"
+        )
+        layout.addWidget(help_text)
+        
+        widget.setLayout(layout)
+        return widget
+        
+    def _apply_styling(self):
+        """Apply custom styling."""
+        self.setStyleSheet("""
+            QPushButton {
+                background-color: #3498db;
+                color: white;
+                border: none;
+                padding: 6px 12px;
+                border-radius: 3px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #2980b9;
+            }
+            QPushButton:pressed {
+                background-color: #21618c;
+            }
+            QLineEdit, QTextEdit, QSpinBox, QDoubleSpinBox, QComboBox {
+                padding: 5px;
+                border: 1px solid #bdc3c7;
+                border-radius: 3px;
+            }
+            QGroupBox {
+                font-weight: bold;
+                border: 2px solid #bdc3c7;
+                border-radius: 5px;
+                margin-top: 1ex;
+                padding-top: 10px;
+            }
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                left: 10px;
+                padding: 0 5px 0 5px;
+            }
+            QTextBrowser {
+                border: 1px solid #bdc3c7;
+                border-radius: 3px;
+                background-color: #f8f9fa;
+            }
+        """)
+        
+    def _on_enable_splitting_toggled(self, checked: bool):
+        """Handle enable splitting checkbox toggle."""
+        self.tab_widget.setEnabled(checked)
+        self.split_config.enabled = checked
+        self._update_preview()
+        
+    def _on_size_slider_changed(self, value: int):
+        """Handle size slider change."""
+        self.max_file_size_spin.setValue(float(value))
+        
+    def _browse_output_directory(self):
+        """Browse for output directory."""
+        directory = QFileDialog.getExistingDirectory(self, "Select Output Directory")
+        if directory:
+            self.output_dir_edit.setText(directory)
+            
+    def _update_preview(self):
+        """Update the split preview."""
+        if not self.split_config.enabled:
+            self.preview_text.setPlainText("File splitting is disabled.")
+            return
+            
+        # Get current tab
+        current_tab = self.tab_widget.currentIndex()
+        
+        if current_tab == 0:  # Rows tab
+            rows_per_file = self.rows_per_file_spin.value()
+            # Estimate based on typical file sizes
+            estimated_files = f"~{rows_per_file:,} rows per file"
+            self.estimated_files_label.setText(f"Estimated: {estimated_files}")
+            
+        elif current_tab == 1:  # Size tab
+            max_size = self.max_file_size_spin.value()
+            estimated_files = f"~{max_size:.1f} MB per file"
+            self.estimated_files_size_label.setText(f"Estimated: {estimated_files}")
+            
+        elif current_tab == 2:  # Time tab
+            interval = self.time_interval_spin.value()
+            column = self.time_column_edit.text()
+            if column:
+                estimated_files = f"Split by {interval:.1f} hour intervals using '{column}' column"
+            else:
+                estimated_files = "Please specify a time column"
+                
+        else:  # Custom tab
+            condition = self.custom_condition_edit.toPlainText()
+            if condition.strip():
+                estimated_files = f"Split based on custom condition"
+            else:
+                estimated_files = "Please specify a custom condition"
+                
+        # Update preview text
+        preview_text = f"Split Configuration:\n"
+        preview_text += f"Method: {self.tab_widget.tabText(current_tab)}\n"
+        preview_text += f"Output: {estimated_files}\n"
+        
+        if self.output_dir_edit.text():
+            preview_text += f"Directory: {self.output_dir_edit.text()}\n"
+        else:
+            preview_text += f"Directory: Auto-created\n"
+            
+        preview_text += f"Pattern: {self.filename_pattern_edit.text()}\n"
+        preview_text += f"Compression: {self.compression_combo.currentText()}"
+        
+        self.preview_text.setPlainText(preview_text)
+        
+    def _accept(self):
+        """Accept the configuration."""
+        if not self.split_config.enabled:
+            self.accept()
+            return
+            
+        # Validate configuration based on current tab
+        current_tab = self.tab_widget.currentIndex()
+        
+        if current_tab == 0:  # Rows
+            self.split_config.method = SplitMethod.ROWS
+            self.split_config.rows_per_file = self.rows_per_file_spin.value()
+            
+        elif current_tab == 1:  # Size
+            self.split_config.method = SplitMethod.SIZE
+            self.split_config.max_file_size_mb = self.max_file_size_spin.value()
+            
+        elif current_tab == 2:  # Time
+            self.split_config.method = SplitMethod.TIME
+            self.split_config.time_column = self.time_column_edit.text().strip()
+            self.split_config.time_interval_hours = self.time_interval_spin.value()
+            
+            if not self.split_config.time_column:
+                QMessageBox.warning(self, "Missing Time Column", 
+                                  "Please specify a time column name.")
+                return
+                
+        else:  # Custom
+            self.split_config.method = SplitMethod.CUSTOM
+            self.split_config.custom_condition = self.custom_condition_edit.toPlainText().strip()
+            
+            if not self.split_config.custom_condition:
+                QMessageBox.warning(self, "Missing Custom Condition", 
+                                  "Please specify a custom splitting condition.")
+                return
+                
+        # Get output configuration
+        self.split_config.output_directory = self.output_dir_edit.text().strip()
+        self.split_config.filename_pattern = self.filename_pattern_edit.text()
+        self.split_config.compression = self.compression_combo.currentText()
+        self.split_config.include_header = self.include_header_checkbox.isChecked()
+        
+        self.accept()
+        
+    def get_split_config(self) -> SplitConfig:
+        """Get the split configuration."""
+        return self.split_config 
