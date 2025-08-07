@@ -694,34 +694,57 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         # Initialize thread-safe UI manager
         self.thread_safe_ui = ThreadSafeUI(self)
         
-        # Remove the Help tab that was added by parent class
-        # We'll add it back at the end to ensure it's the rightmost tab
+        # The parent class has already created all the original tabs:
+        # - "Processing" (Setup and Process)
+        # - "Plotting & Analysis" 
+        # - "Plots List"
+        # - "DAT File Import"
+        # - "Help"
+        
+        # The parent class has already created all the original tabs and populated them:
+        # - "Processing" (Setup and Process)
+        # - "Plotting & Analysis" 
+        # - "Plots List"
+        # - "DAT File Import"
+        # - "Help"
+        
+        # We want to add our new tabs in the correct order without disturbing the original ones
+        # The final tab order should be:
+        # 1. Processing (original - already created by parent)
+        # 2. Plotting & Analysis (original - already created by parent)
+        # 3. Plots List (original - already created by parent)
+        # 4. Format Converter (new - we'll add this)
+        # 5. Folder Tool (new - we'll add this)
+        # 6. DAT File Import (original - already created by parent, but we want it on the right)
+        # 7. Help (original - already created by parent, rightmost)
+        
+        # To achieve this order, we need to temporarily remove the last two tabs and re-add them
+        # This is safe because the parent class has already created and populated them
+        self.main_tab_view.delete("DAT File Import")
         self.main_tab_view.delete("Help")
         
-        # Remove the DAT File Import tab to reorder it
-        self.main_tab_view.delete("DAT File Import")
-        
-        # Add the Format Converter tab
+        # Add our new tabs
         self.main_tab_view.add("Format Converter")
         self.create_format_converter_tab(self.main_tab_view.tab("Format Converter"))
         
-        # Add DAT File Import tab back (now it will be before Help)
-        self.main_tab_view.add("DAT File Import")
-        self.create_dat_import_tab(self.main_tab_view.tab("DAT File Import"))
-        
-        # Add Folder Tool tab (if available)
         if FOLDER_TOOL_AVAILABLE:
             self.main_tab_view.add("Folder Tool")
             self.create_folder_tool_tab(self.main_tab_view.tab("Folder Tool"))
         
-        # Add Help tab back as the rightmost tab
+        # Re-add the original tabs in the desired order
+        # Note: We don't need to call create_*_tab again because the parent class already did this
+        # We just need to re-add the tabs to the tab view
+        self.main_tab_view.add("DAT File Import")
         self.main_tab_view.add("Help")
-        self.create_help_tab(self.main_tab_view.tab("Help"))
     
     def __del__(self):
         """Cleanup when application is destroyed."""
-        if hasattr(self, 'thread_safe_ui'):
-            self.thread_safe_ui.shutdown()
+        try:
+            if hasattr(self, 'thread_safe_ui') and self.thread_safe_ui is not None:
+                self.thread_safe_ui.shutdown()
+        except:
+            # Ignore errors during cleanup
+            pass
 
     # Compiler converter methods - Define these BEFORE creating the UI
     def converter_browse_files(self):
