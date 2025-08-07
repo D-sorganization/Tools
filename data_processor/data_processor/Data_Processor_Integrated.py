@@ -416,6 +416,24 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         self.converter_batch_size = 10
         self.converter_chunk_size = 10000
         
+        # Initialize folder tool variables BEFORE calling parent class
+        # This ensures they exist when parent class methods are called
+        self.folder_source_folders = []
+        self.folder_destination = ""
+        self.folder_operation_mode = ctk.StringVar(value="combine")
+        self.folder_filter_extensions = ctk.StringVar(value="")
+        self.folder_min_file_size = ctk.StringVar(value="0")
+        self.folder_max_file_size = ctk.StringVar(value="1000")
+        self.folder_organize_by_type_var = ctk.BooleanVar(value=False)
+        self.folder_organize_by_date_var = ctk.BooleanVar(value=False)
+        self.folder_deduplicate_var = ctk.BooleanVar(value=False)
+        self.folder_zip_output_var = ctk.BooleanVar(value=False)
+        self.folder_preview_mode_var = ctk.BooleanVar(value=False)
+        self.folder_backup_before_var = ctk.BooleanVar(value=False)
+        self.folder_progress_var = ctk.DoubleVar(value=0)
+        self.folder_status_var = ctk.StringVar(value="Ready")
+        self.folder_cancel_flag = False # For cancelling processing
+        
         # Initialize the parent class
         super().__init__(*args, **kwargs)
         
@@ -449,31 +467,34 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
     # Compiler converter methods - Define these BEFORE creating the UI
     def converter_browse_files(self):
         """Browse for input files."""
-        files = filedialog.askopenfilenames(
-            title="Select Input Files",
-            filetypes=[
-                ("All Supported", "*.csv *.tsv *.txt *.parquet *.pq *.xlsx *.xls *.json *.h5 *.hdf5 *.pkl *.pickle *.npy *.mat *.feather *.arrow *.db *.sqlite"),
-                ("CSV Files", "*.csv"),
-                ("TSV Files", "*.tsv *.txt"),
-                ("Parquet Files", "*.parquet *.pq"),
-                ("Excel Files", "*.xlsx *.xls"),
-                ("JSON Files", "*.json"),
-                ("HDF5 Files", "*.h5 *.hdf5"),
-                ("Pickle Files", "*.pkl *.pickle"),
-                ("NumPy Files", "*.npy"),
-                ("MATLAB Files", "*.mat"),
-                ("Feather Files", "*.feather"),
-                ("Arrow Files", "*.arrow"),
-                ("SQLite Files", "*.db *.sqlite"),
-                ("All Files", "*.*")
-            ]
-        )
-        
-        if files:
-            self.converter_input_files = list(files)
-            self.converter_update_file_list()
-            self.converter_input_label.configure(text=f"{len(files)} files selected")
-            self.converter_update_convert_button()
+        try:
+            files = filedialog.askopenfilenames(
+                title="Select Input Files",
+                filetypes=[
+                    ("All Supported", "*.csv *.tsv *.txt *.parquet *.pq *.xlsx *.xls *.json *.h5 *.hdf5 *.pkl *.pickle *.npy *.mat *.feather *.arrow *.db *.sqlite"),
+                    ("CSV Files", "*.csv"),
+                    ("TSV Files", "*.tsv *.txt"),
+                    ("Parquet Files", "*.parquet *.pq"),
+                    ("Excel Files", "*.xlsx *.xls"),
+                    ("JSON Files", "*.json"),
+                    ("HDF5 Files", "*.h5 *.hdf5"),
+                    ("Pickle Files", "*.pkl *.pickle"),
+                    ("NumPy Files", "*.npy"),
+                    ("MATLAB Files", "*.mat"),
+                    ("Feather Files", "*.feather"),
+                    ("Arrow Files", "*.arrow"),
+                    ("SQLite Files", "*.db *.sqlite"),
+                    ("All Files", "*.*")
+                ]
+            )
+            
+            if files:
+                self.converter_input_files = list(files)
+                self.converter_update_file_list()
+                self.converter_input_label.configure(text=f"{len(files)} files selected")
+                self.converter_update_convert_button()
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to browse files: {str(e)}")
 
     def converter_browse_folder(self):
         """Browse for input folder."""
@@ -912,22 +933,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         folder_scrollable_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
         folder_scrollable_frame.grid_columnconfigure(0, weight=1)
         
-        # Initialize folder tool variables
-        self.folder_source_folders = []
-        self.folder_destination = ""
-        self.folder_operation_mode = ctk.StringVar(value="combine")
-        self.folder_filter_extensions = ctk.StringVar(value="")
-        self.folder_min_file_size = ctk.StringVar(value="0")
-        self.folder_max_file_size = ctk.StringVar(value="1000")
-        self.folder_organize_by_type_var = ctk.BooleanVar(value=False)
-        self.folder_organize_by_date_var = ctk.BooleanVar(value=False)
-        self.folder_deduplicate_var = ctk.BooleanVar(value=False)
-        self.folder_zip_output_var = ctk.BooleanVar(value=False)
-        self.folder_preview_mode_var = ctk.BooleanVar(value=False)
-        self.folder_backup_before_var = ctk.BooleanVar(value=False)
-        self.folder_progress_var = ctk.DoubleVar(value=0)
-        self.folder_status_var = ctk.StringVar(value="Ready")
-        self.folder_cancel_flag = False # Flag to signal cancellation
+        # Folder tool variables are now initialized in __init__()
         
         # Create UI sections
         self._create_folder_source_section(folder_scrollable_frame)
@@ -1124,10 +1130,13 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def _folder_select_source_folders(self):
         """Select source folders for processing."""
-        folders = filedialog.askdirectory(title="Select Source Folders", multiple=True)
-        if folders:
-            self.folder_source_folders.extend(folders)
-            self._folder_update_source_display()
+        try:
+            folders = filedialog.askdirectory(title="Select Source Folders", multiple=True)
+            if folders:
+                self.folder_source_folders.extend(folders)
+                self._folder_update_source_display()
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to select source folders: {str(e)}")
 
     def _folder_remove_selected_source(self):
         """Remove selected source folder from the list."""
@@ -1153,9 +1162,12 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def _folder_select_dest_folder(self):
         """Select destination folder."""
-        folder = filedialog.askdirectory(title="Select Destination Folder")
-        if folder:
-            self.folder_destination = folder
+        try:
+            folder = filedialog.askdirectory(title="Select Destination Folder")
+            if folder:
+                self.folder_destination = folder
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to select destination folder: {str(e)}")
             self.folder_dest_label.configure(text=folder)
 
     def _folder_run_processing(self):
