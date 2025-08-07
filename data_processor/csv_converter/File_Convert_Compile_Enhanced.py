@@ -747,7 +747,8 @@ class ConversionWorker(QThread):
     def __init__(self, input_files: List[str], output_path: str, 
                  output_format: str, combine_files: bool = True, 
                  chunk_size: int = 10000, selected_columns: Set[str] = None,
-                 format_options: Dict[str, Any] = None, split_config: SplitConfig = None):
+                 format_options: Dict[str, Any] = None, split_config: SplitConfig = None,
+                 batch_processing: bool = False, batch_size: int = 10):
         super().__init__()
         self.input_files = input_files
         self.output_path = output_path
@@ -757,12 +758,16 @@ class ConversionWorker(QThread):
         self.selected_columns = selected_columns or set()
         self.format_options = format_options or {}
         self.split_config = split_config or SplitConfig()
+        self.batch_processing = batch_processing
+        self.batch_size = batch_size
         self.is_cancelled = False
         
     def run(self):
         """Execute the conversion process."""
         try:
-            if self.combine_files:
+            if self.batch_processing:
+                self._convert_in_batches()
+            elif self.combine_files:
                 self._convert_to_single_file()
             else:
                 self._convert_to_multiple_files()
@@ -901,6 +906,88 @@ class ConversionWorker(QThread):
     def cancel(self):
         """Cancel the conversion process."""
         self.is_cancelled = True
+        
+    def _convert_in_batches(self):
+        """Convert files in batches to create multiple smaller output files."""
+        self.status_updated.emit("Starting batch processing...")
+        
+        # Create output directory if it doesn't exist
+        output_dir = Path(self.output_path).parent
+        output_dir.mkdir(parents=True, exist_ok=True)
+        
+        total_files = len(self.input_files)
+        total_batches = math.ceil(total_files / self.batch_size)
+        
+        self.status_updated.emit(f"Processing {total_files} files in {total_batches} batches of {self.batch_size} files each")
+        
+        for batch_num in range(total_batches):
+            if self.is_cancelled:
+                break
+                
+            start_idx = batch_num * self.batch_size
+            end_idx = min((batch_num + 1) * self.batch_size, total_files)
+            batch_files = self.input_files[start_idx:end_idx]
+            
+            self.status_updated.emit(f"Processing batch {batch_num + 1}/{total_batches} ({len(batch_files)} files)")
+            
+            # Process this batch
+            combined_data = []
+            
+            for i, input_file in enumerate(batch_files):
+                if self.is_cancelled:
+                    break
+                    
+                try:
+                    self.status_updated.emit(f"Reading {Path(input_file).name} (batch {batch_num + 1})")
+                    
+                    # Detect input format
+                    input_format = FileFormatDetector.detect_format(input_file)
+                    if not input_format:
+                        raise ValueError(f"Could not detect format for {input_file}")
+                    
+                    # Read the file
+                    df = DataReader.read_file(input_file, input_format)
+                    
+                    # Apply column selection if specified
+                    if self.selected_columns:
+                        available_columns = set(df.columns)
+                        selected_available = self.selected_columns.intersection(available_columns)
+                        if selected_available:
+                            df = df[list(selected_available)]
+                        else:
+                            self.status_updated.emit(f"Warning: No selected columns found in {input_file}")
+                            continue
+                    
+                    combined_data.append(df)
+                    
+                except Exception as e:
+                    self.error_occurred.emit(f"Error processing {input_file}: {str(e)}")
+                    continue
+            
+            if not combined_data:
+                self.status_updated.emit(f"Warning: No data in batch {batch_num + 1}")
+                continue
+            
+            # Combine batch data
+            self.status_updated.emit(f"Combining batch {batch_num + 1} data...")
+            batch_df = pd.concat(combined_data, ignore_index=True)
+            
+            # Generate output filename for this batch
+            output_path = Path(self.output_path)
+            batch_filename = f"{output_path.stem}_batch_{batch_num + 1:03d}{output_path.suffix}"
+            batch_output_path = output_path.parent / batch_filename
+            
+            # Write the batch file
+            self.status_updated.emit(f"Writing batch {batch_num + 1} to {batch_filename}")
+            DataWriter.write_file(batch_df, str(batch_output_path), self.output_format, **self.format_options)
+            
+            # Update progress
+            progress = int((batch_num + 1) / total_batches * 100)
+            self.progress_updated.emit(progress)
+            
+            # Clear batch data to free memory
+            del combined_data
+            del batch_df
 
     def _split_dataframe(self, df: pd.DataFrame, base_path: Path) -> List[str]:
         """Split a DataFrame into multiple files based on configuration."""
@@ -1155,6 +1242,8 @@ class UniversalFileConverter(QWidget):
         self.selected_columns = set()
         self.output_format = 'parquet'
         self.combine_files = True
+        self.batch_processing = False
+        self.batch_size = 10
         self.chunk_size = 10000
         self.format_options = {}
         self.split_config = SplitConfig()
@@ -1208,7 +1297,7 @@ class UniversalFileConverter(QWidget):
         layout = QVBoxLayout()
         
         # Input file selection
-        input_group = QGroupBox("Input Files")
+        input_group = QGroupBox("Input Files (CSV, Parquet, Excel, JSON, HDF5, etc.)")
         input_layout = QVBoxLayout()
         
         # File selection buttons
@@ -1288,6 +1377,22 @@ class UniversalFileConverter(QWidget):
         self.combine_files_checkbox.setChecked(True)
         self.combine_files_checkbox.toggled.connect(self._on_combine_toggled)
         output_layout.addRow("", self.combine_files_checkbox)
+        
+        # Batch processing option
+        self.batch_processing_checkbox = QCheckBox("Create multiple smaller output files (memory management)")
+        self.batch_processing_checkbox.toggled.connect(self._on_batch_processing_toggled)
+        output_layout.addRow("", self.batch_processing_checkbox)
+        
+        # Batch size configuration
+        batch_size_layout = QHBoxLayout()
+        batch_size_layout.addWidget(QLabel("Files per batch:"))
+        self.batch_size_spin = QSpinBox()
+        self.batch_size_spin.setRange(1, 1000)
+        self.batch_size_spin.setValue(10)
+        self.batch_size_spin.setEnabled(False)
+        batch_size_layout.addWidget(self.batch_size_spin)
+        batch_size_layout.addStretch()
+        output_layout.addRow("", batch_size_layout)
         
         # Output path
         output_path_layout = QHBoxLayout()
@@ -1433,14 +1538,14 @@ class UniversalFileConverter(QWidget):
         
     def _browse_folder(self):
         """Browse for a folder containing files to convert."""
-        folder_path = QFileDialog.getExistingDirectory(self, "Select Folder")
+        folder_path = QFileDialog.getExistingDirectory(self, "Select Folder with Files to Convert")
         if folder_path:
             self._scan_files(folder_path)
             
     def _browse_files(self):
         """Browse for individual files to convert."""
         file_paths, _ = QFileDialog.getOpenFileNames(
-            self, "Select Files", "",
+            self, "Select Files to Convert", "",
             "All Supported Files (*.csv *.tsv *.txt *.parquet *.pq *.xlsx *.xls *.json *.h5 *.hdf5 *.pkl *.pickle *.npy *.npz *.mat *.feather *.arrow *.db *.sqlite *.sqlite3 *.joblib);;All Files (*)"
         )
         if file_paths:
@@ -1528,6 +1633,23 @@ class UniversalFileConverter(QWidget):
     def _on_combine_toggled(self, checked: bool):
         """Handle combine files checkbox toggle."""
         self.combine_files = checked
+        # Disable batch processing when combining all files
+        if checked:
+            self.batch_processing_checkbox.setChecked(False)
+            self.batch_processing_checkbox.setEnabled(False)
+        else:
+            self.batch_processing_checkbox.setEnabled(True)
+            
+    def _on_batch_processing_toggled(self, checked: bool):
+        """Handle batch processing checkbox toggle."""
+        self.batch_processing = checked
+        self.batch_size_spin.setEnabled(checked)
+        # Disable combine files when batch processing
+        if checked:
+            self.combine_files_checkbox.setChecked(False)
+            self.combine_files_checkbox.setEnabled(False)
+        else:
+            self.combine_files_checkbox.setEnabled(True)
         
     def _on_split_files_toggled(self, checked: bool):
         """Handle split files checkbox toggle."""
@@ -1568,8 +1690,8 @@ class UniversalFileConverter(QWidget):
                 
     def _browse_output(self):
         """Browse for output path."""
-        if self.combine_files:
-            # Single file output
+        if self.combine_files or self.batch_processing:
+            # Single file output (for combine) or base file name (for batch processing)
             file_path, _ = QFileDialog.getSaveFileName(
                 self, "Save As", "",
                 f"{SUPPORTED_FORMATS[self.output_format]['name']} (*{SUPPORTED_FORMATS[self.output_format]['extensions'][0]})"
@@ -1604,6 +1726,8 @@ class UniversalFileConverter(QWidget):
         output_path = self.output_path_edit.text().strip()
         output_format = self.output_format_combo.currentData()
         combine_files = self.combine_files_checkbox.isChecked()
+        batch_processing = self.batch_processing_checkbox.isChecked()
+        batch_size = self.batch_size_spin.value()
         chunk_size = self.chunk_size_spin.value()
         
         # Update UI state
@@ -1615,7 +1739,8 @@ class UniversalFileConverter(QWidget):
         self.conversion_worker = ConversionWorker(
             self.input_files, output_path, output_format,
             combine_files, chunk_size, self.selected_columns,
-            self.format_options, self.split_config
+            self.format_options, self.split_config,
+            batch_processing, batch_size
         )
         
         self.conversion_worker.progress_updated.connect(self.progress_bar.setValue)
@@ -1840,7 +1965,7 @@ class FileSplittingDialog(QDialog):
         button_layout.addWidget(ok_btn)
         
         cancel_btn = QPushButton("Cancel")
-        cancel_btn.clicked.connect(self._reject)
+        cancel_btn.clicked.connect(self.reject)
         button_layout.addWidget(cancel_btn)
         
         layout.addLayout(button_layout)
@@ -2170,4 +2295,25 @@ class FileSplittingDialog(QDialog):
         
     def get_split_config(self) -> SplitConfig:
         """Get the split configuration."""
-        return self.split_config 
+        return self.split_config
+
+
+def main():
+    """Main application entry point."""
+    app = QApplication(sys.argv)
+    
+    # Set application properties
+    app.setApplicationName("Universal File Format Converter")
+    app.setApplicationVersion("2.0")
+    app.setOrganizationName("Data Processor")
+    
+    # Create and show main window
+    window = MainWindow()
+    window.show()
+    
+    # Start the application
+    sys.exit(app.exec())
+
+
+if __name__ == "__main__":
+    main() 
