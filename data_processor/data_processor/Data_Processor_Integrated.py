@@ -75,6 +75,14 @@ import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from Data_Processor_r0 import CSVProcessorApp as OriginalCSVProcessorApp
 
+# Import folder tool functionality
+try:
+    from Claude_Folders_Uno import FolderProcessorApp as OriginalFolderProcessorApp
+    FOLDER_TOOL_AVAILABLE = True
+except ImportError:
+    FOLDER_TOOL_AVAILABLE = False
+    print("Warning: Folder tool not available. Folder Tool tab will be disabled.")
+
 # =============================================================================
 # COMPILER CONVERTER CLASSES
 # =============================================================================
@@ -427,6 +435,11 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         # Add DAT File Import tab back (now it will be before Help)
         self.main_tab_view.add("DAT File Import")
         self.create_dat_import_tab(self.main_tab_view.tab("DAT File Import"))
+        
+        # Add Folder Tool tab (if available)
+        if FOLDER_TOOL_AVAILABLE:
+            self.main_tab_view.add("Folder Tool")
+            self.create_folder_tool_tab(self.main_tab_view.tab("Folder Tool"))
         
         # Add Help tab back as the rightmost tab
         self.main_tab_view.add("Help")
@@ -887,6 +900,85 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         splitter_frame = self._create_splitter(parent_tab, create_converter_left_content, create_converter_right_content, 
                                               'converter_left_width', 400)
         splitter_frame.grid(row=0, column=0, sticky="nsew")
+
+    def create_folder_tool_tab(self, parent_tab):
+        """Create the folder tool tab with embedded folder processor functionality."""
+        parent_tab.grid_columnconfigure(0, weight=1)
+        parent_tab.grid_rowconfigure(0, weight=1)
+        
+        if not FOLDER_TOOL_AVAILABLE:
+            # Show error message if folder tool is not available
+            error_frame = ctk.CTkFrame(parent_tab)
+            error_frame.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
+            
+            ctk.CTkLabel(error_frame, text="Folder Tool Not Available", 
+                        font=ctk.CTkFont(size=16, weight="bold")).pack(pady=20)
+            ctk.CTkLabel(error_frame, text="The folder tool component could not be loaded.\n"
+                        "Please ensure Claude_Folders_Uno.py is available in the same directory.").pack(pady=10)
+            return
+        
+        # Create a frame to hold the folder tool
+        folder_frame = ctk.CTkFrame(parent_tab)
+        folder_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+        folder_frame.grid_columnconfigure(0, weight=1)
+        folder_frame.grid_rowconfigure(0, weight=1)
+        
+        # Create a title for the folder tool section
+        title_label = ctk.CTkLabel(folder_frame, text="Enhanced Folder Processor", 
+                                  font=ctk.CTkFont(size=18, weight="bold"))
+        title_label.grid(row=0, column=0, pady=(10, 20))
+        
+        # Create a button to launch the folder tool in a separate window
+        launch_button = ctk.CTkButton(folder_frame, text="Launch Folder Tool", 
+                                     command=self.launch_folder_tool,
+                                     height=50, font=ctk.CTkFont(size=14, weight="bold"))
+        launch_button.grid(row=1, column=0, pady=20)
+        
+        # Add description
+        description_text = """
+The Folder Tool provides comprehensive folder processing capabilities:
+
+• Combine & Copy: Merge multiple folders into one
+• Flatten & Tidy: Remove nested folder structures
+• Copy & Prune Empty: Remove empty folders after copying
+• Deduplicate Files: Remove duplicate files in-place
+• Analyze & Report: Generate detailed folder analysis
+
+Click "Launch Folder Tool" to open the full folder processing interface.
+        """
+        
+        description_label = ctk.CTkLabel(folder_frame, text=description_text, 
+                                       justify="left", wraplength=600)
+        description_label.grid(row=2, column=0, pady=20, padx=20)
+
+    def launch_folder_tool(self):
+        """Launch the folder tool in a separate window."""
+        if not FOLDER_TOOL_AVAILABLE:
+            messagebox.showerror("Error", "Folder tool is not available.")
+            return
+        
+        try:
+            # Create a new Tkinter root window for the folder tool
+            folder_root = tk.Tk()
+            
+            # Initialize the folder processor app
+            folder_app = OriginalFolderProcessorApp(folder_root)
+            
+            # Set up the window to be modal relative to the main application
+            folder_root.transient(self)
+            folder_root.grab_set()
+            
+            # Center the window on screen
+            folder_root.update_idletasks()
+            x = (folder_root.winfo_screenwidth() // 2) - (700 // 2)
+            y = (folder_root.winfo_screenheight() // 2) - (900 // 2)
+            folder_root.geometry(f"700x900+{x}+{y}")
+            
+            # Start the folder tool
+            folder_root.mainloop()
+            
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to launch folder tool: {str(e)}")
 
 class ColumnSelectionDialog(ctk.CTkToplevel):
     """Simple dialog for column selection."""
