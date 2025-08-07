@@ -927,6 +927,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         self.folder_backup_before_var = ctk.BooleanVar(value=False)
         self.folder_progress_var = ctk.DoubleVar(value=0)
         self.folder_status_var = ctk.StringVar(value="Ready")
+        self.folder_cancel_flag = False # Flag to signal cancellation
         
         # Create UI sections
         self._create_folder_source_section(folder_scrollable_frame)
@@ -1168,6 +1169,9 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             messagebox.showwarning("No Destination", "Please select a destination folder.")
             return
         
+        # Reset cancel flag
+        self.folder_cancel_flag = False
+        
         # Start processing in background thread
         processing_thread = threading.Thread(target=self._folder_perform_processing)
         processing_thread.daemon = True
@@ -1180,6 +1184,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def _folder_cancel_processing(self):
         """Cancel the folder processing operation."""
+        self.folder_cancel_flag = True # Set flag to signal cancellation
         self.folder_status_var.set("Cancelled")
         self.folder_progress_bar.set(0)
         self.folder_run_button.configure(state="normal")
@@ -1213,44 +1218,502 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))
 
     def _folder_combine_operation(self):
-        """Perform combine operation."""
-        # Implementation would go here - for now just simulate progress
-        for i in range(101):
-            self.after(0, lambda p=i: self.folder_progress_bar.set(p/100))
-            self.after(0, lambda p=i: self.folder_status_var.set(f"Combining files... {p}%"))
-            time.sleep(0.05)
+        """Perform combine operation - copy all files from source folders to destination."""
+        try:
+            import os
+            import shutil
+            from datetime import datetime
+            
+            # Create destination directory
+            os.makedirs(self.folder_destination, exist_ok=True)
+            
+            # Count total files for progress tracking
+            total_files = 0
+            for src in self.folder_source_folders:
+                for root, dirs, files in os.walk(src):
+                    total_files += len(files)
+            
+            if total_files == 0:
+                self.after(0, lambda: self.folder_status_var.set("No files found in source folders"))
+                return
+            
+            processed_files = 0
+            copied_count = 0
+            renamed_count = 0
+            skipped_count = 0
+            
+            for src in self.folder_source_folders:
+                if self.folder_cancel_flag:
+                    break
+                    
+                for root, dirs, files in os.walk(src):
+                    for file in files:
+                        if self.folder_cancel_flag:
+                            break
+                            
+                        source_path = os.path.join(root, file)
+                        
+                        # Apply file filters
+                        if not self._folder_validate_file_filters(source_path):
+                            skipped_count += 1
+                            processed_files += 1
+                            continue
+                        
+                        # Get organized destination path
+                        dest_path = self._folder_get_organized_path(source_path, self.folder_destination)
+                        dest_dir = os.path.dirname(dest_path)
+                        
+                        # Create destination directory if needed
+                        os.makedirs(dest_dir, exist_ok=True)
+                        
+                        # Handle naming conflicts
+                        final_dest_path = self._folder_get_unique_path(dest_path)
+                        if final_dest_path != dest_path:
+                            renamed_count += 1
+                        
+                        try:
+                            if not self.folder_preview_mode_var.get():
+                                shutil.copy2(source_path, final_dest_path)
+                            copied_count += 1
+                        except Exception as e:
+                            print(f"Error copying '{file}': {e}")
+                        
+                        processed_files += 1
+                        if processed_files % 10 == 0:  # Update progress every 10 files
+                            progress = processed_files / total_files
+                            self.after(0, lambda p=progress: self.folder_progress_bar.set(p))
+                            self.after(0, lambda p=processed_files, t=total_files: 
+                                     self.folder_status_var.set(f"Processed {p}/{t} files"))
+            
+            # Final status
+            if self.folder_preview_mode_var.get():
+                status = f"PREVIEW: Would copy {copied_count} files, rename {renamed_count}, skip {skipped_count}"
+            else:
+                status = f"Copied {copied_count} files, renamed {renamed_count}, skipped {skipped_count}"
+            
+            self.after(0, lambda: self.folder_status_var.set(status))
+            
+        except Exception as e:
+            self.after(0, lambda: self.folder_status_var.set(f"Error: {str(e)}"))
 
     def _folder_flatten_operation(self):
-        """Perform flatten operation."""
-        # Implementation would go here
-        for i in range(101):
-            self.after(0, lambda p=i: self.folder_progress_bar.set(p/100))
-            self.after(0, lambda p=i: self.folder_status_var.set(f"Flattening folders... {p}%"))
-            time.sleep(0.05)
+        """Perform flatten operation - copy files from nested folders to top level."""
+        try:
+            import os
+            import shutil
+            
+            # Create destination directory
+            os.makedirs(self.folder_destination, exist_ok=True)
+            
+            # Count total files for progress tracking
+            total_files = 0
+            for src in self.folder_source_folders:
+                for root, dirs, files in os.walk(src):
+                    total_files += len(files)
+            
+            if total_files == 0:
+                self.after(0, lambda: self.folder_status_var.set("No files found in source folders"))
+                return
+            
+            processed_files = 0
+            copied_count = 0
+            renamed_count = 0
+            skipped_count = 0
+            
+            for src in self.folder_source_folders:
+                if self.folder_cancel_flag:
+                    break
+                    
+                for root, dirs, files in os.walk(src):
+                    for file in files:
+                        if self.folder_cancel_flag:
+                            break
+                            
+                        source_path = os.path.join(root, file)
+                        
+                        # Apply file filters
+                        if not self._folder_validate_file_filters(source_path):
+                            skipped_count += 1
+                            processed_files += 1
+                            continue
+                        
+                        # For flatten operation, files go directly to destination root
+                        dest_path = os.path.join(self.folder_destination, file)
+                        
+                        # Handle naming conflicts
+                        final_dest_path = self._folder_get_unique_path(dest_path)
+                        if final_dest_path != dest_path:
+                            renamed_count += 1
+                        
+                        try:
+                            if not self.folder_preview_mode_var.get():
+                                shutil.copy2(source_path, final_dest_path)
+                            copied_count += 1
+                        except Exception as e:
+                            print(f"Error copying '{file}': {e}")
+                        
+                        processed_files += 1
+                        if processed_files % 10 == 0:
+                            progress = processed_files / total_files
+                            self.after(0, lambda p=progress: self.folder_progress_bar.set(p))
+                            self.after(0, lambda p=processed_files, t=total_files: 
+                                     self.folder_status_var.set(f"Processed {p}/{t} files"))
+            
+            # Final status
+            if self.folder_preview_mode_var.get():
+                status = f"PREVIEW: Would flatten {copied_count} files, rename {renamed_count}, skip {skipped_count}"
+            else:
+                status = f"Flattened {copied_count} files, renamed {renamed_count}, skipped {skipped_count}"
+            
+            self.after(0, lambda: self.folder_status_var.set(status))
+            
+        except Exception as e:
+            self.after(0, lambda: self.folder_status_var.set(f"Error: {str(e)}"))
 
     def _folder_prune_operation(self):
-        """Perform prune operation."""
-        # Implementation would go here
-        for i in range(101):
-            self.after(0, lambda p=i: self.folder_progress_bar.set(p/100))
-            self.after(0, lambda p=i: self.folder_status_var.set(f"Pruning empty folders... {p}%"))
-            time.sleep(0.05)
+        """Perform prune operation - copy folders but skip empty subfolders."""
+        try:
+            import os
+            import shutil
+            
+            # Create destination directory
+            os.makedirs(self.folder_destination, exist_ok=True)
+            
+            # Count total files for progress tracking
+            total_files = 0
+            for src in self.folder_source_folders:
+                for root, dirs, files in os.walk(src):
+                    total_files += len(files)
+            
+            if total_files == 0:
+                self.after(0, lambda: self.folder_status_var.set("No files found in source folders"))
+                return
+            
+            processed_files = 0
+            copied_count = 0
+            skipped_count = 0
+            
+            for src in self.folder_source_folders:
+                if self.folder_cancel_flag:
+                    break
+                    
+                # Get relative path from source
+                src_name = os.path.basename(src)
+                dest_src_path = os.path.join(self.folder_destination, src_name)
+                
+                for root, dirs, files in os.walk(src):
+                    if self.folder_cancel_flag:
+                        break
+                    
+                    # Skip empty directories
+                    if not files:
+                        continue
+                    
+                    # Calculate relative path
+                    rel_path = os.path.relpath(root, src)
+                    dest_dir = os.path.join(dest_src_path, rel_path)
+                    
+                    # Create destination directory
+                    if not self.folder_preview_mode_var.get():
+                        os.makedirs(dest_dir, exist_ok=True)
+                    
+                    for file in files:
+                        if self.folder_cancel_flag:
+                            break
+                            
+                        source_path = os.path.join(root, file)
+                        
+                        # Apply file filters
+                        if not self._folder_validate_file_filters(source_path):
+                            skipped_count += 1
+                            processed_files += 1
+                            continue
+                        
+                        dest_path = os.path.join(dest_dir, file)
+                        
+                        try:
+                            if not self.folder_preview_mode_var.get():
+                                shutil.copy2(source_path, dest_path)
+                            copied_count += 1
+                        except Exception as e:
+                            print(f"Error copying '{file}': {e}")
+                        
+                        processed_files += 1
+                        if processed_files % 10 == 0:
+                            progress = processed_files / total_files
+                            self.after(0, lambda p=progress: self.folder_progress_bar.set(p))
+                            self.after(0, lambda p=processed_files, t=total_files: 
+                                     self.folder_status_var.set(f"Processed {p}/{t} files"))
+            
+            # Final status
+            if self.folder_preview_mode_var.get():
+                status = f"PREVIEW: Would copy {copied_count} files, skip {skipped_count} (pruned empty folders)"
+            else:
+                status = f"Copied {copied_count} files, skipped {skipped_count} (pruned empty folders)"
+            
+            self.after(0, lambda: self.folder_status_var.set(status))
+            
+        except Exception as e:
+            self.after(0, lambda: self.folder_status_var.set(f"Error: {str(e)}"))
 
     def _folder_deduplicate_operation(self):
-        """Perform deduplicate operation."""
-        # Implementation would go here
-        for i in range(101):
-            self.after(0, lambda p=i: self.folder_progress_bar.set(p/100))
-            self.after(0, lambda p=i: self.folder_status_var.set(f"Deduplicating files... {p}%"))
-            time.sleep(0.05)
+        """Perform deduplicate operation - remove renamed duplicates in source folders."""
+        try:
+            import os
+            import re
+            
+            # Count total files for progress tracking
+            total_files = 0
+            for src in self.folder_source_folders:
+                for root, dirs, files in os.walk(src):
+                    total_files += len(files)
+            
+            if total_files == 0:
+                self.after(0, lambda: self.folder_status_var.set("No files found in source folders"))
+                return
+            
+            processed_files = 0
+            deleted_count = 0
+            pattern = re.compile(r"(.+?)(?: \((\d+)\))?(\.\w+)$")
+            
+            for src in self.folder_source_folders:
+                if self.folder_cancel_flag:
+                    break
+                    
+                for root, dirs, files in os.walk(src):
+                    if self.folder_cancel_flag:
+                        break
+                        
+                    files_by_base_name = {}
+                    for filename in files:
+                        match = pattern.match(filename)
+                        if match:
+                            base, _, ext = match.groups()
+                            base_name = f"{base}{ext}"
+                            files_by_base_name.setdefault(base_name, []).append(os.path.join(root, filename))
+                    
+                    for base_name, file_list in files_by_base_name.items():
+                        if len(file_list) > 1:
+                            try:
+                                # Keep the newest file
+                                file_to_keep = max(file_list, key=lambda f: os.path.getmtime(f))
+                            except (OSError, FileNotFoundError):
+                                continue
+                            
+                            for file_path in file_list:
+                                if file_path != file_to_keep:
+                                    try:
+                                        if not self.folder_preview_mode_var.get():
+                                            os.remove(file_path)
+                                        deleted_count += 1
+                                    except OSError as e:
+                                        print(f"Failed to delete '{os.path.basename(file_path)}': {e}")
+                        
+                        processed_files += len(file_list)
+                        if processed_files % 10 == 0:
+                            progress = processed_files / total_files
+                            self.after(0, lambda p=progress: self.folder_progress_bar.set(p))
+                            self.after(0, lambda p=processed_files, t=total_files: 
+                                     self.folder_status_var.set(f"Processed {p}/{t} files"))
+            
+            # Final status
+            if self.folder_preview_mode_var.get():
+                status = f"PREVIEW: Would delete {deleted_count} duplicate files"
+            else:
+                status = f"Deleted {deleted_count} duplicate files"
+            
+            self.after(0, lambda: self.folder_status_var.set(status))
+            
+        except Exception as e:
+            self.after(0, lambda: self.folder_status_var.set(f"Error: {str(e)}"))
 
     def _folder_analyze_operation(self):
-        """Perform analyze operation."""
-        # Implementation would go here
-        for i in range(101):
-            self.after(0, lambda p=i: self.folder_progress_bar.set(p/100))
-            self.after(0, lambda p=i: self.folder_status_var.set(f"Analyzing folders... {p}%"))
-            time.sleep(0.05)
+        """Perform analyze operation - generate detailed report of folder contents."""
+        try:
+            import os
+            from collections import defaultdict
+            from datetime import datetime
+            
+            # Count total files for progress tracking
+            total_files = 0
+            for src in self.folder_source_folders:
+                for root, dirs, files in os.walk(src):
+                    total_files += len(files)
+            
+            if total_files == 0:
+                self.after(0, lambda: self.folder_status_var.set("No files found in source folders"))
+                return
+            
+            processed_files = 0
+            total_size = 0
+            file_types = defaultdict(int)
+            size_by_type = defaultdict(int)
+            largest_files = []
+            
+            report_lines = ["=== FOLDER ANALYSIS REPORT ===", f"Generated: {datetime.now()}", ""]
+            
+            for src in self.folder_source_folders:
+                if self.folder_cancel_flag:
+                    break
+                    
+                report_lines.append(f"Analyzing: {src}")
+                folder_files = 0
+                folder_size = 0
+                
+                for root, dirs, files in os.walk(src):
+                    for file in files:
+                        if self.folder_cancel_flag:
+                            break
+                            
+                        file_path = os.path.join(root, file)
+                        try:
+                            file_size = os.path.getsize(file_path)
+                            file_ext = os.path.splitext(file)[1].lower() or 'no_extension'
+                            
+                            total_size += file_size
+                            folder_files += 1
+                            folder_size += file_size
+                            file_types[file_ext] += 1
+                            size_by_type[file_ext] += file_size
+                            
+                            # Track largest files
+                            largest_files.append((file_path, file_size))
+                            if len(largest_files) > 10:
+                                largest_files.sort(key=lambda x: x[1], reverse=True)
+                                largest_files = largest_files[:10]
+                                
+                        except OSError:
+                            continue
+                        
+                        processed_files += 1
+                        if processed_files % 10 == 0:
+                            progress = processed_files / total_files
+                            self.after(0, lambda p=progress: self.folder_progress_bar.set(p))
+                            self.after(0, lambda p=processed_files, t=total_files: 
+                                     self.folder_status_var.set(f"Analyzed {p}/{t} files"))
+                
+                report_lines.append(f"  Files: {folder_files}, Size: {folder_size/(1024*1024):.1f} MB")
+            
+            report_lines.extend([
+                "",
+                f"TOTAL FILES: {processed_files}",
+                f"TOTAL SIZE: {total_size/(1024*1024):.1f} MB",
+                "",
+                "FILE TYPES:",
+            ])
+            
+            for ext, count in sorted(file_types.items(), key=lambda x: x[1], reverse=True):
+                size_mb = size_by_type[ext] / (1024*1024)
+                report_lines.append(f"  {ext}: {count} files, {size_mb:.1f} MB")
+            
+            report_lines.extend(["", "LARGEST FILES:"])
+            for file_path, size in sorted(largest_files, key=lambda x: x[1], reverse=True):
+                size_mb = size / (1024*1024)
+                report_lines.append(f"  {os.path.basename(file_path)}: {size_mb:.1f} MB")
+            
+            # Show report in a dialog
+            report_text = "\n".join(report_lines)
+            self.after(0, lambda: self._show_folder_analysis_report(report_text))
+            
+            self.after(0, lambda: self.folder_status_var.set(f"Analysis complete: {processed_files} files analyzed"))
+            
+        except Exception as e:
+            self.after(0, lambda: self.folder_status_var.set(f"Error: {str(e)}"))
+
+    def _show_folder_analysis_report(self, report_text):
+        """Show the analysis report in a dialog."""
+        dialog = ctk.CTkToplevel(self)
+        dialog.title("Folder Analysis Report")
+        dialog.geometry("800x600")
+        
+        # Make dialog modal
+        dialog.transient(self)
+        dialog.grab_set()
+        
+        # Create text widget
+        text_widget = ctk.CTkTextbox(dialog)
+        text_widget.pack(fill="both", expand=True, padx=10, pady=10)
+        
+        # Insert report text
+        text_widget.insert("1.0", report_text)
+        
+        # Add close button
+        close_button = ctk.CTkButton(dialog, text="Close", command=dialog.destroy)
+        close_button.pack(pady=10)
+
+    def _folder_validate_file_filters(self, file_path):
+        """Validate if a file meets the filtering criteria."""
+        if self.folder_cancel_flag:
+            return False
+            
+        # Extension filter
+        extensions = self.folder_filter_extensions.get().strip()
+        if extensions:
+            ext_list = [ext.strip().lower() for ext in extensions.split(',')]
+            file_ext = os.path.splitext(file_path)[1].lower()
+            if file_ext not in ext_list:
+                return False
+        
+        # Size filter
+        try:
+            file_size_mb = os.path.getsize(file_path) / (1024 * 1024)
+            
+            min_size = float(self.folder_min_file_size.get() or 0)
+            if file_size_mb < min_size:
+                return False
+                
+            max_size_str = self.folder_max_file_size.get().strip()
+            if max_size_str:
+                max_size = float(max_size_str)
+                if file_size_mb > max_size:
+                    return False
+        except (ValueError, OSError):
+            return False
+            
+        return True
+
+    def _folder_get_organized_path(self, file_path, dest_base):
+        """Returns the organized destination path based on organization options."""
+        filename = os.path.basename(file_path)
+        dest_path = dest_base
+        
+        # Organize by type
+        if self.folder_organize_by_type_var.get():
+            file_ext = os.path.splitext(filename)[1].lower()
+            type_mapping = {
+                '.jpg': 'Images', '.jpeg': 'Images', '.png': 'Images', '.gif': 'Images', '.bmp': 'Images',
+                '.mp4': 'Videos', '.avi': 'Videos', '.mov': 'Videos', '.wmv': 'Videos', '.mkv': 'Videos',
+                '.mp3': 'Audio', '.wav': 'Audio', '.flac': 'Audio', '.aac': 'Audio',
+                '.pdf': 'Documents', '.doc': 'Documents', '.docx': 'Documents', '.txt': 'Documents',
+                '.zip': 'Archives', '.rar': 'Archives', '.7z': 'Archives', '.tar': 'Archives'
+            }
+            file_type = type_mapping.get(file_ext, 'Other')
+            dest_path = os.path.join(dest_path, file_type)
+        
+        # Organize by date
+        if self.folder_organize_by_date_var.get():
+            try:
+                mtime = os.path.getmtime(file_path)
+                date_folder = datetime.fromtimestamp(mtime).strftime('%Y/%m')
+                dest_path = os.path.join(dest_path, date_folder)
+            except OSError:
+                dest_path = os.path.join(dest_path, 'Unknown_Date')
+        
+        return os.path.join(dest_path, filename)
+
+    def _folder_get_unique_path(self, path):
+        """Get a unique path by adding a number if the file already exists."""
+        if not os.path.exists(path):
+            return path
+        parent, name = os.path.split(path)
+        is_file = '.' in name and not os.path.isdir(path)
+        filename, ext = os.path.splitext(name) if is_file else (name, '')
+        counter = 1
+        new_path = os.path.join(parent, f"{filename} ({counter}){ext}")
+        while os.path.exists(new_path):
+            counter += 1
+            new_path = os.path.join(parent, f"{filename} ({counter}){ext}")
+        return new_path
 
 class ColumnSelectionDialog(ctk.CTkToplevel):
     """Simple dialog for column selection."""
