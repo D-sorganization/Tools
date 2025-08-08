@@ -350,7 +350,7 @@ class CSVProcessorApp(ctk.CTk):
         bulk_content_frame.pack(fill="x", padx=5, pady=5)
         bulk_content_frame.grid_columnconfigure(0, weight=1)
         
-        self.bulk_mode_var = ctk.BooleanVar(value=True)  # Default to True
+        self.bulk_mode_var = ctk.BooleanVar(value=False)  # Default to False per request
         bulk_checkbox = ctk.CTkCheckBox(
             bulk_content_frame, 
             text="Bulk Processing Mode", 
@@ -1252,7 +1252,13 @@ class CSVProcessorApp(ctk.CTk):
             
             print("DEBUG: Calling update_file_list()")
             self.update_file_list()
-            print("DEBUG: Files selected. Use 'Load from Files' button to load signals.")
+            # Auto-load signals for Processing tab immediately to populate lists
+            try:
+                print("DEBUG: Auto-loading signals after file selection...")
+                # Schedule shortly so UI can render the updated file list first
+                self.after(50, self.load_signals_from_files)
+            except Exception as e:
+                print(f"DEBUG: Auto-load scheduling failed: {e}")
         else:
             print("DEBUG: No files selected (user cancelled)")
 
