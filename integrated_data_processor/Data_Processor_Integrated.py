@@ -78,7 +78,7 @@ from Data_Processor_r0 import CSVProcessorApp as OriginalCSVProcessorApp
 
 # Import folder tool functionality
 try:
-    from Claude_Folders_Uno import FolderProcessorApp as OriginalFolderProcessorApp
+    from folder_tool.Folder_Cleanup_Tool_Rev0 import FolderProcessorApp
     FOLDER_TOOL_AVAILABLE = True
 except ImportError:
     FOLDER_TOOL_AVAILABLE = False
