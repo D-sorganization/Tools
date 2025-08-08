@@ -1,0 +1,94 @@
+{
+    // GitHub Copilot Max Request Settings
+    "github.copilot.editor.enableCodeActions": true,
+    "github.copilot.enable": {
+        "*": true,
+        "plaintext": true,
+        "markdown": true,
+        "scminput": false
+    },
+    
+    // Copilot Chat Settings - Controls max request/response size
+    "github.copilot.chat.enableCodeBlocks": true,
+    "github.copilot.chat.localeOverride": "auto",
+    "github.copilot.chat.scopeSelection": true,
+    "github.copilot.chat.experimental.codeGeneration.instructions": [
+        "Use the .github/copilot-instructions.md file for workspace-specific guidance",
+        "Follow conventional commit message format",
+        "Always create feature branches for significant changes",
+        "Include comprehensive error handling and logging"
+    ],
+    
+    // Advanced Copilot Settings for Request Management
+    "github.copilot.advanced": {
+        "secret_key": "github.copilot.enableAutoCompletions",
+        "length": 3000,
+        "temperature": "",
+        "top_p": "",
+        "debug.overrideEngine": "",
+        "debug.testOverrideProxyUrl": "",
+        "debug.overrideProxyUrl": ""
+    },
+    
+    // Max Request Configuration
+    "github.copilot.chat.maxRequestTokens": 8000,
+    "github.copilot.editor.maxCompletionLength": 3000,
+    "github.copilot.chat.maxContextFiles": 20,
+    "github.copilot.chat.maxContextLines": 10000,
+    
+    // Experimental Features for Enhanced Requests
+    "github.copilot.experimental.enableServerExperiments": true,
+    "github.copilot.experimental.enableRequestLogging": false,
+    "github.copilot.experimental.conversationThreading": true,
+    "github.copilot.experimental.enableLargeContextWindow": true,
+    
+    // Editor Settings that Affect Request Context
+    "editor.suggest.preview": true,
+    "editor.suggest.showStatusBar": true,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": true,
+    
+    // File Handling for Large Requests
+    "files.maxMemoryForLargeFilesMB": 8192,
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/node_modules": true,
+        "**/.venv": true,
+        "**/venv": true
+    },
+    
+    // Python-specific settings for better context
+    "python.defaultInterpreterPath": "python",
+    "python.analysis.autoSearchPaths": true,
+    "python.analysis.extraPaths": [],
+    "python.analysis.diagnosticMode": "workspace",
+    "python.analysis.typeCheckingMode": "basic",
+    
+    // Terminal settings
+    "terminal.integrated.defaultProfile.windows": "Git Bash",
+    "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+            "source": "PowerShell",
+            "icon": "terminal-powershell"
+        },
+        "Command Prompt": {
+            "path": [
+                "${env:windir}\\Sysnative\\cmd.exe",
+                "${env:windir}\\System32\\cmd.exe"
+            ],
+            "args": [],
+            "icon": "terminal-cmd"
+        },
+        "Git Bash": {
+            "source": "Git Bash"
+        }
+    }
+}
