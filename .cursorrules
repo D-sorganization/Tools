@@ -75,3 +75,320 @@ This is a comprehensive scientific and engineering simulation platform for proce
 - **Launch issues:** Verify working directory is `integrated_process_simulator/`
 
 Remember: This is a scientific simulation platform - accuracy and proper calculations are paramount. Always use real thermodynamic values and engineering correlations, never hardcoded placeholders.
+
+## Extended Cursor IDE Development Rules
+
+### Repository Structure and Organization
+
+#### Python Project Structure Standard
+```
+project_name/
+├── README.md
+├── requirements.txt
+├── setup.py (for packages)
+├── .gitignore
+├── .env.example
+├── .cursor-rules (Cursor-specific)
+├── src/
+│   └── project_name/
+│       ├── __init__.py
+│       ├── main.py
+│       ├── gui/
+│       │   ├── __init__.py
+│       │   └── main_window.py
+│       └── utils/
+│           ├── __init__.py
+│           └── helpers.py
+├── tests/
+│   ├── __init__.py
+│   └── test_main.py
+├── docs/
+├── data/ (if applicable)
+└── scripts/
+```
+
+### Cursor-Specific Configuration Best Practices
+
+#### Enhanced Settings Configuration
+Add to `.vscode/settings.json` (Cursor uses VS Code settings):
+
+```json
+{
+    "cursor.cpp.disabledLanguages": ["plaintext", "markdown"],
+    "cursor.general.enableCtrlKChatShortcut": true,
+    "cursor.chat.model": "gpt-4",
+    "cursor.autocomplete.enabled": true,
+    "cursor.autocomplete.model": "claude-3.5-sonnet",
+    "cursor.autocomplete.acceptOnTab": true,
+    "cursor.autocomplete.suggestOnEveryChange": true,
+    "python.defaultInterpreterPath": "./venv/bin/python",
+    "python.terminal.activateEnvironment": true,
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.formatting.provider": "black",
+    "python.formatting.blackArgs": ["--line-length", "88"],
+    "files.autoSave": "onFocusChange",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    }
+}
+```
+
+### Advanced Git Workflow Rules
+
+#### Enhanced Branch Strategy
+- **main/master**: Production-ready code only
+- **develop**: Integration branch for features
+- **feature/**: Individual features (`feature/add-login-gui`)
+- **hotfix/**: Critical bug fixes (`hotfix/fix-crash-bug`)
+
+#### Cursor-Enhanced Commit Workflow
+1. **Use Cursor's AI commit messages**: Let Cursor suggest commit messages, then review and edit
+2. **Conventional commit format**:
+   ```
+   type(scope): description
+   
+   Examples:
+   feat(gui): add user authentication dialog
+   fix(data): resolve CSV parsing memory leak
+   docs: update API documentation
+   refactor(utils): optimize helper functions
+   ```
+
+3. **Cursor commit workflow**:
+   - Use Ctrl+Shift+G to open source control
+   - Stage changes selectively
+   - Use Cursor's AI to generate commit messages
+   - Review and customize the AI suggestion
+   - Add detailed description if needed
+
+### Cursor AI Safety Rules
+
+#### AI Code Review Process
+1. **Always review AI suggestions** before accepting
+2. **Use Cursor Chat (Ctrl+L)** to ask questions about generated code
+3. **Verify complex algorithms** by asking Cursor to explain them
+4. **Test AI-generated code** thoroughly before committing
+
+#### Cursor Chat Best Practices
+- **Ask for explanations**: "Explain this function's logic"
+- **Request alternatives**: "Show me a different approach to this problem"
+- **Seek optimization**: "How can I make this code more efficient?"
+- **Security review**: "Are there any security issues with this code?"
+
+#### What to Double-Check with Cursor
+- Use chat to verify database queries and connections
+- Ask Cursor to review file I/O operations for safety
+- Request security analysis for API calls
+- Have Cursor explain error handling strategies
+- Verify algorithm correctness for complex calculations
+
+#### Cursor-Specific Safety Commands
+```
+# In Cursor Chat (Ctrl+L):
+"Review this code for security vulnerabilities"
+"Explain what this function does step by step"
+"Are there any edge cases I should consider?"
+"How can I improve error handling here?"
+"Is this the most efficient approach?"
+```
+
+### Enhanced File Management Rules
+
+#### .gitignore for Cursor Projects
+```
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+.env
+pip-log.txt
+
+# MATLAB
+*.asv
+*.m~
+slprj/
+*.slx.autosave
+
+# Cursor specific
+.cursor/
+*.cursor-chat
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data and outputs
+data/sensitive/
+output/temp/
+logs/
+*.log
+
+# AI generated files (review before ignoring)
+# ai_generated/
+```
+
+### Cursor Workflow Optimizations
+
+#### Daily Development Routine
+1. **Morning setup**:
+   ```bash
+   git pull origin main
+   git checkout -b feature/your-feature
+   # Open Cursor, activate virtual environment
+   ```
+
+2. **During development**:
+   - Use Ctrl+K for quick AI edits
+   - Use Ctrl+L for complex questions
+   - Use Ctrl+Shift+L for file-specific questions
+   - Regular commits with AI-suggested messages
+
+3. **End of day**:
+   ```bash
+   # Use Cursor to review changes before commit
+   git add .
+   # Let Cursor suggest commit message, then review
+   git commit -m "AI-suggested message (reviewed and approved)"
+   git push origin feature/your-feature
+   ```
+
+#### Cursor Keyboard Shortcuts
+- **Ctrl+K**: Quick AI edit
+- **Ctrl+L**: Open AI chat
+- **Ctrl+Shift+L**: Chat about current file
+- **Ctrl+I**: Inline AI suggestions
+- **Tab**: Accept AI autocomplete
+- **Esc**: Reject AI suggestion
+
+### Security and Privacy with Cursor
+
+#### Data Privacy Rules
+1. **Review code before sending**: Understand what Cursor sees
+2. **Avoid sensitive data**: Don't include API keys in prompts
+3. **Use local models when possible**: Configure for sensitive projects
+4. **Regular privacy audits**: Review what data has been shared
+
+#### Cursor Privacy Settings
+```json
+{
+    "cursor.privacy.enableTelemetry": false,
+    "cursor.privacy.includeCodeContext": true,
+    "cursor.privacy.includeFileContents": false,
+    "cursor.general.enableCtrlKChatShortcut": true,
+    "cursor.chat.clearHistoryOnExit": true
+}
+```
+
+### Troubleshooting and Recovery
+
+#### Common Cursor Issues
+1. **AI suggestions not working**:
+   - Check internet connection
+   - Restart Cursor
+   - Clear AI cache: Ctrl+Shift+P -> "Cursor: Clear Cache"
+
+2. **Performance issues**:
+   - Disable AI for large files
+   - Use .gitignore to exclude AI from data folders
+   - Reduce autocomplete frequency
+
+#### Emergency Git Commands
+```bash
+# Undo AI-generated changes
+git reset --hard HEAD~1
+
+# Create backup before major AI refactoring
+git branch backup-before-ai-refactor
+
+# Compare AI suggestions
+git diff HEAD~1
+
+# Recover from AI-generated errors
+git checkout HEAD~1 -- problematic_file.py
+```
+
+### Advanced Cursor Techniques
+
+#### Multi-file AI Operations
+1. **Project-wide refactoring**:
+   - Select multiple files
+   - Use Ctrl+Shift+L: "Refactor this pattern across all files"
+
+2. **Consistent naming**:
+   - Ask Cursor: "Make variable names consistent across the project"
+
+3. **Architecture review**:
+   - Use chat: "Review the overall architecture of this project"
+
+#### Custom AI Instructions for This Project
+```
+# Custom Instructions for Tools Project
+- Always use type hints in Python functions
+- Prefer composition over inheritance
+- Use dependency injection for testability
+- Follow the single responsibility principle
+- Write defensive code with proper error handling
+- Use logging.getLogger(__name__) for logging
+- Implement proper resource cleanup (context managers)
+- Use pathlib for all file operations
+- Prefer f-strings for string formatting
+- Use dataclasses for structured data
+- NEVER truncate existing functional code
+- ALWAYS preserve integrated features when making changes
+- Test all functionality after modifications
+```
+
+### Daily Cursor Workflow Quick Reference
+```bash
+# Start development session
+git status
+git pull origin main
+cursor .  # Open Cursor in current directory
+
+# During development (in Cursor)
+# Ctrl+K: Quick edits
+# Ctrl+L: Complex questions
+# Tab: Accept suggestions
+# Regular commits with AI help
+
+# End session
+git add .
+git commit -m "feat: AI-assisted feature implementation"
+git push origin feature-branch
+```
+
+### AI Assistance Commands
+```
+# In Cursor Chat (Ctrl+L):
+"Explain this error message"
+"Optimize this function for performance"
+"Add error handling to this code"
+"Generate unit tests for this class"
+"Refactor this code to be more readable"
+"Check for potential bugs in this implementation"
+"Suggest improvements for this algorithm"
+```
+
+### Code Quality Checks
+```
+# Ask Cursor to review:
+"Review this code for Python best practices"
+"Check for potential security vulnerabilities"
+"Suggest performance optimizations"
+"Verify error handling is adequate"
+"Ensure proper type hints are used"
+```
