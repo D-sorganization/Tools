@@ -27,7 +27,7 @@ Folder Fix is a comprehensive Windows application for advanced folder processing
 
 ## Build Information
 - **Executable:** `FolderFix.exe`
-- **Original Source:** `Claude_Folders_Uno.py`
+- **Original Source:** `Folders_Tool_r0.py`
 - **Icon:** Paper plane design with ICO format for crisp display
 - **Framework:** Python + Tkinter GUI
 - **Packaging:** PyInstaller with custom manifest
@@ -47,7 +47,7 @@ Folder Fix is a comprehensive Windows application for advanced folder processing
 - `FolderFix.exe.manifest` - Windows integration manifest
 
 ## Build Files (Development)
-- `Claude_Folders_Uno.py` - Source code
+- `Folders_Tool_r0.py` - Source code
 - `FolderFix.spec` - PyInstaller configuration
 - `requirements.txt` - Python dependencies
 - `paper_plane_icon.png` - Original icon source
