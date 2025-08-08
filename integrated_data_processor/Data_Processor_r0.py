@@ -2199,6 +2199,10 @@ This section helps you manage which signals (columns) to process from your files
         """Handle signal checkbox toggles by auto-updating plot."""
         self._schedule_plot_update()
 
+    def _on_plot_signal_checkbox_changed(self) -> None:
+        """Auto-update plot when Plotting tab signal checkboxes change (scoped)."""
+        self._schedule_plot_update()
+
     def _display_signals_batch(self, signals_batch, start_index=0):
         """Display a batch of signals in the scrollable frame."""
         print(f"DEBUG: Displaying batch of {len(signals_batch)} signals starting at index {start_index}")
@@ -3822,7 +3826,12 @@ This section helps you manage which signals (columns) to process from your files
                 
                 for signal in df.columns:
                     var = tk.BooleanVar(value=False)
-                    cb = ctk.CTkCheckBox(self.plot_signal_frame, text=signal, variable=var)
+                    cb = ctk.CTkCheckBox(
+                        self.plot_signal_frame,
+                        text=signal,
+                        variable=var,
+                        command=self._on_plot_signal_checkbox_changed,
+                    )
                     cb.pack(anchor="w", padx=5, pady=2)
                     self.plot_signal_vars[signal] = {'var': var, 'checkbox': cb}
                 
