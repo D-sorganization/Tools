@@ -1,0 +1,77 @@
+# Integrated Process Simulator - Cursor AI Rules
+
+## Project Context
+This is a comprehensive scientific and engineering simulation platform for process modeling, thermodynamic calculations, and analysis. The project contains ~57,000 Python lines across 427 Python files with extensive documentation.
+
+## Critical Development Rules
+
+### 1. ALWAYS Create Feature Branches
+- **NEVER make changes directly to main branch**
+- **ALWAYS create a feature branch for ANY changes** using: `git checkout -b feature/descriptive-name`
+- **Commit and push feature branches** before merging
+- **Use descriptive branch names** like: `feature/fix-quench-calculations`, `feature/add-new-thermodynamic-model`
+
+### 2. Code Quality Standards
+- **NEVER truncate files and start from scratch** - ALWAYS restore from git or fix current version
+- **NEVER truncate code when making modifications** - preserve all existing code structure
+- **NEVER delete large batches of code** or significantly reduce code count without explicit user permission
+- **Preserve existing functionality** - only fix bugs, don't change working features
+- **Test imports** after any changes: `python -c "from module import Class; print('✓ Import successful')"`
+- **Commit frequently** with descriptive messages
+
+### 3. Project Structure
+- **Core logic** in `core/` directory
+- **UI components** in `ui/` directory  
+- **Calculators** in `calculators/` directory
+- **Documentation** in `docs/` directory
+- **Tests** in `tests/` directory
+
+### 4. Thermodynamic Calculations
+- **Use real calculations** - NO hardcoded placeholder values
+- **Energy balance** must be properly implemented
+- **Heat transfer coefficients** should use engineering correlations
+- **Composition calculations** must use proper equilibrium methods
+
+### 5. Error Handling
+- **Root cause analysis** - find the actual problem, don't apply patches
+- **Git operations** - use `git checkout -- filename` to restore corrupted files
+- **Import testing** - verify modules work after changes
+
+### 6. Documentation
+- **ALWAYS keep markdown description files in docs folder** to clear up clutter
+- **Update relevant docs** when making changes
+- **Maintain audit files** like `HARDCODED_VALUES_AUDIT.md`
+- **Document fixes** with clear explanations
+
+### 7. Testing Protocol
+- **Test imports** after changes
+- **Verify calculations** work correctly
+- **Check application launches** successfully
+- **Validate inter-sheet communication**
+
+## Current Project Status
+- **Active Development:** Yes
+- **Critical Fixes Completed:** All major hardcoded value issues resolved
+- **Focus Areas:** Equilibrium calculations, thermodynamic accuracy, inter-sheet communication
+- **Branch Strategy:** Feature branches for all changes
+
+## File Naming Conventions
+- **Python files:** snake_case.py
+- **Classes:** PascalCase
+- **Functions:** snake_case
+- **Constants:** UPPER_SNAKE_CASE
+
+## Git Workflow
+1. Create feature branch: `git checkout -b feature/descriptive-name`
+2. Make changes
+3. Test imports and functionality
+4. Commit: `git commit -m "type: descriptive message"`
+5. Push: `git push origin feature/descriptive-name`
+6. Create pull request when ready
+
+## Emergency Procedures
+- **File corruption:** `git checkout -- filename`
+- **Import errors:** Check dependencies and module structure
+- **Launch issues:** Verify working directory is `integrated_process_simulator/`
+
+Remember: This is a scientific simulation platform - accuracy and proper calculations are paramount. Always use real thermodynamic values and engineering correlations, never hardcoded placeholders.
