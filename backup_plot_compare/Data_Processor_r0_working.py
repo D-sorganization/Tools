@@ -7,7 +7,7 @@
 # from Rev2 with the UI fixes from Rev4_Claude, ensuring complete functionality.
 #
 # Dependencies for Python 3.8+:
-# pip install customtkinter pandas numpy scipy matplotlib openpyxl Pillow simpledbf pyarrow tables feather-format
+# pip install customtkinter pandas numpy scipy matplotlib openpyxl Pillow simpledbf
 #
 # =============================================================================
 
@@ -321,78 +321,28 @@ class CSVProcessorApp(ctk.CTk):
         file_frame.grid(row=0, column=0, padx=10, pady=10, sticky="new")
         file_frame.grid_columnconfigure(0, weight=1)
         
-        # Header with help button
-        file_header_frame = ctk.CTkFrame(file_frame)
-        file_header_frame.grid(row=0, column=0, padx=10, pady=(10, 5), sticky="ew")
-        file_header_frame.grid_columnconfigure(0, weight=1)
-        
-        ctk.CTkLabel(file_header_frame, text="Input File Selection", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, padx=(0, 5), pady=5, sticky="w")
-        ctk.CTkButton(file_header_frame, text="?", width=25, command=self._show_input_file_help, fg_color="gray", hover_color="darkgray").grid(row=0, column=1, padx=(0, 0), pady=5, sticky="e")
-        
-        # File selection buttons in a horizontal frame
-        file_buttons_frame = ctk.CTkFrame(file_frame)
-        file_buttons_frame.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
-        file_buttons_frame.grid_columnconfigure(0, weight=1)
-        file_buttons_frame.grid_columnconfigure(1, weight=1)
-        
-        ctk.CTkButton(file_buttons_frame, text="Select Input Files", command=self.select_files).grid(row=0, column=0, padx=(0, 5), pady=5, sticky="ew")
-        ctk.CTkButton(file_buttons_frame, text="Clear All Files", command=self._clear_all_files).grid(row=0, column=1, padx=(5, 0), pady=5, sticky="ew")
-        
+        ctk.CTkLabel(file_frame, text="CSV File Selection", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, padx=10, pady=(10, 5), sticky="w")
+        ctk.CTkButton(file_frame, text="Select Input CSV Files", command=self.select_files).grid(row=1, column=0, padx=10, pady=5, sticky="ew")
         ctk.CTkButton(file_frame, text="Select Output Folder", command=self.select_output_folder).grid(row=2, column=0, padx=10, pady=5, sticky="ew")
         
-        # Bulk processing mode toggle
-        bulk_frame = ctk.CTkFrame(file_frame)
-        bulk_frame.grid(row=3, column=0, padx=10, pady=5, sticky="ew")
-        bulk_frame.grid_columnconfigure(0, weight=1)
-        
-        # Create a horizontal frame for checkbox
-        bulk_content_frame = ctk.CTkFrame(bulk_frame)
-        bulk_content_frame.pack(fill="x", padx=5, pady=5)
-        bulk_content_frame.grid_columnconfigure(0, weight=1)
-        
-        self.bulk_mode_var = ctk.BooleanVar(value=True)  # Default to True
-        bulk_checkbox = ctk.CTkCheckBox(
-            bulk_content_frame, 
-            text="Bulk Processing Mode", 
-            variable=self.bulk_mode_var,
-            command=self._on_bulk_mode_change
-        )
-        bulk_checkbox.grid(row=0, column=0, padx=(0, 5), pady=5, sticky="w")
-        
-        # First file only option will be moved to Signal List Management section
-        self.first_file_only_var = ctk.BooleanVar(value=False)
-        
         self.output_label = ctk.CTkLabel(file_frame, text=f"Output: {self.output_directory}", wraplength=300, justify="left", font=ctk.CTkFont(size=11))
-        self.output_label.grid(row=4, column=0, padx=10, pady=(0, 10), sticky="w")
+        self.output_label.grid(row=3, column=0, padx=10, pady=(0, 10), sticky="w")
         
         # Signal List Management frame - MOVED TO TOP
         signal_list_frame = ctk.CTkFrame(tab)
         signal_list_frame.grid(row=1, column=0, padx=10, pady=10, sticky="new")
         signal_list_frame.grid_columnconfigure(0, weight=1)
-        signal_list_frame.grid_columnconfigure(1, weight=1)
-        signal_list_frame.grid_columnconfigure(2, weight=1)
         
-        # Header with help button
-        header_frame = ctk.CTkFrame(signal_list_frame)
-        header_frame.grid(row=0, column=0, columnspan=3, padx=10, pady=(10, 5), sticky="ew")
-        header_frame.grid_columnconfigure(0, weight=1)
+        ctk.CTkLabel(signal_list_frame, text="Signal List Management", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, columnspan=3, padx=10, pady=(10, 5), sticky="w")
         
-        ctk.CTkLabel(header_frame, text="Signal List Management", font=ctk.CTkFont(weight="bold")).grid(row=0, column=0, padx=(0, 5), pady=5, sticky="w")
-        ctk.CTkButton(header_frame, text="?", width=25, command=self._show_signal_list_help, fg_color="gray", hover_color="darkgray").grid(row=0, column=1, padx=(0, 0), pady=5, sticky="e")
+        # Buttons for signal list management
+        ctk.CTkButton(signal_list_frame, text="Save Current Signal List", command=self.save_signal_list).grid(row=1, column=0, padx=10, pady=5, sticky="ew")
+        ctk.CTkButton(signal_list_frame, text="Load Saved Signal List", command=self.load_signal_list).grid(row=1, column=1, padx=10, pady=5, sticky="ew")
+        # Removed "Apply Saved Signals" button as requested
         
-        # Buttons for signal list management - Row 1
-        ctk.CTkButton(signal_list_frame, text="Save Signal List", command=self.save_signal_list).grid(row=1, column=0, padx=10, pady=5, sticky="ew")
-        ctk.CTkButton(signal_list_frame, text="Load Signal List", command=self.load_signal_list).grid(row=1, column=1, padx=10, pady=5, sticky="ew")
-        ctk.CTkButton(signal_list_frame, text="Load from Files", command=self._manual_load_signals).grid(row=1, column=2, padx=10, pady=5, sticky="ew")
-        
-        # Buttons for signal list management - Row 2
-        ctk.CTkButton(signal_list_frame, text="Create Signal List", command=self._create_signal_list).grid(row=2, column=0, padx=10, pady=5, sticky="ew")
-        ctk.CTkButton(signal_list_frame, text="Apply Signals", command=self.apply_saved_signals).grid(row=2, column=1, padx=10, pady=5, sticky="ew")
-        ctk.CTkButton(signal_list_frame, text="Load from First File", command=self._load_signals_from_first_file).grid(row=2, column=2, padx=10, pady=5, sticky="ew")
-        
-        # Status label for signal list operations - Row 3
+        # Status label for signal list operations
         self.signal_list_status_label = ctk.CTkLabel(signal_list_frame, text="No saved signal list loaded", font=ctk.CTkFont(size=11), text_color="gray")
-        self.signal_list_status_label.grid(row=3, column=0, columnspan=3, padx=10, pady=(5, 10), sticky="w")
+        self.signal_list_status_label.grid(row=2, column=0, columnspan=3, padx=10, pady=(5, 10), sticky="w")
         
         # Settings frame
         settings_frame = ctk.CTkFrame(tab)
@@ -447,15 +397,7 @@ class CSVProcessorApp(ctk.CTk):
             "Excel (Multi-sheet)", 
             "Excel (Separate Files)",
             "MAT (Separate Files)",
-            "MAT (Compiled)",
-            "Parquet (Single File)",
-            "Parquet (Separate Files)",
-            "HDF5 (Single File)",
-            "HDF5 (Separate Files)",
-            "Feather (Single File)",
-            "Feather (Separate Files)",
-            "Pickle (Single File)",
-            "Pickle (Separate Files)"
+            "MAT (Compiled)"
         ]).grid(row=1, column=1, padx=10, pady=5, sticky="ew")
         
         ctk.CTkLabel(export_frame, text="Sort By:").grid(row=2, column=0, padx=10, pady=5, sticky="w")
@@ -757,90 +699,21 @@ class CSVProcessorApp(ctk.CTk):
             self.plot_zscore_frame.grid()
         elif filter_type == "Savitzky-Golay":
             self.plot_savgol_frame.grid()
-    
-    def _update_compare_filter_ui(self, filter_type):
-        """Update comparison filter UI based on selected filter type."""
-        # Hide all comparison frames
-        for frame in [self.compare_ma_frame, self.compare_bw_frame, self.compare_median_frame, self.compare_hampel_frame, self.compare_zscore_frame, self.compare_savgol_frame]:
-            frame.grid_remove()
-        
-        # Show relevant frame
-        if filter_type == "Moving Average":
-            self.compare_ma_frame.grid(row=14, column=0, sticky="ew", padx=10, pady=5)
-        elif filter_type in ["Butterworth Low-pass", "Butterworth High-pass"]:
-            self.compare_bw_frame.grid(row=14, column=0, sticky="ew", padx=10, pady=5)
-        elif filter_type == "Median Filter":
-            self.compare_median_frame.grid(row=14, column=0, sticky="ew", padx=10, pady=5)
-        elif filter_type == "Hampel Filter":
-            self.compare_hampel_frame.grid(row=14, column=0, sticky="ew", padx=10, pady=5)
-        elif filter_type == "Z-Score Filter":
-            self.compare_zscore_frame.grid(row=14, column=0, sticky="ew", padx=10, pady=5)
-        elif filter_type == "Savitzky-Golay":
-            self.compare_savgol_frame.grid(row=14, column=0, sticky="ew", padx=10, pady=5)
 
     def _filter_signals(self, event=None):
-        """Filter signals based on search text - optimized for large signal counts."""
-        # Check if we're using the new efficient display
-        if hasattr(self, 'signal_search_entry'):
-            search_text = self.signal_search_entry.get().lower()
-            print(f"DEBUG: Filtering signals with search text: '{search_text}'")
-            
-            # Clear the scrollable frame
-            for widget in self.signals_scrollable_frame.winfo_children():
-                widget.destroy()
-            
-            # Clear signal vars for filtered signals
-            self.signal_vars.clear()
-            
-            if not search_text:
-                # Show first 50 signals when search is cleared
-                self._display_signals_batch(self.all_signals[:50], 0)
-                self.signals_displayed = min(50, len(self.all_signals))
-                
-                # Update load more button
-                if hasattr(self, 'load_more_button') and len(self.all_signals) > 50:
-                    remaining = len(self.all_signals) - 50
-                    self.load_more_button.configure(text=f"Load More Signals ({remaining} remaining)")
-                    self.load_more_button.configure(state="normal")
+        """Filter signals based on search text."""
+        search_text = self.search_entry.get().lower()
+        for signal, data in self.signal_vars.items():
+            if search_text in signal.lower():
+                data['widget'].grid()
             else:
-                # Filter signals based on search text
-                filtered_signals = [signal for signal in self.all_signals if search_text in signal.lower()]
-                print(f"DEBUG: Found {len(filtered_signals)} matching signals")
-                
-                # Display filtered signals
-                self._display_signals_batch(filtered_signals, 0)
-                self.signals_displayed = len(filtered_signals)
-                
-                # Update load more button for filtered results
-                if hasattr(self, 'load_more_button'):
-                    if len(filtered_signals) > 50:
-                        remaining = len(filtered_signals) - 50
-                        self.load_more_button.configure(text=f"Load More Filtered Signals ({remaining} remaining)")
-                        self.load_more_button.configure(state="normal")
-                    else:
-                        self.load_more_button.configure(text=f"All {len(filtered_signals)} Filtered Signals Shown")
-                        self.load_more_button.configure(state="disabled")
-            
-            print(f"DEBUG: Filtering completed, now showing {self.signals_displayed} signals")
-        else:
-            # Fallback to original method for small signal counts
-            search_text = self.search_entry.get().lower()
-            for signal, data in self.signal_vars.items():
-                if search_text in signal.lower():
-                    data['widget'].grid()
-                else:
-                    data['widget'].grid_remove()
+                data['widget'].grid_remove()
 
     def _clear_search(self):
-        """Clear search and show all signals - optimized for large signal counts."""
-        if hasattr(self, 'signal_search_entry'):
-            self.signal_search_entry.delete(0, tk.END)
-            self._filter_signals()  # This will handle the clearing properly
-        else:
-            # Fallback to original method for small signal counts
-            self.search_entry.delete(0, tk.END)
-            for signal, data in self.signal_vars.items():
-                data['widget'].grid()
+        """Clear search and show all signals."""
+        self.search_entry.delete(0, tk.END)
+        for signal, data in self.signal_vars.items():
+            data['widget'].grid()
 
     def _filter_integrator_signals(self, event=None):
         """Filter integration signals based on search text."""
@@ -1252,7 +1125,8 @@ class CSVProcessorApp(ctk.CTk):
             
             print("DEBUG: Calling update_file_list()")
             self.update_file_list()
-            print("DEBUG: Files selected. Use 'Load from Files' button to load signals.")
+            print("DEBUG: Calling load_signals_from_files()")
+            self.load_signals_from_files()
         else:
             print("DEBUG: No files selected (user cancelled)")
 
@@ -1267,8 +1141,6 @@ class CSVProcessorApp(ctk.CTk):
         """Update the file list display."""
         print("DEBUG: update_file_list() called")
         print(f"DEBUG: input_file_paths = {getattr(self, 'input_file_paths', 'NOT SET')}")
-        print(f"DEBUG: input_file_paths type = {type(getattr(self, 'input_file_paths', None))}")
-        print(f"DEBUG: input_file_paths length = {len(getattr(self, 'input_file_paths', []))}")
         
         # Clear existing widgets
         for widget in self.file_list_frame.winfo_children():
@@ -1282,461 +1154,28 @@ class CSVProcessorApp(ctk.CTk):
             print("DEBUG: Default label created and packed")
             return
         
-        total_files = len(self.input_file_paths)
-        print(f"DEBUG: Creating display for {total_files} files")
-        print(f"DEBUG: total_files > 50? {total_files > 50}")
-        
-        # For large numbers of files, use a more efficient display
-        if total_files > 50:  # Lowered threshold for better performance
-            print(f"DEBUG: Using smart summary display for {total_files} files")
-            # Create a summary display for large file lists
-            summary_frame = ctk.CTkFrame(self.file_list_frame)
-            summary_frame.pack(fill="x", padx=5, pady=5)
+        print(f"DEBUG: Creating display for {len(self.input_file_paths)} files")
+        for i, file_path in enumerate(self.input_file_paths):
+            print(f"DEBUG: Creating widget for file {i+1}: {file_path}")
+            file_frame = ctk.CTkFrame(self.file_list_frame)
+            file_frame.pack(fill="x", padx=5, pady=2)
+            print(f"DEBUG: File frame created and packed for file {i+1}")
             
-            # Show file count and first few files
-            summary_label = ctk.CTkLabel(
-                summary_frame, 
-                text=f"📁 {total_files} files selected",
-                font=ctk.CTkFont(size=14, weight="bold")
-            )
-            summary_label.pack(padx=5, pady=5)
+            filename = os.path.basename(file_path)
+            print(f"DEBUG: Filename: {filename}")
+            label = ctk.CTkLabel(file_frame, text=f"{i+1}. {filename}", font=ctk.CTkFont(size=11))
+            label.pack(side="left", padx=5, pady=2)
+            print(f"DEBUG: Label created and packed for file {i+1}")
             
-            # Show first 5 files as examples
-            preview_frame = ctk.CTkFrame(summary_frame)
-            preview_frame.pack(fill="x", padx=5, pady=5)
-            
-            preview_label = ctk.CTkLabel(preview_frame, text="📋 Sample files:", font=ctk.CTkFont(size=12))
-            preview_label.pack(anchor="w", padx=5, pady=2)
-            
-            for i in range(min(5, total_files)):
-                filename = os.path.basename(self.input_file_paths[i])
-                file_label = ctk.CTkLabel(preview_frame, text=f"  • {filename}", font=ctk.CTkFont(size=11))
-                file_label.pack(anchor="w", padx=10, pady=1)
-            
-            if total_files > 5:
-                more_label = ctk.CTkLabel(
-                    preview_frame, 
-                    text=f"  ... and {total_files - 5} more files",
-                    font=ctk.CTkFont(size=11, slant="italic")
-                )
-                more_label.pack(anchor="w", padx=10, pady=1)
-            
-            # Add a button to show all files (optional)
-            show_all_button = ctk.CTkButton(
-                summary_frame,
-                text="Show All Files",
-                command=self._show_all_files_dialog,
-                width=120
-            )
-            show_all_button.pack(pady=5)
-            
-            # Add a button to clear all files
-            clear_all_button = ctk.CTkButton(
-                summary_frame,
-                text="Clear All Files",
-                command=self._clear_all_files,
-                width=120,
-                fg_color="red",
-                hover_color="darkred"
-            )
-            clear_all_button.pack(pady=5)
-            
-        else:
-            # For smaller file lists, use the original detailed display
-            print(f"DEBUG: Using detailed display for {total_files} files")
-            for i, file_path in enumerate(self.input_file_paths):
-                file_frame = ctk.CTkFrame(self.file_list_frame)
-                file_frame.pack(fill="x", padx=5, pady=2)
-                
-                filename = os.path.basename(file_path)
-                label = ctk.CTkLabel(file_frame, text=f"{i+1}. {filename}", font=ctk.CTkFont(size=11))
-                label.pack(side="left", padx=5, pady=2)
-                
-                button = ctk.CTkButton(file_frame, text="X", width=25, command=lambda f=file_path: self.remove_file(f))
-                button.pack(side="right", padx=5, pady=2)
+            button = ctk.CTkButton(file_frame, text="X", width=25, command=lambda f=file_path: self.remove_file(f))
+            button.pack(side="right", padx=5, pady=2)
+            print(f"DEBUG: Remove button created and packed for file {i+1}")
         
         print("DEBUG: update_file_list() completed")
         
         # Force GUI update
         self.file_list_frame.update_idletasks()
         print("DEBUG: Forced file_list_frame update_idletasks()")
-
-    def _show_all_files_dialog(self):
-        """Show all files in a separate dialog window."""
-        if not self.input_file_paths:
-            return
-            
-        # Create a new window
-        dialog = ctk.CTkToplevel(self)
-        dialog.title(f"All Files ({len(self.input_file_paths)} files)")
-        dialog.geometry("600x400")
-        dialog.resizable(True, True)
-        
-        # Create a scrollable frame
-        scroll_frame = ctk.CTkScrollableFrame(dialog)
-        scroll_frame.pack(fill="both", expand=True, padx=10, pady=10)
-        
-        # Add all files to the scrollable frame
-        for i, file_path in enumerate(self.input_file_paths):
-            file_frame = ctk.CTkFrame(scroll_frame)
-            file_frame.pack(fill="x", padx=5, pady=2)
-            
-            filename = os.path.basename(file_path)
-            label = ctk.CTkLabel(file_frame, text=f"{i+1:4d}. {filename}", font=ctk.CTkFont(size=11))
-            label.pack(side="left", padx=5, pady=2)
-            
-            button = ctk.CTkButton(file_frame, text="X", width=25, command=lambda f=file_path: self.remove_file(f))
-            button.pack(side="right", padx=5, pady=2)
-        
-        # Add close button
-        close_button = ctk.CTkButton(dialog, text="Close", command=dialog.destroy)
-        close_button.pack(pady=10)
-
-    def _clear_all_files(self):
-        """Clear all selected files."""
-        if self.input_file_paths:
-            file_count = len(self.input_file_paths)
-            self.input_file_paths.clear()
-            self.update_file_list()
-            
-            # Clear signal lists immediately
-            if hasattr(self, 'signal_vars'):
-                self.signal_vars.clear()
-            
-            # Clear signal list display
-            if hasattr(self, 'signal_list_frame'):
-                for widget in self.signal_list_frame.winfo_children():
-                    widget.destroy()
-                
-                # Show default message
-                label = ctk.CTkLabel(self.signal_list_frame, text="No signals available. Select files to load signals.")
-                label.pack(padx=5, pady=5)
-            
-            # Update status
-            if hasattr(self, 'status_label'):
-                self.status_label.configure(text=f"Cleared {file_count} files. Ready to select new files.")
-            
-            print(f"DEBUG: Cleared {file_count} files")
-        else:
-            print("DEBUG: No files to clear")
-
-    def _cancel_signal_loading(self, progress_window):
-        """Cancel the signal loading process."""
-        print("DEBUG: Signal loading cancelled by user")
-        self.signal_loading_cancelled = True
-        
-        # Clear files if loading was cancelled
-        if hasattr(self, 'input_file_paths'):
-            self.input_file_paths.clear()
-            self.update_file_list()
-        
-        # Clear signal lists
-        if hasattr(self, 'signal_vars'):
-            self.signal_vars.clear()
-        
-        # Clear signal list display
-        if hasattr(self, 'signal_list_frame'):
-            for widget in self.signal_list_frame.winfo_children():
-                widget.destroy()
-            
-            # Show default message
-            label = ctk.CTkLabel(self.signal_list_frame, text="Signal loading cancelled. Select files to try again.")
-            label.pack(padx=5, pady=5)
-        
-        # Update status
-        if hasattr(self, 'status_label'):
-            self.status_label.configure(text="Signal loading cancelled. Ready to select new files.")
-        
-        # Close progress window
-        try:
-            progress_window.destroy()
-        except:
-            pass
-        
-        # Clear progress window reference
-        if hasattr(self, 'current_progress_window'):
-            delattr(self, 'current_progress_window')
-
-    def _on_bulk_mode_change(self):
-        """Handle bulk processing mode toggle."""
-        # First file only option is now in Signal List Management section
-        # No need to show/hide it based on bulk mode state
-        pass
-        
-        if hasattr(self, 'input_file_paths') and self.input_file_paths:
-            # Reload signals with new mode
-            self.load_signals_from_files()
-
-    def _manual_load_signals(self):
-        """Manually load signals from files."""
-        if not hasattr(self, 'input_file_paths') or not self.input_file_paths:
-            messagebox.showwarning("No Files", "Please select files first before loading signals.")
-            return
-        
-        print("DEBUG: Manual signal loading triggered")
-        self.load_signals_from_files()
-    
-    def _load_signals_from_first_file(self):
-        """Load signals from the first file only."""
-        if not hasattr(self, 'input_file_paths') or not self.input_file_paths:
-            messagebox.showwarning("No Files", "Please select files first before loading signals.")
-            return
-        
-        print("DEBUG: Loading signals from first file only")
-        
-        # Set the first file only flag
-        self.first_file_only_var.set(True)
-        
-        # Load signals using the existing function
-        self.load_signals_from_files()
-
-    def _create_signal_list(self):
-        """Create a signal list from text file or manual input."""
-        print("DEBUG: _create_signal_list() called")
-        
-        # Ask user if they want to load from file or enter manually
-        choice = messagebox.askyesno(
-            "Create Signal List", 
-            "Do you want to load signals from a text file?\n\n"
-            "Yes = Load from text file (one signal per line)\n"
-            "No = Enter signals manually"
-        )
-        
-        if choice:
-            # Load from text file
-            file_path = filedialog.askopenfilename(
-                title="Select Signal List File",
-                filetypes=[("Text files", "*.txt"), ("All files", "*.*")]
-            )
-            
-            if file_path:
-                try:
-                    with open(file_path, 'r') as f:
-                        signals = [line.strip() for line in f.readlines() if line.strip()]
-                    
-                    if signals:
-                        print(f"DEBUG: Loaded {len(signals)} signals from file")
-                        self.update_signal_list(signals)
-                        self.signal_list_status_label.configure(
-                            text=f"Created signal list from file: {len(signals)} signals",
-                            text_color="green"
-                        )
-                    else:
-                        messagebox.showwarning("Empty File", "The selected file contains no signals.")
-                except Exception as e:
-                    messagebox.showerror("Error", f"Failed to load signal file:\n{e}")
-        else:
-            # Manual input
-            self._show_manual_signal_input()
-
-    def _show_manual_signal_input(self):
-        """Show dialog for manual signal input."""
-        # Create a dialog window
-        dialog = ctk.CTkToplevel(self)
-        dialog.title("Enter Signal Names")
-        dialog.geometry("500x400")
-        dialog.resizable(True, True)
-        dialog.transient(self)
-        dialog.grab_set()
-        
-        # Instructions
-        instruction_label = ctk.CTkLabel(
-            dialog, 
-            text="Enter signal names (one per line):",
-            font=ctk.CTkFont(size=14, weight="bold")
-        )
-        instruction_label.pack(pady=10)
-        
-        # Text area for signal input
-        text_area = ctk.CTkTextbox(dialog, height=200)
-        text_area.pack(fill="both", expand=True, padx=20, pady=10)
-        
-        # Buttons
-        button_frame = ctk.CTkFrame(dialog)
-        button_frame.pack(fill="x", padx=20, pady=10)
-        
-        def create_signal_list():
-            # Get text from text area
-            text = text_area.get("1.0", "end-1c")
-            signals = [line.strip() for line in text.split('\n') if line.strip()]
-            
-            if signals:
-                print(f"DEBUG: Created signal list with {len(signals)} signals")
-                self.update_signal_list(signals)
-                self.signal_list_status_label.configure(
-                    text=f"Created signal list manually: {len(signals)} signals",
-                    text_color="green"
-                )
-                dialog.destroy()
-            else:
-                messagebox.showwarning("No Signals", "Please enter at least one signal name.")
-        
-        def cancel():
-            dialog.destroy()
-        
-        ctk.CTkButton(button_frame, text="Create Signal List", command=create_signal_list).pack(side="left", padx=5)
-        ctk.CTkButton(button_frame, text="Cancel", command=cancel).pack(side="right", padx=5)
-
-    def _show_input_file_help(self):
-        """Show comprehensive help for Input File Selection section."""
-        help_text = """Input File Selection - Complete Guide
-
-This section helps you select and configure your input files for processing.
-
-📁 FILE SELECTION:
-
-• Select Input Files
-  - Opens file dialog to select CSV files for processing
-  - Supports multiple file selection
-  - Automatically sets output directory to first file's location
-  - Files are displayed in a summary view (for large selections)
-
-• Clear All Files
-  - Removes all selected files from the list
-  - Clears the signal list display
-  - Resets the file selection state
-
-• Select Output Folder
-  - Choose where processed files will be saved
-  - Defaults to the folder of the first selected file
-  - Can be changed at any time before processing
-
-⚙️ BULK PROCESSING MODE:
-
-When enabled (default):
-• Reads headers from only the first 3 files
-• Assumes all files have the same column structure
-• Much faster for large datasets (10,000+ files)
-• Ideal when all files are from the same source/system
-
-When disabled:
-• Reads headers from all files (up to 100 for very large datasets)
-• More thorough but slower
-• Use when files might have different column structures
-
-This mode only affects signal detection, not data processing.
-
-🔄 TYPICAL WORKFLOW:
-
-1. Select Input Files → Choose your CSV files
-2. Configure Bulk Mode → Enable/disable based on your dataset
-3. Select Output Folder → Choose where to save results
-4. Load Signals → Use Signal List Management to load available signals
-5. Process Data → Apply filters, export, etc.
-
-💡 TIPS:
-
-• Use bulk mode for large, uniform datasets (same column structure)
-• Disable bulk mode if files might have different structures
-• The output folder can be changed anytime before processing
-• Large file selections (>50 files) show a summary view for performance
-        """
-        
-        # Create help dialog
-        help_dialog = ctk.CTkToplevel(self)
-        help_dialog.title("Input File Selection Help")
-        help_dialog.geometry("600x500")
-        help_dialog.resizable(True, True)
-        
-        # Make dialog modal
-        help_dialog.transient(self)
-        help_dialog.grab_set()
-        
-        # Create scrollable text widget
-        text_widget = ctk.CTkTextbox(help_dialog, wrap="word")
-        text_widget.pack(fill="both", expand=True, padx=10, pady=10)
-        
-        # Insert help text
-        text_widget.insert("1.0", help_text)
-        text_widget.configure(state="disabled")  # Make read-only
-        
-        # Add close button
-        close_button = ctk.CTkButton(help_dialog, text="Close", command=help_dialog.destroy)
-        close_button.pack(pady=10)
-
-    def _show_signal_list_help(self):
-        """Show comprehensive help for Signal List Management section."""
-        help_text = """Signal List Management - Complete Guide
-
-This section helps you manage which signals (columns) to process from your files.
-
-📋 ESSENTIAL BUTTONS:
-
-• Load from Files
-  - Reads headers from all selected files to find available signals
-  - Populates the "Available Signals to Process" list
-  - REQUIRED: Use this after selecting files to see available signals
-  - This is now manual since we removed automatic signal loading
-
-• Load from First File
-  - Reads headers from only the first file (bulk processing mode)
-  - Assumes all files have the same column structure
-  - Much faster for large datasets (10,000+ files)
-  - Use when you know all files have identical structure
-
-📁 SIGNAL LIST MANAGEMENT:
-
-• Save Signal List
-  - Saves your currently selected signals to a file
-  - Useful for reusing the same signal selection later
-  - Creates a .json file with your signal preferences
-
-• Load Signal List
-  - Loads a previously saved signal list
-  - Restores your signal selection from a saved file
-  - Useful for consistent processing across different datasets
-
-• Create Signal List
-  - Creates a signal list from a text file or manual input
-  - Option to load from text file (one signal per line)
-  - Option to manually enter signal names
-  - Useful when you know exactly which signals you want
-
-• Apply Signals
-  - Takes a loaded signal list and applies it to current files
-  - Selects signals present in both saved list and current files
-  - Deselects signals not in the saved list
-  - Shows which saved signals are missing from current files
-
-🔄 TYPICAL WORKFLOW:
-
-1. Select Files → Click "Select Input Files"
-2. Load Signals → Click "Load from Files" (or "Load from First File" for bulk mode)
-3. Select Signals → Choose which signals to process
-4. Save List → Optionally save your selection for future use
-5. Process Data → Apply filters, export, etc.
-
-💡 TIPS:
-
-• Use "Load from Files" for thorough signal detection
-• Use "Load from First File" for speed with large, uniform datasets
-• Save signal lists for consistent processing across multiple datasets
-• The status label below shows current signal list status
-        """
-        
-        # Create help dialog
-        help_dialog = ctk.CTkToplevel(self)
-        help_dialog.title("Signal List Management Help")
-        help_dialog.geometry("600x500")
-        help_dialog.resizable(True, True)
-        
-        # Make dialog modal
-        help_dialog.transient(self)
-        help_dialog.grab_set()
-        
-        # Create scrollable text widget
-        text_widget = ctk.CTkTextbox(help_dialog, wrap="word")
-        text_widget.pack(fill="both", expand=True, padx=10, pady=10)
-        
-        # Insert help text
-        text_widget.insert("1.0", help_text)
-        text_widget.configure(state="disabled")  # Make read-only
-        
-        # Add close button
-        close_button = ctk.CTkButton(help_dialog, text="Close", command=help_dialog.destroy)
-        close_button.pack(pady=10)
-
-
 
     def remove_file(self, file_path):
         """Remove a file from the list."""
@@ -1746,266 +1185,45 @@ This section helps you manage which signals (columns) to process from your files
             self.load_signals_from_files()
 
     def load_signals_from_files(self):
-        """Load signals from all selected files (optimized for large file counts)."""
+        """Load signals from all selected files (optimized)."""
         print("DEBUG: load_signals_from_files() called")
         
         if not self.input_file_paths:
             print("DEBUG: No input file paths, returning early")
             return
         
+        # Update status
+        if hasattr(self, 'status_label'):
+            self.status_label.configure(text="Reading file headers to identify signals...")
+            self.update()
+        
+        all_signals = set()
         total_files = len(self.input_file_paths)
         
-        # Create progress window for large file counts
-        progress_window = None
-        status_label = None
-        progress_bar = None
+        for i, file_path in enumerate(self.input_file_paths):
+            try:
+                # Update progress
+                if hasattr(self, 'status_label'):
+                    self.status_label.configure(text=f"Reading file {i+1}/{total_files}: {os.path.basename(file_path)}")
+                    if i % 5 == 0:  # Update every 5 files to prevent UI freezing
+                        self.update()
+                
+                # Just read header for efficiency
+                df = pd.read_csv(file_path, nrows=1)
+                signals = df.columns.tolist()
+                all_signals.update(signals)
+                
+            except Exception as e:
+                print(f"Error reading {file_path}: {e}")
         
-        if total_files > 100:
-            progress_window = ctk.CTkToplevel(self)
-            progress_window.title("Loading Signals")
-            progress_window.geometry("400x200")
-            progress_window.resizable(False, False)
-            
-            # Make dialog modal
-            progress_window.transient(self)
-            progress_window.grab_set()
-            
-            progress_label = ctk.CTkLabel(progress_window, text="Loading signals from files...")
-            progress_label.pack(pady=20)
-            
-            # Add progress bar
-            progress_bar = ctk.CTkProgressBar(progress_window)
-            progress_bar.pack(pady=10, padx=20, fill="x")
-            progress_bar.set(0)
-            
-            status_label = ctk.CTkLabel(progress_window, text="Starting...")
-            status_label.pack(pady=10)
-            
-            # Add cancel button
-            cancel_button = ctk.CTkButton(
-                progress_window, 
-                text="Cancel", 
-                command=lambda: self._cancel_signal_loading(progress_window),
-                fg_color="red",
-                hover_color="darkred"
-            )
-            cancel_button.pack(pady=10)
-            
-            # Store reference for cleanup
-            self.current_progress_window = progress_window
+        print(f"DEBUG: All signals collected: {len(all_signals)} unique signals")
         
-        # Check if bulk processing mode is enabled
-        bulk_mode = getattr(self, 'bulk_mode_var', None) and self.bulk_mode_var.get()
-        print(f"DEBUG: bulk_mode_var exists: {getattr(self, 'bulk_mode_var', None) is not None}")
-        print(f"DEBUG: bulk_mode_var value: {getattr(self, 'bulk_mode_var', None).get() if getattr(self, 'bulk_mode_var', None) else 'N/A'}")
-        print(f"DEBUG: bulk_mode result: {bulk_mode}")
+        # Update status
+        if hasattr(self, 'status_label'):
+            self.status_label.configure(text=f"Found {len(all_signals)} unique signals in files...")
+            self.update()
         
-        # Check for cancellation
-        if hasattr(self, 'signal_loading_cancelled') and self.signal_loading_cancelled:
-            self.signal_loading_cancelled = False
-            if progress_window:
-                try:
-                    progress_window.destroy()
-                except:
-                    pass
-            return
-        
-        try:
-            if bulk_mode and total_files > 1:
-                # Check if first file only option is enabled
-                first_file_only = getattr(self, 'first_file_only_var', None) and self.first_file_only_var.get()
-                
-                if first_file_only:
-                    # First file only mode: most conservative approach
-                    print("DEBUG: Using bulk processing mode - reading headers from first file only")
-                    
-                    # Update status
-                    if total_files > 100:
-                        status_label.configure(text="Bulk mode: Reading headers from first file only...")
-                        progress_window.update()
-                    elif hasattr(self, 'status_label'):
-                        self.status_label.configure(text="Bulk mode: Reading headers from first file only...")
-                        self.update()
-                    
-                    # Read headers from first file only
-                    sample_files = self.input_file_paths[:1]
-                    all_signals = set()
-                else:
-                    # Standard bulk mode: read headers from first few files
-                    print("DEBUG: Using bulk processing mode - reading headers from sample files only")
-                    
-                    # Update status
-                    if total_files > 100:
-                        status_label.configure(text="Bulk mode: Reading headers from sample files...")
-                        progress_window.update()
-                    elif hasattr(self, 'status_label'):
-                        self.status_label.configure(text="Bulk mode: Reading headers from sample files...")
-                        self.update()
-                    
-                    # Read headers from first 3 files only
-                    sample_files = self.input_file_paths[:3]
-                    all_signals = set()
-                
-                for i, file_path in enumerate(sample_files):
-                    # Check for cancellation
-                    if hasattr(self, 'signal_loading_cancelled') and self.signal_loading_cancelled:
-                        print("DEBUG: Signal loading cancelled during bulk mode processing")
-                        return
-                    
-                    try:
-                        if total_files > 100:
-                            status_label.configure(text=f"Reading sample file {i+1}/3: {os.path.basename(file_path)}")
-                            if progress_bar:
-                                progress = (i + 1) / len(sample_files)
-                                progress_bar.set(progress)
-                            progress_window.update()
-                        elif hasattr(self, 'status_label'):
-                            self.status_label.configure(text=f"Reading sample file {i+1}/3: {os.path.basename(file_path)}")
-                            self.update()
-                        
-                        df = pd.read_csv(file_path, nrows=1)
-                        signals = df.columns.tolist()
-                        all_signals.update(signals)
-                        
-                    except Exception as e:
-                        print(f"Error reading sample file {file_path}: {e}")
-                
-                if first_file_only:
-                    print(f"DEBUG: Bulk mode (first file only) - signals from 1 file: {len(all_signals)} unique signals")
-                    
-                    # Update status
-                    if total_files > 100:
-                        status_label.configure(text=f"Bulk mode: Using {len(all_signals)} signals from first file only (assumed same for all {total_files} files)")
-                        progress_window.update()
-                    elif hasattr(self, 'status_label'):
-                        self.status_label.configure(text=f"Bulk mode: Using {len(all_signals)} signals from first file only (assumed same for all {total_files} files)")
-                        self.update()
-                else:
-                    print(f"DEBUG: Bulk mode - signals from {len(sample_files)} sample files: {len(all_signals)} unique signals")
-                    
-                    # Update status
-                    if total_files > 100:
-                        status_label.configure(text=f"Bulk mode: Using {len(all_signals)} signals from sample files (assumed same for all {total_files} files)")
-                        progress_window.update()
-                    elif hasattr(self, 'status_label'):
-                        self.status_label.configure(text=f"Bulk mode: Using {len(all_signals)} signals from sample files (assumed same for all {total_files} files)")
-                        self.update()
-                
-            else:
-                # Normal mode: read headers from all files (but limit for very large counts)
-                print("DEBUG: Using normal mode - reading headers from all files")
-                
-                # For very large file counts, limit to first 100 files to prevent stalling
-                files_to_read = min(total_files, 100) if total_files > 100 else total_files
-                
-                # Update status
-                if total_files > 100:
-                    status_label.configure(text=f"Reading headers from first {files_to_read} files (of {total_files})...")
-                    progress_window.update()
-                elif hasattr(self, 'status_label'):
-                    self.status_label.configure(text=f"Reading headers from {files_to_read} files...")
-                    self.update()
-                
-                all_signals = set()
-                
-                # For large numbers of files, use batch processing
-                batch_size = 20 if files_to_read > 50 else 10
-                
-                for i in range(0, files_to_read, batch_size):
-                    # Check for cancellation
-                    if hasattr(self, 'signal_loading_cancelled') and self.signal_loading_cancelled:
-                        print("DEBUG: Signal loading cancelled during batch processing")
-                        return
-                    
-                    batch_end = min(i + batch_size, files_to_read)
-                    batch_files = self.input_file_paths[i:batch_end]
-                    
-                    # Update status for batch
-                    if total_files > 100:
-                        try:
-                            status_label.configure(text=f"Reading files {i+1}-{batch_end}/{files_to_read}...")
-                            if progress_bar:
-                                progress = (i + batch_size) / files_to_read
-                                progress_bar.set(min(progress, 1.0))
-                            progress_window.update()
-                        except Exception as e:
-                            print(f"Status update error (ignoring): {e}")
-                            # Continue processing even if status update fails
-                    elif hasattr(self, 'status_label'):
-                        self.status_label.configure(text=f"Reading files {i+1}-{batch_end}/{total_files}...")
-                        self.update()
-                    
-                    for file_path in batch_files:
-                        try:
-                            # Just read header for efficiency
-                            df = pd.read_csv(file_path, nrows=1)
-                            signals = df.columns.tolist()
-                            all_signals.update(signals)
-                            
-                        except Exception as e:
-                            print(f"Error reading {file_path}: {e}")
-                    
-                    # Force UI update after each batch
-                    if total_files > 100:
-                        progress_window.update()
-                    else:
-                        self.update()
-                
-                print(f"DEBUG: Normal mode - all signals collected: {len(all_signals)} unique signals")
-                
-                # Update status
-                if total_files > 100:
-                    try:
-                        if files_to_read < total_files:
-                            status_label.configure(text=f"Found {len(all_signals)} unique signals in first {files_to_read} files (of {total_files})")
-                        else:
-                            status_label.configure(text=f"Found {len(all_signals)} unique signals in {total_files} files")
-                        progress_window.update()
-                    except Exception as e:
-                        print(f"Status update error (ignoring): {e}")
-                elif hasattr(self, 'status_label'):
-                    if 'files_to_read' in locals() and files_to_read < total_files:
-                        self.status_label.configure(text=f"Found {len(all_signals)} unique signals in first {files_to_read} files (of {total_files})")
-                    else:
-                        self.status_label.configure(text=f"Found {len(all_signals)} unique signals in {total_files} files")
-                    self.update()
-            
-            # Update signal list
-            if total_files > 100:
-                try:
-                    status_label.configure(text="Updating signal list...")
-                    progress_window.update()
-                except Exception as e:
-                    print(f"Signal list update error (ignoring): {e}")
-            
-            self.update_signal_list(sorted(all_signals))
-            
-            # Close progress window
-            if total_files > 100:
-                try:
-                    progress_window.destroy()
-                    print("DEBUG: Progress window closed")
-                except Exception as e:
-                    print(f"Progress window close error (ignoring): {e}")
-                
-                # Clear progress window reference
-                if hasattr(self, 'current_progress_window'):
-                    delattr(self, 'current_progress_window')
-            
-        except Exception as e:
-            print(f"Error in load_signals_from_files: {e}")
-            traceback.print_exc()
-            if total_files > 100 and progress_window:
-                try:
-                    progress_window.destroy()
-                except:
-                    pass
-                
-                # Clear progress window reference
-                if hasattr(self, 'current_progress_window'):
-                    delattr(self, 'current_progress_window')
-            
-            messagebox.showerror("Error", f"Error loading signals: {str(e)}")
+        self.update_signal_list(sorted(all_signals))
         
         # Update plot file menu with smart defaults
         file_names = ["Select a file..."] + [os.path.basename(f) for f in self.input_file_paths]
@@ -2064,101 +1282,19 @@ This section helps you manage which signals (columns) to process from your files
         return True
 
     def update_signal_list(self, signals):
-        """Update the signal list with checkboxes - optimized for large signal counts."""
-        print(f"DEBUG: update_signal_list called with {len(signals)} signals")
-        
-        # Store signals for later use
-        self.all_signals = signals
-        
-        # Check if signal_list_frame exists
-        if not hasattr(self, 'signal_list_frame'):
-            print("DEBUG: ERROR - signal_list_frame does not exist!")
-            return
-        
-        print(f"DEBUG: signal_list_frame exists, clearing widgets")
-        
+        """Update the signal list with checkboxes - simplified version."""
         # Clear existing widgets
         for widget in self.signal_list_frame.winfo_children():
             widget.destroy()
         
         self.signal_vars.clear()
         
-        # For large numbers of signals, use a more efficient approach
-        if len(signals) > 100:
-            print(f"DEBUG: Large signal count ({len(signals)}), using efficient display")
-            
-            # Create a summary frame
-            summary_frame = ctk.CTkFrame(self.signal_list_frame)
-            summary_frame.pack(fill="x", padx=5, pady=5)
-            
-            # Show signal count
-            summary_label = ctk.CTkLabel(
-                summary_frame, 
-                text=f"📊 {len(signals)} signals available",
-                font=ctk.CTkFont(size=14, weight="bold")
-            )
-            summary_label.pack(padx=5, pady=5)
-            
-            # Create search frame
-            search_frame = ctk.CTkFrame(summary_frame)
-            search_frame.pack(fill="x", padx=5, pady=5)
-            
-            search_label = ctk.CTkLabel(search_frame, text="Search signals:", font=ctk.CTkFont(size=12))
-            search_label.pack(anchor="w", padx=5, pady=2)
-            
-            self.signal_search_entry = ctk.CTkEntry(search_frame, placeholder_text="Type to search signals...")
-            self.signal_search_entry.pack(fill="x", padx=5, pady=2)
-            self.signal_search_entry.bind("<KeyRelease>", self._filter_signals)
-            
-            # Create control buttons
-            button_frame = ctk.CTkFrame(summary_frame)
-            button_frame.pack(fill="x", padx=5, pady=5)
-            
-            ctk.CTkButton(button_frame, text="Select All", command=self.select_all).pack(side="left", padx=2, pady=2)
-            ctk.CTkButton(button_frame, text="Deselect All", command=self.deselect_all).pack(side="left", padx=2, pady=2)
-            ctk.CTkButton(button_frame, text="Show Selected", command=self._show_selected_signals).pack(side="left", padx=2, pady=2)
-            ctk.CTkButton(button_frame, text="Clear Search", command=self._clear_search).pack(side="left", padx=2, pady=2)
-            
-            # Create scrollable frame for signals
-            self.signals_scrollable_frame = ctk.CTkScrollableFrame(self.signal_list_frame, height=300)
-            self.signals_scrollable_frame.pack(fill="both", expand=True, padx=5, pady=5)
-            
-            # Initially show first 50 signals
-            self._display_signals_batch(signals[:50], start_index=0)
-            
-            # Add "Load More" button if there are more signals
-            if len(signals) > 50:
-                load_more_frame = ctk.CTkFrame(self.signal_list_frame)
-                load_more_frame.pack(fill="x", padx=5, pady=5)
-                
-                self.load_more_button = ctk.CTkButton(
-                    load_more_frame,
-                    text=f"Load More Signals ({len(signals) - 50} remaining)",
-                    command=lambda: self._load_more_signals(signals, 50)
-                )
-                self.load_more_button.pack(pady=5)
-                
-                self.signals_displayed = 50
-                self.all_signals_for_display = signals
-            else:
-                self.signals_displayed = len(signals)
-                self.all_signals_for_display = signals
-            
-        else:
-            # For smaller signal counts, use the original approach
-            print(f"DEBUG: Small signal count ({len(signals)}), using standard display")
-            
-            # Create checkboxes directly
-            for signal in signals:
-                var = tk.BooleanVar(value=True)
-                cb = ctk.CTkCheckBox(
-                    self.signal_list_frame,
-                    text=signal,
-                    variable=var,
-                    command=self._on_signal_checkbox_changed,
-                )
-                cb.grid(sticky="w", padx=5, pady=2)
-                self.signal_vars[signal] = {'var': var, 'widget': cb}
+        # Create checkboxes directly - no complex batching
+        for signal in signals:
+            var = tk.BooleanVar(value=True)
+            cb = ctk.CTkCheckBox(self.signal_list_frame, text=signal, variable=var)
+            cb.grid(sticky="w", padx=5, pady=2)
+            self.signal_vars[signal] = {'var': var, 'widget': cb}
         
         # Update sort column menu
         sort_values = ["No Sorting"] + signals
@@ -2172,66 +1308,6 @@ This section helps you manage which signals (columns) to process from your files
         self._update_integration_signals(signals)
         self._update_differentiation_signals(signals)
         self._update_reference_signals(signals)
-        
-        print(f"DEBUG: update_signal_list completed")
-
-    def _schedule_plot_update(self) -> None:
-        """Debounce and schedule plot update shortly after a checkbox change."""
-        try:
-            # Cancel pending job if any
-            if hasattr(self, "_plot_update_job_id") and self._plot_update_job_id is not None:
-                try:
-                    self.after_cancel(self._plot_update_job_id)
-                except Exception:
-                    pass
-            # Schedule a near-future update to coalesce rapid toggles
-            self._plot_update_job_id = self.after(200, getattr(self, "update_plot", lambda: None))
-        except Exception as e:
-            print(f"DEBUG: _schedule_plot_update error: {e}")
-
-    def _on_signal_checkbox_changed(self) -> None:
-        """Handle signal checkbox toggles by auto-updating plot."""
-        self._schedule_plot_update()
-
-    def _display_signals_batch(self, signals_batch, start_index=0):
-        """Display a batch of signals in the scrollable frame."""
-        print(f"DEBUG: Displaying batch of {len(signals_batch)} signals starting at index {start_index}")
-        
-        for i, signal in enumerate(signals_batch):
-            var = tk.BooleanVar(value=True)
-            cb = ctk.CTkCheckBox(
-                self.signals_scrollable_frame,
-                text=signal,
-                variable=var,
-                command=self._on_signal_checkbox_changed,
-            )
-            cb.pack(anchor="w", padx=5, pady=1)
-            self.signal_vars[signal] = {'var': var, 'widget': cb}
-        
-        print(f"DEBUG: Batch display completed")
-
-    def _load_more_signals(self, all_signals, current_count):
-        """Load more signals when the Load More button is clicked."""
-        print(f"DEBUG: Loading more signals, currently showing {current_count} of {len(all_signals)}")
-        
-        # Calculate how many more to load
-        remaining = len(all_signals) - current_count
-        batch_size = min(50, remaining)
-        end_index = current_count + batch_size
-        
-        # Display the next batch
-        self._display_signals_batch(all_signals[current_count:end_index], current_count)
-        
-        # Update the load more button
-        remaining_after = len(all_signals) - end_index
-        if remaining_after > 0:
-            self.load_more_button.configure(text=f"Load More Signals ({remaining_after} remaining)")
-        else:
-            self.load_more_button.configure(text="All Signals Loaded")
-            self.load_more_button.configure(state="disabled")
-        
-        self.signals_displayed = end_index
-        print(f"DEBUG: Now showing {self.signals_displayed} signals")
 
     def _update_integration_signals(self, signals):
         """Update integration signals - simplified."""
@@ -2278,30 +1354,14 @@ This section helps you manage which signals (columns) to process from your files
             cb.grid(sticky="w", padx=5, pady=2)
             self.reference_signal_widgets[signal] = {'var': var, 'widget': cb}
     def select_all(self):
-        """Select all signals - optimized for large signal counts."""
-        if hasattr(self, 'all_signals'):
-            # For large signal counts, select all signals (including those not yet displayed)
-            for signal in self.all_signals:
-                if signal in self.signal_vars:
-                    self.signal_vars[signal]['var'].set(True)
-            print(f"DEBUG: Selected all {len(self.all_signals)} signals")
-        else:
-            # Fallback for small signal counts
-            for signal, data in self.signal_vars.items():
-                data['var'].set(True)
+        """Select all signals."""
+        for signal, data in self.signal_vars.items():
+            data['var'].set(True)
 
     def deselect_all(self):
-        """Deselect all signals - optimized for large signal counts."""
-        if hasattr(self, 'all_signals'):
-            # For large signal counts, deselect all signals (including those not yet displayed)
-            for signal in self.all_signals:
-                if signal in self.signal_vars:
-                    self.signal_vars[signal]['var'].set(False)
-            print(f"DEBUG: Deselected all {len(self.all_signals)} signals")
-        else:
-            # Fallback for small signal counts
-            for signal, data in self.signal_vars.items():
-                data['var'].set(False)
+        """Deselect all signals."""
+        for signal, data in self.signal_vars.items():
+            data['var'].set(False)
 
     def process_files(self):
         """Process all selected files with current settings."""
@@ -2719,22 +1779,6 @@ This section helps you manage which signals (columns) to process from your files
             self._export_mat_separate(processed_files)
         elif export_type == "MAT (Compiled)":
             self._export_mat_compiled(processed_files)
-        elif export_type == "Parquet (Single File)":
-            self._export_parquet_single(processed_files)
-        elif export_type == "Parquet (Separate Files)":
-            self._export_parquet_separate(processed_files)
-        elif export_type == "HDF5 (Single File)":
-            self._export_hdf5_single(processed_files)
-        elif export_type == "HDF5 (Separate Files)":
-            self._export_hdf5_separate(processed_files)
-        elif export_type == "Feather (Single File)":
-            self._export_feather_single(processed_files)
-        elif export_type == "Feather (Separate Files)":
-            self._export_feather_separate(processed_files)
-        elif export_type == "Pickle (Single File)":
-            self._export_pickle_single(processed_files)
-        elif export_type == "Pickle (Separate Files)":
-            self._export_pickle_separate(processed_files)
 
     def _export_csv_separate(self, processed_files):
         """Export each file as a separate CSV."""
@@ -2841,237 +1885,6 @@ This section helps you manage which signals (columns) to process from your files
             mat_data = {col: compiled_df[col].values for col in compiled_df.columns}
             savemat(final_path, mat_data)
             messagebox.showinfo("Success", f"Exported compiled MAT file to {final_path}")
-
-    def _export_parquet_single(self, processed_files):
-        """Export all files as a single Parquet file (optimized for large datasets)."""
-        if not processed_files: return
-        
-        # Check bulk mode for column validation
-        bulk_mode = getattr(self, 'bulk_mode_var', None) and self.bulk_mode_var.get()
-        expected_columns = None
-        column_mismatches = []
-        
-        # Create progress window
-        progress_window = ctk.CTkToplevel(self)
-        progress_window.title("Converting to Parquet")
-        progress_window.geometry("400x200")
-        progress_window.resizable(False, False)
-        
-        progress_label = ctk.CTkLabel(progress_window, text="Converting files to Parquet...")
-        progress_label.pack(pady=20)
-        
-        progress_bar = ctk.CTkProgressBar(progress_window)
-        progress_bar.pack(pady=10, padx=20, fill="x")
-        progress_bar.set(0)
-        
-        status_label = ctk.CTkLabel(progress_window, text="Starting conversion...")
-        status_label.pack(pady=10)
-        
-        try:
-            # Process files in batches
-            batch_size = 100
-            all_dataframes = []
-            total_files = len(processed_files)
-            
-            for i in range(0, total_files, batch_size):
-                batch_end = min(i + batch_size, total_files)
-                batch_files = processed_files[i:batch_end]
-                
-                # Update progress
-                progress = (i + batch_size) / total_files
-                progress_bar.set(min(progress, 1.0))
-                status_label.configure(text=f"Processing files {i+1}-{batch_end}/{total_files}")
-                progress_window.update()
-                
-                batch_dfs = []
-                for file_path, df in batch_files:
-                    try:
-                        # Column validation in bulk mode
-                        if bulk_mode and expected_columns is None:
-                            expected_columns = df.columns.tolist()
-                        elif bulk_mode and expected_columns is not None:
-                            current_columns = df.columns.tolist()
-                            if current_columns != expected_columns:
-                                column_mismatches.append({
-                                    'file': os.path.basename(file_path),
-                                    'expected': expected_columns,
-                                    'found': current_columns
-                                })
-                        
-                        # Add source file information
-                        df['source_file'] = os.path.basename(file_path)
-                        batch_dfs.append(df)
-                        
-                    except Exception as e:
-                        print(f"Error processing {file_path}: {e}")
-                        continue
-                
-                if batch_dfs:
-                    # Concatenate batch dataframes
-                    batch_combined = pd.concat(batch_dfs, ignore_index=True)
-                    all_dataframes.append(batch_combined)
-                
-                # Clear batch dataframes to free memory
-                del batch_dfs
-                if 'batch_combined' in locals():
-                    del batch_combined
-            
-            # Final concatenation
-            status_label.configure(text="Combining all data...")
-            progress_window.update()
-            
-            if all_dataframes:
-                final_df = pd.concat(all_dataframes, ignore_index=True)
-                final_df = self._apply_sorting(final_df)
-                
-                # Save to Parquet
-                status_label.configure(text="Saving to Parquet file...")
-                progress_window.update()
-                
-                output_path = os.path.join(self.output_directory, "compiled_processed_data.parquet")
-                final_path = self._check_file_overwrite(output_path)
-                if final_path:
-                    final_df.to_parquet(final_path, engine='pyarrow', compression='snappy')
-                    
-                    # Show success message with column mismatch info if any
-                    progress_window.destroy()
-                    
-                    success_message = f"Successfully exported {total_files} files to:\n{final_path}\n\n"
-                    success_message += f"Total rows: {len(final_df):,}\n"
-                    success_message += f"Total columns: {len(final_df.columns)}"
-                    
-                    if bulk_mode and column_mismatches:
-                        success_message += f"\n\n⚠️ Column mismatches found in {len(column_mismatches)} files:"
-                        for mismatch in column_mismatches[:5]:  # Show first 5 mismatches
-                            success_message += f"\n• {mismatch['file']}: expected {len(mismatch['expected'])} columns, found {len(mismatch['found'])}"
-                        if len(column_mismatches) > 5:
-                            success_message += f"\n• ... and {len(column_mismatches) - 5} more files"
-                    
-                    messagebox.showinfo("Success", success_message)
-                else:
-                    progress_window.destroy()
-                    messagebox.showinfo("Cancelled", "Export was cancelled.")
-            else:
-                progress_window.destroy()
-                messagebox.showerror("Error", "No valid data found to export.")
-                
-        except Exception as e:
-            progress_window.destroy()
-            messagebox.showerror("Error", f"Error converting files: {str(e)}")
-            print(f"Conversion error: {e}")
-            traceback.print_exc()
-
-    def _export_parquet_separate(self, processed_files):
-        """Export each file as a separate Parquet file."""
-        exported_count = 0
-        for file_path, df in processed_files:
-            base_name = os.path.splitext(os.path.basename(file_path))[0]
-            output_path = os.path.join(self.output_directory, f"{base_name}_processed.parquet")
-            
-            final_path = self._check_file_overwrite(output_path)
-            if final_path is None: continue
-            
-            df = self._apply_sorting(df)
-            df.to_parquet(final_path, engine='pyarrow', compression='snappy')
-            exported_count += 1
-        
-        if exported_count > 0:
-            messagebox.showinfo("Success", f"Exported {exported_count} Parquet files to {self.output_directory}")
-        else:
-            messagebox.showinfo("Cancelled", "No files were exported.")
-
-    def _export_hdf5_single(self, processed_files):
-        """Export all files as a single HDF5 file."""
-        if not processed_files: return
-        compiled_df = pd.concat([df.assign(Source_File=os.path.splitext(os.path.basename(fp))[0]) for fp, df in processed_files], ignore_index=True)
-        compiled_df = self._apply_sorting(compiled_df)
-        
-        output_path = os.path.join(self.output_directory, "compiled_processed_data.h5")
-        final_path = self._check_file_overwrite(output_path)
-        if final_path:
-            compiled_df.to_hdf(final_path, key='data', mode='w', complevel=9, complib='blosc')
-            messagebox.showinfo("Success", f"Exported compiled HDF5 file to {final_path}")
-
-    def _export_hdf5_separate(self, processed_files):
-        """Export each file as a separate HDF5 file."""
-        exported_count = 0
-        for file_path, df in processed_files:
-            base_name = os.path.splitext(os.path.basename(file_path))[0]
-            output_path = os.path.join(self.output_directory, f"{base_name}_processed.h5")
-            
-            final_path = self._check_file_overwrite(output_path)
-            if final_path is None: continue
-            
-            df = self._apply_sorting(df)
-            df.to_hdf(final_path, key='data', mode='w', complevel=9, complib='blosc')
-            exported_count += 1
-        
-        if exported_count > 0:
-            messagebox.showinfo("Success", f"Exported {exported_count} HDF5 files to {self.output_directory}")
-        else:
-            messagebox.showinfo("Cancelled", "No files were exported.")
-
-    def _export_feather_single(self, processed_files):
-        """Export all files as a single Feather file."""
-        if not processed_files: return
-        compiled_df = pd.concat([df.assign(Source_File=os.path.splitext(os.path.basename(fp))[0]) for fp, df in processed_files], ignore_index=True)
-        compiled_df = self._apply_sorting(compiled_df)
-        
-        output_path = os.path.join(self.output_directory, "compiled_processed_data.feather")
-        final_path = self._check_file_overwrite(output_path)
-        if final_path:
-            compiled_df.to_feather(final_path, compression='lz4')
-            messagebox.showinfo("Success", f"Exported compiled Feather file to {final_path}")
-
-    def _export_feather_separate(self, processed_files):
-        """Export each file as a separate Feather file."""
-        exported_count = 0
-        for file_path, df in processed_files:
-            base_name = os.path.splitext(os.path.basename(file_path))[0]
-            output_path = os.path.join(self.output_directory, f"{base_name}_processed.feather")
-            
-            final_path = self._check_file_overwrite(output_path)
-            if final_path is None: continue
-            
-            df = self._apply_sorting(df)
-            df.to_feather(output_path, compression='lz4')
-            exported_count += 1
-        
-        if exported_count > 0:
-            messagebox.showinfo("Success", f"Exported {exported_count} Feather files to {self.output_directory}")
-        else:
-            messagebox.showinfo("Cancelled", "No files were exported.")
-
-    def _export_pickle_single(self, processed_files):
-        """Export all files as a single Pickle file."""
-        if not processed_files: return
-        compiled_df = pd.concat([df.assign(Source_File=os.path.splitext(os.path.basename(fp))[0]) for fp, df in processed_files], ignore_index=True)
-        compiled_df = self._apply_sorting(compiled_df)
-        
-        output_path = os.path.join(self.output_directory, "compiled_processed_data.pkl")
-        final_path = self._check_file_overwrite(output_path)
-        if final_path:
-            compiled_df.to_pickle(final_path, compression='gzip')
-            messagebox.showinfo("Success", f"Exported compiled Pickle file to {final_path}")
-
-    def _export_pickle_separate(self, processed_files):
-        """Export each file as a separate Pickle file."""
-        exported_count = 0
-        for file_path, df in processed_files:
-            base_name = os.path.splitext(os.path.basename(file_path))[0]
-            output_path = os.path.join(self.output_directory, f"{base_name}_processed.pkl")
-            
-            final_path = self._check_file_overwrite(output_path)
-            if final_path is None: continue
-            
-            df = self._apply_sorting(df)
-            df.to_pickle(final_path, compression='gzip')
-            exported_count += 1
-        
-        if exported_count > 0:
-            messagebox.showinfo("Success", f"Exported {exported_count} Pickle files to {self.output_directory}")
-        else:
-            messagebox.showinfo("Cancelled", "No files were exported.")
 
     def _apply_sorting(self, df):
         """Apply sorting to the dataframe."""
@@ -3185,7 +1998,7 @@ This section helps you manage which signals (columns) to process from your files
             # Second filter for comparison
             ctk.CTkLabel(plot_filter_frame, text="Compare with filter:").grid(row=12, column=0, sticky="w", padx=10, pady=(10,0))
             self.compare_filter_type = ctk.StringVar(value="None")
-            self.compare_filter_menu = ctk.CTkOptionMenu(plot_filter_frame, variable=self.compare_filter_type, values=self.filter_names, command=self._update_compare_filter_ui)
+            self.compare_filter_menu = ctk.CTkOptionMenu(plot_filter_frame, variable=self.compare_filter_type, values=self.filter_names, command=self._on_plot_setting_change)
             self.compare_filter_menu.grid(row=13, column=0, sticky="ew", padx=10, pady=5)
             
             # Second filter parameter frames (initially hidden)
@@ -3206,7 +2019,7 @@ This section helps you manage which signals (columns) to process from your files
             ctk.CTkCheckBox(auto_zoom_frame, text="Auto-zoom on changes", variable=self.auto_zoom_var).grid(row=0, column=0, sticky="w", padx=5, pady=2)
             ctk.CTkButton(auto_zoom_frame, text="Fit to Data", command=self._auto_fit_plot, width=100).grid(row=0, column=1, sticky="e", padx=5, pady=2)
             
-            ctk.CTkButton(plot_filter_frame, text="Preview Filter/s", command=self.update_plot).grid(row=21, column=0, sticky="ew", padx=10, pady=5)
+            ctk.CTkButton(plot_filter_frame, text="Preview Filter", command=self.update_plot).grid(row=21, column=0, sticky="ew", padx=10, pady=5)
             ctk.CTkButton(plot_filter_frame, text="Copy Settings to Processing Tab", command=self._copy_plot_settings_to_processing).grid(row=22, column=0, sticky="ew", padx=10, pady=5)
 
             # Plot appearance controls
@@ -3224,25 +2037,22 @@ This section helps you manage which signals (columns) to process from your files
             self.plot_title_entry.grid(row=3, column=0, sticky="ew", padx=10, pady=5)
             self.plot_title_entry.bind("<Return>", self._on_plot_setting_change)
             self.plot_title_entry.bind("<FocusOut>", self._on_plot_setting_change)
-            # Force placeholder to show immediately
-            self.plot_title_entry.delete(0, "end")
-            self.plot_title_entry.insert(0, "")
+            # Force placeholder to show
+            self.plot_title_entry.configure(placeholder_text="Plot Title")
             
             self.plot_xlabel_entry = ctk.CTkEntry(appearance_frame, placeholder_text="X-Axis Label")
             self.plot_xlabel_entry.grid(row=4, column=0, sticky="ew", padx=10, pady=5)
             self.plot_xlabel_entry.bind("<Return>", self._on_plot_setting_change)
             self.plot_xlabel_entry.bind("<FocusOut>", self._on_plot_setting_change)
-            # Force placeholder to show immediately
-            self.plot_xlabel_entry.delete(0, "end")
-            self.plot_xlabel_entry.insert(0, "")
+            # Force placeholder to show
+            self.plot_xlabel_entry.configure(placeholder_text="X-Axis Label")
             
             self.plot_ylabel_entry = ctk.CTkEntry(appearance_frame, placeholder_text="Y-Axis Label")
             self.plot_ylabel_entry.grid(row=5, column=0, sticky="ew", padx=10, pady=5)
             self.plot_ylabel_entry.bind("<Return>", self._on_plot_setting_change)
             self.plot_ylabel_entry.bind("<FocusOut>", self._on_plot_setting_change)
-            # Force placeholder to show immediately
-            self.plot_ylabel_entry.delete(0, "end")
-            self.plot_ylabel_entry.insert(0, "")
+            # Force placeholder to show
+            self.plot_ylabel_entry.configure(placeholder_text="Y-Axis Label")
             
             # Color scheme controls
             ctk.CTkLabel(appearance_frame, text="Color Scheme:").grid(row=6, column=0, sticky="w", padx=10, pady=(10,0))
@@ -3934,18 +2744,6 @@ This section helps you manage which signals (columns) to process from your files
                     continue
                 
                 try:
-                    # Convert data to numeric if possible
-                    try:
-                        signal_data[signal] = pd.to_numeric(signal_data[signal], errors='coerce')
-                    except:
-                        print(f"Warning: Could not convert signal {signal} to numeric")
-                        continue
-                    
-                    # Skip if all values are NaN after conversion
-                    if signal_data[signal].isna().all():
-                        print(f"Warning: Signal {signal} has no valid numeric data")
-                        continue
-                    
                     # Get color
                     color_scheme = self.color_scheme_var.get()
                     if color_scheme == "Default":
@@ -3966,45 +2764,28 @@ This section helps you manage which signals (columns) to process from your files
                     
                     # Show both raw and filtered if requested
                     if show_both and plot_filter != "None":
-                        raw_data = pd.to_numeric(df[signal], errors='coerce')
-                        if not raw_data.isna().all():
-                            raw_label = f"{label} (raw)"
-                            self.plot_ax.plot(df[x_axis_col], raw_data, 
-                                             label=raw_label, color=color, alpha=0.3, 
-                                             linewidth=line_width*0.7)
+                        raw_label = f"{label} (raw)"
+                        self.plot_ax.plot(df[x_axis_col], df[signal], 
+                                         label=raw_label, color=color, alpha=0.3, 
+                                         linewidth=line_width*0.7)
                     
                     # Compare multiple filters if requested
                     if compare_filters and plot_filter != "None":
-                        compare_filter = self.compare_filter_type.get()
+                        # Plot raw data first
+                        raw_label = f"{label} (raw)"
+                        self.plot_ax.plot(df[x_axis_col], df[signal], 
+                                         label=raw_label, color=color, alpha=0.5, 
+                                         linewidth=line_width*0.8, linestyle='--')
                         
-                        # Plot raw data first (ensure numeric)
-                        raw_data = pd.to_numeric(df[signal], errors='coerce')
-                        if not raw_data.isna().all():
-                            raw_label = f"{label} (raw)"
-                            self.plot_ax.plot(df[x_axis_col], raw_data, 
-                                             label=raw_label, color=color, alpha=0.5, 
-                                             linewidth=line_width*0.8, linestyle='--')
-                        
-                        # Plot main filter
+                        # Plot current filter
                         try:
-                            filtered_df = self._apply_plot_filter(df.copy(), [signal], x_axis_col, plot_filter, False)
+                            filtered_df = self._apply_plot_filter(df.copy(), [signal], x_axis_col)
                             filtered_label = f"{label} ({plot_filter})"
                             self.plot_ax.plot(filtered_df[x_axis_col], filtered_df[signal], 
                                              label=filtered_label, color=color, 
                                              linewidth=line_width)
                         except Exception as e:
-                            print(f"Warning: Main filter failed - {e}")
-                        
-                        # Plot comparison filter if different from main filter
-                        if compare_filter != "None" and compare_filter != plot_filter:
-                            try:
-                                compare_df = self._apply_plot_filter(df.copy(), [signal], x_axis_col, compare_filter, True)
-                                compare_label = f"{label} ({compare_filter})"
-                                self.plot_ax.plot(compare_df[x_axis_col], compare_df[signal], 
-                                                 label=compare_label, color=color, 
-                                                 linewidth=line_width, linestyle=':')
-                            except Exception as e:
-                                print(f"Warning: Comparison filter failed - {e}")
+                            print(f"Warning: Filter comparison failed - {e}")
                         
                 except Exception as e:
                     print(f"Error plotting signal {signal}: {e}")
@@ -4115,129 +2896,7 @@ This section helps you manage which signals (columns) to process from your files
         if hasattr(self, 'plot_debug') and self.plot_debug:
             print(f"[PLOT DEBUG] {message}")
 
-    def _apply_plot_filter(self, df, signal_cols, x_axis_col, filter_type=None, is_comparison=False):
-        """Apply filter to plot data with support for comparison filters."""
-        if filter_type is None:
-            filter_type = self.plot_filter_type.get()
-        
-        if filter_type == "None":
-            return df
-        
-        # Get filter parameters based on whether this is a comparison filter
-        if is_comparison:
-            # Use comparison filter parameters
-            if filter_type == "Moving Average":
-                window = int(self.compare_ma_value_entry.get())
-                unit = self.compare_ma_unit_menu.get()
-                # Convert to samples based on unit
-                if unit == "ms":
-                    window = int(window * self.sample_rate / 1000)
-                elif unit == "s":
-                    window = int(window * self.sample_rate)
-                elif unit == "min":
-                    window = int(window * self.sample_rate * 60)
-                elif unit == "hr":
-                    window = int(window * self.sample_rate * 3600)
-                
-                for col in signal_cols:
-                    if col in df.columns:
-                        df[col] = df[col].rolling(window=window, center=True).mean()
-            
-            elif filter_type in ["Butterworth Low-pass", "Butterworth High-pass"]:
-                order = int(self.compare_bw_order_entry.get())
-                cutoff = float(self.compare_bw_cutoff_entry.get())
-                
-                for col in signal_cols:
-                    if col in df.columns:
-                        if filter_type == "Butterworth Low-pass":
-                            df[col] = self._apply_butterworth_lowpass(df[col], cutoff, order)
-                        else:
-                            df[col] = self._apply_butterworth_highpass(df[col], cutoff, order)
-            
-            elif filter_type == "Median Filter":
-                kernel_size = int(self.compare_median_kernel_entry.get())
-                for col in signal_cols:
-                    if col in df.columns:
-                        df[col] = df[col].rolling(window=kernel_size, center=True).median()
-            
-            elif filter_type == "Hampel Filter":
-                window = int(self.compare_hampel_window_entry.get())
-                threshold = float(self.compare_hampel_threshold_entry.get())
-                for col in signal_cols:
-                    if col in df.columns:
-                        df[col] = self._apply_hampel_filter(df[col], window, threshold)
-            
-            elif filter_type == "Z-Score Filter":
-                threshold = float(self.compare_zscore_threshold_entry.get())
-                method = self.compare_zscore_method_menu.get()
-                for col in signal_cols:
-                    if col in df.columns:
-                        df[col] = self._apply_zscore_filter(df[col], threshold, method)
-            
-            elif filter_type == "Savitzky-Golay":
-                window = int(self.compare_savgol_window_entry.get())
-                polyorder = int(self.compare_savgol_polyorder_entry.get())
-                for col in signal_cols:
-                    if col in df.columns:
-                        df[col] = savgol_filter(df[col], window, polyorder)
-        else:
-            # Use main filter parameters (existing logic)
-            if filter_type == "Moving Average":
-                window = int(self.plot_ma_value_entry.get())
-                unit = self.plot_ma_unit_menu.get()
-                # Convert to samples based on unit
-                if unit == "ms":
-                    window = int(window * self.sample_rate / 1000)
-                elif unit == "s":
-                    window = int(window * self.sample_rate)
-                elif unit == "min":
-                    window = int(window * self.sample_rate * 60)
-                elif unit == "hr":
-                    window = int(window * self.sample_rate * 3600)
-                
-                for col in signal_cols:
-                    if col in df.columns:
-                        df[col] = df[col].rolling(window=window, center=True).mean()
-            
-            elif filter_type in ["Butterworth Low-pass", "Butterworth High-pass"]:
-                order = int(self.plot_bw_order_entry.get())
-                cutoff = float(self.plot_bw_cutoff_entry.get())
-                
-                for col in signal_cols:
-                    if col in df.columns:
-                        if filter_type == "Butterworth Low-pass":
-                            df[col] = self._apply_butterworth_lowpass(df[col], cutoff, order)
-                        else:
-                            df[col] = self._apply_butterworth_highpass(df[col], cutoff, order)
-            
-            elif filter_type == "Median Filter":
-                kernel_size = int(self.plot_median_kernel_entry.get())
-                for col in signal_cols:
-                    if col in df.columns:
-                        df[col] = df[col].rolling(window=kernel_size, center=True).median()
-            
-            elif filter_type == "Hampel Filter":
-                window = int(self.plot_hampel_window_entry.get())
-                threshold = float(self.plot_hampel_threshold_entry.get())
-                for col in signal_cols:
-                    if col in df.columns:
-                        df[col] = self._apply_hampel_filter(df[col], window, threshold)
-            
-            elif filter_type == "Z-Score Filter":
-                threshold = float(self.plot_zscore_threshold_entry.get())
-                method = self.plot_zscore_method_menu.get()
-                for col in signal_cols:
-                    if col in df.columns:
-                        df[col] = self._apply_zscore_filter(df[col], threshold, method)
-            
-            elif filter_type == "Savitzky-Golay":
-                window = int(self.plot_savgol_window_entry.get())
-                polyorder = int(self.plot_savgol_polyorder_entry.get())
-                for col in signal_cols:
-                    if col in df.columns:
-                        df[col] = savgol_filter(df[col], window, polyorder)
-        
-        return df
+    def _apply_plot_filter(self, df, signal_cols, x_axis_col):
         """Apply filter preview to the plot data."""
         filter_type = self.plot_filter_type.get()
         
@@ -5301,10 +3960,6 @@ COMMON MISTAKES TO AVOID:
                 text_color="green"
             )
             
-            # Create a signal list from the loaded signals even if no files are loaded
-            print(f"DEBUG: Creating signal list from loaded signals")
-            self.update_signal_list(self.saved_signal_list)
-            
             # Automatically apply the loaded signals if we have signals available
             print(f"DEBUG: Checking if signal_vars exist: {bool(self.signal_vars)}")
             if self.signal_vars:
@@ -5363,14 +4018,7 @@ COMMON MISTAKES TO AVOID:
         print("DEBUG: _apply_loaded_signals_internal() completed")
 
     def apply_saved_signals(self):
-        """Apply the saved signal list to the current file's signals.
-        
-        This function takes a previously saved signal list and applies it to the currently loaded files.
-        It will:
-        1. Select all signals that are present in both the saved list and current files
-        2. Deselect all signals that are not in the saved list
-        3. Show you which signals from the saved list are missing from current files
-        """
+        """Apply the saved signal list to the current file's signals."""
         if not self.saved_signal_list:
             messagebox.showwarning("Warning", "No saved signal list loaded. Please load a signal list first.")
             return
@@ -6678,36 +5326,10 @@ For additional support or feature requests, please refer to the application docu
             dialog.destroy()
             messagebox.showinfo("Success", f"Configuration '{selected_config['name']}' has been updated with current settings!")
         
-        def on_delete():
-            selection = listbox.curselection()
-            if not selection:
-                messagebox.showwarning("No Selection", "Please select a configuration to delete.")
-                return
-            
-            selected_index = selection[0]
-            selected_config = self.plots_list[selected_index]
-            
-            # Ask for confirmation
-            result = messagebox.askyesno("Confirm Delete", 
-                                       f"Are you sure you want to delete the configuration '{selected_config['name']}'?\n\nThis action cannot be undone.")
-            if result:
-                # Remove the configuration from the list
-                deleted_config = self.plots_list.pop(selected_index)
-                
-                # Update the listbox
-                listbox.delete(selection[0])
-                
-                # Update the plots listbox in the main UI if it exists
-                if hasattr(self, 'plots_listbox'):
-                    self._update_plots_listbox()
-                
-                messagebox.showinfo("Success", f"Configuration '{deleted_config['name']}' has been deleted!")
-        
         def on_cancel():
             dialog.destroy()
         
         ctk.CTkButton(button_frame, text="Modify Selected", command=on_modify).pack(side="left", padx=5)
-        ctk.CTkButton(button_frame, text="Delete Selected", command=on_delete, fg_color="red", hover_color="darkred").pack(side="left", padx=5)
         ctk.CTkButton(button_frame, text="Cancel", command=on_cancel).pack(side="right", padx=5)
 
     def _update_plot_config(self, config_index):

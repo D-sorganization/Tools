@@ -2151,12 +2151,7 @@ This section helps you manage which signals (columns) to process from your files
             # Create checkboxes directly
             for signal in signals:
                 var = tk.BooleanVar(value=True)
-                cb = ctk.CTkCheckBox(
-                    self.signal_list_frame,
-                    text=signal,
-                    variable=var,
-                    command=self._on_signal_checkbox_changed,
-                )
+                cb = ctk.CTkCheckBox(self.signal_list_frame, text=signal, variable=var)
                 cb.grid(sticky="w", padx=5, pady=2)
                 self.signal_vars[signal] = {'var': var, 'widget': cb}
         
@@ -2175,36 +2170,13 @@ This section helps you manage which signals (columns) to process from your files
         
         print(f"DEBUG: update_signal_list completed")
 
-    def _schedule_plot_update(self) -> None:
-        """Debounce and schedule plot update shortly after a checkbox change."""
-        try:
-            # Cancel pending job if any
-            if hasattr(self, "_plot_update_job_id") and self._plot_update_job_id is not None:
-                try:
-                    self.after_cancel(self._plot_update_job_id)
-                except Exception:
-                    pass
-            # Schedule a near-future update to coalesce rapid toggles
-            self._plot_update_job_id = self.after(200, getattr(self, "update_plot", lambda: None))
-        except Exception as e:
-            print(f"DEBUG: _schedule_plot_update error: {e}")
-
-    def _on_signal_checkbox_changed(self) -> None:
-        """Handle signal checkbox toggles by auto-updating plot."""
-        self._schedule_plot_update()
-
     def _display_signals_batch(self, signals_batch, start_index=0):
         """Display a batch of signals in the scrollable frame."""
         print(f"DEBUG: Displaying batch of {len(signals_batch)} signals starting at index {start_index}")
         
         for i, signal in enumerate(signals_batch):
             var = tk.BooleanVar(value=True)
-            cb = ctk.CTkCheckBox(
-                self.signals_scrollable_frame,
-                text=signal,
-                variable=var,
-                command=self._on_signal_checkbox_changed,
-            )
+            cb = ctk.CTkCheckBox(self.signals_scrollable_frame, text=signal, variable=var)
             cb.pack(anchor="w", padx=5, pady=1)
             self.signal_vars[signal] = {'var': var, 'widget': cb}
         
