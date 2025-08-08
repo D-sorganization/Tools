@@ -78,7 +78,7 @@ from Data_Processor_r0 import CSVProcessorApp as OriginalCSVProcessorApp
 
 # Import folder tool functionality
 try:
-    from folder_tool.Folder_Cleanup_Tool_Rev0 import FolderProcessorApp
+    from Claude_Folders_Uno import FolderProcessorApp as OriginalFolderProcessorApp
     FOLDER_TOOL_AVAILABLE = True
 except ImportError:
     FOLDER_TOOL_AVAILABLE = False
@@ -448,12 +448,6 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         
         # Remove the DAT File Import tab to reorder it
         self.main_tab_view.delete("DAT File Import")
-        
-        # Recreate the Plotting & Analysis tab (parent class method)
-        self.create_plotting_tab(self.main_tab_view.tab("Plotting & Analysis"))
-        
-        # Recreate the Plots List tab (parent class method)
-        self.create_plots_list_tab(self.main_tab_view.tab("Plots List"))
         
         # Add the Format Converter tab
         self.main_tab_view.add("Format Converter")
