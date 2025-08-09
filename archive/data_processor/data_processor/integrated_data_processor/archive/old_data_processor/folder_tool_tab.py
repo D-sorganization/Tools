@@ -1,10 +1,8 @@
-from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QGroupBox, QHBoxLayout, QPushButton, QListWidget,
-    QLineEdit, QMessageBox, QProgressBar, QFileDialog, QListView, QTreeView
-)
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QAbstractItemView
-
+from PyQt6.QtWidgets import (QAbstractItemView, QFileDialog, QGroupBox,
+                             QHBoxLayout, QLineEdit, QListView, QListWidget,
+                             QMessageBox, QProgressBar, QPushButton, QTreeView,
+                             QVBoxLayout, QWidget)
 from threads import FolderProcessingThread
 
 
@@ -42,10 +40,16 @@ class FolderToolTab(QWidget):
         operation_group = QGroupBox("Operation")
         operation_layout = QVBoxLayout(operation_group)
 
-        from PyQt6.QtWidgets import QComboBox  # imported here to avoid circular import ordering
+        from PyQt6.QtWidgets import \
+            QComboBox  # imported here to avoid circular import ordering
+
         self.folder_operation_combo = QComboBox()
-        self.folder_operation_combo.addItems(['Combine', 'Flatten', 'Prune', 'Deduplicate', 'Analyze'])
-        self.folder_operation_combo.currentTextChanged.connect(self.on_folder_operation_changed)
+        self.folder_operation_combo.addItems(
+            ["Combine", "Flatten", "Prune", "Deduplicate", "Analyze"]
+        )
+        self.folder_operation_combo.currentTextChanged.connect(
+            self.on_folder_operation_changed
+        )
         operation_layout.addWidget(self.folder_operation_combo)
         layout.addWidget(operation_group)
 
@@ -125,14 +129,19 @@ class FolderToolTab(QWidget):
         source_folders = self.get_folder_source_list()
         dest_folder = self.folder_dest_edit.text()
 
-        self.folder_thread = FolderProcessingThread(source_folders, dest_folder, operation)
+        self.folder_thread = FolderProcessingThread(
+            source_folders, dest_folder, operation
+        )
         self.folder_thread.progress_updated.connect(self.update_folder_progress)
         self.folder_thread.finished.connect(self.folder_processing_finished)
         self.folder_thread.start()
 
     def get_folder_source_list(self):
         """Get list of source folders from widget."""
-        return [self.folder_source_list.item(i).text() for i in range(self.folder_source_list.count())]
+        return [
+            self.folder_source_list.item(i).text()
+            for i in range(self.folder_source_list.count())
+        ]
 
     def update_folder_progress(self, value):
         """Update folder processing progress bar."""

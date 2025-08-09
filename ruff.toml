@@ -1,0 +1,9 @@
+# ruff.toml
+target-version = "py311"
+extend-exclude = [
+  "archive/",
+  "data/",
+  "data_processor/data/",
+  "project_packer/",
+  "Golf_GUI/Simscape Multibody Data Plotters/Python Version/",
+]
