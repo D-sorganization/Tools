@@ -1,4 +1,11 @@
 {
+  "git.autofetch": true,
+  "git.pruneOnFetch": true,
+  "git.fetchOnPull": true,
+  "task.allowAutomaticTasks": "on"
+}
+
+{
     // GitHub Copilot Max Request Settings
     "github.copilot.editor.enableCodeActions": true,
     "github.copilot.enable": {
