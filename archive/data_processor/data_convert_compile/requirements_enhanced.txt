@@ -1,0 +1,22 @@
+# Universal File Format Converter - Enhanced Requirements
+# Core dependencies
+PyQt6>=6.4.0
+pandas>=1.5.0
+pyarrow>=10.0.0
+numpy>=1.21.0
+
+# File format support
+openpyxl>=3.0.0  # Excel support
+xlrd>=2.0.0      # Legacy Excel support
+h5py>=3.7.0      # HDF5 support
+scipy>=1.9.0     # MATLAB and scientific computing
+joblib>=1.2.0    # Joblib serialization
+
+# Optional dependencies (for additional features)
+# tensorflow>=2.10.0  # TFRecord support (uncomment if needed)
+# onnx>=1.12.0        # ONNX support (uncomment if needed)
+# pypmml>=0.9.0       # PMML support (uncomment if needed)
+
+# Development and testing
+pytest>=7.0.0
+pytest-qt>=4.0.0 
