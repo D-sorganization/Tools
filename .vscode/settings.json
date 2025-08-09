@@ -12,12 +12,6 @@
     "github.copilot.chat.enableCodeBlocks": true,
     "github.copilot.chat.localeOverride": "auto",
     "github.copilot.chat.scopeSelection": true,
-    "github.copilot.chat.experimental.codeGeneration.instructions": [
-        "Use the .github/copilot-instructions.md file for workspace-specific guidance",
-        "Follow conventional commit message format",
-        "Always create feature branches for significant changes",
-        "Include comprehensive error handling and logging"
-    ],
     
     // Advanced Copilot Settings for Request Management
     "github.copilot.advanced": {
@@ -90,5 +84,11 @@
         "Git Bash": {
             "source": "Git Bash"
         }
-    }
+    },
+    "github.copilot.chat.codeGeneration.instructions": [
+        "Use the .github/copilot-instructions.md file for workspace-specific guidance",
+        "Follow conventional commit message format",
+        "Always create feature branches for significant changes",
+        "Include comprehensive error handling and logging"
+    ]
 }
