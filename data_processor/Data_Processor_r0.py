@@ -4051,7 +4051,7 @@ This section helps you manage which signals (columns) to process from your files
 
         if selected_file == "Select a file..." or not x_axis_col:
             return
-        
+
         # Clear the plot first
         self.plot_ax.clear()
         
@@ -4282,7 +4282,7 @@ This section helps you manage which signals (columns) to process from your files
                              ha='center', va='center', wrap=True)
             self.plot_canvas.draw()
             self.status_label.configure(text="Plot error - check console for details")
-                
+
     def _ensure_plot_canvas_ready(self):
         """Ensure plot canvas is properly initialized."""
         if not hasattr(self, 'plot_canvas') or self.plot_canvas is None:
