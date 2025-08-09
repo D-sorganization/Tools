@@ -7,51 +7,55 @@ Creates a clean deployment package with just the necessary files
 import os
 import shutil
 import zipfile
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
+
 
 def create_deployment_package():
     """Create a deployment package"""
-    
+
     current_dir = Path(__file__).parent
     dist_dir = current_dir / "dist"
-    
+
     if not dist_dir.exists():
         print("❌ Error: dist folder not found! Please build the executable first.")
         return False
-    
+
     exe_file = dist_dir / "FolderPacker.exe"
     if not exe_file.exists():
-        print("❌ Error: FolderPacker.exe not found! Please build the executable first.")
+        print(
+            "❌ Error: FolderPacker.exe not found! Please build the executable first."
+        )
         return False
-    
+
     # Create package directory
     package_name = f"FolderPacker_v1.1_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
     package_dir = current_dir / "packages" / package_name
     package_dir.mkdir(parents=True, exist_ok=True)
-    
+
     print(f"📦 Creating deployment package: {package_name}")
-    
+
     # Copy executable
     shutil.copy2(exe_file, package_dir / "FolderPacker.exe")
     print("✓ Copied executable")
-    
+
     # Copy launcher
     launcher_file = dist_dir / "Launch_FolderPacker.bat"
     if launcher_file.exists():
         shutil.copy2(launcher_file, package_dir / "Launch_FolderPacker.bat")
         print("✓ Copied launcher script")
-    
+
     # Copy README
     readme_file = current_dir / "README.md"
     if readme_file.exists():
         shutil.copy2(readme_file, package_dir / "README.md")
         print("✓ Copied README")
-    
+
     # Create a simple user guide
     user_guide = package_dir / "Quick_Start_Guide.txt"
-    with open(user_guide, 'w') as f:
-        f.write("""Folder Packer / Unpacker Tool - Quick Start Guide
+    with open(user_guide, "w") as f:
+        f.write(
+            """Folder Packer / Unpacker Tool - Quick Start Guide
 ================================================
 
 GETTING STARTED:
@@ -99,36 +103,38 @@ For more information, see README.md
 
 Version: 1.1
 Built: {datetime.now().strftime('%Y-%m-%d %H:%M')}
-""")
+"""
+        )
     print("✓ Created Quick Start Guide")
-    
+
     # Create ZIP package
     zip_file = current_dir / "packages" / f"{package_name}.zip"
-    with zipfile.ZipFile(zip_file, 'w', zipfile.ZIP_DEFLATED) as zf:
-        for file_path in package_dir.rglob('*'):
+    with zipfile.ZipFile(zip_file, "w", zipfile.ZIP_DEFLATED) as zf:
+        for file_path in package_dir.rglob("*"):
             if file_path.is_file():
                 arcname = file_path.relative_to(package_dir)
                 zf.write(file_path, arcname)
-    
+
     print(f"✅ Created ZIP package: {zip_file}")
-    
+
     # Show summary
     print(f"\n📊 DEPLOYMENT PACKAGE SUMMARY")
     print(f"Package name: {package_name}")
     print(f"Package folder: {package_dir}")
     print(f"ZIP file: {zip_file}")
     print(f"ZIP size: {zip_file.stat().st_size / (1024*1024):.1f} MB")
-    
+
     print(f"\n📋 PACKAGE CONTENTS:")
-    for file_path in sorted(package_dir.rglob('*')):
+    for file_path in sorted(package_dir.rglob("*")):
         if file_path.is_file():
-            size_mb = file_path.stat().st_size / (1024*1024)
+            size_mb = file_path.stat().st_size / (1024 * 1024)
             print(f"  - {file_path.name} ({size_mb:.1f} MB)")
-    
+
     print(f"\n🎉 Deployment package ready!")
     print(f"📁 You can distribute the ZIP file or the entire '{package_name}' folder")
-    
+
     return True
+
 
 if __name__ == "__main__":
     print("📦 Folder Packer - Deployment Packager")

@@ -8,24 +8,24 @@ print("Creating plotting fix...")
 
 # Read the current Data_Processor_r0.py file to understand the exact structure
 try:
-    with open('Data_Processor_r0.py', 'r', encoding='utf-8') as f:
+    with open("Data_Processor_r0.py", "r", encoding="utf-8") as f:
         content = f.read()
     print("✓ Successfully read Data_Processor_r0.py")
-    
+
     # Check if the critical methods exist
-    has_update_plot = 'def update_plot(' in content
-    has_get_data_for_plotting = 'def get_data_for_plotting(' in content
-    has_on_plot_file_select = 'def on_plot_file_select(' in content
-    
+    has_update_plot = "def update_plot(" in content
+    has_get_data_for_plotting = "def get_data_for_plotting(" in content
+    has_on_plot_file_select = "def on_plot_file_select(" in content
+
     print(f"update_plot method exists: {has_update_plot}")
     print(f"get_data_for_plotting method exists: {has_get_data_for_plotting}")
     print(f"on_plot_file_select method exists: {has_on_plot_file_select}")
-    
+
     if all([has_update_plot, has_get_data_for_plotting, has_on_plot_file_select]):
         print("✓ All core plotting methods are present")
     else:
         print("✗ Some core plotting methods are missing")
-    
+
 except Exception as e:
     print(f"✗ Error reading file: {e}")
     exit(1)
@@ -283,7 +283,7 @@ patch_content = f"""
 {patched_update_plot}
 """
 
-with open('plotting_debug_patch.py', 'w', encoding='utf-8') as f:
+with open("plotting_debug_patch.py", "w", encoding="utf-8") as f:
     f.write(patch_content)
 
 print("✓ Created plotting_debug_patch.py with enhanced debugging")
@@ -293,6 +293,8 @@ print("2. Apply the debugging enhancements to see detailed output")
 print("3. The enhanced update_plot method includes comprehensive error checking")
 
 print("\nManual application steps:")
-print("1. Add the _debug_plot_state and _force_signal_selection methods to CSVProcessorApp")
+print(
+    "1. Add the _debug_plot_state and _force_signal_selection methods to CSVProcessorApp"
+)
 print("2. Replace the update_plot method with the enhanced version")
 print("3. Run the application and check console output for detailed debugging")

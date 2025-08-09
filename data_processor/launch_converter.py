@@ -3,8 +3,8 @@
 Standalone launcher for the Format Converter tool.
 Starts the integrated app and switches focus to the 'Format Converter' tab.
 """
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 

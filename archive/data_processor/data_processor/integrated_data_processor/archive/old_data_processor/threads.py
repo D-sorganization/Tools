@@ -1,13 +1,14 @@
 import os
 import shutil
-import pandas as pd
-from PyQt6.QtCore import QThread, pyqtSignal
 
-from file_utils import FileFormatDetector, DataReader, DataWriter
+import pandas as pd
+from file_utils import DataReader, DataWriter, FileFormatDetector
+from PyQt6.QtCore import QThread, pyqtSignal
 
 
 class ProcessingThread(QThread):
     """Thread for processing files."""
+
     progress_updated = pyqtSignal(int, str)
 
     def __init__(self, files, settings, output_folder, processor=None):
@@ -16,7 +17,9 @@ class ProcessingThread(QThread):
         self.settings = settings
         self.output_folder = output_folder
         if processor is None:
-            from Data_Processor_PyQt6 import process_single_csv_file as _processor
+            from Data_Processor_PyQt6 import \
+                process_single_csv_file as _processor
+
             self.processor = _processor
         else:
             self.processor = processor
@@ -38,6 +41,7 @@ class ProcessingThread(QThread):
 
 class ConversionThread(QThread):
     """Thread for file conversion."""
+
     progress_updated = pyqtSignal(int)
     log_updated = pyqtSignal(str)
 
@@ -100,6 +104,7 @@ class ConversionThread(QThread):
 
 class FolderProcessingThread(QThread):
     """Thread for folder processing operations."""
+
     progress_updated = pyqtSignal(int)
 
     def __init__(self, source_folders, dest_folder, operation):
@@ -128,7 +133,13 @@ class FolderProcessingThread(QThread):
         os.makedirs(self.dest_folder, exist_ok=True)
         file_count = 0
         total_files = sum(
-            len([f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f))])
+            len(
+                [
+                    f
+                    for f in os.listdir(folder)
+                    if os.path.isfile(os.path.join(folder, f))
+                ]
+            )
             for folder in self.source_folders
         )
         for folder in self.source_folders:
@@ -180,7 +191,13 @@ class FolderProcessingThread(QThread):
         os.makedirs(self.dest_folder, exist_ok=True)
         file_count = 0
         total_files = sum(
-            len([f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f))])
+            len(
+                [
+                    f
+                    for f in os.listdir(folder)
+                    if os.path.isfile(os.path.join(folder, f))
+                ]
+            )
             for folder in self.source_folders
         )
         seen_files = set()
@@ -203,7 +220,13 @@ class FolderProcessingThread(QThread):
         os.makedirs(self.dest_folder, exist_ok=True)
         file_count = 0
         total_files = sum(
-            len([f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f))])
+            len(
+                [
+                    f
+                    for f in os.listdir(folder)
+                    if os.path.isfile(os.path.join(folder, f))
+                ]
+            )
             for folder in self.source_folders
         )
         seen_hashes = set()
@@ -213,7 +236,8 @@ class FolderProcessingThread(QThread):
                 if os.path.isfile(file_path):
                     try:
                         import hashlib
-                        with open(file_path, 'rb') as f:
+
+                        with open(file_path, "rb") as f:
                             file_hash = hashlib.md5(f.read()).hexdigest()
                         if file_hash not in seen_hashes:
                             seen_hashes.add(file_hash)
@@ -233,23 +257,23 @@ class FolderProcessingThread(QThread):
         total_folders = len(self.source_folders)
         for folder in self.source_folders:
             folder_stats = {
-                'folder': folder,
-                'total_files': 0,
-                'total_size': 0,
-                'file_types': {},
-                'subfolders': 0,
+                "folder": folder,
+                "total_files": 0,
+                "total_size": 0,
+                "file_types": {},
+                "subfolders": 0,
             }
             for root, dirs, files in os.walk(folder):
-                folder_stats['subfolders'] += len(dirs)
+                folder_stats["subfolders"] += len(dirs)
                 for file in files:
                     file_path = os.path.join(root, file)
                     try:
                         file_size = os.path.getsize(file_path)
-                        folder_stats['total_files'] += 1
-                        folder_stats['total_size'] += file_size
+                        folder_stats["total_files"] += 1
+                        folder_stats["total_size"] += file_size
                         ext = os.path.splitext(file)[1].lower()
-                        folder_stats['file_types'][ext] = (
-                            folder_stats['file_types'].get(ext, 0) + 1
+                        folder_stats["file_types"][ext] = (
+                            folder_stats["file_types"].get(ext, 0) + 1
                         )
                     except Exception:
                         pass
@@ -257,18 +281,16 @@ class FolderProcessingThread(QThread):
             folder_count += 1
             self.progress_updated.emit(int((folder_count / total_folders) * 100))
         report_path = os.path.join(self.dest_folder, "folder_analysis_report.txt")
-        with open(report_path, 'w') as f:
+        with open(report_path, "w") as f:
             f.write("Folder Analysis Report\n")
             f.write("=" * 50 + "\n\n")
             for stats in analysis_results:
                 f.write(f"Folder: {stats['folder']}\n")
                 f.write(f"Total Files: {stats['total_files']}\n")
-                f.write(
-                    f"Total Size: {stats['total_size'] / (1024*1024):.2f} MB\n"
-                )
+                f.write(f"Total Size: {stats['total_size'] / (1024*1024):.2f} MB\n")
                 f.write(f"Subfolders: {stats['subfolders']}\n")
                 f.write("File Types:\n")
-                for ext, count in stats['file_types'].items():
+                for ext, count in stats["file_types"].items():
                     f.write(f"  {ext}: {count}\n")
                 f.write("\n")
         self.progress_updated.emit(100)

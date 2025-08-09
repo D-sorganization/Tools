@@ -1,0 +1,26 @@
+repos:
+- repo: https://github.com/psf/black
+  rev: 24.4.2
+  hooks:
+    - id: black
+      exclude: ^(archive/|data/|data_processor/data/|project_packer/|Golf_GUI/Simscape Multibody Data Plotters/Python Version/)
+- repo: https://github.com/PyCQA/isort
+  rev: 5.13.2
+  hooks:
+    - id: isort
+      args: ["--profile", "black"]
+      exclude: ^(archive/|data/|data_processor/data/|project_packer/|Golf_GUI/Simscape Multibody Data Plotters/Python Version/)
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.5.0
+  hooks:
+    - id: ruff
+      exclude: ^(archive/|data/|data_processor/data/|data_processor/Data_Processor_r0\.working_safe\.py|data_processor/folder_tool/|folder_tool/|project_packer/|Golf_GUI/Simscape Multibody Data Plotters/Python Version/)
+- repo: https://github.com/pre-commit/mirrors-mypy
+  rev: v1.10.0
+  hooks:
+    - id: mypy
+      additional_dependencies: ["types-requests"]
+      exclude: ^(archive/|data/|python/|data_processor/data/|data_processor/Data_Processor_r0\.working_safe\.py|data_processor/Data_Processor_r0\.py|data_processor/folder_tool/|folder_tool/|project_packer/|Golf_GUI/Simscape Multibody Data Plotters/Python Version/)
+- repo: https://github.com/kynan/nbstripout
+  rev: 0.7.1
+  hooks: [{id: nbstripout}]
