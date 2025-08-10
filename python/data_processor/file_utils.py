@@ -75,7 +75,9 @@ class DataWriter:
 
     @staticmethod
     def write_file(
-        data: pd.DataFrame, file_path: str | Path, format_type: str,
+        data: pd.DataFrame,
+        file_path: str | Path,
+        format_type: str,
     ) -> None:
         """Write data to a file in the specified format.
 

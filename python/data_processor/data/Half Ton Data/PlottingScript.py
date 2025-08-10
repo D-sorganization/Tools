@@ -58,7 +58,13 @@ ws.append(["Time", "CO %", "CO2 %", "CH4 %", "Filtered H2 %"])
 # Write data to Excel
 for _, row in df.iterrows():
     ws.append(
-        [row["time"], row["co_pct"], row["co2_pct"], row["ch4_pct"], row["h2_filtered"]],
+        [
+            row["time"],
+            row["co_pct"],
+            row["co2_pct"],
+            row["ch4_pct"],
+            row["h2_filtered"],
+        ],
     )
 
 # Insert the plot into the Excel file

@@ -122,7 +122,11 @@ class FolderPackerGUI:
         # Source folders listbox
         self.folders_listbox = tk.Listbox(source_frame, height=6)
         self.folders_listbox.grid(
-            row=0, column=0, columnspan=3, sticky="ew", pady=(0, 10),
+            row=0,
+            column=0,
+            columnspan=3,
+            sticky="ew",
+            pady=(0, 10),
         )
 
         # Source folder buttons
@@ -218,7 +222,8 @@ class FolderPackerGUI:
         """Pack the selected folders to the output directory."""
         if not self.source_folders:
             messagebox.showwarning(
-                "Warning", "Please select at least one source folder.",
+                "Warning",
+                "Please select at least one source folder.",
             )
             return
 

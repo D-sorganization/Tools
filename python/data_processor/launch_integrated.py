@@ -10,8 +10,7 @@ from pathlib import Path
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s",
 )
 
 # Add the current directory to the Python path
@@ -37,7 +36,7 @@ except ImportError as e:
     logging.exception("Please ensure all dependencies are installed:")
     logging.exception(
         "pip install customtkinter pandas numpy scipy matplotlib openpyxl "
-        "Pillow simpledbf pyarrow tables feather-format"
+        "Pillow simpledbf pyarrow tables feather-format",
     )
     input("Press Enter to exit...")
 except Exception as e:

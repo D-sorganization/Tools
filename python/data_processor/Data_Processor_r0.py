@@ -89,7 +89,8 @@ def process_single_csv_file(file_path, settings):
                 if filter_type == "Moving Average":
                     window_size = settings.get("ma_window", 10)
                     processed_df[col] = signal_data.rolling(
-                        window=window_size, min_periods=1,
+                        window=window_size,
+                        min_periods=1,
                     ).mean()
                 elif filter_type in ["Butterworth Low-pass", "Butterworth High-pass"]:
                     order = settings.get("bw_order", 3)
@@ -106,7 +107,8 @@ def process_single_csv_file(file_path, settings):
                         )
                         b, a = butter(N=order, Wn=cutoff, btype=btype, fs=sr)
                         processed_df[col] = pd.Series(
-                            filtfilt(b, a, signal_data), index=signal_data.index,
+                            filtfilt(b, a, signal_data),
+                            index=signal_data.index,
                         )
                 elif filter_type == "Median Filter":
                     kernel = settings.get("median_kernel", 5)
@@ -192,7 +194,8 @@ class CSVProcessorApp(ctk.CTk):
 
         # Layout persistence variables
         self.layout_config_file = os.path.join(
-            os.path.expanduser("~"), ".csv_processor_layout.json",
+            os.path.expanduser("~"),
+            ".csv_processor_layout.json",
         )
         self.splitters = {}
         self.layout_data = self._load_layout_config()
@@ -315,7 +318,11 @@ class CSVProcessorApp(ctk.CTk):
             # Create a scrollable frame for the processing tab view
             processing_scrollable_frame = ctk.CTkScrollableFrame(left_panel)
             processing_scrollable_frame.grid(
-                row=0, column=0, padx=10, pady=10, sticky="nsew",
+                row=0,
+                column=0,
+                padx=10,
+                pady=10,
+                sticky="nsew",
             )
             processing_scrollable_frame.grid_columnconfigure(0, weight=1)
 
@@ -359,13 +366,20 @@ class CSVProcessorApp(ctk.CTk):
 
             # File list frame
             self.file_list_frame = ctk.CTkScrollableFrame(
-                right_panel, label_text="Selected Input Files", height=120,
+                right_panel,
+                label_text="Selected Input Files",
+                height=120,
             )
             self.file_list_frame.grid(
-                row=0, column=0, padx=10, pady=(0, 10), sticky="new",
+                row=0,
+                column=0,
+                padx=10,
+                pady=(0, 10),
+                sticky="new",
             )
             self.initial_file_label = ctk.CTkLabel(
-                self.file_list_frame, text="Files you select will be listed here.",
+                self.file_list_frame,
+                text="Files you select will be listed here.",
             )
             self.initial_file_label.pack(padx=5, pady=5)
 
@@ -375,12 +389,16 @@ class CSVProcessorApp(ctk.CTk):
             signal_control_frame.grid_columnconfigure(0, weight=1)
 
             self.search_entry = ctk.CTkEntry(
-                signal_control_frame, placeholder_text="Search for signals...",
+                signal_control_frame,
+                placeholder_text="Search for signals...",
             )
             self.search_entry.grid(row=0, column=0, padx=(0, 5), sticky="ew")
             self.search_entry.bind("<KeyRelease>", self._filter_signals)
             self.clear_search_button = ctk.CTkButton(
-                signal_control_frame, text="X", width=28, command=self._clear_search,
+                signal_control_frame,
+                text="X",
+                width=28,
+                command=self._clear_search,
             )
             self.clear_search_button.grid(row=0, column=1, padx=5)
             ctk.CTkButton(
@@ -398,10 +416,15 @@ class CSVProcessorApp(ctk.CTk):
 
             # Signal list frame
             self.signal_list_frame = ctk.CTkScrollableFrame(
-                right_panel, label_text="Available Signals to Process",
+                right_panel,
+                label_text="Available Signals to Process",
             )
             self.signal_list_frame.grid(
-                row=2, column=0, padx=10, pady=(5, 10), sticky="nsew",
+                row=2,
+                column=0,
+                padx=10,
+                pady=(5, 10),
+                sticky="nsew",
             )
             self.signal_list_frame.grid_columnconfigure(0, weight=1)
 
@@ -450,14 +473,20 @@ class CSVProcessorApp(ctk.CTk):
         file_buttons_frame.grid_columnconfigure(1, weight=1)
 
         ctk.CTkButton(
-            file_buttons_frame, text="Select Input Files", command=self.select_files,
+            file_buttons_frame,
+            text="Select Input Files",
+            command=self.select_files,
         ).grid(row=0, column=0, padx=(0, 5), pady=5, sticky="ew")
         ctk.CTkButton(
-            file_buttons_frame, text="Clear All Files", command=self._clear_all_files,
+            file_buttons_frame,
+            text="Clear All Files",
+            command=self._clear_all_files,
         ).grid(row=0, column=1, padx=(5, 0), pady=5, sticky="ew")
 
         ctk.CTkButton(
-            file_frame, text="Select Output Folder", command=self.select_output_folder,
+            file_frame,
+            text="Select Output Folder",
+            command=self.select_output_folder,
         ).grid(row=2, column=0, padx=10, pady=5, sticky="ew")
 
         # Bulk processing mode toggle
@@ -501,12 +530,19 @@ class CSVProcessorApp(ctk.CTk):
         # Header with help button
         header_frame = ctk.CTkFrame(signal_list_frame)
         header_frame.grid(
-            row=0, column=0, columnspan=3, padx=10, pady=(10, 5), sticky="ew",
+            row=0,
+            column=0,
+            columnspan=3,
+            padx=10,
+            pady=(10, 5),
+            sticky="ew",
         )
         header_frame.grid_columnconfigure(0, weight=1)
 
         ctk.CTkLabel(
-            header_frame, text="Signal List Management", font=ctk.CTkFont(weight="bold"),
+            header_frame,
+            text="Signal List Management",
+            font=ctk.CTkFont(weight="bold"),
         ).grid(row=0, column=0, padx=(0, 5), pady=5, sticky="w")
         ctk.CTkButton(
             header_frame,
@@ -519,13 +555,19 @@ class CSVProcessorApp(ctk.CTk):
 
         # Buttons for signal list management - Row 1
         ctk.CTkButton(
-            signal_list_frame, text="Save Signal List", command=self.save_signal_list,
+            signal_list_frame,
+            text="Save Signal List",
+            command=self.save_signal_list,
         ).grid(row=1, column=0, padx=10, pady=5, sticky="ew")
         ctk.CTkButton(
-            signal_list_frame, text="Load Signal List", command=self.load_signal_list,
+            signal_list_frame,
+            text="Load Signal List",
+            command=self.load_signal_list,
         ).grid(row=1, column=1, padx=10, pady=5, sticky="ew")
         ctk.CTkButton(
-            signal_list_frame, text="Load from Files", command=self._manual_load_signals,
+            signal_list_frame,
+            text="Load from Files",
+            command=self._manual_load_signals,
         ).grid(row=1, column=2, padx=10, pady=5, sticky="ew")
 
         # Buttons for signal list management - Row 2
@@ -535,7 +577,9 @@ class CSVProcessorApp(ctk.CTk):
             command=self._create_signal_list,
         ).grid(row=2, column=0, padx=10, pady=5, sticky="ew")
         ctk.CTkButton(
-            signal_list_frame, text="Apply Signals", command=self.apply_saved_signals,
+            signal_list_frame,
+            text="Apply Signals",
+            command=self.apply_saved_signals,
         ).grid(row=2, column=1, padx=10, pady=5, sticky="ew")
         ctk.CTkButton(
             signal_list_frame,
@@ -551,7 +595,12 @@ class CSVProcessorApp(ctk.CTk):
             text_color="gray",
         )
         self.signal_list_status_label.grid(
-            row=3, column=0, columnspan=3, padx=10, pady=(5, 10), sticky="w",
+            row=3,
+            column=0,
+            columnspan=3,
+            padx=10,
+            pady=(5, 10),
+            sticky="w",
         )
 
         # Settings frame
@@ -565,10 +614,14 @@ class CSVProcessorApp(ctk.CTk):
             font=ctk.CTkFont(weight="bold"),
         ).grid(row=0, column=0, columnspan=3, padx=10, pady=(10, 5), sticky="w")
         ctk.CTkButton(
-            settings_frame, text="Save Settings", command=self.save_settings,
+            settings_frame,
+            text="Save Settings",
+            command=self.save_settings,
         ).grid(row=1, column=0, padx=10, pady=5, sticky="ew")
         ctk.CTkButton(
-            settings_frame, text="Load Settings", command=self.load_settings,
+            settings_frame,
+            text="Load Settings",
+            command=self.load_settings,
         ).grid(row=1, column=1, padx=10, pady=5, sticky="ew")
         ctk.CTkButton(
             settings_frame,
@@ -582,7 +635,9 @@ class CSVProcessorApp(ctk.CTk):
         dataset_frame.grid_columnconfigure(1, weight=1)
 
         ctk.CTkLabel(
-            dataset_frame, text="Dataset Naming", font=ctk.CTkFont(weight="bold"),
+            dataset_frame,
+            text="Dataset Naming",
+            font=ctk.CTkFont(weight="bold"),
         ).grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 5), sticky="w")
 
         # Default naming option
@@ -607,17 +662,26 @@ class CSVProcessorApp(ctk.CTk):
         custom_radio.grid(row=2, column=0, padx=10, pady=5, sticky="w")
 
         self.custom_dataset_entry = ctk.CTkEntry(
-            dataset_frame, placeholder_text="Enter custom dataset name",
+            dataset_frame,
+            placeholder_text="Enter custom dataset name",
         )
         self.custom_dataset_entry.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
         self.custom_dataset_entry.configure(state="disabled")  # Initially disabled
 
         # Warning label for file overwriting
         self.overwrite_warning_label = ctk.CTkLabel(
-            dataset_frame, text="", font=ctk.CTkFont(size=11), text_color="orange",
+            dataset_frame,
+            text="",
+            font=ctk.CTkFont(size=11),
+            text_color="orange",
         )
         self.overwrite_warning_label.grid(
-            row=3, column=0, columnspan=2, padx=10, pady=5, sticky="w",
+            row=3,
+            column=0,
+            columnspan=2,
+            padx=10,
+            pady=5,
+            sticky="w",
         )
 
         # Export options frame
@@ -626,10 +690,16 @@ class CSVProcessorApp(ctk.CTk):
         export_frame.grid_columnconfigure(1, weight=1)
 
         ctk.CTkLabel(
-            export_frame, text="Export Options", font=ctk.CTkFont(weight="bold"),
+            export_frame,
+            text="Export Options",
+            font=ctk.CTkFont(weight="bold"),
         ).grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 5), sticky="w")
         ctk.CTkLabel(export_frame, text="Format:").grid(
-            row=1, column=0, padx=10, pady=5, sticky="w",
+            row=1,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
         )
 
         self.export_type_var = ctk.StringVar(value="CSV (Separate Files)")
@@ -655,7 +725,11 @@ class CSVProcessorApp(ctk.CTk):
         ).grid(row=1, column=1, padx=10, pady=5, sticky="ew")
 
         ctk.CTkLabel(export_frame, text="Sort By:").grid(
-            row=2, column=0, padx=10, pady=5, sticky="w",
+            row=2,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
         )
         self.sort_col_menu = ctk.CTkOptionMenu(export_frame, values=["No Sorting"])
         self.sort_col_menu.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
@@ -687,7 +761,9 @@ class CSVProcessorApp(ctk.CTk):
         trim_frame.grid_columnconfigure(1, weight=1)
 
         ctk.CTkLabel(
-            trim_frame, text="Time Trimming", font=ctk.CTkFont(weight="bold"),
+            trim_frame,
+            text="Time Trimming",
+            font=ctk.CTkFont(weight="bold"),
         ).grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 5), sticky="w")
         ctk.CTkLabel(
             trim_frame,
@@ -696,26 +772,41 @@ class CSVProcessorApp(ctk.CTk):
         ).grid(row=1, column=0, columnspan=2, padx=10, pady=(0, 5), sticky="w")
 
         ctk.CTkLabel(trim_frame, text="Date (YYYY-MM-DD):").grid(
-            row=2, column=0, padx=10, pady=5, sticky="w",
+            row=2,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
         )
         self.trim_date_entry = ctk.CTkEntry(
-            trim_frame, placeholder_text="e.g., 2024-01-15",
+            trim_frame,
+            placeholder_text="e.g., 2024-01-15",
         )
         self.trim_date_entry.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
 
         ctk.CTkLabel(trim_frame, text="Start Time (HH:MM:SS):").grid(
-            row=3, column=0, padx=10, pady=5, sticky="w",
+            row=3,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
         )
         self.trim_start_entry = ctk.CTkEntry(
-            trim_frame, placeholder_text="e.g., 09:30:00",
+            trim_frame,
+            placeholder_text="e.g., 09:30:00",
         )
         self.trim_start_entry.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
 
         ctk.CTkLabel(trim_frame, text="End Time (HH:MM:SS):").grid(
-            row=4, column=0, padx=10, pady=5, sticky="w",
+            row=4,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
         )
         self.trim_end_entry = ctk.CTkEntry(
-            trim_frame, placeholder_text="e.g., 17:00:00",
+            trim_frame,
+            placeholder_text="e.g., 17:00:00",
         )
         self.trim_end_entry.grid(row=4, column=1, padx=10, pady=5, sticky="ew")
 
@@ -736,10 +827,16 @@ class CSVProcessorApp(ctk.CTk):
         filter_frame.grid_columnconfigure(1, weight=1)
 
         ctk.CTkLabel(
-            filter_frame, text="Signal Filtering", font=ctk.CTkFont(weight="bold"),
+            filter_frame,
+            text="Signal Filtering",
+            font=ctk.CTkFont(weight="bold"),
         ).grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 5), sticky="w")
         ctk.CTkLabel(filter_frame, text="Filter Type:").grid(
-            row=1, column=0, padx=10, pady=5, sticky="w",
+            row=1,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
         )
 
         self.filter_type_var = ctk.StringVar(value="None")
@@ -778,16 +875,24 @@ class CSVProcessorApp(ctk.CTk):
         resample_frame.grid_columnconfigure(1, weight=1)
 
         ctk.CTkLabel(
-            resample_frame, text="Time Resampling", font=ctk.CTkFont(weight="bold"),
+            resample_frame,
+            text="Time Resampling",
+            font=ctk.CTkFont(weight="bold"),
         ).grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 5), sticky="w")
 
         self.resample_var = tk.BooleanVar(value=False)
         ctk.CTkCheckBox(
-            resample_frame, text="Enable Resampling", variable=self.resample_var,
+            resample_frame,
+            text="Enable Resampling",
+            variable=self.resample_var,
         ).grid(row=1, column=0, columnspan=2, padx=10, pady=5, sticky="w")
 
         ctk.CTkLabel(resample_frame, text="Time Gap:").grid(
-            row=2, column=0, padx=10, pady=5, sticky="w",
+            row=2,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
         )
 
         resample_time_frame = ctk.CTkFrame(resample_frame, fg_color="transparent")
@@ -796,12 +901,14 @@ class CSVProcessorApp(ctk.CTk):
         resample_time_frame.grid_columnconfigure(1, weight=1)
 
         self.resample_value_entry = ctk.CTkEntry(
-            resample_time_frame, placeholder_text="e.g., 10",
+            resample_time_frame,
+            placeholder_text="e.g., 10",
         )
         self.resample_value_entry.grid(row=0, column=0, sticky="ew")
 
         self.resample_unit_menu = ctk.CTkOptionMenu(
-            resample_time_frame, values=time_units,
+            resample_time_frame,
+            values=time_units,
         )
         self.resample_unit_menu.grid(row=0, column=1, padx=(5, 0), sticky="ew")
 
@@ -811,7 +918,9 @@ class CSVProcessorApp(ctk.CTk):
         integrator_frame.grid_columnconfigure(1, weight=1)
 
         ctk.CTkLabel(
-            integrator_frame, text="Signal Integration", font=ctk.CTkFont(weight="bold"),
+            integrator_frame,
+            text="Signal Integration",
+            font=ctk.CTkFont(weight="bold"),
         ).grid(row=0, column=0, columnspan=2, padx=10, pady=(5, 3), sticky="w")
         ctk.CTkLabel(
             integrator_frame,
@@ -820,7 +929,11 @@ class CSVProcessorApp(ctk.CTk):
         ).grid(row=1, column=0, columnspan=2, padx=10, pady=(0, 5), sticky="w")
 
         ctk.CTkLabel(integrator_frame, text="Integration Method:").grid(
-            row=2, column=0, padx=10, pady=5, sticky="w",
+            row=2,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
         )
         self.integrator_method_var = ctk.StringVar(value="Trapezoidal")
         ctk.CTkOptionMenu(
@@ -832,7 +945,12 @@ class CSVProcessorApp(ctk.CTk):
         # Integration signals selection frame
         integrator_signals_frame = ctk.CTkFrame(integrator_frame)
         integrator_signals_frame.grid(
-            row=3, column=0, columnspan=2, padx=10, pady=5, sticky="ew",
+            row=3,
+            column=0,
+            columnspan=2,
+            padx=10,
+            pady=5,
+            sticky="ew",
         )
         integrator_signals_frame.grid_columnconfigure(0, weight=1)
 
@@ -843,11 +961,13 @@ class CSVProcessorApp(ctk.CTk):
         ).grid(row=0, column=0, columnspan=2, padx=5, pady=5, sticky="w")
 
         self.integrator_search_entry = ctk.CTkEntry(
-            integrator_signals_frame, placeholder_text="Search signals to integrate...",
+            integrator_signals_frame,
+            placeholder_text="Search signals to integrate...",
         )
         self.integrator_search_entry.grid(row=1, column=0, padx=5, pady=5, sticky="ew")
         self.integrator_search_entry.bind(
-            "<KeyRelease>", self._filter_integrator_signals,
+            "<KeyRelease>",
+            self._filter_integrator_signals,
         )
 
         ctk.CTkButton(
@@ -858,17 +978,29 @@ class CSVProcessorApp(ctk.CTk):
         ).grid(row=1, column=1, padx=5, pady=5)
 
         self.integrator_signals_frame = ctk.CTkScrollableFrame(
-            integrator_signals_frame, height=100,
+            integrator_signals_frame,
+            height=100,
         )
         self.integrator_signals_frame.grid(
-            row=2, column=0, columnspan=2, padx=5, pady=5, sticky="ew",
+            row=2,
+            column=0,
+            columnspan=2,
+            padx=5,
+            pady=5,
+            sticky="ew",
         )
 
         integrator_buttons_frame = ctk.CTkFrame(
-            integrator_frame, fg_color="transparent",
+            integrator_frame,
+            fg_color="transparent",
         )
         integrator_buttons_frame.grid(
-            row=4, column=0, columnspan=2, padx=10, pady=5, sticky="ew",
+            row=4,
+            column=0,
+            columnspan=2,
+            padx=10,
+            pady=5,
+            sticky="ew",
         )
 
         ctk.CTkButton(
@@ -888,7 +1020,9 @@ class CSVProcessorApp(ctk.CTk):
         deriv_frame.grid_columnconfigure(1, weight=1)
 
         ctk.CTkLabel(
-            deriv_frame, text="Signal Differentiation", font=ctk.CTkFont(weight="bold"),
+            deriv_frame,
+            text="Signal Differentiation",
+            font=ctk.CTkFont(weight="bold"),
         ).grid(row=0, column=0, columnspan=2, padx=10, pady=(5, 3), sticky="w")
         ctk.CTkLabel(
             deriv_frame,
@@ -898,7 +1032,11 @@ class CSVProcessorApp(ctk.CTk):
 
         # Differentiation method selection
         ctk.CTkLabel(deriv_frame, text="Method:").grid(
-            row=2, column=0, padx=10, pady=5, sticky="w",
+            row=2,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
         )
         self.deriv_method_var = ctk.StringVar(value="Spline (Acausal)")
         ctk.CTkOptionMenu(
@@ -910,7 +1048,12 @@ class CSVProcessorApp(ctk.CTk):
         # Differentiation signals selection frame
         deriv_signals_frame = ctk.CTkFrame(deriv_frame)
         deriv_signals_frame.grid(
-            row=3, column=0, columnspan=2, padx=10, pady=5, sticky="ew",
+            row=3,
+            column=0,
+            columnspan=2,
+            padx=10,
+            pady=5,
+            sticky="ew",
         )
         deriv_signals_frame.grid_columnconfigure(0, weight=1)
 
@@ -922,41 +1065,65 @@ class CSVProcessorApp(ctk.CTk):
 
         # Search bar for differentiation signals
         self.deriv_search_entry = ctk.CTkEntry(
-            deriv_signals_frame, placeholder_text="Search signals to differentiate...",
+            deriv_signals_frame,
+            placeholder_text="Search signals to differentiate...",
         )
         self.deriv_search_entry.grid(row=1, column=0, padx=5, pady=5, sticky="ew")
         self.deriv_search_entry.bind("<KeyRelease>", self._filter_deriv_signals)
 
         ctk.CTkButton(
-            deriv_signals_frame, text="X", width=28, command=self._clear_deriv_search,
+            deriv_signals_frame,
+            text="X",
+            width=28,
+            command=self._clear_deriv_search,
         ).grid(row=1, column=1, padx=5, pady=5)
 
         # Scrollable frame for differentiation signal checkboxes
         self.deriv_signals_frame = ctk.CTkScrollableFrame(
-            deriv_signals_frame, height=100,
+            deriv_signals_frame,
+            height=100,
         )
         self.deriv_signals_frame.grid(
-            row=2, column=0, columnspan=2, padx=5, pady=5, sticky="ew",
+            row=2,
+            column=0,
+            columnspan=2,
+            padx=5,
+            pady=5,
+            sticky="ew",
         )
         self.deriv_signals_frame.grid_columnconfigure(0, weight=1)
 
         # Differentiation control buttons
         deriv_buttons_frame = ctk.CTkFrame(deriv_frame, fg_color="transparent")
         deriv_buttons_frame.grid(
-            row=4, column=0, columnspan=2, padx=10, pady=5, sticky="ew",
+            row=4,
+            column=0,
+            columnspan=2,
+            padx=10,
+            pady=5,
+            sticky="ew",
         )
 
         ctk.CTkButton(
-            deriv_buttons_frame, text="Select All", command=self._deriv_select_all,
+            deriv_buttons_frame,
+            text="Select All",
+            command=self._deriv_select_all,
         ).grid(row=0, column=0, padx=5, pady=5)
         ctk.CTkButton(
-            deriv_buttons_frame, text="Deselect All", command=self._deriv_deselect_all,
+            deriv_buttons_frame,
+            text="Deselect All",
+            command=self._deriv_deselect_all,
         ).grid(row=0, column=1, padx=5, pady=5)
 
         # Derivative order selection (up to 5th order)
         deriv_order_frame = ctk.CTkFrame(deriv_frame)
         deriv_order_frame.grid(
-            row=5, column=0, columnspan=2, padx=10, pady=5, sticky="ew",
+            row=5,
+            column=0,
+            columnspan=2,
+            padx=10,
+            pady=5,
+            sticky="ew",
         )
         ctk.CTkLabel(
             deriv_order_frame,
@@ -977,14 +1144,22 @@ class CSVProcessorApp(ctk.CTk):
         frame.grid_columnconfigure(1, weight=1)
 
         ctk.CTkLabel(frame, text="Window Size:").grid(
-            row=0, column=0, padx=10, pady=5, sticky="w",
+            row=0,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
         )
         value_entry = ctk.CTkEntry(frame, placeholder_text="10")
         value_entry.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
         value_entry.insert(0, "10")  # Set default value
 
         ctk.CTkLabel(frame, text="Unit:").grid(
-            row=0, column=2, padx=10, pady=5, sticky="w",
+            row=0,
+            column=2,
+            padx=10,
+            pady=5,
+            sticky="w",
         )
         unit_menu = ctk.CTkOptionMenu(frame, values=time_units)
         unit_menu.grid(row=0, column=3, padx=10, pady=5, sticky="ew")
@@ -999,13 +1174,21 @@ class CSVProcessorApp(ctk.CTk):
         frame.grid_columnconfigure(1, weight=1)
 
         ctk.CTkLabel(frame, text="Order:").grid(
-            row=0, column=0, padx=10, pady=5, sticky="w",
+            row=0,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
         )
         order_entry = ctk.CTkEntry(frame, placeholder_text="3")
         order_entry.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
 
         ctk.CTkLabel(frame, text="Cutoff:").grid(
-            row=1, column=0, padx=10, pady=5, sticky="w",
+            row=1,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
         )
         cutoff_entry = ctk.CTkEntry(frame, placeholder_text="0.1")
         cutoff_entry.grid(row=1, column=1, padx=10, pady=5, sticky="ew")
@@ -1019,7 +1202,11 @@ class CSVProcessorApp(ctk.CTk):
         frame.grid_columnconfigure(1, weight=1)
 
         ctk.CTkLabel(frame, text="Kernel Size:").grid(
-            row=0, column=0, padx=10, pady=5, sticky="w",
+            row=0,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
         )
         kernel_entry = ctk.CTkEntry(frame, placeholder_text="5")
         kernel_entry.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
@@ -1033,13 +1220,21 @@ class CSVProcessorApp(ctk.CTk):
         frame.grid_columnconfigure(1, weight=1)
 
         ctk.CTkLabel(frame, text="Window Size:").grid(
-            row=0, column=0, padx=10, pady=5, sticky="w",
+            row=0,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
         )
         window_entry = ctk.CTkEntry(frame, placeholder_text="11")
         window_entry.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
 
         ctk.CTkLabel(frame, text="Polynomial Order:").grid(
-            row=1, column=0, padx=10, pady=5, sticky="w",
+            row=1,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
         )
         polyorder_entry = ctk.CTkEntry(frame, placeholder_text="2")
         polyorder_entry.grid(row=1, column=1, padx=10, pady=5, sticky="ew")
@@ -1053,13 +1248,21 @@ class CSVProcessorApp(ctk.CTk):
         frame.grid_columnconfigure(1, weight=1)
 
         ctk.CTkLabel(frame, text="Window Size:").grid(
-            row=0, column=0, padx=10, pady=5, sticky="w",
+            row=0,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
         )
         window_entry = ctk.CTkEntry(frame, placeholder_text="7")
         window_entry.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
 
         ctk.CTkLabel(frame, text="Threshold (σ):").grid(
-            row=1, column=0, padx=10, pady=5, sticky="w",
+            row=1,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
         )
         threshold_entry = ctk.CTkEntry(frame, placeholder_text="3.0")
         threshold_entry.grid(row=1, column=1, padx=10, pady=5, sticky="ew")
@@ -1073,16 +1276,25 @@ class CSVProcessorApp(ctk.CTk):
         frame.grid_columnconfigure(1, weight=1)
 
         ctk.CTkLabel(frame, text="Threshold (σ):").grid(
-            row=0, column=0, padx=10, pady=5, sticky="w",
+            row=0,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
         )
         threshold_entry = ctk.CTkEntry(frame, placeholder_text="3.0")
         threshold_entry.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
 
         ctk.CTkLabel(frame, text="Method:").grid(
-            row=1, column=0, padx=10, pady=5, sticky="w",
+            row=1,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
         )
         method_menu = ctk.CTkOptionMenu(
-            frame, values=["Remove Outliers", "Clip Outliers", "Replace with Median"],
+            frame,
+            values=["Remove Outliers", "Clip Outliers", "Replace with Median"],
         )
         method_menu.grid(row=1, column=1, padx=10, pady=5, sticky="ew")
 
@@ -1162,19 +1374,35 @@ class CSVProcessorApp(ctk.CTk):
             self.compare_bw_frame.grid(row=14, column=0, sticky="ew", padx=10, pady=5)
         elif filter_type == "Median Filter":
             self.compare_median_frame.grid(
-                row=14, column=0, sticky="ew", padx=10, pady=5,
+                row=14,
+                column=0,
+                sticky="ew",
+                padx=10,
+                pady=5,
             )
         elif filter_type == "Hampel Filter":
             self.compare_hampel_frame.grid(
-                row=14, column=0, sticky="ew", padx=10, pady=5,
+                row=14,
+                column=0,
+                sticky="ew",
+                padx=10,
+                pady=5,
             )
         elif filter_type == "Z-Score Filter":
             self.compare_zscore_frame.grid(
-                row=14, column=0, sticky="ew", padx=10, pady=5,
+                row=14,
+                column=0,
+                sticky="ew",
+                padx=10,
+                pady=5,
             )
         elif filter_type == "Savitzky-Golay":
             self.compare_savgol_frame.grid(
-                row=14, column=0, sticky="ew", padx=10, pady=5,
+                row=14,
+                column=0,
+                sticky="ew",
+                padx=10,
+                pady=5,
             )
 
     def _filter_signals(self, event=None):
@@ -1394,7 +1622,8 @@ class CSVProcessorApp(ctk.CTk):
             self.update_plot(selected_signals=selected_signals)
         else:
             messagebox.showwarning(
-                "No Signals Selected", "Please select at least one signal to plot.",
+                "No Signals Selected",
+                "Please select at least one signal to plot.",
             )
 
     def _filter_reference_signals(self, event=None):
@@ -1450,25 +1679,41 @@ class CSVProcessorApp(ctk.CTk):
         ).grid(row=1, column=0, padx=10, pady=(0, 5), sticky="w")
 
         ctk.CTkLabel(tab, text="New Variable Name:").grid(
-            row=2, column=0, padx=10, pady=(5, 0), sticky="w",
+            row=2,
+            column=0,
+            padx=10,
+            pady=(5, 0),
+            sticky="w",
         )
         self.custom_var_name_entry = ctk.CTkEntry(
-            tab, placeholder_text="e.g., Power_Ratio",
+            tab,
+            placeholder_text="e.g., Power_Ratio",
         )
         self.custom_var_name_entry.grid(row=3, column=0, padx=10, pady=5, sticky="ew")
 
         ctk.CTkLabel(tab, text="Formula:").grid(
-            row=4, column=0, padx=10, pady=(5, 0), sticky="w",
+            row=4,
+            column=0,
+            padx=10,
+            pady=(5, 0),
+            sticky="w",
         )
         self.custom_var_formula_entry = ctk.CTkEntry(
-            tab, placeholder_text="e.g., ( [SignalA] + [SignalB] ) / 2",
+            tab,
+            placeholder_text="e.g., ( [SignalA] + [SignalB] ) / 2",
         )
         self.custom_var_formula_entry.grid(
-            row=5, column=0, padx=10, pady=5, sticky="ew",
+            row=5,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="ew",
         )
 
         ctk.CTkButton(
-            tab, text="Add Custom Variable", command=self._add_custom_variable,
+            tab,
+            text="Add Custom Variable",
+            command=self._add_custom_variable,
         ).grid(row=6, column=0, padx=10, pady=10, sticky="ew")
 
         # Save/Load custom variables
@@ -1484,10 +1729,14 @@ class CSVProcessorApp(ctk.CTk):
         ).grid(row=0, column=0, columnspan=2, padx=10, pady=5, sticky="w")
 
         ctk.CTkButton(
-            save_load_frame, text="Save Variables", command=self._save_custom_variables,
+            save_load_frame,
+            text="Save Variables",
+            command=self._save_custom_variables,
         ).grid(row=1, column=0, padx=5, pady=5, sticky="ew")
         ctk.CTkButton(
-            save_load_frame, text="Load Variables", command=self._load_custom_variables,
+            save_load_frame,
+            text="Load Variables",
+            command=self._load_custom_variables,
         ).grid(row=1, column=1, padx=5, pady=5, sticky="ew")
 
         # FIXED: Add missing custom variables listbox
@@ -1521,20 +1770,26 @@ class CSVProcessorApp(ctk.CTk):
         search_bar_frame.grid_columnconfigure(0, weight=1)
 
         self.custom_var_search_entry = ctk.CTkEntry(
-            search_bar_frame, placeholder_text="Search available signals...",
+            search_bar_frame,
+            placeholder_text="Search available signals...",
         )
         self.custom_var_search_entry.grid(row=0, column=0, sticky="ew")
         self.custom_var_search_entry.bind(
-            "<KeyRelease>", self._filter_reference_signals,
+            "<KeyRelease>",
+            self._filter_reference_signals,
         )
 
         self.custom_var_clear_button = ctk.CTkButton(
-            search_bar_frame, text="X", width=28, command=self._clear_reference_search,
+            search_bar_frame,
+            text="X",
+            width=28,
+            command=self._clear_reference_search,
         )
         self.custom_var_clear_button.grid(row=0, column=1, padx=(5, 0))
 
         self.signal_reference_frame = ctk.CTkScrollableFrame(
-            reference_frame, label_text="Available Signals Reference",
+            reference_frame,
+            label_text="Available Signals Reference",
         )
         self.signal_reference_frame.grid(row=1, column=0, padx=0, pady=5, sticky="nsew")
 
@@ -1545,7 +1800,8 @@ class CSVProcessorApp(ctk.CTk):
 
         for var in self.custom_vars_list:
             self.custom_vars_listbox.insert(
-                tk.END, f"{var['name']}: {var['formula']}\n",
+                tk.END,
+                f"{var['name']}: {var['formula']}\n",
             )
 
         self.custom_vars_listbox.configure(state="disabled")
@@ -1574,7 +1830,8 @@ class CSVProcessorApp(ctk.CTk):
                 messagebox.showinfo("Success", f"Custom variables saved to {file_path}")
             except Exception as e:
                 messagebox.showerror(
-                    "Error", f"Failed to save custom variables: {e!s}",
+                    "Error",
+                    f"Failed to save custom variables: {e!s}",
                 )
 
     def _load_custom_variables(self):
@@ -1592,7 +1849,8 @@ class CSVProcessorApp(ctk.CTk):
                 # Validate the loaded data
                 if not isinstance(loaded_vars, list):
                     messagebox.showerror(
-                        "Error", "Invalid file format. Expected a list of variables.",
+                        "Error",
+                        "Invalid file format. Expected a list of variables.",
                     )
                     return
 
@@ -1604,7 +1862,8 @@ class CSVProcessorApp(ctk.CTk):
                         or "formula" not in var
                     ):
                         messagebox.showerror(
-                            "Error", "Invalid variable format in file.",
+                            "Error",
+                            "Invalid variable format in file.",
                         )
                         return
 
@@ -1635,11 +1894,16 @@ class CSVProcessorApp(ctk.CTk):
 
             except Exception as e:
                 messagebox.showerror(
-                    "Error", f"Failed to load custom variables: {e!s}",
+                    "Error",
+                    f"Failed to load custom variables: {e!s}",
                 )
 
     def _apply_integration(
-        self, df, time_col, signals_to_integrate, method="Trapezoidal",
+        self,
+        df,
+        time_col,
+        signals_to_integrate,
+        method="Trapezoidal",
     ):
         """Apply integration to selected signals."""
         if not signals_to_integrate:
@@ -1707,7 +1971,11 @@ class CSVProcessorApp(ctk.CTk):
         return df
 
     def _apply_differentiation(
-        self, df, time_col, signals_to_differentiate, method="Spline (Acausal)",
+        self,
+        df,
+        time_col,
+        signals_to_differentiate,
+        method="Spline (Acausal)",
     ):
         """Apply differentiation to selected signals with support for up to 5th order."""
         if not signals_to_differentiate:
@@ -1742,7 +2010,10 @@ class CSVProcessorApp(ctk.CTk):
 
                                 # Fit spline
                                 spline = UnivariateSpline(
-                                    x_valid, y_valid, s=0, k=min(5, len(y_valid) - 1),
+                                    x_valid,
+                                    y_valid,
+                                    s=0,
+                                    k=min(5, len(y_valid) - 1),
                                 )
 
                                 # Calculate derivatives
@@ -1793,7 +2064,8 @@ class CSVProcessorApp(ctk.CTk):
                             # Use the helper function for causal differentiation
                             window_size = 11  # Default window size
                             poly_order = min(
-                                5, window_size - 1,
+                                5,
+                                window_size - 1,
                             )  # Ensure polynomial order < window size
 
                             if len(signal_data) > window_size:
@@ -1878,7 +2150,8 @@ class CSVProcessorApp(ctk.CTk):
         if not self.input_file_paths:
             print("DEBUG: No input file paths, showing default message")
             label = ctk.CTkLabel(
-                self.file_list_frame, text="Files you select will be listed here.",
+                self.file_list_frame,
+                text="Files you select will be listed here.",
             )
             label.pack(padx=5, pady=5)
             print("DEBUG: Default label created and packed")
@@ -1908,14 +2181,18 @@ class CSVProcessorApp(ctk.CTk):
             preview_frame.pack(fill="x", padx=5, pady=5)
 
             preview_label = ctk.CTkLabel(
-                preview_frame, text="📋 Sample files:", font=ctk.CTkFont(size=12),
+                preview_frame,
+                text="📋 Sample files:",
+                font=ctk.CTkFont(size=12),
             )
             preview_label.pack(anchor="w", padx=5, pady=2)
 
             for i in range(min(5, total_files)):
                 filename = os.path.basename(self.input_file_paths[i])
                 file_label = ctk.CTkLabel(
-                    preview_frame, text=f"  • {filename}", font=ctk.CTkFont(size=11),
+                    preview_frame,
+                    text=f"  • {filename}",
+                    font=ctk.CTkFont(size=11),
                 )
                 file_label.pack(anchor="w", padx=10, pady=1)
 
@@ -1956,7 +2233,9 @@ class CSVProcessorApp(ctk.CTk):
 
                 filename = os.path.basename(file_path)
                 label = ctk.CTkLabel(
-                    file_frame, text=f"{i+1}. {filename}", font=ctk.CTkFont(size=11),
+                    file_frame,
+                    text=f"{i+1}. {filename}",
+                    font=ctk.CTkFont(size=11),
                 )
                 label.pack(side="left", padx=5, pady=2)
 
@@ -1996,7 +2275,9 @@ class CSVProcessorApp(ctk.CTk):
 
             filename = os.path.basename(file_path)
             label = ctk.CTkLabel(
-                file_frame, text=f"{i+1:4d}. {filename}", font=ctk.CTkFont(size=11),
+                file_frame,
+                text=f"{i+1:4d}. {filename}",
+                font=ctk.CTkFont(size=11),
             )
             label.pack(side="left", padx=5, pady=2)
 
@@ -2101,7 +2382,8 @@ class CSVProcessorApp(ctk.CTk):
         """Manually load signals from files."""
         if not hasattr(self, "input_file_paths") or not self.input_file_paths:
             messagebox.showwarning(
-                "No Files", "Please select files first before loading signals.",
+                "No Files",
+                "Please select files first before loading signals.",
             )
             return
 
@@ -2112,7 +2394,8 @@ class CSVProcessorApp(ctk.CTk):
         """Load signals from the first file only."""
         if not hasattr(self, "input_file_paths") or not self.input_file_paths:
             messagebox.showwarning(
-                "No Files", "Please select files first before loading signals.",
+                "No Files",
+                "Please select files first before loading signals.",
             )
             return
 
@@ -2146,9 +2429,7 @@ class CSVProcessorApp(ctk.CTk):
             if file_path:
                 try:
                     with open(file_path) as f:
-                        signals = [
-                            line.strip() for line in f if line.strip()
-                        ]
+                        signals = [line.strip() for line in f if line.strip()]
 
                     if signals:
                         print(f"DEBUG: Loaded {len(signals)} signals from file")
@@ -2159,7 +2440,8 @@ class CSVProcessorApp(ctk.CTk):
                         )
                     else:
                         messagebox.showwarning(
-                            "Empty File", "The selected file contains no signals.",
+                            "Empty File",
+                            "The selected file contains no signals.",
                         )
                 except Exception as e:
                     messagebox.showerror("Error", f"Failed to load signal file:\n{e}")
@@ -2208,17 +2490,21 @@ class CSVProcessorApp(ctk.CTk):
                 dialog.destroy()
             else:
                 messagebox.showwarning(
-                    "No Signals", "Please enter at least one signal name.",
+                    "No Signals",
+                    "Please enter at least one signal name.",
                 )
 
         def cancel():
             dialog.destroy()
 
         ctk.CTkButton(
-            button_frame, text="Create Signal List", command=create_signal_list,
+            button_frame,
+            text="Create Signal List",
+            command=create_signal_list,
         ).pack(side="left", padx=5)
         ctk.CTkButton(button_frame, text="Cancel", command=cancel).pack(
-            side="right", padx=5,
+            side="right",
+            padx=5,
         )
 
     def _show_input_file_help(self):
@@ -2296,7 +2582,9 @@ This mode only affects signal detection, not data processing.
 
         # Add close button
         close_button = ctk.CTkButton(
-            help_dialog, text="Close", command=help_dialog.destroy,
+            help_dialog,
+            text="Close",
+            command=help_dialog.destroy,
         )
         close_button.pack(pady=10)
 
@@ -2380,7 +2668,9 @@ This section helps you manage which signals (columns) to process from your files
 
         # Add close button
         close_button = ctk.CTkButton(
-            help_dialog, text="Close", command=help_dialog.destroy,
+            help_dialog,
+            text="Close",
+            command=help_dialog.destroy,
         )
         close_button.pack(pady=10)
 
@@ -2417,7 +2707,8 @@ This section helps you manage which signals (columns) to process from your files
             progress_window.grab_set()
 
             progress_label = ctk.CTkLabel(
-                progress_window, text="Loading signals from files...",
+                progress_window,
+                text="Loading signals from files...",
             )
             progress_label.pack(pady=20)
 
@@ -2834,12 +3125,15 @@ This section helps you manage which signals (columns) to process from your files
             search_frame.pack(fill="x", padx=5, pady=5)
 
             search_label = ctk.CTkLabel(
-                search_frame, text="Search signals:", font=ctk.CTkFont(size=12),
+                search_frame,
+                text="Search signals:",
+                font=ctk.CTkFont(size=12),
             )
             search_label.pack(anchor="w", padx=5, pady=2)
 
             self.signal_search_entry = ctk.CTkEntry(
-                search_frame, placeholder_text="Type to search signals...",
+                search_frame,
+                placeholder_text="Type to search signals...",
             )
             self.signal_search_entry.pack(fill="x", padx=5, pady=2)
             self.signal_search_entry.bind("<KeyRelease>", self._filter_signals)
@@ -2849,21 +3143,30 @@ This section helps you manage which signals (columns) to process from your files
             button_frame.pack(fill="x", padx=5, pady=5)
 
             ctk.CTkButton(
-                button_frame, text="Select All", command=self.select_all,
+                button_frame,
+                text="Select All",
+                command=self.select_all,
             ).pack(side="left", padx=2, pady=2)
             ctk.CTkButton(
-                button_frame, text="Deselect All", command=self.deselect_all,
+                button_frame,
+                text="Deselect All",
+                command=self.deselect_all,
             ).pack(side="left", padx=2, pady=2)
             ctk.CTkButton(
-                button_frame, text="Show Selected", command=self._show_selected_signals,
+                button_frame,
+                text="Show Selected",
+                command=self._show_selected_signals,
             ).pack(side="left", padx=2, pady=2)
             ctk.CTkButton(
-                button_frame, text="Clear Search", command=self._clear_search,
+                button_frame,
+                text="Clear Search",
+                command=self._clear_search,
             ).pack(side="left", padx=2, pady=2)
 
             # Create scrollable frame for signals
             self.signals_scrollable_frame = ctk.CTkScrollableFrame(
-                self.signal_list_frame, height=300,
+                self.signal_list_frame,
+                height=300,
             )
             self.signals_scrollable_frame.pack(fill="both", expand=True, padx=5, pady=5)
 
@@ -2942,7 +3245,8 @@ This section helps you manage which signals (columns) to process from your files
                     pass
             # Schedule a near-future update to coalesce rapid toggles
             self._plot_update_job_id = self.after(
-                200, getattr(self, "update_plot", lambda: None),
+                200,
+                getattr(self, "update_plot", lambda: None),
             )
         except Exception as e:
             print(f"DEBUG: _schedule_plot_update error: {e}")
@@ -3041,7 +3345,9 @@ This section helps you manage which signals (columns) to process from your files
         for signal in signals:
             var = tk.BooleanVar(value=False)
             cb = ctk.CTkCheckBox(
-                self.integrator_signals_frame, text=signal, variable=var,
+                self.integrator_signals_frame,
+                text=signal,
+                variable=var,
             )
             cb.grid(sticky="w", padx=5, pady=2)
             self.integrator_signal_vars[signal] = {"var": var, "widget": cb}
@@ -3120,7 +3426,8 @@ This section helps you manage which signals (columns) to process from your files
         if not selected_signals:
             print("ERROR: No signals selected")
             messagebox.showerror(
-                "Error", "Please select at least one signal to process.",
+                "Error",
+                "Please select at least one signal to process.",
             )
             return
 
@@ -3307,7 +3614,8 @@ This section helps you manage which signals (columns) to process from your files
             # Data type conversion
             print("  Converting data types...")
             processed_df[time_col] = pd.to_datetime(
-                processed_df[time_col], errors="coerce",
+                processed_df[time_col],
+                errors="coerce",
             )
             before_drop = len(processed_df)
             processed_df.dropna(subset=[time_col], inplace=True)
@@ -3318,7 +3626,8 @@ This section helps you manage which signals (columns) to process from your files
                 if col != time_col:
                     before_numeric = processed_df[col].notna().sum()
                     processed_df[col] = pd.to_numeric(
-                        processed_df[col], errors="coerce",
+                        processed_df[col],
+                        errors="coerce",
                     )
                     after_numeric = processed_df[col].notna().sum()
                     print(
@@ -3390,7 +3699,8 @@ This section helps you manage which signals (columns) to process from your files
                     if filter_type == "Moving Average":
                         window_size = settings.get("ma_window", 10)
                         processed_df[col] = signal_data.rolling(
-                            window=window_size, min_periods=1,
+                            window=window_size,
+                            min_periods=1,
                         ).mean()
                     elif filter_type in [
                         "Butterworth Low-pass",
@@ -3412,7 +3722,8 @@ This section helps you manage which signals (columns) to process from your files
                             )
                             b, a = butter(N=order, Wn=cutoff, btype=btype, fs=sr)
                             processed_df[col] = pd.Series(
-                                filtfilt(b, a, signal_data), index=signal_data.index,
+                                filtfilt(b, a, signal_data),
+                                index=signal_data.index,
                             )
                     elif filter_type == "Median Filter":
                         kernel = settings.get("median_kernel", 5)
@@ -3468,7 +3779,8 @@ This section helps you manage which signals (columns) to process from your files
                             upper_bound = mean_val + threshold * std_val
                             lower_bound = mean_val - threshold * std_val
                             processed_df[col] = processed_df[col].clip(
-                                lower=lower_bound, upper=upper_bound,
+                                lower=lower_bound,
+                                upper=upper_bound,
                             )
                         elif method == "Replace with Median":
                             median_val = signal_data.median()
@@ -3522,7 +3834,10 @@ This section helps you manage which signals (columns) to process from your files
                 print(f"  Applying integration to: {signals_to_integrate}")
                 integration_method = self.integrator_method_var.get()
                 processed_df = self._apply_integration(
-                    processed_df, time_col, signals_to_integrate, integration_method,
+                    processed_df,
+                    time_col,
+                    signals_to_integrate,
+                    integration_method,
                 )
                 print(f"  DataFrame shape after integration: {processed_df.shape}")
 
@@ -3685,7 +4000,8 @@ This section helps you manage which signals (columns) to process from your files
         for file_path, df in processed_files:
             base_name = os.path.splitext(os.path.basename(file_path))[0]
             output_path = os.path.join(
-                self.output_directory, f"{base_name}_processed.csv",
+                self.output_directory,
+                f"{base_name}_processed.csv",
             )
             print(f"Exporting to: {output_path}")
 
@@ -3751,7 +4067,8 @@ This section helps you manage which signals (columns) to process from your files
         for file_path, df in processed_files:
             base_name = os.path.splitext(os.path.basename(file_path))[0]
             output_path = os.path.join(
-                self.output_directory, f"{base_name}_processed.xlsx",
+                self.output_directory,
+                f"{base_name}_processed.xlsx",
             )
 
             final_path = self._check_file_overwrite(output_path)
@@ -3776,7 +4093,8 @@ This section helps you manage which signals (columns) to process from your files
         for file_path, df in processed_files:
             base_name = os.path.splitext(os.path.basename(file_path))[0]
             output_path = os.path.join(
-                self.output_directory, f"{base_name}_processed.mat",
+                self.output_directory,
+                f"{base_name}_processed.mat",
             )
 
             final_path = self._check_file_overwrite(output_path)
@@ -3815,7 +4133,8 @@ This section helps you manage which signals (columns) to process from your files
             mat_data = {col: compiled_df[col].values for col in compiled_df.columns}
             savemat(final_path, mat_data)
             messagebox.showinfo(
-                "Success", f"Exported compiled MAT file to {final_path}",
+                "Success",
+                f"Exported compiled MAT file to {final_path}",
             )
 
     def _export_parquet_single(self, processed_files):
@@ -3835,7 +4154,8 @@ This section helps you manage which signals (columns) to process from your files
         progress_window.resizable(False, False)
 
         progress_label = ctk.CTkLabel(
-            progress_window, text="Converting files to Parquet...",
+            progress_window,
+            text="Converting files to Parquet...",
         )
         progress_label.pack(pady=20)
 
@@ -3912,12 +4232,15 @@ This section helps you manage which signals (columns) to process from your files
                 progress_window.update()
 
                 output_path = os.path.join(
-                    self.output_directory, "compiled_processed_data.parquet",
+                    self.output_directory,
+                    "compiled_processed_data.parquet",
                 )
                 final_path = self._check_file_overwrite(output_path)
                 if final_path:
                     final_df.to_parquet(
-                        final_path, engine="pyarrow", compression="snappy",
+                        final_path,
+                        engine="pyarrow",
+                        compression="snappy",
                     )
 
                     # Show success message with column mismatch info if any
@@ -3958,7 +4281,8 @@ This section helps you manage which signals (columns) to process from your files
         for file_path, df in processed_files:
             base_name = os.path.splitext(os.path.basename(file_path))[0]
             output_path = os.path.join(
-                self.output_directory, f"{base_name}_processed.parquet",
+                self.output_directory,
+                f"{base_name}_processed.parquet",
             )
 
             final_path = self._check_file_overwrite(output_path)
@@ -3994,10 +4318,15 @@ This section helps you manage which signals (columns) to process from your files
         final_path = self._check_file_overwrite(output_path)
         if final_path:
             compiled_df.to_hdf(
-                final_path, key="data", mode="w", complevel=9, complib="blosc",
+                final_path,
+                key="data",
+                mode="w",
+                complevel=9,
+                complib="blosc",
             )
             messagebox.showinfo(
-                "Success", f"Exported compiled HDF5 file to {final_path}",
+                "Success",
+                f"Exported compiled HDF5 file to {final_path}",
             )
 
     def _export_hdf5_separate(self, processed_files):
@@ -4006,7 +4335,8 @@ This section helps you manage which signals (columns) to process from your files
         for file_path, df in processed_files:
             base_name = os.path.splitext(os.path.basename(file_path))[0]
             output_path = os.path.join(
-                self.output_directory, f"{base_name}_processed.h5",
+                self.output_directory,
+                f"{base_name}_processed.h5",
             )
 
             final_path = self._check_file_overwrite(output_path)
@@ -4039,13 +4369,15 @@ This section helps you manage which signals (columns) to process from your files
         compiled_df = self._apply_sorting(compiled_df)
 
         output_path = os.path.join(
-            self.output_directory, "compiled_processed_data.feather",
+            self.output_directory,
+            "compiled_processed_data.feather",
         )
         final_path = self._check_file_overwrite(output_path)
         if final_path:
             compiled_df.to_feather(final_path, compression="lz4")
             messagebox.showinfo(
-                "Success", f"Exported compiled Feather file to {final_path}",
+                "Success",
+                f"Exported compiled Feather file to {final_path}",
             )
 
     def _export_feather_separate(self, processed_files):
@@ -4054,7 +4386,8 @@ This section helps you manage which signals (columns) to process from your files
         for file_path, df in processed_files:
             base_name = os.path.splitext(os.path.basename(file_path))[0]
             output_path = os.path.join(
-                self.output_directory, f"{base_name}_processed.feather",
+                self.output_directory,
+                f"{base_name}_processed.feather",
             )
 
             final_path = self._check_file_overwrite(output_path)
@@ -4091,7 +4424,8 @@ This section helps you manage which signals (columns) to process from your files
         if final_path:
             compiled_df.to_pickle(final_path, compression="gzip")
             messagebox.showinfo(
-                "Success", f"Exported compiled Pickle file to {final_path}",
+                "Success",
+                f"Exported compiled Pickle file to {final_path}",
             )
 
     def _export_pickle_separate(self, processed_files):
@@ -4100,7 +4434,8 @@ This section helps you manage which signals (columns) to process from your files
         for file_path, df in processed_files:
             base_name = os.path.splitext(os.path.basename(file_path))[0]
             output_path = os.path.join(
-                self.output_directory, f"{base_name}_processed.pkl",
+                self.output_directory,
+                f"{base_name}_processed.pkl",
             )
 
             final_path = self._check_file_overwrite(output_path)
@@ -4191,7 +4526,10 @@ This section helps you manage which signals (columns) to process from your files
         plot_control_frame.grid_columnconfigure(1, weight=1)
 
         ctk.CTkLabel(plot_control_frame, text="File to Plot:").grid(
-            row=0, column=0, padx=(10, 5), pady=10,
+            row=0,
+            column=0,
+            padx=(10, 5),
+            pady=10,
         )
         self.plot_file_menu = ctk.CTkOptionMenu(
             plot_control_frame,
@@ -4201,7 +4539,10 @@ This section helps you manage which signals (columns) to process from your files
         self.plot_file_menu.grid(row=0, column=1, padx=5, pady=10, sticky="ew")
 
         ctk.CTkLabel(plot_control_frame, text="X-Axis:").grid(
-            row=0, column=2, padx=(10, 5), pady=10,
+            row=0,
+            column=2,
+            padx=(10, 5),
+            pady=10,
         )
         self.plot_xaxis_menu = ctk.CTkOptionMenu(
             plot_control_frame,
@@ -4212,7 +4553,10 @@ This section helps you manage which signals (columns) to process from your files
 
         # Load Plot Configuration dropdown
         ctk.CTkLabel(plot_control_frame, text="Load Config:").grid(
-            row=0, column=4, padx=(10, 5), pady=10,
+            row=0,
+            column=4,
+            padx=(10, 5),
+            pady=10,
         )
         self.load_plot_config_menu = ctk.CTkOptionMenu(
             plot_control_frame,
@@ -4267,10 +4611,16 @@ This section helps you manage which signals (columns) to process from your files
             plot_signal_select_frame.grid_columnconfigure(0, weight=1)
 
             self.plot_search_entry = ctk.CTkEntry(
-                plot_signal_select_frame, placeholder_text="Search plot signals...",
+                plot_signal_select_frame,
+                placeholder_text="Search plot signals...",
             )
             self.plot_search_entry.grid(
-                row=0, column=0, columnspan=4, sticky="ew", padx=5, pady=5,
+                row=0,
+                column=0,
+                columnspan=4,
+                sticky="ew",
+                padx=5,
+                pady=5,
             )
             self.plot_search_entry.bind("<KeyRelease>", self._filter_plot_signals)
 
@@ -4283,14 +4633,23 @@ This section helps you manage which signals (columns) to process from your files
                 command=self._on_limit_plot_signals_changed,
             )
             limit_plot_checkbox.grid(
-                row=1, column=0, columnspan=2, sticky="w", padx=5, pady=2,
+                row=1,
+                column=0,
+                columnspan=2,
+                sticky="w",
+                padx=5,
+                pady=2,
             )
 
             ctk.CTkButton(
-                plot_signal_select_frame, text="All", command=self._plot_select_all,
+                plot_signal_select_frame,
+                text="All",
+                command=self._plot_select_all,
             ).grid(row=2, column=0, sticky="ew", padx=2, pady=5)
             ctk.CTkButton(
-                plot_signal_select_frame, text="None", command=self._plot_select_none,
+                plot_signal_select_frame,
+                text="None",
+                command=self._plot_select_none,
             ).grid(row=2, column=1, sticky="ew", padx=2, pady=5)
             ctk.CTkButton(
                 plot_signal_select_frame,
@@ -4305,7 +4664,9 @@ This section helps you manage which signals (columns) to process from your files
             ).grid(row=2, column=3, sticky="w", padx=2, pady=5)
 
             self.plot_signal_frame = ctk.CTkScrollableFrame(
-                plot_left_panel, label_text="Signals to Plot", height=150,
+                plot_left_panel,
+                label_text="Signals to Plot",
+                height=150,
             )
             self.plot_signal_frame.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
 
@@ -4383,7 +4744,11 @@ This section helps you manage which signals (columns) to process from your files
 
             # Second filter for comparison
             ctk.CTkLabel(plot_filter_frame, text="Compare with filter:").grid(
-                row=12, column=0, sticky="w", padx=10, pady=(10, 0),
+                row=12,
+                column=0,
+                sticky="w",
+                padx=10,
+                pady=(10, 0),
             )
             self.compare_filter_type = ctk.StringVar(value="None")
             self.compare_filter_menu = ctk.CTkOptionMenu(
@@ -4393,7 +4758,11 @@ This section helps you manage which signals (columns) to process from your files
                 command=self._update_compare_filter_ui,
             )
             self.compare_filter_menu.grid(
-                row=13, column=0, sticky="ew", padx=10, pady=5,
+                row=13,
+                column=0,
+                sticky="ew",
+                padx=10,
+                pady=5,
             )
 
             # Second filter parameter frames (initially hidden)
@@ -4446,7 +4815,9 @@ This section helps you manage which signals (columns) to process from your files
             ).grid(row=0, column=1, sticky="e", padx=5, pady=2)
 
             ctk.CTkButton(
-                plot_filter_frame, text="Preview Filter/s", command=self.update_plot,
+                plot_filter_frame,
+                text="Preview Filter/s",
+                command=self.update_plot,
             ).grid(row=21, column=0, sticky="ew", padx=10, pady=5)
             ctk.CTkButton(
                 plot_filter_frame,
@@ -4465,7 +4836,10 @@ This section helps you manage which signals (columns) to process from your files
                 font=ctk.CTkFont(weight="bold"),
             ).grid(row=0, column=0, sticky="w", padx=10, pady=5)
             ctk.CTkLabel(appearance_frame, text="Chart Type:").grid(
-                row=1, column=0, sticky="w", padx=10,
+                row=1,
+                column=0,
+                sticky="w",
+                padx=10,
             )
             self.plot_type_var = ctk.StringVar(value="Line Only")
             plot_type_menu = ctk.CTkOptionMenu(
@@ -4477,7 +4851,8 @@ This section helps you manage which signals (columns) to process from your files
             plot_type_menu.grid(row=2, column=0, sticky="ew", padx=10, pady=5)
 
             self.plot_title_entry = ctk.CTkEntry(
-                appearance_frame, placeholder_text="Plot Title",
+                appearance_frame,
+                placeholder_text="Plot Title",
             )
             self.plot_title_entry.grid(row=3, column=0, sticky="ew", padx=10, pady=5)
             self.plot_title_entry.bind("<Return>", self._on_plot_setting_change)
@@ -4487,7 +4862,8 @@ This section helps you manage which signals (columns) to process from your files
             self.plot_title_entry.insert(0, "")
 
             self.plot_xlabel_entry = ctk.CTkEntry(
-                appearance_frame, placeholder_text="X-Axis Label",
+                appearance_frame,
+                placeholder_text="X-Axis Label",
             )
             self.plot_xlabel_entry.grid(row=4, column=0, sticky="ew", padx=10, pady=5)
             self.plot_xlabel_entry.bind("<Return>", self._on_plot_setting_change)
@@ -4497,7 +4873,8 @@ This section helps you manage which signals (columns) to process from your files
             self.plot_xlabel_entry.insert(0, "")
 
             self.plot_ylabel_entry = ctk.CTkEntry(
-                appearance_frame, placeholder_text="Y-Axis Label",
+                appearance_frame,
+                placeholder_text="Y-Axis Label",
             )
             self.plot_ylabel_entry.grid(row=5, column=0, sticky="ew", padx=10, pady=5)
             self.plot_ylabel_entry.bind("<Return>", self._on_plot_setting_change)
@@ -4508,7 +4885,11 @@ This section helps you manage which signals (columns) to process from your files
 
             # Color scheme controls
             ctk.CTkLabel(appearance_frame, text="Color Scheme:").grid(
-                row=6, column=0, sticky="w", padx=10, pady=(10, 0),
+                row=6,
+                column=0,
+                sticky="w",
+                padx=10,
+                pady=(10, 0),
             )
             self.color_scheme_var = ctk.StringVar(value="Auto (Matplotlib)")
             color_schemes = [
@@ -4531,7 +4912,12 @@ This section helps you manage which signals (columns) to process from your files
             # Custom Colors Frame (initially hidden)
             self.custom_colors_frame = ctk.CTkFrame(appearance_frame)
             self.custom_colors_frame.grid(
-                row=7, column=0, columnspan=2, sticky="ew", padx=10, pady=5,
+                row=7,
+                column=0,
+                columnspan=2,
+                sticky="ew",
+                padx=10,
+                pady=5,
             )
             self.custom_colors_frame.grid_remove()  # Initially hidden
             self.custom_colors_frame.grid_columnconfigure(0, weight=1)
@@ -4544,24 +4930,38 @@ This section helps you manage which signals (columns) to process from your files
 
             # Scrollable frame for color buttons
             self.colors_scroll_frame = ctk.CTkScrollableFrame(
-                self.custom_colors_frame, height=80,
+                self.custom_colors_frame,
+                height=80,
             )
             self.colors_scroll_frame.grid(
-                row=1, column=0, columnspan=2, sticky="ew", padx=10, pady=5,
+                row=1,
+                column=0,
+                columnspan=2,
+                sticky="ew",
+                padx=10,
+                pady=5,
             )
 
             # Buttons for color management
             colors_buttons_frame = ctk.CTkFrame(
-                self.custom_colors_frame, fg_color="transparent",
+                self.custom_colors_frame,
+                fg_color="transparent",
             )
             colors_buttons_frame.grid(
-                row=2, column=0, columnspan=2, sticky="ew", padx=10, pady=5,
+                row=2,
+                column=0,
+                columnspan=2,
+                sticky="ew",
+                padx=10,
+                pady=5,
             )
             colors_buttons_frame.grid_columnconfigure(0, weight=1)
             colors_buttons_frame.grid_columnconfigure(1, weight=1)
 
             ctk.CTkButton(
-                colors_buttons_frame, text="Add Color", command=self._add_custom_color,
+                colors_buttons_frame,
+                text="Add Color",
+                command=self._add_custom_color,
             ).grid(row=0, column=0, padx=5, sticky="ew")
             ctk.CTkButton(
                 colors_buttons_frame,
@@ -4574,7 +4974,11 @@ This section helps you manage which signals (columns) to process from your files
 
             # Line width control
             ctk.CTkLabel(appearance_frame, text="Line Width:").grid(
-                row=8, column=0, sticky="w", padx=10, pady=(5, 0),
+                row=8,
+                column=0,
+                sticky="w",
+                padx=10,
+                pady=(5, 0),
             )
             self.line_width_var = ctk.StringVar(value="1.0")
             line_widths = ["0.5", "1.0", "1.5", "2.0", "2.5", "3.0"]
@@ -4588,7 +4992,11 @@ This section helps you manage which signals (columns) to process from your files
 
             # Legend placement control
             ctk.CTkLabel(appearance_frame, text="Legend Position:").grid(
-                row=9, column=0, sticky="w", padx=10, pady=(5, 0),
+                row=9,
+                column=0,
+                sticky="w",
+                padx=10,
+                pady=(5, 0),
             )
             self.legend_position_var = ctk.StringVar(value="best")
             legend_positions = [
@@ -4612,13 +5020,22 @@ This section helps you manage which signals (columns) to process from your files
                 command=self._on_plot_setting_change,
             )
             legend_position_menu.grid(
-                row=9, column=1, sticky="ew", padx=10, pady=(5, 0),
+                row=9,
+                column=1,
+                sticky="ew",
+                padx=10,
+                pady=(5, 0),
             )
 
             # Custom Legend Labels control
             legend_header_frame = ctk.CTkFrame(appearance_frame, fg_color="transparent")
             legend_header_frame.grid(
-                row=10, column=0, columnspan=2, sticky="ew", padx=10, pady=(10, 0),
+                row=10,
+                column=0,
+                columnspan=2,
+                sticky="ew",
+                padx=10,
+                pady=(10, 0),
             )
             legend_header_frame.grid_columnconfigure(0, weight=1)
 
@@ -4644,7 +5061,12 @@ This section helps you manage which signals (columns) to process from your files
             # Scrollable frame for legend customization
             self.legend_frame = ctk.CTkScrollableFrame(appearance_frame, height=120)
             self.legend_frame.grid(
-                row=12, column=0, columnspan=2, sticky="ew", padx=10, pady=5,
+                row=12,
+                column=0,
+                columnspan=2,
+                sticky="ew",
+                padx=10,
+                pady=5,
             )
 
             ctk.CTkButton(
@@ -4663,11 +5085,17 @@ This section helps you manage which signals (columns) to process from your files
             trend_frame.grid_columnconfigure(0, weight=1)
 
             ctk.CTkLabel(
-                trend_frame, text="Trendline", font=ctk.CTkFont(weight="bold"),
+                trend_frame,
+                text="Trendline",
+                font=ctk.CTkFont(weight="bold"),
             ).grid(row=0, column=0, sticky="w", padx=10, pady=5)
 
             ctk.CTkLabel(trend_frame, text="Signal:").grid(
-                row=1, column=0, sticky="w", padx=10, pady=(5, 0),
+                row=1,
+                column=0,
+                sticky="w",
+                padx=10,
+                pady=(5, 0),
             )
             self.trendline_signal_var = ctk.StringVar(value="Select signal...")
             self.trendline_signal_menu = ctk.CTkOptionMenu(
@@ -4677,11 +5105,19 @@ This section helps you manage which signals (columns) to process from your files
                 command=self._on_plot_setting_change,
             )
             self.trendline_signal_menu.grid(
-                row=2, column=0, sticky="ew", padx=10, pady=5,
+                row=2,
+                column=0,
+                sticky="ew",
+                padx=10,
+                pady=5,
             )
 
             ctk.CTkLabel(trend_frame, text="Type:").grid(
-                row=3, column=0, sticky="w", padx=10, pady=(5, 0),
+                row=3,
+                column=0,
+                sticky="w",
+                padx=10,
+                pady=(5, 0),
             )
             self.trendline_type_var = ctk.StringVar(value="None")
             trendline_type_menu = ctk.CTkOptionMenu(
@@ -4693,7 +5129,8 @@ This section helps you manage which signals (columns) to process from your files
             trendline_type_menu.grid(row=4, column=0, sticky="ew", padx=10, pady=5)
 
             self.poly_order_entry = ctk.CTkEntry(
-                trend_frame, placeholder_text="Polynomial Order (2-6)",
+                trend_frame,
+                placeholder_text="Polynomial Order (2-6)",
             )
             self.poly_order_entry.grid(row=5, column=0, sticky="ew", padx=10, pady=5)
             self.poly_order_entry.bind("<Return>", self._on_plot_setting_change)
@@ -4701,7 +5138,11 @@ This section helps you manage which signals (columns) to process from your files
 
             # Trendline time window controls
             ctk.CTkLabel(trend_frame, text="Time Window:").grid(
-                row=6, column=0, sticky="w", padx=10, pady=(5, 0),
+                row=6,
+                column=0,
+                sticky="w",
+                padx=10,
+                pady=(5, 0),
             )
 
             # Time window selection method
@@ -4717,28 +5158,46 @@ This section helps you manage which signals (columns) to process from your files
             # Manual time window frame (initially hidden)
             self.trendline_manual_frame = ctk.CTkFrame(trend_frame)
             self.trendline_manual_frame.grid(
-                row=8, column=0, sticky="ew", padx=10, pady=5,
+                row=8,
+                column=0,
+                sticky="ew",
+                padx=10,
+                pady=5,
             )
             self.trendline_manual_frame.grid_remove()  # Hide initially
             self.trendline_manual_frame.grid_columnconfigure(0, weight=1)
             self.trendline_manual_frame.grid_columnconfigure(1, weight=1)
 
             ctk.CTkLabel(self.trendline_manual_frame, text="Start:").grid(
-                row=0, column=0, sticky="w", padx=5, pady=2,
+                row=0,
+                column=0,
+                sticky="w",
+                padx=5,
+                pady=2,
             )
             self.trendline_start_entry = ctk.CTkEntry(
-                self.trendline_manual_frame, placeholder_text="Start time",
+                self.trendline_manual_frame,
+                placeholder_text="Start time",
             )
             self.trendline_start_entry.grid(
-                row=0, column=1, sticky="ew", padx=5, pady=2,
+                row=0,
+                column=1,
+                sticky="ew",
+                padx=5,
+                pady=2,
             )
             self.trendline_start_entry.bind("<Return>", self._on_plot_setting_change)
 
             ctk.CTkLabel(self.trendline_manual_frame, text="End:").grid(
-                row=1, column=0, sticky="w", padx=5, pady=2,
+                row=1,
+                column=0,
+                sticky="w",
+                padx=5,
+                pady=2,
             )
             self.trendline_end_entry = ctk.CTkEntry(
-                self.trendline_manual_frame, placeholder_text="End time",
+                self.trendline_manual_frame,
+                placeholder_text="End time",
             )
             self.trendline_end_entry.grid(row=1, column=1, sticky="ew", padx=5, pady=2)
             self.trendline_end_entry.bind("<Return>", self._on_plot_setting_change)
@@ -4746,7 +5205,11 @@ This section helps you manage which signals (columns) to process from your files
             # Visual selection controls
             self.trendline_visual_frame = ctk.CTkFrame(trend_frame)
             self.trendline_visual_frame.grid(
-                row=9, column=0, sticky="ew", padx=10, pady=5,
+                row=9,
+                column=0,
+                sticky="ew",
+                padx=10,
+                pady=5,
             )
             self.trendline_visual_frame.grid_remove()  # Hide initially
             self.trendline_visual_frame.grid_columnconfigure(0, weight=1)
@@ -4757,14 +5220,23 @@ This section helps you manage which signals (columns) to process from your files
                 command=self._start_trendline_selection,
             )
             self.trendline_select_button.grid(
-                row=0, column=0, sticky="ew", padx=5, pady=5,
+                row=0,
+                column=0,
+                sticky="ew",
+                padx=5,
+                pady=5,
             )
 
             self.trendline_selected_range = ctk.CTkLabel(
-                self.trendline_visual_frame, text="No range selected",
+                self.trendline_visual_frame,
+                text="No range selected",
             )
             self.trendline_selected_range.grid(
-                row=1, column=0, sticky="ew", padx=5, pady=2,
+                row=1,
+                column=0,
+                sticky="ew",
+                padx=5,
+                pady=2,
             )
 
             self.trendline_textbox = ctk.CTkTextbox(trend_frame, height=70)
@@ -4781,22 +5253,38 @@ This section helps you manage which signals (columns) to process from your files
                 font=ctk.CTkFont(weight="bold"),
             ).grid(row=0, column=0, sticky="w", padx=10, pady=5)
             ctk.CTkLabel(time_range_frame, text="Start Time (HH:MM:SS):").grid(
-                row=1, column=0, sticky="w", padx=10,
+                row=1,
+                column=0,
+                sticky="w",
+                padx=10,
             )
             self.plotting_start_time_entry = ctk.CTkEntry(
-                time_range_frame, placeholder_text="e.g., 09:30:00",
+                time_range_frame,
+                placeholder_text="e.g., 09:30:00",
             )
             self.plotting_start_time_entry.grid(
-                row=2, column=0, sticky="ew", padx=10, pady=2,
+                row=2,
+                column=0,
+                sticky="ew",
+                padx=10,
+                pady=2,
             )
             ctk.CTkLabel(time_range_frame, text="End Time (HH:MM:SS):").grid(
-                row=3, column=0, sticky="w", padx=10,
+                row=3,
+                column=0,
+                sticky="w",
+                padx=10,
             )
             self.plotting_end_time_entry = ctk.CTkEntry(
-                time_range_frame, placeholder_text="e.g., 17:00:00",
+                time_range_frame,
+                placeholder_text="e.g., 17:00:00",
             )
             self.plotting_end_time_entry.grid(
-                row=4, column=0, sticky="ew", padx=10, pady=2,
+                row=4,
+                column=0,
+                sticky="ew",
+                padx=10,
+                pady=2,
             )
             ctk.CTkButton(
                 time_range_frame,
@@ -4825,7 +5313,9 @@ This section helps you manage which signals (columns) to process from your files
             export_chart_frame.grid_columnconfigure(0, weight=1)
 
             ctk.CTkLabel(
-                export_chart_frame, text="Export Chart", font=ctk.CTkFont(weight="bold"),
+                export_chart_frame,
+                text="Export Chart",
+                font=ctk.CTkFont(weight="bold"),
             ).grid(row=0, column=0, sticky="w", padx=10, pady=5)
             ctk.CTkButton(
                 export_chart_frame,
@@ -4854,7 +5344,8 @@ This section helps you manage which signals (columns) to process from your files
             self.plot_fig.tight_layout()
 
             self.plot_canvas = FigureCanvasTkAgg(
-                self.plot_fig, master=plot_canvas_frame,
+                self.plot_fig,
+                master=plot_canvas_frame,
             )
             self.plot_canvas.get_tk_widget().grid(row=1, column=0, sticky="nsew")
 
@@ -4871,7 +5362,9 @@ This section helps you manage which signals (columns) to process from your files
             self.plot_canvas.draw()
 
             toolbar = NavigationToolbar2Tk(
-                self.plot_canvas, plot_canvas_frame, pack_toolbar=False,
+                self.plot_canvas,
+                plot_canvas_frame,
+                pack_toolbar=False,
             )
             toolbar.grid(row=0, column=0, sticky="ew")
 
@@ -4890,22 +5383,30 @@ This section helps you manage which signals (columns) to process from your files
             zoom_frame.grid_columnconfigure(3, weight=1)
 
             save_zoom_btn = ctk.CTkButton(
-                zoom_frame, text="Save Zoom State", command=self._save_zoom_state,
+                zoom_frame,
+                text="Save Zoom State",
+                command=self._save_zoom_state,
             )
             save_zoom_btn.grid(row=0, column=0, padx=2, pady=2, sticky="ew")
 
             restore_zoom_btn = ctk.CTkButton(
-                zoom_frame, text="Restore Zoom", command=self._restore_zoom_state,
+                zoom_frame,
+                text="Restore Zoom",
+                command=self._restore_zoom_state,
             )
             restore_zoom_btn.grid(row=0, column=1, padx=2, pady=2, sticky="ew")
 
             zoom_in_btn = ctk.CTkButton(
-                zoom_frame, text="Zoom In 25%", command=self._zoom_in_25,
+                zoom_frame,
+                text="Zoom In 25%",
+                command=self._zoom_in_25,
             )
             zoom_in_btn.grid(row=0, column=2, padx=2, pady=2, sticky="ew")
 
             zoom_out_btn = ctk.CTkButton(
-                zoom_frame, text="Zoom Out 25%", command=self._zoom_out_25,
+                zoom_frame,
+                text="Zoom Out 25%",
+                command=self._zoom_out_25,
             )
             zoom_out_btn.grid(row=0, column=3, padx=2, pady=2, sticky="ew")
 
@@ -4961,28 +5462,44 @@ This section helps you manage which signals (columns) to process from your files
         config_frame.grid_columnconfigure(0, weight=1)
 
         ctk.CTkLabel(
-            config_frame, text="Plot Configuration", font=ctk.CTkFont(weight="bold"),
+            config_frame,
+            text="Plot Configuration",
+            font=ctk.CTkFont(weight="bold"),
         ).grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
         ctk.CTkLabel(config_frame, text="Plot Name:").grid(
-            row=1, column=0, padx=10, pady=2, sticky="w",
+            row=1,
+            column=0,
+            padx=10,
+            pady=2,
+            sticky="w",
         )
         self.plot_name_entry = ctk.CTkEntry(
-            config_frame, placeholder_text="e.g., Temperature Analysis",
+            config_frame,
+            placeholder_text="e.g., Temperature Analysis",
         )
         self.plot_name_entry.grid(row=2, column=0, padx=10, pady=2, sticky="ew")
 
         ctk.CTkLabel(config_frame, text="Description:").grid(
-            row=3, column=0, padx=10, pady=2, sticky="w",
+            row=3,
+            column=0,
+            padx=10,
+            pady=2,
+            sticky="w",
         )
         self.plot_desc_entry = ctk.CTkEntry(
-            config_frame, placeholder_text="Brief description of this plot",
+            config_frame,
+            placeholder_text="Brief description of this plot",
         )
         self.plot_desc_entry.grid(row=4, column=0, padx=10, pady=2, sticky="ew")
 
         # Signal selection
         ctk.CTkLabel(config_frame, text="Signals to Include:").grid(
-            row=5, column=0, padx=10, pady=(10, 2), sticky="w",
+            row=5,
+            column=0,
+            padx=10,
+            pady=(10, 2),
+            sticky="w",
         )
         self.plots_signals_frame = ctk.CTkScrollableFrame(config_frame, height=100)
         self.plots_signals_frame.grid(row=6, column=0, padx=10, pady=2, sticky="ew")
@@ -4992,7 +5509,11 @@ This section helps you manage which signals (columns) to process from your files
 
         # Time range
         ctk.CTkLabel(config_frame, text="Time Range (HH:MM:SS):").grid(
-            row=7, column=0, padx=10, pady=(10, 2), sticky="w",
+            row=7,
+            column=0,
+            padx=10,
+            pady=(10, 2),
+            sticky="w",
         )
 
         time_range_frame = ctk.CTkFrame(config_frame, fg_color="transparent")
@@ -5001,17 +5522,27 @@ This section helps you manage which signals (columns) to process from your files
         time_range_frame.grid_columnconfigure(1, weight=1)
 
         self.plots_list_start_time_entry = ctk.CTkEntry(
-            time_range_frame, placeholder_text="Start time",
+            time_range_frame,
+            placeholder_text="Start time",
         )
         self.plots_list_start_time_entry.grid(
-            row=0, column=0, padx=(0, 5), pady=2, sticky="ew",
+            row=0,
+            column=0,
+            padx=(0, 5),
+            pady=2,
+            sticky="ew",
         )
 
         self.plots_list_end_time_entry = ctk.CTkEntry(
-            time_range_frame, placeholder_text="End time",
+            time_range_frame,
+            placeholder_text="End time",
         )
         self.plots_list_end_time_entry.grid(
-            row=0, column=1, padx=(5, 0), pady=2, sticky="ew",
+            row=0,
+            column=1,
+            padx=(5, 0),
+            pady=2,
+            sticky="ew",
         )
 
         # Buttons
@@ -5019,13 +5550,19 @@ This section helps you manage which signals (columns) to process from your files
         button_frame.grid(row=9, column=0, padx=10, pady=10, sticky="ew")
 
         ctk.CTkButton(
-            button_frame, text="Add to List", command=self._add_plot_to_list,
+            button_frame,
+            text="Add to List",
+            command=self._add_plot_to_list,
         ).grid(row=0, column=0, padx=5, pady=5, sticky="ew")
         ctk.CTkButton(
-            button_frame, text="Update Selected", command=self._update_selected_plot,
+            button_frame,
+            text="Update Selected",
+            command=self._update_selected_plot,
         ).grid(row=0, column=1, padx=5, pady=5, sticky="ew")
         ctk.CTkButton(
-            button_frame, text="Clear Form", command=self._clear_plot_form,
+            button_frame,
+            text="Clear Form",
+            command=self._clear_plot_form,
         ).grid(row=0, column=2, padx=5, pady=5, sticky="ew")
 
         # Plots list
@@ -5035,11 +5572,15 @@ This section helps you manage which signals (columns) to process from your files
         list_frame.grid_rowconfigure(1, weight=1)
 
         ctk.CTkLabel(
-            list_frame, text="Saved Plots", font=ctk.CTkFont(weight="bold"),
+            list_frame,
+            text="Saved Plots",
+            font=ctk.CTkFont(weight="bold"),
         ).grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
         self.plots_listbox = tk.Listbox(
-            list_frame, selectmode=tk.SINGLE, font=("Arial", 10),
+            list_frame,
+            selectmode=tk.SINGLE,
+            font=("Arial", 10),
         )
         self.plots_listbox.grid(row=1, column=0, padx=10, pady=5, sticky="nsew")
         self.plots_listbox.bind("<<ListboxSelect>>", self._on_plot_select)
@@ -5049,7 +5590,9 @@ This section helps you manage which signals (columns) to process from your files
         list_button_frame.grid(row=2, column=0, padx=10, pady=5, sticky="ew")
 
         ctk.CTkButton(
-            list_button_frame, text="Load Selected", command=self._load_selected_plot,
+            list_button_frame,
+            text="Load Selected",
+            command=self._load_selected_plot,
         ).grid(row=0, column=0, padx=5, pady=5, sticky="ew")
         ctk.CTkButton(
             list_button_frame,
@@ -5057,7 +5600,9 @@ This section helps you manage which signals (columns) to process from your files
             command=self._delete_selected_plot,
         ).grid(row=0, column=1, padx=5, pady=5, sticky="ew")
         ctk.CTkButton(
-            list_button_frame, text="Clear All", command=self._clear_all_plots,
+            list_button_frame,
+            text="Clear All",
+            command=self._clear_all_plots,
         ).grid(row=0, column=2, padx=5, pady=5, sticky="ew")
 
     def _create_plots_list_right(self, right_panel):
@@ -5072,7 +5617,9 @@ This section helps you manage which signals (columns) to process from your files
         preview_frame.grid_rowconfigure(1, weight=1)
 
         ctk.CTkLabel(
-            preview_frame, text="Plot Preview", font=ctk.CTkFont(weight="bold"),
+            preview_frame,
+            text="Plot Preview",
+            font=ctk.CTkFont(weight="bold"),
         ).grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
         # Preview canvas
@@ -5082,7 +5629,11 @@ This section helps you manage which signals (columns) to process from your files
 
         self.preview_canvas = FigureCanvasTkAgg(self.preview_fig, master=preview_frame)
         self.preview_canvas.get_tk_widget().grid(
-            row=1, column=0, padx=10, pady=5, sticky="nsew",
+            row=1,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="nsew",
         )
 
         # Preview buttons
@@ -5142,23 +5693,33 @@ This section helps you manage which signals (columns) to process from your files
         file_frame.grid_columnconfigure(0, weight=1)
 
         ctk.CTkLabel(
-            file_frame, text="File Selection", font=ctk.CTkFont(weight="bold"),
+            file_frame,
+            text="File Selection",
+            font=ctk.CTkFont(weight="bold"),
         ).grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
         ctk.CTkButton(
-            file_frame, text="Select Tag File (.dbf)", command=self._select_tag_file,
+            file_frame,
+            text="Select Tag File (.dbf)",
+            command=self._select_tag_file,
         ).grid(row=1, column=0, padx=10, pady=5, sticky="ew")
         ctk.CTkButton(
-            file_frame, text="Select Data File (.dat)", command=self._select_data_file,
+            file_frame,
+            text="Select Data File (.dat)",
+            command=self._select_data_file,
         ).grid(row=2, column=0, padx=10, pady=5, sticky="ew")
 
         self.tag_file_label = ctk.CTkLabel(
-            file_frame, text="No tag file selected", font=ctk.CTkFont(size=11),
+            file_frame,
+            text="No tag file selected",
+            font=ctk.CTkFont(size=11),
         )
         self.tag_file_label.grid(row=3, column=0, padx=10, pady=2, sticky="w")
 
         self.data_file_label = ctk.CTkLabel(
-            file_frame, text="No data file selected", font=ctk.CTkFont(size=11),
+            file_frame,
+            text="No data file selected",
+            font=ctk.CTkFont(size=11),
         )
         self.data_file_label.grid(row=4, column=0, padx=10, pady=2, sticky="w")
 
@@ -5169,11 +5730,17 @@ This section helps you manage which signals (columns) to process from your files
         settings_frame.grid_rowconfigure(2, weight=1)
 
         ctk.CTkLabel(
-            settings_frame, text="Import Settings", font=ctk.CTkFont(weight="bold"),
+            settings_frame,
+            text="Import Settings",
+            font=ctk.CTkFont(weight="bold"),
         ).grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
         ctk.CTkLabel(settings_frame, text="Tag Delimiter:").grid(
-            row=1, column=0, padx=10, pady=2, sticky="w",
+            row=1,
+            column=0,
+            padx=10,
+            pady=2,
+            sticky="w",
         )
         ctk.CTkOptionMenu(
             settings_frame,
@@ -5188,11 +5755,15 @@ This section helps you manage which signals (columns) to process from your files
         tag_frame.grid_rowconfigure(1, weight=1)
 
         ctk.CTkLabel(
-            tag_frame, text="Select Tags to Import:", font=ctk.CTkFont(weight="bold"),
+            tag_frame,
+            text="Select Tags to Import:",
+            font=ctk.CTkFont(weight="bold"),
         ).grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
         self.tags_listbox = tk.Listbox(
-            tag_frame, selectmode=tk.MULTIPLE, font=("Arial", 10),
+            tag_frame,
+            selectmode=tk.MULTIPLE,
+            font=("Arial", 10),
         )
         self.tags_listbox.grid(row=1, column=0, padx=10, pady=5, sticky="nsew")
 
@@ -5215,7 +5786,9 @@ This section helps you manage which signals (columns) to process from your files
         preview_frame.grid_rowconfigure(1, weight=1)
 
         ctk.CTkLabel(
-            preview_frame, text="Import Preview", font=ctk.CTkFont(weight="bold"),
+            preview_frame,
+            text="Import Preview",
+            font=ctk.CTkFont(weight="bold"),
         ).grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
         self.import_preview_text = ctk.CTkTextbox(preview_frame, height=200)
@@ -5249,7 +5822,12 @@ This section helps you manage which signals (columns) to process from your files
             print(f"Error saving layout config: {e}")
 
     def _create_splitter(
-        self, parent, left_creator, right_creator, splitter_key, default_left_width,
+        self,
+        parent,
+        left_creator,
+        right_creator,
+        splitter_key,
+        default_left_width,
     ):
         """Create a splitter with left and right panels."""
         splitter_frame = ctk.CTkFrame(parent)
@@ -5274,21 +5852,29 @@ This section helps you manage which signals (columns) to process from your files
 
         # Bind events for dragging
         splitter_handle.bind(
-            "<Enter>", lambda e, h=splitter_handle: self._on_splitter_enter(e, h),
+            "<Enter>",
+            lambda e, h=splitter_handle: self._on_splitter_enter(e, h),
         )
         splitter_handle.bind(
-            "<Leave>", lambda e, h=splitter_handle: self._on_splitter_leave(e, h),
+            "<Leave>",
+            lambda e, h=splitter_handle: self._on_splitter_leave(e, h),
         )
         splitter_handle.bind(
             "<Button-1>",
             lambda e, h=splitter_handle: self._start_splitter_drag(
-                e, h, left_panel, splitter_key,
+                e,
+                h,
+                left_panel,
+                splitter_key,
             ),
         )
         splitter_handle.bind(
             "<B1-Motion>",
             lambda e, h=splitter_handle: self._drag_splitter(
-                e, h, left_panel, splitter_key,
+                e,
+                h,
+                left_panel,
+                splitter_key,
             ),
         )
         splitter_handle.bind("<ButtonRelease-1>", lambda e: self._end_splitter_drag())
@@ -5329,7 +5915,8 @@ This section helps you manage which signals (columns) to process from your files
         if hasattr(self, "dragging_splitter") and self.dragging_splitter:
             delta_x = event.x_root - self.drag_start_x
             new_width = max(
-                150, min(800, self.drag_start_width + delta_x),
+                150,
+                min(800, self.drag_start_width + delta_x),
             )  # Min 150, Max 800
             left_panel.configure(width=new_width)
 
@@ -5348,7 +5935,8 @@ This section helps you manage which signals (columns) to process from your files
         # Reset handle color
         for splitter_key, splitter in self.splitters.items():
             if hasattr(splitter, "master") and hasattr(
-                splitter.master, "winfo_children",
+                splitter.master,
+                "winfo_children",
             ):
                 for child in splitter.master.winfo_children():
                     if isinstance(child, ctk.CTkFrame) and child.winfo_width() == 8:
@@ -5389,7 +5977,11 @@ This section helps you manage which signals (columns) to process from your files
         self.progress_label.grid_remove()  # Hidden by default
 
     def update_status(
-        self, message, show_progress=False, progress_value=0, progress_text="",
+        self,
+        message,
+        show_progress=False,
+        progress_value=0,
+        progress_text="",
     ):
         """Update status bar with optional progress tracking."""
         self.status_label.configure(text=message)
@@ -5464,7 +6056,8 @@ This section helps you manage which signals (columns) to process from your files
 
             traceback.print_exc()
             messagebox.showerror(
-                "Error", f"Failed to select file for plotting:\n{e!s}",
+                "Error",
+                f"Failed to select file for plotting:\n{e!s}",
             )
             if hasattr(self, "status_label"):
                 self.status_label.configure(text="Error selecting file for plotting")
@@ -5506,7 +6099,11 @@ This section helps you manage which signals (columns) to process from your files
 
         if df is None or df.empty:
             self.plot_ax.text(
-                0.5, 0.5, "No data available for plotting", ha="center", va="center",
+                0.5,
+                0.5,
+                "No data available for plotting",
+                ha="center",
+                va="center",
             )
             self.plot_canvas.draw()
             return
@@ -5534,7 +6131,11 @@ This section helps you manage which signals (columns) to process from your files
 
         if not signals_to_plot:
             self.plot_ax.text(
-                0.5, 0.5, "Select one or more signals to plot", ha="center", va="center",
+                0.5,
+                0.5,
+                "Select one or more signals to plot",
+                ha="center",
+                va="center",
             )
             self.plot_canvas.draw()
             return
@@ -5559,7 +6160,9 @@ This section helps you manage which signals (columns) to process from your files
             if plot_filter != "None" and not show_both and not compare_filters:
                 try:
                     plot_df = self._apply_plot_filter(
-                        plot_df, signals_to_plot, x_axis_col,
+                        plot_df,
+                        signals_to_plot,
+                        x_axis_col,
                     )
                 except Exception as e:
                     print(f"Warning: Filter failed - {e}")
@@ -5580,7 +6183,8 @@ This section helps you manage which signals (columns) to process from your files
                     # Convert data to numeric if possible
                     try:
                         signal_data[signal] = pd.to_numeric(
-                            signal_data[signal], errors="coerce",
+                            signal_data[signal],
+                            errors="coerce",
                         )
                     except Exception:
                         print("Warning: Could not convert signal to numeric")
@@ -5659,7 +6263,11 @@ This section helps you manage which signals (columns) to process from your files
                         # Plot main filter
                         try:
                             filtered_df = self._apply_plot_filter(
-                                df.copy(), [signal], x_axis_col, plot_filter, False,
+                                df.copy(),
+                                [signal],
+                                x_axis_col,
+                                plot_filter,
+                                False,
                             )
                             filtered_label = f"{label} ({plot_filter})"
                             self.plot_ax.plot(
@@ -5705,7 +6313,10 @@ This section helps you manage which signals (columns) to process from your files
 
                 if trendline_signal != "None" and trendline_signal in signals_to_plot:
                     self._add_trendline(
-                        plot_df, x_axis_col, trendline_signal, trendline_type,
+                        plot_df,
+                        x_axis_col,
+                        trendline_signal,
+                        trendline_type,
                     )
             except Exception as e:
                 print(f"Warning: Trendline failed - {e}")
@@ -5813,7 +6424,12 @@ This section helps you manage which signals (columns) to process from your files
             print(f"[PLOT DEBUG] {message}")
 
     def _apply_plot_filter(
-        self, df, signal_cols, x_axis_col, filter_type=None, is_comparison=False,
+        self,
+        df,
+        signal_cols,
+        x_axis_col,
+        filter_type=None,
+        is_comparison=False,
     ):
         """Apply filter to plot data with support for comparison filters."""
         if filter_type is None:
@@ -5850,11 +6466,15 @@ This section helps you manage which signals (columns) to process from your files
                     if col in df.columns:
                         if filter_type == "Butterworth Low-pass":
                             df[col] = self._apply_butterworth_lowpass(
-                                df[col], cutoff, order,
+                                df[col],
+                                cutoff,
+                                order,
                             )
                         else:
                             df[col] = self._apply_butterworth_highpass(
-                                df[col], cutoff, order,
+                                df[col],
+                                cutoff,
+                                order,
                             )
 
             elif filter_type == "Median Filter":
@@ -5914,20 +6534,22 @@ This section helps you manage which signals (columns) to process from your files
                 if col in df.columns:
                     if filter_type == "Butterworth Low-pass":
                         df[col] = self._apply_butterworth_lowpass(
-                            df[col], cutoff, order,
+                            df[col],
+                            cutoff,
+                            order,
                         )
                     else:
                         df[col] = self._apply_butterworth_highpass(
-                            df[col], cutoff, order,
+                            df[col],
+                            cutoff,
+                            order,
                         )
 
         elif filter_type == "Median Filter":
             kernel_size = int(self.plot_median_kernel_entry.get())
             for col in signal_cols:
                 if col in df.columns:
-                    df[col] = (
-                        df[col].rolling(window=kernel_size, center=True).median()
-                    )
+                    df[col] = df[col].rolling(window=kernel_size, center=True).median()
 
         elif filter_type == "Hampel Filter":
             window = int(self.plot_hampel_window_entry.get())
@@ -6103,7 +6725,8 @@ This section helps you manage which signals (columns) to process from your files
                     upper_bound = mean_val + threshold * std_val
                     lower_bound = mean_val - threshold * std_val
                     filtered_df[signal] = filtered_df[signal].clip(
-                        lower=lower_bound, upper=upper_bound,
+                        lower=lower_bound,
+                        upper=upper_bound,
                     )
                 elif method == "Replace with Median":
                     # Replace outliers with median
@@ -6177,12 +6800,14 @@ This section helps you manage which signals (columns) to process from your files
                             plot_df = plot_df[plot_df[x_axis_col] <= end_val]
                 except (ValueError, TypeError):
                     messagebox.showwarning(
-                        "Warning", "Invalid time window format. Using full range.",
+                        "Warning",
+                        "Invalid time window format. Using full range.",
                     )
 
         elif window_mode == "Visual Selection":
             if hasattr(self, "trendline_selection_start") and hasattr(
-                self, "trendline_selection_end",
+                self,
+                "trendline_selection_end",
             ):
                 if (
                     self.trendline_selection_start is not None
@@ -6272,7 +6897,8 @@ This section helps you manage which signals (columns) to process from your files
                     equation = f"y = {a:.4f} * x^({b:.4f})"
                 else:
                     messagebox.showwarning(
-                        "Warning", "Not enough positive values for power trendline.",
+                        "Warning",
+                        "Not enough positive values for power trendline.",
                     )
                     return
 
@@ -6311,7 +6937,10 @@ This section helps you manage which signals (columns) to process from your files
             legend_position = self.legend_position_var.get()
             if legend_position == "outside right":
                 self.plot_ax.legend(
-                    handles, labels, bbox_to_anchor=(1.05, 1), loc="upper left",
+                    handles,
+                    labels,
+                    bbox_to_anchor=(1.05, 1),
+                    loc="upper left",
                 )
             else:
                 self.plot_ax.legend(handles, labels, loc=legend_position)
@@ -6416,13 +7045,15 @@ This section helps you manage which signals (columns) to process from your files
     def _show_setup_help(self):
         """Show setup help."""
         messagebox.showinfo(
-            "Setup Help", "This tab allows you to configure file processing settings.",
+            "Setup Help",
+            "This tab allows you to configure file processing settings.",
         )
 
     def _show_plot_help(self):
         """Show plotting help."""
         messagebox.showinfo(
-            "Plotting Help", "This tab allows you to visualize and analyze your data.",
+            "Plotting Help",
+            "This tab allows you to visualize and analyze your data.",
         )
 
     def _show_plots_list_help(self):
@@ -6533,7 +7164,10 @@ COMMON MISTAKES TO AVOID:
 
         # Create text widget for the guide
         text_widget = ctk.CTkTextbox(
-            scrollable_frame, width=550, height=500, wrap="word",
+            scrollable_frame,
+            width=550,
+            height=500,
+            wrap="word",
         )
         text_widget.grid(row=1, column=0, pady=10, sticky="ew")
         text_widget.insert("1.0", guide_text)
@@ -6541,7 +7175,9 @@ COMMON MISTAKES TO AVOID:
 
         # Close button
         close_button = ctk.CTkButton(
-            guide_window, text="Close", command=guide_window.destroy,
+            guide_window,
+            text="Close",
+            command=guide_window.destroy,
         )
         close_button.grid(row=1, column=0, pady=10)
 
@@ -6763,12 +7399,14 @@ COMMON MISTAKES TO AVOID:
                 if hasattr(self, "hampel_threshold_entry"):
                     self.hampel_threshold_entry.delete(0, tk.END)
                     self.hampel_threshold_entry.insert(
-                        0, fs.get("hampel_threshold", "3.0"),
+                        0,
+                        fs.get("hampel_threshold", "3.0"),
                     )
                 if hasattr(self, "zscore_threshold_entry"):
                     self.zscore_threshold_entry.delete(0, tk.END)
                     self.zscore_threshold_entry.insert(
-                        0, fs.get("zscore_threshold", "3.0"),
+                        0,
+                        fs.get("zscore_threshold", "3.0"),
                     )
                 if hasattr(self, "zscore_method_menu"):
                     self.zscore_method_menu.set(
@@ -6780,7 +7418,8 @@ COMMON MISTAKES TO AVOID:
                 if hasattr(self, "savgol_polyorder_entry"):
                     self.savgol_polyorder_entry.delete(0, tk.END)
                     self.savgol_polyorder_entry.insert(
-                        0, fs.get("savgol_polyorder", "2"),
+                        0,
+                        fs.get("savgol_polyorder", "2"),
                     )
 
             # Apply resample settings
@@ -6899,15 +7538,23 @@ COMMON MISTAKES TO AVOID:
 
             # Listbox for configurations
             self.config_listbox = tk.Listbox(
-                list_frame, selectmode=tk.SINGLE, font=("Arial", 10),
+                list_frame,
+                selectmode=tk.SINGLE,
+                font=("Arial", 10),
             )
             config_scrollbar = tk.Scrollbar(
-                list_frame, orient="vertical", command=self.config_listbox.yview,
+                list_frame,
+                orient="vertical",
+                command=self.config_listbox.yview,
             )
             self.config_listbox.configure(yscrollcommand=config_scrollbar.set)
 
             self.config_listbox.pack(
-                side="left", fill="both", expand=True, padx=(5, 0), pady=5,
+                side="left",
+                fill="both",
+                expand=True,
+                padx=(5, 0),
+                pady=5,
             )
             config_scrollbar.pack(side="right", fill="y", pady=5)
 
@@ -6917,10 +7564,14 @@ COMMON MISTAKES TO AVOID:
 
             # Buttons
             ctk.CTkButton(
-                button_frame, text="Refresh List", command=self._refresh_config_list,
+                button_frame,
+                text="Refresh List",
+                command=self._refresh_config_list,
             ).pack(side="left", padx=5, pady=5)
             ctk.CTkButton(
-                button_frame, text="Load Selected", command=self._load_selected_config,
+                button_frame,
+                text="Load Selected",
+                command=self._load_selected_config,
             ).pack(side="left", padx=5, pady=5)
             ctk.CTkButton(
                 button_frame,
@@ -6933,12 +7584,16 @@ COMMON MISTAKES TO AVOID:
                 command=self._open_config_location,
             ).pack(side="left", padx=5, pady=5)
             ctk.CTkButton(
-                button_frame, text="Close", command=config_window.destroy,
+                button_frame,
+                text="Close",
+                command=config_window.destroy,
             ).pack(side="right", padx=5, pady=5)
 
             # Status label
             self.config_status_label = ctk.CTkLabel(
-                main_frame, text="", font=ctk.CTkFont(size=11),
+                main_frame,
+                text="",
+                font=ctk.CTkFont(size=11),
             )
             self.config_status_label.pack(pady=5)
 
@@ -6950,7 +7605,8 @@ COMMON MISTAKES TO AVOID:
 
         except Exception as e:
             messagebox.showerror(
-                "Error", f"Failed to open configuration manager:\n{e!s}",
+                "Error",
+                f"Failed to open configuration manager:\n{e!s}",
             )
 
     def _refresh_config_list(self):
@@ -7026,7 +7682,8 @@ COMMON MISTAKES TO AVOID:
             selection = self.config_listbox.curselection()
             if not selection:
                 messagebox.showwarning(
-                    "Warning", "Please select a configuration file to load.",
+                    "Warning",
+                    "Please select a configuration file to load.",
                 )
                 return
 
@@ -7055,7 +7712,8 @@ COMMON MISTAKES TO AVOID:
 
             self.config_status_label.configure(text=f"Loaded configuration: {filename}")
             messagebox.showinfo(
-                "Success", f"Configuration loaded successfully:\n{filename}",
+                "Success",
+                f"Configuration loaded successfully:\n{filename}",
             )
 
         except Exception as e:
@@ -7067,7 +7725,8 @@ COMMON MISTAKES TO AVOID:
             selection = self.config_listbox.curselection()
             if not selection:
                 messagebox.showwarning(
-                    "Warning", "Please select a configuration file to delete.",
+                    "Warning",
+                    "Please select a configuration file to delete.",
                 )
                 return
 
@@ -7091,7 +7750,8 @@ COMMON MISTAKES TO AVOID:
                 )
                 self._refresh_config_list()
                 messagebox.showinfo(
-                    "Success", f"Configuration deleted successfully:\n{filename}",
+                    "Success",
+                    f"Configuration deleted successfully:\n{filename}",
                 )
 
         except Exception as e:
@@ -7143,12 +7803,14 @@ COMMON MISTAKES TO AVOID:
                 if hasattr(self, "hampel_threshold_entry"):
                     self.hampel_threshold_entry.delete(0, tk.END)
                     self.hampel_threshold_entry.insert(
-                        0, fs.get("hampel_threshold", "3.0"),
+                        0,
+                        fs.get("hampel_threshold", "3.0"),
                     )
                 if hasattr(self, "zscore_threshold_entry"):
                     self.zscore_threshold_entry.delete(0, tk.END)
                     self.zscore_threshold_entry.insert(
-                        0, fs.get("zscore_threshold", "3.0"),
+                        0,
+                        fs.get("zscore_threshold", "3.0"),
                     )
                 if hasattr(self, "zscore_method_menu"):
                     self.zscore_method_menu.set(
@@ -7160,7 +7822,8 @@ COMMON MISTAKES TO AVOID:
                 if hasattr(self, "savgol_polyorder_entry"):
                     self.savgol_polyorder_entry.delete(0, tk.END)
                     self.savgol_polyorder_entry.insert(
-                        0, fs.get("savgol_polyorder", "2"),
+                        0,
+                        fs.get("savgol_polyorder", "2"),
                     )
 
             # Apply resample settings
@@ -7242,7 +7905,8 @@ COMMON MISTAKES TO AVOID:
         """Save the currently selected signals as a signal list."""
         if not self.signal_vars:
             messagebox.showwarning(
-                "Warning", "No signals available to save. Please load a file first.",
+                "Warning",
+                "No signals available to save. Please load a file first.",
             )
             return
 
@@ -7429,7 +8093,8 @@ COMMON MISTAKES TO AVOID:
 
         if not self.signal_vars:
             messagebox.showwarning(
-                "Warning", "No signals available. Please load a file first.",
+                "Warning",
+                "No signals available. Please load a file first.",
             )
             return
 
@@ -7486,14 +8151,16 @@ COMMON MISTAKES TO AVOID:
         # Copy filter parameters
         if plot_filter == "Moving Average":
             if hasattr(self, "plot_ma_value_entry") and hasattr(
-                self, "plot_ma_unit_menu",
+                self,
+                "plot_ma_unit_menu",
             ):
                 self.ma_value_entry.delete(0, tk.END)
                 self.ma_value_entry.insert(0, self.plot_ma_value_entry.get())
                 self.ma_unit_menu.set(self.plot_ma_unit_menu.get())
         elif plot_filter == "Butterworth":
             if hasattr(self, "plot_bw_order_entry") and hasattr(
-                self, "plot_bw_cutoff_entry",
+                self,
+                "plot_bw_cutoff_entry",
             ):
                 self.bw_order_entry.delete(0, tk.END)
                 self.bw_order_entry.insert(0, self.plot_bw_order_entry.get())
@@ -7505,32 +8172,38 @@ COMMON MISTAKES TO AVOID:
                 self.median_kernel_entry.insert(0, self.plot_median_kernel_entry.get())
         elif plot_filter == "Hampel Filter":
             if hasattr(self, "plot_hampel_window_entry") and hasattr(
-                self, "plot_hampel_threshold_entry",
+                self,
+                "plot_hampel_threshold_entry",
             ):
                 self.hampel_window_entry.delete(0, tk.END)
                 self.hampel_window_entry.insert(0, self.plot_hampel_window_entry.get())
                 self.hampel_threshold_entry.delete(0, tk.END)
                 self.hampel_threshold_entry.insert(
-                    0, self.plot_hampel_threshold_entry.get(),
+                    0,
+                    self.plot_hampel_threshold_entry.get(),
                 )
         elif plot_filter == "Z-Score Filter":
             if hasattr(self, "plot_zscore_threshold_entry") and hasattr(
-                self, "plot_zscore_method_menu",
+                self,
+                "plot_zscore_method_menu",
             ):
                 self.zscore_threshold_entry.delete(0, tk.END)
                 self.zscore_threshold_entry.insert(
-                    0, self.plot_zscore_threshold_entry.get(),
+                    0,
+                    self.plot_zscore_threshold_entry.get(),
                 )
                 self.zscore_method_menu.set(self.plot_zscore_method_menu.get())
         elif plot_filter == "Savitzky-Golay":
             if hasattr(self, "plot_savgol_window_entry") and hasattr(
-                self, "plot_savgol_polyorder_entry",
+                self,
+                "plot_savgol_polyorder_entry",
             ):
                 self.savgol_window_entry.delete(0, tk.END)
                 self.savgol_window_entry.insert(0, self.plot_savgol_window_entry.get())
                 self.savgol_polyorder_entry.delete(0, tk.END)
                 self.savgol_polyorder_entry.insert(
-                    0, self.plot_savgol_polyorder_entry.get(),
+                    0,
+                    self.plot_savgol_polyorder_entry.get(),
                 )
 
         messagebox.showinfo(
@@ -7542,7 +8215,8 @@ COMMON MISTAKES TO AVOID:
         """Export the current chart as an image file."""
         if not hasattr(self, "plot_fig") or not self.plot_fig.get_axes():
             messagebox.showwarning(
-                "Warning", "No plot to export. Please create a plot first.",
+                "Warning",
+                "No plot to export. Please create a plot first.",
             )
             return
 
@@ -7627,7 +8301,9 @@ COMMON MISTAKES TO AVOID:
                         # Export to Excel
                         with pd.ExcelWriter(final_path, engine="openpyxl") as writer:
                             export_df.to_excel(
-                                writer, sheet_name="Chart Data", index=False,
+                                writer,
+                                sheet_name="Chart Data",
+                                index=False,
                             )
 
                             # Add chart information
@@ -7650,18 +8326,22 @@ COMMON MISTAKES TO AVOID:
                                 },
                             )
                             info_df.to_excel(
-                                writer, sheet_name="Chart Info", index=False,
+                                writer,
+                                sheet_name="Chart Info",
+                                index=False,
                             )
 
                         messagebox.showinfo(
-                            "Success", f"Chart data exported to:\n{final_path}",
+                            "Success",
+                            f"Chart data exported to:\n{final_path}",
                         )
                         self.status_label.configure(
                             text=f"Chart data exported: {os.path.basename(final_path)}",
                         )
                     else:
                         messagebox.showwarning(
-                            "Warning", "No signals selected for plotting.",
+                            "Warning",
+                            "No signals selected for plotting.",
                         )
                 else:
                     messagebox.showerror("Error", "Could not load data for export.")
@@ -7812,7 +8492,8 @@ COMMON MISTAKES TO AVOID:
         plot_name = self.plots_list[idx]["name"]
 
         if messagebox.askyesno(
-            "Confirm Delete", f"Are you sure you want to delete plot '{plot_name}'?",
+            "Confirm Delete",
+            f"Are you sure you want to delete plot '{plot_name}'?",
         ):
             del self.plots_list[idx]
             self._update_plots_listbox()
@@ -7823,7 +8504,8 @@ COMMON MISTAKES TO AVOID:
     def _clear_all_plots(self):
         """Clear all plots from list."""
         if self.plots_list and messagebox.askyesno(
-            "Confirm Clear", "Are you sure you want to clear all plots?",
+            "Confirm Clear",
+            "Are you sure you want to clear all plots?",
         ):
             self.plots_list.clear()
             self._update_plots_listbox()
@@ -7842,7 +8524,8 @@ COMMON MISTAKES TO AVOID:
         """Save plots list to file."""
         try:
             plots_file = os.path.join(
-                os.path.expanduser("~"), ".csv_processor_plots.json",
+                os.path.expanduser("~"),
+                ".csv_processor_plots.json",
             )
             with open(plots_file, "w") as f:
                 json.dump(self.plots_list, f, indent=2)
@@ -7853,7 +8536,8 @@ COMMON MISTAKES TO AVOID:
         """Load plots list from file."""
         try:
             plots_file = os.path.join(
-                os.path.expanduser("~"), ".csv_processor_plots.json",
+                os.path.expanduser("~"),
+                ".csv_processor_plots.json",
             )
             if os.path.exists(plots_file):
                 with open(plots_file) as f:
@@ -7926,7 +8610,8 @@ COMMON MISTAKES TO AVOID:
             if output_path:
                 filtered_df.to_csv(output_path, index=False)
                 messagebox.showinfo(
-                    "Success", f"Data imported and saved to {output_path}",
+                    "Success",
+                    f"Data imported and saved to {output_path}",
                 )
 
         except Exception as e:
@@ -7944,7 +8629,8 @@ COMMON MISTAKES TO AVOID:
 
         if not any([trim_date, trim_start, trim_end]):
             messagebox.showerror(
-                "Error", "Please specify at least one time parameter for trimming.",
+                "Error",
+                "Please specify at least one time parameter for trimming.",
             )
             return
 
@@ -7979,7 +8665,8 @@ COMMON MISTAKES TO AVOID:
                 # Save trimmed file
                 base_name = os.path.splitext(os.path.basename(file_path))[0]
                 output_path = os.path.join(
-                    self.output_directory, f"{base_name}_Trimmed.csv",
+                    self.output_directory,
+                    f"{base_name}_Trimmed.csv",
                 )
                 df.to_csv(output_path, index=False)
 
@@ -7987,7 +8674,8 @@ COMMON MISTAKES TO AVOID:
                 print(f"Error trimming {file_path}: {e}")
 
         messagebox.showinfo(
-            "Success", f"Files trimmed and saved to {self.output_directory}",
+            "Success",
+            f"Files trimmed and saved to {self.output_directory}",
         )
 
     def _apply_plot_time_range(self):
@@ -8038,7 +8726,8 @@ COMMON MISTAKES TO AVOID:
 
             if filtered_df.empty:
                 messagebox.showwarning(
-                    "Warning", "The specified time range resulted in an empty dataset.",
+                    "Warning",
+                    "The specified time range resulted in an empty dataset.",
                 )
                 return
 
@@ -8062,7 +8751,9 @@ COMMON MISTAKES TO AVOID:
                 plot_filter = self.plot_filter_type.get()
                 if plot_filter != "None":
                     filtered_df = self._apply_plot_filter(
-                        filtered_df, signals_to_plot, time_col,
+                        filtered_df,
+                        signals_to_plot,
+                        time_col,
                     )
 
                 # Chart customization
@@ -8118,7 +8809,9 @@ COMMON MISTAKES TO AVOID:
                         and selected_trendline_signal in filtered_df.columns
                     ):
                         self._add_trendline(
-                            filtered_df, selected_trendline_signal, time_col,
+                            filtered_df,
+                            selected_trendline_signal,
+                            time_col,
                         )
 
             # Apply custom labels and title
@@ -8151,7 +8844,8 @@ COMMON MISTAKES TO AVOID:
 
         except Exception as e:
             messagebox.showerror(
-                "Time Range Error", f"Invalid time format. Please use HH:MM:SS.\n{e}",
+                "Time Range Error",
+                f"Invalid time format. Please use HH:MM:SS.\n{e}",
             )
 
     def _reset_plot_range(self):
@@ -8181,7 +8875,8 @@ COMMON MISTAKES TO AVOID:
             # Check if plot exists and has data
             if not hasattr(self, "plot_ax") or not self.plot_ax.lines:
                 messagebox.showwarning(
-                    "Warning", "No plot data available. Please create a plot first.",
+                    "Warning",
+                    "No plot data available. Please create a plot first.",
                 )
                 return
 
@@ -8245,7 +8940,8 @@ COMMON MISTAKES TO AVOID:
             # This is essentially the same as _copy_plot_range_to_trim but with a different message
             if not hasattr(self, "plot_ax") or not self.plot_ax.lines:
                 messagebox.showwarning(
-                    "Warning", "No plot data available. Please create a plot first.",
+                    "Warning",
+                    "No plot data available. Please create a plot first.",
                 )
                 return
 
@@ -8323,7 +9019,8 @@ COMMON MISTAKES TO AVOID:
 
         if not selected_signals:
             ctk.CTkLabel(
-                self.legend_frame, text="Select signals to customize legend labels",
+                self.legend_frame,
+                text="Select signals to customize legend labels",
             ).pack(padx=5, pady=5)
             ctk.CTkLabel(
                 self.legend_frame,
@@ -8384,13 +9081,16 @@ COMMON MISTAKES TO AVOID:
 
             # Signal name label
             ctk.CTkLabel(signal_frame, text=f"{signal}:", width=100).pack(
-                side="left", padx=5, pady=2,
+                side="left",
+                padx=5,
+                pady=2,
             )
 
             # Custom legend entry
             current_value = self.custom_legend_entries.get(signal, signal)
             legend_entry = ctk.CTkEntry(
-                signal_frame, placeholder_text=f"Custom label for {signal}",
+                signal_frame,
+                placeholder_text=f"Custom label for {signal}",
             )
             legend_entry.pack(side="right", fill="x", expand=True, padx=5, pady=2)
             legend_entry.insert(0, current_value)
@@ -8437,7 +9137,8 @@ COMMON MISTAKES TO AVOID:
         """Add trendline to plot."""
         if not hasattr(self, "plot_ax") or not self.plot_ax:
             messagebox.showerror(
-                "Error", "No plot available. Please create a plot first.",
+                "Error",
+                "No plot available. Please create a plot first.",
             )
             return
 
@@ -8486,7 +9187,8 @@ COMMON MISTAKES TO AVOID:
 
             if len(x_clean) < 2:
                 messagebox.showerror(
-                    "Error", "Not enough valid data points for trendline.",
+                    "Error",
+                    "Not enough valid data points for trendline.",
                 )
                 return
 
@@ -8516,7 +9218,12 @@ COMMON MISTAKES TO AVOID:
 
             # Plot trendline
             self.plot_ax.plot(
-                x_clean, trendline_y, "--", linewidth=2, label=label, alpha=0.8,
+                x_clean,
+                trendline_y,
+                "--",
+                linewidth=2,
+                label=label,
+                alpha=0.8,
             )
             self.plot_ax.legend()
             self.plot_canvas.draw()
@@ -8536,7 +9243,9 @@ COMMON MISTAKES TO AVOID:
         preview_frame.grid_rowconfigure(1, weight=1)
 
         ctk.CTkLabel(
-            preview_frame, text="Import Preview", font=ctk.CTkFont(weight="bold"),
+            preview_frame,
+            text="Import Preview",
+            font=ctk.CTkFont(weight="bold"),
         ).grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
         self.import_preview_text = ctk.CTkTextbox(preview_frame, height=200)
@@ -8790,7 +9499,8 @@ For additional support or feature requests, please refer to the application docu
             base_name = os.path.splitext(os.path.basename(file_path))[0]
             extension = os.path.splitext(file_path)[1]
             return self._generate_unique_filename(
-                os.path.join(directory, base_name), extension,
+                os.path.join(directory, base_name),
+                extension,
             )
 
         return file_path
@@ -8799,7 +9509,8 @@ For additional support or feature requests, please refer to the application docu
         """Save the current plot configuration."""
         # Get current plot settings
         plot_name = simpledialog.askstring(
-            "Save Plot Configuration", "Enter a name for this plot configuration:",
+            "Save Plot Configuration",
+            "Enter a name for this plot configuration:",
         )
         if not plot_name:
             return
@@ -8965,7 +9676,8 @@ For additional support or feature requests, please refer to the application docu
         self._save_plots_to_file()
 
         messagebox.showinfo(
-            "Success", f"Plot configuration '{plot_name}' saved successfully!",
+            "Success",
+            f"Plot configuration '{plot_name}' saved successfully!",
         )
 
     def _modify_plot_config(self):
@@ -9018,7 +9730,8 @@ For additional support or feature requests, please refer to the application docu
             selection = listbox.curselection()
             if not selection:
                 messagebox.showwarning(
-                    "No Selection", "Please select a configuration to modify.",
+                    "No Selection",
+                    "Please select a configuration to modify.",
                 )
                 return
 
@@ -9041,7 +9754,8 @@ For additional support or feature requests, please refer to the application docu
             selection = listbox.curselection()
             if not selection:
                 messagebox.showwarning(
-                    "No Selection", "Please select a configuration to delete.",
+                    "No Selection",
+                    "Please select a configuration to delete.",
                 )
                 return
 
@@ -9073,7 +9787,8 @@ For additional support or feature requests, please refer to the application docu
             dialog.destroy()
 
         ctk.CTkButton(button_frame, text="Modify Selected", command=on_modify).pack(
-            side="left", padx=5,
+            side="left",
+            padx=5,
         )
         ctk.CTkButton(
             button_frame,
@@ -9083,7 +9798,8 @@ For additional support or feature requests, please refer to the application docu
             hover_color="darkred",
         ).pack(side="left", padx=5)
         ctk.CTkButton(button_frame, text="Cancel", command=on_cancel).pack(
-            side="right", padx=5,
+            side="right",
+            padx=5,
         )
 
     def _update_plot_config(self, config_index):
@@ -9271,14 +9987,16 @@ For additional support or feature requests, please refer to the application docu
 
         if not plot_config:
             messagebox.showerror(
-                "Error", f"Plot configuration '{selected_plot_name}' not found.",
+                "Error",
+                f"Plot configuration '{selected_plot_name}' not found.",
             )
             return
 
         # Apply the plot configuration
         self._apply_plot_config(plot_config)
         messagebox.showinfo(
-            "Success", f"Plot configuration '{selected_plot_name}' loaded!",
+            "Success",
+            f"Plot configuration '{selected_plot_name}' loaded!",
         )
 
     def _apply_plot_config(self, plot_config):
@@ -9339,47 +10057,57 @@ For additional support or feature requests, please refer to the application docu
                 self.plot_bw_cutoff_entry.insert(0, plot_config["bw_cutoff"])
         elif plot_config.get("filter_type") == "Median Filter":
             if "median_kernel" in plot_config and hasattr(
-                self, "plot_median_kernel_entry",
+                self,
+                "plot_median_kernel_entry",
             ):
                 self.plot_median_kernel_entry.delete(0, tk.END)
                 self.plot_median_kernel_entry.insert(0, plot_config["median_kernel"])
         elif plot_config.get("filter_type") == "Hampel Filter":
             if "hampel_window" in plot_config and hasattr(
-                self, "plot_hampel_window_entry",
+                self,
+                "plot_hampel_window_entry",
             ):
                 self.plot_hampel_window_entry.delete(0, tk.END)
                 self.plot_hampel_window_entry.insert(0, plot_config["hampel_window"])
             if "hampel_threshold" in plot_config and hasattr(
-                self, "plot_hampel_threshold_entry",
+                self,
+                "plot_hampel_threshold_entry",
             ):
                 self.plot_hampel_threshold_entry.delete(0, tk.END)
                 self.plot_hampel_threshold_entry.insert(
-                    0, plot_config["hampel_threshold"],
+                    0,
+                    plot_config["hampel_threshold"],
                 )
         elif plot_config.get("filter_type") == "Z-Score Filter":
             if "zscore_threshold" in plot_config and hasattr(
-                self, "plot_zscore_threshold_entry",
+                self,
+                "plot_zscore_threshold_entry",
             ):
                 self.plot_zscore_threshold_entry.delete(0, tk.END)
                 self.plot_zscore_threshold_entry.insert(
-                    0, plot_config["zscore_threshold"],
+                    0,
+                    plot_config["zscore_threshold"],
                 )
             if "zscore_method" in plot_config and hasattr(
-                self, "plot_zscore_method_menu",
+                self,
+                "plot_zscore_method_menu",
             ):
                 self.plot_zscore_method_menu.set(plot_config["zscore_method"])
         elif plot_config.get("filter_type") == "Savitzky-Golay":
             if "savgol_window" in plot_config and hasattr(
-                self, "plot_savgol_window_entry",
+                self,
+                "plot_savgol_window_entry",
             ):
                 self.plot_savgol_window_entry.delete(0, tk.END)
                 self.plot_savgol_window_entry.insert(0, plot_config["savgol_window"])
             if "savgol_polyorder" in plot_config and hasattr(
-                self, "plot_savgol_polyorder_entry",
+                self,
+                "plot_savgol_polyorder_entry",
             ):
                 self.plot_savgol_polyorder_entry.delete(0, tk.END)
                 self.plot_savgol_polyorder_entry.insert(
-                    0, plot_config["savgol_polyorder"],
+                    0,
+                    plot_config["savgol_polyorder"],
                 )
 
         # Apply custom legend entries
@@ -9392,7 +10120,8 @@ For additional support or feature requests, please refer to the application docu
 
         # Apply other plot settings
         if "show_both_signals" in plot_config and hasattr(
-            self, "show_both_signals_var",
+            self,
+            "show_both_signals_var",
         ):
             self.show_both_signals_var.set(plot_config["show_both_signals"])
 
@@ -9472,7 +10201,9 @@ For additional support or feature requests, please refer to the application docu
             if signal != signals[0]:  # Skip time column
                 var = tk.BooleanVar(value=False)
                 cb = ctk.CTkCheckBox(
-                    self.plots_signals_frame, text=signal, variable=var,
+                    self.plots_signals_frame,
+                    text=signal,
+                    variable=var,
                 )
                 cb.grid(sticky="w", padx=5, pady=2)
                 self.plots_signal_vars[signal] = var
@@ -9520,7 +10251,8 @@ For additional support or feature requests, please refer to the application docu
                 # Show available files for debugging
                 available_files = []
                 if hasattr(self, "plot_file_menu") and hasattr(
-                    self.plot_file_menu, "_values",
+                    self.plot_file_menu,
+                    "_values",
                 ):
                     available_files = [
                         f
@@ -9726,7 +10458,9 @@ For additional support or feature requests, please refer to the application docu
                         f.write(f"Filter: {plot_config['filter_type']}\n")
 
                     f.write("\nFull Configuration:\n")
-                    f.writelines(f"  {key}: {value}\n" for key, value in plot_config.items())
+                    f.writelines(
+                        f"  {key}: {value}\n" for key, value in plot_config.items()
+                    )
 
                 exported_count += 1
 
@@ -9786,7 +10520,9 @@ For additional support or feature requests, please refer to the application docu
 
             # Color hex code label
             color_label = ctk.CTkLabel(
-                color_frame, text=color, font=ctk.CTkFont(size=10),
+                color_frame,
+                text=color,
+                font=ctk.CTkFont(size=10),
             )
             color_label.pack(side="left", padx=5, pady=5)
 
@@ -9814,7 +10550,8 @@ For additional support or feature requests, please refer to the application docu
         if 0 <= index < len(self.custom_colors):
             current_color = self.custom_colors[index]
             color = colorchooser.askcolor(
-                color=current_color, title=f"Edit Color {index+1}",
+                color=current_color,
+                title=f"Edit Color {index+1}",
             )[1]
             if color:
                 self.custom_colors[index] = color
@@ -9857,7 +10594,8 @@ For additional support or feature requests, please refer to the application docu
             # Scroll the frame's canvas
             try:
                 frame._parent_canvas.yview_scroll(
-                    int(-1 * (event.delta / 120)), "units",
+                    int(-1 * (event.delta / 120)),
+                    "units",
                 )
             except Exception:
                 # Fallback for different systems
@@ -9867,10 +10605,12 @@ For additional support or feature requests, please refer to the application docu
         def bind_mousewheel(widget):
             widget.bind("<MouseWheel>", on_mousewheel)
             widget.bind(
-                "<Button-4>", lambda e: frame._parent_canvas.yview_scroll(-1, "units"),
+                "<Button-4>",
+                lambda e: frame._parent_canvas.yview_scroll(-1, "units"),
             )  # Linux
             widget.bind(
-                "<Button-5>", lambda e: frame._parent_canvas.yview_scroll(1, "units"),
+                "<Button-5>",
+                lambda e: frame._parent_canvas.yview_scroll(1, "units"),
             )  # Linux
 
             for child in widget.winfo_children():
@@ -9905,10 +10645,12 @@ For additional support or feature requests, please refer to the application docu
 
         # Connect mouse events
         self.plot_canvas.mpl_connect(
-            "button_press_event", self._on_trendline_selection_start,
+            "button_press_event",
+            self._on_trendline_selection_start,
         )
         self.plot_canvas.mpl_connect(
-            "button_release_event", self._on_trendline_selection_end,
+            "button_release_event",
+            self._on_trendline_selection_end,
         )
 
         # Update button text
@@ -9964,7 +10706,8 @@ For additional support or feature requests, please refer to the application docu
         if self.dataset_naming_var.get() == "custom":
             self.custom_dataset_entry.configure(state="normal")
             self.custom_dataset_entry.bind(
-                "<KeyRelease>", self._check_custom_name_overwrite,
+                "<KeyRelease>",
+                self._check_custom_name_overwrite,
             )
         else:
             self.custom_dataset_entry.configure(state="disabled")
@@ -9973,7 +10716,8 @@ For additional support or feature requests, please refer to the application docu
     def _check_custom_name_overwrite(self, event=None):
         """Check if custom dataset name will cause file overwrite."""
         if not hasattr(self, "custom_dataset_entry") or not hasattr(
-            self, "output_directory",
+            self,
+            "output_directory",
         ):
             return
 
@@ -9997,11 +10741,13 @@ For additional support or feature requests, please refer to the application docu
             if existing_files:
                 warning_text = f"⚠️ Warning: Will overwrite existing files: {', '.join(existing_files)}"
                 self.overwrite_warning_label.configure(
-                    text=warning_text, text_color="orange",
+                    text=warning_text,
+                    text_color="orange",
                 )
             else:
                 self.overwrite_warning_label.configure(
-                    text="✓ No file conflicts found", text_color="green",
+                    text="✓ No file conflicts found",
+                    text_color="green",
                 )
         else:
             self.overwrite_warning_label.configure(text="")
@@ -10044,10 +10790,12 @@ For additional support or feature requests, please refer to the application docu
 
             # Set new limits
             self.plot_ax.set_xlim(
-                x_center - new_x_range / 2, x_center + new_x_range / 2,
+                x_center - new_x_range / 2,
+                x_center + new_x_range / 2,
             )
             self.plot_ax.set_ylim(
-                y_center - new_y_range / 2, y_center + new_y_range / 2,
+                y_center - new_y_range / 2,
+                y_center + new_y_range / 2,
             )
             self.plot_canvas.draw()
 
@@ -10069,10 +10817,12 @@ For additional support or feature requests, please refer to the application docu
 
             # Set new limits
             self.plot_ax.set_xlim(
-                x_center - new_x_range / 2, x_center + new_x_range / 2,
+                x_center - new_x_range / 2,
+                x_center + new_x_range / 2,
             )
             self.plot_ax.set_ylim(
-                y_center - new_y_range / 2, y_center + new_y_range / 2,
+                y_center - new_y_range / 2,
+                y_center + new_y_range / 2,
             )
             self.plot_canvas.draw()
 

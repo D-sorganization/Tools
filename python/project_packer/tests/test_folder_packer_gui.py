@@ -144,7 +144,8 @@ class TestFolderPackerGUI:
             assert gui_instance.output_directory == ""
 
     def test_pack_folders_no_source_folders(
-        self, gui_instance: FolderPackerGUI,
+        self,
+        gui_instance: FolderPackerGUI,
     ) -> None:
         """Test packing when no source folders are selected."""
         gui_instance.source_folders = []
@@ -154,7 +155,8 @@ class TestFolderPackerGUI:
             mock_warning.assert_called_once()
 
     def test_pack_folders_no_output_directory(
-        self, gui_instance: FolderPackerGUI,
+        self,
+        gui_instance: FolderPackerGUI,
     ) -> None:
         """Test packing when no output directory is selected."""
         gui_instance.source_folders = ["/test/folder"]
@@ -165,7 +167,9 @@ class TestFolderPackerGUI:
             mock_warning.assert_called_once()
 
     def test_pack_folders_success(
-        self, gui_instance: FolderPackerGUI, tmp_path: Path,
+        self,
+        gui_instance: FolderPackerGUI,
+        tmp_path: Path,
     ) -> None:
         """Test successful folder packing."""
         # Setup test data
@@ -187,7 +191,9 @@ class TestFolderPackerGUI:
                 )  # At least packing and success messages
 
     def test_pack_single_folder_success(
-        self, gui_instance: FolderPackerGUI, tmp_path: Path,
+        self,
+        gui_instance: FolderPackerGUI,
+        tmp_path: Path,
     ) -> None:
         """Test successful single folder packing."""
         source_folder = tmp_path / "source"
@@ -212,7 +218,8 @@ class TestFolderPackerGUI:
         assert result is False
 
     def test_should_include_file_config_file(
-        self, gui_instance: FolderPackerGUI,
+        self,
+        gui_instance: FolderPackerGUI,
     ) -> None:
         """Test file inclusion for configuration files."""
         config_files = [".env", ".config", ".conf", ".cfg", ".ini", ".toml"]
@@ -222,7 +229,8 @@ class TestFolderPackerGUI:
             assert gui_instance.should_include_file(file_path) is True
 
     def test_should_include_file_regular_file(
-        self, gui_instance: FolderPackerGUI,
+        self,
+        gui_instance: FolderPackerGUI,
     ) -> None:
         """Test file inclusion for regular files."""
         # These files should be included because they're in INCLUDE_EXTENSIONS
@@ -233,7 +241,8 @@ class TestFolderPackerGUI:
             assert gui_instance.should_include_file(file_path) is True
 
     def test_should_include_directory_excluded_patterns(
-        self, gui_instance: FolderPackerGUI,
+        self,
+        gui_instance: FolderPackerGUI,
     ) -> None:
         """Test directory inclusion for excluded patterns."""
         excluded_dirs = ["__pycache__", ".git", "node_modules", ".venv"]
@@ -243,7 +252,9 @@ class TestFolderPackerGUI:
             assert gui_instance.should_include_directory(dir_path) is False
 
     def test_should_include_directory_valid(
-        self, gui_instance: FolderPackerGUI, tmp_path: Path,
+        self,
+        gui_instance: FolderPackerGUI,
+        tmp_path: Path,
     ) -> None:
         """Test directory inclusion for valid directories."""
         valid_dir = tmp_path / "valid_folder"

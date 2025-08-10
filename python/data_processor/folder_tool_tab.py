@@ -34,24 +34,35 @@ class FolderToolTab:
 
         # Title
         title_label = ttk.Label(
-            main_frame, text="Folder Processing Tool", font=("Arial", 14, "bold"),
+            main_frame,
+            text="Folder Processing Tool",
+            font=("Arial", 14, "bold"),
         )
         title_label.grid(row=0, column=0, columnspan=3, pady=(0, 20))
 
         # Source folders section
         ttk.Label(main_frame, text="Source Folders:").grid(
-            row=1, column=0, sticky=tk.W, pady=(0, 5),
+            row=1,
+            column=0,
+            sticky=tk.W,
+            pady=(0, 5),
         )
 
         # Source folders listbox
         self.folders_listbox = tk.Listbox(main_frame, height=6, selectmode=tk.EXTENDED)
         self.folders_listbox.grid(
-            row=2, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(0, 10),
+            row=2,
+            column=0,
+            columnspan=2,
+            sticky=(tk.W, tk.E),
+            pady=(0, 10),
         )
 
         # Scrollbar for folders listbox
         folders_scrollbar = ttk.Scrollbar(
-            main_frame, orient=tk.VERTICAL, command=self.folders_listbox.yview,
+            main_frame,
+            orient=tk.VERTICAL,
+            command=self.folders_listbox.yview,
         )
         folders_scrollbar.grid(row=2, column=2, sticky=(tk.N, tk.S))
         self.folders_listbox.configure(yscrollcommand=folders_scrollbar.set)
@@ -61,7 +72,9 @@ class FolderToolTab:
         buttons_frame.grid(row=3, column=0, columnspan=3, pady=(0, 20))
 
         ttk.Button(
-            buttons_frame, text="Add Folder", command=self.folder_select_source_folders,
+            buttons_frame,
+            text="Add Folder",
+            command=self.folder_select_source_folders,
         ).pack(side=tk.LEFT, padx=(0, 10))
 
         ttk.Button(
@@ -71,18 +84,27 @@ class FolderToolTab:
         ).pack(side=tk.LEFT, padx=(0, 10))
 
         ttk.Button(
-            buttons_frame, text="Clear All", command=self.folder_clear_source_folders,
+            buttons_frame,
+            text="Clear All",
+            command=self.folder_clear_source_folders,
         ).pack(side=tk.LEFT)
 
         # Operation selection
         ttk.Label(main_frame, text="Operation:").grid(
-            row=4, column=0, sticky=tk.W, pady=(0, 5),
+            row=4,
+            column=0,
+            sticky=tk.W,
+            pady=(0, 5),
         )
 
         self.operation_var = tk.StringVar(value="combine")
         operation_frame = ttk.Frame(main_frame)
         operation_frame.grid(
-            row=5, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=(0, 20),
+            row=5,
+            column=0,
+            columnspan=3,
+            sticky=(tk.W, tk.E),
+            pady=(0, 20),
         )
 
         ttk.Radiobutton(
@@ -100,7 +122,10 @@ class FolderToolTab:
         ).pack(side=tk.LEFT, padx=(0, 20))
 
         ttk.Radiobutton(
-            operation_frame, text="Prune", variable=self.operation_var, value="prune",
+            operation_frame,
+            text="Prune",
+            variable=self.operation_var,
+            value="prune",
         ).pack(side=tk.LEFT, padx=(0, 20))
 
         ttk.Radiobutton(
@@ -119,13 +144,20 @@ class FolderToolTab:
 
         # Destination folder section
         ttk.Label(main_frame, text="Destination Folder:").grid(
-            row=6, column=0, sticky=tk.W, pady=(0, 5),
+            row=6,
+            column=0,
+            sticky=tk.W,
+            pady=(0, 5),
         )
 
         # Destination folder entry and browse button
         dest_frame = ttk.Frame(main_frame)
         dest_frame.grid(
-            row=7, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=(0, 20),
+            row=7,
+            column=0,
+            columnspan=3,
+            sticky=(tk.W, tk.E),
+            pady=(0, 20),
         )
         dest_frame.columnconfigure(0, weight=1)
 
@@ -133,31 +165,42 @@ class FolderToolTab:
         self.dest_entry.grid(row=0, column=0, sticky=(tk.W, tk.E), padx=(0, 10))
 
         ttk.Button(
-            dest_frame, text="Browse", command=self.folder_select_dest_folder,
+            dest_frame,
+            text="Browse",
+            command=self.folder_select_dest_folder,
         ).grid(row=0, column=1)
 
         # Process button
         self.process_button = ttk.Button(
-            main_frame, text="🚀 Process Folders", command=self.folder_run_processing,
+            main_frame,
+            text="🚀 Process Folders",
+            command=self.folder_run_processing,
         )
         self.process_button.grid(row=8, column=0, columnspan=3, pady=(0, 20))
 
         # Progress bar
         self.progress = ttk.Progressbar(main_frame, mode="indeterminate")
         self.progress.grid(
-            row=9, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=(0, 10),
+            row=9,
+            column=0,
+            columnspan=3,
+            sticky=(tk.W, tk.E),
+            pady=(0, 10),
         )
 
         # Status label
         self.status_label = ttk.Label(
-            main_frame, text="Ready to process folders", font=("Arial", 9),
+            main_frame,
+            text="Ready to process folders",
+            font=("Arial", 9),
         )
         self.status_label.grid(row=10, column=0, columnspan=3)
 
     def folder_select_source_folders(self) -> None:
         """Select source folders for processing."""
         folder_paths = filedialog.askdirectory(
-            title="Select Source Folders", multiple=True,
+            title="Select Source Folders",
+            multiple=True,
         )
 
         if folder_paths:
@@ -211,13 +254,15 @@ class FolderToolTab:
         """Start folder processing operation."""
         if not self.source_folders:
             messagebox.showwarning(
-                "No Folders", "Please add at least one source folder",
+                "No Folders",
+                "Please add at least one source folder",
             )
             return
 
         if not self.dest_folder:
             messagebox.showwarning(
-                "No Destination", "Please select a destination folder",
+                "No Destination",
+                "Please select a destination folder",
             )
             return
 

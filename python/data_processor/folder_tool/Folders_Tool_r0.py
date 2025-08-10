@@ -77,7 +77,8 @@ class FolderProcessorApp:
                         try:
                             # Try to get exact size from ICO, or resize
                             resized = image.resize(
-                                (size, size), Image.Resampling.LANCZOS,
+                                (size, size),
+                                Image.Resampling.LANCZOS,
                             )
                             if resized.mode != "RGBA":
                                 resized = resized.convert("RGBA")
@@ -169,7 +170,8 @@ class FolderProcessorApp:
         scrollable_frame = ttk.Frame(canvas)
 
         scrollable_frame.bind(
-            "<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")),
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all")),
         )
 
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
@@ -206,7 +208,9 @@ class FolderProcessorApp:
 
     def create_source_widgets(self, parent):
         self.source_frame = ttk.LabelFrame(
-            parent, text="1. Select Folder(s) to Process", padding="10",
+            parent,
+            text="1. Select Folder(s) to Process",
+            padding="10",
         )
         self.source_frame.pack(fill=tk.X, pady=5)
 
@@ -216,7 +220,9 @@ class FolderProcessorApp:
 
         self.source_listbox = tk.Listbox(listbox_frame, height=6)
         source_scrollbar = ttk.Scrollbar(
-            listbox_frame, orient="vertical", command=self.source_listbox.yview,
+            listbox_frame,
+            orient="vertical",
+            command=self.source_listbox.yview,
         )
         self.source_listbox.configure(yscrollcommand=source_scrollbar.set)
 
@@ -226,34 +232,48 @@ class FolderProcessorApp:
         button_frame = ttk.Frame(self.source_frame)
         button_frame.pack(fill=tk.X, pady=5)
         ttk.Button(
-            button_frame, text="Add Folder(s)", command=self.select_source_folders,
+            button_frame,
+            text="Add Folder(s)",
+            command=self.select_source_folders,
         ).pack(side=tk.LEFT, expand=True, fill=tk.X, padx=(0, 5))
         ttk.Button(
-            button_frame, text="Remove Selected", command=self.remove_selected_source,
+            button_frame,
+            text="Remove Selected",
+            command=self.remove_selected_source,
         ).pack(side=tk.RIGHT, expand=True, fill=tk.X, padx=(5, 0))
 
         # Add folder info label
         self.source_info_label = ttk.Label(
-            self.source_frame, text="", foreground="blue",
+            self.source_frame,
+            text="",
+            foreground="blue",
         )
         self.source_info_label.pack(fill=tk.X, pady=2)
 
     def create_destination_widgets(self, parent):
         self.dest_frame = ttk.LabelFrame(
-            parent, text="2. Select Final Destination Folder", padding="10",
+            parent,
+            text="2. Select Final Destination Folder",
+            padding="10",
         )
         self.dest_frame.pack(fill=tk.X, pady=5)
         self.dest_label = ttk.Label(
-            self.dest_frame, text="No destination selected.", foreground="grey",
+            self.dest_frame,
+            text="No destination selected.",
+            foreground="grey",
         )
         self.dest_label.pack(fill=tk.X, expand=True, side=tk.LEFT)
         ttk.Button(
-            self.dest_frame, text="Set Destination", command=self.select_dest_folder,
+            self.dest_frame,
+            text="Set Destination",
+            command=self.select_dest_folder,
         ).pack(side=tk.RIGHT)
 
     def create_filtering_widgets(self, parent):
         filter_frame = ttk.LabelFrame(
-            parent, text="3. File Filtering Options", padding="10",
+            parent,
+            text="3. File Filtering Options",
+            padding="10",
         )
         filter_frame.pack(fill=tk.X, pady=5)
 
@@ -277,16 +297,20 @@ class FolderProcessorApp:
         size_frame.pack(fill=tk.X, pady=5)
         ttk.Label(size_frame, text="Min size (MB):").pack(side=tk.LEFT)
         ttk.Entry(size_frame, textvariable=self.min_file_size, width=10).pack(
-            side=tk.LEFT, padx=5,
+            side=tk.LEFT,
+            padx=5,
         )
         ttk.Label(size_frame, text="Max size (MB):").pack(side=tk.LEFT, padx=(10, 0))
         ttk.Entry(size_frame, textvariable=self.max_file_size, width=10).pack(
-            side=tk.LEFT, padx=5,
+            side=tk.LEFT,
+            padx=5,
         )
 
     def create_preprocessing_widgets(self, parent):
         self.pre_process_frame = ttk.LabelFrame(
-            parent, text="4. Pre-processing Options (On Source)", padding="10",
+            parent,
+            text="4. Pre-processing Options (On Source)",
+            padding="10",
         )
         self.pre_process_frame.pack(fill=tk.X, pady=5)
 
@@ -303,7 +327,9 @@ class FolderProcessorApp:
 
     def create_main_operation_widgets(self, parent):
         self.mode_frame = ttk.LabelFrame(
-            parent, text="5. Choose Main Operation", padding="10",
+            parent,
+            text="5. Choose Main Operation",
+            padding="10",
         )
         self.mode_frame.pack(fill=tk.X, pady=5)
 
@@ -344,13 +370,18 @@ class FolderProcessorApp:
         ).pack(anchor=tk.W)
 
         self.mode_description = ttk.Label(
-            self.mode_frame, text="", wraplength=600, justify=tk.LEFT,
+            self.mode_frame,
+            text="",
+            wraplength=600,
+            justify=tk.LEFT,
         )
         self.mode_description.pack(fill=tk.X, pady=(5, 0))
 
     def create_organization_widgets(self, parent):
         org_frame = ttk.LabelFrame(
-            parent, text="6. File Organization Options", padding="10",
+            parent,
+            text="6. File Organization Options",
+            padding="10",
         )
         org_frame.pack(fill=tk.X, pady=5)
 
@@ -367,7 +398,9 @@ class FolderProcessorApp:
 
     def create_postprocessing_widgets(self, parent):
         self.post_process_frame = ttk.LabelFrame(
-            parent, text="7. Post-processing Options (On Destination)", padding="10",
+            parent,
+            text="7. Post-processing Options (On Destination)",
+            padding="10",
         )
         self.post_process_frame.pack(fill=tk.X, pady=5)
 
@@ -389,7 +422,9 @@ class FolderProcessorApp:
 
     def create_advanced_options_widgets(self, parent):
         advanced_frame = ttk.LabelFrame(
-            parent, text="9. Advanced Options", padding="10",
+            parent,
+            text="9. Advanced Options",
+            padding="10",
         )
         advanced_frame.pack(fill=tk.X, pady=5)
 
@@ -409,7 +444,10 @@ class FolderProcessorApp:
         progress_frame.pack(fill=tk.X, pady=5)
 
         self.progress_bar = ttk.Progressbar(
-            progress_frame, variable=self.progress_var, maximum=100, mode="determinate",
+            progress_frame,
+            variable=self.progress_var,
+            maximum=100,
+            mode="determinate",
         )
         self.progress_bar.pack(fill=tk.X, pady=2)
 
@@ -427,7 +465,11 @@ class FolderProcessorApp:
             style="Accent.TButton",
         )
         self.run_button.pack(
-            side=tk.LEFT, expand=True, fill=tk.X, padx=(0, 5), ipady=10,
+            side=tk.LEFT,
+            expand=True,
+            fill=tk.X,
+            padx=(0, 5),
+            ipady=10,
         )
 
         self.cancel_button = ttk.Button(
@@ -662,7 +704,8 @@ class FolderProcessorApp:
 
             progress = (i + 1) / len(self.source_folders) * 20  # 20% for backup
             self.update_progress(
-                progress, f"Backing up folder {i+1}/{len(self.source_folders)}",
+                progress,
+                f"Backing up folder {i+1}/{len(self.source_folders)}",
             )
 
         return backup_base
@@ -748,7 +791,8 @@ class FolderProcessorApp:
                 if report:
                     self.show_text_dialog("Analysis Report", report)
                     messagebox.showinfo(
-                        "Analysis Complete", "Analysis report generated successfully!",
+                        "Analysis Complete",
+                        "Analysis report generated successfully!",
                     )
             except Exception as e:
                 messagebox.showerror("Error", f"An error occurred during analysis: {e}")
@@ -766,7 +810,8 @@ class FolderProcessorApp:
                 )
             except Exception as e:
                 messagebox.showerror(
-                    "Error", f"An error occurred during deduplication: {e}",
+                    "Error",
+                    f"An error occurred during deduplication: {e}",
                 )
             return
 
@@ -797,7 +842,8 @@ class FolderProcessorApp:
                     return
             except Exception as e:
                 messagebox.showerror(
-                    "Error", f"An error occurred during bulk unzip: {e}",
+                    "Error",
+                    f"An error occurred during bulk unzip: {e}",
                 )
                 return
 
@@ -818,7 +864,8 @@ class FolderProcessorApp:
             final_summary = "Main Operation Complete!\n\n" + "\n".join(main_op_log)
         except Exception as e:
             messagebox.showerror(
-                "Error", f"An error occurred during the main operation: {e}",
+                "Error",
+                f"An error occurred during the main operation: {e}",
             )
             return
 
@@ -896,7 +943,8 @@ class FolderProcessorApp:
                 return False
             if any(src == self.dest_folder for src in self.source_folders):
                 messagebox.showerror(
-                    "Error", "The destination folder cannot be a source folder.",
+                    "Error",
+                    "The destination folder cannot be a source folder.",
                 )
                 return False
         return True
@@ -1003,7 +1051,8 @@ class FolderProcessorApp:
                     if processed_files % 10 == 0:  # Update progress every 10 files
                         progress = 30 + (processed_files / total_files) * 40
                         self.update_progress(
-                            progress, f"Processed {processed_files}/{total_files} files",
+                            progress,
+                            f"Processed {processed_files}/{total_files} files",
                         )
 
         summary = [
@@ -1028,7 +1077,7 @@ class FolderProcessorApp:
             confirm = messagebox.askyesno(
                 "Confirm Deletion",
                 f"This will permanently delete duplicate files in:\n{target_folder}\n\n"
-                 "It keeps the newest version of files like 'file (1).txt'. This cannot be undone. Are you sure?",
+                "It keeps the newest version of files like 'file (1).txt'. This cannot be undone. Are you sure?",
             )
             if not confirm:
                 return ["Deduplication cancelled by user."]
@@ -1112,7 +1161,8 @@ class FolderProcessorApp:
     def select_source_folders(self) -> None:
         """Select source folders for processing."""
         folder = filedialog.askdirectory(
-            mustexist=True, title="Select a folder to process",
+            mustexist=True,
+            title="Select a folder to process",
         )
         if folder and folder not in self.source_folders:
             self.source_folders.append(folder)
@@ -1129,7 +1179,8 @@ class FolderProcessorApp:
     def select_dest_folder(self) -> None:
         """Select destination folder for processing."""
         folder = filedialog.askdirectory(
-            mustexist=True, title="Select the destination folder",
+            mustexist=True,
+            title="Select the destination folder",
         )
         if folder:
             self.dest_folder = folder
@@ -1155,7 +1206,7 @@ class FolderProcessorApp:
         return [
             f"Processed {pf} non-empty source folder(s).",
             f"Copied a total of {fc} files.",
-            *log[:10]
+            *log[:10],
         ]
 
 

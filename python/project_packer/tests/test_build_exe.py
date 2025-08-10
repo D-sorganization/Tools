@@ -91,7 +91,8 @@ class TestBuildExe:
             with patch("build_exe.clean_build_dirs") as mock_clean:
                 with patch("build_exe.subprocess.run") as mock_run:
                     mock_run.side_effect = subprocess.CalledProcessError(
-                        1, "pyinstaller",
+                        1,
+                        "pyinstaller",
                     )
                     assert build_executable() is False
 

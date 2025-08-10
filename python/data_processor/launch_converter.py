@@ -7,8 +7,7 @@ from pathlib import Path
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s",
 )
 
 # Add the parent directory to the Python path
@@ -20,9 +19,7 @@ try:
     from data_processor.Data_Processor_Integrated import DataProcessorApp
 
     def main() -> None:
-        """Main entry point for the data converter application.
-
-        """
+        """Main entry point for the data converter application."""
         app = QApplication(sys.argv)
         window = DataProcessorApp()
         window.show()

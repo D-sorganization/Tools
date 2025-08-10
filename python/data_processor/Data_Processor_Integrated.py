@@ -78,7 +78,8 @@ try:
     import sys
 
     folder_tool_path = os.path.join(
-        os.path.dirname(os.path.dirname(__file__)), "folder_tool",
+        os.path.dirname(os.path.dirname(__file__)),
+        "folder_tool",
     )
     sys.path.append(folder_tool_path)
     # Validate presence of folder tool without importing unused symbols
@@ -243,7 +244,10 @@ class DataWriter:
 
     @staticmethod
     def write_file(
-        df: pd.DataFrame, file_path: str, format_type: str, **kwargs,
+        df: pd.DataFrame,
+        file_path: str,
+        format_type: str,
+        **kwargs,
     ) -> None:
         """Write DataFrame to file based on format type."""
         try:
@@ -269,7 +273,8 @@ class DataWriter:
                 if not SCIPY_AVAILABLE:
                     raise ImportError("SciPy is required for MATLAB files")
                 scipy.io.savemat(
-                    file_path, {"data": df.values, "columns": df.columns.tolist()},
+                    file_path,
+                    {"data": df.values, "columns": df.columns.tolist()},
                 )
             elif format_type == "feather":
                 if not PYARROW_AVAILABLE:
@@ -302,7 +307,12 @@ class DataWriter:
 class ParquetAnalyzerDialog(ctk.CTkToplevel):
     """Dialog for analyzing parquet file metadata."""
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None) -> None:
+        """Initialize the Parquet Analyzer Dialog.
+        
+        Args:
+            parent: Parent window for this dialog
+        """
         super().__init__(parent)
         self.title("Parquet File Analyzer")
         self.geometry("600x500")
@@ -314,7 +324,7 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
 
         self.setup_ui()
 
-    def setup_ui(self):
+    def setup_ui(self) -> None:
         """Setup the user interface."""
         # Main frame
         main_frame = ctk.CTkFrame(self)
@@ -330,7 +340,10 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
 
         # Select file button
         self.select_btn = ctk.CTkButton(
-            main_frame, text="Select Parquet File", command=self.select_file, height=40,
+            main_frame,
+            text="Select Parquet File",
+            command=self.select_file,
+            height=40,
         )
         self.select_btn.pack(pady=(0, 20))
 
@@ -340,11 +353,14 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
 
         # Close button
         close_btn = ctk.CTkButton(
-            main_frame, text="Close", command=self.destroy, height=35,
+            main_frame,
+            text="Close",
+            command=self.destroy,
+            height=35,
         )
         close_btn.pack(pady=(0, 10))
 
-    def select_file(self):
+    def select_file(self) -> None:
         """Open file dialog to select a parquet file."""
         file_path = filedialog.askopenfilename(
             title="Select Parquet File",
@@ -354,12 +370,17 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
         if file_path:
             self.analyze_parquet_file(file_path)
 
-    def analyze_parquet_file(self, file_path):
-        """Analyze the selected parquet file."""
+    def analyze_parquet_file(self, file_path: str) -> None:
+        """Analyze the selected parquet file.
+        
+        Args:
+            file_path: Path to the parquet file to analyze
+        """
         try:
             if not PYARROW_AVAILABLE:
                 self.results_text.insert(
-                    "end", "Error: PyArrow is required for parquet analysis.\n",
+                    "end",
+                    "Error: PyArrow is required for parquet analysis.\n",
                 )
                 return
 
@@ -415,8 +436,15 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
             self.results_text.delete("1.0", "end")
             self.results_text.insert("1.0", f"Error analyzing file: {exc!s}")
 
-    def format_file_size(self, size_bytes):
-        """Format file size in human readable format."""
+    def format_file_size(self, size_bytes: int) -> str:
+        """Format file size in human readable format.
+        
+        Args:
+            size_bytes: File size in bytes
+            
+        Returns:
+            Formatted file size string (e.g., "1.25 MB")
+        """
         for unit in ["B", "KB", "MB", "GB", "TB"]:
             if size_bytes < 1024.0:
                 return f"{size_bytes:.2f} {unit}"
@@ -432,7 +460,13 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
 class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
     """Extended application class with integrated compiler converter functionality."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
+        """Initialize the integrated CSV processor application.
+        
+        Args:
+            *args: Variable length argument list
+            **kwargs: Arbitrary keyword arguments
+        """
         # Initialize converter variables BEFORE calling parent class
         # This ensures they exist when parent class methods are called
         self.converter_input_files = []
@@ -497,7 +531,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         self.create_help_tab(self.main_tab_view.tab("Help"))
 
     # Compiler converter methods - Define these BEFORE creating the UI
-    def converter_browse_files(self):
+    def converter_browse_files(self) -> None:
         """Browse for input files."""
         try:
             files = filedialog.askopenfilenames(
@@ -533,7 +567,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         except Exception as exc:
             messagebox.showerror("Error", f"Failed to browse files: {exc!s}")
 
-    def converter_browse_folder(self):
+    def converter_browse_folder(self) -> None:
         """Browse for input folder."""
         folder = filedialog.askdirectory(title="Select Input Folder")
         if folder:
@@ -574,17 +608,18 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 self.converter_update_convert_button()
             else:
                 messagebox.showwarning(
-                    "No Files Found", "No supported files found in the selected folder.",
+                    "No Files Found",
+                    "No supported files found in the selected folder.",
                 )
 
-    def converter_clear_files(self):
+    def converter_clear_files(self) -> None:
         """Clear all selected files."""
         self.converter_input_files = []
         self.converter_update_file_list()
         self.converter_input_label.configure(text="No files selected")
         self.converter_update_convert_button()
 
-    def converter_update_file_list(self):
+    def converter_update_file_list(self) -> None:
         """Update the file list display."""
         # Clear existing widgets
         for widget in self.converter_file_list_frame.winfo_children():
@@ -592,7 +627,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
         if not self.converter_input_files:
             ctk.CTkLabel(self.converter_file_list_frame, text="No files selected").pack(
-                padx=5, pady=5,
+                padx=5,
+                pady=5,
             )
             return
 
@@ -615,8 +651,12 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 command=lambda fp=file_path: self.converter_remove_file(fp),
             ).pack(side="right", padx=5, pady=2)
 
-    def converter_remove_file(self, file_path):
-        """Remove a specific file from the list."""
+    def converter_remove_file(self, file_path: str) -> None:
+        """Remove a specific file from the list.
+        
+        Args:
+            file_path: Path to the file to remove
+        """
         if file_path in self.converter_input_files:
             self.converter_input_files.remove(file_path)
             self.converter_update_file_list()
@@ -625,7 +665,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             )
             self.converter_update_convert_button()
 
-    def converter_browse_output(self):
+    def converter_browse_output(self) -> None:
         """Browse for output directory."""
         folder = filedialog.askdirectory(title="Select Output Directory")
         if folder:
@@ -633,11 +673,12 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             self.converter_output_label.configure(text=folder)
             self.converter_update_convert_button()
 
-    def converter_select_columns(self):
+    def converter_select_columns(self) -> None:
         """Open column selection dialog."""
         if not self.converter_input_files:
             messagebox.showwarning(
-                "No Files", "Please select input files first to determine columns.",
+                "No Files",
+                "Please select input files first to determine columns.",
             )
             return
 
@@ -646,7 +687,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             format_type = FileFormatDetector.detect_format(first_file)
             if not format_type:
                 messagebox.showerror(
-                    "Error", "Could not detect format for the first file.",
+                    "Error",
+                    "Could not detect format for the first file.",
                 )
                 return
 
@@ -667,14 +709,14 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         except Exception as exc:
             messagebox.showerror("Error", f"Error reading file: {exc!s}")
 
-    def converter_update_convert_button(self):
+    def converter_update_convert_button(self) -> None:
         """Update the convert button state."""
         if self.converter_input_files and self.converter_output_path:
             self.converter_convert_button.configure(state="normal")
         else:
             self.converter_convert_button.configure(state="disabled")
 
-    def converter_start_conversion(self):
+    def converter_start_conversion(self) -> None:
         """Start the file conversion process."""
         if not self.converter_input_files:
             messagebox.showwarning("No Files", "Please select input files first.")
@@ -707,13 +749,21 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def _perform_conversion(
         self,
-        output_format,
-        combine_files,
-        use_all_columns,
-        batch_processing,
-        split_files,
-    ):
-        """Perform the actual file conversion in a background thread."""
+        output_format: str,
+        combine_files: bool,
+        use_all_columns: bool,
+        batch_processing: bool,
+        split_files: bool,
+    ) -> None:
+        """Perform the actual file conversion in a background thread.
+        
+        Args:
+            output_format: Target output format (e.g., 'csv', 'parquet')
+            combine_files: Whether to combine all files into one
+            use_all_columns: Whether to use all columns or selected ones
+            batch_processing: Whether to process files in batches
+            split_files: Whether to split large files
+        """
         try:
             self.converter_status_label.configure(text="Converting files...")
             self.converter_progress.set(0)
@@ -772,10 +822,12 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                     try:
                         combined_df = pd.concat(combined_data, ignore_index=True)
                         output_filename = self._generate_output_filename(
-                            output_format, "combined_data",
+                            output_format,
+                            "combined_data",
                         )
                         output_path = os.path.join(
-                            self.converter_output_path, output_filename,
+                            self.converter_output_path,
+                            output_filename,
                         )
 
                         DataWriter.write_file(combined_df, output_path, output_format)
@@ -828,10 +880,12 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         # Generate output filename
                         base_name = os.path.splitext(os.path.basename(file_path))[0]
                         output_filename = self._generate_output_filename(
-                            output_format, base_name,
+                            output_format,
+                            base_name,
                         )
                         output_path = os.path.join(
-                            self.converter_output_path, output_filename,
+                            self.converter_output_path,
+                            output_filename,
                         )
 
                         DataWriter.write_file(df, output_path, output_format)
@@ -858,8 +912,16 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         finally:
             self.converter_convert_button.configure(state="normal")
 
-    def _generate_output_filename(self, output_format, base_name=None):
-        """Generate output filename with proper extension."""
+    def _generate_output_filename(self, output_format: str, base_name: str | None = None) -> str:
+        """Generate output filename with proper extension.
+        
+        Args:
+            output_format: Target output format
+            base_name: Base name for the file (defaults to "converted_data")
+            
+        Returns:
+            Generated filename with proper extension
+        """
         if not base_name:
             base_name = "converted_data"
 
@@ -881,8 +943,12 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         extension = extensions.get(output_format, ".txt")
         return f"{base_name}{extension}"
 
-    def _log_conversion_message(self, message):
-        """Add a message to the conversion log."""
+    def _log_conversion_message(self, message: str) -> None:
+        """Add a message to the conversion log.
+        
+        Args:
+            message: Message to add to the log
+        """
         timestamp = datetime.now().strftime("%H:%M:%S")
         log_message = f"[{timestamp}] {message}\n"
 
@@ -890,11 +956,11 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         self.after(0, lambda: self.converter_log_text.insert("end", log_message))
         self.after(0, lambda: self.converter_log_text.see("end"))
 
-    def converter_clear_log(self):
+    def converter_clear_log(self) -> None:
         """Clear the conversion log."""
         self.converter_log_text.delete("1.0", "end")
 
-    def converter_save_log(self):
+    def converter_save_log(self) -> None:
         """Save the conversion log to a file."""
         log_content = self.converter_log_text.get("1.0", "end")
         if log_content.strip():
@@ -911,13 +977,17 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 except Exception as exc:
                     messagebox.showerror("Error", f"Failed to save log: {exc!s}")
 
-    def show_parquet_analyzer(self):
+    def show_parquet_analyzer(self) -> None:
         """Show the parquet analyzer dialog."""
         dialog = ParquetAnalyzerDialog(self)
         dialog.grab_set()  # Make dialog modal
 
-    def create_format_converter_tab(self, parent_tab):
-        """Create the format converter tab."""
+    def create_format_converter_tab(self, parent_tab: ctk.CTkFrame) -> None:
+        """Create the format converter tab.
+        
+        Args:
+            parent_tab: Parent tab frame to add content to
+        """
         parent_tab.grid_columnconfigure(0, weight=1)
         parent_tab.grid_rowconfigure(0, weight=1)
 
@@ -929,7 +999,11 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Create scrollable frame
             converter_scrollable_frame = ctk.CTkScrollableFrame(left_panel)
             converter_scrollable_frame.grid(
-                row=0, column=0, padx=10, pady=10, sticky="nsew",
+                row=0,
+                column=0,
+                padx=10,
+                pady=10,
+                sticky="nsew",
             )
             converter_scrollable_frame.grid_columnconfigure(0, weight=1)
 
@@ -939,16 +1013,26 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             input_frame.grid_columnconfigure(1, weight=1)
 
             ctk.CTkLabel(input_frame, text="Input Files:").grid(
-                row=0, column=0, padx=5, pady=5, sticky="w",
+                row=0,
+                column=0,
+                padx=5,
+                pady=5,
+                sticky="w",
             )
             self.converter_input_label = ctk.CTkLabel(
-                input_frame, text="No files selected",
+                input_frame,
+                text="No files selected",
             )
             self.converter_input_label.grid(row=0, column=1, padx=5, pady=5, sticky="w")
 
             input_buttons_frame = ctk.CTkFrame(input_frame)
             input_buttons_frame.grid(
-                row=1, column=0, columnspan=2, padx=5, pady=5, sticky="ew",
+                row=1,
+                column=0,
+                columnspan=2,
+                padx=5,
+                pady=5,
+                sticky="ew",
             )
 
             ctk.CTkButton(
@@ -973,7 +1057,11 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             output_frame.grid_columnconfigure(1, weight=1)
 
             ctk.CTkLabel(output_frame, text="Output Format:").grid(
-                row=0, column=0, padx=5, pady=5, sticky="w",
+                row=0,
+                column=0,
+                padx=5,
+                pady=5,
+                sticky="w",
             )
             self.converter_format_var = ctk.StringVar(value="parquet")
             format_combo = ctk.CTkComboBox(
@@ -997,17 +1085,28 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             format_combo.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
 
             ctk.CTkLabel(output_frame, text="Output Path:").grid(
-                row=1, column=0, padx=5, pady=5, sticky="w",
+                row=1,
+                column=0,
+                padx=5,
+                pady=5,
+                sticky="w",
             )
             self.converter_output_label = ctk.CTkLabel(
-                output_frame, text="No output path selected",
+                output_frame,
+                text="No output path selected",
             )
             self.converter_output_label.grid(
-                row=1, column=1, padx=5, pady=5, sticky="w",
+                row=1,
+                column=1,
+                padx=5,
+                pady=5,
+                sticky="w",
             )
 
             ctk.CTkButton(
-                output_frame, text="Browse Output", command=self.converter_browse_output,
+                output_frame,
+                text="Browse Output",
+                command=self.converter_browse_output,
             ).grid(row=2, column=0, columnspan=2, padx=5, pady=5)
 
             # Options section
@@ -1047,10 +1146,13 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             column_frame.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
 
             ctk.CTkLabel(column_frame, text="Column Selection:").pack(
-                anchor="w", padx=5, pady=2,
+                anchor="w",
+                padx=5,
+                pady=2,
             )
             self.converter_columns_label = ctk.CTkLabel(
-                column_frame, text="All columns selected",
+                column_frame,
+                text="All columns selected",
             )
             self.converter_columns_label.pack(anchor="w", padx=5, pady=2)
 
@@ -1068,7 +1170,11 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 height=40,
             )
             self.converter_convert_button.grid(
-                row=4, column=0, sticky="ew", padx=5, pady=10,
+                row=4,
+                column=0,
+                sticky="ew",
+                padx=5,
+                pady=10,
             )
 
             # Progress
@@ -1078,10 +1184,15 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
             # Status
             self.converter_status_label = ctk.CTkLabel(
-                converter_scrollable_frame, text="Ready",
+                converter_scrollable_frame,
+                text="Ready",
             )
             self.converter_status_label.grid(
-                row=6, column=0, sticky="w", padx=5, pady=5,
+                row=6,
+                column=0,
+                sticky="w",
+                padx=5,
+                pady=5,
             )
 
         def create_converter_right_content(right_panel):
@@ -1091,10 +1202,16 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
             # File list
             self.converter_file_list_frame = ctk.CTkScrollableFrame(
-                right_panel, label_text="Selected Files", height=200,
+                right_panel,
+                label_text="Selected Files",
+                height=200,
             )
             self.converter_file_list_frame.grid(
-                row=0, column=0, padx=10, pady=(0, 10), sticky="ew",
+                row=0,
+                column=0,
+                padx=10,
+                pady=(0, 10),
+                sticky="ew",
             )
 
             # Log area
@@ -1104,7 +1221,9 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             log_frame.grid_rowconfigure(0, weight=1)
 
             ctk.CTkLabel(log_frame, text="Conversion Log:").pack(
-                anchor="w", padx=5, pady=2,
+                anchor="w",
+                padx=5,
+                pady=2,
             )
             self.converter_log_text = ctk.CTkTextbox(log_frame, height=300)
             self.converter_log_text.pack(fill="both", expand=True, padx=5, pady=5)
@@ -1114,13 +1233,19 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             button_frame.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
 
             ctk.CTkButton(
-                button_frame, text="Analyze Parquet", command=self.show_parquet_analyzer,
+                button_frame,
+                text="Analyze Parquet",
+                command=self.show_parquet_analyzer,
             ).pack(side="left", padx=5)
             ctk.CTkButton(
-                button_frame, text="Clear Log", command=self.converter_clear_log,
+                button_frame,
+                text="Clear Log",
+                command=self.converter_clear_log,
             ).pack(side="left", padx=5)
             ctk.CTkButton(
-                button_frame, text="Save Log", command=self.converter_save_log,
+                button_frame,
+                text="Save Log",
+                command=self.converter_save_log,
             ).pack(side="left", padx=5)
 
         # Create the splitter
@@ -1133,8 +1258,12 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         )
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
-    def create_folder_tool_tab(self, parent_tab):
-        """Create the folder tool tab with integrated folder processor functionality."""
+    def create_folder_tool_tab(self, parent_tab: ctk.CTkFrame) -> None:
+        """Create the folder tool tab with integrated folder processor functionality.
+        
+        Args:
+            parent_tab: Parent tab frame to add content to
+        """
         parent_tab.grid_columnconfigure(0, weight=1)
         parent_tab.grid_rowconfigure(0, weight=1)
 
@@ -1158,8 +1287,12 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         # Initialize mode description
         self._update_folder_mode_description()
 
-    def _create_folder_source_section(self, parent):
-        """Create the source folders section."""
+    def _create_folder_source_section(self, parent: ctk.CTkFrame) -> None:
+        """Create the source folders section.
+        
+        Args:
+            parent: Parent frame to add content to
+        """
         source_frame = ctk.CTkFrame(parent)
         source_frame.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
         source_frame.grid_columnconfigure(0, weight=1)
@@ -1190,17 +1323,25 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             command=self._folder_remove_selected_source,
         ).pack(side="left", padx=5)
         ctk.CTkButton(
-            button_frame, text="Clear All", command=self._folder_clear_source_folders,
+            button_frame,
+            text="Clear All",
+            command=self._folder_clear_source_folders,
         ).pack(side="left", padx=5)
 
         # Info label
         self.folder_source_info_label = ctk.CTkLabel(
-            source_frame, text="No folders selected", text_color="gray",
+            source_frame,
+            text="No folders selected",
+            text_color="gray",
         )
         self.folder_source_info_label.grid(row=3, column=0, sticky="w", padx=10, pady=5)
 
-    def _create_folder_destination_section(self, parent):
-        """Create the destination folder section."""
+    def _create_folder_destination_section(self, parent: ctk.CTkFrame) -> None:
+        """Create the destination folder section.
+        
+        Args:
+            parent: Parent frame to add content to
+        """
         dest_frame = ctk.CTkFrame(parent)
         dest_frame.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
         dest_frame.grid_columnconfigure(1, weight=1)
@@ -1214,17 +1355,25 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
         # Destination label
         self.folder_dest_label = ctk.CTkLabel(
-            dest_frame, text="No destination selected", text_color="gray",
+            dest_frame,
+            text="No destination selected",
+            text_color="gray",
         )
         self.folder_dest_label.grid(row=1, column=0, sticky="w", padx=10, pady=5)
 
         # Set destination button
         ctk.CTkButton(
-            dest_frame, text="Set Destination", command=self._folder_select_dest_folder,
+            dest_frame,
+            text="Set Destination",
+            command=self._folder_select_dest_folder,
         ).grid(row=1, column=1, padx=10, pady=5)
 
-    def _create_folder_filtering_section(self, parent):
-        """Create the file filtering section."""
+    def _create_folder_filtering_section(self, parent: ctk.CTkFrame) -> None:
+        """Create the file filtering section.
+        
+        Args:
+            parent: Parent frame to add content to
+        """
         filter_frame = ctk.CTkFrame(parent)
         filter_frame.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
         filter_frame.grid_columnconfigure(1, weight=1)
@@ -1238,7 +1387,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
         # Extensions filter
         ctk.CTkLabel(
-            filter_frame, text="Include only extensions (comma-separated):",
+            filter_frame,
+            text="Include only extensions (comma-separated):",
         ).grid(row=1, column=0, sticky="w", padx=10, pady=2)
         ctk.CTkEntry(
             filter_frame,
@@ -1248,17 +1398,29 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
         # File size filters
         ctk.CTkLabel(filter_frame, text="Min size (MB):").grid(
-            row=2, column=0, sticky="w", padx=10, pady=2,
+            row=2,
+            column=0,
+            sticky="w",
+            padx=10,
+            pady=2,
         )
         ctk.CTkEntry(
-            filter_frame, textvariable=self.folder_min_file_size, width=100,
+            filter_frame,
+            textvariable=self.folder_min_file_size,
+            width=100,
         ).grid(row=2, column=1, sticky="w", padx=10, pady=2)
 
         ctk.CTkLabel(filter_frame, text="Max size (MB):").grid(
-            row=3, column=0, sticky="w", padx=10, pady=2,
+            row=3,
+            column=0,
+            sticky="w",
+            padx=10,
+            pady=2,
         )
         ctk.CTkEntry(
-            filter_frame, textvariable=self.folder_max_file_size, width=100,
+            filter_frame,
+            textvariable=self.folder_max_file_size,
+            width=100,
         ).grid(row=3, column=1, sticky="w", padx=10, pady=2)
 
         # Help text
@@ -1269,8 +1431,12 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             font=ctk.CTkFont(size=12),
         ).grid(row=4, column=0, columnspan=2, sticky="w", padx=10, pady=5)
 
-    def _create_folder_operation_section(self, parent):
-        """Create the main operation section."""
+    def _create_folder_operation_section(self, parent: ctk.CTkFrame) -> None:
+        """Create the main operation section.
+        
+        Args:
+            parent: Parent frame to add content to
+        """
         operation_frame = ctk.CTkFrame(parent)
         operation_frame.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
 
@@ -1301,14 +1467,25 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
         # Mode description
         self.folder_mode_description = ctk.CTkLabel(
-            operation_frame, text="", wraplength=600, text_color="blue",
+            operation_frame,
+            text="",
+            wraplength=600,
+            text_color="blue",
         )
         self.folder_mode_description.grid(
-            row=len(operations) + 1, column=0, sticky="w", padx=10, pady=10,
+            row=len(operations) + 1,
+            column=0,
+            sticky="w",
+            padx=10,
+            pady=10,
         )
 
-    def _create_folder_organization_section(self, parent):
-        """Create the organization options section."""
+    def _create_folder_organization_section(self, parent: ctk.CTkFrame) -> None:
+        """Create the organization options section.
+        
+        Args:
+            parent: Parent frame to add content to
+        """
         org_frame = ctk.CTkFrame(parent)
         org_frame.grid(row=4, column=0, sticky="ew", padx=5, pady=5)
 
@@ -1331,8 +1508,12 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             variable=self.folder_organize_by_date_var,
         ).grid(row=2, column=0, sticky="w", padx=10, pady=2)
 
-    def _create_folder_output_section(self, parent):
-        """Create the output options section."""
+    def _create_folder_output_section(self, parent: ctk.CTkFrame) -> None:
+        """Create the output options section.
+        
+        Args:
+            parent: Parent frame to add content to
+        """
         output_frame = ctk.CTkFrame(parent)
         output_frame.grid(row=5, column=0, sticky="ew", padx=5, pady=5)
 
@@ -1365,14 +1546,20 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             variable=self.folder_backup_before_var,
         ).grid(row=4, column=0, sticky="w", padx=10, pady=2)
 
-    def _create_folder_progress_section(self, parent):
-        """Create the progress section."""
+    def _create_folder_progress_section(self, parent: ctk.CTkFrame) -> None:
+        """Create the progress section.
+        
+        Args:
+            parent: Parent frame to add content to
+        """
         progress_frame = ctk.CTkFrame(parent)
         progress_frame.grid(row=6, column=0, sticky="ew", padx=5, pady=5)
 
         # Title
         ctk.CTkLabel(
-            progress_frame, text="Progress", font=ctk.CTkFont(size=14, weight="bold"),
+            progress_frame,
+            text="Progress",
+            font=ctk.CTkFont(size=14, weight="bold"),
         ).grid(row=0, column=0, sticky="w", padx=10, pady=(10, 5))
 
         # Progress bar
@@ -1382,12 +1569,17 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
         # Status label
         self.folder_status_label = ctk.CTkLabel(
-            progress_frame, textvariable=self.folder_status_var,
+            progress_frame,
+            textvariable=self.folder_status_var,
         )
         self.folder_status_label.grid(row=2, column=0, sticky="w", padx=10, pady=5)
 
-    def _create_folder_run_section(self, parent):
-        """Create the run button section."""
+    def _create_folder_run_section(self, parent: ctk.CTkFrame) -> None:
+        """Create the run button section.
+        
+        Args:
+            parent: Parent frame to add content to
+        """
         run_frame = ctk.CTkFrame(parent)
         run_frame.grid(row=7, column=0, sticky="ew", padx=5, pady=5)
 
@@ -1427,14 +1619,16 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         """Select source folders for processing."""
         try:
             folders = filedialog.askdirectory(
-                title="Select Source Folders", multiple=True,
+                title="Select Source Folders",
+                multiple=True,
             )
             if folders:
                 self.folder_source_folders.extend(folders)
                 self._folder_update_source_display()
         except Exception as exc:
             messagebox.showerror(
-                "Error", f"Failed to select source folders: {exc!s}",
+                "Error",
+                f"Failed to select source folders: {exc!s}",
             )
 
     def _folder_remove_selected_source(self):
@@ -1469,7 +1663,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 self.folder_destination = folder
         except Exception as exc:
             messagebox.showerror(
-                "Error", f"Failed to select destination folder: {exc!s}",
+                "Error",
+                f"Failed to select destination folder: {exc!s}",
             )
             self.folder_dest_label.configure(text=folder)
 
@@ -1477,14 +1672,16 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         """Start the folder processing operation."""
         if not self.folder_source_folders:
             messagebox.showwarning(
-                "No Source Folders", "Please select at least one source folder.",
+                "No Source Folders",
+                "Please select at least one source folder.",
             )
             return
 
         mode = self.folder_operation_mode.get()
         if mode not in ["deduplicate", "analyze"] and not self.folder_destination:
             messagebox.showwarning(
-                "No Destination", "Please select a destination folder.",
+                "No Destination",
+                "Please select a destination folder.",
             )
             return
 
@@ -1586,7 +1783,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
                         # Get organized destination path
                         dest_path = self._folder_get_organized_path(
-                            source_path, self.folder_destination,
+                            source_path,
+                            self.folder_destination,
                         )
                         dest_dir = os.path.dirname(dest_path)
 
@@ -1609,7 +1807,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         if processed_files % 10 == 0:  # Update progress every 10 files
                             progress = processed_files / total_files
                             self.after(
-                                0, lambda p=progress: self.folder_progress_bar.set(p),
+                                0,
+                                lambda p=progress: self.folder_progress_bar.set(p),
                             )
                             self.after(
                                 0,
@@ -1695,7 +1894,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         if processed_files % 10 == 0:
                             progress = processed_files / total_files
                             self.after(
-                                0, lambda p=progress: self.folder_progress_bar.set(p),
+                                0,
+                                lambda p=progress: self.folder_progress_bar.set(p),
                             )
                             self.after(
                                 0,
@@ -1793,7 +1993,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         if processed_files % 10 == 0:
                             progress = processed_files / total_files
                             self.after(
-                                0, lambda p=progress: self.folder_progress_bar.set(p),
+                                0,
+                                lambda p=progress: self.folder_progress_bar.set(p),
                             )
                             self.after(
                                 0,
@@ -1862,7 +2063,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             try:
                                 # Keep the newest file
                                 file_to_keep = max(
-                                    file_list, key=lambda f: os.path.getmtime(f),
+                                    file_list,
+                                    key=lambda f: os.path.getmtime(f),
                                 )
                             except (OSError, FileNotFoundError):
                                 continue
@@ -1882,7 +2084,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         if processed_files % 10 == 0:
                             progress = processed_files / total_files
                             self.after(
-                                0, lambda p=progress: self.folder_progress_bar.set(p),
+                                0,
+                                lambda p=progress: self.folder_progress_bar.set(p),
                             )
                             self.after(
                                 0,
@@ -1976,7 +2179,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         if processed_files % 10 == 0:
                             progress = processed_files / total_files
                             self.after(
-                                0, lambda p=progress: self.folder_progress_bar.set(p),
+                                0,
+                                lambda p=progress: self.folder_progress_bar.set(p),
                             )
                             self.after(
                                 0,
@@ -2000,14 +2204,18 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             )
 
             for ext, count in sorted(
-                file_types.items(), key=lambda x: x[1], reverse=True,
+                file_types.items(),
+                key=lambda x: x[1],
+                reverse=True,
             ):
                 size_mb = size_by_type[ext] / (1024 * 1024)
                 report_lines.append(f"  {ext}: {count} files, {size_mb:.1f} MB")
 
             report_lines.extend(["", "LARGEST FILES:"])
             for file_path, size in sorted(
-                largest_files, key=lambda x: x[1], reverse=True,
+                largest_files,
+                key=lambda x: x[1],
+                reverse=True,
             ):
                 size_mb = size / (1024 * 1024)
                 report_lines.append(
@@ -2781,10 +2989,12 @@ class ColumnSelectionDialog(ctk.CTkToplevel):
         button_frame.pack(fill="x", padx=10, pady=(0, 10))
 
         ctk.CTkButton(button_frame, text="Select All", command=self.select_all).pack(
-            side="left", padx=5,
+            side="left",
+            padx=5,
         )
         ctk.CTkButton(button_frame, text="Select None", command=self.select_none).pack(
-            side="left", padx=5,
+            side="left",
+            padx=5,
         )
 
         # Scrollable frame for checkboxes
@@ -2805,10 +3015,12 @@ class ColumnSelectionDialog(ctk.CTkToplevel):
         bottom_frame.pack(fill="x", padx=10, pady=(10, 0))
 
         ctk.CTkButton(bottom_frame, text="OK", command=self.ok_clicked).pack(
-            side="right", padx=5,
+            side="right",
+            padx=5,
         )
         ctk.CTkButton(bottom_frame, text="Cancel", command=self.cancel_clicked).pack(
-            side="right", padx=5,
+            side="right",
+            padx=5,
         )
 
     def select_all(self):

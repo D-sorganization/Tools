@@ -27,7 +27,8 @@ MAGIC_NUMBERS = [
 
 
 def check_banned_patterns(
-    lines: list[str], filepath: Path,
+    lines: list[str],
+    filepath: Path,
 ) -> list[tuple[int, str, str]]:
     """Check for banned patterns in lines."""
     issues: list[tuple[int, str, str]] = []
@@ -143,7 +144,9 @@ def main() -> None:
     )
     parser.add_argument("--files", nargs="+", help="Specific Python files to check")
     parser.add_argument(
-        "--all", action="store_true", help="Check all Python files in repository",
+        "--all",
+        action="store_true",
+        help="Check all Python files in repository",
     )
     args = parser.parse_args()
 

@@ -179,7 +179,8 @@ class FolderProcessingThread(threading.Thread):
 
 
 def create_processing_thread(
-    folder_tool: "FolderToolTab", operation: str,
+    folder_tool: "FolderToolTab",
+    operation: str,
 ) -> "FolderProcessingThread":
     """Create a new folder processing thread.
 
