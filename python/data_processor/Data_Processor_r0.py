@@ -171,7 +171,16 @@ def _poly_derivative(series: pd.Series, window: int, poly_order: int, deriv_orde
     # Pad the series at the beginning to get derivatives for the initial points
     padded_series = pd.concat([pd.Series([series.iloc[0]] * (window - 1)), series])
 
-    def get_deriv(w):
+    def get_deriv(w: pd.Series) -> float:
+        """
+        Calculate derivative for a window of data.
+        
+        Args:
+            w: Series containing the data window
+            
+        Returns:
+            Calculated derivative value or NaN if calculation fails
+        """
         # Can't compute if the window is not full or has NaNs
         if len(w) < window or np.isnan(w).any():
             return np.nan
