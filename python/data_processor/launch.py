@@ -11,7 +11,7 @@ from pathlib import Path
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
+    format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
 # Add the current directory to the Python path
@@ -34,13 +34,13 @@ try:
         app.mainloop()
 
 except ImportError as e:
-    logging.error(f"Error importing required modules: {e}")
-    logging.error("Please ensure all dependencies are installed:")
-    logging.error(
+    logging.exception(f"Error importing required modules: {e}")
+    logging.exception("Please ensure all dependencies are installed:")
+    logging.exception(
         "pip install customtkinter pandas numpy scipy matplotlib openpyxl "
         "Pillow simpledbf pyarrow tables feather-format"
     )
     input("Press Enter to exit...")
 except Exception as e:
-    logging.error(f"Error starting application: {e}")
+    logging.exception(f"Error starting application: {e}")
     input("Press Enter to exit...")

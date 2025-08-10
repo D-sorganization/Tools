@@ -27,20 +27,19 @@ class DataReader:
 
         if format_type.lower() == "csv":
             return pd.read_csv(file_path)
-        elif format_type.lower() == "excel":
+        if format_type.lower() == "excel":
             return pd.read_excel(file_path)
-        elif format_type.lower() == "parquet":
+        if format_type.lower() == "parquet":
             return pd.read_parquet(file_path)
-        elif format_type.lower() == "json":
+        if format_type.lower() == "json":
             return pd.read_json(file_path)
-        elif format_type.lower() == "pickle":
+        if format_type.lower() == "pickle":
             return pd.read_pickle(file_path)
-        elif format_type.lower() == "hdf5":
+        if format_type.lower() == "hdf5":
             return pd.read_hdf(file_path)
-        elif format_type.lower() == "feather":
+        if format_type.lower() == "feather":
             return pd.read_feather(file_path)
-        else:
-            raise ValueError(f"Unsupported format: {format_type}")
+        raise ValueError(f"Unsupported format: {format_type}")
 
     @staticmethod
     def detect_format(file_path: str | Path) -> str:

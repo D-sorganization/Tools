@@ -1620,7 +1620,7 @@ class CSVProcessorApp(ctk.CTk):
 
                     if response is None:  # Cancel
                         return
-                    elif response:  # Yes - append
+                    if response:  # Yes - append
                         self.custom_vars_list.extend(loaded_vars)
                     else:  # No - replace
                         self.custom_vars_list = loaded_vars.copy()
@@ -2147,7 +2147,7 @@ class CSVProcessorApp(ctk.CTk):
                 try:
                     with open(file_path) as f:
                         signals = [
-                            line.strip() for line in f.readlines() if line.strip()
+                            line.strip() for line in f if line.strip()
                         ]
 
                     if signals:
@@ -3634,11 +3634,11 @@ This section helps you manage which signals (columns) to process from your files
             value = float(value)
             if unit == "ms":
                 return f"{value}ms"
-            elif unit == "s":
+            if unit == "s":
                 return f"{value}s"  # Fixed: use 's' instead of deprecated 'S'
-            elif unit == "min":
+            if unit == "min":
                 return f"{value}T"
-            elif unit == "hr":
+            if unit == "hr":
                 return f"{value}H"
         except ValueError:
             return None
@@ -8753,8 +8753,7 @@ For additional support or feature requests, please refer to the application docu
         base_name = os.path.splitext(os.path.basename(base_path))[0]
 
         # Remove any existing suffix like _processed, _1, _2, etc.
-        if base_name.endswith("_processed"):
-            base_name = base_name[:-10]  # Remove '_processed'
+        base_name = base_name.removesuffix("_processed")  # Remove '_processed'
 
         counter = 1
         while True:
@@ -8784,15 +8783,15 @@ For additional support or feature requests, please refer to the application docu
 
             if response is None:  # Cancel
                 return None
-            elif response:  # Yes - overwrite
+            if response:  # Yes - overwrite
                 return file_path
-            else:  # No - generate unique name
-                directory = os.path.dirname(file_path)
-                base_name = os.path.splitext(os.path.basename(file_path))[0]
-                extension = os.path.splitext(file_path)[1]
-                return self._generate_unique_filename(
-                    os.path.join(directory, base_name), extension,
-                )
+            # No - generate unique name
+            directory = os.path.dirname(file_path)
+            base_name = os.path.splitext(os.path.basename(file_path))[0]
+            extension = os.path.splitext(file_path)[1]
+            return self._generate_unique_filename(
+                os.path.join(directory, base_name), extension,
+            )
 
         return file_path
 
@@ -9727,8 +9726,7 @@ For additional support or feature requests, please refer to the application docu
                         f.write(f"Filter: {plot_config['filter_type']}\n")
 
                     f.write("\nFull Configuration:\n")
-                    for key, value in plot_config.items():
-                        f.write(f"  {key}: {value}\n")
+                    f.writelines(f"  {key}: {value}\n" for key, value in plot_config.items())
 
                 exported_count += 1
 

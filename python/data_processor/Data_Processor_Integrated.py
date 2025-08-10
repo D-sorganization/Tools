@@ -139,27 +139,27 @@ class FileFormatDetector:
         # Extension-based detection
         if ext in [".csv"]:
             return "csv"
-        elif ext in [".tsv", ".txt"]:
+        if ext in [".tsv", ".txt"]:
             return "tsv"
-        elif ext in [".parquet", ".pq"]:
+        if ext in [".parquet", ".pq"]:
             return "parquet"
-        elif ext in [".xlsx", ".xls"]:
+        if ext in [".xlsx", ".xls"]:
             return "excel"
-        elif ext in [".json"]:
+        if ext in [".json"]:
             return "json"
-        elif ext in [".h5", ".hdf5"]:
+        if ext in [".h5", ".hdf5"]:
             return "hdf5"
-        elif ext in [".pkl", ".pickle"]:
+        if ext in [".pkl", ".pickle"]:
             return "pickle"
-        elif ext in [".npy"]:
+        if ext in [".npy"]:
             return "numpy"
-        elif ext in [".mat"]:
+        if ext in [".mat"]:
             return "matlab"
-        elif ext in [".feather"]:
+        if ext in [".feather"]:
             return "feather"
-        elif ext in [".arrow"]:
+        if ext in [".arrow"]:
             return "arrow"
-        elif ext in [".db", ".sqlite"]:
+        if ext in [".db", ".sqlite"]:
             return "sqlite"
 
         # Content-based detection for ambiguous extensions
@@ -170,11 +170,11 @@ class FileFormatDetector:
             # Check for CSV/TSV
             if b"," in header and b"\n" in header:
                 return "csv"
-            elif b"\t" in header and b"\n" in header:
+            if b"\t" in header and b"\n" in header:
                 return "tsv"
-            elif header.startswith(b"{") or header.startswith(b"["):
+            if header.startswith(b"{") or header.startswith(b"["):
                 return "json"
-            elif header.startswith(b"PK"):
+            if header.startswith(b"PK"):
                 return "excel"  # ZIP-based format
 
         except Exception:
@@ -193,48 +193,45 @@ class DataReader:
         try:
             if format_type == "csv":
                 return pd.read_csv(file_path, **kwargs)
-            elif format_type == "tsv":
+            if format_type == "tsv":
                 return pd.read_csv(file_path, sep="\t", **kwargs)
-            elif format_type == "parquet":
+            if format_type == "parquet":
                 if not PYARROW_AVAILABLE:
                     raise ImportError("PyArrow is required for parquet files")
                 return pd.read_parquet(file_path, **kwargs)
-            elif format_type == "excel":
+            if format_type == "excel":
                 return pd.read_excel(file_path, **kwargs)
-            elif format_type == "json":
+            if format_type == "json":
                 return pd.read_json(file_path, **kwargs)
-            elif format_type == "hdf5":
+            if format_type == "hdf5":
                 return pd.read_hdf(file_path, **kwargs)
-            elif format_type == "pickle":
+            if format_type == "pickle":
                 return pd.read_pickle(file_path)
-            elif format_type == "numpy":
+            if format_type == "numpy":
                 data = np.load(file_path)
                 if isinstance(data, np.ndarray):
                     return pd.DataFrame(data)
-                else:
-                    return pd.DataFrame(data.item())
-            elif format_type == "matlab":
+                return pd.DataFrame(data.item())
+            if format_type == "matlab":
                 if not SCIPY_AVAILABLE:
                     raise ImportError("SciPy is required for MATLAB files")
                 data = scipy.io.loadmat(file_path)
                 # Convert MATLAB struct to DataFrame
                 if len(data) == 1:
                     return pd.DataFrame(data[list(data.keys())[0]])
-                else:
-                    return pd.DataFrame(data)
-            elif format_type == "feather":
+                return pd.DataFrame(data)
+            if format_type == "feather":
                 if not PYARROW_AVAILABLE:
                     raise ImportError("PyArrow is required for feather files")
                 return pd.read_feather(file_path, **kwargs)
-            elif format_type == "arrow":
+            if format_type == "arrow":
                 if not PYARROW_AVAILABLE:
                     raise ImportError("PyArrow is required for arrow files")
                 table = pa.ipc.open_file(file_path).read_all()
                 return table.to_pandas()
-            elif format_type == "sqlite":
+            if format_type == "sqlite":
                 return pd.read_sql_query("SELECT * FROM data", f"sqlite:///{file_path}")
-            else:
-                raise ValueError(f"Unsupported format: {format_type}")
+            raise ValueError(f"Unsupported format: {format_type}")
 
         except Exception as exc:
             exc_str = str(exc)

@@ -9,6 +9,7 @@ import tkinter as tk
 import zipfile
 from collections import defaultdict
 from datetime import datetime
+from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
 # Set up logging to capture detailed information
@@ -1027,7 +1028,7 @@ class FolderProcessorApp:
             confirm = messagebox.askyesno(
                 "Confirm Deletion",
                 f"This will permanently delete duplicate files in:\n{target_folder}\n\n"
-                + "It keeps the newest version of files like 'file (1).txt'. This cannot be undone. Are you sure?",
+                 "It keeps the newest version of files like 'file (1).txt'. This cannot be undone. Are you sure?",
             )
             if not confirm:
                 return ["Deduplication cancelled by user."]
@@ -1125,7 +1126,8 @@ class FolderProcessorApp:
             self.source_listbox.delete(i)
         self.update_source_info()
 
-    def select_dest_folder(self):
+    def select_dest_folder(self) -> None:
+        """Select destination folder for processing."""
         folder = filedialog.askdirectory(
             mustexist=True, title="Select the destination folder",
         )
@@ -1134,26 +1136,27 @@ class FolderProcessorApp:
             self.dest_label.config(text=self.dest_folder, foreground="black")
 
     # Simplified versions of other existing methods for compatibility
-    def _flatten_folders(self):
-        # Existing implementation
+    def _flatten_folders(self) -> list[str]:
+        """Flatten folder structure by moving files to a single level."""
         log, moved_count = [], 0
-        for src in self.source_folders:
+        for _src in self.source_folders:
             if self.cancel_operation:
                 break
             # ... existing flatten logic ...
-        return [f"Copied {moved_count} tidy folder structures."] + log[:10]
+        return [f"Copied {moved_count} tidy folder structures.", *log[:10]]
 
-    def _prune_empty_folders(self):
-        # Existing implementation
+    def _prune_empty_folders(self) -> list[str]:
+        """Prune empty folders from the source directories."""
         log, fc, pf = [], 0, 0
-        for src in self.source_folders:
+        for _src in self.source_folders:
             if self.cancel_operation:
                 break
             # ... existing prune logic ...
         return [
             f"Processed {pf} non-empty source folder(s).",
             f"Copied a total of {fc} files.",
-        ] + log[:10]
+            *log[:10]
+        ]
 
 
 if __name__ == "__main__":
