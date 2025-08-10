@@ -182,7 +182,7 @@ class FileFormatDetector:
             # Silently ignore format detection errors
             # Log the error for debugging purposes
             logger = logging.getLogger(__name__)
-            logger.debug(f"Format detection failed for {file_path}: {str(exc)}")
+            logger.debug(f"Format detection failed for {file_path}: {exc!s}")
 
         return None
 
@@ -311,7 +311,7 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
 
     def __init__(self, parent=None) -> None:
         """Initialize the Parquet Analyzer Dialog.
-        
+
         Args:
             parent: Parent window for this dialog
         """
@@ -374,7 +374,7 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
 
     def analyze_parquet_file(self, file_path: str) -> None:
         """Analyze the selected parquet file.
-        
+
         Args:
             file_path: Path to the parquet file to analyze
         """
@@ -440,10 +440,10 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
 
     def format_file_size(self, size_bytes: int) -> str:
         """Format file size in human readable format.
-        
+
         Args:
             size_bytes: File size in bytes
-            
+
         Returns:
             Formatted file size string (e.g., "1.25 MB")
         """
@@ -464,7 +464,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def __init__(self, *args, **kwargs) -> None:
         """Initialize the integrated CSV processor application.
-        
+
         Args:
             *args: Variable length argument list
             **kwargs: Arbitrary keyword arguments
@@ -655,7 +655,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def converter_remove_file(self, file_path: str) -> None:
         """Remove a specific file from the list.
-        
+
         Args:
             file_path: Path to the file to remove
         """
@@ -758,7 +758,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         split_files: bool,
     ) -> None:
         """Perform the actual file conversion in a background thread.
-        
+
         Args:
             output_format: Target output format (e.g., 'csv', 'parquet')
             combine_files: Whether to combine all files into one
@@ -914,13 +914,15 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         finally:
             self.converter_convert_button.configure(state="normal")
 
-    def _generate_output_filename(self, output_format: str, base_name: str | None = None) -> str:
+    def _generate_output_filename(
+        self, output_format: str, base_name: str | None = None,
+    ) -> str:
         """Generate output filename with proper extension.
-        
+
         Args:
             output_format: Target output format
             base_name: Base name for the file (defaults to "converted_data")
-            
+
         Returns:
             Generated filename with proper extension
         """
@@ -947,7 +949,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def _log_conversion_message(self, message: str) -> None:
         """Add a message to the conversion log.
-        
+
         Args:
             message: Message to add to the log
         """
@@ -986,7 +988,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def create_format_converter_tab(self, parent_tab: ctk.CTkFrame) -> None:
         """Create the format converter tab.
-        
+
         Args:
             parent_tab: Parent tab frame to add content to
         """
@@ -1262,7 +1264,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def create_folder_tool_tab(self, parent_tab: ctk.CTkFrame) -> None:
         """Create the folder tool tab with integrated folder processor functionality.
-        
+
         Args:
             parent_tab: Parent tab frame to add content to
         """
@@ -1291,7 +1293,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def _create_folder_source_section(self, parent: ctk.CTkFrame) -> None:
         """Create the source folders section.
-        
+
         Args:
             parent: Parent frame to add content to
         """
@@ -1340,7 +1342,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def _create_folder_destination_section(self, parent: ctk.CTkFrame) -> None:
         """Create the destination folder section.
-        
+
         Args:
             parent: Parent frame to add content to
         """
@@ -1372,7 +1374,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def _create_folder_filtering_section(self, parent: ctk.CTkFrame) -> None:
         """Create the file filtering section.
-        
+
         Args:
             parent: Parent frame to add content to
         """
@@ -1435,7 +1437,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def _create_folder_operation_section(self, parent: ctk.CTkFrame) -> None:
         """Create the main operation section.
-        
+
         Args:
             parent: Parent frame to add content to
         """
@@ -1484,7 +1486,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def _create_folder_organization_section(self, parent: ctk.CTkFrame) -> None:
         """Create the organization options section.
-        
+
         Args:
             parent: Parent frame to add content to
         """
@@ -1512,7 +1514,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def _create_folder_output_section(self, parent: ctk.CTkFrame) -> None:
         """Create the output options section.
-        
+
         Args:
             parent: Parent frame to add content to
         """
@@ -1550,7 +1552,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def _create_folder_progress_section(self, parent: ctk.CTkFrame) -> None:
         """Create the progress section.
-        
+
         Args:
             parent: Parent frame to add content to
         """
@@ -1578,7 +1580,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def _create_folder_run_section(self, parent: ctk.CTkFrame) -> None:
         """Create the run button section.
-        
+
         Args:
             parent: Parent frame to add content to
         """
@@ -2241,7 +2243,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def _show_folder_analysis_report(self, report_text: str) -> None:
         """Show the analysis report in a dialog.
-        
+
         Args:
             report_text: The report text to display
         """
@@ -2266,10 +2268,10 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def _folder_validate_file_filters(self, file_path: str) -> bool:
         """Validate if a file meets the filtering criteria.
-        
+
         Args:
             file_path: Path to the file to validate
-            
+
         Returns:
             True if file meets criteria, False otherwise
         """
@@ -2304,11 +2306,11 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def _folder_get_organized_path(self, file_path: str, dest_base: str) -> str:
         """Returns the organized destination path based on organization options.
-        
+
         Args:
             file_path: Source file path
             dest_base: Base destination directory
-            
+
         Returns:
             Organized destination path
         """
@@ -2358,10 +2360,10 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def _folder_get_unique_path(self, path: str) -> str:
         """Get a unique path by adding a number if the file already exists.
-        
+
         Args:
             path: Original file path
-            
+
         Returns:
             Unique file path (with number suffix if needed)
         """
@@ -2379,7 +2381,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def create_help_tab(self, tab: ctk.CTkFrame) -> None:
         """Create the help tab with comprehensive documentation for all integrated features.
-        
+
         Args:
             tab: Parent tab frame to add content to
         """
@@ -2989,7 +2991,7 @@ class ColumnSelectionDialog(ctk.CTkToplevel):
 
     def __init__(self, parent: ctk.CTkToplevel, columns: list[str]) -> None:
         """Initialize the column selection dialog.
-        
+
         Args:
             parent: Parent window
             columns: List of column names to select from

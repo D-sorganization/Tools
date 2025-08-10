@@ -19,6 +19,7 @@ import tkinter as tk
 import traceback
 from concurrent.futures import ProcessPoolExecutor, as_completed  # noqa: F401
 from tkinter import colorchooser, filedialog, messagebox, simpledialog
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import customtkinter as ctk
 import matplotlib.dates as mdates
@@ -44,10 +45,17 @@ except Exception:  # pragma: no cover - optional dependency
 # =============================================================================
 # WORKER FUNCTION FOR PARALLEL PROCESSING
 # =============================================================================
-def process_single_csv_file(file_path, settings):
+def process_single_csv_file(file_path: str, settings: Dict[str, Any]) -> Optional[pd.DataFrame]:
     """
     Processes a single CSV file based on a dictionary of settings.
     This function is designed to be run in a separate process.
+    
+    Args:
+        file_path: Path to the CSV file to process
+        settings: Dictionary containing processing settings
+        
+    Returns:
+        Processed DataFrame or None if processing failed
     """
     try:
         df = pd.read_csv(file_path, low_memory=False)
@@ -155,7 +163,7 @@ def process_single_csv_file(file_path, settings):
 
 
 # Helper function for causal derivative calculation
-def _poly_derivative(series, window, poly_order, deriv_order, delta_x):
+def _poly_derivative(series: pd.Series, window: int, poly_order: int, deriv_order: int, delta_x: float) -> pd.Series:
     """Calculates the derivative of a series using a rolling polynomial fit."""
     if poly_order < deriv_order:
         return pd.Series(np.nan, index=series.index)
