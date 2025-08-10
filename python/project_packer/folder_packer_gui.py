@@ -7,6 +7,20 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
+from .constants import (
+    DEFAULT_WINDOW_WIDTH,
+    DEFAULT_WINDOW_HEIGHT,
+    DEFAULT_PADDING,
+    SMALL_PADDING,
+    TINY_PADDING,
+    TITLE_FONT_SIZE,
+    HEADER_FONT_SIZE,
+    BOLD_HEADER_FONT_SIZE,
+    DEFAULT_LISTBOX_HEIGHT,
+    STATUS_TEXT_HEIGHT,
+    GRID_WEIGHT_MAIN,
+)
+
 # Set up logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
@@ -71,7 +85,7 @@ class FolderPackerGUI:
         """
         self.root = root
         self.root.title("Folder Packer")
-        self.root.geometry("600x500")
+        self.root.geometry(f"{DEFAULT_WINDOW_WIDTH}x{DEFAULT_WINDOW_HEIGHT}")
         self.root.resizable(width=True, height=True)
 
         # Initialize data
@@ -85,48 +99,48 @@ class FolderPackerGUI:
     def setup_ui(self) -> None:
         """Set up the main user interface."""
         # Main frame
-        main_frame = ttk.Frame(self.root, padding="20")
+        main_frame = ttk.Frame(self.root, padding=str(DEFAULT_PADDING))
         main_frame.grid(row=0, column=0, sticky="nsew")
 
         # Configure grid weights
-        self.root.columnconfigure(0, weight=1)
-        self.root.rowconfigure(0, weight=1)
-        main_frame.columnconfigure(2, weight=1)
+        self.root.columnconfigure(0, weight=GRID_WEIGHT_MAIN)
+        self.root.rowconfigure(0, weight=GRID_WEIGHT_MAIN)
+        main_frame.columnconfigure(2, weight=GRID_WEIGHT_MAIN)
 
         # Title
         title_label = ttk.Label(
             main_frame,
             text="📁 Folder Packer",
-            font=("Arial", 16, "bold"),
+            font=("Arial", TITLE_FONT_SIZE, "bold"),
         )
-        title_label.grid(row=0, column=0, columnspan=3, pady=(0, 20))
+        title_label.grid(row=0, column=0, columnspan=3, pady=(0, DEFAULT_PADDING))
 
         # Description
         desc_label = ttk.Label(
             main_frame,
             text="Select source folders and pack them to a destination directory",
-            font=("Arial", 10),
+            font=("Arial", HEADER_FONT_SIZE),
         )
         desc_label.grid(
             row=1,
             column=0,
             columnspan=3,
-            pady=(0, 20),
+            pady=(0, DEFAULT_PADDING),
         )
 
         # Source folders section
-        source_frame = ttk.LabelFrame(main_frame, text="Source Folders", padding="10")
-        source_frame.grid(row=2, column=0, columnspan=3, sticky="ew", pady=(0, 20))
-        source_frame.columnconfigure(1, weight=1)
+        source_frame = ttk.LabelFrame(main_frame, text="Source Folders", padding=str(SMALL_PADDING))
+        source_frame.grid(row=2, column=0, columnspan=3, sticky="ew", pady=(0, DEFAULT_PADDING))
+        source_frame.columnconfigure(1, weight=GRID_WEIGHT_MAIN)
 
         # Source folders listbox
-        self.folders_listbox = tk.Listbox(source_frame, height=6)
+        self.folders_listbox = tk.Listbox(source_frame, height=DEFAULT_LISTBOX_HEIGHT)
         self.folders_listbox.grid(
             row=0,
             column=0,
             columnspan=3,
             sticky="ew",
-            pady=(0, 10),
+            pady=(0, SMALL_PADDING),
         )
 
         # Source folder buttons
@@ -134,29 +148,29 @@ class FolderPackerGUI:
             source_frame,
             text="Add Folder",
             command=self.add_folder,
-        ).grid(row=1, column=0, sticky="w", pady=(0, 5))
+        ).grid(row=1, column=0, sticky="w", pady=(0, TINY_PADDING))
 
         ttk.Button(
             source_frame,
             text="Remove Selected",
             command=self.remove_selected_folders,
-        ).grid(row=1, column=1, sticky="w", pady=(0, 5))
+        ).grid(row=1, column=1, sticky="w", pady=(0, TINY_PADDING))
 
         # Output directory section
         output_label = ttk.Label(
             main_frame,
             text="Output Directory:",
-            font=("Arial", 10, "bold"),
+            font=("Arial", BOLD_HEADER_FONT_SIZE, "bold"),
         )
-        output_label.grid(row=3, column=0, sticky="w", pady=(0, 5))
+        output_label.grid(row=3, column=0, sticky="w", pady=(0, TINY_PADDING))
 
         # Output directory entry and browse button
         output_frame = ttk.Frame(main_frame)
-        output_frame.grid(row=4, column=0, columnspan=3, sticky="ew", pady=(0, 20))
-        output_frame.columnconfigure(0, weight=1)
+        output_frame.grid(row=4, column=0, columnspan=3, sticky="ew", pady=(0, DEFAULT_PADDING))
+        output_frame.columnconfigure(0, weight=GRID_WEIGHT_MAIN)
 
         self.output_entry = ttk.Entry(output_frame)
-        self.output_entry.grid(row=0, column=0, sticky="ew", padx=(0, 10))
+        self.output_entry.grid(row=0, column=0, sticky="ew", padx=(0, SMALL_PADDING))
 
         ttk.Button(
             output_frame,
@@ -171,14 +185,14 @@ class FolderPackerGUI:
             command=self.pack_folders,
             style="Accent.TButton",
         )
-        pack_button.grid(row=5, column=0, columnspan=3, pady=(0, 20))
+        pack_button.grid(row=5, column=0, columnspan=3, pady=(0, DEFAULT_PADDING))
 
         # Status section
-        status_frame = ttk.LabelFrame(main_frame, text="Status", padding="10")
+        status_frame = ttk.LabelFrame(main_frame, text="Status", padding=str(SMALL_PADDING))
         status_frame.grid(row=6, column=0, columnspan=3, sticky="ew")
-        status_frame.columnconfigure(0, weight=1)
+        status_frame.columnconfigure(0, weight=GRID_WEIGHT_MAIN)
 
-        self.status_text = tk.Text(status_frame, height=8, wrap=tk.WORD)
+        self.status_text = tk.Text(status_frame, height=STATUS_TEXT_HEIGHT, wrap=tk.WORD)
         self.status_text.grid(row=0, column=0, sticky="ew")
 
         # Scrollbar for status text
@@ -193,7 +207,7 @@ class FolderPackerGUI:
     def setup_styles(self) -> None:
         """Set up custom styles for the application."""
         style = ttk.Style()
-        style.configure("Accent.TButton", font=("Arial", 10, "bold"))
+        style.configure("Accent.TButton", font=("Arial", BOLD_HEADER_FONT_SIZE, "bold"))
 
     def add_folder(self) -> None:
         """Add a folder to the source folders list."""

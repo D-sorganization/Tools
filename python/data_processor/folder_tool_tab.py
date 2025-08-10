@@ -4,6 +4,11 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
+from .constants import (
+    DEFAULT_PADDING,
+    DEFAULT_BUTTON_HEIGHT,
+    DEFAULT_TEXT_HEIGHT,
+)
 from .threads import create_processing_thread
 
 
@@ -26,7 +31,7 @@ class FolderToolTab:
     def _build_ui(self) -> None:
         """Build the user interface for the folder tool tab."""
         # Main frame
-        main_frame = ttk.Frame(self.parent, padding="10")
+        main_frame = ttk.Frame(self.parent, padding=str(DEFAULT_PADDING))
         main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
         # Configure grid weights
@@ -38,24 +43,24 @@ class FolderToolTab:
             text="Folder Processing Tool",
             font=("Arial", 14, "bold"),
         )
-        title_label.grid(row=0, column=0, columnspan=3, pady=(0, 20))
+        title_label.grid(row=0, column=0, columnspan=3, pady=(0, DEFAULT_PADDING * 2))
 
         # Source folders section
-        ttk.Label(main_frame, text="Source Folders:").grid(
+        ttk.Label(main_frame, text="Source Folders:"        ).grid(
             row=1,
             column=0,
             sticky=tk.W,
-            pady=(0, 5),
+            pady=(0, DEFAULT_PADDING // 2),
         )
 
         # Source folders listbox
-        self.folders_listbox = tk.Listbox(main_frame, height=6, selectmode=tk.EXTENDED)
+        self.folders_listbox = tk.Listbox(main_frame, height=DEFAULT_TEXT_HEIGHT // 20, selectmode=tk.EXTENDED)
         self.folders_listbox.grid(
             row=2,
             column=0,
             columnspan=2,
             sticky=(tk.W, tk.E),
-            pady=(0, 10),
+            pady=(0, DEFAULT_PADDING),
         )
 
         # Scrollbar for folders listbox
@@ -69,19 +74,19 @@ class FolderToolTab:
 
         # Buttons frame
         buttons_frame = ttk.Frame(main_frame)
-        buttons_frame.grid(row=3, column=0, columnspan=3, pady=(0, 20))
+        buttons_frame.grid(row=3, column=0, columnspan=3, pady=(0, DEFAULT_PADDING * 2))
 
         ttk.Button(
             buttons_frame,
             text="Add Folder",
             command=self.folder_select_source_folders,
-        ).pack(side=tk.LEFT, padx=(0, 10))
+        ).pack(side=tk.LEFT, padx=(0, DEFAULT_PADDING))
 
         ttk.Button(
             buttons_frame,
             text="Remove Selected",
             command=self.folder_remove_selected_source,
-        ).pack(side=tk.LEFT, padx=(0, 10))
+        ).pack(side=tk.LEFT, padx=(0, DEFAULT_PADDING))
 
         ttk.Button(
             buttons_frame,
@@ -94,7 +99,7 @@ class FolderToolTab:
             row=4,
             column=0,
             sticky=tk.W,
-            pady=(0, 5),
+            pady=(0, DEFAULT_PADDING // 2),
         )
 
         self.operation_var = tk.StringVar(value="combine")
@@ -104,7 +109,7 @@ class FolderToolTab:
             column=0,
             columnspan=3,
             sticky=(tk.W, tk.E),
-            pady=(0, 20),
+            pady=(0, DEFAULT_PADDING * 2),
         )
 
         ttk.Radiobutton(
@@ -112,28 +117,28 @@ class FolderToolTab:
             text="Combine",
             variable=self.operation_var,
             value="combine",
-        ).pack(side=tk.LEFT, padx=(0, 20))
+        ).pack(side=tk.LEFT, padx=(0, DEFAULT_PADDING * 2))
 
         ttk.Radiobutton(
             operation_frame,
             text="Flatten",
             variable=self.operation_var,
             value="flatten",
-        ).pack(side=tk.LEFT, padx=(0, 20))
+        ).pack(side=tk.LEFT, padx=(0, DEFAULT_PADDING * 2))
 
         ttk.Radiobutton(
             operation_frame,
             text="Prune",
             variable=self.operation_var,
             value="prune",
-        ).pack(side=tk.LEFT, padx=(0, 20))
+        ).pack(side=tk.LEFT, padx=(0, DEFAULT_PADDING * 2))
 
         ttk.Radiobutton(
             operation_frame,
             text="Deduplicate",
             variable=self.operation_var,
             value="deduplicate",
-        ).pack(side=tk.LEFT, padx=(0, 20))
+        ).pack(side=tk.LEFT, padx=(0, DEFAULT_PADDING * 2))
 
         ttk.Radiobutton(
             operation_frame,
@@ -147,7 +152,7 @@ class FolderToolTab:
             row=6,
             column=0,
             sticky=tk.W,
-            pady=(0, 5),
+            pady=(0, DEFAULT_PADDING // 2),
         )
 
         # Destination folder entry and browse button
@@ -157,12 +162,12 @@ class FolderToolTab:
             column=0,
             columnspan=3,
             sticky=(tk.W, tk.E),
-            pady=(0, 20),
+            pady=(0, DEFAULT_PADDING * 2),
         )
         dest_frame.columnconfigure(0, weight=1)
 
         self.dest_entry = ttk.Entry(dest_frame)
-        self.dest_entry.grid(row=0, column=0, sticky=(tk.W, tk.E), padx=(0, 10))
+        self.dest_entry.grid(row=0, column=0, sticky=(tk.W, tk.E), padx=(0, DEFAULT_PADDING))
 
         ttk.Button(
             dest_frame,
@@ -176,7 +181,7 @@ class FolderToolTab:
             text="🚀 Process Folders",
             command=self.folder_run_processing,
         )
-        self.process_button.grid(row=8, column=0, columnspan=3, pady=(0, 20))
+        self.process_button.grid(row=8, column=0, columnspan=3, pady=(0, DEFAULT_PADDING * 2))
 
         # Progress bar
         self.progress = ttk.Progressbar(main_frame, mode="indeterminate")
@@ -185,7 +190,7 @@ class FolderToolTab:
             column=0,
             columnspan=3,
             sticky=(tk.W, tk.E),
-            pady=(0, 10),
+            pady=(0, DEFAULT_PADDING),
         )
 
         # Status label
