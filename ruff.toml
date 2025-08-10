@@ -1,9 +1,37 @@
-# ruff.toml
+# Ruff configuration for aggressive code quality
+
 target-version = "py311"
-extend-exclude = [
-  "archive/",
-  "data/",
-  "data_processor/data/",
-  "project_packer/",
-  "Golf_GUI/Simscape Multibody Data Plotters/Python Version/",
+line-length = 100
+
+# Exclude legacy code
+exclude = [
+    "archive/",
+    "legacy/",
+    "experimental/",
+    "*/migrations/",
+    "*_pb2.py",
+    "matlab/",
+    "output/",
 ]
+
+[lint]
+# Enable ALL rules then selectively disable
+select = ["ALL"]
+ignore = [
+    "D",      # Docstring checks (we check separately)
+    "COM812", # Missing trailing comma (conflicts with black)
+    "ISC001", # Single line implicit string concat
+]
+
+# Stricter than defaults
+fixable = ["ALL"]
+unfixable = []
+
+# Flake8 settings
+flake8-quotes = {inline-quotes = "double", multiline-quotes = "double", docstring-quotes = "double"}
+flake8-import-conventions = {banned-from = ["typing"]}
+flake8-tidy-imports = {banned-module-level-imports = ["numpy", "pandas"]}
+
+# Complexity settings
+mccabe = {max-complexity = 10}
+pylint = {max-args = 5, max-branches = 10, max-returns = 3, max-statements = 30}
