@@ -4676,7 +4676,7 @@ This section helps you manage which signals (columns) to process from your files
         plot_main_frame.grid_rowconfigure(0, weight=1)
         plot_main_frame.grid_columnconfigure(0, weight=1)
 
-        def create_plot_left_content(left_panel):
+        def create_plot_left_content(left_panel: ctk.CTkFrame) -> None:
             """Create the left panel content for plotting with all advanced features"""
             left_panel.grid_rowconfigure(0, weight=1)
             left_panel.grid_columnconfigure(0, weight=1)
@@ -5409,7 +5409,7 @@ This section helps you manage which signals (columns) to process from your files
                 command=self._export_chart_excel,
             ).grid(row=2, column=0, sticky="ew", padx=10, pady=2)
 
-        def create_plot_right_content(right_panel):
+        def create_plot_right_content(right_panel: ctk.CTkFrame) -> None:
             """Create the right panel content for plotting"""
             right_panel.grid_rowconfigure(1, weight=1)
             right_panel.grid_columnconfigure(0, weight=1)
@@ -5532,7 +5532,7 @@ This section helps you manage which signals (columns) to process from your files
         )
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
-    def _create_plots_list_left(self, left_panel):
+    def _create_plots_list_left(self, left_panel: ctk.CTkFrame) -> None:
         """Create left panel for plots list."""
         left_panel.grid_rowconfigure(1, weight=1)
         left_panel.grid_columnconfigure(0, weight=1)
@@ -5686,7 +5686,7 @@ This section helps you manage which signals (columns) to process from your files
             command=self._clear_all_plots,
         ).grid(row=0, column=2, padx=5, pady=5, sticky="ew")
 
-    def _create_plots_list_right(self, right_panel):
+    def _create_plots_list_right(self, right_panel: ctk.CTkFrame) -> None:
         """Create right panel for plots list."""
         right_panel.grid_rowconfigure(0, weight=1)
         right_panel.grid_columnconfigure(0, weight=1)
@@ -5763,7 +5763,7 @@ This section helps you manage which signals (columns) to process from your files
         )
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
-    def _create_dat_import_left(self, left_panel):
+    def _create_dat_import_left(self, left_panel: ctk.CTkFrame) -> None:
         """Create left panel for DAT import."""
         left_panel.grid_rowconfigure(1, weight=1)
         left_panel.grid_columnconfigure(0, weight=1)
@@ -5855,7 +5855,7 @@ This section helps you manage which signals (columns) to process from your files
             command=self._import_selected_tags,
         ).grid(row=4, column=0, padx=10, pady=10, sticky="ew")
 
-    def _create_dat_import_right(self, right_panel):
+    def _create_dat_import_right(self, right_panel: ctk.CTkFrame) -> None:
         """Create right panel for DAT import."""
         right_panel.grid_rowconfigure(0, weight=1)
         right_panel.grid_columnconfigure(0, weight=1)
@@ -5904,12 +5904,12 @@ This section helps you manage which signals (columns) to process from your files
 
     def _create_splitter(
         self,
-        parent,
-        left_creator,
-        right_creator,
-        splitter_key,
-        default_left_width,
-    ):
+        parent: ctk.CTkFrame,
+        left_creator: callable,
+        right_creator: callable,
+        splitter_key: str,
+        default_left_width: int,
+    ) -> ctk.CTkFrame:
         """Create a splitter with left and right panels."""
         splitter_frame = ctk.CTkFrame(parent)
         # Make the right panel expandable rather than the splitter handle
@@ -5972,17 +5972,17 @@ This section helps you manage which signals (columns) to process from your files
 
         return splitter_frame
 
-    def _on_splitter_enter(self, event, handle):
+    def _on_splitter_enter(self, event: tk.Event, handle: ctk.CTkFrame) -> None:
         """Handle mouse enter on splitter handle."""
         handle.configure(fg_color="#888888")
         handle.configure(cursor="sb_h_double_arrow")
 
-    def _on_splitter_leave(self, event, handle):
+    def _on_splitter_leave(self, event: tk.Event, handle: ctk.CTkFrame) -> None:
         """Handle mouse leave on splitter handle."""
         if not hasattr(self, "dragging_splitter") or not self.dragging_splitter:
             handle.configure(fg_color="#666666")
 
-    def _start_splitter_drag(self, event, handle, left_panel, splitter_key):
+    def _start_splitter_drag(self, event: tk.Event, handle: ctk.CTkFrame, left_panel: ctk.CTkFrame, splitter_key: str) -> None:
         """Start dragging the splitter."""
         self.dragging_splitter = True
         self.drag_splitter_key = splitter_key
@@ -5991,7 +5991,7 @@ This section helps you manage which signals (columns) to process from your files
         self.drag_start_width = left_panel.winfo_width()
         handle.configure(fg_color="#AAAAAA")
 
-    def _drag_splitter(self, event, handle, left_panel, splitter_key):
+    def _drag_splitter(self, event: tk.Event, handle: ctk.CTkFrame, left_panel: ctk.CTkFrame, splitter_key: str) -> None:
         """Drag the splitter."""
         if hasattr(self, "dragging_splitter") and self.dragging_splitter:
             delta_x = event.x_root - self.drag_start_x
@@ -6001,7 +6001,7 @@ This section helps you manage which signals (columns) to process from your files
             )  # Min 150, Max 800
             left_panel.configure(width=new_width)
 
-    def _end_splitter_drag(self):
+    def _end_splitter_drag(self) -> None:
         """End dragging the splitter."""
         if hasattr(self, "dragging_splitter") and self.dragging_splitter:
             # Save the current position
@@ -6506,12 +6506,12 @@ This section helps you manage which signals (columns) to process from your files
 
     def _apply_plot_filter(
         self,
-        df,
-        signal_cols,
-        x_axis_col,
-        filter_type=None,
-        is_comparison=False,
-    ):
+        df: pd.DataFrame,
+        signal_cols: list[str],
+        x_axis_col: str,
+        filter_type: str | None = None,
+        is_comparison: bool = False,
+    ) -> pd.DataFrame:
         """Apply filter to plot data with support for comparison filters."""
         if filter_type is None:
             filter_type = self.plot_filter_type.get()
@@ -6843,7 +6843,7 @@ This section helps you manage which signals (columns) to process from your files
 
         return filtered_df
 
-    def _add_trendline(self, df, signal, x_axis_col):
+    def _add_trendline(self, df: pd.DataFrame, signal: str, x_axis_col: str) -> None:
         """Add trendline to the plot."""
         trend_type = self.trendline_type_var.get()
 
@@ -7040,7 +7040,7 @@ This section helps you manage which signals (columns) to process from your files
 
             traceback.print_exc()
 
-    def get_data_for_plotting(self, filename):
+    def get_data_for_plotting(self, filename: str) -> pd.DataFrame | None:
         """Get data for plotting from the specified file - simplified baseline approach."""
         try:
             # First check if it's in processed files
@@ -7078,7 +7078,7 @@ This section helps you manage which signals (columns) to process from your files
             print(f"Error loading data for plotting: {e}")
             return None
 
-    def _debug_plot_state(self):
+    def _debug_plot_state(self) -> None:
         """Debug helper to print current plotting state."""
         print("\n=== PLOT DEBUG STATE ===")
         print(f"plot_file_menu: {getattr(self, 'plot_file_menu', None)}")
@@ -7107,7 +7107,7 @@ This section helps you manage which signals (columns) to process from your files
         )
         print("========================\n")
 
-    def _force_signal_selection(self):
+    def _force_signal_selection(self) -> None:
         """Force select at least one signal for debugging."""
         if hasattr(self, "plot_signal_vars") and self.plot_signal_vars:
             # Check if any signals are selected
@@ -7124,35 +7124,35 @@ This section helps you manage which signals (columns) to process from your files
                         print(f"DEBUG: Force-selected signal: {signal}")
                         break
 
-    def _show_setup_help(self):
+    def _show_setup_help(self) -> None:
         """Show setup help."""
         messagebox.showinfo(
             "Setup Help",
             "This tab allows you to configure file processing settings.",
         )
 
-    def _show_plot_help(self):
+    def _show_plot_help(self) -> None:
         """Show plotting help."""
         messagebox.showinfo(
             "Plotting Help",
             "This tab allows you to visualize and analyze your data.",
         )
 
-    def _show_plots_list_help(self):
+    def _show_plots_list_help(self) -> None:
         """Show plots list help."""
         messagebox.showinfo(
             "Plots List Help",
             "This tab allows you to save and manage plot configurations.",
         )
 
-    def _show_dat_import_help(self):
+    def _show_dat_import_help(self) -> None:
         """Show DAT import help."""
         messagebox.showinfo(
             "DAT Import Help",
             "This tab allows you to import DAT files with DBF tag files.",
         )
 
-    def _show_legend_guide(self):
+    def _show_legend_guide(self) -> None:
         """Show comprehensive legend formatting guide."""
         guide_window = ctk.CTkToplevel(self)
         guide_window.title("Custom Legend Guide - LaTeX Formatting")
@@ -7269,7 +7269,7 @@ COMMON MISTAKES TO AVOID:
         y = (guide_window.winfo_screenheight() // 2) - (700 // 2)
         guide_window.geometry(f"600x700+{x}+{y}")
 
-    def save_settings(self):
+    def save_settings(self) -> None:
         """Save current settings to a configuration file."""
         try:
             # Collect all current settings
@@ -7441,7 +7441,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to save settings:\n{e!s}")
 
-    def load_settings(self):
+    def load_settings(self) -> None:
         """Load settings from a configuration file."""
         try:
             file_path = filedialog.askopenfilename(
@@ -7586,7 +7586,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to load settings:\n{e!s}")
 
-    def manage_configurations(self):
+    def manage_configurations(self) -> None:
         """Open a window to manage saved configuration files."""
         try:
             # Create a new window for configuration management
@@ -7691,7 +7691,7 @@ COMMON MISTAKES TO AVOID:
                 f"Failed to open configuration manager:\n{e!s}",
             )
 
-    def _refresh_config_list(self):
+    def _refresh_config_list(self) -> None:
         """Refresh the list of saved configuration files."""
         try:
             self.config_listbox.delete(0, tk.END)
@@ -7758,7 +7758,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             self.config_status_label.configure(text=f"Error refreshing list: {e!s}")
 
-    def _load_selected_config(self):
+    def _load_selected_config(self) -> None:
         """Load the selected configuration file."""
         try:
             selection = self.config_listbox.curselection()
@@ -7801,7 +7801,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to load configuration:\n{e!s}")
 
-    def _delete_selected_config(self):
+    def _delete_selected_config(self) -> None:
         """Delete the selected configuration file."""
         try:
             selection = self.config_listbox.curselection()
@@ -7839,7 +7839,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to delete configuration:\n{e!s}")
 
-    def _open_config_location(self):
+    def _open_config_location(self) -> None:
         """Open the folder containing configuration files."""
         try:
             current_dir = os.getcwd()
@@ -7856,7 +7856,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to open folder:\n{e!s}")
 
-    def _apply_loaded_settings(self, settings):
+    def _apply_loaded_settings(self, settings: dict[str, Any]) -> None:
         """Apply loaded settings to the UI (extracted from load_settings)."""
         try:
             # Apply filter settings
@@ -7983,7 +7983,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to apply settings:\n{e!s}")
 
-    def save_signal_list(self):
+    def save_signal_list(self) -> None:
         """Save the currently selected signals as a signal list."""
         if not self.signal_vars:
             messagebox.showwarning(
@@ -8045,7 +8045,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to save signal list:\n{e}")
 
-    def load_signal_list(self):
+    def load_signal_list(self) -> None:
         """Load a saved signal list from file."""
         print("DEBUG: load_signal_list() called")
         try:
@@ -8113,7 +8113,7 @@ COMMON MISTAKES TO AVOID:
             traceback.print_exc()
             messagebox.showerror("Error", f"Failed to load signal list:\n{e}")
 
-    def _apply_loaded_signals_internal(self):
+    def _apply_loaded_signals_internal(self) -> None:
         """Internal method to apply loaded signals without showing message boxes."""
         print("DEBUG: _apply_loaded_signals_internal() called")
         if not self.saved_signal_list or not self.signal_vars:
@@ -8157,7 +8157,7 @@ COMMON MISTAKES TO AVOID:
         )
         print("DEBUG: _apply_loaded_signals_internal() completed")
 
-    def apply_saved_signals(self):
+    def apply_saved_signals(self) -> None:
         """Apply the saved signal list to the current file's signals.
 
         This function takes a previously saved signal list and applies it to the currently loaded files.
@@ -8224,7 +8224,7 @@ COMMON MISTAKES TO AVOID:
             text=f"Applied {len(present_signals)} signals from saved list",
         )
 
-    def _copy_plot_settings_to_processing(self):
+    def _copy_plot_settings_to_processing(self) -> None:
         """Copies filter settings from the plot tab to the main processing tab."""
         plot_filter = self.plot_filter_type.get()
         self.filter_type_var.set(plot_filter)
@@ -8293,7 +8293,7 @@ COMMON MISTAKES TO AVOID:
             "Filter settings from the plot tab have been applied to the main processing configuration.",
         )
 
-    def _export_chart_image(self):
+    def _export_chart_image(self) -> None:
         """Export the current chart as an image file."""
         if not hasattr(self, "plot_fig") or not self.plot_fig.get_axes():
             messagebox.showwarning(
@@ -8337,7 +8337,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to export chart:\n{e}")
 
-    def _export_chart_excel(self):
+    def _export_chart_excel(self) -> None:
         """Export the current plot data and chart to Excel."""
         selected_file = self.plot_file_menu.get()
 
@@ -8431,7 +8431,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to export chart data:\n{e}")
 
-    def _add_plot_to_list(self):
+    def _add_plot_to_list(self) -> None:
         """Add plot to the plots list."""
         plot_name = self.plot_name_entry.get().strip()
         plot_desc = self.plot_desc_entry.get().strip()
@@ -8464,7 +8464,7 @@ COMMON MISTAKES TO AVOID:
 
         messagebox.showinfo("Success", f"Plot '{plot_name}' added to list!")
 
-    def _update_selected_plot(self):
+    def _update_selected_plot(self) -> None:
         """Update selected plot in the list."""
         selection = self.plots_listbox.curselection()
         if not selection:
@@ -8498,7 +8498,7 @@ COMMON MISTAKES TO AVOID:
         self._save_plots_to_file()
         messagebox.showinfo("Success", "Plot configuration updated!")
 
-    def _clear_plot_form(self):
+    def _clear_plot_form(self) -> None:
         """Clear the plot form."""
         self.plot_name_entry.delete(0, tk.END)
         self.plot_desc_entry.delete(0, tk.END)
@@ -8510,7 +8510,7 @@ COMMON MISTAKES TO AVOID:
             for var in self.plots_signal_vars.values():
                 var.set(False)
 
-    def _on_plot_select(self, event):
+    def _on_plot_select(self, event: tk.Event) -> None:
         """Handle plot selection in listbox."""
         selection = self.plots_listbox.curselection()
         if not selection:
@@ -8538,7 +8538,7 @@ COMMON MISTAKES TO AVOID:
             for signal, var in self.plots_signal_vars.items():
                 var.set(signal in saved_signals)
 
-    def _load_selected_plot(self):
+    def _load_selected_plot(self) -> None:
         """Load selected plot configuration."""
         selection = self.plots_listbox.curselection()
         if not selection:
@@ -8563,7 +8563,7 @@ COMMON MISTAKES TO AVOID:
             f"Plot configuration '{plot_config['name']}' loaded and applied to Plotting tab!",
         )
 
-    def _delete_selected_plot(self):
+    def _delete_selected_plot(self) -> None:
         """Delete selected plot from list."""
         selection = self.plots_listbox.curselection()
         if not selection:
@@ -8583,7 +8583,7 @@ COMMON MISTAKES TO AVOID:
             self._clear_plot_form()
             messagebox.showinfo("Success", f"Plot '{plot_name}' deleted.")
 
-    def _clear_all_plots(self):
+    def _clear_all_plots(self) -> None:
         """Clear all plots from list."""
         if self.plots_list and messagebox.askyesno(
             "Confirm Clear",
@@ -8595,14 +8595,14 @@ COMMON MISTAKES TO AVOID:
             self._clear_plot_form()
             messagebox.showinfo("Success", "All plots cleared.")
 
-    def _update_plots_listbox(self):
+    def _update_plots_listbox(self) -> None:
         """Update the plots listbox with current plots."""
         self.plots_listbox.delete(0, tk.END)
         for plot in self.plots_list:
             display_text = f"{plot['name']} ({len(plot.get('signals', []))} signals)"
             self.plots_listbox.insert(tk.END, display_text)
 
-    def _save_plots_to_file(self):
+    def _save_plots_to_file(self) -> None:
         """Save plots list to file."""
         try:
             plots_file = os.path.join(
@@ -8614,7 +8614,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             print(f"Error saving plots to file: {e}")
 
-    def _load_plots_from_file(self):
+    def _load_plots_from_file(self) -> None:
         """Load plots list from file."""
         try:
             plots_file = os.path.join(
@@ -8630,7 +8630,7 @@ COMMON MISTAKES TO AVOID:
             print(f"Error loading plots from file: {e}")
             self.plots_list = []
 
-    def _select_tag_file(self):
+    def _select_tag_file(self) -> None:
         """Select tag file for DAT import."""
         filepath = filedialog.askopenfilename(
             title="Select Tag File",
@@ -8640,7 +8640,7 @@ COMMON MISTAKES TO AVOID:
             self.dat_import_tag_file_path = filepath
             self.tag_file_label.configure(text=os.path.basename(filepath))
 
-    def _select_data_file(self):
+    def _select_data_file(self) -> None:
         """Select data file for DAT import."""
         filepath = filedialog.askopenfilename(
             title="Select Data File",
@@ -8657,7 +8657,7 @@ COMMON MISTAKES TO AVOID:
             if hasattr(self, "output_label"):
                 self.output_label.configure(text=f"Output: {self.output_directory}")
 
-    def _import_selected_tags(self):
+    def _import_selected_tags(self) -> None:
         """Import selected tags."""
         if not self.dat_import_data_file_path:
             messagebox.showerror("Error", "Please select a data file first.")
@@ -8699,7 +8699,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to import data: {e!s}")
 
-    def trim_and_save(self):
+    def trim_and_save(self) -> None:
         """Trim data and save."""
         if not self.input_file_paths:
             messagebox.showerror("Error", "Please select input files first.")
@@ -8760,7 +8760,7 @@ COMMON MISTAKES TO AVOID:
             f"Files trimmed and saved to {self.output_directory}",
         )
 
-    def _apply_plot_time_range(self):
+    def _apply_plot_time_range(self) -> None:
         """Apply time range to plot."""
         start_time_str = self.plotting_start_time_entry.get()
         end_time_str = self.plotting_end_time_entry.get()
@@ -8930,13 +8930,13 @@ COMMON MISTAKES TO AVOID:
                 f"Invalid time format. Please use HH:MM:SS.\n{e}",
             )
 
-    def _reset_plot_range(self):
+    def _reset_plot_range(self) -> None:
         """Reset plot range."""
         self.plotting_start_time_entry.delete(0, tk.END)
         self.plotting_end_time_entry.delete(0, tk.END)
         self.update_plot()
 
-    def _copy_trim_to_plot_range(self):
+    def _copy_trim_to_plot_range(self) -> None:
         """Copy trim times to plot range."""
         start_time = self.trim_start_entry.get()
         end_time = self.trim_end_entry.get()
@@ -8951,7 +8951,7 @@ COMMON MISTAKES TO AVOID:
 
         self._apply_plot_time_range()
 
-    def _copy_plot_range_to_trim(self):
+    def _copy_plot_range_to_trim(self) -> None:
         """Copy current plot x-axis range to time trimming fields."""
         try:
             # Check if plot exists and has data
@@ -8992,7 +8992,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to copy plot range: {e!s}")
 
-    def _save_current_plot_view(self):
+    def _save_current_plot_view(self) -> None:
         """Save the current plot view state."""
         try:
             if not hasattr(self, "plot_ax"):
@@ -9312,26 +9312,6 @@ COMMON MISTAKES TO AVOID:
 
         except Exception as e:
             messagebox.showerror("Error", f"Failed to add trendline: {e!s}")
-
-    def _create_dat_import_right(self, right_panel):
-        """Create right panel for DAT import."""
-        right_panel.grid_rowconfigure(0, weight=1)
-        right_panel.grid_columnconfigure(0, weight=1)
-
-        # Preview frame
-        preview_frame = ctk.CTkFrame(right_panel)
-        preview_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-        preview_frame.grid_columnconfigure(0, weight=1)
-        preview_frame.grid_rowconfigure(1, weight=1)
-
-        ctk.CTkLabel(
-            preview_frame,
-            text="Import Preview",
-            font=ctk.CTkFont(weight="bold"),
-        ).grid(row=0, column=0, padx=10, pady=5, sticky="w")
-
-        self.import_preview_text = ctk.CTkTextbox(preview_frame, height=200)
-        self.import_preview_text.grid(row=1, column=0, padx=10, pady=5, sticky="nsew")
 
     def create_help_tab(self, tab):
         """Create the help tab with comprehensive documentation."""
