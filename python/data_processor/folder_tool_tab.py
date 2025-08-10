@@ -1,166 +1,289 @@
-# Note: Qt imported but unused; remove to satisfy linter
-from PyQt6.QtWidgets import (
-    QAbstractItemView,
-    QFileDialog,
-    QGroupBox,
-    QHBoxLayout,
-    QLineEdit,
-    QListView,
-    QListWidget,
-    QMessageBox,
-    QProgressBar,
-    QPushButton,
-    QTreeView,
-    QVBoxLayout,
-    QWidget,
-)
-from threads import FolderProcessingThread
+"""Folder tool tab for data processing operations."""
+
+import tkinter as tk
+from pathlib import Path
+from tkinter import filedialog, messagebox, ttk
+from typing import List, Optional
+
+from .threads import create_processing_thread
 
 
-class FolderToolTab(QWidget):
-    """Tab widget encapsulating folder operations."""
+class FolderToolTab:
+    """Tab for folder processing operations."""
 
-    def __init__(self, status_bar=None, parent=None):
-        super().__init__(parent)
-        self.status_bar = status_bar
+    def __init__(self, parent: tk.Frame) -> None:
+        """Initialize the folder tool tab.
+        
+        Args:
+            parent: Parent frame widget
+        """
+        self.parent = parent
+        self.source_folders: List[Path] = []
+        self.dest_folder: Optional[Path] = None
+        self.processing_thread = None
         self._build_ui()
 
-    def _build_ui(self):
-        layout = QVBoxLayout(self)
-
-        # Source folders group
-        source_group = QGroupBox("Source Folders")
-        source_layout = QVBoxLayout(source_group)
-
-        source_buttons_layout = QHBoxLayout()
-        self.folder_select_source_btn = QPushButton("Add Folders")
-        self.folder_select_source_btn.clicked.connect(self.folder_select_source_folders)
-        source_buttons_layout.addWidget(self.folder_select_source_btn)
-
-        self.folder_clear_source_btn = QPushButton("Clear All")
-        self.folder_clear_source_btn.clicked.connect(self.folder_clear_source_folders)
-        source_buttons_layout.addWidget(self.folder_clear_source_btn)
-
-        source_layout.addLayout(source_buttons_layout)
-
-        self.folder_source_list = QListWidget()
-        source_layout.addWidget(self.folder_source_list)
-        layout.addWidget(source_group)
-
+    def _build_ui(self) -> None:
+        """Build the user interface for the folder tool tab."""
+        # Main frame
+        main_frame = ttk.Frame(self.parent, padding="10")
+        main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        
+        # Configure grid weights
+        main_frame.columnconfigure(1, weight=1)
+        
+        # Title
+        title_label = ttk.Label(
+            main_frame, 
+            text="Folder Processing Tool", 
+            font=("Arial", 14, "bold")
+        )
+        title_label.grid(row=0, column=0, columnspan=3, pady=(0, 20))
+        
+        # Source folders section
+        ttk.Label(main_frame, text="Source Folders:").grid(
+            row=1, column=0, sticky=tk.W, pady=(0, 5)
+        )
+        
+        # Source folders listbox
+        self.folders_listbox = tk.Listbox(
+            main_frame, 
+            height=6, 
+            selectmode=tk.EXTENDED
+        )
+        self.folders_listbox.grid(
+            row=2, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(0, 10)
+        )
+        
+        # Scrollbar for folders listbox
+        folders_scrollbar = ttk.Scrollbar(
+            main_frame, 
+            orient=tk.VERTICAL, 
+            command=self.folders_listbox.yview
+        )
+        folders_scrollbar.grid(row=2, column=2, sticky=(tk.N, tk.S))
+        self.folders_listbox.configure(yscrollcommand=folders_scrollbar.set)
+        
+        # Buttons frame
+        buttons_frame = ttk.Frame(main_frame)
+        buttons_frame.grid(row=3, column=0, columnspan=3, pady=(0, 20))
+        
+        ttk.Button(
+            buttons_frame, 
+            text="Add Folder", 
+            command=self.folder_select_source_folders
+        ).pack(side=tk.LEFT, padx=(0, 10))
+        
+        ttk.Button(
+            buttons_frame, 
+            text="Remove Selected", 
+            command=self.folder_remove_selected_source
+        ).pack(side=tk.LEFT, padx=(0, 10))
+        
+        ttk.Button(
+            buttons_frame, 
+            text="Clear All", 
+            command=self.folder_clear_source_folders
+        ).pack(side=tk.LEFT)
+        
         # Operation selection
-        operation_group = QGroupBox("Operation")
-        operation_layout = QVBoxLayout(operation_group)
-
-        from PyQt6.QtWidgets import (  # imported here to avoid circular import ordering
-            QComboBox,
+        ttk.Label(main_frame, text="Operation:").grid(
+            row=4, column=0, sticky=tk.W, pady=(0, 5)
         )
-
-        self.folder_operation_combo = QComboBox()
-        self.folder_operation_combo.addItems(
-            ["Combine", "Flatten", "Prune", "Deduplicate", "Analyze"]
+        
+        self.operation_var = tk.StringVar(value="combine")
+        operation_frame = ttk.Frame(main_frame)
+        operation_frame.grid(row=5, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=(0, 20))
+        
+        ttk.Radiobutton(
+            operation_frame, 
+            text="Combine", 
+            variable=self.operation_var, 
+            value="combine"
+        ).pack(side=tk.LEFT, padx=(0, 20))
+        
+        ttk.Radiobutton(
+            operation_frame, 
+            text="Flatten", 
+            variable=self.operation_var, 
+            value="flatten"
+        ).pack(side=tk.LEFT, padx=(0, 20))
+        
+        ttk.Radiobutton(
+            operation_frame, 
+            text="Prune", 
+            variable=self.operation_var, 
+            value="prune"
+        ).pack(side=tk.LEFT, padx=(0, 20))
+        
+        ttk.Radiobutton(
+            operation_frame, 
+            text="Deduplicate", 
+            variable=self.operation_var, 
+            value="deduplicate"
+        ).pack(side=tk.LEFT, padx=(0, 20))
+        
+        ttk.Radiobutton(
+            operation_frame, 
+            text="Analyze", 
+            variable=self.operation_var, 
+            value="analyze"
+        ).pack(side=tk.LEFT)
+        
+        # Destination folder section
+        ttk.Label(main_frame, text="Destination Folder:").grid(
+            row=6, column=0, sticky=tk.W, pady=(0, 5)
         )
-        self.folder_operation_combo.currentTextChanged.connect(
-            self.on_folder_operation_changed
+        
+        # Destination folder entry and browse button
+        dest_frame = ttk.Frame(main_frame)
+        dest_frame.grid(row=7, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=(0, 20))
+        dest_frame.columnconfigure(0, weight=1)
+        
+        self.dest_entry = ttk.Entry(dest_frame)
+        self.dest_entry.grid(row=0, column=0, sticky=(tk.W, tk.E), padx=(0, 10))
+        
+        ttk.Button(
+            dest_frame, 
+            text="Browse", 
+            command=self.folder_select_dest_folder
+        ).grid(row=0, column=1)
+        
+        # Process button
+        self.process_button = ttk.Button(
+            main_frame, 
+            text="🚀 Process Folders", 
+            command=self.folder_run_processing
         )
-        operation_layout.addWidget(self.folder_operation_combo)
-        layout.addWidget(operation_group)
+        self.process_button.grid(row=8, column=0, columnspan=3, pady=(0, 20))
+        
+        # Progress bar
+        self.progress = ttk.Progressbar(
+            main_frame, 
+            mode="indeterminate"
+        )
+        self.progress.grid(row=9, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=(0, 10))
+        
+        # Status label
+        self.status_label = ttk.Label(
+            main_frame, 
+            text="Ready to process folders", 
+            font=("Arial", 9)
+        )
+        self.status_label.grid(row=10, column=0, columnspan=3)
 
-        # Destination folder
-        dest_group = QGroupBox("Destination")
-        dest_layout = QHBoxLayout(dest_group)
+    def folder_select_source_folders(self) -> None:
+        """Select source folders for processing."""
+        folder_paths = filedialog.askdirectory(
+            title="Select Source Folders",
+            multiple=True
+        )
+        
+        if folder_paths:
+            for folder_path in folder_paths:
+                path = Path(folder_path)
+                if path not in self.source_folders:
+                    self.source_folders.append(path)
+                    self.folders_listbox.insert(tk.END, str(path))
+            
+            self.update_folder_progress(f"Added {len(folder_paths)} folder(s)")
 
-        self.folder_dest_edit = QLineEdit()
-        self.folder_dest_edit.setPlaceholderText("Select destination folder...")
-        dest_layout.addWidget(self.folder_dest_edit)
+    def folder_remove_selected_source(self) -> None:
+        """Remove selected source folders."""
+        selected_indices = self.folders_listbox.curselection()
+        
+        if not selected_indices:
+            messagebox.showwarning(
+                "No Selection", 
+                "Please select folders to remove"
+            )
+            return
+        
+        # Remove in reverse order to maintain indices
+        for index in reversed(selected_indices):
+            folder_path = Path(self.folders_listbox.get(index))
+            self.source_folders.remove(folder_path)
+            self.folders_listbox.delete(index)
+        
+        self.update_folder_progress(f"Removed {len(selected_indices)} folder(s)")
 
-        self.folder_select_dest_btn = QPushButton("Browse")
-        self.folder_select_dest_btn.clicked.connect(self.folder_select_dest_folder)
-        dest_layout.addWidget(self.folder_select_dest_btn)
-        layout.addWidget(dest_group)
-
-        # Run button and progress
-        self.folder_run_btn = QPushButton("Run Operation")
-        self.folder_run_btn.clicked.connect(self.folder_run_processing)
-        layout.addWidget(self.folder_run_btn)
-
-        self.folder_progress = QProgressBar()
-        layout.addWidget(self.folder_progress)
-
-    # ------------------------------------------------------------------
-    # Slot implementations
-    # ------------------------------------------------------------------
-    def folder_select_source_folders(self):
-        """Select source folders for folder operations."""
-        dialog = QFileDialog(self, "Select Source Folders")
-        dialog.setFileMode(QFileDialog.FileMode.Directory)
-        dialog.setOption(QFileDialog.Option.ShowDirsOnly, True)
-        dialog.setOption(QFileDialog.Option.DontUseNativeDialog, True)
-
-        list_view = dialog.findChild(QListView, "listView")
-        if list_view:
-            list_view.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
-        tree_view = dialog.findChild(QTreeView)
-        if tree_view:
-            tree_view.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
-
-        if dialog.exec():
-            for folder in dialog.selectedFiles():
-                self.folder_source_list.addItem(folder)
-
-    def folder_clear_source_folders(self):
+    def folder_clear_source_folders(self) -> None:
         """Clear all source folders."""
-        self.folder_source_list.clear()
+        if self.source_folders:
+            self.source_folders.clear()
+            self.folders_listbox.delete(0, tk.END)
+            self.update_folder_progress("Cleared all folders")
 
-    def on_folder_operation_changed(self, operation):
-        """Handle folder operation change."""
-        requires_dest = operation in {"Combine", "Flatten", "Prune", "Deduplicate"}
-        self.folder_dest_edit.setEnabled(requires_dest)
-        self.folder_select_dest_btn.setEnabled(requires_dest)
-        if not requires_dest:
-            self.folder_dest_edit.clear()
-        if self.status_bar is not None:
-            self.status_bar.showMessage(f"Operation set to {operation}")
+    def on_folder_operation_changed(self) -> None:
+        """Handle operation selection change."""
+        operation = self.operation_var.get()
+        self.update_folder_progress(f"Operation changed to: {operation}")
 
-    def folder_select_dest_folder(self):
-        """Select destination folder for folder operations."""
-        folder = QFileDialog.getExistingDirectory(self, "Select Destination Folder")
-        if folder:
-            self.folder_dest_edit.setText(folder)
-
-    def folder_run_processing(self):
-        """Run the folder processing operation."""
-        if self.folder_source_list.count() == 0:
-            QMessageBox.warning(self, "Warning", "Please select source folders.")
-            return
-
-        operation = self.folder_operation_combo.currentText()
-        if operation != "Analyze" and not self.folder_dest_edit.text():
-            QMessageBox.warning(self, "Warning", "Please select a destination folder.")
-            return
-
-        source_folders = self.get_folder_source_list()
-        dest_folder = self.folder_dest_edit.text()
-
-        self.folder_thread = FolderProcessingThread(
-            source_folders, dest_folder, operation
+    def folder_select_dest_folder(self) -> None:
+        """Select destination folder for processing."""
+        dest_path = filedialog.askdirectory(
+            title="Select Destination Folder"
         )
-        self.folder_thread.progress_updated.connect(self.update_folder_progress)
-        self.folder_thread.finished.connect(self.folder_processing_finished)
-        self.folder_thread.start()
+        
+        if dest_path:
+            self.dest_folder = Path(dest_path)
+            self.dest_entry.delete(0, tk.END)
+            self.dest_entry.insert(0, str(self.dest_folder))
+            self.update_folder_progress(f"Destination: {self.dest_folder.name}")
 
-    def get_folder_source_list(self):
-        """Get list of source folders from widget."""
-        return [
-            self.folder_source_list.item(i).text()
-            for i in range(self.folder_source_list.count())
-        ]
+    def folder_run_processing(self) -> None:
+        """Start folder processing operation."""
+        if not self.source_folders:
+            messagebox.showwarning(
+                "No Folders", 
+                "Please add at least one source folder"
+            )
+            return
+        
+        if not self.dest_folder:
+            messagebox.showwarning(
+                "No Destination", 
+                "Please select a destination folder"
+            )
+            return
+        
+        # Get selected operation
+        operation = self.operation_var.get()
+        
+        # Start processing
+        self.progress.start()
+        self.update_folder_progress(f"Processing folders with {operation} operation...")
+        
+        # Create and start processing thread
+        self.processing_thread = create_processing_thread(self, operation)
+        self.processing_thread.start()
+        
+        # Update UI
+        self.process_button.config(state="disabled")
+        self.status_label.config(text="Processing...")
 
-    def update_folder_progress(self, value):
-        """Update folder processing progress bar."""
-        self.folder_progress.setValue(value)
+    def get_folder_source_list(self) -> List[Path]:
+        """Get list of source folders.
+        
+        Returns:
+            List[Path]: List of source folder paths
+        """
+        return self.source_folders.copy()
 
-    def folder_processing_finished(self):
-        """Handle folder processing completion."""
-        QMessageBox.information(self, "Complete", "Folder processing completed!")
-        if self.status_bar is not None:
-            self.status_bar.showMessage("Folder processing completed")
+    def update_folder_progress(self, message: str) -> None:
+        """Update progress and status information.
+        
+        Args:
+            message: Status message to display
+        """
+        self.status_label.config(text=message)
+        self.parent.update_idletasks()
+
+    def folder_processing_finished(self) -> None:
+        """Handle completion of folder processing."""
+        self.progress.stop()
+        self.process_button.config(state="normal")
+        self.update_folder_progress("Processing completed")
+        
+        if self.processing_thread:
+            self.processing_thread = None

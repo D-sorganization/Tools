@@ -5,8 +5,7 @@ from openpyxl import Workbook
 from openpyxl.drawing.image import Image
 
 # Load CSV file
-file_path = "C:\Users\diete\Dropbox\Programming\Plotting Python Script\2024-04-17 Data.csv" 
-cd C:\Users\diete\Dropbox\Programming\DataPlotterPython\
+file_path = "2024-04-17 Data.csv"  # Use relative path
 df = pd.read_csv(file_path)
 
 # Convert 'time' column to datetime

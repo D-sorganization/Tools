@@ -64,13 +64,13 @@ def check_ast_issues(content: str) -> list[tuple[int, str, str]]:
                     issues.append((
                         node.lineno,
                         f"Function '{node.name}' missing docstring",
-                        ""
+                        "",
                     ))
                 if not node.returns and node.name != "__init__":
                     issues.append((
                         node.lineno,
                         f"Function '{node.name}' missing return type hint",
-                        ""
+                        "",
                     ))
     except SyntaxError as e:
         issues.append((0, f"Syntax error: {e}", ""))
@@ -100,7 +100,7 @@ def get_all_python_files() -> list[Path]:
     # Exclude certain directories
     exclude_dirs = {
         "archive", "legacy", "experimental", ".git", "__pycache__",
-        ".ruff_cache", ".mypy_cache", "matlab", "output"
+        ".ruff_cache", ".mypy_cache", "matlab", "output",
     }
     return [
         f for f in python_files

@@ -1,142 +1,106 @@
 #!/usr/bin/env python3
-"""
-Package the Folder Packer executable for distribution
-Creates a clean deployment package with just the necessary files
-"""
+"""Package creation utility for Folder Packer distribution."""
 
-import os
+import logging
 import shutil
+import sys
 import zipfile
-from datetime import datetime
+from datetime import datetime, UTC
 from pathlib import Path
 
+# Set up logging
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+logger = logging.getLogger(__name__)
 
-def create_deployment_package():
-    """Create a deployment package"""
+# Constants for package creation
+PACKAGE_VERSION: str = "1.1"
+PACKAGE_BASE_NAME: str = "FolderPacker"
+PACKAGES_DIR: str = "packages"
+REQUIRED_FILES: list[str] = [
+    "folder_packer_gui.py",
+    "build_exe.py",
+    "build.bat",
+    "README.md",
+    "requirements.txt",
+]
 
+
+def create_deployment_package() -> bool:
+    """Create a deployment package."""
     current_dir = Path(__file__).parent
-    dist_dir = current_dir / "dist"
 
-    if not dist_dir.exists():
-        print("❌ Error: dist folder not found! Please build the executable first.")
-        return False
+    # Create packages directory
+    packages_dir = current_dir / PACKAGES_DIR
+    packages_dir.mkdir(exist_ok=True)
 
-    exe_file = dist_dir / "FolderPacker.exe"
-    if not exe_file.exists():
-        print(
-            "❌ Error: FolderPacker.exe not found! Please build the executable first."
-        )
-        return False
-
-    # Create package directory
-    package_name = f"FolderPacker_v1.1_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    package_dir = current_dir / "packages" / package_name
+    # Create package directory with timestamp
+    timestamp = datetime.now(tz=UTC).strftime("%Y%m%d_%H%M%S")
+    package_name = f"{PACKAGE_BASE_NAME}_v{PACKAGE_VERSION}_{timestamp}"
+    package_dir = current_dir / PACKAGES_DIR / package_name
     package_dir.mkdir(parents=True, exist_ok=True)
 
-    print(f"📦 Creating deployment package: {package_name}")
+    # Copy required files
+    success = copy_required_files(current_dir, package_dir)
+    if not success:
+        return False
 
-    # Copy executable
-    shutil.copy2(exe_file, package_dir / "FolderPacker.exe")
-    print("✓ Copied executable")
+    # Create zip archive
+    zip_path = packages_dir / f"{package_name}.zip"
+    create_zip_archive(package_dir, zip_path)
 
-    # Copy launcher
-    launcher_file = dist_dir / "Launch_FolderPacker.bat"
-    if launcher_file.exists():
-        shutil.copy2(launcher_file, package_dir / "Launch_FolderPacker.bat")
-        print("✓ Copied launcher script")
+    logger.info(f"Package created successfully: {zip_path}")
+    return True
 
-    # Copy README
-    readme_file = current_dir / "README.md"
-    if readme_file.exists():
-        shutil.copy2(readme_file, package_dir / "README.md")
-        print("✓ Copied README")
 
-    # Create a simple user guide
-    user_guide = package_dir / "Quick_Start_Guide.txt"
-    with open(user_guide, "w") as f:
-        f.write(
-            """Folder Packer / Unpacker Tool - Quick Start Guide
-================================================
+def copy_required_files(source_dir: Path, package_dir: Path) -> bool:
+    """Copy required files to package directory.
 
-GETTING STARTED:
-1. Double-click "FolderPacker.exe" to run the application
-   OR
-   Double-click "Launch_FolderPacker.bat" for a friendlier startup
+    Args:
+        source_dir: Source directory containing files.
+        package_dir: Package directory to copy files to.
 
-WHAT IT DOES:
-- Packs multiple programming files into a single text file
-- Preserves folder structure and hierarchy
-- Can unpack the text file back to original folders
-- Automatically excludes common backup/archive folders
+    Returns:
+        bool: True if all files were copied successfully.
+    """
+    for filename in REQUIRED_FILES:
+        source_file = source_dir / filename
+        if not source_file.exists():
+            logger.warning(f"Warning: Required file {filename} not found")
+            continue
 
-HOW TO USE:
-
-PACKING:
-1. Click "Select Source Folder" and choose your project folder
-2. (Optional) Configure exclusions in the "Folder Exclusions" tab
-3. Click "Select Output File" and choose where to save the packed file
-4. Click "Pack Folder" - done!
-
-UNPACKING:
-1. Click "Select Packed File" and choose a previously packed text file
-2. Click "Select Destination Folder" for where to restore files
-3. Click "Unpack File" - your folder structure is recreated!
-
-FEATURES:
-- Modern, clean interface
-- Progress tracking for large operations
-- Smart exclusion of common backup folders
-- Supports 30+ programming file types
-- Built-in help and instructions
-
-SUPPORTED FILE TYPES:
-.py .html .css .js .java .cpp .c .h .json .xml .txt .md
-.yml .yaml .php .rb .go .rs .swift .kt .r .sql .sh .bat
-...and more!
-
-TROUBLESHOOTING:
-- If the app doesn't start, make sure you have Windows 10 or later
-- For very large projects, the packing may take a few minutes
-- Check the "Instructions" tab in the app for detailed help
-
-For more information, see README.md
-
-Version: 1.1
-Built: {datetime.now().strftime('%Y-%m-%d %H:%M')}
-"""
-        )
-    print("✓ Created Quick Start Guide")
-
-    # Create ZIP package
-    zip_file = current_dir / "packages" / f"{package_name}.zip"
-    with zipfile.ZipFile(zip_file, "w", zipfile.ZIP_DEFLATED) as zf:
-        for file_path in package_dir.rglob("*"):
-            if file_path.is_file():
-                arcname = file_path.relative_to(package_dir)
-                zf.write(file_path, arcname)
-
-    print(f"✅ Created ZIP package: {zip_file}")
-
-    # Show summary
-    print(f"\n📊 DEPLOYMENT PACKAGE SUMMARY")
-    print(f"Package name: {package_name}")
-    print(f"Package folder: {package_dir}")
-    print(f"ZIP file: {zip_file}")
-    print(f"ZIP size: {zip_file.stat().st_size / (1024*1024):.1f} MB")
-
-    print(f"\n📋 PACKAGE CONTENTS:")
-    for file_path in sorted(package_dir.rglob("*")):
-        if file_path.is_file():
-            size_mb = file_path.stat().st_size / (1024 * 1024)
-            print(f"  - {file_path.name} ({size_mb:.1f} MB)")
-
-    print(f"\n🎉 Deployment package ready!")
-    print(f"📁 You can distribute the ZIP file or the entire '{package_name}' folder")
+        dest_file = package_dir / filename
+        try:
+            shutil.copy2(source_file, dest_file)
+            logger.info(f"Copied: {filename}")
+        except OSError as e:
+            logger.error(f"Error copying {filename}: {e}")
+            return False
 
     return True
 
 
+def create_zip_archive(source_dir: Path, zip_path: Path) -> None:
+    """Create a zip archive from the package directory.
+
+    Args:
+        source_dir: Directory to archive.
+        zip_path: Path for the zip file.
+    """
+    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
+        for file_path in source_dir.rglob("*"):
+            if file_path.is_file():
+                arcname = file_path.relative_to(source_dir)
+                zipf.write(file_path, arcname)
+
+    logger.info(f"Created archive: {zip_path}")
+
+
+def main() -> None:
+    """Main function to run package creation."""
+    success = create_deployment_package()
+    if not success:
+        sys.exit(1)
+
+
 if __name__ == "__main__":
-    print("📦 Folder Packer - Deployment Packager")
-    print("=" * 40)
-    create_deployment_package()
+    main()

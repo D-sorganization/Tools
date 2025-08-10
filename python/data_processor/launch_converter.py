@@ -1,28 +1,31 @@
 #!/usr/bin/env python3
-"""
-Standalone launcher for the Format Converter tool.
-Starts the integrated app and switches focus to the 'Format Converter' tab.
-"""
-import os
+"""Launch script for the data converter application."""
+
 import sys
+from pathlib import Path
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Add the parent directory to the Python path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from Data_Processor_Integrated import IntegratedCSVProcessorApp
-
-if __name__ == "__main__":
-    app = IntegratedCSVProcessorApp()
-    try:
-        # Ensure the tab exists, then select it
-        if hasattr(app, "main_tab_view"):
-            try:
-                # Some tabviews use .set(label), others use .select(tab)
-                app.main_tab_view.set("Format Converter")
-            except Exception:
-                try:
-                    app.main_tab_view.select(app.main_tab_view.tab("Format Converter"))
-                except Exception:
-                    pass
-    except Exception:
-        pass
-    app.mainloop()
+try:
+    from data_processor.Data_Processor_Integrated import DataProcessorApp
+    from PyQt6.QtWidgets import QApplication
+    
+    def main() -> None:
+        """Main entry point for the data converter application."""
+        app = QApplication(sys.argv)
+        window = DataProcessorApp()
+        window.show()
+        sys.exit(app.exec())
+    
+    if __name__ == "__main__":
+        main()
+        
+except ImportError as e:
+    print(f"Error importing required modules: {e}")
+    print("Please ensure all dependencies are installed:")
+    print("pip install PyQt6 pandas numpy")
+    sys.exit(1)
+except Exception as e:
+    print(f"Unexpected error: {e}")
+    sys.exit(1)

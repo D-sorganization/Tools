@@ -1,169 +1,141 @@
 #!/usr/bin/env python3
-"""
-Build script for Folder Packer GUI executable
-Creates a standalone Windows executable using PyInstaller
-"""
+"""Build executable for Folder Packer application."""
 
-import os
+import importlib.util
+import logging
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 
+# Set up logging
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+logger = logging.getLogger(__name__)
 
-def build_executable():
-    """Build the executable using PyInstaller"""
+# Constants for build configuration
+SCRIPT_NAME: str = "folder_packer_gui.py"
+EXE_NAME: str = "FolderPacker"
+BUILD_DIR: str = "build"
+DIST_DIR: str = "dist"
+SPEC_FILE: str = "FolderPacker.spec"
 
-    # Get the current directory
-    current_dir = Path(__file__).parent
 
-    # Check if required files exist
-    main_script = current_dir / "folder_packer_gui.py"
-    icon_file = current_dir / "folder_icon.jpg"
+def check_pyinstaller() -> bool:
+    """Check if PyInstaller is available.
 
-    if not main_script.exists():
-        print("❌ Error: folder_packer_gui.py not found!")
+    Returns:
+        bool: True if PyInstaller is available, False otherwise.
+    """
+    return importlib.util.find_spec("PyInstaller") is not None
+
+
+def install_pyinstaller() -> bool:
+    """Install PyInstaller if not available.
+
+    Returns:
+        bool: True if installation was successful, False otherwise.
+    """
+    logger.info("Installing PyInstaller...")
+    try:
+        subprocess.run(
+            [sys.executable, "-m", "pip", "install", "pyinstaller"],
+            check=True,
+            capture_output=True,
+            text=True
+        )
+        logger.info("PyInstaller installed successfully!")
+        return True
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Failed to install PyInstaller: {e}")
         return False
 
-    # Convert JPG icon to ICO if needed
-    ico_file = current_dir / "folder_icon.ico"
-    if icon_file.exists() and not ico_file.exists():
-        try:
-            from PIL import Image
 
-            # Load and convert icon
-            img = Image.open(icon_file)
-            # Resize to common icon sizes
-            sizes = [
-                (16, 16),
-                (24, 24),
-                (32, 32),
-                (48, 48),
-                (64, 64),
-                (128, 128),
-                (256, 256),
-            ]
-            img.save(ico_file, format="ICO", sizes=sizes)
-            print(f"✓ Converted {icon_file.name} to {ico_file.name}")
-        except Exception as e:
-            print(f"⚠️  Warning: Could not convert icon: {e}")
-            ico_file = None
+def clean_build_dirs() -> None:
+    """Clean build and dist directories."""
+    for dir_name in [BUILD_DIR, DIST_DIR]:
+        dir_path = Path(dir_name)
+        if dir_path.exists():
+            shutil.rmtree(dir_path)
+            logger.info(f"Cleaned {dir_name} directory")
 
-    # Build PyInstaller command
+
+def build_executable() -> bool:
+    """Build the executable using PyInstaller.
+
+    Returns:
+        bool: True if build was successful, False otherwise.
+    """
+    script_path = Path(SCRIPT_NAME)
+    if not script_path.exists():
+        logger.error(f"Error: {SCRIPT_NAME} not found!")
+        return False
+
+    # Clean previous builds
+    clean_build_dirs()
+
+    # Build command - using trusted paths only
     cmd = [
-        "pyinstaller",
-        "--onefile",  # Create a single executable file
-        "--windowed",  # No console window
-        "--name",
-        "FolderPacker",
-        "--distpath",
-        str(current_dir / "dist"),
-        "--workpath",
-        str(current_dir / "build"),
-        "--specpath",
-        str(current_dir),
+        sys.executable, "-m", "PyInstaller",
+        "--onefile",
+        "--windowed",
+        "--name", EXE_NAME,
+        str(script_path),
     ]
 
-    # Add icon if available
-    if ico_file and ico_file.exists():
-        cmd.extend(["--icon", str(ico_file)])
-
-    # Add the main script
-    cmd.append(str(main_script))
-
-    print("🔨 Building executable...")
-    print(f"Command: {' '.join(cmd)}")
+    logger.info("Building executable...")
+    logger.info(f"Command: {' '.join(cmd)}")
 
     try:
-        # Run PyInstaller
-        result = subprocess.run(cmd, cwd=current_dir, capture_output=True, text=True)
-
-        if result.returncode == 0:
-            exe_path = current_dir / "dist" / "FolderPacker.exe"
-            if exe_path.exists():
-                print(f"✅ Successfully built executable: {exe_path}")
-                print(f"📁 File size: {exe_path.stat().st_size / (1024*1024):.1f} MB")
-                return True
-            else:
-                print("❌ Build completed but executable not found!")
-                return False
-        else:
-            print("❌ Build failed!")
-            print("STDOUT:", result.stdout)
-            print("STDERR:", result.stderr)
-            return False
-
-    except FileNotFoundError:
-        print(
-            "❌ PyInstaller not found! Please install it with: pip install pyinstaller"
-        )
+        subprocess.run(cmd, cwd=Path.cwd(), check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Build failed: {e}")
         return False
-    except Exception as e:
-        print(f"❌ Build error: {e}")
+    else:
+        logger.info("Build completed successfully!")
+        return True
+
+
+def verify_build() -> bool:
+    """Verify that the build was successful.
+
+    Returns:
+        bool: True if build verification passed, False otherwise.
+    """
+    exe_path = Path(DIST_DIR) / f"{EXE_NAME}.exe"
+    if not exe_path.exists():
+        logger.error(f"Error: Executable not found at {exe_path}")
         return False
 
+    file_size = exe_path.stat().st_size
+    logger.info(f"Executable created: {exe_path}")
+    logger.info(f"File size: {file_size / (1024 * 1024):.1f} MB")
 
-def clean_build():
-    """Clean build artifacts"""
-    current_dir = Path(__file__).parent
-
-    # Remove build directories
-    for folder in ["build", "dist", "__pycache__"]:
-        folder_path = current_dir / folder
-        if folder_path.exists():
-            shutil.rmtree(folder_path)
-            print(f"🧹 Cleaned {folder}")
-
-    # Remove spec file
-    spec_file = current_dir / "FolderPacker.spec"
-    if spec_file.exists():
-        spec_file.unlink()
-        print(f"🧹 Cleaned {spec_file.name}")
+    return True
 
 
-def main():
-    """Main function"""
-    print("📦 Folder Packer - Executable Builder")
-    print("=" * 40)
+def main() -> None:
+    """Execute the main build process."""
+    logger.info("Folder Packer - Executable Builder")
+    logger.info("=" * 40)
 
-    if len(sys.argv) > 1 and sys.argv[1] == "clean":
-        clean_build()
-        return
-
-    # Check if PyInstaller is installed
-    try:
-        subprocess.run(["pyinstaller", "--version"], capture_output=True, check=True)
-    except (FileNotFoundError, subprocess.CalledProcessError):
-        print("❌ PyInstaller not found!")
-        print("📥 Installing PyInstaller...")
-        try:
-            subprocess.run(
-                [sys.executable, "-m", "pip", "install", "pyinstaller"], check=True
-            )
-            print("✅ PyInstaller installed successfully")
-        except subprocess.CalledProcessError as e:
-            print(f"❌ Failed to install PyInstaller: {e}")
-            return
-
-    # Check if Pillow is installed (for icon conversion)
-    try:
-        import PIL
-    except ImportError:
-        print("📥 Installing Pillow for icon support...")
-        try:
-            subprocess.run(
-                [sys.executable, "-m", "pip", "install", "Pillow"], check=True
-            )
-            print("✅ Pillow installed successfully")
-        except subprocess.CalledProcessError as e:
-            print(f"❌ Failed to install Pillow: {e}")
+    # Check if PyInstaller is available
+    if not check_pyinstaller():
+        logger.info("PyInstaller not found. Installing...")
+        if not install_pyinstaller():
+            logger.error("Failed to install PyInstaller. Exiting.")
+            sys.exit(1)
 
     # Build the executable
     if build_executable():
-        print("\n🎉 Build completed successfully!")
-        print("📁 The executable is located in the 'dist' folder")
+        if verify_build():
+            logger.info("\n✅ Build completed successfully!")
+            logger.info(f"Executable location: {Path(DIST_DIR) / f'{EXE_NAME}.exe'}")
+        else:
+            logger.error("\n❌ Build verification failed!")
+            sys.exit(1)
     else:
-        print("\n💥 Build failed!")
+        logger.error("\n❌ Build failed!")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
