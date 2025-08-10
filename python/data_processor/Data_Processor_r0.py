@@ -1495,8 +1495,8 @@ class CSVProcessorApp(ctk.CTk):
 
                 # Update load more button for filtered results
                 if hasattr(self, "load_more_button"):
-                    if len(filtered_signals) > 50:
-                        remaining = len(filtered_signals) - 50
+                            if len(filtered_signals) > LARGE_SIGNAL_THRESHOLD:
+            remaining = len(filtered_signals) - LARGE_SIGNAL_THRESHOLD
                         self.load_more_button.configure(
                             text=f"Load More Filtered Signals ({remaining} remaining)",
                         )
@@ -2186,7 +2186,7 @@ class CSVProcessorApp(ctk.CTk):
             try:
                 print("DEBUG: Auto-loading signals after file selection...")
                 # Schedule shortly so UI can render the updated file list first
-                self.after(50, self.load_signals_from_files)
+                self.after(UI_UPDATE_DELAY_MS, self.load_signals_from_files)
             except Exception as e:
                 print(f"DEBUG: Auto-load scheduling failed: {e}")
         else:
@@ -2229,10 +2229,10 @@ class CSVProcessorApp(ctk.CTk):
 
         total_files = len(self.input_file_paths)
         print(f"DEBUG: Creating display for {total_files} files")
-        print(f"DEBUG: total_files > 50? {total_files > 50}")
+        print(f"DEBUG: total_files > {LARGE_SIGNAL_THRESHOLD}? {total_files > LARGE_SIGNAL_THRESHOLD}")
 
         # For large numbers of files, use a more efficient display
-        if total_files > 50:  # Lowered threshold for better performance
+        if total_files > LARGE_SIGNAL_THRESHOLD:  # Lowered threshold for better performance
             print(f"DEBUG: Using smart summary display for {total_files} files")
             # Create a summary display for large file lists
             summary_frame = ctk.CTkFrame(self.file_list_frame)
@@ -2980,7 +2980,7 @@ This section helps you manage which signals (columns) to process from your files
                 all_signals = set()
 
                 # For large numbers of files, use batch processing
-                batch_size = 20 if files_to_read > 50 else 10
+                batch_size = LARGE_BATCH_SIZE if files_to_read > LARGE_SIGNAL_THRESHOLD else SMALL_BATCH_SIZE
 
                 for i in range(0, files_to_read, batch_size):
                     # Check for cancellation
@@ -3268,7 +3268,7 @@ This section helps you manage which signals (columns) to process from your files
                 # Show warning about truncated signals
                 warning_label = ctk.CTkLabel(
                     load_more_frame,
-                    text=f"⚠️ WARNING: Only showing first 200 of {len(signals)} signals",
+                    text=f"⚠️ WARNING: Only showing first {SIGNAL_BATCH_SIZE} of {len(signals)} signals",
                     font=ctk.CTkFont(size=12, weight="bold"),
                     text_color="orange",
                 )
@@ -3276,12 +3276,12 @@ This section helps you manage which signals (columns) to process from your files
 
                 self.load_more_button = ctk.CTkButton(
                     load_more_frame,
-                    text=f"Load More Signals ({len(signals) - 200} remaining)",
-                    command=lambda: self._load_more_signals(signals, 200),
+                    text=f"Load More Signals ({len(signals) - SIGNAL_BATCH_SIZE} remaining)",
+                    command=lambda: self._load_more_signals(signals, SIGNAL_BATCH_SIZE),
                 )
                 self.load_more_button.pack(pady=5)
 
-                self.signals_displayed = 200
+                self.signals_displayed = SIGNAL_BATCH_SIZE
                 self.all_signals_for_display = signals
             else:
                 self.signals_displayed = len(signals)
@@ -3405,7 +3405,7 @@ This section helps you manage which signals (columns) to process from your files
 
         # Calculate how many more to load (use 200 as batch size)
         remaining = len(all_signals) - current_count
-        batch_size = min(200, remaining)
+        batch_size = min(SIGNAL_BATCH_SIZE, remaining)
         end_index = current_count + batch_size
 
         # Display the next batch
@@ -3747,8 +3747,8 @@ This section helps you manage which signals (columns) to process from your files
                         print(f"  Using date from data: {trim_date}")
 
                     # Create full datetime strings
-                    start_time_str = trim_start or "00:00:00"
-                    end_time_str = trim_end or "23:59:59"
+                    start_time_str = trim_start or DEFAULT_START_TIME
+                    end_time_str = trim_end or DEFAULT_END_TIME
                     start_full_str = f"{trim_date} {start_time_str}"
                     end_full_str = f"{trim_date} {end_time_str}"
                     print(f"  Time range: {start_full_str} to {end_full_str}")
@@ -4149,7 +4149,7 @@ This section helps you manage which signals (columns) to process from your files
 
         with pd.ExcelWriter(final_path, engine="openpyxl") as writer:
             for file_path, df in processed_files:
-                sheet_name = os.path.splitext(os.path.basename(file_path))[0][:31]
+                sheet_name = os.path.splitext(os.path.basename(file_path))[0][:EXCEL_SHEET_NAME_MAX_LENGTH]
                 df = self._apply_sorting(df)
                 df.to_excel(writer, sheet_name=sheet_name, index=False)
 
@@ -8340,7 +8340,7 @@ COMMON MISTAKES TO AVOID:
 
                 self.plot_fig.savefig(
                     final_path,
-                    dpi=300,
+                    dpi=DEFAULT_DPI,
                     bbox_inches="tight",
                     facecolor="white",
                     edgecolor="none",
@@ -8748,8 +8748,8 @@ COMMON MISTAKES TO AVOID:
                         trim_date = df[time_col].iloc[0].strftime("%Y-%m-%d")
 
                     # Create full datetime strings
-                    start_time_str = trim_start or "00:00:00"
-                    end_time_str = trim_end or "23:59:59"
+                    start_time_str = trim_start or DEFAULT_START_TIME
+                    end_time_str = trim_end or DEFAULT_END_TIME
                     start_full_str = f"{trim_date} {start_time_str}"
                     end_full_str = f"{trim_date} {end_time_str}"
 
@@ -8811,10 +8811,10 @@ COMMON MISTAKES TO AVOID:
             start_full_str = (
                 f"{date_str} {start_time_str}"
                 if start_time_str
-                else f"{date_str} 00:00:00"
+                else f"{date_str} {DEFAULT_START_TIME}"
             )
             end_full_str = (
-                f"{date_str} {end_time_str}" if end_time_str else f"{date_str} 23:59:59"
+                f"{date_str} {end_time_str}" if end_time_str else f"{date_str} {DEFAULT_END_TIME}"
             )
 
             # Filter the data
