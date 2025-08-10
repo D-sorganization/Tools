@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Quality check script to verify AI-generated code meets standards."""
 
+import argparse
 import ast
 import re
 import sys
@@ -92,8 +93,8 @@ def check_file(filepath: Path) -> list[tuple[int, str, str]]:
         return issues
 
 
-def main() -> None:
-    """Run quality checks on Python files."""
+def get_all_python_files() -> list[Path]:
+    """Get all Python files in repository with exclusions."""
     python_files = list(Path().rglob("*.py"))
 
     # Exclude certain directories
@@ -101,10 +102,36 @@ def main() -> None:
         "archive", "legacy", "experimental", ".git", "__pycache__",
         ".ruff_cache", ".mypy_cache", "matlab", "output"
     }
-    python_files = [
+    return [
         f for f in python_files
         if not any(part in exclude_dirs for part in f.parts)
     ]
+
+
+def get_specified_python_files(file_paths: list[str]) -> list[Path]:
+    """Get Python files from specified paths."""
+    python_files = [Path(f) for f in file_paths if f.endswith(".py")]
+    if not python_files:
+        sys.stderr.write("❌ No Python files specified\n")
+        sys.exit(1)
+    return python_files
+
+
+def get_python_files_from_args(args: argparse.Namespace) -> list[Path]:
+    """Get Python files based on command line arguments."""
+    if args.files:
+        return get_specified_python_files(args.files)
+    return get_all_python_files()
+
+
+def main() -> None:
+    """Run quality checks on Python files."""
+    parser = argparse.ArgumentParser(description="Quality check script for Python files")
+    parser.add_argument("--files", nargs="+", help="Specific Python files to check")
+    parser.add_argument("--all", action="store_true", help="Check all Python files in repository")
+    args = parser.parse_args()
+
+    python_files = get_python_files_from_args(args)
 
     all_issues = []
     for filepath in python_files:
