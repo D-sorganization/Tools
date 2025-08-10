@@ -41,11 +41,11 @@ def is_legitimate_pass_context(lines: list[str], line_num: int) -> bool:
     """Check if a pass statement is in a legitimate context."""
     if line_num <= 0 or line_num > len(lines):
         return False
-    
+
     line = lines[line_num - 1].strip()
-    if not line == "pass":
+    if line != "pass":
         return False
-    
+
     # Check if this is in a class definition (legitimate)
     for i in range(line_num - 1, max(0, line_num - 10), -1):
         prev_line = lines[i - 1].strip()
@@ -53,23 +53,24 @@ def is_legitimate_pass_context(lines: list[str], line_num: int) -> bool:
             return True
         if prev_line.startswith("def "):
             return False
-        if prev_line.endswith(":"):
-            # Check if it's a legitimate empty block
-            if any(keyword in prev_line for keyword in ["try:", "except", "finally:", "with ", "if __name__"]):
-                return True
-    
+        if prev_line.endswith(":") and any(
+            keyword in prev_line
+            for keyword in ["try:", "except", "finally:", "with ", "if __name__"]
+        ):
+            return True
+
     # Check if this is in a try/except block (legitimate)
     for i in range(line_num - 1, max(0, line_num - 5), -1):
         prev_line = lines[i - 1].strip()
         if "try:" in prev_line or "except" in prev_line:
             return True
-    
+
     # Check if this is in a context manager (legitimate)
     for i in range(line_num - 1, max(0, line_num - 3), -1):
         prev_line = lines[i - 1].strip()
         if prev_line.startswith("with "):
             return True
-    
+
     return False
 
 
@@ -80,14 +81,10 @@ def is_legitimate_tkinter_binding(line: str) -> bool:
         r"<KeyRelease>", r"<KeyPress>", r"<Key>", r"<Return>", r"<Enter>", r"<Leave>",
         r"<Button-1>", r"<ButtonRelease-1>", r"<B1-Motion>", r"<Configure>",
         r"<MouseWheel>", r"<Button-4>", r"<Button-5>", r"<FocusIn>", r"<FocusOut>",
-        r"<<ListboxSelect>>", r"<<ComboboxSelected>>", r"<<TreeviewSelect>>"
+        r"<<ListboxSelect>>", r"<<ComboboxSelected>>", r"<<TreeviewSelect>>",
     ]
-    
-    for event_pattern in tkinter_events:
-        if re.search(event_pattern, line):
-            return True
-    
-    return False
+
+    return any(re.search(event_pattern, line) for event_pattern in tkinter_events)
 
 
 def check_banned_patterns(
@@ -99,22 +96,24 @@ def check_banned_patterns(
     # Skip checking this file for its own patterns
     if filepath.name == "quality_check_script.py":
         return issues
-    
+
     for line_num, line in enumerate(lines, 1):
         # Skip legitimate Tkinter event bindings
         if is_legitimate_tkinter_binding(line):
             continue
-            
+
         # Check for basic banned patterns
         for pattern, message in BANNED_PATTERNS:
             if pattern.search(line):
                 issues.append((line_num, message, line.strip()))
-        
+
         # Special handling for pass statements
-        if re.match(r"^\s*pass\s*$", line):
-            if not is_legitimate_pass_context(lines, line_num):
-                issues.append((line_num, "Empty pass statement - consider adding logic or comment", line.strip()))
-    
+        if (re.match(r"^\s*pass\s*$", line) and
+            not is_legitimate_pass_context(lines, line_num)):
+            issues.append(
+                (line_num, "Empty pass statement - consider adding logic or comment", line.strip()),
+            )
+
     return issues
 
 

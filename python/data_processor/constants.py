@@ -39,10 +39,20 @@ DEFAULT_MA_WINDOW: Final[int] = 10  # Default moving average window size
 DEFAULT_BW_ORDER: Final[int] = 3  # Default Butterworth filter order
 DEFAULT_BW_CUTOFF: Final[float] = 0.1  # Default Butterworth filter cutoff frequency
 DEFAULT_BW_NYQUIST: Final[float] = 1.0  # Default Nyquist frequency for Butterworth
+MIN_BUTTERWORTH_DATA_MULTIPLIER: Final[int] = 10  # Minimum data points per filter order
 
 # Median filter defaults
 DEFAULT_MEDIAN_KERNEL: Final[int] = 5  # Default median filter kernel size
 MIN_KERNEL_SIZE: Final[int] = 3  # Minimum kernel size for median filter
+
+# Hampel filter defaults
+DEFAULT_HAMPEL_WINDOW: Final[int] = 5  # Default Hampel filter window size
+DEFAULT_HAMPEL_THRESHOLD: Final[float] = 3.0  # Default Hampel filter threshold
+
+# Z-score filter defaults
+DEFAULT_ZSCORE_THRESHOLD: Final[float] = 3.0  # Default Z-score filter threshold
+DEFAULT_ZSCORE_METHOD: Final[str] = "modified"  # Default Z-score filter method
+NORMAL_DISTRIBUTION_CONSTANT: Final[float] = 1.4826  # Constant for normal distribution in MAD calculation
 
 # Savitzky-Golay filter defaults
 DEFAULT_SAVGOL_WINDOW: Final[int] = 11  # Default Savitzky-Golay window size
@@ -67,6 +77,8 @@ SIGNAL_BATCH_SIZE: Final[int] = 200  # Number of signals to display in each batc
 # Bulk processing limits
 BULK_SAMPLE_SIZE: Final[int] = 3  # Number of files to sample in bulk mode
 LARGE_FILE_THRESHOLD: Final[int] = 100  # Threshold for large file handling
+LARGE_BATCH_SIZE: Final[int] = 50  # Batch size for large file processing
+SMALL_BATCH_SIZE: Final[int] = 10  # Batch size for small file processing
 
 # =============================================================================
 # PLOTTING CONSTANTS
@@ -74,6 +86,8 @@ LARGE_FILE_THRESHOLD: Final[int] = 100  # Threshold for large file handling
 
 # Plot update scheduling
 PLOT_UPDATE_DELAY_MS: Final[int] = 200  # [ms] Delay for plot update coalescing
+UI_UPDATE_DELAY_MS: Final[int] = 100  # [ms] Delay for UI updates
+LAYOUT_SAVE_DELAY_MS: Final[int] = 500  # [ms] Delay for layout save operations
 
 # Zoom factors
 ZOOM_OUT_FACTOR: Final[float] = 1.25  # Zoom out by 25%
@@ -97,6 +111,9 @@ SUPPORTED_HDF5_EXTENSIONS: Final[tuple[str, ...]] = (".h5", ".hdf5")
 SUPPORTED_FEATHER_EXTENSIONS: Final[tuple[str, ...]] = (".feather",)
 SUPPORTED_PICKLE_EXTENSIONS: Final[tuple[str, ...]] = (".pkl", ".pickle")
 
+# Excel constraints
+EXCEL_SHEET_NAME_MAX_LENGTH: Final[int] = 31  # Maximum Excel sheet name length
+
 # =============================================================================
 # ERROR HANDLING CONSTANTS
 # =============================================================================
@@ -118,6 +135,19 @@ DEFAULT_LEGEND_POSITION: Final[str] = "best"
 
 # Time formatting
 DEFAULT_TIME_FORMAT: Final[str] = "%H:%M"  # Default time format for plots
+
+# Time conversion constants
+MILLISECONDS_PER_SECOND: Final[int] = 1000  # Milliseconds in one second
+SECONDS_PER_MINUTE: Final[int] = 60  # Seconds in one minute
+SECONDS_PER_HOUR: Final[int] = 3600  # Seconds in one hour
+
+# Default time values
+DEFAULT_START_TIME: Final[str] = "00:00"  # Default start time for time range selection
+DEFAULT_END_TIME: Final[str] = "23:59"  # Default end time for time range selection
+
+# Plot styling defaults
+DEFAULT_ALPHA: Final[float] = 0.8  # Default transparency for plot elements
+DEFAULT_DPI: Final[int] = 100  # Default DPI for plot exports
 
 # =============================================================================
 # VALIDATION CONSTANTS

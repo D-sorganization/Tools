@@ -161,7 +161,7 @@ class FolderProcessorApp:
         # --- Main Frame with Scrollable Content ---
         self.create_scrollable_interface()
 
-    def create_scrollable_interface(self):
+    def create_scrollable_interface(self) -> None:
         """Creates a scrollable main interface."""
         # Create canvas and scrollbar
         canvas = tk.Canvas(self.root)
@@ -205,7 +205,8 @@ class FolderProcessorApp:
 
         self.on_mode_change()  # Initial UI setup
 
-    def create_source_widgets(self, parent):
+    def create_source_widgets(self, parent) -> None:
+        """Create source folder selection widgets."""
         self.source_frame = ttk.LabelFrame(
             parent,
             text="1. Select Folder(s) to Process",
@@ -249,7 +250,8 @@ class FolderProcessorApp:
         )
         self.source_info_label.pack(fill=tk.X, pady=2)
 
-    def create_destination_widgets(self, parent):
+    def create_destination_widgets(self, parent) -> None:
+        """Create destination folder selection widgets."""
         self.dest_frame = ttk.LabelFrame(
             parent,
             text="2. Select Final Destination Folder",
@@ -268,7 +270,8 @@ class FolderProcessorApp:
             command=self.select_dest_folder,
         ).pack(side=tk.RIGHT)
 
-    def create_filtering_widgets(self, parent):
+    def create_filtering_widgets(self, parent) -> None:
+        """Create file filtering option widgets."""
         filter_frame = ttk.LabelFrame(
             parent,
             text="3. File Filtering Options",
@@ -305,7 +308,8 @@ class FolderProcessorApp:
             padx=5,
         )
 
-    def create_preprocessing_widgets(self, parent):
+    def create_preprocessing_widgets(self, parent) -> None:
+        """Create pre-processing option widgets."""
         self.pre_process_frame = ttk.LabelFrame(
             parent,
             text="4. Pre-processing Options (On Source)",
@@ -324,7 +328,8 @@ class FolderProcessorApp:
             variable=self.safe_extract_var,
         ).pack(anchor=tk.W, padx=(20, 0))
 
-    def create_main_operation_widgets(self, parent):
+    def create_main_operation_widgets(self, parent) -> None:
+        """Create main operation selection widgets."""
         self.mode_frame = ttk.LabelFrame(
             parent,
             text="5. Choose Main Operation",
@@ -376,7 +381,8 @@ class FolderProcessorApp:
         )
         self.mode_description.pack(fill=tk.X, pady=(5, 0))
 
-    def create_organization_widgets(self, parent):
+    def create_organization_widgets(self, parent) -> None:
+        """Create file organization option widgets."""
         org_frame = ttk.LabelFrame(
             parent,
             text="6. File Organization Options",
@@ -395,7 +401,8 @@ class FolderProcessorApp:
             variable=self.organize_by_date_var,
         ).pack(anchor=tk.W)
 
-    def create_postprocessing_widgets(self, parent):
+    def create_postprocessing_widgets(self, parent) -> None:
+        """Create post-processing option widgets."""
         self.post_process_frame = ttk.LabelFrame(
             parent,
             text="7. Post-processing Options (On Destination)",
@@ -409,7 +416,8 @@ class FolderProcessorApp:
             variable=self.deduplicate_var,
         ).pack(anchor=tk.W)
 
-    def create_output_options_widgets(self, parent):
+    def create_output_options_widgets(self, parent) -> None:
+        """Create output option widgets."""
         output_frame = ttk.LabelFrame(parent, text="8. Output Options", padding="10")
         output_frame.pack(fill=tk.X, pady=5)
 
@@ -419,7 +427,8 @@ class FolderProcessorApp:
             variable=self.zip_output_var,
         ).pack(anchor=tk.W)
 
-    def create_advanced_options_widgets(self, parent):
+    def create_advanced_options_widgets(self, parent) -> None:
+        """Create advanced option widgets."""
         advanced_frame = ttk.LabelFrame(
             parent,
             text="9. Advanced Options",
@@ -438,7 +447,8 @@ class FolderProcessorApp:
             variable=self.backup_before_var,
         ).pack(anchor=tk.W)
 
-    def create_progress_widgets(self, parent):
+    def create_progress_widgets(self, parent) -> None:
+        """Create progress tracking widgets."""
         progress_frame = ttk.LabelFrame(parent, text="Progress", padding="10")
         progress_frame.pack(fill=tk.X, pady=5)
 
@@ -453,7 +463,8 @@ class FolderProcessorApp:
         self.status_label = ttk.Label(progress_frame, textvariable=self.status_var)
         self.status_label.pack(anchor=tk.W)
 
-    def create_run_button(self, parent):
+    def create_run_button(self, parent) -> None:
+        """Create the main run button and cancel button."""
         button_frame = ttk.Frame(parent)
         button_frame.pack(fill=tk.X, pady=(10, 5))
 
@@ -482,7 +493,7 @@ class FolderProcessorApp:
         style = ttk.Style()
         style.configure("Accent.TButton", font=("Helvetica", 10, "bold"))
 
-    def on_mode_change(self):
+    def on_mode_change(self) -> None:
         """Updates UI descriptions and widget states based on the selected operation mode."""
         mode = self.operation_mode.get()
 
@@ -510,7 +521,7 @@ class FolderProcessorApp:
                 if hasattr(child, "configure"):
                     child.configure(state=new_state)
 
-    def update_source_info(self):
+    def update_source_info(self) -> None:
         """Updates the source folder information display."""
         if not self.source_folders:
             self.source_info_label.config(text="")
@@ -534,13 +545,14 @@ class FolderProcessorApp:
         info_text = f"Total: {total_files} files, {size_mb:.1f} MB"
         self.source_info_label.config(text=info_text)
 
-    def run_processing_threaded(self):
+    def run_processing_threaded(self) -> None:
         """Runs the processing in a separate thread to keep UI responsive."""
         self.cancel_operation = False
         self.run_button.config(state=tk.DISABLED)
         self.cancel_button.config(state=tk.NORMAL)
 
-        def processing_thread():
+        def processing_thread() -> None:
+            """Run the processing operation in a separate thread."""
             try:
                 self.run_processing()
             finally:
@@ -549,26 +561,26 @@ class FolderProcessorApp:
         thread = threading.Thread(target=processing_thread, daemon=True)
         thread.start()
 
-    def cancel_processing(self):
+    def cancel_processing(self) -> None:
         """Cancels the current operation."""
         self.cancel_operation = True
         self.update_status("Cancelling operation...")
 
-    def processing_complete(self):
+    def processing_complete(self) -> None:
         """Called when processing is complete to reset UI state."""
         self.run_button.config(state=tk.NORMAL)
         self.cancel_button.config(state=tk.DISABLED)
         self.progress_var.set(0)
         self.update_status("Ready")
 
-    def update_progress(self, value, status=""):
+    def update_progress(self, value: int, status: str = "") -> None:
         """Updates the progress bar and status."""
         self.progress_var.set(value)
         if status:
             self.update_status(status)
         self.root.update_idletasks()
 
-    def update_status(self, status):
+    def update_status(self, status: str) -> None:
         """Updates the status label."""
         self.status_var.set(status)
         self.root.update_idletasks()

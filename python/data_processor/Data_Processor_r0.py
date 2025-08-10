@@ -47,15 +47,21 @@ from .constants import (
     DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, DEFAULT_PADDING, DEFAULT_BUTTON_HEIGHT,
     DEFAULT_TEXT_HEIGHT, DEFAULT_SEARCH_WIDTH, GRID_WEIGHT_MAIN,
     MIN_SIGNAL_DATA_POINTS, MIN_PERIODS_DEFAULT, DEFAULT_MA_WINDOW,
-    DEFAULT_BW_ORDER, DEFAULT_BW_CUTOFF, DEFAULT_BW_NYQUIST,
+    DEFAULT_BW_ORDER, DEFAULT_BW_CUTOFF, DEFAULT_BW_NYQUIST, MIN_BUTTERWORTH_DATA_MULTIPLIER,
     DEFAULT_MEDIAN_KERNEL, MIN_KERNEL_SIZE, DEFAULT_SAVGOL_WINDOW,
     DEFAULT_SAVGOL_POLYORDER, MAX_DERIVATIVE_ORDER,
     TIME_COLUMN_KEYWORDS, LARGE_SIGNAL_THRESHOLD, SIGNAL_BATCH_SIZE,
     BULK_SAMPLE_SIZE, LARGE_FILE_THRESHOLD, PLOT_UPDATE_DELAY_MS,
+    UI_UPDATE_DELAY_MS, LAYOUT_SAVE_DELAY_MS, LARGE_BATCH_SIZE, SMALL_BATCH_SIZE,
     ZOOM_OUT_FACTOR, ZOOM_IN_FACTOR, DEFAULT_LINE_WIDTH, DEFAULT_GRID_ALPHA,
     DEFAULT_GRID_LINESTYLE, ERROR_MSG_NO_FILES, ERROR_MSG_EMPTY_FILE,
     ERROR_MSG_NO_PLOTS, DEFAULT_PLOT_TITLE, DEFAULT_PLOT_XLABEL,
-    DEFAULT_PLOT_YLABEL, DEFAULT_LEGEND_POSITION, DEFAULT_TIME_FORMAT
+    DEFAULT_PLOT_YLABEL, DEFAULT_LEGEND_POSITION, DEFAULT_TIME_FORMAT,
+    MILLISECONDS_PER_SECOND, SECONDS_PER_MINUTE, SECONDS_PER_HOUR,
+    DEFAULT_START_TIME, DEFAULT_END_TIME, DEFAULT_ALPHA, DEFAULT_DPI,
+    DEFAULT_HAMPEL_WINDOW, DEFAULT_HAMPEL_THRESHOLD,
+    DEFAULT_ZSCORE_THRESHOLD, DEFAULT_ZSCORE_METHOD, NORMAL_DISTRIBUTION_CONSTANT,
+    EXCEL_SHEET_NAME_MAX_LENGTH
 )
 
 
@@ -129,7 +135,8 @@ def process_single_csv_file(
                             signal_data.index.to_series().diff().dt.total_seconds(),
                         ).mean()
                     )
-                    if pd.notna(sr) and len(signal_data) > order * MIN_BUTTERWORTH_DATA_MULTIPLIER:
+                                            if (pd.notna(sr) and 
+                            len(signal_data) > order * MIN_BUTTERWORTH_DATA_MULTIPLIER):
                         btype = (
                             "low" if filter_type == "Butterworth Low-pass" else "high"
                         )
@@ -2229,7 +2236,10 @@ class CSVProcessorApp(ctk.CTk):
 
         total_files = len(self.input_file_paths)
         print(f"DEBUG: Creating display for {total_files} files")
-        print(f"DEBUG: total_files > {LARGE_SIGNAL_THRESHOLD}? {total_files > LARGE_SIGNAL_THRESHOLD}")
+        print(
+            f"DEBUG: total_files > {LARGE_SIGNAL_THRESHOLD}? "
+            f"{total_files > LARGE_SIGNAL_THRESHOLD}"
+        )
 
         # For large numbers of files, use a more efficient display
         if total_files > LARGE_SIGNAL_THRESHOLD:  # Lowered threshold for better performance
@@ -2545,7 +2555,8 @@ class CSVProcessorApp(ctk.CTk):
         button_frame = ctk.CTkFrame(dialog)
         button_frame.pack(fill="x", padx=20, pady=10)
 
-        def create_signal_list():
+        def create_signal_list() -> None:
+            """Create signal list from manual input text."""
             # Get text from text area
             text = text_area.get("1.0", "end-1c")
             signals = [line.strip() for line in text.split("\n") if line.strip()]
@@ -2564,7 +2575,8 @@ class CSVProcessorApp(ctk.CTk):
                     "Please enter at least one signal name.",
                 )
 
-        def cancel():
+        def cancel() -> None:
+            """Cancel the manual signal input dialog."""
             dialog.destroy()
 
         ctk.CTkButton(
@@ -2925,14 +2937,18 @@ This section helps you manage which signals (columns) to process from your files
                     # Update status
                     if total_files > 100:
                         status_label.configure(
-                            text=f"Bulk mode: Using {len(all_signals)} signals from first file only "
-                            f"(assumed same for all {total_files} files)",
+                            text=(
+                                f"Bulk mode: Using {len(all_signals)} signals from first file only "
+                                f"(assumed same for all {total_files} files)"
+                            ),
                         )
                         progress_window.update()
                     elif hasattr(self, "status_label"):
                         self.status_label.configure(
-                            text=f"Bulk mode: Using {len(all_signals)} signals from first file only "
-                            f"(assumed same for all {total_files} files)",
+                            text=(
+                                f"Bulk mode: Using {len(all_signals)} signals from first file only "
+                                f"(assumed same for all {total_files} files)"
+                            ),
                         )
                         self.update()
                 else:
@@ -2980,7 +2996,10 @@ This section helps you manage which signals (columns) to process from your files
                 all_signals = set()
 
                 # For large numbers of files, use batch processing
-                batch_size = LARGE_BATCH_SIZE if files_to_read > LARGE_SIGNAL_THRESHOLD else SMALL_BATCH_SIZE
+                batch_size = (
+                    LARGE_BATCH_SIZE if files_to_read > LARGE_SIGNAL_THRESHOLD 
+                    else SMALL_BATCH_SIZE
+                )
 
                 for i in range(0, files_to_read, batch_size):
                     # Check for cancellation
@@ -3041,8 +3060,10 @@ This section helps you manage which signals (columns) to process from your files
                     try:
                         if files_to_read < total_files:
                             status_label.configure(
-                                text=f"Found {len(all_signals)} unique signals in first {files_to_read} "
-                                f"files (of {total_files})",
+                                text=(
+                                    f"Found {len(all_signals)} unique signals in first {files_to_read} "
+                                    f"files (of {total_files})"
+                                ),
                             )
                         else:
                             status_label.configure(
@@ -3054,8 +3075,10 @@ This section helps you manage which signals (columns) to process from your files
                 elif hasattr(self, "status_label"):
                     if "files_to_read" in locals() and files_to_read < total_files:
                         self.status_label.configure(
-                            text=f"Found {len(all_signals)} unique signals in first {files_to_read} "
-                            f"files (of {total_files})",
+                            text=(
+                                f"Found {len(all_signals)} unique signals in first {files_to_read} "
+                                f"files (of {total_files})"
+                            ),
                         )
                     else:
                         self.status_label.configure(
@@ -3119,8 +3142,10 @@ This section helps you manage which signals (columns) to process from your files
                 self.plot_file_menu.set("Select a file...")
                 if hasattr(self, "status_label"):
                     self.status_label.configure(
-                        text=f"Ready - {len(self.input_file_paths)} files loaded. "
-                        f"Go to Plotting tab to visualize.",
+                        text=(
+                        f"Ready - {len(self.input_file_paths)} files loaded. "
+                        f"Go to Plotting tab to visualize."
+                    ),
                     )
 
         print("DEBUG: load_signals_from_files() completed")
@@ -3268,7 +3293,9 @@ This section helps you manage which signals (columns) to process from your files
                 # Show warning about truncated signals
                 warning_label = ctk.CTkLabel(
                     load_more_frame,
-                    text=f"⚠️ WARNING: Only showing first {SIGNAL_BATCH_SIZE} of {len(signals)} signals",
+                    text=(
+                        f"⚠️ WARNING: Only showing first {SIGNAL_BATCH_SIZE} of {len(signals)} signals"
+                    ),
                     font=ctk.CTkFont(size=12, weight="bold"),
                     text_color="orange",
                 )
@@ -3377,7 +3404,12 @@ This section helps you manage which signals (columns) to process from your files
         """Auto-update plot when Plotting tab signal checkboxes change (scoped)."""
         self._schedule_plot_update()
 
-    def _display_signals_batch(self, signals_batch: list[str], start_index: int = 0, auto_select: bool = True) -> None:
+    def _display_signals_batch(
+        self, 
+        signals_batch: list[str], 
+        start_index: int = 0, 
+        auto_select: bool = True
+    ) -> None:
         """Display a batch of signals in the scrollable frame."""
         print(
             f"DEBUG: Displaying batch of {len(signals_batch)} signals starting at index "
@@ -4149,7 +4181,9 @@ This section helps you manage which signals (columns) to process from your files
 
         with pd.ExcelWriter(final_path, engine="openpyxl") as writer:
             for file_path, df in processed_files:
-                sheet_name = os.path.splitext(os.path.basename(file_path))[0][:EXCEL_SHEET_NAME_MAX_LENGTH]
+                sheet_name = (
+                    os.path.splitext(os.path.basename(file_path))[0][:EXCEL_SHEET_NAME_MAX_LENGTH]
+                )
                 df = self._apply_sorting(df)
                 df.to_excel(writer, sheet_name=sheet_name, index=False)
 
@@ -9805,7 +9839,8 @@ For additional support or feature requests, please refer to the application docu
         button_frame = ctk.CTkFrame(dialog)
         button_frame.pack(fill="x", padx=20, pady=10)
 
-        def on_modify():
+        def on_modify() -> None:
+            """Modify the selected plot configuration."""
             selection = listbox.curselection()
             if not selection:
                 messagebox.showwarning(
@@ -9829,7 +9864,8 @@ For additional support or feature requests, please refer to the application docu
                 f"Configuration '{selected_config['name']}' has been updated with current settings!",
             )
 
-        def on_delete():
+        def on_delete() -> None:
+            """Delete the selected plot configuration."""
             selection = listbox.curselection()
             if not selection:
                 messagebox.showwarning(
@@ -9862,7 +9898,8 @@ For additional support or feature requests, please refer to the application docu
                     f"Configuration '{deleted_config['name']}' has been deleted!",
                 )
 
-        def on_cancel():
+        def on_cancel() -> None:
+            """Cancel the configuration modification dialog."""
             dialog.destroy()
 
         ctk.CTkButton(button_frame, text="Modify Selected", command=on_modify).pack(
@@ -10671,7 +10708,8 @@ For additional support or feature requests, please refer to the application docu
     def _bind_mousewheel_to_frame(self, frame: ctk.CTkFrame) -> None:
         """Bind mouse wheel events to a frame for proper scrolling."""
 
-        def on_mousewheel(event):
+        def on_mousewheel(event: tk.Event) -> None:
+            """Handle mouse wheel scrolling for the frame."""
             # Scroll the frame's canvas
             try:
                 frame._parent_canvas.yview_scroll(
@@ -10683,7 +10721,8 @@ For additional support or feature requests, please refer to the application docu
                 frame._parent_canvas.yview_scroll(int(-1 * event.delta), "units")
 
         # Bind mousewheel to the frame and all its children
-        def bind_mousewheel(widget):
+        def bind_mousewheel(widget: tk.Widget) -> None:
+            """Recursively bind mouse wheel events to a widget and its children."""
             widget.bind("<MouseWheel>", on_mousewheel)
             widget.bind(
                 "<Button-4>",
