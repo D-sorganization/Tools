@@ -6780,9 +6780,9 @@ This section helps you manage which signals (columns) to process from your files
                     mad = signal_data.rolling(window=window, center=True).apply(
                         lambda x: np.median(np.abs(x - np.median(x))),
                     )
-                                            threshold_value = (
-                            threshold * NORMAL_DISTRIBUTION_CONSTANT * mad
-                        )  # 1.4826 is the constant for normal distribution
+                    threshold_value = (
+                        threshold * NORMAL_DISTRIBUTION_CONSTANT * mad
+                    )  # 1.4826 is the constant for normal distribution
 
                     # Replace outliers with median using proper indexing
                     outliers = np.abs(signal_data - median_filtered) > threshold_value
