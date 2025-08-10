@@ -7,7 +7,8 @@
 # from Rev2 with the UI fixes from Rev4_Claude, ensuring complete functionality.
 #
 # Dependencies for Python 3.8+:
-# pip install customtkinter pandas numpy scipy matplotlib openpyxl Pillow simpledbf pyarrow tables feather-format
+# pip install customtkinter pandas numpy scipy matplotlib openpyxl Pillow
+# simpledbf pyarrow tables feather-format
 #
 # =============================================================================
 
@@ -19,7 +20,7 @@ import tkinter as tk
 import traceback
 from concurrent.futures import ProcessPoolExecutor, as_completed  # noqa: F401
 from tkinter import colorchooser, filedialog, messagebox, simpledialog
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any
 
 import customtkinter as ctk
 import matplotlib.dates as mdates
@@ -45,15 +46,18 @@ except Exception:  # pragma: no cover - optional dependency
 # =============================================================================
 # WORKER FUNCTION FOR PARALLEL PROCESSING
 # =============================================================================
-def process_single_csv_file(file_path: str, settings: Dict[str, Any]) -> Optional[pd.DataFrame]:
+def process_single_csv_file(
+    file_path: str,
+    settings: dict[str, Any],
+) -> pd.DataFrame | None:
     """
     Processes a single CSV file based on a dictionary of settings.
     This function is designed to be run in a separate process.
-    
+
     Args:
         file_path: Path to the CSV file to process
         settings: Dictionary containing processing settings
-        
+
     Returns:
         Processed DataFrame or None if processing failed
     """
@@ -137,7 +141,8 @@ def process_single_csv_file(file_path: str, settings: Dict[str, Any]) -> Optiona
                     if len(signal_data) > window:
                         if _savgol_filter is None:
                             raise RuntimeError(
-                                "scipy.signal.savgol_filter unavailable. Install SciPy or skip smoothing.",
+                                "scipy.signal.savgol_filter unavailable. "
+                                "Install SciPy or skip smoothing.",
                             )
                         processed_df[col] = pd.Series(
                             _savgol_filter(signal_data, window, polyorder),
@@ -163,7 +168,13 @@ def process_single_csv_file(file_path: str, settings: Dict[str, Any]) -> Optiona
 
 
 # Helper function for causal derivative calculation
-def _poly_derivative(series: pd.Series, window: int, poly_order: int, deriv_order: int, delta_x: float) -> pd.Series:
+def _poly_derivative(
+    series: pd.Series,
+    window: int,
+    poly_order: int,
+    deriv_order: int,
+    delta_x: float,
+) -> pd.Series:
     """Calculates the derivative of a series using a rolling polynomial fit."""
     if poly_order < deriv_order:
         return pd.Series(np.nan, index=series.index)
@@ -174,10 +185,10 @@ def _poly_derivative(series: pd.Series, window: int, poly_order: int, deriv_orde
     def get_deriv(w: pd.Series) -> float:
         """
         Calculate derivative for a window of data.
-        
+
         Args:
             w: Series containing the data window
-            
+
         Returns:
             Calculated derivative value or NaN if calculation fails
         """
@@ -206,7 +217,8 @@ def _poly_derivative(series: pd.Series, window: int, poly_order: int, deriv_orde
 class CSVProcessorApp(ctk.CTk):
     """The main application class with all advanced features and UI fixes."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Initialize the CSV Processor application with all UI components and state variables."""
         super().__init__(*args, **kwargs)
 
         # Layout persistence variables
@@ -322,12 +334,12 @@ class CSVProcessorApp(ctk.CTk):
         # Load saved plots and other settings
         self._load_plots_from_file()
 
-    def create_setup_and_process_tab(self, parent_tab):
+    def create_setup_and_process_tab(self, parent_tab: ctk.CTkFrame) -> None:
         """Fixed version with proper splitter implementation and all advanced features."""
         parent_tab.grid_columnconfigure(0, weight=1)
         parent_tab.grid_rowconfigure(0, weight=1)
 
-        def create_left_content(left_panel):
+        def create_left_content(left_panel: ctk.CTkFrame) -> None:
             """Create the left panel content"""
             left_panel.grid_rowconfigure(0, weight=1)
             left_panel.grid_columnconfigure(0, weight=1)
@@ -376,7 +388,7 @@ class CSVProcessorApp(ctk.CTk):
             )
             self.process_button.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
 
-        def create_right_content(right_panel):
+        def create_right_content(right_panel: ctk.CTkFrame) -> None:
             """Create the right panel content"""
             right_panel.grid_rowconfigure(2, weight=1)
             right_panel.grid_columnconfigure(0, weight=1)
@@ -455,7 +467,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
-    def populate_setup_sub_tab(self, tab):
+    def populate_setup_sub_tab(self, tab: ctk.CTkFrame) -> None:
         """Populate the setup sub-tab."""
         tab.grid_columnconfigure(0, weight=1)
 
@@ -767,7 +779,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         sort_desc.grid(row=3, column=1, padx=10, pady=5, sticky="w")
 
-    def populate_processing_sub_tab(self, tab):
+    def populate_processing_sub_tab(self, tab: ctk.CTkFrame) -> None:
         """Populate the processing sub-tab with all advanced features."""
         tab.grid_columnconfigure(0, weight=1)
         time_units = ["ms", "s", "min", "hr"]
@@ -1154,7 +1166,11 @@ class CSVProcessorApp(ctk.CTk):
             cb.grid(row=1, column=i - 1, padx=10, pady=2, sticky="w")
             self.derivative_vars[i] = var
 
-    def _create_ma_param_frame(self, parent, time_units):
+    def _create_ma_param_frame(
+        self,
+        parent: ctk.CTkFrame,
+        time_units: str,
+    ) -> ctk.CTkFrame:
         """Create Moving Average parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1184,7 +1200,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, value_entry, unit_menu
 
-    def _create_bw_param_frame(self, parent):
+    def _create_bw_param_frame(self, parent: ctk.CTkFrame) -> ctk.CTkFrame:
         """Create Butterworth filter parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1212,7 +1228,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, order_entry, cutoff_entry
 
-    def _create_median_param_frame(self, parent):
+    def _create_median_param_frame(self, parent: ctk.CTkFrame) -> ctk.CTkFrame:
         """Create Median filter parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1230,7 +1246,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, kernel_entry
 
-    def _create_savgol_param_frame(self, parent):
+    def _create_savgol_param_frame(self, parent: ctk.CTkFrame) -> ctk.CTkFrame:
         """Create Savitzky-Golay filter parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1258,7 +1274,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, window_entry, polyorder_entry
 
-    def _create_hampel_param_frame(self, parent):
+    def _create_hampel_param_frame(self, parent: ctk.CTkFrame) -> ctk.CTkFrame:
         """Create Hampel filter parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1286,7 +1302,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, window_entry, threshold_entry
 
-    def _create_zscore_param_frame(self, parent):
+    def _create_zscore_param_frame(self, parent: ctk.CTkFrame) -> ctk.CTkFrame:
         """Create Z-Score filter parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1317,7 +1333,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, threshold_entry, method_menu
 
-    def _update_filter_ui(self, filter_type):
+    def _update_filter_ui(self, filter_type: str) -> None:
         """Update filter UI based on selected filter type."""
         # Hide all frames
         for frame in [
@@ -1344,7 +1360,7 @@ class CSVProcessorApp(ctk.CTk):
         elif filter_type == "Savitzky-Golay":
             self.savgol_frame.grid()
 
-    def _update_plot_filter_ui(self, filter_type):
+    def _update_plot_filter_ui(self, filter_type: str) -> None:
         """Update plot filter UI based on selected filter type."""
         # Hide all frames
         for frame in [
@@ -1371,7 +1387,7 @@ class CSVProcessorApp(ctk.CTk):
         elif filter_type == "Savitzky-Golay":
             self.plot_savgol_frame.grid()
 
-    def _update_compare_filter_ui(self, filter_type):
+    def _update_compare_filter_ui(self, filter_type: str) -> None:
         """Update comparison filter UI based on selected filter type."""
         # Hide all comparison frames
         for frame in [
@@ -1422,7 +1438,7 @@ class CSVProcessorApp(ctk.CTk):
                 pady=5,
             )
 
-    def _filter_signals(self, event=None):
+    def _filter_signals(self, event: tk.Event | None = None) -> None:
         """Filter signals based on search text - optimized for large signal counts."""
         # Check if we're using the new efficient display
         if hasattr(self, "signal_search_entry"):
@@ -1487,7 +1503,7 @@ class CSVProcessorApp(ctk.CTk):
                 else:
                     data["widget"].grid_remove()
 
-    def _clear_search(self):
+    def _clear_search(self) -> None:
         """Clear search and show all signals - optimized for large signal counts."""
         if hasattr(self, "signal_search_entry"):
             self.signal_search_entry.delete(0, tk.END)
@@ -1498,7 +1514,7 @@ class CSVProcessorApp(ctk.CTk):
             for signal, data in self.signal_vars.items():
                 data["widget"].grid()
 
-    def _filter_integrator_signals(self, event=None):
+    def _filter_integrator_signals(self, event: tk.Event | None = None) -> None:
         """Filter integration signals based on search text."""
         search_text = self.integrator_search_entry.get().lower()
         for signal, data in self.integrator_signal_vars.items():
@@ -1507,23 +1523,23 @@ class CSVProcessorApp(ctk.CTk):
             else:
                 data["widget"].pack_forget()
 
-    def _clear_integrator_search(self):
+    def _clear_integrator_search(self) -> None:
         """Clear integration search and show all signals."""
         self.integrator_search_entry.delete(0, tk.END)
         for signal, data in self.integrator_signal_vars.items():
             data["widget"].pack(anchor="w", padx=5, pady=2)
 
-    def _integrator_select_all(self):
+    def _integrator_select_all(self) -> None:
         """Select all integration signals."""
         for signal, data in self.integrator_signal_vars.items():
             data["var"].set(True)
 
-    def _integrator_deselect_all(self):
+    def _integrator_deselect_all(self) -> None:
         """Deselect all integration signals."""
         for signal, data in self.integrator_signal_vars.items():
             data["var"].set(False)
 
-    def _filter_deriv_signals(self, event=None):
+    def _filter_deriv_signals(self, event: tk.Event | None = None) -> None:
         """Filter differentiation signals based on search text."""
         search_text = self.deriv_search_entry.get().lower()
         for signal, data in self.deriv_signal_vars.items():
@@ -1532,23 +1548,23 @@ class CSVProcessorApp(ctk.CTk):
             else:
                 data["widget"].pack_forget()
 
-    def _clear_deriv_search(self):
+    def _clear_deriv_search(self) -> None:
         """Clear differentiation search and show all signals."""
         self.deriv_search_entry.delete(0, tk.END)
         for signal, data in self.deriv_signal_vars.items():
             data["widget"].pack(anchor="w", padx=5, pady=2)
 
-    def _deriv_select_all(self):
+    def _deriv_select_all(self) -> None:
         """Select all differentiation signals."""
         for signal, data in self.deriv_signal_vars.items():
             data["var"].set(True)
 
-    def _deriv_deselect_all(self):
+    def _deriv_deselect_all(self) -> None:
         """Deselect all differentiation signals."""
         for signal, data in self.deriv_signal_vars.items():
             data["var"].set(False)
 
-    def _filter_plot_signals(self, event=None):
+    def _filter_plot_signals(self, event: tk.Event | None = None) -> None:
         """Filter plot signals based on search text and processing signal limit."""
         search_text = self.plot_search_entry.get().lower()
 
@@ -1578,12 +1594,12 @@ class CSVProcessorApp(ctk.CTk):
             else:
                 data["checkbox"].pack_forget()
 
-    def _on_limit_plot_signals_changed(self):
+    def _on_limit_plot_signals_changed(self) -> None:
         """Handle changes to the limit plotting signals checkbox."""
         # Re-apply the current search filter to update the display
         self._filter_plot_signals()
 
-    def _populate_plotting_signals_from_available(self):
+    def _populate_plotting_signals_from_available(self) -> None:
         """Populate plotting signals with available signals from processing tab."""
         if not hasattr(self, "plot_signal_frame") or not hasattr(self, "signal_vars"):
             return
@@ -1614,23 +1630,23 @@ class CSVProcessorApp(ctk.CTk):
         # Apply current filter
         self._filter_plot_signals()
 
-    def _plot_clear_search(self):
+    def _plot_clear_search(self) -> None:
         """Clear plot search and show all signals."""
         self.plot_search_entry.delete(0, tk.END)
         for signal, data in self.plot_signal_vars.items():
             data["checkbox"].pack(anchor="w", padx=5, pady=2)
 
-    def _plot_select_all(self):
+    def _plot_select_all(self) -> None:
         """Select all plot signals."""
         for signal, data in self.plot_signal_vars.items():
             data["var"].set(True)
 
-    def _plot_select_none(self):
+    def _plot_select_none(self) -> None:
         """Deselect all plot signals."""
         for signal, data in self.plot_signal_vars.items():
             data["var"].set(False)
 
-    def _show_selected_signals(self):
+    def _show_selected_signals(self) -> None:
         """Show only selected signals in plot."""
         selected_signals = [
             s for s, data in self.plot_signal_vars.items() if data["var"].get()
@@ -1643,7 +1659,7 @@ class CSVProcessorApp(ctk.CTk):
                 "Please select at least one signal to plot.",
             )
 
-    def _filter_reference_signals(self, event=None):
+    def _filter_reference_signals(self, event: tk.Event | None = None) -> None:
         """Filter reference signals for custom variables."""
         search_text = self.custom_var_search_entry.get().lower()
         for signal, widget in self.reference_signal_widgets.items():
@@ -1652,13 +1668,13 @@ class CSVProcessorApp(ctk.CTk):
             else:
                 widget.pack_forget()
 
-    def _clear_reference_search(self):
+    def _clear_reference_search(self) -> None:
         """Clear reference search and show all signals."""
         self.custom_var_search_entry.delete(0, tk.END)
         for signal, widget in self.reference_signal_widgets.items():
             widget.pack(anchor="w", padx=5, pady=2)
 
-    def _add_custom_variable(self):
+    def _add_custom_variable(self) -> None:
         """Add a custom variable to the list."""
         name = self.custom_var_name_entry.get().strip()
         formula = self.custom_var_formula_entry.get().strip()
@@ -1679,7 +1695,7 @@ class CSVProcessorApp(ctk.CTk):
         self.custom_var_name_entry.delete(0, tk.END)
         self.custom_var_formula_entry.delete(0, tk.END)
 
-    def populate_custom_var_sub_tab(self, tab):
+    def populate_custom_var_sub_tab(self, tab: ctk.CTkFrame) -> None:
         """Fixed custom variables sub-tab with missing listbox."""
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(9, weight=1)
@@ -1810,7 +1826,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         self.signal_reference_frame.grid(row=1, column=0, padx=0, pady=5, sticky="nsew")
 
-    def _update_custom_vars_display(self):
+    def _update_custom_vars_display(self) -> None:
         """Update the custom variables display."""
         self.custom_vars_listbox.configure(state="normal")
         self.custom_vars_listbox.delete("1.0", tk.END)
@@ -1823,12 +1839,12 @@ class CSVProcessorApp(ctk.CTk):
 
         self.custom_vars_listbox.configure(state="disabled")
 
-    def _clear_custom_variables(self):
+    def _clear_custom_variables(self) -> None:
         """Clear all custom variables."""
         self.custom_vars_list.clear()
         self._update_custom_vars_display()
 
-    def _save_custom_variables(self):
+    def _save_custom_variables(self) -> None:
         """Save current custom variables to a JSON file."""
         if not self.custom_vars_list:
             messagebox.showwarning("Warning", "No custom variables to save.")
@@ -1851,7 +1867,7 @@ class CSVProcessorApp(ctk.CTk):
                     f"Failed to save custom variables: {e!s}",
                 )
 
-    def _load_custom_variables(self):
+    def _load_custom_variables(self) -> None:
         """Load custom variables from a JSON file."""
         file_path = filedialog.askopenfilename(
             title="Load Custom Variables",
@@ -1917,12 +1933,22 @@ class CSVProcessorApp(ctk.CTk):
 
     def _apply_integration(
         self,
-        df,
-        time_col,
-        signals_to_integrate,
-        method="Trapezoidal",
-    ):
-        """Apply integration to selected signals."""
+        df: pd.DataFrame,
+        time_col: str,
+        signals_to_integrate: list[str],
+        method: str = "Trapezoidal",
+    ) -> pd.DataFrame:
+        """Apply integration to selected signals.
+        
+        Args:
+            df: Input DataFrame
+            time_col: Column name for time values
+            signals_to_integrate: List of signal column names to integrate
+            method: Integration method ("Trapezoidal", "Rectangular", or "Simpson")
+            
+        Returns:
+            DataFrame with integrated signals added as new columns
+        """
         if not signals_to_integrate:
             return df
 
@@ -1989,12 +2015,22 @@ class CSVProcessorApp(ctk.CTk):
 
     def _apply_differentiation(
         self,
-        df,
-        time_col,
-        signals_to_differentiate,
-        method="Spline (Acausal)",
-    ):
-        """Apply differentiation to selected signals with support for up to 5th order."""
+        df: pd.DataFrame,
+        time_col: str,
+        signals_to_differentiate: list[str],
+        method: str = "Spline (Acausal)",
+    ) -> pd.DataFrame:
+        """Apply differentiation to selected signals with support for up to 5th order.
+        
+        Args:
+            df: Input DataFrame
+            time_col: Column name for time values
+            signals_to_differentiate: List of signal column names to differentiate
+            method: Differentiation method
+            
+        Returns:
+            DataFrame with differentiated signals added as new columns
+        """
         if not signals_to_differentiate:
             return df
 
@@ -2098,13 +2134,14 @@ class CSVProcessorApp(ctk.CTk):
                                 df[f"{signal}_d{order}"] = np.nan
                         except Exception as e:
                             print(
-                                f"Error in polynomial differentiation for {signal}, order {order}: {e}",
+                                f"Error in polynomial differentiation for {signal}, "
+                                f"order {order}: {e}",
                             )
                             df[f"{signal}_d{order}"] = np.nan
 
         return df
 
-    def select_files(self):
+    def select_files(self) -> None:
         """Select input CSV files."""
         print("DEBUG: select_files() called")
         file_paths = filedialog.askopenfilenames(
@@ -2139,14 +2176,14 @@ class CSVProcessorApp(ctk.CTk):
         else:
             print("DEBUG: No files selected (user cancelled)")
 
-    def select_output_folder(self):
+    def select_output_folder(self) -> None:
         """Select output directory for processed files."""
         folder_path = filedialog.askdirectory(title="Select Output Folder")
         if folder_path:
             self.output_directory = folder_path
             self.output_label.configure(text=f"Output: {self.output_directory}")
 
-    def update_file_list(self):
+    def update_file_list(self) -> None:
         """Update the file list display."""
         print("DEBUG: update_file_list() called")
         print(
@@ -2270,7 +2307,7 @@ class CSVProcessorApp(ctk.CTk):
         self.file_list_frame.update_idletasks()
         print("DEBUG: Forced file_list_frame update_idletasks()")
 
-    def _show_all_files_dialog(self):
+    def _show_all_files_dialog(self) -> None:
         """Show all files in a separate dialog window."""
         if not self.input_file_paths:
             return
@@ -2310,7 +2347,7 @@ class CSVProcessorApp(ctk.CTk):
         close_button = ctk.CTkButton(dialog, text="Close", command=dialog.destroy)
         close_button.pack(pady=10)
 
-    def _clear_all_files(self):
+    def _clear_all_files(self) -> None:
         """Clear all selected files."""
         if self.input_file_paths:
             file_count = len(self.input_file_paths)
@@ -2343,7 +2380,7 @@ class CSVProcessorApp(ctk.CTk):
         else:
             print("DEBUG: No files to clear")
 
-    def _cancel_signal_loading(self, progress_window):
+    def _cancel_signal_loading(self, progress_window: ctk.CTkToplevel) -> None:
         """Cancel the signal loading process."""
         print("DEBUG: Signal loading cancelled by user")
         self.signal_loading_cancelled = True
@@ -2386,7 +2423,7 @@ class CSVProcessorApp(ctk.CTk):
         if hasattr(self, "current_progress_window"):
             delattr(self, "current_progress_window")
 
-    def _on_bulk_mode_change(self):
+    def _on_bulk_mode_change(self) -> None:
         """Handle bulk processing mode toggle."""
         # First file only option is now in Signal List Management section
         # No need to show/hide it based on bulk mode state
@@ -2395,7 +2432,7 @@ class CSVProcessorApp(ctk.CTk):
             # Reload signals with new mode
             self.load_signals_from_files()
 
-    def _manual_load_signals(self):
+    def _manual_load_signals(self) -> None:
         """Manually load signals from files."""
         if not hasattr(self, "input_file_paths") or not self.input_file_paths:
             messagebox.showwarning(
@@ -2407,7 +2444,7 @@ class CSVProcessorApp(ctk.CTk):
         print("DEBUG: Manual signal loading triggered")
         self.load_signals_from_files()
 
-    def _load_signals_from_first_file(self):
+    def _load_signals_from_first_file(self) -> None:
         """Load signals from the first file only."""
         if not hasattr(self, "input_file_paths") or not self.input_file_paths:
             messagebox.showwarning(
@@ -2424,7 +2461,7 @@ class CSVProcessorApp(ctk.CTk):
         # Load signals using the existing function
         self.load_signals_from_files()
 
-    def _create_signal_list(self):
+    def _create_signal_list(self) -> None:
         """Create a signal list from text file or manual input."""
         print("DEBUG: _create_signal_list() called")
 
@@ -2466,7 +2503,7 @@ class CSVProcessorApp(ctk.CTk):
             # Manual input
             self._show_manual_signal_input()
 
-    def _show_manual_signal_input(self):
+    def _show_manual_signal_input(self) -> None:
         """Show dialog for manual signal input."""
         # Create a dialog window
         dialog = ctk.CTkToplevel(self)
@@ -2524,7 +2561,7 @@ class CSVProcessorApp(ctk.CTk):
             padx=5,
         )
 
-    def _show_input_file_help(self):
+    def _show_input_file_help(self) -> None:
         """Show comprehensive help for Input File Selection section."""
         help_text = """Input File Selection - Complete Guide
 
@@ -2605,7 +2642,7 @@ This mode only affects signal detection, not data processing.
         )
         close_button.pack(pady=10)
 
-    def _show_signal_list_help(self):
+    def _show_signal_list_help(self) -> None:
         """Show comprehensive help for Signal List Management section."""
         help_text = """Signal List Management - Complete Guide
 
@@ -2691,14 +2728,14 @@ This section helps you manage which signals (columns) to process from your files
         )
         close_button.pack(pady=10)
 
-    def remove_file(self, file_path):
+    def remove_file(self, file_path: str) -> None:
         """Remove a file from the list."""
         if file_path in self.input_file_paths:
             self.input_file_paths.remove(file_path)
             self.update_file_list()
             self.load_signals_from_files()
 
-    def load_signals_from_files(self):
+    def load_signals_from_files(self) -> None:
         """Load signals from all selected files (optimized for large file counts)."""
         print("DEBUG: load_signals_from_files() called")
 
@@ -2709,9 +2746,9 @@ This section helps you manage which signals (columns) to process from your files
         total_files = len(self.input_file_paths)
 
         # Create progress window for large file counts
-        progress_window = None
-        status_label = None
-        progress_bar = None
+        progress_window: ctk.CTkToplevel | None = None
+        status_label: ctk.CTkLabel | None = None
+        progress_bar: ctk.CTkProgressBar | None = None
 
         if total_files > 100:
             progress_window = ctk.CTkToplevel(self)
@@ -2755,9 +2792,12 @@ This section helps you manage which signals (columns) to process from your files
         print(
             f"DEBUG: bulk_mode_var exists: {getattr(self, 'bulk_mode_var', None) is not None}",
         )
-        print(
-            f"DEBUG: bulk_mode_var value: {getattr(self, 'bulk_mode_var', None).get() if getattr(self, 'bulk_mode_var', None) else 'N/A'}",
+        bulk_mode_value = (
+            getattr(self, "bulk_mode_var", None).get()
+            if getattr(self, "bulk_mode_var", None)
+            else "N/A"
         )
+        print(f"DEBUG: bulk_mode_var value: {bulk_mode_value}")
         print(f"DEBUG: bulk_mode result: {bulk_mode}")
 
         # Check for cancellation
@@ -2805,7 +2845,8 @@ This section helps you manage which signals (columns) to process from your files
                 else:
                     # Standard bulk mode: read headers from first few files
                     print(
-                        "DEBUG: Using bulk processing mode - reading headers from sample files only",
+                        "DEBUG: Using bulk processing mode - "
+                        "reading headers from sample files only",
                     )
 
                     # Update status
@@ -2861,34 +2902,40 @@ This section helps you manage which signals (columns) to process from your files
 
                 if first_file_only:
                     print(
-                        f"DEBUG: Bulk mode (first file only) - signals from 1 file: {len(all_signals)} unique signals",
+                        f"DEBUG: Bulk mode (first file only) - "
+                        f"signals from 1 file: {len(all_signals)} unique signals",
                     )
 
                     # Update status
                     if total_files > 100:
                         status_label.configure(
-                            text=f"Bulk mode: Using {len(all_signals)} signals from first file only (assumed same for all {total_files} files)",
+                            text=f"Bulk mode: Using {len(all_signals)} signals from first file only "
+                            f"(assumed same for all {total_files} files)",
                         )
                         progress_window.update()
                     elif hasattr(self, "status_label"):
                         self.status_label.configure(
-                            text=f"Bulk mode: Using {len(all_signals)} signals from first file only (assumed same for all {total_files} files)",
+                            text=f"Bulk mode: Using {len(all_signals)} signals from first file only "
+                            f"(assumed same for all {total_files} files)",
                         )
                         self.update()
                 else:
                     print(
-                        f"DEBUG: Bulk mode - signals from {len(sample_files)} sample files: {len(all_signals)} unique signals",
+                        f"DEBUG: Bulk mode - signals from {len(sample_files)} sample files: "
+                        f"{len(all_signals)} unique signals",
                     )
 
                     # Update status
                     if total_files > 100:
                         status_label.configure(
-                            text=f"Bulk mode: Using {len(all_signals)} signals from sample files (assumed same for all {total_files} files)",
+                            text=f"Bulk mode: Using {len(all_signals)} signals from sample files "
+                            f"(assumed same for all {total_files} files)",
                         )
                         progress_window.update()
                     elif hasattr(self, "status_label"):
                         self.status_label.configure(
-                            text=f"Bulk mode: Using {len(all_signals)} signals from sample files (assumed same for all {total_files} files)",
+                            text=f"Bulk mode: Using {len(all_signals)} signals from sample files "
+                            f"(assumed same for all {total_files} files)",
                         )
                         self.update()
 
@@ -2904,7 +2951,8 @@ This section helps you manage which signals (columns) to process from your files
                 # Update status
                 if total_files > 100:
                     status_label.configure(
-                        text=f"Reading headers from first {files_to_read} files (of {total_files})...",
+                        text=f"Reading headers from first {files_to_read} files "
+                        f"(of {total_files})...",
                     )
                     progress_window.update()
                 elif hasattr(self, "status_label"):
@@ -2934,7 +2982,8 @@ This section helps you manage which signals (columns) to process from your files
                     if total_files > 100:
                         try:
                             status_label.configure(
-                                text=f"Reading files {i+1}-{batch_end}/{files_to_read}...",
+                                text=f"Reading files {i+1}-{batch_end}/"
+                                f"{files_to_read}...",
                             )
                             if progress_bar:
                                 progress = (i + batch_size) / files_to_read
@@ -2945,7 +2994,8 @@ This section helps you manage which signals (columns) to process from your files
                             # Continue processing even if status update fails
                     elif hasattr(self, "status_label"):
                         self.status_label.configure(
-                            text=f"Reading files {i+1}-{batch_end}/{total_files}...",
+                            text=f"Reading files {i+1}-{batch_end}/"
+                            f"{total_files}...",
                         )
                         self.update()
 
@@ -2966,7 +3016,8 @@ This section helps you manage which signals (columns) to process from your files
                         self.update()
 
                 print(
-                    f"DEBUG: Normal mode - all signals collected: {len(all_signals)} unique signals",
+                    f"DEBUG: Normal mode - all signals collected: "
+                    f"{len(all_signals)} unique signals",
                 )
 
                 # Update status
@@ -2974,7 +3025,8 @@ This section helps you manage which signals (columns) to process from your files
                     try:
                         if files_to_read < total_files:
                             status_label.configure(
-                                text=f"Found {len(all_signals)} unique signals in first {files_to_read} files (of {total_files})",
+                                text=f"Found {len(all_signals)} unique signals in first {files_to_read} "
+                                f"files (of {total_files})",
                             )
                         else:
                             status_label.configure(
@@ -2986,7 +3038,8 @@ This section helps you manage which signals (columns) to process from your files
                 elif hasattr(self, "status_label"):
                     if "files_to_read" in locals() and files_to_read < total_files:
                         self.status_label.configure(
-                            text=f"Found {len(all_signals)} unique signals in first {files_to_read} files (of {total_files})",
+                            text=f"Found {len(all_signals)} unique signals in first {files_to_read} "
+                            f"files (of {total_files})",
                         )
                     else:
                         self.status_label.configure(
@@ -3050,7 +3103,8 @@ This section helps you manage which signals (columns) to process from your files
                 self.plot_file_menu.set("Select a file...")
                 if hasattr(self, "status_label"):
                     self.status_label.configure(
-                        text=f"Ready - {len(self.input_file_paths)} files loaded. Go to Plotting tab to visualize.",
+                        text=f"Ready - {len(self.input_file_paths)} files loaded. "
+                        f"Go to Plotting tab to visualize.",
                     )
 
         print("DEBUG: load_signals_from_files() completed")
@@ -3058,7 +3112,7 @@ This section helps you manage which signals (columns) to process from your files
         # Populate plotting signals with available signals
         self._populate_plotting_signals_from_available()
 
-    def _auto_select_single_file(self, filename):
+    def _auto_select_single_file(self, filename: str) -> None:
         """Auto-select single file - simplified."""
         try:
             if hasattr(self, "plot_file_menu"):
@@ -3068,7 +3122,7 @@ This section helps you manage which signals (columns) to process from your files
         except Exception as e:
             print(f"Error in auto-select: {e}")
 
-    def _ensure_data_loaded(self, filename):
+    def _ensure_data_loaded(self, filename: str) -> bool:
         """Ensure data is loaded for the given filename."""
         if filename not in self.processed_files:
             # Try to load the file
@@ -3099,7 +3153,7 @@ This section helps you manage which signals (columns) to process from your files
                     return False
         return True
 
-    def update_signal_list(self, signals):
+    def update_signal_list(self, signals: list[str]) -> None:
         """Update the signal list with checkboxes - optimized for large signal counts."""
         print(f"DEBUG: update_signal_list called with {len(signals)} signals")
 
@@ -3259,6 +3313,7 @@ This section helps you manage which signals (columns) to process from your files
                 try:
                     self.after_cancel(self._plot_update_job_id)
                 except Exception:
+                    # No action needed for after_cancel errors
                     pass
             # Schedule a near-future update to coalesce rapid toggles
             self._plot_update_job_id = self.after(
@@ -3274,7 +3329,7 @@ This section helps you manage which signals (columns) to process from your files
         # Update integration and differentiation signals based on selected processing signals
         self._update_processing_dependent_signals()
 
-    def _update_processing_dependent_signals(self):
+    def _update_processing_dependent_signals(self) -> None:
         """Update integration and differentiation signals based on selected processing signals."""
         # Get currently selected signals for processing
         selected_signals = [
@@ -3306,10 +3361,11 @@ This section helps you manage which signals (columns) to process from your files
         """Auto-update plot when Plotting tab signal checkboxes change (scoped)."""
         self._schedule_plot_update()
 
-    def _display_signals_batch(self, signals_batch, start_index=0, auto_select=True):
+    def _display_signals_batch(self, signals_batch: list[str], start_index: int = 0, auto_select: bool = True) -> None:
         """Display a batch of signals in the scrollable frame."""
         print(
-            f"DEBUG: Displaying batch of {len(signals_batch)} signals starting at index {start_index}, auto_select={auto_select}",
+            f"DEBUG: Displaying batch of {len(signals_batch)} signals starting at index "
+            f"{start_index}, auto_select={auto_select}",
         )
 
         for i, signal in enumerate(signals_batch):
@@ -3325,7 +3381,7 @@ This section helps you manage which signals (columns) to process from your files
 
         print("DEBUG: Batch display completed")
 
-    def _load_more_signals(self, all_signals, current_count):
+    def _load_more_signals(self, all_signals: list[str], current_count: int) -> None:
         """Load more signals when the Load More button is clicked."""
         print(
             f"DEBUG: Loading more signals, currently showing {current_count} of {len(all_signals)}",
@@ -3352,7 +3408,7 @@ This section helps you manage which signals (columns) to process from your files
         self.signals_displayed = end_index
         print(f"DEBUG: Now showing {self.signals_displayed} signals")
 
-    def _update_integration_signals(self, signals):
+    def _update_integration_signals(self, signals: list[str]) -> None:
         """Update integration signals - simplified."""
         # Clear existing widgets
         for widget in self.integrator_signals_frame.winfo_children():
@@ -3369,7 +3425,7 @@ This section helps you manage which signals (columns) to process from your files
             cb.grid(sticky="w", padx=5, pady=2)
             self.integrator_signal_vars[signal] = {"var": var, "widget": cb}
 
-    def _update_differentiation_signals(self, signals):
+    def _update_differentiation_signals(self, signals: list[str]) -> None:
         """Update differentiation signals - simplified."""
         # Clear existing widgets
         for widget in self.deriv_signals_frame.winfo_children():
@@ -3382,7 +3438,7 @@ This section helps you manage which signals (columns) to process from your files
             cb.grid(sticky="w", padx=5, pady=2)
             self.deriv_signal_vars[signal] = {"var": var, "widget": cb}
 
-    def _update_reference_signals(self, signals):
+    def _update_reference_signals(self, signals: list[str]) -> None:
         """Update reference signals - simplified."""
         # Clear existing widgets
         for widget in self.signal_reference_frame.winfo_children():
@@ -3395,7 +3451,7 @@ This section helps you manage which signals (columns) to process from your files
             cb.grid(sticky="w", padx=5, pady=2)
             self.reference_signal_widgets[signal] = {"var": var, "widget": cb}
 
-    def select_all(self):
+    def select_all(self) -> None:
         """Select all signals - optimized for large signal counts."""
         if hasattr(self, "all_signals"):
             # For large signal counts, select all signals (including those not yet displayed)
@@ -3408,7 +3464,7 @@ This section helps you manage which signals (columns) to process from your files
             for signal, data in self.signal_vars.items():
                 data["var"].set(True)
 
-    def deselect_all(self):
+    def deselect_all(self) -> None:
         """Deselect all signals - optimized for large signal counts."""
         if hasattr(self, "all_signals"):
             # For large signal counts, deselect all signals (including those not yet displayed)
@@ -3421,7 +3477,7 @@ This section helps you manage which signals (columns) to process from your files
             for signal, data in self.signal_vars.items():
                 data["var"].set(False)
 
-    def process_files(self):
+    def process_files(self) -> None:
         """Process all selected files with current settings."""
         print("\n=== STARTING PROCESS_FILES DEBUG ===")
         if not self.input_file_paths:
@@ -3502,11 +3558,13 @@ This section helps you manage which signals (columns) to process from your files
 
         for i, file_path in enumerate(self.input_file_paths):
             print(
-                f"\n--- Processing file {i+1}/{len(self.input_file_paths)}: {os.path.basename(file_path)} ---",
+                f"\n--- Processing file {i+1}/{len(self.input_file_paths)}: "
+                f"{os.path.basename(file_path)} ---",
             )
             try:
                 self.status_label.configure(
-                    text=f"Processing file {i+1}/{len(self.input_file_paths)}: {os.path.basename(file_path)}",
+                    text=f"Processing file {i+1}/{len(self.input_file_paths)}: "
+                    f"{os.path.basename(file_path)}",
                 )
                 self.update()
 
@@ -3582,7 +3640,8 @@ This section helps you manage which signals (columns) to process from your files
 
             if error_count > 0:
                 self.status_label.configure(
-                    text=f"Processing complete: {success_count}/{total_count} files processed successfully",
+                    text=f"Processing complete: {success_count}/{total_count} "
+                    f"files processed successfully",
                 )
                 messagebox.showwarning(
                     "Processing Complete",
@@ -3602,7 +3661,7 @@ This section helps you manage which signals (columns) to process from your files
             messagebox.showerror("Export Error", f"Error exporting files: {e!s}")
             self.status_label.configure(text="Export failed")
 
-    def _process_single_file(self, file_path, settings):
+    def _process_single_file(self, file_path: str, settings: dict[str, Any]) -> pd.DataFrame | None:
         """Process a single file with all advanced features."""
         print(f"\n_process_single_file called for: {os.path.basename(file_path)}")
         try:
@@ -3662,7 +3721,8 @@ This section helps you manage which signals (columns) to process from your files
 
             if trim_date or trim_start or trim_end:
                 print(
-                    f"  Applying time trimming: date={trim_date}, start={trim_start}, end={trim_end}",
+                    f"  Applying time trimming: date={trim_date}, start={trim_start}, "
+                    f"end={trim_end}",
                 )
                 try:
                     # Get the date from the data if not specified
@@ -3812,7 +3872,8 @@ This section helps you manage which signals (columns) to process from your files
                         if len(signal_data) > window:
                             if _savgol_filter is None:
                                 raise RuntimeError(
-                                    "scipy.signal.savgol_filter unavailable. Install SciPy or skip smoothing.",
+                                    "scipy.signal.savgol_filter unavailable. "
+                                    "Install SciPy or skip smoothing.",
                                 )
                             processed_df[col] = pd.Series(
                                 _savgol_filter(signal_data, window, polyorder),
@@ -3889,7 +3950,7 @@ This section helps you manage which signals (columns) to process from your files
             traceback.print_exc()
             return None
 
-    def _apply_custom_variables(self, df, time_col):
+    def _apply_custom_variables(self, df: pd.DataFrame, time_col: str) -> pd.DataFrame:
         """Apply custom variables to the dataframe."""
         if not self.custom_vars_list:
             return df
@@ -3951,7 +4012,7 @@ This section helps you manage which signals (columns) to process from your files
 
         return df
 
-    def _get_resample_rule(self):
+    def _get_resample_rule(self) -> str:
         """Get the resample rule from UI inputs."""
         if not self.resample_var.get():
             return None
@@ -3977,7 +4038,7 @@ This section helps you manage which signals (columns) to process from your files
 
         return None
 
-    def _export_processed_files(self, processed_files):
+    def _export_processed_files(self, processed_files: dict[str, pd.DataFrame]) -> None:
         """Export processed files based on selected format."""
         export_type = self.export_type_var.get()
 
@@ -4010,7 +4071,7 @@ This section helps you manage which signals (columns) to process from your files
         elif export_type == "Pickle (Separate Files)":
             self._export_pickle_separate(processed_files)
 
-    def _export_csv_separate(self, processed_files):
+    def _export_csv_separate(self, processed_files: dict[str, pd.DataFrame]) -> None:
         """Export each file as a separate CSV."""
         print(f"_export_csv_separate called with {len(processed_files)} files")
         exported_count = 0
@@ -4044,7 +4105,7 @@ This section helps you manage which signals (columns) to process from your files
             print("Showing cancelled message")
             messagebox.showinfo("Export Cancelled", "No files were exported.")
 
-    def _export_csv_compiled(self, processed_files):
+    def _export_csv_compiled(self, processed_files: dict[str, pd.DataFrame]) -> None:
         """Export all files as a single compiled CSV."""
         if not processed_files:
             return
@@ -4063,7 +4124,7 @@ This section helps you manage which signals (columns) to process from your files
             compiled_df.to_csv(final_path, index=False)
             messagebox.showinfo("Success", f"Exported compiled data to {final_path}")
 
-    def _export_excel_multisheet(self, processed_files):
+    def _export_excel_multisheet(self, processed_files: dict[str, pd.DataFrame]) -> None:
         """Export all files to a single Excel file with multiple sheets."""
         output_path = os.path.join(self.output_directory, "processed_data.xlsx")
         final_path = self._check_file_overwrite(output_path)
@@ -4078,7 +4139,7 @@ This section helps you manage which signals (columns) to process from your files
 
         messagebox.showinfo("Success", f"Exported to Excel file: {final_path}")
 
-    def _export_excel_separate(self, processed_files):
+    def _export_excel_separate(self, processed_files: dict[str, pd.DataFrame]) -> None:
         """Export each file as a separate Excel file."""
         exported_count = 0
         for file_path, df in processed_files:
@@ -4104,7 +4165,7 @@ This section helps you manage which signals (columns) to process from your files
         else:
             messagebox.showinfo("Cancelled", "No files were exported.")
 
-    def _export_mat_separate(self, processed_files):
+    def _export_mat_separate(self, processed_files: dict[str, pd.DataFrame]) -> None:
         """Export each file as a separate MAT file."""
         exported_count = 0
         for file_path, df in processed_files:
@@ -4131,7 +4192,7 @@ This section helps you manage which signals (columns) to process from your files
         else:
             messagebox.showinfo("Cancelled", "No files were exported.")
 
-    def _export_mat_compiled(self, processed_files):
+    def _export_mat_compiled(self, processed_files: dict[str, pd.DataFrame]) -> None:
         """Export all files as a single compiled MAT file."""
         if not processed_files:
             return
@@ -4154,7 +4215,7 @@ This section helps you manage which signals (columns) to process from your files
                 f"Exported compiled MAT file to {final_path}",
             )
 
-    def _export_parquet_single(self, processed_files):
+    def _export_parquet_single(self, processed_files: dict[str, pd.DataFrame]) -> None:
         """Export all files as a single Parquet file (optimized for large datasets)."""
         if not processed_files:
             return
@@ -4272,7 +4333,10 @@ This section helps you manage which signals (columns) to process from your files
                         for mismatch in column_mismatches[
                             :5
                         ]:  # Show first 5 mismatches
-                            success_message += f"\n• {mismatch['file']}: expected {len(mismatch['expected'])} columns, found {len(mismatch['found'])}"
+                            success_message += (
+                                f"\n• {mismatch['file']}: expected "
+                                f"{len(mismatch['expected'])} columns, found {len(mismatch['found'])}"
+                            )
                         if len(column_mismatches) > 5:
                             success_message += (
                                 f"\n• ... and {len(column_mismatches) - 5} more files"
@@ -4292,7 +4356,7 @@ This section helps you manage which signals (columns) to process from your files
             print(f"Conversion error: {e}")
             traceback.print_exc()
 
-    def _export_parquet_separate(self, processed_files):
+    def _export_parquet_separate(self, processed_files: dict[str, pd.DataFrame]) -> None:
         """Export each file as a separate Parquet file."""
         exported_count = 0
         for file_path, df in processed_files:
@@ -4318,7 +4382,7 @@ This section helps you manage which signals (columns) to process from your files
         else:
             messagebox.showinfo("Cancelled", "No files were exported.")
 
-    def _export_hdf5_single(self, processed_files):
+    def _export_hdf5_single(self, processed_files: dict[str, pd.DataFrame]) -> None:
         """Export all files as a single HDF5 file."""
         if not processed_files:
             return
@@ -4346,7 +4410,7 @@ This section helps you manage which signals (columns) to process from your files
                 f"Exported compiled HDF5 file to {final_path}",
             )
 
-    def _export_hdf5_separate(self, processed_files):
+    def _export_hdf5_separate(self, processed_files: dict[str, pd.DataFrame]) -> None:
         """Export each file as a separate HDF5 file."""
         exported_count = 0
         for file_path, df in processed_files:
@@ -4372,7 +4436,7 @@ This section helps you manage which signals (columns) to process from your files
         else:
             messagebox.showinfo("Cancelled", "No files were exported.")
 
-    def _export_feather_single(self, processed_files):
+    def _export_feather_single(self, processed_files: dict[str, pd.DataFrame]) -> None:
         """Export all files as a single Feather file."""
         if not processed_files:
             return
@@ -4397,7 +4461,7 @@ This section helps you manage which signals (columns) to process from your files
                 f"Exported compiled Feather file to {final_path}",
             )
 
-    def _export_feather_separate(self, processed_files):
+    def _export_feather_separate(self, processed_files: dict[str, pd.DataFrame]) -> None:
         """Export each file as a separate Feather file."""
         exported_count = 0
         for file_path, df in processed_files:
@@ -4423,7 +4487,7 @@ This section helps you manage which signals (columns) to process from your files
         else:
             messagebox.showinfo("Cancelled", "No files were exported.")
 
-    def _export_pickle_single(self, processed_files):
+    def _export_pickle_single(self, processed_files: dict[str, pd.DataFrame]) -> None:
         """Export all files as a single Pickle file."""
         if not processed_files:
             return
@@ -4445,7 +4509,7 @@ This section helps you manage which signals (columns) to process from your files
                 f"Exported compiled Pickle file to {final_path}",
             )
 
-    def _export_pickle_separate(self, processed_files):
+    def _export_pickle_separate(self, processed_files: dict[str, pd.DataFrame]) -> None:
         """Export each file as a separate Pickle file."""
         exported_count = 0
         for file_path, df in processed_files:
@@ -4471,7 +4535,7 @@ This section helps you manage which signals (columns) to process from your files
         else:
             messagebox.showinfo("Cancelled", "No files were exported.")
 
-    def _combine_multiple_files(self, processed_files):
+    def _combine_multiple_files(self, processed_files: dict[str, pd.DataFrame]) -> pd.DataFrame:
         """Combine multiple processed files into a single dataset for time series data."""
         if not processed_files or len(processed_files) <= 1:
             return processed_files
@@ -4521,7 +4585,7 @@ This section helps you manage which signals (columns) to process from your files
         combined_file_path = "combined_dataset"
         return [(combined_file_path, combined_df)]
 
-    def _apply_sorting(self, df):
+    def _apply_sorting(self, df: pd.DataFrame) -> pd.DataFrame:
         """Apply sorting to the dataframe."""
         sort_col = self.sort_col_menu.get()
         sort_order = self.sort_order_var.get()
@@ -4532,7 +4596,7 @@ This section helps you manage which signals (columns) to process from your files
 
         return df
 
-    def create_plotting_tab(self, tab):
+    def create_plotting_tab(self, tab: ctk.CTkFrame) -> None:
         """Create the plotting and analysis tab with all advanced features."""
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(1, weight=1)
@@ -5437,7 +5501,7 @@ This section helps you manage which signals (columns) to process from your files
         )
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
-    def create_plots_list_tab(self, tab):
+    def create_plots_list_tab(self, tab: ctk.CTkFrame) -> None:
         """Create the plots list tab."""
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(1, weight=1)
@@ -5668,7 +5732,7 @@ This section helps you manage which signals (columns) to process from your files
             command=self._export_all_plots,
         ).grid(row=0, column=1, padx=5, pady=5, sticky="ew")
 
-    def create_dat_import_tab(self, tab):
+    def create_dat_import_tab(self, tab: ctk.CTkFrame) -> None:
         """Create the DAT file import tab."""
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(1, weight=1)
@@ -5811,7 +5875,7 @@ This section helps you manage which signals (columns) to process from your files
         self.import_preview_text = ctk.CTkTextbox(preview_frame, height=200)
         self.import_preview_text.grid(row=1, column=0, padx=10, pady=5, sticky="nsew")
 
-    def _load_layout_config(self):
+    def _load_layout_config(self) -> dict[str, Any]:
         """Load layout configuration from file."""
         try:
             if os.path.exists(self.layout_config_file):
@@ -5821,7 +5885,7 @@ This section helps you manage which signals (columns) to process from your files
             print(f"Error loading layout config: {e}")
         return {}
 
-    def _save_layout_config(self):
+    def _save_layout_config(self) -> None:
         """Save layout configuration to file."""
         try:
             # Get current window dimensions
@@ -5959,12 +6023,12 @@ This section helps you manage which signals (columns) to process from your files
                     if isinstance(child, ctk.CTkFrame) and child.winfo_width() == 8:
                         child.configure(fg_color="#666666")
 
-    def _on_closing(self):
+    def _on_closing(self) -> None:
         """Handle application closing."""
         self._save_layout_config()
         self.quit()
 
-    def _on_window_configure(self, event):
+    def _on_window_configure(self, event: tk.Event) -> None:
         """Handle window resize events to save layout."""
         # Only save if this is the main window being resized
         if event.widget == self:
@@ -5973,7 +6037,7 @@ This section helps you manage which signals (columns) to process from your files
                 self.after_cancel(self._resize_timer)
             self._resize_timer = self.after(1000, self._save_layout_config)
 
-    def create_status_bar(self):
+    def create_status_bar(self) -> None:
         """Create the status bar with progress tracking."""
         status_frame = ctk.CTkFrame(self)
         status_frame.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
@@ -5995,11 +6059,11 @@ This section helps you manage which signals (columns) to process from your files
 
     def update_status(
         self,
-        message,
-        show_progress=False,
-        progress_value=0,
-        progress_text="",
-    ):
+        message: str,
+        show_progress: bool = False,
+        progress_value: int = 0,
+        progress_text: str = "",
+    ) -> None:
         """Update status bar with optional progress tracking."""
         self.status_label.configure(text=message)
 
@@ -6017,7 +6081,7 @@ This section helps you manage which signals (columns) to process from your files
         self.update()
 
     # Placeholder methods for functionality that would be implemented
-    def on_plot_file_select(self, value):
+    def on_plot_file_select(self, value: str) -> None:
         """Handle plot file selection - simplified for better performance."""
         if value == "Select a file...":
             return
@@ -6080,7 +6144,7 @@ This section helps you manage which signals (columns) to process from your files
                 self.status_label.configure(text="Error selecting file for plotting")
                 self.status_label.configure(text="Ready")
 
-    def update_plot(self, selected_signals=None):
+    def update_plot(self, selected_signals: list[str] | None = None) -> None:
         """Update the plot with fixed error handling and canvas management."""
         # Check if plot canvas is initialized
         if not hasattr(self, "plot_canvas") or not hasattr(self, "plot_ax"):
@@ -6413,7 +6477,7 @@ This section helps you manage which signals (columns) to process from your files
             self.plot_canvas.draw()
             self.status_label.configure(text="Plot error - check console for details")
 
-    def _ensure_plot_canvas_ready(self):
+    def _ensure_plot_canvas_ready(self) -> None:
         """Ensure plot canvas is properly initialized."""
         if not hasattr(self, "plot_canvas") or self.plot_canvas is None:
             print("ERROR: Plot canvas not initialized!")
@@ -6431,11 +6495,11 @@ This section helps you manage which signals (columns) to process from your files
             print(f"ERROR: Canvas draw failed - {e}")
             return False
 
-    def enable_plot_debugging(self):
+    def enable_plot_debugging(self) -> None:
         """Enable verbose debugging for plot operations."""
         self.plot_debug = True
 
-    def debug_print(self, message):
+    def debug_print(self, message: str) -> None:
         """Print debug message if debugging is enabled."""
         if hasattr(self, "plot_debug") and self.plot_debug:
             print(f"[PLOT DEBUG] {message}")
@@ -7006,6 +7070,7 @@ This section helps you manage which signals (columns) to process from your files
                     try:
                         df[time_col] = pd.to_datetime(df[time_col])
                     except Exception:
+                        # No action needed for datetime conversion errors
                         pass
 
                 return df
@@ -10379,6 +10444,7 @@ For additional support or feature requests, please refer to the application docu
                             )
                             plot_df = plot_df[plot_df[time_col] >= start_datetime]
                         except Exception:
+                            # No action needed for time range filtering errors
                             pass
                     if end_time:
                         try:
@@ -10387,6 +10453,7 @@ For additional support or feature requests, please refer to the application docu
                             )
                             plot_df = plot_df[plot_df[time_col] <= end_datetime]
                         except Exception:
+                            # No action needed for time range filtering errors
                             pass
 
             # Plot all available signals

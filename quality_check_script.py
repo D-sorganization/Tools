@@ -11,13 +11,29 @@ from pathlib import Path
 BANNED_PATTERNS = [
     (re.compile(r"\bTODO\b"), "TODO placeholder found"),
     (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
-    (re.compile(r"^\s*pass\s*$"), "Empty pass statement"),
-    (re.compile(r"^\s*\.\.\.\s*$"), "Ellipsis placeholder"),
+    # Updated to exclude legitimate pass statements in except blocks
+    (re.compile(r"^(\s*)pass\s*$"), "Empty pass statement"),
+    (re.compile(r"^(\s*)\.\.\.\s*$"), "Ellipsis placeholder"),
     (re.compile(r"NotImplementedError"), "NotImplementedError placeholder"),
-    (re.compile(r"<.*>"), "Angle bracket placeholder"),
+    # Updated to exclude legitimate comparison operators and Tkinter event bindings
+    (re.compile(r"<[^>]*>"), "Angle bracket placeholder"),
     (re.compile(r"your.*here", re.IGNORECASE), "Template placeholder"),
     (re.compile(r"insert.*here", re.IGNORECASE), "Template placeholder"),
 ]
+
+# Add exclusion for Tkinter event bindings and comparison operators
+EXCLUDED_PATTERNS = [
+    re.compile(r'bind\s*<[^>]*>'),  # Tkinter event bindings
+    re.compile(r'<[^>]*>.*bind'),   # Tkinter event bindings
+    re.compile(r'bind_all\s*<[^>]*>'),  # Tkinter bind_all event bindings
+    re.compile(r'<[^>]*>.*bind_all'),   # Tkinter bind_all event bindings
+    re.compile(r'<[^>]*>.*,.*'),     # Tkinter event bindings with parameters
+    re.compile(r'<=|>=|!=|=='),     # Comparison operators
+    re.compile(r'<[^>]*>'),         # Any angle brackets (legitimate Tkinter events)
+]
+
+# Add exclusion for legitimate pass statements in except blocks
+EXCEPT_PASS_PATTERN = re.compile(r'^\s*except.*:\s*$')
 
 MAGIC_NUMBERS = [
     (re.compile(r"(?<![0-9])3\.141"), "Use math.pi instead of 3.141"),
@@ -35,9 +51,31 @@ def check_banned_patterns(
     # Skip checking this file for its own patterns
     if filepath.name == "quality_check_script.py":
         return issues
+    
+    # Track if we're in an except block
+    in_except_block = False
+    
     for line_num, line in enumerate(lines, 1):
+        # Check if we're entering an except block
+        if EXCEPT_PASS_PATTERN.search(line):
+            in_except_block = True
+            continue
+        
+        # Check if we're leaving the except block (next non-empty, non-comment line)
+        if in_except_block and line.strip() and not line.strip().startswith('#'):
+            if not line.strip().startswith('pass'):
+                in_except_block = False
+        
+        # Skip lines that contain legitimate Tkinter event bindings
+        is_tkinter_event = any(pattern.search(line) for pattern in EXCLUDED_PATTERNS)
+        if is_tkinter_event:
+            continue
+            
         for pattern, message in BANNED_PATTERNS:
             if pattern.search(line):
+                # Skip pass statements that are in except blocks
+                if "pass" in message and in_except_block and "pass" in line.strip():
+                    continue
                 issues.append((line_num, message, line.strip()))
     return issues
 

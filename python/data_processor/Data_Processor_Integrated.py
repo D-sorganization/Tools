@@ -915,7 +915,9 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             self.converter_convert_button.configure(state="normal")
 
     def _generate_output_filename(
-        self, output_format: str, base_name: str | None = None,
+        self,
+        output_format: str,
+        base_name: str | None = None,
     ) -> str:
         """Generate output filename with proper extension.
 
