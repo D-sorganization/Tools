@@ -1,41 +1,31 @@
-# Global Safety
-- Every coding session starts with: `git switch -c chore/wip-$(date +%Y-%m-%d)`.
-- Every 30 min: make a WIP commit. If tests don’t pass, prefix with `wip:`.
-- End of day: run `scripts/snapshot.sh` to tag `snapshot-YYYY-MM-DD` and push `safety-net/YYYY-MM-DD`.
+# .cursorrules — Guardrails for Multi-file and Large Changes
 
-# Cursor AI Guardrails
-- Any AI change >50 lines or multi-file: FIRST create branch `backup/before-ai-<shortdesc>`.
-- Require: "Explain changes line-by-line" before accepting large edits.
-- Ask for edge cases and failure modes before accepting algorithmic code.
-- Never accept secrets or API keys in prompts/code; if detected, abort and scrub.
+# Purpose:
+# Enforce disciplined, end-to-end changes when AI edits multiple files or large diffs.
+# Maintain code quality, prevent placeholders, and ensure CI passes.
 
-# Python Rules
-- Python 3.11+, PEP8, type hints mandatory.
-- Pre-commit must pass: black, isort, ruff, mypy, nbstripout.
-- Use pinned deps: `requirements.txt` (exact versions) or `environment.yml` (conda).
-- Use `logging.getLogger(__name__)`; avoid `print` in libraries.
-- Determinism: set seeds (numpy, random, torch) and log in metadata.
+- For any change touching >3 files or >200 lines:
+  1) **PLAN** — List all files, dependencies, Definition of Done (DoD), and delivery strategy (stacked vs atomic PR).
+  2) **MECHANICAL fixes first** — ruff --fix, exception types, f-string migration.
+  3) **TYPING second** — add type hints, narrow exceptions, pass mypy.
+  4) **LOGIC last** — bug fixes or perf improvements with new tests.
+  5) Output **unified DIFFS** per file with a traceability table mapping requirements to changes.
+  6) Run **self-checks** and paste results (pre-commit, tests, mypy, ruff).
+  7) **No placeholders** — No TODO/FIXME/pass/NotImplementedError in maintained code.
+  8) If blocked or would exceed constraints, **STOP** and propose staged plan before proceeding.
 
-# MATLAB/Simulink Rules
-- Enable Code Analyzer; treat warnings as blockers.
-- Track `.slx/.mdl/.mat` via Git LFS; export textual configs via `.m` scripts.
-- Provide `matlab/run_all.m` that reproduces results end-to-end without clicks.
-- Save outputs to `output/YYYY-MM-DD/<experiment>/` with `metadata.json` (parameters, commit SHA, MATLAB version).
-- Include MATLAB Unit Test stubs for core functions; CI must run them.
+# Repo layout expectations:
+- Python libs: `python/<project>/`
+- Python tests: `python/<project>/tests/`
+- MATLAB libs: `matlab/<project>/`
+- MATLAB tests: `matlab/tests/`
+- Scripts/CLI entry points: `/scripts`
+- Large data/binaries: Git LFS
 
-# Project Hygiene
-- No direct commits to `main`. Use feature branches + PRs. Merge via squash commits.
-- Conventional commits required: feat/fix/docs/refactor/test/chore.
-- Maintain `CHANGELOG.md`; bump versions via `python/src/project/version.py` or MATLAB `+pkg/Version.m`.
-
-# PR Checklist (block merge unless all checked)
-- [ ] Reproducible: `run_all` completes locally
-- [ ] Tests pass (MATLAB + Python)
-- [ ] Large binary outputs excluded or LFS tracked
-- [ ] Env files updated
-- [ ] AI changes explained in PR description
-- [ ] No secrets or large data dumps
-
-# Domain-Specific Notes
-- Golf swing modeling: export kinematic parameter tables (CSV), torque profiles (CSV/MAT), figure data (CSV). Include sampling rates and coordinate-frame definitions in metadata.
-- Chemical simulations: pin solver tolerances, units, and EOS; store input decks (JSON/YAML) and outputs (CSV/Parquet) with schema version.
+# Commands AI should run (and paste output):
+```bash
+ruff check <touched_dir> --fix
+mypy <touched_dir> || true
+pre-commit run --all-files
+pytest -q || echo "No tests found"
+```
