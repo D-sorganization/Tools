@@ -23,8 +23,10 @@ parent_dir = current_dir.parent
 sys.path.insert(0, str(parent_dir))
 sys.path.insert(0, str(current_dir))
 
-# Set the package name for relative imports to work
-os.environ['PYTHONPATH'] = str(parent_dir)
+# Preserve existing PYTHONPATH and prepend project directories for child processes
+existing_pythonpath = os.environ.get('PYTHONPATH')
+prefix = os.pathsep.join([str(parent_dir), str(current_dir)])
+os.environ['PYTHONPATH'] = f"{prefix}{os.pathsep}{existing_pythonpath}" if existing_pythonpath else prefix
 
 try:
     from Data_Processor_Integrated import IntegratedCSVProcessorApp
