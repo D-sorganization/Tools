@@ -5,11 +5,11 @@ import logging
 import shutil
 import sys
 import zipfile
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from pathlib import Path
 
 # Set up logging
-logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 # Constants for package creation
@@ -48,7 +48,7 @@ def create_deployment_package() -> bool:
     zip_path = packages_dir / f"{package_name}.zip"
     create_zip_archive(package_dir, zip_path)
 
-    logger.info(f"Package created successfully: {zip_path}")
+    logger.info("Package created successfully: %s", zip_path)
     return True
 
 
@@ -61,19 +61,20 @@ def copy_required_files(source_dir: Path, package_dir: Path) -> bool:
 
     Returns:
         bool: True if all files were copied successfully.
+
     """
     for filename in REQUIRED_FILES:
         source_file = source_dir / filename
         if not source_file.exists():
-            logger.warning(f"Warning: Required file {filename} not found")
+            logger.warning("Warning: Required file %s not found", filename)
             continue
 
         dest_file = package_dir / filename
         try:
             shutil.copy2(source_file, dest_file)
-            logger.info(f"Copied: {filename}")
-        except OSError as e:
-            logger.error(f"Error copying {filename}: {e}")
+            logger.info("Copied: %s", filename)
+        except OSError:
+            logger.exception("Error copying %s", filename)
             return False
 
     return True
@@ -85,6 +86,7 @@ def create_zip_archive(source_dir: Path, zip_path: Path) -> None:
     Args:
         source_dir: Directory to archive.
         zip_path: Path for the zip file.
+
     """
     with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
         for file_path in source_dir.rglob("*"):
@@ -92,11 +94,11 @@ def create_zip_archive(source_dir: Path, zip_path: Path) -> None:
                 arcname = file_path.relative_to(source_dir)
                 zipf.write(file_path, arcname)
 
-    logger.info(f"Created archive: {zip_path}")
+    logger.info("Created archive: %s", zip_path)
 
 
 def main() -> None:
-    """Main function to run package creation."""
+    """Run package creation."""
     success = create_deployment_package()
     if not success:
         sys.exit(1)

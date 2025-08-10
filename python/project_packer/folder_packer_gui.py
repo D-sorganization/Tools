@@ -8,7 +8,7 @@ from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
 # Set up logging
-logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 # Constants for file filtering
@@ -33,6 +33,7 @@ class FolderPackerGUI:
 
         Args:
             root: Main Tkinter root window.
+
         """
         self.root = root
         self.root.title("Folder Packer")
@@ -138,7 +139,9 @@ class FolderPackerGUI:
         self.status_text.grid(row=0, column=0, sticky="ew")
 
         # Scrollbar for status text
-        status_scrollbar = ttk.Scrollbar(status_frame, orient="vertical", command=self.status_text.yview)
+        status_scrollbar = ttk.Scrollbar(
+            status_frame, orient="vertical", command=self.status_text.yview,
+        )
         status_scrollbar.grid(row=0, column=1, sticky="ns")
         self.status_text.configure(yscrollcommand=status_scrollbar.set)
 
@@ -198,19 +201,19 @@ class FolderPackerGUI:
             if success_count == total_count:
                 messagebox.showinfo(
                     "Success",
-                    f"All {success_count} folders packed successfully to:\n{output_path}"
+                    f"All {success_count} folders packed successfully to:\n{output_path}",
                 )
             else:
                 messagebox.showwarning(
                     "Partial Success",
                     f"Packed {success_count}/{total_count} folders successfully.\n"
-                    f"Check status for details."
+                    f"Check status for details.",
                 )
 
-        except Exception as e:
+        except OSError as e:
             messagebox.showerror(
                 "Error",
-                f"An error occurred while packing: {e}"
+                f"An error occurred while packing: {e}",
             )
             self.update_status("Error occurred during packing")
 
@@ -222,11 +225,12 @@ class FolderPackerGUI:
 
         Returns:
             bool: True if packing was successful, False otherwise.
+
         """
         try:
             source_path = Path(source_folder)
             if not source_path.exists():
-                logger.error(f"Source folder does not exist: {source_folder}")
+                logger.error("Source folder does not exist: %s", source_folder)
                 return False
 
             # Create destination path
@@ -236,11 +240,11 @@ class FolderPackerGUI:
 
             # Copy folder contents
             self.copy_folder_contents(source_path, dest_path)
-            return True
-
-        except OSError as e:
-            logger.error(f"Error packing {source_folder}: {e}")
+        except OSError:
+            logger.exception("Error packing %s", source_folder)
             return False
+        else:
+            return True
 
     def copy_folder_contents(self, source: Path, destination: Path) -> None:
         """Copy folder contents with filtering.
@@ -248,6 +252,7 @@ class FolderPackerGUI:
         Args:
             source: Source folder path.
             destination: Destination folder path.
+
         """
         destination.mkdir(parents=True, exist_ok=True)
 
@@ -266,12 +271,13 @@ class FolderPackerGUI:
 
         Returns:
             bool: True if the file should be included.
+
         """
         # Check if it's a configuration file (these are always included)
         config_extensions = {".env", ".config", ".conf", ".cfg", ".ini", ".toml"}
         if file_path.suffix.lower() in config_extensions:
             return True
-        
+
         # Check if file extension is in the include list
         return file_path.suffix.lower() in INCLUDE_EXTENSIONS
 
@@ -283,6 +289,7 @@ class FolderPackerGUI:
 
         Returns:
             bool: True if the directory should be included.
+
         """
         dir_name = dir_path.name.lower()
 
@@ -304,8 +311,9 @@ class FolderPackerGUI:
 
         Args:
             message: Status message to display.
+
         """
-        timestamp = datetime.datetime.now().strftime("%H:%M:%S")
+        timestamp = datetime.datetime.now(tz=datetime.UTC).strftime("%H:%M:%S")
         status_line = f"[{timestamp}] {message}\n"
         self.status_text.insert(tk.END, status_line)
         self.status_text.see(tk.END)
@@ -313,7 +321,7 @@ class FolderPackerGUI:
 
 
 def main() -> None:
-    """Main entry point for the Folder Packer application."""
+    """Run the Folder Packer application."""
     # Create main window
     root = tk.Tk()
     FolderPackerGUI(root)

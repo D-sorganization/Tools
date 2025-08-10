@@ -34,30 +34,33 @@ class TestFolderPackerGUI:
     @pytest.fixture
     def gui_instance(self, mock_root: Mock) -> FolderPackerGUI:
         """Create a FolderPackerGUI instance with mocked dependencies."""
-        with patch("folder_packer_gui.ttk.Frame"), \
-             patch("folder_packer_gui.ttk.Label"), \
-             patch("folder_packer_gui.ttk.LabelFrame"), \
-             patch("folder_packer_gui.tk.Listbox"), \
-             patch("folder_packer_gui.ttk.Button"), \
-             patch("folder_packer_gui.ttk.Entry"), \
-             patch("folder_packer_gui.ttk.Frame"), \
-             patch("folder_packer_gui.tk.Text"), \
-             patch("folder_packer_gui.ttk.Scrollbar"), \
-             patch("folder_packer_gui.ttk.Style"):
+        with (
+            patch("folder_packer_gui.ttk.Frame"),
+            patch("folder_packer_gui.ttk.Label"),
+            patch("folder_packer_gui.ttk.LabelFrame"),
+            patch("folder_packer_gui.tk.Listbox"),
+            patch("folder_packer_gui.ttk.Button"),
+            patch("folder_packer_gui.ttk.ttk.Entry"),
+            patch("folder_packer_gui.tk.Text"),
+            patch("folder_packer_gui.ttk.Scrollbar"),
+            patch("folder_packer_gui.ttk.Style"),
+        ):
             gui = FolderPackerGUI(mock_root)
             return gui
 
     def test_init(self, mock_root: Mock) -> None:
         """Test GUI initialization."""
-        with patch("folder_packer_gui.ttk.Frame"), \
-             patch("folder_packer_gui.ttk.Label"), \
-             patch("folder_packer_gui.ttk.LabelFrame"), \
-             patch("folder_packer_gui.tk.Listbox"), \
-             patch("folder_packer_gui.ttk.Button"), \
-             patch("folder_packer_gui.ttk.Entry"), \
-             patch("folder_packer_gui.tk.Text"), \
-             patch("folder_packer_gui.ttk.Scrollbar"), \
-             patch("folder_packer_gui.ttk.Style"):
+        with (
+            patch("folder_packer_gui.ttk.Frame"),
+            patch("folder_packer_gui.ttk.Label"),
+            patch("folder_packer_gui.ttk.LabelFrame"),
+            patch("folder_packer_gui.tk.Listbox"),
+            patch("folder_packer_gui.ttk.Button"),
+            patch("folder_packer_gui.ttk.Entry"),
+            patch("folder_packer_gui.tk.Text"),
+            patch("folder_packer_gui.ttk.Scrollbar"),
+            patch("folder_packer_gui.ttk.Style"),
+        ):
             gui = FolderPackerGUI(mock_root)
 
             assert gui.root == mock_root

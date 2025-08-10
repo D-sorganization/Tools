@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 # Set up logging
-logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 # Constants for build configuration
@@ -25,6 +25,8 @@ def check_pyinstaller() -> bool:
 
     Returns:
         bool: True if PyInstaller is available, False otherwise.
+
+
     """
     return importlib.util.find_spec("PyInstaller") is not None
 
@@ -34,6 +36,8 @@ def install_pyinstaller() -> bool:
 
     Returns:
         bool: True if installation was successful, False otherwise.
+
+
     """
     logger.info("Installing PyInstaller...")
     try:
@@ -41,13 +45,14 @@ def install_pyinstaller() -> bool:
             [sys.executable, "-m", "pip", "install", "pyinstaller"],
             check=True,
             capture_output=True,
-            text=True
+            text=True,
         )
         logger.info("PyInstaller installed successfully!")
-        return True
-    except subprocess.CalledProcessError as e:
-        logger.error(f"Failed to install PyInstaller: {e}")
+    except subprocess.CalledProcessError:
+        logger.exception("Failed to install PyInstaller")
         return False
+    else:
+        return True
 
 
 def clean_build_dirs() -> None:
@@ -56,7 +61,7 @@ def clean_build_dirs() -> None:
         dir_path = Path(dir_name)
         if dir_path.exists():
             shutil.rmtree(dir_path)
-            logger.info(f"Cleaned {dir_name} directory")
+            logger.info("Cleaned %s directory", dir_name)
 
 
 def build_executable() -> bool:
@@ -64,10 +69,12 @@ def build_executable() -> bool:
 
     Returns:
         bool: True if build was successful, False otherwise.
+
+
     """
     script_path = Path(SCRIPT_NAME)
     if not script_path.exists():
-        logger.error(f"Error: {SCRIPT_NAME} not found!")
+        logger.error("Error: %s not found!", SCRIPT_NAME)
         return False
 
     # Clean previous builds
@@ -83,12 +90,12 @@ def build_executable() -> bool:
     ]
 
     logger.info("Building executable...")
-    logger.info(f"Command: {' '.join(cmd)}")
+    logger.info("Command: %s", " ".join(cmd))
 
     try:
         subprocess.run(cmd, cwd=Path.cwd(), check=True, capture_output=True, text=True)
-    except subprocess.CalledProcessError as e:
-        logger.error(f"Build failed: {e}")
+    except subprocess.CalledProcessError:
+        logger.exception("Build failed")
         return False
     else:
         logger.info("Build completed successfully!")
@@ -100,15 +107,17 @@ def verify_build() -> bool:
 
     Returns:
         bool: True if build verification passed, False otherwise.
+
+
     """
     exe_path = Path(DIST_DIR) / f"{EXE_NAME}.exe"
     if not exe_path.exists():
-        logger.error(f"Error: Executable not found at {exe_path}")
+        logger.error("Error: Executable not found at %s", exe_path)
         return False
 
     file_size = exe_path.stat().st_size
-    logger.info(f"Executable created: {exe_path}")
-    logger.info(f"File size: {file_size / (1024 * 1024):.1f} MB")
+    logger.info("Executable created: %s", exe_path)
+    logger.info("File size: %.1f MB", file_size / (1024 * 1024))
 
     return True
 
@@ -129,7 +138,7 @@ def main() -> None:
     if build_executable():
         if verify_build():
             logger.info("\n✅ Build completed successfully!")
-            logger.info(f"Executable location: {Path(DIST_DIR) / f'{EXE_NAME}.exe'}")
+            logger.info("Executable location: %s", Path(DIST_DIR) / f"{EXE_NAME}.exe")
         else:
             logger.error("\n❌ Build verification failed!")
             sys.exit(1)
