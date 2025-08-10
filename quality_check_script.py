@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Quality check script to verify AI-generated code meets standards."""
 
-import argparse
 import ast
 import re
 import sys
@@ -11,35 +10,64 @@ from pathlib import Path
 BANNED_PATTERNS = [
     (re.compile(r"\bTODO\b"), "TODO placeholder found"),
     (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
-    # Updated to exclude legitimate pass statements in except blocks
-    (re.compile(r"^(\s*)pass\s*$"), "Empty pass statement"),
-    (re.compile(r"^(\s*)\.\.\.\s*$"), "Ellipsis placeholder"),
+    (re.compile(r"^\s*\.\.\.\s*$"), "Ellipsis placeholder"),
     (re.compile(r"NotImplementedError"), "NotImplementedError placeholder"),
-    # Updated to exclude legitimate comparison operators and Tkinter event bindings
-    (re.compile(r"<[^>]*>"), "Angle bracket placeholder"),
+    (re.compile(r"<.*>"), "Angle bracket placeholder"),
     (re.compile(r"your.*here", re.IGNORECASE), "Template placeholder"),
     (re.compile(r"insert.*here", re.IGNORECASE), "Template placeholder"),
 ]
 
-# Add exclusion for Tkinter event bindings and comparison operators
-EXCLUDED_PATTERNS = [
-    re.compile(r"bind\s*<[^>]*>"),  # Tkinter event bindings
-    re.compile(r"<[^>]*>.*bind"),  # Tkinter event bindings
-    re.compile(r"bind_all\s*<[^>]*>"),  # Tkinter bind_all event bindings
-    re.compile(r"<[^>]*>.*bind_all"),  # Tkinter bind_all event bindings
-    re.compile(r"<[^>]*>.*,.*"),  # Tkinter event bindings with parameters
-    re.compile(r"<=|>=|!=|=="),  # Comparison operators
-    re.compile(r"<[^>]*>"),  # Any angle brackets (legitimate Tkinter events)
+# More intelligent pass statement detection
+PASS_PATTERNS = [
+    # Empty pass statements that are likely placeholders
+    (re.compile(r"^\s*pass\s*$"), "Empty pass statement"),
+    # Pass statements in empty blocks that might be placeholders
+    (re.compile(r"^\s*if\s+.*:\s*$"), "Empty if block - consider adding logic or comment"),
+    (re.compile(r"^\s*else:\s*$"), "Empty else block - consider adding logic or comment"),
+    (re.compile(r"^\s*except\s+.*:\s*$"), "Empty except block - consider adding error handling"),
 ]
-
-# Add exclusion for legitimate pass statements in except blocks
-EXCEPT_PASS_PATTERN = re.compile(r"^\s*except.*:\s*$")
 
 MAGIC_NUMBERS = [
     (re.compile(r"(?<![0-9])3\.141"), "Use math.pi instead of 3.141"),
     (re.compile(r"(?<![0-9])9\.8[0-9]?(?![0-9])"), "Define GRAVITY_M_S2 constant"),
     (re.compile(r"(?<![0-9])6\.67[0-9]?(?![0-9])"), "Define gravitational constant"),
 ]
+
+
+def is_legitimate_pass_context(lines: list[str], line_num: int) -> bool:
+    """Check if a pass statement is in a legitimate context."""
+    if line_num <= 0 or line_num > len(lines):
+        return False
+    
+    line = lines[line_num - 1].strip()
+    if not line == "pass":
+        return False
+    
+    # Check if this is in a class definition (legitimate)
+    for i in range(line_num - 1, max(0, line_num - 10), -1):
+        prev_line = lines[i - 1].strip()
+        if prev_line.startswith("class "):
+            return True
+        if prev_line.startswith("def "):
+            return False
+        if prev_line.endswith(":"):
+            # Check if it's a legitimate empty block
+            if any(keyword in prev_line for keyword in ["try:", "except", "finally:", "with ", "if __name__"]):
+                return True
+    
+    # Check if this is in a try/except block (legitimate)
+    for i in range(line_num - 1, max(0, line_num - 5), -1):
+        prev_line = lines[i - 1].strip()
+        if "try:" in prev_line or "except" in prev_line:
+            return True
+    
+    # Check if this is in a context manager (legitimate)
+    for i in range(line_num - 1, max(0, line_num - 3), -1):
+        prev_line = lines[i - 1].strip()
+        if prev_line.startswith("with "):
+            return True
+    
+    return False
 
 
 def check_banned_patterns(
@@ -51,32 +79,18 @@ def check_banned_patterns(
     # Skip checking this file for its own patterns
     if filepath.name == "quality_check_script.py":
         return issues
-
-    # Track if we're in an except block
-    in_except_block = False
-
+    
     for line_num, line in enumerate(lines, 1):
-        # Check if we're entering an except block
-        if EXCEPT_PASS_PATTERN.search(line):
-            in_except_block = True
-            continue
-
-        # Check if we're leaving the except block (next non-empty, non-comment line)
-        if in_except_block and line.strip() and not line.strip().startswith("#"):
-            if not line.strip().startswith("pass"):
-                in_except_block = False
-
-        # Skip lines that contain legitimate Tkinter event bindings
-        is_tkinter_event = any(pattern.search(line) for pattern in EXCLUDED_PATTERNS)
-        if is_tkinter_event:
-            continue
-
+        # Check for basic banned patterns
         for pattern, message in BANNED_PATTERNS:
             if pattern.search(line):
-                # Skip pass statements that are in except blocks
-                if "pass" in message and in_except_block and "pass" in line.strip():
-                    continue
                 issues.append((line_num, message, line.strip()))
+        
+        # Special handling for pass statements
+        if re.match(r"^\s*pass\s*$", line):
+            if not is_legitimate_pass_context(lines, line_num):
+                issues.append((line_num, "Empty pass statement - consider adding logic or comment", line.strip()))
+    
     return issues
 
 
@@ -103,11 +117,7 @@ def check_ast_issues(content: str) -> list[tuple[int, str, str]]:
             if isinstance(node, ast.FunctionDef):
                 if not ast.get_docstring(node):
                     issues.append(
-                        (
-                            node.lineno,
-                            f"Function '{node.name}' missing docstring",
-                            "",
-                        ),
+                        (node.lineno, f"Function '{node.name}' missing docstring", ""),
                     )
                 if not node.returns and node.name != "__init__":
                     issues.append(
@@ -138,8 +148,8 @@ def check_file(filepath: Path) -> list[tuple[int, str, str]]:
         return issues
 
 
-def get_all_python_files() -> list[Path]:
-    """Get all Python files in repository with exclusions."""
+def main() -> None:
+    """Run quality checks on Python files."""
     python_files = list(Path().rglob("*.py"))
 
     # Exclude certain directories
@@ -153,42 +163,12 @@ def get_all_python_files() -> list[Path]:
         ".mypy_cache",
         "matlab",
         "output",
+        ".ipynb_checkpoints",  # Add checkpoint files to exclusion
+        ".Trash",  # Add trash files to exclusion
     }
-    return [
+    python_files = [
         f for f in python_files if not any(part in exclude_dirs for part in f.parts)
     ]
-
-
-def get_specified_python_files(file_paths: list[str]) -> list[Path]:
-    """Get Python files from specified paths."""
-    python_files = [Path(f) for f in file_paths if f.endswith(".py")]
-    if not python_files:
-        sys.stderr.write("❌ No Python files specified\n")
-        sys.exit(1)
-    return python_files
-
-
-def get_python_files_from_args(args: argparse.Namespace) -> list[Path]:
-    """Get Python files based on command line arguments."""
-    if args.files:
-        return get_specified_python_files(args.files)
-    return get_all_python_files()
-
-
-def main() -> None:
-    """Run quality checks on Python files."""
-    parser = argparse.ArgumentParser(
-        description="Quality check script for Python files",
-    )
-    parser.add_argument("--files", nargs="+", help="Specific Python files to check")
-    parser.add_argument(
-        "--all",
-        action="store_true",
-        help="Check all Python files in repository",
-    )
-    args = parser.parse_args()
-
-    python_files = get_python_files_from_args(args)
 
     all_issues = []
     for filepath in python_files:
