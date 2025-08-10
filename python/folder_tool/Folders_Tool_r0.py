@@ -6,6 +6,7 @@ import re
 import shutil
 import sys
 import threading
+import time
 
 # Third-party imports
 import tkinter as tk
@@ -31,6 +32,16 @@ MAX_DIALOG_WIDTH: Final[int] = 800  # Maximum dialog width [pixels] - prevents d
 MAX_DIALOG_HEIGHT: Final[int] = 600  # Maximum dialog height [pixels] - prevents dialog overflow
 MIN_DIALOG_WIDTH: Final[int] = 400  # Minimum dialog width [pixels] - ensures usability
 MIN_DIALOG_HEIGHT: Final[int] = 300  # Minimum dialog height [pixels] - ensures usability
+
+# Additional constants for improved maintainability
+MAX_TEXT_CONTENT_SIZE: Final[int] = 1000000  # Maximum text content size [characters] - prevents performance issues
+MAX_TITLE_LENGTH: Final[int] = 100  # Maximum title length [characters] - prevents window title truncation
+MAX_COUNTER_ATTEMPTS: Final[int] = 1000  # Maximum attempts to generate unique filename [attempts] - prevents infinite loops
+PROGRESS_BACKUP_PERCENT: Final[int] = 20  # Progress percentage allocated to backup operations [%] - UI progress tracking
+PROGRESS_MAIN_OP_PERCENT: Final[int] = 40  # Progress percentage allocated to main operations [%] - UI progress tracking
+PROGRESS_ZIP_PERCENT: Final[int] = 10  # Progress percentage allocated to ZIP creation [%] - UI progress tracking
+PROGRESS_START_MAIN: Final[int] = 30  # Starting progress percentage for main operations [%] - UI progress tracking
+PROGRESS_START_ZIP: Final[int] = 85  # Starting progress percentage for ZIP creation [%] - UI progress tracking
 
 # Set up logging to capture detailed information
 log_filename = "folder_processor.log"
@@ -101,6 +112,10 @@ class FolderProcessorApp:
     def _validate_constants(self) -> None:
         """Validates that all constants meet the required constraints.
         
+        This method ensures all constants are within valid ranges and follow
+        logical relationships. It validates file sizes, UI dimensions, progress
+        percentages, and other configuration values.
+        
         Raises:
             ValueError: If any constant violates its constraints
         """
@@ -130,10 +145,39 @@ class FolderProcessorApp:
         if MAX_RETRY_ATTEMPTS <= 0:
             raise ValueError(f"MAX_RETRY_ATTEMPTS must be positive, got {MAX_RETRY_ATTEMPTS}")
 
+        # Validate new constants
+        if MAX_TEXT_CONTENT_SIZE <= 0:
+            raise ValueError(f"MAX_TEXT_CONTENT_SIZE must be positive, got {MAX_TEXT_CONTENT_SIZE}")
+        if MAX_TITLE_LENGTH <= 0:
+            raise ValueError(f"MAX_TITLE_LENGTH must be positive, got {MAX_TITLE_LENGTH}")
+        if MAX_COUNTER_ATTEMPTS <= 0:
+            raise ValueError(f"MAX_COUNTER_ATTEMPTS must be positive, got {MAX_COUNTER_ATTEMPTS}")
+        
+        # Validate progress constants
+        if PROGRESS_BACKUP_PERCENT < 0 or PROGRESS_BACKUP_PERCENT > 100:
+            raise ValueError(f"PROGRESS_BACKUP_PERCENT must be between 0 and 100, got {PROGRESS_BACKUP_PERCENT}")
+        if PROGRESS_MAIN_OP_PERCENT < 0 or PROGRESS_MAIN_OP_PERCENT > 100:
+            raise ValueError(f"PROGRESS_MAIN_OP_PERCENT must be between 0 and 100, got {PROGRESS_MAIN_OP_PERCENT}")
+        if PROGRESS_ZIP_PERCENT < 0 or PROGRESS_ZIP_PERCENT > 100:
+            raise ValueError(f"PROGRESS_ZIP_PERCENT must be between 0 and 100, got {PROGRESS_ZIP_PERCENT}")
+        if PROGRESS_START_MAIN < 0 or PROGRESS_START_MAIN > 100:
+            raise ValueError(f"PROGRESS_START_MAIN must be between 0 and 100, got {PROGRESS_START_MAIN}")
+        if PROGRESS_START_ZIP < 0 or PROGRESS_START_ZIP > 100:
+            raise ValueError(f"PROGRESS_START_ZIP must be between 0 and 100, got {PROGRESS_START_ZIP}")
+
+        # Validate progress flow consistency
+        total_progress = PROGRESS_BACKUP_PERCENT + PROGRESS_MAIN_OP_PERCENT + PROGRESS_ZIP_PERCENT
+        if total_progress > 100:
+            raise ValueError(f"Total progress allocation exceeds 100%: {total_progress}")
+
         logger.info("All constants validated successfully")
 
     def get_constants_info(self) -> dict[str, dict[str, str]]:
         """Returns information about all constants for debugging and documentation.
+        
+        This method provides comprehensive metadata about all constants including
+        their values, units, and sources. This is useful for debugging, documentation,
+        and system validation.
         
         Returns:
             Dictionary mapping constant names to their metadata [dict] - includes value, units, and source
@@ -217,6 +261,46 @@ class FolderProcessorApp:
                 "value": str(MIN_DIALOG_HEIGHT),
                 "units": "pixels",
                 "source": "Ensures usability"
+            },
+            "MAX_TEXT_CONTENT_SIZE": {
+                "value": str(MAX_TEXT_CONTENT_SIZE),
+                "units": "characters",
+                "source": "Prevents performance issues in text dialogs"
+            },
+            "MAX_TITLE_LENGTH": {
+                "value": str(MAX_TITLE_LENGTH),
+                "units": "characters",
+                "source": "Prevents window title truncation"
+            },
+            "MAX_COUNTER_ATTEMPTS": {
+                "value": str(MAX_COUNTER_ATTEMPTS),
+                "units": "attempts",
+                "source": "Prevents infinite loops in filename generation"
+            },
+            "PROGRESS_BACKUP_PERCENT": {
+                "value": str(PROGRESS_BACKUP_PERCENT),
+                "units": "%",
+                "source": "UI progress tracking for backup operations"
+            },
+            "PROGRESS_MAIN_OP_PERCENT": {
+                "value": str(PROGRESS_MAIN_OP_PERCENT),
+                "units": "%",
+                "source": "UI progress tracking for main operations"
+            },
+            "PROGRESS_ZIP_PERCENT": {
+                "value": str(PROGRESS_ZIP_PERCENT),
+                "units": "%",
+                "source": "UI progress tracking for ZIP creation"
+            },
+            "PROGRESS_START_MAIN": {
+                "value": str(PROGRESS_START_MAIN),
+                "units": "%",
+                "source": "Starting progress for main operations"
+            },
+            "PROGRESS_START_ZIP": {
+                "value": str(PROGRESS_START_ZIP),
+                "units": "%",
+                "source": "Starting progress for ZIP creation"
             }
         }
 
@@ -1117,30 +1201,63 @@ class FolderProcessorApp:
             Tuple of (success: bool, message: str) - success indicates extraction completed without errors
             
         Raises:
+            ValueError: If archive_path is empty or invalid
+            FileNotFoundError: If archive file does not exist
+            PermissionError: If insufficient permissions to read archive or write to extract directory
             OSError: If file system operations fail
-            ValueError: If archive validation fails
             Exception: If extraction process fails
         """
-        if not os.path.exists(archive_path):
-            return False, f"Archive file not found: {archive_path}"
+        # Input validation
+        if not archive_path or not isinstance(archive_path, str):
+            raise ValueError(f"Archive path must be non-empty string, got {type(archive_path)}")
+        
+        archive_path_obj = Path(archive_path)
+        
+        # Validate archive file exists and is accessible
+        if not archive_path_obj.exists():
+            raise FileNotFoundError(f"Archive file not found: {archive_path}")
+        if not archive_path_obj.is_file():
+            raise ValueError(f"Archive path is not a file: {archive_path}")
+        if not os.access(archive_path, os.R_OK):
+            raise PermissionError(f"Cannot read archive file: {archive_path}")
 
         # Validate archive file size
         try:
-            archive_size = os.path.getsize(archive_path)
+            archive_size = archive_path_obj.stat().st_size
             if archive_size == 0:
                 return False, f"Archive file is empty: {archive_path}"
+            if archive_size > MAX_FILE_SIZE_MB * 1024 * 1024:
+                logger.warning(f"Archive file exceeds maximum size limit: {archive_path} ({archive_size / (1024*1024):.1f} MB)")
         except OSError as e:
             return False, f"Cannot access archive file: {e}"
 
+        # Validate archive file extension
+        archive_ext = archive_path_obj.suffix.lower()
+        supported_formats = {'.zip', '.tar', '.gz', '.bz2', '.xz', '.7z', '.rar'}
+        if archive_ext not in supported_formats:
+            logger.warning(f"Unsupported archive format: {archive_ext} for {archive_path}")
+
+        # Generate unique extraction directory
         extract_dir = self._get_unique_path(os.path.splitext(archive_path)[0])
+        extract_dir_obj = Path(extract_dir)
 
         try:
+            # Create extraction directory
+            extract_dir_obj.mkdir(parents=True, exist_ok=True)
+            
+            # Verify directory was created and is writable
+            if not extract_dir_obj.exists():
+                raise Exception("Failed to create extraction directory")
+            if not os.access(extract_dir, os.W_OK):
+                raise PermissionError(f"Cannot write to extraction directory: {extract_dir}")
+
             # Extract archive
+            logger.info(f"Extracting archive: {archive_path} -> {extract_dir}")
             shutil.unpack_archive(archive_path, extract_dir)
 
             # Validate extraction if safe mode is enabled
             if self.safe_extract_var.get():
-                if not os.path.exists(extract_dir):
+                if not extract_dir_obj.exists():
                     raise Exception("Extraction failed - destination folder was not created")
 
                 if not os.listdir(extract_dir):
@@ -1148,30 +1265,37 @@ class FolderProcessorApp:
 
                 # Check if any files were actually extracted
                 extracted_files = []
-                for root, dirs, files in os.walk(extract_dir):
-                    extracted_files.extend(files)
-
-                if not extracted_files:
-                    raise Exception(
-                        "Extraction failed - no files found in extracted folder",
-                    )
-
-                # Verify total extracted size is reasonable
                 total_extracted_size = 0
+                
                 for root, dirs, files in os.walk(extract_dir):
                     for file in files:
                         file_path = os.path.join(root, file)
                         try:
-                            total_extracted_size += os.path.getsize(file_path)
-                        except OSError:
-                            continue
+                            file_size = os.path.getsize(file_path)
+                            extracted_files.append(file_path)
+                            total_extracted_size += file_size
+                        except OSError as e:
+                            logger.warning(f"Cannot access extracted file size: {file_path} - {e}")
 
-                # Check if extracted size is reasonable (should be >= archive size * MIN_ARCHIVE_SIZE_RATIO)
+                if not extracted_files:
+                    raise Exception("Extraction failed - no files found in extracted folder")
+
+                # Verify total extracted size is reasonable
                 if total_extracted_size < archive_size * MAX_ARCHIVE_SIZE_RATIO:
-                    logger.warning(f"Extracted size ({total_extracted_size}) seems small compared to archive size ({archive_size})")
+                    logger.warning(
+                        f"Extracted size ({total_extracted_size}) seems small compared to archive size ({archive_size})"
+                    )
+
+                logger.info(f"Extraction validation passed: {len(extracted_files)} files, {total_extracted_size} bytes")
 
             # Only delete original if extraction was successful
-            os.remove(archive_path)
+            try:
+                archive_path_obj.unlink()
+                logger.info(f"Deleted original archive: {archive_path}")
+            except OSError as e:
+                logger.warning(f"Failed to delete original archive: {archive_path} - {e}")
+                # Don't fail the operation if cleanup fails
+
             return (
                 True,
                 f"Successfully extracted and deleted '{os.path.basename(archive_path)}' ({len(extracted_files) if 'extracted_files' in locals() else 'unknown'} files)",
@@ -1179,11 +1303,12 @@ class FolderProcessorApp:
 
         except Exception as e:
             # Clean up failed extraction directory
-            if os.path.exists(extract_dir):
+            if extract_dir_obj.exists():
                 try:
                     shutil.rmtree(extract_dir, ignore_errors=True)
+                    logger.info(f"Cleaned up failed extraction directory: {extract_dir}")
                 except Exception as cleanup_error:
-                    logger.warning(f"Failed to cleanup extraction directory: {cleanup_error}")
+                    logger.warning(f"Failed to cleanup extraction directory: {extract_dir} - {cleanup_error}")
 
             return False, f"Failed to extract '{os.path.basename(archive_path)}': {e}"
 
@@ -1194,65 +1319,150 @@ class FolderProcessorApp:
             Path to backup directory if successful [str], None if failed
             
         Raises:
+            ValueError: If source_folders list is empty or invalid
             OSError: If file system operations fail during backup creation
             PermissionError: If insufficient permissions to create backup
             Exception: If backup process fails for other reasons
         """
+        # Input validation
         if not self.source_folders:
-            logger.error("No source folders to backup")
-            return None
+            raise ValueError("No source folders to backup")
+        if not isinstance(self.source_folders, list):
+            raise ValueError(f"Source folders must be a list, got {type(self.source_folders)}")
+        
+        # Validate each source folder
+        valid_source_folders = []
+        for folder in self.source_folders:
+            if not folder or not isinstance(folder, str):
+                logger.warning(f"Invalid source folder: {folder}")
+                continue
+            if not os.path.exists(folder):
+                logger.warning(f"Source folder no longer exists: {folder}")
+                continue
+            if not os.access(folder, os.R_OK):
+                logger.warning(f"Cannot access source folder: {folder}")
+                continue
+            valid_source_folders.append(folder)
+        
+        if not valid_source_folders:
+            raise ValueError("No valid source folders to backup")
 
-        backup_base = os.path.join(
-            os.path.dirname(self.source_folders[0]),
-            f"backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
-        )
+        # Generate backup directory name with timestamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        backup_base_name = f"backup_{timestamp}"
+        
+        # Create backup in parent directory of first source folder
+        try:
+            first_source_parent = Path(valid_source_folders[0]).parent
+            backup_base = first_source_parent / backup_base_name
+        except Exception as e:
+            raise ValueError(f"Cannot determine backup location: {e}")
 
         self.update_status("Creating backup...")
+        logger.info(f"Creating backup at: {backup_base}")
 
         try:
             # Create backup base directory
-            os.makedirs(backup_base, exist_ok=True)
+            backup_base.mkdir(parents=True, exist_ok=True)
+            
+            # Verify directory was created and is writable
+            if not backup_base.exists():
+                raise Exception("Failed to create backup base directory")
+            if not os.access(backup_base, os.W_OK):
+                raise PermissionError(f"Cannot write to backup directory: {backup_base}")
 
-            for i, folder in enumerate(self.source_folders):
+            total_folders = len(valid_source_folders)
+            successful_backups = 0
+            failed_backups = 0
+
+            for i, folder in enumerate(valid_source_folders):
                 if self.cancel_operation:
+                    logger.info("Backup operation cancelled by user")
                     return None
 
                 if not os.path.exists(folder):
                     logger.warning(f"Source folder no longer exists: {folder}")
                     continue
 
-                backup_path = os.path.join(backup_base, os.path.basename(folder))
+                # Create backup path
+                try:
+                    folder_name = Path(folder).name
+                    backup_path = backup_base / folder_name
+                    
+                    # Ensure backup path is unique
+                    if backup_path.exists():
+                        backup_path = self._get_unique_path(str(backup_path))
+                        backup_path = Path(backup_path)
+                except Exception as e:
+                    logger.error(f"Failed to create backup path for {folder}: {e}")
+                    failed_backups += 1
+                    continue
 
                 try:
+                    # Create backup
                     shutil.copytree(folder, backup_path)
+                    successful_backups += 1
                     logger.info(f"Backed up folder: {folder} -> {backup_path}")
+                    
+                    # Verify backup was created successfully
+                    if not backup_path.exists():
+                        raise Exception("Backup directory was not created")
+                    if not os.listdir(backup_path):
+                        raise Exception("Backup directory is empty")
+                    
                 except Exception as e:
+                    failed_backups += 1
                     logger.error(f"Failed to backup folder {folder}: {e}")
+                    
+                    # Clean up failed backup
+                    if backup_path.exists():
+                        try:
+                            shutil.rmtree(backup_path, ignore_errors=True)
+                            logger.info(f"Cleaned up failed backup: {backup_path}")
+                        except Exception as cleanup_error:
+                            logger.warning(f"Failed to cleanup failed backup: {backup_path} - {cleanup_error}")
+                    
                     # Continue with other folders
                     continue
 
-                progress = (i + 1) / len(self.source_folders) * 20  # 20% for backup
+                # Update progress
+                progress = (i + 1) / total_folders * PROGRESS_BACKUP_PERCENT  # PROGRESS_BACKUP_PERCENT% for backup
                 self.update_progress(
                     progress,
-                    f"Backing up folder {i+1}/{len(self.source_folders)}",
+                    f"Backing up folder {i+1}/{total_folders}",
                 )
 
-            # Verify backup was created successfully
-            if os.path.exists(backup_base) and os.listdir(backup_base):
+            # Verify overall backup success
+            if successful_backups == 0:
+                logger.error("No folders were successfully backed up")
+                # Clean up empty backup directory
+                if backup_base.exists():
+                    try:
+                        shutil.rmtree(backup_base, ignore_errors=True)
+                        logger.info(f"Cleaned up empty backup directory: {backup_base}")
+                    except Exception as cleanup_error:
+                        logger.warning(f"Failed to cleanup empty backup directory: {backup_base} - {cleanup_error}")
+                return None
+
+            # Final verification
+            if backup_base.exists() and os.listdir(backup_base):
                 logger.info(f"Backup completed successfully: {backup_base}")
-                return backup_base
-            logger.error("Backup directory is empty or was not created")
-            return None
+                logger.info(f"Backup summary: {successful_backups} successful, {failed_backups} failed")
+                return str(backup_base)
+            else:
+                logger.error("Backup directory is empty or was not created")
+                return None
 
         except Exception as e:
             logger.error(f"Backup creation failed: {e}")
             # Cleanup failed backup
-            if os.path.exists(backup_base):
+            if backup_base.exists():
                 try:
                     shutil.rmtree(backup_base, ignore_errors=True)
+                    logger.info(f"Cleaned up failed backup: {backup_base}")
                 except Exception as cleanup_error:
-                    logger.warning(f"Failed to cleanup failed backup: {cleanup_error}")
-            return None
+                    logger.warning(f"Failed to cleanup failed backup: {backup_base} - {cleanup_error}")
+            raise
 
     def generate_analysis_report(self) -> str | None:
         """Generates a comprehensive analysis report.
@@ -1261,70 +1471,152 @@ class FolderProcessorApp:
             Formatted analysis report [str] if successful, None if cancelled or failed
             
         Raises:
+            ValueError: If source_folders list is empty or invalid
             OSError: If file system operations fail during analysis
+            PermissionError: If insufficient permissions to access source folders
             Exception: If report generation fails for other reasons
         """
+        # Input validation
+        if not self.source_folders:
+            raise ValueError("No source folders to analyze")
+        if not isinstance(self.source_folders, list):
+            raise ValueError(f"Source folders must be a list, got {type(self.source_folders)}")
+        
+        # Validate each source folder
+        valid_source_folders = []
+        for folder in self.source_folders:
+            if not folder or not isinstance(folder, str):
+                logger.warning(f"Invalid source folder: {folder}")
+                continue
+            if not os.path.exists(folder):
+                logger.warning(f"Source folder no longer exists: {folder}")
+                continue
+            if not os.access(folder, os.R_OK):
+                logger.warning(f"Cannot access source folder: {folder}")
+                continue
+            valid_source_folders.append(folder)
+        
+        if not valid_source_folders:
+            raise ValueError("No valid source folders to analyze")
+
         report = ["=== FOLDER ANALYSIS REPORT ===", f"Generated: {datetime.now()}", ""]
+        logger.info(f"Starting analysis of {len(valid_source_folders)} source folders")
 
         total_files = 0
         total_size = 0
         file_types = defaultdict(int)
         size_by_type = defaultdict(int)
         largest_files = []
+        analysis_errors = []
 
-        for folder in self.source_folders:
+        for folder in valid_source_folders:
+            if self.cancel_operation:
+                logger.info("Analysis cancelled by user")
+                return None
+
             report.append(f"Analyzing: {folder}")
             folder_files = 0
             folder_size = 0
+            folder_errors = 0
 
-            for root, dirs, files in os.walk(folder):
-                for file in files:
+            try:
+                for root, dirs, files in os.walk(folder):
                     if self.cancel_operation:
-                        return None
+                        break
 
-                    file_path = os.path.join(root, file)
-                    try:
-                        file_size = os.path.getsize(file_path)
-                        file_ext = os.path.splitext(file)[1].lower() or "no_extension"
+                    for file in files:
+                        if self.cancel_operation:
+                            break
 
-                        total_files += 1
-                        folder_files += 1
-                        total_size += file_size
-                        folder_size += file_size
-                        file_types[file_ext] += 1
-                        size_by_type[file_ext] += file_size
+                        file_path = os.path.join(root, file)
+                        try:
+                            # Validate file exists and is accessible
+                            if not os.path.exists(file_path):
+                                folder_errors += 1
+                                continue
+                            if not os.access(file_path, os.R_OK):
+                                folder_errors += 1
+                                continue
 
-                        # Track largest files
-                        largest_files.append((file_path, file_size))
-                        if len(largest_files) > 10:
-                            largest_files.sort(key=lambda x: x[1], reverse=True)
-                            largest_files = largest_files[:10]
+                            file_size = os.path.getsize(file_path)
+                            file_ext = os.path.splitext(file)[1].lower() or "no_extension"
 
-                    except OSError:
-                        continue
+                            # Validate file size
+                            if file_size < MIN_FILE_SIZE_BYTES:
+                                logger.debug(f"File below minimum size: {file_path} ({file_size} bytes)")
+                                continue
+                            if file_size > MAX_FILE_SIZE_MB * 1024 * 1024:
+                                logger.warning(f"File exceeds maximum size: {file_path} ({file_size / (1024*1024):.1f} MB)")
 
-            report.append(
-                f"  Files: {folder_files}, Size: {folder_size/(1024*1024):.1f} MB",
-            )
+                            total_files += 1
+                            folder_files += 1
+                            total_size += file_size
+                            folder_size += file_size
+                            file_types[file_ext] += 1
+                            size_by_type[file_ext] += file_size
 
-        report.extend(
-            [
-                "",
-                f"TOTAL FILES: {total_files}",
-                f"TOTAL SIZE: {total_size/(1024*1024):.1f} MB",
-                "",
-                "FILE TYPES:",
-            ],
-        )
+                            # Track largest files
+                            largest_files.append((file_path, file_size))
+                            if len(largest_files) > 10:
+                                largest_files.sort(key=lambda x: x[1], reverse=True)
+                                largest_files = largest_files[:10]
 
+                        except (OSError, PermissionError) as e:
+                            folder_errors += 1
+                            logger.debug(f"Cannot access file {file_path}: {e}")
+                            continue
+
+                # Report folder analysis results
+                if folder_errors > 0:
+                    report.append(f"  Files: {folder_files}, Size: {folder_size/(1024*1024):.1f} MB, Errors: {folder_errors}")
+                    analysis_errors.append(f"Folder {folder}: {folder_errors} access errors")
+                else:
+                    report.append(f"  Files: {folder_files}, Size: {folder_size/(1024*1024):.1f} MB")
+
+            except (OSError, PermissionError) as e:
+                error_msg = f"Error accessing folder {folder}: {e}"
+                report.append(f"  ERROR: {error_msg}")
+                analysis_errors.append(error_msg)
+                logger.error(error_msg)
+                continue
+
+        # Add summary statistics
+        report.extend([
+            "",
+            f"TOTAL FILES: {total_files}",
+            f"TOTAL SIZE: {total_size/(1024*1024):.1f} MB",
+            "",
+            "FILE TYPES:",
+        ])
+
+        # Sort file types by count
         for ext, count in sorted(file_types.items(), key=lambda x: x[1], reverse=True):
             size_mb = size_by_type[ext] / (1024 * 1024)
             report.append(f"  {ext}: {count} files, {size_mb:.1f} MB")
 
+        # Add largest files section
         report.extend(["", "LARGEST FILES:"])
         for file_path, size in sorted(largest_files, key=lambda x: x[1], reverse=True):
             size_mb = size / (1024 * 1024)
             report.append(f"  {os.path.basename(file_path)}: {size_mb:.1f} MB")
+
+        # Add error summary if any occurred
+        if analysis_errors:
+            report.extend(["", "ANALYSIS ERRORS:", *analysis_errors])
+
+        # Add analysis metadata
+        report.extend([
+            "",
+            "ANALYSIS METADATA:",
+            f"  Source folders processed: {len(valid_source_folders)}",
+            f"  Total folders analyzed: {len(valid_source_folders)}",
+            f"  Analysis timestamp: {datetime.now()}",
+            f"  File size limits: {MIN_FILE_SIZE_BYTES} bytes - {MAX_FILE_SIZE_MB} MB",
+        ])
+
+        logger.info(f"Analysis completed: {total_files} files, {total_size/(1024*1024):.1f} MB")
+        if analysis_errors:
+            logger.warning(f"Analysis completed with {len(analysis_errors)} errors")
 
         return "\n".join(report)
 
@@ -1458,29 +1750,77 @@ class FolderProcessorApp:
             Path to the created ZIP file [str] - absolute path to the created archive
             
         Raises:
+            ValueError: If destination folder path is empty or invalid
             FileNotFoundError: If destination folder does not exist
-            ValueError: If destination folder is empty
+            PermissionError: If insufficient permissions to read destination or write ZIP
             OSError: If file system operations fail during ZIP creation
             Exception: If ZIP creation fails for other reasons
         """
-        if not os.path.exists(self.dest_folder):
-            raise Exception("Destination folder does not exist")
+        # Input validation
+        if not self.dest_folder:
+            raise ValueError("Destination folder not set")
+        if not isinstance(self.dest_folder, str):
+            raise ValueError(f"Destination folder must be a string, got {type(self.dest_folder)}")
+        
+        dest_path_obj = Path(self.dest_folder)
+        
+        # Validate destination folder exists and is accessible
+        if not dest_path_obj.exists():
+            raise FileNotFoundError(f"Destination folder does not exist: {self.dest_folder}")
+        if not dest_path_obj.is_dir():
+            raise ValueError(f"Destination path is not a directory: {self.dest_folder}")
+        if not os.access(self.dest_folder, os.R_OK):
+            raise PermissionError(f"Cannot read destination folder: {self.dest_folder}")
 
-        if not os.listdir(self.dest_folder):
-            raise Exception("Destination folder is empty - nothing to archive")
+        # Check if destination folder is empty
+        try:
+            folder_contents = list(dest_path_obj.iterdir())
+            if not folder_contents:
+                raise ValueError("Destination folder is empty - nothing to archive")
+        except (OSError, PermissionError) as e:
+            raise PermissionError(f"Cannot access destination folder contents: {self.dest_folder} - {e}")
 
+        # Generate ZIP filename with timestamp
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         zip_filename = f"processed_files_{timestamp}.zip"
-        zip_path = os.path.join(os.path.dirname(self.dest_folder), zip_filename)
+        
+        # Create ZIP in parent directory of destination
+        try:
+            zip_path = dest_path_obj.parent / zip_filename
+        except Exception as e:
+            raise ValueError(f"Cannot determine ZIP location: {e}")
 
-        # Check if ZIP file already exists
-        if os.path.exists(zip_path):
-            zip_path = self._get_unique_path(zip_path)
+        # Check if ZIP file already exists and generate unique name
+        if zip_path.exists():
+            zip_path = Path(self._get_unique_path(str(zip_path)))
+
+        logger.info(f"Creating ZIP archive: {zip_path}")
 
         try:
+            # Count total files and size for progress tracking
+            total_files = 0
+            total_size = 0
+            
+            for root, dirs, files in os.walk(self.dest_folder):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    try:
+                        if os.path.exists(file_path) and os.access(file_path, os.R_OK):
+                            total_files += 1
+                            total_size += os.path.getsize(file_path)
+                    except (OSError, PermissionError):
+                        continue
+            
+            if total_files == 0:
+                raise ValueError("No accessible files found in destination folder")
+
+            logger.info(f"ZIP will contain {total_files} files, {total_size/(1024*1024):.1f} MB")
+
+            # Create ZIP archive
             with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
-                total_files = 0
-                total_size = 0
+                processed_files = 0
+                processed_size = 0
+                failed_files = 0
 
                 for root, dirs, files in os.walk(self.dest_folder):
                     for file in files:
@@ -1488,28 +1828,71 @@ class FolderProcessorApp:
                             raise Exception("ZIP creation cancelled by user")
 
                         file_path = os.path.join(root, file)
-                        arcname = os.path.relpath(file_path, self.dest_folder)
-
+                        
+                        # Validate file before adding to ZIP
                         try:
+                            if not os.path.exists(file_path):
+                                failed_files += 1
+                                logger.warning(f"File no longer exists: {file_path}")
+                                continue
+                            if not os.access(file_path, os.R_OK):
+                                failed_files += 1
+                                logger.warning(f"Cannot read file: {file_path}")
+                                continue
+                            
+                            # Calculate relative path for archive
+                            arcname = os.path.relpath(file_path, self.dest_folder)
+                            
+                            # Add file to ZIP
                             zipf.write(file_path, arcname)
-                            total_files += 1
-                            total_size += os.path.getsize(file_path)
+                            processed_files += 1
+                            processed_size += os.path.getsize(file_path)
+                            
+                            # Update progress every N files
+                            if processed_files % MAX_UI_UPDATE_FREQUENCY == 0:
+                                progress = PROGRESS_START_ZIP + (processed_files / total_files) * PROGRESS_ZIP_PERCENT
+                                self.update_progress(
+                                    progress,
+                                    f"Added {processed_files}/{total_files} files to ZIP"
+                                )
+                                
                         except Exception as e:
+                            failed_files += 1
                             logger.warning(f"Failed to add file to ZIP: {file_path} - {e}")
                             continue
 
-                logger.info(f"ZIP archive created: {zip_path} ({total_files} files, {total_size/(1024*1024):.1f} MB)")
+                # Verify ZIP was created successfully
+                if not zip_path.exists():
+                    raise Exception("ZIP file was not created")
+                
+                # Verify ZIP size is reasonable
+                try:
+                    zip_size = zip_path.stat().st_size
+                    if zip_size == 0:
+                        raise Exception("ZIP file is empty")
+                    logger.info(f"ZIP archive created: {zip_path} ({processed_files} files, {processed_size/(1024*1024):.1f} MB, ZIP size: {zip_size/(1024*1024):.1f} MB)")
+                except OSError as e:
+                    logger.warning(f"Cannot verify ZIP file size: {e}")
+
+                # Final summary
+                if failed_files > 0:
+                    logger.warning(f"ZIP creation completed with {failed_files} failed files")
+                else:
+                    logger.info("ZIP creation completed successfully")
 
         except Exception as e:
             # Cleanup failed ZIP file
-            if os.path.exists(zip_path):
+            if zip_path.exists():
                 try:
-                    os.remove(zip_path)
+                    zip_path.unlink()
+                    logger.info(f"Cleaned up failed ZIP file: {zip_path}")
                 except Exception as cleanup_error:
-                    logger.warning(f"Failed to cleanup failed ZIP file: {cleanup_error}")
+                    logger.warning(f"Failed to cleanup failed ZIP file: {zip_path} - {cleanup_error}")
+            
+            logger.error(f"Failed to create ZIP archive: {e}")
             raise Exception(f"Failed to create ZIP archive: {e}")
 
-        return zip_path
+        return str(zip_path)
 
     def show_text_dialog(self, title: str, content: str) -> None:
         """Shows a dialog with scrollable text content.
@@ -1519,18 +1902,44 @@ class FolderProcessorApp:
             content: Text content to display [str] - must not be empty
             
         Raises:
-            ValueError: If title or content is empty
+            ValueError: If title or content is empty or invalid
             tkinter.TclError: If Tkinter widget creation fails
             Exception: If dialog creation fails for other reasons
         """
-        if not title or not content:
-            logger.warning("Invalid dialog parameters: title or content is empty")
-            return
+        # Input validation
+        if not title or not isinstance(title, str):
+            raise ValueError(f"Title must be non-empty string, got {type(title)}")
+        if not content or not isinstance(content, str):
+            raise ValueError(f"Content must be non-empty string, got {type(content)}")
+        
+        # Validate title and content length
+        if len(title.strip()) == 0:
+            raise ValueError("Title cannot be empty or whitespace only")
+        if len(content.strip()) == 0:
+            raise ValueError("Content cannot be empty or whitespace only")
+        
+        # Validate title length for window title bar
+        if len(title) > MAX_TITLE_LENGTH:
+            logger.warning(f"Title is very long ({len(title)} chars), may be truncated: {title[:MAX_TITLE_PREVIEW_LENGTH]}...")
+        
+        # Validate content length for performance
+        if len(content) > MAX_TEXT_CONTENT_SIZE:  # MAX_TEXT_CONTENT_SIZE limit for text content
+            logger.warning(f"Content is very large ({len(content)} chars), may cause performance issues")
+            # Truncate content for display
+            content = content[:MAX_TEXT_CONTENT_SIZE] + "\n\n... [Content truncated due to size]"
+
+        logger.info(f"Creating text dialog: '{title}' with {len(content)} characters")
 
         try:
+            # Create dialog window
             dialog = tk.Toplevel(self.root)
             dialog.title(title)
-            dialog.geometry(f"{MAX_DIALOG_WIDTH}x{MAX_DIALOG_HEIGHT}")
+            
+            # Set dialog geometry with validation
+            dialog_width = min(MAX_DIALOG_WIDTH, max(MIN_DIALOG_WIDTH, len(content) // CHARS_PER_DIALOG_LINE + DIALOG_WIDTH_OFFSET))
+            dialog_height = min(MAX_DIALOG_HEIGHT, max(MIN_DIALOG_HEIGHT, len(content.split('\n')) * LINE_HEIGHT_PIXELS + DIALOG_HEIGHT_OFFSET))
+            
+            dialog.geometry(f"{dialog_width}x{dialog_height}")
             dialog.minsize(MIN_DIALOG_WIDTH, MIN_DIALOG_HEIGHT)
 
             # Center dialog on screen
@@ -1541,35 +1950,96 @@ class FolderProcessorApp:
             text_frame = ttk.Frame(dialog)
             text_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-            text_widget = tk.Text(text_frame, wrap=tk.WORD, font=("Consolas", 10))
+            # Create text widget with appropriate font and settings
+            text_widget = tk.Text(
+                text_frame, 
+                wrap=tk.WORD, 
+                font=("Consolas", 10),
+                undo=False,  # Disable undo for performance
+                maxundo=0,   # No undo history
+                selectbackground="lightblue",
+                selectforeground="black"
+            )
+            
             scrollbar = ttk.Scrollbar(text_frame, orient="vertical", command=text_widget.yview)
             text_widget.configure(yscrollcommand=scrollbar.set)
 
             text_widget.pack(side="left", fill="both", expand=True)
             scrollbar.pack(side="right", fill="y")
 
-            # Insert content
-            text_widget.insert("1.0", content)
-            text_widget.config(state="disabled")
+            # Insert content with error handling
+            try:
+                text_widget.insert("1.0", content)
+                text_widget.config(state="disabled")  # Make read-only
+                
+                # Set cursor to beginning
+                text_widget.mark_set("insert", "1.0")
+                text_widget.see("1.0")
+                
+            except Exception as e:
+                logger.error(f"Failed to insert content into text widget: {e}")
+                # Fallback: show truncated content
+                safe_content = content[:1000] + "\n\n... [Content truncated due to error]"
+                text_widget.insert("1.0", safe_content)
+                text_widget.config(state="disabled")
 
             # Add close button
             button_frame = ttk.Frame(dialog)
             button_frame.pack(fill=tk.X, padx=10, pady=(0, 10))
 
-            ttk.Button(
+            close_button = ttk.Button(
                 button_frame,
                 text="Close",
                 command=dialog.destroy
-            ).pack(side=tk.RIGHT)
+            )
+            close_button.pack(side="right")
+
+            # Add copy button for convenience
+            def copy_to_clipboard():
+                """Copy dialog content to clipboard."""
+                try:
+                    dialog.clipboard_clear()
+                    dialog.clipboard_append(content)
+                    logger.debug("Dialog content copied to clipboard")
+                except Exception as e:
+                    logger.warning(f"Failed to copy to clipboard: {e}")
+
+            copy_button = ttk.Button(
+                button_frame,
+                text="Copy All",
+                command=copy_to_clipboard
+            )
+            copy_button.pack(side="right", padx=(0, 5))
 
             # Set focus and make dialog modal
             dialog.focus_set()
+            close_button.focus_set()  # Focus on close button for better UX
+            
+            # Bind escape key to close dialog
+            def on_escape(event):
+                dialog.destroy()
+            
+            dialog.bind("<Escape>", on_escape)
+            
+            # Log successful dialog creation
+            logger.info(f"Text dialog created successfully: {dialog_width}x{dialog_height}")
+            
+            # Wait for dialog to close
             dialog.wait_window()
 
+        except tk.TclError as e:
+            logger.error(f"Tkinter error creating text dialog: {e}")
+            # Fallback to simple message box
+            fallback_content = content[:500] + "..." if len(content) > 500 else content
+            messagebox.showinfo(title, fallback_content)
+            raise
+            
         except Exception as e:
             logger.error(f"Failed to show text dialog: {e}")
             # Fallback to simple message box
-            messagebox.showinfo(title, content[:500] + "..." if len(content) > 500 else content)
+            fallback_content = content[:500] + "..." if len(content) > 500 else content
+            messagebox.showinfo(title, fallback_content)
+            raise
 
     def validate_inputs(self, check_destination: bool = True) -> bool:
         """Validate user inputs before processing.
@@ -1746,36 +2216,84 @@ class FolderProcessorApp:
         Raises:
             OSError: If file operations fail after all retry attempts
             IOError: If file I/O operations fail
+            ValueError: If source_path is empty or invalid
+            FileNotFoundError: If source file does not exist
+            PermissionError: If insufficient permissions to read source or write destination
         """
+        # Input validation
+        if not source_path or not isinstance(source_path, str):
+            raise ValueError(f"Source path must be non-empty string, got {type(source_path)}")
+        if not dest_path or not isinstance(dest_path, str):
+            raise ValueError(f"Destination path must be non-empty string, got {type(dest_path)}")
+        
+        source_path_obj = Path(source_path)
+        dest_path_obj = Path(dest_path)
+        
+        # Validate source file exists and is accessible
+        if not source_path_obj.exists():
+            raise FileNotFoundError(f"Source file does not exist: {source_path}")
+        if not source_path_obj.is_file():
+            raise ValueError(f"Source path is not a file: {source_path}")
+        if not os.access(source_path, os.R_OK):
+            raise PermissionError(f"Cannot read source file: {source_path}")
+        
+        # Validate source file size
+        try:
+            source_size = source_path_obj.stat().st_size
+            if source_size == 0:
+                logger.warning(f"Source file is empty: {source_path}")
+            elif source_size > MAX_FILE_SIZE_MB * 1024 * 1024:
+                logger.warning(f"Source file exceeds maximum size limit: {source_path} ({source_size / (1024*1024):.1f} MB)")
+        except OSError as e:
+            logger.warning(f"Cannot access source file size: {source_path} - {e}")
+        
         for attempt in range(MAX_RETRY_ATTEMPTS):
             try:
                 # Ensure destination directory exists
-                dest_dir = Path(dest_path).parent
-                Path(dest_dir).mkdir(parents=True, exist_ok=True)
+                dest_dir = dest_path_obj.parent
+                dest_dir.mkdir(parents=True, exist_ok=True)
+                
+                # Check if destination directory is writable
+                if not os.access(dest_dir, os.W_OK):
+                    raise PermissionError(f"Cannot write to destination directory: {dest_dir}")
 
                 # Copy file with metadata preservation
                 shutil.copy2(source_path, dest_path)
 
                 # Verify copy was successful
-                if Path(dest_path).exists():
-                    source_size = Path(source_path).stat().st_size
-                    dest_size = Path(dest_path).stat().st_size
-                    if source_size == dest_size:
-                        return True
-                    # Size mismatch, remove failed copy and retry
-                    if Path(dest_path).exists():
-                        Path(dest_path).unlink()
+                if dest_path_obj.exists():
+                    try:
+                        source_size = source_path_obj.stat().st_size
+                        dest_size = dest_path_obj.stat().st_size
+                        if source_size == dest_size:
+                            logger.debug(f"Successfully copied {source_path} -> {dest_path} ({source_size} bytes)")
+                            return True
+                        else:
+                            logger.warning(f"Size mismatch after copy: source={source_size}, dest={dest_size}")
+                            # Size mismatch, remove failed copy and retry
+                            if dest_path_obj.exists():
+                                dest_path_obj.unlink()
+                            if attempt < MAX_RETRY_ATTEMPTS - 1:
+                                logger.info(f"Retrying copy due to size mismatch (attempt {attempt + 1}/{MAX_RETRY_ATTEMPTS})")
+                                continue
+                    except OSError as e:
+                        logger.warning(f"Failed to verify copy sizes: {e}")
+                        if attempt < MAX_RETRY_ATTEMPTS - 1:
+                            continue
+                else:
+                    logger.error(f"Destination file was not created: {dest_path}")
                     if attempt < MAX_RETRY_ATTEMPTS - 1:
                         continue
 
-            except OSError:
+            except (OSError, IOError, PermissionError) as e:
+                logger.warning(f"Copy attempt {attempt + 1} failed: {e}")
                 if attempt < MAX_RETRY_ATTEMPTS - 1:
+                    # Wait before retry (exponential backoff)
+                    time.sleep(0.1 * (2 ** attempt))
                     continue
-                logger.exception(
-                    "Failed to copy %s after %d attempts", 
-                    source_path, 
-                    MAX_RETRY_ATTEMPTS
-                )
+                else:
+                    logger.error(f"Failed to copy {source_path} after {MAX_RETRY_ATTEMPTS} attempts: {e}")
+                    raise
 
         return False
 
@@ -1844,7 +2362,7 @@ class FolderProcessorApp:
 
                     processed_files += 1
                     if processed_files % MAX_UI_UPDATE_FREQUENCY == 0:  # Update progress every N files
-                        progress = 30 + (processed_files / total_files) * 40
+                        progress = PROGRESS_START_MAIN + (processed_files / total_files) * PROGRESS_MAIN_OP_PERCENT
                         self.update_progress(
                             progress,
                             f"Processed {processed_files}/{total_files} files",
@@ -1955,15 +2473,47 @@ class FolderProcessorApp:
             Unique path that doesn't exist [str] - original path or path with counter suffix
             
         Raises:
+            ValueError: If path is empty or invalid
             OSError: If file system operations fail during path checking
+            PermissionError: If insufficient permissions to check path existence
         """
+        # Input validation
+        if not path or not isinstance(path, str):
+            raise ValueError(f"Path must be non-empty string, got {type(path)}")
+        
         path_obj = Path(path)
-        if not path_obj.exists():
+        
+        # Validate path format
+        try:
+            # Check if path is absolute or relative
+            if path_obj.is_absolute():
+                # Ensure drive exists on Windows
+                if sys.platform == "win32" and len(path_obj.parts) > 0:
+                    drive = path_obj.parts[0]
+                    if not os.path.exists(drive):
+                        raise ValueError(f"Drive does not exist: {drive}")
+        except Exception as e:
+            raise ValueError(f"Invalid path format: {path} - {e}")
+        
+        # Check if path already exists
+        try:
+            if not path_obj.exists():
+                return path
+        except (OSError, PermissionError) as e:
+            logger.warning(f"Cannot check if path exists: {path} - {e}")
+            # Assume it doesn't exist and return original path
             return path
 
+        # Path exists, generate unique version
         parent = path_obj.parent
         name = path_obj.name
-        is_file = "." in name and not path_obj.is_dir()
+        
+        # Determine if this is a file or directory
+        try:
+            is_file = path_obj.is_file()
+        except (OSError, PermissionError):
+            # If we can't determine, assume it's a file if it has an extension
+            is_file = "." in name and not name.endswith(".")
 
         if is_file:
             filename = path_obj.stem
@@ -1972,18 +2522,45 @@ class FolderProcessorApp:
             filename = name
             ext = ""
 
+        # Generate unique path with counter
         counter = 1
-        new_path = parent / f"{filename} ({counter}){ext}"
-
-        while new_path.exists():
+        max_attempts = 1000  # Prevent infinite loops
+        
+        while counter <= max_attempts:
+            new_name = f"{filename} ({counter}){ext}"
+            new_path = parent / new_name
+            
+            try:
+                if not new_path.exists():
+                    logger.debug(f"Generated unique path: {path} -> {new_path}")
+                    return str(new_path)
+            except (OSError, PermissionError) as e:
+                logger.warning(f"Cannot check if generated path exists: {new_path} - {e}")
+                # If we can't check, assume it's safe to use
+                return str(new_path)
+            
             counter += 1
-            new_path = parent / f"{filename} ({counter}){ext}"
-
-        return str(new_path)
+        
+        # If we've exhausted all reasonable attempts, append timestamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        fallback_name = f"{filename}_{timestamp}{ext}"
+        fallback_path = parent / fallback_name
+        
+        logger.warning(f"Exhausted counter attempts, using timestamp fallback: {fallback_path}")
+        return str(fallback_path)
 
     def select_source_folders(self) -> None:
         """Open folder selection dialog to add source folders.
         
+        This method allows users to select folders that will be processed by the application.
+        Selected folders are added to the source_folders list and displayed in the UI.
+        
+        Args:
+            None - uses filedialog.askdirectory() for user input
+            
+        Returns:
+            None - updates self.source_folders and UI state
+            
         Raises:
             OSError: If file system operations fail during folder validation
             PermissionError: If insufficient permissions to access selected folder
@@ -2021,6 +2598,16 @@ class FolderProcessorApp:
     def remove_selected_source(self) -> None:
         """Remove selected source folders from the list.
         
+        This method removes user-selected folders from the source_folders list.
+        It prompts for confirmation before removal and updates both the internal
+        list and the UI display.
+        
+        Args:
+            None - uses self.source_listbox.curselection() for user input
+            
+        Returns:
+            None - updates self.source_folders and UI state
+            
         Raises:
             IndexError: If selected indices are invalid
             Exception: If folder removal fails for other reasons
@@ -2060,6 +2647,16 @@ class FolderProcessorApp:
     def select_dest_folder(self) -> None:
         """Open folder selection dialog to select destination folder.
         
+        This method allows users to select the destination folder where processed
+        files will be placed. The selected folder is validated for write access
+        and stored in self.dest_folder.
+        
+        Args:
+            None - uses filedialog.askdirectory() for user input
+            
+        Returns:
+            None - updates self.dest_folder and UI state
+            
         Raises:
             OSError: If file system operations fail during folder validation
             PermissionError: If insufficient permissions to write to selected folder
@@ -2157,7 +2754,7 @@ class FolderProcessorApp:
 
                     processed_files += 1
                     if processed_files % MAX_UI_UPDATE_FREQUENCY == 0:  # Update progress every N files
-                        progress = 30 + (processed_files / total_files) * 40
+                        progress = PROGRESS_START_MAIN + (processed_files / total_files) * PROGRESS_MAIN_OP_PERCENT
                         self.update_progress(
                             progress,
                             f"Processed {processed_files}/{total_files} files",
@@ -2257,7 +2854,7 @@ class FolderProcessorApp:
 
                     processed_files += 1
                     if processed_files % MAX_UI_UPDATE_FREQUENCY == 0:  # Update progress every N files
-                        progress = 30 + (processed_files / total_files) * 40
+                        progress = PROGRESS_START_MAIN + (processed_files / total_files) * PROGRESS_MAIN_OP_PERCENT
                         self.update_progress(
                             progress,
                             f"Processed {processed_files}/{total_files} files",
