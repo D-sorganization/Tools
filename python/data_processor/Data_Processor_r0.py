@@ -9016,7 +9016,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to save plot view: {e!s}")
 
-    def _copy_current_view_to_processing(self):
+    def _copy_current_view_to_processing(self) -> None:
         """Copy current plot view range to processing tab time trimming."""
         try:
             # This is essentially the same as _copy_plot_range_to_trim but with a different message
@@ -9060,7 +9060,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to copy current view: {e!s}")
 
-    def _override_home_button(self):
+    def _override_home_button(self) -> None:
         """Override the matplotlib toolbar home button to use saved view."""
         if hasattr(self, "plot_toolbar") and self.saved_plot_view:
             # Store original home function
@@ -9068,7 +9068,8 @@ COMMON MISTAKES TO AVOID:
                 self._original_home = self.plot_toolbar.home
 
             # Create custom home function
-            def custom_home():
+            def custom_home() -> None:
+                """Custom home function that restores saved plot view."""
                 try:
                     if self.saved_plot_view:
                         self.plot_ax.set_xlim(self.saved_plot_view["xlim"])
@@ -9084,7 +9085,7 @@ COMMON MISTAKES TO AVOID:
             # Replace the home function
             self.plot_toolbar.home = custom_home
 
-    def _refresh_legend_entries(self):
+    def _refresh_legend_entries(self) -> None:
         """Refresh legend entries based on currently selected signals."""
         # Clear existing legend widgets
         for widget in self.legend_frame.winfo_children():
@@ -9185,13 +9186,13 @@ COMMON MISTAKES TO AVOID:
                 lambda e, s=signal: self._on_legend_change(s, e.widget.get()),
             )
 
-    def _on_legend_change(self, signal, new_label):
+    def _on_legend_change(self, signal: str, new_label: str) -> None:
         """Handle changes to legend labels."""
         self.custom_legend_entries[signal] = new_label
         # Trigger immediate plot update
         self._on_plot_setting_change()
 
-    def _move_legend_up(self, signal):
+    def _move_legend_up(self, signal: str) -> None:
         """Move a signal up in the legend order."""
         if hasattr(self, "legend_order") and signal in self.legend_order:
             idx = self.legend_order.index(signal)
@@ -9203,7 +9204,7 @@ COMMON MISTAKES TO AVOID:
                 self._refresh_legend_entries()
                 self._on_plot_setting_change()
 
-    def _move_legend_down(self, signal):
+    def _move_legend_down(self, signal: str) -> None:
         """Move a signal down in the legend order."""
         if hasattr(self, "legend_order") and signal in self.legend_order:
             idx = self.legend_order.index(signal)
@@ -9215,7 +9216,7 @@ COMMON MISTAKES TO AVOID:
                 self._refresh_legend_entries()
                 self._on_plot_setting_change()
 
-    def _add_trendline(self):
+    def _add_trendline(self) -> None:
         """Add trendline to plot."""
         if not hasattr(self, "plot_ax") or not self.plot_ax:
             messagebox.showerror(
@@ -9313,7 +9314,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to add trendline: {e!s}")
 
-    def create_help_tab(self, tab):
+    def create_help_tab(self, tab: ctk.CTkFrame) -> None:
         """Create the help tab with comprehensive documentation."""
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(1, weight=1)
@@ -9518,7 +9519,7 @@ For additional support or feature requests, please refer to the application docu
         help_text.insert("1.0", help_content)
         help_text.configure(state="disabled")  # Make read-only
 
-    def _generate_unique_filename(self, base_path, extension):
+    def _generate_unique_filename(self, base_path: str, extension: str) -> str:
         """Generate a unique filename to prevent overwriting existing files."""
         directory = os.path.dirname(base_path)
         base_name = os.path.splitext(os.path.basename(base_path))[0]
@@ -9538,7 +9539,7 @@ For additional support or feature requests, please refer to the application docu
                 return full_path
             counter += 1
 
-    def _check_file_overwrite(self, file_path):
+    def _check_file_overwrite(self, file_path: str) -> str | None:
         """Check if file exists and prompt user for action."""
         if os.path.exists(file_path):
             filename = os.path.basename(file_path)
@@ -9567,7 +9568,7 @@ For additional support or feature requests, please refer to the application docu
 
         return file_path
 
-    def _save_current_plot_config(self):
+    def _save_current_plot_config(self) -> None:
         """Save the current plot configuration."""
         # Get current plot settings
         plot_name = simpledialog.askstring(
@@ -9742,7 +9743,7 @@ For additional support or feature requests, please refer to the application docu
             f"Plot configuration '{plot_name}' saved successfully!",
         )
 
-    def _modify_plot_config(self):
+    def _modify_plot_config(self) -> None:
         """Modify an existing plot configuration."""
         if not hasattr(self, "plots_list") or not self.plots_list:
             messagebox.showwarning(
@@ -9864,7 +9865,7 @@ For additional support or feature requests, please refer to the application docu
             padx=5,
         )
 
-    def _update_plot_config(self, config_index):
+    def _update_plot_config(self, config_index: int) -> None:
         """Update an existing plot configuration with current settings."""
         if not hasattr(self, "plots_list") or config_index >= len(self.plots_list):
             return
@@ -10035,7 +10036,7 @@ For additional support or feature requests, please refer to the application docu
         # Save the updated configuration
         self._save_plots_to_file()
 
-    def _on_load_plot_config_select(self, selected_plot_name):
+    def _on_load_plot_config_select(self, selected_plot_name: str) -> None:
         """Handle selection from the load plot config dropdown."""
         if selected_plot_name == "No saved plots":
             return
@@ -10061,7 +10062,7 @@ For additional support or feature requests, please refer to the application docu
             f"Plot configuration '{selected_plot_name}' loaded!",
         )
 
-    def _apply_plot_config(self, plot_config):
+    def _apply_plot_config(self, plot_config: dict[str, Any]) -> None:
         """Apply a plot configuration to the current plotting tab."""
         # Apply file selection first
         if (
@@ -10079,7 +10080,7 @@ For additional support or feature requests, please refer to the application docu
             # If no file, just apply what we can
             self._apply_plot_config_signals(plot_config)
 
-    def _apply_plot_config_signals(self, plot_config):
+    def _apply_plot_config_signals(self, plot_config: dict[str, Any]) -> None:
         """Apply signal selections and other settings after file is loaded."""
         # Apply x-axis selection
         if (
@@ -10230,7 +10231,7 @@ For additional support or feature requests, please refer to the application docu
         # Update the plot
         self.update_plot()
 
-    def _update_load_plot_config_menu(self):
+    def _update_load_plot_config_menu(self) -> None:
         """Update the load plot config dropdown menu."""
         if not hasattr(self, "load_plot_config_menu"):
             return
@@ -10243,7 +10244,7 @@ For additional support or feature requests, please refer to the application docu
             self.load_plot_config_menu.configure(values=["No saved plots"])
             self.load_plot_config_menu.set("No saved plots")
 
-    def _update_plots_signals(self, signals):
+    def _update_plots_signals(self, signals: list[str]) -> None:
         """Update signals available in plots list tab."""
         if not hasattr(self, "plots_signals_frame"):
             return
@@ -10273,7 +10274,7 @@ For additional support or feature requests, please refer to the application docu
         # Re-bind mouse wheel to all new checkboxes
         self._bind_mousewheel_to_frame(self.plots_signals_frame)
 
-    def _generate_plot_preview(self):
+    def _generate_plot_preview(self) -> None:
         """Generate plot preview."""
         selection = self.plots_listbox.curselection()
         if not selection:
@@ -10492,7 +10493,7 @@ For additional support or feature requests, please refer to the application docu
             self.preview_ax.set_title("Preview Error")
             self.preview_canvas.draw()
 
-    def _export_all_plots(self):
+    def _export_all_plots(self) -> None:
         """Export all plots."""
         if not self.plots_list:
             messagebox.showwarning("Warning", "No plots to export.")
@@ -10536,7 +10537,7 @@ For additional support or feature requests, please refer to the application docu
         except Exception as e:
             messagebox.showerror("Export Error", f"Error exporting plots: {e}")
 
-    def _on_plot_setting_change(self, *args):
+    def _on_plot_setting_change(self, *args: Any) -> None:
         """Automatically update plot when appearance settings change."""
         # Only update if we have data and signals selected
         if hasattr(self, "plot_signal_vars"):
@@ -10550,7 +10551,7 @@ For additional support or feature requests, please refer to the application docu
                     self.after_cancel(self._update_pending)
                 self._update_pending = self.after_idle(self.update_plot)
 
-    def _on_color_scheme_change(self, scheme):
+    def _on_color_scheme_change(self, scheme: str) -> None:
         """Handle color scheme change and show/hide custom colors interface."""
         if scheme == "Custom Colors":
             self.custom_colors_frame.grid()
@@ -10560,7 +10561,7 @@ For additional support or feature requests, please refer to the application docu
         # Trigger plot update
         self._on_plot_setting_change()
 
-    def _update_custom_colors_display(self):
+    def _update_custom_colors_display(self) -> None:
         """Update the display of custom colors with color preview buttons."""
         # Clear existing widgets
         for widget in self.colors_scroll_frame.winfo_children():
@@ -10600,7 +10601,7 @@ For additional support or feature requests, please refer to the application docu
             )
             remove_button.pack(side="right", padx=5, pady=5)
 
-    def _add_custom_color(self):
+    def _add_custom_color(self) -> None:
         """Add a new custom color using color picker."""
         color = colorchooser.askcolor(title="Choose Color")[1]  # Get hex value
         if color:
@@ -10609,7 +10610,7 @@ For additional support or feature requests, please refer to the application docu
             if self.color_scheme_var.get() == "Custom Colors":
                 self._on_plot_setting_change()
 
-    def _edit_custom_color(self, index):
+    def _edit_custom_color(self, index: int) -> None:
         """Edit an existing custom color."""
         if 0 <= index < len(self.custom_colors):
             current_color = self.custom_colors[index]
@@ -10623,7 +10624,7 @@ For additional support or feature requests, please refer to the application docu
                 if self.color_scheme_var.get() == "Custom Colors":
                     self._on_plot_setting_change()
 
-    def _remove_custom_color(self, index):
+    def _remove_custom_color(self, index: int) -> None:
         """Remove a custom color."""
         if (
             0 <= index < len(self.custom_colors) and len(self.custom_colors) > 1
@@ -10633,7 +10634,7 @@ For additional support or feature requests, please refer to the application docu
             if self.color_scheme_var.get() == "Custom Colors":
                 self._on_plot_setting_change()
 
-    def _reset_custom_colors(self):
+    def _reset_custom_colors(self) -> None:
         """Reset custom colors to default set."""
         self.custom_colors = [
             "#1f77b4",
@@ -10651,7 +10652,7 @@ For additional support or feature requests, please refer to the application docu
         if self.color_scheme_var.get() == "Custom Colors":
             self._on_plot_setting_change()
 
-    def _bind_mousewheel_to_frame(self, frame):
+    def _bind_mousewheel_to_frame(self, frame: ctk.CTkFrame) -> None:
         """Bind mouse wheel events to a frame for proper scrolling."""
 
         def on_mousewheel(event):
@@ -10682,7 +10683,7 @@ For additional support or feature requests, please refer to the application docu
 
         bind_mousewheel(frame)
 
-    def _on_trendline_window_mode_change(self, mode):
+    def _on_trendline_window_mode_change(self, mode: str) -> None:
         """Handle trendline window mode change."""
         if mode == "Manual Entry":
             self.trendline_manual_frame.grid()
@@ -10696,7 +10697,7 @@ For additional support or feature requests, please refer to the application docu
 
         self._on_plot_setting_change()
 
-    def _start_trendline_selection(self):
+    def _start_trendline_selection(self) -> None:
         """Start visual selection of trendline window."""
         if not hasattr(self, "plot_canvas") or not self.plot_canvas:
             messagebox.showwarning("Warning", "Please generate a plot first.")
@@ -10723,7 +10724,7 @@ For additional support or feature requests, please refer to the application docu
         )
         self.trendline_selected_range.configure(text="Selection active...")
 
-    def _on_trendline_selection_start(self, event):
+    def _on_trendline_selection_start(self, event: Any) -> None:
         """Handle start of trendline selection."""
         if (
             hasattr(self, "trendline_selection_active")
@@ -10732,7 +10733,7 @@ For additional support or feature requests, please refer to the application docu
         ):
             self.trendline_selection_start = event.xdata
 
-    def _on_trendline_selection_end(self, event):
+    def _on_trendline_selection_end(self, event: Any) -> None:
         """Handle end of trendline selection."""
         if (
             hasattr(self, "trendline_selection_active")
@@ -10765,7 +10766,7 @@ For additional support or feature requests, please refer to the application docu
                 # Update plot
                 self._on_plot_setting_change()
 
-    def _on_dataset_naming_change(self):
+    def _on_dataset_naming_change(self) -> None:
         """Handle changes to dataset naming mode."""
         if self.dataset_naming_var.get() == "custom":
             self.custom_dataset_entry.configure(state="normal")
@@ -10777,7 +10778,7 @@ For additional support or feature requests, please refer to the application docu
             self.custom_dataset_entry.configure(state="disabled")
             self.overwrite_warning_label.configure(text="")
 
-    def _check_custom_name_overwrite(self, event=None):
+    def _check_custom_name_overwrite(self, event: Any = None) -> None:
         """Check if custom dataset name will cause file overwrite."""
         if not hasattr(self, "custom_dataset_entry") or not hasattr(
             self,
@@ -10816,7 +10817,7 @@ For additional support or feature requests, please refer to the application docu
         else:
             self.overwrite_warning_label.configure(text="")
 
-    def _save_zoom_state(self):
+    def _save_zoom_state(self) -> None:
         """Save current zoom/pan state of the plot."""
         if hasattr(self, "plot_ax"):
             self.saved_zoom_state = {
@@ -10825,7 +10826,7 @@ For additional support or feature requests, please refer to the application docu
             }
             messagebox.showinfo("Zoom State", "Current zoom state saved!")
 
-    def _restore_zoom_state(self):
+    def _restore_zoom_state(self) -> None:
         """Restore previously saved zoom/pan state."""
         if hasattr(self, "saved_zoom_state") and self.saved_zoom_state:
             if hasattr(self, "plot_ax"):
@@ -10836,7 +10837,7 @@ For additional support or feature requests, please refer to the application docu
         else:
             messagebox.showwarning("Warning", "No saved zoom state found.")
 
-    def _zoom_out_25(self):
+    def _zoom_out_25(self) -> None:
         """Zoom out by 25% while maintaining center."""
         if hasattr(self, "plot_ax"):
             xlim = self.plot_ax.get_xlim()
@@ -10863,7 +10864,7 @@ For additional support or feature requests, please refer to the application docu
             )
             self.plot_canvas.draw()
 
-    def _zoom_in_25(self):
+    def _zoom_in_25(self) -> None:
         """Zoom in by 25% while maintaining center."""
         if hasattr(self, "plot_ax"):
             xlim = self.plot_ax.get_xlim()
@@ -10890,7 +10891,7 @@ For additional support or feature requests, please refer to the application docu
             )
             self.plot_canvas.draw()
 
-    def _preserve_zoom_during_update(self):
+    def _preserve_zoom_during_update(self) -> None:
         """Store zoom state before plot update and restore after."""
         zoom_state = None
         if hasattr(self, "plot_ax"):
@@ -10900,7 +10901,7 @@ For additional support or feature requests, please refer to the application docu
             }
         return zoom_state
 
-    def _auto_fit_plot(self):
+    def _auto_fit_plot(self) -> None:
         """Auto-fit the plot to show all data."""
         if hasattr(self, "plot_ax"):
             try:
@@ -10910,7 +10911,7 @@ For additional support or feature requests, please refer to the application docu
             except Exception as e:
                 print(f"Error auto-fitting plot: {e}")
 
-    def _should_auto_zoom(self, reason="filter_change"):
+    def _should_auto_zoom(self, reason: str = "filter_change") -> bool:
         """Determine if auto-zoom should be applied based on the reason."""
         if not hasattr(self, "auto_zoom_var"):
             return True  # Default to auto-zoom if control doesn't exist
@@ -10922,7 +10923,7 @@ For additional support or feature requests, please refer to the application docu
         # Use user preference for other changes
         return self.auto_zoom_var.get()
 
-    def _detect_new_signals(self, current_signals):
+    def _detect_new_signals(self, current_signals: list[str]) -> bool:
         """Detect if new signals have been added since last plot update."""
         if not hasattr(self, "last_plotted_signals"):
             self.last_plotted_signals = set()
@@ -10936,7 +10937,7 @@ For additional support or feature requests, please refer to the application docu
 
         return len(new_signals) > 0
 
-    def _apply_zoom_state(self, zoom_state):
+    def _apply_zoom_state(self, zoom_state: dict[str, Any]) -> None:
         """Apply stored zoom state after plot update."""
         if zoom_state and hasattr(self, "plot_ax"):
             try:
