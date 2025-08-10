@@ -5,8 +5,8 @@ import threading
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .converter_tab import ConverterTab
-    from .folder_tool_tab import FolderToolTab
+    from converter_tab import ConverterTab
+    from folder_tool_tab import FolderToolTab
 
 
 class ConversionThread(threading.Thread):

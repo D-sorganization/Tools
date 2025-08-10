@@ -6,6 +6,7 @@ This script launches the integrated version that includes the compiler converter
 
 import logging
 import sys
+import os
 from pathlib import Path
 
 # Configure logging
@@ -14,8 +15,16 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
 
-# Add the current directory to the Python path
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+# Get the current script directory and parent directory
+current_dir = Path(__file__).resolve().parent
+parent_dir = current_dir.parent
+
+# Add both directories to the Python path
+sys.path.insert(0, str(parent_dir))
+sys.path.insert(0, str(current_dir))
+
+# Set the package name for relative imports to work
+os.environ['PYTHONPATH'] = str(parent_dir)
 
 try:
     from Data_Processor_Integrated import IntegratedCSVProcessorApp
