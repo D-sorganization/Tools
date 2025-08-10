@@ -1,3 +1,4 @@
+# Standard library imports
 import ctypes
 import logging
 import os
@@ -5,17 +6,24 @@ import re
 import shutil
 import sys
 import threading
-import tkinter as tk
 import zipfile
 from collections import defaultdict
 from datetime import datetime
-from tkinter import filedialog, messagebox, ttk
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Final
 
-# Constants for configuration
-MAX_LOG_ENTRIES: int = 20  # Maximum number of log entries to display
-PROGRESS_INCREMENT: int = 10  # Progress bar increment for operations
+# Third-party imports
+import tkinter as tk
+from tkinter import filedialog, messagebox, ttk
+
+# Constants for configuration with sources
+MAX_LOG_ENTRIES: Final[int] = 20  # Maximum number of log entries to display per operation
+PROGRESS_INCREMENT: Final[int] = 10  # Progress bar increment percentage for operations
+MAX_FILE_SIZE_MB: Final[int] = 1024  # Maximum file size limit [MB] - reasonable limit for most systems
+MIN_FILE_SIZE_BYTES: Final[int] = 1  # Minimum file size [bytes] - 1 byte minimum
+DEFAULT_CHUNK_SIZE: Final[int] = 8192  # File copy chunk size [bytes] - optimal for most systems per Python docs
+MAX_RETRY_ATTEMPTS: Final[int] = 3  # Maximum retry attempts for file operations
+ICON_SIZES: Final[Tuple[int, ...]] = (16, 32, 48, 64)  # Standard icon sizes [pixels] per Windows guidelines
 
 # Set up logging to capture detailed information
 log_filename = "folder_processor.log"
@@ -24,6 +32,9 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[logging.FileHandler(log_filename, mode="w")],
 )
+
+# Get logger for this module
+logger = logging.getLogger(__name__)
 
 
 class FolderProcessorApp:
@@ -44,100 +55,7 @@ class FolderProcessorApp:
         self.root.minsize(600, 800)
 
         # Set application icon
-        try:
-            # Get the directory where the script/executable is located
-            if getattr(sys, "frozen", False):
-                # Running as compiled executable
-                base_dir = sys._MEIPASS
-            else:
-                # Running as script
-                base_dir = os.path.dirname(__file__)
-
-            # On Windows, set the app ID FIRST for better taskbar behavior
-            try:
-                # Set app user model ID for Windows taskbar grouping
-                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
-                    "FolderFix.Tool.2.0",
-                )
-                print("Set Windows App User Model ID for taskbar grouping")
-            except Exception as e:
-                print(f"Could not set app ID: {e}")
-
-            # Try ICO file first (best for Windows)
-            ico_path = os.path.join(base_dir, "paper_plane_icon.ico")
-            if os.path.exists(ico_path):
-                # Use iconbitmap for Windows taskbar integration
-                self.root.iconbitmap(ico_path)
-                print(f"Loaded ICO icon for taskbar: {ico_path}")
-
-                # Also set iconphoto with multiple sizes for better display
-                try:
-                    from PIL import Image, ImageTk
-
-                    # Load the ICO file which now has multiple sizes
-                    image = Image.open(ico_path)
-
-                    # Create PhotoImage objects for different sizes
-                    sizes = [16, 32, 48, 64]
-                    photos = []
-
-                    for size in sizes:
-                        try:
-                            # Try to get exact size from ICO, or resize
-                            resized = image.resize(
-                                (size, size),
-                                Image.Resampling.LANCZOS,
-                            )
-                            if resized.mode != "RGBA":
-                                resized = resized.convert("RGBA")
-                            photo = ImageTk.PhotoImage(resized)
-                            photos.append(photo)
-                        except Exception as e:
-                            print(f"Could not create {size}x{size} icon: {e}")
-
-                    # Set all sizes at once for best scaling
-                    if photos:
-                        self.root.iconphoto(True, *photos)
-                        # Keep references to prevent garbage collection
-                        self.icon_photos = photos
-                        print(f"Set iconphoto with {len(photos)} different sizes")
-
-                except Exception as e:
-                    print(f"Could not set iconphoto from ICO: {e}")
-
-            else:
-                # Fallback to PNG if ICO doesn't exist
-                png_path = os.path.join(base_dir, "paper_plane_icon.png")
-                if os.path.exists(png_path):
-                    print("ICO not found, using PNG fallback")
-                    from PIL import Image, ImageTk
-
-                    image = Image.open(png_path)
-
-                    # Convert to RGBA for transparency support
-                    if image.mode != "RGBA":
-                        image = image.convert("RGBA")
-
-                    # Create multiple sizes for better scaling
-                    sizes = [16, 32, 48, 64]
-                    photos = []
-                    for size in sizes:
-                        resized = image.resize((size, size), Image.Resampling.LANCZOS)
-                        photo = ImageTk.PhotoImage(resized)
-                        photos.append(photo)
-
-                    if photos:
-                        self.root.iconphoto(True, *photos)
-                        # Keep references to prevent garbage collection
-                        self.icon_photos = photos
-                        print(f"Loaded PNG icon: {png_path}")
-                else:
-                    print(
-                        "No icon files found (paper_plane_icon.ico or paper_plane_icon.png)",
-                    )
-
-        except Exception as e:
-            print(f"Could not load icon: {e}")
+        self._setup_application_icon()
 
         # --- UI Variables ---
         self.source_folders = []
@@ -169,6 +87,111 @@ class FolderProcessorApp:
 
         # --- Main Frame with Scrollable Content ---
         self.create_scrollable_interface()
+
+    def _setup_application_icon(self) -> None:
+        """Sets up the application icon with fallback options."""
+        try:
+            # Get the directory where the script/executable is located
+            if getattr(sys, "frozen", False):
+                # Running as compiled executable
+                base_dir = sys._MEIPASS
+            else:
+                # Running as script
+                base_dir = os.path.dirname(__file__)
+
+            # On Windows, set the app ID FIRST for better taskbar behavior
+            self._set_windows_app_id()
+
+            # Try ICO file first (best for Windows)
+            ico_path = os.path.join(base_dir, "paper_plane_icon.ico")
+            if os.path.exists(ico_path):
+                self._load_ico_icon(ico_path)
+            else:
+                # Fallback to PNG if ICO doesn't exist
+                self._load_png_fallback(base_dir)
+
+        except Exception as e:
+            logger.error(f"Could not load icon: {e}")
+
+    def _set_windows_app_id(self) -> None:
+        """Sets the Windows app user model ID for taskbar grouping."""
+        try:
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
+                "FolderFix.Tool.2.0",
+            )
+            logger.info("Set Windows App User Model ID for taskbar grouping")
+        except Exception as e:
+            logger.warning(f"Could not set app ID: {e}")
+
+    def _load_ico_icon(self, ico_path: str) -> None:
+        """Loads and sets the ICO icon for the application."""
+        # Use iconbitmap for Windows taskbar integration
+        self.root.iconbitmap(ico_path)
+        logger.info(f"Loaded ICO icon for taskbar: {ico_path}")
+
+        # Also set iconphoto with multiple sizes for better display
+        try:
+            from PIL import Image, ImageTk
+
+            # Load the ICO file which now has multiple sizes
+            image = Image.open(ico_path)
+
+            # Create PhotoImage objects for different sizes using constants
+            photos = []
+
+            for size in ICON_SIZES:
+                try:
+                    # Try to get exact size from ICO, or resize
+                    resized = image.resize(
+                        (size, size),
+                        Image.Resampling.LANCZOS,
+                    )
+                    if resized.mode != "RGBA":
+                        resized = resized.convert("RGBA")
+                    photo = ImageTk.PhotoImage(resized)
+                    photos.append(photo)
+                except Exception as e:
+                    logger.warning(f"Could not create {size}x{size} icon: {e}")
+
+            # Set all sizes at once for best scaling
+            if photos:
+                self.root.iconphoto(True, *photos)
+                # Keep references to prevent garbage collection
+                self.icon_photos = photos
+                logger.info(f"Set iconphoto with {len(photos)} different sizes")
+
+        except Exception as e:
+            logger.warning(f"Could not set iconphoto from ICO: {e}")
+
+    def _load_png_fallback(self, base_dir: str) -> None:
+        """Loads PNG icon as fallback when ICO is not available."""
+        png_path = os.path.join(base_dir, "paper_plane_icon.png")
+        if os.path.exists(png_path):
+            logger.info("ICO not found, using PNG fallback")
+            from PIL import Image, ImageTk
+
+            image = Image.open(png_path)
+
+            # Convert to RGBA for transparency support
+            if image.mode != "RGBA":
+                image = image.convert("RGBA")
+
+            # Create multiple sizes for better scaling using constants
+            photos = []
+            for size in ICON_SIZES:
+                resized = image.resize((size, size), Image.Resampling.LANCZOS)
+                photo = ImageTk.PhotoImage(resized)
+                photos.append(photo)
+
+            if photos:
+                self.root.iconphoto(True, *photos)
+                # Keep references to prevent garbage collection
+                self.icon_photos = photos
+                logger.info(f"Loaded PNG icon: {png_path}")
+        else:
+            logger.warning(
+                "No icon files found (paper_plane_icon.ico or paper_plane_icon.png)",
+            )
 
     def create_scrollable_interface(self) -> None:
         """Creates a scrollable main interface."""
@@ -558,10 +581,20 @@ class FolderProcessorApp:
         # Update description
         descriptions = {
             "combine": "Copies all files from source folders into the single destination folder.",
-            "flatten": "Finds deeply nested folders and copies them to the top level of the destination.",
-            "prune": "Copies source folders to the destination, preserving structure but skipping empty sub-folders.",
-            "deduplicate": "Deletes renamed duplicates like 'file (1).txt' within the source folder(s), keeping the newest version.",
-            "analyze": "Analyzes folder contents and generates a detailed report without making changes.",
+            "flatten": (
+                "Finds deeply nested folders and copies them to the top level of the destination."
+            ),
+            "prune": (
+                "Copies source folders to the destination, preserving structure but "
+                "skipping empty sub-folders."
+            ),
+            "deduplicate": (
+                "Deletes renamed duplicates like 'file (1).txt' within the source folder(s), "
+                "keeping the newest version."
+            ),
+            "analyze": (
+                "Analyzes folder contents and generates a detailed report without making changes."
+            ),
         }
         self.mode_description.config(text=descriptions.get(mode, ""))
 
@@ -658,20 +691,103 @@ class FolderProcessorApp:
 
         # Size filter
         try:
-            file_size_mb = os.path.getsize(file_path) / (1024 * 1024)
+            file_size_bytes = os.path.getsize(file_path)
+            file_size_mb = file_size_bytes / (1024 * 1024)
 
-            min_size = float(self.min_file_size.get() or 0)
-            if file_size_mb < min_size:
+            # Validate minimum size
+            min_size_mb = float(self.min_file_size.get() or 0)
+            if min_size_mb < 0:
+                min_size_mb = 0  # Reset invalid negative values
+                self.min_file_size.set("0")
+            if file_size_mb < min_size_mb:
                 return False
 
+            # Validate maximum size
             max_size_str = self.max_file_size.get().strip()
             if max_size_str:
-                max_size = float(max_size_str)
-                if file_size_mb > max_size:
+                try:
+                    max_size_mb = float(max_size_str)
+                    if max_size_mb < 0:
+                        max_size_mb = MAX_FILE_SIZE_MB  # Reset invalid negative values
+                        self.max_file_size.set(str(MAX_FILE_SIZE_MB))
+                    if file_size_mb > max_size_mb:
+                        return False
+                        
+                    # Validate against absolute maximum
+                    if max_size_mb > MAX_FILE_SIZE_MB:
+                        max_size_mb = MAX_FILE_SIZE_MB
+                        self.max_file_size.set(str(MAX_FILE_SIZE_MB))
+                        return False
+                except ValueError:
+                    # Invalid input, reset to empty
+                    self.max_file_size.set("")
                     return False
+                    
         except (ValueError, OSError):
             return False
 
+        return True
+
+    def validate_size_inputs(self) -> bool:
+        """Validates file size input fields and provides user feedback.
+        
+        Returns:
+            True if inputs are valid, False otherwise
+        """
+        try:
+            # Validate minimum size
+            min_size_str = self.min_file_size.get().strip()
+            if min_size_str:
+                min_size_mb = float(min_size_str)
+                if min_size_mb < 0:
+                    messagebox.showwarning(
+                        "Invalid Input",
+                        f"Minimum file size cannot be negative. Setting to 0 MB."
+                    )
+                    self.min_file_size.set("0")
+                    return False
+                if min_size_mb > MAX_FILE_SIZE_MB:
+                    messagebox.showwarning(
+                        "Invalid Input",
+                        f"Minimum file size cannot exceed {MAX_FILE_SIZE_MB} MB. Setting to 0 MB."
+                    )
+                    self.min_file_size.set("0")
+                    return False
+            
+            # Validate maximum size
+            max_size_str = self.max_file_size.get().strip()
+            if max_size_str:
+                max_size_mb = float(max_size_str)
+                if max_size_mb < 0:
+                    messagebox.showwarning(
+                        "Invalid Input",
+                        f"Maximum file size cannot be negative. Setting to {MAX_FILE_SIZE_MB} MB."
+                    )
+                    self.max_file_size.set(str(MAX_FILE_SIZE_MB))
+                    return False
+                if max_size_mb > MAX_FILE_SIZE_MB:
+                    messagebox.showwarning(
+                        "Invalid Input",
+                        f"Maximum file size cannot exceed {MAX_FILE_SIZE_MB} MB. Setting to {MAX_FILE_SIZE_MB} MB."
+                    )
+                    self.max_file_size.set(str(MAX_FILE_SIZE_MB))
+                    return False
+                
+                # Check if min > max
+                if min_size_str and float(min_size_str) > max_size_mb:
+                    messagebox.showwarning(
+                        "Invalid Input",
+                        "Minimum file size cannot be greater than maximum file size."
+                    )
+                    return False
+                    
+        except ValueError:
+            messagebox.showerror(
+                "Invalid Input",
+                "Please enter valid numeric values for file sizes."
+            )
+            return False
+            
         return True
 
     def get_organized_path(self, file_path: str, dest_base: str) -> str:
@@ -720,8 +836,26 @@ class FolderProcessorApp:
 
         return os.path.join(dest_path, filename)
 
-    def safe_extract_archive(self, archive_path: str) -> bool:
-        """Safely extracts an archive with validation."""
+    def safe_extract_archive(self, archive_path: str) -> Tuple[bool, str]:
+        """Safely extracts an archive with validation.
+        
+        Args:
+            archive_path: Path to the archive file to extract
+            
+        Returns:
+            Tuple of (success: bool, message: str)
+        """
+        if not os.path.exists(archive_path):
+            return False, f"Archive file not found: {archive_path}"
+            
+        # Validate archive file size
+        try:
+            archive_size = os.path.getsize(archive_path)
+            if archive_size == 0:
+                return False, f"Archive file is empty: {archive_path}"
+        except OSError as e:
+            return False, f"Cannot access archive file: {e}"
+        
         extract_dir = self._get_unique_path(os.path.splitext(archive_path)[0])
 
         try:
@@ -730,7 +864,10 @@ class FolderProcessorApp:
 
             # Validate extraction if safe mode is enabled
             if self.safe_extract_var.get():
-                if not os.path.exists(extract_dir) or not os.listdir(extract_dir):
+                if not os.path.exists(extract_dir):
+                    raise Exception("Extraction failed - destination folder was not created")
+
+                if not os.listdir(extract_dir):
                     raise Exception("Extraction failed - destination folder is empty")
 
                 # Check if any files were actually extracted
@@ -742,21 +879,39 @@ class FolderProcessorApp:
                     raise Exception(
                         "Extraction failed - no files found in extracted folder",
                     )
+                    
+                # Verify total extracted size is reasonable
+                total_extracted_size = 0
+                for root, dirs, files in os.walk(extract_dir):
+                    for file in files:
+                        file_path = os.path.join(root, file)
+                        try:
+                            total_extracted_size += os.path.getsize(file_path)
+                        except OSError:
+                            continue
+                            
+                # Check if extracted size is reasonable (should be >= archive size * 0.1)
+                if total_extracted_size < archive_size * 0.1:
+                    logger.warning(f"Extracted size ({total_extracted_size}) seems small compared to archive size ({archive_size})")
 
             # Only delete original if extraction was successful
             os.remove(archive_path)
             return (
                 True,
-                f"Successfully extracted and deleted '{os.path.basename(archive_path)}'",
+                f"Successfully extracted and deleted '{os.path.basename(archive_path)}' ({len(extracted_files) if 'extracted_files' in locals() else 'unknown'} files)",
             )
 
         except Exception as e:
             # Clean up failed extraction directory
             if os.path.exists(extract_dir):
-                shutil.rmtree(extract_dir, ignore_errors=True)
+                try:
+                    shutil.rmtree(extract_dir, ignore_errors=True)
+                except Exception as cleanup_error:
+                    logger.warning(f"Failed to cleanup extraction directory: {cleanup_error}")
+                    
             return False, f"Failed to extract '{os.path.basename(archive_path)}': {e}"
 
-    def create_backup(self) -> bool:
+    def create_backup(self) -> Optional[str]:
         """Creates a backup of source folders before processing."""
         backup_base = os.path.join(
             os.path.dirname(self.source_folders[0]),
@@ -779,7 +934,7 @@ class FolderProcessorApp:
 
         return backup_base
 
-    def generate_analysis_report(self) -> str:
+    def generate_analysis_report(self) -> Optional[str]:
         """Generates a comprehensive analysis report."""
         report = ["=== FOLDER ANALYSIS REPORT ===", f"Generated: {datetime.now()}", ""]
 
@@ -1014,6 +1169,7 @@ class FolderProcessorApp:
         if not self.source_folders:
             messagebox.showerror("Error", "Please add at least one source folder.")
             return False
+            
         if check_destination:
             if not self.dest_folder:
                 messagebox.showerror("Error", "Please select a destination folder.")
@@ -1024,10 +1180,35 @@ class FolderProcessorApp:
                     "The destination folder cannot be a source folder.",
                 )
                 return False
+                
+        # Validate file size inputs
+        if not self.validate_size_inputs():
+            return False
+            
+        # Validate extension filter format
+        extensions = self.filter_extensions.get().strip()
+        if extensions:
+            try:
+                ext_list = [ext.strip().lower() for ext in extensions.split(",")]
+                # Validate each extension starts with a dot
+                for ext in ext_list:
+                    if ext and not ext.startswith('.'):
+                        messagebox.showwarning(
+                            "Invalid Extension Format",
+                            f"Extension '{ext}' should start with a dot (e.g., '.txt')."
+                        )
+                        return False
+            except Exception:
+                messagebox.showerror(
+                    "Error",
+                    "Invalid extension filter format. Use comma-separated values like '.txt,.pdf'."
+                )
+                return False
+                
         return True
 
     # --- Enhanced Backend Processing Methods ---
-    def _bulk_unzip_enhanced(self) -> None:
+    def _bulk_unzip_enhanced(self) -> List[str]:
         """Enhanced bulk extraction with better validation."""
         log = ["Starting enhanced bulk extraction..."]
         extracted_count = 0
@@ -1068,12 +1249,53 @@ class FolderProcessorApp:
         summary += f"Successfully extracted: {extracted_count}, Failed: {failed_count}"
         return [summary] + log[1:]
 
-    def _combine_folders_enhanced(self) -> None:
+    def _safe_copy_file(self, source_path: str, dest_path: str) -> bool:
+        """Safely copy a file with retry logic and error handling.
+        
+        Args:
+            source_path: Source file path
+            dest_path: Destination file path
+            
+        Returns:
+            True if copy successful, False otherwise
+        """
+        for attempt in range(MAX_RETRY_ATTEMPTS):
+            try:
+                # Ensure destination directory exists
+                dest_dir = os.path.dirname(dest_path)
+                os.makedirs(dest_dir, exist_ok=True)
+                
+                # Copy file with metadata preservation
+                shutil.copy2(source_path, dest_path)
+                
+                # Verify copy was successful
+                if os.path.exists(dest_path):
+                    source_size = os.path.getsize(source_path)
+                    dest_size = os.path.getsize(dest_path)
+                    if source_size == dest_size:
+                        return True
+                    else:
+                        # Size mismatch, remove failed copy and retry
+                        if os.path.exists(dest_path):
+                            os.remove(dest_path)
+                        if attempt < MAX_RETRY_ATTEMPTS - 1:
+                            continue
+                        
+            except (OSError, IOError) as e:
+                if attempt < MAX_RETRY_ATTEMPTS - 1:
+                    continue
+                else:
+                    logger.error(f"Failed to copy {source_path} after {MAX_RETRY_ATTEMPTS} attempts: {e}")
+                    
+        return False
+
+    def _combine_folders_enhanced(self) -> List[str]:
         """Enhanced combine operation with filtering and organization."""
         log = []
         file_count = 0
         renamed_count = 0
         skipped_count = 0
+        failed_count = 0
 
         os.makedirs(self.dest_folder, exist_ok=True)
 
@@ -1119,9 +1341,15 @@ class FolderProcessorApp:
 
                     try:
                         if not self.preview_mode_var.get():
-                            shutil.copy2(source_path, final_dest_path)
-                        file_count += 1
+                            if self._safe_copy_file(source_path, final_dest_path):
+                                file_count += 1
+                            else:
+                                failed_count += 1
+                                log.append(f"FAILED to copy '{file}' after retries")
+                        else:
+                            file_count += 1  # Count in preview mode
                     except Exception as e:
+                        failed_count += 1
                         log.append(f"ERROR copying '{file}': {e}")
 
                     processed_files += 1
@@ -1137,14 +1365,17 @@ class FolderProcessorApp:
             f"Renamed {renamed_count} files due to duplicates.",
             f"Skipped {skipped_count} files due to filters.",
         ]
+        
+        if failed_count > 0:
+            summary.append(f"Failed to copy {failed_count} files.")
 
         if self.preview_mode_var.get():
             summary.insert(0, "PREVIEW MODE - No files were actually copied.")
 
-        return summary + log[:10]
+        return summary + log[:MAX_LOG_ENTRIES]
 
     # --- Keep existing methods for compatibility ---
-    def _perform_deduplication(self, target_folder: str) -> None:
+    def _perform_deduplication(self, target_folder: str) -> List[str]:
         """Core logic to find and delete renamed duplicates in a single target folder."""
         log = []
         deleted_count = 0
@@ -1154,7 +1385,8 @@ class FolderProcessorApp:
             confirm = messagebox.askyesno(
                 "Confirm Deletion",
                 f"This will permanently delete duplicate files in:\n{target_folder}\n\n"
-                + "It keeps the newest version of files like 'file (1).txt'. This cannot be undone. Are you sure?",
+                + "It keeps the newest version of files like 'file (1).txt'. "
+                + "This cannot be undone. Are you sure?",
             )
             if not confirm:
                 return ["Deduplication cancelled by user."]
@@ -1212,7 +1444,7 @@ class FolderProcessorApp:
         return summary
 
     # Keep other existing methods...
-    def _run_deduplicate_main_op(self) -> None:
+    def _run_deduplicate_main_op(self) -> List[str]:
         """Run deduplication as a main, in-place operation on source folders."""
         full_log = []
         for folder in self.source_folders:
@@ -1284,30 +1516,194 @@ class FolderProcessorApp:
             self.dest_folder = folder
             self.dest_label.config(text=self.dest_folder, foreground="black")
 
-    # Simplified versions of other existing methods for compatibility
-    def _flatten_fold_folders(self) -> None:
-        """Flatten folder structure by moving all files to root level."""
-        # Existing implementation
-        log, moved_count = [], 0
+    def _flatten_folders(self) -> List[str]:
+        """Flatten folder structure by moving all files to root level of destination.
+        
+        Returns:
+            List of log messages describing the operation results
+        """
+        log = []
+        moved_count = 0
+        skipped_count = 0
+        failed_count = 0
+        
+        os.makedirs(self.dest_folder, exist_ok=True)
+        
+        # Count total files for progress tracking
+        total_files = 0
+        for src in self.source_folders:
+            for root, dirs, files in os.walk(src):
+                total_files += len(files)
+        
+        processed_files = 0
+        
         for src in self.source_folders:
             if self.cancel_operation:
                 break
-            # ... existing flatten logic ...
-        return [f"Copied {moved_count} tidy folder structures.", *log[:10]]
-
-    def _prune_empty_folders(self) -> None:
-        """Remove empty folders after processing."""
-        # Existing implementation
-        log, fc, pf = [], 0, 0
-        for src in self.source_folders:
-            if self.cancel_operation:
-                break
-            # ... existing prune logic ...
-        return [
-            f"Processed {pf} non-empty source folder(s).",
-            f"Copied a total of {fc} files.",
-            *log[:10]
+                
+            for root, dirs, files in os.walk(src):
+                for file in files:
+                    if self.cancel_operation:
+                        break
+                        
+                    source_path = os.path.join(root, file)
+                    
+                    # Apply filters
+                    if not self.validate_file_filters(source_path):
+                        skipped_count += 1
+                        processed_files += 1
+                        continue
+                    
+                    # Get organized destination path (flattened to root)
+                    dest_path = self.get_organized_path(source_path, self.dest_folder)
+                    dest_dir = os.path.dirname(dest_path)
+                    
+                    # Create destination directory if needed
+                    os.makedirs(dest_dir, exist_ok=True)
+                    
+                    # Handle naming conflicts
+                    final_dest_path = self._get_unique_path(dest_path)
+                    if final_dest_path != dest_path:
+                        log.append(
+                            f"Renamed: '{file}' to '{os.path.basename(final_dest_path)}'",
+                        )
+                    
+                    try:
+                        if not self.preview_mode_var.get():
+                            if self._safe_copy_file(source_path, final_dest_path):
+                                moved_count += 1
+                            else:
+                                failed_count += 1
+                                log.append(f"FAILED to copy '{file}' after retries")
+                        else:
+                            moved_count += 1  # Count in preview mode
+                    except Exception as e:
+                        failed_count += 1
+                        log.append(f"ERROR copying '{file}': {e}")
+                    
+                    processed_files += 1
+                    if processed_files % 10 == 0:  # Update progress every 10 files
+                        progress = 30 + (processed_files / total_files) * 40
+                        self.update_progress(
+                            progress,
+                            f"Processed {processed_files}/{total_files} files",
+                        )
+        
+        summary = [
+            f"Flattened {moved_count} files to destination root level.",
+            f"Skipped {skipped_count} files due to filters.",
         ]
+        
+        if failed_count > 0:
+            summary.append(f"Failed to copy {failed_count} files.")
+        
+        if self.preview_mode_var.get():
+            summary.insert(0, "PREVIEW MODE - No files were actually copied.")
+        
+        return summary + log[:MAX_LOG_ENTRIES]
+
+    def _prune_empty_folders(self) -> List[str]:
+        """Copy source folders to destination while preserving structure but skipping empty sub-folders.
+        
+        Returns:
+            List of log messages describing the operation results
+        """
+        log = []
+        file_count = 0
+        processed_folders = 0
+        empty_folders_skipped = 0
+        failed_count = 0
+        
+        os.makedirs(self.dest_folder, exist_ok=True)
+        
+        # Count total files for progress tracking
+        total_files = 0
+        for src in self.source_folders:
+            for root, dirs, files in os.walk(src):
+                total_files += len(files)
+        
+        processed_files = 0
+        
+        for src in self.source_folders:
+            if self.cancel_operation:
+                break
+                
+            src_name = os.path.basename(src)
+            dest_src_path = os.path.join(self.dest_folder, src_name)
+            
+            for root, dirs, files in os.walk(src):
+                if self.cancel_operation:
+                    break
+                    
+                # Skip empty folders
+                if not files and not any(os.listdir(os.path.join(root, d)) for d in dirs if os.path.exists(os.path.join(root, d))):
+                    empty_folders_skipped += 1
+                    continue
+                
+                # Calculate relative path from source root
+                rel_path = os.path.relpath(root, src)
+                dest_path = os.path.join(dest_src_path, rel_path)
+                
+                # Create destination directory
+                os.makedirs(dest_path, exist_ok=True)
+                
+                # Copy files in this directory
+                for file in files:
+                    if self.cancel_operation:
+                        break
+                        
+                    source_file_path = os.path.join(root, file)
+                    
+                    # Apply filters
+                    if not self.validate_file_filters(source_file_path):
+                        processed_files += 1
+                        continue
+                    
+                    dest_file_path = os.path.join(dest_path, file)
+                    
+                    # Handle naming conflicts
+                    final_dest_path = self._get_unique_path(dest_file_path)
+                    if final_dest_path != dest_file_path:
+                        log.append(
+                            f"Renamed: '{file}' to '{os.path.basename(final_dest_path)}'",
+                        )
+                    
+                    try:
+                        if not self.preview_mode_var.get():
+                            if self._safe_copy_file(source_file_path, final_dest_path):
+                                file_count += 1
+                            else:
+                                failed_count += 1
+                                log.append(f"FAILED to copy '{file}' after retries")
+                        else:
+                            file_count += 1  # Count in preview mode
+                    except Exception as e:
+                        failed_count += 1
+                        log.append(f"ERROR copying '{file}': {e}")
+                    
+                    processed_files += 1
+                    if processed_files % 10 == 0:  # Update progress every 10 files
+                        progress = 30 + (processed_files / total_files) * 40
+                        self.update_progress(
+                            progress,
+                            f"Processed {processed_files}/{total_files} files",
+                        )
+                
+                processed_folders += 1
+        
+        summary = [
+            f"Processed {processed_folders} non-empty source folder(s).",
+            f"Copied a total of {file_count} files.",
+            f"Skipped {empty_folders_skipped} empty folders.",
+        ]
+        
+        if failed_count > 0:
+            summary.append(f"Failed to copy {failed_count} files.")
+        
+        if self.preview_mode_var.get():
+            summary.insert(0, "PREVIEW MODE - No files were actually copied.")
+        
+        return summary + log[:MAX_LOG_ENTRIES]
 
 
 if __name__ == "__main__":
