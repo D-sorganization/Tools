@@ -1469,13 +1469,13 @@ class CSVProcessorApp(ctk.CTk):
             self.signal_vars.clear()
 
             if not search_text:
-                        # Show first 200 signals when search is cleared
-        self._display_signals_batch(self.all_signals[:SIGNAL_BATCH_SIZE], 0)
-        self.signals_displayed = min(SIGNAL_BATCH_SIZE, len(self.all_signals))
+                # Show first 200 signals when search is cleared
+                self._display_signals_batch(self.all_signals[:SIGNAL_BATCH_SIZE], 0)
+                self.signals_displayed = min(SIGNAL_BATCH_SIZE, len(self.all_signals))
 
                 # Update load more button
-                        if hasattr(self, "load_more_button") and len(self.all_signals) > SIGNAL_BATCH_SIZE:
-            remaining = len(self.all_signals) - SIGNAL_BATCH_SIZE
+                if hasattr(self, "load_more_button") and len(self.all_signals) > SIGNAL_BATCH_SIZE:
+                    remaining = len(self.all_signals) - SIGNAL_BATCH_SIZE
                     self.load_more_button.configure(
                         text=f"Load More Signals ({remaining} remaining)",
                     )
@@ -1495,8 +1495,8 @@ class CSVProcessorApp(ctk.CTk):
 
                 # Update load more button for filtered results
                 if hasattr(self, "load_more_button"):
-                            if len(filtered_signals) > LARGE_SIGNAL_THRESHOLD:
-            remaining = len(filtered_signals) - LARGE_SIGNAL_THRESHOLD
+                    if len(filtered_signals) > LARGE_SIGNAL_THRESHOLD:
+                        remaining = len(filtered_signals) - LARGE_SIGNAL_THRESHOLD
                         self.load_more_button.configure(
                             text=f"Load More Filtered Signals ({remaining} remaining)",
                         )

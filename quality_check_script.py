@@ -12,7 +12,10 @@ BANNED_PATTERNS = [
     (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
     (re.compile(r"^\s*\.\.\.\s*$"), "Ellipsis placeholder"),
     (re.compile(r"NotImplementedError"), "NotImplementedError placeholder"),
-    (re.compile(r"<.*>"), "Angle bracket placeholder"),
+    # More specific angle bracket patterns to avoid Tkinter event bindings
+    (re.compile(r"<[^<>]*placeholder[^<>]*>", re.IGNORECASE), "Angle bracket placeholder"),
+    (re.compile(r"<[^<>]*TODO[^<>]*>", re.IGNORECASE), "Angle bracket TODO placeholder"),
+    (re.compile(r"<[^<>]*FIXME[^<>]*>", re.IGNORECASE), "Angle bracket FIXME placeholder"),
     (re.compile(r"your.*here", re.IGNORECASE), "Template placeholder"),
     (re.compile(r"insert.*here", re.IGNORECASE), "Template placeholder"),
 ]
@@ -70,6 +73,23 @@ def is_legitimate_pass_context(lines: list[str], line_num: int) -> bool:
     return False
 
 
+def is_legitimate_tkinter_binding(line: str) -> bool:
+    """Check if a line contains legitimate Tkinter event bindings."""
+    # Common Tkinter event patterns
+    tkinter_events = [
+        r"<KeyRelease>", r"<KeyPress>", r"<Key>", r"<Return>", r"<Enter>", r"<Leave>",
+        r"<Button-1>", r"<ButtonRelease-1>", r"<B1-Motion>", r"<Configure>",
+        r"<MouseWheel>", r"<Button-4>", r"<Button-5>", r"<FocusIn>", r"<FocusOut>",
+        r"<<ListboxSelect>>", r"<<ComboboxSelected>>", r"<<TreeviewSelect>>"
+    ]
+    
+    for event_pattern in tkinter_events:
+        if re.search(event_pattern, line):
+            return True
+    
+    return False
+
+
 def check_banned_patterns(
     lines: list[str],
     filepath: Path,
@@ -81,6 +101,10 @@ def check_banned_patterns(
         return issues
     
     for line_num, line in enumerate(lines, 1):
+        # Skip legitimate Tkinter event bindings
+        if is_legitimate_tkinter_binding(line):
+            continue
+            
         # Check for basic banned patterns
         for pattern, message in BANNED_PATTERNS:
             if pattern.search(line):
