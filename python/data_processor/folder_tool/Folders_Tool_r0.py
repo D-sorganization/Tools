@@ -165,7 +165,7 @@ class FolderProcessorApp:
         # --- Main Frame with Scrollable Content ---
         self.create_scrollable_interface()
 
-    def create_scrollable_interface(self):
+    def create_scrollable_interface(self) -> None:
         """Creates a scrollable main interface."""
         # Create canvas and scrollbar
         canvas = tk.Canvas(self.root)
@@ -190,6 +190,11 @@ class FolderProcessorApp:
 
         # Enable mouse wheel scrolling
         def _on_mousewheel(event: tk.Event) -> None:
+            """Handle mouse wheel scrolling for the canvas.
+            
+            Args:
+                event: Mouse wheel event containing delta information
+            """
             canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
         canvas.bind_all("<MouseWheel>", _on_mousewheel)
@@ -210,6 +215,11 @@ class FolderProcessorApp:
         self.on_mode_change()  # Initial UI setup
 
     def create_source_widgets(self, parent: tk.Widget) -> None:
+        """Create source folder selection widgets.
+        
+        Args:
+            parent: Parent widget to contain the source widgets
+        """
         self.source_frame = ttk.LabelFrame(
             parent,
             text="1. Select Folder(s) to Process",
@@ -254,6 +264,11 @@ class FolderProcessorApp:
         self.source_info_label.pack(fill=tk.X, pady=2)
 
     def create_destination_widgets(self, parent: tk.Widget) -> None:
+        """Create destination folder selection widgets.
+        
+        Args:
+            parent: Parent widget to contain the destination widgets
+        """
         self.dest_frame = ttk.LabelFrame(
             parent,
             text="2. Select Final Destination Folder",
@@ -273,6 +288,11 @@ class FolderProcessorApp:
         ).pack(side=tk.RIGHT)
 
     def create_filtering_widgets(self, parent: tk.Widget) -> None:
+        """Create file filtering configuration widgets.
+        
+        Args:
+            parent: Parent widget to contain the filtering widgets
+        """
         filter_frame = ttk.LabelFrame(
             parent,
             text="3. File Filtering Options",
@@ -310,6 +330,11 @@ class FolderProcessorApp:
         )
 
     def create_preprocessing_widgets(self, parent: tk.Widget) -> None:
+        """Create pre-processing configuration widgets.
+        
+        Args:
+            parent: Parent widget to contain the pre-processing widgets
+        """
         self.pre_process_frame = ttk.LabelFrame(
             parent,
             text="4. Pre-processing Options (On Source)",
@@ -329,6 +354,11 @@ class FolderProcessorApp:
         ).pack(anchor=tk.W, padx=(20, 0))
 
     def create_main_operation_widgets(self, parent: tk.Widget) -> None:
+        """Create main operation selection widgets.
+        
+        Args:
+            parent: Parent widget to contain the operation widgets
+        """
         self.mode_frame = ttk.LabelFrame(
             parent,
             text="5. Choose Main Operation",
@@ -381,6 +411,11 @@ class FolderProcessorApp:
         self.mode_description.pack(fill=tk.X, pady=(5, 0))
 
     def create_organization_widgets(self, parent: tk.Widget) -> None:
+        """Create file organization configuration widgets.
+        
+        Args:
+            parent: Parent widget to contain the organization widgets
+        """
         org_frame = ttk.LabelFrame(
             parent,
             text="6. File Organization Options",
@@ -400,6 +435,11 @@ class FolderProcessorApp:
         ).pack(anchor=tk.W)
 
     def create_postprocessing_widgets(self, parent: tk.Widget) -> None:
+        """Create post-processing configuration widgets.
+        
+        Args:
+            parent: Parent widget to contain the post-processing widgets
+        """
         self.post_process_frame = ttk.LabelFrame(
             parent,
             text="7. Post-processing Options (On Destination)",
@@ -414,6 +454,11 @@ class FolderProcessorApp:
         ).pack(anchor=tk.W)
 
     def create_output_options_widgets(self, parent: tk.Widget) -> None:
+        """Create output configuration widgets.
+        
+        Args:
+            parent: Parent widget to contain the output widgets
+        """
         output_frame = ttk.LabelFrame(parent, text="8. Output Options", padding="10")
         output_frame.pack(fill=tk.X, pady=5)
 
@@ -424,6 +469,11 @@ class FolderProcessorApp:
         ).pack(anchor=tk.W)
 
     def create_advanced_options_widgets(self, parent: tk.Widget) -> None:
+        """Create advanced configuration widgets.
+        
+        Args:
+            parent: Parent widget to contain the advanced widgets
+        """
         advanced_frame = ttk.LabelFrame(
             parent,
             text="9. Advanced Options",
@@ -443,6 +493,11 @@ class FolderProcessorApp:
         ).pack(anchor=tk.W)
 
     def create_progress_widgets(self, parent: tk.Widget) -> None:
+        """Create progress tracking widgets.
+        
+        Args:
+            parent: Parent widget to contain the progress widgets
+        """
         progress_frame = ttk.LabelFrame(parent, text="Progress", padding="10")
         progress_frame.pack(fill=tk.X, pady=5)
 
@@ -458,6 +513,11 @@ class FolderProcessorApp:
         self.status_label.pack(anchor=tk.W)
 
     def create_run_button(self, parent: tk.Widget) -> None:
+        """Create the main run button and control widgets.
+        
+        Args:
+            parent: Parent widget to contain the run button
+        """
         button_frame = ttk.Frame(parent)
         button_frame.pack(fill=tk.X, pady=(10, 5))
 
@@ -545,6 +605,7 @@ class FolderProcessorApp:
         self.cancel_button.config(state=tk.NORMAL)
 
         def processing_thread() -> None:
+            """Execute processing in a separate thread to keep UI responsive."""
             try:
                 self.run_processing()
             finally:
@@ -937,6 +998,14 @@ class FolderProcessorApp:
         text_widget.config(state="disabled")
 
     def validate_inputs(self, check_destination: bool = True) -> bool:
+        """Validate user inputs before processing.
+        
+        Args:
+            check_destination: Whether to validate destination folder selection
+            
+        Returns:
+            True if inputs are valid, False otherwise
+        """
         if not self.source_folders:
             messagebox.showerror("Error", "Please add at least one source folder.")
             return False

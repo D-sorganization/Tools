@@ -10,6 +10,12 @@ import zipfile
 from collections import defaultdict
 from datetime import datetime
 from tkinter import filedialog, messagebox, ttk
+from pathlib import Path
+from typing import List, Optional, Tuple
+
+# Constants for configuration
+MAX_LOG_ENTRIES: int = 20  # Maximum number of log entries to display
+PROGRESS_INCREMENT: int = 10  # Progress bar increment for operations
 
 # Set up logging to capture detailed information
 log_filename = "folder_processor.log"
@@ -189,6 +195,11 @@ class FolderProcessorApp:
 
         # Enable mouse wheel scrolling
         def _on_mousewheel(event: tk.Event) -> None:
+            """Handle mouse wheel scrolling for the canvas.
+            
+            Args:
+                event: Mouse wheel event containing delta information
+            """
             canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
         canvas.bind_all("<MouseWheel>", _on_mousewheel)
@@ -208,8 +219,12 @@ class FolderProcessorApp:
 
         self.on_mode_change()  # Initial UI setup
 
-    def create_source_widgets(self, parent) -> None:
-        """Create source folder selection widgets."""
+    def create_source_widgets(self, parent: tk.Widget) -> None:
+        """Create source folder selection widgets.
+        
+        Args:
+            parent: Parent widget to contain the source widgets
+        """
         self.source_frame = ttk.LabelFrame(
             parent,
             text="1. Select Folder(s) to Process",
@@ -253,8 +268,12 @@ class FolderProcessorApp:
         )
         self.source_info_label.pack(fill=tk.X, pady=2)
 
-    def create_destination_widgets(self, parent) -> None:
-        """Create destination folder selection widgets."""
+    def create_destination_widgets(self, parent: tk.Widget) -> None:
+        """Create destination folder selection widgets.
+        
+        Args:
+            parent: Parent widget to contain the destination widgets
+        """
         self.dest_frame = ttk.LabelFrame(
             parent,
             text="2. Select Final Destination Folder",
@@ -273,8 +292,12 @@ class FolderProcessorApp:
             command=self.select_dest_folder,
         ).pack(side=tk.RIGHT)
 
-    def create_filtering_widgets(self, parent) -> None:
-        """Create file filtering option widgets."""
+    def create_filtering_widgets(self, parent: tk.Widget) -> None:
+        """Create file filtering configuration widgets.
+        
+        Args:
+            parent: Parent widget to contain the filtering widgets
+        """
         filter_frame = ttk.LabelFrame(
             parent,
             text="3. File Filtering Options",
@@ -311,8 +334,12 @@ class FolderProcessorApp:
             padx=5,
         )
 
-    def create_preprocessing_widgets(self, parent) -> None:
-        """Create pre-processing option widgets."""
+    def create_preprocessing_widgets(self, parent: tk.Widget) -> None:
+        """Create preprocessing configuration widgets.
+        
+        Args:
+            parent: Parent widget to contain the preprocessing widgets
+        """
         self.pre_process_frame = ttk.LabelFrame(
             parent,
             text="4. Pre-processing Options (On Source)",
@@ -331,8 +358,12 @@ class FolderProcessorApp:
             variable=self.safe_extract_var,
         ).pack(anchor=tk.W, padx=(20, 0))
 
-    def create_main_operation_widgets(self, parent) -> None:
-        """Create main operation selection widgets."""
+    def create_main_operation_widgets(self, parent: tk.Widget) -> None:
+        """Create main operation selection widgets.
+        
+        Args:
+            parent: Parent widget to contain the main operation widgets
+        """
         self.mode_frame = ttk.LabelFrame(
             parent,
             text="5. Choose Main Operation",
@@ -384,8 +415,12 @@ class FolderProcessorApp:
         )
         self.mode_description.pack(fill=tk.X, pady=(5, 0))
 
-    def create_organization_widgets(self, parent) -> None:
-        """Create file organization option widgets."""
+    def create_organization_widgets(self, parent: tk.Widget) -> None:
+        """Create file organization configuration widgets.
+        
+        Args:
+            parent: Parent widget to contain the organization widgets
+        """
         org_frame = ttk.LabelFrame(
             parent,
             text="6. File Organization Options",
@@ -404,8 +439,12 @@ class FolderProcessorApp:
             variable=self.organize_by_date_var,
         ).pack(anchor=tk.W)
 
-    def create_postprocessing_widgets(self, parent) -> None:
-        """Create post-processing option widgets."""
+    def create_postprocessing_widgets(self, parent: tk.Widget) -> None:
+        """Create postprocessing configuration widgets.
+        
+        Args:
+            parent: Parent widget to contain the postprocessing widgets
+        """
         self.post_process_frame = ttk.LabelFrame(
             parent,
             text="7. Post-processing Options (On Destination)",
@@ -419,8 +458,12 @@ class FolderProcessorApp:
             variable=self.deduplicate_var,
         ).pack(anchor=tk.W)
 
-    def create_output_options_widgets(self, parent) -> None:
-        """Create output option widgets."""
+    def create_output_options_widgets(self, parent: tk.Widget) -> None:
+        """Create output options configuration widgets.
+        
+        Args:
+            parent: Parent widget to contain the output options widgets
+        """
         output_frame = ttk.LabelFrame(parent, text="8. Output Options", padding="10")
         output_frame.pack(fill=tk.X, pady=5)
 
@@ -430,8 +473,12 @@ class FolderProcessorApp:
             variable=self.zip_output_var,
         ).pack(anchor=tk.W)
 
-    def create_advanced_options_widgets(self, parent) -> None:
-        """Create advanced option widgets."""
+    def create_advanced_options_widgets(self, parent: tk.Widget) -> None:
+        """Create advanced options configuration widgets.
+        
+        Args:
+            parent: Parent widget to contain the advanced options widgets
+        """
         advanced_frame = ttk.LabelFrame(
             parent,
             text="9. Advanced Options",
@@ -450,8 +497,12 @@ class FolderProcessorApp:
             variable=self.backup_before_var,
         ).pack(anchor=tk.W)
 
-    def create_progress_widgets(self, parent) -> None:
-        """Create progress tracking widgets."""
+    def create_progress_widgets(self, parent: tk.Widget) -> None:
+        """Create progress tracking widgets.
+        
+        Args:
+            parent: Parent widget to contain the progress widgets
+        """
         progress_frame = ttk.LabelFrame(parent, text="Progress", padding="10")
         progress_frame.pack(fill=tk.X, pady=5)
 
@@ -466,8 +517,12 @@ class FolderProcessorApp:
         self.status_label = ttk.Label(progress_frame, textvariable=self.status_var)
         self.status_label.pack(anchor=tk.W)
 
-    def create_run_button(self, parent) -> None:
-        """Create the main run button and cancel button."""
+    def create_run_button(self, parent: tk.Widget) -> None:
+        """Create the main run button widget.
+        
+        Args:
+            parent: Parent widget to contain the run button
+        """
         button_frame = ttk.Frame(parent)
         button_frame.pack(fill=tk.X, pady=(10, 5))
 
@@ -948,6 +1003,14 @@ class FolderProcessorApp:
         text_widget.config(state="disabled")
 
     def validate_inputs(self, check_destination: bool = True) -> bool:
+        """Validate user inputs before processing.
+        
+        Args:
+            check_destination: Whether to validate destination folder selection
+            
+        Returns:
+            True if inputs are valid, False otherwise
+        """
         if not self.source_folders:
             messagebox.showerror("Error", "Please add at least one source folder.")
             return False
@@ -1108,47 +1171,49 @@ class FolderProcessorApp:
                     base, _, ext = match.groups()
                     base_name = f"{base}{ext}"
                     files_by_base_name.setdefault(base_name, []).append(
-                        os.path.join(dirpath, filename),
+                        str(Path(dirpath) / filename),
                     )
 
             for base_name, files in files_by_base_name.items():
                 if len(files) > 1:
                     try:
-                        file_to_keep = max(files, key=lambda f: os.path.getmtime(f))
+                        file_to_keep = max(files, key=lambda f: Path(f).stat().st_mtime)
                     except FileNotFoundError:
                         continue
 
                     log.append(
-                        f"Duplicate set for '{base_name}': Keeping '{os.path.basename(file_to_keep)}'",
+                        f"Duplicate set for '{base_name}': Keeping '{Path(file_to_keep).name}'",
                     )
 
                     for file_path in files:
                         if file_path != file_to_keep:
                             try:
                                 if not self.preview_mode_var.get():
-                                    os.remove(file_path)
+                                    Path(file_path).unlink()
                                 log.append(
-                                    f"  - {'WOULD DELETE' if self.preview_mode_var.get() else 'DELETED'}: '{os.path.basename(file_path)}'",
+                                    f"  - {'WOULD DELETE' if self.preview_mode_var.get() else 'DELETED'}: "
+                                    f"'{Path(file_path).name}'",
                                 )
                                 deleted_count += 1
                             except OSError as e:
                                 log.append(
-                                    f"  - FAILED to delete '{os.path.basename(file_path)}': {e}",
+                                    f"  - FAILED to delete '{Path(file_path).name}': {e}",
                                 )
 
         summary = [
             f"Deduplication {'preview' if self.preview_mode_var.get() else 'complete'}.",
             f"{'Would delete' if self.preview_mode_var.get() else 'Deleted'} a total of {deleted_count} files.",
-        ] + log[:20]
+            *log[:MAX_LOG_ENTRIES],
+        ]
 
-        if len(log) > 20:
+        if len(log) > MAX_LOG_ENTRIES:
             summary.append("... (see log for full details)")
 
         return summary
 
     # Keep other existing methods...
     def _run_deduplicate_main_op(self) -> None:
-        """Wrapper for running deduplication as a main, in-place operation on source folders."""
+        """Run deduplication as a main, in-place operation on source folders."""
         full_log = []
         for folder in self.source_folders:
             if self.cancel_operation:
@@ -1159,19 +1224,40 @@ class FolderProcessorApp:
         return full_log
 
     def _get_unique_path(self, path: str) -> str:
-        if not os.path.exists(path):
+        """Generate a unique path by appending counter if path exists.
+        
+        Args:
+            path: Original file or directory path
+            
+        Returns:
+            Unique path that doesn't exist
+        """
+        path_obj = Path(path)
+        if not path_obj.exists():
             return path
-        parent, name = os.path.split(path)
-        is_file = "." in name and not os.path.isdir(path)
-        filename, ext = os.path.splitext(name) if is_file else (name, "")
+            
+        parent = path_obj.parent
+        name = path_obj.name
+        is_file = "." in name and not path_obj.is_dir()
+        
+        if is_file:
+            filename = path_obj.stem
+            ext = path_obj.suffix
+        else:
+            filename = name
+            ext = ""
+            
         counter = 1
-        new_path = os.path.join(parent, f"{filename} ({counter}){ext}")
-        while os.path.exists(new_path):
+        new_path = parent / f"{filename} ({counter}){ext}"
+        
+        while new_path.exists():
             counter += 1
-            new_path = os.path.join(parent, f"{filename} ({counter}){ext}")
-        return new_path
+            new_path = parent / f"{filename} ({counter}){ext}"
+            
+        return str(new_path)
 
     def select_source_folders(self) -> None:
+        """Open folder selection dialog to add source folders."""
         folder = filedialog.askdirectory(
             mustexist=True,
             title="Select a folder to process",
@@ -1182,12 +1268,14 @@ class FolderProcessorApp:
             self.update_source_info()
 
     def remove_selected_source(self) -> None:
+        """Remove selected source folders from the list."""
         for i in sorted(self.source_listbox.curselection(), reverse=True):
             self.source_folders.pop(i)
             self.source_listbox.delete(i)
         self.update_source_info()
 
     def select_dest_folder(self) -> None:
+        """Open folder selection dialog to select destination folder."""
         folder = filedialog.askdirectory(
             mustexist=True,
             title="Select the destination folder",
@@ -1198,15 +1286,17 @@ class FolderProcessorApp:
 
     # Simplified versions of other existing methods for compatibility
     def _flatten_fold_folders(self) -> None:
+        """Flatten folder structure by moving all files to root level."""
         # Existing implementation
         log, moved_count = [], 0
         for src in self.source_folders:
             if self.cancel_operation:
                 break
             # ... existing flatten logic ...
-        return [f"Copied {moved_count} tidy folder structures."] + log[:10]
+        return [f"Copied {moved_count} tidy folder structures.", *log[:10]]
 
     def _prune_empty_folders(self) -> None:
+        """Remove empty folders after processing."""
         # Existing implementation
         log, fc, pf = [], 0, 0
         for src in self.source_folders:
@@ -1216,7 +1306,8 @@ class FolderProcessorApp:
         return [
             f"Processed {pf} non-empty source folder(s).",
             f"Copied a total of {fc} files.",
-        ] + log[:10]
+            *log[:10]
+        ]
 
 
 if __name__ == "__main__":
