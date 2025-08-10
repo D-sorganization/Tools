@@ -25,9 +25,12 @@ class FolderProcessorApp:
     An enhanced GUI application for comprehensive folder processing tasks.
     """
 
-    def __init__(self, root_window):
+    def __init__(self, root_window: tk.Tk) -> None:
         """
         Initializes the application's user interface.
+        
+        Args:
+            root_window: The root Tkinter window
         """
         self.root = root_window
         self.root.title("Folder Fix - Enhanced Folder Processor v2.0")
@@ -185,7 +188,7 @@ class FolderProcessorApp:
         main_frame.pack(fill=tk.BOTH, expand=True)
 
         # Enable mouse wheel scrolling
-        def _on_mousewheel(event):
+        def _on_mousewheel(event: tk.Event) -> None:
             canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
         canvas.bind_all("<MouseWheel>", _on_mousewheel)
@@ -585,7 +588,7 @@ class FolderProcessorApp:
         self.status_var.set(status)
         self.root.update_idletasks()
 
-    def validate_file_filters(self, file_path):
+    def validate_file_filters(self, file_path: str) -> bool:
         """Validates if a file meets the filtering criteria."""
         if self.cancel_operation:
             return False
@@ -616,7 +619,7 @@ class FolderProcessorApp:
 
         return True
 
-    def get_organized_path(self, file_path, dest_base):
+    def get_organized_path(self, file_path: str, dest_base: str) -> str:
         """Returns the organized destination path based on organization options."""
         filename = os.path.basename(file_path)
         dest_path = dest_base
@@ -662,7 +665,7 @@ class FolderProcessorApp:
 
         return os.path.join(dest_path, filename)
 
-    def safe_extract_archive(self, archive_path):
+    def safe_extract_archive(self, archive_path: str) -> bool:
         """Safely extracts an archive with validation."""
         extract_dir = self._get_unique_path(os.path.splitext(archive_path)[0])
 
@@ -698,7 +701,7 @@ class FolderProcessorApp:
                 shutil.rmtree(extract_dir, ignore_errors=True)
             return False, f"Failed to extract '{os.path.basename(archive_path)}': {e}"
 
-    def create_backup(self):
+    def create_backup(self) -> bool:
         """Creates a backup of source folders before processing."""
         backup_base = os.path.join(
             os.path.dirname(self.source_folders[0]),
@@ -721,7 +724,7 @@ class FolderProcessorApp:
 
         return backup_base
 
-    def generate_analysis_report(self):
+    def generate_analysis_report(self) -> str:
         """Generates a comprehensive analysis report."""
         report = ["=== FOLDER ANALYSIS REPORT ===", f"Generated: {datetime.now()}", ""]
 
@@ -788,7 +791,7 @@ class FolderProcessorApp:
         return "\n".join(report)
 
     # --- Core Application Logic ---
-    def run_processing(self):
+    def run_processing(self) -> None:
         """Main function to start the selected processing workflow."""
         mode = self.operation_mode.get()
 
@@ -910,7 +913,7 @@ class FolderProcessorApp:
         if not self.cancel_operation:
             messagebox.showinfo("All Operations Complete", final_summary)
 
-    def create_output_zip(self):
+    def create_output_zip(self) -> bool:
         """Creates a ZIP archive of the destination folder."""
         if not os.path.exists(self.dest_folder):
             raise Exception("Destination folder does not exist")
@@ -928,7 +931,7 @@ class FolderProcessorApp:
 
         return zip_path
 
-    def show_text_dialog(self, title, content):
+    def show_text_dialog(self, title: str, content: str) -> None:
         """Shows a dialog with scrollable text content."""
         dialog = tk.Toplevel(self.root)
         dialog.title(title)
@@ -944,7 +947,7 @@ class FolderProcessorApp:
         text_widget.insert("1.0", content)
         text_widget.config(state="disabled")
 
-    def validate_inputs(self, check_destination=True):
+    def validate_inputs(self, check_destination: bool = True) -> bool:
         if not self.source_folders:
             messagebox.showerror("Error", "Please add at least one source folder.")
             return False
@@ -961,7 +964,7 @@ class FolderProcessorApp:
         return True
 
     # --- Enhanced Backend Processing Methods ---
-    def _bulk_unzip_enhanced(self):
+    def _bulk_unzip_enhanced(self) -> None:
         """Enhanced bulk extraction with better validation."""
         log = ["Starting enhanced bulk extraction..."]
         extracted_count = 0
@@ -1002,7 +1005,7 @@ class FolderProcessorApp:
         summary += f"Successfully extracted: {extracted_count}, Failed: {failed_count}"
         return [summary] + log[1:]
 
-    def _combine_folders_enhanced(self):
+    def _combine_folders_enhanced(self) -> None:
         """Enhanced combine operation with filtering and organization."""
         log = []
         file_count = 0
@@ -1078,7 +1081,7 @@ class FolderProcessorApp:
         return summary + log[:10]
 
     # --- Keep existing methods for compatibility ---
-    def _perform_deduplication(self, target_folder):
+    def _perform_deduplication(self, target_folder: str) -> None:
         """Core logic to find and delete renamed duplicates in a single target folder."""
         log = []
         deleted_count = 0
@@ -1144,7 +1147,7 @@ class FolderProcessorApp:
         return summary
 
     # Keep other existing methods...
-    def _run_deduplicate_main_op(self):
+    def _run_deduplicate_main_op(self) -> None:
         """Wrapper for running deduplication as a main, in-place operation on source folders."""
         full_log = []
         for folder in self.source_folders:
@@ -1155,7 +1158,7 @@ class FolderProcessorApp:
             full_log.append("---")
         return full_log
 
-    def _get_unique_path(self, path):
+    def _get_unique_path(self, path: str) -> str:
         if not os.path.exists(path):
             return path
         parent, name = os.path.split(path)
@@ -1168,7 +1171,7 @@ class FolderProcessorApp:
             new_path = os.path.join(parent, f"{filename} ({counter}){ext}")
         return new_path
 
-    def select_source_folders(self):
+    def select_source_folders(self) -> None:
         folder = filedialog.askdirectory(
             mustexist=True,
             title="Select a folder to process",
@@ -1178,13 +1181,13 @@ class FolderProcessorApp:
             self.source_listbox.insert(tk.END, folder)
             self.update_source_info()
 
-    def remove_selected_source(self):
+    def remove_selected_source(self) -> None:
         for i in sorted(self.source_listbox.curselection(), reverse=True):
             self.source_folders.pop(i)
             self.source_listbox.delete(i)
         self.update_source_info()
 
-    def select_dest_folder(self):
+    def select_dest_folder(self) -> None:
         folder = filedialog.askdirectory(
             mustexist=True,
             title="Select the destination folder",
@@ -1194,7 +1197,7 @@ class FolderProcessorApp:
             self.dest_label.config(text=self.dest_folder, foreground="black")
 
     # Simplified versions of other existing methods for compatibility
-    def _flatten_folders(self):
+    def _flatten_fold_folders(self) -> None:
         # Existing implementation
         log, moved_count = [], 0
         for src in self.source_folders:
@@ -1203,7 +1206,7 @@ class FolderProcessorApp:
             # ... existing flatten logic ...
         return [f"Copied {moved_count} tidy folder structures."] + log[:10]
 
-    def _prune_empty_folders(self):
+    def _prune_empty_folders(self) -> None:
         # Existing implementation
         log, fc, pf = [], 0, 0
         for src in self.source_folders:

@@ -135,8 +135,8 @@ def process_single_csv_file(
                             signal_data.index.to_series().diff().dt.total_seconds(),
                         ).mean()
                     )
-                                            if (pd.notna(sr) and 
-                            len(signal_data) > order * MIN_BUTTERWORTH_DATA_MULTIPLIER):
+                    if (pd.notna(sr) and 
+                        len(signal_data) > order * MIN_BUTTERWORTH_DATA_MULTIPLIER):
                         btype = (
                             "low" if filter_type == "Butterworth Low-pass" else "high"
                         )
