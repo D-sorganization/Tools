@@ -42,6 +42,22 @@ try:
 except Exception:  # pragma: no cover - optional dependency
     _savgol_filter = None
 
+# Import constants
+from .constants import (
+    DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, DEFAULT_PADDING, DEFAULT_BUTTON_HEIGHT,
+    DEFAULT_TEXT_HEIGHT, DEFAULT_SEARCH_WIDTH, GRID_WEIGHT_MAIN,
+    MIN_SIGNAL_DATA_POINTS, MIN_PERIODS_DEFAULT, DEFAULT_MA_WINDOW,
+    DEFAULT_BW_ORDER, DEFAULT_BW_CUTOFF, DEFAULT_BW_NYQUIST,
+    DEFAULT_MEDIAN_KERNEL, MIN_KERNEL_SIZE, DEFAULT_SAVGOL_WINDOW,
+    DEFAULT_SAVGOL_POLYORDER, MAX_DERIVATIVE_ORDER,
+    TIME_COLUMN_KEYWORDS, LARGE_SIGNAL_THRESHOLD, SIGNAL_BATCH_SIZE,
+    BULK_SAMPLE_SIZE, LARGE_FILE_THRESHOLD, PLOT_UPDATE_DELAY_MS,
+    ZOOM_OUT_FACTOR, ZOOM_IN_FACTOR, DEFAULT_LINE_WIDTH, DEFAULT_GRID_ALPHA,
+    DEFAULT_GRID_LINESTYLE, ERROR_MSG_NO_FILES, ERROR_MSG_EMPTY_FILE,
+    ERROR_MSG_NO_PLOTS, DEFAULT_PLOT_TITLE, DEFAULT_PLOT_XLABEL,
+    DEFAULT_PLOT_YLABEL, DEFAULT_LEGEND_POSITION, DEFAULT_TIME_FORMAT
+)
+
 
 # =============================================================================
 # WORKER FUNCTION FOR PARALLEL PROCESSING
@@ -94,7 +110,7 @@ def process_single_csv_file(
             ).columns.tolist()
             for col in numeric_cols:
                 signal_data = processed_df[col].dropna()
-                if len(signal_data) < 2:
+                if len(signal_data) < MIN_SIGNAL_DATA_POINTS:
                     continue
 
                 # Apply filtering based on type
@@ -105,15 +121,15 @@ def process_single_csv_file(
                         min_periods=1,
                     ).mean()
                 elif filter_type in ["Butterworth Low-pass", "Butterworth High-pass"]:
-                    order = settings.get("bw_order", 3)
-                    cutoff = settings.get("bw_cutoff", 0.1)
+                    order = settings.get("bw_order", DEFAULT_BW_ORDER)
+                    cutoff = settings.get("bw_cutoff", DEFAULT_BW_CUTOFF)
                     sr = (
                         1.0
                         / pd.to_numeric(
                             signal_data.index.to_series().diff().dt.total_seconds(),
                         ).mean()
                     )
-                    if pd.notna(sr) and len(signal_data) > order * 3:
+                    if pd.notna(sr) and len(signal_data) > order * MIN_BUTTERWORTH_DATA_MULTIPLIER:
                         btype = (
                             "low" if filter_type == "Butterworth Low-pass" else "high"
                         )
@@ -123,7 +139,7 @@ def process_single_csv_file(
                             index=signal_data.index,
                         )
                 elif filter_type == "Median Filter":
-                    kernel = settings.get("median_kernel", 5)
+                    kernel = settings.get("median_kernel", DEFAULT_MEDIAN_KERNEL)
                     if kernel % 2 == 0:
                         kernel += 1
                     if len(signal_data) > kernel:
@@ -132,8 +148,8 @@ def process_single_csv_file(
                             index=signal_data.index,
                         )
                 elif filter_type == "Savitzky-Golay":
-                    window = settings.get("savgol_window", 11)
-                    polyorder = settings.get("savgol_polyorder", 2)
+                    window = settings.get("savgol_window", DEFAULT_SAVGOL_WINDOW)
+                    polyorder = settings.get("savgol_polyorder", DEFAULT_SAVGOL_POLYORDER)
                     if window % 2 == 0:
                         window += 1
                     if polyorder >= window:
@@ -232,8 +248,8 @@ class CSVProcessorApp(ctk.CTk):
         self.title("Advanced CSV Processor & DAT Importer - Complete Version")
 
         # Force reasonable window size (ignore saved layout for size)
-        window_width = 1200
-        window_height = 800
+        window_width = DEFAULT_WINDOW_WIDTH
+        window_height = DEFAULT_WINDOW_HEIGHT
         self.geometry(f"{window_width}x{window_height}")
 
         # Center the window on screen
@@ -287,7 +303,7 @@ class CSVProcessorApp(ctk.CTk):
         self.integrator_signal_vars = {}
         self.deriv_signal_vars = {}
         self.derivative_vars = {}
-        for i in range(1, 6):  # Support up to 5th order derivatives
+        for i in range(1, MAX_DERIVATIVE_ORDER + 1):  # Support up to 5th order derivatives
             self.derivative_vars[i] = tk.BooleanVar(value=False)
 
         # Plot view state management
@@ -1160,7 +1176,7 @@ class CSVProcessorApp(ctk.CTk):
             font=ctk.CTkFont(weight="bold"),
         ).grid(row=0, column=0, columnspan=5, padx=10, pady=5, sticky="w")
 
-        for i in range(1, 6):  # Support up to 5th order
+        for i in range(1, MAX_DERIVATIVE_ORDER + 1):  # Support up to 5th order
             var = tk.BooleanVar(value=False)
             cb = ctk.CTkCheckBox(deriv_order_frame, text=f"Order {i}", variable=var)
             cb.grid(row=1, column=i - 1, padx=10, pady=2, sticky="w")
@@ -1453,13 +1469,13 @@ class CSVProcessorApp(ctk.CTk):
             self.signal_vars.clear()
 
             if not search_text:
-                # Show first 200 signals when search is cleared
-                self._display_signals_batch(self.all_signals[:200], 0)
-                self.signals_displayed = min(200, len(self.all_signals))
+                        # Show first 200 signals when search is cleared
+        self._display_signals_batch(self.all_signals[:SIGNAL_BATCH_SIZE], 0)
+        self.signals_displayed = min(SIGNAL_BATCH_SIZE, len(self.all_signals))
 
                 # Update load more button
-                if hasattr(self, "load_more_button") and len(self.all_signals) > 200:
-                    remaining = len(self.all_signals) - 200
+                        if hasattr(self, "load_more_button") and len(self.all_signals) > SIGNAL_BATCH_SIZE:
+            remaining = len(self.all_signals) - SIGNAL_BATCH_SIZE
                     self.load_more_button.configure(
                         text=f"Load More Signals ({remaining} remaining)",
                     )
@@ -2415,9 +2431,9 @@ class CSVProcessorApp(ctk.CTk):
         # Close progress window
         try:
             progress_window.destroy()
-        except Exception:
-            # Silently ignore progress window destruction errors
-            pass
+        except Exception as e:
+            # Log progress window destruction errors for debugging
+            print(f"Warning: Failed to destroy progress window: {e}")
 
         # Clear progress window reference
         if hasattr(self, "current_progress_window"):
@@ -2806,9 +2822,9 @@ This section helps you manage which signals (columns) to process from your files
             if progress_window:
                 try:
                     progress_window.destroy()
-                except Exception:
-                    # Silently ignore progress window destruction errors
-                    pass
+                except Exception as e:
+                    # Log progress window destruction errors for debugging
+                    print(f"Warning: Failed to destroy progress window: {e}")
             return
 
         try:
@@ -3144,9 +3160,9 @@ This section helps you manage which signals (columns) to process from your files
                             try:
                                 df[col] = pd.to_datetime(df[col])
                                 break  # Only convert first time column found
-                            except Exception:
-                                # Silently ignore datetime conversion errors
-                                pass
+                            except Exception as e:
+                                # Log datetime conversion errors for debugging
+                                print(f"Warning: Failed to convert column {col} to datetime: {e}")
                     return True
                 except Exception as e:
                     print(f"Error loading {filename}: {e}")
@@ -3174,7 +3190,7 @@ This section helps you manage which signals (columns) to process from your files
         self.signal_vars.clear()
 
         # For large numbers of signals, use a more efficient approach
-        if len(signals) > 200:
+        if len(signals) > SIGNAL_BATCH_SIZE:
             print(
                 f"DEBUG: Large signal count ({len(signals)}), using efficient display",
             )
@@ -3242,10 +3258,10 @@ This section helps you manage which signals (columns) to process from your files
             self.signals_scrollable_frame.pack(fill="both", expand=True, padx=5, pady=5)
 
             # Initially show first 200 signals
-            self._display_signals_batch(signals[:200], start_index=0)
+            self._display_signals_batch(signals[:SIGNAL_BATCH_SIZE], start_index=0)
 
             # Add "Load More" button if there are more signals
-            if len(signals) > 200:
+            if len(signals) > SIGNAL_BATCH_SIZE:
                 load_more_frame = ctk.CTkFrame(self.signal_list_frame)
                 load_more_frame.pack(fill="x", padx=5, pady=5)
 
@@ -3312,9 +3328,9 @@ This section helps you manage which signals (columns) to process from your files
             ):
                 try:
                     self.after_cancel(self._plot_update_job_id)
-                except Exception:
-                    # No action needed for after_cancel errors
-                    pass
+                except Exception as e:
+                    # Log after_cancel errors for debugging
+                    print(f"Warning: Failed to cancel plot update job: {e}")
             # Schedule a near-future update to coalesce rapid toggles
             self._plot_update_job_id = self.after(
                 200,
@@ -3769,29 +3785,29 @@ This section helps you manage which signals (columns) to process from your files
                 print(f"  Numeric columns for filtering: {numeric_cols}")
                 for col in numeric_cols:
                     signal_data = processed_df[col].dropna()
-                    if len(signal_data) < 2:
+                    if len(signal_data) < MIN_SIGNAL_DATA_POINTS:
                         continue
 
                     # Apply filtering based on type
                     if filter_type == "Moving Average":
-                        window_size = settings.get("ma_window", 10)
+                        window_size = settings.get("ma_window", DEFAULT_MA_WINDOW)
                         processed_df[col] = signal_data.rolling(
                             window=window_size,
-                            min_periods=1,
+                            min_periods=MIN_PERIODS_DEFAULT,
                         ).mean()
                     elif filter_type in [
                         "Butterworth Low-pass",
                         "Butterworth High-pass",
                     ]:
-                        order = settings.get("bw_order", 3)
-                        cutoff = settings.get("bw_cutoff", 0.1)
+                        order = settings.get("bw_order", DEFAULT_BW_ORDER)
+                        cutoff = settings.get("bw_cutoff", DEFAULT_BW_CUTOFF)
                         sr = (
                             1.0
                             / pd.to_numeric(
                                 signal_data.index.to_series().diff().dt.total_seconds(),
                             ).mean()
                         )
-                        if pd.notna(sr) and len(signal_data) > order * 3:
+                        if pd.notna(sr) and len(signal_data) > order * MIN_BUTTERWORTH_DATA_MULTIPLIER:
                             btype = (
                                 "low"
                                 if filter_type == "Butterworth Low-pass"
@@ -3803,7 +3819,7 @@ This section helps you manage which signals (columns) to process from your files
                                 index=signal_data.index,
                             )
                     elif filter_type == "Median Filter":
-                        kernel = settings.get("median_kernel", 5)
+                        kernel = settings.get("median_kernel", DEFAULT_MEDIAN_KERNEL)
                         if kernel % 2 == 0:
                             kernel += 1
                         if len(signal_data) > kernel:
@@ -3812,8 +3828,8 @@ This section helps you manage which signals (columns) to process from your files
                                 index=signal_data.index,
                             )
                     elif filter_type == "Hampel Filter":
-                        window = settings.get("hampel_window", 7)
-                        threshold = settings.get("hampel_threshold", 3.0)
+                        window = settings.get("hampel_window", DEFAULT_HAMPEL_WINDOW)
+                        threshold = settings.get("hampel_threshold", DEFAULT_HAMPEL_THRESHOLD)
 
                         try:
                             signal_data = processed_df[col].ffill().bfill()
@@ -3827,7 +3843,7 @@ This section helps you manage which signals (columns) to process from your files
                                 lambda x: np.median(np.abs(x - np.median(x))),
                             )
                             threshold_value = (
-                                threshold * 1.4826 * mad
+                                threshold * NORMAL_DISTRIBUTION_CONSTANT * mad
                             )  # 1.4826 is the constant for normal distribution
 
                             # Replace outliers with median using proper indexing
@@ -3843,8 +3859,8 @@ This section helps you manage which signals (columns) to process from your files
                                 index=signal_data.index,
                             )
                     elif filter_type == "Z-Score Filter":
-                        threshold = settings.get("zscore_threshold", 3.0)
-                        method = settings.get("zscore_method", "Remove Outliers")
+                        threshold = settings.get("zscore_threshold", DEFAULT_ZSCORE_THRESHOLD)
+                        method = settings.get("zscore_method", DEFAULT_ZSCORE_METHOD)
 
                         mean_val = signal_data.mean()
                         std_val = signal_data.std()
@@ -3863,8 +3879,8 @@ This section helps you manage which signals (columns) to process from your files
                             median_val = signal_data.median()
                             processed_df.loc[z_scores > threshold, col] = median_val
                     elif filter_type == "Savitzky-Golay":
-                        window = settings.get("savgol_window", 11)
-                        polyorder = settings.get("savgol_polyorder", 2)
+                        window = settings.get("savgol_window", DEFAULT_SAVGOL_WINDOW)
+                        polyorder = settings.get("savgol_polyorder", DEFAULT_SAVGOL_POLYORDER)
                         if window % 2 == 0:
                             window += 1
                         if polyorder >= window:
@@ -6035,7 +6051,7 @@ This section helps you manage which signals (columns) to process from your files
             # Debounce the saving to avoid too frequent saves
             if hasattr(self, "_resize_timer"):
                 self.after_cancel(self._resize_timer)
-            self._resize_timer = self.after(1000, self._save_layout_config)
+            self._resize_timer = self.after(LAYOUT_SAVE_DELAY_MS, self._save_layout_config)
 
     def create_status_bar(self) -> None:
         """Create the status bar with progress tracking."""
@@ -6337,7 +6353,7 @@ This section helps you manage which signals (columns) to process from your files
                                 label=raw_label,
                                 color=color,
                                 alpha=0.5,
-                                linewidth=line_width * 0.8,
+                                linewidth=line_width * ZOOM_IN_FACTOR,
                                 linestyle="--",
                             )
 
@@ -6527,13 +6543,13 @@ This section helps you manage which signals (columns) to process from your files
                 unit = self.compare_ma_unit_menu.get()
                 # Convert to samples based on unit
                 if unit == "ms":
-                    window = int(window * self.sample_rate / 1000)
+                    window = int(window * self.sample_rate / MILLISECONDS_PER_SECOND)
                 elif unit == "s":
                     window = int(window * self.sample_rate)
                 elif unit == "min":
-                    window = int(window * self.sample_rate * 60)
+                    window = int(window * self.sample_rate * SECONDS_PER_MINUTE)
                 elif unit == "hr":
-                    window = int(window * self.sample_rate * 3600)
+                    window = int(window * self.sample_rate * SECONDS_PER_HOUR)
 
                 for col in signal_cols:
                     if col in df.columns:
@@ -6595,13 +6611,13 @@ This section helps you manage which signals (columns) to process from your files
             unit = self.plot_ma_unit_menu.get()
             # Convert to samples based on unit
             if unit == "ms":
-                window = int(window * self.sample_rate / 1000)
+                window = int(window * self.sample_rate / MILLISECONDS_PER_SECOND)
             elif unit == "s":
                 window = int(window * self.sample_rate)
             elif unit == "min":
-                window = int(window * self.sample_rate * 60)
+                window = int(window * self.sample_rate * SECONDS_PER_MINUTE)
             elif unit == "hr":
-                window = int(window * self.sample_rate * 3600)
+                window = int(window * self.sample_rate * SECONDS_PER_HOUR)
 
             for col in signal_cols:
                 if col in df.columns:
@@ -6674,11 +6690,11 @@ This section helps you manage which signals (columns) to process from your files
                 window = float(self.plot_ma_value_entry.get() or "10")
                 unit = self.plot_ma_unit_menu.get()
                 if unit == "ms":
-                    window = window / 1000
+                    window = window / MILLISECONDS_PER_SECOND
                 elif unit == "min":
-                    window = window * 60
+                    window = window * SECONDS_PER_MINUTE
                 elif unit == "hr":
-                    window = window * 3600
+                    window = window * SECONDS_PER_HOUR
 
                 # Convert window to number of samples
                 if pd.api.types.is_datetime64_any_dtype(df[x_axis_col]):
@@ -6711,7 +6727,7 @@ This section helps you manage which signals (columns) to process from your files
                         fs = 1.0
 
                     # Normalize cutoff frequency
-                    nyquist = fs / 2.0
+                    nyquist = fs / DEFAULT_BW_NYQUIST
                     normalized_cutoff = cutoff / nyquist
 
                     # Design filter
@@ -6732,13 +6748,13 @@ This section helps you manage which signals (columns) to process from your files
                 except ImportError:
                     # Fallback to simple smoothing if scipy not available
                     filtered_df[signal] = (
-                        df[signal].rolling(window=order * 2 + 1, center=True).mean()
+                        df[signal].rolling(window=order * MIN_BUTTERWORTH_DATA_MULTIPLIER + 1, center=True).mean()
                     )
                 except Exception as e:
                     print(f"Error applying Butterworth filter: {e}")
                     # Fallback to simple smoothing
                     filtered_df[signal] = (
-                        df[signal].rolling(window=order * 2 + 1, center=True).mean()
+                        df[signal].rolling(window=order * MIN_BUTTERWORTH_DATA_MULTIPLIER + 1, center=True).mean()
                     )
 
             elif filter_type == "Median Filter":
@@ -6764,9 +6780,9 @@ This section helps you manage which signals (columns) to process from your files
                     mad = signal_data.rolling(window=window, center=True).apply(
                         lambda x: np.median(np.abs(x - np.median(x))),
                     )
-                    threshold_value = (
-                        threshold * 1.4826 * mad
-                    )  # 1.4826 is the constant for normal distribution
+                                            threshold_value = (
+                            threshold * NORMAL_DISTRIBUTION_CONSTANT * mad
+                        )  # 1.4826 is the constant for normal distribution
 
                     # Replace outliers with median using proper indexing
                     outliers = np.abs(signal_data - median_filtered) > threshold_value
@@ -7010,7 +7026,7 @@ This section helps you manage which signals (columns) to process from your files
                 color="red",
                 linewidth=2,
                 label=f"{signal} Trendline ({trend_type})",
-                alpha=0.8,
+                alpha=DEFAULT_ALPHA,
             )
 
             # Force redraw the legend
@@ -7069,9 +7085,9 @@ This section helps you manage which signals (columns) to process from your files
                 if time_col and pd.api.types.is_object_dtype(df[time_col]):
                     try:
                         df[time_col] = pd.to_datetime(df[time_col])
-                    except Exception:
-                        # No action needed for datetime conversion errors
-                        pass
+                    except Exception as e:
+                        # Log datetime conversion errors for debugging
+                        print(f"Warning: Failed to convert time column to datetime: {e}")
 
                 return df
         except Exception as e:
@@ -9306,7 +9322,7 @@ COMMON MISTAKES TO AVOID:
                 "--",
                 linewidth=2,
                 label=label,
-                alpha=0.8,
+                alpha=DEFAULT_ALPHA,
             )
             self.plot_ax.legend()
             self.plot_canvas.draw()
@@ -10424,18 +10440,18 @@ For additional support or feature requests, please refer to the application docu
                                 f"{plot_df[time_col].dt.date.iloc[0]} {start_time}",
                             )
                             plot_df = plot_df[plot_df[time_col] >= start_datetime]
-                        except Exception:
-                            # No action needed for time range filtering errors
-                            pass
+                        except Exception as e:
+                            # Log time range filtering errors for debugging
+                            print(f"Warning: Failed to apply start time filter: {e}")
                     if end_time:
                         try:
                             end_datetime = pd.to_datetime(
                                 f"{plot_df[time_col].dt.date.iloc[0]} {end_time}",
                             )
                             plot_df = plot_df[plot_df[time_col] <= end_datetime]
-                        except Exception:
-                            # No action needed for time range filtering errors
-                            pass
+                        except Exception as e:
+                            # Log time range filtering errors for debugging
+                            print(f"Warning: Failed to apply end time filter: {e}")
 
             # Plot all available signals
             colors = plt.cm.tab10(np.linspace(0, 1, len(available_signals)))
@@ -10850,8 +10866,8 @@ For additional support or feature requests, please refer to the application docu
             y_range = ylim[1] - ylim[0]
 
             # Expand range by 25%
-            new_x_range = x_range * 1.25
-            new_y_range = y_range * 1.25
+            new_x_range = x_range * ZOOM_OUT_FACTOR
+            new_y_range = y_range * ZOOM_OUT_FACTOR
 
             # Set new limits
             self.plot_ax.set_xlim(
