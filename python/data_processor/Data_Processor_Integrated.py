@@ -29,7 +29,7 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from tkinter import colorchooser, filedialog, messagebox, simpledialog  # noqa: F401
-from typing import Any, Dict, List, Optional, Set, Tuple  # noqa: F401
+from typing import Any, Optional  # noqa: F401
 
 import customtkinter as ctk
 import numpy as np
@@ -180,7 +180,9 @@ class FileFormatDetector:
 
         except Exception:
             # Silently ignore format detection errors
-            pass
+            # Log the error for debugging purposes
+            logger = logging.getLogger(__name__)
+            logger.debug(f"Format detection failed for {file_path}: {str(exc)}")
 
         return None
 
@@ -991,7 +993,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         parent_tab.grid_columnconfigure(0, weight=1)
         parent_tab.grid_rowconfigure(0, weight=1)
 
-        def create_converter_left_content(left_panel):
+        def create_converter_left_content(left_panel: ctk.CTkFrame) -> None:
             """Create the left panel content for converter"""
             left_panel.grid_rowconfigure(0, weight=1)
             left_panel.grid_columnconfigure(0, weight=1)
@@ -1195,7 +1197,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 pady=5,
             )
 
-        def create_converter_right_content(right_panel):
+        def create_converter_right_content(right_panel: ctk.CTkFrame) -> None:
             """Create the right panel content for converter"""
             right_panel.grid_rowconfigure(1, weight=1)
             right_panel.grid_columnconfigure(0, weight=1)
@@ -1601,7 +1603,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         )
         self.folder_cancel_button.grid(row=0, column=1, padx=10, pady=10)
 
-    def _update_folder_mode_description(self):
+    def _update_folder_mode_description(self) -> None:
         """Update the mode description based on selected operation."""
         mode = self.folder_operation_mode.get()
 
@@ -1615,7 +1617,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
         self.folder_mode_description.configure(text=descriptions.get(mode, ""))
 
-    def _folder_select_source_folders(self):
+    def _folder_select_source_folders(self) -> None:
         """Select source folders for processing."""
         try:
             folders = filedialog.askdirectory(
@@ -1631,19 +1633,19 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 f"Failed to select source folders: {exc!s}",
             )
 
-    def _folder_remove_selected_source(self):
+    def _folder_remove_selected_source(self) -> None:
         """Remove selected source folder from the list."""
         # For simplicity, remove the last added folder
         if self.folder_source_folders:
             self.folder_source_folders.pop()
             self._folder_update_source_display()
 
-    def _folder_clear_source_folders(self):
+    def _folder_clear_source_folders(self) -> None:
         """Clear all source folders."""
         self.folder_source_folders = []
         self._folder_update_source_display()
 
-    def _folder_update_source_display(self):
+    def _folder_update_source_display(self) -> None:
         """Update the source folders display."""
         self.folder_source_listbox.delete("1.0", "end")
         if self.folder_source_folders:
@@ -1655,7 +1657,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         else:
             self.folder_source_info_label.configure(text="No folders selected")
 
-    def _folder_select_dest_folder(self):
+    def _folder_select_dest_folder(self) -> None:
         """Select destination folder."""
         try:
             folder = filedialog.askdirectory(title="Select Destination Folder")
@@ -1668,7 +1670,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             )
             self.folder_dest_label.configure(text=folder)
 
-    def _folder_run_processing(self):
+    def _folder_run_processing(self) -> None:
         """Start the folder processing operation."""
         if not self.folder_source_folders:
             messagebox.showwarning(
@@ -1698,7 +1700,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         self.folder_cancel_button.configure(state="normal")
         self.folder_status_var.set("Processing...")
 
-    def _folder_cancel_processing(self):
+    def _folder_cancel_processing(self) -> None:
         """Cancel the folder processing operation."""
         self.folder_cancel_flag = True  # Set flag to signal cancellation
         self.folder_status_var.set("Cancelled")
@@ -1706,7 +1708,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         self.folder_run_button.configure(state="normal")
         self.folder_cancel_button.configure(state="disabled")
 
-    def _folder_perform_processing(self):
+    def _folder_perform_processing(self) -> None:
         """Perform the actual folder processing operation."""
         try:
             mode = self.folder_operation_mode.get()
@@ -1734,7 +1736,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             self.after(0, lambda: self.folder_run_button.configure(state="normal"))
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))
 
-    def _folder_combine_operation(self):
+    def _folder_combine_operation(self) -> None:
         """Perform combine operation - copy all files from source folders to destination."""
         try:
             import os
@@ -1829,7 +1831,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             exc_str = str(exc)
             self.after(0, lambda: self.folder_status_var.set(f"Error: {exc_str}"))
 
-    def _folder_flatten_operation(self):
+    def _folder_flatten_operation(self) -> None:
         """Perform flatten operation - copy files from nested folders to top level."""
         try:
             import os
@@ -1916,7 +1918,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             exc_str = str(exc)
             self.after(0, lambda: self.folder_status_var.set(f"Error: {exc_str}"))
 
-    def _folder_prune_operation(self):
+    def _folder_prune_operation(self) -> None:
         """Perform prune operation - copy folders but skip empty subfolders."""
         try:
             import os
@@ -2015,7 +2017,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             exc_msg = str(exc)
             self.after(0, lambda: self.folder_status_var.set(f"Error: {exc_msg}"))
 
-    def _folder_deduplicate_operation(self):
+    def _folder_deduplicate_operation(self) -> None:
         """Perform deduplicate operation - remove renamed duplicates in source folders."""
         try:
             import os
@@ -2106,7 +2108,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             exc_msg = str(exc)
             self.after(0, lambda: self.folder_status_var.set(f"Error: {exc_msg}"))
 
-    def _folder_analyze_operation(self):
+    def _folder_analyze_operation(self) -> None:
         """Perform analyze operation - generate detailed report of folder contents."""
         try:
             import os
@@ -2237,8 +2239,12 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             exc_msg = str(exc)
             self.after(0, lambda: self.folder_status_var.set(f"Error: {exc_msg}"))
 
-    def _show_folder_analysis_report(self, report_text):
-        """Show the analysis report in a dialog."""
+    def _show_folder_analysis_report(self, report_text: str) -> None:
+        """Show the analysis report in a dialog.
+        
+        Args:
+            report_text: The report text to display
+        """
         dialog = ctk.CTkToplevel(self)
         dialog.title("Folder Analysis Report")
         dialog.geometry("800x600")
@@ -2258,8 +2264,15 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         close_button = ctk.CTkButton(dialog, text="Close", command=dialog.destroy)
         close_button.pack(pady=10)
 
-    def _folder_validate_file_filters(self, file_path):
-        """Validate if a file meets the filtering criteria."""
+    def _folder_validate_file_filters(self, file_path: str) -> bool:
+        """Validate if a file meets the filtering criteria.
+        
+        Args:
+            file_path: Path to the file to validate
+            
+        Returns:
+            True if file meets criteria, False otherwise
+        """
         if self.folder_cancel_flag:
             return False
 
@@ -2289,8 +2302,16 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
         return True
 
-    def _folder_get_organized_path(self, file_path, dest_base):
-        """Returns the organized destination path based on organization options."""
+    def _folder_get_organized_path(self, file_path: str, dest_base: str) -> str:
+        """Returns the organized destination path based on organization options.
+        
+        Args:
+            file_path: Source file path
+            dest_base: Base destination directory
+            
+        Returns:
+            Organized destination path
+        """
         filename = os.path.basename(file_path)
         dest_path = dest_base
 
@@ -2335,8 +2356,15 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
         return os.path.join(dest_path, filename)
 
-    def _folder_get_unique_path(self, path):
-        """Get a unique path by adding a number if the file already exists."""
+    def _folder_get_unique_path(self, path: str) -> str:
+        """Get a unique path by adding a number if the file already exists.
+        
+        Args:
+            path: Original file path
+            
+        Returns:
+            Unique file path (with number suffix if needed)
+        """
         if not os.path.exists(path):
             return path
         parent, name = os.path.split(path)
@@ -2349,8 +2377,12 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             new_path = os.path.join(parent, f"{filename} ({counter}){ext}")
         return new_path
 
-    def create_help_tab(self, tab):
-        """Create the help tab with comprehensive documentation for all integrated features."""
+    def create_help_tab(self, tab: ctk.CTkFrame) -> None:
+        """Create the help tab with comprehensive documentation for all integrated features.
+        
+        Args:
+            tab: Parent tab frame to add content to
+        """
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(1, weight=1)
 
@@ -2955,7 +2987,13 @@ Welcome to professional data processing! 🚀
 class ColumnSelectionDialog(ctk.CTkToplevel):
     """Simple dialog for column selection."""
 
-    def __init__(self, parent, columns):
+    def __init__(self, parent: ctk.CTkToplevel, columns: list[str]) -> None:
+        """Initialize the column selection dialog.
+        
+        Args:
+            parent: Parent window
+            columns: List of column names to select from
+        """
         super().__init__(parent)
         self.title("Select Columns")
         self.geometry("400x500")
@@ -2970,7 +3008,7 @@ class ColumnSelectionDialog(ctk.CTkToplevel):
 
         self.setup_ui()
 
-    def setup_ui(self):
+    def setup_ui(self) -> None:
         """Setup the user interface."""
         # Main frame
         main_frame = ctk.CTkFrame(self)
@@ -3023,17 +3061,17 @@ class ColumnSelectionDialog(ctk.CTkToplevel):
             padx=5,
         )
 
-    def select_all(self):
+    def select_all(self) -> None:
         """Select all columns."""
         for var in self.column_vars.values():
             var.set(True)
 
-    def select_none(self):
+    def select_none(self) -> None:
         """Select no columns."""
         for var in self.column_vars.values():
             var.set(False)
 
-    def ok_clicked(self):
+    def ok_clicked(self) -> None:
         """Handle OK button click."""
         selected_columns = [col for col, var in self.column_vars.items() if var.get()]
         if not selected_columns:
@@ -3043,7 +3081,7 @@ class ColumnSelectionDialog(ctk.CTkToplevel):
         self.result = selected_columns
         self.destroy()
 
-    def cancel_clicked(self):
+    def cancel_clicked(self) -> None:
         """Handle Cancel button click."""
         self.result = None
         self.destroy()
