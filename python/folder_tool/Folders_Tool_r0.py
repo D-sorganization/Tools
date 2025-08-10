@@ -37,11 +37,18 @@ MIN_DIALOG_HEIGHT: Final[int] = 300  # Minimum dialog height [pixels] - ensures 
 MAX_TEXT_CONTENT_SIZE: Final[int] = 1000000  # Maximum text content size [characters] - prevents performance issues
 MAX_TITLE_LENGTH: Final[int] = 100  # Maximum title length [characters] - prevents window title truncation
 MAX_COUNTER_ATTEMPTS: Final[int] = 1000  # Maximum attempts to generate unique filename [attempts] - prevents infinite loops
+MAX_FALLBACK_CONTENT_SIZE: Final[int] = 500  # Maximum content size for fallback display [characters] - prevents UI overflow
 PROGRESS_BACKUP_PERCENT: Final[int] = 20  # Progress percentage allocated to backup operations [%] - UI progress tracking
 PROGRESS_MAIN_OP_PERCENT: Final[int] = 40  # Progress percentage allocated to main operations [%] - UI progress tracking
 PROGRESS_ZIP_PERCENT: Final[int] = 10  # Progress percentage allocated to ZIP creation [%] - UI progress tracking
 PROGRESS_START_MAIN: Final[int] = 30  # Starting progress percentage for main operations [%] - UI progress tracking
 PROGRESS_START_ZIP: Final[int] = 85  # Starting progress percentage for ZIP creation [%] - UI progress tracking
+
+# Dialog layout constants
+CHARS_PER_DIALOG_LINE: Final[int] = 80  # Characters per line for dialog width calculation [characters] - standard text width
+DIALOG_WIDTH_OFFSET: Final[int] = 100  # Additional width offset for dialog borders [pixels] - accounts for scrollbars and margins
+LINE_HEIGHT_PIXELS: Final[int] = 20  # Height per line for dialog height calculation [pixels] - standard line height
+MAX_TITLE_PREVIEW_LENGTH: Final[int] = 50  # Maximum title length for preview in logs [characters] - prevents log overflow
 
 # Set up logging to capture detailed information
 log_filename = "folder_processor.log"
@@ -276,6 +283,11 @@ class FolderProcessorApp:
                 "value": str(MAX_COUNTER_ATTEMPTS),
                 "units": "attempts",
                 "source": "Prevents infinite loops in filename generation"
+            },
+            "MAX_FALLBACK_CONTENT_SIZE": {
+                "value": str(MAX_FALLBACK_CONTENT_SIZE),
+                "units": "characters",
+                "source": "Prevents UI overflow in fallback dialogs"
             },
             "PROGRESS_BACKUP_PERCENT": {
                 "value": str(PROGRESS_BACKUP_PERCENT),
@@ -1979,7 +1991,7 @@ class FolderProcessorApp:
             except Exception as e:
                 logger.error(f"Failed to insert content into text widget: {e}")
                 # Fallback: show truncated content
-                safe_content = content[:1000] + "\n\n... [Content truncated due to error]"
+                safe_content = content[:MAX_FALLBACK_CONTENT_SIZE] + "\n\n... [Content truncated due to error]"
                 text_widget.insert("1.0", safe_content)
                 text_widget.config(state="disabled")
 
@@ -2030,14 +2042,14 @@ class FolderProcessorApp:
         except tk.TclError as e:
             logger.error(f"Tkinter error creating text dialog: {e}")
             # Fallback to simple message box
-            fallback_content = content[:500] + "..." if len(content) > 500 else content
+            fallback_content = content[:MAX_FALLBACK_CONTENT_SIZE] + "..." if len(content) > MAX_FALLBACK_CONTENT_SIZE else content
             messagebox.showinfo(title, fallback_content)
             raise
             
         except Exception as e:
             logger.error(f"Failed to show text dialog: {e}")
             # Fallback to simple message box
-            fallback_content = content[:500] + "..." if len(content) > 500 else content
+            fallback_content = content[:MAX_FALLBACK_CONTENT_SIZE] + "..." if len(content) > MAX_FALLBACK_CONTENT_SIZE else content
             messagebox.showinfo(title, fallback_content)
             raise
 
@@ -2524,9 +2536,8 @@ class FolderProcessorApp:
 
         # Generate unique path with counter
         counter = 1
-        max_attempts = 1000  # Prevent infinite loops
         
-        while counter <= max_attempts:
+        while counter <= MAX_COUNTER_ATTEMPTS:
             new_name = f"{filename} ({counter}){ext}"
             new_path = parent / new_name
             
