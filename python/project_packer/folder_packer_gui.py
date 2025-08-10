@@ -13,15 +13,49 @@ logger = logging.getLogger(__name__)
 
 # Constants for file filtering
 INCLUDE_EXTENSIONS = {
-    ".py", ".txt", ".md", ".json", ".yaml", ".yml", ".ini", ".cfg",
-    ".csv", ".xlsx", ".xls", ".pdf", ".doc", ".docx", ".html", ".css",
-    ".js", ".ts", ".java", ".cpp", ".c", ".h", ".hpp", ".sql", ".xml",
+    ".py",
+    ".txt",
+    ".md",
+    ".json",
+    ".yaml",
+    ".yml",
+    ".ini",
+    ".cfg",
+    ".csv",
+    ".xlsx",
+    ".xls",
+    ".pdf",
+    ".doc",
+    ".docx",
+    ".html",
+    ".css",
+    ".js",
+    ".ts",
+    ".java",
+    ".cpp",
+    ".c",
+    ".h",
+    ".hpp",
+    ".sql",
+    ".xml",
 }
 
 EXCLUDE_PATTERNS = {
-    "__pycache__", ".git", ".svn", ".DS_Store", "Thumbs.db",
-    "node_modules", ".venv", "venv", "env", ".pytest_cache",
-    ".mypy_cache", ".ruff_cache", "build", "dist", "*.egg-info",
+    "__pycache__",
+    ".git",
+    ".svn",
+    ".DS_Store",
+    "Thumbs.db",
+    "node_modules",
+    ".venv",
+    "venv",
+    "env",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".ruff_cache",
+    "build",
+    "dist",
+    "*.egg-info",
 }
 
 
@@ -74,7 +108,10 @@ class FolderPackerGUI:
             font=("Arial", 10),
         )
         desc_label.grid(
-            row=1, column=0, columnspan=3, pady=(0, 20),
+            row=1,
+            column=0,
+            columnspan=3,
+            pady=(0, 20),
         )
 
         # Source folders section
@@ -84,7 +121,9 @@ class FolderPackerGUI:
 
         # Source folders listbox
         self.folders_listbox = tk.Listbox(source_frame, height=6)
-        self.folders_listbox.grid(row=0, column=0, columnspan=3, sticky="ew", pady=(0, 10))
+        self.folders_listbox.grid(
+            row=0, column=0, columnspan=3, sticky="ew", pady=(0, 10),
+        )
 
         # Source folder buttons
         ttk.Button(
@@ -140,7 +179,9 @@ class FolderPackerGUI:
 
         # Scrollbar for status text
         status_scrollbar = ttk.Scrollbar(
-            status_frame, orient="vertical", command=self.status_text.yview,
+            status_frame,
+            orient="vertical",
+            command=self.status_text.yview,
         )
         status_scrollbar.grid(row=0, column=1, sticky="ns")
         self.status_text.configure(yscrollcommand=status_scrollbar.set)
@@ -176,7 +217,9 @@ class FolderPackerGUI:
     def pack_folders(self) -> None:
         """Pack the selected folders to the output directory."""
         if not self.source_folders:
-            messagebox.showwarning("Warning", "Please select at least one source folder.")
+            messagebox.showwarning(
+                "Warning", "Please select at least one source folder.",
+            )
             return
 
         if not self.output_directory:

@@ -164,18 +164,21 @@ class TestPackageForDistribution:
     def test_package_version_constant(self) -> None:
         """Test that package version constant is properly defined."""
         from package_for_distribution import PACKAGE_VERSION
+
         assert isinstance(PACKAGE_VERSION, str)
         assert len(PACKAGE_VERSION) > 0
 
     def test_package_base_name_constant(self) -> None:
         """Test that package base name constant is properly defined."""
         from package_for_distribution import PACKAGE_BASE_NAME
+
         assert isinstance(PACKAGE_BASE_NAME, str)
         assert len(PACKAGE_BASE_NAME) > 0
 
     def test_required_files_constant(self) -> None:
         """Test that required files constant is properly defined."""
         from package_for_distribution import REQUIRED_FILES
+
         assert isinstance(REQUIRED_FILES, list)
         assert len(REQUIRED_FILES) > 0
         assert all(isinstance(f, str) for f in REQUIRED_FILES)

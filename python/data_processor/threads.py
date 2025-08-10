@@ -1,21 +1,24 @@
 """Threading utilities for data processing operations."""
 
+import logging
 import threading
-import time
-from typing import Any, Callable, List, Optional
+from typing import TYPE_CHECKING
 
-from .folder_tool_tab import FolderToolTab
+if TYPE_CHECKING:
+    from .folder_tool_tab import FolderToolTab
+    from .converter_tab import ConverterTab
 
 
 class ConversionThread(threading.Thread):
     """Thread for handling file conversion operations."""
 
-    def __init__(self, converter_tab: Any, conversion_type: str) -> None:
+    def __init__(self, converter_tab: "ConverterTab", conversion_type: str) -> None:
         """Initialize the conversion thread.
-        
+
         Args:
             converter_tab: The converter tab instance
             conversion_type: Type of conversion to perform
+
         """
         super().__init__()
         self.converter_tab = converter_tab
@@ -25,22 +28,21 @@ class ConversionThread(threading.Thread):
     def run(self) -> None:
         """Execute the conversion operation in a separate thread."""
         try:
-            if self.conversion_type == "combined":
-                self.converter_tab._perform_conversion()
-            elif self.conversion_type == "separate":
+            if self.conversion_type in {"combined", "separate"}:
                 self.converter_tab._perform_conversion()
         except Exception as e:
-            print(f"Conversion error: {e}")
+            logging.error(f"Conversion error: {e}")
 
 
 class CombinedConversionThread(threading.Thread):
     """Thread for handling combined file conversion."""
 
-    def __init__(self, converter_tab: Any) -> None:
+    def __init__(self, converter_tab: "ConverterTab") -> None:
         """Initialize the combined conversion thread.
-        
+
         Args:
             converter_tab: The converter tab instance
+
         """
         super().__init__()
         self.converter_tab = converter_tab
@@ -51,7 +53,7 @@ class CombinedConversionThread(threading.Thread):
         try:
             self.converter_tab._perform_conversion()
         except Exception as e:
-            print(f"Combined conversion error: {e}")
+            logging.error(f"Combined conversion error: {e}")
 
     def run(self) -> None:
         """Execute the combined conversion operation."""
@@ -61,11 +63,12 @@ class CombinedConversionThread(threading.Thread):
 class SeparateConversionThread(threading.Thread):
     """Thread for handling separate file conversion."""
 
-    def __init__(self, converter_tab: Any) -> None:
+    def __init__(self, converter_tab: "ConverterTab") -> None:
         """Initialize the separate conversion thread.
-        
+
         Args:
             converter_tab: The converter tab instance
+
         """
         super().__init__()
         self.converter_tab = converter_tab
@@ -76,7 +79,7 @@ class SeparateConversionThread(threading.Thread):
         try:
             self.converter_tab._perform_conversion()
         except Exception as e:
-            print(f"Separate conversion error: {e}")
+            logging.error(f"Separate conversion error: {e}")
 
     def run(self) -> None:
         """Execute the separate conversion operation."""
@@ -86,12 +89,13 @@ class SeparateConversionThread(threading.Thread):
 class FolderProcessingThread(threading.Thread):
     """Thread for handling folder processing operations."""
 
-    def __init__(self, folder_tool: FolderToolTab, operation: str) -> None:
+    def __init__(self, folder_tool: "FolderToolTab", operation: str) -> None:
         """Initialize the folder processing thread.
-        
+
         Args:
             folder_tool: The folder tool instance
             operation: Type of operation to perform
+
         """
         super().__init__()
         self.folder_tool = folder_tool
@@ -105,9 +109,10 @@ class FolderProcessingThread(threading.Thread):
 
     def stopped(self) -> bool:
         """Check if the thread has been stopped.
-        
+
         Returns:
             bool: True if thread is stopped, False otherwise
+
         """
         return self._stop_event.is_set()
 
@@ -125,7 +130,7 @@ class FolderProcessingThread(threading.Thread):
             elif self.operation == "analyze":
                 self.analyze_operation()
         except Exception as e:
-            print(f"Folder processing error: {e}")
+            logging.error(f"Folder processing error: {e}")
 
     def combine_operation(self) -> None:
         """Perform folder combination operation."""
@@ -134,7 +139,7 @@ class FolderProcessingThread(threading.Thread):
             # For now, just a placeholder
             pass  # This will be replaced with actual implementation
         except Exception as e:
-            print(f"Combine operation error: {e}")
+            logging.error(f"Combine operation error: {e}")
 
     def flatten_operation(self) -> None:
         """Perform folder flattening operation."""
@@ -143,7 +148,7 @@ class FolderProcessingThread(threading.Thread):
             # For now, just a placeholder
             pass  # This will be replaced with actual implementation
         except Exception as e:
-            print(f"Flatten operation error: {e}")
+            logging.error(f"Flatten operation error: {e}")
 
     def prune_operation(self) -> None:
         """Perform folder pruning operation."""
@@ -152,7 +157,7 @@ class FolderProcessingThread(threading.Thread):
             # For now, just a placeholder
             pass  # This will be replaced with actual implementation
         except Exception as e:
-            print(f"Prune operation error: {e}")
+            logging.error(f"Prune operation error: {e}")
 
     def deduplicate_operation(self) -> None:
         """Perform folder deduplication operation."""
@@ -161,7 +166,7 @@ class FolderProcessingThread(threading.Thread):
             # For now, just a placeholder
             pass  # This will be replaced with actual implementation
         except Exception as e:
-            print(f"Deduplicate operation error: {e}")
+            logging.error(f"Deduplicate operation error: {e}")
 
     def analyze_operation(self) -> None:
         """Perform folder analysis operation."""
@@ -170,20 +175,20 @@ class FolderProcessingThread(threading.Thread):
             # For now, just a placeholder
             pass  # This will be replaced with actual implementation
         except Exception as e:
-            print(f"Analyze operation error: {e}")
+            logging.error(f"Analyze operation error: {e}")
 
 
 def create_processing_thread(
-    folder_tool: FolderToolTab, 
-    operation: str
-) -> FolderProcessingThread:
+    folder_tool: "FolderToolTab", operation: str,
+) -> "FolderProcessingThread":
     """Create a new folder processing thread.
-    
+
     Args:
         folder_tool: The folder tool instance
         operation: Type of operation to perform
-        
+
     Returns:
         FolderProcessingThread: The created thread instance
+
     """
     return FolderProcessingThread(folder_tool, operation)

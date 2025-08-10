@@ -26,7 +26,9 @@ MAGIC_NUMBERS = [
 ]
 
 
-def check_banned_patterns(lines: list[str], filepath: Path) -> list[tuple[int, str, str]]:
+def check_banned_patterns(
+    lines: list[str], filepath: Path,
+) -> list[tuple[int, str, str]]:
     """Check for banned patterns in lines."""
     issues: list[tuple[int, str, str]] = []
     # Skip checking this file for its own patterns
@@ -46,7 +48,7 @@ def check_magic_numbers(lines: list[str], filepath: Path) -> list[tuple[int, str
     if filepath.name == "quality_check_script.py":
         return issues
     for line_num, line in enumerate(lines, 1):
-        line_content = line[:line.index("#")] if "#" in line else line
+        line_content = line[: line.index("#")] if "#" in line else line
         for pattern, message in MAGIC_NUMBERS:
             if pattern.search(line_content):
                 issues.append((line_num, message, line.strip()))
@@ -61,17 +63,21 @@ def check_ast_issues(content: str) -> list[tuple[int, str, str]]:
         for node in ast.walk(tree):
             if isinstance(node, ast.FunctionDef):
                 if not ast.get_docstring(node):
-                    issues.append((
-                        node.lineno,
-                        f"Function '{node.name}' missing docstring",
-                        "",
-                    ))
+                    issues.append(
+                        (
+                            node.lineno,
+                            f"Function '{node.name}' missing docstring",
+                            "",
+                        ),
+                    )
                 if not node.returns and node.name != "__init__":
-                    issues.append((
-                        node.lineno,
-                        f"Function '{node.name}' missing return type hint",
-                        "",
-                    ))
+                    issues.append(
+                        (
+                            node.lineno,
+                            f"Function '{node.name}' missing return type hint",
+                            "",
+                        ),
+                    )
     except SyntaxError as e:
         issues.append((0, f"Syntax error: {e}", ""))
     return issues
@@ -99,12 +105,18 @@ def get_all_python_files() -> list[Path]:
 
     # Exclude certain directories
     exclude_dirs = {
-        "archive", "legacy", "experimental", ".git", "__pycache__",
-        ".ruff_cache", ".mypy_cache", "matlab", "output",
+        "archive",
+        "legacy",
+        "experimental",
+        ".git",
+        "__pycache__",
+        ".ruff_cache",
+        ".mypy_cache",
+        "matlab",
+        "output",
     }
     return [
-        f for f in python_files
-        if not any(part in exclude_dirs for part in f.parts)
+        f for f in python_files if not any(part in exclude_dirs for part in f.parts)
     ]
 
 
@@ -126,9 +138,13 @@ def get_python_files_from_args(args: argparse.Namespace) -> list[Path]:
 
 def main() -> None:
     """Run quality checks on Python files."""
-    parser = argparse.ArgumentParser(description="Quality check script for Python files")
+    parser = argparse.ArgumentParser(
+        description="Quality check script for Python files",
+    )
     parser.add_argument("--files", nargs="+", help="Specific Python files to check")
-    parser.add_argument("--all", action="store_true", help="Check all Python files in repository")
+    parser.add_argument(
+        "--all", action="store_true", help="Check all Python files in repository",
+    )
     args = parser.parse_args()
 
     python_files = get_python_files_from_args(args)
@@ -152,7 +168,9 @@ def main() -> None:
                 else:
                     sys.stderr.write(f"  {message}\n")
 
-        sys.stderr.write(f"\nTotal issues: {sum(len(issues) for _, issues in all_issues)}\n")
+        sys.stderr.write(
+            f"\nTotal issues: {sum(len(issues) for _, issues in all_issues)}\n",
+        )
         sys.exit(1)
     else:
         sys.stderr.write("✅ Quality check PASSED\n")
@@ -162,4 +180,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

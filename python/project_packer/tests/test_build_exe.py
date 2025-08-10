@@ -90,7 +90,9 @@ class TestBuildExe:
             mock_path.return_value.exists.return_value = True
             with patch("build_exe.clean_build_dirs") as mock_clean:
                 with patch("build_exe.subprocess.run") as mock_run:
-                    mock_run.side_effect = subprocess.CalledProcessError(1, "pyinstaller")
+                    mock_run.side_effect = subprocess.CalledProcessError(
+                        1, "pyinstaller",
+                    )
                     assert build_executable() is False
 
     def test_verify_build_success(self, tmp_path: Path) -> None:

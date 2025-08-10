@@ -1,18 +1,14 @@
 import ctypes
-import hashlib
 import logging
-import mimetypes
 import os
 import re
 import shutil
 import sys
 import threading
-import time
 import tkinter as tk
 import zipfile
 from collections import defaultdict
 from datetime import datetime
-from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
 # Set up logging to capture detailed information
@@ -52,7 +48,7 @@ class FolderProcessorApp:
             try:
                 # Set app user model ID for Windows taskbar grouping
                 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
-                    "FolderFix.Tool.2.0"
+                    "FolderFix.Tool.2.0",
                 )
                 print("Set Windows App User Model ID for taskbar grouping")
             except Exception as e:
@@ -80,7 +76,7 @@ class FolderProcessorApp:
                         try:
                             # Try to get exact size from ICO, or resize
                             resized = image.resize(
-                                (size, size), Image.Resampling.LANCZOS
+                                (size, size), Image.Resampling.LANCZOS,
                             )
                             if resized.mode != "RGBA":
                                 resized = resized.convert("RGBA")
@@ -127,7 +123,7 @@ class FolderProcessorApp:
                         print(f"Loaded PNG icon: {png_path}")
                 else:
                     print(
-                        "No icon files found (paper_plane_icon.ico or paper_plane_icon.png)"
+                        "No icon files found (paper_plane_icon.ico or paper_plane_icon.png)",
                     )
 
         except Exception as e:
@@ -172,7 +168,7 @@ class FolderProcessorApp:
         scrollable_frame = ttk.Frame(canvas)
 
         scrollable_frame.bind(
-            "<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+            "<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")),
         )
 
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
@@ -209,7 +205,7 @@ class FolderProcessorApp:
 
     def create_source_widgets(self, parent):
         self.source_frame = ttk.LabelFrame(
-            parent, text="1. Select Folder(s) to Process", padding="10"
+            parent, text="1. Select Folder(s) to Process", padding="10",
         )
         self.source_frame.pack(fill=tk.X, pady=5)
 
@@ -219,7 +215,7 @@ class FolderProcessorApp:
 
         self.source_listbox = tk.Listbox(listbox_frame, height=6)
         source_scrollbar = ttk.Scrollbar(
-            listbox_frame, orient="vertical", command=self.source_listbox.yview
+            listbox_frame, orient="vertical", command=self.source_listbox.yview,
         )
         self.source_listbox.configure(yscrollcommand=source_scrollbar.set)
 
@@ -229,34 +225,34 @@ class FolderProcessorApp:
         button_frame = ttk.Frame(self.source_frame)
         button_frame.pack(fill=tk.X, pady=5)
         ttk.Button(
-            button_frame, text="Add Folder(s)", command=self.select_source_folders
+            button_frame, text="Add Folder(s)", command=self.select_source_folders,
         ).pack(side=tk.LEFT, expand=True, fill=tk.X, padx=(0, 5))
         ttk.Button(
-            button_frame, text="Remove Selected", command=self.remove_selected_source
+            button_frame, text="Remove Selected", command=self.remove_selected_source,
         ).pack(side=tk.RIGHT, expand=True, fill=tk.X, padx=(5, 0))
 
         # Add folder info label
         self.source_info_label = ttk.Label(
-            self.source_frame, text="", foreground="blue"
+            self.source_frame, text="", foreground="blue",
         )
         self.source_info_label.pack(fill=tk.X, pady=2)
 
     def create_destination_widgets(self, parent):
         self.dest_frame = ttk.LabelFrame(
-            parent, text="2. Select Final Destination Folder", padding="10"
+            parent, text="2. Select Final Destination Folder", padding="10",
         )
         self.dest_frame.pack(fill=tk.X, pady=5)
         self.dest_label = ttk.Label(
-            self.dest_frame, text="No destination selected.", foreground="grey"
+            self.dest_frame, text="No destination selected.", foreground="grey",
         )
         self.dest_label.pack(fill=tk.X, expand=True, side=tk.LEFT)
         ttk.Button(
-            self.dest_frame, text="Set Destination", command=self.select_dest_folder
+            self.dest_frame, text="Set Destination", command=self.select_dest_folder,
         ).pack(side=tk.RIGHT)
 
     def create_filtering_widgets(self, parent):
         filter_frame = ttk.LabelFrame(
-            parent, text="3. File Filtering Options", padding="10"
+            parent, text="3. File Filtering Options", padding="10",
         )
         filter_frame.pack(fill=tk.X, pady=5)
 
@@ -264,10 +260,10 @@ class FolderProcessorApp:
         ext_frame = ttk.Frame(filter_frame)
         ext_frame.pack(fill=tk.X, pady=2)
         ttk.Label(ext_frame, text="Include only extensions (comma-separated):").pack(
-            side=tk.LEFT
+            side=tk.LEFT,
         )
         ttk.Entry(ext_frame, textvariable=self.filter_extensions, width=30).pack(
-            side=tk.RIGHT
+            side=tk.RIGHT,
         )
         ttk.Label(
             filter_frame,
@@ -280,16 +276,16 @@ class FolderProcessorApp:
         size_frame.pack(fill=tk.X, pady=5)
         ttk.Label(size_frame, text="Min size (MB):").pack(side=tk.LEFT)
         ttk.Entry(size_frame, textvariable=self.min_file_size, width=10).pack(
-            side=tk.LEFT, padx=5
+            side=tk.LEFT, padx=5,
         )
         ttk.Label(size_frame, text="Max size (MB):").pack(side=tk.LEFT, padx=(10, 0))
         ttk.Entry(size_frame, textvariable=self.max_file_size, width=10).pack(
-            side=tk.LEFT, padx=5
+            side=tk.LEFT, padx=5,
         )
 
     def create_preprocessing_widgets(self, parent):
         self.pre_process_frame = ttk.LabelFrame(
-            parent, text="4. Pre-processing Options (On Source)", padding="10"
+            parent, text="4. Pre-processing Options (On Source)", padding="10",
         )
         self.pre_process_frame.pack(fill=tk.X, pady=5)
 
@@ -306,7 +302,7 @@ class FolderProcessorApp:
 
     def create_main_operation_widgets(self, parent):
         self.mode_frame = ttk.LabelFrame(
-            parent, text="5. Choose Main Operation", padding="10"
+            parent, text="5. Choose Main Operation", padding="10",
         )
         self.mode_frame.pack(fill=tk.X, pady=5)
 
@@ -347,13 +343,13 @@ class FolderProcessorApp:
         ).pack(anchor=tk.W)
 
         self.mode_description = ttk.Label(
-            self.mode_frame, text="", wraplength=600, justify=tk.LEFT
+            self.mode_frame, text="", wraplength=600, justify=tk.LEFT,
         )
         self.mode_description.pack(fill=tk.X, pady=(5, 0))
 
     def create_organization_widgets(self, parent):
         org_frame = ttk.LabelFrame(
-            parent, text="6. File Organization Options", padding="10"
+            parent, text="6. File Organization Options", padding="10",
         )
         org_frame.pack(fill=tk.X, pady=5)
 
@@ -370,7 +366,7 @@ class FolderProcessorApp:
 
     def create_postprocessing_widgets(self, parent):
         self.post_process_frame = ttk.LabelFrame(
-            parent, text="7. Post-processing Options (On Destination)", padding="10"
+            parent, text="7. Post-processing Options (On Destination)", padding="10",
         )
         self.post_process_frame.pack(fill=tk.X, pady=5)
 
@@ -392,7 +388,7 @@ class FolderProcessorApp:
 
     def create_advanced_options_widgets(self, parent):
         advanced_frame = ttk.LabelFrame(
-            parent, text="9. Advanced Options", padding="10"
+            parent, text="9. Advanced Options", padding="10",
         )
         advanced_frame.pack(fill=tk.X, pady=5)
 
@@ -412,7 +408,7 @@ class FolderProcessorApp:
         progress_frame.pack(fill=tk.X, pady=5)
 
         self.progress_bar = ttk.Progressbar(
-            progress_frame, variable=self.progress_var, maximum=100, mode="determinate"
+            progress_frame, variable=self.progress_var, maximum=100, mode="determinate",
         )
         self.progress_bar.pack(fill=tk.X, pady=2)
 
@@ -430,7 +426,7 @@ class FolderProcessorApp:
             style="Accent.TButton",
         )
         self.run_button.pack(
-            side=tk.LEFT, expand=True, fill=tk.X, padx=(0, 5), ipady=10
+            side=tk.LEFT, expand=True, fill=tk.X, padx=(0, 5), ipady=10,
         )
 
         self.cancel_button = ttk.Button(
@@ -632,7 +628,7 @@ class FolderProcessorApp:
 
                 if not extracted_files:
                     raise Exception(
-                        "Extraction failed - no files found in extracted folder"
+                        "Extraction failed - no files found in extracted folder",
                     )
 
             # Only delete original if extraction was successful
@@ -665,7 +661,7 @@ class FolderProcessorApp:
 
             progress = (i + 1) / len(self.source_folders) * 20  # 20% for backup
             self.update_progress(
-                progress, f"Backing up folder {i+1}/{len(self.source_folders)}"
+                progress, f"Backing up folder {i+1}/{len(self.source_folders)}",
             )
 
         return backup_base
@@ -712,7 +708,7 @@ class FolderProcessorApp:
                         continue
 
             report.append(
-                f"  Files: {folder_files}, Size: {folder_size/(1024*1024):.1f} MB"
+                f"  Files: {folder_files}, Size: {folder_size/(1024*1024):.1f} MB",
             )
 
         report.extend(
@@ -722,7 +718,7 @@ class FolderProcessorApp:
                 f"TOTAL SIZE: {total_size/(1024*1024):.1f} MB",
                 "",
                 "FILE TYPES:",
-            ]
+            ],
         )
 
         for ext, count in sorted(file_types.items(), key=lambda x: x[1], reverse=True):
@@ -751,7 +747,7 @@ class FolderProcessorApp:
                 if report:
                     self.show_text_dialog("Analysis Report", report)
                     messagebox.showinfo(
-                        "Analysis Complete", "Analysis report generated successfully!"
+                        "Analysis Complete", "Analysis report generated successfully!",
                     )
             except Exception as e:
                 messagebox.showerror("Error", f"An error occurred during analysis: {e}")
@@ -769,7 +765,7 @@ class FolderProcessorApp:
                 )
             except Exception as e:
                 messagebox.showerror(
-                    "Error", f"An error occurred during deduplication: {e}"
+                    "Error", f"An error occurred during deduplication: {e}",
                 )
             return
 
@@ -793,14 +789,14 @@ class FolderProcessorApp:
                     return
                 if not messagebox.askyesno(
                     "Pre-processing Complete",
-                    f"Bulk Extraction Complete!\n\n"
+                    "Bulk Extraction Complete!\n\n"
                     + "\n".join(unzip_log)
                     + "\n\nDo you want to proceed?",
                 ):
                     return
             except Exception as e:
                 messagebox.showerror(
-                    "Error", f"An error occurred during bulk unzip: {e}"
+                    "Error", f"An error occurred during bulk unzip: {e}",
                 )
                 return
 
@@ -821,7 +817,7 @@ class FolderProcessorApp:
             final_summary = "Main Operation Complete!\n\n" + "\n".join(main_op_log)
         except Exception as e:
             messagebox.showerror(
-                "Error", f"An error occurred during the main operation: {e}"
+                "Error", f"An error occurred during the main operation: {e}",
             )
             return
 
@@ -831,7 +827,7 @@ class FolderProcessorApp:
                 self.update_progress(70, "Deduplicating files...")
                 dedupe_log = self._perform_deduplication(self.dest_folder)
                 final_summary += "\n\n--- Deduplication Results ---\n" + "\n".join(
-                    dedupe_log
+                    dedupe_log,
                 )
             except Exception as e:
                 final_summary += f"\n\n--- Deduplication FAILED: {e}"
@@ -899,7 +895,7 @@ class FolderProcessorApp:
                 return False
             if any(src == self.dest_folder for src in self.source_folders):
                 messagebox.showerror(
-                    "Error", "The destination folder cannot be a source folder."
+                    "Error", "The destination folder cannot be a source folder.",
                 )
                 return False
         return True
@@ -991,7 +987,7 @@ class FolderProcessorApp:
                     final_dest_path = self._get_unique_path(dest_path)
                     if final_dest_path != dest_path:
                         log.append(
-                            f"Renamed: '{file}' to '{os.path.basename(final_dest_path)}'"
+                            f"Renamed: '{file}' to '{os.path.basename(final_dest_path)}'",
                         )
                         renamed_count += 1
 
@@ -1006,7 +1002,7 @@ class FolderProcessorApp:
                     if processed_files % 10 == 0:  # Update progress every 10 files
                         progress = 30 + (processed_files / total_files) * 40
                         self.update_progress(
-                            progress, f"Processed {processed_files}/{total_files} files"
+                            progress, f"Processed {processed_files}/{total_files} files",
                         )
 
         summary = [
@@ -1048,7 +1044,7 @@ class FolderProcessorApp:
                     base, _, ext = match.groups()
                     base_name = f"{base}{ext}"
                     files_by_base_name.setdefault(base_name, []).append(
-                        os.path.join(dirpath, filename)
+                        os.path.join(dirpath, filename),
                     )
 
             for base_name, files in files_by_base_name.items():
@@ -1059,7 +1055,7 @@ class FolderProcessorApp:
                         continue
 
                     log.append(
-                        f"Duplicate set for '{base_name}': Keeping '{os.path.basename(file_to_keep)}'"
+                        f"Duplicate set for '{base_name}': Keeping '{os.path.basename(file_to_keep)}'",
                     )
 
                     for file_path in files:
@@ -1068,12 +1064,12 @@ class FolderProcessorApp:
                                 if not self.preview_mode_var.get():
                                     os.remove(file_path)
                                 log.append(
-                                    f"  - {'WOULD DELETE' if self.preview_mode_var.get() else 'DELETED'}: '{os.path.basename(file_path)}'"
+                                    f"  - {'WOULD DELETE' if self.preview_mode_var.get() else 'DELETED'}: '{os.path.basename(file_path)}'",
                                 )
                                 deleted_count += 1
                             except OSError as e:
                                 log.append(
-                                    f"  - FAILED to delete '{os.path.basename(file_path)}': {e}"
+                                    f"  - FAILED to delete '{os.path.basename(file_path)}': {e}",
                                 )
 
         summary = [
@@ -1098,29 +1094,32 @@ class FolderProcessorApp:
             full_log.append("---")
         return full_log
 
-    def _get_unique_path(self, path):
-        if not os.path.exists(path):
+    def _get_unique_path(self, path: str) -> str:
+        """Get a unique path by appending a counter if the path already exists."""
+        if not Path(path).exists():
             return path
-        parent, name = os.path.split(path)
-        is_file = "." in name and not os.path.isdir(path)
-        filename, ext = os.path.splitext(name) if is_file else (name, "")
+        parent, name = Path(path).parts[-2:]
+        is_file = "." in name and not Path(path).is_dir()
+        filename, ext = Path(name).stem, Path(name).suffix if is_file else (name, "")
         counter = 1
-        new_path = os.path.join(parent, f"{filename} ({counter}){ext}")
-        while os.path.exists(new_path):
+        new_path = Path(parent) / f"{filename} ({counter}){ext}"
+        while new_path.exists():
             counter += 1
-            new_path = os.path.join(parent, f"{filename} ({counter}){ext}")
-        return new_path
+            new_path = Path(parent) / f"{filename} ({counter}){ext}"
+        return str(new_path)
 
-    def select_source_folders(self):
+    def select_source_folders(self) -> None:
+        """Select source folders for processing."""
         folder = filedialog.askdirectory(
-            mustexist=True, title="Select a folder to process"
+            mustexist=True, title="Select a folder to process",
         )
         if folder and folder not in self.source_folders:
             self.source_folders.append(folder)
             self.source_listbox.insert(tk.END, folder)
             self.update_source_info()
 
-    def remove_selected_source(self):
+    def remove_selected_source(self) -> None:
+        """Remove selected source folders."""
         for i in sorted(self.source_listbox.curselection(), reverse=True):
             self.source_folders.pop(i)
             self.source_listbox.delete(i)
@@ -1128,7 +1127,7 @@ class FolderProcessorApp:
 
     def select_dest_folder(self):
         folder = filedialog.askdirectory(
-            mustexist=True, title="Select the destination folder"
+            mustexist=True, title="Select the destination folder",
         )
         if folder:
             self.dest_folder = folder

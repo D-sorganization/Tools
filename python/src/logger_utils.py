@@ -7,7 +7,9 @@ import random
 logger = logging.getLogger(__name__)
 
 # Constants with clear sources and units
-DEFAULT_SEED: int = 42  # Standard reproducibility seed per scientific computing best practices
+DEFAULT_SEED: int = (
+    42  # Standard reproducibility seed per scientific computing best practices
+)
 
 
 def set_seeds(seed: int = DEFAULT_SEED) -> None:
@@ -22,6 +24,7 @@ def set_seeds(seed: int = DEFAULT_SEED) -> None:
     # Import numpy only when needed to avoid module-level import
     try:
         import numpy as np
+
         # Use modern numpy random generator
         rng = np.random.default_rng(seed)
         logger.info("Seeds set: %d", seed)

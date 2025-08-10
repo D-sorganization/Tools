@@ -82,10 +82,13 @@ def build_executable() -> bool:
 
     # Build command - using trusted paths only
     cmd = [
-        sys.executable, "-m", "PyInstaller",
+        sys.executable,
+        "-m",
+        "PyInstaller",
         "--onefile",
         "--windowed",
-        "--name", EXE_NAME,
+        "--name",
+        EXE_NAME,
         str(script_path),
     ]
 
