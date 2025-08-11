@@ -4,12 +4,12 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
-from .constants import (
+from constants import (
     DEFAULT_PADDING,
     DEFAULT_BUTTON_HEIGHT,
     DEFAULT_TEXT_HEIGHT,
 )
-from .threads import create_processing_thread
+from threads import create_processing_thread
 
 
 class FolderToolTab:

@@ -43,7 +43,7 @@ except Exception:  # pragma: no cover - optional dependency
     _savgol_filter = None
 
 # Import constants
-from .constants import (
+from constants import (
     DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, DEFAULT_PADDING, DEFAULT_BUTTON_HEIGHT,
     DEFAULT_TEXT_HEIGHT, DEFAULT_SEARCH_WIDTH, GRID_WEIGHT_MAIN,
     MIN_SIGNAL_DATA_POINTS, MIN_PERIODS_DEFAULT, DEFAULT_MA_WINDOW,
