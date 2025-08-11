@@ -2007,7 +2007,7 @@ class FolderProcessorApp:
             close_button.pack(side="right")
 
             # Add copy button for convenience
-            def copy_to_clipboard():
+            def copy_to_clipboard() -> None:
                 """Copy dialog content to clipboard."""
                 try:
                     dialog.clipboard_clear()
@@ -2028,7 +2028,12 @@ class FolderProcessorApp:
             close_button.focus_set()  # Focus on close button for better UX
             
             # Bind escape key to close dialog
-            def on_escape(event):
+            def on_escape(event: tk.Event) -> None:
+                """Close dialog when escape key is pressed.
+                
+                Args:
+                    event: The key event that triggered this function
+                """
                 dialog.destroy()
             
             dialog.bind("<Escape>", on_escape)
