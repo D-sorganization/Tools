@@ -2454,13 +2454,14 @@ Transform raw CSV time series data into processed, analyzed, and visualized data
 
 ### 🔬 Processing Sub-tab - Advanced Signal Processing
 
-#### 🔧 Signal Filtering (6 Professional Filters)
+#### 🔧 Signal Filtering (7 Professional Filters)
 - **📈 Moving Average**: Smooth data with configurable window size (3-1000 points)
 - **🌊 Butterworth Filter**: Low-pass, high-pass, band-pass filtering with order control
 - **🎯 Median Filter**: Remove outliers with configurable kernel size
 - **📊 Savitzky-Golay**: Polynomial smoothing for noisy data with window/polynomial control
 - **🛡️ Hampel Filter**: Robust outlier detection and removal with statistical thresholds
 - **📏 Z-Score Filter**: Statistical outlier removal with configurable sigma values
+- **🔵 Gaussian Filter**: Optimal noise reduction with minimal edge distortion using configurable sigma and boundary modes
 
 #### ⏱️ Time Resampling & Interpolation
 - **🔄 Resample Data**: Convert to different time intervals (1s, 1min, 1h, 1d, custom)
