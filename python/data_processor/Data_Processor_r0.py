@@ -198,6 +198,109 @@ def _poly_derivative(
         Calculate derivative for a window of data.
 
         Args:
+            w: Window of data points
+
+        Returns:
+            Derivative value
+        """
+        if len(w) < window:
+            return np.nan
+
+        # Fit polynomial
+        x = np.arange(len(w))
+        coeffs = np.polyfit(x, w, poly_order)
+
+        # Calculate derivative
+        deriv_coeffs = np.polyder(coeffs, deriv_order)
+        return np.polyval(deriv_coeffs, len(w) - 1) / (delta_x**deriv_order)
+
+    return padded_series.rolling(window=window).apply(get_deriv, raw=False)
+
+
+class SimpleProgressDialog:
+    """Simple progress dialog with cancellation support."""
+
+    def __init__(self, parent, title: str, total: int):
+        """Initialize the progress dialog."""
+        self.parent = parent
+        self.total = total
+        self.cancel_event = threading.Event()
+
+        # Create dialog window
+        self.dialog = ctk.CTkToplevel(parent)
+        self.dialog.title(title)
+        self.dialog.geometry("400x200")
+        self.dialog.resizable(False, False)
+
+        # Make dialog modal
+        self.dialog.transient(parent)
+        self.dialog.grab_set()
+
+        # Create UI components
+        self.title_label = ctk.CTkLabel(
+            self.dialog, text=title, font=ctk.CTkFont(size=16, weight="bold")
+        )
+        self.title_label.pack(pady=20)
+
+        self.status_label = ctk.CTkLabel(
+            self.dialog, text="Starting...", font=ctk.CTkFont(size=12)
+        )
+        self.status_label.pack(pady=10)
+
+        self.progress_bar = ctk.CTkProgressBar(self.dialog)
+        self.progress_bar.pack(pady=10, padx=20, fill="x")
+        self.progress_bar.set(0)
+
+        self.cancel_button = ctk.CTkButton(
+            self.dialog,
+            text="Cancel",
+            command=self._on_cancel,
+            fg_color="red",
+            hover_color="darkred",
+        )
+        self.cancel_button.pack(pady=10)
+
+    def _on_cancel(self):
+        """Handle cancel button click."""
+        self.cancel_event.set()
+        self.dialog.destroy()
+
+    def update(self, completed: int, total: int, message: str):
+        """Update progress."""
+        if self.dialog.winfo_exists():
+            self.status_label.configure(text=f"{message} ({completed}/{total})")
+            self.progress_bar.set(completed / total)
+            self.dialog.update()
+
+    def is_cancelled(self) -> bool:
+        """Check if operation was cancelled."""
+        return self.cancel_event.is_set()
+
+    def destroy(self):
+        """Destroy the dialog."""
+        if self.dialog.winfo_exists():
+            self.dialog.destroy()
+
+
+def _poly_derivative(
+    series: pd.Series,
+    window: int,
+    poly_order: int,
+    deriv_order: int,
+    delta_x: float,
+) -> pd.Series:
+    """Calculates the derivative of a series using a rolling polynomial fit."""
+    if poly_order < deriv_order:
+        return pd.Series(np.nan, index=series.index)
+
+    # Pad the series at the beginning to get derivatives for the initial points
+    padded_series = pd.concat([pd.Series([series.iloc[0]] * (window - 1)), series])
+
+    def get_deriv(w: pd.Series) -> float:
+        """
+        Calculate derivative for a window of data.
+
+        Args:
             w: Series containing the data window
 
         Returns:
@@ -3046,7 +3149,7 @@ This section helps you manage which signals (columns) to process from your files
             else:
                 # High-performance mode: use HighPerformanceDataLoader
                 print("DEBUG: Using high-performance mode with parallel loading")
-                
+
                 # Configure high-performance loader
                 config = LoadingConfig(
                     max_workers=8,  # Use 8 threads for parallel processing
@@ -3055,14 +3158,16 @@ This section helps you manage which signals (columns) to process from your files
                     lazy_loading=True,
                     max_files_per_batch=20,
                 )
-                
+
                 loader = HighPerformanceDataLoader(config)
-                
+
                 # Progress callback for UI updates
                 def progress_callback(completed, total, message):
                     if total_files > 100 and status_label:
                         try:
-                            status_label.configure(text=f"{message} ({completed}/{total})")
+                            status_label.configure(
+                                text=f"{message} ({completed}/{total})"
+                            )
                             if progress_bar:
                                 progress_bar.set(completed / total)
                             progress_window.update()
@@ -3070,29 +3175,33 @@ This section helps you manage which signals (columns) to process from your files
                             print(f"Progress update error (ignoring): {e}")
                     elif hasattr(self, "status_label"):
                         try:
-                            self.status_label.configure(text=f"{message} ({completed}/{total})")
+                            self.status_label.configure(
+                                text=f"{message} ({completed}/{total})"
+                            )
                             self.update()
                         except Exception as e:
                             print(f"Status update error (ignoring): {e}")
-                
+
                 # Cancel flag
                 cancel_event = threading.Event()
                 if hasattr(self, "signal_loading_cancelled"):
                     if self.signal_loading_cancelled:
                         cancel_event.set()
-                
+
                 # Load signals using high-performance loader
                 all_signals, file_metadata = loader.load_signals_from_files(
                     self.input_file_paths,
                     progress_callback=progress_callback,
                     cancel_flag=cancel_event,
                 )
-                
+
                 if cancel_event.is_set():
                     print("DEBUG: Signal loading cancelled")
                     return
-                
-                print(f"✅ Found {len(all_signals)} unique signals from {len(file_metadata)} files")
+
+                print(
+                    f"✅ Found {len(all_signals)} unique signals from {len(file_metadata)} files"
+                )
 
             # Update signal list
             if total_files > 100:
