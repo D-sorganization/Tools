@@ -119,63 +119,20 @@ class FolderProcessingThread(threading.Thread):
     def run(self) -> None:
         """Execute the folder processing operation."""
         try:
+            # Route to integrated app methods instead of placeholder methods
             if self.operation == "combine":
-                self.combine_operation()
+                self.folder_tool._folder_combine_operation()
             elif self.operation == "flatten":
-                self.flatten_operation()
+                self.folder_tool._folder_flatten_operation()
             elif self.operation == "prune":
-                self.prune_operation()
+                self.folder_tool._folder_prune_operation()
             elif self.operation == "deduplicate":
-                self.deduplicate_operation()
+                self.folder_tool._folder_deduplicate_operation()
             elif self.operation == "analyze":
-                self.analyze_operation()
+                self.folder_tool._folder_analyze_operation()
         except Exception as e:
             logging.exception(f"Folder processing error: {e}")
 
-    def combine_operation(self) -> None:
-        """Perform folder combination operation."""
-        try:
-            # Implementation would go here
-            # For now, just a placeholder
-            pass  # This will be replaced with actual implementation
-        except Exception as e:
-            logging.exception(f"Combine operation error: {e}")
-
-    def flatten_operation(self) -> None:
-        """Perform folder flattening operation."""
-        try:
-            # Implementation would go here
-            # For now, just a placeholder
-            pass  # This will be replaced with actual implementation
-        except Exception as e:
-            logging.exception(f"Flatten operation error: {e}")
-
-    def prune_operation(self) -> None:
-        """Perform folder pruning operation."""
-        try:
-            # Implementation would go here
-            # For now, just a placeholder
-            pass  # This will be replaced with actual implementation
-        except Exception as e:
-            logging.exception(f"Prune operation error: {e}")
-
-    def deduplicate_operation(self) -> None:
-        """Perform folder deduplication operation."""
-        try:
-            # Implementation would go here
-            # For now, just a placeholder
-            pass  # This will be replaced with actual implementation
-        except Exception as e:
-            logging.exception(f"Deduplicate operation error: {e}")
-
-    def analyze_operation(self) -> None:
-        """Perform folder analysis operation."""
-        try:
-            # Implementation would go here
-            # For now, just a placeholder
-            pass  # This will be replaced with actual implementation
-        except Exception as e:
-            logging.exception(f"Analyze operation error: {e}")
 
 
 def create_processing_thread(

@@ -12,13 +12,10 @@
 #
 # =============================================================================
 
-import io  # noqa: F401 (kept for possible runtime use)
 import json
 import os
-import re  # noqa: F401
 import tkinter as tk
 import traceback
-from concurrent.futures import ProcessPoolExecutor, as_completed  # noqa: F401
 from tkinter import colorchooser, filedialog, messagebox, simpledialog
 from typing import Any
 
@@ -29,13 +26,10 @@ import numpy as np
 import pandas as pd
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
-from PIL import Image  # noqa: F401
 from scipy.interpolate import UnivariateSpline
 from scipy.io import savemat
 from scipy.signal import butter, filtfilt, medfilt
 from scipy.ndimage import gaussian_filter1d
-from scipy.stats import linregress  # noqa: F401
-from simpledbf import Dbf5  # noqa: F401
 
 # Optional Savitzky-Golay import with guard
 try:
