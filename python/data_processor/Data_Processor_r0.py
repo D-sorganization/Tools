@@ -1440,24 +1440,28 @@ class CSVProcessorApp(ctk.CTk):
 
     def _safe_get_sigma(self, sigma_str: str) -> float:
         """Safely parse sigma value with validation and default fallback.
-        
+
         Args:
             sigma_str: String value from sigma entry field
-            
+
         Returns:
             Valid sigma value (default: 1.0 if invalid input)
         """
         try:
             sigma = float(sigma_str.strip())
             if sigma <= 0:
-                print(f"Warning: Sigma must be positive, using default {DEFAULT_GAUSSIAN_SIGMA}")
+                print(
+                    f"Warning: Sigma must be positive, using default {DEFAULT_GAUSSIAN_SIGMA}"
+                )
                 return DEFAULT_GAUSSIAN_SIGMA
             if sigma > 100:
                 print(f"Warning: Sigma too large ({sigma}), clamping to 100")
                 return 100.0
             return sigma
         except (ValueError, AttributeError):
-            print(f"Warning: Invalid sigma value '{sigma_str}', using default {DEFAULT_GAUSSIAN_SIGMA}")
+            print(
+                f"Warning: Invalid sigma value '{sigma_str}', using default {DEFAULT_GAUSSIAN_SIGMA}"
+            )
             return DEFAULT_GAUSSIAN_SIGMA
 
     def _update_filter_ui(self, filter_type: str) -> None:
