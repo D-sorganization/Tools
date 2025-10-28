@@ -45,25 +45,63 @@ except Exception:  # pragma: no cover - optional dependency
 
 # Import constants
 from constants import (
-    DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, DEFAULT_PADDING, DEFAULT_BUTTON_HEIGHT,
-    DEFAULT_TEXT_HEIGHT, DEFAULT_SEARCH_WIDTH, GRID_WEIGHT_MAIN,
-    MIN_SIGNAL_DATA_POINTS, MIN_PERIODS_DEFAULT, DEFAULT_MA_WINDOW,
-    DEFAULT_BW_ORDER, DEFAULT_BW_CUTOFF, DEFAULT_BW_NYQUIST, MIN_BUTTERWORTH_DATA_MULTIPLIER,
-    DEFAULT_MEDIAN_KERNEL, MIN_KERNEL_SIZE, DEFAULT_SAVGOL_WINDOW,
-    DEFAULT_SAVGOL_POLYORDER, MAX_DERIVATIVE_ORDER,
-    TIME_COLUMN_KEYWORDS, LARGE_SIGNAL_THRESHOLD, SIGNAL_BATCH_SIZE,
-    BULK_SAMPLE_SIZE, LARGE_FILE_THRESHOLD, PLOT_UPDATE_DELAY_MS,
-    UI_UPDATE_DELAY_MS, LAYOUT_SAVE_DELAY_MS, LARGE_BATCH_SIZE, SMALL_BATCH_SIZE,
-    ZOOM_OUT_FACTOR, ZOOM_IN_FACTOR, DEFAULT_LINE_WIDTH, DEFAULT_GRID_ALPHA,
-    DEFAULT_GRID_LINESTYLE, ERROR_MSG_NO_FILES, ERROR_MSG_EMPTY_FILE,
-    ERROR_MSG_NO_PLOTS, DEFAULT_PLOT_TITLE, DEFAULT_PLOT_XLABEL,
-    DEFAULT_PLOT_YLABEL, DEFAULT_LEGEND_POSITION, DEFAULT_TIME_FORMAT,
-    MILLISECONDS_PER_SECOND, SECONDS_PER_MINUTE, SECONDS_PER_HOUR,
-    DEFAULT_START_TIME, DEFAULT_END_TIME, DEFAULT_ALPHA, DEFAULT_DPI,
-    DEFAULT_HAMPEL_WINDOW, DEFAULT_HAMPEL_THRESHOLD,
-    DEFAULT_ZSCORE_THRESHOLD, DEFAULT_ZSCORE_METHOD, NORMAL_DISTRIBUTION_CONSTANT,
-    DEFAULT_GAUSSIAN_SIGMA, DEFAULT_GAUSSIAN_MODE,
-    EXCEL_SHEET_NAME_MAX_LENGTH
+    DEFAULT_WINDOW_WIDTH,
+    DEFAULT_WINDOW_HEIGHT,
+    DEFAULT_PADDING,
+    DEFAULT_BUTTON_HEIGHT,
+    DEFAULT_TEXT_HEIGHT,
+    DEFAULT_SEARCH_WIDTH,
+    GRID_WEIGHT_MAIN,
+    MIN_SIGNAL_DATA_POINTS,
+    MIN_PERIODS_DEFAULT,
+    DEFAULT_MA_WINDOW,
+    DEFAULT_BW_ORDER,
+    DEFAULT_BW_CUTOFF,
+    DEFAULT_BW_NYQUIST,
+    MIN_BUTTERWORTH_DATA_MULTIPLIER,
+    DEFAULT_MEDIAN_KERNEL,
+    MIN_KERNEL_SIZE,
+    DEFAULT_SAVGOL_WINDOW,
+    DEFAULT_SAVGOL_POLYORDER,
+    MAX_DERIVATIVE_ORDER,
+    TIME_COLUMN_KEYWORDS,
+    LARGE_SIGNAL_THRESHOLD,
+    SIGNAL_BATCH_SIZE,
+    BULK_SAMPLE_SIZE,
+    LARGE_FILE_THRESHOLD,
+    PLOT_UPDATE_DELAY_MS,
+    UI_UPDATE_DELAY_MS,
+    LAYOUT_SAVE_DELAY_MS,
+    LARGE_BATCH_SIZE,
+    SMALL_BATCH_SIZE,
+    ZOOM_OUT_FACTOR,
+    ZOOM_IN_FACTOR,
+    DEFAULT_LINE_WIDTH,
+    DEFAULT_GRID_ALPHA,
+    DEFAULT_GRID_LINESTYLE,
+    ERROR_MSG_NO_FILES,
+    ERROR_MSG_EMPTY_FILE,
+    ERROR_MSG_NO_PLOTS,
+    DEFAULT_PLOT_TITLE,
+    DEFAULT_PLOT_XLABEL,
+    DEFAULT_PLOT_YLABEL,
+    DEFAULT_LEGEND_POSITION,
+    DEFAULT_TIME_FORMAT,
+    MILLISECONDS_PER_SECOND,
+    SECONDS_PER_MINUTE,
+    SECONDS_PER_HOUR,
+    DEFAULT_START_TIME,
+    DEFAULT_END_TIME,
+    DEFAULT_ALPHA,
+    DEFAULT_DPI,
+    DEFAULT_HAMPEL_WINDOW,
+    DEFAULT_HAMPEL_THRESHOLD,
+    DEFAULT_ZSCORE_THRESHOLD,
+    DEFAULT_ZSCORE_METHOD,
+    NORMAL_DISTRIBUTION_CONSTANT,
+    DEFAULT_GAUSSIAN_SIGMA,
+    DEFAULT_GAUSSIAN_MODE,
+    EXCEL_SHEET_NAME_MAX_LENGTH,
 )
 
 
@@ -137,8 +175,10 @@ def process_single_csv_file(
                             signal_data.index.to_series().diff().dt.total_seconds(),
                         ).mean()
                     )
-                    if (pd.notna(sr) and 
-                        len(signal_data) > order * MIN_BUTTERWORTH_DATA_MULTIPLIER):
+                    if (
+                        pd.notna(sr)
+                        and len(signal_data) > order * MIN_BUTTERWORTH_DATA_MULTIPLIER
+                    ):
                         btype = (
                             "low" if filter_type == "Butterworth Low-pass" else "high"
                         )
@@ -158,7 +198,9 @@ def process_single_csv_file(
                         )
                 elif filter_type == "Savitzky-Golay":
                     window = settings.get("savgol_window", DEFAULT_SAVGOL_WINDOW)
-                    polyorder = settings.get("savgol_polyorder", DEFAULT_SAVGOL_POLYORDER)
+                    polyorder = settings.get(
+                        "savgol_polyorder", DEFAULT_SAVGOL_POLYORDER
+                    )
                     if window % 2 == 0:
                         window += 1
                     if polyorder >= window:
@@ -313,7 +355,9 @@ class CSVProcessorApp(ctk.CTk):
         self.integrator_signal_vars = {}
         self.deriv_signal_vars = {}
         self.derivative_vars = {}
-        for i in range(1, MAX_DERIVATIVE_ORDER + 1):  # Support up to 5th order derivatives
+        for i in range(
+            1, MAX_DERIVATIVE_ORDER + 1
+        ):  # Support up to 5th order derivatives
             self.derivative_vars[i] = tk.BooleanVar(value=False)
 
         # Plot view state management
@@ -1525,7 +1569,10 @@ class CSVProcessorApp(ctk.CTk):
                 self.signals_displayed = min(SIGNAL_BATCH_SIZE, len(self.all_signals))
 
                 # Update load more button
-                if hasattr(self, "load_more_button") and len(self.all_signals) > SIGNAL_BATCH_SIZE:
+                if (
+                    hasattr(self, "load_more_button")
+                    and len(self.all_signals) > SIGNAL_BATCH_SIZE
+                ):
                     remaining = len(self.all_signals) - SIGNAL_BATCH_SIZE
                     self.load_more_button.configure(
                         text=f"Load More Signals ({remaining} remaining)",
@@ -2006,13 +2053,13 @@ class CSVProcessorApp(ctk.CTk):
         method: str = "Trapezoidal",
     ) -> pd.DataFrame:
         """Apply integration to selected signals.
-        
+
         Args:
             df: Input DataFrame
             time_col: Column name for time values
             signals_to_integrate: List of signal column names to integrate
             method: Integration method ("Trapezoidal", "Rectangular", or "Simpson")
-            
+
         Returns:
             DataFrame with integrated signals added as new columns
         """
@@ -2088,13 +2135,13 @@ class CSVProcessorApp(ctk.CTk):
         method: str = "Spline (Acausal)",
     ) -> pd.DataFrame:
         """Apply differentiation to selected signals with support for up to 5th order.
-        
+
         Args:
             df: Input DataFrame
             time_col: Column name for time values
             signals_to_differentiate: List of signal column names to differentiate
             method: Differentiation method
-            
+
         Returns:
             DataFrame with differentiated signals added as new columns
         """
@@ -2286,7 +2333,9 @@ class CSVProcessorApp(ctk.CTk):
         )
 
         # For large numbers of files, use a more efficient display
-        if total_files > LARGE_SIGNAL_THRESHOLD:  # Lowered threshold for better performance
+        if (
+            total_files > LARGE_SIGNAL_THRESHOLD
+        ):  # Lowered threshold for better performance
             print(f"DEBUG: Using smart summary display for {total_files} files")
             # Create a summary display for large file lists
             summary_frame = ctk.CTkFrame(self.file_list_frame)
@@ -3041,7 +3090,8 @@ This section helps you manage which signals (columns) to process from your files
 
                 # For large numbers of files, use batch processing
                 batch_size = (
-                    LARGE_BATCH_SIZE if files_to_read > LARGE_SIGNAL_THRESHOLD 
+                    LARGE_BATCH_SIZE
+                    if files_to_read > LARGE_SIGNAL_THRESHOLD
                     else SMALL_BATCH_SIZE
                 )
 
@@ -3187,9 +3237,9 @@ This section helps you manage which signals (columns) to process from your files
                 if hasattr(self, "status_label"):
                     self.status_label.configure(
                         text=(
-                        f"Ready - {len(self.input_file_paths)} files loaded. "
-                        f"Go to Plotting tab to visualize."
-                    ),
+                            f"Ready - {len(self.input_file_paths)} files loaded. "
+                            f"Go to Plotting tab to visualize."
+                        ),
                     )
 
         print("DEBUG: load_signals_from_files() completed")
@@ -3231,7 +3281,9 @@ This section helps you manage which signals (columns) to process from your files
                                 break  # Only convert first time column found
                             except Exception as e:
                                 # Log datetime conversion errors for debugging
-                                print(f"Warning: Failed to convert column {col} to datetime: {e}")
+                                print(
+                                    f"Warning: Failed to convert column {col} to datetime: {e}"
+                                )
                     return True
                 except Exception as e:
                     print(f"Error loading {filename}: {e}")
@@ -3449,10 +3501,7 @@ This section helps you manage which signals (columns) to process from your files
         self._schedule_plot_update()
 
     def _display_signals_batch(
-        self, 
-        signals_batch: list[str], 
-        start_index: int = 0, 
-        auto_select: bool = True
+        self, signals_batch: list[str], start_index: int = 0, auto_select: bool = True
     ) -> None:
         """Display a batch of signals in the scrollable frame."""
         print(
@@ -3753,7 +3802,9 @@ This section helps you manage which signals (columns) to process from your files
             messagebox.showerror("Export Error", f"Error exporting files: {e!s}")
             self.status_label.configure(text="Export failed")
 
-    def _process_single_file(self, file_path: str, settings: dict[str, Any]) -> pd.DataFrame | None:
+    def _process_single_file(
+        self, file_path: str, settings: dict[str, Any]
+    ) -> pd.DataFrame | None:
         """Process a single file with all advanced features."""
         print(f"\n_process_single_file called for: {os.path.basename(file_path)}")
         try:
@@ -3883,7 +3934,11 @@ This section helps you manage which signals (columns) to process from your files
                                 signal_data.index.to_series().diff().dt.total_seconds(),
                             ).mean()
                         )
-                        if pd.notna(sr) and len(signal_data) > order * MIN_BUTTERWORTH_DATA_MULTIPLIER:
+                        if (
+                            pd.notna(sr)
+                            and len(signal_data)
+                            > order * MIN_BUTTERWORTH_DATA_MULTIPLIER
+                        ):
                             btype = (
                                 "low"
                                 if filter_type == "Butterworth Low-pass"
@@ -3905,7 +3960,9 @@ This section helps you manage which signals (columns) to process from your files
                             )
                     elif filter_type == "Hampel Filter":
                         window = settings.get("hampel_window", DEFAULT_HAMPEL_WINDOW)
-                        threshold = settings.get("hampel_threshold", DEFAULT_HAMPEL_THRESHOLD)
+                        threshold = settings.get(
+                            "hampel_threshold", DEFAULT_HAMPEL_THRESHOLD
+                        )
 
                         try:
                             signal_data = processed_df[col].ffill().bfill()
@@ -3935,7 +3992,9 @@ This section helps you manage which signals (columns) to process from your files
                                 index=signal_data.index,
                             )
                     elif filter_type == "Z-Score Filter":
-                        threshold = settings.get("zscore_threshold", DEFAULT_ZSCORE_THRESHOLD)
+                        threshold = settings.get(
+                            "zscore_threshold", DEFAULT_ZSCORE_THRESHOLD
+                        )
                         method = settings.get("zscore_method", DEFAULT_ZSCORE_METHOD)
 
                         mean_val = signal_data.mean()
@@ -3956,7 +4015,9 @@ This section helps you manage which signals (columns) to process from your files
                             processed_df.loc[z_scores > threshold, col] = median_val
                     elif filter_type == "Savitzky-Golay":
                         window = settings.get("savgol_window", DEFAULT_SAVGOL_WINDOW)
-                        polyorder = settings.get("savgol_polyorder", DEFAULT_SAVGOL_POLYORDER)
+                        polyorder = settings.get(
+                            "savgol_polyorder", DEFAULT_SAVGOL_POLYORDER
+                        )
                         if window % 2 == 0:
                             window += 1
                         if polyorder >= window:
@@ -3974,11 +4035,13 @@ This section helps you manage which signals (columns) to process from your files
                     elif filter_type == "Gaussian Filter":
                         sigma = settings.get("gaussian_sigma", DEFAULT_GAUSSIAN_SIGMA)
                         mode = settings.get("gaussian_mode", DEFAULT_GAUSSIAN_MODE)
-                        
+
                         if len(signal_data) > 1:
                             try:
                                 processed_df[col] = pd.Series(
-                                    gaussian_filter1d(signal_data, sigma=sigma, mode=mode),
+                                    gaussian_filter1d(
+                                        signal_data, sigma=sigma, mode=mode
+                                    ),
                                     index=signal_data.index,
                                 )
                             except Exception as e:
@@ -4232,7 +4295,9 @@ This section helps you manage which signals (columns) to process from your files
             compiled_df.to_csv(final_path, index=False)
             messagebox.showinfo("Success", f"Exported compiled data to {final_path}")
 
-    def _export_excel_multisheet(self, processed_files: dict[str, pd.DataFrame]) -> None:
+    def _export_excel_multisheet(
+        self, processed_files: dict[str, pd.DataFrame]
+    ) -> None:
         """Export all files to a single Excel file with multiple sheets."""
         output_path = os.path.join(self.output_directory, "processed_data.xlsx")
         final_path = self._check_file_overwrite(output_path)
@@ -4241,9 +4306,9 @@ This section helps you manage which signals (columns) to process from your files
 
         with pd.ExcelWriter(final_path, engine="openpyxl") as writer:
             for file_path, df in processed_files:
-                sheet_name = (
-                    os.path.splitext(os.path.basename(file_path))[0][:EXCEL_SHEET_NAME_MAX_LENGTH]
-                )
+                sheet_name = os.path.splitext(os.path.basename(file_path))[0][
+                    :EXCEL_SHEET_NAME_MAX_LENGTH
+                ]
                 df = self._apply_sorting(df)
                 df.to_excel(writer, sheet_name=sheet_name, index=False)
 
@@ -4466,7 +4531,9 @@ This section helps you manage which signals (columns) to process from your files
             print(f"Conversion error: {e}")
             traceback.print_exc()
 
-    def _export_parquet_separate(self, processed_files: dict[str, pd.DataFrame]) -> None:
+    def _export_parquet_separate(
+        self, processed_files: dict[str, pd.DataFrame]
+    ) -> None:
         """Export each file as a separate Parquet file."""
         exported_count = 0
         for file_path, df in processed_files:
@@ -4571,7 +4638,9 @@ This section helps you manage which signals (columns) to process from your files
                 f"Exported compiled Feather file to {final_path}",
             )
 
-    def _export_feather_separate(self, processed_files: dict[str, pd.DataFrame]) -> None:
+    def _export_feather_separate(
+        self, processed_files: dict[str, pd.DataFrame]
+    ) -> None:
         """Export each file as a separate Feather file."""
         exported_count = 0
         for file_path, df in processed_files:
@@ -4645,7 +4714,9 @@ This section helps you manage which signals (columns) to process from your files
         else:
             messagebox.showinfo("Cancelled", "No files were exported.")
 
-    def _combine_multiple_files(self, processed_files: dict[str, pd.DataFrame]) -> pd.DataFrame:
+    def _combine_multiple_files(
+        self, processed_files: dict[str, pd.DataFrame]
+    ) -> pd.DataFrame:
         """Combine multiple processed files into a single dataset for time series data."""
         if not processed_files or len(processed_files) <= 1:
             return processed_files
@@ -6097,7 +6168,13 @@ This section helps you manage which signals (columns) to process from your files
         if not hasattr(self, "dragging_splitter") or not self.dragging_splitter:
             handle.configure(fg_color="#666666")
 
-    def _start_splitter_drag(self, event: tk.Event, handle: ctk.CTkFrame, left_panel: ctk.CTkFrame, splitter_key: str) -> None:
+    def _start_splitter_drag(
+        self,
+        event: tk.Event,
+        handle: ctk.CTkFrame,
+        left_panel: ctk.CTkFrame,
+        splitter_key: str,
+    ) -> None:
         """Start dragging the splitter."""
         self.dragging_splitter = True
         self.drag_splitter_key = splitter_key
@@ -6106,7 +6183,13 @@ This section helps you manage which signals (columns) to process from your files
         self.drag_start_width = left_panel.winfo_width()
         handle.configure(fg_color="#AAAAAA")
 
-    def _drag_splitter(self, event: tk.Event, handle: ctk.CTkFrame, left_panel: ctk.CTkFrame, splitter_key: str) -> None:
+    def _drag_splitter(
+        self,
+        event: tk.Event,
+        handle: ctk.CTkFrame,
+        left_panel: ctk.CTkFrame,
+        splitter_key: str,
+    ) -> None:
         """Drag the splitter."""
         if hasattr(self, "dragging_splitter") and self.dragging_splitter:
             delta_x = event.x_root - self.drag_start_x
@@ -6150,7 +6233,9 @@ This section helps you manage which signals (columns) to process from your files
             # Debounce the saving to avoid too frequent saves
             if hasattr(self, "_resize_timer"):
                 self.after_cancel(self._resize_timer)
-            self._resize_timer = self.after(LAYOUT_SAVE_DELAY_MS, self._save_layout_config)
+            self._resize_timer = self.after(
+                LAYOUT_SAVE_DELAY_MS, self._save_layout_config
+            )
 
     def create_status_bar(self) -> None:
         """Create the status bar with progress tracking."""
@@ -6859,13 +6944,23 @@ This section helps you manage which signals (columns) to process from your files
                 except ImportError:
                     # Fallback to simple smoothing if scipy not available
                     filtered_df[signal] = (
-                        df[signal].rolling(window=order * MIN_BUTTERWORTH_DATA_MULTIPLIER + 1, center=True).mean()
+                        df[signal]
+                        .rolling(
+                            window=order * MIN_BUTTERWORTH_DATA_MULTIPLIER + 1,
+                            center=True,
+                        )
+                        .mean()
                     )
                 except Exception as e:
                     print(f"Error applying Butterworth filter: {e}")
                     # Fallback to simple smoothing
                     filtered_df[signal] = (
-                        df[signal].rolling(window=order * MIN_BUTTERWORTH_DATA_MULTIPLIER + 1, center=True).mean()
+                        df[signal]
+                        .rolling(
+                            window=order * MIN_BUTTERWORTH_DATA_MULTIPLIER + 1,
+                            center=True,
+                        )
+                        .mean()
                     )
 
             elif filter_type == "Median Filter":
@@ -7198,7 +7293,9 @@ This section helps you manage which signals (columns) to process from your files
                         df[time_col] = pd.to_datetime(df[time_col])
                     except Exception as e:
                         # Log datetime conversion errors for debugging
-                        print(f"Warning: Failed to convert time column to datetime: {e}")
+                        print(
+                            f"Warning: Failed to convert time column to datetime: {e}"
+                        )
 
                 return df
         except Exception as e:
@@ -7354,7 +7451,7 @@ ENGINEERING EXAMPLES:
 FRACTIONS & MATH:
 • $\\frac{m}{s}$ → m/s (as fraction)
 • $m/s^2$ → m/s² (acceleration)
-• $kg \\cdot m^2$ → kg·m² 
+• $kg \\cdot m^2$ → kg·m²
 • $\\pm$ → ± (plus-minus)
 
 TIPS:
@@ -8925,7 +9022,9 @@ COMMON MISTAKES TO AVOID:
                 else f"{date_str} {DEFAULT_START_TIME}"
             )
             end_full_str = (
-                f"{date_str} {end_time_str}" if end_time_str else f"{date_str} {DEFAULT_END_TIME}"
+                f"{date_str} {end_time_str}"
+                if end_time_str
+                else f"{date_str} {DEFAULT_END_TIME}"
             )
 
             # Filter the data
