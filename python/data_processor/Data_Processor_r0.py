@@ -33,6 +33,7 @@ from PIL import Image  # noqa: F401
 from scipy.interpolate import UnivariateSpline
 from scipy.io import savemat
 from scipy.signal import butter, filtfilt, medfilt
+from scipy.ndimage import gaussian_filter1d
 from scipy.stats import linregress  # noqa: F401
 from simpledbf import Dbf5  # noqa: F401
 
@@ -61,6 +62,7 @@ from constants import (
     DEFAULT_START_TIME, DEFAULT_END_TIME, DEFAULT_ALPHA, DEFAULT_DPI,
     DEFAULT_HAMPEL_WINDOW, DEFAULT_HAMPEL_THRESHOLD,
     DEFAULT_ZSCORE_THRESHOLD, DEFAULT_ZSCORE_METHOD, NORMAL_DISTRIBUTION_CONSTANT,
+    DEFAULT_GAUSSIAN_SIGMA, DEFAULT_GAUSSIAN_MODE,
     EXCEL_SHEET_NAME_MAX_LENGTH
 )
 
@@ -290,6 +292,7 @@ class CSVProcessorApp(ctk.CTk):
             "Butterworth Low-pass",
             "Butterworth High-pass",
             "Savitzky-Golay",
+            "Gaussian Filter",
         ]
         self.custom_vars_list = []
         self.reference_signal_widgets = {}
@@ -919,6 +922,9 @@ class CSVProcessorApp(ctk.CTk):
         (self.savgol_frame, self.savgol_window_entry, self.savgol_polyorder_entry) = (
             self._create_savgol_param_frame(filter_frame)
         )
+        (self.gaussian_frame, self.gaussian_sigma_entry, self.gaussian_mode_menu) = (
+            self._create_gaussian_param_frame(filter_frame)
+        )
         self._update_filter_ui("None")
 
         # Resample frame
@@ -1297,6 +1303,38 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, window_entry, polyorder_entry
 
+    def _create_gaussian_param_frame(self, parent: ctk.CTkFrame) -> ctk.CTkFrame:
+        """Create Gaussian filter parameter frame."""
+        frame = ctk.CTkFrame(parent)
+        frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+        frame.grid_columnconfigure(1, weight=1)
+
+        ctk.CTkLabel(frame, text="Sigma:").grid(
+            row=0,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
+        )
+        sigma_entry = ctk.CTkEntry(frame, placeholder_text="1.0")
+        sigma_entry.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
+
+        ctk.CTkLabel(frame, text="Boundary Mode:").grid(
+            row=1,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
+        )
+        mode_menu = ctk.CTkOptionMenu(
+            frame,
+            values=["reflect", "constant", "nearest", "mirror", "wrap"],
+            width=120,
+        )
+        mode_menu.grid(row=1, column=1, padx=10, pady=5, sticky="w")
+
+        return frame, sigma_entry, mode_menu
+
     def _create_hampel_param_frame(self, parent: ctk.CTkFrame) -> ctk.CTkFrame:
         """Create Hampel filter parameter frame."""
         frame = ctk.CTkFrame(parent)
@@ -1366,6 +1404,7 @@ class CSVProcessorApp(ctk.CTk):
             self.hampel_frame,
             self.zscore_frame,
             self.savgol_frame,
+            self.gaussian_frame,
         ]:
             frame.grid_remove()
 
@@ -1382,6 +1421,8 @@ class CSVProcessorApp(ctk.CTk):
             self.zscore_frame.grid()
         elif filter_type == "Savitzky-Golay":
             self.savgol_frame.grid()
+        elif filter_type == "Gaussian Filter":
+            self.gaussian_frame.grid()
 
     def _update_plot_filter_ui(self, filter_type: str) -> None:
         """Update plot filter UI based on selected filter type."""
@@ -1393,6 +1434,7 @@ class CSVProcessorApp(ctk.CTk):
             self.plot_hampel_frame,
             self.plot_zscore_frame,
             self.plot_savgol_frame,
+            self.plot_gaussian_frame,
         ]:
             frame.grid_remove()
 
@@ -1409,6 +1451,8 @@ class CSVProcessorApp(ctk.CTk):
             self.plot_zscore_frame.grid()
         elif filter_type == "Savitzky-Golay":
             self.plot_savgol_frame.grid()
+        elif filter_type == "Gaussian Filter":
+            self.plot_gaussian_frame.grid()
 
     def _update_compare_filter_ui(self, filter_type: str) -> None:
         """Update comparison filter UI based on selected filter type."""
@@ -3927,6 +3971,22 @@ This section helps you manage which signals (columns) to process from your files
                                 _savgol_filter(signal_data, window, polyorder),
                                 index=signal_data.index,
                             )
+                    elif filter_type == "Gaussian Filter":
+                        sigma = settings.get("gaussian_sigma", DEFAULT_GAUSSIAN_SIGMA)
+                        mode = settings.get("gaussian_mode", DEFAULT_GAUSSIAN_MODE)
+                        
+                        if len(signal_data) > 1:
+                            try:
+                                processed_df[col] = pd.Series(
+                                    gaussian_filter1d(signal_data, sigma=sigma, mode=mode),
+                                    index=signal_data.index,
+                                )
+                            except Exception as e:
+                                print(f"Error applying Gaussian filter: {e}")
+                                # Fallback to moving average
+                                processed_df[col] = signal_data.rolling(
+                                    window=min(10, len(signal_data)), min_periods=1
+                                ).mean()
 
             # Apply Resampling
             if settings.get("resample_enabled"):
@@ -4851,6 +4911,11 @@ This section helps you manage which signals (columns) to process from your files
                 self.plot_savgol_window_entry,
                 self.plot_savgol_polyorder_entry,
             ) = self._create_savgol_param_frame(plot_filter_frame)
+            (
+                self.plot_gaussian_frame,
+                self.plot_gaussian_sigma_entry,
+                self.plot_gaussian_mode_menu,
+            ) = self._create_gaussian_param_frame(plot_filter_frame)
             self._update_plot_filter_ui("None")
 
             # Show both raw and filtered signals option (moved below parameter frames)
@@ -6706,6 +6771,18 @@ This section helps you manage which signals (columns) to process from your files
                             "scipy.signal.savgol_filter unavailable. Install SciPy or skip smoothing.",
                         )
                     df[col] = _savgol_filter(df[col], window, polyorder)
+
+        elif filter_type == "Gaussian Filter":
+            sigma = float(self.plot_gaussian_sigma_entry.get())
+            mode = self.plot_gaussian_mode_menu.get()
+            for col in signal_cols:
+                if col in df.columns:
+                    try:
+                        df[col] = gaussian_filter1d(df[col], sigma=sigma, mode=mode)
+                    except Exception as e:
+                        print(f"Error applying Gaussian filter to {col}: {e}")
+                        # Fallback to moving average
+                        df[col] = df[col].rolling(window=10, center=True).mean()
 
         return df
         """Apply filter preview to the plot data."""

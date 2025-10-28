@@ -58,6 +58,10 @@ NORMAL_DISTRIBUTION_CONSTANT: Final[float] = 1.4826  # Constant for normal distr
 DEFAULT_SAVGOL_WINDOW: Final[int] = 11  # Default Savitzky-Golay window size
 DEFAULT_SAVGOL_POLYORDER: Final[int] = 2  # Default Savitzky-Golay polynomial order
 
+# Gaussian filter defaults
+DEFAULT_GAUSSIAN_SIGMA: Final[float] = 1.0  # Default Gaussian filter sigma value
+DEFAULT_GAUSSIAN_MODE: Final[str] = "reflect"  # Default Gaussian filter boundary mode
+
 # Derivative processing
 MAX_DERIVATIVE_ORDER: Final[int] = 5  # Maximum derivative order supported
 
