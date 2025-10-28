@@ -1438,6 +1438,28 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, threshold_entry, method_menu
 
+    def _safe_get_sigma(self, sigma_str: str) -> float:
+        """Safely parse sigma value with validation and default fallback.
+        
+        Args:
+            sigma_str: String value from sigma entry field
+            
+        Returns:
+            Valid sigma value (default: 1.0 if invalid input)
+        """
+        try:
+            sigma = float(sigma_str.strip())
+            if sigma <= 0:
+                print(f"Warning: Sigma must be positive, using default {DEFAULT_GAUSSIAN_SIGMA}")
+                return DEFAULT_GAUSSIAN_SIGMA
+            if sigma > 100:
+                print(f"Warning: Sigma too large ({sigma}), clamping to 100")
+                return 100.0
+            return sigma
+        except (ValueError, AttributeError):
+            print(f"Warning: Invalid sigma value '{sigma_str}', using default {DEFAULT_GAUSSIAN_SIGMA}")
+            return DEFAULT_GAUSSIAN_SIGMA
+
     def _update_filter_ui(self, filter_type: str) -> None:
         """Update filter UI based on selected filter type."""
         # Hide all frames
@@ -1508,6 +1530,7 @@ class CSVProcessorApp(ctk.CTk):
             self.compare_hampel_frame,
             self.compare_zscore_frame,
             self.compare_savgol_frame,
+            self.compare_gaussian_frame,
         ]:
             frame.grid_remove()
 
@@ -1542,6 +1565,14 @@ class CSVProcessorApp(ctk.CTk):
             )
         elif filter_type == "Savitzky-Golay":
             self.compare_savgol_frame.grid(
+                row=14,
+                column=0,
+                sticky="ew",
+                padx=10,
+                pady=5,
+            )
+        elif filter_type == "Gaussian Filter":
+            self.compare_gaussian_frame.grid(
                 row=14,
                 column=0,
                 sticky="ew",
@@ -5061,6 +5092,11 @@ This section helps you manage which signals (columns) to process from your files
                 self.compare_savgol_window_entry,
                 self.compare_savgol_polyorder_entry,
             ) = self._create_savgol_param_frame(plot_filter_frame)
+            (
+                self.compare_gaussian_frame,
+                self.compare_gaussian_sigma_entry,
+                self.compare_gaussian_mode_menu,
+            ) = self._create_gaussian_param_frame(plot_filter_frame)
 
             # Auto-zoom controls
             auto_zoom_frame = ctk.CTkFrame(plot_filter_frame)
@@ -6790,6 +6826,18 @@ This section helps you manage which signals (columns) to process from your files
                                 "scipy.signal.savgol_filter unavailable. Install SciPy or skip smoothing.",
                             )
                         df[col] = _savgol_filter(df[col], window, polyorder)
+
+            elif filter_type == "Gaussian Filter":
+                sigma = self._safe_get_sigma(self.compare_gaussian_sigma_entry.get())
+                mode = self.compare_gaussian_mode_menu.get()
+                for col in signal_cols:
+                    if col in df.columns:
+                        try:
+                            df[col] = gaussian_filter1d(df[col], sigma=sigma, mode=mode)
+                        except Exception as e:
+                            print(f"Error applying Gaussian filter to {col}: {e}")
+                            # Fallback to moving average
+                            df[col] = df[col].rolling(window=10, center=True).mean()
         elif filter_type == "Moving Average":
             window = int(self.plot_ma_value_entry.get())
             unit = self.plot_ma_unit_menu.get()
@@ -6858,7 +6906,7 @@ This section helps you manage which signals (columns) to process from your files
                     df[col] = _savgol_filter(df[col], window, polyorder)
 
         elif filter_type == "Gaussian Filter":
-            sigma = float(self.plot_gaussian_sigma_entry.get())
+            sigma = self._safe_get_sigma(self.plot_gaussian_sigma_entry.get())
             mode = self.plot_gaussian_mode_menu.get()
             for col in signal_cols:
                 if col in df.columns:
