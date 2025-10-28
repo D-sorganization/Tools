@@ -14,6 +14,7 @@
 
 import json
 import os
+import threading
 import tkinter as tk
 import traceback
 from tkinter import colorchooser, filedialog, messagebox, simpledialog
@@ -39,6 +40,7 @@ except Exception:  # pragma: no cover - optional dependency
 
 # Import vectorized filter engine
 from vectorized_filter_engine import VectorizedFilterEngine
+from high_performance_loader import HighPerformanceDataLoader, LoadingConfig
 
 # Import constants
 from constants import (
@@ -151,12 +153,12 @@ def process_single_csv_file(
             numeric_cols = processed_df.select_dtypes(
                 include=np.number,
             ).columns.tolist()
-            
+
             # Use VectorizedFilterEngine for faster processing
             filter_engine = VectorizedFilterEngine()
             processed_df[numeric_cols] = filter_engine.apply_filter_batch(
                 processed_df, filter_type, settings, numeric_cols
-                        )
+            )
 
         # Apply Resampling
         if settings.get("resample_enabled"):
@@ -2030,13 +2032,13 @@ class CSVProcessorApp(ctk.CTk):
         method: str = "Trapezoidal",
     ) -> pd.DataFrame:
         """Apply integration to selected signals.
-        
+
         Args:
             df: Input DataFrame
             time_col: Column name for time values
             signals_to_integrate: List of signal column names to integrate
             method: Integration method ("Trapezoidal", "Rectangular", or "Simpson")
-            
+
         Returns:
             DataFrame with integrated signals added as new columns
         """
@@ -2112,13 +2114,13 @@ class CSVProcessorApp(ctk.CTk):
         method: str = "Spline (Acausal)",
     ) -> pd.DataFrame:
         """Apply differentiation to selected signals with support for up to 5th order.
-        
+
         Args:
             df: Input DataFrame
             time_col: Column name for time values
             signals_to_differentiate: List of signal column names to differentiate
             method: Differentiation method
-            
+
         Returns:
             DataFrame with differentiated signals added as new columns
         """
@@ -3042,120 +3044,55 @@ This section helps you manage which signals (columns) to process from your files
                         self.update()
 
             else:
-                # Normal mode: read headers from all files (but limit for very large counts)
-                print("DEBUG: Using normal mode - reading headers from all files")
-
-                # For very large file counts, limit to first 100 files to prevent stalling
-                files_to_read = (
-                    min(total_files, 100) if total_files > 100 else total_files
+                # High-performance mode: use HighPerformanceDataLoader
+                print("DEBUG: Using high-performance mode with parallel loading")
+                
+                # Configure high-performance loader
+                config = LoadingConfig(
+                    max_workers=8,  # Use 8 threads for parallel processing
+                    cache_enabled=True,
+                    parallel_loading=True,
+                    lazy_loading=True,
+                    max_files_per_batch=20,
                 )
-
-                # Update status
-                if total_files > 100:
-                    status_label.configure(
-                        text=f"Reading headers from first {files_to_read} files "
-                        f"(of {total_files})...",
-                    )
-                    progress_window.update()
-                elif hasattr(self, "status_label"):
-                    self.status_label.configure(
-                        text=f"Reading headers from {files_to_read} files...",
-                    )
-                    self.update()
-
-                all_signals = set()
-
-                # For large numbers of files, use batch processing
-                batch_size = (
-                    LARGE_BATCH_SIZE
-                    if files_to_read > LARGE_SIGNAL_THRESHOLD
-                    else SMALL_BATCH_SIZE
-                )
-
-                for i in range(0, files_to_read, batch_size):
-                    # Check for cancellation
-                    if (
-                        hasattr(self, "signal_loading_cancelled")
-                        and self.signal_loading_cancelled
-                    ):
-                        print("DEBUG: Signal loading cancelled during batch processing")
-                        return
-
-                    batch_end = min(i + batch_size, files_to_read)
-                    batch_files = self.input_file_paths[i:batch_end]
-
-                    # Update status for batch
-                    if total_files > 100:
+                
+                loader = HighPerformanceDataLoader(config)
+                
+                # Progress callback for UI updates
+                def progress_callback(completed, total, message):
+                    if total_files > 100 and status_label:
                         try:
-                            status_label.configure(
-                                text=f"Reading files {i+1}-{batch_end}/"
-                                f"{files_to_read}...",
-                            )
+                            status_label.configure(text=f"{message} ({completed}/{total})")
                             if progress_bar:
-                                progress = (i + batch_size) / files_to_read
-                                progress_bar.set(min(progress, 1.0))
+                                progress_bar.set(completed / total)
                             progress_window.update()
                         except Exception as e:
-                            print(f"Status update error (ignoring): {e}")
-                            # Continue processing even if status update fails
+                            print(f"Progress update error (ignoring): {e}")
                     elif hasattr(self, "status_label"):
-                        self.status_label.configure(
-                            text=f"Reading files {i+1}-{batch_end}/"
-                            f"{total_files}...",
-                        )
-                        self.update()
-
-                    for file_path in batch_files:
                         try:
-                            # Just read header for efficiency
-                            df = pd.read_csv(file_path, nrows=1)
-                            signals = df.columns.tolist()
-                            all_signals.update(signals)
-
+                            self.status_label.configure(text=f"{message} ({completed}/{total})")
+                            self.update()
                         except Exception as e:
-                            print(f"Error reading {file_path}: {e}")
-
-                    # Force UI update after each batch
-                    if total_files > 100:
-                        progress_window.update()
-                    else:
-                        self.update()
-
-                print(
-                    f"DEBUG: Normal mode - all signals collected: "
-                    f"{len(all_signals)} unique signals",
+                            print(f"Status update error (ignoring): {e}")
+                
+                # Cancel flag
+                cancel_event = threading.Event()
+                if hasattr(self, "signal_loading_cancelled"):
+                    if self.signal_loading_cancelled:
+                        cancel_event.set()
+                
+                # Load signals using high-performance loader
+                all_signals, file_metadata = loader.load_signals_from_files(
+                    self.input_file_paths,
+                    progress_callback=progress_callback,
+                    cancel_flag=cancel_event,
                 )
-
-                # Update status
-                if total_files > 100:
-                    try:
-                        if files_to_read < total_files:
-                            status_label.configure(
-                                text=(
-                                    f"Found {len(all_signals)} unique signals in first {files_to_read} "
-                                    f"files (of {total_files})"
-                                ),
-                            )
-                        else:
-                            status_label.configure(
-                                text=f"Found {len(all_signals)} unique signals in {total_files} files",
-                            )
-                        progress_window.update()
-                    except Exception as e:
-                        print(f"Status update error (ignoring): {e}")
-                elif hasattr(self, "status_label"):
-                    if "files_to_read" in locals() and files_to_read < total_files:
-                        self.status_label.configure(
-                            text=(
-                                f"Found {len(all_signals)} unique signals in first {files_to_read} "
-                                f"files (of {total_files})"
-                            ),
-                        )
-                    else:
-                        self.status_label.configure(
-                            text=f"Found {len(all_signals)} unique signals in {total_files} files",
-                        )
-                    self.update()
+                
+                if cancel_event.is_set():
+                    print("DEBUG: Signal loading cancelled")
+                    return
+                
+                print(f"✅ Found {len(all_signals)} unique signals from {len(file_metadata)} files")
 
             # Update signal list
             if total_files > 100:
@@ -3214,9 +3151,9 @@ This section helps you manage which signals (columns) to process from your files
                 if hasattr(self, "status_label"):
                     self.status_label.configure(
                         text=(
-                        f"Ready - {len(self.input_file_paths)} files loaded. "
-                        f"Go to Plotting tab to visualize."
-                    ),
+                            f"Ready - {len(self.input_file_paths)} files loaded. "
+                            f"Go to Plotting tab to visualize."
+                        ),
                     )
 
         print("DEBUG: load_signals_from_files() completed")
@@ -7445,7 +7382,7 @@ ENGINEERING EXAMPLES:
 FRACTIONS & MATH:
 • $\\frac{m}{s}$ → m/s (as fraction)
 • $m/s^2$ → m/s² (acceleration)
-• $kg \\cdot m^2$ → kg·m² 
+• $kg \\cdot m^2$ → kg·m²
 • $\\pm$ → ± (plus-minus)
 
 TIPS:
