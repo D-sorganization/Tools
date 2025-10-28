@@ -37,6 +37,9 @@ try:
 except Exception:  # pragma: no cover - optional dependency
     _savgol_filter = None
 
+# Import vectorized filter engine
+from vectorized_filter_engine import VectorizedFilterEngine
+
 # Import constants
 from constants import (
     DEFAULT_WINDOW_WIDTH,
@@ -142,72 +145,17 @@ def process_single_csv_file(
 
         processed_df.set_index(time_col, inplace=True)
 
-        # Apply Filtering
+        # Apply Filtering using VectorizedFilterEngine
         filter_type = settings.get("filter_type")
         if filter_type and filter_type != "None":
             numeric_cols = processed_df.select_dtypes(
                 include=np.number,
             ).columns.tolist()
-            for col in numeric_cols:
-                signal_data = processed_df[col].dropna()
-                if len(signal_data) < MIN_SIGNAL_DATA_POINTS:
-                    continue
-
-                # Apply filtering based on type
-                if filter_type == "Moving Average":
-                    window_size = settings.get("ma_window", 10)
-                    processed_df[col] = signal_data.rolling(
-                        window=window_size,
-                        min_periods=1,
-                    ).mean()
-                elif filter_type in ["Butterworth Low-pass", "Butterworth High-pass"]:
-                    order = settings.get("bw_order", DEFAULT_BW_ORDER)
-                    cutoff = settings.get("bw_cutoff", DEFAULT_BW_CUTOFF)
-                    sr = (
-                        1.0
-                        / pd.to_numeric(
-                            signal_data.index.to_series().diff().dt.total_seconds(),
-                        ).mean()
-                    )
-                    if (
-                        pd.notna(sr)
-                        and len(signal_data) > order * MIN_BUTTERWORTH_DATA_MULTIPLIER
-                    ):
-                        btype = (
-                            "low" if filter_type == "Butterworth Low-pass" else "high"
-                        )
-                        b, a = butter(N=order, Wn=cutoff, btype=btype, fs=sr)
-                        processed_df[col] = pd.Series(
-                            filtfilt(b, a, signal_data),
-                            index=signal_data.index,
-                        )
-                elif filter_type == "Median Filter":
-                    kernel = settings.get("median_kernel", DEFAULT_MEDIAN_KERNEL)
-                    if kernel % 2 == 0:
-                        kernel += 1
-                    if len(signal_data) > kernel:
-                        processed_df[col] = pd.Series(
-                            medfilt(signal_data, kernel_size=kernel),
-                            index=signal_data.index,
-                        )
-                elif filter_type == "Savitzky-Golay":
-                    window = settings.get("savgol_window", DEFAULT_SAVGOL_WINDOW)
-                    polyorder = settings.get(
-                        "savgol_polyorder", DEFAULT_SAVGOL_POLYORDER
-                    )
-                    if window % 2 == 0:
-                        window += 1
-                    if polyorder >= window:
-                        polyorder = window - 1
-                    if len(signal_data) > window:
-                        if _savgol_filter is None:
-                            raise RuntimeError(
-                                "scipy.signal.savgol_filter unavailable. "
-                                "Install SciPy or skip smoothing.",
-                            )
-                        processed_df[col] = pd.Series(
-                            _savgol_filter(signal_data, window, polyorder),
-                            index=signal_data.index,
+            
+            # Use VectorizedFilterEngine for faster processing
+            filter_engine = VectorizedFilterEngine()
+            processed_df[numeric_cols] = filter_engine.apply_filter_batch(
+                processed_df, filter_type, settings, numeric_cols
                         )
 
         # Apply Resampling
@@ -2082,13 +2030,13 @@ class CSVProcessorApp(ctk.CTk):
         method: str = "Trapezoidal",
     ) -> pd.DataFrame:
         """Apply integration to selected signals.
-
+        
         Args:
             df: Input DataFrame
             time_col: Column name for time values
             signals_to_integrate: List of signal column names to integrate
             method: Integration method ("Trapezoidal", "Rectangular", or "Simpson")
-
+            
         Returns:
             DataFrame with integrated signals added as new columns
         """
@@ -2164,13 +2112,13 @@ class CSVProcessorApp(ctk.CTk):
         method: str = "Spline (Acausal)",
     ) -> pd.DataFrame:
         """Apply differentiation to selected signals with support for up to 5th order.
-
+        
         Args:
             df: Input DataFrame
             time_col: Column name for time values
             signals_to_differentiate: List of signal column names to differentiate
             method: Differentiation method
-
+            
         Returns:
             DataFrame with differentiated signals added as new columns
         """
@@ -3266,9 +3214,9 @@ This section helps you manage which signals (columns) to process from your files
                 if hasattr(self, "status_label"):
                     self.status_label.configure(
                         text=(
-                            f"Ready - {len(self.input_file_paths)} files loaded. "
-                            f"Go to Plotting tab to visualize."
-                        ),
+                        f"Ready - {len(self.input_file_paths)} files loaded. "
+                        f"Go to Plotting tab to visualize."
+                    ),
                     )
 
         print("DEBUG: load_signals_from_files() completed")
@@ -7497,7 +7445,7 @@ ENGINEERING EXAMPLES:
 FRACTIONS & MATH:
 • $\\frac{m}{s}$ → m/s (as fraction)
 • $m/s^2$ → m/s² (acceleration)
-• $kg \\cdot m^2$ → kg·m²
+• $kg \\cdot m^2$ → kg·m² 
 • $\\pm$ → ± (plus-minus)
 
 TIPS:
