@@ -268,7 +268,7 @@ end
 mixedAudio = zeros(maxLength, 2); % Stereo output
 
 % Check if any track is soloed
-hasSolo = any([mixer.Tracks.solo]);
+hasSolo = any([mixer.Tracks.Solo]);
 
 % Process each loaded track
 for trackIdx = loadedTracks
