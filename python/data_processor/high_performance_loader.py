@@ -24,12 +24,6 @@ from dataclasses import dataclass
 import pickle
 
 # Import constants
-from constants import (
-    LARGE_SIGNAL_THRESHOLD,
-    LARGE_BATCH_SIZE,
-    SMALL_BATCH_SIZE,
-    BULK_SAMPLE_SIZE,
-)
 
 
 @dataclass
