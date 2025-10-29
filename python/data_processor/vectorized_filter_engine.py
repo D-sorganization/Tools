@@ -8,7 +8,6 @@ Optimized for chemical plant data processing with:
 - Parallel processing support
 """
 
-import logging
 from typing import Any, Callable, Dict, List, Optional, Union
 import numpy as np
 import pandas as pd
