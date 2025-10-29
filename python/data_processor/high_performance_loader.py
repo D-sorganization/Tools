@@ -326,6 +326,7 @@ class HighPerformanceDataLoader:
                         try:
                             df[col] = pd.to_datetime(df[col])
                         except (ValueError, TypeError):
+                            # Not all object columns are datetimes; safe to leave as object if conversion fails
                             pass
             
             # Downcast integer columns
