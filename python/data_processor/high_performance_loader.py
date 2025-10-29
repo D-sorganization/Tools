@@ -318,6 +318,7 @@ class HighPerformanceDataLoader:
                     try:
                         df[col] = pd.to_numeric(df[col])
                     except (ValueError, TypeError):
+                        # Column could not be converted to numeric; leave as-is and try datetime next
                         pass
                     
                     # Try to convert to datetime
