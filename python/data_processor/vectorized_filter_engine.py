@@ -8,7 +8,7 @@ Optimized for chemical plant data processing with:
 - Parallel processing support
 """
 
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional
 import numpy as np
 import pandas as pd
 from scipy.signal import butter, filtfilt, medfilt, windows
