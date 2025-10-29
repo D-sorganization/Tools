@@ -179,44 +179,6 @@ def process_single_csv_file(
 
 
 # Helper function for causal derivative calculation
-def _poly_derivative(
-    series: pd.Series,
-    window: int,
-    poly_order: int,
-    deriv_order: int,
-    delta_x: float,
-) -> pd.Series:
-    """Calculates the derivative of a series using a rolling polynomial fit."""
-    if poly_order < deriv_order:
-        return pd.Series(np.nan, index=series.index)
-
-    # Pad the series at the beginning to get derivatives for the initial points
-    padded_series = pd.concat([pd.Series([series.iloc[0]] * (window - 1)), series])
-
-    def get_deriv(w: pd.Series) -> float:
-        """
-        Calculate derivative for a window of data.
-
-        Args:
-            w: Window of data points
-
-        Returns:
-            Derivative value
-        """
-        if len(w) < window:
-            return np.nan
-
-        # Fit polynomial
-        x = np.arange(len(w))
-        coeffs = np.polyfit(x, w, poly_order)
-
-        # Calculate derivative
-        deriv_coeffs = np.polyder(coeffs, deriv_order)
-        return np.polyval(deriv_coeffs, len(w) - 1) / (delta_x**deriv_order)
-
-    return padded_series.rolling(window=window).apply(get_deriv, raw=False)
-
-
 class SimpleProgressDialog:
     """Simple progress dialog with cancellation support."""
 
