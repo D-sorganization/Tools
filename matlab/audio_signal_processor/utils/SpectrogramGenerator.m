@@ -77,8 +77,13 @@ overlapSamples = round(options.WindowLength * options.Overlap);
 
 % Generate spectrogram using MATLAB's spectrogram function
 try
-    [S, F, T] = spectrogram(audioData, options.WindowLength, overlapSamples, ...
-        options.NFFT, options.SampleRate, options.Window);
+    % Build a concrete window vector from the requested type and length
+    windowVector = constructWindow(options.Window, options.WindowLength);
+
+    % MATLAB's spectrogram expects the window vector (or its length),
+    % not a separate window-type argument
+    [S, F, T] = spectrogram(audioData, windowVector, overlapSamples, ...
+        options.NFFT, options.SampleRate);
 catch ME
     error('SpectrogramGenerator:SpectrogramError', ...
         'Error generating spectrogram: %s', ME.message);
@@ -171,4 +176,25 @@ S_db = 20 * log10(abs(S));
 
 % Apply minimum dB threshold
 S_db(S_db < minDB) = minDB;
+end
+
+function windowVector = constructWindow(windowType, windowLength)
+% Construct a window vector from type and length
+
+switch lower(string(windowType))
+    case "hann"
+        windowVector = hann(windowLength);
+    case "hamming"
+        windowVector = hamming(windowLength);
+    case "blackman"
+        windowVector = blackman(windowLength);
+    case "kaiser"
+        % Default beta chosen for general-purpose spectral analysis
+        defaultBeta = 8;
+        windowVector = kaiser(windowLength, defaultBeta);
+    case "rectangular"
+        windowVector = ones(windowLength, 1);
+    otherwise
+        error('SpectrogramGenerator:InvalidWindow', 'Unsupported window type: %s', windowType);
+end
 end

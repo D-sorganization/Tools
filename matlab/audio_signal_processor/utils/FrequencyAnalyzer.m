@@ -138,8 +138,9 @@ sampleRate = analyzer.SampleRate;
 overlapSamples = round(windowLength * overlap);
 
 % Generate spectrogram
-[S, F, T] = spectrogram(audioData, windowLength, overlapSamples, ...
-    nfft, sampleRate, analyzer.Parameters.Window);
+windowVector = constructWindow(analyzer.Parameters.Window, windowLength);
+[S, F, T] = spectrogram(audioData, windowVector, overlapSamples, ...
+    nfft, sampleRate);
 
 % Calculate average spectrum
 analyzer.Spectrum = mean(abs(S), 2);
@@ -292,4 +293,25 @@ if mod(windowSize, 2) == 0
 end
 
 smoothedSpectrum = movmean(spectrum, windowSize);
+end
+
+function windowVector = constructWindow(windowType, windowLength)
+% Construct a window vector from type and length
+
+switch lower(string(windowType))
+    case "hann"
+        windowVector = hann(windowLength);
+    case "hamming"
+        windowVector = hamming(windowLength);
+    case "blackman"
+        windowVector = blackman(windowLength);
+    case "kaiser"
+        % Default beta chosen for general-purpose spectral analysis
+        defaultBeta = 8;
+        windowVector = kaiser(windowLength, defaultBeta);
+    case "rectangular"
+        windowVector = ones(windowLength, 1);
+    otherwise
+        error('FrequencyAnalyzer:InvalidWindow', 'Unsupported window type: %s', windowType);
+end
 end
