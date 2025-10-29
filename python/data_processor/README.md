@@ -15,18 +15,20 @@ A comprehensive, self-contained data processing application that combines multip
 ## Installation
 
 1. Install Python dependencies:
-```bash
-pip install -r requirements.txt
-```
+
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 2. Launch the application:
-```bash
-python launch.py
-```
+
+   ```bash
+   python launch_integrated.py
+   ```
 
 ## File Structure
 
-```
+```text
 integrated_data_processor/
 ├── Data_Processor_Integrated.py    # Main integrated application
 ├── Data_Processor_r0.py            # Base CSV processor class
@@ -35,7 +37,7 @@ integrated_data_processor/
 ├── folder_tool_tab.py              # Folder tool UI components
 ├── folder_tool/                    # Folder processing functionality
 │   └── Folder_Cleanup_Tool_Rev0.py
-├── launch.py                       # Launch script
+├── launch_integrated.py            # Launch script
 ├── requirements.txt                # Python dependencies
 └── README.md                       # This file
 ```
