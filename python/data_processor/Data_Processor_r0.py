@@ -12,13 +12,11 @@
 #
 # =============================================================================
 
-import io  # noqa: F401 (kept for possible runtime use)
 import json
 import os
-import re  # noqa: F401
+import threading
 import tkinter as tk
 import traceback
-from concurrent.futures import ProcessPoolExecutor, as_completed  # noqa: F401
 from tkinter import colorchooser, filedialog, messagebox, simpledialog
 from typing import Any
 
@@ -29,12 +27,10 @@ import numpy as np
 import pandas as pd
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
-from PIL import Image  # noqa: F401
 from scipy.interpolate import UnivariateSpline
 from scipy.io import savemat
 from scipy.signal import butter, filtfilt, medfilt
-from scipy.stats import linregress  # noqa: F401
-from simpledbf import Dbf5  # noqa: F401
+from scipy.ndimage import gaussian_filter1d
 
 # Optional Savitzky-Golay import with guard
 try:
@@ -42,26 +38,69 @@ try:
 except Exception:  # pragma: no cover - optional dependency
     _savgol_filter = None
 
+# Import vectorized filter engine
+from vectorized_filter_engine import VectorizedFilterEngine
+from high_performance_loader import HighPerformanceDataLoader, LoadingConfig
+
 # Import constants
 from constants import (
-    DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, DEFAULT_PADDING, DEFAULT_BUTTON_HEIGHT,
-    DEFAULT_TEXT_HEIGHT, DEFAULT_SEARCH_WIDTH, GRID_WEIGHT_MAIN,
-    MIN_SIGNAL_DATA_POINTS, MIN_PERIODS_DEFAULT, DEFAULT_MA_WINDOW,
-    DEFAULT_BW_ORDER, DEFAULT_BW_CUTOFF, DEFAULT_BW_NYQUIST, MIN_BUTTERWORTH_DATA_MULTIPLIER,
-    DEFAULT_MEDIAN_KERNEL, MIN_KERNEL_SIZE, DEFAULT_SAVGOL_WINDOW,
-    DEFAULT_SAVGOL_POLYORDER, MAX_DERIVATIVE_ORDER,
-    TIME_COLUMN_KEYWORDS, LARGE_SIGNAL_THRESHOLD, SIGNAL_BATCH_SIZE,
-    BULK_SAMPLE_SIZE, LARGE_FILE_THRESHOLD, PLOT_UPDATE_DELAY_MS,
-    UI_UPDATE_DELAY_MS, LAYOUT_SAVE_DELAY_MS, LARGE_BATCH_SIZE, SMALL_BATCH_SIZE,
-    ZOOM_OUT_FACTOR, ZOOM_IN_FACTOR, DEFAULT_LINE_WIDTH, DEFAULT_GRID_ALPHA,
-    DEFAULT_GRID_LINESTYLE, ERROR_MSG_NO_FILES, ERROR_MSG_EMPTY_FILE,
-    ERROR_MSG_NO_PLOTS, DEFAULT_PLOT_TITLE, DEFAULT_PLOT_XLABEL,
-    DEFAULT_PLOT_YLABEL, DEFAULT_LEGEND_POSITION, DEFAULT_TIME_FORMAT,
-    MILLISECONDS_PER_SECOND, SECONDS_PER_MINUTE, SECONDS_PER_HOUR,
-    DEFAULT_START_TIME, DEFAULT_END_TIME, DEFAULT_ALPHA, DEFAULT_DPI,
-    DEFAULT_HAMPEL_WINDOW, DEFAULT_HAMPEL_THRESHOLD,
-    DEFAULT_ZSCORE_THRESHOLD, DEFAULT_ZSCORE_METHOD, NORMAL_DISTRIBUTION_CONSTANT,
-    EXCEL_SHEET_NAME_MAX_LENGTH
+    DEFAULT_WINDOW_WIDTH,
+    DEFAULT_WINDOW_HEIGHT,
+    DEFAULT_PADDING,
+    DEFAULT_BUTTON_HEIGHT,
+    DEFAULT_TEXT_HEIGHT,
+    DEFAULT_SEARCH_WIDTH,
+    GRID_WEIGHT_MAIN,
+    MIN_SIGNAL_DATA_POINTS,
+    MIN_PERIODS_DEFAULT,
+    DEFAULT_MA_WINDOW,
+    DEFAULT_BW_ORDER,
+    DEFAULT_BW_CUTOFF,
+    DEFAULT_BW_NYQUIST,
+    MIN_BUTTERWORTH_DATA_MULTIPLIER,
+    DEFAULT_MEDIAN_KERNEL,
+    MIN_KERNEL_SIZE,
+    DEFAULT_SAVGOL_WINDOW,
+    DEFAULT_SAVGOL_POLYORDER,
+    MAX_DERIVATIVE_ORDER,
+    TIME_COLUMN_KEYWORDS,
+    LARGE_SIGNAL_THRESHOLD,
+    SIGNAL_BATCH_SIZE,
+    BULK_SAMPLE_SIZE,
+    LARGE_FILE_THRESHOLD,
+    PLOT_UPDATE_DELAY_MS,
+    UI_UPDATE_DELAY_MS,
+    LAYOUT_SAVE_DELAY_MS,
+    LARGE_BATCH_SIZE,
+    SMALL_BATCH_SIZE,
+    ZOOM_OUT_FACTOR,
+    ZOOM_IN_FACTOR,
+    DEFAULT_LINE_WIDTH,
+    DEFAULT_GRID_ALPHA,
+    DEFAULT_GRID_LINESTYLE,
+    ERROR_MSG_NO_FILES,
+    ERROR_MSG_EMPTY_FILE,
+    ERROR_MSG_NO_PLOTS,
+    DEFAULT_PLOT_TITLE,
+    DEFAULT_PLOT_XLABEL,
+    DEFAULT_PLOT_YLABEL,
+    DEFAULT_LEGEND_POSITION,
+    DEFAULT_TIME_FORMAT,
+    MILLISECONDS_PER_SECOND,
+    SECONDS_PER_MINUTE,
+    SECONDS_PER_HOUR,
+    DEFAULT_START_TIME,
+    DEFAULT_END_TIME,
+    DEFAULT_ALPHA,
+    DEFAULT_DPI,
+    DEFAULT_HAMPEL_WINDOW,
+    DEFAULT_HAMPEL_THRESHOLD,
+    DEFAULT_ZSCORE_THRESHOLD,
+    DEFAULT_ZSCORE_METHOD,
+    NORMAL_DISTRIBUTION_CONSTANT,
+    DEFAULT_GAUSSIAN_SIGMA,
+    DEFAULT_GAUSSIAN_MODE,
+    EXCEL_SHEET_NAME_MAX_LENGTH,
 )
 
 
@@ -108,69 +147,18 @@ def process_single_csv_file(
 
         processed_df.set_index(time_col, inplace=True)
 
-        # Apply Filtering
+        # Apply Filtering using VectorizedFilterEngine
         filter_type = settings.get("filter_type")
         if filter_type and filter_type != "None":
             numeric_cols = processed_df.select_dtypes(
                 include=np.number,
             ).columns.tolist()
-            for col in numeric_cols:
-                signal_data = processed_df[col].dropna()
-                if len(signal_data) < MIN_SIGNAL_DATA_POINTS:
-                    continue
 
-                # Apply filtering based on type
-                if filter_type == "Moving Average":
-                    window_size = settings.get("ma_window", 10)
-                    processed_df[col] = signal_data.rolling(
-                        window=window_size,
-                        min_periods=1,
-                    ).mean()
-                elif filter_type in ["Butterworth Low-pass", "Butterworth High-pass"]:
-                    order = settings.get("bw_order", DEFAULT_BW_ORDER)
-                    cutoff = settings.get("bw_cutoff", DEFAULT_BW_CUTOFF)
-                    sr = (
-                        1.0
-                        / pd.to_numeric(
-                            signal_data.index.to_series().diff().dt.total_seconds(),
-                        ).mean()
-                    )
-                    if (pd.notna(sr) and 
-                        len(signal_data) > order * MIN_BUTTERWORTH_DATA_MULTIPLIER):
-                        btype = (
-                            "low" if filter_type == "Butterworth Low-pass" else "high"
-                        )
-                        b, a = butter(N=order, Wn=cutoff, btype=btype, fs=sr)
-                        processed_df[col] = pd.Series(
-                            filtfilt(b, a, signal_data),
-                            index=signal_data.index,
-                        )
-                elif filter_type == "Median Filter":
-                    kernel = settings.get("median_kernel", DEFAULT_MEDIAN_KERNEL)
-                    if kernel % 2 == 0:
-                        kernel += 1
-                    if len(signal_data) > kernel:
-                        processed_df[col] = pd.Series(
-                            medfilt(signal_data, kernel_size=kernel),
-                            index=signal_data.index,
-                        )
-                elif filter_type == "Savitzky-Golay":
-                    window = settings.get("savgol_window", DEFAULT_SAVGOL_WINDOW)
-                    polyorder = settings.get("savgol_polyorder", DEFAULT_SAVGOL_POLYORDER)
-                    if window % 2 == 0:
-                        window += 1
-                    if polyorder >= window:
-                        polyorder = window - 1
-                    if len(signal_data) > window:
-                        if _savgol_filter is None:
-                            raise RuntimeError(
-                                "scipy.signal.savgol_filter unavailable. "
-                                "Install SciPy or skip smoothing.",
-                            )
-                        processed_df[col] = pd.Series(
-                            _savgol_filter(signal_data, window, polyorder),
-                            index=signal_data.index,
-                        )
+            # Use VectorizedFilterEngine for faster processing
+            filter_engine = VectorizedFilterEngine()
+            processed_df[numeric_cols] = filter_engine.apply_filter_batch(
+                processed_df, filter_type, settings, numeric_cols
+            )
 
         # Apply Resampling
         if settings.get("resample_enabled"):
@@ -189,8 +177,72 @@ def process_single_csv_file(
         print(f"Error processing {file_path}: {e!s}")
         return None
 
+ 
+class SimpleProgressDialog:
+    """Simple progress dialog with cancellation support."""
 
-# Helper function for causal derivative calculation
+    def __init__(self, parent, title: str, total: int):
+        """Initialize the progress dialog."""
+        self.parent = parent
+        self.total = total
+        self.cancel_event = threading.Event()
+
+        # Create dialog window
+        self.dialog = ctk.CTkToplevel(parent)
+        self.dialog.title(title)
+        self.dialog.geometry("400x200")
+        self.dialog.resizable(False, False)
+
+        # Make dialog modal
+        self.dialog.transient(parent)
+        self.dialog.grab_set()
+
+        # Create UI components
+        self.title_label = ctk.CTkLabel(
+            self.dialog, text=title, font=ctk.CTkFont(size=16, weight="bold")
+        )
+        self.title_label.pack(pady=20)
+
+        self.status_label = ctk.CTkLabel(
+            self.dialog, text="Starting...", font=ctk.CTkFont(size=12)
+        )
+        self.status_label.pack(pady=10)
+
+        self.progress_bar = ctk.CTkProgressBar(self.dialog)
+        self.progress_bar.pack(pady=10, padx=20, fill="x")
+        self.progress_bar.set(0)
+
+        self.cancel_button = ctk.CTkButton(
+            self.dialog,
+            text="Cancel",
+            command=self._on_cancel,
+            fg_color="red",
+            hover_color="darkred",
+        )
+        self.cancel_button.pack(pady=10)
+
+    def _on_cancel(self):
+        """Handle cancel button click."""
+        self.cancel_event.set()
+        self.dialog.destroy()
+
+    def update(self, completed: int, total: int, message: str):
+        """Update progress."""
+        if self.dialog.winfo_exists():
+            self.status_label.configure(text=f"{message} ({completed}/{total})")
+            self.progress_bar.set(completed / total)
+            self.dialog.update()
+
+    def is_cancelled(self) -> bool:
+        """Check if operation was cancelled."""
+        return self.cancel_event.is_set()
+
+    def destroy(self):
+        """Destroy the dialog."""
+        if self.dialog.winfo_exists():
+            self.dialog.destroy()
+
+
 def _poly_derivative(
     series: pd.Series,
     window: int,
@@ -290,6 +342,11 @@ class CSVProcessorApp(ctk.CTk):
             "Butterworth Low-pass",
             "Butterworth High-pass",
             "Savitzky-Golay",
+            "Gaussian Filter",
+            "FFT Low-pass",
+            "FFT High-pass",
+            "FFT Band-pass",
+            "FFT Band-stop",
         ]
         self.custom_vars_list = []
         self.reference_signal_widgets = {}
@@ -310,7 +367,9 @@ class CSVProcessorApp(ctk.CTk):
         self.integrator_signal_vars = {}
         self.deriv_signal_vars = {}
         self.derivative_vars = {}
-        for i in range(1, MAX_DERIVATIVE_ORDER + 1):  # Support up to 5th order derivatives
+        for i in range(
+            1, MAX_DERIVATIVE_ORDER + 1
+        ):  # Support up to 5th order derivatives
             self.derivative_vars[i] = tk.BooleanVar(value=False)
 
         # Plot view state management
@@ -919,6 +978,18 @@ class CSVProcessorApp(ctk.CTk):
         (self.savgol_frame, self.savgol_window_entry, self.savgol_polyorder_entry) = (
             self._create_savgol_param_frame(filter_frame)
         )
+        (self.gaussian_frame, self.gaussian_sigma_entry, self.gaussian_mode_menu) = (
+            self._create_gaussian_param_frame(filter_frame)
+        )
+        (
+            self.fft_frame,
+            self.fft_window_shape_menu,
+            self.fft_freq_unit_menu,
+            self.fft_freq_low_entry,
+            self.fft_freq_high_entry,
+            self.fft_transition_bw_entry,
+            self.fft_zero_phase_checkbox,
+        ) = self._create_fft_param_frame(filter_frame)
         self._update_filter_ui("None")
 
         # Resample frame
@@ -1297,6 +1368,38 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, window_entry, polyorder_entry
 
+    def _create_gaussian_param_frame(self, parent: ctk.CTkFrame) -> ctk.CTkFrame:
+        """Create Gaussian filter parameter frame."""
+        frame = ctk.CTkFrame(parent)
+        frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+        frame.grid_columnconfigure(1, weight=1)
+
+        ctk.CTkLabel(frame, text="Sigma:").grid(
+            row=0,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
+        )
+        sigma_entry = ctk.CTkEntry(frame, placeholder_text="1.0")
+        sigma_entry.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
+
+        ctk.CTkLabel(frame, text="Boundary Mode:").grid(
+            row=1,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
+        )
+        mode_menu = ctk.CTkOptionMenu(
+            frame,
+            values=["reflect", "constant", "nearest", "mirror", "wrap"],
+            width=120,
+        )
+        mode_menu.grid(row=1, column=1, padx=10, pady=5, sticky="w")
+
+        return frame, sigma_entry, mode_menu
+
     def _create_hampel_param_frame(self, parent: ctk.CTkFrame) -> ctk.CTkFrame:
         """Create Hampel filter parameter frame."""
         frame = ctk.CTkFrame(parent)
@@ -1356,6 +1459,130 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, threshold_entry, method_menu
 
+    def _create_fft_param_frame(self, parent: ctk.CTkFrame) -> ctk.CTkFrame:
+        """Create FFT filter parameter frame."""
+        frame = ctk.CTkFrame(parent)
+        frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+        frame.grid_columnconfigure(1, weight=1)
+
+        # Window Shape
+        ctk.CTkLabel(frame, text="Window Shape:").grid(
+            row=0,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
+        )
+        window_shape_menu = ctk.CTkOptionMenu(
+            frame,
+            values=[
+                "Gaussian",
+                "Rectangular",
+                "Hamming",
+                "Hann",
+                "Blackman",
+                "Kaiser",
+                "Tukey",
+                "Bartlett",
+            ],
+            width=120,
+        )
+        window_shape_menu.grid(row=0, column=1, padx=10, pady=5, sticky="w")
+
+        # Frequency Unit
+        ctk.CTkLabel(frame, text="Frequency Unit:").grid(
+            row=1,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
+        )
+        freq_unit_menu = ctk.CTkOptionMenu(
+            frame,
+            values=["normalized", "Hz"],
+            width=120,
+        )
+        freq_unit_menu.grid(row=1, column=1, padx=10, pady=5, sticky="w")
+
+        # Low Frequency
+        ctk.CTkLabel(frame, text="Low Frequency:").grid(
+            row=2,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
+        )
+        freq_low_entry = ctk.CTkEntry(frame, placeholder_text="0.1")
+        freq_low_entry.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
+
+        # High Frequency
+        ctk.CTkLabel(frame, text="High Frequency:").grid(
+            row=3,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
+        )
+        freq_high_entry = ctk.CTkEntry(frame, placeholder_text="0.3")
+        freq_high_entry.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
+
+        # Transition Bandwidth
+        ctk.CTkLabel(frame, text="Transition Bandwidth:").grid(
+            row=4,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
+        )
+        transition_bw_entry = ctk.CTkEntry(frame, placeholder_text="0.05")
+        transition_bw_entry.grid(row=4, column=1, padx=10, pady=5, sticky="ew")
+
+        # Zero Phase Checkbox
+        zero_phase_checkbox = ctk.CTkCheckBox(
+            frame,
+            text="Zero Phase Filtering",
+        )
+        zero_phase_checkbox.grid(
+            row=5, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
+        zero_phase_checkbox.select()  # Default to checked
+
+        return (
+            frame,
+            window_shape_menu,
+            freq_unit_menu,
+            freq_low_entry,
+            freq_high_entry,
+            transition_bw_entry,
+            zero_phase_checkbox,
+        )
+
+    def _safe_get_sigma(self, sigma_str: str) -> float:
+        """Safely parse sigma value with validation and default fallback.
+
+        Args:
+            sigma_str: String value from sigma entry field
+
+        Returns:
+            Valid sigma value (default: 1.0 if invalid input)
+        """
+        try:
+            sigma = float(sigma_str.strip())
+            if sigma <= 0:
+                print(
+                    f"Warning: Sigma must be positive, using default {DEFAULT_GAUSSIAN_SIGMA}"
+                )
+                return DEFAULT_GAUSSIAN_SIGMA
+            if sigma > 100:
+                print(f"Warning: Sigma too large ({sigma}), clamping to 100")
+                return 100.0
+            return sigma
+        except (ValueError, AttributeError):
+            print(
+                f"Warning: Invalid sigma value '{sigma_str}', using default {DEFAULT_GAUSSIAN_SIGMA}"
+            )
+            return DEFAULT_GAUSSIAN_SIGMA
+
     def _update_filter_ui(self, filter_type: str) -> None:
         """Update filter UI based on selected filter type."""
         # Hide all frames
@@ -1366,6 +1593,8 @@ class CSVProcessorApp(ctk.CTk):
             self.hampel_frame,
             self.zscore_frame,
             self.savgol_frame,
+            self.gaussian_frame,
+            self.fft_frame,
         ]:
             frame.grid_remove()
 
@@ -1382,6 +1611,15 @@ class CSVProcessorApp(ctk.CTk):
             self.zscore_frame.grid()
         elif filter_type == "Savitzky-Golay":
             self.savgol_frame.grid()
+        elif filter_type == "Gaussian Filter":
+            self.gaussian_frame.grid()
+        elif filter_type in [
+            "FFT Low-pass",
+            "FFT High-pass",
+            "FFT Band-pass",
+            "FFT Band-stop",
+        ]:
+            self.fft_frame.grid()
 
     def _update_plot_filter_ui(self, filter_type: str) -> None:
         """Update plot filter UI based on selected filter type."""
@@ -1393,6 +1631,8 @@ class CSVProcessorApp(ctk.CTk):
             self.plot_hampel_frame,
             self.plot_zscore_frame,
             self.plot_savgol_frame,
+            self.plot_gaussian_frame,
+            self.plot_fft_frame,
         ]:
             frame.grid_remove()
 
@@ -1409,6 +1649,15 @@ class CSVProcessorApp(ctk.CTk):
             self.plot_zscore_frame.grid()
         elif filter_type == "Savitzky-Golay":
             self.plot_savgol_frame.grid()
+        elif filter_type == "Gaussian Filter":
+            self.plot_gaussian_frame.grid()
+        elif filter_type in [
+            "FFT Low-pass",
+            "FFT High-pass",
+            "FFT Band-pass",
+            "FFT Band-stop",
+        ]:
+            self.plot_fft_frame.grid()
 
     def _update_compare_filter_ui(self, filter_type: str) -> None:
         """Update comparison filter UI based on selected filter type."""
@@ -1420,6 +1669,8 @@ class CSVProcessorApp(ctk.CTk):
             self.compare_hampel_frame,
             self.compare_zscore_frame,
             self.compare_savgol_frame,
+            self.compare_gaussian_frame,
+            self.compare_fft_frame,
         ]:
             frame.grid_remove()
 
@@ -1460,6 +1711,27 @@ class CSVProcessorApp(ctk.CTk):
                 padx=10,
                 pady=5,
             )
+        elif filter_type == "Gaussian Filter":
+            self.compare_gaussian_frame.grid(
+                row=14,
+                column=0,
+                sticky="ew",
+                padx=10,
+                pady=5,
+            )
+        elif filter_type in [
+            "FFT Low-pass",
+            "FFT High-pass",
+            "FFT Band-pass",
+            "FFT Band-stop",
+        ]:
+            self.compare_fft_frame.grid(
+                row=14,
+                column=0,
+                sticky="ew",
+                padx=10,
+                pady=5,
+            )
 
     def _filter_signals(self, event: tk.Event | None = None) -> None:
         """Filter signals based on search text - optimized for large signal counts."""
@@ -1481,7 +1753,10 @@ class CSVProcessorApp(ctk.CTk):
                 self.signals_displayed = min(SIGNAL_BATCH_SIZE, len(self.all_signals))
 
                 # Update load more button
-                if hasattr(self, "load_more_button") and len(self.all_signals) > SIGNAL_BATCH_SIZE:
+                if (
+                    hasattr(self, "load_more_button")
+                    and len(self.all_signals) > SIGNAL_BATCH_SIZE
+                ):
                     remaining = len(self.all_signals) - SIGNAL_BATCH_SIZE
                     self.load_more_button.configure(
                         text=f"Load More Signals ({remaining} remaining)",
@@ -1962,13 +2237,13 @@ class CSVProcessorApp(ctk.CTk):
         method: str = "Trapezoidal",
     ) -> pd.DataFrame:
         """Apply integration to selected signals.
-        
+
         Args:
             df: Input DataFrame
             time_col: Column name for time values
             signals_to_integrate: List of signal column names to integrate
             method: Integration method ("Trapezoidal", "Rectangular", or "Simpson")
-            
+
         Returns:
             DataFrame with integrated signals added as new columns
         """
@@ -2044,13 +2319,13 @@ class CSVProcessorApp(ctk.CTk):
         method: str = "Spline (Acausal)",
     ) -> pd.DataFrame:
         """Apply differentiation to selected signals with support for up to 5th order.
-        
+
         Args:
             df: Input DataFrame
             time_col: Column name for time values
             signals_to_differentiate: List of signal column names to differentiate
             method: Differentiation method
-            
+
         Returns:
             DataFrame with differentiated signals added as new columns
         """
@@ -2242,7 +2517,9 @@ class CSVProcessorApp(ctk.CTk):
         )
 
         # For large numbers of files, use a more efficient display
-        if total_files > LARGE_SIGNAL_THRESHOLD:  # Lowered threshold for better performance
+        if (
+            total_files > LARGE_SIGNAL_THRESHOLD
+        ):  # Lowered threshold for better performance
             print(f"DEBUG: Using smart summary display for {total_files} files")
             # Create a summary display for large file lists
             summary_frame = ctk.CTkFrame(self.file_list_frame)
@@ -2972,119 +3249,61 @@ This section helps you manage which signals (columns) to process from your files
                         self.update()
 
             else:
-                # Normal mode: read headers from all files (but limit for very large counts)
-                print("DEBUG: Using normal mode - reading headers from all files")
+                # High-performance mode: use HighPerformanceDataLoader
+                print("DEBUG: Using high-performance mode with parallel loading")
 
-                # For very large file counts, limit to first 100 files to prevent stalling
-                files_to_read = (
-                    min(total_files, 100) if total_files > 100 else total_files
+                # Configure high-performance loader
+                config = LoadingConfig(
+                    max_workers=8,  # Use 8 threads for parallel processing
+                    cache_enabled=True,
+                    parallel_loading=True,
+                    lazy_loading=True,
+                    max_files_per_batch=20,
                 )
 
-                # Update status
-                if total_files > 100:
-                    status_label.configure(
-                        text=f"Reading headers from first {files_to_read} files "
-                        f"(of {total_files})...",
-                    )
-                    progress_window.update()
-                elif hasattr(self, "status_label"):
-                    self.status_label.configure(
-                        text=f"Reading headers from {files_to_read} files...",
-                    )
-                    self.update()
+                loader = HighPerformanceDataLoader(config)
 
-                all_signals = set()
-
-                # For large numbers of files, use batch processing
-                batch_size = (
-                    LARGE_BATCH_SIZE if files_to_read > LARGE_SIGNAL_THRESHOLD 
-                    else SMALL_BATCH_SIZE
-                )
-
-                for i in range(0, files_to_read, batch_size):
-                    # Check for cancellation
-                    if (
-                        hasattr(self, "signal_loading_cancelled")
-                        and self.signal_loading_cancelled
-                    ):
-                        print("DEBUG: Signal loading cancelled during batch processing")
-                        return
-
-                    batch_end = min(i + batch_size, files_to_read)
-                    batch_files = self.input_file_paths[i:batch_end]
-
-                    # Update status for batch
-                    if total_files > 100:
+                # Progress callback for UI updates
+                def progress_callback(completed, total, message):
+                    if total_files > 100 and status_label:
                         try:
                             status_label.configure(
-                                text=f"Reading files {i+1}-{batch_end}/"
-                                f"{files_to_read}...",
+                                text=f"{message} ({completed}/{total})"
                             )
                             if progress_bar:
-                                progress = (i + batch_size) / files_to_read
-                                progress_bar.set(min(progress, 1.0))
+                                progress_bar.set(completed / total)
                             progress_window.update()
                         except Exception as e:
-                            print(f"Status update error (ignoring): {e}")
-                            # Continue processing even if status update fails
+                            print(f"Progress update error (ignoring): {e}")
                     elif hasattr(self, "status_label"):
-                        self.status_label.configure(
-                            text=f"Reading files {i+1}-{batch_end}/"
-                            f"{total_files}...",
-                        )
-                        self.update()
-
-                    for file_path in batch_files:
                         try:
-                            # Just read header for efficiency
-                            df = pd.read_csv(file_path, nrows=1)
-                            signals = df.columns.tolist()
-                            all_signals.update(signals)
-
+                            self.status_label.configure(
+                                text=f"{message} ({completed}/{total})"
+                            )
+                            self.update()
                         except Exception as e:
-                            print(f"Error reading {file_path}: {e}")
+                            print(f"Status update error (ignoring): {e}")
 
-                    # Force UI update after each batch
-                    if total_files > 100:
-                        progress_window.update()
-                    else:
-                        self.update()
+                # Cancel flag
+                cancel_event = threading.Event()
+                if hasattr(self, "signal_loading_cancelled"):
+                    if self.signal_loading_cancelled:
+                        cancel_event.set()
 
-                print(
-                    f"DEBUG: Normal mode - all signals collected: "
-                    f"{len(all_signals)} unique signals",
+                # Load signals using high-performance loader
+                all_signals, file_metadata = loader.load_signals_from_files(
+                    self.input_file_paths,
+                    progress_callback=progress_callback,
+                    cancel_flag=cancel_event,
                 )
 
-                # Update status
-                if total_files > 100:
-                    try:
-                        if files_to_read < total_files:
-                            status_label.configure(
-                                text=(
-                                    f"Found {len(all_signals)} unique signals in first {files_to_read} "
-                                    f"files (of {total_files})"
-                                ),
-                            )
-                        else:
-                            status_label.configure(
-                                text=f"Found {len(all_signals)} unique signals in {total_files} files",
-                            )
-                        progress_window.update()
-                    except Exception as e:
-                        print(f"Status update error (ignoring): {e}")
-                elif hasattr(self, "status_label"):
-                    if "files_to_read" in locals() and files_to_read < total_files:
-                        self.status_label.configure(
-                            text=(
-                                f"Found {len(all_signals)} unique signals in first {files_to_read} "
-                                f"files (of {total_files})"
-                            ),
-                        )
-                    else:
-                        self.status_label.configure(
-                            text=f"Found {len(all_signals)} unique signals in {total_files} files",
-                        )
-                    self.update()
+                if cancel_event.is_set():
+                    print("DEBUG: Signal loading cancelled")
+                    return
+
+                print(
+                    f"✅ Found {len(all_signals)} unique signals from {len(file_metadata)} files"
+                )
 
             # Update signal list
             if total_files > 100:
@@ -3143,9 +3362,9 @@ This section helps you manage which signals (columns) to process from your files
                 if hasattr(self, "status_label"):
                     self.status_label.configure(
                         text=(
-                        f"Ready - {len(self.input_file_paths)} files loaded. "
-                        f"Go to Plotting tab to visualize."
-                    ),
+                            f"Ready - {len(self.input_file_paths)} files loaded. "
+                            f"Go to Plotting tab to visualize."
+                        ),
                     )
 
         print("DEBUG: load_signals_from_files() completed")
@@ -3187,7 +3406,9 @@ This section helps you manage which signals (columns) to process from your files
                                 break  # Only convert first time column found
                             except Exception as e:
                                 # Log datetime conversion errors for debugging
-                                print(f"Warning: Failed to convert column {col} to datetime: {e}")
+                                print(
+                                    f"Warning: Failed to convert column {col} to datetime: {e}"
+                                )
                     return True
                 except Exception as e:
                     print(f"Error loading {filename}: {e}")
@@ -3405,10 +3626,7 @@ This section helps you manage which signals (columns) to process from your files
         self._schedule_plot_update()
 
     def _display_signals_batch(
-        self, 
-        signals_batch: list[str], 
-        start_index: int = 0, 
-        auto_select: bool = True
+        self, signals_batch: list[str], start_index: int = 0, auto_select: bool = True
     ) -> None:
         """Display a batch of signals in the scrollable frame."""
         print(
@@ -3709,7 +3927,9 @@ This section helps you manage which signals (columns) to process from your files
             messagebox.showerror("Export Error", f"Error exporting files: {e!s}")
             self.status_label.configure(text="Export failed")
 
-    def _process_single_file(self, file_path: str, settings: dict[str, Any]) -> pd.DataFrame | None:
+    def _process_single_file(
+        self, file_path: str, settings: dict[str, Any]
+    ) -> pd.DataFrame | None:
         """Process a single file with all advanced features."""
         print(f"\n_process_single_file called for: {os.path.basename(file_path)}")
         try:
@@ -3839,7 +4059,11 @@ This section helps you manage which signals (columns) to process from your files
                                 signal_data.index.to_series().diff().dt.total_seconds(),
                             ).mean()
                         )
-                        if pd.notna(sr) and len(signal_data) > order * MIN_BUTTERWORTH_DATA_MULTIPLIER:
+                        if (
+                            pd.notna(sr)
+                            and len(signal_data)
+                            > order * MIN_BUTTERWORTH_DATA_MULTIPLIER
+                        ):
                             btype = (
                                 "low"
                                 if filter_type == "Butterworth Low-pass"
@@ -3861,7 +4085,9 @@ This section helps you manage which signals (columns) to process from your files
                             )
                     elif filter_type == "Hampel Filter":
                         window = settings.get("hampel_window", DEFAULT_HAMPEL_WINDOW)
-                        threshold = settings.get("hampel_threshold", DEFAULT_HAMPEL_THRESHOLD)
+                        threshold = settings.get(
+                            "hampel_threshold", DEFAULT_HAMPEL_THRESHOLD
+                        )
 
                         try:
                             signal_data = processed_df[col].ffill().bfill()
@@ -3891,7 +4117,9 @@ This section helps you manage which signals (columns) to process from your files
                                 index=signal_data.index,
                             )
                     elif filter_type == "Z-Score Filter":
-                        threshold = settings.get("zscore_threshold", DEFAULT_ZSCORE_THRESHOLD)
+                        threshold = settings.get(
+                            "zscore_threshold", DEFAULT_ZSCORE_THRESHOLD
+                        )
                         method = settings.get("zscore_method", DEFAULT_ZSCORE_METHOD)
 
                         mean_val = signal_data.mean()
@@ -3912,7 +4140,9 @@ This section helps you manage which signals (columns) to process from your files
                             processed_df.loc[z_scores > threshold, col] = median_val
                     elif filter_type == "Savitzky-Golay":
                         window = settings.get("savgol_window", DEFAULT_SAVGOL_WINDOW)
-                        polyorder = settings.get("savgol_polyorder", DEFAULT_SAVGOL_POLYORDER)
+                        polyorder = settings.get(
+                            "savgol_polyorder", DEFAULT_SAVGOL_POLYORDER
+                        )
                         if window % 2 == 0:
                             window += 1
                         if polyorder >= window:
@@ -3927,6 +4157,24 @@ This section helps you manage which signals (columns) to process from your files
                                 _savgol_filter(signal_data, window, polyorder),
                                 index=signal_data.index,
                             )
+                    elif filter_type == "Gaussian Filter":
+                        sigma = settings.get("gaussian_sigma", DEFAULT_GAUSSIAN_SIGMA)
+                        mode = settings.get("gaussian_mode", DEFAULT_GAUSSIAN_MODE)
+
+                        if len(signal_data) > 1:
+                            try:
+                                processed_df[col] = pd.Series(
+                                    gaussian_filter1d(
+                                        signal_data, sigma=sigma, mode=mode
+                                    ),
+                                    index=signal_data.index,
+                                )
+                            except Exception as e:
+                                print(f"Error applying Gaussian filter: {e}")
+                                # Fallback to moving average
+                                processed_df[col] = signal_data.rolling(
+                                    window=min(10, len(signal_data)), min_periods=1
+                                ).mean()
 
             # Apply Resampling
             if settings.get("resample_enabled"):
@@ -4172,7 +4420,9 @@ This section helps you manage which signals (columns) to process from your files
             compiled_df.to_csv(final_path, index=False)
             messagebox.showinfo("Success", f"Exported compiled data to {final_path}")
 
-    def _export_excel_multisheet(self, processed_files: dict[str, pd.DataFrame]) -> None:
+    def _export_excel_multisheet(
+        self, processed_files: dict[str, pd.DataFrame]
+    ) -> None:
         """Export all files to a single Excel file with multiple sheets."""
         output_path = os.path.join(self.output_directory, "processed_data.xlsx")
         final_path = self._check_file_overwrite(output_path)
@@ -4181,9 +4431,9 @@ This section helps you manage which signals (columns) to process from your files
 
         with pd.ExcelWriter(final_path, engine="openpyxl") as writer:
             for file_path, df in processed_files:
-                sheet_name = (
-                    os.path.splitext(os.path.basename(file_path))[0][:EXCEL_SHEET_NAME_MAX_LENGTH]
-                )
+                sheet_name = os.path.splitext(os.path.basename(file_path))[0][
+                    :EXCEL_SHEET_NAME_MAX_LENGTH
+                ]
                 df = self._apply_sorting(df)
                 df.to_excel(writer, sheet_name=sheet_name, index=False)
 
@@ -4406,7 +4656,9 @@ This section helps you manage which signals (columns) to process from your files
             print(f"Conversion error: {e}")
             traceback.print_exc()
 
-    def _export_parquet_separate(self, processed_files: dict[str, pd.DataFrame]) -> None:
+    def _export_parquet_separate(
+        self, processed_files: dict[str, pd.DataFrame]
+    ) -> None:
         """Export each file as a separate Parquet file."""
         exported_count = 0
         for file_path, df in processed_files:
@@ -4511,7 +4763,9 @@ This section helps you manage which signals (columns) to process from your files
                 f"Exported compiled Feather file to {final_path}",
             )
 
-    def _export_feather_separate(self, processed_files: dict[str, pd.DataFrame]) -> None:
+    def _export_feather_separate(
+        self, processed_files: dict[str, pd.DataFrame]
+    ) -> None:
         """Export each file as a separate Feather file."""
         exported_count = 0
         for file_path, df in processed_files:
@@ -4585,7 +4839,9 @@ This section helps you manage which signals (columns) to process from your files
         else:
             messagebox.showinfo("Cancelled", "No files were exported.")
 
-    def _combine_multiple_files(self, processed_files: dict[str, pd.DataFrame]) -> pd.DataFrame:
+    def _combine_multiple_files(
+        self, processed_files: dict[str, pd.DataFrame]
+    ) -> pd.DataFrame:
         """Combine multiple processed files into a single dataset for time series data."""
         if not processed_files or len(processed_files) <= 1:
             return processed_files
@@ -4851,6 +5107,20 @@ This section helps you manage which signals (columns) to process from your files
                 self.plot_savgol_window_entry,
                 self.plot_savgol_polyorder_entry,
             ) = self._create_savgol_param_frame(plot_filter_frame)
+            (
+                self.plot_gaussian_frame,
+                self.plot_gaussian_sigma_entry,
+                self.plot_gaussian_mode_menu,
+            ) = self._create_gaussian_param_frame(plot_filter_frame)
+            (
+                self.plot_fft_frame,
+                self.plot_fft_window_shape_menu,
+                self.plot_fft_freq_unit_menu,
+                self.plot_fft_freq_low_entry,
+                self.plot_fft_freq_high_entry,
+                self.plot_fft_transition_bw_entry,
+                self.plot_fft_zero_phase_checkbox,
+            ) = self._create_fft_param_frame(plot_filter_frame)
             self._update_plot_filter_ui("None")
 
             # Show both raw and filtered signals option (moved below parameter frames)
@@ -4925,6 +5195,20 @@ This section helps you manage which signals (columns) to process from your files
                 self.compare_savgol_window_entry,
                 self.compare_savgol_polyorder_entry,
             ) = self._create_savgol_param_frame(plot_filter_frame)
+            (
+                self.compare_gaussian_frame,
+                self.compare_gaussian_sigma_entry,
+                self.compare_gaussian_mode_menu,
+            ) = self._create_gaussian_param_frame(plot_filter_frame)
+            (
+                self.compare_fft_frame,
+                self.compare_fft_window_shape_menu,
+                self.compare_fft_freq_unit_menu,
+                self.compare_fft_freq_low_entry,
+                self.compare_fft_freq_high_entry,
+                self.compare_fft_transition_bw_entry,
+                self.compare_fft_zero_phase_checkbox,
+            ) = self._create_fft_param_frame(plot_filter_frame)
 
             # Auto-zoom controls
             auto_zoom_frame = ctk.CTkFrame(plot_filter_frame)
@@ -6032,7 +6316,13 @@ This section helps you manage which signals (columns) to process from your files
         if not hasattr(self, "dragging_splitter") or not self.dragging_splitter:
             handle.configure(fg_color="#666666")
 
-    def _start_splitter_drag(self, event: tk.Event, handle: ctk.CTkFrame, left_panel: ctk.CTkFrame, splitter_key: str) -> None:
+    def _start_splitter_drag(
+        self,
+        event: tk.Event,
+        handle: ctk.CTkFrame,
+        left_panel: ctk.CTkFrame,
+        splitter_key: str,
+    ) -> None:
         """Start dragging the splitter."""
         self.dragging_splitter = True
         self.drag_splitter_key = splitter_key
@@ -6041,7 +6331,13 @@ This section helps you manage which signals (columns) to process from your files
         self.drag_start_width = left_panel.winfo_width()
         handle.configure(fg_color="#AAAAAA")
 
-    def _drag_splitter(self, event: tk.Event, handle: ctk.CTkFrame, left_panel: ctk.CTkFrame, splitter_key: str) -> None:
+    def _drag_splitter(
+        self,
+        event: tk.Event,
+        handle: ctk.CTkFrame,
+        left_panel: ctk.CTkFrame,
+        splitter_key: str,
+    ) -> None:
         """Drag the splitter."""
         if hasattr(self, "dragging_splitter") and self.dragging_splitter:
             delta_x = event.x_root - self.drag_start_x
@@ -6085,7 +6381,9 @@ This section helps you manage which signals (columns) to process from your files
             # Debounce the saving to avoid too frequent saves
             if hasattr(self, "_resize_timer"):
                 self.after_cancel(self._resize_timer)
-            self._resize_timer = self.after(LAYOUT_SAVE_DELAY_MS, self._save_layout_config)
+            self._resize_timer = self.after(
+                LAYOUT_SAVE_DELAY_MS, self._save_layout_config
+            )
 
     def create_status_bar(self) -> None:
         """Create the status bar with progress tracking."""
@@ -6640,6 +6938,18 @@ This section helps you manage which signals (columns) to process from your files
                                 "scipy.signal.savgol_filter unavailable. Install SciPy or skip smoothing.",
                             )
                         df[col] = _savgol_filter(df[col], window, polyorder)
+
+            elif filter_type == "Gaussian Filter":
+                sigma = self._safe_get_sigma(self.compare_gaussian_sigma_entry.get())
+                mode = self.compare_gaussian_mode_menu.get()
+                for col in signal_cols:
+                    if col in df.columns:
+                        try:
+                            df[col] = gaussian_filter1d(df[col], sigma=sigma, mode=mode)
+                        except Exception as e:
+                            print(f"Error applying Gaussian filter to {col}: {e}")
+                            # Fallback to moving average
+                            df[col] = df[col].rolling(window=10, center=True).mean()
         elif filter_type == "Moving Average":
             window = int(self.plot_ma_value_entry.get())
             unit = self.plot_ma_unit_menu.get()
@@ -6706,6 +7016,18 @@ This section helps you manage which signals (columns) to process from your files
                             "scipy.signal.savgol_filter unavailable. Install SciPy or skip smoothing.",
                         )
                     df[col] = _savgol_filter(df[col], window, polyorder)
+
+        elif filter_type == "Gaussian Filter":
+            sigma = self._safe_get_sigma(self.plot_gaussian_sigma_entry.get())
+            mode = self.plot_gaussian_mode_menu.get()
+            for col in signal_cols:
+                if col in df.columns:
+                    try:
+                        df[col] = gaussian_filter1d(df[col], sigma=sigma, mode=mode)
+                    except Exception as e:
+                        print(f"Error applying Gaussian filter to {col}: {e}")
+                        # Fallback to moving average
+                        df[col] = df[col].rolling(window=10, center=True).mean()
 
         return df
         """Apply filter preview to the plot data."""
@@ -6782,13 +7104,23 @@ This section helps you manage which signals (columns) to process from your files
                 except ImportError:
                     # Fallback to simple smoothing if scipy not available
                     filtered_df[signal] = (
-                        df[signal].rolling(window=order * MIN_BUTTERWORTH_DATA_MULTIPLIER + 1, center=True).mean()
+                        df[signal]
+                        .rolling(
+                            window=order * MIN_BUTTERWORTH_DATA_MULTIPLIER + 1,
+                            center=True,
+                        )
+                        .mean()
                     )
                 except Exception as e:
                     print(f"Error applying Butterworth filter: {e}")
                     # Fallback to simple smoothing
                     filtered_df[signal] = (
-                        df[signal].rolling(window=order * MIN_BUTTERWORTH_DATA_MULTIPLIER + 1, center=True).mean()
+                        df[signal]
+                        .rolling(
+                            window=order * MIN_BUTTERWORTH_DATA_MULTIPLIER + 1,
+                            center=True,
+                        )
+                        .mean()
                     )
 
             elif filter_type == "Median Filter":
@@ -7121,7 +7453,9 @@ This section helps you manage which signals (columns) to process from your files
                         df[time_col] = pd.to_datetime(df[time_col])
                     except Exception as e:
                         # Log datetime conversion errors for debugging
-                        print(f"Warning: Failed to convert time column to datetime: {e}")
+                        print(
+                            f"Warning: Failed to convert time column to datetime: {e}"
+                        )
 
                 return df
         except Exception as e:
@@ -7277,7 +7611,7 @@ ENGINEERING EXAMPLES:
 FRACTIONS & MATH:
 • $\\frac{m}{s}$ → m/s (as fraction)
 • $m/s^2$ → m/s² (acceleration)
-• $kg \\cdot m^2$ → kg·m² 
+• $kg \\cdot m^2$ → kg·m²
 • $\\pm$ → ± (plus-minus)
 
 TIPS:
@@ -7384,6 +7718,36 @@ COMMON MISTAKES TO AVOID:
                         self.savgol_polyorder_entry.get()
                         if hasattr(self, "savgol_polyorder_entry")
                         else "2"
+                    ),
+                    "fft_window_shape": (
+                        self.fft_window_shape_menu.get()
+                        if hasattr(self, "fft_window_shape_menu")
+                        else "Gaussian"
+                    ),
+                    "fft_freq_unit": (
+                        self.fft_freq_unit_menu.get()
+                        if hasattr(self, "fft_freq_unit_menu")
+                        else "normalized"
+                    ),
+                    "fft_freq_low": (
+                        self.fft_freq_low_entry.get()
+                        if hasattr(self, "fft_freq_low_entry")
+                        else "0.1"
+                    ),
+                    "fft_freq_high": (
+                        self.fft_freq_high_entry.get()
+                        if hasattr(self, "fft_freq_high_entry")
+                        else "0.3"
+                    ),
+                    "fft_transition_bw": (
+                        self.fft_transition_bw_entry.get()
+                        if hasattr(self, "fft_transition_bw_entry")
+                        else "0.05"
+                    ),
+                    "fft_zero_phase": (
+                        self.fft_zero_phase_checkbox.get()
+                        if hasattr(self, "fft_zero_phase_checkbox")
+                        else True
                     ),
                 },
                 "resample_settings": {
@@ -8848,7 +9212,9 @@ COMMON MISTAKES TO AVOID:
                 else f"{date_str} {DEFAULT_START_TIME}"
             )
             end_full_str = (
-                f"{date_str} {end_time_str}" if end_time_str else f"{date_str} {DEFAULT_END_TIME}"
+                f"{date_str} {end_time_str}"
+                if end_time_str
+                else f"{date_str} {DEFAULT_END_TIME}"
             )
 
             # Filter the data
@@ -9781,6 +10147,42 @@ For additional support or feature requests, please refer to the application docu
                 if hasattr(self, "plot_savgol_polyorder_entry")
                 else ""
             )
+        elif plot_config["filter_type"] in [
+            "FFT Low-pass",
+            "FFT High-pass",
+            "FFT Band-pass",
+            "FFT Band-stop",
+        ]:
+            plot_config["fft_window_shape"] = (
+                self.plot_fft_window_shape_menu.get()
+                if hasattr(self, "plot_fft_window_shape_menu")
+                else ""
+            )
+            plot_config["fft_freq_unit"] = (
+                self.plot_fft_freq_unit_menu.get()
+                if hasattr(self, "plot_fft_freq_unit_menu")
+                else ""
+            )
+            plot_config["fft_freq_low"] = (
+                self.plot_fft_freq_low_entry.get()
+                if hasattr(self, "plot_fft_freq_low_entry")
+                else ""
+            )
+            plot_config["fft_freq_high"] = (
+                self.plot_fft_freq_high_entry.get()
+                if hasattr(self, "plot_fft_freq_high_entry")
+                else ""
+            )
+            plot_config["fft_transition_bw"] = (
+                self.plot_fft_transition_bw_entry.get()
+                if hasattr(self, "plot_fft_transition_bw_entry")
+                else ""
+            )
+            plot_config["fft_zero_phase"] = (
+                self.plot_fft_zero_phase_checkbox.get()
+                if hasattr(self, "plot_fft_zero_phase_checkbox")
+                else ""
+            )
 
         # Add to plots list
         self.plots_list.append(plot_config)
@@ -10085,6 +10487,42 @@ For additional support or feature requests, please refer to the application docu
                 if hasattr(self, "plot_savgol_polyorder_entry")
                 else ""
             )
+        elif self.plots_list[config_index]["filter_type"] in [
+            "FFT Low-pass",
+            "FFT High-pass",
+            "FFT Band-pass",
+            "FFT Band-stop",
+        ]:
+            self.plots_list[config_index]["fft_window_shape"] = (
+                self.plot_fft_window_shape_menu.get()
+                if hasattr(self, "plot_fft_window_shape_menu")
+                else ""
+            )
+            self.plots_list[config_index]["fft_freq_unit"] = (
+                self.plot_fft_freq_unit_menu.get()
+                if hasattr(self, "plot_fft_freq_unit_menu")
+                else ""
+            )
+            self.plots_list[config_index]["fft_freq_low"] = (
+                self.plot_fft_freq_low_entry.get()
+                if hasattr(self, "plot_fft_freq_low_entry")
+                else ""
+            )
+            self.plots_list[config_index]["fft_freq_high"] = (
+                self.plot_fft_freq_high_entry.get()
+                if hasattr(self, "plot_fft_freq_high_entry")
+                else ""
+            )
+            self.plots_list[config_index]["fft_transition_bw"] = (
+                self.plot_fft_transition_bw_entry.get()
+                if hasattr(self, "plot_fft_transition_bw_entry")
+                else ""
+            )
+            self.plots_list[config_index]["fft_zero_phase"] = (
+                self.plot_fft_zero_phase_checkbox.get()
+                if hasattr(self, "plot_fft_zero_phase_checkbox")
+                else ""
+            )
 
         # Save the updated configuration
         self._save_plots_to_file()
@@ -10224,6 +10662,45 @@ For additional support or feature requests, please refer to the application docu
                 self.plot_savgol_polyorder_entry.insert(
                     0,
                     plot_config["savgol_polyorder"],
+                )
+        elif plot_config.get("filter_type") in [
+            "FFT Low-pass",
+            "FFT High-pass",
+            "FFT Band-pass",
+            "FFT Band-stop",
+        ]:
+            if "fft_window_shape" in plot_config and hasattr(
+                self, "plot_fft_window_shape_menu"
+            ):
+                self.plot_fft_window_shape_menu.set(plot_config["fft_window_shape"])
+            if "fft_freq_unit" in plot_config and hasattr(
+                self, "plot_fft_freq_unit_menu"
+            ):
+                self.plot_fft_freq_unit_menu.set(plot_config["fft_freq_unit"])
+            if "fft_freq_low" in plot_config and hasattr(
+                self, "plot_fft_freq_low_entry"
+            ):
+                self.plot_fft_freq_low_entry.delete(0, tk.END)
+                self.plot_fft_freq_low_entry.insert(0, plot_config["fft_freq_low"])
+            if "fft_freq_high" in plot_config and hasattr(
+                self, "plot_fft_freq_high_entry"
+            ):
+                self.plot_fft_freq_high_entry.delete(0, tk.END)
+                self.plot_fft_freq_high_entry.insert(0, plot_config["fft_freq_high"])
+            if "fft_transition_bw" in plot_config and hasattr(
+                self, "plot_fft_transition_bw_entry"
+            ):
+                self.plot_fft_transition_bw_entry.delete(0, tk.END)
+                self.plot_fft_transition_bw_entry.insert(
+                    0, plot_config["fft_transition_bw"]
+                )
+            if "fft_zero_phase" in plot_config and hasattr(
+                self, "plot_fft_zero_phase_checkbox"
+            ):
+                (
+                    self.plot_fft_zero_phase_checkbox.select()
+                    if plot_config["fft_zero_phase"]
+                    else self.plot_fft_zero_phase_checkbox.deselect()
                 )
 
         # Apply custom legend entries

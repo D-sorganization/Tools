@@ -14,32 +14,15 @@
 from __future__ import annotations
 
 import os
-import queue  # noqa: F401
-import re  # noqa: F401
-import shutil  # noqa: F401
-import tempfile  # noqa: F401
 import threading
-import time  # noqa: F401
-import tkinter as tk  # noqa: F401
-import traceback  # noqa: F401
-import zipfile  # noqa: F401
-from concurrent.futures import ProcessPoolExecutor, as_completed  # noqa: F401
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from tkinter import colorchooser, filedialog, messagebox, simpledialog  # noqa: F401
-from typing import Any, Optional  # noqa: F401
 
 import customtkinter as ctk
 import numpy as np
 import pandas as pd
-from PIL import Image  # noqa: F401
-from scipy.interpolate import UnivariateSpline  # noqa: F401
-from scipy.io import savemat  # noqa: F401
-from scipy.signal import butter, filtfilt, medfilt, savgol_filter  # noqa: F401
-from scipy.stats import linregress  # noqa: F401
-from simpledbf import Dbf5  # noqa: F401
 
 # Note: Removed optional joblib import (unused)
 
@@ -62,13 +45,7 @@ except ImportError:
 # Import the original data processor
 import sys
 
-import matplotlib.dates as mdates  # noqa: F401
-import matplotlib.pyplot as plt  # noqa: F401
-from matplotlib.backends.backend_tkagg import (
-    FigureCanvasTkAgg,  # noqa: F401
-    NavigationToolbar2Tk,  # noqa: F401
-)
-from matplotlib.figure import Figure  # noqa: F401
+# Matplotlib imports removed - not used in integrated app
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from Data_Processor_r0 import CSVProcessorApp as OriginalCSVProcessorApp
@@ -2454,13 +2431,14 @@ Transform raw CSV time series data into processed, analyzed, and visualized data
 
 ### 🔬 Processing Sub-tab - Advanced Signal Processing
 
-#### 🔧 Signal Filtering (6 Professional Filters)
+#### 🔧 Signal Filtering (7 Professional Filters)
 - **📈 Moving Average**: Smooth data with configurable window size (3-1000 points)
 - **🌊 Butterworth Filter**: Low-pass, high-pass, band-pass filtering with order control
 - **🎯 Median Filter**: Remove outliers with configurable kernel size
 - **📊 Savitzky-Golay**: Polynomial smoothing for noisy data with window/polynomial control
 - **🛡️ Hampel Filter**: Robust outlier detection and removal with statistical thresholds
 - **📏 Z-Score Filter**: Statistical outlier removal with configurable sigma values
+- **🔵 Gaussian Filter**: Optimal noise reduction with minimal edge distortion using configurable sigma and boundary modes
 
 #### ⏱️ Time Resampling & Interpolation
 - **🔄 Resample Data**: Convert to different time intervals (1s, 1min, 1h, 1d, custom)
