@@ -334,9 +334,12 @@ class HighPerformanceDataLoader:
                         except (ValueError, TypeError):
                             pass
             
-            # Downcast numeric types
-            for col in df.select_dtypes(include=[np.number]).columns:
+            # Downcast integer columns
+            for col in df.select_dtypes(include=['integer']).columns:
                 df[col] = pd.to_numeric(df[col], downcast='integer')
+            
+            # Downcast float columns
+            for col in df.select_dtypes(include=['floating']).columns:
                 df[col] = pd.to_numeric(df[col], downcast='float')
             
             return df
