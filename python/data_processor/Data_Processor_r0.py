@@ -382,6 +382,10 @@ class CSVProcessorApp(ctk.CTk):
             "Butterworth High-pass",
             "Savitzky-Golay",
             "Gaussian Filter",
+            "FFT Low-pass",
+            "FFT High-pass",
+            "FFT Band-pass",
+            "FFT Band-stop",
         ]
         self.custom_vars_list = []
         self.reference_signal_widgets = {}
@@ -1016,6 +1020,15 @@ class CSVProcessorApp(ctk.CTk):
         (self.gaussian_frame, self.gaussian_sigma_entry, self.gaussian_mode_menu) = (
             self._create_gaussian_param_frame(filter_frame)
         )
+        (
+            self.fft_frame,
+            self.fft_window_shape_menu,
+            self.fft_freq_unit_menu,
+            self.fft_freq_low_entry,
+            self.fft_freq_high_entry,
+            self.fft_transition_bw_entry,
+            self.fft_zero_phase_checkbox,
+        ) = self._create_fft_param_frame(filter_frame)
         self._update_filter_ui("None")
 
         # Resample frame
@@ -1485,6 +1498,104 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, threshold_entry, method_menu
 
+    def _create_fft_param_frame(self, parent: ctk.CTkFrame) -> ctk.CTkFrame:
+        """Create FFT filter parameter frame."""
+        frame = ctk.CTkFrame(parent)
+        frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+        frame.grid_columnconfigure(1, weight=1)
+
+        # Window Shape
+        ctk.CTkLabel(frame, text="Window Shape:").grid(
+            row=0,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
+        )
+        window_shape_menu = ctk.CTkOptionMenu(
+            frame,
+            values=[
+                "Gaussian",
+                "Rectangular",
+                "Hamming",
+                "Hann",
+                "Blackman",
+                "Kaiser",
+                "Tukey",
+                "Bartlett",
+            ],
+            width=120,
+        )
+        window_shape_menu.grid(row=0, column=1, padx=10, pady=5, sticky="w")
+
+        # Frequency Unit
+        ctk.CTkLabel(frame, text="Frequency Unit:").grid(
+            row=1,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
+        )
+        freq_unit_menu = ctk.CTkOptionMenu(
+            frame,
+            values=["normalized", "Hz"],
+            width=120,
+        )
+        freq_unit_menu.grid(row=1, column=1, padx=10, pady=5, sticky="w")
+
+        # Low Frequency
+        ctk.CTkLabel(frame, text="Low Frequency:").grid(
+            row=2,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
+        )
+        freq_low_entry = ctk.CTkEntry(frame, placeholder_text="0.1")
+        freq_low_entry.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
+
+        # High Frequency
+        ctk.CTkLabel(frame, text="High Frequency:").grid(
+            row=3,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
+        )
+        freq_high_entry = ctk.CTkEntry(frame, placeholder_text="0.3")
+        freq_high_entry.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
+
+        # Transition Bandwidth
+        ctk.CTkLabel(frame, text="Transition Bandwidth:").grid(
+            row=4,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="w",
+        )
+        transition_bw_entry = ctk.CTkEntry(frame, placeholder_text="0.05")
+        transition_bw_entry.grid(row=4, column=1, padx=10, pady=5, sticky="ew")
+
+        # Zero Phase Checkbox
+        zero_phase_checkbox = ctk.CTkCheckBox(
+            frame,
+            text="Zero Phase Filtering",
+        )
+        zero_phase_checkbox.grid(
+            row=5, column=0, columnspan=2, padx=10, pady=5, sticky="w"
+        )
+        zero_phase_checkbox.select()  # Default to checked
+
+        return (
+            frame,
+            window_shape_menu,
+            freq_unit_menu,
+            freq_low_entry,
+            freq_high_entry,
+            transition_bw_entry,
+            zero_phase_checkbox,
+        )
+
     def _safe_get_sigma(self, sigma_str: str) -> float:
         """Safely parse sigma value with validation and default fallback.
 
@@ -1522,6 +1633,7 @@ class CSVProcessorApp(ctk.CTk):
             self.zscore_frame,
             self.savgol_frame,
             self.gaussian_frame,
+            self.fft_frame,
         ]:
             frame.grid_remove()
 
@@ -1540,6 +1652,13 @@ class CSVProcessorApp(ctk.CTk):
             self.savgol_frame.grid()
         elif filter_type == "Gaussian Filter":
             self.gaussian_frame.grid()
+        elif filter_type in [
+            "FFT Low-pass",
+            "FFT High-pass",
+            "FFT Band-pass",
+            "FFT Band-stop",
+        ]:
+            self.fft_frame.grid()
 
     def _update_plot_filter_ui(self, filter_type: str) -> None:
         """Update plot filter UI based on selected filter type."""
@@ -1552,6 +1671,7 @@ class CSVProcessorApp(ctk.CTk):
             self.plot_zscore_frame,
             self.plot_savgol_frame,
             self.plot_gaussian_frame,
+            self.plot_fft_frame,
         ]:
             frame.grid_remove()
 
@@ -1570,6 +1690,13 @@ class CSVProcessorApp(ctk.CTk):
             self.plot_savgol_frame.grid()
         elif filter_type == "Gaussian Filter":
             self.plot_gaussian_frame.grid()
+        elif filter_type in [
+            "FFT Low-pass",
+            "FFT High-pass",
+            "FFT Band-pass",
+            "FFT Band-stop",
+        ]:
+            self.plot_fft_frame.grid()
 
     def _update_compare_filter_ui(self, filter_type: str) -> None:
         """Update comparison filter UI based on selected filter type."""
@@ -1582,6 +1709,7 @@ class CSVProcessorApp(ctk.CTk):
             self.compare_zscore_frame,
             self.compare_savgol_frame,
             self.compare_gaussian_frame,
+            self.compare_fft_frame,
         ]:
             frame.grid_remove()
 
@@ -1624,6 +1752,19 @@ class CSVProcessorApp(ctk.CTk):
             )
         elif filter_type == "Gaussian Filter":
             self.compare_gaussian_frame.grid(
+                row=14,
+                column=0,
+                sticky="ew",
+                padx=10,
+                pady=5,
+            )
+        elif filter_type in [
+            "FFT Low-pass",
+            "FFT High-pass",
+            "FFT Band-pass",
+            "FFT Band-stop",
+        ]:
+            self.compare_fft_frame.grid(
                 row=14,
                 column=0,
                 sticky="ew",
@@ -5010,6 +5151,15 @@ This section helps you manage which signals (columns) to process from your files
                 self.plot_gaussian_sigma_entry,
                 self.plot_gaussian_mode_menu,
             ) = self._create_gaussian_param_frame(plot_filter_frame)
+            (
+                self.plot_fft_frame,
+                self.plot_fft_window_shape_menu,
+                self.plot_fft_freq_unit_menu,
+                self.plot_fft_freq_low_entry,
+                self.plot_fft_freq_high_entry,
+                self.plot_fft_transition_bw_entry,
+                self.plot_fft_zero_phase_checkbox,
+            ) = self._create_fft_param_frame(plot_filter_frame)
             self._update_plot_filter_ui("None")
 
             # Show both raw and filtered signals option (moved below parameter frames)
@@ -5089,6 +5239,15 @@ This section helps you manage which signals (columns) to process from your files
                 self.compare_gaussian_sigma_entry,
                 self.compare_gaussian_mode_menu,
             ) = self._create_gaussian_param_frame(plot_filter_frame)
+            (
+                self.compare_fft_frame,
+                self.compare_fft_window_shape_menu,
+                self.compare_fft_freq_unit_menu,
+                self.compare_fft_freq_low_entry,
+                self.compare_fft_freq_high_entry,
+                self.compare_fft_transition_bw_entry,
+                self.compare_fft_zero_phase_checkbox,
+            ) = self._create_fft_param_frame(plot_filter_frame)
 
             # Auto-zoom controls
             auto_zoom_frame = ctk.CTkFrame(plot_filter_frame)
@@ -7599,6 +7758,36 @@ COMMON MISTAKES TO AVOID:
                         if hasattr(self, "savgol_polyorder_entry")
                         else "2"
                     ),
+                    "fft_window_shape": (
+                        self.fft_window_shape_menu.get()
+                        if hasattr(self, "fft_window_shape_menu")
+                        else "Gaussian"
+                    ),
+                    "fft_freq_unit": (
+                        self.fft_freq_unit_menu.get()
+                        if hasattr(self, "fft_freq_unit_menu")
+                        else "normalized"
+                    ),
+                    "fft_freq_low": (
+                        self.fft_freq_low_entry.get()
+                        if hasattr(self, "fft_freq_low_entry")
+                        else "0.1"
+                    ),
+                    "fft_freq_high": (
+                        self.fft_freq_high_entry.get()
+                        if hasattr(self, "fft_freq_high_entry")
+                        else "0.3"
+                    ),
+                    "fft_transition_bw": (
+                        self.fft_transition_bw_entry.get()
+                        if hasattr(self, "fft_transition_bw_entry")
+                        else "0.05"
+                    ),
+                    "fft_zero_phase": (
+                        self.fft_zero_phase_checkbox.get()
+                        if hasattr(self, "fft_zero_phase_checkbox")
+                        else True
+                    ),
                 },
                 "resample_settings": {
                     "enabled": (
@@ -9997,6 +10186,42 @@ For additional support or feature requests, please refer to the application docu
                 if hasattr(self, "plot_savgol_polyorder_entry")
                 else ""
             )
+        elif plot_config["filter_type"] in [
+            "FFT Low-pass",
+            "FFT High-pass",
+            "FFT Band-pass",
+            "FFT Band-stop",
+        ]:
+            plot_config["fft_window_shape"] = (
+                self.plot_fft_window_shape_menu.get()
+                if hasattr(self, "plot_fft_window_shape_menu")
+                else ""
+            )
+            plot_config["fft_freq_unit"] = (
+                self.plot_fft_freq_unit_menu.get()
+                if hasattr(self, "plot_fft_freq_unit_menu")
+                else ""
+            )
+            plot_config["fft_freq_low"] = (
+                self.plot_fft_freq_low_entry.get()
+                if hasattr(self, "plot_fft_freq_low_entry")
+                else ""
+            )
+            plot_config["fft_freq_high"] = (
+                self.plot_fft_freq_high_entry.get()
+                if hasattr(self, "plot_fft_freq_high_entry")
+                else ""
+            )
+            plot_config["fft_transition_bw"] = (
+                self.plot_fft_transition_bw_entry.get()
+                if hasattr(self, "plot_fft_transition_bw_entry")
+                else ""
+            )
+            plot_config["fft_zero_phase"] = (
+                self.plot_fft_zero_phase_checkbox.get()
+                if hasattr(self, "plot_fft_zero_phase_checkbox")
+                else ""
+            )
 
         # Add to plots list
         self.plots_list.append(plot_config)
@@ -10301,6 +10526,42 @@ For additional support or feature requests, please refer to the application docu
                 if hasattr(self, "plot_savgol_polyorder_entry")
                 else ""
             )
+        elif self.plots_list[config_index]["filter_type"] in [
+            "FFT Low-pass",
+            "FFT High-pass",
+            "FFT Band-pass",
+            "FFT Band-stop",
+        ]:
+            self.plots_list[config_index]["fft_window_shape"] = (
+                self.plot_fft_window_shape_menu.get()
+                if hasattr(self, "plot_fft_window_shape_menu")
+                else ""
+            )
+            self.plots_list[config_index]["fft_freq_unit"] = (
+                self.plot_fft_freq_unit_menu.get()
+                if hasattr(self, "plot_fft_freq_unit_menu")
+                else ""
+            )
+            self.plots_list[config_index]["fft_freq_low"] = (
+                self.plot_fft_freq_low_entry.get()
+                if hasattr(self, "plot_fft_freq_low_entry")
+                else ""
+            )
+            self.plots_list[config_index]["fft_freq_high"] = (
+                self.plot_fft_freq_high_entry.get()
+                if hasattr(self, "plot_fft_freq_high_entry")
+                else ""
+            )
+            self.plots_list[config_index]["fft_transition_bw"] = (
+                self.plot_fft_transition_bw_entry.get()
+                if hasattr(self, "plot_fft_transition_bw_entry")
+                else ""
+            )
+            self.plots_list[config_index]["fft_zero_phase"] = (
+                self.plot_fft_zero_phase_checkbox.get()
+                if hasattr(self, "plot_fft_zero_phase_checkbox")
+                else ""
+            )
 
         # Save the updated configuration
         self._save_plots_to_file()
@@ -10440,6 +10701,45 @@ For additional support or feature requests, please refer to the application docu
                 self.plot_savgol_polyorder_entry.insert(
                     0,
                     plot_config["savgol_polyorder"],
+                )
+        elif plot_config.get("filter_type") in [
+            "FFT Low-pass",
+            "FFT High-pass",
+            "FFT Band-pass",
+            "FFT Band-stop",
+        ]:
+            if "fft_window_shape" in plot_config and hasattr(
+                self, "plot_fft_window_shape_menu"
+            ):
+                self.plot_fft_window_shape_menu.set(plot_config["fft_window_shape"])
+            if "fft_freq_unit" in plot_config and hasattr(
+                self, "plot_fft_freq_unit_menu"
+            ):
+                self.plot_fft_freq_unit_menu.set(plot_config["fft_freq_unit"])
+            if "fft_freq_low" in plot_config and hasattr(
+                self, "plot_fft_freq_low_entry"
+            ):
+                self.plot_fft_freq_low_entry.delete(0, tk.END)
+                self.plot_fft_freq_low_entry.insert(0, plot_config["fft_freq_low"])
+            if "fft_freq_high" in plot_config and hasattr(
+                self, "plot_fft_freq_high_entry"
+            ):
+                self.plot_fft_freq_high_entry.delete(0, tk.END)
+                self.plot_fft_freq_high_entry.insert(0, plot_config["fft_freq_high"])
+            if "fft_transition_bw" in plot_config and hasattr(
+                self, "plot_fft_transition_bw_entry"
+            ):
+                self.plot_fft_transition_bw_entry.delete(0, tk.END)
+                self.plot_fft_transition_bw_entry.insert(
+                    0, plot_config["fft_transition_bw"]
+                )
+            if "fft_zero_phase" in plot_config and hasattr(
+                self, "plot_fft_zero_phase_checkbox"
+            ):
+                (
+                    self.plot_fft_zero_phase_checkbox.select()
+                    if plot_config["fft_zero_phase"]
+                    else self.plot_fft_zero_phase_checkbox.deselect()
                 )
 
         # Apply custom legend entries

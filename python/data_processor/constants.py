@@ -163,6 +163,20 @@ MAX_WINDOW_SIZE: Final[int] = 1000  # Maximum window size for filters
 MIN_CUTOFF_FREQUENCY: Final[float] = 0.001  # Minimum cutoff frequency
 MAX_CUTOFF_FREQUENCY: Final[float] = 0.999  # Maximum cutoff frequency
 
+# FFT Filter defaults
+DEFAULT_FFT_FREQ_LOW: Final[float] = 0.1  # Default low cutoff frequency (normalized)
+DEFAULT_FFT_FREQ_HIGH: Final[float] = 0.3  # Default high cutoff frequency (normalized)
+DEFAULT_FFT_TRANSITION_BW: Final[float] = 0.05  # Default transition bandwidth (normalized)
+DEFAULT_FFT_WINDOW_SHAPE: Final[str] = "Gaussian"  # Default window function
+DEFAULT_FFT_ZERO_PHASE: Final[bool] = True  # Default zero-phase filtering
+DEFAULT_FFT_FREQ_UNIT: Final[str] = "normalized"  # Default frequency unit
+
+# FFT Filter validation
+MIN_FFT_FREQUENCY: Final[float] = 0.0  # Minimum FFT frequency
+MAX_FFT_FREQUENCY: Final[float] = 0.5  # Maximum FFT frequency (Nyquist)
+MIN_FFT_TRANSITION_BW: Final[float] = 0.001  # Minimum transition bandwidth
+MAX_FFT_TRANSITION_BW: Final[float] = 0.2  # Maximum transition bandwidth
+
 # =============================================================================
 # SOURCES AND REFERENCES
 # =============================================================================
