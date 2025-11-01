@@ -37,7 +37,8 @@ else
 end
 
 % Check Audio Toolbox (recommended)
-if license('test', 'Audio_Toolbox')
+v = ver('audio');
+if ~isempty(v)
     fprintf('✓ Audio Toolbox: Available\n');
 else
     warning('AudioProcessor:MissingToolbox', ...

@@ -92,7 +92,8 @@ function processor = AdvancedAudioProcessor()
 % Initialize processor structure
 processor = struct();
 processor.Version = '1.0';
-processor.HasAudioToolbox = license('test', 'Audio_Toolbox');
+v = ver('audio');
+processor.HasAudioToolbox = ~isempty(v);
 
 if ~processor.HasAudioToolbox
     warning('AdvancedAudioProcessor:NoToolbox', ...
