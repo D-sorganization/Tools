@@ -36,8 +36,7 @@ function mainWindow = MainWindow()
 % Create main figure
 mainWindow = struct();
 mainWindow.Figure = uifigure('Name', 'Audio Signal Processor', ...
-    'Position', [100, 100, 1200, 800], ...
-    'CloseRequestFcn', @(src, event) closeApp(src, event, mainWindow));
+    'Position', [100, 100, 1200, 800]);
 
 % Initialize components
 mainWindow.LibraryManager = SoundLibraryManager();
@@ -75,6 +74,9 @@ mainWindow.loadAudio = @(filename) loadAudio(mainWindow, filename);
 mainWindow.play = @() play(mainWindow);
 mainWindow.pause = @() pause(mainWindow);
 mainWindow.stop = @() stop(mainWindow);
+
+% Set close request function NOW that mainWindow is fully initialized
+mainWindow.Figure.CloseRequestFcn = @(src, event) closeApp(src, event, mainWindow);
 end
 
 function createMenuBar(mainWindow)
@@ -789,10 +791,16 @@ end
 function closeApp(src, event, mainWindow)
 % Handle application close request
 
-if mainWindow.IsPlaying
-    stop(mainWindow);
+try
+    % Stop playback if active
+    if isfield(mainWindow, 'IsPlaying') && mainWindow.IsPlaying
+        stop(mainWindow);
+    end
+catch
+    % Ignore errors during cleanup
 end
 
+% Delete the figure
 delete(src);
 end
 
