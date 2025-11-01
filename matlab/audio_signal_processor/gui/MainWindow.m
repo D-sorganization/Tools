@@ -1075,12 +1075,3 @@ uibutton(actionGrid, 'Text', 'Apply', ...
 uibutton(actionGrid, 'Text', 'Save', ...
     'ButtonPushedFcn', @(src, event) saveSettings(mainWindow));
 end
-
-%% CONTINUED IN NEXT MESSAGE (Part 2 of implementation)
-% This file is intentionally split due to length
-% The following functions will be added in a separate section:
-% - All callback functions for each tab
-% - Helper functions
-% - Utility functions
-
-% TO BE CONTINUED...

@@ -722,7 +722,7 @@ end
 editor.HistoryIndex = editor.HistoryIndex + 1;
 
 % Restore next state
-snapshot = editor.History{editor.HistoryIndex + 1};
+snapshot = editor.History{editor.HistoryIndex};
 editor.AudioData = snapshot.AudioData;
 editor.Selection = snapshot.Selection;
 end
