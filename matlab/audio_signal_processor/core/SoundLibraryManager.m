@@ -229,7 +229,7 @@ try
     % Load MATLAB built-in sound using eval to call the sound name as a function
     % MATLAB built-in sounds like 'handel', 'gong', etc. are loaded this way
     soundData = load(char(soundName));
-    
+
     % Get the field name (usually the same as the sound name, or 'y')
     fieldNames = fieldnames(soundData);
     if ismember('y', fieldNames)
@@ -248,7 +248,7 @@ try
         end
         sampleRate = 8192; % Default for MATLAB sounds without Fs
     end
-    
+
     % Normalize to column vector if needed
     if size(audioData, 2) > size(audioData, 1)
         audioData = audioData';
