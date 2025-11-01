@@ -14,7 +14,8 @@ function processedData = AudioEffects(audioData, effectType, varargin)
 %
 %   Supported Effects:
 %   -----------------
-%   - 'Reverb' - Algorithmic and convolution-based reverb
+%   - 'Reverb' - Algorithmic reverb (Schroeder/Moorer)
+%   - 'ConvolutionReverb' - Impulse response-based reverb
 %   - 'Delay' - Delay/echo with feedback control
 %   - 'EQ' - Parametric equalizer
 %   - 'Compression' - Dynamic range compression
@@ -36,6 +37,14 @@ function processedData = AudioEffects(audioData, effectType, varargin)
 %   'DecayTime'       - Decay time in seconds (default: 2.0)
 %   'Damping'         - High-frequency damping 0-1 (default: 0.5)
 %   'PreDelay'         - Pre-delay in seconds (default: 0.02)
+%
+%   ConvolutionReverb Properties:
+%   'IRFile'           - Path to impulse response WAV file (default: '')
+%   'IRSpace'          - Built-in space name (default: 'medium_room')
+%                        Options: 'small_room', 'medium_room', 'concert_hall',
+%                                'chamber', 'plate', 'spring', 'ambience'
+%   'WetAmount'        - Reverb level 0-1 (default: 0.3)
+%   'DryAmount'        - Direct signal level 0-1 (default: 0.7)
 %
 %   Delay Properties:
 %   'DelayTime'       - Delay time in seconds (default: 0.25)
@@ -104,6 +113,11 @@ arguments
     options.DecayTime (1,1) double {mustBePositive} = 2.0
     options.Damping (1,1) double {mustBeInRange(options.Damping, 0, 1)} = 0.5
     options.PreDelay (1,1) double {mustBeNonnegative} = 0.02
+    % Convolution reverb parameters
+    options.IRFile (1,1) string = ""
+    options.IRSpace (1,1) string = "medium_room"
+    options.WetAmount (1,1) double {mustBeInRange(options.WetAmount, 0, 1)} = 0.3
+    options.DryAmount (1,1) double {mustBeInRange(options.DryAmount, 0, 1)} = 0.7
     % Delay parameters
     options.DelayTime (1,1) double {mustBePositive} = 0.25
     options.Feedback (1,1) double {mustBeInRange(options.Feedback, 0, 0.95)} = 0.3
@@ -150,6 +164,8 @@ end
 switch effectType
     case 'Reverb'
         processedData = applyReverb(audioData, options);
+    case 'ConvolutionReverb'
+        processedData = applyConvolutionReverb(audioData, options);
     case 'Delay'
         processedData = applyDelay(audioData, options);
     case 'EQ'
@@ -525,4 +541,31 @@ processedData = resample(audioData, newLength, originalLength);
 if size(processedData, 1) ~= originalLength
     processedData = resample(processedData, originalLength, size(processedData, 1));
 end
+end
+
+function processedData = applyConvolutionReverb(audioData, options)
+% Apply convolution reverb using impulse responses
+
+% Create ConvolutionReverb instance
+reverb = ConvolutionReverb();
+
+% Load impulse response
+if strlength(options.IRFile) > 0
+    % Use custom IR file
+    reverb.loadIR(char(options.IRFile));
+else
+    % Use built-in IR
+    reverb.loadBuiltIn(char(options.IRSpace));
+end
+
+% Set wet/dry mix
+reverb.setWetDry(options.WetAmount, options.DryAmount);
+
+% Set pre-delay if specified
+if options.PreDelay > 0
+    reverb.setPreDelay(options.PreDelay);
+end
+
+% Process audio
+processedData = reverb.process(audioData, options.SampleRate);
 end
