@@ -75,8 +75,8 @@ mainWindow.play = @() play(mainWindow);
 mainWindow.pause = @() pause(mainWindow);
 mainWindow.stop = @() stop(mainWindow);
 
-% Set close request function NOW that mainWindow is fully initialized
-mainWindow.Figure.CloseRequestFcn = @(src, event) closeApp(src, event, mainWindow);
+% Set close request function - use simpler callback that just deletes the figure
+mainWindow.Figure.CloseRequestFcn = @(src, event) delete(src);
 end
 
 function createMenuBar(mainWindow)
@@ -202,9 +202,12 @@ waveformGrid.Padding = [5, 5, 5, 5];
 waveformPanel = uipanel(waveformGrid);
 waveformPanel.Layout.Row = 1;
 
+% Create grid layout inside panel for proper axes sizing
+axesGrid = uigridlayout(waveformPanel, [1, 1]);
+axesGrid.Padding = [10, 10, 10, 10];
+
 % Create axes for waveform display
-mainWindow.WaveformAxes = uiaxes(waveformPanel);
-mainWindow.WaveformAxes.Position = [10, 10, waveformPanel.Position(3)-20, waveformPanel.Position(4)-20];
+mainWindow.WaveformAxes = uiaxes(axesGrid);
 mainWindow.WaveformAxes.XLabel.String = 'Time (s)';
 mainWindow.WaveformAxes.YLabel.String = 'Amplitude';
 mainWindow.WaveformAxes.Title.String = 'Audio Waveform';
