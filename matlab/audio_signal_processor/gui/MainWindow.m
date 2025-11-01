@@ -1,49 +1,61 @@
 function mainWindow = MainWindow()
-%MAINWINDOW Main application window for Audio Signal Processor
+%MAINWINDOW Professional Audio Signal Processor - Complete GUI
 %
 %   MAINWINDOW = MAINWINDOW() creates the main application window with
-%   all GUI components and functionality.
+%   all GUI components and functionality for professional audio processing.
 %
-%   Properties:
-%   ----------
-%   Figure - Main figure handle
-%   TabGroup - Tab group for different panels
-%   StatusBar - Status bar with playback controls
-%   WaveformDisplay - Waveform visualization area
-%   TransportControls - Playback controls
-%   LibraryManager - Sound library manager
-%   Mixer - Multi-track mixer
-%   EffectsLibrary - Effects library
+%   Features:
+%   ---------
+%   - Waveform viewing and selection
+%   - Professional audio editing (trim, cut, fade, normalize)
+%   - Complete effects chain (11 effects including convolution reverb)
+%   - Advanced multi-track mixer with time offsets and automation
+%   - Music production tools (autotune, key/tempo detection, harmonizer)
+%   - Research-grade analysis (wavelets, feature extraction, anti-aliasing)
+%   - Comprehensive sample library management
+%   - User preferences and settings
 %
-%   Methods:
-%   --------
-%   show() - Show the main window
-%   hide() - Hide the main window
-%   close() - Close the application
-%   loadAudio() - Load audio file
-%   play() - Start playback
-%   pause() - Pause playback
-%   stop() - Stop playback
+%   Tabs:
+%   -----
+%   1. Waveform - View and navigate audio
+%   2. Edit - Audio editing with undo/redo
+%   3. Effects - Effect chain management
+%   4. Mixer - Multi-track mixing with timeline
+%   5. Production - Music production tools
+%   6. Analysis - Real-time audio analysis
+%   7. Research - Advanced analysis tools
+%   8. Library - Sample browser and management
+%   9. Settings - Application preferences
 %
 %   Example:
 %   --------
-%   % Create and show main window
 %   mainWindow = MainWindow();
 %   mainWindow.show();
-%
-%   See also: FilterPanel, MixerPanel, AnalysisPanel, LibraryBrowserPanel
 
 % Create main figure
 mainWindow = struct();
-mainWindow.Figure = uifigure('Name', 'Audio Signal Processor', ...
-    'Position', [100, 100, 1200, 800]);
+mainWindow.Figure = uifigure('Name', 'Audio Signal Processor - Professional Edition', ...
+    'Position', [50, 50, 1400, 900]);
 
-% Initialize components
+% Initialize backend components
 mainWindow.LibraryManager = SoundLibraryManager();
-mainWindow.Mixer = MixerCore(8, 44100);
+mainWindow.Mixer = MixerCoreEnhanced(8, 44100);  % ENHANCED MIXER
 mainWindow.EffectsLibrary = InstrumentEffectsLibrary();
+mainWindow.AudioEditor = [];  % Created on demand
+mainWindow.MusicTools = MusicProductionTools();
+mainWindow.WaveletProc = WaveletProcessor();
+mainWindow.AdvancedAudio = AdvancedAudioProcessor();
+mainWindow.AntiAliasing = AntiAliasingTools();
 
-% Create main layout (must be first as it creates MainGrid)
+% Initialize state
+mainWindow.IsPlaying = false;
+mainWindow.CurrentFile = '';
+mainWindow.LoadedAudio = [];
+mainWindow.SampleRate = 44100;
+mainWindow.EffectChain = {};  % Array of effects
+mainWindow.Clipboard = [];  % For cut/copy/paste
+
+% Create main layout
 mainWindow.MainGrid = uigridlayout(mainWindow.Figure, [3, 1]);
 mainWindow.MainGrid.RowHeight = {'fit', '1x', 'fit'};
 mainWindow.MainGrid.ColumnWidth = {'1x'};
@@ -51,20 +63,10 @@ mainWindow.MainGrid.Padding = [5, 5, 5, 5];
 mainWindow.MainGrid.RowSpacing = 5;
 mainWindow.MainGrid.ColumnSpacing = 5;
 
-% Create menu bar
+% Create GUI components
 createMenuBar(mainWindow);
-
-% Create status bar
 createStatusBar(mainWindow);
-
-% Create tab group with panels
 createTabGroup(mainWindow);
-
-% Initialize application state
-mainWindow.IsPlaying = false;
-mainWindow.CurrentFile = '';
-mainWindow.LoadedAudio = [];
-mainWindow.SampleRate = 44100;
 
 % Add methods
 mainWindow.show = @() show(mainWindow);
@@ -75,49 +77,77 @@ mainWindow.play = @() play(mainWindow);
 mainWindow.pause = @() pause(mainWindow);
 mainWindow.stop = @() stop(mainWindow);
 
-% Set close request function - use simpler callback that just deletes the figure
+% Set close request function
 mainWindow.Figure.CloseRequestFcn = @(src, event) delete(src);
+
+% Show welcome message
+uialert(mainWindow.Figure, ...
+    sprintf(['Welcome to Audio Signal Processor - Professional Edition!\n\n', ...
+    'All backend features are now accessible through the GUI.\n\n', ...
+    'Start by loading audio (File → Load Audio or use Library tab).']),...
+    'Welcome', 'Icon', 'info');
 end
 
+%% MENU BAR
 function createMenuBar(mainWindow)
-% Create menu bar
-
 % File menu
 fileMenu = uimenu(mainWindow.Figure, 'Text', 'File');
-uimenu(fileMenu, 'Text', 'Load Audio...', 'MenuSelectedFcn', @(src, event) loadAudioDialog(mainWindow));
-uimenu(fileMenu, 'Text', 'Load from Library...', 'MenuSelectedFcn', @(src, event) loadFromLibraryDialog(mainWindow));
+uimenu(fileMenu, 'Text', 'Load Audio...', 'MenuSelectedFcn', @(src, event) loadAudioDialog(mainWindow), ...
+    'Accelerator', 'O');
+uimenu(fileMenu, 'Text', 'Load from Library...', 'MenuSelectedFcn', @(src, event) switchToLibraryTab(mainWindow));
 uimenu(fileMenu, 'Separator', 'on');
-uimenu(fileMenu, 'Text', 'Export Audio...', 'MenuSelectedFcn', @(src, event) exportAudioDialog(mainWindow));
+uimenu(fileMenu, 'Text', 'Export Audio...', 'MenuSelectedFcn', @(src, event) exportAudioDialog(mainWindow), ...
+    'Accelerator', 'S');
+uimenu(fileMenu, 'Text', 'Export with Effects...', 'MenuSelectedFcn', @(src, event) exportWithEffects(mainWindow));
 uimenu(fileMenu, 'Separator', 'on');
 uimenu(fileMenu, 'Text', 'Exit', 'MenuSelectedFcn', @(src, event) close(mainWindow));
 
 % Edit menu
 editMenu = uimenu(mainWindow.Figure, 'Text', 'Edit');
-uimenu(editMenu, 'Text', 'Undo', 'Enable', 'off');
-uimenu(editMenu, 'Text', 'Redo', 'Enable', 'off');
+mainWindow.UndoMenuItem = uimenu(editMenu, 'Text', 'Undo', 'MenuSelectedFcn', @(src, event) undoEdit(mainWindow), ...
+    'Enable', 'off', 'Accelerator', 'Z');
+mainWindow.RedoMenuItem = uimenu(editMenu, 'Text', 'Redo', 'MenuSelectedFcn', @(src, event) redoEdit(mainWindow), ...
+    'Enable', 'off', 'Accelerator', 'Y');
 uimenu(editMenu, 'Separator', 'on');
-uimenu(editMenu, 'Text', 'Preferences...', 'MenuSelectedFcn', @(src, event) showPreferences(mainWindow));
+uimenu(editMenu, 'Text', 'Select All', 'MenuSelectedFcn', @(src, event) selectAllAudio(mainWindow), 'Accelerator', 'A');
+uimenu(editMenu, 'Text', 'Cut', 'MenuSelectedFcn', @(src, event) cutAudio(mainWindow), 'Accelerator', 'X');
+uimenu(editMenu, 'Text', 'Copy', 'MenuSelectedFcn', @(src, event) copyAudio(mainWindow), 'Accelerator', 'C');
+uimenu(editMenu, 'Text', 'Paste', 'MenuSelectedFcn', @(src, event) pasteAudio(mainWindow), 'Accelerator', 'V');
+uimenu(editMenu, 'Separator', 'on');
+uimenu(editMenu, 'Text', 'Preferences...', 'MenuSelectedFcn', @(src, event) switchToSettingsTab(mainWindow));
 
 % View menu
 viewMenu = uimenu(mainWindow.Figure, 'Text', 'View');
-uimenu(viewMenu, 'Text', 'Zoom In', 'MenuSelectedFcn', @(src, event) zoomIn(mainWindow));
-uimenu(viewMenu, 'Text', 'Zoom Out', 'MenuSelectedFcn', @(src, event) zoomOut(mainWindow));
-uimenu(viewMenu, 'Text', 'Fit to Window', 'MenuSelectedFcn', @(src, event) fitToWindow(mainWindow));
+uimenu(viewMenu, 'Text', 'Zoom In', 'MenuSelectedFcn', @(src, event) zoomIn(mainWindow), 'Accelerator', '=');
+uimenu(viewMenu, 'Text', 'Zoom Out', 'MenuSelectedFcn', @(src, event) zoomOut(mainWindow), 'Accelerator', '-');
+uimenu(viewMenu, 'Text', 'Fit to Window', 'MenuSelectedFcn', @(src, event) fitToWindow(mainWindow), 'Accelerator', '0');
+
+% Effects menu
+effectsMenu = uimenu(mainWindow.Figure, 'Text', 'Effects');
+uimenu(effectsMenu, 'Text', 'Apply Effect Chain', 'MenuSelectedFcn', @(src, event) applyEffectChain(mainWindow), 'Accelerator', 'E');
+uimenu(effectsMenu, 'Text', 'Clear Effect Chain', 'MenuSelectedFcn', @(src, event) clearEffectChain(mainWindow));
+uimenu(effectsMenu, 'Separator', 'on');
+uimenu(effectsMenu, 'Text', 'Quick Normalize', 'MenuSelectedFcn', @(src, event) quickNormalize(mainWindow), 'Accelerator', 'N');
+uimenu(effectsMenu, 'Text', 'Quick Reverb', 'MenuSelectedFcn', @(src, event) quickReverb(mainWindow), 'Accelerator', 'R');
 
 % Tools menu
 toolsMenu = uimenu(mainWindow.Figure, 'Text', 'Tools');
+uimenu(toolsMenu, 'Text', 'Autotune...', 'MenuSelectedFcn', @(src, event) showAutotuneDialog(mainWindow));
+uimenu(toolsMenu, 'Text', 'Detect Key', 'MenuSelectedFcn', @(src, event) detectKeyQuick(mainWindow));
+uimenu(toolsMenu, 'Text', 'Detect Tempo', 'MenuSelectedFcn', @(src, event) detectTempoQuick(mainWindow));
+uimenu(toolsMenu, 'Separator', 'on');
 uimenu(toolsMenu, 'Text', 'Batch Process...', 'MenuSelectedFcn', @(src, event) showBatchProcessor(mainWindow));
-uimenu(toolsMenu, 'Text', 'Audio Analysis...', 'MenuSelectedFcn', @(src, event) showAudioAnalysis(mainWindow));
 
 % Help menu
 helpMenu = uimenu(mainWindow.Figure, 'Text', 'Help');
-uimenu(helpMenu, 'Text', 'User Guide', 'MenuSelectedFcn', @(src, event) showUserGuide(mainWindow));
+uimenu(helpMenu, 'Text', 'Quick Start Guide', 'MenuSelectedFcn', @(src, event) showQuickStart(mainWindow));
+uimenu(helpMenu, 'Text', 'Keyboard Shortcuts', 'MenuSelectedFcn', @(src, event) showShortcuts(mainWindow));
+uimenu(helpMenu, 'Separator', 'on');
 uimenu(helpMenu, 'Text', 'About', 'MenuSelectedFcn', @(src, event) showAbout(mainWindow));
 end
 
+%% STATUS BAR
 function createStatusBar(mainWindow)
-% Create status bar with playback controls
-
 statusBar = uipanel(mainWindow.MainGrid);
 statusBar.Layout.Row = 3;
 statusBar.Layout.Column = 1;
@@ -129,20 +159,19 @@ statusGrid.Padding = [5, 5, 5, 5];
 % Transport controls
 transportPanel = uipanel(statusGrid);
 transportPanel.Layout.Column = 1;
-
 transportGrid = uigridlayout(transportPanel, [1, 3]);
 transportGrid.ColumnWidth = {'fit', 'fit', 'fit'};
 transportGrid.Padding = [2, 2, 2, 2];
 
 mainWindow.PlayButton = uibutton(transportGrid, 'Text', '▶', ...
-    'ButtonPushedFcn', @(src, event) play(mainWindow));
+    'ButtonPushedFcn', @(src, event) play(mainWindow), 'Tooltip', 'Play (Space)');
 mainWindow.PauseButton = uibutton(transportGrid, 'Text', '⏸', ...
-    'ButtonPushedFcn', @(src, event) pause(mainWindow));
+    'ButtonPushedFcn', @(src, event) pause(mainWindow), 'Tooltip', 'Pause');
 mainWindow.StopButton = uibutton(transportGrid, 'Text', '⏹', ...
-    'ButtonPushedFcn', @(src, event) stop(mainWindow));
+    'ButtonPushedFcn', @(src, event) stop(mainWindow), 'Tooltip', 'Stop');
 
 % Status text
-mainWindow.StatusText = uilabel(statusGrid, 'Text', 'Ready');
+mainWindow.StatusText = uilabel(statusGrid, 'Text', 'Ready - Load audio to begin');
 mainWindow.StatusText.Layout.Column = 2;
 
 % Time display
@@ -152,9 +181,8 @@ mainWindow.TimeDisplay.Layout.Column = 3;
 % Volume control
 volumePanel = uipanel(statusGrid);
 volumePanel.Layout.Column = 4;
-
 volumeGrid = uigridlayout(volumePanel, [1, 2]);
-volumeGrid.ColumnWidth = {'fit', 'fit'};
+volumeGrid.ColumnWidth = {'fit', 100};
 volumeGrid.Padding = [2, 2, 2, 2];
 
 uilabel(volumeGrid, 'Text', 'Vol:');
@@ -163,37 +191,43 @@ mainWindow.VolumeSlider = uislider(volumeGrid, 'Value', 0.7, ...
     'ValueChangedFcn', @(src, event) updateVolume(mainWindow, src.Value));
 end
 
+%% TAB GROUP
 function createTabGroup(mainWindow)
-% Create tab group with different panels
-
 mainWindow.TabGroup = uitabgroup(mainWindow.MainGrid);
 mainWindow.TabGroup.Layout.Row = 2;
 mainWindow.TabGroup.Layout.Column = 1;
 
-% Waveform tab
-waveformTab = uitab(mainWindow.TabGroup, 'Title', 'Waveform');
+% Create all 9 tabs
+waveformTab = uitab(mainWindow.TabGroup, 'Title', '📊 Waveform');
 createWaveformPanel(mainWindow, waveformTab);
 
-% Filters tab
-filtersTab = uitab(mainWindow.TabGroup, 'Title', 'Filters');
-createFiltersPanel(mainWindow, filtersTab);
+editTab = uitab(mainWindow.TabGroup, 'Title', '✂️ Edit');
+createEditPanel(mainWindow, editTab);
 
-% Mixer tab
-mixerTab = uitab(mainWindow.TabGroup, 'Title', 'Mixer');
+effectsTab = uitab(mainWindow.TabGroup, 'Title', '🎛️ Effects');
+createEffectsPanel(mainWindow, effectsTab);
+
+mixerTab = uitab(mainWindow.TabGroup, 'Title', '🎚️ Mixer');
 createMixerPanel(mainWindow, mixerTab);
 
-% Analysis tab
-analysisTab = uitab(mainWindow.TabGroup, 'Title', 'Analysis');
+productionTab = uitab(mainWindow.TabGroup, 'Title', '🎵 Production');
+createProductionPanel(mainWindow, productionTab);
+
+analysisTab = uitab(mainWindow.TabGroup, 'Title', '📈 Analysis');
 createAnalysisPanel(mainWindow, analysisTab);
 
-% Library tab
-libraryTab = uitab(mainWindow.TabGroup, 'Title', 'Library');
+researchTab = uitab(mainWindow.TabGroup, 'Title', '🔬 Research');
+createResearchPanel(mainWindow, researchTab);
+
+libraryTab = uitab(mainWindow.TabGroup, 'Title', '📚 Library');
 createLibraryPanel(mainWindow, libraryTab);
+
+settingsTab = uitab(mainWindow.TabGroup, 'Title', '⚙️ Settings');
+createSettingsPanel(mainWindow, settingsTab);
 end
 
+%% TAB 1: WAVEFORM
 function createWaveformPanel(mainWindow, parent)
-% Create waveform display panel
-
 waveformGrid = uigridlayout(parent, [2, 1]);
 waveformGrid.RowHeight = {'1x', 'fit'};
 waveformGrid.Padding = [5, 5, 5, 5];
@@ -202,11 +236,9 @@ waveformGrid.Padding = [5, 5, 5, 5];
 waveformPanel = uipanel(waveformGrid);
 waveformPanel.Layout.Row = 1;
 
-% Create grid layout inside panel for proper axes sizing
 axesGrid = uigridlayout(waveformPanel, [1, 1]);
 axesGrid.Padding = [10, 10, 10, 10];
 
-% Create axes for waveform display
 mainWindow.WaveformAxes = uiaxes(axesGrid);
 mainWindow.WaveformAxes.XLabel.String = 'Time (s)';
 mainWindow.WaveformAxes.YLabel.String = 'Amplitude';
@@ -217,140 +249,226 @@ grid(mainWindow.WaveformAxes, 'on');
 controlsPanel = uipanel(waveformGrid);
 controlsPanel.Layout.Row = 2;
 
-controlsGrid = uigridlayout(controlsPanel, [1, 4]);
-controlsGrid.ColumnWidth = {'fit', 'fit', 'fit', '1x'};
+controlsGrid = uigridlayout(controlsPanel, [1, 6]);
+controlsGrid.ColumnWidth = {'fit', 'fit', 'fit', 'fit', '1x', 'fit'};
 controlsGrid.Padding = [5, 5, 5, 5];
 
 uibutton(controlsGrid, 'Text', 'Load Audio', ...
-    'ButtonPushedFcn', @(src, event) loadAudioDialog(mainWindow));
+    'ButtonPushedFcn', @(src, event) loadAudioDialog(mainWindow), ...
+    'Tooltip', 'Load audio file (Ctrl+O)');
 
 uibutton(controlsGrid, 'Text', 'Zoom In', ...
-    'ButtonPushedFcn', @(src, event) zoomIn(mainWindow));
+    'ButtonPushedFcn', @(src, event) zoomIn(mainWindow), ...
+    'Tooltip', 'Zoom in (Ctrl+=)');
 
 uibutton(controlsGrid, 'Text', 'Zoom Out', ...
-    'ButtonPushedFcn', @(src, event) zoomOut(mainWindow));
+    'ButtonPushedFcn', @(src, event) zoomOut(mainWindow), ...
+    'Tooltip', 'Zoom out (Ctrl+-)');
 
-% Placeholder for additional controls
-uilabel(controlsGrid, 'Text', '');
+uibutton(controlsGrid, 'Text', 'Fit View', ...
+    'ButtonPushedFcn', @(src, event) fitToWindow(mainWindow), ...
+    'Tooltip', 'Fit to window (Ctrl+0)');
+
+% File info
+mainWindow.FileInfoLabel = uilabel(controlsGrid, 'Text', 'No audio loaded');
+
+uibutton(controlsGrid, 'Text', 'Play Selected', ...
+    'ButtonPushedFcn', @(src, event) playSelection(mainWindow));
 end
 
-function createFiltersPanel(mainWindow, parent)
-% Create filters panel with filter controls
+%% TAB 2: EDIT
+function createEditPanel(mainWindow, parent)
+editGrid = uigridlayout(parent, [4, 1]);
+editGrid.RowHeight = {'fit', 'fit', 'fit', 'fit'};
+editGrid.Padding = [10, 10, 10, 10];
+editGrid.RowSpacing = 10;
 
-filtersGrid = uigridlayout(parent, [4, 2]);
-filtersGrid.RowHeight = {'fit', 'fit', 'fit', '2x'};
-filtersGrid.ColumnWidth = {'1x', '1x'};
-filtersGrid.Padding = [10, 10, 10, 10];
-filtersGrid.RowSpacing = 8;
-filtersGrid.ColumnSpacing = 10;
+% Selection Tools
+selectionPanel = uipanel(editGrid, 'Title', 'Selection & Editing');
+selectionPanel.Layout.Row = 1;
+selectionGrid = uigridlayout(selectionPanel, [3, 4]);
+selectionGrid.ColumnWidth = {'fit', '1x', '1x', '1x'};
+selectionGrid.Padding = [5, 5, 5, 5];
 
-% Filter Type Selection - Compact horizontal layout
-filterTypePanel = uipanel(filtersGrid, 'Title', 'Filter Type');
-filterTypePanel.Layout.Row = 1;
-filterTypePanel.Layout.Column = [1, 2];
+uilabel(selectionGrid, 'Text', 'Selection:');
+mainWindow.SelectionStartField = uispinner(selectionGrid, 'Value', 0, 'Limits', [0, 10000], ...
+    'ValueDisplayFormat', '%.3fs', 'Tooltip', 'Selection start time', ...
+    'ValueChangedFcn', @(src, event) updateSelectionInfo(mainWindow));
+mainWindow.SelectionEndField = uispinner(selectionGrid, 'Value', 0, 'Limits', [0, 10000], ...
+    'ValueDisplayFormat', '%.3fs', 'Tooltip', 'Selection end time', ...
+    'ValueChangedFcn', @(src, event) updateSelectionInfo(mainWindow));
+mainWindow.SelectionDurationLabel = uilabel(selectionGrid, 'Text', 'Duration: 0.000s');
 
-filterTypeGrid = uigridlayout(filterTypePanel, [1, 7]);
-filterTypeGrid.ColumnWidth = repmat({'fit'}, 1, 7);
-filterTypeGrid.Padding = [5, 5, 5, 5];
-filterTypeGrid.ColumnSpacing = 8;
+uilabel(selectionGrid, 'Text', 'Actions:');
+uibutton(selectionGrid, 'Text', 'Trim', 'ButtonPushedFcn', @(src, event) trimAudio(mainWindow), ...
+    'Tooltip', 'Keep selection, delete rest');
+uibutton(selectionGrid, 'Text', 'Cut', 'ButtonPushedFcn', @(src, event) cutAudio(mainWindow), ...
+    'Tooltip', 'Cut selection to clipboard (Ctrl+X)');
+uibutton(selectionGrid, 'Text', 'Copy', 'ButtonPushedFcn', @(src, event) copyAudio(mainWindow), ...
+    'Tooltip', 'Copy selection to clipboard (Ctrl+C)');
 
-mainWindow.FilterTypeGroup = uibuttongroup(filterTypeGrid);
-mainWindow.FilterTypeGroup.Layout.Row = 1;
-mainWindow.FilterTypeGroup.Layout.Column = [1, 7];
-mainWindow.FilterTypeGroup.BorderType = 'none';
+uilabel(selectionGrid, 'Text', '');
+mainWindow.PastePositionField = uispinner(selectionGrid, 'Value', 0, 'Limits', [0, 10000], ...
+    'ValueDisplayFormat', '%.3fs', 'Tooltip', 'Paste position');
+uibutton(selectionGrid, 'Text', 'Paste', 'ButtonPushedFcn', @(src, event) pasteAudio(mainWindow), ...
+    'Tooltip', 'Paste at position (Ctrl+V)');
+uibutton(selectionGrid, 'Text', 'Select All', 'ButtonPushedFcn', @(src, event) selectAllAudio(mainWindow), ...
+    'Tooltip', 'Select all audio (Ctrl+A)');
 
-uiradiobutton(mainWindow.FilterTypeGroup, 'Text', 'Low Pass', 'Position', [5, 5, 85, 22], 'Value', true);
-uiradiobutton(mainWindow.FilterTypeGroup, 'Text', 'High Pass', 'Position', [95, 5, 85, 22]);
-uiradiobutton(mainWindow.FilterTypeGroup, 'Text', 'Band Pass', 'Position', [185, 5, 85, 22]);
-uiradiobutton(mainWindow.FilterTypeGroup, 'Text', 'Band Stop', 'Position', [275, 5, 85, 22]);
-uiradiobutton(mainWindow.FilterTypeGroup, 'Text', 'Butterworth', 'Position', [365, 5, 95, 22]);
-uiradiobutton(mainWindow.FilterTypeGroup, 'Text', 'Moving Avg', 'Position', [465, 5, 95, 22]);
-uiradiobutton(mainWindow.FilterTypeGroup, 'Text', 'Median', 'Position', [565, 5, 75, 22]);
+% Fades & Crossfades
+fadePanel = uipanel(editGrid, 'Title', 'Fades & Crossfades');
+fadePanel.Layout.Row = 2;
+fadeGrid = uigridlayout(fadePanel, [2, 5]);
+fadeGrid.ColumnWidth = {'fit', '1x', '1x', 'fit', 'fit'};
+fadeGrid.Padding = [5, 5, 5, 5];
 
-% FFT Filter Parameters
-fftPanel = uipanel(filtersGrid, 'Title', 'FFT Filter Parameters');
-fftPanel.Layout.Row = 2;
-fftPanel.Layout.Column = 1;
+uilabel(fadeGrid, 'Text', 'Fade In:');
+mainWindow.FadeInDurationField = uispinner(fadeGrid, 'Value', 0.5, 'Limits', [0, 10], 'Step', 0.1, ...
+    'ValueDisplayFormat', '%.2fs');
+mainWindow.FadeInCurveDropdown = uidropdown(fadeGrid, ...
+    'Items', {'linear', 'exponential', 'logarithmic', 'scurve'}, 'Value', 'scurve');
+uibutton(fadeGrid, 'Text', 'Preview', 'ButtonPushedFcn', @(src, event) previewFadeIn(mainWindow));
+uibutton(fadeGrid, 'Text', 'Apply', 'ButtonPushedFcn', @(src, event) applyFadeInToSelection(mainWindow));
 
-fftGrid = uigridlayout(fftPanel, [4, 2]);
-fftGrid.ColumnWidth = {'fit', '1x'};
-fftGrid.Padding = [5, 5, 5, 5];
-fftGrid.RowSpacing = 5;
+uilabel(fadeGrid, 'Text', 'Fade Out:');
+mainWindow.FadeOutDurationField = uispinner(fadeGrid, 'Value', 1.0, 'Limits', [0, 10], 'Step', 0.1, ...
+    'ValueDisplayFormat', '%.2fs');
+mainWindow.FadeOutCurveDropdown = uidropdown(fadeGrid, ...
+    'Items', {'linear', 'exponential', 'logarithmic', 'scurve'}, 'Value', 'exponential');
+uibutton(fadeGrid, 'Text', 'Preview', 'ButtonPushedFcn', @(src, event) previewFadeOut(mainWindow));
+uibutton(fadeGrid, 'Text', 'Apply', 'ButtonPushedFcn', @(src, event) applyFadeOutToSelection(mainWindow));
 
-uilabel(fftGrid, 'Text', 'Cutoff Freq (Hz):');
-mainWindow.CutoffFreqSpinner = uispinner(fftGrid, 'Value', 1000, 'Limits', [20, 20000]);
+% Processing
+processingPanel = uipanel(editGrid, 'Title', 'Audio Processing');
+processingPanel.Layout.Row = 3;
+processingGrid = uigridlayout(processingPanel, [2, 5]);
+processingGrid.ColumnWidth = {'1x', '1x', '1x', '1x', '1x'};
+processingGrid.Padding = [5, 5, 5, 5];
 
-uilabel(fftGrid, 'Text', 'Transition BW (Hz):');
-mainWindow.TransitionBWSpinner = uispinner(fftGrid, 'Value', 100, 'Limits', [10, 5000]);
+uibutton(processingGrid, 'Text', 'Normalize', 'ButtonPushedFcn', @(src, event) showNormalizeDialog(mainWindow), ...
+    'Tooltip', 'Normalize audio (peak, RMS, or LUFS)');
+uibutton(processingGrid, 'Text', 'Remove Silence', 'ButtonPushedFcn', @(src, event) showRemoveSilenceDialog(mainWindow), ...
+    'Tooltip', 'Remove silent sections');
+uibutton(processingGrid, 'Text', 'Reverse', 'ButtonPushedFcn', @(src, event) reverseAudio(mainWindow), ...
+    'Tooltip', 'Reverse audio');
+uibutton(processingGrid, 'Text', 'Remove DC Offset', 'ButtonPushedFcn', @(src, event) removeDCOffset(mainWindow), ...
+    'Tooltip', 'Remove DC bias');
+uibutton(processingGrid, 'Text', 'Change Gain', 'ButtonPushedFcn', @(src, event) showGainDialog(mainWindow), ...
+    'Tooltip', 'Adjust volume level');
 
-uilabel(fftGrid, 'Text', 'Window Type:');
-mainWindow.WindowTypeDropdown = uidropdown(fftGrid, ...
-    'Items', {'Gaussian', 'Rectangular', 'Hamming', 'Hann', 'Blackman', 'Kaiser', 'Tukey', 'Bartlett'}, ...
-    'Value', 'Gaussian');
+uibutton(processingGrid, 'Text', 'Insert Silence', 'ButtonPushedFcn', @(src, event) insertSilence(mainWindow));
+uibutton(processingGrid, 'Text', 'Generate Tone', 'ButtonPushedFcn', @(src, event) generateTone(mainWindow));
+uibutton(processingGrid, 'Text', 'Generate Noise', 'ButtonPushedFcn', @(src, event) generateNoise(mainWindow));
+uilabel(processingGrid, 'Text', '');
+uilabel(processingGrid, 'Text', '');
 
-uilabel(fftGrid, 'Text', 'Zero Phase:');
-mainWindow.ZeroPhaseCheckbox = uicheckbox(fftGrid, 'Text', '', 'Value', true);
+% History
+historyPanel = uipanel(editGrid, 'Title', 'Undo/Redo History');
+historyPanel.Layout.Row = 4;
+historyGrid = uigridlayout(historyPanel, [1, 4]);
+historyGrid.ColumnWidth = {'fit', 'fit', '1x', 'fit'};
+historyGrid.Padding = [5, 5, 5, 5];
 
-% Time-Domain Filter Parameters
-timePanel = uipanel(filtersGrid, 'Title', 'Time-Domain Parameters');
-timePanel.Layout.Row = 2;
-timePanel.Layout.Column = 2;
-
-timeGrid = uigridlayout(timePanel, [3, 2]);
-timeGrid.ColumnWidth = {'fit', '1x'};
-timeGrid.Padding = [5, 5, 5, 5];
-timeGrid.RowSpacing = 5;
-
-uilabel(timeGrid, 'Text', 'Filter Order:');
-mainWindow.FilterOrderSpinner = uispinner(timeGrid, 'Value', 4, 'Limits', [1, 10]);
-
-uilabel(timeGrid, 'Text', 'Window Size:');
-mainWindow.WindowSizeSpinner = uispinner(timeGrid, 'Value', 5, 'Limits', [3, 101], 'Step', 2);
-
-uilabel(timeGrid, 'Text', 'Passband Ripple:');
-mainWindow.PassbandRippleSpinner = uispinner(timeGrid, 'Value', 1, 'Limits', [0.1, 10], 'Step', 0.1);
-
-% Filter Controls
-controlPanel = uipanel(filtersGrid, 'Title', 'Filter Controls');
-controlPanel.Layout.Row = 3;
-controlPanel.Layout.Column = [1, 2];
-
-controlGrid = uigridlayout(controlPanel, [1, 3]);
-controlGrid.ColumnWidth = {'1x', '1x', '1x'};
-controlGrid.Padding = [5, 5, 5, 5];
-
-uibutton(controlGrid, 'Text', 'Apply Filter', ...
-    'ButtonPushedFcn', @(src, event) applyFilter(mainWindow));
-uibutton(controlGrid, 'Text', 'Preview Response', ...
-    'ButtonPushedFcn', @(src, event) previewFilterResponse(mainWindow));
-uibutton(controlGrid, 'Text', 'Reset', ...
-    'ButtonPushedFcn', @(src, event) resetFilter(mainWindow));
-
-% Filter Response Display
-responsePanel = uipanel(filtersGrid, 'Title', 'Filter Response');
-responsePanel.Layout.Row = 4;
-responsePanel.Layout.Column = [1, 2];
-
-mainWindow.FilterResponseAxes = uiaxes(responsePanel);
-mainWindow.FilterResponseAxes.XLabel.String = 'Frequency (Hz)';
-mainWindow.FilterResponseAxes.YLabel.String = 'Magnitude (dB)';
-mainWindow.FilterResponseAxes.Title.String = 'Frequency Response';
-grid(mainWindow.FilterResponseAxes, 'on');
+mainWindow.UndoButton = uibutton(historyGrid, 'Text', '◀ Undo', ...
+    'ButtonPushedFcn', @(src, event) undoEdit(mainWindow), ...
+    'Enable', 'off', 'Tooltip', 'Undo last edit (Ctrl+Z)');
+mainWindow.RedoButton = uibutton(historyGrid, 'Text', 'Redo ▶', ...
+    'ButtonPushedFcn', @(src, event) redoEdit(mainWindow), ...
+    'Enable', 'off', 'Tooltip', 'Redo last undo (Ctrl+Y)');
+mainWindow.HistoryLabel = uilabel(historyGrid, 'Text', 'No edit history');
+uibutton(historyGrid, 'Text', 'Clear History', 'ButtonPushedFcn', @(src, event) clearEditHistory(mainWindow));
 end
 
+%% TAB 3: EFFECTS
+function createEffectsPanel(mainWindow, parent)
+effectsGrid = uigridlayout(parent, [3, 1]);
+effectsGrid.RowHeight = {'fit', '1x', 'fit'};
+effectsGrid.Padding = [10, 10, 10, 10];
+effectsGrid.RowSpacing = 10;
+
+% Effect Chain Header
+chainHeaderPanel = uipanel(effectsGrid, 'Title', 'Effect Chain');
+chainHeaderPanel.Layout.Row = 1;
+chainHeaderGrid = uigridlayout(chainHeaderPanel, [1, 6]);
+chainHeaderGrid.ColumnWidth = {'fit', '1x', 'fit', 'fit', 'fit', 'fit'};
+chainHeaderGrid.Padding = [5, 5, 5, 5];
+
+uilabel(chainHeaderGrid, 'Text', 'Add Effect:');
+mainWindow.AddEffectDropdown = uidropdown(chainHeaderGrid, ...
+    'Items', {'Reverb', 'ConvolutionReverb', 'Delay', 'EQ', 'Compression', 'Limiting', 'Distortion', 'Chorus', 'Flanger', 'PitchShift', 'TimeStretch'}, ...
+    'Value', 'Reverb');
+uibutton(chainHeaderGrid, 'Text', '+ Add', 'ButtonPushedFcn', @(src, event) addEffectToChain(mainWindow));
+uibutton(chainHeaderGrid, 'Text', 'Clear All', 'ButtonPushedFcn', @(src, event) clearEffectChain(mainWindow));
+uibutton(chainHeaderGrid, 'Text', 'Save Preset', 'ButtonPushedFcn', @(src, event) saveEffectPreset(mainWindow));
+uibutton(chainHeaderGrid, 'Text', 'Load Preset', 'ButtonPushedFcn', @(src, event) loadEffectPreset(mainWindow));
+
+% Effect Chain List
+chainListPanel = uipanel(effectsGrid, 'Title', 'Current Effects');
+chainListPanel.Layout.Row = 2;
+chainListGrid = uigridlayout(chainListPanel, [1, 1]);
+chainListGrid.Padding = [5, 5, 5, 5];
+
+mainWindow.EffectChainListBox = uilistbox(chainListGrid, ...
+    'Items', {'(Empty - Add effects above)'}, ...
+    'ValueChangedFcn', @(src, event) selectEffect(mainWindow, src.Value));
+
+% Effect Controls
+effectControlPanel = uipanel(effectsGrid, 'Title', 'Effect Parameters');
+effectControlPanel.Layout.Row = 3;
+mainWindow.EffectControlGrid = uigridlayout(effectControlPanel, [5, 4]);
+mainWindow.EffectControlGrid.RowHeight = repmat({'fit'}, 1, 5);
+mainWindow.EffectControlGrid.ColumnWidth = {'fit', '1x', 'fit', 'fit'};
+mainWindow.EffectControlGrid.Padding = [10, 10, 10, 10];
+
+% Placeholder text
+uilabel(mainWindow.EffectControlGrid, 'Text', 'Select an effect from the chain to edit its parameters.', ...
+    'HorizontalAlignment', 'center');
+end
+
+%% TAB 4: MIXER (ENHANCED)
 function createMixerPanel(mainWindow, parent)
-% Create mixer panel with multi-track controls
-
-mixerGrid = uigridlayout(parent, [2, 1]);
-mixerGrid.RowHeight = {'1x', 'fit'};
+mixerGrid = uigridlayout(parent, [4, 1]);
+mixerGrid.RowHeight = {'fit', 'fit', '1x', 'fit'};
 mixerGrid.Padding = [5, 5, 5, 5];
 
-% Tracks panel
+% Timeline View
+timelinePanel = uipanel(mixerGrid, 'Title', 'Timeline');
+timelinePanel.Layout.Row = 1;
+timelineAxesGrid = uigridlayout(timelinePanel, [1, 1]);
+timelineAxesGrid.Padding = [5, 5, 5, 5];
+
+mainWindow.MixerTimelineAxes = uiaxes(timelineAxesGrid);
+mainWindow.MixerTimelineAxes.XLabel.String = 'Time (s)';
+mainWindow.MixerTimelineAxes.YLabel.String = 'Track';
+mainWindow.MixerTimelineAxes.Title.String = 'Multi-track Timeline';
+grid(mainWindow.MixerTimelineAxes, 'on');
+
+% Timeline Controls
+timelineControlPanel = uipanel(mixerGrid);
+timelineControlPanel.Layout.Row = 2;
+timelineControlGrid = uigridlayout(timelineControlPanel, [1, 6]);
+timelineControlGrid.ColumnWidth = {'fit', 'fit', 'fit', 'fit', '1x', 'fit'};
+timelineControlGrid.Padding = [5, 5, 5, 5];
+
+uibutton(timelineControlGrid, 'Text', 'Add Marker', ...
+    'ButtonPushedFcn', @(src, event) addMarkerDialog(mainWindow));
+uidropdown(timelineControlGrid, 'Items', {'Manual', 'Align to Start', 'Align to Peak', 'Align to End'}, ...
+    'Value', 'Manual', ...
+    'ValueChangedFcn', @(src, event) alignTracks(mainWindow, src.Value));
+uibutton(timelineControlGrid, 'Text', 'Zoom +', ...
+    'ButtonPushedFcn', @(src, event) zoomTimeline(mainWindow, 0.8));
+uibutton(timelineControlGrid, 'Text', 'Zoom -', ...
+    'ButtonPushedFcn', @(src, event) zoomTimeline(mainWindow, 1.2));
+uilabel(timelineControlGrid, 'Text', '');
+uibutton(timelineControlGrid, 'Text', 'Update Timeline', ...
+    'ButtonPushedFcn', @(src, event) updateTimelineDisplay(mainWindow));
+
+% Tracks Panel
 tracksPanel = uipanel(mixerGrid, 'Title', 'Tracks');
-tracksPanel.Layout.Row = 1;
+tracksPanel.Layout.Row = 3;
 
 tracksScroll = uigridlayout(tracksPanel, [1, 8]);
-tracksScroll.ColumnWidth = repmat({'fit'}, 1, 8);
+tracksScroll.ColumnWidth = repmat({100}, 1, 8);
 tracksScroll.Padding = [5, 5, 5, 5];
 tracksScroll.ColumnSpacing = 10;
 
@@ -360,14 +478,14 @@ for i = 1:8
     trackStrip = uipanel(tracksScroll);
     trackStrip.Title = sprintf('Track %d', i);
 
-    trackGrid = uigridlayout(trackStrip, [8, 1]);
-    trackGrid.RowHeight = {'fit', 'fit', '1x', 'fit', 'fit', 'fit', 'fit', 'fit'};
-    trackGrid.ColumnWidth = {80};
+    trackGrid = uigridlayout(trackStrip, [10, 1]);
+    trackGrid.RowHeight = {'fit', 'fit', '1x', 'fit', 'fit', 'fit', 'fit', 'fit', 'fit', 'fit'};
+    trackGrid.ColumnWidth = {90};
     trackGrid.Padding = [5, 5, 5, 5];
-    trackGrid.RowSpacing = 5;
+    trackGrid.RowSpacing = 3;
 
     % Track name
-    trackName = uilabel(trackGrid, 'Text', sprintf('Track %d', i), ...
+    uilabel(trackGrid, 'Text', sprintf('Track %d', i), ...
         'HorizontalAlignment', 'center', 'FontWeight', 'bold');
 
     % Load button
@@ -380,30 +498,49 @@ for i = 1:8
         'ValueChangedFcn', @(src, event) setTrackVolume(mainWindow.Mixer, i, src.Value));
 
     % Volume label
-    uilabel(trackGrid, 'Text', 'Volume', 'HorizontalAlignment', 'center');
+    uilabel(trackGrid, 'Text', 'Volume', 'HorizontalAlignment', 'center', 'FontSize', 8);
 
     % Pan knob
     panKnob = uiknob(trackGrid, 'Value', 0, 'Limits', [-1, 1], ...
         'ValueChangedFcn', @(src, event) setTrackPan(mainWindow.Mixer, i, src.Value));
 
-    % Solo button
-    uibutton(trackGrid, 'Text', 'S', ...
-        'ButtonPushedFcn', @(src, event) toggleTrackSolo(mainWindow, i, src));
-
-    % Mute button
-    uibutton(trackGrid, 'Text', 'M', ...
-        'ButtonPushedFcn', @(src, event) toggleTrackMute(mainWindow, i, src));
+    % Solo/Mute buttons
+    soloButton = uibutton(trackGrid, 'Text', 'S', ...
+        'ButtonPushedFcn', @(src, event) toggleTrackSolo(mainWindow, i, src), ...
+        'Tooltip', 'Solo');
+    muteButton = uibutton(trackGrid, 'Text', 'M', ...
+        'ButtonPushedFcn', @(src, event) toggleTrackMute(mainWindow, i, src), ...
+        'Tooltip', 'Mute');
 
     % Effects button
     uibutton(trackGrid, 'Text', 'FX', ...
-        'ButtonPushedFcn', @(src, event) showTrackEffects(mainWindow, i));
+        'ButtonPushedFcn', @(src, event) showTrackEffects(mainWindow, i), ...
+        'Tooltip', 'Add effects to track');
 
-    mainWindow.TrackStrips{i} = struct('Panel', trackStrip, 'Volume', volumeSlider, 'Pan', panKnob);
+    % Offset control
+    offsetSpinner = uispinner(trackGrid, 'Value', 0, 'Limits', [0, 300], 'Step', 0.1, ...
+        'ValueDisplayFormat', '%.1fs', ...
+        'ValueChangedFcn', @(src, event) setTrackOffset(mainWindow, i, src.Value), ...
+        'Tooltip', 'Time offset (seconds)');
+
+    % Fade buttons
+    fadePanel = uipanel(trackGrid);
+    fadeGrid = uigridlayout(fadePanel, [1, 2]);
+    fadeGrid.ColumnWidth = {'1x', '1x'};
+    fadeGrid.Padding = [1, 1, 1, 1];
+
+    uibutton(fadeGrid, 'Text', 'FI', 'Tooltip', 'Fade In', 'FontSize', 8, ...
+        'ButtonPushedFcn', @(src, event) showFadeInDialog(mainWindow, i));
+    uibutton(fadeGrid, 'Text', 'FO', 'Tooltip', 'Fade Out', 'FontSize', 8, ...
+        'ButtonPushedFcn', @(src, event) showFadeOutDialog(mainWindow, i));
+
+    mainWindow.TrackStrips{i} = struct('Panel', trackStrip, 'Volume', volumeSlider, ...
+        'Pan', panKnob, 'Offset', offsetSpinner, 'Solo', soloButton, 'Mute', muteButton);
 end
 
-% Master section
+% Master Section
 masterPanel = uipanel(mixerGrid, 'Title', 'Master');
-masterPanel.Layout.Row = 2;
+masterPanel.Layout.Row = 4;
 
 masterGrid = uigridlayout(masterPanel, [1, 6]);
 masterGrid.ColumnWidth = {'fit', '1x', 'fit', 'fit', 'fit', 'fit'};
@@ -414,7 +551,8 @@ mainWindow.MasterVolumeSlider = uislider(masterGrid, 'Value', 0.8, 'Limits', [0,
     'ValueChangedFcn', @(src, event) updateVolume(mainWindow, src.Value));
 
 uibutton(masterGrid, 'Text', 'Process Mix', ...
-    'ButtonPushedFcn', @(src, event) processMix(mainWindow));
+    'ButtonPushedFcn', @(src, event) processMix(mainWindow), ...
+    'Tooltip', 'Process all tracks into one audio file');
 uibutton(masterGrid, 'Text', 'Clear All', ...
     'ButtonPushedFcn', @(src, event) clearAllTracks(mainWindow));
 uibutton(masterGrid, 'Text', 'Export Mix', ...
@@ -423,9 +561,111 @@ uibutton(masterGrid, 'Text', 'Export Stems', ...
     'ButtonPushedFcn', @(src, event) exportStems(mainWindow));
 end
 
-function createAnalysisPanel(mainWindow, parent)
-% Create analysis panel with visualization tools
+%% TAB 5: PRODUCTION
+function createProductionPanel(mainWindow, parent)
+productionGrid = uigridlayout(parent, [4, 1]);
+productionGrid.RowHeight = {'fit', 'fit', 'fit', '1x'};
+productionGrid.Padding = [10, 10, 10, 10];
+productionGrid.RowSpacing = 10;
 
+% Pitch Correction (Autotune)
+autotunePanel = uipanel(productionGrid, 'Title', 'Pitch Correction (Autotune)');
+autotunePanel.Layout.Row = 1;
+autotuneGrid = uigridlayout(autotunePanel, [3, 4]);
+autotuneGrid.ColumnWidth = {'fit', '1x', 'fit', 'fit'};
+autotuneGrid.Padding = [5, 5, 5, 5];
+
+uilabel(autotuneGrid, 'Text', 'Key:');
+mainWindow.AutotuneKeyDropdown = uidropdown(autotuneGrid, ...
+    'Items', {'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'}, ...
+    'Value', 'C');
+uilabel(autotuneGrid, 'Text', 'Scale:');
+mainWindow.AutotuneScaleDropdown = uidropdown(autotuneGrid, ...
+    'Items', {'major', 'minor', 'harmonic_minor', 'melodic_minor', 'dorian', 'phrygian', 'lydian', 'mixolydian'}, ...
+    'Value', 'major');
+
+uilabel(autotuneGrid, 'Text', 'Strength:');
+mainWindow.AutotuneStrengthSlider = uislider(autotuneGrid, 'Value', 0.8, 'Limits', [0, 1], ...
+    'Tooltip', '0 = Natural, 1 = Robotic');
+uilabel(autotuneGrid, 'Text', 'Speed (ms):');
+mainWindow.AutotuneSpeedSpinner = uispinner(autotuneGrid, 'Value', 10, 'Limits', [1, 100], ...
+    'Tooltip', 'Pitch correction speed');
+
+mainWindow.AutotuneFormantCheckbox = uicheckbox(autotuneGrid, 'Text', 'Preserve Formants', 'Value', true);
+uibutton(autotuneGrid, 'Text', 'Apply Autotune', ...
+    'ButtonPushedFcn', @(src, event) applyAutotune(mainWindow), ...
+    'Tooltip', 'Apply pitch correction to loaded audio');
+uibutton(autotuneGrid, 'Text', 'Preview', ...
+    'ButtonPushedFcn', @(src, event) previewAutotune(mainWindow));
+uilabel(autotuneGrid, 'Text', '');
+
+% Musical Analysis
+analysisPanel = uipanel(productionGrid, 'Title', 'Musical Analysis');
+analysisPanel.Layout.Row = 2;
+analysisGrid = uigridlayout(analysisPanel, [3, 3]);
+analysisGrid.ColumnWidth = {'fit', '1x', 'fit'};
+analysisGrid.Padding = [5, 5, 5, 5];
+
+uilabel(analysisGrid, 'Text', 'Detected Key:');
+mainWindow.DetectedKeyLabel = uilabel(analysisGrid, 'Text', '(Not analyzed)');
+uibutton(analysisGrid, 'Text', 'Analyze Key', ...
+    'ButtonPushedFcn', @(src, event) detectKeyQuick(mainWindow));
+
+uilabel(analysisGrid, 'Text', 'Detected Tempo:');
+mainWindow.DetectedTempoLabel = uilabel(analysisGrid, 'Text', '(Not analyzed)');
+uibutton(analysisGrid, 'Text', 'Analyze Tempo', ...
+    'ButtonPushedFcn', @(src, event) detectTempoQuick(mainWindow));
+
+uilabel(analysisGrid, 'Text', 'Chord Detection:');
+uilabel(analysisGrid, 'Text', '');
+uibutton(analysisGrid, 'Text', 'Detect Chords', ...
+    'ButtonPushedFcn', @(src, event) detectChordsDetailed(mainWindow));
+
+% Rhythm & Timing
+rhythmPanel = uipanel(productionGrid, 'Title', 'Rhythm & Timing');
+rhythmPanel.Layout.Row = 3;
+rhythmGrid = uigridlayout(rhythmPanel, [2, 4]);
+rhythmGrid.ColumnWidth = {'fit', '1x', 'fit', 'fit'};
+rhythmGrid.Padding = [5, 5, 5, 5];
+
+uilabel(rhythmGrid, 'Text', 'Generate Click:');
+mainWindow.ClickBPMSpinner = uispinner(rhythmGrid, 'Value', 120, 'Limits', [40, 300], 'Tooltip', 'BPM');
+mainWindow.ClickBarsSpinner = uispinner(rhythmGrid, 'Value', 16, 'Limits', [1, 128], 'Tooltip', 'Number of bars');
+uibutton(rhythmGrid, 'Text', 'Generate', ...
+    'ButtonPushedFcn', @(src, event) generateClickTrack(mainWindow));
+
+uilabel(rhythmGrid, 'Text', 'Quantize Audio:');
+mainWindow.QuantizeBPMSpinner = uispinner(rhythmGrid, 'Value', 120, 'Limits', [40, 300]);
+mainWindow.QuantizeStrengthSlider = uislider(rhythmGrid, 'Value', 0.5, 'Limits', [0, 1], 'Tooltip', 'Quantize strength');
+uibutton(rhythmGrid, 'Text', 'Quantize', ...
+    'ButtonPushedFcn', @(src, event) quantizeAudio(mainWindow));
+
+% Creative Tools
+creativePanel = uipanel(productionGrid, 'Title', 'Creative Tools');
+creativePanel.Layout.Row = 4;
+creativeGrid = uigridlayout(creativePanel, [3, 3]);
+creativeGrid.ColumnWidth = {'1x', '1x', '1x'};
+creativeGrid.Padding = [5, 5, 5, 5];
+
+uibutton(creativeGrid, 'Text', 'Harmonizer', ...
+    'ButtonPushedFcn', @(src, event) showHarmonizerDialog(mainWindow), ...
+    'Tooltip', 'Generate harmonies');
+uibutton(creativeGrid, 'Text', 'Vocoder', ...
+    'ButtonPushedFcn', @(src, event) showVocoderDialog(mainWindow), ...
+    'Tooltip', 'Apply vocoder effect');
+uibutton(creativeGrid, 'Text', 'Audio→MIDI', ...
+    'ButtonPushedFcn', @(src, event) audioToMIDI(mainWindow), ...
+    'Tooltip', 'Convert audio to MIDI');
+
+uibutton(creativeGrid, 'Text', 'Pitch Shift', ...
+    'ButtonPushedFcn', @(src, event) showPitchShiftDialog(mainWindow));
+uibutton(creativeGrid, 'Text', 'Time Stretch', ...
+    'ButtonPushedFcn', @(src, event) showTimeStretchDialog(mainWindow));
+uilabel(creativeGrid, 'Text', '');
+end
+
+%% TAB 6: ANALYSIS (Keep existing, minor updates)
+function createAnalysisPanel(mainWindow, parent)
 analysisGrid = uigridlayout(parent, [3, 2]);
 analysisGrid.RowHeight = {'1x', '1x', 'fit'};
 analysisGrid.ColumnWidth = {'1x', '1x'};
@@ -516,9 +756,110 @@ uilabel(controlGrid, 'Text', 'Window Overlap:');
 mainWindow.WindowOverlapSpinner = uispinner(controlGrid, 'Value', 50, 'Limits', [0, 90], 'Step', 10);
 end
 
-function createLibraryPanel(mainWindow, parent)
-% Create library panel with sample browser
+%% TAB 7: RESEARCH
+function createResearchPanel(mainWindow, parent)
+researchGrid = uigridlayout(parent, [4, 1]);
+researchGrid.RowHeight = {'fit', 'fit', 'fit', 'fit'};
+researchGrid.Padding = [10, 10, 10, 10];
+researchGrid.RowSpacing = 10;
 
+% Wavelet Analysis
+waveletPanel = uipanel(researchGrid, 'Title', 'Wavelet Analysis (Wavelet Toolbox)');
+waveletPanel.Layout.Row = 1;
+waveletGrid = uigridlayout(waveletPanel, [2, 5]);
+waveletGrid.ColumnWidth = {'fit', '1x', 'fit', 'fit', 'fit'};
+waveletGrid.Padding = [5, 5, 5, 5];
+
+uilabel(waveletGrid, 'Text', 'Wavelet:');
+mainWindow.WaveletTypeDropdown = uidropdown(waveletGrid, ...
+    'Items', {'db1', 'db2', 'db4', 'db8', 'sym4', 'coif4', 'haar'}, ...
+    'Value', 'db4');
+uilabel(waveletGrid, 'Text', 'Levels:');
+mainWindow.WaveletLevelsSpinner = uispinner(waveletGrid, 'Value', 5, 'Limits', [1, 10]);
+uibutton(waveletGrid, 'Text', 'Time-Frequency', ...
+    'ButtonPushedFcn', @(src, event) waveletTimeFrequency(mainWindow), ...
+    'Tooltip', 'Continuous Wavelet Transform');
+
+uibutton(waveletGrid, 'Text', 'Denoise', ...
+    'ButtonPushedFcn', @(src, event) waveletDenoise(mainWindow), ...
+    'Tooltip', 'Wavelet-based noise reduction');
+uibutton(waveletGrid, 'Text', 'Separate Transients', ...
+    'ButtonPushedFcn', @(src, event) separateTransientTonal(mainWindow), ...
+    'Tooltip', 'Separate transient and tonal components');
+uilabel(waveletGrid, 'Text', '');
+uilabel(waveletGrid, 'Text', '');
+uilabel(waveletGrid, 'Text', '');
+
+% Feature Extraction
+featurePanel = uipanel(researchGrid, 'Title', 'Feature Extraction (Audio Toolbox)');
+featurePanel.Layout.Row = 2;
+featureGrid = uigridlayout(featurePanel, [2, 4]);
+featureGrid.ColumnWidth = {'fit', 'fit', 'fit', 'fit'};
+featureGrid.Padding = [5, 5, 5, 5];
+
+mainWindow.ExtractMFCCCheckbox = uicheckbox(featureGrid, 'Text', 'MFCC', 'Value', true);
+mainWindow.ExtractSpectralCheckbox = uicheckbox(featureGrid, 'Text', 'Spectral Features', 'Value', true);
+mainWindow.ExtractTemporalCheckbox = uicheckbox(featureGrid, 'Text', 'Temporal Features', 'Value', true);
+uibutton(featureGrid, 'Text', 'Extract All', ...
+    'ButtonPushedFcn', @(src, event) extractAllFeatures(mainWindow));
+
+mainWindow.FeatureResultLabel = uilabel(featureGrid, 'Text', 'No features extracted');
+uilabel(featureGrid, 'Text', '');
+uibutton(featureGrid, 'Text', 'Export to CSV', ...
+    'ButtonPushedFcn', @(src, event) exportFeatures(mainWindow));
+uibutton(featureGrid, 'Text', 'Plot Features', ...
+    'ButtonPushedFcn', @(src, event) plotFeatures(mainWindow));
+
+% Anti-Aliasing & Nyquist
+antiAliasingPanel = uipanel(researchGrid, 'Title', 'Anti-Aliasing & Nyquist Analysis');
+antiAliasingPanel.Layout.Row = 3;
+aaGrid = uigridlayout(antiAliasingPanel, [3, 4]);
+aaGrid.ColumnWidth = {'fit', '1x', 'fit', 'fit'};
+aaGrid.Padding = [5, 5, 5, 5];
+
+uilabel(aaGrid, 'Text', 'Sample Rate:');
+mainWindow.AACurrentSRLabel = uilabel(aaGrid, 'Text', '44100 Hz');
+uilabel(aaGrid, 'Text', 'Nyquist Freq:');
+mainWindow.AANyquistLabel = uilabel(aaGrid, 'Text', '22050 Hz');
+
+uibutton(aaGrid, 'Text', 'Check Compliance', ...
+    'ButtonPushedFcn', @(src, event) checkNyquistCompliance(mainWindow));
+uibutton(aaGrid, 'Text', 'Detect Aliasing', ...
+    'ButtonPushedFcn', @(src, event) detectAliasing(mainWindow));
+mainWindow.AAStatusLabel = uilabel(aaGrid, 'Text', 'Not analyzed');
+uilabel(aaGrid, 'Text', '');
+
+uibutton(aaGrid, 'Text', 'Apply AA Filter', ...
+    'ButtonPushedFcn', @(src, event) applyAntiAliasingFilter(mainWindow), ...
+    'Tooltip', 'Apply anti-aliasing low-pass filter');
+uibutton(aaGrid, 'Text', 'Oversample ×2', ...
+    'ButtonPushedFcn', @(src, event) oversampleAudio(mainWindow));
+uibutton(aaGrid, 'Text', 'Downsample ÷2', ...
+    'ButtonPushedFcn', @(src, event) downsampleAudio(mainWindow));
+uibutton(aaGrid, 'Text', 'Plot Spectrum', ...
+    'ButtonPushedFcn', @(src, event) plotNyquistSpectrum(mainWindow));
+
+% Pitch & Onset Detection
+pitchPanel = uipanel(researchGrid, 'Title', 'Pitch & Onset Detection');
+pitchPanel.Layout.Row = 4;
+pitchGrid = uigridlayout(pitchPanel, [1, 4]);
+pitchGrid.ColumnWidth = {'1x', '1x', '1x', '1x'};
+pitchGrid.Padding = [5, 5, 5, 5];
+
+uibutton(pitchGrid, 'Text', 'Detect Pitch (Neural)', ...
+    'ButtonPushedFcn', @(src, event) detectPitchNeural(mainWindow), ...
+    'Tooltip', 'Neural network-based pitch detection');
+uibutton(pitchGrid, 'Text', 'Detect Onsets', ...
+    'ButtonPushedFcn', @(src, event) detectOnsets(mainWindow), ...
+    'Tooltip', 'Find note/drum onsets');
+uibutton(pitchGrid, 'Text', 'Measure Loudness (LUFS)', ...
+    'ButtonPushedFcn', @(src, event) measureLUFS(mainWindow), ...
+    'Tooltip', 'Accurate LUFS loudness measurement');
+uilabel(pitchGrid, 'Text', '');
+end
+
+%% TAB 8: LIBRARY (Enhanced)
+function createLibraryPanel(mainWindow, parent)
 libraryGrid = uigridlayout(parent, [3, 2]);
 libraryGrid.RowHeight = {'fit', '1x', 'fit'};
 libraryGrid.ColumnWidth = {'1x', '1x'};
@@ -566,20 +907,22 @@ uibutton(browserControlGrid, 'Text', 'Preview', ...
 uibutton(browserControlGrid, 'Text', 'Refresh', ...
     'ButtonPushedFcn', @(src, event) refreshLibraryCatalog(mainWindow));
 
-% MATLAB Sounds panel
-matlabSoundsPanel = uipanel(libraryGrid, 'Title', 'MATLAB Built-in Sounds');
-matlabSoundsPanel.Layout.Row = 1;
-matlabSoundsPanel.Layout.Column = 2;
+% Instrument Presets (NEW)
+presetsPanel = uipanel(libraryGrid, 'Title', 'Instrument Effect Presets');
+presetsPanel.Layout.Row = 1;
+presetsPanel.Layout.Column = 2;
 
-matlabGrid = uigridlayout(matlabSoundsPanel, [2, 1]);
-matlabGrid.RowHeight = {'1x', 'fit'};
-matlabGrid.Padding = [5, 5, 5, 5];
+presetsGrid = uigridlayout(presetsPanel, [3, 1]);
+presetsGrid.RowHeight = {'fit', '1x', 'fit'};
+presetsGrid.Padding = [5, 5, 5, 5];
 
-mainWindow.MATLABSoundsListBox = uilistbox(matlabGrid, ...
-    'Items', fieldnames(mainWindow.LibraryManager.MATLABSounds));
+uilabel(presetsGrid, 'Text', 'Select instrument preset to load effect chain:');
+mainWindow.InstrumentPresetList = uilistbox(presetsGrid, ...
+    'Items', {'Vintage Keys', 'Electric Guitar', 'Acoustic Guitar', 'Bass Guitar', 'Lead Synth', 'Pad Synth', 'Vocals', 'Drums'}, ...
+    'Value', 'Vintage Keys');
 
-uibutton(matlabGrid, 'Text', 'Load MATLAB Sound', ...
-    'ButtonPushedFcn', @(src, event) loadMATLABSound(mainWindow));
+uibutton(presetsGrid, 'Text', 'Load Preset to Effects Tab', ...
+    'ButtonPushedFcn', @(src, event) loadInstrumentPreset(mainWindow));
 
 % Sample info panel
 infoPanel = uipanel(libraryGrid, 'Title', 'Sample Information');
@@ -632,646 +975,103 @@ uibutton(userGrid, 'Text', 'Export Collection', ...
 updateLibraryBrowser(mainWindow);
 end
 
-function show(mainWindow)
-% Show the main window
-
-mainWindow.Figure.Visible = 'on';
-end
-
-function hide(mainWindow)
-% Hide the main window
-
-mainWindow.Figure.Visible = 'off';
-end
-
-function close(mainWindow)
-% Close the application
-
-delete(mainWindow.Figure);
-end
-
-function loadAudio(mainWindow, filename)
-% Load audio file
-
-try
-    [audioData, sampleRate, info] = AudioLoader(filename);
-
-    mainWindow.LoadedAudio = audioData;
-    mainWindow.SampleRate = sampleRate;
-    mainWindow.CurrentFile = filename;
-
-    % Update waveform display
-    updateWaveformDisplay(mainWindow);
-
-    % Update status
-    mainWindow.StatusText.Text = sprintf('Loaded: %s', filename);
-
-catch ME
-    uialert(mainWindow.Figure, sprintf('Error loading audio: %s', ME.message), 'Load Error');
-end
-end
-
-function play(mainWindow)
-% Start playback
-
-if isempty(mainWindow.LoadedAudio)
-    uialert(mainWindow.Figure, 'No audio loaded', 'Playback Error');
-    return;
-end
-
-mainWindow.IsPlaying = true;
-mainWindow.PlayButton.Enable = 'off';
-mainWindow.PauseButton.Enable = 'on';
-mainWindow.StopButton.Enable = 'on';
-
-mainWindow.StatusText.Text = 'Playing...';
-end
-
-function pause(mainWindow)
-% Pause playback
-
-mainWindow.IsPlaying = false;
-mainWindow.PlayButton.Enable = 'on';
-mainWindow.PauseButton.Enable = 'off';
-
-mainWindow.StatusText.Text = 'Paused';
-end
-
-function stop(mainWindow)
-% Stop playback
-
-mainWindow.IsPlaying = false;
-mainWindow.PlayButton.Enable = 'on';
-mainWindow.PauseButton.Enable = 'off';
-mainWindow.StopButton.Enable = 'off';
-
-mainWindow.StatusText.Text = 'Stopped';
-end
-
-function updateWaveformDisplay(mainWindow)
-% Update waveform display
-
-if isempty(mainWindow.LoadedAudio)
-    return;
-end
-
-audioData = mainWindow.LoadedAudio;
-sampleRate = mainWindow.SampleRate;
-
-% Create time vector
-time = (0:size(audioData, 1)-1) / sampleRate;
-
-% Plot waveform
-cla(mainWindow.WaveformAxes);
-plot(mainWindow.WaveformAxes, time, audioData);
-mainWindow.WaveformAxes.XLabel.String = 'Time (s)';
-mainWindow.WaveformAxes.YLabel.String = 'Amplitude';
-mainWindow.WaveformAxes.Title.String = sprintf('Audio Waveform - %s', mainWindow.CurrentFile);
-grid(mainWindow.WaveformAxes, 'on');
-end
-
-function updateVolume(mainWindow, volume)
-% Update master volume
-
-mainWindow.Mixer.MasterBus.Volume = volume;
-end
-
-% Dialog functions (placeholders)
-function loadAudioDialog(mainWindow)
-[filename, pathname] = uigetfile({'*.wav;*.mp3;*.flac;*.ogg;*.m4a', 'Audio Files'}, 'Load Audio');
-if filename ~= 0
-    loadAudio(mainWindow, fullfile(pathname, filename));
-end
-end
-
-function loadFromLibraryDialog(mainWindow)
-uialert(mainWindow.Figure, 'Library browser coming soon', 'Info');
-end
-
-function exportAudioDialog(mainWindow)
-uialert(mainWindow.Figure, 'Export dialog coming soon', 'Info');
-end
-
-function showPreferences(mainWindow)
-uialert(mainWindow.Figure, 'Preferences coming soon', 'Info');
-end
-
-function zoomIn(mainWindow)
-if ~isempty(mainWindow.LoadedAudio)
-    xlim(mainWindow.WaveformAxes, xlim(mainWindow.WaveformAxes) * 0.8);
-end
-end
-
-function zoomOut(mainWindow)
-if ~isempty(mainWindow.LoadedAudio)
-    xlim(mainWindow.WaveformAxes, xlim(mainWindow.WaveformAxes) * 1.25);
-end
-end
-
-function fitToWindow(mainWindow)
-if ~isempty(mainWindow.LoadedAudio)
-    audioData = mainWindow.LoadedAudio;
-    sampleRate = mainWindow.SampleRate;
-    time = (0:size(audioData, 1)-1) / sampleRate;
-    xlim(mainWindow.WaveformAxes, [min(time), max(time)]);
-end
-end
-
-function showBatchProcessor(mainWindow)
-uialert(mainWindow.Figure, 'Batch processor coming soon', 'Info');
-end
-
-function showAudioAnalysis(mainWindow)
-uialert(mainWindow.Figure, 'Audio analysis coming soon', 'Info');
-end
-
-function showUserGuide(mainWindow)
-uialert(mainWindow.Figure, 'User guide coming soon', 'Info');
-end
-
-function showAbout(mainWindow)
-uialert(mainWindow.Figure, 'Audio Signal Processor v1.0\nMATLAB Audio Processing Suite', 'About');
-end
-
-function closeApp(src, event, mainWindow)
-% Handle application close request
-
-try
-    % Stop playback if active
-    if isfield(mainWindow, 'IsPlaying') && mainWindow.IsPlaying
-        stop(mainWindow);
-    end
-catch
-    % Ignore errors during cleanup
-end
-
-% Delete the figure
-delete(src);
-end
-
-% ========== Filter Panel Callbacks ==========
-
-function applyFilter(mainWindow)
-% Apply selected filter to loaded audio
-
-if isempty(mainWindow.LoadedAudio)
-    uialert(mainWindow.Figure, 'Please load audio first', 'No Audio');
-    return;
-end
-
-try
-    filterType = mainWindow.FilterTypeGroup.SelectedObject.Text;
-    audioData = mainWindow.LoadedAudio;
-    sampleRate = mainWindow.SampleRate;
-
-    switch filterType
-        case {'Low Pass', 'High Pass', 'Band Pass', 'Band Stop'}
-            % FFT-based filter
-            cutoffFreq = mainWindow.CutoffFreqSpinner.Value;
-            transitionBW = mainWindow.TransitionBWSpinner.Value;
-            windowType = mainWindow.WindowTypeDropdown.Value;
-            zeroPhase = mainWindow.ZeroPhaseCheckbox.Value;
-
-            filtered = FFTFilters(audioData, filterType, ...
-                'CutoffFrequency', cutoffFreq, ...
-                'TransitionBandwidth', transitionBW, ...
-                'WindowType', windowType, ...
-                'ZeroPhase', zeroPhase, ...
-                'SampleRate', sampleRate);
-
-        case 'Butterworth'
-            % Time-domain Butterworth filter
-            cutoffFreq = mainWindow.CutoffFreqSpinner.Value;
-            filterOrder = mainWindow.FilterOrderSpinner.Value;
-
-            filtered = AudioFilterEngine(audioData, 'Butterworth', ...
-                'CutoffFrequency', cutoffFreq, ...
-                'FilterOrder', filterOrder, ...
-                'SampleRate', sampleRate);
-
-        case 'Moving Avg'
-            % Moving average filter
-            windowSize = mainWindow.WindowSizeSpinner.Value;
-            filtered = AudioFilterEngine(audioData, 'MovingAverage', ...
-                'WindowSize', windowSize);
-
-        case 'Median'
-            % Median filter
-            windowSize = mainWindow.WindowSizeSpinner.Value;
-            filtered = AudioFilterEngine(audioData, 'Median', ...
-                'WindowSize', windowSize);
-    end
-
-    mainWindow.LoadedAudio = filtered;
-    updateWaveformDisplay(mainWindow);
-    uialert(mainWindow.Figure, 'Filter applied successfully', 'Success');
-
-catch ME
-    uialert(mainWindow.Figure, ['Error applying filter: ' ME.message], 'Error');
-end
-end
-
-function previewFilterResponse(mainWindow)
-% Preview filter frequency response
-
-try
-    filterType = mainWindow.FilterTypeGroup.SelectedObject.Text;
-    cutoffFreq = mainWindow.CutoffFreqSpinner.Value;
-    sampleRate = mainWindow.SampleRate;
-
-    % Generate filter response
-    freqs = linspace(0, sampleRate/2, 1000);
-    response = zeros(size(freqs));
-
-    for i = 1:length(freqs)
-        if strcmp(filterType, 'Low Pass')
-            response(i) = freqs(i) < cutoffFreq;
-        elseif strcmp(filterType, 'High Pass')
-            response(i) = freqs(i) > cutoffFreq;
-        end
-    end
-
-    % Plot on filter response axes
-    plot(mainWindow.FilterResponseAxes, freqs, 20*log10(response + eps));
-    title(mainWindow.FilterResponseAxes, sprintf('%s Filter Response', filterType));
-
-catch ME
-    uialert(mainWindow.Figure, ['Error previewing filter: ' ME.message], 'Error');
-end
-end
-
-function resetFilter(mainWindow)
-% Reset filter parameters to defaults
-
-mainWindow.CutoffFreqSpinner.Value = 1000;
-mainWindow.TransitionBWSpinner.Value = 100;
-mainWindow.WindowTypeDropdown.Value = 'Gaussian';
-mainWindow.ZeroPhaseCheckbox.Value = true;
-mainWindow.FilterOrderSpinner.Value = 4;
-mainWindow.WindowSizeSpinner.Value = 5;
-end
-
-% ========== Mixer Panel Callbacks ==========
-
-function loadTrackAudio(mainWindow, trackIndex)
-% Load audio file into specific track
-
-[file, path] = uigetfile({'*.wav;*.mp3;*.flac', 'Audio Files'}, 'Select Audio File');
-if file == 0
-    return;
-end
-
-try
-    [audioData, fs] = AudioLoader(fullfile(path, file));
-    mainWindow.Mixer.loadTrack(trackIndex, audioData, fs);
-    uialert(mainWindow.Figure, sprintf('Track %d loaded successfully', trackIndex), 'Success');
-catch ME
-    uialert(mainWindow.Figure, ['Error loading track: ' ME.message], 'Error');
-end
-end
-
-function toggleTrackSolo(mainWindow, trackIndex, button)
-% Toggle track solo state
-
-currentState = mainWindow.Mixer.Tracks(trackIndex).Solo;
-mainWindow.Mixer.setTrackSolo(trackIndex, ~currentState);
-
-if ~currentState
-    button.BackgroundColor = [1, 0.8, 0];
-else
-    button.BackgroundColor = [0.96, 0.96, 0.96];
-end
-end
-
-function toggleTrackMute(mainWindow, trackIndex, button)
-% Toggle track mute state
-
-currentState = mainWindow.Mixer.Tracks(trackIndex).Mute;
-mainWindow.Mixer.setTrackMute(trackIndex, ~currentState);
-
-if ~currentState
-    button.BackgroundColor = [1, 0.4, 0.4];
-else
-    button.BackgroundColor = [0.96, 0.96, 0.96];
-end
-end
-
-function showTrackEffects(mainWindow, trackIndex)
-% Show effects dialog for track
-
-uialert(mainWindow.Figure, sprintf('Effects editor for Track %d coming soon', trackIndex), 'Info');
-end
-
-function processMix(mainWindow)
-% Process and mix all tracks
-
-try
-    mixedAudio = mainWindow.Mixer.processMix();
-    mainWindow.LoadedAudio = mixedAudio;
-    mainWindow.CurrentFile = 'Mixed Audio';
-    updateWaveformDisplay(mainWindow);
-    uialert(mainWindow.Figure, 'Mix processed successfully', 'Success');
-catch ME
-    uialert(mainWindow.Figure, ['Error processing mix: ' ME.message], 'Error');
-end
-end
-
-function clearAllTracks(mainWindow)
-% Clear all tracks
-
-for i = 1:mainWindow.Mixer.NumTracks
-    mainWindow.Mixer.Tracks(i).AudioData = [];
-    mainWindow.Mixer.Tracks(i).IsLoaded = false;
-end
-uialert(mainWindow.Figure, 'All tracks cleared', 'Success');
-end
-
-function exportMix(mainWindow)
-% Export mixed audio
-
-if isempty(mainWindow.LoadedAudio)
-    uialert(mainWindow.Figure, 'No audio to export', 'Warning');
-    return;
-end
-
-[file, path] = uiputfile({'*.wav', 'WAV File'}, 'Export Mixed Audio');
-if file == 0
-    return;
-end
-
-try
-    AudioExporter(mainWindow.LoadedAudio, fullfile(path, file), ...
-        'SampleRate', mainWindow.SampleRate, 'BitDepth', 24);
-    uialert(mainWindow.Figure, 'Mix exported successfully', 'Success');
-catch ME
-    uialert(mainWindow.Figure, ['Error exporting: ' ME.message], 'Error');
-end
-end
-
-function exportStems(mainWindow)
-% Export individual track stems
-
-uialert(mainWindow.Figure, 'Stem export coming soon', 'Info');
-end
-
-% ========== Analysis Panel Callbacks ==========
-
-function generateSpectrogram(mainWindow)
-% Generate and display spectrogram
-
-if isempty(mainWindow.LoadedAudio)
-    uialert(mainWindow.Figure, 'Please load audio first', 'No Audio');
-    return;
-end
-
-try
-    fftSize = str2double(mainWindow.FFTSizeDropdown.Value);
-    overlap = mainWindow.WindowOverlapSpinner.Value / 100;
-
-    [S, F, T] = SpectrogramGenerator(mainWindow.LoadedAudio, ...
-        'SampleRate', mainWindow.SampleRate, ...
-        'FFTSize', fftSize, ...
-        'Overlap', overlap);
-
-    imagesc(mainWindow.SpectrogramAxes, T, F, 10*log10(abs(S)));
-    axis(mainWindow.SpectrogramAxes, 'xy');
-    colormap(mainWindow.SpectrogramAxes, 'jet');
-    colorbar(mainWindow.SpectrogramAxes);
-
-catch ME
-    uialert(mainWindow.Figure, ['Error generating spectrogram: ' ME.message], 'Error');
-end
-end
-
-function analyzeSpectrum(mainWindow)
-% Analyze and display FFT spectrum
-
-if isempty(mainWindow.LoadedAudio)
-    uialert(mainWindow.Figure, 'Please load audio first', 'No Audio');
-    return;
-end
-
-try
-    fftSize = str2double(mainWindow.FFTSizeDropdown.Value);
-    [freqs, magnitudes] = FrequencyAnalyzer(mainWindow.LoadedAudio, ...
-        'SampleRate', mainWindow.SampleRate, ...
-        'FFTSize', fftSize);
-
-    plot(mainWindow.SpectrumAxes, freqs, 20*log10(magnitudes));
-    xlim(mainWindow.SpectrumAxes, [0, mainWindow.SampleRate/2]);
-
-catch ME
-    uialert(mainWindow.Figure, ['Error analyzing spectrum: ' ME.message], 'Error');
-end
-end
-
-function analyzePhase(mainWindow)
-% Analyze stereo phase correlation
-
-if isempty(mainWindow.LoadedAudio)
-    uialert(mainWindow.Figure, 'Please load audio first', 'No Audio');
-    return;
-end
-
-if size(mainWindow.LoadedAudio, 2) < 2
-    uialert(mainWindow.Figure, 'Phase analysis requires stereo audio', 'Warning');
-    return;
-end
-
-try
-    L = mainWindow.LoadedAudio(:, 1);
-    R = mainWindow.LoadedAudio(:, 2);
-
-    % Calculate correlation
-    windowSize = round(0.1 * mainWindow.SampleRate); % 0.1 sec window, dynamic for sample rate
-    numWindows = floor(length(L) / windowSize);
-    correlation = zeros(numWindows, 1);
-    time = (1:numWindows) * windowSize / mainWindow.SampleRate;
-
-    for i = 1:numWindows
-        idx = (i-1)*windowSize + (1:windowSize);
-        correlation(i) = corr(L(idx), R(idx));
-    end
-
-    plot(mainWindow.PhaseAxes, time, correlation);
-    ylim(mainWindow.PhaseAxes, [-1, 1]);
-
-catch ME
-    uialert(mainWindow.Figure, ['Error analyzing phase: ' ME.message], 'Error');
-end
-end
-
-function measureLoudness(mainWindow)
-% Measure audio loudness metrics
-
-if isempty(mainWindow.LoadedAudio)
-    uialert(mainWindow.Figure, 'Please load audio first', 'No Audio');
-    return;
-end
-
-try
-    audioData = mainWindow.LoadedAudio;
-
-    % Peak level
-    peakLevel = 20 * log10(max(abs(audioData(:))));
-    mainWindow.PeakLevelLabel.Text = sprintf('%.2f dB', peakLevel);
-
-    % RMS level
-    rmsLevel = 20 * log10(rms(audioData(:)));
-    mainWindow.RMSLevelLabel.Text = sprintf('%.2f dB', rmsLevel);
-
-    % Approximate LUFS (simplified calculation)
-    lufs = rmsLevel - 0.691; % Rough approximation - does not implement ITU-R BS.1770 K-weighting or gating. Use this only as an estimate.
-    mainWindow.LUFSLabel.Text = sprintf('%.2f LUFS', lufs);
-
-    % Display level meter
-    bar(mainWindow.LevelMeterAxes, [peakLevel, rmsLevel, lufs]);
-    set(mainWindow.LevelMeterAxes, 'XTickLabel', {'Peak', 'RMS', 'LUFS'});
-    ylabel(mainWindow.LevelMeterAxes, 'Level (dB)');
-
-catch ME
-    uialert(mainWindow.Figure, ['Error measuring loudness: ' ME.message], 'Error');
-end
-end
-
-% ========== Library Panel Callbacks ==========
-
-function updateLibraryBrowser(mainWindow)
-% Update library browser based on category selection
-
-try
-    category = mainWindow.CategoryDropdown.Value;
-
-    if strcmp(category, 'MATLAB Sounds')
-        items = fieldnames(mainWindow.LibraryManager.MATLABSounds);
-    elseif strcmp(category, 'All')
-        items = {'Refresh catalog to see samples'};
-    else
-        items = {sprintf('Samples in %s category', category)};
-    end
-
-    mainWindow.SampleListBox.Items = items;
-catch ME
-    warning('Error updating library browser: %s', ME.message);
-end
-end
-
-function searchLibrary(mainWindow, query)
-% Search library for samples matching query
-
-if isempty(query)
-    updateLibraryBrowser(mainWindow);
-    return;
-end
-
-try
-    results = mainWindow.LibraryManager.searchSamples(query);
-
-    if results.Count > 0
-        items = cell(results.Count, 1);
-        for i = 1:results.Count
-            match = results.Matches{i};
-            items{i} = sprintf('%s - %s', match.Category, match.Filename);
-        end
-        mainWindow.SampleListBox.Items = items;
-    else
-        mainWindow.SampleListBox.Items = {'No matches found'};
-    end
-catch ME
-    uialert(mainWindow.Figure, ['Search error: ' ME.message], 'Error');
-end
-end
-
-function selectSample(mainWindow, selectedValue)
-% Display information about selected sample
-
-mainWindow.SampleFilenameLabel.Text = selectedValue;
-mainWindow.SampleCategoryLabel.Text = mainWindow.CategoryDropdown.Value;
-end
-
-function loadSelectedSample(mainWindow)
-% Load selected sample into main window
-
-selected = mainWindow.SampleListBox.Value;
-if isempty(selected) || strcmp(selected, 'No samples loaded')
-    return;
-end
-
-try
-    category = mainWindow.CategoryDropdown.Value;
-    [audioData, fs, info] = mainWindow.LibraryManager.loadSample(category, selected);
-
-    mainWindow.LoadedAudio = audioData;
-    mainWindow.SampleRate = fs;
-    mainWindow.CurrentFile = selected;
-    updateWaveformDisplay(mainWindow);
-
-    uialert(mainWindow.Figure, 'Sample loaded successfully', 'Success');
-catch ME
-    uialert(mainWindow.Figure, ['Error loading sample: ' ME.message], 'Error');
-end
-end
-
-function previewSample(mainWindow)
-% Preview selected sample
-
-uialert(mainWindow.Figure, 'Sample preview coming soon', 'Info');
-end
-
-function refreshLibraryCatalog(mainWindow)
-% Refresh the library catalog
-
-try
-    mainWindow.LibraryManager.updateCatalog();
-    updateLibraryBrowser(mainWindow);
-    uialert(mainWindow.Figure, 'Library catalog refreshed', 'Success');
-catch ME
-    uialert(mainWindow.Figure, ['Error refreshing catalog: ' ME.message], 'Error');
-end
-end
-
-function loadMATLABSound(mainWindow)
-% Load MATLAB built-in sound
-
-selected = mainWindow.MATLABSoundsListBox.Value;
-if isempty(selected)
-    return;
-end
-
-try
-    [audioData, fs, info] = mainWindow.LibraryManager.loadMATLABSound(selected);
-
-    mainWindow.LoadedAudio = audioData;
-    mainWindow.SampleRate = fs;
-    mainWindow.CurrentFile = selected;
-    updateWaveformDisplay(mainWindow);
-
-    uialert(mainWindow.Figure, sprintf('MATLAB sound "%s" loaded', selected), 'Success');
-catch ME
-    uialert(mainWindow.Figure, ['Error loading MATLAB sound: ' ME.message], 'Error');
-end
-end
-
-function addSampleToLibrary(mainWindow)
-% Add new sample to user library
-
-uialert(mainWindow.Figure, 'Add sample feature coming soon', 'Info');
-end
-
-function createSampleCollection(mainWindow)
-% Create new sample collection
-
-uialert(mainWindow.Figure, 'Create collection feature coming soon', 'Info');
-end
-
-function importSampleCollection(mainWindow)
-% Import sample collection
-
-uialert(mainWindow.Figure, 'Import collection feature coming soon', 'Info');
-end
-
-function exportSampleCollection(mainWindow)
-% Export sample collection
-
-uialert(mainWindow.Figure, 'Export collection feature coming soon', 'Info');
+%% TAB 9: SETTINGS
+function createSettingsPanel(mainWindow, parent)
+settingsGrid = uigridlayout(parent, [5, 1]);
+settingsGrid.RowHeight = {'fit', 'fit', 'fit', 'fit', 'fit'};
+settingsGrid.Padding = [10, 10, 10, 10];
+settingsGrid.RowSpacing = 10;
+
+% Audio Settings
+audioPanel = uipanel(settingsGrid, 'Title', 'Audio Settings');
+audioPanel.Layout.Row = 1;
+audioGrid = uigridlayout(audioPanel, [4, 2]);
+audioGrid.ColumnWidth = {'fit', '1x'};
+audioGrid.Padding = [5, 5, 5, 5];
+
+uilabel(audioGrid, 'Text', 'Default Sample Rate:');
+mainWindow.DefaultSRDropdown = uidropdown(audioGrid, ...
+    'Items', {'44100', '48000', '88200', '96000'}, 'Value', '44100');
+
+uilabel(audioGrid, 'Text', 'Bit Depth:');
+mainWindow.BitDepthDropdown = uidropdown(audioGrid, ...
+    'Items', {'16', '24', '32'}, 'Value', '24');
+
+uilabel(audioGrid, 'Text', 'Buffer Size:');
+mainWindow.BufferSizeDropdown = uidropdown(audioGrid, ...
+    'Items', {'128', '256', '512', '1024', '2048'}, 'Value', '512');
+
+mainWindow.AutoNormalizeCheckbox = uicheckbox(audioGrid, 'Text', 'Auto-normalize on load', 'Value', false);
+uilabel(audioGrid, 'Text', '');
+
+% Processing Settings
+processingPanel = uipanel(settingsGrid, 'Title', 'Processing Settings');
+processingPanel.Layout.Row = 2;
+procGrid = uigridlayout(processingPanel, [3, 2]);
+procGrid.ColumnWidth = {'fit', '1x'};
+procGrid.Padding = [5, 5, 5, 5];
+
+uilabel(procGrid, 'Text', 'Undo History Levels:');
+mainWindow.UndoLevelsSpinner = uispinner(procGrid, 'Value', 50, 'Limits', [10, 100]);
+
+mainWindow.EnableGPUCheckbox = uicheckbox(procGrid, 'Text', 'Enable GPU Acceleration', 'Value', false);
+uilabel(procGrid, 'Text', '');
+
+mainWindow.ParallelProcCheckbox = uicheckbox(procGrid, 'Text', 'Use Parallel Processing', 'Value', true);
+uilabel(procGrid, 'Text', '');
+
+% Display Settings
+displayPanel = uipanel(settingsGrid, 'Title', 'Display Settings');
+displayPanel.Layout.Row = 3;
+displayGrid = uigridlayout(displayPanel, [4, 2]);
+displayGrid.ColumnWidth = {'fit', '1x'};
+displayGrid.Padding = [5, 5, 5, 5];
+
+uilabel(displayGrid, 'Text', 'Theme:');
+mainWindow.ThemeDropdown = uidropdown(displayGrid, ...
+    'Items', {'Light', 'Dark', 'Auto'}, 'Value', 'Light');
+
+uilabel(displayGrid, 'Text', 'Waveform Color:');
+mainWindow.WaveformColorDropdown = uidropdown(displayGrid, ...
+    'Items', {'Blue', 'Green', 'Red', 'Purple', 'Orange'}, 'Value', 'Blue');
+
+mainWindow.ShowGridCheckbox = uicheckbox(displayGrid, 'Text', 'Show Grid', 'Value', true);
+uilabel(displayGrid, 'Text', '');
+
+mainWindow.ShowMarkersCheckbox = uicheckbox(displayGrid, 'Text', 'Show Timeline Markers', 'Value', true);
+uilabel(displayGrid, 'Text', '');
+
+% File Paths
+pathPanel = uipanel(settingsGrid, 'Title', 'File Paths');
+pathPanel.Layout.Row = 4;
+pathGrid = uigridlayout(pathPanel, [3, 3]);
+pathGrid.ColumnWidth = {'fit', '1x', 'fit'};
+pathGrid.Padding = [5, 5, 5, 5];
+
+uilabel(pathGrid, 'Text', 'User Library:');
+mainWindow.UserLibraryPathField = uieditfield(pathGrid, 'Value', pwd);
+uibutton(pathGrid, 'Text', 'Browse', 'ButtonPushedFcn', @(src, event) browseUserLibrary(mainWindow));
+
+uilabel(pathGrid, 'Text', 'Impulse Responses:');
+mainWindow.IRPathField = uieditfield(pathGrid, 'Value', pwd);
+uibutton(pathGrid, 'Text', 'Browse', 'ButtonPushedFcn', @(src, event) browseIRPath(mainWindow));
+
+uilabel(pathGrid, 'Text', 'Export Default:');
+mainWindow.ExportPathField = uieditfield(pathGrid, 'Value', pwd);
+uibutton(pathGrid, 'Text', 'Browse', 'ButtonPushedFcn', @(src, event) browseExportPath(mainWindow));
+
+% Apply/Reset
+actionPanel = uipanel(settingsGrid);
+actionPanel.Layout.Row = 5;
+actionGrid = uigridlayout(actionPanel, [1, 4]);
+actionGrid.ColumnWidth = {'1x', 'fit', 'fit', 'fit'};
+actionGrid.Padding = [5, 5, 5, 5];
+
+uilabel(actionGrid, 'Text', '');
+uibutton(actionGrid, 'Text', 'Reset to Defaults', ...
+    'ButtonPushedFcn', @(src, event) resetSettings(mainWindow));
+uibutton(actionGrid, 'Text', 'Apply', ...
+    'ButtonPushedFcn', @(src, event) applySettings(mainWindow));
+uibutton(actionGrid, 'Text', 'Save', ...
+    'ButtonPushedFcn', @(src, event) saveSettings(mainWindow));
 end
