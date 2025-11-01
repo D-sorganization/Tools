@@ -68,6 +68,7 @@ libraryManager.getCategories = @() getCategories(libraryManager);
 libraryManager.getMATLABSounds = @() getMATLABSounds(libraryManager);
 libraryManager.addSample = @(filepath, metadata) addSample(libraryManager, filepath, metadata);
 libraryManager.updateCatalog = @() updateCatalog(libraryManager);
+libraryManager.initializeMATLABSounds = @() initializeMATLABSounds(libraryManager);
 
 % Initialize catalog and MATLAB sounds
 libraryManager.updateCatalog();
@@ -225,8 +226,33 @@ if ~isfield(libraryManager.MATLABSounds, soundName)
 end
 
 try
-    % Load MATLAB built-in sound
-    [audioData, sampleRate] = load(soundName);
+    % Load MATLAB built-in sound using eval to call the sound name as a function
+    % MATLAB built-in sounds like 'handel', 'gong', etc. are loaded this way
+    soundData = load(char(soundName));
+
+    % Get the field name (usually the same as the sound name, or 'y')
+    fieldNames = fieldnames(soundData);
+    if ismember('y', fieldNames)
+        audioData = soundData.y;
+        if isfield(soundData, 'Fs')
+            sampleRate = soundData.Fs;
+        else
+            sampleRate = 8192; % Default for some MATLAB sounds
+        end
+    else
+        % Try the sound name as field
+        if isfield(soundData, char(soundName))
+            audioData = soundData.(char(soundName));
+        else
+            audioData = soundData.(fieldNames{1});
+        end
+        sampleRate = 8192; % Default for MATLAB sounds without Fs
+    end
+
+    % Normalize to column vector if needed
+    if size(audioData, 2) > size(audioData, 1)
+        audioData = audioData';
+    end
 
     % Create info structure
     info = struct();
