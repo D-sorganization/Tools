@@ -1083,7 +1083,7 @@ try
     R = mainWindow.LoadedAudio(:, 2);
 
     % Calculate correlation
-    windowSize = 4410; % 0.1 sec at 44.1kHz
+    windowSize = round(0.1 * mainWindow.SampleRate); % 0.1 sec window, dynamic for sample rate
     numWindows = floor(length(L) / windowSize);
     correlation = zeros(numWindows, 1);
     time = (1:numWindows) * windowSize / mainWindow.SampleRate;
