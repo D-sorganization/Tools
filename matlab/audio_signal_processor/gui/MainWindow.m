@@ -235,32 +235,34 @@ function createFiltersPanel(mainWindow, parent)
 % Create filters panel with filter controls
 
 filtersGrid = uigridlayout(parent, [4, 2]);
-filtersGrid.RowHeight = {'fit', 'fit', 'fit', '1x'};
+filtersGrid.RowHeight = {'fit', 'fit', 'fit', '2x'};
 filtersGrid.ColumnWidth = {'1x', '1x'};
 filtersGrid.Padding = [10, 10, 10, 10];
-filtersGrid.RowSpacing = 10;
+filtersGrid.RowSpacing = 8;
 filtersGrid.ColumnSpacing = 10;
 
-% Filter Type Selection
+% Filter Type Selection - Compact horizontal layout
 filterTypePanel = uipanel(filtersGrid, 'Title', 'Filter Type');
 filterTypePanel.Layout.Row = 1;
 filterTypePanel.Layout.Column = [1, 2];
 
-filterTypeGrid = uigridlayout(filterTypePanel, [2, 4]);
-filterTypeGrid.ColumnWidth = {'1x', '1x', '1x', '1x'};
+filterTypeGrid = uigridlayout(filterTypePanel, [1, 7]);
+filterTypeGrid.ColumnWidth = repmat({'fit'}, 1, 7);
 filterTypeGrid.Padding = [5, 5, 5, 5];
+filterTypeGrid.ColumnSpacing = 8;
 
 mainWindow.FilterTypeGroup = uibuttongroup(filterTypeGrid);
-mainWindow.FilterTypeGroup.Layout.Row = [1, 2];
-mainWindow.FilterTypeGroup.Layout.Column = [1, 4];
+mainWindow.FilterTypeGroup.Layout.Row = 1;
+mainWindow.FilterTypeGroup.Layout.Column = [1, 7];
+mainWindow.FilterTypeGroup.BorderType = 'none';
 
-uiradiobutton(mainWindow.FilterTypeGroup, 'Text', 'Low Pass', 'Position', [10, 30, 100, 22], 'Value', true);
-uiradiobutton(mainWindow.FilterTypeGroup, 'Text', 'High Pass', 'Position', [120, 30, 100, 22]);
-uiradiobutton(mainWindow.FilterTypeGroup, 'Text', 'Band Pass', 'Position', [230, 30, 100, 22]);
-uiradiobutton(mainWindow.FilterTypeGroup, 'Text', 'Band Stop', 'Position', [340, 30, 100, 22]);
-uiradiobutton(mainWindow.FilterTypeGroup, 'Text', 'Butterworth', 'Position', [10, 5, 100, 22]);
-uiradiobutton(mainWindow.FilterTypeGroup, 'Text', 'Moving Avg', 'Position', [120, 5, 100, 22]);
-uiradiobutton(mainWindow.FilterTypeGroup, 'Text', 'Median', 'Position', [230, 5, 100, 22]);
+uiradiobutton(mainWindow.FilterTypeGroup, 'Text', 'Low Pass', 'Position', [5, 5, 85, 22], 'Value', true);
+uiradiobutton(mainWindow.FilterTypeGroup, 'Text', 'High Pass', 'Position', [95, 5, 85, 22]);
+uiradiobutton(mainWindow.FilterTypeGroup, 'Text', 'Band Pass', 'Position', [185, 5, 85, 22]);
+uiradiobutton(mainWindow.FilterTypeGroup, 'Text', 'Band Stop', 'Position', [275, 5, 85, 22]);
+uiradiobutton(mainWindow.FilterTypeGroup, 'Text', 'Butterworth', 'Position', [365, 5, 95, 22]);
+uiradiobutton(mainWindow.FilterTypeGroup, 'Text', 'Moving Avg', 'Position', [465, 5, 95, 22]);
+uiradiobutton(mainWindow.FilterTypeGroup, 'Text', 'Median', 'Position', [565, 5, 75, 22]);
 
 % FFT Filter Parameters
 fftPanel = uipanel(filtersGrid, 'Title', 'FFT Filter Parameters');
