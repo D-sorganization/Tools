@@ -17,9 +17,7 @@ function processor = WaveletProcessor()
 %   Denoising Methods:
 %   -----------------
 %   denoise(audio, options) - Wavelet denoising with multiple methods
-%   denoise
-
-ByLevel(audio, level, options) - Level-dependent denoising
+%   denoiseByLevel(audio, level, options) - Level-dependent denoising
 %   adaptiveDenoising(audio, options) - Adaptive threshold selection
 %
 %   Analysis Methods:
