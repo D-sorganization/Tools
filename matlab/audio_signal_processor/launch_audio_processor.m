@@ -79,8 +79,13 @@ catch ME
     % Display error details
     fprintf('\nError details:\n');
     fprintf('  Identifier: %s\n', ME.identifier);
-    fprintf('  File: %s\n', ME.stack(1).file);
-    fprintf('  Line: %d\n', ME.stack(1).line);
+    if ~isempty(ME.stack)
+        fprintf('  File: %s\n', ME.stack(1).file);
+        fprintf('  Line: %d\n', ME.stack(1).line);
+    else
+        fprintf('  File: [stack unavailable]\n');
+        fprintf('  Line: [stack unavailable]\n');
+    end
     fprintf('\nPlease fix the error and try again.\n');
 
     % Don't rethrow - just return so MATLAB prompt is available
