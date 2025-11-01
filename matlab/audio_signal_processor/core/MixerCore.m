@@ -124,10 +124,7 @@ arguments
 end
 
 % Validate trackIndex against NumTracks
-if trackIndex > mixer.NumTracks
-    error('MixerCore:InvalidTrackIndex', ...
-        'Track index %d exceeds number of tracks (%d)', trackIndex, mixer.NumTracks);
-end
+validateTrackIndex(mixer, trackIndex);
 
 success = false;
 
@@ -160,10 +157,7 @@ arguments
 end
 
 % Validate trackIndex against NumTracks
-if trackIndex > mixer.NumTracks
-    error('MixerCore:InvalidTrackIndex', ...
-        'Track index %d exceeds number of tracks (%d)', trackIndex, mixer.NumTracks);
-end
+validateTrackIndex(mixer, trackIndex);
 
 mixer.Tracks(trackIndex).Volume = volume;
 end
@@ -178,10 +172,7 @@ arguments
 end
 
 % Validate trackIndex against NumTracks
-if trackIndex > mixer.NumTracks
-    error('MixerCore:InvalidTrackIndex', ...
-        'Track index %d exceeds number of tracks (%d)', trackIndex, mixer.NumTracks);
-end
+validateTrackIndex(mixer, trackIndex);
 
 mixer.Tracks(trackIndex).Pan = pan;
 end
@@ -196,10 +187,7 @@ arguments
 end
 
 % Validate trackIndex against NumTracks
-if trackIndex > mixer.NumTracks
-    error('MixerCore:InvalidTrackIndex', ...
-        'Track index %d exceeds number of tracks (%d)', trackIndex, mixer.NumTracks);
-end
+validateTrackIndex(mixer, trackIndex);
 
 mixer.Tracks(trackIndex).Solo = solo;
 end
@@ -214,10 +202,7 @@ arguments
 end
 
 % Validate trackIndex against NumTracks
-if trackIndex > mixer.NumTracks
-    error('MixerCore:InvalidTrackIndex', ...
-        'Track index %d exceeds number of tracks (%d)', trackIndex, mixer.NumTracks);
-end
+validateTrackIndex(mixer, trackIndex);
 
 mixer.Tracks(trackIndex).Mute = mute;
 end
@@ -233,10 +218,7 @@ arguments
 end
 
 % Validate trackIndex against NumTracks
-if trackIndex > mixer.NumTracks
-    error('MixerCore:InvalidTrackIndex', ...
-        'Track index %d exceeds number of tracks (%d)', trackIndex, mixer.NumTracks);
-end
+validateTrackIndex(mixer, trackIndex);
 
 success = false;
 
@@ -267,10 +249,7 @@ arguments
 end
 
 % Validate trackIndex against NumTracks
-if trackIndex > mixer.NumTracks
-    error('MixerCore:InvalidTrackIndex', ...
-        'Track index %d exceeds number of tracks (%d)', trackIndex, mixer.NumTracks);
-end
+validateTrackIndex(mixer, trackIndex);
 
 success = false;
 
@@ -438,4 +417,20 @@ arguments
 end
 
 mixer.CurrentPosition = position;
+end
+
+function validateTrackIndex(mixer, trackIndex)
+% Validate track index is within valid range
+%
+% Throws error if trackIndex exceeds NumTracks
+
+arguments
+    mixer
+    trackIndex (1,1) double {mustBePositive, mustBeInteger}
+end
+
+if trackIndex > mixer.NumTracks
+    error('MixerCore:InvalidTrackIndex', ...
+        'Track index %d exceeds number of tracks (%d)', trackIndex, mixer.NumTracks);
+end
 end
