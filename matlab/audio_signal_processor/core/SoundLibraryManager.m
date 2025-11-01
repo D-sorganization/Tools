@@ -68,6 +68,7 @@ libraryManager.getCategories = @() getCategories(libraryManager);
 libraryManager.getMATLABSounds = @() getMATLABSounds(libraryManager);
 libraryManager.addSample = @(filepath, metadata) addSample(libraryManager, filepath, metadata);
 libraryManager.updateCatalog = @() updateCatalog(libraryManager);
+libraryManager.initializeMATLABSounds = @() initializeMATLABSounds(libraryManager);
 
 % Initialize catalog and MATLAB sounds
 libraryManager.updateCatalog();

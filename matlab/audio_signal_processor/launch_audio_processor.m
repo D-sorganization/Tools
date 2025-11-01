@@ -67,6 +67,23 @@ try
 
 catch ME
     fprintf('✗ Error launching application: %s\n', ME.message);
-    rethrow(ME);
+
+    % Clean up any open figures
+    try
+        openFigs = findall(0, 'Type', 'figure');
+        delete(openFigs);
+    catch
+        % Ignore cleanup errors
+    end
+
+    % Display error details
+    fprintf('\nError details:\n');
+    fprintf('  Identifier: %s\n', ME.identifier);
+    fprintf('  File: %s\n', ME.stack(1).file);
+    fprintf('  Line: %d\n', ME.stack(1).line);
+    fprintf('\nPlease fix the error and try again.\n');
+
+    % Don't rethrow - just return so MATLAB prompt is available
+    return;
 end
 end

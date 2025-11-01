@@ -118,9 +118,15 @@ function success = loadTrack(mixer, trackIndex, audioData, trackSampleRate)
 
 arguments
     mixer
-    trackIndex (1,1) double {mustBePositive, mustBeInteger, mustBeLessThanOrEqual(trackIndex, mixer.NumTracks)}
+    trackIndex (1,1) double {mustBePositive, mustBeInteger}
     audioData (:,:) double
     trackSampleRate (1,1) double {mustBePositive} = mixer.SampleRate
+end
+
+% Validate trackIndex against NumTracks
+if trackIndex > mixer.NumTracks
+    error('MixerCore:InvalidTrackIndex', ...
+        'Track index %d exceeds number of tracks (%d)', trackIndex, mixer.NumTracks);
 end
 
 success = false;
@@ -149,8 +155,14 @@ function setTrackVolume(mixer, trackIndex, volume)
 
 arguments
     mixer
-    trackIndex (1,1) double {mustBePositive, mustBeInteger, mustBeLessThanOrEqual(trackIndex, mixer.NumTracks)}
+    trackIndex (1,1) double {mustBePositive, mustBeInteger}
     volume (1,1) double {mustBeInRange(volume, 0, 1)}
+end
+
+% Validate trackIndex against NumTracks
+if trackIndex > mixer.NumTracks
+    error('MixerCore:InvalidTrackIndex', ...
+        'Track index %d exceeds number of tracks (%d)', trackIndex, mixer.NumTracks);
 end
 
 mixer.Tracks(trackIndex).Volume = volume;
@@ -161,8 +173,14 @@ function setTrackPan(mixer, trackIndex, pan)
 
 arguments
     mixer
-    trackIndex (1,1) double {mustBePositive, mustBeInteger, mustBeLessThanOrEqual(trackIndex, mixer.NumTracks)}
+    trackIndex (1,1) double {mustBePositive, mustBeInteger}
     pan (1,1) double {mustBeInRange(pan, -1, 1)}
+end
+
+% Validate trackIndex against NumTracks
+if trackIndex > mixer.NumTracks
+    error('MixerCore:InvalidTrackIndex', ...
+        'Track index %d exceeds number of tracks (%d)', trackIndex, mixer.NumTracks);
 end
 
 mixer.Tracks(trackIndex).Pan = pan;
@@ -173,8 +191,14 @@ function setTrackSolo(mixer, trackIndex, solo)
 
 arguments
     mixer
-    trackIndex (1,1) double {mustBePositive, mustBeInteger, mustBeLessThanOrEqual(trackIndex, mixer.NumTracks)}
+    trackIndex (1,1) double {mustBePositive, mustBeInteger}
     solo (1,1) logical
+end
+
+% Validate trackIndex against NumTracks
+if trackIndex > mixer.NumTracks
+    error('MixerCore:InvalidTrackIndex', ...
+        'Track index %d exceeds number of tracks (%d)', trackIndex, mixer.NumTracks);
 end
 
 mixer.Tracks(trackIndex).Solo = solo;
@@ -185,8 +209,14 @@ function setTrackMute(mixer, trackIndex, mute)
 
 arguments
     mixer
-    trackIndex (1,1) double {mustBePositive, mustBeInteger, mustBeLessThanOrEqual(trackIndex, mixer.NumTracks)}
+    trackIndex (1,1) double {mustBePositive, mustBeInteger}
     mute (1,1) logical
+end
+
+% Validate trackIndex against NumTracks
+if trackIndex > mixer.NumTracks
+    error('MixerCore:InvalidTrackIndex', ...
+        'Track index %d exceeds number of tracks (%d)', trackIndex, mixer.NumTracks);
 end
 
 mixer.Tracks(trackIndex).Mute = mute;
@@ -197,9 +227,15 @@ function success = addEffect(mixer, trackIndex, effectType, params)
 
 arguments
     mixer
-    trackIndex (1,1) double {mustBePositive, mustBeInteger, mustBeLessThanOrEqual(trackIndex, mixer.NumTracks)}
+    trackIndex (1,1) double {mustBePositive, mustBeInteger}
     effectType (1,1) string
     params (1,1) struct = struct()
+end
+
+% Validate trackIndex against NumTracks
+if trackIndex > mixer.NumTracks
+    error('MixerCore:InvalidTrackIndex', ...
+        'Track index %d exceeds number of tracks (%d)', trackIndex, mixer.NumTracks);
 end
 
 success = false;
@@ -226,8 +262,14 @@ function success = removeEffect(mixer, trackIndex, effectIndex)
 
 arguments
     mixer
-    trackIndex (1,1) double {mustBePositive, mustBeInteger, mustBeLessThanOrEqual(trackIndex, mixer.NumTracks)}
+    trackIndex (1,1) double {mustBePositive, mustBeInteger}
     effectIndex (1,1) double {mustBePositive, mustBeInteger}
+end
+
+% Validate trackIndex against NumTracks
+if trackIndex > mixer.NumTracks
+    error('MixerCore:InvalidTrackIndex', ...
+        'Track index %d exceeds number of tracks (%d)', trackIndex, mixer.NumTracks);
 end
 
 success = false;
