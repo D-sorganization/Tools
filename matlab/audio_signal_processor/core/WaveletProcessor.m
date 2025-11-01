@@ -644,7 +644,7 @@ wavelets.Coiflets = {'coif1', 'coif2', 'coif3', 'coif4', 'coif5'};
 wavelets.Symlets = {'sym2', 'sym3', 'sym4', 'sym5', 'sym6', 'sym8'};
 wavelets.Biorthogonal = {'bior1.3', 'bior1.5', 'bior2.2', 'bior2.4', 'bior4.4', 'bior6.8'};
 wavelets.ReverseBiorthogonal = {'rbio1.3', 'rbio1.5', 'rbio2.2', 'rbio2.4', 'rbio3.1'};
-wavelets.Discrete Meyer = {'dmey'};
+wavelets.DiscreteMeyer = {'dmey'};
 wavelets.Analytic = {'amor', 'morse'};  % For CWT
 
 fprintf('Available Wavelet Families:\n');
