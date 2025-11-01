@@ -37,7 +37,8 @@ else
 end
 
 % Check Audio Toolbox (recommended)
-if license('test', 'Audio_Toolbox')
+v = ver('audio');
+if ~isempty(v)
     fprintf('✓ Audio Toolbox: Available\n');
 else
     warning('AudioProcessor:MissingToolbox', ...
@@ -45,7 +46,8 @@ else
 end
 
 % Check DSP System Toolbox (optional)
-if license('test', 'DSP_System_Toolbox')
+v = ver('dsp');
+if ~isempty(v)
     fprintf('✓ DSP System Toolbox: Available\n');
 else
     fprintf('⚠ DSP System Toolbox: Not available (optional)\n');
