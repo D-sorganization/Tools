@@ -1121,7 +1121,7 @@ try
     mainWindow.RMSLevelLabel.Text = sprintf('%.2f dB', rmsLevel);
 
     % Approximate LUFS (simplified calculation)
-    lufs = rmsLevel - 0.691; % Rough approximation
+    lufs = rmsLevel - 0.691; % Rough approximation - does not implement ITU-R BS.1770 K-weighting or gating. Use this only as an estimate.
     mainWindow.LUFSLabel.Text = sprintf('%.2f LUFS', lufs);
 
     % Display level meter
