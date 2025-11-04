@@ -27,7 +27,6 @@ git checkout -b feature/descriptive-feature-name
 ### 3. Testing Before Merge
 - Ensure all functionality works as expected
 - Run any existing tests
-- Test the integrated data processor if changes affect it
 - Verify no regressions in existing features
 
 ### 4. Merging to Main
