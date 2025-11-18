@@ -61,6 +61,57 @@ It acts like Ruff (lint checks) and Black (formatter) combined—Cursor should a
 - Use `string` instead of `char` when interfacing with APIs.
 - Use `assert`, `error`, and descriptive IDs for error handling.
 
+### Dependency & Path Validation for MATLAB/Simulink Workflows
+- **MUST** verify that required helper functions exist on the MATLAB path before running simulations.
+- **MUST** verify that required model files exist before starting simulations.
+- **MUST** check for required MATLAB toolboxes (Simulink, Simscape, Parallel Computing Toolbox, etc.) based on execution mode.
+- **SHOULD** implement preflight validation routines that fail fast if dependencies are missing.
+- **SHOULD** validate dependencies as part of configuration validation, consistent with existing model file checks.
+
+**Implementation Pattern:**
+- Use `exist(functionName, 'file')` to check if functions are on the path.
+- Use `exist(modelPath, 'file')` to verify model files exist (already standard practice).
+- Use `license('test', 'Toolbox_Name')` to check for required toolboxes.
+- Create a `validateDependencies()` function that:
+  - Loops over required function names and raises clear errors if missing.
+  - Checks toolbox availability based on execution mode flags.
+  - Emits clear error messages listing missing dependencies.
+- Run dependency validation early in the workflow (e.g., in `validateSimulationConfig` or as a preflight step before long simulations).
+- This improves reliability for batch/parallel runs and checkpoint/resume flows by failing before long simulations start.
+
+**Example:**
+```matlab
+function validateDependencies(requiredFunctions, requiredToolboxes)
+    % Validate that all required functions exist on MATLAB path
+    missingFunctions = {};
+    for i = 1:length(requiredFunctions)
+        if exist(requiredFunctions{i}, 'file') ~= 2
+            missingFunctions{end+1} = requiredFunctions{i};
+        end
+    end
+    
+    % Validate required toolboxes
+    missingToolboxes = {};
+    for i = 1:length(requiredToolboxes)
+        if ~license('test', requiredToolboxes{i})
+            missingToolboxes{end+1} = requiredToolboxes{i};
+        end
+    end
+    
+    % Raise error if any dependencies are missing
+    if ~isempty(missingFunctions) || ~isempty(missingToolboxes)
+        errorMsg = 'Missing dependencies:\n';
+        if ~isempty(missingFunctions)
+            errorMsg = [errorMsg, sprintf('  Functions: %s\n', strjoin(missingFunctions, ', '))];
+        end
+        if ~isempty(missingToolboxes)
+            errorMsg = [errorMsg, sprintf('  Toolboxes: %s\n', strjoin(missingToolboxes, ', '))];
+        end
+        error('DependencyValidation:MissingDependencies', errorMsg);
+    end
+end
+```
+
 ---
 
 ## 🚀 Performance Optimization
@@ -168,6 +219,7 @@ It acts like Ruff (lint checks) and Black (formatter) combined—Cursor should a
 - [ ] No `inv`, `eval`, or globals
 - [ ] Built-ins used over custom loops
 - [ ] Input validation present
+- [ ] Dependency validation for MATLAB/Simulink workflows (functions, models, toolboxes)
 - [ ] Descriptive names and comments
 - [ ] Unit tests written
 - [ ] Plots efficient (no redraw in compute loops)
