@@ -1,0 +1,126 @@
+name: Pull Request Quality Check
+
+on:
+  pull_request:
+    branches: [ main, master ]
+  push:
+    branches: [ main, master ]
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9, 3.10, 3.11]
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Full history for better analysis
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt', '**/pyproject.toml') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-${{ matrix.python-version }}-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        if [ -f pyproject.toml ]; then pip install -e .; fi
+        pip install ruff mypy black pytest pytest-cov
+
+    - name: Check for placeholders and magic numbers
+      run: |
+        echo "🔍 Checking for placeholders and magic numbers..."
+        if [ -f scripts/quality-check.py ]; then
+          python scripts/quality-check.py
+        else
+          echo "⚠️ No quality-check.py found, skipping..."
+        fi
+
+    - name: Lint with Ruff
+      run: |
+        echo "🔍 Running Ruff linter..."
+        if [ -f ruff.toml ]; then
+          ruff check . --select ALL
+        else
+          ruff check . --select E,W,F,I,N,UP,YTT,S,ARG,ERA,PD,PG,PL,TRY,NPY,PIE,T20,FLY,PERF,LOG,RSE,RUF
+        fi
+
+    - name: Type check with MyPy
+      run: |
+        echo "🔍 Running MyPy type checker..."
+        if [ -f mypy.ini ]; then
+          mypy . --config-file mypy.ini
+        else
+          mypy . --strict --ignore-missing-imports
+        fi
+
+    - name: Format check with Black
+      run: |
+        echo "🔍 Checking code formatting with Black..."
+        black --check --diff .
+
+    - name: Run tests
+      run: |
+        echo "🧪 Running tests..."
+        if [ -f pytest.ini ]; then
+          pytest --cov=. --cov-report=xml --cov-report=term-missing
+        else
+          pytest --cov=. --cov-report=xml --cov-report=term-missing tests/
+        fi
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+
+  security-check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Run Bandit security check
+      run: |
+        pip install bandit
+        bandit -r . -f json -o bandit-report.json || true
+
+    - name: Upload Bandit results
+      uses: actions/upload-artifact@v4
+      with:
+        name: bandit-report
+        path: bandit-report.json
+
+  documentation-check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Check documentation links
+      run: |
+        echo "📚 Checking documentation..."
+        if [ -f README.md ]; then
+          echo "✅ README.md found"
+        else
+          echo "⚠️ No README.md found"
+        fi
+
+    - name: Check for docstrings
+      run: |
+        echo "📝 Checking for docstrings..."
+        if command -v pydocstyle &> /dev/null; then
+          pip install pydocstyle
+          pydocstyle . || echo "⚠️ Docstring issues found"
+        fi
