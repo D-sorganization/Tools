@@ -109,42 +109,67 @@ function validateDependencies(requiredFunctions, requiredToolboxes)
         requiredToolboxes (1,:) cell
     end
 
-    % Preallocate arrays for missing dependencies
-    missingFunctions = cell(1, numel(requiredFunctions));
-    numMissingFunctions = 0;
+    % exist() returns 2 for files on the MATLAB path
+    EXIST_FILE = 2;
     
-    % Validate that all required functions exist on MATLAB path
+    % Use logical indexing for efficient collection of missing functions
+    functionExists = false(1, numel(requiredFunctions));
     for i = 1:numel(requiredFunctions)
-        if exist(requiredFunctions{i}, 'file') ~= 2
-            numMissingFunctions = numMissingFunctions + 1;
-            missingFunctions{numMissingFunctions} = requiredFunctions{i};
-        end
+        functionExists(i) = (exist(requiredFunctions{i}, 'file') == EXIST_FILE);
     end
-    missingFunctions = missingFunctions(1:numMissingFunctions);
+    missingFunctions = requiredFunctions(~functionExists);
 
-    % Preallocate arrays for missing toolboxes
-    missingToolboxes = cell(1, numel(requiredToolboxes));
-    numMissingToolboxes = 0;
-    
-    % Validate required toolboxes
+    % Use logical indexing for efficient collection of missing toolboxes
+    toolboxAvailable = false(1, numel(requiredToolboxes));
     for i = 1:numel(requiredToolboxes)
-        if ~license('test', requiredToolboxes{i})
-            numMissingToolboxes = numMissingToolboxes + 1;
-            missingToolboxes{numMissingToolboxes} = requiredToolboxes{i};
-        end
+        toolboxAvailable(i) = license('test', requiredToolboxes{i});
     end
-    missingToolboxes = missingToolboxes(1:numMissingToolboxes);
+    missingToolboxes = requiredToolboxes(~toolboxAvailable);
 
     % Raise error if any dependencies are missing
     if ~isempty(missingFunctions) || ~isempty(missingToolboxes)
-        parts = {'Missing dependencies:'};
+        % Preallocate parts array (max 3 elements: header + functions + toolboxes)
+        parts = cell(1, 3);
+        numParts = 1;
+        parts{1} = 'Missing dependencies:';
+        
         if ~isempty(missingFunctions)
-            parts{end+1} = sprintf('  Functions: %s', strjoin(missingFunctions, ', '));
+            numParts = numParts + 1;
+            parts{numParts} = sprintf('  Functions: %s', strjoin(missingFunctions, ', '));
         end
         if ~isempty(missingToolboxes)
-            parts{end+1} = sprintf('  Toolboxes: %s', strjoin(missingToolboxes, ', '));
+            numParts = numParts + 1;
+            parts{numParts} = sprintf('  Toolboxes: %s', strjoin(missingToolboxes, ', '));
         end
-        error('DependencyValidation:MissingDependencies', '%s', strjoin(parts, newline));
+        error('DependencyValidation:MissingDependencies', '%s', strjoin(parts(1:numParts), newline));
+    end
+end
+```
+
+**Example Tests:**
+```matlab
+function test_validateDependencies_valid()
+    % Test with built-in functions and available toolbox
+    validateDependencies({'sin', 'cos'}, {'MATLAB'});
+end
+
+function test_validateDependencies_missing_function()
+    % Test error for missing function
+    try
+        validateDependencies({'nonexistentFunction123'}, {});
+        error('Expected error was not raised');
+    catch ME
+        assert(strcmp(ME.identifier, 'DependencyValidation:MissingDependencies'));
+    end
+end
+
+function test_validateDependencies_missing_toolbox()
+    % Test error for missing toolbox
+    try
+        validateDependencies({}, {'Nonexistent_Toolbox_XYZ'});
+        error('Expected error was not raised');
+    catch ME
+        assert(strcmp(ME.identifier, 'DependencyValidation:MissingDependencies'));
     end
 end
 ```
