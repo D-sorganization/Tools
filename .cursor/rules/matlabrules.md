@@ -1,6 +1,6 @@
 # MATLAB Best Practices Rules for Cursor
 
-This document consolidates style, correctness, and performance optimization guidelines for MATLAB programming. 
+This document consolidates style, correctness, and performance optimization guidelines for MATLAB programming.
 It acts like Ruff (lint checks) and Black (formatter) combined—Cursor should apply these rules automatically where possible.
 
 ---
@@ -82,32 +82,69 @@ It acts like Ruff (lint checks) and Black (formatter) combined—Cursor should a
 **Example:**
 ```matlab
 function validateDependencies(requiredFunctions, requiredToolboxes)
+    %VALIDATEDEPENDENCIES Validate that required functions and toolboxes are available.
+    %
+    % Purpose:
+    %   Checks that all required helper functions are present on the MATLAB path and
+    %   that all required toolboxes are available. Raises an error if any dependencies
+    %   are missing, listing the missing functions and toolboxes.
+    %
+    % Inputs:
+    %   requiredFunctions - Cell array of function names (strings) to validate.
+    %   requiredToolboxes - Cell array of toolbox names (strings) to check licenses for.
+    %
+    % Outputs:
+    %   (none) - Raises an error if dependencies are missing.
+    %
+    % Raises:
+    %   Error with ID 'DependencyValidation:MissingDependencies' if any dependencies are missing.
+    %
+    % Example:
+    %   validateDependencies({'myHelper', 'myUtility'}, {'Simulink', 'Parallel_Computing_Toolbox'});
+    %
+    % See also: exist, license, error
+
+    arguments
+        requiredFunctions (1,:) cell
+        requiredToolboxes (1,:) cell
+    end
+
+    % Preallocate arrays for missing dependencies
+    missingFunctions = cell(1, numel(requiredFunctions));
+    numMissingFunctions = 0;
+    
     % Validate that all required functions exist on MATLAB path
-    missingFunctions = {};
-    for i = 1:length(requiredFunctions)
+    for i = 1:numel(requiredFunctions)
         if exist(requiredFunctions{i}, 'file') ~= 2
-            missingFunctions{end+1} = requiredFunctions{i};
+            numMissingFunctions = numMissingFunctions + 1;
+            missingFunctions{numMissingFunctions} = requiredFunctions{i};
         end
     end
+    missingFunctions = missingFunctions(1:numMissingFunctions);
+
+    % Preallocate arrays for missing toolboxes
+    missingToolboxes = cell(1, numel(requiredToolboxes));
+    numMissingToolboxes = 0;
     
     % Validate required toolboxes
-    missingToolboxes = {};
-    for i = 1:length(requiredToolboxes)
+    for i = 1:numel(requiredToolboxes)
         if ~license('test', requiredToolboxes{i})
-            missingToolboxes{end+1} = requiredToolboxes{i};
+            numMissingToolboxes = numMissingToolboxes + 1;
+            missingToolboxes{numMissingToolboxes} = requiredToolboxes{i};
         end
     end
-    
+    missingToolboxes = missingToolboxes(1:numMissingToolboxes);
+
     % Raise error if any dependencies are missing
     if ~isempty(missingFunctions) || ~isempty(missingToolboxes)
-        errorMsg = 'Missing dependencies:\n';
+        parts = {'Missing dependencies:'};
         if ~isempty(missingFunctions)
-            errorMsg = [errorMsg, sprintf('  Functions: %s\n', strjoin(missingFunctions, ', '))];
+            parts{end+1} = sprintf('  Functions: %s', strjoin(missingFunctions, ', '));
         end
         if ~isempty(missingToolboxes)
-            errorMsg = [errorMsg, sprintf('  Toolboxes: %s\n', strjoin(missingToolboxes, ', '))];
+            parts{end+1} = sprintf('  Toolboxes: %s', strjoin(missingToolboxes, ', '));
         end
-        error('DependencyValidation:MissingDependencies', errorMsg);
+        error('DependencyValidation:MissingDependencies', '%s', strjoin(parts, newline));
     end
 end
 ```
@@ -131,7 +168,7 @@ end
 - Avoid `arrayfun`/`cellfun` for speed (fine for clarity).
 
 ### 2. Preallocation
-- **Critical Rule**: Preallocate arrays with `zeros`, `ones`, `nan`, `cell`, or `spalloc`. 
+- **Critical Rule**: Preallocate arrays with `zeros`, `ones`, `nan`, `cell`, or `spalloc`.
 - Never grow arrays in a loop.
 - Preallocate cell arrays and structs if filled in loops.
 
