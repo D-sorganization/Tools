@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doom-like FPS Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+        }
+
+        #gameCanvas {
+            display: block;
+            margin: 0 auto;
+            background: #000;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        #startScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #ff0000;
+            z-index: 1000;
+        }
+
+        #startScreen h1 {
+            font-size: 64px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #ff0000;
+        }
+
+        #startScreen p {
+            font-size: 18px;
+            margin: 10px;
+            color: #fff;
+        }
+
+        #startScreen button {
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-size: 24px;
+            background: #ff0000;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+        }
+
+        #startScreen button:hover {
+            background: #cc0000;
+        }
+
+        .controls {
+            color: #888;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="startScreen">
+        <h1>DOOM-LIKE</h1>
+        <p class="controls">WASD - Move</p>
+        <p class="controls">Mouse - Look Around</p>
+        <p class="controls">Click - Shoot</p>
+        <p class="controls">E - Open Doors</p>
+        <p style="margin-top: 20px; color: #ff0000;">Kill all enemies to win!</p>
+        <button id="startButton">START GAME</button>
+    </div>
+    <canvas id="gameCanvas"></canvas>
+
+    <script src="game.js"></script>
+</body>
+</html>
