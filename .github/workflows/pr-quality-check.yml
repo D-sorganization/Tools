@@ -2,12 +2,9 @@ name: Pull Request Quality Check
 
 on:
   pull_request:
-    branches: [ main, master ]
-    # Replicant branch: claude/Tools_Replicants:
     branches: [ main, master, claude/Tools_Replicants ]
   push:
-    branches: [ main, master ]
-    # Replicant branch: claude/Tools_Replicants
+    branches: [ main, master, claude/Tools_Replicants ]
 
 jobs:
   quality-check:
