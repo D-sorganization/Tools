@@ -41,7 +41,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         if [ -f pyproject.toml ]; then pip install -e .; fi
         # ✅ Pin tool versions
-        pip install ruff==0.5.0 mypy==1.10.0 black==24.4.2 pytest pytest-cov
+        pip install ruff==0.5.0 mypy==1.10.0 black==24.4.2 pytest==8.3.3 pytest-cov==6.0.0
 
     - name: Check for placeholders and magic numbers
       run: |
@@ -166,8 +166,8 @@ jobs:
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: false
-        # ✅ Always include token
-        token: ${{ secrets.CODECOV_TOKEN }}
+        # ✅ Only include token if available (for forked PRs compatibility)
+        token: ${{ secrets.CODECOV_TOKEN || '' }}
 
   security-check:
     runs-on: ubuntu-latest
@@ -187,7 +187,7 @@ jobs:
         pip install bandit==1.7.7
         # ✅ Exclude test directories, target source code only
         if [ -d python/src ]; then
-          bandit -r python/src -x tests -f json -o bandit-report.json
+          bandit -r python/src -x python/tests -f json -o bandit-report.json
         elif [ -d python ]; then
           bandit -r python -x tests -f json -o bandit-report.json
         elif [ -d src ]; then
