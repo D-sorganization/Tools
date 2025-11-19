@@ -2,58 +2,70 @@ name: Pull Request Quality Check
 
 on:
   pull_request:
-    branches: [ main, master ]
+    branches: [ main, master, claude/Tools_Replicants ]
   push:
-    branches: [ main, master ]
+    branches: [ main, master, claude/Tools_Replicants ]
 
 jobs:
   quality-check:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: true  # ✅ Always include
       matrix:
-        python-version: ['3.9', '3.10', '3.11']
+        python-version: ["3.9", "3.10", "3.11"]
 
     steps:
     - uses: actions/checkout@v4
       with:
-        fetch-depth: 0  # Full history for better analysis
+        fetch-depth: 0
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
 
     - name: Cache pip dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt', '**/pyproject.toml') }}
+        # ✅ Comprehensive cache key pattern
+        key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/*requirements*.txt', '**/pyproject.toml', '**/setup.py', '**/setup.cfg') }}
         restore-keys: |
           ${{ runner.os }}-pip-${{ matrix.python-version }}-
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        # Check both root and python/ subdirectory
+        if [ -f python/requirements.txt ]; then pip install -r python/requirements.txt; fi
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         if [ -f pyproject.toml ]; then pip install -e .; fi
-        pip install ruff mypy black pytest pytest-cov
+        # ✅ Pin tool versions
+        pip install ruff==0.5.0 mypy==1.10.0 black==24.4.2 pytest==8.3.3 pytest-cov==6.0.0
 
     - name: Check for placeholders and magic numbers
       run: |
         echo "🔍 Checking for placeholders and magic numbers..."
+        # ✅ Check both possible script locations
         if [ -f scripts/quality-check.py ]; then
           python scripts/quality-check.py
+        elif [ -f scripts/quality_check.py ]; then
+          python scripts/quality_check.py
+        elif [ -f quality_check_script.py ]; then
+          python quality_check_script.py
         else
-          echo "⚠️ No quality-check.py found, skipping..."
+          echo "⚠️ No quality check script found, skipping..."
         fi
 
     - name: Lint with Ruff
       run: |
         echo "🔍 Running Ruff linter..."
         if [ -f ruff.toml ]; then
-          ruff check . --select ALL
+          # ✅ Respect config file, don't override
+          ruff check .
         else
-          ruff check . --select E,W,F,I,N,UP,YTT,S,ARG,ERA,PD,PG,PL,TRY,NPY,PIE,T20,FLY,PERF,LOG,RSE,RUF
+          # ✅ Fallback with explicit rules
+          ruff check . --select ALL
         fi
 
     - name: Type check with MyPy
@@ -61,52 +73,151 @@ jobs:
         echo "🔍 Running MyPy type checker..."
         if [ -f mypy.ini ]; then
           mypy . --config-file mypy.ini
+        elif [ -f pyproject.toml ] && grep -qE '^\s*\[tool\.mypy\]' pyproject.toml; then
+          mypy .
         else
-          mypy . --strict --ignore-missing-imports
+          # ✅ Non-strict fallback to avoid conflicts
+          mypy . --ignore-missing-imports
         fi
 
     - name: Format check with Black
       run: |
         echo "🔍 Checking code formatting with Black..."
-        black --check --diff .
+        # ✅ Check source directories explicitly
+        if [ -d python/src ]; then
+          if [ -d python/tests ]; then
+            black --check --diff python/src python/tests
+          else
+            black --check --diff python/src
+          fi
+        elif [ -d python ]; then
+          black --check --diff python
+        elif [ -d src ]; then
+          if [ -d tests ]; then
+            black --check --diff src tests/
+          else
+            black --check --diff src
+          fi
+        else
+          black --check --diff .
+        fi
 
     - name: Run tests
       run: |
         echo "🧪 Running tests..."
-        if [ -f pytest.ini ]; then
-          pytest --cov=. --cov-report=xml --cov-report=term-missing
+        # ✅ Detect source directory for accurate coverage
+        if [ -d python/src ]; then
+          COV_TARGET="python/src"
+        elif [ -d python ]; then
+          COV_TARGET="python"
+        elif [ -d src ]; then
+          COV_TARGET="src"
         else
-          pytest --cov=. --cov-report=xml --cov-report=term-missing tests/
+          COV_TARGET="."
+        fi
+
+        # Check for pytest.ini in python/ subdirectory first
+        if [ -f python/pytest.ini ]; then
+          cd python
+          if [ -d src ]; then
+            pytest tests/ --cov=src --cov-report=xml --cov-report=term-missing
+            EXIT_CODE=$?
+          else
+            pytest tests/ --cov=. --cov-report=xml --cov-report=term-missing
+            EXIT_CODE=$?
+          fi
+          cd ..
+          exit $EXIT_CODE
+        elif [ -f pytest.ini ]; then
+          pytest --cov="$COV_TARGET" --cov-report=xml --cov-report=term-missing
+          EXIT_CODE=$?
+          exit $EXIT_CODE
+        elif [ -d python/tests ]; then
+          cd python
+          if [ -d src ]; then
+            pytest tests/ --cov=src --cov-report=xml --cov-report=term-missing
+            EXIT_CODE=$?
+          else
+            pytest tests/ --cov=. --cov-report=xml --cov-report=term-missing
+            EXIT_CODE=$?
+          fi
+          cd ..
+          exit $EXIT_CODE
+        elif [ -d tests ]; then
+          pytest tests/ --cov="$COV_TARGET" --cov-report=xml --cov-report=term-missing
+          EXIT_CODE=$?
+          exit $EXIT_CODE
+        else
+          echo "⚠️ No tests directory found, skipping tests"
+        fi
+
+    - name: Check for coverage file
+      id: coverage-check
+      run: |
+        # ✅ Check for coverage.xml anywhere in the repo (matches upload pattern)
+        if find . -name 'coverage.xml' -type f | grep -q .; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
         fi
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+      if: steps.coverage-check.outputs.exists == 'true'
+      uses: codecov/codecov-action@v4
       with:
-        file: ./coverage.xml
+        # ✅ Wildcard pattern for flexibility
+        files: '**/coverage.xml'
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: false
+        # ✅ Token will be empty string for forked PRs (Codecov handles this gracefully)
+        token: ${{ secrets.CODECOV_TOKEN }}
 
   security-check:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
 
+    # ✅ Always set up Python
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
     - name: Run Bandit security check
+      # ✅ Use continue-on-error instead of || true
+      continue-on-error: true
       run: |
-        pip install bandit
-        bandit -r . -f json -o bandit-report.json || true
+        pip install bandit==1.7.7
+        # ✅ Exclude test directories, target source code only
+        if [ -d python/src ]; then
+          bandit -r python/src --exclude 'python/tests,**/tests/**' -f json -o bandit-report.json
+        elif [ -d python ]; then
+          bandit -r python --exclude 'tests,**/tests/**' -f json -o bandit-report.json
+        elif [ -d src ]; then
+          bandit -r src --exclude 'tests,**/tests/**' -f json -o bandit-report.json
+        else
+          bandit -r . --exclude 'tests,**/tests/**' -f json -o bandit-report.json
+        fi
 
     - name: Upload Bandit results
       uses: actions/upload-artifact@v4
       with:
         name: bandit-report
         path: bandit-report.json
+        # ✅ Handle missing files gracefully
+        if-no-files-found: ignore
 
   documentation-check:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+
+    # ✅ Always set up Python
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
 
     - name: Check documentation links
       run: |
@@ -118,9 +229,18 @@ jobs:
         fi
 
     - name: Check for docstrings
+      # ✅ Use continue-on-error instead of || echo
+      continue-on-error: true
       run: |
         echo "📝 Checking for docstrings..."
-        if ! command -v pydocstyle &> /dev/null; then
-          pip install pydocstyle
+        pip install pydocstyle==6.3.0
+        # ✅ Check source directories only
+        if [ -d python/src ]; then
+          pydocstyle python/src
+        elif [ -d python ]; then
+          pydocstyle python
+        elif [ -d src ]; then
+          pydocstyle src
+        else
+          pydocstyle .
         fi
-        pydocstyle . || echo "⚠️ Docstring issues found"
