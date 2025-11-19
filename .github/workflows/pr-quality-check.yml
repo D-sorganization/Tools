@@ -73,7 +73,7 @@ jobs:
         echo "🔍 Running MyPy type checker..."
         if [ -f mypy.ini ]; then
           mypy . --config-file mypy.ini
-        elif [ -f pyproject.toml ] && grep -q "tool\.mypy" pyproject.toml; then
+        elif [ -f pyproject.toml ] && grep -qE '^\s*\[tool\.mypy\]' pyproject.toml; then
           mypy .
         else
           # ✅ Non-strict fallback to avoid conflicts
@@ -191,13 +191,13 @@ jobs:
         pip install bandit==1.7.7
         # ✅ Exclude test directories, target source code only
         if [ -d python/src ]; then
-          bandit -r python/src --exclude '**/tests/**' -f json -o bandit-report.json
+          bandit -r python/src --exclude 'python/tests,**/tests/**' -f json -o bandit-report.json
         elif [ -d python ]; then
-          bandit -r python --exclude '**/tests/**' -f json -o bandit-report.json
+          bandit -r python --exclude 'tests,**/tests/**' -f json -o bandit-report.json
         elif [ -d src ]; then
-          bandit -r src --exclude '**/tests/**' -f json -o bandit-report.json
+          bandit -r src --exclude 'tests,**/tests/**' -f json -o bandit-report.json
         else
-          bandit -r . --exclude '**/tests/**' -f json -o bandit-report.json
+          bandit -r . --exclude 'tests,**/tests/**' -f json -o bandit-report.json
         fi
 
     - name: Upload Bandit results
