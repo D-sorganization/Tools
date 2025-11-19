@@ -86,17 +86,17 @@ jobs:
         # ✅ Check source directories explicitly
         if [ -d python/src ]; then
           if [ -d python/tests ]; then
-            black --check --diff python/src python/tests
+            black --check --diff pythonsrc python/tests
           else
-            black --check --diff python/src
+            black --check --diff pythonsrc
           fi
         elif [ -d python ]; then
-          black --check --diff python/
+          black --check --diff python
         elif [ -d src ]; then
           if [ -d tests ]; then
-            black --check --diff src/ tests/
+            black --check --diff src tests/
           else
-            black --check --diff src/
+            black --check --diff src
           fi
         else
           black --check --diff .
@@ -170,8 +170,8 @@ jobs:
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: false
-        # ✅ Only include token if available (for forked PRs compatibility)
-        token: ${{ secrets.CODECOV_TOKEN || '' }}
+        # ✅ Token will be empty string for forked PRs (Codecov handles this gracefully)
+        token: ${{ secrets.CODECOV_TOKEN }}
 
   security-check:
     runs-on: ubuntu-latest
@@ -191,13 +191,13 @@ jobs:
         pip install bandit==1.7.7
         # ✅ Exclude test directories, target source code only
         if [ -d python/src ]; then
-          bandit -r python/src -x python/tests -f json -o bandit-report.json
+          bandit -r python/src --exclude python/tests -f json -o bandit-report.json
         elif [ -d python ]; then
-          bandit -r python -x tests -f json -o bandit-report.json
+          bandit -r python --exclude tests -f json -o bandit-report.json
         elif [ -d src ]; then
-          bandit -r src -x tests -f json -o bandit-report.json
+          bandit -r src --exclude tests -f json -o bandit-report.json
         else
-          bandit -r . -x tests -f json -o bandit-report.json
+          bandit -r . --exclude tests -f json -o bandit-report.json
         fi
 
     - name: Upload Bandit results
@@ -236,11 +236,11 @@ jobs:
         pip install pydocstyle==6.3.0
         # ✅ Check source directories only
         if [ -d python/src ]; then
-          pydocstyle python/src/
+          pydocstyle pythonsrc
         elif [ -d python ]; then
-          pydocstyle python/
+          pydocstyle python
         elif [ -d src ]; then
-          pydocstyle src/
+          pydocstyle src
         else
           pydocstyle .
         fi
