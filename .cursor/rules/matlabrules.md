@@ -1,6 +1,6 @@
 # MATLAB Best Practices Rules for Cursor
 
-This document consolidates style, correctness, and performance optimization guidelines for MATLAB programming. 
+This document consolidates style, correctness, and performance optimization guidelines for MATLAB programming.
 It acts like Ruff (lint checks) and Black (formatter) combined—Cursor should apply these rules automatically where possible.
 
 ---
@@ -89,7 +89,7 @@ function validateDependencies(requiredFunctions, requiredToolboxes)
             missingFunctions{end+1} = requiredFunctions{i};
         end
     end
-    
+
     % Validate required toolboxes
     missingToolboxes = {};
     for i = 1:length(requiredToolboxes)
@@ -97,7 +97,7 @@ function validateDependencies(requiredFunctions, requiredToolboxes)
             missingToolboxes{end+1} = requiredToolboxes{i};
         end
     end
-    
+
     % Raise error if any dependencies are missing
     if ~isempty(missingFunctions) || ~isempty(missingToolboxes)
         errorMsg = 'Missing dependencies:\n';
@@ -131,7 +131,7 @@ end
 - Avoid `arrayfun`/`cellfun` for speed (fine for clarity).
 
 ### 2. Preallocation
-- **Critical Rule**: Preallocate arrays with `zeros`, `ones`, `nan`, `cell`, or `spalloc`. 
+- **Critical Rule**: Preallocate arrays with `zeros`, `ones`, `nan`, `cell`, or `spalloc`.
 - Never grow arrays in a loop.
 - Preallocate cell arrays and structs if filled in loops.
 

@@ -1,0 +1,178 @@
+name: Pull Request Quality Check
+
+on:
+  pull_request:
+    branches: [ main, master ]
+  push:
+    branches: [ main, master ]
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Full history for better analysis
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Cache pip dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/*requirements*.txt', '**/pyproject.toml', '**/setup.py', '**/setup.cfg') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-${{ matrix.python-version }}-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f python/requirements.txt ]; then pip install -r python/requirements.txt; fi
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        pip install ruff==0.5.0 mypy==1.10.0 black==24.4.2 pytest pytest-cov
+
+    - name: Check for placeholders and magic numbers
+      run: |
+        echo "🔍 Checking for placeholders and magic numbers..."
+        if [ -f scripts/quality-check.py ]; then
+          python scripts/quality-check.py
+        else
+          echo "⚠️ No quality-check.py found, skipping..."
+        fi
+
+    - name: Lint with Ruff
+      run: |
+        echo "🔍 Running Ruff linter..."
+        if [ -f ruff.toml ]; then
+          ruff check .
+        else
+          ruff check . --select ALL
+        fi
+
+    - name: Type check with MyPy
+      run: |
+        echo "🔍 Running MyPy type checker..."
+        if [ -f mypy.ini ]; then
+          mypy . --config-file mypy.ini
+        else
+          mypy . --ignore-missing-imports
+        fi
+
+    - name: Format check with Black
+      run: |
+        echo "🔍 Checking code formatting with Black..."
+        black --check --diff .
+
+    - name: Run tests
+      run: |
+        echo "🧪 Running tests..."
+        if [ -f pytest.ini ]; then
+          pytest --cov=python --cov-report=xml --cov-report=term-missing
+        elif [ -d python/tests ]; then
+          cd python
+          pytest tests/ --cov=. --cov-report=xml --cov-report=term-missing
+          cd ..
+        elif [ -d tests ]; then
+          pytest --cov=python --cov-report=xml --cov-report=term-missing tests/
+        else
+          echo "⚠️ No tests directory found, skipping tests"
+        fi
+
+    - name: Check for coverage file
+      id: coverage-check
+      run: |
+        if [ -f coverage.xml ] || [ -f python/coverage.xml ]; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Upload coverage to Codecov
+      if: steps.coverage-check.outputs.exists == 'true'
+      uses: codecov/codecov-action@v4
+      with:
+        files: '**/coverage.xml'
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+        token: ${{ secrets.CODECOV_TOKEN }}
+
+  security-check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Run Bandit security check
+      continue-on-error: true
+      run: |
+        pip install bandit
+        # Run Bandit on source code only, excluding test directories to reduce false positives
+        if [ -d python/src ]; then
+          bandit -r python/src -x python/tests -f json -o bandit-report.json
+        elif [ -d python ]; then
+          bandit -r python -x python/tests -f json -o bandit-report.json
+        elif [ -d src ]; then
+          bandit -r src -x tests -f json -o bandit-report.json
+        else
+          bandit -r . -x tests -f json -o bandit-report.json
+        fi
+
+    - name: Upload Bandit results
+      uses: actions/upload-artifact@v4
+      with:
+        name: bandit-report
+        path: bandit-report.json
+        if-no-files-found: ignore
+
+  documentation-check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Check documentation links
+      run: |
+        echo "📚 Checking documentation..."
+        if [ -f README.md ]; then
+          echo "✅ README.md found"
+        else
+          echo "⚠️ No README.md found"
+        fi
+
+    - name: Check for docstrings
+      continue-on-error: true
+      run: |
+        echo "📝 Checking for docstrings..."
+        pip install pydocstyle
+        # Check source directories only
+        if [ -d python/src ]; then
+          pydocstyle python/src/
+        elif [ -d python ]; then
+          pydocstyle python/
+        elif [ -d src ]; then
+          pydocstyle src/
+        else
+          pydocstyle .
+        fi
+
+
+
+
+
