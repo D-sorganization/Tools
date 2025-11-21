@@ -229,6 +229,27 @@ jobs:
         fi
 
     - name: Check for docstrings
+<<<<<<< HEAD
+      continue-on-error: true
+      run: |
+        echo "📝 Checking for docstrings..."
+        pip install pydocstyle
+        # Check source directories only
+        if [ -d python/src ]; then
+          pydocstyle python/src/
+        elif [ -d python ]; then
+          pydocstyle python/
+        elif [ -d src ]; then
+          pydocstyle src/
+        else
+          pydocstyle .
+        fi
+
+
+
+
+
+=======
       # ✅ Use continue-on-error instead of || echo
       continue-on-error: true
       run: |
@@ -244,3 +265,4 @@ jobs:
         else
           pydocstyle .
         fi
+>>>>>>> origin/main
