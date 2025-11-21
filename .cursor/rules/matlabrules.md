@@ -82,32 +82,92 @@ It acts like Ruff (lint checks) and Black (formatter) combined—Cursor should a
 **Example:**
 ```matlab
 function validateDependencies(requiredFunctions, requiredToolboxes)
-    % Validate that all required functions exist on MATLAB path
-    missingFunctions = {};
-    for i = 1:length(requiredFunctions)
-        if exist(requiredFunctions{i}, 'file') ~= 2
-            missingFunctions{end+1} = requiredFunctions{i};
-        end
+    %VALIDATEDEPENDENCIES Validate that required functions and toolboxes are available.
+    %
+    % Purpose:
+    %   Checks that all required helper functions are present on the MATLAB path and
+    %   that all required toolboxes are available. Raises an error if any dependencies
+    %   are missing, listing the missing functions and toolboxes.
+    %
+    % Inputs:
+    %   requiredFunctions - Cell array of function names (strings) to validate.
+    %   requiredToolboxes - Cell array of toolbox names (strings) to check licenses for.
+    %
+    % Outputs:
+    %   (none) - Raises an error if dependencies are missing.
+    %
+    % Raises:
+    %   Error with ID 'DependencyValidation:MissingDependencies' if any dependencies are missing.
+    %
+    % Example:
+    %   validateDependencies({'myHelper', 'myUtility'}, {'Simulink', 'Parallel_Computing_Toolbox'});
+    %
+    % See also: exist, license, error
+
+    arguments
+        requiredFunctions (1,:) cell
+        requiredToolboxes (1,:) cell
     end
 
-    % Validate required toolboxes
-    missingToolboxes = {};
-    for i = 1:length(requiredToolboxes)
-        if ~license('test', requiredToolboxes{i})
-            missingToolboxes{end+1} = requiredToolboxes{i};
-        end
+    % exist() returns 2 for files on the MATLAB path
+    EXIST_FILE = 2;
+    % Use logical indexing for efficient collection of missing functions
+    functionExists = false(1, numel(requiredFunctions));
+    for i = 1:numel(requiredFunctions)
+        functionExists(i) = (exist(requiredFunctions{i}, 'file') == EXIST_FILE);
     end
+    missingFunctions = requiredFunctions(~functionExists);
+
+    % Use logical indexing for efficient collection of missing toolboxes
+    toolboxAvailable = false(1, numel(requiredToolboxes));
+    for i = 1:numel(requiredToolboxes)
+        toolboxAvailable(i) = license('test', requiredToolboxes{i});
+    end
+    missingToolboxes = requiredToolboxes(~toolboxAvailable);
 
     % Raise error if any dependencies are missing
     if ~isempty(missingFunctions) || ~isempty(missingToolboxes)
-        errorMsg = 'Missing dependencies:\n';
+        % Preallocate parts array (max 3 elements: header + functions + toolboxes)
+        parts = cell(1, 3);
+        numParts = 1;
+        parts{1} = 'Missing dependencies:';
         if ~isempty(missingFunctions)
-            errorMsg = [errorMsg, sprintf('  Functions: %s\n', strjoin(missingFunctions, ', '))];
+            numParts = numParts + 1;
+            parts{numParts} = sprintf('  Functions: %s', strjoin(missingFunctions, ', '));
         end
         if ~isempty(missingToolboxes)
-            errorMsg = [errorMsg, sprintf('  Toolboxes: %s\n', strjoin(missingToolboxes, ', '))];
+            numParts = numParts + 1;
+            parts{numParts} = sprintf('  Toolboxes: %s', strjoin(missingToolboxes, ', '));
         end
-        error('DependencyValidation:MissingDependencies', errorMsg);
+        error('DependencyValidation:MissingDependencies', '%s', strjoin(parts(1:numParts), newline));
+    end
+end
+```
+
+**Example Tests:**
+```matlab
+function test_validateDependencies_valid()
+    % Test with built-in functions and available toolbox
+    validateDependencies({'sin', 'cos'}, {'MATLAB'});
+end
+
+function test_validateDependencies_missing_function()
+    % Test error for missing function
+    try
+        validateDependencies({'nonexistentFunction123'}, cell(1,0));
+        error('Expected error was not raised');
+    catch ME
+        assert(strcmp(ME.identifier, 'DependencyValidation:MissingDependencies'));
+    end
+end
+
+function test_validateDependencies_missing_toolbox()
+    % Test error for missing toolbox
+    try
+        validateDependencies(cell(1,0), {'Nonexistent_Toolbox_XYZ'});
+        error('Expected error was not raised');
+    catch ME
+        assert(strcmp(ME.identifier, 'DependencyValidation:MissingDependencies'));
     end
 end
 ```
