@@ -25,7 +25,23 @@ repos:
   hooks:
     - id: mypy
       additional_dependencies: ["types-requests", "types-PyYAML"]
-      args: ["--strict", "--ignore-missing-imports"]
+      args: [--config-file=mypy.ini]
+      types: [python]  # Only Python files - MyPy won't check JavaScript/TypeScript
+      files: ^python/  # Only python/ directory
+      exclude: |
+        (?x)^(
+          matlab/|
+          matlab_utilities/|
+          javascript/|  # Future-proof: exclude JS/TS directories
+          archive/|
+          legacy/|
+          experimental/|
+          \.git/|
+          __pycache__/|
+          \.pytest_cache/|
+          \.venv/|
+          venv/
+        )$
 
 # Jupyter notebook cleaner
 - repo: https://github.com/kynan/nbstripout
