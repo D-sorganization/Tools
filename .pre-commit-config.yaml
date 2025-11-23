@@ -2,20 +2,20 @@ repos:
 # Python formatters
 - repo: https://github.com/psf/black
   rev: 24.4.2
-  hooks: 
+  hooks:
     - id: black
       language_version: python3.11
 
 - repo: https://github.com/PyCQA/isort
   rev: 5.13.2
-  hooks: 
+  hooks:
     - id: isort
       args: ["--profile", "black"]
 
 # Python linter
 - repo: https://github.com/astral-sh/ruff-pre-commit
   rev: v0.5.0
-  hooks: 
+  hooks:
     - id: ruff
       args: ["--fix", "--select", "ALL", "--ignore", "D,ANN101,ANN102"]
 
@@ -27,7 +27,7 @@ repos:
       additional_dependencies: ["types-requests", "types-PyYAML"]
       args: [--config-file=mypy.ini]
       types: [python]  # Only Python files - MyPy won't check JavaScript/TypeScript
-      files: ^python/  # Only python/ directory
+      files: ^python/.*  # All files under python/ and subdirectories
       exclude: |
         (?x)^(
           matlab/|
@@ -46,7 +46,7 @@ repos:
 # Jupyter notebook cleaner
 - repo: https://github.com/kynan/nbstripout
   rev: 0.7.1
-  hooks: 
+  hooks:
     - id: nbstripout
 
 # Local quality checks
