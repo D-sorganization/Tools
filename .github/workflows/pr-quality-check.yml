@@ -72,12 +72,24 @@ jobs:
       run: |
         echo "🔍 Running MyPy type checker..."
         if [ -f mypy.ini ]; then
-          mypy . --config-file mypy.ini
+          if [ -d python ]; then
+            mypy python/ --config-file mypy.ini
+          else
+            mypy . --config-file mypy.ini
+          fi
         elif [ -f pyproject.toml ] && grep -qE '^\s*\[tool\.mypy\]' pyproject.toml; then
-          mypy .
+          if [ -d python ]; then
+            mypy python/
+          else
+            mypy .
+          fi
         else
           # ✅ Non-strict fallback to avoid conflicts
-          mypy . --ignore-missing-imports
+          if [ -d python ]; then
+            mypy python/ --ignore-missing-imports
+          else
+            mypy . --ignore-missing-imports
+          fi
         fi
 
     - name: Format check with Black
