@@ -30,17 +30,17 @@ repos:
       files: ^python/.*  # All files under python/ and subdirectories
       exclude: |
         (?x)^(
-          matlab/|
-          matlab_utilities/|
-          javascript/|  # Future-proof: exclude JS/TS directories
-          archive/|
-          legacy/|
-          experimental/|
-          \.git/|
-          __pycache__/|
-          \.pytest_cache/|
-          \.venv/|
-          venv/
+          python/matlab/|
+          python/matlab_utilities/|
+          python/javascript/|  # Future-proof: exclude JS/TS directories
+          python/archive/|
+          python/legacy/|
+          python/experimental/|
+          python/\.git/|
+          python/__pycache__/|
+          python/\.pytest_cache/|
+          python/\.venv/|
+          python/venv/
         )
 
 # Jupyter notebook cleaner
