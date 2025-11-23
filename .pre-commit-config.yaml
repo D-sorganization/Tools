@@ -41,7 +41,7 @@ repos:
           \.pytest_cache/|
           \.venv/|
           venv/
-        )$
+        )
 
 # Jupyter notebook cleaner
 - repo: https://github.com/kynan/nbstripout
