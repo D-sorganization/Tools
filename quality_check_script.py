@@ -134,32 +134,32 @@ def check_magic_numbers(lines: list[str], filepath: Path) -> list[tuple[int, str
     }
     if filepath.name in excluded_files:
         return issues
-    for line_num, line in enumerate(lines, 1):
-        def strip_comments(line: str) -> str:
-            """Strip comments from a line, handling string literals correctly."""
-            # Find the first # that's not inside a string literal
-            in_single_quote = False
-            in_double_quote = False
-            escaped = False
-            
-            for i, char in enumerate(line):
-                if escaped:
-                    escaped = False
-                    continue
-                if char == "\\":
-                    escaped = True
-                    continue
-                if char == "'" and not in_double_quote:
-                    in_single_quote = not in_single_quote
-                elif char == '"' and not in_single_quote:
-                    in_double_quote = not in_double_quote
-                elif char == "#" and not in_single_quote and not in_double_quote:
-                    # Found a comment marker outside of strings
-                    return line[:i].rstrip()
-            return line
+
+    def strip_comments(line: str) -> str:
+        """Strip comments from a line, handling string literals correctly."""
+        # Find the first # that's not inside a string literal
+        in_single_quote = False
+        in_double_quote = False
+        escaped = False
         
-            for line_num, line in enumerate(lines, 1):
-                line_content = strip_comments(line)
+        for i, char in enumerate(line):
+            if escaped:
+                escaped = False
+                continue
+            if char == "\\":
+                escaped = True
+                continue
+            if char == "'" and not in_double_quote:
+                in_single_quote = not in_single_quote
+            elif char == '"' and not in_single_quote:
+                in_double_quote = not in_double_quote
+            elif char == "#" and not in_single_quote and not in_double_quote:
+                # Found a comment marker outside of strings
+                return line[:i].rstrip()
+        return line
+
+    for line_num, line in enumerate(lines, 1):
+        line_content = strip_comments(line)
         for pattern, message in MAGIC_NUMBERS:
             if pattern.search(line_content):
                 issues.append((line_num, message, line.strip()))
