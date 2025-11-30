@@ -13,6 +13,7 @@ Usage:
 import argparse
 import json
 import logging
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -198,11 +199,9 @@ class MATLABQualityChecker:
         issues = []
 
         try:
-            with open(file_path, encoding="utf-8", errors="ignore") as f:
+            with file_path.open(encoding="utf-8", errors="ignore") as f:
                 content = f.read()
                 lines = content.split("\n")
-
-            import re
 
             # Track if we're in a function and nesting level
             in_function = False
@@ -318,22 +317,22 @@ class MATLABQualityChecker:
                     )
 
                 # Check for magic numbers (but allow common values and known constants)
-                # Exclude scientific notation, array indices, and common values
-                magic_number_pattern = r"(?<![.\w])\d*\.\d+(?![.\w])"
+                # Match both integer and floating-point literals (not part of variable names)
+                magic_number_pattern = r"(?<![.\w])(?:\d+\.\d+|\d+)(?![.\w])"
                 magic_numbers = re.findall(magic_number_pattern, line_stripped)
 
-                # Known acceptable values
+                # Known acceptable values (include integer and float representations)
                 acceptable_numbers = {
-                    "0.0",
+                    "0", "0.0",
+                    "1", "1.0",
+                    "2", "2.0",
+                    "3", "3.0",
+                    "4", "4.0",
+                    "5", "5.0",
+                    "10", "10.0",
+                    "100", "100.0",
+                    "1000", "1000.0",
                     "0.5",
-                    "1.0",
-                    "2.0",
-                    "3.0",
-                    "4.0",
-                    "5.0",
-                    "10.0",
-                    "100.0",
-                    "1000.0",
                     "0.1",
                     "0.01",
                     "0.001",

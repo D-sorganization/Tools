@@ -105,7 +105,7 @@ end
 if ~isempty(analysisOpts.OutputFile) || opts.AutoSave
     outputFile = analysisOpts.OutputFile;
     if isempty(outputFile) && opts.AutoSave
-        timestamp = datestr(now, 'yyyymmdd_HHMMSS');
+        timestamp = char(datetime('now', 'Format', 'yyyyMMdd_HHmmss'));
         outputFile = fullfile(pwd, sprintf('code_issues_%s.csv', timestamp));
     end
 

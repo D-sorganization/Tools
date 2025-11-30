@@ -128,8 +128,9 @@ function results = run_matlab_tests()
             fprintf('Found %d test methods in framework\n', length(suite));
 
             % Create test runner
+            % Use Detailed verbosity (level 2) for verbose output
             runner = matlab.unittest.TestRunner.withPlugin(...
-                matlab.unittest.plugins.VerbosityPlugin(2)); % Verbose output
+                matlab.unittest.plugins.VerbosityPlugin(matlab.unittest.Verbosity.Detailed));
 
             % Run tests
             test_results = runner.run(suite);
@@ -203,7 +204,13 @@ function results = run_matlab_tests()
         % Write JSON file
         fid = fopen(output_file, 'w');
         if fid ~= -1
-            fprintf(fid, '%s', jsonencode(json_results, 'PrettyPrint', true));
+            % Use PrettyPrint if available (R2021a+), otherwise use basic jsonencode
+            try
+                json_str = jsonencode(json_results, 'PrettyPrint', true);
+            catch
+                json_str = jsonencode(json_results);
+            end
+            fprintf(fid, '%s', json_str);
             fclose(fid);
             fprintf('Results saved to: %s\n', output_file);
         end
