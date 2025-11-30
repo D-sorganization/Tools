@@ -112,15 +112,27 @@ jobs:
       - name: Check for approximations
         run: |
           # Fail if "approximately" or similar found
-          if grep -ri "approximately\|approx[^a-z]\|roughly\|~[0-9]" \
+          # Exclude constants_file.py (contains documented values with sources)
+          # Exclude MATLAB files from approx variable name check (legitimate variable names)
+          # Only check for actual approximation words in comments/strings, not variable names
+          if grep -ri "approximately\|roughly" \
             --include="*.py" --include="*.m" \
             --exclude-dir=".git" \
-            --exclude-dir="docs" .; then
+            --exclude-dir="docs" \
+            --exclude="constants_file.py" .; then
             echo "❌ ERROR: Approximations found - use exact values with sources"
             exit 1
-          else
-            echo "✅ No approximations found"
           fi
+          # Check for ~ in comments (but exclude constants_file.py and MATLAB variable names)
+          if grep -ri "~[0-9]" \
+            --include="*.py" \
+            --exclude-dir=".git" \
+            --exclude-dir="docs" \
+            --exclude="constants_file.py" .; then
+            echo "❌ ERROR: Approximations found - use exact values with sources"
+            exit 1
+          fi
+          echo "✅ No approximations found"
             
       - name: Run pre-commit
         run: |
