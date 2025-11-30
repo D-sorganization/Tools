@@ -55,16 +55,43 @@ PADDING_SMALL: Final[int] = 5
 
 # File extensions for syntax highlighting (basic categorization)
 CODE_EXTENSIONS: Final[set] = {
-    ".py", ".js", ".ts", ".java", ".cpp", ".c", ".h", ".cs",
-    ".go", ".rs", ".rb", ".php", ".swift", ".kt", ".r", ".m",
+    ".py",
+    ".js",
+    ".ts",
+    ".java",
+    ".cpp",
+    ".c",
+    ".h",
+    ".cs",
+    ".go",
+    ".rs",
+    ".rb",
+    ".php",
+    ".swift",
+    ".kt",
+    ".r",
+    ".m",
 }
 
 MARKUP_EXTENSIONS: Final[set] = {
-    ".html", ".xml", ".css", ".scss", ".sass", ".vue", ".jsx", ".tsx",
+    ".html",
+    ".xml",
+    ".css",
+    ".scss",
+    ".sass",
+    ".vue",
+    ".jsx",
+    ".tsx",
 }
 
 CONFIG_EXTENSIONS: Final[set] = {
-    ".json", ".yaml", ".yml", ".toml", ".ini", ".cfg", ".conf",
+    ".json",
+    ".yaml",
+    ".yml",
+    ".toml",
+    ".ini",
+    ".cfg",
+    ".conf",
 }
 
 # Default exclusion patterns
@@ -209,7 +236,12 @@ class PackageManifest:
     def add_file(self, file_path: str, size: int, checksum: str):
         """Add file to manifest."""
         self.files.append(
-            {"path": file_path, "size": size, "checksum": checksum, "added_at": datetime.now().isoformat()}
+            {
+                "path": file_path,
+                "size": size,
+                "checksum": checksum,
+                "added_at": datetime.now().isoformat(),
+            }
         )
         self.stats["total_files"] += 1
         self.stats["total_size"] += size
@@ -296,7 +328,9 @@ class FolderPackerPro:
         # Tools menu
         tools_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Tools", menu=tools_menu)
-        tools_menu.add_command(label="Manage Exclusions", command=self._manage_exclusions)
+        tools_menu.add_command(
+            label="Manage Exclusions", command=self._manage_exclusions
+        )
         tools_menu.add_command(label="Open Log File", command=self._open_log_file)
 
         # Help menu
@@ -309,7 +343,9 @@ class FolderPackerPro:
         """Create main user interface with modern design."""
         # Create notebook for tabbed interface
         self.notebook = ttk.Notebook(self.root)
-        self.notebook.pack(fill="both", expand=True, padx=PADDING_SMALL, pady=PADDING_SMALL)
+        self.notebook.pack(
+            fill="both", expand=True, padx=PADDING_SMALL, pady=PADDING_SMALL
+        )
 
         # Create tabs
         self._create_pack_tab()
@@ -327,10 +363,22 @@ class FolderPackerPro:
 
         # Main container with two columns
         left_frame = ttk.Frame(tab)
-        left_frame.pack(side="left", fill="both", expand=True, padx=PADDING_MEDIUM, pady=PADDING_MEDIUM)
+        left_frame.pack(
+            side="left",
+            fill="both",
+            expand=True,
+            padx=PADDING_MEDIUM,
+            pady=PADDING_MEDIUM,
+        )
 
         right_frame = ttk.Frame(tab)
-        right_frame.pack(side="right", fill="both", expand=True, padx=PADDING_MEDIUM, pady=PADDING_MEDIUM)
+        right_frame.pack(
+            side="right",
+            fill="both",
+            expand=True,
+            padx=PADDING_MEDIUM,
+            pady=PADDING_MEDIUM,
+        )
 
         # LEFT COLUMN - Source and Output
         # Header
@@ -342,35 +390,45 @@ class FolderPackerPro:
         header_label.pack(pady=(0, PADDING_MEDIUM))
 
         # Source folder section
-        source_frame = ttk.LabelFrame(left_frame, text="Source Folder", padding=PADDING_MEDIUM)
+        source_frame = ttk.LabelFrame(
+            left_frame, text="Source Folder", padding=PADDING_MEDIUM
+        )
         source_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         source_entry_frame = ttk.Frame(source_frame)
         source_entry_frame.pack(fill="x")
 
         self.pack_source_entry = ttk.Entry(source_entry_frame)
-        self.pack_source_entry.pack(side="left", fill="x", expand=True, padx=(0, PADDING_SMALL))
-
-        ttk.Button(source_entry_frame, text="Browse", command=self._browse_pack_source).pack(
-            side="right"
+        self.pack_source_entry.pack(
+            side="left", fill="x", expand=True, padx=(0, PADDING_SMALL)
         )
 
+        ttk.Button(
+            source_entry_frame, text="Browse", command=self._browse_pack_source
+        ).pack(side="right")
+
         # Output file section
-        output_frame = ttk.LabelFrame(left_frame, text="Output Package File", padding=PADDING_MEDIUM)
+        output_frame = ttk.LabelFrame(
+            left_frame, text="Output Package File", padding=PADDING_MEDIUM
+        )
         output_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         output_entry_frame = ttk.Frame(output_frame)
         output_entry_frame.pack(fill="x")
 
         self.pack_output_entry = ttk.Entry(output_entry_frame)
-        self.pack_output_entry.pack(side="left", fill="x", expand=True, padx=(0, PADDING_SMALL))
-
-        ttk.Button(output_entry_frame, text="Browse", command=self._browse_pack_output).pack(
-            side="right"
+        self.pack_output_entry.pack(
+            side="left", fill="x", expand=True, padx=(0, PADDING_SMALL)
         )
 
+        ttk.Button(
+            output_entry_frame, text="Browse", command=self._browse_pack_output
+        ).pack(side="right")
+
         # File statistics section
-        stats_frame = ttk.LabelFrame(left_frame, text="Project Statistics", padding=PADDING_MEDIUM)
+        stats_frame = ttk.LabelFrame(
+            left_frame, text="Project Statistics", padding=PADDING_MEDIUM
+        )
         stats_frame.pack(fill="both", expand=True, pady=(0, PADDING_MEDIUM))
 
         self.stats_text = scrolledtext.ScrolledText(
@@ -382,10 +440,14 @@ class FolderPackerPro:
         )
         self.stats_text.pack(fill="both", expand=True)
 
-        ttk.Button(stats_frame, text="🔄 Scan Folder", command=self._scan_folder).pack(pady=(PADDING_SMALL, 0))
+        ttk.Button(stats_frame, text="🔄 Scan Folder", command=self._scan_folder).pack(
+            pady=(PADDING_SMALL, 0)
+        )
 
         # Progress section
-        progress_frame = ttk.LabelFrame(left_frame, text="Progress", padding=PADDING_MEDIUM)
+        progress_frame = ttk.LabelFrame(
+            left_frame, text="Progress", padding=PADDING_MEDIUM
+        )
         progress_frame.pack(fill="x")
 
         self.pack_progress_var = tk.DoubleVar()
@@ -397,7 +459,9 @@ class FolderPackerPro:
         )
         self.pack_progress_bar.pack(fill="x", pady=(0, PADDING_SMALL))
 
-        self.pack_status_label = ttk.Label(progress_frame, text="Ready", font=("Segoe UI", 9))
+        self.pack_status_label = ttk.Label(
+            progress_frame, text="Ready", font=("Segoe UI", 9)
+        )
         self.pack_status_label.pack(fill="x")
 
         # RIGHT COLUMN - Options
@@ -426,7 +490,9 @@ class FolderPackerPro:
             ).pack(anchor="w", pady=2)
 
         # Security options
-        security_frame = ttk.LabelFrame(right_frame, text="Security Options", padding=PADDING_MEDIUM)
+        security_frame = ttk.LabelFrame(
+            right_frame, text="Security Options", padding=PADDING_MEDIUM
+        )
         security_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         self.encrypt_var = tk.BooleanVar()
@@ -445,13 +511,17 @@ class FolderPackerPro:
         self.pack_password_entry.pack(fill="x", pady=(PADDING_SMALL, 0))
         self.pack_password_entry.configure(state="disabled")
 
-        ttk.Label(self.password_frame, text="Confirm:").pack(anchor="w", pady=(PADDING_SMALL, 0))
+        ttk.Label(self.password_frame, text="Confirm:").pack(
+            anchor="w", pady=(PADDING_SMALL, 0)
+        )
         self.pack_password_confirm = ttk.Entry(self.password_frame, show="*")
         self.pack_password_confirm.pack(fill="x", pady=(PADDING_SMALL, 0))
         self.pack_password_confirm.configure(state="disabled")
 
         # Advanced options
-        advanced_frame = ttk.LabelFrame(right_frame, text="Advanced Options", padding=PADDING_MEDIUM)
+        advanced_frame = ttk.LabelFrame(
+            right_frame, text="Advanced Options", padding=PADDING_MEDIUM
+        )
         advanced_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         self.include_git_var = tk.BooleanVar()
@@ -459,13 +529,19 @@ class FolderPackerPro:
         self.verify_pack_var = tk.BooleanVar(value=True)
 
         ttk.Checkbutton(
-            advanced_frame, text="Include .git folder (preserve repository)", variable=self.include_git_var
+            advanced_frame,
+            text="Include .git folder (preserve repository)",
+            variable=self.include_git_var,
         ).pack(anchor="w")
         ttk.Checkbutton(
-            advanced_frame, text="Create manifest file", variable=self.create_manifest_var
+            advanced_frame,
+            text="Create manifest file",
+            variable=self.create_manifest_var,
         ).pack(anchor="w")
         ttk.Checkbutton(
-            advanced_frame, text="Verify package after creation", variable=self.verify_pack_var
+            advanced_frame,
+            text="Verify package after creation",
+            variable=self.verify_pack_var,
         ).pack(anchor="w")
 
         # Action buttons
@@ -481,7 +557,10 @@ class FolderPackerPro:
         self.pack_btn.pack(side="left", fill="x", expand=True, padx=(0, PADDING_SMALL))
 
         self.pack_cancel_btn = ttk.Button(
-            action_frame, text="⏹️ Cancel", command=self._cancel_operation, state="disabled"
+            action_frame,
+            text="⏹️ Cancel",
+            command=self._cancel_operation,
+            state="disabled",
         )
         self.pack_cancel_btn.pack(side="right", fill="x", expand=True)
 
@@ -502,33 +581,45 @@ class FolderPackerPro:
         header_label.pack(pady=(0, PADDING_MEDIUM))
 
         # Package file section
-        package_frame = ttk.LabelFrame(main_frame, text="Package File", padding=PADDING_MEDIUM)
+        package_frame = ttk.LabelFrame(
+            main_frame, text="Package File", padding=PADDING_MEDIUM
+        )
         package_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         package_entry_frame = ttk.Frame(package_frame)
         package_entry_frame.pack(fill="x")
 
         self.unpack_source_entry = ttk.Entry(package_entry_frame)
-        self.unpack_source_entry.pack(side="left", fill="x", expand=True, padx=(0, PADDING_SMALL))
-
-        ttk.Button(package_entry_frame, text="Browse", command=self._browse_unpack_source).pack(
-            side="right"
+        self.unpack_source_entry.pack(
+            side="left", fill="x", expand=True, padx=(0, PADDING_SMALL)
         )
 
+        ttk.Button(
+            package_entry_frame, text="Browse", command=self._browse_unpack_source
+        ).pack(side="right")
+
         # Destination folder section
-        dest_frame = ttk.LabelFrame(main_frame, text="Destination Folder", padding=PADDING_MEDIUM)
+        dest_frame = ttk.LabelFrame(
+            main_frame, text="Destination Folder", padding=PADDING_MEDIUM
+        )
         dest_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         dest_entry_frame = ttk.Frame(dest_frame)
         dest_entry_frame.pack(fill="x")
 
         self.unpack_dest_entry = ttk.Entry(dest_entry_frame)
-        self.unpack_dest_entry.pack(side="left", fill="x", expand=True, padx=(0, PADDING_SMALL))
+        self.unpack_dest_entry.pack(
+            side="left", fill="x", expand=True, padx=(0, PADDING_SMALL)
+        )
 
-        ttk.Button(dest_entry_frame, text="Browse", command=self._browse_unpack_dest).pack(side="right")
+        ttk.Button(
+            dest_entry_frame, text="Browse", command=self._browse_unpack_dest
+        ).pack(side="right")
 
         # Decryption section
-        decrypt_frame = ttk.LabelFrame(main_frame, text="Decryption", padding=PADDING_MEDIUM)
+        decrypt_frame = ttk.LabelFrame(
+            main_frame, text="Decryption", padding=PADDING_MEDIUM
+        )
         decrypt_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         self.encrypted_var = tk.BooleanVar()
@@ -548,7 +639,9 @@ class FolderPackerPro:
         self.unpack_password_entry.configure(state="disabled")
 
         # Package info section
-        info_frame = ttk.LabelFrame(main_frame, text="Package Information", padding=PADDING_MEDIUM)
+        info_frame = ttk.LabelFrame(
+            main_frame, text="Package Information", padding=PADDING_MEDIUM
+        )
         info_frame.pack(fill="both", expand=True, pady=(0, PADDING_MEDIUM))
 
         self.package_info_text = scrolledtext.ScrolledText(
@@ -560,12 +653,14 @@ class FolderPackerPro:
         )
         self.package_info_text.pack(fill="both", expand=True)
 
-        ttk.Button(info_frame, text="🔍 Inspect Package", command=self._inspect_package).pack(
-            pady=(PADDING_SMALL, 0)
-        )
+        ttk.Button(
+            info_frame, text="🔍 Inspect Package", command=self._inspect_package
+        ).pack(pady=(PADDING_SMALL, 0))
 
         # Progress section
-        progress_frame = ttk.LabelFrame(main_frame, text="Progress", padding=PADDING_MEDIUM)
+        progress_frame = ttk.LabelFrame(
+            main_frame, text="Progress", padding=PADDING_MEDIUM
+        )
         progress_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         self.unpack_progress_var = tk.DoubleVar()
@@ -577,7 +672,9 @@ class FolderPackerPro:
         )
         self.unpack_progress_bar.pack(fill="x", pady=(0, PADDING_SMALL))
 
-        self.unpack_status_label = ttk.Label(progress_frame, text="Ready", font=("Segoe UI", 9))
+        self.unpack_status_label = ttk.Label(
+            progress_frame, text="Ready", font=("Segoe UI", 9)
+        )
         self.unpack_status_label.pack(fill="x")
 
         # Action buttons
@@ -590,10 +687,15 @@ class FolderPackerPro:
             command=self._start_unpack,
             style="Accent.TButton",
         )
-        self.unpack_btn.pack(side="left", fill="x", expand=True, padx=(0, PADDING_SMALL))
+        self.unpack_btn.pack(
+            side="left", fill="x", expand=True, padx=(0, PADDING_SMALL)
+        )
 
         self.unpack_cancel_btn = ttk.Button(
-            action_frame, text="⏹️ Cancel", command=self._cancel_operation, state="disabled"
+            action_frame,
+            text="⏹️ Cancel",
+            command=self._cancel_operation,
+            state="disabled",
         )
         self.unpack_cancel_btn.pack(side="right", fill="x", expand=True)
 
@@ -609,12 +711,16 @@ class FolderPackerPro:
         toolbar = ttk.Frame(main_frame)
         toolbar.pack(fill="x", pady=(0, PADDING_SMALL))
 
-        ttk.Label(toolbar, text="File Preview with Syntax Detection", font=("Segoe UI", 12, "bold")).pack(
-            side="left"
-        )
+        ttk.Label(
+            toolbar,
+            text="File Preview with Syntax Detection",
+            font=("Segoe UI", 12, "bold"),
+        ).pack(side="left")
 
         # File tree
-        tree_label_frame = ttk.LabelFrame(main_frame, text="Files to Pack", padding=PADDING_SMALL)
+        tree_label_frame = ttk.LabelFrame(
+            main_frame, text="Files to Pack", padding=PADDING_SMALL
+        )
         tree_label_frame.pack(fill="both", expand=True, pady=(0, PADDING_SMALL))
 
         tree_frame = ttk.Frame(tree_label_frame)
@@ -647,7 +753,9 @@ class FolderPackerPro:
         self.preview_tree.bind("<<TreeviewSelect>>", self._on_file_select)
 
         # Preview pane
-        preview_label_frame = ttk.LabelFrame(main_frame, text="File Content", padding=PADDING_SMALL)
+        preview_label_frame = ttk.LabelFrame(
+            main_frame, text="File Content", padding=PADDING_SMALL
+        )
         preview_label_frame.pack(fill="both", expand=True)
 
         self.preview_text = scrolledtext.ScrolledText(
@@ -677,7 +785,9 @@ class FolderPackerPro:
         toolbar = ttk.Frame(main_frame)
         toolbar.pack(fill="x", pady=(0, PADDING_SMALL))
 
-        ttk.Button(toolbar, text="🗑️ Clear Log", command=self._clear_log).pack(side="left")
+        ttk.Button(toolbar, text="🗑️ Clear Log", command=self._clear_log).pack(
+            side="left"
+        )
         ttk.Button(toolbar, text="💾 Save Log", command=self._save_log).pack(
             side="left", padx=(PADDING_SMALL, 0)
         )
@@ -711,9 +821,13 @@ class FolderPackerPro:
         status_frame.pack(side="bottom", fill="x")
 
         self.status_bar_label = ttk.Label(
-            status_frame, text="Ready  |  Theme: Dark  |  No operation in progress", anchor="w"
+            status_frame,
+            text="Ready  |  Theme: Dark  |  No operation in progress",
+            anchor="w",
         )
-        self.status_bar_label.pack(side="left", fill="x", expand=True, padx=PADDING_SMALL)
+        self.status_bar_label.pack(
+            side="left", fill="x", expand=True, padx=PADDING_SMALL
+        )
 
         # Version label
         version_label = ttk.Label(status_frame, text="v2.0", anchor="e")
@@ -858,8 +972,12 @@ class FolderPackerPro:
         output += f"Excluded Files: {stats['excluded_files']:,}\n\n"
 
         output += "File Types:\n"
-        for ext, count in sorted(stats["file_types"].items(), key=lambda x: x[1], reverse=True)[:15]:
-            percentage = (count / stats["total_files"] * 100) if stats["total_files"] > 0 else 0
+        for ext, count in sorted(
+            stats["file_types"].items(), key=lambda x: x[1], reverse=True
+        )[:15]:
+            percentage = (
+                (count / stats["total_files"] * 100) if stats["total_files"] > 0 else 0
+            )
             output += f"  {ext:20s} {count:5,} files ({percentage:5.1f}%)\n"
 
         self.stats_text.insert("1.0", output)
@@ -943,7 +1061,9 @@ class FolderPackerPro:
             # Check file size
             size = file_path.stat().st_size
             if size > 1024 * 1024:  # 1MB limit
-                self.preview_text.insert("1.0", f"File too large to preview ({self._format_size(size)})")
+                self.preview_text.insert(
+                    "1.0", f"File too large to preview ({self._format_size(size)})"
+                )
             else:
                 # Try to read as text
                 with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
@@ -961,9 +1081,28 @@ class FolderPackerPro:
         """Insert text with basic syntax highlighting."""
         # For simplicity, basic keyword highlighting
         keywords = {
-            "def", "class", "import", "from", "if", "else", "elif",
-            "for", "while", "return", "try", "except", "with", "as",
-            "True", "False", "None", "and", "or", "not", "in", "is",
+            "def",
+            "class",
+            "import",
+            "from",
+            "if",
+            "else",
+            "elif",
+            "for",
+            "while",
+            "return",
+            "try",
+            "except",
+            "with",
+            "as",
+            "True",
+            "False",
+            "None",
+            "and",
+            "or",
+            "not",
+            "in",
+            "is",
         }
 
         lines = content.split("\n")
@@ -1048,7 +1187,9 @@ class FolderPackerPro:
             confirm = self.pack_password_confirm.get()
 
             if not password:
-                messagebox.showwarning("No Password", "Please enter an encryption password.")
+                messagebox.showwarning(
+                    "No Password", "Please enter an encryption password."
+                )
                 return
 
             if password != confirm:
@@ -1114,11 +1255,15 @@ class FolderPackerPro:
                         content = f.read()
 
                     # Store with base64 encoding
-                    package_data["files"][str(rel_path)] = base64.b64encode(content).decode("utf-8")
+                    package_data["files"][str(rel_path)] = base64.b64encode(
+                        content
+                    ).decode("utf-8")
 
                     progress = ((i + 1) / total_files) * 100
                     self.root.after(0, lambda p=progress: self.pack_progress_var.set(p))
-                    self._update_pack_status(f"Packing {file_path.name} ({i+1}/{total_files})")
+                    self._update_pack_status(
+                        f"Packing {file_path.name} ({i+1}/{total_files})"
+                    )
 
                 except Exception as e:
                     self._log_message(f"Error packing {file_path}: {e}", "error")
@@ -1161,7 +1306,9 @@ class FolderPackerPro:
                     json.dump(manifest, f, indent=2)
 
             self._log_message(f"Package created successfully: {output_path}", "success")
-            self._log_message(f"Package size: {self._format_size(output_path.stat().st_size)}", "info")
+            self._log_message(
+                f"Package size: {self._format_size(output_path.stat().st_size)}", "info"
+            )
 
             self.root.after(
                 0,
@@ -1176,7 +1323,9 @@ class FolderPackerPro:
         except Exception as e:
             logger.exception("Pack operation failed")
             self._log_message(f"Pack operation failed: {e}", "error")
-            self.root.after(0, lambda: messagebox.showerror("Error", f"Pack failed:\n\n{e}"))
+            self.root.after(
+                0, lambda: messagebox.showerror("Error", f"Pack failed:\n\n{e}")
+            )
 
         finally:
             self.root.after(0, self._pack_finished)
@@ -1189,14 +1338,18 @@ class FolderPackerPro:
             return
 
         if not self.unpack_dest_entry.get():
-            messagebox.showwarning("No Destination", "Please select a destination folder.")
+            messagebox.showwarning(
+                "No Destination", "Please select a destination folder."
+            )
             return
 
         # Validate decryption
         if self.encrypted_var.get():
             password = self.unpack_password_entry.get()
             if not password:
-                messagebox.showwarning("No Password", "Please enter the decryption password.")
+                messagebox.showwarning(
+                    "No Password", "Please enter the decryption password."
+                )
                 return
 
         # Start operation
@@ -1261,8 +1414,12 @@ class FolderPackerPro:
                         f.write(content)
 
                     progress = ((i + 1) / total_files) * 100
-                    self.root.after(0, lambda p=progress: self.unpack_progress_var.set(p))
-                    self._update_unpack_status(f"Extracting {Path(rel_path).name} ({i+1}/{total_files})")
+                    self.root.after(
+                        0, lambda p=progress: self.unpack_progress_var.set(p)
+                    )
+                    self._update_unpack_status(
+                        f"Extracting {Path(rel_path).name} ({i+1}/{total_files})"
+                    )
 
                 except Exception as e:
                     self._log_message(f"Error extracting {rel_path}: {e}", "error")
@@ -1271,19 +1428,24 @@ class FolderPackerPro:
                 self._log_message("Unpack operation cancelled", "warning")
                 return
 
-            self._log_message(f"Package extracted successfully to: {dest_path}", "success")
+            self._log_message(
+                f"Package extracted successfully to: {dest_path}", "success"
+            )
 
             self.root.after(
                 0,
                 lambda: messagebox.showinfo(
-                    "Success", f"Package extracted successfully!\n\nFiles: {total_files}\nLocation: {dest_path}"
+                    "Success",
+                    f"Package extracted successfully!\n\nFiles: {total_files}\nLocation: {dest_path}",
                 ),
             )
 
         except Exception as e:
             logger.exception("Unpack operation failed")
             self._log_message(f"Unpack operation failed: {e}", "error")
-            self.root.after(0, lambda: messagebox.showerror("Error", f"Unpack failed:\n\n{e}"))
+            self.root.after(
+                0, lambda: messagebox.showerror("Error", f"Unpack failed:\n\n{e}")
+            )
 
         finally:
             self.root.after(0, self._unpack_finished)
@@ -1338,13 +1500,15 @@ class FolderPackerPro:
         dialog.title("Manage Exclusions")
         dialog.geometry("500x400")
 
-        ttk.Label(dialog, text="Exclusion Patterns", font=("Segoe UI", 12, "bold")).pack(
-            pady=PADDING_MEDIUM
-        )
+        ttk.Label(
+            dialog, text="Exclusion Patterns", font=("Segoe UI", 12, "bold")
+        ).pack(pady=PADDING_MEDIUM)
 
         # Listbox with current patterns
         list_frame = ttk.Frame(dialog)
-        list_frame.pack(fill="both", expand=True, padx=PADDING_MEDIUM, pady=PADDING_SMALL)
+        list_frame.pack(
+            fill="both", expand=True, padx=PADDING_MEDIUM, pady=PADDING_SMALL
+        )
 
         scrollbar = ttk.Scrollbar(list_frame)
         scrollbar.pack(side="right", fill="y")
@@ -1361,7 +1525,9 @@ class FolderPackerPro:
         btn_frame.pack(fill="x", padx=PADDING_MEDIUM, pady=PADDING_SMALL)
 
         def add_pattern():
-            pattern = tk.simpledialog.askstring("Add Pattern", "Enter exclusion pattern:")
+            pattern = tk.simpledialog.askstring(
+                "Add Pattern", "Enter exclusion pattern:"
+            )
             if pattern:
                 self.exclude_patterns.add(pattern)
                 listbox.insert("end", pattern)
@@ -1386,9 +1552,13 @@ class FolderPackerPro:
         ttk.Button(btn_frame, text="Remove", command=remove_pattern).pack(
             side="left", padx=(0, PADDING_SMALL)
         )
-        ttk.Button(btn_frame, text="Reset to Default", command=reset_patterns).pack(side="left")
+        ttk.Button(btn_frame, text="Reset to Default", command=reset_patterns).pack(
+            side="left"
+        )
 
-        ttk.Button(dialog, text="Close", command=dialog.destroy).pack(pady=PADDING_MEDIUM)
+        ttk.Button(dialog, text="Close", command=dialog.destroy).pack(
+            pady=PADDING_MEDIUM
+        )
 
     def _new_package(self):
         """Reset form for new package."""

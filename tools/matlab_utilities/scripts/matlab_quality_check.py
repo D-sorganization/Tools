@@ -319,9 +319,9 @@ class MATLABQualityChecker:
                 # Check for load without output (loads into workspace)
                 # Match both command syntax (load file.mat) and function syntax (load('file.mat'))
                 if (
-                    (re.search(r"^\s*load\s+\w+", line_stripped) or re.search(r"^\s*load\s*\([^)]+\)", line_stripped))
-                    and "=" not in line_stripped
-                ):
+                    re.search(r"^\s*load\s+\w+", line_stripped)
+                    or re.search(r"^\s*load\s*\([^)]+\)", line_stripped)
+                ) and "=" not in line_stripped:
                     issues.append(
                         f"{file_path.name} (line {i}): load without output variable - use 'data = load(...)' instead",
                     )
@@ -336,15 +336,24 @@ class MATLABQualityChecker:
 
                 # Known acceptable values (include integer and float representations)
                 acceptable_numbers = {
-                    "0", "0.0",
-                    "1", "1.0",
-                    "2", "2.0",
-                    "3", "3.0",
-                    "4", "4.0",
-                    "5", "5.0",
-                    "10", "10.0",
-                    "100", "100.0",
-                    "1000", "1000.0",
+                    "0",
+                    "0.0",
+                    "1",
+                    "1.0",
+                    "2",
+                    "2.0",
+                    "3",
+                    "3.0",
+                    "4",
+                    "4.0",
+                    "5",
+                    "5.0",
+                    "10",
+                    "10.0",
+                    "100",
+                    "100.0",
+                    "1000",
+                    "1000.0",
                     "0.5",
                     "0.1",
                     "0.01",
@@ -387,7 +396,9 @@ class MATLABQualityChecker:
                 # Check for clear/clc/close all in functions (bad practice)
                 if in_function:
                     # Check for clear without variable (dangerous) or clear all/global (very dangerous)
-                    if re.search(r"\bclear\s+(all|global)\b", line_stripped, re.IGNORECASE):
+                    if re.search(
+                        r"\bclear\s+(all|global)\b", line_stripped, re.IGNORECASE
+                    ):
                         issues.append(
                             f"{file_path.name} (line {i}): Avoid 'clear all' or 'clear global' in functions - clears all variables, functions, and MEX links",
                         )
@@ -497,7 +508,9 @@ def main():
         print("=" * 60)  # noqa: T201
         print(f"Timestamp: {results.get('timestamp', 'N/A')}")  # noqa: T201
         print(f"Total Files: {results.get('total_files', 0)}")  # noqa: T201
-        print(f"Status: {'PASSED' if results.get('passed', False) else 'FAILED'}")  # noqa: T201
+        print(
+            f"Status: {'PASSED' if results.get('passed', False) else 'FAILED'}"
+        )  # noqa: T201
         print(f"Summary: {results.get('summary', 'N/A')}")  # noqa: T201
 
         if results.get("issues"):

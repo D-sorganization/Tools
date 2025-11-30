@@ -5,6 +5,7 @@ import sys
 import subprocess
 from pathlib import Path
 
+
 def build_exe():
     """Build Windows executable using PyInstaller."""
 
@@ -26,8 +27,16 @@ def build_exe():
         "--onefile",  # Single executable
         "--windowed",  # No console window
         "--name=FolderFixPro",  # Executable name
-        "--icon=paper_plane_icon.ico" if (script_dir / "paper_plane_icon.ico").exists() else "",
-        "--add-data=paper_plane_icon.ico;." if (script_dir / "paper_plane_icon.ico").exists() else "",
+        (
+            "--icon=paper_plane_icon.ico"
+            if (script_dir / "paper_plane_icon.ico").exists()
+            else ""
+        ),
+        (
+            "--add-data=paper_plane_icon.ico;."
+            if (script_dir / "paper_plane_icon.ico").exists()
+            else ""
+        ),
         "--clean",  # Clean cache
         "--noconfirm",  # Overwrite without asking
         str(main_script),

@@ -13,9 +13,18 @@ BANNED_PATTERNS = [
     (re.compile(r"^\s*\.\.\.\s*$"), "Ellipsis placeholder"),
     (re.compile(r"NotImplementedError"), "NotImplementedError placeholder"),
     # More specific angle bracket patterns to avoid Tkinter event bindings
-    (re.compile(r"<[^<>]*placeholder[^<>]*>", re.IGNORECASE), "Angle bracket placeholder"),
-    (re.compile(r"<[^<>]*TODO[^<>]*>", re.IGNORECASE), "Angle bracket TODO placeholder"),
-    (re.compile(r"<[^<>]*FIXME[^<>]*>", re.IGNORECASE), "Angle bracket FIXME placeholder"),
+    (
+        re.compile(r"<[^<>]*placeholder[^<>]*>", re.IGNORECASE),
+        "Angle bracket placeholder",
+    ),
+    (
+        re.compile(r"<[^<>]*TODO[^<>]*>", re.IGNORECASE),
+        "Angle bracket TODO placeholder",
+    ),
+    (
+        re.compile(r"<[^<>]*FIXME[^<>]*>", re.IGNORECASE),
+        "Angle bracket FIXME placeholder",
+    ),
     (re.compile(r"your.*here", re.IGNORECASE), "Template placeholder"),
     (re.compile(r"insert.*here", re.IGNORECASE), "Template placeholder"),
 ]
@@ -25,9 +34,18 @@ PASS_PATTERNS = [
     # Empty pass statements that are likely placeholders
     (re.compile(r"^\s*pass\s*$"), "Empty pass statement"),
     # Pass statements in empty blocks that might be placeholders
-    (re.compile(r"^\s*if\s+.*:\s*$"), "Empty if block - consider adding logic or comment"),
-    (re.compile(r"^\s*else:\s*$"), "Empty else block - consider adding logic or comment"),
-    (re.compile(r"^\s*except\s+.*:\s*$"), "Empty except block - consider adding error handling"),
+    (
+        re.compile(r"^\s*if\s+.*:\s*$"),
+        "Empty if block - consider adding logic or comment",
+    ),
+    (
+        re.compile(r"^\s*else:\s*$"),
+        "Empty else block - consider adding logic or comment",
+    ),
+    (
+        re.compile(r"^\s*except\s+.*:\s*$"),
+        "Empty except block - consider adding error handling",
+    ),
 ]
 
 MAGIC_NUMBERS = [
@@ -78,10 +96,24 @@ def is_legitimate_tkinter_binding(line: str) -> bool:
     """Check if a line contains legitimate Tkinter event bindings."""
     # Common Tkinter event patterns
     tkinter_events = [
-        r"<KeyRelease>", r"<KeyPress>", r"<Key>", r"<Return>", r"<Enter>", r"<Leave>",
-        r"<Button-1>", r"<ButtonRelease-1>", r"<B1-Motion>", r"<Configure>",
-        r"<MouseWheel>", r"<Button-4>", r"<Button-5>", r"<FocusIn>", r"<FocusOut>",
-        r"<<ListboxSelect>>", r"<<ComboboxSelected>>", r"<<TreeviewSelect>>",
+        r"<KeyRelease>",
+        r"<KeyPress>",
+        r"<Key>",
+        r"<Return>",
+        r"<Enter>",
+        r"<Leave>",
+        r"<Button-1>",
+        r"<ButtonRelease-1>",
+        r"<B1-Motion>",
+        r"<Configure>",
+        r"<MouseWheel>",
+        r"<Button-4>",
+        r"<Button-5>",
+        r"<FocusIn>",
+        r"<FocusOut>",
+        r"<<ListboxSelect>>",
+        r"<<ComboboxSelected>>",
+        r"<<TreeviewSelect>>",
     ]
 
     return any(re.search(event_pattern, line) for event_pattern in tkinter_events)
@@ -106,19 +138,21 @@ def check_banned_patterns(
         # Only skip angle bracket patterns for Tkinter bindings, not all patterns
         for pattern, message in BANNED_PATTERNS:
             # Skip angle bracket patterns if line contains legitimate Tkinter bindings
-            if (
-                "<" in pattern.pattern
-                and is_legitimate_tkinter_binding(line)
-            ):
+            if "<" in pattern.pattern and is_legitimate_tkinter_binding(line):
                 continue
             if pattern.search(line):
                 issues.append((line_num, message, line.strip()))
 
         # Special handling for pass statements
-        if (re.match(r"^\s*pass\s*$", line) and
-            not is_legitimate_pass_context(lines, line_num)):
+        if re.match(r"^\s*pass\s*$", line) and not is_legitimate_pass_context(
+            lines, line_num
+        ):
             issues.append(
-                (line_num, "Empty pass statement - consider adding logic or comment", line.strip()),
+                (
+                    line_num,
+                    "Empty pass statement - consider adding logic or comment",
+                    line.strip(),
+                ),
             )
 
     return issues
@@ -141,7 +175,7 @@ def check_magic_numbers(lines: list[str], filepath: Path) -> list[tuple[int, str
         in_single_quote = False
         in_double_quote = False
         escaped = False
-        
+
         for i, char in enumerate(line):
             if escaped:
                 escaped = False
