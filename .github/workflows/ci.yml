@@ -68,18 +68,32 @@ jobs:
         run: |
           # Fail if TODO, FIXME, or other placeholders found in Python files
           # Exclude quality check scripts that contain the patterns they check for
-          if grep -r "TODO\|FIXME\|XXX\|HACK\|pass #\|\.\.\..*#\|NotImplementedError" \
-            --include="*.py" \
-            --exclude-dir=".git" \
-            --exclude-dir="archive" \
-            --exclude-dir="legacy" \
-            --exclude-dir="experimental" \
-            --exclude="quality_check*.py" \
-            --exclude="matlab_quality_check.py" .; then
-            echo "❌ ERROR: Placeholders found in code"
-            exit 1
+          # Use Python script if available for smarter detection (excludes type hints)
+          if [ -f scripts/check_placeholders.py ]; then
+            python3 scripts/check_placeholders.py
+            if [ $? -ne 0 ]; then
+              echo "❌ ERROR: Placeholders found in code"
+              exit 1
+            else
+              echo "✅ No placeholders found"
+            fi
           else
-            echo "✅ No placeholders found"
+            # Fallback to grep with improved pattern (exclude type hints with ...)
+            # Pattern: match TODO/FIXME/XXX/HACK/NotImplementedError, or standalone ellipsis (not in type hints)
+            if grep -r -E "\bTODO\b|\bFIXME\b|\bXXX\b|\bHACK\b|pass\s+#|NotImplementedError|^\s*\.\.\.\s*$|^\s*\.\.\.\s+#" \
+              --include="*.py" \
+              --exclude-dir=".git" \
+              --exclude-dir="archive" \
+              --exclude-dir="legacy" \
+              --exclude-dir="experimental" \
+              --exclude="quality_check*.py" \
+              --exclude="matlab_quality_check.py" \
+              --exclude="check_placeholders.py" .; then
+              echo "❌ ERROR: Placeholders found in code"
+              exit 1
+            else
+              echo "✅ No placeholders found"
+            fi
           fi
             
       - name: Check for magic numbers
