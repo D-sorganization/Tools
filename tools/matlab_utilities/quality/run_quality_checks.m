@@ -88,21 +88,16 @@ function results = run_quality_checks(target_path, varargin)
         return;
     end
 
-    % Count files analyzed
-    if ~isempty(results.issues_table)
-        results.total_files = numel(unique(results.issues_table.File));
-    else
-        % Count .m files in target path
-        if isfolder(target_path)
-            if opts.Recursive
-                files = dir(fullfile(target_path, '**', '*.m'));
-            else
-                files = dir(fullfile(target_path, '*.m'));
-            end
-            results.total_files = length(files);
+    % Count files analyzed - always count all files checked, not just files with issues
+    if isfolder(target_path)
+        if opts.Recursive
+            files = dir(fullfile(target_path, '**', '*.m'));
         else
-            results.total_files = 1;
+            files = dir(fullfile(target_path, '*.m'));
         end
+        results.total_files = length(files);
+    else
+        results.total_files = 1;
     end
 
     % Determine pass/fail
@@ -135,20 +130,22 @@ function results = run_quality_checks(target_path, varargin)
         if results.total_issues > 0 && results.total_issues <= 20
             fprintf('Issues found:\n');
             for i = 1:height(results.issues_table)
+                % Use parenthesis indexing for string arrays
                 fprintf('  %d. %s (line %d): %s\n', ...
                     i, ...
-                    results.issues_table.RelFile{i}, ...
+                    results.issues_table.RelFile(i), ...
                     results.issues_table.Line(i), ...
-                    results.issues_table.Message{i});
+                    results.issues_table.Message(i));
             end
         elseif results.total_issues > 20
             fprintf('First 20 issues:\n');
             for i = 1:20
+                % Use parenthesis indexing for string arrays
                 fprintf('  %d. %s (line %d): %s\n', ...
                     i, ...
-                    results.issues_table.RelFile{i}, ...
+                    results.issues_table.RelFile(i), ...
                     results.issues_table.Line(i), ...
-                    results.issues_table.Message{i});
+                    results.issues_table.Message(i));
             end
             fprintf('  ... and %d more issues\n', results.total_issues - 20);
         end

@@ -42,7 +42,8 @@ try
                 [counts, ids] = countIssueTypes(results);
                 fprintf('\nTop issue types:\n');
                 for i = 1:min(5, length(ids))
-                    fprintf('  %s: %d occurrences\n', ids{i}, counts(i));
+                    % Use parenthesis indexing for string arrays
+                    fprintf('  %s: %d occurrences\n', ids(i), counts(i));
                 end
             end
         end
@@ -76,7 +77,8 @@ uniqueIds = unique(results.Identifier);
 counts = zeros(size(uniqueIds));
 
 for i = 1:length(uniqueIds)
-    counts(i) = sum(strcmp(results.Identifier, uniqueIds{i}));
+    % Use parenthesis indexing for string arrays
+    counts(i) = sum(strcmp(results.Identifier, uniqueIds(i)));
 end
 
 % Sort by count (descending)

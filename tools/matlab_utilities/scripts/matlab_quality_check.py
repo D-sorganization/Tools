@@ -16,7 +16,11 @@ import logging
 import re
 import subprocess
 import sys
+from datetime import datetime
 from pathlib import Path
+
+# Constants
+MATLAB_SCRIPT_TIMEOUT_SECONDS: int = 300  # 5 minutes - allows time for large codebases
 
 # Set up logging
 logging.basicConfig(
@@ -38,7 +42,7 @@ class MATLABQualityChecker:
         self.project_root = project_root
         self.matlab_dir = project_root / "matlab"
         self.results = {
-            "timestamp": None,
+            "timestamp": datetime.now().isoformat(),
             "total_files": 0,
             "issues": [],
             "passed": True,
@@ -130,8 +134,8 @@ class MATLABQualityChecker:
                         capture_output=True,
                         text=True,
                         cwd=self.matlab_dir,
-                        timeout=300,
-                        check=False,  # 5 minute timeout
+                        timeout=MATLAB_SCRIPT_TIMEOUT_SECONDS,
+                        check=False,
                     )
 
                     if result.returncode == 0:
@@ -256,9 +260,14 @@ class MATLABQualityChecker:
                         )
 
                     # Check for arguments validation block
+                    # Skip comment lines to avoid false positives
                     has_arguments = False
                     for j in range(i, min(i + 15, len(lines))):
-                        if re.search(r"\barguments\b", lines[j]):
+                        line_check = lines[j].strip()
+                        # Skip comment lines
+                        if line_check.startswith("%"):
+                            continue
+                        if re.search(r"\barguments\b", line_check):
                             has_arguments = True
                             break
 
@@ -308,8 +317,9 @@ class MATLABQualityChecker:
                     )
 
                 # Check for load without output (loads into workspace)
+                # Match both command syntax (load file.mat) and function syntax (load('file.mat'))
                 if (
-                    re.search(r"^\s*load\s+\w+", line_stripped)
+                    (re.search(r"^\s*load\s+\w+", line_stripped) or re.search(r"^\s*load\s*\([^)]+\)", line_stripped))
                     and "=" not in line_stripped
                 ):
                     issues.append(
@@ -317,7 +327,10 @@ class MATLABQualityChecker:
                     )
 
                 # Check for magic numbers (but allow common values and known constants)
-                # Match both integer and floating-point literals (not part of variable names)
+                # Matches both integer and floating-point literals (e.g., 3.14, 42, 0.5)
+                # that are not part of scientific notation, array indices, or embedded in words.
+                # Uses lookbehind/lookahead to avoid matching numbers adjacent to dots or word characters.
+                # This helps flag "magic numbers" in code while avoiding false positives from common patterns.
                 magic_number_pattern = r"(?<![.\w])(?:\d+\.\d+|\d+)(?![.\w])"
                 magic_numbers = re.findall(magic_number_pattern, line_stripped)
 
@@ -340,17 +353,18 @@ class MATLABQualityChecker:
                 }
 
                 # Known physics constants (should be defined but at least flag with context)
+                # Includes units and sources per coding guidelines
                 known_constants = {
-                    "3.14159": "pi constant",
-                    "3.1416": "pi constant",
-                    "3.14": "pi constant",
-                    "1.5708": "pi/2 constant",
-                    "1.57": "pi/2 constant",
-                    "0.7854": "pi/4 constant",
-                    "0.785": "pi/4 constant",
-                    "9.81": "gravitational acceleration",
-                    "9.8": "gravitational acceleration",
-                    "9.807": "gravitational acceleration",
+                    "3.14159": "pi constant [dimensionless] - mathematical constant",
+                    "3.1416": "pi constant [dimensionless] - mathematical constant",
+                    "3.14": "pi constant [dimensionless] - mathematical constant",
+                    "1.5708": "pi/2 constant [dimensionless] - mathematical constant",
+                    "1.57": "pi/2 constant [dimensionless] - mathematical constant",
+                    "0.7854": "pi/4 constant [dimensionless] - mathematical constant",
+                    "0.785": "pi/4 constant [dimensionless] - mathematical constant",
+                    "9.81": "gravitational acceleration [m/s²] - approximate standard gravity",
+                    "9.8": "gravitational acceleration [m/s²] - approximate standard gravity",
+                    "9.807": "gravitational acceleration [m/s²] - approximate standard gravity",
                 }
 
                 for num in magic_numbers:
@@ -372,7 +386,12 @@ class MATLABQualityChecker:
 
                 # Check for clear/clc/close all in functions (bad practice)
                 if in_function:
-                    if re.search(r"\bclear\b(?!\s+\w+)", line_stripped):
+                    # Check for clear without variable (dangerous) or clear all/global (very dangerous)
+                    if re.search(r"\bclear\s+(all|global)\b", line_stripped, re.IGNORECASE):
+                        issues.append(
+                            f"{file_path.name} (line {i}): Avoid 'clear all' or 'clear global' in functions - clears all variables, functions, and MEX links",
+                        )
+                    elif re.search(r"\bclear\b(?!\s+\w+)", line_stripped):
                         issues.append(
                             f"{file_path.name} (line {i}): Avoid 'clear' in functions - can clear function variables",
                         )
