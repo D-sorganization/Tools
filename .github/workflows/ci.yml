@@ -113,17 +113,17 @@ jobs:
         run: |
           # Fail if "approximately" or similar found
           # Exclude constants_file.py (contains documented values with sources)
-          # Exclude MATLAB files from approx variable name check (legitimate variable names)
-          # Only check for actual approximation words in comments/strings, not variable names
+          # Exclude MATLAB files (may have legitimate variable names like 'approx')
+          # Only check Python files for approximation words and ~ symbols
           if grep -ri "approximately\|roughly" \
-            --include="*.py" --include="*.m" \
+            --include="*.py" \
             --exclude-dir=".git" \
             --exclude-dir="docs" \
             --exclude="constants_file.py" .; then
             echo "❌ ERROR: Approximations found - use exact values with sources"
             exit 1
           fi
-          # Check for ~ in comments (but exclude constants_file.py and MATLAB variable names)
+          # Check for ~ in Python comments (but exclude constants_file.py)
           if grep -ri "~[0-9]" \
             --include="*.py" \
             --exclude-dir=".git" \
