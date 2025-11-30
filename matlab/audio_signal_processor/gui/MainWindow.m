@@ -2178,7 +2178,7 @@ end
 % Analysis, Library, and Settings tabs...
 
 % Due to length, this is split across multiple files for organization.
-% The complete implementation includes ~2000 more lines of callbacks.
+% The complete implementation includes over 2000 more lines of callbacks.
 % MAINWINDOWCALLBACKS_PART2 - Remaining callback functions
 % Production, Research, Analysis, Library, and Settings tabs
 
@@ -3009,7 +3009,7 @@ try
         mainWindow.LUFSLabel.Text = sprintf('%.2f LUFS', lufs);
     catch
         lufs = rmsLevel - 0.691;
-        mainWindow.LUFSLabel.Text = sprintf('%.2f LUFS (approx)', lufs);
+        mainWindow.LUFSLabel.Text = sprintf('%.2f LUFS (estimated)', lufs);
     end
 
     bar(mainWindow.LevelMeterAxes, [peakLevel, rmsLevel, lufs]);

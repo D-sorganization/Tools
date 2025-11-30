@@ -424,7 +424,7 @@ for ch = 1:nChannels
     channelData = audio(:, ch);
 
     % Wavelet decomposition
-    [approx, details] = multiscaleAnalysis(channelData, fs, ...
+    [approximation, details] = multiscaleAnalysis(channelData, fs, ...
         'Wavelet', options.Wavelet, 'Level', options.Level);
 
     % Transients are in high-frequency details
@@ -434,7 +434,7 @@ for ch = 1:nChannels
     end
 
     % Tonal is approximation + mid-frequency details
-    tonalComponent = approx;
+    tonalComponent = approximation;
     for i = 4:length(details)
         tonalComponent = tonalComponent + details{i};
     end
@@ -580,7 +580,7 @@ parse(p, varargin{:});
 
 options = p.Results;
 
-[approx, details] = multiscaleAnalysis(audio, fs, ...
+[approximation, details] = multiscaleAnalysis(audio, fs, ...
     'Wavelet', options.Wavelet, 'Level', options.Level);
 
 figure;
@@ -605,7 +605,7 @@ end
 
 % Approximation
 subplot(numPlots, 1, numPlots);
-plot(t, approx);
+plot(t, approximation);
 title('Approximation');
 xlabel('Time (s)');
 ylabel('Amplitude');
