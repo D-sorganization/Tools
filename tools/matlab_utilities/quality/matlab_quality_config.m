@@ -23,7 +23,9 @@ function results = matlab_quality_config()
     % 1. Add current directory to path if not already there
     current_dir = pwd;
     path_modified = false;
-    if ~contains(path, current_dir)
+    % Use proper path checking to avoid false positives from substring matching
+    path_dirs = strsplit(path, pathsep);
+    if ~any(strcmp(path_dirs, current_dir))
         addpath(current_dir);
         path_modified = true;
         fprintf('Added %s to MATLAB path\n', current_dir);

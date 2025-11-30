@@ -78,6 +78,10 @@ function results = run_matlab_tests()
     % 4. Run each test file
     fprintf('\n🧪 Running individual tests...\n');
 
+    % Add test directory to path before running tests
+    addpath(test_dir);
+    cleanup_test_path = onCleanup(@() rmpath(test_dir));
+    
     for i = 1:length(test_files)
         test_file = fullfile(test_dir, test_files(i).name);
         fprintf('\nRunning: %s\n', test_files(i).name);
