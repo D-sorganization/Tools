@@ -237,7 +237,7 @@ function files = collectFilesFromDir(dd, folder, includeExt, excludeFiles)
             continue;
         end
         full = fullfile(folder, [base, ext]);
-        if any(cellfun(@(pat)~isempty(dir(fullfile(folder, pat))) && ~isempty(matchName(dd(i).name, pat)), excludeFiles)) %#ok<ISMAT>
+        if any(cellfun(@(pat)matchName(dd(i).name, pat), excludeFiles))
             continue;
         end
         files{end+1} = char(java.io.File(full).getAbsolutePath()); %#ok<AGROW>
@@ -386,8 +386,9 @@ end
 
 function s = escapeMd(str)
     s = char(str);
-    s = strrep(s, '|', '\|');
+    % Escape backslashes first, then pipes (order matters)
     s = strrep(s, '\', '\\');
+    s = strrep(s, '|', '\|');
     s = regexprep(s, '[\r\n]+', ' ');
 end
 

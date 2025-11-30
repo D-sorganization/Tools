@@ -111,8 +111,7 @@ if ~isempty(analysisOpts.OutputFile) || opts.AutoSave
 
     if ~isempty(outputFile)
         try
-            exportCodeIssues('dummy', 'Output', ''); % Just to use the writeOutput function
-            % Actually, let's implement our own simple output
+            % Write results table to file
             writetable(T, outputFile);
             fprintf('[codeIssuesGUI] Results saved to: %s\n', outputFile);
         catch ME

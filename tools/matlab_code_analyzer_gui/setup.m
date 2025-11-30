@@ -46,7 +46,8 @@ if allFound
         fprintf('\n✓ All functions accessible\n');
 
         % Test that we can create an empty results table
-        testResults = exportCodeIssues(tempname(), 'Quiet', true);
+        % Use current directory (folder) instead of non-existent file
+        testResults = exportCodeIssues(pwd, 'Quiet', true);
         if istable(testResults)
             fprintf('✓ Core functionality verified\n');
         else

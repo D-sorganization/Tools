@@ -20,7 +20,8 @@ from typing import Any
 
 # Set up logging
 logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
 
@@ -77,8 +78,11 @@ class MATLABQualityChecker:
             # Check if we can run MATLAB from command line
             matlab_script = self.matlab_dir / "matlab_quality_config.m"
             if not matlab_script.exists():
-                logger.error(f"MATLAB quality config script not found: {matlab_script}")
-                return {"error": "MATLAB quality config script not found"}
+                # Config script not found - fall back to static analysis (primary use case)
+                logger.info(
+                    "MATLAB quality config script not found, using static analysis",
+                )
+                return self._static_matlab_analysis()
 
             # Try to run MATLAB quality checks
             # Note: This requires MATLAB to be installed and accessible from command line
@@ -126,7 +130,8 @@ class MATLABQualityChecker:
                         capture_output=True,
                         text=True,
                         cwd=self.matlab_dir,
-                        timeout=300, check=False,  # 5 minute timeout
+                        timeout=300,
+                        check=False,  # 5 minute timeout
                     )
 
                     if result.returncode == 0:

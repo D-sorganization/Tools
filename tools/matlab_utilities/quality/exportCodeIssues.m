@@ -386,8 +386,9 @@ end
 
 function s = escapeMd(str)
     s = char(str);
-    s = strrep(s, '|', '\|');
+    % Escape backslashes first, then pipes (order matters)
     s = strrep(s, '\', '\\');
+    s = strrep(s, '|', '\|');
     s = regexprep(s, '[\r\n]+', ' ');
 end
 
