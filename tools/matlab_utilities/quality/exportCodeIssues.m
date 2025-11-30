@@ -360,7 +360,12 @@ function writeOutput(T, outPath, root)
         case '.json'
             % Convert to struct array with sensible field names
             S = table2struct(T);
-            txt = jsonencode(S, 'PrettyPrint', true);
+            % Use PrettyPrint if available (R2021a+), otherwise use basic jsonencode
+            try
+                txt = jsonencode(S, 'PrettyPrint', true);
+            catch
+                txt = jsonencode(S);
+            end
             fid = fopen(outPath, 'w', 'n','UTF-8');
             assert(fid>0, 'exportCodeIssues:IO', 'Could not open %s for writing.', outPath);
             cleaner = onCleanup(@() fclose(fid)); %#ok<NASGU>

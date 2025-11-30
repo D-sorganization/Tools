@@ -360,7 +360,7 @@ end
 - Code Analyzer (mlint/checkcode) - included with MATLAB
 
 ### Python Tools
-- Python 3.7 or later (3.11+ recommended for CI/CD)
+- Python 3.8 or later (3.11+ recommended for CI/CD)
 - No additional dependencies required for `matlab_quality_check.py`
 
 ## License Considerations
@@ -417,5 +417,5 @@ For issues or questions:
 ---
 
 **Version**: 1.0.0
-**Last Updated**: 2025-11-17
-**Compatibility**: MATLAB R2019b+, Python 3.7+
+**Last Updated**: 2025-11-30
+**Compatibility**: MATLAB R2019b+, Python 3.8+

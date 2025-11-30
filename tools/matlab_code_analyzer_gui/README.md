@@ -26,7 +26,7 @@ A user-friendly graphical interface for analyzing MATLAB code using the built-in
 ### Method 1: Simple Launcher
 ```matlab
 % Add the Code_Analysis_GUI folder to your MATLAB path
-addpath('matlab/Scripts/Code_Analysis_GUI');
+addpath('tools/matlab_code_analyzer_gui');
 
 % Launch the GUI
 launchCodeAnalyzer();
