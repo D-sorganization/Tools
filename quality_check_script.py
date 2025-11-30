@@ -124,8 +124,12 @@ def check_banned_patterns(
 def check_magic_numbers(lines: list[str], filepath: Path) -> list[tuple[int, str, str]]:
     """Check for magic numbers in lines."""
     issues: list[tuple[int, str, str]] = []
-    # Skip checking this file for magic numbers
-    if filepath.name == "quality_check_script.py":
+    # Skip checking files that contain placeholder detection patterns themselves
+    excluded_files = {
+        "quality_check_script.py",
+        "matlab_quality_check.py",
+    }
+    if filepath.name in excluded_files:
         return issues
     for line_num, line in enumerate(lines, 1):
         line_content = line[: line.index("#")] if "#" in line else line
