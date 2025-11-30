@@ -271,8 +271,12 @@ currentPaths = {};
 
     function removePath(~, ~)
         selected = get(pathListbox, 'Value');
-        if ~isempty(selected) && selected <= length(currentPaths)
-            currentPaths(selected) = [];
+        if ~isempty(selected) && all(selected > 0) && all(selected <= length(currentPaths))
+            % Sort in descending order to remove from end to beginning
+            selected = sort(selected, 'descend');
+            for idx = selected
+                currentPaths(idx) = [];
+            end
             updatePathList();
         end
     end
@@ -302,7 +306,7 @@ currentPaths = {};
         % Collect options
         selectedPaths = currentPaths;
 
-        analysisOpts.Recursive = get(recursiveCheck, 'Value');
+        analysisOpts.Recursive = logical(get(recursiveCheck, 'Value'));
 
         extStr = get(extEdit, 'String');
         if isempty(strtrim(extStr))

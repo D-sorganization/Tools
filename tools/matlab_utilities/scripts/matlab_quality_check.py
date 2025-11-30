@@ -490,7 +490,18 @@ def main():
         print("\n" + "=" * 60)
 
     # Exit with appropriate code
-    sys.exit(0 if results.get("passed", False) else 1)
+    # In strict mode, fail if any issues are found; otherwise fail only if checks didn't pass
+    passed = results.get("passed", False)
+    has_issues = bool(results.get("issues"))
+    
+    if args.strict:
+        # Strict mode: fail if any issues found
+        exit_code = 0 if (passed and not has_issues) else 1
+    else:
+        # Normal mode: fail only if checks didn't pass
+        exit_code = 0 if passed else 1
+    
+    sys.exit(exit_code)
 
 
 if __name__ == "__main__":
