@@ -16,7 +16,6 @@ import logging
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any
 
 # Set up logging
 logging.basicConfig(
@@ -68,7 +67,7 @@ class MATLABQualityChecker:
         logger.info(f"Found {len(m_files)} MATLAB files")
         return True
 
-    def run_matlab_quality_checks(self) -> dict[str, Any]:
+    def run_matlab_quality_checks(self) -> dict[str, object]:
         """Run MATLAB quality checks using the MATLAB script.
 
         Returns:
@@ -99,7 +98,7 @@ class MATLABQualityChecker:
             logger.error(f"Error running MATLAB quality checks: {e}")
             return {"error": str(e)}
 
-    def _run_matlab_script(self, script_path: Path) -> dict[str, Any]:
+    def _run_matlab_script(self, script_path: Path) -> dict[str, object]:
         """Attempt to run MATLAB script from command line.
 
         Args:
@@ -158,7 +157,7 @@ class MATLABQualityChecker:
             logger.error(f"Error running MATLAB script: {e}")
             return {"error": str(e)}
 
-    def _static_matlab_analysis(self) -> dict[str, Any]:
+    def _static_matlab_analysis(self) -> dict[str, object]:
         """Perform static analysis of MATLAB files without running MATLAB.
 
         Returns:
@@ -404,7 +403,7 @@ class MATLABQualityChecker:
 
         return issues
 
-    def run_all_checks(self) -> dict[str, Any]:
+    def run_all_checks(self) -> dict[str, object]:
         """Run all MATLAB quality checks.
 
         Returns:
