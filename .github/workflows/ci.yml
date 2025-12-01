@@ -32,7 +32,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pre-commit pytest pytest-cov
           if [ -f python/requirements.txt ]; then pip install -r python/requirements.txt; fi
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          # Install from python/ subdirectory only
           
       - name: Run MATLAB Quality Check (Static Analysis)
         continue-on-error: true  # Non-blocking due to MATLAB license restrictions

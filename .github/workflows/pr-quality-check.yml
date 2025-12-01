@@ -38,7 +38,7 @@ jobs:
         python -m pip install --upgrade pip
         # Check both root and python/ subdirectory
         if [ -f python/requirements.txt ]; then pip install -r python/requirements.txt; fi
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        # Install from python/ subdirectory only
         if [ -f pyproject.toml ]; then pip install -e .; fi
         # ✅ Pin tool versions
         pip install ruff==0.5.0 mypy==1.10.0 black==24.4.2 pytest==8.3.3 pytest-cov==6.0.0
