@@ -90,6 +90,7 @@ jobs:
               --exclude-dir="experimental" \
               --exclude="quality_check.py" \
               --exclude="quality_check_script.py" \
+              --exclude="quality-check.py" \
               --exclude="matlab_quality_check.py" \
               --exclude="check_placeholders.py" .; then
               echo "❌ ERROR: Placeholders found in code"
