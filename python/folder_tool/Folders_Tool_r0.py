@@ -1394,22 +1394,22 @@ class FolderProcessorApp:
                             total_extracted_size += file_size
                         except OSError as e:
                             logger.warning(
-                                f"Cannot access extracted file size: {file_path} - {e}"
+                                f"Cannot access extracted file size: {file_path} - {e}",
                             )
 
                 if not extracted_files:
                     raise Exception(
-                        "Extraction failed - no files found in extracted folder"
+                        "Extraction failed - no files found in extracted folder",
                     )
 
                 # Verify total extracted size is reasonable
                 if total_extracted_size < archive_size * MAX_ARCHIVE_SIZE_RATIO:
                     logger.warning(
-                        f"Extracted size ({total_extracted_size}) seems small compared to archive size ({archive_size})"
+                        f"Extracted size ({total_extracted_size}) seems small compared to archive size ({archive_size})",
                     )
 
                 logger.info(
-                    f"Extraction validation passed: {len(extracted_files)} files, {total_extracted_size} bytes"
+                    f"Extraction validation passed: {len(extracted_files)} files, {total_extracted_size} bytes",
                 )
 
             # Only delete original if extraction was successful
@@ -1418,7 +1418,7 @@ class FolderProcessorApp:
                 logger.info(f"Deleted original archive: {archive_path}")
             except OSError as e:
                 logger.warning(
-                    f"Failed to delete original archive: {archive_path} - {e}"
+                    f"Failed to delete original archive: {archive_path} - {e}",
                 )
                 # Don't fail the operation if cleanup fails
 
@@ -1433,11 +1433,11 @@ class FolderProcessorApp:
                 try:
                     shutil.rmtree(extract_dir, ignore_errors=True)
                     logger.info(
-                        f"Cleaned up failed extraction directory: {extract_dir}"
+                        f"Cleaned up failed extraction directory: {extract_dir}",
                     )
                 except Exception as cleanup_error:
                     logger.warning(
-                        f"Failed to cleanup extraction directory: {extract_dir} - {cleanup_error}"
+                        f"Failed to cleanup extraction directory: {extract_dir} - {cleanup_error}",
                     )
 
             return False, f"Failed to extract '{os.path.basename(archive_path)}': {e}"
