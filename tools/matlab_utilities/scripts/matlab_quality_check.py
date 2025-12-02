@@ -256,7 +256,10 @@ class MATLABQualityChecker:
                         next_line = lines[j].strip()
                         if next_line and not next_line.startswith("%"):
                             break
-                        if next_line.startswith("%") and len(next_line) > min_docstring_length:
+                        if (
+                            next_line.startswith("%")
+                            and len(next_line) > min_docstring_length
+                        ):
                             has_docstring = True
                             break
 
@@ -400,7 +403,9 @@ class MATLABQualityChecker:
                         # Check if the number appears before a comment on same line
                         comment_idx = line_original.find("%")
                         num_idx = line_original.find(num)
-                        if comment_idx == -1 or (num_idx != -1 and num_idx < comment_idx):
+                        if comment_idx == -1 or (
+                            num_idx != -1 and num_idx < comment_idx
+                        ):
                             issues.append(
                                 f"{file_path.name} (line {i}): Magic number {num} "
                                 "should be defined as constant with units and source",
@@ -474,7 +479,9 @@ class MATLABQualityChecker:
 
         if "error" in matlab_results:
             self.results["passed"] = False
-            self.results["summary"] = f"MATLAB quality checks failed: {matlab_results['error']}"
+            self.results["summary"] = (
+                f"MATLAB quality checks failed: {matlab_results['error']}"
+            )
             self.results["checks"]["matlab"] = matlab_results
         else:
             self.results["checks"]["matlab"] = matlab_results
@@ -548,7 +555,11 @@ def main() -> None:
     passed = results.get("passed", False)
     has_issues = bool(results.get("issues"))
 
-    exit_code = (0 if (passed and not has_issues) else 1) if args.strict else (0 if passed else 1)
+    exit_code = (
+        (0 if (passed and not has_issues) else 1)
+        if args.strict
+        else (0 if passed else 1)
+    )
 
     sys.exit(exit_code)
 
