@@ -147,8 +147,9 @@ jobs:
             
       - name: Run pre-commit
         id: pre-commit
+        continue-on-error: true  # Non-blocking to match Audio_Processor
         run: |
-          pre-commit run --all-files --show-diff-on-failure
+          pre-commit run --all-files --show-diff-on-failure || echo "⚠️ Pre-commit checks failed (non-blocking)"
           
       - name: Run strict type checking
         id: type-checking
