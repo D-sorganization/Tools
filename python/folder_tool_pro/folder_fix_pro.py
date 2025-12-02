@@ -1088,9 +1088,7 @@ class FolderFixPro:
             except Exception as e:
                 logger.error(f"Error adding {file_path} to preview: {e}")
 
-        count_text = f"{len(files)}" + (
-            " (limited)" if len(files) >= PREVIEW_MAX_FILES else ""
-        )
+        count_text = f"{len(files)}" + (" (limited)" if len(files) >= PREVIEW_MAX_FILES else "")
         self.preview_count_label.configure(text=count_text)
 
     def _should_include_file(self, file_path: Path) -> bool:
@@ -1380,9 +1378,7 @@ class FolderFixPro:
                     break
 
                 # Check if folder has any files matching filters
-                has_files = any(
-                    self._should_include_file(Path(root) / f) for f in filenames
-                )
+                has_files = any(self._should_include_file(Path(root) / f) for f in filenames)
 
                 if has_files:
                     # Recreate folder structure
@@ -1601,9 +1597,7 @@ class FolderFixPro:
 
             # Calculate ETA
             if current > 0:
-                elapsed = (
-                    datetime.now() - self.operation_report.start_time
-                ).total_seconds()
+                elapsed = (datetime.now() - self.operation_report.start_time).total_seconds()
                 eta_seconds = (elapsed / current) * (total - current)
                 eta = f"ETA: {int(eta_seconds // 60)}m {int(eta_seconds % 60)}s"
                 self.root.after(0, lambda: self.eta_label.configure(text=eta))
