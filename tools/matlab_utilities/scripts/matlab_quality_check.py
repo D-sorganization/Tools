@@ -271,7 +271,7 @@ class MATLABQualityChecker:
                     # Check for arguments validation block
                     # Skip comment lines to avoid false positives
                     has_arguments = False
-                    for j in range(i, min(i + 15, len(lines))):
+                    for j in range(i, min(i + 25, len(lines))):
                         line_check = lines[j].strip()
                         # Skip comment lines
                         if line_check.startswith("%"):
