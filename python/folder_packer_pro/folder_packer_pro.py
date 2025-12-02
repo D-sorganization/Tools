@@ -27,7 +27,7 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from tkinter import filedialog, messagebox, scrolledtext, simpledialog, ttk
-from typing import Any, Final, Union
+from typing import Any, Final
 
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
@@ -249,7 +249,7 @@ class PackageManifest:
     def set_metadata(
         self,
         key: str,
-        value: Union[str, int, float, bool, None, list[Any], dict[str, Any]],
+        value: str | float | bool | None | list[Any] | dict[str, Any],
     ) -> None:
         """Set metadata value."""
         self.metadata[key] = value
