@@ -73,7 +73,7 @@ class TestBuildExe:
         """Test building executable when script exists."""
         with patch("build_exe.Path") as mock_path:
             mock_path.return_value.exists.return_value = True
-            with patch("build_exe.clean_build_dirs") as mock_clean:
+            with patch("build_exe.clean_build_dirs"):
                 with patch("build_exe.subprocess.run") as mock_run:
                     mock_run.return_value = Mock(returncode=0)
                     assert build_executable() is True
@@ -88,7 +88,7 @@ class TestBuildExe:
         """Test building executable when subprocess fails."""
         with patch("build_exe.Path") as mock_path:
             mock_path.return_value.exists.return_value = True
-            with patch("build_exe.clean_build_dirs") as mock_clean:
+            with patch("build_exe.clean_build_dirs"):
                 with patch("build_exe.subprocess.run") as mock_run:
                     mock_run.side_effect = subprocess.CalledProcessError(
                         1,

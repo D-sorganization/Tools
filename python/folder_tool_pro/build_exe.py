@@ -1,8 +1,7 @@
 """Build script for Folder Fix Pro v3.0 executable."""
 
-import os
-import sys
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -49,7 +48,7 @@ def build_exe():
     print(f"Command: {' '.join(cmd)}\n")
 
     try:
-        result = subprocess.run(cmd, cwd=script_dir, check=True)
+        subprocess.run(cmd, cwd=script_dir, check=True)
 
         print("\n" + "=" * 60)
         print("Build completed successfully!")

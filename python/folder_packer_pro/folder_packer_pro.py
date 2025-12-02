@@ -16,21 +16,19 @@ A comprehensive project packaging application with advanced features:
 
 import base64
 import gzip
-import hashlib
 import json
 import logging
 import os
 import re
-import shutil
 import sys
 import threading
-import zipfile
+import tkinter as tk
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-import tkinter as tk
-from tkinter import filedialog, messagebox, ttk, scrolledtext
-from typing import Final, Optional, List, Dict
+from tkinter import filedialog, messagebox, scrolledtext, ttk
+from typing import Final
+
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2
@@ -1066,7 +1064,7 @@ class FolderPackerPro:
                 )
             else:
                 # Try to read as text
-                with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                with open(file_path, encoding="utf-8", errors="ignore") as f:
                     content = f.read()
 
                 # Insert with basic syntax highlighting
@@ -1323,8 +1321,9 @@ class FolderPackerPro:
         except Exception as e:
             logger.exception("Pack operation failed")
             self._log_message(f"Pack operation failed: {e}", "error")
+            error_msg = str(e)
             self.root.after(
-                0, lambda: messagebox.showerror("Error", f"Pack failed:\n\n{e}")
+                0, lambda: messagebox.showerror("Error", f"Pack failed:\n\n{error_msg}")
             )
 
         finally:
@@ -1443,8 +1442,9 @@ class FolderPackerPro:
         except Exception as e:
             logger.exception("Unpack operation failed")
             self._log_message(f"Unpack operation failed: {e}", "error")
+            error_msg = str(e)
             self.root.after(
-                0, lambda: messagebox.showerror("Error", f"Unpack failed:\n\n{e}")
+                0, lambda: messagebox.showerror("Error", f"Unpack failed:\n\n{error_msg}")
             )
 
         finally:
@@ -1474,7 +1474,7 @@ class FolderPackerPro:
             self.package_info_text.configure(state="normal")
             self.package_info_text.delete("1.0", "end")
 
-            info = f"📦 Package Information\n\n"
+            info = "📦 Package Information\n\n"
             info += f"File: {Path(package_path).name}\n"
             info += f"Size: {self._format_size(Path(package_path).stat().st_size)}\n"
             info += f"Encrypted: {'Yes' if is_encrypted else 'No'}\n\n"
@@ -1764,7 +1764,7 @@ def main():
         root = tk.Tk()
 
         # Create application
-        app = FolderPackerPro(root)
+        FolderPackerPro(root)
 
         # Start main loop
         root.mainloop()

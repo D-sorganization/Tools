@@ -2138,7 +2138,7 @@ class FolderProcessorApp:
                 max(
                     MIN_DIALOG_HEIGHT,
                     len(content.split("\n")) * LINE_HEIGHT_PIXELS
-                    + DIALOG_HEIGHT_OFFSET,
+                    + DIALOG_WIDTH_OFFSET,
                 ),
             )
 
@@ -2528,7 +2528,7 @@ class FolderProcessorApp:
                     if attempt < MAX_RETRY_ATTEMPTS - 1:
                         continue
 
-            except (OSError, IOError, PermissionError) as e:
+            except (OSError, PermissionError) as e:
                 logger.warning(f"Copy attempt {attempt + 1} failed: {e}")
                 if attempt < MAX_RETRY_ATTEMPTS - 1:
                     # Wait before retry (exponential backoff)

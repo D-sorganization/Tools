@@ -45,8 +45,7 @@ class TestFolderPackerGUI:
             patch("folder_packer_gui.ttk.Scrollbar"),
             patch("folder_packer_gui.ttk.Style"),
         ):
-            gui = FolderPackerGUI(mock_root)
-            return gui
+            return FolderPackerGUI(mock_root)
 
     def test_init(self, mock_root: Mock) -> None:
         """Test GUI initialization."""

@@ -21,14 +21,12 @@ import re
 import shutil
 import sys
 import threading
-import time
-import zipfile
+import tkinter as tk
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
-from typing import Final, Optional
+from typing import Final
 
 # Constants with professional standards
 MAX_FILE_SIZE_MB: Final[int] = 10240  # 10GB limit for modern systems
@@ -98,7 +96,7 @@ class FileHasher:
     """Efficient file hashing for deduplication."""
 
     @staticmethod
-    def hash_file(file_path: Path, algorithm: str = HASH_ALGORITHM) -> Optional[str]:
+    def hash_file(file_path: Path, algorithm: str = HASH_ALGORITHM) -> str | None:
         """
         Generate cryptographic hash of file contents.
 
@@ -120,7 +118,7 @@ class FileHasher:
             return None
 
     @staticmethod
-    def hash_file_fast(file_path: Path) -> Optional[str]:
+    def hash_file_fast(file_path: Path) -> str | None:
         """
         Generate fast hash using first/last chunks + size.
         Useful for quick duplicate detection.
@@ -1101,13 +1099,13 @@ class FolderFixPro:
                     if self._should_include_file(file_path):
                         matching_files.append(file_path)
 
-        message = f"Filter Results:\n\n"
+        message = "Filter Results:\n\n"
         message += f"Total files scanned: {total_files}\n"
         message += f"Files matching filters: {len(matching_files)}\n"
         message += f"Files excluded: {total_files - len(matching_files)}\n\n"
 
         if matching_files:
-            message += f"Sample matching files (first 10):\n"
+            message += "Sample matching files (first 10):\n"
             for file in matching_files[:10]:
                 message += f"  • {file.name}\n"
 
@@ -1184,8 +1182,9 @@ class FolderFixPro:
             logger.exception("Operation failed")
             self._log_message(f"Operation failed: {e}", "error")
             self.operation_report.add_error(str(e))
+            error_msg = str(e)
             self.root.after(
-                0, lambda: messagebox.showerror("Error", f"Operation failed:\n\n{e}")
+                0, lambda: messagebox.showerror("Error", f"Operation failed:\n\n{error_msg}")
             )
 
         finally:
@@ -1753,7 +1752,7 @@ def main():
         root = tk.Tk()
 
         # Create application
-        app = FolderFixPro(root)
+        FolderFixPro(root)
 
         # Start main loop
         root.mainloop()
