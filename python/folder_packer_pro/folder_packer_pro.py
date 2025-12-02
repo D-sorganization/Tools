@@ -200,8 +200,9 @@ class EncryptionManager:
         salt = os.urandom(16)
         key = EncryptionManager.derive_key(password, salt)
         cipher = Fernet(key)
-        encrypted = cipher.encrypt(data)
-        return salt + encrypted
+        encrypted: bytes = cipher.encrypt(data)
+        result: bytes = salt + encrypted
+        return result
 
     @staticmethod
     def decrypt_data(encrypted_data: bytes, password: str) -> bytes:
@@ -219,7 +220,7 @@ class EncryptionManager:
         encrypted = encrypted_data[16:]
         key = EncryptionManager.derive_key(password, salt)
         cipher = Fernet(key)
-        decrypted: bytes = cipher.decrypt(encrypted)  # type: ignore[assignment]
+        decrypted: bytes = cipher.decrypt(encrypted)
         return decrypted
 
 

@@ -46,7 +46,7 @@ class TestFolderPackerGUI:
             patch("folder_packer_gui.ttk.LabelFrame"),
             patch("folder_packer_gui.tk.Listbox"),
             patch("folder_packer_gui.ttk.Button"),
-            patch("folder_packer_gui.ttk.ttk.Entry"),
+            patch("folder_packer_gui.ttk.Entry"),
             patch("folder_packer_gui.tk.Text"),
             patch("folder_packer_gui.ttk.Scrollbar"),
             patch("folder_packer_gui.ttk.Style"),
