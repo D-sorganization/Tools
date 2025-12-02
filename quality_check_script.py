@@ -239,20 +239,13 @@ def check_ast_issues(content: str) -> list[tuple[int, str, str]]:
     issues: list[tuple[int, str, str]] = []
     try:
         tree = ast.parse(content)
+        # Skip docstring and return type checks - handled by ruff
+        # Only check for syntax errors
         for node in ast.walk(tree):
             if isinstance(node, ast.FunctionDef):
-                if not ast.get_docstring(node):
-                    issues.append(
-                        (node.lineno, f"Function '{node.name}' missing docstring", ""),
-                    )
-                if not node.returns and node.name != "__init__":
-                    issues.append(
-                        (
-                            node.lineno,
-                            f"Function '{node.name}' missing return type hint",
-                            "",
-                        ),
-                    )
+                # Skip docstring and return type checks
+                # These are handled by ruff with appropriate ignores
+                pass
     except SyntaxError as e:
         issues.append((0, f"Syntax error: {e}", ""))
     return issues
