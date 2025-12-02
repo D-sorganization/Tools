@@ -599,7 +599,9 @@ class FolderFixPro:
         self.progress_bar.pack(fill="x", pady=(0, PADDING_SMALL))
 
         self.status_label = ttk.Label(
-            progress_frame, text="Ready", font=("Segoe UI", 9)
+            progress_frame,
+            text="Ready",
+            font=("Segoe UI", 9),
         )
         self.status_label.pack(fill="x")
 
@@ -609,7 +611,9 @@ class FolderFixPro:
         # RIGHT COLUMN - Operations and Options
         # Operation mode
         mode_frame = ttk.LabelFrame(
-            right_frame, text="Operation Mode", padding=PADDING_MEDIUM
+            right_frame,
+            text="Operation Mode",
+            padding=PADDING_MEDIUM,
         )
         mode_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
@@ -633,7 +637,9 @@ class FolderFixPro:
 
         # Processing options
         options_frame = ttk.LabelFrame(
-            right_frame, text="Processing Options", padding=PADDING_MEDIUM
+            right_frame,
+            text="Processing Options",
+            padding=PADDING_MEDIUM,
         )
         options_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
@@ -657,12 +663,15 @@ class FolderFixPro:
 
         for text, var in options:
             ttk.Checkbutton(options_frame, text=text, variable=var).pack(
-                anchor="w", pady=2
+                anchor="w",
+                pady=2,
             )
 
         # Deduplication method
         dedupe_method_frame = ttk.LabelFrame(
-            right_frame, text="Deduplication Method", padding=PADDING_MEDIUM
+            right_frame,
+            text="Deduplication Method",
+            padding=PADDING_MEDIUM,
         )
         dedupe_method_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
@@ -716,7 +725,9 @@ class FolderFixPro:
 
         # File extension filter
         ext_frame = ttk.LabelFrame(
-            main_frame, text="File Extension Filter", padding=PADDING_MEDIUM
+            main_frame,
+            text="File Extension Filter",
+            padding=PADDING_MEDIUM,
         )
         ext_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
