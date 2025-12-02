@@ -1393,7 +1393,9 @@ class FolderFixPro:
 
                 processed += 1
                 self._update_progress(
-                    processed, total_files, f"Checking {file_path.name}"
+                    processed,
+                    total_files,
+                    f"Checking {file_path.name}",
                 )
             except Exception as e:
                 self.operation_report.add_error(f"Failed to process {file_path}: {e}")
@@ -1422,7 +1424,7 @@ class FolderFixPro:
                         )
                     except Exception as e:
                         self.operation_report.add_error(
-                            f"Failed to delete duplicate {duplicate_file}: {e}"
+                            f"Failed to delete duplicate {duplicate_file}: {e}",
                         )
 
         self._log_message(
@@ -1462,7 +1464,8 @@ class FolderFixPro:
                             # Track largest files
                             stats["largest_files"].append((file_path, stat.st_size))
                             stats["largest_files"].sort(
-                                key=lambda x: x[1], reverse=True
+                                key=lambda x: x[1],
+                                reverse=True,
                             )
                             stats["largest_files"] = stats["largest_files"][:10]
 
@@ -1472,17 +1475,22 @@ class FolderFixPro:
                             stats["oldest_files"] = stats["oldest_files"][:10]
 
                             stats["newest_files"].append((file_path, stat.st_mtime))
-                            stats["newest_files"].sort(key=lambda x: x[1], reverse=True)
+                            stats["newest_files"].sort(
+                                key=lambda x: x[1],
+                                reverse=True,
+                            )
                             stats["newest_files"] = stats["newest_files"][:10]
 
                         except Exception as e:
                             self.operation_report.add_error(
-                                f"Failed to analyze {file_path}: {e}"
+                                f"Failed to analyze {file_path}: {e}",
                             )
 
             processed += 1
             self._update_progress(
-                processed, total_folders, f"Analyzing {source_folder}"
+                processed,
+                total_folders,
+                f"Analyzing {source_folder}",
             )
 
         # Show analysis results
@@ -1496,7 +1504,9 @@ class FolderFixPro:
 
         results += "File Types:\n"
         for ext, count in sorted(
-            stats["file_types"].items(), key=lambda x: x[1], reverse=True
+            stats["file_types"].items(),
+            key=lambda x: x[1],
+            reverse=True,
         )[:10]:
             results += f"  {ext}: {count:,} files\n"
 
