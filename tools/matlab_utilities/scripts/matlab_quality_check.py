@@ -183,8 +183,11 @@ class MATLABQualityChecker:
         issues = []
         total_files = 0
 
-        # Analyze each MATLAB file
+        # Analyze each MATLAB file (exclude archive directories)
         for m_file in self.matlab_dir.rglob("*.m"):
+            # Skip files in archive directories
+            if "archive" in m_file.parts:
+                continue
             total_files += 1
             file_issues = self._analyze_matlab_file(m_file)
             issues.extend(file_issues)
