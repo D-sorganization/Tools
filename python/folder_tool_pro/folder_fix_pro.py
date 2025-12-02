@@ -166,7 +166,7 @@ class OperationReport:
     def add_operation(self, operation: str, details: dict):
         """Add operation to report."""
         self.operations.append(
-            {"timestamp": datetime.now(), "operation": operation, "details": details}
+            {"timestamp": datetime.now(), "operation": operation, "details": details},
         )
         self.stats[operation] += 1
 
@@ -438,7 +438,7 @@ class FolderFixPro:
         try:
             if sys.platform == "win32":
                 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
-                    "FolderFixPro.Tool.3.0"
+                    "FolderFixPro.Tool.3.0",
                 )
             # You can add icon file loading here
         except Exception as e:
@@ -453,10 +453,12 @@ class FolderFixPro:
         file_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="File", menu=file_menu)
         file_menu.add_command(
-            label="Export Report (JSON)", command=self._export_report_json
+            label="Export Report (JSON)",
+            command=self._export_report_json,
         )
         file_menu.add_command(
-            label="Export Report (HTML)", command=self._export_report_html
+            label="Export Report (HTML)",
+            command=self._export_report_html,
         )
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.root.quit)
@@ -484,7 +486,10 @@ class FolderFixPro:
         # Create notebook for tabbed interface
         self.notebook = ttk.Notebook(self.root)
         self.notebook.pack(
-            fill="both", expand=True, padx=PADDING_SMALL, pady=PADDING_SMALL
+            fill="both",
+            expand=True,
+            padx=PADDING_SMALL,
+            pady=PADDING_SMALL,
         )
 
         # Create tabs
