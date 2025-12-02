@@ -35,30 +35,30 @@ class TestFolderPackerGUI:
     def gui_instance(self, mock_root: Mock) -> FolderPackerGUI:
         """Create a FolderPackerGUI instance with mocked dependencies."""
         with (
-            patch("folder_packer_gui.ttk.Frame"),
-            patch("folder_packer_gui.ttk.Label"),
-            patch("folder_packer_gui.ttk.LabelFrame"),
-            patch("folder_packer_gui.tk.Listbox"),
-            patch("folder_packer_gui.ttk.Button"),
-            patch("folder_packer_gui.ttk.ttk.Entry"),
-            patch("folder_packer_gui.tk.Text"),
-            patch("folder_packer_gui.ttk.Scrollbar"),
-            patch("folder_packer_gui.ttk.Style"),
+            patch("project_packer.folder_packer_gui.ttk.Frame"),
+            patch("project_packer.folder_packer_gui.ttk.Label"),
+            patch("project_packer.folder_packer_gui.ttk.LabelFrame"),
+            patch("project_packer.folder_packer_gui.tk.Listbox"),
+            patch("project_packer.folder_packer_gui.ttk.Button"),
+            patch("project_packer.folder_packer_gui.ttk.Entry"),
+            patch("project_packer.folder_packer_gui.tk.Text"),
+            patch("project_packer.folder_packer_gui.ttk.Scrollbar"),
+            patch("project_packer.folder_packer_gui.ttk.Style"),
         ):
             return FolderPackerGUI(mock_root)
 
     def test_init(self, mock_root: Mock) -> None:
         """Test GUI initialization."""
         with (
-            patch("folder_packer_gui.ttk.Frame"),
-            patch("folder_packer_gui.ttk.Label"),
-            patch("folder_packer_gui.ttk.LabelFrame"),
-            patch("folder_packer_gui.tk.Listbox"),
-            patch("folder_packer_gui.ttk.Button"),
-            patch("folder_packer_gui.ttk.Entry"),
-            patch("folder_packer_gui.tk.Text"),
-            patch("folder_packer_gui.ttk.Scrollbar"),
-            patch("folder_packer_gui.ttk.Style"),
+            patch("project_packer.folder_packer_gui.ttk.Frame"),
+            patch("project_packer.folder_packer_gui.ttk.Label"),
+            patch("project_packer.folder_packer_gui.ttk.LabelFrame"),
+            patch("project_packer.folder_packer_gui.tk.Listbox"),
+            patch("project_packer.folder_packer_gui.ttk.Button"),
+            patch("project_packer.folder_packer_gui.ttk.Entry"),
+            patch("project_packer.folder_packer_gui.tk.Text"),
+            patch("project_packer.folder_packer_gui.ttk.Scrollbar"),
+            patch("project_packer.folder_packer_gui.ttk.Style"),
         ):
             gui = FolderPackerGUI(mock_root)
 
@@ -69,7 +69,7 @@ class TestFolderPackerGUI:
     def test_add_folder_new(self, gui_instance: FolderPackerGUI) -> None:
         """Test adding a new folder."""
         test_folder = "/test/path"
-        with patch("folder_packer_gui.filedialog.askdirectory") as mock_ask:
+        with patch("project_packer.folder_packer_gui.filedialog.askdirectory") as mock_ask:
             mock_ask.return_value = test_folder
             gui_instance.add_folder()
 
@@ -80,7 +80,7 @@ class TestFolderPackerGUI:
         test_folder = "/test/path"
         gui_instance.source_folders = [test_folder]
 
-        with patch("folder_packer_gui.filedialog.askdirectory") as mock_ask:
+        with patch("project_packer.folder_packer_gui.filedialog.askdirectory") as mock_ask:
             mock_ask.return_value = test_folder
             gui_instance.add_folder()
 
@@ -89,7 +89,7 @@ class TestFolderPackerGUI:
 
     def test_add_folder_cancelled(self, gui_instance: FolderPackerGUI) -> None:
         """Test adding folder when dialog is cancelled."""
-        with patch("folder_packer_gui.filedialog.askdirectory") as mock_ask:
+        with patch("project_packer.folder_packer_gui.filedialog.askdirectory") as mock_ask:
             mock_ask.return_value = ""
             gui_instance.add_folder()
 
@@ -123,7 +123,7 @@ class TestFolderPackerGUI:
         test_directory = "/output/path"
         gui_instance.output_entry = Mock()
 
-        with patch("folder_packer_gui.filedialog.askdirectory") as mock_ask:
+        with patch("project_packer.folder_packer_gui.filedialog.askdirectory") as mock_ask:
             mock_ask.return_value = test_directory
             gui_instance.browse_output()
 
@@ -135,7 +135,7 @@ class TestFolderPackerGUI:
         """Test browsing for output directory when cancelled."""
         gui_instance.output_entry = Mock()
 
-        with patch("folder_packer_gui.filedialog.askdirectory") as mock_ask:
+        with patch("project_packer.folder_packer_gui.filedialog.askdirectory") as mock_ask:
             mock_ask.return_value = ""
             gui_instance.browse_output()
 
@@ -149,7 +149,7 @@ class TestFolderPackerGUI:
         """Test packing when no source folders are selected."""
         gui_instance.source_folders = []
 
-        with patch("folder_packer_gui.messagebox.showwarning") as mock_warning:
+        with patch("project_packer.folder_packer_gui.messagebox.showwarning") as mock_warning:
             gui_instance.pack_folders()
             mock_warning.assert_called_once()
 
@@ -161,7 +161,7 @@ class TestFolderPackerGUI:
         gui_instance.source_folders = ["/test/folder"]
         gui_instance.output_directory = ""
 
-        with patch("folder_packer_gui.messagebox.showwarning") as mock_warning:
+        with patch("project_packer.folder_packer_gui.messagebox.showwarning") as mock_warning:
             gui_instance.pack_folders()
             mock_warning.assert_called_once()
 
@@ -287,11 +287,11 @@ class TestFolderPackerGUI:
 
     def test_main_function(self) -> None:
         """Test main function."""
-        with patch("folder_packer_gui.tk.Tk") as mock_tk_class:
+        with patch("project_packer.folder_packer_gui.tk.Tk") as mock_tk_class:
             mock_root = Mock()
             mock_tk_class.return_value = mock_root
 
-            with patch("folder_packer_gui.FolderPackerGUI") as mock_gui_class:
+            with patch("project_packer.folder_packer_gui.FolderPackerGUI") as mock_gui_class:
                 mock_gui = Mock()
                 mock_gui_class.return_value = mock_gui
 

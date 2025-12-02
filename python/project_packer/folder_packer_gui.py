@@ -7,7 +7,7 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
-from .constants import (
+from project_packer.constants import (
     BOLD_HEADER_FONT_SIZE,
     DEFAULT_LISTBOX_HEIGHT,
     DEFAULT_PADDING,
