@@ -16,7 +16,7 @@ import logging
 import re
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 # Constants
@@ -46,7 +46,7 @@ class MATLABQualityChecker:
         self.project_root = project_root
         self.matlab_dir = project_root / "matlab"
         self.results = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "total_files": 0,
             "issues": [],
             "passed": True,
@@ -62,7 +62,8 @@ class MATLABQualityChecker:
         """
         if not self.matlab_dir.exists():
             logger.info(
-                f"MATLAB directory not found: {self.matlab_dir} (skipping MATLAB checks)",
+                "MATLAB directory not found: %s (skipping MATLAB checks)",
+                self.matlab_dir,
             )
             return False
 
@@ -73,7 +74,7 @@ class MATLABQualityChecker:
             logger.info("No MATLAB files found (skipping MATLAB checks)")
             return False
 
-        logger.info(f"Found {len(m_files)} MATLAB files")
+        logger.info("Found %d MATLAB files", len(m_files))
         return True
 
     def run_matlab_quality_checks(self) -> dict[str, object]:
@@ -96,8 +97,7 @@ class MATLABQualityChecker:
             # Note: This requires MATLAB to be installed and accessible from command line
             try:
                 # First, try to run the MATLAB script directly if possible
-                result = self._run_matlab_script(matlab_script)
-                return result
+                return self._run_matlab_script(matlab_script)
             except Exception as e:
                 logger.warning("Could not run MATLAB script directly: %s", e)
                 # Fall back to static analysis
@@ -251,11 +251,12 @@ class MATLABQualityChecker:
                 if line_stripped.startswith("function") and not is_comment:
                     # Check if next non-empty line has docstring
                     has_docstring = False
+                    MIN_DOCSTRING_LENGTH = 3
                     for j in range(i, min(i + 5, len(lines))):
                         next_line = lines[j].strip()
                         if next_line and not next_line.startswith("%"):
                             break
-                        if next_line.startswith("%") and len(next_line) > 3:
+                        if next_line.startswith("%") and len(next_line) > MIN_DOCSTRING_LENGTH:
                             has_docstring = True
                             break
 
@@ -302,39 +303,48 @@ class MATLABQualityChecker:
                 # Check for common MATLAB anti-patterns
                 if re.search(r"\beval\s*\(", line_stripped):
                     issues.append(
-                        f"{file_path.name} (line {i}): Avoid using eval() - potential security risk and performance issue",
+                        f"{file_path.name} (line {i}): "
+                        "Avoid using eval() - potential security risk and performance issue",
                     )
 
                 if re.search(r"\bassignin\s*\(", line_stripped):
                     issues.append(
-                        f"{file_path.name} (line {i}): Avoid using assignin() - violates encapsulation",
+                        f"{file_path.name} (line {i}): "
+                        "Avoid using assignin() - violates encapsulation",
                     )
 
                 if re.search(r"\bevalin\s*\(", line_stripped):
                     issues.append(
-                        f"{file_path.name} (line {i}): Avoid using evalin() - violates encapsulation",
+                        f"{file_path.name} (line {i}): "
+                        "Avoid using evalin() - violates encapsulation",
                     )
 
                 # Check for global variables (often code smell)
                 if re.search(r"\bglobal\s+\w+", line_stripped):
                     issues.append(
-                        f"{file_path.name} (line {i}): Global variable usage - consider passing as argument",
+                        f"{file_path.name} (line {i}): "
+                        "Global variable usage - consider passing as argument",
                     )
 
                 # Check for load without output (loads into workspace)
                 # Match both command syntax (load file.mat) and function syntax (load('file.mat'))
                 # Check for specific assignment pattern rather than just presence of =
                 # This avoids false negatives from = in comments or comparisons
-                if self.LOAD_PATTERN.search(line_stripped) and not self.ASSIGNMENT_PATTERN.search(line_stripped):
+                if (
+                    self.LOAD_PATTERN.search(line_stripped)
+                    and not self.ASSIGNMENT_PATTERN.search(line_stripped)
+                ):
                     issues.append(
-                        f"{file_path.name} (line {i}): load without output variable - use 'data = load(...)' instead",
+                        f"{file_path.name} (line {i}): "
+                        "load without output variable - use 'data = load(...)' instead",
                     )
 
                 # Check for magic numbers (but allow common values and known constants)
                 # Matches both integer and floating-point literals (e.g., 3.14, 42, 0.5)
                 # that are not part of scientific notation, array indices, or embedded in words.
-                # Uses lookbehind/lookahead to avoid matching numbers adjacent to dots or word characters.
-                # This helps flag "magic numbers" in code while avoiding false positives from common patterns.
+                # Uses lookbehind/lookahead to avoid matching numbers adjacent to dots or
+                # word characters. This helps flag "magic numbers" in code while avoiding
+                # false positives from common patterns.
                 magic_number_pattern = r"(?<![.\w])(?:\d+\.\d+|\d+)(?![.\w])"
                 magic_numbers = re.findall(magic_number_pattern, line_stripped)
 
@@ -384,7 +394,8 @@ class MATLABQualityChecker:
                     # Check if it's a known constant
                     if num in known_constants:
                         issues.append(
-                            f"{file_path.name} (line {i}): Magic number {num} ({known_constants[num]}) - define as named constant",
+                            f"{file_path.name} (line {i}): Magic number {num} "
+                            f"({known_constants[num]}) - define as named constant",
                         )
                     elif num not in acceptable_numbers:
                         # Check if the number appears before a comment on same line
@@ -394,41 +405,50 @@ class MATLABQualityChecker:
                             num_idx != -1 and num_idx < comment_idx
                         ):
                             issues.append(
-                                f"{file_path.name} (line {i}): Magic number {num} should be defined as constant with units and source",
+                                f"{file_path.name} (line {i}): Magic number {num} "
+                                "should be defined as constant with units and source",
                             )
 
                 # Check for clear/clc/close all in functions (bad practice)
                 if in_function:
-                    # Check for clear without variable (dangerous) or clear all/global (very dangerous)
+                    # Check for clear without variable (dangerous) or clear all/global
+                    # (very dangerous)
                     if re.search(
                         r"\bclear\s+(all|global)\b", line_stripped, re.IGNORECASE
                     ):
                         issues.append(
-                            f"{file_path.name} (line {i}): Avoid 'clear all' or 'clear global' in functions - clears all variables, functions, and MEX links",
+                            f"{file_path.name} (line {i}): Avoid 'clear all' or "
+                            "'clear global' in functions - clears all variables, "
+                            "functions, and MEX links",
                         )
                     elif re.search(r"\bclear\b(?!\s+\w+)", line_stripped):
                         issues.append(
-                            f"{file_path.name} (line {i}): Avoid 'clear' in functions - can clear function variables",
+                            f"{file_path.name} (line {i}): Avoid 'clear' in functions "
+                            "- can clear function variables",
                         )
                     if re.search(r"\bclc\b", line_stripped):
                         issues.append(
-                            f"{file_path.name} (line {i}): Avoid 'clc' in functions - affects user's workspace",
+                            f"{file_path.name} (line {i}): Avoid 'clc' in functions "
+                            "- affects user's workspace",
                         )
                     if re.search(r"\bclose\s+all\b", line_stripped):
                         issues.append(
-                            f"{file_path.name} (line {i}): Avoid 'close all' in functions - closes user's figures",
+                            f"{file_path.name} (line {i}): Avoid 'close all' in "
+                            "functions - closes user's figures",
                         )
 
                 # Check for exist() usage (often code smell, prefer try/catch or validation)
                 if re.search(r"\bexist\s*\(", line_stripped):
                     issues.append(
-                        f"{file_path.name} (line {i}): Consider using validation or try/catch instead of exist()",
+                        f"{file_path.name} (line {i}): Consider using validation or "
+                        "try/catch instead of exist()",
                     )
 
                 # Check for addpath in functions (should be in startup.m or managed externally)
                 if in_function and re.search(r"\baddpath\s*\(", line_stripped):
                     issues.append(
-                        f"{file_path.name} (line {i}): Avoid addpath in functions - manage paths externally",
+                        f"{file_path.name} (line {i}): Avoid addpath in functions "
+                        "- manage paths externally",
                     )
 
         except Exception as e:
@@ -463,12 +483,14 @@ class MATLABQualityChecker:
             self.results["checks"]["matlab"] = matlab_results
             if matlab_results.get("passed", False):
                 self.results["summary"] = (
-                    f"[PASS] MATLAB quality checks PASSED ({self.results['total_files']} files checked)"
+                    f"[PASS] MATLAB quality checks PASSED "
+                    f"({self.results['total_files']} files checked)"
                 )
             else:
                 self.results["passed"] = False
                 self.results["summary"] = (
-                    f"[FAIL] MATLAB quality checks FAILED ({self.results['total_files']} files checked)"
+                    f"[FAIL] MATLAB quality checks FAILED "
+                    f"({self.results['total_files']} files checked)"
                 )
 
         return self.results
@@ -529,12 +551,11 @@ def main() -> None:
     passed = results.get("passed", False)
     has_issues = bool(results.get("issues"))
 
-    if args.strict:
-        # Strict mode: fail if any issues found
-        exit_code = 0 if (passed and not has_issues) else 1
-    else:
-        # Normal mode: fail only if checks didn't pass
-        exit_code = 0 if passed else 1
+    exit_code = (
+        (0 if (passed and not has_issues) else 1)
+        if args.strict
+        else (0 if passed else 1)
+    )
 
     sys.exit(exit_code)
 
