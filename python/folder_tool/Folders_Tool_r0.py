@@ -1604,7 +1604,7 @@ class FolderProcessorApp:
                     logger.info(f"Cleaned up failed backup: {backup_base}")
                 except Exception as cleanup_error:
                     logger.warning(
-                        f"Failed to cleanup failed backup: {backup_base} - {cleanup_error}"
+                        f"Failed to cleanup failed backup: {backup_base} - {cleanup_error}",
                     )
             raise
 
@@ -1692,12 +1692,12 @@ class FolderProcessorApp:
                             # Validate file size
                             if file_size < MIN_FILE_SIZE_BYTES:
                                 logger.debug(
-                                    f"File below minimum size: {file_path} ({file_size} bytes)"
+                                    f"File below minimum size: {file_path} ({file_size} bytes)",
                                 )
                                 continue
                             if file_size > MAX_FILE_SIZE_MB * 1024 * 1024:
                                 logger.warning(
-                                    f"File exceeds maximum size: {file_path} ({file_size / (1024*1024):.1f} MB)"
+                                    f"File exceeds maximum size: {file_path} ({file_size / (1024*1024):.1f} MB)",
                                 )
 
                             total_files += 1
@@ -1721,14 +1721,14 @@ class FolderProcessorApp:
                 # Report folder analysis results
                 if folder_errors > 0:
                     report.append(
-                        f"  Files: {folder_files}, Size: {folder_size/(1024*1024):.1f} MB, Errors: {folder_errors}"
+                        f"  Files: {folder_files}, Size: {folder_size/(1024*1024):.1f} MB, Errors: {folder_errors}",
                     )
                     analysis_errors.append(
-                        f"Folder {folder}: {folder_errors} access errors"
+                        f"Folder {folder}: {folder_errors} access errors",
                     )
                 else:
                     report.append(
-                        f"  Files: {folder_files}, Size: {folder_size/(1024*1024):.1f} MB"
+                        f"  Files: {folder_files}, Size: {folder_size/(1024*1024):.1f} MB",
                     )
 
             except (OSError, PermissionError) as e:
