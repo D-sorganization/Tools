@@ -278,8 +278,15 @@ end
 
 function msgs = ensureField(msgs, fname, defaultVal)
     if ~isfield(msgs, fname)
-        for k = 1:numel(msgs)
-            msgs(k).(fname) = defaultVal; %#ok<AGROW>
+        % Handle cell array defaultVal (e.g., from extractIdentifierFallback)
+        if iscell(defaultVal) && numel(defaultVal) == numel(msgs)
+            for k = 1:numel(msgs)
+                msgs(k).(fname) = defaultVal{k}; %#ok<AGROW>
+            end
+        else
+            for k = 1:numel(msgs)
+                msgs(k).(fname) = defaultVal; %#ok<AGROW>
+            end
         end
     end
 end

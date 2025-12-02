@@ -32,6 +32,10 @@ logger = logging.getLogger(__name__)
 
 class MATLABQualityChecker:
     """Comprehensive MATLAB code quality checker."""
+    
+    # Compiled regex patterns for performance (compiled once, reused many times)
+    LOAD_PATTERN = re.compile(r"^\s*load\s+(?:\w+|\([^)]+\))")
+    ASSIGNMENT_PATTERN = re.compile(r"\w+\s*=\s*load\s*[\(]")
 
     def __init__(self, project_root: Path):
         """Initialize the MATLAB quality checker.
@@ -318,10 +322,9 @@ class MATLABQualityChecker:
 
                 # Check for load without output (loads into workspace)
                 # Match both command syntax (load file.mat) and function syntax (load('file.mat'))
-                if (
-                    re.search(r"^\s*load\s+\w+", line_stripped)
-                    or re.search(r"^\s*load\s*\([^)]+\)", line_stripped)
-                ) and "=" not in line_stripped:
+                # Check for specific assignment pattern rather than just presence of =
+                # This avoids false negatives from = in comments or comparisons
+                if self.LOAD_PATTERN.search(line_stripped) and not self.ASSIGNMENT_PATTERN.search(line_stripped):
                     issues.append(
                         f"{file_path.name} (line {i}): load without output variable - use 'data = load(...)' instead",
                     )

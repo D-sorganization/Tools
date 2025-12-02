@@ -138,7 +138,9 @@ def check_banned_patterns(
         # Only skip angle bracket patterns for Tkinter bindings, not all patterns
         for pattern, message in BANNED_PATTERNS:
             # Skip angle bracket patterns if line contains legitimate Tkinter bindings
-            if "<" in pattern.pattern and is_legitimate_tkinter_binding(line):
+            # Check pattern string before compilation to avoid accessing internal regex implementation
+            pattern_str = pattern.pattern if hasattr(pattern, 'pattern') else str(pattern)
+            if "<" in pattern_str and is_legitimate_tkinter_binding(line):
                 continue
             if pattern.search(line):
                 issues.append((line_num, message, line.strip()))
@@ -170,26 +172,55 @@ def check_magic_numbers(lines: list[str], filepath: Path) -> list[tuple[int, str
         return issues
 
     def strip_comments(line: str) -> str:
-        """Strip comments from a line, handling string literals correctly."""
+        """Strip comments from a line, handling string literals correctly.
+        
+        Handles single quotes, double quotes, triple quotes, and escaped characters.
+        """
         # Find the first # that's not inside a string literal
         in_single_quote = False
         in_double_quote = False
+        in_triple_single = False
+        in_triple_double = False
         escaped = False
+        i = 0
 
-        for i, char in enumerate(line):
+        while i < len(line):
+            char = line[i]
+            
             if escaped:
                 escaped = False
+                i += 1
                 continue
+                
             if char == "\\":
                 escaped = True
+                i += 1
                 continue
-            if char == "'" and not in_double_quote:
-                in_single_quote = not in_single_quote
-            elif char == '"' and not in_single_quote:
-                in_double_quote = not in_double_quote
-            elif char == "#" and not in_single_quote and not in_double_quote:
-                # Found a comment marker outside of strings
-                return line[:i].rstrip()
+            
+            # Check for triple quotes first (they take precedence)
+            if i + 2 < len(line):
+                triple = line[i : i + 3]
+                if triple == '"""' and not in_single_quote and not in_triple_single:
+                    in_triple_double = not in_triple_double
+                    i += 3
+                    continue
+                elif triple == "'''" and not in_double_quote and not in_triple_double:
+                    in_triple_single = not in_triple_single
+                    i += 3
+                    continue
+            
+            # Only process single/double quotes if not in triple quotes
+            if not in_triple_single and not in_triple_double:
+                if char == "'" and not in_double_quote:
+                    in_single_quote = not in_single_quote
+                elif char == '"' and not in_single_quote:
+                    in_double_quote = not in_double_quote
+                elif char == "#" and not in_single_quote and not in_double_quote:
+                    # Found a comment marker outside of strings
+                    return line[:i].rstrip()
+            
+            i += 1
+            
         return line
 
     for line_num, line in enumerate(lines, 1):

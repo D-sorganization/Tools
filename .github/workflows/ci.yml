@@ -80,13 +80,14 @@ jobs:
           else
             # Fallback to grep with improved pattern (exclude type hints with ...)
             # Pattern: match TODO/FIXME/XXX/HACK/NotImplementedError, or standalone ellipsis (not in type hints)
-            if grep -r -E "\bTODO\b|\bFIXME\b|\bXXX\b|\bHACK\b|pass\s+#|NotImplementedError|^\s*\.\.\.\s*$|^\s*\.\.\.\s+#" \
+            if grep -r -E "\bTODO\b|\bFIXME\b|\bXXX\b|\bHACK\b|\bpass\s+#|NotImplementedError|^\s*\.\.\.\s*$|^\s*\.\.\.\s+#" \
               --include="*.py" \
               --exclude-dir=".git" \
               --exclude-dir="archive" \
               --exclude-dir="legacy" \
               --exclude-dir="experimental" \
-              --exclude="quality_check*.py" \
+              --exclude="quality_check.py" \
+              --exclude="quality_check_script.py" \
               --exclude="matlab_quality_check.py" \
               --exclude="check_placeholders.py" .; then
               echo "❌ ERROR: Placeholders found in code"
