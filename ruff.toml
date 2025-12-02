@@ -83,6 +83,9 @@ ignore = [
     "TRY003",  # Raise vanilla args (intentional)
     "EM102",   # F-string in exception (readability)
     "E501",    # Line too long (handled by black)
+    "EXE001",  # Shebang present but file not executable (Windows compatibility)
+    "PLC0415", # Import not at top level (lazy imports for optional dependencies)
+    "PTH208",  # os.listdir vs pathlib (acceptable pattern)
 ]
 
 # Stricter than defaults
