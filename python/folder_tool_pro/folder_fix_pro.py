@@ -729,7 +729,9 @@ class FolderFixPro:
 
         # Regex filter
         regex_frame = ttk.LabelFrame(
-            main_frame, text="Regular Expression Filter", padding=PADDING_MEDIUM
+            main_frame,
+            text="Regular Expression Filter",
+            padding=PADDING_MEDIUM,
         )
         regex_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
@@ -742,7 +744,9 @@ class FolderFixPro:
 
         # Size filter
         size_frame = ttk.LabelFrame(
-            main_frame, text="File Size Filter", padding=PADDING_MEDIUM
+            main_frame,
+            text="File Size Filter",
+            padding=PADDING_MEDIUM,
         )
         size_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
@@ -764,7 +768,9 @@ class FolderFixPro:
 
         # Advanced options
         advanced_frame = ttk.LabelFrame(
-            main_frame, text="Advanced Options", padding=PADDING_MEDIUM
+            main_frame,
+            text="Advanced Options",
+            padding=PADDING_MEDIUM,
         )
         advanced_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
@@ -774,10 +780,14 @@ class FolderFixPro:
         self.preserve_metadata_var = tk.BooleanVar(value=True)
 
         ttk.Checkbutton(
-            advanced_frame, text="Skip hidden files", variable=self.skip_hidden_var
+            advanced_frame,
+            text="Skip hidden files",
+            variable=self.skip_hidden_var,
         ).pack(anchor="w")
         ttk.Checkbutton(
-            advanced_frame, text="Skip system files", variable=self.skip_system_var
+            advanced_frame,
+            text="Skip system files",
+            variable=self.skip_system_var,
         ).pack(anchor="w")
         ttk.Checkbutton(
             advanced_frame,
@@ -792,7 +802,7 @@ class FolderFixPro:
 
         # Test filters button
         ttk.Button(main_frame, text="🔍 Test Filters", command=self._test_filters).pack(
-            pady=PADDING_MEDIUM
+            pady=PADDING_MEDIUM,
         )
 
     def _create_preview_tab(self):
