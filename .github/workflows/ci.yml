@@ -197,13 +197,41 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Quality Check | ${{ steps.quality-check.outcome == 'success' || steps.quality-check.outcome == 'skipped' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| No Placeholders | ${{ steps.placeholders.outcome == 'success' || steps.placeholders.outcome == 'skipped' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| No Magic Numbers | ${{ steps.magic-numbers.outcome == 'success' || steps.magic-numbers.outcome == 'skipped' && '✅' || '⚠️' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| No Approximations | ${{ steps.approximations.outcome == 'success' || steps.approximations.outcome == 'skipped' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Pre-commit | ${{ steps.pre-commit.outcome == 'success' || steps.pre-commit.outcome == 'skipped' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Type Checking | ${{ steps.type-checking.outcome == 'success' || steps.type-checking.outcome == 'skipped' && '✅' || '⚠️' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Tests + Coverage | ${{ steps.tests.outcome == 'success' || steps.tests.outcome == 'skipped' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.quality-check.outcome }}" == "success" ] || [ "${{ steps.quality-check.outcome }}" == "skipped" ]; then
+            echo "| Quality Check | ✅ |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Quality Check | ❌ |" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ "${{ steps.placeholders.outcome }}" == "success" ] || [ "${{ steps.placeholders.outcome }}" == "skipped" ]; then
+            echo "| No Placeholders | ✅ |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| No Placeholders | ❌ |" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ "${{ steps.magic-numbers.outcome }}" == "success" ] || [ "${{ steps.magic-numbers.outcome }}" == "skipped" ]; then
+            echo "| No Magic Numbers | ✅ |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| No Magic Numbers | ⚠️ |" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ "${{ steps.approximations.outcome }}" == "success" ] || [ "${{ steps.approximations.outcome }}" == "skipped" ]; then
+            echo "| No Approximations | ✅ |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| No Approximations | ❌ |" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ "${{ steps.pre-commit.outcome }}" == "success" ] || [ "${{ steps.pre-commit.outcome }}" == "skipped" ]; then
+            echo "| Pre-commit | ✅ |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Pre-commit | ❌ |" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ "${{ steps.type-checking.outcome }}" == "success" ] || [ "${{ steps.type-checking.outcome }}" == "skipped" ]; then
+            echo "| Type Checking | ✅ |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Type Checking | ⚠️ |" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ "${{ steps.tests.outcome }}" == "success" ] || [ "${{ steps.tests.outcome }}" == "skipped" ]; then
+            echo "| Tests + Coverage | ✅ |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Tests + Coverage | ❌ |" >> $GITHUB_STEP_SUMMARY
+          fi
           
   matlab-analysis:
     runs-on: ubuntu-latest
