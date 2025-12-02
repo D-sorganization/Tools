@@ -433,7 +433,7 @@ class FolderFixPro:
 
         logger.info("Folder Fix Pro v3.0 initialized successfully")
 
-    def _setup_icon(self):
+    def _setup_icon(self) -> None:
         """Set up application icon with fallback."""
         try:
             if sys.platform == "win32":
@@ -992,13 +992,13 @@ class FolderFixPro:
             text=f"Ready  |  Theme: {self.current_theme.title()}  |  No operation in progress",
         )
 
-    def _toggle_theme(self):
+    def _toggle_theme(self) -> None:
         """Toggle between dark and light themes."""
         self.current_theme = "light" if self.current_theme == "dark" else "dark"
         self._apply_theme()
         self._log_message(f"Switched to {self.current_theme} theme", "info")
 
-    def _add_source_folder(self):
+    def _add_source_folder(self) -> None:
         """Add source folder via dialog."""
         folder = filedialog.askdirectory(title="Select Source Folder")
         if folder and folder not in self.source_folders:
@@ -1007,9 +1007,9 @@ class FolderFixPro:
             self._log_message(f"Added source folder: {folder}", "info")
             self._update_preview()
 
-    def _remove_source_folder(self):
+    def _remove_source_folder(self) -> None:
         """Remove selected source folder."""
-        selection = self.source_listbox.curselection()
+        selection = self.source_listbox.curselection()  # type: ignore[no-untyped-call]
         for index in reversed(selection):
             folder = self.source_folders[index]
             self.source_folders.pop(index)
@@ -1017,14 +1017,14 @@ class FolderFixPro:
             self._log_message(f"Removed source folder: {folder}", "info")
         self._update_preview()
 
-    def _clear_source_folders(self):
+    def _clear_source_folders(self) -> None:
         """Clear all source folders."""
         self.source_folders.clear()
         self.source_listbox.delete(0, "end")
         self._log_message("Cleared all source folders", "info")
         self._update_preview()
 
-    def _browse_destination(self):
+    def _browse_destination(self) -> None:
         """Browse for destination folder."""
         folder = filedialog.askdirectory(title="Select Destination Folder")
         if folder:
@@ -1033,13 +1033,13 @@ class FolderFixPro:
             self.dest_entry.insert(0, folder)
             self._log_message(f"Set destination folder: {folder}", "info")
 
-    def _on_mode_change(self):
+    def _on_mode_change(self) -> None:
         """Handle operation mode change."""
         mode = self.mode_var.get()
         self._log_message(f"Operation mode changed to: {mode}", "info")
         self._update_preview()
 
-    def _update_preview(self):
+    def _update_preview(self) -> None:
         """Update the preview tab with files to be processed."""
         self.preview_tree.delete(*self.preview_tree.get_children())
 
@@ -1048,8 +1048,8 @@ class FolderFixPro:
             return
 
         # Scan files in background
-        def scan_files():
-            files = []
+        def scan_files() -> None:
+            files: list[Path] = []
             for folder in self.source_folders:
                 try:
                     for root, _, filenames in os.walk(folder):
@@ -1068,7 +1068,7 @@ class FolderFixPro:
 
         threading.Thread(target=scan_files, daemon=True).start()
 
-    def _populate_preview(self, files):
+    def _populate_preview(self, files: list[Path]) -> None:
         """Populate preview tree with scanned files."""
         for file_path in files[:PREVIEW_MAX_FILES]:
             try:
@@ -1133,7 +1133,7 @@ class FolderFixPro:
             logger.exception("Error checking file %s", file_path)
             return False
 
-    def _test_filters(self):
+    def _test_filters(self) -> None:
         """Test current filters and show results."""
         if not self.source_folders:
             messagebox.showwarning(
@@ -1165,7 +1165,7 @@ class FolderFixPro:
 
         messagebox.showinfo("Filter Test Results", message)
 
-    def _start_operation(self):
+    def _start_operation(self) -> None:
         """Start the selected operation."""
         # Validate inputs
         if not self.source_folders:
@@ -1203,7 +1203,7 @@ class FolderFixPro:
 
         threading.Thread(target=self._run_operation, daemon=True).start()
 
-    def _run_operation(self):
+    def _run_operation(self) -> None:
         """Run the selected operation (background thread)."""
         try:
             mode = self.mode_var.get()
@@ -1250,7 +1250,7 @@ class FolderFixPro:
         finally:
             self.root.after(0, self._operation_finished)
 
-    def _operation_combine(self):
+    def _operation_combine(self) -> None:
         """Combine and copy files from multiple sources."""
         dest_path = Path(self.dest_folder)
         dest_path.mkdir(parents=True, exist_ok=True)
@@ -1297,7 +1297,7 @@ class FolderFixPro:
                                 f"Failed to copy {source_file}: {e}",
                             )
 
-    def _operation_flatten(self):
+    def _operation_flatten(self) -> None:
         """Flatten directory structure."""
         dest_path = Path(self.dest_folder)
         dest_path.mkdir(parents=True, exist_ok=True)
@@ -1358,7 +1358,7 @@ class FolderFixPro:
                                 f"Failed to flatten {source_file}: {e}",
                             )
 
-    def _operation_prune(self):
+    def _operation_prune(self) -> None:
         """Copy structure but prune empty folders."""
         dest_path = Path(self.dest_folder)
 
@@ -1417,7 +1417,7 @@ class FolderFixPro:
                     f"Processing {Path(root).name}",
                 )
 
-    def _operation_deduplicate(self):
+    def _operation_deduplicate(self) -> None:
         """Remove duplicate files based on selected method."""
         method = self.dedupe_method_var.get()
         self._log_message(f"Deduplication method: {method}", "info")
@@ -1496,9 +1496,9 @@ class FolderFixPro:
             "success",
         )
 
-    def _operation_analyze(self):
+    def _operation_analyze(self) -> None:
         """Analyze folders without making changes."""
-        stats = {
+        stats: dict[str, Any] = {
             "total_files": 0,
             "total_size": 0,
             "file_types": defaultdict(int),
@@ -1559,7 +1559,7 @@ class FolderFixPro:
         # Show analysis results
         self._show_analysis_results(stats)
 
-    def _show_analysis_results(self, stats):
+    def _show_analysis_results(self, stats: dict[str, Any]) -> None:
         """Show analysis results in a dialog."""
         results = "📊 Folder Analysis Results\n\n"
         results += f"Total Files: {stats['total_files']:,}\n"
@@ -1593,7 +1593,7 @@ class FolderFixPro:
                 total += len(filenames)
         return total
 
-    def _update_progress(self, current: int, total: int, message: str):
+    def _update_progress(self, current: int, total: int, message: str) -> None:
         """Update progress bar and status."""
         if total > 0:
             percentage = (current / total) * 100
@@ -1610,7 +1610,7 @@ class FolderFixPro:
 
         self._update_status(message)
 
-    def _update_status(self, message: str):
+    def _update_status(self, message: str) -> None:
         """Update status label."""
         self.root.after(0, lambda: self.status_label.configure(text=message))
         self.root.after(
@@ -1620,13 +1620,13 @@ class FolderFixPro:
             ),
         )
 
-    def _cancel_operation(self):
+    def _cancel_operation(self) -> None:
         """Cancel current operation."""
         self.cancel_operation = True
         self._log_message("Operation cancelled by user", "warning")
         self._update_status("Cancelling...")
 
-    def _operation_finished(self):
+    def _operation_finished(self) -> None:
         """Clean up after operation finishes."""
         self.start_btn.configure(state="normal")
         self.cancel_btn.configure(state="disabled")
@@ -1634,12 +1634,12 @@ class FolderFixPro:
         self.eta_label.configure(text="")
         self._update_status("Ready")
 
-    def _log_message(self, message: str, level: str = "info"):
+    def _log_message(self, message: str, level: str = "info") -> None:
         """Add message to log."""
         timestamp = datetime.now().strftime("%H:%M:%S")
         log_entry = f"[{timestamp}] {message}\n"
 
-        def update_log():
+        def update_log() -> None:
             self.log_text.configure(state="normal")
             self.log_text.insert("end", log_entry, level)
             self.log_text.see("end")
@@ -1657,13 +1657,13 @@ class FolderFixPro:
         else:
             logger.info(message)
 
-    def _clear_log(self):
+    def _clear_log(self) -> None:
         """Clear the log display."""
         self.log_text.configure(state="normal")
         self.log_text.delete("1.0", "end")
         self.log_text.configure(state="disabled")
 
-    def _save_log(self):
+    def _save_log(self) -> None:
         """Save log to file."""
         file_path = filedialog.asksaveasfilename(
             defaultextension=".txt",
@@ -1676,7 +1676,7 @@ class FolderFixPro:
                 f.write(self.log_text.get("1.0", "end"))
             messagebox.showinfo("Log Saved", f"Log saved to:\n{file_path}")
 
-    def _export_report_json(self):
+    def _export_report_json(self) -> None:
         """Export operation report as JSON."""
         file_path = filedialog.asksaveasfilename(
             defaultextension=".json",
@@ -1694,7 +1694,7 @@ class FolderFixPro:
             except Exception as e:
                 messagebox.showerror("Export Failed", f"Failed to export report:\n{e}")
 
-    def _export_report_html(self):
+    def _export_report_html(self) -> None:
         """Export operation report as HTML."""
         file_path = filedialog.asksaveasfilename(
             defaultextension=".html",
@@ -1721,13 +1721,13 @@ class FolderFixPro:
             except Exception as e:
                 messagebox.showerror("Export Failed", f"Failed to export report:\n{e}")
 
-    def _clear_cache(self):
+    def _clear_cache(self) -> None:
         """Clear file cache."""
         self.file_cache.clear()
         self._log_message("Cache cleared", "info")
         messagebox.showinfo("Cache Cleared", "File cache has been cleared.")
 
-    def _open_log_file(self):
+    def _open_log_file(self) -> None:
         """Open the log file in default text editor."""
         try:
             if sys.platform == "win32":
@@ -1739,7 +1739,7 @@ class FolderFixPro:
         except Exception as e:
             messagebox.showerror("Error", f"Could not open log file:\n{e}")
 
-    def _show_about(self):
+    def _show_about(self) -> None:
         """Show about dialog."""
         about_text = """Folder Fix Pro v3.0
 
@@ -1759,7 +1759,7 @@ Features:
 """
         messagebox.showinfo("About Folder Fix Pro", about_text)
 
-    def _show_user_guide(self):
+    def _show_user_guide(self) -> None:
         """Show user guide."""
         guide_text = """Folder Fix Pro - Quick Start Guide
 
@@ -1817,14 +1817,15 @@ Tips:
     @staticmethod
     def _format_size(size_bytes: int) -> str:
         """Format file size in human-readable format."""
+        size: float = float(size_bytes)
         for unit in ["B", "KB", "MB", "GB", "TB"]:
-            if size_bytes < 1024.0:
-                return f"{size_bytes:.2f} {unit}"
-            size_bytes /= 1024.0
-        return f"{size_bytes:.2f} PB"
+            if size < 1024.0:
+                return f"{size:.2f} {unit}"
+            size /= 1024.0
+        return f"{size:.2f} PB"
 
 
-def main():
+def main() -> None:
     """Main entry point for Folder Fix Pro."""
     try:
         # Create root window

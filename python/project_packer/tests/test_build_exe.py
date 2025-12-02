@@ -147,9 +147,14 @@ class TestBuildExe:
             mock_check.return_value = False
             with patch("build_exe.install_pyinstaller") as mock_install:
                 mock_install.return_value = False
-                with patch("sys.exit") as mock_exit:
-                    main()
-                    mock_exit.assert_called_once_with(1)
+                with patch("build_exe.build_executable") as mock_build:
+                    # Mock build_executable to prevent it from running
+                    mock_build.return_value = False
+                    with patch("sys.exit") as mock_exit:
+                        main()
+                        # sys.exit should be called once when install fails
+                        # The return statement prevents further execution
+                        mock_exit.assert_called_once_with(1)
 
     def test_main_build_failure(self) -> None:
         """Test main function when build fails."""
