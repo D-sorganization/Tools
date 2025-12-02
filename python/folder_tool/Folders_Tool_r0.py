@@ -1746,7 +1746,7 @@ class FolderProcessorApp:
                 f"TOTAL SIZE: {total_size/(1024*1024):.1f} MB",
                 "",
                 "FILE TYPES:",
-            ]
+            ],
         )
 
         # Sort file types by count
@@ -1773,11 +1773,11 @@ class FolderProcessorApp:
                 f"  Total folders analyzed: {len(valid_source_folders)}",
                 f"  Analysis timestamp: {datetime.now()}",
                 f"  File size limits: {MIN_FILE_SIZE_BYTES} bytes - {MAX_FILE_SIZE_MB} MB",
-            ]
+            ],
         )
 
         logger.info(
-            f"Analysis completed: {total_files} files, {total_size/(1024*1024):.1f} MB"
+            f"Analysis completed: {total_files} files, {total_size/(1024*1024):.1f} MB",
         )
         if analysis_errors:
             logger.warning(f"Analysis completed with {len(analysis_errors)} errors")
@@ -1925,7 +1925,7 @@ class FolderProcessorApp:
             raise ValueError("Destination folder not set")
         if not isinstance(self.dest_folder, str):
             raise ValueError(
-                f"Destination folder must be a string, got {type(self.dest_folder)}"
+                f"Destination folder must be a string, got {type(self.dest_folder)}",
             )
 
         dest_path_obj = Path(self.dest_folder)
@@ -1933,7 +1933,7 @@ class FolderProcessorApp:
         # Validate destination folder exists and is accessible
         if not dest_path_obj.exists():
             raise FileNotFoundError(
-                f"Destination folder does not exist: {self.dest_folder}"
+                f"Destination folder does not exist: {self.dest_folder}",
             )
         if not dest_path_obj.is_dir():
             raise ValueError(f"Destination path is not a directory: {self.dest_folder}")
@@ -1947,7 +1947,7 @@ class FolderProcessorApp:
                 raise ValueError("Destination folder is empty - nothing to archive")
         except (OSError, PermissionError) as e:
             raise PermissionError(
-                f"Cannot access destination folder contents: {self.dest_folder} - {e}"
+                f"Cannot access destination folder contents: {self.dest_folder} - {e}",
             )
 
         # Generate ZIP filename with timestamp
