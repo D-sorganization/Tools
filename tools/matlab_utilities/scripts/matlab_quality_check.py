@@ -251,12 +251,12 @@ class MATLABQualityChecker:
                 if line_stripped.startswith("function") and not is_comment:
                     # Check if next non-empty line has docstring
                     has_docstring = False
-                    MIN_DOCSTRING_LENGTH = 3
+                    min_docstring_length = 3
                     for j in range(i, min(i + 5, len(lines))):
                         next_line = lines[j].strip()
                         if next_line and not next_line.startswith("%"):
                             break
-                        if next_line.startswith("%") and len(next_line) > MIN_DOCSTRING_LENGTH:
+                        if next_line.startswith("%") and len(next_line) > min_docstring_length:
                             has_docstring = True
                             break
 
