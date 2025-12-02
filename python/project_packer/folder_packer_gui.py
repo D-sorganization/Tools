@@ -201,7 +201,7 @@ class FolderPackerGUI:
         status_frame.columnconfigure(0, weight=GRID_WEIGHT_MAIN)
 
         self.status_text = tk.Text(
-            status_frame, height=STATUS_TEXT_HEIGHT, wrap=tk.WORD
+            status_frame, height=STATUS_TEXT_HEIGHT, wrap=tk.WORD,
         )
         self.status_text.grid(row=0, column=0, sticky="ew")
 
