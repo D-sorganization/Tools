@@ -43,6 +43,28 @@ jobs:
         # ✅ Pin tool versions
         pip install ruff==0.5.0 mypy==1.10.0 black==24.4.2 pytest==8.3.3 pytest-cov==6.0.0
 
+    - name: Run MATLAB Quality Check (Static Analysis)
+      continue-on-error: true  # Non-blocking due to MATLAB license restrictions
+      run: |
+        if [ -f tools/matlab_utilities/scripts/matlab_quality_check.py ]; then
+          echo "=========================================="
+          echo "MATLAB Code Quality Checks"
+          echo "=========================================="
+          python tools/matlab_utilities/scripts/matlab_quality_check.py --output-format json > matlab_quality_results.json || true
+          python tools/matlab_utilities/scripts/matlab_quality_check.py --output-format text || echo "⚠️  Quality issues found - see report above (non-blocking)"
+        else
+          echo "⚠️  MATLAB quality check script not found - skipping"
+        fi
+
+    - name: Upload MATLAB Quality Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: matlab-quality-report
+        path: matlab_quality_results.json
+        retention-days: 30
+        if-no-files-found: ignore
+
     - name: Check for placeholders and magic numbers
       run: |
         echo "🔍 Checking for placeholders and magic numbers..."
