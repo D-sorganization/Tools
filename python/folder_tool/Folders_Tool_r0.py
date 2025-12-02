@@ -1502,7 +1502,7 @@ class FolderProcessorApp:
                 raise Exception("Failed to create backup base directory")
             if not os.access(backup_base, os.W_OK):
                 raise PermissionError(
-                    f"Cannot write to backup directory: {backup_base}"
+                    f"Cannot write to backup directory: {backup_base}",
                 )
 
             total_folders = len(valid_source_folders)
@@ -1555,7 +1555,7 @@ class FolderProcessorApp:
                             logger.info(f"Cleaned up failed backup: {backup_path}")
                         except Exception as cleanup_error:
                             logger.warning(
-                                f"Failed to cleanup failed backup: {backup_path} - {cleanup_error}"
+                                f"Failed to cleanup failed backup: {backup_path} - {cleanup_error}",
                             )
 
                     # Continue with other folders
@@ -1580,7 +1580,7 @@ class FolderProcessorApp:
                         logger.info(f"Cleaned up empty backup directory: {backup_base}")
                     except Exception as cleanup_error:
                         logger.warning(
-                            f"Failed to cleanup empty backup directory: {backup_base} - {cleanup_error}"
+                            f"Failed to cleanup empty backup directory: {backup_base} - {cleanup_error}",
                         )
                 return None
 
@@ -1588,7 +1588,7 @@ class FolderProcessorApp:
             if backup_base.exists() and os.listdir(backup_base):
                 logger.info(f"Backup completed successfully: {backup_base}")
                 logger.info(
-                    f"Backup summary: {successful_backups} successful, {failed_backups} failed"
+                    f"Backup summary: {successful_backups} successful, {failed_backups} failed",
                 )
                 return str(backup_base)
             else:
