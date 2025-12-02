@@ -2113,7 +2113,7 @@ class FolderProcessorApp:
             len(content) > MAX_TEXT_CONTENT_SIZE
         ):  # MAX_TEXT_CONTENT_SIZE limit for text content
             logger.warning(
-                f"Content is very large ({len(content)} chars), may cause performance issues"
+                f"Content is very large ({len(content)} chars), may cause performance issues",
             )
             # Truncate content for display
             content = (
@@ -2168,7 +2168,9 @@ class FolderProcessorApp:
             )
 
             scrollbar = ttk.Scrollbar(
-                text_frame, orient="vertical", command=text_widget.yview
+                text_frame,
+                orient="vertical",
+                command=text_widget.yview,
             )
             text_widget.configure(yscrollcommand=scrollbar.set)
 
@@ -2199,7 +2201,9 @@ class FolderProcessorApp:
             button_frame.pack(fill=tk.X, padx=10, pady=(0, 10))
 
             close_button = ttk.Button(
-                button_frame, text="Close", command=dialog.destroy
+                button_frame,
+                text="Close",
+                command=dialog.destroy,
             )
             close_button.pack(side="right")
 
@@ -2214,7 +2218,9 @@ class FolderProcessorApp:
                     logger.warning(f"Failed to copy to clipboard: {e}")
 
             copy_button = ttk.Button(
-                button_frame, text="Copy All", command=copy_to_clipboard
+                button_frame,
+                text="Copy All",
+                command=copy_to_clipboard,
             )
             copy_button.pack(side="right", padx=(0, 5))
 
@@ -2235,7 +2241,7 @@ class FolderProcessorApp:
 
             # Log successful dialog creation
             logger.info(
-                f"Text dialog created successfully: {dialog_width}x{dialog_height}"
+                f"Text dialog created successfully: {dialog_width}x{dialog_height}",
             )
 
             # Wait for dialog to close
