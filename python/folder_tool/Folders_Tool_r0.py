@@ -1459,7 +1459,7 @@ class FolderProcessorApp:
             raise ValueError("No source folders to backup")
         if not isinstance(self.source_folders, list):
             raise ValueError(
-                f"Source folders must be a list, got {type(self.source_folders)}"
+                f"Source folders must be a list, got {type(self.source_folders)}",
             )
 
         # Validate each source folder
@@ -1625,7 +1625,7 @@ class FolderProcessorApp:
             raise ValueError("No source folders to analyze")
         if not isinstance(self.source_folders, list):
             raise ValueError(
-                f"Source folders must be a list, got {type(self.source_folders)}"
+                f"Source folders must be a list, got {type(self.source_folders)}",
             )
 
         # Validate each source folder
