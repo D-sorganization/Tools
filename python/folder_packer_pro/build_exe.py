@@ -26,7 +26,11 @@ def build_exe():
         "--onefile",  # Single executable
         "--windowed",  # No console window
         "--name=FolderPackerPro",  # Executable name
-        ("--icon=paper_plane_icon.ico" if (script_dir / "paper_plane_icon.ico").exists() else ""),
+        (
+            "--icon=paper_plane_icon.ico"
+            if (script_dir / "paper_plane_icon.ico").exists()
+            else ""
+        ),
         (
             "--add-data=paper_plane_icon.ico;."
             if (script_dir / "paper_plane_icon.ico").exists()
