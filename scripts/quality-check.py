@@ -12,19 +12,13 @@ BANNED_PATTERNS = [
     (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
     (re.compile(r"^\s*\.\.\.\s*$"), "Ellipsis placeholder"),
     (re.compile(r"NotImplementedError"), "NotImplementedError placeholder"),
-    # More specific angle bracket patterns to avoid Tkinter event bindings
+    # Angle bracket placeholder pattern (excludes Tkinter event bindings via is_legitimate_tkinter_binding)
     (
         re.compile(r"<[^<>]*placeholder[^<>]*>", re.IGNORECASE),
         "Angle bracket placeholder",
     ),
-    (
-        re.compile(r"<[^<>]*TODO[^<>]*>", re.IGNORECASE),
-        "Angle bracket TODO placeholder",
-    ),
-    (
-        re.compile(r"<[^<>]*FIXME[^<>]*>", re.IGNORECASE),
-        "Angle bracket FIXME placeholder",
-    ),
+    # Note: Angle bracket TODO/FIXME patterns removed to avoid false positives in regex definitions
+    # Standard TODO/FIXME word boundary patterns above will catch these cases
     (re.compile(r"your.*here", re.IGNORECASE), "Template placeholder"),
     (re.compile(r"insert.*here", re.IGNORECASE), "Template placeholder"),
 ]

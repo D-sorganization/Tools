@@ -1,8 +1,28 @@
-// File: matlab/run_all.m
 function run_all()
-    % Recreates key results end-to-end.
-    % 1) Configure reproducibility
-    rng(42);
+%RUN_ALL Recreates key results end-to-end.
+%
+%   RUN_ALL() executes a complete end-to-end workflow to recreate key
+%   results, including configuration, output directory preparation, and
+%   metadata saving.
+%
+%   Output:
+%   -------
+%   Creates output directory structure and saves metadata JSON file.
+%
+%   Example:
+%   --------
+%   run_all();
+%
+%   See also: datetime, datestr, jsonencode
+
+arguments
+end
+
+% Standard reproducibility seed (commonly used in scientific computing)
+REPRODUCIBILITY_SEED = 42; % Standard seed for reproducibility
+
+% 1) Configure reproducibility
+rng(REPRODUCIBILITY_SEED);
     % 2) Prepare output directory
     outdir = fullfile('output', datestr(datetime('now'),'yyyy-mm-dd'), 'baseline');
     if ~exist(outdir, 'dir'); mkdir(outdir); end

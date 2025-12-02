@@ -12,6 +12,98 @@
 % - ConvolutionReverb.m must be in your path
 % - Audio files for testing (or generate test signals)
 
+%% Constants
+% Audio processing constants with units and sources
+SAMPLE_RATE_HZ = 44100; % [Hz] Standard CD-quality sample rate (IEC 60908)
+A4_FREQUENCY_HZ = 440; % [Hz] Standard tuning frequency A4 (ISO 16:1975)
+LOW_FREQ_HZ = 100; % [Hz] Low frequency cutoff for bandpass filter
+HIGH_FREQ_HZ = 8000; % [Hz] High frequency cutoff for bandpass filter
+DURATION_SECONDS = 2; % [s] Test signal duration
+WET_DRY_MIX = 0.5; % [0-1] Wet/dry mix ratio
+PAUSE_DURATION_SECONDS = 2.5; % [s] Pause duration between audio playback
+CLIP_PREVENTION_SCALE = 0.5; % [0-1] Scale factor to prevent clipping
+DECAY_RATE = 2; % [1/s] Exponential decay rate for test tone
+BUTTERWORTH_ORDER = 4; % Filter order for Butterworth bandpass
+VOCAL_FUNDAMENTAL_HZ = 200; % [Hz] Fundamental frequency for vocal simulation
+VOCAL_HARMONIC_2_HZ = 400; % [Hz] Second harmonic for vocal simulation
+VOCAL_HARMONIC_3_HZ = 600; % [Hz] Third harmonic for vocal simulation
+VOCAL_DECAY_RATE = 4; % [1/s] Decay rate for vocal simulation
+VOCAL_ENVELOPE_RISE_S = 0.2; % [s] Envelope rise time
+VOCAL_ENVELOPE_FALL_S = 1.8; % [s] Envelope fall start time
+PRE_DELAY_1_MS = 0.02; % [s] Pre-delay option 1 (20 ms)
+PRE_DELAY_2_MS = 0.05; % [s] Pre-delay option 2 (50 ms)
+PRE_DELAY_3_MS = 0.10; % [s] Pre-delay option 3 (100 ms)
+EQ_CUT_LOW_DB = -8; % [dB] Low frequency cut for EQ
+EQ_CUT_HIGH_DB = -8; % [dB] High frequency cut for EQ
+EQ_BOOST_LOW_DB = 4; % [dB] Low frequency boost for EQ
+EQ_BOOST_HIGH_DB = 4; % [dB] High frequency boost for EQ
+EQ_WARM_CUT_HIGH_DB = -6; % [dB] High frequency cut for warm EQ
+EQ_BRIGHT_CUT_LOW_DB = -6; % [dB] Low frequency cut for bright EQ
+NOISE_DURATION_S = 0.2; % [s] White noise burst duration
+NOISE_SILENCE_S = 1.8; % [s] Silence duration after noise burst
+PLAYBACK_SCALE_1 = 0.7; % [0-1] Playback scale factor 1
+PLAYBACK_SCALE_2 = 0.5; % [0-1] Playback scale factor 2
+PLAYBACK_SCALE_3 = 0.8; % [0-1] Playback scale factor 3
+PAUSE_SHORT_S = 1.5; % [s] Short pause duration
+PAUSE_MEDIUM_S = 2; % [s] Medium pause duration
+SPECTROGRAM_WINDOW = 512; % [samples] Spectrogram window size
+SPECTROGRAM_OVERLAP = 384; % [samples] Spectrogram overlap size
+SPECTROGRAM_NFFT = 512; % [samples] Spectrogram FFT size
+SPECTROGRAM_WINDOW_SMALL = 256; % [samples] Small spectrogram window
+SPECTROGRAM_OVERLAP_SMALL = 192; % [samples] Small spectrogram overlap
+HARMONIC_COUNT = 8; % Number of harmonics for vocal simulation
+VIBRATO_DEPTH = 0.02; % [0-1] Vibrato depth
+VIBRATO_RATE_HZ = 5; % [Hz] Vibrato rate
+VOCAL_NORMALIZE_SCALE = 0.8; % [0-1] Vocal normalization scale
+WET_DRY_SUBTLE_WET = 0.25; % [0-1] Subtle wet mix
+WET_DRY_SUBTLE_DRY = 0.75; % [0-1] Subtle dry mix
+PRE_DELAY_VOCAL_MS = 0.05; % [s] Pre-delay for vocal (50 ms)
+EQ_VOCAL_LOW_DB = -4; % [dB] Low frequency cut for vocal EQ
+EQ_VOCAL_HIGH_DB = -3; % [dB] High frequency cut for vocal EQ
+DAMPING_VOCAL = 0.3; % [0-1] Damping for vocal
+STEREO_WIDTH_VOCAL = 1.3; % Stereo width for vocal
+IMPULSE_DURATION_S = 0.1; % [s] Impulse duration for snare simulation
+SNARE_NOISE_SCALE = 0.3; % [0-1] Noise scale for snare
+KICK_DURATION_S = 2; % [s] Kick drum duration
+KICK_LOW_FREQ_HZ = 50; % [Hz] Low frequency for kick
+KICK_HIGH_FREQ_HZ = 200; % [Hz] High frequency for kick
+TAIL_LENGTH_1_S = 2.0; % [s] Tail length option 1
+TAIL_LENGTH_2_S = 1.0; % [s] Tail length option 2
+TAIL_LENGTH_3_S = 0.5; % [s] Tail length option 3
+TAIL_LENGTH_4_S = 0.25; % [s] Tail length option 4
+CREATIVE_IMPULSE_DURATION_S = 0.2; % [s] Impulse duration for creative example
+CREATIVE_LOW_FREQ_HZ = 100; % [Hz] Low frequency for creative example
+CREATIVE_HIGH_FREQ_HZ = 4000; % [Hz] High frequency for creative example
+CREATIVE_CHORD_DURATION_S = 2; % [s] Chord duration for creative example
+CREATIVE_CHORD_DECAY_RATE = 2; % [1/s] Chord decay rate
+CREATIVE_WET_DRY_WET = 0.7; % [0-1] Wet mix for creative example
+CREATIVE_WET_DRY_DRY = 0.3; % [0-1] Dry mix for creative example
+C_MAJOR_FREQ_1_HZ = 261.63; % [Hz] C note frequency
+C_MAJOR_FREQ_2_HZ = 329.63; % [Hz] E note frequency
+C_MAJOR_FREQ_3_HZ = 392; % [Hz] G note frequency
+DAMPING_LEVEL_1 = 0.3; % [0-1] Damping level 1
+DAMPING_LEVEL_2 = 0.6; % [0-1] Damping level 2
+DAMPING_LEVEL_3 = 0.9; % [0-1] Damping level 3
+BRIGHT_FREQ_1_HZ = 440; % [Hz] Bright frequency 1
+BRIGHT_FREQ_2_HZ = 880; % [Hz] Bright frequency 2
+BRIGHT_FREQ_3_HZ = 1760; % [Hz] Bright frequency 3
+BRIGHT_FREQ_4_HZ = 3520; % [Hz] Bright frequency 4
+BRIGHT_DECAY_RATE = 8; % [1/s] Bright decay rate
+BRIGHT_DURATION_S = 0.3; % [s] Bright signal duration
+MONO_DECAY_RATE = 5; % [1/s] Mono decay rate
+MONO_DURATION_S = 0.5; % [s] Mono signal duration
+STEREO_WIDTH_1 = 0.5; % Stereo width option 1
+STEREO_WIDTH_2 = 1.0; % Stereo width option 2
+STEREO_WIDTH_3 = 1.5; % Stereo width option 3
+STEREO_WIDTH_4 = 2.0; % Stereo width option 4
+BATCH_WET_DRY_WET = 0.35; % [0-1] Wet mix for batch processing
+BATCH_WET_DRY_DRY = 0.65; % [0-1] Dry mix for batch processing
+BATCH_PRE_DELAY_S = 0.03; % [s] Pre-delay for batch processing
+TONE_DURATION_S = 1; % [s] Tone duration
+TONE_DECAY_RATE = 3; % [1/s] Tone decay rate
+TONE_FREQ_1_HZ = 554; % [Hz] Tone frequency 1 (C#)
+TONE_FREQ_2_HZ = 659; % [Hz] Tone frequency 2 (E)
+
 %% Example 1: Basic Reverb Application
 % Start with the simplest case - apply reverb to audio
 
@@ -24,10 +116,10 @@ reverb = ConvolutionReverb();
 reverb.loadBuiltIn('concert_hall');
 
 % Generate test audio (or load your own)
-fs = 44100;
-duration = 2;
+fs = SAMPLE_RATE_HZ;
+duration = DURATION_SECONDS;
 t = linspace(0, duration, duration * fs)';
-testAudio = sin(2*pi*440*t) .* exp(-t*2);  % Decaying tone
+testAudio = sin(2*pi*A4_FREQUENCY_HZ*t) .* exp(-t*DECAY_RATE);  % Decaying tone
 
 % Apply reverb
 reverbedAudio = reverb.process(testAudio, fs);
@@ -51,7 +143,7 @@ sound(testAudio, fs);
 pause(duration + 0.5);
 
 fprintf('Playing with reverb...\n');
-sound(reverbedAudio * 0.5, fs);  % Scale down to prevent clipping
+sound(reverbedAudio * CLIP_PREVENTION_SCALE, fs);  % Scale down to prevent clipping
 pause(length(reverbedAudio)/fs + 0.5);
 
 %% Example 2: Compare Different Spaces
@@ -60,9 +152,9 @@ pause(length(reverbedAudio)/fs + 0.5);
 fprintf('\n=== Example 2: Different Spaces ===\n');
 
 % Generate percussive test signal (works well for demonstrating reverb)
-fs = 44100;
+fs = SAMPLE_RATE_HZ;
 impulse = [1; zeros(fs*2-1, 1)];  % Single impulse
-[b, a] = butter(4, [100, 8000]/(fs/2), 'bandpass');
+[b, a] = butter(BUTTERWORTH_ORDER, [LOW_FREQ_HZ, HIGH_FREQ_HZ]/(fs/2), 'bandpass');
 clickSound = filter(b, a, impulse);
 clickSound = clickSound / max(abs(clickSound));
 
@@ -79,7 +171,7 @@ for i = 1:length(spaces)
     reverb.loadBuiltIn(spaces{i});
 
     % Process
-    results{i} = reverb.process(clickSound, fs, 'WetDry', 0.5);
+    results{i} = reverb.process(clickSound, fs, 'WetDry', WET_DRY_MIX);
 
     % Plot
     subplot(length(spaces), 1, i);
@@ -91,8 +183,8 @@ for i = 1:length(spaces)
 
     % Play
     fprintf('Playing: %s\n', spaces{i});
-    sound(results{i} * 0.5, fs);
-    pause(2.5);
+    sound(results{i} * CLIP_PREVENTION_SCALE, fs);
+    pause(PAUSE_DURATION_SECONDS);
 end
 
 %% Example 3: Control Echo Amount (Wet/Dry Mix)
@@ -101,9 +193,9 @@ end
 fprintf('\n=== Example 3: Wet/Dry Mix ===\n');
 
 % Test signal
-fs = 44100;
+fs = SAMPLE_RATE_HZ;
 t = linspace(0, 1, fs)';
-testTone = sin(2*pi*440*t) .* (t < 0.5);  % Short beep
+testTone = sin(2*pi*A4_FREQUENCY_HZ*t) .* (t < 0.5);  % Short beep
 
 % Create reverb
 reverb = ConvolutionReverb();
