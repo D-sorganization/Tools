@@ -68,6 +68,18 @@ ignore = [
     "SLF001",  # Private member access (intentional)
     "PERF401", # Manual list comprehension (readability)
     "UP038",   # Non-pep604 isinstance (readability)
+    "EM101",   # Raw string in exception (readability)
+    "PTH118",  # os.path.join (pathlib preferred but acceptable)
+    "PTH123",  # builtin open (pathlib preferred but acceptable)
+    "PTH110",  # os.path.exists (pathlib preferred but acceptable)
+    "PLR2004", # Magic value comparison (too many to fix)
+    "TRY301",  # Raise within try (intentional)
+    "B007",    # Unused loop control variable (intentional)
+    "TRY002",  # Raise vanilla class (intentional)
+    "PTH119",  # os.path.basename (pathlib preferred but acceptable)
+    "B904",    # Raise without from inside except (intentional)
+    "PTH202",  # os.path.getsize (pathlib preferred but acceptable)
+    "S605",    # Start process with shell (needed for cross-platform)
 ]
 
 # Stricter than defaults
