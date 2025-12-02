@@ -1985,7 +1985,7 @@ class FolderProcessorApp:
                 raise ValueError("No accessible files found in destination folder")
 
             logger.info(
-                f"ZIP will contain {total_files} files, {total_size/(1024*1024):.1f} MB"
+                f"ZIP will contain {total_files} files, {total_size/(1024*1024):.1f} MB",
             )
 
             # Create ZIP archive
@@ -2035,7 +2035,7 @@ class FolderProcessorApp:
                         except Exception as e:
                             failed_files += 1
                             logger.warning(
-                                f"Failed to add file to ZIP: {file_path} - {e}"
+                                f"Failed to add file to ZIP: {file_path} - {e}",
                             )
                             continue
 
@@ -2049,7 +2049,7 @@ class FolderProcessorApp:
                     if zip_size == 0:
                         raise Exception("ZIP file is empty")
                     logger.info(
-                        f"ZIP archive created: {zip_path} ({processed_files} files, {processed_size/(1024*1024):.1f} MB, ZIP size: {zip_size/(1024*1024):.1f} MB)"
+                        f"ZIP archive created: {zip_path} ({processed_files} files, {processed_size/(1024*1024):.1f} MB, ZIP size: {zip_size/(1024*1024):.1f} MB)",
                     )
                 except OSError as e:
                     logger.warning(f"Cannot verify ZIP file size: {e}")
@@ -2057,7 +2057,7 @@ class FolderProcessorApp:
                 # Final summary
                 if failed_files > 0:
                     logger.warning(
-                        f"ZIP creation completed with {failed_files} failed files"
+                        f"ZIP creation completed with {failed_files} failed files",
                     )
                 else:
                     logger.info("ZIP creation completed successfully")
@@ -2070,7 +2070,7 @@ class FolderProcessorApp:
                     logger.info(f"Cleaned up failed ZIP file: {zip_path}")
                 except Exception as cleanup_error:
                     logger.warning(
-                        f"Failed to cleanup failed ZIP file: {zip_path} - {cleanup_error}"
+                        f"Failed to cleanup failed ZIP file: {zip_path} - {cleanup_error}",
                     )
 
             logger.error(f"Failed to create ZIP archive: {e}")
@@ -2105,7 +2105,7 @@ class FolderProcessorApp:
         # Validate title length for window title bar
         if len(title) > MAX_TITLE_LENGTH:
             logger.warning(
-                f"Title is very long ({len(title)} chars), may be truncated: {title[:MAX_TITLE_PREVIEW_LENGTH]}..."
+                f"Title is very long ({len(title)} chars), may be truncated: {title[:MAX_TITLE_PREVIEW_LENGTH]}...",
             )
 
         # Validate content length for performance
