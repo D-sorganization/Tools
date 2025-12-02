@@ -1236,7 +1236,8 @@ class FolderProcessorApp:
 
         except ValueError:
             messagebox.showerror(
-                "Invalid Input", "Please enter valid numeric values for file sizes."
+                "Invalid Input",
+                "Please enter valid numeric values for file sizes.",
             )
             return False
 
@@ -1318,7 +1319,7 @@ class FolderProcessorApp:
         # Input validation
         if not archive_path or not isinstance(archive_path, str):
             raise ValueError(
-                f"Archive path must be non-empty string, got {type(archive_path)}"
+                f"Archive path must be non-empty string, got {type(archive_path)}",
             )
 
         archive_path_obj = Path(archive_path)
@@ -1338,7 +1339,7 @@ class FolderProcessorApp:
                 return False, f"Archive file is empty: {archive_path}"
             if archive_size > MAX_FILE_SIZE_MB * 1024 * 1024:
                 logger.warning(
-                    f"Archive file exceeds maximum size limit: {archive_path} ({archive_size / (1024*1024):.1f} MB)"
+                    f"Archive file exceeds maximum size limit: {archive_path} ({archive_size / (1024*1024):.1f} MB)",
                 )
         except OSError as e:
             return False, f"Cannot access archive file: {e}"
@@ -1348,7 +1349,7 @@ class FolderProcessorApp:
         supported_formats = {".zip", ".tar", ".gz", ".bz2", ".xz", ".7z", ".rar"}
         if archive_ext not in supported_formats:
             logger.warning(
-                f"Unsupported archive format: {archive_ext} for {archive_path}"
+                f"Unsupported archive format: {archive_ext} for {archive_path}",
             )
 
         # Generate unique extraction directory
@@ -1364,7 +1365,7 @@ class FolderProcessorApp:
                 raise Exception("Failed to create extraction directory")
             if not os.access(extract_dir, os.W_OK):
                 raise PermissionError(
-                    f"Cannot write to extraction directory: {extract_dir}"
+                    f"Cannot write to extraction directory: {extract_dir}",
                 )
 
             # Extract archive
@@ -1375,7 +1376,7 @@ class FolderProcessorApp:
             if self.safe_extract_var.get():
                 if not extract_dir_obj.exists():
                     raise Exception(
-                        "Extraction failed - destination folder was not created"
+                        "Extraction failed - destination folder was not created",
                     )
 
                 if not os.listdir(extract_dir):
