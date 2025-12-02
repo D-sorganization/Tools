@@ -113,8 +113,8 @@ class FileHasher:
                 while chunk := f.read(DEFAULT_CHUNK_SIZE):
                     hasher.update(chunk)
             return hasher.hexdigest()
-        except Exception as e:
-            logger.error(f"Error hashing {file_path}: {e}")
+        except Exception:
+            logger.exception("Error hashing %s", file_path)
             return None
 
     @staticmethod
@@ -148,8 +148,8 @@ class FileHasher:
                     hasher.update(last_chunk)
 
             return hasher.hexdigest()
-        except Exception as e:
-            logger.error(f"Error fast hashing {file_path}: {e}")
+        except Exception:
+            logger.exception("Error fast hashing %s", file_path)
             return None
 
 
@@ -1085,8 +1085,8 @@ class FolderFixPro:
                     text=file_path.name,
                     values=(str(file_path), size, modified, file_type),
                 )
-            except Exception as e:
-                logger.error(f"Error adding {file_path} to preview: {e}")
+            except Exception:
+                logger.exception("Error adding %s to preview", file_path)
 
         count_text = f"{len(files)}" + (
             " (limited)" if len(files) >= PREVIEW_MAX_FILES else ""
@@ -1129,8 +1129,8 @@ class FolderFixPro:
 
             return True
 
-        except Exception as e:
-            logger.error(f"Error checking file {file_path}: {e}")
+        except Exception:
+            logger.exception("Error checking file %s", file_path)
             return False
 
     def _test_filters(self):

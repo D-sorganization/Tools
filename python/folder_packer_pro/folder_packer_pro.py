@@ -1020,8 +1020,8 @@ class FolderPackerPro:
                     stats["total_size"] += size
                     ext = file_path.suffix.lower() or "no extension"
                     stats["file_types"][ext] += 1
-                except Exception as e:
-                    logger.error(f"Error scanning {file_path}: {e}")
+                except Exception:
+                    logger.exception("Error scanning %s", file_path)
 
         return stats
 
@@ -1077,8 +1077,8 @@ class FolderPackerPro:
                             files.append((file_path, stat))
                             if len(files) >= 500:  # Limit preview
                                 break
-                        except Exception as e:
-                            logger.error(f"Error scanning {file_path}: {e}")
+                        except Exception:
+                            logger.exception("Error scanning %s", file_path)
                 if len(files) >= 500:
                     break
 

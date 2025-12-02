@@ -1095,8 +1095,8 @@ class FolderProcessorApp:
             # Update UI
             self.root.update_idletasks()
 
-        except Exception as e:
-            logger.error(f"Error updating progress: {e}")
+        except Exception:
+            logger.exception("Error updating progress")
 
     def update_status(self, status: str) -> None:
         """Updates the status label.
@@ -1117,8 +1117,8 @@ class FolderProcessorApp:
             self.status_var.set(status)
             self.root.update_idletasks()
 
-        except Exception as e:
-            logger.error(f"Error updating status: {e}")
+        except Exception:
+            logger.exception("Error updating status")
 
     def validate_file_filters(self, file_path: str) -> bool:
         """Validates if a file meets the filtering criteria.
