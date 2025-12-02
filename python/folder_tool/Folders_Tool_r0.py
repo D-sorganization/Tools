@@ -2519,7 +2519,7 @@ class FolderProcessorApp:
                                 dest_path_obj.unlink()
                             if attempt < MAX_RETRY_ATTEMPTS - 1:
                                 logger.info(
-                                    f"Retrying copy due to size mismatch (attempt {attempt + 1}/{MAX_RETRY_ATTEMPTS})"
+                                    f"Retrying copy due to size mismatch (attempt {attempt + 1}/{MAX_RETRY_ATTEMPTS})",
                                 )
                                 continue
                     except OSError as e:
@@ -2539,7 +2539,7 @@ class FolderProcessorApp:
                     continue
                 else:
                     logger.error(
-                        f"Failed to copy {source_path} after {MAX_RETRY_ATTEMPTS} attempts: {e}"
+                        f"Failed to copy {source_path} after {MAX_RETRY_ATTEMPTS} attempts: {e}",
                     )
                     raise
 
@@ -2788,7 +2788,7 @@ class FolderProcessorApp:
                     return str(new_path)
             except (OSError, PermissionError) as e:
                 logger.warning(
-                    f"Cannot check if generated path exists: {new_path} - {e}"
+                    f"Cannot check if generated path exists: {new_path} - {e}",
                 )
                 # If we can't check, assume it's safe to use
                 return str(new_path)
@@ -2801,7 +2801,7 @@ class FolderProcessorApp:
         fallback_path = parent / fallback_name
 
         logger.warning(
-            f"Exhausted counter attempts, using timestamp fallback: {fallback_path}"
+            f"Exhausted counter attempts, using timestamp fallback: {fallback_path}",
         )
         return str(fallback_path)
 
@@ -2835,7 +2835,8 @@ class FolderProcessorApp:
 
                 if not os.access(folder, os.R_OK):
                     messagebox.showerror(
-                        "Error", "Cannot access the selected folder. Check permissions."
+                        "Error",
+                        "Cannot access the selected folder. Check permissions.",
                     )
                     return
 
@@ -2846,7 +2847,8 @@ class FolderProcessorApp:
                     logger.info("Added source folder: %s", folder)
                 else:
                     messagebox.showinfo(
-                        "Info", "This folder is already in the source list."
+                        "Info",
+                        "This folder is already in the source list.",
                     )
             else:
                 logger.debug("Folder selection cancelled by user")
