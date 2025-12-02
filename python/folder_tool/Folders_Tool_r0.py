@@ -187,81 +187,81 @@ class FolderProcessorApp:
         # Validate file size constants
         if MAX_FILE_SIZE_MB <= 0:
             raise ValueError(
-                f"MAX_FILE_SIZE_MB must be positive, got {MAX_FILE_SIZE_MB}"
+                f"MAX_FILE_SIZE_MB must be positive, got {MAX_FILE_SIZE_MB}",
             )
         if MIN_FILE_SIZE_BYTES < 0:
             raise ValueError(
-                f"MIN_FILE_SIZE_BYTES must be non-negative, got {MIN_FILE_SIZE_BYTES}"
+                f"MIN_FILE_SIZE_BYTES must be non-negative, got {MIN_FILE_SIZE_BYTES}",
             )
         if MIN_FILE_SIZE_BYTES >= MAX_FILE_SIZE_MB * 1024 * 1024:
             raise ValueError(
-                f"MIN_FILE_SIZE_BYTES must be less than MAX_FILE_SIZE_MB, got {MIN_FILE_SIZE_BYTES}"
+                f"MIN_FILE_SIZE_BYTES must be less than MAX_FILE_SIZE_MB, got {MIN_FILE_SIZE_BYTES}",
             )
 
         # Validate UI constants
         if MAX_STATUS_LENGTH <= 0:
             raise ValueError(
-                f"MAX_STATUS_LENGTH must be positive, got {MAX_STATUS_LENGTH}"
+                f"MAX_STATUS_LENGTH must be positive, got {MAX_STATUS_LENGTH}",
             )
         if MAX_UI_UPDATE_FREQUENCY <= 0:
             raise ValueError(
-                f"MAX_UI_UPDATE_FREQUENCY must be positive, got {MAX_UI_UPDATE_FREQUENCY}"
+                f"MAX_UI_UPDATE_FREQUENCY must be positive, got {MAX_UI_UPDATE_FREQUENCY}",
             )
         if MAX_DIALOG_WIDTH <= MIN_DIALOG_WIDTH:
             raise ValueError(
-                f"MAX_DIALOG_WIDTH must be greater than MIN_DIALOG_WIDTH, got {MAX_DIALOG_WIDTH} <= {MIN_DIALOG_WIDTH}"
+                f"MAX_DIALOG_WIDTH must be greater than MIN_DIALOG_WIDTH, got {MAX_DIALOG_WIDTH} <= {MIN_DIALOG_WIDTH}",
             )
         if MAX_DIALOG_HEIGHT <= MIN_DIALOG_HEIGHT:
             raise ValueError(
-                f"MAX_DIALOG_HEIGHT must be greater than MIN_DIALOG_HEIGHT, got {MAX_DIALOG_HEIGHT} <= {MIN_DIALOG_HEIGHT}"
+                f"MAX_DIALOG_HEIGHT must be greater than MIN_DIALOG_HEIGHT, got {MAX_DIALOG_HEIGHT} <= {MIN_DIALOG_HEIGHT}",
             )
 
         # Validate archive constants
         if not 0 < MAX_ARCHIVE_SIZE_RATIO < 1:
             raise ValueError(
-                f"MAX_ARCHIVE_SIZE_RATIO must be between 0 and 1, got {MAX_ARCHIVE_SIZE_RATIO}"
+                f"MAX_ARCHIVE_SIZE_RATIO must be between 0 and 1, got {MAX_ARCHIVE_SIZE_RATIO}",
             )
 
         # Validate retry constants
         if MAX_RETRY_ATTEMPTS <= 0:
             raise ValueError(
-                f"MAX_RETRY_ATTEMPTS must be positive, got {MAX_RETRY_ATTEMPTS}"
+                f"MAX_RETRY_ATTEMPTS must be positive, got {MAX_RETRY_ATTEMPTS}",
             )
 
         # Validate new constants
         if MAX_TEXT_CONTENT_SIZE <= 0:
             raise ValueError(
-                f"MAX_TEXT_CONTENT_SIZE must be positive, got {MAX_TEXT_CONTENT_SIZE}"
+                f"MAX_TEXT_CONTENT_SIZE must be positive, got {MAX_TEXT_CONTENT_SIZE}",
             )
         if MAX_TITLE_LENGTH <= 0:
             raise ValueError(
-                f"MAX_TITLE_LENGTH must be positive, got {MAX_TITLE_LENGTH}"
+                f"MAX_TITLE_LENGTH must be positive, got {MAX_TITLE_LENGTH}",
             )
         if MAX_COUNTER_ATTEMPTS <= 0:
             raise ValueError(
-                f"MAX_COUNTER_ATTEMPTS must be positive, got {MAX_COUNTER_ATTEMPTS}"
+                f"MAX_COUNTER_ATTEMPTS must be positive, got {MAX_COUNTER_ATTEMPTS}",
             )
 
         # Validate progress constants
         if PROGRESS_BACKUP_PERCENT < 0 or PROGRESS_BACKUP_PERCENT > 100:
             raise ValueError(
-                f"PROGRESS_BACKUP_PERCENT must be between 0 and 100, got {PROGRESS_BACKUP_PERCENT}"
+                f"PROGRESS_BACKUP_PERCENT must be between 0 and 100, got {PROGRESS_BACKUP_PERCENT}",
             )
         if PROGRESS_MAIN_OP_PERCENT < 0 or PROGRESS_MAIN_OP_PERCENT > 100:
             raise ValueError(
-                f"PROGRESS_MAIN_OP_PERCENT must be between 0 and 100, got {PROGRESS_MAIN_OP_PERCENT}"
+                f"PROGRESS_MAIN_OP_PERCENT must be between 0 and 100, got {PROGRESS_MAIN_OP_PERCENT}",
             )
         if PROGRESS_ZIP_PERCENT < 0 or PROGRESS_ZIP_PERCENT > 100:
             raise ValueError(
-                f"PROGRESS_ZIP_PERCENT must be between 0 and 100, got {PROGRESS_ZIP_PERCENT}"
+                f"PROGRESS_ZIP_PERCENT must be between 0 and 100, got {PROGRESS_ZIP_PERCENT}",
             )
         if PROGRESS_START_MAIN < 0 or PROGRESS_START_MAIN > 100:
             raise ValueError(
-                f"PROGRESS_START_MAIN must be between 0 and 100, got {PROGRESS_START_MAIN}"
+                f"PROGRESS_START_MAIN must be between 0 and 100, got {PROGRESS_START_MAIN}",
             )
         if PROGRESS_START_ZIP < 0 or PROGRESS_START_ZIP > 100:
             raise ValueError(
-                f"PROGRESS_START_ZIP must be between 0 and 100, got {PROGRESS_START_ZIP}"
+                f"PROGRESS_START_ZIP must be between 0 and 100, got {PROGRESS_START_ZIP}",
             )
 
         # Validate progress flow consistency
@@ -270,7 +270,7 @@ class FolderProcessorApp:
         )
         if total_progress > 100:
             raise ValueError(
-                f"Total progress allocation exceeds 100%: {total_progress}"
+                f"Total progress allocation exceeds 100%: {total_progress}",
             )
 
         logger.info("All constants validated successfully")
@@ -1014,7 +1014,8 @@ class FolderProcessorApp:
                         try:
                             file_path = os.path.join(root, file)
                             if os.path.exists(file_path) and os.access(
-                                file_path, os.R_OK
+                                file_path,
+                                os.R_OK,
                             ):
                                 file_size = os.path.getsize(file_path)
                                 total_size += file_size
@@ -1029,7 +1030,8 @@ class FolderProcessorApp:
 
         if accessible_folders == 0:
             self.source_info_label.config(
-                text="Warning: No accessible source folders", foreground="red"
+                text="Warning: No accessible source folders",
+                foreground="red",
             )
             return
 
