@@ -1231,11 +1231,13 @@ class FolderFixPro:
                             )
                             processed += 1
                             self._update_progress(
-                                processed, total_files, f"Copying {filename}"
+                                processed,
+                                total_files,
+                                f"Copying {filename}",
                             )
                         except Exception as e:
                             self.operation_report.add_error(
-                                f"Failed to copy {source_file}: {e}"
+                                f"Failed to copy {source_file}: {e}",
                             )
 
     def _operation_flatten(self):
@@ -1290,11 +1292,13 @@ class FolderFixPro:
                             )
                             processed += 1
                             self._update_progress(
-                                processed, total_files, f"Flattening {filename}"
+                                processed,
+                                total_files,
+                                f"Flattening {filename}",
                             )
                         except Exception as e:
                             self.operation_report.add_error(
-                                f"Failed to flatten {source_file}: {e}"
+                                f"Failed to flatten {source_file}: {e}",
                             )
 
     def _operation_prune(self):
@@ -1351,7 +1355,9 @@ class FolderFixPro:
 
                 processed += 1
                 self._update_progress(
-                    processed, total_folders, f"Processing {Path(root).name}"
+                    processed,
+                    total_folders,
+                    f"Processing {Path(root).name}",
                 )
 
     def _operation_deduplicate(self):
