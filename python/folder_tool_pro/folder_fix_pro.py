@@ -808,13 +808,16 @@ class FolderFixPro:
         toolbar.pack(fill="x", pady=(0, PADDING_SMALL))
 
         ttk.Button(toolbar, text="🔄 Refresh", command=self._update_preview).pack(
-            side="left"
+            side="left",
         )
         ttk.Label(toolbar, text="Files to be processed:").pack(
-            side="left", padx=(PADDING_MEDIUM, 0)
+            side="left",
+            padx=(PADDING_MEDIUM, 0),
         )
         self.preview_count_label = ttk.Label(
-            toolbar, text="0", font=("Segoe UI", 10, "bold")
+            toolbar,
+            text="0",
+            font=("Segoe UI", 10, "bold"),
         )
         self.preview_count_label.pack(side="left", padx=(PADDING_SMALL, 0))
 
@@ -866,10 +869,11 @@ class FolderFixPro:
         toolbar.pack(fill="x", pady=(0, PADDING_SMALL))
 
         ttk.Button(toolbar, text="🗑️ Clear Log", command=self._clear_log).pack(
-            side="left"
+            side="left",
         )
         ttk.Button(toolbar, text="💾 Save Log", command=self._save_log).pack(
-            side="left", padx=(PADDING_SMALL, 0)
+            side="left",
+            padx=(PADDING_SMALL, 0),
         )
 
         # Log text widget
@@ -906,7 +910,10 @@ class FolderFixPro:
             anchor="w",
         )
         self.status_bar_label.pack(
-            side="left", fill="x", expand=True, padx=PADDING_SMALL
+            side="left",
+            fill="x",
+            expand=True,
+            padx=PADDING_SMALL,
         )
 
         # Version label
@@ -928,7 +935,10 @@ class FolderFixPro:
 
         # Configure button style with accent color
         style.configure(
-            "Accent.TButton", font=("Segoe UI", 10, "bold"), padding=10, relief="flat"
+            "Accent.TButton",
+            font=("Segoe UI", 10, "bold"),
+            padding=10,
+            relief="flat",
         )
 
         # Update root background
