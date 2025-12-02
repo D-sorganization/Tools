@@ -67,7 +67,12 @@ class MATLABQualityChecker:
             )
             return False
 
-        m_files = list(self.matlab_dir.rglob("*.m"))
+        # Exclude archive directories from quality checks
+        m_files = [
+            f
+            for f in self.matlab_dir.rglob("*.m")
+            if "archive" not in f.parts
+        ]
         self.results["total_files"] = len(m_files)
 
         if len(m_files) == 0:
