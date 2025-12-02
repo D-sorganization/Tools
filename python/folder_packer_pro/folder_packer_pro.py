@@ -1444,7 +1444,8 @@ class FolderPackerPro:
             self._log_message(f"Unpack operation failed: {e}", "error")
             error_msg = str(e)
             self.root.after(
-                0, lambda: messagebox.showerror("Error", f"Unpack failed:\n\n{error_msg}")
+                0,
+                lambda: messagebox.showerror("Error", f"Unpack failed:\n\n{error_msg}"),
             )
 
         finally:

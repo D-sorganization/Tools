@@ -1184,7 +1184,10 @@ class FolderFixPro:
             self.operation_report.add_error(str(e))
             error_msg = str(e)
             self.root.after(
-                0, lambda: messagebox.showerror("Error", f"Operation failed:\n\n{error_msg}")
+                0,
+                lambda: messagebox.showerror(
+                    "Error", f"Operation failed:\n\n{error_msg}"
+                ),
             )
 
         finally:
