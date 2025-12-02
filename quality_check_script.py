@@ -139,7 +139,9 @@ def check_banned_patterns(
         for pattern, message in BANNED_PATTERNS:
             # Skip angle bracket patterns if line contains legitimate Tkinter bindings
             # Check pattern string before compilation to avoid accessing internal regex
-            pattern_str = pattern.pattern if hasattr(pattern, "pattern") else str(pattern)
+            pattern_str = (
+                pattern.pattern if hasattr(pattern, "pattern") else str(pattern)
+            )
             if "<" in pattern_str and is_legitimate_tkinter_binding(line):
                 continue
             if pattern.search(line):
