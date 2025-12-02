@@ -128,6 +128,7 @@ def check_banned_patterns(
     # Skip checking files that contain placeholder detection patterns themselves
     excluded_files = {
         "quality_check_script.py",
+        "quality-check.py",
         "matlab_quality_check.py",
     }
     if filepath.name in excluded_files:
@@ -169,6 +170,7 @@ def check_magic_numbers(lines: list[str], filepath: Path) -> list[tuple[int, str
     # Skip checking files that contain placeholder detection patterns themselves
     excluded_files = {
         "quality_check_script.py",
+        "quality-check.py",
         "matlab_quality_check.py",
     }
     if filepath.name in excluded_files:
