@@ -52,3 +52,34 @@ flake8-tidy-imports = {banned-module-level-imports = ["numpy", "pandas"]}
 # Complexity settings
 mccabe = {max-complexity = 10}
 pylint = {max-args = 5, max-branches = 10, max-returns = 3, max-statements = 30}
+
+[lint.per-file-ignores]
+# Tests can be more relaxed
+"test_*.py" = [
+    "S101",   # Use of assert
+    "PLR2004", # Magic numbers allowed in tests
+]
+"**/tests/*.py" = [
+    "S101",
+    "PLR2004",
+]
+"**/test_*.py" = [
+    "S101",
+    "PLR2004",
+]
+# Build scripts - allow prints and subprocess
+"**/build_exe.py" = [
+    "T201",   # Print statements
+    "S603",   # Subprocess calls
+    "ANN201", # Missing return type annotations
+]
+# Quality check scripts - allow complexity
+"quality_check_script.py" = [
+    "C901",   # Too complex (intentional)
+    "PLR0911", # Too many return statements (intentional)
+    "PLR0915", # Too many statements (intentional)
+]
+"tools/matlab_utilities/scripts/matlab_quality_check.py" = [
+    "PLR0911", # Too many return statements (intentional)
+    "S603",   # Subprocess calls needed
+]
