@@ -330,9 +330,8 @@ class MATLABQualityChecker:
                 # Match both command syntax (load file.mat) and function syntax (load('file.mat'))
                 # Check for specific assignment pattern rather than just presence of =
                 # This avoids false negatives from = in comments or comparisons
-                if (
-                    self.LOAD_PATTERN.search(line_stripped)
-                    and not self.ASSIGNMENT_PATTERN.search(line_stripped)
+                if self.LOAD_PATTERN.search(line_stripped) and not self.ASSIGNMENT_PATTERN.search(
+                    line_stripped
                 ):
                     issues.append(
                         f"{file_path.name} (line {i}): "
@@ -401,9 +400,7 @@ class MATLABQualityChecker:
                         # Check if the number appears before a comment on same line
                         comment_idx = line_original.find("%")
                         num_idx = line_original.find(num)
-                        if comment_idx == -1 or (
-                            num_idx != -1 and num_idx < comment_idx
-                        ):
+                        if comment_idx == -1 or (num_idx != -1 and num_idx < comment_idx):
                             issues.append(
                                 f"{file_path.name} (line {i}): Magic number {num} "
                                 "should be defined as constant with units and source",
@@ -413,9 +410,7 @@ class MATLABQualityChecker:
                 if in_function:
                     # Check for clear without variable (dangerous) or clear all/global
                     # (very dangerous)
-                    if re.search(
-                        r"\bclear\s+(all|global)\b", line_stripped, re.IGNORECASE
-                    ):
+                    if re.search(r"\bclear\s+(all|global)\b", line_stripped, re.IGNORECASE):
                         issues.append(
                             f"{file_path.name} (line {i}): Avoid 'clear all' or "
                             "'clear global' in functions - clears all variables, "
@@ -475,9 +470,7 @@ class MATLABQualityChecker:
 
         if "error" in matlab_results:
             self.results["passed"] = False
-            self.results["summary"] = (
-                f"MATLAB quality checks failed: {matlab_results['error']}"
-            )
+            self.results["summary"] = f"MATLAB quality checks failed: {matlab_results['error']}"
             self.results["checks"]["matlab"] = matlab_results
         else:
             self.results["checks"]["matlab"] = matlab_results
@@ -551,11 +544,7 @@ def main() -> None:
     passed = results.get("passed", False)
     has_issues = bool(results.get("issues"))
 
-    exit_code = (
-        (0 if (passed and not has_issues) else 1)
-        if args.strict
-        else (0 if passed else 1)
-    )
+    exit_code = (0 if (passed and not has_issues) else 1) if args.strict else (0 if passed else 1)
 
     sys.exit(exit_code)
 
