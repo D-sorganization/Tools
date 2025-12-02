@@ -330,9 +330,9 @@ class MATLABQualityChecker:
                 # Match both command syntax (load file.mat) and function syntax (load('file.mat'))
                 # Check for specific assignment pattern rather than just presence of =
                 # This avoids false negatives from = in comments or comparisons
-                if self.LOAD_PATTERN.search(line_stripped) and not self.ASSIGNMENT_PATTERN.search(
-                    line_stripped
-                ):
+                if self.LOAD_PATTERN.search(
+                    line_stripped,
+                ) and not self.ASSIGNMENT_PATTERN.search(line_stripped):
                     issues.append(
                         f"{file_path.name} (line {i}): "
                         "load without output variable - use 'data = load(...)' instead",
@@ -410,7 +410,11 @@ class MATLABQualityChecker:
                 if in_function:
                     # Check for clear without variable (dangerous) or clear all/global
                     # (very dangerous)
-                    if re.search(r"\bclear\s+(all|global)\b", line_stripped, re.IGNORECASE):
+                    if re.search(
+                        r"\bclear\s+(all|global)\b",
+                        line_stripped,
+                        re.IGNORECASE,
+                    ):
                         issues.append(
                             f"{file_path.name} (line {i}): Avoid 'clear all' or "
                             "'clear global' in functions - clears all variables, "
@@ -528,7 +532,7 @@ def main() -> None:
         print(f"Timestamp: {results.get('timestamp', 'N/A')}")  # noqa: T201
         print(f"Total Files: {results.get('total_files', 0)}")  # noqa: T201
         print(  # noqa: T201
-            f"Status: {'PASSED' if results.get('passed', False) else 'FAILED'}"
+            f"Status: {'PASSED' if results.get('passed', False) else 'FAILED'}",
         )
         print(f"Summary: {results.get('summary', 'N/A')}")  # noqa: T201
 
