@@ -110,7 +110,7 @@ class TestBuildExe:
         """Test build verification when executable doesn't exist."""
         # Create dist directory but no executable
         (tmp_path / "dist").mkdir(parents=True)
-        
+
         with patch("build_exe.DIST_DIR", str(tmp_path / "dist")):
             with patch("build_exe.EXE_NAME", "FolderPacker"):
                 assert verify_build() is False

@@ -20,7 +20,7 @@ class TestFolderPackerGUI:
     """Test cases for folder_packer_gui.py module."""
 
     @pytest.fixture(autouse=True)
-    def mocked_tk(self, monkeypatch: pytest.MonkeyPatch) -> None:
+    def _mocked_tk(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Mock Tkinter to prevent GUI instantiation in headless CI environments."""
         monkeypatch.setattr("tkinter.Tk", Mock())
         monkeypatch.setattr("tkinter.Toplevel", Mock())
@@ -51,8 +51,7 @@ class TestFolderPackerGUI:
             patch("folder_packer_gui.ttk.Scrollbar"),
             patch("folder_packer_gui.ttk.Style"),
         ):
-            gui = FolderPackerGUI(mock_root)
-            return gui
+            return FolderPackerGUI(mock_root)
 
     def test_init(self, mock_root: Mock) -> None:
         """Test GUI initialization."""
