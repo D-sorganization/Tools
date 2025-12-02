@@ -977,7 +977,7 @@ class FolderFixPro:
         style = ttk.Style()
 
         # Configure button style with accent color
-        style.configure(
+        style.configure(  # type: ignore[no-untyped-call]
             "Accent.TButton",
             font=("Segoe UI", 10, "bold"),
             padding=10,

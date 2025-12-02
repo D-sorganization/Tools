@@ -909,7 +909,7 @@ class FolderPackerPro:
 
         # Configure ttk styles
         style = ttk.Style()
-        style.configure("Accent.TButton", font=("Segoe UI", 10, "bold"), padding=10)
+        style.configure("Accent.TButton", font=("Segoe UI", 10, "bold"), padding=10)  # type: ignore[no-untyped-call]
 
         # Update root background
         self.root.configure(bg=theme["bg"])
