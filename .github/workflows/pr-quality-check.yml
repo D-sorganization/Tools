@@ -60,7 +60,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: matlab-quality-report
+        name: matlab-quality-report-py${{ matrix.python-version }}
         path: matlab_quality_results.json
         retention-days: 30
         if-no-files-found: ignore
