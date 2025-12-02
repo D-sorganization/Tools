@@ -26,7 +26,7 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
-from typing import Final
+from typing import Any, Final
 
 # Constants with professional standards
 MAX_FILE_SIZE_MB: Final[int] = 10240  # 10GB limit for modern systems
@@ -156,25 +156,25 @@ class FileHasher:
 class OperationReport:
     """Generate detailed operation reports."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.start_time = datetime.now()
-        self.end_time = None
-        self.operations = []
-        self.stats = defaultdict(int)
-        self.errors = []
+        self.end_time: datetime | None = None
+        self.operations: list[dict[str, Any]] = []
+        self.stats: defaultdict[str, int] = defaultdict(int)
+        self.errors: list[dict[str, Any]] = []
 
-    def add_operation(self, operation: str, details: dict):
+    def add_operation(self, operation: str, details: dict[str, Any]) -> None:
         """Add operation to report."""
         self.operations.append(
             {"timestamp": datetime.now(), "operation": operation, "details": details},
         )
         self.stats[operation] += 1
 
-    def add_error(self, error: str):
+    def add_error(self, error: str) -> None:
         """Add error to report."""
         self.errors.append({"timestamp": datetime.now(), "error": error})
 
-    def finalize(self):
+    def finalize(self) -> None:
         """Finalize report with end time."""
         self.end_time = datetime.now()
 
@@ -185,7 +185,7 @@ class OperationReport:
             return str(duration).split(".")[0]
         return "In progress"
 
-    def export_json(self, file_path: str):
+    def export_json(self, file_path: str) -> None:
         """Export report as JSON."""
         report_data = {
             "start_time": self.start_time.isoformat(),
@@ -211,7 +211,7 @@ class OperationReport:
         with open(file_path, "w", encoding="utf-8") as f:
             json.dump(report_data, f, indent=2)
 
-    def export_html(self, file_path: str):
+    def export_html(self, file_path: str) -> None:
         """Export report as HTML."""
         html_content = f"""
 <!DOCTYPE html>
@@ -391,19 +391,19 @@ class OperationReport:
 class FolderFixPro:
     """Enhanced professional folder processing application."""
 
-    def __init__(self, root):
+    def __init__(self, root: tk.Tk) -> None:
         self.root = root
         self.root.title("Folder Fix Pro v3.0 - Professional Folder Manager")
         self.root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
         self.root.minsize(MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT)
 
         # Application state
-        self.source_folders = []
+        self.source_folders: list[str] = []
         self.dest_folder = ""
         self.current_theme = "dark"
         self.operation_report = OperationReport()
         self.cancel_operation = False
-        self.file_cache = {}  # Cache for file information
+        self.file_cache: dict[str, Any] = {}  # Cache for file information
 
         # Operation variables
         self.operation_mode = "combine"
@@ -444,7 +444,7 @@ class FolderFixPro:
         except Exception as e:
             logger.warning(f"Could not set icon: {e}")
 
-    def _create_menu_bar(self):
+    def _create_menu_bar(self) -> None:
         """Create professional menu bar."""
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
@@ -481,7 +481,7 @@ class FolderFixPro:
         help_menu.add_command(label="About", command=self._show_about)
         help_menu.add_command(label="User Guide", command=self._show_user_guide)
 
-    def _create_main_ui(self):
+    def _create_main_ui(self) -> None:
         """Create main user interface with modern design."""
         # Create notebook for tabbed interface
         self.notebook = ttk.Notebook(self.root)
@@ -501,7 +501,7 @@ class FolderFixPro:
         # Status bar at bottom
         self._create_status_bar()
 
-    def _create_operation_tab(self):
+    def _create_operation_tab(self) -> None:
         """Create main operation tab."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Operation  ")
@@ -737,7 +737,7 @@ class FolderFixPro:
         )
         self.cancel_btn.pack(side="right", fill="x", expand=True)
 
-    def _create_filters_tab(self):
+    def _create_filters_tab(self) -> None:
         """Create filters and advanced options tab."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Filters & Advanced  ")
@@ -838,7 +838,7 @@ class FolderFixPro:
             pady=PADDING_MEDIUM,
         )
 
-    def _create_preview_tab(self):
+    def _create_preview_tab(self) -> None:
         """Create preview tab showing files that will be processed."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Preview  ")
@@ -899,7 +899,7 @@ class FolderFixPro:
         tree_scroll_y.config(command=self.preview_tree.yview)
         tree_scroll_x.config(command=self.preview_tree.xview)
 
-    def _create_log_tab(self):
+    def _create_log_tab(self) -> None:
         """Create operation log tab."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Log  ")
@@ -942,7 +942,7 @@ class FolderFixPro:
         self.log_text.tag_config("warning", foreground="#ffc107")
         self.log_text.tag_config("error", foreground="#dc3545")
 
-    def _create_status_bar(self):
+    def _create_status_bar(self) -> None:
         """Create bottom status bar."""
         status_frame = ttk.Frame(self.root, relief="sunken", borderwidth=1)
         status_frame.pack(side="bottom", fill="x")
@@ -963,13 +963,13 @@ class FolderFixPro:
         version_label = ttk.Label(status_frame, text="v3.0", anchor="e")
         version_label.pack(side="right", padx=PADDING_SMALL)
 
-    def _setup_drag_drop(self):
+    def _setup_drag_drop(self) -> None:
         """Set up drag and drop functionality."""
         # Drag-and-drop would require tkinterdnd2 package
         # For standard tkinter, we rely on file dialog buttons
         self._log_message("Ready - Use buttons to add folders", "info")
 
-    def _apply_theme(self):
+    def _apply_theme(self) -> None:
         """Apply color theme to application."""
         theme = DARK_THEME if self.current_theme == "dark" else LIGHT_THEME
 

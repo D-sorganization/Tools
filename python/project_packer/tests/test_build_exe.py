@@ -102,15 +102,18 @@ class TestBuildExe:
         exe_path.parent.mkdir(parents=True)
         exe_path.write_bytes(b"fake executable")
 
-        with patch("build_exe.Path") as mock_path:
-            mock_path.return_value = exe_path
-            assert verify_build() is True
+        with patch("build_exe.DIST_DIR", str(tmp_path / "dist")):
+            with patch("build_exe.EXE_NAME", "FolderPacker"):
+                assert verify_build() is True
 
-    def test_verify_build_executable_not_found(self) -> None:
+    def test_verify_build_executable_not_found(self, tmp_path: Path) -> None:
         """Test build verification when executable doesn't exist."""
-        with patch("build_exe.Path") as mock_path:
-            mock_path.return_value.exists.return_value = False
-            assert verify_build() is False
+        # Create dist directory but no executable
+        (tmp_path / "dist").mkdir(parents=True)
+        
+        with patch("build_exe.DIST_DIR", str(tmp_path / "dist")):
+            with patch("build_exe.EXE_NAME", "FolderPacker"):
+                assert verify_build() is False
 
     def test_main_pyinstaller_available(self) -> None:
         """Test main function when PyInstaller is available."""

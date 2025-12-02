@@ -26,7 +26,7 @@ import tkinter as tk
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-from tkinter import filedialog, messagebox, scrolledtext, ttk
+from tkinter import filedialog, messagebox, scrolledtext, simpledialog, ttk
 from typing import Any, Final
 
 from cryptography.fernet import Fernet
@@ -219,7 +219,7 @@ class EncryptionManager:
         encrypted = encrypted_data[16:]
         key = EncryptionManager.derive_key(password, salt)
         cipher = Fernet(key)
-        decrypted: bytes = cipher.decrypt(encrypted)
+        decrypted: bytes = cipher.decrypt(encrypted)  # type: ignore[assignment]
         return decrypted
 
 
@@ -989,15 +989,15 @@ class FolderPackerPro:
             return
 
         # Scan in background
-        def scan():
+        def scan() -> None:
             stats = self._collect_folder_stats(source_path)
             self.root.after(0, lambda: self._display_stats(stats))
 
         threading.Thread(target=scan, daemon=True).start()
 
-    def _collect_folder_stats(self, folder: Path) -> dict:
+    def _collect_folder_stats(self, folder: Path) -> dict[str, Any]:
         """Collect statistics about folder contents."""
-        stats = {
+        stats: dict[str, Any] = {
             "total_files": 0,
             "total_size": 0,
             "file_types": defaultdict(int),
@@ -1064,7 +1064,7 @@ class FolderPackerPro:
         if not source_path.exists():
             return
 
-        def scan():
+        def scan() -> None:
             files = []
             for root, dirs, filenames in os.walk(source_path):
                 # Filter excluded directories
@@ -1329,7 +1329,7 @@ class FolderPackerPro:
                     ).decode("utf-8")
 
                     progress = ((i + 1) / total_files) * 100
-                    self.root.after(0, lambda p=progress: self.pack_progress_var.set(p))
+                    self.root.after(0, lambda p=progress: self.pack_progress_var.set(float(p)))  # type: ignore[misc]
                     self._update_pack_status(
                         f"Packing {file_path.name} ({i+1}/{total_files})",
                     )
@@ -1358,7 +1358,7 @@ class FolderPackerPro:
 
             # Write to file
             self._update_pack_status("Writing package file...")
-            with open(output_path, "wb") as f:
+            with open(output_path, "wb") as f:  # type: ignore[assignment]
                 f.write(json_data)
 
             # Create manifest if enabled
@@ -1371,8 +1371,8 @@ class FolderPackerPro:
                     "total_files": total_files,
                     "package_size": output_path.stat().st_size,
                 }
-                with open(manifest_path, "w") as f:
-                    json.dump(manifest, f, indent=2)
+                with open(manifest_path, "w", encoding="utf-8") as manifest_file:
+                    json.dump(manifest, manifest_file, indent=2)
 
             self._log_message(f"Package created successfully: {output_path}", "success")
             self._log_message(
@@ -1490,7 +1490,7 @@ class FolderPackerPro:
                     progress = ((i + 1) / total_files) * 100
                     self.root.after(
                         0,
-                        lambda p=progress: self.unpack_progress_var.set(p),
+                        lambda p=progress: self.unpack_progress_var.set(float(p)),  # type: ignore[misc]
                     )
                     self._update_unpack_status(
                         f"Extracting {Path(rel_path).name} ({i+1}/{total_files})",
@@ -1607,8 +1607,8 @@ class FolderPackerPro:
         btn_frame = ttk.Frame(dialog)
         btn_frame.pack(fill="x", padx=PADDING_MEDIUM, pady=PADDING_SMALL)
 
-        def add_pattern():
-            pattern = tk.simpledialog.askstring(
+        def add_pattern() -> None:
+            pattern = simpledialog.askstring(
                 "Add Pattern",
                 "Enter exclusion pattern:",
             )
@@ -1616,14 +1616,14 @@ class FolderPackerPro:
                 self.exclude_patterns.add(pattern)
                 listbox.insert("end", pattern)
 
-        def remove_pattern():
-            selection = listbox.curselection()
+        def remove_pattern() -> None:
+            selection = listbox.curselection()  # type: ignore[no-untyped-call]
             if selection:
                 pattern = listbox.get(selection[0])
                 self.exclude_patterns.discard(pattern)
                 listbox.delete(selection[0])
 
-        def reset_patterns():
+        def reset_patterns() -> None:
             if messagebox.askyesno("Reset", "Reset to default exclusion patterns?"):
                 self.exclude_patterns = set(DEFAULT_EXCLUDE_PATTERNS)
                 listbox.delete(0, "end")
@@ -1646,7 +1646,7 @@ class FolderPackerPro:
             pady=PADDING_MEDIUM,
         )
 
-    def _new_package(self):
+    def _new_package(self) -> None:
         """Reset form for new package."""
         self.pack_source_entry.delete(0, "end")
         self.pack_output_entry.delete(0, "end")
@@ -1719,7 +1719,7 @@ class FolderPackerPro:
         timestamp = datetime.now().strftime("%H:%M:%S")
         log_entry = f"[{timestamp}] {message}\n"
 
-        def update_log():
+        def update_log() -> None:
             self.log_text.configure(state="normal")
             self.log_text.insert("end", log_entry, level)
             self.log_text.see("end")
@@ -1737,13 +1737,13 @@ class FolderPackerPro:
         else:
             logger.info(message)
 
-    def _clear_log(self):
+    def _clear_log(self) -> None:
         """Clear the log display."""
         self.log_text.configure(state="normal")
         self.log_text.delete("1.0", "end")
         self.log_text.configure(state="disabled")
 
-    def _save_log(self):
+    def _save_log(self) -> None:
         """Save log to file."""
         file_path = filedialog.asksaveasfilename(
             defaultextension=".txt",
@@ -1836,14 +1836,15 @@ TIPS:
     @staticmethod
     def _format_size(size_bytes: int) -> str:
         """Format file size in human-readable format."""
+        size: float = float(size_bytes)
         for unit in ["B", "KB", "MB", "GB", "TB"]:
-            if size_bytes < 1024.0:
-                return f"{size_bytes:.2f} {unit}"
-            size_bytes /= 1024.0
-        return f"{size_bytes:.2f} PB"
+            if size < 1024.0:
+                return f"{size:.2f} {unit}"
+            size /= 1024.0
+        return f"{size:.2f} PB"
 
 
-def main():
+def main() -> None:
     """Main entry point for Folder Packer Pro."""
     try:
         # Create root window
