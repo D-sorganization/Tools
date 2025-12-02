@@ -130,10 +130,16 @@ class FolderPackerGUI:
 
         # Source folders section
         source_frame = ttk.LabelFrame(
-            main_frame, text="Source Folders", padding=str(SMALL_PADDING)
+            main_frame,
+            text="Source Folders",
+            padding=str(SMALL_PADDING),
         )
         source_frame.grid(
-            row=2, column=0, columnspan=3, sticky="ew", pady=(0, DEFAULT_PADDING)
+            row=2,
+            column=0,
+            columnspan=3,
+            sticky="ew",
+            pady=(0, DEFAULT_PADDING),
         )
         source_frame.columnconfigure(1, weight=GRID_WEIGHT_MAIN)
 
@@ -171,7 +177,11 @@ class FolderPackerGUI:
         # Output directory entry and browse button
         output_frame = ttk.Frame(main_frame)
         output_frame.grid(
-            row=4, column=0, columnspan=3, sticky="ew", pady=(0, DEFAULT_PADDING)
+            row=4,
+            column=0,
+            columnspan=3,
+            sticky="ew",
+            pady=(0, DEFAULT_PADDING),
         )
         output_frame.columnconfigure(0, weight=GRID_WEIGHT_MAIN)
 
@@ -195,7 +205,9 @@ class FolderPackerGUI:
 
         # Status section
         status_frame = ttk.LabelFrame(
-            main_frame, text="Status", padding=str(SMALL_PADDING)
+            main_frame,
+            text="Status",
+            padding=str(SMALL_PADDING),
         )
         status_frame.grid(row=6, column=0, columnspan=3, sticky="ew")
         status_frame.columnconfigure(0, weight=GRID_WEIGHT_MAIN)

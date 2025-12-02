@@ -1543,7 +1543,7 @@ class FolderFixPro:
         self.root.after(
             0,
             lambda: self.status_bar_label.configure(
-                text=f"{message}  |  Theme: {self.current_theme.title()}"
+                text=f"{message}  |  Theme: {self.current_theme.title()}",
             ),
         )
 
@@ -1615,7 +1615,8 @@ class FolderFixPro:
             try:
                 self.operation_report.export_json(file_path)
                 messagebox.showinfo(
-                    "Report Exported", f"Report exported to:\n{file_path}"
+                    "Report Exported",
+                    f"Report exported to:\n{file_path}",
                 )
             except Exception as e:
                 messagebox.showerror("Export Failed", f"Failed to export report:\n{e}")
@@ -1632,12 +1633,14 @@ class FolderFixPro:
             try:
                 self.operation_report.export_html(file_path)
                 messagebox.showinfo(
-                    "Report Exported", f"Report exported to:\n{file_path}"
+                    "Report Exported",
+                    f"Report exported to:\n{file_path}",
                 )
 
                 # Ask if user wants to open it
                 if messagebox.askyesno(
-                    "Open Report", "Would you like to open the report?"
+                    "Open Report",
+                    "Would you like to open the report?",
                 ):
                     import webbrowser
 
