@@ -232,18 +232,21 @@ end
 fprintf('\n=== Example 4: Pre-Delay ===\n');
 
 % Vocal-like test signal
-fs = 44100;
-t = linspace(0, 0.5, round(0.5*fs))';
-vocalSim = sin(2*pi*200*t) + 0.5*sin(2*pi*400*t) + 0.3*sin(2*pi*600*t);
-vocalSim = vocalSim .* exp(-t*4);  % Decay
+fs = SAMPLE_RATE_HZ;
+VOCAL_DURATION_S = 0.5; % [s] Vocal simulation duration
+t = linspace(0, VOCAL_DURATION_S, round(VOCAL_DURATION_S*fs))';
+vocalSim = sin(2*pi*VOCAL_FUNDAMENTAL_HZ*t) + 0.5*sin(2*pi*VOCAL_HARMONIC_2_HZ*t) + 0.3*sin(2*pi*VOCAL_HARMONIC_3_HZ*t);
+vocalSim = vocalSim .* exp(-t*VOCAL_DECAY_RATE);  % Decay
 
 % Create reverb
 reverb = ConvolutionReverb();
 reverb.loadBuiltIn('plate');
-reverb.setWetDry(0.4, 0.6);
+WET_DRY_4_WET = 0.4; % [0-1] Wet mix for example 4
+WET_DRY_4_DRY = 0.6; % [0-1] Dry mix for example 4
+reverb.setWetDry(WET_DRY_4_WET, WET_DRY_4_DRY);
 
 % Try different pre-delays
-preDelays = [0, 0.02, 0.05, 0.10];  % seconds
+preDelays = [0, PRE_DELAY_1_MS, PRE_DELAY_2_MS, PRE_DELAY_3_MS];  % seconds
 
 figure('Name', 'Example 4: Pre-Delay Effect');
 for i = 1:length(preDelays)
@@ -259,7 +262,8 @@ for i = 1:length(preDelays)
     title(sprintf('Pre-delay: %.0f ms', preDelays(i)*1000));
     xlabel('Time (s)'); ylabel('Amplitude');
     grid on;
-    xlim([0, 1.5]);
+    XLIM_MAX_S = 1.5; % [s] Maximum x-axis limit for plot
+    xlim([0, XLIM_MAX_S]);
 
     % Mark pre-delay
     if preDelays(i) > 0
@@ -270,8 +274,8 @@ for i = 1:length(preDelays)
 
     % Play
     fprintf('Playing: %.0f ms pre-delay\n', preDelays(i)*1000);
-    sound(result * 0.7, fs);
-    pause(2);
+    sound(result * PLAYBACK_SCALE_1, fs);
+    pause(PAUSE_MEDIUM_S);
 end
 
 %% Example 5: EQ the Reverb
@@ -280,22 +284,27 @@ end
 fprintf('\n=== Example 5: Reverb EQ ===\n');
 
 % White noise burst (reveals frequency content)
-fs = 44100;
-noise = randn(round(0.2*fs), 1);
-noise = [noise; zeros(round(1.8*fs), 1)];
+fs = SAMPLE_RATE_HZ;
+noise = randn(round(NOISE_DURATION_S*fs), 1);
+noise = [noise; zeros(round(NOISE_SILENCE_S*fs), 1)];
 
 % Create reverb
 reverb = ConvolutionReverb();
 reverb.loadBuiltIn('concert_hall');
-reverb.setWetDry(0.6, 0.4);
+WET_DRY_5_WET = 0.6; % [0-1] Wet mix for example 5
+WET_DRY_5_DRY = 0.4; % [0-1] Dry mix for example 5
+reverb.setWetDry(WET_DRY_5_WET, WET_DRY_5_DRY);
 
 % Try different EQ settings
+EQ_FLAT_LOW = 0; % [dB] Flat EQ low frequency
+EQ_FLAT_MID = 0; % [dB] Flat EQ mid frequency
+EQ_FLAT_HIGH = 0; % [dB] Flat EQ high frequency
 eqSettings = {
-    [0, 0, 0],     'Flat (No EQ)';
-    [-8, 0, 0],    'Cut Lows (Thin)';
-    [0, 0, -8],    'Cut Highs (Dark)';
-    [+4, 0, -6],   'Warm (Boost Lows, Cut Highs)';
-    [-6, 0, +4]    'Bright (Cut Lows, Boost Highs)'
+    [EQ_FLAT_LOW, EQ_FLAT_MID, EQ_FLAT_HIGH],     'Flat (No EQ)';
+    [EQ_CUT_LOW_DB, EQ_FLAT_MID, EQ_FLAT_HIGH],    'Cut Lows (Thin)';
+    [EQ_FLAT_LOW, EQ_FLAT_MID, EQ_CUT_HIGH_DB],    'Cut Highs (Dark)';
+    [EQ_BOOST_LOW_DB, EQ_FLAT_MID, EQ_WARM_CUT_HIGH_DB],   'Warm (Boost Lows, Cut Highs)';
+    [EQ_BRIGHT_CUT_LOW_DB, EQ_FLAT_MID, EQ_BOOST_HIGH_DB]    'Bright (Cut Lows, Boost Highs)'
 };
 
 figure('Name', 'Example 5: Reverb EQ');
@@ -310,13 +319,13 @@ for i = 1:size(eqSettings, 1)
 
     % Plot spectrogram
     subplot(size(eqSettings, 1), 1, i);
-    spectrogram(result, 512, 384, 512, fs, 'yaxis');
+    spectrogram(result, SPECTROGRAM_WINDOW, SPECTROGRAM_OVERLAP, SPECTROGRAM_NFFT, fs, 'yaxis');
     title(label);
 
     % Play
     fprintf('Playing: %s\n', label);
-    sound(result * 0.5, fs);
-    pause(2.5);
+    sound(result * PLAYBACK_SCALE_2, fs);
+    pause(PAUSE_DURATION_SECONDS);
 end
 
 %% Example 6: Damping (Air Absorption)
