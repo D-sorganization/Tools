@@ -16,7 +16,7 @@ import logging
 import re
 import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 # Constants
@@ -32,12 +32,12 @@ logger = logging.getLogger(__name__)
 
 class MATLABQualityChecker:
     """Comprehensive MATLAB code quality checker."""
-    
+
     # Compiled regex patterns for performance (compiled once, reused many times)
     LOAD_PATTERN = re.compile(r"^\s*load\s+(?:\w+|\([^)]+\))")
     ASSIGNMENT_PATTERN = re.compile(r"\w+\s*=\s*load\s*[\(]")
 
-    def __init__(self, project_root: Path):
+    def __init__(self, project_root: Path) -> None:
         """Initialize the MATLAB quality checker.
 
         Args:
@@ -46,7 +46,7 @@ class MATLABQualityChecker:
         self.project_root = project_root
         self.matlab_dir = project_root / "matlab"
         self.results = {
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "total_files": 0,
             "issues": [],
             "passed": True,
@@ -99,12 +99,12 @@ class MATLABQualityChecker:
                 result = self._run_matlab_script(matlab_script)
                 return result
             except Exception as e:
-                logger.warning(f"Could not run MATLAB script directly: {e}")
+                logger.warning("Could not run MATLAB script directly: %s", e)
                 # Fall back to static analysis
                 return self._static_matlab_analysis()
 
         except Exception as e:
-            logger.error(f"Error running MATLAB quality checks: {e}")
+            logger.exception("Error running MATLAB quality checks")
             return {"error": str(e)}
 
     def _run_matlab_script(self, script_path: Path) -> dict[str, object]:
@@ -132,7 +132,7 @@ class MATLABQualityChecker:
 
             for cmd in commands:
                 try:
-                    logger.info(f"Trying command: {' '.join(cmd)}")
+                    logger.info("Trying command: %s", " ".join(cmd))
                     result = subprocess.run(
                         cmd,
                         capture_output=True,
@@ -148,12 +148,13 @@ class MATLABQualityChecker:
                             "success": True,
                             "output": result.stdout,
                             "method": "matlab_script",
+                            "passed": True,
                         }
-                    else:
-                        logger.warning(
-                            f"Command failed with return code {result.returncode}",
-                        )
-                        logger.debug(f"stderr: {result.stderr}")
+                    logger.warning(
+                        "Command failed with return code %s",
+                        result.returncode,
+                    )
+                    logger.debug("stderr: %s", result.stderr)
 
                 except (subprocess.TimeoutExpired, FileNotFoundError):
                     continue
@@ -163,7 +164,7 @@ class MATLABQualityChecker:
             return self._static_matlab_analysis()
 
         except Exception as e:
-            logger.error(f"Error running MATLAB script: {e}")
+            logger.exception("Error running MATLAB script")
             return {"error": str(e)}
 
     def _static_matlab_analysis(self) -> dict[str, object]:
@@ -473,7 +474,7 @@ class MATLABQualityChecker:
         return self.results
 
 
-def main():
+def main() -> None:
     """Main entry point for the MATLAB quality check script."""
     parser = argparse.ArgumentParser(description="MATLAB Code Quality Checker")
     parser.add_argument("--strict", action="store_true", help="Enable strict mode")
@@ -495,7 +496,7 @@ def main():
     # Get project root
     project_root = Path(args.project_root).resolve()
     if not project_root.exists():
-        logger.error(f"Project root does not exist: {project_root}")
+        logger.error("Project root does not exist: %s", project_root)
         sys.exit(1)
 
     # Initialize and run quality checks
@@ -511,9 +512,9 @@ def main():
         print("=" * 60)  # noqa: T201
         print(f"Timestamp: {results.get('timestamp', 'N/A')}")  # noqa: T201
         print(f"Total Files: {results.get('total_files', 0)}")  # noqa: T201
-        print(
+        print(  # noqa: T201
             f"Status: {'PASSED' if results.get('passed', False) else 'FAILED'}"
-        )  # noqa: T201
+        )
         print(f"Summary: {results.get('summary', 'N/A')}")  # noqa: T201
 
         if results.get("issues"):
