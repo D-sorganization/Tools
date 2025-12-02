@@ -1,3 +1,3 @@
 """Project package init."""
 
-__all__ = []
+__all__: list[str] = []
