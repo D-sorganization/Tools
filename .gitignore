@@ -38,3 +38,6 @@ logs/
 *.mat
 *.h5
 *.zip
+
+# Development artifacts
+branch_cleanup_report_*.md

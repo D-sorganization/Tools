@@ -98,6 +98,9 @@ CHARS_PER_DIALOG_LINE: Final[int] = (
 DIALOG_WIDTH_OFFSET: Final[int] = (
     100  # Additional width offset for dialog borders [pixels] - accounts for scrollbars and margins
 )
+DIALOG_HEIGHT_OFFSET: Final[int] = (
+    100  # Additional height offset for dialog borders [pixels] - accounts for title bar and margins
+)
 LINE_HEIGHT_PIXELS: Final[int] = (
     20  # Height per line for dialog height calculation [pixels] - standard line height
 )
@@ -2138,7 +2141,7 @@ class FolderProcessorApp:
                 max(
                     MIN_DIALOG_HEIGHT,
                     len(content.split("\n")) * LINE_HEIGHT_PIXELS
-                    + DIALOG_WIDTH_OFFSET,
+                    + DIALOG_HEIGHT_OFFSET,
                 ),
             )
 
