@@ -7,8 +7,8 @@ from unittest.mock import Mock, patch
 import pytest
 
 # Import the module to test
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from folder_packer_gui import (
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from project_packer.folder_packer_gui import (
     EXCLUDE_PATTERNS,
     INCLUDE_EXTENSIONS,
     FolderPackerGUI,

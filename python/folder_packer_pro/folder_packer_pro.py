@@ -27,7 +27,7 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from tkinter import filedialog, messagebox, scrolledtext, ttk
-from typing import Final
+from typing import Any, Final
 
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
@@ -35,7 +35,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2
 
 # Constants with professional standards
 MAX_FILE_SIZE_MB: Final[int] = 1024  # 1GB max per file
-COMPRESSION_LEVELS: Final[dict] = {
+COMPRESSION_LEVELS: Final[dict[str, int]] = {
     "none": 0,
     "fast": 1,
     "balanced": 6,
@@ -52,7 +52,7 @@ PADDING_MEDIUM: Final[int] = 10
 PADDING_SMALL: Final[int] = 5
 
 # File extensions for syntax highlighting (basic categorization)
-CODE_EXTENSIONS: Final[set] = {
+CODE_EXTENSIONS: Final[set[str]] = {
     ".py",
     ".js",
     ".ts",
@@ -71,7 +71,7 @@ CODE_EXTENSIONS: Final[set] = {
     ".m",
 }
 
-MARKUP_EXTENSIONS: Final[set] = {
+MARKUP_EXTENSIONS: Final[set[str]] = {
     ".html",
     ".xml",
     ".css",
@@ -82,7 +82,7 @@ MARKUP_EXTENSIONS: Final[set] = {
     ".tsx",
 }
 
-CONFIG_EXTENSIONS: Final[set] = {
+CONFIG_EXTENSIONS: Final[set[str]] = {
     ".json",
     ".yaml",
     ".yml",
@@ -93,7 +93,7 @@ CONFIG_EXTENSIONS: Final[set] = {
 }
 
 # Default exclusion patterns
-DEFAULT_EXCLUDE_PATTERNS: Final[set] = {
+DEFAULT_EXCLUDE_PATTERNS: Final[set[str]] = {
     "__pycache__",
     ".git",
     ".svn",
@@ -219,19 +219,20 @@ class EncryptionManager:
         encrypted = encrypted_data[16:]
         key = EncryptionManager.derive_key(password, salt)
         cipher = Fernet(key)
-        return cipher.decrypt(encrypted)
+        decrypted: bytes = cipher.decrypt(encrypted)
+        return decrypted
 
 
 class PackageManifest:
     """Manage package manifest with metadata."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.created_at = datetime.now()
-        self.files = []
-        self.metadata = {}
-        self.stats = defaultdict(int)
+        self.files: list[dict[str, Any]] = []
+        self.metadata: dict[str, Any] = {}
+        self.stats: defaultdict[str, int] = defaultdict(int)
 
-    def add_file(self, file_path: str, size: int, checksum: str):
+    def add_file(self, file_path: str, size: int, checksum: str) -> None:
         """Add file to manifest."""
         self.files.append(
             {
@@ -244,11 +245,11 @@ class PackageManifest:
         self.stats["total_files"] += 1
         self.stats["total_size"] += size
 
-    def set_metadata(self, key: str, value):
+    def set_metadata(self, key: str, value: Any) -> None:
         """Set metadata value."""
         self.metadata[key] = value
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         """Convert manifest to dictionary."""
         return {
             "created_at": self.created_at.isoformat(),
@@ -262,7 +263,7 @@ class PackageManifest:
         return json.dumps(self.to_dict(), indent=2)
 
     @classmethod
-    def from_json(cls, json_str: str):
+    def from_json(cls, json_str: str) -> "PackageManifest":
         """Create manifest from JSON string."""
         data = json.loads(json_str)
         manifest = cls()
@@ -276,7 +277,7 @@ class PackageManifest:
 class FolderPackerPro:
     """Enhanced professional folder packing application."""
 
-    def __init__(self, root):
+    def __init__(self, root: tk.Tk) -> None:
         self.root = root
         self.root.title("Folder Packer Pro v2.0 - Professional Project Packager")
         self.root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
@@ -287,7 +288,7 @@ class FolderPackerPro:
         self.output_file = ""
         self.current_theme = "dark"
         self.exclude_patterns = set(DEFAULT_EXCLUDE_PATTERNS)
-        self.include_extensions = set()
+        self.include_extensions: set[str] = set()
         self.manifest = PackageManifest()
 
         # Operation variables
@@ -305,7 +306,7 @@ class FolderPackerPro:
 
         logger.info("Folder Packer Pro v2.0 initialized successfully")
 
-    def _create_menu_bar(self):
+    def _create_menu_bar(self) -> None:
         """Create professional menu bar."""
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
@@ -338,7 +339,7 @@ class FolderPackerPro:
         help_menu.add_command(label="About", command=self._show_about)
         help_menu.add_command(label="User Guide", command=self._show_user_guide)
 
-    def _create_main_ui(self):
+    def _create_main_ui(self) -> None:
         """Create main user interface with modern design."""
         # Create notebook for tabbed interface
         self.notebook = ttk.Notebook(self.root)
@@ -358,7 +359,7 @@ class FolderPackerPro:
         # Status bar at bottom
         self._create_status_bar()
 
-    def _create_pack_tab(self):
+    def _create_pack_tab(self) -> None:
         """Create pack operation tab."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Pack  ")
@@ -593,7 +594,7 @@ class FolderPackerPro:
         )
         self.pack_cancel_btn.pack(side="right", fill="x", expand=True)
 
-    def _create_unpack_tab(self):
+    def _create_unpack_tab(self) -> None:
         """Create unpack operation tab."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Unpack  ")
@@ -755,7 +756,7 @@ class FolderPackerPro:
         )
         self.unpack_cancel_btn.pack(side="right", fill="x", expand=True)
 
-    def _create_preview_tab(self):
+    def _create_preview_tab(self) -> None:
         """Create file preview tab."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Preview  ")
@@ -833,7 +834,7 @@ class FolderPackerPro:
         self.preview_text.tag_config("function", foreground="#dcdcaa")
         self.preview_text.tag_config("number", foreground="#b5cea8")
 
-    def _create_log_tab(self):
+    def _create_log_tab(self) -> None:
         """Create operation log tab."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Log  ")
@@ -876,7 +877,7 @@ class FolderPackerPro:
         self.log_text.tag_config("warning", foreground="#ffc107")
         self.log_text.tag_config("error", foreground="#dc3545")
 
-    def _create_status_bar(self):
+    def _create_status_bar(self) -> None:
         """Create bottom status bar."""
         status_frame = ttk.Frame(self.root, relief="sunken", borderwidth=1)
         status_frame.pack(side="bottom", fill="x")
@@ -897,7 +898,7 @@ class FolderPackerPro:
         version_label = ttk.Label(status_frame, text="v2.0", anchor="e")
         version_label.pack(side="right", padx=PADDING_SMALL)
 
-    def _apply_theme(self):
+    def _apply_theme(self) -> None:
         """Apply color theme to application."""
         theme = DARK_THEME if self.current_theme == "dark" else LIGHT_THEME
 
@@ -913,13 +914,13 @@ class FolderPackerPro:
             text=f"Ready  |  Theme: {self.current_theme.title()}  |  No operation in progress",
         )
 
-    def _toggle_theme(self):
+    def _toggle_theme(self) -> None:
         """Toggle between dark and light themes."""
         self.current_theme = "light" if self.current_theme == "dark" else "dark"
         self._apply_theme()
         self._log_message(f"Switched to {self.current_theme} theme", "info")
 
-    def _browse_pack_source(self):
+    def _browse_pack_source(self) -> None:
         """Browse for source folder to pack."""
         folder = filedialog.askdirectory(title="Select Folder to Pack")
         if folder:
@@ -929,7 +930,7 @@ class FolderPackerPro:
             self._log_message(f"Selected source folder: {folder}", "info")
             self._scan_folder()
 
-    def _browse_pack_output(self):
+    def _browse_pack_output(self) -> None:
         """Browse for output package file."""
         file_path = filedialog.asksaveasfilename(
             defaultextension=".fpp",
@@ -942,7 +943,7 @@ class FolderPackerPro:
             self.output_file = file_path
             self._log_message(f"Set output file: {file_path}", "info")
 
-    def _browse_unpack_source(self):
+    def _browse_unpack_source(self) -> None:
         """Browse for package file to unpack."""
         file_path = filedialog.askopenfilename(
             title="Select Package to Unpack",
@@ -953,7 +954,7 @@ class FolderPackerPro:
             self.unpack_source_entry.insert(0, file_path)
             self._log_message(f"Selected package: {file_path}", "info")
 
-    def _browse_unpack_dest(self):
+    def _browse_unpack_dest(self) -> None:
         """Browse for destination folder for unpacking."""
         folder = filedialog.askdirectory(title="Select Destination Folder")
         if folder:
@@ -961,7 +962,7 @@ class FolderPackerPro:
             self.unpack_dest_entry.insert(0, folder)
             self._log_message(f"Set destination folder: {folder}", "info")
 
-    def _on_encrypt_toggle(self):
+    def _on_encrypt_toggle(self) -> None:
         """Handle encryption checkbox toggle."""
         if self.encrypt_var.get():
             self.pack_password_entry.configure(state="normal")
@@ -970,14 +971,14 @@ class FolderPackerPro:
             self.pack_password_entry.configure(state="disabled")
             self.pack_password_confirm.configure(state="disabled")
 
-    def _on_encrypted_toggle(self):
+    def _on_encrypted_toggle(self) -> None:
         """Handle encrypted package checkbox toggle."""
         if self.encrypted_var.get():
             self.unpack_password_entry.configure(state="normal")
         else:
             self.unpack_password_entry.configure(state="disabled")
 
-    def _scan_folder(self):
+    def _scan_folder(self) -> None:
         """Scan source folder and display statistics."""
         if not self.pack_source_entry.get():
             return
@@ -1025,7 +1026,7 @@ class FolderPackerPro:
 
         return stats
 
-    def _display_stats(self, stats: dict):
+    def _display_stats(self, stats: dict[str, Any]) -> None:
         """Display folder statistics in the stats text widget."""
         self.stats_text.configure(state="normal")
         self.stats_text.delete("1.0", "end")
@@ -1052,7 +1053,7 @@ class FolderPackerPro:
         # Update preview tree
         self._update_preview_tree()
 
-    def _update_preview_tree(self):
+    def _update_preview_tree(self) -> None:
         """Update preview tree with files to be packed."""
         self.preview_tree.delete(*self.preview_tree.get_children())
 
@@ -1086,7 +1087,7 @@ class FolderPackerPro:
 
         threading.Thread(target=scan, daemon=True).start()
 
-    def _populate_tree(self, files: list, base_path: Path):
+    def _populate_tree(self, files: list[tuple[Path, os.stat_result]], base_path: Path) -> None:
         """Populate tree with file list."""
         for file_path, stat in files:
             rel_path = file_path.relative_to(base_path)
@@ -1102,7 +1103,7 @@ class FolderPackerPro:
                 tags=(str(file_path),),
             )
 
-    def _on_file_select(self, event):
+    def _on_file_select(self, event: tk.Event[ttk.Treeview]) -> None:
         """Handle file selection in preview tree."""
         selection = self.preview_tree.selection()
         if not selection:
@@ -1118,7 +1119,7 @@ class FolderPackerPro:
         if file_path.exists() and file_path.is_file():
             self._preview_file(file_path)
 
-    def _preview_file(self, file_path: Path):
+    def _preview_file(self, file_path: Path) -> None:
         """Preview file content with basic syntax highlighting."""
         self.preview_text.configure(state="normal")
         self.preview_text.delete("1.0", "end")
@@ -1144,7 +1145,7 @@ class FolderPackerPro:
 
         self.preview_text.configure(state="disabled")
 
-    def _insert_with_highlighting(self, content: str, file_ext: str):
+    def _insert_with_highlighting(self, content: str, file_ext: str) -> None:
         """Insert text with basic syntax highlighting."""
         # For simplicity, basic keyword highlighting
         keywords = {
@@ -1237,7 +1238,7 @@ class FolderPackerPro:
         else:
             return "Other"
 
-    def _start_pack(self):
+    def _start_pack(self) -> None:
         """Start packing operation."""
         # Validate inputs
         if not self.pack_source_entry.get():
@@ -1272,7 +1273,7 @@ class FolderPackerPro:
 
         threading.Thread(target=self._run_pack, daemon=True).start()
 
-    def _run_pack(self):
+    def _run_pack(self) -> None:
         """Run pack operation in background."""
         try:
             source_path = Path(self.pack_source_entry.get())
@@ -1401,7 +1402,7 @@ class FolderPackerPro:
         finally:
             self.root.after(0, self._pack_finished)
 
-    def _start_unpack(self):
+    def _start_unpack(self) -> None:
         """Start unpacking operation."""
         # Validate inputs
         if not self.unpack_source_entry.get():
@@ -1433,7 +1434,7 @@ class FolderPackerPro:
 
         threading.Thread(target=self._run_unpack, daemon=True).start()
 
-    def _run_unpack(self):
+    def _run_unpack(self) -> None:
         """Run unpack operation in background."""
         try:
             package_path = Path(self.unpack_source_entry.get())
@@ -1527,7 +1528,7 @@ class FolderPackerPro:
         finally:
             self.root.after(0, self._unpack_finished)
 
-    def _inspect_package(self):
+    def _inspect_package(self) -> None:
         """Inspect package file and show information."""
         package_path = self.unpack_source_entry.get()
         if not package_path:
@@ -1571,7 +1572,7 @@ class FolderPackerPro:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to inspect package:\n\n{e}")
 
-    def _manage_exclusions(self):
+    def _manage_exclusions(self) -> None:
         """Show dialog to manage exclusion patterns."""
         dialog = tk.Toplevel(self.root)
         dialog.title("Manage Exclusions")
@@ -1655,7 +1656,7 @@ class FolderPackerPro:
         self.preview_tree.delete(*self.preview_tree.get_children())
         self._log_message("Ready for new package", "info")
 
-    def _export_manifest(self):
+    def _export_manifest(self) -> None:
         """Export current manifest."""
         if not self.manifest.files:
             messagebox.showwarning("No Manifest", "No manifest data to export.")
@@ -1675,17 +1676,17 @@ class FolderPackerPro:
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to export manifest:\n{e}")
 
-    def _update_pack_status(self, message: str):
+    def _update_pack_status(self, message: str) -> None:
         """Update pack status label."""
         self.root.after(0, lambda: self.pack_status_label.configure(text=message))
         self._update_status_bar(message)
 
-    def _update_unpack_status(self, message: str):
+    def _update_unpack_status(self, message: str) -> None:
         """Update unpack status label."""
         self.root.after(0, lambda: self.unpack_status_label.configure(text=message))
         self._update_status_bar(message)
 
-    def _update_status_bar(self, message: str):
+    def _update_status_bar(self, message: str) -> None:
         """Update bottom status bar."""
         self.root.after(
             0,
@@ -1694,26 +1695,26 @@ class FolderPackerPro:
             ),
         )
 
-    def _cancel_operation(self):
+    def _cancel_operation(self) -> None:
         """Cancel current operation."""
         self.cancel_operation = True
         self._log_message("Operation cancelled by user", "warning")
 
-    def _pack_finished(self):
+    def _pack_finished(self) -> None:
         """Clean up after pack operation."""
         self.pack_btn.configure(state="normal")
         self.pack_cancel_btn.configure(state="disabled")
         self.pack_progress_var.set(0)
         self._update_pack_status("Ready")
 
-    def _unpack_finished(self):
+    def _unpack_finished(self) -> None:
         """Clean up after unpack operation."""
         self.unpack_btn.configure(state="normal")
         self.unpack_cancel_btn.configure(state="disabled")
         self.unpack_progress_var.set(0)
         self._update_unpack_status("Ready")
 
-    def _log_message(self, message: str, level: str = "info"):
+    def _log_message(self, message: str, level: str = "info") -> None:
         """Add message to log."""
         timestamp = datetime.now().strftime("%H:%M:%S")
         log_entry = f"[{timestamp}] {message}\n"
@@ -1755,7 +1756,7 @@ class FolderPackerPro:
                 f.write(self.log_text.get("1.0", "end"))
             messagebox.showinfo("Log Saved", f"Log saved to:\n{file_path}")
 
-    def _open_log_file(self):
+    def _open_log_file(self) -> None:
         """Open the log file in default text editor."""
         try:
             if sys.platform == "win32":
@@ -1767,7 +1768,7 @@ class FolderPackerPro:
         except Exception as e:
             messagebox.showerror("Error", f"Could not open log file:\n{e}")
 
-    def _show_about(self):
+    def _show_about(self) -> None:
         """Show about dialog."""
         about_text = """Folder Packer Pro v2.0
 
@@ -1788,7 +1789,7 @@ Features:
 """
         messagebox.showinfo("About Folder Packer Pro", about_text)
 
-    def _show_user_guide(self):
+    def _show_user_guide(self) -> None:
         """Show user guide."""
         guide_text = """Folder Packer Pro - Quick Start Guide
 
