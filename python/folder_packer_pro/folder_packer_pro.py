@@ -27,7 +27,7 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from tkinter import filedialog, messagebox, scrolledtext, simpledialog, ttk
-from typing import Any, Final
+from typing import Any, Final, Union
 
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
@@ -246,7 +246,11 @@ class PackageManifest:
         self.stats["total_files"] += 1
         self.stats["total_size"] += size
 
-    def set_metadata(self, key: str, value: Any) -> None:
+    def set_metadata(
+        self,
+        key: str,
+        value: Union[str, int, float, bool, None, list[Any], dict[str, Any]],
+    ) -> None:
         """Set metadata value."""
         self.metadata[key] = value
 
