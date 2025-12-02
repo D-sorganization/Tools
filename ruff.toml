@@ -80,6 +80,9 @@ ignore = [
     "B904",    # Raise without from inside except (intentional)
     "PTH202",  # os.path.getsize (pathlib preferred but acceptable)
     "S605",    # Start process with shell (needed for cross-platform)
+    "TRY003",  # Raise vanilla args (intentional)
+    "EM102",   # F-string in exception (readability)
+    "E501",    # Line too long (handled by black)
 ]
 
 # Stricter than defaults
