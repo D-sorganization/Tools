@@ -370,6 +370,8 @@ class MATLABQualityChecker:
                     "5.0",
                     "10",
                     "10.0",
+                    "42",  # Common reproducibility seed in scientific computing
+                    "42.0",
                     "100",
                     "100.0",
                     "1000",

@@ -21,7 +21,7 @@ end
 % Standard reproducibility seed (commonly used in scientific computing)
 % Value: 42 [dimensionless] Standard seed for reproducibility
 % Source: Common practice in scientific computing (e.g., scikit-learn default)
-REPRODUCIBILITY_SEED = 42;
+REPRODUCIBILITY_SEED = 42;  % [dimensionless] Standard seed for reproducibility - Common practice in scientific computing
 
 % 1) Configure reproducibility
 rng(REPRODUCIBILITY_SEED);
