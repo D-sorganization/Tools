@@ -15,6 +15,9 @@ function launch_audio_processor()
 %
 %   See also: MainWindow
 
+arguments
+end
+
 % Add current directory and subdirectories to path
 currentDir = fileparts(mfilename('fullpath'));
 addpath(currentDir);

@@ -32,6 +32,9 @@ function mainWindow = launch_audio_processor_pro()
 %
 %   See also: MainWindow, COMPLETE_IMPLEMENTATION_GUIDE
 
+arguments
+end
+
 fprintf('\n');
 fprintf('========================================\n');
 fprintf('  Audio Signal Processor - Pro Edition  \n');
