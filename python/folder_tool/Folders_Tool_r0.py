@@ -2349,7 +2349,8 @@ class FolderProcessorApp:
         if self.dest_folder:
             validation_results["destination_exists"] = os.path.exists(self.dest_folder)
             validation_results["destination_writable"] = os.access(
-                self.dest_folder, os.W_OK
+                self.dest_folder,
+                os.W_OK,
             )
         else:
             validation_results["destination_exists"] = (
@@ -2455,11 +2456,11 @@ class FolderProcessorApp:
         # Input validation
         if not source_path or not isinstance(source_path, str):
             raise ValueError(
-                f"Source path must be non-empty string, got {type(source_path)}"
+                f"Source path must be non-empty string, got {type(source_path)}",
             )
         if not dest_path or not isinstance(dest_path, str):
             raise ValueError(
-                f"Destination path must be non-empty string, got {type(dest_path)}"
+                f"Destination path must be non-empty string, got {type(dest_path)}",
             )
 
         source_path_obj = Path(source_path)
@@ -2480,7 +2481,7 @@ class FolderProcessorApp:
                 logger.warning(f"Source file is empty: {source_path}")
             elif source_size > MAX_FILE_SIZE_MB * 1024 * 1024:
                 logger.warning(
-                    f"Source file exceeds maximum size limit: {source_path} ({source_size / (1024*1024):.1f} MB)"
+                    f"Source file exceeds maximum size limit: {source_path} ({source_size / (1024*1024):.1f} MB)",
                 )
         except OSError as e:
             logger.warning(f"Cannot access source file size: {source_path} - {e}")
@@ -2494,7 +2495,7 @@ class FolderProcessorApp:
                 # Check if destination directory is writable
                 if not os.access(dest_dir, os.W_OK):
                     raise PermissionError(
-                        f"Cannot write to destination directory: {dest_dir}"
+                        f"Cannot write to destination directory: {dest_dir}",
                     )
 
                 # Copy file with metadata preservation
@@ -2507,12 +2508,12 @@ class FolderProcessorApp:
                         dest_size = dest_path_obj.stat().st_size
                         if source_size == dest_size:
                             logger.debug(
-                                f"Successfully copied {source_path} -> {dest_path} ({source_size} bytes)"
+                                f"Successfully copied {source_path} -> {dest_path} ({source_size} bytes)",
                             )
                             return True
                         else:
                             logger.warning(
-                                f"Size mismatch after copy: source={source_size}, dest={dest_size}"
+                                f"Size mismatch after copy: source={source_size}, dest={dest_size}",
                             )
                             # Size mismatch, remove failed copy and retry
                             if dest_path_obj.exists():
