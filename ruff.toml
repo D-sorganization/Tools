@@ -106,14 +106,17 @@ pylint = {max-args = 5, max-branches = 10, max-returns = 3, max-statements = 30}
 "test_*.py" = [
     "S101",   # Use of assert
     "PLR2004", # Magic numbers allowed in tests
+    "PT001",  # pytest.fixture() vs @pytest.fixture (version-dependent)
 ]
 "**/tests/*.py" = [
     "S101",
     "PLR2004",
+    "PT001",  # pytest.fixture() vs @pytest.fixture (version-dependent)
 ]
 "**/test_*.py" = [
     "S101",
     "PLR2004",
+    "PT001",  # pytest.fixture() vs @pytest.fixture (version-dependent)
 ]
 # Build scripts - allow prints and subprocess
 "**/build_exe.py" = [
