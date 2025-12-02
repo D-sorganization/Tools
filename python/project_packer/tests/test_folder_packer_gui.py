@@ -19,7 +19,13 @@ from folder_packer_gui import (
 class TestFolderPackerGUI:
     """Test cases for folder_packer_gui.py module."""
 
-    @pytest.fixture()
+    @pytest.fixture(autouse=True)
+    def _mocked_tk(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Mock Tkinter to prevent GUI instantiation in headless CI environments."""
+        monkeypatch.setattr("tkinter.Tk", Mock())
+        monkeypatch.setattr("tkinter.Toplevel", Mock())
+
+    @pytest.fixture
     def mock_root(self) -> Mock:
         """Create a mock Tkinter root window."""
         mock_root = Mock()
@@ -31,7 +37,7 @@ class TestFolderPackerGUI:
         mock_root.update_idletasks = Mock()
         return mock_root
 
-    @pytest.fixture()
+    @pytest.fixture
     def gui_instance(self, mock_root: Mock) -> FolderPackerGUI:
         """Create a FolderPackerGUI instance with mocked dependencies."""
         with (
@@ -40,13 +46,12 @@ class TestFolderPackerGUI:
             patch("folder_packer_gui.ttk.LabelFrame"),
             patch("folder_packer_gui.tk.Listbox"),
             patch("folder_packer_gui.ttk.Button"),
-            patch("folder_packer_gui.ttk.ttk.Entry"),
+            patch("folder_packer_gui.ttk.Entry"),
             patch("folder_packer_gui.tk.Text"),
             patch("folder_packer_gui.ttk.Scrollbar"),
             patch("folder_packer_gui.ttk.Style"),
         ):
-            gui = FolderPackerGUI(mock_root)
-            return gui
+            return FolderPackerGUI(mock_root)
 
     def test_init(self, mock_root: Mock) -> None:
         """Test GUI initialization."""
@@ -183,12 +188,14 @@ class TestFolderPackerGUI:
         with patch.object(gui_instance, "pack_single_folder") as mock_pack:
             mock_pack.return_value = True
             with patch.object(gui_instance, "update_status") as mock_update:
-                gui_instance.pack_folders()
+                with patch("folder_packer_gui.messagebox.showinfo") as mock_showinfo:
+                    gui_instance.pack_folders()
 
-                mock_pack.assert_called_once_with(str(source_folder))
-                assert (
-                    mock_update.call_count >= 2
-                )  # At least packing and success messages
+                    mock_pack.assert_called_once_with(str(source_folder))
+                    assert (
+                        mock_update.call_count >= 2
+                    )  # At least packing and success messages
+                    mock_showinfo.assert_called_once()
 
     def test_pack_single_folder_success(
         self,

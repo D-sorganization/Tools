@@ -73,7 +73,7 @@ class TestBuildExe:
         """Test building executable when script exists."""
         with patch("build_exe.Path") as mock_path:
             mock_path.return_value.exists.return_value = True
-            with patch("build_exe.clean_build_dirs") as mock_clean:
+            with patch("build_exe.clean_build_dirs"):
                 with patch("build_exe.subprocess.run") as mock_run:
                     mock_run.return_value = Mock(returncode=0)
                     assert build_executable() is True
@@ -88,7 +88,7 @@ class TestBuildExe:
         """Test building executable when subprocess fails."""
         with patch("build_exe.Path") as mock_path:
             mock_path.return_value.exists.return_value = True
-            with patch("build_exe.clean_build_dirs") as mock_clean:
+            with patch("build_exe.clean_build_dirs"):
                 with patch("build_exe.subprocess.run") as mock_run:
                     mock_run.side_effect = subprocess.CalledProcessError(
                         1,
@@ -102,15 +102,18 @@ class TestBuildExe:
         exe_path.parent.mkdir(parents=True)
         exe_path.write_bytes(b"fake executable")
 
-        with patch("build_exe.Path") as mock_path:
-            mock_path.return_value = exe_path
-            assert verify_build() is True
+        with patch("build_exe.DIST_DIR", str(tmp_path / "dist")):
+            with patch("build_exe.EXE_NAME", "FolderPacker"):
+                assert verify_build() is True
 
-    def test_verify_build_executable_not_found(self) -> None:
+    def test_verify_build_executable_not_found(self, tmp_path: Path) -> None:
         """Test build verification when executable doesn't exist."""
-        with patch("build_exe.Path") as mock_path:
-            mock_path.return_value.exists.return_value = False
-            assert verify_build() is False
+        # Create dist directory but no executable
+        (tmp_path / "dist").mkdir(parents=True)
+
+        with patch("build_exe.DIST_DIR", str(tmp_path / "dist")):
+            with patch("build_exe.EXE_NAME", "FolderPacker"):
+                assert verify_build() is False
 
     def test_main_pyinstaller_available(self) -> None:
         """Test main function when PyInstaller is available."""
@@ -144,9 +147,14 @@ class TestBuildExe:
             mock_check.return_value = False
             with patch("build_exe.install_pyinstaller") as mock_install:
                 mock_install.return_value = False
-                with patch("sys.exit") as mock_exit:
-                    main()
-                    mock_exit.assert_called_once_with(1)
+                with patch("build_exe.build_executable") as mock_build:
+                    # Mock build_executable to prevent it from running
+                    mock_build.return_value = False
+                    with patch("sys.exit") as mock_exit:
+                        main()
+                        # sys.exit should be called once when install fails
+                        # The return statement prevents further execution
+                        mock_exit.assert_called_once_with(1)
 
     def test_main_build_failure(self) -> None:
         """Test main function when build fails."""

@@ -38,10 +38,32 @@ jobs:
         python -m pip install --upgrade pip
         # Check both root and python/ subdirectory
         if [ -f python/requirements.txt ]; then pip install -r python/requirements.txt; fi
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        # Install from python/ subdirectory only
         if [ -f pyproject.toml ]; then pip install -e .; fi
         # ✅ Pin tool versions
-        pip install ruff==0.5.0 mypy==1.10.0 black==24.4.2 pytest==8.3.3 pytest-cov==6.0.0
+        pip install ruff==0.5.0 mypy==1.17.1 black==24.4.2 pytest==8.3.3 pytest-cov==6.0.0
+
+    - name: Run MATLAB Quality Check (Static Analysis)
+      continue-on-error: true  # Non-blocking due to MATLAB license restrictions
+      run: |
+        if [ -f tools/matlab_utilities/scripts/matlab_quality_check.py ]; then
+          echo "=========================================="
+          echo "MATLAB Code Quality Checks"
+          echo "=========================================="
+          python tools/matlab_utilities/scripts/matlab_quality_check.py --output-format json > matlab_quality_results.json || true
+          python tools/matlab_utilities/scripts/matlab_quality_check.py --output-format text || echo "⚠️  Quality issues found - see report above (non-blocking)"
+        else
+          echo "⚠️  MATLAB quality check script not found - skipping"
+        fi
+
+    - name: Upload MATLAB Quality Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: matlab-quality-report-py${{ matrix.python-version }}
+        path: matlab_quality_results.json
+        retention-days: 30
+        if-no-files-found: ignore
 
     - name: Check for placeholders and magic numbers
       run: |
@@ -241,27 +263,6 @@ jobs:
         fi
 
     - name: Check for docstrings
-<<<<<<< HEAD
-      continue-on-error: true
-      run: |
-        echo "📝 Checking for docstrings..."
-        pip install pydocstyle
-        # Check source directories only
-        if [ -d python/src ]; then
-          pydocstyle python/src/
-        elif [ -d python ]; then
-          pydocstyle python/
-        elif [ -d src ]; then
-          pydocstyle src/
-        else
-          pydocstyle .
-        fi
-
-
-
-
-
-=======
       # ✅ Use continue-on-error instead of || echo
       continue-on-error: true
       run: |
@@ -277,4 +278,3 @@ jobs:
         else
           pydocstyle .
         fi
->>>>>>> origin/main

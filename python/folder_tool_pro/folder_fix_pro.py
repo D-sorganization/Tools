@@ -21,14 +21,12 @@ import re
 import shutil
 import sys
 import threading
-import time
-import zipfile
+import tkinter as tk
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
-from typing import Final, Optional
+from typing import Any, Final
 
 # Constants with professional standards
 MAX_FILE_SIZE_MB: Final[int] = 10240  # 10GB limit for modern systems
@@ -98,7 +96,7 @@ class FileHasher:
     """Efficient file hashing for deduplication."""
 
     @staticmethod
-    def hash_file(file_path: Path, algorithm: str = HASH_ALGORITHM) -> Optional[str]:
+    def hash_file(file_path: Path, algorithm: str = HASH_ALGORITHM) -> str | None:
         """
         Generate cryptographic hash of file contents.
 
@@ -115,12 +113,12 @@ class FileHasher:
                 while chunk := f.read(DEFAULT_CHUNK_SIZE):
                     hasher.update(chunk)
             return hasher.hexdigest()
-        except Exception as e:
-            logger.error(f"Error hashing {file_path}: {e}")
+        except Exception:
+            logger.exception("Error hashing %s", file_path)
             return None
 
     @staticmethod
-    def hash_file_fast(file_path: Path) -> Optional[str]:
+    def hash_file_fast(file_path: Path) -> str | None:
         """
         Generate fast hash using first/last chunks + size.
         Useful for quick duplicate detection.
@@ -150,33 +148,33 @@ class FileHasher:
                     hasher.update(last_chunk)
 
             return hasher.hexdigest()
-        except Exception as e:
-            logger.error(f"Error fast hashing {file_path}: {e}")
+        except Exception:
+            logger.exception("Error fast hashing %s", file_path)
             return None
 
 
 class OperationReport:
     """Generate detailed operation reports."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.start_time = datetime.now()
-        self.end_time = None
-        self.operations = []
-        self.stats = defaultdict(int)
-        self.errors = []
+        self.end_time: datetime | None = None
+        self.operations: list[dict[str, Any]] = []
+        self.stats: defaultdict[str, int] = defaultdict(int)
+        self.errors: list[dict[str, Any]] = []
 
-    def add_operation(self, operation: str, details: dict):
+    def add_operation(self, operation: str, details: dict[str, Any]) -> None:
         """Add operation to report."""
         self.operations.append(
-            {"timestamp": datetime.now(), "operation": operation, "details": details}
+            {"timestamp": datetime.now(), "operation": operation, "details": details},
         )
         self.stats[operation] += 1
 
-    def add_error(self, error: str):
+    def add_error(self, error: str) -> None:
         """Add error to report."""
         self.errors.append({"timestamp": datetime.now(), "error": error})
 
-    def finalize(self):
+    def finalize(self) -> None:
         """Finalize report with end time."""
         self.end_time = datetime.now()
 
@@ -187,7 +185,7 @@ class OperationReport:
             return str(duration).split(".")[0]
         return "In progress"
 
-    def export_json(self, file_path: str):
+    def export_json(self, file_path: str) -> None:
         """Export report as JSON."""
         report_data = {
             "start_time": self.start_time.isoformat(),
@@ -213,7 +211,7 @@ class OperationReport:
         with open(file_path, "w", encoding="utf-8") as f:
             json.dump(report_data, f, indent=2)
 
-    def export_html(self, file_path: str):
+    def export_html(self, file_path: str) -> None:
         """Export report as HTML."""
         html_content = f"""
 <!DOCTYPE html>
@@ -393,19 +391,19 @@ class OperationReport:
 class FolderFixPro:
     """Enhanced professional folder processing application."""
 
-    def __init__(self, root):
+    def __init__(self, root: tk.Tk) -> None:
         self.root = root
         self.root.title("Folder Fix Pro v3.0 - Professional Folder Manager")
         self.root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
         self.root.minsize(MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT)
 
         # Application state
-        self.source_folders = []
+        self.source_folders: list[str] = []
         self.dest_folder = ""
         self.current_theme = "dark"
         self.operation_report = OperationReport()
         self.cancel_operation = False
-        self.file_cache = {}  # Cache for file information
+        self.file_cache: dict[str, Any] = {}  # Cache for file information
 
         # Operation variables
         self.operation_mode = "combine"
@@ -435,18 +433,18 @@ class FolderFixPro:
 
         logger.info("Folder Fix Pro v3.0 initialized successfully")
 
-    def _setup_icon(self):
+    def _setup_icon(self) -> None:
         """Set up application icon with fallback."""
         try:
             if sys.platform == "win32":
                 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
-                    "FolderFixPro.Tool.3.0"
+                    "FolderFixPro.Tool.3.0",
                 )
             # You can add icon file loading here
         except Exception as e:
             logger.warning(f"Could not set icon: {e}")
 
-    def _create_menu_bar(self):
+    def _create_menu_bar(self) -> None:
         """Create professional menu bar."""
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
@@ -454,8 +452,14 @@ class FolderFixPro:
         # File menu
         file_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="File", menu=file_menu)
-        file_menu.add_command(label="Export Report (JSON)", command=self._export_report_json)
-        file_menu.add_command(label="Export Report (HTML)", command=self._export_report_html)
+        file_menu.add_command(
+            label="Export Report (JSON)",
+            command=self._export_report_json,
+        )
+        file_menu.add_command(
+            label="Export Report (HTML)",
+            command=self._export_report_html,
+        )
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.root.quit)
 
@@ -477,11 +481,16 @@ class FolderFixPro:
         help_menu.add_command(label="About", command=self._show_about)
         help_menu.add_command(label="User Guide", command=self._show_user_guide)
 
-    def _create_main_ui(self):
+    def _create_main_ui(self) -> None:
         """Create main user interface with modern design."""
         # Create notebook for tabbed interface
         self.notebook = ttk.Notebook(self.root)
-        self.notebook.pack(fill="both", expand=True, padx=PADDING_SMALL, pady=PADDING_SMALL)
+        self.notebook.pack(
+            fill="both",
+            expand=True,
+            padx=PADDING_SMALL,
+            pady=PADDING_SMALL,
+        )
 
         # Create tabs
         self._create_operation_tab()
@@ -492,17 +501,29 @@ class FolderFixPro:
         # Status bar at bottom
         self._create_status_bar()
 
-    def _create_operation_tab(self):
+    def _create_operation_tab(self) -> None:
         """Create main operation tab."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Operation  ")
 
         # Main container with two columns
         left_frame = ttk.Frame(tab)
-        left_frame.pack(side="left", fill="both", expand=True, padx=PADDING_MEDIUM, pady=PADDING_MEDIUM)
+        left_frame.pack(
+            side="left",
+            fill="both",
+            expand=True,
+            padx=PADDING_MEDIUM,
+            pady=PADDING_MEDIUM,
+        )
 
         right_frame = ttk.Frame(tab)
-        right_frame.pack(side="right", fill="both", expand=True, padx=PADDING_MEDIUM, pady=PADDING_MEDIUM)
+        right_frame.pack(
+            side="right",
+            fill="both",
+            expand=True,
+            padx=PADDING_MEDIUM,
+            pady=PADDING_MEDIUM,
+        )
 
         # LEFT COLUMN - Source and Destination
         # Header
@@ -514,7 +535,11 @@ class FolderFixPro:
         header_label.pack(pady=(0, PADDING_MEDIUM))
 
         # Source folders section
-        source_frame = ttk.LabelFrame(left_frame, text="Source Folders", padding=PADDING_MEDIUM)
+        source_frame = ttk.LabelFrame(
+            left_frame,
+            text="Source Folders",
+            padding=PADDING_MEDIUM,
+        )
         source_frame.pack(fill="both", expand=True, pady=(0, PADDING_MEDIUM))
 
         # Source listbox with scrollbar
@@ -537,32 +562,53 @@ class FolderFixPro:
         btn_frame = ttk.Frame(source_frame)
         btn_frame.pack(fill="x", pady=(PADDING_SMALL, 0))
 
-        ttk.Button(btn_frame, text="➕ Add Folder", command=self._add_source_folder).pack(
-            side="left", padx=(0, PADDING_SMALL)
-        )
-        ttk.Button(btn_frame, text="➖ Remove", command=self._remove_source_folder).pack(
-            side="left", padx=(0, PADDING_SMALL)
-        )
-        ttk.Button(btn_frame, text="🗑️ Clear All", command=self._clear_source_folders).pack(
-            side="left"
-        )
+        ttk.Button(
+            btn_frame,
+            text="➕ Add Folder",
+            command=self._add_source_folder,
+        ).pack(side="left", padx=(0, PADDING_SMALL))
+        ttk.Button(
+            btn_frame,
+            text="➖ Remove",
+            command=self._remove_source_folder,
+        ).pack(side="left", padx=(0, PADDING_SMALL))
+        ttk.Button(
+            btn_frame,
+            text="🗑️ Clear All",
+            command=self._clear_source_folders,
+        ).pack(side="left")
 
         # Destination folder section
-        dest_frame = ttk.LabelFrame(left_frame, text="Destination Folder", padding=PADDING_MEDIUM)
+        dest_frame = ttk.LabelFrame(
+            left_frame,
+            text="Destination Folder",
+            padding=PADDING_MEDIUM,
+        )
         dest_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         dest_entry_frame = ttk.Frame(dest_frame)
         dest_entry_frame.pack(fill="x")
 
         self.dest_entry = ttk.Entry(dest_entry_frame)
-        self.dest_entry.pack(side="left", fill="x", expand=True, padx=(0, PADDING_SMALL))
-
-        ttk.Button(dest_entry_frame, text="Browse", command=self._browse_destination).pack(
-            side="right"
+        self.dest_entry.pack(
+            side="left",
+            fill="x",
+            expand=True,
+            padx=(0, PADDING_SMALL),
         )
 
+        ttk.Button(
+            dest_entry_frame,
+            text="Browse",
+            command=self._browse_destination,
+        ).pack(side="right")
+
         # Progress section
-        progress_frame = ttk.LabelFrame(left_frame, text="Progress", padding=PADDING_MEDIUM)
+        progress_frame = ttk.LabelFrame(
+            left_frame,
+            text="Progress",
+            padding=PADDING_MEDIUM,
+        )
         progress_frame.pack(fill="x")
 
         self.progress_var = tk.DoubleVar()
@@ -574,7 +620,11 @@ class FolderFixPro:
         )
         self.progress_bar.pack(fill="x", pady=(0, PADDING_SMALL))
 
-        self.status_label = ttk.Label(progress_frame, text="Ready", font=("Segoe UI", 9))
+        self.status_label = ttk.Label(
+            progress_frame,
+            text="Ready",
+            font=("Segoe UI", 9),
+        )
         self.status_label.pack(fill="x")
 
         self.eta_label = ttk.Label(progress_frame, text="", font=("Segoe UI", 8))
@@ -582,7 +632,11 @@ class FolderFixPro:
 
         # RIGHT COLUMN - Operations and Options
         # Operation mode
-        mode_frame = ttk.LabelFrame(right_frame, text="Operation Mode", padding=PADDING_MEDIUM)
+        mode_frame = ttk.LabelFrame(
+            right_frame,
+            text="Operation Mode",
+            padding=PADDING_MEDIUM,
+        )
         mode_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         operations = [
@@ -604,7 +658,11 @@ class FolderFixPro:
             ).grid(row=i, column=0, sticky="w", pady=2)
 
         # Processing options
-        options_frame = ttk.LabelFrame(right_frame, text="Processing Options", padding=PADDING_MEDIUM)
+        options_frame = ttk.LabelFrame(
+            right_frame,
+            text="Processing Options",
+            padding=PADDING_MEDIUM,
+        )
         options_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         self.unzip_var = tk.BooleanVar()
@@ -626,11 +684,16 @@ class FolderFixPro:
         ]
 
         for text, var in options:
-            ttk.Checkbutton(options_frame, text=text, variable=var).pack(anchor="w", pady=2)
+            ttk.Checkbutton(options_frame, text=text, variable=var).pack(
+                anchor="w",
+                pady=2,
+            )
 
         # Deduplication method
         dedupe_method_frame = ttk.LabelFrame(
-            right_frame, text="Deduplication Method", padding=PADDING_MEDIUM
+            right_frame,
+            text="Deduplication Method",
+            padding=PADDING_MEDIUM,
         )
         dedupe_method_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
@@ -667,11 +730,14 @@ class FolderFixPro:
         self.start_btn.pack(side="left", fill="x", expand=True, padx=(0, PADDING_SMALL))
 
         self.cancel_btn = ttk.Button(
-            action_frame, text="⏹️ Cancel", command=self._cancel_operation, state="disabled"
+            action_frame,
+            text="⏹️ Cancel",
+            command=self._cancel_operation,
+            state="disabled",
         )
         self.cancel_btn.pack(side="right", fill="x", expand=True)
 
-    def _create_filters_tab(self):
+    def _create_filters_tab(self) -> None:
         """Create filters and advanced options tab."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Filters & Advanced  ")
@@ -680,27 +746,41 @@ class FolderFixPro:
         main_frame.pack(fill="both", expand=True)
 
         # File extension filter
-        ext_frame = ttk.LabelFrame(main_frame, text="File Extension Filter", padding=PADDING_MEDIUM)
+        ext_frame = ttk.LabelFrame(
+            main_frame,
+            text="File Extension Filter",
+            padding=PADDING_MEDIUM,
+        )
         ext_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         ttk.Label(
-            ext_frame, text="Include only these extensions (comma-separated, e.g., .jpg,.png,.pdf):"
+            ext_frame,
+            text="Include only these extensions (comma-separated, e.g., .jpg,.png,.pdf):",
         ).pack(anchor="w")
         self.ext_filter_entry = ttk.Entry(ext_frame)
         self.ext_filter_entry.pack(fill="x", pady=(PADDING_SMALL, 0))
 
         # Regex filter
-        regex_frame = ttk.LabelFrame(main_frame, text="Regular Expression Filter", padding=PADDING_MEDIUM)
+        regex_frame = ttk.LabelFrame(
+            main_frame,
+            text="Regular Expression Filter",
+            padding=PADDING_MEDIUM,
+        )
         regex_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         ttk.Label(
-            regex_frame, text="File name pattern (regex, e.g., ^report_.*\\.pdf$ for report PDFs):"
+            regex_frame,
+            text="File name pattern (regex, e.g., ^report_.*\\.pdf$ for report PDFs):",
         ).pack(anchor="w")
         self.regex_filter_entry = ttk.Entry(regex_frame)
         self.regex_filter_entry.pack(fill="x", pady=(PADDING_SMALL, 0))
 
         # Size filter
-        size_frame = ttk.LabelFrame(main_frame, text="File Size Filter", padding=PADDING_MEDIUM)
+        size_frame = ttk.LabelFrame(
+            main_frame,
+            text="File Size Filter",
+            padding=PADDING_MEDIUM,
+        )
         size_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         size_row1 = ttk.Frame(size_frame)
@@ -720,7 +800,11 @@ class FolderFixPro:
         self.max_size_entry.insert(0, str(MAX_FILE_SIZE_MB))
 
         # Advanced options
-        advanced_frame = ttk.LabelFrame(main_frame, text="Advanced Options", padding=PADDING_MEDIUM)
+        advanced_frame = ttk.LabelFrame(
+            main_frame,
+            text="Advanced Options",
+            padding=PADDING_MEDIUM,
+        )
         advanced_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         self.skip_hidden_var = tk.BooleanVar(value=True)
@@ -728,23 +812,33 @@ class FolderFixPro:
         self.follow_symlinks_var = tk.BooleanVar(value=False)
         self.preserve_metadata_var = tk.BooleanVar(value=True)
 
-        ttk.Checkbutton(advanced_frame, text="Skip hidden files", variable=self.skip_hidden_var).pack(
-            anchor="w"
-        )
-        ttk.Checkbutton(advanced_frame, text="Skip system files", variable=self.skip_system_var).pack(
-            anchor="w"
-        )
         ttk.Checkbutton(
-            advanced_frame, text="Follow symbolic links", variable=self.follow_symlinks_var
+            advanced_frame,
+            text="Skip hidden files",
+            variable=self.skip_hidden_var,
         ).pack(anchor="w")
         ttk.Checkbutton(
-            advanced_frame, text="Preserve file metadata", variable=self.preserve_metadata_var
+            advanced_frame,
+            text="Skip system files",
+            variable=self.skip_system_var,
+        ).pack(anchor="w")
+        ttk.Checkbutton(
+            advanced_frame,
+            text="Follow symbolic links",
+            variable=self.follow_symlinks_var,
+        ).pack(anchor="w")
+        ttk.Checkbutton(
+            advanced_frame,
+            text="Preserve file metadata",
+            variable=self.preserve_metadata_var,
         ).pack(anchor="w")
 
         # Test filters button
-        ttk.Button(main_frame, text="🔍 Test Filters", command=self._test_filters).pack(pady=PADDING_MEDIUM)
+        ttk.Button(main_frame, text="🔍 Test Filters", command=self._test_filters).pack(
+            pady=PADDING_MEDIUM,
+        )
 
-    def _create_preview_tab(self):
+    def _create_preview_tab(self) -> None:
         """Create preview tab showing files that will be processed."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Preview  ")
@@ -756,9 +850,18 @@ class FolderFixPro:
         toolbar = ttk.Frame(main_frame)
         toolbar.pack(fill="x", pady=(0, PADDING_SMALL))
 
-        ttk.Button(toolbar, text="🔄 Refresh", command=self._update_preview).pack(side="left")
-        ttk.Label(toolbar, text="Files to be processed:").pack(side="left", padx=(PADDING_MEDIUM, 0))
-        self.preview_count_label = ttk.Label(toolbar, text="0", font=("Segoe UI", 10, "bold"))
+        ttk.Button(toolbar, text="🔄 Refresh", command=self._update_preview).pack(
+            side="left",
+        )
+        ttk.Label(toolbar, text="Files to be processed:").pack(
+            side="left",
+            padx=(PADDING_MEDIUM, 0),
+        )
+        self.preview_count_label = ttk.Label(
+            toolbar,
+            text="0",
+            font=("Segoe UI", 10, "bold"),
+        )
         self.preview_count_label.pack(side="left", padx=(PADDING_SMALL, 0))
 
         # Treeview for file preview
@@ -796,7 +899,7 @@ class FolderFixPro:
         tree_scroll_y.config(command=self.preview_tree.yview)
         tree_scroll_x.config(command=self.preview_tree.xview)
 
-    def _create_log_tab(self):
+    def _create_log_tab(self) -> None:
         """Create operation log tab."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Log  ")
@@ -808,9 +911,12 @@ class FolderFixPro:
         toolbar = ttk.Frame(main_frame)
         toolbar.pack(fill="x", pady=(0, PADDING_SMALL))
 
-        ttk.Button(toolbar, text="🗑️ Clear Log", command=self._clear_log).pack(side="left")
+        ttk.Button(toolbar, text="🗑️ Clear Log", command=self._clear_log).pack(
+            side="left",
+        )
         ttk.Button(toolbar, text="💾 Save Log", command=self._save_log).pack(
-            side="left", padx=(PADDING_SMALL, 0)
+            side="left",
+            padx=(PADDING_SMALL, 0),
         )
 
         # Log text widget
@@ -836,27 +942,34 @@ class FolderFixPro:
         self.log_text.tag_config("warning", foreground="#ffc107")
         self.log_text.tag_config("error", foreground="#dc3545")
 
-    def _create_status_bar(self):
+    def _create_status_bar(self) -> None:
         """Create bottom status bar."""
         status_frame = ttk.Frame(self.root, relief="sunken", borderwidth=1)
         status_frame.pack(side="bottom", fill="x")
 
         self.status_bar_label = ttk.Label(
-            status_frame, text="Ready  |  Theme: Dark  |  No operation in progress", anchor="w"
+            status_frame,
+            text="Ready  |  Theme: Dark  |  No operation in progress",
+            anchor="w",
         )
-        self.status_bar_label.pack(side="left", fill="x", expand=True, padx=PADDING_SMALL)
+        self.status_bar_label.pack(
+            side="left",
+            fill="x",
+            expand=True,
+            padx=PADDING_SMALL,
+        )
 
         # Version label
         version_label = ttk.Label(status_frame, text="v3.0", anchor="e")
         version_label.pack(side="right", padx=PADDING_SMALL)
 
-    def _setup_drag_drop(self):
+    def _setup_drag_drop(self) -> None:
         """Set up drag and drop functionality."""
         # Drag-and-drop would require tkinterdnd2 package
         # For standard tkinter, we rely on file dialog buttons
         self._log_message("Ready - Use buttons to add folders", "info")
 
-    def _apply_theme(self):
+    def _apply_theme(self) -> None:
         """Apply color theme to application."""
         theme = DARK_THEME if self.current_theme == "dark" else LIGHT_THEME
 
@@ -864,8 +977,11 @@ class FolderFixPro:
         style = ttk.Style()
 
         # Configure button style with accent color
-        style.configure(
-            "Accent.TButton", font=("Segoe UI", 10, "bold"), padding=10, relief="flat"
+        style.configure(  # type: ignore[no-untyped-call]
+            "Accent.TButton",
+            font=("Segoe UI", 10, "bold"),
+            padding=10,
+            relief="flat",
         )
 
         # Update root background
@@ -873,16 +989,16 @@ class FolderFixPro:
 
         # Update status bar
         self.status_bar_label.configure(
-            text=f"Ready  |  Theme: {self.current_theme.title()}  |  No operation in progress"
+            text=f"Ready  |  Theme: {self.current_theme.title()}  |  No operation in progress",
         )
 
-    def _toggle_theme(self):
+    def _toggle_theme(self) -> None:
         """Toggle between dark and light themes."""
         self.current_theme = "light" if self.current_theme == "dark" else "dark"
         self._apply_theme()
         self._log_message(f"Switched to {self.current_theme} theme", "info")
 
-    def _add_source_folder(self):
+    def _add_source_folder(self) -> None:
         """Add source folder via dialog."""
         folder = filedialog.askdirectory(title="Select Source Folder")
         if folder and folder not in self.source_folders:
@@ -891,9 +1007,9 @@ class FolderFixPro:
             self._log_message(f"Added source folder: {folder}", "info")
             self._update_preview()
 
-    def _remove_source_folder(self):
+    def _remove_source_folder(self) -> None:
         """Remove selected source folder."""
-        selection = self.source_listbox.curselection()
+        selection = self.source_listbox.curselection()  # type: ignore[no-untyped-call]
         for index in reversed(selection):
             folder = self.source_folders[index]
             self.source_folders.pop(index)
@@ -901,14 +1017,14 @@ class FolderFixPro:
             self._log_message(f"Removed source folder: {folder}", "info")
         self._update_preview()
 
-    def _clear_source_folders(self):
+    def _clear_source_folders(self) -> None:
         """Clear all source folders."""
         self.source_folders.clear()
         self.source_listbox.delete(0, "end")
         self._log_message("Cleared all source folders", "info")
         self._update_preview()
 
-    def _browse_destination(self):
+    def _browse_destination(self) -> None:
         """Browse for destination folder."""
         folder = filedialog.askdirectory(title="Select Destination Folder")
         if folder:
@@ -917,13 +1033,13 @@ class FolderFixPro:
             self.dest_entry.insert(0, folder)
             self._log_message(f"Set destination folder: {folder}", "info")
 
-    def _on_mode_change(self):
+    def _on_mode_change(self) -> None:
         """Handle operation mode change."""
         mode = self.mode_var.get()
         self._log_message(f"Operation mode changed to: {mode}", "info")
         self._update_preview()
 
-    def _update_preview(self):
+    def _update_preview(self) -> None:
         """Update the preview tab with files to be processed."""
         self.preview_tree.delete(*self.preview_tree.get_children())
 
@@ -932,8 +1048,8 @@ class FolderFixPro:
             return
 
         # Scan files in background
-        def scan_files():
-            files = []
+        def scan_files() -> None:
+            files: list[Path] = []
             for folder in self.source_folders:
                 try:
                     for root, _, filenames in os.walk(folder):
@@ -952,13 +1068,15 @@ class FolderFixPro:
 
         threading.Thread(target=scan_files, daemon=True).start()
 
-    def _populate_preview(self, files):
+    def _populate_preview(self, files: list[Path]) -> None:
         """Populate preview tree with scanned files."""
         for file_path in files[:PREVIEW_MAX_FILES]:
             try:
                 stat = file_path.stat()
                 size = self._format_size(stat.st_size)
-                modified = datetime.fromtimestamp(stat.st_mtime).strftime("%Y-%m-%d %H:%M:%S")
+                modified = datetime.fromtimestamp(stat.st_mtime).strftime(
+                    "%Y-%m-%d %H:%M:%S",
+                )
                 file_type = file_path.suffix or "File"
 
                 self.preview_tree.insert(
@@ -967,10 +1085,12 @@ class FolderFixPro:
                     text=file_path.name,
                     values=(str(file_path), size, modified, file_type),
                 )
-            except Exception as e:
-                logger.error(f"Error adding {file_path} to preview: {e}")
+            except Exception:
+                logger.exception("Error adding %s to preview", file_path)
 
-        count_text = f"{len(files)}" + (" (limited)" if len(files) >= PREVIEW_MAX_FILES else "")
+        count_text = f"{len(files)}" + (
+            " (limited)" if len(files) >= PREVIEW_MAX_FILES else ""
+        )
         self.preview_count_label.configure(text=count_text)
 
     def _should_include_file(self, file_path: Path) -> bool:
@@ -1009,14 +1129,17 @@ class FolderFixPro:
 
             return True
 
-        except Exception as e:
-            logger.error(f"Error checking file {file_path}: {e}")
+        except Exception:
+            logger.exception("Error checking file %s", file_path)
             return False
 
-    def _test_filters(self):
+    def _test_filters(self) -> None:
         """Test current filters and show results."""
         if not self.source_folders:
-            messagebox.showwarning("No Source Folders", "Please add source folders first.")
+            messagebox.showwarning(
+                "No Source Folders",
+                "Please add source folders first.",
+            )
             return
 
         matching_files = []
@@ -1030,28 +1153,34 @@ class FolderFixPro:
                     if self._should_include_file(file_path):
                         matching_files.append(file_path)
 
-        message = f"Filter Results:\n\n"
+        message = "Filter Results:\n\n"
         message += f"Total files scanned: {total_files}\n"
         message += f"Files matching filters: {len(matching_files)}\n"
         message += f"Files excluded: {total_files - len(matching_files)}\n\n"
 
         if matching_files:
-            message += f"Sample matching files (first 10):\n"
+            message += "Sample matching files (first 10):\n"
             for file in matching_files[:10]:
                 message += f"  • {file.name}\n"
 
         messagebox.showinfo("Filter Test Results", message)
 
-    def _start_operation(self):
+    def _start_operation(self) -> None:
         """Start the selected operation."""
         # Validate inputs
         if not self.source_folders:
-            messagebox.showwarning("No Source Folders", "Please add at least one source folder.")
+            messagebox.showwarning(
+                "No Source Folders",
+                "Please add at least one source folder.",
+            )
             return
 
         mode = self.mode_var.get()
         if mode != "analyze" and not self.dest_folder:
-            messagebox.showwarning("No Destination", "Please select a destination folder.")
+            messagebox.showwarning(
+                "No Destination",
+                "Please select a destination folder.",
+            )
             return
 
         # Confirm operation
@@ -1074,7 +1203,7 @@ class FolderFixPro:
 
         threading.Thread(target=self._run_operation, daemon=True).start()
 
-    def _run_operation(self):
+    def _run_operation(self) -> None:
         """Run the selected operation (background thread)."""
         try:
             mode = self.mode_var.get()
@@ -1100,7 +1229,8 @@ class FolderFixPro:
                 self.root.after(
                     0,
                     lambda: messagebox.showinfo(
-                        "Success", f"Operation completed!\n\nDuration: {self.operation_report.get_duration()}"
+                        "Success",
+                        f"Operation completed!\n\nDuration: {self.operation_report.get_duration()}",
                     ),
                 )
 
@@ -1108,12 +1238,19 @@ class FolderFixPro:
             logger.exception("Operation failed")
             self._log_message(f"Operation failed: {e}", "error")
             self.operation_report.add_error(str(e))
-            self.root.after(0, lambda: messagebox.showerror("Error", f"Operation failed:\n\n{e}"))
+            error_msg = str(e)
+            self.root.after(
+                0,
+                lambda: messagebox.showerror(
+                    "Error",
+                    f"Operation failed:\n\n{error_msg}",
+                ),
+            )
 
         finally:
             self.root.after(0, self._operation_finished)
 
-    def _operation_combine(self):
+    def _operation_combine(self) -> None:
         """Combine and copy files from multiple sources."""
         dest_path = Path(self.dest_folder)
         dest_path.mkdir(parents=True, exist_ok=True)
@@ -1146,14 +1283,21 @@ class FolderFixPro:
                             if not self.preview_var.get():
                                 shutil.copy2(source_file, dest_file)
                             self.operation_report.add_operation(
-                                "copy", {"source": str(source_file), "dest": str(dest_file)}
+                                "copy",
+                                {"source": str(source_file), "dest": str(dest_file)},
                             )
                             processed += 1
-                            self._update_progress(processed, total_files, f"Copying {filename}")
+                            self._update_progress(
+                                processed,
+                                total_files,
+                                f"Copying {filename}",
+                            )
                         except Exception as e:
-                            self.operation_report.add_error(f"Failed to copy {source_file}: {e}")
+                            self.operation_report.add_error(
+                                f"Failed to copy {source_file}: {e}",
+                            )
 
-    def _operation_flatten(self):
+    def _operation_flatten(self) -> None:
         """Flatten directory structure."""
         dest_path = Path(self.dest_folder)
         dest_path.mkdir(parents=True, exist_ok=True)
@@ -1200,19 +1344,28 @@ class FolderFixPro:
                             if not self.preview_var.get():
                                 shutil.copy2(source_file, dest_file)
                             self.operation_report.add_operation(
-                                "flatten", {"source": str(source_file), "dest": str(dest_file)}
+                                "flatten",
+                                {"source": str(source_file), "dest": str(dest_file)},
                             )
                             processed += 1
-                            self._update_progress(processed, total_files, f"Flattening {filename}")
+                            self._update_progress(
+                                processed,
+                                total_files,
+                                f"Flattening {filename}",
+                            )
                         except Exception as e:
-                            self.operation_report.add_error(f"Failed to flatten {source_file}: {e}")
+                            self.operation_report.add_error(
+                                f"Failed to flatten {source_file}: {e}",
+                            )
 
-    def _operation_prune(self):
+    def _operation_prune(self) -> None:
         """Copy structure but prune empty folders."""
         dest_path = Path(self.dest_folder)
 
         total_folders = sum(
-            len(dirs) for source_folder in self.source_folders for _, dirs, _ in os.walk(source_folder)
+            len(dirs)
+            for source_folder in self.source_folders
+            for _, dirs, _ in os.walk(source_folder)
         )
         processed = 0
 
@@ -1246,17 +1399,25 @@ class FolderFixPro:
                                 if not self.preview_var.get():
                                     shutil.copy2(source_file, dest_file)
                                 self.operation_report.add_operation(
-                                    "copy", {"source": str(source_file), "dest": str(dest_file)}
+                                    "copy",
+                                    {
+                                        "source": str(source_file),
+                                        "dest": str(dest_file),
+                                    },
                                 )
                             except Exception as e:
                                 self.operation_report.add_error(
-                                    f"Failed to copy {source_file}: {e}"
+                                    f"Failed to copy {source_file}: {e}",
                                 )
 
                 processed += 1
-                self._update_progress(processed, total_folders, f"Processing {Path(root).name}")
+                self._update_progress(
+                    processed,
+                    total_folders,
+                    f"Processing {Path(root).name}",
+                )
 
-    def _operation_deduplicate(self):
+    def _operation_deduplicate(self) -> None:
         """Remove duplicate files based on selected method."""
         method = self.dedupe_method_var.get()
         self._log_message(f"Deduplication method: {method}", "info")
@@ -1295,7 +1456,9 @@ class FolderFixPro:
 
                 processed += 1
                 self._update_progress(
-                    processed, total_files, f"Checking {file_path.name}"
+                    processed,
+                    total_files,
+                    f"Checking {file_path.name}",
                 )
             except Exception as e:
                 self.operation_report.add_error(f"Failed to process {file_path}: {e}")
@@ -1324,7 +1487,7 @@ class FolderFixPro:
                         )
                     except Exception as e:
                         self.operation_report.add_error(
-                            f"Failed to delete duplicate {duplicate_file}: {e}"
+                            f"Failed to delete duplicate {duplicate_file}: {e}",
                         )
 
         self._log_message(
@@ -1333,9 +1496,9 @@ class FolderFixPro:
             "success",
         )
 
-    def _operation_analyze(self):
+    def _operation_analyze(self) -> None:
         """Analyze folders without making changes."""
-        stats = {
+        stats: dict[str, Any] = {
             "total_files": 0,
             "total_size": 0,
             "file_types": defaultdict(int),
@@ -1363,7 +1526,10 @@ class FolderFixPro:
 
                             # Track largest files
                             stats["largest_files"].append((file_path, stat.st_size))
-                            stats["largest_files"].sort(key=lambda x: x[1], reverse=True)
+                            stats["largest_files"].sort(
+                                key=lambda x: x[1],
+                                reverse=True,
+                            )
                             stats["largest_files"] = stats["largest_files"][:10]
 
                             # Track oldest/newest files
@@ -1372,28 +1538,39 @@ class FolderFixPro:
                             stats["oldest_files"] = stats["oldest_files"][:10]
 
                             stats["newest_files"].append((file_path, stat.st_mtime))
-                            stats["newest_files"].sort(key=lambda x: x[1], reverse=True)
+                            stats["newest_files"].sort(
+                                key=lambda x: x[1],
+                                reverse=True,
+                            )
                             stats["newest_files"] = stats["newest_files"][:10]
 
                         except Exception as e:
-                            self.operation_report.add_error(f"Failed to analyze {file_path}: {e}")
+                            self.operation_report.add_error(
+                                f"Failed to analyze {file_path}: {e}",
+                            )
 
             processed += 1
-            self._update_progress(processed, total_folders, f"Analyzing {source_folder}")
+            self._update_progress(
+                processed,
+                total_folders,
+                f"Analyzing {source_folder}",
+            )
 
         # Show analysis results
         self._show_analysis_results(stats)
 
-    def _show_analysis_results(self, stats):
+    def _show_analysis_results(self, stats: dict[str, Any]) -> None:
         """Show analysis results in a dialog."""
         results = "📊 Folder Analysis Results\n\n"
         results += f"Total Files: {stats['total_files']:,}\n"
         results += f"Total Size: {self._format_size(stats['total_size'])}\n\n"
 
         results += "File Types:\n"
-        for ext, count in sorted(stats["file_types"].items(), key=lambda x: x[1], reverse=True)[
-            :10
-        ]:
+        for ext, count in sorted(
+            stats["file_types"].items(),
+            key=lambda x: x[1],
+            reverse=True,
+        )[:10]:
             results += f"  {ext}: {count:,} files\n"
 
         results += "\nLargest Files:\n"
@@ -1416,7 +1593,7 @@ class FolderFixPro:
                 total += len(filenames)
         return total
 
-    def _update_progress(self, current: int, total: int, message: str):
+    def _update_progress(self, current: int, total: int, message: str) -> None:
         """Update progress bar and status."""
         if total > 0:
             percentage = (current / total) * 100
@@ -1424,30 +1601,32 @@ class FolderFixPro:
 
             # Calculate ETA
             if current > 0:
-                elapsed = (datetime.now() - self.operation_report.start_time).total_seconds()
+                elapsed = (
+                    datetime.now() - self.operation_report.start_time
+                ).total_seconds()
                 eta_seconds = (elapsed / current) * (total - current)
                 eta = f"ETA: {int(eta_seconds // 60)}m {int(eta_seconds % 60)}s"
                 self.root.after(0, lambda: self.eta_label.configure(text=eta))
 
         self._update_status(message)
 
-    def _update_status(self, message: str):
+    def _update_status(self, message: str) -> None:
         """Update status label."""
         self.root.after(0, lambda: self.status_label.configure(text=message))
         self.root.after(
             0,
             lambda: self.status_bar_label.configure(
-                text=f"{message}  |  Theme: {self.current_theme.title()}"
+                text=f"{message}  |  Theme: {self.current_theme.title()}",
             ),
         )
 
-    def _cancel_operation(self):
+    def _cancel_operation(self) -> None:
         """Cancel current operation."""
         self.cancel_operation = True
         self._log_message("Operation cancelled by user", "warning")
         self._update_status("Cancelling...")
 
-    def _operation_finished(self):
+    def _operation_finished(self) -> None:
         """Clean up after operation finishes."""
         self.start_btn.configure(state="normal")
         self.cancel_btn.configure(state="disabled")
@@ -1455,12 +1634,12 @@ class FolderFixPro:
         self.eta_label.configure(text="")
         self._update_status("Ready")
 
-    def _log_message(self, message: str, level: str = "info"):
+    def _log_message(self, message: str, level: str = "info") -> None:
         """Add message to log."""
         timestamp = datetime.now().strftime("%H:%M:%S")
         log_entry = f"[{timestamp}] {message}\n"
 
-        def update_log():
+        def update_log() -> None:
             self.log_text.configure(state="normal")
             self.log_text.insert("end", log_entry, level)
             self.log_text.see("end")
@@ -1478,13 +1657,13 @@ class FolderFixPro:
         else:
             logger.info(message)
 
-    def _clear_log(self):
+    def _clear_log(self) -> None:
         """Clear the log display."""
         self.log_text.configure(state="normal")
         self.log_text.delete("1.0", "end")
         self.log_text.configure(state="disabled")
 
-    def _save_log(self):
+    def _save_log(self) -> None:
         """Save log to file."""
         file_path = filedialog.asksaveasfilename(
             defaultextension=".txt",
@@ -1497,7 +1676,7 @@ class FolderFixPro:
                 f.write(self.log_text.get("1.0", "end"))
             messagebox.showinfo("Log Saved", f"Log saved to:\n{file_path}")
 
-    def _export_report_json(self):
+    def _export_report_json(self) -> None:
         """Export operation report as JSON."""
         file_path = filedialog.asksaveasfilename(
             defaultextension=".json",
@@ -1508,11 +1687,14 @@ class FolderFixPro:
         if file_path:
             try:
                 self.operation_report.export_json(file_path)
-                messagebox.showinfo("Report Exported", f"Report exported to:\n{file_path}")
+                messagebox.showinfo(
+                    "Report Exported",
+                    f"Report exported to:\n{file_path}",
+                )
             except Exception as e:
                 messagebox.showerror("Export Failed", f"Failed to export report:\n{e}")
 
-    def _export_report_html(self):
+    def _export_report_html(self) -> None:
         """Export operation report as HTML."""
         file_path = filedialog.asksaveasfilename(
             defaultextension=".html",
@@ -1523,23 +1705,29 @@ class FolderFixPro:
         if file_path:
             try:
                 self.operation_report.export_html(file_path)
-                messagebox.showinfo("Report Exported", f"Report exported to:\n{file_path}")
+                messagebox.showinfo(
+                    "Report Exported",
+                    f"Report exported to:\n{file_path}",
+                )
 
                 # Ask if user wants to open it
-                if messagebox.askyesno("Open Report", "Would you like to open the report?"):
+                if messagebox.askyesno(
+                    "Open Report",
+                    "Would you like to open the report?",
+                ):
                     import webbrowser
 
                     webbrowser.open(f"file://{os.path.abspath(file_path)}")
             except Exception as e:
                 messagebox.showerror("Export Failed", f"Failed to export report:\n{e}")
 
-    def _clear_cache(self):
+    def _clear_cache(self) -> None:
         """Clear file cache."""
         self.file_cache.clear()
         self._log_message("Cache cleared", "info")
         messagebox.showinfo("Cache Cleared", "File cache has been cleared.")
 
-    def _open_log_file(self):
+    def _open_log_file(self) -> None:
         """Open the log file in default text editor."""
         try:
             if sys.platform == "win32":
@@ -1551,7 +1739,7 @@ class FolderFixPro:
         except Exception as e:
             messagebox.showerror("Error", f"Could not open log file:\n{e}")
 
-    def _show_about(self):
+    def _show_about(self) -> None:
         """Show about dialog."""
         about_text = """Folder Fix Pro v3.0
 
@@ -1571,7 +1759,7 @@ Features:
 """
         messagebox.showinfo("About Folder Fix Pro", about_text)
 
-    def _show_user_guide(self):
+    def _show_user_guide(self) -> None:
         """Show user guide."""
         guide_text = """Folder Fix Pro - Quick Start Guide
 
@@ -1629,21 +1817,22 @@ Tips:
     @staticmethod
     def _format_size(size_bytes: int) -> str:
         """Format file size in human-readable format."""
+        size: float = float(size_bytes)
         for unit in ["B", "KB", "MB", "GB", "TB"]:
-            if size_bytes < 1024.0:
-                return f"{size_bytes:.2f} {unit}"
-            size_bytes /= 1024.0
-        return f"{size_bytes:.2f} PB"
+            if size < 1024.0:
+                return f"{size:.2f} {unit}"
+            size /= 1024.0
+        return f"{size:.2f} PB"
 
 
-def main():
+def main() -> None:
     """Main entry point for Folder Fix Pro."""
     try:
         # Create root window
         root = tk.Tk()
 
         # Create application
-        app = FolderFixPro(root)
+        FolderFixPro(root)
 
         # Start main loop
         root.mainloop()
