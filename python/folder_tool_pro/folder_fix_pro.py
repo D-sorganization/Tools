@@ -531,7 +531,9 @@ class FolderFixPro:
 
         # Source folders section
         source_frame = ttk.LabelFrame(
-            left_frame, text="Source Folders", padding=PADDING_MEDIUM
+            left_frame,
+            text="Source Folders",
+            padding=PADDING_MEDIUM,
         )
         source_frame.pack(fill="both", expand=True, pady=(0, PADDING_MEDIUM))
 
@@ -556,18 +558,26 @@ class FolderFixPro:
         btn_frame.pack(fill="x", pady=(PADDING_SMALL, 0))
 
         ttk.Button(
-            btn_frame, text="➕ Add Folder", command=self._add_source_folder
+            btn_frame,
+            text="➕ Add Folder",
+            command=self._add_source_folder,
         ).pack(side="left", padx=(0, PADDING_SMALL))
         ttk.Button(
-            btn_frame, text="➖ Remove", command=self._remove_source_folder
+            btn_frame,
+            text="➖ Remove",
+            command=self._remove_source_folder,
         ).pack(side="left", padx=(0, PADDING_SMALL))
         ttk.Button(
-            btn_frame, text="🗑️ Clear All", command=self._clear_source_folders
+            btn_frame,
+            text="🗑️ Clear All",
+            command=self._clear_source_folders,
         ).pack(side="left")
 
         # Destination folder section
         dest_frame = ttk.LabelFrame(
-            left_frame, text="Destination Folder", padding=PADDING_MEDIUM
+            left_frame,
+            text="Destination Folder",
+            padding=PADDING_MEDIUM,
         )
         dest_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
@@ -576,16 +586,23 @@ class FolderFixPro:
 
         self.dest_entry = ttk.Entry(dest_entry_frame)
         self.dest_entry.pack(
-            side="left", fill="x", expand=True, padx=(0, PADDING_SMALL)
+            side="left",
+            fill="x",
+            expand=True,
+            padx=(0, PADDING_SMALL),
         )
 
         ttk.Button(
-            dest_entry_frame, text="Browse", command=self._browse_destination
+            dest_entry_frame,
+            text="Browse",
+            command=self._browse_destination,
         ).pack(side="right")
 
         # Progress section
         progress_frame = ttk.LabelFrame(
-            left_frame, text="Progress", padding=PADDING_MEDIUM
+            left_frame,
+            text="Progress",
+            padding=PADDING_MEDIUM,
         )
         progress_frame.pack(fill="x")
 
