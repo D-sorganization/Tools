@@ -936,7 +936,7 @@ class FolderFixPro:
 
         # Update status bar
         self.status_bar_label.configure(
-            text=f"Ready  |  Theme: {self.current_theme.title()}  |  No operation in progress"
+            text=f"Ready  |  Theme: {self.current_theme.title()}  |  No operation in progress",
         )
 
     def _toggle_theme(self):
@@ -1022,7 +1022,7 @@ class FolderFixPro:
                 stat = file_path.stat()
                 size = self._format_size(stat.st_size)
                 modified = datetime.fromtimestamp(stat.st_mtime).strftime(
-                    "%Y-%m-%d %H:%M:%S"
+                    "%Y-%m-%d %H:%M:%S",
                 )
                 file_type = file_path.suffix or "File"
 
@@ -1084,7 +1084,8 @@ class FolderFixPro:
         """Test current filters and show results."""
         if not self.source_folders:
             messagebox.showwarning(
-                "No Source Folders", "Please add source folders first."
+                "No Source Folders",
+                "Please add source folders first.",
             )
             return
 
@@ -1116,14 +1117,16 @@ class FolderFixPro:
         # Validate inputs
         if not self.source_folders:
             messagebox.showwarning(
-                "No Source Folders", "Please add at least one source folder."
+                "No Source Folders",
+                "Please add at least one source folder.",
             )
             return
 
         mode = self.mode_var.get()
         if mode != "analyze" and not self.dest_folder:
             messagebox.showwarning(
-                "No Destination", "Please select a destination folder."
+                "No Destination",
+                "Please select a destination folder.",
             )
             return
 
@@ -1186,7 +1189,8 @@ class FolderFixPro:
             self.root.after(
                 0,
                 lambda: messagebox.showerror(
-                    "Error", f"Operation failed:\n\n{error_msg}"
+                    "Error",
+                    f"Operation failed:\n\n{error_msg}",
                 ),
             )
 
@@ -1350,7 +1354,7 @@ class FolderFixPro:
                                 )
                             except Exception as e:
                                 self.operation_report.add_error(
-                                    f"Failed to copy {source_file}: {e}"
+                                    f"Failed to copy {source_file}: {e}",
                                 )
 
                 processed += 1
