@@ -60,7 +60,7 @@ repos:
     # Main quality gate
     - id: quality-check
       name: Quality check (no placeholders/magic numbers)
-      entry: python quality_check_script.py
+      entry: python scripts/quality-check.py
       language: python
       pass_filenames: false
       always_run: true
