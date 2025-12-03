@@ -35,6 +35,7 @@ jobs:
           # Install from python/ subdirectory only
           
       - name: Run MATLAB Quality Check (Static Analysis)
+        id: matlab-quality
         continue-on-error: true  # Non-blocking due to MATLAB license restrictions
         run: |
           if [ -f tools/matlab_utilities/scripts/matlab_quality_check.py ]; then
@@ -42,7 +43,12 @@ jobs:
             echo "MATLAB Code Quality Checks"
             echo "=========================================="
             python tools/matlab_utilities/scripts/matlab_quality_check.py --output-format json > matlab_quality_results.json || true
-            python tools/matlab_utilities/scripts/matlab_quality_check.py --output-format text || echo "⚠️  Quality issues found - see report above (non-blocking)"
+            python tools/matlab_utilities/scripts/matlab_quality_check.py --output-format text
+            MATLAB_EXIT_CODE=$?
+            if [ $MATLAB_EXIT_CODE -ne 0 ]; then
+              echo "⚠️  Quality issues found - see report above (non-blocking)"
+            fi
+            exit $MATLAB_EXIT_CODE
           else
             echo "⚠️  MATLAB quality check script not found - skipping"
           fi
@@ -102,6 +108,7 @@ jobs:
             
       - name: Check for magic numbers
         id: magic-numbers
+        continue-on-error: true  # Non-blocking warning
         run: |
           # Check for common magic numbers that should be constants
           # Exclude constants_file.py (contains documented constants) and quality check scripts
@@ -115,6 +122,7 @@ jobs:
             --exclude="matlab_quality_check.py" .; then
             echo "⚠️ WARNING: Possible magic numbers found (should be named constants with sources)"
             echo "Examples: 3.14→math.pi, 9.8→GRAVITY_M_S2, 2.71→math.e"
+            exit 1  # Fail to trigger warning indicator in summary
           else
             echo "✅ No obvious magic numbers found"
           fi
@@ -149,7 +157,12 @@ jobs:
         id: pre-commit
         continue-on-error: true  # Non-blocking to match Audio_Processor
         run: |
-          pre-commit run --all-files --show-diff-on-failure || echo "⚠️ Pre-commit checks failed (non-blocking)"
+          pre-commit run --all-files --show-diff-on-failure
+          PRECOMMIT_EXIT_CODE=$?
+          if [ $PRECOMMIT_EXIT_CODE -ne 0 ]; then
+            echo "⚠️ Pre-commit checks failed, but this does not block CI. Please fix these issues."
+            exit $PRECOMMIT_EXIT_CODE
+          fi
           
       - name: Run strict type checking
         id: type-checking
@@ -204,38 +217,75 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ steps.quality-check.outcome }}" == "success" ] || [ "${{ steps.quality-check.outcome }}" == "skipped" ]; then
+          
+          # MATLAB Quality Check (non-blocking, continue-on-error: true)
+          if [ "${{ steps.matlab-quality.outcome }}" == "success" ]; then
+            echo "| MATLAB Quality Check | ✅ |" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.matlab-quality.outcome }}" == "skipped" ] || [ -z "${{ steps.matlab-quality.outcome }}" ]; then
+            echo "| MATLAB Quality Check | ⏭️ (skipped) |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| MATLAB Quality Check | ⚠️ (non-blocking) |" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Quality Check
+          if [ "${{ steps.quality-check.outcome }}" == "success" ]; then
             echo "| Quality Check | ✅ |" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.quality-check.outcome }}" == "skipped" ] || [ -z "${{ steps.quality-check.outcome }}" ]; then
+            echo "| Quality Check | ⏭️ (skipped) |" >> $GITHUB_STEP_SUMMARY
           else
             echo "| Quality Check | ❌ |" >> $GITHUB_STEP_SUMMARY
           fi
-          if [ "${{ steps.placeholders.outcome }}" == "success" ] || [ "${{ steps.placeholders.outcome }}" == "skipped" ]; then
+          
+          # Placeholders
+          if [ "${{ steps.placeholders.outcome }}" == "success" ]; then
             echo "| No Placeholders | ✅ |" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.placeholders.outcome }}" == "skipped" ] || [ -z "${{ steps.placeholders.outcome }}" ]; then
+            echo "| No Placeholders | ⏭️ (skipped) |" >> $GITHUB_STEP_SUMMARY
           else
             echo "| No Placeholders | ❌ |" >> $GITHUB_STEP_SUMMARY
           fi
-          if [ "${{ steps.magic-numbers.outcome }}" == "success" ] || [ "${{ steps.magic-numbers.outcome }}" == "skipped" ]; then
+          
+          # Magic Numbers
+          if [ "${{ steps.magic-numbers.outcome }}" == "success" ]; then
             echo "| No Magic Numbers | ✅ |" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.magic-numbers.outcome }}" == "skipped" ] || [ -z "${{ steps.magic-numbers.outcome }}" ]; then
+            echo "| No Magic Numbers | ⏭️ (skipped) |" >> $GITHUB_STEP_SUMMARY
           else
             echo "| No Magic Numbers | ⚠️ |" >> $GITHUB_STEP_SUMMARY
           fi
-          if [ "${{ steps.approximations.outcome }}" == "success" ] || [ "${{ steps.approximations.outcome }}" == "skipped" ]; then
+          
+          # Approximations
+          if [ "${{ steps.approximations.outcome }}" == "success" ]; then
             echo "| No Approximations | ✅ |" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.approximations.outcome }}" == "skipped" ] || [ -z "${{ steps.approximations.outcome }}" ]; then
+            echo "| No Approximations | ⏭️ (skipped) |" >> $GITHUB_STEP_SUMMARY
           else
             echo "| No Approximations | ❌ |" >> $GITHUB_STEP_SUMMARY
           fi
-          if [ "${{ steps.pre-commit.outcome }}" == "success" ] || [ "${{ steps.pre-commit.outcome }}" == "skipped" ]; then
+          
+          # Pre-commit (non-blocking)
+          if [ "${{ steps.pre-commit.outcome }}" == "success" ]; then
             echo "| Pre-commit | ✅ |" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.pre-commit.outcome }}" == "skipped" ] || [ -z "${{ steps.pre-commit.outcome }}" ]; then
+            echo "| Pre-commit | ⏭️ (skipped) |" >> $GITHUB_STEP_SUMMARY
           else
-            echo "| Pre-commit | ❌ |" >> $GITHUB_STEP_SUMMARY
+            echo "| Pre-commit | ⚠️ (non-blocking) |" >> $GITHUB_STEP_SUMMARY
           fi
-          if [ "${{ steps.type-checking.outcome }}" == "success" ] || [ "${{ steps.type-checking.outcome }}" == "skipped" ]; then
+          
+          # Type Checking
+          if [ "${{ steps.type-checking.outcome }}" == "success" ]; then
             echo "| Type Checking | ✅ |" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.type-checking.outcome }}" == "skipped" ] || [ -z "${{ steps.type-checking.outcome }}" ]; then
+            echo "| Type Checking | ⏭️ (skipped) |" >> $GITHUB_STEP_SUMMARY
           else
             echo "| Type Checking | ⚠️ |" >> $GITHUB_STEP_SUMMARY
           fi
-          if [ "${{ steps.tests.outcome }}" == "success" ] || [ "${{ steps.tests.outcome }}" == "skipped" ]; then
+          
+          # Tests
+          if [ "${{ steps.tests.outcome }}" == "success" ]; then
             echo "| Tests + Coverage | ✅ |" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.tests.outcome }}" == "skipped" ] || [ -z "${{ steps.tests.outcome }}" ]; then
+            echo "| Tests + Coverage | ⏭️ (skipped) |" >> $GITHUB_STEP_SUMMARY
           else
             echo "| Tests + Coverage | ❌ |" >> $GITHUB_STEP_SUMMARY
           fi
