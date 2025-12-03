@@ -103,6 +103,7 @@ jobs:
             
       - name: Check for magic numbers
         id: magic-numbers
+        continue-on-error: true  # Non-blocking warning
         run: |
           # Check for common magic numbers that should be constants
           # Exclude constants_file.py (contains documented constants) and quality check scripts
@@ -116,6 +117,7 @@ jobs:
             --exclude="matlab_quality_check.py" .; then
             echo "⚠️ WARNING: Possible magic numbers found (should be named constants with sources)"
             echo "Examples: 3.14→math.pi, 9.8→GRAVITY_M_S2, 2.71→math.e"
+            exit 1  # Fail to trigger warning indicator in summary
           else
             echo "✅ No obvious magic numbers found"
           fi
@@ -150,7 +152,7 @@ jobs:
         id: pre-commit
         continue-on-error: true  # Non-blocking to match Audio_Processor
         run: |
-          pre-commit run --all-files --show-diff-on-failure || echo "⚠️ Pre-commit checks failed (non-blocking)"
+          pre-commit run --all-files --show-diff-on-failure
           
       - name: Run strict type checking
         id: type-checking
