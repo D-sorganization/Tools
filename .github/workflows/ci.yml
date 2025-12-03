@@ -43,7 +43,12 @@ jobs:
             echo "MATLAB Code Quality Checks"
             echo "=========================================="
             python tools/matlab_utilities/scripts/matlab_quality_check.py --output-format json > matlab_quality_results.json || true
-            python tools/matlab_utilities/scripts/matlab_quality_check.py --output-format text || echo "⚠️  Quality issues found - see report above (non-blocking)"
+            python tools/matlab_utilities/scripts/matlab_quality_check.py --output-format text
+            MATLAB_EXIT_CODE=$?
+            if [ $MATLAB_EXIT_CODE -ne 0 ]; then
+              echo "⚠️  Quality issues found - see report above (non-blocking)"
+            fi
+            exit $MATLAB_EXIT_CODE
           else
             echo "⚠️  MATLAB quality check script not found - skipping"
           fi
