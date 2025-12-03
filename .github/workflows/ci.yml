@@ -236,7 +236,6 @@ jobs:
           elif [ -z "${{ steps.placeholders.outcome }}" ]; then
             echo "| No Placeholders | ⏭️ (skipped) |" >> $GITHUB_STEP_SUMMARY
           else
-          else
             echo "| No Placeholders | ❌ |" >> $GITHUB_STEP_SUMMARY
           fi
           # Magic Numbers
@@ -244,7 +243,6 @@ jobs:
             echo "| No Magic Numbers | ✅ |" >> $GITHUB_STEP_SUMMARY
           elif [ -z "${{ steps.magic-numbers.outcome }}" ]; then
             echo "| No Magic Numbers | ⏭️ (skipped) |" >> $GITHUB_STEP_SUMMARY
-          else
           else
             echo "| No Magic Numbers | ⚠️ |" >> $GITHUB_STEP_SUMMARY
           fi
@@ -254,7 +252,6 @@ jobs:
           elif [ -z "${{ steps.approximations.outcome }}" ]; then
             echo "| No Approximations | ⏭️ (skipped) |" >> $GITHUB_STEP_SUMMARY
           else
-          else
             echo "| No Approximations | ❌ |" >> $GITHUB_STEP_SUMMARY
           fi
           # Pre-commit (non-blocking)
@@ -262,7 +259,6 @@ jobs:
             echo "| Pre-commit | ✅ |" >> $GITHUB_STEP_SUMMARY
           elif [ -z "${{ steps.pre-commit.outcome }}" ]; then
             echo "| Pre-commit | ⏭️ (skipped) |" >> $GITHUB_STEP_SUMMARY
-          else
           else
             echo "| Pre-commit | ⚠️ (non-blocking) |" >> $GITHUB_STEP_SUMMARY
           fi
@@ -272,7 +268,6 @@ jobs:
           elif [ -z "${{ steps.type-checking.outcome }}" ]; then
             echo "| Type Checking | ⏭️ (skipped) |" >> $GITHUB_STEP_SUMMARY
           else
-          else
             echo "| Type Checking | ⚠️ |" >> $GITHUB_STEP_SUMMARY
           fi
           # Tests
@@ -280,7 +275,6 @@ jobs:
             echo "| Tests + Coverage | ✅ |" >> $GITHUB_STEP_SUMMARY
           elif [ -z "${{ steps.tests.outcome }}" ]; then
             echo "| Tests + Coverage | ⏭️ (skipped) |" >> $GITHUB_STEP_SUMMARY
-          else
           else
             echo "| Tests + Coverage | ❌ |" >> $GITHUB_STEP_SUMMARY
           fi
