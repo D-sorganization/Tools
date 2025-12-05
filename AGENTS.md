@@ -117,8 +117,6 @@ Use **Conventional Commits** format:
 
 ---
 
----
-
 ## 🌐 Web Development Standards (HTML/CSS/JS)
 
 ### 1. HTML
@@ -151,7 +149,7 @@ Use **Conventional Commits** format:
 
 - Follow the **Google C++ Style Guide**.
 - **Formatting**: Use `clang-format`.
-  - Indent width: 4 spaces (as seen in `_clang-format`).
+  - Indent width: 4 spaces (as seen in `.clang-format`).
   - Column limit: 0 (no hard limit, but keep it readable).
   - Brace wrapping: Allman style (braces on new line) is configured in some repos, but consistency within the specific repo is key.
 
