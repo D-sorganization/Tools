@@ -29,15 +29,10 @@ class TestLoggerUtils:
 
     def test_set_seeds_numpy_missing(self) -> None:
         """Test set_seeds when numpy is missing."""
-        import builtins
-        orig_import = builtins.__import__
-
-        def mock_import(name, *args, **kwargs):
-            if name == "numpy":
-                raise ImportError("Mocked ImportError")
-            return orig_import(name, *args, **kwargs)
-
-        with patch("builtins.__import__", side_effect=mock_import):
+        import sys
+        # Use simple patch.dict to safely simulate missing module
+        # ModuleNotFoundError (raised when None is in sys.modules) inherits from ImportError
+        with patch.dict(sys.modules, {"numpy": None}):
             with patch("src.logger_utils.logger") as mock_logger:
                 set_seeds()
                 mock_logger.warning.assert_called_once()
