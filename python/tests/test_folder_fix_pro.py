@@ -45,6 +45,26 @@ class TestFileHasher:
         expected_hash = hasher.hexdigest()
         assert FileHasher.hash_file_fast(p) == expected_hash
 
+    def test_hash_file_fast_large_file(self, tmp_path):
+        """Test fast hashing with large file to trigger last chunk logic."""
+        p = tmp_path / "large_test.bin"
+        # Create file larger than 2 * DEFAULT_CHUNK_SIZE (65536 * 2 = 131072)
+        size = 150000
+        content = os.urandom(size)
+        p.write_bytes(content)
+
+        # Calculate expected hash manually
+        hasher = hashlib.sha256()
+        hasher.update(str(size).encode())
+        
+        # First chunk
+        hasher.update(content[:65536])
+        
+        # Last chunk
+        hasher.update(content[-65536:])
+
+        assert FileHasher.hash_file_fast(p) == hasher.hexdigest()
+
 class TestOperationReport:
     """Test cases for OperationReport."""
 

@@ -104,9 +104,14 @@ class TestFolderProcessorApp:
             p = tmp_path / "test.txt"
             p.write_text("content")
 
+            # Test first conflict
             unique_path = app._get_unique_path(str(p))
-            assert unique_path != str(p)
-            assert " (1)" in unique_path or "_2" in unique_path or "test (" in unique_path
+            assert unique_path == str(tmp_path / "test (1).txt")
+
+            # Create the first conflict file and test second conflict
+            Path(unique_path).write_text("content 2")
+            unique_path_2 = app._get_unique_path(str(p))
+            assert unique_path_2 == str(tmp_path / "test (2).txt")
 
     def test_validate_inputs_no_source(self, mock_root, mock_tk_vars):
         """Test validate_inputs with no source."""
