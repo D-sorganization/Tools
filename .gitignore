@@ -41,3 +41,5 @@ logs/
 
 # Development artifacts
 branch_cleanup_report_*.md
+.coverage
+.pytest_cache/

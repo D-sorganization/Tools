@@ -1,0 +1,125 @@
+"""Tests for folder_fix_pro.py."""
+
+import sys
+import os
+from pathlib import Path
+from unittest.mock import Mock, patch
+import json
+import pytest
+import hashlib
+
+# Add folder_tool_pro directory to path
+sys.path.append(str(Path(__file__).parent.parent / "folder_tool_pro"))
+
+from folder_fix_pro import (
+    FileHasher,
+    OperationReport,
+    FolderFixPro,
+)
+
+class TestFileHasher:
+    """Test cases for FileHasher."""
+
+    def test_hash_file(self, tmp_path):
+        """Test hashing a file."""
+        p = tmp_path / "test.txt"
+        p.write_text("test content")
+
+        expected_hash = hashlib.sha256(b"test content").hexdigest()
+        assert FileHasher.hash_file(p) == expected_hash
+
+    def test_hash_file_fast(self, tmp_path):
+        """Test fast hashing."""
+        p = tmp_path / "test.txt"
+        p.write_text("test content")
+
+        # Calculate expected hash for fast method
+        size = p.stat().st_size
+        hasher = hashlib.sha256()
+        hasher.update(str(size).encode())
+        with open(p, "rb") as f:
+            chunk = f.read(65536) # DEFAULT_CHUNK_SIZE
+            hasher.update(chunk)
+            # File is small, so last chunk logic won't trigger if it's smaller than 2*CHUNK_SIZE
+
+        expected_hash = hasher.hexdigest()
+        assert FileHasher.hash_file_fast(p) == expected_hash
+
+class TestOperationReport:
+    """Test cases for OperationReport."""
+
+    def test_add_operation(self):
+        """Test adding operations."""
+        report = OperationReport()
+        report.add_operation("copy", {"source": "a", "dest": "b"})
+
+        assert len(report.operations) == 1
+        assert report.stats["copy"] == 1
+
+    def test_add_error(self):
+        """Test adding errors."""
+        report = OperationReport()
+        report.add_error("test error")
+
+        assert len(report.errors) == 1
+
+    def test_finalize(self):
+        """Test finalizing report."""
+        report = OperationReport()
+        assert report.end_time is None
+        report.finalize()
+        assert report.end_time is not None
+
+class TestFolderFixPro:
+    """Test cases for FolderFixPro GUI class."""
+
+    @pytest.fixture
+    def mock_root(self):
+        """Mock Tkinter root."""
+        root = Mock()
+        return root
+
+    @pytest.fixture
+    def mock_tk_vars(self):
+        """Mock Tkinter variables."""
+        with patch("tkinter.BooleanVar") as mock_bool, \
+             patch("tkinter.StringVar") as mock_string, \
+             patch("tkinter.DoubleVar") as mock_double, \
+             patch("tkinter.IntVar") as mock_int:
+
+            mock_bool.return_value.get.return_value = False
+            mock_string.return_value.get.return_value = ""
+            mock_double.return_value.get.return_value = 0.0
+            mock_int.return_value.get.return_value = 0
+
+            yield {
+                "bool": mock_bool,
+                "string": mock_string,
+                "double": mock_double,
+                "int": mock_int
+            }
+
+    def test_init(self, mock_root, mock_tk_vars):
+        """Test initialization of FolderFixPro."""
+        with patch("tkinter.Menu"), \
+             patch("tkinter.ttk.Notebook"), \
+             patch("tkinter.ttk.Frame"), \
+             patch("tkinter.ttk.Label"), \
+             patch("tkinter.ttk.LabelFrame"), \
+             patch("tkinter.ttk.Entry"), \
+             patch("tkinter.ttk.Button"), \
+             patch("tkinter.Text"), \
+             patch("tkinter.ttk.Progressbar"), \
+             patch("tkinter.ttk.Radiobutton"), \
+             patch("tkinter.ttk.Checkbutton"), \
+             patch("tkinter.ttk.Treeview"), \
+             patch("tkinter.ttk.Scrollbar"), \
+             patch("tkinter.Listbox"), \
+             patch("tkinter.ttk.Style"), \
+             patch("folder_fix_pro.ctypes"):
+
+            app = FolderFixPro(mock_root)
+
+            assert app.root == mock_root
+            assert app.current_theme == "dark"
+            assert isinstance(app.operation_report, OperationReport)

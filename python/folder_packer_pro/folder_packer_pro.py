@@ -31,7 +31,7 @@ from typing import Any, Final
 
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 # Constants with professional standards
 MAX_FILE_SIZE_MB: Final[int] = 1024  # 1GB max per file
@@ -177,7 +177,7 @@ class EncryptionManager:
         Returns:
             32-byte encryption key
         """
-        kdf = PBKDF2(
+        kdf = PBKDF2HMAC(
             algorithm=hashes.SHA256(),
             length=32,
             salt=salt,
@@ -1108,7 +1108,7 @@ class FolderPackerPro:
                 tags=(str(file_path),),
             )
 
-    def _on_file_select(self, event: tk.Event[ttk.Treeview]) -> None:
+    def _on_file_select(self, event: tk.Event) -> None:
         """Handle file selection in preview tree."""
         selection = self.preview_tree.selection()
         if not selection:
