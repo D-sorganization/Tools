@@ -159,3 +159,123 @@ class TestFolderProcessorApp:
 
             assert app.validate_inputs() is False
             mock_error.assert_called()
+
+    def test_safe_copy_file_success(self, mock_root, mock_tk_vars, tmp_path):
+        """Test _safe_copy_file success case."""
+        with patch("tkinter.ttk.Style"), \
+             patch("tkinter.Canvas"), \
+             patch("tkinter.ttk.Scrollbar"), \
+             patch("tkinter.ttk.Frame"), \
+             patch("tkinter.ttk.LabelFrame"), \
+             patch("tkinter.Listbox"), \
+             patch("tkinter.ttk.Button"), \
+             patch("tkinter.ttk.Label"), \
+             patch("tkinter.ttk.Entry"), \
+             patch("tkinter.ttk.Checkbutton"), \
+             patch("tkinter.ttk.Radiobutton"), \
+             patch("tkinter.ttk.Progressbar"), \
+             patch("Folders_Tool_r0.ctypes"):
+
+            app = FolderProcessorApp(mock_root)
+            
+            # Setup source and dest
+            source_file = tmp_path / "source.txt"
+            source_file.write_text("content")
+            
+            dest_file = tmp_path / "dest.txt"
+            
+            # Perform copy
+            result = app._safe_copy_file(str(source_file), str(dest_file))
+            
+            assert result is True
+            assert dest_file.exists()
+            assert dest_file.read_text() == "content"
+
+    def test_safe_copy_file_fail_source_not_found(self, mock_root, mock_tk_vars, tmp_path):
+        """Test _safe_copy_file source not found."""
+        with patch("tkinter.ttk.Style"), \
+             patch("tkinter.Canvas"), \
+             patch("tkinter.ttk.Scrollbar"), \
+             patch("tkinter.ttk.Frame"), \
+             patch("tkinter.ttk.LabelFrame"), \
+             patch("tkinter.Listbox"), \
+             patch("tkinter.ttk.Button"), \
+             patch("tkinter.ttk.Label"), \
+             patch("tkinter.ttk.Entry"), \
+             patch("tkinter.ttk.Checkbutton"), \
+             patch("tkinter.ttk.Radiobutton"), \
+             patch("tkinter.ttk.Progressbar"), \
+             patch("Folders_Tool_r0.ctypes"):
+
+            app = FolderProcessorApp(mock_root)
+            
+            source_file = tmp_path / "non_existent.txt"
+            dest_file = tmp_path / "dest.txt"
+            
+            with pytest.raises(FileNotFoundError):
+                app._safe_copy_file(str(source_file), str(dest_file))
+
+    def test_create_output_zip_success(self, mock_root, mock_tk_vars, tmp_path):
+        """Test create_output_zip success."""
+        with patch("tkinter.ttk.Style"), \
+             patch("tkinter.Canvas"), \
+             patch("tkinter.ttk.Scrollbar"), \
+             patch("tkinter.ttk.Frame"), \
+             patch("tkinter.ttk.LabelFrame"), \
+             patch("tkinter.Listbox"), \
+             patch("tkinter.ttk.Button"), \
+             patch("tkinter.ttk.Label"), \
+             patch("tkinter.ttk.Entry"), \
+             patch("tkinter.ttk.Checkbutton"), \
+             patch("tkinter.ttk.Radiobutton"), \
+             patch("tkinter.ttk.Progressbar"), \
+             patch("Folders_Tool_r0.ctypes"):
+
+            app = FolderProcessorApp(mock_root)
+            
+            # Setup destination folder with files
+            dest_folder = tmp_path / "output_folder"
+            dest_folder.mkdir()
+            (dest_folder / "file1.txt").write_text("content1")
+            
+            app.dest_folder = str(dest_folder)
+            
+            # Mock update_progress to avoid errors if it tries to update UI
+            app.update_progress = Mock()
+            
+            zip_path = app.create_output_zip()
+            
+            assert os.path.exists(zip_path)
+            assert zip_path.endswith(".zip")
+            
+            # Verify zip content
+            import zipfile
+            with zipfile.ZipFile(zip_path, 'r') as zf:
+                assert "file1.txt" in zf.namelist()
+
+    def test_create_output_zip_empty_dest(self, mock_root, mock_tk_vars, tmp_path):
+        """Test create_output_zip with empty destination."""
+        with patch("tkinter.ttk.Style"), \
+             patch("tkinter.Canvas"), \
+             patch("tkinter.ttk.Scrollbar"), \
+             patch("tkinter.ttk.Frame"), \
+             patch("tkinter.ttk.LabelFrame"), \
+             patch("tkinter.Listbox"), \
+             patch("tkinter.ttk.Button"), \
+             patch("tkinter.ttk.Label"), \
+             patch("tkinter.ttk.Entry"), \
+             patch("tkinter.ttk.Checkbutton"), \
+             patch("tkinter.ttk.Radiobutton"), \
+             patch("tkinter.ttk.Progressbar"), \
+             patch("Folders_Tool_r0.ctypes"):
+
+            app = FolderProcessorApp(mock_root)
+            
+            dest_folder = tmp_path / "empty_folder"
+            dest_folder.mkdir()
+            app.dest_folder = str(dest_folder)
+            
+            # Should raise ValueError because folder is empty
+            with pytest.raises(ValueError, match="Destination folder is empty"):
+                app.create_output_zip()
+
