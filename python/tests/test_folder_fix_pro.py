@@ -143,3 +143,113 @@ class TestFolderFixPro:
             assert app.root == mock_root
             assert app.current_theme == "dark"
             assert isinstance(app.operation_report, OperationReport)
+
+    def test_should_include_file(self, mock_root, mock_tk_vars, tmp_path):
+        """Test _should_include_file logic."""
+        with patch("tkinter.Menu"), \
+             patch("tkinter.ttk.Notebook"), \
+             patch("tkinter.ttk.Frame"), \
+             patch("tkinter.ttk.Label"), \
+             patch("tkinter.ttk.LabelFrame"), \
+             patch("tkinter.ttk.Entry"), \
+             patch("tkinter.ttk.Button"), \
+             patch("tkinter.Text"), \
+             patch("tkinter.ttk.Progressbar"), \
+             patch("tkinter.ttk.Radiobutton"), \
+             patch("tkinter.ttk.Checkbutton"), \
+             patch("tkinter.ttk.Treeview"), \
+             patch("tkinter.ttk.Scrollbar"), \
+             patch("tkinter.Listbox"), \
+             patch("tkinter.ttk.Style"), \
+             patch("folder_fix_pro.ctypes"):
+
+            app = FolderFixPro(mock_root)
+            
+            # Setup defaults
+            app.skip_hidden_var = Mock()
+            app.skip_hidden_var.get.return_value = False
+            
+            app.min_size_entry = Mock()
+            app.min_size_entry.get.return_value = "0"
+            
+            app.max_size_entry = Mock()
+            # Set a large max size
+            app.max_size_entry.get.return_value = "10"  # 10 MB
+            
+            app.ext_filter_entry = Mock()
+            app.ext_filter_entry.get.return_value = ""
+            
+            app.regex_filter_entry = Mock()
+            app.regex_filter_entry.get.return_value = ""
+
+            # Create test files
+            file1 = tmp_path / "normal.txt"
+            file1.write_text("content")
+            
+            file2 = tmp_path / ".hidden"
+            file2.write_text("content")
+            
+            # Test normal inclusion
+            assert app._should_include_file(file1) is True
+            
+            # Test hidden exclusion
+            app.skip_hidden_var.get.return_value = True
+            assert app._should_include_file(file2) is False
+            app.skip_hidden_var.get.return_value = False
+            
+            # Test extension filter
+            app.ext_filter_entry.get.return_value = ".jpg,.png"
+            assert app._should_include_file(file1) is False
+            
+            jpg_file = tmp_path / "test.jpg"
+            jpg_file.write_text("content")
+            assert app._should_include_file(jpg_file) is True
+            
+            # Test regex filter
+            app.ext_filter_entry.get.return_value = ""
+            app.regex_filter_entry.get.return_value = r"^test.*"
+            
+            assert app._should_include_file(jpg_file) is True
+            assert app._should_include_file(file1) is False
+
+    def test_count_files(self, mock_root, mock_tk_vars, tmp_path):
+        """Test _count_files logic."""
+        with patch("tkinter.Menu"), \
+             patch("tkinter.ttk.Notebook"), \
+             patch("tkinter.ttk.Frame"), \
+             patch("tkinter.ttk.Label"), \
+             patch("tkinter.ttk.LabelFrame"), \
+             patch("tkinter.ttk.Entry"), \
+             patch("tkinter.ttk.Button"), \
+             patch("tkinter.Text"), \
+             patch("tkinter.ttk.Progressbar"), \
+             patch("tkinter.ttk.Radiobutton"), \
+             patch("tkinter.ttk.Checkbutton"), \
+             patch("tkinter.ttk.Treeview"), \
+             patch("tkinter.ttk.Scrollbar"), \
+             patch("tkinter.Listbox"), \
+             patch("tkinter.ttk.Style"), \
+             patch("folder_fix_pro.ctypes"):
+
+            app = FolderFixPro(mock_root)
+            
+            # Create structure
+            # root/
+            #   src1/
+            #     f1.txt
+            #     f2.txt
+            #   src2/
+            #     f3.txt
+            
+            src1 = tmp_path / "src1"
+            src1.mkdir()
+            (src1 / "f1.txt").write_text("c")
+            (src1 / "f2.txt").write_text("c")
+            
+            src2 = tmp_path / "src2"
+            src2.mkdir()
+            (src2 / "f3.txt").write_text("c")
+            
+            app.source_folders = [str(src1), str(src2)]
+            
+            assert app._count_files() == 3
