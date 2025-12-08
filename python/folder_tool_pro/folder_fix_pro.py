@@ -26,7 +26,7 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
-from typing import Any, Final
+from typing import Any, Final, Optional
 
 # Constants with professional standards
 MAX_FILE_SIZE_MB: Final[int] = 10240  # 10GB limit for modern systems
@@ -96,7 +96,7 @@ class FileHasher:
     """Efficient file hashing for deduplication."""
 
     @staticmethod
-    def hash_file(file_path: Path, algorithm: str = HASH_ALGORITHM) -> str | None:
+    def hash_file(file_path: Path, algorithm: str = HASH_ALGORITHM) -> Optional[str]:
         """
         Generate cryptographic hash of file contents.
 
@@ -118,7 +118,7 @@ class FileHasher:
             return None
 
     @staticmethod
-    def hash_file_fast(file_path: Path) -> str | None:
+    def hash_file_fast(file_path: Path) -> Optional[str]:
         """
         Generate fast hash using first/last chunks + size.
         Useful for quick duplicate detection.
@@ -158,7 +158,7 @@ class OperationReport:
 
     def __init__(self) -> None:
         self.start_time = datetime.now()
-        self.end_time: datetime | None = None
+        self.end_time: Optional[datetime] = None
         self.operations: list[dict[str, Any]] = []
         self.stats: defaultdict[str, int] = defaultdict(int)
         self.errors: list[dict[str, Any]] = []

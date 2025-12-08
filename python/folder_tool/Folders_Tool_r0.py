@@ -15,7 +15,7 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
-from typing import Final
+from typing import Final, Optional
 
 # Constants for configuration with sources and units
 MAX_LOG_ENTRIES: Final[int] = (
@@ -1445,7 +1445,7 @@ class FolderProcessorApp:
 
             return False, f"Failed to extract '{os.path.basename(archive_path)}': {e}"
 
-    def create_backup(self) -> str | None:
+    def create_backup(self) -> Optional[str]:
         """Creates a backup of source folders before processing.
 
         Returns:
@@ -1611,7 +1611,7 @@ class FolderProcessorApp:
                     )
             raise
 
-    def generate_analysis_report(self) -> str | None:
+    def generate_analysis_report(self) -> Optional[str]:
         """Generates a comprehensive analysis report.
 
         Returns:

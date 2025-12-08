@@ -5,6 +5,12 @@ description: Summary of fixes and improvements for Tools repository
 # Task: Fix Tools Linting Errors & Improve Coverage
 
 ## Accomplished Goals
+- [x] **Resolved CI Compatibility (Python 3.9)**:
+  - Replaced `X | Y` type hints with `Union[X, Y]` or `Optional[X]` in:
+    - `python/folder_tool/Folders_Tool_r0.py`
+    - `python/folder_packer_pro/folder_packer_pro.py`
+    - `python/folder_tool_pro/folder_fix_pro.py`
+  - This resolves `TypeError: unsupported operand type(s) for |` in Python 3.9 environments.
 - [x] **Resolved Ruff Linting Errors**:
   - Fixed `PTH208` (use `pathlib.Path.iterdir()`) in `Folders_Tool_r0.py`.
   - Fixed `RET504`, `S105`, `ERA001`, `F841`, `ICN001`, `F821`.
