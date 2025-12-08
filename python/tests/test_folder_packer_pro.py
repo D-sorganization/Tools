@@ -224,3 +224,103 @@ class TestFolderPackerPro:
             assert stats["file_types"][".txt"] == 1
             assert stats["file_types"][".py"] == 1
 
+
+    def test_scan_folder(self, mock_root, mock_tk_vars, tmp_path):
+        """Test _scan_folder."""
+        with patch("tkinter.Menu"), \
+             patch("tkinter.ttk.Notebook"), \
+             patch("tkinter.ttk.Frame"), \
+             patch("tkinter.ttk.Label"), \
+             patch("tkinter.ttk.LabelFrame"), \
+             patch("tkinter.ttk.Entry"), \
+             patch("tkinter.ttk.Button"), \
+             patch("tkinter.scrolledtext.ScrolledText"), \
+             patch("tkinter.ttk.Progressbar"), \
+             patch("tkinter.ttk.Radiobutton"), \
+             patch("tkinter.ttk.Checkbutton"), \
+             patch("tkinter.ttk.Treeview"), \
+             patch("tkinter.ttk.Scrollbar"), \
+             patch("tkinter.Text"), \
+             patch("tkinter.ttk.Style"), \
+             patch("tkinter.messagebox.showerror") as mock_error:
+
+            app = FolderPackerPro(mock_root)
+            app.pack_source_entry = Mock()
+            app._collect_folder_stats = Mock(return_value={})
+            app._display_stats = Mock()
+            
+            # Empty source
+            app.pack_source_entry.get.return_value = ""
+            app._scan_folder()
+            app._collect_folder_stats.assert_not_called()
+            
+            # Invalid source
+            app.pack_source_entry.get.return_value = "/non/existent"
+            app._scan_folder()
+            mock_error.assert_called()
+            
+            # Valid source
+            app.pack_source_entry.get.return_value = str(tmp_path)
+            # Mock root.after to execute immediately
+            def immediate_after(delay, callback):
+                callback()
+            app.root.after.side_effect = immediate_after
+            
+            app._scan_folder()
+            app._collect_folder_stats.assert_called_with(Path(str(tmp_path)))
+            app._display_stats.assert_called()
+
+    def test_browse_handlers(self, mock_root, mock_tk_vars, tmp_path):
+        """Test browse handlers."""
+        with patch("tkinter.Menu"), \
+             patch("tkinter.ttk.Notebook"), \
+             patch("tkinter.ttk.Frame"), \
+             patch("tkinter.ttk.Label"), \
+             patch("tkinter.ttk.LabelFrame"), \
+             patch("tkinter.ttk.Entry"), \
+             patch("tkinter.ttk.Button"), \
+             patch("tkinter.scrolledtext.ScrolledText"), \
+             patch("tkinter.ttk.Progressbar"), \
+             patch("tkinter.ttk.Radiobutton"), \
+             patch("tkinter.ttk.Checkbutton"), \
+             patch("tkinter.ttk.Treeview"), \
+             patch("tkinter.ttk.Scrollbar"), \
+             patch("tkinter.Text"), \
+             patch("tkinter.ttk.Style"), \
+             patch("tkinter.filedialog.askdirectory") as mock_askdir, \
+             patch("tkinter.filedialog.asksaveasfilename") as mock_save, \
+             patch("tkinter.filedialog.askopenfilename") as mock_open:
+
+            app = FolderPackerPro(mock_root)
+            app.pack_source_entry = Mock()
+            app.pack_output_entry = Mock()
+            app.unpack_source_entry = Mock()
+            app.unpack_dest_entry = Mock()
+            app._scan_folder = Mock()
+            app._log_message = Mock()
+            
+            # _browse_pack_source
+            mock_askdir.return_value = str(tmp_path)
+            app._browse_pack_source()
+            app.pack_source_entry.delete.assert_called()
+            app.pack_source_entry.insert.assert_called_with(0, str(tmp_path))
+            app._scan_folder.assert_called()
+            
+            # _browse_pack_output
+            mock_save.return_value = str(tmp_path / "pkg.fpp")
+            app._browse_pack_output()
+            app.pack_output_entry.delete.assert_called()
+            app.pack_output_entry.insert.assert_called_with(0, str(tmp_path / "pkg.fpp"))
+            
+            # _browse_unpack_source
+            mock_open.return_value = str(tmp_path / "pkg.fpp")
+            app._browse_unpack_source()
+            app.unpack_source_entry.delete.assert_called()
+            app.unpack_source_entry.insert.assert_called_with(0, str(tmp_path / "pkg.fpp"))
+            
+            # _browse_unpack_dest
+            mock_askdir.return_value = str(tmp_path / "dest")
+            app._browse_unpack_dest()
+            app.unpack_dest_entry.delete.assert_called()
+            app.unpack_dest_entry.insert.assert_called_with(0, str(tmp_path / "dest"))
+
