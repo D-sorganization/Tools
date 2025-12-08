@@ -412,3 +412,124 @@ class TestFolderProcessorApp:
             assert state["source_folders_exist"] is True  # Based on earlier logic verification
 
 
+    def test_cancel_processing(self, mock_root, mock_tk_vars):
+        """Test cancel_processing."""
+        with patch("tkinter.ttk.Style"), \
+             patch("tkinter.Canvas"), \
+             patch("tkinter.ttk.Scrollbar"), \
+             patch("tkinter.ttk.Frame"), \
+             patch("tkinter.ttk.LabelFrame"), \
+             patch("tkinter.Listbox"), \
+             patch("tkinter.ttk.Button"), \
+             patch("tkinter.ttk.Label"), \
+             patch("tkinter.ttk.Entry"), \
+             patch("tkinter.ttk.Checkbutton"), \
+             patch("tkinter.ttk.Radiobutton"), \
+             patch("tkinter.ttk.Progressbar"), \
+             patch("Folders_Tool_r0.ctypes"):
+
+            app = FolderProcessorApp(mock_root)
+            app.status_var = Mock()
+            
+            app.cancel_processing()
+            
+            assert app.cancel_operation is True
+            app.status_var.set.assert_called_with("Cancelling operation...")
+            
+    def test_processing_complete(self, mock_root, mock_tk_vars):
+        """Test processing_complete."""
+        with patch("tkinter.ttk.Style"), \
+             patch("tkinter.Canvas"), \
+             patch("tkinter.ttk.Scrollbar"), \
+             patch("tkinter.ttk.Frame"), \
+             patch("tkinter.ttk.LabelFrame"), \
+             patch("tkinter.Listbox"), \
+             patch("tkinter.ttk.Button"), \
+             patch("tkinter.ttk.Label"), \
+             patch("tkinter.ttk.Entry"), \
+             patch("tkinter.ttk.Checkbutton"), \
+             patch("tkinter.ttk.Radiobutton"), \
+             patch("tkinter.ttk.Progressbar"), \
+             patch("Folders_Tool_r0.ctypes"):
+
+            app = FolderProcessorApp(mock_root)
+            app.run_button = Mock()
+            app.cancel_button = Mock()
+            app.progress_var = Mock()
+            app.status_var = Mock()
+            
+            app.processing_complete()
+            
+            app.run_button.config.assert_called_with(state=tkinter.NORMAL)
+            app.cancel_button.config.assert_called_with(state=tkinter.DISABLED)
+            app.progress_var.set.assert_called_with(0)
+            app.status_var.set.assert_called_with("Ready")
+
+    def test_update_progress(self, mock_root, mock_tk_vars):
+        """Test update_progress."""
+        with patch("tkinter.ttk.Style"), \
+             patch("tkinter.Canvas"), \
+             patch("tkinter.ttk.Scrollbar"), \
+             patch("tkinter.ttk.Frame"), \
+             patch("tkinter.ttk.LabelFrame"), \
+             patch("tkinter.Listbox"), \
+             patch("tkinter.ttk.Button"), \
+             patch("tkinter.ttk.Label"), \
+             patch("tkinter.ttk.Entry"), \
+             patch("tkinter.ttk.Checkbutton"), \
+             patch("tkinter.ttk.Radiobutton"), \
+             patch("tkinter.ttk.Progressbar"), \
+             patch("Folders_Tool_r0.ctypes"):
+
+            app = FolderProcessorApp(mock_root)
+            app.progress_var = Mock()
+            app.status_var = Mock()
+            
+            # Normal update
+            app.update_progress(50, "Halfway")
+            app.progress_var.set.assert_called_with(50.0)
+            app.status_var.set.assert_called_with("Halfway")
+            
+            # Clamp high
+            app.update_progress(150)
+            app.progress_var.set.assert_called_with(100.0)
+            
+            # Clamp low
+            app.update_progress(-50)
+            app.progress_var.set.assert_called_with(0.0)
+            
+            # Invalid type (should log warning but not crash)
+            app.update_progress("invalid")
+            # Should not have called set with invalid value in last call, check count or specific calls if needed
+            
+    def test_run_processing_threaded(self, mock_root, mock_tk_vars):
+        """Test run_processing_threaded."""
+        with patch("tkinter.ttk.Style"), \
+             patch("tkinter.Canvas"), \
+             patch("tkinter.ttk.Scrollbar"), \
+             patch("tkinter.ttk.Frame"), \
+             patch("tkinter.ttk.LabelFrame"), \
+             patch("tkinter.Listbox"), \
+             patch("tkinter.ttk.Button"), \
+             patch("tkinter.ttk.Label"), \
+             patch("tkinter.ttk.Entry"), \
+             patch("tkinter.ttk.Checkbutton"), \
+             patch("tkinter.ttk.Radiobutton"), \
+             patch("tkinter.ttk.Progressbar"), \
+             patch("Folders_Tool_r0.ctypes"), \
+             patch("threading.Thread") as mock_thread:
+
+            app = FolderProcessorApp(mock_root)
+            app.run_button = Mock()
+            app.cancel_button = Mock()
+            
+            app.run_processing_threaded()
+            
+            assert app.cancel_operation is False
+            app.run_button.config.assert_called_with(state=tkinter.DISABLED)
+            app.cancel_button.config.assert_called_with(state=tkinter.NORMAL)
+            
+            mock_thread.assert_called_once()
+            mock_thread.return_value.start.assert_called_once()
+
+
