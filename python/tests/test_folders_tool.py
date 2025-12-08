@@ -415,7 +415,8 @@ class TestFolderProcessorApp:
     def test_safe_extract_archive(self, mock_root, mock_tk_vars, tmp_path):
         """Test safe_extract_archive."""
         # Mock UI creation methods to avoid patching all widgets
-        with patch.object(FolderProcessorApp, "create_scrollable_interface"), \
+        with patch("tkinter.ttk.Style"), \
+             patch.object(FolderProcessorApp, "create_scrollable_interface"), \
              patch.object(FolderProcessorApp, "_setup_application_icon"), \
              patch("Folders_Tool_r0.ctypes"), \
              patch("shutil.unpack_archive"), \
