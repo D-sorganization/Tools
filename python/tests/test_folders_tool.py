@@ -279,3 +279,136 @@ class TestFolderProcessorApp:
             with pytest.raises(ValueError, match="Destination folder is empty"):
                 app.create_output_zip()
 
+
+    def test_validate_size_inputs(self, mock_root, mock_tk_vars):
+        """Test validate_size_inputs."""
+        with patch("tkinter.ttk.Style"), \
+             patch("tkinter.Canvas"), \
+             patch("tkinter.ttk.Scrollbar"), \
+             patch("tkinter.ttk.Frame"), \
+             patch("tkinter.ttk.LabelFrame"), \
+             patch("tkinter.Listbox"), \
+             patch("tkinter.ttk.Button"), \
+             patch("tkinter.ttk.Label"), \
+             patch("tkinter.ttk.Entry"), \
+             patch("tkinter.ttk.Checkbutton"), \
+             patch("tkinter.ttk.Radiobutton"), \
+             patch("tkinter.ttk.Progressbar"), \
+             patch("Folders_Tool_r0.ctypes"), \
+             patch("tkinter.messagebox.showwarning") as mock_warning, \
+             patch("tkinter.messagebox.showerror") as mock_error:
+
+            app = FolderProcessorApp(mock_root)
+            
+            # Use distinct mocks for min and max to avoid shared state if StringVar returns singleton mock
+            app.min_file_size = Mock()
+            app.max_file_size = Mock()
+            
+            # Valid inputs
+            app.min_file_size.get.return_value = "0"
+            app.max_file_size.get.return_value = "10"
+            assert app.validate_size_inputs() is True
+            
+            # Invalid min size (negative)
+            app.min_file_size.get.return_value = "-1"
+            assert app.validate_size_inputs() is False
+            mock_warning.assert_called()
+            
+            # Invalid max size (negative)
+            app.min_file_size.get.return_value = "0"
+            app.max_file_size.get.return_value = "-1"
+            assert app.validate_size_inputs() is False
+            
+            # Min > Max
+            app.min_file_size.get.return_value = "20"
+            app.max_file_size.get.return_value = "10"
+            assert app.validate_size_inputs() is False
+            
+            # Value error (non-numeric) - Should return False and show error
+            app.min_file_size.get.side_effect = ValueError("Invalid float")
+            assert app.validate_size_inputs() is False
+            mock_error.assert_called()
+            
+            # Reset side effect
+            app.min_file_size.get.side_effect = None
+            
+            # Also mock min/max file size for validate_file_filters test requirement
+            
+    def test_validate_file_filters(self, mock_root, mock_tk_vars):
+        """Test validate_file_filters."""
+        with patch("tkinter.ttk.Style"), \
+             patch("tkinter.Canvas"), \
+             patch("tkinter.ttk.Scrollbar"), \
+             patch("tkinter.ttk.Frame"), \
+             patch("tkinter.ttk.LabelFrame"), \
+             patch("tkinter.Listbox"), \
+             patch("tkinter.ttk.Button"), \
+             patch("tkinter.ttk.Label"), \
+             patch("tkinter.ttk.Entry"), \
+             patch("tkinter.ttk.Checkbutton"), \
+             patch("tkinter.ttk.Radiobutton"), \
+             patch("tkinter.ttk.Progressbar"), \
+             patch("Folders_Tool_r0.ctypes"), \
+             patch("os.path.getsize") as mock_getsize, \
+             patch("os.path.exists"):
+
+            app = FolderProcessorApp(mock_root)
+            
+            # Use distinct mocks
+            app.min_file_size = Mock()
+            app.max_file_size = Mock()
+            
+            # Setup filter extensions
+            app.filter_extensions.get.return_value = ".txt,.log"
+            
+            # Mock size inputs
+            app.min_file_size.get.return_value = "0"
+            app.max_file_size.get.return_value = "100"
+            
+            # Mock file size to 1 byte
+            mock_getsize.return_value = 1
+            
+            assert app.validate_file_filters("test.txt") is True
+            assert app.validate_file_filters("test.log") is True
+            assert app.validate_file_filters("test.py") is False
+            
+            # Empty filter
+            app.filter_extensions.get.return_value = ""
+            assert app.validate_file_filters("test.py") is True
+
+    def test_validate_application_state(self, mock_root, mock_tk_vars):
+        """Test validate_application_state."""
+        with patch("tkinter.ttk.Style"), \
+             patch("tkinter.Canvas"), \
+             patch("tkinter.ttk.Scrollbar"), \
+             patch("tkinter.ttk.Frame"), \
+             patch("tkinter.ttk.LabelFrame"), \
+             patch("tkinter.Listbox"), \
+             patch("tkinter.ttk.Button"), \
+             patch("tkinter.ttk.Label"), \
+             patch("tkinter.ttk.Entry"), \
+             patch("tkinter.ttk.Checkbutton"), \
+             patch("tkinter.ttk.Radiobutton"), \
+             patch("tkinter.ttk.Progressbar"), \
+             patch("Folders_Tool_r0.ctypes"), \
+             patch("os.path.exists") as mock_exists, \
+             patch("os.access") as mock_access:
+
+            app = FolderProcessorApp(mock_root)
+            app.source_folders = ["/src"]
+            app.dest_folder = "/dest"
+            
+            mock_exists.return_value = True
+            mock_access.return_value = True
+            
+            state = app.validate_application_state()
+            # Keys based on implementation: source_folders_exist, source_folders_readable, destination_exists, destination_writable
+            assert state["source_folders_exist"] is True
+            assert state["destination_exists"] is True
+            assert state["destination_writable"] is True
+            
+            app.source_folders = []
+            state = app.validate_application_state()
+            assert state["source_folders_exist"] is True  # Based on earlier logic verification
+
+
