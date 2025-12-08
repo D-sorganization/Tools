@@ -27,11 +27,11 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from tkinter import filedialog, messagebox, scrolledtext, simpledialog, ttk
-from typing import Any, Final
+from typing import Any, Final, Union
 
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 # Constants with professional standards
 MAX_FILE_SIZE_MB: Final[int] = 1024  # 1GB max per file
@@ -177,7 +177,7 @@ class EncryptionManager:
         Returns:
             32-byte encryption key
         """
-        kdf = PBKDF2(
+        kdf = PBKDF2HMAC(
             algorithm=hashes.SHA256(),
             length=32,
             salt=salt,
@@ -249,7 +249,7 @@ class PackageManifest:
     def set_metadata(
         self,
         key: str,
-        value: str | float | bool | None | list[Any] | dict[str, Any],
+        value: Union[str, float, bool, None, list[Any], dict[str, Any]],
     ) -> None:
         """Set metadata value."""
         self.metadata[key] = value
@@ -1092,7 +1092,9 @@ class FolderPackerPro:
 
         threading.Thread(target=scan, daemon=True).start()
 
-    def _populate_tree(self, files: list[tuple[Path, os.stat_result]], base_path: Path) -> None:
+    def _populate_tree(
+        self, files: list[tuple[Path, os.stat_result]], base_path: Path
+    ) -> None:
         """Populate tree with file list."""
         for file_path, stat in files:
             rel_path = file_path.relative_to(base_path)
@@ -1108,7 +1110,7 @@ class FolderPackerPro:
                 tags=(str(file_path),),
             )
 
-    def _on_file_select(self, event: tk.Event[ttk.Treeview]) -> None:
+    def _on_file_select(self, event: tk.Event) -> None:
         """Handle file selection in preview tree."""
         selection = self.preview_tree.selection()
         if not selection:

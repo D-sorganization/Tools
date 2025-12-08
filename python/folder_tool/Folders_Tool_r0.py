@@ -15,7 +15,7 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
-from typing import Final
+from typing import Final, Optional
 
 # Constants for configuration with sources and units
 MAX_LOG_ENTRIES: Final[int] = (
@@ -141,7 +141,7 @@ class FolderProcessorApp:
         self._setup_application_icon()
 
         # --- UI Variables ---
-        self.source_folders = []
+        self.source_folders: list[str] = []
         self.dest_folder = ""
         self.unzip_var = tk.BooleanVar(value=False)
         self.safe_extract_var = tk.BooleanVar(value=True)
@@ -165,8 +165,8 @@ class FolderProcessorApp:
 
         # --- UI Style ---
         style = ttk.Style()
-        style.configure("TButton", padding=6, relief="flat")
-        style.configure("TLabel", padding=5)
+        style.configure("TButton", padding=6, relief="flat")  # type: ignore  # noqa: PGH003
+        style.configure("TLabel", padding=5)  # type: ignore  # noqa: PGH003
 
         # Validate constants at startup
         self._validate_constants()
@@ -452,7 +452,7 @@ class FolderProcessorApp:
             # Get the directory where the script/executable is located
             if getattr(sys, "frozen", False):
                 # Running as compiled executable
-                base_dir = sys._MEIPASS
+                base_dir = sys._MEIPASS  # type: ignore  # noqa: PGH003
             else:
                 # Running as script
                 base_dir = os.path.dirname(__file__)
@@ -484,7 +484,7 @@ class FolderProcessorApp:
     def _load_ico_icon(self, ico_path: str) -> None:
         """Loads and sets the ICO icon for the application."""
         # Use iconbitmap for Windows taskbar integration
-        self.root.iconbitmap(ico_path)
+        self.root.iconbitmap(ico_path)  # type: ignore  # noqa: PGH003
         logger.info(f"Loaded ICO icon for taskbar: {ico_path}")
 
         # Also set iconphoto with multiple sizes for better display
@@ -947,7 +947,7 @@ class FolderProcessorApp:
         self.cancel_button.pack(side=tk.RIGHT, padx=(5, 0), ipady=10)
 
         style = ttk.Style()
-        style.configure("Accent.TButton", font=("Helvetica", 10, "bold"))
+        style.configure("Accent.TButton", font=("Helvetica", 10, "bold"))  # type: ignore  # noqa: PGH003
 
     def on_mode_change(self) -> None:
         """Updates UI descriptions and widget states based on the selected operation mode."""
@@ -985,7 +985,7 @@ class FolderProcessorApp:
         for frame in frames_to_toggle:
             for child in frame.winfo_children():
                 if hasattr(child, "configure"):
-                    child.configure(state=new_state)
+                    child.configure(state=new_state)  # type: ignore  # noqa: PGH003
 
     def update_source_info(self) -> None:
         """Updates the source folder information display."""
@@ -1072,7 +1072,7 @@ class FolderProcessorApp:
         self.progress_var.set(0)
         self.update_status("Ready")
 
-    def update_progress(self, value: int, status: str = "") -> None:
+    def update_progress(self, value: float, status: str = "") -> None:
         """Updates the progress bar and status.
 
         Args:
@@ -1381,7 +1381,7 @@ class FolderProcessorApp:
                         "Extraction failed - destination folder was not created",
                     )
 
-                if not os.listdir(extract_dir):
+                if not any(extract_dir_obj.iterdir()):
                     raise Exception("Extraction failed - destination folder is empty")
 
                 # Check if any files were actually extracted
@@ -1445,7 +1445,7 @@ class FolderProcessorApp:
 
             return False, f"Failed to extract '{os.path.basename(archive_path)}': {e}"
 
-    def create_backup(self) -> str | None:
+    def create_backup(self) -> Optional[str]:
         """Creates a backup of source folders before processing.
 
         Returns:
@@ -1528,8 +1528,8 @@ class FolderProcessorApp:
 
                     # Ensure backup path is unique
                     if backup_path.exists():
-                        backup_path = self._get_unique_path(str(backup_path))
-                        backup_path = Path(backup_path)
+                        unique_path = self._get_unique_path(str(backup_path))
+                        backup_path = Path(unique_path)
                 except Exception as e:
                     logger.error(f"Failed to create backup path for {folder}: {e}")
                     failed_backups += 1
@@ -1544,7 +1544,7 @@ class FolderProcessorApp:
                     # Verify backup was created successfully
                     if not backup_path.exists():
                         raise Exception("Backup directory was not created")
-                    if not os.listdir(backup_path):
+                    if not any(backup_path.iterdir()):
                         raise Exception("Backup directory is empty")
 
                 except Exception as e:
@@ -1588,7 +1588,7 @@ class FolderProcessorApp:
                 return None
 
             # Final verification
-            if backup_base.exists() and os.listdir(backup_base):
+            if backup_base.exists() and any(backup_base.iterdir()):
                 logger.info(f"Backup completed successfully: {backup_base}")
                 logger.info(
                     f"Backup summary: {successful_backups} successful, {failed_backups} failed",
@@ -1611,7 +1611,7 @@ class FolderProcessorApp:
                     )
             raise
 
-    def generate_analysis_report(self) -> str | None:
+    def generate_analysis_report(self) -> Optional[str]:
         """Generates a comprehensive analysis report.
 
         Returns:
@@ -1653,8 +1653,8 @@ class FolderProcessorApp:
 
         total_files = 0
         total_size = 0
-        file_types = defaultdict(int)
-        size_by_type = defaultdict(int)
+        file_types: dict[str, int] = defaultdict(int)
+        size_by_type: dict[str, int] = defaultdict(int)
         largest_files = []
         analysis_errors = []
 
@@ -2433,7 +2433,7 @@ class FolderProcessorApp:
             if not Path(archive_path).exists():
                 continue
 
-            success, message = self.safe_extract_archive(archive_path)
+            success, message = self.safe_extract_archive(str(archive_path))
             log.append(message)
 
             if success:
@@ -2667,7 +2667,7 @@ class FolderProcessorApp:
             if self.cancel_operation:
                 break
 
-            files_by_base_name = {}
+            files_by_base_name: dict[str, list[str]] = {}
             for filename in filenames:
                 match = pattern.match(filename)
                 if match:
@@ -2885,7 +2885,7 @@ class FolderProcessorApp:
             Exception: If folder removal fails for other reasons
         """
         try:
-            selected_indices = list(self.source_listbox.curselection())
+            selected_indices = list(self.source_listbox.curselection())  # type: ignore  # noqa: PGH003
             if not selected_indices:
                 messagebox.showinfo("Info", "Please select folders to remove.")
                 return
@@ -3088,7 +3088,7 @@ class FolderProcessorApp:
 
                 # Skip empty folders
                 if not files and not any(
-                    os.listdir(os.path.join(root, d))
+                    any(Path(root, d).iterdir())
                     for d in dirs
                     if os.path.exists(os.path.join(root, d))
                 ):
