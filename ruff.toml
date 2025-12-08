@@ -1,6 +1,6 @@
 # Ruff configuration for aggressive code quality
 
-target-version = "py311"
+target-version = "py39"
 line-length = 100
 
 # Exclude legacy code
@@ -85,6 +85,9 @@ ignore = [
     "E501",    # Line too long (handled by black)
     "EXE001",  # Shebang present but file not executable (Windows compatibility)
     "PLC0415", # Import not at top level (lazy imports for optional dependencies)
+    "FA100",   # Future annotations (not safe for 3.9 runtime type evaluation)
+    "PERF203", # Try-except in loop (performance overhead negligible here)
+    "UP007",   # Allow Union/Optional for 3.9 runtime compatibility
 ]
 
 # Stricter than defaults
