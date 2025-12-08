@@ -412,6 +412,75 @@ class TestFolderProcessorApp:
             assert state["source_folders_exist"] is True  # Based on earlier logic verification
 
 
+    def test_safe_extract_archive(self, mock_root, mock_tk_vars, tmp_path):
+        """Test safe_extract_archive."""
+        # Mock UI creation methods to avoid patching all widgets
+        with patch.object(FolderProcessorApp, "create_scrollable_interface"), \
+             patch.object(FolderProcessorApp, "_setup_application_icon"), \
+             patch("Folders_Tool_r0.ctypes"), \
+             patch("shutil.unpack_archive"), \
+             patch("Folders_Tool_r0.logger"), \
+             patch("shutil.rmtree") as mock_rmtree, \
+             patch("os.path.getsize") as mock_getsize:
+
+            app = FolderProcessorApp(mock_root)
+            # Init manually creates vars, but we need to ensure safe_extract_var is working
+            # Since we didn't patch init, vars are real (mocks from fixture applied globally? No, only mock_tk_vars patches classes)
+            # mock_tk_vars fixture patches tk.BooleanVar etc, so self.safe_extract_var is a Mock.
+            
+            app.safe_extract_var.get.return_value = True
+            
+            # 1. Archive file not found
+            with pytest.raises(FileNotFoundError):
+                app.safe_extract_archive(str(tmp_path / "non_existent.zip"))
+                
+            # 2. Archive file is empty
+            empty_zip = tmp_path / "empty.zip"
+            empty_zip.touch()
+            success, msg = app.safe_extract_archive(str(empty_zip))
+            assert success is False
+            assert "empty" in msg
+            
+            # 3. Successful extraction (mocked)
+            valid_zip = tmp_path / "valid.zip"
+            valid_zip.write_text("content")
+            
+            # Combined mocks for success case
+            with patch("os.access", return_value=True), \
+                 patch("pathlib.Path.unlink") as mock_unlink, \
+                 patch("os.listdir", side_effect=[["extracted_file.txt"], []]) as mock_listdir, \
+                 patch("os.walk") as mock_walk, \
+                 patch("pathlib.Path.exists", return_value=True):
+                 
+                # Mock result for getsize: Archive size > 0, then file sizes
+                mock_getsize.side_effect = lambda p: 100
+                
+                app._get_unique_path = Mock(return_value=str(tmp_path / "valid"))
+                
+                # Setup os.walk to return one file
+                mock_walk.return_value = [
+                    (str(tmp_path / "valid"), [], ["extracted_file.txt"])
+                ]
+                
+                success, msg = app.safe_extract_archive(str(valid_zip))
+                
+                assert success is True
+                assert "Successfully extracted" in msg
+                mock_unlink.assert_called_once()
+
+            # 4. Extraction failure (exception during unpack)
+            with patch("os.access", return_value=True), \
+                 patch("shutil.unpack_archive", side_effect=Exception("Unpack error")):
+                
+                mock_getsize.side_effect = None
+                mock_getsize.return_value = 100
+                
+                success, msg = app.safe_extract_archive(str(valid_zip))
+                assert success is False
+                assert "Failed to extract" in msg
+                mock_rmtree.assert_called()
+
+
     def test_cancel_processing(self, mock_root, mock_tk_vars):
         """Test cancel_processing."""
         with patch("tkinter.ttk.Style"), \
