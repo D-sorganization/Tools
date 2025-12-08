@@ -253,3 +253,127 @@ class TestFolderFixPro:
             app.source_folders = [str(src1), str(src2)]
             
             assert app._count_files() == 3
+
+
+    def test_operation_analyze(self, mock_root, mock_tk_vars, tmp_path):
+        """Test _operation_analyze."""
+        with patch("tkinter.Menu"), \
+             patch("tkinter.ttk.Notebook"), \
+             patch("tkinter.ttk.Frame"), \
+             patch("tkinter.ttk.Label"), \
+             patch("tkinter.ttk.LabelFrame"), \
+             patch("tkinter.ttk.Entry"), \
+             patch("tkinter.ttk.Button"), \
+             patch("tkinter.Text"), \
+             patch("tkinter.ttk.Progressbar"), \
+             patch("tkinter.ttk.Radiobutton"), \
+             patch("tkinter.ttk.Checkbutton"), \
+             patch("tkinter.ttk.Treeview"), \
+             patch("tkinter.ttk.Scrollbar"), \
+             patch("tkinter.Listbox"), \
+             patch("tkinter.ttk.Style"), \
+             patch("folder_fix_pro.ctypes"):
+
+            app = FolderFixPro(mock_root)
+            
+            src = tmp_path / "src"
+            src.mkdir()
+            (src / "f1.txt").write_text("a")
+            (src / "f2.log").write_text("b" * 100)
+            
+            app.source_folders = [str(src)]
+            app._should_include_file = Mock(return_value=True)
+            app._update_progress = Mock()
+            app._show_analysis_results = Mock()
+            app._log_message = Mock()
+            
+            app._operation_analyze()
+            
+            # Verify results
+            assert app._show_analysis_results.called
+            stats = app._show_analysis_results.call_args[0][0]
+            assert stats["total_files"] == 2
+            assert stats["total_size"] == 101
+            assert stats["file_types"][".txt"] == 1
+            assert stats["file_types"][".log"] == 1
+
+    def test_operation_combine(self, mock_root, mock_tk_vars, tmp_path):
+        """Test _operation_combine."""
+        with patch("tkinter.Menu"), \
+             patch("tkinter.ttk.Notebook"), \
+             patch("tkinter.ttk.Frame"), \
+             patch("tkinter.ttk.Label"), \
+             patch("tkinter.ttk.LabelFrame"), \
+             patch("tkinter.ttk.Entry"), \
+             patch("tkinter.ttk.Button"), \
+             patch("tkinter.Text"), \
+             patch("tkinter.ttk.Progressbar"), \
+             patch("tkinter.ttk.Radiobutton"), \
+             patch("tkinter.ttk.Checkbutton"), \
+             patch("tkinter.ttk.Treeview"), \
+             patch("tkinter.ttk.Scrollbar"), \
+             patch("tkinter.Listbox"), \
+             patch("tkinter.ttk.Style"), \
+             patch("folder_fix_pro.ctypes"):
+
+            app = FolderFixPro(mock_root)
+            
+            src = tmp_path / "src"
+            src.mkdir()
+            (src / "f1.txt").write_text("content")
+            
+            dest = tmp_path / "dest"
+            
+            app.source_folders = [str(src)]
+            app.dest_folder = str(dest)
+            app._should_include_file = Mock(return_value=True)
+            app.preview_var.get.return_value = False
+            app._update_progress = Mock()
+            
+            app._operation_combine()
+            
+            assert (dest / "f1.txt").exists()
+            assert (dest / "f1.txt").read_text() == "content"
+
+    def test_operation_flatten(self, mock_root, mock_tk_vars, tmp_path):
+        """Test _operation_flatten."""
+        with patch("tkinter.Menu"), \
+             patch("tkinter.ttk.Notebook"), \
+             patch("tkinter.ttk.Frame"), \
+             patch("tkinter.ttk.Label"), \
+             patch("tkinter.ttk.LabelFrame"), \
+             patch("tkinter.ttk.Entry"), \
+             patch("tkinter.ttk.Button"), \
+             patch("tkinter.Text"), \
+             patch("tkinter.ttk.Progressbar"), \
+             patch("tkinter.ttk.Radiobutton"), \
+             patch("tkinter.ttk.Checkbutton"), \
+             patch("tkinter.ttk.Treeview"), \
+             patch("tkinter.ttk.Scrollbar"), \
+             patch("tkinter.Listbox"), \
+             patch("tkinter.ttk.Style"), \
+             patch("folder_fix_pro.ctypes"):
+
+            app = FolderFixPro(mock_root)
+            
+            src = tmp_path / "src"
+            src.mkdir()
+            sub = src / "sub"
+            sub.mkdir()
+            (sub / "f1.txt").write_text("content")
+            
+            dest = tmp_path / "dest"
+            
+            app.source_folders = [str(src)]
+            app.dest_folder = str(dest)
+            app.organize_type_var.get.return_value = False
+            app.organize_date_var.get.return_value = False
+            app._should_include_file = Mock(return_value=True)
+            app.preview_var.get.return_value = False
+            app._update_progress = Mock()
+            
+            app._operation_flatten()
+            
+            # File should be at root of dest, not in subfolder
+            assert (dest / "f1.txt").exists()
+
