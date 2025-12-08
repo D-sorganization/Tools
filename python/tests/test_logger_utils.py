@@ -1,11 +1,9 @@
 """Tests for logger_utils.py."""
 
-import logging
-import random
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
-import pytest
-from src.logger_utils import set_seeds, DEFAULT_SEED
+from src.logger_utils import DEFAULT_SEED, set_seeds
+
 
 class TestLoggerUtils:
     """Test cases for logger_utils.py."""
@@ -30,6 +28,7 @@ class TestLoggerUtils:
     def test_set_seeds_numpy_missing(self) -> None:
         """Test set_seeds when numpy is missing."""
         import sys
+
         # Use simple patch.dict to safely simulate missing module
         # ModuleNotFoundError (raised when None is in sys.modules) inherits from ImportError
         with patch.dict(sys.modules, {"numpy": None}):

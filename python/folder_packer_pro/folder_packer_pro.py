@@ -1092,7 +1092,9 @@ class FolderPackerPro:
 
         threading.Thread(target=scan, daemon=True).start()
 
-    def _populate_tree(self, files: list[tuple[Path, os.stat_result]], base_path: Path) -> None:
+    def _populate_tree(
+        self, files: list[tuple[Path, os.stat_result]], base_path: Path
+    ) -> None:
         """Populate tree with file list."""
         for file_path, stat in files:
             rel_path = file_path.relative_to(base_path)
