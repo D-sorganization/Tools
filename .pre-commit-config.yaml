@@ -31,7 +31,7 @@ repos:
         exclude: |
           (?x)^(
             python/matlab/|
-            python/javascript/|  # Future-proof: exclude JS/TS directories
+            python/javascript/|  # Exclude python/javascript/ directory (JS/TS code)
             python/archive/|
             python/legacy/|
             python/experimental/|

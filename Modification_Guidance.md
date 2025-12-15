@@ -1,7 +1,3 @@
-Here is the guidance document for upgrading your repository to use the official **Jules Tools CLI** and **API**. You can safe this as `JULES_UPGRADE_GUIDE.md` in your `docs/` folder or root directory.
-
------
-
 # Jules Architecture Upgrade Guide v2.1
 
 **Objective:** Upgrade the "Control Tower" architecture to use the official **Jules Tools CLI** (`@google/jules`) and **REST API**. This improves stability, enables parallel task execution, and aligns with Google's long-term support for the agent.
