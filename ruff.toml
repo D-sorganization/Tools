@@ -1,138 +1,46 @@
-# Ruff configuration for aggressive code quality
+# ruff.toml
+# Configuration for the Ruff linter
+# Matches standards defined in ci-standard.yml
 
-target-version = "py39"
-line-length = 100
+# Target Python 3.11 (matches your CI environment)
+target-version = "py311"
+line-length = 88  # Matches Black standard (88 chars)
 
-# Exclude legacy code
+# Exclude generated code and standard noise
 exclude = [
-    "archive/",
-    "legacy/",
-    "experimental/",
-    "*/migrations/",
-    "*_pb2.py",
-    "matlab/",
-    "output/",
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    "venv",
+    ".env",
+    "node_modules",
+    "*.ipynb",  # Jupyter notebooks often fail standard linting
 ]
 
 [lint]
-# Enable ALL rules then selectively disable
-select = ["ALL"]
-ignore = [
-    "D",      # Docstring checks (we check separately)
-    "COM812", # Missing trailing comma (conflicts with black)
-    "ISC001", # Single line implicit string concat
-    "S101",   # Use of assert (allowed in tests)
-    "T201",   # Print statements (allowed in scripts)
-    "BLE001", # Blind exception catching (too many to fix now)
-    "G004",   # F-string logging (too many to fix now)
-    "DTZ005", # datetime.now() without tz (too many to fix now)
-    "DTZ006", # datetime.fromtimestamp() without tz (too many to fix now)
-    "ANN201", # Missing return type annotation for public function
-    "ANN202", # Missing return type annotation for private function
-    "ANN204", # Missing return type annotation for __init__
-    "ANN001", # Missing type annotation for function argument
-    "INP001", # Missing __init__.py (intentional namespace packages)
-    "ICN003", # Banned import from typing (needed for some cases)
-    "S603",   # Subprocess call (build scripts need this)
-    "C901",   # Too complex (refactoring needed)
-    "PLR0911", # Too many return statements (refactoring needed)
-    "PLR0912", # Too many branches (refactoring needed)
-    "PLR0915", # Too many statements (refactoring needed)
-    "TRY400",  # Use logging.exception (too many to fix now)
-    "SIM117",  # Multiple with statements (readability)
-    "NPY002",  # Legacy numpy random (intentional)
-    "PLR2004", # Magic numbers in tests (allowed)
-    "RET505",  # Superfluous else return (readability)
-    "RET507",  # Superfluous else continue (readability)
-    "TRY300",  # Try consider else (readability)
-    "TRY004",  # Type check without type error (readability)
-    "SIM102",  # Collapsible if (readability)
-    "SIM108",  # If-else block instead of if-exp (readability)
-    "SIM113",  # Enumerate for loop (readability)
-    "PTH103",  # os.makedirs (pathlib preferred but acceptable)
-    "PTH120",  # os.path.dirname (pathlib preferred but acceptable)
-    "PTH122",  # os.path.splitext (pathlib preferred but acceptable)
-    "PTH100",  # os.path.abspath (pathlib preferred but acceptable)
-    "PTH204",  # os.path.getmtime (pathlib preferred but acceptable)
-    "RUF001",  # Ambiguous unicode character (emoji in strings)
-    "S606",    # Start process with no shell (build scripts)
-    "FBT003",  # Boolean positional value (API compatibility)
-    "ARG002",  # Unused method argument (API compatibility)
-    "ARG001",  # Unused function argument (API compatibility)
-    "ARG005",  # Unused lambda argument (API compatibility)
-    "ANN206",  # Missing return type class method (too many to fix)
-    "S110",    # Try-except-pass (intentional)
-    "FBT001",  # Boolean type hint positional (API compatibility)
-    "FBT002",  # Boolean default value positional (API compatibility)
-    "PIE810",  # Multiple starts/ends with (readability)
-    "SLF001",  # Private member access (intentional)
-    "PERF401", # Manual list comprehension (readability)
-    "UP038",   # Non-pep604 isinstance (readability)
-    "EM101",   # Raw string in exception (readability)
-    "PTH118",  # os.path.join (pathlib preferred but acceptable)
-    "PTH123",  # builtin open (pathlib preferred but acceptable)
-    "PTH110",  # os.path.exists (pathlib preferred but acceptable)
-    "PLR2004", # Magic value comparison (too many to fix)
-    "TRY301",  # Raise within try (intentional)
-    "B007",    # Unused loop control variable (intentional)
-    "TRY002",  # Raise vanilla class (intentional)
-    "PTH119",  # os.path.basename (pathlib preferred but acceptable)
-    "B904",    # Raise without from inside except (intentional)
-    "PTH202",  # os.path.getsize (pathlib preferred but acceptable)
-    "S605",    # Start process with shell (needed for cross-platform)
-    "TRY003",  # Raise vanilla args (intentional)
-    "EM102",   # F-string in exception (readability)
-    "E501",    # Line too long (handled by black)
-    "EXE001",  # Shebang present but file not executable (Windows compatibility)
-    "PLC0415", # Import not at top level (lazy imports for optional dependencies)
-    "FA100",   # Future annotations (not safe for 3.9 runtime type evaluation)
-    "PERF203", # Try-except in loop (performance overhead negligible here)
-    "UP007",   # Allow Union/Optional for 3.9 runtime compatibility
-]
+# Enable specific rule sets:
+# E = pycodestyle errors
+# F = Pyflakes (Logic errors)
+# W = pycodestyle warnings
+# I = isort (Import sorting)
+# B = flake8-bugbear (Catches likely bugs/traps)
+# UP = pyupgrade (Modernizes old Python syntax)
+select = ["E", "F", "W", "I", "B", "UP"]
 
-# Stricter than defaults
-fixable = ["ALL"]
-unfixable = []
+# Ignore:
+# D = pydocstyle (We let the 'Doc-Scribe' agent handle docstrings, so we don't lint them strictly here)
+ignore = ["D"]
 
-# Flake8 settings
-flake8-quotes = {inline-quotes = "double", multiline-quotes = "double", docstring-quotes = "double"}
-flake8-import-conventions = {banned-from = ["typing"]}
-flake8-tidy-imports = {banned-module-level-imports = ["numpy", "pandas"]}
-
-# Complexity settings
-mccabe = {max-complexity = 10}
-pylint = {max-args = 5, max-branches = 10, max-returns = 3, max-statements = 30}
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [lint.per-file-ignores]
-# Tests can be more relaxed
-"test_*.py" = [
-    "S101",   # Use of assert
-    "PLR2004", # Magic numbers allowed in tests
-    "PT001",  # pytest.fixture() vs @pytest.fixture (version-dependent)
-]
-"**/tests/*.py" = [
-    "S101",
-    "PLR2004",
-    "PT001",  # pytest.fixture() vs @pytest.fixture (version-dependent)
-]
-"**/test_*.py" = [
-    "S101",
-    "PLR2004",
-    "PT001",  # pytest.fixture() vs @pytest.fixture (version-dependent)
-]
-# Build scripts - allow prints and subprocess
-"**/build_exe.py" = [
-    "T201",   # Print statements
-    "S603",   # Subprocess calls
-    "ANN201", # Missing return type annotations
-]
-# Quality check scripts - allow complexity
-"quality_check_script.py" = [
-    "C901",   # Too complex (intentional)
-    "PLR0911", # Too many return statements (intentional)
-    "PLR0915", # Too many statements (intentional)
-]
-"tools/matlab_utilities/scripts/matlab_quality_check.py" = [
-    "PLR0911", # Too many return statements (intentional)
-    "S603",   # Subprocess calls needed
-]
+# Ignore "unused imports" in __init__.py files (common pattern)
+"__init__.py" = ["F401"]
+# Allow assertions in tests
+"tests/*" = ["S101"]
+
+[lint.isort]
+# Tells Ruff how to group your own code vs. libraries
+known-first-party = ["src", "games", "tools"]
