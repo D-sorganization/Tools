@@ -43,10 +43,11 @@ repos:
           )
 
   # Jupyter notebook cleaner
-  - repo: https://github.com/kynan/nbstripout
-    rev: 0.7.1
-    hooks:
-      - id: nbstripout
+  # DISABLED due to corrupted notebook issues (re-enabling requires careful verification)
+  # - repo: https://github.com/kynan/nbstripout
+  #   rev: 0.7.1
+  #   hooks:
+  #     - id: nbstripout
 
   # Local quality checks
   - repo: local
