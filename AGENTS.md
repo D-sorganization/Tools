@@ -2,7 +2,7 @@
 
 ## 🤖 Agent Personas & Directives
 
-**Audience:** This document is the authoritative guide for **Jules**, **Antigravity**, and any other AI agents working in this repository.
+**Audience:** This document is the authoritative guide for AI agents working in this repository.
 
 **Core Mission:**
 
@@ -14,15 +14,15 @@
 
 ## 🛡️ Safety & Security (CRITICAL)
 
-1.  **Secrets Management**:
-    - **NEVER** commit API keys, passwords, tokens, or database connection strings.
-    - Use `.env` files and `python-dotenv` for secrets.
-    - Create `.env.example` templates for required environment variables.
-2.  **Code Review**:
-    - Review all generated code for security vulnerabilities (SQL injection, unsafe file I/O, etc.).
-    - Do not accept code you do not understand.
-3.  **Data Protection**:
-    - Do not commit large binary files (>50MB) or personal data.
+1. **Secrets Management**:
+   - **NEVER** commit API keys, passwords, tokens, or database connection strings.
+   - Use `.env` files and `python-dotenv` for secrets.
+   - Create `.env.example` templates for required environment variables.
+2. **Code Review**:
+   - Review all generated code for security vulnerabilities (SQL injection, unsafe file I/O, etc.).
+   - Do not accept code you do not understand.
+3. **Data Protection**:
+   - Do not commit large binary files (>50MB) or personal data.
 
 ---
 
@@ -175,3 +175,60 @@ If sensitive data is accidentally committed:
 1.  **Stop** immediately.
 2.  Use `git filter-branch` or BFG Repo-Cleaner to remove the file from history.
 3.  Force push only if necessary and coordinated with the team.
+
+---
+
+## 🏗️ System Architecture & Agent Roles
+
+**Reference:** [JULES_ARCHITECTURE.md](JULES_ARCHITECTURE.md)
+
+This section defines the active agents within the Jules "Control Tower" Architecture. All agents must operate within their defined scope.
+
+### 1. The Control Tower (Orchestrator)
+**Role:** Air Traffic Controller
+**Workflow:** `.github/workflows/jules-control-tower.yml`
+**Responsibilities:**
+-  **Sole Trigger:** The only agent that listens to GitHub events (Push, PR, Schedule).
+-  **Decision Maker:** Analyzes the event context (Triage) and dispatches the appropriate specialized worker.
+-  **Loop Prevention:** Enforces `if: github.actor != 'jules-bot'` to prevent infinite recursion.
+
+### 2. Auto-Repair (Medic)
+**Role:** Fixer of Broken Builds
+**Workflow:** `.github/workflows/jules-auto-repair.yml`
+**Triggered By:** CI Failure (Standard CI)
+**Capabilities:**
+-  **Read:** CI Failure Logs
+-  **Write:** Fixes to syntax, imports, and simple logic errors.
+-  **Constraint:** limited retries (max 2) to prevent "flailing".
+
+### 3. Test-Generator (Architect)
+**Role:** Quality Assurance Engineer
+**Workflow:** `.github/workflows/jules-test-generator.yml`
+**Triggered By:** New PR with `.py` changes
+**Capabilities:**
+-  **Write:** New test files in `tests/`.
+-  **Constraint:** Must not modify existing application code, only add tests.
+
+### 4. Doc-Scribe (Librarian)
+**Role:** Documentation Maintainer
+**Workflow:** `.github/workflows/jules-documentation-scribe.yml`
+**Triggered By:** Push to `main`
+**Capabilities:**
+-  **Write:** Updates to `docs/` and markdown files.
+-  **Mode:** "CodeWiki" - treats the codebase as a living encyclopedia.
+
+### 5. Scientific-Auditor (The Professor)
+**Role:** Peer Reviewer
+**Workflow:** `.github/workflows/jules-scientific-auditor.yml`
+**Triggered By:** Nightly Schedule
+**Capabilities:**
+-  **Read-Only:** CANNOT modify code.
+-  **Output:** Comments on PRs or Issues regarding mathematical correctness and physics fidelity.
+
+### 6. Conflict-Fix (Diplomat)
+**Role:** Merge Conflict Resolver
+**Workflow:** `.github/workflows/jules-conflict-fix.yml`
+**Triggered By:** Manual dispatch or specific conflict events (if configured)
+**Capabilities:**
+-  **Write:** Merge resolution commits.
+-  **Constraint:** Prioritizes "Incoming" changes unless specified otherwise.
