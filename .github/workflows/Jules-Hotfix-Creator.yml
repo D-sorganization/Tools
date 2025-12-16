@@ -30,7 +30,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: "20" }
       - run: npm install -g @google/jules
-      - run: jules auth --token ${{ secrets.JULES_API_TOKEN }}
+      - run: jules auth --token ${{ secrets.JULES_API_KEY }}
 
       - name: Create Hotfix Branch
         id: hotfix
