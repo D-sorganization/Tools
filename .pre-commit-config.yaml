@@ -55,7 +55,7 @@ repos:
       # Main quality gate
       - id: quality-check
         name: Quality check (no placeholders/magic numbers)
-        entry: python tools/scientific_auditor.py
+        entry: python tools/code_quality_check.py
         language: python
         pass_filenames: false
         always_run: true
