@@ -44,7 +44,7 @@ jobs:
 
       - name: Authenticate Jules
         if: steps.target.outputs.has_issues == 'true'
-        run: jules auth --token ${{ secrets.JULES_API_TOKEN }}
+        run: jules auth --token ${{ secrets.JULES_API_KEY }}
 
       - name: Dispatch Jules
         if: steps.target.outputs.has_issues == 'true'

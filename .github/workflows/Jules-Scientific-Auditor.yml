@@ -24,7 +24,7 @@ jobs:
 
       - name: Jules Analysis (Comment Only)
         env:
-          JULES_TOKEN: ${{ secrets.JULES_API_TOKEN }}
+          JULES_TOKEN: ${{ secrets.JULES_API_KEY }}
         run: |
           jules auth --token $JULES_TOKEN
           # FIX: Explicit Read-Only instruction

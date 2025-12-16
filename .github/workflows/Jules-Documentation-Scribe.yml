@@ -43,7 +43,7 @@ jobs:
         if: steps.changes.outputs.files != ''
         run: |
           npm install -g @google/jules
-          jules auth --token ${{ secrets.JULES_API_TOKEN }}
+          jules auth --token ${{ secrets.JULES_API_KEY }}
 
       - name: Create Docs Branch
         if: steps.changes.outputs.files != ''
