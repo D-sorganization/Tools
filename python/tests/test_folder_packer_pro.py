@@ -8,10 +8,10 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-# Add folder_packer_pro directory to path
-sys.path.append(str(Path(__file__).parent.parent / "folder_packer_pro"))
+# Add python directory to path
+sys.path.append(str(Path(__file__).parent.parent))
 
-from folder_packer_pro import (
+from folder_packer_pro.folder_packer_pro import (
     EncryptionManager,
     FolderPackerPro,
     PackageManifest,
@@ -84,20 +84,20 @@ class TestPackageManifest:
 class TestFolderPackerPro:
     """Test cases for FolderPackerPro GUI class."""
 
-    @pytest.fixture  # type: ignore  # noqa: PGH003
+    @pytest.fixture
     def mock_root(self) -> Mock:
         """Mock Tkinter root."""
         return Mock()
 
-    @pytest.fixture  # type: ignore  # noqa: PGH003
+    @pytest.fixture
     def mock_tk_vars(self) -> Generator[dict[str, Mock], None, None]:
         """Mock Tkinter variables."""
-        with patch("tkinter.BooleanVar") as mock_bool, patch(
-            "tkinter.StringVar"
-        ) as mock_string, patch("tkinter.DoubleVar") as mock_double, patch(
-            "tkinter.IntVar"
-        ) as mock_int:
-
+        with (
+            patch("tkinter.BooleanVar") as mock_bool,
+            patch("tkinter.StringVar") as mock_string,
+            patch("tkinter.DoubleVar") as mock_double,
+            patch("tkinter.IntVar") as mock_int,
+        ):
             mock_bool.return_value.get.return_value = False
             mock_string.return_value.get.return_value = ""
             mock_double.return_value.get.return_value = 0.0
@@ -112,30 +112,23 @@ class TestFolderPackerPro:
 
     def test_init(self, mock_root: Mock, mock_tk_vars: dict[str, Mock]) -> None:
         """Test initialization of FolderPackerPro."""
-        with patch("tkinter.Menu"), patch("tkinter.ttk.Notebook"), patch(
-            "tkinter.ttk.Frame"
-        ), patch("tkinter.ttk.Label"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.scrolledtext.ScrolledText"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Treeview"
-        ), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch(
-            "tkinter.Text"
-        ), patch(
-            "tkinter.ttk.Style"
+        with (
+            patch("tkinter.Menu"),
+            patch("tkinter.ttk.Notebook"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.scrolledtext.ScrolledText"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Treeview"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.Text"),
+            patch("tkinter.ttk.Style"),
         ):
-
             app = FolderPackerPro(mock_root)
 
             assert app.root == mock_root
@@ -146,35 +139,28 @@ class TestFolderPackerPro:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock]
     ) -> None:
         """Test _should_exclude logic."""
-        with patch("tkinter.Menu"), patch("tkinter.ttk.Notebook"), patch(
-            "tkinter.ttk.Frame"
-        ), patch("tkinter.ttk.Label"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.scrolledtext.ScrolledText"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Treeview"
-        ), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch(
-            "tkinter.Text"
-        ), patch(
-            "tkinter.ttk.Style"
+        with (
+            patch("tkinter.Menu"),
+            patch("tkinter.ttk.Notebook"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.scrolledtext.ScrolledText"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Treeview"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.Text"),
+            patch("tkinter.ttk.Style"),
         ):
-
             app = FolderPackerPro(mock_root)
 
             # Setup vars
-            app.include_git_var.get.return_value = False  # type: ignore  # noqa: PGH003
-            app.exclude_patterns = ["*.pyc", "dist"]  # type: ignore  # noqa: PGH003
+            app.include_git_var.get.return_value = False
+            app.exclude_patterns = ["*.pyc", "dist"]
 
             # Test git exclusion
             assert app._should_exclude(Path("path/to/.git/config")) is True
@@ -190,40 +176,33 @@ class TestFolderPackerPro:
             assert app._should_exclude(Path("path/to/source.py")) is False
 
             # Test git inclusion
-            app.include_git_var.get.return_value = True  # type: ignore  # noqa: PGH003
+            app.include_git_var.get.return_value = True
             assert app._should_exclude(Path("path/to/.git/config")) is False
 
     def test_collect_folder_stats(
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock], tmp_path: Path
     ) -> None:
         """Test _collect_folder_stats."""
-        with patch("tkinter.Menu"), patch("tkinter.ttk.Notebook"), patch(
-            "tkinter.ttk.Frame"
-        ), patch("tkinter.ttk.Label"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.scrolledtext.ScrolledText"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Treeview"
-        ), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch(
-            "tkinter.Text"
-        ), patch(
-            "tkinter.ttk.Style"
+        with (
+            patch("tkinter.Menu"),
+            patch("tkinter.ttk.Notebook"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.scrolledtext.ScrolledText"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Treeview"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.Text"),
+            patch("tkinter.ttk.Style"),
         ):
-
             app = FolderPackerPro(mock_root)
-            app.include_git_var.get.return_value = False  # type: ignore  # noqa: PGH003
-            app.exclude_patterns = []  # type: ignore  # noqa: PGH003
+            app.include_git_var.get.return_value = False
+            app.exclude_patterns = []
 
             # Create dummy structure
 
@@ -250,36 +229,28 @@ class TestFolderPackerPro:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock], tmp_path: Path
     ) -> None:
         """Test _scan_folder."""
-        with patch("tkinter.Menu"), patch("tkinter.ttk.Notebook"), patch(
-            "tkinter.ttk.Frame"
-        ), patch("tkinter.ttk.Label"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.scrolledtext.ScrolledText"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Treeview"
-        ), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch(
-            "tkinter.Text"
-        ), patch(
-            "tkinter.ttk.Style"
-        ), patch(
-            "tkinter.messagebox.showerror"
-        ) as mock_error:
-
+        with (
+            patch("tkinter.Menu"),
+            patch("tkinter.ttk.Notebook"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.scrolledtext.ScrolledText"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Treeview"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.Text"),
+            patch("tkinter.ttk.Style"),
+            patch("tkinter.messagebox.showerror") as mock_error,
+        ):
             app = FolderPackerPro(mock_root)
             app.pack_source_entry = Mock()
-            app._collect_folder_stats = Mock(return_value={})  # type: ignore  # noqa: PGH003
-            app._display_stats = Mock()  # type: ignore  # noqa: PGH003
+            app._collect_folder_stats = Mock(return_value={})
+            app._display_stats = Mock()
 
             # Empty source
             app.pack_source_entry.get.return_value = ""
@@ -296,9 +267,10 @@ class TestFolderPackerPro:
 
             # Mock root.after to execute immediately
             def immediate_after(delay: object, callback: Callable[[], None]) -> None:
+                """Execute callback immediately."""
                 callback()
 
-            app.root.after.side_effect = immediate_after  # type: ignore  # noqa: PGH003
+            app.root.after.side_effect = immediate_after
 
             app._scan_folder()
             app._collect_folder_stats.assert_called_with(Path(str(tmp_path)))
@@ -308,43 +280,33 @@ class TestFolderPackerPro:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock], tmp_path: Path
     ) -> None:
         """Test browse handlers."""
-        with patch("tkinter.Menu"), patch("tkinter.ttk.Notebook"), patch(
-            "tkinter.ttk.Frame"
-        ), patch("tkinter.ttk.Label"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.scrolledtext.ScrolledText"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Treeview"
-        ), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch(
-            "tkinter.Text"
-        ), patch(
-            "tkinter.ttk.Style"
-        ), patch(
-            "tkinter.filedialog.askdirectory"
-        ) as mock_askdir, patch(
-            "tkinter.filedialog.asksaveasfilename"
-        ) as mock_save, patch(
-            "tkinter.filedialog.askopenfilename"
-        ) as mock_open:
-
+        with (
+            patch("tkinter.Menu"),
+            patch("tkinter.ttk.Notebook"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.scrolledtext.ScrolledText"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Treeview"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.Text"),
+            patch("tkinter.ttk.Style"),
+            patch("tkinter.filedialog.askdirectory") as mock_askdir,
+            patch("tkinter.filedialog.asksaveasfilename") as mock_save,
+            patch("tkinter.filedialog.askopenfilename") as mock_open,
+        ):
             app = FolderPackerPro(mock_root)
             app.pack_source_entry = Mock()
             app.pack_output_entry = Mock()
             app.unpack_source_entry = Mock()
             app.unpack_dest_entry = Mock()
-            app._scan_folder = Mock()  # type: ignore  # noqa: PGH003
-            app._log_message = Mock()  # type: ignore  # noqa: PGH003
+            app._scan_folder = Mock()
+            app._log_message = Mock()
 
             # _browse_pack_source
             mock_askdir.return_value = str(tmp_path)

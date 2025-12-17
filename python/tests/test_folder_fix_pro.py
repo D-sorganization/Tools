@@ -97,20 +97,20 @@ class TestOperationReport:
 class TestFolderFixPro:
     """Test cases for FolderFixPro GUI class."""
 
-    @pytest.fixture  # type: ignore  # noqa: PGH003
+    @pytest.fixture
     def mock_root(self) -> Mock:
         """Mock Tkinter root."""
         return Mock()
 
-    @pytest.fixture  # type: ignore  # noqa: PGH003
+    @pytest.fixture
     def mock_tk_vars(self) -> Generator[dict[str, Mock], None, None]:
         """Mock Tkinter variables."""
-        with patch("tkinter.BooleanVar") as mock_bool, patch(
-            "tkinter.StringVar"
-        ) as mock_string, patch("tkinter.DoubleVar") as mock_double, patch(
-            "tkinter.IntVar"
-        ) as mock_int:
-
+        with (
+            patch("tkinter.BooleanVar") as mock_bool,
+            patch("tkinter.StringVar") as mock_string,
+            patch("tkinter.DoubleVar") as mock_double,
+            patch("tkinter.IntVar") as mock_int,
+        ):
             mock_bool.return_value.get.return_value = False
             mock_string.return_value.get.return_value = ""
             mock_double.return_value.get.return_value = 0.0
@@ -125,32 +125,24 @@ class TestFolderFixPro:
 
     def test_init(self, mock_root: Mock, mock_tk_vars: dict[str, Mock]) -> None:
         """Test initialization of FolderFixPro."""
-        with patch("tkinter.Menu"), patch("tkinter.ttk.Notebook"), patch(
-            "tkinter.ttk.Frame"
-        ), patch("tkinter.ttk.Label"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.Text"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Treeview"
-        ), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch(
-            "tkinter.Listbox"
-        ), patch(
-            "tkinter.ttk.Style"
-        ), patch(
-            "folder_fix_pro.ctypes"
+        with (
+            patch("tkinter.Menu"),
+            patch("tkinter.ttk.Notebook"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.Text"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Treeview"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.Listbox"),
+            patch("tkinter.ttk.Style"),
+            patch("folder_fix_pro.ctypes"),
         ):
-
             app = FolderFixPro(mock_root)
 
             assert app.root == mock_root
@@ -161,32 +153,24 @@ class TestFolderFixPro:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock], tmp_path: Path
     ) -> None:
         """Test _should_include_file logic."""
-        with patch("tkinter.Menu"), patch("tkinter.ttk.Notebook"), patch(
-            "tkinter.ttk.Frame"
-        ), patch("tkinter.ttk.Label"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.Text"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Treeview"
-        ), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch(
-            "tkinter.Listbox"
-        ), patch(
-            "tkinter.ttk.Style"
-        ), patch(
-            "folder_fix_pro.ctypes"
+        with (
+            patch("tkinter.Menu"),
+            patch("tkinter.ttk.Notebook"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.Text"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Treeview"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.Listbox"),
+            patch("tkinter.ttk.Style"),
+            patch("folder_fix_pro.ctypes"),
         ):
-
             app = FolderFixPro(mock_root)
 
             # Setup defaults
@@ -240,32 +224,24 @@ class TestFolderFixPro:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock], tmp_path: Path
     ) -> None:
         """Test _count_files logic."""
-        with patch("tkinter.Menu"), patch("tkinter.ttk.Notebook"), patch(
-            "tkinter.ttk.Frame"
-        ), patch("tkinter.ttk.Label"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.Text"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Treeview"
-        ), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch(
-            "tkinter.Listbox"
-        ), patch(
-            "tkinter.ttk.Style"
-        ), patch(
-            "folder_fix_pro.ctypes"
+        with (
+            patch("tkinter.Menu"),
+            patch("tkinter.ttk.Notebook"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.Text"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Treeview"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.Listbox"),
+            patch("tkinter.ttk.Style"),
+            patch("folder_fix_pro.ctypes"),
         ):
-
             app = FolderFixPro(mock_root)
 
             # Create structure
@@ -293,32 +269,24 @@ class TestFolderFixPro:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock], tmp_path: Path
     ) -> None:
         """Test _operation_analyze."""
-        with patch("tkinter.Menu"), patch("tkinter.ttk.Notebook"), patch(
-            "tkinter.ttk.Frame"
-        ), patch("tkinter.ttk.Label"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.Text"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Treeview"
-        ), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch(
-            "tkinter.Listbox"
-        ), patch(
-            "tkinter.ttk.Style"
-        ), patch(
-            "folder_fix_pro.ctypes"
+        with (
+            patch("tkinter.Menu"),
+            patch("tkinter.ttk.Notebook"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.Text"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Treeview"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.Listbox"),
+            patch("tkinter.ttk.Style"),
+            patch("folder_fix_pro.ctypes"),
         ):
-
             app = FolderFixPro(mock_root)
 
             src = tmp_path / "src"
@@ -327,10 +295,10 @@ class TestFolderFixPro:
             (src / "f2.log").write_text("b" * 100)
 
             app.source_folders = [str(src)]
-            app._should_include_file = Mock(return_value=True)  # type: ignore  # noqa: PGH003
-            app._update_progress = Mock()  # type: ignore  # noqa: PGH003
-            app._show_analysis_results = Mock()  # type: ignore  # noqa: PGH003
-            app._log_message = Mock()  # type: ignore  # noqa: PGH003
+            app._should_include_file = Mock(return_value=True)
+            app._update_progress = Mock()
+            app._show_analysis_results = Mock()
+            app._log_message = Mock()
 
             app._operation_analyze()
 
@@ -346,32 +314,24 @@ class TestFolderFixPro:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock], tmp_path: Path
     ) -> None:
         """Test _operation_combine."""
-        with patch("tkinter.Menu"), patch("tkinter.ttk.Notebook"), patch(
-            "tkinter.ttk.Frame"
-        ), patch("tkinter.ttk.Label"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.Text"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Treeview"
-        ), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch(
-            "tkinter.Listbox"
-        ), patch(
-            "tkinter.ttk.Style"
-        ), patch(
-            "folder_fix_pro.ctypes"
+        with (
+            patch("tkinter.Menu"),
+            patch("tkinter.ttk.Notebook"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.Text"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Treeview"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.Listbox"),
+            patch("tkinter.ttk.Style"),
+            patch("folder_fix_pro.ctypes"),
         ):
-
             app = FolderFixPro(mock_root)
 
             src = tmp_path / "src"
@@ -382,9 +342,9 @@ class TestFolderFixPro:
 
             app.source_folders = [str(src)]
             app.dest_folder = str(dest)
-            app._should_include_file = Mock(return_value=True)  # type: ignore  # noqa: PGH003
-            app.preview_var.get.return_value = False  # type: ignore  # noqa: PGH003
-            app._update_progress = Mock()  # type: ignore  # noqa: PGH003
+            app._should_include_file = Mock(return_value=True)
+            app.preview_var.get.return_value = False
+            app._update_progress = Mock()
 
             app._operation_combine()
 
@@ -395,32 +355,24 @@ class TestFolderFixPro:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock], tmp_path: Path
     ) -> None:
         """Test _operation_flatten."""
-        with patch("tkinter.Menu"), patch("tkinter.ttk.Notebook"), patch(
-            "tkinter.ttk.Frame"
-        ), patch("tkinter.ttk.Label"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.Text"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Treeview"
-        ), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch(
-            "tkinter.Listbox"
-        ), patch(
-            "tkinter.ttk.Style"
-        ), patch(
-            "folder_fix_pro.ctypes"
+        with (
+            patch("tkinter.Menu"),
+            patch("tkinter.ttk.Notebook"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.Text"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Treeview"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.Listbox"),
+            patch("tkinter.ttk.Style"),
+            patch("folder_fix_pro.ctypes"),
         ):
-
             app = FolderFixPro(mock_root)
 
             src = tmp_path / "src"
@@ -433,11 +385,11 @@ class TestFolderFixPro:
 
             app.source_folders = [str(src)]
             app.dest_folder = str(dest)
-            app.organize_type_var.get.return_value = False  # type: ignore  # noqa: PGH003
-            app.organize_date_var.get.return_value = False  # type: ignore  # noqa: PGH003
-            app._should_include_file = Mock(return_value=True)  # type: ignore  # noqa: PGH003
-            app.preview_var.get.return_value = False  # type: ignore  # noqa: PGH003
-            app._update_progress = Mock()  # type: ignore  # noqa: PGH003
+            app.organize_type_var.get.return_value = False
+            app.organize_date_var.get.return_value = False
+            app._should_include_file = Mock(return_value=True)
+            app.preview_var.get.return_value = False
+            app._update_progress = Mock()
 
             app._operation_flatten()
 

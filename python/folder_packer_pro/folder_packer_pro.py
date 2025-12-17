@@ -27,7 +27,7 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from tkinter import filedialog, messagebox, scrolledtext, simpledialog, ttk
-from typing import Any, Final, Union
+from typing import Any, Final
 
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
@@ -228,6 +228,7 @@ class PackageManifest:
     """Manage package manifest with metadata."""
 
     def __init__(self) -> None:
+        """Initialize the manifest."""
         self.created_at = datetime.now()
         self.files: list[dict[str, Any]] = []
         self.metadata: dict[str, Any] = {}
@@ -249,7 +250,7 @@ class PackageManifest:
     def set_metadata(
         self,
         key: str,
-        value: Union[str, float, bool, None, list[Any], dict[str, Any]],
+        value: str | float | bool | None | list[Any] | dict[str, Any],
     ) -> None:
         """Set metadata value."""
         self.metadata[key] = value
@@ -283,6 +284,7 @@ class FolderPackerPro:
     """Enhanced professional folder packing application."""
 
     def __init__(self, root: tk.Tk) -> None:
+        """Initialize the application."""
         self.root = root
         self.root.title("Folder Packer Pro v2.0 - Professional Project Packager")
         self.root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
@@ -909,7 +911,7 @@ class FolderPackerPro:
 
         # Configure ttk styles
         style = ttk.Style()
-        style.configure("Accent.TButton", font=("Segoe UI", 10, "bold"), padding=10)  # type: ignore[no-untyped-call]
+        style.configure("Accent.TButton", font=("Segoe UI", 10, "bold"), padding=10)
 
         # Update root background
         self.root.configure(bg=theme["bg"])
@@ -995,6 +997,7 @@ class FolderPackerPro:
 
         # Scan in background
         def scan() -> None:
+            """Background task to scan folder statistics."""
             stats = self._collect_folder_stats(source_path)
             self.root.after(0, lambda: self._display_stats(stats))
 
@@ -1070,6 +1073,7 @@ class FolderPackerPro:
             return
 
         def scan() -> None:
+            """Background task to scan files for preview."""
             files = []
             for root, dirs, filenames in os.walk(source_path):
                 # Filter excluded directories
@@ -1336,9 +1340,11 @@ class FolderPackerPro:
                     ).decode("utf-8")
 
                     progress = ((i + 1) / total_files) * 100
-                    self.root.after(0, lambda p=progress: self.pack_progress_var.set(float(p)))  # type: ignore[misc]
+                    self.root.after(
+                        0, lambda p=progress: self.pack_progress_var.set(float(p))
+                    )  # type: ignore[misc]
                     self._update_pack_status(
-                        f"Packing {file_path.name} ({i+1}/{total_files})",
+                        f"Packing {file_path.name} ({i + 1}/{total_files})",
                     )
 
                 except Exception as e:
@@ -1500,7 +1506,7 @@ class FolderPackerPro:
                         lambda p=progress: self.unpack_progress_var.set(float(p)),  # type: ignore[misc]
                     )
                     self._update_unpack_status(
-                        f"Extracting {Path(rel_path).name} ({i+1}/{total_files})",
+                        f"Extracting {Path(rel_path).name} ({i + 1}/{total_files})",
                     )
 
                 except Exception as e:
@@ -1615,6 +1621,7 @@ class FolderPackerPro:
         btn_frame.pack(fill="x", padx=PADDING_MEDIUM, pady=PADDING_SMALL)
 
         def add_pattern() -> None:
+            """Add a new exclusion pattern."""
             pattern = simpledialog.askstring(
                 "Add Pattern",
                 "Enter exclusion pattern:",
@@ -1624,6 +1631,7 @@ class FolderPackerPro:
                 listbox.insert("end", pattern)
 
         def remove_pattern() -> None:
+            """Remove selected exclusion pattern."""
             selection = listbox.curselection()  # type: ignore[no-untyped-call]
             if selection:
                 pattern = listbox.get(selection[0])
@@ -1631,6 +1639,7 @@ class FolderPackerPro:
                 listbox.delete(selection[0])
 
         def reset_patterns() -> None:
+            """Reset exclusion patterns to defaults."""
             if messagebox.askyesno("Reset", "Reset to default exclusion patterns?"):
                 self.exclude_patterns = set(DEFAULT_EXCLUDE_PATTERNS)
                 listbox.delete(0, "end")
@@ -1727,6 +1736,7 @@ class FolderPackerPro:
         log_entry = f"[{timestamp}] {message}\n"
 
         def update_log() -> None:
+            """Update log widget from thread."""
             self.log_text.configure(state="normal")
             self.log_text.insert("end", log_entry, level)
             self.log_text.see("end")

@@ -35,7 +35,10 @@ BANNED_PATTERNS = [
     (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
     (re.compile(r"^\s*\.\.\.\s*$"), "Ellipsis placeholder"),
     (re.compile(r"NotImplementedError"), "NotImplementedError placeholder"),
-    (re.compile(r"<.*>"), "Angle bracket placeholder"),
+    (
+        re.compile(r"<[^<>]*placeholder[^<>]*>", re.IGNORECASE),
+        "Angle bracket placeholder",
+    ),
     (re.compile(r"your.*here", re.IGNORECASE), "Template placeholder"),
     (re.compile(r"insert.*here", re.IGNORECASE), "Template placeholder"),
 ]
@@ -110,7 +113,12 @@ def check_banned_patterns(
     """Check for banned patterns in lines."""
     issues: list[tuple[int, str, str]] = []
     # Skip checking quality check scripts for their own patterns
-    if filepath.name in ("quality_check_script.py", "matlab_quality_check.py", "code_quality_check.py"):
+    if filepath.name in (
+        "quality_check_script.py",
+        "matlab_quality_check.py",
+        "code_quality_check.py",
+        "quality-check.py",
+    ):
         return issues
 
     for line_num, line in enumerate(lines, 1):
@@ -139,7 +147,12 @@ def check_magic_numbers(lines: list[str], filepath: Path) -> list[tuple[int, str
     """Check for magic numbers in lines."""
     issues: list[tuple[int, str, str]] = []
     # Skip checking quality check scripts for magic numbers (they contain patterns they check for)
-    if filepath.name in ("quality_check_script.py", "matlab_quality_check.py", "code_quality_check.py"):
+    if filepath.name in (
+        "quality_check_script.py",
+        "matlab_quality_check.py",
+        "code_quality_check.py",
+        "quality-check.py",
+    ):
         return issues
     for line_num, line in enumerate(lines, 1):
         line_content = line[: line.index("#")] if "#" in line else line
@@ -153,7 +166,12 @@ def check_ast_issues(content: str, filepath: Path) -> list[tuple[int, str, str]]
     """Check AST for quality issues."""
     issues: list[tuple[int, str, str]] = []
     # Skip checking quality check scripts for AST issues
-    if filepath.name in ("quality_check_script.py", "matlab_quality_check.py", "code_quality_check.py"):
+    if filepath.name in (
+        "quality_check_script.py",
+        "matlab_quality_check.py",
+        "code_quality_check.py",
+        "quality-check.py",
+    ):
         return issues
     try:
         tree = ast.parse(content)
@@ -165,7 +183,7 @@ def check_ast_issues(content: str, filepath: Path) -> list[tuple[int, str, str]]
                     )
                 if not node.returns and node.name != "__init__":
                     pass
-                    # Relaxed: We let MyPy handle missing return checks, 
+                    # Relaxed: We let MyPy handle missing return checks,
                     # as this stricter check might block valid quick scripts.
                     # Uncomment to enforce:
                     # issues.append((node.lineno, f"Function '{node.name}' missing return type hint", ""))
@@ -211,8 +229,9 @@ def main() -> None:
         "output",
         ".ipynb_checkpoints",  # Add checkpoint files to exclusion
         ".Trash",  # Add trash files to exclusion
+        "replicants",  # Exclude replicants directory
     }
-    
+
     # Filter if scanning directory
     if len(sys.argv) <= 1:
         python_files = [

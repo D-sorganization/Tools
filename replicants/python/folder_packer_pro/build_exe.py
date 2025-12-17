@@ -1,9 +1,9 @@
 """Build script for Folder Packer Pro v2.0 executable."""
 
-import os
-import sys
 import subprocess
+import sys
 from pathlib import Path
+
 
 def build_exe():
     """Build Windows executable using PyInstaller."""
@@ -27,7 +27,9 @@ def build_exe():
         "--windowed",  # No console window
         "--name=FolderPackerPro",  # Executable name
         "--icon=paper_plane_icon.ico" if (script_dir / "paper_plane_icon.ico").exists() else "",
-        "--add-data=paper_plane_icon.ico;." if (script_dir / "paper_plane_icon.ico").exists() else "",
+        "--add-data=paper_plane_icon.ico;."
+        if (script_dir / "paper_plane_icon.ico").exists()
+        else "",
         "--clean",  # Clean cache
         "--noconfirm",  # Overwrite without asking
         str(main_script),
