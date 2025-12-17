@@ -21,14 +21,12 @@ import re
 import shutil
 import sys
 import threading
-import time
-import zipfile
+import tkinter as tk
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
-from typing import Final, Optional
+from typing import Final
 
 # Constants with professional standards
 MAX_FILE_SIZE_MB: Final[int] = 10240  # 10GB limit for modern systems
@@ -98,7 +96,7 @@ class FileHasher:
     """Efficient file hashing for deduplication."""
 
     @staticmethod
-    def hash_file(file_path: Path, algorithm: str = HASH_ALGORITHM) -> Optional[str]:
+    def hash_file(file_path: Path, algorithm: str = HASH_ALGORITHM) -> str | None:
         """
         Generate cryptographic hash of file contents.
 
@@ -120,7 +118,7 @@ class FileHasher:
             return None
 
     @staticmethod
-    def hash_file_fast(file_path: Path) -> Optional[str]:
+    def hash_file_fast(file_path: Path) -> str | None:
         """
         Generate fast hash using first/last chunks + size.
         Useful for quick duplicate detection.
@@ -323,7 +321,9 @@ class OperationReport:
         <h2>Summary</h2>
         <p><strong>Duration:</strong> {self.get_duration()}</p>
         <p><strong>Start Time:</strong> {self.start_time.strftime("%Y-%m-%d %H:%M:%S")}</p>
-        <p><strong>End Time:</strong> {self.end_time.strftime("%Y-%m-%d %H:%M:%S") if self.end_time else "In progress"}</p>
+        <p><strong>End Time:</strong> {
+            self.end_time.strftime("%Y-%m-%d %H:%M:%S") if self.end_time else "In progress"
+        }</p>
     </div>
 
     <div class="stats">
@@ -351,17 +351,23 @@ class OperationReport:
                 </tr>
             </thead>
             <tbody>
-                {"".join(f"<tr><td>{op}</td><td>{count}</td></tr>" for op, count in self.stats.items())}
+                {
+            "".join(f"<tr><td>{op}</td><td>{count}</td></tr>" for op, count in self.stats.items())
+        }
             </tbody>
         </table>
     </div>
 
-    {f'''
+    {
+            f'''
     <div class="section">
         <h2>Errors ({len(self.errors)})</h2>
         {"".join(f'<div class="error"><span class="timestamp">{err["timestamp"].strftime("%H:%M:%S")}</span> - {err["error"]}</div>' for err in self.errors)}
     </div>
-    ''' if self.errors else ''}
+    '''
+            if self.errors
+            else ""
+        }
 
     <div class="section">
         <h2>Operation Details</h2>
@@ -374,14 +380,23 @@ class OperationReport:
                 </tr>
             </thead>
             <tbody>
-                {"".join(f'''<tr>
+                {
+            "".join(
+                f'''<tr>
                     <td class="timestamp">{op["timestamp"].strftime("%H:%M:%S")}</td>
                     <td>{op["operation"]}</td>
                     <td>{json.dumps(op["details"], indent=2)}</td>
-                </tr>''' for op in self.operations[-100:])}
+                </tr>'''
+                for op in self.operations[-100:]
+            )
+        }
             </tbody>
         </table>
-        {f'<p><em>Showing last 100 of {len(self.operations)} operations</em></p>' if len(self.operations) > 100 else ''}
+        {
+            f"<p><em>Showing last 100 of {len(self.operations)} operations</em></p>"
+            if len(self.operations) > 100
+            else ""
+        }
     </div>
 </body>
 </html>
@@ -499,10 +514,14 @@ class FolderFixPro:
 
         # Main container with two columns
         left_frame = ttk.Frame(tab)
-        left_frame.pack(side="left", fill="both", expand=True, padx=PADDING_MEDIUM, pady=PADDING_MEDIUM)
+        left_frame.pack(
+            side="left", fill="both", expand=True, padx=PADDING_MEDIUM, pady=PADDING_MEDIUM
+        )
 
         right_frame = ttk.Frame(tab)
-        right_frame.pack(side="right", fill="both", expand=True, padx=PADDING_MEDIUM, pady=PADDING_MEDIUM)
+        right_frame.pack(
+            side="right", fill="both", expand=True, padx=PADDING_MEDIUM, pady=PADDING_MEDIUM
+        )
 
         # LEFT COLUMN - Source and Destination
         # Header
@@ -604,7 +623,9 @@ class FolderFixPro:
             ).grid(row=i, column=0, sticky="w", pady=2)
 
         # Processing options
-        options_frame = ttk.LabelFrame(right_frame, text="Processing Options", padding=PADDING_MEDIUM)
+        options_frame = ttk.LabelFrame(
+            right_frame, text="Processing Options", padding=PADDING_MEDIUM
+        )
         options_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         self.unzip_var = tk.BooleanVar()
@@ -690,7 +711,9 @@ class FolderFixPro:
         self.ext_filter_entry.pack(fill="x", pady=(PADDING_SMALL, 0))
 
         # Regex filter
-        regex_frame = ttk.LabelFrame(main_frame, text="Regular Expression Filter", padding=PADDING_MEDIUM)
+        regex_frame = ttk.LabelFrame(
+            main_frame, text="Regular Expression Filter", padding=PADDING_MEDIUM
+        )
         regex_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         ttk.Label(
@@ -728,12 +751,12 @@ class FolderFixPro:
         self.follow_symlinks_var = tk.BooleanVar(value=False)
         self.preserve_metadata_var = tk.BooleanVar(value=True)
 
-        ttk.Checkbutton(advanced_frame, text="Skip hidden files", variable=self.skip_hidden_var).pack(
-            anchor="w"
-        )
-        ttk.Checkbutton(advanced_frame, text="Skip system files", variable=self.skip_system_var).pack(
-            anchor="w"
-        )
+        ttk.Checkbutton(
+            advanced_frame, text="Skip hidden files", variable=self.skip_hidden_var
+        ).pack(anchor="w")
+        ttk.Checkbutton(
+            advanced_frame, text="Skip system files", variable=self.skip_system_var
+        ).pack(anchor="w")
         ttk.Checkbutton(
             advanced_frame, text="Follow symbolic links", variable=self.follow_symlinks_var
         ).pack(anchor="w")
@@ -742,7 +765,9 @@ class FolderFixPro:
         ).pack(anchor="w")
 
         # Test filters button
-        ttk.Button(main_frame, text="🔍 Test Filters", command=self._test_filters).pack(pady=PADDING_MEDIUM)
+        ttk.Button(main_frame, text="🔍 Test Filters", command=self._test_filters).pack(
+            pady=PADDING_MEDIUM
+        )
 
     def _create_preview_tab(self):
         """Create preview tab showing files that will be processed."""
@@ -757,7 +782,9 @@ class FolderFixPro:
         toolbar.pack(fill="x", pady=(0, PADDING_SMALL))
 
         ttk.Button(toolbar, text="🔄 Refresh", command=self._update_preview).pack(side="left")
-        ttk.Label(toolbar, text="Files to be processed:").pack(side="left", padx=(PADDING_MEDIUM, 0))
+        ttk.Label(toolbar, text="Files to be processed:").pack(
+            side="left", padx=(PADDING_MEDIUM, 0)
+        )
         self.preview_count_label = ttk.Label(toolbar, text="0", font=("Segoe UI", 10, "bold"))
         self.preview_count_label.pack(side="left", padx=(PADDING_SMALL, 0))
 
@@ -864,9 +891,7 @@ class FolderFixPro:
         style = ttk.Style()
 
         # Configure button style with accent color
-        style.configure(
-            "Accent.TButton", font=("Segoe UI", 10, "bold"), padding=10, relief="flat"
-        )
+        style.configure("Accent.TButton", font=("Segoe UI", 10, "bold"), padding=10, relief="flat")
 
         # Update root background
         self.root.configure(bg=theme["bg"])
@@ -1030,13 +1055,13 @@ class FolderFixPro:
                     if self._should_include_file(file_path):
                         matching_files.append(file_path)
 
-        message = f"Filter Results:\n\n"
+        message = "Filter Results:\n\n"
         message += f"Total files scanned: {total_files}\n"
         message += f"Files matching filters: {len(matching_files)}\n"
         message += f"Files excluded: {total_files - len(matching_files)}\n\n"
 
         if matching_files:
-            message += f"Sample matching files (first 10):\n"
+            message += "Sample matching files (first 10):\n"
             for file in matching_files[:10]:
                 message += f"  • {file.name}\n"
 
@@ -1100,7 +1125,8 @@ class FolderFixPro:
                 self.root.after(
                     0,
                     lambda: messagebox.showinfo(
-                        "Success", f"Operation completed!\n\nDuration: {self.operation_report.get_duration()}"
+                        "Success",
+                        f"Operation completed!\n\nDuration: {self.operation_report.get_duration()}",
                     ),
                 )
 
@@ -1212,7 +1238,9 @@ class FolderFixPro:
         dest_path = Path(self.dest_folder)
 
         total_folders = sum(
-            len(dirs) for source_folder in self.source_folders for _, dirs, _ in os.walk(source_folder)
+            len(dirs)
+            for source_folder in self.source_folders
+            for _, dirs, _ in os.walk(source_folder)
         )
         processed = 0
 
@@ -1227,9 +1255,7 @@ class FolderFixPro:
                     break
 
                 # Check if folder has any files matching filters
-                has_files = any(
-                    self._should_include_file(Path(root) / f) for f in filenames
-                )
+                has_files = any(self._should_include_file(Path(root) / f) for f in filenames)
 
                 if has_files:
                     # Recreate folder structure
@@ -1294,9 +1320,7 @@ class FolderFixPro:
                     hash_map[file_hash].append(file_path)
 
                 processed += 1
-                self._update_progress(
-                    processed, total_files, f"Checking {file_path.name}"
-                )
+                self._update_progress(processed, total_files, f"Checking {file_path.name}")
             except Exception as e:
                 self.operation_report.add_error(f"Failed to process {file_path}: {e}")
 

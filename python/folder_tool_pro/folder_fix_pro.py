@@ -26,7 +26,7 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
-from typing import Any, Final, Optional
+from typing import Any, Final
 
 # Constants with professional standards
 MAX_FILE_SIZE_MB: Final[int] = 10240  # 10GB limit for modern systems
@@ -96,7 +96,7 @@ class FileHasher:
     """Efficient file hashing for deduplication."""
 
     @staticmethod
-    def hash_file(file_path: Path, algorithm: str = HASH_ALGORITHM) -> Optional[str]:
+    def hash_file(file_path: Path, algorithm: str = HASH_ALGORITHM) -> str | None:
         """
         Generate cryptographic hash of file contents.
 
@@ -118,7 +118,7 @@ class FileHasher:
             return None
 
     @staticmethod
-    def hash_file_fast(file_path: Path) -> Optional[str]:
+    def hash_file_fast(file_path: Path) -> str | None:
         """
         Generate fast hash using first/last chunks + size.
         Useful for quick duplicate detection.
@@ -157,8 +157,9 @@ class OperationReport:
     """Generate detailed operation reports."""
 
     def __init__(self) -> None:
+        """Initialize the operation report."""
         self.start_time = datetime.now()
-        self.end_time: Optional[datetime] = None
+        self.end_time: datetime | None = None
         self.operations: list[dict[str, Any]] = []
         self.stats: defaultdict[str, int] = defaultdict(int)
         self.errors: list[dict[str, Any]] = []
@@ -320,8 +321,14 @@ class OperationReport:
     <div class="summary">
         <h2>Summary</h2>
         <p><strong>Duration:</strong> {self.get_duration()}</p>
-        <p><strong>Start Time:</strong> {self.start_time.strftime("%Y-%m-%d %H:%M:%S")}</p>
-        <p><strong>End Time:</strong> {self.end_time.strftime("%Y-%m-%d %H:%M:%S") if self.end_time else "In progress"}</p>
+        <p><strong>Start Time:</strong> {
+            self.start_time.strftime("%Y-%m-%d %H:%M:%S")
+        }</p>
+        <p><strong>End Time:</strong> {
+            self.end_time.strftime("%Y-%m-%d %H:%M:%S")
+            if self.end_time
+            else "In progress"
+        }</p>
     </div>
 
     <div class="stats">
@@ -349,17 +356,26 @@ class OperationReport:
                 </tr>
             </thead>
             <tbody>
-                {"".join(f"<tr><td>{op}</td><td>{count}</td></tr>" for op, count in self.stats.items())}
+                {
+            "".join(
+                f"<tr><td>{op}</td><td>{count}</td></tr>"
+                for op, count in self.stats.items()
+            )
+        }
             </tbody>
         </table>
     </div>
 
-    {f'''
+    {
+            f'''
     <div class="section">
         <h2>Errors ({len(self.errors)})</h2>
         {"".join(f'<div class="error"><span class="timestamp">{err["timestamp"].strftime("%H:%M:%S")}</span> - {err["error"]}</div>' for err in self.errors)}
     </div>
-    ''' if self.errors else ''}
+    '''
+            if self.errors
+            else ""
+        }
 
     <div class="section">
         <h2>Operation Details</h2>
@@ -372,14 +388,23 @@ class OperationReport:
                 </tr>
             </thead>
             <tbody>
-                {"".join(f'''<tr>
+                {
+            "".join(
+                f'''<tr>
                     <td class="timestamp">{op["timestamp"].strftime("%H:%M:%S")}</td>
                     <td>{op["operation"]}</td>
                     <td>{json.dumps(op["details"], indent=2)}</td>
-                </tr>''' for op in self.operations[-100:])}
+                </tr>'''
+                for op in self.operations[-100:]
+            )
+        }
             </tbody>
         </table>
-        {f'<p><em>Showing last 100 of {len(self.operations)} operations</em></p>' if len(self.operations) > 100 else ''}
+        {
+            f"<p><em>Showing last 100 of {len(self.operations)} operations</em></p>"
+            if len(self.operations) > 100
+            else ""
+        }
     </div>
 </body>
 </html>
@@ -392,6 +417,7 @@ class FolderFixPro:
     """Enhanced professional folder processing application."""
 
     def __init__(self, root: tk.Tk) -> None:
+        """Initialize the application."""
         self.root = root
         self.root.title("Folder Fix Pro v3.0 - Professional Folder Manager")
         self.root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
@@ -977,7 +1003,7 @@ class FolderFixPro:
         style = ttk.Style()
 
         # Configure button style with accent color
-        style.configure(  # type: ignore[no-untyped-call]
+        style.configure(
             "Accent.TButton",
             font=("Segoe UI", 10, "bold"),
             padding=10,
@@ -1049,6 +1075,7 @@ class FolderFixPro:
 
         # Scan files in background
         def scan_files() -> None:
+            """Background task to scan files for preview."""
             files: list[Path] = []
             for folder in self.source_folders:
                 try:
@@ -1640,6 +1667,7 @@ class FolderFixPro:
         log_entry = f"[{timestamp}] {message}\n"
 
         def update_log() -> None:
+            """Update log widget from thread."""
             self.log_text.configure(state="normal")
             self.log_text.insert("end", log_entry, level)
             self.log_text.see("end")

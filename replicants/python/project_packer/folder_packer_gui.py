@@ -8,17 +8,17 @@ from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
 from .constants import (
-    DEFAULT_WINDOW_WIDTH,
-    DEFAULT_WINDOW_HEIGHT,
-    DEFAULT_PADDING,
-    SMALL_PADDING,
-    TINY_PADDING,
-    TITLE_FONT_SIZE,
-    HEADER_FONT_SIZE,
     BOLD_HEADER_FONT_SIZE,
     DEFAULT_LISTBOX_HEIGHT,
-    STATUS_TEXT_HEIGHT,
+    DEFAULT_PADDING,
+    DEFAULT_WINDOW_HEIGHT,
+    DEFAULT_WINDOW_WIDTH,
     GRID_WEIGHT_MAIN,
+    HEADER_FONT_SIZE,
+    SMALL_PADDING,
+    STATUS_TEXT_HEIGHT,
+    TINY_PADDING,
+    TITLE_FONT_SIZE,
 )
 
 # Set up logging

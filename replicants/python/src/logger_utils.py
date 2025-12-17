@@ -7,9 +7,7 @@ import random
 logger = logging.getLogger(__name__)
 
 # Constants with clear sources and units
-DEFAULT_SEED: int = (
-    42  # Standard reproducibility seed per scientific computing best practices
-)
+DEFAULT_SEED: int = 42  # Standard reproducibility seed per scientific computing best practices
 
 
 def set_seeds(seed: int = DEFAULT_SEED) -> None:

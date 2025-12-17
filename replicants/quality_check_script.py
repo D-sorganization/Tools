@@ -78,10 +78,24 @@ def is_legitimate_tkinter_binding(line: str) -> bool:
     """Check if a line contains legitimate Tkinter event bindings."""
     # Common Tkinter event patterns
     tkinter_events = [
-        r"<KeyRelease>", r"<KeyPress>", r"<Key>", r"<Return>", r"<Enter>", r"<Leave>",
-        r"<Button-1>", r"<ButtonRelease-1>", r"<B1-Motion>", r"<Configure>",
-        r"<MouseWheel>", r"<Button-4>", r"<Button-5>", r"<FocusIn>", r"<FocusOut>",
-        r"<<ListboxSelect>>", r"<<ComboboxSelected>>", r"<<TreeviewSelect>>",
+        r"<KeyRelease>",
+        r"<KeyPress>",
+        r"<Key>",
+        r"<Return>",
+        r"<Enter>",
+        r"<Leave>",
+        r"<Button-1>",
+        r"<ButtonRelease-1>",
+        r"<B1-Motion>",
+        r"<Configure>",
+        r"<MouseWheel>",
+        r"<Button-4>",
+        r"<Button-5>",
+        r"<FocusIn>",
+        r"<FocusOut>",
+        r"<<ListboxSelect>>",
+        r"<<ComboboxSelected>>",
+        r"<<TreeviewSelect>>",
     ]
 
     return any(re.search(event_pattern, line) for event_pattern in tkinter_events)
@@ -108,8 +122,7 @@ def check_banned_patterns(
                 issues.append((line_num, message, line.strip()))
 
         # Special handling for pass statements
-        if (re.match(r"^\s*pass\s*$", line) and
-            not is_legitimate_pass_context(lines, line_num)):
+        if re.match(r"^\s*pass\s*$", line) and not is_legitimate_pass_context(lines, line_num):
             issues.append(
                 (line_num, "Empty pass statement - consider adding logic or comment", line.strip()),
             )
@@ -189,9 +202,7 @@ def main() -> None:
         ".ipynb_checkpoints",  # Add checkpoint files to exclusion
         ".Trash",  # Add trash files to exclusion
     }
-    python_files = [
-        f for f in python_files if not any(part in exclude_dirs for part in f.parts)
-    ]
+    python_files = [f for f in python_files if not any(part in exclude_dirs for part in f.parts)]
 
     all_issues = []
     for filepath in python_files:

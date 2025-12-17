@@ -43,3 +43,7 @@ logs/
 branch_cleanup_report_*.md
 .coverage
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.dmypy.json
+dmypy.json

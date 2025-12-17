@@ -19,7 +19,7 @@ from folder_packer_gui import (
 class TestFolderPackerGUI:
     """Test cases for folder_packer_gui.py module."""
 
-    @pytest.fixture()
+    @pytest.fixture
     def mock_root(self) -> Mock:
         """Create a mock Tkinter root window."""
         mock_root = Mock()
@@ -31,7 +31,7 @@ class TestFolderPackerGUI:
         mock_root.update_idletasks = Mock()
         return mock_root
 
-    @pytest.fixture()
+    @pytest.fixture
     def gui_instance(self, mock_root: Mock) -> FolderPackerGUI:
         """Create a FolderPackerGUI instance with mocked dependencies."""
         with (
@@ -186,9 +186,7 @@ class TestFolderPackerGUI:
                 gui_instance.pack_folders()
 
                 mock_pack.assert_called_once_with(str(source_folder))
-                assert (
-                    mock_update.call_count >= 2
-                )  # At least packing and success messages
+                assert mock_update.call_count >= 2  # At least packing and success messages
 
     def test_pack_single_folder_success(
         self,

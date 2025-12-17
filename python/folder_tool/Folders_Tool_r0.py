@@ -15,7 +15,7 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
-from typing import Final, Optional
+from typing import Final
 
 # Constants for configuration with sources and units
 MAX_LOG_ENTRIES: Final[int] = (
@@ -165,8 +165,8 @@ class FolderProcessorApp:
 
         # --- UI Style ---
         style = ttk.Style()
-        style.configure("TButton", padding=6, relief="flat")  # type: ignore  # noqa: PGH003
-        style.configure("TLabel", padding=5)  # type: ignore  # noqa: PGH003
+        style.configure("TButton", padding=6, relief="flat")
+        style.configure("TLabel", padding=5)
 
         # Validate constants at startup
         self._validate_constants()
@@ -452,7 +452,7 @@ class FolderProcessorApp:
             # Get the directory where the script/executable is located
             if getattr(sys, "frozen", False):
                 # Running as compiled executable
-                base_dir = sys._MEIPASS  # type: ignore  # noqa: PGH003
+                base_dir = sys._MEIPASS
             else:
                 # Running as script
                 base_dir = os.path.dirname(__file__)
@@ -484,7 +484,7 @@ class FolderProcessorApp:
     def _load_ico_icon(self, ico_path: str) -> None:
         """Loads and sets the ICO icon for the application."""
         # Use iconbitmap for Windows taskbar integration
-        self.root.iconbitmap(ico_path)  # type: ignore  # noqa: PGH003
+        self.root.iconbitmap(ico_path)
         logger.info(f"Loaded ICO icon for taskbar: {ico_path}")
 
         # Also set iconphoto with multiple sizes for better display
@@ -947,7 +947,7 @@ class FolderProcessorApp:
         self.cancel_button.pack(side=tk.RIGHT, padx=(5, 0), ipady=10)
 
         style = ttk.Style()
-        style.configure("Accent.TButton", font=("Helvetica", 10, "bold"))  # type: ignore  # noqa: PGH003
+        style.configure("Accent.TButton", font=("Helvetica", 10, "bold"))
 
     def on_mode_change(self) -> None:
         """Updates UI descriptions and widget states based on the selected operation mode."""
@@ -985,7 +985,7 @@ class FolderProcessorApp:
         for frame in frames_to_toggle:
             for child in frame.winfo_children():
                 if hasattr(child, "configure"):
-                    child.configure(state=new_state)  # type: ignore  # noqa: PGH003
+                    child.configure(state=new_state)
 
     def update_source_info(self) -> None:
         """Updates the source folder information display."""
@@ -1341,7 +1341,7 @@ class FolderProcessorApp:
                 return False, f"Archive file is empty: {archive_path}"
             if archive_size > MAX_FILE_SIZE_MB * 1024 * 1024:
                 logger.warning(
-                    f"Archive file exceeds maximum size limit: {archive_path} ({archive_size / (1024*1024):.1f} MB)",
+                    f"Archive file exceeds maximum size limit: {archive_path} ({archive_size / (1024 * 1024):.1f} MB)",
                 )
         except OSError as e:
             return False, f"Cannot access archive file: {e}"
@@ -1445,7 +1445,7 @@ class FolderProcessorApp:
 
             return False, f"Failed to extract '{os.path.basename(archive_path)}': {e}"
 
-    def create_backup(self) -> Optional[str]:
+    def create_backup(self) -> str | None:
         """Creates a backup of source folders before processing.
 
         Returns:
@@ -1570,7 +1570,7 @@ class FolderProcessorApp:
                 )  # PROGRESS_BACKUP_PERCENT% for backup
                 self.update_progress(
                     progress,
-                    f"Backing up folder {i+1}/{total_folders}",
+                    f"Backing up folder {i + 1}/{total_folders}",
                 )
 
             # Verify overall backup success
@@ -1611,7 +1611,7 @@ class FolderProcessorApp:
                     )
             raise
 
-    def generate_analysis_report(self) -> Optional[str]:
+    def generate_analysis_report(self) -> str | None:
         """Generates a comprehensive analysis report.
 
         Returns:
@@ -1700,7 +1700,7 @@ class FolderProcessorApp:
                                 continue
                             if file_size > MAX_FILE_SIZE_MB * 1024 * 1024:
                                 logger.warning(
-                                    f"File exceeds maximum size: {file_path} ({file_size / (1024*1024):.1f} MB)",
+                                    f"File exceeds maximum size: {file_path} ({file_size / (1024 * 1024):.1f} MB)",
                                 )
 
                             total_files += 1
@@ -1724,14 +1724,14 @@ class FolderProcessorApp:
                 # Report folder analysis results
                 if folder_errors > 0:
                     report.append(
-                        f"  Files: {folder_files}, Size: {folder_size/(1024*1024):.1f} MB, Errors: {folder_errors}",
+                        f"  Files: {folder_files}, Size: {folder_size / (1024 * 1024):.1f} MB, Errors: {folder_errors}",
                     )
                     analysis_errors.append(
                         f"Folder {folder}: {folder_errors} access errors",
                     )
                 else:
                     report.append(
-                        f"  Files: {folder_files}, Size: {folder_size/(1024*1024):.1f} MB",
+                        f"  Files: {folder_files}, Size: {folder_size / (1024 * 1024):.1f} MB",
                     )
 
             except (OSError, PermissionError) as e:
@@ -1746,7 +1746,7 @@ class FolderProcessorApp:
             [
                 "",
                 f"TOTAL FILES: {total_files}",
-                f"TOTAL SIZE: {total_size/(1024*1024):.1f} MB",
+                f"TOTAL SIZE: {total_size / (1024 * 1024):.1f} MB",
                 "",
                 "FILE TYPES:",
             ],
@@ -1780,7 +1780,7 @@ class FolderProcessorApp:
         )
 
         logger.info(
-            f"Analysis completed: {total_files} files, {total_size/(1024*1024):.1f} MB",
+            f"Analysis completed: {total_files} files, {total_size / (1024 * 1024):.1f} MB",
         )
         if analysis_errors:
             logger.warning(f"Analysis completed with {len(analysis_errors)} errors")
@@ -1988,7 +1988,7 @@ class FolderProcessorApp:
                 raise ValueError("No accessible files found in destination folder")
 
             logger.info(
-                f"ZIP will contain {total_files} files, {total_size/(1024*1024):.1f} MB",
+                f"ZIP will contain {total_files} files, {total_size / (1024 * 1024):.1f} MB",
             )
 
             # Create ZIP archive
@@ -2052,7 +2052,7 @@ class FolderProcessorApp:
                     if zip_size == 0:
                         raise Exception("ZIP file is empty")
                     logger.info(
-                        f"ZIP archive created: {zip_path} ({processed_files} files, {processed_size/(1024*1024):.1f} MB, ZIP size: {zip_size/(1024*1024):.1f} MB)",
+                        f"ZIP archive created: {zip_path} ({processed_files} files, {processed_size / (1024 * 1024):.1f} MB, ZIP size: {zip_size / (1024 * 1024):.1f} MB)",
                     )
                 except OSError as e:
                     logger.warning(f"Cannot verify ZIP file size: {e}")
@@ -2490,7 +2490,7 @@ class FolderProcessorApp:
                 logger.warning(f"Source file is empty: {source_path}")
             elif source_size > MAX_FILE_SIZE_MB * 1024 * 1024:
                 logger.warning(
-                    f"Source file exceeds maximum size limit: {source_path} ({source_size / (1024*1024):.1f} MB)",
+                    f"Source file exceeds maximum size limit: {source_path} ({source_size / (1024 * 1024):.1f} MB)",
                 )
         except OSError as e:
             logger.warning(f"Cannot access source file size: {source_path} - {e}")
@@ -2885,7 +2885,7 @@ class FolderProcessorApp:
             Exception: If folder removal fails for other reasons
         """
         try:
-            selected_indices = list(self.source_listbox.curselection())  # type: ignore  # noqa: PGH003
+            selected_indices = list(self.source_listbox.curselection())
             if not selected_indices:
                 messagebox.showinfo("Info", "Please select folders to remove.")
                 return

@@ -16,21 +16,19 @@ A comprehensive project packaging application with advanced features:
 
 import base64
 import gzip
-import hashlib
 import json
 import logging
 import os
 import re
-import shutil
 import sys
 import threading
-import zipfile
+import tkinter as tk
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-import tkinter as tk
-from tkinter import filedialog, messagebox, ttk, scrolledtext
-from typing import Final, Optional, List, Dict
+from tkinter import filedialog, messagebox, scrolledtext, ttk
+from typing import Final
+
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2
@@ -55,16 +53,43 @@ PADDING_SMALL: Final[int] = 5
 
 # File extensions for syntax highlighting (basic categorization)
 CODE_EXTENSIONS: Final[set] = {
-    ".py", ".js", ".ts", ".java", ".cpp", ".c", ".h", ".cs",
-    ".go", ".rs", ".rb", ".php", ".swift", ".kt", ".r", ".m",
+    ".py",
+    ".js",
+    ".ts",
+    ".java",
+    ".cpp",
+    ".c",
+    ".h",
+    ".cs",
+    ".go",
+    ".rs",
+    ".rb",
+    ".php",
+    ".swift",
+    ".kt",
+    ".r",
+    ".m",
 }
 
 MARKUP_EXTENSIONS: Final[set] = {
-    ".html", ".xml", ".css", ".scss", ".sass", ".vue", ".jsx", ".tsx",
+    ".html",
+    ".xml",
+    ".css",
+    ".scss",
+    ".sass",
+    ".vue",
+    ".jsx",
+    ".tsx",
 }
 
 CONFIG_EXTENSIONS: Final[set] = {
-    ".json", ".yaml", ".yml", ".toml", ".ini", ".cfg", ".conf",
+    ".json",
+    ".yaml",
+    ".yml",
+    ".toml",
+    ".ini",
+    ".cfg",
+    ".conf",
 }
 
 # Default exclusion patterns
@@ -209,7 +234,12 @@ class PackageManifest:
     def add_file(self, file_path: str, size: int, checksum: str):
         """Add file to manifest."""
         self.files.append(
-            {"path": file_path, "size": size, "checksum": checksum, "added_at": datetime.now().isoformat()}
+            {
+                "path": file_path,
+                "size": size,
+                "checksum": checksum,
+                "added_at": datetime.now().isoformat(),
+            }
         )
         self.stats["total_files"] += 1
         self.stats["total_size"] += size
@@ -327,10 +357,14 @@ class FolderPackerPro:
 
         # Main container with two columns
         left_frame = ttk.Frame(tab)
-        left_frame.pack(side="left", fill="both", expand=True, padx=PADDING_MEDIUM, pady=PADDING_MEDIUM)
+        left_frame.pack(
+            side="left", fill="both", expand=True, padx=PADDING_MEDIUM, pady=PADDING_MEDIUM
+        )
 
         right_frame = ttk.Frame(tab)
-        right_frame.pack(side="right", fill="both", expand=True, padx=PADDING_MEDIUM, pady=PADDING_MEDIUM)
+        right_frame.pack(
+            side="right", fill="both", expand=True, padx=PADDING_MEDIUM, pady=PADDING_MEDIUM
+        )
 
         # LEFT COLUMN - Source and Output
         # Header
@@ -356,7 +390,9 @@ class FolderPackerPro:
         )
 
         # Output file section
-        output_frame = ttk.LabelFrame(left_frame, text="Output Package File", padding=PADDING_MEDIUM)
+        output_frame = ttk.LabelFrame(
+            left_frame, text="Output Package File", padding=PADDING_MEDIUM
+        )
         output_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         output_entry_frame = ttk.Frame(output_frame)
@@ -382,7 +418,9 @@ class FolderPackerPro:
         )
         self.stats_text.pack(fill="both", expand=True)
 
-        ttk.Button(stats_frame, text="🔄 Scan Folder", command=self._scan_folder).pack(pady=(PADDING_SMALL, 0))
+        ttk.Button(stats_frame, text="🔄 Scan Folder", command=self._scan_folder).pack(
+            pady=(PADDING_SMALL, 0)
+        )
 
         # Progress section
         progress_frame = ttk.LabelFrame(left_frame, text="Progress", padding=PADDING_MEDIUM)
@@ -426,7 +464,9 @@ class FolderPackerPro:
             ).pack(anchor="w", pady=2)
 
         # Security options
-        security_frame = ttk.LabelFrame(right_frame, text="Security Options", padding=PADDING_MEDIUM)
+        security_frame = ttk.LabelFrame(
+            right_frame, text="Security Options", padding=PADDING_MEDIUM
+        )
         security_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         self.encrypt_var = tk.BooleanVar()
@@ -451,7 +491,9 @@ class FolderPackerPro:
         self.pack_password_confirm.configure(state="disabled")
 
         # Advanced options
-        advanced_frame = ttk.LabelFrame(right_frame, text="Advanced Options", padding=PADDING_MEDIUM)
+        advanced_frame = ttk.LabelFrame(
+            right_frame, text="Advanced Options", padding=PADDING_MEDIUM
+        )
         advanced_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         self.include_git_var = tk.BooleanVar()
@@ -459,7 +501,9 @@ class FolderPackerPro:
         self.verify_pack_var = tk.BooleanVar(value=True)
 
         ttk.Checkbutton(
-            advanced_frame, text="Include .git folder (preserve repository)", variable=self.include_git_var
+            advanced_frame,
+            text="Include .git folder (preserve repository)",
+            variable=self.include_git_var,
         ).pack(anchor="w")
         ttk.Checkbutton(
             advanced_frame, text="Create manifest file", variable=self.create_manifest_var
@@ -525,7 +569,9 @@ class FolderPackerPro:
         self.unpack_dest_entry = ttk.Entry(dest_entry_frame)
         self.unpack_dest_entry.pack(side="left", fill="x", expand=True, padx=(0, PADDING_SMALL))
 
-        ttk.Button(dest_entry_frame, text="Browse", command=self._browse_unpack_dest).pack(side="right")
+        ttk.Button(dest_entry_frame, text="Browse", command=self._browse_unpack_dest).pack(
+            side="right"
+        )
 
         # Decryption section
         decrypt_frame = ttk.LabelFrame(main_frame, text="Decryption", padding=PADDING_MEDIUM)
@@ -609,9 +655,9 @@ class FolderPackerPro:
         toolbar = ttk.Frame(main_frame)
         toolbar.pack(fill="x", pady=(0, PADDING_SMALL))
 
-        ttk.Label(toolbar, text="File Preview with Syntax Detection", font=("Segoe UI", 12, "bold")).pack(
-            side="left"
-        )
+        ttk.Label(
+            toolbar, text="File Preview with Syntax Detection", font=("Segoe UI", 12, "bold")
+        ).pack(side="left")
 
         # File tree
         tree_label_frame = ttk.LabelFrame(main_frame, text="Files to Pack", padding=PADDING_SMALL)
@@ -858,7 +904,9 @@ class FolderPackerPro:
         output += f"Excluded Files: {stats['excluded_files']:,}\n\n"
 
         output += "File Types:\n"
-        for ext, count in sorted(stats["file_types"].items(), key=lambda x: x[1], reverse=True)[:15]:
+        for ext, count in sorted(stats["file_types"].items(), key=lambda x: x[1], reverse=True)[
+            :15
+        ]:
             percentage = (count / stats["total_files"] * 100) if stats["total_files"] > 0 else 0
             output += f"  {ext:20s} {count:5,} files ({percentage:5.1f}%)\n"
 
@@ -943,10 +991,12 @@ class FolderPackerPro:
             # Check file size
             size = file_path.stat().st_size
             if size > 1024 * 1024:  # 1MB limit
-                self.preview_text.insert("1.0", f"File too large to preview ({self._format_size(size)})")
+                self.preview_text.insert(
+                    "1.0", f"File too large to preview ({self._format_size(size)})"
+                )
             else:
                 # Try to read as text
-                with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                with open(file_path, encoding="utf-8", errors="ignore") as f:
                     content = f.read()
 
                 # Insert with basic syntax highlighting
@@ -961,9 +1011,28 @@ class FolderPackerPro:
         """Insert text with basic syntax highlighting."""
         # For simplicity, basic keyword highlighting
         keywords = {
-            "def", "class", "import", "from", "if", "else", "elif",
-            "for", "while", "return", "try", "except", "with", "as",
-            "True", "False", "None", "and", "or", "not", "in", "is",
+            "def",
+            "class",
+            "import",
+            "from",
+            "if",
+            "else",
+            "elif",
+            "for",
+            "while",
+            "return",
+            "try",
+            "except",
+            "with",
+            "as",
+            "True",
+            "False",
+            "None",
+            "and",
+            "or",
+            "not",
+            "in",
+            "is",
         }
 
         lines = content.split("\n")
@@ -1016,20 +1085,19 @@ class FolderPackerPro:
         ext = file_path.suffix.lower()
         if ext in CODE_EXTENSIONS:
             return "Code"
-        elif ext in MARKUP_EXTENSIONS:
+        if ext in MARKUP_EXTENSIONS:
             return "Markup"
-        elif ext in CONFIG_EXTENSIONS:
+        if ext in CONFIG_EXTENSIONS:
             return "Config"
-        elif ext in {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg"}:
+        if ext in {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg"}:
             return "Image"
-        elif ext in {".mp3", ".wav", ".flac", ".ogg", ".m4a"}:
+        if ext in {".mp3", ".wav", ".flac", ".ogg", ".m4a"}:
             return "Audio"
-        elif ext in {".mp4", ".avi", ".mkv", ".mov", ".wmv"}:
+        if ext in {".mp4", ".avi", ".mkv", ".mov", ".wmv"}:
             return "Video"
-        elif ext in {".pdf", ".doc", ".docx", ".txt", ".md", ".rst"}:
+        if ext in {".pdf", ".doc", ".docx", ".txt", ".md", ".rst"}:
             return "Document"
-        else:
-            return "Other"
+        return "Other"
 
     def _start_pack(self):
         """Start packing operation."""
@@ -1118,7 +1186,7 @@ class FolderPackerPro:
 
                     progress = ((i + 1) / total_files) * 100
                     self.root.after(0, lambda p=progress: self.pack_progress_var.set(p))
-                    self._update_pack_status(f"Packing {file_path.name} ({i+1}/{total_files})")
+                    self._update_pack_status(f"Packing {file_path.name} ({i + 1}/{total_files})")
 
                 except Exception as e:
                     self._log_message(f"Error packing {file_path}: {e}", "error")
@@ -1161,7 +1229,9 @@ class FolderPackerPro:
                     json.dump(manifest, f, indent=2)
 
             self._log_message(f"Package created successfully: {output_path}", "success")
-            self._log_message(f"Package size: {self._format_size(output_path.stat().st_size)}", "info")
+            self._log_message(
+                f"Package size: {self._format_size(output_path.stat().st_size)}", "info"
+            )
 
             self.root.after(
                 0,
@@ -1262,7 +1332,9 @@ class FolderPackerPro:
 
                     progress = ((i + 1) / total_files) * 100
                     self.root.after(0, lambda p=progress: self.unpack_progress_var.set(p))
-                    self._update_unpack_status(f"Extracting {Path(rel_path).name} ({i+1}/{total_files})")
+                    self._update_unpack_status(
+                        f"Extracting {Path(rel_path).name} ({i + 1}/{total_files})"
+                    )
 
                 except Exception as e:
                     self._log_message(f"Error extracting {rel_path}: {e}", "error")
@@ -1276,7 +1348,8 @@ class FolderPackerPro:
             self.root.after(
                 0,
                 lambda: messagebox.showinfo(
-                    "Success", f"Package extracted successfully!\n\nFiles: {total_files}\nLocation: {dest_path}"
+                    "Success",
+                    f"Package extracted successfully!\n\nFiles: {total_files}\nLocation: {dest_path}",
                 ),
             )
 
@@ -1312,7 +1385,7 @@ class FolderPackerPro:
             self.package_info_text.configure(state="normal")
             self.package_info_text.delete("1.0", "end")
 
-            info = f"📦 Package Information\n\n"
+            info = "📦 Package Information\n\n"
             info += f"File: {Path(package_path).name}\n"
             info += f"Size: {self._format_size(Path(package_path).stat().st_size)}\n"
             info += f"Encrypted: {'Yes' if is_encrypted else 'No'}\n\n"

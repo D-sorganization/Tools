@@ -18,20 +18,20 @@ from Folders_Tool_r0 import FolderProcessorApp
 class TestFolderProcessorApp:
     """Test cases for FolderProcessorApp."""
 
-    @pytest.fixture  # type: ignore  # noqa: PGH003
+    @pytest.fixture
     def mock_root(self) -> Mock:
         """Mock Tkinter root."""
         return Mock()
 
-    @pytest.fixture  # type: ignore  # noqa: PGH003
+    @pytest.fixture
     def mock_tk_vars(self) -> Generator[dict[str, Mock], None, None]:
         """Mock Tkinter variables."""
-        with patch("tkinter.BooleanVar") as mock_bool, patch(
-            "tkinter.StringVar"
-        ) as mock_string, patch("tkinter.DoubleVar") as mock_double, patch(
-            "tkinter.IntVar"
-        ) as mock_int:
-
+        with (
+            patch("tkinter.BooleanVar") as mock_bool,
+            patch("tkinter.StringVar") as mock_string,
+            patch("tkinter.DoubleVar") as mock_double,
+            patch("tkinter.IntVar") as mock_int,
+        ):
             mock_bool.return_value.get.return_value = False
             mock_string.return_value.get.return_value = ""
             mock_double.return_value.get.return_value = 0.0
@@ -46,26 +46,21 @@ class TestFolderProcessorApp:
 
     def test_init(self, mock_root: Mock, mock_tk_vars: dict[str, Mock]) -> None:
         """Test initialization of FolderProcessorApp."""
-        with patch("tkinter.ttk.Style"), patch("tkinter.Canvas"), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch("tkinter.ttk.Frame"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.Listbox"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.ttk.Label"
-        ), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "Folders_Tool_r0.ctypes"
+        with (
+            patch("tkinter.ttk.Style"),
+            patch("tkinter.Canvas"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.Listbox"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("Folders_Tool_r0.ctypes"),
         ):  # Mock ctypes used in _setup_application_icon
-
             app = FolderProcessorApp(mock_root)
 
             assert app.root == mock_root
@@ -76,26 +71,21 @@ class TestFolderProcessorApp:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock]
     ) -> None:
         """Test constant validation."""
-        with patch("tkinter.ttk.Style"), patch("tkinter.Canvas"), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch("tkinter.ttk.Frame"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.Listbox"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.ttk.Label"
-        ), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "Folders_Tool_r0.ctypes"
+        with (
+            patch("tkinter.ttk.Style"),
+            patch("tkinter.Canvas"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.Listbox"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("Folders_Tool_r0.ctypes"),
         ):
-
             FolderProcessorApp(mock_root)
             # If no exception, it passed
             assert True
@@ -104,26 +94,21 @@ class TestFolderProcessorApp:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock], tmp_path: Path
     ) -> None:
         """Test _get_unique_path."""
-        with patch("tkinter.ttk.Style"), patch("tkinter.Canvas"), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch("tkinter.ttk.Frame"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.Listbox"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.ttk.Label"
-        ), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "Folders_Tool_r0.ctypes"
+        with (
+            patch("tkinter.ttk.Style"),
+            patch("tkinter.Canvas"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.Listbox"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("Folders_Tool_r0.ctypes"),
         ):
-
             app = FolderProcessorApp(mock_root)
 
             p = tmp_path / "test.txt"
@@ -142,28 +127,22 @@ class TestFolderProcessorApp:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock]
     ) -> None:
         """Test validate_inputs with no source."""
-        with patch("tkinter.ttk.Style"), patch("tkinter.Canvas"), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch("tkinter.ttk.Frame"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.Listbox"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.ttk.Label"
-        ), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "Folders_Tool_r0.ctypes"
-        ), patch(
-            "tkinter.messagebox.showerror"
-        ) as mock_error:
-
+        with (
+            patch("tkinter.ttk.Style"),
+            patch("tkinter.Canvas"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.Listbox"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("Folders_Tool_r0.ctypes"),
+            patch("tkinter.messagebox.showerror") as mock_error,
+        ):
             app = FolderProcessorApp(mock_root)
             app.source_folders = []
 
@@ -174,28 +153,22 @@ class TestFolderProcessorApp:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock]
     ) -> None:
         """Test validate_inputs with no dest."""
-        with patch("tkinter.ttk.Style"), patch("tkinter.Canvas"), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch("tkinter.ttk.Frame"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.Listbox"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.ttk.Label"
-        ), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "Folders_Tool_r0.ctypes"
-        ), patch(
-            "tkinter.messagebox.showerror"
-        ) as mock_error:
-
+        with (
+            patch("tkinter.ttk.Style"),
+            patch("tkinter.Canvas"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.Listbox"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("Folders_Tool_r0.ctypes"),
+            patch("tkinter.messagebox.showerror") as mock_error,
+        ):
             app = FolderProcessorApp(mock_root)
             app.source_folders = ["/some/path"]
             app.dest_folder = ""
@@ -207,26 +180,21 @@ class TestFolderProcessorApp:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock], tmp_path: Path
     ) -> None:
         """Test _safe_copy_file success case."""
-        with patch("tkinter.ttk.Style"), patch("tkinter.Canvas"), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch("tkinter.ttk.Frame"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.Listbox"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.ttk.Label"
-        ), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "Folders_Tool_r0.ctypes"
+        with (
+            patch("tkinter.ttk.Style"),
+            patch("tkinter.Canvas"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.Listbox"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("Folders_Tool_r0.ctypes"),
         ):
-
             app = FolderProcessorApp(mock_root)
 
             # Setup source and dest
@@ -246,26 +214,21 @@ class TestFolderProcessorApp:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock], tmp_path: Path
     ) -> None:
         """Test _safe_copy_file source not found."""
-        with patch("tkinter.ttk.Style"), patch("tkinter.Canvas"), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch("tkinter.ttk.Frame"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.Listbox"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.ttk.Label"
-        ), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "Folders_Tool_r0.ctypes"
+        with (
+            patch("tkinter.ttk.Style"),
+            patch("tkinter.Canvas"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.Listbox"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("Folders_Tool_r0.ctypes"),
         ):
-
             app = FolderProcessorApp(mock_root)
 
             source_file = tmp_path / "non_existent.txt"
@@ -278,26 +241,21 @@ class TestFolderProcessorApp:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock], tmp_path: Path
     ) -> None:
         """Test create_output_zip success."""
-        with patch("tkinter.ttk.Style"), patch("tkinter.Canvas"), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch("tkinter.ttk.Frame"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.Listbox"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.ttk.Label"
-        ), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "Folders_Tool_r0.ctypes"
+        with (
+            patch("tkinter.ttk.Style"),
+            patch("tkinter.Canvas"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.Listbox"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("Folders_Tool_r0.ctypes"),
         ):
-
             app = FolderProcessorApp(mock_root)
 
             # Setup destination folder with files
@@ -325,26 +283,21 @@ class TestFolderProcessorApp:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock], tmp_path: Path
     ) -> None:
         """Test create_output_zip with empty destination."""
-        with patch("tkinter.ttk.Style"), patch("tkinter.Canvas"), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch("tkinter.ttk.Frame"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.Listbox"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.ttk.Label"
-        ), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "Folders_Tool_r0.ctypes"
+        with (
+            patch("tkinter.ttk.Style"),
+            patch("tkinter.Canvas"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.Listbox"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("Folders_Tool_r0.ctypes"),
         ):
-
             app = FolderProcessorApp(mock_root)
 
             dest_folder = tmp_path / "empty_folder"
@@ -359,30 +312,23 @@ class TestFolderProcessorApp:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock]
     ) -> None:
         """Test validate_size_inputs."""
-        with patch("tkinter.ttk.Style"), patch("tkinter.Canvas"), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch("tkinter.ttk.Frame"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.Listbox"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.ttk.Label"
-        ), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "Folders_Tool_r0.ctypes"
-        ), patch(
-            "tkinter.messagebox.showwarning"
-        ) as mock_warning, patch(
-            "tkinter.messagebox.showerror"
-        ) as mock_error:
-
+        with (
+            patch("tkinter.ttk.Style"),
+            patch("tkinter.Canvas"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.Listbox"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("Folders_Tool_r0.ctypes"),
+            patch("tkinter.messagebox.showwarning") as mock_warning,
+            patch("tkinter.messagebox.showerror") as mock_error,
+        ):
             app = FolderProcessorApp(mock_root)
 
             # Use distinct mocks for min and max to avoid shared state if StringVar returns singleton mock
@@ -423,30 +369,23 @@ class TestFolderProcessorApp:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock]
     ) -> None:
         """Test validate_file_filters."""
-        with patch("tkinter.ttk.Style"), patch("tkinter.Canvas"), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch("tkinter.ttk.Frame"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.Listbox"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.ttk.Label"
-        ), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "Folders_Tool_r0.ctypes"
-        ), patch(
-            "os.path.getsize"
-        ) as mock_getsize, patch(
-            "os.path.exists"
+        with (
+            patch("tkinter.ttk.Style"),
+            patch("tkinter.Canvas"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.Listbox"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("Folders_Tool_r0.ctypes"),
+            patch("os.path.getsize") as mock_getsize,
+            patch("os.path.exists"),
         ):
-
             app = FolderProcessorApp(mock_root)
 
             # Use distinct mocks
@@ -475,30 +414,23 @@ class TestFolderProcessorApp:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock]
     ) -> None:
         """Test validate_application_state."""
-        with patch("tkinter.ttk.Style"), patch("tkinter.Canvas"), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch("tkinter.ttk.Frame"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.Listbox"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.ttk.Label"
-        ), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "Folders_Tool_r0.ctypes"
-        ), patch(
-            "os.path.exists"
-        ) as mock_exists, patch(
-            "os.access"
-        ) as mock_access:
-
+        with (
+            patch("tkinter.ttk.Style"),
+            patch("tkinter.Canvas"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.Listbox"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("Folders_Tool_r0.ctypes"),
+            patch("os.path.exists") as mock_exists,
+            patch("os.access") as mock_access,
+        ):
             app = FolderProcessorApp(mock_root)
             app.source_folders = ["/src"]
             app.dest_folder = "/dest"
@@ -521,20 +453,16 @@ class TestFolderProcessorApp:
     ) -> None:
         """Test safe_extract_archive."""
         # Mock UI creation methods to avoid patching all widgets
-        with patch("tkinter.ttk.Style"), patch.object(
-            FolderProcessorApp, "create_scrollable_interface"
-        ), patch.object(FolderProcessorApp, "_setup_application_icon"), patch(
-            "Folders_Tool_r0.ctypes"
-        ), patch(
-            "shutil.unpack_archive"
-        ), patch(
-            "Folders_Tool_r0.logger"
-        ), patch(
-            "shutil.rmtree"
-        ) as mock_rmtree, patch(
-            "os.path.getsize"
-        ) as mock_getsize:
-
+        with (
+            patch("tkinter.ttk.Style"),
+            patch.object(FolderProcessorApp, "create_scrollable_interface"),
+            patch.object(FolderProcessorApp, "_setup_application_icon"),
+            patch("Folders_Tool_r0.ctypes"),
+            patch("shutil.unpack_archive"),
+            patch("Folders_Tool_r0.logger"),
+            patch("shutil.rmtree") as mock_rmtree,
+            patch("os.path.getsize") as mock_getsize,
+        ):
             app = FolderProcessorApp(mock_root)
             # Init manually creates vars, but we need to ensure safe_extract_var is working
             app.safe_extract_var.get.return_value = True
@@ -555,16 +483,15 @@ class TestFolderProcessorApp:
             valid_zip.write_text("content")
 
             # Combined mocks for success case
-            with patch("os.access", return_value=True), patch(
-                "pathlib.Path.unlink"
-            ) as mock_unlink, patch(
-                "pathlib.Path.iterdir", return_value=[Path("extracted_file.txt")]
-            ), patch(
-                "os.walk"
-            ) as mock_walk, patch(
-                "pathlib.Path.exists", return_value=True
+            with (
+                patch("os.access", return_value=True),
+                patch("pathlib.Path.unlink") as mock_unlink,
+                patch(
+                    "pathlib.Path.iterdir", return_value=[Path("extracted_file.txt")]
+                ),
+                patch("os.walk") as mock_walk,
+                patch("pathlib.Path.exists", return_value=True),
             ):
-
                 # Mock result for getsize: Archive size > 0, then file sizes
                 mock_getsize.side_effect = lambda p: 100
 
@@ -582,10 +509,10 @@ class TestFolderProcessorApp:
                 mock_unlink.assert_called_once()
 
             # 4. Extraction failure (exception during unpack)
-            with patch("os.access", return_value=True), patch(
-                "shutil.unpack_archive", side_effect=Exception("Unpack error")
+            with (
+                patch("os.access", return_value=True),
+                patch("shutil.unpack_archive", side_effect=Exception("Unpack error")),
             ):
-
                 mock_getsize.side_effect = None
                 mock_getsize.return_value = 100
 
@@ -598,26 +525,21 @@ class TestFolderProcessorApp:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock]
     ) -> None:
         """Test cancel_processing."""
-        with patch("tkinter.ttk.Style"), patch("tkinter.Canvas"), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch("tkinter.ttk.Frame"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.Listbox"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.ttk.Label"
-        ), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "Folders_Tool_r0.ctypes"
+        with (
+            patch("tkinter.ttk.Style"),
+            patch("tkinter.Canvas"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.Listbox"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("Folders_Tool_r0.ctypes"),
         ):
-
             app = FolderProcessorApp(mock_root)
             app.status_var = Mock()
 
@@ -630,26 +552,21 @@ class TestFolderProcessorApp:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock]
     ) -> None:
         """Test processing_complete."""
-        with patch("tkinter.ttk.Style"), patch("tkinter.Canvas"), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch("tkinter.ttk.Frame"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.Listbox"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.ttk.Label"
-        ), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "Folders_Tool_r0.ctypes"
+        with (
+            patch("tkinter.ttk.Style"),
+            patch("tkinter.Canvas"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.Listbox"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("Folders_Tool_r0.ctypes"),
         ):
-
             app = FolderProcessorApp(mock_root)
             app.run_button = Mock()
             app.cancel_button = Mock()
@@ -667,26 +584,21 @@ class TestFolderProcessorApp:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock]
     ) -> None:
         """Test update_progress."""
-        with patch("tkinter.ttk.Style"), patch("tkinter.Canvas"), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch("tkinter.ttk.Frame"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.Listbox"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.ttk.Label"
-        ), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "Folders_Tool_r0.ctypes"
+        with (
+            patch("tkinter.ttk.Style"),
+            patch("tkinter.Canvas"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.Listbox"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("Folders_Tool_r0.ctypes"),
         ):
-
             app = FolderProcessorApp(mock_root)
             app.progress_var = Mock()
             app.status_var = Mock()
@@ -711,28 +623,22 @@ class TestFolderProcessorApp:
         self, mock_root: Mock, mock_tk_vars: dict[str, Mock]
     ) -> None:
         """Test run_processing_threaded."""
-        with patch("tkinter.ttk.Style"), patch("tkinter.Canvas"), patch(
-            "tkinter.ttk.Scrollbar"
-        ), patch("tkinter.ttk.Frame"), patch("tkinter.ttk.LabelFrame"), patch(
-            "tkinter.Listbox"
-        ), patch(
-            "tkinter.ttk.Button"
-        ), patch(
-            "tkinter.ttk.Label"
-        ), patch(
-            "tkinter.ttk.Entry"
-        ), patch(
-            "tkinter.ttk.Checkbutton"
-        ), patch(
-            "tkinter.ttk.Radiobutton"
-        ), patch(
-            "tkinter.ttk.Progressbar"
-        ), patch(
-            "Folders_Tool_r0.ctypes"
-        ), patch(
-            "threading.Thread"
-        ) as mock_thread:
-
+        with (
+            patch("tkinter.ttk.Style"),
+            patch("tkinter.Canvas"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.Listbox"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("Folders_Tool_r0.ctypes"),
+            patch("threading.Thread") as mock_thread,
+        ):
             app = FolderProcessorApp(mock_root)
             app.run_button = Mock()
             app.cancel_button = Mock()

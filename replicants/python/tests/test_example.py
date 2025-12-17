@@ -1,6 +1,5 @@
 """Example test module to verify testing infrastructure works correctly."""
 
-import pytest
 
 # Constants for test values
 EXPECTED_SUM: int = 4
