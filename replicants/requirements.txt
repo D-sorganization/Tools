@@ -1,0 +1,45 @@
+# Tools Repository Requirements
+# ============================
+
+# Core Dependencies
+# =================
+# Scientific computing and data processing
+numpy==2.0.1
+pandas==2.2.2
+matplotlib==3.9.0
+scipy==1.13.1
+
+# Development and testing
+pytest==8.2.0
+pyyaml==6.0.1
+
+# Tool-specific Dependencies
+# =========================
+# File and folder management tools
+click==8.1.7
+rich==13.7.0
+pathlib2==2.3.7
+
+# Data processing and analysis
+# Uncomment if needed:
+# openpyxl==3.1.2  # Excel file handling
+# h5py==3.10.0     # HDF5 file support
+# netCDF4==1.6.5   # NetCDF file support
+
+# Installation Instructions
+# =======================
+# 1. Install all dependencies:
+#    pip install -r requirements.txt
+#
+# 2. For development, install in editable mode:
+#    pip install -e .
+#
+# 3. Verify installation:
+#    python -c "import numpy, pandas, matplotlib; print('Dependencies installed successfully')"
+
+# Notes
+# =====
+# - This repository contains utility tools and scripts
+# - Some tools may have additional subdirectory-specific requirements
+# - Check individual tool directories for specific dependencies
+# - All tools are designed to work with the standard scientific Python stack
