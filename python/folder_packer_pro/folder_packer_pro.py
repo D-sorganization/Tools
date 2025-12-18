@@ -1341,9 +1341,11 @@ class FolderPackerPro:
                     ).decode("utf-8")
 
                     progress = ((i + 1) / total_files) * 100
-                    self.root.after(
-                        0, lambda p=progress: self.pack_progress_var.set(float(p))
-                    )  # type: ignore[misc]
+
+                    def update_progress(p: float = progress) -> None:
+                        self.pack_progress_var.set(float(p))
+
+                    self.root.after(0, update_progress)
                     self._update_pack_status(
                         f"Packing {file_path.name} ({i + 1}/{total_files})",
                     )
@@ -1353,7 +1355,7 @@ class FolderPackerPro:
 
             if self.cancel_operation:
                 self._log_message("Pack operation cancelled", "warning")
-                return
+                return  # type: ignore[unreachable]
 
             # Serialize to JSON
             json_data = json.dumps(package_data, indent=2).encode("utf-8")

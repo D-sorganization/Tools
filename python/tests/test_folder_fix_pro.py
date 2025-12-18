@@ -42,7 +42,8 @@ class TestFileHasher:
         with open(p, "rb") as f:
             chunk = f.read(65536)  # DEFAULT_CHUNK_SIZE
             hasher.update(chunk)
-            # File is small, so last chunk logic won't trigger if it's smaller than 2*CHUNK_SIZE
+            # File is small, so last chunk logic won't trigger if it's smaller
+            # than 2*CHUNK_SIZE
 
         expected_hash = hasher.hexdigest()
         assert FileHasher.hash_file_fast(p) == expected_hash

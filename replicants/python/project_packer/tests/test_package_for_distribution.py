@@ -104,11 +104,13 @@ class TestPackageForDistribution:
         test_file = "folder_packer_gui.py"
         (source_dir / test_file).write_text("test content")
 
-        with patch("package_for_distribution.REQUIRED_FILES", [test_file]):
-            with patch("shutil.copy2") as mock_copy:
-                mock_copy.side_effect = OSError("Permission denied")
-                result = copy_required_files(source_dir, package_dir)
-                assert result is False
+        with (
+            patch("package_for_distribution.REQUIRED_FILES", [test_file]),
+            patch("shutil.copy2") as mock_copy,
+        ):
+            mock_copy.side_effect = OSError("Permission denied")
+            result = copy_required_files(source_dir, package_dir)
+            assert result is False
 
     def test_create_zip_archive_success(self, tmp_path: Path) -> None:
         """Test successful zip archive creation."""

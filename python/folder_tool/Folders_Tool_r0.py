@@ -481,7 +481,9 @@ class FolderProcessorApp:
             # Get the directory where the script/executable is located
             if getattr(sys, "frozen", False):
                 # Running as compiled executable
-                base_dir = sys._MEIPASS
+                base_dir = getattr(
+                    sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__))
+                )
             else:
                 # Running as script
                 base_dir = os.path.dirname(__file__)
@@ -503,10 +505,11 @@ class FolderProcessorApp:
     def _set_windows_app_id(self) -> None:
         """Sets the Windows app user model ID for taskbar grouping."""
         try:
-            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
-                "FolderFix.Tool.2.0",
-            )
-            logger.info("Set Windows App User Model ID for taskbar grouping")
+            if sys.platform == "win32":
+                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(  # type: ignore[attr-defined]
+                    "FolderFix.Tool.2.0",
+                )
+                logger.info("Set Windows App User Model ID for taskbar grouping")
         except Exception as e:
             logger.warning(f"Could not set app ID: {e}")
 
@@ -542,7 +545,7 @@ class FolderProcessorApp:
 
             # Set all sizes at once for best scaling
             if photos:
-                self.root.iconphoto(True, *photos)
+                self.root.iconphoto(True, *photos)  # type: ignore[arg-type]
                 # Keep references to prevent garbage collection
                 self.icon_photos = photos
                 logger.info(f"Set iconphoto with {len(photos)} different sizes")
@@ -557,7 +560,7 @@ class FolderProcessorApp:
             logger.info("ICO not found, using PNG fallback")
             from PIL import Image, ImageTk
 
-            image = Image.open(png_path)
+            image: Image.Image = Image.open(png_path)
 
             # Convert to RGBA for transparency support
             if image.mode != "RGBA":
@@ -1872,7 +1875,7 @@ class FolderProcessorApp:
                     )
             except Exception as e:
                 messagebox.showerror("Error", f"An error occurred during analysis: {e}")
-            return
+            return  # type: ignore[unreachable]
 
         # Handle deduplication mode
         if mode == "deduplicate":
@@ -1889,7 +1892,7 @@ class FolderProcessorApp:
                     "Error",
                     f"An error occurred during deduplication: {e}",
                 )
-            return
+            return  # type: ignore[unreachable]
 
         # Handle Source -> Destination workflows
         if not self.validate_inputs(check_destination=True):
@@ -1921,7 +1924,7 @@ class FolderProcessorApp:
                     "Error",
                     f"An error occurred during bulk unzip: {e}",
                 )
-                return
+                return  # type: ignore[unreachable]
 
         # Main Operation
         try:
@@ -1943,7 +1946,7 @@ class FolderProcessorApp:
                 "Error",
                 f"An error occurred during the main operation: {e}",
             )
-            return
+            return  # type: ignore[unreachable]
 
         # Post-processing
         if self.deduplicate_var.get():
@@ -2984,7 +2987,7 @@ class FolderProcessorApp:
             Exception: If folder removal fails for other reasons
         """
         try:
-            selected_indices = list(self.source_listbox.curselection())
+            selected_indices = list(self.source_listbox.curselection())  # type: ignore[no-untyped-call]
             if not selected_indices:
                 messagebox.showinfo("Info", "Please select folders to remove.")
                 return

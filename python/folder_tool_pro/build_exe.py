@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 
-def build_exe():
+def build_exe() -> int:
     """Build Windows executable using PyInstaller."""
 
     print("=" * 60)

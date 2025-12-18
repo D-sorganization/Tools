@@ -21,7 +21,12 @@ ignore = [
     "D",      # Docstring checks (we check separately)
     "COM812", # Missing trailing comma (conflicts with black)
     "ISC001", # Single line implicit string concat
+    "EXE001", # Shebang present but file not executable (Windows/chmod issue)
 ]
+
+per-file-ignores = { "tests/*" = ["S101"], "*/tests/*" = ["S101"] }
+
+# Stricter than defaults
 
 # Stricter than defaults
 fixable = ["ALL"]

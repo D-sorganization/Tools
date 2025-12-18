@@ -55,6 +55,40 @@ MAGIC_NUMBERS = [
 ]
 
 
+def _is_class_or_func_context(lines: list[str], line_num: int) -> bool:
+    """Check if pass is inside a class or function definition."""
+    for i in range(line_num - 1, max(0, line_num - 10), -1):
+        prev_line = lines[i - 1].strip()
+        if prev_line.startswith("def "):
+            return False
+
+        is_block_start = prev_line.endswith(":") and any(
+            keyword in prev_line
+            for keyword in ["try:", "except", "finally:", "with ", "if __name__"]
+        )
+        if prev_line.startswith("class ") or is_block_start:
+            return True
+    return False
+
+
+def _is_try_except_context(lines: list[str], line_num: int) -> bool:
+    """Check if pass is inside a try/except block."""
+    for i in range(line_num - 1, max(0, line_num - 5), -1):
+        prev_line = lines[i - 1].strip()
+        if "try:" in prev_line or "except" in prev_line:
+            return True
+    return False
+
+
+def _is_context_manager_context(lines: list[str], line_num: int) -> bool:
+    """Check if pass is inside a context manager."""
+    for i in range(line_num - 1, max(0, line_num - 3), -1):
+        prev_line = lines[i - 1].strip()
+        if prev_line.startswith("with "):
+            return True
+    return False
+
+
 def is_legitimate_pass_context(lines: list[str], line_num: int) -> bool:
     """Check if a pass statement is in a legitimate context."""
     if line_num <= 0 or line_num > len(lines):
@@ -64,32 +98,11 @@ def is_legitimate_pass_context(lines: list[str], line_num: int) -> bool:
     if line != "pass":
         return False
 
-    # Check if this is in a class definition (legitimate)
-    for i in range(line_num - 1, max(0, line_num - 10), -1):
-        prev_line = lines[i - 1].strip()
-        if prev_line.startswith("class "):
-            return True
-        if prev_line.startswith("def "):
-            return False
-        if prev_line.endswith(":") and any(
-            keyword in prev_line
-            for keyword in ["try:", "except", "finally:", "with ", "if __name__"]
-        ):
-            return True
-
-    # Check if this is in a try/except block (legitimate)
-    for i in range(line_num - 1, max(0, line_num - 5), -1):
-        prev_line = lines[i - 1].strip()
-        if "try:" in prev_line or "except" in prev_line:
-            return True
-
-    # Check if this is in a context manager (legitimate)
-    for i in range(line_num - 1, max(0, line_num - 3), -1):
-        prev_line = lines[i - 1].strip()
-        if prev_line.startswith("with "):
-            return True
-
-    return False
+    return (
+        _is_class_or_func_context(lines, line_num)
+        or _is_try_except_context(lines, line_num)
+        or _is_context_manager_context(lines, line_num)
+    )
 
 
 def is_legitimate_tkinter_binding(line: str) -> bool:

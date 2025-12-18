@@ -30,7 +30,8 @@ class TestLoggerUtils:
         import sys
 
         # Use simple patch.dict to safely simulate missing module
-        # ModuleNotFoundError (raised when None is in sys.modules) inherits from ImportError
+        # ModuleNotFoundError (raised when None is in sys.modules) inherits from
+        # ImportError
         with patch.dict(sys.modules, {"numpy": None}):
             with patch("src.logger_utils.logger") as mock_logger:
                 set_seeds()

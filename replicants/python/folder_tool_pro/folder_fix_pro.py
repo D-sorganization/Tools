@@ -1,4 +1,5 @@
 """
+# ruff: noqa: RUF001, PLR0915
 Folder Fix Pro v3.0 - Enhanced Professional Folder Processing Tool
 
 A comprehensive, modern folder management application with advanced features:
@@ -156,27 +157,27 @@ class FileHasher:
 class OperationReport:
     """Generate detailed operation reports."""
 
-    def __init__(self):
-        self.start_time = datetime.now()
+    def __init__(self) -> None:
+        self.start_time = datetime.now(datetime.UTC)
         self.end_time = None
         self.operations = []
         self.stats = defaultdict(int)
         self.errors = []
 
-    def add_operation(self, operation: str, details: dict):
+    def add_operation(self, operation: str, details: dict) -> None:
         """Add operation to report."""
         self.operations.append(
-            {"timestamp": datetime.now(), "operation": operation, "details": details}
+            {"timestamp": datetime.now(datetime.UTC), "operation": operation, "details": details}
         )
         self.stats[operation] += 1
 
-    def add_error(self, error: str):
+    def add_error(self, error: str) -> None:
         """Add error to report."""
-        self.errors.append({"timestamp": datetime.now(), "error": error})
+        self.errors.append({"timestamp": datetime.now(datetime.UTC), "error": error})
 
-    def finalize(self):
+    def finalize(self) -> None:
         """Finalize report with end time."""
-        self.end_time = datetime.now()
+        self.end_time = datetime.now(datetime.UTC)
 
     def get_duration(self) -> str:
         """Get operation duration."""
@@ -185,7 +186,7 @@ class OperationReport:
             return str(duration).split(".")[0]
         return "In progress"
 
-    def export_json(self, file_path: str):
+    def export_json(self, file_path: str) -> None:
         """Export report as JSON."""
         report_data = {
             "start_time": self.start_time.isoformat(),
@@ -208,10 +209,10 @@ class OperationReport:
             ],
         }
 
-        with open(file_path, "w", encoding="utf-8") as f:
+        with Path(file_path).open("w", encoding="utf-8") as f:
             json.dump(report_data, f, indent=2)
 
-    def export_html(self, file_path: str):
+    def export_html(self, file_path: str) -> None:
         """Export report as HTML."""
         html_content = f"""
 <!DOCTYPE html>
@@ -362,7 +363,10 @@ class OperationReport:
             f'''
     <div class="section">
         <h2>Errors ({len(self.errors)})</h2>
-        {"".join(f'<div class="error"><span class="timestamp">{err["timestamp"].strftime("%H:%M:%S")}</span> - {err["error"]}</div>' for err in self.errors)}
+        {"".join(
+            f'<div class="error"><span class="timestamp">{err["timestamp"].strftime("%H:%M:%S")}</span> - {err["error"]}</div>'
+            for err in self.errors
+        )}
     </div>
     '''
             if self.errors
@@ -393,22 +397,22 @@ class OperationReport:
             </tbody>
         </table>
         {
-            f"<p><em>Showing last 100 of {len(self.operations)} operations</em></p>"
-            if len(self.operations) > 100
+            f"<p><em>Showing last {PREVIEW_MAX_FILES} of {len(self.operations)} operations</em></p>"
+            if len(self.operations) > PREVIEW_MAX_FILES
             else ""
         }
     </div>
 </body>
 </html>
 """
-        with open(file_path, "w", encoding="utf-8") as f:
+        with Path(file_path).open("w", encoding="utf-8") as f:
             f.write(html_content)
 
 
 class FolderFixPro:
     """Enhanced professional folder processing application."""
 
-    def __init__(self, root):
+    def __init__(self, root: tk.Tk) -> None:
         self.root = root
         self.root.title("Folder Fix Pro v3.0 - Professional Folder Manager")
         self.root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
@@ -450,7 +454,7 @@ class FolderFixPro:
 
         logger.info("Folder Fix Pro v3.0 initialized successfully")
 
-    def _setup_icon(self):
+    def _setup_icon(self) -> None:
         """Set up application icon with fallback."""
         try:
             if sys.platform == "win32":
@@ -459,9 +463,9 @@ class FolderFixPro:
                 )
             # You can add icon file loading here
         except Exception as e:
-            logger.warning(f"Could not set icon: {e}")
+            logger.warning("Could not set icon: %s", e)
 
-    def _create_menu_bar(self):
+    def _create_menu_bar(self) -> None:
         """Create professional menu bar."""
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
@@ -496,7 +500,7 @@ class FolderFixPro:
         help_menu.add_command(label="About", command=self._show_about)
         help_menu.add_command(label="User Guide", command=self._show_user_guide)
 
-    def _create_main_ui(self):
+    def _create_main_ui(self) -> None:
         """Create main user interface with modern design."""
         # Create notebook for tabbed interface
         self.notebook = ttk.Notebook(self.root)
@@ -513,7 +517,7 @@ class FolderFixPro:
         # Status bar at bottom
         self._create_status_bar()
 
-    def _create_operation_tab(self):
+    def _create_operation_tab(self) -> None:
         """Create main operation tab."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Operation  ")
@@ -723,7 +727,7 @@ class FolderFixPro:
         )
         self.cancel_btn.pack(side="right", fill="x", expand=True)
 
-    def _create_filters_tab(self):
+    def _create_filters_tab(self) -> None:
         """Create filters and advanced options tab."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Filters & Advanced  ")
@@ -812,7 +816,7 @@ class FolderFixPro:
             pady=PADDING_MEDIUM
         )
 
-    def _create_preview_tab(self):
+    def _create_preview_tab(self) -> None:
         """Create preview tab showing files that will be processed."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Preview  ")
@@ -870,7 +874,7 @@ class FolderFixPro:
         tree_scroll_y.config(command=self.preview_tree.yview)
         tree_scroll_x.config(command=self.preview_tree.xview)
 
-    def _create_log_tab(self):
+    def _create_operation_log_tab(self) -> None:
         """Create operation log tab."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Log  ")
@@ -912,7 +916,7 @@ class FolderFixPro:
         self.log_text.tag_config("warning", foreground="#ffc107")
         self.log_text.tag_config("error", foreground="#dc3545")
 
-    def _create_status_bar(self):
+    def _create_status_bar(self) -> None:
         """Create bottom status bar."""
         status_frame = ttk.Frame(self.root, relief="sunken", borderwidth=1)
         status_frame.pack(side="bottom", fill="x")
@@ -930,13 +934,13 @@ class FolderFixPro:
         version_label = ttk.Label(status_frame, text="v3.0", anchor="e")
         version_label.pack(side="right", padx=PADDING_SMALL)
 
-    def _setup_drag_drop(self):
+    def _setup_drag_drop(self) -> None:
         """Set up drag and drop functionality."""
         # Drag-and-drop would require tkinterdnd2 package
         # For standard tkinter, we rely on file dialog buttons
         self._log_message("Ready - Use buttons to add folders", "info")
 
-    def _apply_theme(self):
+    def _apply_theme(self) -> None:
         """Apply color theme to application."""
         theme = DARK_THEME if self.current_theme == "dark" else LIGHT_THEME
 
@@ -956,13 +960,13 @@ class FolderFixPro:
             text=f"Ready  |  Theme: {self.current_theme.title()}  |  No operation in progress"
         )
 
-    def _toggle_theme(self):
+    def _toggle_theme(self) -> None:
         """Toggle between dark and light themes."""
         self.current_theme = "light" if self.current_theme == "dark" else "dark"
         self._apply_theme()
         self._log_message(f"Switched to {self.current_theme} theme", "info")
 
-    def _add_source_folder(self):
+    def _add_source_folder(self) -> None:
         """Add source folder via dialog."""
         folder = filedialog.askdirectory(title="Select Source Folder")
         if folder and folder not in self.source_folders:
@@ -971,7 +975,7 @@ class FolderFixPro:
             self._log_message(f"Added source folder: {folder}", "info")
             self._update_preview()
 
-    def _remove_source_folder(self):
+    def _remove_source_folder(self) -> None:
         """Remove selected source folder."""
         selection = self.source_listbox.curselection()
         for index in reversed(selection):
@@ -981,14 +985,14 @@ class FolderFixPro:
             self._log_message(f"Removed source folder: {folder}", "info")
         self._update_preview()
 
-    def _clear_source_folders(self):
+    def _clear_source_folders(self) -> None:
         """Clear all source folders."""
         self.source_folders.clear()
         self.source_listbox.delete(0, "end")
         self._log_message("Cleared all source folders", "info")
         self._update_preview()
 
-    def _browse_destination(self):
+    def _browse_destination(self) -> None:
         """Browse for destination folder."""
         folder = filedialog.askdirectory(title="Select Destination Folder")
         if folder:
@@ -997,13 +1001,13 @@ class FolderFixPro:
             self.dest_entry.insert(0, folder)
             self._log_message(f"Set destination folder: {folder}", "info")
 
-    def _on_mode_change(self):
+    def _on_mode_change(self) -> None:
         """Handle operation mode change."""
         mode = self.mode_var.get()
         self._log_message(f"Operation mode changed to: {mode}", "info")
         self._update_preview()
 
-    def _update_preview(self):
+    def _update_preview(self) -> None:
         """Update the preview tab with files to be processed."""
         self.preview_tree.delete(*self.preview_tree.get_children())
 
@@ -1012,8 +1016,8 @@ class FolderFixPro:
             return
 
         # Scan files in background
-        def scan_files():
-            files = []
+        def scan_files() -> None:
+            files: list[Path] = []
             for folder in self.source_folders:
                 try:
                     for root, _, filenames in os.walk(folder):
@@ -1025,22 +1029,22 @@ class FolderFixPro:
                                     break
                         if len(files) >= PREVIEW_MAX_FILES:
                             break
-                except Exception as e:
-                    logger.error(f"Error scanning {folder}: {e}")
+                except Exception:
+                    logger.exception("Error scanning %s", folder)
 
             self.root.after(0, lambda: self._populate_preview(files))
 
         threading.Thread(target=scan_files, daemon=True).start()
 
-    def _populate_preview(self, files):
+    def _populate_preview(self, files: list[Path]) -> None:
         """Populate preview tree with scanned files."""
         for file_path in files[:PREVIEW_MAX_FILES]:
             try:
                 stat = file_path.stat()
                 size = self._format_size(stat.st_size)
-                modified = datetime.fromtimestamp(stat.st_mtime).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
+                modified = datetime.fromtimestamp(
+                    stat.st_mtime, datetime.UTC
+                ).strftime("%Y-%m-%d %H:%M:%S")
                 file_type = file_path.suffix or "File"
 
                 self.preview_tree.insert(
@@ -1049,8 +1053,8 @@ class FolderFixPro:
                     text=file_path.name,
                     values=(str(file_path), size, modified, file_type),
                 )
-            except Exception as e:
-                logger.error(f"Error adding {file_path} to preview: {e}")
+            except Exception:
+                logger.exception("Error adding %s to preview", file_path)
 
         count_text = f"{len(files)}" + (
             " (limited)" if len(files) >= PREVIEW_MAX_FILES else ""
@@ -1060,44 +1064,42 @@ class FolderFixPro:
     def _should_include_file(self, file_path: Path) -> bool:
         """Check if file should be included based on filters."""
         try:
-            # Check if file exists
-            if not file_path.exists():
-                return False
-
-            # Check hidden files
-            if self.skip_hidden_var.get() and file_path.name.startswith("."):
-                return False
-
-            # Check size
-            size = file_path.stat().st_size
-            min_size_mb = float(self.min_size_entry.get() or 0)
-            max_size_mb = float(self.max_size_entry.get() or MAX_FILE_SIZE_MB)
-
-            if size < min_size_mb * 1024 * 1024:
-                return False
-            if size > max_size_mb * 1024 * 1024:
-                return False
-
-            # Check extension filter
-            ext_filter = self.ext_filter_entry.get().strip()
-            if ext_filter:
-                extensions = [ext.strip().lower() for ext in ext_filter.split(",")]
-                if file_path.suffix.lower() not in extensions:
+            # Check include extensions
+            include_exts = self.ext_filter_entry.get().strip()
+            if include_exts:
+                exts = [e.strip().lower() for e in include_exts.split(",")]
+                if file_path.suffix.lower() not in exts:
                     return False
+
+            # Check min size
+            min_size_str = self.min_size_entry.get().strip()
+            if min_size_str:
+                try:
+                    min_size = float(min_size_str) * 1024 * 1024  # MB to bytes
+                    if file_path.stat().st_size < min_size:
+                        return False
+                except ValueError:
+                    pass
+
+            # Check max size
+            max_size_str = self.max_size_entry.get().strip()
+            if max_size_str:
+                try:
+                    max_size = float(max_size_str) * 1024 * 1024  # MB to bytes
+                    if file_path.stat().st_size > max_size:
+                        return False
+                except ValueError:
+                    pass
 
             # Check regex filter
             regex_filter = self.regex_filter_entry.get().strip()
-            if regex_filter:
-                if not re.match(regex_filter, file_path.name):
-                    return False
+            return not (regex_filter and not re.match(regex_filter, file_path.name))
 
-            return True
-
-        except Exception as e:
-            logger.error(f"Error checking file {file_path}: {e}")
+        except Exception:
+            logger.exception("Error checking file %s", file_path)
             return False
 
-    def _test_filters(self):
+    def _test_filters(self) -> None:
         """Test current filters and show results."""
         if not self.source_folders:
             messagebox.showwarning(
@@ -1128,7 +1130,7 @@ class FolderFixPro:
 
         messagebox.showinfo("Filter Test Results", message)
 
-    def _start_operation(self):
+    def _start_operation(self) -> None:
         """Start the selected operation."""
         # Validate inputs
         if not self.source_folders:
@@ -1145,15 +1147,14 @@ class FolderFixPro:
             return
 
         # Confirm operation
-        if not self.preview_var.get():
-            if not messagebox.askyesno(
-                "Confirm Operation",
-                f"Are you sure you want to perform this operation?\n\n"
-                f"Mode: {mode}\n"
-                f"Sources: {len(self.source_folders)} folder(s)\n"
-                f"Destination: {self.dest_folder if mode != 'analyze' else 'N/A'}",
-            ):
-                return
+        if not self.preview_var.get() and not messagebox.askyesno(
+            "Confirm Operation",
+            f"Are you sure you want to perform this operation?\n\n"
+            f"Mode: {mode}\n"
+            f"Sources: {len(self.source_folders)} folder(s)\n"
+            f"Destination: {self.dest_folder if mode != 'analyze' else 'N/A'}",
+        ):
+            return
 
         # Start operation in background thread
         self.cancel_operation = False
@@ -1164,7 +1165,7 @@ class FolderFixPro:
 
         threading.Thread(target=self._run_operation, daemon=True).start()
 
-    def _run_operation(self):
+    def _run_operation(self) -> None:
         """Run the selected operation (background thread)."""
         try:
             mode = self.mode_var.get()
@@ -1198,15 +1199,16 @@ class FolderFixPro:
         except Exception as e:
             logger.exception("Operation failed")
             self._log_message(f"Operation failed: {e}", "error")
-            self.operation_report.add_error(str(e))
+            err_msg = str(e)
+            self.operation_report.add_error(err_msg)
             self.root.after(
-                0, lambda: messagebox.showerror("Error", f"Operation failed:\n\n{e}")
+                0, lambda: messagebox.showerror("Error", f"Operation failed:\n\n{err_msg}")
             )
 
         finally:
             self.root.after(0, self._operation_finished)
 
-    def _operation_combine(self):
+    def _operation_combine(self) -> None:
         """Combine and copy files from multiple sources."""
         dest_path = Path(self.dest_folder)
         dest_path.mkdir(parents=True, exist_ok=True)
@@ -1246,12 +1248,13 @@ class FolderFixPro:
                             self._update_progress(
                                 processed, total_files, f"Copying {filename}"
                             )
-                        except Exception as e:
+                        except Exception as e:  # noqa: BLE001
                             self.operation_report.add_error(
                                 f"Failed to copy {source_file}: {e}"
                             )
 
-    def _operation_flatten(self):
+
+    def _operation_flatten(self) -> None:
         """Flatten directory structure."""
         dest_path = Path(self.dest_folder)
         dest_path.mkdir(parents=True, exist_ok=True)
@@ -1269,48 +1272,81 @@ class FolderFixPro:
                         break
 
                     source_file = Path(root) / filename
-                    if self._should_include_file(source_file):
-                        # Create flat structure
-                        if self.organize_type_var.get():
-                            # Organize by file type
-                            file_type = source_file.suffix.lstrip(".") or "no_extension"
-                            type_folder = dest_path / file_type
-                            type_folder.mkdir(exist_ok=True)
-                            dest_file = type_folder / filename
-                        elif self.organize_date_var.get():
-                            # Organize by date
-                            mtime = datetime.fromtimestamp(source_file.stat().st_mtime)
-                            date_folder = dest_path / mtime.strftime("%Y-%m")
-                            date_folder.mkdir(exist_ok=True)
-                            dest_file = date_folder / filename
-                        else:
-                            dest_file = dest_path / filename
+                    if self._flatten_single_file(source_file, dest_path):
+                        processed += 1
+                        self._update_progress(
+                            processed, total_files, f"Flattening {filename}"
+                        )
 
-                        # Handle duplicates
-                        counter = 1
-                        while dest_file.exists():
-                            stem = source_file.stem
-                            suffix = source_file.suffix
-                            dest_file = dest_file.parent / f"{stem}_{counter}{suffix}"
-                            counter += 1
+    def _flatten_single_file(self, source_file: Path, dest_path: Path) -> bool:
+        """Process a single file for flattening."""
+        if not self._should_include_file(source_file):
+            return False
 
-                        try:
-                            if not self.preview_var.get():
-                                shutil.copy2(source_file, dest_file)
-                            self.operation_report.add_operation(
-                                "flatten",
-                                {"source": str(source_file), "dest": str(dest_file)},
-                            )
-                            processed += 1
-                            self._update_progress(
-                                processed, total_files, f"Flattening {filename}"
-                            )
-                        except Exception as e:
-                            self.operation_report.add_error(
-                                f"Failed to flatten {source_file}: {e}"
-                            )
+        try:
+            dest_file = self._determine_flatten_dest(source_file, dest_path)
+            dest_file = self._resolve_collision(source_file, dest_file)
+            
+            if not self.preview_var.get():
+                shutil.copy2(source_file, dest_file)
+            
+            self.operation_report.add_operation(
+                "flatten",
+                {"source": str(source_file), "dest": str(dest_file)},
+            )
+            return True
+        except Exception as e:  # noqa: BLE001
+             self.operation_report.add_error(
+                f"Failed to flatten {source_file}: {e}"
+            )
+             return False
 
-    def _operation_prune(self):
+            if not self.preview_var.get():
+                shutil.copy2(source_file, dest_file)
+
+            self.operation_report.add_operation(
+                "flatten",
+                {"source": str(source_file), "dest": str(dest_file)},
+            )
+            return True
+
+        except Exception as e:  # noqa: BLE001
+            self.operation_report.add_error(
+                f"Failed to flatten {source_file}: {e}"
+            )
+            return False
+
+    def _determine_flatten_dest(self, source_file: Path, dest_path: Path) -> Path:
+        """Determine destination path for flattening."""
+        if self.organize_type_var.get():
+            # Organize by file type
+            file_type = source_file.suffix.lstrip(".") or "no_extension"
+            type_folder = dest_path / file_type
+            type_folder.mkdir(exist_ok=True)
+            return type_folder / source_file.name
+
+        if self.organize_date_var.get():
+            # Organize by date
+            mtime = datetime.fromtimestamp(
+                source_file.stat().st_mtime, datetime.UTC
+            )
+            date_folder = dest_path / mtime.strftime("%Y-%m")
+            date_folder.mkdir(exist_ok=True)
+            return date_folder / source_file.name
+
+        return dest_path / source_file.name
+
+    def _resolve_collision(self, source_file: Path, dest_file: Path) -> Path:
+        """Resolve filename collisions."""
+        counter = 1
+        while dest_file.exists():
+            stem = source_file.stem
+            suffix = source_file.suffix
+            dest_file = dest_file.parent / f"{stem}_{counter}{suffix}"
+            counter += 1
+        return dest_file
+
+    def _operation_prune(self) -> None:
         """Copy structure but prune empty folders."""
         dest_path = Path(self.dest_folder)
 
@@ -1327,7 +1363,7 @@ class FolderFixPro:
 
             source_path = Path(source_folder)
 
-            for root, dirs, filenames in os.walk(source_folder):
+            for root, _dirs, filenames in os.walk(source_folder):
                 if self.cancel_operation:
                     break
 
@@ -1357,7 +1393,7 @@ class FolderFixPro:
                                         "dest": str(dest_file),
                                     },
                                 )
-                            except Exception as e:
+                            except Exception as e:  # noqa: BLE001
                                 self.operation_report.add_error(
                                     f"Failed to copy {source_file}: {e}"
                                 )
@@ -1367,12 +1403,30 @@ class FolderFixPro:
                     processed, total_folders, f"Processing {Path(root).name}"
                 )
 
-    def _operation_deduplicate(self):
+    def _operation_deduplicate(self) -> None:
         """Remove duplicate files based on selected method."""
         method = self.dedupe_method_var.get()
         self._log_message(f"Deduplication method: {method}", "info")
 
         # Collect all files
+        files = self._collect_files_for_dedupe()
+        total_files = len(files)
+        self._log_message(f"Found {total_files} files to check for duplicates", "info")
+
+        # Find duplicates
+        hash_map = self._build_dedupe_hash_map(method, files)
+
+        # Remove duplicates
+        duplicates_found, space_saved = self._remove_duplicates(hash_map)
+
+        self._log_message(
+            f"Deduplication complete. Removed {duplicates_found} duplicates, "
+            f"saved {self._format_size(space_saved)}",
+            "success",
+        )
+
+    def _collect_files_for_dedupe(self) -> list[Path]:
+        """Collect all files from source folders."""
         files = []
         for source_folder in self.source_folders:
             for root, _, filenames in os.walk(source_folder):
@@ -1380,19 +1434,19 @@ class FolderFixPro:
                     file_path = Path(root) / filename
                     if self._should_include_file(file_path):
                         files.append(file_path)
+        return files
 
-        total_files = len(files)
-        self._log_message(f"Found {total_files} files to check for duplicates", "info")
-
-        # Find duplicates
+    def _build_dedupe_hash_map(self, method: str, files: list[Path]) -> dict[str, list[Path]]:
+        """Build hash map for duplicate detection."""
         hash_map = defaultdict(list)
-        processed = 0
+        total_files = len(files)
 
-        for file_path in files:
+        for i, file_path in enumerate(files, 1):
             if self.cancel_operation:
                 break
 
             try:
+                file_hash = None
                 if method == "hash":
                     file_hash = FileHasher.hash_file(file_path)
                 elif method == "fast_hash":
@@ -1404,18 +1458,20 @@ class FolderFixPro:
                 if file_hash:
                     hash_map[file_hash].append(file_path)
 
-                processed += 1
                 self._update_progress(
-                    processed, total_files, f"Checking {file_path.name}"
+                    i, total_files, f"Checking {file_path.name}"
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001
                 self.operation_report.add_error(f"Failed to process {file_path}: {e}")
 
-        # Remove duplicates
+        return hash_map
+
+    def _remove_duplicates(self, hash_map: dict[str, list[Path]]) -> tuple[int, int]:
+        """Remove identified duplicates."""
         duplicates_found = 0
         space_saved = 0
 
-        for file_hash, file_list in hash_map.items():
+        for file_list in hash_map.values():
             if len(file_list) > 1:
                 # Keep first file, remove others
                 for duplicate_file in file_list[1:]:
@@ -1433,18 +1489,13 @@ class FolderFixPro:
                                 "size": size,
                             },
                         )
-                    except Exception as e:
+                    except Exception as e:  # noqa: BLE001
                         self.operation_report.add_error(
                             f"Failed to delete duplicate {duplicate_file}: {e}"
                         )
+        return duplicates_found, space_saved
 
-        self._log_message(
-            f"Deduplication complete: {duplicates_found} duplicates, "
-            f"{self._format_size(space_saved)} saved",
-            "success",
-        )
-
-    def _operation_analyze(self):
+    def _operation_analyze(self) -> None:
         """Analyze folders without making changes."""
         stats = {
             "total_files": 0,
@@ -1456,9 +1507,7 @@ class FolderFixPro:
         }
 
         total_folders = len(self.source_folders)
-        processed = 0
-
-        for source_folder in self.source_folders:
+        for processed, source_folder in enumerate(self.source_folders, 1):
             if self.cancel_operation:
                 break
 
@@ -1488,12 +1537,12 @@ class FolderFixPro:
                             stats["newest_files"].sort(key=lambda x: x[1], reverse=True)
                             stats["newest_files"] = stats["newest_files"][:10]
 
-                        except Exception as e:
+                        except Exception as e:  # noqa: BLE001
                             self.operation_report.add_error(
                                 f"Failed to analyze {file_path}: {e}"
                             )
 
-            processed += 1
+            # processed already tracked by enumerate
             self._update_progress(
                 processed, total_folders, f"Analyzing {source_folder}"
             )
@@ -1501,7 +1550,7 @@ class FolderFixPro:
         # Show analysis results
         self._show_analysis_results(stats)
 
-    def _show_analysis_results(self, stats):
+    def _show_analysis_results(self, stats: dict[str, int]) -> None:
         """Show analysis results in a dialog."""
         results = "📊 Folder Analysis Results\n\n"
         results += f"Total Files: {stats['total_files']:,}\n"
@@ -1533,7 +1582,7 @@ class FolderFixPro:
                 total += len(filenames)
         return total
 
-    def _update_progress(self, current: int, total: int, message: str):
+    def _update_progress(self, current: int, total: int, message: str) -> None:
         """Update progress bar and status."""
         if total > 0:
             percentage = (current / total) * 100
@@ -1542,7 +1591,7 @@ class FolderFixPro:
             # Calculate ETA
             if current > 0:
                 elapsed = (
-                    datetime.now() - self.operation_report.start_time
+                    datetime.now(datetime.UTC) - self.operation_report.start_time
                 ).total_seconds()
                 eta_seconds = (elapsed / current) * (total - current)
                 eta = f"ETA: {int(eta_seconds // 60)}m {int(eta_seconds % 60)}s"
@@ -1550,7 +1599,7 @@ class FolderFixPro:
 
         self._update_status(message)
 
-    def _update_status(self, message: str):
+    def _update_status(self, message: str) -> None:
         """Update status label."""
         self.root.after(0, lambda: self.status_label.configure(text=message))
         self.root.after(
@@ -1560,13 +1609,13 @@ class FolderFixPro:
             ),
         )
 
-    def _cancel_operation(self):
+    def _cancel_operation(self) -> None:
         """Cancel current operation."""
         self.cancel_operation = True
         self._log_message("Operation cancelled by user", "warning")
         self._update_status("Cancelling...")
 
-    def _operation_finished(self):
+    def _operation_finished(self) -> None:
         """Clean up after operation finishes."""
         self.start_btn.configure(state="normal")
         self.cancel_btn.configure(state="disabled")
@@ -1574,12 +1623,12 @@ class FolderFixPro:
         self.eta_label.configure(text="")
         self._update_status("Ready")
 
-    def _log_message(self, message: str, level: str = "info"):
+    def _log_message(self, message: str, level: str = "info") -> None:
         """Add message to log."""
-        timestamp = datetime.now().strftime("%H:%M:%S")
+        timestamp = datetime.now(datetime.UTC).strftime("%H:%M:%S")
         log_entry = f"[{timestamp}] {message}\n"
 
-        def update_log():
+        def update_log() -> None:
             self.log_text.configure(state="normal")
             self.log_text.insert("end", log_entry, level)
             self.log_text.see("end")
@@ -1593,35 +1642,35 @@ class FolderFixPro:
         elif level == "warning":
             logger.warning(message)
         elif level == "success":
-            logger.info(f"SUCCESS: {message}")
+            logger.info("SUCCESS: %s", message)
         else:
             logger.info(message)
 
-    def _clear_log(self):
+    def _clear_log(self) -> None:
         """Clear the log display."""
         self.log_text.configure(state="normal")
         self.log_text.delete("1.0", "end")
         self.log_text.configure(state="disabled")
 
-    def _save_log(self):
+    def _save_log(self) -> None:
         """Save log to file."""
         file_path = filedialog.asksaveasfilename(
             defaultextension=".txt",
             filetypes=[("Text files", "*.txt"), ("All files", "*.*")],
-            initialfile=f"folder_fix_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
+            initialfile=f"folder_fix_log_{datetime.now(datetime.UTC).strftime('%Y%m%d_%H%M%S')}.txt",
         )
 
         if file_path:
-            with open(file_path, "w", encoding="utf-8") as f:
+            with Path(file_path).open("w", encoding="utf-8") as f:
                 f.write(self.log_text.get("1.0", "end"))
             messagebox.showinfo("Log Saved", f"Log saved to:\n{file_path}")
 
-    def _export_report_json(self):
+    def _export_report_json(self) -> None:
         """Export operation report as JSON."""
         file_path = filedialog.asksaveasfilename(
             defaultextension=".json",
             filetypes=[("JSON files", "*.json"), ("All files", "*.*")],
-            initialfile=f"folder_fix_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
+            initialfile=f"folder_fix_report_{datetime.now(datetime.UTC).strftime('%Y%m%d_%H%M%S')}.json",
         )
 
         if file_path:
@@ -1630,15 +1679,15 @@ class FolderFixPro:
                 messagebox.showinfo(
                     "Report Exported", f"Report exported to:\n{file_path}"
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001
                 messagebox.showerror("Export Failed", f"Failed to export report:\n{e}")
 
-    def _export_report_html(self):
+    def _export_report_html(self) -> None:
         """Export operation report as HTML."""
         file_path = filedialog.asksaveasfilename(
             defaultextension=".html",
             filetypes=[("HTML files", "*.html"), ("All files", "*.*")],
-            initialfile=f"folder_fix_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html",
+            initialfile=f"folder_fix_report_{datetime.now(datetime.UTC).strftime('%Y%m%d_%H%M%S')}.html",
         )
 
         if file_path:
@@ -1654,29 +1703,26 @@ class FolderFixPro:
                 ):
                     import webbrowser
 
-                    webbrowser.open(f"file://{os.path.abspath(file_path)}")
-            except Exception as e:
+                    webbrowser.open(f"file://{Path(file_path).resolve()}")
+            except Exception as e:  # noqa: BLE001
                 messagebox.showerror("Export Failed", f"Failed to export report:\n{e}")
 
-    def _clear_cache(self):
+    def _clear_cache(self) -> None:
         """Clear file cache."""
         self.file_cache.clear()
         self._log_message("Cache cleared", "info")
         messagebox.showinfo("Cache Cleared", "File cache has been cleared.")
 
-    def _open_log_file(self):
+    def _open_log_file(self) -> None:
         """Open the log file in default text editor."""
         try:
-            if sys.platform == "win32":
-                os.startfile(log_filename)
-            elif sys.platform == "darwin":
-                os.system(f"open {log_filename}")
-            else:
-                os.system(f"xdg-open {log_filename}")
-        except Exception as e:
+            import webbrowser
+
+            webbrowser.open(log_filename)
+        except Exception as e:  # noqa: BLE001
             messagebox.showerror("Error", f"Could not open log file:\n{e}")
 
-    def _show_about(self):
+    def _show_about(self) -> None:
         """Show about dialog."""
         about_text = """Folder Fix Pro v3.0
 
@@ -1696,12 +1742,12 @@ Features:
 """
         messagebox.showinfo("About Folder Fix Pro", about_text)
 
-    def _show_user_guide(self):
+    def _show_user_guide(self) -> None:
         """Show user guide."""
         guide_text = """Folder Fix Pro - Quick Start Guide
 
 1. ADDING SOURCES
-   • Click '➕ Add Folder' or drag folders to the list
+   • Click '➕ Add Folder' or drag folders to the list  # noqa: RUF001
    • Select multiple folders for batch operations
 
 2. SELECTING DESTINATION
@@ -1754,21 +1800,22 @@ Tips:
     @staticmethod
     def _format_size(size_bytes: int) -> str:
         """Format file size in human-readable format."""
+        kb_size = 1024.0
         for unit in ["B", "KB", "MB", "GB", "TB"]:
-            if size_bytes < 1024.0:
+            if size_bytes < kb_size:
                 return f"{size_bytes:.2f} {unit}"
-            size_bytes /= 1024.0
+            size_bytes /= kb_size
         return f"{size_bytes:.2f} PB"
 
 
-def main():
+def main() -> None:
     """Main entry point for Folder Fix Pro."""
     try:
         # Create root window
         root = tk.Tk()
 
         # Create application
-        app = FolderFixPro(root)
+        _app = FolderFixPro(root)
 
         # Start main loop
         root.mainloop()
