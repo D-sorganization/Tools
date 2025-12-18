@@ -186,7 +186,9 @@ class TestFolderPackerGUI:
                 gui_instance.pack_folders()
 
                 mock_pack.assert_called_once_with(str(source_folder))
-                assert mock_update.call_count >= 2  # At least packing and success messages
+                assert (
+                    mock_update.call_count >= 2
+                )  # At least packing and success messages
 
     def test_pack_single_folder_success(
         self,

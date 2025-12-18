@@ -51,10 +51,16 @@ MAX_UI_UPDATE_FREQUENCY: Final[int] = (
 MAX_ARCHIVE_SIZE_RATIO: Final[float] = (
     0.1  # Minimum extracted size ratio [ratio] - archive size * 0.1 for validation
 )
-MAX_DIALOG_WIDTH: Final[int] = 800  # Maximum dialog width [pixels] - prevents dialog overflow
-MAX_DIALOG_HEIGHT: Final[int] = 600  # Maximum dialog height [pixels] - prevents dialog overflow
+MAX_DIALOG_WIDTH: Final[int] = (
+    800  # Maximum dialog width [pixels] - prevents dialog overflow
+)
+MAX_DIALOG_HEIGHT: Final[int] = (
+    600  # Maximum dialog height [pixels] - prevents dialog overflow
+)
 MIN_DIALOG_WIDTH: Final[int] = 400  # Minimum dialog width [pixels] - ensures usability
-MIN_DIALOG_HEIGHT: Final[int] = 300  # Minimum dialog height [pixels] - ensures usability
+MIN_DIALOG_HEIGHT: Final[int] = (
+    300  # Minimum dialog height [pixels] - ensures usability
+)
 
 # Additional constants for improved maintainability
 MAX_TEXT_CONTENT_SIZE: Final[int] = (
@@ -177,9 +183,13 @@ class FolderProcessorApp:
         """
         # Validate file size constants
         if MAX_FILE_SIZE_MB <= 0:
-            raise ValueError(f"MAX_FILE_SIZE_MB must be positive, got {MAX_FILE_SIZE_MB}")
+            raise ValueError(
+                f"MAX_FILE_SIZE_MB must be positive, got {MAX_FILE_SIZE_MB}"
+            )
         if MIN_FILE_SIZE_BYTES < 0:
-            raise ValueError(f"MIN_FILE_SIZE_BYTES must be non-negative, got {MIN_FILE_SIZE_BYTES}")
+            raise ValueError(
+                f"MIN_FILE_SIZE_BYTES must be non-negative, got {MIN_FILE_SIZE_BYTES}"
+            )
         if MIN_FILE_SIZE_BYTES >= MAX_FILE_SIZE_MB * 1024 * 1024:
             raise ValueError(
                 f"MIN_FILE_SIZE_BYTES must be less than MAX_FILE_SIZE_MB, got {MIN_FILE_SIZE_BYTES}"
@@ -187,7 +197,9 @@ class FolderProcessorApp:
 
         # Validate UI constants
         if MAX_STATUS_LENGTH <= 0:
-            raise ValueError(f"MAX_STATUS_LENGTH must be positive, got {MAX_STATUS_LENGTH}")
+            raise ValueError(
+                f"MAX_STATUS_LENGTH must be positive, got {MAX_STATUS_LENGTH}"
+            )
         if MAX_UI_UPDATE_FREQUENCY <= 0:
             raise ValueError(
                 f"MAX_UI_UPDATE_FREQUENCY must be positive, got {MAX_UI_UPDATE_FREQUENCY}"
@@ -209,15 +221,23 @@ class FolderProcessorApp:
 
         # Validate retry constants
         if MAX_RETRY_ATTEMPTS <= 0:
-            raise ValueError(f"MAX_RETRY_ATTEMPTS must be positive, got {MAX_RETRY_ATTEMPTS}")
+            raise ValueError(
+                f"MAX_RETRY_ATTEMPTS must be positive, got {MAX_RETRY_ATTEMPTS}"
+            )
 
         # Validate new constants
         if MAX_TEXT_CONTENT_SIZE <= 0:
-            raise ValueError(f"MAX_TEXT_CONTENT_SIZE must be positive, got {MAX_TEXT_CONTENT_SIZE}")
+            raise ValueError(
+                f"MAX_TEXT_CONTENT_SIZE must be positive, got {MAX_TEXT_CONTENT_SIZE}"
+            )
         if MAX_TITLE_LENGTH <= 0:
-            raise ValueError(f"MAX_TITLE_LENGTH must be positive, got {MAX_TITLE_LENGTH}")
+            raise ValueError(
+                f"MAX_TITLE_LENGTH must be positive, got {MAX_TITLE_LENGTH}"
+            )
         if MAX_COUNTER_ATTEMPTS <= 0:
-            raise ValueError(f"MAX_COUNTER_ATTEMPTS must be positive, got {MAX_COUNTER_ATTEMPTS}")
+            raise ValueError(
+                f"MAX_COUNTER_ATTEMPTS must be positive, got {MAX_COUNTER_ATTEMPTS}"
+            )
 
         # Validate progress constants
         if PROGRESS_BACKUP_PERCENT < 0 or PROGRESS_BACKUP_PERCENT > 100:
@@ -242,9 +262,13 @@ class FolderProcessorApp:
             )
 
         # Validate progress flow consistency
-        total_progress = PROGRESS_BACKUP_PERCENT + PROGRESS_MAIN_OP_PERCENT + PROGRESS_ZIP_PERCENT
+        total_progress = (
+            PROGRESS_BACKUP_PERCENT + PROGRESS_MAIN_OP_PERCENT + PROGRESS_ZIP_PERCENT
+        )
         if total_progress > 100:
-            raise ValueError(f"Total progress allocation exceeds 100%: {total_progress}")
+            raise ValueError(
+                f"Total progress allocation exceeds 100%: {total_progress}"
+            )
 
         logger.info("All constants validated successfully")
 
@@ -986,7 +1010,9 @@ class FolderProcessorApp:
                     for file in files:
                         try:
                             file_path = os.path.join(root, file)
-                            if os.path.exists(file_path) and os.access(file_path, os.R_OK):
+                            if os.path.exists(file_path) and os.access(
+                                file_path, os.R_OK
+                            ):
                                 file_size = os.path.getsize(file_path)
                                 total_size += file_size
                                 total_files += 1
@@ -1165,7 +1191,8 @@ class FolderProcessorApp:
                 min_size_mb = float(min_size_str)
                 if min_size_mb < 0:
                     messagebox.showwarning(
-                        "Invalid Input", "Minimum file size cannot be negative. Setting to 0 MB."
+                        "Invalid Input",
+                        "Minimum file size cannot be negative. Setting to 0 MB.",
                     )
                     self.min_file_size.set("0")
                     return False
@@ -1287,7 +1314,9 @@ class FolderProcessorApp:
         """
         # Input validation
         if not archive_path or not isinstance(archive_path, str):
-            raise ValueError(f"Archive path must be non-empty string, got {type(archive_path)}")
+            raise ValueError(
+                f"Archive path must be non-empty string, got {type(archive_path)}"
+            )
 
         archive_path_obj = Path(archive_path)
 
@@ -1315,7 +1344,9 @@ class FolderProcessorApp:
         archive_ext = archive_path_obj.suffix.lower()
         supported_formats = {".zip", ".tar", ".gz", ".bz2", ".xz", ".7z", ".rar"}
         if archive_ext not in supported_formats:
-            logger.warning(f"Unsupported archive format: {archive_ext} for {archive_path}")
+            logger.warning(
+                f"Unsupported archive format: {archive_ext} for {archive_path}"
+            )
 
         # Generate unique extraction directory
         extract_dir = self._get_unique_path(os.path.splitext(archive_path)[0])
@@ -1329,7 +1360,9 @@ class FolderProcessorApp:
             if not extract_dir_obj.exists():
                 raise Exception("Failed to create extraction directory")
             if not os.access(extract_dir, os.W_OK):
-                raise PermissionError(f"Cannot write to extraction directory: {extract_dir}")
+                raise PermissionError(
+                    f"Cannot write to extraction directory: {extract_dir}"
+                )
 
             # Extract archive
             logger.info(f"Extracting archive: {archive_path} -> {extract_dir}")
@@ -1338,7 +1371,9 @@ class FolderProcessorApp:
             # Validate extraction if safe mode is enabled
             if self.safe_extract_var.get():
                 if not extract_dir_obj.exists():
-                    raise Exception("Extraction failed - destination folder was not created")
+                    raise Exception(
+                        "Extraction failed - destination folder was not created"
+                    )
 
                 if not os.listdir(extract_dir):
                     raise Exception("Extraction failed - destination folder is empty")
@@ -1355,10 +1390,14 @@ class FolderProcessorApp:
                             extracted_files.append(file_path)
                             total_extracted_size += file_size
                         except OSError as e:
-                            logger.warning(f"Cannot access extracted file size: {file_path} - {e}")
+                            logger.warning(
+                                f"Cannot access extracted file size: {file_path} - {e}"
+                            )
 
                 if not extracted_files:
-                    raise Exception("Extraction failed - no files found in extracted folder")
+                    raise Exception(
+                        "Extraction failed - no files found in extracted folder"
+                    )
 
                 # Verify total extracted size is reasonable
                 if total_extracted_size < archive_size * MAX_ARCHIVE_SIZE_RATIO:
@@ -1375,7 +1414,9 @@ class FolderProcessorApp:
                 archive_path_obj.unlink()
                 logger.info(f"Deleted original archive: {archive_path}")
             except OSError as e:
-                logger.warning(f"Failed to delete original archive: {archive_path} - {e}")
+                logger.warning(
+                    f"Failed to delete original archive: {archive_path} - {e}"
+                )
                 # Don't fail the operation if cleanup fails
 
             return (
@@ -1388,7 +1429,9 @@ class FolderProcessorApp:
             if extract_dir_obj.exists():
                 try:
                     shutil.rmtree(extract_dir, ignore_errors=True)
-                    logger.info(f"Cleaned up failed extraction directory: {extract_dir}")
+                    logger.info(
+                        f"Cleaned up failed extraction directory: {extract_dir}"
+                    )
                 except Exception as cleanup_error:
                     logger.warning(
                         f"Failed to cleanup extraction directory: {extract_dir} - {cleanup_error}"
@@ -1412,7 +1455,9 @@ class FolderProcessorApp:
         if not self.source_folders:
             raise ValueError("No source folders to backup")
         if not isinstance(self.source_folders, list):
-            raise ValueError(f"Source folders must be a list, got {type(self.source_folders)}")
+            raise ValueError(
+                f"Source folders must be a list, got {type(self.source_folders)}"
+            )
 
         # Validate each source folder
         valid_source_folders = []
@@ -1453,7 +1498,9 @@ class FolderProcessorApp:
             if not backup_base.exists():
                 raise Exception("Failed to create backup base directory")
             if not os.access(backup_base, os.W_OK):
-                raise PermissionError(f"Cannot write to backup directory: {backup_base}")
+                raise PermissionError(
+                    f"Cannot write to backup directory: {backup_base}"
+                )
 
             total_folders = len(valid_source_folders)
             successful_backups = 0
@@ -1573,7 +1620,9 @@ class FolderProcessorApp:
         if not self.source_folders:
             raise ValueError("No source folders to analyze")
         if not isinstance(self.source_folders, list):
-            raise ValueError(f"Source folders must be a list, got {type(self.source_folders)}")
+            raise ValueError(
+                f"Source folders must be a list, got {type(self.source_folders)}"
+            )
 
         # Validate each source folder
         valid_source_folders = []
@@ -1632,7 +1681,9 @@ class FolderProcessorApp:
                                 continue
 
                             file_size = os.path.getsize(file_path)
-                            file_ext = os.path.splitext(file)[1].lower() or "no_extension"
+                            file_ext = (
+                                os.path.splitext(file)[1].lower() or "no_extension"
+                            )
 
                             # Validate file size
                             if file_size < MIN_FILE_SIZE_BYTES:
@@ -1668,7 +1719,9 @@ class FolderProcessorApp:
                     report.append(
                         f"  Files: {folder_files}, Size: {folder_size / (1024 * 1024):.1f} MB, Errors: {folder_errors}"
                     )
-                    analysis_errors.append(f"Folder {folder}: {folder_errors} access errors")
+                    analysis_errors.append(
+                        f"Folder {folder}: {folder_errors} access errors"
+                    )
                 else:
                     report.append(
                         f"  Files: {folder_files}, Size: {folder_size / (1024 * 1024):.1f} MB"
@@ -1719,7 +1772,9 @@ class FolderProcessorApp:
             ]
         )
 
-        logger.info(f"Analysis completed: {total_files} files, {total_size / (1024 * 1024):.1f} MB")
+        logger.info(
+            f"Analysis completed: {total_files} files, {total_size / (1024 * 1024):.1f} MB"
+        )
         if analysis_errors:
             logger.warning(f"Analysis completed with {len(analysis_errors)} errors")
 
@@ -1834,7 +1889,9 @@ class FolderProcessorApp:
             try:
                 self.update_progress(85, "Creating ZIP archive...")
                 zip_path = self.create_output_zip()
-                final_summary += f"\n\n--- ZIP Archive Created ---\nLocation: {zip_path}"
+                final_summary += (
+                    f"\n\n--- ZIP Archive Created ---\nLocation: {zip_path}"
+                )
             except Exception as e:
                 final_summary += f"\n\n--- ZIP Creation FAILED: {e}"
 
@@ -1863,13 +1920,17 @@ class FolderProcessorApp:
         if not self.dest_folder:
             raise ValueError("Destination folder not set")
         if not isinstance(self.dest_folder, str):
-            raise ValueError(f"Destination folder must be a string, got {type(self.dest_folder)}")
+            raise ValueError(
+                f"Destination folder must be a string, got {type(self.dest_folder)}"
+            )
 
         dest_path_obj = Path(self.dest_folder)
 
         # Validate destination folder exists and is accessible
         if not dest_path_obj.exists():
-            raise FileNotFoundError(f"Destination folder does not exist: {self.dest_folder}")
+            raise FileNotFoundError(
+                f"Destination folder does not exist: {self.dest_folder}"
+            )
         if not dest_path_obj.is_dir():
             raise ValueError(f"Destination path is not a directory: {self.dest_folder}")
         if not os.access(self.dest_folder, os.R_OK):
@@ -1959,15 +2020,19 @@ class FolderProcessorApp:
                             if processed_files % MAX_UI_UPDATE_FREQUENCY == 0:
                                 progress = (
                                     PROGRESS_START_ZIP
-                                    + (processed_files / total_files) * PROGRESS_ZIP_PERCENT
+                                    + (processed_files / total_files)
+                                    * PROGRESS_ZIP_PERCENT
                                 )
                                 self.update_progress(
-                                    progress, f"Added {processed_files}/{total_files} files to ZIP"
+                                    progress,
+                                    f"Added {processed_files}/{total_files} files to ZIP",
                                 )
 
                         except Exception as e:
                             failed_files += 1
-                            logger.warning(f"Failed to add file to ZIP: {file_path} - {e}")
+                            logger.warning(
+                                f"Failed to add file to ZIP: {file_path} - {e}"
+                            )
                             continue
 
                 # Verify ZIP was created successfully
@@ -1987,7 +2052,9 @@ class FolderProcessorApp:
 
                 # Final summary
                 if failed_files > 0:
-                    logger.warning(f"ZIP creation completed with {failed_files} failed files")
+                    logger.warning(
+                        f"ZIP creation completed with {failed_files} failed files"
+                    )
                 else:
                     logger.info("ZIP creation completed successfully")
 
@@ -2038,12 +2105,17 @@ class FolderProcessorApp:
             )
 
         # Validate content length for performance
-        if len(content) > MAX_TEXT_CONTENT_SIZE:  # MAX_TEXT_CONTENT_SIZE limit for text content
+        if (
+            len(content) > MAX_TEXT_CONTENT_SIZE
+        ):  # MAX_TEXT_CONTENT_SIZE limit for text content
             logger.warning(
                 f"Content is very large ({len(content)} chars), may cause performance issues"
             )
             # Truncate content for display
-            content = content[:MAX_TEXT_CONTENT_SIZE] + "\n\n... [Content truncated due to size]"
+            content = (
+                content[:MAX_TEXT_CONTENT_SIZE]
+                + "\n\n... [Content truncated due to size]"
+            )
 
         logger.info(f"Creating text dialog: '{title}' with {len(content)} characters")
 
@@ -2055,13 +2127,17 @@ class FolderProcessorApp:
             # Set dialog geometry with validation
             dialog_width = min(
                 MAX_DIALOG_WIDTH,
-                max(MIN_DIALOG_WIDTH, len(content) // CHARS_PER_DIALOG_LINE + DIALOG_WIDTH_OFFSET),
+                max(
+                    MIN_DIALOG_WIDTH,
+                    len(content) // CHARS_PER_DIALOG_LINE + DIALOG_WIDTH_OFFSET,
+                ),
             )
             dialog_height = min(
                 MAX_DIALOG_HEIGHT,
                 max(
                     MIN_DIALOG_HEIGHT,
-                    len(content.split("\n")) * LINE_HEIGHT_PIXELS + DIALOG_HEIGHT_OFFSET,
+                    len(content.split("\n")) * LINE_HEIGHT_PIXELS
+                    + DIALOG_HEIGHT_OFFSET,
                 ),
             )
 
@@ -2087,7 +2163,9 @@ class FolderProcessorApp:
                 selectforeground="black",
             )
 
-            scrollbar = ttk.Scrollbar(text_frame, orient="vertical", command=text_widget.yview)
+            scrollbar = ttk.Scrollbar(
+                text_frame, orient="vertical", command=text_widget.yview
+            )
             text_widget.configure(yscrollcommand=scrollbar.set)
 
             text_widget.pack(side="left", fill="both", expand=True)
@@ -2106,7 +2184,8 @@ class FolderProcessorApp:
                 logger.error(f"Failed to insert content into text widget: {e}")
                 # Fallback: show truncated content
                 safe_content = (
-                    content[:MAX_FALLBACK_CONTENT_SIZE] + "\n\n... [Content truncated due to error]"
+                    content[:MAX_FALLBACK_CONTENT_SIZE]
+                    + "\n\n... [Content truncated due to error]"
                 )
                 text_widget.insert("1.0", safe_content)
                 text_widget.config(state="disabled")
@@ -2115,7 +2194,9 @@ class FolderProcessorApp:
             button_frame = ttk.Frame(dialog)
             button_frame.pack(fill=tk.X, padx=10, pady=(0, 10))
 
-            close_button = ttk.Button(button_frame, text="Close", command=dialog.destroy)
+            close_button = ttk.Button(
+                button_frame, text="Close", command=dialog.destroy
+            )
             close_button.pack(side="right")
 
             # Add copy button for convenience
@@ -2128,7 +2209,9 @@ class FolderProcessorApp:
                 except Exception as e:
                     logger.warning(f"Failed to copy to clipboard: {e}")
 
-            copy_button = ttk.Button(button_frame, text="Copy All", command=copy_to_clipboard)
+            copy_button = ttk.Button(
+                button_frame, text="Copy All", command=copy_to_clipboard
+            )
             copy_button.pack(side="right", padx=(0, 5))
 
             # Set focus and make dialog modal
@@ -2147,7 +2230,9 @@ class FolderProcessorApp:
             dialog.bind("<Escape>", on_escape)
 
             # Log successful dialog creation
-            logger.info(f"Text dialog created successfully: {dialog_width}x{dialog_height}")
+            logger.info(
+                f"Text dialog created successfully: {dialog_width}x{dialog_height}"
+            )
 
             # Wait for dialog to close
             dialog.wait_window()
@@ -2259,10 +2344,16 @@ class FolderProcessorApp:
         # Check destination folder
         if self.dest_folder:
             validation_results["destination_exists"] = os.path.exists(self.dest_folder)
-            validation_results["destination_writable"] = os.access(self.dest_folder, os.W_OK)
+            validation_results["destination_writable"] = os.access(
+                self.dest_folder, os.W_OK
+            )
         else:
-            validation_results["destination_exists"] = True  # Not required for all modes
-            validation_results["destination_writable"] = True  # Not required for all modes
+            validation_results["destination_exists"] = (
+                True  # Not required for all modes
+            )
+            validation_results["destination_writable"] = (
+                True  # Not required for all modes
+            )
 
         # Check file size inputs
         try:
@@ -2359,9 +2450,13 @@ class FolderProcessorApp:
         """
         # Input validation
         if not source_path or not isinstance(source_path, str):
-            raise ValueError(f"Source path must be non-empty string, got {type(source_path)}")
+            raise ValueError(
+                f"Source path must be non-empty string, got {type(source_path)}"
+            )
         if not dest_path or not isinstance(dest_path, str):
-            raise ValueError(f"Destination path must be non-empty string, got {type(dest_path)}")
+            raise ValueError(
+                f"Destination path must be non-empty string, got {type(dest_path)}"
+            )
 
         source_path_obj = Path(source_path)
         dest_path_obj = Path(dest_path)
@@ -2394,7 +2489,9 @@ class FolderProcessorApp:
 
                 # Check if destination directory is writable
                 if not os.access(dest_dir, os.W_OK):
-                    raise PermissionError(f"Cannot write to destination directory: {dest_dir}")
+                    raise PermissionError(
+                        f"Cannot write to destination directory: {dest_dir}"
+                    )
 
                 # Copy file with metadata preservation
                 shutil.copy2(source_path, dest_path)
@@ -2684,7 +2781,9 @@ class FolderProcessorApp:
                     logger.debug(f"Generated unique path: {path} -> {new_path}")
                     return str(new_path)
             except (OSError, PermissionError) as e:
-                logger.warning(f"Cannot check if generated path exists: {new_path} - {e}")
+                logger.warning(
+                    f"Cannot check if generated path exists: {new_path} - {e}"
+                )
                 # If we can't check, assume it's safe to use
                 return str(new_path)
 
@@ -2695,7 +2794,9 @@ class FolderProcessorApp:
         fallback_name = f"{filename}_{timestamp}{ext}"
         fallback_path = parent / fallback_name
 
-        logger.warning(f"Exhausted counter attempts, using timestamp fallback: {fallback_path}")
+        logger.warning(
+            f"Exhausted counter attempts, using timestamp fallback: {fallback_path}"
+        )
         return str(fallback_path)
 
     def select_source_folders(self) -> None:
@@ -2738,7 +2839,9 @@ class FolderProcessorApp:
                     self.update_source_info()
                     logger.info("Added source folder: %s", folder)
                 else:
-                    messagebox.showinfo("Info", "This folder is already in the source list.")
+                    messagebox.showinfo(
+                        "Info", "This folder is already in the source list."
+                    )
             else:
                 logger.debug("Folder selection cancelled by user")
 
@@ -2773,7 +2876,8 @@ class FolderProcessorApp:
             if len(selected_indices) == 1:
                 folder_name = os.path.basename(self.source_folders[selected_indices[0]])
                 confirm = messagebox.askyesno(
-                    "Confirm Removal", f"Remove folder '{folder_name}' from source list?"
+                    "Confirm Removal",
+                    f"Remove folder '{folder_name}' from source list?",
                 )
             else:
                 confirm = messagebox.askyesno(
@@ -2825,7 +2929,8 @@ class FolderProcessorApp:
 
                 if not os.access(folder, os.W_OK):
                     messagebox.showerror(
-                        "Error", "Cannot write to the selected folder. Check permissions."
+                        "Error",
+                        "Cannot write to the selected folder. Check permissions.",
                     )
                     return
 

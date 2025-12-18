@@ -136,7 +136,7 @@ def main() -> None:
         if not install_pyinstaller():
             logger.error("Failed to install PyInstaller. Exiting.")
             sys.exit(1)
-            return  # Prevent further execution if sys.exit is mocked in tests
+            return  # type: ignore[unreachable] # Prevent further execution if sys.exit is mocked in tests
 
     # Build the executable
     if build_executable():
@@ -146,11 +146,11 @@ def main() -> None:
         else:
             logger.error("\n❌ Build verification failed!")
             sys.exit(1)
-            return  # Prevent further execution if sys.exit is mocked in tests
+            return  # type: ignore[unreachable] # Prevent further execution if sys.exit is mocked in tests
     else:
         logger.error("\n❌ Build failed!")
         sys.exit(1)
-        return  # Prevent further execution if sys.exit is mocked in tests
+        return  # type: ignore[unreachable] # Prevent further execution if sys.exit is mocked in tests
 
 
 if __name__ == "__main__":
