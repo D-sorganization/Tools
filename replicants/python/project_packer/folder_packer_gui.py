@@ -107,9 +107,17 @@ class FolderPackerGUI:
         self.root.rowconfigure(0, weight=GRID_WEIGHT_MAIN)
         main_frame.columnconfigure(2, weight=GRID_WEIGHT_MAIN)
 
+        self._setup_header(main_frame)
+        self._setup_source_section(main_frame)
+        self._setup_output_section(main_frame)
+        self._setup_actions(main_frame)
+        self._setup_status_section(main_frame)
+
+    def _setup_header(self, parent: ttk.Frame) -> None:
+        """Set up the header section."""
         # Title
         title_label = ttk.Label(
-            main_frame,
+            parent,
             text="📁 Folder Packer",
             font=("Arial", TITLE_FONT_SIZE, "bold"),
         )
@@ -117,7 +125,7 @@ class FolderPackerGUI:
 
         # Description
         desc_label = ttk.Label(
-            main_frame,
+            parent,
             text="Select source folders and pack them to a destination directory",
             font=("Arial", HEADER_FONT_SIZE),
         )
@@ -128,9 +136,10 @@ class FolderPackerGUI:
             pady=(0, DEFAULT_PADDING),
         )
 
-        # Source folders section
+    def _setup_source_section(self, parent: ttk.Frame) -> None:
+        """Set up the source folders section."""
         source_frame = ttk.LabelFrame(
-            main_frame, text="Source Folders", padding=str(SMALL_PADDING)
+            parent, text="Source Folders", padding=str(SMALL_PADDING)
         )
         source_frame.grid(
             row=2, column=0, columnspan=3, sticky="ew", pady=(0, DEFAULT_PADDING)
@@ -160,16 +169,18 @@ class FolderPackerGUI:
             command=self.remove_selected_folders,
         ).grid(row=1, column=1, sticky="w", pady=(0, TINY_PADDING))
 
+    def _setup_output_section(self, parent: ttk.Frame) -> None:
+        """Set up the output directory section."""
         # Output directory section
         output_label = ttk.Label(
-            main_frame,
+            parent,
             text="Output Directory:",
             font=("Arial", BOLD_HEADER_FONT_SIZE, "bold"),
         )
         output_label.grid(row=3, column=0, sticky="w", pady=(0, TINY_PADDING))
 
         # Output directory entry and browse button
-        output_frame = ttk.Frame(main_frame)
+        output_frame = ttk.Frame(parent)
         output_frame.grid(
             row=4, column=0, columnspan=3, sticky="ew", pady=(0, DEFAULT_PADDING)
         )
@@ -184,19 +195,19 @@ class FolderPackerGUI:
             command=self.browse_output,
         ).grid(row=0, column=1)
 
-        # Pack button
+    def _setup_actions(self, parent: ttk.Frame) -> None:
+        """Set up action buttons."""
         pack_button = ttk.Button(
-            main_frame,
+            parent,
             text="Pack Folders",
             command=self.pack_folders,
             style="Accent.TButton",
         )
         pack_button.grid(row=5, column=0, columnspan=3, pady=(0, DEFAULT_PADDING))
 
-        # Status section
-        status_frame = ttk.LabelFrame(
-            main_frame, text="Status", padding=str(SMALL_PADDING)
-        )
+    def _setup_status_section(self, parent: ttk.Frame) -> None:
+        """Set up status display section."""
+        status_frame = ttk.LabelFrame(parent, text="Status", padding=str(SMALL_PADDING))
         status_frame.grid(row=6, column=0, columnspan=3, sticky="ew")
         status_frame.columnconfigure(0, weight=GRID_WEIGHT_MAIN)
 
@@ -370,12 +381,14 @@ class FolderPackerGUI:
             return False
 
         # Check if any files in the directory should be included
-        for item in dir_path.iterdir():
-            if item.is_file() and self.should_include_file(item):
-                return True
-            if item.is_dir() and self.should_include_directory(item):
-                return True
+        return any(self._should_include_item(item) for item in dir_path.iterdir())
 
+    def _should_include_item(self, item: Path) -> bool:
+        """Check if an item (file or dir) should be included."""
+        if item.is_file():
+            return self.should_include_file(item)
+        if item.is_dir():
+            return self.should_include_directory(item)
         return False
 
     def update_status(self, message: str) -> None:
