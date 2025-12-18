@@ -1471,7 +1471,9 @@ class FolderPackerPro:
                 try:
                     data = EncryptionManager.decrypt_data(data, password)
                 except Exception as e:
-                    raise ValueError(f"Decryption failed - incorrect password? {e}") from e
+                    raise ValueError(
+                        f"Decryption failed - incorrect password? {e}"
+                    ) from e
 
             # Decompress if needed
             try:

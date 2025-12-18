@@ -143,7 +143,10 @@ def _format_output_filename(source_path: str, output_format: str) -> str:
 
 @app.command()
 def detect(
-    files: list[Path] = typer.Argument(..., help="One or more CSV/Parquet data files."),  # noqa: B008
+    files: list[Path] = typer.Argument(  # noqa: B008
+        ...,
+        help="One or more CSV/Parquet data files.",
+    ),
     high_perf: bool = typer.Option(
         True,
         "--high-perf/--no-high-perf",

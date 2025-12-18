@@ -1051,9 +1051,9 @@ class FolderFixPro:
             try:
                 stat = file_path.stat()
                 size = self._format_size(stat.st_size)
-                modified = datetime.fromtimestamp(
-                    stat.st_mtime, datetime.UTC
-                ).strftime("%Y-%m-%d %H:%M:%S")
+                modified = datetime.fromtimestamp(stat.st_mtime, datetime.UTC).strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
                 file_type = file_path.suffix or "File"
 
                 self.preview_tree.insert(
@@ -1211,7 +1211,10 @@ class FolderFixPro:
             err_msg = str(e)
             self.operation_report.add_error(err_msg)
             self.root.after(
-                0, lambda: messagebox.showerror("Error", f"Operation failed:\n\n{err_msg}")
+                0,
+                lambda: messagebox.showerror(
+                    "Error", f"Operation failed:\n\n{err_msg}"
+                ),
             )
 
         finally:
@@ -1261,7 +1264,6 @@ class FolderFixPro:
                             self.operation_report.add_error(
                                 f"Failed to copy {source_file}: {e}"
                             )
-
 
     def _operation_flatten(self) -> None:
         """Flatten directory structure."""
@@ -1320,9 +1322,7 @@ class FolderFixPro:
 
         if self.organize_date_var.get():
             # Organize by date
-            mtime = datetime.fromtimestamp(
-                source_file.stat().st_mtime, datetime.UTC
-            )
+            mtime = datetime.fromtimestamp(source_file.stat().st_mtime, datetime.UTC)
             date_folder = dest_path / mtime.strftime("%Y-%m")
             date_folder.mkdir(exist_ok=True)
             return date_folder / source_file.name
@@ -1429,7 +1429,9 @@ class FolderFixPro:
                         files.append(file_path)
         return files
 
-    def _build_dedupe_hash_map(self, method: str, files: list[Path]) -> dict[str, list[Path]]:
+    def _build_dedupe_hash_map(
+        self, method: str, files: list[Path]
+    ) -> dict[str, list[Path]]:
         """Build hash map for duplicate detection."""
         hash_map = defaultdict(list)
         total_files = len(files)
@@ -1451,9 +1453,7 @@ class FolderFixPro:
                 if file_hash:
                     hash_map[file_hash].append(file_path)
 
-                self._update_progress(
-                    i, total_files, f"Checking {file_path.name}"
-                )
+                self._update_progress(i, total_files, f"Checking {file_path.name}")
             except Exception as e:  # noqa: BLE001
                 self.operation_report.add_error(f"Failed to process {file_path}: {e}")
 
