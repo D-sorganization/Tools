@@ -1079,9 +1079,9 @@ class FolderPackerPro:
 
         self.preview_text.configure(state="disabled")
 
-    def _insert_with_highlighting(
+    def _insert_with_highlighting(  # noqa: PLR0912
         self, content: str, file_ext: str
-    ) -> None:  # noqa: PLR0912
+    ) -> None:
         """Insert text with basic syntax highlighting."""
         # For simplicity, basic keyword highlighting
         keywords = {
@@ -1257,7 +1257,6 @@ class FolderPackerPro:
 
         except Exception as e:
             logger.exception("Pack operation failed")
-            # F821 fix: Use the variable safely
             err_msg = str(e)
             self._log_message(f"Pack operation failed: {err_msg}", "error")
             self.root.after(
@@ -1712,9 +1711,9 @@ class FolderPackerPro:
             elif sys.platform == "darwin":
                 subprocess.run(["open", log_filename], check=True)  # noqa: S603, S607
             else:
-                subprocess.run(
-                    ["xdg-open", log_filename], check=True
-                )  # noqa: S603, S607
+                subprocess.run(  # noqa: S603
+                    ["xdg-open", log_filename], check=True  # noqa: S607
+                )
         except Exception as e:  # noqa: BLE001
             messagebox.showerror("Error", f"Could not open log file:\n{e}")
 

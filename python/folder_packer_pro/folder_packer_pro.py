@@ -918,8 +918,7 @@ class FolderPackerPro:
 
         # Update status bar
         self.status_bar_label.configure(
-            text=f"Ready  |  Theme: {self.current_theme.title()}  |  "
-            "No operation in progress",
+            text=f"Ready  |  Theme: {self.current_theme.title()}  |  No operation in progress",
         )
 
     def _toggle_theme(self) -> None:
@@ -1115,7 +1114,7 @@ class FolderPackerPro:
                 tags=(str(file_path),),
             )
 
-    def _on_file_select(self, event: tk.Event[tk.Misc]) -> None:
+    def _on_file_select(self, event: tk.Event) -> None:
         """Handle file selection in preview tree."""
         selection = self.preview_tree.selection()
         if not selection:
@@ -1328,7 +1327,7 @@ class FolderPackerPro:
             # Add files to package
             for i, file_path in enumerate(files_to_pack):
                 if self.cancel_operation:
-                    break  # type: ignore[unreachable]
+                    break
 
                 try:
                     rel_path = file_path.relative_to(source_path)
@@ -1341,10 +1340,11 @@ class FolderPackerPro:
                     ).decode("utf-8")
 
                     progress = ((i + 1) / total_files) * 100
-                    self.root.after(
-                        0,
-                        lambda p=float(progress): self.pack_progress_var.set(p),
-                    )
+
+                    def update_progress(p: float = progress) -> None:
+                        self.pack_progress_var.set(float(p))
+
+                    self.root.after(0, update_progress)
                     self._update_pack_status(
                         f"Packing {file_path.name} ({i + 1}/{total_files})",
                     )
@@ -1353,8 +1353,8 @@ class FolderPackerPro:
                     self._log_message(f"Error packing {file_path}: {e}", "error")
 
             if self.cancel_operation:
-                self._log_message("Pack operation cancelled", "warning")  # type: ignore[unreachable]
-                return
+                self._log_message("Pack operation cancelled", "warning")
+                return  # type: ignore[unreachable]
 
             # Serialize to JSON
             json_data = json.dumps(package_data, indent=2).encode("utf-8")
@@ -1470,9 +1470,7 @@ class FolderPackerPro:
                 try:
                     data = EncryptionManager.decrypt_data(data, password)
                 except Exception as e:
-                    raise ValueError(
-                        f"Decryption failed - incorrect password? {e}",
-                    ) from e
+                    raise ValueError(f"Decryption failed - incorrect password? {e}")
 
             # Decompress if needed
             try:
@@ -1529,8 +1527,7 @@ class FolderPackerPro:
                 0,
                 lambda: messagebox.showinfo(
                     "Success",
-                    f"Package extracted successfully!\n\nFiles: {total_files}\n"
-                    f"Location: {dest_path}",
+                    f"Package extracted successfully!\n\nFiles: {total_files}\nLocation: {dest_path}",
                 ),
             )
 

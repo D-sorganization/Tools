@@ -1200,6 +1200,7 @@ class FolderFixPro:
             logger.exception("Operation failed")
             self._log_message(f"Operation failed: {e}", "error")
             err_msg = str(e)
+            self.operation_report.add_error(err_msg)
             self.root.after(
                 0, lambda: messagebox.showerror("Error", f"Operation failed:\n\n{err_msg}")
             )
@@ -1285,6 +1286,20 @@ class FolderFixPro:
         try:
             dest_file = self._determine_flatten_dest(source_file, dest_path)
             dest_file = self._resolve_collision(source_file, dest_file)
+            
+            if not self.preview_var.get():
+                shutil.copy2(source_file, dest_file)
+            
+            self.operation_report.add_operation(
+                "flatten",
+                {"source": str(source_file), "dest": str(dest_file)},
+            )
+            return True
+        except Exception as e:  # noqa: BLE001
+             self.operation_report.add_error(
+                f"Failed to flatten {source_file}: {e}"
+            )
+             return False
 
             if not self.preview_var.get():
                 shutil.copy2(source_file, dest_file)
