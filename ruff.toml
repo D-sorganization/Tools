@@ -18,9 +18,6 @@ exclude = [
     "*.ipynb",  # Jupyter notebooks often fail standard linting
     "**/archive",
     "**/legacy",
-    "replicants",
-    "media_processing",
-    "development_tools",
     "data_processing/data_processor/archive",
 ]
 

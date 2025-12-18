@@ -1581,10 +1581,10 @@ class FolderProcessorApp:
                         logger.info(f"Cleaned up empty backup directory: {backup_base}")
                     except Exception as cleanup_error:
                         logger.warning(
-                            (
+
                                 f"Failed to cleanup empty backup directory: {backup_base} "
                                 f"- {cleanup_error}"
-                            )
+
                         )
                 return None
 
