@@ -242,7 +242,7 @@ class FolderPackerGUI:
 
     def remove_selected_folders(self) -> None:
         """Remove selected folders from the source folders list."""
-        selection = self.folders_listbox.curselection()
+        selection = self.folders_listbox.curselection()  # type: ignore[no-untyped-call]
         for index in reversed(selection):
             folder = self.folders_listbox.get(index)
             self.source_folders.remove(folder)
