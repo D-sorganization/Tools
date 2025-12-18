@@ -8,8 +8,6 @@ from pathlib import Path
 # Set up logging
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
-import sys
-from pathlib import Path
 
 
 def build_exe() -> int:
@@ -60,7 +58,7 @@ def build_exe() -> int:
         logger.info("\n" + "=" * 60)
         logger.info("Build completed successfully!")
         logger.info("=" * 60)
-        logger.info("\nExecutable location: %s", script_dir / 'dist' / 'FolderFixPro.exe')
+        logger.info("\nExecutable location: %s", script_dir / "dist" / "FolderFixPro.exe")
 
         return 0
 

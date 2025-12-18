@@ -364,7 +364,9 @@ class OperationReport:
     <div class="section">
         <h2>Errors ({len(self.errors)})</h2>
         {"".join(
-            f'<div class="error"><span class="timestamp">{err["timestamp"].strftime("%H:%M:%S")}</span> - {err["error"]}</div>'
+            f'<div class="error"><span class="timestamp">'
+            f'{err["timestamp"].strftime("%H:%M:%S")}</span> - '
+            f'{err["error"]}</div>'
             for err in self.errors
         )}
     </div>
@@ -1286,20 +1288,6 @@ class FolderFixPro:
         try:
             dest_file = self._determine_flatten_dest(source_file, dest_path)
             dest_file = self._resolve_collision(source_file, dest_file)
-            
-            if not self.preview_var.get():
-                shutil.copy2(source_file, dest_file)
-            
-            self.operation_report.add_operation(
-                "flatten",
-                {"source": str(source_file), "dest": str(dest_file)},
-            )
-            return True
-        except Exception as e:  # noqa: BLE001
-             self.operation_report.add_error(
-                f"Failed to flatten {source_file}: {e}"
-            )
-             return False
 
             if not self.preview_var.get():
                 shutil.copy2(source_file, dest_file)
@@ -1309,8 +1297,12 @@ class FolderFixPro:
                 {"source": str(source_file), "dest": str(dest_file)},
             )
             return True
-
-        except Exception as e:  # noqa: BLE001
+            self.operation_report.add_operation(
+                "flatten",
+                {"source": str(source_file), "dest": str(dest_file)},
+            )
+            return True
+        except Exception as e:
             self.operation_report.add_error(
                 f"Failed to flatten {source_file}: {e}"
             )
