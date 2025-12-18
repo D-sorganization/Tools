@@ -19,22 +19,28 @@ from typing import Final
 
 # Constants for configuration with sources and units
 MAX_LOG_ENTRIES: Final[int] = (
-    20  # Maximum number of log entries to display per operation - UI performance limit
+    20  # Maximum number of log entries to display per operation
+    # - UI performance limit
 )
 PROGRESS_INCREMENT: Final[int] = (
-    10  # Progress bar increment percentage [%] - standard UI update frequency
+    10  # Progress bar increment percentage [%]
+    # - standard UI update frequency
 )
 MAX_FILE_SIZE_MB: Final[int] = (
-    1024  # Maximum file size limit [MB] - Windows FAT32 limit per Microsoft docs
+    1024  # Maximum file size limit [MB]
+    # - Windows FAT32 limit per Microsoft docs
 )
 MIN_FILE_SIZE_BYTES: Final[int] = (
-    1  # Minimum file size [bytes] - 1 byte minimum per filesystem standards
+    1  # Minimum file size [bytes]
+    # - 1 byte minimum per filesystem standards
 )
 DEFAULT_CHUNK_SIZE: Final[int] = (
-    8192  # File copy chunk size [bytes] - optimal for most systems per Python shutil docs
+    8192  # File copy chunk size [bytes]
+    # - optimal for most systems per Python shutil docs
 )
 MAX_RETRY_ATTEMPTS: Final[int] = (
-    3  # Maximum retry attempts for file operations - industry standard retry limit
+    3  # Maximum retry attempts for file operations
+    # - industry standard retry limit
 )
 ICON_SIZES: Final[tuple[int, ...]] = (
     16,
@@ -43,13 +49,16 @@ ICON_SIZES: Final[tuple[int, ...]] = (
     64,
 )  # Standard icon sizes [pixels] per Windows Shell API guidelines
 MAX_STATUS_LENGTH: Final[int] = (
-    200  # Maximum status message length [characters] - prevents UI overflow
+    200  # Maximum status message length [characters]
+    # - prevents UI overflow
 )
 MAX_UI_UPDATE_FREQUENCY: Final[int] = (
-    10  # Update progress every N files - balances responsiveness with performance
+    10  # Update progress every N files
+    # - balances responsiveness with performance
 )
 MAX_ARCHIVE_SIZE_RATIO: Final[float] = (
-    0.1  # Minimum extracted size ratio [ratio] - archive size * 0.1 for validation
+    0.1  # Minimum extracted size ratio [ratio]
+    # - archive size * 0.1 for validation
 )
 MAX_DIALOG_WIDTH: Final[int] = (
     800  # Maximum dialog width [pixels] - prevents dialog overflow
@@ -64,16 +73,20 @@ MIN_DIALOG_HEIGHT: Final[int] = (
 
 # Additional constants for improved maintainability
 MAX_TEXT_CONTENT_SIZE: Final[int] = (
-    1000000  # Maximum text content size [characters] - prevents performance issues
+    1000000  # Maximum text content size [characters]
+    # - prevents performance issues
 )
 MAX_TITLE_LENGTH: Final[int] = (
-    100  # Maximum title length [characters] - prevents window title truncation
+    100  # Maximum title length [characters]
+    # - prevents window title truncation
 )
 MAX_COUNTER_ATTEMPTS: Final[int] = (
-    1000  # Maximum attempts to generate unique filename [attempts] - prevents infinite loops
+    1000  # Maximum attempts to generate unique filename [attempts]
+    # - prevents infinite loops
 )
 MAX_FALLBACK_CONTENT_SIZE: Final[int] = (
-    500  # Maximum content size for fallback display [characters] - prevents UI overflow
+    500  # Maximum content size for fallback display [characters]
+    # - prevents UI overflow
 )
 PROGRESS_BACKUP_PERCENT: Final[int] = (
     20  # Progress percentage allocated to backup operations [%] - UI progress tracking
@@ -93,19 +106,23 @@ PROGRESS_START_ZIP: Final[int] = (
 
 # Dialog layout constants
 CHARS_PER_DIALOG_LINE: Final[int] = (
-    80  # Characters per line for dialog width calculation [characters] - standard text width
+    80  # Characters per line for dialog width calculation [characters]
+    # - standard text width
 )
 DIALOG_WIDTH_OFFSET: Final[int] = (
-    100  # Additional width offset for dialog borders [pixels] - accounts for scrollbars and margins
+    100  # Additional width offset for dialog borders [pixels]
+    # - accounts for scrollbars and margins
 )
 DIALOG_HEIGHT_OFFSET: Final[int] = (
-    100  # Additional height offset for dialog borders [pixels] - accounts for title bar and margins
+    100  # Additional height offset for dialog borders [pixels]
+    # - accounts for title bar and margins
 )
 LINE_HEIGHT_PIXELS: Final[int] = (
     20  # Height per line for dialog height calculation [pixels] - standard line height
 )
 MAX_TITLE_PREVIEW_LENGTH: Final[int] = (
-    50  # Maximum title length for preview in logs [characters] - prevents log overflow
+    50  # Maximum title length for preview in logs [characters]
+    # - prevents log overflow
 )
 
 # Set up logging to capture detailed information
@@ -195,7 +212,8 @@ class FolderProcessorApp:
             )
         if MIN_FILE_SIZE_BYTES >= MAX_FILE_SIZE_MB * 1024 * 1024:
             raise ValueError(
-                f"MIN_FILE_SIZE_BYTES must be less than MAX_FILE_SIZE_MB, got {MIN_FILE_SIZE_BYTES}",
+                f"MIN_FILE_SIZE_BYTES must be less than MAX_FILE_SIZE_MB, "
+                f"got {MIN_FILE_SIZE_BYTES}",
             )
 
         # Validate UI constants
@@ -205,21 +223,25 @@ class FolderProcessorApp:
             )
         if MAX_UI_UPDATE_FREQUENCY <= 0:
             raise ValueError(
-                f"MAX_UI_UPDATE_FREQUENCY must be positive, got {MAX_UI_UPDATE_FREQUENCY}",
+                f"MAX_UI_UPDATE_FREQUENCY must be positive, "
+                f"got {MAX_UI_UPDATE_FREQUENCY}",
             )
         if MAX_DIALOG_WIDTH <= MIN_DIALOG_WIDTH:
             raise ValueError(
-                f"MAX_DIALOG_WIDTH must be greater than MIN_DIALOG_WIDTH, got {MAX_DIALOG_WIDTH} <= {MIN_DIALOG_WIDTH}",
+                f"MAX_DIALOG_WIDTH must be greater than MIN_DIALOG_WIDTH, "
+                f"got {MAX_DIALOG_WIDTH} <= {MIN_DIALOG_WIDTH}",
             )
         if MAX_DIALOG_HEIGHT <= MIN_DIALOG_HEIGHT:
             raise ValueError(
-                f"MAX_DIALOG_HEIGHT must be greater than MIN_DIALOG_HEIGHT, got {MAX_DIALOG_HEIGHT} <= {MIN_DIALOG_HEIGHT}",
+                "MAX_DIALOG_HEIGHT must be greater than MIN_DIALOG_HEIGHT, "
+                f"got {MAX_DIALOG_HEIGHT} <= {MIN_DIALOG_HEIGHT}",
             )
 
         # Validate archive constants
         if not 0 < MAX_ARCHIVE_SIZE_RATIO < 1:
             raise ValueError(
-                f"MAX_ARCHIVE_SIZE_RATIO must be between 0 and 1, got {MAX_ARCHIVE_SIZE_RATIO}",
+                f"MAX_ARCHIVE_SIZE_RATIO must be between 0 and 1, "
+                f"got {MAX_ARCHIVE_SIZE_RATIO}",
             )
 
         # Validate retry constants
@@ -245,23 +267,28 @@ class FolderProcessorApp:
         # Validate progress constants
         if PROGRESS_BACKUP_PERCENT < 0 or PROGRESS_BACKUP_PERCENT > 100:
             raise ValueError(
-                f"PROGRESS_BACKUP_PERCENT must be between 0 and 100, got {PROGRESS_BACKUP_PERCENT}",
+                f"PROGRESS_BACKUP_PERCENT must be between 0 and 100, "
+                f"got {PROGRESS_BACKUP_PERCENT}",
             )
         if PROGRESS_MAIN_OP_PERCENT < 0 or PROGRESS_MAIN_OP_PERCENT > 100:
             raise ValueError(
-                f"PROGRESS_MAIN_OP_PERCENT must be between 0 and 100, got {PROGRESS_MAIN_OP_PERCENT}",
+                f"PROGRESS_MAIN_OP_PERCENT must be between 0 and 100, "
+                f"got {PROGRESS_MAIN_OP_PERCENT}",
             )
         if PROGRESS_ZIP_PERCENT < 0 or PROGRESS_ZIP_PERCENT > 100:
             raise ValueError(
-                f"PROGRESS_ZIP_PERCENT must be between 0 and 100, got {PROGRESS_ZIP_PERCENT}",
+                f"PROGRESS_ZIP_PERCENT must be between 0 and 100, "
+                f"got {PROGRESS_ZIP_PERCENT}",
             )
         if PROGRESS_START_MAIN < 0 or PROGRESS_START_MAIN > 100:
             raise ValueError(
-                f"PROGRESS_START_MAIN must be between 0 and 100, got {PROGRESS_START_MAIN}",
+                f"PROGRESS_START_MAIN must be between 0 and 100, "
+                f"got {PROGRESS_START_MAIN}",
             )
         if PROGRESS_START_ZIP < 0 or PROGRESS_START_ZIP > 100:
             raise ValueError(
-                f"PROGRESS_START_ZIP must be between 0 and 100, got {PROGRESS_START_ZIP}",
+                f"PROGRESS_START_ZIP must be between 0 and 100, "
+                f"got {PROGRESS_START_ZIP}",
             )
 
         # Validate progress flow consistency
@@ -283,7 +310,8 @@ class FolderProcessorApp:
         and system validation.
 
         Returns:
-            Dictionary mapping constant names to their metadata [dict] - includes value, units, and source
+            Dictionary mapping constant names to their metadata [dict]
+                - includes value, units, and source
 
         Example:
             {
@@ -416,7 +444,8 @@ class FolderProcessorApp:
         """Exports constants documentation to a file for reference.
 
         Args:
-            output_path: Path to the output file [str] - will be created if it doesn't exist
+            output_path: Path to the output file [str]
+                - will be created if it doesn't exist
 
         Returns:
             True if export successful, False otherwise
@@ -950,25 +979,31 @@ class FolderProcessorApp:
         style.configure("Accent.TButton", font=("Helvetica", 10, "bold"))
 
     def on_mode_change(self) -> None:
-        """Updates UI descriptions and widget states based on the selected operation mode."""
+        """Updates UI descriptions and widget states based on the selected operation
+        mode."""
         mode = self.operation_mode.get()
 
         # Update description
         descriptions = {
-            "combine": "Copies all files from source folders into the single destination folder.",
+            "combine": (
+                "Copies all files from source folders into the single destination "
+                "folder."
+            ),
             "flatten": (
-                "Finds deeply nested folders and copies them to the top level of the destination."
+                "Finds deeply nested folders and copies them to the top level of "
+                "the destination."
             ),
             "prune": (
                 "Copies source folders to the destination, preserving structure but "
                 "skipping empty sub-folders."
             ),
             "deduplicate": (
-                "Deletes renamed duplicates like 'file (1).txt' within the source folder(s), "
-                "keeping the newest version."
+                "Deletes renamed duplicates like 'file (1).txt' within the source "
+                "folder(s), keeping the newest version."
             ),
             "analyze": (
-                "Analyzes folder contents and generates a detailed report without making changes."
+                "Analyzes folder contents and generates a detailed report without "
+                "making changes."
             ),
         }
         self.mode_description.config(text=descriptions.get(mode, ""))
@@ -1009,7 +1044,7 @@ class FolderProcessorApp:
 
                 accessible_folders += 1
 
-                for root, dirs, files in os.walk(folder):
+                for root, _dirs, files in os.walk(folder):
                     for file in files:
                         try:
                             file_path = os.path.join(root, file)
@@ -1036,7 +1071,10 @@ class FolderProcessorApp:
             return
 
         size_mb = total_size / (1024 * 1024)
-        info_text = f"Total: {total_files} files, {size_mb:.1f} MB ({accessible_folders}/{len(self.source_folders)} folders accessible)"
+        info_text = (
+            f"Total: {total_files} files, {size_mb:.1f} MB "
+            f"({accessible_folders}/{len(self.source_folders)} folders accessible)"
+        )
 
         # Set color based on accessibility
         if accessible_folders < len(self.source_folders):
@@ -1081,7 +1119,7 @@ class FolderProcessorApp:
         """
         try:
             # Validate progress value
-            if not isinstance(value, (int, float)):
+            if not isinstance(value, int | float):
                 logger.warning(f"Invalid progress value type: {type(value)}")
                 return
 
@@ -1204,7 +1242,8 @@ class FolderProcessorApp:
                 if min_size_mb > MAX_FILE_SIZE_MB:
                     messagebox.showwarning(
                         "Invalid Input",
-                        f"Minimum file size cannot exceed {MAX_FILE_SIZE_MB} MB. Setting to 0 MB.",
+                        f"Minimum file size cannot exceed {MAX_FILE_SIZE_MB} MB. "
+                        "Setting to 0 MB.",
                     )
                     self.min_file_size.set("0")
                     return False
@@ -1216,14 +1255,16 @@ class FolderProcessorApp:
                 if max_size_mb < 0:
                     messagebox.showwarning(
                         "Invalid Input",
-                        f"Maximum file size cannot be negative. Setting to {MAX_FILE_SIZE_MB} MB.",
+                        f"Maximum file size cannot be negative. Setting to "
+                        f"{MAX_FILE_SIZE_MB} MB.",
                     )
                     self.max_file_size.set(str(MAX_FILE_SIZE_MB))
                     return False
                 if max_size_mb > MAX_FILE_SIZE_MB:
                     messagebox.showwarning(
                         "Invalid Input",
-                        f"Maximum file size cannot exceed {MAX_FILE_SIZE_MB} MB. Setting to {MAX_FILE_SIZE_MB} MB.",
+                        f"Maximum file size cannot exceed {MAX_FILE_SIZE_MB} MB. "
+                        f"Setting to {MAX_FILE_SIZE_MB} MB.",
                     )
                     self.max_file_size.set(str(MAX_FILE_SIZE_MB))
                     return False
@@ -1249,11 +1290,14 @@ class FolderProcessorApp:
         """Returns the organized destination path based on organization options.
 
         Args:
-            file_path: Source file path [str] - used to determine file type and modification date
-            dest_base: Base destination directory [str] - where organized files will be placed
+            file_path: Source file path [str]
+                - used to determine file type and modification date
+            dest_base: Base destination directory [str]
+                - where organized files will be placed
 
         Returns:
-            Organized destination path [str] - includes type/date subdirectories if enabled
+            Organized destination path [str]
+                - includes type/date subdirectories if enabled
 
         Raises:
             OSError: If file system operations fail during path construction
@@ -1306,15 +1350,18 @@ class FolderProcessorApp:
         """Safely extracts an archive with validation.
 
         Args:
-            archive_path: Path to the archive file to extract [str] - must exist and be readable
+            archive_path: Path to the archive file to extract [str]
+                - must exist and be readable
 
         Returns:
-            Tuple of (success: bool, message: str) - success indicates extraction completed without errors
+            Tuple of (success: bool, message: str)
+                - success indicates extraction completed without errors
 
         Raises:
             ValueError: If archive_path is empty or invalid
             FileNotFoundError: If archive file does not exist
-            PermissionError: If insufficient permissions to read archive or write to extract directory
+            PermissionError: If insufficient permissions to read archive or write to
+                extract directory
             OSError: If file system operations fail
             Exception: If extraction process fails
         """
@@ -1341,7 +1388,8 @@ class FolderProcessorApp:
                 return False, f"Archive file is empty: {archive_path}"
             if archive_size > MAX_FILE_SIZE_MB * 1024 * 1024:
                 logger.warning(
-                    f"Archive file exceeds maximum size limit: {archive_path} ({archive_size / (1024 * 1024):.1f} MB)",
+                    f"Archive file exceeds maximum size limit: {archive_path} "
+                    f"({archive_size / (1024 * 1024):.1f} MB)",
                 )
         except OSError as e:
             return False, f"Cannot access archive file: {e}"
@@ -1388,7 +1436,7 @@ class FolderProcessorApp:
                 extracted_files = []
                 total_extracted_size = 0
 
-                for root, dirs, files in os.walk(extract_dir):
+                for root, _dirs, files in os.walk(extract_dir):
                     for file in files:
                         file_path = os.path.join(root, file)
                         try:
@@ -1408,11 +1456,13 @@ class FolderProcessorApp:
                 # Verify total extracted size is reasonable
                 if total_extracted_size < archive_size * MAX_ARCHIVE_SIZE_RATIO:
                     logger.warning(
-                        f"Extracted size ({total_extracted_size}) seems small compared to archive size ({archive_size})",
+                        f"Extracted size ({total_extracted_size}) seems small "
+                        f"compared to archive size ({archive_size})",
                     )
 
                 logger.info(
-                    f"Extraction validation passed: {len(extracted_files)} files, {total_extracted_size} bytes",
+                    f"Extraction validation passed: {len(extracted_files)} files, "
+                    f"{total_extracted_size} bytes",
                 )
 
             # Only delete original if extraction was successful
@@ -1427,7 +1477,10 @@ class FolderProcessorApp:
 
             return (
                 True,
-                f"Successfully extracted and deleted '{os.path.basename(archive_path)}' ({len(extracted_files) if 'extracted_files' in locals() else 'unknown'} files)",
+                f"Successfully extracted and deleted "
+                f"'{os.path.basename(archive_path)}' "
+                f"({'known' if 'extracted_files' in locals() else 'unknown'} "
+                "files)",
             )
 
         except Exception as e:
@@ -1440,7 +1493,8 @@ class FolderProcessorApp:
                     )
                 except Exception as cleanup_error:
                     logger.warning(
-                        f"Failed to cleanup extraction directory: {extract_dir} - {cleanup_error}",
+                        f"Failed to cleanup extraction directory: {extract_dir} - "
+                        f"{cleanup_error}",
                     )
 
             return False, f"Failed to extract '{os.path.basename(archive_path)}': {e}"
@@ -1491,7 +1545,7 @@ class FolderProcessorApp:
             first_source_parent = Path(valid_source_folders[0]).parent
             backup_base = first_source_parent / backup_base_name
         except Exception as e:
-            raise ValueError(f"Cannot determine backup location: {e}")
+            raise ValueError(f"Cannot determine backup location: {e}") from e
 
         self.update_status("Creating backup...")
         logger.info(f"Creating backup at: {backup_base}")
@@ -1558,7 +1612,8 @@ class FolderProcessorApp:
                             logger.info(f"Cleaned up failed backup: {backup_path}")
                         except Exception as cleanup_error:
                             logger.warning(
-                                f"Failed to cleanup failed backup: {backup_path} - {cleanup_error}",
+                                f"Failed to cleanup failed backup: {backup_path} - "
+                                f"{cleanup_error}",
                             )
 
                     # Continue with other folders
@@ -1583,7 +1638,8 @@ class FolderProcessorApp:
                         logger.info(f"Cleaned up empty backup directory: {backup_base}")
                     except Exception as cleanup_error:
                         logger.warning(
-                            f"Failed to cleanup empty backup directory: {backup_base} - {cleanup_error}",
+                            f"Failed to cleanup empty backup directory: "
+                            f"{backup_base} - {cleanup_error}",
                         )
                 return None
 
@@ -1591,7 +1647,8 @@ class FolderProcessorApp:
             if backup_base.exists() and any(backup_base.iterdir()):
                 logger.info(f"Backup completed successfully: {backup_base}")
                 logger.info(
-                    f"Backup summary: {successful_backups} successful, {failed_backups} failed",
+                    f"Backup summary: {successful_backups} successful, "
+                    f"{failed_backups} failed",
                 )
                 return str(backup_base)
             else:
@@ -1607,7 +1664,8 @@ class FolderProcessorApp:
                     logger.info(f"Cleaned up failed backup: {backup_base}")
                 except Exception as cleanup_error:
                     logger.warning(
-                        f"Failed to cleanup failed backup: {backup_base} - {cleanup_error}",
+                        f"Failed to cleanup failed backup: {backup_base} - "
+                        f"{cleanup_error}",
                     )
             raise
 
@@ -1669,7 +1727,7 @@ class FolderProcessorApp:
             folder_errors = 0
 
             try:
-                for root, dirs, files in os.walk(folder):
+                for root, _dirs, files in os.walk(folder):
                     if self.cancel_operation:
                         break
 
@@ -1695,12 +1753,14 @@ class FolderProcessorApp:
                             # Validate file size
                             if file_size < MIN_FILE_SIZE_BYTES:
                                 logger.debug(
-                                    f"File below minimum size: {file_path} ({file_size} bytes)",
+                                    f"File below minimum size: {file_path} "
+                                    f"({file_size} bytes)",
                                 )
                                 continue
                             if file_size > MAX_FILE_SIZE_MB * 1024 * 1024:
                                 logger.warning(
-                                    f"File exceeds maximum size: {file_path} ({file_size / (1024 * 1024):.1f} MB)",
+                                    f"File exceeds maximum size: {file_path} "
+                                    f"({file_size / (1024 * 1024):.1f} MB)",
                                 )
 
                             total_files += 1
@@ -1724,14 +1784,17 @@ class FolderProcessorApp:
                 # Report folder analysis results
                 if folder_errors > 0:
                     report.append(
-                        f"  Files: {folder_files}, Size: {folder_size / (1024 * 1024):.1f} MB, Errors: {folder_errors}",
+                        f"  Files: {folder_files}, "
+                        f"Size: {folder_size / (1024 * 1024):.1f} MB, "
+                        f"Errors: {folder_errors}",
                     )
                     analysis_errors.append(
                         f"Folder {folder}: {folder_errors} access errors",
                     )
                 else:
                     report.append(
-                        f"  Files: {folder_files}, Size: {folder_size / (1024 * 1024):.1f} MB",
+                        f"  Files: {folder_files}, "
+                        f"Size: {folder_size / (1024 * 1024):.1f} MB",
                     )
 
             except (OSError, PermissionError) as e:
@@ -1775,12 +1838,14 @@ class FolderProcessorApp:
                 f"  Source folders processed: {len(valid_source_folders)}",
                 f"  Total folders analyzed: {len(valid_source_folders)}",
                 f"  Analysis timestamp: {datetime.now()}",
-                f"  File size limits: {MIN_FILE_SIZE_BYTES} bytes - {MAX_FILE_SIZE_MB} MB",
+                f"  File size limits: {MIN_FILE_SIZE_BYTES} bytes - "
+                f"{MAX_FILE_SIZE_MB} MB",
             ],
         )
 
         logger.info(
-            f"Analysis completed: {total_files} files, {total_size / (1024 * 1024):.1f} MB",
+            f"Analysis completed: {total_files} files, "
+            f"{total_size / (1024 * 1024):.1f} MB",
         )
         if analysis_errors:
             logger.warning(f"Analysis completed with {len(analysis_errors)} errors")
@@ -1919,7 +1984,8 @@ class FolderProcessorApp:
         Raises:
             ValueError: If destination folder path is empty or invalid
             FileNotFoundError: If destination folder does not exist
-            PermissionError: If insufficient permissions to read destination or write ZIP
+            PermissionError: If insufficient permissions to read destination or
+                write ZIP
             OSError: If file system operations fail during ZIP creation
             Exception: If ZIP creation fails for other reasons
         """
@@ -1950,8 +2016,9 @@ class FolderProcessorApp:
                 raise ValueError("Destination folder is empty - nothing to archive")
         except (OSError, PermissionError) as e:
             raise PermissionError(
-                f"Cannot access destination folder contents: {self.dest_folder} - {e}",
-            )
+                f"Cannot access destination folder contents: {self.dest_folder} - "
+                f"{e}",
+            ) from e
 
         # Generate ZIP filename with timestamp
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -1961,7 +2028,7 @@ class FolderProcessorApp:
         try:
             zip_path = dest_path_obj.parent / zip_filename
         except Exception as e:
-            raise ValueError(f"Cannot determine ZIP location: {e}")
+            raise ValueError(f"Cannot determine ZIP location: {e}") from e
 
         # Check if ZIP file already exists and generate unique name
         if zip_path.exists():
@@ -1974,7 +2041,7 @@ class FolderProcessorApp:
             total_files = 0
             total_size = 0
 
-            for root, dirs, files in os.walk(self.dest_folder):
+            for root, _dirs, files in os.walk(self.dest_folder):
                 for file in files:
                     file_path = os.path.join(root, file)
                     try:
@@ -1988,7 +2055,8 @@ class FolderProcessorApp:
                 raise ValueError("No accessible files found in destination folder")
 
             logger.info(
-                f"ZIP will contain {total_files} files, {total_size / (1024 * 1024):.1f} MB",
+                f"ZIP will contain {total_files} files, "
+                f"{total_size / (1024 * 1024):.1f} MB",
             )
 
             # Create ZIP archive
@@ -1997,7 +2065,7 @@ class FolderProcessorApp:
                 processed_size = 0
                 failed_files = 0
 
-                for root, dirs, files in os.walk(self.dest_folder):
+                for root, _dirs, files in os.walk(self.dest_folder):
                     for file in files:
                         if self.cancel_operation:
                             raise Exception("ZIP creation cancelled by user")
@@ -2032,7 +2100,8 @@ class FolderProcessorApp:
                                 )
                                 self.update_progress(
                                     progress,
-                                    f"Added {processed_files}/{total_files} files to ZIP",
+                                    f"Added {processed_files}/{total_files} files "
+                                    "to ZIP",
                                 )
 
                         except Exception as e:
@@ -2052,7 +2121,9 @@ class FolderProcessorApp:
                     if zip_size == 0:
                         raise Exception("ZIP file is empty")
                     logger.info(
-                        f"ZIP archive created: {zip_path} ({processed_files} files, {processed_size / (1024 * 1024):.1f} MB, ZIP size: {zip_size / (1024 * 1024):.1f} MB)",
+                        f"ZIP archive created: {zip_path} ({processed_files} files, "
+                        f"{processed_size / (1024 * 1024):.1f} MB, "
+                        f"ZIP size: {zip_size / (1024 * 1024):.1f} MB)",
                     )
                 except OSError as e:
                     logger.warning(f"Cannot verify ZIP file size: {e}")
@@ -2073,11 +2144,12 @@ class FolderProcessorApp:
                     logger.info(f"Cleaned up failed ZIP file: {zip_path}")
                 except Exception as cleanup_error:
                     logger.warning(
-                        f"Failed to cleanup failed ZIP file: {zip_path} - {cleanup_error}",
+                        f"Failed to cleanup failed ZIP file: {zip_path} - "
+                        f"{cleanup_error}",
                     )
 
             logger.error(f"Failed to create ZIP archive: {e}")
-            raise Exception(f"Failed to create ZIP archive: {e}")
+            raise Exception(f"Failed to create ZIP archive: {e}") from e
 
         return str(zip_path)
 
@@ -2108,7 +2180,8 @@ class FolderProcessorApp:
         # Validate title length for window title bar
         if len(title) > MAX_TITLE_LENGTH:
             logger.warning(
-                f"Title is very long ({len(title)} chars), may be truncated: {title[:MAX_TITLE_PREVIEW_LENGTH]}...",
+                f"Title is very long ({len(title)} chars), may be truncated: "
+                f"{title[:MAX_TITLE_PREVIEW_LENGTH]}...",
             )
 
         # Validate content length for performance
@@ -2116,7 +2189,8 @@ class FolderProcessorApp:
             len(content) > MAX_TEXT_CONTENT_SIZE
         ):  # MAX_TEXT_CONTENT_SIZE limit for text content
             logger.warning(
-                f"Content is very large ({len(content)} chars), may cause performance issues",
+                f"Content is very large ({len(content)} chars), may cause "
+                "performance issues",
             )
             # Truncate content for display
             content = (
@@ -2276,7 +2350,8 @@ class FolderProcessorApp:
         """Validate user inputs before processing.
 
         Args:
-            check_destination: Whether to validate destination folder selection [bool] - defaults to True
+            check_destination: Whether to validate destination folder selection [bool]
+                - defaults to True
 
         Returns:
             True if inputs are valid, False otherwise
@@ -2314,13 +2389,15 @@ class FolderProcessorApp:
                     if ext and not ext.startswith("."):
                         messagebox.showwarning(
                             "Invalid Extension Format",
-                            f"Extension '{ext}' should start with a dot (e.g., '.txt').",
+                            f"Extension '{ext}' should start with a dot "
+                            "(e.g., '.txt').",
                         )
                         return False
             except Exception:
                 messagebox.showerror(
                     "Error",
-                    "Invalid extension filter format. Use comma-separated values like '.txt,.pdf'.",
+                    "Invalid extension filter format. Use comma-separated values "
+                    "like '.txt,.pdf'.",
                 )
                 return False
 
@@ -2330,7 +2407,8 @@ class FolderProcessorApp:
         """Validates the current application state and returns validation results.
 
         Returns:
-            Dictionary mapping validation checks to their results [dict] - True if valid, False if invalid
+            Dictionary mapping validation checks to their results [dict]
+                - True if valid, False if invalid
 
         Example:
             {
@@ -2450,7 +2528,8 @@ class FolderProcessorApp:
 
         Args:
             source_path: Source file path [str] - must exist and be readable
-            dest_path: Destination file path [str] - parent directory will be created if needed
+            dest_path: Destination file path [str]
+                - parent directory will be created if needed
 
         Returns:
             True if copy successful, False otherwise
@@ -2460,7 +2539,8 @@ class FolderProcessorApp:
             IOError: If file I/O operations fail
             ValueError: If source_path is empty or invalid
             FileNotFoundError: If source file does not exist
-            PermissionError: If insufficient permissions to read source or write destination
+            PermissionError: If insufficient permissions to read source or write
+                destination
         """
         # Input validation
         if not source_path or not isinstance(source_path, str):
@@ -2490,7 +2570,8 @@ class FolderProcessorApp:
                 logger.warning(f"Source file is empty: {source_path}")
             elif source_size > MAX_FILE_SIZE_MB * 1024 * 1024:
                 logger.warning(
-                    f"Source file exceeds maximum size limit: {source_path} ({source_size / (1024 * 1024):.1f} MB)",
+                    f"Source file exceeds maximum size limit: {source_path} "
+                    f"({source_size / (1024 * 1024):.1f} MB)",
                 )
         except OSError as e:
             logger.warning(f"Cannot access source file size: {source_path} - {e}")
@@ -2517,19 +2598,22 @@ class FolderProcessorApp:
                         dest_size = dest_path_obj.stat().st_size
                         if source_size == dest_size:
                             logger.debug(
-                                f"Successfully copied {source_path} -> {dest_path} ({source_size} bytes)",
+                                f"Successfully copied {source_path} -> {dest_path} "
+                                f"({source_size} bytes)",
                             )
                             return True
                         else:
                             logger.warning(
-                                f"Size mismatch after copy: source={source_size}, dest={dest_size}",
+                                f"Size mismatch after copy: source={source_size}, "
+                                f"dest={dest_size}",
                             )
                             # Size mismatch, remove failed copy and retry
                             if dest_path_obj.exists():
                                 dest_path_obj.unlink()
                             if attempt < MAX_RETRY_ATTEMPTS - 1:
                                 logger.info(
-                                    f"Retrying copy due to size mismatch (attempt {attempt + 1}/{MAX_RETRY_ATTEMPTS})",
+                                    "Retrying copy due to size mismatch "
+                                    f"(attempt {attempt + 1}/{MAX_RETRY_ATTEMPTS})",
                                 )
                                 continue
                     except OSError as e:
@@ -2549,7 +2633,8 @@ class FolderProcessorApp:
                     continue
                 else:
                     logger.error(
-                        f"Failed to copy {source_path} after {MAX_RETRY_ATTEMPTS} attempts: {e}",
+                        f"Failed to copy {source_path} after "
+                        f"{MAX_RETRY_ATTEMPTS} attempts: {e}",
                     )
                     raise
 
@@ -2577,7 +2662,7 @@ class FolderProcessorApp:
             if self.cancel_operation:
                 break
 
-            for root, dirs, files in os.walk(src):
+            for root, _dirs, files in os.walk(src):
                 for file in files:
                     if self.cancel_operation:
                         break
@@ -2601,7 +2686,8 @@ class FolderProcessorApp:
                     final_dest_path = self._get_unique_path(dest_path)
                     if final_dest_path != dest_path:
                         log.append(
-                            f"Renamed: '{file}' to '{os.path.basename(final_dest_path)}'",
+                            f"Renamed: '{file}' to "
+                            f"'{os.path.basename(final_dest_path)}'",
                         )
                         renamed_count += 1
 
@@ -2647,7 +2733,9 @@ class FolderProcessorApp:
 
     # --- Keep existing methods for compatibility ---
     def _perform_deduplication(self, target_folder: str) -> list[str]:
-        """Core logic to find and delete renamed duplicates in a single target folder."""
+        """Core logic to find and delete renamed duplicates in a single
+        target folder.
+        """
         log = []
         deleted_count = 0
         pattern = re.compile(r"(.+?)(?: \((\d+)\))?(\.\w+)$")
@@ -2685,7 +2773,8 @@ class FolderProcessorApp:
                         continue
 
                     log.append(
-                        f"Duplicate set for '{base_name}': Keeping '{Path(file_to_keep).name}'",
+                        f"Duplicate set for '{base_name}': Keeping "
+                        f"'{Path(file_to_keep).name}'",
                     )
 
                     for file_path in files:
@@ -2693,19 +2782,26 @@ class FolderProcessorApp:
                             try:
                                 if not self.preview_mode_var.get():
                                     Path(file_path).unlink()
+                                mode_str = (
+                                    "WOULD DELETE"
+                                    if self.preview_mode_var.get()
+                                    else "DEL"
+                                )
                                 log.append(
-                                    f"  - {'WOULD DELETE' if self.preview_mode_var.get() else 'DELETED'}: "
-                                    f"'{Path(file_path).name}'",
+                                    f"  - {mode_str}: " f"'{Path(file_path).name}'",
                                 )
                                 deleted_count += 1
                             except OSError as e:
                                 log.append(
-                                    f"  - FAILED to delete '{Path(file_path).name}': {e}",
+                                    f"  - FAILED to delete '{Path(file_path).name}': "
+                                    f"{e}",
                                 )
 
         summary = [
-            f"Deduplication {'preview' if self.preview_mode_var.get() else 'complete'}.",
-            f"{'Would delete' if self.preview_mode_var.get() else 'Deleted'} a total of {deleted_count} files.",
+            f"Deduplication "
+            f"{'preview' if self.preview_mode_var.get() else 'complete'}.",
+            f"{'Would delete' if self.preview_mode_var.get() else 'Deleted'} a total "
+            f"of {deleted_count} files.",
             *log[:MAX_LOG_ENTRIES],
         ]
 
@@ -2730,10 +2826,12 @@ class FolderProcessorApp:
         """Generate a unique path by appending counter if path exists.
 
         Args:
-            path: Original file or directory path [str] - will be analyzed for name and extension
+            path: Original file or directory path [str]
+                - will be analyzed for name and extension
 
         Returns:
-            Unique path that doesn't exist [str] - original path or path with counter suffix
+            Unique path that doesn't exist [str]
+                - original path or path with counter suffix
 
         Raises:
             ValueError: If path is empty or invalid
@@ -2756,7 +2854,7 @@ class FolderProcessorApp:
                     if not os.path.exists(drive):
                         raise ValueError(f"Drive does not exist: {drive}")
         except Exception as e:
-            raise ValueError(f"Invalid path format: {path} - {e}")
+            raise ValueError(f"Invalid path format: {path} - {e}") from e
 
         # Check if path already exists
         try:
@@ -2818,7 +2916,8 @@ class FolderProcessorApp:
     def select_source_folders(self) -> None:
         """Open folder selection dialog to add source folders.
 
-        This method allows users to select folders that will be processed by the application.
+        This method allows users to select folders that will be processed by
+        the application.
         Selected folders are added to the source_folders list and displayed in the UI.
 
         Args:
@@ -2900,7 +2999,8 @@ class FolderProcessorApp:
             else:
                 confirm = messagebox.askyesno(
                     "Confirm Removal",
-                    f"Remove {len(selected_indices)} selected folders from source list?",
+                    f"Remove {len(selected_indices)} "
+                    "selected folders from source list?",
                 )
 
             if confirm:
@@ -2978,7 +3078,7 @@ class FolderProcessorApp:
         # Count total files for progress tracking
         total_files = 0
         for src in self.source_folders:
-            for root, dirs, files in os.walk(src):
+            for _root, _dirs, files in os.walk(src):
                 total_files += len(files)
 
         processed_files = 0
@@ -2987,7 +3087,7 @@ class FolderProcessorApp:
             if self.cancel_operation:
                 break
 
-            for root, dirs, files in os.walk(src):
+            for _root, _dirs, files in os.walk(src):
                 for file in files:
                     if self.cancel_operation:
                         break
@@ -3011,7 +3111,8 @@ class FolderProcessorApp:
                     final_dest_path = self._get_unique_path(dest_path)
                     if final_dest_path != dest_path:
                         log.append(
-                            f"Renamed: '{file}' to '{os.path.basename(final_dest_path)}'",
+                            f"Renamed: '{file}' to "
+                            f"'{os.path.basename(final_dest_path)}'",
                         )
 
                     try:
@@ -3054,7 +3155,8 @@ class FolderProcessorApp:
         return summary + log[:MAX_LOG_ENTRIES]
 
     def _prune_empty_folders(self) -> list[str]:
-        """Copy source folders to destination while preserving structure but skipping empty sub-folders.
+        """Copy source folders to destination while preserving structure but
+        skipping empty sub-folders.
 
         Returns:
             List of log messages describing the operation results
@@ -3070,7 +3172,7 @@ class FolderProcessorApp:
         # Count total files for progress tracking
         total_files = 0
         for src in self.source_folders:
-            for root, dirs, files in os.walk(src):
+            for _root, _dirs, files in os.walk(src):
                 total_files += len(files)
 
         processed_files = 0
@@ -3120,7 +3222,8 @@ class FolderProcessorApp:
                     final_dest_path = self._get_unique_path(dest_file_path)
                     if final_dest_path != dest_file_path:
                         log.append(
-                            f"Renamed: '{file}' to '{os.path.basename(final_dest_path)}'",
+                            f"Renamed: '{file}' to "
+                            f"'{os.path.basename(final_dest_path)}'",
                         )
 
                     try:

@@ -918,7 +918,8 @@ class FolderPackerPro:
 
         # Update status bar
         self.status_bar_label.configure(
-            text=f"Ready  |  Theme: {self.current_theme.title()}  |  No operation in progress",
+            text=f"Ready  |  Theme: {self.current_theme.title()}  |  "
+            "No operation in progress",
         )
 
     def _toggle_theme(self) -> None:
@@ -1468,7 +1469,9 @@ class FolderPackerPro:
                 try:
                     data = EncryptionManager.decrypt_data(data, password)
                 except Exception as e:
-                    raise ValueError(f"Decryption failed - incorrect password? {e}")
+                    raise ValueError(
+                        f"Decryption failed - incorrect password? {e}",
+                    ) from e
 
             # Decompress if needed
             try:
@@ -1525,7 +1528,8 @@ class FolderPackerPro:
                 0,
                 lambda: messagebox.showinfo(
                     "Success",
-                    f"Package extracted successfully!\n\nFiles: {total_files}\nLocation: {dest_path}",
+                    f"Package extracted successfully!\n\nFiles: {total_files}\n"
+                    f"Location: {dest_path}",
                 ),
             )
 
