@@ -128,7 +128,8 @@ class TestBuildExe:
                         mock_exit.assert_not_called()
 
     def test_main_pyinstaller_not_available_install_success(self) -> None:
-        """Test main function when PyInstaller is not available but installs successfully."""
+        """Test main function when PyInstaller is not available but installs
+        successfully."""
         with patch("build_exe.check_pyinstaller") as mock_check:
             mock_check.return_value = False
             with patch("build_exe.install_pyinstaller") as mock_install:

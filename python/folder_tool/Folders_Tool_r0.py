@@ -481,7 +481,7 @@ class FolderProcessorApp:
             # Get the directory where the script/executable is located
             if getattr(sys, "frozen", False):
                 # Running as compiled executable
-                base_dir = sys._MEIPASS
+                base_dir = sys._MEIPASS  # type: ignore[attr-defined]
             else:
                 # Running as script
                 base_dir = os.path.dirname(__file__)
@@ -542,7 +542,7 @@ class FolderProcessorApp:
 
             # Set all sizes at once for best scaling
             if photos:
-                self.root.iconphoto(True, *photos)
+                self.root.iconphoto(True, *photos)  # type: ignore[arg-type]
                 # Keep references to prevent garbage collection
                 self.icon_photos = photos
                 logger.info(f"Set iconphoto with {len(photos)} different sizes")
@@ -561,7 +561,7 @@ class FolderProcessorApp:
 
             # Convert to RGBA for transparency support
             if image.mode != "RGBA":
-                image = image.convert("RGBA")
+                image = image.convert("RGBA")  # type: ignore[assignment]
 
             # Create multiple sizes for better scaling using constants
             photos = []
@@ -571,7 +571,7 @@ class FolderProcessorApp:
                 photos.append(photo)
 
             if photos:
-                self.root.iconphoto(True, *photos)
+                self.root.iconphoto(True, *photos)  # type: ignore[arg-type]
                 # Keep references to prevent garbage collection
                 self.icon_photos = photos
                 logger.info(f"Loaded PNG icon: {png_path}")
@@ -604,7 +604,7 @@ class FolderProcessorApp:
         main_frame.pack(fill=tk.BOTH, expand=True)
 
         # Enable mouse wheel scrolling
-        def _on_mousewheel(event: tk.Event) -> None:
+        def _on_mousewheel(event: tk.Event[tk.Misc]) -> None:
             """Handle mouse wheel scrolling for the canvas.
 
             Args:
@@ -1020,7 +1020,7 @@ class FolderProcessorApp:
         for frame in frames_to_toggle:
             for child in frame.winfo_children():
                 if hasattr(child, "configure"):
-                    child.configure(state=new_state)
+                    child.configure(state=new_state)  # type: ignore[call-arg]
 
     def update_source_info(self) -> None:
         """Updates the source folder information display."""
@@ -1119,7 +1119,7 @@ class FolderProcessorApp:
         """
         try:
             # Validate progress value
-            if not isinstance(value, int | float):
+            if not isinstance(value, int | float):  # type: ignore[unreachable]
                 logger.warning(f"Invalid progress value type: {type(value)}")
                 return
 
@@ -1143,7 +1143,7 @@ class FolderProcessorApp:
             status: Status message to display
         """
         try:
-            if not isinstance(status, str):
+            if not isinstance(status, str):  # type: ignore[unreachable]
                 logger.warning(f"Invalid status type: {type(status)}")
                 return
 
@@ -1729,11 +1729,11 @@ class FolderProcessorApp:
             try:
                 for root, _dirs, files in os.walk(folder):
                     if self.cancel_operation:
-                        break
+                        break  # type: ignore[unreachable]
 
                     for file in files:
                         if self.cancel_operation:
-                            break
+                            break  # type: ignore[unreachable]
 
                         file_path = os.path.join(root, file)
                         try:
@@ -2306,7 +2306,7 @@ class FolderProcessorApp:
             close_button.focus_set()  # Focus on close button for better UX
 
             # Bind escape key to close dialog
-            def on_escape(event: tk.Event) -> None:
+            def on_escape(event: tk.Event[tk.Misc]) -> None:
                 """Close dialog when escape key is pressed.
 
                 Args:
@@ -2665,7 +2665,7 @@ class FolderProcessorApp:
             for root, _dirs, files in os.walk(src):
                 for file in files:
                     if self.cancel_operation:
-                        break
+                        break  # type: ignore[unreachable]
 
                     source_path = os.path.join(root, file)
 
@@ -2984,7 +2984,7 @@ class FolderProcessorApp:
             Exception: If folder removal fails for other reasons
         """
         try:
-            selected_indices = list(self.source_listbox.curselection())
+            selected_indices = list(self.source_listbox.curselection())  # type: ignore[no-untyped-call]
             if not selected_indices:
                 messagebox.showinfo("Info", "Please select folders to remove.")
                 return
@@ -3087,10 +3087,10 @@ class FolderProcessorApp:
             if self.cancel_operation:
                 break
 
-            for _root, _dirs, files in os.walk(src):
+            for root, _dirs, files in os.walk(src):
                 for file in files:
                     if self.cancel_operation:
-                        break
+                        break  # type: ignore[unreachable]
 
                     source_path = os.path.join(root, file)
 
@@ -3186,7 +3186,7 @@ class FolderProcessorApp:
 
             for root, dirs, files in os.walk(src):
                 if self.cancel_operation:
-                    break
+                    break  # type: ignore[unreachable]
 
                 # Skip empty folders
                 if not files and not any(
@@ -3207,7 +3207,7 @@ class FolderProcessorApp:
                 # Copy files in this directory
                 for file in files:
                     if self.cancel_operation:
-                        break
+                        break  # type: ignore[unreachable]
 
                     source_file_path = os.path.join(root, file)
 

@@ -1115,7 +1115,7 @@ class FolderPackerPro:
                 tags=(str(file_path),),
             )
 
-    def _on_file_select(self, event: tk.Event) -> None:
+    def _on_file_select(self, event: tk.Event[tk.Misc]) -> None:
         """Handle file selection in preview tree."""
         selection = self.preview_tree.selection()
         if not selection:
@@ -1328,7 +1328,7 @@ class FolderPackerPro:
             # Add files to package
             for i, file_path in enumerate(files_to_pack):
                 if self.cancel_operation:
-                    break
+                    break  # type: ignore[unreachable]
 
                 try:
                     rel_path = file_path.relative_to(source_path)
@@ -1342,8 +1342,9 @@ class FolderPackerPro:
 
                     progress = ((i + 1) / total_files) * 100
                     self.root.after(
-                        0, lambda p=progress: self.pack_progress_var.set(float(p))
-                    )  # type: ignore[misc]
+                        0,
+                        lambda p=float(progress): self.pack_progress_var.set(p),
+                    )
                     self._update_pack_status(
                         f"Packing {file_path.name} ({i + 1}/{total_files})",
                     )
@@ -1352,7 +1353,7 @@ class FolderPackerPro:
                     self._log_message(f"Error packing {file_path}: {e}", "error")
 
             if self.cancel_operation:
-                self._log_message("Pack operation cancelled", "warning")
+                self._log_message("Pack operation cancelled", "warning")  # type: ignore[unreachable]
                 return
 
             # Serialize to JSON
