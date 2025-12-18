@@ -370,7 +370,12 @@ class OperationReport:
             f'''
     <div class="section">
         <h2>Errors ({len(self.errors)})</h2>
-        {"".join(f'<div class="error"><span class="timestamp">{err["timestamp"].strftime("%H:%M:%S")}</span> - {err["error"]}</div>' for err in self.errors)}
+        {"".join(
+            f'<div class="error"><span class="timestamp">'
+            f'{err["timestamp"].strftime("%H:%M:%S")}</span> - '
+            f'{err["error"]}</div>'
+            for err in self.errors
+        )}
     </div>
     '''
             if self.errors
@@ -781,7 +786,8 @@ class FolderFixPro:
 
         ttk.Label(
             ext_frame,
-            text="Include only these extensions (comma-separated, e.g., .jpg,.png,.pdf):",
+            text="Include only these extensions (comma-separated, e.g., "
+            ".jpg,.png,.pdf):",
         ).pack(anchor="w")
         self.ext_filter_entry = ttk.Entry(ext_frame)
         self.ext_filter_entry.pack(fill="x", pady=(PADDING_SMALL, 0))
@@ -1015,7 +1021,8 @@ class FolderFixPro:
 
         # Update status bar
         self.status_bar_label.configure(
-            text=f"Ready  |  Theme: {self.current_theme.title()}  |  No operation in progress",
+            text=f"Ready  |  Theme: {self.current_theme.title()}  |  "
+            "No operation in progress",
         )
 
     def _toggle_theme(self) -> None:
@@ -1257,7 +1264,8 @@ class FolderFixPro:
                     0,
                     lambda: messagebox.showinfo(
                         "Success",
-                        f"Operation completed!\n\nDuration: {self.operation_report.get_duration()}",
+                        f"Operation completed!\n\nDuration: "
+                        f"{self.operation_report.get_duration()}",
                     ),
                 )
 
@@ -1292,7 +1300,7 @@ class FolderFixPro:
             for root, _, filenames in os.walk(source_folder):
                 for filename in filenames:
                     if self.cancel_operation:
-                        break
+                        break  # type: ignore[unreachable]
 
                     source_file = Path(root) / filename
                     if self._should_include_file(source_file):
@@ -1339,7 +1347,7 @@ class FolderFixPro:
             for root, _, filenames in os.walk(source_folder):
                 for filename in filenames:
                     if self.cancel_operation:
-                        break
+                        break  # type: ignore[unreachable]
 
                     source_file = Path(root) / filename
                     if self._should_include_file(source_file):
@@ -1402,9 +1410,9 @@ class FolderFixPro:
 
             source_path = Path(source_folder)
 
-            for root, dirs, filenames in os.walk(source_folder):
+            for root, _dirs, filenames in os.walk(source_folder):
                 if self.cancel_operation:
-                    break
+                    break  # type: ignore[unreachable]
 
                 # Check if folder has any files matching filters
                 has_files = any(
@@ -1494,7 +1502,7 @@ class FolderFixPro:
         duplicates_found = 0
         space_saved = 0
 
-        for file_hash, file_list in hash_map.items():
+        for _file_hash, file_list in hash_map.items():
             if len(file_list) > 1:
                 # Keep first file, remove others
                 for duplicate_file in file_list[1:]:

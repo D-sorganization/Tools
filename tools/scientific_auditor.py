@@ -25,7 +25,8 @@ class ScienceAuditor(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_Call(self, node: ast.Call) -> None:  # noqa: N802
-        """Check function calls for potential risks like unit ambiguity in trig functions."""
+        """Check function calls for potential risks like unit ambiguity in trig
+        functions."""
         # 2. Trig Safety
         if isinstance(node.func, ast.Attribute) and node.func.attr in [
             "sin",

@@ -59,10 +59,13 @@ class TestBuildExe:
             mock_path.return_value = tmp_path
             with patch("build_exe.shutil.rmtree") as mock_rmtree:
                 clean_build_dirs()
-                assert mock_rmtree.call_count == 2
+                expected_call_count = 2
+                assert mock_rmtree.call_count == expected_call_count
 
     def test_clean_build_dirs_nonexistent(self, tmp_path: Path) -> None:
         """Test cleaning non-existent build directories."""
+        # Use tmp_path to ensure clean state
+        _ = tmp_path
         # Don't mock Path here, let it use the real implementation
         # but ensure the directories don't exist
         with patch("build_exe.shutil.rmtree") as mock_rmtree:
@@ -73,10 +76,12 @@ class TestBuildExe:
         """Test building executable when script exists."""
         with patch("build_exe.Path") as mock_path:
             mock_path.return_value.exists.return_value = True
-            with patch("build_exe.clean_build_dirs") as mock_clean:
-                with patch("build_exe.subprocess.run") as mock_run:
-                    mock_run.return_value = Mock(returncode=0)
-                    assert build_executable() is True
+            with (
+                patch("build_exe.clean_build_dirs"),
+                patch("build_exe.subprocess.run") as mock_run,
+            ):
+                mock_run.return_value = Mock(returncode=0)
+                assert build_executable() is True
 
     def test_build_executable_script_not_exists(self) -> None:
         """Test building executable when script doesn't exist."""
@@ -88,13 +93,15 @@ class TestBuildExe:
         """Test building executable when subprocess fails."""
         with patch("build_exe.Path") as mock_path:
             mock_path.return_value.exists.return_value = True
-            with patch("build_exe.clean_build_dirs") as mock_clean:
-                with patch("build_exe.subprocess.run") as mock_run:
-                    mock_run.side_effect = subprocess.CalledProcessError(
-                        1,
-                        "pyinstaller",
-                    )
-                    assert build_executable() is False
+            with (
+                patch("build_exe.clean_build_dirs"),
+                patch("build_exe.subprocess.run") as mock_run,
+            ):
+                mock_run.side_effect = subprocess.CalledProcessError(
+                    1,
+                    "pyinstaller",
+                )
+                assert build_executable() is False
 
     def test_verify_build_success(self, tmp_path: Path) -> None:
         """Test build verification when executable exists."""

@@ -331,7 +331,8 @@ class TestFolderProcessorApp:
         ):
             app = FolderProcessorApp(mock_root)
 
-            # Use distinct mocks for min and max to avoid shared state if StringVar returns singleton mock
+            # Use distinct mocks for min and max to avoid shared state if StringVar
+            # returns singleton mock
             app.min_file_size = Mock()
             app.max_file_size = Mock()
 
@@ -464,7 +465,8 @@ class TestFolderProcessorApp:
             patch("os.path.getsize") as mock_getsize,
         ):
             app = FolderProcessorApp(mock_root)
-            # Init manually creates vars, but we need to ensure safe_extract_var is working
+            # Init manually creates vars, but we need to ensure safe_extract_var is
+            # working
             app.safe_extract_var.get.return_value = True
 
             # 1. Archive file not found
