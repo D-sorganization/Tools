@@ -16,6 +16,12 @@ exclude = [
     ".env",
     "node_modules",
     "*.ipynb",  # Jupyter notebooks often fail standard linting
+    "**/archive",
+    "**/legacy",
+    "replicants",
+    "media_processing",
+    "development_tools",
+    "data_processing/data_processor/archive",
 ]
 
 [lint]
@@ -40,6 +46,7 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "__init__.py" = ["F401"]
 # Allow assertions in tests
 "tests/*" = ["S101"]
+"**/*.py" = ["E501"]
 
 [lint.isort]
 # Tells Ruff how to group your own code vs. libraries

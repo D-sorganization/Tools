@@ -47,3 +47,11 @@ branch_cleanup_report_*.md
 .ruff_cache/
 .dmypy.json
 dmypy.json
+
+# JavaScript
+node_modules/
+dist/
+build/
+
+# Cache
+.cache/

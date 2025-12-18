@@ -2019,8 +2019,7 @@ class FolderProcessorApp:
                 raise ValueError("Destination folder is empty - nothing to archive")
         except (OSError, PermissionError) as e:
             raise PermissionError(
-                f"Cannot access destination folder contents: {self.dest_folder} - "
-                f"{e}",
+                f"Cannot access destination folder contents: {self.dest_folder} - {e}",
             ) from e
 
         # Generate ZIP filename with timestamp
@@ -3090,7 +3089,7 @@ class FolderProcessorApp:
             if self.cancel_operation:
                 break
 
-            for _root, _dirs, files in os.walk(src):
+            for root, _dirs, files in os.walk(src):
                 for file in files:
                     if self.cancel_operation:
                         break
