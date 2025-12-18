@@ -8,8 +8,6 @@ from pathlib import Path
 # Set up logging
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
-import sys
-from pathlib import Path
 
 
 def build_exe() -> int:
@@ -57,20 +55,23 @@ def build_exe() -> int:
     try:
         subprocess.run(cmd, cwd=script_dir, check=True)  # noqa: S603
 
-        logger.info("\n" + "=" * 60)
-        logger.info("Build completed successfully!")
-        logger.info("=" * 60)
-        logger.info("\nExecutable location: %s", script_dir / 'dist' / 'FolderPackerPro.exe')
-
-        return 0
-
     except subprocess.CalledProcessError as e:
-        logger.error("\nError: Build failed with exit code %s", e.returncode)
+        logger.exception("\nError: Build failed with exit code %s", e.returncode)
         return 1
     except FileNotFoundError:
-        logger.error("\nError: PyInstaller not found. Please install it:")
-        logger.error("  pip install pyinstaller")
+        logger.exception("\nError: PyInstaller not found. Please install it:")
+        logger.info("  pip install pyinstaller")
         return 1
+    else:
+        logger.info("\n%s", "=" * 60)
+        logger.info("Build completed successfully!")
+        logger.info("=" * 60)
+        logger.info(
+            "\nExecutable location: %s",
+            script_dir / "dist" / "FolderPackerPro.exe",
+        )
+
+        return 0
 
 
 if __name__ == "__main__":

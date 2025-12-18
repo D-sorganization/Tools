@@ -1,5 +1,5 @@
+# ruff: noqa: RUF001, PLR0915, PLR0911, PLR0912, UP017
 """
-# ruff: noqa: RUF001, PLR0915
 Folder Fix Pro v3.0 - Enhanced Professional Folder Processing Tool
 
 A comprehensive, modern folder management application with advanced features:
@@ -23,29 +23,29 @@ import shutil
 import sys
 import threading
 import tkinter as tk
+import typing
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
-from typing import Final
 
 # Constants with professional standards
-MAX_FILE_SIZE_MB: Final[int] = 10240  # 10GB limit for modern systems
-MIN_FILE_SIZE_BYTES: Final[int] = 0
-DEFAULT_CHUNK_SIZE: Final[int] = 65536  # 64KB chunks for optimal performance
-MAX_RETRY_ATTEMPTS: Final[int] = 3
-HASH_ALGORITHM: Final[str] = "sha256"  # Cryptographic hash for deduplication
-PREVIEW_MAX_FILES: Final[int] = 1000  # Max files to show in preview
-ICON_SIZES: Final[tuple[int, ...]] = (16, 32, 48, 64, 128, 256)
+MAX_FILE_SIZE_MB: typing.Final[int] = 10240  # 10GB limit for modern systems
+MIN_FILE_SIZE_BYTES: typing.Final[int] = 0
+DEFAULT_CHUNK_SIZE: typing.Final[int] = 65536  # 64KB chunks for optimal performance
+MAX_RETRY_ATTEMPTS: typing.Final[int] = 3
+HASH_ALGORITHM: typing.Final[str] = "sha256"  # Cryptographic hash for deduplication
+PREVIEW_MAX_FILES: typing.Final[int] = 1000  # Max files to show in preview
+ICON_SIZES: typing.Final[tuple[int, ...]] = (16, 32, 48, 64, 128, 256)
 
 # UI Constants
-WINDOW_WIDTH: Final[int] = 1200
-WINDOW_HEIGHT: Final[int] = 800
-MIN_WINDOW_WIDTH: Final[int] = 900
-MIN_WINDOW_HEIGHT: Final[int] = 600
-PADDING_LARGE: Final[int] = 20
-PADDING_MEDIUM: Final[int] = 10
-PADDING_SMALL: Final[int] = 5
+WINDOW_WIDTH: typing.Final[int] = 1200
+WINDOW_HEIGHT: typing.Final[int] = 800
+MIN_WINDOW_WIDTH: typing.Final[int] = 900
+MIN_WINDOW_HEIGHT: typing.Final[int] = 600
+PADDING_LARGE: typing.Final[int] = 20
+PADDING_MEDIUM: typing.Final[int] = 10
+PADDING_SMALL: typing.Final[int] = 5
 
 # Color schemes for themes
 DARK_THEME = {
@@ -110,12 +110,12 @@ class FileHasher:
         """
         try:
             hasher = hashlib.new(algorithm)
-            with open(file_path, "rb") as f:
+            with file_path.open("rb") as f:
                 while chunk := f.read(DEFAULT_CHUNK_SIZE):
                     hasher.update(chunk)
             return hasher.hexdigest()
-        except Exception as e:
-            logger.error(f"Error hashing {file_path}: {e}")
+        except OSError:
+            logger.exception("Error hashing %s", file_path)
             return None
 
     @staticmethod
@@ -137,7 +137,7 @@ class FileHasher:
             # Hash file size
             hasher.update(str(size).encode())
 
-            with open(file_path, "rb") as f:
+            with file_path.open("rb") as f:
                 # Hash first chunk
                 first_chunk = f.read(DEFAULT_CHUNK_SIZE)
                 hasher.update(first_chunk)
@@ -149,8 +149,8 @@ class FileHasher:
                     hasher.update(last_chunk)
 
             return hasher.hexdigest()
-        except Exception as e:
-            logger.error(f"Error fast hashing {file_path}: {e}")
+        except OSError:
+            logger.exception("Error fast hashing %s", file_path)
             return None
 
 
@@ -158,26 +158,30 @@ class OperationReport:
     """Generate detailed operation reports."""
 
     def __init__(self) -> None:
-        self.start_time = datetime.now(datetime.UTC)
-        self.end_time = None
-        self.operations = []
-        self.stats = defaultdict(int)
-        self.errors = []
+        self.start_time: datetime = datetime.now(timezone.utc)
+        self.end_time: datetime | None = None
+        self.operations: list[dict[str, typing.Any]] = []
+        self.stats: dict[str, int] = defaultdict(int)
+        self.errors: list[dict[str, typing.Any]] = []
 
     def add_operation(self, operation: str, details: dict) -> None:
         """Add operation to report."""
         self.operations.append(
-            {"timestamp": datetime.now(datetime.UTC), "operation": operation, "details": details}
+            {
+                "timestamp": datetime.now(timezone.utc),
+                "operation": operation,
+                "details": details,
+            }
         )
         self.stats[operation] += 1
 
     def add_error(self, error: str) -> None:
         """Add error to report."""
-        self.errors.append({"timestamp": datetime.now(datetime.UTC), "error": error})
+        self.errors.append({"timestamp": datetime.now(timezone.utc), "error": error})
 
     def finalize(self) -> None:
         """Finalize report with end time."""
-        self.end_time = datetime.now(datetime.UTC)
+        self.end_time = datetime.now(timezone.utc)
 
     def get_duration(self) -> str:
         """Get operation duration."""
@@ -364,7 +368,9 @@ class OperationReport:
     <div class="section">
         <h2>Errors ({len(self.errors)})</h2>
         {"".join(
-            f'<div class="error"><span class="timestamp">{err["timestamp"].strftime("%H:%M:%S")}</span> - {err["error"]}</div>'
+            f'<div class="error"><span class="timestamp">'
+            f'{err["timestamp"].strftime("%H:%M:%S")}</span> - '
+            f'{err["error"]}</div>'
             for err in self.errors
         )}
     </div>
@@ -419,12 +425,15 @@ class FolderFixPro:
         self.root.minsize(MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT)
 
         # Application state
-        self.source_folders = []
-        self.dest_folder = ""
-        self.current_theme = "dark"
-        self.operation_report = OperationReport()
-        self.cancel_operation = False
-        self.file_cache = {}  # Cache for file information
+        # Application state
+        self.source_folders: list[str] = []
+        self.dest_folder: str = ""
+        self.current_theme: str = "dark"
+        self.operation_report: OperationReport = OperationReport()
+        self.cancel_operation: bool = False
+        self.file_cache: dict[str, typing.Any] = {}  # Cache for file information
+        self.duplicate_groups: dict[str, list[str]] = defaultdict(list)
+        self.file_list: dict[str, typing.Any] = {}
 
         # Operation variables
         self.operation_mode = "combine"
@@ -462,7 +471,7 @@ class FolderFixPro:
                     "FolderFixPro.Tool.3.0"
                 )
             # You can add icon file loading here
-        except Exception as e:
+        except OSError as e:
             logger.warning("Could not set icon: %s", e)
 
     def _create_menu_bar(self) -> None:
@@ -1042,9 +1051,9 @@ class FolderFixPro:
             try:
                 stat = file_path.stat()
                 size = self._format_size(stat.st_size)
-                modified = datetime.fromtimestamp(
-                    stat.st_mtime, datetime.UTC
-                ).strftime("%Y-%m-%d %H:%M:%S")
+                modified = datetime.fromtimestamp(stat.st_mtime, datetime.UTC).strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
                 file_type = file_path.suffix or "File"
 
                 self.preview_tree.insert(
@@ -1202,7 +1211,10 @@ class FolderFixPro:
             err_msg = str(e)
             self.operation_report.add_error(err_msg)
             self.root.after(
-                0, lambda: messagebox.showerror("Error", f"Operation failed:\n\n{err_msg}")
+                0,
+                lambda: messagebox.showerror(
+                    "Error", f"Operation failed:\n\n{err_msg}"
+                ),
             )
 
         finally:
@@ -1253,7 +1265,6 @@ class FolderFixPro:
                                 f"Failed to copy {source_file}: {e}"
                             )
 
-
     def _operation_flatten(self) -> None:
         """Flatten directory structure."""
         dest_path = Path(self.dest_folder)
@@ -1286,20 +1297,6 @@ class FolderFixPro:
         try:
             dest_file = self._determine_flatten_dest(source_file, dest_path)
             dest_file = self._resolve_collision(source_file, dest_file)
-            
-            if not self.preview_var.get():
-                shutil.copy2(source_file, dest_file)
-            
-            self.operation_report.add_operation(
-                "flatten",
-                {"source": str(source_file), "dest": str(dest_file)},
-            )
-            return True
-        except Exception as e:  # noqa: BLE001
-             self.operation_report.add_error(
-                f"Failed to flatten {source_file}: {e}"
-            )
-             return False
 
             if not self.preview_var.get():
                 shutil.copy2(source_file, dest_file)
@@ -1308,13 +1305,11 @@ class FolderFixPro:
                 "flatten",
                 {"source": str(source_file), "dest": str(dest_file)},
             )
-            return True
-
         except Exception as e:  # noqa: BLE001
-            self.operation_report.add_error(
-                f"Failed to flatten {source_file}: {e}"
-            )
+            self.operation_report.add_error(f"Failed to flatten {source_file}: {e}")
             return False
+        else:
+            return True
 
     def _determine_flatten_dest(self, source_file: Path, dest_path: Path) -> Path:
         """Determine destination path for flattening."""
@@ -1327,9 +1322,7 @@ class FolderFixPro:
 
         if self.organize_date_var.get():
             # Organize by date
-            mtime = datetime.fromtimestamp(
-                source_file.stat().st_mtime, datetime.UTC
-            )
+            mtime = datetime.fromtimestamp(source_file.stat().st_mtime, datetime.UTC)
             date_folder = dest_path / mtime.strftime("%Y-%m")
             date_folder.mkdir(exist_ok=True)
             return date_folder / source_file.name
@@ -1436,7 +1429,9 @@ class FolderFixPro:
                         files.append(file_path)
         return files
 
-    def _build_dedupe_hash_map(self, method: str, files: list[Path]) -> dict[str, list[Path]]:
+    def _build_dedupe_hash_map(
+        self, method: str, files: list[Path]
+    ) -> dict[str, list[Path]]:
         """Build hash map for duplicate detection."""
         hash_map = defaultdict(list)
         total_files = len(files)
@@ -1458,9 +1453,7 @@ class FolderFixPro:
                 if file_hash:
                     hash_map[file_hash].append(file_path)
 
-                self._update_progress(
-                    i, total_files, f"Checking {file_path.name}"
-                )
+                self._update_progress(i, total_files, f"Checking {file_path.name}")
             except Exception as e:  # noqa: BLE001
                 self.operation_report.add_error(f"Failed to process {file_path}: {e}")
 
@@ -1591,7 +1584,7 @@ class FolderFixPro:
             # Calculate ETA
             if current > 0:
                 elapsed = (
-                    datetime.now(datetime.UTC) - self.operation_report.start_time
+                    datetime.now(timezone.utc) - self.operation_report.start_time
                 ).total_seconds()
                 eta_seconds = (elapsed / current) * (total - current)
                 eta = f"ETA: {int(eta_seconds // 60)}m {int(eta_seconds % 60)}s"
@@ -1625,7 +1618,7 @@ class FolderFixPro:
 
     def _log_message(self, message: str, level: str = "info") -> None:
         """Add message to log."""
-        timestamp = datetime.now(datetime.UTC).strftime("%H:%M:%S")
+        timestamp = datetime.now(timezone.utc).strftime("%H:%M:%S")
         log_entry = f"[{timestamp}] {message}\n"
 
         def update_log() -> None:
@@ -1657,7 +1650,7 @@ class FolderFixPro:
         file_path = filedialog.asksaveasfilename(
             defaultextension=".txt",
             filetypes=[("Text files", "*.txt"), ("All files", "*.*")],
-            initialfile=f"folder_fix_log_{datetime.now(datetime.UTC).strftime('%Y%m%d_%H%M%S')}.txt",
+            initialfile=f"folder_fix_log_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.txt",
         )
 
         if file_path:
@@ -1670,7 +1663,7 @@ class FolderFixPro:
         file_path = filedialog.asksaveasfilename(
             defaultextension=".json",
             filetypes=[("JSON files", "*.json"), ("All files", "*.*")],
-            initialfile=f"folder_fix_report_{datetime.now(datetime.UTC).strftime('%Y%m%d_%H%M%S')}.json",
+            initialfile=f"folder_fix_report_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.json",
         )
 
         if file_path:
@@ -1687,7 +1680,7 @@ class FolderFixPro:
         file_path = filedialog.asksaveasfilename(
             defaultextension=".html",
             filetypes=[("HTML files", "*.html"), ("All files", "*.*")],
-            initialfile=f"folder_fix_report_{datetime.now(datetime.UTC).strftime('%Y%m%d_%H%M%S')}.html",
+            initialfile=f"folder_fix_report_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.html",
         )
 
         if file_path:

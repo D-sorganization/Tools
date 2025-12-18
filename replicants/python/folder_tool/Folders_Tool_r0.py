@@ -97,10 +97,13 @@ CHARS_PER_DIALOG_LINE: typing.Final[int] = (
 DIALOG_WIDTH_OFFSET: typing.Final[int] = (
     100  # Additional width offset for dialog borders [pixels] - accounts for scrollbars and margins
 )
-LINE_HEIGHT_PIXELS: Final[int] = (
+DIALOG_HEIGHT_OFFSET: typing.Final[int] = (
+    100  # Additional height offset for dialog borders [pixels] - accounts for title bar and margins
+)
+LINE_HEIGHT_PIXELS: typing.Final[int] = (
     20  # Height per line for dialog height calculation [pixels] - standard line height
 )
-MAX_TITLE_PREVIEW_LENGTH: Final[int] = (
+MAX_TITLE_PREVIEW_LENGTH: typing.Final[int] = (
     50  # Maximum title length for preview in logs [characters] - prevents log overflow
 )
 
@@ -1484,7 +1487,7 @@ class FolderProcessorApp:
             first_source_parent = Path(valid_source_folders[0]).parent
             backup_base = first_source_parent / backup_base_name
         except Exception as e:
-            raise ValueError(f"Cannot determine backup location: {e}")
+            raise ValueError(f"Cannot determine backup location: {e}") from e
 
         self.update_status("Creating backup...")
         logger.info(f"Creating backup at: {backup_base}")
@@ -1576,7 +1579,8 @@ class FolderProcessorApp:
                         logger.info(f"Cleaned up empty backup directory: {backup_base}")
                     except Exception as cleanup_error:
                         logger.warning(
-                            f"Failed to cleanup empty backup directory: {backup_base} - {cleanup_error}"
+                            f"Failed to cleanup empty backup directory: {backup_base} "
+                            f"- {cleanup_error}"
                         )
                 return None
 
@@ -1692,7 +1696,8 @@ class FolderProcessorApp:
                                 continue
                             if file_size > MAX_FILE_SIZE_MB * 1024 * 1024:
                                 logger.warning(
-                                    f"File exceeds maximum size: {file_path} ({file_size / (1024 * 1024):.1f} MB)"
+                                    f"File exceeds maximum size: {file_path} "
+                                    f"({file_size / (1024 * 1024):.1f} MB)"
                                 )
 
                             total_files += 1
@@ -1953,7 +1958,7 @@ class FolderProcessorApp:
         try:
             zip_path = dest_path_obj.parent / zip_filename
         except Exception as e:
-            raise ValueError(f"Cannot determine ZIP location: {e}")
+            raise ValueError(f"Cannot determine ZIP location: {e}") from e
 
         # Check if ZIP file already exists and generate unique name
         if zip_path.exists():
@@ -2069,7 +2074,7 @@ class FolderProcessorApp:
                     )
 
             logger.error(f"Failed to create ZIP archive: {e}")
-            raise Exception(f"Failed to create ZIP archive: {e}")
+            raise Exception(f"Failed to create ZIP archive: {e}") from e
 
         return str(zip_path)
 
@@ -2100,7 +2105,8 @@ class FolderProcessorApp:
         # Validate title length for window title bar
         if len(title) > MAX_TITLE_LENGTH:
             logger.warning(
-                f"Title is very long ({len(title)} chars), may be truncated: {title[:MAX_TITLE_PREVIEW_LENGTH]}..."
+                f"Title is very long ({len(title)} chars), "
+                f"may be truncated: {title[:MAX_TITLE_PREVIEW_LENGTH]}..."
             )
 
         # Validate content length for performance
