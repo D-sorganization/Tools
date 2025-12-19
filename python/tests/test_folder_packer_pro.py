@@ -264,7 +264,9 @@ class TestFolderPackerPro:
             patch("tkinter.ttk.Scrollbar"),
             patch("tkinter.Text"),
             patch("tkinter.ttk.Style"),
-            patch("folder_packer_pro.folder_packer_pro.messagebox.showerror") as mock_error,
+            patch(
+                "folder_packer_pro.folder_packer_pro.messagebox.showerror"
+            ) as mock_error,
         ):
             app = FolderPackerPro(mock_root)
             app.pack_source_entry = Mock()
@@ -317,9 +319,15 @@ class TestFolderPackerPro:
             patch("tkinter.ttk.Scrollbar"),
             patch("tkinter.Text"),
             patch("tkinter.ttk.Style"),
-            patch("folder_packer_pro.folder_packer_pro.filedialog.askdirectory") as mock_askdir,
-            patch("folder_packer_pro.folder_packer_pro.filedialog.asksaveasfilename") as mock_save,
-            patch("folder_packer_pro.folder_packer_pro.filedialog.askopenfilename") as mock_open,
+            patch(
+                "folder_packer_pro.folder_packer_pro.filedialog.askdirectory"
+            ) as mock_askdir,
+            patch(
+                "folder_packer_pro.folder_packer_pro.filedialog.asksaveasfilename"
+            ) as mock_save,
+            patch(
+                "folder_packer_pro.folder_packer_pro.filedialog.askopenfilename"
+            ) as mock_open,
         ):
             app = FolderPackerPro(mock_root)
             app.pack_source_entry = Mock()
