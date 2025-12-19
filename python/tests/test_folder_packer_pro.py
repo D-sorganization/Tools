@@ -2,6 +2,23 @@
 
 import os
 import sys
+from unittest.mock import MagicMock
+
+# Mock tkinter before importing modules that use it
+sys.modules["tkinter"] = MagicMock()
+sys.modules["tkinter.ttk"] = MagicMock()
+sys.modules["tkinter.filedialog"] = MagicMock()
+sys.modules["tkinter.messagebox"] = MagicMock()
+sys.modules["tkinter.scrolledtext"] = MagicMock()
+sys.modules["tkinter.simpledialog"] = MagicMock()
+
+# Link submodules to parent module
+sys.modules["tkinter"].ttk = sys.modules["tkinter.ttk"]
+sys.modules["tkinter"].filedialog = sys.modules["tkinter.filedialog"]
+sys.modules["tkinter"].messagebox = sys.modules["tkinter.messagebox"]
+sys.modules["tkinter"].scrolledtext = sys.modules["tkinter.scrolledtext"]
+sys.modules["tkinter"].simpledialog = sys.modules["tkinter.simpledialog"]
+
 from collections.abc import Callable, Generator
 from pathlib import Path
 from unittest.mock import Mock, patch
