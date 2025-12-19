@@ -3,6 +3,23 @@
 import hashlib
 import os
 import sys
+from unittest.mock import MagicMock
+
+# Mock tkinter before importing modules that use it
+sys.modules["tkinter"] = MagicMock()
+sys.modules["tkinter.ttk"] = MagicMock()
+sys.modules["tkinter.filedialog"] = MagicMock()
+sys.modules["tkinter.messagebox"] = MagicMock()
+sys.modules["tkinter.scrolledtext"] = MagicMock()
+sys.modules["tkinter.simpledialog"] = MagicMock()
+
+# Link submodules to parent module
+sys.modules["tkinter"].ttk = sys.modules["tkinter.ttk"]  # type: ignore[attr-defined]
+sys.modules["tkinter"].filedialog = sys.modules["tkinter.filedialog"]  # type: ignore[attr-defined]
+sys.modules["tkinter"].messagebox = sys.modules["tkinter.messagebox"]  # type: ignore[attr-defined]
+sys.modules["tkinter"].scrolledtext = sys.modules["tkinter.scrolledtext"]  # type: ignore[attr-defined]
+sys.modules["tkinter"].simpledialog = sys.modules["tkinter.simpledialog"]  # type: ignore[attr-defined]
+
 from collections.abc import Generator
 from pathlib import Path
 from unittest.mock import Mock, patch
@@ -107,10 +124,10 @@ class TestFolderFixPro:
     def mock_tk_vars(self) -> Generator[dict[str, Mock], None, None]:
         """Mock Tkinter variables."""
         with (
-            patch("tkinter.BooleanVar") as mock_bool,
-            patch("tkinter.StringVar") as mock_string,
-            patch("tkinter.DoubleVar") as mock_double,
-            patch("tkinter.IntVar") as mock_int,
+            patch("folder_fix_pro.tk.BooleanVar") as mock_bool,
+            patch("folder_fix_pro.tk.StringVar") as mock_string,
+            patch("folder_fix_pro.tk.DoubleVar") as mock_double,
+            patch("folder_fix_pro.tk.IntVar") as mock_int,
         ):
             mock_bool.return_value.get.return_value = False
             mock_string.return_value.get.return_value = ""
@@ -127,21 +144,21 @@ class TestFolderFixPro:
     def test_init(self, mock_root: Mock, mock_tk_vars: dict[str, Mock]) -> None:
         """Test initialization of FolderFixPro."""
         with (
-            patch("tkinter.Menu"),
-            patch("tkinter.ttk.Notebook"),
-            patch("tkinter.ttk.Frame"),
-            patch("tkinter.ttk.Label"),
-            patch("tkinter.ttk.LabelFrame"),
-            patch("tkinter.ttk.Entry"),
-            patch("tkinter.ttk.Button"),
-            patch("tkinter.Text"),
-            patch("tkinter.ttk.Progressbar"),
-            patch("tkinter.ttk.Radiobutton"),
-            patch("tkinter.ttk.Checkbutton"),
-            patch("tkinter.ttk.Treeview"),
-            patch("tkinter.ttk.Scrollbar"),
-            patch("tkinter.Listbox"),
-            patch("tkinter.ttk.Style"),
+            patch("folder_fix_pro.tk.Menu"),
+            patch("folder_fix_pro.ttk.Notebook"),
+            patch("folder_fix_pro.ttk.Frame"),
+            patch("folder_fix_pro.ttk.Label"),
+            patch("folder_fix_pro.ttk.LabelFrame"),
+            patch("folder_fix_pro.ttk.Entry"),
+            patch("folder_fix_pro.ttk.Button"),
+            patch("folder_fix_pro.tk.Text"),
+            patch("folder_fix_pro.ttk.Progressbar"),
+            patch("folder_fix_pro.ttk.Radiobutton"),
+            patch("folder_fix_pro.ttk.Checkbutton"),
+            patch("folder_fix_pro.ttk.Treeview"),
+            patch("folder_fix_pro.ttk.Scrollbar"),
+            patch("folder_fix_pro.tk.Listbox"),
+            patch("folder_fix_pro.ttk.Style"),
             patch("folder_fix_pro.ctypes"),
         ):
             app = FolderFixPro(mock_root)
@@ -155,21 +172,21 @@ class TestFolderFixPro:
     ) -> None:
         """Test _should_include_file logic."""
         with (
-            patch("tkinter.Menu"),
-            patch("tkinter.ttk.Notebook"),
-            patch("tkinter.ttk.Frame"),
-            patch("tkinter.ttk.Label"),
-            patch("tkinter.ttk.LabelFrame"),
-            patch("tkinter.ttk.Entry"),
-            patch("tkinter.ttk.Button"),
-            patch("tkinter.Text"),
-            patch("tkinter.ttk.Progressbar"),
-            patch("tkinter.ttk.Radiobutton"),
-            patch("tkinter.ttk.Checkbutton"),
-            patch("tkinter.ttk.Treeview"),
-            patch("tkinter.ttk.Scrollbar"),
-            patch("tkinter.Listbox"),
-            patch("tkinter.ttk.Style"),
+            patch("folder_fix_pro.tk.Menu"),
+            patch("folder_fix_pro.ttk.Notebook"),
+            patch("folder_fix_pro.ttk.Frame"),
+            patch("folder_fix_pro.ttk.Label"),
+            patch("folder_fix_pro.ttk.LabelFrame"),
+            patch("folder_fix_pro.ttk.Entry"),
+            patch("folder_fix_pro.ttk.Button"),
+            patch("folder_fix_pro.tk.Text"),
+            patch("folder_fix_pro.ttk.Progressbar"),
+            patch("folder_fix_pro.ttk.Radiobutton"),
+            patch("folder_fix_pro.ttk.Checkbutton"),
+            patch("folder_fix_pro.ttk.Treeview"),
+            patch("folder_fix_pro.ttk.Scrollbar"),
+            patch("folder_fix_pro.tk.Listbox"),
+            patch("folder_fix_pro.ttk.Style"),
             patch("folder_fix_pro.ctypes"),
         ):
             app = FolderFixPro(mock_root)
@@ -226,21 +243,21 @@ class TestFolderFixPro:
     ) -> None:
         """Test _count_files logic."""
         with (
-            patch("tkinter.Menu"),
-            patch("tkinter.ttk.Notebook"),
-            patch("tkinter.ttk.Frame"),
-            patch("tkinter.ttk.Label"),
-            patch("tkinter.ttk.LabelFrame"),
-            patch("tkinter.ttk.Entry"),
-            patch("tkinter.ttk.Button"),
-            patch("tkinter.Text"),
-            patch("tkinter.ttk.Progressbar"),
-            patch("tkinter.ttk.Radiobutton"),
-            patch("tkinter.ttk.Checkbutton"),
-            patch("tkinter.ttk.Treeview"),
-            patch("tkinter.ttk.Scrollbar"),
-            patch("tkinter.Listbox"),
-            patch("tkinter.ttk.Style"),
+            patch("folder_fix_pro.tk.Menu"),
+            patch("folder_fix_pro.ttk.Notebook"),
+            patch("folder_fix_pro.ttk.Frame"),
+            patch("folder_fix_pro.ttk.Label"),
+            patch("folder_fix_pro.ttk.LabelFrame"),
+            patch("folder_fix_pro.ttk.Entry"),
+            patch("folder_fix_pro.ttk.Button"),
+            patch("folder_fix_pro.tk.Text"),
+            patch("folder_fix_pro.ttk.Progressbar"),
+            patch("folder_fix_pro.ttk.Radiobutton"),
+            patch("folder_fix_pro.ttk.Checkbutton"),
+            patch("folder_fix_pro.ttk.Treeview"),
+            patch("folder_fix_pro.ttk.Scrollbar"),
+            patch("folder_fix_pro.tk.Listbox"),
+            patch("folder_fix_pro.ttk.Style"),
             patch("folder_fix_pro.ctypes"),
         ):
             app = FolderFixPro(mock_root)
@@ -271,21 +288,21 @@ class TestFolderFixPro:
     ) -> None:
         """Test _operation_analyze."""
         with (
-            patch("tkinter.Menu"),
-            patch("tkinter.ttk.Notebook"),
-            patch("tkinter.ttk.Frame"),
-            patch("tkinter.ttk.Label"),
-            patch("tkinter.ttk.LabelFrame"),
-            patch("tkinter.ttk.Entry"),
-            patch("tkinter.ttk.Button"),
-            patch("tkinter.Text"),
-            patch("tkinter.ttk.Progressbar"),
-            patch("tkinter.ttk.Radiobutton"),
-            patch("tkinter.ttk.Checkbutton"),
-            patch("tkinter.ttk.Treeview"),
-            patch("tkinter.ttk.Scrollbar"),
-            patch("tkinter.Listbox"),
-            patch("tkinter.ttk.Style"),
+            patch("folder_fix_pro.tk.Menu"),
+            patch("folder_fix_pro.ttk.Notebook"),
+            patch("folder_fix_pro.ttk.Frame"),
+            patch("folder_fix_pro.ttk.Label"),
+            patch("folder_fix_pro.ttk.LabelFrame"),
+            patch("folder_fix_pro.ttk.Entry"),
+            patch("folder_fix_pro.ttk.Button"),
+            patch("folder_fix_pro.tk.Text"),
+            patch("folder_fix_pro.ttk.Progressbar"),
+            patch("folder_fix_pro.ttk.Radiobutton"),
+            patch("folder_fix_pro.ttk.Checkbutton"),
+            patch("folder_fix_pro.ttk.Treeview"),
+            patch("folder_fix_pro.ttk.Scrollbar"),
+            patch("folder_fix_pro.tk.Listbox"),
+            patch("folder_fix_pro.ttk.Style"),
             patch("folder_fix_pro.ctypes"),
         ):
             app = FolderFixPro(mock_root)
@@ -316,21 +333,21 @@ class TestFolderFixPro:
     ) -> None:
         """Test _operation_combine."""
         with (
-            patch("tkinter.Menu"),
-            patch("tkinter.ttk.Notebook"),
-            patch("tkinter.ttk.Frame"),
-            patch("tkinter.ttk.Label"),
-            patch("tkinter.ttk.LabelFrame"),
-            patch("tkinter.ttk.Entry"),
-            patch("tkinter.ttk.Button"),
-            patch("tkinter.Text"),
-            patch("tkinter.ttk.Progressbar"),
-            patch("tkinter.ttk.Radiobutton"),
-            patch("tkinter.ttk.Checkbutton"),
-            patch("tkinter.ttk.Treeview"),
-            patch("tkinter.ttk.Scrollbar"),
-            patch("tkinter.Listbox"),
-            patch("tkinter.ttk.Style"),
+            patch("folder_fix_pro.tk.Menu"),
+            patch("folder_fix_pro.ttk.Notebook"),
+            patch("folder_fix_pro.ttk.Frame"),
+            patch("folder_fix_pro.ttk.Label"),
+            patch("folder_fix_pro.ttk.LabelFrame"),
+            patch("folder_fix_pro.ttk.Entry"),
+            patch("folder_fix_pro.ttk.Button"),
+            patch("folder_fix_pro.tk.Text"),
+            patch("folder_fix_pro.ttk.Progressbar"),
+            patch("folder_fix_pro.ttk.Radiobutton"),
+            patch("folder_fix_pro.ttk.Checkbutton"),
+            patch("folder_fix_pro.ttk.Treeview"),
+            patch("folder_fix_pro.ttk.Scrollbar"),
+            patch("folder_fix_pro.tk.Listbox"),
+            patch("folder_fix_pro.ttk.Style"),
             patch("folder_fix_pro.ctypes"),
         ):
             app = FolderFixPro(mock_root)
@@ -357,21 +374,21 @@ class TestFolderFixPro:
     ) -> None:
         """Test _operation_flatten."""
         with (
-            patch("tkinter.Menu"),
-            patch("tkinter.ttk.Notebook"),
-            patch("tkinter.ttk.Frame"),
-            patch("tkinter.ttk.Label"),
-            patch("tkinter.ttk.LabelFrame"),
-            patch("tkinter.ttk.Entry"),
-            patch("tkinter.ttk.Button"),
-            patch("tkinter.Text"),
-            patch("tkinter.ttk.Progressbar"),
-            patch("tkinter.ttk.Radiobutton"),
-            patch("tkinter.ttk.Checkbutton"),
-            patch("tkinter.ttk.Treeview"),
-            patch("tkinter.ttk.Scrollbar"),
-            patch("tkinter.Listbox"),
-            patch("tkinter.ttk.Style"),
+            patch("folder_fix_pro.tk.Menu"),
+            patch("folder_fix_pro.ttk.Notebook"),
+            patch("folder_fix_pro.ttk.Frame"),
+            patch("folder_fix_pro.ttk.Label"),
+            patch("folder_fix_pro.ttk.LabelFrame"),
+            patch("folder_fix_pro.ttk.Entry"),
+            patch("folder_fix_pro.ttk.Button"),
+            patch("folder_fix_pro.tk.Text"),
+            patch("folder_fix_pro.ttk.Progressbar"),
+            patch("folder_fix_pro.ttk.Radiobutton"),
+            patch("folder_fix_pro.ttk.Checkbutton"),
+            patch("folder_fix_pro.ttk.Treeview"),
+            patch("folder_fix_pro.ttk.Scrollbar"),
+            patch("folder_fix_pro.tk.Listbox"),
+            patch("folder_fix_pro.ttk.Style"),
             patch("folder_fix_pro.ctypes"),
         ):
             app = FolderFixPro(mock_root)
