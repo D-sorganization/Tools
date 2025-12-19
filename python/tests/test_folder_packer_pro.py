@@ -2,6 +2,23 @@
 
 import os
 import sys
+from unittest.mock import MagicMock
+
+# Mock tkinter before importing modules that use it
+sys.modules["tkinter"] = MagicMock()
+sys.modules["tkinter.ttk"] = MagicMock()
+sys.modules["tkinter.filedialog"] = MagicMock()
+sys.modules["tkinter.messagebox"] = MagicMock()
+sys.modules["tkinter.scrolledtext"] = MagicMock()
+sys.modules["tkinter.simpledialog"] = MagicMock()
+
+# Link submodules to parent module
+sys.modules["tkinter"].ttk = sys.modules["tkinter.ttk"]  # type: ignore[attr-defined]
+sys.modules["tkinter"].filedialog = sys.modules["tkinter.filedialog"]  # type: ignore[attr-defined]
+sys.modules["tkinter"].messagebox = sys.modules["tkinter.messagebox"]  # type: ignore[attr-defined]
+sys.modules["tkinter"].scrolledtext = sys.modules["tkinter.scrolledtext"]  # type: ignore[attr-defined]
+sys.modules["tkinter"].simpledialog = sys.modules["tkinter.simpledialog"]  # type: ignore[attr-defined]
+
 from collections.abc import Callable, Generator
 from pathlib import Path
 from unittest.mock import Mock, patch
@@ -247,7 +264,9 @@ class TestFolderPackerPro:
             patch("tkinter.ttk.Scrollbar"),
             patch("tkinter.Text"),
             patch("tkinter.ttk.Style"),
-            patch("tkinter.messagebox.showerror") as mock_error,
+            patch(
+                "folder_packer_pro.folder_packer_pro.messagebox.showerror"
+            ) as mock_error,
         ):
             app = FolderPackerPro(mock_root)
             app.pack_source_entry = Mock()
@@ -300,9 +319,15 @@ class TestFolderPackerPro:
             patch("tkinter.ttk.Scrollbar"),
             patch("tkinter.Text"),
             patch("tkinter.ttk.Style"),
-            patch("tkinter.filedialog.askdirectory") as mock_askdir,
-            patch("tkinter.filedialog.asksaveasfilename") as mock_save,
-            patch("tkinter.filedialog.askopenfilename") as mock_open,
+            patch(
+                "folder_packer_pro.folder_packer_pro.filedialog.askdirectory"
+            ) as mock_askdir,
+            patch(
+                "folder_packer_pro.folder_packer_pro.filedialog.asksaveasfilename"
+            ) as mock_save,
+            patch(
+                "folder_packer_pro.folder_packer_pro.filedialog.askopenfilename"
+            ) as mock_open,
         ):
             app = FolderPackerPro(mock_root)
             app.pack_source_entry = Mock()

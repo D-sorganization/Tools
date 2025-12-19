@@ -2,6 +2,23 @@
 
 import os
 import sys
+from unittest.mock import MagicMock
+
+# Mock tkinter before importing modules that use it
+sys.modules["tkinter"] = MagicMock()
+sys.modules["tkinter.ttk"] = MagicMock()
+sys.modules["tkinter.filedialog"] = MagicMock()
+sys.modules["tkinter.messagebox"] = MagicMock()
+sys.modules["tkinter.scrolledtext"] = MagicMock()
+sys.modules["tkinter.simpledialog"] = MagicMock()
+
+# Link submodules to parent module
+sys.modules["tkinter"].ttk = sys.modules["tkinter.ttk"]  # type: ignore[attr-defined]
+sys.modules["tkinter"].filedialog = sys.modules["tkinter.filedialog"]  # type: ignore[attr-defined]
+sys.modules["tkinter"].messagebox = sys.modules["tkinter.messagebox"]  # type: ignore[attr-defined]
+sys.modules["tkinter"].scrolledtext = sys.modules["tkinter.scrolledtext"]  # type: ignore[attr-defined]
+sys.modules["tkinter"].simpledialog = sys.modules["tkinter.simpledialog"]  # type: ignore[attr-defined]
+
 import tkinter as tk
 from collections.abc import Generator
 from pathlib import Path
@@ -141,7 +158,7 @@ class TestFolderProcessorApp:
             patch("tkinter.ttk.Radiobutton"),
             patch("tkinter.ttk.Progressbar"),
             patch("Folders_Tool_r0.ctypes"),
-            patch("tkinter.messagebox.showerror") as mock_error,
+            patch("Folders_Tool_r0.messagebox.showerror") as mock_error,
         ):
             app = FolderProcessorApp(mock_root)
             app.source_folders = []
@@ -167,7 +184,7 @@ class TestFolderProcessorApp:
             patch("tkinter.ttk.Radiobutton"),
             patch("tkinter.ttk.Progressbar"),
             patch("Folders_Tool_r0.ctypes"),
-            patch("tkinter.messagebox.showerror") as mock_error,
+            patch("Folders_Tool_r0.messagebox.showerror") as mock_error,
         ):
             app = FolderProcessorApp(mock_root)
             app.source_folders = ["/some/path"]
@@ -326,8 +343,8 @@ class TestFolderProcessorApp:
             patch("tkinter.ttk.Radiobutton"),
             patch("tkinter.ttk.Progressbar"),
             patch("Folders_Tool_r0.ctypes"),
-            patch("tkinter.messagebox.showwarning") as mock_warning,
-            patch("tkinter.messagebox.showerror") as mock_error,
+            patch("Folders_Tool_r0.messagebox.showwarning") as mock_warning,
+            patch("Folders_Tool_r0.messagebox.showerror") as mock_error,
         ):
             app = FolderProcessorApp(mock_root)
 

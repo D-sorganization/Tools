@@ -178,7 +178,7 @@ class FolderProcessorApp:
         # Progress tracking
         self.progress_var = tk.DoubleVar()
         self.status_var = tk.StringVar(value="Ready")
-        self.cancel_operation = False
+        self.cancel_operation: bool = False
 
         # --- UI Style ---
         style = ttk.Style()
@@ -516,7 +516,7 @@ class FolderProcessorApp:
     def _load_ico_icon(self, ico_path: str) -> None:
         """Loads and sets the ICO icon for the application."""
         # Use iconbitmap for Windows taskbar integration
-        self.root.iconbitmap(ico_path)
+        self.root.iconbitmap(ico_path)  # type: ignore[no-untyped-call]
         logger.info(f"Loaded ICO icon for taskbar: {ico_path}")
 
         # Also set iconphoto with multiple sizes for better display
@@ -545,7 +545,7 @@ class FolderProcessorApp:
 
             # Set all sizes at once for best scaling
             if photos:
-                self.root.iconphoto(True, *photos)  # type: ignore[arg-type]
+                self.root.iconphoto(True, *photos)
                 # Keep references to prevent garbage collection
                 self.icon_photos = photos
                 logger.info(f"Set iconphoto with {len(photos)} different sizes")
@@ -1023,7 +1023,7 @@ class FolderProcessorApp:
         for frame in frames_to_toggle:
             for child in frame.winfo_children():
                 if hasattr(child, "configure"):
-                    child.configure(state=new_state)
+                    child.configure(state=new_state)  # type: ignore[call-arg]
 
     def update_source_info(self) -> None:
         """Updates the source folder information display."""
@@ -1121,11 +1121,6 @@ class FolderProcessorApp:
             status: Status message to display
         """
         try:
-            # Validate progress value
-            if not isinstance(value, int | float):
-                logger.warning(f"Invalid progress value type: {type(value)}")
-                return
-
             # Clamp progress value to valid range
             clamped_value = max(0, min(100, float(value)))
             self.progress_var.set(clamped_value)
@@ -1146,10 +1141,6 @@ class FolderProcessorApp:
             status: Status message to display
         """
         try:
-            if not isinstance(status, str):
-                logger.warning(f"Invalid status type: {type(status)}")
-                return
-
             # Limit status length to prevent UI issues
             max_length = MAX_STATUS_LENGTH
             if len(status) > max_length:
@@ -1732,11 +1723,11 @@ class FolderProcessorApp:
             try:
                 for root, _dirs, files in os.walk(folder):
                     if self.cancel_operation:
-                        break
+                        break  # type: ignore[unreachable]
 
                     for file in files:
                         if self.cancel_operation:
-                            break
+                            break  # type: ignore[unreachable]
 
                         file_path = os.path.join(root, file)
                         try:
@@ -1875,7 +1866,7 @@ class FolderProcessorApp:
                     )
             except Exception as e:
                 messagebox.showerror("Error", f"An error occurred during analysis: {e}")
-            return  # type: ignore[unreachable]
+            return
 
         # Handle deduplication mode
         if mode == "deduplicate":
@@ -1892,7 +1883,7 @@ class FolderProcessorApp:
                     "Error",
                     f"An error occurred during deduplication: {e}",
                 )
-            return  # type: ignore[unreachable]
+            return
 
         # Handle Source -> Destination workflows
         if not self.validate_inputs(check_destination=True):
@@ -1924,7 +1915,7 @@ class FolderProcessorApp:
                     "Error",
                     f"An error occurred during bulk unzip: {e}",
                 )
-                return  # type: ignore[unreachable]
+                return
 
         # Main Operation
         try:
@@ -1946,7 +1937,7 @@ class FolderProcessorApp:
                 "Error",
                 f"An error occurred during the main operation: {e}",
             )
-            return  # type: ignore[unreachable]
+            return
 
         # Post-processing
         if self.deduplicate_var.get():
@@ -2667,7 +2658,7 @@ class FolderProcessorApp:
             for root, _dirs, files in os.walk(src):
                 for file in files:
                     if self.cancel_operation:
-                        break
+                        break  # type: ignore[unreachable]
 
                     source_path = os.path.join(root, file)
 
@@ -3092,7 +3083,7 @@ class FolderProcessorApp:
             for root, _dirs, files in os.walk(src):
                 for file in files:
                     if self.cancel_operation:
-                        break
+                        break  # type: ignore[unreachable]
 
                     source_path = os.path.join(root, file)
 
@@ -3188,7 +3179,7 @@ class FolderProcessorApp:
 
             for root, dirs, files in os.walk(src):
                 if self.cancel_operation:
-                    break
+                    break  # type: ignore[unreachable]
 
                 # Skip empty folders
                 if not files and not any(
@@ -3209,7 +3200,7 @@ class FolderProcessorApp:
                 # Copy files in this directory
                 for file in files:
                     if self.cancel_operation:
-                        break
+                        break  # type: ignore[unreachable]
 
                     source_file_path = os.path.join(root, file)
 
