@@ -13,11 +13,11 @@ sys.modules["tkinter.scrolledtext"] = MagicMock()
 sys.modules["tkinter.simpledialog"] = MagicMock()
 
 # Link submodules to parent module
-sys.modules["tkinter"].ttk = sys.modules["tkinter.ttk"]
-sys.modules["tkinter"].filedialog = sys.modules["tkinter.filedialog"]
-sys.modules["tkinter"].messagebox = sys.modules["tkinter.messagebox"]
-sys.modules["tkinter"].scrolledtext = sys.modules["tkinter.scrolledtext"]
-sys.modules["tkinter"].simpledialog = sys.modules["tkinter.simpledialog"]
+sys.modules["tkinter"].ttk = sys.modules["tkinter.ttk"]  # type: ignore[attr-defined]
+sys.modules["tkinter"].filedialog = sys.modules["tkinter.filedialog"]  # type: ignore[attr-defined]
+sys.modules["tkinter"].messagebox = sys.modules["tkinter.messagebox"]  # type: ignore[attr-defined]
+sys.modules["tkinter"].scrolledtext = sys.modules["tkinter.scrolledtext"]  # type: ignore[attr-defined]
+sys.modules["tkinter"].simpledialog = sys.modules["tkinter.simpledialog"]  # type: ignore[attr-defined]
 
 from collections.abc import Callable, Generator
 from pathlib import Path
