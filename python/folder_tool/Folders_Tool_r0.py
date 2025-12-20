@@ -1121,10 +1121,6 @@ class FolderProcessorApp:
             status: Status message to display
         """
         try:
-            # Validate progress value
-            if not isinstance(value, int | float):
-                logger.warning(f"Invalid progress value type: {type(value)}")
-                return
             # Clamp progress value to valid range
             clamped_value = max(0, min(100, float(value)))
             self.progress_var.set(clamped_value)

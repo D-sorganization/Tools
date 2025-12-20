@@ -3,6 +3,7 @@
 Guardrails for MATLAB + Python projects (golf swing modeling and chemical simulations). Created on 2025-08-09.
 
 ## Quick Start
+
 ```bash
 # 1) Initialize repo + Git LFS
 git init
@@ -17,10 +18,12 @@ git checkout -b chore/wip-$(date +%F)
 ```
 
 ## Daily Safety
+
 - Commit every ~30 minutes (`wip:` if tests fail).
 - End-of-day snapshot: `bash scripts/snapshot.sh`.
 - Big AI refactor? Create `backup/before-ai-<desc>` branch first.
 
 ## Reproducibility
+
 - `matlab/run_all.m` should regenerate results.
 - Python env pinned via `python/requirements.txt` or `python/environment.yml`.

@@ -1,6 +1,7 @@
 # Branching Workflow Rule
 
 ## Overview
+
 This document establishes the mandatory branching workflow for all development work on this project.
 
 ## Rule: Always Use Feature Branches
@@ -10,6 +11,7 @@ This document establishes the mandatory branching workflow for all development w
 ## Workflow Process
 
 ### 1. Creating a Feature Branch
+
 ```bash
 # Always start from main branch
 git checkout main
@@ -20,16 +22,19 @@ git checkout -b feature/descriptive-feature-name
 ```
 
 ### 2. Making Changes
+
 - Make all your changes in the feature branch
 - Commit frequently with descriptive commit messages
 - Test thoroughly before considering merge
 
 ### 3. Testing Before Merge
+
 - Ensure all functionality works as expected
 - Run any existing tests
 - Verify no regressions in existing features
 
 ### 4. Merging to Main
+
 ```bash
 # Switch back to main
 git checkout main
@@ -49,6 +54,7 @@ git push origin --delete feature/descriptive-feature-name
 ## Branch Naming Convention
 
 Use descriptive names that clearly indicate the purpose:
+
 - `feature/folder-tool-reorganization`
 - `feature/new-data-processing-feature`
 - `feature/bugfix-plotting-issue`
@@ -57,6 +63,7 @@ Use descriptive names that clearly indicate the purpose:
 ## Exceptions
 
 **NO EXCEPTIONS** - This rule applies to:
+
 - Bug fixes
 - New features
 - Documentation updates
@@ -106,4 +113,5 @@ git branch -d feature/add-new-export-format
 ```
 
 ## Date Established
+
 January 2025 - This rule is effective immediately and applies to all future development work.
