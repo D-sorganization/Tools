@@ -76,4 +76,4 @@ default_language_version:
   python: python3.11
 
 # Files to always exclude
-exclude: '^(archive/|legacy/|experimental/|\.git/)'
+exclude: '^(archive/|legacy/|experimental/|replicants/|\.git/)'

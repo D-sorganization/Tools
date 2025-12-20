@@ -5,6 +5,7 @@ description: Summary of fixes and improvements for Tools repository
 # Task: Fix Tools Linting Errors & Improve Coverage
 
 ## Accomplished Goals
+
 - [x] **Resolved CI Compatibility (Python 3.9)**:
   - Downgraded Ruff `target-version` to `py39` in `ruff.toml` to prevent suggestions of unsupported syntax (like `|` for types).
   - Explicitly ignored `FA100` (missing `from __future__ import annotations`) and `PERF203` (try-except in loop) in `ruff.toml` to prioritize 3.9 stability and suppress noise.
@@ -27,6 +28,7 @@ description: Summary of fixes and improvements for Tools repository
   - All **90** tests passed successfully.
 
 ## Key Changes
+
 - **`python/tests/*.py`**:
   - Fully typed all test methods and fixtures.
   - Replaced `Any` with specific types (`dict[str, Mock]`, `Generator`, `Callable`, `object`) to satisfy strict linting.
@@ -35,5 +37,6 @@ description: Summary of fixes and improvements for Tools repository
   - Added type annotations to fix `Unsupported target for indexed assignment` error.
 
 ## Next Steps
+
 - Coverage is solid (>60%) and CI is clean.
 - Codebase is now strictly typed and compliant with Ruff/Black/Mypy.
