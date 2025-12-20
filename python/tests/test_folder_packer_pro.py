@@ -2,6 +2,23 @@
 
 import os
 import sys
+from unittest.mock import MagicMock
+
+# Mock tkinter before importing modules that use it
+sys.modules["tkinter"] = MagicMock()
+sys.modules["tkinter.ttk"] = MagicMock()
+sys.modules["tkinter.filedialog"] = MagicMock()
+sys.modules["tkinter.messagebox"] = MagicMock()
+sys.modules["tkinter.scrolledtext"] = MagicMock()
+sys.modules["tkinter.simpledialog"] = MagicMock()
+
+# Link submodules to parent module
+sys.modules["tkinter"].ttk = sys.modules["tkinter.ttk"]  # type: ignore[attr-defined]
+sys.modules["tkinter"].filedialog = sys.modules["tkinter.filedialog"]  # type: ignore[attr-defined]
+sys.modules["tkinter"].messagebox = sys.modules["tkinter.messagebox"]  # type: ignore[attr-defined]
+sys.modules["tkinter"].scrolledtext = sys.modules["tkinter.scrolledtext"]  # type: ignore[attr-defined]
+sys.modules["tkinter"].simpledialog = sys.modules["tkinter.simpledialog"]  # type: ignore[attr-defined]
+
 from collections.abc import Callable, Generator
 from pathlib import Path
 from unittest.mock import Mock, patch
@@ -159,8 +176,9 @@ class TestFolderPackerPro:
             app = FolderPackerPro(mock_root)
 
             # Setup vars
-            app.include_git_var.get.return_value = False
-            app.exclude_patterns = ["*.pyc", "dist"]
+            # Use type: ignore for Mock attributes that MyPy doesn't see
+            app.include_git_var.get.return_value = False  # type: ignore[attr-defined]
+            app.exclude_patterns = {"*.pyc", "dist"}
 
             # Test git exclusion
             assert app._should_exclude(Path("path/to/.git/config")) is True
@@ -168,7 +186,8 @@ class TestFolderPackerPro:
             assert app._should_exclude(Path("path/to/file.pyc")) is True
             # For directories, it checks the name.
             assert app._should_exclude(Path("path/to/dist")) is True
-            # For files inside dist, the walker would skip dist, but should_exclude on the file itself follows name rules
+            # For files inside dist, the walker would skip dist, but should_exclude
+            # on the file itself follows name rules
             # so file.txt is NOT excluded unless "dist" is in its name.
             assert app._should_exclude(Path("path/to/dist/file.txt")) is False
 
@@ -176,7 +195,7 @@ class TestFolderPackerPro:
             assert app._should_exclude(Path("path/to/source.py")) is False
 
             # Test git inclusion
-            app.include_git_var.get.return_value = True
+            app.include_git_var.get.return_value = True  # type: ignore[attr-defined]
             assert app._should_exclude(Path("path/to/.git/config")) is False
 
     def test_collect_folder_stats(
@@ -201,8 +220,8 @@ class TestFolderPackerPro:
             patch("tkinter.ttk.Style"),
         ):
             app = FolderPackerPro(mock_root)
-            app.include_git_var.get.return_value = False
-            app.exclude_patterns = []
+            app.include_git_var.get.return_value = False  # type: ignore[attr-defined]
+            app.exclude_patterns = set()
 
             # Create dummy structure
 
@@ -245,12 +264,16 @@ class TestFolderPackerPro:
             patch("tkinter.ttk.Scrollbar"),
             patch("tkinter.Text"),
             patch("tkinter.ttk.Style"),
-            patch("tkinter.messagebox.showerror") as mock_error,
+            patch(
+                "folder_packer_pro.folder_packer_pro.messagebox.showerror"
+            ) as mock_error,
         ):
             app = FolderPackerPro(mock_root)
             app.pack_source_entry = Mock()
-            app._collect_folder_stats = Mock(return_value={})
-            app._display_stats = Mock()
+            app._collect_folder_stats = Mock(  # type: ignore[method-assign]
+                return_value={}
+            )
+            app._display_stats = Mock()  # type: ignore[method-assign]
 
             # Empty source
             app.pack_source_entry.get.return_value = ""
@@ -270,7 +293,7 @@ class TestFolderPackerPro:
                 """Execute callback immediately."""
                 callback()
 
-            app.root.after.side_effect = immediate_after
+            app.root.after.side_effect = immediate_after  # type: ignore[attr-defined]
 
             app._scan_folder()
             app._collect_folder_stats.assert_called_with(Path(str(tmp_path)))
@@ -296,17 +319,23 @@ class TestFolderPackerPro:
             patch("tkinter.ttk.Scrollbar"),
             patch("tkinter.Text"),
             patch("tkinter.ttk.Style"),
-            patch("tkinter.filedialog.askdirectory") as mock_askdir,
-            patch("tkinter.filedialog.asksaveasfilename") as mock_save,
-            patch("tkinter.filedialog.askopenfilename") as mock_open,
+            patch(
+                "folder_packer_pro.folder_packer_pro.filedialog.askdirectory"
+            ) as mock_askdir,
+            patch(
+                "folder_packer_pro.folder_packer_pro.filedialog.asksaveasfilename"
+            ) as mock_save,
+            patch(
+                "folder_packer_pro.folder_packer_pro.filedialog.askopenfilename"
+            ) as mock_open,
         ):
             app = FolderPackerPro(mock_root)
             app.pack_source_entry = Mock()
             app.pack_output_entry = Mock()
             app.unpack_source_entry = Mock()
             app.unpack_dest_entry = Mock()
-            app._scan_folder = Mock()
-            app._log_message = Mock()
+            app._scan_folder = Mock()  # type: ignore[method-assign]
+            app._log_message = Mock()  # type: ignore[method-assign]
 
             # _browse_pack_source
             mock_askdir.return_value = str(tmp_path)

@@ -26,7 +26,7 @@ def set_seeds(seed: int = DEFAULT_SEED) -> None:
         import numpy as np
 
         # Use modern numpy random generator
-        np.random.seed(seed)
+        np.random.seed(seed)  # noqa: NPY002
         logger.info("Seeds set: %d", seed)
     except ImportError:
         logger.warning("NumPy not available, skipping numpy seed setting")

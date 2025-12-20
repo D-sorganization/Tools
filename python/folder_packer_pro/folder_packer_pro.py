@@ -304,7 +304,7 @@ class FolderPackerPro:
         self.encryption_password = ""
         self.include_git = False
         self.create_manifest = True
-        self.cancel_operation = False
+        self.cancel_operation: bool = False
 
         # Initialize UI
         self._create_menu_bar()
@@ -1328,7 +1328,7 @@ class FolderPackerPro:
             # Add files to package
             for i, file_path in enumerate(files_to_pack):
                 if self.cancel_operation:
-                    break
+                    break  # type: ignore[unreachable]
 
                 try:
                     rel_path = file_path.relative_to(source_path)
@@ -1341,9 +1341,12 @@ class FolderPackerPro:
                     ).decode("utf-8")
 
                     progress = ((i + 1) / total_files) * 100
-                    self.root.after(
-                        0, lambda p=progress: self.pack_progress_var.set(float(p))
-                    )  # type: ignore[misc]
+
+                    def update_progress(p: float = progress) -> None:
+                        """Update the progress bar."""
+                        self.pack_progress_var.set(float(p))
+
+                    self.root.after(0, update_progress)
                     self._update_pack_status(
                         f"Packing {file_path.name} ({i + 1}/{total_files})",
                     )
@@ -1352,7 +1355,7 @@ class FolderPackerPro:
                     self._log_message(f"Error packing {file_path}: {e}", "error")
 
             if self.cancel_operation:
-                self._log_message("Pack operation cancelled", "warning")
+                self._log_message("Pack operation cancelled", "warning")  # type: ignore[unreachable]
                 return
 
             # Serialize to JSON

@@ -1,23 +1,28 @@
 """Build script for Folder Packer Pro v2.0 executable."""
 
+import logging
 import subprocess
 import sys
 from pathlib import Path
 
+# Set up logging
+logging.basicConfig(level=logging.INFO, format="%(message)s")
+logger = logging.getLogger(__name__)
 
-def build_exe():
+
+def build_exe() -> int:
     """Build Windows executable using PyInstaller."""
 
-    print("=" * 60)
-    print("Building Folder Packer Pro v2.0 Executable")
-    print("=" * 60)
+    logger.info("=" * 60)
+    logger.info("Building Folder Packer Pro v2.0 Executable")
+    logger.info("=" * 60)
 
     # Get script directory
     script_dir = Path(__file__).parent
     main_script = script_dir / "folder_packer_pro.py"
 
     if not main_script.exists():
-        print(f"Error: Main script not found: {main_script}")
+        logger.error("Error: Main script not found: %s", main_script)
         sys.exit(1)
 
     # PyInstaller command
@@ -44,26 +49,29 @@ def build_exe():
     # Remove empty arguments
     cmd = [arg for arg in cmd if arg]
 
-    print("\nRunning PyInstaller...")
-    print(f"Command: {' '.join(cmd)}\n")
+    logger.info("\nRunning PyInstaller...")
+    logger.info("Command: %s\n", " ".join(cmd))
 
     try:
-        result = subprocess.run(cmd, cwd=script_dir, check=True)
-
-        print("\n" + "=" * 60)
-        print("Build completed successfully!")
-        print("=" * 60)
-        print(f"\nExecutable location: {script_dir / 'dist' / 'FolderPackerPro.exe'}")
-
-        return 0
+        subprocess.run(cmd, cwd=script_dir, check=True)  # noqa: S603
 
     except subprocess.CalledProcessError as e:
-        print(f"\nError: Build failed with exit code {e.returncode}")
+        logger.exception("\nError: Build failed with exit code %s", e.returncode)
         return 1
     except FileNotFoundError:
-        print("\nError: PyInstaller not found. Please install it:")
-        print("  pip install pyinstaller")
+        logger.exception("\nError: PyInstaller not found. Please install it:")
+        logger.info("  pip install pyinstaller")
         return 1
+    else:
+        logger.info("\n%s", "=" * 60)
+        logger.info("Build completed successfully!")
+        logger.info("=" * 60)
+        logger.info(
+            "\nExecutable location: %s",
+            script_dir / "dist" / "FolderPackerPro.exe",
+        )
+
+        return 0
 
 
 if __name__ == "__main__":

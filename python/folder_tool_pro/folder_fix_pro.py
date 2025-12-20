@@ -1300,7 +1300,7 @@ class FolderFixPro:
             for root, _, filenames in os.walk(source_folder):
                 for filename in filenames:
                     if self.cancel_operation:
-                        break
+                        break  # type: ignore[unreachable]
 
                     source_file = Path(root) / filename
                     if self._should_include_file(source_file):
@@ -1347,7 +1347,7 @@ class FolderFixPro:
             for root, _, filenames in os.walk(source_folder):
                 for filename in filenames:
                     if self.cancel_operation:
-                        break
+                        break  # type: ignore[unreachable]
 
                     source_file = Path(root) / filename
                     if self._should_include_file(source_file):
@@ -1412,7 +1412,7 @@ class FolderFixPro:
 
             for root, _dirs, filenames in os.walk(source_folder):
                 if self.cancel_operation:
-                    break
+                    break  # type: ignore[unreachable]
 
                 # Check if folder has any files matching filters
                 has_files = any(

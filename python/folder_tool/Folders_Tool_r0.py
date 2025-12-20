@@ -178,7 +178,7 @@ class FolderProcessorApp:
         # Progress tracking
         self.progress_var = tk.DoubleVar()
         self.status_var = tk.StringVar(value="Ready")
-        self.cancel_operation = False
+        self.cancel_operation: bool = False
 
         # --- UI Style ---
         style = ttk.Style()
@@ -481,7 +481,9 @@ class FolderProcessorApp:
             # Get the directory where the script/executable is located
             if getattr(sys, "frozen", False):
                 # Running as compiled executable
-                base_dir = sys._MEIPASS
+                base_dir = getattr(
+                    sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__))
+                )
             else:
                 # Running as script
                 base_dir = os.path.dirname(__file__)
@@ -503,17 +505,18 @@ class FolderProcessorApp:
     def _set_windows_app_id(self) -> None:
         """Sets the Windows app user model ID for taskbar grouping."""
         try:
-            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
-                "FolderFix.Tool.2.0",
-            )
-            logger.info("Set Windows App User Model ID for taskbar grouping")
+            if sys.platform == "win32":
+                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(  # type: ignore[attr-defined]
+                    "FolderFix.Tool.2.0",
+                )
+                logger.info("Set Windows App User Model ID for taskbar grouping")
         except Exception as e:
             logger.warning(f"Could not set app ID: {e}")
 
     def _load_ico_icon(self, ico_path: str) -> None:
         """Loads and sets the ICO icon for the application."""
         # Use iconbitmap for Windows taskbar integration
-        self.root.iconbitmap(ico_path)
+        self.root.iconbitmap(ico_path)  # type: ignore[no-untyped-call]
         logger.info(f"Loaded ICO icon for taskbar: {ico_path}")
 
         # Also set iconphoto with multiple sizes for better display
@@ -557,7 +560,7 @@ class FolderProcessorApp:
             logger.info("ICO not found, using PNG fallback")
             from PIL import Image, ImageTk
 
-            image = Image.open(png_path)
+            image: Image.Image = Image.open(png_path)
 
             # Convert to RGBA for transparency support
             if image.mode != "RGBA":
@@ -1020,7 +1023,7 @@ class FolderProcessorApp:
         for frame in frames_to_toggle:
             for child in frame.winfo_children():
                 if hasattr(child, "configure"):
-                    child.configure(state=new_state)
+                    child.configure(state=new_state)  # type: ignore[call-arg]
 
     def update_source_info(self) -> None:
         """Updates the source folder information display."""
@@ -1122,7 +1125,6 @@ class FolderProcessorApp:
             if not isinstance(value, int | float):
                 logger.warning(f"Invalid progress value type: {type(value)}")
                 return
-
             # Clamp progress value to valid range
             clamped_value = max(0, min(100, float(value)))
             self.progress_var.set(clamped_value)
@@ -1143,10 +1145,6 @@ class FolderProcessorApp:
             status: Status message to display
         """
         try:
-            if not isinstance(status, str):
-                logger.warning(f"Invalid status type: {type(status)}")
-                return
-
             # Limit status length to prevent UI issues
             max_length = MAX_STATUS_LENGTH
             if len(status) > max_length:
@@ -1729,11 +1727,11 @@ class FolderProcessorApp:
             try:
                 for root, _dirs, files in os.walk(folder):
                     if self.cancel_operation:
-                        break
+                        break  # type: ignore[unreachable]
 
                     for file in files:
                         if self.cancel_operation:
-                            break
+                            break  # type: ignore[unreachable]
 
                         file_path = os.path.join(root, file)
                         try:
@@ -2665,7 +2663,7 @@ class FolderProcessorApp:
             for root, _dirs, files in os.walk(src):
                 for file in files:
                     if self.cancel_operation:
-                        break
+                        break  # type: ignore[unreachable]
 
                     source_path = os.path.join(root, file)
 
@@ -2984,7 +2982,7 @@ class FolderProcessorApp:
             Exception: If folder removal fails for other reasons
         """
         try:
-            selected_indices = list(self.source_listbox.curselection())
+            selected_indices = list(self.source_listbox.curselection())  # type: ignore[no-untyped-call]
             if not selected_indices:
                 messagebox.showinfo("Info", "Please select folders to remove.")
                 return
@@ -3087,10 +3085,10 @@ class FolderProcessorApp:
             if self.cancel_operation:
                 break
 
-            for _root, _dirs, files in os.walk(src):
+            for root, _dirs, files in os.walk(src):
                 for file in files:
                     if self.cancel_operation:
-                        break
+                        break  # type: ignore[unreachable]
 
                     source_path = os.path.join(root, file)
 
@@ -3186,7 +3184,7 @@ class FolderProcessorApp:
 
             for root, dirs, files in os.walk(src):
                 if self.cancel_operation:
-                    break
+                    break  # type: ignore[unreachable]
 
                 # Skip empty folders
                 if not files and not any(
@@ -3207,7 +3205,7 @@ class FolderProcessorApp:
                 # Copy files in this directory
                 for file in files:
                     if self.cancel_operation:
-                        break
+                        break  # type: ignore[unreachable]
 
                     source_file_path = os.path.join(root, file)
 
