@@ -1121,6 +1121,10 @@ class FolderProcessorApp:
             status: Status message to display
         """
         try:
+            # Validate progress value
+            if not isinstance(value, int | float):
+                logger.warning(f"Invalid progress value type: {type(value)}")
+                return
             # Clamp progress value to valid range
             clamped_value = max(0, min(100, float(value)))
             self.progress_var.set(clamped_value)
@@ -2010,7 +2014,8 @@ class FolderProcessorApp:
                 raise ValueError("Destination folder is empty - nothing to archive")
         except (OSError, PermissionError) as e:
             raise PermissionError(
-                f"Cannot access destination folder contents: {self.dest_folder} - {e}",
+                f"Cannot access destination folder contents: {self.dest_folder} - "
+                f"{e}",
             ) from e
 
         # Generate ZIP filename with timestamp
