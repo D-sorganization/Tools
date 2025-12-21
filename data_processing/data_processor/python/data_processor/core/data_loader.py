@@ -23,6 +23,8 @@ logger = get_logger(__name__)
 class DataLoader:
     """Handles loading and managing CSV data files."""
 
+    hp_loader: HighPerformanceDataLoader | None
+
     def __init__(self, use_high_performance: bool = True) -> None:
         """Initialize the data loader.
 
@@ -132,6 +134,7 @@ class DataLoader:
         """
         if self.use_high_performance and self.hp_loader:
             # Use high-performance signal detection
+            signals: set[str]
             signals, _ = self.hp_loader.load_signals_from_files(
                 file_paths,
                 progress_callback=progress_callback,
@@ -167,16 +170,17 @@ class DataLoader:
         """
         # Check for common time column names
         for col in df.columns:
-            col_lower = col.lower()
+            col_str: str = str(col)
+            col_lower = col_str.lower()
             if any(keyword in col_lower for keyword in TIME_COLUMN_KEYWORDS):
-                logger.info(f"Detected time column: {col}")
-                return col
+                logger.info(f"Detected time column: {col_str}")
+                return col_str
 
         # Check for datetime dtype
         for col in df.columns:
             if pd.api.types.is_datetime64_any_dtype(df[col]):
                 logger.info(f"Detected datetime column: {col}")
-                return col
+                return str(col)
 
         logger.warning("No time column detected")
         return None
@@ -219,7 +223,7 @@ class DataLoader:
         Returns:
             List of numeric column names
         """
-        numeric_cols = df.select_dtypes(include=np.number).columns.tolist()
+        numeric_cols: list[str] = df.select_dtypes(include=np.number).columns.tolist()
         logger.info(f"Found {len(numeric_cols)} numeric signals")
         return numeric_cols
 

@@ -141,7 +141,7 @@ def _format_output_filename(source_path: str, output_format: str) -> str:
     return f"{stem}{suffix}"
 
 
-@app.command()
+@app.command()  # type: ignore[misc]
 def detect(
     files: list[Path] = typer.Argument(  # noqa: B008
         ...,
@@ -171,7 +171,7 @@ def detect(
     console.print(table)
 
 
-@app.command()
+@app.command()  # type: ignore[misc]
 def run(
     config: Path | None = typer.Option(  # noqa: B008
         None,
