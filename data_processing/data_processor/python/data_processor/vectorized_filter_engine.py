@@ -50,7 +50,7 @@ try:
         NORMAL_DISTRIBUTION_CONSTANT,
     )
 except ImportError:
-    from constants import (  # type: ignore[no-redef]
+    from constants import (
         DEFAULT_BW_CUTOFF,
         DEFAULT_BW_ORDER,
         DEFAULT_FFT_FREQ_HIGH,
@@ -97,7 +97,9 @@ class VectorizedFilterEngine:
     - Optimized for large datasets (1M+ points)
     """
 
-    def __init__(self, logger: Callable | None = None, n_jobs: int = -1) -> None:
+    def __init__(
+        self, logger: Callable[..., Any] | None = None, n_jobs: int = -1
+    ) -> None:
         """
         Initialize the vectorized filter engine.
 
@@ -636,7 +638,7 @@ class VectorizedFilterEngine:
                 time_diffs = signal.index.to_series().diff().dt.total_seconds()
                 mean_diff = time_diffs.mean()
                 if pd.notna(mean_diff) and mean_diff > 0:
-                    return 1.0 / mean_diff
+                    return float(1.0 / mean_diff)
             return None
         except (ValueError, TypeError, ZeroDivisionError):
             return None

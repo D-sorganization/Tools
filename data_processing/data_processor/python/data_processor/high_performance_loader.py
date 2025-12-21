@@ -29,13 +29,13 @@ import pandas as pd
 try:
     from .logging_config import get_logger
 except ImportError:
-    from logging_config import get_logger  # type: ignore[no-redef]
+    from logging_config import get_logger
 
 # Import security utilities
 try:
     from .security_utils import FileSizeError, check_file_size
 except ImportError:
-    from security_utils import FileSizeError, check_file_size  # type: ignore[no-redef]
+    from security_utils import FileSizeError, check_file_size
 
 # Module logger
 logger = get_logger(__name__)
