@@ -15,7 +15,7 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
-from typing import Final
+from typing import Any, Final
 
 # Constants for configuration with sources and units
 MAX_LOG_ENTRIES: Final[int] = (
@@ -506,7 +506,7 @@ class FolderProcessorApp:
         """Sets the Windows app user model ID for taskbar grouping."""
         try:
             if sys.platform == "win32":
-                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(  # type: ignore[attr-defined]
+                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
                     "FolderFix.Tool.2.0",
                 )
                 logger.info("Set Windows App User Model ID for taskbar grouping")
@@ -516,7 +516,7 @@ class FolderProcessorApp:
     def _load_ico_icon(self, ico_path: str) -> None:
         """Loads and sets the ICO icon for the application."""
         # Use iconbitmap for Windows taskbar integration
-        self.root.iconbitmap(ico_path)  # type: ignore[no-untyped-call]
+        self.root.iconbitmap(ico_path)
         logger.info(f"Loaded ICO icon for taskbar: {ico_path}")
 
         # Also set iconphoto with multiple sizes for better display
@@ -607,7 +607,7 @@ class FolderProcessorApp:
         main_frame.pack(fill=tk.BOTH, expand=True)
 
         # Enable mouse wheel scrolling
-        def _on_mousewheel(event: tk.Event) -> None:
+        def _on_mousewheel(event: tk.Event[Any]) -> None:
             """Handle mouse wheel scrolling for the canvas.
 
             Args:
@@ -2300,7 +2300,7 @@ class FolderProcessorApp:
             close_button.focus_set()  # Focus on close button for better UX
 
             # Bind escape key to close dialog
-            def on_escape(event: tk.Event) -> None:
+            def on_escape(event: tk.Event[Any]) -> None:
                 """Close dialog when escape key is pressed.
 
                 Args:
