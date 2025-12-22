@@ -1115,7 +1115,7 @@ class FolderPackerPro:
                 tags=(str(file_path),),
             )
 
-    def _on_file_select(self, event: tk.Event) -> None:
+    def _on_file_select(self, event: tk.Event[Any]) -> None:
         """Handle file selection in preview tree."""
         selection = self.preview_tree.selection()
         if not selection:
