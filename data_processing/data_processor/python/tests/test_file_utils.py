@@ -17,7 +17,7 @@ from file_utils import (  # noqa: PGH003
 )
 
 
-@pytest.fixture  # type: ignore[misc]
+@pytest.fixture
 def sample_df() -> pd.DataFrame:
     """Create a sample DataFrame for testing."""
     return pd.DataFrame(
@@ -81,7 +81,7 @@ def test_numpy_conversion(tmp_path: Path, sample_df: pd.DataFrame) -> None:
     np.testing.assert_array_equal(numeric_df.values, loaded_df.values)
 
 
-@pytest.mark.skipif(not PYARROW_AVAILABLE, reason="PyArrow not installed")  # type: ignore[misc]
+@pytest.mark.skipif(not PYARROW_AVAILABLE, reason="PyArrow not installed")
 def test_parquet_conversion(tmp_path: Path, sample_df: pd.DataFrame) -> None:
     """Test Parquet read/write conversion."""
     filepath = tmp_path / "test.parquet"
@@ -92,7 +92,7 @@ def test_parquet_conversion(tmp_path: Path, sample_df: pd.DataFrame) -> None:
     pd.testing.assert_frame_equal(sample_df, loaded_df)
 
 
-@pytest.mark.skipif(not PYARROW_AVAILABLE, reason="PyArrow not installed")  # type: ignore[misc]
+@pytest.mark.skipif(not PYARROW_AVAILABLE, reason="PyArrow not installed")
 def test_feather_conversion(tmp_path: Path, sample_df: pd.DataFrame) -> None:
     """Test Feather read/write conversion."""
     filepath = tmp_path / "test.feather"
@@ -103,7 +103,7 @@ def test_feather_conversion(tmp_path: Path, sample_df: pd.DataFrame) -> None:
     pd.testing.assert_frame_equal(sample_df, loaded_df)
 
 
-@pytest.mark.skipif(not OPENPYXL_AVAILABLE, reason="openpyxl not installed")  # type: ignore[misc]
+@pytest.mark.skipif(not OPENPYXL_AVAILABLE, reason="openpyxl not installed")
 def test_excel_conversion(tmp_path: Path, sample_df: pd.DataFrame) -> None:
     """Test Excel read/write conversion."""
     filepath = tmp_path / "test.xlsx"

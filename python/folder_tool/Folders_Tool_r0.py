@@ -545,7 +545,7 @@ class FolderProcessorApp:
 
             # Set all sizes at once for best scaling
             if photos:
-                self.root.iconphoto(True, *photos)
+                self.root.iconphoto(True, *photos)  # type: ignore[arg-type]
                 # Keep references to prevent garbage collection
                 self.icon_photos = photos
                 logger.info(f"Set iconphoto with {len(photos)} different sizes")
@@ -574,7 +574,7 @@ class FolderProcessorApp:
                 photos.append(photo)
 
             if photos:
-                self.root.iconphoto(True, *photos)
+                self.root.iconphoto(True, *photos)  # type: ignore[arg-type]
                 # Keep references to prevent garbage collection
                 self.icon_photos = photos
                 logger.info(f"Loaded PNG icon: {png_path}")
