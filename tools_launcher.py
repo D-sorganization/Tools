@@ -553,10 +553,14 @@ class ToolsLauncher:
             self.status_var.set("Launching Integrated Data Processor...")
             self.root.update()
 
-            # Try the main launcher
-            subprocess.Popen([sys.executable, "launch_tools_main.py"])
-            self.status_var.set("✓ Integrated Data Processor launched")
-            logger.info("Launched Integrated Data Processor")
+            # Try the integrated processor launcher
+            integrated_path = Path("data_processing/data_processor/python/data_processor/launch_integrated.py")
+            if integrated_path.exists():
+                subprocess.Popen([sys.executable, str(integrated_path)])
+                self.status_var.set("✓ Integrated Data Processor launched")
+                logger.info("Launched Integrated Data Processor")
+            else:
+                self.show_error("Integrated Data Processor launcher not found")
 
         except Exception as e:
             self.show_error(f"Failed to launch Integrated Data Processor: {e}")
