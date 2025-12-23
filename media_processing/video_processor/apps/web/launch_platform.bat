@@ -1,0 +1,6 @@
+@echo off
+echo Starting Golf Swing Video Analysis Platform...
+cd /d "%~dp0"
+echo Running 'npm run dev'...
+npm run dev
+pause
