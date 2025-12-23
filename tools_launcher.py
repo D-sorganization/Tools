@@ -697,8 +697,13 @@ class ToolsLauncher:
         try:
             dev_path = Path("development_tools")
             if dev_path.exists():
-                os.startfile(str(dev_path))
-                self.status_var.set("✓ Development Tools folder opened")
+                if sys.platform == "win32":
+                    os.startfile(str(dev_path))  # type: ignore[attr-defined]
+                    self.status_var.set("✓ Development Tools folder opened")
+                else:
+                    # Linux/Mac support could be added here
+                    logger.warning("Opening folders is only supported on Windows")
+                    self.status_var.set("⚠️ Feature only available on Windows")
             else:
                 self.show_error("Development Tools folder not found")
         except Exception as e:

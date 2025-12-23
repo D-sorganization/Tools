@@ -9,7 +9,7 @@ from tkinter import messagebox, ttk
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
-def get_path(rel_path):
+def get_path(rel_path: str) -> str:
     return os.path.normpath(os.path.join(BASE_DIR, rel_path))
 
 
@@ -100,7 +100,7 @@ TOOLS = {
 
 
 class ToolsLauncher(tk.Tk):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.title("Tools Launcher")
         self.geometry("950x700")
@@ -125,7 +125,7 @@ class ToolsLauncher(tk.Tk):
 
         self.create_tabs()
 
-    def create_tabs(self):
+    def create_tabs(self) -> None:
         has_tools = False
         categories = [
             "Unit Converters",
@@ -181,7 +181,7 @@ class ToolsLauncher(tk.Tk):
                     btn_frame,
                     text=btn_text,
                     state=state,
-                    command=lambda p=full_path, k=kind: self.launch_tool(p, k),
+                    command=lambda p=full_path, k=kind: self.launch_tool(p, k),  # type: ignore[misc]
                 )
                 btn.pack(pady=10, padx=10, fill=tk.X)
 
@@ -215,7 +215,7 @@ class ToolsLauncher(tk.Tk):
         if not has_tools:
             ttk.Label(self, text="No tools configured.").pack()
 
-    def launch_tool(self, path, kind):
+    def launch_tool(self, path: str, kind: str) -> None:
         try:
             cwd = os.path.dirname(path)
             if kind == "python":
@@ -228,7 +228,12 @@ class ToolsLauncher(tk.Tk):
             elif kind == "exe":
                 subprocess.Popen([path], cwd=cwd)
             else:
-                os.startfile(path)
+                if sys.platform == "win32":
+                    os.startfile(path)  # type: ignore[attr-defined]
+                else:
+                    messagebox.showinfo(
+                        "Info", f"Cannot open file on this platform: {path}"
+                    )
 
         except Exception as e:
             messagebox.showerror("Error", f"Failed to launch {path}:\n{e}")
