@@ -1,7 +1,6 @@
-
 $WshShell = New-Object -comObject WScript.Shell
 $DesktopPath = [Environment]::GetFolderPath("Desktop")
-$ShortcutFile = "$DesktopPath\Tools Launcher.lnk"
+$ShortcutFile = "$DesktopPath\Tools Launcher (PNG Icon).lnk"
 $Shortcut = $WshShell.CreateShortcut($ShortcutFile)
 
 # Assuming python is in PATH. If not, this might need adjustment.
@@ -15,8 +14,8 @@ else {
 
 $Shortcut.Arguments = "tools_launcher.py"
 $Shortcut.WorkingDirectory = "C:\Users\diete\Repositories\Tools"
-$Shortcut.Description = "Launch Professional Tools Launcher"
-$Shortcut.IconLocation = "C:\Users\diete\Repositories\Tools\tools_icon_alt.ico"
+$Shortcut.Description = "Launch Professional Tools Launcher (PNG Icon)"
+$Shortcut.IconLocation = "C:\Users\diete\Repositories\Tools\tools_icon.png"
 $Shortcut.Save()
 
-Write-Host "Created shortcut at: $ShortcutFile"
+Write-Host "Created shortcut with PNG icon at: $ShortcutFile"
