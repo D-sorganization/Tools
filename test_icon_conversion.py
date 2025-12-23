@@ -21,7 +21,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 
-def create_alternative_ico():
+def create_alternative_ico() -> None:
     """Create alternative ICO with different settings."""
     png_path = Path("tools_icon.png")
     ico_path = Path("tools_icon_alt.ico")
@@ -51,7 +51,7 @@ def create_alternative_ico():
         logger.error(f"Failed to create alternative ICO: {e}")
 
 
-def create_simple_ico():
+def create_simple_ico() -> None:
     """Create a simple single-size ICO."""
     png_path = Path("tools_icon.png")
     ico_path = Path("tools_icon_simple.ico")
@@ -74,7 +74,7 @@ def create_simple_ico():
         logger.error(f"Failed to create simple ICO: {e}")
 
 
-def main():
+def main() -> None:
     """Test different conversion methods."""
     logger.info("Testing alternative icon conversion methods...")
 
