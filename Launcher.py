@@ -21,29 +21,81 @@ def get_path(rel_path):
 TOOLS = {
     "Unit Converters": [
         ("Calculator App", "web_applications/calculator/webapp.py", "python"),
-        ("Unit Converter (Web)", "web_applications/unit_converter/unit-converter-app/index.html", "html"),
+        (
+            "Unit Converter (Web)",
+            "web_applications/unit_converter/unit-converter-app/index.html",
+            "html",
+        ),
     ],
     "Data Processors": [
-        ("Data Processor (Integrated)", "data_processing/data_processor/python/data_processor/launch_integrated.py", "python"),
-        ("Data Processor (Replicant r0)", "data_processing/data_processor/archive/Data_Processor_r0.py", "python"),
-        ("Data Processor (Archive Integrated)", "data_processing/data_processor/archive/Data_Processor_Integrated.py", "python"),
+        (
+            "Data Processor (Integrated)",
+            "data_processing/data_processor/python/data_processor/launch_integrated.py",
+            "python",
+        ),
+        (
+            "Data Processor (Replicant r0)",
+            "data_processing/data_processor/archive/Data_Processor_r0.py",
+            "python",
+        ),
+        (
+            "Data Processor (Archive Integrated)",
+            "data_processing/data_processor/archive/Data_Processor_Integrated.py",
+            "python",
+        ),
     ],
     "Video Processors": [
-        ("Web Platform (Next.js)", "media_processing/video_processor/apps/web/launch_platform.bat", "bat"),
+        (
+            "Web Platform (Next.js)",
+            "media_processing/video_processor/apps/web/launch_platform.bat",
+            "bat",
+        ),
         ("MATLAB Engine", "media_processing/video_processor/matlab/run_all.m", "file"),
     ],
     "Audio Processors": [
-        ("Audio Processor Pro (Main)", "media_processing/audio_processor/matlab/audio_signal_processor/launch_audio_processor_pro.m", "file"),
-        ("Audio Processor Pro (Replicant)", "replicants/matlab/audio_signal_processor/launch_audio_processor_pro.m", "file"),
+        (
+            "Audio Processor Pro (Main)",
+            "media_processing/audio_processor/matlab/audio_signal_processor/launch_audio_processor_pro.m",
+            "file",
+        ),
+        (
+            "Audio Processor Pro (Replicant)",
+            "replicants/matlab/audio_signal_processor/launch_audio_processor_pro.m",
+            "file",
+        ),
     ],
     "Folder Tools": [
-        ("Folder Packer Pro (Main)", "development_tools/folder_tools/folder_packer_pro/folder_packer_pro.py", "python"),
-        ("Folder Fix (Main)", "development_tools/folder_tools/folder_tool/Launch_FolderFix.bat", "bat"),
-        ("Folder Packer Pro (Replicant)", "replicants/python/folder_packer_pro/folder_packer_pro.py", "python"),
-        ("Project Packer (Replicant)", "replicants/python/project_packer/folder_packer_gui.py", "python"),
-        ("Folder Fix (Replicant)", "replicants/python/folder_tool/Launch_FolderFix.bat", "bat"),
-        ("Folder Fix Pro (Replicant)", "replicants/python/folder_tool_pro/folder_fix_pro.py", "python"),
-    ]
+        (
+            "Folder Packer Pro (Main)",
+            "development_tools/folder_tools/folder_packer_pro/folder_packer_pro.py",
+            "python",
+        ),
+        (
+            "Folder Fix (Main)",
+            "development_tools/folder_tools/folder_tool/Launch_FolderFix.bat",
+            "bat",
+        ),
+        (
+            "Folder Packer Pro (Replicant)",
+            "replicants/python/folder_packer_pro/folder_packer_pro.py",
+            "python",
+        ),
+        (
+            "Project Packer (Replicant)",
+            "replicants/python/project_packer/folder_packer_gui.py",
+            "python",
+        ),
+        (
+            "Folder Fix (Replicant)",
+            "replicants/python/folder_tool/Launch_FolderFix.bat",
+            "bat",
+        ),
+        (
+            "Folder Fix Pro (Replicant)",
+            "replicants/python/folder_tool_pro/folder_fix_pro.py",
+            "python",
+        ),
+    ],
 }
 
 
@@ -55,14 +107,16 @@ class ToolsLauncher(tk.Tk):
 
         # Style
         style = ttk.Style()
-        style.theme_use('clam')
+        style.theme_use("clam")
         style.configure("TButton", font=("Helvetica", 10), padding=5)
         style.configure("TLabel", font=("Helvetica", 12))
         style.configure("Header.TLabel", font=("Helvetica", 18, "bold"))
         style.configure("TNotebook.Tab", font=("Helvetica", 11), padding=[10, 5])
 
         # Title
-        title_label = ttk.Label(self, text="Tools Repository Launcher", style="Header.TLabel")
+        title_label = ttk.Label(
+            self, text="Tools Repository Launcher", style="Header.TLabel"
+        )
         title_label.pack(pady=20)
 
         # Notebook (Tabs)
@@ -78,7 +132,7 @@ class ToolsLauncher(tk.Tk):
             "Data Processors",
             "Video Processors",
             "Audio Processors",
-            "Folder Tools"
+            "Folder Tools",
         ]
 
         # Add any other categories that might exist in TOOLS but not in the ordered list
@@ -123,16 +177,31 @@ class ToolsLauncher(tk.Tk):
                 if kind == "file" and exists:
                     btn_text = "Open File"
 
-                btn = ttk.Button(btn_frame, text=btn_text, state=state,
-                                 command=lambda p=full_path, k=kind: self.launch_tool(p, k))
+                btn = ttk.Button(
+                    btn_frame,
+                    text=btn_text,
+                    state=state,
+                    command=lambda p=full_path, k=kind: self.launch_tool(p, k),
+                )
                 btn.pack(pady=10, padx=10, fill=tk.X)
 
                 # Path Label (Small)
-                path_lbl = ttk.Label(btn_frame, text=rel_path, font=("Courier", 8), foreground="#555", wraplength=400)
+                path_lbl = ttk.Label(
+                    btn_frame,
+                    text=rel_path,
+                    font=("Courier", 8),
+                    foreground="#555",
+                    wraplength=400,
+                )
                 path_lbl.pack(pady=(0, 10))
 
                 if not exists:
-                    ttk.Label(btn_frame, text="File missing on disk", font=("Helvetica", 8), foreground="red").pack(pady=2)
+                    ttk.Label(
+                        btn_frame,
+                        text="File missing on disk",
+                        font=("Helvetica", 8),
+                        foreground="red",
+                    ).pack(pady=2)
 
                 col += 1
                 if col >= MAX_COLS:
