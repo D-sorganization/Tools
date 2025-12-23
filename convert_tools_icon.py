@@ -81,7 +81,7 @@ def convert_png_to_ico(png_path: Path, ico_path: Path) -> bool:
         return False
 
 
-def main():
+def main() -> None:
     """Main conversion function."""
     png_path = Path("tools_icon.png")
     ico_path = Path("tools_icon_hq.ico")
