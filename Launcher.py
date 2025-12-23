@@ -80,7 +80,7 @@ class ToolsLauncher(tk.Tk):
             "Audio Processors",
             "Folder Tools"
         ]
-        
+
         # Add any other categories that might exist in TOOLS but not in the ordered list
         for cat in TOOLS.keys():
             if cat not in categories:
@@ -118,7 +118,7 @@ class ToolsLauncher(tk.Tk):
                 exists = os.path.exists(full_path)
                 state = "normal" if exists else "disabled"
                 btn_text = "Launch" if exists else "Not Found"
-                
+
                 # Check for "file" type to be more descriptive
                 if kind == "file" and exists:
                     btn_text = "Open File"
