@@ -1495,8 +1495,9 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             self.after(0, lambda: self.folder_run_button.configure(state="normal"))
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))
 
-        except Exception:
-            self.after(0, lambda: self.folder_status_var.set(f"Error: {str(e)}"))
+        except Exception as e:
+            error_msg = f"Error: {str(e)}"
+            self.after(0, lambda: self.folder_status_var.set(error_msg))
             self.after(0, lambda: self.folder_run_button.configure(state="normal"))
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))
 
@@ -1588,8 +1589,9 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
             self.after(0, lambda: self.folder_status_var.set(status))
 
-        except Exception:
-            self.after(0, lambda: self.folder_status_var.set(f"Error: {str(e)}"))
+        except Exception as e:
+            error_msg = f"Error: {str(e)}"
+            self.after(0, lambda: self.folder_status_var.set(error_msg))
 
     def _folder_flatten_operation(self):
         """Perform flatten operation - copy files from nested folders to top level."""
@@ -1673,8 +1675,9 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
             self.after(0, lambda: self.folder_status_var.set(status))
 
-        except Exception:
-            self.after(0, lambda: self.folder_status_var.set(f"Error: {str(e)}"))
+        except Exception as e:
+            error_msg = f"Error: {str(e)}"
+            self.after(0, lambda: self.folder_status_var.set(error_msg))
 
     def _folder_prune_operation(self):
         """Perform prune operation - copy folders but skip empty subfolders."""
@@ -1770,8 +1773,9 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
             self.after(0, lambda: self.folder_status_var.set(status))
 
-        except Exception:
-            self.after(0, lambda: self.folder_status_var.set(f"Error: {str(e)}"))
+        except Exception as e:
+            error_msg = f"Error: {str(e)}"
+            self.after(0, lambda: self.folder_status_var.set(error_msg))
 
     def _folder_deduplicate_operation(self):
         """Perform deduplicate operation - remove renamed duplicates in source folders."""
@@ -1858,8 +1862,9 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
             self.after(0, lambda: self.folder_status_var.set(status))
 
-        except Exception:
-            self.after(0, lambda: self.folder_status_var.set(f"Error: {str(e)}"))
+        except Exception as e:
+            error_msg = f"Error: {str(e)}"
+            self.after(0, lambda: self.folder_status_var.set(error_msg))
 
     def _folder_analyze_operation(self):
         """Perform analyze operation - generate detailed report of folder contents."""
@@ -1983,8 +1988,9 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 ),
             )
 
-        except Exception:
-            self.after(0, lambda: self.folder_status_var.set(f"Error: {str(e)}"))
+        except Exception as e:
+            error_msg = f"Error: {str(e)}"
+            self.after(0, lambda: self.folder_status_var.set(error_msg))
 
     def _show_folder_analysis_report(self, report_text):
         """Show the analysis report in a dialog."""
