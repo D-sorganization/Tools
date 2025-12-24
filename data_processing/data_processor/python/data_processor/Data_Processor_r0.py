@@ -280,7 +280,7 @@ class CSVProcessorApp(ctk.CTk):
             os.path.expanduser("~"),
             ".csv_processor_layout.json",
         )
-        self.splitters = {}
+        self.splitters: dict[str, Any] = {}
         self.layout_data = self._load_layout_config()
 
         self.title("Advanced CSV Processor & DAT Importer - Complete Version")
@@ -306,12 +306,14 @@ class CSVProcessorApp(ctk.CTk):
         self.bind("<Configure>", self._on_window_configure)
 
         # App State Variables
-        self.input_file_paths = []
-        self.loaded_data_cache = {}
-        self.processed_files = {}  # Store processed data for plotting
+        self.input_file_paths: list[str] = []
+        self.loaded_data_cache: dict[str, pd.DataFrame] = {}
+        self.processed_files: dict[str, pd.DataFrame] = (
+            {}
+        )  # Store processed data for plotting
         self.output_directory = os.path.expanduser("~/Documents")
-        self.signal_vars = {}
-        self.plot_signal_vars = {}
+        self.signal_vars: dict[str, dict[str, Any]] = {}
+        self.plot_signal_vars: dict[str, dict[str, Any]] = {}
         self.filter_names = [
             "None",
             "Moving Average",
@@ -327,24 +329,24 @@ class CSVProcessorApp(ctk.CTk):
             "FFT Band-pass",
             "FFT Band-stop",
         ]
-        self.custom_vars_list = []
-        self.reference_signal_widgets = {}
+        self.custom_vars_list: list[dict[str, Any]] = []
+        self.reference_signal_widgets: dict[str, Any] = {}
         self.dat_import_tag_file_path = None
         self.dat_import_data_file_path = None
-        self.dat_tag_vars = {}
+        self.dat_tag_vars: dict[str, tk.BooleanVar] = {}
         self.tag_delimiter_var = tk.StringVar(value="newline")
 
         # Plots List variables
-        self.plots_list = []
+        self.plots_list: list[dict[str, Any]] = []
         self.current_plot_config = None
 
         # Signal List Management variables
-        self.saved_signal_list = []
+        self.saved_signal_list: list[str] = []
         self.saved_signal_list_name = ""
 
         # Integration and Differentiation variables
-        self.integrator_signal_vars = {}
-        self.deriv_signal_vars = {}
+        self.integrator_signal_vars: dict[str, tk.BooleanVar] = {}
+        self.deriv_signal_vars: dict[str, tk.BooleanVar] = {}
         self.derivative_vars = {}
         for i in range(
             1, MAX_DERIVATIVE_ORDER + 1
@@ -355,7 +357,7 @@ class CSVProcessorApp(ctk.CTk):
         self.saved_plot_view = None
 
         # Custom legend entries for plots
-        self.custom_legend_entries = {}
+        self.custom_legend_entries: dict[str, str] = {}
 
         # Custom colors for plots
         self.custom_colors = [
@@ -1551,7 +1553,8 @@ class CSVProcessorApp(ctk.CTk):
             sigma = float(sigma_str.strip())
             if sigma <= 0:
                 print(
-                    f"Warning: Sigma must be positive, using default {DEFAULT_GAUSSIAN_SIGMA}"
+                    f"Warning: Sigma must be positive, using default "
+                    f"{DEFAULT_GAUSSIAN_SIGMA}"
                 )
                 return DEFAULT_GAUSSIAN_SIGMA
             if sigma > 100:
@@ -1560,7 +1563,8 @@ class CSVProcessorApp(ctk.CTk):
             return sigma
         except (ValueError, AttributeError):
             print(
-                f"Warning: Invalid sigma value '{sigma_str}', using default {DEFAULT_GAUSSIAN_SIGMA}"
+                f"Warning: Invalid sigma value '{sigma_str}', using default "
+                f"{DEFAULT_GAUSSIAN_SIGMA}"
             )
             return DEFAULT_GAUSSIAN_SIGMA
 
@@ -1886,7 +1890,7 @@ class CSVProcessorApp(ctk.CTk):
         # Clear existing plotting signals
         for widget in self.plot_signal_frame.winfo_children():
             widget.destroy()
-        self.plot_signal_vars = {}
+        self.plot_signal_vars: dict[str, dict[str, Any]] = {}
 
         # Get all available signals from processing tab
         available_signals = list(self.signal_vars.keys())
@@ -2773,7 +2777,8 @@ class CSVProcessorApp(ctk.CTk):
                         print(f"DEBUG: Loaded {len(signals)} signals from file")
                         self.update_signal_list(signals)
                         self.signal_list_status_label.configure(
-                            text=f"Created signal list from file: {len(signals)} signals",
+                            text=f"Created signal list from file:"
+                            f"{len(signals)} signals",
                             text_color="green",
                         )
                     else:
@@ -3127,7 +3132,7 @@ This section helps you manage which signals (columns) to process from your files
 
                     # Read headers from first file only
                     sample_files = self.input_file_paths[:1]
-                    all_signals = set()
+                    all_signals: set[str] = set()
                 else:
                     # Standard bulk mode: read headers from first few files
                     print(
@@ -3151,7 +3156,7 @@ This section helps you manage which signals (columns) to process from your files
 
                     # Read headers from first 3 files only
                     sample_files = self.input_file_paths[:3]
-                    all_signals = set()
+                    all_signals: set[str] = set()
 
                 for i, file_path in enumerate(sample_files):
                     # Check for cancellation
@@ -3167,7 +3172,8 @@ This section helps you manage which signals (columns) to process from your files
                     try:
                         if total_files > 100:
                             status_label.configure(
-                                text=f"Reading sample file {i+1}/3: {os.path.basename(file_path)}",
+                                text=f"Reading sample file {i+1}/3:"
+                                f"{os.path.basename(file_path)}",
                             )
                             if progress_bar:
                                 progress = (i + 1) / len(sample_files)
@@ -3175,7 +3181,8 @@ This section helps you manage which signals (columns) to process from your files
                             progress_window.update()
                         elif hasattr(self, "status_label"):
                             self.status_label.configure(
-                                text=f"Reading sample file {i+1}/3: {os.path.basename(file_path)}",
+                                text=f"Reading sample file {i+1}/3:"
+                                f"{os.path.basename(file_path)}",
                             )
                             self.update()
 
@@ -3218,13 +3225,15 @@ This section helps you manage which signals (columns) to process from your files
                     # Update status
                     if total_files > 100:
                         status_label.configure(
-                            text=f"Bulk mode: Using {len(all_signals)} signals from sample files "
+                            text=f"Bulk mode: Using {len(all_signals)} signals from"
+                            f"sample files "
                             f"(assumed same for all {total_files} files)",
                         )
                         progress_window.update()
                     elif hasattr(self, "status_label"):
                         self.status_label.configure(
-                            text=f"Bulk mode: Using {len(all_signals)} signals from sample files "
+                            text=f"Bulk mode: Using {len(all_signals)} signals from"
+                            f"sample files "
                             f"(assumed same for all {total_files} files)",
                         )
                         self.update()
@@ -3331,7 +3340,8 @@ This section helps you manage which signals (columns) to process from your files
         if hasattr(self, "plot_file_menu"):
             self.plot_file_menu.configure(values=file_names)
 
-            # Auto-select the first file if there's only one - immediate execution like baseline
+            # Auto-select the first file if there's only one -
+            # immediate execution like baseline
             if len(self.input_file_paths) == 1:
                 single_file = os.path.basename(self.input_file_paths[0])
                 self.plot_file_menu.set(single_file)
@@ -3537,7 +3547,7 @@ This section helps you manage which signals (columns) to process from your files
         self.sort_col_menu.configure(values=sort_values)
 
         # Initialize plot signal variables (will be populated when file is selected in plotting tab)
-        self.plot_signal_vars = {}
+        self.plot_signal_vars: dict[str, dict[str, Any]] = {}
 
         # Update other signal lists - simplified
         self._update_plots_signals(signals)
@@ -3611,9 +3621,8 @@ This section helps you manage which signals (columns) to process from your files
     ) -> None:
         """Display a batch of signals in the scrollable frame."""
         print(
-            f"DEBUG: Displaying batch of
-            {len(signals_batch)} signals starting at index "
-            f"{start_index}, auto_select={auto_select}",
+            f"DEBUG: Displaying batch of {len(signals_batch)} signals "
+            f"starting at index {start_index}, auto_select={auto_select}",
         )
 
         for _i, signal in enumerate(signals_batch):
@@ -3632,8 +3641,8 @@ This section helps you manage which signals (columns) to process from your files
     def _load_more_signals(self, all_signals: list[str], current_count: int) -> None:
         """Load more signals when the Load More button is clicked."""
         print(
-            f"DEBUG: Loading more signals, currently showing {current_count} of
-            {len(all_signals)}",
+            f"DEBUG: Loading more signals, currently showing {current_count} "
+            f"of {len(all_signals)}",
         )
 
         # Calculate how many more to load (use 200 as batch size)
@@ -3703,7 +3712,8 @@ This section helps you manage which signals (columns) to process from your files
     def select_all(self) -> None:
         """Select all signals - optimized for large signal counts."""
         if hasattr(self, "all_signals"):
-            # For large signal counts, select all signals (including those not yet displayed)
+            # For large signal counts,
+            # select all signals (including those not yet displayed)
             for signal in self.all_signals:
                 if signal in self.signal_vars:
                     self.signal_vars[signal]["var"].set(True)
@@ -3716,7 +3726,8 @@ This section helps you manage which signals (columns) to process from your files
     def deselect_all(self) -> None:
         """Deselect all signals - optimized for large signal counts."""
         if hasattr(self, "all_signals"):
-            # For large signal counts, deselect all signals (including those not yet displayed)
+            # For large signal counts,
+            # deselect all signals (including those not yet displayed)
             for signal in self.all_signals:
                 if signal in self.signal_vars:
                     self.signal_vars[signal]["var"].set(False)
@@ -4825,7 +4836,8 @@ This section helps you manage which signals (columns) to process from your files
     def _combine_multiple_files(
         self, processed_files: dict[str, pd.DataFrame]
     ) -> pd.DataFrame:
-        """Combine multiple processed files into a single dataset for time series data."""
+        """Combine multiple processed files into a single dataset
+        for time series data."""
         if not processed_files or len(processed_files) <= 1:
             return processed_files
 
@@ -4866,7 +4878,8 @@ This section helps you manage which signals (columns) to process from your files
 
         print(f"Combined dataset shape: {combined_df.shape}")
         print(
-            f"Time range: {combined_df[time_col].min()} to {combined_df[time_col].max()}",
+            f"Time range: {combined_df[time_col].min()} to "
+            f"{combined_df[time_col].max()}",
         )
         print(f"Files included: {[os.path.basename(fp) for fp, _, _ in sorted_files]}")
 
@@ -5475,7 +5488,7 @@ This section helps you manage which signals (columns) to process from your files
 
             # Custom legend entries dictionary - only initialize if not already exists
             if not hasattr(self, "custom_legend_entries"):
-                self.custom_legend_entries = {}
+                self.custom_legend_entries: dict[str, str] = {}
 
             # Trendline controls
             trend_frame = ctk.CTkFrame(plot_left_panel)
@@ -6430,7 +6443,7 @@ This section helps you manage which signals (columns) to process from your files
                     self.plot_xaxis_menu.set(x_axis_options[0])
 
                 # Update signal checkboxes - direct creation like baseline
-                self.plot_signal_vars = {}
+                self.plot_signal_vars: dict[str, dict[str, Any]] = {}
                 for widget in self.plot_signal_frame.winfo_children():
                     widget.destroy()
 
@@ -6457,7 +6470,7 @@ This section helps you manage which signals (columns) to process from your files
 
                 # Reset signal tracking when file changes
                 if hasattr(self, "last_plotted_signals"):
-                    self.last_plotted_signals = set()
+                    self.last_plotted_signals: set[str] = set()
 
                 # Update plot immediately - no delays
                 self.update_plot()
@@ -6918,7 +6931,8 @@ This section helps you manage which signals (columns) to process from your files
                     if col in df.columns:
                         if _savgol_filter is None:
                             raise RuntimeError(
-                                "scipy.signal.savgol_filter unavailable. Install SciPy or skip smoothing.",
+                                "scipy.signal.savgol_filter unavailable. "
+                                "Install SciPy or skip smoothing.",
                             )
                         df[col] = _savgol_filter(df[col], window, polyorder)
 
@@ -6996,7 +7010,8 @@ This section helps you manage which signals (columns) to process from your files
                 if col in df.columns:
                     if _savgol_filter is None:
                         raise RuntimeError(
-                            "scipy.signal.savgol_filter unavailable. Install SciPy or skip smoothing.",
+                            "scipy.signal.savgol_filter unavailable. "
+                            "Install SciPy or skip smoothing.",
                         )
                     df[col] = _savgol_filter(df[col], window, polyorder)
 
@@ -7187,7 +7202,8 @@ This section helps you manage which signals (columns) to process from your files
                 try:
                     if _savgol_filter is None:
                         raise RuntimeError(
-                            "scipy.signal.savgol_filter unavailable. Install SciPy or skip smoothing.",
+                            "scipy.signal.savgol_filter unavailable. "
+                            "Install SciPy or skip smoothing.",
                         )
 
                     signal_data = (
@@ -7406,7 +7422,8 @@ This section helps you manage which signals (columns) to process from your files
             traceback.print_exc()
 
     def get_data_for_plotting(self, filename: str) -> pd.DataFrame | None:
-        """Get data for plotting from the specified file - simplified baseline approach."""
+        """Get data for plotting from the specified file -
+        simplified baseline approach."""
         try:
             # First check if it's in processed files
             if filename in self.processed_files:
@@ -8103,7 +8120,8 @@ COMMON MISTAKES TO AVOID:
                         # Try to read the file to see if it's a valid configuration
                         with open(file_path) as f:
                             data = json.load(f)
-                            # Check if it has the expected structure (processing configs have 'saved_at', plotting configs have 'plot_name')
+                            # Check if it has the expected structure (processing configs have 'saved_at',
+                            # plotting configs have 'plot_name')
                             if isinstance(data, dict) and (
                                 "saved_at" in data or "plot_name" in data
                             ):
@@ -8126,7 +8144,8 @@ COMMON MISTAKES TO AVOID:
                                         ),
                                     )
                     except Exception:
-                        # Skip files that can't be read as JSON or don't have the right structure
+                        # Skip files that can't be read as JSON or
+                        # don't have the right structure
                         continue
 
             # Sort by creation date (newest first)
@@ -8220,7 +8239,8 @@ COMMON MISTAKES TO AVOID:
             # Confirm deletion
             result = messagebox.askyesno(
                 "Confirm Delete",
-                f"Are you sure you want to delete this configuration file?\n\n{filename}\n\nThis action cannot be undone.",
+                f"Are you sure you want to delete this configuration file?\n\n"
+                f"{filename}\n\nThis action cannot be undone.",
             )
             if result:
                 os.remove(filepath)
@@ -8515,7 +8535,8 @@ COMMON MISTAKES TO AVOID:
         print("DEBUG: _apply_loaded_signals_internal() called")
         if not self.saved_signal_list or not self.signal_vars:
             print(
-                f"DEBUG: Early return - saved_signal_list: {bool(self.saved_signal_list)}, signal_vars: {bool(self.signal_vars)}",
+                f"DEBUG: Early return - saved_signal_list: {bool(self.saved_signal_list)}, "
+                f"signal_vars: {bool(self.signal_vars)}",
             )
             return
 
@@ -9026,7 +9047,7 @@ COMMON MISTAKES TO AVOID:
                 self._update_load_plot_config_menu()
         except Exception as e:
             print(f"Error loading plots from file: {e}")
-            self.plots_list = []
+            self.plots_list: list[dict[str, Any]] = []
 
     def _select_tag_file(self) -> None:
         """Select tag file for DAT import."""
@@ -9310,7 +9331,8 @@ COMMON MISTAKES TO AVOID:
             # Apply legend with custom position
             legend_position = self.legend_position_var.get()
             if legend_position == "outside right":
-                # For outside right, use bbox_to_anchor to place legend outside the plot area
+                # For outside right, use bbox_to_anchor to
+                # place legend outside the plot area
                 self.plot_ax.legend(bbox_to_anchor=(1.05, 1), loc="upper left")
             else:
                 self.plot_ax.legend(loc=legend_position)
@@ -9455,7 +9477,8 @@ COMMON MISTAKES TO AVOID:
 
             messagebox.showinfo(
                 "Success",
-                f"Copied current view to Processing tab time trimming:\nDate: {date_str}\nStart: {start_time_str}\nEnd: {end_time_str}",
+                f"Copied current view to Processing tab time trimming:\n"
+                f"Date: {date_str}\nStart: {start_time_str}\nEnd: {end_time_str}",
             )
 
         except Exception as e:
@@ -9740,7 +9763,8 @@ COMMON MISTAKES TO AVOID:
 # Advanced CSV Processor & DAT Importer - Help Guide
 
 ## Overview
-This application provides comprehensive tools for processing, analyzing, and visualizing time series data from CSV files and DAT files with DBF tag files.
+This application provides comprehensive tools for processing, analyzing, and
+visualizing time series data from CSV files and DAT files with DBF tag files.
 
 ## New Features (Latest Update)
 
@@ -9881,7 +9905,6 @@ Use mathematical formulas with signal references:
 3. **Filtering**: Start with "None" and add filters as needed
 4. **Integration**: Use Trapezoidal method for most accurate results
 5. **Custom Variables**: Test formulas with simple calculations first
-6. **Export**: Use "CSV (Separate Files)" for individual analysis, "CSV (Compiled)" for combined analysis
 7. **Auto-Zoom**: Disable for stable filter comparison, enable for exploration
 8. **Configuration Management**: Regularly clean up old configurations
 
@@ -10770,7 +10793,7 @@ For additional support or feature requests, please refer to the application docu
 
         # Initialize plots signal vars if not exists
         if not hasattr(self, "plots_signal_vars"):
-            self.plots_signal_vars = {}
+            self.plots_signal_vars: dict[str, dict[str, Any]] = {}
 
         self.plots_signal_vars.clear()
 
@@ -10884,7 +10907,10 @@ For additional support or feature requests, please refer to the application docu
                     if len(set(available_files)) > 5:
                         debug_text += f"\n... and {len(set(available_files))-5} more"
                 else:
-                    debug_text = "No data files loaded\n\nPlease:\n1. Select CSV files on Setup tab\n2. Process files or plot directly"
+                    debug_text = (
+                        "No data files loaded\n\n"
+                        "Please:\n1. Select CSV files on Setup tab\n2. Process files or plot directly"
+                    )
 
                 self.preview_ax.text(
                     0.5,
@@ -10976,7 +11002,8 @@ For additional support or feature requests, please refer to the application docu
             self.preview_ax.set_xlabel(xlabel)
             self.preview_ax.set_ylabel(ylabel)
 
-            # Use legend position from plot config if available, otherwise default to 'best'
+            # Use legend position from plot config if available,
+            # otherwise default to 'best'
             legend_position = plot_config.get("legend_position", "best")
             if legend_position == "outside right":
                 self.preview_ax.legend(bbox_to_anchor=(1.05, 1), loc="upper left")
@@ -11443,7 +11470,7 @@ For additional support or feature requests, please refer to the application docu
     def _detect_new_signals(self, current_signals: list[str]) -> bool:
         """Detect if new signals have been added since last plot update."""
         if not hasattr(self, "last_plotted_signals"):
-            self.last_plotted_signals = set()
+            self.last_plotted_signals: set[str] = set()
             return True  # First time plotting, treat as new signals
 
         current_set = set(current_signals)
