@@ -1551,7 +1551,8 @@ class CSVProcessorApp(ctk.CTk):
             sigma = float(sigma_str.strip())
             if sigma <= 0:
                 print(
-                    f"Warning: Sigma must be positive, using default {DEFAULT_GAUSSIAN_SIGMA}"
+                    f"Warning: Sigma must be positive, using default "
+                    f"{DEFAULT_GAUSSIAN_SIGMA}"
                 )
                 return DEFAULT_GAUSSIAN_SIGMA
             if sigma > 100:
@@ -1560,7 +1561,8 @@ class CSVProcessorApp(ctk.CTk):
             return sigma
         except (ValueError, AttributeError):
             print(
-                f"Warning: Invalid sigma value '{sigma_str}', using default {DEFAULT_GAUSSIAN_SIGMA}"
+                f"Warning: Invalid sigma value '{sigma_str}', using default "
+                f"{DEFAULT_GAUSSIAN_SIGMA}"
             )
             return DEFAULT_GAUSSIAN_SIGMA
 
