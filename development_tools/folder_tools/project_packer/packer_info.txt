@@ -1,0 +1,37 @@
+
+INSTRUCTIONS FOR INTERPRETING PACKED PROJECT FILES
+==================================================
+
+1. File Format
+   The packed file is a plain text file containing multiple source files, each delimited by special markers. The folder structure and file names are preserved.
+
+2. Delimiters
+   - Each file block starts with:
+     %%%%%% START FILE: relative/path/to/file.ext %%%%%%
+   - Each file block ends with:
+     %%%%%% END FILE: relative/path/to/file.ext %%%%%%
+   - The relative path is from the original packed folder.
+
+3. Header and Footer
+   - The file begins with metadata lines (e.g., source folder, pack time, exclusions).
+   - The file ends with:
+     %%%%%% END OF PACKED PROJECT %%%%%%
+
+4. How to Extract Files
+   - Read the packed file as text.
+   - For each START FILE delimiter, extract the file path.
+   - Collect all text until the corresponding END FILE delimiter.
+   - Save the collected text as the file content, using the extracted path to reconstruct the folder structure.
+
+5. Notes
+   - If a file block contains the line:
+     ****** ERROR: Could not read file content. Error: ... ******
+     treat this as a placeholder for a file that could not be packed.
+   - Ignore the metadata and footer lines for file extraction.
+
+6. Example
+   %%%%%% START FILE: src/main.py %%%%%%
+   print("Hello, world!")
+   %%%%%% END FILE: src/main.py %%%%%%
+
+   This block should be saved as src/main.py with the given content.

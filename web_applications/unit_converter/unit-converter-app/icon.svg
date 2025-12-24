@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#2563eb" rx="115"/>
+  <g fill="#ffffff">
+    <!-- Arrows symbolizing conversion -->
+    <path d="M140 180 L220 180 L220 140 L320 200 L220 260 L220 220 L140 220 Z" opacity="0.9"/>
+    <path d="M372 312 L292 312 L292 352 L192 292 L292 232 L292 272 L372 272 Z" opacity="0.9"/>
+
+    <!-- Abstract units symbols -->
+    <text x="256" y="380" font-family="system-ui, -apple-system, sans-serif" font-size="120" font-weight="700" text-anchor="middle" fill="#ffffff" opacity="0.15">UC</text>
+
+    <!-- Measurement lines -->
+    <line x1="120" y1="140" x2="120" y2="240" stroke="#ffffff" stroke-width="8" opacity="0.3"/>
+    <line x1="392" y1="252" x2="392" y2="352" stroke="#ffffff" stroke-width="8" opacity="0.3"/>
+  </g>
+</svg>

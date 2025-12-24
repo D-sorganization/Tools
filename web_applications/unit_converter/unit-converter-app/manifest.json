@@ -1,0 +1,50 @@
+{
+  "name": "Unit Converter",
+  "short_name": "Converter",
+  "description": "Professional NIST-compliant unit converter for engineers and scientists. Works offline.",
+  "start_url": "/unit-converter-app/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "categories": ["utilities", "education", "productivity"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "label": "Unit Converter main screen"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Temperature",
+      "url": "/unit-converter-app/?category=temperature",
+      "description": "Temperature conversions"
+    },
+    {
+      "name": "Length",
+      "url": "/unit-converter-app/?category=length",
+      "description": "Length conversions"
+    },
+    {
+      "name": "Mass",
+      "url": "/unit-converter-app/?category=mass",
+      "description": "Mass conversions"
+    }
+  ]
+}

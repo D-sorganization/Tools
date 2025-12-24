@@ -1,0 +1,30 @@
+{
+  "name": "unit-converter",
+  "version": "2.0.0",
+  "description": "Professional NIST-compliant unit converter for engineers and scientists",
+  "main": "unit-converter-app/app.js",
+  "scripts": {
+    "lint": "eslint unit-converter-app/**/*.js",
+    "lint:fix": "eslint unit-converter-app/**/*.js --fix",
+    "format": "prettier --write \"unit-converter-app/**/*.{js,html,css,json}\"",
+    "format:check": "prettier --check \"unit-converter-app/**/*.{js,html,css,json}\"",
+    "test": "jest"
+  },
+  "keywords": [
+    "unit-converter",
+    "conversion",
+    "NIST",
+    "engineering",
+    "pwa"
+  ],
+  "author": "",
+  "license": "SEE LICENSE IN LICENSE",
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "jest": "^30.2.0",
+    "prettier": "^3.2.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

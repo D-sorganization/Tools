@@ -1,0 +1,55 @@
+{
+    "name": "Pop Vocal",
+    "description": "Pop vocal with compression, EQ, and reverb",
+    "category": "vocal",
+    "instrument": "voice",
+    "style": "pop",
+    "effects": [
+        {
+            "type": "Compression",
+            "parameters": {
+                "Threshold": -6,
+                "Ratio": 4,
+                "Attack": 3,
+                "Release": 100,
+                "Knee": 2,
+                "SampleRate": 44100
+            },
+            "enabled": true,
+            "order": 1
+        },
+        {
+            "type": "EQ",
+            "parameters": {
+                "LowGain": -2,
+                "MidGain": 1,
+                "HighGain": 2,
+                "LowFreq": 200,
+                "HighFreq": 5000,
+                "SampleRate": 44100
+            },
+            "enabled": true,
+            "order": 2
+        },
+        {
+            "type": "Reverb",
+            "parameters": {
+                "RoomSize": 0.5,
+                "DecayTime": 2.5,
+                "Damping": 0.5,
+                "PreDelay": 0.03,
+                "SampleRate": 44100
+            },
+            "enabled": true,
+            "order": 3
+        }
+    ],
+    "mix_settings": {
+        "dry_wet": 0.6,
+        "master_volume": 0.9
+    },
+    "usage_notes": "Perfect for pop vocals. Adjust compression ratio for more/less dynamic control.",
+    "created_by": "Audio Signal Processor",
+    "version": "1.0",
+    "created_date": "2024-01-01T00:00:00Z"
+}

@@ -1,0 +1,41 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "serviceworker": true,
+    "node": true
+  },
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "script"
+  },
+  "rules": {
+    "no-console": "error",
+    "no-eval": "error",
+    "no-implied-eval": "error",
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "prefer-const": "warn",
+    "no-var": "warn",
+    "eqeqeq": ["error", "always"],
+    "curly": ["error", "all"],
+    "brace-style": "off",
+    "indent": "off",
+    "quotes": "off",
+    "semi": "off",
+    "no-trailing-spaces": "off",
+    "comma-dangle": "off",
+    "arrow-spacing": "off",
+    "keyword-spacing": "off",
+    "space-before-blocks": "off",
+    "no-loss-of-precision": "warn",
+    "no-redeclare": "off"
+  },
+  "globals": {
+    "convert": "writable",
+    "getCategory": "writable",
+    "getUnitsForCategory": "writable",
+    "searchUnits": "writable",
+    "customUnitManager": "writable"
+  }
+}

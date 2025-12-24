@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Unit Converter" />
+    <meta name="theme-color" content="#2563eb" />
+    <meta
+      name="description"
+      content="Professional NIST-compliant unit converter for engineers and scientists. Works offline."
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'self';"
+    />
+
+    <title>Unit Converter</title>
+
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="icon-192.png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Header -->
+      <header class="header">
+        <h1 class="header-title">Unit Converter</h1>
+        <div class="header-actions">
+          <button
+            class="icon-button"
+            id="customUnitsButton"
+            aria-label="Custom units"
+            title="Custom units"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M12 1v6m0 6v6m5.2-14.2l-4.2 4.2m-1.8 1.8l-4.2 4.2m12.2 0l-4.2-4.2m-1.8-1.8l-4.2-4.2"
+              />
+            </svg>
+          </button>
+          <button class="icon-button" id="themeToggle" aria-label="Toggle dark mode">
+            <svg
+              class="theme-icon sun"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" />
+              <line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            </svg>
+            <svg
+              class="theme-icon moon"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Category Selector -->
+        <div class="category-section">
+          <label for="category" class="label">Category</label>
+          <select id="category" class="select">
+            <option value="length">Length</option>
+            <option value="mass">Mass</option>
+            <option value="volume">Volume</option>
+            <option value="temperature">Temperature</option>
+            <option value="pressure">Pressure</option>
+            <option value="energy">Energy</option>
+            <option value="power">Power</option>
+            <option value="gas_flow">Gas Flow (SCFM/ACFM)</option>
+            <option value="heating_value">Heating Value</option>
+            <option value="mass_flow">Mass Flow</option>
+            <option value="volumetric_flow">Volumetric Flow</option>
+            <option value="area">Area</option>
+            <option value="time">Time</option>
+            <option value="density">Density</option>
+            <option value="dynamic_viscosity">Dynamic Viscosity</option>
+            <option value="kinematic_viscosity">Kinematic Viscosity</option>
+            <option value="thermal_conductivity">Thermal Conductivity</option>
+            <option value="heat_transfer">Heat Transfer Coeff.</option>
+            <option value="specific_heat">Specific Heat</option>
+          </select>
+        </div>
+
+        <!-- From Section -->
+        <div class="conversion-section">
+          <div class="input-group">
+            <label for="fromValue" class="label">From</label>
+            <input
+              type="number"
+              id="fromValue"
+              class="input-number"
+              placeholder="Enter value"
+              inputmode="decimal"
+              step="any"
+            />
+          </div>
+          <div class="input-group">
+            <div class="label-row">
+              <label for="fromUnit" class="label">Unit</label>
+              <button
+                type="button"
+                id="fromUnitSearchTrigger"
+                class="search-trigger"
+                aria-label="Search units"
+                title="Search units"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="unit-input-wrapper">
+              <input
+                type="text"
+                id="fromUnitSearch"
+                class="unit-search-input"
+                placeholder="Search units..."
+                autocomplete="off"
+              />
+              <select id="fromUnit" class="select unit-select"></select>
+              <div id="fromUnitDropdown" class="unit-dropdown" style="display: none"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gas Flow Parameters (conditional) -->
+        <div id="gasFlowParams" class="param-section" style="display: none">
+          <div class="param-header">
+            <span class="param-title">Gas Flow Parameters</span>
+            <span class="param-hint">Required for ACFM conversions</span>
+          </div>
+          <div class="param-grid">
+            <div class="input-group">
+              <label for="standardCondition" class="label">Standard Condition</label>
+              <select id="standardCondition" class="select select-sm">
+                <option value="SCFM_60F">SCFM @ 60°F, 14.696 psia</option>
+                <option value="SCFM_70F">SCFM @ 70°F, 14.696 psia</option>
+                <option value="STP">STP (0°C, 101.325 kPa)</option>
+                <option value="NTP">NTP (20°C, 101.325 kPa)</option>
+                <option value="SATP">SATP (25°C, 1 bar)</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="gasType" class="label">Gas Type</label>
+              <select id="gasType" class="select select-sm">
+                <option value="air">Air</option>
+                <option value="nitrogen">Nitrogen</option>
+                <option value="oxygen">Oxygen</option>
+                <option value="hydrogen">Hydrogen</option>
+                <option value="methane">Methane</option>
+                <option value="co">Carbon Monoxide</option>
+                <option value="co2">Carbon Dioxide</option>
+                <option value="h2o">Water Vapor</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="temperature" class="label">Temperature (K)</label>
+              <input
+                type="number"
+                id="temperature"
+                class="input-number input-sm"
+                placeholder="e.g., 298.15"
+                step="any"
+              />
+            </div>
+            <div class="input-group">
+              <label for="pressure" class="label">Pressure (Pa)</label>
+              <input
+                type="number"
+                id="pressure"
+                class="input-number input-sm"
+                placeholder="e.g., 101325"
+                step="any"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Heating Value Parameters (conditional) -->
+        <div id="heatingValueParams" class="param-section" style="display: none">
+          <div class="param-header">
+            <span class="param-title">Heating Value Parameters</span>
+            <span class="param-hint">Required for volumetric units</span>
+          </div>
+          <div class="input-group">
+            <label for="gasDensity" class="label">Gas Density at STP (kg/m³)</label>
+            <input
+              type="number"
+              id="gasDensity"
+              class="input-number input-sm"
+              placeholder="e.g., 0.717 for methane"
+              step="any"
+            />
+            <div class="input-hint">
+              Common values: Air (1.29), Methane (0.72), H₂ (0.09), Syngas (~0.89)
+            </div>
+          </div>
+        </div>
+
+        <!-- Swap Button -->
+        <div class="swap-section">
+          <button id="swapButton" class="swap-button" aria-label="Swap units">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <polyline points="19 12 12 19 5 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- To Section -->
+        <div class="conversion-section">
+          <div class="input-group">
+            <label for="toValue" class="label">To</label>
+            <div class="value-input-wrapper">
+              <input
+                type="number"
+                id="toValue"
+                class="input-number"
+                placeholder="Result"
+                inputmode="decimal"
+                step="any"
+              />
+              <button
+                id="copyResult"
+                class="copy-button"
+                aria-label="Copy result"
+                title="Copy result"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="input-group">
+            <div class="label-row">
+              <label for="toUnit" class="label">Unit</label>
+              <button
+                type="button"
+                id="toUnitSearchTrigger"
+                class="search-trigger"
+                aria-label="Search units"
+                title="Search units"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="unit-input-wrapper">
+              <input
+                type="text"
+                id="toUnitSearch"
+                class="unit-search-input"
+                placeholder="Search units..."
+                autocomplete="off"
+              />
+              <select id="toUnit" class="select unit-select"></select>
+              <div id="toUnitDropdown" class="unit-dropdown" style="display: none"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <div id="errorMessage" class="error-message" style="display: none"></div>
+
+        <!-- Warning Message (for custom units) -->
+        <div id="warningMessage" class="warning-message" style="display: none"></div>
+
+        <!-- Recent Conversions -->
+        <div class="recent-section">
+          <div class="recent-header">
+            <h2 class="recent-title">Recent Conversions</h2>
+            <button id="clearHistory" class="clear-button">Clear</button>
+          </div>
+          <div id="recentList" class="recent-list">
+            <p class="empty-state">No recent conversions</p>
+          </div>
+        </div>
+      </main>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <p class="footer-text">NIST-compliant conversions • Works offline</p>
+        <p class="footer-version">v2.0.0 • Enhanced with gas flow & custom units</p>
+      </footer>
+    </div>
+
+    <!-- Custom Units Modal -->
+    <div id="customUnitsModal" class="modal" style="display: none">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Custom Units</h2>
+          <button id="closeModal" class="modal-close" aria-label="Close">×</button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Add Custom Unit -->
+          <div class="custom-unit-form">
+            <h3 class="form-title">Add Custom Unit</h3>
+
+            <div class="input-group">
+              <label for="customCategory" class="label">Category</label>
+              <select id="customCategory" class="select">
+                <option value="length">Length</option>
+                <option value="mass">Mass</option>
+                <option value="volume">Volume</option>
+                <option value="pressure">Pressure</option>
+                <option value="energy">Energy</option>
+                <option value="power">Power</option>
+                <option value="time">Time</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label for="customUnit" class="label">Unit Symbol</label>
+              <input type="text" id="customUnit" class="input-text" placeholder="e.g., furlong" />
+            </div>
+
+            <div class="input-group">
+              <label for="referenceUnit" class="label">Reference Unit</label>
+              <select id="referenceUnit" class="select"></select>
+            </div>
+
+            <div class="input-group">
+              <label for="conversionFactor" class="label">Conversion Factor</label>
+              <input
+                type="number"
+                id="conversionFactor"
+                class="input-number"
+                placeholder="1 [your unit] = ? [reference]"
+                step="any"
+              />
+              <div class="input-hint">
+                How many reference units equal 1 of your unit?<br />
+                Example: 1 furlong = 201.168 meters → factor = 201.168
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="customAliases" class="label">Aliases (optional)</label>
+              <input
+                type="text"
+                id="customAliases"
+                class="input-text"
+                placeholder="e.g., furlongs, fl"
+              />
+              <div class="input-hint">Comma-separated alternative names</div>
+            </div>
+
+            <button id="addCustomUnit" class="button button-primary">Add Custom Unit</button>
+          </div>
+
+          <!-- List of Custom Units -->
+          <div class="custom-units-list">
+            <h3 class="form-title">Your Custom Units</h3>
+            <div id="customUnitsList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Install Prompt (iOS) -->
+    <div id="installPrompt" class="install-prompt" style="display: none">
+      <div class="install-content">
+        <h3>Install App</h3>
+        <p>
+          Tap
+          <svg class="share-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
+            <path
+              d="M25 0L22 3L32 13L19 13L19 25L31 25L31 13L41 13L31 3z M5 20L5 50L45 50L45 20L35 20L35 40L15 40L15 20z"
+            />
+          </svg>
+          then "Add to Home Screen"
+        </p>
+        <button id="dismissInstall" class="dismiss-button">Dismiss</button>
+      </div>
+    </div>
+
+    <script src="converter.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
