@@ -8219,7 +8219,8 @@ COMMON MISTAKES TO AVOID:
             # Confirm deletion
             result = messagebox.askyesno(
                 "Confirm Delete",
-                f"Are you sure you want to delete this configuration file?\n\n{filename}\n\nThis action cannot be undone.",
+                f"Are you sure you want to delete this configuration file?\n\n"
+                f"{filename}\n\nThis action cannot be undone.",
             )
             if result:
                 os.remove(filepath)
@@ -8514,7 +8515,8 @@ COMMON MISTAKES TO AVOID:
         print("DEBUG: _apply_loaded_signals_internal() called")
         if not self.saved_signal_list or not self.signal_vars:
             print(
-                f"DEBUG: Early return - saved_signal_list: {bool(self.saved_signal_list)}, signal_vars: {bool(self.signal_vars)}",
+                f"DEBUG: Early return - saved_signal_list: {bool(self.saved_signal_list)}, "
+                f"signal_vars: {bool(self.signal_vars)}",
             )
             return
 
@@ -9454,7 +9456,8 @@ COMMON MISTAKES TO AVOID:
 
             messagebox.showinfo(
                 "Success",
-                f"Copied current view to Processing tab time trimming:\nDate: {date_str}\nStart: {start_time_str}\nEnd: {end_time_str}",
+                f"Copied current view to Processing tab time trimming:\n"
+                f"Date: {date_str}\nStart: {start_time_str}\nEnd: {end_time_str}",
             )
 
         except Exception as e:
@@ -9739,7 +9742,8 @@ COMMON MISTAKES TO AVOID:
 # Advanced CSV Processor & DAT Importer - Help Guide
 
 ## Overview
-This application provides comprehensive tools for processing, analyzing, and visualizing time series data from CSV files and DAT files with DBF tag files.
+This application provides comprehensive tools for processing, analyzing, and
+visualizing time series data from CSV files and DAT files with DBF tag files.
 
 ## New Features (Latest Update)
 
@@ -10883,7 +10887,10 @@ For additional support or feature requests, please refer to the application docu
                     if len(set(available_files)) > 5:
                         debug_text += f"\n... and {len(set(available_files))-5} more"
                 else:
-                    debug_text = "No data files loaded\n\nPlease:\n1. Select CSV files on Setup tab\n2. Process files or plot directly"
+                    debug_text = (
+                        "No data files loaded\n\n"
+                        "Please:\n1. Select CSV files on Setup tab\n2. Process files or plot directly"
+                    )
 
                 self.preview_ax.text(
                     0.5,
