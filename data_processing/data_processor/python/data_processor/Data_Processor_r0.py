@@ -312,7 +312,7 @@ class CSVProcessorApp(ctk.CTk):
             {}
         )  # Store processed data for plotting
         self.output_directory = os.path.expanduser("~/Documents")
-        self.signal_vars: dict[str, tk.BooleanVar] = {}
+        self.signal_vars: dict[str, dict[str, Any]] = {}
         self.plot_signal_vars: dict[str, tk.BooleanVar] = {}
         self.filter_names = [
             "None",
