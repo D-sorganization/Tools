@@ -554,7 +554,9 @@ class ToolsLauncher:
             self.root.update()
 
             # Try the integrated processor launcher
-            integrated_path = Path("data_processing/data_processor/python/data_processor/launch_integrated.py")
+            integrated_path = Path(
+                "data_processing/data_processor/python/data_processor/launch_integrated.py"
+            )
             if integrated_path.exists():
                 subprocess.Popen([sys.executable, str(integrated_path)])
                 self.status_var.set("✓ Integrated Data Processor launched")

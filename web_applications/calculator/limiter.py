@@ -1,6 +1,6 @@
 import threading
 import time
-from typing import Dict, Tuple
+
 
 class RateLimiter:
     """
@@ -21,7 +21,7 @@ class RateLimiter:
         self.limit = limit
         self.window = window
         # Storage: key -> (window_start_timestamp, count)
-        self.hits: Dict[str, Tuple[int, int]] = {}
+        self.hits: dict[str, tuple[int, int]] = {}
         self.lock = threading.Lock()
 
     def is_allowed(self, key: str) -> bool:

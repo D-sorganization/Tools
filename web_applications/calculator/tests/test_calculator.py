@@ -1,12 +1,14 @@
-import unittest
-import sympy as sp
-import sys
 import os
+import sys
+import unittest
+
+import sympy as sp
 
 # Add the parent directory to sys.path to import calculator
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from calculator import TI89Calculator, CalculatorResult
+from calculator import TI89Calculator
+
 
 class TestTI89Calculator(unittest.TestCase):
     def setUp(self):
@@ -22,7 +24,7 @@ class TestTI89Calculator(unittest.TestCase):
 
     def test_simplify(self):
         result = self.calc.simplify_expression("x + x")
-        self.assertEqual(result.result, 2 * sp.Symbol('x'))
+        self.assertEqual(result.result, 2 * sp.Symbol("x"))
 
     def test_solve_equation(self):
         result = self.calc.solve_equation("x - 5 = 0", "x")
@@ -31,11 +33,11 @@ class TestTI89Calculator(unittest.TestCase):
 
     def test_derivative(self):
         result = self.calc.derivative("x**2", "x")
-        self.assertEqual(result.result, 2 * sp.Symbol('x'))
+        self.assertEqual(result.result, 2 * sp.Symbol("x"))
 
     def test_integral_indefinite(self):
         result = self.calc.integral("2*x", "x")
-        self.assertEqual(result.result, sp.Symbol('x')**2)
+        self.assertEqual(result.result, sp.Symbol("x") ** 2)
 
     def test_integral_definite(self):
         result = self.calc.integral("2*x", "x", lower=0, upper=1)
@@ -48,9 +50,10 @@ class TestTI89Calculator(unittest.TestCase):
     def test_taylor_series(self):
         # Taylor series of e^x at x=0 order 2 is 1 + x + x^2/2
         result = self.calc.taylor_series("exp(x)", "x", 0, 2)
-        x = sp.Symbol('x')
-        expected = 1 + x + x**2/2
+        x = sp.Symbol("x")
+        expected = 1 + x + x**2 / 2
         self.assertEqual(result.result, expected)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
