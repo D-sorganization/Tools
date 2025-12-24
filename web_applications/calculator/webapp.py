@@ -6,12 +6,18 @@ from dataclasses import dataclass
 from typing import Any
 
 import sympy as sp
-from flask import Flask, current_app, jsonify, render_template, request, send_from_directory
+from flask import (
+    Flask,
+    current_app,
+    jsonify,
+    render_template,
+    request,
+    send_from_directory,
+)
 from sympy.parsing.sympy_parser import convert_xor, parse_expr, standard_transformations
 
 from .calculator import CalculatorResult, TI89Calculator
 from .limiter import RateLimiter
-
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +54,10 @@ def create_app() -> Flask:
             client_ip = request.remote_addr or "unknown"
             # Access limiter via closure over 'app'
             if not app.limiter.is_allowed(client_ip):  # type: ignore
-                return jsonify({"error": "Rate limit exceeded. Please try again later."}), 429
+                return (
+                    jsonify({"error": "Rate limit exceeded. Please try again later."}),
+                    429,
+                )
 
         payload = request.get_json(silent=True) or {}
         try:
@@ -58,7 +67,7 @@ def create_app() -> Flask:
             return jsonify(response), 200
         except ValueError as error:
             return jsonify({"error": str(error)}), 400
-        except Exception as error:  # pragma: no cover - fallback safety
+        except Exception:  # pragma: no cover - fallback safety
             logger.exception("Calculation failed")
             return jsonify({"error": "An internal error occurred."}), 500
 
@@ -86,7 +95,9 @@ def _parse_payload(raw_payload: Mapping[str, object]) -> CalculationPayload:
         raise ValueError("Expression is required")
 
     if len(expression) > MAX_INPUT_LENGTH:
-        raise ValueError(f"Expression exceeds maximum length of {MAX_INPUT_LENGTH} characters")
+        raise ValueError(
+            f"Expression exceeds maximum length of {MAX_INPUT_LENGTH} characters"
+        )
 
     variable = _clean_optional(raw_payload.get("variable"))
     _validate_length(variable, "Variable")
@@ -135,7 +146,9 @@ def _parse_payload(raw_payload: Mapping[str, object]) -> CalculationPayload:
 
 def _validate_length(value: str | None, name: str) -> None:
     if value and len(value) > MAX_INPUT_LENGTH:
-        raise ValueError(f"{name} exceeds maximum length of {MAX_INPUT_LENGTH} characters")
+        raise ValueError(
+            f"{name} exceeds maximum length of {MAX_INPUT_LENGTH} characters"
+        )
 
 
 def _dispatch_calculation(
@@ -155,9 +168,15 @@ def _dispatch_calculation(
 
     if payload.operation == "solve_system":
         if not payload.variable:
-            raise ValueError("Comma-separated variables are required for solving a system")
-        variables = [part.strip() for part in payload.variable.split(",") if part.strip()]
-        equations = [part.strip() for part in payload.expression.split(";") if part.strip()]
+            raise ValueError(
+                "Comma-separated variables are required for solving a system"
+            )
+        variables = [
+            part.strip() for part in payload.variable.split(",") if part.strip()
+        ]
+        equations = [
+            part.strip() for part in payload.expression.split(";") if part.strip()
+        ]
         if not equations or not variables:
             raise ValueError("Equations and variables are required for system solving")
         return calculator.solve_system(equations, variables)
@@ -175,7 +194,9 @@ def _dispatch_calculation(
             raise ValueError("Variable is required for integrals")
         if payload.lower is not None or payload.upper is not None:
             if payload.lower is None or payload.upper is None:
-                raise ValueError("Both lower and upper bounds are required for definite integrals")
+                raise ValueError(
+                    "Both lower and upper bounds are required for definite integrals"
+                )
             variable_symbol = sp.Symbol(payload.variable)
             lower = _sympify_value(
                 payload.lower,
@@ -221,8 +242,12 @@ def _dispatch_calculation(
 
     if payload.operation == "solve_ode":
         if not payload.function:
-            raise ValueError("Function name is required for solving differential equations")
-        return calculator.solve_differential_equation(payload.expression, payload.function)
+            raise ValueError(
+                "Function name is required for solving differential equations"
+            )
+        return calculator.solve_differential_equation(
+            payload.expression, payload.function
+        )
 
     raise ValueError("Unsupported operation requested")
 
@@ -269,7 +294,10 @@ def _normalize_variables(
 ) -> Mapping[str, sp.Expr]:
     if not variables:
         return {}
-    return {name: _sympify_value(value, calculator=calculator) for name, value in variables.items()}
+    return {
+        name: _sympify_value(value, calculator=calculator)
+        for name, value in variables.items()
+    }
 
 
 def _sympify_value(

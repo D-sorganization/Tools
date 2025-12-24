@@ -29,8 +29,8 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 from matplotlib.figure import Figure
 from scipy.interpolate import UnivariateSpline
 from scipy.io import savemat
-from scipy.signal import butter, filtfilt, medfilt
 from scipy.ndimage import gaussian_filter1d
+from scipy.signal import butter, filtfilt, medfilt
 
 # Optional Savitzky-Golay import with guard
 try:
@@ -39,69 +39,45 @@ except Exception:  # pragma: no cover - optional dependency
     _savgol_filter = None
 
 # Import vectorized filter engine
-from vectorized_filter_engine import VectorizedFilterEngine
-from high_performance_loader import HighPerformanceDataLoader, LoadingConfig
-
 # Import constants
 from constants import (
-    DEFAULT_WINDOW_WIDTH,
-    DEFAULT_WINDOW_HEIGHT,
-    DEFAULT_PADDING,
-    DEFAULT_BUTTON_HEIGHT,
-    DEFAULT_TEXT_HEIGHT,
-    DEFAULT_SEARCH_WIDTH,
-    GRID_WEIGHT_MAIN,
-    MIN_SIGNAL_DATA_POINTS,
-    MIN_PERIODS_DEFAULT,
-    DEFAULT_MA_WINDOW,
-    DEFAULT_BW_ORDER,
+    DEFAULT_ALPHA,
     DEFAULT_BW_CUTOFF,
     DEFAULT_BW_NYQUIST,
-    MIN_BUTTERWORTH_DATA_MULTIPLIER,
-    DEFAULT_MEDIAN_KERNEL,
-    MIN_KERNEL_SIZE,
-    DEFAULT_SAVGOL_WINDOW,
-    DEFAULT_SAVGOL_POLYORDER,
-    MAX_DERIVATIVE_ORDER,
-    TIME_COLUMN_KEYWORDS,
-    LARGE_SIGNAL_THRESHOLD,
-    SIGNAL_BATCH_SIZE,
-    BULK_SAMPLE_SIZE,
-    LARGE_FILE_THRESHOLD,
-    PLOT_UPDATE_DELAY_MS,
-    UI_UPDATE_DELAY_MS,
-    LAYOUT_SAVE_DELAY_MS,
-    LARGE_BATCH_SIZE,
-    SMALL_BATCH_SIZE,
-    ZOOM_OUT_FACTOR,
-    ZOOM_IN_FACTOR,
-    DEFAULT_LINE_WIDTH,
-    DEFAULT_GRID_ALPHA,
-    DEFAULT_GRID_LINESTYLE,
-    ERROR_MSG_NO_FILES,
-    ERROR_MSG_EMPTY_FILE,
-    ERROR_MSG_NO_PLOTS,
-    DEFAULT_PLOT_TITLE,
-    DEFAULT_PLOT_XLABEL,
-    DEFAULT_PLOT_YLABEL,
-    DEFAULT_LEGEND_POSITION,
-    DEFAULT_TIME_FORMAT,
-    MILLISECONDS_PER_SECOND,
-    SECONDS_PER_MINUTE,
-    SECONDS_PER_HOUR,
-    DEFAULT_START_TIME,
-    DEFAULT_END_TIME,
-    DEFAULT_ALPHA,
+    DEFAULT_BW_ORDER,
     DEFAULT_DPI,
-    DEFAULT_HAMPEL_WINDOW,
-    DEFAULT_HAMPEL_THRESHOLD,
-    DEFAULT_ZSCORE_THRESHOLD,
-    DEFAULT_ZSCORE_METHOD,
-    NORMAL_DISTRIBUTION_CONSTANT,
-    DEFAULT_GAUSSIAN_SIGMA,
+    DEFAULT_END_TIME,
     DEFAULT_GAUSSIAN_MODE,
+    DEFAULT_GAUSSIAN_SIGMA,
+    DEFAULT_HAMPEL_THRESHOLD,
+    DEFAULT_HAMPEL_WINDOW,
+    DEFAULT_MA_WINDOW,
+    DEFAULT_MEDIAN_KERNEL,
+    DEFAULT_SAVGOL_POLYORDER,
+    DEFAULT_SAVGOL_WINDOW,
+    DEFAULT_START_TIME,
+    DEFAULT_WINDOW_HEIGHT,
+    DEFAULT_WINDOW_WIDTH,
+    DEFAULT_ZSCORE_METHOD,
+    DEFAULT_ZSCORE_THRESHOLD,
     EXCEL_SHEET_NAME_MAX_LENGTH,
+    LARGE_SIGNAL_THRESHOLD,
+    LAYOUT_SAVE_DELAY_MS,
+    MAX_DERIVATIVE_ORDER,
+    MILLISECONDS_PER_SECOND,
+    MIN_BUTTERWORTH_DATA_MULTIPLIER,
+    MIN_PERIODS_DEFAULT,
+    MIN_SIGNAL_DATA_POINTS,
+    NORMAL_DISTRIBUTION_CONSTANT,
+    SECONDS_PER_HOUR,
+    SECONDS_PER_MINUTE,
+    SIGNAL_BATCH_SIZE,
+    UI_UPDATE_DELAY_MS,
+    ZOOM_IN_FACTOR,
+    ZOOM_OUT_FACTOR,
 )
+from high_performance_loader import HighPerformanceDataLoader, LoadingConfig
+from vectorized_filter_engine import VectorizedFilterEngine
 
 
 # =============================================================================
@@ -177,7 +153,7 @@ def process_single_csv_file(
         print(f"Error processing {file_path}: {e!s}")
         return None
 
- 
+
 class SimpleProgressDialog:
     """Simple progress dialog with cancellation support."""
 
@@ -1809,7 +1785,7 @@ class CSVProcessorApp(ctk.CTk):
         else:
             # Fallback to original method for small signal counts
             self.search_entry.delete(0, tk.END)
-            for signal, data in self.signal_vars.items():
+            for _signal, data in self.signal_vars.items():
                 data["widget"].grid()
 
     def _filter_integrator_signals(self, event: tk.Event | None = None) -> None:
@@ -1824,17 +1800,17 @@ class CSVProcessorApp(ctk.CTk):
     def _clear_integrator_search(self) -> None:
         """Clear integration search and show all signals."""
         self.integrator_search_entry.delete(0, tk.END)
-        for signal, data in self.integrator_signal_vars.items():
+        for _signal, data in self.integrator_signal_vars.items():
             data["widget"].pack(anchor="w", padx=5, pady=2)
 
     def _integrator_select_all(self) -> None:
         """Select all integration signals."""
-        for signal, data in self.integrator_signal_vars.items():
+        for _signal, data in self.integrator_signal_vars.items():
             data["var"].set(True)
 
     def _integrator_deselect_all(self) -> None:
         """Deselect all integration signals."""
-        for signal, data in self.integrator_signal_vars.items():
+        for _signal, data in self.integrator_signal_vars.items():
             data["var"].set(False)
 
     def _filter_deriv_signals(self, event: tk.Event | None = None) -> None:
@@ -1849,17 +1825,17 @@ class CSVProcessorApp(ctk.CTk):
     def _clear_deriv_search(self) -> None:
         """Clear differentiation search and show all signals."""
         self.deriv_search_entry.delete(0, tk.END)
-        for signal, data in self.deriv_signal_vars.items():
+        for _signal, data in self.deriv_signal_vars.items():
             data["widget"].pack(anchor="w", padx=5, pady=2)
 
     def _deriv_select_all(self) -> None:
         """Select all differentiation signals."""
-        for signal, data in self.deriv_signal_vars.items():
+        for _signal, data in self.deriv_signal_vars.items():
             data["var"].set(True)
 
     def _deriv_deselect_all(self) -> None:
         """Deselect all differentiation signals."""
-        for signal, data in self.deriv_signal_vars.items():
+        for _signal, data in self.deriv_signal_vars.items():
             data["var"].set(False)
 
     def _filter_plot_signals(self, event: tk.Event | None = None) -> None:
@@ -1931,17 +1907,17 @@ class CSVProcessorApp(ctk.CTk):
     def _plot_clear_search(self) -> None:
         """Clear plot search and show all signals."""
         self.plot_search_entry.delete(0, tk.END)
-        for signal, data in self.plot_signal_vars.items():
+        for _signal, data in self.plot_signal_vars.items():
             data["checkbox"].pack(anchor="w", padx=5, pady=2)
 
     def _plot_select_all(self) -> None:
         """Select all plot signals."""
-        for signal, data in self.plot_signal_vars.items():
+        for _signal, data in self.plot_signal_vars.items():
             data["var"].set(True)
 
     def _plot_select_none(self) -> None:
         """Deselect all plot signals."""
-        for signal, data in self.plot_signal_vars.items():
+        for _signal, data in self.plot_signal_vars.items():
             data["var"].set(False)
 
     def _show_selected_signals(self) -> None:
@@ -1969,7 +1945,7 @@ class CSVProcessorApp(ctk.CTk):
     def _clear_reference_search(self) -> None:
         """Clear reference search and show all signals."""
         self.custom_var_search_entry.delete(0, tk.END)
-        for signal, widget in self.reference_signal_widgets.items():
+        for _signal, widget in self.reference_signal_widgets.items():
             widget.pack(anchor="w", padx=5, pady=2)
 
     def _add_custom_variable(self) -> None:
@@ -3634,7 +3610,7 @@ This section helps you manage which signals (columns) to process from your files
             f"{start_index}, auto_select={auto_select}",
         )
 
-        for i, signal in enumerate(signals_batch):
+        for _i, signal in enumerate(signals_batch):
             var = tk.BooleanVar(value=auto_select)
             cb = ctk.CTkCheckBox(
                 self.signals_scrollable_frame,
@@ -6360,7 +6336,7 @@ This section helps you manage which signals (columns) to process from your files
 
         self.dragging_splitter = False
         # Reset handle color
-        for splitter_key, splitter in self.splitters.items():
+        for _splitter_key, splitter in self.splitters.items():
             if hasattr(splitter, "master") and hasattr(
                 splitter.master,
                 "winfo_children",
@@ -8150,7 +8126,7 @@ COMMON MISTAKES TO AVOID:
             config_files.sort(key=lambda x: x[2], reverse=True)
 
             # Add to listbox
-            for filename, filepath, saved_at, config_type in config_files:
+            for filename, _filepath, saved_at, config_type in config_files:
                 display_text = f"{filename} ({config_type} - {saved_at})"
                 self.config_listbox.insert(tk.END, display_text)
                 # Store the filepath as item data
@@ -10231,7 +10207,7 @@ For additional support or feature requests, please refer to the application docu
         listbox.pack(fill="both", expand=True, padx=10, pady=10)
 
         # Populate listbox
-        for i, config in enumerate(self.plots_list):
+        for _i, config in enumerate(self.plots_list):
             listbox.insert(
                 tk.END,
                 f"{config['name']} ({config.get('created_date', 'Unknown date')})",

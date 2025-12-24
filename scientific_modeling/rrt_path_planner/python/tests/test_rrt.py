@@ -1,12 +1,14 @@
-import unittest
-import numpy as np
-import sys
 import os
+import sys
+import unittest
+
+import numpy as np
 
 # Add src to path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
 
-from star_wars_rrt import RRTPlanner, Obstacle, PursuitAI, Ship
+from star_wars_rrt import Obstacle, PursuitAI, RRTPlanner, Ship
+
 
 class TestRRTPlanner(unittest.TestCase):
     def setUp(self):
@@ -27,26 +29,41 @@ class TestRRTPlanner(unittest.TestCase):
         self.assertTrue(np.linalg.norm(path[-1] - goal) < self.planner.goal_radius)
 
     def test_collision_sphere(self):
-        obstacle = Obstacle(type=0, position=np.array([0.5, 0, 0]), size=0.2, color=(1,1,1))
+        obstacle = Obstacle(
+            type=0, position=np.array([0.5, 0, 0]), size=0.2, color=(1, 1, 1)
+        )
         # Point inside
-        self.assertTrue(self.planner._check_collision(np.array([0.5, 0.1, 0]), [obstacle]))
+        self.assertTrue(
+            self.planner._check_collision(np.array([0.5, 0.1, 0]), [obstacle])
+        )
         # Point outside
-        self.assertFalse(self.planner._check_collision(np.array([0.0, 0.0, 0]), [obstacle]))
+        self.assertFalse(
+            self.planner._check_collision(np.array([0.0, 0.0, 0]), [obstacle])
+        )
 
     def test_collision_cube(self):
-        obstacle = Obstacle(type=1, position=np.array([0.5, 0, 0]), size=0.2, color=(1,1,1))
+        obstacle = Obstacle(
+            type=1, position=np.array([0.5, 0, 0]), size=0.2, color=(1, 1, 1)
+        )
         # Box extends from 0.4 to 0.6 in x, -0.1 to 0.1 in y/z
         # Point inside
-        self.assertTrue(self.planner._check_collision(np.array([0.5, 0.05, 0.05]), [obstacle]))
+        self.assertTrue(
+            self.planner._check_collision(np.array([0.5, 0.05, 0.05]), [obstacle])
+        )
         # Point outside
-        self.assertFalse(self.planner._check_collision(np.array([0.65, 0, 0]), [obstacle]))
+        self.assertFalse(
+            self.planner._check_collision(np.array([0.65, 0, 0]), [obstacle])
+        )
 
     def test_plan_path_collision_start(self):
-        obstacle = Obstacle(type=0, position=np.array([0.0, 0, 0]), size=0.2, color=(1,1,1))
+        obstacle = Obstacle(
+            type=0, position=np.array([0.0, 0, 0]), size=0.2, color=(1, 1, 1)
+        )
         start = np.array([0.0, 0.0, 0.0])
         goal = np.array([2.0, 0.0, 0.0])
         path = self.planner.plan_path(start, goal, [obstacle])
         self.assertIsNone(path)
+
 
 class TestPursuitAI(unittest.TestCase):
     def setUp(self):
@@ -54,8 +71,16 @@ class TestPursuitAI(unittest.TestCase):
         self.ai = PursuitAI(self.bounds)
 
     def test_evasion(self):
-        target = Ship(position=np.array([0.0, 0.0, 0.0]), orientation=np.eye(3), velocity=np.zeros(3))
-        pursuer = Ship(position=np.array([0.1, 0.0, 0.0]), orientation=np.eye(3), velocity=np.zeros(3))
+        target = Ship(
+            position=np.array([0.0, 0.0, 0.0]),
+            orientation=np.eye(3),
+            velocity=np.zeros(3),
+        )
+        pursuer = Ship(
+            position=np.array([0.1, 0.0, 0.0]),
+            orientation=np.eye(3),
+            velocity=np.zeros(3),
+        )
         # Within evasion radius (0.15)
         new_pos = self.ai.update_target_behavior(target, pursuer, [])
 
@@ -64,5 +89,6 @@ class TestPursuitAI(unittest.TestCase):
         # target at 0, pursuer at 0.1 (x). Evasion should be towards -x.
         self.assertTrue(direction[0] < 0)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

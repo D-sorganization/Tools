@@ -94,8 +94,7 @@ class TransferTrajectory:
                 f"({self.time_of_flight/365.25:.2f} years)"
             ),
             "Total Δv": (
-                f"{self.total_delta_v:.1f} m/s "
-                f"({self.total_delta_v/1000:.2f} km/s)"
+                f"{self.total_delta_v:.1f} m/s " f"({self.total_delta_v/1000:.2f} km/s)"
             ),
             "Phase Angle": f"{self.phase_angle:.1f}°",
             "Maneuvers": len(self.maneuvers),

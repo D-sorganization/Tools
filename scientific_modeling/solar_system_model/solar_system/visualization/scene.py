@@ -1014,17 +1014,14 @@ class SolarSystemScene:
                         bodies.append(
                             {
                                 "name": name,
-                                "selected": self.selected_body
-                                == self.planets[name],
+                                "selected": self.selected_body == self.planets[name],
                             }
                         )
 
                 content_data = {"visible": True, "bodies": bodies}
 
             # Pass to sidebar renderer (handles frame + invokes content)
-            renderer.render_sidebar(
-                self.sidebar_panel.get_render_data(), content_data
-            )
+            renderer.render_sidebar(self.sidebar_panel.get_render_data(), content_data)
 
         # 2. Unified Control Panel (Bottom)
         if self.unified_controls:

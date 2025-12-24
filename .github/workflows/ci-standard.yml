@@ -115,7 +115,6 @@ jobs:
   matlab-tests:
     needs: quality-gate
     runs-on: ubuntu-latest
-    if: false
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
@@ -129,6 +128,7 @@ jobs:
   arduino-build:
     needs: quality-gate
     runs-on: ubuntu-latest
+    if: false
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

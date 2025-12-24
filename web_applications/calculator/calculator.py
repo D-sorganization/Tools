@@ -52,7 +52,9 @@ class TI89Calculator:
             }
 
         if TI89Calculator._TRANSFORMATIONS_CACHE is None:
-            TI89Calculator._TRANSFORMATIONS_CACHE = standard_transformations + (convert_xor,)
+            TI89Calculator._TRANSFORMATIONS_CACHE = standard_transformations + (
+                convert_xor,
+            )
 
     @property
     def allowed_functions(self) -> Mapping[str, object]:
@@ -72,16 +74,24 @@ class TI89Calculator:
         cleaned_variables = variables or {}
         expression_symbols = self._build_symbol_map(cleaned_variables.keys())
         parsed_expression = self._parse_expression(expression, expression_symbols)
-        substitutions = {expression_symbols[key]: value for key, value in cleaned_variables.items()}
+        substitutions = {
+            expression_symbols[key]: value for key, value in cleaned_variables.items()
+        }
         substituted = (
             parsed_expression.subs(substitutions)
             if hasattr(parsed_expression, "subs")
             else parsed_expression
         )
-        simplified = sp.simplify(substituted) if isinstance(substituted, sp.Basic) else substituted
+        simplified = (
+            sp.simplify(substituted)
+            if isinstance(substituted, sp.Basic)
+            else substituted
+        )
         return CalculatorResult(expression, simplified)
 
-    def matrix_exponential(self, matrix: Iterable[Iterable[object]]) -> CalculatorResult:
+    def matrix_exponential(
+        self, matrix: Iterable[Iterable[object]]
+    ) -> CalculatorResult:
         """Compute the matrix exponential for a square matrix."""
 
         result = self._matrix_exp(matrix)
@@ -112,22 +122,30 @@ class TI89Calculator:
         solutions = sp.solve(equation_object, target_symbol)
         return CalculatorResult(equation, sp.Tuple(*solutions))
 
-    def solve_system(self, equations: Sequence[str], variables: Sequence[str]) -> CalculatorResult:
+    def solve_system(
+        self, equations: Sequence[str], variables: Sequence[str]
+    ) -> CalculatorResult:
         """Solve a system of equations for the provided variables."""
 
         symbol_map = self._build_symbol_map(variables)
-        parsed_equations = [self._parse_equation(equation, symbol_map) for equation in equations]
+        parsed_equations = [
+            self._parse_equation(equation, symbol_map) for equation in equations
+        ]
         solution_symbols = [symbol_map[variable] for variable in variables]
         solutions = sp.solve(parsed_equations, solution_symbols, dict=True)
         return CalculatorResult("; ".join(equations), tuple(solutions))
 
-    def derivative(self, expression: str, variable: str, order: int = 1) -> CalculatorResult:
+    def derivative(
+        self, expression: str, variable: str, order: int = 1
+    ) -> CalculatorResult:
         """Compute the symbolic derivative of an expression with respect to a variable."""
 
         if order <= 0:
             raise ValueError("Derivative order must be a positive integer")
         variable_symbol = sp.Symbol(variable)
-        parsed_expression = self._parse_expression(expression, {variable: variable_symbol})
+        parsed_expression = self._parse_expression(
+            expression, {variable: variable_symbol}
+        )
         derivative_expression = sp.diff(parsed_expression, variable_symbol, order)
         return CalculatorResult(expression, sp.simplify(derivative_expression))
 
@@ -141,7 +159,9 @@ class TI89Calculator:
         """Compute definite or indefinite integrals."""
 
         variable_symbol = sp.Symbol(variable)
-        parsed_expression = self._parse_expression(expression, {variable: variable_symbol})
+        parsed_expression = self._parse_expression(
+            expression, {variable: variable_symbol}
+        )
         if lower is None and upper is None:
             result = sp.integrate(parsed_expression, variable_symbol)
         elif lower is not None and upper is not None:
@@ -161,8 +181,12 @@ class TI89Calculator:
 
         direction_token = self._normalize_limit_direction(direction)
         variable_symbol = sp.Symbol(variable)
-        parsed_expression = self._parse_expression(expression, {variable: variable_symbol})
-        result = sp.limit(parsed_expression, variable_symbol, value, dir=direction_token)
+        parsed_expression = self._parse_expression(
+            expression, {variable: variable_symbol}
+        )
+        result = sp.limit(
+            parsed_expression, variable_symbol, value, dir=direction_token
+        )
         return CalculatorResult(expression, result)
 
     def taylor_series(
@@ -173,12 +197,18 @@ class TI89Calculator:
         if order <= 0:
             raise ValueError("Series order must be a positive integer")
         variable_symbol = sp.Symbol(variable)
-        parsed_expression = self._parse_expression(expression, {variable: variable_symbol})
-        series_expansion = sp.series(parsed_expression, variable_symbol, around, order + 1)
+        parsed_expression = self._parse_expression(
+            expression, {variable: variable_symbol}
+        )
+        series_expansion = sp.series(
+            parsed_expression, variable_symbol, around, order + 1
+        )
         truncated = sp.simplify(series_expansion.removeO())
         return CalculatorResult(expression, truncated)
 
-    def solve_differential_equation(self, equation: str, function: str) -> CalculatorResult:
+    def solve_differential_equation(
+        self, equation: str, function: str
+    ) -> CalculatorResult:
         """Solve an ordinary differential equation for the specified function."""
 
         function_symbol = sp.Function(function)
@@ -213,7 +243,9 @@ class TI89Calculator:
             evaluate=True,
         )
 
-    def _parse_equation(self, equation: str, symbols: Mapping[str, sp.Symbol | sp.Expr]) -> sp.Eq:
+    def _parse_equation(
+        self, equation: str, symbols: Mapping[str, sp.Symbol | sp.Expr]
+    ) -> sp.Eq:
         if "=" in equation:
             lhs, rhs = equation.split("=", maxsplit=1)
         else:
@@ -290,10 +322,14 @@ class TI89Calculator:
     def _matrix_log(self, matrix: Iterable[Iterable[object]]) -> sp.Matrix:
         return sp.Matrix(matrix).log()
 
-    def _matrix_power(self, matrix: Iterable[Iterable[object]], power: object) -> sp.Matrix:
+    def _matrix_power(
+        self, matrix: Iterable[Iterable[object]], power: object
+    ) -> sp.Matrix:
         return sp.Matrix(matrix) ** sp.sympify(power)
 
-    def _twist_exponential(self, screw: Iterable[object], theta: object = 1) -> sp.Matrix:
+    def _twist_exponential(
+        self, screw: Iterable[object], theta: object = 1
+    ) -> sp.Matrix:
         hat_matrix = self._se3_hat(screw)
         return sp.exp(hat_matrix * sp.sympify(theta))
 
@@ -356,7 +392,9 @@ class TI89Calculator:
             "round": lambda value, ndigits=0: round(value, ndigits),
             "cis": lambda theta: sp.exp(sp.I * theta),
             "rect": lambda radius, theta: radius * sp.exp(sp.I * theta),
-            "polar": lambda complex_value: sp.Tuple(sp.Abs(complex_value), sp.arg(complex_value)),
+            "polar": lambda complex_value: sp.Tuple(
+                sp.Abs(complex_value), sp.arg(complex_value)
+            ),
             "gcd": sp.gcd,
             "lcm": sp.lcm,
             "factor": sp.factor,
@@ -375,8 +413,12 @@ class TI89Calculator:
             "sum": sp.summation,
             "product": sp.product,
             "Matrix": sp.Matrix,
-            "dot": lambda vector_a, vector_b: sp.Matrix(vector_a).dot(sp.Matrix(vector_b)),
-            "cross": lambda vector_a, vector_b: sp.Matrix(vector_a).cross(sp.Matrix(vector_b)),
+            "dot": lambda vector_a, vector_b: sp.Matrix(vector_a).dot(
+                sp.Matrix(vector_b)
+            ),
+            "cross": lambda vector_a, vector_b: sp.Matrix(vector_a).cross(
+                sp.Matrix(vector_b)
+            ),
             "det": lambda matrix: sp.Matrix(matrix).det(),
             "transpose": lambda matrix: sp.Matrix(matrix).T,
             "inv": lambda matrix: sp.Matrix(matrix).inv(),
@@ -406,7 +448,9 @@ class TI89Calculator:
             "qr": lambda matrix: sp.Matrix(matrix).QRdecomposition(),
             "lu": lambda matrix: sp.Matrix(matrix).LUdecomposition(),
             "svd": lambda matrix: sp.Matrix(matrix).SVD(),
-            "solve_linear": lambda matrix, rhs: sp.Matrix(matrix).LUsolve(sp.Matrix(rhs)),
+            "solve_linear": lambda matrix, rhs: sp.Matrix(matrix).LUsolve(
+                sp.Matrix(rhs)
+            ),
             "linsolve": sp.linsolve,
             "hat": self._hat,
             "vee": self._vee,

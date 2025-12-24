@@ -18,7 +18,9 @@ def test_default_tasks_initialized(checklist_panel: ImmersionChecklistPanel) -> 
     assert all("title" in task for task in data["tasks"])
 
 
-def test_mark_complete_updates_progress(checklist_panel: ImmersionChecklistPanel) -> None:
+def test_mark_complete_updates_progress(
+    checklist_panel: ImmersionChecklistPanel,
+) -> None:
     checklist_panel.mark_complete("select_body")
     checklist_panel.mark_complete("plan_transfer")
     completed, total = checklist_panel.get_progress()

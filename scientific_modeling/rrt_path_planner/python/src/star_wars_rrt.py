@@ -11,9 +11,33 @@ from dataclasses import dataclass
 import numpy as np
 import pygame
 import trimesh
-from OpenGL.GL import *
-from OpenGL.GLU import *
-from pygame.locals import *
+from OpenGL.GL import (
+    GL_COLOR_BUFFER_BIT,
+    GL_COLOR_MATERIAL,
+    GL_DEPTH_BUFFER_BIT,
+    GL_DEPTH_TEST,
+    GL_LIGHT0,
+    GL_LIGHTING,
+    GL_LINE_STRIP,
+    GL_POINTS,
+    GL_QUADS,
+    GL_TRIANGLES,
+    glBegin,
+    glClear,
+    glColor3f,
+    glDisable,
+    glEnable,
+    glEnd,
+    glLineWidth,
+    glLoadIdentity,
+    glPointSize,
+    glPopMatrix,
+    glPushMatrix,
+    glTranslatef,
+    glVertex3f,
+)
+from OpenGL.GLU import gluDeleteQuadric, gluLookAt, gluNewQuadric, gluSphere
+from pygame.locals import DOUBLEBUF, K_ESCAPE, K_SPACE, KEYDOWN, OPENGL, QUIT, K_c
 
 
 @dataclass
@@ -504,7 +528,9 @@ class StarWarsRRTApp:
             target = self.ships[1]
 
             # Update target behavior
-            new_target_pos = self.pursuit_ai.update_target_behavior(target, pursuer, self.obstacles)
+            new_target_pos = self.pursuit_ai.update_target_behavior(
+                target, pursuer, self.obstacles
+            )
             target.position = new_target_pos
 
             # Update pursuer (simple direct movement for now)
@@ -522,7 +548,9 @@ class StarWarsRRTApp:
 
 def main() -> None:
     """Main entry point"""
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+    )
     app = StarWarsRRTApp()
     app.setup_scenario("single")
     app.run()
