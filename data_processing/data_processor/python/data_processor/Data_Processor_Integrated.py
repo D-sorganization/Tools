@@ -201,7 +201,7 @@ class DataReader:
                 raise ValueError(f"Unsupported format: {format_type}")
 
         except Exception as e:
-            raise Exception(f"Error reading {file_path}: {str(e)}")
+            raise Exception(f"Error reading {file_path}: {str(e)}") from e
 
 
 class DataWriter:
@@ -257,7 +257,7 @@ class DataWriter:
                 raise ValueError(f"Unsupported format: {format_type}")
 
         except Exception as e:
-            raise Exception(f"Error writing {file_path}: {str(e)}")
+            raise Exception(f"Error writing {file_path}: {str(e)}") from e
 
 
 # =============================================================================
@@ -1495,7 +1495,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             self.after(0, lambda: self.folder_run_button.configure(state="normal"))
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))
 
-        except Exception as e:
+        except Exception:
             self.after(0, lambda: self.folder_status_var.set(f"Error: {str(e)}"))
             self.after(0, lambda: self.folder_run_button.configure(state="normal"))
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))
@@ -1588,7 +1588,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
             self.after(0, lambda: self.folder_status_var.set(status))
 
-        except Exception as e:
+        except Exception:
             self.after(0, lambda: self.folder_status_var.set(f"Error: {str(e)}"))
 
     def _folder_flatten_operation(self):
