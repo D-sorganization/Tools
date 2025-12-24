@@ -1792,7 +1792,7 @@ class CSVProcessorApp(ctk.CTk):
         """Filter integration signals based on search text."""
         search_text = self.integrator_search_entry.get().lower()
         for signal, data in self.integrator_signal_vars.items():
-            if search_text in _signal.lower():
+            if search_text in signal.lower():
                 data["widget"].pack(anchor="w", padx=5, pady=2)
             else:
                 data["widget"].pack_forget()
@@ -1817,7 +1817,7 @@ class CSVProcessorApp(ctk.CTk):
         """Filter differentiation signals based on search text."""
         search_text = self.deriv_search_entry.get().lower()
         for signal, data in self.deriv_signal_vars.items():
-            if search_text in _signal.lower():
+            if search_text in signal.lower():
                 data["widget"].pack(anchor="w", padx=5, pady=2)
             else:
                 data["widget"].pack_forget()
@@ -1937,7 +1937,7 @@ class CSVProcessorApp(ctk.CTk):
         """Filter reference signals for custom variables."""
         search_text = self.custom_var_search_entry.get().lower()
         for signal, widget in self.reference_signal_widgets.items():
-            if search_text in _signal.lower():
+            if search_text in signal.lower():
                 widget.pack(anchor="w", padx=5, pady=2)
             else:
                 widget.pack_forget()
