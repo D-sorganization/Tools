@@ -269,7 +269,10 @@ class CSVProcessorApp(ctk.CTk):
     """The main application class with all advanced features and UI fixes."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initialize the CSV Processor application with all UI components and state variables."""
+        """
+        Initialize the CSV Processor application with all UI components
+        and state variables.
+        """
         super().__init__(*args, **kwargs)
 
         # Layout persistence variables
@@ -393,7 +396,9 @@ class CSVProcessorApp(ctk.CTk):
         self._load_plots_from_file()
 
     def create_setup_and_process_tab(self, parent_tab: ctk.CTkFrame) -> None:
-        """Fixed version with proper splitter implementation and all advanced features."""
+        """
+        Fixed version with proper splitter implementation and all advanced features.
+        """
         parent_tab.grid_columnconfigure(0, weight=1)
         parent_tab.grid_rowconfigure(0, weight=1)
 
@@ -3606,7 +3611,8 @@ This section helps you manage which signals (columns) to process from your files
     ) -> None:
         """Display a batch of signals in the scrollable frame."""
         print(
-            f"DEBUG: Displaying batch of {len(signals_batch)} signals starting at index "
+            f"DEBUG: Displaying batch of
+            {len(signals_batch)} signals starting at index "
             f"{start_index}, auto_select={auto_select}",
         )
 
@@ -3626,7 +3632,8 @@ This section helps you manage which signals (columns) to process from your files
     def _load_more_signals(self, all_signals: list[str], current_count: int) -> None:
         """Load more signals when the Load More button is clicked."""
         print(
-            f"DEBUG: Loading more signals, currently showing {current_count} of {len(all_signals)}",
+            f"DEBUG: Loading more signals, currently showing {current_count} of
+            {len(all_signals)}",
         )
 
         # Calculate how many more to load (use 200 as batch size)
@@ -8550,7 +8557,8 @@ COMMON MISTAKES TO AVOID:
     def apply_saved_signals(self) -> None:
         """Apply the saved signal list to the current file's signals.
 
-        This function takes a previously saved signal list and applies it to the currently loaded files.
+        This function takes a previously saved signal list and
+        applies it to the currently loaded files.
         It will:
         1. Select all signals that are present in both the saved list and current files
         2. Deselect all signals that are not in the saved list
@@ -9411,7 +9419,8 @@ COMMON MISTAKES TO AVOID:
     def _copy_current_view_to_processing(self) -> None:
         """Copy current plot view range to processing tab time trimming."""
         try:
-            # This is essentially the same as _copy_plot_range_to_trim but with a different message
+            # This is essentially the same as _copy_plot_range_to_trim but with
+            # a different message
             if not hasattr(self, "plot_ax") or not self.plot_ax.lines:
                 messagebox.showwarning(
                     "Warning",

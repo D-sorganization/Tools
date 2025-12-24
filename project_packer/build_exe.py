@@ -147,6 +147,7 @@ def main():
     # Check if Pillow is installed (for icon conversion)
     try:
         import importlib.util
+
         if importlib.util.find_spec("PIL") is None:
             raise ImportError
     except ImportError:
