@@ -1513,7 +1513,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for root, _dirs, files in os.walk(src):
+                for _root, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
@@ -1605,7 +1605,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for root, _dirs, files in os.walk(src):
+                for _root, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
@@ -1691,7 +1691,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for root, _dirs, files in os.walk(src):
+                for _root, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
@@ -1786,7 +1786,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for root, _dirs, files in os.walk(src):
+                for _root, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
@@ -1820,7 +1820,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                                 os.path.join(root, filename)
                             )
 
-                    for base_name, file_list in files_by_base_name.items():
+                    for _base_name, file_list in files_by_base_name.items():
                         if len(file_list) > 1:
                             try:
                                 # Keep the newest file
@@ -1876,7 +1876,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for root, _dirs, files in os.walk(src):
+                for _root, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
