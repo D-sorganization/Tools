@@ -1,0 +1,29 @@
+# Core scientific computing libraries
+# NumPy 2.1.0+ dropped support for Python 3.9 (requires Python >=3.10)
+# See: https://numpy.org/devdocs/release/2.1.0-notes.html#python-3-9-support-dropped
+# Constraint can be relaxed when Python 3.9 support is no longer required
+numpy>=2.0.0,<2.1.0
+pandas==2.2.3
+matplotlib==3.9.1
+# SciPy 1.14.0+ requires Python >=3.10 (latest for Python 3.9 is 1.13.1)
+# See: https://scipy.github.io/devdocs/dev/toolchain.html#python-version-support
+# Constraint can be relaxed when Python 3.9 support is no longer required
+scipy>=1.13.0,<1.14.0
+
+# Testing and development
+pytest==8.2.1
+pytest-cov==5.0.0
+pytest-mock==3.14.0
+
+# Code quality and formatting
+ruff==0.5.0
+black==24.4.2
+mypy==1.10.0
+pre-commit==4.0.0
+
+# Configuration and utilities
+pyyaml==6.0.1
+pathlib2==2.3.7
+
+# Type stubs for better type checking
+types-PyYAML==6.0.12.12

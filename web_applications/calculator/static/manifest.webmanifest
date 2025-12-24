@@ -1,0 +1,10 @@
+{
+  "name": "TI-89 Inspired Calculator",
+  "short_name": "TI-89",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1f2933",
+  "theme_color": "#0da6c2",
+  "description": "Offline-ready TI-89 style calculator for algebra and calculus.",
+  "icons": []
+}

@@ -6,6 +6,8 @@ Handles keyboard and mouse input for the simulation.
 Provides a clean interface between raw input events and simulation actions.
 """
 
+from __future__ import annotations
+
 from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
@@ -121,13 +123,16 @@ class InputHandler:
         self.mouse_state = MouseState()
         self._action_callbacks: dict[InputAction, list[Callable[..., Any]]] = {}
         self._key_bindings: list[KeyBinding] = []
-        self._last_mouse_pos = (0, 0)
+        self._last_mouse_pos: tuple[int, int] = (0, 0)
 
         # Set up default bindings
         self._setup_default_bindings()
 
     def _setup_default_bindings(self) -> None:
         """Set up default keyboard bindings."""
+        if not PYGAME_AVAILABLE:
+            return
+
         default_bindings = [
             KeyBinding(K_ESCAPE, InputAction.QUIT, description="Quit"),
             KeyBinding(K_SPACE, InputAction.PAUSE, description="Pause/Resume"),
@@ -298,6 +303,9 @@ class InputHandler:
             List of (key_name, description) tuples
         """
         result = []
+
+        if not PYGAME_AVAILABLE:
+            return []
 
         for binding in self._key_bindings:
             if binding.description:

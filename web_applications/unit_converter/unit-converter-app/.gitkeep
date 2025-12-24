@@ -1,0 +1,5 @@
+# Placeholder for icons
+# Generate icon-192.png and icon-512.png from icon.svg using:
+# - ImageMagick: convert icon.svg -resize 192x192 icon-192.png
+# - Online: https://realfavicongenerator.net/
+# - Or use any image editor to export SVG to PNG

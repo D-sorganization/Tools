@@ -1,0 +1,43 @@
+{
+  "name": "golf-swing-analyzer",
+  "version": "0.1.0",
+  "description": "Advanced AI-powered golf swing video analysis platform",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "services/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "clean": "turbo run clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "eslint": "^8.54.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.1.0",
+    "turbo": "^1.10.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "."
+  },
+  "keywords": [
+    "golf",
+    "swing-analysis",
+    "video-analysis",
+    "computer-vision",
+    "pose-detection"
+  ],
+  "author": "",
+  "license": "MIT"
+}

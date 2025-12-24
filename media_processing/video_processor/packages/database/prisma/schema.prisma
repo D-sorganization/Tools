@@ -1,0 +1,261 @@
+// This is your Prisma schema file for the golf swing video analyzer
+// Learn more about Prisma: https://prisma.io/docs
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String
+  avatar        String?
+  role          Role      @default(COACH)
+
+  // Relationships
+  projects      Project[]
+  sharedProjects ProjectShare[]
+
+  // Timestamps
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastLoginAt   DateTime?
+
+  @@index([email])
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+
+  // Ownership
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Content
+  videos      Video[]
+  shares      ProjectShare[]
+
+  // Settings
+  settings    Json     @default("{}")
+
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Video {
+  id              String   @id @default(cuid())
+
+  // Project relationship
+  projectId       String
+  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  // File information
+  originalUrl     String   // S3/R2 URL
+  processedUrl    String?  // Processed version URL
+  thumbnailUrl    String?
+  filename        String
+  mimeType        String
+  size            Int      // Bytes
+
+  // Video metadata
+  duration        Float    // Seconds
+  width           Int      // Pixels
+  height          Int      // Pixels
+  fps             Float    // Frames per second
+  codec           String?
+
+  // Content
+  annotations     Annotation[]
+  audioTracks     AudioTrack[]
+  segments        VideoSegment[]
+  aiAnalysis      AiAnalysis?
+
+  // Processing status
+  processingStatus ProcessingStatus @default(PENDING)
+  processingError String?
+
+  // Timestamps
+  uploadedAt      DateTime @default(now())
+  processedAt     DateTime?
+
+  @@index([projectId])
+}
+
+model Annotation {
+  id          String          @id @default(cuid())
+
+  // Video relationship
+  videoId     String
+  video       Video           @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  // Annotation details
+  type        AnnotationType
+  data        Json            // Type-specific data
+
+  // Timing
+  startFrame  Int
+  endFrame    Int?            // Null for single-frame annotations
+
+  // Appearance
+  style       Json            @default("{}")
+
+  // Metadata
+  createdBy   String?         // User ID
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([videoId, startFrame])
+}
+
+model AudioTrack {
+  id          String   @id @default(cuid())
+
+  // Video relationship
+  videoId     String
+  video       Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  // Audio file
+  url         String   // S3/R2 URL
+  filename    String
+  mimeType    String
+  size        Int
+  duration    Float
+
+  // Timing
+  startTime   Float    @default(0) // Seconds into video
+
+  // Metadata
+  recordedBy  String?  // User ID
+  recordedAt  DateTime @default(now())
+
+  @@index([videoId])
+}
+
+model VideoSegment {
+  id          String       @id @default(cuid())
+
+  // Video relationship
+  videoId     String
+  video       Video        @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  // Segment definition
+  type        SegmentType
+  name        String?
+  startTime   Float        // Seconds
+  endTime     Float        // Seconds
+
+  // AI-detected or manual
+  isAiGenerated Boolean   @default(false)
+  confidence    Float?     // For AI-generated segments
+
+  // Metadata
+  createdAt   DateTime    @default(now())
+
+  @@index([videoId])
+}
+
+model AiAnalysis {
+  id              String   @id @default(cuid())
+
+  // Video relationship (one-to-one)
+  videoId         String   @unique
+  video           Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  // Analysis data
+  poseData        Json     // Array of poses per frame
+  pendulumModel   Json?    // Fitted pendulum parameters (from MATLAB or TypeScript)
+  trackingData    Json?    // Feature tracking results
+  swingEvents     Json?    // Detected swing events
+
+  // Processing metadata
+  modelVersions   Json     // Track which models were used
+  processingTime  Float    // Seconds
+  confidence      Float?   // Overall confidence score
+
+  // MATLAB integration
+  matlabResults   Json?    // Results from MATLAB models
+
+  // Timestamps
+  analyzedAt      DateTime @default(now())
+}
+
+model ProjectShare {
+  id          String       @id @default(cuid())
+
+  // Relationships
+  projectId   String
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  userId      String?      // Null for public links
+  user        User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Access control
+  permission  Permission   @default(VIEW)
+  shareToken  String       @unique @default(cuid())
+
+  // Expiration
+  expiresAt   DateTime?
+
+  // Usage tracking
+  accessCount Int          @default(0)
+  lastAccessedAt DateTime?
+
+  // Timestamps
+  createdAt   DateTime     @default(now())
+
+  @@index([projectId])
+  @@index([shareToken])
+}
+
+// Enums
+enum Role {
+  COACH
+  STUDENT
+  ADMIN
+}
+
+enum ProcessingStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum AnnotationType {
+  LINE
+  ARROW
+  CIRCLE
+  RECTANGLE
+  FREEHAND
+  TEXT
+  PLANE_3D
+  POINT
+}
+
+enum SegmentType {
+  ADDRESS
+  BACKSWING
+  TOP_OF_BACKSWING
+  DOWNSWING
+  IMPACT
+  FOLLOW_THROUGH
+  FINISH
+  CUSTOM
+}
+
+enum Permission {
+  VIEW
+  COMMENT
+  EDIT
+  ADMIN
+}

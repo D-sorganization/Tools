@@ -1,0 +1,105 @@
+# Star Wars RRT Path Planner - Git Ignore
+
+# MATLAB files
+*.asv
+*.autosave
+*.mex*
+*.fig
+*.slxc
+
+# Generated obstacle data files (build artifacts)
+matlab/src/velocities.mat
+matlab/src/angular_velocities.mat
+**/src/velocities.mat
+**/src/angular_velocities.mat
+*.slxp
+*.mlapp
+*.mlpkginstall
+*.mltbx
+*.mlappinstall
+*.mlappinstall
+
+# Python files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.out
+
+# Large data files
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
+*.mkv
+*.webm
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Documentation builds
+docs/_build/
+docs/build/
+
+# Test coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Jupyter notebooks
+.ipynb_checkpoints
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

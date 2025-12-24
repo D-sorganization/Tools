@@ -1,0 +1,32 @@
+# Star Wars RRT Path Planner - Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# Core scientific computing
+numpy>=1.21.0
+scipy>=1.7.0
+
+# 3D graphics and rendering
+pygame>=2.1.0
+PyOpenGL>=3.1.0
+PyOpenGL-accelerate>=3.1.0
+
+# 3D mesh handling
+trimesh>=3.9.0
+numpy-stl>=2.16.0
+
+# Optional: GUI enhancements
+tkinter  # Usually comes with Python
+PyQt5>=5.15.0  # For advanced GUI (optional)
+
+# Optional: Performance improvements
+numba>=0.56.0  # JIT compilation for speed
+cupy>=10.0.0   # GPU acceleration (if CUDA available)
+
+# Optional: Additional visualization
+matplotlib>=3.5.0  # For plotting and analysis
+plotly>=5.0.0      # For interactive 3D plots
+
+# Development tools (optional)
+pytest>=6.0.0      # For testing
+black>=22.0.0      # Code formatting
+flake8>=4.0.0      # Code linting 
