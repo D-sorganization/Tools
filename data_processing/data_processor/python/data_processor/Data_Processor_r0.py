@@ -269,7 +269,9 @@ class CSVProcessorApp(ctk.CTk):
     """The main application class with all advanced features and UI fixes."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initialize the CSV Processor application with all UI components and state variables."""
+        """
+        Initialize the CSV Processor application with all UI components and state variables.
+        """
         super().__init__(*args, **kwargs)
 
         # Layout persistence variables
@@ -393,7 +395,9 @@ class CSVProcessorApp(ctk.CTk):
         self._load_plots_from_file()
 
     def create_setup_and_process_tab(self, parent_tab: ctk.CTkFrame) -> None:
-        """Fixed version with proper splitter implementation and all advanced features."""
+        """
+        Fixed version with proper splitter implementation and all advanced features.
+        """
         parent_tab.grid_columnconfigure(0, weight=1)
         parent_tab.grid_rowconfigure(0, weight=1)
 

@@ -3,11 +3,13 @@
 #
 # Description:
 # A comprehensive GUI application for processing, analyzing, and visualizing
-# time series data from CSV files. This version integrates the compiler converter
-# functionality as an additional tab, along with a parquet file analyzer popup.
+# time series data from CSV files. This version integrates the compiler
+# converter functionality as an additional tab, along with a parquet file
+# analyzer popup.
 #
 # Dependencies for Python 3.8+:
-# pip install customtkinter pandas numpy scipy matplotlib openpyxl Pillow simpledbf pyarrow tables feather-format
+# pip install customtkinter pandas numpy scipy matplotlib openpyxl Pillow
+# simpledbf pyarrow tables feather-format
 #
 # =============================================================================
 
