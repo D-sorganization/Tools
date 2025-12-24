@@ -38,7 +38,8 @@ def test_symbolic_derivative_and_integral() -> None:
     derivative = calculator.derivative("sin(x) * exp(x)", "x").result
     assert (
         sp.simplify(
-            derivative - sp.exp(sp.Symbol("x")) * (sp.sin(sp.Symbol("x")) + sp.cos(sp.Symbol("x")))
+            derivative
+            - sp.exp(sp.Symbol("x")) * (sp.sin(sp.Symbol("x")) + sp.cos(sp.Symbol("x")))
         )
         == 0
     )
@@ -59,12 +60,16 @@ def test_definite_integral_and_limit() -> None:
 def test_taylor_series_and_differential_equation_solution() -> None:
     calculator = TI89Calculator()
     taylor = calculator.taylor_series("sin(x)", "x", 0, order=5).result
-    assert taylor == sp.Symbol("x") - sp.Symbol("x") ** 3 / 6 + sp.Symbol("x") ** 5 / 120
+    assert (
+        taylor == sp.Symbol("x") - sp.Symbol("x") ** 3 / 6 + sp.Symbol("x") ** 5 / 120
+    )
 
     ode_solution = calculator.solve_differential_equation(
         "Derivative(f(x), x) + f(x)", "f"
     ).result
-    assert sp.simplify(ode_solution.rhs - sp.exp(-sp.Symbol("x")) * sp.Symbol("C1")) == 0
+    assert (
+        sp.simplify(ode_solution.rhs - sp.exp(-sp.Symbol("x")) * sp.Symbol("C1")) == 0
+    )
 
 
 def test_complex_and_matrix_support() -> None:
@@ -155,7 +160,9 @@ def test_eigentools_and_linear_algebra_extensions() -> None:
     qr_decomposition = calculator.evaluate("qr([[1, 0], [0, 1]])").result
     assert qr_decomposition == (sp.eye(2), sp.eye(2))
 
-    linear_solution = calculator.evaluate("solve_linear([[2, 0], [0, 3]], [4, 6])").result
+    linear_solution = calculator.evaluate(
+        "solve_linear([[2, 0], [0, 3]], [4, 6])"
+    ).result
     assert linear_solution == sp.Matrix([2, 2])
 
     linear_set = calculator.evaluate(
