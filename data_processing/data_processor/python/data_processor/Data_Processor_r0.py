@@ -1771,8 +1771,8 @@ class CSVProcessorApp(ctk.CTk):
         else:
             # Fallback to original method for small signal counts
             search_text = self.search_entry.get().lower()
-            for signal, data in self.signal_vars.items():
-                if search_text in signal.lower():
+            for _signal, data in self.signal_vars.items():
+                if search_text in _signal.lower():
                     data["widget"].grid()
                 else:
                     data["widget"].grid_remove()
@@ -1792,7 +1792,7 @@ class CSVProcessorApp(ctk.CTk):
         """Filter integration signals based on search text."""
         search_text = self.integrator_search_entry.get().lower()
         for signal, data in self.integrator_signal_vars.items():
-            if search_text in signal.lower():
+            if search_text in _signal.lower():
                 data["widget"].pack(anchor="w", padx=5, pady=2)
             else:
                 data["widget"].pack_forget()
@@ -1817,7 +1817,7 @@ class CSVProcessorApp(ctk.CTk):
         """Filter differentiation signals based on search text."""
         search_text = self.deriv_search_entry.get().lower()
         for signal, data in self.deriv_signal_vars.items():
-            if search_text in signal.lower():
+            if search_text in _signal.lower():
                 data["widget"].pack(anchor="w", padx=5, pady=2)
             else:
                 data["widget"].pack_forget()
@@ -1937,7 +1937,7 @@ class CSVProcessorApp(ctk.CTk):
         """Filter reference signals for custom variables."""
         search_text = self.custom_var_search_entry.get().lower()
         for signal, widget in self.reference_signal_widgets.items():
-            if search_text in signal.lower():
+            if search_text in _signal.lower():
                 widget.pack(anchor="w", padx=5, pady=2)
             else:
                 widget.pack_forget()
@@ -3703,7 +3703,7 @@ This section helps you manage which signals (columns) to process from your files
             print(f"DEBUG: Selected all {len(self.all_signals)} signals")
         else:
             # Fallback for small signal counts
-            for signal, data in self.signal_vars.items():
+            for _signal, data in self.signal_vars.items():
                 data["var"].set(True)
 
     def deselect_all(self) -> None:
@@ -3716,7 +3716,7 @@ This section helps you manage which signals (columns) to process from your files
             print(f"DEBUG: Deselected all {len(self.all_signals)} signals")
         else:
             # Fallback for small signal counts
-            for signal, data in self.signal_vars.items():
+            for _signal, data in self.signal_vars.items():
                 data["var"].set(False)
 
     def process_files(self) -> None:
@@ -8533,8 +8533,8 @@ COMMON MISTAKES TO AVOID:
 
         # Apply the saved signals (select present ones, deselect others)
         print("DEBUG: Applying signal selections")
-        for signal, data in self.signal_vars.items():
-            if signal in present_signals:
+        for _signal, data in self.signal_vars.items():
+            if _signal in present_signals:
                 data["var"].set(True)
             else:
                 data["var"].set(False)
@@ -8584,8 +8584,8 @@ COMMON MISTAKES TO AVOID:
                 missing_signals.append(saved_signal)
 
         # Apply the saved signals (select present ones, deselect others)
-        for signal, data in self.signal_vars.items():
-            if signal in present_signals:
+        for _signal, data in self.signal_vars.items():
+            if _signal in present_signals:
                 data["var"].set(True)
             else:
                 data["var"].set(False)
