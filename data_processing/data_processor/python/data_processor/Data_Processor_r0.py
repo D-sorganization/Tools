@@ -4826,7 +4826,8 @@ This section helps you manage which signals (columns) to process from your files
     def _combine_multiple_files(
         self, processed_files: dict[str, pd.DataFrame]
     ) -> pd.DataFrame:
-        """Combine multiple processed files into a single dataset for time series data."""
+        """Combine multiple processed files into a single dataset
+        for time series data."""
         if not processed_files or len(processed_files) <= 1:
             return processed_files
 
@@ -4867,7 +4868,8 @@ This section helps you manage which signals (columns) to process from your files
 
         print(f"Combined dataset shape: {combined_df.shape}")
         print(
-            f"Time range: {combined_df[time_col].min()} to {combined_df[time_col].max()}",
+            f"Time range: {combined_df[time_col].min()} to "
+            f"{combined_df[time_col].max()}",
         )
         print(f"Files included: {[os.path.basename(fp) for fp, _, _ in sorted_files]}")
 
@@ -6919,7 +6921,8 @@ This section helps you manage which signals (columns) to process from your files
                     if col in df.columns:
                         if _savgol_filter is None:
                             raise RuntimeError(
-                                "scipy.signal.savgol_filter unavailable. Install SciPy or skip smoothing.",
+                                "scipy.signal.savgol_filter unavailable. "
+                                "Install SciPy or skip smoothing.",
                             )
                         df[col] = _savgol_filter(df[col], window, polyorder)
 
@@ -6997,7 +7000,8 @@ This section helps you manage which signals (columns) to process from your files
                 if col in df.columns:
                     if _savgol_filter is None:
                         raise RuntimeError(
-                            "scipy.signal.savgol_filter unavailable. Install SciPy or skip smoothing.",
+                            "scipy.signal.savgol_filter unavailable. "
+                            "Install SciPy or skip smoothing.",
                         )
                     df[col] = _savgol_filter(df[col], window, polyorder)
 
@@ -7188,7 +7192,8 @@ This section helps you manage which signals (columns) to process from your files
                 try:
                     if _savgol_filter is None:
                         raise RuntimeError(
-                            "scipy.signal.savgol_filter unavailable. Install SciPy or skip smoothing.",
+                            "scipy.signal.savgol_filter unavailable. "
+                            "Install SciPy or skip smoothing.",
                         )
 
                     signal_data = (
@@ -7407,7 +7412,8 @@ This section helps you manage which signals (columns) to process from your files
             traceback.print_exc()
 
     def get_data_for_plotting(self, filename: str) -> pd.DataFrame | None:
-        """Get data for plotting from the specified file - simplified baseline approach."""
+        """Get data for plotting from the specified file -
+        simplified baseline approach."""
         try:
             # First check if it's in processed files
             if filename in self.processed_files:
