@@ -3611,9 +3611,8 @@ This section helps you manage which signals (columns) to process from your files
     ) -> None:
         """Display a batch of signals in the scrollable frame."""
         print(
-            f"DEBUG: Displaying batch of
-            {len(signals_batch)} signals starting at index "
-            f"{start_index}, auto_select={auto_select}",
+            f"DEBUG: Displaying batch of {len(signals_batch)} signals "
+            f"starting at index {start_index}, auto_select={auto_select}",
         )
 
         for _i, signal in enumerate(signals_batch):
@@ -3632,8 +3631,8 @@ This section helps you manage which signals (columns) to process from your files
     def _load_more_signals(self, all_signals: list[str], current_count: int) -> None:
         """Load more signals when the Load More button is clicked."""
         print(
-            f"DEBUG: Loading more signals, currently showing {current_count} of
-            {len(all_signals)}",
+            f"DEBUG: Loading more signals, currently showing {current_count} "
+            f"of {len(all_signals)}",
         )
 
         # Calculate how many more to load (use 200 as batch size)
