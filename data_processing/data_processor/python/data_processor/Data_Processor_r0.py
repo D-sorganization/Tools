@@ -280,7 +280,7 @@ class CSVProcessorApp(ctk.CTk):
             os.path.expanduser("~"),
             ".csv_processor_layout.json",
         )
-        self.splitters = {}
+        self.splitters: dict[str, Any] = {}
         self.layout_data = self._load_layout_config()
 
         self.title("Advanced CSV Processor & DAT Importer - Complete Version")
@@ -306,12 +306,14 @@ class CSVProcessorApp(ctk.CTk):
         self.bind("<Configure>", self._on_window_configure)
 
         # App State Variables
-        self.input_file_paths = []
-        self.loaded_data_cache = {}
-        self.processed_files = {}  # Store processed data for plotting
+        self.input_file_paths: list[str] = []
+        self.loaded_data_cache: dict[str, pd.DataFrame] = {}
+        self.processed_files: dict[str, pd.DataFrame] = (
+            {}
+        )  # Store processed data for plotting
         self.output_directory = os.path.expanduser("~/Documents")
-        self.signal_vars = {}
-        self.plot_signal_vars = {}
+        self.signal_vars: dict[str, tk.BooleanVar] = {}
+        self.plot_signal_vars: dict[str, tk.BooleanVar] = {}
         self.filter_names = [
             "None",
             "Moving Average",
@@ -327,24 +329,24 @@ class CSVProcessorApp(ctk.CTk):
             "FFT Band-pass",
             "FFT Band-stop",
         ]
-        self.custom_vars_list = []
-        self.reference_signal_widgets = {}
+        self.custom_vars_list: list[dict[str, Any]] = []
+        self.reference_signal_widgets: dict[str, Any] = {}
         self.dat_import_tag_file_path = None
         self.dat_import_data_file_path = None
-        self.dat_tag_vars = {}
+        self.dat_tag_vars: dict[str, tk.BooleanVar] = {}
         self.tag_delimiter_var = tk.StringVar(value="newline")
 
         # Plots List variables
-        self.plots_list = []
+        self.plots_list: list[dict[str, Any]] = []
         self.current_plot_config = None
 
         # Signal List Management variables
-        self.saved_signal_list = []
+        self.saved_signal_list: list[str] = []
         self.saved_signal_list_name = ""
 
         # Integration and Differentiation variables
-        self.integrator_signal_vars = {}
-        self.deriv_signal_vars = {}
+        self.integrator_signal_vars: dict[str, tk.BooleanVar] = {}
+        self.deriv_signal_vars: dict[str, tk.BooleanVar] = {}
         self.derivative_vars = {}
         for i in range(
             1, MAX_DERIVATIVE_ORDER + 1
@@ -355,7 +357,7 @@ class CSVProcessorApp(ctk.CTk):
         self.saved_plot_view = None
 
         # Custom legend entries for plots
-        self.custom_legend_entries = {}
+        self.custom_legend_entries: dict[str, str] = {}
 
         # Custom colors for plots
         self.custom_colors = [
@@ -1888,7 +1890,7 @@ class CSVProcessorApp(ctk.CTk):
         # Clear existing plotting signals
         for widget in self.plot_signal_frame.winfo_children():
             widget.destroy()
-        self.plot_signal_vars = {}
+        self.plot_signal_vars: dict[str, tk.BooleanVar] = {}
 
         # Get all available signals from processing tab
         available_signals = list(self.signal_vars.keys())
@@ -3545,7 +3547,7 @@ This section helps you manage which signals (columns) to process from your files
         self.sort_col_menu.configure(values=sort_values)
 
         # Initialize plot signal variables (will be populated when file is selected in plotting tab)
-        self.plot_signal_vars = {}
+        self.plot_signal_vars: dict[str, tk.BooleanVar] = {}
 
         # Update other signal lists - simplified
         self._update_plots_signals(signals)
@@ -5486,7 +5488,7 @@ This section helps you manage which signals (columns) to process from your files
 
             # Custom legend entries dictionary - only initialize if not already exists
             if not hasattr(self, "custom_legend_entries"):
-                self.custom_legend_entries = {}
+                self.custom_legend_entries: dict[str, str] = {}
 
             # Trendline controls
             trend_frame = ctk.CTkFrame(plot_left_panel)
@@ -6441,7 +6443,7 @@ This section helps you manage which signals (columns) to process from your files
                     self.plot_xaxis_menu.set(x_axis_options[0])
 
                 # Update signal checkboxes - direct creation like baseline
-                self.plot_signal_vars = {}
+                self.plot_signal_vars: dict[str, tk.BooleanVar] = {}
                 for widget in self.plot_signal_frame.winfo_children():
                     widget.destroy()
 
@@ -9045,7 +9047,7 @@ COMMON MISTAKES TO AVOID:
                 self._update_load_plot_config_menu()
         except Exception as e:
             print(f"Error loading plots from file: {e}")
-            self.plots_list = []
+            self.plots_list: list[dict[str, Any]] = []
 
     def _select_tag_file(self) -> None:
         """Select tag file for DAT import."""
@@ -9329,7 +9331,8 @@ COMMON MISTAKES TO AVOID:
             # Apply legend with custom position
             legend_position = self.legend_position_var.get()
             if legend_position == "outside right":
-                # For outside right, use bbox_to_anchor to place legend outside the plot area
+                # For outside right, use bbox_to_anchor to
+                # place legend outside the plot area
                 self.plot_ax.legend(bbox_to_anchor=(1.05, 1), loc="upper left")
             else:
                 self.plot_ax.legend(loc=legend_position)
