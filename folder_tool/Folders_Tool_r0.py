@@ -954,7 +954,7 @@ class FolderProcessorApp:
         # Count total files for progress tracking
         total_files = 0
         for src in self.source_folders:
-            for root, _dirs, files in os.walk(src):
+            for _root, _dirs, files in os.walk(src):
                 total_files += len(files)
 
         processed_files = 0

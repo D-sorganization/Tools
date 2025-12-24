@@ -328,7 +328,7 @@ class UnifiedLauncher(QMainWindow):
                 try:
                     subprocess.Popen(cmd, shell=True, cwd=path.parent)
                     self.log("✅ MATLAB command sent")
-                except:
+                except Exception:
                     os.startfile(path)
                     self.log("⚠️ Executable not found, opened file in default editor")
 

@@ -25,13 +25,6 @@ import pandas as pd
 
 # Additional ML-specific imports
 try:
-    import joblib
-
-    JOBLIB_AVAILABLE = True
-except ImportError:
-    JOBLIB_AVAILABLE = False
-
-try:
     import scipy.io
 
     SCIPY_AVAILABLE = True
@@ -41,7 +34,6 @@ except ImportError:
 # PyArrow imports for parquet handling
 try:
     import pyarrow as pa
-    import pyarrow.feather as feather
     import pyarrow.parquet as pq
 
     PYARROW_AVAILABLE = True
@@ -57,8 +49,6 @@ from Data_Processor_r0 import CSVProcessorApp as OriginalCSVProcessorApp
 
 # Import folder tool functionality
 try:
-    from Claude_Folders_Uno import FolderProcessorApp as OriginalFolderProcessorApp
-
     FOLDER_TOOL_AVAILABLE = True
 except ImportError:
     FOLDER_TOOL_AVAILABLE = False
@@ -1505,7 +1495,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             self.after(0, lambda: self.folder_run_button.configure(state="normal"))
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))
 
-        except Exception:
+        except Exception as e:
             self.after(0, lambda: self.folder_status_var.set(f"Error: {str(e)}"))
             self.after(0, lambda: self.folder_run_button.configure(state="normal"))
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))
@@ -1598,7 +1588,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
             self.after(0, lambda: self.folder_status_var.set(status))
 
-        except Exception:
+        except Exception as e:
             self.after(0, lambda: self.folder_status_var.set(f"Error: {str(e)}"))
 
     def _folder_flatten_operation(self):
