@@ -2775,7 +2775,8 @@ class CSVProcessorApp(ctk.CTk):
                         print(f"DEBUG: Loaded {len(signals)} signals from file")
                         self.update_signal_list(signals)
                         self.signal_list_status_label.configure(
-                            text=f"Created signal list from file: {len(signals)} signals",
+                            text=f"Created signal list from file:"
+                            f"{len(signals)} signals",
                             text_color="green",
                         )
                     else:
@@ -3169,7 +3170,8 @@ This section helps you manage which signals (columns) to process from your files
                     try:
                         if total_files > 100:
                             status_label.configure(
-                                text=f"Reading sample file {i+1}/3: {os.path.basename(file_path)}",
+                                text=f"Reading sample file {i+1}/3:"
+                                f"{os.path.basename(file_path)}",
                             )
                             if progress_bar:
                                 progress = (i + 1) / len(sample_files)
@@ -3177,7 +3179,8 @@ This section helps you manage which signals (columns) to process from your files
                             progress_window.update()
                         elif hasattr(self, "status_label"):
                             self.status_label.configure(
-                                text=f"Reading sample file {i+1}/3: {os.path.basename(file_path)}",
+                                text=f"Reading sample file {i+1}/3:"
+                                f"{os.path.basename(file_path)}",
                             )
                             self.update()
 
@@ -3220,13 +3223,15 @@ This section helps you manage which signals (columns) to process from your files
                     # Update status
                     if total_files > 100:
                         status_label.configure(
-                            text=f"Bulk mode: Using {len(all_signals)} signals from sample files "
+                            text=f"Bulk mode: Using {len(all_signals)} signals from"
+                            f"sample files "
                             f"(assumed same for all {total_files} files)",
                         )
                         progress_window.update()
                     elif hasattr(self, "status_label"):
                         self.status_label.configure(
-                            text=f"Bulk mode: Using {len(all_signals)} signals from sample files "
+                            text=f"Bulk mode: Using {len(all_signals)} signals from"
+                            f"sample files "
                             f"(assumed same for all {total_files} files)",
                         )
                         self.update()
@@ -3333,7 +3338,8 @@ This section helps you manage which signals (columns) to process from your files
         if hasattr(self, "plot_file_menu"):
             self.plot_file_menu.configure(values=file_names)
 
-            # Auto-select the first file if there's only one - immediate execution like baseline
+            # Auto-select the first file if there's only one -
+            # immediate execution like baseline
             if len(self.input_file_paths) == 1:
                 single_file = os.path.basename(self.input_file_paths[0])
                 self.plot_file_menu.set(single_file)
@@ -3704,7 +3710,8 @@ This section helps you manage which signals (columns) to process from your files
     def select_all(self) -> None:
         """Select all signals - optimized for large signal counts."""
         if hasattr(self, "all_signals"):
-            # For large signal counts, select all signals (including those not yet displayed)
+            # For large signal counts,
+            # select all signals (including those not yet displayed)
             for signal in self.all_signals:
                 if signal in self.signal_vars:
                     self.signal_vars[signal]["var"].set(True)
@@ -3717,7 +3724,8 @@ This section helps you manage which signals (columns) to process from your files
     def deselect_all(self) -> None:
         """Deselect all signals - optimized for large signal counts."""
         if hasattr(self, "all_signals"):
-            # For large signal counts, deselect all signals (including those not yet displayed)
+            # For large signal counts,
+            # deselect all signals (including those not yet displayed)
             for signal in self.all_signals:
                 if signal in self.signal_vars:
                     self.signal_vars[signal]["var"].set(False)
@@ -8110,7 +8118,8 @@ COMMON MISTAKES TO AVOID:
                         # Try to read the file to see if it's a valid configuration
                         with open(file_path) as f:
                             data = json.load(f)
-                            # Check if it has the expected structure (processing configs have 'saved_at', plotting configs have 'plot_name')
+                            # Check if it has the expected structure (processing configs have 'saved_at',
+                            # plotting configs have 'plot_name')
                             if isinstance(data, dict) and (
                                 "saved_at" in data or "plot_name" in data
                             ):
@@ -8133,7 +8142,8 @@ COMMON MISTAKES TO AVOID:
                                         ),
                                     )
                     except Exception:
-                        # Skip files that can't be read as JSON or don't have the right structure
+                        # Skip files that can't be read as JSON or
+                        # don't have the right structure
                         continue
 
             # Sort by creation date (newest first)
@@ -9892,7 +9902,6 @@ Use mathematical formulas with signal references:
 3. **Filtering**: Start with "None" and add filters as needed
 4. **Integration**: Use Trapezoidal method for most accurate results
 5. **Custom Variables**: Test formulas with simple calculations first
-6. **Export**: Use "CSV (Separate Files)" for individual analysis, "CSV (Compiled)" for combined analysis
 7. **Auto-Zoom**: Disable for stable filter comparison, enable for exploration
 8. **Configuration Management**: Regularly clean up old configurations
 
@@ -10990,7 +10999,8 @@ For additional support or feature requests, please refer to the application docu
             self.preview_ax.set_xlabel(xlabel)
             self.preview_ax.set_ylabel(ylabel)
 
-            # Use legend position from plot config if available, otherwise default to 'best'
+            # Use legend position from plot config if available,
+            # otherwise default to 'best'
             legend_position = plot_config.get("legend_position", "best")
             if legend_position == "outside right":
                 self.preview_ax.legend(bbox_to_anchor=(1.05, 1), loc="upper left")
