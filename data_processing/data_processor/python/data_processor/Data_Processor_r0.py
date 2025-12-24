@@ -313,7 +313,7 @@ class CSVProcessorApp(ctk.CTk):
         )  # Store processed data for plotting
         self.output_directory = os.path.expanduser("~/Documents")
         self.signal_vars: dict[str, dict[str, Any]] = {}
-        self.plot_signal_vars: dict[str, tk.BooleanVar] = {}
+        self.plot_signal_vars: dict[str, dict[str, Any]] = {}
         self.filter_names = [
             "None",
             "Moving Average",
@@ -1890,7 +1890,7 @@ class CSVProcessorApp(ctk.CTk):
         # Clear existing plotting signals
         for widget in self.plot_signal_frame.winfo_children():
             widget.destroy()
-        self.plot_signal_vars: dict[str, tk.BooleanVar] = {}
+        self.plot_signal_vars: dict[str, dict[str, Any]] = {}
 
         # Get all available signals from processing tab
         available_signals = list(self.signal_vars.keys())
@@ -3132,7 +3132,7 @@ This section helps you manage which signals (columns) to process from your files
 
                     # Read headers from first file only
                     sample_files = self.input_file_paths[:1]
-                    all_signals = set()
+                    all_signals: set[str] = set()
                 else:
                     # Standard bulk mode: read headers from first few files
                     print(
@@ -3156,7 +3156,7 @@ This section helps you manage which signals (columns) to process from your files
 
                     # Read headers from first 3 files only
                     sample_files = self.input_file_paths[:3]
-                    all_signals = set()
+                    all_signals: set[str] = set()
 
                 for i, file_path in enumerate(sample_files):
                     # Check for cancellation
@@ -3547,7 +3547,7 @@ This section helps you manage which signals (columns) to process from your files
         self.sort_col_menu.configure(values=sort_values)
 
         # Initialize plot signal variables (will be populated when file is selected in plotting tab)
-        self.plot_signal_vars: dict[str, tk.BooleanVar] = {}
+        self.plot_signal_vars: dict[str, dict[str, Any]] = {}
 
         # Update other signal lists - simplified
         self._update_plots_signals(signals)
@@ -6443,7 +6443,7 @@ This section helps you manage which signals (columns) to process from your files
                     self.plot_xaxis_menu.set(x_axis_options[0])
 
                 # Update signal checkboxes - direct creation like baseline
-                self.plot_signal_vars: dict[str, tk.BooleanVar] = {}
+                self.plot_signal_vars: dict[str, dict[str, Any]] = {}
                 for widget in self.plot_signal_frame.winfo_children():
                     widget.destroy()
 
@@ -6470,7 +6470,7 @@ This section helps you manage which signals (columns) to process from your files
 
                 # Reset signal tracking when file changes
                 if hasattr(self, "last_plotted_signals"):
-                    self.last_plotted_signals = set()
+                    self.last_plotted_signals: set[str] = set()
 
                 # Update plot immediately - no delays
                 self.update_plot()
@@ -10793,7 +10793,7 @@ For additional support or feature requests, please refer to the application docu
 
         # Initialize plots signal vars if not exists
         if not hasattr(self, "plots_signal_vars"):
-            self.plots_signal_vars = {}
+            self.plots_signal_vars: dict[str, dict[str, Any]] = {}
 
         self.plots_signal_vars.clear()
 
@@ -11470,7 +11470,7 @@ For additional support or feature requests, please refer to the application docu
     def _detect_new_signals(self, current_signals: list[str]) -> bool:
         """Detect if new signals have been added since last plot update."""
         if not hasattr(self, "last_plotted_signals"):
-            self.last_plotted_signals = set()
+            self.last_plotted_signals: set[str] = set()
             return True  # First time plotting, treat as new signals
 
         current_set = set(current_signals)
