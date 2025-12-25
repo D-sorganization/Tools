@@ -1404,14 +1404,17 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         descriptions = {
             "combine": "Copies all files from source folders into the single "
             "destination folder.",
-            "flatten": "Finds deeply nested folders and copies them to the top level of the destination.",
-            "prune": "Copies source folders to the destination, preserving structure but skipping empty sub-folders.",
+            "flatten": "Finds deeply nested folders and copies them to the top \
+                level of the destination.",
+            "prune": "Copies source folders to the destination, preserving \
+                structure but skipping empty sub-folders.",
             "deduplicate": (
                 "Deletes renamed duplicates like 'file" \
                     "(1).txt' within the source folder(s),"
                 "keeping the newest version."
             ),
-            "analyze": "Analyzes folder contents and generates a detailed report without making changes.",
+            "analyze": "Analyzes folder contents and generates a detailed \
+                report without making changes.",
         }
 
         self.folder_mode_description.configure(text=descriptions.get(mode, ""))
@@ -1529,7 +1532,9 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))
 
     def _folder_combine_operation(self):
-        """Perform combine operation - copy all files from source folders to destination."""
+        """
+        Perform combine operation - copy all files from source folders to destination.
+        """
         try:
             import os
             import shutil

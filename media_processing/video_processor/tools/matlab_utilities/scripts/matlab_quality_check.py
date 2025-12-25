@@ -394,9 +394,12 @@ class MATLABQualityChecker:
                     "1.57": "pi/2 constant [dimensionless] - mathematical constant",
                     "0.7854": "pi/4 constant [dimensionless] - mathematical constant",
                     "0.785": "pi/4 constant [dimensionless] - mathematical constant",
-                    "9.81": "gravitational acceleration [m/s^2] - approximate standard gravity",
-                    "9.8": "gravitational acceleration [m/s^2] - approximate standard gravity",
-                    "9.807": "gravitational acceleration [m/s^2] - approximate standard gravity",
+                    "9.81": "gravitational acceleration [m/s^2] - approximate \
+                        standard gravity",
+                    "9.8": "gravitational acceleration [m/s^2] - approximate \
+                        standard gravity",
+                    "9.807": "gravitational acceleration [m/s^2] - approximate \
+                        standard gravity",
                 }
 
                 for num in magic_numbers:

@@ -16,8 +16,8 @@ def fix_ambiguous_unicode_chars(file_path: Path) -> bool:
         original_content = content
 
         # Replace ambiguous Unicode characters
-        content = content.replace('➖', '-')  # HEAVY MINUS SIGN
-        content = content.replace('➕', '+')  # HEAVY PLUS SIGN
+        content = content.replace('-', '-')  # HEAVY MINUS SIGN
+        content = content.replace('+', '+')  # HEAVY PLUS SIGN
 
         if content != original_content:
             file_path.write_text(content, encoding='utf-8')
