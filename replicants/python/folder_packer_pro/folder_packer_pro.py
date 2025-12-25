@@ -37,11 +37,6 @@ A comprehensive project packaging application with advanced features:
 - Professional error handling and validation
 """
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from typing import Any, Final
-
 
 # Constants with professional standards
 MAX_FILE_SIZE_MB: Final[int] = 1024  # 1GB max per file
@@ -1366,7 +1361,9 @@ class FolderPackerPro:
                     self._log_message(f"Error packing {file_path}: {e}", "error")
 
             if self.cancel_operation:
-                self._log_message("Pack operation cancelled", "warning")  # type: ignore[unreachable]
+                self._log_message(
+                    "Pack operation cancelled", "warning"
+                )  # type: ignore[unreachable]
                 return
 
             # Serialize to JSON

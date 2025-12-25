@@ -22,7 +22,9 @@ def fix_comprehensive_issues(file_path: str) -> bool:
             "",
         ),
         (
-            r"\s+# Custom legend entries for plots\n\s+self\.custom_legend_entries = {}",
+r"\s +
+                # Custom legend entries for plots\n\s +
+                self\.custom_legend_entries = {}",
             "",
         ),
         (r"\s+self\.plots_list = \[\]$", ""),  # Remove duplicate plots_list at end
@@ -117,12 +119,12 @@ def fix_remaining_long_lines_manual(file_path: str) -> bool:
     for _i, line in enumerate(lines):
         if len(line.rstrip()) > 88:
             # Fix specific long lines that are commonly flagged in PRs
-            if 'f"DEBUG:' in line and len(line.rstrip()) > 88:
+            if 'f"DEBUG:' in line and len(line.rstrip()) > 88:"
                 # Break debug print statements
                 indent = len(line) - len(line.lstrip())
                 if "print(" in line and line.strip().endswith(","):
                     # Find the f-string content
-                    match = re.search(r'f"([^"]*)"', line)
+                    match = re.search(r'f"([^"]*)"', line)"
                     if match:
                         content_text = match.group(1)
                         if len(content_text) > 60:
@@ -173,7 +175,7 @@ def fix_remaining_long_lines_manual(file_path: str) -> bool:
                             if break_point in content_text:
                                 parts = content_text.split(break_point, 1)
                                 if 20 < len(parts[0]) < 70 and len(parts[1]) < 70:
-                                    is_fstring = 'text=f"' in line
+                                    is_fstring = 'text=f"' in line"
                                     prefix = 'f"' if is_fstring else '"'
                                     new_line1 = line.replace(
                                         f'{prefix}{content_text}"',

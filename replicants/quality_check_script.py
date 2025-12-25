@@ -57,7 +57,7 @@ MAGIC_NUMBERS = [
 
 def _is_class_or_func_context(lines: list[str], line_num: int) -> bool:
     """Check if pass is inside a class or function definition."""
-    for _ in range(line_num - 1, max(0, line_num - 10), -1):
+    for i in range(line_num - 1, max(0, line_num - 10), -1):
         prev_line = lines[i - 1].strip()
         if prev_line.startswith("def "):
             return False
@@ -73,7 +73,7 @@ def _is_class_or_func_context(lines: list[str], line_num: int) -> bool:
 
 def _is_try_except_context(lines: list[str], line_num: int) -> bool:
     """Check if pass is inside a try/except block."""
-    for _ in range(line_num - 1, max(0, line_num - 5), -1):
+    for i in range(line_num - 1, max(0, line_num - 5), -1):
         prev_line = lines[i - 1].strip()
         if "try:" in prev_line or "except" in prev_line:
             return True
@@ -82,7 +82,7 @@ def _is_try_except_context(lines: list[str], line_num: int) -> bool:
 
 def _is_context_manager_context(lines: list[str], line_num: int) -> bool:
     """Check if pass is inside a context manager."""
-    for _ in range(line_num - 1, max(0, line_num - 3), -1):
+    for i in range(line_num - 1, max(0, line_num - 3), -1):
         prev_line = lines[i - 1].strip()
         if prev_line.startswith("with "):
             return True

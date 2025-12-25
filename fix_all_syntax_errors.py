@@ -42,7 +42,11 @@ def fix_all_syntax_errors() -> bool:
 
         # Pattern 3: Remove specific orphaned except blocks
         content = re.sub(
-            r'\s*except Exception as e:\s*\n\s*print\(\s*f?"[^"]*",?\s*\n\s*"[^"]*",?\s*\)\s*\n\s*df\[f?"[^"]*"\]\s*=\s*np\.nan\s*\n',
+            r'\s*except Exception as e:\s*\n\s*print\(
+                \s*f?"[^"]*",
+                ?\s*\n\s*"[^"]*",
+                ?\s*\
+            )\s*\n\s*df\[f?"[^"]*"\]\s*=\s*np\.nan\s*\n',
             "",
             content,
             flags=re.MULTILINE,
@@ -51,7 +55,7 @@ def fix_all_syntax_errors() -> bool:
         # Fix broken f-strings and string concatenations
         # Fix the specific broken f-string patterns
         content = re.sub(
-            r'f"([^"]*)\{([^}]*)\}([^"]*)",\s*\n\s*"([^"]*)"', r'f"\1{\2}\3\4"', content
+            r'f"([^"]*)\{([^}]*)\}([^"]*)",\s*\n\s*"([^"]*)"', r'f"\1{\2}\3\4"', content"
         )
 
         # Fix broken string literals that span multiple lines incorrectly

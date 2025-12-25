@@ -22,12 +22,12 @@ def fix_remaining_long_lines(file_path: str) -> bool:
             continue
 
         # Fix long print statements with f-strings
-        if line.strip().startswith("print(") and 'f"' in line:
+        if line.strip().startswith("print(") and 'f"' in line:"
             indent = len(line) - len(line.lstrip())
             # Break long print statements
             if "DEBUG:" in line or "Error" in line or "Warning" in line:
                 # Extract the f-string content
-                match = re.search(r'f"([^"]*)"', line)
+                match = re.search(r'f"([^"]*)"', line)"
                 if match:
                     content_text = match.group(1)
                     # Break at logical points
@@ -91,7 +91,7 @@ def fix_remaining_long_lines(file_path: str) -> bool:
                         if break_point in content_text:
                             parts = content_text.split(break_point, 1)
                             if 20 < len(parts[0]) < 70 and len(parts[1]) < 70:
-                                is_fstring = 'text=f"' in line
+                                is_fstring = 'text=f"' in line"
                                 prefix = 'f"' if is_fstring else '"'
                                 new_line1 = line.replace(
                                     f'{prefix}{content_text}"',

@@ -22,7 +22,7 @@ def fix_long_lines_in_file(file_path: str) -> bool:
             continue
 
         # Fix long f-strings and print statements
-        if 'f"' in line and len(line.rstrip()) > 88:
+        if 'f"' in line and len(line.rstrip()) > 88:"
             # Handle f-string patterns
             indent = len(line) - len(line.lstrip())
 
@@ -54,7 +54,7 @@ def fix_long_lines_in_file(file_path: str) -> bool:
                                     prefix + parts[0] + break_point.rstrip() + '"'
                                 )
                                 new_lines.append(
-                                    " " * (indent + 4) + 'f"' + parts[1] + suffix
+                                    " " * (indent + 4) + 'f"' + parts[1] + suffix"
                                 )
                                 changes_made = True
                                 break
@@ -64,7 +64,7 @@ def fix_long_lines_in_file(file_path: str) -> bool:
                     new_lines.append(line)
 
             # Pattern for text= assignments with f-strings
-            elif 'text=f"' in line:
+            elif 'text=f"' in line:"
                 match = re.match(r'(\s*.*text=f")(.*?)(".*)', line)
                 if match:
                     prefix = match.group(1)
@@ -90,7 +90,7 @@ def fix_long_lines_in_file(file_path: str) -> bool:
                                     prefix + parts[0] + break_point.rstrip() + '"'
                                 )
                                 new_lines.append(
-                                    " " * (indent + 4) + 'f"' + parts[1] + suffix
+                                    " " * (indent + 4) + 'f"' + parts[1] + suffix"
                                 )
                                 changes_made = True
                                 break

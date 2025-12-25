@@ -704,7 +704,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 # Combine all files into one
                 self._log_conversion_message(
                     f"Starting conversion: combining {total_files} files into "
-                        "{output_format.upper()}"
+                    "{output_format.upper()}"
                 )
 
                 combined_data = []
@@ -714,7 +714,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         if not format_type:
                             self._log_conversion_message(
                                 "Warning: Could not detect format for "
-                        "{os.path.basename(file_path)}"
+                                "{os.path.basename(file_path)}"
                             )
                             continue
 
@@ -737,7 +737,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
                         combined_data.append(df)
                         self._log_conversion_message(
-                            f"Loaded {os.path.basename(file_path)}: {len(df)} rows, {len(df.columns)} columns"
+                            f"Loaded {os.path.basename(file_path)}: {len(df)} rows, "
+                            f"{len(df.columns)} columns"
                         )
 
                         processed_files += 1
@@ -785,7 +786,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         if not format_type:
                             self._log_conversion_message(
                                 "Warning: Could not detect format for "
-                        "{os.path.basename(file_path)}"
+                                "{os.path.basename(file_path)}"
                             )
                             continue
 
@@ -1395,15 +1396,16 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         mode = self.folder_operation_mode.get()
 
         descriptions = {
-            "combine": "Copies all files from source folders into the single destination folder.",
-            "flatten":
-                                "Finds deeply nested folders and copies them to the top level of the destination.",            "prune":
-                                "Copies source folders to the destination, preserving structure but skipping empty sub-folders.",            "deduplicate": (
+            "combine": "Copies all files from source folders into the single "
+            "destination folder.",
+            "flatten": "Finds deeply nested folders and copies them to the top level of the destination.",
+            "prune": "Copies source folders to the destination, preserving structure but skipping empty sub-folders.",
+            "deduplicate": (
                 "Deletes renamed duplicates like 'file (1).txt' within the source folder(s), "
                 "keeping the newest version."
             ),
-            "analyze":
-                    "Analyzes folder contents and generates a detailed report without making changes.",        }
+            "analyze": "Analyzes folder contents and generates a detailed report without making changes.",
+        }
 
         self.folder_mode_description.configure(text=descriptions.get(mode, ""))
 
@@ -1601,7 +1603,10 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
             # Final status
             if self.folder_preview_mode_var.get():
-                status = f"PREVIEW: Would copy {copied_count} files, rename {renamed_count}, skip {skipped_count}"
+                status = (
+                    f"PREVIEW: Would copy {copied_count} files, "
+                    f"rename {renamed_count}, skip {skipped_count}"
+                )
             else:
                 status = f"Copied {copied_count} files, renamed {renamed_count}, skipped {skipped_count}"
 
@@ -1680,7 +1685,11 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             )
                             self.after(
                                 0,
-                                lambda p=processed_files, t=total_files: self.folder_status_var.set(f"Processed {p}/{t} files"),
+                                lambda p=processed_files, t=total_files: (
+                                    self.folder_status_var.set(
+                                        f"Processed {p}/{t} files"
+                                    )
+                                ),
                             )
 
             # Final status
@@ -1782,7 +1791,11 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             )
                             self.after(
                                 0,
-                                lambda p=processed_files, t=total_files: self.folder_status_var.set(f"Processed {p}/{t} files"),
+                                lambda p=processed_files, t=total_files: (
+                                    self.folder_status_var.set(
+                                        f"Processed {p}/{t} files"
+                                    )
+                                ),
                             )
 
             # Final status
@@ -1871,7 +1884,11 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                                         )
                             self.after(
                                 0,
-                                lambda p=processed_files, t=total_files: self.folder_status_var.set(f"Processed {p}/{t} files"),
+                                lambda p=processed_files, t=total_files: (
+                                    self.folder_status_var.set(
+                                        f"Processed {p}/{t} files"
+                                    )
+                                ),
                             )
 
             # Final status
@@ -1963,7 +1980,11 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             )
                             self.after(
                                 0,
-                                lambda p=processed_files, t=total_files: self.folder_status_var.set(f"Analyzed {p}/{t} files"),
+                                lambda p=processed_files, t=total_files: (
+                                    self.folder_status_var.set(
+                                        f"Processed {p}/{t} files"
+                                    )
+                                ),
                             )
 
                 report_lines.append(

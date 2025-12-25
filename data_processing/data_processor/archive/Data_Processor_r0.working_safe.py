@@ -1923,7 +1923,8 @@ class CSVProcessorApp(ctk.CTk):
                 # Update progress
                 if hasattr(self, "status_label"):
                     self.status_label.configure(
-                        text=f"Reading file {i+1}/{total_files}: {os.path.basename(file_path)}",
+text=f"Reading file {i +
+                            1}/{total_files}: {os.path.basename(file_path)}",
                     )
                     if i % 5 == 0:  # Update every 5 files to prevent UI freezing
                         self.update()
@@ -2178,11 +2179,13 @@ class CSVProcessorApp(ctk.CTk):
 
         for i, file_path in enumerate(self.input_file_paths):
             print(
-                f"\n--- Processing file {i+1}/{len(self.input_file_paths)}: {os.path.basename(file_path)} ---",
+f"\n--- Processing file {i +
+                    1}/{len(self.input_file_paths)}: {os.path.basename(file_path)} ---",
             )
             try:
                 self.status_label.configure(
-                    text=f"Processing file {i+1}/{len(self.input_file_paths)}: {os.path.basename(file_path)}",
+text=f"Processing file {i +
+                        1}/{len(self.input_file_paths)}: {os.path.basename(file_path)}",
                 )
                 self.update()
 
@@ -5045,10 +5048,18 @@ class CSVProcessorApp(ctk.CTk):
         print(f"plot_canvas: {getattr(self, 'plot_canvas', None)}")
         print(f"plot_ax: {getattr(self, 'plot_ax', None)}")
         print(
-            f"processed_files: {len(getattr(self, 'processed_files', {})) if hasattr(self, 'processed_files') else 'None'}",
+            f"processed_files: {len(
+                getattr(self,
+                'processed_files',
+                {}
+            )) if hasattr(self, 'processed_files') else 'None'}",
         )
         print(
-            f"loaded_data_cache: {len(getattr(self, 'loaded_data_cache', {})) if hasattr(self, 'loaded_data_cache') else 'None'}",
+            f"loaded_data_cache: {len(
+                getattr(self,
+                'loaded_data_cache',
+                {}
+            )) if hasattr(self, 'loaded_data_cache') else 'None'}",
         )
         print("========================\n")
 
@@ -8244,7 +8255,8 @@ For additional support or feature requests, please refer to the application docu
                     if len(available_files) > 3:
                         debug_text += f"\n... and {len(available_files)-3} more"
                 else:
-                    debug_text += "\n\nNo files currently loaded.\nPlease load files on Setup tab first."
+debug_text +
+                        = "\n\nNo files currently loaded.\nPlease load files on Setup tab first."
 
                 self.preview_ax.text(
                     0.5,

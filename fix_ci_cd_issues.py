@@ -148,7 +148,7 @@ def fix_long_strings(content: str) -> str:
     for line in lines:
         if '"' in line and len(line.rstrip()) > 88:
             # Try to break long strings at logical points
-            if any(keyword in line for keyword in ['f"', "text=", "messagebox"]):
+            if any(keyword in line for keyword in ['f"', "text=", "messagebox"]):"
                 indent = len(line) - len(line.lstrip())
 
                 # Find string content and break it

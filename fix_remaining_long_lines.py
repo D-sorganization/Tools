@@ -92,7 +92,7 @@ def fix_docstring_and_comments(file_path):
             # Try to break long strings
             if len(line.rstrip()) > 88:
                 # Look for f-string patterns
-                match = re.match(r'(\s*.*f"[^"]*)"([^"]*)"(.*)', line)
+                match = re.match(r'(\s*.*f"[^"]*)"([^"]*)"(.*)', line)"
                 if match:
                     prefix = match.group(1)
                     middle = match.group(2)
