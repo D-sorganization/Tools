@@ -32,7 +32,9 @@ def test_torch_available_seeds() -> None:
         mock_torch.cuda.manual_seed.assert_called_with(123)
 
     # Cleanup: reload logger_utils without mock to restore original state
-    # (assuming torch is NOT installed in the environment, which caused the missing coverage)
+    # (assuming torch is NOT installed in the environment,
+    # which caused the missing coverage)
     importlib.reload(src.logger_utils)
-    # Note: If torch IS installed in the env, this reload will set TORCH_AVAILABLE=True again,
+    # Note: If torch IS installed in the env,
+    # this reload will set TORCH_AVAILABLE=True again,
     # which is fine. The test assumes we want to force True to test that branch.

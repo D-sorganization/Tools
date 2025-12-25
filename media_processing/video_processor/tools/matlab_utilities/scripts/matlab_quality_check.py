@@ -88,14 +88,16 @@ class MATLABQualityChecker:
             # Check if we can run MATLAB from command line
             matlab_script = self.matlab_dir / "matlab_quality_config.m"
             if not matlab_script.exists():
-                # Config script not found - fall back to static analysis (primary use case)
+                # Config script not found -
+                # fall back to static analysis (primary use case)
                 logger.info(
                     "MATLAB quality config script not found, using static analysis",
                 )
                 return self._static_matlab_analysis()
 
             # Try to run MATLAB quality checks
-            # Note: This requires MATLAB to be installed and accessible from command line
+            # Note: This requires MATLAB to be installed and
+            # accessible from command line
             try:
                 # First, try to run the MATLAB script directly if possible
                 return self._run_matlab_script(matlab_script)
@@ -225,7 +227,8 @@ class MATLABQualityChecker:
                 if not line_stripped:
                     continue
 
-                # Skip comment-only lines for most checks (but check comments for banned patterns)
+                # Skip comment-only lines for
+                # most checks (but check comments for banned patterns)
                 is_comment = line_stripped.startswith("%")
 
                 # Track function scope by monitoring nesting level
@@ -331,7 +334,8 @@ class MATLABQualityChecker:
                     )
 
                 # Check for load without output (loads into workspace)
-                # Match both command syntax (load file.mat) and function syntax (load('file.mat'))
+                # Match both command syntax (load file.mat) and
+                # function syntax (load('file.mat'))
                 if (
                     re.search(r"^\s*load\s+\w+", line_stripped)
                     or re.search(r"^\s*load\s*\([^)]+\)", line_stripped)
@@ -378,7 +382,8 @@ class MATLABQualityChecker:
                     "0.0001",  # Common tolerances
                 }
 
-                # Known physics constants (should be defined but at least flag with context)
+                # Known physics constants (should be defined but
+                # at least flag with context)
                 # Includes units and sources per coding guidelines
                 known_constants = {
                     "3.14159": "pi constant [dimensionless] - mathematical constant",
@@ -442,14 +447,16 @@ class MATLABQualityChecker:
                             "functions - closes user's figures",
                         )
 
-                # Check for exist() usage (often code smell, prefer try/catch or validation)
+                # Check for exist() usage (often code smell,
+                # prefer try/catch or validation)
                 if re.search(r"\bexist\s*\(", line_stripped):
                     issues.append(
                         f"{file_path.name} (line {i}): Consider using validation "
                         "or try/catch instead of exist()",
                     )
 
-                # Check for addpath in functions (should be in startup.m or managed externally)
+                # Check for addpath in functions (should be in startup.m or
+                # managed externally)
                 if in_function and re.search(r"\baddpath\s*\(", line_stripped):
                     issues.append(
                         f"{file_path.name} (line {i}): Avoid addpath in functions "
