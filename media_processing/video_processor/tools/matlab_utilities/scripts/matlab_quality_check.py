@@ -6,7 +6,8 @@ This script runs comprehensive quality checks on MATLAB code following the proje
 .cursorrules.md requirements. It can be run from the command line and integrates
 with the project's quality control system.
 
-This is the unified version combining the best features from all repository implementations.
+This is the unified version combining the best features from all
+# repository implementations.
 
 Usage:
     python tools/matlab_utilities/scripts/matlab_quality_check.py

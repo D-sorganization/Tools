@@ -241,7 +241,7 @@ class CSVProcessorApp(ctk.CTk):
         self.integrator_signal_vars = {}
         self.deriv_signal_vars = {}
         self.derivative_vars = {}
-        for _ in range(1, 6):  # Support up to 5th order derivatives
+        for i in range(1, 6):  # Support up to 5th order derivatives
             self.derivative_vars[i] = tk.BooleanVar(value=False)
 
         # Plot view state management
@@ -1017,7 +1017,7 @@ class CSVProcessorApp(ctk.CTk):
             font=ctk.CTkFont(weight="bold"),
         ).grid(row=0, column=0, columnspan=5, padx=10, pady=5, sticky="w")
 
-        for _ in range(1, 6):  # Support up to 5th order
+        for i in range(1, 6):  # Support up to 5th order
             var = tk.BooleanVar(value=False)
             cb = ctk.CTkCheckBox(deriv_order_frame, text=f"Order {i}", variable=var)
             cb.grid(row=1, column=i - 1, padx=10, pady=2, sticky="w")
@@ -1649,7 +1649,7 @@ class CSVProcessorApp(ctk.CTk):
                     if method == "Trapezoidal":
                         # Trapezoidal rule
                         cumulative = np.zeros(len(signal_data))
-                        for _ in range(1, len(signal_data)):
+                        for i in range(1, len(signal_data)):
                             if not np.isnan(signal_data.iloc[i]) and not np.isnan(
                                 signal_data.iloc[i - 1],
                             ):
@@ -1667,7 +1667,7 @@ class CSVProcessorApp(ctk.CTk):
                     else:  # Simpson's rule
                         # Simplified implementation
                         cumulative = np.zeros(len(signal_data))
-                        for _ in range(1, len(signal_data)):
+                        for i in range(1, len(signal_data)):
                             if not np.isnan(signal_data.iloc[i]) and not np.isnan(
                                 signal_data.iloc[i - 1],
                             ):
@@ -2011,7 +2011,7 @@ text=f"Reading file {i +
                             try:
                                 df[col] = pd.to_datetime(df[col])
                                 break  # Only convert first time column found
-                            except:
+                            except Exception:
                                 pass
                     return True
                 except Exception as e:
@@ -2167,7 +2167,7 @@ text=f"Reading file {i +
         }
 
         print("\nProcessing settings:")
-        for key, _ in settings.items():
+        for key, value in settings.items():
             print(f"  {key}: {value}")
 
         # Check output directory
@@ -4953,7 +4953,7 @@ text=f"Processing file {i +
                 trendline = trend(x_numeric)
                 # Build equation string
                 terms = []
-                for _ in range(order + 1):
+                for i in range(order + 1):
                     power = order - i
                     coeff = coeffs[i]
                     if power == 0:
@@ -5033,7 +5033,7 @@ text=f"Processing file {i +
                 if time_col and pd.api.types.is_object_dtype(df[time_col]):
                     try:
                         df[time_col] = pd.to_datetime(df[time_col])
-                    except:
+                    except Exception:
                         pass
 
                 return df
@@ -5701,7 +5701,7 @@ COMMON MISTAKES TO AVOID:
                                             "Plot Config",
                                         ),
                                     )
-                    except:
+                    except Exception:
                         # Skip files that can't be read as JSON or don't have the right
                         # structure
                         continue
@@ -7061,7 +7061,7 @@ COMMON MISTAKES TO AVOID:
                     else:
                         # Fall back to original home if no saved view
                         self._original_home()
-                except:
+                except Exception:
                     # Fall back to original home on any error
                     self._original_home()
 
@@ -7342,7 +7342,8 @@ COMMON MISTAKES TO AVOID:
 # Advanced CSV Processor & DAT Importer - Help Guide
 
 ## Overview
-This application provides comprehensive tools for processing, analyzing, and visualizing time series data from CSV files and DAT files with DBF tag files.
+This application provides comprehensive tools for processing, analyzing, and visualizing time series data from CSV files
+# and DAT files with DBF tag files.
 
 ## New Features (Latest Update)
 
@@ -8402,7 +8403,7 @@ For additional support or feature requests, please refer to the application docu
                                 f"{plot_df[time_col].dt.date.iloc[0]} {start_time}",
                             )
                             plot_df = plot_df[plot_df[time_col] >= start_datetime]
-                        except:
+                        except Exception:
                             pass
                     if end_time:
                         try:
@@ -8410,7 +8411,7 @@ For additional support or feature requests, please refer to the application docu
                                 f"{plot_df[time_col].dt.date.iloc[0]} {end_time}",
                             )
                             plot_df = plot_df[plot_df[time_col] <= end_datetime]
-                        except:
+                        except Exception:
                             pass
 
             # Plot all available signals
@@ -8639,7 +8640,7 @@ For additional support or feature requests, please refer to the application docu
                     int(-1 * (event.delta / 120)),
                     "units",
                 )
-            except:
+            except Exception:
                 # Fallback for different systems
                 frame._parent_canvas.yview_scroll(int(-1 * event.delta), "units")
 

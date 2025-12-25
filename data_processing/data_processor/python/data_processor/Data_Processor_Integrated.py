@@ -1608,8 +1608,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             )
                             self.after(
                                 0,
-                                lambda p=processed_files, t=total_files: self.folder_status_var.set(
-                                    f"Processed {p}/{t} files"
+                                lambda p=processed_files, t=total_files: (
+                                    self.folder_status_var.set(f"Processed {p}/{t} files")
                                 ),
                             )
 

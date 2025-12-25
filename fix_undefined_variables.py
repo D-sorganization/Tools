@@ -1,144 +1,122 @@
 #!/usr/bin/env python3
 """
-Fix undefined variable 'i' in for loops across the codebase.
+Fix undefined variable errors in the codebase.
 """
 
-import logging
-import os
-
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
-logger = logging.getLogger(__name__)
+import re
+from pathlib import Path
 
 
-def fix_undefined_i_in_file(file_path: str) -> bool:
-    """Fix undefined variable 'i' in a single file."""
+def fix_undefined_i_variables():
+    """Fix undefined 'i' variables in loops."""
+    file_path = Path("data_processing/data_processor/python/data_processor/Data_Processor_r0.py")
+
+    if not file_path.exists():
+        print(f"File not found: {file_path}")
+        return False
+
     try:
-        with open(file_path, encoding="utf-8") as f:
-            content = f.read()
+        content = file_path.read_text(encoding='utf-8')
+        original_content = content
 
-
-        # Fix pattern: for _ in range(...): ... lines[i - 1]
-        # Replace _ with i in for loops where i is used in the body
-        lines = content.split("\n")
+        # Fix pattern: for _ in range(...): ... i ...
+        # Replace _ with i when i is used in the loop body
+        lines = content.splitlines()
         modified = False
 
-        for line_num, line in enumerate(lines):
-            # Look for for loops using _
-            if "for i in range(" in line and ":" in line:
+        i = 0
+        while i < len(lines):
+            line = lines[i]
+
+            # Look for "for _ in range" patterns
+            if re.match(r'\s*for\s+_\s+in\s+range\s*\(', line):
                 # Check the next few lines for usage of 'i'
-                for check_line in range(line_num + 1, min(line_num + 10, len(lines))):
-                    if check_line < len(lines) and "lines[i" in lines[check_line]:
-                        # Replace _ with i in the for loop
-                        lines[line_num] = line.replace(
-                            "for _ in range(", "for i in range("
-                        )
-                        modified = True
-                        logger.info(
-                            f"Fixed undefined 'i' in {file_path} at line {line_num + 1}"
-                        )
+                loop_start = i
+                indent_level = len(line) - len(line.lstrip())
+
+                # Find the end of this loop block
+                j = i + 1
+                uses_i = False
+                while j < len(lines):
+                    next_line = lines[j]
+                    if next_line.strip() == "":
+                        j += 1
+                        continue
+
+                    next_indent = len(next_line) - len(next_line.lstrip())
+                    if next_indent <= indent_level and next_line.strip():
                         break
 
+                    # Check if this line uses 'i'
+                    if re.search(r'\bi\b', next_line):
+                        uses_i = True
+
+                    j += 1
+
+                # If 'i' is used in the loop, replace _ with i
+                if uses_i:
+                    lines[loop_start] = re.sub(r'for\s+_\s+in\s+range', 'for i in range', lines[loop_start])
+                    modified = True
+                    print(f"Fixed undefined 'i' at line {loop_start + 1}")
+
+            i += 1
+
         if modified:
-            with open(file_path, "w", encoding="utf-8") as f:
-                f.write("\n".join(lines))
+            file_path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+            print(f"Fixed undefined variables in {file_path}")
             return True
+        else:
+            print(f"No undefined variable fixes needed in {file_path}")
+            return False
 
-        return False
     except Exception as e:
-        logger.error(f"Error fixing {file_path}: {e}")
+        print(f"Error fixing {file_path}: {e}")
         return False
 
 
-def fix_undefined_value_in_file(file_path: str) -> bool:
-    """Fix undefined variable 'value' in for loops."""
+def fix_bare_except_clauses():
+    """Fix bare except clauses."""
+    file_path = Path("data_processing/data_processor/python/data_processor/Data_Processor_r0.py")
+
+    if not file_path.exists():
+        print(f"File not found: {file_path}")
+        return False
+
     try:
-        with open(file_path, encoding="utf-8") as f:
-            content = f.read()
+        content = file_path.read_text(encoding='utf-8')
+        original_content = content
 
+        # Replace bare except: with except Exception:
+        content = re.sub(r'except\s*:', 'except Exception:', content)
 
-        # Fix pattern: for key, _ in items(): ... str(value)
-        lines = content.split("\n")
-        modified = False
-
-        for line_num, line in enumerate(lines):
-            # Look for for loops using _ as second variable
-            if "for key, value in" in line and ".items()" in line:
-                # Check the next few lines for usage of 'value'
-                for check_line in range(line_num + 1, min(line_num + 5, len(lines))):
-                    if (
-                        check_line < len(lines)
-                        and "value" in lines[check_line]
-                        and "str(value)" in lines[check_line]
-                    ):
-                        # Replace _ with value in the for loop
-                        lines[line_num] = line.replace(
-                            "for key, _ in", "for key, value in"
-                        )
-                        modified = True
-                        logger.info(
-                            f"Fixed undefined 'value' in {file_path} at line {line_num + 1}"
-                        )
-                        break
-
-        if modified:
-            with open(file_path, "w", encoding="utf-8") as f:
-                f.write("\n".join(lines))
+        if content != original_content:
+            file_path.write_text(content, encoding='utf-8')
+            print(f"Fixed bare except clauses in {file_path}")
             return True
+        else:
+            print(f"No bare except clauses found in {file_path}")
+            return False
 
-        return False
     except Exception as e:
-        logger.error(f"Error fixing {file_path}: {e}")
+        print(f"Error fixing bare except clauses in {file_path}: {e}")
         return False
-
-
-def get_python_files() -> list:
-    """Get all Python files in the repository."""
-    python_files = []
-    for root, dirs, files in os.walk("."):
-        # Skip certain directories
-        dirs[:] = [
-            d
-            for d in dirs
-            if not d.startswith(".") and d not in ["__pycache__", "node_modules"]
-        ]
-
-        for file in files:
-            if file.endswith(".py"):
-                file_path = os.path.join(root, file)
-                # Skip the excluded problematic file
-                if "Data_Processor_r0.py" not in file_path:
-                    python_files.append(file_path)
-
-    return python_files
 
 
 def main():
-    """Main function to fix undefined variables."""
-    logger.info("Starting undefined variable fixes...")
+    """Main function to fix undefined variables and other issues."""
+    print("🔧 Fixing undefined variables and other issues...")
 
-    python_files = get_python_files()
-    logger.info(f"Found {len(python_files)} Python files to process")
+    # Fix undefined 'i' variables
+    print("\n📝 Step 1: Fixing undefined 'i' variables...")
+    fixed_vars = fix_undefined_i_variables()
 
-    total_fixes = 0
+    # Fix bare except clauses
+    print("\n🚫 Step 2: Fixing bare except clauses...")
+    fixed_except = fix_bare_except_clauses()
 
-    for file_path in python_files:
-        fixes_applied = 0
-
-        # Fix undefined variable 'i'
-        if fix_undefined_i_in_file(file_path):
-            fixes_applied += 1
-
-        # Fix undefined variable 'value'
-        if fix_undefined_value_in_file(file_path):
-            fixes_applied += 1
-
-        if fixes_applied > 0:
-            total_fixes += fixes_applied
-            logger.info(f"Applied {fixes_applied} fixes to {file_path}")
-
-    logger.info(f"Completed! Applied {total_fixes} total fixes")
+    print("\n✅ Fixes completed!")
+    print(f"Undefined variables fixed: {fixed_vars}")
+    print(f"Bare except clauses fixed: {fixed_except}")
 
 
 if __name__ == "__main__":
