@@ -481,7 +481,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 filetypes=[
                     (
                         "All Supported",
-                        "*.csv *.tsv *.txt *.parquet *.pq *.xlsx *.xls *.json *.h5 *.hdf5 "
+                        "*.csv *.tsv *.txt *.parquet *.pq" \
+                            "*.xlsx *.xls *.json *.h5 *.hdf5"
                         "*.pkl *.pickle *.npy *.mat *.feather *.arrow *.db *.sqlite",
                     ),
                     ("CSV Files", "*.csv"),
@@ -732,7 +733,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                                 df = df[available_columns]
                             else:
                                 self._log_conversion_message(
-                                    f"Warning: No selected columns found in {os.path.basename(file_path)}"
+                                    "Warning: No selected" \
+                                        "columns found in {os.path.basename(file_path)}"
                                 )
                                 continue
 
@@ -805,7 +807,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                                 df = df[available_columns]
                             else:
                                 self._log_conversion_message(
-                                    f"Warning: No selected columns found in {os.path.basename(file_path)}"
+                                    "Warning: No selected" \
+                                        "columns found in {os.path.basename(file_path)}"
                                 )
                                 continue
 
@@ -820,7 +823,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
                         DataWriter.write_file(df, output_path, output_format)
                         self._log_conversion_message(
-                            f"Converted {os.path.basename(file_path)} -> {output_filename}"
+                            f"Converted {os.path.basename(file_path)}" \
+                                "-> {output_filename}"
                         )
 
                         processed_files += 1
@@ -1403,7 +1407,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             "flatten": "Finds deeply nested folders and copies them to the top level of the destination.",
             "prune": "Copies source folders to the destination, preserving structure but skipping empty sub-folders.",
             "deduplicate": (
-                "Deletes renamed duplicates like 'file (1).txt' within the source folder(s), "
+                "Deletes renamed duplicates like 'file" \
+                    "(1).txt' within the source folder(s),"
                 "keeping the newest version."
             ),
             "analyze": "Analyzes folder contents and generates a detailed report without making changes.",
@@ -1610,7 +1615,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                     f"rename {renamed_count}, skip {skipped_count}"
                 )
             else:
-                status = f"Copied {copied_count} files, renamed {renamed_count}, skipped {skipped_count}"
+                status = f"Copied {copied_count} files," \
+                    "renamed {renamed_count}, skipped {skipped_count}"
 
             self.after(0, lambda: self.folder_status_var.set(status))
 

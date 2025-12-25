@@ -85,8 +85,9 @@ log_filename = "folder_fix_pro.log"
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(funcName)s - %(message)s",
-    handlers=[
-        logging.FileHandler(log_filename, mode="w"),
+    handlers = [logging.FileHandler(log_filename, mod]
+
+    e="w"),
         logging.StreamHandler(),
     ],
 )
@@ -406,8 +407,7 @@ class OperationReport:
             </tbody>
         </table>
         {
-            f"<p><em>Showing last {PREVIEW_MAX_FILES} of {len(self.operations)} operations</em></p>"
-            if len(self.operations) > PREVIEW_MAX_FILES
+            f"<p><em>Showing last {PREVIEW_MAX_FILES} of {len(self.operations)}operations</em></p>if len(self.operations) > PREVIEW_MAX_FILES
             else ""
         }
     </div>
@@ -424,8 +424,7 @@ class FolderFixPro:
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
         self.root.title("Folder Fix Pro v3.0 - Professional Folder Manager")
-        self.root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
-        self.root.minsize(MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT)
+        self.root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT})self.root.minsize(MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT)
 
         # Application state
         # Application state
@@ -536,8 +535,7 @@ class FolderFixPro:
 
         # Main container with two columns
         left_frame = ttk.Frame(tab)
-        left_frame.pack(
-            side="left",
+        left_frame.pack( side="left",
             fill="both",
             expand=True,
             padx=PADDING_MEDIUM,
@@ -744,8 +742,7 @@ class FolderFixPro:
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Filters & Advanced  ")
 
-        main_frame = ttk.Frame(tab, padding=PADDING_MEDIUM)
-        main_frame.pack(fill="both", expand=True)
+        main_frame = ttk.Frame(tab, padding=PADDING_MEDIUM) main_frame.pack(fill="both", expand=True)
 
         # File extension filter
         ext_frame = ttk.LabelFrame(
@@ -839,8 +836,7 @@ class FolderFixPro:
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Preview  ")
 
-        main_frame = ttk.Frame(tab, padding=PADDING_MEDIUM)
-        main_frame.pack(fill="both", expand=True)
+        main_frame = ttk.Frame(tab, padding=PADDING_MEDIUM) main_frame.pack(fill="both", expand=True)
 
         # Toolbar
         toolbar = ttk.Frame(main_frame)
@@ -897,8 +893,7 @@ class FolderFixPro:
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Log  ")
 
-        main_frame = ttk.Frame(tab, padding=PADDING_MEDIUM)
-        main_frame.pack(fill="both", expand=True)
+        main_frame = ttk.Frame(tab, padding=PADDING_MEDIUM) main_frame.pack(fill="both", expand=True)
 
         # Toolbar
         toolbar = ttk.Frame(main_frame)
@@ -975,8 +970,7 @@ class FolderFixPro:
 
         # Update status bar
         self.status_bar_label.configure(
-            text=f"Ready  |  Theme: {self.current_theme.title()}  |  No operation in progress"
-        )
+            text=f"Ready  |  Theme: {self.current_theme.title()}|  No operation in progress)
 
     def _toggle_theme(self) -> None:
         """Toggle between dark and light themes."""
@@ -1074,8 +1068,7 @@ class FolderFixPro:
             except Exception:
                 logger.exception("Error adding %s to preview", file_path)
 
-        count_text = f"{len(files)}" + (
-            " (limited)" if len(files) >= PREVIEW_MAX_FILES else ""
+        count_text = f"{len(files)} + (" (limited)" if len(files) >= PREVIEW_MAX_FILES else ""
         )
         self.preview_count_label.configure(text=count_text)
 
@@ -1137,16 +1130,11 @@ class FolderFixPro:
                         matching_files.append(file_path)
 
         message = "Filter Results:\n\n"
-        message += f"Total files scanned: {total_files}\n"
-        message += f"Files matching filters: {len(matching_files)}\n"
-        message += f"Files excluded: {total_files - len(matching_files)}\n\n"
-
-        if matching_files:
+        message += f"Total files scanned: {total_files}\nmessage += f"Files matching filters: {len(matching_files)}\n"
+        message += f"Files excluded: {total_files - len(matching_files)}\n\nif matching_files:
             message += "Sample matching files (first 10):\n"
             for file in matching_files[:10]:
-                message += f"  • {file.name}\n"
-
-        messagebox.showinfo("Filter Test Results", message)
+                message += f"  • {file.name}\nmessagebox.showinfo("Filter Test Results", message)
 
     def _start_operation(self) -> None:
         """Start the selected operation."""
@@ -1168,8 +1156,7 @@ class FolderFixPro:
         if not self.preview_var.get() and not messagebox.askyesno(
             "Confirm Operation",
             f"Are you sure you want to perform this operation?\n\n"
-            f"Mode: {mode}\n"
-            f"Sources: {len(self.source_folders)} folder(s)\n"
+            f"Mode: {mode}\nf"Sources: {len(self.source_folders)} folder(s)\n"
             f"Destination: {self.dest_folder if mode != 'analyze' else 'N/A'}",
         ):
             return
@@ -1188,9 +1175,7 @@ class FolderFixPro:
         try:
             mode = self.mode_var.get()
             self._log_message(f"Starting operation: {mode}", "info")
-            self._update_status(f"Running {mode} operation...")
-
-            if mode == "combine":
+            self._update_status(f"Running {mode}operation...)if mode == "combine":
                 self._operation_combine()
             elif mode == "flatten":
                 self._operation_flatten()
@@ -1222,8 +1207,7 @@ class FolderFixPro:
             self.root.after(
                 0,
                 lambda: messagebox.showerror(
-                    "Error", f"Operation failed:\n\n{err_msg}"
-                ),
+                    "Error", f"Operation failed:\n\n{err_msg}),
             )
 
         finally:
@@ -1255,8 +1239,7 @@ class FolderFixPro:
                         while dest_file.exists():
                             stem = source_file.stem
                             suffix = source_file.suffix
-                            dest_file = dest_path / f"{stem}_{counter}{suffix}"
-                            counter += 1
+                            dest_file = dest_path / f"{stem}_{counter}{suffix}counter += 1
 
                         try:
                             if not self.preview_var.get():
@@ -1267,8 +1250,7 @@ class FolderFixPro:
                             )
                             processed += 1
                             self._update_progress(
-                                processed, total_files, f"Copying {filename}"
-                            )
+                                processed, total_files, f"Copying {filename})
                         except Exception as e:  # noqa: BLE001
                             self.operation_report.add_error(
                                 f"Failed to copy {source_file}: {e}"
@@ -1295,8 +1277,7 @@ class FolderFixPro:
                     if self._flatten_single_file(source_file, dest_path):
                         processed += 1
                         self._update_progress(
-                            processed, total_files, f"Flattening {filename}"
-                        )
+                            processed, total_files, f"Flattening {filename})
 
     def _flatten_single_file(self, source_file: Path, dest_path: Path) -> bool:
         """Process a single file for flattening."""
@@ -1315,8 +1296,7 @@ class FolderFixPro:
                 {"source": str(source_file), "dest": str(dest_file)},
             )
         except Exception as e:  # noqa: BLE001
-            self.operation_report.add_error(f"Failed to flatten {source_file}: {e}")
-            return False
+            self.operation_report.add_error(f"Failed to flatten {source_file}: {e})return False
         else:
             return True
 
@@ -1344,8 +1324,7 @@ class FolderFixPro:
         while dest_file.exists():
             stem = source_file.stem
             suffix = source_file.suffix
-            dest_file = dest_file.parent / f"{stem}_{counter}{suffix}"
-            counter += 1
+            dest_file = dest_file.parent / f"{stem}_{counter}{suffix}counter += 1
         return dest_file
 
     def _operation_prune(self) -> None:
@@ -1397,8 +1376,7 @@ class FolderFixPro:
                                 )
                             except Exception as e:  # noqa: BLE001
                                 self.operation_report.add_error(
-                                    f"Failed to copy {source_file}: {e}"
-                                )
+                                    f"Failed to copy {source_file}: {e})
 
                 processed += 1
                 self._update_progress(
@@ -1422,8 +1400,7 @@ class FolderFixPro:
         duplicates_found, space_saved = self._remove_duplicates(hash_map)
 
         self._log_message(
-            f"Deduplication complete. Removed {duplicates_found} duplicates, "
-            f"saved {self._format_size(space_saved)}",
+            f"Deduplication complete. Removed {duplicates_found}duplicates, f"saved {self._format_size(space_saved)}",
             "success",
         )
 
@@ -1457,16 +1434,12 @@ class FolderFixPro:
                     file_hash = FileHasher.hash_file_fast(file_path)
                 else:  # name_size
                     stat = file_path.stat()
-                    file_hash = f"{file_path.name}_{stat.st_size}"
-
-                if file_hash:
+                    file_hash = f"{file_path.name}_{stat.st_size}if file_hash:
                     hash_map[file_hash].append(file_path)
 
                 self._update_progress(i, total_files, f"Checking {file_path.name}")
             except Exception as e:  # noqa: BLE001
-                self.operation_report.add_error(f"Failed to process {file_path}: {e}")
-
-        return hash_map
+                self.operation_report.add_error(f"Failed to process {file_path}: {e})return hash_map
 
     def _remove_duplicates(self, hash_map: dict[str, list[Path]]) -> tuple[int, int]:
         """Remove identified duplicates."""
@@ -1493,8 +1466,7 @@ class FolderFixPro:
                         )
                     except Exception as e:  # noqa: BLE001
                         self.operation_report.add_error(
-                            f"Failed to delete duplicate {duplicate_file}: {e}"
-                        )
+                            f"Failed to delete duplicate {duplicate_file}: {e})
         return duplicates_found, space_saved
 
     def _operation_analyze(self) -> None:
@@ -1541,8 +1513,7 @@ class FolderFixPro:
 
                         except Exception as e:  # noqa: BLE001
                             self.operation_report.add_error(
-                                f"Failed to analyze {file_path}: {e}"
-                            )
+                                f"Failed to analyze {file_path}: {e})
 
             # processed already tracked by enumerate
             self._update_progress(
@@ -1555,20 +1526,15 @@ class FolderFixPro:
     def _show_analysis_results(self, stats: dict[str, int]) -> None:
         """Show analysis results in a dialog."""
         results = "📊 Folder Analysis Results\n\n"
-        results += f"Total Files: {stats['total_files']:,}\n"
-        results += f"Total Size: {self._format_size(stats['total_size'])}\n\n"
+        results += f"Total Files: {stats['total_files']:,}\nresults += f"Total Size: {self._format_size(stats['total_size'])}\n\n"
 
         results += "File Types:\n"
         for ext, count in sorted(
             stats["file_types"].items(), key=lambda x: x[1], reverse=True
         )[:10]:
-            results += f"  {ext}: {count:,} files\n"
-
-        results += "\nLargest Files:\n"
+            results += f"  {ext}: {count:,}files\nresults += "\nLargest Files:\n"
         for file_path, size in stats["largest_files"][:5]:
-            results += f"  {file_path.name}: {self._format_size(size)}\n"
-
-        self.root.after(0, lambda: messagebox.showinfo("Analysis Results", results))
+            results += f"  {file_path.name}: {self._format_size(size)}\nself.root.after(0, lambda: messagebox.showinfo("Analysis Results", results))
 
         # Also log to file
         self._log_message("Analysis Results:", "info")
@@ -1596,8 +1562,7 @@ class FolderFixPro:
                     datetime.now(timezone.utc) - self.operation_report.start_time
                 ).total_seconds()
                 eta_seconds = (elapsed / current) * (total - current)
-                eta = f"ETA: {int(eta_seconds // 60)}m {int(eta_seconds % 60)}s"
-                self.root.after(0, lambda: self.eta_label.configure(text=eta))
+                eta = f"ETA: {int(eta_seconds // 60)}m {int(eta_seconds % 60)}sself.root.after(0, lambda: self.eta_label.configure(text=eta))
 
         self._update_status(message)
 
@@ -1607,8 +1572,7 @@ class FolderFixPro:
         self.root.after(
             0,
             lambda: self.status_bar_label.configure(
-                text=f"{message}  |  Theme: {self.current_theme.title()}"
-            ),
+                text=f"{message}  |  Theme: {self.current_theme.title()}),
         )
 
     def _cancel_operation(self) -> None:
@@ -1628,9 +1592,7 @@ class FolderFixPro:
     def _log_message(self, message: str, level: str = "info") -> None:
         """Add message to log."""
         timestamp = datetime.now(timezone.utc).strftime("%H:%M:%S")
-        log_entry = f"[{timestamp}] {message}\n"
-
-        def update_log() -> None:
+        log_entry = f"[{timestamp}] {message}\ndef update_log() -> None:
             self.log_text.configure(state="normal")
             self.log_text.insert("end", log_entry, level)
             self.log_text.see("end")
@@ -1665,9 +1627,7 @@ class FolderFixPro:
         if file_path:
             with Path(file_path).open("w", encoding="utf-8") as f:
                 f.write(self.log_text.get("1.0", "end"))
-            messagebox.showinfo("Log Saved", f"Log saved to:\n{file_path}")
-
-    def _export_report_json(self) -> None:
+            messagebox.showinfo("Log Saved", f"Log saved to:\n{file_path})def _export_report_json(self) -> None:
         """Export operation report as JSON."""
         file_path = filedialog.asksaveasfilename(
             defaultextension=".json",
@@ -1679,12 +1639,9 @@ class FolderFixPro:
             try:
                 self.operation_report.export_json(file_path)
                 messagebox.showinfo(
-                    "Report Exported", f"Report exported to:\n{file_path}"
-                )
+                    "Report Exported", f"Report exported to:\n{file_path})
             except Exception as e:  # noqa: BLE001
-                messagebox.showerror("Export Failed", f"Failed to export report:\n{e}")
-
-    def _export_report_html(self) -> None:
+                messagebox.showerror("Export Failed", f"Failed to export report:\n{e})def _export_report_html(self) -> None:
         """Export operation report as HTML."""
         file_path = filedialog.asksaveasfilename(
             defaultextension=".html",
@@ -1696,8 +1653,7 @@ class FolderFixPro:
             try:
                 self.operation_report.export_html(file_path)
                 messagebox.showinfo(
-                    "Report Exported", f"Report exported to:\n{file_path}"
-                )
+                    "Report Exported", f"Report exported to:\n{file_path})
 
                 # Ask if user wants to open it
                 if messagebox.askyesno(
@@ -1705,11 +1661,8 @@ class FolderFixPro:
                 ):
                     import webbrowser
 
-                    webbrowser.open(f"file://{Path(file_path).resolve()}")
-            except Exception as e:  # noqa: BLE001
-                messagebox.showerror("Export Failed", f"Failed to export report:\n{e}")
-
-    def _clear_cache(self) -> None:
+                    webbrowser.open(f"file://{Path(file_path).resolve()})except Exception as e:  # noqa: BLE001
+                messagebox.showerror("Export Failed", f"Failed to export report:\n{e})def _clear_cache(self) -> None:
         """Clear file cache."""
         self.file_cache.clear()
         self._log_message("Cache cleared", "info")
@@ -1722,9 +1675,7 @@ class FolderFixPro:
 
             webbrowser.open(log_filename)
         except Exception as e:  # noqa: BLE001
-            messagebox.showerror("Error", f"Could not open log file:\n{e}")
-
-    def _show_about(self) -> None:
+            messagebox.showerror("Error", f"Could not open log file:\n{e})def _show_about(self) -> None:
         """Show about dialog."""
         about_text = """Folder Fix Pro v3.0
 
@@ -1805,8 +1756,7 @@ Tips:
         kb_size = 1024.0
         for unit in ["B", "KB", "MB", "GB", "TB"]:
             if size_bytes < kb_size:
-                return f"{size_bytes:.2f} {unit}"
-            size_bytes /= kb_size
+                return f"{size_bytes:.2f} {unit}size_bytes /= kb_size
         return f"{size_bytes:.2f} PB"
 
 
@@ -1824,8 +1774,7 @@ def main() -> None:
 
     except Exception as e:
         logger.exception("Fatal error in main application")
-        messagebox.showerror("Fatal Error", f"Application failed to start:\n\n{e}")
-        sys.exit(1)
+        messagebox.showerror("Fatal Error", f"Application failed to start:\n\n{e})sys.exit(1)
 
 
 if __name__ == "__main__":

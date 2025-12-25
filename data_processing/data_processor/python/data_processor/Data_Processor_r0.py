@@ -102,6 +102,7 @@ def process_single_csv_file(
         # Determine which signals to keep for this specific file
         signals_in_this_file = [
             s for s in settings["selected_signals"] if s in df.columns
+        ]
         time_col = df.columns[0]
         if time_col not in signals_in_this_file:
             signals_in_this_file.insert(0, time_col)
@@ -138,6 +139,7 @@ def process_single_csv_file(
             if resample_rule:
                 processed_df = (
                     processed_df.resample(resample_rule).mean().dropna(how="all")
+                )
 
         if processed_df.empty:
             return None
@@ -196,8 +198,7 @@ class SimpleProgressDialog:
     def update(self, completed: int, total: int, message: str):
         """Update progress."""
         if self.dialog.winfo_exists():
-            self.status_label.configure(text=f"{message} ({completed}/{total})")
-            self.progress_bar.set(completed / total)
+            self.status_label.configure(text=f"{message} ({completed}/{total}))self.progress_bar.set(completed / total)
             self.dialog.update()
 
     def is_cancelled(self) -> bool:
@@ -342,13 +343,14 @@ This section helps you manage which signals (columns) to process from your files
         # Check if bulk processing mode is enabled
         bulk_mode = getattr(self, "bulk_mode_var", None) and self.bulk_mode_var.get()
         print(
-            f"DEBUG: bulk_mode_var exists: {getattr(self,'bulk_mode_var', None) is not None}",
+            f"DEBUG: bulk_mode_var exists: {getattr(self,'bulk_mode_var'," \
+                "None) is not None}",
         bulk_mode_value = (
             getattr(self, "bulk_mode_var", None).get()
             if getattr(self, "bulk_mode_var", None)
             else "N/A"
-        print(f"DEBUG: bulk_mode_var value: {bulk_mode_value}")
-        print(f"DEBUG: bulk_mode result: {bulk_mode}")
+        print(f"DEBUG: bulk_mode_var" \
+            "value: {bulk_mode_value})print(f"DEBUG: bulk_mode result: {bulk_mode}")
 
         # Check for cancellation
         if hasattr(self, "signal_loading_cancelled") and self.signal_loading_cancelled:
@@ -358,8 +360,7 @@ This section helps you manage which signals (columns) to process from your files
                     progress_window.destroy()
                 except Exception as e:
                     # Log progress window destruction errors for debugging
-                    print(f"Warning: Failed to destroy progress window: {e}")
-            return
+                    print(f"Warning: Failed to destroy progress window: {e})return
 
         try:
             if bulk_mode and total_files > 1:
@@ -371,7 +372,8 @@ This section helps you manage which signals (columns) to process from your files
                 if first_file_only:
                     # First file only mode: most conservative approach
                     print(
-                        "DEBUG: Using bulk processing mode - reading headers from first file only",
+                        "DEBUG: Using bulk processing mode -" \
+                            "reading headers from first file only",
 
                     # Update status
                     if total_files > 100:
@@ -391,8 +393,7 @@ This section helps you manage which signals (columns) to process from your files
                 else:
                     # Standard bulk mode: read headers from first few files
                     print(
-                        "DEBUG: Using bulk processing mode - "
-                        "reading headers from sample files only",
+                        "DEBUG: Using bulk processing mode - " "reading headers from sample files only",
 
                     # Update status
                     if total_files > 100:
@@ -416,61 +417,58 @@ This section helps you manage which signals (columns) to process from your files
                         hasattr(self, "signal_loading_cancelled")
                         and self.signal_loading_cancelled
                         print(
-                            "DEBUG: Signal loading cancelled during bulk mode processing",
+                            "DEBUG: Signal loading cancelled" \
+                                "during bulk mode processing",
                         return
 
                     try:
                         if total_files > 100:
                             status_label.configure(
-                                text=f"Reading sample file {i+1}/3:"
-                                f"{os.path.basename(file_path)}",
+                                text=f"Reading sample file {i+1}/3:f"{os.path.basename(file_path)}",
                             if progress_bar:
                                 progress = (i + 1) / len(sample_files)
                                 progress_bar.set(progress)
                             progress_window.update()
                         elif hasattr(self, "status_label"):
                             self.status_label.configure(
-                                text=f"Reading sample file {i+1}/3:"
-                                f"{os.path.basename(file_path)}",
+                                text=f"Reading sample file {i+1}/3:f"{os.path.basename(file_path)}",
                             self.update()
 
                         df = pd.read_csv(file_path, nrows=1)
                         signals = df.columns.tolist()
                         all_signals.update(signals)if first_file_only:
                     print(
-                        f"DEBUG: Bulk mode (first file only) - "
-                        f"signals from 1 file: {len(all_signals)} unique signals",
+                        f"DEBUG: Bulk mode (first file only) - " f"signals from 1 file: {len(all_signals)} unique signals",
 
                     # Update status
                     if total_files > 100:
                         status_label.configure(
                             text=(
-                                f"Bulk mode: Using {len(all_signals)} signals from first file only "
-                                f"(assumed same for all {total_files} files)"
+                                f"Bulk mode: Using {len(all_signals)}signals" \
+                                    "from first file only f"(assumed same for all {total_files} files)"
                         progress_window.update()
                     elif hasattr(self, "status_label"):
                         self.status_label.configure(
                             text=(
-                                f"Bulk mode: Using {len(all_signals)} signals from first file only "
-                                f"(assumed same for all {total_files} files)"
+                                f"Bulk mode: Using {len(all_signals)}signals" \
+                                    "from first file only f"(assumed same for all {total_files} files)"
                         self.update()
                 else:
                     print(
-                        f"DEBUG: Bulk mode - signals from {len(sample_files)} sample files: "
-                        f"{len(all_signals)} unique signals",
+                        f"DEBUG: Bulk mode -" \
+                            "signals from" \
+                                "{len(sample_files)}sample files: f"{len(all_signals)} unique signals",
 
                     # Update status
                     if total_files > 100:
                         status_label.configure(
-                            text=f"Bulk mode: Using {len(all_signals)} signals from"
-                            f"sample files "
-                            f"(assumed same for all {total_files} files)",
+                            text=f"Bulk mode:" \
+                                "Using {len(all_signals)}signals fromf"sample files " f"(assumed same for all {total_files} files)",
                         progress_window.update()
                     elif hasattr(self, "status_label"):
                         self.status_label.configure(
-                            text=f"Bulk mode: Using {len(all_signals)} signals from"
-                            f"sample files "
-                            f"(assumed same for all {total_files} files)",
+                            text=f"Bulk mode:" \
+                                "Using {len(all_signals)}signals fromf"sample files " f"(assumed same for all {total_files} files)",
                         self.update()
 
             else:
@@ -493,8 +491,7 @@ This section helps you manage which signals (columns) to process from your files
                         if total_files > 100 and status_label:
                         try:
                             status_label.configure(
-                                text=f"{message} ({completed}/{total})"
-                            if progress_bar:
+                                text=f"{message} ({completed}/{total})if progress_bar:
                                 progress_bar.set(completed / total)
                             progress_window.update()
                         except Exception as e:
@@ -502,8 +499,7 @@ This section helps you manage which signals (columns) to process from your files
                     elif hasattr(self, "status_label"):
                         try:
                             self.status_label.configure(
-                                text=f"{message} ({completed}/{total})"
-                            self.update()
+                                text=f"{message} ({completed}/{total})self.update()
                         except Exception as e:
                             print(f"Status update error (ignoring): {e}")
 
@@ -561,9 +557,7 @@ COMMON MISTAKES TO AVOID:
         guide_window.update_idletasks()
         x = (guide_window.winfo_screenwidth() // 2) - (600 // 2)
         y = (guide_window.winfo_screenheight() // 2) - (700 // 2)
-        guide_window.geometry(f"600x700+{x}+{y}")
-
-    def save_settings(self) -> None:
+        guide_window.geometry(f"600x700+{x}+{y})def save_settings(self) -> None:
         """Save current settings to a configuration file."""
         try:
             # Collect all current settings
@@ -720,11 +714,8 @@ COMMON MISTAKES TO AVOID:
                     json.dump(settings, f, indent=2)
                 messagebox.showinfo(
                     "Success",
-                    f"Settings saved to:\n{file_path}"
-                )        except Exception as e:
-            messagebox.showerror("Error", f"Failed to save settings:\n{e!s}")
-
-    def load_settings(self) -> None:
+                    f"Settings saved to:\n{file_path})        except Exception as e:
+            messagebox.showerror("Error", f"Failed to save settings:\n{e!s})def load_settings(self) -> None:
         """Load settings from a configuration file."""
         try:
             file_path = filedialog.askopenfilename(
@@ -853,16 +844,13 @@ COMMON MISTAKES TO AVOID:
             if "output_directory" in settings:
                 self.output_directory = settings["output_directory"]
                 if hasattr(self, "output_label"):
-                    self.output_label.configure(text=f"Output: {self.output_directory}")
-
-            saved_at = settings.get("saved_at", "Unknown time")
+                    self.output_label.configure(text=f"Output: {self.output_directory})saved_at" \
+                        "= settings.get("saved_at", "Unknown time")
             messagebox.showinfo(
                 "Success",
                 f"Settings loaded successfully!\n\nConfiguration saved at: {saved_at}",
             )        except Exception as e:
-            messagebox.showerror("Error", f"Failed to load settings:\n{e!s}")
-
-    def manage_configurations(self) -> None:
+            messagebox.showerror("Error", f"Failed to load settings:\n{e!s})def manage_configurations(self) -> None:
         """Open a window to manage saved configuration files."""
         try:
             # Create a new window for configuration management
@@ -1002,8 +990,7 @@ COMMON MISTAKES TO AVOID:
 
             # Add to listbox
             for filename, _filepath, saved_at, config_type in config_files:
-                display_text = f"{filename} ({config_type} - {saved_at})"
-                self.config_listbox.insert(tk.END, display_text)
+                display_text = f"{filename} ({config_type} - {saved_at})self.config_listbox.insert(tk.END, display_text)
                 # Store the filepath as item data
                 self.config_listbox.itemconfig(
                     tk.END,
@@ -1015,9 +1002,7 @@ COMMON MISTAKES TO AVOID:
             self.config_status_label.configure(
                 text=f"Found {len(config_files)} configuration file(s)",
             )        except Exception as e:
-            self.config_status_label.configure(text=f"Error refreshing list: {e!s}")
-
-    def _load_selected_config(self) -> None:
+            self.config_status_label.configure(text=f"Error refreshing list: {e!s})def _load_selected_config(self) -> None:
         """Load the selected configuration file."""
         try:
             selection = self.config_listbox.curselection()
@@ -1049,14 +1034,11 @@ COMMON MISTAKES TO AVOID:
                 messagebox.showerror("Error", "Unknown configuration file format.")
                 return
 
-            self.config_status_label.configure(text=f"Loaded configuration: {filename}")
-            messagebox.showinfo(
+            self.config_status_label.configure(text=f"Loaded configuration: {filename})messagebox.showinfo(
                 "Success",
                 f"Configuration loaded successfully:\n{filename}",
             )        except Exception as e:
-            messagebox.showerror("Error", f"Failed to load configuration:\n{e!s}")
-
-    def _delete_selected_config(self) -> None:
+            messagebox.showerror("Error", f"Failed to load configuration:\n{e!s})def _delete_selected_config(self) -> None:
         """Delete the selected configuration file."""
         try:
             selection = self.config_listbox.curselection()
@@ -1087,9 +1069,7 @@ COMMON MISTAKES TO AVOID:
                     "Success",
                     f"Configuration deleted successfully:\n{filename}",
                 )        except Exception as e:
-            messagebox.showerror("Error", f"Failed to delete configuration:\n{e!s}")
-
-    def _open_config_location(self) -> None:
+            messagebox.showerror("Error", f"Failed to delete configuration:\n{e!s})def _open_config_location(self) -> None:
         """Open the folder containing configuration files."""
         try:
             current_dir = os.getcwd()
@@ -1222,8 +1202,7 @@ For additional support or feature requests, please refer to the application docu
         counter = 1
         while True:
             if counter == 1:
-                filename = f"{base_name}_processed{extension}"
-            else:
+                filename = f"{base_name}_processed{extension}else:
                 filename = f"{base_name}_processed_{counter}{extension}"
 
             full_path = os.path.join(directory, filename)
@@ -1237,8 +1216,7 @@ For additional support or feature requests, please refer to the application docu
             filename = os.path.basename(file_path)
             response = messagebox.askyesnocancel(
                 "File Already Exists",
-                f"The file '{filename}' already exists.\n\n"
-                f"Would you like to:\n"
+                f"The file '{filename}' already exists.\n\nf"Would you like to:\n"
                 f" Yes: Overwrite the existing file\n"
                 f" No: Generate a unique filename\n"
                 f" Cancel: Cancel the operation",
@@ -1277,8 +1255,7 @@ For additional support or feature requests, please refer to the application docu
         # Get current plot settings
         plot_config = {
             "name": plot_name,
-            "description": f"Plot configuration saved on {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}file": (
-                self.plot_file_menu.get() if hasattr(self, "plot_file_menu") else ""
+            "description": f"Plot configuration saved on {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}file: (self.plot_file_menu.get() if hasattr(self, "plot_file_menu") else ""
             "x_axis": (
                 self.plot_xaxis_menu.get() if hasattr(self, "plot_xaxis_menu") else ""
             "signals": selected_signals,
@@ -1430,7 +1407,8 @@ For additional support or feature requests, please refer to the application docu
         """Modify an existing plot configuration."""
         if not hasattr(self, "plots_list") or not self.plots_list:
             messagebox.showwarning(
-                "No ConfigurationsNo saved plot configurations found. Please save a configuration first.",
+                "No ConfigurationsNo saved plot configurations" \
+                    "found. Please save a configuration first.",
             return
 
         # Create a dialog to select which configuration to modify
@@ -1443,9 +1421,7 @@ For additional support or feature requests, please refer to the application docu
         dialog.update_idletasks()
         x = (dialog.winfo_screenwidth() // 2) - (400 // 2)
         y = (dialog.winfo_screenheight() // 2) - (300 // 2)
-        dialog.geometry(f"400x300+{x}+{y}")
-
-        # Create listbox for configurations
+        dialog.geometry(f"400x300+{x}+{y})# Create listbox for configurations
         ctk.CTkLabel(
             dialog,
             text="Select configuration to modify:",
@@ -1489,7 +1465,8 @@ For additional support or feature requests, please refer to the application docu
             dialog.destroy()
             messagebox.showinfo(
                 "Success",
-                f"Configuration '{selected_config['name']}' has been updated withcurrent settings!",
+                f"Configuration '{selected_config['name']}' has" \
+                    "been updated withcurrent settings!",
 
         def on_delete() -> None:
             """Delete the selected plot configuration."""
@@ -1505,7 +1482,9 @@ For additional support or feature requests, please refer to the application docu
             # Ask for confirmation
             result = messagebox.askyesno(
                 "Confirm Delete",
-                f"Are you sure you want to delete the configuration '{selected_config['name']}'?\n\nThis action cannot be undone.",
+                f"Are you sure you want to delete" \
+                    "the configuration '{selected_config['name']}'?\n\nThis" \
+                        "action cannot be undone.",
             if result:
                 # Remove the configuration from the list
                 deleted_config = self.plots_list.pop(selected_index)
@@ -1981,8 +1960,7 @@ For additional support or feature requests, please refer to the application docu
                     ha="center",
                     va="center",
                     fontsize=12,
-                self.preview_ax.set_title(f"Preview: {plot_config['name']}")
-                self.preview_canvas.draw()
+                self.preview_ax.set_title(f"Preview: {plot_config['name']})self.preview_canvas.draw()
                 return
 
             if not file_name or file_name == "Select a file...":
@@ -1991,19 +1969,20 @@ For additional support or feature requests, please refer to the application docu
                 if hasattr(self, "plot_file_menu") and hasattr(
                     self.plot_file_menu,
                     "_values",
-                    available_files = [
-                        f
+                    available_files = [f
                         for f in self.plot_file_menu._values
                         if f != "Select a file..."
 
-                debug_text = f"No data file specified in plot configuration
+                debug_tex]
 
-Saved file: '{file_name}'" + "\n".join(
-                        available_files[:3],
+                    t = f"No data file specified in plot configuration
+
+Saved file: '{file_name}' + "\n".join(available_files[:3],
                     if len(available_files) > 3:
                         debug_text += f"\n... and {len(available_files)-3} more"
                 else:
-                    debug_text += "\n\nNo files currently loaded.\nPlease load files on Setup tab first."
+                    debug_text += "\n\nNo files currently loaded.\nPlease load" \
+                        "files on Setup tab first."
 
                 self.preview_ax.text(
                     0.5,
@@ -2013,8 +1992,7 @@ Saved file: '{file_name}'" + "\n".join(
                     ha="center",
                     va="center",
                     fontsize=10,
-                self.preview_ax.set_title(f"Preview: {plot_config['name']}")
-                self.preview_canvas.draw()
+                self.preview_ax.set_title(f"Preview: {plot_config['name']})self.preview_canvas.draw()
                 return
 
             # Get the actual data using the same method as main plotting
@@ -2034,14 +2012,14 @@ Saved file: '{file_name}'" + "\n".join(
 
                 if available_files:
                     debug_text = (
-                        f"Data file '{file_name}' not found\n\nAvailable files:\n"
-                        + "\n".join(set(available_files)[:5])
+                        f"Data file '{file_name}'" \
+                            "not found\n\nAvailable files:\n+"\n".join(set(available_files)[:5])
                     if len(set(available_files)) > 5:
-                        debug_text += f"\n... and {len(set(available_files))-5} more"
-                else:
+                        debug_text += f"\n... and {len(set(available_files))-5}moreelse:
                     debug_text = (
                         "No data files loaded\n\n"
-                        "Please:\n1. Select CSV files on Setup tab\n2. Process files or plot directly"
+                        "Please:\n1. Select CSV files on Setup" \
+                            "tab\n2. Process files or plot directly"
 
                 self.preview_ax.text(
                     0.5,
@@ -2051,8 +2029,7 @@ Saved file: '{file_name}'" + "\n".join(
                     ha="center",
                     va="center",
                     fontsize=10,
-                self.preview_ax.set_title(f"Preview: {plot_config['name']}")
-                self.preview_canvas.draw()
+                self.preview_ax.set_title(f"Preview: {plot_config['name']})self.preview_canvas.draw()
                 return
 
             # Get time column and available signals
@@ -2077,8 +2054,7 @@ Saved file: '{file_name}'" + "\n".join(
                     ha="center",
                     va="center",
                     fontsize=12,
-                self.preview_ax.set_title(f"Preview: {plot_config['name']}")
-                self.preview_canvas.draw()
+                self.preview_ax.set_title(f"Preview: {plot_config['name']})self.preview_canvas.draw()
                 return
 
             # Apply time range if specified
@@ -2095,17 +2071,14 @@ Saved file: '{file_name}'" + "\n".join(
                             plot_df = plot_df[plot_df[time_col] >= start_datetime]
                         except Exception as e:
                             # Log time range filtering errors for debugging
-                            print(f"Warning: Failed to apply start time filter: {e}")
-                    if end_time:
+                            print(f"Warning: Failed to apply start time filter: {e})if end_time:
                         try:
                             end_datetime = pd.to_datetime(
                                 f"{plot_df[time_col].dt.date.iloc[0]} {end_time}",
                             plot_df = plot_df[plot_df[time_col] <= end_datetime]
                         except Exception as e:
                             # Log time range filtering errors for debugging
-                            print(f"Warning: Failed to apply end time filter: {e}")
-
-            # Plot all available signals
+                            print(f"Warning: Failed to apply end time filter: {e})# Plot all available signals
             colors = plt.cm.tab10(np.linspace(0, 1, len(available_signals)))
             for i, signal in enumerate(available_signals):
                 signal_data = plot_df[[time_col, signal]].dropna()
@@ -2119,8 +2092,7 @@ Saved file: '{file_name}'" + "\n".join(
 
             # Apply plot configuration
             title = (
-                plot_config.get("plot_title", "") or f"Preview: {plot_config['name']}"
-            xlabel = plot_config.get("plot_xlabel", "") or time_col
+                plot_config.get("plot_title", "") or f"Preview: {plot_config['name']}xlabel = plot_config.get("plot_xlabel", "") or time_col
             ylabel = plot_config.get("plot_ylabel", "") or "Value"
 
             self.preview_ax.set_title(title, fontsize=14)
@@ -2172,21 +2144,16 @@ Saved file: '{file_name}'" + "\n".join(
             exported_count = 0
             for plot_config in self.plots_list:
                 # Create a simple text file with plot configuration
-                filename = f"{plot_config['name'].replace(' ', '_')}_config.txt"
-                filepath = os.path.join(export_dir, filename)
+                filename = f"{plot_config['name'].replace(' ', '_')}_config.txtfilepath = os.path.join(export_dir, filename)
 
                 with open(filepath, "w") as f:
-                    f.write(f"Plot Configuration: {plot_config['name']}\n")
-                    f.write(f"Description: {plot_config.get('description', 'N/A')}\n")
-                    f.write(f"Created: {plot_config.get('created_date', 'N/A')}\n")
-                    f.write(f"Signals: {', '.join(plot_config.get('signals', []))}\n")
-                    f.write(f"Start Time: {plot_config.get('start_time', 'N/A')}\n")
-                    f.write(f"End Time: {plot_config.get('end_time', 'N/A')}\n")
+                    f.write(f"Plot Configuration: {plot_config['name']}\n)f.write(f"Description: {plot_config.get('description', 'N/A')}\n")
+                    f.write(f"Created: {plot_config.get('created_date', 'N/A')}\n)f.write(f"Signals: {', '.join(plot_config.get('signals', []))}\n")
+                    f.write(f"Start Time:" \
+                        "{plot_config.get('start_time', 'N/A')}\n)f.write(f"End Time: {plot_config.get('end_time', 'N/A')}\n")
 
                     if "filter_type" in plot_config:
-                        f.write(f"Filter: {plot_config['filter_type']}\n")
-
-                    f.write("\nFull Configuration:\n")
+                        f.write(f"Filter: {plot_config['filter_type']}\n)f.write("\nFull Configuration:\n")
                     f.writelines(
                         f"  {key}: {value}\n" for key, value in plot_config.items()
 
@@ -2196,9 +2163,7 @@ Saved file: '{file_name}'" + "\n".join(
                 "Export Complete",
                 f"Exported {exported_count} plot configurations to {export_dir}",
             )        except Exception as e:
-            messagebox.showerror("Export Error", f"Error exporting plots: {e}")
-
-    def _on_plot_setting_change(self, *args: Any) -> None:
+            messagebox.showerror("Export Error", f"Error exporting plots: {e})def _on_plot_setting_change(self, *args: Any) -> None:
         """Automatically update plot when appearance settings change."""
         # Only update if we have data and signals selected
         if hasattr(self, "plot_signal_vars"):
@@ -2397,8 +2362,7 @@ Saved file: '{file_name}'" + "\n".join(
                         self.trendline_selection_start,
 
                 # Update display
-                start_str = f"{self.trendline_selection_start:.2f}"
-                end_str = f"{self.trendline_selection_end:.2f}"
+                start_str = f"{self.trendline_selection_start:.2f}end_str = f"{self.trendline_selection_end:.2f}"
                 self.trendline_selected_range.configure(
                     text=f"Range: {start_str} to {end_str}",
 
@@ -2441,12 +2405,12 @@ Saved file: '{file_name}'" + "\n".join(
             existing_files = []
 
             for ext in extensions:
-                potential_file = os.path.join(output_dir, f"{custom_name}{ext}")
-                if os.path.exists(potential_file):
+                potential_file = os.path.join(output_dir, f"{custom_name}{ext})if os.path.exists(potential_file):
                     existing_files.append(f"{custom_name}{ext}")
 
             if existing_files:
-                warning_text = f"WARNING Warning: Will overwrite existing files: {', '.join(existing_files)}",
+                warning_text = f"WARNING Warning: Will overwrite" \
+                    "existing files: {', '.join(existing_files)}",
             else:
                 self.overwrite_warning_label.configure(
                     text=" No file conflicts found",
@@ -2540,9 +2504,8 @@ Saved file: '{file_name}'" + "\n".join(
                 self.plot_canvas.draw()
                 self.status_label.configure(text="Plot auto-fitted to data")
             except Exception as e:
-                print(f"Error auto-fitting plot: {e}")
-
-    def _should_auto_zoom(self, reason: str = "filter_change") -> bool:
+                print(f"Error auto-fitting plot: {e})def" \
+                    "_should_auto_zoom(self, reason: str ="filter_change") -> bool:
         """Determine if auto-zoom should be applied based on the reason."""
         if not hasattr(self, "auto_zoom_var"):
             return True  # Default to auto-zoom if control doesn't exist
@@ -2575,9 +2538,7 @@ Saved file: '{file_name}'" + "\n".join(
                 self.plot_ax.set_xlim(zoom_state["xlim"])
                 self.plot_ax.set_ylim(zoom_state["ylim"])
             except Exception as e:
-                print(f"Error restoring zoom state: {e}")
-
-# =============================================================================
+                print(f"Error restoring zoom state: {e})# =============================================================================
 # MAIN EXECUTION
 # =============================================================================
 if __name__ == "__main__":

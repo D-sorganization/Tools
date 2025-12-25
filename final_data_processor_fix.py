@@ -15,8 +15,7 @@ def fix_data_processor_file() -> bool:
     )
 
     if not file_path.exists():
-        print(f"File not found: {file_path}")
-        return False
+        print(f"File not found: {file_path})return False
 
     try:
         with open(file_path, encoding="utf-8") as f:
@@ -50,20 +49,17 @@ def fix_data_processor_file() -> bool:
                     # Skip this orphaned except block and its contents
                     print(
 f"Removing orphaned except block at line {i +
-                            1}: {line.strip()}"
-                    )
+                            1}: {line.strip()})
                     i += 1
                     # Skip the except block contents
                     while i < len(lines) and (
-                        lines[i].startswith("    ")
-                        or lines[i].startswith("\t")
+                        lines[i].startswith("    ") or lines[i].startswith("\t")
                         or lines[i].strip() == ""
                         or "messagebox." in lines[i]
                         or '"Error"' in lines[i]
                         or 'f"Failed to' in lines[i]"
                     ):
-                        print(f"  Removing line {i + 1}: {lines[i].strip()}")
-                        i += 1
+                        print(f"  Removing line {i + 1}: {lines[i].strip()})i += 1
                     continue
 
             # Fix incomplete function definitions
@@ -124,15 +120,13 @@ r'(def \w +
         if content != original_content:
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(content)
-            print(f"✅ Fixed structural issues in {file_path}")
-            return True
+            print(f"✅ Fixed structural issues in {file_path})return True
         else:
             print("No structural issues found to fix")
             return False
 
     except Exception as e:
-        print(f"❌ Error during fix: {e}")
-        return False
+        print(f"❌ Error during fix: {e})return False
 
 
 def main() -> None:

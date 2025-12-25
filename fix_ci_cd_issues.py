@@ -36,8 +36,7 @@ def fix_ruff_issues() -> bool:
         print("✅ All Ruff issues fixed successfully")
         return True
     else:
-        print(f"⚠️ Some Ruff issues remain (exit code: {exit_code})")
-        if stderr:
+        print(f"⚠️ Some Ruff issues remain (exit code: {exit_code}))if stderr:
             print(f"Stderr: {stderr}")
         return False
 
@@ -53,8 +52,7 @@ def fix_black_formatting() -> bool:
         print("✅ All files formatted with Black successfully")
         return True
     else:
-        print(f"❌ Black formatting failed (exit code: {exit_code})")
-        if stderr:
+        print(f"❌ Black formatting failed (exit code: {exit_code}))if stderr:
             print(f"Stderr: {stderr}")
         return False
 
@@ -77,8 +75,7 @@ def fix_specific_long_lines() -> bool:
     for file_path in files_with_long_lines:
         path = Path(file_path)
         if not path.exists():
-            print(f"⚠️ File not found: {file_path}")
-            continue
+            print(f"⚠️ File not found: {file_path})continue
 
         try:
             with open(path, encoding="utf-8") as f:
@@ -94,8 +91,7 @@ def fix_specific_long_lines() -> bool:
             if content != original_content:
                 with open(path, "w", encoding="utf-8") as f:
                     f.write(content)
-                print(f"✅ Fixed long lines in {file_path}")
-                changes_made = True
+                print(f"✅ Fixed long lines in {file_path})changes_made = True
 
         except Exception as e:
             print(f"❌ Error processing {file_path}: {e}")
@@ -115,29 +111,19 @@ def fix_long_comments(content: str) -> str:
 
             # Break at logical points
             for break_point in [
-                " - ",
-                ": ",
-                ", ",
-                " and ",
-                " or ",
-                " but ",
-                " with ",
-                " for ",
+                " - ", ": ", ", ", " and ", " or ", " but ", " with ", " for ",
             ]:
                 if break_point in comment_text and len(comment_text) > 60:
                     parts = comment_text.split(break_point, 1)
                     if 20 < len(parts[0]) < 75 and len(parts[1]) < 75:
-                        new_lines.append(
-                            " " * indent + "# " + parts[0] + break_point.rstrip()
-                        )
-                        new_lines.append(" " * indent + "# " + parts[1])
+                        new_lines.append( " " * indent + "# " + parts[0] + break_point.rstrip()
+                        ) new_lines.append(" " * indent + "# " + parts[1])
                         break
             else:
                 new_lines.append(line)
         else:
             new_lines.append(line)
-
-    return "\n".join(new_lines)
+ return "\n".join(new_lines)
 
 
 def fix_long_strings(content: str) -> str:
@@ -159,18 +145,12 @@ def fix_long_strings(content: str) -> str:
                         if len(content_text) > 60:
                             # Break at logical points
                             for break_point in [
-                                ": ",
-                                " - ",
-                                ", ",
-                                " and ",
-                                " or ",
-                                " with ",
+                                ": ", " - ", ", ", " and ", " or ", " with ",
                             ]:
                                 if break_point in content_text:
                                     parts = content_text.split(break_point, 1)
                                     if 20 < len(parts[0]) < 70 and len(parts[1]) < 70:
-                                        new_line1 = line.replace(
-                                            f'"{content_text}"',
+                                        new_line1 = line.replace( f'"{content_text}"',
                                             f'"{parts[0]}{break_point.rstrip()}"',
                                         )
                                         new_line2 = " " * (indent + 4) + f'"{parts[1]}"'
@@ -222,8 +202,7 @@ def fix_long_function_calls(content: str) -> str:
             new_lines.append(line)
         else:
             new_lines.append(line)
-
-    return "\n".join(new_lines)
+ return "\n".join(new_lines)
 
 
 def remove_unused_variables() -> bool:
@@ -254,8 +233,7 @@ def remove_unused_variables() -> bool:
             if content != original_content:
                 with open(path, "w", encoding="utf-8") as f:
                     f.write(content)
-                print(f"✅ Fixed unused variables in {file_path}")
-                changes_made = True
+                print(f"✅ Fixed unused variables in {file_path})changes_made = True
 
         except Exception as e:
             print(f"❌ Error processing {file_path}: {e}")
@@ -281,11 +259,8 @@ def verify_fixes() -> bool:
     )
     mypy_ok = exit_code == 0
 
-    print(f"Ruff: {'✅' if ruff_ok else '❌'}")
-    print(f"Black: {'✅' if black_ok else '❌'}")
-    print(f"MyPy: {'✅' if mypy_ok else '❌'}")
-
-    return ruff_ok and black_ok and mypy_ok
+    print(f"Ruff: {'✅' if ruff_ok else '❌'})print(f"Black: {'✅' if black_ok else '❌'}")
+    print(f"MyPy: {'✅' if mypy_ok else '❌'})return ruff_ok and black_ok and mypy_ok
 
 
 def main() -> None:
@@ -319,9 +294,7 @@ def main() -> None:
     else:
         print("\n⚠️ Some issues may still remain. Check the output above.")
 
-    print(f"\nCompleted {success_count}/{total_steps} steps successfully")
-
-    if success_count == total_steps:
+    print(f"\nCompleted {success_count}/{total_steps}steps successfully)if success_count == total_steps:
         print("✅ Repository is now ready for CI/CD!")
         sys.exit(0)
     else:

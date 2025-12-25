@@ -45,8 +45,7 @@ def fix_remaining_issues():
                 "def _display_package_info(
                     self,
                     manifest_data: dict,
-                    is_encrypted: bool
-                ) -> None:",
+                    is_encrypted: bool ) -> None:",
                 "FBT001",
             ),
             ("def _inspect_package(self) -> None:", "PLR0915"),
@@ -56,8 +55,7 @@ def fix_remaining_issues():
         for i, line in enumerate(lines):
             for pattern, error_code in noqa_fixes:
                 if pattern in line and "# noqa:" not in line:
-                    lines[i] = f"{line}  # noqa: {error_code}"
-                    break
+                    lines[i] = f"{line}  # noqa: {error_code}break
 
         content = "\n".join(lines)
 

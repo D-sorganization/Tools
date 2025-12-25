@@ -36,8 +36,7 @@ def fix_line_lengths_in_file(file_path: str) -> bool:
                     continue
 
                 # 2. Long f-strings with file operations
-                if 'f"Warning: No selected columns found in {os.path.basename(file_path)}"' in original_line:
-                    indent = len(original_line) - len(original_line.lstrip())
+                if 'f"Warning: No selected columns found in {os.path.basename(file_path)}' in original_line:indent = len(original_line) - len(original_line.lstrip())
                     indent_str = ' ' * indent
                     lines[i] = f'{indent_str}f"Warning: No selected columns found in {{os.path.basename(file_path)}}"\n'
                     modified = True
@@ -47,12 +46,9 @@ def fix_line_lengths_in_file(file_path: str) -> bool:
                 if 'f"Loaded {os.path.basename(
                     file_path)}: {len(df)} rows,
                     {len(df.columns
-                )} columns"' in original_line:
-                    indent = len(original_line) - len(original_line.lstrip())
+                )}columns' in original_line:indent = len(original_line) - len(original_line.lstrip())
                     indent_str = ' ' * indent
-                    lines[i] = f'{indent_str}f"Loaded {{os.path.basename(file_path)}}: {{len(df)}} rows, "\n'
-                    lines.insert(i + 1, f'{indent_str}f"{{len(df.columns)}} columns"\n')
-                    modified = True
+                    lines[i] = f'{indent_str}f"Loaded {{os.path.basename(file_path)}}: {{len(df)}} rows, "\n' lines.insert(i + 1, f'{indent_str}f"{{len(df.columns)}} columns\n')modified = True
                     continue
 
                 # 4. Long f-strings with combined data info
@@ -65,8 +61,7 @@ def fix_line_lengths_in_file(file_path: str) -> bool:
                     lines[i] = f'{indent_str}f"Combined data: {{len(
                         combined_df)}} rows,
                         {{len(combined_df.columns
-                    )}} columns"\n'
-                    modified = True
+                    )}} columns\n'modified = True
                     continue
 
                 # 5. Long dictionary definitions
@@ -75,8 +70,7 @@ def fix_line_lengths_in_file(file_path: str) -> bool:
                     indent_str = ' ' * indent
                     lines[i] = f'{indent_str}"combine": "Copies all files from source folders into the single "\n'
                     lines.insert(
-                        i + 1,
-                        f'{indent_str}           "destination folder.",
+                        i + 1, f'{indent_str}           "destination folder.",
                         \n'
                     )
                     modified = True
@@ -88,8 +82,7 @@ def fix_line_lengths_in_file(file_path: str) -> bool:
                     indent_str = ' ' * indent
                     lines[i] = f'{indent_str}"flatten": "Finds deeply nested folders and copies them to the "\n'
                     lines.insert(
-                        i + 1,
-                        f'{indent_str}           "top level of the destination.",
+                        i + 1, f'{indent_str}           "top level of the destination.",
                         \n'
                     )
                     modified = True
@@ -101,8 +94,7 @@ def fix_line_lengths_in_file(file_path: str) -> bool:
                     indent_str = ' ' * indent
                     lines[i] = f'{indent_str}"prune": "Copies source folders to the destination, preserving "\n'
                     lines.insert(
-                        i + 1,
-                        f'{indent_str}         "structure but skipping empty sub-folders.",
+                        i + 1, f'{indent_str}         "structure but skipping empty sub-folders.",
                         \n'
                     )
                     modified = True
@@ -117,8 +109,7 @@ def fix_line_lengths_in_file(file_path: str) -> bool:
                     continue
 
                 # 9. Long status messages
-                if 'f"PREVIEW: Would copy {copied_count} files, rename {renamed_count}, skip {skipped_count}"' in original_line:
-                    indent = len(original_line) - len(original_line.lstrip())
+                if 'f"PREVIEW: Would copy {copied_count} files, rename {renamed_count}, skip {skipped_count}' in original_line:indent = len(original_line) - len(original_line.lstrip())
                     indent_str = ' ' * indent
                     lines[i] = f'{indent_str}status = (\n'
                     lines.insert(
@@ -127,10 +118,8 @@ def fix_line_lengths_in_file(file_path: str) -> bool:
                         "\n'
                     )
                     lines.insert(
-                        i + 2,
-                        f'{indent_str}    f"rename {{renamed_count}},
-                        skip {{skipped_count}}"\n'
-                    )
+                        i + 2, f'{indent_str}    f"rename {{renamed_count}},
+                        skip {{skipped_count}}\n')
                     lines.insert(i + 3, f'{indent_str})\n')
                     modified = True
                     continue
@@ -151,8 +140,7 @@ def fix_line_lengths_in_file(file_path: str) -> bool:
         if modified:
             with open(file_path, 'w', encoding='utf-8') as f:
                 f.writelines(lines)
-            logger.info(f"Fixed line lengths in {file_path}")
-            return True
+            logger.info(f"Fixed line lengths in {file_path})return True
 
         return False
     except Exception as e:
@@ -163,9 +151,7 @@ def main():
     """Main function."""
     file_path = "data_processing/data_processor/python/data_processor/Data_Processor_Integrated.py"
 
-    logger.info(f"Fixing line length issues in {file_path}")
-
-    if fix_line_lengths_in_file(file_path):
+    logger.info(f"Fixing line length issues in {file_path})if fix_line_lengths_in_file(file_path):
         logger.info("Line length fixes applied successfully")
     else:
         logger.info("No line length fixes needed")

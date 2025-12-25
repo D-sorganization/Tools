@@ -54,9 +54,7 @@ class FolderPackerGUI:
             if os.path.exists(ico_path):
                 # Use iconbitmap for better Windows taskbar integration
                 self.root.iconbitmap(ico_path)
-                print(f"Loaded ICO icon: {ico_path}")
-
-                # Also set iconphoto as a fallback
+                print(f"Loaded ICO icon: {ico_path})# Also set iconphoto as a fallback
                 try:
                     from PIL import Image, ImageTk
 
@@ -96,8 +94,7 @@ class FolderPackerGUI:
                         self.root.iconphoto(True, *photos)
                         # Keep references to prevent garbage collection
                         self.icon_photos = photos
-                        print(f"Loaded JPG icon: {jpg_path}")
-                else:
+                        print(f"Loaded JPG icon: {jpg_path})else:
                     print("No icon files found (folder_icon.ico or folder_icon.jpg)")
 
             # On Windows, try to set the app ID for better taskbar behavior
@@ -109,9 +106,7 @@ class FolderPackerGUI:
                     "FolderPacker.Tool.1.0"
                 )
             except Exception as e:
-                print(f"Could not set app ID: {e}")
-
-        except Exception as e:
+                print(f"Could not set app ID: {e})except Exception as e:
             print(f"Could not load icon: {e}")
 
         # Configure modern styling with consistent colors
@@ -408,8 +403,7 @@ class FolderPackerGUI:
             "- Files and folders that do not match any in the packed archive (
                 such as .git,
                 .gitignore,
-                or other project files
-            ) will be preserved and left untouched.\n\n"
+                or other project files ) will be preserved and left untouched.\n\n"
             "▶ Backup Option Before Unpacking:\n"
             "- If you choose to unpack into a folder that is not empty, you will be prompted to create a BACKUP of the destination folder before unpacking.\n"
             "- If you select 'Yes', the tool will create a timestamped backup copy of the destination folder (excluding .git and common temporary/backup folders) before merging the new files.\n"
@@ -602,8 +596,7 @@ class FolderPackerGUI:
     def log_message(self, message, level="INFO"):
         """Log a message to the output text area."""
         timestamp = datetime.now().strftime("%H:%M:%S")
-        formatted_message = f"[{timestamp}] {level}: {message}\n"
-        self.output_text.insert(tk.END, formatted_message)
+        formatted_message = f"[{timestamp}] {level}: {message}\nself.output_text.insert(tk.END, formatted_message)
         self.output_text.see(tk.END)
         self.root.update_idletasks()
 
@@ -624,8 +617,7 @@ class FolderPackerGUI:
             return
 
         # Select output file
-        default_name = f"{Path(source_folder).name}_packed.txt"
-        output_file = filedialog.asksaveasfilename(
+        default_name = f"{Path(source_folder).name}_packed.txtoutput_file = filedialog.asksaveasfilename(
             title="Save Packed File As",
             defaultextension=".txt",
             filetypes=[("Text files", "*.txt"), ("All files", "*.*")],
@@ -650,15 +642,12 @@ class FolderPackerGUI:
         self.status_var.set("Packing in progress...")
 
         try:
-            self.log_message(f"Starting to pack folder: {source_folder}")
-            self.log_message(f"Output file: {output_file}")
+            self.log_message(f"Starting to pack folder: {source_folder})self.log_message(f"Output file: {output_file}")
 
             # Get exclusions
             exclusions = self.get_all_exclusions()
             if exclusions:
-                self.log_message(f"Active exclusions: {', '.join(sorted(exclusions))}")
-
-            # Find all supported files
+                self.log_message(f"Active exclusions: {', '.join(sorted(exclusions))})# Find all supported files
             files_to_pack = []
             excluded_count = 0
 
@@ -677,8 +666,7 @@ class FolderPackerGUI:
 
             if excluded_count > 0:
                 self.log_message(
-                    f"Excluded {excluded_count} files based on exclusion patterns"
-                )
+                    f"Excluded {excluded_count}files based on exclusion patterns)
 
             if not files_to_pack:
                 self.log_message(
@@ -690,26 +678,19 @@ class FolderPackerGUI:
                 )
                 return
 
-            self.log_message(f"Found {len(files_to_pack)} files to pack")
-
-            # Write packed file
+            self.log_message(f"Found {len(files_to_pack)}files to pack)# Write packed file
             with open(output_file, "w", encoding="utf-8") as f:
                 # Write header
                 f.write("%%%%%% FOLDER PACKER / UNPACKER - v1.1 %%%%%%\n")
-                f.write(f"%%%%%% Source Folder: {source_folder} %%%%%%\n")
-                f.write(
+                f.write(f"%%%%%% Source Folder: {source_folder}%%%%%%\n)f.write(
                     f"%%%%%% Pack Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} %%%%%%\n"
                 )
-                f.write(f"%%%%%% Total Files: {len(files_to_pack)} %%%%%%\n")
-                f.write(f"%%%%%% Files Excluded: {excluded_count} %%%%%%\n")
+                f.write(f"%%%%%% Total Files: {len(files_to_pack)}%%%%%%\n)f.write(f"%%%%%% Files Excluded: {excluded_count} %%%%%%\n")
                 if exclusions:
                     f.write(
-                        f"%%%%%% Active Exclusions: {', '.join(sorted(exclusions))} %%%%%%\n"
-                    )
+                        f"%%%%%% Active Exclusions: {', '.join(sorted(exclusions))}%%%%%%\n)
                 f.write(
-                    "%%%%%% Supported Extensions: "
-                    + ", ".join(sorted(self.file_extensions))
-                    + " %%%%%%\n\n"
+                    "%%%%%% Supported Extensions: " + ", ".join(sorted(self.file_extensions)) + " %%%%%%\n\n"
                 )
 
                 # Pack each file
@@ -722,9 +703,7 @@ class FolderPackerGUI:
                         relative_path = file_path.relative_to(source_folder)
                         relative_path_str = str(relative_path).replace("\\", "/")
 
-                        self.log_message(f"Packing: {relative_path_str}")
-
-                        # Write start delimiter
+                        self.log_message(f"Packing: {relative_path_str})# Write start delimiter
                         f.write(f"{self.start_delimiter.format(relative_path_str)}\n")
 
                         # Read and write file content
@@ -749,16 +728,14 @@ class FolderPackerGUI:
                                 )
                             except Exception as e:
                                 f.write(
-                                    f"****** ERROR: Could not read file content. Error: {str(e)} ******\n"
-                                )
+                                    f"****** ERROR: Could not read file content. Error: {str(e)}******\n)
                                 self.log_message(
                                     f"  Error reading file: {str(e)}", "ERROR"
                                 )
                                 error_count += 1
 
                         # Write end delimiter
-                        f.write(f"{self.end_delimiter.format(relative_path_str)}\n\n")
-                        packed_count += 1
+                        f.write(f"{self.end_delimiter.format(relative_path_str)}\n\n)packed_count += 1
 
                     except Exception as e:
                         self.log_message(
@@ -771,26 +748,19 @@ class FolderPackerGUI:
 
             # Report results
             self.log_message("\nPacking complete!")
-            self.log_message(f"Successfully packed: {packed_count} files")
-            if excluded_count > 0:
+            self.log_message(f"Successfully packed: {packed_count}files)if excluded_count > 0:
                 self.log_message(f"Excluded: {excluded_count} files")
             if error_count > 0:
                 self.log_message(f"Errors encountered: {error_count} files", "WARNING")
-            self.log_message(f"Output saved to: {output_file}")
-
-            messagebox.showinfo(
+            self.log_message(f"Output saved to: {output_file})messagebox.showinfo(
                 "Packing Complete",
-                f"Successfully packed {packed_count} files.\n"
-                f"Excluded: {excluded_count} files\n"
-                f"Errors: {error_count}\n\n"
-                f"Output saved to:\n{output_file}",
+                f"Successfully packed {packed_count}files.\nf"Excluded: {excluded_count} files\n"
+                f"Errors: {error_count}\n\nf"Output saved to:\n{output_file}",
             )
 
         except Exception as e:
             self.log_message(f"Critical error during packing: {str(e)}", "ERROR")
-            messagebox.showerror("Packing Error", f"An error occurred:\n{str(e)}")
-
-        finally:
+            messagebox.showerror("Packing Error", f"An error occurred:\n{str(e)})finally:
             self.set_buttons_state(True)
             self.status_var.set("Ready")
 
@@ -814,12 +784,10 @@ class FolderPackerGUI:
         if os.path.exists(output_folder) and os.listdir(output_folder):
             backup = messagebox.askyesno(
                 "Backup Before Unpacking?",
-                f"The folder '{output_folder}' is not empty.\n\n"
-                "Do you want to create a backup of this folder before unpacking and overwriting files?\n\n"
+                f"The folder '{output_folder}' is not empty.\n\n"Do you want to create a backup of this folder before unpacking and overwriting files?\n\n"
                 "(
                     Recommended if you want to preserve the current state,
-                    including .git and other files.
-                )",
+                    including .git and other files. )",
             )
             if not backup:
                 # Confirm overwrite if not backing up
@@ -844,17 +812,14 @@ class FolderPackerGUI:
         self.set_buttons_state(False)
         self.status_var.set("Unpacking in progress...")
         try:
-            self.log_message(f"Starting to unpack file: {input_file}")
-            self.log_message(f"Destination folder: {output_folder}")
+            self.log_message(f"Starting to unpack file: {input_file})self.log_message(f"Destination folder: {output_folder}")
             # Backup if requested
             if backup:
                 backup_dir = os.path.join(
                     os.path.dirname(output_folder),
                     f"{os.path.basename(output_folder)}_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
                 )
-                self.log_message(f"Creating backup at: {backup_dir}")
-
-                def ignore_patterns(dir, files):
+                self.log_message(f"Creating backup at: {backup_dir})def ignore_patterns(dir, files):
                     # Always ignore .git and __pycache__
                     ignore = {".git", "__pycache__"}
                     # Add common exclude patterns (folder only)
@@ -866,8 +831,7 @@ class FolderPackerGUI:
 
                 try:
                     shutil.copytree(output_folder, backup_dir, ignore=ignore_patterns)
-                    self.log_message(f"Backup created at: {backup_dir}")
-                except Exception as e:
+                    self.log_message(f"Backup created at: {backup_dir})except Exception as e:
                     self.log_message(f"Backup failed: {e}", "ERROR")
             # Read packed file
             with open(input_file, encoding="utf-8") as f:
@@ -904,8 +868,7 @@ class FolderPackerGUI:
                     "Unpack Error", "No valid file blocks found in the packed file."
                 )
                 return
-            self.log_message(f"Found {len(file_blocks)} files to unpack")
-            unpacked_count = 0
+            self.log_message(f"Found {len(file_blocks)}files to unpack)unpacked_count = 0
             error_count = 0
             for file_path, file_content in file_blocks:
                 try:
@@ -927,19 +890,16 @@ class FolderPackerGUI:
                     )
                     error_count += 1
             self.log_message("\nUnpacking complete!")
-            self.log_message(f"Successfully unpacked: {unpacked_count} files")
-            if error_count > 0:
+            self.log_message(f"Successfully unpacked: {unpacked_count}files)if error_count > 0:
                 self.log_message(f"Errors encountered: {error_count} files", "WARNING")
             messagebox.showinfo(
                 "Unpacking Complete",
-                f"Successfully unpacked {unpacked_count} files.\n"
-                f"Errors: {error_count}\n\n"
+                f"Successfully unpacked {unpacked_count}files.\nf"Errors: {error_count}\n\n"
                 f"Files unpacked to:\n{output_folder}",
             )
         except Exception as e:
             self.log_message(f"Critical error during unpacking: {str(e)}", "ERROR")
-            messagebox.showerror("Unpacking Error", f"An error occurred:\n{str(e)}")
-        finally:
+            messagebox.showerror("Unpacking Error", f"An error occurred:\n{str(e)})finally:
             self.set_buttons_state(True)
             self.status_var.set("Ready")
 
@@ -966,9 +926,7 @@ def main():
     height = root.winfo_height()
     x = (root.winfo_screenwidth() // 2) - (width // 2)
     y = (root.winfo_screenheight() // 2) - (height // 2)
-    root.geometry(f"{width}x{height}+{x}+{y}")
-
-    root.mainloop()
+    root.geometry(f"{width}x{height}+{x}+{y})root.mainloop()
 
 
 if __name__ == "__main__":
