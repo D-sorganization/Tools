@@ -8,6 +8,7 @@ import logging
 import os
 import subprocess
 import sys
+import time
 import tkinter as tk
 from collections.abc import Callable
 from pathlib import Path
@@ -438,6 +439,17 @@ class ToolsLauncher:
         show_icon: bool = False,
     ) -> None:
         """Create a professional tool card."""
+
+        def on_click() -> None:
+            """Debounce click events."""
+            current_time = time.time()
+            if not hasattr(self, "_last_click_time"):
+                self._last_click_time = 0.0
+            
+            if current_time - self._last_click_time > 1.0:
+                self._last_click_time = current_time
+                command()
+
         card_frame = tk.Frame(parent, bg="white", relief="raised", bd=1)
         card_frame.pack(fill="x", padx=20, pady=10)
 
@@ -498,7 +510,7 @@ class ToolsLauncher:
         launch_btn = tk.Button(
             button_frame,
             text="Launch Tool",
-            command=command,
+            command=on_click,
             bg=color,
             fg="white",
             font=("Arial", 11, "bold"),
