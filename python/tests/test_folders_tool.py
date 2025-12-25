@@ -35,12 +35,12 @@ from Folders_Tool_r0 import FolderProcessorApp
 class TestFolderProcessorApp:
     """Test cases for FolderProcessorApp."""
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_root(self) -> Mock:
         """Mock Tkinter root."""
         return Mock()
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_tk_vars(self) -> Generator[dict[str, Mock], None, None]:
         """Mock Tkinter variables."""
         with (

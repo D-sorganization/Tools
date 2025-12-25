@@ -96,7 +96,6 @@ def process_single_csv_file(
     Returns:
         Processed DataFrame or None if processing fails
     """
-        Processed DataFrame or None if processing failed
     try:
         df = pd.read_csv(file_path, low_memory=False)
 

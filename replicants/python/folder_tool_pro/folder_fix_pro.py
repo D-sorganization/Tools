@@ -586,10 +586,10 @@ class FolderFixPro:
         btn_frame.pack(fill="x", pady=(PADDING_SMALL, 0))
 
         ttk.Button(
-            btn_frame, text="➕ Add Folder", command=self._add_source_folder
+            btn_frame, text="+ Add Folder", command=self._add_source_folder
         ).pack(side="left", padx=(0, PADDING_SMALL))
         ttk.Button(
-            btn_frame, text="➖ Remove", command=self._remove_source_folder
+            btn_frame, text="- Remove", command=self._remove_source_folder
         ).pack(side="left", padx=(0, PADDING_SMALL))
         ttk.Button(
             btn_frame, text="🗑️ Clear All", command=self._clear_source_folders
@@ -736,7 +736,7 @@ class FolderFixPro:
         )
         self.cancel_btn.pack(side="right", fill="x", expand=True)
 
-    def _create_filters_tab(self) -> None:
+    def _create_filters_tab(self) -> None:  # noqa: PLR0915
         """Create filters and advanced options tab."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Filters & Advanced  ")
@@ -825,7 +825,7 @@ class FolderFixPro:
             pady=PADDING_MEDIUM
         )
 
-    def _create_preview_tab(self) -> None:
+    def _create_preview_tab(self) -> None:  # noqa: PLR0915
         """Create preview tab showing files that will be processed."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Preview  ")
@@ -1070,7 +1070,7 @@ class FolderFixPro:
         )
         self.preview_count_label.configure(text=count_text)
 
-    def _should_include_file(self, file_path: Path) -> bool:
+    def _should_include_file(self, file_path: Path) -> bool:  # noqa: PLR0911
         """Check if file should be included based on filters."""
         try:
             # Check include extensions
@@ -1739,7 +1739,7 @@ Features:
         guide_text = """Folder Fix Pro - Quick Start Guide
 
 1. ADDING SOURCES
-   • Click '➕ Add Folder' or drag folders to the list  # noqa: RUF001
+   • Click '+ Add Folder' or drag folders to the list  # noqa: RUF001
    • Select multiple folders for batch operations
 
 2. SELECTING DESTINATION

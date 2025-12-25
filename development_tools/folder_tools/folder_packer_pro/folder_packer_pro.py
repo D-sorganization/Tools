@@ -763,7 +763,7 @@ class FolderPackerPro:
         )
         self.unpack_cancel_btn.pack(side="right", fill="x", expand=True)
 
-    def _create_preview_tab(self) -> None:
+    def _create_preview_tab(self) -> None:  # noqa: PLR0915
         """Create file preview tab."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Preview  ")
