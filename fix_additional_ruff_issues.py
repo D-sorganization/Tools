@@ -281,7 +281,10 @@ r'(\s +
                     )except Exception as e:\s*\n(\s +
                     )self\._log_message\(f"Error ([^"] +
                     ): \{e\}", "error"\)',"
-                r'\1except Exception as e:\n\2logger.exception("Error \3")\n\2self._log_message(f"Error \3: {e}", "error")',
+                r'\1except Exception as e:\n\2logger.exception(
+                    "Error \3")\n\2self._log_message(f"Error \3: {e}",
+                    "error"
+                )',
                 content,
             )
 

@@ -307,7 +307,8 @@ def _sympify_value(
     symbols: Mapping[str, sp.Symbol | sp.Expr] | None = None,
 ) -> sp.Expr:
     try:
-        # Optimization: Use cached allowed_functions directly if no extra symbols are needed
+        # Optimization: Use cached allowed_functions directly if no extra symbols are
+        # needed
         local_dict = calculator.allowed_functions
         if symbols:
             local_dict = {**calculator.allowed_functions, **symbols}

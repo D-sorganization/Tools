@@ -27,7 +27,7 @@ def fix_undefined_variable_i(file_path: str) -> bool:
 
         # Pattern to find for loops using _ but referencing i
         patterns = [
-            (r'for _ in range\(([^)]+)\):\s*\n(\s+)([^\n]*lines\[i[^\]]*\])', 
+            (r'for _ in range\(([^)]+)\):\s*\n(\s+)([^\n]*lines\[i[^\]]*\])',
              r'for i in range(\1):\n\2\3'),
         ]
 

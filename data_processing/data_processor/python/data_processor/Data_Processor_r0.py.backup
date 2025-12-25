@@ -86,7 +86,7 @@ def process_single_csv_file(
     settings: dict[str, Any],
 ) -> pd.DataFrame | None:
     """Processes a single CSV file based on a dictionary of settings.
-
+    
     This function is designed to be run in a separate process.
 
     Args:
@@ -96,6 +96,7 @@ def process_single_csv_file(
     Returns:
         Processed DataFrame or None if processing fails
     """
+        Processed DataFrame or None if processing failed
     try:
         df = pd.read_csv(file_path, low_memory=False)
 
@@ -718,10 +719,7 @@ COMMON MISTAKES TO AVOID:
             if file_path:
                 with open(file_path, "w") as f:
                     json.dump(settings, f, indent=2)
-                messagebox.showinfo(
-                    "Success",
-                    f"Settings saved to:\n{file_path}"
-                )        except Exception as e:
+                messagebox.showinfo("Success", f"Settings saved to:\n{file_path}")        except Exception as e:
             messagebox.showerror("Error", f"Failed to save settings:\n{e!s}")
 
     def load_settings(self) -> None:
@@ -975,8 +973,7 @@ COMMON MISTAKES TO AVOID:
                         # Try to read the file to see if it's a valid configuration
                         with open(file_path) as f:
                             data = json.load(f)
-                            # Check if it has the expected structure (processing configs
-                            # have 'saved_at',
+                            # Check if it has the expected structure (processing configs have 'saved_at',
                             # plotting configs have 'plot_name')
                             if isinstance(data, dict) and (
                                 "saved_at" in data or "plot_name" in data
@@ -1111,11 +1108,11 @@ visualizing time series data from CSV files and DAT files with DBF tag files.
 
 ## New Features (Latest Update)
 
-###
+### 
 
-###
+### 
 
-###
+### 
 
 ## Tab Descriptions
 
@@ -2057,8 +2054,7 @@ Saved file: '{file_name}'" + "\n".join(
 
             # Get time column and available signals
             time_col = df.columns[0]
-            # Try to find a better time column if the first column doesn't look like
-            # time
+            # Try to find a better time column if the first column doesn't look like time
             for col in df.columns:
                 if any(
                     time_word in col.lower()

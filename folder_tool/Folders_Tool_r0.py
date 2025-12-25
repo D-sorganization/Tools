@@ -893,7 +893,7 @@ class FolderProcessorApp:
             if not self.dest_folder:
                 messagebox.showerror("Error", "Please select a destination folder.")
                 return False
-            
+
             dest_abs = os.path.abspath(self.dest_folder)
             for src in self.source_folders:
                 src_abs = os.path.abspath(src)
@@ -904,7 +904,7 @@ class FolderProcessorApp:
                     return False
                 if dest_abs.startswith(src_abs + os.sep):
                     messagebox.showerror(
-                        "Error", 
+                        "Error",
                         f"The destination folder cannot be inside a source folder.\n\nDestination: {dest_abs}\nSource: {src_abs}\n\nThis would cause infinite loops and incorrect file counts."
                     )
                     return False

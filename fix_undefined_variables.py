@@ -3,9 +3,8 @@
 Fix undefined variable 'i' in for loops across the codebase.
 """
 
-import os
-import re
 import logging
+import os
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -16,10 +15,9 @@ logger = logging.getLogger(__name__)
 def fix_undefined_i_in_file(file_path: str) -> bool:
     """Fix undefined variable 'i' in a single file."""
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             content = f.read()
 
-        original_content = content
 
         # Fix pattern: for _ in range(...): ... lines[i - 1]
         # Replace _ with i in for loops where i is used in the body
@@ -56,10 +54,9 @@ def fix_undefined_i_in_file(file_path: str) -> bool:
 def fix_undefined_value_in_file(file_path: str) -> bool:
     """Fix undefined variable 'value' in for loops."""
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             content = f.read()
 
-        original_content = content
 
         # Fix pattern: for key, _ in items(): ... str(value)
         lines = content.split("\n")

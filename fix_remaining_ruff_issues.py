@@ -54,7 +54,10 @@ def fix_long_doc_lines(content: str) -> str:
 
     for line in lines:
         if len(line.rstrip()) > 88:
-            # Check if it's a documentation line (starts with text, contains descriptions)
+            # Check if it's a documentation line (
+                starts with text,
+                contains descriptions
+            )
             if (
                 line.strip()
                 and not line.strip().startswith("#")

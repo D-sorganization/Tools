@@ -25,7 +25,8 @@ from PyQt6.QtWidgets import (
 REPO_ROOT = Path(__file__).parent.absolute()
 
 # Tool Definitions
-# Format: "Name": {"path": relative_path, "type": "python"|"matlab"|"web"|"browser"|"bat", "desc": "Description"}
+# Format: "Name": {"path": relative_path, "type":
+# "python"|"matlab"|"web"|"browser"|"bat", "desc": "Description"}
 TOOLS = {
     "Media Processing": [
         {

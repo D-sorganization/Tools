@@ -29,7 +29,10 @@ def fix_data_processor_lines():
         # Long print statements with time ranges
         (
             r'f"Time range: {combined_df\[time_col\]\.min\(\)} to {combined_df\[time_col\]\.max\(\)}",',
-            r'(\n            f"Time range: {combined_df[time_col].min()} to "\n            f"{combined_df[time_col].max()}",\n        )',
+            r'(
+                \n            f"Time range: {combined_df[time_col].min()} to "\n            f"{combined_df[time_col].max()}",
+                \n
+            )',
         ),
         # Long scipy error messages
         (
@@ -55,7 +58,11 @@ def fix_data_processor_lines():
                 \n            f"processed_files: {len(getattr(self,
                 \'processed_files\',
                 {}
-            )) "\n            f"if hasattr(self, \'processed_files\') else \'None\'}",\n        )',
+            )) "\n            f"if hasattr(
+                self,
+                \'processed_files\') else \'None\'}",
+                \n
+            )',
         ),
         # Long comment about structure checking
         (

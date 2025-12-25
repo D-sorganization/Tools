@@ -48,7 +48,10 @@ def fix_long_lines_in_file(file_path):
         if "messagebox." in fixed_line and len(fixed_line.rstrip()) > 88:
             # Split messagebox text arguments
             fixed_line = re.sub(
-                r'messagebox\.(showinfo|showwarning|askyesno)\(\s*"([^"]*)",\s*"([^"]*)"',
+                r'messagebox\.(
+                    showinfo|showwarning|askyesno)\(\s*"([^"]*)",
+                    \s*"([^"]*
+                )"',
                 r'messagebox.\1(\n                "\2",\n                "\3"',
                 fixed_line,
             )

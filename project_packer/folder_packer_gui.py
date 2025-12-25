@@ -405,7 +405,11 @@ class FolderPackerGUI:
             "▶ How Unpacking Works:\n"
             "- When you unpack into a folder, the tool will MERGE the packed files into the selected destination folder.\n"
             "- If a file in the packed archive has the same name and path as a file in the destination, it will OVERWRITE the existing file.\n"
-            "- Files and folders that do not match any in the packed archive (such as .git, .gitignore, or other project files) will be preserved and left untouched.\n\n"
+            "- Files and folders that do not match any in the packed archive (
+                such as .git,
+                .gitignore,
+                or other project files
+            ) will be preserved and left untouched.\n\n"
             "▶ Backup Option Before Unpacking:\n"
             "- If you choose to unpack into a folder that is not empty, you will be prompted to create a BACKUP of the destination folder before unpacking.\n"
             "- If you select 'Yes', the tool will create a timestamped backup copy of the destination folder (excluding .git and common temporary/backup folders) before merging the new files.\n"
@@ -812,7 +816,10 @@ class FolderPackerGUI:
                 "Backup Before Unpacking?",
                 f"The folder '{output_folder}' is not empty.\n\n"
                 "Do you want to create a backup of this folder before unpacking and overwriting files?\n\n"
-                "(Recommended if you want to preserve the current state, including .git and other files.)",
+                "(
+                    Recommended if you want to preserve the current state,
+                    including .git and other files.
+                )",
             )
             if not backup:
                 # Confirm overwrite if not backing up

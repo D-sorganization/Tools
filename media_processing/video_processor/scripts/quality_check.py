@@ -309,7 +309,8 @@ def check_file(  # noqa: PLR0911
         content = filepath.read_text(encoding="utf-8")
         # Additional safety: check for unique marker or pattern definitions
         # This is the most reliable check - works regardless of path resolution
-        # CRITICAL: This check MUST happen before reading lines to prevent any processing
+        # CRITICAL: This check MUST happen before reading lines to prevent any
+        # processing
         # Most permissive check:
         # if file contains BANNED_PATTERNS definition, it's this script
         # This is the most reliable content-based check

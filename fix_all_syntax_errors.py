@@ -55,7 +55,10 @@ def fix_all_syntax_errors() -> bool:
         # Fix broken f-strings and string concatenations
         # Fix the specific broken f-string patterns
         content = re.sub(
-            r'f"([^"]*)\{([^}]*)\}([^"]*)",\s*\n\s*"([^"]*)"', r'f"\1{\2}\3\4"', content"
+            r'f"(
+                [^"]*)\{([^}]*)\}([^"]*)",
+                \s*\n\s*"([^"]*
+            )"', r'f"\1{\2}\3\4"', content"
         )
 
         # Fix broken string literals that span multiple lines incorrectly
@@ -65,7 +68,10 @@ def fix_all_syntax_errors() -> bool:
         fixes = [
             # Fix the load more button text
             (
-                r'text=f"Load More Signals \(\{len\(signals\) -",\s*"SIGNAL_BATCH_SIZE\} remaining\)"',
+                r'text=f"Load More Signals \(
+                    \{len\(signals\) -",
+                    \s*"SIGNAL_BATCH_SIZE\} remaining\
+                )"',
                 r'text=f"Load More Signals ({len(signals) - SIGNAL_BATCH_SIZE} remaining)"',
             ),
             # Fix the debug text f-string

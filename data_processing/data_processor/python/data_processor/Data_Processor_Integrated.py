@@ -430,7 +430,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         # Initialize the parent class
         super().__init__(*args, **kwargs)
 
-        # Now initialize Tkinter variables AFTER parent class has created the root window
+        # Now initialize Tkinter variables AFTER parent class has created the root
+        # window
         self.folder_operation_mode = ctk.StringVar(value="combine")
         self.folder_filter_extensions = ctk.StringVar(value="")
         self.folder_min_file_size = ctk.StringVar(value="0")
@@ -764,7 +765,10 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             f"Successfully created: {output_filename}"
                         )
                         self._log_conversion_message(
-                            f"Combined data: {len(combined_df)} rows, {len(combined_df.columns)} columns"
+                            f"Combined data: {len(
+                                combined_df)} rows,
+                                {len(combined_df.columns
+                            )} columns"
                         )
 
                     except Exception as e:

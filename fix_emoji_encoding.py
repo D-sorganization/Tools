@@ -48,7 +48,8 @@ def fix_emoji_issues() -> bool:
         for emoji, replacement in emoji_replacements.items():
             content = content.replace(emoji, replacement)
 
-        # Remove any remaining emoji or special Unicode characters that might cause issues
+        # Remove any remaining emoji or special Unicode characters that might cause
+        # issues
         # Keep only ASCII printable characters, newlines, and basic Unicode
         content = re.sub(r"[^\x00-\x7F\u00A0-\u024F\u1E00-\u1EFF]", "", content)
 

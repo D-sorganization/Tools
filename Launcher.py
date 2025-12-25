@@ -16,7 +16,8 @@ def get_path(rel_path: str) -> str:
 # Tool Configuration
 # Category -> List of (Name, Relative Path, Type)
 # Type: 'python', 'bat', 'html', 'file' or 'matlab'
-# Note: 'matlab' type simply opens the file/folder in OS as we can't reliably assume CLI matlab activation.
+# Note: 'matlab' type simply opens the file/folder in OS as we can't reliably assume CLI
+# matlab activation.
 # But 'file' is usually enough. 'python' launches with current sys.executable.
 TOOLS = {
     "Unit Converters": [
