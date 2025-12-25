@@ -765,10 +765,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             f"Successfully created: {output_filename}"
                         )
                         self._log_conversion_message(
-                            f"Combined data: {len(
-                                combined_df)} rows,
-                                {len(combined_df.columns
-                            )} columns"
+                            f"Combined data: {len(combined_df)} rows, "
+                            f"{len(combined_df.columns)} columns"
                         )
 
                     except Exception as e:
