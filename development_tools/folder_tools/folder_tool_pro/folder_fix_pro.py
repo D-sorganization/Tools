@@ -752,7 +752,7 @@ class FolderFixPro:
 
         ttk.Label(
             ext_frame,
-            text="Include only these extensions (comma-separated, e.g., .jpg,.png,.pdf):",
+            text="Include only these extensions (comma-separated, e.g., .jpg, .png, .pdf):",
         ).pack(anchor="w")
         self.ext_filter_entry = ttk.Entry(ext_frame)
         self.ext_filter_entry.pack(fill="x", pady=(PADDING_SMALL, 0))
