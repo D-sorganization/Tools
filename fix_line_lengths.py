@@ -27,16 +27,16 @@ def fix_long_lines_in_file(file_path):
         fixed_line = line
 
         # Pattern 1: Long f-strings with multiple parts
-        if 'f"' in fixed_line and len(fixed_line.rstrip()) > 88:
+        if 'f"' in fixed_line and len(fixed_line.rstrip()) > 88:"
             # Split long f-strings at logical points
-            if " - " in fixed_line and 'f"' in fixed_line:
+            if " - " in fixed_line and 'f"' in fixed_line:"
                 # Split at " - " in f-strings
                 fixed_line = re.sub(
                     r'f"([^"]*) - ([^"]*)"',
                     r'f"\1 - "\n                f"\2"',
                     fixed_line,
                 )
-            elif ": " in fixed_line and 'f"' in fixed_line:
+            elif ": " in fixed_line and 'f"' in fixed_line:"
                 # Split at ": " in f-strings
                 fixed_line = re.sub(
                     r'f"([^"]*): ([^"]*)"',

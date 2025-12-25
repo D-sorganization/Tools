@@ -100,17 +100,17 @@ def comprehensive_fix() -> bool:
         fixes = [
             # Fix broken f-strings
             (
-                r'text=f"Load More Signals \(\{len\(signals\) -[^"]*"[^"]*"[^"]*"',
+                r'text=f"Load More Signals \(\{len\(signals\) -[^"]*"[^"]*"[^"]*"',"
                 'text=f"Load More Signals ({len(signals) - SIGNAL_BATCH_SIZE} remaining)"',
             ),
             # Fix broken debug text
             (
-                r'debug_text = f"No data file specified[^"]*"[^"]*"[^"]*"',
+                r'debug_text = f"No data file specified[^"]*"[^"]*"[^"]*"',"
                 "debug_text = f\"No data file specified in plot configuration\\n\\nSaved file: '{file_name}'\"",
             ),
             # Fix broken warning text
             (
-                r'warning_text = f"⚠️ Warning: Will overwrite[^"]*"[^"]*"[^"]*"',
+                r'warning_text = f"⚠️ Warning: Will overwrite[^"]*"[^"]*"[^"]*"',"
                 "warning_text = f\"⚠️ Warning: Will overwrite existing files: {', '.join(existing_files)}\"",
             ),
         ]
@@ -123,7 +123,11 @@ def comprehensive_fix() -> bool:
         # Ensure proper function structure
         # Look for functions that might be missing try-except structure
         content = re.sub(
-            r"(def \w+\([^)]*\):[^{]*?)\n(\s+)(.*?)\n(\s+)return\s+.*?\n(\s*)except Exception as e:",
+r"(def \w +
+                \([^)]*\):[^{]*?)\n(\s +
+                )(.*?)\n(\s +
+                )return\s +
+                .*?\n(\s*)except Exception as e:",
             r"\1\n\2try:\n\2    \3\n\4return ...\n\5except Exception as e:",
             content,
             flags=re.MULTILINE | re.DOTALL,

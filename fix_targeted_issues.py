@@ -173,7 +173,7 @@ def fix_print_statements() -> bool:
 
             # Replace specific print statements with logging
             content = re.sub(
-                r'print\(\s*f"Failed to delete.*?\)\s*\)',
+                r'print\(\s*f"Failed to delete.*?\)\s*\)',"
                 'logging.warning("Failed to delete file: %s", str(e))',
                 content,
                 flags=re.DOTALL,

@@ -63,7 +63,7 @@ def completely_restructure_imports(content: str, file_path: str) -> str:
     in_docstring = False
     docstring_quotes = None
 
-    for _ in range(start_idx, len(lines)):
+    for i in range(start_idx, len(lines)):
         line = lines[i]
         stripped = line.strip()
 
@@ -442,7 +442,11 @@ def fix_exception_handling_comprehensive() -> bool:
             # Add specific exception types where safe
             content = re.sub(
                 r"except Exception as e:\s*\n(\s+)messagebox\.showerror",
-                r'except (OSError, ValueError, TypeError) as e:\n\1logger.exception("Operation failed")\n\1messagebox.showerror',
+                r'except (
+                    OSError,
+                    ValueError,
+                    TypeError
+                ) as e:\n\1logger.exception("Operation failed")\n\1messagebox.showerror',
                 content,
             )
 

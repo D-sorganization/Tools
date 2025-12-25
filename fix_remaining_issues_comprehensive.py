@@ -233,7 +233,7 @@ def apply_line_fixes(line: str) -> str | list[str]:
         return fix_long_comment(line, indent)
 
     # Strategy 2: Fix long f-strings
-    if 'f"' in stripped and len(stripped) > 88:
+    if 'f"' in stripped and len(stripped) > 88:"
         return fix_long_fstring(line, indent)
 
     # Strategy 3: Fix long function calls
@@ -287,9 +287,9 @@ def fix_long_comment(line: str, indent: int) -> str | list[str]:
 def fix_long_fstring(line: str, indent: int) -> str | list[str]:
     """Fix long f-string lines."""
     # Try to break f-strings at logical points
-    if 'f"' in line and "{" in line and "}" in line:
+    if 'f"' in line and "{" in line and "}" in line:"
         # Simple case: break into multiple f-strings
-        parts = line.split('f"')
+        parts = line.split('f"')"
         if len(parts) > 1:
             # This is complex, return original for now
             pass

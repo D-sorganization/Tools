@@ -34,7 +34,10 @@ def fix_data_processor_lines():
         # Long scipy error messages
         (
             r'"scipy\.signal\.savgol_filter unavailable\. Install SciPy or skip smoothing\.",',
-            r'(\n                                "scipy.signal.savgol_filter unavailable. "\n                                "Install SciPy or skip smoothing.",\n                            )',
+            r'(
+                \n                                "scipy.signal.savgol_filter unavailable. "\n                                "Install SciPy or skip smoothing.",
+                \n
+            )',
         ),
         # Long docstring for plotting function
         (
@@ -43,13 +46,27 @@ def fix_data_processor_lines():
         ),
         # Long debug print statements
         (
-            r'f"processed_files: {len\(getattr\(self, \'processed_files\', {}\)\) if hasattr\(self, \'processed_files\'\) else \'None\'}",',
-            r'(\n            f"processed_files: {len(getattr(self, \'processed_files\', {})) "\n            f"if hasattr(self, \'processed_files\') else \'None\'}",\n        )',
+            r'f"processed_files: {len\(
+                getattr\(self,
+                \'processed_files\',
+                {}\
+            )\) if hasattr\(self, \'processed_files\'\) else \'None\'}",',
+            r'(
+                \n            f"processed_files: {len(getattr(self,
+                \'processed_files\',
+                {}
+            )) "\n            f"if hasattr(self, \'processed_files\') else \'None\'}",\n        )',
         ),
         # Long comment about structure checking
         (
-            r"# Check if it has the expected structure \(processing configs have \'saved_at\', plotting configs have \'plot_name\'\)",
-            r"(\n        # Check if it has the expected structure (processing configs have \'saved_at\',\n        # plotting configs have \'plot_name\')\n        )",
+            r"# Check if it has the expected structure \(
+                processing configs have \'saved_at\',
+                plotting configs have \'plot_name\'\
+            )",
+            r"(
+                \n        # Check if it has the expected structure (processing configs have \'saved_at\',
+                \n        # plotting configs have \'plot_name\'
+            )\n        )",
         ),
         # Long comment about skipping files
         (

@@ -277,7 +277,10 @@ def fix_exception_handling() -> bool:
 
             # Add logging to bare exceptions where appropriate
             content = re.sub(
-                r'(\s+)except Exception as e:\s*\n(\s+)self\._log_message\(f"Error ([^"]+): \{e\}", "error"\)',
+r'(\s +
+                    )except Exception as e:\s*\n(\s +
+                    )self\._log_message\(f"Error ([^"] +
+                    ): \{e\}", "error"\)',"
                 r'\1except Exception as e:\n\2logger.exception("Error \3")\n\2self._log_message(f"Error \3: {e}", "error")',
                 content,
             )
@@ -329,7 +332,11 @@ def fix_pathlib_usage() -> bool:
                     'with output_path.open("wb") as f:',
                 ),
                 (
-                    r'with open\(manifest_path, "w", encoding="utf-8"\) as manifest_file:',
+                    r'with open\(
+                        manifest_path,
+                        "w",
+                        encoding="utf-8"\
+                    ) as manifest_file:',
                     'with manifest_path.open("w", encoding="utf-8") as manifest_file:',
                 ),
                 (

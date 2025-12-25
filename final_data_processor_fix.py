@@ -49,7 +49,8 @@ def fix_data_processor_file() -> bool:
                 if not found_try:
                     # Skip this orphaned except block and its contents
                     print(
-                        f"Removing orphaned except block at line {i + 1}: {line.strip()}"
+f"Removing orphaned except block at line {i +
+                            1}: {line.strip()}"
                     )
                     i += 1
                     # Skip the except block contents
@@ -59,7 +60,7 @@ def fix_data_processor_file() -> bool:
                         or lines[i].strip() == ""
                         or "messagebox." in lines[i]
                         or '"Error"' in lines[i]
-                        or 'f"Failed to' in lines[i]
+                        or 'f"Failed to' in lines[i]"
                     ):
                         print(f"  Removing line {i + 1}: {lines[i].strip()}")
                         i += 1
@@ -86,7 +87,11 @@ def fix_data_processor_file() -> bool:
         # Fix 3: Ensure proper function structure
         # Look for functions that might have structural issues
         content = re.sub(
-            r'(def \w+\([^)]*\):[^:]*?)\n(\s+)"""([^"]*?)"""\s*\n(\s+)(.*?)\n(\s+)except Exception as e:',
+r'(def \w +
+                \([^)]*\):[^:]*?)\n(\s +
+                )"""([^"]*?)"""\s*\n(\s +
+                )(.*?)\n(\s +
+                )except Exception as e:',
             r'\1\n\2"""\3"""\n\2try:\n\4\5\n\6except Exception as e:',
             content,
             flags=re.MULTILINE | re.DOTALL,

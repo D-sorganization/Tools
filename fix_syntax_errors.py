@@ -47,7 +47,9 @@ def fix_syntax_errors() -> bool:
         # Fix 4: Missing try block for exception handling around line 10906
         # Find the pattern where we have an except without a try
         content = re.sub(
-            r"(\s+)# Get the actual data using the same method as main plotting\s*\n(\s+)df = self\.get_data_for_plotting\(file_name\)",
+r"(\s +
+                )# Get the actual data using the same method as main plotting\s*\n(\s +
+                )df = self\.get_data_for_plotting\(file_name\)",
             r"\1# Get the actual data using the same method as main plotting\n\1try:\n\2df = self.get_data_for_plotting(file_name)",
             content,
         )
