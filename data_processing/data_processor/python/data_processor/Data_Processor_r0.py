@@ -7342,7 +7342,8 @@ COMMON MISTAKES TO AVOID:
 # Advanced CSV Processor & DAT Importer - Help Guide
 
 ## Overview
-This application provides comprehensive tools for processing, analyzing, and visualizing time series data from CSV files
+This application provides comprehensive tools for processing,
+# analyzing, and visualizing time series data from CSV files
 # and DAT files with DBF tag files.
 
 ## New Features (Latest Update)
@@ -7522,7 +7523,8 @@ Use mathematical formulas with signal references:
 
 ## Support
 
-For additional support or feature requests, please refer to the application documentation or contact the development team.
+For additional support or feature requests, please refer to the
+# application documentation or contact the development team.
         """
 
         # Create help text widget

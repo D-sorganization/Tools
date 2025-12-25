@@ -1609,7 +1609,9 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             self.after(
                                 0,
                                 lambda p=processed_files, t=total_files: (
-                                    self.folder_status_var.set(f"Processed {p}/{t} files")
+                                    self.folder_status_var.set(
+                                        f"Processed {p}/{t} files"
+                                    )
                                 ),
                             )
 
@@ -2212,7 +2214,8 @@ Interactive visualization with smart auto-zoom and trendlines
 ## 📊 CSV Processor Tab - Advanced Time Series Processing
 
 ### 🎯 Purpose & Capabilities
-Transform raw CSV time series data into processed, analyzed, and visualized datasets with
+Transform raw CSV time series data into processed, analyzed,
+    and visualized datasets with
     professional-grade mathematical operations.
 
 ### 📁 Setup Sub-tab - File Management & Configuration
@@ -2258,7 +2261,8 @@ Polynomial smoothing for noisy data with window/polynomial control
 
 #### 📉 Signal Differentiation (Advanced Calculus)
 - **📐 Spline Differentiation**: Smooth derivative calculation with configurable order
-- **🔢 Finite Difference**: Direct numerical differentiation (forward, backward, central)
+- **🔢 Finite Difference**: Direct numerical differentiation
+  (forward, backward, central)
 - **📊 Multiple Orders**: 1st through 5th order derivatives with error analysis
 - **🎯 Smoothing Options**: Pre-filtering for noisy derivative calculations
 
@@ -2711,7 +2715,8 @@ Process DAT files with associated DBF tag files for structured data import and a
 ### 🎯 Application Overview
 This integrated application combines multiple powerful tools into a single,
 comprehensive data processing solution. All features are designed to
-    work together seamlessly while maintaining the full functionality of the original standalone applications.
+    work together seamlessly while maintaining the full functionality
+    of the original standalone applications.
 
 ### 🔧 Technical Specifications
 - **Framework**: CustomTkinter (Modern Python GUI)
