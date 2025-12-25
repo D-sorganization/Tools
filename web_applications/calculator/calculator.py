@@ -230,7 +230,8 @@ class TI89Calculator:
     def _parse_expression(
         self, expression: str, symbols: Mapping[str, sp.Symbol | sp.Expr]
     ) -> sp.Expr:
-        # Optimization: Avoid copying the large allowed_functions dict if no symbols are provided
+        # Optimization: Avoid copying the large allowed_functions dict if no symbols are
+        # provided
         local_dict = self._allowed_functions
         if symbols:
             local_dict = {**self._allowed_functions, **symbols}

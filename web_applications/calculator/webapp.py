@@ -105,8 +105,8 @@ def _parse_payload(raw_payload: Mapping[str, object]) -> CalculationPayload:
     variables: Mapping[str, str] | None = None
     if isinstance(raw_payload.get("variables"), Mapping):
         variables = {}
-        for key, value in raw_payload["variables"].items():
-            k_str, v_str = str(key), str(value)
+        for key, val in raw_payload["variables"].items():
+            k_str, v_str = str(key), str(val)
             _validate_length(k_str, "Variable name")
             _validate_length(v_str, "Variable value")
             variables[k_str] = v_str
@@ -307,7 +307,8 @@ def _sympify_value(
     symbols: Mapping[str, sp.Symbol | sp.Expr] | None = None,
 ) -> sp.Expr:
     try:
-        # Optimization: Use cached allowed_functions directly if no extra symbols are needed
+        # Optimization: Use cached allowed_functions directly if no extra symbols are
+        # needed
         local_dict = calculator.allowed_functions
         if symbols:
             local_dict = {**calculator.allowed_functions, **symbols}

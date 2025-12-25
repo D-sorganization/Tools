@@ -4,7 +4,7 @@ import pytest
 from Calculator.webapp import create_app
 
 
-@pytest.fixture
+@pytest.fixture()
 def client():
     app = create_app()
     app.config["TESTING"] = True

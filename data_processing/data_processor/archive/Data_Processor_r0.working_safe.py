@@ -241,7 +241,7 @@ class CSVProcessorApp(ctk.CTk):
         self.integrator_signal_vars = {}
         self.deriv_signal_vars = {}
         self.derivative_vars = {}
-        for i in range(1, 6):  # Support up to 5th order derivatives
+        for _ in range(1, 6):  # Support up to 5th order derivatives
             self.derivative_vars[i] = tk.BooleanVar(value=False)
 
         # Plot view state management
@@ -1015,7 +1015,7 @@ class CSVProcessorApp(ctk.CTk):
             font=ctk.CTkFont(weight="bold"),
         ).grid(row=0, column=0, columnspan=5, padx=10, pady=5, sticky="w")
 
-        for i in range(1, 6):  # Support up to 5th order
+        for _ in range(1, 6):  # Support up to 5th order
             var = tk.BooleanVar(value=False)
             cb = ctk.CTkCheckBox(deriv_order_frame, text=f"Order {i}", variable=var)
             cb.grid(row=1, column=i - 1, padx=10, pady=2, sticky="w")
@@ -1647,7 +1647,7 @@ class CSVProcessorApp(ctk.CTk):
                     if method == "Trapezoidal":
                         # Trapezoidal rule
                         cumulative = np.zeros(len(signal_data))
-                        for i in range(1, len(signal_data)):
+                        for _ in range(1, len(signal_data)):
                             if not np.isnan(signal_data.iloc[i]) and not np.isnan(
                                 signal_data.iloc[i - 1],
                             ):
@@ -1665,7 +1665,7 @@ class CSVProcessorApp(ctk.CTk):
                     else:  # Simpson's rule
                         # Simplified implementation
                         cumulative = np.zeros(len(signal_data))
-                        for i in range(1, len(signal_data)):
+                        for _ in range(1, len(signal_data)):
                             if not np.isnan(signal_data.iloc[i]) and not np.isnan(
                                 signal_data.iloc[i - 1],
                             ):
@@ -1923,7 +1923,8 @@ class CSVProcessorApp(ctk.CTk):
                 # Update progress
                 if hasattr(self, "status_label"):
                     self.status_label.configure(
-                        text=f"Reading file {i+1}/{total_files}: {os.path.basename(file_path)}",
+text=f"Reading file {i +
+                            1}/{total_files}: {os.path.basename(file_path)}",
                     )
                     if i % 5 == 0:  # Update every 5 files to prevent UI freezing
                         self.update()
@@ -1954,7 +1955,8 @@ class CSVProcessorApp(ctk.CTk):
         if hasattr(self, "plot_file_menu"):
             self.plot_file_menu.configure(values=file_names)
 
-            # Auto-select the first file if there's only one - immediate execution like baseline
+            # Auto-select the first file if there's only one - immediate execution like
+            # baseline
             if len(self.input_file_paths) == 1:
                 single_file = os.path.basename(self.input_file_paths[0])
                 self.plot_file_menu.set(single_file)
@@ -2029,7 +2031,8 @@ class CSVProcessorApp(ctk.CTk):
         sort_values = ["No Sorting"] + signals
         self.sort_col_menu.configure(values=sort_values)
 
-        # Initialize plot signal variables (will be populated when file is selected in plotting tab)
+        # Initialize plot signal variables (will be populated when file is selected in
+        # plotting tab)
         self.plot_signal_vars = {}
 
         # Update other signal lists - simplified
@@ -2157,7 +2160,7 @@ class CSVProcessorApp(ctk.CTk):
         }
 
         print("\nProcessing settings:")
-        for key, value in settings.items():
+        for key, _ in settings.items():
             print(f"  {key}: {value}")
 
         # Check output directory
@@ -2178,11 +2181,13 @@ class CSVProcessorApp(ctk.CTk):
 
         for i, file_path in enumerate(self.input_file_paths):
             print(
-                f"\n--- Processing file {i+1}/{len(self.input_file_paths)}: {os.path.basename(file_path)} ---",
+f"\n--- Processing file {i +
+                    1}/{len(self.input_file_paths)}: {os.path.basename(file_path)} ---",
             )
             try:
                 self.status_label.configure(
-                    text=f"Processing file {i+1}/{len(self.input_file_paths)}: {os.path.basename(file_path)}",
+text=f"Processing file {i +
+                        1}/{len(self.input_file_paths)}: {os.path.basename(file_path)}",
                 )
                 self.update()
 
@@ -4937,7 +4942,7 @@ class CSVProcessorApp(ctk.CTk):
                 trendline = trend(x_numeric)
                 # Build equation string
                 terms = []
-                for i in range(order + 1):
+                for _ in range(order + 1):
                     power = order - i
                     coeff = coeffs[i]
                     if power == 0:
@@ -5045,10 +5050,18 @@ class CSVProcessorApp(ctk.CTk):
         print(f"plot_canvas: {getattr(self, 'plot_canvas', None)}")
         print(f"plot_ax: {getattr(self, 'plot_ax', None)}")
         print(
-            f"processed_files: {len(getattr(self, 'processed_files', {})) if hasattr(self, 'processed_files') else 'None'}",
+            f"processed_files: {len(
+                getattr(self,
+                'processed_files',
+                {}
+            )) if hasattr(self, 'processed_files') else 'None'}",
         )
         print(
-            f"loaded_data_cache: {len(getattr(self, 'loaded_data_cache', {})) if hasattr(self, 'loaded_data_cache') else 'None'}",
+            f"loaded_data_cache: {len(
+                getattr(self,
+                'loaded_data_cache',
+                {}
+            )) if hasattr(self, 'loaded_data_cache') else 'None'}",
         )
         print("========================\n")
 
@@ -5651,7 +5664,10 @@ COMMON MISTAKES TO AVOID:
                         # Try to read the file to see if it's a valid configuration
                         with open(file_path) as f:
                             data = json.load(f)
-                            # Check if it has the expected structure (processing configs have 'saved_at', plotting configs have 'plot_name')
+                            # Check if it has the expected structure (
+                                processing configs have 'saved_at',
+                                plotting configs have 'plot_name'
+                            )
                             if isinstance(data, dict) and (
                                 "saved_at" in data or "plot_name" in data
                             ):
@@ -5674,7 +5690,8 @@ COMMON MISTAKES TO AVOID:
                                         ),
                                     )
                     except:
-                        # Skip files that can't be read as JSON or don't have the right structure
+                        # Skip files that can't be read as JSON or don't have the right
+                        # structure
                         continue
 
             # Sort by creation date (newest first)
@@ -6059,7 +6076,10 @@ COMMON MISTAKES TO AVOID:
         print("DEBUG: _apply_loaded_signals_internal() called")
         if not self.saved_signal_list or not self.signal_vars:
             print(
-                f"DEBUG: Early return - saved_signal_list: {bool(self.saved_signal_list)}, signal_vars: {bool(self.signal_vars)}",
+                f"DEBUG: Early return - saved_signal_list: {bool(
+                    self.saved_signal_list)},
+                    signal_vars: {bool(self.signal_vars
+                )}",
             )
             return
 
@@ -6079,7 +6099,10 @@ COMMON MISTAKES TO AVOID:
                 missing_signals.append(saved_signal)
 
         print(
-            f"DEBUG: Present signals: {len(present_signals)}, Missing signals: {len(missing_signals)}",
+            f"DEBUG: Present signals: {len(
+                present_signals)},
+                Missing signals: {len(missing_signals
+            )}",
         )
 
         # Apply the saved signals (select present ones, deselect others)
@@ -6844,7 +6867,8 @@ COMMON MISTAKES TO AVOID:
             # Apply legend with custom position
             legend_position = self.legend_position_var.get()
             if legend_position == "outside right":
-                # For outside right, use bbox_to_anchor to place legend outside the plot area
+                # For outside right, use bbox_to_anchor to place legend outside the plot
+                # area
                 self.plot_ax.legend(bbox_to_anchor=(1.05, 1), loc="upper left")
             else:
                 self.plot_ax.legend(loc=legend_position)
@@ -6953,7 +6977,8 @@ COMMON MISTAKES TO AVOID:
     def _copy_current_view_to_processing(self):
         """Copy current plot view range to processing tab time trimming."""
         try:
-            # This is essentially the same as _copy_plot_range_to_trim but with a different message
+            # This is essentially the same as _copy_plot_range_to_trim but with a
+            # different message
             if not hasattr(self, "plot_ax") or not self.plot_ax.lines:
                 messagebox.showwarning(
                     "Warning",
@@ -7327,7 +7352,12 @@ This application provides comprehensive tools for processing, analyzing, and vis
   - Set sorting options
 
 - **Processing Sub-tab**:
-  - **Signal Filtering**: Apply various filters (Moving Average, Butterworth, Median, Savitzky-Golay)
+  - **Signal Filtering**: Apply various filters (
+      Moving Average,
+      Butterworth,
+      Median,
+      Savitzky-Golay
+  )
   - **Time Resampling**: Resample data to different time intervals
   - **Signal Integration**: Create cumulative columns for flow calculations
   - **Signal Differentiation**: Calculate derivatives up to 5th order
@@ -7433,7 +7463,10 @@ Use mathematical formulas with signal references:
 3. **Filtering**: Start with "None" and add filters as needed
 4. **Integration**: Use Trapezoidal method for most accurate results
 5. **Custom Variables**: Test formulas with simple calculations first
-6. **Export**: Use "CSV (Separate Files)" for individual analysis, "CSV (Compiled)" for combined analysis
+6. **Export**: Use "CSV (
+    Separate Files)" for individual analysis,
+    "CSV (Compiled
+)" for combined analysis
 7. **Auto-Zoom**: Disable for stable filter comparison, enable for exploration
 8. **Configuration Management**: Regularly clean up old configurations
 
@@ -8244,7 +8277,8 @@ For additional support or feature requests, please refer to the application docu
                     if len(available_files) > 3:
                         debug_text += f"\n... and {len(available_files)-3} more"
                 else:
-                    debug_text += "\n\nNo files currently loaded.\nPlease load files on Setup tab first."
+debug_text +
+                        = "\n\nNo files currently loaded.\nPlease load files on Setup tab first."
 
                 self.preview_ax.text(
                     0.5,
@@ -8299,7 +8333,8 @@ For additional support or feature requests, please refer to the application docu
 
             # Get time column and available signals
             time_col = df.columns[0]
-            # Try to find a better time column if the first column doesn't look like time
+            # Try to find a better time column if the first column doesn't look like
+            # time
             for col in df.columns:
                 if any(
                     time_word in col.lower()
@@ -8372,7 +8407,8 @@ For additional support or feature requests, please refer to the application docu
             self.preview_ax.set_xlabel(xlabel)
             self.preview_ax.set_ylabel(ylabel)
 
-            # Use legend position from plot config if available, otherwise default to 'best'
+            # Use legend position from plot config if available, otherwise default to
+            # 'best'
             legend_position = plot_config.get("legend_position", "best")
             if legend_position == "outside right":
                 self.preview_ax.legend(bbox_to_anchor=(1.05, 1), loc="upper left")

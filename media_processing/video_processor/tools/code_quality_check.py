@@ -142,7 +142,8 @@ def check_banned_patterns(
 def check_magic_numbers(lines: list[str], filepath: Path) -> list[tuple[int, str, str]]:
     """Check for magic numbers in lines."""
     issues: list[tuple[int, str, str]] = []
-    # Skip checking quality check scripts for magic numbers (they contain patterns they check for)
+    # Skip checking quality check scripts for
+    # magic numbers (they contain patterns they check for)
     if filepath.name in (
         "quality_check_script.py",
         "matlab_quality_check.py",
@@ -180,7 +181,8 @@ def check_ast_issues(content: str, filepath: Path) -> list[tuple[int, str, str]]
                     # Relaxed: We let MyPy handle missing return checks,
                     # as this stricter check might block valid quick scripts.
                     # Uncomment to enforce:
-                    # issues.append((node.lineno, f"Function '{node.name}' missing return type hint", ""))
+                    # issues.append((node.lineno,
+                    # f"Function '{node.name}' missing return type hint", ""))
     except SyntaxError as e:
         issues.append((0, f"Syntax error: {e}", ""))
     return issues

@@ -101,12 +101,12 @@ class TestPackageManifest:
 class TestFolderPackerPro:
     """Test cases for FolderPackerPro GUI class."""
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_root(self) -> Mock:
         """Mock Tkinter root."""
         return Mock()
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_tk_vars(self) -> Generator[dict[str, Mock], None, None]:
         """Mock Tkinter variables."""
         with (

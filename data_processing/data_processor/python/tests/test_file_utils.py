@@ -17,7 +17,7 @@ from file_utils import (  # noqa: PGH003
 )
 
 
-@pytest.fixture
+@pytest.fixture()
 def sample_df() -> pd.DataFrame:
     """Create a sample DataFrame for testing."""
     return pd.DataFrame(

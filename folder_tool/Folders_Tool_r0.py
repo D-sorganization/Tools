@@ -31,8 +31,8 @@ class FolderProcessorApp:
         """
         self.root = root_window
         self.root.title("Folder Fix - Enhanced Folder Processor v2.0")
-        self.root.geometry("700x900")
-        self.root.minsize(600, 800)
+        self.root.geometry("700x650")
+        self.root.minsize(500, 400)
 
         # Set application icon
         try:
@@ -893,11 +893,21 @@ class FolderProcessorApp:
             if not self.dest_folder:
                 messagebox.showerror("Error", "Please select a destination folder.")
                 return False
-            if any(src == self.dest_folder for src in self.source_folders):
-                messagebox.showerror(
-                    "Error", "The destination folder cannot be a source folder."
-                )
-                return False
+
+            dest_abs = os.path.abspath(self.dest_folder)
+            for src in self.source_folders:
+                src_abs = os.path.abspath(src)
+                if dest_abs == src_abs:
+                    messagebox.showerror(
+                        "Error", "The destination folder cannot be a source folder."
+                    )
+                    return False
+                if dest_abs.startswith(src_abs + os.sep):
+                    messagebox.showerror(
+                        "Error",
+                        f"The destination folder cannot be inside a source folder.\n\nDestination: {dest_abs}\nSource: {src_abs}\n\nThis would cause infinite loops and incorrect file counts."
+                    )
+                    return False
         return True
 
     # --- Enhanced Backend Processing Methods ---
