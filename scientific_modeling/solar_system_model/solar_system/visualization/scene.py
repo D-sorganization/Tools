@@ -668,7 +668,7 @@ class SolarSystemScene:
 
             # Build properties dict
             properties = {}
-            for key, _ in info.items():
+            for key, value in info.items():
                 if key != "fun_facts":
                     properties[key.replace("_", " ").title()] = value
 

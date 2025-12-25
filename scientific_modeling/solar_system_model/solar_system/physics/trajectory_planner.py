@@ -626,7 +626,7 @@ class TrajectoryPlanner:
         nu_range_2 = (nu_end - nu_start) / 2
 
         # Generate points
-        for _ in range(num_points + 1):
+        for i in range(num_points + 1):
             fraction = i / num_points
 
             # Use half-angle for iteration

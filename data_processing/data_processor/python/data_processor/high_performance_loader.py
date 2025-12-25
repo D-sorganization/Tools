@@ -474,7 +474,7 @@ class HighPerformanceDataLoader:
         # Process files in batches
         batch_size = min(self.config.max_files_per_batch, len(file_paths))
 
-        for _ in range(0, len(file_paths), batch_size):
+        for i in range(0, len(file_paths), batch_size):
             if cancel_flag and cancel_flag.is_set():
                 break
 

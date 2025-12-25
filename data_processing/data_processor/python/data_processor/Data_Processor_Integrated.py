@@ -734,9 +734,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
                         combined_data.append(df)
                         self._log_conversion_message(
-                            f"Loaded {os.path.basename(
-                                file_path)}: {len(df)} rows,
-                                {len(df.columns)} columns"
+                            f"Loaded {os.path.basename(file_path)}: {len(df)} rows, {len(df.columns)} columns"
                         )
 
                         processed_files += 1
@@ -762,9 +760,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             f"Successfully created: {output_filename}"
                         )
                         self._log_conversion_message(
-                            f"Combined data: {len(
-                                combined_df)} rows,
-                                {len(combined_df.columns)} columns"
+                            f"Combined data: {len(combined_df)} rows, {len(combined_df.columns)} columns"
                         )
 
                     except Exception as e:

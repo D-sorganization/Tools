@@ -181,7 +181,9 @@ class ToolsLauncher(tk.Tk):
                     btn_frame,
                     text=btn_text,
                     state=state,
-                    command=lambda p=full_path, k=kind: self.launch_tool(p, k),  # type: ignore[misc]
+                    command=lambda p=full_path, k=kind: self.launch_tool(
+                        p, k
+                    ),  # type: ignore[misc]
                 )
                 btn.pack(pady=10, padx=10, fill=tk.X)
 
@@ -209,7 +211,7 @@ class ToolsLauncher(tk.Tk):
                     row += 1
 
             # Configure grid weights
-            for _ in range(MAX_COLS):
+            for i in range(MAX_COLS):
                 grid_frame.columnconfigure(i, weight=1)
 
         if not has_tools:
