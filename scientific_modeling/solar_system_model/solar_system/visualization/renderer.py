@@ -366,7 +366,7 @@ class Renderer:
 
     def _draw_sphere(self, radius: float, segments: int):
         """Draw a unit sphere using immediate mode."""
-        for i in range(segments):
+        for _ in range(segments):
             lat0 = math.pi * (-0.5 + float(i) / segments)
             z0 = math.sin(lat0)
             zr0 = math.cos(lat0)
@@ -397,7 +397,7 @@ class Renderer:
     def _draw_circle(self, radius: float, segments: int):
         """Draw a circle in the XY plane."""
         glBegin(GL_LINE_LOOP)
-        for i in range(segments):
+        for _ in range(segments):
             angle = 2 * math.pi * i / segments
             glVertex3f(radius * math.cos(angle), 0, radius * math.sin(angle))
         glEnd()
@@ -554,7 +554,7 @@ class Renderer:
 
         segments = 64
         glBegin(GL_QUAD_STRIP)
-        for i in range(segments + 1):
+        for _ in range(segments + 1):
             angle = 2 * math.pi * i / segments
             cos_a = math.cos(angle)
             sin_a = math.sin(angle)
@@ -672,7 +672,7 @@ class Renderer:
 
         # Build grid lines
         vertices = []
-        for i in range(-divisions, divisions + 1):
+        for _ in range(-divisions, divisions + 1):
             # Parallel to X
             vertices.extend([-size, 0, i * step])
             vertices.extend([size, 0, i * step])

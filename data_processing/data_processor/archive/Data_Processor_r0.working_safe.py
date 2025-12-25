@@ -241,7 +241,7 @@ class CSVProcessorApp(ctk.CTk):
         self.integrator_signal_vars = {}
         self.deriv_signal_vars = {}
         self.derivative_vars = {}
-        for i in range(1, 6):  # Support up to 5th order derivatives
+        for _ in range(1, 6):  # Support up to 5th order derivatives
             self.derivative_vars[i] = tk.BooleanVar(value=False)
 
         # Plot view state management
@@ -1015,7 +1015,7 @@ class CSVProcessorApp(ctk.CTk):
             font=ctk.CTkFont(weight="bold"),
         ).grid(row=0, column=0, columnspan=5, padx=10, pady=5, sticky="w")
 
-        for i in range(1, 6):  # Support up to 5th order
+        for _ in range(1, 6):  # Support up to 5th order
             var = tk.BooleanVar(value=False)
             cb = ctk.CTkCheckBox(deriv_order_frame, text=f"Order {i}", variable=var)
             cb.grid(row=1, column=i - 1, padx=10, pady=2, sticky="w")
@@ -1647,7 +1647,7 @@ class CSVProcessorApp(ctk.CTk):
                     if method == "Trapezoidal":
                         # Trapezoidal rule
                         cumulative = np.zeros(len(signal_data))
-                        for i in range(1, len(signal_data)):
+                        for _ in range(1, len(signal_data)):
                             if not np.isnan(signal_data.iloc[i]) and not np.isnan(
                                 signal_data.iloc[i - 1],
                             ):
@@ -1665,7 +1665,7 @@ class CSVProcessorApp(ctk.CTk):
                     else:  # Simpson's rule
                         # Simplified implementation
                         cumulative = np.zeros(len(signal_data))
-                        for i in range(1, len(signal_data)):
+                        for _ in range(1, len(signal_data)):
                             if not np.isnan(signal_data.iloc[i]) and not np.isnan(
                                 signal_data.iloc[i - 1],
                             ):
@@ -2157,7 +2157,7 @@ class CSVProcessorApp(ctk.CTk):
         }
 
         print("\nProcessing settings:")
-        for key, value in settings.items():
+        for key, _ in settings.items():
             print(f"  {key}: {value}")
 
         # Check output directory
@@ -4937,7 +4937,7 @@ class CSVProcessorApp(ctk.CTk):
                 trendline = trend(x_numeric)
                 # Build equation string
                 terms = []
-                for i in range(order + 1):
+                for _ in range(order + 1):
                     power = order - i
                     coeff = coeffs[i]
                     if power == 0:

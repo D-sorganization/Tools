@@ -411,7 +411,7 @@ class UIRenderer:
         )
         current_y += line_height + 5
 
-        for key, value in properties.items():
+        for key, _ in properties.items():
             text = f"{key}: {value}"
             if len(text) > 45:
                 text = text[:42] + "..."
@@ -652,7 +652,7 @@ class UIRenderer:
         glColor4f(0.3, 0.3, 0.3, 0.5)
         glBegin(GL_TRIANGLE_FAN)
         glVertex2f(cx, cy)
-        for i in range(33):
+        for _ in range(33):
             angle = i * 2 * math.pi / 32
             glVertex2f(cx + math.cos(angle) * radius, cy + math.sin(angle) * radius)
         glEnd()

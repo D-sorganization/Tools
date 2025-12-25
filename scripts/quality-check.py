@@ -60,7 +60,7 @@ def is_legitimate_pass_context(lines: list[str], line_num: int) -> bool:
         return False
 
     # Check if this is in a class definition (legitimate)
-    for i in range(line_num - 1, max(0, line_num - 10), -1):
+    for _ in range(line_num - 1, max(0, line_num - 10), -1):
         prev_line = lines[i - 1].strip()
         if prev_line.startswith("class "):
             return True
@@ -73,13 +73,13 @@ def is_legitimate_pass_context(lines: list[str], line_num: int) -> bool:
             return True
 
     # Check if this is in a try/except block (legitimate)
-    for i in range(line_num - 1, max(0, line_num - 5), -1):
+    for _ in range(line_num - 1, max(0, line_num - 5), -1):
         prev_line = lines[i - 1].strip()
         if "try:" in prev_line or "except" in prev_line:
             return True
 
     # Check if this is in a context manager (legitimate)
-    for i in range(line_num - 1, max(0, line_num - 3), -1):
+    for _ in range(line_num - 1, max(0, line_num - 3), -1):
         prev_line = lines[i - 1].strip()
         if prev_line.startswith("with "):
             return True

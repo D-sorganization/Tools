@@ -573,7 +573,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             }
 
             files = []
-            for root, dirs, filenames in os.walk(folder):
+            for root, _dirs, filenames in os.walk(folder):
                 for filename in filenames:
                     if Path(filename).suffix.lower() in supported_extensions:
                         files.append(os.path.join(root, filename))
@@ -611,7 +611,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             )
             return
 
-        for i, file_path in enumerate(self.converter_input_files):
+        for _i, file_path in enumerate(self.converter_input_files):
             file_frame = ctk.CTkFrame(self.converter_file_list_frame)
             file_frame.pack(fill="x", padx=5, pady=2)
 
@@ -758,7 +758,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 )
 
                 combined_data = []
-                for i, file_path in enumerate(self.converter_input_files):
+                for _i, file_path in enumerate(self.converter_input_files):
                     try:
                         format_type = FileFormatDetector.detect_format(file_path)
                         if not format_type:
@@ -830,7 +830,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                     f"Starting conversion: processing {total_files} files individually",
                 )
 
-                for i, file_path in enumerate(self.converter_input_files):
+                for _i, file_path in enumerate(self.converter_input_files):
                     try:
                         format_type = FileFormatDetector.detect_format(file_path)
                         if not format_type:
@@ -1730,7 +1730,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for root, dirs, files in os.walk(src):
+                for root, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
@@ -1751,7 +1751,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 if self.folder_cancel_flag:
                     break
 
-                for root, dirs, files in os.walk(src):
+                for root, _dirs, files in os.walk(src):
                     for file in files:
                         if self.folder_cancel_flag:
                             break
@@ -1824,7 +1824,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for root, dirs, files in os.walk(src):
+                for root, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
@@ -1845,7 +1845,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 if self.folder_cancel_flag:
                     break
 
-                for root, dirs, files in os.walk(src):
+                for root, _dirs, files in os.walk(src):
                     for file in files:
                         if self.folder_cancel_flag:
                             break
@@ -1911,7 +1911,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for root, dirs, files in os.walk(src):
+                for root, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
@@ -1935,7 +1935,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 src_name = os.path.basename(src)
                 dest_src_path = os.path.join(self.folder_destination, src_name)
 
-                for root, dirs, files in os.walk(src):
+                for root, _dirs, files in os.walk(src):
                     if self.folder_cancel_flag:
                         break
 
@@ -2007,7 +2007,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for root, dirs, files in os.walk(src):
+                for root, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
@@ -2027,7 +2027,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 if self.folder_cancel_flag:
                     break
 
-                for root, dirs, files in os.walk(src):
+                for root, _dirs, files in os.walk(src):
                     if self.folder_cancel_flag:
                         break
 
@@ -2099,7 +2099,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for root, dirs, files in os.walk(src):
+                for root, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
@@ -2131,7 +2131,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 folder_files = 0
                 folder_size = 0
 
-                for root, dirs, files in os.walk(src):
+                for root, _dirs, files in os.walk(src):
                     for file in files:
                         if self.folder_cancel_flag:
                             break

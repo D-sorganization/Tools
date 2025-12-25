@@ -76,7 +76,7 @@ class PerformanceBenchmark:
         }
 
         # Add signal columns
-        for i in range(n_signals):
+        for _ in range(n_signals):
             # Mix of different signal types
             if i % 3 == 0:
                 # Sine wave with noise
@@ -140,7 +140,7 @@ class PerformanceBenchmark:
             # Test multiple file loading
             files = [
                 self.create_test_data(5_000, 5, tmp_path, suffix=f"_{i}")
-                for i in range(5)
+                for _ in range(5)
             ]
 
             start = time.perf_counter()
@@ -416,7 +416,7 @@ class PerformanceBenchmark:
         for n_rows in dataset_sizes:
             # Create test data
             df = pd.DataFrame(
-                {f"signal_{i}": np.random.randn(n_rows) for i in range(5)},
+                {f"signal_{i}": np.random.randn(n_rows) for _ in range(5)},
             )
 
             # Apply moving average filter
@@ -453,7 +453,7 @@ class PerformanceBenchmark:
 
         # Test memory usage with large dataset
         n_rows = 100_000
-        df = pd.DataFrame({f"signal_{i}": np.random.randn(n_rows) for i in range(20)})
+        df = pd.DataFrame({f"signal_{i}": np.random.randn(n_rows) for _ in range(20)})
 
         memory_before = self.get_memory_usage_mb()
 

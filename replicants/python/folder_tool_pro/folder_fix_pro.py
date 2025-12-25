@@ -1,4 +1,20 @@
-# ruff: noqa: RUF001, PLR0915, PLR0911, PLR0912, UP017
+import ctypes
+import hashlib
+import json
+import logging
+import os
+import re
+import shutil
+import sys
+import threading
+import tkinter as tk
+import typing
+import webbrowser
+from collections import defaultdict
+from datetime import UTC, datetime
+from pathlib import Path
+from tkinter import filedialog, messagebox, ttk
+
 """
 Folder Fix Pro v3.0 - Enhanced Professional Folder Processing Tool
 
@@ -13,23 +29,7 @@ A comprehensive, modern folder management application with advanced features:
 - Professional error handling and validation
 """
 
-import ctypes
-import hashlib
-import json
-import logging
-import os
-import re
-import shutil
-import sys
-import threading
-import tkinter as tk
-import typing
-from collections import defaultdict
-from datetime import datetime, timezone
-from pathlib import Path
-from tkinter import filedialog, messagebox, ttk
 
-# Constants with professional standards
 MAX_FILE_SIZE_MB: typing.Final[int] = 10240  # 10GB limit for modern systems
 MIN_FILE_SIZE_BYTES: typing.Final[int] = 0
 DEFAULT_CHUNK_SIZE: typing.Final[int] = 65536  # 64KB chunks for optimal performance
@@ -158,7 +158,7 @@ class OperationReport:
     """Generate detailed operation reports."""
 
     def __init__(self) -> None:
-        self.start_time: datetime = datetime.now(timezone.utc)
+        self.start_time: datetime = datetime.now(UTC)
         self.end_time: datetime | None = None
         self.operations: list[dict[str, typing.Any]] = []
         self.stats: dict[str, int] = defaultdict(int)
@@ -168,7 +168,7 @@ class OperationReport:
         """Add operation to report."""
         self.operations.append(
             {
-                "timestamp": datetime.now(timezone.utc),
+                "timestamp": datetime.now(UTC),
                 "operation": operation,
                 "details": details,
             }
@@ -177,11 +177,11 @@ class OperationReport:
 
     def add_error(self, error: str) -> None:
         """Add error to report."""
-        self.errors.append({"timestamp": datetime.now(timezone.utc), "error": error})
+        self.errors.append({"timestamp": datetime.now(UTC), "error": error})
 
     def finalize(self) -> None:
         """Finalize report with end time."""
-        self.end_time = datetime.now(timezone.utc)
+        self.end_time = datetime.now(UTC)
 
     def get_duration(self) -> str:
         """Get operation duration."""
@@ -1584,7 +1584,7 @@ class FolderFixPro:
             # Calculate ETA
             if current > 0:
                 elapsed = (
-                    datetime.now(timezone.utc) - self.operation_report.start_time
+                    datetime.now(UTC) - self.operation_report.start_time
                 ).total_seconds()
                 eta_seconds = (elapsed / current) * (total - current)
                 eta = f"ETA: {int(eta_seconds // 60)}m {int(eta_seconds % 60)}s"
@@ -1618,7 +1618,7 @@ class FolderFixPro:
 
     def _log_message(self, message: str, level: str = "info") -> None:
         """Add message to log."""
-        timestamp = datetime.now(timezone.utc).strftime("%H:%M:%S")
+        timestamp = datetime.now(UTC).strftime("%H:%M:%S")
         log_entry = f"[{timestamp}] {message}\n"
 
         def update_log() -> None:
@@ -1650,7 +1650,7 @@ class FolderFixPro:
         file_path = filedialog.asksaveasfilename(
             defaultextension=".txt",
             filetypes=[("Text files", "*.txt"), ("All files", "*.*")],
-            initialfile=f"folder_fix_log_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.txt",
+            initialfile=f"folder_fix_log_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}.txt",
         )
 
         if file_path:
@@ -1663,7 +1663,7 @@ class FolderFixPro:
         file_path = filedialog.asksaveasfilename(
             defaultextension=".json",
             filetypes=[("JSON files", "*.json"), ("All files", "*.*")],
-            initialfile=f"folder_fix_report_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.json",
+            initialfile=f"folder_fix_report_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}.json",
         )
 
         if file_path:
@@ -1680,7 +1680,7 @@ class FolderFixPro:
         file_path = filedialog.asksaveasfilename(
             defaultextension=".html",
             filetypes=[("HTML files", "*.html"), ("All files", "*.*")],
-            initialfile=f"folder_fix_report_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.html",
+            initialfile=f"folder_fix_report_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}.html",
         )
 
         if file_path:
@@ -1709,7 +1709,6 @@ class FolderFixPro:
     def _open_log_file(self) -> None:
         """Open the log file in default text editor."""
         try:
-            import webbrowser
 
             webbrowser.open(log_filename)
         except Exception as e:  # noqa: BLE001

@@ -209,7 +209,7 @@ class ToolsLauncher(tk.Tk):
                     row += 1
 
             # Configure grid weights
-            for i in range(MAX_COLS):
+            for _ in range(MAX_COLS):
                 grid_frame.columnconfigure(i, weight=1)
 
         if not has_tools:

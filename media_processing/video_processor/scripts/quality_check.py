@@ -73,7 +73,7 @@ MAGIC_NUMBERS = [
 def _is_in_class_definition(lines: list[str], line_num: int) -> bool:
     """Check if pass is in a class definition context."""
     result = False
-    for i in range(line_num - 1, max(0, line_num - 10), -1):
+    for _ in range(line_num - 1, max(0, line_num - 10), -1):
         prev_line = lines[i - 1].strip()
         if prev_line.startswith("class "):
             result = True
@@ -92,7 +92,7 @@ def _is_in_class_definition(lines: list[str], line_num: int) -> bool:
 
 def _is_in_try_except_block(lines: list[str], line_num: int) -> bool:
     """Check if pass is in a try/except block context."""
-    for i in range(line_num - 1, max(0, line_num - 5), -1):
+    for _ in range(line_num - 1, max(0, line_num - 5), -1):
         prev_line = lines[i - 1].strip()
         if "try:" in prev_line or "except" in prev_line:
             return True
@@ -101,7 +101,7 @@ def _is_in_try_except_block(lines: list[str], line_num: int) -> bool:
 
 def _is_in_context_manager(lines: list[str], line_num: int) -> bool:
     """Check if pass is in a context manager context."""
-    for i in range(line_num - 1, max(0, line_num - 3), -1):
+    for _ in range(line_num - 1, max(0, line_num - 3), -1):
         prev_line = lines[i - 1].strip()
         if prev_line.startswith("with "):
             return True
@@ -132,10 +132,12 @@ def check_banned_patterns(  # noqa: PLR0911, C901, PLR0912
     """Check for banned patterns in lines."""
     issues: list[tuple[int, str, str]] = []
 
-    # CRITICAL: Hardcoded filename/path check - ABSOLUTE FIRST check before ANY processing
+    # CRITICAL: Hardcoded filename/path check -
+    # ABSOLUTE FIRST check before ANY processing
     # This is the most reliable check that works in all environments (local, CI, etc.)
     # Check filename AND path string to catch all variations
-    # Also check if path contains 'scripts' and 'quality_check' to catch CI path variations
+    # Also check if path contains 'scripts' and
+    # 'quality_check' to catch CI path variations
     # Also check against __file__ if available for absolute certainty
     filepath_str = str(filepath)
     filepath_lower = filepath_str.lower()
@@ -179,7 +181,8 @@ def check_banned_patterns(  # noqa: PLR0911, C901, PLR0912
     # Join lines into content string for checking
     file_content = "\n".join(lines)
 
-    # ABSOLUTE FIRST CONTENT CHECK: If file contains BANNED_PATTERNS definition, it's this script
+    # ABSOLUTE FIRST CONTENT CHECK:
+    # If file contains BANNED_PATTERNS definition, it's this script
     # This is the most reliable check - only this script contains BANNED_PATTERNS = [
     # MUST be checked FIRST before any other checks
     # This check is CRITICAL - it must happen before any pattern matching
@@ -199,7 +202,8 @@ def check_banned_patterns(  # noqa: PLR0911, C901, PLR0912
     # Only reach here if content check didn't exclude the file
     for line_num, line in enumerate(lines, 1):
         # Skip lines that are pattern definitions (avoid false positives)
-        # Check for actual pattern definition lines - these contain the patterns themselves
+        # Check for actual pattern definition lines -
+        # these contain the patterns themselves
         # Match lines like: (re.compile(r"\bTODO\b"), "TODO placeholder found"),
         if (
             re.search(r'\(re\.compile\(r"[^"]*TODO', line)
@@ -280,7 +284,8 @@ def check_file(  # noqa: PLR0911
     """Check a Python file for quality issues."""
     # CRITICAL: Hardcoded filename/path check - ABSOLUTE FIRST check
     # This works in all environments and doesn't depend on path resolution
-    # Also check if path contains 'scripts' and 'quality_check' to catch CI path variations
+    # Also check if path contains 'scripts' and
+    # 'quality_check' to catch CI path variations
     filepath_str = str(filepath)
     filepath_lower = filepath_str.lower()
     is_quality_check_script = filepath.name in (
@@ -305,7 +310,8 @@ def check_file(  # noqa: PLR0911
         # Additional safety: check for unique marker or pattern definitions
         # This is the most reliable check - works regardless of path resolution
         # CRITICAL: This check MUST happen before reading lines to prevent any processing
-        # Most permissive check: if file contains BANNED_PATTERNS definition, it's this script
+        # Most permissive check:
+        # if file contains BANNED_PATTERNS definition, it's this script
         # This is the most reliable content-based check
         if "BANNED_PATTERNS = [" in content or _QUALITY_CHECK_SCRIPT_MARKER in content:
             return []
@@ -313,7 +319,8 @@ def check_file(  # noqa: PLR0911
         lines = content.splitlines()
 
         # Cache exclusion result to avoid repeated expensive checks in helper functions
-        # Note: is_excluded is False here because should_exclude_file() already returned early
+        # Note: is_excluded is False here because should_exclude_file() already retur
+        # ned early
         # if the file should be excluded, so we only reach here for non-excluded files
         is_excluded = False
 

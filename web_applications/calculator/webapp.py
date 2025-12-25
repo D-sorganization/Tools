@@ -105,7 +105,7 @@ def _parse_payload(raw_payload: Mapping[str, object]) -> CalculationPayload:
     variables: Mapping[str, str] | None = None
     if isinstance(raw_payload.get("variables"), Mapping):
         variables = {}
-        for key, value in raw_payload["variables"].items():
+        for key, _ in raw_payload["variables"].items():
             k_str, v_str = str(key), str(value)
             _validate_length(k_str, "Variable name")
             _validate_length(v_str, "Variable value")

@@ -76,7 +76,7 @@ def is_legitimate_pass_context(lines: list[str], line_num: int) -> bool:
         return False
 
     # Check if this is in a class definition (legitimate)
-    for i in range(line_num - 1, max(0, line_num - 10), -1):
+    for _ in range(line_num - 1, max(0, line_num - 10), -1):
         prev_line = lines[i - 1].strip()
         if prev_line.startswith("class "):
             return True
@@ -89,13 +89,13 @@ def is_legitimate_pass_context(lines: list[str], line_num: int) -> bool:
             return True
 
     # Check if this is in a try/except block (legitimate)
-    for i in range(line_num - 1, max(0, line_num - 5), -1):
+    for _ in range(line_num - 1, max(0, line_num - 5), -1):
         prev_line = lines[i - 1].strip()
         if "try:" in prev_line or "except" in prev_line:
             return True
 
     # Check if this is in a context manager (legitimate)
-    for i in range(line_num - 1, max(0, line_num - 3), -1):
+    for _ in range(line_num - 1, max(0, line_num - 3), -1):
         prev_line = lines[i - 1].strip()
         if prev_line.startswith("with "):
             return True
@@ -142,7 +142,8 @@ def check_banned_patterns(
 def check_magic_numbers(lines: list[str], filepath: Path) -> list[tuple[int, str, str]]:
     """Check for magic numbers in lines."""
     issues: list[tuple[int, str, str]] = []
-    # Skip checking quality check scripts for magic numbers (they contain patterns they check for)
+    # Skip checking quality check scripts for
+    # magic numbers (they contain patterns they check for)
     if filepath.name in (
         "quality_check_script.py",
         "matlab_quality_check.py",
@@ -180,7 +181,8 @@ def check_ast_issues(content: str, filepath: Path) -> list[tuple[int, str, str]]
                     # Relaxed: We let MyPy handle missing return checks,
                     # as this stricter check might block valid quick scripts.
                     # Uncomment to enforce:
-                    # issues.append((node.lineno, f"Function '{node.name}' missing return type hint", ""))
+                    # issues.append((node.lineno,
+                    # f"Function '{node.name}' missing return type hint", ""))
     except SyntaxError as e:
         issues.append((0, f"Syntax error: {e}", ""))
     return issues
