@@ -1165,7 +1165,9 @@ class FolderPackerPro:
 
         self.preview_text.configure(state="disabled")
 
-    def _insert_with_highlighting(self, content: str, file_ext: str) -> None:  # noqa: PLR0912
+    def _insert_with_highlighting(
+        self, content: str, file_ext: str
+    ) -> None:  # noqa: PLR0912
         """Insert text with basic syntax highlighting."""
         # For simplicity, basic keyword highlighting
         # Syntax highlighting map
@@ -1793,7 +1795,9 @@ class FolderPackerPro:
             elif sys.platform == "darwin":
                 subprocess.run(["open", log_filename], check=False)  # noqa: S603,S607
             else:
-                subprocess.run(["xdg-open", log_filename], check=False)  # noqa: S603,S607
+                subprocess.run(
+                    ["xdg-open", log_filename], check=False
+                )  # noqa: S603,S607
         except Exception as e:
             logger.exception("Error occurred")
             messagebox.showerror("Error", f"Could not open log file:\n{e}")
