@@ -7030,7 +7030,7 @@ COMMON MISTAKES TO AVOID:
                     else:
                         # Fall back to original home if no saved view
                         self._original_home()
-                except:
+                except Exception:
                     # Fall back to original home on any error
                     self._original_home()
 
