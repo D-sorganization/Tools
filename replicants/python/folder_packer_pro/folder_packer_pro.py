@@ -13,10 +13,18 @@ from datetime import UTC, datetime
 from pathlib import Path
 from tkinter import filedialog, messagebox, scrolledtext, simpledialog, ttk
 from typing import Any, Final  # noqa: ICN003
+try:
+    from cryptography.fernet import Fernet  # type: ignore
+    from cryptography.hazmat.primitives import hashes  # type: ignore
+    from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC  # type: ignore
 
-from cryptography.fernet import Fernet
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+    HAS_CRYPTO = True
+except ImportError:
+    Fernet = None
+    hashes = None
+    PBKDF2HMAC = None
+    HAS_CRYPTO = False
+    # logger.warning("Cryptography library not found. Encryption/decryption features will be disabled.") # Not in original instruction
 
 PREVIEW_FILE_LIMIT = 500  # Maximum files to show in preview
 PREVIEW_LINE_LIMIT = 1000  # Maximum lines to show in file preview
