@@ -1557,7 +1557,7 @@ class FolderPackerPro:
             return
 
         try:
-            with package_path.open("rb") as f:
+            with Path(package_path).open("rb") as f:
                 data = f.read()
 
             # Check if encrypted
@@ -1695,7 +1695,7 @@ class FolderPackerPro:
 
         if file_path:
             try:
-                with file_path.open("w") as f:
+                with Path(file_path).open("w", encoding="utf-8") as f:
                     f.write(self.manifest.to_json())
                 messagebox.showinfo("Success", f"Manifest exported to:\n{file_path}")
             except Exception as e:
@@ -1779,7 +1779,7 @@ class FolderPackerPro:
         )
 
         if file_path:
-            with file_path.open("w", encoding="utf-8") as f:
+            with Path(file_path).open("w", encoding="utf-8") as f:
                 f.write(self.log_text.get("1.0", "end"))
             messagebox.showinfo("Log Saved", f"Log saved to:\n{file_path}")
 
