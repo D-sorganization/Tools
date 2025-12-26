@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import re
+import subprocess
 import sys
 import threading
 import tkinter as tk
@@ -1167,30 +1168,18 @@ class FolderPackerPro:
     def _insert_with_highlighting(self, content: str, file_ext: str) -> None:
         """Insert text with basic syntax highlighting."""
         # For simplicity, basic keyword highlighting
-        keywords = {
-            "def",
-            "class",
-            "import",
-            "from",
-            "if",
-            "else",
-            "elif",
-            "for",
-            "while",
-            "return",
-            "try",
-            "except",
-            "with",
-            "as",
-            "True",
-            "False",
-            "None",
-            "and",
-            "or",
-            "not",
-            "in",
-            "is",
+        # Syntax highlighting map
+        color_map: dict[str, dict[str, str]] = {
+            ".py": dict.fromkeys(["def", "class", "import", "from"], "blue"),
+            ".pyw": dict.fromkeys(["def", "class", "import", "from"], "blue"),
+            ".js": dict.fromkeys(["function", "const", "let", "var"], "blue"),
+            ".ts": dict.fromkeys(["function", "const", "let", "var"], "blue"),
         }
+        # Add control flow keywords as purple for python
+        for ext in [".py", ".pyw"]:
+            color_map[ext].update(dict.fromkeys(["if", "else", "elif", "for", "while"], "purple"))
+
+        keywords = color_map.get(file_ext, {})
 
         lines = content.split("\n")
         for i, line in enumerate(lines):
@@ -1204,11 +1193,11 @@ class FolderPackerPro:
                 if line.strip().startswith("#"):
                     self.preview_text.insert("end", line + "\n", "comment")
                 else:
-                    # Insert with keyword highlighting
+                    # Insert with keyword highlighting based on simplified map
                     words = re.split(r"(\s+)", line)
                     for word in words:
                         if word in keywords:
-                            self.preview_text.insert("end", word, "keyword")
+                            self.preview_text.insert("end", word, keywords[word])
                         elif word.startswith(('"', "'")):
                             self.preview_text.insert("end", word, "string")
                         elif word.isdigit():
@@ -1800,9 +1789,9 @@ class FolderPackerPro:
             if sys.platform == "win32":
                 os.startfile(log_filename)
             elif sys.platform == "darwin":
-                os.system(f"open {log_filename}")
+                subprocess.run(["open", log_filename], check=False)
             else:
-                os.system(f"xdg-open {log_filename}")
+                subprocess.run(["xdg-open", log_filename], check=False)
         except Exception as e:
             logger.exception("Error occurred")
             messagebox.showerror("Error", f"Could not open log file:\n{e}")

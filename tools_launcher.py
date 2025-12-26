@@ -415,7 +415,7 @@ class ToolsLauncher:
         ]
 
         for name, desc, command, color in tools:
-            self.create_tool_card(scrollable_frame, name, desc, command, color, show_icon=True)
+            self.create_tool_card(scrollable_frame, name, desc, command, color)
 
     def create_utilities_tab(self) -> None:
         """Create Utilities tab."""
