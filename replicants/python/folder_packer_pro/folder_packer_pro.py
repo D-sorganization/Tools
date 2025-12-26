@@ -4,10 +4,7 @@ import json
 import logging
 import os
 import re
-<<<<<<< HEAD
 import subprocess
-=======
->>>>>>> origin/main
 import sys
 import threading
 import tkinter as tk
@@ -15,7 +12,7 @@ from collections import defaultdict
 from datetime import UTC, datetime
 from pathlib import Path
 from tkinter import filedialog, messagebox, scrolledtext, simpledialog, ttk
-from typing import Any, Final
+from typing import Any, Final  # noqa: ICN003
 
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
@@ -259,7 +256,7 @@ class PackageManifest:
     def set_metadata(
         self,
         key: str,
-        value: str | float | bool | None | list[Any] | dict[str, Any],
+        value: str | float | bool | None | list[Any] | dict[str, Any],  # noqa: FBT001
     ) -> None:
         """Set metadata value."""
         self.metadata[key] = value
@@ -1163,12 +1160,12 @@ class FolderPackerPro:
                 # Insert with basic syntax highlighting
                 self._insert_with_highlighting(content, file_path.suffix)
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             self.preview_text.insert("1.0", f"Error previewing file: {e}")
 
         self.preview_text.configure(state="disabled")
 
-    def _insert_with_highlighting(self, content: str, file_ext: str) -> None:
+    def _insert_with_highlighting(self, content: str, file_ext: str) -> None:  # noqa: PLR0912
         """Insert text with basic syntax highlighting."""
         # For simplicity, basic keyword highlighting
         # Syntax highlighting map
@@ -1180,7 +1177,9 @@ class FolderPackerPro:
         }
         # Add control flow keywords as purple for python
         for ext in [".py", ".pyw"]:
-            color_map[ext].update(dict.fromkeys(["if", "else", "elif", "for", "while"], "purple"))
+            color_map[ext].update(
+                dict.fromkeys(["if", "else", "elif", "for", "while"], "purple")
+            )
 
         keywords = color_map.get(file_ext, {})
 
@@ -1200,11 +1199,7 @@ class FolderPackerPro:
                     words = re.split(r"(\s+)", line)
                     for word in words:
                         if word in keywords:
-<<<<<<< HEAD
                             self.preview_text.insert("end", word, keywords[word])
-=======
-                            self.preview_text.insert("end", word, "keyword")
->>>>>>> origin/main
                         elif word.startswith(('"', "'")):
                             self.preview_text.insert("end", word, "string")
                         elif word.isdigit():
@@ -1215,7 +1210,7 @@ class FolderPackerPro:
             else:
                 self.preview_text.insert("end", line + "\n")
 
-    def _should_exclude(self, path: Path) -> bool:
+    def _should_exclude(self, path: Path) -> bool:  # noqa: PLR0911
         """Check if path should be excluded."""
         # Check if .git should be excluded
         if not self.include_git_var.get() and ".git" in path.parts:
@@ -1232,7 +1227,7 @@ class FolderPackerPro:
 
         return False
 
-    def _get_file_type(self, file_path: Path) -> str:
+    def _get_file_type(self, file_path: Path) -> str:  # noqa: PLR0911
         """Get file type category."""
         ext = file_path.suffix.lower()
         if ext in CODE_EXTENSIONS:
@@ -1251,7 +1246,7 @@ class FolderPackerPro:
             return "Document"
         return "Other"
 
-    def _start_pack(self) -> None:
+    def _start_pack(self) -> None:  # noqa: PLR0911
         """Start packing operation."""
         # Validate inputs
         if not self.pack_source_entry.get():
@@ -1485,7 +1480,7 @@ class FolderPackerPro:
             try:
                 self._update_unpack_status("Decompressing...")
                 data = gzip.decompress(data)
-            except Exception:
+            except Exception:  # noqa: S110,BLE001
 
                 # Not compressed - this is expected for uncompressed files
 
@@ -1556,7 +1551,7 @@ class FolderPackerPro:
         finally:
             self.root.after(0, self._unpack_finished)
 
-    def _inspect_package(self) -> None:
+    def _inspect_package(self) -> None:  # noqa: PLR0915
         """Inspect package file and show information."""
         package_path = self.unpack_source_entry.get()
         if not package_path:
@@ -1573,7 +1568,7 @@ class FolderPackerPro:
                 # Try to decompress
                 decompressed = gzip.decompress(data)
                 json.loads(decompressed.decode("utf-8"))
-            except Exception:
+            except Exception:  # noqa: BLE001
                 is_encrypted = True
 
             # Display info
@@ -1794,11 +1789,11 @@ class FolderPackerPro:
         """Open the log file in default text editor."""
         try:
             if sys.platform == "win32":
-                os.startfile(log_filename)
+                os.startfile(log_filename)  # noqa: S606
             elif sys.platform == "darwin":
-                subprocess.run(["open", log_filename], check=False)
+                subprocess.run(["open", log_filename], check=False)  # noqa: S603,S607
             else:
-                subprocess.run(["xdg-open", log_filename], check=False)
+                subprocess.run(["xdg-open", log_filename], check=False)  # noqa: S603,S607
         except Exception as e:
             logger.exception("Error occurred")
             messagebox.showerror("Error", f"Could not open log file:\n{e}")
