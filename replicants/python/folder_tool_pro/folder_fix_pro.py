@@ -371,7 +371,6 @@ class OperationReport:
     <div class="section">
         <h2>Errors ({len(self.errors)})</h2>
         {"".join(
-            f'<div class="error"><span class="timestamp">'
             f'{err["timestamp"].strftime("%H:%M:%S")}</span> - '
             f'{err["error"]}</div>'
             for err in self.errors
@@ -421,7 +420,7 @@ class OperationReport:
 class FolderFixPro:
     """Enhanced professional folder processing application."""
 
-    def __init__(self, root: tk.Tk) -> None:
+    def __init__(self, root: tk.Tk) -> None:  # noqa: PLR0915
         self.root = root
         self.root.title("Folder Fix Pro v3.0 - Professional Folder Manager")
         self.root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
@@ -524,12 +523,12 @@ class FolderFixPro:
         self._create_operation_tab()
         self._create_filters_tab()
         self._create_preview_tab()
-        self._create_log_tab()
+        self._create_operation_log_tab()
 
         # Status bar at bottom
         self._create_status_bar()
 
-    def _create_operation_tab(self) -> None:
+    def _create_operation_tab(self) -> None:  # noqa: PLR0915
         """Create main operation tab."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Operation  ")
@@ -755,13 +754,7 @@ class FolderFixPro:
 
         ttk.Label(
             ext_frame,
-            text="Include only these extensions (
-                comma-separated,
-                e.g.,
-                .jpg,
-                .png,
-                .pdf
-            ):",
+            text="Include only these extensions (comma-separated, e.g., .jpg, .png, .pdf):",
         ).pack(anchor="w")
         self.ext_filter_entry = ttk.Entry(ext_frame)
         self.ext_filter_entry.pack(fill="x", pady=(PADDING_SMALL, 0))
@@ -1060,7 +1053,7 @@ class FolderFixPro:
             try:
                 stat = file_path.stat()
                 size = self._format_size(stat.st_size)
-                modified = datetime.fromtimestamp(stat.st_mtime, datetime.UTC).strftime(
+                modified = datetime.fromtimestamp(stat.st_mtime, UTC).strftime(
                     "%Y-%m-%d %H:%M:%S"
                 )
                 file_type = file_path.suffix or "File"
@@ -1331,7 +1324,7 @@ class FolderFixPro:
 
         if self.organize_date_var.get():
             # Organize by date
-            mtime = datetime.fromtimestamp(source_file.stat().st_mtime, datetime.UTC)
+            mtime = datetime.fromtimestamp(source_file.stat().st_mtime, UTC)
             date_folder = dest_path / mtime.strftime("%Y-%m")
             date_folder.mkdir(exist_ok=True)
             return date_folder / source_file.name
@@ -1703,7 +1696,6 @@ class FolderFixPro:
                 if messagebox.askyesno(
                     "Open Report", "Would you like to open the report?"
                 ):
-                    import webbrowser
 
                     webbrowser.open(f"file://{Path(file_path).resolve()}")
             except Exception as e:  # noqa: BLE001
