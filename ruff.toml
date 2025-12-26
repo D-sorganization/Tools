@@ -18,7 +18,7 @@ exclude = [
     "*.ipynb",  # Jupyter notebooks often fail standard linting
     "**/archive",
     "**/legacy",
-    "replicants",
+    # "replicants", # Enable linting for replicants
     "data_processing/data_processor/archive",
     "data_processing/data_processor/python/data_processor/Data_Processor_r0.py",  # Exclude problematic file
 ]

@@ -399,10 +399,12 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
                 for j, col in enumerate(row_group.column_metadata):
                     results += f"    Column {j}: {col.path_in_schema[0]}\n"
                     results += f"      Values: {col.num_values:,}\n"
-results +
-                        = f"      Size: {self.format_file_size(col.total_uncompressed_size)}\n"
-results +
-                        = f"      Compressed: {self.format_file_size(col.total_compressed_size)}\n"
+                    results += (
+                        f"      Size: {self.format_file_size(col.total_uncompressed_size)}\n"
+                    )
+                    results += (
+                        f"      Compressed: {self.format_file_size(col.total_compressed_size)}\n"
+                    )
                     if col.statistics:
                         stats = col.statistics
                         if hasattr(stats, "min") and hasattr(stats, "max"):
@@ -686,10 +688,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                     text=f"{len(dialog.result)} columns selected",
                 )
                 self._log_conversion_message(
-                    f"Selected {len(
-                        dialog.result)} columns: {',
-                        '.join(dialog.result[:5])}{'...' if len(dialog.result
-                    ) > 5 else ''}",
+                    f"Selected {len(dialog.result)} columns: {', '.join(dialog.result[:5])}{'...' if len(dialog.result) > 5 else ''}",
                 )
 
         except Exception as exc:
@@ -793,10 +792,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
                         combined_data.append(df)
                         self._log_conversion_message(
-                            f"Loaded {os.path.basename(
-                                file_path)}: {len(df)} rows,
-                                {len(df.columns
-                            )} columns",
+                            f"Loaded {os.path.basename(file_path)}: {len(df)} rows, {len(df.columns)} columns",
                         )
 
                         processed_files += 1
@@ -824,10 +820,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             f"Successfully created: {output_filename}",
                         )
                         self._log_conversion_message(
-                            f"Combined data: {len(
-                                combined_df)} rows,
-                                {len(combined_df.columns
-                            )} columns",
+                            f"Combined data: {len(combined_df)} rows, {len(combined_df.columns)} columns",
                         )
 
                     except Exception as exc:

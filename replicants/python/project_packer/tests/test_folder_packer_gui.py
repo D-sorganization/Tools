@@ -19,7 +19,8 @@ from folder_packer_gui import (
 class TestFolderPackerGUI:
     """Test cases for folder_packer_gui.py module."""
 
-    @pytest.fixture()
+    @pytest.fixture
+
     def mock_root(self) -> Mock:
         """Create a mock Tkinter root window."""
         mock_root = Mock()
@@ -31,7 +32,8 @@ class TestFolderPackerGUI:
         mock_root.update_idletasks = Mock()
         return mock_root
 
-    @pytest.fixture()
+    @pytest.fixture
+
     def gui_instance(self, mock_root: Mock) -> FolderPackerGUI:
         """Create a FolderPackerGUI instance with mocked dependencies."""
         with (
