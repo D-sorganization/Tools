@@ -23,7 +23,9 @@ from pathlib import Path
 
 import customtkinter as ctk
 import numpy as np
+import logging
 import pandas as pd
+from tkinter import filedialog, messagebox
 
 # Note: Removed optional joblib import (unused)
 
@@ -156,7 +158,7 @@ class FileFormatDetector:
             if header.startswith(b"PK"):
                 return "excel"  # ZIP-based format
 
-        except Exception:
+        except Exception as exc:
             # Silently ignore format detection errors
             # Log the error for debugging purposes
             logger = logging.getLogger(__name__)
@@ -216,7 +218,7 @@ class DataReader:
 
         except Exception as exc:
             exc_str = str(exc)
-            raise Exception(f"Error reading {file_path}: {exc_str}")
+            raise Exception(f"Error reading {file_path}: {exc_str}") from exc
 
 
 class DataWriter:
@@ -276,7 +278,7 @@ class DataWriter:
                 raise ValueError(f"Unsupported format: {format_type}")
 
         except Exception as exc:
-            raise Exception(f"Error writing {file_path}: {exc!s}")
+            raise Exception(f"Error writing {file_path}: {exc!s}") from exc
 
 
 # =============================================================================
@@ -399,8 +401,10 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
                 for j, col in enumerate(row_group.column_metadata):
                     results += f"    Column {j}: {col.path_in_schema[0]}\n"
                     results += f"      Values: {col.num_values:,}\n"
-                    results += f"      Size: {self.format_file_size(col.total_uncompressed_size)}\n"
-                    results += f"      Compressed: {self.format_file_size(col.total_compressed_size)}\n"
+                    size_str = self.format_file_size(col.total_uncompressed_size)
+                    results += f"      Size: {size_str}\n"
+                    comp_str = self.format_file_size(col.total_compressed_size)
+                    results += f"      Compressed: {comp_str}\n"
                     if col.statistics:
                         stats = col.statistics
                         if hasattr(stats, "min") and hasattr(stats, "max"):
@@ -520,7 +524,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 filetypes=[
                     (
                         "All Supported",
-                        "*.csv *.tsv *.txt *.parquet *.pq *.xlsx *.xls *.json *.h5 *.hdf5 *.pkl *.pickle *.npy *.mat *.feather *.arrow *.db *.sqlite",
+                        "*.csv *.tsv *.txt *.parquet *.pq *.xlsx *.xls *.json *.h5 "
+                        "*.hdf5 *.pkl *.pickle *.npy *.mat *.feather *.arrow *.db *.sqlite",
                     ),
                     ("CSV Files", "*.csv"),
                     ("TSV Files", "*.tsv *.txt"),
@@ -683,9 +688,12 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 self.converter_columns_label.configure(
                     text=f"{len(dialog.result)} columns selected",
                 )
-                self._log_conversion_message(
-                    f"Selected {len(dialog.result)} columns: {', '.join(dialog.result[:5])}{'...' if len(dialog.result) > 5 else ''}",
+                msg = (
+                    f"Selected {len(dialog.result)} columns: "
+                    f"{', '.join(dialog.result[:5])}"
+                    f"{'...' if len(dialog.result) > 5 else ''}"
                 )
+                self._log_conversion_message(msg)
 
         except Exception as exc:
             messagebox.showerror("Error", f"Error reading file: {exc!s}")
@@ -755,9 +763,11 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
             if combine_files:
                 # Combine all files into one
-                self._log_conversion_message(
-                    f"Starting conversion: combining {total_files} files into {output_format.upper()}",
+                msg = (
+                    f"Starting conversion: combining {total_files} files into "
+                    f"{output_format.upper()}"
                 )
+                self._log_conversion_message(msg)
 
                 combined_data = []
                 for _i, file_path in enumerate(self.converter_input_files):
@@ -782,14 +792,17 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                                 df = df[available_columns]
                             else:
                                 self._log_conversion_message(
-                                    f"Warning: No selected columns found in {os.path.basename(file_path)}",
+                                    f"Warning: No selected columns found in "
+                                    f"{os.path.basename(file_path)}",
                                 )
                                 continue
 
                         combined_data.append(df)
-                        self._log_conversion_message(
-                            f"Loaded {os.path.basename(file_path)}: {len(df)} rows, {len(df.columns)} columns",
+                        msg = (
+                            f"Loaded {os.path.basename(file_path)}: {len(df)} rows, "
+                            f"{len(df.columns)} columns"
                         )
+                        self._log_conversion_message(msg)
 
                         processed_files += 1
                         self.converter_progress.set(processed_files / total_files)
@@ -815,9 +828,11 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         self._log_conversion_message(
                             f"Successfully created: {output_filename}",
                         )
-                        self._log_conversion_message(
-                            f"Combined data: {len(combined_df)} rows, {len(combined_df.columns)} columns",
+                        msg = (
+                            f"Combined data: {len(combined_df)} rows, "
+                            f"{len(combined_df.columns)} columns"
                         )
+                        self._log_conversion_message(msg)
 
                     except Exception as exc:
                         self._log_conversion_message(
@@ -837,7 +852,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         format_type = FileFormatDetector.detect_format(file_path)
                         if not format_type:
                             self._log_conversion_message(
-                                f"Warning: Could not detect format for {os.path.basename(file_path)}",
+                                f"Warning: Could not detect format for "
+                                f"{os.path.basename(file_path)}",
                             )
                             continue
 
@@ -854,7 +870,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                                 df = df[available_columns]
                             else:
                                 self._log_conversion_message(
-                                    f"Warning: No selected columns found in {os.path.basename(file_path)}",
+                                    f"Warning: No selected columns found in "
+                                    f"{os.path.basename(file_path)}",
                                 )
                                 continue
 
@@ -871,7 +888,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
                         DataWriter.write_file(df, output_path, output_format)
                         self._log_conversion_message(
-                            f"Converted {os.path.basename(file_path)} -> {output_filename}",
+                            f"Converted {os.path.basename(file_path)} -> "
+                            f"{output_filename}",
                         )
 
                         processed_files += 1
@@ -1591,11 +1609,25 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         mode = self.folder_operation_mode.get()
 
         descriptions = {
-            "combine": "Copies all files from source folders into the single destination folder.",
-            "flatten": "Finds deeply nested folders and copies them to the top level of the destination.",
-            "prune": "Copies source folders to the destination, preserving structure but skipping empty sub-folders.",
-            "deduplicate": "Deletes renamed duplicates like 'file (1).txt' within the source folder(s), keeping the newest version.",
-            "analyze": "Analyzes folder contents and generates a detailed report without making changes.",
+            "combine": (
+                "Copies all files from source folders into the single destination folder."
+            ),
+            "flatten": (
+                "Finds deeply nested folders and copies them to the top level of the "
+                "destination."
+            ),
+            "prune": (
+                "Copies source folders to the destination, preserving structure but "
+                "skipping empty sub-folders."
+            ),
+            "deduplicate": (
+                "Deletes renamed duplicates like 'file (1).txt' within the source "
+                "folder(s), keeping the newest version."
+            ),
+            "analyze": (
+                "Analyzes folder contents and generates a detailed report without "
+                "making changes."
+            ),
         }
 
         self.folder_mode_description.configure(text=descriptions.get(mode, ""))
@@ -1891,9 +1923,15 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
             # Final status
             if self.folder_preview_mode_var.get():
-                status = f"PREVIEW: Would flatten {copied_count} files, rename {renamed_count}, skip {skipped_count}"
+                status = (
+                    f"PREVIEW: Would flatten {copied_count} files, "
+                    f"rename {renamed_count}, skip {skipped_count}"
+                )
             else:
-                status = f"Flattened {copied_count} files, renamed {renamed_count}, skipped {skipped_count}"
+                status = (
+                    f"Flattened {copied_count} files, renamed {renamed_count}, "
+                    f"skipped {skipped_count}"
+                )
 
             self.after(0, lambda: self.folder_status_var.set(status))
 
@@ -1913,7 +1951,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for root, _dirs, files in os.walk(src):
+                for _root, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
@@ -1983,16 +2021,22 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             )
                             self.after(
                                 0,
-                                lambda p=processed_files, t=total_files: self.folder_status_var.set(
-                                    f"Processed {p}/{t} files",
+                                lambda p=processed_files, t=total_files: (
+                                    self.folder_status_var.set(f"Processed {p}/{t} files")
                                 ),
                             )
 
             # Final status
             if self.folder_preview_mode_var.get():
-                status = f"PREVIEW: Would copy {copied_count} files, skip {skipped_count} (pruned empty folders)"
+                status = (
+                    f"PREVIEW: Would copy {copied_count} files, "
+                    f"skip {skipped_count} (pruned empty folders)"
+                )
             else:
-                status = f"Copied {copied_count} files, skipped {skipped_count} (pruned empty folders)"
+                status = (
+                    f"Copied {copied_count} files, "
+                    f"skipped {skipped_count} (pruned empty folders)"
+                )
 
             self.after(0, lambda: self.folder_status_var.set(status))
 
@@ -2001,7 +2045,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             self.after(0, lambda: self.folder_status_var.set(f"Error: {exc_msg}"))
 
     def _folder_deduplicate_operation(self) -> None:
-        """Perform deduplicate operation - remove renamed duplicates in source folders."""
+        """Perform deduplicate operation - remove renamed duplicates."""
         try:
             import os
             import re
@@ -2009,7 +2053,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for root, _dirs, files in os.walk(src):
+                for _root, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
@@ -2043,7 +2087,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                                 os.path.join(root, filename),
                             )
 
-                    for base_name, file_list in files_by_base_name.items():
+                    for _base_name, file_list in files_by_base_name.items():
                         if len(file_list) > 1:
                             try:
                                 # Keep the newest file
@@ -2060,9 +2104,10 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                                         if not self.folder_preview_mode_var.get():
                                             os.remove(file_path)
                                         deleted_count += 1
-                                    except OSError as e:
+                                    except OSError as exc:
                                         print(
-                                            f"Failed to delete '{os.path.basename(file_path)}': {e}",
+                                            f"Failed to delete "
+                                            f"'{os.path.basename(file_path)}': {exc}",
                                         )
 
                         processed_files += len(file_list)
@@ -2074,8 +2119,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             )
                             self.after(
                                 0,
-                                lambda p=processed_files, t=total_files: self.folder_status_var.set(
-                                    f"Processed {p}/{t} files",
+                                lambda p=processed_files, t=total_files: (
+                                    self.folder_status_var.set(f"Processed {p}/{t} files")
                                 ),
                             )
 
@@ -2101,7 +2146,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for root, _dirs, files in os.walk(src):
+                for _root, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
@@ -2169,8 +2214,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             )
                             self.after(
                                 0,
-                                lambda p=processed_files, t=total_files: self.folder_status_var.set(
-                                    f"Analyzed {p}/{t} files",
+                                lambda p=processed_files, t=total_files: (
+                                    self.folder_status_var.set(f"Analyzed {p}/{t} files")
                                 ),
                             )
 
@@ -2361,7 +2406,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         return new_path
 
     def create_help_tab(self, tab: ctk.CTkFrame) -> None:
-        """Create the help tab with comprehensive documentation for all integrated features.
+        """Create the help tab with comprehensive documentation."""
 
         Args:
             tab: Parent tab frame to add content to
@@ -2389,14 +2434,19 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 # 🚀 Advanced Data Processor - Complete Feature Guide
 
 ## 📋 Application Overview
-This integrated application combines multiple powerful tools for data processing, analysis, and visualization:
+This integrated application combines multiple powerful tools for data processing, \
+analysis, and visualization:
 
 ### 🎯 Core Components
-1. **📊 CSV Processor** - Advanced time series data processing with mathematical operations
-2. **🔄 Format Converter** - Multi-format file conversion with batch processing and Parquet analysis
-3. **📁 Folder Tool** - Comprehensive folder processing and organization with 5 operation modes
+1. **📊 CSV Processor** - Advanced time series data processing with mathematical \
+operations
+2. **🔄 Format Converter** - Multi-format file conversion with batch processing \
+and Parquet analysis
+3. **📁 Folder Tool** - Comprehensive folder processing and organization with \
+5 operation modes
 4. **📄 DAT File Import** - DAT file processing with DBF tag files for structured data
-5. **📈 Plotting & Analysis** - Interactive visualization with smart auto-zoom and trendlines
+5. **📈 Plotting & Analysis** - Interactive visualization with smart auto-zoom \
+and trendlines
 6. **📋 Plots List** - Save and manage plot configurations for batch processing
 7. **❓ Help** - This comprehensive documentation
 
@@ -2412,7 +2462,8 @@ This integrated application combines multiple powerful tools for data processing
 ## 📊 CSV Processor Tab - Advanced Time Series Processing
 
 ### 🎯 Purpose & Capabilities
-Transform raw CSV time series data into processed, analyzed, and visualized datasets with professional-grade mathematical operations.
+Transform raw CSV time series data into processed, analyzed, and visualized \
+datasets with professional-grade mathematical operations.
 
 ### 📁 Setup Sub-tab - File Management & Configuration
 
@@ -2445,10 +2496,12 @@ Transform raw CSV time series data into processed, analyzed, and visualized data
 - **📈 Moving Average**: Smooth data with configurable window size (3-1000 points)
 - **🌊 Butterworth Filter**: Low-pass, high-pass, band-pass filtering with order control
 - **🎯 Median Filter**: Remove outliers with configurable kernel size
-- **📊 Savitzky-Golay**: Polynomial smoothing for noisy data with window/polynomial control
+- **📊 Savitzky-Golay**: Polynomial smoothing for noisy data with \
+window/polynomial control
 - **🛡️ Hampel Filter**: Robust outlier detection and removal with statistical thresholds
 - **📏 Z-Score Filter**: Statistical outlier removal with configurable sigma values
-- **🔵 Gaussian Filter**: Optimal noise reduction with minimal edge distortion using configurable sigma and boundary modes
+- **🔵 Gaussian Filter**: Optimal noise reduction with minimal edge \
+distortion using configurable sigma and boundary modes
 
 #### ⏱️ Time Resampling & Interpolation
 - **🔄 Resample Data**: Convert to different time intervals (1s, 1min, 1h, 1d, custom)
@@ -2464,7 +2517,8 @@ Transform raw CSV time series data into processed, analyzed, and visualized data
 
 #### 📉 Signal Differentiation (Advanced Calculus)
 - **📐 Spline Differentiation**: Smooth derivative calculation with configurable order
-- **🔢 Finite Difference**: Direct numerical differentiation (forward, backward, central)
+- **🔢 Finite Difference**: Direct numerical differentiation (forward, backward, \
+central)
 - **📊 Multiple Orders**: 1st through 5th order derivatives with error analysis
 - **🎯 Smoothing Options**: Pre-filtering for noisy derivative calculations
 
@@ -2497,7 +2551,8 @@ log10([Concentration] + 1)        # Log transformation with offset
 ## 🔄 Format Converter Tab - Multi-Format File Processing
 
 ### 🎯 Purpose & Capabilities
-Convert files between 15+ formats with professional batch processing, column selection, and comprehensive analysis tools.
+Convert files between 15+ formats with professional batch processing, column \
+selection, and comprehensive analysis tools.
 
 ### 📁 Supported Formats (15+ Formats)
 
@@ -2572,12 +2627,14 @@ Convert files between 15+ formats with professional batch processing, column sel
 ## 📁 Folder Tool Tab - Professional File Organization
 
 ### 🎯 Purpose & Capabilities
-Comprehensive folder processing and organization with 5 operation modes, advanced filtering, and professional file management.
+Comprehensive folder processing and organization with 5 operation modes, \
+advanced filtering, and professional file management.
 
 ### 🔧 Operation Modes (5 Professional Modes)
 
 #### 🔗 Combine & Copy Mode
-**Purpose**: Consolidate files from multiple source folders into a single organized destination.
+**Purpose**: Consolidate files from multiple source folders into a single \
+organized destination.
 
 **Professional Features**:
 - **🌐 Multi-source Support**: Process files from unlimited source folders
@@ -2708,7 +2765,8 @@ Comprehensive folder processing and organization with 5 operation modes, advance
 ## 📈 Plotting & Analysis Tab - Interactive Visualization
 
 ### 🎯 Purpose & Capabilities
-Professional interactive visualization and analysis of processed data with advanced plotting capabilities.
+Professional interactive visualization and analysis of processed data with \
+advanced plotting capabilities.
 
 ### 🔧 Key Features
 
@@ -2761,7 +2819,8 @@ Professional interactive visualization and analysis of processed data with advan
 ## 📋 Plots List Tab - Configuration Management
 
 ### 🎯 Purpose & Capabilities
-Professional plot configuration management with batch processing and library organization.
+Professional plot configuration management with batch processing and library \
+organization.
 
 ### 🔧 Features
 - **💾 Configuration Save**: Save plot settings with names and descriptions
@@ -2909,8 +2968,10 @@ Process DAT files with associated DBF tag files for structured data import and a
 
 ## 📞 Support Information - Professional Assistance
 
-### 🎯 Application Overview
-This integrated application combines multiple powerful tools into a single, comprehensive data processing solution. All features are designed to work together seamlessly while maintaining the full functionality of the original standalone applications.
+### 🎯This application represents the fully integrated version of the Data Processor \
+Suite, combining all individual tools into a single, cohesive, and comprehensive \
+data processing solution. All features are designed to work together seamlessly \
+while maintaining the full functionality of the original standalone applications.
 
 ### 🔧 Technical Specifications
 - **Framework**: CustomTkinter (Modern Python GUI)
@@ -2936,7 +2997,8 @@ This integrated application combines multiple powerful tools into a single, comp
 - **🛡️ Robust Error Handling**: Comprehensive error recovery
 - **📈 Real-time Progress**: Live progress tracking
 
-For technical support or feature requests, please refer to the application documentation or contact the development team.
+For technical support or feature requests, please refer to the application \
+documentation or contact the development team.
 
 ---
 
