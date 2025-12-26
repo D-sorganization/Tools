@@ -27,6 +27,8 @@ from matplotlib.figure import Figure
 from scipy.interpolate import UnivariateSpline
 from scipy.io import savemat
 from scipy.signal import butter, filtfilt, medfilt, savgol_filter
+from typing import Dict, List, Tuple, Any, Optional, Union, Callable
+from tkinter import Widget, Event
 
 
 
@@ -36,7 +38,7 @@ logger = logging.getLogger(__name__)
 # =============================================================================
 # WORKER FUNCTION FOR PARALLEL PROCESSING
 # =============================================================================
-def process_single_csv_file(file_path, settings):
+def process_single_csv_file(file_path: str, settings: Dict[str, Any]) -> Optional[pd.DataFrame]:
     """
     Processes a single CSV file based on a dictionary of settings.
     This function is designed to be run in a separate process.
@@ -143,7 +145,7 @@ def process_single_csv_file(file_path, settings):
 
 
 # Helper function for causal derivative calculation
-def _poly_derivative(series, window, poly_order, deriv_order, delta_x):
+def _poly_derivative(series: pd.Series, window: int, poly_order: int, deriv_order: int, delta_x: float) -> pd.Series:
     """Calculates the derivative of a series using a rolling polynomial fit."""
     if poly_order < deriv_order:
         return pd.Series(np.nan, index=series.index)
@@ -177,7 +179,7 @@ def _poly_derivative(series, window, poly_order, deriv_order, delta_x):
 class CSVProcessorApp(ctk.CTk):
     """The main application class with all advanced features and UI fixes."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
         # Layout persistence variables
@@ -185,7 +187,7 @@ class CSVProcessorApp(ctk.CTk):
             os.path.expanduser("~"),
             ".csv_processor_layout.json",
         )
-        self.splitters = {}
+        self.splitters: Dict[str, Any] = {}
         self.layout_data = self._load_layout_config()
 
         self.title("Advanced CSV Processor & DAT Importer - Complete Version")
@@ -211,12 +213,12 @@ class CSVProcessorApp(ctk.CTk):
         self.bind("<Configure>", self._on_window_configure)
 
         # App State Variables
-        self.input_file_paths = []
-        self.loaded_data_cache = {}
-        self.processed_files = {}  # Store processed data for plotting
+        self.input_file_paths: List[str] = []
+        self.loaded_data_cache: Dict[str, Any] = {}
+        self.processed_files: Dict[str, Any] = {}  # Store processed data for plotting
         self.output_directory = os.path.expanduser("~/Documents")
-        self.signal_vars = {}
-        self.plot_signal_vars = {}
+        self.signal_vars: Dict[str, Any] = {}
+        self.plot_signal_vars: Dict[str, Any] = {}
         self.filter_names = [
             "None",
             "Moving Average",
@@ -293,7 +295,7 @@ class CSVProcessorApp(ctk.CTk):
         # Load saved plots and other settings
         self._load_plots_from_file()
 
-    def create_setup_and_process_tab(self, parent_tab):
+    def create_setup_and_process_tab(self, parent_tab: Any) -> None:
         """Fixed version with proper splitter implementation and all advanced features."""
         parent_tab.grid_columnconfigure(0, weight=1)
         parent_tab.grid_rowconfigure(0, weight=1)
@@ -426,7 +428,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
-    def populate_setup_sub_tab(self, tab):
+    def populate_setup_sub_tab(self, tab: Any) -> None:
         """Populate the setup sub-tab."""
         tab.grid_columnconfigure(0, weight=1)
 
@@ -639,7 +641,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         sort_desc.grid(row=3, column=1, padx=10, pady=5, sticky="w")
 
-    def populate_processing_sub_tab(self, tab):
+    def populate_processing_sub_tab(self, tab: Any) -> None:
         """Populate the processing sub-tab with all advanced features."""
         tab.grid_columnconfigure(0, weight=1)
         time_units = ["ms", "s", "min", "hr"]
@@ -1026,7 +1028,7 @@ class CSVProcessorApp(ctk.CTk):
             cb.grid(row=1, column=i - 1, padx=10, pady=2, sticky="w")
             self.derivative_vars[i] = var
 
-    def _create_ma_param_frame(self, parent, time_units):
+    def _create_ma_param_frame(self, parent: Any, time_units: List[str]) -> Tuple[Any, Any, Any]:
         """Create Moving Average parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1056,7 +1058,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, value_entry, unit_menu
 
-    def _create_bw_param_frame(self, parent):
+    def _create_bw_param_frame(self, parent: Any) -> Tuple[Any, Any, Any]:
         """Create Butterworth filter parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1084,7 +1086,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, order_entry, cutoff_entry
 
-    def _create_median_param_frame(self, parent):
+    def _create_median_param_frame(self, parent: Any) -> Tuple[Any, Any]:
         """Create Median filter parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1102,7 +1104,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, kernel_entry
 
-    def _create_savgol_param_frame(self, parent):
+    def _create_savgol_param_frame(self, parent: Any) -> Tuple[Any, Any, Any]:
         """Create Savitzky-Golay filter parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1130,7 +1132,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, window_entry, polyorder_entry
 
-    def _create_hampel_param_frame(self, parent):
+    def _create_hampel_param_frame(self, parent: Any) -> Tuple[Any, Any, Any]:
         """Create Hampel filter parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1158,7 +1160,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, window_entry, threshold_entry
 
-    def _create_zscore_param_frame(self, parent):
+    def _create_zscore_param_frame(self, parent: Any) -> Tuple[Any, Any, Any]:
         """Create Z-Score filter parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1189,7 +1191,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, threshold_entry, method_menu
 
-    def _update_filter_ui(self, filter_type):
+    def _update_filter_ui(self, filter_type: str) -> None:
         """Update filter UI based on selected filter type."""
         # Hide all frames
         for frame in [
@@ -1216,7 +1218,7 @@ class CSVProcessorApp(ctk.CTk):
         elif filter_type == "Savitzky-Golay":
             self.savgol_frame.grid()
 
-    def _update_plot_filter_ui(self, filter_type):
+    def _update_plot_filter_ui(self, filter_type: str) -> None:
         """Update plot filter UI based on selected filter type."""
         # Hide all frames
         for frame in [
@@ -1382,7 +1384,7 @@ class CSVProcessorApp(ctk.CTk):
         self.custom_var_name_entry.delete(0, tk.END)
         self.custom_var_formula_entry.delete(0, tk.END)
 
-    def populate_custom_var_sub_tab(self, tab):
+    def populate_custom_var_sub_tab(self, tab: Any) -> None:
         """Fixed custom variables sub-tab with missing listbox."""
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(9, weight=1)
@@ -1809,7 +1811,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return df
 
-    def select_files(self):
+    def select_files(self) -> None:
         """Select input CSV files."""
         logger.debug("DEBUG: \1")
         file_paths = filedialog.askopenfilenames(
@@ -1839,14 +1841,14 @@ class CSVProcessorApp(ctk.CTk):
         else:
             logger.debug("DEBUG: \1")
 
-    def select_output_folder(self):
+    def select_output_folder(self) -> None:
         """Select output directory for processed files."""
         folder_path = filedialog.askdirectory(title="Select Output Folder")
         if folder_path:
             self.output_directory = folder_path
             self.output_label.configure(text=f"Output: {self.output_directory}")
 
-    def update_file_list(self):
+    def update_file_list(self) -> None:
         """Update the file list display."""
         logger.debug("DEBUG: \1")
         print(
@@ -1907,7 +1909,7 @@ class CSVProcessorApp(ctk.CTk):
             self.update_file_list()
             self.load_signals_from_files()
 
-    def load_signals_from_files(self):
+    def load_signals_from_files(self) -> None:
         """Load signals from all selected files (optimized)."""
         logger.debug("DEBUG: \1")
 
@@ -2098,12 +2100,12 @@ class CSVProcessorApp(ctk.CTk):
             cb.grid(sticky="w", padx=5, pady=2)
             self.reference_signal_widgets[signal] = {"var": var, "widget": cb}
 
-    def select_all(self):
+    def select_all(self) -> None:
         """Select all signals."""
         for _signal, data in self.signal_vars.items():
             data["var"].set(True)
 
-    def deselect_all(self):
+    def deselect_all(self) -> None:
         """Deselect all signals."""
         for _signal, data in self.signal_vars.items():
             data["var"].set(False)
@@ -4074,7 +4076,7 @@ class CSVProcessorApp(ctk.CTk):
         self.import_preview_text = ctk.CTkTextbox(preview_frame, height=200)
         self.import_preview_text.grid(row=1, column=0, padx=10, pady=5, sticky="nsew")
 
-    def _load_layout_config(self):
+    def _load_layout_config(self) -> Dict[str, Any]:
         """Load layout configuration from file."""
         try:
             if os.path.exists(self.layout_config_file):
