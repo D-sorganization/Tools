@@ -1123,7 +1123,7 @@ class FolderPackerPro:
                 tags=(str(file_path),),
             )
 
-    def _on_file_select(self, _event: tk.Event) -> None:
+    def _on_file_select(self, _event: tk.Event[Any]) -> None:
         """Handle file selection in preview tree."""
         selection = self.preview_tree.selection()
         if not selection:
@@ -1352,9 +1352,9 @@ class FolderPackerPro:
                     self._log_message(f"Error packing {file_path}: {e}", "error")
 
             if self.cancel_operation:
-                self._log_message(
+                self._log_message(  # type: ignore[unreachable]
                     "Pack operation cancelled", "warning"
-                )  # type: ignore[unreachable]
+                )
                 return
 
             # Serialize to JSON
