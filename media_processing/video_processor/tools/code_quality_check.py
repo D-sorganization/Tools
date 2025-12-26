@@ -142,8 +142,8 @@ def check_banned_patterns(
 def check_magic_numbers(lines: list[str], filepath: Path) -> list[tuple[int, str, str]]:
     """Check for magic numbers in lines."""
     issues: list[tuple[int, str, str]] = []
-    # Skip checking quality check scripts for magic numbers
-    # (they contain patterns they check for)
+    # Skip checking quality check scripts for
+    # magic numbers (they contain patterns they check for)
     if filepath.name in (
         "quality_check_script.py",
         "matlab_quality_check.py",

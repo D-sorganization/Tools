@@ -763,7 +763,7 @@ class FolderPackerPro:
         )
         self.unpack_cancel_btn.pack(side="right", fill="x", expand=True)
 
-    def _create_preview_tab(self) -> None:
+    def _create_preview_tab(self) -> None:  # noqa: PLR0915
         """Create file preview tab."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Preview  ")
@@ -1355,7 +1355,9 @@ class FolderPackerPro:
                     self._log_message(f"Error packing {file_path}: {e}", "error")
 
             if self.cancel_operation:
-                self._log_message("Pack operation cancelled", "warning")  # type: ignore[unreachable]
+                self._log_message(
+                    "Pack operation cancelled", "warning"
+                )  # type: ignore[unreachable]
                 return
 
             # Serialize to JSON

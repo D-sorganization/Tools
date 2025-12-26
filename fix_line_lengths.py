@@ -1,106 +1,131 @@
 #!/usr/bin/env python3
 """
-Fix line-too-long errors systematically
+Fix line length issues (E501 errors) in the codebase.
 """
 
-import re
+import subprocess
 from pathlib import Path
 
 
-def fix_long_lines_in_file(file_path):
-    """Fix line-too-long errors in the specified file"""
-    with open(file_path, encoding='utf-8') as f:
-        lines = f.readlines()
+def fix_line_lengths_in_file(file_path: Path, max_length: int = 88) -> bool:
+    """Fix line length issues in a specific file."""
+    try:
+        content = file_path.read_text(encoding='utf-8')
+        lines = content.splitlines()
+        modified = False
 
-    new_lines = []
-    changes_made = False
+        for i, line in enumerate(lines):
+            if len(line) > max_length:
+                # Fix long docstrings
+                if '"""' in line and line.strip().startswith('"""'):
+                    # Break long docstrings
+                    indent = len(line) - len(line.lstrip())
+                    indent_str = ' ' * indent
 
-    for line in lines:
-        original_line = line
+                    if line.count('"""') == 2:  # Single line docstring
+                        content_start = line.find('"""') + 3
+                        content_end = line.rfind('"""')
+                        docstring_content = line[content_start:content_end]
 
-        # Skip if line is already short enough
-        if len(line.rstrip()) <= 88:
-            new_lines.append(line)
-            continue
+                        if len(docstring_content) > 40:
+                            lines[i] = f'{indent_str}"""'
+                            lines.insert(i + 1, f'{indent_str}{docstring_content.strip()}')
+                            lines.insert(i + 2, f'{indent_str}"""')
+                            modified = True
 
-        # Common patterns to fix
-        fixed_line = line
+                # Fix long comments
+                elif line.strip().startswith('#'):
+                    if len(line) > max_length:
+                        indent = len(line) - len(line.lstrip())
+                        indent_str = ' ' * indent
+                        comment_text = line.strip()[1:].strip()
 
-        # Pattern 1: Long f-strings with multiple parts
-        if 'f"' in fixed_line and len(fixed_line.rstrip()) > 88:
-            # Split long f-strings at logical points
-            if ' - ' in fixed_line and 'f"' in fixed_line:
-                # Split at " - " in f-strings
-                fixed_line = re.sub(
-                    r'f"([^"]*) - ([^"]*)"',
-                    r'f"\1 - "\n                f"\2"',
-                    fixed_line
-                )
-            elif ': ' in fixed_line and 'f"' in fixed_line:
-                # Split at ": " in f-strings
-                fixed_line = re.sub(
-                    r'f"([^"]*): ([^"]*)"',
-                    r'f"\1: "\n                f"\2"',
-                    fixed_line
-                )
+                        # Break into multiple lines
+                        words = comment_text.split()
+                        if len(words) > 3:
+                            mid_point = len(words) // 2
+                            first_part = ' '.join(words[:mid_point])
+                            second_part = ' '.join(words[mid_point:])
 
-        # Pattern 2: Long messagebox calls
-        if 'messagebox.' in fixed_line and len(fixed_line.rstrip()) > 88:
-            # Split messagebox text arguments
-            fixed_line = re.sub(
-                r'messagebox\.(showinfo|showwarning|askyesno)\(\s*"([^"]*)",\s*"([^"]*)"',
-                r'messagebox.\1(\n                "\2",\n                "\3"',
-                fixed_line
-            )
+                            lines[i] = f'{indent_str}# {first_part}'
+                            lines.insert(i + 1, f'{indent_str}# {second_part}')
+                            modified = True
 
-        # Pattern 3: Long comments
-        if fixed_line.strip().startswith('#') and len(fixed_line.rstrip()) > 88:
-            # Split long comments at word boundaries
-            comment_match = re.match(r'(\s*#\s*)(.*)', fixed_line)
-            if comment_match:
-                indent, comment_text = comment_match.groups()
-                if len(comment_text) > 80:
-                    # Find a good split point
-                    words = comment_text.split()
-                    if len(words) > 1:
-                        mid_point = len(words) // 2
-                        first_part = ' '.join(words[:mid_point])
-                        second_part = ' '.join(words[mid_point:])
-                        fixed_line = f"{indent}{first_part}\n{indent}{second_part}\n"
+                # Fix long string literals
+                elif '"' in line and line.count('"') >= 2:
+                    # Simple case: break long strings with continuation
+                    if len(line) > max_length and '"""' not in line:
+                        indent = len(line) - len(line.lstrip())
+                        indent_str = ' ' * indent
 
-        # Pattern 4: Long string literals
-        if '"""' in fixed_line and len(fixed_line.rstrip()) > 88:
-            # Split long docstrings
-            fixed_line = re.sub(
-                r'"""([^"]{60,})"""',
-                r'"""\1\n        """',
-                fixed_line
-            )
+                        # Find a good break point around the middle
+                        break_point = max_length - 10
+                        if break_point < len(line):
+                            # Try to break at a space
+                            while break_point > max_length // 2 and line[break_point] != ' ':
+                                break_point -= 1
 
-        # Pattern 5: Long function calls with multiple arguments
-        if '(' in fixed_line and ')' in fixed_line and len(fixed_line.rstrip()) > 88:
-            # Split function calls at commas
-            if fixed_line.count(',') >= 2:
-                # Find function call pattern
-                func_match = re.match(r'(\s*)([^(]+\([^,]+),(.+)\)', fixed_line)
-                if func_match:
-                    indent, func_start, remaining = func_match.groups()
-                    fixed_line = f"{func_start},\n{indent}    {remaining.strip()}\n"
+                            if break_point > max_length // 2:
+                                first_part = line[:break_point].rstrip()
+                                second_part = line[break_point:].lstrip()
 
-        if fixed_line != original_line:
-            changes_made = True
+                                lines[i] = f'{first_part} \\'
+                                lines.insert(i + 1, f'{indent_str}    {second_part}')
+                                modified = True
 
-        new_lines.append(fixed_line)
+        if modified:
+            file_path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+            return True
+        return False
 
-    if changes_made:
-        with open(file_path, 'w', encoding='utf-8') as f:
-            f.writelines(new_lines)
-        print(f"Fixed long lines in {file_path}")
-        return True
-    return False
+    except Exception as e:
+        print(f"Error fixing line lengths in {file_path}: {e}")
+        return False
 
 
-# Focus on the main problematic file first
-main_file = "data_processing/data_processor/python/data_processor/Data_Processor_r0.py"
-if Path(main_file).exists():
-    fix_long_lines_in_file(main_file)
+def main():
+    """Fix line length issues across the codebase."""
+    print("📏 Fixing line length issues...")
+
+    # Get files with E501 errors
+    try:
+        result = subprocess.run(
+            ["python", "-m", "ruff", "check", ".", "--select", "E501", "--output-format=concise"],
+            capture_output=True,
+            text=True,
+            check=False
+        )
+
+        files_with_errors = set()
+        for line in result.stdout.splitlines():
+            if 'E501' in line and ':' in line:
+                file_path = line.split(':')[0].strip()
+                files_with_errors.add(Path(file_path))
+
+        print(f"Found {len(files_with_errors)} files with line length issues")
+
+        fixed_count = 0
+        for file_path in files_with_errors:
+            if file_path.exists() and file_path.suffix == '.py':
+                if fix_line_lengths_in_file(file_path):
+                    print(f"Fixed line lengths in {file_path}")
+                    fixed_count += 1
+
+        print(f"Fixed line lengths in {fixed_count} files")
+
+        # Final check
+        result = subprocess.run(
+            ["python", "-m", "ruff", "check", ".", "--statistics"],
+            capture_output=True,
+            text=True,
+            check=False
+        )
+        print("\nFinal statistics:")
+        print(result.stdout)
+
+    except Exception as e:
+        print(f"Error: {e}")
+
+
+if __name__ == "__main__":
+    main()

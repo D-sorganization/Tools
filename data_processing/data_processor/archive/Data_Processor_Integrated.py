@@ -7,7 +7,8 @@
 # functionality as an additional tab, along with a parquet file analyzer popup.
 #
 # Dependencies for Python 3.8+:
-# pip install customtkinter pandas numpy scipy matplotlib openpyxl Pillow simpledbf pyarrow tables feather-format
+# pip install customtkinter pandas numpy scipy matplotlib openpyxl Pillow simpledbf
+# pyarrow tables feather-format
 #
 # =============================================================================
 
@@ -398,8 +399,10 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
                 for j, col in enumerate(row_group.column_metadata):
                     results += f"    Column {j}: {col.path_in_schema[0]}\n"
                     results += f"      Values: {col.num_values:,}\n"
-                    results += f"      Size: {self.format_file_size(col.total_uncompressed_size)}\n"
-                    results += f"      Compressed: {self.format_file_size(col.total_compressed_size)}\n"
+results +
+                        = f"      Size: {self.format_file_size(col.total_uncompressed_size)}\n"
+results +
+                        = f"      Compressed: {self.format_file_size(col.total_compressed_size)}\n"
                     if col.statistics:
                         stats = col.statistics
                         if hasattr(stats, "min") and hasattr(stats, "max"):
@@ -468,7 +471,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         # Initialize the parent class
         super().__init__(*args, **kwargs)
 
-        # Now initialize Tkinter variables AFTER parent class has created the root window
+        # Now initialize Tkinter variables AFTER parent class has created the root
+        # window
         self.folder_operation_mode = ctk.StringVar(value="combine")
         self.folder_filter_extensions = ctk.StringVar(value="")
         self.folder_min_file_size = ctk.StringVar(value="0")
@@ -573,7 +577,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             }
 
             files = []
-            for root, dirs, filenames in os.walk(folder):
+            for root, _dirs, filenames in os.walk(folder):
                 for filename in filenames:
                     if Path(filename).suffix.lower() in supported_extensions:
                         files.append(os.path.join(root, filename))
@@ -611,7 +615,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             )
             return
 
-        for i, file_path in enumerate(self.converter_input_files):
+        for _i, file_path in enumerate(self.converter_input_files):
             file_frame = ctk.CTkFrame(self.converter_file_list_frame)
             file_frame.pack(fill="x", padx=5, pady=2)
 
@@ -682,7 +686,10 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                     text=f"{len(dialog.result)} columns selected",
                 )
                 self._log_conversion_message(
-                    f"Selected {len(dialog.result)} columns: {', '.join(dialog.result[:5])}{'...' if len(dialog.result) > 5 else ''}",
+                    f"Selected {len(
+                        dialog.result)} columns: {',
+                        '.join(dialog.result[:5])}{'...' if len(dialog.result
+                    ) > 5 else ''}",
                 )
 
         except Exception as exc:
@@ -758,7 +765,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 )
 
                 combined_data = []
-                for i, file_path in enumerate(self.converter_input_files):
+                for _i, file_path in enumerate(self.converter_input_files):
                     try:
                         format_type = FileFormatDetector.detect_format(file_path)
                         if not format_type:
@@ -786,7 +793,10 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
                         combined_data.append(df)
                         self._log_conversion_message(
-                            f"Loaded {os.path.basename(file_path)}: {len(df)} rows, {len(df.columns)} columns",
+                            f"Loaded {os.path.basename(
+                                file_path)}: {len(df)} rows,
+                                {len(df.columns
+                            )} columns",
                         )
 
                         processed_files += 1
@@ -814,7 +824,10 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             f"Successfully created: {output_filename}",
                         )
                         self._log_conversion_message(
-                            f"Combined data: {len(combined_df)} rows, {len(combined_df.columns)} columns",
+                            f"Combined data: {len(
+                                combined_df)} rows,
+                                {len(combined_df.columns
+                            )} columns",
                         )
 
                     except Exception as exc:
@@ -830,7 +843,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                     f"Starting conversion: processing {total_files} files individually",
                 )
 
-                for i, file_path in enumerate(self.converter_input_files):
+                for _i, file_path in enumerate(self.converter_input_files):
                     try:
                         format_type = FileFormatDetector.detect_format(file_path)
                         if not format_type:
@@ -1730,7 +1743,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for root, dirs, files in os.walk(src):
+                for root, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
@@ -1751,7 +1764,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 if self.folder_cancel_flag:
                     break
 
-                for root, dirs, files in os.walk(src):
+                for root, _dirs, files in os.walk(src):
                     for file in files:
                         if self.folder_cancel_flag:
                             break
@@ -1824,7 +1837,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for root, dirs, files in os.walk(src):
+                for root, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
@@ -1845,7 +1858,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 if self.folder_cancel_flag:
                     break
 
-                for root, dirs, files in os.walk(src):
+                for root, _dirs, files in os.walk(src):
                     for file in files:
                         if self.folder_cancel_flag:
                             break
@@ -1911,7 +1924,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for root, dirs, files in os.walk(src):
+                for root, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
@@ -1935,7 +1948,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 src_name = os.path.basename(src)
                 dest_src_path = os.path.join(self.folder_destination, src_name)
 
-                for root, dirs, files in os.walk(src):
+                for root, _dirs, files in os.walk(src):
                     if self.folder_cancel_flag:
                         break
 
@@ -2007,7 +2020,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for root, dirs, files in os.walk(src):
+                for root, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
@@ -2027,7 +2040,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 if self.folder_cancel_flag:
                     break
 
-                for root, dirs, files in os.walk(src):
+                for root, _dirs, files in os.walk(src):
                     if self.folder_cancel_flag:
                         break
 
@@ -2099,7 +2112,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for root, dirs, files in os.walk(src):
+                for root, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
@@ -2131,7 +2144,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 folder_files = 0
                 folder_size = 0
 
-                for root, dirs, files in os.walk(src):
+                for root, _dirs, files in os.walk(src):
                     for file in files:
                         if self.folder_cancel_flag:
                             break
@@ -2418,7 +2431,15 @@ Transform raw CSV time series data into processed, analyzed, and visualized data
 - **📂 Input Files**: Multi-file selection with drag-and-drop support
 - **📁 Output Directory**: Configurable output location with automatic creation
 - **⚙️ Configuration Management**: Save/load complete processing settings
-- **📤 Export Format**: 15+ output formats (CSV, Excel, MAT, Parquet, HDF5, Feather, etc.)
+- **📤 Export Format**: 15+ output formats (
+    CSV,
+    Excel,
+    MAT,
+    Parquet,
+    HDF5,
+    Feather,
+    etc.
+)
 - **📊 Sorting Options**: Time-based and value-based sorting configurations
 
 #### 🚀 Usage Workflow

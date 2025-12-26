@@ -115,12 +115,12 @@ class TestOperationReport:
 class TestFolderFixPro:
     """Test cases for FolderFixPro GUI class."""
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_root(self) -> Mock:
         """Mock Tkinter root."""
         return Mock()
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_tk_vars(self) -> Generator[dict[str, Mock], None, None]:
         """Mock Tkinter variables."""
         with (

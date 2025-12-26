@@ -6,7 +6,8 @@ This script runs comprehensive quality checks on MATLAB code following the proje
 .cursorrules.md requirements. It can be run from the command line and integrates
 with the project's quality control system.
 
-This is the unified version combining the best features from all repository implementations.
+This is the unified version combining the best features from all
+# repository implementations.
 
 Usage:
     python tools/matlab_utilities/scripts/matlab_quality_check.py
@@ -285,7 +286,8 @@ class MATLABQualityChecker:
 
                     if not has_arguments:
                         issues.append(
-                            f"{file_path.name} (line {i}): Missing arguments validation block",
+                            f"{file_path.name} (line {i}):",
+                            "Missing arguments validation block",
                         )
 
                 # Check for banned patterns (in comments and code)
@@ -393,9 +395,12 @@ class MATLABQualityChecker:
                     "1.57": "pi/2 constant [dimensionless] - mathematical constant",
                     "0.7854": "pi/4 constant [dimensionless] - mathematical constant",
                     "0.785": "pi/4 constant [dimensionless] - mathematical constant",
-                    "9.81": "gravitational acceleration [m/s²] - approximate standard gravity",
-                    "9.8": "gravitational acceleration [m/s²] - approximate standard gravity",
-                    "9.807": "gravitational acceleration [m/s²] - approximate standard gravity",
+                    "9.81": "gravitational acceleration [m/s^2] - approximate \
+                        standard gravity",
+                    "9.8": "gravitational acceleration [m/s^2] - approximate \
+                        standard gravity",
+                    "9.807": "gravitational acceleration [m/s^2] - approximate \
+                        standard gravity",
                 }
 
                 for num in magic_numbers:
@@ -563,7 +568,8 @@ def main() -> None:
         print("\n" + "=" * 60)  # noqa: T201
 
     # Exit with appropriate code
-    # In strict mode, fail if any issues are found; otherwise fail only if checks didn't pass
+    # In strict mode, fail if any issues are found; otherwise fail only if checks
+    #  didn't pass
     passed = bool(results.get("passed", False))
     has_issues = bool(results.get("issues"))
 

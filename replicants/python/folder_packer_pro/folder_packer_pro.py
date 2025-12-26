@@ -1,3 +1,26 @@
+import base64
+import gzip
+import json
+import logging
+import os
+import re
+import sys
+import threading
+import tkinter as tk
+from collections import defaultdict
+from datetime import UTC, datetime
+from pathlib import Path
+from tkinter import filedialog, messagebox, scrolledtext, simpledialog, ttk
+from typing import Any, Final
+
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+
+PREVIEW_FILE_LIMIT = 500  # Maximum files to show in preview
+PREVIEW_LINE_LIMIT = 1000  # Maximum lines to show in file preview
+BYTES_PER_KB = 1024.0  # Bytes in a kilobyte
+
 """
 Folder Packer Pro v2.0 - Enhanced Professional Project Packing Tool
 
@@ -14,24 +37,6 @@ A comprehensive project packaging application with advanced features:
 - Professional error handling and validation
 """
 
-import base64
-import gzip
-import json
-import logging
-import os
-import re
-import sys
-import threading
-import tkinter as tk
-from collections import defaultdict
-from datetime import datetime
-from pathlib import Path
-from tkinter import filedialog, messagebox, scrolledtext, simpledialog, ttk
-from typing import Any, Final
-
-from cryptography.fernet import Fernet
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 # Constants with professional standards
 MAX_FILE_SIZE_MB: Final[int] = 1024  # 1GB max per file
@@ -229,7 +234,7 @@ class PackageManifest:
 
     def __init__(self) -> None:
         """Initialize the manifest."""
-        self.created_at = datetime.now()
+        self.created_at = datetime.now(UTC)
         self.files: list[dict[str, Any]] = []
         self.metadata: dict[str, Any] = {}
         self.stats: defaultdict[str, int] = defaultdict(int)
@@ -241,7 +246,7 @@ class PackageManifest:
                 "path": file_path,
                 "size": size,
                 "checksum": checksum,
-                "added_at": datetime.now().isoformat(),
+                "added_at": datetime.now(UTC).isoformat(),
             },
         )
         self.stats["total_files"] += 1
@@ -366,7 +371,7 @@ class FolderPackerPro:
         # Status bar at bottom
         self._create_status_bar()
 
-    def _create_pack_tab(self) -> None:
+    def _create_pack_tab(self) -> None:  # noqa: PLR0915
         """Create pack operation tab."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Pack  ")
@@ -601,7 +606,7 @@ class FolderPackerPro:
         )
         self.pack_cancel_btn.pack(side="right", fill="x", expand=True)
 
-    def _create_unpack_tab(self) -> None:
+    def _create_unpack_tab(self) -> None:  # noqa: PLR0915
         """Create unpack operation tab."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Unpack  ")
@@ -763,7 +768,7 @@ class FolderPackerPro:
         )
         self.unpack_cancel_btn.pack(side="right", fill="x", expand=True)
 
-    def _create_preview_tab(self) -> None:
+    def _create_preview_tab(self) -> None:  # noqa: PLR0915
         """Create file preview tab."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text="  Preview  ")
@@ -1086,11 +1091,11 @@ class FolderPackerPro:
                         try:
                             stat = file_path.stat()
                             files.append((file_path, stat))
-                            if len(files) >= 500:  # Limit preview
+                            if len(files) >= PREVIEW_FILE_LIMIT:  # Limit preview
                                 break
                         except Exception:
                             logger.exception("Error scanning %s", file_path)
-                if len(files) >= 500:
+                if len(files) >= PREVIEW_FILE_LIMIT:
                     break
 
             self.root.after(0, lambda: self._populate_tree(files, source_path))
@@ -1105,7 +1110,9 @@ class FolderPackerPro:
             rel_path = file_path.relative_to(base_path)
             size = self._format_size(stat.st_size)
             file_type = self._get_file_type(file_path)
-            modified = datetime.fromtimestamp(stat.st_mtime).strftime("%Y-%m-%d %H:%M")
+            modified = datetime.fromtimestamp(stat.st_mtime, UTC).strftime(
+                "%Y-%m-%d %H:%M"
+            )
 
             self.preview_tree.insert(
                 "",
@@ -1115,7 +1122,7 @@ class FolderPackerPro:
                 tags=(str(file_path),),
             )
 
-    def _on_file_select(self, event: tk.Event) -> None:
+    def _on_file_select(self, _event: tk.Event) -> None:
         """Handle file selection in preview tree."""
         selection = self.preview_tree.selection()
         if not selection:
@@ -1146,7 +1153,7 @@ class FolderPackerPro:
                 )
             else:
                 # Try to read as text
-                with open(file_path, encoding="utf-8", errors="ignore") as f:
+                with file_path.open(encoding="utf-8", errors="ignore") as f:
                     content = f.read()
 
                 # Insert with basic syntax highlighting
@@ -1187,7 +1194,7 @@ class FolderPackerPro:
 
         lines = content.split("\n")
         for i, line in enumerate(lines):
-            if i >= 1000:  # Limit lines
+            if i >= PREVIEW_LINE_LIMIT:  # Limit lines
                 self.preview_text.insert("end", "\n... (truncated)")
                 break
 
@@ -1202,7 +1209,7 @@ class FolderPackerPro:
                     for word in words:
                         if word in keywords:
                             self.preview_text.insert("end", word, "keyword")
-                        elif word.startswith('"') or word.startswith("'"):
+                        elif word.startswith(('"', "'")):
                             self.preview_text.insert("end", word, "string")
                         elif word.isdigit():
                             self.preview_text.insert("end", word, "number")
@@ -1215,9 +1222,8 @@ class FolderPackerPro:
     def _should_exclude(self, path: Path) -> bool:
         """Check if path should be excluded."""
         # Check if .git should be excluded
-        if not self.include_git_var.get():
-            if ".git" in path.parts:
-                return True
+        if not self.include_git_var.get() and ".git" in path.parts:
+            return True
 
         # Check exclusion patterns
         name = path.name
@@ -1235,20 +1241,19 @@ class FolderPackerPro:
         ext = file_path.suffix.lower()
         if ext in CODE_EXTENSIONS:
             return "Code"
-        elif ext in MARKUP_EXTENSIONS:
+        if ext in MARKUP_EXTENSIONS:
             return "Markup"
-        elif ext in CONFIG_EXTENSIONS:
+        if ext in CONFIG_EXTENSIONS:
             return "Config"
-        elif ext in {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg"}:
+        if ext in {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg"}:
             return "Image"
-        elif ext in {".mp3", ".wav", ".flac", ".ogg", ".m4a"}:
+        if ext in {".mp3", ".wav", ".flac", ".ogg", ".m4a"}:
             return "Audio"
-        elif ext in {".mp4", ".avi", ".mkv", ".mov", ".wmv"}:
+        if ext in {".mp4", ".avi", ".mkv", ".mov", ".wmv"}:
             return "Video"
-        elif ext in {".pdf", ".doc", ".docx", ".txt", ".md", ".rst"}:
+        if ext in {".pdf", ".doc", ".docx", ".txt", ".md", ".rst"}:
             return "Document"
-        else:
-            return "Other"
+        return "Other"
 
     def _start_pack(self) -> None:
         """Start packing operation."""
@@ -1285,7 +1290,7 @@ class FolderPackerPro:
 
         threading.Thread(target=self._run_pack, daemon=True).start()
 
-    def _run_pack(self) -> None:
+    def _run_pack(self) -> None:  # noqa: PLR0915,PLR0912,C901
         """Run pack operation in background."""
         try:
             source_path = Path(self.pack_source_entry.get())
@@ -1317,7 +1322,7 @@ class FolderPackerPro:
             package_data = {
                 "files": {},
                 "metadata": {
-                    "created_at": datetime.now().isoformat(),
+                    "created_at": datetime.now(UTC).isoformat(),
                     "source": str(source_path),
                     "total_files": total_files,
                     "compression": self.compression_var.get(),
@@ -1332,7 +1337,7 @@ class FolderPackerPro:
 
                 try:
                     rel_path = file_path.relative_to(source_path)
-                    with open(file_path, "rb") as f:
+                    with file_path.open("rb") as f:
                         content = f.read()
 
                     # Store with base64 encoding
@@ -1352,10 +1357,13 @@ class FolderPackerPro:
                     )
 
                 except Exception as e:
+                    logger.exception("Error packing {file_path}")
                     self._log_message(f"Error packing {file_path}: {e}", "error")
 
             if self.cancel_operation:
-                self._log_message("Pack operation cancelled", "warning")  # type: ignore[unreachable]
+                self._log_message(
+                    "Pack operation cancelled", "warning"
+                )  # type: ignore[unreachable]
                 return
 
             # Serialize to JSON
@@ -1375,7 +1383,7 @@ class FolderPackerPro:
 
             # Write to file
             self._update_pack_status("Writing package file...")
-            with open(output_path, "wb") as f:  # type: ignore[assignment]
+            with output_path.open("wb") as f:  # type: ignore[assignment]
                 f.write(json_data)
 
             # Create manifest if enabled
@@ -1383,12 +1391,12 @@ class FolderPackerPro:
                 manifest_path = output_path.with_suffix(".manifest.json")
                 manifest = {
                     "package_file": str(output_path),
-                    "created_at": datetime.now().isoformat(),
+                    "created_at": datetime.now(UTC).isoformat(),
                     "files": [str(f.relative_to(source_path)) for f in files_to_pack],
                     "total_files": total_files,
                     "package_size": output_path.stat().st_size,
                 }
-                with open(manifest_path, "w", encoding="utf-8") as manifest_file:
+                with manifest_path.open("w", encoding="utf-8") as manifest_file:
                     json.dump(manifest, manifest_file, indent=2)
 
             self._log_message(f"Package created successfully: {output_path}", "success")
@@ -1451,7 +1459,7 @@ class FolderPackerPro:
 
         threading.Thread(target=self._run_unpack, daemon=True).start()
 
-    def _run_unpack(self) -> None:
+    def _run_unpack(self) -> None:  # noqa: PLR0915
         """Run unpack operation in background."""
         try:
             package_path = Path(self.unpack_source_entry.get())
@@ -1462,7 +1470,7 @@ class FolderPackerPro:
             self._update_unpack_status("Reading package...")
 
             # Read package file
-            with open(package_path, "rb") as f:
+            with package_path.open("rb") as f:
                 data = f.read()
 
             # Decrypt if needed
@@ -1472,8 +1480,9 @@ class FolderPackerPro:
                 try:
                     data = EncryptionManager.decrypt_data(data, password)
                 except Exception as e:
+                    msg = f"Decryption failed - incorrect password? {e}"
                     raise ValueError(
-                        f"Decryption failed - incorrect password? {e}",
+                        msg,
                     ) from e
 
             # Decompress if needed
@@ -1481,7 +1490,9 @@ class FolderPackerPro:
                 self._update_unpack_status("Decompressing...")
                 data = gzip.decompress(data)
             except Exception:
-                # Not compressed
+
+                # Not compressed - this is expected for uncompressed files
+
                 pass
 
             # Parse JSON
@@ -1503,7 +1514,7 @@ class FolderPackerPro:
 
                     # Decode and write
                     content = base64.b64decode(encoded_content)
-                    with open(file_path, "wb") as f:
+                    with file_path.open("wb") as f:
                         f.write(content)
 
                     progress = ((i + 1) / total_files) * 100
@@ -1516,6 +1527,7 @@ class FolderPackerPro:
                     )
 
                 except Exception as e:
+                    logger.exception("Error extracting {rel_path}")
                     self._log_message(f"Error extracting {rel_path}: {e}", "error")
 
             if self.cancel_operation:
@@ -1556,7 +1568,7 @@ class FolderPackerPro:
             return
 
         try:
-            with open(package_path, "rb") as f:
+            with package_path.open("rb") as f:
                 data = f.read()
 
             # Check if encrypted
@@ -1590,9 +1602,10 @@ class FolderPackerPro:
             self.package_info_text.configure(state="disabled")
 
         except Exception as e:
+            logger.exception("Error occurred")
             messagebox.showerror("Error", f"Failed to inspect package:\n\n{e}")
 
-    def _manage_exclusions(self) -> None:
+    def _manage_exclusions(self) -> None:  # noqa: PLR0915
         """Show dialog to manage exclusion patterns."""
         dialog = tk.Toplevel(self.root)
         dialog.title("Manage Exclusions")
@@ -1693,10 +1706,11 @@ class FolderPackerPro:
 
         if file_path:
             try:
-                with open(file_path, "w") as f:
+                with file_path.open("w") as f:
                     f.write(self.manifest.to_json())
                 messagebox.showinfo("Success", f"Manifest exported to:\n{file_path}")
             except Exception as e:
+                logger.exception("Error occurred")
                 messagebox.showerror("Error", f"Failed to export manifest:\n{e}")
 
     def _update_pack_status(self, message: str) -> None:
@@ -1739,7 +1753,7 @@ class FolderPackerPro:
 
     def _log_message(self, message: str, level: str = "info") -> None:
         """Add message to log."""
-        timestamp = datetime.now().strftime("%H:%M:%S")
+        timestamp = datetime.now(UTC).strftime("%H:%M:%S")
         log_entry = f"[{timestamp}] {message}\n"
 
         def update_log() -> None:
@@ -1757,7 +1771,7 @@ class FolderPackerPro:
         elif level == "warning":
             logger.warning(message)
         elif level == "success":
-            logger.info(f"SUCCESS: {message}")
+            logger.info("SUCCESS: %s", message)
         else:
             logger.info(message)
 
@@ -1772,11 +1786,11 @@ class FolderPackerPro:
         file_path = filedialog.asksaveasfilename(
             defaultextension=".txt",
             filetypes=[("Text files", "*.txt"), ("All files", "*.*")],
-            initialfile=f"packer_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
+            initialfile=f"packer_log_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}.txt",
         )
 
         if file_path:
-            with open(file_path, "w", encoding="utf-8") as f:
+            with file_path.open("w", encoding="utf-8") as f:
                 f.write(self.log_text.get("1.0", "end"))
             messagebox.showinfo("Log Saved", f"Log saved to:\n{file_path}")
 
@@ -1790,6 +1804,7 @@ class FolderPackerPro:
             else:
                 os.system(f"xdg-open {log_filename}")
         except Exception as e:
+            logger.exception("Error occurred")
             messagebox.showerror("Error", f"Could not open log file:\n{e}")
 
     def _show_about(self) -> None:
@@ -1862,9 +1877,9 @@ TIPS:
         """Format file size in human-readable format."""
         size: float = float(size_bytes)
         for unit in ["B", "KB", "MB", "GB", "TB"]:
-            if size < 1024.0:
+            if size < BYTES_PER_KB:
                 return f"{size:.2f} {unit}"
-            size /= 1024.0
+            size /= BYTES_PER_KB
         return f"{size:.2f} PB"
 
 

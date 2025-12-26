@@ -97,6 +97,7 @@ class ToolsLauncher:
         self.create_folder_tools_tab()
         self.create_media_tools_tab()
         self.create_web_tools_tab()
+        self.create_document_tools_tab()
         self.create_utilities_tab()
 
         # Status bar
@@ -371,6 +372,50 @@ class ToolsLauncher:
 
         for name, desc, command, color in tools:
             self.create_tool_card(scrollable_frame, name, desc, command, color)
+
+    def create_document_tools_tab(self) -> None:
+        """Create Document Tools tab."""
+        frame = ttk.Frame(self.notebook)
+        self.notebook.add(frame, text="📄 Document Processing")
+
+        canvas = tk.Canvas(frame, bg="white")
+        scrollbar = ttk.Scrollbar(frame, orient="vertical", command=canvas.yview)
+        scrollable_frame = tk.Frame(canvas, bg="white")
+
+        scrollable_frame.bind(
+            "<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
+        # Header
+        header_frame = tk.Frame(scrollable_frame, bg="#e74c3c", height=60)
+        header_frame.pack(fill="x")
+        header_frame.pack_propagate(False)
+
+        tk.Label(
+            header_frame,
+            text="📄 Document Processing Tools",
+            font=("Arial", 16, "bold"),
+            bg="#e74c3c",
+            fg="white",
+        ).pack(expand=True)
+
+        tools: list[tuple[str, str, Callable[[], None], str]] = [
+            (
+                "📄 PDF Renamer",
+                "Bulk rename PDF files based on metadata with duplicate detection",
+                lambda: self.launch_pdf_renamer(),
+                "#c0392b",
+            ),
+        ]
+
+        for name, desc, command, color in tools:
+            self.create_tool_card(scrollable_frame, name, desc, command, color, show_icon=True)
 
     def create_utilities_tab(self) -> None:
         """Create Utilities tab."""
@@ -660,6 +705,21 @@ class ToolsLauncher:
                 self.show_error("Quality Check script not found")
         except Exception as e:
             self.show_error(f"Failed to launch Quality Check: {e}")
+
+    def launch_pdf_renamer(self) -> None:
+        """Launch PDF Renamer."""
+        try:
+            self.status_var.set("Launching PDF Renamer...")
+            self.root.update()
+
+            renamer_path = Path("document_processing/pdf_renamer/launch_pdf_gui.py")
+            if renamer_path.exists():
+                subprocess.Popen([sys.executable, str(renamer_path)])
+                self.status_var.set("✓ PDF Renamer launched")
+            else:
+                self.show_error("PDF Renamer not found")
+        except Exception as e:
+            self.show_error(f"Failed to launch PDF Renamer: {e}")
 
     # Info methods
     def show_converter_info(self) -> None:
