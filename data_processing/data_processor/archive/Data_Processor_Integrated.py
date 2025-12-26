@@ -14,18 +14,18 @@
 
 from __future__ import annotations
 
+import logging
 import os
 import threading
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
+from tkinter import filedialog, messagebox
 
 import customtkinter as ctk
 import numpy as np
-import logging
 import pandas as pd
-from tkinter import filedialog, messagebox
 
 # Note: Removed optional joblib import (unused)
 
@@ -525,7 +525,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                     (
                         "All Supported",
                         "*.csv *.tsv *.txt *.parquet *.pq *.xlsx *.xls *.json *.h5 "
-                        "*.hdf5 *.pkl *.pickle *.npy *.mat *.feather *.arrow *.db *.sqlite",
+                        "*.hdf5 *.pkl *.pickle *.npy *.mat *.feather *.arrow *.db "
+                        "*.sqlite",
                     ),
                     ("CSV Files", "*.csv"),
                     ("TSV Files", "*.tsv *.txt"),
@@ -775,7 +776,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         format_type = FileFormatDetector.detect_format(file_path)
                         if not format_type:
                             self._log_conversion_message(
-                                f"Warning: Could not detect format for {os.path.basename(file_path)}",
+                                f"Warning: Could not detect format for "
+                                f"{os.path.basename(file_path)}",
                             )
                             continue
 
@@ -1610,7 +1612,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
         descriptions = {
             "combine": (
-                "Copies all files from source folders into the single destination folder."
+                "Copies all files from source folders into the single destination "
+                "folder."
             ),
             "flatten": (
                 "Finds deeply nested folders and copies them to the top level of the "
@@ -1752,7 +1755,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))
 
     def _folder_combine_operation(self) -> None:
-        """Perform combine operation - copy all files from source folders to destination."""
+        """Perform combine operation - copy all files to destination."""
         try:
             import os
             import shutil
@@ -1764,7 +1767,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for root, _dirs, files in os.walk(src):
+                for _, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
@@ -1829,16 +1832,24 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             )
                             self.after(
                                 0,
-                                lambda p=processed_files, t=total_files: self.folder_status_var.set(
-                                    f"Processed {p}/{t} files",
+                                lambda p=processed_files, t=total_files: (
+                                    self.folder_status_var.set(
+                                        f"Processed {p}/{t} files"
+                                    )
                                 ),
                             )
 
             # Final status
             if self.folder_preview_mode_var.get():
-                status = f"PREVIEW: Would copy {copied_count} files, rename {renamed_count}, skip {skipped_count}"
+                status = (
+                    f"PREVIEW: Would copy {copied_count} files, "
+                    f"rename {renamed_count}, skip {skipped_count}"
+                )
             else:
-                status = f"Copied {copied_count} files, renamed {renamed_count}, skipped {skipped_count}"
+                status = (
+                    f"Copied {copied_count} files, renamed {renamed_count}, "
+                    f"skipped {skipped_count}"
+                )
 
             self.after(0, lambda: self.folder_status_var.set(status))
 
@@ -1858,7 +1869,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for root, _dirs, files in os.walk(src):
+                for _, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
@@ -1916,8 +1927,10 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             )
                             self.after(
                                 0,
-                                lambda p=processed_files, t=total_files: self.folder_status_var.set(
-                                    f"Processed {p}/{t} files",
+                                lambda p=processed_files, t=total_files: (
+                                    self.folder_status_var.set(
+                                        f"Processed {p}/{t} files"
+                                    )
                                 ),
                             )
 
@@ -1951,7 +1964,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for _root, _dirs, files in os.walk(src):
+                for _, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
@@ -2022,7 +2035,9 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             self.after(
                                 0,
                                 lambda p=processed_files, t=total_files: (
-                                    self.folder_status_var.set(f"Processed {p}/{t} files")
+                                    self.folder_status_var.set(
+                                        f"Processed {p}/{t} files"
+                                    )
                                 ),
                             )
 
@@ -2053,7 +2068,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for _root, _dirs, files in os.walk(src):
+                for _, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
@@ -2087,7 +2102,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                                 os.path.join(root, filename),
                             )
 
-                    for _base_name, file_list in files_by_base_name.items():
+                    for _, file_list in files_by_base_name.items():
                         if len(file_list) > 1:
                             try:
                                 # Keep the newest file
@@ -2120,7 +2135,9 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             self.after(
                                 0,
                                 lambda p=processed_files, t=total_files: (
-                                    self.folder_status_var.set(f"Processed {p}/{t} files")
+                                    self.folder_status_var.set(
+                                        f"Processed {p}/{t} files"
+                                    )
                                 ),
                             )
 
@@ -2146,7 +2163,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
-                for _root, _dirs, files in os.walk(src):
+                for _, _dirs, files in os.walk(src):
                     total_files += len(files)
 
             if total_files == 0:
@@ -2215,7 +2232,9 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             self.after(
                                 0,
                                 lambda p=processed_files, t=total_files: (
-                                    self.folder_status_var.set(f"Analyzed {p}/{t} files")
+                                    self.folder_status_var.set(
+                                        f"Analyzed {p}/{t} files"
+                                    )
                                 ),
                             )
 
@@ -2406,7 +2425,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         return new_path
 
     def create_help_tab(self, tab: ctk.CTkFrame) -> None:
-        """Create the help tab with comprehensive documentation."""
+        """Create the help tab with comprehensive documentation.
 
         Args:
             tab: Parent tab frame to add content to
@@ -2431,603 +2450,23 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
         # Comprehensive help content with enhanced formatting
         help_content = """
-# 🚀 Advanced Data Processor - Complete Feature Guide
-
-## 📋 Application Overview
-This integrated application combines multiple powerful tools for data processing, \
-analysis, and visualization:
-
-### 🎯 Core Components
-1. **📊 CSV Processor** - Advanced time series data processing with mathematical \
-operations
-2. **🔄 Format Converter** - Multi-format file conversion with batch processing \
-and Parquet analysis
-3. **📁 Folder Tool** - Comprehensive folder processing and organization with \
-5 operation modes
-4. **📄 DAT File Import** - DAT file processing with DBF tag files for structured data
-5. **📈 Plotting & Analysis** - Interactive visualization with smart auto-zoom \
-and trendlines
-6. **📋 Plots List** - Save and manage plot configurations for batch processing
-7. **❓ Help** - This comprehensive documentation
-
-### 🏗️ Architecture
-- **Framework**: CustomTkinter (modern Python GUI framework)
-- **Data Processing**: Pandas, NumPy, SciPy for advanced mathematical operations
-- **File Formats**: Support for 15+ file formats (CSV, Parquet, Excel, JSON, HDF5, etc.)
-- **Visualization**: Matplotlib with interactive features
-- **Threading**: Background processing for non-blocking operations
-
----
-
-## 📊 CSV Processor Tab - Advanced Time Series Processing
-
-### 🎯 Purpose & Capabilities
-Transform raw CSV time series data into processed, analyzed, and visualized \
-datasets with professional-grade mathematical operations.
-
-### 📁 Setup Sub-tab - File Management & Configuration
-
-#### 🔧 File Selection & Processing
-- **📂 Input Files**: Multi-file selection with drag-and-drop support
-- **📁 Output Directory**: Configurable output location with automatic creation
-- **⚙️ Configuration Management**: Save/load complete processing settings
-- **📤 Export Format**: 15+ output formats (
-    CSV,
-    Excel,
-    MAT,
-    Parquet,
-    HDF5,
-    Feather,
-    etc.
-)
-- **📊 Sorting Options**: Time-based and value-based sorting configurations
-
-#### 🚀 Usage Workflow
-1. **Select Files**: Click "Select Files" or drag CSV files into the interface
-2. **Set Output**: Choose destination folder for processed files
-3. **Configure Processing**: Set up filtering, integration, differentiation options
-4. **Save Configuration**: Store settings for future use (recommended)
-5. **Select Signals**: Choose which data columns to process
-6. **Process & Export**: Execute processing with real-time progress tracking
-
-### 🔬 Processing Sub-tab - Advanced Signal Processing
-
-#### 🔧 Signal Filtering (7 Professional Filters)
-- **📈 Moving Average**: Smooth data with configurable window size (3-1000 points)
-- **🌊 Butterworth Filter**: Low-pass, high-pass, band-pass filtering with order control
-- **🎯 Median Filter**: Remove outliers with configurable kernel size
-- **📊 Savitzky-Golay**: Polynomial smoothing for noisy data with \
-window/polynomial control
-- **🛡️ Hampel Filter**: Robust outlier detection and removal with statistical thresholds
-- **📏 Z-Score Filter**: Statistical outlier removal with configurable sigma values
-- **🔵 Gaussian Filter**: Optimal noise reduction with minimal edge \
-distortion using configurable sigma and boundary modes
-
-#### ⏱️ Time Resampling & Interpolation
-- **🔄 Resample Data**: Convert to different time intervals (1s, 1min, 1h, 1d, custom)
-- **📐 Interpolation Methods**: Linear, cubic, nearest neighbor, polynomial
-- **📊 Aggregation Functions**: Mean, sum, min, max, median, std, custom functions
-- **🎯 Time Alignment**: Automatic time column detection and alignment
-
-#### 📈 Signal Integration (Mathematical Operations)
-- **📊 Trapezoidal Integration**: Calculate cumulative values with error estimation
-- **🌊 Flow Calculations**: Convert rate data to total volumes with unit conversion
-- **🔧 Custom Integration**: User-defined integration methods and formulas
-- **📏 Unit Conversion**: Automatic unit detection and conversion
-
-#### 📉 Signal Differentiation (Advanced Calculus)
-- **📐 Spline Differentiation**: Smooth derivative calculation with configurable order
-- **🔢 Finite Difference**: Direct numerical differentiation (forward, backward, \
-central)
-- **📊 Multiple Orders**: 1st through 5th order derivatives with error analysis
-- **🎯 Smoothing Options**: Pre-filtering for noisy derivative calculations
-
-### 🧮 Custom Variables Sub-tab - Formula Builder
-
-#### 🔧 Mathematical Formula Creation
-- **📝 Formula Builder**: Visual formula creation with syntax highlighting
-- **🔗 Signal Reference**: Use [SignalName] syntax to reference existing data columns
-- **📊 Mathematical Functions**: sin, cos, exp, log, sqrt, abs, pow, etc.
-- **🔀 Conditional Logic**: if/else statements for complex conditional calculations
-- **📈 Statistical Functions**: mean, std, min, max, percentile, etc.
-
-#### 💡 Example Formulas
-```
-[Flow] * 3600                    # Convert flow rate to hourly volume
-sqrt([Pressure]^2 + [Temp]^2)    # Calculate magnitude from components
-if([Value] > 100, [Value] * 2, [Value])  # Conditional processing
-[Signal1] + [Signal2] * 0.5      # Weighted combination
-log10([Concentration] + 1)        # Log transformation with offset
-```
-
-#### 🎯 Advanced Features
-- **🔍 Formula Validation**: Real-time syntax checking and error detection
-- **📊 Result Preview**: Preview calculated values before processing
-- **💾 Formula Library**: Save and reuse complex formulas
-- **📈 Unit Consistency**: Automatic unit checking and conversion
-
----
-
-## 🔄 Format Converter Tab - Multi-Format File Processing
-
-### 🎯 Purpose & Capabilities
-Convert files between 15+ formats with professional batch processing, column \
-selection, and comprehensive analysis tools.
-
-### 📁 Supported Formats (15+ Formats)
-
-#### 📥 Input Formats
-- **📊 CSV/TSV**: Comma/Tab separated values with encoding detection
-- **📈 Parquet**: Columnar storage with compression and partitioning
-- **📋 Excel**: .xlsx and .xls files with multiple sheet support
-- **📄 JSON**: JavaScript Object Notation with nested structure support
-- **🗄️ HDF5**: Hierarchical Data Format with compression
-- **🥒 Pickle**: Python serialization format
-- **🔢 NumPy**: .npy binary arrays
-- **📊 MATLAB**: .mat files with variable extraction
-- **🪶 Feather**: Fast columnar format for R/Python
-- **🏹 Arrow**: Apache Arrow format with zero-copy reads
-- **🗃️ SQLite**: Database files with table extraction
-
-#### 📤 Output Formats
-- **📊 CSV/TSV**: With configurable delimiters and encoding
-- **📈 Parquet**: With compression options (snappy, gzip, brotli)
-- **📋 Excel**: Multi-sheet workbooks with formatting
-- **📄 JSON**: With pretty printing and nested structure
-- **🗄️ HDF5**: With compression and metadata
-- **🥒 Pickle**: Python-compatible serialization
-- **🔢 NumPy**: Binary arrays with metadata
-- **📊 MATLAB**: .mat files with variable naming
-- **🪶 Feather**: Fast columnar format
-- **🏹 Arrow**: Apache Arrow format
-- **🗃️ SQLite**: Database files with table creation
-
-### 🔧 Key Features
-
-#### 📁 Advanced File Selection
-- **📂 Individual Files**: Select specific files with multi-select support
-- **📁 Folder Import**: Import all supported files from directories recursively
-- **🔄 Batch Processing**: Process hundreds of files simultaneously
-- **📋 File List Management**: Add, remove, clear, and organize file lists
-- **🔍 File Preview**: Preview file contents before conversion
-
-#### ⚙️ Professional Conversion Options
-- **🎯 Output Format**: Choose from 15+ target formats
-- **🔗 Combine Files**: Merge multiple files into single output with conflict resolution
-- **📊 Column Selection**: Choose specific columns with drag-and-drop interface
-- **⚡ Batch Processing**: Enable for large file sets with progress tracking
-- **✂️ File Splitting**: Split large files by rows, size, time, or custom conditions
-- **🗜️ Compression**: Configurable compression for supported formats
-
-#### 📊 Parquet Analyzer (Professional Tool)
-- **📈 Metadata Analysis**: Complete file structure and statistics
-- **📊 Column Information**: Data types, null counts, memory usage, statistics
-- **📁 File Properties**: Size, compression ratio, row groups, partitioning
-- **🔍 Schema Details**: Complete column schema with type information
-- **📊 Statistics**: Min, max, mean, std, null percentages for each column
-- **💾 Memory Analysis**: Memory usage estimation and optimization tips
-
-### 🚀 Usage Workflow
-1. **📁 Select Files**: Choose input files or import entire folders
-2. **⚙️ Configure Output**: Set target format and destination path
-3. **📊 Select Columns**: Choose specific columns (optional, with preview)
-4. **🔧 Set Options**: Configure batch processing, splitting, and compression
-5. **🔄 Convert**: Start conversion with real-time progress tracking
-6. **📊 Monitor Progress**: Track conversion status, logs, and error handling
-
-### 📈 Advanced Features
-- **🔍 Format Detection**: Automatic format detection for unknown files
-- **📊 Schema Validation**: Validate data types and constraints
-- **🔄 Incremental Processing**: Resume interrupted conversions
-- **📈 Performance Optimization**: Memory-efficient processing for large files
-- **🔧 Custom Transformations**: Apply data transformations during conversion
-
----
-
-## 📁 Folder Tool Tab - Professional File Organization
-
-### 🎯 Purpose & Capabilities
-Comprehensive folder processing and organization with 5 operation modes, \
-advanced filtering, and professional file management.
-
-### 🔧 Operation Modes (5 Professional Modes)
-
-#### 🔗 Combine & Copy Mode
-**Purpose**: Consolidate files from multiple source folders into a single \
-organized destination.
-
-**Professional Features**:
-- **🌐 Multi-source Support**: Process files from unlimited source folders
-- **🔄 Automatic Renaming**: Handle naming conflicts with intelligent numbering
-- **🔍 Advanced Filtering**: Filter by extension, size, date, and custom criteria
-- **📁 Smart Organization**: Organize by file type, date, or custom hierarchy
-- **📊 Progress Tracking**: Real-time progress with detailed statistics
-- **🛡️ Safety Features**: Preview mode, backup creation, cancellation support
-
-**Use Cases**:
-- 📸 Consolidating photo collections from multiple devices
-- 📁 Merging document archives from different locations
-- 💾 Combining backup files from multiple sources
-- 🎵 Organizing music libraries from various sources
-
-#### 📂 Flatten & Tidy Mode
-**Purpose**: Transform deeply nested folder structures into flat, organized layouts.
-
-**Professional Features**:
-- **🏗️ Structure Flattening**: Remove complex nested hierarchies
-- **🔄 Conflict Resolution**: Intelligent duplicate filename handling
-- **🔍 Smart Filtering**: Include only relevant file types and sizes
-- **📊 Progress Monitoring**: Detailed progress with file counting
-- **🛡️ Safety Controls**: Preview mode and rollback capabilities
-
-**Use Cases**:
-- 📁 Simplifying complex project folder structures
-- 🗂️ Organizing scattered files into logical collections
-- 📦 Preparing files for backup or sharing
-- 🧹 Cleaning up messy folder hierarchies
-
-#### ✂️ Copy & Prune Empty Mode
-**Purpose**: Copy folder structures while automatically removing empty directories.
-
-**Professional Features**:
-- **📁 Structure Preservation**: Maintain relative folder paths
-- **🔍 Empty Detection**: Automatic empty directory identification
-- **⚡ Efficient Processing**: Only copy non-empty folders
-- **🔧 Advanced Filtering**: Apply comprehensive file filters
-- **📊 Detailed Reporting**: Complete operation statistics
-
-**Use Cases**:
-- 🧹 Cleaning up folder structures
-- 📁 Removing empty directories from backups
-- 🗂️ Organizing file collections efficiently
-- 📦 Preparing clean folder structures for deployment
-
-#### 🗑️ Deduplicate Files Mode
-**Purpose**: Remove renamed duplicate files using advanced pattern recognition.
-
-**Professional Features**:
-- **🔍 Pattern Recognition**: Advanced regex-based duplicate detection
-- **📊 Smart Selection**: Keep newest, largest, or highest quality versions
-- **🛡️ Safe Operation**: Preview mode with detailed analysis
-- **📍 In-place Processing**: Works directly on source folders
-- **📈 Statistical Analysis**: Detailed duplicate analysis reports
-
-**Use Cases**:
-- 🧹 Cleaning up duplicate downloads
-- 📁 Removing system-generated duplicates
-- 🎵 Organizing music collections
-- 📸 Managing photo duplicates
-
-#### 📊 Analyze & Report Mode
-**Purpose**: Generate comprehensive analysis reports without modifying files.
-
-**Professional Features**:
-- **📊 File Statistics**: Complete file count, size, and type analysis
-- **📈 Size Distribution**: Largest files identification and categorization
-- **📋 Type Breakdown**: Detailed file type distribution analysis
-- **📊 Detailed Reports**: Professional analysis reports with charts
-- **💾 Export Options**: Save reports in multiple formats
-
-**Use Cases**:
-- 📊 Understanding folder contents before processing
-- 🔍 Identifying large files for cleanup
-- 📈 Planning storage requirements
-- 📋 Generating asset inventories
-
-### 🔧 Advanced Features
-
-#### 🔍 Professional File Filtering
-- **📁 Extension Filtering**: Include/exclude specific file extensions
-- **📏 Size Filtering**: Filter by minimum and maximum file sizes
-- **📅 Date Filtering**: Filter by creation, modification, or access dates
-- **🔍 Content Filtering**: Filter by file content or metadata
-- **🔗 Combined Filters**: Apply multiple filters simultaneously
-
-#### 📁 Smart Organization Options
-- **📂 By Type**: Organize into intelligent type-based folders
-  - Images: JPG, PNG, GIF, BMP, TIFF, RAW formats
-  - Videos: MP4, AVI, MOV, WMV, MKV, FLV formats
-  - Audio: MP3, WAV, FLAC, AAC, OGG formats
-  - Documents: PDF, DOC, DOCX, TXT, RTF formats
-  - Archives: ZIP, RAR, 7Z, TAR, GZ formats
-  - Code: PY, JS, HTML, CSS, JAVA, C++ formats
-  - Data: CSV, XLSX, JSON, XML, SQL formats
-- **📅 By Date**: Organize by creation/modification date (YYYY/MM/DD structure)
-- **🏷️ By Custom**: User-defined organization rules
-- **🔗 Combined Organization**: Use multiple organization methods simultaneously
-
-#### 🛡️ Professional Safety Features
-- **👁️ Preview Mode**: Show exactly what would be done without making changes
-- **💾 Backup Creation**: Automatic backup creation before processing
-- **🔄 Rollback Capability**: Ability to undo operations
-- **⏹️ Cancellation**: Cancel operations at any time with cleanup
-- **📊 Progress Tracking**: Real-time progress with detailed statistics
-- **🔍 Validation**: Pre-operation validation and error checking
-
-### 🚀 Usage Workflow
-1. **📁 Select Source Folders**: Choose folders to process (multiple selection)
-2. **📂 Set Destination**: Choose output location (if applicable)
-3. **🔍 Configure Filters**: Set file type, size, and date filters
-4. **🎯 Choose Operation**: Select the appropriate processing mode
-5. **⚙️ Set Options**: Configure organization and safety options
-6. **🚀 Run Operation**: Start processing with comprehensive monitoring
-7. **📊 Review Results**: Analyze operation results and statistics
-
-### 📈 Performance Features
-- **⚡ Multi-threaded Processing**: Parallel file operations for speed
-- **💾 Memory Optimization**: Efficient memory usage for large operations
-- **📊 Progress Tracking**: Real-time progress with ETA calculations
-- **🔄 Incremental Processing**: Resume interrupted operations
-- **📈 Performance Monitoring**: Track operation performance metrics
-
----
-
-## 📈 Plotting & Analysis Tab - Interactive Visualization
-
-### 🎯 Purpose & Capabilities
-Professional interactive visualization and analysis of processed data with \
-advanced plotting capabilities.
-
-### 🔧 Key Features
-
-#### 🎯 Smart Auto-Zoom System
-- **🤖 Auto-zoom Control**: Intelligent automatic zoom behavior
-- **🧠 Smart Detection**: Distinguish between new signals and filter changes
-- **🎮 Manual Control**: "Fit to Data" button for manual zoom control
-- **💾 Zoom Preservation**: Maintain view when changing filters or signals
-- **📊 Zoom History**: Navigate through zoom states
-
-#### 📊 Professional Plotting Capabilities
-- **📈 Interactive Charts**: Full zoom, pan, and explore functionality
-- **🎨 Multiple Chart Types**: Line, scatter, bar, area, and combination plots
-- **📊 Signal Selection**: Dynamic signal selection with search
-- **🎨 Color Schemes**: 20+ color schemes plus custom color creation
-- **📋 Legend Management**: Customize signal labels, order, and visibility
-- **📏 Axis Control**: Custom axis ranges, labels, and scaling
-
-#### 📈 Advanced Trendline Analysis
-- **📊 Linear Regression**: Straight line trend analysis with R² values
-- **📈 Exponential Fit**: Exponential growth/decay trend analysis
-- **📊 Power Law**: Power function relationship analysis
-- **📈 Polynomial**: Higher-order polynomial fits (2nd-6th order)
-- **📊 Statistical Metrics**: R-squared, p-values, confidence intervals
-- **📈 Multiple Trendlines**: Compare multiple trendline types
-
-#### 💾 Professional Export Options
-- **🖼️ Image Export**: Save plots as PNG, JPG, PDF, SVG, TIFF
-- **📊 Excel Export**: Export data and plots to Excel with formatting
-- **📋 Configuration Save**: Save plot settings for reuse
-- **📈 Animation Export**: Create animated plots for presentations
-- **📊 Report Generation**: Generate comprehensive analysis reports
-
-### 🚀 Usage Workflow
-1. **📁 Select File**: Choose data file from dropdown with preview
-2. **📊 Select Signals**: Choose which signals to plot with search
-3. **🎨 Configure Display**: Set colors, styles, layout, and themes
-4. **📈 Add Analysis**: Include trendlines, statistics, and annotations
-5. **💾 Export Results**: Save plots, data, or reports as needed
-
-### 📊 Advanced Features
-- **🔍 Data Exploration**: Interactive data exploration tools
-- **📈 Statistical Analysis**: Built-in statistical analysis functions
-- **🎨 Custom Themes**: Create and save custom plot themes
-- **📊 Multi-panel Plots**: Create complex multi-panel visualizations
-- **🔄 Real-time Updates**: Live plot updates during data changes
-
----
-
-## 📋 Plots List Tab - Configuration Management
-
-### 🎯 Purpose & Capabilities
-Professional plot configuration management with batch processing and library \
-organization.
-
-### 🔧 Features
-- **💾 Configuration Save**: Save plot settings with names and descriptions
-- **🔄 Batch Export**: Generate all saved plots automatically
-- **👁️ Preview System**: Preview plots before saving
-- **📚 Library Management**: Organize and manage plot collection
-- **📊 Template System**: Create and use plot templates
-- **🔄 Version Control**: Track plot configuration versions
-
-### 🚀 Usage
-1. **📈 Create Plot**: Configure plot in Plotting tab
-2. **💾 Save Configuration**: Add to plots library with metadata
-3. **🔄 Batch Export**: Generate all saved plots at once
-4. **📚 Manage Library**: Edit, delete, or reorganize saved plots
-
----
-
-## 📄 DAT File Import Tab - Structured Data Processing
-
-### 🎯 Purpose & Capabilities
-Process DAT files with associated DBF tag files for structured data import and analysis.
-
-### 🔧 Features
-- **📁 DAT File Selection**: Choose data files with preview
-- **🏷️ DBF Tag Import**: Import tag information from DBF files
-- **✂️ Data Trimming**: Set precise time ranges for data extraction
-- **📤 Export Options**: Save processed data in multiple formats
-- **📊 Data Validation**: Validate data integrity and structure
-- **🔍 Tag Mapping**: Map DBF tags to data columns
-
-### 🚀 Usage
-1. **📁 Select DAT File**: Choose the data file with preview
-2. **🏷️ Import Tags**: Load associated DBF tag file
-3. **⏰ Configure Trimming**: Set start/end times with precision
-4. **🔄 Process & Export**: Generate output files with validation
-
----
-
-## ⚙️ Configuration Management - Professional Settings
-
-### 💾 Save/Load Settings
-- **💾 Configuration Save**: Save all current settings with metadata
-- **📂 Configuration Load**: Restore previous settings with validation
-- **📚 Configuration Management**: Delete and organize saved configs
-- **📁 File Location**: Access configuration files directly
-- **🔄 Auto-save**: Automatic configuration backup
-- **📊 Version Control**: Track configuration changes
-
-### 📊 Signal List Management
-- **💾 Save Signal Lists**: Save selected signals for reuse
-- **📂 Load Signal Lists**: Restore previous signal selections
-- **🔄 Apply Saved Lists**: Quickly apply saved signal configurations
-- **📚 Template System**: Create signal list templates
-- **🔍 Search & Filter**: Find signals in large lists
-
----
-
-## 🎨 User Interface Features - Modern Design
-
-### 🖥️ Responsive Design
-- **📐 Splitter Panels**: Adjustable panel sizes with memory
-- **📜 Scrollable Content**: Handle large datasets efficiently
-- **🎨 Modern UI**: CustomTkinter-based modern interface
-- **⌨️ Keyboard Shortcuts**: Efficient navigation and operation
-- **🎯 Touch Support**: Touch-friendly interface elements
-- **🌙 Dark/Light Mode**: Theme switching capability
-
-### 📊 Progress Tracking
-- **📈 Real-time Updates**: Live progress indicators with ETA
-- **💬 Status Messages**: Clear operation feedback
-- **⏹️ Cancellation Support**: Stop operations at any time
-- **🛡️ Error Handling**: Comprehensive error reporting
-- **📊 Performance Metrics**: Track operation performance
-- **🔍 Debug Information**: Detailed debug information
-
----
-
-## 🚀 Performance Features - Optimized Operations
-
-### ⚡ Optimization
-- **🔄 Background Processing**: Non-blocking operations with threading
-- **💾 Memory Management**: Efficient data handling and cleanup
-- **📊 Batch Operations**: Process multiple files efficiently
-- **📈 Progress Feedback**: Real-time operation status
-- **🔧 Resource Management**: Optimal resource utilization
-- **📊 Caching**: Intelligent caching for repeated operations
-
-### 📁 File Handling
-- **📊 Large File Support**: Handle files of any size with chunking
-- **🔄 Multiple Formats**: Support for 15+ file formats
-- **🗜️ Compression**: Built-in compression for output files
-- **🛡️ Error Recovery**: Robust error handling and recovery
-- **📊 Format Detection**: Automatic format detection
-- **🔍 Integrity Checking**: File integrity validation
-
----
-
-## 📚 Tips & Best Practices - Professional Usage
-
-### 📊 Data Processing
-1. **🔬 Start Small**: Test with small datasets before processing large files
-2. **👁️ Use Preview Mode**: Always preview folder operations before execution
-3. **💾 Save Configurations**: Save frequently used settings
-4. **💾 Backup Data**: Create backups before major operations
-5. **📊 Monitor Progress**: Watch progress indicators for large operations
-6. **🔍 Validate Results**: Always validate processing results
-
-### 📁 File Organization
-1. **🏷️ Use Descriptive Names**: Name configurations and plots clearly
-2. **📂 Organize by Type**: Use folder tool's intelligent type organization
-3. **🧹 Regular Cleanup**: Use deduplication features regularly
-4. **💾 Backup Important Data**: Always backup before major changes
-5. **📊 Plan Structure**: Plan folder structure before large operations
-6. **🔍 Document Changes**: Keep records of major organizational changes
-
-### ⚡ Performance
-1. **🔄 Batch Processing**: Use batch modes for multiple files
-2. **🔍 Filter Early**: Apply filters early in the process
-3. **💾 Monitor Memory**: Watch memory usage with large datasets
-4. **📊 Use Appropriate Formats**: Choose efficient formats for your data
-5. **🔧 Optimize Settings**: Adjust settings for optimal performance
-6. **📊 Monitor Resources**: Track CPU and memory usage
-
----
-
-## 🔧 Troubleshooting - Professional Support
-
-### 🚨 Common Issues
-- **📁 File Not Found**: Check file paths and permissions
-- **💾 Memory Errors**: Reduce batch size or use smaller datasets
-- **📊 Format Errors**: Verify file format compatibility
-- **🔐 Permission Errors**: Check file and folder permissions
-- **⏱️ Timeout Errors**: Increase timeout settings for large operations
-- **📊 Data Corruption**: Validate data integrity before processing
-
-### 🆘 Getting Help
-- **📋 Error Messages**: Read error messages carefully for clues
-- **📄 Log Files**: Check application logs for detailed information
-- **👁️ Preview Mode**: Use preview features to test operations
-- **🔬 Small Tests**: Test with small datasets first
-- **📊 Documentation**: Refer to this comprehensive help guide
-- **🔍 Debug Mode**: Enable debug mode for detailed information
-
----
-
-## 📞 Support Information - Professional Assistance
-
-### 🎯This application represents the fully integrated version of the Data Processor \
-Suite, combining all individual tools into a single, cohesive, and comprehensive \
-data processing solution. All features are designed to work together seamlessly \
-while maintaining the full functionality of the original standalone applications.
-
-### 🔧 Technical Specifications
-- **Framework**: CustomTkinter (Modern Python GUI)
-- **Data Processing**: Pandas, NumPy, SciPy (Professional mathematical operations)
-- **File Formats**: 15+ supported formats with compression
-- **Visualization**: Matplotlib with interactive features
-- **Threading**: Background processing for non-blocking operations
-- **Memory Management**: Efficient handling of large datasets
-
-### 📊 Feature Summary
-- **📊 CSV Processing**: Advanced time series processing with 6 filter types
-- **🔄 Format Conversion**: 15+ format support with batch processing
-- **📁 Folder Management**: 5 operation modes with professional features
-- **📈 Visualization**: Interactive plotting with trendline analysis
-- **📋 Configuration**: Professional settings management
-- **🛡️ Safety**: Comprehensive error handling and validation
-
-### 🚀 Performance Highlights
-- **⚡ Fast Processing**: Optimized algorithms for speed
-- **💾 Memory Efficient**: Smart memory management
-- **🔄 Batch Operations**: Process hundreds of files simultaneously
-- **📊 Large File Support**: Handle files of any size
-- **🛡️ Robust Error Handling**: Comprehensive error recovery
-- **📈 Real-time Progress**: Live progress tracking
-
-For technical support or feature requests, please refer to the application \
-documentation or contact the development team.
-
----
-
-## 🎉 Getting Started - Quick Start Guide
-
-### 🚀 First Steps
-1. **📁 Load Data**: Start with the CSV Processor tab to load your data
-2. **🔧 Configure Settings**: Set up your processing preferences
-3. **📊 Process Data**: Apply filters and mathematical operations
-4. **📈 Visualize Results**: Use the Plotting tab to explore your data
-5. **💾 Save Work**: Save configurations and results for future use
-
-### 🎯 Common Workflows
-- **📊 Data Analysis**: Load → Process → Visualize → Export
-- **🔄 Format Conversion**: Select → Convert → Analyze → Save
-- **📁 File Organization**: Select → Organize → Validate → Backup
-- **📈 Report Generation**: Process → Plot → Configure → Export
-
-### 💡 Pro Tips
-- **💾 Always Backup**: Create backups before major operations
-- **👁️ Use Preview**: Preview operations before execution
-- **📊 Save Configurations**: Save frequently used settings
-- **🔍 Validate Results**: Always check processing results
-- **📈 Start Small**: Test with small datasets first
-
-Welcome to professional data processing! 🚀
+# Advanced Data Processor - Help Guide
+
+This integrated application combines multiple powerful tools for data processing,
+analysis, and visualization.
+
+## Core Components
+1. **CSV Processor** - Advanced time series data processing
+2. **Format Converter** - Multi-format file conversion
+3. **Folder Tool** - Comprehensive folder processing
+4. **DAT File Import** - Structured data import
+5. **Plotting & Analysis** - Interactive visualization
+6. **Plots List** - Configuration management
+
+## Documentation
+For full documentation, please refer to the separate user manual or
+contact the development team.
 """
-
-        # Create text widget for help content with enhanced styling
         help_text = ctk.CTkTextbox(help_frame, wrap="word", font=ctk.CTkFont(size=11))
         help_text.pack(fill="both", expand=True, padx=10, pady=10)
 
