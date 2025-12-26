@@ -13,10 +13,11 @@ from datetime import UTC, datetime
 from pathlib import Path
 from tkinter import filedialog, messagebox, scrolledtext, simpledialog, ttk
 from typing import Any, Final  # noqa: ICN003
+
 try:
-    from cryptography.fernet import Fernet  # type: ignore
-    from cryptography.hazmat.primitives import hashes  # type: ignore
-    from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC  # type: ignore
+    from cryptography.fernet import Fernet  # type: ignore[import]
+    from cryptography.hazmat.primitives import hashes  # type: ignore[import]
+    from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC  # type: ignore[import]
 
     HAS_CRYPTO = True
 except ImportError:
@@ -24,7 +25,7 @@ except ImportError:
     hashes = None
     PBKDF2HMAC = None
     HAS_CRYPTO = False
-    # logger.warning("Cryptography library not found. Encryption/decryption features will be disabled.") # Not in original instruction
+
 
 PREVIEW_FILE_LIMIT = 500  # Maximum files to show in preview
 PREVIEW_LINE_LIMIT = 1000  # Maximum lines to show in file preview
@@ -1173,9 +1174,9 @@ class FolderPackerPro:
 
         self.preview_text.configure(state="disabled")
 
-    def _insert_with_highlighting(
+    def _insert_with_highlighting(  # noqa: PLR0912
         self, content: str, file_ext: str
-    ) -> None:  # noqa: PLR0912
+    ) -> None:
         """Insert text with basic syntax highlighting."""
         # For simplicity, basic keyword highlighting
         # Syntax highlighting map
@@ -1803,8 +1804,8 @@ class FolderPackerPro:
             elif sys.platform == "darwin":
                 subprocess.run(["open", log_filename], check=False)  # noqa: S603,S607
             else:
-                subprocess.run(  # noqa: S603,S607
-                    ["xdg-open", log_filename], check=False
+                subprocess.run(  # noqa: S603
+                    ["xdg-open", log_filename], check=False  # noqa: S607
                 )
         except Exception as e:
             logger.exception("Error occurred")
