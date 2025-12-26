@@ -21,12 +21,17 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import logging
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 from scipy.interpolate import UnivariateSpline
 from scipy.io import savemat
 from scipy.signal import butter, filtfilt, medfilt, savgol_filter
 
+
+
+# Set up logging
+logger = logging.getLogger(__name__)
 
 # =============================================================================
 # WORKER FUNCTION FOR PARALLEL PROCESSING
@@ -1769,7 +1774,8 @@ class CSVProcessorApp(ctk.CTk):
                                 df[f"{signal}_d{order}"] = np.nan
                         except Exception as e:
                             print(
-                                f"Error in spline differentiation for {signal}, order {order}: {e}",
+                                f"Error in spline differentiation for {signal}, "
+                                 f"order {order}: {e}",
                             )
                             df[f"{signal}_d{order}"] = np.nan
 
@@ -1796,7 +1802,8 @@ class CSVProcessorApp(ctk.CTk):
                                 df[f"{signal}_d{order}"] = np.nan
                         except Exception as e:
                             print(
-                                f"Error in polynomial differentiation for {signal}, order {order}: {e}",
+                                f"Error in polynomial differentiation for {signal}, "
+                                 f"order {order}: {e}",
                             )
                             df[f"{signal}_d{order}"] = np.nan
 
@@ -1804,33 +1811,33 @@ class CSVProcessorApp(ctk.CTk):
 
     def select_files(self):
         """Select input CSV files."""
-        print("DEBUG: select_files() called")
+        logger.debug("DEBUG: \1")
         file_paths = filedialog.askopenfilenames(
             title="Select CSV Files",
             filetypes=[("CSV files", "*.csv"), ("All files", "*.*")],
         )
-        print(f"DEBUG: File dialog returned: {file_paths}")
+        logger.debug(f"DEBUG: \1")
 
         if file_paths:
             self.input_file_paths = list(file_paths)
-            print(f"DEBUG: Set input_file_paths to: {self.input_file_paths}")
+            logger.debug(f"DEBUG: \1")
 
             # Set default output directory to the folder of the first selected file
             if self.input_file_paths:
                 first_file_dir = os.path.dirname(self.input_file_paths[0])
                 self.output_directory = first_file_dir
-                print(f"DEBUG: Set output directory to: {self.output_directory}")
+                logger.debug(f"DEBUG: \1")
                 # Update the output label to reflect the new default directory
                 if hasattr(self, "output_label"):
                     self.output_label.configure(text=f"Output: {self.output_directory}")
-                    print("DEBUG: Updated output label")
+                    logger.debug("DEBUG: \1")
 
-            print("DEBUG: Calling update_file_list()")
+            logger.debug("DEBUG: \1")
             self.update_file_list()
-            print("DEBUG: Calling load_signals_from_files()")
+            logger.debug("DEBUG: \1")
             self.load_signals_from_files()
         else:
-            print("DEBUG: No files selected (user cancelled)")
+            logger.debug("DEBUG: \1")
 
     def select_output_folder(self):
         """Select output directory for processed files."""
@@ -1841,7 +1848,7 @@ class CSVProcessorApp(ctk.CTk):
 
     def update_file_list(self):
         """Update the file list display."""
-        print("DEBUG: update_file_list() called")
+        logger.debug("DEBUG: \1")
         print(
             f"DEBUG: input_file_paths = {getattr(self, 'input_file_paths', 'NOT SET')}",
         )
@@ -1849,34 +1856,34 @@ class CSVProcessorApp(ctk.CTk):
         # Clear existing widgets
         for widget in self.file_list_frame.winfo_children():
             widget.destroy()
-        print("DEBUG: Cleared existing widgets")
+        logger.debug("DEBUG: \1")
 
         if not self.input_file_paths:
-            print("DEBUG: No input file paths, showing default message")
+            logger.debug("DEBUG: \1")
             label = ctk.CTkLabel(
                 self.file_list_frame,
                 text="Files you select will be listed here.",
             )
             label.pack(padx=5, pady=5)
-            print("DEBUG: Default label created and packed")
+            logger.debug("DEBUG: \1")
             return
 
-        print(f"DEBUG: Creating display for {len(self.input_file_paths)} files")
+        logger.debug(f"DEBUG: \1")
         for i, file_path in enumerate(self.input_file_paths):
-            print(f"DEBUG: Creating widget for file {i+1}: {file_path}")
+            logger.debug(f"DEBUG: \1")
             file_frame = ctk.CTkFrame(self.file_list_frame)
             file_frame.pack(fill="x", padx=5, pady=2)
-            print(f"DEBUG: File frame created and packed for file {i+1}")
+            logger.debug(f"DEBUG: \1")
 
             filename = os.path.basename(file_path)
-            print(f"DEBUG: Filename: {filename}")
+            logger.debug(f"DEBUG: \1")
             label = ctk.CTkLabel(
                 file_frame,
                 text=f"{i+1}. {filename}",
                 font=ctk.CTkFont(size=11),
             )
             label.pack(side="left", padx=5, pady=2)
-            print(f"DEBUG: Label created and packed for file {i+1}")
+            logger.debug(f"DEBUG: \1")
 
             button = ctk.CTkButton(
                 file_frame,
@@ -1885,13 +1892,13 @@ class CSVProcessorApp(ctk.CTk):
                 command=lambda f=file_path: self.remove_file(f),
             )
             button.pack(side="right", padx=5, pady=2)
-            print(f"DEBUG: Remove button created and packed for file {i+1}")
+            logger.debug(f"DEBUG: \1")
 
-        print("DEBUG: update_file_list() completed")
+        logger.debug("DEBUG: \1")
 
         # Force GUI update
         self.file_list_frame.update_idletasks()
-        print("DEBUG: Forced file_list_frame update_idletasks()")
+        logger.debug("DEBUG: \1")
 
     def remove_file(self, file_path):
         """Remove a file from the list."""
@@ -1902,10 +1909,10 @@ class CSVProcessorApp(ctk.CTk):
 
     def load_signals_from_files(self):
         """Load signals from all selected files (optimized)."""
-        print("DEBUG: load_signals_from_files() called")
+        logger.debug("DEBUG: \1")
 
         if not self.input_file_paths:
-            print("DEBUG: No input file paths, returning early")
+            logger.debug("DEBUG: \1")
             return
 
         # Update status
@@ -1923,7 +1930,8 @@ class CSVProcessorApp(ctk.CTk):
                 # Update progress
                 if hasattr(self, "status_label"):
                     self.status_label.configure(
-                        text=f"Reading file {i+1}/{total_files}: {os.path.basename(file_path)}",
+                        text=f"Reading file {i+1}/{total_files}: "
+                        f"{os.path.basename(file_path)}",
                     )
                     if i % 5 == 0:  # Update every 5 files to prevent UI freezing
                         self.update()
@@ -1936,7 +1944,7 @@ class CSVProcessorApp(ctk.CTk):
             except Exception as e:
                 print(f"Error reading {file_path}: {e}")
 
-        print(f"DEBUG: All signals collected: {len(all_signals)} unique signals")
+        logger.debug(f"DEBUG: \1")
 
         # Update status
         if hasattr(self, "status_label"):
@@ -1966,10 +1974,11 @@ class CSVProcessorApp(ctk.CTk):
                 self.plot_file_menu.set("Select a file...")
                 if hasattr(self, "status_label"):
                     self.status_label.configure(
-                        text=f"Ready - {len(self.input_file_paths)} files loaded. Go to Plotting tab to visualize.",
+                        text=f"Ready - {len(self.input_file_paths)} files loaded. "
+                        f"Go to Plotting tab to visualize.",
                     )
 
-        print("DEBUG: load_signals_from_files() completed")
+        logger.debug("DEBUG: \1")
 
     def _auto_select_single_file(self, filename):
         """Auto-select single file - simplified."""
@@ -2003,7 +2012,7 @@ class CSVProcessorApp(ctk.CTk):
                             try:
                                 df[col] = pd.to_datetime(df[col])
                                 break  # Only convert first time column found
-                            except:
+                            except Exception:
                                 pass
                     return True
                 except Exception as e:
@@ -2180,11 +2189,13 @@ class CSVProcessorApp(ctk.CTk):
 
         for i, file_path in enumerate(self.input_file_paths):
             print(
-                f"\n--- Processing file {i+1}/{len(self.input_file_paths)}: {os.path.basename(file_path)} ---",
+                f"\n--- Processing file {i+1}/{len(self.input_file_paths)}: "
+                f"{os.path.basename(file_path)} ---",
             )
             try:
                 self.status_label.configure(
-                    text=f"Processing file {i+1}/{len(self.input_file_paths)}: {os.path.basename(file_path)}",
+                    text=f"Processing file {i+1}/{len(self.input_file_paths)}: "
+                    f"{os.path.basename(file_path)}",
                 )
                 self.update()
 
@@ -5017,7 +5028,7 @@ class CSVProcessorApp(ctk.CTk):
                 if time_col and pd.api.types.is_object_dtype(df[time_col]):
                     try:
                         df[time_col] = pd.to_datetime(df[time_col])
-                    except:
+                    except Exception:
                         pass
 
                 return df
@@ -5078,7 +5089,7 @@ class CSVProcessorApp(ctk.CTk):
                         word in signal.lower() for word in ["time", "date", "timestamp"]
                     ):
                         data["var"].set(True)
-                        print(f"DEBUG: Force-selected signal: {signal}")
+                        logger.debug(f"DEBUG: \1")
                         break
 
     def _show_setup_help(self):
@@ -5688,7 +5699,7 @@ COMMON MISTAKES TO AVOID:
                                             "Plot Config",
                                         ),
                                     )
-                    except:
+                    except Exception:
                         # Skip files that can't be read as JSON or don't have the right
                         # structure
                         continue
@@ -6008,63 +6019,63 @@ COMMON MISTAKES TO AVOID:
 
     def load_signal_list(self):
         """Load a saved signal list from file."""
-        print("DEBUG: load_signal_list() called")
+        logger.debug("DEBUG: \1")
         try:
-            print("DEBUG: Opening file dialog")
+            logger.debug("DEBUG: \1")
             file_path = filedialog.askopenfilename(
                 title="Load Signal List",
                 filetypes=[("JSON files", "*.json"), ("All files", "*.*")],
             )
-            print(f"DEBUG: File dialog returned: {file_path}")
+            logger.debug(f"DEBUG: \1")
 
             if not file_path:
-                print("DEBUG: No file selected, returning")
+                logger.debug("DEBUG: \1")
                 return  # User cancelled
 
-            print(f"DEBUG: Loading file: {file_path}")
+            logger.debug(f"DEBUG: \1")
             with open(file_path) as f:
                 signal_list_data = json.load(f)
-            print(f"DEBUG: Successfully loaded JSON data: {signal_list_data}")
-            print(f"DEBUG: Successfully loaded JSON data: {signal_list_data}")
+            logger.debug(f"DEBUG: \1")
+            logger.debug(f"DEBUG: \1")
 
             # Validate the loaded data
-            print("DEBUG: Validating loaded data")
+            logger.debug("DEBUG: \1")
             if (
                 not isinstance(signal_list_data, dict)
                 or "signals" not in signal_list_data
             ):
-                print("DEBUG: Invalid signal list file format")
+                logger.debug("DEBUG: \1")
                 messagebox.showerror("Error", "Invalid signal list file format.")
                 return
 
             # Store the loaded signal list
-            print("DEBUG: Storing loaded signal list")
+            logger.debug("DEBUG: \1")
             self.saved_signal_list = signal_list_data.get("signals", [])
             self.saved_signal_list_name = signal_list_data.get("name", "Unknown")
-            print(f"DEBUG: Saved signal list: {len(self.saved_signal_list)} signals")
+            logger.debug(f"DEBUG: \1")
 
             # Update status
-            print("DEBUG: Updating status label")
+            logger.debug("DEBUG: \1")
             self.signal_list_status_label.configure(
                 text=f"Loaded: {self.saved_signal_list_name} ({len(self.saved_signal_list)} signals)",
                 text_color="green",
             )
 
             # Automatically apply the loaded signals if we have signals available
-            print(f"DEBUG: Checking if signal_vars exist: {bool(self.signal_vars)}")
+            logger.debug(f"DEBUG: \1")
             if self.signal_vars:
-                print("DEBUG: Applying loaded signals internally")
+                logger.debug("DEBUG: \1")
                 self._apply_loaded_signals_internal()
 
-            print("DEBUG: Signal list loaded successfully without popup")
+            logger.debug("DEBUG: \1")
             # No popup message - just update status bar for better user experience
             self.status_label.configure(
                 text=f"Signal list loaded: {self.saved_signal_list_name} ({len(self.saved_signal_list)} signals)",
             )
-            print("DEBUG: load_signal_list() completed successfully")
+            logger.debug("DEBUG: \1")
 
         except Exception as e:
-            print(f"DEBUG: Exception in load_signal_list: {e}")
+            logger.debug(f"DEBUG: \1")
             import traceback
 
             traceback.print_exc()
@@ -6072,7 +6083,7 @@ COMMON MISTAKES TO AVOID:
 
     def _apply_loaded_signals_internal(self):
         """Internal method to apply loaded signals without showing message boxes."""
-        print("DEBUG: _apply_loaded_signals_internal() called")
+        logger.debug("DEBUG: \1")
         if not self.saved_signal_list or not self.signal_vars:
             print(
                 f"DEBUG: Early return - saved_signal_list: {bool(self.saved_signal_list)}, signal_vars: {bool(self.signal_vars)}",
@@ -6081,13 +6092,13 @@ COMMON MISTAKES TO AVOID:
 
         # Get current available signals
         available_signals = list(self.signal_vars.keys())
-        print(f"DEBUG: Available signals: {len(available_signals)}")
+        logger.debug(f"DEBUG: \1")
 
         # Find which saved signals are present
         present_signals = []
         missing_signals = []
 
-        print("DEBUG: Checking saved signals against available signals")
+        logger.debug("DEBUG: \1")
         for saved_signal in self.saved_signal_list:
             if saved_signal in available_signals:
                 present_signals.append(saved_signal)
@@ -6095,11 +6106,12 @@ COMMON MISTAKES TO AVOID:
                 missing_signals.append(saved_signal)
 
         print(
-            f"DEBUG: Present signals: {len(present_signals)}, Missing signals: {len(missing_signals)}",
+            f"DEBUG: Present signals: {len(present_signals)}, "
+            f"Missing signals: {len(missing_signals)}",
         )
 
         # Apply the saved signals (select present ones, deselect others)
-        print("DEBUG: Applying signal selections")
+        logger.debug("DEBUG: \1")
         for signal, data in self.signal_vars.items():
             if signal in present_signals:
                 data["var"].set(True)
@@ -6107,12 +6119,15 @@ COMMON MISTAKES TO AVOID:
                 data["var"].set(False)
 
         # Update status
-        print("DEBUG: Updating status label")
+        logger.debug("DEBUG: \1")
         self.signal_list_status_label.configure(
-            text=f"Applied: {self.saved_signal_list_name} ({len(present_signals)}/{len(self.saved_signal_list)} signals)",
+            text=(
+                f"Applied: {self.saved_signal_list_name} "
+                f"({len(present_signals)}/{len(self.saved_signal_list)} signals)"
+            ),
             text_color="blue",
         )
-        print("DEBUG: _apply_loaded_signals_internal() completed")
+        logger.debug("DEBUG: \1")
 
     def apply_saved_signals(self):
         """Apply the saved signal list to the current file's signals."""
@@ -6155,13 +6170,19 @@ COMMON MISTAKES TO AVOID:
             missing_text = "\n".join([f"• {signal}" for signal in missing_signals])
             messagebox.showinfo(
                 "Signals Applied",
-                f"Applied {len(present_signals)} signals from '{self.saved_signal_list_name}'.\n\n"
-                f"Missing signals ({len(missing_signals)}):\n{missing_text}",
+                (
+                    f"Applied {len(present_signals)} signals from "
+                    f"'{self.saved_signal_list_name}'.\n\n"
+                    f"Missing signals ({len(missing_signals)}):\n{missing_text}"
+                ),
             )
         else:
             messagebox.showinfo(
                 "Signals Applied",
-                f"Successfully applied all {len(present_signals)} signals from '{self.saved_signal_list_name}'.",
+                (
+                    f"Successfully applied all {len(present_signals)} signals "
+                    f"from '{self.saved_signal_list_name}'."
+                ),
             )
 
         # Update status
@@ -6498,8 +6519,8 @@ COMMON MISTAKES TO AVOID:
         idx = selection[0]
         plot_config = self.plots_list[idx]
 
-        print(f"DEBUG: Loading plot config: {plot_config.get('name', 'Unknown')}")
-        print(f"DEBUG: File in config: '{plot_config.get('file', '')}'")
+        logger.debug(f"DEBUG: \1")
+        logger.debug(f"DEBUG: \1")
 
         # Apply the plot configuration using the same method as the main plotting tab
         self._apply_plot_config(plot_config)
@@ -7029,7 +7050,7 @@ COMMON MISTAKES TO AVOID:
                     else:
                         # Fall back to original home if no saved view
                         self._original_home()
-                except:
+                except Exception:
                     # Fall back to original home on any error
                     self._original_home()
 
@@ -8364,7 +8385,7 @@ For additional support or feature requests, please refer to the application docu
                                 f"{plot_df[time_col].dt.date.iloc[0]} {start_time}",
                             )
                             plot_df = plot_df[plot_df[time_col] >= start_datetime]
-                        except:
+                        except Exception:
                             pass
                     if end_time:
                         try:
@@ -8372,7 +8393,7 @@ For additional support or feature requests, please refer to the application docu
                                 f"{plot_df[time_col].dt.date.iloc[0]} {end_time}",
                             )
                             plot_df = plot_df[plot_df[time_col] <= end_datetime]
-                        except:
+                        except Exception:
                             pass
 
             # Plot all available signals
@@ -8601,7 +8622,7 @@ For additional support or feature requests, please refer to the application docu
                     int(-1 * (event.delta / 120)),
                     "units",
                 )
-            except:
+            except Exception:
                 # Fallback for different systems
                 frame._parent_canvas.yview_scroll(int(-1 * event.delta), "units")
 
