@@ -16,7 +16,7 @@ def get_error_breakdown() -> dict[str, list[str]]:
             ["python", "-m", "ruff", "check", ".", "--output-format=concise"],
             capture_output=True,
             text=True,
-            check=False
+            check=False,
         )
 
         errors = {"syntax": [], "line_length": [], "other": []}
@@ -38,39 +38,29 @@ def get_error_breakdown() -> dict[str, list[str]]:
 def fix_syntax_errors_in_file(file_path: Path) -> bool:
     """Fix common syntax errors in a file."""
     try:
-        content = file_path.read_text(encoding='utf-8')
+        content = file_path.read_text(encoding="utf-8")
         original_content = content
 
         # Fix 1: Missing closing brackets in list comprehensions
         content = re.sub(
-            r'(\s+)(\w+)\s*=\s*\[\s*([^]]+)\s*(\w+\s*=)',
-            r'\1\2 = [\3]\n\1\4',
-            content
+            r"(\s+)(\w+)\s*=\s*\[\s*([^]]+)\s*(\w+\s*=)", r"\1\2 = [\3]\n\1\4", content
         )
 
         # Fix 2: Broken f-strings
         content = re.sub(
             r'f"([^"]*)\{\s*([^}]+)\s*\}\s*([^"]*)"([^,\n]*)\n\s*([^"]*)"',
             r'f"\1{\2}\3\4\5"',
-            content
+            content,
         )
 
         # Fix 3: Missing quotes in string literals
-        content = re.sub(
-            r'(\s+)"([^"]*)\n\s*([^"]*)"',
-            r'\1"\2 \3"',
-            content
-        )
+        content = re.sub(r'(\s+)"([^"]*)\n\s*([^"]*)"', r'\1"\2 \3"', content)
 
         # Fix 4: Broken multi-line strings
-        content = re.sub(
-            r'"([^"]*)\(\s*\n\s*([^)]*)\s*\n\s*\)"',
-            r'"\1(\2)"',
-            content
-        )
+        content = re.sub(r'"([^"]*)\(\s*\n\s*([^)]*)\s*\n\s*\)"', r'"\1(\2)"', content)
 
         if content != original_content:
-            file_path.write_text(content, encoding='utf-8')
+            file_path.write_text(content, encoding="utf-8")
             return True
         return False
     except Exception as e:
@@ -81,16 +71,16 @@ def fix_syntax_errors_in_file(file_path: Path) -> bool:
 def fix_line_length_in_file(file_path: Path, max_length: int = 88) -> bool:
     """Fix line length issues in a file."""
     try:
-        content = file_path.read_text(encoding='utf-8')
+        content = file_path.read_text(encoding="utf-8")
         lines = content.splitlines()
         original_lines = lines.copy()
 
         for i, line in enumerate(lines):
             if len(line) > max_length:
                 # Fix long comments
-                if line.strip().startswith('#'):
-                    indent_match = re.match(r'^(\s*)', line)
-                    indent = indent_match.group(1) if indent_match else ''
+                if line.strip().startswith("#"):
+                    indent_match = re.match(r"^(\s*)", line)
+                    indent = indent_match.group(1) if indent_match else ""
 
                     # Break long comments
                     words = line.split()
@@ -99,8 +89,8 @@ def fix_line_length_in_file(file_path: Path, max_length: int = 88) -> bool:
                         new_lines = []
 
                         for word in words[1:]:  # Skip the '#'
-                            if len(current_line + ' ' + word) <= max_length:
-                                current_line += ' ' + word
+                            if len(current_line + " " + word) <= max_length:
+                                current_line += " " + word
                             else:
                                 new_lines.append(current_line)
                                 current_line = f"{indent}# {word}"
@@ -109,7 +99,7 @@ def fix_line_length_in_file(file_path: Path, max_length: int = 88) -> bool:
                             new_lines.append(current_line)
 
                         if len(new_lines) > 1:
-                            lines[i:i+1] = new_lines
+                            lines[i : i + 1] = new_lines
                             continue
 
                 # Fix long string literals
@@ -123,21 +113,21 @@ def fix_line_length_in_file(file_path: Path, max_length: int = 88) -> bool:
                         words = string_content.split()
                         if len(words) > 3:
                             mid_point = len(words) // 2
-                            first_part = ' '.join(words[:mid_point])
-                            second_part = ' '.join(words[mid_point:])
+                            first_part = " ".join(words[:mid_point])
+                            second_part = " ".join(words[mid_point:])
 
-                            indent_match = re.match(r'^(\s*)', line)
-                            indent = indent_match.group(1) if indent_match else ''
+                            indent_match = re.match(r"^(\s*)", line)
+                            indent = indent_match.group(1) if indent_match else ""
 
                             new_lines = [
                                 f'{prefix}{first_part}" \\',
-                                f'{indent}    "{second_part}{suffix}'
+                                f'{indent}    "{second_part}{suffix}',
                             ]
-                            lines[i:i+1] = new_lines
+                            lines[i : i + 1] = new_lines
                             continue
 
         if lines != original_lines:
-            file_path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+            file_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
             return True
         return False
     except Exception as e:
@@ -200,13 +190,13 @@ def main():
 
     # Get files with syntax errors
     syntax_files = set()
-    for error in errors['syntax']:
-        if ':' in error:
-            file_path = error.split(':')[0]
+    for error in errors["syntax"]:
+        if ":" in error:
+            file_path = error.split(":")[0]
             syntax_files.add(Path(file_path))
 
     for file_path in syntax_files:
-        if file_path.exists() and file_path.suffix == '.py':
+        if file_path.exists() and file_path.suffix == ".py":
             if fix_syntax_errors_in_file(file_path):
                 syntax_fixes += 1
                 print(f"Fixed syntax errors in {file_path}")
@@ -219,13 +209,13 @@ def main():
 
     # Get files with line length errors
     length_files = set()
-    for error in errors['line_length']:
-        if ':' in error:
-            file_path = error.split(':')[0]
+    for error in errors["line_length"]:
+        if ":" in error:
+            file_path = error.split(":")[0]
             length_files.add(Path(file_path))
 
     for file_path in length_files:
-        if file_path.exists() and file_path.suffix == '.py':
+        if file_path.exists() and file_path.suffix == ".py":
             if fix_line_length_in_file(file_path):
                 length_fixes += 1
                 print(f"Fixed line lengths in {file_path}")
@@ -239,7 +229,7 @@ def main():
             ["python", "-m", "ruff", "check", ".", "--fix"],
             capture_output=True,
             text=True,
-            check=False
+            check=False,
         )
         print("Ruff auto-fix completed")
     except Exception as e:
@@ -252,7 +242,7 @@ def main():
             ["python", "-m", "ruff", "check", ".", "--statistics"],
             capture_output=True,
             text=True,
-            check=False
+            check=False,
         )
         print("Final statistics:")
         print(result.stdout)

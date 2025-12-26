@@ -905,7 +905,7 @@ class FolderProcessorApp:
                 if dest_abs.startswith(src_abs + os.sep):
                     messagebox.showerror(
                         "Error",
-                        f"The destination folder cannot be inside a source folder.\n\nDestination: {dest_abs}\nSource: {src_abs}\n\nThis would cause infinite loops and incorrect file counts."
+                        f"The destination folder cannot be inside a source folder.\n\nDestination: {dest_abs}\nSource: {src_abs}\n\nThis would cause infinite loops and incorrect file counts.",
                     )
                     return False
         return True

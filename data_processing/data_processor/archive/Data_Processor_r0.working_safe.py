@@ -1923,7 +1923,7 @@ class CSVProcessorApp(ctk.CTk):
                 # Update progress
                 if hasattr(self, "status_label"):
                     self.status_label.configure(
-text=f"Reading file {i +
+                        text=f"Reading file {i +
                             1}/{total_files}: {os.path.basename(file_path)}",
                     )
                     if i % 5 == 0:  # Update every 5 files to prevent UI freezing
@@ -2181,12 +2181,12 @@ text=f"Reading file {i +
 
         for i, file_path in enumerate(self.input_file_paths):
             print(
-f"\n--- Processing file {i +
+                f"\n--- Processing file {i +
                     1}/{len(self.input_file_paths)}: {os.path.basename(file_path)} ---",
             )
             try:
                 self.status_label.configure(
-text=f"Processing file {i +
+                    text=f"Processing file {i +
                         1}/{len(self.input_file_paths)}: {os.path.basename(file_path)}",
                 )
                 self.update()
@@ -5665,9 +5665,9 @@ COMMON MISTAKES TO AVOID:
                         with open(file_path) as f:
                             data = json.load(f)
                             # Check if it has the expected structure (
-                                processing configs have 'saved_at',
-                                plotting configs have 'plot_name'
-                            )
+                            #   processing configs have 'saved_at',
+                            #   plotting configs have 'plot_name'
+                            # )
                             if isinstance(data, dict) and (
                                 "saved_at" in data or "plot_name" in data
                             ):
@@ -6076,10 +6076,7 @@ COMMON MISTAKES TO AVOID:
         print("DEBUG: _apply_loaded_signals_internal() called")
         if not self.saved_signal_list or not self.signal_vars:
             print(
-                f"DEBUG: Early return - saved_signal_list: {bool(
-                    self.saved_signal_list)},
-                    signal_vars: {bool(self.signal_vars
-                )}",
+                f"DEBUG: Early return - saved_signal_list: {bool(self.saved_signal_list)}, signal_vars: {bool(self.signal_vars)}",
             )
             return
 
@@ -6099,10 +6096,7 @@ COMMON MISTAKES TO AVOID:
                 missing_signals.append(saved_signal)
 
         print(
-            f"DEBUG: Present signals: {len(
-                present_signals)},
-                Missing signals: {len(missing_signals
-            )}",
+            f"DEBUG: Present signals: {len(present_signals)}, Missing signals: {len(missing_signals)}",
         )
 
         # Apply the saved signals (select present ones, deselect others)
@@ -6173,7 +6167,10 @@ COMMON MISTAKES TO AVOID:
 
         # Update status
         self.signal_list_status_label.configure(
-            text=f"Applied: {self.saved_signal_list_name} ({len(present_signals)}/{len(self.saved_signal_list)} signals)",
+            text=(
+                f"Applied: {self.saved_signal_list_name} "
+                f"({len(present_signals)}/{len(self.saved_signal_list)} signals)"
+            ),
             text_color="blue",
         )
 
@@ -6247,7 +6244,10 @@ COMMON MISTAKES TO AVOID:
 
         messagebox.showinfo(
             "Settings Copied",
-            "Filter settings from the plot tab have been applied to the main processing configuration.",
+            (
+                "Filter settings from the plot tab have been applied to the "
+                "main processing configuration."
+            ),
         )
 
     def _export_chart_image(self):
@@ -6407,7 +6407,8 @@ COMMON MISTAKES TO AVOID:
         plot_config = {
             "name": plot_name,
             "description": plot_desc
-            or f"Plot configuration created on {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            or f"Plot configuration created on "
+            f"{pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}",
             "signals": selected_signals,
             "start_time": self.plots_list_start_time_entry.get(),
             "end_time": self.plots_list_end_time_entry.get(),
@@ -6517,7 +6518,8 @@ COMMON MISTAKES TO AVOID:
 
         messagebox.showinfo(
             "Success",
-            f"Plot configuration '{plot_config['name']}' loaded and applied to Plotting tab!",
+            f"Plot configuration '{plot_config['name']}' "
+            "loaded and applied to Plotting tab!",
         )
 
     def _delete_selected_plot(self):
@@ -6856,7 +6858,8 @@ COMMON MISTAKES TO AVOID:
             # Apply custom labels and title
             title = (
                 self.plot_title_entry.get()
-                or f"Signals from {selected_file} (Time Range: {start_time_str} - {end_time_str})"
+                or f"Signals from {selected_file} "
+                f"(Time Range: {start_time_str} - {end_time_str})"
             )
             xlabel = self.plot_xlabel_entry.get() or time_col
             ylabel = self.plot_ylabel_entry.get() or "Value"
@@ -6944,7 +6947,10 @@ COMMON MISTAKES TO AVOID:
 
             messagebox.showinfo(
                 "Success",
-                f"Copied plot range to time trimming:\nDate: {date_str}\nStart: {start_time_str}\nEnd: {end_time_str}",
+                (
+                    f"Copied plot range to time trimming:\nDate: {date_str}\n"
+                    f"Start: {start_time_str}\nEnd: {end_time_str}"
+                ),
             )
 
         except Exception as e:
@@ -6965,7 +6971,8 @@ COMMON MISTAKES TO AVOID:
 
             messagebox.showinfo(
                 "Success",
-                "Current plot view saved! Use the Home button on the toolbar to return to this view.",
+                "Current plot view saved! Use the Home button on the toolbar to "
+                "return to this view.",
             )
 
             # Override the home button functionality
@@ -7013,7 +7020,8 @@ COMMON MISTAKES TO AVOID:
 
             messagebox.showinfo(
                 "Success",
-                f"Copied current view to Processing tab time trimming:\nDate: {date_str}\nStart: {start_time_str}\nEnd: {end_time_str}",
+                f"Reset plot using tab time trimming:\nDate: {date_str}\n"
+                f"Start: {start_time_str}\nEnd: {end_time_str}",
             )
 
         except Exception as e:
@@ -7036,7 +7044,7 @@ COMMON MISTAKES TO AVOID:
                     else:
                         # Fall back to original home if no saved view
                         self._original_home()
-                except:
+                except Exception:
                     # Fall back to original home on any error
                     self._original_home()
 
@@ -7576,7 +7584,8 @@ For additional support or feature requests, please refer to the application docu
         # Get current plot settings
         plot_config = {
             "name": plot_name,
-            "description": f"Plot configuration saved on {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            "description": f"Plot configuration saved on "
+            f"{pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}",
             "file": (
                 self.plot_file_menu.get() if hasattr(self, "plot_file_menu") else ""
             ),
@@ -7734,7 +7743,8 @@ For additional support or feature requests, please refer to the application docu
         if not hasattr(self, "plots_list") or not self.plots_list:
             messagebox.showwarning(
                 "No Configurations",
-                "No saved plot configurations found. Please save a configuration first.",
+                "No saved plot configurations found. "
+                "Please save a configuration first.",
             )
             return
 
@@ -7796,7 +7806,8 @@ For additional support or feature requests, please refer to the application docu
             dialog.destroy()
             messagebox.showinfo(
                 "Success",
-                f"Configuration '{selected_config['name']}' has been updated with current settings!",
+                f"Configuration '{selected_config['name']}' has been updated "
+                "with current settings!",
             )
 
         def on_cancel():
@@ -8269,7 +8280,10 @@ For additional support or feature requests, please refer to the application docu
                         if f != "Select a file..."
                     ]
 
-                debug_text = f"No data file specified in plot configuration\n\nSaved file: '{file_name}'"
+                debug_text = (
+                    f"No data file specified in plot configuration\n\n"
+                    f"Saved file: '{file_name}'"
+                )
                 if available_files:
                     debug_text += "\n\nAvailable files:\n" + "\n".join(
                         available_files[:3],
@@ -8277,8 +8291,10 @@ For additional support or feature requests, please refer to the application docu
                     if len(available_files) > 3:
                         debug_text += f"\n... and {len(available_files)-3} more"
                 else:
-debug_text +
-                        = "\n\nNo files currently loaded.\nPlease load files on Setup tab first."
+                    debug_text += (
+                        "\n\nNo files currently loaded.\n"
+                        "Please load files on Setup tab first."
+                    )
 
                 self.preview_ax.text(
                     0.5,
@@ -8316,7 +8332,12 @@ debug_text +
                     if len(set(available_files)) > 5:
                         debug_text += f"\n... and {len(set(available_files))-5} more"
                 else:
-                    debug_text = "No data files loaded\n\nPlease:\n1. Select CSV files on Setup tab\n2. Process files or plot directly"
+                    debug_text = (
+                        "No data files loaded\n\n"
+                        "Please:\n"
+                        "1. Select CSV files on Setup tab\n"
+                        "2. Process files or plot directly"
+                    )
 
                 self.preview_ax.text(
                     0.5,
@@ -8372,7 +8393,7 @@ debug_text +
                                 f"{plot_df[time_col].dt.date.iloc[0]} {start_time}",
                             )
                             plot_df = plot_df[plot_df[time_col] >= start_datetime]
-                        except:
+                        except Exception:
                             pass
                     if end_time:
                         try:
@@ -8380,7 +8401,7 @@ debug_text +
                                 f"{plot_df[time_col].dt.date.iloc[0]} {end_time}",
                             )
                             plot_df = plot_df[plot_df[time_col] <= end_datetime]
-                        except:
+                        except Exception:
                             pass
 
             # Plot all available signals
@@ -8609,7 +8630,7 @@ debug_text +
                     int(-1 * (event.delta / 120)),
                     "units",
                 )
-            except:
+            except Exception:
                 # Fallback for different systems
                 frame._parent_canvas.yview_scroll(int(-1 * event.delta), "units")
 
@@ -8751,7 +8772,10 @@ debug_text +
                     existing_files.append(f"{custom_name}{ext}")
 
             if existing_files:
-                warning_text = f"⚠️ Warning: Will overwrite existing files: {', '.join(existing_files)}"
+                warning_text = (
+                    "⚠️ Warning: Will overwrite existing files: "
+                    f"{', '.join(existing_files)}"
+                )
                 self.overwrite_warning_label.configure(
                     text=warning_text,
                     text_color="orange",

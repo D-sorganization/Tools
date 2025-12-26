@@ -10,18 +10,18 @@ from Calculator.limiter import RateLimiter
 
 
 class TestRateLimiter(unittest.TestCase):
-    def test_allow_within_limit(self):
+    def test_allow_within_limit(self) -> None:
         limiter = RateLimiter(limit=5, window=60)
         for _ in range(5):
             self.assertTrue(limiter.is_allowed("1.2.3.4"))
 
-    def test_deny_exceeding_limit(self):
+    def test_deny_exceeding_limit(self) -> None:
         limiter = RateLimiter(limit=2, window=60)
         self.assertTrue(limiter.is_allowed("1.2.3.4"))
         self.assertTrue(limiter.is_allowed("1.2.3.4"))
         self.assertFalse(limiter.is_allowed("1.2.3.4"))
 
-    def test_window_reset(self):
+    def test_window_reset(self) -> None:
         limiter = RateLimiter(limit=1, window=60)
 
         with patch("time.time") as mock_time:
@@ -34,7 +34,7 @@ class TestRateLimiter(unittest.TestCase):
             mock_time.return_value = 70
             self.assertTrue(limiter.is_allowed("1.2.3.4"))
 
-    def test_independent_keys(self):
+    def test_independent_keys(self) -> None:
         limiter = RateLimiter(limit=1, window=60)
         self.assertTrue(limiter.is_allowed("A"))
         self.assertFalse(limiter.is_allowed("A"))

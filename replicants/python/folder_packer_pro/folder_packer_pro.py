@@ -14,9 +14,18 @@ from pathlib import Path
 from tkinter import filedialog, messagebox, scrolledtext, simpledialog, ttk
 from typing import Any, Final  # noqa: ICN003
 
-from cryptography.fernet import Fernet
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+try:
+    from cryptography.fernet import Fernet  # type: ignore[import]
+    from cryptography.hazmat.primitives import hashes  # type: ignore[import]
+    from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC  # type: ignore[import]
+
+    HAS_CRYPTO = True
+except ImportError:
+    Fernet = None
+    hashes = None
+    PBKDF2HMAC = None
+    HAS_CRYPTO = False
+
 
 PREVIEW_FILE_LIMIT = 500  # Maximum files to show in preview
 PREVIEW_LINE_LIMIT = 1000  # Maximum lines to show in file preview
@@ -256,7 +265,7 @@ class PackageManifest:
     def set_metadata(
         self,
         key: str,
-        value: str | float | bool | None | list[Any] | dict[str, Any],  # noqa: FBT001
+        value: str | float | bool | None | list[Any] | dict[str, Any],
     ) -> None:
         """Set metadata value."""
         self.metadata[key] = value
@@ -1165,7 +1174,9 @@ class FolderPackerPro:
 
         self.preview_text.configure(state="disabled")
 
-    def _insert_with_highlighting(self, content: str, file_ext: str) -> None:  # noqa: PLR0912
+    def _insert_with_highlighting(  # noqa: PLR0912
+        self, content: str, file_ext: str
+    ) -> None:
         """Insert text with basic syntax highlighting."""
         # For simplicity, basic keyword highlighting
         # Syntax highlighting map
@@ -1793,7 +1804,9 @@ class FolderPackerPro:
             elif sys.platform == "darwin":
                 subprocess.run(["open", log_filename], check=False)  # noqa: S603,S607
             else:
-                subprocess.run(["xdg-open", log_filename], check=False)  # noqa: S603,S607
+                subprocess.run(  # noqa: S603
+                    ["xdg-open", log_filename], check=False  # noqa: S607
+                )
         except Exception as e:
             logger.exception("Error occurred")
             messagebox.showerror("Error", f"Could not open log file:\n{e}")

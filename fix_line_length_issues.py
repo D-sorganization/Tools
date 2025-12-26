@@ -10,7 +10,7 @@ from pathlib import Path
 def fix_line_length_in_file(file_path: Path, max_length: int = 88) -> bool:
     """Fix line length issues in a single file."""
     try:
-        content = file_path.read_text(encoding='utf-8')
+        content = file_path.read_text(encoding="utf-8")
         lines = content.splitlines()
         original_lines = lines.copy()
 
@@ -23,15 +23,15 @@ def fix_line_length_in_file(file_path: Path, max_length: int = 88) -> bool:
                     continue  # Skip docstrings for now
 
                 # 2. Long function calls with multiple parameters
-                if '(' in line and ')' in line and ',' in line:
+                if "(" in line and ")" in line and "," in line:
                     # Find function call pattern
-                    match = re.match(r'^(\s*)(.*?)(\(.*\))(.*)$', line)
+                    match = re.match(r"^(\s*)(.*?)(\(.*\))(.*)$", line)
                     if match:
                         indent, prefix, params, suffix = match.groups()
                         if len(params) > 40:  # Only break if params are long
                             # Break after opening parenthesis
-                            new_indent = indent + '    '
-                            param_parts = params[1:-1].split(',')
+                            new_indent = indent + "    "
+                            param_parts = params[1:-1].split(",")
                             if len(param_parts) > 1:
                                 new_lines = [f"{indent}{prefix}("]
                                 for j, param in enumerate(param_parts):
@@ -43,23 +43,23 @@ def fix_line_length_in_file(file_path: Path, max_length: int = 88) -> bool:
                                 new_lines.append(f"{indent}){suffix}")
 
                                 # Replace the long line with multiple lines
-                                lines[i:i+1] = new_lines
+                                lines[i : i + 1] = new_lines
                                 continue
 
                 # 3. Long comments - break them
-                if line.strip().startswith('#'):
+                if line.strip().startswith("#"):
                     words = line.split()
                     if len(words) > 3:
-                        indent_match = re.match(r'^(\s*)', line)
-                        indent = indent_match.group(1) if indent_match else ''
+                        indent_match = re.match(r"^(\s*)", line)
+                        indent = indent_match.group(1) if indent_match else ""
 
                         # Break comment into multiple lines
                         current_line = f"{indent}#"
                         new_lines = []
 
                         for word in words[1:]:  # Skip the '#'
-                            if len(current_line + ' ' + word) <= max_length:
-                                current_line += ' ' + word
+                            if len(current_line + " " + word) <= max_length:
+                                current_line += " " + word
                             else:
                                 new_lines.append(current_line)
                                 current_line = f"{indent}# {word}"
@@ -68,21 +68,21 @@ def fix_line_length_in_file(file_path: Path, max_length: int = 88) -> bool:
                             new_lines.append(current_line)
 
                         if len(new_lines) > 1:
-                            lines[i:i+1] = new_lines
+                            lines[i : i + 1] = new_lines
                             continue
 
                 # 4. Long import statements
-                if line.strip().startswith('from ') and ' import ' in line:
-                    if ',' in line:
-                        parts = line.split(' import ')
+                if line.strip().startswith("from ") and " import " in line:
+                    if "," in line:
+                        parts = line.split(" import ")
                         if len(parts) == 2:
                             from_part = parts[0]
                             import_part = parts[1]
-                            imports = [imp.strip() for imp in import_part.split(',')]
+                            imports = [imp.strip() for imp in import_part.split(",")]
 
                             if len(imports) > 1:
-                                indent_match = re.match(r'^(\s*)', line)
-                                indent = indent_match.group(1) if indent_match else ''
+                                indent_match = re.match(r"^(\s*)", line)
+                                indent = indent_match.group(1) if indent_match else ""
 
                                 new_lines = [f"{from_part} import ("]
                                 for j, imp in enumerate(imports):
@@ -92,11 +92,11 @@ def fix_line_length_in_file(file_path: Path, max_length: int = 88) -> bool:
                                         new_lines.append(f"{indent}    {imp},")
                                 new_lines.append(f"{indent})")
 
-                                lines[i:i+1] = new_lines
+                                lines[i : i + 1] = new_lines
                                 continue
 
         if lines != original_lines:
-            file_path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+            file_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
             return True
         return False
     except Exception as e:
@@ -114,7 +114,7 @@ def main():
     fixes_applied = 0
 
     for py_file in python_files:
-        if py_file.name.startswith('.') or 'fix_line_length_issues' in str(py_file):
+        if py_file.name.startswith(".") or "fix_line_length_issues" in str(py_file):
             continue
 
         if fix_line_length_in_file(py_file):

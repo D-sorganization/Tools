@@ -31,7 +31,7 @@ class TI89Calculator:
 
     _ALLOWED_FUNCTIONS_CACHE: Mapping[str, object] | None = None
     _SAFE_GLOBALS_CACHE: Mapping[str, object] | None = None
-    _TRANSFORMATIONS_CACHE: tuple | None = None
+    _TRANSFORMATIONS_CACHE: tuple[object, ...] | None = None
 
     def __init__(self) -> None:
         if TI89Calculator._ALLOWED_FUNCTIONS_CACHE is None:
@@ -58,10 +58,12 @@ class TI89Calculator:
 
     @property
     def allowed_functions(self) -> Mapping[str, object]:
+        assert self._allowed_functions is not None
         return self._allowed_functions
 
     @property
     def safe_globals(self) -> Mapping[str, object]:
+        assert self._SAFE_GLOBALS_CACHE is not None
         return self._SAFE_GLOBALS_CACHE
 
     def evaluate(

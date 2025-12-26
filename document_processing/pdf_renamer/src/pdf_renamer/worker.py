@@ -6,6 +6,7 @@ from .renamer import Renamer
 
 logger = logging.getLogger(__name__)
 
+
 def process_single_file(file_path: Path, style: str, dry_run: bool) -> str:
     """
     Worker function to process a single PDF file.
@@ -25,7 +26,6 @@ def process_single_file(file_path: Path, style: str, dry_run: bool) -> str:
 
         new_filename = renamer.generate_new_filename(author, title)
 
-
         # Initial check to avoid unnecessary renaming logic if names match
         if file_path.name == new_filename:
             return f"ℹ️ Skipping {file_path.name} (already named correctly)"
@@ -35,7 +35,9 @@ def process_single_file(file_path: Path, style: str, dry_run: bool) -> str:
         try:
             renamer.rename_file(file_path, new_filename)
             if dry_run:
-                return f"🔍 [DRY RUN] Would rename '{file_path.name}' -> '{new_filename}'"
+                return (
+                    f"🔍 [DRY RUN] Would rename '{file_path.name}' -> '{new_filename}'"
+                )
             else:
                 # Note: Renamer may adjust the final filename on collision; we report the intended name here.
                 return f"✅ Renamed '{file_path.name}' -> '{new_filename}'"

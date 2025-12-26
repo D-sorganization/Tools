@@ -10,6 +10,9 @@ import pytest
 # Import the module to test
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from package_for_distribution import (
+    PACKAGE_BASE_NAME,
+    PACKAGE_VERSION,
+    REQUIRED_FILES,
     copy_required_files,
     create_deployment_package,
     create_zip_archive,
@@ -165,21 +168,18 @@ class TestPackageForDistribution:
 
     def test_package_version_constant(self) -> None:
         """Test that package version constant is properly defined."""
-        from package_for_distribution import PACKAGE_VERSION
 
         assert isinstance(PACKAGE_VERSION, str)
         assert len(PACKAGE_VERSION) > 0
 
     def test_package_base_name_constant(self) -> None:
         """Test that package base name constant is properly defined."""
-        from package_for_distribution import PACKAGE_BASE_NAME
 
         assert isinstance(PACKAGE_BASE_NAME, str)
         assert len(PACKAGE_BASE_NAME) > 0
 
     def test_required_files_constant(self) -> None:
         """Test that required files constant is properly defined."""
-        from package_for_distribution import REQUIRED_FILES
 
         assert isinstance(REQUIRED_FILES, list)
         assert len(REQUIRED_FILES) > 0

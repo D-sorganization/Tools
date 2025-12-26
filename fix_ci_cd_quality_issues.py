@@ -11,16 +11,16 @@ from pathlib import Path
 def fix_ambiguous_characters(file_path: Path) -> bool:
     """Fix ambiguous Unicode characters in the file."""
     try:
-        content = file_path.read_text(encoding='utf-8')
+        content = file_path.read_text(encoding="utf-8")
         original_content = content
 
         # Replace heavy minus sign with regular hyphen-minus
-        content = content.replace('-', '-')
+        content = content.replace("-", "-")
         # Replace heavy plus sign with regular plus sign
-        content = content.replace('+', '+')
+        content = content.replace("+", "+")
 
         if content != original_content:
-            file_path.write_text(content, encoding='utf-8')
+            file_path.write_text(content, encoding="utf-8")
             print(f"Fixed ambiguous characters in {file_path}")
             return True
         return False
@@ -32,18 +32,14 @@ def fix_ambiguous_characters(file_path: Path) -> bool:
 def fix_pytest_fixtures(file_path: Path) -> bool:
     """Fix pytest fixture decorators to include parentheses."""
     try:
-        content = file_path.read_text(encoding='utf-8')
+        content = file_path.read_text(encoding="utf-8")
         original_content = content
 
         # Replace @pytest.fixture() with @pytest.fixture()
-        content = re.sub(
-            r'@pytest\.fixture(?!\()',
-            '@pytest.fixture()',
-            content
-        )
+        content = re.sub(r"@pytest\.fixture(?!\()", "@pytest.fixture()", content)
 
         if content != original_content:
-            file_path.write_text(content, encoding='utf-8')
+            file_path.write_text(content, encoding="utf-8")
             print(f"Fixed pytest fixtures in {file_path}")
             return True
         return False
@@ -55,7 +51,7 @@ def fix_pytest_fixtures(file_path: Path) -> bool:
 def add_noqa_comments(file_path: Path, issues: list[tuple[int, str]]) -> bool:
     """Add noqa comments for complex functions that can't be easily refactored."""
     try:
-        lines = file_path.read_text(encoding='utf-8').splitlines()
+        lines = file_path.read_text(encoding="utf-8").splitlines()
         original_lines = lines.copy()
 
         for line_num, error_code in issues:
@@ -64,15 +60,15 @@ def add_noqa_comments(file_path: Path, issues: list[tuple[int, str]]) -> bool:
                 line = lines[line_idx]
 
                 # Check if noqa comment already exists
-                if '# noqa:' not in line:
+                if "# noqa:" not in line:
                     # Add noqa comment at the end of the line
-                    if line.rstrip().endswith(':'):
+                    if line.rstrip().endswith(":"):
                         lines[line_idx] = f"{line}  # noqa: {error_code}"
                     else:
                         lines[line_idx] = f"{line}  # noqa: {error_code}"
 
         if lines != original_lines:
-            file_path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+            file_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
             print(f"Added noqa comments to {file_path}")
             return True
         return False
@@ -97,7 +93,7 @@ def main():
         complex_function_issues = [
             (739, "PLR0915"),  # _create_filters_tab
             (828, "PLR0915"),  # _create_preview_tab
-            (1073, "PLR0911"), # _should_include_file
+            (1073, "PLR0911"),  # _should_include_file
         ]
 
         if add_noqa_comments(folder_fix_pro, complex_function_issues):

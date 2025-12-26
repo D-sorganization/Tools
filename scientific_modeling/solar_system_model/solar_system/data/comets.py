@@ -11,7 +11,7 @@ from ..core.constants import OrbitalElements, PhysicalProperties
 class CometDescriptor:
     name: str
     elements: OrbitalElements
-    color: tuple
+    color: tuple[float, float, float]
     properties: PhysicalProperties
 
 
