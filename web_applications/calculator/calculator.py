@@ -31,7 +31,7 @@ class TI89Calculator:
 
     _ALLOWED_FUNCTIONS_CACHE: Mapping[str, object] | None = None
     _SAFE_GLOBALS_CACHE: Mapping[str, object] | None = None
-    _TRANSFORMATIONS_CACHE: tuple | None = None
+    _TRANSFORMATIONS_CACHE: tuple[object, ...] | None = None
 
     def __init__(self) -> None:
         if TI89Calculator._ALLOWED_FUNCTIONS_CACHE is None:
