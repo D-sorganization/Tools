@@ -58,10 +58,12 @@ class TI89Calculator:
 
     @property
     def allowed_functions(self) -> Mapping[str, object]:
+        assert self._allowed_functions is not None
         return self._allowed_functions
 
     @property
     def safe_globals(self) -> Mapping[str, object]:
+        assert self._SAFE_GLOBALS_CACHE is not None
         return self._SAFE_GLOBALS_CACHE
 
     def evaluate(

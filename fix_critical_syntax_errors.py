@@ -11,44 +11,46 @@ from pathlib import Path
 
 def fix_data_processor_syntax():
     """Fix critical syntax errors in Data_Processor_r0.py"""
-    file_path = Path("data_processing/data_processor/python/data_processor/Data_Processor_r0.py")
+    file_path = Path(
+        "data_processing/data_processor/python/data_processor/Data_Processor_r0.py"
+    )
 
     if not file_path.exists():
         print(f"File not found: {file_path}")
         return False
 
     try:
-        content = file_path.read_text(encoding='utf-8')
+        content = file_path.read_text(encoding="utf-8")
         original_content = content
 
         # Fix 1: Incomplete comment/docstring around line 5668
         content = re.sub(
-            r'# Check if it has the expected structure \(\s*processing configs have',
-            '# Check if it has the expected structure (\n                            # processing configs have',
-            content
+            r"# Check if it has the expected structure \(\s*processing configs have",
+            "# Check if it has the expected structure (\n                            # processing configs have",
+            content,
         )
 
         # Fix 2: Fix incomplete parentheses in conditions
         content = re.sub(
             r'if isinstance\(data, dict\) and \(\s*"saved_at" in data or "plot_name" in data\s*\):',
             'if isinstance(data, dict) and ("saved_at" in data or "plot_name" in data):',
-            content
+            content,
         )
 
         # Fix 3: Fix incomplete function calls
         content = re.sub(
-            r'config_files\.append\(\s*$',
-            'config_files.append(file_path)',
+            r"config_files\.append\(\s*$",
+            "config_files.append(file_path)",
             content,
-            flags=re.MULTILINE
+            flags=re.MULTILINE,
         )
 
         # Fix 4: Fix incomplete try blocks
         content = re.sub(
-            r'try:\s*$\s*except',
-            'try:\n                    pass\n                except',
+            r"try:\s*$\s*except",
+            "try:\n                    pass\n                except",
             content,
-            flags=re.MULTILINE
+            flags=re.MULTILINE,
         )
 
         # Fix 5: Fix f-string issues
@@ -56,11 +58,11 @@ def fix_data_processor_syntax():
             r'f"([^"]*)\{([^}]*)\}([^"]*)"([^"]*$)',
             r'f"\1{\2}\3\4"',
             content,
-            flags=re.MULTILINE
+            flags=re.MULTILINE,
         )
 
         if content != original_content:
-            file_path.write_text(content, encoding='utf-8')
+            file_path.write_text(content, encoding="utf-8")
             print(f"Fixed syntax errors in {file_path}")
             return True
         else:
@@ -93,7 +95,7 @@ def remove_broken_fix_scripts():
                 result = subprocess.run(
                     ["python", "-m", "py_compile", str(script_path)],
                     capture_output=True,
-                    text=True
+                    text=True,
                 )
                 if result.returncode != 0:
                     script_path.unlink()
@@ -112,7 +114,7 @@ def run_ruff_fix():
             ["python", "-m", "ruff", "check", ".", "--fix", "--unsafe-fixes"],
             capture_output=True,
             text=True,
-            check=False
+            check=False,
         )
         print("Ruff auto-fix completed")
         return True
@@ -145,7 +147,7 @@ def main():
             ["python", "-m", "ruff", "check", ".", "--statistics"],
             capture_output=True,
             text=True,
-            check=False
+            check=False,
         )
         print("Final statistics:")
         print(result.stdout)

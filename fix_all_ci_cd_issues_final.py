@@ -12,15 +12,15 @@ from pathlib import Path
 def fix_ambiguous_unicode_chars(file_path: Path) -> bool:
     """Fix ambiguous Unicode characters."""
     try:
-        content = file_path.read_text(encoding='utf-8')
+        content = file_path.read_text(encoding="utf-8")
         original_content = content
 
         # Replace ambiguous Unicode characters
-        content = content.replace('-', '-')  # HEAVY MINUS SIGN
-        content = content.replace('+', '+')  # HEAVY PLUS SIGN
+        content = content.replace("-", "-")  # HEAVY MINUS SIGN
+        content = content.replace("+", "+")  # HEAVY PLUS SIGN
 
         if content != original_content:
-            file_path.write_text(content, encoding='utf-8')
+            file_path.write_text(content, encoding="utf-8")
             return True
         return False
     except Exception as e:
@@ -31,18 +31,14 @@ def fix_ambiguous_unicode_chars(file_path: Path) -> bool:
 def fix_pytest_fixtures(file_path: Path) -> bool:
     """Fix pytest fixture decorators."""
     try:
-        content = file_path.read_text(encoding='utf-8')
+        content = file_path.read_text(encoding="utf-8")
         original_content = content
 
         # Fix @pytest.fixture to @pytest.fixture()
-        content = re.sub(
-            r'@pytest\.fixture(?!\()',
-            '@pytest.fixture()',
-            content
-        )
+        content = re.sub(r"@pytest\.fixture(?!\()", "@pytest.fixture()", content)
 
         if content != original_content:
-            file_path.write_text(content, encoding='utf-8')
+            file_path.write_text(content, encoding="utf-8")
             return True
         return False
     except Exception as e:
@@ -53,22 +49,23 @@ def fix_pytest_fixtures(file_path: Path) -> bool:
 def add_noqa_for_complex_functions(file_path: Path) -> bool:
     """Add noqa comments for functions that are too complex."""
     try:
-        content = file_path.read_text(encoding='utf-8')
+        content = file_path.read_text(encoding="utf-8")
         lines = content.splitlines()
         original_lines = lines.copy()
 
         # Add noqa for specific complex functions
         for i, line in enumerate(lines):
-            if ('def _create_filters_tab(' in line or
-                'def _create_preview_tab(' in line) and '# noqa:' not in line:
-                if line.rstrip().endswith(':'):
+            if (
+                "def _create_filters_tab(" in line or "def _create_preview_tab(" in line
+            ) and "# noqa:" not in line:
+                if line.rstrip().endswith(":"):
                     lines[i] = f"{line}  # noqa: PLR0915"
-            elif 'def _should_include_file(' in line and '# noqa:' not in line:
-                if line.rstrip().endswith(':'):
+            elif "def _should_include_file(" in line and "# noqa:" not in line:
+                if line.rstrip().endswith(":"):
                     lines[i] = f"{line}  # noqa: PLR0911"
 
         if lines != original_lines:
-            file_path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+            file_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
             return True
         return False
     except Exception as e:
@@ -79,19 +76,21 @@ def add_noqa_for_complex_functions(file_path: Path) -> bool:
 def fix_boolean_arguments(file_path: Path) -> bool:
     """Fix boolean argument issues by adding noqa comments."""
     try:
-        content = file_path.read_text(encoding='utf-8')
+        content = file_path.read_text(encoding="utf-8")
         lines = content.splitlines()
         original_lines = lines.copy()
 
         # Look for function definitions with boolean arguments
         for i, line in enumerate(lines):
-            if (': bool' in line and
-                any('def ' in lines[j] for j in range(max(0, i-2), i+1)) and
-                '# noqa:' not in line):
+            if (
+                ": bool" in line
+                and any("def " in lines[j] for j in range(max(0, i - 2), i + 1))
+                and "# noqa:" not in line
+            ):
                 lines[i] = f"{line}  # noqa: FBT001"
 
         if lines != original_lines:
-            file_path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+            file_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
             return True
         return False
     except Exception as e:
@@ -102,21 +101,21 @@ def fix_boolean_arguments(file_path: Path) -> bool:
 def remove_unused_noqa_directives(file_path: Path) -> bool:
     """Remove unused noqa directives."""
     try:
-        content = file_path.read_text(encoding='utf-8')
+        content = file_path.read_text(encoding="utf-8")
         original_content = content
 
         # Remove specific unused noqa patterns that are causing RUF100 errors
         patterns_to_remove = [
-            r'  # noqa: FBT001\s*$',
-            r'  # noqa: PLC0415\s*$',
+            r"  # noqa: FBT001\s*$",
+            r"  # noqa: PLC0415\s*$",
         ]
 
         for pattern in patterns_to_remove:
             # Only remove if it's not actually needed
-            content = re.sub(pattern, '', content, flags=re.MULTILINE)
+            content = re.sub(pattern, "", content, flags=re.MULTILINE)
 
         if content != original_content:
-            file_path.write_text(content, encoding='utf-8')
+            file_path.write_text(content, encoding="utf-8")
             return True
         return False
     except Exception as e:
@@ -135,7 +134,7 @@ def main():
 
     # Fix issues in all Python files
     for py_file in python_files:
-        if py_file.name.startswith('.') or 'fix_all_ci_cd_issues_final' in str(py_file):
+        if py_file.name.startswith(".") or "fix_all_ci_cd_issues_final" in str(py_file):
             continue
 
         file_fixed = False
@@ -171,7 +170,7 @@ def main():
             ["python", "-m", "ruff", "check", ".", "--fix"],
             capture_output=True,
             text=True,
-            check=False
+            check=False,
         )
         if result.returncode != 0:
             print("Ruff found and fixed additional issues")
@@ -186,7 +185,7 @@ def main():
             ["python", "-m", "ruff", "check", ".", "--output-format=concise"],
             capture_output=True,
             text=True,
-            check=False
+            check=False,
         )
         if result.returncode == 0:
             print("\n🎉 All issues resolved!")

@@ -1923,7 +1923,7 @@ class CSVProcessorApp(ctk.CTk):
                 # Update progress
                 if hasattr(self, "status_label"):
                     self.status_label.configure(
-text=f"Reading file {i +
+                        text=f"Reading file {i +
                             1}/{total_files}: {os.path.basename(file_path)}",
                     )
                     if i % 5 == 0:  # Update every 5 files to prevent UI freezing
@@ -2181,12 +2181,12 @@ text=f"Reading file {i +
 
         for i, file_path in enumerate(self.input_file_paths):
             print(
-f"\n--- Processing file {i +
+                f"\n--- Processing file {i +
                     1}/{len(self.input_file_paths)}: {os.path.basename(file_path)} ---",
             )
             try:
                 self.status_label.configure(
-text=f"Processing file {i +
+                    text=f"Processing file {i +
                         1}/{len(self.input_file_paths)}: {os.path.basename(file_path)}",
                 )
                 self.update()
@@ -5665,9 +5665,9 @@ COMMON MISTAKES TO AVOID:
                         with open(file_path) as f:
                             data = json.load(f)
                             # Check if it has the expected structure (
-                                processing configs have 'saved_at',
-                                plotting configs have 'plot_name'
-                            )
+                            #   processing configs have 'saved_at',
+                            #   plotting configs have 'plot_name'
+                            # )
                             if isinstance(data, dict) and (
                                 "saved_at" in data or "plot_name" in data
                             ):
@@ -6076,10 +6076,7 @@ COMMON MISTAKES TO AVOID:
         print("DEBUG: _apply_loaded_signals_internal() called")
         if not self.saved_signal_list or not self.signal_vars:
             print(
-                f"DEBUG: Early return - saved_signal_list: {bool(
-                    self.saved_signal_list)},
-                    signal_vars: {bool(self.signal_vars
-                )}",
+                f"DEBUG: Early return - saved_signal_list: {bool(self.saved_signal_list)}, signal_vars: {bool(self.signal_vars)}",
             )
             return
 
@@ -6099,10 +6096,7 @@ COMMON MISTAKES TO AVOID:
                 missing_signals.append(saved_signal)
 
         print(
-            f"DEBUG: Present signals: {len(
-                present_signals)},
-                Missing signals: {len(missing_signals
-            )}",
+            f"DEBUG: Present signals: {len(present_signals)}, Missing signals: {len(missing_signals)}",
         )
 
         # Apply the saved signals (select present ones, deselect others)
@@ -8277,8 +8271,7 @@ For additional support or feature requests, please refer to the application docu
                     if len(available_files) > 3:
                         debug_text += f"\n... and {len(available_files)-3} more"
                 else:
-debug_text +
-                        = "\n\nNo files currently loaded.\nPlease load files on Setup tab first."
+                    debug_text += "\n\nNo files currently loaded.\nPlease load files on Setup tab first."
 
                 self.preview_ax.text(
                     0.5,

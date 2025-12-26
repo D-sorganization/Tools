@@ -95,7 +95,7 @@ class PhysicalProperties:
     axial_tilt: float  # degrees
     albedo: float  # geometric albedo
     temperature: float  # K (mean surface or cloud-top)
-    color: tuple  # RGB color for visualization (0-1 range)
+    color: tuple[float, float, float]  # RGB color for visualization (0-1 range)
 
 
 # Orbital elements from NASA JPL - Keplerian Elements for Approximate Positions

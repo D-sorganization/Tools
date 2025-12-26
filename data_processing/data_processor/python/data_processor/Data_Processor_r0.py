@@ -1929,7 +1929,7 @@ class CSVProcessorApp(ctk.CTk):
                 # Update progress
                 if hasattr(self, "status_label"):
                     self.status_label.configure(
-text=f"Reading file {i +
+                        text=f"Reading file {i +
                             1}/{total_files}: {os.path.basename(file_path)}",
                     )
                     if i % 5 == 0:  # Update every 5 files to prevent UI freezing
@@ -2188,12 +2188,12 @@ text=f"Reading file {i +
 
         for i, file_path in enumerate(self.input_file_paths):
             print(
-f"\n--- Processing file {i +
+                f"\n--- Processing file {i +
                     1}/{len(self.input_file_paths)}: {os.path.basename(file_path)} ---",
             )
             try:
                 self.status_label.configure(
-text=f"Processing file {i +
+                    text=f"Processing file {i +
                         1}/{len(self.input_file_paths)}: {os.path.basename(file_path)}",
                 )
                 self.update()
@@ -8309,8 +8309,10 @@ For additional support or feature requests, please refer to the
                     if len(available_files) > 3:
                         debug_text += f"\n... and {len(available_files)-3} more"
                 else:
-                    debug_text += ("\n\nNo files currently loaded.\n"
-                                 "Please load files on Setup tab first.")
+                    debug_text += (
+                        "\n\nNo files currently loaded.\n"
+                        "Please load files on Setup tab first."
+                    )
 
                 self.preview_ax.text(
                     0.5,

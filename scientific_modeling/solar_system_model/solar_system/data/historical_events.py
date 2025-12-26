@@ -476,13 +476,13 @@ def get_events_for_date(dt: datetime, window_days: int = 3) -> list[dict[str, An
     for event in SPACE_EVENTS:
         # Check if month and day match (within window)
         if event["month"] == dt.month:
-            day_diff = abs(event["day"] - dt.day)
+            day_diff = abs(int(event["day"]) - dt.day)
             if day_diff <= window_days:
                 matching_events.append(event)
 
         # Also check adjacent months if within window
         # Handle month wrapping (December <-> January)
-        month_diff = abs(event["month"] - dt.month)
+        month_diff = abs(int(event["month"]) - dt.month)
         is_adjacent = (month_diff == 1) or (
             month_diff == 11
         )  # 11 handles Dec->Jan or Jan->Dec
@@ -495,11 +495,11 @@ def get_events_for_date(dt: datetime, window_days: int = 3) -> list[dict[str, An
             ):
                 # Event is in next month
                 days_in_current = monthrange(dt.year, dt.month)[1]
-                day_diff = (days_in_current - dt.day) + event["day"]
+                day_diff = (days_in_current - dt.day) + int(event["day"])
             else:
                 # Event is in previous month
-                days_in_event_month = monthrange(dt.year, event["month"])[1]
-                day_diff = (days_in_event_month - event["day"]) + dt.day
+                days_in_event_month = monthrange(dt.year, int(event["month"]))[1]
+                day_diff = (days_in_event_month - int(event["day"])) + dt.day
 
             if day_diff <= window_days:
                 matching_events.append(event)

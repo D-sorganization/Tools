@@ -590,9 +590,9 @@ class FolderFixPro:
         ttk.Button(
             btn_frame, text="+ Add Folder", command=self._add_source_folder
         ).pack(side="left", padx=(0, PADDING_SMALL))
-        ttk.Button(
-            btn_frame, text="- Remove", command=self._remove_source_folder
-        ).pack(side="left", padx=(0, PADDING_SMALL))
+        ttk.Button(btn_frame, text="- Remove", command=self._remove_source_folder).pack(
+            side="left", padx=(0, PADDING_SMALL)
+        )
         ttk.Button(
             btn_frame, text="🗑️ Clear All", command=self._clear_source_folders
         ).pack(side="left")

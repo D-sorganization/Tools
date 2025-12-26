@@ -70,7 +70,7 @@ class PDFRenamerLauncher:
             text="v2.1 (Parallel Processing)",
             font=("Arial", 9),
             bg="#3498db",
-            fg="#ecf0f1"
+            fg="#ecf0f1",
         ).pack(side="right", padx=20)
 
         # Main Layout: Top (Controls) and Bottom (Logs)
@@ -104,11 +104,15 @@ class PDFRenamerLauncher:
         controls_frame.columnconfigure(1, weight=1)
 
         # Settings Group
-        settings_frame = tk.LabelFrame(controls_frame, text="Settings", bg="#f0f0f0", font=("Arial", 9, "bold"))
+        settings_frame = tk.LabelFrame(
+            controls_frame, text="Settings", bg="#f0f0f0", font=("Arial", 9, "bold")
+        )
         settings_frame.grid(row=1, column=0, columnspan=3, sticky="ew", pady=10, padx=5)
 
         # Naming Style
-        tk.Label(settings_frame, text="Naming Style:", bg="#f0f0f0").grid(row=0, column=0, sticky="w", padx=10, pady=5)
+        tk.Label(settings_frame, text="Naming Style:", bg="#f0f0f0").grid(
+            row=0, column=0, sticky="w", padx=10, pady=5
+        )
 
         styles = [
             ("Standard (Author - Title.pdf)", "standard"),
@@ -147,10 +151,14 @@ class PDFRenamerLauncher:
         progress_frame = tk.Frame(controls_frame, bg="#f0f0f0")
         progress_frame.grid(row=2, column=0, columnspan=3, sticky="ew", pady=10, padx=5)
 
-        self.progress = ttk.Progressbar(progress_frame, orient="horizontal", mode="determinate")
+        self.progress = ttk.Progressbar(
+            progress_frame, orient="horizontal", mode="determinate"
+        )
         self.progress.pack(fill="x", expand=True)
 
-        self.status_label = tk.Label(progress_frame, textvariable=self.status_var, bg="#f0f0f0", anchor="w")
+        self.status_label = tk.Label(
+            progress_frame, textvariable=self.status_var, bg="#f0f0f0", anchor="w"
+        )
         self.status_label.pack(fill="x", pady=(5, 0))
 
         # Run Button
@@ -171,7 +179,9 @@ class PDFRenamerLauncher:
         log_frame = tk.LabelFrame(main_pane, text="Execution Log", bg="#f0f0f0")
         main_pane.add(log_frame, stretch="always")
 
-        self.log_text = scrolledtext.ScrolledText(log_frame, font=("Consolas", 9), state="normal")
+        self.log_text = scrolledtext.ScrolledText(
+            log_frame, font=("Consolas", 9), state="normal"
+        )
         self.log_text.pack(fill="both", expand=True, padx=5, pady=5)
 
         # Tags for colored logs
@@ -187,19 +197,23 @@ class PDFRenamerLauncher:
 
     def log(self, message: str, level: str = "INFO"):
         """Thread-safe logging to the text widget."""
+
         def _log():
             self.log_text.insert(tk.END, f"[{level}] {message}\n", level)
             self.log_text.see(tk.END)
+
         self.root.after(0, _log)
 
     def update_status(self, message: str, progress: int = 0, total: int = 0):
         """Thread-safe status update."""
+
         def _update():
             self.status_var.set(message)
             if total > 0:
                 self.progress["value"] = (progress / total) * 100
             else:
                 self.progress["value"] = 0
+
         self.root.after(0, _update)
 
     def start_processing_thread(self):
@@ -226,7 +240,9 @@ class PDFRenamerLauncher:
             delete_dups = self.delete_dups_var.get()
 
             self.log(f"Starting processing in: {directory}")
-            self.log(f"Configuration: Style={style}, DryRun={dry_run}, DeleteDups={delete_dups}")
+            self.log(
+                f"Configuration: Style={style}, DryRun={dry_run}, DeleteDups={delete_dups}"
+            )
 
             # 1. Handle Duplicates
             self.update_status("Scanning for duplicates...", 0, 100)
@@ -240,7 +256,9 @@ class PDFRenamerLauncher:
                 self.log(f"Found {len(duplicates)} sets of duplicates.", "WARNING")
                 for _, paths in duplicates.items():
                     if delete_dups:
-                        sorted_paths = sorted(paths, key=lambda p: (len(str(p)), p.name))
+                        sorted_paths = sorted(
+                            paths, key=lambda p: (len(str(p)), p.name)
+                        )
                         keep = sorted_paths[0]
                         to_delete = sorted_paths[1:]
                         self.log(f"Keeping: {keep.name}", "SUCCESS")
@@ -255,7 +273,10 @@ class PDFRenamerLauncher:
                                 except Exception as e:
                                     self.log(f"Failed to delete {p.name}: {e}", "ERROR")
                     else:
-                         self.log(f"Duplicate set: {[p.name for p in paths]} (Use 'Delete Duplicates' to fix)", "WARNING")
+                        self.log(
+                            f"Duplicate set: {[p.name for p in paths]} (Use 'Delete Duplicates' to fix)",
+                            "WARNING",
+                        )
             else:
                 self.log("No duplicates found.", "SUCCESS")
 
@@ -308,11 +329,17 @@ class PDFRenamerLauncher:
                     except Exception as e:
                         self.log(f"Executor failed for {file_path.name}: {e}", "ERROR")
 
-                    self.update_status(f"Processed {processed_count}/{total_files} files", processed_count, total_files)
+                    self.update_status(
+                        f"Processed {processed_count}/{total_files} files",
+                        processed_count,
+                        total_files,
+                    )
 
             self.log("Processing complete!", "SUCCESS")
             self.update_status("Done", 100, 100)
-            messagebox.showinfo("Complete", f"Processed {total_files} files successfully.")
+            messagebox.showinfo(
+                "Complete", f"Processed {total_files} files successfully."
+            )
 
         except Exception as e:
             self.log(f"Critical Error: {e}", "ERROR")
@@ -322,8 +349,10 @@ class PDFRenamerLauncher:
 
     def finish_processing(self):
         self.is_running = False
+
         def _reset():
             self.run_btn.config(state="normal", text="Start Renaming")
+
         self.root.after(0, _reset)
 
     def run(self):
@@ -331,5 +360,5 @@ class PDFRenamerLauncher:
 
 
 if __name__ == "__main__":
-    multiprocessing.freeze_support() # Required for Windows PyInstaller/ProcessPool
+    multiprocessing.freeze_support()  # Required for Windows PyInstaller/ProcessPool
     PDFRenamerLauncher().run()
