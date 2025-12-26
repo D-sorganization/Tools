@@ -265,7 +265,7 @@ class PackageManifest:
     def set_metadata(
         self,
         key: str,
-        value: str | float | bool | None | list[Any] | dict[str, Any],  # noqa: FBT001
+        value: str | float | bool | None | list[Any] | dict[str, Any],
     ) -> None:
         """Set metadata value."""
         self.metadata[key] = value

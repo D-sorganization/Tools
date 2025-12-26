@@ -8365,7 +8365,7 @@ For additional support or feature requests, please refer to the application docu
                                 f"{plot_df[time_col].dt.date.iloc[0]} {start_time}",
                             )
                             plot_df = plot_df[plot_df[time_col] >= start_datetime]
-                        except:
+                        except Exception:
                             pass
                     if end_time:
                         try:
@@ -8373,7 +8373,7 @@ For additional support or feature requests, please refer to the application docu
                                 f"{plot_df[time_col].dt.date.iloc[0]} {end_time}",
                             )
                             plot_df = plot_df[plot_df[time_col] <= end_datetime]
-                        except:
+                        except Exception:
                             pass
 
             # Plot all available signals
@@ -8602,7 +8602,7 @@ For additional support or feature requests, please refer to the application docu
                     int(-1 * (event.delta / 120)),
                     "units",
                 )
-            except:
+            except Exception:
                 # Fallback for different systems
                 frame._parent_canvas.yview_scroll(int(-1 * event.delta), "units")
 
@@ -8744,7 +8744,10 @@ For additional support or feature requests, please refer to the application docu
                     existing_files.append(f"{custom_name}{ext}")
 
             if existing_files:
-                warning_text = f"⚠️ Warning: Will overwrite existing files: {', '.join(existing_files)}"
+                warning_text = (
+                    "⚠️ Warning: Will overwrite existing files: "
+                    f"{', '.join(existing_files)}"
+                )
                 self.overwrite_warning_label.configure(
                     text=warning_text,
                     text_color="orange",
