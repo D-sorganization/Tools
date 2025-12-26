@@ -6105,9 +6105,9 @@ COMMON MISTAKES TO AVOID:
             else:
                 missing_signals.append(saved_signal)
 
-        print(
-            f"DEBUG: Present signals: {len(present_signals)}, "
-            f"Missing signals: {len(missing_signals)}",
+        logger.debug(
+            f"Present signals: {len(present_signals)}, "
+            f"Missing signals: {len(missing_signals)}"
         )
 
         # Apply the saved signals (select present ones, deselect others)

@@ -2190,9 +2190,9 @@ class CSVProcessorApp(ctk.CTk):
         print(f"\nStarting processing of {len(self.input_file_paths)} files...")
 
         for i, file_path in enumerate(self.input_file_paths):
-            print(
-                f"\n--- Processing file {i + 1}/{len(self.input_file_paths)}: "
-                f"{os.path.basename(file_path)} ---",
+            logger.info(
+                f"Processing file {i + 1}/{len(self.input_file_paths)}: "
+                f"{os.path.basename(file_path)}"
             )
             try:
                 self.status_label.configure(
@@ -6106,10 +6106,10 @@ COMMON MISTAKES TO AVOID:
         """Internal method to apply loaded signals without showing message boxes."""
         print("DEBUG: _apply_loaded_signals_internal() called")
         if not self.saved_signal_list or not self.signal_vars:
-            print(
-                f"DEBUG: Early return - saved_signal_list: "
+            logger.debug(
+                f"Early return - saved_signal_list: "
                 f"{bool(self.saved_signal_list)}, "
-                f"signal_vars: {bool(self.signal_vars)}",
+                f"signal_vars: {bool(self.signal_vars)}"
             )
             return
 
@@ -6128,9 +6128,9 @@ COMMON MISTAKES TO AVOID:
             else:
                 missing_signals.append(saved_signal)
 
-        print(
-            f"DEBUG: Present signals: {len(present_signals)}, "
-            f"Missing signals: {len(missing_signals)}",
+        logger.debug(
+            f"Present signals: {len(present_signals)}, "
+            f"Missing signals: {len(missing_signals)}"
         )
 
         # Apply the saved signals (select present ones, deselect others)
