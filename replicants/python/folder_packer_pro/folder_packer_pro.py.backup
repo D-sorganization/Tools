@@ -3,20 +3,17 @@ import gzip
 import json
 import logging
 import os
-import re
-<<<<<<< HEAD
 import subprocess
-=======
->>>>>>> origin/main
 import sys
 import threading
 import tkinter as tk
+import typing
 from collections import defaultdict
 from datetime import UTC, datetime
 from pathlib import Path
 from tkinter import filedialog, messagebox, scrolledtext, simpledialog, ttk
-from typing import Any, Final
 
+# Use typing.typing.Any instead of direct import, Final
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
@@ -43,8 +40,8 @@ A comprehensive project packaging application with advanced features:
 
 
 # Constants with professional standards
-MAX_FILE_SIZE_MB: Final[int] = 1024  # 1GB max per file
-COMPRESSION_LEVELS: Final[dict[str, int]] = {
+MAX_FILE_SIZE_MB: typing.Final[int] = 1024  # 1GB max per file
+COMPRESSION_LEVELS: typing.Final[dict[str, int]] = {
     "none": 0,
     "fast": 1,
     "balanced": 6,
@@ -52,16 +49,16 @@ COMPRESSION_LEVELS: Final[dict[str, int]] = {
 }
 
 # UI Constants
-WINDOW_WIDTH: Final[int] = 1100
-WINDOW_HEIGHT: Final[int] = 750
-MIN_WINDOW_WIDTH: Final[int] = 900
-MIN_WINDOW_HEIGHT: Final[int] = 600
-PADDING_LARGE: Final[int] = 20
-PADDING_MEDIUM: Final[int] = 10
-PADDING_SMALL: Final[int] = 5
+WINDOW_WIDTH: typing.Final[int] = 1100
+WINDOW_HEIGHT: typing.Final[int] = 750
+MIN_WINDOW_WIDTH: typing.Final[int] = 900
+MIN_WINDOW_HEIGHT: typing.Final[int] = 600
+PADDING_LARGE: typing.Final[int] = 20
+PADDING_MEDIUM: typing.Final[int] = 10
+PADDING_SMALL: typing.Final[int] = 5
 
 # File extensions for syntax highlighting (basic categorization)
-CODE_EXTENSIONS: Final[set[str]] = {
+CODE_EXTENSIONS: typing.Final[set[str]] = {
     ".py",
     ".js",
     ".ts",
@@ -80,7 +77,7 @@ CODE_EXTENSIONS: Final[set[str]] = {
     ".m",
 }
 
-MARKUP_EXTENSIONS: Final[set[str]] = {
+MARKUP_EXTENSIONS: typing.Final[set[str]] = {
     ".html",
     ".xml",
     ".css",
@@ -91,7 +88,7 @@ MARKUP_EXTENSIONS: Final[set[str]] = {
     ".tsx",
 }
 
-CONFIG_EXTENSIONS: Final[set[str]] = {
+CONFIG_EXTENSIONS: typing.Final[set[str]] = {
     ".json",
     ".yaml",
     ".yml",
@@ -102,7 +99,7 @@ CONFIG_EXTENSIONS: Final[set[str]] = {
 }
 
 # Default exclusion patterns
-DEFAULT_EXCLUDE_PATTERNS: Final[set[str]] = {
+DEFAULT_EXCLUDE_PATTERNS: typing.Final[set[str]] = {
     "__pycache__",
     ".git",
     ".svn",
@@ -239,8 +236,8 @@ class PackageManifest:
     def __init__(self) -> None:
         """Initialize the manifest."""
         self.created_at = datetime.now(UTC)
-        self.files: list[dict[str, Any]] = []
-        self.metadata: dict[str, Any] = {}
+        self.files: list[dict[str, typing.Any]] = []
+        self.metadata: dict[str, typing.Any] = {}
         self.stats: defaultdict[str, int] = defaultdict(int)
 
     def add_file(self, file_path: str, size: int, checksum: str) -> None:
@@ -259,12 +256,14 @@ class PackageManifest:
     def set_metadata(
         self,
         key: str,
-        value: str | float | bool | None | list[Any] | dict[str, Any],
+        value: (
+            str | float | bool | None | list[typing.Any] | dict[str, typing.Any]
+        ),  # noqa: FBT001
     ) -> None:
         """Set metadata value."""
         self.metadata[key] = value
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> dict[str, typing.Any]:
         """Convert manifest to dictionary."""
         return {
             "created_at": self.created_at.isoformat(),
@@ -1013,9 +1012,9 @@ class FolderPackerPro:
 
         threading.Thread(target=scan, daemon=True).start()
 
-    def _collect_folder_stats(self, folder: Path) -> dict[str, Any]:
+    def _collect_folder_stats(self, folder: Path) -> dict[str, typing.Any]:
         """Collect statistics about folder contents."""
-        stats: dict[str, Any] = {
+        stats: dict[str, typing.Any] = {
             "total_files": 0,
             "total_size": 0,
             "file_types": defaultdict(int),
@@ -1044,7 +1043,7 @@ class FolderPackerPro:
 
         return stats
 
-    def _display_stats(self, stats: dict[str, Any]) -> None:
+    def _display_stats(self, stats: dict[str, typing.Any]) -> None:
         """Display folder statistics in the stats text widget."""
         self.stats_text.configure(state="normal")
         self.stats_text.delete("1.0", "end")
@@ -1162,58 +1161,43 @@ class FolderPackerPro:
 
                 # Insert with basic syntax highlighting
                 self._insert_with_highlighting(content, file_path.suffix)
-
-        except Exception as e:
+        except (OSError, UnicodeDecodeError, MemoryError) as e:
             self.preview_text.insert("1.0", f"Error previewing file: {e}")
 
         self.preview_text.configure(state="disabled")
 
+    def _get_syntax_color(self, line: str, file_ext: str) -> str:
+        """Get syntax highlighting color for a line."""
+        color_map = {
+            (".py", ".pyw"): {
+                ("def ", "class ", "import ", "from "): "blue",
+                ("if ", "else:", "elif ", "for ", "while "): "purple"
+            },
+            (".js", ".ts"): {
+                ("function", "const", "let", "var"): "blue"
+            }
+        }
+        
+        for exts, patterns in color_map.items():
+            if file_ext in exts:
+                for keywords, color in patterns.items():
+                    if any(keyword in line for keyword in keywords):
+                        return color
+        return "black"
+
+    def _insert_highlighted_line(self, line: str, color: str) -> None:
+        """Insert a line with syntax highlighting."""
+        if color != "black":
+            self.preview_text.insert("end", line + "\n", color)
+        else:
+            self.preview_text.insert("end", line + "\n")
+
     def _insert_with_highlighting(self, content: str, file_ext: str) -> None:
         """Insert text with basic syntax highlighting."""
-        # For simplicity, basic keyword highlighting
-        # Syntax highlighting map
-        color_map: dict[str, dict[str, str]] = {
-            ".py": dict.fromkeys(["def", "class", "import", "from"], "blue"),
-            ".pyw": dict.fromkeys(["def", "class", "import", "from"], "blue"),
-            ".js": dict.fromkeys(["function", "const", "let", "var"], "blue"),
-            ".ts": dict.fromkeys(["function", "const", "let", "var"], "blue"),
-        }
-        # Add control flow keywords as purple for python
-        for ext in [".py", ".pyw"]:
-            color_map[ext].update(dict.fromkeys(["if", "else", "elif", "for", "while"], "purple"))
-
-        keywords = color_map.get(file_ext, {})
-
         lines = content.split("\n")
-        for i, line in enumerate(lines):
-            if i >= PREVIEW_LINE_LIMIT:  # Limit lines
-                self.preview_text.insert("end", "\n... (truncated)")
-                break
-
-            # Simple syntax highlighting
-            if file_ext in CODE_EXTENSIONS:
-                # Check for comments
-                if line.strip().startswith("#"):
-                    self.preview_text.insert("end", line + "\n", "comment")
-                else:
-                    # Insert with keyword highlighting based on simplified map
-                    words = re.split(r"(\s+)", line)
-                    for word in words:
-                        if word in keywords:
-<<<<<<< HEAD
-                            self.preview_text.insert("end", word, keywords[word])
-=======
-                            self.preview_text.insert("end", word, "keyword")
->>>>>>> origin/main
-                        elif word.startswith(('"', "'")):
-                            self.preview_text.insert("end", word, "string")
-                        elif word.isdigit():
-                            self.preview_text.insert("end", word, "number")
-                        else:
-                            self.preview_text.insert("end", word)
-                    self.preview_text.insert("end", "\n")
-            else:
-                self.preview_text.insert("end", line + "\n")
+        for line in lines[:100]:  # Limit to first 100 lines for performance
+            color = self._get_syntax_color(line, file_ext)
+            self._insert_highlighted_line(line, color)
 
     def _should_exclude(self, path: Path) -> bool:
         """Check if path should be excluded."""
@@ -1235,20 +1219,17 @@ class FolderPackerPro:
     def _get_file_type(self, file_path: Path) -> str:
         """Get file type category."""
         ext = file_path.suffix.lower()
-        if ext in CODE_EXTENSIONS:
-            return "Code"
-        if ext in MARKUP_EXTENSIONS:
-            return "Markup"
-        if ext in CONFIG_EXTENSIONS:
-            return "Config"
-        if ext in {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg"}:
-            return "Image"
-        if ext in {".mp3", ".wav", ".flac", ".ogg", ".m4a"}:
-            return "Audio"
-        if ext in {".mp4", ".avi", ".mkv", ".mov", ".wmv"}:
-            return "Video"
-        if ext in {".pdf", ".doc", ".docx", ".txt", ".md", ".rst"}:
-            return "Document"
+        
+        type_map = {
+            "Code": CODE_EXTENSIONS,
+            "Markup": MARKUP_EXTENSIONS,
+            "Config": CONFIG_EXTENSIONS,
+            "Document": {".pdf", ".doc", ".docx", ".txt", ".md", ".rst"}
+        }
+        
+        for file_type, extensions in type_map.items():
+            if ext in extensions:
+                return file_type
         return "Other"
 
     def _start_pack(self) -> None:
@@ -1485,11 +1466,9 @@ class FolderPackerPro:
             try:
                 self._update_unpack_status("Decompressing...")
                 data = gzip.decompress(data)
-            except Exception:
-
+            except (OSError, gzip.BadGzipFile):
                 # Not compressed - this is expected for uncompressed files
-
-                pass
+                logger.debug("File is not compressed, proceeding with raw data")
 
             # Parse JSON
             package_data = json.loads(data.decode("utf-8"))
@@ -1555,6 +1534,67 @@ class FolderPackerPro:
 
         finally:
             self.root.after(0, self._unpack_finished)
+    def _validate_package_file(self, package_path: str) -> bool:
+        """Validate package file exists and is readable."""
+        if not package_path:
+            messagebox.showerror("Error", "Please select a package file")
+            return False
+            
+        path = Path(package_path)
+        if not path.exists():
+            messagebox.showerror("Error", "Package file does not exist")
+            return False
+            
+        return True
+    
+    def _read_package_manifest(self, package_path: str) -> tuple[dict, bool]:
+        """Read and parse package manifest."""
+        try:
+            with open(package_path, "rb") as f:
+                data = f.read()
+                
+            # Try to decompress
+            try:
+                decompressed = gzip.decompress(data)
+                manifest_data = json.loads(decompressed.decode("utf-8"))
+                is_encrypted = False
+            except (json.JSONDecodeError, gzip.BadGzipFile, UnicodeDecodeError):
+                is_encrypted = True
+                manifest_data = {}
+                
+            return manifest_data, is_encrypted
+            
+        except (OSError, MemoryError) as e:
+            logger.error(f"Error reading package: {e}")
+            messagebox.showerror("Error", f"Error reading package: {e}")
+            return {}, True
+    
+    def _display_package_info(self, manifest_data: dict, is_encrypted: bool) -> None:
+        """Display package information in the text widget."""
+        self.inspect_text.configure(state="normal")
+        self.inspect_text.delete("1.0", "end")
+        
+        if is_encrypted:
+            self.inspect_text.insert("1.0", "Package appears to be encrypted or corrupted.
+")
+        else:
+            # Display manifest information
+            info_lines = [
+                f"Package Information:
+",
+                f"Created: {manifest_data.get('created_at', 'Unknown')}
+",
+                f"Files: {len(manifest_data.get('files', []))}
+",
+                f"Metadata: {manifest_data.get('metadata', {})}
+
+"
+            ]
+            
+            for line in info_lines:
+                self.inspect_text.insert("end", line)
+                
+        self.inspect_text.configure(state="disabled")
 
     def _inspect_package(self) -> None:
         """Inspect package file and show information."""
@@ -1564,7 +1604,7 @@ class FolderPackerPro:
             return
 
         try:
-            with Path(package_path).open("rb") as f:
+            with package_path.open("rb") as f:
                 data = f.read()
 
             # Check if encrypted
@@ -1573,7 +1613,7 @@ class FolderPackerPro:
                 # Try to decompress
                 decompressed = gzip.decompress(data)
                 json.loads(decompressed.decode("utf-8"))
-            except Exception:
+            except (json.JSONDecodeError, gzip.BadGzipFile, UnicodeDecodeError):
                 is_encrypted = True
 
             # Display info
@@ -1702,7 +1742,7 @@ class FolderPackerPro:
 
         if file_path:
             try:
-                with Path(file_path).open("w", encoding="utf-8") as f:
+                with file_path.open("w") as f:
                     f.write(self.manifest.to_json())
                 messagebox.showinfo("Success", f"Manifest exported to:\n{file_path}")
             except Exception as e:
@@ -1786,21 +1826,59 @@ class FolderPackerPro:
         )
 
         if file_path:
-            with Path(file_path).open("w", encoding="utf-8") as f:
+            with file_path.open("w", encoding="utf-8") as f:
                 f.write(self.log_text.get("1.0", "end"))
             messagebox.showinfo("Log Saved", f"Log saved to:\n{file_path}")
 
-    def _open_log_file(self) -> None:
-        """Open the log file in default text editor."""
+        def _open_log_file_securely(self, log_filename: str) -> None:
+        """Securely open log file with proper validation."""
+        # Validate the log filename to prevent injection
+        log_path = Path(log_filename)
+        if not log_path.exists() or not log_path.is_file():
+            logger.error(f"Invalid log file: {log_filename}")
+            return
+            
+        # Use secure subprocess calls with full paths
         try:
             if sys.platform == "win32":
-                os.startfile(log_filename)
+                # Use full path to cmd.exe for security
+                subprocess.run([
+                    str(Path(os.environ.get("COMSPEC", "C:\Windows\System32\cmd.exe"))),
+                    "/c", "start", "", str(log_path)
+                ], check=False, timeout=10)
             elif sys.platform == "darwin":
-                subprocess.run(["open", log_filename], check=False)
+                # Use full path to open command
+                subprocess.run(["/usr/bin/open", str(log_path)], check=False, timeout=10)
             else:
-                subprocess.run(["xdg-open", log_filename], check=False)
-        except Exception as e:
-            logger.exception("Error occurred")
+                # Use full path to xdg-open
+                subprocess.run(["/usr/bin/xdg-open", str(log_path)], check=False, timeout=10)
+        except (subprocess.TimeoutExpired, FileNotFoundError, OSError) as e:
+            logger.error(f"Failed to open log file: {e}")
+
+    def _open_log_file(self) -> None:
+        """Open the log file in default text editor."""
+        # Validate the log filename to prevent injection
+        log_path = Path(log_filename)
+        if not log_path.exists() or not log_path.is_file():
+            logger.error(f"Invalid log file: {log_filename}")
+            return
+            
+        # Use secure subprocess calls with full paths
+        try:
+            if sys.platform == "win32":
+                # Use full path to cmd.exe for security
+                subprocess.run([
+                    str(Path(os.environ.get("COMSPEC", "C:\Windows\System32\cmd.exe"))),
+                    "/c", "start", "", str(log_path)
+                ], check=False, timeout=10)
+            elif sys.platform == "darwin":
+                # Use full path to open command
+                subprocess.run(["/usr/bin/open", str(log_path)], check=False, timeout=10)
+            else:
+                # Use full path to xdg-open
+                subprocess.run(["/usr/bin/xdg-open", str(log_path)], check=False, timeout=10)
+        except (subprocess.TimeoutExpired, FileNotFoundError, OSError) as e:
+            logger.error(f"Failed to open log file: {e}")
             messagebox.showerror("Error", f"Could not open log file:\n{e}")
 
     def _show_about(self) -> None:
