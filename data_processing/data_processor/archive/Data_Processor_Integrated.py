@@ -2092,7 +2092,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                     if self.folder_cancel_flag:
                         break
 
-                    files_by_base_name = {}
+                    files_by_base_name: dict[str, list[str]] = {}
                     for filename in files:
                         match = pattern.match(filename)
                         if match:
@@ -2177,8 +2177,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
             processed_files = 0
             total_size = 0
-            file_types = defaultdict(int)
-            size_by_type = defaultdict(int)
+            file_types: dict[str, int] = defaultdict(int)
+            size_by_type: dict[str, int] = defaultdict(int)
             largest_files = []
 
             report_lines = [
@@ -2497,7 +2497,7 @@ class ColumnSelectionDialog(ctk.CTkToplevel):
         self.grab_set()
 
         self.columns = columns
-        self.result = None
+        self.result: list[str] | None = None
 
         self.setup_ui()
 
