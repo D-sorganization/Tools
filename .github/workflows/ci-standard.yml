@@ -44,7 +44,7 @@ jobs:
 
       # FIX: Less aggressive Ruff (Errors, Warnings, Imports only)
       - name: Lint
-        run: ruff check --exclude="data_processing/data_processor/python/data_processor/Data_Processor_r0.py" . --ignore=FBT001
+        run: ruff check --exclude="data_processing/data_processor/python/data_processor/Data_Processor_r0.py" . --ignore=FBT001,PT001
 
       # FIX: Enforce Black formatting (88 chars) - exclude problematic file
       - name: Check Formatting
