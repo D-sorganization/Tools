@@ -2649,7 +2649,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return None
 
-    def _export_processed_files(self, processed_files: List[pd.DataFrame]) -> None:
+    def _export_processed_files(self, processed_files: List[Tuple[str, pd.DataFrame]]) -> None:
         """Export processed files based on selected format."""
         export_type = self.export_type_var.get()
 
@@ -2666,7 +2666,7 @@ class CSVProcessorApp(ctk.CTk):
         elif export_type == "MAT (Compiled)":
             self._export_mat_compiled(processed_files)
 
-    def _export_csv_separate(self, processed_files: List[pd.DataFrame]) -> None:
+    def _export_csv_separate(self, processed_files: List[Tuple[str, pd.DataFrame]]) -> None:
         """Export each file as a separate CSV."""
         print(f"_export_csv_separate called with {len(processed_files)} files")
         exported_count = 0
@@ -2700,7 +2700,7 @@ class CSVProcessorApp(ctk.CTk):
             print("Showing cancelled message")
             messagebox.showinfo("Export Cancelled", "No files were exported.")
 
-    def _export_csv_compiled(self, processed_files: List[pd.DataFrame]) -> None:
+    def _export_csv_compiled(self, processed_files: List[Tuple[str, pd.DataFrame]]) -> None:
         """Export all files as a single compiled CSV."""
         if not processed_files:
             return
@@ -2719,7 +2719,7 @@ class CSVProcessorApp(ctk.CTk):
             compiled_df.to_csv(final_path, index=False)
             messagebox.showinfo("Success", f"Exported compiled data to {final_path}")
 
-    def _export_excel_multisheet(self, processed_files: List[pd.DataFrame]) -> None:
+    def _export_excel_multisheet(self, processed_files: List[Tuple[str, pd.DataFrame]]) -> None:
         """Export all files to a single Excel file with multiple sheets."""
         output_path = os.path.join(self.output_directory, "processed_data.xlsx")
         final_path = self._check_file_overwrite(output_path)
@@ -2734,7 +2734,7 @@ class CSVProcessorApp(ctk.CTk):
 
         messagebox.showinfo("Success", f"Exported to Excel file: {final_path}")
 
-    def _export_excel_separate(self, processed_files: List[pd.DataFrame]) -> None:
+    def _export_excel_separate(self, processed_files: List[Tuple[str, pd.DataFrame]]) -> None:
         """Export each file as a separate Excel file."""
         exported_count = 0
         for file_path, df in processed_files:
@@ -2760,7 +2760,7 @@ class CSVProcessorApp(ctk.CTk):
         else:
             messagebox.showinfo("Cancelled", "No files were exported.")
 
-    def _export_mat_separate(self, processed_files: List[pd.DataFrame]) -> None:
+    def _export_mat_separate(self, processed_files: List[Tuple[str, pd.DataFrame]]) -> None:
         """Export each file as a separate MAT file."""
         exported_count = 0
         for file_path, df in processed_files:
@@ -2787,7 +2787,7 @@ class CSVProcessorApp(ctk.CTk):
         else:
             messagebox.showinfo("Cancelled", "No files were exported.")
 
-    def _export_mat_compiled(self, processed_files: List[pd.DataFrame]) -> None:
+    def _export_mat_compiled(self, processed_files: List[Tuple[str, pd.DataFrame]]) -> None:
         """Export all files as a single compiled MAT file."""
         if not processed_files:
             return
@@ -4109,12 +4109,12 @@ class CSVProcessorApp(ctk.CTk):
 
     def _create_splitter(
         self,
-        parent,
-        left_creator,
-        right_creator,
-        splitter_key,
-        default_left_width,
-    ):
+        parent: Any,
+        left_creator: Callable[[Any], None],
+        right_creator: Callable[[Any], Any],
+        splitter_key: str,
+        default_left_width: int,
+    ) -> Any:
         """Create a splitter with left and right panels."""
         splitter_frame = ctk.CTkFrame(parent)
         # Make the right panel expandable rather than the splitter handle
@@ -6201,7 +6201,7 @@ COMMON MISTAKES TO AVOID:
             text=f"Applied {len(present_signals)} signals from saved list",
         )
 
-    def _copy_plot_settings_to_processing(self):
+    def _copy_plot_settings_to_processing(self) -> None:
         """Copies filter settings from the plot tab to the main processing tab."""
         plot_filter = self.plot_filter_type.get()
         self.filter_type_var.set(plot_filter)
@@ -6270,7 +6270,7 @@ COMMON MISTAKES TO AVOID:
             "Filter settings from the plot tab have been applied to the main processing configuration.",
         )
 
-    def _export_chart_image(self):
+    def _export_chart_image(self) -> None:
         """Export the current chart as an image file."""
         if not hasattr(self, "plot_fig") or not self.plot_fig.get_axes():
             messagebox.showwarning(
@@ -6314,7 +6314,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to export chart:\n{e}")
 
-    def _export_chart_excel(self):
+    def _export_chart_excel(self) -> None:
         """Export the current plot data and chart to Excel."""
         selected_file = self.plot_file_menu.get()
 
@@ -6408,7 +6408,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to export chart data:\n{e}")
 
-    def _add_plot_to_list(self):
+    def _add_plot_to_list(self) -> None:
         """Add plot to the plots list."""
         plot_name = self.plot_name_entry.get().strip()
         plot_desc = self.plot_desc_entry.get().strip()
@@ -6441,7 +6441,7 @@ COMMON MISTAKES TO AVOID:
 
         messagebox.showinfo("Success", f"Plot '{plot_name}' added to list!")
 
-    def _update_selected_plot(self):
+    def _update_selected_plot(self) -> None:
         """Update selected plot in the list."""
         selection = self.plots_listbox.curselection()
         if not selection:
@@ -6475,7 +6475,7 @@ COMMON MISTAKES TO AVOID:
         self._save_plots_to_file()
         messagebox.showinfo("Success", "Plot configuration updated!")
 
-    def _clear_plot_form(self):
+    def _clear_plot_form(self) -> None:
         """Clear the plot form."""
         self.plot_name_entry.delete(0, tk.END)
         self.plot_desc_entry.delete(0, tk.END)
@@ -6487,7 +6487,7 @@ COMMON MISTAKES TO AVOID:
             for var in self.plots_signal_vars.values():
                 var.set(False)
 
-    def _on_plot_select(self, event):
+    def _on_plot_select(self, event: Any) -> None:
         """Handle plot selection in listbox."""
         selection = self.plots_listbox.curselection()
         if not selection:
@@ -6515,7 +6515,7 @@ COMMON MISTAKES TO AVOID:
             for signal, var in self.plots_signal_vars.items():
                 var.set(signal in saved_signals)
 
-    def _load_selected_plot(self):
+    def _load_selected_plot(self) -> None:
         """Load selected plot configuration."""
         selection = self.plots_listbox.curselection()
         if not selection:
@@ -6540,7 +6540,7 @@ COMMON MISTAKES TO AVOID:
             f"Plot configuration '{plot_config['name']}' loaded and applied to Plotting tab!",
         )
 
-    def _delete_selected_plot(self):
+    def _delete_selected_plot(self) -> None:
         """Delete selected plot from list."""
         selection = self.plots_listbox.curselection()
         if not selection:
@@ -6560,7 +6560,7 @@ COMMON MISTAKES TO AVOID:
             self._clear_plot_form()
             messagebox.showinfo("Success", f"Plot '{plot_name}' deleted.")
 
-    def _clear_all_plots(self):
+    def _clear_all_plots(self) -> None:
         """Clear all plots from list."""
         if self.plots_list and messagebox.askyesno(
             "Confirm Clear",
@@ -6572,14 +6572,14 @@ COMMON MISTAKES TO AVOID:
             self._clear_plot_form()
             messagebox.showinfo("Success", "All plots cleared.")
 
-    def _update_plots_listbox(self):
+    def _update_plots_listbox(self) -> None:
         """Update the plots listbox with current plots."""
         self.plots_listbox.delete(0, tk.END)
         for plot in self.plots_list:
             display_text = f"{plot['name']} ({len(plot.get('signals', []))} signals)"
             self.plots_listbox.insert(tk.END, display_text)
 
-    def _save_plots_to_file(self):
+    def _save_plots_to_file(self) -> None:
         """Save plots list to file."""
         try:
             plots_file = os.path.join(
@@ -6607,7 +6607,7 @@ COMMON MISTAKES TO AVOID:
             print(f"Error loading plots from file: {e}")
             self.plots_list = []
 
-    def _select_tag_file(self):
+    def _select_tag_file(self) -> None:
         """Select tag file for DAT import."""
         filepath = filedialog.askopenfilename(
             title="Select Tag File",
@@ -6617,7 +6617,7 @@ COMMON MISTAKES TO AVOID:
             self.dat_import_tag_file_path = filepath
             self.tag_file_label.configure(text=os.path.basename(filepath))
 
-    def _select_data_file(self):
+    def _select_data_file(self) -> None:
         """Select data file for DAT import."""
         filepath = filedialog.askopenfilename(
             title="Select Data File",
@@ -6634,7 +6634,7 @@ COMMON MISTAKES TO AVOID:
             if hasattr(self, "output_label"):
                 self.output_label.configure(text=f"Output: {self.output_directory}")
 
-    def _import_selected_tags(self):
+    def _import_selected_tags(self) -> None:
         """Import selected tags."""
         if not self.dat_import_data_file_path:
             messagebox.showerror("Error", "Please select a data file first.")
@@ -6676,7 +6676,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to import data: {e!s}")
 
-    def trim_and_save(self):
+    def trim_and_save(self) -> None:
         """Trim data and save."""
         if not self.input_file_paths:
             messagebox.showerror("Error", "Please select input files first.")
@@ -6737,7 +6737,7 @@ COMMON MISTAKES TO AVOID:
             f"Files trimmed and saved to {self.output_directory}",
         )
 
-    def _apply_plot_time_range(self):
+    def _apply_plot_time_range(self) -> None:
         """Apply time range to plot."""
         start_time_str = self.plotting_start_time_entry.get()
         end_time_str = self.plotting_end_time_entry.get()
@@ -6908,13 +6908,13 @@ COMMON MISTAKES TO AVOID:
                 f"Invalid time format. Please use HH:MM:SS.\n{e}",
             )
 
-    def _reset_plot_range(self):
+    def _reset_plot_range(self) -> None:
         """Reset plot range."""
         self.plotting_start_time_entry.delete(0, tk.END)
         self.plotting_end_time_entry.delete(0, tk.END)
         self.update_plot()
 
-    def _copy_trim_to_plot_range(self):
+    def _copy_trim_to_plot_range(self) -> None:
         """Copy trim times to plot range."""
         start_time = self.trim_start_entry.get()
         end_time = self.trim_end_entry.get()
@@ -6929,7 +6929,7 @@ COMMON MISTAKES TO AVOID:
 
         self._apply_plot_time_range()
 
-    def _copy_plot_range_to_trim(self):
+    def _copy_plot_range_to_trim(self) -> None:
         """Copy current plot x-axis range to time trimming fields."""
         try:
             # Check if plot exists and has data
@@ -6970,7 +6970,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to copy plot range: {e!s}")
 
-    def _save_current_plot_view(self):
+    def _save_current_plot_view(self) -> None:
         """Save the current plot view state."""
         try:
             if not hasattr(self, "plot_ax"):
@@ -6994,7 +6994,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to save plot view: {e!s}")
 
-    def _copy_current_view_to_processing(self):
+    def _copy_current_view_to_processing(self) -> None:
         """Copy current plot view range to processing tab time trimming."""
         try:
             # This is essentially the same as _copy_plot_range_to_trim but with a
@@ -7039,7 +7039,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to copy current view: {e!s}")
 
-    def _override_home_button(self):
+    def _override_home_button(self) -> None:
         """Override the matplotlib toolbar home button to use saved view."""
         if hasattr(self, "plot_toolbar") and self.saved_plot_view:
             # Store original home function
@@ -7047,7 +7047,7 @@ COMMON MISTAKES TO AVOID:
                 self._original_home = self.plot_toolbar.home
 
             # Create custom home function
-            def custom_home():
+            def custom_home() -> None:
                 try:
                     if self.saved_plot_view:
                         self.plot_ax.set_xlim(self.saved_plot_view["xlim"])
@@ -7063,7 +7063,7 @@ COMMON MISTAKES TO AVOID:
             # Replace the home function
             self.plot_toolbar.home = custom_home
 
-    def _refresh_legend_entries(self):
+    def _refresh_legend_entries(self) -> None:
         """Refresh legend entries based on currently selected signals."""
         # Clear existing legend widgets
         for widget in self.legend_frame.winfo_children():
@@ -7164,13 +7164,13 @@ COMMON MISTAKES TO AVOID:
                 lambda e, s=signal: self._on_legend_change(s, e.widget.get()),
             )
 
-    def _on_legend_change(self, signal, new_label):
+    def _on_legend_change(self, signal: str, new_label: str) -> None:
         """Handle changes to legend labels."""
         self.custom_legend_entries[signal] = new_label
         # Trigger immediate plot update
         self._on_plot_setting_change()
 
-    def _move_legend_up(self, signal):
+    def _move_legend_up(self, signal: str) -> None:
         """Move a signal up in the legend order."""
         if hasattr(self, "legend_order") and signal in self.legend_order:
             idx = self.legend_order.index(signal)
@@ -7182,7 +7182,7 @@ COMMON MISTAKES TO AVOID:
                 self._refresh_legend_entries()
                 self._on_plot_setting_change()
 
-    def _move_legend_down(self, signal):
+    def _move_legend_down(self, signal: str) -> None:
         """Move a signal down in the legend order."""
         if hasattr(self, "legend_order") and signal in self.legend_order:
             idx = self.legend_order.index(signal)
@@ -7525,7 +7525,7 @@ For additional support or feature requests, please refer to the application docu
         help_text.insert("1.0", help_content)
         help_text.configure(state="disabled")  # Make read-only
 
-    def _generate_unique_filename(self, base_path, extension):
+    def _generate_unique_filename(self, base_path: str, extension: str) -> str:
         """Generate a unique filename to prevent overwriting existing files."""
         directory = os.path.dirname(base_path)
         base_name = os.path.splitext(os.path.basename(base_path))[0]
