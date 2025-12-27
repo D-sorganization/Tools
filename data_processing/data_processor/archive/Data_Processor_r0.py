@@ -52,6 +52,8 @@ def process_single_csv_file(file_path: str, settings: Dict[str, Any]) -> Optiona
     """
     try:
         df = pd.read_csv(file_path, low_memory=False)
+    except Exception:
+        pass
 
         # Determine which signals to keep for this specific file
         signals_in_this_file = [
@@ -1567,6 +1569,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             try:
                 with open(file_path) as f:
                     loaded_vars = json.load(f)
+            except Exception:
+                pass
 
                 # Validate the loaded data
                 if not isinstance(loaded_vars, list):
@@ -1634,6 +1638,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
         try:
             # Make a copy to avoid modifying original
             df = df.copy()
+        except Exception:
+            pass
 
             # Convert time to numeric for integration
             if time_col in df.columns and pd.api.types.is_datetime64_any_dtype(
@@ -1729,6 +1735,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                             if np.sum(valid_mask) > order + 1:
                                 x_valid = time_numeric[valid_mask]
                                 y_valid = signal_data[valid_mask]
+                        except Exception:
+                            pass
 
                                 # Fit spline
                                 spline = UnivariateSpline(
@@ -1790,6 +1798,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                                 5,
                                 window_size - 1,
                             )  # Ensure polynomial order < window size
+                        except Exception:
+                            pass
 
                             if len(signal_data) > window_size:
                                 derivative = _poly_derivative(
@@ -1937,6 +1947,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                     )
                     if i % 5 == 0:  # Update every 5 files to prevent UI freezing
                         self.update()
+            except Exception:
+                pass
 
                 # Just read header for efficiency
                 df = pd.read_csv(file_path, nrows=1)
@@ -2185,7 +2197,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
         # Process files sequentially (simpler than parallel processing for debugging)
         processed_files = []
         error_count = 0
-            print(f"\nStarting processing of {len(self.input_file_paths)} files...")
+        print(f"\nStarting processing of {len(self.input_file_paths)} files...")
 
         for i, file_path in enumerate(self.input_file_paths):
             print(
@@ -2198,25 +2210,28 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                     f"{os.path.basename(file_path)}",
                 )
                 self.update()
+            except Exception:
+                pass
 
                 # Check if file exists
                 if not os.path.exists(file_path):
                     print(f"ERROR: File not found: {file_path}")
                     error_count += 1
                     continue
-            print(f"File exists, size: {os.path.getsize(file_path)} bytes")
+                
+                print(f"File exists, size: {os.path.getsize(file_path)} bytes")
 
                 # Process the file
                 processed_df = self._process_single_file(file_path, settings)
 
                 if processed_df is not None and not processed_df.empty:
                     print(f"SUCCESS: File processed. Shape: {processed_df.shape}")
-            print(f"Columns: {list(processed_df.columns)}")
+                    print(f"Columns: {list(processed_df.columns)}")
                     processed_files.append((file_path, processed_df))
                     # Store processed data for plotting
                     filename = os.path.basename(file_path)
                     self.processed_files[filename] = processed_df.copy()
-            print(f"Stored in processed_files cache as: {filename}")
+                    print(f"Stored in processed_files cache as: {filename}")
                 else:
                     print("ERROR: File processing returned None or empty DataFrame")
                     error_count += 1
@@ -2243,6 +2258,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
         try:
             self._export_processed_files(processed_files)
             print("Export completed successfully")
+        except Exception:
+            pass
 
             # Update status
             success_count = len(processed_files)
@@ -2278,6 +2295,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             df = pd.read_csv(file_path, low_memory=False)
             print(f"  Loaded DataFrame shape: {df.shape}")
             print(f"  Original columns: {list(df.columns)}")
+        except Exception:
+            pass
 
             # Determine which signals to keep for this specific file
             signals_in_this_file = [
@@ -2335,6 +2354,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                     # Get the date from the data if not specified
                     if not trim_date:
                         trim_date = processed_df[time_col].iloc[0].strftime("%Y-%m-%d")
+                except Exception:
+                    pass
             print(f"  Using date from data: {trim_date}")
 
                     # Create full datetime strings
@@ -2357,6 +2378,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                     if processed_df.empty:
                         print("  ERROR: Time trimming resulted in empty dataset")
                         return None
+                try:
+                    pass
                 except Exception as e:
                     print(f"  ERROR in time trimming: {e}")
             print("  Setting time column as index...")
@@ -2422,6 +2445,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
 
                         try:
                             signal_data = processed_df[col].ffill().bfill()
+                        except Exception:
+                            pass
 
                             # Apply Hampel filter
                             median_filtered = pd.Series(
@@ -2559,6 +2584,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             try:
                 formula = var["formula"]
                 name = var["name"]
+            except Exception:
+                pass
 
                 # Create a safe evaluation environment
                 safe_dict: Dict[str, Any] = {}
@@ -4068,6 +4095,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             # Get current window dimensions
             self.layout_data["window_width"] = self.winfo_width()
             self.layout_data["window_height"] = self.winfo_height()
+        except Exception:
+            pass
 
             # Save splitter positions
             for splitter_key, splitter in self.splitters.items():
@@ -4232,6 +4261,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 # Update x-axis options - use actual columns, not "default time"
                 x_axis_options = list(df.columns)
                 self.plot_xaxis_menu.configure(values=x_axis_options)
+        except Exception:
+            pass
 
                 # Set the first column as default x-axis (usually time)
                 if x_axis_options:
@@ -4358,6 +4389,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             show_both = self.show_both_signals_var.get()
             plot_filter = self.plot_filter_type.get()
             compare_filters = self.compare_filters_var.get()
+        except Exception:
+            pass
 
             # Chart customization
             plot_style = self.plot_type_var.get()
@@ -4411,6 +4444,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                         color = colors[i % len(colors)]
                     else:
                         color = self.custom_colors[i % len(self.custom_colors)]
+                except Exception:
+                    pass
 
                     # Plot with custom legend if available
                     label = self.custom_legend_entries.get(signal, signal)
@@ -4477,6 +4512,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             try:
                 trendline_signal = self.trendline_signal_var.get()
                 trendline_type = self.trendline_type_var.get()
+            except Exception:
+                pass
 
                 if trendline_signal != "None" and trendline_signal in signals_to_plot:
                     self._add_trendline(
@@ -4526,14 +4563,22 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 # Auto-fit to show all data
                 try:
                     self.plot_ax.autoscale_view()
+                except Exception:
+                    pass
             print(f"Auto-zoom applied ({zoom_reason}): fitting to all data")
+                try:
+                    pass
                 except Exception as e:
                     print(f"Warning: Could not auto-fit plot - {e}")
             elif zoom_state:
                 # Restore previous zoom state
                 try:
                     self._apply_zoom_state(zoom_state)
+                except Exception:
+                    pass
             print(f"Zoom state restored ({zoom_reason}): preserving user view")
+                try:
+                    pass
                 except Exception as e:
                     print(f"Warning: Could not apply zoom state - {e}")
 
@@ -4571,6 +4616,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             return True          except Exception as e:  # type: ignore
             print(f"ERROR: Canvas draw failed - {e}")
             return False
+        except Exception:
+            pass
 
     def enable_plot_debugging(self) -> None:
         """Enable verbose debugging for plot operations."""
@@ -4625,6 +4672,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
 
                 try:
                     from scipy.signal import butter, filtfilt
+                except Exception:
+                    pass
 
                     # Calculate sampling frequency from time data
                     if pd.api.types.is_datetime64_any_dtype(df[x_axis_col]):
@@ -4677,6 +4726,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
 
                 try:
                     from scipy.signal import medfilt
+                except Exception:
+                    pass
 
                     signal_data = df[signal].ffill().bfill()
 
@@ -4745,6 +4796,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
 
                 try:
                     from scipy.signal import savgol_filter
+                except Exception:
+                    pass
 
                     signal_data = (
                         df[signal].fillna(method="ffill").fillna(method="bfill")
@@ -4865,6 +4918,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 trend = np.poly1d(coeffs)
                 trendline = trend(x_numeric)
                 equation = f"y = {coeffs[0]:.4f}x + {coeffs[1]:.4f}"
+        except Exception:
+            pass
 
             elif trend_type == "Exponential":
                 # Log-linear fit for exponential
@@ -4953,6 +5008,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
 
             # Redraw the canvas
             self.plot_canvas.draw()  # type: ignore
+            try:
+                pass
             except Exception as e:              messagebox.showerror("Trendline Error", f"Error adding trendline: {e!s}")  # type: ignore
             print(f"Error adding trendline: {e}")
             import traceback
@@ -4965,6 +5022,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             # First check if it's in processed files
             if filename in self.processed_files:
                 return self.processed_files[filename]
+        except Exception:
+            pass
 
             # Find the full path of the file
             full_path = None
@@ -5350,6 +5409,8 @@ COMMON MISTAKES TO AVOID:
                 "output_directory": self.output_directory,
                 "saved_at": pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S"),
             }
+        except Exception:
+            pass
 
             # Ask user for save location
             file_path = filedialog.asksaveasfilename(
@@ -5374,6 +5435,8 @@ COMMON MISTAKES TO AVOID:
                 title="Load Configuration Settings",
                 filetypes=[("JSON Configuration", "*.json"), ("All files", "*.*")],
             )
+        except Exception:
+            pass
 
             if not file_path:
                 return
@@ -5520,6 +5583,8 @@ COMMON MISTAKES TO AVOID:
             config_window.title("Manage Saved Configurations")
             config_window.geometry("600x400")
             config_window.resizable(True, True)
+        except Exception:
+            pass
 
             # Make it modal
             config_window.transient(self)
@@ -5622,6 +5687,8 @@ COMMON MISTAKES TO AVOID:
         try:
             self.config_listbox.delete(0, tk.END)
             config_files = []
+        except Exception:
+            pass
 
             # Get the current directory and look for .json files
             current_dir = os.getcwd()
@@ -5696,6 +5763,8 @@ COMMON MISTAKES TO AVOID:
                     "Please select a configuration file to load.",
                 )
                 return
+        except Exception:
+            pass
 
             # Get the selected item
             selected_index = selection[0]
@@ -5737,6 +5806,8 @@ COMMON MISTAKES TO AVOID:
                     "Please select a configuration file to delete.",
                 )
                 return
+        except Exception:
+            pass
 
             # Get the selected item
             selected_index = selection[0]
@@ -5773,6 +5844,8 @@ COMMON MISTAKES TO AVOID:
                 os.startfile(current_dir)
             elif os.name == "posix":  # macOS and Linux
                 import subprocess
+        except Exception:
+            pass
 
                 subprocess.run(["open", current_dir], check=False)  # macOS
             else:
@@ -5833,6 +5906,8 @@ COMMON MISTAKES TO AVOID:
                         0,
                         fs.get("savgol_polyorder", "2"),
                     )
+        except Exception:
+            pass
 
             # Apply resample settings
             if "resample_settings" in settings:
@@ -5955,6 +6030,8 @@ COMMON MISTAKES TO AVOID:
                 filetypes=[("JSON files", "*.json"), ("All files", "*.*")],
                 initialfile=f"{signal_list_name}.json",
             )
+        except Exception:
+            pass
 
             if file_path:
                 with open(file_path, "w") as f:
@@ -5981,6 +6058,8 @@ COMMON MISTAKES TO AVOID:
                 filetypes=[("JSON files", "*.json"), ("All files", "*.*")],
             )
             logger.debug(f"DEBUG: \1")
+        except Exception:
+            pass
 
             if not file_path:
                 logger.debug("DEBUG: \1")
@@ -6233,6 +6312,8 @@ COMMON MISTAKES TO AVOID:
                 ("SVG files", "*.svg"),
                 ("JPEG files", "*.jpg"),
             ]
+        except Exception:
+            pass
 
             save_path = filedialog.asksaveasfilename(
                 title="Export Chart As Image",
@@ -6275,6 +6356,8 @@ COMMON MISTAKES TO AVOID:
                 filetypes=[("Excel files", "*.xlsx")],
                 defaultextension=".xlsx",
             )
+        except Exception:
+            pass
 
             if save_path:
                 # Check for overwrite and get final path
@@ -6587,6 +6670,8 @@ COMMON MISTAKES TO AVOID:
         try:
             # Load and process the DAT file with selected tags
             df = pd.read_csv(self.dat_import_data_file_path, sep="\t", low_memory=False)
+        except Exception:
+            pass
 
             # Filter to only selected tags
             if "Time" in df.columns:
@@ -6636,6 +6721,8 @@ COMMON MISTAKES TO AVOID:
             try:
                 df = pd.read_csv(file_path, low_memory=False)
                 time_col = df.columns[0]
+            except Exception:
+                pass
 
                 # Convert time column
                 df[time_col] = pd.to_datetime(df[time_col], errors="coerce")
@@ -6706,6 +6793,8 @@ COMMON MISTAKES TO AVOID:
         try:
             # Get the date from the data
             date_str = df[time_col].iloc[0].strftime("%Y-%m-%d")
+        except Exception:
+            pass
 
             # Create full datetime strings
             start_full_str = (
@@ -6839,6 +6928,8 @@ COMMON MISTAKES TO AVOID:
                 self.plot_ax.tick_params(axis="x", rotation=0)
 
             self.plot_canvas.draw()  # type: ignore
+            try:
+                pass
             except Exception as e:              messagebox.showerror(  # type: ignore
                 "Time Range Error",
                 f"Invalid time format. Please use HH:MM:SS.\n{e}",
@@ -6875,6 +6966,8 @@ COMMON MISTAKES TO AVOID:
                     "No plot data available. Please create a plot first.",
                 )
                 return
+        except Exception:
+            pass
 
             # Get current x-axis limits
             xlim = self.plot_ax.get_xlim()
@@ -6909,6 +7002,8 @@ COMMON MISTAKES TO AVOID:
             if not hasattr(self, "plot_ax"):
                 messagebox.showwarning("Warning", "No plot available.")
                 return
+        except Exception:
+            pass
 
             # Save current view limits
             self.saved_plot_view = {
@@ -6938,6 +7033,8 @@ COMMON MISTAKES TO AVOID:
                     "No plot data available. Please create a plot first.",
                 )
                 return
+        except Exception:
+            pass
 
             # Get current x-axis limits
             xlim = self.plot_ax.get_xlim()
@@ -6985,9 +7082,13 @@ COMMON MISTAKES TO AVOID:
                         self.plot_canvas.draw()  # type: ignore
             else:                            # type: ignore# Fall back to original home if no saved view
                         self._original_home()
+                try:
+                    pass
                 except Exception:
                     # Fall back to original home on any error
                     self._original_home()
+                except Exception:
+                    pass
 
             # Replace the home function
             self.plot_toolbar.home = custom_home
@@ -8057,6 +8158,8 @@ For additional support or feature requests, please refer to the application docu
         try:
             # Clear previous plot
             self.preview_ax.clear()
+        except Exception:
+            pass
 
             idx = selection[0]
             plot_config = self.plots_list[idx]
@@ -8239,6 +8342,8 @@ For additional support or feature requests, please refer to the application docu
                 import matplotlib.dates as mdates
 
                 self.preview_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))                  self.preview_ax.tick_params(axis="x", rotation=0)              self.preview_canvas.draw()  # type: ignore
+            try:
+                pass
             except Exception as e:    # type: ignore            self.preview_ax.clear()  # type: ignore
             self.preview_ax.text(
                 0.5,
@@ -8267,6 +8372,8 @@ For additional support or feature requests, please refer to the application docu
                 # Create a simple text file with plot configuration
                 filename = f"{plot_config['name'].replace(' ', '_')}_config.txt"
                 filepath = os.path.join(export_dir, filename)
+        except Exception:
+            pass
 
                 with open(filepath, "w") as f:
                     f.write(f"Plot Configuration: {plot_config['name']}\n")
@@ -8658,6 +8765,8 @@ For additional support or feature requests, please refer to the application docu
             try:
                 self.plot_ax.autoscale_view()
                 self.plot_canvas.draw()  # type: ignore
+            except Exception:
+                pass
             self.status_label.configure(text="Plot auto-fitted to data")              except Exception as e:  # type: ignore
             print(f"Error auto-fitting plot: {e}")
 
