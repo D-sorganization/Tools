@@ -12,6 +12,7 @@
 # =============================================================================
 
 import json
+import logging
 import os
 import tkinter as tk
 from tkinter import colorchooser, filedialog, messagebox, simpledialog
@@ -26,6 +27,10 @@ from matplotlib.figure import Figure
 from scipy.interpolate import UnivariateSpline
 from scipy.io import savemat
 from scipy.signal import butter, filtfilt, medfilt, savgol_filter
+
+# Set up logging per AGENTS.md guidelines
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 # =============================================================================
@@ -241,7 +246,7 @@ class CSVProcessorApp(ctk.CTk):
         self.integrator_signal_vars = {}
         self.deriv_signal_vars = {}
         self.derivative_vars = {}
-        for _ in range(1, 6):  # Support up to 5th order derivatives
+        for i in range(1, 6):  # Support up to 5th order derivatives
             self.derivative_vars[i] = tk.BooleanVar(value=False)
 
         # Plot view state management
@@ -289,7 +294,10 @@ class CSVProcessorApp(ctk.CTk):
         self._load_plots_from_file()
 
     def create_setup_and_process_tab(self, parent_tab):
-        """Fixed version with proper splitter implementation and all advanced features."""
+        """
+        Fixed version with proper splitter implementation and all advanced
+        features.
+        """
         parent_tab.grid_columnconfigure(0, weight=1)
         parent_tab.grid_rowconfigure(0, weight=1)
 
@@ -1015,7 +1023,7 @@ class CSVProcessorApp(ctk.CTk):
             font=ctk.CTkFont(weight="bold"),
         ).grid(row=0, column=0, columnspan=5, padx=10, pady=5, sticky="w")
 
-        for _ in range(1, 6):  # Support up to 5th order
+        for i in range(1, 6):  # Support up to 5th order
             var = tk.BooleanVar(value=False)
             cb = ctk.CTkCheckBox(deriv_order_frame, text=f"Order {i}", variable=var)
             cb.grid(row=1, column=i - 1, padx=10, pady=2, sticky="w")
@@ -1647,7 +1655,7 @@ class CSVProcessorApp(ctk.CTk):
                     if method == "Trapezoidal":
                         # Trapezoidal rule
                         cumulative = np.zeros(len(signal_data))
-                        for _ in range(1, len(signal_data)):
+                        for i in range(1, len(signal_data)):
                             if not np.isnan(signal_data.iloc[i]) and not np.isnan(
                                 signal_data.iloc[i - 1],
                             ):
@@ -1665,7 +1673,7 @@ class CSVProcessorApp(ctk.CTk):
                     else:  # Simpson's rule
                         # Simplified implementation
                         cumulative = np.zeros(len(signal_data))
-                        for _ in range(1, len(signal_data)):
+                        for i in range(1, len(signal_data)):
                             if not np.isnan(signal_data.iloc[i]) and not np.isnan(
                                 signal_data.iloc[i - 1],
                             ):
@@ -1692,7 +1700,7 @@ class CSVProcessorApp(ctk.CTk):
         signals_to_differentiate,
         method="Spline (Acausal)",
     ):
-        """Apply differentiation to selected signals with support for up to 5th order."""
+        """Apply differentiation to selected signals (max 5th order)."""
         if not signals_to_differentiate:
             return df
 
@@ -1769,7 +1777,8 @@ class CSVProcessorApp(ctk.CTk):
                                 df[f"{signal}_d{order}"] = np.nan
                         except Exception as e:
                             print(
-                                f"Error in spline differentiation for {signal}, order {order}: {e}",
+                                f"Error in spline differentiation for {signal}, "
+                                f"order {order}: {e}",
                             )
                             df[f"{signal}_d{order}"] = np.nan
 
@@ -1796,7 +1805,8 @@ class CSVProcessorApp(ctk.CTk):
                                 df[f"{signal}_d{order}"] = np.nan
                         except Exception as e:
                             print(
-                                f"Error in polynomial differentiation for {signal}, order {order}: {e}",
+                                f"Error in polynomial differentiation for {signal}, "
+                                f"order {order}: {e}",
                             )
                             df[f"{signal}_d{order}"] = np.nan
 
@@ -1923,8 +1933,10 @@ class CSVProcessorApp(ctk.CTk):
                 # Update progress
                 if hasattr(self, "status_label"):
                     self.status_label.configure(
-                        text=f"Reading file {i +
-                            1}/{total_files}: {os.path.basename(file_path)}",
+                        text=(
+                            f"Reading file {i+1}/{total_files}: "
+                            f"{os.path.basename(file_path)}"
+                        ),
                     )
                     if i % 5 == 0:  # Update every 5 files to prevent UI freezing
                         self.update()
@@ -1967,7 +1979,10 @@ class CSVProcessorApp(ctk.CTk):
                 self.plot_file_menu.set("Select a file...")
                 if hasattr(self, "status_label"):
                     self.status_label.configure(
-                        text=f"Ready - {len(self.input_file_paths)} files loaded. Go to Plotting tab to visualize.",
+                        text=(
+                            f"Ready - {len(self.input_file_paths)} files loaded. "
+                            "Go to Plotting tab to visualize."
+                        ),
                     )
 
         print("DEBUG: load_signals_from_files() completed")
@@ -2004,7 +2019,7 @@ class CSVProcessorApp(ctk.CTk):
                             try:
                                 df[col] = pd.to_datetime(df[col])
                                 break  # Only convert first time column found
-                            except:
+                            except Exception:
                                 pass
                     return True
                 except Exception as e:
@@ -2160,7 +2175,7 @@ class CSVProcessorApp(ctk.CTk):
         }
 
         print("\nProcessing settings:")
-        for key, _ in settings.items():
+        for key, value in settings.items():
             print(f"  {key}: {value}")
 
         # Check output directory
@@ -2180,14 +2195,16 @@ class CSVProcessorApp(ctk.CTk):
         print(f"\nStarting processing of {len(self.input_file_paths)} files...")
 
         for i, file_path in enumerate(self.input_file_paths):
-            print(
-                f"\n--- Processing file {i +
-                    1}/{len(self.input_file_paths)}: {os.path.basename(file_path)} ---",
+            logger.info(
+                f"Processing file {i + 1}/{len(self.input_file_paths)}: "
+                f"{os.path.basename(file_path)}"
             )
             try:
                 self.status_label.configure(
-                    text=f"Processing file {i +
-                        1}/{len(self.input_file_paths)}: {os.path.basename(file_path)}",
+                    text=(
+                        f"Processing file {i + 1}/{len(self.input_file_paths)}: "
+                        f"{os.path.basename(file_path)}"
+                    ),
                 )
                 self.update()
 
@@ -2244,7 +2261,10 @@ class CSVProcessorApp(ctk.CTk):
 
             if error_count > 0:
                 self.status_label.configure(
-                    text=f"Processing complete: {success_count}/{total_count} files processed successfully",
+                    text=(
+                        f"Processing complete: {success_count}/{total_count} "
+                        "files processed successfully"
+                    ),
                 )
                 messagebox.showwarning(
                     "Processing Complete",
@@ -2310,7 +2330,8 @@ class CSVProcessorApp(ctk.CTk):
                     )
                     after_numeric = processed_df[col].notna().sum()
                     print(
-                        f"  Column {col}: {before_numeric} -> {after_numeric} valid values",
+                        f"  Column {col}: {before_numeric} -> "
+                        f"{after_numeric} valid values",
                     )
 
             if processed_df.empty:
@@ -2324,7 +2345,8 @@ class CSVProcessorApp(ctk.CTk):
 
             if trim_date or trim_start or trim_end:
                 print(
-                    f"  Applying time trimming: date={trim_date}, start={trim_start}, end={trim_end}",
+                    f"  Applying time trimming: date={trim_date}, "
+                    f"start={trim_start}, end={trim_end}",
                 )
                 try:
                     # Get the date from the data if not specified
@@ -2536,7 +2558,8 @@ class CSVProcessorApp(ctk.CTk):
                 return None
 
             print(
-                f"  SUCCESS: Returning processed DataFrame with shape {processed_df.shape}",
+                f"  SUCCESS: Returning processed DataFrame with shape "
+                f"{processed_df.shape}",
             )
             return processed_df
 
@@ -4942,7 +4965,7 @@ class CSVProcessorApp(ctk.CTk):
                 trendline = trend(x_numeric)
                 # Build equation string
                 terms = []
-                for _ in range(order + 1):
+                for i in range(order + 1):
                     power = order - i
                     coeff = coeffs[i]
                     if power == 0:
@@ -4992,7 +5015,7 @@ class CSVProcessorApp(ctk.CTk):
             traceback.print_exc()
 
     def get_data_for_plotting(self, filename):
-        """Get data for plotting from the specified file - simplified baseline approach."""
+        """Get data for plotting from the specified file - simplified baseline."""
         try:
             # First check if it's in processed files
             if filename in self.processed_files:
@@ -5020,7 +5043,7 @@ class CSVProcessorApp(ctk.CTk):
                 if time_col and pd.api.types.is_object_dtype(df[time_col]):
                     try:
                         df[time_col] = pd.to_datetime(df[time_col])
-                    except:
+                    except Exception:
                         pass
 
                 return df
@@ -5689,7 +5712,7 @@ COMMON MISTAKES TO AVOID:
                                             "Plot Config",
                                         ),
                                     )
-                    except:
+                    except Exception:
                         # Skip files that can't be read as JSON or don't have the right
                         # structure
                         continue
@@ -5785,7 +5808,10 @@ COMMON MISTAKES TO AVOID:
             # Confirm deletion
             result = messagebox.askyesno(
                 "Confirm Delete",
-                f"Are you sure you want to delete this configuration file?\n\n{filename}\n\nThis action cannot be undone.",
+                (
+                    "Are you sure you want to delete this configuration file?\n\n"
+                    f"{filename}\n\nThis action cannot be undone."
+                ),
             )
             if result:
                 os.remove(filepath)
@@ -5998,10 +6024,14 @@ COMMON MISTAKES TO AVOID:
 
                 # No popup message - just update status bar for better user experience
                 self.status_label.configure(
-                    text=f"Signal list saved: {signal_list_name} ({len(selected_signals)} signals)",
+                    text=(
+                        f"Signal list saved: {signal_list_name} "
+                        f"({len(selected_signals)} signals)"
+                    ),
                 )
                 print(
-                    f"DEBUG: Signal list '{signal_list_name}' saved successfully with {len(selected_signals)} signals",
+                    f"DEBUG: Signal list '{signal_list_name}' saved successfully "
+                    f"with {len(selected_signals)} signals",
                 )
 
         except Exception as e:
@@ -6047,7 +6077,10 @@ COMMON MISTAKES TO AVOID:
             # Update status
             print("DEBUG: Updating status label")
             self.signal_list_status_label.configure(
-                text=f"Loaded: {self.saved_signal_list_name} ({len(self.saved_signal_list)} signals)",
+                text=(
+                    f"Loaded: {self.saved_signal_list_name} "
+                    f"({len(self.saved_signal_list)} signals)"
+                ),
                 text_color="green",
             )
 
@@ -6060,7 +6093,10 @@ COMMON MISTAKES TO AVOID:
             print("DEBUG: Signal list loaded successfully without popup")
             # No popup message - just update status bar for better user experience
             self.status_label.configure(
-                text=f"Signal list loaded: {self.saved_signal_list_name} ({len(self.saved_signal_list)} signals)",
+                text=(
+                    f"Signal list loaded: {self.saved_signal_list_name} "
+                    f"({len(self.saved_signal_list)} signals)"
+                ),
             )
             print("DEBUG: load_signal_list() completed successfully")
 
@@ -6075,8 +6111,10 @@ COMMON MISTAKES TO AVOID:
         """Internal method to apply loaded signals without showing message boxes."""
         print("DEBUG: _apply_loaded_signals_internal() called")
         if not self.saved_signal_list or not self.signal_vars:
-            print(
-                f"DEBUG: Early return - saved_signal_list: {bool(self.saved_signal_list)}, signal_vars: {bool(self.signal_vars)}",
+            logger.debug(
+                f"Early return - saved_signal_list: "
+                f"{bool(self.saved_signal_list)}, "
+                f"signal_vars: {bool(self.signal_vars)}"
             )
             return
 
@@ -6095,8 +6133,9 @@ COMMON MISTAKES TO AVOID:
             else:
                 missing_signals.append(saved_signal)
 
-        print(
-            f"DEBUG: Present signals: {len(present_signals)}, Missing signals: {len(missing_signals)}",
+        logger.debug(
+            f"Present signals: {len(present_signals)}, "
+            f"Missing signals: {len(missing_signals)}"
         )
 
         # Apply the saved signals (select present ones, deselect others)
@@ -6110,7 +6149,10 @@ COMMON MISTAKES TO AVOID:
         # Update status
         print("DEBUG: Updating status label")
         self.signal_list_status_label.configure(
-            text=f"Applied: {self.saved_signal_list_name} ({len(present_signals)}/{len(self.saved_signal_list)} signals)",
+            text=(
+                f"Applied: {self.saved_signal_list_name} "
+                f"({len(present_signals)}/{len(self.saved_signal_list)} signals)"
+            ),
             text_color="blue",
         )
         print("DEBUG: _apply_loaded_signals_internal() completed")
@@ -6156,13 +6198,15 @@ COMMON MISTAKES TO AVOID:
             missing_text = "\n".join([f"• {signal}" for signal in missing_signals])
             messagebox.showinfo(
                 "Signals Applied",
-                f"Applied {len(present_signals)} signals from '{self.saved_signal_list_name}'.\n\n"
+                f"Applied {len(present_signals)} signals from "
+                f"'{self.saved_signal_list_name}'.\n\n"
                 f"Missing signals ({len(missing_signals)}):\n{missing_text}",
             )
         else:
             messagebox.showinfo(
                 "Signals Applied",
-                f"Successfully applied all {len(present_signals)} signals from '{self.saved_signal_list_name}'.",
+                f"Successfully applied all {len(present_signals)} signals from "
+                f"'{self.saved_signal_list_name}'.",
             )
 
         # Update status
@@ -7325,7 +7369,8 @@ COMMON MISTAKES TO AVOID:
 # Advanced CSV Processor & DAT Importer - Help Guide
 
 ## Overview
-This application provides comprehensive tools for processing, analyzing, and visualizing time series data from CSV files and DAT files with DBF tag files.
+This application provides comprehensive tools for processing, analyzing, and \
+visualizing time series data from CSV files and DAT files with DBF tag files.
 
 ## New Features (Latest Update)
 
@@ -7504,7 +7549,8 @@ Use mathematical formulas with signal references:
 
 ## Support
 
-For additional support or feature requests, please refer to the application documentation or contact the development team.
+For additional support or feature requests, please refer to the application \
+documentation or contact the development team.
         """
 
         # Create help text widget
