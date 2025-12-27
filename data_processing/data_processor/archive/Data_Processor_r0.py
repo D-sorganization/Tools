@@ -103,35 +103,35 @@ def process_single_csv_file(file_path: str, settings: Dict[str, Any]) -> Optiona
                             signal_data.index.to_series().diff().dt.total_seconds(),
                         ).mean()
                     )
-                    if pd.notna(sr) and len(signal_data) > order * 3:
-                        btype = (
+        if pd.notna(sr) and len(signal_data) > order * 3:
+        btype = (
                             "low" if filter_type == "Butterworth Low-pass" else "high"
                         )
-                        b, a = butter(N=order, Wn=cutoff, btype=btype, fs=sr)
-                        processed_df[col] = pd.Series(
-                            filtfilt(b, a, signal_data),
-                            index=signal_data.index,
+        b, a = butter(N=order, Wn=cutoff, btype=btype, fs=sr)
+        processed_df[col] = pd.Series(
+        filtfilt(b, a, signal_data),
+        index=signal_data.index,
                         )
                 elif filter_type == "Median Filter":
-                    kernel = settings.get("median_kernel", 5)
-                    if kernel % 2 == 0:
-                        kernel += 1
-                    if len(signal_data) > kernel:
-                        processed_df[col] = pd.Series(
-                            medfilt(signal_data, kernel_size=kernel),
-                            index=signal_data.index,
+        kernel = settings.get("median_kernel", 5)
+        if kernel % 2 == 0:
+        kernel += 1
+        if len(signal_data) > kernel:
+        processed_df[col] = pd.Series(
+        medfilt(signal_data, kernel_size=kernel),
+        index=signal_data.index,
                         )
                 elif filter_type == "Savitzky-Golay":
-                    window = settings.get("savgol_window", 11)
-                    polyorder = settings.get("savgol_polyorder", 2)
-                    if window % 2 == 0:
-                        window += 1
-                    if polyorder >= window:
-                        polyorder = window - 1
-                    if len(signal_data) > window:
-                        processed_df[col] = pd.Series(
-                            savgol_filter(signal_data, window, polyorder),
-                            index=signal_data.index,
+        window = settings.get("savgol_window", 11)
+        polyorder = settings.get("savgol_polyorder", 2)
+        if window % 2 == 0:
+        window += 1
+        if polyorder >= window:
+        polyorder = window - 1
+        if len(signal_data) > window:
+        processed_df[col] = pd.Series(
+        savgol_filter(signal_data, window, polyorder),
+        index=signal_data.index,
                         )
 
         # Apply Resampling
@@ -139,7 +139,7 @@ def process_single_csv_file(file_path: str, settings: Dict[str, Any]) -> Optiona
             resample_rule = settings.get("resample_rule")
             if resample_rule:
                 processed_df = (
-                    processed_df.resample(resample_rule).mean().dropna(how="all")
+        processed_df.resample(resample_rule).mean().dropna(how="all")
                 )
 
         if processed_df.empty:
@@ -1550,12 +1550,12 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
         if file_path:
             try:
                 with open(file_path, "w") as f:
-                    json.dump(self.custom_vars_list, f, indent=2)
+        json.dump(self.custom_vars_list, f, indent=2)
                 messagebox.showinfo("Success", f"Custom variables saved to {file_path}")
             except Exception as e:
                 messagebox.showerror(
                     "Error",
-                    f"Failed to save custom variables: {e!s}",
+        f"Failed to save custom variables: {e!s}",
                 )
 
     def _load_custom_variables(self) -> None:
@@ -1568,60 +1568,59 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
         if file_path:
             try:
                 with open(file_path) as f:
-                    loaded_vars = json.load(f)
+        loaded_vars = json.load(f)
             except Exception:
                 pass
 
                 # Validate the loaded data
                 if not isinstance(loaded_vars, list):
-                    messagebox.showerror(
+        messagebox.showerror(
                         "Error",
                         "Invalid file format. Expected a list of variables.",
                     )
-                    return
+        return
 
                 # Check if variables have required fields
                 for var in loaded_vars:
-                    if (
-                        not isinstance(var, dict)
-                        or "name" not in var
-                        or "formula" not in var
+        if (
+        not isinstance(var, dict)
+        or "name" not in var
+        or "formula" not in var
                     ):
-                        messagebox.showerror(
+        messagebox.showerror(
                             "Error",
                             "Invalid variable format in file.",
                         )
-                        return
+        return
 
                 # Ask if user wants to append or replace
                 if self.custom_vars_list:
-                    response = messagebox.askyesnocancel(
+        response = messagebox.askyesnocancel(
                         "Load Variables",
-                        f"Found {len(loaded_vars)} variables in file.\n\n"
+        f"Found {len(loaded_vars)} variables in file.\n\n"
                         "• Yes: Add to existing variables\n"
                         "• No: Replace all existing variables\n"
                         "• Cancel: Cancel operation",
                     )
-
-                    if response is None:  # Cancel
-                        return
-                    if response:  # Yes - append
-                        self.custom_vars_list.extend(loaded_vars)
-                    else:  # No - replace
-                        self.custom_vars_list = loaded_vars.copy()
+        if response is None:  # Cancel
+        return
+        if response:  # Yes - append
+        self.custom_vars_list.extend(loaded_vars)
+        else:  # No - replace
+        self.custom_vars_list = loaded_vars.copy()
                 else:
-                    self.custom_vars_list = loaded_vars.copy()
+        self.custom_vars_list = loaded_vars.copy()
 
                 self._update_custom_vars_display()
                 messagebox.showinfo(
                     "Success",
-                    f"Loaded {len(loaded_vars)} custom variables from {file_path}",
+        f"Loaded {len(loaded_vars)} custom variables from {file_path}",
                 )
 
             except Exception as e:
                 messagebox.showerror(
                     "Error",
-                    f"Failed to load custom variables: {e!s}",
+        f"Failed to load custom variables: {e!s}",
                 )
 
     def _apply_integration(
@@ -1655,43 +1654,41 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
 
             for signal in signals_to_integrate:
                 if signal in df.columns and signal != time_col:
-                    signal_data = pd.to_numeric(df[signal], errors="coerce")
-
-                    if method == "Trapezoidal":
+        signal_data = pd.to_numeric(df[signal], errors="coerce")
+        if method == "Trapezoidal":
                         # Trapezoidal rule
-                        cumulative = np.zeros(len(signal_data))
-                        for i in range(1, len(signal_data)):
-                            if not np.isnan(signal_data.iloc[i]) and not np.isnan(
-                                signal_data.iloc[i - 1],
+        cumulative = np.zeros(len(signal_data))
+        for i in range(1, len(signal_data)):
+        if not np.isnan(signal_data.iloc[i]) and not np.isnan(
+        signal_data.iloc[i - 1],
                             ):
-                                cumulative[i] = (
-                                    cumulative[i - 1]
+        cumulative[i] = (
+        cumulative[i - 1]
                                     + 0.5
                                     * (signal_data.iloc[i] + signal_data.iloc[i - 1])
                                     * dt.iloc[i]
                                 )
-                            else:
-                                cumulative[i] = cumulative[i - 1]
-                    elif method == "Rectangular":
+        else:
+        cumulative[i] = cumulative[i - 1]
+        elif method == "Rectangular":
                         # Rectangular rule (left endpoint)
-                        cumulative = np.cumsum(signal_data.fillna(0).values * dt.values)
-                    else:  # Simpson's rule
+        cumulative = np.cumsum(signal_data.fillna(0).values * dt.values)
+        else:  # Simpson's rule
                         # Simplified implementation
-                        cumulative = np.zeros(len(signal_data))
-                        for i in range(1, len(signal_data)):
-                            if not np.isnan(signal_data.iloc[i]) and not np.isnan(
-                                signal_data.iloc[i - 1],
+        cumulative = np.zeros(len(signal_data))
+        for i in range(1, len(signal_data)):
+        if not np.isnan(signal_data.iloc[i]) and not np.isnan(
+        signal_data.iloc[i - 1],
                             ):
-                                cumulative[i] = (
-                                    cumulative[i - 1]
+        cumulative[i] = (
+        cumulative[i - 1]
                                     + 0.5
                                     * (signal_data.iloc[i] + signal_data.iloc[i - 1])
                                     * dt.iloc[i]
                                 )
-                            else:
-                                cumulative[i] = cumulative[i - 1]
-
-                    df[f"cumulative_{signal}"] = cumulative
+        else:
+        cumulative[i] = cumulative[i - 1]
+        df[f"cumulative_{signal}"] = cumulative
 
         except Exception as e:
             print(f"Error in integration: {e}")
@@ -1725,99 +1722,95 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 signal_data = pd.to_numeric(df[signal], errors="coerce")
 
                 for order in selected_orders:
-                    if method == "Spline (Acausal)":
+        if method == "Spline (Acausal)":
                         # Spline-based differentiation (acausal)
-                        try:
+        try:
                             # Remove NaN values for spline fitting
-                            valid_mask = ~(
-                                np.isnan(signal_data) | np.isnan(time_numeric)
+        valid_mask = ~(
+        np.isnan(signal_data) | np.isnan(time_numeric)
                             )
-                            if np.sum(valid_mask) > order + 1:
-                                x_valid = time_numeric[valid_mask]
-                                y_valid = signal_data[valid_mask]
-                        except Exception:
-                            pass
+        if np.sum(valid_mask) > order + 1:
+        x_valid = time_numeric[valid_mask]
+        y_valid = signal_data[valid_mask]
 
                                 # Fit spline
-                                spline = UnivariateSpline(
-                                    x_valid,
-                                    y_valid,
-                                    s=0,
-                                    k=min(5, len(y_valid) - 1),
+        spline = UnivariateSpline(
+        x_valid,
+        y_valid,
+        s=0,
+        k=min(5, len(y_valid) - 1),
                                 )
 
                                 # Calculate derivatives
-                                if order == 1:
-                                    derivative = spline.derivative()(time_numeric)
-                                elif order == 2:
-                                    derivative = spline.derivative().derivative()(
-                                        time_numeric,
+        if order == 1:
+        derivative = spline.derivative()(time_numeric)
+        elif order == 2:
+        derivative = spline.derivative().derivative()(
+        time_numeric,
                                     )
-                                elif order == 3:
-                                    derivative = (
-                                        spline.derivative()
+        elif order == 3:
+        derivative = (
+        spline.derivative()
                                         .derivative()
                                         .derivative()(time_numeric)
                                     )
-                                elif order == 4:
-                                    derivative = (
-                                        spline.derivative()
-                                        .derivative()
-                                        .derivative()
-                                        .derivative()(time_numeric)
-                                    )
-                                elif order == 5:
-                                    derivative = (
-                                        spline.derivative()
-                                        .derivative()
+        elif order == 4:
+        derivative = (
+        spline.derivative()
                                         .derivative()
                                         .derivative()
                                         .derivative()(time_numeric)
                                     )
-                                else:
-                                    continue
+        elif order == 5:
+        derivative = (
+        spline.derivative()
+                                        .derivative()
+                                        .derivative()
+                                        .derivative()
+                                        .derivative()(time_numeric)
+                                    )
+        else:
+        continue
 
                                 # Handle NaN values
-                                derivative[~valid_mask] = np.nan
-                                df[f"{signal}_d{order}"] = derivative
-                            else:
-                                df[f"{signal}_d{order}"] = np.nan
-                        except Exception as e:
-                            print(
-                                f"Error in spline differentiation for {signal}, "
-                                 f"order {order}: {e}",
+        derivative[~valid_mask] = np.nan
+        df[f"{signal}_d{order}"] = derivative
+        else:
+        df[f"{signal}_d{order}"] = np.nan
+        except Exception as e:
+        print(
+        f"Error in spline differentiation for {signal}, "
+        f"order {order}: {e}",
                             )
-                            df[f"{signal}_d{order}"] = np.nan
-
-                    elif method == "Rolling Polynomial (Causal)":
+        df[f"{signal}_d{order}"] = np.nan
+        elif method == "Rolling Polynomial (Causal)":
                         # Rolling polynomial differentiation (causal)
-                        try:
+        try:
                             # Use the helper function for causal differentiation
-                            window_size = 11  # Default window size
-                            poly_order = min(
-                                5,
-                                window_size - 1,
+        window_size = 11  # Default window size
+        poly_order = min(
+        5,
+        window_size - 1,
                             )  # Ensure polynomial order < window size
-                        except Exception:
-                            pass
-
-                            if len(signal_data) > window_size:
-                                derivative = _poly_derivative(
-                                    signal_data,
-                                    window_size,
-                                    poly_order,
-                                    order,
-                                    dt.mean(),
+        except Exception:
+        pass
+        if len(signal_data) > window_size:
+        derivative = _poly_derivative(
+        signal_data,
+        window_size,
+        poly_order,
+        order,
+        dt.mean(),
                                 )
-                                df[f"{signal}_d{order}"] = derivative
-                            else:
-                                df[f"{signal}_d{order}"] = np.nan
-                        except Exception as e:
-                            print(
-                                f"Error in polynomial differentiation for {signal}, "
-                                 f"order {order}: {e}",
+        df[f"{signal}_d{order}"] = derivative
+        else:
+        df[f"{signal}_d{order}"] = np.nan
+        except Exception as e:
+        print(
+        f"Error in polynomial differentiation for {signal}, "
+        f"order {order}: {e}",
                             )
-                            df[f"{signal}_d{order}"] = np.nan
+        df[f"{signal}_d{order}"] = np.nan
 
         return df
 
@@ -1841,8 +1834,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 logger.debug(f"DEBUG: \1")
                 # Update the output label to reflect the new default directory
                 if hasattr(self, "output_label"):
-                    self.output_label.configure(text=f"Output: {self.output_directory}")
-                    logger.debug("DEBUG: \1")
+        self.output_label.configure(text=f"Output: {self.output_directory}")
+        logger.debug("DEBUG: \1")
 
             logger.debug("DEBUG: \1")
             self.update_file_list()
@@ -1941,12 +1934,12 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             try:
                 # Update progress
                 if hasattr(self, "status_label"):
-                    self.status_label.configure(
-                        text=f"Reading file {i+1}/{total_files}: "
-                        f"{os.path.basename(file_path)}",
+        self.status_label.configure(
+        text=f"Reading file {i+1}/{total_files}: "
+        f"{os.path.basename(file_path)}",
                     )
-                    if i % 5 == 0:  # Update every 5 files to prevent UI freezing
-                        self.update()
+        if i % 5 == 0:  # Update every 5 files to prevent UI freezing
+        self.update()
             except Exception:
                 pass
 
@@ -1987,9 +1980,9 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 # For multiple files, user can select
                 self.plot_file_menu.set("Select a file...")
                 if hasattr(self, "status_label"):
-                    self.status_label.configure(
-                        text=f"Ready - {len(self.input_file_paths)} files loaded. "
-                        f"Go to Plotting tab to visualize.",
+        self.status_label.configure(
+        text=f"Ready - {len(self.input_file_paths)} files loaded. "
+        f"Go to Plotting tab to visualize.",
                     )
 
         logger.debug("DEBUG: \1")
@@ -2000,7 +1993,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             if hasattr(self, "plot_file_menu"):
                 current_selection = self.plot_file_menu.get()
                 if current_selection == filename:  # Only proceed if still selected
-                    self.on_plot_file_select(filename)
+        self.on_plot_file_select(filename)
         except Exception as e:
             print(f"Error in auto-select: {e}")
 
@@ -2011,27 +2004,27 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             full_path = None
             for file_path in self.input_file_paths:
                 if os.path.basename(file_path) == filename:
-                    full_path = file_path
-                    break
+        full_path = file_path
+        break
 
             if full_path and os.path.exists(full_path):
                 try:
-                    df = pd.read_csv(full_path, low_memory=False)
+        df = pd.read_csv(full_path, low_memory=False)
                     # Simple time column conversion
-                    for col in df.columns:
-                        if any(
-                            time_word in col.lower()
-                            for time_word in ["time", "timestamp", "date"]
+        for col in df.columns:
+        if any(
+        time_word in col.lower()
+        for time_word in ["time", "timestamp", "date"]
                         ):
-                            try:
-                                df[col] = pd.to_datetime(df[col])
-                                break  # Only convert first time column found
-                            except Exception:
-                                pass
-                    return True
+        try:
+        df[col] = pd.to_datetime(df[col])
+        break  # Only convert first time column found
+        except Exception:
+        pass
+        return True
                 except Exception as e:
-                    print(f"Error loading {filename}: {e}")
-                    return False
+        print(f"Error loading {filename}: {e}")
+        return False
         return True
 
     def update_signal_list(self, signals: List[str]) -> None:
@@ -2206,8 +2199,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             )
             try:
                 self.status_label.configure(
-                    text=f"Processing file {i+1}/{len(self.input_file_paths)}: "
-                    f"{os.path.basename(file_path)}",
+        text=f"Processing file {i+1}/{len(self.input_file_paths)}: "
+        f"{os.path.basename(file_path)}",
                 )
                 self.update()
             except Exception:
@@ -2215,26 +2208,25 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
 
                 # Check if file exists
                 if not os.path.exists(file_path):
-                    print(f"ERROR: File not found: {file_path}")
-                    error_count += 1
-                    continue
-                
-                print(f"File exists, size: {os.path.getsize(file_path)} bytes")
+        print(f"ERROR: File not found: {file_path}")
+        error_count += 1
+        continue
+        print(f"File exists, size: {os.path.getsize(file_path)} bytes")
 
                 # Process the file
                 processed_df = self._process_single_file(file_path, settings)
 
                 if processed_df is not None and not processed_df.empty:
-                    print(f"SUCCESS: File processed. Shape: {processed_df.shape}")
-                    print(f"Columns: {list(processed_df.columns)}")
-                    processed_files.append((file_path, processed_df))
+        print(f"SUCCESS: File processed. Shape: {processed_df.shape}")
+        print(f"Columns: {list(processed_df.columns)}")
+        processed_files.append((file_path, processed_df))
                     # Store processed data for plotting
-                    filename = os.path.basename(file_path)
-                    self.processed_files[filename] = processed_df.copy()
-                    print(f"Stored in processed_files cache as: {filename}")
+        filename = os.path.basename(file_path)
+        self.processed_files[filename] = processed_df.copy()
+        print(f"Stored in processed_files cache as: {filename}")
                 else:
-                    print("ERROR: File processing returned None or empty DataFrame")
-                    error_count += 1
+        print("ERROR: File processing returned None or empty DataFrame")
+        error_count += 1
 
             except Exception as e:
                 print(f"EXCEPTION processing {file_path}: {e}")
@@ -2267,20 +2259,20 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
 
             if error_count > 0:
                 self.status_label.configure(
-                    text=f"Processing complete: {success_count}/{total_count} files processed successfully",
+        text=f"Processing complete: {success_count}/{total_count} files processed successfully",
                 )
                 messagebox.showwarning(
                     "Processing Complete",
-                    f"Processed {success_count} out of {total_count} files.\n"
-                    f"{error_count} files had errors.",
+        f"Processed {success_count} out of {total_count} files.\n"
+        f"{error_count} files had errors.",
                 )
             else:
                 self.status_label.configure(
-                    text=f"All {success_count} files processed successfully!",
+        text=f"All {success_count} files processed successfully!",
                 )
                 messagebox.showinfo(
                     "Success",
-                    f"All {success_count} files processed and exported successfully!",
+        f"All {success_count} files processed and exported successfully!",
                 )
 
         except Exception as e:
@@ -2328,14 +2320,14 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
 
             for col in processed_df.columns:
                 if col != time_col:
-                    before_numeric = processed_df[col].notna().sum()
-                    processed_df[col] = pd.to_numeric(
-                        processed_df[col],
-                        errors="coerce",
+        before_numeric = processed_df[col].notna().sum()
+        processed_df[col] = pd.to_numeric(
+        processed_df[col],
+        errors="coerce",
                     )
-                    after_numeric = processed_df[col].notna().sum()
-            print(
-                        f"  Column {col}: {before_numeric} -> {after_numeric} valid values",
+        after_numeric = processed_df[col].notna().sum()
+        print(
+        f"  Column {col}: {before_numeric} -> {after_numeric} valid values",
                     )
 
             if processed_df.empty:
@@ -2348,41 +2340,37 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
 
             if trim_date or trim_start or trim_end:
                 print(
-                    f"  Applying time trimming: date={trim_date}, start={trim_start}, end={trim_end}",
+        f"  Applying time trimming: date={trim_date}, start={trim_start}, end={trim_end}",
                 )
                 try:
                     # Get the date from the data if not specified
-                    if not trim_date:
-                        trim_date = processed_df[time_col].iloc[0].strftime("%Y-%m-%d")
+        if not trim_date:
+        trim_date = processed_df[time_col].iloc[0].strftime("%Y-%m-%d")
                 except Exception:
-                    pass
-            print(f"  Using date from data: {trim_date}")
+        pass
+        print(f"  Using date from data: {trim_date}")
 
-                    # Create full datetime strings
-                    start_time_str = trim_start or "00:00:00"
-                    end_time_str = trim_end or "23:59:59"
-                    start_full_str = f"{trim_date} {start_time_str}"
-                    end_full_str = f"{trim_date} {end_time_str}"
-                    print(f"  Time range: {start_full_str} to {end_full_str}")
+                # Create full datetime strings
+                start_time_str = trim_start or "00:00:00"
+                end_time_str = trim_end or "23:59:59"
+                start_full_str = f"{trim_date} {start_time_str}"
+                end_full_str = f"{trim_date} {end_time_str}"
+                print(f"  Time range: {start_full_str} to {end_full_str}")
 
-                    before_trim = len(processed_df)
-                    # Filter the data by time range
-                    processed_df = (
-                        processed_df.set_index(time_col)
-                        .loc[start_full_str:end_full_str]
-                        .reset_index()
-                    )
-                    after_trim = len(processed_df)
-            print(f"  Trimming: {before_trim} -> {after_trim} rows")
+                before_trim = len(processed_df)
+                # Filter the data by time range
+                processed_df = (
+        processed_df.set_index(time_col)
+                    .loc[start_full_str:end_full_str]
+                    .reset_index()
+                )
+                after_trim = len(processed_df)
+                print(f"  Trimming: {before_trim} -> {after_trim} rows")
 
-                    if processed_df.empty:
-                        print("  ERROR: Time trimming resulted in empty dataset")
-                        return None
-                try:
-                    pass
-                except Exception as e:
-                    print(f"  ERROR in time trimming: {e}")
-            print("  Setting time column as index...")
+                if processed_df.empty:
+        print("  ERROR: Time trimming resulted in empty dataset")
+        return None
+        print("  Setting time column as index...")
             processed_df.set_index(time_col, inplace=True)
             print(f"  DataFrame shape after indexing: {processed_df.shape}")
 
@@ -2392,13 +2380,13 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             if filter_type and filter_type != "None":
                 print("  Applying filtering...")
                 numeric_cols = processed_df.select_dtypes(
-                    include=np.number,
+        include=np.number,
                 ).columns.tolist()
             print(f"  Numeric columns for filtering: {numeric_cols}")
                 for col in numeric_cols:
-                    signal_data = processed_df[col].dropna()
-                    if len(signal_data) < 2:
-                        continue
+        signal_data = processed_df[col].dropna()
+        if len(signal_data) < 2:
+        continue
 
                     # Apply filtering based on type
                     if filter_type == "Moving Average":
@@ -2411,98 +2399,95 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                         "Butterworth Low-pass",
                         "Butterworth High-pass",
                     ]:
-                        order = settings.get("bw_order", 3)
-                        cutoff = settings.get("bw_cutoff", 0.1)
-                        sr = (
-                            1.0
+        order = settings.get("bw_order", 3)
+        cutoff = settings.get("bw_cutoff", 0.1)
+        sr = (
+        1.0
                             / pd.to_numeric(
-                                signal_data.index.to_series().diff().dt.total_seconds(),
+        signal_data.index.to_series().diff().dt.total_seconds(),
                             ).mean()
                         )
-                        if pd.notna(sr) and len(signal_data) > order * 3:
-                            btype = (
+        if pd.notna(sr) and len(signal_data) > order * 3:
+        btype = (
                                 "low"
-                                if filter_type == "Butterworth Low-pass"
-                                else "high"
+        if filter_type == "Butterworth Low-pass"
+        else "high"
                             )
-                            b, a = butter(N=order, Wn=cutoff, btype=btype, fs=sr)
-                            processed_df[col] = pd.Series(
-                                filtfilt(b, a, signal_data),
-                                index=signal_data.index,
+        b, a = butter(N=order, Wn=cutoff, btype=btype, fs=sr)
+        processed_df[col] = pd.Series(
+        filtfilt(b, a, signal_data),
+        index=signal_data.index,
                             )
-                    elif filter_type == "Median Filter":
-                        kernel = settings.get("median_kernel", 5)
-                        if kernel % 2 == 0:
-                            kernel += 1
-                        if len(signal_data) > kernel:
-                            processed_df[col] = pd.Series(
-                                medfilt(signal_data, kernel_size=kernel),
-                                index=signal_data.index,
+        elif filter_type == "Median Filter":
+        kernel = settings.get("median_kernel", 5)
+        if kernel % 2 == 0:
+        kernel += 1
+        if len(signal_data) > kernel:
+        processed_df[col] = pd.Series(
+        medfilt(signal_data, kernel_size=kernel),
+        index=signal_data.index,
                             )
-                    elif filter_type == "Hampel Filter":
-                        window = settings.get("hampel_window", 7)
-                        threshold = settings.get("hampel_threshold", 3.0)
-
-                        try:
-                            signal_data = processed_df[col].ffill().bfill()
-                        except Exception:
-                            pass
+        elif filter_type == "Hampel Filter":
+        window = settings.get("hampel_window", 7)
+        threshold = settings.get("hampel_threshold", 3.0)
+        try:
+        signal_data = processed_df[col].ffill().bfill()
+        except Exception:
+        pass
 
                             # Apply Hampel filter
-                            median_filtered = pd.Series(
-                                medfilt(signal_data, kernel_size=window),
-                                index=signal_data.index,
+        median_filtered = pd.Series(
+        medfilt(signal_data, kernel_size=window),
+        index=signal_data.index,
                             )
-                            mad = signal_data.rolling(window=window, center=True).apply(
-                                lambda x: np.median(np.abs(x - np.median(x))),
+        mad = signal_data.rolling(window=window, center=True).apply(
+        lambda x: np.median(np.abs(x - np.median(x))),
                             )
-                            threshold_value = (
-                                threshold * 1.4826 * mad
+        threshold_value = (
+        threshold * 1.4826 * mad
                             )  # 1.4826 is the constant for normal distribution
 
                             # Replace outliers with median using proper indexing
-                            outliers = (
-                                np.abs(signal_data - median_filtered) > threshold_value
+        outliers = (
+        np.abs(signal_data - median_filtered) > threshold_value
                             )
-                            processed_df.loc[outliers, col] = median_filtered[outliers]
-                        except Exception as e:
-                            print(f"Error applying Hampel filter: {e}")
+        processed_df.loc[outliers, col] = median_filtered[outliers]
+        except Exception as e:
+        print(f"Error applying Hampel filter: {e}")
                             # Fallback to simple median filter
-                            processed_df[col] = pd.Series(
-                                medfilt(signal_data, kernel_size=window),
-                                index=signal_data.index,
+        processed_df[col] = pd.Series(
+        medfilt(signal_data, kernel_size=window),
+        index=signal_data.index,
                             )
-                    elif filter_type == "Z-Score Filter":
-                        threshold = settings.get("zscore_threshold", 3.0)
-                        method = settings.get("zscore_method", "Remove Outliers")
-
-                        mean_val = signal_data.mean()
-                        std_val = signal_data.std()
-                        z_scores = np.abs((signal_data - mean_val) / std_val)
-
-                        if method == "Remove Outliers":
-                            processed_df.loc[z_scores > threshold, col] = np.nan
-                        elif method == "Clip Outliers":
-                            upper_bound = mean_val + threshold * std_val
-                            lower_bound = mean_val - threshold * std_val
-                            processed_df[col] = processed_df[col].clip(
-                                lower=lower_bound,
-                                upper=upper_bound,
+        elif filter_type == "Z-Score Filter":
+        threshold = settings.get("zscore_threshold", 3.0)
+        method = settings.get("zscore_method", "Remove Outliers")
+        mean_val = signal_data.mean()
+        std_val = signal_data.std()
+        z_scores = np.abs((signal_data - mean_val) / std_val)
+        if method == "Remove Outliers":
+        processed_df.loc[z_scores > threshold, col] = np.nan
+        elif method == "Clip Outliers":
+        upper_bound = mean_val + threshold * std_val
+        lower_bound = mean_val - threshold * std_val
+        processed_df[col] = processed_df[col].clip(
+        lower=lower_bound,
+        upper=upper_bound,
                             )
-                        elif method == "Replace with Median":
-                            median_val = pd.Series([signal_data]).median()
-                            processed_df.loc[z_scores > threshold, col] = median_val
-                    elif filter_type == "Savitzky-Golay":
-                        window = settings.get("savgol_window", 11)
-                        polyorder = settings.get("savgol_polyorder", 2)
-                        if window % 2 == 0:
-                            window += 1
-                        if polyorder >= window:
-                            polyorder = window - 1
-                        if len(signal_data) > window:
-                            processed_df[col] = pd.Series(
-                                savgol_filter(signal_data, window, polyorder),
-                                index=signal_data.index,
+        elif method == "Replace with Median":
+        median_val = pd.Series([signal_data]).median()
+        processed_df.loc[z_scores > threshold, col] = median_val
+        elif filter_type == "Savitzky-Golay":
+        window = settings.get("savgol_window", 11)
+        polyorder = settings.get("savgol_polyorder", 2)
+        if window % 2 == 0:
+        window += 1
+        if polyorder >= window:
+        polyorder = window - 1
+        if len(signal_data) > window:
+        processed_df[col] = pd.Series(
+        savgol_filter(signal_data, window, polyorder),
+        index=signal_data.index,
                             )
 
             # Apply Resampling
@@ -2510,11 +2495,11 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 resample_rule = settings.get("resample_rule")
             print(f"  Applying resampling with rule: {resample_rule}")
                 if resample_rule:
-                    before_resample = len(processed_df)
-                    processed_df = (
-                        processed_df.resample(resample_rule).mean().dropna(how="all")
+        before_resample = len(processed_df)
+        processed_df = (
+        processed_df.resample(resample_rule).mean().dropna(how="all")
                     )
-                    after_resample = len(processed_df)
+        after_resample = len(processed_df)
             print(f"  Resampling: {before_resample} -> {after_resample} rows")
             else:
                 print("  Resampling disabled")
@@ -2536,10 +2521,10 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 print(f"  Applying integration to: {signals_to_integrate}")
                 integration_method = self.integrator_method_var.get()
                 processed_df = self._apply_integration(
-                    processed_df,
-                    time_col,
-                    signals_to_integrate,
-                    integration_method,
+        processed_df,
+        time_col,
+        signals_to_integrate,
+        integration_method,
                 )
             print(f"  DataFrame shape after integration: {processed_df.shape}")
 
@@ -2551,10 +2536,10 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 print(f"  Applying differentiation to: {signals_to_differentiate}")
                 differentiation_method = self.deriv_method_var.get()
                 processed_df = self._apply_differentiation(
-                    processed_df,
-                    time_col,
-                    signals_to_differentiate,
-                    differentiation_method,
+        processed_df,
+        time_col,
+        signals_to_differentiate,
+        differentiation_method,
                 )
             print(f"  DataFrame shape after differentiation: {processed_df.shape}")
 
@@ -2592,11 +2577,11 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
 
                 # Add all numeric columns to the safe dictionary
                 for col in df.columns:
-                    if col != time_col and pd.api.types.is_numeric_dtype(df[col]):
+        if col != time_col and pd.api.types.is_numeric_dtype(df[col]):
                         # Replace signal name in formula
-                        if f"[{col}]" in formula:
-                            safe_dict[col] = df[col]
-                            formula = formula.replace(f"[{col}]", col)
+        if f"[{col}]" in formula:
+        safe_dict[col] = df[col]
+        formula = formula.replace(f"[{col}]", col)
 
                 # Add safe math functions
                 import math
@@ -2631,7 +2616,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 df[var["name"]] = np.nan
                 messagebox.showwarning(
                     "Custom Variable Error",
-                    f"Error in formula for '{var['name']}':\n{e!s}",
+        f"Error in formula for '{var['name']}':\n{e!s}",
                 )
 
         return df
@@ -3651,8 +3636,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             )
             self.plot_ax.set_title("Select a file to begin plotting")
             self.plot_canvas.draw()  # type: ignore
-            
-            toolbar = NavigationToolbar2Tk(  # type: ignore
+        toolbar = NavigationToolbar2Tk(  # type: ignore
                 self.plot_canvas,
                 plot_canvas_frame,
                 pack_toolbar=False,
@@ -4084,7 +4068,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
         try:
             if os.path.exists(self.layout_config_file):
                 with open(self.layout_config_file) as f:
-                    return json.load(f)
+        return json.load(f)
         except Exception as e:
             print(f"Error loading layout config: {e}")
         return {}
@@ -4101,7 +4085,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             # Save splitter positions
             for splitter_key, splitter in self.splitters.items():
                 if hasattr(splitter, "winfo_width"):
-                    self.layout_data[splitter_key] = splitter.winfo_width()
+        self.layout_data[splitter_key] = splitter.winfo_width()
 
             with open(self.layout_config_file, "w") as f:
                 json.dump(self.layout_data, f, indent=2)
@@ -4213,7 +4197,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             # Save the current position
             if hasattr(self, "drag_splitter_key") and hasattr(self, "drag_left_panel"):
                 self.layout_data[self.drag_splitter_key] = (
-                    self.drag_left_panel.winfo_width()
+        self.drag_left_panel.winfo_width()
                 )
                 # Auto-save layout
                 self._save_layout_config()
@@ -4226,8 +4210,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 "winfo_children",
             ):
                 for child in splitter.master.winfo_children():
-                    if isinstance(child, ctk.CTkFrame) and child.winfo_width() == 8:
-                        child.configure(fg_color="#666666")
+        if isinstance(child, ctk.CTkFrame) and child.winfo_width() == 8:
+        child.configure(fg_color="#666666")
 
     def _on_closing(self) -> None:
         """Handle application closing."""
@@ -4266,36 +4250,36 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
 
                 # Set the first column as default x-axis (usually time)
                 if x_axis_options:
-                    self.plot_xaxis_menu.set(x_axis_options[0])
+        self.plot_xaxis_menu.set(x_axis_options[0])
 
                 # Update signal checkboxes - direct creation like baseline
                 self.plot_signal_vars = {}
                 for widget in self.plot_signal_frame.winfo_children():
-                    widget.destroy()
+        widget.destroy()
 
                 for signal in df.columns:
-                    var = tk.BooleanVar(value=False)
-                    cb = ctk.CTkCheckBox(
-                        self.plot_signal_frame,
-                        text=signal,
-                        variable=var,
+        var = tk.BooleanVar(value=False)
+        cb = ctk.CTkCheckBox(
+        self.plot_signal_frame,
+        text=signal,
+        variable=var,
                     )
-                    cb.pack(anchor="w", padx=5, pady=2)
-                    self.plot_signal_vars[signal] = {"var": var, "checkbox": cb}
+        cb.pack(anchor="w", padx=5, pady=2)
+        self.plot_signal_vars[signal] = {"var": var, "checkbox": cb}
 
                 # Re-bind mouse wheel to all new checkboxes
                 self._bind_mousewheel_to_frame(self.plot_signal_frame)
 
                 # Update trendline signal options
                 signal_options = ["Select signal..."] + [
-                    col for col in df.columns if col != x_axis_options[0]
+        col for col in df.columns if col != x_axis_options[0]
                 ]  # Exclude time column
                 self.trendline_signal_menu.configure(values=signal_options)
                 self.trendline_signal_var.set("Select signal...")
 
                 # Reset signal tracking when file changes
                 if hasattr(self, "last_plotted_signals"):
-                    self.last_plotted_signals: set[str] = set()
+        self.last_plotted_signals: set[str] = set()
 
                 # Update plot immediately - no delays
                 self.update_plot()
@@ -4362,11 +4346,11 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 self.plot_xaxis_menu.set(x_axis_col)
             else:
                 self.plot_ax.text(
-                    0.5,
-                    0.5,
+        0.5,
+        0.5,
                     "No valid columns found for plotting.",
-                    ha="center",
-                    va="center",
+        ha="center",
+        va="center",
                 )
                 self.plot_canvas.draw()  # type: ignore
             return            # type: ignore# Get signals to plot
@@ -4404,33 +4388,33 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             plot_df = df.copy()
             if plot_filter != "None" and not show_both and not compare_filters:
                 try:
-                    plot_df = self._apply_plot_filter(
-                        plot_df,
-                        signals_to_plot,
-                        x_axis_col,
+        plot_df = self._apply_plot_filter(
+        plot_df,
+        signals_to_plot,
+        x_axis_col,
                     )
                 except Exception as e:
-                    print(f"Warning: Filter failed - {e}")
+        print(f"Warning: Filter failed - {e}")
                     # Continue with unfiltered data
 
             # Plot signals
             for i, signal in enumerate(signals_to_plot):
                 if signal not in plot_df.columns:
-                    print(f"Warning: Signal {signal} not found in data")
-                    continue
+        print(f"Warning: Signal {signal} not found in data")
+        continue
 
                 signal_data = plot_df[[x_axis_col, signal]].dropna()
                 if len(signal_data) == 0:
-                    print(f"Warning: No valid data for signal {signal}")
-                    continue
+        print(f"Warning: No valid data for signal {signal}")
+        continue
 
                 try:
                     # Get color
-                    color_scheme = self.color_scheme_var.get()
-                    if color_scheme == "Default":
-                        color = getattr(plt.cm, "tab10", plt.cm.get_cmap("viridis"))(i % 10)
-                    elif color_scheme == "Colorblind-friendly":
-                        colors = [
+        color_scheme = self.color_scheme_var.get()
+        if color_scheme == "Default":
+        color = getattr(plt.cm, "tab10", plt.cm.get_cmap("viridis"))(i % 10)
+        elif color_scheme == "Colorblind-friendly":
+        colors = [
                             "#0173B2",
                             "#DE8F05",
                             "#029E73",
@@ -4441,72 +4425,71 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                             "#ECE133",
                             "#56B4E9",
                         ]
-                        color = colors[i % len(colors)]
-                    else:
-                        color = self.custom_colors[i % len(self.custom_colors)]
+        color = colors[i % len(colors)]
+        else:
+        color = self.custom_colors[i % len(self.custom_colors)]
                 except Exception:
-                    pass
+        pass
 
                     # Plot with custom legend if available
-                    label = self.custom_legend_entries.get(signal, signal)
-                    line_width = self.line_width_var.get()
-
-                    self.plot_ax.plot(
-                        signal_data[x_axis_col],
-                        signal_data[signal],
-                        label=label,
-                        color=color,
-                        linewidth=line_width,
+        label = self.custom_legend_entries.get(signal, signal)
+        line_width = self.line_width_var.get()
+        self.plot_ax.plot(
+        signal_data[x_axis_col],
+        signal_data[signal],
+        label=label,
+        color=color,
+        linewidth=line_width,
                         **style_args,
                     )
 
                     # Show both raw and filtered if requested
-                    if show_both and plot_filter != "None":
-                        raw_label = f"{label} (raw)"
-                        self.plot_ax.plot(
-                            df[x_axis_col],
-                            df[signal],
-                            label=raw_label,
-                            color=color,
-                            alpha=0.3,
-                            linewidth=line_width * 0.7,
+        if show_both and plot_filter != "None":
+        raw_label = f"{label} (raw)"
+        self.plot_ax.plot(
+        df[x_axis_col],
+        df[signal],
+        label=raw_label,
+        color=color,
+        alpha=0.3,
+        linewidth=line_width * 0.7,
                         )
 
                     # Compare multiple filters if requested
-                    if compare_filters and plot_filter != "None":
+        if compare_filters and plot_filter != "None":
                         # Plot raw data first
-                        raw_label = f"{label} (raw)"
-                        self.plot_ax.plot(
-                            df[x_axis_col],
-                            df[signal],
-                            label=raw_label,
-                            color=color,
-                            alpha=0.5,
-                            linewidth=line_width * 0.8,
-                            linestyle="--",
+        raw_label = f"{label} (raw)"
+        self.plot_ax.plot(
+        df[x_axis_col],
+        df[signal],
+        label=raw_label,
+        color=color,
+        alpha=0.5,
+        linewidth=line_width * 0.8,
+        linestyle="--",
                         )
 
                         # Plot current filter
-                        try:
-                            filtered_df = self._apply_plot_filter(
-                                df.copy(),
+        try:
+        filtered_df = self._apply_plot_filter(
+        df.copy(),
                                 [signal],
-                                x_axis_col,
+        x_axis_col,
                             )
-                            filtered_label = f"{label} ({plot_filter})"
-                            self.plot_ax.plot(
-                                filtered_df[x_axis_col],
-                                filtered_df[signal],
-                                label=filtered_label,
-                                color=color,
-                                linewidth=line_width,
+        filtered_label = f"{label} ({plot_filter})"
+        self.plot_ax.plot(
+        filtered_df[x_axis_col],
+        filtered_df[signal],
+        label=filtered_label,
+        color=color,
+        linewidth=line_width,
                             )
-                        except Exception as e:
-                            print(f"Warning: Filter comparison failed - {e}")
+        except Exception as e:
+        print(f"Warning: Filter comparison failed - {e}")
 
                 except Exception as e:
-                    print(f"Error plotting signal {signal}: {e}")
-                    continue
+        print(f"Error plotting signal {signal}: {e}")
+        continue
 
             # Add trendline if configured
             try:
@@ -4516,11 +4499,11 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 pass
 
                 if trendline_signal != "None" and trendline_signal in signals_to_plot:
-                    self._add_trendline(
-                        plot_df,
-                        x_axis_col,
-                        trendline_signal,
-                        trendline_type,
+        self._add_trendline(
+        plot_df,
+        x_axis_col,
+        trendline_signal,
+        trendline_type,
                     )
             except Exception as e:
                 print(f"Warning: Trendline failed - {e}")
@@ -4562,25 +4545,25 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             if should_auto_zoom:
                 # Auto-fit to show all data
                 try:
-                    self.plot_ax.autoscale_view()
+        self.plot_ax.autoscale_view()
                 except Exception:
-                    pass
+        pass
             print(f"Auto-zoom applied ({zoom_reason}): fitting to all data")
                 try:
-                    pass
+        pass
                 except Exception as e:
-                    print(f"Warning: Could not auto-fit plot - {e}")
+        print(f"Warning: Could not auto-fit plot - {e}")
             elif zoom_state:
                 # Restore previous zoom state
                 try:
-                    self._apply_zoom_state(zoom_state)
+        self._apply_zoom_state(zoom_state)
                 except Exception:
-                    pass
+        pass
             print(f"Zoom state restored ({zoom_reason}): preserving user view")
                 try:
-                    pass
+        pass
                 except Exception as e:
-                    print(f"Warning: Could not apply zoom state - {e}")
+        print(f"Warning: Could not apply zoom state - {e}")
 
             # Force canvas update
             self.plot_canvas.draw_idle()              self.status_label.configure(text="Plot updated successfully")          except Exception as e:  # type: ignore
@@ -4645,25 +4628,25 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 window = float(self.plot_ma_value_entry.get() or "10")
                 unit = self.plot_ma_unit_menu.get()
                 if unit == "ms":
-                    window = window / 1000
+        window = window / 1000
                 elif unit == "min":
-                    window = window * 60
+        window = window * 60
                 elif unit == "hr":
-                    window = window * 3600
+        window = window * 3600
 
                 # Convert window to number of samples
                 if pd.api.types.is_datetime64_any_dtype(df[x_axis_col]):
-                    time_diff = df[x_axis_col].diff().dt.total_seconds().median()
-                    if time_diff > 0:
-                        window_samples = int(window / time_diff)
-                        filtered_df[signal] = (
-                            df[signal]
+        time_diff = df[x_axis_col].diff().dt.total_seconds().median()
+        if time_diff > 0:
+        window_samples = int(window / time_diff)
+        filtered_df[signal] = (
+        df[signal]
                             .rolling(window=max(1, window_samples), center=True)
                             .mean()
                         )
                 else:
-                    filtered_df[signal] = (
-                        df[signal].rolling(window=int(window), center=True).mean()
+        filtered_df[signal] = (
+        df[signal].rolling(window=int(window), center=True).mean()
                     )
 
             elif filter_type in ["Butterworth Low-pass", "Butterworth High-pass"]:
@@ -4671,53 +4654,53 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 cutoff = float(self.plot_bw_cutoff_entry.get() or "0.1")
 
                 try:
-                    from scipy.signal import butter, filtfilt
+        from scipy.signal import butter, filtfilt
                 except Exception:
-                    pass
+        pass
 
                     # Calculate sampling frequency from time data
-                    if pd.api.types.is_datetime64_any_dtype(df[x_axis_col]):
-                        time_diff = df[x_axis_col].diff().dt.total_seconds()
-                        fs = 1.0 / pd.Series([time_diff]).median() if pd.Series([time_diff]).median() > 0 else 1.0
-                    else:
+        if pd.api.types.is_datetime64_any_dtype(df[x_axis_col]):
+        time_diff = df[x_axis_col].diff().dt.total_seconds()
+        fs = 1.0 / pd.Series([time_diff]).median() if pd.Series([time_diff]).median() > 0 else 1.0
+        else:
                         # Assume uniform sampling
-                        fs = 1.0
+        fs = 1.0
 
                     # Normalize cutoff frequency
-                    nyquist = fs / 2.0
-                    normalized_cutoff = cutoff / nyquist
+        nyquist = fs / 2.0
+        normalized_cutoff = cutoff / nyquist
 
                     # Design filter
-                    b, a = butter(
-                        order,
-                        normalized_cutoff,
-                        btype=(
+        b, a = butter(
+        order,
+        normalized_cutoff,
+        btype=(
                             "low" if filter_type == "Butterworth Low-pass" else "high"
                         ),
                     )
 
                     # Apply filter
-                    signal_data = (
-                        df[signal].fillna(method="ffill").fillna(method="bfill")
+        signal_data = (
+        df[signal].fillna(method="ffill").fillna(method="bfill")
                     )
-                    filtered_df[signal] = filtfilt(b, a, signal_data)
+        filtered_df[signal] = filtfilt(b, a, signal_data)
 
                 except ImportError:
                     # Fallback to simple smoothing if scipy not available
-                    filtered_df[signal] = (
-                        df[signal].rolling(window=order * 2 + 1, center=True).mean()
+        filtered_df[signal] = (
+        df[signal].rolling(window=order * 2 + 1, center=True).mean()
                     )
                 except Exception as e:
-                    print(f"Error applying Butterworth filter: {e}")
+        print(f"Error applying Butterworth filter: {e}")
                     # Fallback to simple smoothing
-                    filtered_df[signal] = (
-                        df[signal].rolling(window=order * 2 + 1, center=True).mean()
+        filtered_df[signal] = (
+        df[signal].rolling(window=order * 2 + 1, center=True).mean()
                     )
 
             elif filter_type == "Median Filter":
                 kernel = int(self.plot_median_kernel_entry.get() or "5")
                 filtered_df[signal] = (
-                    df[signal].rolling(window=kernel, center=True).median()
+        df[signal].rolling(window=kernel, center=True).median()
                 )
 
             elif filter_type == "Hampel Filter":
@@ -4725,41 +4708,40 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 threshold = float(self.plot_hampel_threshold_entry.get() or "3.0")
 
                 try:
-                    from scipy.signal import medfilt
+        from scipy.signal import medfilt
                 except Exception:
-                    pass
-
-                    signal_data = df[signal].ffill().bfill()
+        pass
+        signal_data = df[signal].ffill().bfill()
 
                     # Apply Hampel filter
-                    median_filtered = pd.Series(
-                        medfilt(signal_data, kernel_size=window),
-                        index=signal_data.index,
+        median_filtered = pd.Series(
+        medfilt(signal_data, kernel_size=window),
+        index=signal_data.index,
                     )
-                    mad = signal_data.rolling(window=window, center=True).apply(
-                        lambda x: np.median(np.abs(x - np.median(x))),
+        mad = signal_data.rolling(window=window, center=True).apply(
+        lambda x: np.median(np.abs(x - np.median(x))),
                     )
-                    threshold_value = (
-                        threshold * 1.4826 * mad
+        threshold_value = (
+        threshold * 1.4826 * mad
                     )  # 1.4826 is the constant for normal distribution
 
                     # Replace outliers with median using proper indexing
-                    outliers = np.abs(signal_data - median_filtered) > threshold_value
-                    filtered_df = (
-                        filtered_df.copy()
+        outliers = np.abs(signal_data - median_filtered) > threshold_value
+        filtered_df = (
+        filtered_df.copy()
                     )  # Ensure we have a copy to avoid warnings
-                    filtered_df.loc[outliers, signal] = median_filtered.loc[outliers]
+        filtered_df.loc[outliers, signal] = median_filtered.loc[outliers]
 
                 except ImportError:
                     # Fallback to simple median filter
-                    filtered_df[signal] = (
-                        df[signal].rolling(window=window, center=True).median()
+        filtered_df[signal] = (
+        df[signal].rolling(window=window, center=True).median()
                     )
                 except Exception as e:
-                    print(f"Error applying Hampel filter: {e}")
+        print(f"Error applying Hampel filter: {e}")
                     # Fallback to simple median filter
-                    filtered_df[signal] = (
-                        df[signal].rolling(window=window, center=True).median()
+        filtered_df[signal] = (
+        df[signal].rolling(window=window, center=True).median()
                     )
 
             elif filter_type == "Z-Score Filter":
@@ -4773,46 +4755,45 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
 
                 if method == "Remove Outliers":
                     # Replace outliers with NaN
-                    filtered_df[signal] = signal_data.copy()
-                    filtered_df[signal].loc[z_scores > threshold] = np.nan
+        filtered_df[signal] = signal_data.copy()
+        filtered_df[signal].loc[z_scores > threshold] = np.nan
                 elif method == "Clip Outliers":
                     # Clip outliers to threshold
-                    filtered_df[signal] = signal_data.copy()
-                    upper_bound = mean_val + threshold * std_val
-                    lower_bound = mean_val - threshold * std_val
-                    filtered_df[signal] = filtered_df[signal].clip(
-                        lower=lower_bound,
-                        upper=upper_bound,
+        filtered_df[signal] = signal_data.copy()
+        upper_bound = mean_val + threshold * std_val
+        lower_bound = mean_val - threshold * std_val
+        filtered_df[signal] = filtered_df[signal].clip(
+        lower=lower_bound,
+        upper=upper_bound,
                     )
                 elif method == "Replace with Median":
                     # Replace outliers with median
-                    median_val = pd.Series([signal_data]).median()
-                    filtered_df[signal] = signal_data.copy()
-                    filtered_df[signal].loc[z_scores > threshold] = median_val
+        median_val = pd.Series([signal_data]).median()
+        filtered_df[signal] = signal_data.copy()
+        filtered_df[signal].loc[z_scores > threshold] = median_val
 
             elif filter_type == "Savitzky-Golay":
                 window = int(self.plot_savgol_window_entry.get() or "11")
                 polyorder = int(self.plot_savgol_polyorder_entry.get() or "3")
 
                 try:
-                    from scipy.signal import savgol_filter
+        from scipy.signal import savgol_filter
                 except Exception:
-                    pass
-
-                    signal_data = (
-                        df[signal].fillna(method="ffill").fillna(method="bfill")
+        pass
+        signal_data = (
+        df[signal].fillna(method="ffill").fillna(method="bfill")
                     )
-                    filtered_df[signal] = savgol_filter(signal_data, window, polyorder)
+        filtered_df[signal] = savgol_filter(signal_data, window, polyorder)
                 except ImportError:
                     # Fallback to simple smoothing if scipy not available
-                    filtered_df[signal] = (
-                        df[signal].rolling(window=window, center=True).mean()
+        filtered_df[signal] = (
+        df[signal].rolling(window=window, center=True).mean()
                     )
                 except Exception as e:
-                    print(f"Error applying Savitzky-Golay filter: {e}")
+        print(f"Error applying Savitzky-Golay filter: {e}")
                     # Fallback to simple smoothing
-                    filtered_df[signal] = (
-                        df[signal].rolling(window=window, center=True).mean()
+        filtered_df[signal] = (
+        df[signal].rolling(window=window, center=True).mean()
                     )
 
         return filtered_df
@@ -4837,24 +4818,24 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
 
             if start_str or end_str:
                 try:
-                    if pd.api.types.is_datetime64_any_dtype(plot_df[x_axis_col]):
+        if pd.api.types.is_datetime64_any_dtype(plot_df[x_axis_col]):
                         # Convert to datetime
-                        if start_str:
-                            start_time = pd.to_datetime(start_str)
-                            plot_df = plot_df[plot_df[x_axis_col] >= start_time]
-                        if end_str:
-                            end_time = pd.to_datetime(end_str)
-                            plot_df = plot_df[plot_df[x_axis_col] <= end_time]
-                    else:
+        if start_str:
+        start_time = pd.to_datetime(start_str)
+        plot_df = plot_df[plot_df[x_axis_col] >= start_time]
+        if end_str:
+        end_time = pd.to_datetime(end_str)
+        plot_df = plot_df[plot_df[x_axis_col] <= end_time]
+        else:
                         # Numeric data
-                        if start_str:
-                            start_val = float(start_str)
-                            plot_df = plot_df[plot_df[x_axis_col] >= start_val]
-                        if end_str:
-                            end_val = float(end_str)
-                            plot_df = plot_df[plot_df[x_axis_col] <= end_val]
+        if start_str:
+        start_val = float(start_str)
+        plot_df = plot_df[plot_df[x_axis_col] >= start_val]
+        if end_str:
+        end_val = float(end_str)
+        plot_df = plot_df[plot_df[x_axis_col] <= end_val]
                 except (ValueError, TypeError):
-                    messagebox.showwarning(
+        messagebox.showwarning(
                         "Warning",
                         "Invalid time window format. Using full range.",
                     )
@@ -4865,31 +4846,31 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 "trendline_selection_end",
             ):
                 if (
-                    self.trendline_selection_start is not None
-                    and self.trendline_selection_end is not None
+        self.trendline_selection_start is not None
+        and self.trendline_selection_end is not None
                 ):
-                    try:
-                        if pd.api.types.is_datetime64_any_dtype(plot_df[x_axis_col]):
+        try:
+        if pd.api.types.is_datetime64_any_dtype(plot_df[x_axis_col]):
                             # Convert numeric selection back to datetime
-                            x_min = plot_df[x_axis_col].min()
-                            start_time = x_min + pd.Timedelta(
-                                seconds=self.trendline_selection_start,
+        x_min = plot_df[x_axis_col].min()
+        start_time = x_min + pd.Timedelta(
+        seconds=self.trendline_selection_start,
                             )
-                            end_time = x_min + pd.Timedelta(
-                                seconds=self.trendline_selection_end,
+        end_time = x_min + pd.Timedelta(
+        seconds=self.trendline_selection_end,
                             )
-                            plot_df = plot_df[
+        plot_df = plot_df[
                                 (plot_df[x_axis_col] >= start_time)
                                 & (plot_df[x_axis_col] <= end_time)
                             ]
-                        else:
+        else:
                             # Numeric data
-                            plot_df = plot_df[
+        plot_df = plot_df[
                                 (plot_df[x_axis_col] >= self.trendline_selection_start)
                                 & (plot_df[x_axis_col] <= self.trendline_selection_end)
                             ]
-                    except Exception as e:
-                        print(f"Error applying visual selection: {e}")
+        except Exception as e:
+        print(f"Error applying visual selection: {e}")
 
         # Check if we still have enough data after filtering
         if len(plot_df) < 2:
@@ -4926,18 +4907,18 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 y_positive = y_data[y_data > 0]
                 x_positive = x_numeric[y_data > 0]
                 if len(y_positive) > 1:
-                    log_y = np.log(y_positive)
-                    coeffs = np.polyfit(np.asarray(x_positive), np.asarray(log_y), 1)
-                    a = np.exp(coeffs[1])
-                    b = coeffs[0]
-                    trendline = a * np.exp(b * x_numeric)
-                    equation = f"y = {a:.4f} * e^({b:.4f}x)"
+        log_y = np.log(y_positive)
+        coeffs = np.polyfit(np.asarray(x_positive), np.asarray(log_y), 1)
+        a = np.exp(coeffs[1])
+        b = coeffs[0]
+        trendline = a * np.exp(b * x_numeric)
+        equation = f"y = {a:.4f} * e^({b:.4f}x)"
                 else:
-                    messagebox.showwarning(
+        messagebox.showwarning(
                         "Warning",
                         "Not enough positive values for exponential trendline.",
                     )
-                    return
+        return
 
             elif trend_type == "Power":
                 # Log-log fit for power law
@@ -4945,19 +4926,19 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 y_positive = y_data[mask]
                 x_positive = x_numeric[mask]
                 if len(y_positive) > 1:
-                    log_x = np.log(x_positive)
-                    log_y = np.log(y_positive)
-                    coeffs = np.polyfit(np.asarray(log_x), np.asarray(log_y), 1)
-                    a = np.exp(coeffs[1])
-                    b = coeffs[0]
-                    trendline = a * (x_numeric**b)
-                    equation = f"y = {a:.4f} * x^({b:.4f})"
+        log_x = np.log(x_positive)
+        log_y = np.log(y_positive)
+        coeffs = np.polyfit(np.asarray(log_x), np.asarray(log_y), 1)
+        a = np.exp(coeffs[1])
+        b = coeffs[0]
+        trendline = a * (x_numeric**b)
+        equation = f"y = {a:.4f} * x^({b:.4f})"
                 else:
-                    messagebox.showwarning(
+        messagebox.showwarning(
                         "Warning",
                         "Not enough positive values for power trendline.",
                     )
-                    return
+        return
 
             elif trend_type == "Polynomial":
                 order = int(self.poly_order_entry.get() or "2")
@@ -4968,14 +4949,14 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 # Build equation string
                 terms = []
                 for i in range(order + 1):
-                    power = order - i
-                    coeff = coeffs[i]
-                    if power == 0:
-                        terms.append(f"{coeff:.4f}")
-                    elif power == 1:
-                        terms.append(f"{coeff:.4f}x")
-                    else:
-                        terms.append(f"{coeff:.4f}x^{power}")
+        power = order - i
+        coeff = coeffs[i]
+        if power == 0:
+        terms.append(f"{coeff:.4f}")
+        elif power == 1:
+        terms.append(f"{coeff:.4f}x")
+        else:
+        terms.append(f"{coeff:.4f}x^{power}")
                 equation = f"Polynomial (order {order}): " + " + ".join(terms)
 
             # Plot trendline - use the original x_data for plotting
@@ -4994,10 +4975,10 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             legend_position = self.legend_position_var.get()
             if legend_position == "outside right":
                 self.plot_ax.legend(
-                    handles,
-                    labels,
-                    bbox_to_anchor=(1.05, 1),
-                    loc="upper left",
+        handles,
+        labels,
+        bbox_to_anchor=(1.05, 1),
+        loc="upper left",
                 )
             else:
                 self.plot_ax.legend(handles, labels, loc=legend_position)
@@ -5029,26 +5010,26 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             full_path = None
             for file_path in self.input_file_paths:
                 if os.path.basename(file_path) == filename:
-                    full_path = file_path
-                    break
+        full_path = file_path
+        break
 
             if full_path and os.path.exists(full_path):
                 df = pd.read_csv(full_path)
                 # Try to identify time column
                 time_col = None
                 for col in df.columns:
-                    if any(
-                        time_word in col.lower()
-                        for time_word in ["time", "timestamp", "date"]
+        if any(
+        time_word in col.lower()
+        for time_word in ["time", "timestamp", "date"]
                     ):
-                        time_col = col
-                        break
+        time_col = col
+        break
 
                 if time_col and pd.api.types.is_object_dtype(df[time_col]):
-                    try:
-                        df[time_col] = pd.to_datetime(df[time_col])
-                    except Exception:
-                        pass
+        try:
+        df[time_col] = pd.to_datetime(df[time_col])
+        except Exception:
+        pass
 
                 return df
         except Exception as e:
@@ -5102,12 +5083,12 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             if not selected:
                 # Auto-select first non-time signal
                 for signal, data in self.plot_signal_vars.items():
-                    if not any(
-                        word in signal.lower() for word in ["time", "date", "timestamp"]
+        if not any(
+        word in signal.lower() for word in ["time", "date", "timestamp"]
                     ):
-                        data["var"].set(True)
-                        logger.debug(f"DEBUG: \1")
-                        break
+        data["var"].set(True)
+        logger.debug(f"DEBUG: \1")
+        break
 
     def _show_setup_help(self) -> None:
         """Show setup help."""
@@ -5261,150 +5242,150 @@ COMMON MISTAKES TO AVOID:
             settings = {
                 "filter_settings": {
                     "filter_type": (
-                        self.filter_type_var.get()
-                        if hasattr(self, "filter_type_var")
-                        else "None"
+        self.filter_type_var.get()
+        if hasattr(self, "filter_type_var")
+        else "None"
                     ),
                     "ma_window": (
-                        self.ma_value_entry.get()
-                        if hasattr(self, "ma_value_entry")
-                        else "10"
+        self.ma_value_entry.get()
+        if hasattr(self, "ma_value_entry")
+        else "10"
                     ),
                     "ma_unit": (
-                        self.ma_unit_menu.get()
-                        if hasattr(self, "ma_unit_menu")
-                        else "s"
+        self.ma_unit_menu.get()
+        if hasattr(self, "ma_unit_menu")
+        else "s"
                     ),
                     "bw_order": (
-                        self.bw_order_entry.get()
-                        if hasattr(self, "bw_order_entry")
-                        else "3"
+        self.bw_order_entry.get()
+        if hasattr(self, "bw_order_entry")
+        else "3"
                     ),
                     "bw_cutoff": (
-                        self.bw_cutoff_entry.get()
-                        if hasattr(self, "bw_cutoff_entry")
-                        else "0.1"
+        self.bw_cutoff_entry.get()
+        if hasattr(self, "bw_cutoff_entry")
+        else "0.1"
                     ),
                     "median_kernel": (
-                        self.median_kernel_entry.get()
-                        if hasattr(self, "median_kernel_entry")
-                        else "5"
+        self.median_kernel_entry.get()
+        if hasattr(self, "median_kernel_entry")
+        else "5"
                     ),
                     "hampel_window": (
-                        self.hampel_window_entry.get()
-                        if hasattr(self, "hampel_window_entry")
-                        else "7"
+        self.hampel_window_entry.get()
+        if hasattr(self, "hampel_window_entry")
+        else "7"
                     ),
                     "hampel_threshold": (
-                        self.hampel_threshold_entry.get()
-                        if hasattr(self, "hampel_threshold_entry")
-                        else "3.0"
+        self.hampel_threshold_entry.get()
+        if hasattr(self, "hampel_threshold_entry")
+        else "3.0"
                     ),
                     "zscore_threshold": (
-                        self.zscore_threshold_entry.get()
-                        if hasattr(self, "zscore_threshold_entry")
-                        else "3.0"
+        self.zscore_threshold_entry.get()
+        if hasattr(self, "zscore_threshold_entry")
+        else "3.0"
                     ),
                     "zscore_method": (
-                        self.zscore_method_menu.get()
-                        if hasattr(self, "zscore_method_menu")
-                        else "Remove Outliers"
+        self.zscore_method_menu.get()
+        if hasattr(self, "zscore_method_menu")
+        else "Remove Outliers"
                     ),
                     "savgol_window": (
-                        self.savgol_window_entry.get()
-                        if hasattr(self, "savgol_window_entry")
-                        else "11"
+        self.savgol_window_entry.get()
+        if hasattr(self, "savgol_window_entry")
+        else "11"
                     ),
                     "savgol_polyorder": (
-                        self.savgol_polyorder_entry.get()
-                        if hasattr(self, "savgol_polyorder_entry")
-                        else "2"
+        self.savgol_polyorder_entry.get()
+        if hasattr(self, "savgol_polyorder_entry")
+        else "2"
                     ),
                 },
                 "resample_settings": {
                     "enabled": (
-                        self.resample_var.get()
-                        if hasattr(self, "resample_var")
-                        else False
+        self.resample_var.get()
+        if hasattr(self, "resample_var")
+        else False
                     ),
                     "value": (
-                        self.resample_value_entry.get()
-                        if hasattr(self, "resample_value_entry")
-                        else "10"
+        self.resample_value_entry.get()
+        if hasattr(self, "resample_value_entry")
+        else "10"
                     ),
                     "unit": (
-                        self.resample_unit_menu.get()
-                        if hasattr(self, "resample_unit_menu")
-                        else "s"
+        self.resample_unit_menu.get()
+        if hasattr(self, "resample_unit_menu")
+        else "s"
                     ),
                 },
                 "trim_settings": {
                     "date": (
-                        self.trim_date_entry.get()
-                        if hasattr(self, "trim_date_entry")
-                        else ""
+        self.trim_date_entry.get()
+        if hasattr(self, "trim_date_entry")
+        else ""
                     ),
                     "start_time": (
-                        self.trim_start_entry.get()
-                        if hasattr(self, "trim_start_entry")
-                        else ""
+        self.trim_start_entry.get()
+        if hasattr(self, "trim_start_entry")
+        else ""
                     ),
                     "end_time": (
-                        self.trim_end_entry.get()
-                        if hasattr(self, "trim_end_entry")
-                        else ""
+        self.trim_end_entry.get()
+        if hasattr(self, "trim_end_entry")
+        else ""
                     ),
                 },
                 "integration_settings": {
                     "method": (
-                        self.integrator_method_var.get()
-                        if hasattr(self, "integrator_method_var")
-                        else "Trapezoidal"
+        self.integrator_method_var.get()
+        if hasattr(self, "integrator_method_var")
+        else "Trapezoidal"
                     ),
                 },
                 "differentiation_settings": {
                     "method": (
-                        self.deriv_method_var.get()
-                        if hasattr(self, "deriv_method_var")
-                        else "Spline (Acausal)"
+        self.deriv_method_var.get()
+        if hasattr(self, "deriv_method_var")
+        else "Spline (Acausal)"
                     ),
                     "orders": (
                         {str(i): var.get() for i, var in self.derivative_vars.items()}
-                        if hasattr(self, "derivative_vars")
-                        else {}
+        if hasattr(self, "derivative_vars")
+        else {}
                     ),
                 },
                 "export_settings": {
                     "type": (
-                        self.export_type_var.get()
-                        if hasattr(self, "export_type_var")
-                        else "CSV (Separate Files)"
+        self.export_type_var.get()
+        if hasattr(self, "export_type_var")
+        else "CSV (Separate Files)"
                     ),
                     "sort_column": (
-                        self.sort_col_menu.get()
-                        if hasattr(self, "sort_col_menu")
-                        else "No Sorting"
+        self.sort_col_menu.get()
+        if hasattr(self, "sort_col_menu")
+        else "No Sorting"
                     ),
                     "sort_order": (
-                        self.sort_order_var.get()
-                        if hasattr(self, "sort_order_var")
-                        else "Ascending"
+        self.sort_order_var.get()
+        if hasattr(self, "sort_order_var")
+        else "Ascending"
                     ),
                 },
                 "dataset_naming": {
                     "mode": (
-                        self.dataset_naming_var.get()
-                        if hasattr(self, "dataset_naming_var")
-                        else "auto"
+        self.dataset_naming_var.get()
+        if hasattr(self, "dataset_naming_var")
+        else "auto"
                     ),
                     "custom_name": (
-                        self.custom_dataset_entry.get()
-                        if hasattr(self, "custom_dataset_entry")
-                        else ""
+        self.custom_dataset_entry.get()
+        if hasattr(self, "custom_dataset_entry")
+        else ""
                     ),
                 },
                 "custom_variables": (
-                    self.custom_vars_list if hasattr(self, "custom_vars_list") else []
+        self.custom_vars_list if hasattr(self, "custom_vars_list") else []
                 ),
                 "output_directory": self.output_directory,
                 "saved_at": pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -5422,7 +5403,7 @@ COMMON MISTAKES TO AVOID:
 
             if file_path:
                 with open(file_path, "w") as f:
-                    json.dump(settings, f, indent=2)
+        json.dump(settings, f, indent=2)
                 messagebox.showinfo("Success", f"Settings saved to:\n{file_path}")
 
         except Exception as e:
@@ -5448,123 +5429,123 @@ COMMON MISTAKES TO AVOID:
             if "filter_settings" in settings:
                 fs = settings["filter_settings"]
                 if hasattr(self, "filter_type_var"):
-                    self.filter_type_var.set(fs.get("filter_type", "None"))
-                    self._update_filter_ui(fs.get("filter_type", "None"))
+        self.filter_type_var.set(fs.get("filter_type", "None"))
+        self._update_filter_ui(fs.get("filter_type", "None"))
                 if hasattr(self, "ma_value_entry"):
-                    self.ma_value_entry.delete(0, tk.END)
-                    self.ma_value_entry.insert(0, fs.get("ma_window", "10"))
+        self.ma_value_entry.delete(0, tk.END)
+        self.ma_value_entry.insert(0, fs.get("ma_window", "10"))
                 if hasattr(self, "ma_unit_menu"):
-                    self.ma_unit_menu.set(fs.get("ma_unit", "s"))
+        self.ma_unit_menu.set(fs.get("ma_unit", "s"))
                 if hasattr(self, "bw_order_entry"):
-                    self.bw_order_entry.delete(0, tk.END)
-                    self.bw_order_entry.insert(0, fs.get("bw_order", "3"))
+        self.bw_order_entry.delete(0, tk.END)
+        self.bw_order_entry.insert(0, fs.get("bw_order", "3"))
                 if hasattr(self, "bw_cutoff_entry"):
-                    self.bw_cutoff_entry.delete(0, tk.END)
-                    self.bw_cutoff_entry.insert(0, fs.get("bw_cutoff", "0.1"))
+        self.bw_cutoff_entry.delete(0, tk.END)
+        self.bw_cutoff_entry.insert(0, fs.get("bw_cutoff", "0.1"))
                 if hasattr(self, "median_kernel_entry"):
-                    self.median_kernel_entry.delete(0, tk.END)
-                    self.median_kernel_entry.insert(0, fs.get("median_kernel", "5"))
+        self.median_kernel_entry.delete(0, tk.END)
+        self.median_kernel_entry.insert(0, fs.get("median_kernel", "5"))
                 if hasattr(self, "hampel_window_entry"):
-                    self.hampel_window_entry.delete(0, tk.END)
-                    self.hampel_window_entry.insert(0, fs.get("hampel_window", "7"))
+        self.hampel_window_entry.delete(0, tk.END)
+        self.hampel_window_entry.insert(0, fs.get("hampel_window", "7"))
                 if hasattr(self, "hampel_threshold_entry"):
-                    self.hampel_threshold_entry.delete(0, tk.END)
-                    self.hampel_threshold_entry.insert(
-                        0,
-                        fs.get("hampel_threshold", "3.0"),
+        self.hampel_threshold_entry.delete(0, tk.END)
+        self.hampel_threshold_entry.insert(
+        0,
+        fs.get("hampel_threshold", "3.0"),
                     )
                 if hasattr(self, "zscore_threshold_entry"):
-                    self.zscore_threshold_entry.delete(0, tk.END)
-                    self.zscore_threshold_entry.insert(
-                        0,
-                        fs.get("zscore_threshold", "3.0"),
+        self.zscore_threshold_entry.delete(0, tk.END)
+        self.zscore_threshold_entry.insert(
+        0,
+        fs.get("zscore_threshold", "3.0"),
                     )
                 if hasattr(self, "zscore_method_menu"):
-                    self.zscore_method_menu.set(
-                        fs.get("zscore_method", "Remove Outliers"),
+        self.zscore_method_menu.set(
+        fs.get("zscore_method", "Remove Outliers"),
                     )
                 if hasattr(self, "savgol_window_entry"):
-                    self.savgol_window_entry.delete(0, tk.END)
-                    self.savgol_window_entry.insert(0, fs.get("savgol_window", "11"))
+        self.savgol_window_entry.delete(0, tk.END)
+        self.savgol_window_entry.insert(0, fs.get("savgol_window", "11"))
                 if hasattr(self, "savgol_polyorder_entry"):
-                    self.savgol_polyorder_entry.delete(0, tk.END)
-                    self.savgol_polyorder_entry.insert(
-                        0,
-                        fs.get("savgol_polyorder", "2"),
+        self.savgol_polyorder_entry.delete(0, tk.END)
+        self.savgol_polyorder_entry.insert(
+        0,
+        fs.get("savgol_polyorder", "2"),
                     )
 
             # Apply resample settings
             if "resample_settings" in settings:
                 rs = settings["resample_settings"]
                 if hasattr(self, "resample_var"):
-                    self.resample_var.set(rs.get("enabled", False))
+        self.resample_var.set(rs.get("enabled", False))
                 if hasattr(self, "resample_value_entry"):
-                    self.resample_value_entry.delete(0, tk.END)
-                    self.resample_value_entry.insert(0, rs.get("value", "10"))
+        self.resample_value_entry.delete(0, tk.END)
+        self.resample_value_entry.insert(0, rs.get("value", "10"))
                 if hasattr(self, "resample_unit_menu"):
-                    self.resample_unit_menu.set(rs.get("unit", "s"))
+        self.resample_unit_menu.set(rs.get("unit", "s"))
 
             # Apply trim settings
             if "trim_settings" in settings:
                 ts = settings["trim_settings"]
                 if hasattr(self, "trim_date_entry"):
-                    self.trim_date_entry.delete(0, tk.END)
-                    self.trim_date_entry.insert(0, ts.get("date", ""))
+        self.trim_date_entry.delete(0, tk.END)
+        self.trim_date_entry.insert(0, ts.get("date", ""))
                 if hasattr(self, "trim_start_entry"):
-                    self.trim_start_entry.delete(0, tk.END)
-                    self.trim_start_entry.insert(0, ts.get("start_time", ""))
+        self.trim_start_entry.delete(0, tk.END)
+        self.trim_start_entry.insert(0, ts.get("start_time", ""))
                 if hasattr(self, "trim_end_entry"):
-                    self.trim_end_entry.delete(0, tk.END)
-                    self.trim_end_entry.insert(0, ts.get("end_time", ""))
+        self.trim_end_entry.delete(0, tk.END)
+        self.trim_end_entry.insert(0, ts.get("end_time", ""))
 
             # Apply integration settings
             if "integration_settings" in settings:
                 its = settings["integration_settings"]
                 if hasattr(self, "integrator_method_var"):
-                    self.integrator_method_var.set(its.get("method", "Trapezoidal"))
+        self.integrator_method_var.set(its.get("method", "Trapezoidal"))
 
             # Apply differentiation settings
             if "differentiation_settings" in settings:
                 ds = settings["differentiation_settings"]
                 if hasattr(self, "deriv_method_var"):
-                    self.deriv_method_var.set(ds.get("method", "Spline (Acausal)"))
+        self.deriv_method_var.set(ds.get("method", "Spline (Acausal)"))
                 if hasattr(self, "derivative_vars") and "orders" in ds:
-                    for order_str, value in ds["orders"].items():
-                        order = int(order_str)
-                        if order in self.derivative_vars:
-                            self.derivative_vars[order].set(value)
+        for order_str, value in ds["orders"].items():
+        order = int(order_str)
+        if order in self.derivative_vars:
+        self.derivative_vars[order].set(value)
 
             # Apply export settings
             if "export_settings" in settings:
                 es = settings["export_settings"]
                 if hasattr(self, "export_type_var"):
-                    self.export_type_var.set(es.get("type", "CSV (Separate Files)"))
+        self.export_type_var.set(es.get("type", "CSV (Separate Files)"))
                 if hasattr(self, "sort_col_menu"):
-                    self.sort_col_menu.set(es.get("sort_column", "No Sorting"))
+        self.sort_col_menu.set(es.get("sort_column", "No Sorting"))
                 if hasattr(self, "sort_order_var"):
-                    self.sort_order_var.set(es.get("sort_order", "Ascending"))
+        self.sort_order_var.set(es.get("sort_order", "Ascending"))
 
             # Apply dataset naming settings
             if "dataset_naming" in settings:
                 dns = settings["dataset_naming"]
                 if hasattr(self, "dataset_naming_var"):
-                    self.dataset_naming_var.set(dns.get("mode", "auto"))
-                    self._on_dataset_naming_change()
+        self.dataset_naming_var.set(dns.get("mode", "auto"))
+        self._on_dataset_naming_change()
                 if hasattr(self, "custom_dataset_entry"):
-                    self.custom_dataset_entry.delete(0, tk.END)
-                    self.custom_dataset_entry.insert(0, dns.get("custom_name", ""))
+        self.custom_dataset_entry.delete(0, tk.END)
+        self.custom_dataset_entry.insert(0, dns.get("custom_name", ""))
 
             # Apply custom variables
             if "custom_variables" in settings and hasattr(self, "custom_vars_list"):
                 self.custom_vars_list = settings["custom_variables"]
                 if hasattr(self, "_update_custom_vars_display"):
-                    self._update_custom_vars_display()
+        self._update_custom_vars_display()
 
             # Apply output directory
             if "output_directory" in settings:
                 self.output_directory = settings["output_directory"]
                 if hasattr(self, "output_label"):
-                    self.output_label.configure(text=f"Output: {self.output_directory}")
+        self.output_label.configure(text=f"Output: {self.output_directory}")
 
             saved_at = settings.get("saved_at", "Unknown time")
             messagebox.showinfo(
@@ -5694,40 +5675,40 @@ COMMON MISTAKES TO AVOID:
             current_dir = os.getcwd()
             for file in os.listdir(current_dir):
                 if file.endswith(".json"):
-                    file_path = os.path.join(current_dir, file)
-                    try:
+        file_path = os.path.join(current_dir, file)
+        try:
                         # Try to read the file to see if it's a valid configuration
-                        with open(file_path) as f:
-                            data = json.load(f)
+        with open(file_path) as f:
+        data = json.load(f)
                             # Check if it has the expected structure (
                             #     processing configs have 'saved_at',
                             #     plotting configs have 'plot_name'
                             # )
-                            if isinstance(data, dict) and (
+        if isinstance(data, dict) and (
                                 "saved_at" in data or "plot_name" in data
                             ):
-                                if "saved_at" in data:
-                                    config_files.append(
+        if "saved_at" in data:
+        config_files.append(
                                         (
-                                            file,
-                                            file_path,
-                                            data.get("saved_at", "Unknown"),
+        file,
+        file_path,
+        data.get("saved_at", "Unknown"),
                                             "Processing Config",
                                         ),
                                     )
-                                elif "plot_name" in data:
-                                    config_files.append(
+        elif "plot_name" in data:
+        config_files.append(
                                         (
-                                            file,
-                                            file_path,
-                                            data.get("created_date", "Unknown"),
+        file,
+        file_path,
+        data.get("created_date", "Unknown"),
                                             "Plot Config",
                                         ),
                                     )
-                    except Exception:
+        except Exception:
                         # Skip files that can't be read as JSON or don't have the right
                         # structure
-                        continue
+        continue
 
             # Sort by creation date (newest first)
             config_files.sort(key=lambda x: x[2], reverse=True)
@@ -5738,12 +5719,12 @@ COMMON MISTAKES TO AVOID:
                 self.config_listbox.insert(tk.END, display_text)
                 # Store the filepath as item data
                 self.config_listbox.itemconfig(
-                    tk.END,
+        tk.END,
                     {
                         "bg": (
                             "lightgray"
-                            if self.config_listbox.size() % 2 == 0
-                            else "white"
+        if self.config_listbox.size() % 2 == 0
+        else "white"
                         ),
                     },
                 )
@@ -5825,12 +5806,12 @@ COMMON MISTAKES TO AVOID:
             if result:
                 os.remove(filepath)
                 self.config_status_label.configure(
-                    text=f"Deleted configuration: {filename}",
+        text=f"Deleted configuration: {filename}",
                 )
                 self._refresh_config_list()
                 messagebox.showinfo(
                     "Success",
-                    f"Configuration deleted successfully:\n{filename}",
+        f"Configuration deleted successfully:\n{filename}",
                 )
 
         except Exception as e:
@@ -5862,49 +5843,49 @@ COMMON MISTAKES TO AVOID:
             if "filter_settings" in settings:
                 fs = settings["filter_settings"]
                 if hasattr(self, "filter_type_var"):
-                    self.filter_type_var.set(fs.get("filter_type", "None"))
-                    self._update_filter_ui(fs.get("filter_type", "None"))
+        self.filter_type_var.set(fs.get("filter_type", "None"))
+        self._update_filter_ui(fs.get("filter_type", "None"))
                 if hasattr(self, "ma_value_entry"):
-                    self.ma_value_entry.delete(0, tk.END)
-                    self.ma_value_entry.insert(0, fs.get("ma_window", "10"))
+        self.ma_value_entry.delete(0, tk.END)
+        self.ma_value_entry.insert(0, fs.get("ma_window", "10"))
                 if hasattr(self, "ma_unit_menu"):
-                    self.ma_unit_menu.set(fs.get("ma_unit", "s"))
+        self.ma_unit_menu.set(fs.get("ma_unit", "s"))
                 if hasattr(self, "bw_order_entry"):
-                    self.bw_order_entry.delete(0, tk.END)
-                    self.bw_order_entry.insert(0, fs.get("bw_order", "3"))
+        self.bw_order_entry.delete(0, tk.END)
+        self.bw_order_entry.insert(0, fs.get("bw_order", "3"))
                 if hasattr(self, "bw_cutoff_entry"):
-                    self.bw_cutoff_entry.delete(0, tk.END)
-                    self.bw_cutoff_entry.insert(0, fs.get("bw_cutoff", "0.1"))
+        self.bw_cutoff_entry.delete(0, tk.END)
+        self.bw_cutoff_entry.insert(0, fs.get("bw_cutoff", "0.1"))
                 if hasattr(self, "median_kernel_entry"):
-                    self.median_kernel_entry.delete(0, tk.END)
-                    self.median_kernel_entry.insert(0, fs.get("median_kernel", "5"))
+        self.median_kernel_entry.delete(0, tk.END)
+        self.median_kernel_entry.insert(0, fs.get("median_kernel", "5"))
                 if hasattr(self, "hampel_window_entry"):
-                    self.hampel_window_entry.delete(0, tk.END)
-                    self.hampel_window_entry.insert(0, fs.get("hampel_window", "7"))
+        self.hampel_window_entry.delete(0, tk.END)
+        self.hampel_window_entry.insert(0, fs.get("hampel_window", "7"))
                 if hasattr(self, "hampel_threshold_entry"):
-                    self.hampel_threshold_entry.delete(0, tk.END)
-                    self.hampel_threshold_entry.insert(
-                        0,
-                        fs.get("hampel_threshold", "3.0"),
+        self.hampel_threshold_entry.delete(0, tk.END)
+        self.hampel_threshold_entry.insert(
+        0,
+        fs.get("hampel_threshold", "3.0"),
                     )
                 if hasattr(self, "zscore_threshold_entry"):
-                    self.zscore_threshold_entry.delete(0, tk.END)
-                    self.zscore_threshold_entry.insert(
-                        0,
-                        fs.get("zscore_threshold", "3.0"),
+        self.zscore_threshold_entry.delete(0, tk.END)
+        self.zscore_threshold_entry.insert(
+        0,
+        fs.get("zscore_threshold", "3.0"),
                     )
                 if hasattr(self, "zscore_method_menu"):
-                    self.zscore_method_menu.set(
-                        fs.get("zscore_method", "Remove Outliers"),
+        self.zscore_method_menu.set(
+        fs.get("zscore_method", "Remove Outliers"),
                     )
                 if hasattr(self, "savgol_window_entry"):
-                    self.savgol_window_entry.delete(0, tk.END)
-                    self.savgol_window_entry.insert(0, fs.get("savgol_window", "11"))
+        self.savgol_window_entry.delete(0, tk.END)
+        self.savgol_window_entry.insert(0, fs.get("savgol_window", "11"))
                 if hasattr(self, "savgol_polyorder_entry"):
-                    self.savgol_polyorder_entry.delete(0, tk.END)
-                    self.savgol_polyorder_entry.insert(
-                        0,
-                        fs.get("savgol_polyorder", "2"),
+        self.savgol_polyorder_entry.delete(0, tk.END)
+        self.savgol_polyorder_entry.insert(
+        0,
+        fs.get("savgol_polyorder", "2"),
                     )
         except Exception:
             pass
@@ -5913,62 +5894,62 @@ COMMON MISTAKES TO AVOID:
             if "resample_settings" in settings:
                 rs = settings["resample_settings"]
                 if hasattr(self, "resample_var"):
-                    self.resample_var.set(rs.get("enabled", False))
+        self.resample_var.set(rs.get("enabled", False))
                 if hasattr(self, "resample_value_entry"):
-                    self.resample_value_entry.delete(0, tk.END)
-                    self.resample_value_entry.insert(0, rs.get("value", "10"))
+        self.resample_value_entry.delete(0, tk.END)
+        self.resample_value_entry.insert(0, rs.get("value", "10"))
                 if hasattr(self, "resample_unit_menu"):
-                    self.resample_unit_menu.set(rs.get("unit", "s"))
+        self.resample_unit_menu.set(rs.get("unit", "s"))
 
             # Apply trim settings
             if "trim_settings" in settings:
                 ts = settings["trim_settings"]
                 if hasattr(self, "trim_date_entry"):
-                    self.trim_date_entry.delete(0, tk.END)
-                    self.trim_date_entry.insert(0, ts.get("date", ""))
+        self.trim_date_entry.delete(0, tk.END)
+        self.trim_date_entry.insert(0, ts.get("date", ""))
                 if hasattr(self, "trim_start_entry"):
-                    self.trim_start_entry.delete(0, tk.END)
-                    self.trim_start_entry.insert(0, ts.get("start_time", ""))
+        self.trim_start_entry.delete(0, tk.END)
+        self.trim_start_entry.insert(0, ts.get("start_time", ""))
                 if hasattr(self, "trim_end_entry"):
-                    self.trim_end_entry.delete(0, tk.END)
-                    self.trim_end_entry.insert(0, ts.get("end_time", ""))
+        self.trim_end_entry.delete(0, tk.END)
+        self.trim_end_entry.insert(0, ts.get("end_time", ""))
 
             # Apply integration settings
             if "integration_settings" in settings:
                 is_settings = settings["integration_settings"]
                 if hasattr(self, "integrator_method_var"):
-                    self.integrator_method_var.set(
-                        is_settings.get("method", "Trapezoidal"),
+        self.integrator_method_var.set(
+        is_settings.get("method", "Trapezoidal"),
                     )
 
             # Apply differentiation settings
             if "differentiation_settings" in settings:
                 ds = settings["differentiation_settings"]
                 if hasattr(self, "deriv_method_var"):
-                    self.deriv_method_var.set(ds.get("method", "Spline (Acausal)"))
+        self.deriv_method_var.set(ds.get("method", "Spline (Acausal)"))
                 if hasattr(self, "derivative_vars") and "orders" in ds:
-                    for order, enabled in ds["orders"].items():
-                        if order in self.derivative_vars:
-                            self.derivative_vars[order].set(enabled)
+        for order, enabled in ds["orders"].items():
+        if order in self.derivative_vars:
+        self.derivative_vars[order].set(enabled)
 
             # Apply export settings
             if "export_settings" in settings:
                 es = settings["export_settings"]
                 if hasattr(self, "export_type_var"):
-                    self.export_type_var.set(es.get("type", "CSV (Separate Files)"))
+        self.export_type_var.set(es.get("type", "CSV (Separate Files)"))
                 if hasattr(self, "sort_col_menu"):
-                    self.sort_col_menu.set(es.get("sort_column", "No Sorting"))
+        self.sort_col_menu.set(es.get("sort_column", "No Sorting"))
                 if hasattr(self, "sort_order_var"):
-                    self.sort_order_var.set(es.get("sort_order", "Ascending"))
+        self.sort_order_var.set(es.get("sort_order", "Ascending"))
 
             # Apply dataset naming settings
             if "dataset_naming" in settings:
                 dn = settings["dataset_naming"]
                 if hasattr(self, "dataset_naming_var"):
-                    self.dataset_naming_var.set(dn.get("mode", "auto"))
+        self.dataset_naming_var.set(dn.get("mode", "auto"))
                 if hasattr(self, "custom_dataset_entry"):
-                    self.custom_dataset_entry.delete(0, tk.END)
-                    self.custom_dataset_entry.insert(0, dn.get("custom_name", ""))
+        self.custom_dataset_entry.delete(0, tk.END)
+        self.custom_dataset_entry.insert(0, dn.get("custom_name", ""))
 
             # Apply custom variables
             if "custom_variables" in settings:
@@ -5979,7 +5960,7 @@ COMMON MISTAKES TO AVOID:
             if "output_directory" in settings:
                 self.output_directory = settings["output_directory"]
                 if hasattr(self, "output_label"):
-                    self.output_label.configure(text=f"Output: {self.output_directory}")
+        self.output_label.configure(text=f"Output: {self.output_directory}")
 
         except Exception as e:
             messagebox.showerror("Error", f"Failed to apply settings:\n{e!s}")
@@ -6035,14 +6016,14 @@ COMMON MISTAKES TO AVOID:
 
             if file_path:
                 with open(file_path, "w") as f:
-                    json.dump(signal_list_data, f, indent=2)
+        json.dump(signal_list_data, f, indent=2)
 
                 # No popup message - just update status bar for better user experience
                 self.status_label.configure(
-                    text=f"Signal list saved: {signal_list_name} ({len(selected_signals)} signals)",
+        text=f"Signal list saved: {signal_list_name} ({len(selected_signals)} signals)",
                 )
                 print(
-                    f"DEBUG: Signal list '{signal_list_name}' saved successfully with {len(selected_signals)} signals",
+        f"DEBUG: Signal list '{signal_list_name}' saved successfully with {len(selected_signals)} signals",
                 )
 
         except Exception as e:
@@ -6203,17 +6184,17 @@ COMMON MISTAKES TO AVOID:
             messagebox.showinfo(
                 "Signals Applied",
                 (
-                    f"Applied {len(present_signals)} signals from "
-                    f"'{self.saved_signal_list_name}'.\n\n"
-                    f"Missing signals ({len(missing_signals)}):\n{missing_text}"
+        f"Applied {len(present_signals)} signals from "
+        f"'{self.saved_signal_list_name}'.\n\n"
+        f"Missing signals ({len(missing_signals)}):\n{missing_text}"
                 ),
             )
         else:
             messagebox.showinfo(
                 "Signals Applied",
                 (
-                    f"Successfully applied all {len(present_signals)} signals "
-                    f"from '{self.saved_signal_list_name}'."
+        f"Successfully applied all {len(present_signals)} signals "
+        f"from '{self.saved_signal_list_name}'."
                 ),
             )
 
@@ -6264,8 +6245,8 @@ COMMON MISTAKES TO AVOID:
                 self.hampel_window_entry.insert(0, self.plot_hampel_window_entry.get())
                 self.hampel_threshold_entry.delete(0, tk.END)
                 self.hampel_threshold_entry.insert(
-                    0,
-                    self.plot_hampel_threshold_entry.get(),
+        0,
+        self.plot_hampel_threshold_entry.get(),
                 )
         elif plot_filter == "Z-Score Filter":
             if hasattr(self, "plot_zscore_threshold_entry") and hasattr(
@@ -6274,8 +6255,8 @@ COMMON MISTAKES TO AVOID:
             ):
                 self.zscore_threshold_entry.delete(0, tk.END)
                 self.zscore_threshold_entry.insert(
-                    0,
-                    self.plot_zscore_threshold_entry.get(),
+        0,
+        self.plot_zscore_threshold_entry.get(),
                 )
                 self.zscore_method_menu.set(self.plot_zscore_method_menu.get())
         elif plot_filter == "Savitzky-Golay":
@@ -6287,8 +6268,8 @@ COMMON MISTAKES TO AVOID:
                 self.savgol_window_entry.insert(0, self.plot_savgol_window_entry.get())
                 self.savgol_polyorder_entry.delete(0, tk.END)
                 self.savgol_polyorder_entry.insert(
-                    0,
-                    self.plot_savgol_polyorder_entry.get(),
+        0,
+        self.plot_savgol_polyorder_entry.get(),
                 )
 
         messagebox.showinfo(
@@ -6325,18 +6306,18 @@ COMMON MISTAKES TO AVOID:
                 # Check for overwrite and get final path
                 final_path = self._check_file_overwrite(save_path)
                 if final_path is None:  # User cancelled
-                    return
+        return
 
                 self.plot_fig.savefig(
-                    final_path,
-                    dpi=300,
-                    bbox_inches="tight",
-                    facecolor="white",
-                    edgecolor="none",
+        final_path,
+        dpi=300,
+        bbox_inches="tight",
+        facecolor="white",
+        edgecolor="none",
                 )
                 messagebox.showinfo("Success", f"Chart exported to:\n{final_path}")
                 self.status_label.configure(
-                    text=f"Chart exported: {os.path.basename(final_path)}",
+        text=f"Chart exported: {os.path.basename(final_path)}",
                 )
 
         except Exception as e:
@@ -6363,40 +6344,38 @@ COMMON MISTAKES TO AVOID:
                 # Check for overwrite and get final path
                 final_path = self._check_file_overwrite(save_path)
                 if final_path is None:  # User cancelled
-                    return
+        return
 
                 df = self.get_data_for_plotting(selected_file)
                 if df is not None and not df.empty:
-                    signals_to_plot = [
-                        s
-                        for s, data in self.plot_signal_vars.items()
-                        if data["var"].get()
+        signals_to_plot = [
+        s
+        for s, data in self.plot_signal_vars.items()
+        if data["var"].get()
                     ]
-
-                    if signals_to_plot:
+        if signals_to_plot:
                         # Filter data to only include plotted signals
-                        export_df = df[signals_to_plot].copy()
+        export_df = df[signals_to_plot].copy()
 
                         # Add time column if it exists
-                        time_col = None
-                        for col in df.columns:
-                            if pd.api.types.is_datetime64_any_dtype(df[col]):
-                                time_col = col
-                                break
-
-                        if time_col:
-                            export_df.insert(0, time_col, df[time_col])
+        time_col = None
+        for col in df.columns:
+        if pd.api.types.is_datetime64_any_dtype(df[col]):
+        time_col = col
+        break
+        if time_col:
+        export_df.insert(0, time_col, df[time_col])
 
                         # Export to Excel
-                        with pd.ExcelWriter(final_path, engine="openpyxl") as writer:
-                            export_df.to_excel(
-                                writer,
-                                sheet_name="Chart Data",
-                                index=False,
+        with pd.ExcelWriter(final_path, engine="openpyxl") as writer:
+        export_df.to_excel(
+        writer,
+        sheet_name="Chart Data",
+        index=False,
                             )
 
                             # Add chart information
-                            info_df = pd.DataFrame(
+        info_df = pd.DataFrame(
                                 {
                                     "Property": [
                                         "File",
@@ -6406,34 +6385,33 @@ COMMON MISTAKES TO AVOID:
                                         "Signals Plotted",
                                     ],
                                     "Value": [
-                                        selected_file,
-                                        self.plot_title_entry.get() or "No title",
-                                        self.plot_xlabel_entry.get() or "No label",
-                                        self.plot_ylabel_entry.get() or "No label",
+        selected_file,
+        self.plot_title_entry.get() or "No title",
+        self.plot_xlabel_entry.get() or "No label",
+        self.plot_ylabel_entry.get() or "No label",
                                         ", ".join(signals_to_plot),
                                     ],
                                 },
                             )
-                            info_df.to_excel(
-                                writer,
-                                sheet_name="Chart Info",
-                                index=False,
+        info_df.to_excel(
+        writer,
+        sheet_name="Chart Info",
+        index=False,
                             )
-
-                        messagebox.showinfo(
+        messagebox.showinfo(
                             "Success",
-                            f"Chart data exported to:\n{final_path}",
+        f"Chart data exported to:\n{final_path}",
                         )
-                        self.status_label.configure(
-                            text=f"Chart data exported: {os.path.basename(final_path)}",
+        self.status_label.configure(
+        text=f"Chart data exported: {os.path.basename(final_path)}",
                         )
-                    else:
-                        messagebox.showwarning(
+        else:
+        messagebox.showwarning(
                             "Warning",
                             "No signals selected for plotting.",
                         )
                 else:
-                    messagebox.showerror("Error", "Could not load data for export.")
+        messagebox.showerror("Error", "Could not load data for export.")
 
         except Exception as e:
             messagebox.showerror("Error", f"Failed to export chart data:\n{e}")
@@ -6622,7 +6600,7 @@ COMMON MISTAKES TO AVOID:
             )
             if os.path.exists(plots_file):
                 with open(plots_file) as f:
-                    self.plots_list = json.load(f)
+        self.plots_list = json.load(f)
                 self._update_plots_listbox()
                 self._update_load_plot_config_menu()
         except Exception as e:
@@ -6676,7 +6654,7 @@ COMMON MISTAKES TO AVOID:
             # Filter to only selected tags
             if "Time" in df.columns:
                 selected_columns = ["Time"] + [
-                    col for col in selected_tags if col in df.columns
+        col for col in selected_tags if col in df.columns
                 ]
             else:
                 selected_columns = [col for col in selected_tags if col in df.columns]
@@ -6694,7 +6672,7 @@ COMMON MISTAKES TO AVOID:
                 filtered_df.to_csv(output_path, index=False)
                 messagebox.showinfo(
                     "Success",
-                    f"Data imported and saved to {output_path}",
+        f"Data imported and saved to {output_path}",
                 )
 
         except Exception as e:
@@ -6731,18 +6709,18 @@ COMMON MISTAKES TO AVOID:
                 # Apply time trimming
                 if trim_date or trim_start or trim_end:
                     # Get the date from the data if not specified
-                    if not trim_date:
-                        trim_date = df[time_col].iloc[0].strftime("%Y-%m-%d")
+        if not trim_date:
+        trim_date = df[time_col].iloc[0].strftime("%Y-%m-%d")
 
                     # Create full datetime strings
-                    start_time_str = trim_start or "00:00:00"
-                    end_time_str = trim_end or "23:59:59"
-                    start_full_str = f"{trim_date} {start_time_str}"
-                    end_full_str = f"{trim_date} {end_time_str}"
+        start_time_str = trim_start or "00:00:00"
+        end_time_str = trim_end or "23:59:59"
+        start_full_str = f"{trim_date} {start_time_str}"
+        end_full_str = f"{trim_date} {end_time_str}"
 
                     # Filter the data by time range
-                    df = (
-                        df.set_index(time_col)
+        df = (
+        df.set_index(time_col)
                         .loc[start_full_str:end_full_str]
                         .reset_index()
                     )
@@ -6750,8 +6728,8 @@ COMMON MISTAKES TO AVOID:
                 # Save trimmed file
                 base_name = os.path.splitext(os.path.basename(file_path))[0]
                 output_path = os.path.join(
-                    self.output_directory,
-                    f"{base_name}_Trimmed.csv",
+        self.output_directory,
+        f"{base_name}_Trimmed.csv",
                 )
                 df.to_csv(output_path, index=False)
 
@@ -6827,29 +6805,29 @@ COMMON MISTAKES TO AVOID:
 
             if not signals_to_plot:
                 self.plot_ax.text(
-                    0.5,
-                    0.5,
+        0.5,
+        0.5,
                     "Select one or more signals to plot",
-                    ha="center",
-                    va="center",
+        ha="center",
+        va="center",
                 )
             else:
                 # Apply filter preview if selected
                 plot_filter = self.plot_filter_type.get()
                 if plot_filter != "None":
-                    filtered_df = self._apply_plot_filter(
-                        filtered_df,
-                        signals_to_plot,
-                        time_col,
+        filtered_df = self._apply_plot_filter(
+        filtered_df,
+        signals_to_plot,
+        time_col,
                     )
 
                 # Chart customization
                 plot_style = self.plot_type_var.get()
                 style_args = {"linestyle": "-", "marker": ""}
                 if plot_style == "Line with Markers":
-                    style_args = {"linestyle": "-", "marker": ".", "markersize": 4}
+        style_args = {"linestyle": "-", "marker": ".", "markersize": 4}
                 elif plot_style == "Markers Only (Scatter)":
-                    style_args = {"linestyle": "None", "marker": ".", "markersize": 5}
+        style_args = {"linestyle": "None", "marker": ".", "markersize": 5}
 
                 # Apply line width
                 line_width = float(self.line_width_var.get())
@@ -6858,47 +6836,46 @@ COMMON MISTAKES TO AVOID:
                 # Get color scheme
                 color_scheme = self.color_scheme_var.get()
                 if color_scheme == "Auto (Matplotlib)":
-                    colors = getattr(plt.cm, "tab10", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(signals_to_plot)))
+        colors = getattr(plt.cm, "tab10", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(signals_to_plot)))
                 elif color_scheme == "Viridis":
-                    colors = getattr(plt.cm, "viridis", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(signals_to_plot)))
+        colors = getattr(plt.cm, "viridis", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(signals_to_plot)))
                 elif color_scheme == "Plasma":
-                    colors = getattr(plt.cm, "plasma", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(signals_to_plot)))
+        colors = getattr(plt.cm, "plasma", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(signals_to_plot)))
                 elif color_scheme == "Cool":
-                    colors = getattr(plt.cm, "cool", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(signals_to_plot)))
+        colors = getattr(plt.cm, "cool", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(signals_to_plot)))
                 elif color_scheme == "Warm":
-                    colors = getattr(plt.cm, "autumn", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(signals_to_plot)))
+        colors = getattr(plt.cm, "autumn", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(signals_to_plot)))
                 elif color_scheme == "Rainbow":
-                    colors = getattr(plt.cm, "rainbow", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(signals_to_plot)))
+        colors = getattr(plt.cm, "rainbow", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(signals_to_plot)))
                 else:  # Custom Colors - default to tab10
-                    colors = getattr(plt.cm, "Set1", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(signals_to_plot)))
+        colors = getattr(plt.cm, "Set1", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(signals_to_plot)))
 
                 # Plot each selected signal
                 for i, signal in enumerate(signals_to_plot):
-                    if signal not in filtered_df.columns:
-                        continue
-
-                    plot_df = filtered_df[[time_col, signal]].dropna()
-                    plot_style = style_args.copy()
-                    plot_style["color"] = colors[i]
-                    signal_label = self.custom_legend_entries.get(signal, signal)
-                    self.plot_ax.plot(
-                        plot_df[time_col],
-                        plot_df[signal],
-                        label=signal_label,
+        if signal not in filtered_df.columns:
+        continue
+        plot_df = filtered_df[[time_col, signal]].dropna()
+        plot_style = style_args.copy()
+        plot_style["color"] = colors[i]
+        signal_label = self.custom_legend_entries.get(signal, signal)
+        self.plot_ax.plot(
+        plot_df[time_col],
+        plot_df[signal],
+        label=signal_label,
                         **plot_style,
                     )
 
                 # Add trendline if selected
                 if self.trendline_type_var.get() != "None":
-                    selected_trendline_signal = self.trendline_signal_var.get()
-                    if (
-                        selected_trendline_signal != "Select signal..."
-                        and selected_trendline_signal in filtered_df.columns
+        selected_trendline_signal = self.trendline_signal_var.get()
+        if (
+        selected_trendline_signal != "Select signal..."
+        and selected_trendline_signal in filtered_df.columns
                     ):
-                        self._add_trendline(
-                            filtered_df,
-                            selected_trendline_signal,
-                            time_col,
+        self._add_trendline(
+        filtered_df,
+        selected_trendline_signal,
+        time_col,
                         )
 
             # Apply custom labels and title
@@ -7076,19 +7053,19 @@ COMMON MISTAKES TO AVOID:
             # Create custom home function
             def custom_home() -> None:
                 try:
-                    if self.saved_plot_view:
-                        self.plot_ax.set_xlim(self.saved_plot_view["xlim"])
-                        self.plot_ax.set_ylim(self.saved_plot_view["ylim"])
-                        self.plot_canvas.draw()  # type: ignore
+        if self.saved_plot_view:
+        self.plot_ax.set_xlim(self.saved_plot_view["xlim"])
+        self.plot_ax.set_ylim(self.saved_plot_view["ylim"])
+        self.plot_canvas.draw()  # type: ignore
             else:                            # type: ignore# Fall back to original home if no saved view
-                        self._original_home()
+        self._original_home()
                 try:
-                    pass
+        pass
                 except Exception:
                     # Fall back to original home on any error
-                    self._original_home()
+        self._original_home()
                 except Exception:
-                    pass
+        pass
 
             # Replace the home function
             self.plot_toolbar.home = custom_home
@@ -7128,7 +7105,7 @@ COMMON MISTAKES TO AVOID:
             # Update legend order to include new signals
             for signal in selected_signals:
                 if signal not in self.legend_order:
-                    self.legend_order.append(signal)
+        self.legend_order.append(signal)
             # Remove signals that are no longer selected
             self.legend_order = [s for s in self.legend_order if s in selected_signals]
 
@@ -7143,11 +7120,11 @@ COMMON MISTAKES TO AVOID:
             # Move up button
             if i > 0:
                 up_btn = ctk.CTkButton(
-                    signal_frame,
-                    text="↑",
-                    width=25,
-                    height=25,
-                    command=lambda s=signal: self._move_legend_up(s),
+        signal_frame,
+        text="↑",
+        width=25,
+        height=25,
+        command=lambda s=signal: self._move_legend_up(s),
                 )
                 up_btn.pack(side="left", padx=2, pady=2)
             else:
@@ -7158,11 +7135,11 @@ COMMON MISTAKES TO AVOID:
             # Move down button
             if i < len(self.legend_order) - 1:
                 down_btn = ctk.CTkButton(
-                    signal_frame,
-                    text="↓",
-                    width=25,
-                    height=25,
-                    command=lambda s=signal: self._move_legend_down(s),
+        signal_frame,
+        text="↓",
+        width=25,
+        height=25,
+        command=lambda s=signal: self._move_legend_down(s),
                 )
                 down_btn.pack(side="left", padx=2, pady=2)
             else:
@@ -7206,8 +7183,8 @@ COMMON MISTAKES TO AVOID:
             idx = self.legend_order.index(signal)
             if idx > 0:
                 self.legend_order[idx], self.legend_order[idx - 1] = (
-                    self.legend_order[idx - 1],
-                    self.legend_order[idx],
+        self.legend_order[idx - 1],
+        self.legend_order[idx],
                 )
                 self._refresh_legend_entries()
                 self._on_plot_setting_change()
@@ -7218,8 +7195,8 @@ COMMON MISTAKES TO AVOID:
             idx = self.legend_order.index(signal)
             if idx < len(self.legend_order) - 1:
                 self.legend_order[idx], self.legend_order[idx + 1] = (
-                    self.legend_order[idx + 1],
-                    self.legend_order[idx],
+        self.legend_order[idx + 1],
+        self.legend_order[idx],
                 )
                 self._refresh_legend_entries()
                 self._on_plot_setting_change()
@@ -7759,83 +7736,83 @@ For additional support or feature requests, please refer to the application docu
         self.plots_list[config_index].update(
             {
                 "file": (
-                    self.plot_file_menu.get() if hasattr(self, "plot_file_menu") else ""
+        self.plot_file_menu.get() if hasattr(self, "plot_file_menu") else ""
                 ),
                 "x_axis": (
-                    self.plot_xaxis_menu.get()
-                    if hasattr(self, "plot_xaxis_menu")
-                    else ""
+        self.plot_xaxis_menu.get()
+        if hasattr(self, "plot_xaxis_menu")
+        else ""
                 ),
                 "signals": selected_signals,
                 "filter_type": (
-                    self.plot_filter_type.get()
-                    if hasattr(self, "plot_filter_type")
-                    else "None"
+        self.plot_filter_type.get()
+        if hasattr(self, "plot_filter_type")
+        else "None"
                 ),
                 "show_both_signals": (
-                    self.show_both_signals_var.get()
-                    if hasattr(self, "show_both_signals_var")
-                    else False
+        self.show_both_signals_var.get()
+        if hasattr(self, "show_both_signals_var")
+        else False
                 ),
                 "compare_filters": (
-                    self.compare_filters_var.get()
-                    if hasattr(self, "compare_filters_var")
-                    else False
+        self.compare_filters_var.get()
+        if hasattr(self, "compare_filters_var")
+        else False
                 ),
                 "plot_title": (
-                    self.plot_title_entry.get()
-                    if hasattr(self, "plot_title_entry")
-                    else ""
+        self.plot_title_entry.get()
+        if hasattr(self, "plot_title_entry")
+        else ""
                 ),
                 "plot_xlabel": (
-                    self.plot_xlabel_entry.get()
-                    if hasattr(self, "plot_xlabel_entry")
-                    else ""
+        self.plot_xlabel_entry.get()
+        if hasattr(self, "plot_xlabel_entry")
+        else ""
                 ),
                 "plot_ylabel": (
-                    self.plot_ylabel_entry.get()
-                    if hasattr(self, "plot_ylabel_entry")
-                    else ""
+        self.plot_ylabel_entry.get()
+        if hasattr(self, "plot_ylabel_entry")
+        else ""
                 ),
                 "start_time": (
-                    self.plotting_start_time_entry.get()
-                    if hasattr(self, "plotting_start_time_entry")
-                    else ""
+        self.plotting_start_time_entry.get()
+        if hasattr(self, "plotting_start_time_entry")
+        else ""
                 ),
                 "end_time": (
-                    self.plotting_end_time_entry.get()
-                    if hasattr(self, "plotting_end_time_entry")
-                    else ""
+        self.plotting_end_time_entry.get()
+        if hasattr(self, "plotting_end_time_entry")
+        else ""
                 ),
                 "color_scheme": (
-                    self.color_scheme_var.get()
-                    if hasattr(self, "color_scheme_var")
-                    else "Auto (Matplotlib)"
+        self.color_scheme_var.get()
+        if hasattr(self, "color_scheme_var")
+        else "Auto (Matplotlib)"
                 ),
                 "line_width": (
-                    self.line_width_var.get()
-                    if hasattr(self, "line_width_var")
-                    else "1.0"
+        self.line_width_var.get()
+        if hasattr(self, "line_width_var")
+        else "1.0"
                 ),
                 "legend_position": (
-                    self.legend_position_var.get()
-                    if hasattr(self, "legend_position_var")
-                    else "best"
+        self.legend_position_var.get()
+        if hasattr(self, "legend_position_var")
+        else "best"
                 ),
                 "plot_type": (
-                    self.plot_type_var.get()
-                    if hasattr(self, "plot_type_var")
-                    else "Line with Markers"
+        self.plot_type_var.get()
+        if hasattr(self, "plot_type_var")
+        else "Line with Markers"
                 ),
                 "trendline_signal": (
-                    self.trendline_signal_var.get()
-                    if hasattr(self, "trendline_signal_var")
-                    else "Select signal..."
+        self.trendline_signal_var.get()
+        if hasattr(self, "trendline_signal_var")
+        else "Select signal..."
                 ),
                 "trendline_type": (
-                    self.trendline_type_var.get()
-                    if hasattr(self, "trendline_type_var")
-                    else "None"
+        self.trendline_type_var.get()
+        if hasattr(self, "trendline_type_var")
+        else "None"
                 ),
                 "custom_legend_entries": dict(self.custom_legend_entries),
                 "custom_colors": list(self.custom_colors),
@@ -8014,8 +7991,8 @@ For additional support or feature requests, please refer to the application docu
             ):
                 self.plot_hampel_threshold_entry.delete(0, tk.END)
                 self.plot_hampel_threshold_entry.insert(
-                    0,
-                    plot_config["hampel_threshold"],
+        0,
+        plot_config["hampel_threshold"],
                 )
         elif plot_config.get("filter_type") == "Z-Score Filter":
             if "zscore_threshold" in plot_config and hasattr(
@@ -8024,8 +8001,8 @@ For additional support or feature requests, please refer to the application docu
             ):
                 self.plot_zscore_threshold_entry.delete(0, tk.END)
                 self.plot_zscore_threshold_entry.insert(
-                    0,
-                    plot_config["zscore_threshold"],
+        0,
+        plot_config["zscore_threshold"],
                 )
             if "zscore_method" in plot_config and hasattr(
                 self,
@@ -8045,8 +8022,8 @@ For additional support or feature requests, please refer to the application docu
             ):
                 self.plot_savgol_polyorder_entry.delete(0, tk.END)
                 self.plot_savgol_polyorder_entry.insert(
-                    0,
-                    plot_config["savgol_polyorder"],
+        0,
+        plot_config["savgol_polyorder"],
                 )
 
         # Apply custom legend entries
@@ -8140,9 +8117,9 @@ For additional support or feature requests, please refer to the application docu
             if signal != signals[0]:  # Skip time column
                 var = tk.BooleanVar(value=False)
                 cb = ctk.CTkCheckBox(
-                    self.plots_signals_frame,
-                    text=signal,
-                    variable=var,
+        self.plots_signals_frame,
+        text=signal,
+        variable=var,
                 )
                 cb.grid(sticky="w", padx=5, pady=2)
                 self.plots_signal_vars[signal] = var
@@ -8173,13 +8150,13 @@ For additional support or feature requests, please refer to the application docu
 
             if not signals:
                 self.preview_ax.text(
-                    0.5,
-                    0.5,
+        0.5,
+        0.5,
                     "No signals selected in this configuration",
-                    transform=self.preview_ax.transAxes,
-                    ha="center",
-                    va="center",
-                    fontsize=12,
+        transform=self.preview_ax.transAxes,
+        ha="center",
+        va="center",
+        fontsize=12,
                 )
                 self.preview_ax.set_title(f"Preview: {plot_config['name']}")
                 self.preview_canvas.draw()  # type: ignore
@@ -8187,33 +8164,33 @@ For additional support or feature requests, please refer to the application docu
                 # Show available files for debugging
                 available_files = []
                 if hasattr(self, "plot_file_menu") and hasattr(
-                    self.plot_file_menu,
+        self.plot_file_menu,
                     "_values",
                 ):
-                    available_files = [
-                        f
-                        for f in self.plot_file_menu._values
-                        if f != "Select a file..."
+        available_files = [
+        f
+        for f in self.plot_file_menu._values
+        if f != "Select a file..."
                     ]
 
                 debug_text = f"No data file specified in plot configuration\n\nSaved file: '{file_name}'"
                 if available_files:
-                    debug_text += "\n\nAvailable files:\n" + "\n".join(
-                        available_files[:3],
+        debug_text += "\n\nAvailable files:\n" + "\n".join(
+        available_files[:3],
                     )
-                    if len(available_files) > 3:
-                        debug_text += f"\n... and {len(available_files)-3} more"
+        if len(available_files) > 3:
+        debug_text += f"\n... and {len(available_files)-3} more"
                 else:
-                    debug_text += "\n\nNo files currently loaded.\nPlease load files on Setup tab first."
+        debug_text += "\n\nNo files currently loaded.\nPlease load files on Setup tab first."
 
                 self.preview_ax.text(
-                    0.5,
-                    0.5,
-                    debug_text,
-                    transform=self.preview_ax.transAxes,
-                    ha="center",
-                    va="center",
-                    fontsize=10,
+        0.5,
+        0.5,
+        debug_text,
+        transform=self.preview_ax.transAxes,
+        ha="center",
+        va="center",
+        fontsize=10,
                 )
                 self.preview_ax.set_title(f"Preview: {plot_config['name']}")
                 self.preview_canvas.draw()  # type: ignore
@@ -8224,32 +8201,32 @@ For additional support or feature requests, please refer to the application docu
                 # Show available files for debugging
                 available_files = []
                 if hasattr(self, "processed_files") and self.processed_files:
-                    available_files.extend(
+        available_files.extend(
                         [os.path.basename(fp) for fp in self.processed_files.keys()],
                     )
                 if hasattr(self, "input_file_paths") and self.input_file_paths:
-                    available_files.extend(
+        available_files.extend(
                         [os.path.basename(fp) for fp in self.input_file_paths],
                     )
 
                 if available_files:
-                    debug_text = (
-                        f"Data file '{file_name}' not found\n\nAvailable files:\n"
+        debug_text = (
+        f"Data file '{file_name}' not found\n\nAvailable files:\n"
                         + "\n".join(set(available_files)[:5])
                     )
-                    if len(set(available_files)) > 5:
-                        debug_text += f"\n... and {len(set(available_files))-5} more"
+        if len(set(available_files)) > 5:
+        debug_text += f"\n... and {len(set(available_files))-5} more"
                 else:
-                    debug_text = "No data files loaded\n\nPlease:\n1. Select CSV files on Setup tab\n2. Process files or plot directly"
+        debug_text = "No data files loaded\n\nPlease:\n1. Select CSV files on Setup tab\n2. Process files or plot directly"
 
                 self.preview_ax.text(
-                    0.5,
-                    0.5,
-                    debug_text,
-                    transform=self.preview_ax.transAxes,
-                    ha="center",
-                    va="center",
-                    fontsize=10,
+        0.5,
+        0.5,
+        debug_text,
+        transform=self.preview_ax.transAxes,
+        ha="center",
+        va="center",
+        fontsize=10,
                 )
                 self.preview_ax.set_title(f"Preview: {plot_config['name']}")
                 self.preview_canvas.draw()  # type: ignore
@@ -8259,23 +8236,23 @@ For additional support or feature requests, please refer to the application docu
             # time
             for col in df.columns:
                 if any(
-                    time_word in col.lower()
-                    for time_word in ["time", "timestamp", "date"]
+        time_word in col.lower()
+        for time_word in ["time", "timestamp", "date"]
                 ):
-                    time_col = col
-                    break
+        time_col = col
+        break
 
             available_signals = [s for s in signals if s in df.columns]
 
             if not available_signals:
                 self.preview_ax.text(
-                    0.5,
-                    0.5,
+        0.5,
+        0.5,
                     "None of the selected signals\nare available in the data",
-                    transform=self.preview_ax.transAxes,
-                    ha="center",
-                    va="center",
-                    fontsize=12,
+        transform=self.preview_ax.transAxes,
+        ha="center",
+        va="center",
+        fontsize=12,
                 )
                 self.preview_ax.set_title(f"Preview: {plot_config['name']}")
                 self.preview_canvas.draw()  # type: ignore
@@ -8286,34 +8263,34 @@ For additional support or feature requests, please refer to the application docu
 
             if start_time or end_time:
                 if pd.api.types.is_datetime64_any_dtype(plot_df[time_col]):
-                    if start_time:
-                        try:
-                            start_datetime = pd.to_datetime(
-                                f"{plot_df[time_col].dt.date.iloc[0]} {start_time}",
+        if start_time:
+        try:
+        start_datetime = pd.to_datetime(
+        f"{plot_df[time_col].dt.date.iloc[0]} {start_time}",
                             )
-                            plot_df = plot_df[plot_df[time_col] >= start_datetime]
-                        except Exception:
-                            pass
-                    if end_time:
-                        try:
-                            end_datetime = pd.to_datetime(
-                                f"{plot_df[time_col].dt.date.iloc[0]} {end_time}",
+        plot_df = plot_df[plot_df[time_col] >= start_datetime]
+        except Exception:
+        pass
+        if end_time:
+        try:
+        end_datetime = pd.to_datetime(
+        f"{plot_df[time_col].dt.date.iloc[0]} {end_time}",
                             )
-                            plot_df = plot_df[plot_df[time_col] <= end_datetime]
-                        except Exception:
-                            pass
+        plot_df = plot_df[plot_df[time_col] <= end_datetime]
+        except Exception:
+        pass
 
             # Plot all available signals
             colors = getattr(plt.cm, "tab10", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(available_signals)))
             for i, signal in enumerate(available_signals):
                 signal_data = plot_df[[time_col, signal]].dropna()
                 if len(signal_data) > 0:
-                    self.preview_ax.plot(
-                        signal_data[time_col],
-                        signal_data[signal],
-                        label=signal,
-                        linewidth=1,
-                        color=colors[i],
+        self.preview_ax.plot(
+        signal_data[time_col],
+        signal_data[signal],
+        label=signal,
+        linewidth=1,
+        color=colors[i],
                     )
 
             # Apply plot configuration
@@ -8376,19 +8353,17 @@ For additional support or feature requests, please refer to the application docu
             pass
 
                 with open(filepath, "w") as f:
-                    f.write(f"Plot Configuration: {plot_config['name']}\n")
-                    f.write(f"Description: {plot_config.get('description', 'N/A')}\n")
-                    f.write(f"Created: {plot_config.get('created_date', 'N/A')}\n")
-                    f.write(f"Signals: {', '.join(plot_config.get('signals', []))}\n")
-                    f.write(f"Start Time: {plot_config.get('start_time', 'N/A')}\n")
-                    f.write(f"End Time: {plot_config.get('end_time', 'N/A')}\n")
-
-                    if "filter_type" in plot_config:
-                        f.write(f"Filter: {plot_config['filter_type']}\n")
-
-                    f.write("\nFull Configuration:\n")
-                    f.writelines(
-                        f"  {key}: {value}\n" for key, value in plot_config.items()
+        f.write(f"Plot Configuration: {plot_config['name']}\n")
+        f.write(f"Description: {plot_config.get('description', 'N/A')}\n")
+        f.write(f"Created: {plot_config.get('created_date', 'N/A')}\n")
+        f.write(f"Signals: {', '.join(plot_config.get('signals', []))}\n")
+        f.write(f"Start Time: {plot_config.get('start_time', 'N/A')}\n")
+        f.write(f"End Time: {plot_config.get('end_time', 'N/A')}\n")
+        if "filter_type" in plot_config:
+        f.write(f"Filter: {plot_config['filter_type']}\n")
+        f.write("\nFull Configuration:\n")
+        f.writelines(
+        f"  {key}: {value}\n" for key, value in plot_config.items()
                     )
 
                 exported_count += 1
@@ -8412,7 +8387,7 @@ For additional support or feature requests, please refer to the application docu
             if selected_count > 0:
                 # Use after_idle to prevent too many rapid updates
                 if hasattr(self, "_update_pending"):
-                    self.after_cancel(self._update_pending)
+        self.after_cancel(self._update_pending)
                 self._update_pending = self.after_idle(self.update_plot)
 
     def _on_color_scheme_change(self, scheme: str) -> None:
@@ -8486,7 +8461,7 @@ For additional support or feature requests, please refer to the application docu
                 self.custom_colors[index] = color
                 self._update_custom_colors_display()
                 if self.color_scheme_var.get() == "Custom Colors":
-                    self._on_plot_setting_change()
+        self._on_plot_setting_change()
 
     def _remove_custom_color(self, index: int) -> None:
         """Remove a custom color."""
@@ -8523,7 +8498,7 @@ For additional support or feature requests, please refer to the application docu
             # Scroll the frame's canvas
             try:
                 frame._parent_canvas.yview_scroll(
-                    int(-1 * (event.delta / 120)),
+        int(-1 * (event.delta / 120)),
                     "units",
                 )
             except Exception:
@@ -8608,22 +8583,22 @@ For additional support or feature requests, please refer to the application docu
 
                 # Ensure start < end
                 if self.trendline_selection_start > self.trendline_selection_end:
-                    self.trendline_selection_start, self.trendline_selection_end = (
-                        self.trendline_selection_end,
-                        self.trendline_selection_start,
+        self.trendline_selection_start, self.trendline_selection_end = (
+        self.trendline_selection_end,
+        self.trendline_selection_start,
                     )
 
                 # Update display
                 start_str = f"{self.trendline_selection_start:.2f}"
                 end_str = f"{self.trendline_selection_end:.2f}"
                 self.trendline_selected_range.configure(
-                    text=f"Range: {start_str} to {end_str}",
+        text=f"Range: {start_str} to {end_str}",
                 )
 
                 # Disable selection mode
                 self.trendline_selection_active = False
                 self.trendline_select_button.configure(
-                    text="Select Time Window on Plot",
+        text="Select Time Window on Plot",
                 )
 
                 # Update plot
@@ -8664,18 +8639,18 @@ For additional support or feature requests, please refer to the application docu
             for ext in extensions:
                 potential_file = os.path.join(output_dir, f"{custom_name}{ext}")
                 if os.path.exists(potential_file):
-                    existing_files.append(f"{custom_name}{ext}")
+        existing_files.append(f"{custom_name}{ext}")
 
             if existing_files:
                 warning_text = f"⚠️ Warning: Will overwrite existing files: {', '.join(existing_files)}"
                 self.overwrite_warning_label.configure(
-                    text=warning_text,
-                    text_color="orange",
+        text=warning_text,
+        text_color="orange",
                 )
             else:
                 self.overwrite_warning_label.configure(
-                    text="✓ No file conflicts found",
-                    text_color="green",
+        text="✓ No file conflicts found",
+        text_color="green",
                 )
         else:
             self.overwrite_warning_label.configure(text="")
