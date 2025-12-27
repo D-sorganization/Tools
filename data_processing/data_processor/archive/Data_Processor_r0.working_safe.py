@@ -12,6 +12,7 @@
 # =============================================================================
 
 import json
+import logging
 import os
 import tkinter as tk
 from tkinter import colorchooser, filedialog, messagebox, simpledialog
@@ -26,6 +27,10 @@ from matplotlib.figure import Figure
 from scipy.interpolate import UnivariateSpline
 from scipy.io import savemat
 from scipy.signal import butter, filtfilt, medfilt, savgol_filter
+
+# Set up logging per AGENTS.md guidelines
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 # =============================================================================

@@ -405,8 +405,6 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
                     results += f"      Size: {size_str}\n"
                     comp_str = self.format_file_size(col.total_compressed_size)
                     results += f"      Compressed: {comp_str}\n"
-                    results += f"      Compressed: {self.format_file_size(col.total_compressed_size)}\n"
->>>>>>> origin/main
                     if col.statistics:
                         stats = col.statistics
                         if hasattr(stats, "min") and hasattr(stats, "max"):
