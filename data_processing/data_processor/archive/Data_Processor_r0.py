@@ -1519,7 +1519,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         self.signal_reference_frame.grid(row=1, column=0, padx=0, pady=5, sticky="nsew")
 
-    def _update_custom_vars_display(self):
+    def _update_custom_vars_display(self) -> None:
         """Update the custom variables display."""
         self.custom_vars_listbox.configure(state="normal")
         self.custom_vars_listbox.delete("1.0", tk.END)
@@ -1532,12 +1532,12 @@ class CSVProcessorApp(ctk.CTk):
 
         self.custom_vars_listbox.configure(state="disabled")
 
-    def _clear_custom_variables(self):
+    def _clear_custom_variables(self) -> None:
         """Clear all custom variables."""
         self.custom_vars_list.clear()
         self._update_custom_vars_display()
 
-    def _save_custom_variables(self):
+    def _save_custom_variables(self) -> None:
         """Save current custom variables to a JSON file."""
         if not self.custom_vars_list:
             messagebox.showwarning("Warning", "No custom variables to save.")
@@ -1560,7 +1560,7 @@ class CSVProcessorApp(ctk.CTk):
                     f"Failed to save custom variables: {e!s}",
                 )
 
-    def _load_custom_variables(self):
+    def _load_custom_variables(self) -> None:
         """Load custom variables from a JSON file."""
         file_path = filedialog.askopenfilename(
             title="Load Custom Variables",
@@ -1906,7 +1906,7 @@ class CSVProcessorApp(ctk.CTk):
         self.file_list_frame.update_idletasks()
         logger.debug("DEBUG: \1")
 
-    def remove_file(self, file_path):
+    def remove_file(self, file_path: str) -> None:
         """Remove a file from the list."""
         if file_path in self.input_file_paths:
             self.input_file_paths.remove(file_path)
@@ -1986,7 +1986,7 @@ class CSVProcessorApp(ctk.CTk):
 
         logger.debug("DEBUG: \1")
 
-    def _auto_select_single_file(self, filename):
+    def _auto_select_single_file(self, filename: str) -> None:
         """Auto-select single file - simplified."""
         try:
             if hasattr(self, "plot_file_menu"):
@@ -1996,7 +1996,7 @@ class CSVProcessorApp(ctk.CTk):
         except Exception as e:
             print(f"Error in auto-select: {e}")
 
-    def _ensure_data_loaded(self, filename):
+    def _ensure_data_loaded(self, filename: str) -> bool:
         """Ensure data is loaded for the given filename."""
         if filename not in self.processed_files:
             # Try to load the file
@@ -2026,7 +2026,7 @@ class CSVProcessorApp(ctk.CTk):
                     return False
         return True
 
-    def update_signal_list(self, signals):
+    def update_signal_list(self, signals: List[str]) -> None:
         """Update the signal list with checkboxes - simplified version."""
         # Clear existing widgets
         for widget in self.signal_list_frame.winfo_children():
@@ -2055,7 +2055,7 @@ class CSVProcessorApp(ctk.CTk):
         self._update_differentiation_signals(signals)
         self._update_reference_signals(signals)
 
-    def _update_integration_signals(self, signals):
+    def _update_integration_signals(self, signals: List[str]) -> None:
         """Update integration signals - simplified."""
         # Clear existing widgets
         for widget in self.integrator_signals_frame.winfo_children():
@@ -2075,7 +2075,7 @@ class CSVProcessorApp(ctk.CTk):
             cb.grid(sticky="w", padx=5, pady=2)
             self.integrator_signal_vars[signal] = {"var": var, "widget": cb}
 
-    def _update_differentiation_signals(self, signals):
+    def _update_differentiation_signals(self, signals: List[str]) -> None:
         """Update differentiation signals - simplified."""
         # Clear existing widgets
         for widget in self.deriv_signals_frame.winfo_children():
@@ -2091,7 +2091,7 @@ class CSVProcessorApp(ctk.CTk):
             cb.grid(sticky="w", padx=5, pady=2)
             self.deriv_signal_vars[signal] = {"var": var, "widget": cb}
 
-    def _update_reference_signals(self, signals):
+    def _update_reference_signals(self, signals: List[str]) -> None:
         """Update reference signals - simplified."""
         # Clear existing widgets
         for widget in self.signal_reference_frame.winfo_children():
@@ -2114,7 +2114,7 @@ class CSVProcessorApp(ctk.CTk):
         for _signal, data in self.signal_vars.items():
             data["var"].set(False)
 
-    def process_files(self):
+    def process_files(self) -> None:
         """Process all selected files with current settings."""
         print("\n=== STARTING PROCESS_FILES DEBUG ===")
         if not self.input_file_paths:
@@ -2278,7 +2278,7 @@ class CSVProcessorApp(ctk.CTk):
             messagebox.showerror("Export Error", f"Error exporting files: {e!s}")
             self.status_label.configure(text="Export failed")
 
-    def _process_single_file(self, file_path, settings):
+    def _process_single_file(self, file_path: str, settings: Dict[str, Any]) -> Optional[pd.DataFrame]:
         """Process a single file with all advanced features."""
         print(f"\n_process_single_file called for: {os.path.basename(file_path)}")
         try:
@@ -2561,7 +2561,7 @@ class CSVProcessorApp(ctk.CTk):
             traceback.print_exc()
             return None
 
-    def _apply_custom_variables(self, df, time_col):
+    def _apply_custom_variables(self, df: pd.DataFrame, time_col: str) -> pd.DataFrame:
         """Apply custom variables to the dataframe."""
         if not self.custom_vars_list:
             return df
@@ -2623,7 +2623,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return df
 
-    def _get_resample_rule(self):
+    def _get_resample_rule(self) -> Optional[str]:
         """Get the resample rule from UI inputs."""
         if not self.resample_var.get():
             return None
@@ -2649,7 +2649,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return None
 
-    def _export_processed_files(self, processed_files):
+    def _export_processed_files(self, processed_files: List[pd.DataFrame]) -> None:
         """Export processed files based on selected format."""
         export_type = self.export_type_var.get()
 
@@ -2666,7 +2666,7 @@ class CSVProcessorApp(ctk.CTk):
         elif export_type == "MAT (Compiled)":
             self._export_mat_compiled(processed_files)
 
-    def _export_csv_separate(self, processed_files):
+    def _export_csv_separate(self, processed_files: List[pd.DataFrame]) -> None:
         """Export each file as a separate CSV."""
         print(f"_export_csv_separate called with {len(processed_files)} files")
         exported_count = 0
@@ -2700,7 +2700,7 @@ class CSVProcessorApp(ctk.CTk):
             print("Showing cancelled message")
             messagebox.showinfo("Export Cancelled", "No files were exported.")
 
-    def _export_csv_compiled(self, processed_files):
+    def _export_csv_compiled(self, processed_files: List[pd.DataFrame]) -> None:
         """Export all files as a single compiled CSV."""
         if not processed_files:
             return
@@ -2719,7 +2719,7 @@ class CSVProcessorApp(ctk.CTk):
             compiled_df.to_csv(final_path, index=False)
             messagebox.showinfo("Success", f"Exported compiled data to {final_path}")
 
-    def _export_excel_multisheet(self, processed_files):
+    def _export_excel_multisheet(self, processed_files: List[pd.DataFrame]) -> None:
         """Export all files to a single Excel file with multiple sheets."""
         output_path = os.path.join(self.output_directory, "processed_data.xlsx")
         final_path = self._check_file_overwrite(output_path)
@@ -2734,7 +2734,7 @@ class CSVProcessorApp(ctk.CTk):
 
         messagebox.showinfo("Success", f"Exported to Excel file: {final_path}")
 
-    def _export_excel_separate(self, processed_files):
+    def _export_excel_separate(self, processed_files: List[pd.DataFrame]) -> None:
         """Export each file as a separate Excel file."""
         exported_count = 0
         for file_path, df in processed_files:
@@ -2760,7 +2760,7 @@ class CSVProcessorApp(ctk.CTk):
         else:
             messagebox.showinfo("Cancelled", "No files were exported.")
 
-    def _export_mat_separate(self, processed_files):
+    def _export_mat_separate(self, processed_files: List[pd.DataFrame]) -> None:
         """Export each file as a separate MAT file."""
         exported_count = 0
         for file_path, df in processed_files:
@@ -2787,7 +2787,7 @@ class CSVProcessorApp(ctk.CTk):
         else:
             messagebox.showinfo("Cancelled", "No files were exported.")
 
-    def _export_mat_compiled(self, processed_files):
+    def _export_mat_compiled(self, processed_files: List[pd.DataFrame]) -> None:
         """Export all files as a single compiled MAT file."""
         if not processed_files:
             return
@@ -2810,7 +2810,7 @@ class CSVProcessorApp(ctk.CTk):
                 f"Exported compiled MAT file to {final_path}",
             )
 
-    def _apply_sorting(self, df):
+    def _apply_sorting(self, df: pd.DataFrame) -> pd.DataFrame:
         """Apply sorting to the dataframe."""
         sort_col = self.sort_col_menu.get()
         sort_order = self.sort_order_var.get()
@@ -2901,7 +2901,7 @@ class CSVProcessorApp(ctk.CTk):
         plot_main_frame.grid_rowconfigure(0, weight=1)
         plot_main_frame.grid_columnconfigure(0, weight=1)
 
-        def create_plot_left_content(left_panel):
+        def create_plot_left_content(left_panel: Any) -> None:
             """Create the left panel content for plotting with all advanced features"""
             left_panel.grid_rowconfigure(0, weight=1)
             left_panel.grid_columnconfigure(0, weight=1)
@@ -3614,7 +3614,7 @@ class CSVProcessorApp(ctk.CTk):
                 command=self._export_chart_excel,
             ).grid(row=2, column=0, sticky="ew", padx=10, pady=2)
 
-        def create_plot_right_content(right_panel):
+        def create_plot_right_content(right_panel: Any) -> None:
             """Create the right panel content for plotting"""
             right_panel.grid_rowconfigure(1, weight=1)
             right_panel.grid_columnconfigure(0, weight=1)
@@ -3737,7 +3737,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
-    def _create_plots_list_left(self, left_panel):
+    def _create_plots_list_left(self, left_panel: Any) -> None:
         """Create left panel for plots list."""
         left_panel.grid_rowconfigure(1, weight=1)
         left_panel.grid_columnconfigure(0, weight=1)
@@ -3891,7 +3891,7 @@ class CSVProcessorApp(ctk.CTk):
             command=self._clear_all_plots,
         ).grid(row=0, column=2, padx=5, pady=5, sticky="ew")
 
-    def _create_plots_list_right(self, right_panel):
+    def _create_plots_list_right(self, right_panel: Any) -> None:
         """Create right panel for plots list."""
         right_panel.grid_rowconfigure(0, weight=1)
         right_panel.grid_columnconfigure(0, weight=1)
@@ -3968,7 +3968,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
-    def _create_dat_import_left(self, left_panel):
+    def _create_dat_import_left(self, left_panel: Any) -> None:
         """Create left panel for DAT import."""
         left_panel.grid_rowconfigure(1, weight=1)
         left_panel.grid_columnconfigure(0, weight=1)
@@ -4060,7 +4060,7 @@ class CSVProcessorApp(ctk.CTk):
             command=self._import_selected_tags,
         ).grid(row=4, column=0, padx=10, pady=10, sticky="ew")
 
-    def _create_dat_import_right(self, right_panel):
+    def _create_dat_import_right(self, right_panel: Any) -> Dict[str, Any]:
         """Create right panel for DAT import."""
         right_panel.grid_rowconfigure(0, weight=1)
         right_panel.grid_columnconfigure(0, weight=1)
@@ -4090,7 +4090,7 @@ class CSVProcessorApp(ctk.CTk):
             print(f"Error loading layout config: {e}")
         return {}
 
-    def _save_layout_config(self):
+    def _save_layout_config(self) -> None:
         """Save layout configuration to file."""
         try:
             # Get current window dimensions
@@ -4177,17 +4177,17 @@ class CSVProcessorApp(ctk.CTk):
 
         return splitter_frame
 
-    def _on_splitter_enter(self, event, handle):
+    def _on_splitter_enter(self, event: Any, handle: Any) -> None:
         """Handle mouse enter on splitter handle."""
         handle.configure(fg_color="#888888")
         handle.configure(cursor="sb_h_double_arrow")
 
-    def _on_splitter_leave(self, event, handle):
+    def _on_splitter_leave(self, event: Any, handle: Any) -> None:
         """Handle mouse leave on splitter handle."""
         if not hasattr(self, "dragging_splitter") or not self.dragging_splitter:
             handle.configure(fg_color="#666666")
 
-    def _start_splitter_drag(self, event, handle, left_panel, splitter_key):
+    def _start_splitter_drag(self, event: Any, handle: Any, left_panel: Any, splitter_key: str) -> None:
         """Start dragging the splitter."""
         self.dragging_splitter = True
         self.drag_splitter_key = splitter_key
@@ -4196,7 +4196,7 @@ class CSVProcessorApp(ctk.CTk):
         self.drag_start_width = left_panel.winfo_width()
         handle.configure(fg_color="#AAAAAA")
 
-    def _drag_splitter(self, event, handle, left_panel, splitter_key):
+    def _drag_splitter(self, event: Any, handle: Any, left_panel: Any, splitter_key: str) -> None:
         """Drag the splitter."""
         if hasattr(self, "dragging_splitter") and self.dragging_splitter:
             delta_x = event.x_root - self.drag_start_x
@@ -4206,7 +4206,7 @@ class CSVProcessorApp(ctk.CTk):
             )  # Min 150, Max 800
             left_panel.configure(width=new_width)
 
-    def _end_splitter_drag(self):
+    def _end_splitter_drag(self) -> None:
         """End dragging the splitter."""
         if hasattr(self, "dragging_splitter") and self.dragging_splitter:
             # Save the current position
@@ -4228,12 +4228,12 @@ class CSVProcessorApp(ctk.CTk):
                     if isinstance(child, ctk.CTkFrame) and child.winfo_width() == 8:
                         child.configure(fg_color="#666666")
 
-    def _on_closing(self):
+    def _on_closing(self) -> None:
         """Handle application closing."""
         self._save_layout_config()
         self.quit()
 
-    def _on_window_configure(self, event):
+    def _on_window_configure(self, event: Any) -> None:
         """Handle window resize events to save layout."""
         # Only save if this is the main window being resized
         if event.widget == self:
@@ -4248,7 +4248,7 @@ class CSVProcessorApp(ctk.CTk):
         self.status_label.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
 
     # Placeholder methods for functionality that would be implemented
-    def on_plot_file_select(self, value):
+    def on_plot_file_select(self, value: str) -> None:
         """Handle plot file selection - simplified for better performance."""
         if value == "Select a file...":
             return
@@ -4310,7 +4310,7 @@ class CSVProcessorApp(ctk.CTk):
                 self.status_label.configure(text="Error selecting file for plotting")
                 self.status_label.configure(text="Ready")
 
-    def update_plot(self, selected_signals=None):
+    def update_plot(self, selected_signals: Optional[List[str]] = None) -> None:
         """Update the plot with fixed error handling and canvas management."""
         # Check if plot canvas is initialized
         if not hasattr(self, "plot_canvas") or not hasattr(self, "plot_ax"):
@@ -4430,7 +4430,7 @@ class CSVProcessorApp(ctk.CTk):
                     # Get color
                     color_scheme = self.color_scheme_var.get()
                     if color_scheme == "Default":
-                        color = plt.cm.tab10(i % 10)
+                        color = getattr(plt.cm, "tab10", plt.cm.viridis)(i % 10)
                     elif color_scheme == "Colorblind-friendly":
                         colors = [
                             "#0173B2",
@@ -4598,7 +4598,7 @@ class CSVProcessorApp(ctk.CTk):
             self.plot_canvas.draw()
             self.status_label.configure(text="Plot error - check console for details")
 
-    def _ensure_plot_canvas_ready(self):
+    def _ensure_plot_canvas_ready(self) -> bool:
         """Ensure plot canvas is properly initialized."""
         if not hasattr(self, "plot_canvas") or self.plot_canvas is None:
             print("ERROR: Plot canvas not initialized!")
@@ -4616,16 +4616,16 @@ class CSVProcessorApp(ctk.CTk):
             print(f"ERROR: Canvas draw failed - {e}")
             return False
 
-    def enable_plot_debugging(self):
+    def enable_plot_debugging(self) -> None:
         """Enable verbose debugging for plot operations."""
         self.plot_debug = True
 
-    def debug_print(self, message):
+    def debug_print(self, message: str) -> None:
         """Print debug message if debugging is enabled."""
         if hasattr(self, "plot_debug") and self.plot_debug:
             print(f"[PLOT DEBUG] {message}")
 
-    def _apply_plot_filter(self, df, signal_cols, x_axis_col):
+    def _apply_plot_filter(self, df: pd.DataFrame, signal_cols: List[str], x_axis_col: str) -> pd.DataFrame:
         """Apply filter preview to the plot data."""
         filter_type = self.plot_filter_type.get()
 
@@ -4808,7 +4808,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return filtered_df
 
-    def _add_trendline(self, df, signal, x_axis_col):
+    def _add_trendline(self, df: pd.DataFrame, signal: str, x_axis_col: str) -> None:
         """Add trendline to the plot."""
         trend_type = self.trendline_type_var.get()
 
@@ -5005,7 +5005,7 @@ class CSVProcessorApp(ctk.CTk):
 
             traceback.print_exc()
 
-    def get_data_for_plotting(self, filename):
+    def get_data_for_plotting(self, filename: str) -> Optional[pd.DataFrame]:
         """Get data for plotting from the specified file - simplified baseline approach."""
         try:
             # First check if it's in processed files
@@ -5042,7 +5042,7 @@ class CSVProcessorApp(ctk.CTk):
             print(f"Error loading data for plotting: {e}")
             return None
 
-    def _debug_plot_state(self):
+    def _debug_plot_state(self) -> None:
         """Debug helper to print current plotting state."""
         print("\n=== PLOT DEBUG STATE ===")
         print(f"plot_file_menu: {getattr(self, 'plot_file_menu', None)}")
@@ -5081,7 +5081,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         print("========================\n")
 
-    def _force_signal_selection(self):
+    def _force_signal_selection(self) -> None:
         """Force select at least one signal for debugging."""
         if hasattr(self, "plot_signal_vars") and self.plot_signal_vars:
             # Check if any signals are selected
@@ -5098,35 +5098,35 @@ class CSVProcessorApp(ctk.CTk):
                         logger.debug(f"DEBUG: \1")
                         break
 
-    def _show_setup_help(self):
+    def _show_setup_help(self) -> None:
         """Show setup help."""
         messagebox.showinfo(
             "Setup Help",
             "This tab allows you to configure file processing settings.",
         )
 
-    def _show_plot_help(self):
+    def _show_plot_help(self) -> None:
         """Show plotting help."""
         messagebox.showinfo(
             "Plotting Help",
             "This tab allows you to visualize and analyze your data.",
         )
 
-    def _show_plots_list_help(self):
+    def _show_plots_list_help(self) -> None:
         """Show plots list help."""
         messagebox.showinfo(
             "Plots List Help",
             "This tab allows you to save and manage plot configurations.",
         )
 
-    def _show_dat_import_help(self):
+    def _show_dat_import_help(self) -> None:
         """Show DAT import help."""
         messagebox.showinfo(
             "DAT Import Help",
             "This tab allows you to import DAT files with DBF tag files.",
         )
 
-    def _show_legend_guide(self):
+    def _show_legend_guide(self) -> None:
         """Show comprehensive legend formatting guide."""
         guide_window = ctk.CTkToplevel(self)
         guide_window.title("Custom Legend Guide - LaTeX Formatting")
@@ -5243,7 +5243,7 @@ COMMON MISTAKES TO AVOID:
         y = (guide_window.winfo_screenheight() // 2) - (700 // 2)
         guide_window.geometry(f"600x700+{x}+{y}")
 
-    def save_settings(self):
+    def save_settings(self) -> None:
         """Save current settings to a configuration file."""
         try:
             # Collect all current settings
@@ -5415,7 +5415,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to save settings:\n{e!s}")
 
-    def load_settings(self):
+    def load_settings(self) -> None:
         """Load settings from a configuration file."""
         try:
             file_path = filedialog.askopenfilename(
@@ -5560,7 +5560,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to load settings:\n{e!s}")
 
-    def manage_configurations(self):
+    def manage_configurations(self) -> None:
         """Open a window to manage saved configuration files."""
         try:
             # Create a new window for configuration management
@@ -5665,7 +5665,7 @@ COMMON MISTAKES TO AVOID:
                 f"Failed to open configuration manager:\n{e!s}",
             )
 
-    def _refresh_config_list(self):
+    def _refresh_config_list(self) -> None:
         """Refresh the list of saved configuration files."""
         try:
             self.config_listbox.delete(0, tk.END)
@@ -5736,7 +5736,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             self.config_status_label.configure(text=f"Error refreshing list: {e!s}")
 
-    def _load_selected_config(self):
+    def _load_selected_config(self) -> None:
         """Load the selected configuration file."""
         try:
             selection = self.config_listbox.curselection()
@@ -5779,7 +5779,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to load configuration:\n{e!s}")
 
-    def _delete_selected_config(self):
+    def _delete_selected_config(self) -> None:
         """Delete the selected configuration file."""
         try:
             selection = self.config_listbox.curselection()
@@ -5817,7 +5817,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to delete configuration:\n{e!s}")
 
-    def _open_config_location(self):
+    def _open_config_location(self) -> None:
         """Open the folder containing configuration files."""
         try:
             current_dir = os.getcwd()
@@ -5834,7 +5834,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to open folder:\n{e!s}")
 
-    def _apply_loaded_settings(self, settings):
+    def _apply_loaded_settings(self, settings: Dict[str, Any]) -> None:
         """Apply loaded settings to the UI (extracted from load_settings)."""
         try:
             # Apply filter settings
@@ -5961,7 +5961,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to apply settings:\n{e!s}")
 
-    def save_signal_list(self):
+    def save_signal_list(self) -> None:
         """Save the currently selected signals as a signal list."""
         if not self.signal_vars:
             messagebox.showwarning(
@@ -6023,7 +6023,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to save signal list:\n{e}")
 
-    def load_signal_list(self):
+    def load_signal_list(self) -> None:
         """Load a saved signal list from file."""
         logger.debug("DEBUG: \1")
         try:
@@ -6087,7 +6087,7 @@ COMMON MISTAKES TO AVOID:
             traceback.print_exc()
             messagebox.showerror("Error", f"Failed to load signal list:\n{e}")
 
-    def _apply_loaded_signals_internal(self):
+    def _apply_loaded_signals_internal(self) -> None:
         """Internal method to apply loaded signals without showing message boxes."""
         logger.debug("DEBUG: \1")
         if not self.saved_signal_list or not self.signal_vars:
@@ -6135,7 +6135,7 @@ COMMON MISTAKES TO AVOID:
         )
         logger.debug("DEBUG: \1")
 
-    def apply_saved_signals(self):
+    def apply_saved_signals(self) -> None:
         """Apply the saved signal list to the current file's signals."""
         if not self.saved_signal_list:
             messagebox.showwarning(
@@ -6830,19 +6830,19 @@ COMMON MISTAKES TO AVOID:
                 # Get color scheme
                 color_scheme = self.color_scheme_var.get()
                 if color_scheme == "Auto (Matplotlib)":
-                    colors = plt.cm.tab10(np.linspace(0, 1, len(signals_to_plot)))
+                    colors = getattr(plt.cm, "tab10", plt.cm.viridis)(np.linspace(0, 1, len(signals_to_plot)))
                 elif color_scheme == "Viridis":
-                    colors = plt.cm.viridis(np.linspace(0, 1, len(signals_to_plot)))
+                    colors = getattr(plt.cm, "viridis", plt.cm.viridis)(np.linspace(0, 1, len(signals_to_plot)))
                 elif color_scheme == "Plasma":
-                    colors = plt.cm.plasma(np.linspace(0, 1, len(signals_to_plot)))
+                    colors = getattr(plt.cm, "plasma", plt.cm.viridis)(np.linspace(0, 1, len(signals_to_plot)))
                 elif color_scheme == "Cool":
-                    colors = plt.cm.cool(np.linspace(0, 1, len(signals_to_plot)))
+                    colors = getattr(plt.cm, "cool", plt.cm.viridis)(np.linspace(0, 1, len(signals_to_plot)))
                 elif color_scheme == "Warm":
-                    colors = plt.cm.autumn(np.linspace(0, 1, len(signals_to_plot)))
+                    colors = getattr(plt.cm, "autumn", plt.cm.viridis)(np.linspace(0, 1, len(signals_to_plot)))
                 elif color_scheme == "Rainbow":
-                    colors = plt.cm.rainbow(np.linspace(0, 1, len(signals_to_plot)))
+                    colors = getattr(plt.cm, "rainbow", plt.cm.viridis)(np.linspace(0, 1, len(signals_to_plot)))
                 else:  # Custom Colors - default to tab10
-                    colors = plt.cm.Set1(np.linspace(0, 1, len(signals_to_plot)))
+                    colors = getattr(plt.cm, "Set1", plt.cm.viridis)(np.linspace(0, 1, len(signals_to_plot)))
 
                 # Plot each selected signal
                 for i, signal in enumerate(signals_to_plot):
@@ -7292,7 +7292,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to add trendline: {e!s}")
 
-    def _create_dat_import_right(self, right_panel):
+    def _create_dat_import_right(self, right_panel: Any) -> Dict[str, Any]:
         """Create right panel for DAT import."""
         right_panel.grid_rowconfigure(0, weight=1)
         right_panel.grid_columnconfigure(0, weight=1)
@@ -8403,7 +8403,7 @@ For additional support or feature requests, please refer to the application docu
                             pass
 
             # Plot all available signals
-            colors = plt.cm.tab10(np.linspace(0, 1, len(available_signals)))
+            colors = getattr(plt.cm, "tab10", plt.cm.viridis)(np.linspace(0, 1, len(available_signals)))
             for i, signal in enumerate(available_signals):
                 signal_data = plot_df[[time_col, signal]].dropna()
                 if len(signal_data) > 0:
