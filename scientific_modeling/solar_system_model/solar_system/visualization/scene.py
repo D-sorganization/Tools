@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 from calendar import monthrange
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any
 
 import numpy as np
@@ -227,8 +227,10 @@ class SolarSystemScene:
 
         return True
 
-    def _initialize_ui_widgets(self):
+    def _initialize_ui_widgets(self) -> None:
         """Initialize enhanced UI widgets with modern Unified Layout."""
+        if not self.renderer:
+            return
 
         # Date picker for manual time navigation
         self.date_picker = DateTimePicker(
@@ -299,7 +301,7 @@ class SolarSystemScene:
         )
         self.help_overlay.set_controls(self.controls)
 
-    def _on_date_picker_change(self, new_date: datetime):
+    def _on_date_picker_change(self, new_date: datetime) -> None:
         """
         Handle date changes from the date picker.
 
@@ -308,7 +310,8 @@ class SolarSystemScene:
         """
         # Ensure timezone aware
         if new_date.tzinfo is None:
-            new_date = new_date.replace(tzinfo=datetime.UTC)
+
+            new_date = new_date.replace(tzinfo=UTC)
 
         # Update simulation time
         self.time_manager.set_datetime(new_date)
@@ -364,7 +367,9 @@ class SolarSystemScene:
             self.comets[comet.name] = comet_body
 
     def get_all_bodies(self) -> list[CelestialBody]:
-        bodies = [self.sun]
+        bodies: list[CelestialBody] = []
+        if self.sun:
+            bodies.append(self.sun)
         bodies.extend(self.planets.values())
         bodies.extend(self.moons.values())
         bodies.extend(self.asteroids.values())
@@ -387,9 +392,10 @@ class SolarSystemScene:
             return self.spacecraft[name]
         return None
 
-    def select_body(self, body: CelestialBody):
+    def select_body(self, body: CelestialBody) -> None:
         self.selected_body = body
-        self.renderer.selected_body = body
+        if self.renderer:
+            self.renderer.selected_body = body
         self._mark_immersion_task("select_body")
 
     def plan_trajectory(
@@ -634,8 +640,9 @@ class SolarSystemScene:
 
         # Number keys for planet selection
         elif key == K_0:
-            self.select_body(self.sun)
-            self._update_educational_panel()
+            if self.sun:
+                self.select_body(self.sun)
+                self._update_educational_panel()
 
         elif K_1 <= key <= K_9:
             planet_index = key - K_1
@@ -646,7 +653,7 @@ class SolarSystemScene:
 
         return True
 
-    def _update_ui_date(self):
+    def _update_ui_date(self) -> None:
         """Update all UI widgets with current date."""
         current_dt = self.time_manager.current_time.datetime_utc
 
@@ -656,7 +663,7 @@ class SolarSystemScene:
         if self.historical_events:
             self.historical_events.set_date(current_dt)
 
-    def _update_educational_panel(self):
+    def _update_educational_panel(self) -> None:
         """Update educational panel with selected body information."""
         if not self.selected_body or not self.educational_panel:
             return
@@ -667,7 +674,7 @@ class SolarSystemScene:
             info = PLANET_DESCRIPTIONS[body_name]
 
             # Build properties dict
-            properties = {}
+            properties: dict[str, Any] = {}
             for key, value in info.items():
                 if key != "fun_facts":
                     properties[key.replace("_", " ").title()] = value
@@ -679,12 +686,12 @@ class SolarSystemScene:
 
         self._mark_immersion_task("select_body")
 
-    def _mark_immersion_task(self, task_id: str):
+    def _mark_immersion_task(self, task_id: str) -> None:
         """Mark an immersion checklist task as complete if available."""
         if self.immersion_checklist:
             self.immersion_checklist.mark_complete(task_id)
 
-    def _handle_time_nav_action(self, action: str):
+    def _handle_time_nav_action(self, action: str) -> None:
         """
         Handle time navigation panel button actions.
 
@@ -712,7 +719,8 @@ class SolarSystemScene:
         elif action == "goto_j2000":
             self.time_manager.set_to_j2000()
         elif action == "goto_j2030":
-            self.time_manager.set_datetime(self.time_manager.J2030)
+            if hasattr(self.time_manager, "J2030"):
+                self.time_manager.set_datetime(self.time_manager.J2030)
         elif action == "reset":
             self.time_manager.set_to_now()
         elif action == "faster":
@@ -728,7 +736,7 @@ class SolarSystemScene:
         self._update_ui_date()
         self._mark_immersion_task("navigate_time")
 
-    def _handle_mouse_button(self, button: int, pressed: bool):
+    def _handle_mouse_button(self, button: int, pressed: bool) -> None:
         """Handle mouse button events."""
         if button == 1:  # Left button
             # Check UI clicks first
@@ -746,7 +754,7 @@ class SolarSystemScene:
             else:
                 self._mouse_dragging = False
 
-    def _handle_mouse_motion(self, pos: tuple[int, int], rel: tuple[int, int]):
+    def _handle_mouse_motion(self, pos: tuple[int, int], rel: tuple[int, int]) -> None:
         """Handle mouse motion."""
         if not self.renderer:
             return
@@ -772,7 +780,7 @@ class SolarSystemScene:
             elif buttons[2]:  # Right button - pan camera
                 self.renderer.camera.pan(-rel[0], rel[1])
 
-    def _handle_mouse_wheel(self, y_offset: float):
+    def _handle_mouse_wheel(self, y_offset: float) -> None:
         """Handle mouse wheel events."""
         if not self.renderer:
             return
@@ -810,7 +818,7 @@ class SolarSystemScene:
             "toggle_overlays"
         )  # Close enough to 'interacting', trigger check
 
-    def _cycle_camera_mode(self):
+    def _cycle_camera_mode(self) -> None:
         """Cycle through camera modes."""
         if not self.renderer:
             return
@@ -827,7 +835,7 @@ class SolarSystemScene:
         new_mode = modes[next_index]
         camera.set_mode(new_mode, self.selected_body)
 
-    def _focus_on_selected(self):
+    def _focus_on_selected(self) -> None:
         if not self.selected_body or not self.renderer:
             return
 
@@ -845,7 +853,7 @@ class SolarSystemScene:
         else:
             self.renderer.camera.set_distance(15)
 
-    def _update(self):
+    def _update(self) -> None:
         # Update time
         delta_jd = self.time_manager.update()
 
@@ -864,7 +872,7 @@ class SolarSystemScene:
                 self.time_manager.julian_date, self.renderer.distance_scale
             )
 
-    def _render(self):
+    def _render(self) -> None:
         if not self.renderer:
             return
         renderer = self.renderer
@@ -896,7 +904,7 @@ class SolarSystemScene:
         self._render_overlays(jd)
         renderer.end_frame()
 
-    def _render_view_contents(self, julian_date: float):
+    def _render_view_contents(self, julian_date: float) -> None:
         if not self.renderer:
             return
         renderer = self.renderer
@@ -971,7 +979,7 @@ class SolarSystemScene:
                     pos = state.position * renderer.distance_scale
                     renderer.render_label("🚀 " + spacecraft.name, pos, (0, 255, 128))
 
-    def _render_overlays(self, julian_date: float):
+    def _render_overlays(self, julian_date: float) -> None:
         if not self.renderer:
             return
         renderer = self.renderer
@@ -1003,7 +1011,7 @@ class SolarSystemScene:
                 content_data = self.historical_events.get_render_data()
             elif content_key == "planets":
                 # Generate planet list data
-                bodies = []
+                bodies: list[dict[str, Any]] = []
                 # Add Sun
                 bodies.append(
                     {"name": "Sun", "selected": self.selected_body == self.sun}
@@ -1180,7 +1188,7 @@ class SolarSystemScene:
 
         return False
 
-    def _handle_setting_action(self, action: str):
+    def _handle_setting_action(self, action: str) -> None:
         if action == "toggle_orbits":
             self.view_state.show_orbits = not self.view_state.show_orbits
             # self.renderer.settings.show_orbits = self.view_state.show_orbits
@@ -1188,7 +1196,8 @@ class SolarSystemScene:
             self.view_state.show_labels = not self.view_state.show_labels
             self.renderer.settings.show_labels = self.view_state.show_labels
         elif action == "toggle_grid":
-            self.renderer.settings.show_grid = not self.renderer.settings.show_grid
+            if self.renderer:
+                self.renderer.settings.show_grid = not self.renderer.settings.show_grid
         elif action == "toggle_stereo":
             self.settings.stereo_view = not self.settings.stereo_view
         # Granular

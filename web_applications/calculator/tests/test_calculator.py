@@ -11,43 +11,43 @@ from calculator import TI89Calculator
 
 
 class TestTI89Calculator(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.calc = TI89Calculator()
 
-    def test_evaluate_basic(self):
+    def test_evaluate_basic(self) -> None:
         result = self.calc.evaluate("2 + 2")
         self.assertEqual(result.result, 4)
 
-    def test_evaluate_variables(self):
+    def test_evaluate_variables(self) -> None:
         result = self.calc.evaluate("x + y", variables={"x": 1, "y": 2})
         self.assertEqual(result.result, 3)
 
-    def test_simplify(self):
+    def test_simplify(self) -> None:
         result = self.calc.simplify_expression("x + x")
         self.assertEqual(result.result, 2 * sp.Symbol("x"))
 
-    def test_solve_equation(self):
+    def test_solve_equation(self) -> None:
         result = self.calc.solve_equation("x - 5 = 0", "x")
         # solve returns a tuple of solutions
-        self.assertTrue(5 in result.result)
+        self.assertTrue(5 in result.result)  # type: ignore[operator]
 
-    def test_derivative(self):
+    def test_derivative(self) -> None:
         result = self.calc.derivative("x**2", "x")
         self.assertEqual(result.result, 2 * sp.Symbol("x"))
 
-    def test_integral_indefinite(self):
+    def test_integral_indefinite(self) -> None:
         result = self.calc.integral("2*x", "x")
         self.assertEqual(result.result, sp.Symbol("x") ** 2)
 
-    def test_integral_definite(self):
+    def test_integral_definite(self) -> None:
         result = self.calc.integral("2*x", "x", lower=0, upper=1)
         self.assertEqual(result.result, 1)
 
-    def test_limit(self):
+    def test_limit(self) -> None:
         result = self.calc.limit("1/x", "x", sp.oo)
         self.assertEqual(result.result, 0)
 
-    def test_taylor_series(self):
+    def test_taylor_series(self) -> None:
         # Taylor series of e^x at x=0 order 2 is 1 + x + x^2/2
         result = self.calc.taylor_series("exp(x)", "x", 0, 2)
         x = sp.Symbol("x")
