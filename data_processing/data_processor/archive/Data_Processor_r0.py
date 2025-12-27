@@ -7194,7 +7194,7 @@ COMMON MISTAKES TO AVOID:
                 self._refresh_legend_entries()
                 self._on_plot_setting_change()
 
-    def _add_trendline(self):
+    def _add_trendline(self) -> None:
         """Add trendline to plot."""
         if not hasattr(self, "plot_ax") or not self.plot_ax:
             messagebox.showerror(
@@ -7545,7 +7545,7 @@ For additional support or feature requests, please refer to the application docu
                 return full_path
             counter += 1
 
-    def _check_file_overwrite(self, file_path):
+    def _check_file_overwrite(self, file_path: str) -> str:
         """Check if file exists and prompt user for action."""
         if os.path.exists(file_path):
             filename = os.path.basename(file_path)
@@ -7574,7 +7574,7 @@ For additional support or feature requests, please refer to the application docu
 
         return file_path
 
-    def _save_current_plot_config(self):
+    def _save_current_plot_config(self) -> None:
         """Save the current plot configuration."""
         # Get current plot settings
         plot_name = simpledialog.askstring(
@@ -7749,7 +7749,7 @@ For additional support or feature requests, please refer to the application docu
             f"Plot configuration '{plot_name}' saved successfully!",
         )
 
-    def _modify_plot_config(self):
+    def _modify_plot_config(self) -> None:
         """Modify an existing plot configuration."""
         if not hasattr(self, "plots_list") or not self.plots_list:
             messagebox.showwarning(
@@ -7795,7 +7795,7 @@ For additional support or feature requests, please refer to the application docu
         button_frame = ctk.CTkFrame(dialog)
         button_frame.pack(fill="x", padx=20, pady=10)
 
-        def on_modify():
+        def on_modify() -> None:
             selection = listbox.curselection()
             if not selection:
                 messagebox.showwarning(
@@ -7819,7 +7819,7 @@ For additional support or feature requests, please refer to the application docu
                 f"Configuration '{selected_config['name']}' has been updated with current settings!",
             )
 
-        def on_cancel():
+        def on_cancel() -> None:
             dialog.destroy()
 
         ctk.CTkButton(button_frame, text="Modify Selected", command=on_modify).pack(
@@ -7831,7 +7831,7 @@ For additional support or feature requests, please refer to the application docu
             padx=5,
         )
 
-    def _update_plot_config(self, config_index):
+    def _update_plot_config(self, config_index: int) -> None:
         """Update an existing plot configuration with current settings."""
         if not hasattr(self, "plots_list") or config_index >= len(self.plots_list):
             return
@@ -8002,7 +8002,7 @@ For additional support or feature requests, please refer to the application docu
         # Save the updated configuration
         self._save_plots_to_file()
 
-    def _on_load_plot_config_select(self, selected_plot_name):
+    def _on_load_plot_config_select(self, selected_plot_name: str) -> None:
         """Handle selection from the load plot config dropdown."""
         if selected_plot_name == "No saved plots":
             return
@@ -8028,7 +8028,7 @@ For additional support or feature requests, please refer to the application docu
             f"Plot configuration '{selected_plot_name}' loaded!",
         )
 
-    def _apply_plot_config(self, plot_config):
+    def _apply_plot_config(self, plot_config: Dict[str, Any]) -> None:
         """Apply a plot configuration to the current plotting tab."""
         # Apply file selection first
         if (
@@ -8046,7 +8046,7 @@ For additional support or feature requests, please refer to the application docu
             # If no file, just apply what we can
             self._apply_plot_config_signals(plot_config)
 
-    def _apply_plot_config_signals(self, plot_config):
+    def _apply_plot_config_signals(self, plot_config: Dict[str, Any]) -> None:
         """Apply signal selections and other settings after file is loaded."""
         # Apply x-axis selection
         if (
@@ -8197,7 +8197,7 @@ For additional support or feature requests, please refer to the application docu
         # Update the plot
         self.update_plot()
 
-    def _update_load_plot_config_menu(self):
+    def _update_load_plot_config_menu(self) -> None:
         """Update the load plot config dropdown menu."""
         if not hasattr(self, "load_plot_config_menu"):
             return
@@ -8210,7 +8210,7 @@ For additional support or feature requests, please refer to the application docu
             self.load_plot_config_menu.configure(values=["No saved plots"])
             self.load_plot_config_menu.set("No saved plots")
 
-    def _update_plots_signals(self, signals):
+    def _update_plots_signals(self, signals: List[str]) -> None:
         """Update signals available in plots list tab."""
         if not hasattr(self, "plots_signals_frame"):
             return
@@ -8240,7 +8240,7 @@ For additional support or feature requests, please refer to the application docu
         # Re-bind mouse wheel to all new checkboxes
         self._bind_mousewheel_to_frame(self.plots_signals_frame)
 
-    def _generate_plot_preview(self):
+    def _generate_plot_preview(self) -> None:
         """Generate plot preview."""
         selection = self.plots_listbox.curselection()
         if not selection:
@@ -8459,7 +8459,7 @@ For additional support or feature requests, please refer to the application docu
             self.preview_ax.set_title("Preview Error")
             self.preview_canvas.draw()
 
-    def _export_all_plots(self):
+    def _export_all_plots(self) -> None:
         """Export all plots."""
         if not self.plots_list:
             messagebox.showwarning("Warning", "No plots to export.")
@@ -8503,7 +8503,7 @@ For additional support or feature requests, please refer to the application docu
         except Exception as e:
             messagebox.showerror("Export Error", f"Error exporting plots: {e}")
 
-    def _on_plot_setting_change(self, *args):
+    def _on_plot_setting_change(self, *args: Any) -> None:
         """Automatically update plot when appearance settings change."""
         # Only update if we have data and signals selected
         if hasattr(self, "plot_signal_vars"):
@@ -8517,7 +8517,7 @@ For additional support or feature requests, please refer to the application docu
                     self.after_cancel(self._update_pending)
                 self._update_pending = self.after_idle(self.update_plot)
 
-    def _on_color_scheme_change(self, scheme):
+    def _on_color_scheme_change(self, scheme: str) -> None:
         """Handle color scheme change and show/hide custom colors interface."""
         if scheme == "Custom Colors":
             self.custom_colors_frame.grid()
@@ -8527,7 +8527,7 @@ For additional support or feature requests, please refer to the application docu
         # Trigger plot update
         self._on_plot_setting_change()
 
-    def _update_custom_colors_display(self):
+    def _update_custom_colors_display(self) -> None:
         """Update the display of custom colors with color preview buttons."""
         # Clear existing widgets
         for widget in self.colors_scroll_frame.winfo_children():
@@ -8567,7 +8567,7 @@ For additional support or feature requests, please refer to the application docu
             )
             remove_button.pack(side="right", padx=5, pady=5)
 
-    def _add_custom_color(self):
+    def _add_custom_color(self) -> None:
         """Add a new custom color using color picker."""
         color = colorchooser.askcolor(title="Choose Color")[1]  # Get hex value
         if color:
@@ -8576,7 +8576,7 @@ For additional support or feature requests, please refer to the application docu
             if self.color_scheme_var.get() == "Custom Colors":
                 self._on_plot_setting_change()
 
-    def _edit_custom_color(self, index):
+    def _edit_custom_color(self, index: int) -> None:
         """Edit an existing custom color."""
         if 0 <= index < len(self.custom_colors):
             current_color = self.custom_colors[index]
@@ -8590,7 +8590,7 @@ For additional support or feature requests, please refer to the application docu
                 if self.color_scheme_var.get() == "Custom Colors":
                     self._on_plot_setting_change()
 
-    def _remove_custom_color(self, index):
+    def _remove_custom_color(self, index: int) -> None:
         """Remove a custom color."""
         if (
             0 <= index < len(self.custom_colors) and len(self.custom_colors) > 1
@@ -8600,7 +8600,7 @@ For additional support or feature requests, please refer to the application docu
             if self.color_scheme_var.get() == "Custom Colors":
                 self._on_plot_setting_change()
 
-    def _reset_custom_colors(self):
+    def _reset_custom_colors(self) -> None:
         """Reset custom colors to default set."""
         self.custom_colors = [
             "#1f77b4",
@@ -8618,10 +8618,10 @@ For additional support or feature requests, please refer to the application docu
         if self.color_scheme_var.get() == "Custom Colors":
             self._on_plot_setting_change()
 
-    def _bind_mousewheel_to_frame(self, frame):
+    def _bind_mousewheel_to_frame(self, frame: Any) -> None:
         """Bind mouse wheel events to a frame for proper scrolling."""
 
-        def on_mousewheel(event):
+        def on_mousewheel(event: Any) -> None:
             # Scroll the frame's canvas
             try:
                 frame._parent_canvas.yview_scroll(
@@ -8633,7 +8633,7 @@ For additional support or feature requests, please refer to the application docu
                 frame._parent_canvas.yview_scroll(int(-1 * event.delta), "units")
 
         # Bind mousewheel to the frame and all its children
-        def bind_mousewheel(widget):
+        def bind_mousewheel(widget: Any) -> None:
             widget.bind("<MouseWheel>", on_mousewheel)
             widget.bind(
                 "<Button-4>",
