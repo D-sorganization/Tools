@@ -72,7 +72,6 @@ def process_single_csv_file(file_path: str, settings: Dict[str, Any]) -> Optiona
 
         if processed_df.empty:
             return None
-
         processed_df.set_index(time_col, inplace=True)
 
         # Apply Filtering
@@ -143,14 +142,11 @@ def process_single_csv_file(file_path: str, settings: Dict[str, Any]) -> Optiona
 
         if processed_df.empty:
             return None
-
         processed_df.reset_index(inplace=True)
         return processed_df
     except Exception as e:
         print(f"Error processing {file_path}: {e!s}")
         return None
-
-
 # Helper function for causal derivative calculation
 def _poly_derivative(series: pd.Series, window: int, poly_order: int, deriv_order: int, delta_x: float) -> pd.Series:
     """Calculates the derivative of a series using a rolling polynomial fit."""
@@ -171,16 +167,13 @@ def _poly_derivative(series: pd.Series, window: int, poly_order: int, deriv_orde
             # Get the derivative of the polynomial
             deriv_coeffs = np.polyder(coeffs, deriv_order)
             # Evaluate the derivative at the last point of the window
-            return np.polyval(deriv_coeffs, x[-1])
+            return float(np.polyval(deriv_coeffs, x[-1]))
         except (np.linalg.LinAlgError, TypeError):
             # Handle cases where the fit fails
             return np.nan
 
-    return (
-        padded_series.rolling(window=window)
-        .apply(get_deriv, raw=True)
-        .iloc[window - 1 :]
-    )
+    result = padded_series.rolling(window=window).apply(get_deriv, raw=True).iloc[window - 1 :]
+    return pd.Series(result, dtype=float)
 
 
 class CSVProcessorApp(ctk.CTk):  # type: ignore
@@ -2124,8 +2117,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             print("ERROR: No input file paths selected")
             messagebox.showerror("Error", "Please select input files first.")
             return
-
-        print(f"Input files: {len(self.input_file_paths)} files")
+            print(f"Input files: {len(self.input_file_paths)} files")
         for i, path in enumerate(self.input_file_paths):
             print(f"  {i+1}: {path}")
 
@@ -2193,8 +2185,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
         # Process files sequentially (simpler than parallel processing for debugging)
         processed_files = []
         error_count = 0
-
-        print(f"\nStarting processing of {len(self.input_file_paths)} files...")
+            print(f"\nStarting processing of {len(self.input_file_paths)} files...")
 
         for i, file_path in enumerate(self.input_file_paths):
             print(
@@ -2213,20 +2204,19 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                     print(f"ERROR: File not found: {file_path}")
                     error_count += 1
                     continue
-
-                print(f"File exists, size: {os.path.getsize(file_path)} bytes")
+            print(f"File exists, size: {os.path.getsize(file_path)} bytes")
 
                 # Process the file
                 processed_df = self._process_single_file(file_path, settings)
 
                 if processed_df is not None and not processed_df.empty:
                     print(f"SUCCESS: File processed. Shape: {processed_df.shape}")
-                    print(f"Columns: {list(processed_df.columns)}")
+            print(f"Columns: {list(processed_df.columns)}")
                     processed_files.append((file_path, processed_df))
                     # Store processed data for plotting
                     filename = os.path.basename(file_path)
                     self.processed_files[filename] = processed_df.copy()
-                    print(f"Stored in processed_files cache as: {filename}")
+            print(f"Stored in processed_files cache as: {filename}")
                 else:
                     print("ERROR: File processing returned None or empty DataFrame")
                     error_count += 1
@@ -2237,9 +2227,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
 
                 traceback.print_exc()
                 error_count += 1
-
-        print("\nProcessing complete. Results:")
-        print(f"  Processed files: {len(processed_files)}")
+            print("\nProcessing complete. Results:")
+            print(f"  Processed files: {len(processed_files)}")
         print(f"  Errors: {error_count}")
 
         if not processed_files:
@@ -2249,8 +2238,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             return
 
         # Export processed files
-        print("\nStarting export process...")
-        print(f"Export type: {self.export_type_var.get()}")
+            print("\nStarting export process...")
+            print(f"Export type: {self.export_type_var.get()}")
         try:
             self._export_processed_files(processed_files)
             print("Export completed successfully")
@@ -2300,7 +2289,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
 
             if time_col not in signals_in_this_file:
                 signals_in_this_file.insert(0, time_col)
-                print("  Added time column to signals")
+            print("  Added time column to signals")
 
             print(f"  Final signals to process: {signals_in_this_file}")
 
@@ -2326,14 +2315,13 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                         errors="coerce",
                     )
                     after_numeric = processed_df[col].notna().sum()
-                    print(
+            print(
                         f"  Column {col}: {before_numeric} -> {after_numeric} valid values",
                     )
 
             if processed_df.empty:
                 print("  ERROR: DataFrame is empty after data type conversion")
                 return None
-
             # Apply time trimming if specified
             trim_date = self.trim_date_entry.get().strip()
             trim_start = self.trim_start_entry.get().strip()
@@ -2347,7 +2335,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                     # Get the date from the data if not specified
                     if not trim_date:
                         trim_date = processed_df[time_col].iloc[0].strftime("%Y-%m-%d")
-                        print(f"  Using date from data: {trim_date}")
+            print(f"  Using date from data: {trim_date}")
 
                     # Create full datetime strings
                     start_time_str = trim_start or "00:00:00"
@@ -2364,15 +2352,13 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                         .reset_index()
                     )
                     after_trim = len(processed_df)
-                    print(f"  Trimming: {before_trim} -> {after_trim} rows")
+            print(f"  Trimming: {before_trim} -> {after_trim} rows")
 
                     if processed_df.empty:
                         print("  ERROR: Time trimming resulted in empty dataset")
                         return None
-
                 except Exception as e:
                     print(f"  ERROR in time trimming: {e}")
-
             print("  Setting time column as index...")
             processed_df.set_index(time_col, inplace=True)
             print(f"  DataFrame shape after indexing: {processed_df.shape}")
@@ -2385,7 +2371,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 numeric_cols = processed_df.select_dtypes(
                     include=np.number,
                 ).columns.tolist()
-                print(f"  Numeric columns for filtering: {numeric_cols}")
+            print(f"  Numeric columns for filtering: {numeric_cols}")
                 for col in numeric_cols:
                     signal_data = processed_df[col].dropna()
                     if len(signal_data) < 2:
@@ -2497,17 +2483,16 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             # Apply Resampling
             if settings.get("resample_enabled"):
                 resample_rule = settings.get("resample_rule")
-                print(f"  Applying resampling with rule: {resample_rule}")
+            print(f"  Applying resampling with rule: {resample_rule}")
                 if resample_rule:
                     before_resample = len(processed_df)
                     processed_df = (
                         processed_df.resample(resample_rule).mean().dropna(how="all")
                     )
                     after_resample = len(processed_df)
-                    print(f"  Resampling: {before_resample} -> {after_resample} rows")
+            print(f"  Resampling: {before_resample} -> {after_resample} rows")
             else:
                 print("  Resampling disabled")
-
             print("  Resetting index...")
             processed_df.reset_index(inplace=True)
             print(f"  DataFrame shape after reset: {processed_df.shape}")
@@ -2531,7 +2516,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                     signals_to_integrate,
                     integration_method,
                 )
-                print(f"  DataFrame shape after integration: {processed_df.shape}")
+            print(f"  DataFrame shape after integration: {processed_df.shape}")
 
             # Apply differentiation if signals are selected
             signals_to_differentiate = [
@@ -2546,12 +2531,11 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                     signals_to_differentiate,
                     differentiation_method,
                 )
-                print(f"  DataFrame shape after differentiation: {processed_df.shape}")
+            print(f"  DataFrame shape after differentiation: {processed_df.shape}")
 
             if processed_df.empty:
                 print("  ERROR: Final DataFrame is empty")
                 return None
-
             print(
                 f"  SUCCESS: Returning processed DataFrame with shape {processed_df.shape}",
             )
@@ -2563,7 +2547,6 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
 
             traceback.print_exc()
             return None
-
     def _apply_custom_variables(self, df: pd.DataFrame, time_col: str) -> pd.DataFrame:
         """Apply custom variables to the dataframe."""
         if not self.custom_vars_list:
@@ -2630,13 +2613,11 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
         """Get the resample rule from UI inputs."""
         if not self.resample_var.get():
             return None
-
         value = self.resample_value_entry.get()
         unit = self.resample_unit_menu.get()
 
         if not value:
             return None
-
         try:
             value = float(value)
             if unit == "ms":
@@ -2649,9 +2630,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 return f"{value}H"
         except ValueError:
             return None
-
         return None
-
     def _export_processed_files(self, processed_files: List[Tuple[str, pd.DataFrame]]) -> None:
         """Export processed files based on selected format."""
         export_type = self.export_type_var.get()
@@ -2685,14 +2664,12 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             if final_path is None:
                 print(f"Export cancelled for {base_name}")
                 continue
-
             print(f"Final export path: {final_path}")
             df = self._apply_sorting(df)
             df.to_csv(final_path, index=False)
             exported_count += 1
             print(f"Successfully exported: {final_path}")
-
-        print(f"Export summary: {exported_count} files exported")
+            print(f"Export summary: {exported_count} files exported")
         if exported_count > 0:
             print(f"Showing success message for {exported_count} files")
             messagebox.showinfo(
@@ -3635,10 +3612,8 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             self.plot_canvas = FigureCanvasTkAgg(
                 self.plot_fig,
                 master=plot_canvas_frame,
-            )  # type: ignore
-            self.plot_canvas.get_tk_widget()  # type: ignore.grid(row=1, column=0, sticky="nsew")
-
-            # Initialize plot with welcome message
+            )
+            self.plot_canvas.get_tk_widget().grid(Initialize plot with welcome message)  # type: ignore
             self.plot_ax.text(
                 0.5,
                 0.5,
@@ -3649,18 +3624,13 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             )
             self.plot_ax.set_title("Select a file to begin plotting")
             self.plot_canvas.draw()  # type: ignore
-
-            toolbar = NavigationToolbar2Tk(
+            
+            toolbar = NavigationToolbar2Tk(  # type: ignore
                 self.plot_canvas,
                 plot_canvas_frame,
                 pack_toolbar=False,
-            )  # type: ignore
-            toolbar.grid(row=0, column=0, sticky="ew")
-
-            # Store toolbar reference for custom functionality
-            self.plot_toolbar = toolbar
-
-            # Initialize zoom state storage
+            )
+            toolbar.grid(Initialize zoom state storage)  # type: ignore
             self.saved_zoom_state = None
 
             # Add custom zoom controls
@@ -3916,10 +3886,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
         self.preview_ax = self.preview_fig.add_subplot(111)
         self.preview_fig.tight_layout()
 
-        self.preview_canvas = FigureCanvasTkAgg(self.preview_fig, master=preview_frame)  # type: ignore
-        self.preview_canvas.get_tk_widget().grid(  # type: ignore
-            row=1,
-            column=0,
+        self.preview_canvas = FigureCanvasTkAgg(self.preview_fig, master=preview_frame)          self.preview_canvas.get_tk_widget().grid(    # type: ignore            row=1,              column=0,  # type: ignore
             padx=10,
             pady=5,
             sticky="nsew",
@@ -4135,7 +4102,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
         left_panel.grid_propagate(False)
         left_panel.grid_columnconfigure(0, weight=1)
         left_panel.grid_rowconfigure(0, weight=1)
-        left_creator(left_panel)
+            left_creator(left_panel)
 
         # Create splitter handle with better visual feedback
         splitter_handle = ctk.CTkFrame(splitter_frame, width=8, fg_color="#666666")
@@ -4175,7 +4142,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
         right_panel.grid(row=0, column=2, sticky="nsew", padx=(0, 5))
         right_panel.grid_columnconfigure(0, weight=1)
         right_panel.grid_rowconfigure(0, weight=1)
-        right_creator(right_panel)
+            right_creator(right_panel)
 
         # Store splitter reference
         self.splitters[splitter_key] = left_panel
@@ -4346,8 +4313,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 wrap=True,
             )
             self.plot_canvas.draw()  # type: ignore
-            self.status_label.configure(text="Error loading data - check console")
-            return
+            self.status_label.configure(text="Error loading data - check console")              return  # type: ignore
 
         if df is None or df.empty:
             self.plot_ax.text(
@@ -4358,9 +4324,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 va="center",
             )
             self.plot_canvas.draw()  # type: ignore
-            return
-
-        # Validate x_axis_col
+            return            # type: ignore# Validate x_axis_col
         if x_axis_col not in df.columns:
             if len(df.columns) > 0:
                 x_axis_col = df.columns[0]
@@ -4374,9 +4338,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                     va="center",
                 )
                 self.plot_canvas.draw()  # type: ignore
-                return
-
-        # Get signals to plot
+            return            # type: ignore# Get signals to plot
         signals_to_plot = [
             s for s, data in self.plot_signal_vars.items() if data["var"].get()
         ]
@@ -4390,9 +4352,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 va="center",
             )
             self.plot_canvas.draw()  # type: ignore
-            return
-
-        # Now do the actual plotting with more granular error handling
+            return            # type: ignore# Now do the actual plotting with more granular error handling
         try:
             # Check if we should show both raw and filtered signals
             show_both = self.show_both_signals_var.get()
@@ -4548,10 +4508,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
 
             # Format datetime axis if applicable
             if pd.api.types.is_datetime64_any_dtype(df[x_axis_col]):
-                self.plot_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))  # type: ignore
-                self.plot_ax.tick_params(axis="x", rotation=0)
-
-            # Smart zoom handling
+                self.plot_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))                  self.plot_ax.tick_params(axis="x", rotation=0)                # type: ignore# Smart zoom handling
             zoom_state = getattr(self, "saved_zoom_state", None)
 
             # Detect if new signals were added
@@ -4569,22 +4526,19 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 # Auto-fit to show all data
                 try:
                     self.plot_ax.autoscale_view()
-                    print(f"Auto-zoom applied ({zoom_reason}): fitting to all data")
+            print(f"Auto-zoom applied ({zoom_reason}): fitting to all data")
                 except Exception as e:
                     print(f"Warning: Could not auto-fit plot - {e}")
             elif zoom_state:
                 # Restore previous zoom state
                 try:
                     self._apply_zoom_state(zoom_state)
-                    print(f"Zoom state restored ({zoom_reason}): preserving user view")
+            print(f"Zoom state restored ({zoom_reason}): preserving user view")
                 except Exception as e:
                     print(f"Warning: Could not apply zoom state - {e}")
 
             # Force canvas update
-            self.plot_canvas.draw_idle()  # type: ignore
-            self.status_label.configure(text="Plot updated successfully")
-
-        except Exception as e:
+            self.plot_canvas.draw_idle()              self.status_label.configure(text="Plot updated successfully")          except Exception as e:  # type: ignore
             print(f"Error in plotting: {e}")
             import traceback
 
@@ -4601,9 +4555,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 wrap=True,
             )
             self.plot_canvas.draw()  # type: ignore
-            self.status_label.configure(text="Plot error - check console for details")
-
-    def _ensure_plot_canvas_ready(self) -> bool:
+            self.status_label.configure(text="Plot error - check console for details")      def _ensure_plot_canvas_ready(self) -> bool:  # type: ignore
         """Ensure plot canvas is properly initialized."""
         if not hasattr(self, "plot_canvas") or self.plot_canvas is None:
             print("ERROR: Plot canvas not initialized!")
@@ -4616,8 +4568,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
         # Force a draw to ensure canvas is ready
         try:
             self.plot_canvas.draw()  # type: ignore
-            return True
-        except Exception as e:
+            return True          except Exception as e:  # type: ignore
             print(f"ERROR: Canvas draw failed - {e}")
             return False
 
@@ -5002,9 +4953,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
 
             # Redraw the canvas
             self.plot_canvas.draw()  # type: ignore
-
-        except Exception as e:
-            messagebox.showerror("Trendline Error", f"Error adding trendline: {e!s}")
+            except Exception as e:              messagebox.showerror("Trendline Error", f"Error adding trendline: {e!s}")  # type: ignore
             print(f"Error adding trendline: {e}")
             import traceback
 
@@ -5046,11 +4995,10 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
         except Exception as e:
             print(f"Error loading data for plotting: {e}")
             return None
-
     def _debug_plot_state(self) -> None:
         """Debug helper to print current plotting state."""
         print("\n=== PLOT DEBUG STATE ===")
-        print(f"plot_file_menu: {getattr(self, 'plot_file_menu', None)}")
+            print(f"plot_file_menu: {getattr(self, 'plot_file_menu', None)}")
         if hasattr(self, "plot_file_menu"):
             print(f"  selected file: {self.plot_file_menu.get()}")
 
@@ -5065,8 +5013,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 s for s, data in self.plot_signal_vars.items() if data["var"].get()
             ]
             print(f"  selected signals: {selected}")
-
-        print(f"plot_canvas: {getattr(self, 'plot_canvas', None)}")
+            print(f"plot_canvas: {getattr(self, 'plot_canvas', None)}")
         print(f"plot_ax: {getattr(self, 'plot_ax', None)}")
         print(
             f"processed_files: {len(
@@ -5744,9 +5691,7 @@ COMMON MISTAKES TO AVOID:
     def _load_selected_config(self) -> None:
         """Load the selected configuration file."""
         try:
-            selection = self.config_listbox.curselection()  # type: ignore
-            if not selection:
-                messagebox.showwarning(
+            selection = self.config_listbox.curselection()              if not selection:                  messagebox.showwarning(  # type: ignore
                     "Warning",
                     "Please select a configuration file to load.",
                 )
@@ -5787,9 +5732,7 @@ COMMON MISTAKES TO AVOID:
     def _delete_selected_config(self) -> None:
         """Delete the selected configuration file."""
         try:
-            selection = self.config_listbox.curselection()  # type: ignore
-            if not selection:
-                messagebox.showwarning(
+            selection = self.config_listbox.curselection()              if not selection:                  messagebox.showwarning(  # type: ignore
                     "Warning",
                     "Please select a configuration file to delete.",
                 )
@@ -6115,8 +6058,7 @@ COMMON MISTAKES TO AVOID:
                 present_signals.append(saved_signal)
             else:
                 missing_signals.append(saved_signal)
-
-        print(
+            print(
             f"DEBUG: Present signals: {len(present_signals)}, "
             f"Missing signals: {len(missing_signals)}",
         )
@@ -6448,9 +6390,7 @@ COMMON MISTAKES TO AVOID:
 
     def _update_selected_plot(self) -> None:
         """Update selected plot in the list."""
-        selection = self.plots_listbox.curselection()  # type: ignore
-        if not selection:
-            messagebox.showwarning("Warning", "Please select a plot to update.")
+        selection = self.plots_listbox.curselection()          if not selection:              messagebox.showwarning("Warning", "Please select a plot to update.")  # type: ignore
             return
 
         plot_name = self.plot_name_entry.get().strip()
@@ -6494,9 +6434,7 @@ COMMON MISTAKES TO AVOID:
 
     def _on_plot_select(self, event: Any) -> None:
         """Handle plot selection in listbox."""
-        selection = self.plots_listbox.curselection()  # type: ignore
-        if not selection:
-            return
+        selection = self.plots_listbox.curselection()          if not selection:              return  # type: ignore
 
         idx = selection[0]
         plot_config = self.plots_list[idx]
@@ -6522,9 +6460,7 @@ COMMON MISTAKES TO AVOID:
 
     def _load_selected_plot(self) -> None:
         """Load selected plot configuration."""
-        selection = self.plots_listbox.curselection()  # type: ignore
-        if not selection:
-            messagebox.showwarning("Warning", "Please select a plot to load.")
+        selection = self.plots_listbox.curselection()          if not selection:              messagebox.showwarning("Warning", "Please select a plot to load.")  # type: ignore
             return
 
         idx = selection[0]
@@ -6547,9 +6483,7 @@ COMMON MISTAKES TO AVOID:
 
     def _delete_selected_plot(self) -> None:
         """Delete selected plot from list."""
-        selection = self.plots_listbox.curselection()  # type: ignore
-        if not selection:
-            messagebox.showwarning("Warning", "Please select a plot to delete.")
+        selection = self.plots_listbox.curselection()          if not selection:              messagebox.showwarning("Warning", "Please select a plot to delete.")  # type: ignore
             return
 
         idx = selection[0]
@@ -6901,14 +6835,11 @@ COMMON MISTAKES TO AVOID:
 
             if pd.api.types.is_datetime64_any_dtype(filtered_df[time_col]):
                 # Use simpler HH:MM format for cleaner plot appearance
-                self.plot_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))  # type: ignore
-                # Keep labels horizontal for better readability
+                self.plot_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))                    # type: ignore# Keep labels horizontal for better readability
                 self.plot_ax.tick_params(axis="x", rotation=0)
 
             self.plot_canvas.draw()  # type: ignore
-
-        except Exception as e:
-            messagebox.showerror(
+            except Exception as e:              messagebox.showerror(  # type: ignore
                 "Time Range Error",
                 f"Invalid time format. Please use HH:MM:SS.\n{e}",
             )
@@ -6949,10 +6880,7 @@ COMMON MISTAKES TO AVOID:
             xlim = self.plot_ax.get_xlim()
 
             # Convert matplotlib date numbers to datetime
-            start_datetime = mdates.num2date(xlim[0])  # type: ignore
-            end_datetime = mdates.num2date(xlim[1])  # type: ignore
-
-            # Extract date and time components
+            start_datetime = mdates.num2date(xlim[0])              end_datetime = mdates.num2date(xlim[1])    # type: ignore# Extract date and time components
             date_str = start_datetime.strftime("%Y-%m-%d")
             start_time_str = start_datetime.strftime("%H:%M:%S")
             end_time_str = end_datetime.strftime("%H:%M:%S")
@@ -7015,10 +6943,7 @@ COMMON MISTAKES TO AVOID:
             xlim = self.plot_ax.get_xlim()
 
             # Convert matplotlib date numbers to datetime
-            start_datetime = mdates.num2date(xlim[0])  # type: ignore
-            end_datetime = mdates.num2date(xlim[1])  # type: ignore
-
-            # Extract date and time components
+            start_datetime = mdates.num2date(xlim[0])              end_datetime = mdates.num2date(xlim[1])    # type: ignore# Extract date and time components
             date_str = start_datetime.strftime("%Y-%m-%d")
             start_time_str = start_datetime.strftime("%H:%M:%S")
             end_time_str = end_datetime.strftime("%H:%M:%S")
@@ -7058,8 +6983,7 @@ COMMON MISTAKES TO AVOID:
                         self.plot_ax.set_xlim(self.saved_plot_view["xlim"])
                         self.plot_ax.set_ylim(self.saved_plot_view["ylim"])
                         self.plot_canvas.draw()  # type: ignore
-                    else:
-                        # Fall back to original home if no saved view
+            else:                            # type: ignore# Fall back to original home if no saved view
                         self._original_home()
                 except Exception:
                     # Fall back to original home on any error
@@ -7683,9 +7607,7 @@ For additional support or feature requests, please refer to the application docu
         button_frame.pack(fill="x", padx=20, pady=10)
 
         def on_modify() -> None:
-            selection = listbox.curselection()  # type: ignore
-            if not selection:
-                messagebox.showwarning(
+            selection = listbox.curselection()              if not selection:                  messagebox.showwarning(  # type: ignore
                     "No Selection",
                     "Please select a configuration to modify.",
                 )
@@ -8129,9 +8051,7 @@ For additional support or feature requests, please refer to the application docu
 
     def _generate_plot_preview(self) -> None:
         """Generate plot preview."""
-        selection = self.plots_listbox.curselection()  # type: ignore
-        if not selection:
-            messagebox.showwarning("Warning", "Please select a plot to preview.")
+        selection = self.plots_listbox.curselection()          if not selection:              messagebox.showwarning("Warning", "Please select a plot to preview.")  # type: ignore
             return
 
         try:
@@ -8144,7 +8064,6 @@ For additional support or feature requests, please refer to the application docu
             # Get the actual data and plot it exactly like the main plotting tab
             signals = plot_config.get("signals", [])
             file_name = plot_config.get("file", "")
-
             print(
                 f"DEBUG: Preview plot config - File: '{file_name}', Signals: {signals}",
             )
@@ -8161,9 +8080,7 @@ For additional support or feature requests, please refer to the application docu
                 )
                 self.preview_ax.set_title(f"Preview: {plot_config['name']}")
                 self.preview_canvas.draw()  # type: ignore
-                return
-
-            if not file_name or file_name == "Select a file...":
+            return              if not file_name or file_name == "Select a file...":  # type: ignore
                 # Show available files for debugging
                 available_files = []
                 if hasattr(self, "plot_file_menu") and hasattr(
@@ -8197,9 +8114,7 @@ For additional support or feature requests, please refer to the application docu
                 )
                 self.preview_ax.set_title(f"Preview: {plot_config['name']}")
                 self.preview_canvas.draw()  # type: ignore
-                return
-
-            # Get the actual data using the same method as main plotting
+            return                # type: ignore# Get the actual data using the same method as main plotting
             df = self.get_data_for_plotting(file_name)
 
             if df is None or df.empty:
@@ -8235,9 +8150,7 @@ For additional support or feature requests, please refer to the application docu
                 )
                 self.preview_ax.set_title(f"Preview: {plot_config['name']}")
                 self.preview_canvas.draw()  # type: ignore
-                return
-
-            # Get time column and available signals
+            return                # type: ignore# Get time column and available signals
             time_col = df.columns[0]
             # Try to find a better time column if the first column doesn't look like
             # time
@@ -8263,9 +8176,7 @@ For additional support or feature requests, please refer to the application docu
                 )
                 self.preview_ax.set_title(f"Preview: {plot_config['name']}")
                 self.preview_canvas.draw()  # type: ignore
-                return
-
-            # Apply time range if specified
+            return                # type: ignore# Apply time range if specified
             plot_df = df.copy()
             start_time = plot_config.get("start_time", "")
             end_time = plot_config.get("end_time", "")
@@ -8327,13 +8238,8 @@ For additional support or feature requests, please refer to the application docu
             if pd.api.types.is_datetime64_any_dtype(plot_df[time_col]):
                 import matplotlib.dates as mdates
 
-                self.preview_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))  # type: ignore
-                self.preview_ax.tick_params(axis="x", rotation=0)
-
-            self.preview_canvas.draw()  # type: ignore
-
-        except Exception as e:
-            self.preview_ax.clear()
+                self.preview_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))                  self.preview_ax.tick_params(axis="x", rotation=0)              self.preview_canvas.draw()  # type: ignore
+            except Exception as e:    # type: ignore            self.preview_ax.clear()  # type: ignore
             self.preview_ax.text(
                 0.5,
                 0.5,
@@ -8345,9 +8251,7 @@ For additional support or feature requests, please refer to the application docu
             )
             self.preview_ax.set_title("Preview Error")
             self.preview_canvas.draw()  # type: ignore
-
-    def _export_all_plots(self) -> None:
-        """Export all plots."""
+            def _export_all_plots(self) -> None:          """Export all plots."""  # type: ignore
         if not self.plots_list:
             messagebox.showwarning("Warning", "No plots to export.")
             return
@@ -8533,8 +8437,7 @@ For additional support or feature requests, please refer to the application docu
 
             for child in widget.winfo_children():
                 bind_mousewheel(child)
-
-        bind_mousewheel(frame)
+            bind_mousewheel(frame)
 
     def _on_trendline_window_mode_change(self, mode: str) -> None:
         """Handle trendline window mode change."""
@@ -8686,8 +8589,7 @@ For additional support or feature requests, please refer to the application docu
                 self.plot_ax.set_xlim(self.saved_zoom_state["xlim"])
                 self.plot_ax.set_ylim(self.saved_zoom_state["ylim"])
                 self.plot_canvas.draw()  # type: ignore
-                messagebox.showinfo("Zoom State", "Zoom state restored!")
-        else:
+            messagebox.showinfo("Zoom State", "Zoom state restored!")          else:  # type: ignore
             messagebox.showwarning("Warning", "No saved zoom state found.")
 
     def _zoom_out_25(self) -> None:
@@ -8716,9 +8618,7 @@ For additional support or feature requests, please refer to the application docu
                 y_center + new_y_range / 2,
             )
             self.plot_canvas.draw()  # type: ignore
-
-    def _zoom_in_25(self) -> None:
-        """Zoom in by 25% while maintaining center."""
+            def _zoom_in_25(self) -> None:          """Zoom in by 25% while maintaining center."""  # type: ignore
         if hasattr(self, "plot_ax"):
             xlim = self.plot_ax.get_xlim()
             ylim = self.plot_ax.get_ylim()
@@ -8743,9 +8643,7 @@ For additional support or feature requests, please refer to the application docu
                 y_center + new_y_range / 2,
             )
             self.plot_canvas.draw()  # type: ignore
-
-    def _preserve_zoom_during_update(self) -> Optional[Dict[str, Tuple[float, float]]]:
-        """Store zoom state before plot update and restore after."""
+            def _preserve_zoom_during_update(self) -> Optional[Dict[str, Tuple[float, float]]]:          """Store zoom state before plot update and restore after."""  # type: ignore
         zoom_state = None
         if hasattr(self, "plot_ax"):
             zoom_state = {
@@ -8760,9 +8658,8 @@ For additional support or feature requests, please refer to the application docu
             try:
                 self.plot_ax.autoscale_view()
                 self.plot_canvas.draw()  # type: ignore
-                self.status_label.configure(text="Plot auto-fitted to data")
-            except Exception as e:
-                print(f"Error auto-fitting plot: {e}")
+            self.status_label.configure(text="Plot auto-fitted to data")              except Exception as e:  # type: ignore
+            print(f"Error auto-fitting plot: {e}")
 
     def _should_auto_zoom(self, reason: str = "filter_change") -> bool:
         """Determine if auto-zoom should be applied based on the reason."""
