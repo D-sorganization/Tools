@@ -26,13 +26,14 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 try:
     from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 except ImportError:
-    NavigationToolbar2Tk = None
+    NavigationToolbar2Tk = type("NavigationToolbar2Tk", (), {})
 from matplotlib.figure import Figure
 from scipy.interpolate import UnivariateSpline
 from scipy.io import savemat
 from scipy.signal import butter, filtfilt, medfilt, savgol_filter
 from typing import Dict, List, Tuple, Any, Optional, Union, Callable
 from tkinter import Widget, Event
+import numpy.typing as npt
 
 
 
@@ -157,7 +158,7 @@ def _poly_derivative(series: pd.Series, window: int, poly_order: int, deriv_orde
     # Pad the series at the beginning to get derivatives for the initial points
     padded_series = pd.concat([pd.Series([series.iloc[0]] * (window - 1)), series])
 
-    def get_deriv(w: np.ndarray) -> float:
+    def get_deriv(w: npt.NDArray[np.floating]) -> float:
         # Can't compute if the window is not full or has NaNs
         if len(w) < window or np.isnan(w).any():
             return np.nan
@@ -180,7 +181,7 @@ def _poly_derivative(series: pd.Series, window: int, poly_order: int, deriv_orde
     )
 
 
-class CSVProcessorApp(ctk.CTk):
+class CSVProcessorApp(ctk.CTk):  # type: ignore
     """The main application class with all advanced features and UI fixes."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -2476,7 +2477,7 @@ class CSVProcessorApp(ctk.CTk):
                                 upper=upper_bound,
                             )
                         elif method == "Replace with Median":
-                            median_val = signal_data.median()
+                            median_val = pd.Series([signal_data]).median()
                             processed_df.loc[z_scores > threshold, col] = median_val
                     elif filter_type == "Savitzky-Golay":
                         window = settings.get("savgol_window", 11)
@@ -2575,7 +2576,7 @@ class CSVProcessorApp(ctk.CTk):
                 name = var["name"]
 
                 # Create a safe evaluation environment
-                safe_dict = {}
+                safe_dict: Dict[str, Any] = {}
 
                 # Add all numeric columns to the safe dictionary
                 for col in df.columns:
@@ -3632,8 +3633,8 @@ class CSVProcessorApp(ctk.CTk):
             self.plot_canvas = FigureCanvasTkAgg(
                 self.plot_fig,
                 master=plot_canvas_frame,
-            )
-            self.plot_canvas.get_tk_widget().grid(row=1, column=0, sticky="nsew")
+            )  # type: ignore
+            self.plot_canvas.get_tk_widget()  # type: ignore.grid(row=1, column=0, sticky="nsew")
 
             # Initialize plot with welcome message
             self.plot_ax.text(
@@ -3645,13 +3646,13 @@ class CSVProcessorApp(ctk.CTk):
                 transform=self.plot_ax.transAxes,
             )
             self.plot_ax.set_title("Select a file to begin plotting")
-            self.plot_canvas.draw()
+            self.plot_canvas.draw()  # type: ignore
 
             toolbar = NavigationToolbar2Tk(
                 self.plot_canvas,
                 plot_canvas_frame,
                 pack_toolbar=False,
-            )
+            )  # type: ignore
             toolbar.grid(row=0, column=0, sticky="ew")
 
             # Store toolbar reference for custom functionality
@@ -3913,8 +3914,8 @@ class CSVProcessorApp(ctk.CTk):
         self.preview_ax = self.preview_fig.add_subplot(111)
         self.preview_fig.tight_layout()
 
-        self.preview_canvas = FigureCanvasTkAgg(self.preview_fig, master=preview_frame)
-        self.preview_canvas.get_tk_widget().grid(
+        self.preview_canvas = FigureCanvasTkAgg(self.preview_fig, master=preview_frame)  # type: ignore
+        self.preview_canvas.get_tk_widget().grid(  # type: ignore
             row=1,
             column=0,
             padx=10,
@@ -4079,6 +4080,8 @@ class CSVProcessorApp(ctk.CTk):
 
         self.import_preview_text = ctk.CTkTextbox(preview_frame, height=200)
         self.import_preview_text.grid(row=1, column=0, padx=10, pady=5, sticky="nsew")
+        
+        return {}
 
     def _load_layout_config(self) -> Dict[str, Any]:
         """Load layout configuration from file."""
@@ -4292,7 +4295,7 @@ class CSVProcessorApp(ctk.CTk):
 
                 # Reset signal tracking when file changes
                 if hasattr(self, "last_plotted_signals"):
-                    self.last_plotted_signals = set()
+                    self.last_plotted_signals: set[str] = set()
 
                 # Update plot immediately - no delays
                 self.update_plot()
@@ -4340,7 +4343,7 @@ class CSVProcessorApp(ctk.CTk):
                 va="center",
                 wrap=True,
             )
-            self.plot_canvas.draw()
+            self.plot_canvas.draw()  # type: ignore
             self.status_label.configure(text="Error loading data - check console")
             return
 
@@ -4352,7 +4355,7 @@ class CSVProcessorApp(ctk.CTk):
                 ha="center",
                 va="center",
             )
-            self.plot_canvas.draw()
+            self.plot_canvas.draw()  # type: ignore
             return
 
         # Validate x_axis_col
@@ -4368,7 +4371,7 @@ class CSVProcessorApp(ctk.CTk):
                     ha="center",
                     va="center",
                 )
-                self.plot_canvas.draw()
+                self.plot_canvas.draw()  # type: ignore
                 return
 
         # Get signals to plot
@@ -4384,7 +4387,7 @@ class CSVProcessorApp(ctk.CTk):
                 ha="center",
                 va="center",
             )
-            self.plot_canvas.draw()
+            self.plot_canvas.draw()  # type: ignore
             return
 
         # Now do the actual plotting with more granular error handling
@@ -4430,7 +4433,7 @@ class CSVProcessorApp(ctk.CTk):
                     # Get color
                     color_scheme = self.color_scheme_var.get()
                     if color_scheme == "Default":
-                        color = getattr(plt.cm, "tab10", plt.cm.viridis)(i % 10)
+                        color = getattr(plt.cm, "tab10", plt.cm.get_cmap("viridis"))(i % 10)
                     elif color_scheme == "Colorblind-friendly":
                         colors = [
                             "#0173B2",
@@ -4543,7 +4546,7 @@ class CSVProcessorApp(ctk.CTk):
 
             # Format datetime axis if applicable
             if pd.api.types.is_datetime64_any_dtype(df[x_axis_col]):
-                self.plot_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
+                self.plot_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))  # type: ignore
                 self.plot_ax.tick_params(axis="x", rotation=0)
 
             # Smart zoom handling
@@ -4576,7 +4579,7 @@ class CSVProcessorApp(ctk.CTk):
                     print(f"Warning: Could not apply zoom state - {e}")
 
             # Force canvas update
-            self.plot_canvas.draw_idle()
+            self.plot_canvas.draw_idle()  # type: ignore
             self.status_label.configure(text="Plot updated successfully")
 
         except Exception as e:
@@ -4595,7 +4598,7 @@ class CSVProcessorApp(ctk.CTk):
                 va="center",
                 wrap=True,
             )
-            self.plot_canvas.draw()
+            self.plot_canvas.draw()  # type: ignore
             self.status_label.configure(text="Plot error - check console for details")
 
     def _ensure_plot_canvas_ready(self) -> bool:
@@ -4610,7 +4613,7 @@ class CSVProcessorApp(ctk.CTk):
 
         # Force a draw to ensure canvas is ready
         try:
-            self.plot_canvas.draw()
+            self.plot_canvas.draw()  # type: ignore
             return True
         except Exception as e:
             print(f"ERROR: Canvas draw failed - {e}")
@@ -4673,7 +4676,7 @@ class CSVProcessorApp(ctk.CTk):
                     # Calculate sampling frequency from time data
                     if pd.api.types.is_datetime64_any_dtype(df[x_axis_col]):
                         time_diff = df[x_axis_col].diff().dt.total_seconds()
-                        fs = 1.0 / time_diff.median() if time_diff.median() > 0 else 1.0
+                        fs = 1.0 / pd.Series([time_diff]).median() if pd.Series([time_diff]).median() > 0 else 1.0
                     else:
                         # Assume uniform sampling
                         fs = 1.0
@@ -4779,7 +4782,7 @@ class CSVProcessorApp(ctk.CTk):
                     )
                 elif method == "Replace with Median":
                     # Replace outliers with median
-                    median_val = signal_data.median()
+                    median_val = pd.Series([signal_data]).median()
                     filtered_df[signal] = signal_data.copy()
                     filtered_df[signal].loc[z_scores > threshold] = median_val
 
@@ -4996,7 +4999,7 @@ class CSVProcessorApp(ctk.CTk):
             self.trendline_textbox.insert("1.0", equation)
 
             # Redraw the canvas
-            self.plot_canvas.draw()
+            self.plot_canvas.draw()  # type: ignore
 
         except Exception as e:
             messagebox.showerror("Trendline Error", f"Error adding trendline: {e!s}")
@@ -5739,7 +5742,7 @@ COMMON MISTAKES TO AVOID:
     def _load_selected_config(self) -> None:
         """Load the selected configuration file."""
         try:
-            selection = self.config_listbox.curselection()
+            selection = self.config_listbox.curselection()  # type: ignore
             if not selection:
                 messagebox.showwarning(
                     "Warning",
@@ -5782,7 +5785,7 @@ COMMON MISTAKES TO AVOID:
     def _delete_selected_config(self) -> None:
         """Delete the selected configuration file."""
         try:
-            selection = self.config_listbox.curselection()
+            selection = self.config_listbox.curselection()  # type: ignore
             if not selection:
                 messagebox.showwarning(
                     "Warning",
@@ -6443,7 +6446,7 @@ COMMON MISTAKES TO AVOID:
 
     def _update_selected_plot(self) -> None:
         """Update selected plot in the list."""
-        selection = self.plots_listbox.curselection()
+        selection = self.plots_listbox.curselection()  # type: ignore
         if not selection:
             messagebox.showwarning("Warning", "Please select a plot to update.")
             return
@@ -6489,7 +6492,7 @@ COMMON MISTAKES TO AVOID:
 
     def _on_plot_select(self, event: Any) -> None:
         """Handle plot selection in listbox."""
-        selection = self.plots_listbox.curselection()
+        selection = self.plots_listbox.curselection()  # type: ignore
         if not selection:
             return
 
@@ -6517,7 +6520,7 @@ COMMON MISTAKES TO AVOID:
 
     def _load_selected_plot(self) -> None:
         """Load selected plot configuration."""
-        selection = self.plots_listbox.curselection()
+        selection = self.plots_listbox.curselection()  # type: ignore
         if not selection:
             messagebox.showwarning("Warning", "Please select a plot to load.")
             return
@@ -6542,7 +6545,7 @@ COMMON MISTAKES TO AVOID:
 
     def _delete_selected_plot(self) -> None:
         """Delete selected plot from list."""
-        selection = self.plots_listbox.curselection()
+        selection = self.plots_listbox.curselection()  # type: ignore
         if not selection:
             messagebox.showwarning("Warning", "Please select a plot to delete.")
             return
@@ -6830,19 +6833,19 @@ COMMON MISTAKES TO AVOID:
                 # Get color scheme
                 color_scheme = self.color_scheme_var.get()
                 if color_scheme == "Auto (Matplotlib)":
-                    colors = getattr(plt.cm, "tab10", plt.cm.viridis)(np.linspace(0, 1, len(signals_to_plot)))
+                    colors = getattr(plt.cm, "tab10", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(signals_to_plot)))
                 elif color_scheme == "Viridis":
-                    colors = getattr(plt.cm, "viridis", plt.cm.viridis)(np.linspace(0, 1, len(signals_to_plot)))
+                    colors = getattr(plt.cm, "viridis", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(signals_to_plot)))
                 elif color_scheme == "Plasma":
-                    colors = getattr(plt.cm, "plasma", plt.cm.viridis)(np.linspace(0, 1, len(signals_to_plot)))
+                    colors = getattr(plt.cm, "plasma", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(signals_to_plot)))
                 elif color_scheme == "Cool":
-                    colors = getattr(plt.cm, "cool", plt.cm.viridis)(np.linspace(0, 1, len(signals_to_plot)))
+                    colors = getattr(plt.cm, "cool", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(signals_to_plot)))
                 elif color_scheme == "Warm":
-                    colors = getattr(plt.cm, "autumn", plt.cm.viridis)(np.linspace(0, 1, len(signals_to_plot)))
+                    colors = getattr(plt.cm, "autumn", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(signals_to_plot)))
                 elif color_scheme == "Rainbow":
-                    colors = getattr(plt.cm, "rainbow", plt.cm.viridis)(np.linspace(0, 1, len(signals_to_plot)))
+                    colors = getattr(plt.cm, "rainbow", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(signals_to_plot)))
                 else:  # Custom Colors - default to tab10
-                    colors = getattr(plt.cm, "Set1", plt.cm.viridis)(np.linspace(0, 1, len(signals_to_plot)))
+                    colors = getattr(plt.cm, "Set1", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(signals_to_plot)))
 
                 # Plot each selected signal
                 for i, signal in enumerate(signals_to_plot):
@@ -6896,11 +6899,11 @@ COMMON MISTAKES TO AVOID:
 
             if pd.api.types.is_datetime64_any_dtype(filtered_df[time_col]):
                 # Use simpler HH:MM format for cleaner plot appearance
-                self.plot_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
+                self.plot_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))  # type: ignore
                 # Keep labels horizontal for better readability
                 self.plot_ax.tick_params(axis="x", rotation=0)
 
-            self.plot_canvas.draw()
+            self.plot_canvas.draw()  # type: ignore
 
         except Exception as e:
             messagebox.showerror(
@@ -6944,8 +6947,8 @@ COMMON MISTAKES TO AVOID:
             xlim = self.plot_ax.get_xlim()
 
             # Convert matplotlib date numbers to datetime
-            start_datetime = mdates.num2date(xlim[0])
-            end_datetime = mdates.num2date(xlim[1])
+            start_datetime = mdates.num2date(xlim[0])  # type: ignore
+            end_datetime = mdates.num2date(xlim[1])  # type: ignore
 
             # Extract date and time components
             date_str = start_datetime.strftime("%Y-%m-%d")
@@ -7010,8 +7013,8 @@ COMMON MISTAKES TO AVOID:
             xlim = self.plot_ax.get_xlim()
 
             # Convert matplotlib date numbers to datetime
-            start_datetime = mdates.num2date(xlim[0])
-            end_datetime = mdates.num2date(xlim[1])
+            start_datetime = mdates.num2date(xlim[0])  # type: ignore
+            end_datetime = mdates.num2date(xlim[1])  # type: ignore
 
             # Extract date and time components
             date_str = start_datetime.strftime("%Y-%m-%d")
@@ -7052,7 +7055,7 @@ COMMON MISTAKES TO AVOID:
                     if self.saved_plot_view:
                         self.plot_ax.set_xlim(self.saved_plot_view["xlim"])
                         self.plot_ax.set_ylim(self.saved_plot_view["ylim"])
-                        self.plot_canvas.draw()
+                        self.plot_canvas.draw()  # type: ignore
                     else:
                         # Fall back to original home if no saved view
                         self._original_home()
@@ -7193,124 +7196,6 @@ COMMON MISTAKES TO AVOID:
                 )
                 self._refresh_legend_entries()
                 self._on_plot_setting_change()
-
-    def _add_trendline(self) -> None:
-        """Add trendline to plot."""
-        if not hasattr(self, "plot_ax") or not self.plot_ax:
-            messagebox.showerror(
-                "Error",
-                "No plot available. Please create a plot first.",
-            )
-            return
-
-        trendline_signal = self.trendline_signal_var.get()
-        trendline_type = self.trendline_type_var.get()
-
-        if trendline_signal == "Select signal..." or trendline_type == "None":
-            return
-
-        try:
-            # Get current plot data
-            selected_file = self.plot_file_menu.get()
-            if selected_file == "Select a file...":
-                messagebox.showerror("Error", "Please select a file for plotting.")
-                return
-
-            # Find the matching file path
-            file_path = None
-            for path in self.input_file_paths:
-                if os.path.basename(path) == selected_file:
-                    file_path = path
-                    break
-
-            if not file_path:
-                messagebox.showerror("Error", "Selected file not found.")
-                return
-
-            # Load data for trendline
-            df = self._load_data_for_plotting(file_path)
-            if df is None:
-                return
-
-            # Get time and signal data
-            time_col = self.plot_xaxis_menu.get()
-            if time_col not in df.columns or trendline_signal not in df.columns:
-                messagebox.showerror("Error", "Selected columns not found in data.")
-                return
-
-            x_data = df[time_col]
-            y_data = df[trendline_signal]
-
-            # Remove NaN values
-            valid_mask = ~(pd.isna(x_data) | pd.isna(y_data))
-            x_clean = x_data[valid_mask]
-            y_clean = y_data[valid_mask]
-
-            if len(x_clean) < 2:
-                messagebox.showerror(
-                    "Error",
-                    "Not enough valid data points for trendline.",
-                )
-                return
-
-            # Convert datetime to numeric for fitting if needed
-            if pd.api.types.is_datetime64_any_dtype(x_clean):
-                x_numeric = pd.to_numeric(x_clean)
-            else:
-                x_numeric = pd.to_numeric(x_clean, errors="coerce")
-
-            y_numeric = pd.to_numeric(y_clean, errors="coerce")
-
-            # Calculate trendline based on type
-            if trendline_type == "Linear":
-                coeffs = np.polyfit(x_numeric, y_numeric, 1)
-                trendline_y = np.polyval(coeffs, x_numeric)
-                label = f"Linear Trend: {trendline_signal}"
-            elif trendline_type == "Polynomial (2nd)":
-                coeffs = np.polyfit(x_numeric, y_numeric, 2)
-                trendline_y = np.polyval(coeffs, x_numeric)
-                label = f"Poly (2nd) Trend: {trendline_signal}"
-            elif trendline_type == "Polynomial (3rd)":
-                coeffs = np.polyfit(x_numeric, y_numeric, 3)
-                trendline_y = np.polyval(coeffs, x_numeric)
-                label = f"Poly (3rd) Trend: {trendline_signal}"
-            else:
-                return
-
-            # Plot trendline
-            self.plot_ax.plot(
-                x_clean,
-                trendline_y,
-                "--",
-                linewidth=2,
-                label=label,
-                alpha=0.8,
-            )
-            self.plot_ax.legend()
-            self.plot_canvas.draw()
-
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to add trendline: {e!s}")
-
-    def _create_dat_import_right(self, right_panel: Any) -> Dict[str, Any]:
-        """Create right panel for DAT import."""
-        right_panel.grid_rowconfigure(0, weight=1)
-        right_panel.grid_columnconfigure(0, weight=1)
-
-        # Preview frame
-        preview_frame = ctk.CTkFrame(right_panel)
-        preview_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-        preview_frame.grid_columnconfigure(0, weight=1)
-        preview_frame.grid_rowconfigure(1, weight=1)
-
-        ctk.CTkLabel(
-            preview_frame,
-            text="Import Preview",
-            font=ctk.CTkFont(weight="bold"),
-        ).grid(row=0, column=0, padx=10, pady=5, sticky="w")
-
-        self.import_preview_text = ctk.CTkTextbox(preview_frame, height=200)
-        self.import_preview_text.grid(row=1, column=0, padx=10, pady=5, sticky="nsew")
 
     def create_help_tab(self, tab: Any) -> None:
         """Create the help tab with comprehensive documentation."""
@@ -7796,7 +7681,7 @@ For additional support or feature requests, please refer to the application docu
         button_frame.pack(fill="x", padx=20, pady=10)
 
         def on_modify() -> None:
-            selection = listbox.curselection()
+            selection = listbox.curselection()  # type: ignore
             if not selection:
                 messagebox.showwarning(
                     "No Selection",
@@ -8221,7 +8106,7 @@ For additional support or feature requests, please refer to the application docu
 
         # Initialize plots signal vars if not exists
         if not hasattr(self, "plots_signal_vars"):
-            self.plots_signal_vars = {}
+            self.plots_signal_vars: Dict[str, Any] = {}
 
         self.plots_signal_vars.clear()
 
@@ -8242,7 +8127,7 @@ For additional support or feature requests, please refer to the application docu
 
     def _generate_plot_preview(self) -> None:
         """Generate plot preview."""
-        selection = self.plots_listbox.curselection()
+        selection = self.plots_listbox.curselection()  # type: ignore
         if not selection:
             messagebox.showwarning("Warning", "Please select a plot to preview.")
             return
@@ -8273,7 +8158,7 @@ For additional support or feature requests, please refer to the application docu
                     fontsize=12,
                 )
                 self.preview_ax.set_title(f"Preview: {plot_config['name']}")
-                self.preview_canvas.draw()
+                self.preview_canvas.draw()  # type: ignore
                 return
 
             if not file_name or file_name == "Select a file...":
@@ -8309,7 +8194,7 @@ For additional support or feature requests, please refer to the application docu
                     fontsize=10,
                 )
                 self.preview_ax.set_title(f"Preview: {plot_config['name']}")
-                self.preview_canvas.draw()
+                self.preview_canvas.draw()  # type: ignore
                 return
 
             # Get the actual data using the same method as main plotting
@@ -8347,7 +8232,7 @@ For additional support or feature requests, please refer to the application docu
                     fontsize=10,
                 )
                 self.preview_ax.set_title(f"Preview: {plot_config['name']}")
-                self.preview_canvas.draw()
+                self.preview_canvas.draw()  # type: ignore
                 return
 
             # Get time column and available signals
@@ -8375,7 +8260,7 @@ For additional support or feature requests, please refer to the application docu
                     fontsize=12,
                 )
                 self.preview_ax.set_title(f"Preview: {plot_config['name']}")
-                self.preview_canvas.draw()
+                self.preview_canvas.draw()  # type: ignore
                 return
 
             # Apply time range if specified
@@ -8403,7 +8288,7 @@ For additional support or feature requests, please refer to the application docu
                             pass
 
             # Plot all available signals
-            colors = getattr(plt.cm, "tab10", plt.cm.viridis)(np.linspace(0, 1, len(available_signals)))
+            colors = getattr(plt.cm, "tab10", plt.cm.get_cmap("viridis"))(np.linspace(0, 1, len(available_signals)))
             for i, signal in enumerate(available_signals):
                 signal_data = plot_df[[time_col, signal]].dropna()
                 if len(signal_data) > 0:
@@ -8440,10 +8325,10 @@ For additional support or feature requests, please refer to the application docu
             if pd.api.types.is_datetime64_any_dtype(plot_df[time_col]):
                 import matplotlib.dates as mdates
 
-                self.preview_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
+                self.preview_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))  # type: ignore
                 self.preview_ax.tick_params(axis="x", rotation=0)
 
-            self.preview_canvas.draw()
+            self.preview_canvas.draw()  # type: ignore
 
         except Exception as e:
             self.preview_ax.clear()
@@ -8457,7 +8342,7 @@ For additional support or feature requests, please refer to the application docu
                 fontsize=12,
             )
             self.preview_ax.set_title("Preview Error")
-            self.preview_canvas.draw()
+            self.preview_canvas.draw()  # type: ignore
 
     def _export_all_plots(self) -> None:
         """Export all plots."""
@@ -8649,7 +8534,7 @@ For additional support or feature requests, please refer to the application docu
 
         bind_mousewheel(frame)
 
-    def _on_trendline_window_mode_change(self, mode):
+    def _on_trendline_window_mode_change(self, mode: str) -> None:
         """Handle trendline window mode change."""
         if mode == "Manual Entry":
             self.trendline_manual_frame.grid()
@@ -8663,7 +8548,7 @@ For additional support or feature requests, please refer to the application docu
 
         self._on_plot_setting_change()
 
-    def _start_trendline_selection(self):
+    def _start_trendline_selection(self) -> None:
         """Start visual selection of trendline window."""
         if not hasattr(self, "plot_canvas") or not self.plot_canvas:
             messagebox.showwarning("Warning", "Please generate a plot first.")
@@ -8690,7 +8575,7 @@ For additional support or feature requests, please refer to the application docu
         )
         self.trendline_selected_range.configure(text="Selection active...")
 
-    def _on_trendline_selection_start(self, event):
+    def _on_trendline_selection_start(self, event: Any) -> None:
         """Handle start of trendline selection."""
         if (
             hasattr(self, "trendline_selection_active")
@@ -8699,7 +8584,7 @@ For additional support or feature requests, please refer to the application docu
         ):
             self.trendline_selection_start = event.xdata
 
-    def _on_trendline_selection_end(self, event):
+    def _on_trendline_selection_end(self, event: Any) -> None:
         """Handle end of trendline selection."""
         if (
             hasattr(self, "trendline_selection_active")
@@ -8732,7 +8617,7 @@ For additional support or feature requests, please refer to the application docu
                 # Update plot
                 self._on_plot_setting_change()
 
-    def _on_dataset_naming_change(self):
+    def _on_dataset_naming_change(self) -> None:
         """Handle changes to dataset naming mode."""
         if self.dataset_naming_var.get() == "custom":
             self.custom_dataset_entry.configure(state="normal")
@@ -8744,7 +8629,7 @@ For additional support or feature requests, please refer to the application docu
             self.custom_dataset_entry.configure(state="disabled")
             self.overwrite_warning_label.configure(text="")
 
-    def _check_custom_name_overwrite(self, event=None):
+    def _check_custom_name_overwrite(self, event: Optional[Any] = None) -> None:
         """Check if custom dataset name will cause file overwrite."""
         if not hasattr(self, "custom_dataset_entry") or not hasattr(
             self,
@@ -8783,7 +8668,7 @@ For additional support or feature requests, please refer to the application docu
         else:
             self.overwrite_warning_label.configure(text="")
 
-    def _save_zoom_state(self):
+    def _save_zoom_state(self) -> None:
         """Save current zoom/pan state of the plot."""
         if hasattr(self, "plot_ax"):
             self.saved_zoom_state = {
@@ -8792,18 +8677,18 @@ For additional support or feature requests, please refer to the application docu
             }
             messagebox.showinfo("Zoom State", "Current zoom state saved!")
 
-    def _restore_zoom_state(self):
+    def _restore_zoom_state(self) -> None:
         """Restore previously saved zoom/pan state."""
         if hasattr(self, "saved_zoom_state") and self.saved_zoom_state:
             if hasattr(self, "plot_ax"):
                 self.plot_ax.set_xlim(self.saved_zoom_state["xlim"])
                 self.plot_ax.set_ylim(self.saved_zoom_state["ylim"])
-                self.plot_canvas.draw()
+                self.plot_canvas.draw()  # type: ignore
                 messagebox.showinfo("Zoom State", "Zoom state restored!")
         else:
             messagebox.showwarning("Warning", "No saved zoom state found.")
 
-    def _zoom_out_25(self):
+    def _zoom_out_25(self) -> None:
         """Zoom out by 25% while maintaining center."""
         if hasattr(self, "plot_ax"):
             xlim = self.plot_ax.get_xlim()
@@ -8828,9 +8713,9 @@ For additional support or feature requests, please refer to the application docu
                 y_center - new_y_range / 2,
                 y_center + new_y_range / 2,
             )
-            self.plot_canvas.draw()
+            self.plot_canvas.draw()  # type: ignore
 
-    def _zoom_in_25(self):
+    def _zoom_in_25(self) -> None:
         """Zoom in by 25% while maintaining center."""
         if hasattr(self, "plot_ax"):
             xlim = self.plot_ax.get_xlim()
@@ -8855,9 +8740,9 @@ For additional support or feature requests, please refer to the application docu
                 y_center - new_y_range / 2,
                 y_center + new_y_range / 2,
             )
-            self.plot_canvas.draw()
+            self.plot_canvas.draw()  # type: ignore
 
-    def _preserve_zoom_during_update(self):
+    def _preserve_zoom_during_update(self) -> Optional[Dict[str, Tuple[float, float]]]:
         """Store zoom state before plot update and restore after."""
         zoom_state = None
         if hasattr(self, "plot_ax"):
@@ -8867,17 +8752,17 @@ For additional support or feature requests, please refer to the application docu
             }
         return zoom_state
 
-    def _auto_fit_plot(self):
+    def _auto_fit_plot(self) -> None:
         """Auto-fit the plot to show all data."""
         if hasattr(self, "plot_ax"):
             try:
                 self.plot_ax.autoscale_view()
-                self.plot_canvas.draw()
+                self.plot_canvas.draw()  # type: ignore
                 self.status_label.configure(text="Plot auto-fitted to data")
             except Exception as e:
                 print(f"Error auto-fitting plot: {e}")
 
-    def _should_auto_zoom(self, reason="filter_change"):
+    def _should_auto_zoom(self, reason: str = "filter_change") -> bool:
         """Determine if auto-zoom should be applied based on the reason."""
         if not hasattr(self, "auto_zoom_var"):
             return True  # Default to auto-zoom if control doesn't exist
@@ -8889,10 +8774,10 @@ For additional support or feature requests, please refer to the application docu
         # Use user preference for other changes
         return self.auto_zoom_var.get()
 
-    def _detect_new_signals(self, current_signals):
+    def _detect_new_signals(self, current_signals: List[str]) -> bool:
         """Detect if new signals have been added since last plot update."""
         if not hasattr(self, "last_plotted_signals"):
-            self.last_plotted_signals = set()
+            self.last_plotted_signals: set[str] = set()
             return True  # First time plotting, treat as new signals
 
         current_set = set(current_signals)
@@ -8903,7 +8788,7 @@ For additional support or feature requests, please refer to the application docu
 
         return len(new_signals) > 0
 
-    def _apply_zoom_state(self, zoom_state):
+    def _apply_zoom_state(self, zoom_state: Optional[Dict[str, Tuple[float, float]]]) -> None:
         """Apply stored zoom state after plot update."""
         if zoom_state and hasattr(self, "plot_ax"):
             try:
