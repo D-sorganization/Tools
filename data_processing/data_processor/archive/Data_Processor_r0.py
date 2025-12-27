@@ -26,7 +26,9 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 try:
     from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 except ImportError:
-    NavigationToolbar2Tk = type("NavigationToolbar2Tk", (), {})
+    # Create a dummy class for type checking
+    class NavigationToolbar2Tk:  # type: ignore
+        pass
 from matplotlib.figure import Figure
 from scipy.interpolate import UnivariateSpline
 from scipy.io import savemat
@@ -165,7 +167,7 @@ def _poly_derivative(series: pd.Series, window: int, poly_order: int, deriv_orde
         x = np.arange(len(w)) * delta_x
         try:
             # Fit polynomial to the window's data
-            coeffs = np.polyfit(x, w, poly_order)
+            coeffs = np.polyfit(np.asarray(x), np.asarray(w), poly_order)
             # Get the derivative of the polynomial
             deriv_coeffs = np.polyder(coeffs, deriv_order)
             # Evaluate the derivative at the last point of the window
@@ -4908,7 +4910,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
 
         try:
             if trend_type == "Linear":
-                coeffs = np.polyfit(x_numeric, y_data, 1)
+                coeffs = np.polyfit(np.asarray(x_numeric), np.asarray(y_data), 1)
                 trend = np.poly1d(coeffs)
                 trendline = trend(x_numeric)
                 equation = f"y = {coeffs[0]:.4f}x + {coeffs[1]:.4f}"
@@ -4919,7 +4921,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 x_positive = x_numeric[y_data > 0]
                 if len(y_positive) > 1:
                     log_y = np.log(y_positive)
-                    coeffs = np.polyfit(x_positive, log_y, 1)
+                    coeffs = np.polyfit(np.asarray(x_positive), np.asarray(log_y), 1)
                     a = np.exp(coeffs[1])
                     b = coeffs[0]
                     trendline = a * np.exp(b * x_numeric)
@@ -4939,7 +4941,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
                 if len(y_positive) > 1:
                     log_x = np.log(x_positive)
                     log_y = np.log(y_positive)
-                    coeffs = np.polyfit(log_x, log_y, 1)
+                    coeffs = np.polyfit(np.asarray(log_x), np.asarray(log_y), 1)
                     a = np.exp(coeffs[1])
                     b = coeffs[0]
                     trendline = a * (x_numeric**b)
@@ -4954,7 +4956,7 @@ class CSVProcessorApp(ctk.CTk):  # type: ignore
             elif trend_type == "Polynomial":
                 order = int(self.poly_order_entry.get() or "2")
                 order = max(2, min(6, order))  # Limit to 2-6
-                coeffs = np.polyfit(x_numeric, y_data, order)
+                coeffs = np.polyfit(np.asarray(x_numeric), np.asarray(y_data), order)
                 trend = np.poly1d(coeffs)
                 trendline = trend(x_numeric)
                 # Build equation string
@@ -8777,7 +8779,6 @@ For additional support or feature requests, please refer to the application docu
     def _detect_new_signals(self, current_signals: List[str]) -> bool:
         """Detect if new signals have been added since last plot update."""
         if not hasattr(self, "last_plotted_signals"):
-            self.last_plotted_signals: set[str] = set()
             return True  # First time plotting, treat as new signals
 
         current_set = set(current_signals)
