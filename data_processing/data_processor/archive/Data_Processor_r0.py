@@ -22,7 +22,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import logging
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+try:
+    from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
+except ImportError:
+    NavigationToolbar2Tk = None
 from matplotlib.figure import Figure
 from scipy.interpolate import UnivariateSpline
 from scipy.io import savemat
@@ -153,7 +157,7 @@ def _poly_derivative(series: pd.Series, window: int, poly_order: int, deriv_orde
     # Pad the series at the beginning to get derivatives for the initial points
     padded_series = pd.concat([pd.Series([series.iloc[0]] * (window - 1)), series])
 
-    def get_deriv(w):
+    def get_deriv(w: np.ndarray) -> float:
         # Can't compute if the window is not full or has NaNs
         if len(w) < window or np.isnan(w).any():
             return np.nan
@@ -229,24 +233,24 @@ class CSVProcessorApp(ctk.CTk):
             "Butterworth High-pass",
             "Savitzky-Golay",
         ]
-        self.custom_vars_list = []
-        self.reference_signal_widgets = {}
+        self.custom_vars_list: List[Dict[str, Any]] = []
+        self.reference_signal_widgets: Dict[str, Any] = {}
         self.dat_import_tag_file_path = None
         self.dat_import_data_file_path = None
-        self.dat_tag_vars = {}
+        self.dat_tag_vars: Dict[str, Any] = {}
         self.tag_delimiter_var = tk.StringVar(value="newline")
 
         # Plots List variables
-        self.plots_list = []
+        self.plots_list: List[Dict[str, Any]] = []
         self.current_plot_config = None
 
         # Signal List Management variables
-        self.saved_signal_list = []
+        self.saved_signal_list: List[str] = []
         self.saved_signal_list_name = ""
 
         # Integration and Differentiation variables
-        self.integrator_signal_vars = {}
-        self.deriv_signal_vars = {}
+        self.integrator_signal_vars: Dict[str, Any] = {}
+        self.deriv_signal_vars: Dict[str, Any] = {}
         self.derivative_vars = {}
         for i in range(1, 6):  # Support up to 5th order derivatives
             self.derivative_vars[i] = tk.BooleanVar(value=False)
@@ -255,7 +259,7 @@ class CSVProcessorApp(ctk.CTk):
         self.saved_plot_view = None
 
         # Custom legend entries for plots
-        self.custom_legend_entries = {}
+        self.custom_legend_entries: Dict[str, Any] = {}
 
         # Custom colors for plots
         self.custom_colors = [
@@ -300,7 +304,7 @@ class CSVProcessorApp(ctk.CTk):
         parent_tab.grid_columnconfigure(0, weight=1)
         parent_tab.grid_rowconfigure(0, weight=1)
 
-        def create_left_content(left_panel):
+        def create_left_content(left_panel: Any) -> None:
             """Create the left panel content"""
             left_panel.grid_rowconfigure(0, weight=1)
             left_panel.grid_columnconfigure(0, weight=1)
@@ -349,7 +353,7 @@ class CSVProcessorApp(ctk.CTk):
             )
             self.process_button.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
 
-        def create_right_content(right_panel):
+        def create_right_content(right_panel: Any) -> None:
             """Create the right panel content"""
             right_panel.grid_rowconfigure(2, weight=1)
             right_panel.grid_columnconfigure(0, weight=1)
@@ -1245,7 +1249,7 @@ class CSVProcessorApp(ctk.CTk):
         elif filter_type == "Savitzky-Golay":
             self.plot_savgol_frame.grid()
 
-    def _filter_signals(self, event=None):
+    def _filter_signals(self, event: Optional[Any] = None) -> None:
         """Filter signals based on search text."""
         search_text = self.search_entry.get().lower()
         for signal, data in self.signal_vars.items():
@@ -1254,13 +1258,13 @@ class CSVProcessorApp(ctk.CTk):
             else:
                 data["widget"].grid_remove()
 
-    def _clear_search(self):
+    def _clear_search(self) -> None:
         """Clear search and show all signals."""
         self.search_entry.delete(0, tk.END)
         for _signal, data in self.signal_vars.items():
             data["widget"].grid()
 
-    def _filter_integrator_signals(self, event=None):
+    def _filter_integrator_signals(self, event: Optional[Any] = None) -> None:
         """Filter integration signals based on search text."""
         search_text = self.integrator_search_entry.get().lower()
         for signal, data in self.integrator_signal_vars.items():
@@ -1269,23 +1273,23 @@ class CSVProcessorApp(ctk.CTk):
             else:
                 data["widget"].pack_forget()
 
-    def _clear_integrator_search(self):
+    def _clear_integrator_search(self) -> None:
         """Clear integration search and show all signals."""
         self.integrator_search_entry.delete(0, tk.END)
         for _signal, data in self.integrator_signal_vars.items():
             data["widget"].pack(anchor="w", padx=5, pady=2)
 
-    def _integrator_select_all(self):
+    def _integrator_select_all(self) -> None:
         """Select all integration signals."""
         for _signal, data in self.integrator_signal_vars.items():
             data["var"].set(True)
 
-    def _integrator_deselect_all(self):
+    def _integrator_deselect_all(self) -> None:
         """Deselect all integration signals."""
         for _signal, data in self.integrator_signal_vars.items():
             data["var"].set(False)
 
-    def _filter_deriv_signals(self, event=None):
+    def _filter_deriv_signals(self, event: Optional[Any] = None) -> None:
         """Filter differentiation signals based on search text."""
         search_text = self.deriv_search_entry.get().lower()
         for signal, data in self.deriv_signal_vars.items():
@@ -1294,23 +1298,23 @@ class CSVProcessorApp(ctk.CTk):
             else:
                 data["widget"].pack_forget()
 
-    def _clear_deriv_search(self):
+    def _clear_deriv_search(self) -> None:
         """Clear differentiation search and show all signals."""
         self.deriv_search_entry.delete(0, tk.END)
         for _signal, data in self.deriv_signal_vars.items():
             data["widget"].pack(anchor="w", padx=5, pady=2)
 
-    def _deriv_select_all(self):
+    def _deriv_select_all(self) -> None:
         """Select all differentiation signals."""
         for _signal, data in self.deriv_signal_vars.items():
             data["var"].set(True)
 
-    def _deriv_deselect_all(self):
+    def _deriv_deselect_all(self) -> None:
         """Deselect all differentiation signals."""
         for _signal, data in self.deriv_signal_vars.items():
             data["var"].set(False)
 
-    def _filter_plot_signals(self, event=None):
+    def _filter_plot_signals(self, event: Optional[Any] = None) -> None:
         """Filter plot signals based on search text."""
         search_text = self.plot_search_entry.get().lower()
         for signal, data in self.plot_signal_vars.items():
@@ -1319,23 +1323,23 @@ class CSVProcessorApp(ctk.CTk):
             else:
                 data["widget"].grid_remove()
 
-    def _plot_clear_search(self):
+    def _plot_clear_search(self) -> None:
         """Clear plot search and show all signals."""
         self.plot_search_entry.delete(0, tk.END)
         for _signal, data in self.plot_signal_vars.items():
             data["widget"].grid()
 
-    def _plot_select_all(self):
+    def _plot_select_all(self) -> None:
         """Select all plot signals."""
         for _signal, data in self.plot_signal_vars.items():
             data["var"].set(True)
 
-    def _plot_select_none(self):
+    def _plot_select_none(self) -> None:
         """Deselect all plot signals."""
         for _signal, data in self.plot_signal_vars.items():
             data["var"].set(False)
 
-    def _show_selected_signals(self):
+    def _show_selected_signals(self) -> None:
         """Show only selected signals in plot."""
         selected_signals = [
             s for s, data in self.plot_signal_vars.items() if data["var"].get()
@@ -1348,7 +1352,7 @@ class CSVProcessorApp(ctk.CTk):
                 "Please select at least one signal to plot.",
             )
 
-    def _filter_reference_signals(self, event=None):
+    def _filter_reference_signals(self, event: Optional[Any] = None) -> None:
         """Filter reference signals for custom variables."""
         search_text = self.custom_var_search_entry.get().lower()
         for signal, widget in self.reference_signal_widgets.items():
@@ -1357,13 +1361,13 @@ class CSVProcessorApp(ctk.CTk):
             else:
                 widget.pack_forget()
 
-    def _clear_reference_search(self):
+    def _clear_reference_search(self) -> None:
         """Clear reference search and show all signals."""
         self.custom_var_search_entry.delete(0, tk.END)
         for _signal, widget in self.reference_signal_widgets.items():
             widget.pack(anchor="w", padx=5, pady=2)
 
-    def _add_custom_variable(self):
+    def _add_custom_variable(self) -> None:
         """Add a custom variable to the list."""
         name = self.custom_var_name_entry.get().strip()
         formula = self.custom_var_formula_entry.get().strip()
@@ -1622,11 +1626,11 @@ class CSVProcessorApp(ctk.CTk):
 
     def _apply_integration(
         self,
-        df,
-        time_col,
-        signals_to_integrate,
-        method="Trapezoidal",
-    ):
+        df: pd.DataFrame,
+        time_col: str,
+        signals_to_integrate: List[str],
+        method: str = "Trapezoidal",
+    ) -> pd.DataFrame:
         """Apply integration to selected signals."""
         if not signals_to_integrate:
             return df
@@ -1694,11 +1698,11 @@ class CSVProcessorApp(ctk.CTk):
 
     def _apply_differentiation(
         self,
-        df,
-        time_col,
-        signals_to_differentiate,
-        method="Spline (Acausal)",
-    ):
+        df: pd.DataFrame,
+        time_col: str,
+        signals_to_differentiate: List[str],
+        method: str = "Spline (Acausal)",
+    ) -> pd.DataFrame:
         """Apply differentiation to selected signals with support for up to 5th order."""
         if not signals_to_differentiate:
             return df
@@ -2817,7 +2821,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return df
 
-    def create_plotting_tab(self, tab):
+    def create_plotting_tab(self, tab: Any) -> None:
         """Create the plotting and analysis tab with all advanced features."""
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(1, weight=1)
@@ -3702,7 +3706,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
-    def create_plots_list_tab(self, tab):
+    def create_plots_list_tab(self, tab: Any) -> None:
         """Create the plots list tab."""
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(1, weight=1)
@@ -3933,7 +3937,7 @@ class CSVProcessorApp(ctk.CTk):
             command=self._export_all_plots,
         ).grid(row=0, column=1, padx=5, pady=5, sticky="ew")
 
-    def create_dat_import_tab(self, tab):
+    def create_dat_import_tab(self, tab: Any) -> None:
         """Create the DAT file import tab."""
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(1, weight=1)
@@ -4238,7 +4242,7 @@ class CSVProcessorApp(ctk.CTk):
                 self.after_cancel(self._resize_timer)
             self._resize_timer = self.after(1000, self._save_layout_config)
 
-    def create_status_bar(self):
+    def create_status_bar(self) -> None:
         """Create the status bar."""
         self.status_label = ctk.CTkLabel(self, text="Ready", anchor="w")
         self.status_label.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
@@ -6587,7 +6591,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             print(f"Error saving plots to file: {e}")
 
-    def _load_plots_from_file(self):
+    def _load_plots_from_file(self) -> None:
         """Load plots list from file."""
         try:
             plots_file = os.path.join(
@@ -7308,7 +7312,7 @@ COMMON MISTAKES TO AVOID:
         self.import_preview_text = ctk.CTkTextbox(preview_frame, height=200)
         self.import_preview_text.grid(row=1, column=0, padx=10, pady=5, sticky="nsew")
 
-    def create_help_tab(self, tab):
+    def create_help_tab(self, tab: Any) -> None:
         """Create the help tab with comprehensive documentation."""
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(1, weight=1)
