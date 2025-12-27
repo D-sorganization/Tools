@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 from calendar import monthrange
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any
 
 import numpy as np
@@ -310,9 +310,8 @@ class SolarSystemScene:
         """
         # Ensure timezone aware
         if new_date.tzinfo is None:
-            from datetime import timezone
 
-            new_date = new_date.replace(tzinfo=timezone.utc)
+            new_date = new_date.replace(tzinfo=UTC)
 
         # Update simulation time
         self.time_manager.set_datetime(new_date)

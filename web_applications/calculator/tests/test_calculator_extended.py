@@ -33,9 +33,10 @@ def test_solve_linear_system() -> None:
     calculator = TI89Calculator()
     res = calculator.solve_system(["x + y = 5", "x - y = 1"], ["x", "y"]).result
     # Ensure res is a list and access first element
-    if isinstance(res, list) and len(res) > 0:
-        solution = res[0]
-        assert solution == {sp.Symbol("x"): 3, sp.Symbol("y"): 2}
+    assert isinstance(res, list), "Result should be a list"
+    assert len(res) > 0, "Result list should not be empty"
+    solution = res[0]
+    assert solution == {sp.Symbol("x"): 3, sp.Symbol("y"): 2}
 
 
 def test_symbolic_derivative_and_integral() -> None:
@@ -73,11 +74,10 @@ def test_taylor_series_and_differential_equation_solution() -> None:
         "Derivative(f(x), x) + f(x)", "f"
     ).result
     # Check if ode_solution has rhs attribute
-    if hasattr(ode_solution, "rhs"):
-        assert (
-            sp.simplify(ode_solution.rhs - sp.exp(-sp.Symbol("x")) * sp.Symbol("C1"))
-            == 0
-        )
+    assert hasattr(ode_solution, "rhs"), "ODE solution should have 'rhs' attribute"
+    assert (
+        sp.simplify(ode_solution.rhs - sp.exp(-sp.Symbol("x")) * sp.Symbol("C1")) == 0
+    )
 
 
 def test_complex_and_matrix_support() -> None:
