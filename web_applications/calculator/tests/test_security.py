@@ -9,12 +9,12 @@ from Calculator.webapp import create_app
 
 
 class TestSecurity(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.app = create_app()
         self.app.config.update({"TESTING": True})
         self.client = self.app.test_client()
 
-    def test_input_too_large(self):
+    def test_input_too_large(self) -> None:
         # Create a very large expression (> 1000 characters)
         large_expression = "1+" * 1000 + "1"
         payload = {"operation": "evaluate", "expression": large_expression}

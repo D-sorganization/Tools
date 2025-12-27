@@ -11,24 +11,25 @@ from star_wars_rrt import Obstacle, PursuitAI, RRTPlanner, Ship
 
 
 class TestRRTPlanner(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.bounds = np.array([-10, 10, -10, 10, -10, 10])
         self.planner = RRTPlanner(self.bounds, max_iterations=2000)
         # Increase goal radius for test stability
         self.planner.goal_radius = 0.5
 
-    def test_plan_path_no_obstacles(self):
+    def test_plan_path_no_obstacles(self) -> None:
         start = np.array([0.0, 0.0, 0.0])
         goal = np.array([2.0, 0.0, 0.0])
-        obstacles = []
+        obstacles: list[Obstacle] = []
         path = self.planner.plan_path(start, goal, obstacles)
         self.assertIsNotNone(path)
-        # Start and end should be close to requested
-        self.assertTrue(np.allclose(path[0], start, atol=1e-5))
-        # Last point should be within goal_radius of goal
-        self.assertTrue(np.linalg.norm(path[-1] - goal) < self.planner.goal_radius)
+        if path is not None:
+            # Start and end should be close to requested
+            self.assertTrue(np.allclose(path[0], start, atol=1e-5))
+            # Last point should be within goal_radius of goal
+            self.assertTrue(np.linalg.norm(path[-1] - goal) < self.planner.goal_radius)
 
-    def test_collision_sphere(self):
+    def test_collision_sphere(self) -> None:
         obstacle = Obstacle(
             type=0, position=np.array([0.5, 0, 0]), size=0.2, color=(1, 1, 1)
         )
@@ -41,7 +42,7 @@ class TestRRTPlanner(unittest.TestCase):
             self.planner._check_collision(np.array([0.0, 0.0, 0]), [obstacle])
         )
 
-    def test_collision_cube(self):
+    def test_collision_cube(self) -> None:
         obstacle = Obstacle(
             type=1, position=np.array([0.5, 0, 0]), size=0.2, color=(1, 1, 1)
         )
@@ -55,7 +56,7 @@ class TestRRTPlanner(unittest.TestCase):
             self.planner._check_collision(np.array([0.65, 0, 0]), [obstacle])
         )
 
-    def test_plan_path_collision_start(self):
+    def test_plan_path_collision_start(self) -> None:
         obstacle = Obstacle(
             type=0, position=np.array([0.0, 0, 0]), size=0.2, color=(1, 1, 1)
         )
@@ -66,11 +67,11 @@ class TestRRTPlanner(unittest.TestCase):
 
 
 class TestPursuitAI(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.bounds = np.array([-10, 10, -10, 10, -10, 10])
         self.ai = PursuitAI(self.bounds)
 
-    def test_evasion(self):
+    def test_evasion(self) -> None:
         target = Ship(
             position=np.array([0.0, 0.0, 0.0]),
             orientation=np.eye(3),

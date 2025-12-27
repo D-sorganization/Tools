@@ -9,13 +9,13 @@ from Calculator.webapp import create_app
 
 
 class TestRateLimitEnforcement(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.app = create_app()
         # Ensure TESTING is False (default)
         self.app.config.update({"TESTING": False})
         self.client = self.app.test_client()
 
-    def test_rate_limit_exceeded(self):
+    def test_rate_limit_exceeded(self) -> None:
         # Set low limit for testing
         # We access the limiter attached to the app
         self.app.limiter.limit = 2
