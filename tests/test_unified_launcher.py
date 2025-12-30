@@ -1,4 +1,3 @@
-
 import sys
 import unittest
 from pathlib import Path
@@ -20,31 +19,33 @@ mock_qt_core = MagicMock()
 # However, modifying the class inheritance at runtime is tricky.
 # Instead, we will mock the QMainWindow class itself.
 
+
 class MockQMainWindow:
     def __init__(self, *args, **kwargs):
-        pass # Do nothing
-    
+        pass  # Do nothing
+
     def setWindowTitle(self, title):
         pass
-        
+
     def resize(self, w, h):
         pass
-        
+
     def setStyleSheet(self, s):
         pass
-        
+
     def setWindowIcon(self, icon):
         pass
-        
+
     def setCentralWidget(self, w):
         pass
-    
+
     def show(self):
         pass
 
+
 # Inherited classes must be actual classes or MagicMock class
 mock_qt_widgets.QMainWindow = MockQMainWindow
-mock_qt_widgets.QFrame = MagicMock 
+mock_qt_widgets.QFrame = MagicMock
 
 # Instantiated classes should be MagicMock instances (acting as factories)
 # so that ClassName(args) calls the instance and returns a new Mock
@@ -66,8 +67,8 @@ sys.modules["PyQt6.QtWidgets"] = mock_qt_widgets
 sys.modules["PyQt6.QtCore"] = mock_qt_core
 
 # Now we can safely import the module under test
-import UnifiedToolsLauncher
 from UnifiedToolsLauncher import TOOLS, UnifiedLauncher
+
 
 class TestUnifiedLauncherConfig(unittest.TestCase):
     """Test the configuration of the Unified Launcher."""
@@ -80,9 +81,10 @@ class TestUnifiedLauncherConfig(unittest.TestCase):
                 path = REPO_ROOT / tool["path"]
                 if not path.exists():
                     missing.append(f"{category} -> {tool['name']}: {path}")
-        
+
         if missing:
-            self.fail(f"The following tools have invalid paths:\n" + "\n".join(missing))
+            self.fail("The following tools have invalid paths:\n" + "\n".join(missing))
+
 
 class TestUnifiedLauncherLogic(unittest.TestCase):
     """Test the logic of the Unified Launcher."""
@@ -91,7 +93,7 @@ class TestUnifiedLauncherLogic(unittest.TestCase):
         # Patch ToolCard to avoid widget creation during setup_category_tab
         self.tool_card_patcher = patch("UnifiedToolsLauncher.ToolCard")
         self.mock_tool_card = self.tool_card_patcher.start()
-        
+
         # Instantiate launcher
         self.launcher = UnifiedLauncher()
         self.launcher.log_area = MagicMock()
@@ -106,11 +108,11 @@ class TestUnifiedLauncherLogic(unittest.TestCase):
             "name": "Test Tool",
             "path": "test_script.py",
             "type": "python",
-            "desc": "Test"
+            "desc": "Test",
         }
-        
+
         self.launcher.launch_tool(tool)
-             
+
         mock_popen.assert_called_once()
         args = mock_popen.call_args[0][0]
         self.assertEqual(args[0], sys.executable)
@@ -123,9 +125,9 @@ class TestUnifiedLauncherLogic(unittest.TestCase):
             "name": "Web Tool",
             "path": "index.html",
             "type": "browser",
-            "desc": "Test"
+            "desc": "Test",
         }
-        
+
         self.launcher.launch_tool(tool)
         mock_web.assert_called_once()
 
@@ -136,13 +138,13 @@ class TestUnifiedLauncherLogic(unittest.TestCase):
             "name": "Matlab Tool",
             "path": "script.m",
             "type": "matlab",
-            "desc": "Test"
+            "desc": "Test",
         }
-        
-        # UnifiedLauncher logic does not perform strict path.exists() checks 
+
+        # UnifiedLauncher logic does not perform strict path.exists() checks
         # that prevent launching if path is missing, it relies on Popen execution.
         # But if it does, we can patch Path.exists here if needed, but current code suggests it tries to run.
-        
+
         self.launcher.launch_tool(tool)
         mock_popen.assert_called_once()
         args = mock_popen.call_args[0][0]
@@ -156,14 +158,15 @@ class TestUnifiedLauncherLogic(unittest.TestCase):
             "name": "Batch Tool",
             "path": "script.bat",
             "type": "bat",
-            "desc": "Test"
+            "desc": "Test",
         }
 
         self.launcher.launch_tool(tool)
-        
+
         mock_popen.assert_called_once()
         args = mock_popen.call_args[0][0]
         self.assertTrue("script.bat" in str(args[0]))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,8 +1,8 @@
 
 import sys
-import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
+
 import pytest
 
 # Add project root to path
@@ -18,7 +18,7 @@ def mock_tkinter():
     mock_tk = MagicMock()
     mock_tk.Tk = MagicMock()
     mock_tk.TclError = Exception
-    
+
     # Widget mocks
     mock_tk.Label = MagicMock()
     mock_tk.Frame = MagicMock()
@@ -37,12 +37,12 @@ def mock_tkinter():
     mock_tk.Scale = MagicMock()
     mock_tk.Spinbox = MagicMock()
     mock_tk.LabelFrame = MagicMock()
-    
+
     # Layout managers
     mock_tk.pack = MagicMock()
     mock_tk.grid = MagicMock()
     mock_tk.place = MagicMock()
-    
+
     # Mock ttk
     mock_ttk = MagicMock()
     mock_ttk.Notebook = MagicMock()
@@ -63,7 +63,7 @@ def mock_tkinter():
     mock_messagebox.showinfo = MagicMock()
     mock_messagebox.showwarning = MagicMock()
     mock_messagebox.showerror = MagicMock()
-    
+
     # Patch sys.modules
     with patch.dict(sys.modules, {
         "tkinter": mock_tk,
@@ -92,7 +92,7 @@ class TestToolsLauncher:
     def test_initialization(self):
         """Test that the launcher initializes correctly."""
         launcher = self.launcher_class()
-        
+
         # Verify window setup
         launcher.root.title.assert_called_with("🧰 Tools Launcher")
         launcher.root.geometry.assert_called_with("900x700")
@@ -100,16 +100,16 @@ class TestToolsLauncher:
     def test_pdf_renamer_launch_logic(self):
         """Test launching the PDF Renamer."""
         launcher = self.launcher_class()
-        
+
         with patch("subprocess.Popen") as mock_popen:
             # Mock Path.exists to return True
             with patch.object(Path, "exists", return_value=True):
                 launcher.launch_pdf_renamer()
-                
+
                 # Verify subprocess was called
                 mock_popen.assert_called_once()
                 args = mock_popen.call_args[0][0]
-                
+
                 # Check command structure
                 assert args[0] == sys.executable
                 assert "launch_pdf_gui.py" in str(args[1])
@@ -123,7 +123,7 @@ class TestToolsLauncher:
         # We must patch the messagebox imported in the module under test
         with patch("subprocess.Popen") as mock_popen, \
              patch("tools_launcher.messagebox") as mock_mb:
-            
+
             # Mock Path.exists to return False
             with patch.object(Path, "exists", return_value=False):
                 launcher.launch_pdf_renamer()
@@ -137,7 +137,7 @@ class TestToolsLauncher:
     def test_launch_integrated_processor(self):
         """Test launching the Integrated Data Processor."""
         launcher = self.launcher_class()
-        
+
         with patch("subprocess.Popen") as mock_popen:
             with patch.object(Path, "exists", return_value=True):
                 launcher.launch_integrated_processor()
@@ -148,7 +148,7 @@ class TestToolsLauncher:
     def test_launch_solar_system(self):
         """Test launching the Solar System Model."""
         launcher = self.launcher_class()
-        
+
         with patch("subprocess.Popen") as mock_popen:
             with patch.object(Path, "exists", return_value=True):
                 launcher.launch_solar_system()
@@ -179,10 +179,10 @@ class TestToolsLauncher:
     def test_rrt_path_planner_info(self):
         """Test RRT Path Planner info dialog."""
         launcher = self.launcher_class()
-        
+
         # Call show_matlab_info directly as if button was clicked
         launcher.show_matlab_info("RRT Path Planner")
-        
+
         # Verify messagebox
         import tkinter.messagebox as mbox
         mbox.showinfo.assert_called()
