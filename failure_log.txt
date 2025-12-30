@@ -1,0 +1,71 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.7, pytest-8.2.0, pluggy-1.6.0 -- C:\ProgramData\Anaconda3\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\diete\Repositories\Tools
+configfile: pytest.ini
+plugins: cov-7.0.0, mock-3.15.1, anyio-4.2.0
+collecting ... collected 7 items
+
+tests/test_tools_launcher.py::TestToolsLauncher::test_initialization PASSED [ 14%]
+tests/test_tools_launcher.py::TestToolsLauncher::test_pdf_renamer_launch_logic PASSED [ 28%]
+tests/test_tools_launcher.py::TestToolsLauncher::test_pdf_renamer_missing FAILED [ 42%]
+tests/test_tools_launcher.py::TestToolsLauncher::test_launch_integrated_processor PASSED [ 57%]
+tests/test_tools_launcher.py::TestToolsLauncher::test_launch_solar_system PASSED [ 71%]
+tests/test_tools_launcher.py::TestToolsLauncher::test_tab_creation PASSED [ 85%]
+tests/test_tools_launcher.py::TestToolsLauncher::test_rrt_path_planner_info PASSED [100%]
+
+================================== FAILURES ===================================
+_________________ TestToolsLauncher.test_pdf_renamer_missing __________________
+
+self = <MagicMock name='showerror' id='2145956827152'>
+args = ('Error', 'PDF Renamer not found'), kwargs = {}
+expected = "showerror('Error', 'PDF Renamer not found')", actual = 'not called.'
+error_message = "expected call not found.\nExpected: showerror('Error', 'PDF Renamer not found')\n  Actual: not called."
+
+    def assert_called_with(self, /, *args, **kwargs):
+        """assert that the last call was made with the specified arguments.
+    
+        Raises an AssertionError if the args and keyword args passed in are
+        different to the last call to the mock."""
+        if self.call_args is None:
+            expected = self._format_mock_call_signature(args, kwargs)
+            actual = 'not called.'
+            error_message = ('expected call not found.\nExpected: %s\n  Actual: %s'
+                    % (expected, actual))
+>           raise AssertionError(error_message)
+E           AssertionError: expected call not found.
+E           Expected: showerror('Error', 'PDF Renamer not found')
+E             Actual: not called.
+
+C:\ProgramData\Anaconda3\Lib\unittest\mock.py:940: AssertionError
+
+During handling of the above exception, another exception occurred:
+
+self = <test_tools_launcher.TestToolsLauncher object at 0x000001F3A489BA40>
+
+    def test_pdf_renamer_missing(self):
+        """Test error handling when PDF Renamer is missing."""
+        launcher = self.launcher_class()
+    
+        with patch("subprocess.Popen") as mock_popen, \
+             patch("tkinter.messagebox.showerror") as mock_showerror:
+    
+            # Mock Path.exists to return False
+            with patch.object(Path, "exists", return_value=False):
+                launcher.launch_pdf_renamer()
+    
+                # Verify subprocess was NOT called
+                mock_popen.assert_not_called()
+    
+                # Verify error message was shown
+>               mock_showerror.assert_called_with("Error", "PDF Renamer not found")
+E               AssertionError: expected call not found.
+E               Expected: showerror('Error', 'PDF Renamer not found')
+E                 Actual: not called.
+
+tests\test_tools_launcher.py:134: AssertionError
+------------------------------ Captured log call ------------------------------
+ERROR    tools_launcher:tools_launcher.py:830 PDF Renamer not found
+=========================== short test summary info ===========================
+FAILED tests/test_tools_launcher.py::TestToolsLauncher::test_pdf_renamer_missing
+========================= 1 failed, 6 passed in 0.37s =========================
