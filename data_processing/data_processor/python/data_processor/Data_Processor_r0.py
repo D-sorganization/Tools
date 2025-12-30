@@ -2980,32 +2980,42 @@ class CSVProcessorApp(ctk.CTk):
 
             # Filter parameter frames
             time_units = ["ms", "s", "min", "hr"]
+
+            # Container for primary filter parameters to avoid row collision
+            self.primary_params_container = ctk.CTkFrame(
+                plot_filter_frame, fg_color="transparent"
+            )
+            self.primary_params_container.grid(
+                row=2, column=0, sticky="ew", padx=0, pady=0
+            )
+            self.primary_params_container.grid_columnconfigure(0, weight=1)
+
             (self.plot_ma_frame, self.plot_ma_value_entry, self.plot_ma_unit_menu) = (
-                self._create_ma_param_frame(plot_filter_frame, time_units)
+                self._create_ma_param_frame(self.primary_params_container, time_units)
             )
             (
                 self.plot_bw_frame,
                 self.plot_bw_order_entry,
                 self.plot_bw_cutoff_entry,
-            ) = self._create_bw_param_frame(plot_filter_frame)
+            ) = self._create_bw_param_frame(self.primary_params_container)
             (self.plot_median_frame, self.plot_median_kernel_entry) = (
-                self._create_median_param_frame(plot_filter_frame)
+                self._create_median_param_frame(self.primary_params_container)
             )
             (
                 self.plot_hampel_frame,
                 self.plot_hampel_window_entry,
                 self.plot_hampel_threshold_entry,
-            ) = self._create_hampel_param_frame(plot_filter_frame)
+            ) = self._create_hampel_param_frame(self.primary_params_container)
             (
                 self.plot_zscore_frame,
                 self.plot_zscore_threshold_entry,
                 self.plot_zscore_method_menu,
-            ) = self._create_zscore_param_frame(plot_filter_frame)
+            ) = self._create_zscore_param_frame(self.primary_params_container)
             (
                 self.plot_savgol_frame,
                 self.plot_savgol_window_entry,
                 self.plot_savgol_polyorder_entry,
-            ) = self._create_savgol_param_frame(plot_filter_frame)
+            ) = self._create_savgol_param_frame(self.primary_params_container)
             self._update_plot_filter_ui("None")
 
             # Show both raw and filtered signals option (moved below parameter frames)
@@ -3052,34 +3062,44 @@ class CSVProcessorApp(ctk.CTk):
             )
 
             # Second filter parameter frames (initially hidden)
+
+            # Container for comparison filter parameters
+            self.compare_params_container = ctk.CTkFrame(
+                plot_filter_frame, fg_color="transparent"
+            )
+            self.compare_params_container.grid(
+                row=14, column=0, sticky="ew", padx=0, pady=0
+            )
+            self.compare_params_container.grid_columnconfigure(0, weight=1)
+
             (
                 self.compare_ma_frame,
                 self.compare_ma_value_entry,
                 self.compare_ma_unit_menu,
-            ) = self._create_ma_param_frame(plot_filter_frame, time_units)
+            ) = self._create_ma_param_frame(self.compare_params_container, time_units)
             (
                 self.compare_bw_frame,
                 self.compare_bw_order_entry,
                 self.compare_bw_cutoff_entry,
-            ) = self._create_bw_param_frame(plot_filter_frame)
+            ) = self._create_bw_param_frame(self.compare_params_container)
             (self.compare_median_frame, self.compare_median_kernel_entry) = (
-                self._create_median_param_frame(plot_filter_frame)
+                self._create_median_param_frame(self.compare_params_container)
             )
             (
                 self.compare_hampel_frame,
                 self.compare_hampel_window_entry,
                 self.compare_hampel_threshold_entry,
-            ) = self._create_hampel_param_frame(plot_filter_frame)
+            ) = self._create_hampel_param_frame(self.compare_params_container)
             (
                 self.compare_zscore_frame,
                 self.compare_zscore_threshold_entry,
                 self.compare_zscore_method_menu,
-            ) = self._create_zscore_param_frame(plot_filter_frame)
+            ) = self._create_zscore_param_frame(self.compare_params_container)
             (
                 self.compare_savgol_frame,
                 self.compare_savgol_window_entry,
                 self.compare_savgol_polyorder_entry,
-            ) = self._create_savgol_param_frame(plot_filter_frame)
+            ) = self._create_savgol_param_frame(self.compare_params_container)
 
             # Auto-zoom controls
             auto_zoom_frame = ctk.CTkFrame(plot_filter_frame)
