@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "c:\Users\diete\Repositories\Tools\tests\data_processor\test_integrated_app.py", line 41, in <module>
+    from Data_Processor_Integrated import IntegratedCSVProcessorApp, SplitConfig, SplitMethod, FileFormatDetector
+  File "c:\Users\diete\Repositories\Tools\data_processing\data_processor\python\data_processor\Data_Processor_Integrated.py", line 27, in <module>
+    import pandas as pd
+  File "C:\Users\diete\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\__init__.py", line 152, in <module>
+    from pandas import testing
+  File "C:\Users\diete\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\testing.py", line 6, in <module>
+    from pandas._testing import (
+    ...<4 lines>...
+    )
+  File "C:\Users\diete\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\_testing\__init__.py", line 197, in <module>
+    str(ArrowDtype(typ)) for typ in ALL_INT_PYARROW_DTYPES
+        ~~~~~~~~~~^^^^^
+  File "C:\Users\diete\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\core\dtypes\dtypes.py", line 2098, in __init__
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: pyarrow_dtype (<MagicMock name='mock.uint8()' id='2077177384976'>) must be an instance of a pyarrow.DataType. Got <class 'unittest.mock.MagicMock'> instead.

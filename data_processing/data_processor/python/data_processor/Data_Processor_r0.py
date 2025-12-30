@@ -2980,10 +2980,14 @@ class CSVProcessorApp(ctk.CTk):
 
             # Filter parameter frames
             time_units = ["ms", "s", "min", "hr"]
-            
+
             # Container for primary filter parameters to avoid row collision
-            self.primary_params_container = ctk.CTkFrame(plot_filter_frame, fg_color="transparent")
-            self.primary_params_container.grid(row=2, column=0, sticky="ew", padx=0, pady=0)
+            self.primary_params_container = ctk.CTkFrame(
+                plot_filter_frame, fg_color="transparent"
+            )
+            self.primary_params_container.grid(
+                row=2, column=0, sticky="ew", padx=0, pady=0
+            )
             self.primary_params_container.grid_columnconfigure(0, weight=1)
 
             (self.plot_ma_frame, self.plot_ma_value_entry, self.plot_ma_unit_menu) = (
@@ -3058,10 +3062,14 @@ class CSVProcessorApp(ctk.CTk):
             )
 
             # Second filter parameter frames (initially hidden)
-            
+
             # Container for comparison filter parameters
-            self.compare_params_container = ctk.CTkFrame(plot_filter_frame, fg_color="transparent")
-            self.compare_params_container.grid(row=14, column=0, sticky="ew", padx=0, pady=0)
+            self.compare_params_container = ctk.CTkFrame(
+                plot_filter_frame, fg_color="transparent"
+            )
+            self.compare_params_container.grid(
+                row=14, column=0, sticky="ew", padx=0, pady=0
+            )
             self.compare_params_container.grid_columnconfigure(0, weight=1)
 
             (
