@@ -88,9 +88,16 @@ class TestUnifiedLauncherLogic(unittest.TestCase):
     """Test the logic of the Unified Launcher."""
 
     def setUp(self):
+        # Patch ToolCard to avoid widget creation during setup_category_tab
+        self.tool_card_patcher = patch("UnifiedToolsLauncher.ToolCard")
+        self.mock_tool_card = self.tool_card_patcher.start()
+        
+        # Instantiate launcher
         self.launcher = UnifiedLauncher()
-        # Mock the log method to prevent side effects
-        self.launcher.log_area = MagicMock() 
+        self.launcher.log_area = MagicMock()
+
+    def tearDown(self):
+        self.tool_card_patcher.stop()
 
     @patch("subprocess.Popen")
     def test_launch_python_tool(self, mock_popen):
@@ -101,10 +108,6 @@ class TestUnifiedLauncherLogic(unittest.TestCase):
             "type": "python",
             "desc": "Test"
         }
-        
-        # We assume the path exists logic handles itself since we are just testing the Popen call
-        # UnifiedLauncher.launch_tool constructs path using REPO_ROOT / tool['path']
-        # Popen is called with [sys.executable, str(path)]
         
         self.launcher.launch_tool(tool)
              
@@ -129,9 +132,6 @@ class TestUnifiedLauncherLogic(unittest.TestCase):
     @patch("subprocess.Popen")
     def test_launch_matlab_tool(self, mock_popen):
         """Test launching a MATLAB tool."""
-        # MATLAB launching logic in UnifiedLauncher:
-        # Popen(cmd, shell=True, ...)
-        
         tool = {
             "name": "Matlab Tool",
             "path": "script.m",
@@ -139,10 +139,13 @@ class TestUnifiedLauncherLogic(unittest.TestCase):
             "desc": "Test"
         }
         
+        # UnifiedLauncher logic does not perform strict path.exists() checks 
+        # that prevent launching if path is missing, it relies on Popen execution.
+        # But if it does, we can patch Path.exists here if needed, but current code suggests it tries to run.
+        
         self.launcher.launch_tool(tool)
         mock_popen.assert_called_once()
         args = mock_popen.call_args[0][0]
-        # Since it uses shell=True, args is the command string
         self.assertIn("matlab", args)
         self.assertIn("script.m", args)
 
@@ -160,8 +163,6 @@ class TestUnifiedLauncherLogic(unittest.TestCase):
         
         mock_popen.assert_called_once()
         args = mock_popen.call_args[0][0]
-        # For bat, Popen([str(path)], shell=True)
-        # arg[0] should be the list containing path string
         self.assertTrue("script.bat" in str(args[0]))
 
 if __name__ == "__main__":

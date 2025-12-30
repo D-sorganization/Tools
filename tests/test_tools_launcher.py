@@ -119,27 +119,20 @@ class TestToolsLauncher:
     def test_pdf_renamer_missing(self):
         """Test error handling when PDF Renamer is missing."""
         launcher = self.launcher_class()
-        
-        with patch("subprocess.Popen") as mock_popen:
+
+        # We must patch the messagebox imported in the module under test
+        with patch("subprocess.Popen") as mock_popen, \
+             patch("tools_launcher.messagebox") as mock_mb:
+            
             # Mock Path.exists to return False
             with patch.object(Path, "exists", return_value=False):
-                # We need to mock the messagebox internal to the class or module
-                # The launcher uses self.show_error which calls messagebox.showerror
-                
                 launcher.launch_pdf_renamer()
-                
+
                 # Verify subprocess was NOT called
                 mock_popen.assert_not_called()
-                
-                # Verify error message
-                # Note: creating ToolsLauncher calls setup_ui which creates widgets
-                # launch_pdf_renamer calls self.show_error
-                # Since we mocked logic, we can check the status var or logger
-                
-                # Ideally check if showerror was called.
-                # Since we patched tkinter.messagebox in the fixture:
-                import tkinter.messagebox as mbox
-                mbox.showerror.assert_called_with("Error", "PDF Renamer not found")
+
+                # Verify error message was shown
+                mock_mb.showerror.assert_called_with("Error", "PDF Renamer not found")
 
     def test_launch_integrated_processor(self):
         """Test launching the Integrated Data Processor."""
@@ -166,9 +159,22 @@ class TestToolsLauncher:
     def test_tab_creation(self):
         """Test that tabs are created."""
         launcher = self.launcher_class()
-        # Check that notebook.add was called for each tab
-        # Tabs: Data, Folder, Media, Web, Document, Scientific Modeling, Utilities (7 tabs)
-        assert launcher.notebook.add.call_count == 7
+        # Tabs: Data, Folder, Media, Web, Document, Scientific Modeling, Utilities
+        expected_tabs = [
+            "Data",
+            "Folder",
+            "Media",
+            "Web",
+            "Document",
+            "Scientific Modeling",
+            "Utilities",
+        ]
+        # Check that notebook.add was called once for each expected tab.
+        actual_call_count = launcher.notebook.add.call_count
+        assert actual_call_count == len(expected_tabs), (
+            f"Expected {len(expected_tabs)} tabs {expected_tabs}, "
+            f"but notebook.add was called {actual_call_count} times."
+        )
 
     def test_rrt_path_planner_info(self):
         """Test RRT Path Planner info dialog."""

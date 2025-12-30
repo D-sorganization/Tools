@@ -22,19 +22,19 @@ logger = logging.getLogger(__name__)
 class RedirectText:
     """Redirect stdout/stderr to a tkinter text widget."""
 
-    def __init__(self, text_widget):
+    def __init__(self, text_widget: tk.Text) -> None:
         self.output = text_widget
 
-    def write(self, string):
+    def write(self, string: str) -> None:
         self.output.insert(tk.END, string)
         self.output.see(tk.END)
 
-    def flush(self):
+    def flush(self) -> None:
         pass
 
 
 class PDFRenamerLauncher:
-    def __init__(self):
+    def __init__(self) -> None:
         self.root = tk.Tk()
         self.root.title("PDF Renamer Tool")
         self.root.geometry("800x600")
@@ -50,7 +50,7 @@ class PDFRenamerLauncher:
 
         self.setup_ui()
 
-    def setup_ui(self):
+    def setup_ui(self) -> None:
         # Header
         header_frame = tk.Frame(self.root, bg="#3498db", height=60)
         header_frame.pack(fill="x")
@@ -190,24 +190,24 @@ class PDFRenamerLauncher:
         self.log_text.tag_config("WARNING", foreground="#e67e22")
         self.log_text.tag_config("ERROR", foreground="red")
 
-    def browse_directory(self):
+    def browse_directory(self) -> None:
         directory = filedialog.askdirectory()
         if directory:
             self.dir_var.set(directory)
 
-    def log(self, message: str, level: str = "INFO"):
+    def log(self, message: str, level: str = "INFO") -> None:
         """Thread-safe logging to the text widget."""
 
-        def _log():
+        def _log() -> None:
             self.log_text.insert(tk.END, f"[{level}] {message}\n", level)
             self.log_text.see(tk.END)
 
         self.root.after(0, _log)
 
-    def update_status(self, message: str, progress: int = 0, total: int = 0):
+    def update_status(self, message: str, progress: int = 0, total: int = 0) -> None:
         """Thread-safe status update."""
 
-        def _update():
+        def _update() -> None:
             self.status_var.set(message)
             if total > 0:
                 self.progress["value"] = (progress / total) * 100
@@ -216,7 +216,7 @@ class PDFRenamerLauncher:
 
         self.root.after(0, _update)
 
-    def start_processing_thread(self):
+    def start_processing_thread(self) -> None:
         if self.is_running:
             return
 
@@ -232,7 +232,7 @@ class PDFRenamerLauncher:
         # Start worker thread
         threading.Thread(target=self.run_process, daemon=True).start()
 
-    def run_process(self):
+    def run_process(self) -> None:
         try:
             directory = Path(self.dir_var.get())
             dry_run = self.dry_run_var.get()
@@ -347,15 +347,15 @@ class PDFRenamerLauncher:
         finally:
             self.finish_processing()
 
-    def finish_processing(self):
+    def finish_processing(self) -> None:
         self.is_running = False
 
-        def _reset():
+        def _reset() -> None:
             self.run_btn.config(state="normal", text="Start Renaming")
 
         self.root.after(0, _reset)
 
-    def run(self):
+    def run(self) -> None:
         self.root.mainloop()
 
 

@@ -12,7 +12,8 @@ from calculator import TI89Calculator
 def test_evaluate_with_trigonometric_identity() -> None:
     calculator = TI89Calculator()
     result = calculator.evaluate("sin(x)^2 + cos(x)^2", {"x": sp.pi / 4})
-    assert sp.simplify(result.result - 1) == 0
+    # Cast or ignore if result.result is typed as object/Any but known to be compatible
+    assert sp.simplify(result.result - 1) == 0  # type: ignore[operator]
 
 
 def test_e_constant_is_available() -> None:
@@ -24,12 +25,17 @@ def test_e_constant_is_available() -> None:
 def test_solve_quadratic_equation() -> None:
     calculator = TI89Calculator()
     solutions = calculator.solve_equation("x^2 - 5*x + 6 = 0", "x").result
-    assert {sp.Integer(2), sp.Integer(3)} == set(solutions)
+    # Use explicit set creation with cast if needed or type ignore
+    assert {sp.Integer(2), sp.Integer(3)} == set(solutions)  # type: ignore[call-overload]
 
 
 def test_solve_linear_system() -> None:
     calculator = TI89Calculator()
-    solution = calculator.solve_system(["x + y = 5", "x - y = 1"], ["x", "y"]).result[0]
+    res = calculator.solve_system(["x + y = 5", "x - y = 1"], ["x", "y"]).result
+    # Ensure res is a list and access first element
+    assert isinstance(res, list), "Result should be a list"
+    assert len(res) > 0, "Result list should not be empty"
+    solution = res[0]
     assert solution == {sp.Symbol("x"): 3, sp.Symbol("y"): 2}
 
 
@@ -67,6 +73,8 @@ def test_taylor_series_and_differential_equation_solution() -> None:
     ode_solution = calculator.solve_differential_equation(
         "Derivative(f(x), x) + f(x)", "f"
     ).result
+    # Check if ode_solution has rhs attribute
+    assert hasattr(ode_solution, "rhs"), "ODE solution should have 'rhs' attribute"
     assert (
         sp.simplify(ode_solution.rhs - sp.exp(-sp.Symbol("x")) * sp.Symbol("C1")) == 0
     )

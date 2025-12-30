@@ -1,14 +1,30 @@
+"""
+Script to create a desktop shortcut for the Tools Launcher.
 
+This script detects the user's Desktop path (standard or OneDrive),
+locates the Python executable (preferring pythonw.exe to avoid console windows),
+and creates a Windows shortcut (.lnk) pointing to the PyQt6 UnifiedToolsLauncher.
+"""
 import os
 import sys
 import win32com.client
 
 def create_shortcut():
     desktop = os.path.join(os.environ["USERPROFILE"], "Desktop")
-    # If Desktop doesn't exist (unlikely), fallback
+    
+    # If standard Desktop doesn't exist, check OneDrive
     if not os.path.exists(desktop):
-        # Onedrive case
+        # OneDrive case
         desktop = os.path.join(os.environ["USERPROFILE"], "OneDrive", "Desktop")
+        
+    # If the OneDrive Desktop also does not exist, fail early with a clear error
+    if not os.path.exists(desktop):
+        raise FileNotFoundError(
+            f"Could not find a Desktop folder under USERPROFILE. "
+            f"Tried: "
+            f"{os.path.join(os.environ['USERPROFILE'], 'Desktop')} and "
+            f"{os.path.join(os.environ['USERPROFILE'], 'OneDrive', 'Desktop')}."
+        )
         
     path = os.path.join(desktop, "Tools Launcher.lnk")
     # Point to the Qt6 launcher
