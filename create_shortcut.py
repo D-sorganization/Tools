@@ -5,6 +5,7 @@ This script detects the user's Desktop path (standard or OneDrive),
 locates the Python executable (preferring pythonw.exe to avoid console windows),
 and creates a Windows shortcut (.lnk) pointing to the PyQt6 UnifiedToolsLauncher.
 """
+
 import os
 import sys
 
@@ -52,6 +53,7 @@ def create_shortcut():
     shortcut.Description = "Launch Professional Tools Launcher (Antigravity Unified)"
     shortcut.Save()
     print(f"Shortcut created at {path}")
+
 
 if __name__ == "__main__":
     try:

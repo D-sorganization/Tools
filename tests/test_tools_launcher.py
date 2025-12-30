@@ -1,4 +1,3 @@
-
 import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -8,6 +7,7 @@ import pytest
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
+
 
 @pytest.fixture
 def mock_tkinter():
@@ -65,15 +65,19 @@ def mock_tkinter():
     mock_messagebox.showerror = MagicMock()
 
     # Patch sys.modules
-    with patch.dict(sys.modules, {
-        "tkinter": mock_tk,
-        "tkinter.ttk": mock_ttk,
-        "tkinter.messagebox": mock_messagebox,
-        "tkinter.filedialog": MagicMock(),
-        "tkinter.colorchooser": MagicMock(),
-        "tkinter.font": MagicMock(),
-    }):
+    with patch.dict(
+        sys.modules,
+        {
+            "tkinter": mock_tk,
+            "tkinter.ttk": mock_ttk,
+            "tkinter.messagebox": mock_messagebox,
+            "tkinter.filedialog": MagicMock(),
+            "tkinter.colorchooser": MagicMock(),
+            "tkinter.font": MagicMock(),
+        },
+    ):
         yield mock_tk
+
 
 class TestToolsLauncher:
     """Test suite for ToolsLauncher."""
@@ -85,6 +89,7 @@ class TestToolsLauncher:
         if "tools_launcher" in sys.modules:
             del sys.modules["tools_launcher"]
         import tools_launcher
+
         self.module = tools_launcher
         self.launcher_class = tools_launcher.ToolsLauncher
         yield
@@ -121,8 +126,9 @@ class TestToolsLauncher:
         launcher = self.launcher_class()
 
         # We must patch the messagebox imported in the module under test
-        with patch("subprocess.Popen") as mock_popen, \
-             patch("tools_launcher.messagebox") as mock_mb:
+        with patch("subprocess.Popen") as mock_popen, patch(
+            "tools_launcher.messagebox"
+        ) as mock_mb:
 
             # Mock Path.exists to return False
             with patch.object(Path, "exists", return_value=False):
@@ -185,6 +191,7 @@ class TestToolsLauncher:
 
         # Verify messagebox
         import tkinter.messagebox as mbox
+
         mbox.showinfo.assert_called()
         args = mbox.showinfo.call_args[0]
         assert "RRT Path Planner" in args[0]
