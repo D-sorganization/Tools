@@ -1,0 +1,57 @@
+.FEE
+======================================================================
+ERROR: test_launch_python_tool (__main__.TestUnifiedLauncherLogic.test_launch_python_tool)
+Test launching a Python tool.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\diete\Repositories\Tools\tests\test_unified_launcher.py", line 41, in setUp
+    self.launcher = UnifiedLauncher()
+                    ^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\Anaconda3\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\Anaconda3\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\Anaconda3\Lib\unittest\mock.py", line 1200, in _execute_mock_call
+    result = next(effect)
+             ^^^^^^^^^^^^
+StopIteration
+
+======================================================================
+ERROR: test_launch_web_tool (__main__.TestUnifiedLauncherLogic.test_launch_web_tool)
+Test launching a Web tool.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\diete\Repositories\Tools\tests\test_unified_launcher.py", line 41, in setUp
+    self.launcher = UnifiedLauncher()
+                    ^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\Anaconda3\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\Anaconda3\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\Anaconda3\Lib\unittest\mock.py", line 1200, in _execute_mock_call
+    result = next(effect)
+             ^^^^^^^^^^^^
+StopIteration
+
+======================================================================
+FAIL: test_launch_matlab_tool (__main__.TestUnifiedLauncherLogic.test_launch_matlab_tool)
+Test launching a MATLAB tool.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\ProgramData\Anaconda3\Lib\unittest\mock.py", line 1395, in patched
+    return func(*newargs, **newkeywargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\diete\Repositories\Tools\tests\test_unified_launcher.py", line 92, in test_launch_matlab_tool
+    mock_popen.assert_called_once()
+  File "C:\ProgramData\Anaconda3\Lib\unittest\mock.py", line 928, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'Popen' to have been called once. Called 0 times.
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.004s
+
+FAILED (failures=1, errors=2)
