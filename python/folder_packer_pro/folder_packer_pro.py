@@ -1355,9 +1355,9 @@ class FolderPackerPro:
                     self._log_message(f"Error packing {file_path}: {e}", "error")
 
             if self.cancel_operation:
-                self._log_message(
+                self._log_message(  # type: ignore[unreachable]
                     "Pack operation cancelled", "warning"
-                )  # type: ignore[unreachable]
+                )
                 return
 
             # Serialize to JSON
