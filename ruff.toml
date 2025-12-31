@@ -36,7 +36,7 @@ select = ["E", "F", "W", "I", "B", "UP"]
 # Ignore:
 # D = pydocstyle (We let the 'Doc-Scribe' agent handle docstrings, so we don't lint them strictly here)
 # FBT = flake8-boolean-trap (Boolean positional arguments - style preference, not critical)
-# PT001 = pytest-fixture-incorrect-parentheses-style (Disabled because local IDE tooling, pre-commit hooks, and CI use slightly different pytest/Ruff plugin versions that disagree on the "correct" parentheses style for fixtures; keeping PT001 enabled causes non-actionable churn and spurious diffs across environments.)
+# PT001 = pytest-fixture-incorrect-parentheses-style (Inconsistent between environments)
 ignore = ["D", "FBT", "PT001"]
 
 # Allow unused variables when underscore-prefixed.
