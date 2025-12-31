@@ -98,7 +98,6 @@ class ToolsLauncher:
         self.create_media_tools_tab()
         self.create_web_tools_tab()
         self.create_document_tools_tab()
-        self.create_scientific_modeling_tab()
         self.create_utilities_tab()
 
         # Status bar
@@ -119,7 +118,7 @@ class ToolsLauncher:
         # Version info
         version_label = tk.Label(
             status_frame,
-            text="v2.1 - Tools Launcher with Professional Icon",
+            text="v2.0 - Tools Launcher with Professional Icon",
             bg="#34495e",
             fg="#95a5a6",
             font=("Arial", 9),
@@ -418,10 +417,10 @@ class ToolsLauncher:
         for name, desc, command, color in tools:
             self.create_tool_card(scrollable_frame, name, desc, command, color)
 
-    def create_scientific_modeling_tab(self) -> None:
-        """Create Scientific Modeling tab."""
+    def create_utilities_tab(self) -> None:
+        """Create Utilities tab."""
         frame = ttk.Frame(self.notebook)
-        self.notebook.add(frame, text="🔬 Scientific Modeling")
+        self.notebook.add(frame, text="🔧 Utilities")
 
         canvas = tk.Canvas(frame, bg="white")
         scrollbar = ttk.Scrollbar(frame, orient="vertical", command=canvas.yview)
@@ -444,7 +443,7 @@ class ToolsLauncher:
 
         tk.Label(
             header_frame,
-            text="🔬 Scientific Modeling & Simulation",
+            text="🔧 Development & System Tools",
             font=("Arial", 16, "bold"),
             bg="#34495e",
             fg="white",
@@ -457,50 +456,6 @@ class ToolsLauncher:
                 lambda: self.launch_solar_system(),
                 "#2c3e50",
             ),
-            (
-                "🤖 RRT Path Planner (MATLAB)",
-                "Rapidly-exploring Random Tree Navigator",
-                lambda: self.show_matlab_info("RRT Path Planner"),
-                "#16a085",
-            ),
-        ]
-
-        for name, desc, command, color in tools:
-            self.create_tool_card(scrollable_frame, name, desc, command, color)
-
-    def create_utilities_tab(self) -> None:
-        """Create Utilities tab."""
-        frame = ttk.Frame(self.notebook)
-        self.notebook.add(frame, text="🔧 Utilities")
-
-        canvas = tk.Canvas(frame, bg="white")
-        scrollbar = ttk.Scrollbar(frame, orient="vertical", command=canvas.yview)
-        scrollable_frame = tk.Frame(canvas, bg="white")
-
-        scrollable_frame.bind(
-            "<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
-        )
-
-        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
-        canvas.configure(yscrollcommand=scrollbar.set)
-
-        canvas.pack(side="left", fill="both", expand=True)
-        scrollbar.pack(side="right", fill="y")
-
-        # Header
-        header_frame = tk.Frame(scrollable_frame, bg="#95a5a6", height=60)
-        header_frame.pack(fill="x")
-        header_frame.pack_propagate(False)
-
-        tk.Label(
-            header_frame,
-            text="🔧 Development & System Tools",
-            font=("Arial", 16, "bold"),
-            bg="#95a5a6",
-            fg="white",
-        ).pack(expand=True)
-
-        tools: list[tuple[str, str, Callable[[], None], str]] = [
             (
                 "✅ Quality Check",
                 "Code quality analysis and validation",

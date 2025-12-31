@@ -47,12 +47,6 @@ TOOLS = {
             "type": "bat",
             "desc": "Next.js Video Processing Web Platform",
         },
-        {
-            "name": "Video Processor (MATLAB Analysis)",
-            "path": "media_processing/video_processor/matlab/run_all.m",
-            "type": "matlab",
-            "desc": "Physics Modeling and Swing Analysis Backend",
-        },
     ],
     "Data Processing": [
         {
@@ -104,36 +98,10 @@ TOOLS = {
             "desc": "Project Archiving and Distribution Tool",
         },
         {
-            "name": "Folder Packer Pro (Replicant)",
-            "path": "replicants/python/folder_packer_pro/folder_packer_pro.py",
-            "type": "python",
-            "desc": "Legacy Project Archiving Tool",
-        },
-        {
             "name": "Folder Tool (Utility)",
             "path": "development_tools/folder_tools/folder_tool/Folders_Tool_r0.py",
             "type": "python",
             "desc": "Directory Management Utility",
-        },
-        {
-            "name": "Folder Tool (Replicant)",
-            "path": "replicants/python/folder_tool/Folders_Tool_r0.py",
-            "type": "python",
-            "desc": "Original Directory Management Utility (r0)",
-        },
-        {
-            "name": "Folder Fix Pro (Replicant)",
-            "path": "replicants/python/folder_tool_pro/folder_fix_pro.py",
-            "type": "python",
-            "desc": "Pro version of Folder Tool (Legacy)",
-        },
-    ],
-    "Document Processing": [
-        {
-            "name": "PDF Renamer",
-            "path": "document_processing/pdf_renamer/launch_pdf_gui.py",
-            "type": "python",
-            "desc": "Bulk rename PDF files based on metadata",
         },
     ],
 }
