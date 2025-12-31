@@ -516,7 +516,7 @@ class FolderProcessorApp:
     def _load_ico_icon(self, ico_path: str) -> None:
         """Loads and sets the ICO icon for the application."""
         # Use iconbitmap for Windows taskbar integration
-        self.root.iconbitmap(ico_path)
+        self.root.iconbitmap(ico_path)  # type: ignore[no-untyped-call]
         logger.info(f"Loaded ICO icon for taskbar: {ico_path}")
 
         # Also set iconphoto with multiple sizes for better display
@@ -545,7 +545,7 @@ class FolderProcessorApp:
 
             # Set all sizes at once for best scaling
             if photos:
-                self.root.iconphoto(True, *photos)  # type: ignore[arg-type]
+                self.root.iconphoto(True, *photos)
                 # Keep references to prevent garbage collection
                 self.icon_photos = photos
                 logger.info(f"Set iconphoto with {len(photos)} different sizes")
@@ -574,7 +574,7 @@ class FolderProcessorApp:
                 photos.append(photo)
 
             if photos:
-                self.root.iconphoto(True, *photos)  # type: ignore[arg-type]
+                self.root.iconphoto(True, *photos)
                 # Keep references to prevent garbage collection
                 self.icon_photos = photos
                 logger.info(f"Loaded PNG icon: {png_path}")
