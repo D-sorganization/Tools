@@ -40,13 +40,15 @@ from rich.table import Table
 
 from .core.data_loader import DataLoader
 from .core.signal_processor import SignalProcessor
-from .models.processing_config import FilterConfig
+from .logging_config import get_logger
+from .models import FilterConfig, PipelineConfig
 
 if TYPE_CHECKING:
     import pandas as pd
 
 console = Console()
 app = typer.Typer(help="Data Processor CLI for automated workflows.")
+logger = get_logger(__name__)
 
 
 def _load_config(config_path: Path) -> dict[str, Any]:
@@ -61,6 +63,18 @@ def _load_config(config_path: Path) -> dict[str, Any]:
         ) from exc
     except OSError as exc:
         msg = f"Unable to read config '{config_path}': {exc}"
+        raise typer.BadParameter(
+            msg,
+        ) from exc
+
+
+def _build_pipeline_config(pipeline_data: dict[str, object]) -> PipelineConfig:
+    """Validate and construct a strongly-typed pipeline configuration."""
+
+    try:
+        return PipelineConfig.from_mapping(pipeline_data)
+    except ValueError as exc:
+        msg = f"Invalid pipeline configuration: {exc}"
         raise typer.BadParameter(
             msg,
         ) from exc
@@ -95,20 +109,19 @@ def _select_signals(
 
 def _apply_filter_if_requested(
     df: pd.DataFrame,
-    filter_section: dict[str, object] | None,
+    filter_config: FilterConfig | None,
     signal_processor: SignalProcessor,
 ) -> pd.DataFrame:
     """Apply configured filter if specified."""
-    if not filter_section:
+    if filter_config is None:
         return df
 
-    filter_config = FilterConfig(**cast("dict[str, Any]", filter_section))
     return signal_processor.apply_filter(df, filter_config)
 
 
 def _process_dataframe(
     df: pd.DataFrame,
-    pipeline: dict[str, object],
+    pipeline: PipelineConfig,
     signal_processor: SignalProcessor,
     source_label: str,
 ) -> pd.DataFrame:
@@ -116,12 +129,12 @@ def _process_dataframe(
     result = df.copy()
     result = _select_signals(
         result,
-        cast("list[str] | None", pipeline.get("selected_signals")),
+        pipeline.selected_signals,
         source_label=source_label,
     )
     return _apply_filter_if_requested(
         result,
-        cast("dict[str, object] | None", pipeline.get("filter")),
+        pipeline.filter,
         signal_processor,
     )
 
@@ -209,48 +222,42 @@ def run(
     ),
 ) -> None:
     """Execute a lightweight processing pipeline."""
-    pipeline: dict[str, object] = {}
+    pipeline_data: dict[str, object] = {}
     if config:
-        pipeline.update(_load_config(config))
+        pipeline_data.update(_load_config(config))
 
     if files:
-        pipeline["files"] = [str(path) for path in files]
+        pipeline_data["files"] = [str(path) for path in files]
 
     if combine is not None:
-        pipeline["combine"] = combine
+        pipeline_data["combine"] = combine
 
     if output:
-        pipeline.setdefault("output", {})
-        output_dict = cast("dict[str, object]", pipeline["output"])
+        pipeline_data.setdefault("output", {})
+        output_dict = cast("dict[str, object]", pipeline_data["output"])
         output_dict["path"] = str(output)
         output_dict["format"] = output_format
 
-    file_list = cast("list[str]", pipeline.get("files", []))
-    if not file_list:
-        msg = "No input files provided. Use --file or supply a config."
-        raise typer.BadParameter(
-            msg,
-        )
-
+    pipeline = _build_pipeline_config(pipeline_data)
     loader = DataLoader(use_high_performance=high_perf)
     processor = SignalProcessor()
 
-    combine_frames = cast("bool", pipeline.get("combine", True))
-    console.rule("Loading data")
-    data = loader.load_multiple_files(file_list, combine=combine_frames)
+    logger.info("Executing pipeline", extra={"pipeline_config": pipeline.summary()})
 
-    output_section = cast("dict[str, object] | None", pipeline.get("output"))
-    if combine_frames:
+    console.rule("Loading data")
+    data = loader.load_multiple_files(pipeline.files, combine=pipeline.combine)
+
+    if pipeline.combine:
         dataframe = _process_dataframe(
-            data,
+            cast("pd.DataFrame", data),
             pipeline,
             processor,
             source_label="combined dataset",
         )
 
-        if output_section:
-            output_path = Path(cast("str", output_section["path"])).expanduser()
-            target_format = cast("str", output_section.get("format", output_format))
+        if pipeline.output:
+            output_path = pipeline.output.path
+            target_format = pipeline.output.format
             output_path.parent.mkdir(parents=True, exist_ok=True)
             loader.save_dataframe(
                 dataframe,
@@ -262,9 +269,9 @@ def run(
             console.print("[cyan]Pipeline completed (no output specified).[/cyan]")
         return
 
-    # combine_frames == False => process each file independently
+    # combine == False => process each file independently
     processed_frames: dict[str, pd.DataFrame] = {}
-    for source_path, frame in data.items():
+    for source_path, frame in cast("dict[str, pd.DataFrame]", data).items():
         processed_frames[source_path] = _process_dataframe(
             frame,
             pipeline,
@@ -272,14 +279,9 @@ def run(
             source_label=Path(source_path).name,
         )
 
-    if output_section:
-        output_path = Path(cast("str", output_section["path"])).expanduser()
-        target_format = cast("str", output_section.get("format", output_format))
-        if output_path.suffix:
-            msg = "When combine is disabled, the output path must be a directory."
-            raise typer.BadParameter(
-                msg,
-            )
+    if pipeline.output:
+        output_path = pipeline.output.ensure_directory_for_uncombined()
+        target_format = pipeline.output.format
         output_path.mkdir(parents=True, exist_ok=True)
 
         for source_path, processed_df in processed_frames.items():
