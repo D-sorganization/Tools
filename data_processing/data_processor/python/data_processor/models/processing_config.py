@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping, MutableMapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Mapping, MutableMapping, Sequence
+from typing import Any
 
 from data_processor.constants import SUPPORTED_FORMATS
 
@@ -57,7 +58,7 @@ class FilterConfig:
     parameters: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
-    def from_mapping(cls, mapping: Mapping[str, Any]) -> "FilterConfig":
+    def from_mapping(cls, mapping: Mapping[str, Any]) -> FilterConfig:
         """Construct a FilterConfig from a mapping with validation."""
         if "filter_type" not in mapping:
             msg = "filter.filter_type is required"
@@ -75,14 +76,15 @@ class FilterConfig:
             key: value for key, value in mapping.items() if key != "filter_type"
         }
         validated = cls._validate_parameters(parameters)
-        validated["filter_type"] = filter_type
         return cls(filter_type=filter_type, parameters=validated)
 
     @staticmethod
     def _validate_parameters(raw: Mapping[str, Any]) -> dict[str, Any]:
         cleaned: dict[str, Any] = {}
 
-        allowed_keys = set(_INT_PARAMETERS) | set(_FLOAT_PARAMETERS) | _STRING_PARAMETERS
+        allowed_keys = (
+            set(_INT_PARAMETERS) | set(_FLOAT_PARAMETERS) | _STRING_PARAMETERS
+        )
 
         for key, value in raw.items():
             if key in _INT_PARAMETERS:
@@ -112,7 +114,8 @@ class OutputConfig:
     format: str = "csv"
 
     @classmethod
-    def from_mapping(cls, mapping: Mapping[str, Any]) -> "OutputConfig":
+    def from_mapping(cls, mapping: Mapping[str, Any]) -> OutputConfig:
+
         if "path" not in mapping:
             msg = "output.path is required when an output section is provided"
             raise ValueError(msg)
@@ -149,7 +152,8 @@ class PipelineConfig:
     output: OutputConfig | None = None
 
     @classmethod
-    def from_mapping(cls, mapping: Mapping[str, Any]) -> "PipelineConfig":
+    def from_mapping(cls, mapping: Mapping[str, Any]) -> PipelineConfig:
+
         normalized: MutableMapping[str, Any] = dict(mapping)
         files = _normalize_files(normalized.get("files"))
         combine = bool(normalized.get("combine", True))

@@ -41,7 +41,7 @@ class SignalProcessor:
             "Applying filter",
             extra={
                 "filter_type": config.filter_type,
-                "parameters": {k: v for k, v in engine_params.items()},
+                "parameters": engine_params,
             },
         )
 

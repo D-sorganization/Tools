@@ -242,7 +242,7 @@ def run(
     loader = DataLoader(use_high_performance=high_perf)
     processor = SignalProcessor()
 
-    logger.info("Executing pipeline", extra={"extra": pipeline.summary()})
+    logger.info("Executing pipeline", extra={"pipeline_config": pipeline.summary()})
 
     console.rule("Loading data")
     data = loader.load_multiple_files(pipeline.files, combine=pipeline.combine)
