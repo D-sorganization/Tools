@@ -7,8 +7,8 @@ import os
 import subprocess
 import sys
 import webbrowser
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 from PyQt6.QtCore import QSize, Qt
 from PyQt6.QtGui import QIcon, QPalette, QPixmap
@@ -27,7 +27,6 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-
 from tile_launcher.manager import AppManager
 from tile_launcher.models import AppDefinition, LaunchType
 
@@ -92,7 +91,7 @@ class LauncherWindow(QMainWindow):
         header = self._build_header()
         outer_layout.addLayout(header)
 
-        self.tiles = QListWidget()
+        self.tiles: QListWidget = QListWidget()
         self.tiles.setViewMode(QListWidget.ViewMode.IconMode)
         self.tiles.setMovement(QListView.Movement.Static)
         self.tiles.setIconSize(QSize(96, 96))
@@ -104,7 +103,8 @@ class LauncherWindow(QMainWindow):
         self.tiles.setAcceptDrops(False)
         self.tiles.setDropIndicatorShown(True)
         self.tiles.itemDoubleClicked.connect(self._launch_selected)
-        self.tiles.model().rowsMoved.connect(self._sync_layout_from_view)
+        if model := self.tiles.model():
+            model.rowsMoved.connect(self._sync_layout_from_view)
 
         outer_layout.addWidget(self.tiles)
         self._refresh_tiles()
@@ -188,7 +188,7 @@ class LauncherWindow(QMainWindow):
     def _logo_path(self, app: AppDefinition) -> Path | None:
         if not app.logo:
             return None
-        return self.manager.repository_root / app.logo
+        return self.manager.repository_root / app.logo  # type: ignore[no-any-return]
 
     def _add_tile(self) -> None:
         dialog = SelectionDialog("Add Tile", self.manager.available_to_add())
@@ -222,10 +222,11 @@ class LauncherWindow(QMainWindow):
         self._refresh_tiles()
 
     def _sync_layout_from_view(self) -> None:
-        ordered_ids = [
-            self.tiles.item(index).data(Qt.ItemDataRole.UserRole)
-            for index in range(self.tiles.count())
-        ]
+        ordered_ids: list[str] = []
+        for index in range(self.tiles.count()):
+            item = self.tiles.item(index)
+            if item is not None:
+                ordered_ids.append(item.data(Qt.ItemDataRole.UserRole))
         if ordered_ids:
             self.manager.reorder(ordered_ids)
 
@@ -276,7 +277,7 @@ class LauncherWindow(QMainWindow):
     @staticmethod
     def _open_file(target_path: Path) -> None:
         if sys.platform.startswith("win"):
-            os.startfile(target_path)  # type: ignore[attr-defined]
+            os.startfile(target_path)
         elif sys.platform == "darwin":
             subprocess.Popen(["open", str(target_path)])
         else:
@@ -287,7 +288,7 @@ class LauncherWindow(QMainWindow):
             subprocess.Popen(["cmd", "/c", str(target_path)])
             return
 
-        QMessageBox.information(
+        QMessageBox.information(  # type: ignore[unreachable]
             self,
             "Windows Script",
             f"{app_name} is configured as a Windows batch file and can only run on Windows.",

@@ -5,7 +5,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-
 from tile_launcher.manager import AppCatalogError, AppManager, load_catalog
 from tile_launcher.models import AppDefinition, InMemoryLayoutStore, LaunchType
 

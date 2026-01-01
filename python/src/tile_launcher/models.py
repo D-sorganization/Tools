@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
+import json
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
-from typing import Iterable, Protocol, Sequence
-
-import json
+from typing import Protocol
 
 
 class LaunchType(StrEnum):

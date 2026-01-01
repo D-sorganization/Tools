@@ -4,11 +4,12 @@ from __future__ import annotations
 
 import json
 import logging
+from collections.abc import Iterable, Sequence
 from pathlib import Path
-from typing import Iterable, Sequence
 
-from tile_launcher import DEFAULT_LAYOUT_PATH
 from tile_launcher.models import AppDefinition, LaunchType, LayoutStore
+
+from . import DEFAULT_LAYOUT_PATH
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +62,7 @@ class AppManager:
         self._load_layout()
 
     @classmethod
-    def from_default_paths(cls) -> "AppManager":
+    def from_default_paths(cls) -> AppManager:
         base_path = Path(__file__).resolve().parents[3]
         catalog_path = Path(__file__).resolve().parent / "app_catalog.json"
         catalog = load_catalog(catalog_path)
