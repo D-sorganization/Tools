@@ -204,11 +204,13 @@ def _normalize_files(value: Any) -> list[str]:
         msg = "At least one input file must be supplied"
         raise ValueError(msg)
 
-    if isinstance(value, (str, Path)):
+    if isinstance(value, str | Path):
+
         return [str(value)]
 
     if isinstance(value, Sequence):
-        files = [str(item) for item in value if isinstance(item, (str, Path))]
+        files = [str(item) for item in value if isinstance(item, str | Path)]
+
         if not files:
             msg = "files must contain at least one path"
             raise ValueError(msg)
@@ -221,10 +223,12 @@ def _normalize_files(value: Any) -> list[str]:
 def _normalize_optional_str_list(value: Any) -> list[str] | None:
     if value is None:
         return None
-    if isinstance(value, (str, Path)):
+    if isinstance(value, str | Path):
+
         return [str(value)]
     if isinstance(value, Sequence):
-        result = [str(item) for item in value if isinstance(item, (str, Path))]
+        result = [str(item) for item in value if isinstance(item, str | Path)]
+
         return result or None
     msg = "selected_signals must be a list of strings if provided"
     raise ValueError(msg)
