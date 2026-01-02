@@ -33,7 +33,7 @@ from tile_launcher.models import AppDefinition, LaunchType
 logger = logging.getLogger(__name__)
 
 
-class SelectionDialog(QDialog):
+class SelectionDialog(QDialog):  # type: ignore[misc]
     """Dialog that allows users to pick an app from a provided list."""
 
     def __init__(self, title: str, apps: Iterable[AppDefinition]) -> None:
@@ -73,7 +73,7 @@ class SelectionDialog(QDialog):
         self.accept()
 
 
-class LauncherWindow(QMainWindow):
+class LauncherWindow(QMainWindow):  # type: ignore[misc]
     """Main window hosting the tile-based launcher experience."""
 
     def __init__(self, manager: AppManager) -> None:
@@ -288,7 +288,7 @@ class LauncherWindow(QMainWindow):
             subprocess.Popen(["cmd", "/c", str(target_path)])
             return
 
-        QMessageBox.information(  # type: ignore[unreachable]
+        QMessageBox.information(
             self,
             "Windows Script",
             f"{app_name} is configured as a Windows batch file and can only run on Windows.",
