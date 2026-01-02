@@ -60,7 +60,7 @@ def get_api_key(key_name: str = "GEMINI_API_KEY") -> str | None:
     for env_path in env_locations:
         if env_path.exists():
             try:
-                with open(env_path, 'r') as f:
+                with open(env_path) as f:
                     for line in f:
                         line = line.strip()
                         if line and not line.startswith('#') and '=' in line:
@@ -86,7 +86,7 @@ def setup_api_key_interactive() -> bool:
 
     existing_key = get_api_key()
     if existing_key:
-        print(f"\n✓ API key already configured!")
+        print("\n✓ API key already configured!")
         print(f"  Found in: {_find_key_location()}")
 
         response = input("\nDo you want to update it? (y/N): ").strip().lower()
@@ -133,14 +133,14 @@ def setup_api_key_interactive() -> bool:
         # Read existing content
         existing_content = []
         if env_path.exists():
-            with open(env_path, 'r') as f:
+            with open(env_path) as f:
                 existing_content = [line for line in f if not line.strip().startswith('GEMINI_API_KEY')]
 
         # Write new content
         with open(env_path, 'w') as f:
             # Write header
             f.write("# PDF Renamer Configuration\n")
-            f.write(f"# Auto-generated API key configuration\n\n")
+            f.write("# Auto-generated API key configuration\n\n")
 
             # Write API key
             f.write(f"GEMINI_API_KEY={api_key}\n")
@@ -153,8 +153,8 @@ def setup_api_key_interactive() -> bool:
                         f.write(line)
 
         print(f"\n✓ API key saved to: {env_path}")
-        print(f"  File is gitignored and secure.")
-        print(f"\nAI features are now enabled!")
+        print("  File is gitignored and secure.")
+        print("\nAI features are now enabled!")
         return True
 
     except Exception as e:
@@ -178,7 +178,7 @@ def _find_key_location() -> str:
     for env_path, location in env_locations:
         if env_path.exists():
             try:
-                with open(env_path, 'r') as f:
+                with open(env_path) as f:
                     for line in f:
                         if line.strip().startswith('GEMINI_API_KEY='):
                             return f"{location} ({env_path})"
@@ -206,13 +206,13 @@ def get_user_preferences() -> dict[str, Any]:
         "create_failed_folder": True,
         "failed_folder_name": "failed_renames"
     }
-    
+
     if not config_file.exists():
         save_user_preferences(default_prefs)
         return default_prefs
-    
+
     try:
-        with open(config_file, 'r', encoding='utf-8') as f:
+        with open(config_file, encoding='utf-8') as f:
             prefs = json.load(f)
             # Merge with defaults to handle new settings
             for key, value in default_prefs.items():

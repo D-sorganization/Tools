@@ -92,7 +92,7 @@ class TransactionLog:
             return operations
 
         try:
-            with open(self.log_path, "r", encoding="utf-8") as f:
+            with open(self.log_path, encoding="utf-8") as f:
                 for line in f:
                     try:
                         entry = json.loads(line.strip())

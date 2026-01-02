@@ -1,19 +1,20 @@
 """Modern PyQt6 GUI for PDF Renamer."""
 
 import logging
-import os
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
-from PyQt6.QtCore import QThread, pyqtSignal, Qt
+from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QFont, QTextCursor
 from PyQt6.QtWidgets import (
     QApplication,
     QCheckBox,
+    QComboBox,
     QFileDialog,
     QGroupBox,
     QHBoxLayout,
+    QHeaderView,
     QLabel,
     QLineEdit,
     QMainWindow,
@@ -21,18 +22,14 @@ from PyQt6.QtWidgets import (
     QProgressBar,
     QPushButton,
     QRadioButton,
+    QSpinBox,
+    QTableWidget,
+    QTableWidgetItem,
+    QTabWidget,
     QTextEdit,
     QVBoxLayout,
     QWidget,
-    QSpinBox,
-    QTabWidget,
-    QTableWidget,
-    QTableWidgetItem,
-    QHeaderView,
-    QComboBox,
 )
-
-from typing import Optional
 
 from .api_mode import APIRenameManager, RenameProposal
 from .cache import ResultCache
@@ -108,7 +105,7 @@ class ProcessingThread(QThread):
                     f"Found {len(duplicates)} sets of duplicates", "WARNING"
                 )
 
-                for file_hash, paths in duplicates.items():
+                for _file_hash, paths in duplicates.items():
                     if self._is_cancelled:
                         return
 
@@ -347,7 +344,7 @@ class PDFRenamerGUI(QMainWindow):
         self.workers_spin.setMaximum(16)
         self.workers_spin.setValue(4)
         workers_layout.addWidget(self.workers_spin)
-        
+
         workers_layout.addWidget(QLabel("Failed Folder:"))
         self.failed_folder_input = QLineEdit("failed_renames")
         workers_layout.addWidget(self.failed_folder_input)
@@ -414,7 +411,7 @@ class PDFRenamerGUI(QMainWindow):
         # Directory and settings
         dir_group = QGroupBox("📁 Directory & Settings")
         dir_layout = QVBoxLayout()
-        
+
         # Directory selection
         dir_select_layout = QHBoxLayout()
         self.api_dir_input = QLineEdit()
@@ -424,23 +421,23 @@ class PDFRenamerGUI(QMainWindow):
         self.api_browse_btn.clicked.connect(self.api_browse_directory)
         dir_select_layout.addWidget(self.api_browse_btn)
         dir_layout.addLayout(dir_select_layout)
-        
+
         # API settings
         api_settings_layout = QHBoxLayout()
         api_settings_layout.addWidget(QLabel("Style:"))
         self.api_style_combo = QComboBox()
         self.api_style_combo.addItems(["Standard", "Snake Case", "Kebab Case"])
         api_settings_layout.addWidget(self.api_style_combo)
-        
+
         self.api_include_author = QCheckBox("Include Author")
         api_settings_layout.addWidget(self.api_include_author)
-        
+
         self.api_recursive = QCheckBox("Include Subfolders")
         self.api_recursive.setChecked(True)
         api_settings_layout.addWidget(self.api_recursive)
         api_settings_layout.addStretch()
         dir_layout.addLayout(api_settings_layout)
-        
+
         dir_group.setLayout(dir_layout)
         layout.addWidget(dir_group)
 
@@ -509,24 +506,24 @@ class PDFRenamerGUI(QMainWindow):
         # API Configuration
         api_group = QGroupBox("🔑 API Configuration")
         api_layout = QVBoxLayout()
-        
+
         api_info = QLabel(
             "Configure your Gemini API key for AI-powered title extraction.\n"
             "The API key is stored securely in your user profile."
         )
         api_layout.addWidget(api_info)
-        
+
         api_button_layout = QHBoxLayout()
         self.setup_api_btn = QPushButton("🔧 Setup API Key")
         self.setup_api_btn.clicked.connect(self.setup_api_key)
         api_button_layout.addWidget(self.setup_api_btn)
-        
+
         self.test_api_btn = QPushButton("🧪 Test API Key")
         self.test_api_btn.clicked.connect(self.test_api_key)
         api_button_layout.addWidget(self.test_api_btn)
         api_button_layout.addStretch()
         api_layout.addLayout(api_button_layout)
-        
+
         api_group.setLayout(api_layout)
         layout.addWidget(api_group)
 
@@ -550,7 +547,7 @@ class PDFRenamerGUI(QMainWindow):
         if self.preferences.get("last_directory"):
             self.dir_input.setText(self.preferences["last_directory"])
             self.api_dir_input.setText(self.preferences["last_directory"])
-        
+
         # Set other preferences
         self.workers_spin.setValue(self.preferences.get("default_workers", 4))
         self.failed_folder_input.setText(self.preferences.get("failed_folder_name", "failed_renames"))
@@ -562,7 +559,7 @@ class PDFRenamerGUI(QMainWindow):
         self.preferences["default_workers"] = self.workers_spin.value()
         self.preferences["failed_folder_name"] = self.default_failed_input.text()
         self.preferences["remember_settings"] = self.remember_settings_check.isChecked()
-        
+
         save_user_preferences(self.preferences)
         QMessageBox.information(self, "Preferences Saved", "Your preferences have been saved successfully!")
 
@@ -708,8 +705,8 @@ if __name__ == "__main__":
         from .config import get_api_key
         if not get_api_key():
             QMessageBox.warning(
-                self, 
-                "API Key Required", 
+                self,
+                "API Key Required",
                 "Please configure your Gemini API key in the Settings tab first."
             )
             return
@@ -718,10 +715,10 @@ if __name__ == "__main__":
             # Create API manager
             cache = ResultCache(Path.cwd() / "pdf_titles.sqlite")
             llm = GeminiTitleLLM()
-            
+
             style_map = {"Standard": "standard", "Snake Case": "snake_case", "Kebab Case": "kebab_case"}
             style = style_map[self.api_style_combo.currentText()]
-            
+
             self.api_manager = APIRenameManager(
                 directory=Path(directory),
                 cache=cache,
@@ -734,21 +731,21 @@ if __name__ == "__main__":
             # Generate proposals
             self.generate_btn.setEnabled(False)
             self.generate_btn.setText("🔄 Generating...")
-            
+
             proposals = self.api_manager.generate_proposals()
-            
+
             # Populate table
             self.populate_proposals_table(proposals)
-            
+
             # Enable buttons
             self.export_btn.setEnabled(True)
             self.execute_btn.setEnabled(True)
             self.generate_btn.setEnabled(True)
             self.generate_btn.setText("🔍 Generate Proposals")
-            
+
             QMessageBox.information(
-                self, 
-                "Proposals Generated", 
+                self,
+                "Proposals Generated",
                 f"Generated {len(proposals)} rename proposals. Review and approve them below."
             )
 
@@ -761,27 +758,27 @@ if __name__ == "__main__":
     def populate_proposals_table(self, proposals: list[RenameProposal]):
         """Populate the proposals table with data."""
         self.proposals_table.setRowCount(len(proposals))
-        
+
         for i, proposal in enumerate(proposals):
             # Current name
             self.proposals_table.setItem(i, 0, QTableWidgetItem(proposal.current_name))
-            
+
             # Proposed name
             self.proposals_table.setItem(i, 1, QTableWidgetItem(proposal.proposed_name))
-            
+
             # Confidence
             confidence_item = QTableWidgetItem(f"{proposal.confidence:.2f}")
             self.proposals_table.setItem(i, 2, confidence_item)
-            
+
             # Status
             status_item = QTableWidgetItem("Pending")
             self.proposals_table.setItem(i, 3, status_item)
-            
+
             # Approve button
             approve_btn = QPushButton("✅ Approve")
             approve_btn.clicked.connect(lambda checked, idx=i: self.approve_proposal(idx))
             self.proposals_table.setCellWidget(i, 4, approve_btn)
-            
+
             # Reject button
             reject_btn = QPushButton("❌ Reject")
             reject_btn.clicked.connect(lambda checked, idx=i: self.reject_proposal(idx))
@@ -805,7 +802,7 @@ if __name__ == "__main__":
         """Export proposals to CSV."""
         if not self.api_manager:
             return
-            
+
         filename, _ = QFileDialog.getSaveFileName(
             self, "Export Proposals", "rename_proposals.csv", "CSV Files (*.csv)"
         )
@@ -820,19 +817,19 @@ if __name__ == "__main__":
         """Execute approved rename operations."""
         if not self.api_manager:
             return
-            
+
         approved = self.api_manager.get_approved_proposals()
         if not approved:
             QMessageBox.warning(self, "No Approved Proposals", "Please approve some proposals first.")
             return
-            
+
         reply = QMessageBox.question(
             self,
             "Execute Renames",
             f"Execute {len(approved)} approved rename operations?\n\nThis will actually rename the files.",
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
         )
-        
+
         if reply == QMessageBox.StandardButton.Yes:
             try:
                 results = self.api_manager.execute_approved_renames(dry_run=False)
@@ -844,20 +841,20 @@ if __name__ == "__main__":
                     f"❌ Failed: {results['failed']}\n"
                     f"⏭️ Skipped: {results['skipped']}"
                 )
-                
+
                 # Refresh the table to show completed operations
                 for i in range(self.proposals_table.rowCount()):
                     status_item = self.proposals_table.item(i, 3)
                     if status_item and status_item.text() == "✅ Approved":
                         status_item.setText("✅ Completed")
-                        
+
             except Exception as e:
                 QMessageBox.critical(self, "Execution Failed", f"Failed to execute renames: {e}")
 
     def setup_api_key(self):
         """Setup API key interactively."""
         from .config import setup_api_key_interactive
-        
+
         try:
             success = setup_api_key_interactive()
             if success:
@@ -870,12 +867,12 @@ if __name__ == "__main__":
     def test_api_key(self):
         """Test the configured API key."""
         from .config import get_api_key
-        
+
         api_key = get_api_key()
         if not api_key:
             QMessageBox.warning(self, "No API Key", "No API key found. Please setup your API key first.")
             return
-            
+
         try:
             # Test with a simple LLM call
             llm = GeminiTitleLLM()

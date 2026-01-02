@@ -1,8 +1,6 @@
 """Verify PDF Renamer installation and dependencies."""
 
 import os
-import sys
-from pathlib import Path
 
 # Color codes for terminal output
 GREEN = '\033[92m'
@@ -33,7 +31,7 @@ def main():
 
     # Core dependencies
     print(f"\n{BOLD}Core Dependencies:{RESET}")
-    all_good &= check_dependency("Python 3.11+", f"assert sys.version_info >= (3, 11)")
+    all_good &= check_dependency("Python 3.11+", "assert sys.version_info >= (3, 11)")
     all_good &= check_dependency("PyPDF", "import pypdf")
     all_good &= check_dependency("PyMuPDF (fitz)", "import fitz")
     all_good &= check_dependency("PyQt6", "from PyQt6.QtWidgets import QApplication")
@@ -67,8 +65,8 @@ def main():
     if all_good:
         print(f"\n{GREEN}{BOLD}[SUCCESS] All required dependencies installed!{RESET}")
         print(f"\n{BOLD}Ready to use:{RESET}")
-        print(f"  - GUI: python launch_gui.py")
-        print(f"  - CLI: python -m src.pdf_renamer.cli /path/to/pdfs --dry-run")
+        print("  - GUI: python launch_gui.py")
+        print("  - CLI: python -m src.pdf_renamer.cli /path/to/pdfs --dry-run")
         if not llm_ok:
             print(f"\n{YELLOW}Note:{RESET} AI features require google-generativeai (optional)")
         if not gemini_key and llm_ok:
@@ -76,7 +74,7 @@ def main():
     else:
         print(f"\n{RED}{BOLD}[FAILED] Some dependencies are missing!{RESET}")
         print(f"\n{BOLD}To fix:{RESET}")
-        print(f"  pip install -r requirements.txt")
+        print("  pip install -r requirements.txt")
 
     print()
 

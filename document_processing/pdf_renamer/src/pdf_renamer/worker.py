@@ -9,7 +9,14 @@ from .core import extract_title
 from .extractors import TitleLLM, author_from_metadata
 from .transaction_log import TransactionLog
 from .types import TitleResult
-from .utils import get_last_name, sanitize_filename, sha256_file, to_kebab_case, to_snake_case, to_title_case
+from .utils import (
+    get_last_name,
+    sanitize_filename,
+    sha256_file,
+    to_kebab_case,
+    to_snake_case,
+    to_title_case,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -110,7 +117,7 @@ def process_single_file(
                         result,
                         failed_path,
                     )
-            
+
             return ProcessingResult(
                 file_path,
                 False,
@@ -235,34 +242,34 @@ def _move_to_failed_folder(
 ) -> Path | None:
     """
     Move a file to the failed processing folder.
-    
+
     Args:
         file_path: Original file path
         failed_folder: Name of the failed folder
         transaction_log: Transaction log instance
-        
+
     Returns:
         New path if successful, None if failed
     """
     try:
         failed_dir = file_path.parent / failed_folder
         failed_dir.mkdir(exist_ok=True)
-        
+
         target_path = failed_dir / file_path.name
-        
+
         # Handle name collisions
         counter = 1
         while target_path.exists():
             stem = file_path.stem
             target_path = failed_dir / f"{stem}_{counter}.pdf"
             counter += 1
-        
+
         with _file_operation_lock:
             file_path.rename(target_path)
             transaction_log.log_rename(file_path, target_path, True, "Moved to failed folder")
-            
+
         return target_path
-        
+
     except Exception as e:
         logger.error(f"Failed to move {file_path} to failed folder: {e}")
         return None

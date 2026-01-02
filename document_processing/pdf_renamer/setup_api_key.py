@@ -6,7 +6,11 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
-from pdf_renamer.config import setup_api_key_interactive, get_api_key, _find_key_location
+from pdf_renamer.config import (
+    _find_key_location,
+    get_api_key,
+    setup_api_key_interactive,
+)
 
 
 def main():
@@ -19,7 +23,7 @@ def main():
     existing_key = get_api_key()
 
     if existing_key:
-        print(f"\n✓ API key is already configured!")
+        print("\n✓ API key is already configured!")
         print(f"  Location: {_find_key_location()}")
         print(f"  Key preview: {existing_key[:8]}...{existing_key[-4:]}")
         print("\nAI features are enabled and ready to use.")
