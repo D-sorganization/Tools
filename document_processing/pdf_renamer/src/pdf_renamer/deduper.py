@@ -1,3 +1,5 @@
+"""Enhanced duplicate detection with SHA256 hashing."""
+
 import hashlib
 import logging
 from collections import defaultdict
@@ -7,19 +9,33 @@ logger = logging.getLogger(__name__)
 
 
 class DuplicateFinder:
-    def __init__(self, directory: Path):
+    """Finds duplicate PDF files based on size and SHA256 hash."""
+
+    def __init__(self, directory: Path, recursive: bool = True):
+        """
+        Initialize duplicate finder.
+
+        Args:
+            directory: Root directory to scan
+            recursive: Whether to scan subdirectories
+        """
         self.directory = directory
+        self.recursive = recursive
 
     def find_duplicates(self) -> dict[str, list[Path]]:
         """
-        Finds duplicates based on file size and MD5 hash.
-        Returns a dictionary where key is the hash and value is list of paths.
+        Finds duplicates based on file size and SHA256 hash.
+
+        Returns:
+            Dictionary where key is the hash and value is list of paths.
+            Only includes entries where len(paths) > 1.
         """
         size_map: dict[int, list[Path]] = defaultdict(list)
 
-        # 1. Group by size
-        for file_path in self.directory.glob("**/*.pdf"):
-            if file_path.is_file():
+        # 1. Group by size (fast pre-filter)
+        pattern = "**/*.pdf" if self.recursive else "*.pdf"
+        for file_path in self.directory.glob(pattern):
+            if file_path.is_file() and not file_path.is_symlink():
                 try:
                     size = file_path.stat().st_size
                     size_map[size].append(file_path)
@@ -37,7 +53,7 @@ class DuplicateFinder:
             hash_map: dict[str, list[Path]] = defaultdict(list)
             for file_path in files:
                 try:
-                    file_hash = self._calculate_md5(file_path)
+                    file_hash = self._calculate_sha256(file_path)
                     hash_map[file_hash].append(file_path)
                 except OSError as e:
                     logger.error(f"Error hashing file {file_path}: {e}")
@@ -45,13 +61,26 @@ class DuplicateFinder:
             # Add to duplicates if collision found
             for file_hash, paths in hash_map.items():
                 if len(paths) > 1:
-                    duplicates[file_hash] = paths
+                    # Sort by path length and name for deterministic ordering
+                    duplicates[file_hash] = sorted(
+                        paths, key=lambda p: (len(str(p)), p.name)
+                    )
 
         return duplicates
 
-    def _calculate_md5(self, file_path: Path, chunk_size: int = 8192) -> str:
-        md5 = hashlib.md5()
+    def _calculate_sha256(self, file_path: Path, chunk_size: int = 8192) -> str:
+        """
+        Calculate SHA256 hash of a file.
+
+        Args:
+            file_path: Path to file
+            chunk_size: Size of chunks to read (default 8KB)
+
+        Returns:
+            Hexadecimal SHA256 hash string
+        """
+        sha256 = hashlib.sha256()
         with open(file_path, "rb") as f:
             while chunk := f.read(chunk_size):
-                md5.update(chunk)
-        return md5.hexdigest()
+                sha256.update(chunk)
+        return sha256.hexdigest()

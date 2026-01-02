@@ -1,42 +1,84 @@
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from pdf_renamer.extractor import extract_metadata
+from pdf_renamer.extractors import title_from_first_page, title_from_metadata
 
 
-def test_extract_metadata(tmp_path: object) -> None:
-    # Create a dummy PDF file (empty)
-    # mypy handling for tmp_path fixture
-    from pathlib import Path
-
-    assert isinstance(tmp_path, Path)
-    pdf_path = tmp_path / "dummy.pdf"
+def test_title_from_metadata(tmp_path: Path) -> None:
+    pdf_path = tmp_path / "test.pdf"
     pdf_path.touch()
 
-    # Mock pdfplumber.open
-    with patch("pdfplumber.open") as mock_open:
-        mock_pdf = MagicMock()
-        mock_pdf.metadata = {"Author": "Alice", "Title": "Wonderland"}
-        mock_open.return_value.__enter__.return_value = mock_pdf
+    with patch("pypdf.PdfReader") as mock_reader_cls:
+        mock_reader = MagicMock()
+        mock_reader.metadata = MagicMock()
+        mock_reader.metadata.title = "Metadata Title"
+        mock_reader_cls.return_value = mock_reader
 
-        author, title = extract_metadata(pdf_path)
+        result = title_from_metadata(pdf_path)
+        assert result.title == "Metadata Title"
+        assert result.method == "metadata"
 
-        assert author == "Alice"
-        assert title == "Wonderland"
 
-
-def test_extract_metadata_missing_keys(tmp_path: object) -> None:
-    from pathlib import Path
-
-    assert isinstance(tmp_path, Path)
-    pdf_path = tmp_path / "dummy.pdf"
+def test_title_from_metadata_missing(tmp_path: Path) -> None:
+    pdf_path = tmp_path / "test.pdf"
     pdf_path.touch()
 
-    with patch("pdfplumber.open") as mock_open:
-        mock_pdf = MagicMock()
-        mock_pdf.metadata = {}  # Empty metadata
-        mock_open.return_value.__enter__.return_value = mock_pdf
+    with patch("pdf_renamer.extractors.PdfReader", create=True) as mock_reader_cls:
+        mock_reader = MagicMock()
+        mock_reader.metadata = {}  # Empty metadata
+        mock_reader_cls.return_value = mock_reader
 
-        author, title = extract_metadata(pdf_path)
+        result = title_from_metadata(pdf_path)
+        assert result.title is None
+        assert result.method == "metadata"
 
-        assert author is None
-        assert title is None
+
+def test_title_from_first_page(tmp_path: Path) -> None:
+    pdf_path = tmp_path / "test.pdf"
+    pdf_path.touch()
+
+    with patch("fitz.open") as mock_open:
+        mock_doc = MagicMock()
+        mock_doc.page_count = 1
+        mock_page = MagicMock()
+        mock_doc.load_page.return_value = mock_page
+
+        # Mock struct: blocks -> lines -> spans
+        # This simulates layout extraction
+        mock_page.get_text.return_value = {
+            "blocks": [
+                {
+                    "lines": [
+                        {
+                            "spans": [
+                                {
+                                    "text": "Big Title",
+                                    "size": 24.0,
+                                    "bbox": [0, 0, 100, 20],
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+        mock_page.rect.height = 1000
+        mock_open.return_value = mock_doc
+
+        result = title_from_first_page(pdf_path)
+        assert result.title == "Big Title"
+        assert result.method == "heuristic"
+
+
+def test_title_from_first_page_empty(tmp_path: Path) -> None:
+    pdf_path = tmp_path / "test.pdf"
+    pdf_path.touch()
+
+    with patch("pdf_renamer.extractors.fitz", create=True) as mock_fitz:
+        mock_doc = MagicMock()
+        mock_doc.page_count = 0
+        mock_fitz.open.return_value = mock_doc
+
+        result = title_from_first_page(pdf_path)
+        assert result.title is None
+        assert result.method == "heuristic"

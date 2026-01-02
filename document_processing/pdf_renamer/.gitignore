@@ -1,4 +1,32 @@
+# Python
 __pycache__/
 *.pyc
 .pytest_cache/
 .mypy_cache/
+*.egg-info/
+dist/
+build/
+
+# Environment and secrets
+.env
+.env.local
+*.key
+secrets/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Application data
+pdf_titles.sqlite
+pdf_titles.sqlite-*
+pdf_renamer_transactions.jsonl
+pdf_renamer.log
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini

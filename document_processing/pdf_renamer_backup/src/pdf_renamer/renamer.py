@@ -50,16 +50,6 @@ class Renamer:
         return f"{clean_author}{sep}{clean_title}.pdf"
 
     def rename_file(self, original_path: Path, new_filename: str) -> str | None:
-        """
-        Rename a file to the new filename.
-
-        Args:
-            original_path: Path to the original file
-            new_filename: New filename to use
-
-        Returns:
-            Success message if renamed, None if failed or skipped
-        """
         if not original_path.exists():
             logger.error(f"File not found: {original_path}")
             return None
@@ -76,16 +66,15 @@ class Renamer:
 
         if target_path == original_path:
             logger.info(f"Skipping {original_path.name} (already named correctly)")
-            return f"Skipped: {original_path.name} (already named correctly)"
+            return str(target_path.name)
 
         logger.info(f"Renaming '{original_path.name}' -> '{target_path.name}'")
 
         if not self.dry_run:
             try:
                 original_path.rename(target_path)
-                return f"Renamed: {original_path.name} -> {target_path.name}"
+                return str(target_path.name)
             except OSError as e:
                 logger.error(f"Failed to rename {original_path}: {e}")
                 return None
-        else:
-            return f"[DRY RUN] Would rename: {original_path.name} -> {target_path.name}"
+        return str(target_path.name)
