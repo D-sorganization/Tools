@@ -15,9 +15,9 @@ from pdf_renamer.config import (
 
 def main() -> None:
     """Run interactive API key setup."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("PDF Renamer - API Key Configuration")
-    print("="*60)
+    print("=" * 60)
 
     # Check current status
     existing_key = get_api_key()
@@ -29,28 +29,30 @@ def main() -> None:
         print("\nAI features are enabled and ready to use.")
 
         response = input("\nDo you want to reconfigure? (y/N): ").strip().lower()
-        if response != 'y':
+        if response != "y":
             print("\nNo changes made. Exiting.")
             return
     else:
         print("\n⚠ No API key found.")
         print("\nAI features require a Gemini API key for title extraction.")
-        print("Without it, the tool will use local extraction only (metadata + heuristics).")
+        print(
+            "Without it, the tool will use local extraction only (metadata + heuristics)."
+        )
 
     # Run interactive setup
     if setup_api_key_interactive():
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("Setup Complete!")
-        print("="*60)
+        print("=" * 60)
         print("\n✓ API key configured successfully")
         print("✓ AI features are now enabled")
         print("\nYou can now use the PDF Renamer with AI-powered extraction:")
         print("  • GUI: python launch_gui.py")
         print("  • CLI: python -m src.pdf_renamer.cli /path/to/pdfs --provider gemini")
     else:
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("Setup Cancelled or Failed")
-        print("="*60)
+        print("=" * 60)
         print("\nYou can still use the PDF Renamer with local extraction only.")
         print("To set up the API key later, run this script again:")
         print("  python setup_api_key.py")
@@ -64,4 +66,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n\nError: {e}")
         import traceback
+
         traceback.print_exc()

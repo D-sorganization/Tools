@@ -146,7 +146,10 @@ def author_from_metadata(pdf_path: Path) -> str | None:
             # Basic validation
             if author and len(author) > 0 and len(author) < 100:
                 # Remove common garbage
-                if not any(bad in author.lower() for bad in ["unknown", "user", "admin", "default"]):
+                if not any(
+                    bad in author.lower()
+                    for bad in ["unknown", "user", "admin", "default"]
+                ):
                     return author
         return None
     except Exception as e:

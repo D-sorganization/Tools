@@ -105,7 +105,9 @@ class TransactionLog:
 
         return operations
 
-    def rollback_session(self, session_id: str | None = None, dry_run: bool = True) -> None:
+    def rollback_session(
+        self, session_id: str | None = None, dry_run: bool = True
+    ) -> None:
         """
         Rollback all successful operations from a session.
 

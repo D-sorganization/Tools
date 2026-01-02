@@ -10,15 +10,52 @@ MAX_FILENAME_LENGTH = 200  # Conservative limit for cross-platform compatibility
 
 # Windows reserved filenames
 WINDOWS_RESERVED = {
-    "CON", "PRN", "AUX", "NUL",
-    "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
-    "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9",
+    "CON",
+    "PRN",
+    "AUX",
+    "NUL",
+    "COM1",
+    "COM2",
+    "COM3",
+    "COM4",
+    "COM5",
+    "COM6",
+    "COM7",
+    "COM8",
+    "COM9",
+    "LPT1",
+    "LPT2",
+    "LPT3",
+    "LPT4",
+    "LPT5",
+    "LPT6",
+    "LPT7",
+    "LPT8",
+    "LPT9",
 }
 
 # Minor words for title case
 MINOR_WORDS = {
-    "a", "an", "the", "and", "but", "or", "nor", "for", "so", "yet",
-    "at", "by", "in", "of", "on", "to", "up", "from", "with", "as"
+    "a",
+    "an",
+    "the",
+    "and",
+    "but",
+    "or",
+    "nor",
+    "for",
+    "so",
+    "yet",
+    "at",
+    "by",
+    "in",
+    "of",
+    "on",
+    "to",
+    "up",
+    "from",
+    "with",
+    "as",
 }
 
 
@@ -78,8 +115,17 @@ def looks_like_title(s: str) -> bool:
         return False
 
     # Avoid common non-title strings
-    bad = ["arxiv", "doi:", "http", "www.", "copyright", "all rights reserved",
-           "page ", "draft", "confidential"]
+    bad = [
+        "arxiv",
+        "doi:",
+        "http",
+        "www.",
+        "copyright",
+        "all rights reserved",
+        "page ",
+        "draft",
+        "confidential",
+    ]
     if any(b in s.lower() for b in bad):
         return False
 

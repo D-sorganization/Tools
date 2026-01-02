@@ -72,9 +72,7 @@ def process_single_file(
     """
     try:
         if not file_path.exists():
-            return ProcessingResult(
-                file_path, False, f"File not found: {file_path}"
-            )
+            return ProcessingResult(file_path, False, f"File not found: {file_path}")
 
         # 1. Calculate hash
         file_hash = sha256_file(file_path)
@@ -108,7 +106,9 @@ def process_single_file(
         if not result.title:
             # Move to failed folder if enabled
             if move_failed and not dry_run:
-                failed_path = _move_to_failed_folder(file_path, failed_folder, transaction_log)
+                failed_path = _move_to_failed_folder(
+                    file_path, failed_folder, transaction_log
+                )
                 if failed_path:
                     return ProcessingResult(
                         file_path,
@@ -131,9 +131,7 @@ def process_single_file(
             author = author_from_metadata(file_path) or ""
 
         # 7. Generate new filename
-        new_filename = _generate_filename(
-            result.title, author, style, include_author
-        )
+        new_filename = _generate_filename(result.title, author, style, include_author)
 
         target_path = file_path.parent / new_filename
 
@@ -266,7 +264,9 @@ def _move_to_failed_folder(
 
         with _file_operation_lock:
             file_path.rename(target_path)
-            transaction_log.log_rename(file_path, target_path, True, "Moved to failed folder")
+            transaction_log.log_rename(
+                file_path, target_path, True, "Moved to failed folder"
+            )
 
         return target_path
 

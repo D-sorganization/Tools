@@ -9,7 +9,9 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 # Constants for configuration paths
-TOOLS_ENV_PATH = Path("c:/Users/diete/Repositories/Tools/document_processing/pdf_renamer/.env")
+TOOLS_ENV_PATH = Path(
+    "c:/Users/diete/Repositories/Tools/document_processing/pdf_renamer/.env"
+)
 
 # Try to load from .env file if available
 try:
@@ -66,8 +68,8 @@ def get_api_key(key_name: str = "GEMINI_API_KEY") -> str | None:
                 with open(env_path) as f:
                     for line in f:
                         line = line.strip()
-                        if line and not line.startswith('#') and '=' in line:
-                            var_name, var_value = line.split('=', 1)
+                        if line and not line.startswith("#") and "=" in line:
+                            var_name, var_value = line.split("=", 1)
                             if var_name.strip() == key_name:
                                 return var_value.strip().strip('"').strip("'")
             except Exception:
@@ -83,9 +85,9 @@ def setup_api_key_interactive() -> bool:
     Returns:
         True if API key was set up successfully, False otherwise
     """
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("API Key Setup")
-    print("="*60)
+    print("=" * 60)
 
     existing_key = get_api_key()
     if existing_key:
@@ -93,15 +95,19 @@ def setup_api_key_interactive() -> bool:
         print(f"  Found in: {_find_key_location()}")
 
         response = input("\nDo you want to update it? (y/N): ").strip().lower()
-        if response != 'y':
+        if response != "y":
             return True
 
     print("\nTo use AI-powered title extraction, you need a Gemini API key.")
     print("Get your free API key at: https://makersuite.google.com/app/apikey")
-    print("\nNote: AI features are optional. You can skip this and use local extraction only.")
+    print(
+        "\nNote: AI features are optional. You can skip this and use local extraction only."
+    )
 
-    response = input("\nWould you like to set up your API key now? (y/N): ").strip().lower()
-    if response != 'y':
+    response = (
+        input("\nWould you like to set up your API key now? (y/N): ").strip().lower()
+    )
+    if response != "y":
         print("\nSkipping API key setup. You can set it later by:")
         print("  1. Creating a .env file with: GEMINI_API_KEY=your_key")
         print("  2. Setting environment variable: GEMINI_API_KEY=your_key")
@@ -137,10 +143,12 @@ def setup_api_key_interactive() -> bool:
         existing_content = []
         if env_path.exists():
             with open(env_path) as f:
-                existing_content = [line for line in f if not line.strip().startswith('GEMINI_API_KEY')]
+                existing_content = [
+                    line for line in f if not line.strip().startswith("GEMINI_API_KEY")
+                ]
 
         # Write new content
-        with open(env_path, 'w') as f:
+        with open(env_path, "w") as f:
             # Write header
             f.write("# PDF Renamer Configuration\n")
             f.write("# Auto-generated API key configuration\n\n")
@@ -152,7 +160,7 @@ def setup_api_key_interactive() -> bool:
             if existing_content:
                 f.write("\n# Other settings\n")
                 for line in existing_content:
-                    if line.strip() and not line.strip().startswith('#'):
+                    if line.strip() and not line.strip().startswith("#"):
                         f.write(line)
 
         print(f"\n✓ API key saved to: {env_path}")
@@ -183,7 +191,7 @@ def _find_key_location() -> str:
             try:
                 with open(env_path) as f:
                     for line in f:
-                        if line.strip().startswith('GEMINI_API_KEY='):
+                        if line.strip().startswith("GEMINI_API_KEY="):
                             return f"{location} ({env_path})"
             except Exception:
                 continue
@@ -207,7 +215,7 @@ def get_user_preferences() -> dict[str, Any]:
         "default_workers": 4,
         "remember_settings": True,
         "create_failed_folder": True,
-        "failed_folder_name": "failed_renames"
+        "failed_folder_name": "failed_renames",
     }
 
     if not config_file.exists():
@@ -215,7 +223,7 @@ def get_user_preferences() -> dict[str, Any]:
         return default_prefs
 
     try:
-        with open(config_file, encoding='utf-8') as f:
+        with open(config_file, encoding="utf-8") as f:
             prefs: dict[str, Any] = json.load(f)
             # Merge with defaults to handle new settings
             for key, value in default_prefs.items():
@@ -231,7 +239,7 @@ def save_user_preferences(preferences: dict[str, Any]) -> None:
     """Save user preferences to config file."""
     config_file = get_config_dir() / "preferences.json"
     try:
-        with open(config_file, 'w', encoding='utf-8') as f:
+        with open(config_file, "w", encoding="utf-8") as f:
             json.dump(preferences, f, indent=2, ensure_ascii=False)
     except Exception as e:
         logger.error(f"Failed to save preferences: {e}")
@@ -247,6 +255,7 @@ def update_last_directory(directory: str) -> None:
 # Auto-load .env on import
 try:
     from dotenv import load_dotenv
+
     for env_path in [
         Path(__file__).parent.parent.parent / ".env",
         TOOLS_ENV_PATH,

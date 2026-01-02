@@ -77,7 +77,9 @@ class APIRenameManager:
                 proposal = self._create_proposal(pdf_file)
                 if proposal:
                     self.proposals.append(proposal)
-                    logger.info(f"Generated proposal: {proposal.current_name} -> {proposal.proposed_name}")
+                    logger.info(
+                        f"Generated proposal: {proposal.current_name} -> {proposal.proposed_name}"
+                    )
                 else:
                     logger.warning(f"Could not generate proposal for: {pdf_file.name}")
 
@@ -100,7 +102,9 @@ class APIRenameManager:
             else:
                 # Force API extraction (no local fallback)
                 if not self.llm:
-                    logger.warning(f"No LLM available for API-only mode: {file_path.name}")
+                    logger.warning(
+                        f"No LLM available for API-only mode: {file_path.name}"
+                    )
                     return None
 
                 result = self.llm.extract_title(file_path)
@@ -114,7 +118,9 @@ class APIRenameManager:
                     provider="gemini",
                     model=model_name,
                 )
-                logger.info(f"[API] {file_path.name} -> {result.title} ({result.confidence:.2f})")
+                logger.info(
+                    f"[API] {file_path.name} -> {result.title} ({result.confidence:.2f})"
+                )
 
             if not result.title:
                 logger.warning(f"No title extracted for: {file_path.name}")
@@ -172,7 +178,9 @@ class APIRenameManager:
             proposal.rejected = False
             if custom_name:
                 proposal.custom_name = custom_name
-            logger.info(f"Approved: {proposal.current_name} -> {custom_name or proposal.proposed_name}")
+            logger.info(
+                f"Approved: {proposal.current_name} -> {custom_name or proposal.proposed_name}"
+            )
             return True
         return False
 
@@ -220,11 +228,15 @@ class APIRenameManager:
                     target_path = proposal.file_path.parent / f"{stem}_{short_hash}.pdf"
 
                 if dry_run:
-                    logger.info(f"[DRY RUN] Would rename: {proposal.current_name} -> {target_path.name}")
+                    logger.info(
+                        f"[DRY RUN] Would rename: {proposal.current_name} -> {target_path.name}"
+                    )
                     results["success"] += 1
                 else:
                     proposal.file_path.rename(target_path)
-                    logger.info(f"Renamed: {proposal.current_name} -> {target_path.name}")
+                    logger.info(
+                        f"Renamed: {proposal.current_name} -> {target_path.name}"
+                    )
                     results["success"] += 1
 
             except Exception as e:
@@ -237,24 +249,35 @@ class APIRenameManager:
         """Export proposals to CSV for external review."""
         import csv
 
-        with open(output_path, 'w', newline='', encoding='utf-8') as csvfile:
+        with open(output_path, "w", newline="", encoding="utf-8") as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow([
-                'Current Name', 'Proposed Name', 'Title', 'Author',
-                'Confidence', 'Method', 'Approved', 'Rejected', 'Custom Name'
-            ])
+            writer.writerow(
+                [
+                    "Current Name",
+                    "Proposed Name",
+                    "Title",
+                    "Author",
+                    "Confidence",
+                    "Method",
+                    "Approved",
+                    "Rejected",
+                    "Custom Name",
+                ]
+            )
 
             for proposal in self.proposals:
-                writer.writerow([
-                    proposal.current_name,
-                    proposal.proposed_name,
-                    proposal.title_result.title,
-                    proposal.author,
-                    f"{proposal.confidence:.2f}",
-                    proposal.title_result.method,
-                    proposal.approved,
-                    proposal.rejected,
-                    proposal.custom_name or ""
-                ])
+                writer.writerow(
+                    [
+                        proposal.current_name,
+                        proposal.proposed_name,
+                        proposal.title_result.title,
+                        proposal.author,
+                        f"{proposal.confidence:.2f}",
+                        proposal.title_result.method,
+                        proposal.approved,
+                        proposal.rejected,
+                        proposal.custom_name or "",
+                    ]
+                )
 
         logger.info(f"Exported {len(self.proposals)} proposals to: {output_path}")

@@ -3,11 +3,12 @@
 import os
 
 # Color codes for terminal output
-GREEN = '\033[92m'
-RED = '\033[91m'
-YELLOW = '\033[93m'
-RESET = '\033[0m'
-BOLD = '\033[1m'
+GREEN = "\033[92m"
+RED = "\033[91m"
+YELLOW = "\033[93m"
+RESET = "\033[0m"
+BOLD = "\033[1m"
+
 
 def check_dependency(name: str, import_statement: str) -> bool:
     """Check if a dependency is installed."""
@@ -21,6 +22,7 @@ def check_dependency(name: str, import_statement: str) -> bool:
     except Exception as e:
         print(f"{YELLOW}[WARN]{RESET} {name} - {e}")
         return False
+
 
 def main():
     """Run installation verification."""
@@ -48,7 +50,9 @@ def main():
     all_good &= check_dependency("worker", "from src.pdf_renamer import worker")
     all_good &= check_dependency("cache", "from src.pdf_renamer import cache")
     all_good &= check_dependency("deduper", "from src.pdf_renamer import deduper")
-    all_good &= check_dependency("transaction_log", "from src.pdf_renamer import transaction_log")
+    all_good &= check_dependency(
+        "transaction_log", "from src.pdf_renamer import transaction_log"
+    )
     all_good &= check_dependency("utils", "from src.pdf_renamer import utils")
     all_good &= check_dependency("gui", "from src.pdf_renamer import gui")
 
@@ -68,15 +72,20 @@ def main():
         print("  - GUI: python launch_gui.py")
         print("  - CLI: python -m src.pdf_renamer.cli /path/to/pdfs --dry-run")
         if not llm_ok:
-            print(f"\n{YELLOW}Note:{RESET} AI features require google-generativeai (optional)")
+            print(
+                f"\n{YELLOW}Note:{RESET} AI features require google-generativeai (optional)"
+            )
         if not gemini_key and llm_ok:
-            print(f"{YELLOW}Note:{RESET} Set GEMINI_API_KEY environment variable to enable AI")
+            print(
+                f"{YELLOW}Note:{RESET} Set GEMINI_API_KEY environment variable to enable AI"
+            )
     else:
         print(f"\n{RED}{BOLD}[FAILED] Some dependencies are missing!{RESET}")
         print(f"\n{BOLD}To fix:{RESET}")
         print("  pip install -r requirements.txt")
 
     print()
+
 
 if __name__ == "__main__":
     main()
