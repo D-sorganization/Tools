@@ -13,7 +13,7 @@ from pdf_renamer.config import (
 )
 
 
-def main():
+def main() -> None:
     """Run interactive API key setup."""
     print("\n" + "="*60)
     print("PDF Renamer - API Key Configuration")
@@ -25,7 +25,7 @@ def main():
     if existing_key:
         print("\n✓ API key is already configured!")
         print(f"  Location: {_find_key_location()}")
-        print(f"  Key preview: {existing_key[:8]}...{existing_key[-4:]}")
+        print("  Key: [hidden for security]")
         print("\nAI features are enabled and ready to use.")
 
         response = input("\nDo you want to reconfigure? (y/N): ").strip().lower()

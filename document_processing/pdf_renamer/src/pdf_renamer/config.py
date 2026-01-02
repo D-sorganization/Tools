@@ -8,6 +8,9 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
+# Constants for configuration paths
+TOOLS_ENV_PATH = Path("c:/Users/diete/Repositories/Tools/document_processing/pdf_renamer/.env")
+
 # Try to load from .env file if available
 try:
     from dotenv import load_dotenv
@@ -17,7 +20,7 @@ try:
         Path(__file__).parent.parent.parent / ".env",  # Project root
         Path.cwd() / ".env",  # Current working directory
         Path.home() / ".pdf_renamer" / ".env",  # User home directory
-        Path("c:/Users/diete/Repositories/Tools/document_processing/pdf_renamer/.env"),  # Tools version
+        TOOLS_ENV_PATH,  # Tools version
     ]
 
     for env_path in env_locations:
@@ -53,7 +56,7 @@ def get_api_key(key_name: str = "GEMINI_API_KEY") -> str | None:
     # If not in environment, try to manually load from known locations
     env_locations = [
         Path(__file__).parent.parent.parent / ".env",  # Project root
-        Path("c:/Users/diete/Repositories/Tools/document_processing/pdf_renamer/.env"),  # Tools version
+        TOOLS_ENV_PATH,  # Tools version
         Path.home() / ".pdf_renamer" / ".env",  # User home
     ]
 
@@ -119,7 +122,7 @@ def setup_api_key_interactive() -> bool:
 
     save_locations = {
         "1": Path(__file__).parent.parent.parent / ".env",
-        "2": Path("c:/Users/diete/Repositories/Tools/document_processing/pdf_renamer/.env"),
+        "2": TOOLS_ENV_PATH,
         "3": Path.home() / ".pdf_renamer" / ".env",
     }
 
@@ -171,7 +174,7 @@ def _find_key_location() -> str:
 
     env_locations = [
         (Path(__file__).parent.parent.parent / ".env", "Project folder"),
-        (Path("c:/Users/diete/Repositories/Tools/document_processing/pdf_renamer/.env"), "Tools folder"),
+        (TOOLS_ENV_PATH, "Tools folder"),
         (Path.home() / ".pdf_renamer" / ".env", "User home"),
     ]
 
@@ -198,7 +201,7 @@ def get_config_dir() -> Path:
 def get_user_preferences() -> dict[str, Any]:
     """Load user preferences from config file."""
     config_file = get_config_dir() / "preferences.json"
-    default_prefs = {
+    default_prefs: dict[str, Any] = {
         "last_directory": str(Path.home()),
         "default_style": "standard",
         "default_workers": 4,
@@ -213,7 +216,7 @@ def get_user_preferences() -> dict[str, Any]:
 
     try:
         with open(config_file, encoding='utf-8') as f:
-            prefs = json.load(f)
+            prefs: dict[str, Any] = json.load(f)
             # Merge with defaults to handle new settings
             for key, value in default_prefs.items():
                 if key not in prefs:
@@ -246,7 +249,7 @@ try:
     from dotenv import load_dotenv
     for env_path in [
         Path(__file__).parent.parent.parent / ".env",
-        Path("c:/Users/diete/Repositories/Tools/document_processing/pdf_renamer/.env"),
+        TOOLS_ENV_PATH,
         Path.home() / ".pdf_renamer" / ".env",
     ]:
         if env_path.exists():

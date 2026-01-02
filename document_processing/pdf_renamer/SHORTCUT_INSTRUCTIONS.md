@@ -23,8 +23,9 @@
 1. Right-click on your desktop
 2. Select "New" → "Shortcut"
 3. Click "Browse..." and navigate to:
+
    ```
-   c:\Users\diete\Repositories\Playground\PDFRenamer\PDF_Renamer.bat
+   C:\Users\[USERNAME]\Repositories\Tools\document_processing\pdf_renamer\PDF_Renamer.bat
    ```
 4. Click "Next"
 5. Name it: `PDF Renamer`
@@ -45,7 +46,7 @@ Version=1.0
 Type=Application
 Name=PDF Renamer
 Comment=AI-Powered PDF Renaming Tool
-Exec=/usr/bin/python3 /c/Users/diete/Repositories/Playground/PDFRenamer/launch_gui.py
+Exec=/usr/bin/python3 /c/Users/[USERNAME]/Repositories/Tools/document_processing/pdf_renamer/launch_gui.py
 Icon=application-pdf
 Terminal=false
 Categories=Utility;FileTools;
@@ -58,7 +59,7 @@ chmod +x ~/Desktop/pdf-renamer.desktop
 1. Open Automator
 2. Create new "Application"
 3. Add "Run Shell Script" action
-4. Script: `cd /Users/diete/Repositories/Playground/PDFRenamer && python3 launch_gui.py`
+4. Script: `cd /Users/[USERNAME]/Repositories/Tools/document_processing/pdf_renamer && python3 launch_gui.py`
 5. Save as "PDF Renamer" in Applications folder
 6. Drag to Dock
 
@@ -85,8 +86,9 @@ When you double-click the shortcut:
 ### "Failed to install dependencies"
 
 **Solution:**
+
 ```bash
-cd c:\Users\diete\Repositories\Playground\PDFRenamer
+cd C:\Users\[USERNAME]\Repositories\Tools\document_processing\pdf_renamer
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
