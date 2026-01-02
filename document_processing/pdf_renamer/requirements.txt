@@ -1,4 +1,16 @@
-pdfplumber
-pytest
-types-setuptools
-PyPDF2
+# Core dependencies
+pypdf>=4.0.0
+pymupdf>=1.23.0
+google-generativeai>=0.3.0
+PyQt6>=6.6.0
+python-dotenv>=1.0.0
+
+# Development dependencies
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-qt>=4.2.0
+types-setuptools>=68.0.0
+mypy>=1.0.0
+
+# Optional dependencies
+pdfplumber>=0.10.0

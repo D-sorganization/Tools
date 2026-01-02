@@ -1,0 +1,59 @@
+================================================================================
+                     PDF RENAMER - API KEY QUICK REFERENCE
+================================================================================
+
+INTERACTIVE SETUP (EASIEST)
+----------------------------
+  python setup_api_key.py
+
+
+MANUAL SETUP - Create .env file with:
+--------------------------------------
+  GEMINI_API_KEY=your_actual_key_here
+
+
+WHERE TO SAVE .env FILE (Pick one):
+------------------------------------
+  1. Playground: c:\Users\diete\Repositories\Playground\PDFRenamer\.env
+  2. Tools:      c:\Users\diete\Repositories\Tools\document_processing\pdf_renamer\.env
+  3. User Home:  %USERPROFILE%\.pdf_renamer\.env
+
+
+GET API KEY:
+------------
+  https://makersuite.google.com/app/apikey
+
+
+VERIFY SETUP:
+-------------
+  python verify_installation.py
+
+
+CHECK KEY STATUS:
+-----------------
+  python -c "from src.pdf_renamer.config import get_api_key; print('Found!' if get_api_key() else 'Not found')"
+
+
+RECOMMENDED FOR YOUR SETUP:
+----------------------------
+  Since you have both Tools and Playground versions, create .env in Tools folder:
+
+  c:\Users\diete\Repositories\Tools\document_processing\pdf_renamer\.env
+
+  Both versions will automatically find and use it!
+
+
+SECURITY:
+---------
+  ✓ .env files are automatically gitignored
+  ✓ Never committed to version control
+  ✓ Safe to store locally
+  ✓ Shared securely between projects
+
+
+NEED HELP?
+----------
+  See API_KEY_SETUP.md for full documentation
+
+
+================================================================================
