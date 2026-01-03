@@ -55,6 +55,7 @@ class AppManager:
         repository_root: Path,
         layout_store: LayoutStore | None = None,
     ) -> None:
+        """Initialize the manager with a catalog and layout store."""
         self._catalog = {app.id: app for app in catalog}
         self.repository_root = repository_root
         self.layout_store = layout_store
@@ -63,6 +64,7 @@ class AppManager:
 
     @classmethod
     def from_default_paths(cls) -> AppManager:
+        """Create an AppManager using default paths for catalog and layout."""
         base_path = Path(__file__).resolve().parents[3]
         catalog_path = Path(__file__).resolve().parent / "app_catalog.json"
         catalog = load_catalog(catalog_path)
@@ -73,11 +75,13 @@ class AppManager:
 
     @staticmethod
     def _default_store() -> LayoutStore:
+        """Return the default layout store strategy."""
         from tile_launcher.models import FileLayoutStore
 
         return FileLayoutStore(path=DEFAULT_LAYOUT_PATH)
 
     def _load_layout(self) -> None:
+        """Load the layout from the store or initialize default."""
         saved_layout = self.layout_store.load() if self.layout_store else []
         seen: set[str] = set()
         self.layout = []
@@ -90,21 +94,25 @@ class AppManager:
             self._save_layout()
 
     def _save_layout(self) -> None:
+        """Save the current layout to the store."""
         if self.layout_store:
             self.layout_store.save(self.layout)
 
     def apps_in_layout(self) -> list[AppDefinition]:
+        """Return the list of apps currently in the layout."""
         return [
             self._catalog[app_id] for app_id in self.layout if app_id in self._catalog
         ]
 
     def available_to_add(self) -> list[AppDefinition]:
+        """Return list of apps available to be added to the layout."""
         available = [
             app for app_id, app in self._catalog.items() if app_id not in self.layout
         ]
         return sorted(available, key=lambda app: app.name.lower())
 
     def add_app(self, app_id: str) -> None:
+        """Add an app to the layout."""
         if app_id not in self._catalog:
             raise KeyError(f"App id '{app_id}' is not present in the catalog")
 
@@ -116,6 +124,7 @@ class AppManager:
         self._save_layout()
 
     def remove_app(self, app_id: str) -> None:
+        """Remove an app from the layout."""
         if app_id not in self.layout:
             logger.info("App %s not in layout; skipping remove", app_id)
             return
@@ -124,6 +133,7 @@ class AppManager:
         self._save_layout()
 
     def reorder(self, new_order: Iterable[str]) -> None:
+        """Reorder the layout based on a new sequence of app IDs."""
         validated: list[str] = []
         for app_id in new_order:
             if app_id in self._catalog and app_id not in validated:
@@ -135,8 +145,10 @@ class AppManager:
         self._save_layout()
 
     def reset_layout(self) -> None:
+        """Reset the layout to include all apps from the catalog."""
         self.layout = list(self._catalog.keys())
         self._save_layout()
 
     def get_app(self, app_id: str) -> AppDefinition:
+        """Get the definition for a specific app."""
         return self._catalog[app_id]

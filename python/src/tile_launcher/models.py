@@ -53,6 +53,7 @@ class FileLayoutStore:
     path: Path
 
     def load(self) -> list[str]:
+        """Load the layout from the JSON file."""
         if not self.path.exists():
             return []
 
@@ -63,6 +64,7 @@ class FileLayoutStore:
         return list(json.loads(content))
 
     def save(self, layout_ids: Sequence[str]) -> None:
+        """Save the layout to the JSON file."""
         self.path.parent.mkdir(parents=True, exist_ok=True)
         serialized = json.dumps(list(layout_ids), indent=2)
         self.path.write_text(serialized, encoding="utf-8")
@@ -72,10 +74,13 @@ class InMemoryLayoutStore:
     """Testing helper that keeps layout state in memory only."""
 
     def __init__(self, layout: Iterable[str] | None = None) -> None:
+        """Initialize with an optional initial layout."""
         self._layout = list(layout) if layout else []
 
     def load(self) -> list[str]:
+        """Return the current in-memory layout."""
         return list(self._layout)
 
     def save(self, layout_ids: Sequence[str]) -> None:
+        """Update the in-memory layout."""
         self._layout = list(layout_ids)

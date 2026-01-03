@@ -37,6 +37,7 @@ class SelectionDialog(QDialog):  # type: ignore[misc]
     """Dialog that allows users to pick an app from a provided list."""
 
     def __init__(self, title: str, apps: Iterable[AppDefinition]) -> None:
+        """Initialize the dialog with a title and list of apps."""
         super().__init__()
         self.setWindowTitle(title)
         self.setModal(True)
@@ -62,6 +63,7 @@ class SelectionDialog(QDialog):  # type: ignore[misc]
         self.setLayout(layout)
 
     def _on_accept(self) -> None:
+        """Handle OK button click."""
         selected_items = self.list_widget.selectedItems()
         if not selected_items:
             QMessageBox.information(
@@ -77,6 +79,7 @@ class LauncherWindow(QMainWindow):  # type: ignore[misc]
     """Main window hosting the tile-based launcher experience."""
 
     def __init__(self, manager: AppManager) -> None:
+        """Initialize the main window."""
         super().__init__()
         self.manager = manager
         self.edit_mode = False
@@ -111,6 +114,7 @@ class LauncherWindow(QMainWindow):  # type: ignore[misc]
         self._apply_dark_theme()
 
     def _build_header(self) -> QHBoxLayout:
+        """Create the header row with action buttons."""
         button_row = QHBoxLayout()
 
         add_button = QPushButton("Add Tile")
@@ -134,6 +138,7 @@ class LauncherWindow(QMainWindow):  # type: ignore[misc]
         return button_row
 
     def _apply_dark_theme(self) -> None:
+        """Apply a dark color scheme to the window."""
         palette = QPalette()
         palette.setColor(QPalette.ColorRole.Window, Qt.GlobalColor.black)
         palette.setColor(QPalette.ColorRole.WindowText, Qt.GlobalColor.white)
@@ -163,6 +168,7 @@ class LauncherWindow(QMainWindow):  # type: ignore[misc]
         )
 
     def _refresh_tiles(self) -> None:
+        """Reload the list of tiles from the manager."""
         self.tiles.clear()
         for app in self.manager.apps_in_layout():
             item = QListWidgetItem()
@@ -174,6 +180,7 @@ class LauncherWindow(QMainWindow):  # type: ignore[misc]
             self.tiles.addItem(item)
 
     def _icon_for_app(self, app: AppDefinition) -> QIcon:
+        """Load the icon for the given app, or a fallback."""
         icon_path = self._logo_path(app)
         if icon_path and icon_path.exists():
             pixmap = QPixmap(str(icon_path)).scaled(
@@ -186,23 +193,27 @@ class LauncherWindow(QMainWindow):  # type: ignore[misc]
         return QIcon(fallback)
 
     def _logo_path(self, app: AppDefinition) -> Path | None:
+        """Resolve the full path to the app's logo."""
         if not app.logo:
             return None
         return self.manager.repository_root / app.logo  # type: ignore[no-any-return]
 
     def _add_tile(self) -> None:
+        """Show the dialog to add a new tile."""
         dialog = SelectionDialog("Add Tile", self.manager.available_to_add())
         if dialog.exec() == QDialog.DialogCode.Accepted and dialog.selected_id:
             self.manager.add_app(dialog.selected_id)
             self._refresh_tiles()
 
     def _remove_tile(self) -> None:
+        """Show the dialog to remove an existing tile."""
         dialog = SelectionDialog("Remove Tile", self.manager.apps_in_layout())
         if dialog.exec() == QDialog.DialogCode.Accepted and dialog.selected_id:
             self.manager.remove_app(dialog.selected_id)
             self._refresh_tiles()
 
     def _toggle_edit_mode(self) -> None:
+        """Toggle the layout modification mode (drag and drop)."""
         self.edit_mode = not self.edit_mode
         self.modify_button.setChecked(self.edit_mode)
         if self.edit_mode:
@@ -218,10 +229,12 @@ class LauncherWindow(QMainWindow):  # type: ignore[misc]
             self._sync_layout_from_view()
 
     def _reset_layout(self) -> None:
+        """Reset the layout to the default state."""
         self.manager.reset_layout()
         self._refresh_tiles()
 
     def _sync_layout_from_view(self) -> None:
+        """Update the manager's layout order based on the current view."""
         ordered_ids: list[str] = []
         for index in range(self.tiles.count()):
             item = self.tiles.item(index)
@@ -231,6 +244,7 @@ class LauncherWindow(QMainWindow):  # type: ignore[misc]
             self.manager.reorder(ordered_ids)
 
     def _launch_selected(self, item: QListWidgetItem) -> None:
+        """Launch the app corresponding to the clicked tile."""
         if self.edit_mode:
             return
 
@@ -239,6 +253,7 @@ class LauncherWindow(QMainWindow):  # type: ignore[misc]
         self._launch_app(app)
 
     def _launch_app(self, app: AppDefinition) -> None:
+        """Execute the launch logic for the given app."""
         target_path = app.resolved_path(self.manager.repository_root)
         if not target_path.exists():
             QMessageBox.warning(
@@ -276,14 +291,16 @@ class LauncherWindow(QMainWindow):  # type: ignore[misc]
 
     @staticmethod
     def _open_file(target_path: Path) -> None:
+        """Open a file using the system default handler."""
         if sys.platform.startswith("win"):
-            os.startfile(target_path)
+            os.startfile(target_path)  # type: ignore[attr-defined]
         elif sys.platform == "darwin":
             subprocess.Popen(["open", str(target_path)])
         else:
             subprocess.Popen(["xdg-open", str(target_path)])
 
     def _launch_batch(self, target_path: Path, app_name: str) -> None:
+        """Launch a Windows batch file."""
         if sys.platform.startswith("win"):
             subprocess.Popen(["cmd", "/c", str(target_path)])
             return

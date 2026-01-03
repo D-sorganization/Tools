@@ -157,6 +157,7 @@ class FolderProcessorApp:
         # Set application icon
         self._setup_application_icon()
 
+        self.icon_photos: list[tk.PhotoImage] = []
         # --- UI Variables ---
         self.source_folders: list[str] = []
         self.dest_folder = ""
@@ -506,7 +507,7 @@ class FolderProcessorApp:
         """Sets the Windows app user model ID for taskbar grouping."""
         try:
             if sys.platform == "win32":
-                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
+                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(  # type: ignore[attr-defined]
                     "FolderFix.Tool.2.0",
                 )
                 logger.info("Set Windows App User Model ID for taskbar grouping")
@@ -516,7 +517,7 @@ class FolderProcessorApp:
     def _load_ico_icon(self, ico_path: str) -> None:
         """Loads and sets the ICO icon for the application."""
         # Use iconbitmap for Windows taskbar integration
-        self.root.iconbitmap(ico_path)
+        self.root.iconbitmap(ico_path)  # type: ignore[no-untyped-call]
         logger.info(f"Loaded ICO icon for taskbar: {ico_path}")
 
         # Also set iconphoto with multiple sizes for better display
@@ -545,6 +546,7 @@ class FolderProcessorApp:
 
             # Set all sizes at once for best scaling
             if photos:
+                # Mypy doesn't like passing list of PhotoImage to iconphoto (expects *args)
                 self.root.iconphoto(True, *photos)
                 # Keep references to prevent garbage collection
                 self.icon_photos = photos
@@ -574,6 +576,7 @@ class FolderProcessorApp:
                 photos.append(photo)
 
             if photos:
+                # Mypy doesn't like passing list of PhotoImage to iconphoto (expects *args)
                 self.root.iconphoto(True, *photos)
                 # Keep references to prevent garbage collection
                 self.icon_photos = photos

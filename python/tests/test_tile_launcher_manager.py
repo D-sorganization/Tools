@@ -11,6 +11,7 @@ from tile_launcher.models import AppDefinition, InMemoryLayoutStore, LaunchType
 
 @pytest.fixture()
 def sample_catalog() -> list[AppDefinition]:
+    """Provide a sample catalog for testing."""
     return [
         AppDefinition(
             id="alpha",
@@ -36,6 +37,7 @@ def sample_catalog() -> list[AppDefinition]:
 def test_defaults_when_layout_missing(
     sample_catalog: list[AppDefinition], tmp_path: Path
 ) -> None:
+    """Ensure that the default layout includes all apps if no layout is saved."""
     manager = AppManager(
         catalog=sample_catalog,
         repository_root=tmp_path,
@@ -48,6 +50,7 @@ def test_defaults_when_layout_missing(
 def test_add_remove_and_reorder(
     sample_catalog: list[AppDefinition], tmp_path: Path
 ) -> None:
+    """Test adding, removing, and reordering apps in the layout."""
     store = InMemoryLayoutStore(["alpha", "beta"])
     manager = AppManager(
         catalog=sample_catalog, repository_root=tmp_path, layout_store=store
@@ -69,6 +72,7 @@ def test_add_remove_and_reorder(
 def test_available_to_add_sorted(
     sample_catalog: list[AppDefinition], tmp_path: Path
 ) -> None:
+    """Ensure that apps not in the layout are available to add."""
     manager = AppManager(
         catalog=sample_catalog,
         repository_root=tmp_path,
@@ -80,6 +84,7 @@ def test_available_to_add_sorted(
 
 
 def test_load_catalog_rejects_duplicates(tmp_path: Path) -> None:
+    """Ensure that duplicate app IDs in the catalog raise an error."""
     catalog_path = tmp_path / "catalog.json"
     catalog_path.write_text(
         """

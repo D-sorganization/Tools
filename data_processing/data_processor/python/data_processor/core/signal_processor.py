@@ -17,6 +17,7 @@ class SignalProcessor:
     filter_engine: VectorizedFilterEngine | None = None
 
     def __post_init__(self) -> None:
+        """Initialize the logger and filter engine after dataclass initialization."""
         self.logger = get_logger(__name__)
         if self.filter_engine is None:
             # Default to sequential processing for predictable resource usage.
@@ -52,6 +53,7 @@ class SignalProcessor:
         )
 
     def _validate_dataframe(self, df: pd.DataFrame) -> None:
+        """Ensure the input dataframe is valid and non-empty."""
         if df.empty:
             msg = "Cannot filter an empty dataframe"
             raise ValueError(msg)
