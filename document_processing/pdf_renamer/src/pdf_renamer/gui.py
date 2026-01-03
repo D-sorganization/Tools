@@ -703,19 +703,6 @@ class PDFRenamerGUI(QMainWindow):
         else:
             QMessageBox.critical(self, "Processing Failed", message)
 
-
-def main():
-    """Main entry point for GUI."""
-    app = QApplication(sys.argv)
-    app.setStyle("Fusion")  # Modern look
-    window = PDFRenamerGUI()
-    window.show()
-    sys.exit(app.exec())
-
-
-if __name__ == "__main__":
-    main()
-
     def generate_proposals(self):
         """Generate API-based rename proposals."""
         directory = self.api_dir_input.text()
@@ -933,3 +920,16 @@ if __name__ == "__main__":
                 )
         except Exception as e:
             QMessageBox.critical(self, "API Key Test", f"❌ API key test failed: {e}")
+
+
+def main():
+    """Main entry point for GUI."""
+    app = QApplication(sys.argv)
+    app.setStyle("Fusion")  # Modern look
+    window = PDFRenamerGUI()
+    window.show()
+    sys.exit(app.exec())
+
+
+if __name__ == "__main__":
+    main()

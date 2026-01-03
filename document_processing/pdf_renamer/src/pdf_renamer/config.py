@@ -39,7 +39,7 @@ def get_api_key(key_name: str = "GEMINI_API_KEY") -> str | None:
     Get API key from multiple sources with priority order.
 
     Priority:
-    1. Environment variable (current session)
+    1. Environment variable (current session) - checks both GEMINI_API_KEY and GOOGLE_API_KEY
     2. .env file in project root
     3. .env file in Tools folder
     4. .env file in user home (~/.pdf_renamer/.env)
@@ -50,8 +50,8 @@ def get_api_key(key_name: str = "GEMINI_API_KEY") -> str | None:
     Returns:
         API key string or None if not found
     """
-    # First check environment variable
-    api_key = os.environ.get(key_name)
+    # Check both old and new environment variable names
+    api_key = os.environ.get(key_name) or os.environ.get("GOOGLE_API_KEY")
     if api_key:
         return api_key
 
@@ -62,6 +62,9 @@ def get_api_key(key_name: str = "GEMINI_API_KEY") -> str | None:
         Path.home() / ".pdf_renamer" / ".env",  # User home
     ]
 
+    # Check for both key names in .env files
+    key_names = [key_name, "GOOGLE_API_KEY", "GEMINI_API_KEY"]
+
     for env_path in env_locations:
         if env_path.exists():
             try:
@@ -70,7 +73,7 @@ def get_api_key(key_name: str = "GEMINI_API_KEY") -> str | None:
                         line = line.strip()
                         if line and not line.startswith("#") and "=" in line:
                             var_name, var_value = line.split("=", 1)
-                            if var_name.strip() == key_name:
+                            if var_name.strip() in key_names:
                                 return var_value.strip().strip('"').strip("'")
             except Exception:
                 continue
@@ -144,7 +147,10 @@ def setup_api_key_interactive() -> bool:
         if env_path.exists():
             with open(env_path) as f:
                 existing_content = [
-                    line for line in f if not line.strip().startswith("GEMINI_API_KEY")
+                    line
+                    for line in f
+                    if not line.strip().startswith("GEMINI_API_KEY")
+                    and not line.strip().startswith("GOOGLE_API_KEY")
                 ]
 
         # Write new content
@@ -153,8 +159,9 @@ def setup_api_key_interactive() -> bool:
             f.write("# PDF Renamer Configuration\n")
             f.write("# Auto-generated API key configuration\n\n")
 
-            # Write API key
+            # Write API key with both names for compatibility
             f.write(f"GEMINI_API_KEY={api_key}\n")
+            f.write(f"GOOGLE_API_KEY={api_key}\n")
 
             # Write back other existing variables
             if existing_content:
@@ -177,7 +184,7 @@ def setup_api_key_interactive() -> bool:
 
 def _find_key_location() -> str:
     """Find where the API key is configured."""
-    if os.environ.get("GEMINI_API_KEY"):
+    if os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY"):
         return "Environment variable"
 
     env_locations = [
@@ -191,7 +198,9 @@ def _find_key_location() -> str:
             try:
                 with open(env_path) as f:
                     for line in f:
-                        if line.strip().startswith("GEMINI_API_KEY="):
+                        if line.strip().startswith(
+                            "GEMINI_API_KEY="
+                        ) or line.strip().startswith("GOOGLE_API_KEY="):
                             return f"{location} ({env_path})"
             except Exception:
                 continue
