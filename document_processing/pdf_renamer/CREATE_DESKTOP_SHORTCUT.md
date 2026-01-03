@@ -99,7 +99,7 @@ If you want to change the icon:
 1. **Right-click** the desktop shortcut
 2. Select **"Properties"**
 3. Click **"Change Icon..."**
-4. Browse to choose a different icon file
+4. Browse to choose a different icon file (or `C:\Windows\System32\shell32.dll` for system icons)
 5. Click **"OK"** twice
 
 ---

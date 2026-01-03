@@ -147,7 +147,7 @@ def setup_api_key_interactive() -> bool:
         if env_path.exists():
             with open(env_path) as f:
                 existing_content = [
-                    line for line in f if not line.strip().startswith("GEMINI_API_KEY")
+                    line for line in f if not line.strip().startswith("GEMINI_API_KEY") and not line.strip().startswith("GOOGLE_API_KEY")
                 ]
 
         # Write new content
@@ -181,7 +181,7 @@ def setup_api_key_interactive() -> bool:
 
 def _find_key_location() -> str:
     """Find where the API key is configured."""
-    if os.environ.get("GEMINI_API_KEY"):
+    if os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY"):
         return "Environment variable"
 
     env_locations = [
@@ -195,7 +195,7 @@ def _find_key_location() -> str:
             try:
                 with open(env_path) as f:
                     for line in f:
-                        if line.strip().startswith("GEMINI_API_KEY="):
+                        if line.strip().startswith("GEMINI_API_KEY=") or line.strip().startswith("GOOGLE_API_KEY="):
                             return f"{location} ({env_path})"
             except Exception:
                 continue

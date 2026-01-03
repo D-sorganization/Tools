@@ -703,6 +703,7 @@ class PDFRenamerGUI(QMainWindow):
         else:
             QMessageBox.critical(self, "Processing Failed", message)
 
+>>>>>>> origin/main
     def generate_proposals(self):
         """Generate API-based rename proposals."""
         directory = self.api_dir_input.text()
@@ -933,3 +934,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+if __name__ == "__main__":
+    main()
+=======
+>>>>>>> origin/main
