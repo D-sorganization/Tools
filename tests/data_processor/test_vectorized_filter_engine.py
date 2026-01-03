@@ -1,23 +1,31 @@
+import os
 import sys
 import unittest
 
 import numpy as np
 import pandas as pd
 
-# Add the project root to path to verify imports
-project_root = r"c:\Users\diete\Repositories\Tools\data_processing\data_processor\python\data_processor"
+# Adjust path to find the module under test
+# This is required because the test file is outside the package structure
+current_dir = os.path.dirname(os.path.abspath(__file__))
+# Go up two levels to reach the repo root, then down to the package
+project_root = os.path.abspath(
+    os.path.join(
+        current_dir, "../../data_processing/data_processor/python/data_processor"
+    )
+)
 sys.path.insert(0, project_root)
 
-# Mock constants if import fails
 try:
     from vectorized_filter_engine import VectorizedFilterEngine
 except ImportError:
-    # If standard import fails, we might need to adjust path or mock modules
-    pass
+    # Fail loudly if we can't import the module under test
+    raise
 
 
 class TestVectorizedFilterEngine(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
+        """Initialize the test environment with a fresh engine and synthetic data."""
         self.engine = VectorizedFilterEngine()
 
         # Create synthetic data
@@ -29,7 +37,8 @@ class TestVectorizedFilterEngine(unittest.TestCase):
             {"Time": self.t, "Clean": self.signal, "Noisy": self.noisy_signal}
         )
 
-    def test_apply_moving_average_vectorized(self):
+    def test_apply_moving_average_vectorized(self) -> None:
+        """Test the vectorized moving average filter."""
         params = {"ma_window": 5}
         result = self.engine._apply_moving_average_vectorized(self.df["Clean"], params)
 
@@ -42,7 +51,8 @@ class TestVectorizedFilterEngine(unittest.TestCase):
         # but the engine handles it preserving length.
         self.assertFalse(result.isna().all())
 
-    def test_apply_butterworth_vectorized(self):
+    def test_apply_butterworth_vectorized(self) -> None:
+        """Test the vectorized Butterworth filter."""
         params = {
             "bw_order": 2,
             "bw_cutoff": 0.5,
@@ -56,12 +66,14 @@ class TestVectorizedFilterEngine(unittest.TestCase):
         result = self.engine._apply_butterworth_vectorized(self.df["Clean"], params)
         self.assertEqual(len(result), 100)
 
-    def test_apply_median_vectorized(self):
+    def test_apply_median_vectorized(self) -> None:
+        """Test the vectorized median filter."""
         params = {"median_kernel": 5}
         result = self.engine._apply_median_vectorized(self.df["Clean"], params)
         self.assertEqual(len(result), 100)
 
-    def test_apply_hampel_vectorized(self):
+    def test_apply_hampel_vectorized(self) -> None:
+        """Test the vectorized Hampel filter (outlier removal)."""
         # Add an outlier
         outlier_sig = self.df["Clean"].copy()
         outlier_sig.iloc[50] = 100.0
@@ -73,7 +85,8 @@ class TestVectorizedFilterEngine(unittest.TestCase):
         self.assertNotEqual(result.iloc[50], 100.0)
         self.assertLess(result.iloc[50], 2.0)
 
-    def test_apply_zscore_vectorized(self):
+    def test_apply_zscore_vectorized(self) -> None:
+        """Test the vectorized Z-score filter (outlier removal)."""
         # Add an outlier
         outlier_sig = self.df["Clean"].copy()
         outlier_sig.iloc[50] = 100.0
@@ -84,12 +97,14 @@ class TestVectorizedFilterEngine(unittest.TestCase):
         # Outlier should be removed
         self.assertNotEqual(result.iloc[50], 100.0)
 
-    def test_apply_savgol_vectorized(self):
+    def test_apply_savgol_vectorized(self) -> None:
+        """Test the vectorized Savitzky-Golay filter."""
         params = {"savgol_window": 11, "savgol_polyorder": 2}
         result = self.engine._apply_savgol_vectorized(self.df["Clean"], params)
         self.assertEqual(len(result), 100)
 
-    def test_batch_processing(self):
+    def test_batch_processing(self) -> None:
+        """Test applying filters in batch to multiple columns."""
         params = {"ma_window": 5}
         result_df = self.engine.apply_filter_batch(
             self.df, "Moving Average", params, signal_names=["Clean", "Noisy"]
