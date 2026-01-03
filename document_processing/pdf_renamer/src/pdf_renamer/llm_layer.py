@@ -18,7 +18,11 @@ class GeminiTitleLLM:
 
             self.genai = genai
             # Try multiple sources for API key - check both old and new env var names
-            key = api_key or get_api_key("GEMINI_API_KEY") or get_api_key("GOOGLE_API_KEY")
+            key = (
+                api_key
+                or get_api_key("GEMINI_API_KEY")
+                or get_api_key("GOOGLE_API_KEY")
+            )
             if not key:
                 logger.warning(
                     "API key not found. Checked: GEMINI_API_KEY, GOOGLE_API_KEY in environment variables, "
@@ -33,7 +37,13 @@ class GeminiTitleLLM:
                 except Exception as e:
                     logger.warning(f"Failed to create model '{model_name}': {e}")
                     # Try fallback model names
-                    fallback_models = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro", "gemini-pro"]
+                    fallback_models = [
+                        "gemini-2.5-flash",
+                        "gemini-2.0-flash",
+                        "gemini-1.5-flash",
+                        "gemini-1.5-pro",
+                        "gemini-pro",
+                    ]
                     for fallback in fallback_models:
                         try:
                             logger.info(f"Trying fallback model: {fallback}")
@@ -41,7 +51,9 @@ class GeminiTitleLLM:
                             logger.info(f"Successfully using model: {fallback}")
                             break
                         except Exception as fallback_error:
-                            logger.warning(f"Fallback model '{fallback}' failed: {fallback_error}")
+                            logger.warning(
+                                f"Fallback model '{fallback}' failed: {fallback_error}"
+                            )
                             continue
                     else:
                         logger.error("All model attempts failed")
@@ -52,7 +64,9 @@ class GeminiTitleLLM:
 
     def extract_title(self, pdf_path: Path) -> TitleResult:
         if not self.genai or not self.model:
-            return TitleResult(None, 0.0, "llm", "Gemini API not available or model not initialized")
+            return TitleResult(
+                None, 0.0, "llm", "Gemini API not available or model not initialized"
+            )
 
         uploaded_file = None
         try:
