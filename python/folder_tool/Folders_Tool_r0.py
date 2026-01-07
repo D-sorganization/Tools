@@ -507,7 +507,7 @@ class FolderProcessorApp:
         """Sets the Windows app user model ID for taskbar grouping."""
         try:
             if sys.platform == "win32":
-                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(  # type: ignore[attr-defined]
+                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
                     "FolderFix.Tool.2.0",
                 )
                 logger.info("Set Windows App User Model ID for taskbar grouping")
@@ -517,7 +517,7 @@ class FolderProcessorApp:
     def _load_ico_icon(self, ico_path: str) -> None:
         """Loads and sets the ICO icon for the application."""
         # Use iconbitmap for Windows taskbar integration
-        self.root.iconbitmap(ico_path)  # type: ignore[no-untyped-call]
+        self.root.iconbitmap(ico_path)
         logger.info(f"Loaded ICO icon for taskbar: {ico_path}")
 
         # Also set iconphoto with multiple sizes for better display
@@ -547,9 +547,9 @@ class FolderProcessorApp:
             # Set all sizes at once for best scaling
             if photos:
                 # Mypy doesn't like passing list of PhotoImage to iconphoto (expects *args)
-                self.root.iconphoto(True, *photos)
+                self.root.iconphoto(True, *photos)  # type: ignore[arg-type]
                 # Keep references to prevent garbage collection
-                self.icon_photos = photos
+                self.icon_photos = photos  # type: ignore[assignment]
                 logger.info(f"Set iconphoto with {len(photos)} different sizes")
 
         except Exception as e:
@@ -577,9 +577,9 @@ class FolderProcessorApp:
 
             if photos:
                 # Mypy doesn't like passing list of PhotoImage to iconphoto (expects *args)
-                self.root.iconphoto(True, *photos)
+                self.root.iconphoto(True, *photos)  # type: ignore[arg-type]
                 # Keep references to prevent garbage collection
-                self.icon_photos = photos
+                self.icon_photos = photos  # type: ignore[assignment]
                 logger.info(f"Loaded PNG icon: {png_path}")
         else:
             logger.warning(

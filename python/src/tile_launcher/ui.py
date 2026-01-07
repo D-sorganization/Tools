@@ -33,7 +33,7 @@ from tile_launcher.models import AppDefinition, LaunchType
 logger = logging.getLogger(__name__)
 
 
-class SelectionDialog(QDialog):  # type: ignore[misc]
+class SelectionDialog(QDialog):
     """Dialog that allows users to pick an app from a provided list."""
 
     def __init__(self, title: str, apps: Iterable[AppDefinition]) -> None:
@@ -75,7 +75,7 @@ class SelectionDialog(QDialog):  # type: ignore[misc]
         self.accept()
 
 
-class LauncherWindow(QMainWindow):  # type: ignore[misc]
+class LauncherWindow(QMainWindow):
     """Main window hosting the tile-based launcher experience."""
 
     def __init__(self, manager: AppManager) -> None:
