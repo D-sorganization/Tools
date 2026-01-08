@@ -652,6 +652,7 @@ class ImmersionChecklistPanel:
         style: PanelStyle = None,
         tasks: list[ImmersionTask] | None = None,
     ):
+        """Initialize the checklist panel."""
         self.position = position
         self.width = width
         self.style = style or PanelStyle()
@@ -660,6 +661,7 @@ class ImmersionChecklistPanel:
         self._initialize_tasks(tasks)
 
     def _initialize_tasks(self, tasks: list[ImmersionTask] | None):
+        """Initialize checklist with default or provided tasks."""
         default_tasks = tasks or [
             ImmersionTask(
                 task_id="select_body",
@@ -759,24 +761,29 @@ class SettingsPanel:
     """
 
     def __init__(self, position: tuple[int, int] = (20, 500), style: PanelStyle = None):
+        """Initialize the settings panel."""
         self.position = position
         self.style = style or PanelStyle()
         self.visible = False
         self.checkboxes: list[Checkbox] = []
 
     def add_checkbox(self, label: str, checked: bool, action: str):
+        """Add a checkbox setting."""
         self.checkboxes.append(Checkbox(label, checked, action))
 
     def toggle_checkbox(self, index: int) -> str | None:
+        """Toggle a checkbox by index."""
         if 0 <= index < len(self.checkboxes):
             self.checkboxes[index].checked = not self.checkboxes[index].checked
             return self.checkboxes[index].action
         return None
 
     def toggle(self):
+        """Toggle panel visibility."""
         self.visible = not self.visible
 
     def get_render_data(self) -> dict[str, Any]:
+        """Get render data for settings panel."""
         return {
             "position": self.position,
             "checkboxes": self.checkboxes,
@@ -791,6 +798,7 @@ class NavigationPanel:
     """
 
     def __init__(self, position: tuple[int, int] = (20, 300), style: PanelStyle = None):
+        """Initialize navigation panel."""
         self.position = position
         self.style = style or PanelStyle()
         self.visible = True
@@ -798,14 +806,17 @@ class NavigationPanel:
         self.current_mode_index = 0  # 0=Orbit
 
     def set_mode(self, mode_name: str):
+        """Set the current navigation mode."""
         if mode_name in self.modes:
             self.current_mode_index = self.modes.index(mode_name)
 
     def cycle_mode(self) -> str:
+        """Cycle to the next navigation mode."""
         self.current_mode_index = (self.current_mode_index + 1) % len(self.modes)
         return self.modes[self.current_mode_index]
 
     def get_current_mode(self) -> str:
+        """Get the current navigation mode name."""
         return self.modes[self.current_mode_index]
 
 
@@ -827,6 +838,7 @@ class SidebarPanel:
         height: int = 600,
         style: PanelStyle = None,
     ):
+        """Initialize sidebar panel."""
         self.position = position
         self.width = 380
         self.height = height
@@ -841,10 +853,12 @@ class SidebarPanel:
         ]
 
     def set_tab(self, index: int):
+        """Set active tab index."""
         if 0 <= index < len(self.tabs):
             self.current_tab_index = index
 
     def handle_click(self, rel_x: int, rel_y: int) -> str | None:
+        """Handle mouse click on sidebar."""
         # Simple tab hit detection
         tab_width = self.width // len(self.tabs)
         header_height = 35
@@ -856,6 +870,7 @@ class SidebarPanel:
         return None
 
     def get_render_data(self) -> dict[str, Any]:
+        """Get render data for sidebar."""
         return {
             "position": self.position,
             "width": self.width,
@@ -889,6 +904,7 @@ class UnifiedControlPanel:
         width: int = 800,
         style: PanelStyle = None,
     ):
+        """Initialize unified control panel."""
         self.position = position
         self.width = width
         self.height = 140  # Increased height for more toggles
@@ -900,25 +916,31 @@ class UnifiedControlPanel:
         self.buttons: list[Button] = []
 
     def add_checkbox(self, label: str, checked: bool, action: str):
+        """Add a checkbox setting."""
         self.checkboxes.append(Checkbox(label, checked, action))
 
     def add_button(self, label: str, action: str):
+        """Add a button."""
         self.buttons.append(Button(label, action))
 
     def toggle_checkbox(self, index: int) -> str | None:
+        """Toggle checkbox by index."""
         if 0 <= index < len(self.checkboxes):
             self.checkboxes[index].checked = not self.checkboxes[index].checked
             return self.checkboxes[index].action
         return None
 
     def set_mode(self, mode_name: str):
+        """Set navigation mode."""
         if mode_name in self.modes:
             self.current_mode_index = self.modes.index(mode_name)
 
     def get_current_mode(self) -> str:
+        """Get current navigation mode name."""
         return self.modes[self.current_mode_index]
 
     def get_render_data(self) -> dict[str, Any]:
+        """Get render data for unified control panel."""
         return {
             "position": self.position,
             "width": self.width,

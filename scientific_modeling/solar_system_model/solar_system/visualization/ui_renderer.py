@@ -144,6 +144,7 @@ class UIRenderer:
         self.drawn_labels: list[pygame.Rect] = []
 
     def update_dimensions(self, width: int, height: int):
+        """Update window dimensions for UI rendering."""
         self.window_width = width
         self.window_height = height
 
@@ -238,6 +239,7 @@ class UIRenderer:
         self.text_cache.render(text, final_pos[0], final_pos[1], "default", color)
 
     def render_status_bar(self, text: str):
+        """Render a status bar at the bottom of the screen."""
         self.begin_2d()
         y = self.window_height - 30
         self.draw_rect(0, y - 5, self.window_width, 35, (0.0, 0.0, 0.0, 0.7))
@@ -245,6 +247,7 @@ class UIRenderer:
         self.end_2d()
 
     def render_help_overlay(self, help_data: dict[str, Any]):
+        """Render the help overlay with controls list."""
         if not help_data.get("visible", False):
             return
 
@@ -294,6 +297,7 @@ class UIRenderer:
         self.end_2d()
 
     def render_date_picker(self, picker_data: dict[str, Any]):
+        """Render the date picker widget."""
         if not picker_data.get("visible", False):
             return
 
@@ -325,6 +329,7 @@ class UIRenderer:
     def render_sidebar(
         self, sidebar_data: dict[str, Any], content_data: dict[str, Any] | None
     ):
+        """Render the sidebar with tabs and content."""
         if not sidebar_data.get("visible", False):
             return
 
@@ -387,6 +392,7 @@ class UIRenderer:
                 self.render_planet_selector(content_data)
 
     def render_educational_panel(self, edu_data: dict[str, Any]):
+        """Render educational information about selected body."""
         if not edu_data.get("visible", False):
             return
 
@@ -441,6 +447,7 @@ class UIRenderer:
         self.end_2d()
 
     def render_historical_events(self, events_data: dict[str, Any]):
+        """Render list of historical events."""
         if not events_data.get("visible", False):
             return
 
@@ -474,6 +481,7 @@ class UIRenderer:
         self.end_2d()
 
     def render_immersion_checklist(self, checklist_data: dict[str, Any]):
+        """Render the immersion checklist."""
         if not checklist_data.get("visible", False):
             return
 
@@ -510,6 +518,7 @@ class UIRenderer:
     def render_unified_controls(
         self, ctrl_data: dict[str, Any], time_data: dict[str, Any]
     ):
+        """Render the unified control panel."""
         if not ctrl_data.get("visible", False):
             return
 

@@ -117,8 +117,20 @@ class ViewState:
 
 
 class SolarSystemScene:
+    """
+    Main scene controller for the Solar System simulation.
+
+    Handles initialization, updates, event handling, and rendering coordination
+    for celestial bodies, trajectories, and UI elements.
+    """
 
     def __init__(self, settings: RenderSettings | None = None):
+        """
+        Initialize the Solar System scene.
+
+        Args:
+            settings: Optional rendering settings. If None, default settings are used.
+        """
         self.settings = settings or RenderSettings()
         self.renderer: Renderer | None = None
         self.time_manager = TimeManager()
@@ -208,6 +220,12 @@ class SolarSystemScene:
         self._last_ui_sync_jd: float | None = None
 
     def initialize(self) -> bool:
+        """
+        Initialize the scene, renderer, and simulation state.
+
+        Returns:
+            True if initialization was successful, False otherwise.
+        """
         # Create renderer
         self.renderer = Renderer(self.settings)
         if not self.renderer.initialize():
@@ -323,6 +341,7 @@ class SolarSystemScene:
         self._mark_immersion_task("navigate_time")
 
     def _create_solar_system(self) -> None:
+        """Create and populate the solar system with celestial bodies."""
         # Create the Sun
         self.sun = Star("Sun")
 
@@ -367,6 +386,12 @@ class SolarSystemScene:
             self.comets[comet.name] = comet_body
 
     def get_all_bodies(self) -> list[CelestialBody]:
+        """
+        Get a list of all celestial bodies in the scene.
+
+        Returns:
+            A list containing the Sun, planets, moons, asteroids, comets, and spacecraft.
+        """
         bodies: list[CelestialBody] = []
         if self.sun:
             bodies.append(self.sun)
@@ -378,6 +403,15 @@ class SolarSystemScene:
         return bodies
 
     def get_body_by_name(self, name: str) -> CelestialBody | None:
+        """
+        Retrieve a celestial body by its name.
+
+        Args:
+            name: The name of the body to retrieve.
+
+        Returns:
+            The CelestialBody object if found, otherwise None.
+        """
         if name == "Sun":
             return self.sun
         if name in self.planets:
@@ -393,6 +427,12 @@ class SolarSystemScene:
         return None
 
     def select_body(self, body: CelestialBody) -> None:
+        """
+        Select a celestial body in the scene.
+
+        Args:
+            body: The CelestialBody to select.
+        """
         self.selected_body = body
         if self.renderer:
             self.renderer.selected_body = body
@@ -404,6 +444,17 @@ class SolarSystemScene:
         destination_name: str,
         departure_date: float | None = None,
     ) -> TransferTrajectory | None:
+        """
+        Plan a transfer trajectory between two celestial bodies.
+
+        Args:
+            origin_name: Name of the origin body.
+            destination_name: Name of the destination body.
+            departure_date: Optional departure date (Julian Date). If None, uses current time.
+
+        Returns:
+            The calculated TransferTrajectory if successful, otherwise None.
+        """
         origin = self.get_body_by_name(origin_name)
         destination = self.get_body_by_name(destination_name)
 
@@ -431,6 +482,13 @@ class SolarSystemScene:
         return trajectory
 
     def run(self):
+        """
+        Run the main simulation loop.
+
+        This method blocks until the simulation exits.
+        Raises:
+            RuntimeError: If the scene has not been initialized.
+        """
         if not self.renderer:
             raise RuntimeError("Scene not initialized. Call initialize() first.")
 
@@ -450,6 +508,12 @@ class SolarSystemScene:
         self.renderer.cleanup()
 
     def _handle_events(self) -> bool:
+        """
+        Process all pending Pygame events.
+
+        Returns:
+            False if a quit event was received, True otherwise.
+        """
         for event in pygame.event.get():
             if event.type == QUIT:
                 return False
@@ -836,6 +900,7 @@ class SolarSystemScene:
         camera.set_mode(new_mode, self.selected_body)
 
     def _focus_on_selected(self) -> None:
+        """Focus the camera on the currently selected body."""
         if not self.selected_body or not self.renderer:
             return
 
@@ -854,6 +919,7 @@ class SolarSystemScene:
             self.renderer.camera.set_distance(15)
 
     def _update(self) -> None:
+        """Update the simulation state (time, physics, camera)."""
         # Update time
         delta_jd = self.time_manager.update()
 
@@ -873,6 +939,7 @@ class SolarSystemScene:
             )
 
     def _render(self) -> None:
+        """Render the current frame."""
         if not self.renderer:
             return
         renderer = self.renderer
@@ -905,6 +972,12 @@ class SolarSystemScene:
         renderer.end_frame()
 
     def _render_view_contents(self, julian_date: float) -> None:
+        """
+        Render the 3D contents of the view (bodies, stars, orbits).
+
+        Args:
+            julian_date: The current simulation time.
+        """
         if not self.renderer:
             return
         renderer = self.renderer
@@ -980,6 +1053,12 @@ class SolarSystemScene:
                     renderer.render_label("🚀 " + spacecraft.name, pos, (0, 255, 128))
 
     def _render_overlays(self, julian_date: float) -> None:
+        """
+        Render 2D UI overlays (sidebar, controls, HUD).
+
+        Args:
+            julian_date: The current simulation time.
+        """
         if not self.renderer:
             return
         renderer = self.renderer
@@ -1063,6 +1142,15 @@ class SolarSystemScene:
         renderer.render_compass(renderer.camera.yaw)
 
     def _should_render_body(self, body: CelestialBody) -> bool:
+        """
+        Determine if a celestial body should be rendered based on view settings.
+
+        Args:
+            body: The body to check.
+
+        Returns:
+            True if the body is visible, False otherwise.
+        """
         # Check granular visibility flags
         if body.name in INNER_PLANETS:
             return self.view_state.show_inner_planets
@@ -1084,6 +1172,16 @@ class SolarSystemScene:
     def get_transfer_summary(
         self, origin_name: str, destination_name: str
     ) -> dict[str, Any] | None:
+        """
+        Get a summary of a potential transfer between two bodies.
+
+        Args:
+            origin_name: Name of the origin body.
+            destination_name: Name of the destination body.
+
+        Returns:
+            A dictionary with transfer details, or None if bodies are invalid.
+        """
         origin = self.get_body_by_name(origin_name)
         destination = self.get_body_by_name(destination_name)
 
@@ -1099,7 +1197,7 @@ class SolarSystemScene:
         # 1. Check Date Picker
         if self.date_picker and self.date_picker.visible:
             # Add logic if DatePicker had proper hit testing exposed
-            pass
+            pass  # Placeholder for future hit testing logic
 
         # 2. Check Sidebar
         if self.sidebar_panel:
@@ -1189,9 +1287,14 @@ class SolarSystemScene:
         return False
 
     def _handle_setting_action(self, action: str) -> None:
+        """
+        Handle settings actions triggered by UI controls.
+
+        Args:
+            action: The action identifier string.
+        """
         if action == "toggle_orbits":
             self.view_state.show_orbits = not self.view_state.show_orbits
-            # self.renderer.settings.show_orbits = self.view_state.show_orbits
         elif action == "toggle_labels":
             self.view_state.show_labels = not self.view_state.show_labels
             self.renderer.settings.show_labels = self.view_state.show_labels

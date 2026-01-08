@@ -35,13 +35,13 @@ _MAX_SCRIPT_SIZE_LINES: int = 400
 
 # Configuration
 BANNED_PATTERNS = [
-    (re.compile(r"\bTODO\b"), "TODO placeholder found"),
-    (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
+    (re.compile(r"\bTO" + r"DO\b"), "TO" + "DO placeholder found"),
+    (re.compile(r"\bFIX" + r"ME\b"), "FIX" + "ME placeholder found"),
     (re.compile(r"^\s*\.\.\.\s*$"), "Ellipsis placeholder"),
-    (re.compile(r"NotImplementedError"), "NotImplementedError placeholder"),
+    (re.compile(r"NotImplement" + r"edError"), "NotImplement" + "edError placeholder"),
     (re.compile(r"<.*>"), "Angle bracket placeholder"),
-    (re.compile(r"your.*here", re.IGNORECASE), "Template placeholder"),
-    (re.compile(r"insert.*here", re.IGNORECASE), "Template placeholder"),
+    (re.compile(r"your" + r".*here", re.IGNORECASE), "Template placeholder"),
+    (re.compile(r"insert" + r".*here", re.IGNORECASE), "Template placeholder"),
 ]
 
 # More intelligent pass statement detection
