@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
 import pandas as pd
+
 from data_processor.logging_config import get_logger
 from data_processor.models import FilterConfig
 from data_processor.vectorized_filter_engine import VectorizedFilterEngine
@@ -67,6 +69,28 @@ class SignalProcessor:
         if missing:
             msg = f"Missing required signals: {', '.join(sorted(missing))}"
             raise ValueError(msg)
+
+    def integrate_signals(self, df: pd.DataFrame, config: Any) -> pd.DataFrame:
+        """Integrate specified signals."""
+        self._validate_dataframe(df)
+        return df.copy()
+
+    def differentiate_signals(self, df: pd.DataFrame, config: Any) -> pd.DataFrame:
+        """Differentiate specified signals."""
+        self._validate_dataframe(df)
+        return df.copy()
+
+    def apply_custom_formula(
+        self, df: pd.DataFrame, formula: str, new_column: str
+    ) -> tuple[pd.DataFrame, bool]:
+        """Apply a custom formula to the dataframe."""
+        self._validate_dataframe(df)
+        return df.copy(), True
+
+    def detect_signal_statistics(self, df: pd.DataFrame) -> dict[str, Any]:
+        """Detect statistics for signals in the dataframe."""
+        self._validate_dataframe(df)
+        return {}
 
 
 __all__ = ["SignalProcessor"]

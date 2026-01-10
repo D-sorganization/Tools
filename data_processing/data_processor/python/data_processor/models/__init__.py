@@ -1,5 +1,17 @@
-"""Typed configuration models for the Data Processor."""
+"""Data processor models."""
 
-from .processing_config import FilterConfig, OutputConfig, PipelineConfig
+from .processing_config import (
+    DifferentiationConfig,
+    FilterConfig,
+    IntegrationConfig,
+    OutputConfig,
+    PipelineConfig,
+)
 
-__all__ = ["FilterConfig", "OutputConfig", "PipelineConfig"]
+__all__ = [
+    "DifferentiationConfig",
+    "FilterConfig",
+    "IntegrationConfig",
+    "OutputConfig",
+    "PipelineConfig",
+]

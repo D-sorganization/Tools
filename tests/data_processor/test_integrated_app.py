@@ -221,7 +221,7 @@ class TestIntegratedCSVProcessorApp(unittest.TestCase):
     """Test suite for the Integrated CSV Processor Application."""
 
     @patch("Data_Processor_Integrated.ctk.CTk")
-    def test_initialization(self, mock_ctk):
+    def test_initialization(self, mock_ctk: MagicMock) -> None:
         """Test application initialization."""
         # Base class is now our MockCSVProcessorApp
         app = IntegratedCSVProcessorApp()
@@ -232,7 +232,7 @@ class TestIntegratedCSVProcessorApp(unittest.TestCase):
         self.assertTrue(hasattr(app, "converter_input_files"))
         self.assertEqual(app.converter_input_files, [])
 
-    def test_split_config_defaults(self):
+    def test_split_config_defaults(self) -> None:
         """Test default values of SplitConfig."""
         config = SplitConfig()
         self.assertFalse(config.enabled)
@@ -241,7 +241,7 @@ class TestIntegratedCSVProcessorApp(unittest.TestCase):
         self.assertEqual(config.compression, "snappy")
 
     @patch("os.path.exists", return_value=True)
-    def test_file_format_detector(self, mock_exists):
+    def test_file_format_detector(self, mock_exists: MagicMock) -> None:
         """Test file format detection."""
         detector = FileFormatDetector()
 
@@ -254,7 +254,7 @@ class TestIntegratedCSVProcessorApp(unittest.TestCase):
         self.assertEqual(detector.detect_format("test.txt"), "tsv")
 
     @patch("Data_Processor_Integrated.pq")
-    def test_parquet_analyzer(self, mock_pq):
+    def test_parquet_analyzer(self, mock_pq: MagicMock) -> None:
         """Test the Parquet analyzer dialog."""
         from Data_Processor_Integrated import ParquetAnalyzerDialog
 

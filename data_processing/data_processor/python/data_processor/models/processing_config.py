@@ -107,6 +107,24 @@ class FilterConfig:
 
 
 @dataclass(frozen=True)
+class IntegrationConfig:
+    """Configuration for signal integration."""
+
+    method: str = "trapezoidal"
+    signals: list[str] = field(default_factory=list)
+    initial_condition: float = 0.0
+
+
+@dataclass(frozen=True)
+class DifferentiationConfig:
+    """Configuration for signal differentiation."""
+
+    method: str = "finite_difference"
+    signals: list[str] = field(default_factory=list)
+    order: int = 1
+
+
+@dataclass(frozen=True)
 class OutputConfig:
     """Validated output configuration."""
 
