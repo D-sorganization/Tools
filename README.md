@@ -87,4 +87,4 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
 
 ## 🛡️ License
 
-[Insert License Information Here]
+This project is licensed under the MIT License. See individual tool directories for specific licensing terms where applicable.
