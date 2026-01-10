@@ -12,9 +12,7 @@ class TestLimiter(unittest.TestCase):
         """Set up the test application and limiter."""
         self.app = Flask(__name__)
         self.limiter = Limiter(
-            get_remote_address,
-            app=self.app,
-            default_limits=["10 per hour"]
+            get_remote_address, app=self.app, default_limits=["10 per hour"]
         )
 
         @self.app.route("/test")
@@ -38,6 +36,7 @@ class TestLimiter(unittest.TestCase):
     def test_window_reset(self) -> None:
         """Test that the rate limit window resets after the specified duration."""
         import time
+
         self.client.get("/test")
         time.sleep(1.1)
         response = self.client.get("/test")
