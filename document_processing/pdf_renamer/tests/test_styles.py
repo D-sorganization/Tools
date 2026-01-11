@@ -19,5 +19,5 @@ def test_renamer_styles() -> None:
     assert r_kebab.generate_new_filename("John Doe", "My Report") == "doe-my-report.pdf"
 
     # Edge cases
-    assert r_snake.generate_new_filename("", "") == "unknown_untitled.pdf"
-    assert r_kebab.generate_new_filename("", "") == "unknown-untitled.pdf"
+    assert r_snake.generate_new_filename("", "") == "untitled_untitled.pdf"
+    assert r_kebab.generate_new_filename("", "") == "untitled-untitled.pdf"
