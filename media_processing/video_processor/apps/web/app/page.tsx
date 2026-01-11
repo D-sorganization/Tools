@@ -13,7 +13,7 @@ import { useVideoFrame } from '@/hooks/useVideoFrame';
 import { logger } from '@/lib/logger';
 import { AudioRecordingError, VideoProcessingError, getUserMessage } from '@/lib/errors';
 import { fabric } from 'fabric';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 export default function HomePage() {
@@ -41,7 +41,7 @@ export default function HomePage() {
     fps: DEFAULT_FPS,
   });
 
-  const handleVideoUpload = (file: File) => {
+  const handleVideoUpload = useCallback((file: File) => {
     try {
       // Note: File validation is performed by VideoUploader component
       // before this handler is called (quickValidateVideoFile)
@@ -64,9 +64,9 @@ export default function HomePage() {
       logger.error('Failed to upload video', { error, file });
       toast.error(getUserMessage(error));
     }
-  };
+  }, []);
 
-  const handleClearVideo = () => {
+  const handleClearVideo = useCallback(() => {
     if (videoUrl) {
       URL.revokeObjectURL(videoUrl);
     }
@@ -77,28 +77,28 @@ export default function HomePage() {
     setCurrentFrame(0);
     setTotalFrames(0);
     setPoseDetectionEnabled(false);
-  };
+  }, [videoUrl]);
 
-  const handleTimeUpdate = (time: number) => {
+  const handleTimeUpdate = useCallback((time: number) => {
     setCurrentTime(time);
     const frame = getCurrentFrame();
     setCurrentFrame(frame);
-  };
+  }, [getCurrentFrame]);
 
-  const handleVideoElementReady = (element: HTMLVideoElement | null) => {
+  const handleVideoElementReady = useCallback((element: HTMLVideoElement | null) => {
     setVideoElement(element);
     videoRef.current = element;
     if (element) {
       const frames = getTotalFrames();
       setTotalFrames(frames);
     }
-  };
+  }, [getTotalFrames]);
 
-  const handleAnnotationChange = (newAnnotations: fabric.Object[]) => {
+  const handleAnnotationChange = useCallback((newAnnotations: fabric.Object[]) => {
     setAnnotations(newAnnotations);
-  };
+  }, []);
 
-  const handleAudioRecorded = (audioBlob: Blob, startTime: number) => {
+  const handleAudioRecorded = useCallback((audioBlob: Blob, startTime: number) => {
     try {
       // Validate input
       if (!audioBlob || audioBlob.size === 0) {
@@ -125,9 +125,9 @@ export default function HomePage() {
       logger.error('Failed to process audio recording', { error, audioBlob, startTime });
       toast.error(getUserMessage(error));
     }
-  };
+  }, [videoFile]);
 
-  const handleVideoExport = (blob: Blob) => {
+  const handleVideoExport = useCallback((blob: Blob) => {
     try {
       // Validate input
       if (!blob || blob.size === 0) {
@@ -155,9 +155,9 @@ export default function HomePage() {
       logger.error('Failed to export video', { error, blob });
       toast.error(getUserMessage(error));
     }
-  };
+  }, [videoFile]);
 
-  const handlePoseDetected = (landmarks: unknown) => {
+  const handlePoseDetected = useCallback((landmarks: unknown) => {
     try {
       logger.debug('Pose detected', {
         landmarks,
@@ -173,7 +173,7 @@ export default function HomePage() {
       // Don't show toast for pose detection errors (they're continuous)
       // toast.error(getUserMessage(error));
     }
-  };
+  }, [videoFile, currentTime, currentFrame]);
 
   useEffect(() => {
     return () => {
@@ -277,14 +277,6 @@ export default function HomePage() {
                       currentTime={currentTime}
                       onAnnotationChange={handleAnnotationChange}
                     />
-                    {poseDetectionEnabled && (
-                      <PoseDetector
-                        videoElement={videoElement}
-                        enabled={poseDetectionEnabled}
-                        onPoseDetected={handlePoseDetected}
-                        disabled={!videoUrl}
-                      />
-                    )}
                   </div>
                   {videoElement && totalFrames > 0 && (
                     <FrameNavigator
