@@ -90,16 +90,20 @@ end
 nodes = nodes(1:node_count, :);
 
 % --- Build Final Path (Backtrack from goal) ---
-% Collect path indices (reverse order), then index at once for O(n) performance
-path_indices = node_count;
+% Pre-allocate path_indices array (worst case: all nodes in path)
+path_indices = zeros(1, node_count);
+path_length = 1;
+path_indices(path_length) = node_count;
 current_idx = node_count;
+
 while nodes(current_idx,4) ~= 0
     current_idx = nodes(current_idx,4);
-    path_indices = [path_indices, current_idx];
+    path_length = path_length + 1;
+    path_indices(path_length) = current_idx;
 end
 
-% Reverse indices to get start->goal order and extract path
-path_indices = fliplr(path_indices);
+% Trim to actual path length and reverse to get start->goal order
+path_indices = fliplr(path_indices(1:path_length));
 path = nodes(path_indices, 1:3);
 
 if iter == max_nodes

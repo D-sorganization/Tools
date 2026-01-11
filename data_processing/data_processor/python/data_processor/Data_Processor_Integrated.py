@@ -1610,8 +1610,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         shutil.copy2(source_path, final_dest_path)
                     copied_count += 1
                 except Exception as e:
-                    file = os.path.basename(source_path)
-                    print(f"Error copying '{file}': {e}")
+                    print(f"Error copying '{os.path.basename(source_path)}': {e}")
 
                 processed_files += 1
                 if processed_files % 10 == 0:  # Update progress every 10 files
@@ -1887,15 +1886,18 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                                     deleted_count += 1
                                 except OSError as e:
                                     logging.warning("Failed to delete file: %s", str(e))
-
-                processed_files += len(files)
-                if processed_files % 100 == 0:
-                    self.after(
-                        0,
-                        lambda p=processed_files, t=total_files: (
-                            self.folder_status_var.set(f"Processed {p}/{t} files")
-                        ),
-                    )
+                            # Update progress for each file processed
+                            processed_files += 1
+                            # Update every 50 files for better granularity
+                            if processed_files % 50 == 0:
+                                self.after(
+                                    0,
+                                    lambda p=processed_files, t=total_files: (
+                                        self.folder_status_var.set(
+                                            f"Processed {p}/{t} files"
+                                        )
+                                    ),
+                                )
 
             # Final status
             if self.folder_preview_mode_var.get():

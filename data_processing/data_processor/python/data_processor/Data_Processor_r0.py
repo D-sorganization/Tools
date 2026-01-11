@@ -53,11 +53,12 @@ def process_single_csv_file(file_path, settings):
         processed_df[time_col] = pd.to_datetime(processed_df[time_col], errors="coerce")
         processed_df.dropna(subset=[time_col], inplace=True)
 
-        # Convert all non-time columns to numeric at once
+        # Convert all non-time columns to numeric at once (truly vectorized)
         numeric_cols = [col for col in processed_df.columns if col != time_col]
         if numeric_cols:
-            processed_df[numeric_cols] = processed_df[numeric_cols].apply(
-                pd.to_numeric, errors="coerce"
+            processed_df[numeric_cols] = pd.to_numeric(
+                processed_df[numeric_cols],
+                errors="coerce",
             )
 
         if processed_df.empty:
@@ -1932,8 +1933,9 @@ class CSVProcessorApp(ctk.CTk):
             try:
                 # Update progress
                 if hasattr(self, "status_label"):
+                    filename = os.path.basename(file_path)
                     self.status_label.configure(
-                        text=f"Reading file {i + 1}/{total_files}: {os.path.basename(file_path)}"
+                        text=f"Reading file {i + 1}/{total_files}: {filename}"
                     )
                     if i % 5 == 0:  # Update every 5 files to prevent UI freezing
                         self.update()
