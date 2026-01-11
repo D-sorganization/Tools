@@ -21,7 +21,11 @@ max_nodes = parameters.maxNodes;
 step_size = parameters.stepSize;
 goal_radius = parameters.goalRadius;
 goal_bias = parameters.goalBias; % 20% chance to aim directly at goal
-nodes = [start 0]; % Start node [x y z parent=0]
+
+% Pre-allocate nodes array for performance (avoid O(n²) growth)
+nodes = zeros(max_nodes, 4);
+nodes(1, :) = [start 0]; % Start node [x y z parent=0]
+node_count = 1;
 
 for iter = 1:max_nodes
     % --- Goal-biased random sampling ---
@@ -37,7 +41,7 @@ for iter = 1:max_nodes
     rand_point = rand_point(:)'; % <-- Force [1x3] row vector
 
     % --- Find nearest node ---
-    diffs = nodes(:,1:3) - rand_point;
+    diffs = nodes(1:node_count,1:3) - rand_point;
     dists = vecnorm(diffs,2,2);
 
     if isempty(dists) || all(isnan(dists))
@@ -46,7 +50,7 @@ for iter = 1:max_nodes
 
     [~, nearest_idx] = min(dists);
 
-    if nearest_idx > size(nodes,1) || nearest_idx < 1
+    if nearest_idx > node_count || nearest_idx < 1
         continue; % Safety check
     end
 
@@ -72,8 +76,8 @@ for iter = 1:max_nodes
     end
 
     % --- Add new node ---
-    new_node = [new_node_pos, nearest_idx]; % [x y z parent]
-    nodes = [nodes; new_node];
+    node_count = node_count + 1;
+    nodes(node_count, :) = [new_node_pos, nearest_idx]; % [x y z parent]
 
     % --- Check if goal reached ---
     if norm(new_node_pos - goal) < goal_radius
@@ -82,14 +86,25 @@ for iter = 1:max_nodes
     end
 end
 
-% --- Build Final Path (Backtrack from goal) ---
-path = new_node_pos; % Start at last node
+% Trim unused pre-allocated space
+nodes = nodes(1:node_count, :);
 
-current_idx = size(nodes,1);
+% --- Build Final Path (Backtrack from goal) ---
+% Pre-allocate path_indices array (worst case: all nodes in path)
+path_indices = zeros(1, node_count);
+path_length = 1;
+path_indices(path_length) = node_count;
+current_idx = node_count;
+
 while nodes(current_idx,4) ~= 0
     current_idx = nodes(current_idx,4);
-    path = [nodes(current_idx,1:3); path];
+    path_length = path_length + 1;
+    path_indices(path_length) = current_idx;
 end
+
+% Trim to actual path length and reverse to get start->goal order
+path_indices = fliplr(path_indices(1:path_length));
+path = nodes(path_indices, 1:3);
 
 if iter == max_nodes
     disp('⚠️ Warning: Max nodes reached, goal NOT found.');

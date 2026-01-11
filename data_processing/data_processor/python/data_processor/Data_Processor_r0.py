@@ -49,12 +49,17 @@ def process_single_csv_file(file_path, settings):
 
         processed_df = df[signals_in_this_file].copy()
 
-        # Data type conversion
+        # Data type conversion (vectorized for better performance)
         processed_df[time_col] = pd.to_datetime(processed_df[time_col], errors="coerce")
         processed_df.dropna(subset=[time_col], inplace=True)
-        for col in processed_df.columns:
-            if col != time_col:
-                processed_df[col] = pd.to_numeric(processed_df[col], errors="coerce")
+
+        # Convert all non-time columns to numeric at once (truly vectorized)
+        numeric_cols = [col for col in processed_df.columns if col != time_col]
+        if numeric_cols:
+            processed_df[numeric_cols] = pd.to_numeric(
+                processed_df[numeric_cols],
+                errors="coerce",
+            )
 
         if processed_df.empty:
             return None
@@ -1928,9 +1933,9 @@ class CSVProcessorApp(ctk.CTk):
             try:
                 # Update progress
                 if hasattr(self, "status_label"):
+                    filename = os.path.basename(file_path)
                     self.status_label.configure(
-                        text=f"Reading file {i +
-                            1}/{total_files}: {os.path.basename(file_path)}",
+                        text=f"Reading file {i + 1}/{total_files}: {filename}"
                     )
                     if i % 5 == 0:  # Update every 5 files to prevent UI freezing
                         self.update()
@@ -2188,13 +2193,13 @@ class CSVProcessorApp(ctk.CTk):
 
         for i, file_path in enumerate(self.input_file_paths):
             print(
-                f"\n--- Processing file {i +
-                    1}/{len(self.input_file_paths)}: {os.path.basename(file_path)} ---",
+                f"\n--- Processing file {i + 1}/{len(self.input_file_paths)}: "
+                f"{os.path.basename(file_path)} ---"
             )
             try:
                 self.status_label.configure(
-                    text=f"Processing file {i +
-                        1}/{len(self.input_file_paths)}: {os.path.basename(file_path)}",
+                    text=f"Processing file {i + 1}/{len(self.input_file_paths)}: "
+                    f"{os.path.basename(file_path)}"
                 )
                 self.update()
 
@@ -5082,20 +5087,20 @@ class CSVProcessorApp(ctk.CTk):
 
         print(f"plot_canvas: {getattr(self, 'plot_canvas', None)}")
         print(f"plot_ax: {getattr(self, 'plot_ax', None)}")
-        print(
-            f"processed_files: {len(
-                getattr(self,
-                'processed_files',
-                {}
-            )) if hasattr(self, 'processed_files') else 'None'}",
+
+        processed_files_len = (
+            len(getattr(self, "processed_files", {}))
+            if hasattr(self, "processed_files")
+            else "None"
         )
-        print(
-            f"loaded_data_cache: {len(
-                getattr(self,
-                'loaded_data_cache',
-                {}
-            )) if hasattr(self, 'loaded_data_cache') else 'None'}",
+        print(f"processed_files: {processed_files_len}")
+
+        loaded_data_cache_len = (
+            len(getattr(self, "loaded_data_cache", {}))
+            if hasattr(self, "loaded_data_cache")
+            else "None"
         )
+        print(f"loaded_data_cache: {loaded_data_cache_len}")
         print("========================\n")
 
     def _force_signal_selection(self):
@@ -6119,8 +6124,8 @@ COMMON MISTAKES TO AVOID:
             )
             return
 
-        # Get current available signals
-        available_signals = list(self.signal_vars.keys())
+        # Get current available signals (use set for O(1) lookup)
+        available_signals = set(self.signal_vars.keys())
         print(f"DEBUG: Available signals: {len(available_signals)}")
 
         # Find which saved signals are present
@@ -6129,7 +6134,7 @@ COMMON MISTAKES TO AVOID:
 
         print("DEBUG: Checking saved signals against available signals")
         for saved_signal in self.saved_signal_list:
-            if saved_signal in available_signals:
+            if saved_signal in available_signals:  # O(1) lookup with set
                 present_signals.append(saved_signal)
             else:
                 missing_signals.append(saved_signal)

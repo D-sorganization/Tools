@@ -252,24 +252,28 @@ class HighPerformanceDataLoader:
         self,
         file_path: str,
     ) -> tuple[set[str], pd.DataFrame | None]:
-        """Read file header and sample data efficiently."""
+        """Read file header and sample data efficiently (avoid duplicate file reads)."""
         try:
-            # Read only header first
-            header_df = pd.read_csv(file_path, nrows=0)
-            signals = set(header_df.columns)
-
-            # Read sample data for analysis
+            # Read sample data or just header in a single operation
             sample_df = None
             if self.config.lazy_loading:
                 try:
-                    # Read a small sample for data type analysis
+                    # Read a small sample for data type analysis (includes header)
                     sample_df = pd.read_csv(
                         file_path,
                         nrows=self.config.sample_size,
                         low_memory=False,
                     )
+                    signals = set(sample_df.columns)
                 except Exception as e:
                     logger.warning(f"Could not read sample data from {file_path}: {e}")
+                    # Fallback to header-only read
+                    header_df = pd.read_csv(file_path, nrows=0)
+                    signals = set(header_df.columns)
+            else:
+                # Just read header when not lazy loading
+                header_df = pd.read_csv(file_path, nrows=0)
+                signals = set(header_df.columns)
 
             return signals, sample_df
 

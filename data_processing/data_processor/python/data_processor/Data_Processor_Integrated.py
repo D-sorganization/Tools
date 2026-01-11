@@ -13,6 +13,7 @@
 #
 # =============================================================================
 
+import heapq
 import logging
 import os
 import threading
@@ -338,49 +339,65 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
             # Get file size
             file_size = Path(file_path).stat().st_size
 
-            # Format results
-            results = "=== Parquet File Analysis ===\n"
-            results += f"File: {Path(file_path).name}\n"
-            results += f"Path: {file_path}\n"
-            results += f"Size: {self.format_file_size(file_size)}\n\n"
+            # Format results (use list for O(n) performance instead of O(n²)
+            # string concatenation)
+            result_lines = [
+                "=== Parquet File Analysis ===",
+                f"File: {Path(file_path).name}",
+                f"Path: {file_path}",
+                f"Size: {self.format_file_size(file_size)}",
+                "",
+                "=== Metadata ===",
+                f"Rows: {parquet_file.metadata.num_rows:,}",
+                f"Columns: {parquet_file.metadata.num_columns}",
+                f"Row Groups: {parquet_file.metadata.num_row_groups}",
+                "",
+                "=== Schema ===",
+            ]
 
-            results += "=== Metadata ===\n"
-            results += f"Rows: {parquet_file.metadata.num_rows:,}\n"
-            results += f"Columns: {parquet_file.metadata.num_columns}\n"
-            results += f"Row Groups: {parquet_file.metadata.num_row_groups}\n\n"
-
-            results += "=== Schema ===\n"
             schema = parquet_file.schema_arrow
             for field in schema:
-                results += f"{field.name}: {field.type}\n"
+                result_lines.append(f"{field.name}: {field.type}")
 
-            results += "\n=== Row Group Details ===\n"
+            result_lines.append("")
+            result_lines.append("=== Row Group Details ===")
+
             for i, row_group in enumerate(parquet_file.metadata.row_group_metadata):
-                results += f"Row Group {i}:\n"
-                results += f"  Rows: {row_group.num_rows:,}\n"
-                results += (
-                    f"  Size: {self.format_file_size(row_group.total_byte_size)}\n"
+                result_lines.extend(
+                    [
+                        f"Row Group {i}:",
+                        f"  Rows: {row_group.num_rows:,}",
+                        f"  Size: {self.format_file_size(row_group.total_byte_size)}",
+                        f"  Columns: {row_group.num_columns}",
+                    ]
                 )
-                results += f"  Columns: {row_group.num_columns}\n"
 
                 # Column details
                 for j, col in enumerate(row_group.column_metadata):
-                    results += f"    Column {j}: {col.path_in_schema[0]}\n"
-                    results += f"      Values: {col.num_values:,}\n"
-                    results += (
-                        f"      Size: "
-                        f"{self.format_file_size(col.total_uncompressed_size)}\n"
+                    result_lines.extend(
+                        [
+                            f"    Column {j}: {col.path_in_schema[0]}",
+                            f"      Values: {col.num_values:,}",
+                            (
+                                f"      Size: "
+                                f"{self.format_file_size(col.total_uncompressed_size)}"
+                            ),
+                            (
+                                f"      Compressed: "
+                                f"{self.format_file_size(col.total_compressed_size)}"
+                            ),
+                        ]
                     )
-                    results += (
-                        f"      Compressed: "
-                        f"{self.format_file_size(col.total_compressed_size)}\n"
-                    )
+
                     if col.statistics:
                         stats = col.statistics
                         if hasattr(stats, "min") and hasattr(stats, "max"):
-                            results += f"      Min: {stats.min}\n"
-                            results += f"      Max: {stats.max}\n"
-                    results += "\n"
+                            result_lines.extend(
+                                [f"      Min: {stats.min}", f"      Max: {stats.max}"]
+                            )
+                    result_lines.append("")
+
+            results = "\n".join(result_lines)
 
             # Clear and insert results
             self.results_text.delete("1.0", "end")
@@ -1542,12 +1559,14 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Create destination directory
             os.makedirs(self.folder_destination, exist_ok=True)
 
-            # Count total files for progress tracking
-            total_files = 0
+            # Collect all file paths in a single walk (avoid O(2n) double traversal)
+            all_file_paths = []
             for src in self.folder_source_folders:
-                for _root, _dirs, files in os.walk(src):
-                    total_files += len(files)
+                for root, _dirs, files in os.walk(src):
+                    for file in files:
+                        all_file_paths.append(os.path.join(root, file))
 
+            total_files = len(all_file_paths)
             if total_files == 0:
                 self.after(
                     0,
@@ -1562,58 +1581,47 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             renamed_count = 0
             skipped_count = 0
 
-            for src in self.folder_source_folders:
+            for source_path in all_file_paths:
                 if self.folder_cancel_flag:
                     break
 
-                for root, _dirs, files in os.walk(src):
-                    for file in files:
-                        if self.folder_cancel_flag:
-                            break
+                # Apply file filters
+                if not self._folder_validate_file_filters(source_path):
+                    skipped_count += 1
+                    processed_files += 1
+                    continue
 
-                        source_path = os.path.join(root, file)
+                # Get organized destination path
+                dest_path = self._folder_get_organized_path(
+                    source_path, self.folder_destination
+                )
+                dest_dir = os.path.dirname(dest_path)
 
-                        # Apply file filters
-                        if not self._folder_validate_file_filters(source_path):
-                            skipped_count += 1
-                            processed_files += 1
-                            continue
+                # Create destination directory if needed
+                os.makedirs(dest_dir, exist_ok=True)
 
-                        # Get organized destination path
-                        dest_path = self._folder_get_organized_path(
-                            source_path, self.folder_destination
-                        )
-                        dest_dir = os.path.dirname(dest_path)
+                # Handle naming conflicts
+                final_dest_path = self._folder_get_unique_path(dest_path)
+                if final_dest_path != dest_path:
+                    renamed_count += 1
 
-                        # Create destination directory if needed
-                        os.makedirs(dest_dir, exist_ok=True)
+                try:
+                    if not self.folder_preview_mode_var.get():
+                        shutil.copy2(source_path, final_dest_path)
+                    copied_count += 1
+                except Exception as e:
+                    print(f"Error copying '{os.path.basename(source_path)}': {e}")
 
-                        # Handle naming conflicts
-                        final_dest_path = self._folder_get_unique_path(dest_path)
-                        if final_dest_path != dest_path:
-                            renamed_count += 1
-
-                        try:
-                            if not self.folder_preview_mode_var.get():
-                                shutil.copy2(source_path, final_dest_path)
-                            copied_count += 1
-                        except Exception as e:
-                            print(f"Error copying '{file}': {e}")
-
-                        processed_files += 1
-                        if processed_files % 10 == 0:  # Update progress every 10 files
-                            progress = processed_files / total_files
-                            self.after(
-                                0, lambda p=progress: self.folder_progress_bar.set(p)
-                            )
-                            self.after(
-                                0,
-                                lambda p=processed_files, t=total_files: (
-                                    self.folder_status_var.set(
-                                        f"Processed {p}/{t} files"
-                                    )
-                                ),
-                            )
+                processed_files += 1
+                if processed_files % 10 == 0:  # Update progress every 10 files
+                    progress = processed_files / total_files
+                    self.after(0, lambda p=progress: self.folder_progress_bar.set(p))
+                    self.after(
+                        0,
+                        lambda p=processed_files, t=total_files: (
+                            self.folder_status_var.set(f"Processed {p}/{t} files")
+                        ),
+                    )
 
             # Final status
             if self.folder_preview_mode_var.get():
@@ -1642,12 +1650,14 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Create destination directory
             os.makedirs(self.folder_destination, exist_ok=True)
 
-            # Count total files for progress tracking
-            total_files = 0
+            # Collect all file paths in a single walk (avoid O(2n) double traversal)
+            all_file_paths = []
             for src in self.folder_source_folders:
-                for _root, _dirs, files in os.walk(src):
-                    total_files += len(files)
+                for root, _dirs, files in os.walk(src):
+                    for file in files:
+                        all_file_paths.append((os.path.join(root, file), file))
 
+            total_files = len(all_file_paths)
             if total_files == 0:
                 self.after(
                     0,
@@ -1662,52 +1672,41 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             renamed_count = 0
             skipped_count = 0
 
-            for src in self.folder_source_folders:
+            for source_path, file in all_file_paths:
                 if self.folder_cancel_flag:
                     break
 
-                for root, _dirs, files in os.walk(src):
-                    for file in files:
-                        if self.folder_cancel_flag:
-                            break
+                # Apply file filters
+                if not self._folder_validate_file_filters(source_path):
+                    skipped_count += 1
+                    processed_files += 1
+                    continue
 
-                        source_path = os.path.join(root, file)
+                # For flatten operation, files go directly to destination root
+                dest_path = os.path.join(self.folder_destination, file)
 
-                        # Apply file filters
-                        if not self._folder_validate_file_filters(source_path):
-                            skipped_count += 1
-                            processed_files += 1
-                            continue
+                # Handle naming conflicts
+                final_dest_path = self._folder_get_unique_path(dest_path)
+                if final_dest_path != dest_path:
+                    renamed_count += 1
 
-                        # For flatten operation, files go directly to destination root
-                        dest_path = os.path.join(self.folder_destination, file)
+                try:
+                    if not self.folder_preview_mode_var.get():
+                        shutil.copy2(source_path, final_dest_path)
+                    copied_count += 1
+                except Exception as e:
+                    print(f"Error copying '{file}': {e}")
 
-                        # Handle naming conflicts
-                        final_dest_path = self._folder_get_unique_path(dest_path)
-                        if final_dest_path != dest_path:
-                            renamed_count += 1
-
-                        try:
-                            if not self.folder_preview_mode_var.get():
-                                shutil.copy2(source_path, final_dest_path)
-                            copied_count += 1
-                        except Exception as e:
-                            print(f"Error copying '{file}': {e}")
-
-                        processed_files += 1
-                        if processed_files % 10 == 0:
-                            progress = processed_files / total_files
-                            self.after(
-                                0, lambda p=progress: self.folder_progress_bar.set(p)
-                            )
-                            self.after(
-                                0,
-                                lambda p=processed_files, t=total_files: (
-                                    self.folder_status_var.set(
-                                        f"Processed {p}/{t} files"
-                                    )
-                                ),
-                            )
+                processed_files += 1
+                if processed_files % 10 == 0:
+                    progress = processed_files / total_files
+                    self.after(0, lambda p=progress: self.folder_progress_bar.set(p))
+                    self.after(
+                        0,
+                        lambda p=processed_files, t=total_files: (
+                            self.folder_status_var.set(f"Processed {p}/{t} files")
+                        ),
+                    )
 
             # Final status
             if self.folder_preview_mode_var.get():
@@ -1736,12 +1735,17 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Create destination directory
             os.makedirs(self.folder_destination, exist_ok=True)
 
-            # Count total files for progress tracking
-            total_files = 0
+            # Collect all file paths with metadata in a single walk
+            # (avoid O(2n) traversal)
+            all_file_data = []  # (source_path, file, src, root)
             for src in self.folder_source_folders:
-                for _root, _dirs, files in os.walk(src):
-                    total_files += len(files)
+                for root, _dirs, files in os.walk(src):
+                    if files:  # Skip empty directories
+                        for file in files:
+                            source_path = os.path.join(root, file)
+                            all_file_data.append((source_path, file, src, root))
 
+            total_files = len(all_file_data)
             if total_files == 0:
                 self.after(
                     0,
@@ -1755,65 +1759,49 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             copied_count = 0
             skipped_count = 0
 
-            for src in self.folder_source_folders:
+            # Process files and create directory structure as needed
+            created_dirs = set()
+            for source_path, file, src, root in all_file_data:
                 if self.folder_cancel_flag:
                     break
 
-                # Get relative path from source
+                # Calculate destination path
                 src_name = os.path.basename(src)
                 dest_src_path = os.path.join(self.folder_destination, src_name)
+                rel_path = os.path.relpath(root, src)
+                dest_dir = os.path.join(dest_src_path, rel_path)
 
-                for root, _dirs, files in os.walk(src):
-                    if self.folder_cancel_flag:
-                        break
-
-                    # Skip empty directories
-                    if not files:
-                        continue
-
-                    # Calculate relative path
-                    rel_path = os.path.relpath(root, src)
-                    dest_dir = os.path.join(dest_src_path, rel_path)
-
-                    # Create destination directory
+                # Create destination directory if not already created
+                if dest_dir not in created_dirs:
                     if not self.folder_preview_mode_var.get():
                         os.makedirs(dest_dir, exist_ok=True)
+                    created_dirs.add(dest_dir)
 
-                    for file in files:
-                        if self.folder_cancel_flag:
-                            break
+                # Apply file filters
+                if not self._folder_validate_file_filters(source_path):
+                    skipped_count += 1
+                    processed_files += 1
+                    continue
 
-                        source_path = os.path.join(root, file)
+                dest_path = os.path.join(dest_dir, file)
 
-                        # Apply file filters
-                        if not self._folder_validate_file_filters(source_path):
-                            skipped_count += 1
-                            processed_files += 1
-                            continue
+                try:
+                    if not self.folder_preview_mode_var.get():
+                        shutil.copy2(source_path, dest_path)
+                    copied_count += 1
+                except Exception as e:
+                    print(f"Error copying '{file}': {e}")
 
-                        dest_path = os.path.join(dest_dir, file)
-
-                        try:
-                            if not self.folder_preview_mode_var.get():
-                                shutil.copy2(source_path, dest_path)
-                            copied_count += 1
-                        except Exception as e:
-                            print(f"Error copying '{file}': {e}")
-
-                        processed_files += 1
-                        if processed_files % 10 == 0:
-                            progress = processed_files / total_files
-                            self.after(
-                                0, lambda p=progress: self.folder_progress_bar.set(p)
-                            )
-                            self.after(
-                                0,
-                                lambda p=processed_files, t=total_files: (
-                                    self.folder_status_var.set(
-                                        f"Processed {p}/{t} files"
-                                    )
-                                ),
-                            )
+                processed_files += 1
+                if processed_files % 10 == 0:
+                    progress = processed_files / total_files
+                    self.after(0, lambda p=progress: self.folder_progress_bar.set(p))
+                    self.after(
+                        0,
+                        lambda p=processed_files, t=total_files: (
+                            self.folder_status_var.set(f"Processed {p}/{t} files")
+                        ),
+                    )
 
             # Final status
             if self.folder_preview_mode_var.get():
@@ -1842,11 +1830,17 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             import os
             import re
 
-            # Count total files for progress tracking
+            # Collect all files grouped by directory in a single walk
+            # (avoid O(2n) traversal)
+            pattern = re.compile(r"(.+?)(?: \((\d+)\))?(\.\w+)$")
+            all_dir_files = []  # List of (root, files_list) tuples
             total_files = 0
+
             for src in self.folder_source_folders:
-                for _root, _dirs, files in os.walk(src):
-                    total_files += len(files)
+                for root, _dirs, files in os.walk(src):
+                    if files:
+                        all_dir_files.append((root, files))
+                        total_files += len(files)
 
             if total_files == 0:
                 self.after(
@@ -1859,54 +1853,51 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
             processed_files = 0
             deleted_count = 0
-            pattern = re.compile(r"(.+?)(?: \((\d+)\))?(\.\w+)$")
 
-            for src in self.folder_source_folders:
+            for root, files in all_dir_files:
                 if self.folder_cancel_flag:
                     break
 
-                for root, _dirs, files in os.walk(src):
-                    if self.folder_cancel_flag:
-                        break
+                files_by_base_name = {}
+                for filename in files:
+                    match = pattern.match(filename)
+                    if match:
+                        base, _, ext = match.groups()
+                        base_name = f"{base}{ext}"
+                        files_by_base_name.setdefault(base_name, []).append(
+                            os.path.join(root, filename)
+                        )
 
-                    files_by_base_name = {}
-                    for filename in files:
-                        match = pattern.match(filename)
-                        if match:
-                            base, _, ext = match.groups()
-                            base_name = f"{base}{ext}"
-                            files_by_base_name.setdefault(base_name, []).append(
-                                os.path.join(root, filename)
+                for _base_name, file_list in files_by_base_name.items():
+                    if len(file_list) > 1:
+                        try:
+                            # Keep the newest file
+                            file_to_keep = max(
+                                file_list, key=lambda f: os.path.getmtime(f)
                             )
+                        except (OSError, FileNotFoundError):
+                            continue
 
-                    for _base_name, file_list in files_by_base_name.items():
-                        if len(file_list) > 1:
-                            try:
-                                # Keep the newest file
-                                file_to_keep = max(
-                                    file_list, key=lambda f: os.path.getmtime(f)
-                                )
-                            except (OSError, FileNotFoundError):
-                                continue
-
-                            for file_path in file_list:
-                                if file_path != file_to_keep:
-                                    try:
-                                        if not self.folder_preview_mode_var.get():
-                                            os.remove(file_path)
-                                        deleted_count += 1
-                                    except OSError as e:
-                                        logging.warning(
-                                            "Failed to delete file: %s", str(e)
+                        for file_path in file_list:
+                            if file_path != file_to_keep:
+                                try:
+                                    if not self.folder_preview_mode_var.get():
+                                        os.remove(file_path)
+                                    deleted_count += 1
+                                except OSError as e:
+                                    logging.warning("Failed to delete file: %s", str(e))
+                            # Update progress for each file processed
+                            processed_files += 1
+                            # Update every 50 files for better granularity
+                            if processed_files % 50 == 0:
+                                self.after(
+                                    0,
+                                    lambda p=processed_files, t=total_files: (
+                                        self.folder_status_var.set(
+                                            f"Processed {p}/{t} files"
                                         )
-                            self.after(
-                                0,
-                                lambda p=processed_files, t=total_files: (
-                                    self.folder_status_var.set(
-                                        f"Processed {p}/{t} files"
-                                    )
-                                ),
-                            )
+                                    ),
+                                )
 
             # Final status
             if self.folder_preview_mode_var.get():
@@ -1980,11 +1971,9 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             file_types[file_ext] += 1
                             size_by_type[file_ext] += file_size
 
-                            # Track largest files
+                            # Track largest files (optimized: collect all,
+                            # sort once at end)
                             largest_files.append((file_path, file_size))
-                            if len(largest_files) > 10:
-                                largest_files.sort(key=lambda x: x[1], reverse=True)
-                                largest_files = largest_files[:10]
 
                         except OSError:
                             continue
@@ -2025,9 +2014,9 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 report_lines.append(f"  {ext}: {count} files, {size_mb:.1f} MB")
 
             report_lines.extend(["", "LARGEST FILES:"])
-            for file_path, size in sorted(
-                largest_files, key=lambda x: x[1], reverse=True
-            ):
+            # Use heapq.nlargest for O(n log k) performance instead of O(n log n)
+            top_10_files = heapq.nlargest(10, largest_files, key=lambda x: x[1])
+            for file_path, size in top_10_files:
                 size_mb = size / (1024 * 1024)
                 report_lines.append(
                     f"  {os.path.basename(file_path)}: {size_mb:.1f} MB"
