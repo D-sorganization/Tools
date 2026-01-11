@@ -339,7 +339,8 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
             # Get file size
             file_size = Path(file_path).stat().st_size
 
-            # Format results (use list for O(n) performance instead of O(n²) string concatenation)
+            # Format results (use list for O(n) performance instead of O(n²)
+            # string concatenation)
             result_lines = [
                 "=== Parquet File Analysis ===",
                 f"File: {Path(file_path).name}",
@@ -351,7 +352,7 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
                 f"Columns: {parquet_file.metadata.num_columns}",
                 f"Row Groups: {parquet_file.metadata.num_row_groups}",
                 "",
-                "=== Schema ==="
+                "=== Schema ===",
             ]
 
             schema = parquet_file.schema_arrow
@@ -362,29 +363,38 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
             result_lines.append("=== Row Group Details ===")
 
             for i, row_group in enumerate(parquet_file.metadata.row_group_metadata):
-                result_lines.extend([
-                    f"Row Group {i}:",
-                    f"  Rows: {row_group.num_rows:,}",
-                    f"  Size: {self.format_file_size(row_group.total_byte_size)}",
-                    f"  Columns: {row_group.num_columns}"
-                ])
+                result_lines.extend(
+                    [
+                        f"Row Group {i}:",
+                        f"  Rows: {row_group.num_rows:,}",
+                        f"  Size: {self.format_file_size(row_group.total_byte_size)}",
+                        f"  Columns: {row_group.num_columns}",
+                    ]
+                )
 
                 # Column details
                 for j, col in enumerate(row_group.column_metadata):
-                    result_lines.extend([
-                        f"    Column {j}: {col.path_in_schema[0]}",
-                        f"      Values: {col.num_values:,}",
-                        f"      Size: {self.format_file_size(col.total_uncompressed_size)}",
-                        f"      Compressed: {self.format_file_size(col.total_compressed_size)}"
-                    ])
+                    result_lines.extend(
+                        [
+                            f"    Column {j}: {col.path_in_schema[0]}",
+                            f"      Values: {col.num_values:,}",
+                            (
+                                f"      Size: "
+                                f"{self.format_file_size(col.total_uncompressed_size)}"
+                            ),
+                            (
+                                f"      Compressed: "
+                                f"{self.format_file_size(col.total_compressed_size)}"
+                            ),
+                        ]
+                    )
 
                     if col.statistics:
                         stats = col.statistics
                         if hasattr(stats, "min") and hasattr(stats, "max"):
-                            result_lines.extend([
-                                f"      Min: {stats.min}",
-                                f"      Max: {stats.max}"
-                            ])
+                            result_lines.extend(
+                                [f"      Min: {stats.min}", f"      Max: {stats.max}"]
+                            )
                     result_lines.append("")
 
             results = "\n".join(result_lines)
@@ -1606,17 +1616,13 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 processed_files += 1
                 if processed_files % 10 == 0:  # Update progress every 10 files
                     progress = processed_files / total_files
-                    self.after(
-                        0, lambda p=progress: self.folder_progress_bar.set(p)
-                    )
+                    self.after(0, lambda p=progress: self.folder_progress_bar.set(p))
                     self.after(
                         0,
                         lambda p=processed_files, t=total_files: (
-                            self.folder_status_var.set(
-                                f"Processed {p}/{t} files"
-                                    )
-                                ),
-                            )
+                            self.folder_status_var.set(f"Processed {p}/{t} files")
+                        ),
+                    )
 
             # Final status
             if self.folder_preview_mode_var.get():
@@ -1695,17 +1701,13 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 processed_files += 1
                 if processed_files % 10 == 0:
                     progress = processed_files / total_files
-                    self.after(
-                        0, lambda p=progress: self.folder_progress_bar.set(p)
-                    )
+                    self.after(0, lambda p=progress: self.folder_progress_bar.set(p))
                     self.after(
                         0,
                         lambda p=processed_files, t=total_files: (
-                            self.folder_status_var.set(
-                                        f"Processed {p}/{t} files"
-                                    )
-                                ),
-                            )
+                            self.folder_status_var.set(f"Processed {p}/{t} files")
+                        ),
+                    )
 
             # Final status
             if self.folder_preview_mode_var.get():
@@ -1734,7 +1736,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             # Create destination directory
             os.makedirs(self.folder_destination, exist_ok=True)
 
-            # Collect all file paths with metadata in a single walk (avoid O(2n) traversal)
+            # Collect all file paths with metadata in a single walk
+            # (avoid O(2n) traversal)
             all_file_data = []  # (source_path, file, src, root)
             for src in self.folder_source_folders:
                 for root, _dirs, files in os.walk(src):
@@ -1793,17 +1796,13 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 processed_files += 1
                 if processed_files % 10 == 0:
                     progress = processed_files / total_files
-                    self.after(
-                        0, lambda p=progress: self.folder_progress_bar.set(p)
-                    )
+                    self.after(0, lambda p=progress: self.folder_progress_bar.set(p))
                     self.after(
                         0,
                         lambda p=processed_files, t=total_files: (
-                            self.folder_status_var.set(
-                                        f"Processed {p}/{t} files"
-                                    )
-                                ),
-                            )
+                            self.folder_status_var.set(f"Processed {p}/{t} files")
+                        ),
+                    )
 
             # Final status
             if self.folder_preview_mode_var.get():
@@ -1832,7 +1831,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             import os
             import re
 
-            # Collect all files grouped by directory in a single walk (avoid O(2n) traversal)
+            # Collect all files grouped by directory in a single walk
+            # (avoid O(2n) traversal)
             pattern = re.compile(r"(.+?)(?: \((\d+)\))?(\.\w+)$")
             all_dir_files = []  # List of (root, files_list) tuples
             total_files = 0
@@ -1886,18 +1886,14 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                                         os.remove(file_path)
                                     deleted_count += 1
                                 except OSError as e:
-                                    logging.warning(
-                                        "Failed to delete file: %s", str(e)
-                                    )
+                                    logging.warning("Failed to delete file: %s", str(e))
 
                 processed_files += len(files)
                 if processed_files % 100 == 0:
                     self.after(
                         0,
                         lambda p=processed_files, t=total_files: (
-                            self.folder_status_var.set(
-                                f"Processed {p}/{t} files"
-                            )
+                            self.folder_status_var.set(f"Processed {p}/{t} files")
                         ),
                     )
 
@@ -1973,7 +1969,8 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             file_types[file_ext] += 1
                             size_by_type[file_ext] += file_size
 
-                            # Track largest files (optimized: collect all, sort once at end)
+                            # Track largest files (optimized: collect all,
+                            # sort once at end)
                             largest_files.append((file_path, file_size))
 
                         except OSError:
