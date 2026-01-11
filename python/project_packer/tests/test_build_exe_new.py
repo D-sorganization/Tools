@@ -3,7 +3,7 @@
 import subprocess
 import sys
 from pathlib import Path
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -149,7 +149,9 @@ class TestBuildExecutable:
             with patch.object(Path, "exists", return_value=True):
                 with patch("build_exe.clean_build_dirs"):
                     with patch("subprocess.run") as mock_run:
-                        mock_run.side_effect = subprocess.CalledProcessError(1, "pyinstaller")
+                        mock_run.side_effect = subprocess.CalledProcessError(
+                            1, "pyinstaller"
+                        )
                         result = build_executable()
                         assert result is False
 
@@ -193,7 +195,8 @@ class TestVerifyBuild:
                     verify_build()
                     # Should log file size
                     assert any(
-                        "size" in str(call).lower() for call in mock_logger.info.call_args_list
+                        "size" in str(call).lower()
+                        for call in mock_logger.info.call_args_list
                     )
 
 
@@ -211,7 +214,9 @@ class TestMain:
     def test_main_installs_pyinstaller_if_missing(self) -> None:
         """Test that main installs PyInstaller if not found."""
         with patch("build_exe.check_pyinstaller", return_value=False):
-            with patch("build_exe.install_pyinstaller", return_value=True) as mock_install:
+            with patch(
+                "build_exe.install_pyinstaller", return_value=True
+            ) as mock_install:
                 with patch("build_exe.build_executable", return_value=True):
                     with patch("build_exe.verify_build", return_value=True):
                         main()
@@ -246,15 +251,15 @@ class TestMain:
         """Test that main executes steps in correct order."""
         call_order = []
 
-        def track_check():
+        def track_check() -> bool:
             call_order.append("check")
             return True
 
-        def track_build():
+        def track_build() -> bool:
             call_order.append("build")
             return True
 
-        def track_verify():
+        def track_verify() -> bool:
             call_order.append("verify")
             return True
 

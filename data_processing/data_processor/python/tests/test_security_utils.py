@@ -1,11 +1,9 @@
 """Tests for security_utils.py - comprehensive security testing."""
 
-import ast
 from pathlib import Path
 from unittest.mock import patch
 
 import pytest
-
 from data_processor.security_utils import (
     ExpressionValidationError,
     FileSizeError,
@@ -78,9 +76,7 @@ class TestValidatePythonExpression:
     def test_unknown_variable_rejected(self) -> None:
         """Test expressions with unknown variables are rejected."""
         allowed = {"x", "y"}
-        with pytest.raises(
-            ExpressionValidationError, match="Unknown identifier: z"
-        ):
+        with pytest.raises(ExpressionValidationError, match="Unknown identifier: z"):
             validate_python_expression("x + z", allowed_names=allowed)
 
     def test_function_calls_allowed(self) -> None:
@@ -187,9 +183,7 @@ class TestValidateFilePath:
         test_file.touch()
 
         with patch("pathlib.Path.cwd", return_value=tmp_path):
-            with pytest.raises(
-                PathValidationError, match="Unsupported file extension"
-            ):
+            with pytest.raises(PathValidationError, match="Unsupported file extension"):
                 validate_file_path(test_file, allowed_extensions={".csv", ".xlsx"})
 
     def test_nonexistent_file_rejected(self, tmp_path: Path) -> None:

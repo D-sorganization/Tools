@@ -303,13 +303,12 @@ class LauncherWindow(QMainWindow):
         """Launch a Windows batch file."""
         if sys.platform.startswith("win"):
             subprocess.Popen(["cmd", "/c", str(target_path)])
-            return
-
-        QMessageBox.information(
-            self,
-            "Windows Script",
-            f"{app_name} is configured as a Windows batch file and can only run on Windows.",
-        )
+        else:
+            QMessageBox.information(
+                self,
+                "Windows Script",
+                f"{app_name} is configured as a Windows batch file and can only run on Windows.",
+            )
 
 
 def run() -> None:
