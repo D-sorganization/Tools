@@ -69,6 +69,10 @@ def setup_logging(
     )
 
 
+# Module-level logger for backwards compatibility
+logger = get_logger(__name__)
+
+
 def set_seeds(seed: int = DEFAULT_SEED) -> None:
     """Set random seeds for reproducibility.
 
@@ -76,7 +80,6 @@ def set_seeds(seed: int = DEFAULT_SEED) -> None:
         seed: Random seed value to use for all random number generators.
 
     """
-    logger = get_logger(__name__)
     random.seed(seed)
 
     # Import numpy only when needed to avoid module-level import
@@ -88,7 +91,3 @@ def set_seeds(seed: int = DEFAULT_SEED) -> None:
         logger.info("Seeds set: %d", seed)
     except ImportError:
         logger.warning("NumPy not available, skipping numpy seed setting")
-
-
-# Module-level logger for backwards compatibility
-logger = get_logger(__name__)
