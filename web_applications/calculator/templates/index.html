@@ -17,8 +17,8 @@
         <main class="screen">
             <div class="history" id="history" aria-live="polite"></div>
             <div class="io-grid">
-                <label for="expression">Expression</label>
-                <input id="expression" name="expression" autocomplete="off" placeholder="sin(x)^2 + cos(x)^2" />
+                <label for="expression">Expression <span class="required-mark" aria-hidden="true">*</span></label>
+                <input id="expression" name="expression" autocomplete="off" placeholder="sin(x)^2 + cos(x)^2" required aria-required="true" />
 
                 <label for="variable">Variable / Unknown</label>
                 <input id="variable" name="variable" autocomplete="off" placeholder="x or x,y" />

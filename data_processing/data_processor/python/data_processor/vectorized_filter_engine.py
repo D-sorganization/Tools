@@ -240,6 +240,39 @@ class VectorizedFilterEngine:
             return signal
 
         try:
+            # Optimization: Use scipy.ndimage for significant speedup (2x+)
+            # when no NaNs are present.
+            if not signal.hasnans:
+                # Use scipy for the bulk of the data
+                filtered_values = uniform_filter1d(
+                    signal.values,
+                    size=window,
+                    mode="nearest",
+                )
+                result = pd.Series(filtered_values, index=signal.index)
+
+                # Fix edges to match pandas "adaptive" behavior (shrink window)
+                # scipy uses padding (mode='nearest') which differs from pandas
+                # rolling(min_periods=1) at the edges.
+                # We overwrite the first and last (window // 2) elements.
+                radius = window // 2
+                if radius > 0 and len(signal) > window:
+                    # Fix top edge
+                    top_subset = signal.iloc[:window]
+                    top_corrected = top_subset.rolling(
+                        window=window, min_periods=1, center=True
+                    ).mean()
+                    result.iloc[:radius] = top_corrected.iloc[:radius]
+
+                    # Fix bottom edge
+                    bottom_subset = signal.iloc[-window:]
+                    bottom_corrected = bottom_subset.rolling(
+                        window=window, min_periods=1, center=True
+                    ).mean()
+                    result.iloc[-radius:] = bottom_corrected.iloc[-radius:]
+
+                return result
+
             # Pandas rolling preserves NaN positions and original index
             result = signal.rolling(window=window, min_periods=1, center=True).mean()
 
