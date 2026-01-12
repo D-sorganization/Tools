@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
+from functools import lru_cache
 
 import sympy as sp
 from sympy.parsing.sympy_parser import convert_xor, parse_expr, standard_transformations
@@ -72,8 +73,16 @@ class TI89Calculator:
         variables: Mapping[str, float | int | sp.Expr] | None = None,
     ) -> CalculatorResult:
         """Evaluate an expression with optional substitutions for symbols."""
+        variables_tuple = tuple(sorted((variables or {}).items()))
+        return self._evaluate_cached(expression, variables_tuple)
 
-        cleaned_variables = variables or {}
+    @lru_cache(maxsize=128)
+    def _evaluate_cached(
+        self,
+        expression: str,
+        variables_tuple: tuple[tuple[str, float | int | sp.Expr], ...],
+    ) -> CalculatorResult:
+        cleaned_variables = dict(variables_tuple)
         expression_symbols = self._build_symbol_map(cleaned_variables.keys())
         parsed_expression = self._parse_expression(expression, expression_symbols)
         substitutions = {
@@ -105,6 +114,7 @@ class TI89Calculator:
         result = self._matrix_log(matrix)
         return CalculatorResult("matrix_log", result)
 
+    @lru_cache(maxsize=128)
     def simplify_expression(self, expression: str) -> CalculatorResult:
         """Simplify an algebraic expression or balance an equation."""
 
@@ -116,6 +126,7 @@ class TI89Calculator:
         parsed_expression = self._parse_expression(expression, {})
         return CalculatorResult(expression, sp.simplify(parsed_expression))
 
+    @lru_cache(maxsize=128)
     def solve_equation(self, equation: str, variable: str) -> CalculatorResult:
         """Solve a single equation for a target variable."""
 
@@ -128,15 +139,23 @@ class TI89Calculator:
         self, equations: Sequence[str], variables: Sequence[str]
     ) -> CalculatorResult:
         """Solve a system of equations for the provided variables."""
+        return self._solve_system_cached(tuple(equations), tuple(variables))
 
+    @lru_cache(maxsize=128)
+    def _solve_system_cached(
+        self, equations: tuple[str, ...], variables: tuple[str, ...]
+    ) -> CalculatorResult:
         symbol_map = self._build_symbol_map(variables)
         parsed_equations = [
             self._parse_equation(equation, symbol_map) for equation in equations
         ]
         solution_symbols = [symbol_map[variable] for variable in variables]
         solutions = sp.solve(parsed_equations, solution_symbols, dict=True)
+        if isinstance(solutions, dict):
+            solutions = [solutions]
         return CalculatorResult("; ".join(equations), tuple(solutions))
 
+    @lru_cache(maxsize=128)
     def derivative(
         self, expression: str, variable: str, order: int = 1
     ) -> CalculatorResult:
@@ -159,7 +178,16 @@ class TI89Calculator:
         upper: float | int | sp.Expr | None = None,
     ) -> CalculatorResult:
         """Compute definite or indefinite integrals."""
+        return self._integral_cached(expression, variable, lower, upper)
 
+    @lru_cache(maxsize=128)
+    def _integral_cached(
+        self,
+        expression: str,
+        variable: str,
+        lower: float | int | sp.Expr | None,
+        upper: float | int | sp.Expr | None,
+    ) -> CalculatorResult:
         variable_symbol = sp.Symbol(variable)
         parsed_expression = self._parse_expression(
             expression, {variable: variable_symbol}
@@ -172,6 +200,7 @@ class TI89Calculator:
             raise ValueError("Both bounds must be provided for a definite integral")
         return CalculatorResult(expression, sp.simplify(result))
 
+    @lru_cache(maxsize=128)
     def limit(
         self,
         expression: str,
@@ -191,6 +220,7 @@ class TI89Calculator:
         )
         return CalculatorResult(expression, result)
 
+    @lru_cache(maxsize=128)
     def taylor_series(
         self, expression: str, variable: str, around: float | int | sp.Expr, order: int
     ) -> CalculatorResult:
@@ -208,6 +238,7 @@ class TI89Calculator:
         truncated = sp.simplify(series_expansion.removeO())
         return CalculatorResult(expression, truncated)
 
+    @lru_cache(maxsize=128)
     def solve_differential_equation(
         self, equation: str, function: str
     ) -> CalculatorResult:
