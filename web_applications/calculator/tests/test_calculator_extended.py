@@ -32,9 +32,9 @@ def test_solve_quadratic_equation() -> None:
 def test_solve_linear_system() -> None:
     calculator = TI89Calculator()
     res = calculator.solve_system(["x + y = 5", "x - y = 1"], ["x", "y"]).result
-    # Ensure res is a list and access first element
-    assert isinstance(res, list), "Result should be a list"
-    assert len(res) > 0, "Result list should not be empty"
+    # Ensure res is a tuple (cached) and access first element
+    assert isinstance(res, tuple), "Result should be a tuple"
+    assert len(res) > 0, "Result tuple should not be empty"
     solution = res[0]
     assert solution == {sp.Symbol("x"): 3, sp.Symbol("y"): 2}
 
