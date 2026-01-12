@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 import pytest
-from Calculator.webapp import create_app
+from calculator.webapp import create_app
 
 
 @pytest.fixture()
@@ -22,7 +22,7 @@ def test_exception_info_leak(client):
 
     # Patch _dispatch_calculation to raise an exception with a sensitive message
     with patch(
-        "Calculator.webapp._dispatch_calculation", side_effect=Exception(secret_message)
+        "calculator.webapp._dispatch_calculation", side_effect=Exception(secret_message)
     ):
         payload = {"operation": "evaluate", "expression": "1+1"}
         response = client.post("/api/calculate", json=payload)
