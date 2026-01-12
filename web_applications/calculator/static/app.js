@@ -63,6 +63,11 @@ function deleteToken() {
 }
 
 async function executeCalculation() {
+    const executeButton = document.getElementById("execute");
+    const originalText = executeButton.textContent;
+    executeButton.disabled = true;
+    executeButton.textContent = "Processing...";
+
     const payload = buildPayload();
     resultText.textContent = "Working…";
     approxLine.hidden = true;
@@ -83,6 +88,10 @@ async function executeCalculation() {
         pushHistory(payload.expression, data.result);
     } catch (error) {
         resultText.textContent = error.message;
+    } finally {
+        executeButton.disabled = false;
+        executeButton.textContent = originalText;
+        expressionInput.focus();
     }
 }
 
