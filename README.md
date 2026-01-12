@@ -23,10 +23,12 @@ The repository is organized into several key areas:
 
 - **`web_applications/`**: Web-based dashboards and interfaces for the simulators and tools.
 
-### 🚀 Launchers
+### 🚀 Launcher
 
-- **`UnifiedToolsLauncher.py`**: A centralized launcher for accessing all tools in the repository.
-- **`tools_launcher.py`**: Alternative launcher interface.
+- **`UnifiedToolsLauncher.py`**: **Primary entry point** - A centralized PyQt6-based launcher for accessing all tools in the repository.
+  ```bash
+  python UnifiedToolsLauncher.py
+  ```
 
 ## 🚀 Quick Start
 
