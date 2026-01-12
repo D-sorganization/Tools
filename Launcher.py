@@ -225,7 +225,8 @@ class ToolsLauncher(tk.Tk):
                 # Use the same python executable
                 subprocess.Popen([sys.executable, path], cwd=cwd)
             elif kind == "bat":
-                subprocess.Popen([path], cwd=cwd, shell=True)
+                # Use cmd.exe explicitly instead of shell=True for security
+                subprocess.Popen(["cmd.exe", "/c", path], cwd=cwd)
             elif kind == "html":
                 webbrowser.open(f"file://{path}")
             elif kind == "exe":

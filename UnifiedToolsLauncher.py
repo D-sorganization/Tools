@@ -323,22 +323,25 @@ class UnifiedLauncher(QMainWindow):
 
             elif type_ == "matlab":
                 self.log("ℹ️ Attempting to launch MATLAB...")
-                # Try to find MATLAB executable or use 'matlab' from PATH
-                cmd = f"matlab -nosplash -nodesktop -r \"run('{str(path)}');\""
-                # For non-blocking, we might just open the file if automation fails
+                # Build MATLAB command safely without shell=True
+                # Using list form to avoid shell injection vulnerabilities
+                matlab_script = f"run('{str(path).replace(chr(39), chr(39)+chr(39))}');"
+                cmd_list = ["matlab", "-nosplash", "-nodesktop", "-r", matlab_script]
                 try:
-                    subprocess.Popen(cmd, shell=True, cwd=path.parent)
+                    subprocess.Popen(cmd_list, cwd=path.parent)
                     self.log("✅ MATLAB command sent")
-                except Exception:
+                except FileNotFoundError:
+                    # MATLAB not in PATH, try opening file directly
                     os.startfile(path)
-                    self.log("⚠️ Executable not found, opened file in default editor")
+                    self.log("⚠️ MATLAB not in PATH, opened file in default editor")
 
             elif type_ == "web" or type_ == "browser":
                 webbrowser.open(path.as_uri())
                 self.log("✅ Opened in default browser")
 
             elif type_ == "bat":
-                subprocess.Popen([str(path)], shell=True, cwd=path.parent)
+                # Use cmd.exe explicitly instead of shell=True for security
+                subprocess.Popen(["cmd.exe", "/c", str(path)], cwd=path.parent)
                 self.log("✅ Batch script executed")
 
             else:
