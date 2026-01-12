@@ -79,6 +79,25 @@ def create_app() -> Flask:
     def service_worker() -> Any:
         return send_from_directory(app.static_folder, "service-worker.js")
 
+    @app.after_request
+    def add_security_headers(response: Any) -> Any:
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "SAMEORIGIN"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        # Content Security Policy
+        # - default-src 'self': Only load content from own origin
+        # - object-src 'none': Disable plugins like Flash
+        # - base-uri 'self': Restrict <base> tag
+        # - form-action 'self': Restrict form submissions
+        csp_policy = (
+            "default-src 'self'; "
+            "object-src 'none'; "
+            "base-uri 'self'; "
+            "form-action 'self';"
+        )
+        response.headers["Content-Security-Policy"] = csp_policy
+        return response
+
     return app
 
 
