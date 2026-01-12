@@ -249,9 +249,7 @@ class TI89Calculator:
         self, expression: str, variable: str, around: float | int | sp.Expr, order: int
     ) -> CalculatorResult:
         """Return the truncated Taylor series expansion up to the specified order."""
-        return TI89Calculator._taylor_series_cached(
-            expression, variable, around, order
-        )
+        return TI89Calculator._taylor_series_cached(expression, variable, around, order)
 
     @staticmethod
     @lru_cache(maxsize=1024)

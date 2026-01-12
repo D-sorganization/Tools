@@ -87,4 +87,7 @@ def test_rejects_unsafe_sympify_inputs() -> None:
     response = client.post("/api/calculate", json=payload)
     assert response.status_code == 400
     data = response.get_json()
-    assert "Security violation" in data["error"] or data["error"] == "Invalid numeric or symbolic value provided"
+    assert (
+        "Security violation" in data["error"]
+        or data["error"] == "Invalid numeric or symbolic value provided"
+    )
