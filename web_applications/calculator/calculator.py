@@ -85,9 +85,9 @@ class TI89Calculator:
         variables_tuple: tuple[tuple[str, float | int | sp.Expr], ...],
     ) -> CalculatorResult:
         cleaned_variables = dict(variables_tuple)
-        expression_symbols = TI89Calculator._build_symbol_map(cleaned_variables.keys())
-        parsed_expression = TI89Calculator._parse_expression_static(
-            expression, expression_symbols
+        variable_names = tuple(sorted(cleaned_variables.keys()))
+        parsed_expression, expression_symbols = (
+            TI89Calculator._parse_expression_structure(expression, variable_names)
         )
         substitutions = {
             expression_symbols[key]: value for key, value in cleaned_variables.items()
@@ -103,6 +103,25 @@ class TI89Calculator:
             else substituted
         )
         return CalculatorResult(expression, simplified)
+
+    @staticmethod
+    @lru_cache(maxsize=1024)
+    def _parse_expression_structure(
+        expression: str, variable_names: tuple[str, ...]
+    ) -> tuple[sp.Expr, Mapping[str, sp.Symbol]]:
+        """
+        Parse the expression structure independently of variable values.
+
+        Returns:
+            A tuple containing the parsed expression and the symbol map used.
+            The symbol map is returned because parsed_expression contains references
+            to these specific Symbol objects.
+        """
+        expression_symbols = TI89Calculator._build_symbol_map(variable_names)
+        parsed_expression = TI89Calculator._parse_expression_static(
+            expression, expression_symbols
+        )
+        return parsed_expression, expression_symbols
 
     def matrix_exponential(
         self, matrix: Iterable[Iterable[object]]
