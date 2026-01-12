@@ -255,8 +255,9 @@ function registerEvents() {
     if (touchExpression) {
         touchExpression.addEventListener("pointerdown", placeCursorFromTouch);
         touchExpression.addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-                executeCalculation();
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                expressionInput.focus();
             }
         });
     }
