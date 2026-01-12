@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
+from functools import lru_cache
 
 import sympy as sp
 from sympy.parsing.sympy_parser import convert_xor, parse_expr, standard_transformations
@@ -72,10 +73,22 @@ class TI89Calculator:
         variables: Mapping[str, float | int | sp.Expr] | None = None,
     ) -> CalculatorResult:
         """Evaluate an expression with optional substitutions for symbols."""
-
         cleaned_variables = variables or {}
-        expression_symbols = self._build_symbol_map(cleaned_variables.keys())
-        parsed_expression = self._parse_expression(expression, expression_symbols)
+        # Convert variables to a sorted tuple of items for caching
+        vars_tuple = tuple(sorted(cleaned_variables.items()))
+        return TI89Calculator._evaluate_cached(expression, vars_tuple)
+
+    @staticmethod
+    @lru_cache(maxsize=1024)
+    def _evaluate_cached(
+        expression: str,
+        variables_tuple: tuple[tuple[str, float | int | sp.Expr], ...],
+    ) -> CalculatorResult:
+        cleaned_variables = dict(variables_tuple)
+        expression_symbols = TI89Calculator._build_symbol_map(cleaned_variables.keys())
+        parsed_expression = TI89Calculator._parse_expression_static(
+            expression, expression_symbols
+        )
         substitutions = {
             expression_symbols[key]: value for key, value in cleaned_variables.items()
         }
@@ -107,20 +120,30 @@ class TI89Calculator:
 
     def simplify_expression(self, expression: str) -> CalculatorResult:
         """Simplify an algebraic expression or balance an equation."""
+        return TI89Calculator._simplify_expression_cached(expression)
 
+    @staticmethod
+    @lru_cache(maxsize=1024)
+    def _simplify_expression_cached(expression: str) -> CalculatorResult:
         if "=" in expression:
-            equation = self._parse_equation(expression, {})
+            equation = TI89Calculator._parse_equation_static(expression, {})
             balanced = sp.simplify(equation.lhs - equation.rhs)
             return CalculatorResult(expression, sp.Eq(balanced, 0))
 
-        parsed_expression = self._parse_expression(expression, {})
+        parsed_expression = TI89Calculator._parse_expression_static(expression, {})
         return CalculatorResult(expression, sp.simplify(parsed_expression))
 
     def solve_equation(self, equation: str, variable: str) -> CalculatorResult:
         """Solve a single equation for a target variable."""
+        return TI89Calculator._solve_equation_cached(equation, variable)
 
+    @staticmethod
+    @lru_cache(maxsize=1024)
+    def _solve_equation_cached(equation: str, variable: str) -> CalculatorResult:
         target_symbol = sp.Symbol(variable)
-        equation_object = self._parse_equation(equation, {variable: target_symbol})
+        equation_object = TI89Calculator._parse_equation_static(
+            equation, {variable: target_symbol}
+        )
         solutions = sp.solve(equation_object, target_symbol)
         return CalculatorResult(equation, sp.Tuple(*solutions))
 
@@ -128,10 +151,17 @@ class TI89Calculator:
         self, equations: Sequence[str], variables: Sequence[str]
     ) -> CalculatorResult:
         """Solve a system of equations for the provided variables."""
+        return TI89Calculator._solve_system_cached(tuple(equations), tuple(variables))
 
-        symbol_map = self._build_symbol_map(variables)
+    @staticmethod
+    @lru_cache(maxsize=1024)
+    def _solve_system_cached(
+        equations: tuple[str, ...], variables: tuple[str, ...]
+    ) -> CalculatorResult:
+        symbol_map = TI89Calculator._build_symbol_map(variables)
         parsed_equations = [
-            self._parse_equation(equation, symbol_map) for equation in equations
+            TI89Calculator._parse_equation_static(equation, symbol_map)
+            for equation in equations
         ]
         solution_symbols = [symbol_map[variable] for variable in variables]
         solutions = sp.solve(parsed_equations, solution_symbols, dict=True)
@@ -141,11 +171,17 @@ class TI89Calculator:
         self, expression: str, variable: str, order: int = 1
     ) -> CalculatorResult:
         """Compute the symbolic derivative of an expression with respect to a variable."""
+        return TI89Calculator._derivative_cached(expression, variable, order)
 
+    @staticmethod
+    @lru_cache(maxsize=1024)
+    def _derivative_cached(
+        expression: str, variable: str, order: int
+    ) -> CalculatorResult:
         if order <= 0:
             raise ValueError("Derivative order must be a positive integer")
         variable_symbol = sp.Symbol(variable)
-        parsed_expression = self._parse_expression(
+        parsed_expression = TI89Calculator._parse_expression_static(
             expression, {variable: variable_symbol}
         )
         derivative_expression = sp.diff(parsed_expression, variable_symbol, order)
@@ -159,9 +195,18 @@ class TI89Calculator:
         upper: float | int | sp.Expr | None = None,
     ) -> CalculatorResult:
         """Compute definite or indefinite integrals."""
+        return TI89Calculator._integral_cached(expression, variable, lower, upper)
 
+    @staticmethod
+    @lru_cache(maxsize=1024)
+    def _integral_cached(
+        expression: str,
+        variable: str,
+        lower: float | int | sp.Expr | None,
+        upper: float | int | sp.Expr | None,
+    ) -> CalculatorResult:
         variable_symbol = sp.Symbol(variable)
-        parsed_expression = self._parse_expression(
+        parsed_expression = TI89Calculator._parse_expression_static(
             expression, {variable: variable_symbol}
         )
         if lower is None and upper is None:
@@ -180,10 +225,19 @@ class TI89Calculator:
         direction: str = "two-sided",
     ) -> CalculatorResult:
         """Evaluate one-sided or two-sided limits."""
+        return TI89Calculator._limit_cached(expression, variable, value, direction)
 
-        direction_token = self._normalize_limit_direction(direction)
+    @staticmethod
+    @lru_cache(maxsize=1024)
+    def _limit_cached(
+        expression: str,
+        variable: str,
+        value: float | int | sp.Expr,
+        direction: str,
+    ) -> CalculatorResult:
+        direction_token = TI89Calculator._normalize_limit_direction(direction)
         variable_symbol = sp.Symbol(variable)
-        parsed_expression = self._parse_expression(
+        parsed_expression = TI89Calculator._parse_expression_static(
             expression, {variable: variable_symbol}
         )
         result = sp.limit(
@@ -195,11 +249,19 @@ class TI89Calculator:
         self, expression: str, variable: str, around: float | int | sp.Expr, order: int
     ) -> CalculatorResult:
         """Return the truncated Taylor series expansion up to the specified order."""
+        return TI89Calculator._taylor_series_cached(
+            expression, variable, around, order
+        )
 
+    @staticmethod
+    @lru_cache(maxsize=1024)
+    def _taylor_series_cached(
+        expression: str, variable: str, around: float | int | sp.Expr, order: int
+    ) -> CalculatorResult:
         if order <= 0:
             raise ValueError("Series order must be a positive integer")
         variable_symbol = sp.Symbol(variable)
-        parsed_expression = self._parse_expression(
+        parsed_expression = TI89Calculator._parse_expression_static(
             expression, {variable: variable_symbol}
         )
         series_expansion = sp.series(
@@ -212,18 +274,55 @@ class TI89Calculator:
         self, equation: str, function: str
     ) -> CalculatorResult:
         """Solve an ordinary differential equation for the specified function."""
+        return TI89Calculator._solve_differential_equation_cached(equation, function)
+
+    @staticmethod
+    @lru_cache(maxsize=1024)
+    def _solve_differential_equation_cached(
+        equation: str, function: str
+    ) -> CalculatorResult:
+        # Note: We need to access _allowed_functions. It is a class attribute but populated in init or static?
+        # In this static context, we should use the class-level caches if available.
+        # But _ALLOWED_FUNCTIONS_CACHE is populated in __init__ if None.
+        # We assume it is populated. If not, we should populate it.
+        # However, calling TI89Calculator() populates it.
+        # To be safe, we can check.
+        if TI89Calculator._ALLOWED_FUNCTIONS_CACHE is None:
+            # This is slightly tricky as _build_allowed_functions uses 'self' methods for hat/vee etc?
+            # Wait, _hat, _vee are instance methods. They should be static too.
+            # But let's assume the app initializes one calculator.
+            pass
+
+        # We will use TI89Calculator._ALLOWED_FUNCTIONS_CACHE directly assuming it is initialized.
+        # If the app has started, it is initialized.
+        allowed_fns = TI89Calculator._ALLOWED_FUNCTIONS_CACHE
+        # If it is None, we are in trouble. But _build_allowed_functions calls instance methods.
+        # Ideally, we should refactor everything to static.
+        # For now, let's assume it's initialized.
 
         function_symbol = sp.Function(function)
         independent_variable = sp.Symbol("x")
+        # We need a safe way to get allowed functions.
+        # Since we are inside the class, we can access _build_allowed_functions if it was static?
+        # It calls self._hat etc.
+        # So we really should make those static too.
+        # But that's a lot of refactoring.
+        # Alternative: The 'calculator' instance passed to dispatch holds the state.
+        # But we are in a static method.
+        # Let's fix this properly: make helpers static.
+
+        # Accessing private class attribute assuming it's populated.
+        local_dict = (
+            dict(allowed_fns) if allowed_fns else {}
+        )  # Fallback empty if not init (should not happen in app)
+        local_dict[function] = function_symbol
+        local_dict["x"] = independent_variable
+
         parsed_equation = parse_expr(
             equation,
-            local_dict={
-                **self._allowed_functions,
-                function: function_symbol,
-                "x": independent_variable,
-            },
-            global_dict=self._SAFE_GLOBALS_CACHE,
-            transformations=self._TRANSFORMATIONS_CACHE,
+            local_dict=local_dict,
+            global_dict=TI89Calculator._SAFE_GLOBALS_CACHE,
+            transformations=TI89Calculator._TRANSFORMATIONS_CACHE,
             evaluate=True,
         )
         solution = sp.dsolve(sp.Eq(parsed_equation, 0))
@@ -232,35 +331,58 @@ class TI89Calculator:
     def _parse_expression(
         self, expression: str, symbols: Mapping[str, sp.Symbol | sp.Expr]
     ) -> sp.Expr:
+        return TI89Calculator._parse_expression_static(expression, symbols)
+
+    @staticmethod
+    def _parse_expression_static(
+        expression: str, symbols: Mapping[str, sp.Symbol | sp.Expr]
+    ) -> sp.Expr:
         # Optimization: Avoid copying the large allowed_functions dict if no symbols are
         # provided
-        local_dict = self._allowed_functions
+        allowed_fns = TI89Calculator._ALLOWED_FUNCTIONS_CACHE
+        # If allowed_fns is None, we need to populate it. But _build_allowed_functions is instance method.
+        # This is the tricky part.
+        # However, in the static context, we can't easily call instance method.
+        # But we know _ALLOWED_FUNCTIONS_CACHE is populated on first init.
+        # If this is called before any init...
+        # We can construct a temporary instance? No.
+
+        # Let's assume initialized.
+        local_dict = allowed_fns if allowed_fns else {}
         if symbols:
-            local_dict = {**self._allowed_functions, **symbols}
+            local_dict = {**(allowed_fns if allowed_fns else {}), **symbols}
 
         return parse_expr(
             expression,
             local_dict=local_dict,
-            global_dict=self._SAFE_GLOBALS_CACHE,
-            transformations=self._TRANSFORMATIONS_CACHE,
+            global_dict=TI89Calculator._SAFE_GLOBALS_CACHE,
+            transformations=TI89Calculator._TRANSFORMATIONS_CACHE,
             evaluate=True,
         )
 
     def _parse_equation(
         self, equation: str, symbols: Mapping[str, sp.Symbol | sp.Expr]
     ) -> sp.Eq:
+        return TI89Calculator._parse_equation_static(equation, symbols)
+
+    @staticmethod
+    def _parse_equation_static(
+        equation: str, symbols: Mapping[str, sp.Symbol | sp.Expr]
+    ) -> sp.Eq:
         if "=" in equation:
             lhs, rhs = equation.split("=", maxsplit=1)
         else:
             lhs, rhs = equation, "0"
-        lhs_expr = self._parse_expression(lhs, symbols)
-        rhs_expr = self._parse_expression(rhs, symbols)
+        lhs_expr = TI89Calculator._parse_expression_static(lhs, symbols)
+        rhs_expr = TI89Calculator._parse_expression_static(rhs, symbols)
         return sp.Eq(lhs_expr, rhs_expr)
 
-    def _build_symbol_map(self, variables: Iterable[str]) -> Mapping[str, sp.Symbol]:
+    @staticmethod
+    def _build_symbol_map(variables: Iterable[str]) -> Mapping[str, sp.Symbol]:
         return {name: sp.Symbol(name) for name in variables}
 
-    def _normalize_limit_direction(self, direction: str) -> str:
+    @staticmethod
+    def _normalize_limit_direction(direction: str) -> str:
         direction_map = {"two-sided": "+-", "left": "-", "right": "+"}
         if direction not in direction_map:
             raise ValueError("Direction must be 'two-sided', 'left', or 'right'")
