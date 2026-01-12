@@ -63,7 +63,9 @@ def create_app() -> Flask:
         # HSTS (Strict-Transport-Security) - enforce HTTPS
         # Max-age: 1 year (31536000 seconds), includeSubDomains
         # Only strict if running on HTTPS, but good to have
-        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        response.headers["Strict-Transport-Security"] = (
+            "max-age=31536000; includeSubDomains"
+        )
         return response
 
     @app.get("/")  # type: ignore[misc]
@@ -78,7 +80,9 @@ def create_app() -> Flask:
             # Access limiter via closure over 'app'
             if not app.limiter.is_allowed(client_ip):  # type: ignore[attr-defined]
                 return (
-                    jsonify({"error": "Rate limit exceeded. Please try again later."}),
+                    jsonify({
+                        "error": "Rate limit exceeded. Please try again later."
+                    }),
                     429,
                 )
 
@@ -375,4 +379,4 @@ def _clean_optional(value: object | None) -> str | None:
     if value is None:
         return None
     text = str(value).strip()
-    return text or None  # type: ignore[no-any-return]
+    return text or None
