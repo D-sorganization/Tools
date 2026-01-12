@@ -97,6 +97,12 @@ class TI89Calculator:
             if hasattr(parsed_expression, "subs")
             else parsed_expression
         )
+
+        # Optimization: Only use full simplification if result is symbolic
+        # For purely numeric results, evaluation is sufficient
+        if isinstance(substituted, sp.Number):
+            return CalculatorResult(expression, substituted)
+
         simplified = (
             sp.simplify(substituted)
             if isinstance(substituted, sp.Basic)
