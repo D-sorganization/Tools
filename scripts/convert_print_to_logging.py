@@ -19,13 +19,16 @@ def convert_print_to_logging(file_path: Path) -> tuple[int, str]:
     modified_lines = []
     conversions = 0
 
-    # Add logging import if not present
+    # Add logging import if not present - check for various logging patterns
     has_logging_import = any(
-        "from data_processor.logging_config import" in line or "import logging" in line
+        "import logging" in line
+        or "from logging" in line
+        or "logging_config" in line
+        or "logger_utils" in line
         for line in lines[:50]
     )
 
-    for _i, line in enumerate(lines):
+    for line in lines:
         # Skip if line is a comment or in a docstring context
         stripped = line.strip()
         if stripped.startswith("#"):
@@ -78,8 +81,8 @@ def convert_print_to_logging(file_path: Path) -> tuple[int, str]:
             if stripped.startswith("import ") or stripped.startswith("from "):
                 insert_pos = i + 1
 
-        # Insert logger import
-        logger_import = "from data_processor.logging_config import get_logger\n\nlogger = get_logger(__name__)\n"
+        # Insert logger import - use standard logging module for portability
+        logger_import = "import logging\n\n" "logger = logging.getLogger(__name__)\n"
         modified_lines.insert(insert_pos, logger_import)
 
     return conversions, "\n".join(modified_lines)
@@ -87,18 +90,20 @@ def convert_print_to_logging(file_path: Path) -> tuple[int, str]:
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python convert_print_to_logging.py <file_path>")
+        sys.stderr.write("Usage: python convert_print_to_logging.py <file_path>\n")
         sys.exit(1)
 
     file_path = Path(sys.argv[1])
     if not file_path.exists():
-        print(f"File not found: {file_path}")
+        sys.stderr.write(f"File not found: {file_path}\n")
         sys.exit(1)
 
     conversions, new_content = convert_print_to_logging(file_path)
 
     if conversions > 0:
         file_path.write_text(new_content, encoding="utf-8")
-        print(f"Converted {conversions} print() statements to logging in {file_path}")
+        sys.stdout.write(
+            f"Converted {conversions} print() statements to logging in {file_path}\n"
+        )
     else:
-        print(f"No print() statements found in {file_path}")
+        sys.stdout.write(f"No print() statements found in {file_path}\n")
