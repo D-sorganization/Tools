@@ -8,6 +8,7 @@ from typing import Any
 import sympy as sp
 from flask import (
     Flask,
+    Response,
     current_app,
     jsonify,
     render_template,
@@ -78,6 +79,24 @@ def create_app() -> Flask:
     @app.get("/service-worker.js")
     def service_worker() -> Any:
         return send_from_directory(app.static_folder, "service-worker.js")
+
+    @app.after_request
+    def add_security_headers(response: Response) -> Response:
+        """Add default security headers to every response."""
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "SAMEORIGIN"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; "
+            "script-src 'self'; "
+            "style-src 'self'; "
+            "img-src 'self' data:; "
+            "object-src 'none'; "
+            "frame-ancestors 'none'; "
+            "base-uri 'self'; "
+            "form-action 'self';"
+        )
+        return response
 
     return app
 
