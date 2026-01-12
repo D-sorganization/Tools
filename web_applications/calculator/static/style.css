@@ -15,6 +15,7 @@
     --shadow: rgba(0, 0, 0, 0.45);
     --soft-key: #16354a;
     --alert: #f3c76b;
+    --error: #e63946;
     font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
     background: radial-gradient(circle at 15% 30%, #0f1822, #070b12 70%);
     min-height: 100vh;
@@ -101,6 +102,11 @@ body {
     font-weight: 700;
 }
 
+.required-mark {
+    color: var(--error);
+    margin-left: 2px;
+}
+
 .io-grid input {
     border: 1px solid #7da88c;
     border-radius: 6px;
@@ -109,6 +115,11 @@ body {
     background: #f5fbf6;
     color: #0f2b1d;
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.io-grid input:invalid {
+    border-color: var(--error);
+    background: #fff5f5;
 }
 
 .bounds-row {
@@ -383,6 +394,13 @@ body {
 .action.primary {
     background: linear-gradient(180deg, #93e2ff, #0da6c2);
     color: #0b202a;
+}
+
+.action.primary:disabled {
+    background: linear-gradient(180deg, #5a7b88, #4a636e);
+    color: #bcc6cc;
+    cursor: not-allowed;
+    box-shadow: none;
 }
 
 .action.secondary {

@@ -3,11 +3,12 @@ from __future__ import annotations
 import logging
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 import sympy as sp
 from flask import (
     Flask,
+    Response,
     current_app,
     jsonify,
     render_template,
@@ -41,19 +42,41 @@ def create_app() -> Flask:
     app = Flask(__name__, static_folder="static", template_folder="templates")
     calculator = TI89Calculator()
     # Rate limit: 100 requests per 60 seconds per IP
-    app.limiter = RateLimiter(limit=100, window=60)  # type: ignore
+    app.limiter = RateLimiter(limit=100, window=60)  # type: ignore[attr-defined]
 
-    @app.get("/")
+    @app.after_request  # type: ignore[misc]
+    def add_security_headers(response: Response) -> Response:
+        """Add security headers to every response."""
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; "
+            "style-src 'self' 'unsafe-inline'; "
+            "script-src 'self' 'unsafe-inline'; "
+            "img-src 'self' data:; "
+            "object-src 'none'; "
+            "frame-ancestors 'none'; "
+            "base-uri 'self'; "
+            "form-action 'self';"
+        )
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        # HSTS (Strict-Transport-Security) - enforce HTTPS
+        # Max-age: 1 year (31536000 seconds), includeSubDomains
+        # Only strict if running on HTTPS, but good to have
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        return response
+
+    @app.get("/")  # type: ignore[misc]
     def index() -> str:
-        return render_template("index.html")
+        return cast(str, render_template("index.html"))
 
-    @app.post("/api/calculate")
+    @app.post("/api/calculate")  # type: ignore[misc]
     def calculate() -> tuple[Any, int]:
         # Security: Rate limiting to prevent DoS
         if not current_app.testing:
             client_ip = request.remote_addr or "unknown"
             # Access limiter via closure over 'app'
-            if not app.limiter.is_allowed(client_ip):  # type: ignore
+            if not app.limiter.is_allowed(client_ip):  # type: ignore[attr-defined]
                 return (
                     jsonify({"error": "Rate limit exceeded. Please try again later."}),
                     429,
@@ -71,11 +94,11 @@ def create_app() -> Flask:
             logger.exception("Calculation failed")
             return jsonify({"error": "An internal error occurred."}), 500
 
-    @app.get("/manifest.webmanifest")
+    @app.get("/manifest.webmanifest")  # type: ignore[misc]
     def manifest() -> Any:
         return send_from_directory(app.static_folder, "manifest.webmanifest")
 
-    @app.get("/service-worker.js")
+    @app.get("/service-worker.js")  # type: ignore[misc]
     def service_worker() -> Any:
         return send_from_directory(app.static_folder, "service-worker.js")
 
@@ -113,7 +136,7 @@ def _parse_payload(raw_payload: Mapping[str, object]) -> CalculationPayload:
     variables: Mapping[str, str] | None = None
     if isinstance(raw_payload.get("variables"), Mapping):
         variables = {}
-        for key, val in raw_payload["variables"].items():
+        for key, val in raw_payload["variables"].items():  # type: ignore[attr-defined]
             k_str, v_str = str(key), str(val)
             _validate_length(k_str, "Variable name")
             _validate_length(v_str, "Variable value")
@@ -343,7 +366,7 @@ def _parse_optional_int(value: object | None) -> int | None:
     if value is None:
         return None
     try:
-        return int(value)
+        return int(str(value))
     except (TypeError, ValueError):
         raise ValueError("Integer value expected") from None
 
@@ -352,4 +375,4 @@ def _clean_optional(value: object | None) -> str | None:
     if value is None:
         return None
     text = str(value).strip()
-    return text or None
+    return text or None  # type: ignore[no-any-return]

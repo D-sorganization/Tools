@@ -13,6 +13,7 @@ const activeModeLabel = document.getElementById("active-mode");
 const touchExpression = document.getElementById("touch-expression");
 const copyResultButton = document.getElementById("copy-result");
 const copyExpressionButton = document.getElementById("copy-expression");
+const executeButton = document.getElementById("execute");
 
 const MODE_LABELS = {
     derivative: "DIFF",
@@ -67,6 +68,12 @@ async function executeCalculation() {
     resultText.textContent = "Working…";
     approxLine.hidden = true;
 
+    // Loading state
+    const originalText = executeButton.textContent;
+    executeButton.textContent = "Processing...";
+    executeButton.disabled = true;
+    executeButton.setAttribute("aria-busy", "true");
+
     try {
         const response = await fetch("/api/calculate", {
             method: "POST",
@@ -83,6 +90,11 @@ async function executeCalculation() {
         pushHistory(payload.expression, data.result);
     } catch (error) {
         resultText.textContent = error.message;
+    } finally {
+        executeButton.textContent = originalText;
+        executeButton.disabled = false;
+        executeButton.removeAttribute("aria-busy");
+        expressionInput.focus();
     }
 }
 
