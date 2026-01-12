@@ -80,9 +80,7 @@ def create_app() -> Flask:
             # Access limiter via closure over 'app'
             if not app.limiter.is_allowed(client_ip):  # type: ignore[attr-defined]
                 return (
-                    jsonify({
-                        "error": "Rate limit exceeded. Please try again later."
-                    }),
+                    jsonify({"error": "Rate limit exceeded. Please try again later."}),
                     429,
                 )
 
