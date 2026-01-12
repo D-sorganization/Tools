@@ -7,7 +7,7 @@ from typing import Any
 # Add the parent directory to sys.path to import webapp
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from webapp import create_app
+from calculator.webapp import create_app
 
 
 def perform_request(client: Any, payload: dict[str, object]) -> dict[str, object]:
