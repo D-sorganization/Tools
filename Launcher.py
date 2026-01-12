@@ -55,46 +55,21 @@ TOOLS = {
     ],
     "Audio Processors": [
         (
-            "Audio Processor Pro (Main)",
+            "Audio Processor Pro",
             "media_processing/audio_processor/matlab/audio_signal_processor/launch_audio_processor_pro.m",
-            "file",
-        ),
-        (
-            "Audio Processor Pro (Replicant)",
-            "replicants/matlab/audio_signal_processor/launch_audio_processor_pro.m",
             "file",
         ),
     ],
     "Folder Tools": [
         (
-            "Folder Packer Pro (Main)",
+            "Folder Packer Pro",
             "development_tools/folder_tools/folder_packer_pro/folder_packer_pro.py",
             "python",
         ),
         (
-            "Folder Fix (Main)",
+            "Folder Fix",
             "development_tools/folder_tools/folder_tool/Launch_FolderFix.bat",
             "bat",
-        ),
-        (
-            "Folder Packer Pro (Replicant)",
-            "replicants/python/folder_packer_pro/folder_packer_pro.py",
-            "python",
-        ),
-        (
-            "Project Packer (Replicant)",
-            "replicants/python/project_packer/folder_packer_gui.py",
-            "python",
-        ),
-        (
-            "Folder Fix (Replicant)",
-            "replicants/python/folder_tool/Launch_FolderFix.bat",
-            "bat",
-        ),
-        (
-            "Folder Fix Pro (Replicant)",
-            "replicants/python/folder_tool_pro/folder_fix_pro.py",
-            "python",
         ),
     ],
 }
