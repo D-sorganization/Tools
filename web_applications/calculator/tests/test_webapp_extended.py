@@ -5,9 +5,9 @@ import sys
 from typing import Any
 
 # Add the parent directory to sys.path to import webapp
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
 
-from webapp import create_app
+from web_applications.calculator.webapp import create_app
 
 
 def perform_request(client: Any, payload: dict[str, object]) -> dict[str, object]:
@@ -87,4 +87,4 @@ def test_rejects_unsafe_sympify_inputs() -> None:
     response = client.post("/api/calculate", json=payload)
     assert response.status_code == 400
     data = response.get_json()
-    assert data["error"] == "Invalid numeric or symbolic value provided"
+    assert "Security violation" in data["error"] or data["error"] == "Invalid numeric or symbolic value provided"

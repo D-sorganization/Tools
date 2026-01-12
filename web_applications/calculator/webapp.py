@@ -85,6 +85,12 @@ def create_app() -> Flask:
 MAX_INPUT_LENGTH = 1000
 
 
+def _validate_security(value: str | None) -> None:
+    """Check for potentially dangerous patterns in input."""
+    if value and "__" in value:
+        raise ValueError("Security violation: Restricted input pattern detected.")
+
+
 def _parse_payload(raw_payload: Mapping[str, object]) -> CalculationPayload:
     operation = str(raw_payload.get("operation", "")).strip()
     if not operation:
@@ -98,9 +104,11 @@ def _parse_payload(raw_payload: Mapping[str, object]) -> CalculationPayload:
         raise ValueError(
             f"Expression exceeds maximum length of {MAX_INPUT_LENGTH} characters"
         )
+    _validate_security(expression)
 
     variable = _clean_optional(raw_payload.get("variable"))
     _validate_length(variable, "Variable")
+    _validate_security(variable)
 
     variables: Mapping[str, str] | None = None
     if isinstance(raw_payload.get("variables"), Mapping):
@@ -109,22 +117,29 @@ def _parse_payload(raw_payload: Mapping[str, object]) -> CalculationPayload:
             k_str, v_str = str(key), str(val)
             _validate_length(k_str, "Variable name")
             _validate_length(v_str, "Variable value")
+            _validate_security(k_str)
+            _validate_security(v_str)
             variables[k_str] = v_str
 
     lower = _clean_optional(raw_payload.get("lower"))
     _validate_length(lower, "Lower bound")
+    _validate_security(lower)
 
     upper = _clean_optional(raw_payload.get("upper"))
     _validate_length(upper, "Upper bound")
+    _validate_security(upper)
 
     value = _clean_optional(raw_payload.get("value"))
     _validate_length(value, "Value")
+    _validate_security(value)
 
     direction = _clean_optional(raw_payload.get("direction"))
     _validate_length(direction, "Direction")
+    _validate_security(direction)
 
     around = _clean_optional(raw_payload.get("around"))
     _validate_length(around, "Around value")
+    _validate_security(around)
 
     function = _clean_optional(raw_payload.get("function"))
     _validate_length(function, "Function name")
