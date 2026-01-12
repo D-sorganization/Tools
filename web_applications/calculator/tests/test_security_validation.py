@@ -1,5 +1,7 @@
 import pytest
+
 from web_applications.calculator.webapp import _validate_security
+
 
 def test_security_validation():
     # Safe inputs
