@@ -308,7 +308,7 @@ class CSVProcessorApp(ctk.CTk):
         parent_tab.grid_columnconfigure(0, weight=1)
         parent_tab.grid_rowconfigure(0, weight=1)
 
-        def create_left_content(left_panel):
+        def create_left_content(left_panel) -> None:
             """Create the left panel content"""
             left_panel.grid_rowconfigure(0, weight=1)
             left_panel.grid_columnconfigure(0, weight=1)
@@ -357,7 +357,7 @@ class CSVProcessorApp(ctk.CTk):
             )
             self.process_button.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
 
-        def create_right_content(right_panel):
+        def create_right_content(right_panel) -> None:
             """Create the right panel content"""
             right_panel.grid_rowconfigure(2, weight=1)
             right_panel.grid_columnconfigure(0, weight=1)
@@ -436,7 +436,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
-    def populate_setup_sub_tab(self, tab) -> None:
+    def populate_setup_sub_tab(self, tab: ctk.CTkFrame) -> None:
         """Populate the setup sub-tab."""
         tab.grid_columnconfigure(0, weight=1)
 
@@ -649,7 +649,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         sort_desc.grid(row=3, column=1, padx=10, pady=5, sticky="w")
 
-    def populate_processing_sub_tab(self, tab) -> None:
+    def populate_processing_sub_tab(self, tab: ctk.CTkFrame) -> None:
         """Populate the processing sub-tab with all advanced features."""
         tab.grid_columnconfigure(0, weight=1)
         time_units = ["ms", "s", "min", "hr"]
@@ -1211,7 +1211,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, threshold_entry, method_menu
 
-    def _update_filter_ui(self, filter_type) -> None:
+    def _update_filter_ui(self, filter_type: str) -> None:
         """Update filter UI based on selected filter type."""
         # Hide all frames
         for frame in [
@@ -1238,7 +1238,7 @@ class CSVProcessorApp(ctk.CTk):
         elif filter_type == "Savitzky-Golay":
             self.savgol_frame.grid()
 
-    def _update_plot_filter_ui(self, filter_type) -> None:
+    def _update_plot_filter_ui(self, filter_type: str) -> None:
         """Update plot filter UI based on selected filter type."""
         # Hide all frames
         for frame in [
@@ -1265,7 +1265,7 @@ class CSVProcessorApp(ctk.CTk):
         elif filter_type == "Savitzky-Golay":
             self.plot_savgol_frame.grid()
 
-    def _filter_signals(self, event=None) -> None:
+    def _filter_signals(self, event: Any = None) -> None:
         """Filter signals based on search text."""
         search_text = self.search_entry.get().lower()
         for signal, data in self.signal_vars.items():
@@ -1280,7 +1280,7 @@ class CSVProcessorApp(ctk.CTk):
         for _signal, data in self.signal_vars.items():
             data["widget"].grid()
 
-    def _filter_integrator_signals(self, event=None) -> None:
+    def _filter_integrator_signals(self, event: Any = None) -> None:
         """Filter integration signals based on search text."""
         search_text = self.integrator_search_entry.get().lower()
         for signal, data in self.integrator_signal_vars.items():
@@ -1305,7 +1305,7 @@ class CSVProcessorApp(ctk.CTk):
         for _signal, data in self.integrator_signal_vars.items():
             data["var"].set(False)
 
-    def _filter_deriv_signals(self, event=None) -> None:
+    def _filter_deriv_signals(self, event: Any = None) -> None:
         """Filter differentiation signals based on search text."""
         search_text = self.deriv_search_entry.get().lower()
         for signal, data in self.deriv_signal_vars.items():
@@ -1404,7 +1404,7 @@ class CSVProcessorApp(ctk.CTk):
         self.custom_var_name_entry.delete(0, tk.END)
         self.custom_var_formula_entry.delete(0, tk.END)
 
-    def populate_custom_var_sub_tab(self, tab) -> None:
+    def populate_custom_var_sub_tab(self, tab: ctk.CTkFrame) -> None:
         """Fixed custom variables sub-tab with missing listbox."""
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(9, weight=1)
@@ -2671,7 +2671,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return None
 
-    def _export_processed_files(self, processed_files) -> None:
+    def _export_processed_files(self, processed_files: dict[str, pd.DataFrame]) -> None:
         """Export processed files based on selected format."""
         export_type = self.export_type_var.get()
 
@@ -2688,7 +2688,7 @@ class CSVProcessorApp(ctk.CTk):
         elif export_type == "MAT (Compiled)":
             self._export_mat_compiled(processed_files)
 
-    def _export_csv_separate(self, processed_files) -> None:
+    def _export_csv_separate(self, processed_files: dict[str, pd.DataFrame]) -> None:
         """Export each file as a separate CSV."""
         print(f"_export_csv_separate called with {len(processed_files)} files")
         exported_count = 0
@@ -2722,7 +2722,7 @@ class CSVProcessorApp(ctk.CTk):
             print("Showing cancelled message")
             messagebox.showinfo("Export Cancelled", "No files were exported.")
 
-    def _export_csv_compiled(self, processed_files) -> None:
+    def _export_csv_compiled(self, processed_files: dict[str, pd.DataFrame]) -> None:
         """Export all files as a single compiled CSV."""
         if not processed_files:
             return
@@ -2741,7 +2741,9 @@ class CSVProcessorApp(ctk.CTk):
             compiled_df.to_csv(final_path, index=False)
             messagebox.showinfo("Success", f"Exported compiled data to {final_path}")
 
-    def _export_excel_multisheet(self, processed_files) -> None:
+    def _export_excel_multisheet(
+        self, processed_files: dict[str, pd.DataFrame]
+    ) -> None:
         """Export all files to a single Excel file with multiple sheets."""
         output_path = os.path.join(self.output_directory, "processed_data.xlsx")
         final_path = self._check_file_overwrite(output_path)
@@ -2756,7 +2758,7 @@ class CSVProcessorApp(ctk.CTk):
 
         messagebox.showinfo("Success", f"Exported to Excel file: {final_path}")
 
-    def _export_excel_separate(self, processed_files) -> None:
+    def _export_excel_separate(self, processed_files: dict[str, pd.DataFrame]) -> None:
         """Export each file as a separate Excel file."""
         exported_count = 0
         for file_path, df in processed_files:
@@ -2782,7 +2784,7 @@ class CSVProcessorApp(ctk.CTk):
         else:
             messagebox.showinfo("Cancelled", "No files were exported.")
 
-    def _export_mat_separate(self, processed_files) -> None:
+    def _export_mat_separate(self, processed_files: dict[str, pd.DataFrame]) -> None:
         """Export each file as a separate MAT file."""
         exported_count = 0
         for file_path, df in processed_files:
@@ -2809,7 +2811,7 @@ class CSVProcessorApp(ctk.CTk):
         else:
             messagebox.showinfo("Cancelled", "No files were exported.")
 
-    def _export_mat_compiled(self, processed_files) -> None:
+    def _export_mat_compiled(self, processed_files: dict[str, pd.DataFrame]) -> None:
         """Export all files as a single compiled MAT file."""
         if not processed_files:
             return
@@ -2923,7 +2925,7 @@ class CSVProcessorApp(ctk.CTk):
         plot_main_frame.grid_rowconfigure(0, weight=1)
         plot_main_frame.grid_columnconfigure(0, weight=1)
 
-        def create_plot_left_content(left_panel):
+        def create_plot_left_content(left_panel) -> None:
             """Create the left panel content for plotting with all advanced features"""
             left_panel.grid_rowconfigure(0, weight=1)
             left_panel.grid_columnconfigure(0, weight=1)
@@ -3656,7 +3658,7 @@ class CSVProcessorApp(ctk.CTk):
                 command=self._export_chart_excel,
             ).grid(row=2, column=0, sticky="ew", padx=10, pady=2)
 
-        def create_plot_right_content(right_panel):
+        def create_plot_right_content(right_panel) -> None:
             """Create the right panel content for plotting"""
             right_panel.grid_rowconfigure(1, weight=1)
             right_panel.grid_columnconfigure(0, weight=1)
@@ -7097,7 +7099,7 @@ COMMON MISTAKES TO AVOID:
                 self._original_home = self.plot_toolbar.home
 
             # Create custom home function
-            def custom_home():
+            def custom_home() -> None:
                 try:
                     if self.saved_plot_view:
                         self.plot_ax.set_xlim(self.saved_plot_view["xlim"])
@@ -7850,7 +7852,7 @@ For additional support or feature requests, please refer to the
         button_frame = ctk.CTkFrame(dialog)
         button_frame.pack(fill="x", padx=20, pady=10)
 
-        def on_modify():
+        def on_modify() -> None:
             selection = listbox.curselection()
             if not selection:
                 messagebox.showwarning(
@@ -7875,7 +7877,7 @@ For additional support or feature requests, please refer to the
                     with current settings!",
             )
 
-        def on_cancel():
+        def on_cancel() -> None:
             dialog.destroy()
 
         ctk.CTkButton(button_frame, text="Modify Selected", command=on_modify).pack(
@@ -8682,7 +8684,7 @@ For additional support or feature requests, please refer to the
     def _bind_mousewheel_to_frame(self, frame) -> None:
         """Bind mouse wheel events to a frame for proper scrolling."""
 
-        def on_mousewheel(event):
+        def on_mousewheel(event) -> None:
             # Scroll the frame's canvas
             try:
                 frame._parent_canvas.yview_scroll(
@@ -8694,7 +8696,7 @@ For additional support or feature requests, please refer to the
                 frame._parent_canvas.yview_scroll(int(-1 * event.delta), "units")
 
         # Bind mousewheel to the frame and all its children
-        def bind_mousewheel(widget):
+        def bind_mousewheel(widget) -> None:
             widget.bind("<MouseWheel>", on_mousewheel)
             widget.bind(
                 "<Button-4>",
