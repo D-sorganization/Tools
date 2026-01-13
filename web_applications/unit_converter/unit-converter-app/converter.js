@@ -357,6 +357,16 @@ const UNIT_ALIASES = {
 // Optimization: Cache for reverse alias lookup
 let _REVERSE_ALIASES_CACHE = null;
 
+// Security: Prevent prototype pollution
+function isValidKey(key) {
+  return (
+    key !== '__proto__' &&
+    key !== 'constructor' &&
+    key !== 'prototype' &&
+    typeof key === 'string'
+  );
+}
+
 function getReverseAliases() {
   if (_REVERSE_ALIASES_CACHE) {
     return _REVERSE_ALIASES_CACHE;
@@ -384,6 +394,11 @@ class CustomUnitManager {
   }
 
   addUnit(category, unit, referenceUnit, factorToReference, aliases = []) {
+    // Security validation
+    if (!isValidKey(category) || !isValidKey(unit)) {
+      throw new Error('Invalid category or unit name');
+    }
+
     // Validation
     if (!CONVERSION_FACTORS[category]) {
       throw new Error(`Unknown category: ${category}`);
@@ -477,22 +492,48 @@ class CustomUnitManager {
       const savedAliases = localStorage.getItem('customAliases');
 
       if (saved) {
-        this.customUnits = JSON.parse(saved);
-        // Restore to main conversion factors
-        Object.keys(this.customUnits).forEach(category => {
-          Object.keys(this.customUnits[category]).forEach(unit => {
-            CONVERSION_FACTORS[category][unit] = this.customUnits[category][unit];
+        const parsed = JSON.parse(saved);
+        this.customUnits = {};
+
+        // Restore to main conversion factors with validation
+        Object.keys(parsed).forEach(category => {
+          if (!isValidKey(category)) return;
+
+          if (!this.customUnits[category]) {
+            this.customUnits[category] = {};
+          }
+
+          Object.keys(parsed[category]).forEach(unit => {
+            if (!isValidKey(unit)) return;
+
+            const value = parsed[category][unit];
+            this.customUnits[category][unit] = value;
+
+            // Only add to CONVERSION_FACTORS if category exists
+            if (CONVERSION_FACTORS[category]) {
+              CONVERSION_FACTORS[category][unit] = value;
+            }
           });
         });
       }
 
       if (savedAliases) {
-        this.customAliases = JSON.parse(savedAliases);
-        // Restore aliases
-        Object.keys(this.customAliases).forEach(unit => {
-          this.customAliases[unit].forEach(alias => {
-            UNIT_ALIASES[alias.toLowerCase()] = unit;
-          });
+        const parsedAliases = JSON.parse(savedAliases);
+        this.customAliases = {};
+
+        // Restore aliases with validation
+        Object.keys(parsedAliases).forEach(unit => {
+          if (!isValidKey(unit)) return;
+
+          const aliases = parsedAliases[unit];
+          if (Array.isArray(aliases)) {
+            this.customAliases[unit] = aliases;
+            aliases.forEach(alias => {
+              if (isValidKey(alias)) {
+                UNIT_ALIASES[alias.toLowerCase()] = unit;
+              }
+            });
+          }
         });
         _REVERSE_ALIASES_CACHE = null; // Invalidate cache
       }
