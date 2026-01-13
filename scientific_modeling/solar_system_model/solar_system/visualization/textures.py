@@ -56,7 +56,7 @@ class TextureHandle:
 class TextureManager:
     """Load and bind NASA-sourced textures for planets and moons."""
 
-    def __init__(self, asset_root: pathlib.Path, auto_download: bool = True):
+    def __init__(self, asset_root: pathlib.Path, auto_download: bool = True) -> None:
         self.asset_root = asset_root
         self.auto_download = auto_download
         self.textures: dict[str, TextureHandle] = {}

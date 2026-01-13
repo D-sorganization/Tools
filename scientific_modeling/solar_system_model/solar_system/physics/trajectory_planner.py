@@ -50,7 +50,7 @@ class ManeuverNode:
     delta_v_magnitude: float
     description: str
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.position = np.array(self.position, dtype=np.float64)
         self.delta_v = np.array(self.delta_v, dtype=np.float64)
 
@@ -130,7 +130,7 @@ class TrajectoryPlanner:
     for visualization.
     """
 
-    def __init__(self, central_body_mu: float = None):
+    def __init__(self, central_body_mu: float = None) -> None:
         """
         Initialize the trajectory planner.
 

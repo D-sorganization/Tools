@@ -57,7 +57,7 @@ class InfoPanel:
         self._data: dict[str, Any] = {}
         self._title: str = ""
 
-    def set_data(self, title: str, data: dict[str, Any]):
+    def set_data(self, title: str, data: dict[str, Any]) -> None:
         """
         Set the data to display.
 
@@ -68,12 +68,12 @@ class InfoPanel:
         self._title = title
         self._data = data
 
-    def clear(self):
+    def clear(self) -> None:
         """Clear the panel data."""
         self._title = ""
         self._data = {}
 
-    def toggle(self):
+    def toggle(self) -> None:
         """Toggle visibility."""
         self.visible = not self.visible
 
@@ -101,29 +101,29 @@ class StatusBar:
     Displays time, speed, selected object, FPS, etc.
     """
 
-    def __init__(self, style: PanelStyle = None):
+    def __init__(self, style: PanelStyle = None) -> None:
         """Initialize the status bar."""
         self.style = style or PanelStyle()
         self.visible = True
         self._components: list[str] = []
 
-    def set_time(self, time_str: str):
+    def set_time(self, time_str: str) -> None:
         """Set the time display."""
         self._time = time_str
 
-    def set_speed(self, speed_str: str):
+    def set_speed(self, speed_str: str) -> None:
         """Set the time warp display."""
         self._speed = speed_str
 
-    def set_selected(self, name: str):
+    def set_selected(self, name: str) -> None:
         """Set the selected object name."""
         self._selected = name
 
-    def set_fps(self, fps: float):
+    def set_fps(self, fps: float) -> None:
         """Set the FPS display."""
         self._fps = fps
 
-    def set_paused(self, paused: bool):
+    def set_paused(self, paused: bool) -> None:
         """Set paused state."""
         self._paused = paused
 
@@ -153,7 +153,9 @@ class HelpOverlay:
     Overlay showing keyboard controls and help information.
     """
 
-    def __init__(self, position: tuple[int, int] = None, style: PanelStyle = None):
+    def __init__(
+        self, position: tuple[int, int] = None, style: PanelStyle = None
+    ) -> None:
         """
         Initialize the help overlay.
 
@@ -166,7 +168,7 @@ class HelpOverlay:
         self.visible = False
         self._controls: list[tuple[str, str]] = []
 
-    def set_controls(self, controls: list[tuple[str, str]]):
+    def set_controls(self, controls: list[tuple[str, str]]) -> None:
         """
         Set the control bindings to display.
 
@@ -175,7 +177,7 @@ class HelpOverlay:
         """
         self._controls = controls
 
-    def toggle(self):
+    def toggle(self) -> None:
         """Toggle visibility."""
         self.visible = not self.visible
 
@@ -196,7 +198,7 @@ class TransferPlanner:
     Allows selection of origin, destination, and departure date.
     """
 
-    def __init__(self, style: PanelStyle = None):
+    def __init__(self, style: PanelStyle = None) -> None:
         """Initialize the transfer planner."""
         self.style = style or PanelStyle()
         self.visible = False
@@ -205,19 +207,19 @@ class TransferPlanner:
         self.departure_date: float | None = None
         self._transfer_info: dict[str, Any] = {}
 
-    def set_origin(self, name: str):
+    def set_origin(self, name: str) -> None:
         """Set origin body."""
         self.origin = name
 
-    def set_destination(self, name: str):
+    def set_destination(self, name: str) -> None:
         """Set destination body."""
         self.destination = name
 
-    def set_transfer_info(self, info: dict[str, Any]):
+    def set_transfer_info(self, info: dict[str, Any]) -> None:
         """Set transfer calculation results."""
         self._transfer_info = info
 
-    def toggle(self):
+    def toggle(self) -> None:
         """Toggle visibility."""
         self.visible = not self.visible
 
@@ -238,7 +240,7 @@ class TooltipManager:
     Manages tooltips for celestial bodies on hover.
     """
 
-    def __init__(self, style: PanelStyle = None):
+    def __init__(self, style: PanelStyle = None) -> None:
         """Initialize tooltip manager."""
         self.style = style or PanelStyle()
         self._active_tooltip: dict[str, Any] | None = None
@@ -258,12 +260,12 @@ class TooltipManager:
         """
         self._active_tooltip = {"name": body_name, "position": position, "info": info}
 
-    def clear_hover(self):
+    def clear_hover(self) -> None:
         """Clear the current hover."""
         self._active_tooltip = None
         self._hover_time = 0.0
 
-    def update(self, delta_time: float):
+    def update(self, delta_time: float) -> None:
         """Update tooltip timing."""
         if self._active_tooltip:
             self._hover_time += delta_time
@@ -309,11 +311,11 @@ class DateTimePicker:
         self._editing_field: str | None = None  # 'year', 'month', 'day', 'hour'
         self._input_buffer: str = ""
 
-    def toggle(self):
+    def toggle(self) -> None:
         """Toggle visibility of the picker."""
         self.visible = not self.visible
 
-    def set_date(self, dt: datetime):
+    def set_date(self, dt: datetime) -> None:
         """
         Set the current date.
 
@@ -352,7 +354,7 @@ class DateTimePicker:
 
         return False
 
-    def _apply_input(self):
+    def _apply_input(self) -> None:
         """Apply the input buffer to the current field."""
         if not self._input_buffer or not self._current_date:
             self._editing_field = None
@@ -393,7 +395,7 @@ class DateTimePicker:
         self._editing_field = None
         self._input_buffer = ""
 
-    def start_editing(self, field: str):
+    def start_editing(self, field: str) -> None:
         """
         Start editing a specific date field.
 
@@ -463,7 +465,7 @@ class TimeNavigationPanel:
             {"label": "Year ▶▶", "action": "next_year", "tooltip": "Go forward 1 year"},
         ]
 
-    def toggle(self):
+    def toggle(self) -> None:
         """Toggle visibility."""
         self.visible = not self.visible
 
@@ -527,7 +529,7 @@ class EducationalInfoPanel:
         self._fun_facts = fun_facts or []
         self._current_fact_index = 0
 
-    def cycle_fact(self):
+    def cycle_fact(self) -> None:
         """Cycle to the next fun fact."""
         if self._fun_facts:
             self._current_fact_index = (self._current_fact_index + 1) % len(
@@ -540,7 +542,7 @@ class EducationalInfoPanel:
             return self._fun_facts[self._current_fact_index]
         return None
 
-    def toggle(self):
+    def toggle(self) -> None:
         """Toggle visibility."""
         self.visible = not self.visible
 
@@ -588,7 +590,7 @@ class HistoricalEventsPanel:
         self._current_date: datetime | None = None
         self._events: list[dict[str, str]] = []
 
-    def set_date(self, dt: datetime):
+    def set_date(self, dt: datetime) -> None:
         """
         Set the current date and find relevant events.
 
@@ -616,7 +618,7 @@ class HistoricalEventsPanel:
             # Fallback to empty list if module not available
             return []
 
-    def toggle(self):
+    def toggle(self) -> None:
         """Toggle visibility."""
         self.visible = not self.visible
 
@@ -660,7 +662,7 @@ class ImmersionChecklistPanel:
         self._tasks: dict[str, ImmersionTask] = {}
         self._initialize_tasks(tasks)
 
-    def _initialize_tasks(self, tasks: list[ImmersionTask] | None):
+    def _initialize_tasks(self, tasks: list[ImmersionTask] | None) -> None:
         """Initialize checklist with default or provided tasks."""
         default_tasks = tasks or [
             ImmersionTask(
@@ -707,12 +709,12 @@ class ImmersionChecklistPanel:
         for task in default_tasks:
             self._tasks[task.task_id] = task
 
-    def mark_complete(self, task_id: str):
+    def mark_complete(self, task_id: str) -> None:
         """Mark a checklist task as complete."""
         if task_id in self._tasks:
             self._tasks[task_id].is_complete = True
 
-    def reset(self):
+    def reset(self) -> None:
         """Reset all tasks to incomplete."""
         for task in self._tasks.values():
             task.is_complete = False
@@ -722,7 +724,7 @@ class ImmersionChecklistPanel:
         completed = sum(1 for task in self._tasks.values() if task.is_complete)
         return completed, len(self._tasks)
 
-    def toggle(self):
+    def toggle(self) -> None:
         """Toggle visibility of the checklist."""
         self.visible = not self.visible
 
@@ -767,7 +769,7 @@ class SettingsPanel:
         self.visible = False
         self.checkboxes: list[Checkbox] = []
 
-    def add_checkbox(self, label: str, checked: bool, action: str):
+    def add_checkbox(self, label: str, checked: bool, action: str) -> None:
         """Add a checkbox setting."""
         self.checkboxes.append(Checkbox(label, checked, action))
 
@@ -778,7 +780,7 @@ class SettingsPanel:
             return self.checkboxes[index].action
         return None
 
-    def toggle(self):
+    def toggle(self) -> None:
         """Toggle panel visibility."""
         self.visible = not self.visible
 
@@ -805,7 +807,7 @@ class NavigationPanel:
         self.modes = ["Orbit", "Pan", "Zoom"]
         self.current_mode_index = 0  # 0=Orbit
 
-    def set_mode(self, mode_name: str):
+    def set_mode(self, mode_name: str) -> None:
         """Set the current navigation mode."""
         if mode_name in self.modes:
             self.current_mode_index = self.modes.index(mode_name)
@@ -852,7 +854,7 @@ class SidebarPanel:
             Tab("History", "history"),
         ]
 
-    def set_tab(self, index: int):
+    def set_tab(self, index: int) -> None:
         """Set active tab index."""
         if 0 <= index < len(self.tabs):
             self.current_tab_index = index
@@ -915,11 +917,11 @@ class UnifiedControlPanel:
         self.current_mode_index = 0
         self.buttons: list[Button] = []
 
-    def add_checkbox(self, label: str, checked: bool, action: str):
+    def add_checkbox(self, label: str, checked: bool, action: str) -> None:
         """Add a checkbox setting."""
         self.checkboxes.append(Checkbox(label, checked, action))
 
-    def add_button(self, label: str, action: str):
+    def add_button(self, label: str, action: str) -> None:
         """Add a button."""
         self.buttons.append(Button(label, action))
 
@@ -930,7 +932,7 @@ class UnifiedControlPanel:
             return self.checkboxes[index].action
         return None
 
-    def set_mode(self, mode_name: str):
+    def set_mode(self, mode_name: str) -> None:
         """Set navigation mode."""
         if mode_name in self.modes:
             self.current_mode_index = self.modes.index(mode_name)
