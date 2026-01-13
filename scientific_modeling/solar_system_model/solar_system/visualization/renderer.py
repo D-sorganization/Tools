@@ -167,7 +167,7 @@ class Renderer:
     - UI overlays (delegated to UIRenderer)
     """
 
-    def __init__(self, settings: RenderSettings | None = None):
+    def __init__(self, settings: RenderSettings | None = None) -> None:
         """
         Initialize the renderer.
 
@@ -257,7 +257,7 @@ class Renderer:
         self.running = True
         return True
 
-    def _setup_opengl(self):
+    def _setup_opengl(self) -> None:
         """Configure OpenGL state."""
         # Enable depth testing
         glEnable(GL_DEPTH_TEST)
@@ -299,7 +299,7 @@ class Renderer:
         # Modern shading pipeline
         self._setup_shaders()
 
-    def _create_display_lists(self):
+    def _create_display_lists(self) -> None:
         """Create OpenGL display lists for common objects."""
         # Sphere for planets
         self._sphere_list = glGenLists(1)
@@ -313,7 +313,7 @@ class Renderer:
         self._draw_circle(1.0, self.settings.orbit_segments)
         glEndList()
 
-    def _setup_shaders(self):
+    def _setup_shaders(self) -> None:
         """Compile a minimal Lambert shader for per-pixel lighting."""
 
         if not self.settings.use_shaders:
@@ -364,7 +364,7 @@ class Renderer:
             self._shader_program = None
             self._shaders_enabled = False
 
-    def _draw_sphere(self, radius: float, segments: int):
+    def _draw_sphere(self, radius: float, segments: int) -> None:
         """Draw a unit sphere using immediate mode."""
         for i in range(segments):
             lat0 = math.pi * (-0.5 + float(i) / segments)
@@ -394,7 +394,7 @@ class Renderer:
                 glVertex3f(radius * x * zr1, radius * y * zr1, radius * z1)
             glEnd()
 
-    def _draw_circle(self, radius: float, segments: int):
+    def _draw_circle(self, radius: float, segments: int) -> None:
         """Draw a circle in the XY plane."""
         glBegin(GL_LINE_LOOP)
         for i in range(segments):
@@ -402,7 +402,7 @@ class Renderer:
             glVertex3f(radius * math.cos(angle), 0, radius * math.sin(angle))
         glEnd()
 
-    def _generate_stars(self):
+    def _generate_stars(self) -> None:
         """Build a star field from the curated catalog using Vertex Arrays."""
         self.star_vertices = build_star_vertices(iter_catalog())
 
@@ -430,7 +430,9 @@ class Renderer:
 
             self.star_batches.append((float(size), n_stars, coords, colors))
 
-    def begin_frame(self, camera_state: CameraState | None = None, clear: bool = True):
+    def begin_frame(
+        self, camera_state: CameraState | None = None, clear: bool = True
+    ) -> None:
         """Begin a new frame."""
         self.ui_renderer.drawn_labels.clear()
         if clear:
@@ -451,12 +453,12 @@ class Renderer:
         # Apply camera
         gluLookAt(*active_camera.position, *active_camera.target, *active_camera.up)
 
-    def end_frame(self):
+    def end_frame(self) -> None:
         """End current frame and swap buffers."""
         pygame.display.flip()
         self.clock.tick(60)  # Cap at 60 FPS
 
-    def render_stars(self):
+    def render_stars(self) -> None:
         """Render the star field background."""
         if not self.star_batches:
             return
@@ -546,7 +548,7 @@ class Renderer:
         if texturing_active:
             glDisable(GL_TEXTURE_2D)
 
-    def _render_rings(self, body: CelestialBody, body_size: float):
+    def _render_rings(self, body: CelestialBody, body_size: float) -> None:
         """Render planetary rings."""
         # Ring color (semi-transparent)
         glDisable(GL_LIGHTING)
@@ -648,7 +650,7 @@ class Renderer:
 
         glEnable(GL_LIGHTING)
 
-    def render_asteroid_belt(self, belt_points_au: np.ndarray):
+    def render_asteroid_belt(self, belt_points_au: np.ndarray) -> None:
         """Render a faint asteroid belt based on pre-generated particle positions."""
 
         if belt_points_au.size == 0:
@@ -668,7 +670,7 @@ class Renderer:
 
         glEnable(GL_LIGHTING)
 
-    def render_grid(self, size: float = 10.0, divisions: int = 20):
+    def render_grid(self, size: float = 10.0, divisions: int = 20) -> None:
         """Render a reference grid in the ecliptic plane."""
         if not self.settings.show_grid:
             return
@@ -698,7 +700,7 @@ class Renderer:
 
         glEnable(GL_LIGHTING)
 
-    def render_axes(self, size: float = 2.0):
+    def render_axes(self, size: float = 2.0) -> None:
         """Render coordinate axes for reference."""
         if not self.settings.show_axes:
             return
@@ -783,29 +785,29 @@ class Renderer:
         # if needed
         pass  # UI Renderer handles panels now via render_sidebar or similar
 
-    def render_status_bar(self, text: str):
+    def render_status_bar(self, text: str) -> None:
         self.ui_renderer.render_status_bar(text)
 
-    def render_help_overlay(self, help_data: dict[str, Any]):
+    def render_help_overlay(self, help_data: dict[str, Any]) -> None:
         self.ui_renderer.render_help_overlay(help_data)
 
-    def render_date_picker(self, picker_data: dict[str, Any]):
+    def render_date_picker(self, picker_data: dict[str, Any]) -> None:
         self.ui_renderer.render_date_picker(picker_data)
 
-    def render_time_navigation_panel(self, nav_data: dict[str, Any]):
+    def render_time_navigation_panel(self, nav_data: dict[str, Any]) -> None:
         # Not used directly in scene anymore (part of unified) but kept for API compat
         pass
 
-    def render_educational_panel(self, edu_data: dict[str, Any]):
+    def render_educational_panel(self, edu_data: dict[str, Any]) -> None:
         self.ui_renderer.render_educational_panel(edu_data)
 
-    def render_historical_events(self, events_data: dict[str, Any]):
+    def render_historical_events(self, events_data: dict[str, Any]) -> None:
         self.ui_renderer.render_historical_events(events_data)
 
-    def render_immersion_checklist(self, checklist_data: dict[str, Any]):
+    def render_immersion_checklist(self, checklist_data: dict[str, Any]) -> None:
         self.ui_renderer.render_immersion_checklist(checklist_data)
 
-    def cleanup(self):
+    def cleanup(self) -> None:
         """Clean up OpenGL resources."""
         if self._sphere_list:
             glDeleteLists(self._sphere_list, 1)
@@ -818,10 +820,10 @@ class Renderer:
         """Get current frames per second."""
         return self.clock.get_fps() if self.clock else 0.0
 
-    def render_settings_panel(self, settings_data: dict[str, Any]):
+    def render_settings_panel(self, settings_data: dict[str, Any]) -> None:
         pass  # Moved to Unified
 
-    def render_nav_mode_panel(self, nav_data: dict[str, Any]):
+    def render_nav_mode_panel(self, nav_data: dict[str, Any]) -> None:
         pass  # Moved to Unified
 
     def render_sidebar(
@@ -834,10 +836,10 @@ class Renderer:
     ):
         self.ui_renderer.render_unified_controls(ctrl_data, time_data)
 
-    def render_speed_indicator(self, time_warp: float):
+    def render_speed_indicator(self, time_warp: float) -> None:
         """Render speed indicator bar."""
         self.ui_renderer.render_speed_indicator(time_warp)
 
-    def render_compass(self, camera_yaw: float):
+    def render_compass(self, camera_yaw: float) -> None:
         """Render compass."""
         self.ui_renderer.render_compass(camera_yaw)

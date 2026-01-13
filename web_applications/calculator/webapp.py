@@ -42,7 +42,7 @@ def create_app() -> Flask:
     app = Flask(__name__, static_folder="static", template_folder="templates")
     calculator = TI89Calculator()
     # Rate limit: 100 requests per 60 seconds per IP
-    app.limiter = RateLimiter(limit=100, window=60)  # type: ignore[attr-defined]
+    app.limiter = RateLimiter(limit=100, window=60)  # Dynamic attribute
 
     @app.after_request
     def add_security_headers(response: Response) -> Response:
@@ -70,7 +70,8 @@ def create_app() -> Flask:
 
     @app.get("/")
     def index() -> str:
-        return render_template("index.html")
+        """Render the calculator home page."""
+        return str(render_template("index.html"))
 
     @app.post("/api/calculate")
     def calculate() -> tuple[Any, int]:
@@ -78,7 +79,7 @@ def create_app() -> Flask:
         if not current_app.testing:
             client_ip = request.remote_addr or "unknown"
             # Access limiter via closure over 'app'
-            if not app.limiter.is_allowed(client_ip):  # type: ignore[attr-defined]
+            if not app.limiter.is_allowed(client_ip):  # Dynamic attribute
                 return (
                     jsonify({"error": "Rate limit exceeded. Please try again later."}),
                     429,
@@ -97,13 +98,15 @@ def create_app() -> Flask:
             return jsonify({"error": "An internal error occurred."}), 500
 
     @app.get("/manifest.webmanifest")
-    def manifest() -> Any:
+    def manifest() -> Response:
+        """Serve the PWA web manifest."""
         return send_from_directory(
             app.static_folder or "static", "manifest.webmanifest"
         )
 
     @app.get("/service-worker.js")
-    def service_worker() -> Any:
+    def service_worker() -> Response:
+        """Serve the service worker for PWA."""
         return send_from_directory(app.static_folder or "static", "service-worker.js")
 
     return app

@@ -6,6 +6,8 @@ Manages simulation time, including conversion between different time systems,
 time acceleration, and synchronization with real time.
 """
 
+from __future__ import annotations
+
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -35,14 +37,14 @@ class SimulationTime:
     year: float  # Decimal year (e.g., 2024.5)
 
     @classmethod
-    def from_julian_date(cls, jd: float) -> "SimulationTime":
+    def from_julian_date(cls, jd: float) -> SimulationTime:
         """Create SimulationTime from Julian date."""
         dt = cls.julian_to_datetime(jd)
         year = cls.julian_to_decimal_year(jd)
         return cls(julian_date=jd, datetime_utc=dt, year=year)
 
     @classmethod
-    def from_datetime(cls, dt: datetime) -> "SimulationTime":
+    def from_datetime(cls, dt: datetime) -> SimulationTime:
         """Create SimulationTime from datetime."""
         jd = cls.datetime_to_julian(dt)
         year = cls.julian_to_decimal_year(jd)
@@ -156,7 +158,7 @@ class TimeManager:
         "1 year/sec": 365.25 * SECONDS_PER_DAY,
     }
 
-    def __init__(self, start_time: SimulationTime | None = None):
+    def __init__(self, start_time: SimulationTime | None = None) -> None:
         """
         Initialize the time manager.
 
@@ -195,7 +197,7 @@ class TimeManager:
         return self._time_warp
 
     @time_warp.setter
-    def time_warp(self, value: float):
+    def time_warp(self, value: float) -> None:
         """Set time warp factor."""
         self._time_warp = max(
             -365.25 * SECONDS_PER_DAY, min(value, 365.25 * SECONDS_PER_DAY)
@@ -238,11 +240,11 @@ class TimeManager:
 
         return delta_jd
 
-    def pause(self):
+    def pause(self) -> None:
         """Pause the simulation."""
         self._paused = True
 
-    def resume(self):
+    def resume(self) -> None:
         """Resume the simulation."""
         self._paused = False
         self._last_update = time.time()
@@ -255,7 +257,7 @@ class TimeManager:
             self.pause()
         return self._paused
 
-    def set_time(self, sim_time: SimulationTime):
+    def set_time(self, sim_time: SimulationTime) -> None:
         """
         Set simulation to a specific time.
 
@@ -271,28 +273,28 @@ class TimeManager:
         for callback in self._on_time_change:
             callback(self._simulation_time)
 
-    def set_julian_date(self, jd: float):
+    def set_julian_date(self, jd: float) -> None:
         """Set simulation to a specific Julian date."""
         self.set_time(SimulationTime.from_julian_date(jd))
 
-    def set_datetime(self, dt: datetime):
+    def set_datetime(self, dt: datetime) -> None:
         """Set simulation to a specific datetime."""
         self.set_time(SimulationTime.from_datetime(dt))
 
-    def set_to_now(self):
+    def set_to_now(self) -> None:
         """Set simulation to current real time."""
         self.set_datetime(datetime.now(UTC))
 
-    def set_to_j2000(self):
+    def set_to_j2000(self) -> None:
         """Set simulation to J2000.0 epoch."""
         self.set_julian_date(J2000)
 
-    def advance_days(self, days: float):
+    def advance_days(self, days: float) -> None:
         """Advance simulation by specified number of days."""
         new_jd = self._simulation_time.julian_date + days
         self.set_julian_date(new_jd)
 
-    def advance_years(self, years: float):
+    def advance_years(self, years: float) -> None:
         """Advance simulation by specified number of years."""
         self.advance_days(years * 365.25)
 
@@ -311,29 +313,33 @@ class TimeManager:
             return True
         return False
 
-    def increase_time_warp(self, factor: float = 10.0):
+    def increase_time_warp(self, factor: float = 10.0) -> None:
         """Increase time warp by a factor."""
         if self._time_warp >= 0:
             self._time_warp *= factor
         else:
             self._time_warp /= factor
 
-    def decrease_time_warp(self, factor: float = 10.0):
+    def decrease_time_warp(self, factor: float = 10.0) -> None:
         """Decrease time warp by a factor."""
         if self._time_warp >= 0:
             self._time_warp /= factor
         else:
             self._time_warp *= factor
 
-    def reverse_time(self):
+    def reverse_time(self) -> None:
         """Reverse the direction of time flow."""
         self._time_warp = -self._time_warp
 
-    def add_time_change_listener(self, callback: Callable[[SimulationTime], None]):
+    def add_time_change_listener(
+        self, callback: Callable[[SimulationTime], None]
+    ) -> None:
         """Add a callback to be notified of time changes."""
         self._on_time_change.append(callback)
 
-    def remove_time_change_listener(self, callback: Callable[[SimulationTime], None]):
+    def remove_time_change_listener(
+        self, callback: Callable[[SimulationTime], None]
+    ) -> None:
         """Remove a time change callback."""
         if callback in self._on_time_change:
             self._on_time_change.remove(callback)

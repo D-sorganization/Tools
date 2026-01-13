@@ -41,7 +41,7 @@ class CameraState:
     near: float = 0.001
     far: float = 1000.0
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.position = np.array(self.position, dtype=np.float64)
         self.target = np.array(self.target, dtype=np.float64)
         self.up = np.array(self.up, dtype=np.float64)
@@ -158,7 +158,7 @@ class Camera:
         )
         return left_state, right_state
 
-    def _update_angles_from_position(self):
+    def _update_angles_from_position(self) -> None:
         """Calculate spherical coordinates from current position."""
         direction = self.position - self.target
         self._distance = np.linalg.norm(direction)
@@ -168,7 +168,7 @@ class Camera:
             self._azimuth = math.atan2(direction[0], direction[2])
             self._elevation = math.asin(np.clip(direction[1], -1, 1))
 
-    def _update_position_from_angles(self):
+    def _update_position_from_angles(self) -> None:
         """Update position from spherical coordinates."""
         x = self._distance * math.cos(self._elevation) * math.sin(self._azimuth)
         y = self._distance * math.sin(self._elevation)
@@ -176,7 +176,7 @@ class Camera:
 
         self.position = self.target + np.array([x, y, z])
 
-    def set_mode(self, mode: CameraMode, target_body: CelestialBody = None):
+    def set_mode(self, mode: CameraMode, target_body: CelestialBody = None) -> None:
         """
         Change camera mode.
 
@@ -196,13 +196,13 @@ class Camera:
             # Will be updated in update() method
             pass
 
-    def _animate_to(self, position: np.ndarray, target: np.ndarray):
+    def _animate_to(self, position: np.ndarray, target: np.ndarray) -> None:
         """Start smooth animation to new position."""
         self._target_position = position
         self._target_target = target
         self._animating = True
 
-    def orbit(self, delta_azimuth: float, delta_elevation: float):
+    def orbit(self, delta_azimuth: float, delta_elevation: float) -> None:
         """
         Orbit the camera around the target point.
 
@@ -220,7 +220,7 @@ class Camera:
 
         self._update_position_from_angles()
 
-    def zoom(self, delta: float):
+    def zoom(self, delta: float) -> None:
         """
         Zoom camera in or out.
 
@@ -313,7 +313,7 @@ class Camera:
         self._distance = new_distance
         self._update_position_from_angles()
 
-    def pan(self, delta_x: float, delta_y: float):
+    def pan(self, delta_x: float, delta_y: float) -> None:
         """
         Pan the camera (move target and position together).
 
@@ -338,14 +338,14 @@ class Camera:
         self.position += offset
         self.target += offset
 
-    def move_forward(self, amount: float):
+    def move_forward(self, amount: float) -> None:
         """Move camera forward/backward."""
         direction = self.target - self.position
         direction = direction / np.linalg.norm(direction)
         self.position += direction * amount * self.move_speed
         self.target += direction * amount * self.move_speed
 
-    def reset(self):
+    def reset(self) -> None:
         """Reset camera to default view."""
         # Position camera far enough to see entire solar system (Neptune at ~4500 units)
         self.position = np.array([0, 1500, 4500], dtype=np.float64)
@@ -353,7 +353,7 @@ class Camera:
         self.up = np.array([0, 1, 0], dtype=np.float64)
         self._update_angles_from_position()
 
-    def update(self, julian_date: float, scale: float = 1e-9):
+    def update(self, julian_date: float, scale: float = 1e-9) -> None:
         """
         Update camera based on current mode and time.
 
@@ -493,7 +493,7 @@ class Camera:
             far=self.far,
         )
 
-    def set_state(self, state: CameraState):
+    def set_state(self, state: CameraState) -> None:
         """Restore camera from state."""
         self.position = state.position.copy()
         self.target = state.target.copy()
@@ -503,7 +503,7 @@ class Camera:
         self.far = state.far
         self._update_angles_from_position()
 
-    def look_at(self, position: np.ndarray, smooth: bool = True):
+    def look_at(self, position: np.ndarray, smooth: bool = True) -> None:
         """
         Point camera at a specific position.
 
@@ -518,7 +518,7 @@ class Camera:
             self.target = position
             self._update_angles_from_position()
 
-    def set_distance(self, distance: float):
+    def set_distance(self, distance: float) -> None:
         """Set distance from target."""
         self._distance = np.clip(distance, self.min_distance, self.max_distance)
         self._update_position_from_angles()

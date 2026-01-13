@@ -1,8 +1,17 @@
+"""
+Unified Tools Launcher - Modern PyQt6-based launcher for the Tools repository.
+
+This is the PRIMARY and RECOMMENDED launcher for accessing all tools.
+Provides a clean, tabbed interface for launching Python, MATLAB, and web tools.
+"""
+
 import os
 import subprocess
 import sys
 import webbrowser
+from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import (
@@ -180,7 +189,13 @@ QTextEdit {
 # LAUNCHER LOGIC
 # =============================================================================
 class ToolCard(QFrame):
-    def __init__(self, tool_info: dict, launch_callback) -> None:
+    """A card widget representing a single launchable tool."""
+
+    def __init__(
+        self,
+        tool_info: dict[str, Any],
+        launch_callback: Callable[[dict[str, Any]], None],
+    ) -> None:
         super().__init__()
         self.tool_info = tool_info
         self.launch_callback = launch_callback
@@ -220,6 +235,8 @@ class ToolCard(QFrame):
 
 
 class UnifiedLauncher(QMainWindow):
+    """Main launcher window with tabbed interface for all tools."""
+
     def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Antigravity Unified Tools Launcher")
@@ -270,7 +287,8 @@ class UnifiedLauncher(QMainWindow):
 
         main_layout.addWidget(log_group)
 
-    def setup_category_tab(self, tab: QWidget, tools: list) -> None:
+    def setup_category_tab(self, tab: QWidget, tools: list[dict[str, Any]]) -> None:
+        """Set up a tab for a category of tools."""
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setStyleSheet("background-color: transparent; border: none;")
@@ -301,6 +319,7 @@ class UnifiedLauncher(QMainWindow):
         tab_layout.addWidget(scroll)
 
     def log(self, message: str) -> None:
+        """Log a message to the activity log area."""
         from datetime import datetime
 
         timestamp = datetime.now().strftime("%H:%M:%S")
@@ -309,7 +328,8 @@ class UnifiedLauncher(QMainWindow):
         cursor.movePosition(cursor.MoveOperation.End)
         self.log_area.setTextCursor(cursor)
 
-    def launch_tool(self, tool_info: dict) -> None:
+    def launch_tool(self, tool_info: dict[str, Any]) -> None:
+        """Launch the specified tool based on its type."""
         path = REPO_ROOT / tool_info["path"]
         type_ = tool_info["type"]
 
@@ -332,8 +352,13 @@ class UnifiedLauncher(QMainWindow):
                     self.log("✅ MATLAB command sent")
                 except FileNotFoundError:
                     # MATLAB not in PATH, try opening file directly
-                    os.startfile(path)
-                    self.log("⚠️ MATLAB not in PATH, opened file in default editor")
+                    # Use hasattr pattern for Windows-specific startfile
+                    if hasattr(os, "startfile"):
+                        os.startfile(path)
+                        self.log("⚠️ MATLAB not in PATH, opened file in default editor")
+                    else:
+                        subprocess.Popen(["xdg-open", str(path)])
+                        self.log("⚠️ MATLAB not in PATH, opened file with xdg-open")
 
             elif type_ == "web" or type_ == "browser":
                 webbrowser.open(path.as_uri())
@@ -354,7 +379,8 @@ class UnifiedLauncher(QMainWindow):
 # =============================================================================
 # ENTRY POINT
 # =============================================================================
-if __name__ == "__main__":
+def main() -> None:
+    """Entry point for the Unified Tools Launcher application."""
     app = QApplication(sys.argv)
 
     # Set app style
@@ -365,3 +391,7 @@ if __name__ == "__main__":
     window.show()
 
     sys.exit(app.exec())
+
+
+if __name__ == "__main__":
+    main()

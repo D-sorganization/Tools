@@ -791,13 +791,18 @@ class ToolsLauncher:
         try:
             dev_path = Path("development_tools")
             if dev_path.exists():
-                if sys.platform == "win32":
-                    os.startfile(str(dev_path))  # type: ignore[attr-defined]
+                # Use hasattr pattern for Windows-specific startfile
+                if hasattr(os, "startfile"):
+                    os.startfile(str(dev_path))
+                    self.status_var.set("✓ Development Tools folder opened")
+                elif sys.platform == "darwin":
+                    # macOS support
+                    subprocess.Popen(["open", str(dev_path)])
                     self.status_var.set("✓ Development Tools folder opened")
                 else:
-                    # Linux/Mac support could be added here
-                    logger.warning("Opening folders is only supported on Windows")
-                    self.status_var.set("⚠️ Feature only available on Windows")
+                    # Linux support
+                    subprocess.Popen(["xdg-open", str(dev_path)])
+                    self.status_var.set("✓ Development Tools folder opened")
             else:
                 self.show_error("Development Tools folder not found")
         except Exception as e:

@@ -238,7 +238,7 @@ class UIRenderer:
         self.drawn_labels.append(rect)
         self.text_cache.render(text, final_pos[0], final_pos[1], "default", color)
 
-    def render_status_bar(self, text: str):
+    def render_status_bar(self, text: str) -> None:
         """Render a status bar at the bottom of the screen."""
         self.begin_2d()
         y = self.window_height - 30
@@ -246,7 +246,7 @@ class UIRenderer:
         self.text_cache.render(text, 10, y, "default", (200, 200, 200))
         self.end_2d()
 
-    def render_help_overlay(self, help_data: dict[str, Any]):
+    def render_help_overlay(self, help_data: dict[str, Any]) -> None:
         """Render the help overlay with controls list."""
         if not help_data.get("visible", False):
             return
@@ -296,7 +296,7 @@ class UIRenderer:
 
         self.end_2d()
 
-    def render_date_picker(self, picker_data: dict[str, Any]):
+    def render_date_picker(self, picker_data: dict[str, Any]) -> None:
         """Render the date picker widget."""
         if not picker_data.get("visible", False):
             return
@@ -391,7 +391,7 @@ class UIRenderer:
             elif content_key == "planets":  # New Planet Selector
                 self.render_planet_selector(content_data)
 
-    def render_educational_panel(self, edu_data: dict[str, Any]):
+    def render_educational_panel(self, edu_data: dict[str, Any]) -> None:
         """Render educational information about selected body."""
         if not edu_data.get("visible", False):
             return
@@ -446,7 +446,7 @@ class UIRenderer:
 
         self.end_2d()
 
-    def render_historical_events(self, events_data: dict[str, Any]):
+    def render_historical_events(self, events_data: dict[str, Any]) -> None:
         """Render list of historical events."""
         if not events_data.get("visible", False):
             return
@@ -480,7 +480,7 @@ class UIRenderer:
 
         self.end_2d()
 
-    def render_immersion_checklist(self, checklist_data: dict[str, Any]):
+    def render_immersion_checklist(self, checklist_data: dict[str, Any]) -> None:
         """Render the immersion checklist."""
         if not checklist_data.get("visible", False):
             return
@@ -584,7 +584,7 @@ class UIRenderer:
 
         self.end_2d()
 
-    def render_planet_selector(self, data: dict[str, Any]):
+    def render_planet_selector(self, data: dict[str, Any]) -> None:
         """Render a clickable list of planets."""
         if not data.get("visible", False):
             return
@@ -611,7 +611,7 @@ class UIRenderer:
 
         self.end_2d()
 
-    def render_speed_indicator(self, time_warp: float):
+    def render_speed_indicator(self, time_warp: float) -> None:
         """Render a visual bar indicating time speed."""
         self.begin_2d()
 
@@ -649,7 +649,7 @@ class UIRenderer:
 
         self.end_2d()
 
-    def render_compass(self, camera_yaw: float):
+    def render_compass(self, camera_yaw: float) -> None:
         """Render a small N compass."""
         self.begin_2d()
 

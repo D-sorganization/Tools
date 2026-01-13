@@ -1,9 +1,16 @@
+"""Basic Tools Launcher using Tkinter.
+
+Note: UnifiedToolsLauncher.py (PyQt6) is the preferred launcher.
+This is a simpler alternative for environments where PyQt6 is not available.
+"""
+
 import os
 import subprocess
 import sys
 import tkinter as tk
 import webbrowser
 from tkinter import messagebox, ttk
+from typing import Any
 
 # Path helpers
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -153,13 +160,14 @@ class ToolsLauncher(tk.Tk):
                 if kind == "file" and exists:
                     btn_text = "Open File"
 
+                def make_launcher(p: str, k: str) -> Any:
+                    return lambda: self.launch_tool(p, k)
+
                 btn = ttk.Button(
                     btn_frame,
                     text=btn_text,
                     state=state,
-                    command=lambda p=full_path, k=kind: self.launch_tool(
-                        p, k
-                    ),  # type: ignore[misc]
+                    command=make_launcher(full_path, kind),
                 )
                 btn.pack(pady=10, padx=10, fill=tk.X)
 
@@ -207,17 +215,23 @@ class ToolsLauncher(tk.Tk):
             elif kind == "exe":
                 subprocess.Popen([path], cwd=cwd)
             else:
-                if sys.platform == "win32":
-                    os.startfile(path)  # type: ignore[attr-defined]
+                # Use hasattr pattern for Windows-specific startfile
+                if hasattr(os, "startfile"):
+                    os.startfile(path)
+                elif sys.platform == "darwin":
+                    subprocess.Popen(["open", path], cwd=cwd)
                 else:
-                    messagebox.showinfo(
-                        "Info", f"Cannot open file on this platform: {path}"
-                    )
+                    subprocess.Popen(["xdg-open", path], cwd=cwd)
 
         except Exception as e:
             messagebox.showerror("Error", f"Failed to launch {path}:\n{e}")
 
 
-if __name__ == "__main__":
+def main() -> None:
+    """Entry point for the basic Tkinter launcher."""
     app = ToolsLauncher()
     app.mainloop()
+
+
+if __name__ == "__main__":
+    main()

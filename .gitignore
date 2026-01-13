@@ -42,11 +42,21 @@ logs/
 # Development artifacts
 branch_cleanup_report_*.md
 .coverage
+coverage.xml
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 .dmypy.json
 dmypy.json
+
+# Temp output files
+mypy_output.txt
+mypy_errors_temp.txt
+black_output.txt
+ruff_output.json
+flask_log.txt
+flask_pid.txt
+*.log
 
 # JavaScript
 node_modules/

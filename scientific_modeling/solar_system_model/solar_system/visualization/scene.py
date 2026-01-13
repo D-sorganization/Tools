@@ -124,7 +124,7 @@ class SolarSystemScene:
     for celestial bodies, trajectories, and UI elements.
     """
 
-    def __init__(self, settings: RenderSettings | None = None):
+    def __init__(self, settings: RenderSettings | None = None) -> None:
         """
         Initialize the Solar System scene.
 
@@ -481,7 +481,7 @@ class SolarSystemScene:
 
         return trajectory
 
-    def run(self):
+    def run(self) -> None:
         """
         Run the main simulation loop.
 
