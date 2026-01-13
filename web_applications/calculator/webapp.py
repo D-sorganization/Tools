@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any, cast
+from typing import Any
 
 import sympy as sp
 from flask import (
@@ -96,13 +96,13 @@ def create_app() -> Flask:
             logger.exception("Calculation failed")
             return jsonify({"error": "An internal error occurred."}), 500
 
-    @app.get("/manifest.webmanifest")
+    @app.get("/manifest.webmanifest")  # type: ignore[misc]
     def manifest() -> Any:
-        return send_from_directory(app.static_folder, "manifest.webmanifest")
+        return send_from_directory(app.static_folder or "static", "manifest.webmanifest")
 
-    @app.get("/service-worker.js")
+    @app.get("/service-worker.js")  # type: ignore[misc]
     def service_worker() -> Any:
-        return send_from_directory(app.static_folder, "service-worker.js")
+        return send_from_directory(app.static_folder or "static", "service-worker.js")
 
     return app
 
@@ -315,7 +315,7 @@ def _approximate(result: object, precision: int = 10) -> float | None:
 
 def _pretty(result: object) -> str | None:
     if isinstance(result, sp.Basic):
-        return sp.pretty(result)
+        return str(sp.pretty(result))
     return None
 
 
