@@ -336,7 +336,9 @@
         <div class="recent-section">
           <div class="recent-header">
             <h2 class="recent-title">Recent Conversions</h2>
-            <button id="clearHistory" class="clear-button" aria-label="Clear conversion history">Clear</button>
+            <button id="clearHistory" class="clear-button" aria-label="Clear conversion history">
+              Clear
+            </button>
           </div>
           <div id="recentList" class="recent-list">
             <p class="empty-state">No recent conversions</p>
@@ -352,11 +354,18 @@
     </div>
 
     <!-- Custom Units Modal -->
-    <div id="customUnitsModal" class="modal" style="display: none">
+    <div
+      id="customUnitsModal"
+      class="modal"
+      style="display: none"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
       <div class="modal-backdrop"></div>
       <div class="modal-content">
         <div class="modal-header">
-          <h2 class="modal-title">Custom Units</h2>
+          <h2 id="modal-title" class="modal-title">Custom Units</h2>
           <button id="closeModal" class="modal-close" aria-label="Close">×</button>
         </div>
 
