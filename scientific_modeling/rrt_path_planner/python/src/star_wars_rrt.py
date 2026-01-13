@@ -96,8 +96,14 @@ class RRTPlanner:
                     ]
                 )
 
-            # Find nearest node
-            nodes_array = np.array([node[:3] for node in nodes])
+            # Find nearest node using pre-allocated array for better performance
+            n_nodes = len(nodes)
+            nodes_array = np.empty((n_nodes, 3), dtype=np.float32)
+            
+            # Fill array directly to avoid list comprehension overhead
+            for i, node in enumerate(nodes):
+                nodes_array[i] = node[:3]
+            
             distances = np.linalg.norm(nodes_array - sample, axis=1)
             nearest_idx = np.argmin(distances)
             nearest_node = nodes_array[nearest_idx]

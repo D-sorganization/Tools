@@ -15,7 +15,7 @@ def convert_print_to_logging(file_path: Path) -> tuple[int, str]:
         Tuple of (number of conversions, modified content)
     """
     content = file_path.read_text(encoding="utf-8")
-    lines = content.split("\n")
+    lines = content.splitlines()  # More efficient than split("\n")
     modified_lines = []
     conversions = 0
 
