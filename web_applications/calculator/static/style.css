@@ -408,6 +408,11 @@ body {
     color: #dce4ec;
 }
 
+.action.secondary[data-confirming] {
+    background: var(--error);
+    color: #ffffff;
+}
+
 button:active {
     transform: translateY(1px);
     box-shadow: 0 2px 6px var(--shadow);
