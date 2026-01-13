@@ -13,7 +13,7 @@ def test_evaluate_with_trigonometric_identity() -> None:
     calculator = TI89Calculator()
     result = calculator.evaluate("sin(x)^2 + cos(x)^2", {"x": sp.pi / 4})
     # Cast or ignore if result.result is typed as object/Any but known to be compatible
-    assert sp.simplify(result.result - 1) == 0  # type: ignore[operator]
+    assert sp.simplify(result.result - 1) == 0
 
 
 def test_e_constant_is_available() -> None:
@@ -26,7 +26,7 @@ def test_solve_quadratic_equation() -> None:
     calculator = TI89Calculator()
     solutions = calculator.solve_equation("x^2 - 5*x + 6 = 0", "x").result
     # Use explicit set creation with cast if needed or type ignore
-    assert {sp.Integer(2), sp.Integer(3)} == set(solutions)  # type: ignore[call-overload]
+    assert {sp.Integer(2), sp.Integer(3)} == set(solutions)
 
 
 def test_solve_linear_system() -> None:
