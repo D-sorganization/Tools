@@ -8574,7 +8574,7 @@ For additional support or feature requests, please refer to the
         except Exception as e:
             messagebox.showerror("Export Error", f"Error exporting plots: {e}")
 
-    def _on_plot_setting_change(self, *args) -> None:
+    def _on_plot_setting_change(self, *args: Any) -> None:
         """Automatically update plot when appearance settings change."""
         # Only update if we have data and signals selected
         if hasattr(self, "plot_signal_vars"):
@@ -8588,7 +8588,7 @@ For additional support or feature requests, please refer to the
                     self.after_cancel(self._update_pending)
                 self._update_pending = self.after_idle(self.update_plot)
 
-    def _on_color_scheme_change(self, scheme) -> None:
+    def _on_color_scheme_change(self, scheme: str) -> None:
         """Handle color scheme change and show/hide custom colors interface."""
         if scheme == "Custom Colors":
             self.custom_colors_frame.grid()
@@ -8689,10 +8689,10 @@ For additional support or feature requests, please refer to the
         if self.color_scheme_var.get() == "Custom Colors":
             self._on_plot_setting_change()
 
-    def _bind_mousewheel_to_frame(self, frame) -> None:
+    def _bind_mousewheel_to_frame(self, frame: Any) -> None:
         """Bind mouse wheel events to a frame for proper scrolling."""
 
-        def on_mousewheel(event) -> None:
+        def on_mousewheel(event: Any) -> None:
             # Scroll the frame's canvas
             try:
                 frame._parent_canvas.yview_scroll(
@@ -8704,7 +8704,7 @@ For additional support or feature requests, please refer to the
                 frame._parent_canvas.yview_scroll(int(-1 * event.delta), "units")
 
         # Bind mousewheel to the frame and all its children
-        def bind_mousewheel(widget) -> None:
+        def bind_mousewheel(widget: Any) -> None:
             widget.bind("<MouseWheel>", on_mousewheel)
             widget.bind(
                 "<Button-4>",
@@ -8720,7 +8720,7 @@ For additional support or feature requests, please refer to the
 
         bind_mousewheel(frame)
 
-    def _on_trendline_window_mode_change(self, mode) -> None:
+    def _on_trendline_window_mode_change(self, mode: str) -> None:
         """Handle trendline window mode change."""
         if mode == "Manual Entry":
             self.trendline_manual_frame.grid()
@@ -8949,7 +8949,7 @@ For additional support or feature requests, please refer to the
             except Exception as e:
                 print(f"Error auto-fitting plot: {e}")
 
-    def _should_auto_zoom(self, reason="filter_change") -> None:
+    def _should_auto_zoom(self, reason: str = "filter_change") -> bool:
         """Determine if auto-zoom should be applied based on the reason."""
         if not hasattr(self, "auto_zoom_var"):
             return True  # Default to auto-zoom if control doesn't exist
@@ -8961,7 +8961,7 @@ For additional support or feature requests, please refer to the
         # Use user preference for other changes
         return self.auto_zoom_var.get()
 
-    def _detect_new_signals(self, current_signals) -> None:
+    def _detect_new_signals(self, current_signals: list[str]) -> bool:
         """Detect if new signals have been added since last plot update."""
         if not hasattr(self, "last_plotted_signals"):
             self.last_plotted_signals = set()
@@ -8975,7 +8975,7 @@ For additional support or feature requests, please refer to the
 
         return len(new_signals) > 0
 
-    def _apply_zoom_state(self, zoom_state) -> None:
+    def _apply_zoom_state(self, zoom_state: dict[str, Any] | None) -> None:
         """Apply stored zoom state after plot update."""
         if zoom_state and hasattr(self, "plot_ax"):
             try:
