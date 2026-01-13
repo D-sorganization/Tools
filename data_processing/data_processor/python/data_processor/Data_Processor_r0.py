@@ -1642,11 +1642,11 @@ class CSVProcessorApp(ctk.CTk):
 
     def _apply_integration(
         self,
-        df,
-        time_col,
-        signals_to_integrate,
-        method="Trapezoidal",
-    ):
+        df: pd.DataFrame,
+        time_col: str,
+        signals_to_integrate: list[str],
+        method: str = "Trapezoidal",
+    ) -> pd.DataFrame:
         """Apply integration to selected signals."""
         if not signals_to_integrate:
             return df
@@ -1714,11 +1714,11 @@ class CSVProcessorApp(ctk.CTk):
 
     def _apply_differentiation(
         self,
-        df,
-        time_col,
-        signals_to_differentiate,
-        method="Spline (Acausal)",
-    ):
+        df: pd.DataFrame,
+        time_col: str,
+        signals_to_differentiate: list[str],
+        method: str = "Spline (Acausal)",
+    ) -> pd.DataFrame:
         """
         Apply differentiation to selected signals with support for up to 5th order.
         """
@@ -2004,7 +2004,7 @@ class CSVProcessorApp(ctk.CTk):
 
         print("DEBUG: load_signals_from_files() completed")
 
-    def _auto_select_single_file(self, filename) -> None:
+    def _auto_select_single_file(self, filename: str) -> None:
         """Auto-select single file - simplified."""
         try:
             if hasattr(self, "plot_file_menu"):
@@ -2014,7 +2014,7 @@ class CSVProcessorApp(ctk.CTk):
         except Exception as e:
             print(f"Error in auto-select: {e}")
 
-    def _ensure_data_loaded(self, filename) -> None:
+    def _ensure_data_loaded(self, filename: str) -> None:
         """Ensure data is loaded for the given filename."""
         if filename not in self.processed_files:
             # Try to load the file
