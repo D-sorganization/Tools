@@ -109,7 +109,6 @@ class Camera:
 
     def snapshot(self) -> CameraState:
         """Capture the current camera parameters."""
-
         return CameraState(
             position=self.position.copy(),
             target=self.target.copy(),
@@ -119,12 +118,12 @@ class Camera:
             far=self.far,
         )
 
-    def apply_state(self, state: CameraState):
+    def apply_state(self, state: CameraState) -> None:
         """Apply a stored camera state."""
-
-        self.position = state.position.copy()
-        self.target = state.target.copy()
-        self.up = state.up.copy()
+        # Use array assignment instead of copy for better performance
+        self.position[:] = state.position
+        self.target[:] = state.target
+        self.up[:] = state.up
         self.fov = state.fov
         self.near = state.near
         self.far = state.far

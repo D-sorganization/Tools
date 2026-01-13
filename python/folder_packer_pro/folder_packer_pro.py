@@ -1074,24 +1074,51 @@ class FolderPackerPro:
             return
 
         def scan() -> None:
-            """Background task to scan files for preview."""
+            """Background task to scan files for preview using optimized scanning."""
             files = []
-            for root, dirs, filenames in os.walk(source_path):
-                # Filter excluded directories
-                dirs[:] = [d for d in dirs if not self._should_exclude(Path(root) / d)]
 
-                for filename in filenames:
-                    file_path = Path(root) / filename
+            # Use optimized scanning if available
+            try:
+                from python.shared.performance_utils import file_scanner
+
+                use_optimized = True
+            except ImportError:
+                use_optimized = False
+
+            if use_optimized:
+                # Use parallel scanner for faster file discovery
+                for file_path in file_scanner.scan_directory_parallel(
+                    source_path, "*", max_depth=10
+                ):
                     if not self._should_exclude(file_path):
                         try:
                             stat = file_path.stat()
                             files.append((file_path, stat))
                             if len(files) >= 500:  # Limit preview
                                 break
-                        except Exception:
-                            logger.exception("Error scanning %s", file_path)
-                if len(files) >= 500:
-                    break
+                        except OSError:
+                            continue
+            else:
+                # Fallback to standard scanning
+                for root, dirs, filenames in os.walk(source_path):
+                    # Filter excluded directories
+                    dirs[:] = [
+                        d for d in dirs if not self._should_exclude(Path(root) / d)
+                    ]
+
+                    for filename in filenames:
+                        file_path = Path(root) / filename
+                        if not self._should_exclude(file_path):
+                            try:
+                                stat = file_path.stat()
+                                files.append((file_path, stat))
+                                if len(files) >= 500:  # Limit preview
+                                    break
+                            except OSError:
+                                continue
+
+                    if len(files) >= 500:
+                        break
 
             self.root.after(0, lambda: self._populate_tree(files, source_path))
 

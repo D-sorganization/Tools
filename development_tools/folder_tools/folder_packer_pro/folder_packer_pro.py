@@ -1185,7 +1185,7 @@ class FolderPackerPro:
             "is",
         }
 
-        lines = content.split("\n")
+        lines = content.splitlines()  # More efficient than split("\n")
         for i, line in enumerate(lines):
             if i >= 1000:  # Limit lines
                 self.preview_text.insert("end", "\n... (truncated)")

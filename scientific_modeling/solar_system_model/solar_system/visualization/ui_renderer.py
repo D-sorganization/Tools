@@ -72,7 +72,7 @@ class UITheme:
 class TextCache:
     """Caches rendered text surfaces to improve performance."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._cache: dict[
             tuple[str, str, tuple[int, int, int]], tuple[bytes, int, int]
         ] = {}
@@ -136,19 +136,19 @@ class UIRenderer:
     Handles 2D UI rendering.
     """
 
-    def __init__(self, window_width: int, window_height: int):
+    def __init__(self, window_width: int, window_height: int) -> None:
         self.window_width = window_width
         self.window_height = window_height
         self.theme = UITheme()
         self.text_cache = TextCache()
         self.drawn_labels: list[pygame.Rect] = []
 
-    def update_dimensions(self, width: int, height: int):
+    def update_dimensions(self, width: int, height: int) -> None:
         """Update window dimensions for UI rendering."""
         self.window_width = width
         self.window_height = height
 
-    def begin_2d(self):
+    def begin_2d(self) -> None:
         """Setup 2D orthographic projection."""
         glMatrixMode(GL_PROJECTION)
         glPushMatrix()
@@ -164,7 +164,7 @@ class UIRenderer:
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-    def end_2d(self):
+    def end_2d(self) -> None:
         """Restore 3D projection."""
         glEnable(GL_DEPTH_TEST)
         glEnable(GL_LIGHTING)

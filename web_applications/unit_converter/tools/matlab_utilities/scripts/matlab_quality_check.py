@@ -241,7 +241,7 @@ class MATLABQualityChecker:
         try:
             with file_path.open(encoding="utf-8", errors="ignore") as f:
                 content = f.read()
-                lines = content.split("\n")
+                lines = content.splitlines()  # More efficient than split("\n")
 
             # Track if we're in a function and nesting level
             in_function = False

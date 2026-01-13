@@ -216,8 +216,8 @@ class MATLABQualityChecker:
 
         try:
             with file_path.open(encoding="utf-8", errors="ignore") as f:
-                content = f.read()
-                lines = content.split("\n")
+                # Optimize: Use splitlines() instead of split("\n") for better performance
+                lines = f.read().splitlines()
 
             # Track if we're in a function and nesting level
             in_function = False
