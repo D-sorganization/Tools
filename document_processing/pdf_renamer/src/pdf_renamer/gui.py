@@ -1,5 +1,7 @@
 """Modern PyQt6 GUI for PDF Renamer."""
 
+from __future__ import annotations
+
 import logging
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -240,15 +242,15 @@ class ProcessingThread(QThread):
 class PDFRenamerGUI(QMainWindow):
     """Main GUI window for PDF Renamer."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
-        self.processing_thread = None
+        self.processing_thread: ProcessingThread | None = None
         self.preferences = get_user_preferences()
-        self.api_manager = None
+        self.api_manager: APIRenameManager | None = None
         self.init_ui()
         self.load_preferences()
 
-    def init_ui(self):
+    def init_ui(self) -> None:
         """Initialize the user interface."""
         self.setWindowTitle("PDF Renamer Pro - AI-Powered Document Management")
         self.setGeometry(100, 100, 1200, 800)
@@ -277,7 +279,7 @@ class PDFRenamerGUI(QMainWindow):
         self.create_api_tab()
         self.create_settings_tab()
 
-    def create_batch_tab(self):
+    def create_batch_tab(self) -> None:
         """Create the batch processing tab."""
         batch_widget = QWidget()
         layout = QVBoxLayout(batch_widget)
@@ -398,7 +400,7 @@ class PDFRenamerGUI(QMainWindow):
 
         self.tab_widget.addTab(batch_widget, "🔄 Batch Processing")
 
-    def create_api_tab(self):
+    def create_api_tab(self) -> None:
         """Create the API-only processing tab."""
         api_widget = QWidget()
         layout = QVBoxLayout(api_widget)
@@ -491,7 +493,7 @@ class PDFRenamerGUI(QMainWindow):
 
         self.tab_widget.addTab(api_widget, "🤖 API Mode")
 
-    def create_settings_tab(self):
+    def create_settings_tab(self) -> None:
         """Create the settings and preferences tab."""
         settings_widget = QWidget()
         layout = QVBoxLayout(settings_widget)
@@ -554,7 +556,7 @@ class PDFRenamerGUI(QMainWindow):
         layout.addStretch()
         self.tab_widget.addTab(settings_widget, "⚙️ Settings")
 
-    def load_preferences(self):
+    def load_preferences(self) -> None:
         """Load user preferences into the GUI."""
         # Set last directory
         if self.preferences.get("last_directory"):
@@ -573,7 +575,7 @@ class PDFRenamerGUI(QMainWindow):
             self.preferences.get("remember_settings", True)
         )
 
-    def save_preferences(self):
+    def save_preferences(self) -> None:
         """Save current preferences."""
         self.preferences["default_workers"] = self.workers_spin.value()
         self.preferences["failed_folder_name"] = self.default_failed_input.text()
@@ -584,7 +586,7 @@ class PDFRenamerGUI(QMainWindow):
             self, "Preferences Saved", "Your preferences have been saved successfully!"
         )
 
-    def browse_directory(self):
+    def browse_directory(self) -> None:
         """Open directory browser dialog for batch processing."""
         start_dir = self.preferences.get("last_directory", str(Path.home()))
         directory = QFileDialog.getExistingDirectory(
@@ -595,7 +597,7 @@ class PDFRenamerGUI(QMainWindow):
             update_last_directory(directory)
             self.preferences["last_directory"] = directory
 
-    def api_browse_directory(self):
+    def api_browse_directory(self) -> None:
         """Open directory browser dialog for API processing."""
         start_dir = self.preferences.get("last_directory", str(Path.home()))
         directory = QFileDialog.getExistingDirectory(
@@ -614,7 +616,7 @@ class PDFRenamerGUI(QMainWindow):
             return "kebab_case"
         return "standard"
 
-    def append_log(self, message: str, level: str = "INFO"):
+    def append_log(self, message: str, level: str = "INFO") -> None:
         """Append message to log with color coding."""
         colors = {
             "INFO": "black",
@@ -632,13 +634,13 @@ class PDFRenamerGUI(QMainWindow):
         )
         self.log_output.ensureCursorVisible()
 
-    def update_progress(self, current: int, total: int, message: str):
+    def update_progress(self, current: int, total: int, message: str) -> None:
         """Update progress bar and status."""
         if total > 0:
             self.progress_bar.setValue(int((current / total) * 100))
         self.status_label.setText(message)
 
-    def start_processing(self):
+    def start_processing(self) -> None:
         """Start the PDF processing."""
         directory = self.dir_input.text()
         if not directory or not Path(directory).exists():
@@ -686,13 +688,13 @@ class PDFRenamerGUI(QMainWindow):
         self.processing_thread.finished.connect(self.processing_finished)
         self.processing_thread.start()
 
-    def cancel_processing(self):
+    def cancel_processing(self) -> None:
         """Cancel the processing."""
         if self.processing_thread:
             self.processing_thread.cancel()
             self.append_log("Cancelling processing...", "WARNING")
 
-    def processing_finished(self, success: bool, message: str):
+    def processing_finished(self, success: bool, message: str) -> None:
         """Handle processing completion."""
         self.start_btn.setEnabled(True)
         self.cancel_btn.setEnabled(False)
@@ -703,7 +705,7 @@ class PDFRenamerGUI(QMainWindow):
         else:
             QMessageBox.critical(self, "Processing Failed", message)
 
-    def generate_proposals(self):
+    def generate_proposals(self) -> None:
         """Generate API-based rename proposals."""
         directory = self.api_dir_input.text()
         if not directory or not Path(directory).exists():
@@ -771,7 +773,7 @@ class PDFRenamerGUI(QMainWindow):
             QMessageBox.critical(self, "Error", f"Failed to generate proposals: {e}")
             logger.error(f"Error generating proposals: {e}")
 
-    def populate_proposals_table(self, proposals: list[RenameProposal]):
+    def populate_proposals_table(self, proposals: list[RenameProposal]) -> None:
         """Populate the proposals table with data."""
         self.proposals_table.setRowCount(len(proposals))
 
@@ -802,21 +804,21 @@ class PDFRenamerGUI(QMainWindow):
             reject_btn.clicked.connect(lambda checked, idx=i: self.reject_proposal(idx))
             self.proposals_table.setCellWidget(i, 5, reject_btn)
 
-    def approve_proposal(self, index: int):
+    def approve_proposal(self, index: int) -> None:
         """Approve a proposal."""
         if self.api_manager and self.api_manager.approve_proposal(index):
             status_item = QTableWidgetItem("✅ Approved")
             status_item.setBackground(Qt.GlobalColor.green)
             self.proposals_table.setItem(index, 3, status_item)
 
-    def reject_proposal(self, index: int):
+    def reject_proposal(self, index: int) -> None:
         """Reject a proposal."""
         if self.api_manager and self.api_manager.reject_proposal(index):
             status_item = QTableWidgetItem("❌ Rejected")
             status_item.setBackground(Qt.GlobalColor.red)
             self.proposals_table.setItem(index, 3, status_item)
 
-    def export_proposals(self):
+    def export_proposals(self) -> None:
         """Export proposals to CSV."""
         if not self.api_manager:
             return
@@ -835,7 +837,7 @@ class PDFRenamerGUI(QMainWindow):
                     self, "Export Failed", f"Failed to export proposals: {e}"
                 )
 
-    def execute_approved(self):
+    def execute_approved(self) -> None:
         """Execute approved rename operations."""
         if not self.api_manager:
             return
@@ -877,7 +879,7 @@ class PDFRenamerGUI(QMainWindow):
                     self, "Execution Failed", f"Failed to execute renames: {e}"
                 )
 
-    def setup_api_key(self):
+    def setup_api_key(self) -> None:
         """Setup API key interactively."""
         from .config import setup_api_key_interactive
 
@@ -894,7 +896,7 @@ class PDFRenamerGUI(QMainWindow):
         except Exception as e:
             QMessageBox.critical(self, "Setup Error", f"Failed to setup API key: {e}")
 
-    def test_api_key(self):
+    def test_api_key(self) -> None:
         """Test the configured API key."""
         from .config import get_api_key
 
@@ -922,7 +924,7 @@ class PDFRenamerGUI(QMainWindow):
             QMessageBox.critical(self, "API Key Test", f"❌ API key test failed: {e}")
 
 
-def main():
+def main() -> None:
     """Main entry point for GUI."""
     app = QApplication(sys.argv)
     app.setStyle("Fusion")  # Modern look
