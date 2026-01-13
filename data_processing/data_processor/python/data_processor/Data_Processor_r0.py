@@ -308,7 +308,7 @@ class CSVProcessorApp(ctk.CTk):
         parent_tab.grid_columnconfigure(0, weight=1)
         parent_tab.grid_rowconfigure(0, weight=1)
 
-        def create_left_content(left_panel) -> None:
+        def create_left_content(left_panel: ctk.CTkFrame) -> None:
             """Create the left panel content"""
             left_panel.grid_rowconfigure(0, weight=1)
             left_panel.grid_columnconfigure(0, weight=1)
@@ -357,7 +357,7 @@ class CSVProcessorApp(ctk.CTk):
             )
             self.process_button.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
 
-        def create_right_content(right_panel) -> None:
+        def create_right_content(right_panel: ctk.CTkFrame) -> None:
             """Create the right panel content"""
             right_panel.grid_rowconfigure(2, weight=1)
             right_panel.grid_columnconfigure(0, weight=1)
@@ -2925,7 +2925,7 @@ class CSVProcessorApp(ctk.CTk):
         plot_main_frame.grid_rowconfigure(0, weight=1)
         plot_main_frame.grid_columnconfigure(0, weight=1)
 
-        def create_plot_left_content(left_panel) -> None:
+        def create_plot_left_content(left_panel: ctk.CTkFrame) -> None:
             """Create the left panel content for plotting with all advanced features"""
             left_panel.grid_rowconfigure(0, weight=1)
             left_panel.grid_columnconfigure(0, weight=1)
@@ -3658,7 +3658,7 @@ class CSVProcessorApp(ctk.CTk):
                 command=self._export_chart_excel,
             ).grid(row=2, column=0, sticky="ew", padx=10, pady=2)
 
-        def create_plot_right_content(right_panel) -> None:
+        def create_plot_right_content(right_panel: ctk.CTkFrame) -> None:
             """Create the right panel content for plotting"""
             right_panel.grid_rowconfigure(1, weight=1)
             right_panel.grid_columnconfigure(0, weight=1)
