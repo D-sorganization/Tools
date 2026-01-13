@@ -332,13 +332,16 @@ function renderTouchExpression() {
         return;
     }
 
+    // Optimization: Use DocumentFragment to batch DOM insertions
+    const fragment = document.createDocumentFragment();
     Array.from(text).forEach((character, index) => {
         const span = document.createElement("span");
         span.dataset.index = `${index}`;
         span.className = "touch-char";
         span.textContent = character;
-        touchExpression.append(span);
+        fragment.append(span);
     });
+    touchExpression.append(fragment);
 }
 
 function placeCursorFromTouch(event) {
