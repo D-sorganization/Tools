@@ -7588,7 +7588,7 @@ For additional support or feature requests, please refer to the
         help_text.insert("1.0", help_content)
         help_text.configure(state="disabled")  # Make read-only
 
-    def _generate_unique_filename(self, base_path, extension) -> None:
+    def _generate_unique_filename(self, base_path: str, extension: str) -> str:
         """Generate a unique filename to prevent overwriting existing files."""
         directory = os.path.dirname(base_path)
         base_name = os.path.splitext(os.path.basename(base_path))[0]
@@ -7897,7 +7897,7 @@ For additional support or feature requests, please refer to the
             padx=5,
         )
 
-    def _update_plot_config(self, config_index) -> None:
+    def _update_plot_config(self, config_index: int) -> None:
         """Update an existing plot configuration with current settings."""
         if not hasattr(self, "plots_list") or config_index >= len(self.plots_list):
             return
@@ -8068,7 +8068,7 @@ For additional support or feature requests, please refer to the
         # Save the updated configuration
         self._save_plots_to_file()
 
-    def _on_load_plot_config_select(self, selected_plot_name) -> None:
+    def _on_load_plot_config_select(self, selected_plot_name: str) -> None:
         """Handle selection from the load plot config dropdown."""
         if selected_plot_name == "No saved plots":
             return
