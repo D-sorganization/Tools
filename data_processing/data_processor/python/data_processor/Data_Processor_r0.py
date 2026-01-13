@@ -2297,7 +2297,9 @@ class CSVProcessorApp(ctk.CTk):
             messagebox.showerror("Export Error", f"Error exporting files: {e!s}")
             self.status_label.configure(text="Export failed")
 
-    def _process_single_file(self, file_path, settings) -> None:
+    def _process_single_file(
+        self, file_path: str, settings: dict[str, Any]
+    ) -> pd.DataFrame | None:
         """Process a single file with all advanced features."""
         print(f"\n_process_single_file called for: {os.path.basename(file_path)}")
         try:
@@ -2583,7 +2585,7 @@ class CSVProcessorApp(ctk.CTk):
             traceback.print_exc()
             return None
 
-    def _apply_custom_variables(self, df: pd.DataFrame, time_col: str) -> None:
+    def _apply_custom_variables(self, df: pd.DataFrame, time_col: str) -> pd.DataFrame:
         """Apply custom variables to the dataframe."""
         if not self.custom_vars_list:
             return df
@@ -2834,7 +2836,7 @@ class CSVProcessorApp(ctk.CTk):
                 f"Exported compiled MAT file to {final_path}",
             )
 
-    def _apply_sorting(self, df: pd.DataFrame) -> None:
+    def _apply_sorting(self, df: pd.DataFrame) -> pd.DataFrame:
         """Apply sorting to the dataframe."""
         sort_col = self.sort_col_menu.get()
         sort_order = self.sort_order_var.get()
@@ -7600,7 +7602,7 @@ For additional support or feature requests, please refer to the
                 return full_path
             counter += 1
 
-    def _check_file_overwrite(self, file_path) -> None:
+    def _check_file_overwrite(self, file_path: str) -> str | None:
         """Check if file exists and prompt user for action."""
         if os.path.exists(file_path):
             filename = os.path.basename(file_path)
