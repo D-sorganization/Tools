@@ -374,11 +374,12 @@ def _sympify_value(
                 pass
 
     try:
-        # Optimization: Use cached allowed_functions directly if no extra symbols are
-        # needed
-        local_dict = calculator.allowed_functions
-        if symbols:
-            local_dict = {**calculator.allowed_functions, **symbols}
+        # Optimization: Use cached parser for constant expressions
+        if not symbols:
+            return TI89Calculator.parse_constant(value)
+
+        # Use cached allowed_functions directly if symbols are needed
+        local_dict = {**calculator.allowed_functions, **symbols}
 
         return parse_expr(
             value,
