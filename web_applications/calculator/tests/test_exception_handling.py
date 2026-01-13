@@ -1,18 +1,21 @@
+from typing import Generator
 from unittest.mock import patch
 
 import pytest
+from flask.testing import FlaskClient
+
 from calculator.webapp import create_app
 
 
 @pytest.fixture()
-def client():
+def client() -> Generator[FlaskClient, None, None]:
     app = create_app()
     app.config["TESTING"] = True
     with app.test_client() as client:
         yield client
 
 
-def test_exception_info_leak(client):
+def test_exception_info_leak(client: FlaskClient) -> None:
     """
     Test that internal exceptions do not leak sensitive info.
     We patch the internal dispatch to raise a specific exception

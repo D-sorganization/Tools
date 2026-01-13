@@ -28,8 +28,9 @@ class TestCalculator(unittest.TestCase):
     def test_solve_equation(self) -> None:
         """Test solving equations."""
         solutions = self.calculator.solve_equation("x^2 - 1", "x").result
-        self.assertTrue(-1 in solutions)
-        self.assertTrue(1 in solutions)
+        # Suppress operator errors for containment checks involving Sympy objects
+        self.assertTrue(-1 in solutions)  # type: ignore[operator]
+        self.assertTrue(1 in solutions)  # type: ignore[operator]
 
     def test_derivative(self) -> None:
         """Test symbolic differentiation."""
