@@ -79,11 +79,11 @@ class ProcessingThread(QThread):
         self.failed_folder = failed_folder
         self._is_cancelled = False
 
-    def cancel(self):
+    def cancel(self) -> None:
         """Cancel the processing."""
         self._is_cancelled = True
 
-    def run(self):
+    def run(self) -> None:
         """Run the processing in background thread."""
         try:
             self.log_message.emit(f"Starting processing in: {self.directory}", "INFO")
