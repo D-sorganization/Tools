@@ -1924,7 +1924,7 @@ class CSVProcessorApp(ctk.CTk):
         self.file_list_frame.update_idletasks()
         print("DEBUG: Forced file_list_frame update_idletasks()")
 
-    def remove_file(self, file_path) -> None:
+    def remove_file(self, file_path: str) -> None:
         """Remove a file from the list."""
         if file_path in self.input_file_paths:
             self.input_file_paths.remove(file_path)
@@ -2847,7 +2847,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return df
 
-    def create_plotting_tab(self, tab) -> None:
+    def create_plotting_tab(self, tab: ctk.CTkFrame) -> None:
         """Create the plotting and analysis tab with all advanced features."""
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(1, weight=1)
@@ -3752,7 +3752,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
-    def create_plots_list_tab(self, tab) -> None:
+    def create_plots_list_tab(self, tab: ctk.CTkFrame) -> None:
         """Create the plots list tab."""
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(1, weight=1)
@@ -3983,7 +3983,7 @@ class CSVProcessorApp(ctk.CTk):
             command=self._export_all_plots,
         ).grid(row=0, column=1, padx=5, pady=5, sticky="ew")
 
-    def create_dat_import_tab(self, tab) -> None:
+    def create_dat_import_tab(self, tab: ctk.CTkFrame) -> None:
         """Create the DAT file import tab."""
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(1, weight=1)
@@ -7366,7 +7366,7 @@ COMMON MISTAKES TO AVOID:
         self.import_preview_text = ctk.CTkTextbox(preview_frame, height=200)
         self.import_preview_text.grid(row=1, column=0, padx=10, pady=5, sticky="nsew")
 
-    def create_help_tab(self, tab) -> None:
+    def create_help_tab(self, tab: ctk.CTkFrame) -> None:
         """Create the help tab with comprehensive documentation."""
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(1, weight=1)
@@ -8641,7 +8641,7 @@ For additional support or feature requests, please refer to the
             if self.color_scheme_var.get() == "Custom Colors":
                 self._on_plot_setting_change()
 
-    def _edit_custom_color(self, index) -> None:
+    def _edit_custom_color(self, index: int) -> None:
         """Edit an existing custom color."""
         if 0 <= index < len(self.custom_colors):
             current_color = self.custom_colors[index]
@@ -8655,7 +8655,7 @@ For additional support or feature requests, please refer to the
                 if self.color_scheme_var.get() == "Custom Colors":
                     self._on_plot_setting_change()
 
-    def _remove_custom_color(self, index) -> None:
+    def _remove_custom_color(self, index: int) -> None:
         """Remove a custom color."""
         if (
             0 <= index < len(self.custom_colors) and len(self.custom_colors) > 1
