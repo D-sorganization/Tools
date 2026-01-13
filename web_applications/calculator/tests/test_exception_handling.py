@@ -2,9 +2,8 @@ from collections.abc import Generator
 from unittest.mock import patch
 
 import pytest
-from flask.testing import FlaskClient
-
 from calculator.webapp import create_app
+from flask.testing import FlaskClient
 
 
 @pytest.fixture()
