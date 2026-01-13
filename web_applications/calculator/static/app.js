@@ -222,17 +222,35 @@ function registerEvents() {
     });
 
     document.getElementById("delete").addEventListener("click", deleteToken);
-    document.getElementById("clear").addEventListener("click", () => {
-        expressionInput.value = "";
-        variableInput.value = "";
-        orderInput.value = "";
-        lowerInput.value = "";
-        upperInput.value = "";
-        valueInput.value = "";
-        variablesInput.value = "";
-        resultText.textContent = "Ready.";
-        approxLine.hidden = true;
-        renderTouchExpression();
+
+    const clearButton = document.getElementById("clear");
+    let clearConfirmTimeout = null;
+
+    clearButton.addEventListener("click", () => {
+        if (clearButton.dataset.confirming) {
+            expressionInput.value = "";
+            variableInput.value = "";
+            orderInput.value = "";
+            lowerInput.value = "";
+            upperInput.value = "";
+            valueInput.value = "";
+            variablesInput.value = "";
+            resultText.textContent = "Ready.";
+            approxLine.hidden = true;
+            renderTouchExpression();
+
+            clearButton.textContent = "CLEAR";
+            delete clearButton.dataset.confirming;
+            clearTimeout(clearConfirmTimeout);
+        } else {
+            clearButton.textContent = "CONFIRM?";
+            clearButton.dataset.confirming = "true";
+
+            clearConfirmTimeout = setTimeout(() => {
+                clearButton.textContent = "CLEAR";
+                delete clearButton.dataset.confirming;
+            }, 3000);
+        }
     });
 
     copyResultButton?.addEventListener("click", () =>
