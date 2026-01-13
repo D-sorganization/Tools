@@ -1330,7 +1330,7 @@ class CSVProcessorApp(ctk.CTk):
         for _signal, data in self.deriv_signal_vars.items():
             data["var"].set(False)
 
-    def _filter_plot_signals(self, event=None) -> None:
+    def _filter_plot_signals(self, event: Any = None) -> None:
         """Filter plot signals based on search text."""
         search_text = self.plot_search_entry.get().lower()
         for signal, data in self.plot_signal_vars.items():
@@ -1368,7 +1368,7 @@ class CSVProcessorApp(ctk.CTk):
                 "Please select at least one signal to plot.",
             )
 
-    def _filter_reference_signals(self, event=None) -> None:
+    def _filter_reference_signals(self, event: Any = None) -> None:
         """Filter reference signals for custom variables."""
         search_text = self.custom_var_search_entry.get().lower()
         for signal, widget in self.reference_signal_widgets.items():
@@ -8809,7 +8809,7 @@ For additional support or feature requests, please refer to the
             self.custom_dataset_entry.configure(state="disabled")
             self.overwrite_warning_label.configure(text="")
 
-    def _check_custom_name_overwrite(self, event=None) -> None:
+    def _check_custom_name_overwrite(self, event: Any = None) -> None:
         """Check if custom dataset name will cause file overwrite."""
         if not hasattr(self, "custom_dataset_entry") or not hasattr(
             self,
