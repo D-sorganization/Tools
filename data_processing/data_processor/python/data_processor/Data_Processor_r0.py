@@ -185,7 +185,7 @@ def _poly_derivative(
 class CSVProcessorApp(ctk.CTk):
     """The main application class with all advanced features and UI fixes."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
         # Layout persistence variables
@@ -301,7 +301,7 @@ class CSVProcessorApp(ctk.CTk):
         # Load saved plots and other settings
         self._load_plots_from_file()
 
-    def create_setup_and_process_tab(self, parent_tab):
+    def create_setup_and_process_tab(self, parent_tab: ctk.CTkFrame) -> None:
         """
         Fixed version with proper splitter implementation and all advanced features.
         """
@@ -436,7 +436,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
-    def populate_setup_sub_tab(self, tab):
+    def populate_setup_sub_tab(self, tab) -> None:
         """Populate the setup sub-tab."""
         tab.grid_columnconfigure(0, weight=1)
 
@@ -649,7 +649,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         sort_desc.grid(row=3, column=1, padx=10, pady=5, sticky="w")
 
-    def populate_processing_sub_tab(self, tab):
+    def populate_processing_sub_tab(self, tab) -> None:
         """Populate the processing sub-tab with all advanced features."""
         tab.grid_columnconfigure(0, weight=1)
         time_units = ["ms", "s", "min", "hr"]
@@ -1036,7 +1036,7 @@ class CSVProcessorApp(ctk.CTk):
             cb.grid(row=1, column=i - 1, padx=10, pady=2, sticky="w")
             self.derivative_vars[i] = var
 
-    def _create_ma_param_frame(self, parent, time_units):
+    def _create_ma_param_frame(self, parent, time_units) -> None:
         """Create Moving Average parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1066,7 +1066,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, value_entry, unit_menu
 
-    def _create_bw_param_frame(self, parent):
+    def _create_bw_param_frame(self, parent) -> None:
         """Create Butterworth filter parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1094,7 +1094,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, order_entry, cutoff_entry
 
-    def _create_median_param_frame(self, parent):
+    def _create_median_param_frame(self, parent) -> None:
         """Create Median filter parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1112,7 +1112,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, kernel_entry
 
-    def _create_savgol_param_frame(self, parent):
+    def _create_savgol_param_frame(self, parent) -> None:
         """Create Savitzky-Golay filter parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1140,7 +1140,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, window_entry, polyorder_entry
 
-    def _create_hampel_param_frame(self, parent):
+    def _create_hampel_param_frame(self, parent) -> None:
         """Create Hampel filter parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1168,7 +1168,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, window_entry, threshold_entry
 
-    def _create_zscore_param_frame(self, parent):
+    def _create_zscore_param_frame(self, parent) -> None:
         """Create Z-Score filter parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1199,7 +1199,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, threshold_entry, method_menu
 
-    def _update_filter_ui(self, filter_type):
+    def _update_filter_ui(self, filter_type) -> None:
         """Update filter UI based on selected filter type."""
         # Hide all frames
         for frame in [
@@ -1226,7 +1226,7 @@ class CSVProcessorApp(ctk.CTk):
         elif filter_type == "Savitzky-Golay":
             self.savgol_frame.grid()
 
-    def _update_plot_filter_ui(self, filter_type):
+    def _update_plot_filter_ui(self, filter_type) -> None:
         """Update plot filter UI based on selected filter type."""
         # Hide all frames
         for frame in [
@@ -1253,7 +1253,7 @@ class CSVProcessorApp(ctk.CTk):
         elif filter_type == "Savitzky-Golay":
             self.plot_savgol_frame.grid()
 
-    def _filter_signals(self, event=None):
+    def _filter_signals(self, event=None) -> None:
         """Filter signals based on search text."""
         search_text = self.search_entry.get().lower()
         for signal, data in self.signal_vars.items():
@@ -1262,13 +1262,13 @@ class CSVProcessorApp(ctk.CTk):
             else:
                 data["widget"].grid_remove()
 
-    def _clear_search(self):
+    def _clear_search(self) -> None:
         """Clear search and show all signals."""
         self.search_entry.delete(0, tk.END)
         for _signal, data in self.signal_vars.items():
             data["widget"].grid()
 
-    def _filter_integrator_signals(self, event=None):
+    def _filter_integrator_signals(self, event=None) -> None:
         """Filter integration signals based on search text."""
         search_text = self.integrator_search_entry.get().lower()
         for signal, data in self.integrator_signal_vars.items():
@@ -1277,23 +1277,23 @@ class CSVProcessorApp(ctk.CTk):
             else:
                 data["widget"].pack_forget()
 
-    def _clear_integrator_search(self):
+    def _clear_integrator_search(self) -> None:
         """Clear integration search and show all signals."""
         self.integrator_search_entry.delete(0, tk.END)
         for _signal, data in self.integrator_signal_vars.items():
             data["widget"].pack(anchor="w", padx=5, pady=2)
 
-    def _integrator_select_all(self):
+    def _integrator_select_all(self) -> None:
         """Select all integration signals."""
         for _signal, data in self.integrator_signal_vars.items():
             data["var"].set(True)
 
-    def _integrator_deselect_all(self):
+    def _integrator_deselect_all(self) -> None:
         """Deselect all integration signals."""
         for _signal, data in self.integrator_signal_vars.items():
             data["var"].set(False)
 
-    def _filter_deriv_signals(self, event=None):
+    def _filter_deriv_signals(self, event=None) -> None:
         """Filter differentiation signals based on search text."""
         search_text = self.deriv_search_entry.get().lower()
         for signal, data in self.deriv_signal_vars.items():
@@ -1302,23 +1302,23 @@ class CSVProcessorApp(ctk.CTk):
             else:
                 data["widget"].pack_forget()
 
-    def _clear_deriv_search(self):
+    def _clear_deriv_search(self) -> None:
         """Clear differentiation search and show all signals."""
         self.deriv_search_entry.delete(0, tk.END)
         for _signal, data in self.deriv_signal_vars.items():
             data["widget"].pack(anchor="w", padx=5, pady=2)
 
-    def _deriv_select_all(self):
+    def _deriv_select_all(self) -> None:
         """Select all differentiation signals."""
         for _signal, data in self.deriv_signal_vars.items():
             data["var"].set(True)
 
-    def _deriv_deselect_all(self):
+    def _deriv_deselect_all(self) -> None:
         """Deselect all differentiation signals."""
         for _signal, data in self.deriv_signal_vars.items():
             data["var"].set(False)
 
-    def _filter_plot_signals(self, event=None):
+    def _filter_plot_signals(self, event=None) -> None:
         """Filter plot signals based on search text."""
         search_text = self.plot_search_entry.get().lower()
         for signal, data in self.plot_signal_vars.items():
@@ -1327,23 +1327,23 @@ class CSVProcessorApp(ctk.CTk):
             else:
                 data["widget"].grid_remove()
 
-    def _plot_clear_search(self):
+    def _plot_clear_search(self) -> None:
         """Clear plot search and show all signals."""
         self.plot_search_entry.delete(0, tk.END)
         for _signal, data in self.plot_signal_vars.items():
             data["widget"].grid()
 
-    def _plot_select_all(self):
+    def _plot_select_all(self) -> None:
         """Select all plot signals."""
         for _signal, data in self.plot_signal_vars.items():
             data["var"].set(True)
 
-    def _plot_select_none(self):
+    def _plot_select_none(self) -> None:
         """Deselect all plot signals."""
         for _signal, data in self.plot_signal_vars.items():
             data["var"].set(False)
 
-    def _show_selected_signals(self):
+    def _show_selected_signals(self) -> None:
         """Show only selected signals in plot."""
         selected_signals = [
             s for s, data in self.plot_signal_vars.items() if data["var"].get()
@@ -1356,7 +1356,7 @@ class CSVProcessorApp(ctk.CTk):
                 "Please select at least one signal to plot.",
             )
 
-    def _filter_reference_signals(self, event=None):
+    def _filter_reference_signals(self, event=None) -> None:
         """Filter reference signals for custom variables."""
         search_text = self.custom_var_search_entry.get().lower()
         for signal, widget in self.reference_signal_widgets.items():
@@ -1365,13 +1365,13 @@ class CSVProcessorApp(ctk.CTk):
             else:
                 widget.pack_forget()
 
-    def _clear_reference_search(self):
+    def _clear_reference_search(self) -> None:
         """Clear reference search and show all signals."""
         self.custom_var_search_entry.delete(0, tk.END)
         for _signal, widget in self.reference_signal_widgets.items():
             widget.pack(anchor="w", padx=5, pady=2)
 
-    def _add_custom_variable(self):
+    def _add_custom_variable(self) -> None:
         """Add a custom variable to the list."""
         name = self.custom_var_name_entry.get().strip()
         formula = self.custom_var_formula_entry.get().strip()
@@ -1392,7 +1392,7 @@ class CSVProcessorApp(ctk.CTk):
         self.custom_var_name_entry.delete(0, tk.END)
         self.custom_var_formula_entry.delete(0, tk.END)
 
-    def populate_custom_var_sub_tab(self, tab):
+    def populate_custom_var_sub_tab(self, tab) -> None:
         """Fixed custom variables sub-tab with missing listbox."""
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(9, weight=1)
@@ -1523,7 +1523,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         self.signal_reference_frame.grid(row=1, column=0, padx=0, pady=5, sticky="nsew")
 
-    def _update_custom_vars_display(self):
+    def _update_custom_vars_display(self) -> None:
         """Update the custom variables display."""
         self.custom_vars_listbox.configure(state="normal")
         self.custom_vars_listbox.delete("1.0", tk.END)
@@ -1536,12 +1536,12 @@ class CSVProcessorApp(ctk.CTk):
 
         self.custom_vars_listbox.configure(state="disabled")
 
-    def _clear_custom_variables(self):
+    def _clear_custom_variables(self) -> None:
         """Clear all custom variables."""
         self.custom_vars_list.clear()
         self._update_custom_vars_display()
 
-    def _save_custom_variables(self):
+    def _save_custom_variables(self) -> None:
         """Save current custom variables to a JSON file."""
         if not self.custom_vars_list:
             messagebox.showwarning("Warning", "No custom variables to save.")
@@ -1564,7 +1564,7 @@ class CSVProcessorApp(ctk.CTk):
                     f"Failed to save custom variables: {e!s}",
                 )
 
-    def _load_custom_variables(self):
+    def _load_custom_variables(self) -> None:
         """Load custom variables from a JSON file."""
         file_path = filedialog.askopenfilename(
             title="Load Custom Variables",
@@ -1821,7 +1821,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return df
 
-    def select_files(self):
+    def select_files(self) -> None:
         """Select input CSV files."""
         print("DEBUG: select_files() called")
         file_paths = filedialog.askopenfilenames(
@@ -1851,14 +1851,14 @@ class CSVProcessorApp(ctk.CTk):
         else:
             print("DEBUG: No files selected (user cancelled)")
 
-    def select_output_folder(self):
+    def select_output_folder(self) -> None:
         """Select output directory for processed files."""
         folder_path = filedialog.askdirectory(title="Select Output Folder")
         if folder_path:
             self.output_directory = folder_path
             self.output_label.configure(text=f"Output: {self.output_directory}")
 
-    def update_file_list(self):
+    def update_file_list(self) -> None:
         """Update the file list display."""
         print("DEBUG: update_file_list() called")
         print(
@@ -1912,14 +1912,14 @@ class CSVProcessorApp(ctk.CTk):
         self.file_list_frame.update_idletasks()
         print("DEBUG: Forced file_list_frame update_idletasks()")
 
-    def remove_file(self, file_path):
+    def remove_file(self, file_path) -> None:
         """Remove a file from the list."""
         if file_path in self.input_file_paths:
             self.input_file_paths.remove(file_path)
             self.update_file_list()
             self.load_signals_from_files()
 
-    def load_signals_from_files(self):
+    def load_signals_from_files(self) -> None:
         """Load signals from all selected files (optimized)."""
         print("DEBUG: load_signals_from_files() called")
 
@@ -1992,7 +1992,7 @@ class CSVProcessorApp(ctk.CTk):
 
         print("DEBUG: load_signals_from_files() completed")
 
-    def _auto_select_single_file(self, filename):
+    def _auto_select_single_file(self, filename) -> None:
         """Auto-select single file - simplified."""
         try:
             if hasattr(self, "plot_file_menu"):
@@ -2002,7 +2002,7 @@ class CSVProcessorApp(ctk.CTk):
         except Exception as e:
             print(f"Error in auto-select: {e}")
 
-    def _ensure_data_loaded(self, filename):
+    def _ensure_data_loaded(self, filename) -> None:
         """Ensure data is loaded for the given filename."""
         if filename not in self.processed_files:
             # Try to load the file
@@ -2032,7 +2032,7 @@ class CSVProcessorApp(ctk.CTk):
                     return False
         return True
 
-    def update_signal_list(self, signals):
+    def update_signal_list(self, signals) -> None:
         """Update the signal list with checkboxes - simplified version."""
         # Clear existing widgets
         for widget in self.signal_list_frame.winfo_children():
@@ -2061,7 +2061,7 @@ class CSVProcessorApp(ctk.CTk):
         self._update_differentiation_signals(signals)
         self._update_reference_signals(signals)
 
-    def _update_integration_signals(self, signals):
+    def _update_integration_signals(self, signals) -> None:
         """Update integration signals - simplified."""
         # Clear existing widgets
         for widget in self.integrator_signals_frame.winfo_children():
@@ -2081,7 +2081,7 @@ class CSVProcessorApp(ctk.CTk):
             cb.grid(sticky="w", padx=5, pady=2)
             self.integrator_signal_vars[signal] = {"var": var, "widget": cb}
 
-    def _update_differentiation_signals(self, signals):
+    def _update_differentiation_signals(self, signals) -> None:
         """Update differentiation signals - simplified."""
         # Clear existing widgets
         for widget in self.deriv_signals_frame.winfo_children():
@@ -2097,7 +2097,7 @@ class CSVProcessorApp(ctk.CTk):
             cb.grid(sticky="w", padx=5, pady=2)
             self.deriv_signal_vars[signal] = {"var": var, "widget": cb}
 
-    def _update_reference_signals(self, signals):
+    def _update_reference_signals(self, signals) -> None:
         """Update reference signals - simplified."""
         # Clear existing widgets
         for widget in self.signal_reference_frame.winfo_children():
@@ -2110,17 +2110,17 @@ class CSVProcessorApp(ctk.CTk):
             cb.grid(sticky="w", padx=5, pady=2)
             self.reference_signal_widgets[signal] = {"var": var, "widget": cb}
 
-    def select_all(self):
+    def select_all(self) -> None:
         """Select all signals."""
         for _signal, data in self.signal_vars.items():
             data["var"].set(True)
 
-    def deselect_all(self):
+    def deselect_all(self) -> None:
         """Deselect all signals."""
         for _signal, data in self.signal_vars.items():
             data["var"].set(False)
 
-    def process_files(self):
+    def process_files(self) -> None:
         """Process all selected files with current settings."""
         print("\n=== STARTING PROCESS_FILES DEBUG ===")
         if not self.input_file_paths:
@@ -2285,7 +2285,7 @@ class CSVProcessorApp(ctk.CTk):
             messagebox.showerror("Export Error", f"Error exporting files: {e!s}")
             self.status_label.configure(text="Export failed")
 
-    def _process_single_file(self, file_path, settings):
+    def _process_single_file(self, file_path, settings) -> None:
         """Process a single file with all advanced features."""
         print(f"\n_process_single_file called for: {os.path.basename(file_path)}")
         try:
@@ -2571,7 +2571,7 @@ class CSVProcessorApp(ctk.CTk):
             traceback.print_exc()
             return None
 
-    def _apply_custom_variables(self, df, time_col):
+    def _apply_custom_variables(self, df, time_col) -> None:
         """Apply custom variables to the dataframe."""
         if not self.custom_vars_list:
             return df
@@ -2633,7 +2633,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return df
 
-    def _get_resample_rule(self):
+    def _get_resample_rule(self) -> None:
         """Get the resample rule from UI inputs."""
         if not self.resample_var.get():
             return None
@@ -2659,7 +2659,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return None
 
-    def _export_processed_files(self, processed_files):
+    def _export_processed_files(self, processed_files) -> None:
         """Export processed files based on selected format."""
         export_type = self.export_type_var.get()
 
@@ -2676,7 +2676,7 @@ class CSVProcessorApp(ctk.CTk):
         elif export_type == "MAT (Compiled)":
             self._export_mat_compiled(processed_files)
 
-    def _export_csv_separate(self, processed_files):
+    def _export_csv_separate(self, processed_files) -> None:
         """Export each file as a separate CSV."""
         print(f"_export_csv_separate called with {len(processed_files)} files")
         exported_count = 0
@@ -2710,7 +2710,7 @@ class CSVProcessorApp(ctk.CTk):
             print("Showing cancelled message")
             messagebox.showinfo("Export Cancelled", "No files were exported.")
 
-    def _export_csv_compiled(self, processed_files):
+    def _export_csv_compiled(self, processed_files) -> None:
         """Export all files as a single compiled CSV."""
         if not processed_files:
             return
@@ -2729,7 +2729,7 @@ class CSVProcessorApp(ctk.CTk):
             compiled_df.to_csv(final_path, index=False)
             messagebox.showinfo("Success", f"Exported compiled data to {final_path}")
 
-    def _export_excel_multisheet(self, processed_files):
+    def _export_excel_multisheet(self, processed_files) -> None:
         """Export all files to a single Excel file with multiple sheets."""
         output_path = os.path.join(self.output_directory, "processed_data.xlsx")
         final_path = self._check_file_overwrite(output_path)
@@ -2744,7 +2744,7 @@ class CSVProcessorApp(ctk.CTk):
 
         messagebox.showinfo("Success", f"Exported to Excel file: {final_path}")
 
-    def _export_excel_separate(self, processed_files):
+    def _export_excel_separate(self, processed_files) -> None:
         """Export each file as a separate Excel file."""
         exported_count = 0
         for file_path, df in processed_files:
@@ -2770,7 +2770,7 @@ class CSVProcessorApp(ctk.CTk):
         else:
             messagebox.showinfo("Cancelled", "No files were exported.")
 
-    def _export_mat_separate(self, processed_files):
+    def _export_mat_separate(self, processed_files) -> None:
         """Export each file as a separate MAT file."""
         exported_count = 0
         for file_path, df in processed_files:
@@ -2797,7 +2797,7 @@ class CSVProcessorApp(ctk.CTk):
         else:
             messagebox.showinfo("Cancelled", "No files were exported.")
 
-    def _export_mat_compiled(self, processed_files):
+    def _export_mat_compiled(self, processed_files) -> None:
         """Export all files as a single compiled MAT file."""
         if not processed_files:
             return
@@ -2820,7 +2820,7 @@ class CSVProcessorApp(ctk.CTk):
                 f"Exported compiled MAT file to {final_path}",
             )
 
-    def _apply_sorting(self, df):
+    def _apply_sorting(self, df) -> None:
         """Apply sorting to the dataframe."""
         sort_col = self.sort_col_menu.get()
         sort_order = self.sort_order_var.get()
@@ -2831,7 +2831,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return df
 
-    def create_plotting_tab(self, tab):
+    def create_plotting_tab(self, tab) -> None:
         """Create the plotting and analysis tab with all advanced features."""
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(1, weight=1)
@@ -3736,7 +3736,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
-    def create_plots_list_tab(self, tab):
+    def create_plots_list_tab(self, tab) -> None:
         """Create the plots list tab."""
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(1, weight=1)
@@ -3767,7 +3767,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
-    def _create_plots_list_left(self, left_panel):
+    def _create_plots_list_left(self, left_panel) -> None:
         """Create left panel for plots list."""
         left_panel.grid_rowconfigure(1, weight=1)
         left_panel.grid_columnconfigure(0, weight=1)
@@ -3921,7 +3921,7 @@ class CSVProcessorApp(ctk.CTk):
             command=self._clear_all_plots,
         ).grid(row=0, column=2, padx=5, pady=5, sticky="ew")
 
-    def _create_plots_list_right(self, right_panel):
+    def _create_plots_list_right(self, right_panel) -> None:
         """Create right panel for plots list."""
         right_panel.grid_rowconfigure(0, weight=1)
         right_panel.grid_columnconfigure(0, weight=1)
@@ -3967,7 +3967,7 @@ class CSVProcessorApp(ctk.CTk):
             command=self._export_all_plots,
         ).grid(row=0, column=1, padx=5, pady=5, sticky="ew")
 
-    def create_dat_import_tab(self, tab):
+    def create_dat_import_tab(self, tab) -> None:
         """Create the DAT file import tab."""
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(1, weight=1)
@@ -3998,7 +3998,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
-    def _create_dat_import_left(self, left_panel):
+    def _create_dat_import_left(self, left_panel) -> None:
         """Create left panel for DAT import."""
         left_panel.grid_rowconfigure(1, weight=1)
         left_panel.grid_columnconfigure(0, weight=1)
@@ -4090,7 +4090,7 @@ class CSVProcessorApp(ctk.CTk):
             command=self._import_selected_tags,
         ).grid(row=4, column=0, padx=10, pady=10, sticky="ew")
 
-    def _create_dat_import_right(self, right_panel):
+    def _create_dat_import_right(self, right_panel) -> None:
         """Create right panel for DAT import."""
         right_panel.grid_rowconfigure(0, weight=1)
         right_panel.grid_columnconfigure(0, weight=1)
@@ -4110,7 +4110,7 @@ class CSVProcessorApp(ctk.CTk):
         self.import_preview_text = ctk.CTkTextbox(preview_frame, height=200)
         self.import_preview_text.grid(row=1, column=0, padx=10, pady=5, sticky="nsew")
 
-    def _load_layout_config(self):
+    def _load_layout_config(self) -> None:
         """Load layout configuration from file."""
         try:
             if os.path.exists(self.layout_config_file):
@@ -4120,7 +4120,7 @@ class CSVProcessorApp(ctk.CTk):
             print(f"Error loading layout config: {e}")
         return {}
 
-    def _save_layout_config(self):
+    def _save_layout_config(self) -> None:
         """Save layout configuration to file."""
         try:
             # Get current window dimensions
@@ -4207,17 +4207,17 @@ class CSVProcessorApp(ctk.CTk):
 
         return splitter_frame
 
-    def _on_splitter_enter(self, event, handle):
+    def _on_splitter_enter(self, event, handle) -> None:
         """Handle mouse enter on splitter handle."""
         handle.configure(fg_color="#888888")
         handle.configure(cursor="sb_h_double_arrow")
 
-    def _on_splitter_leave(self, event, handle):
+    def _on_splitter_leave(self, event, handle) -> None:
         """Handle mouse leave on splitter handle."""
         if not hasattr(self, "dragging_splitter") or not self.dragging_splitter:
             handle.configure(fg_color="#666666")
 
-    def _start_splitter_drag(self, event, handle, left_panel, splitter_key):
+    def _start_splitter_drag(self, event, handle, left_panel, splitter_key) -> None:
         """Start dragging the splitter."""
         self.dragging_splitter = True
         self.drag_splitter_key = splitter_key
@@ -4226,7 +4226,7 @@ class CSVProcessorApp(ctk.CTk):
         self.drag_start_width = left_panel.winfo_width()
         handle.configure(fg_color="#AAAAAA")
 
-    def _drag_splitter(self, event, handle, left_panel, splitter_key):
+    def _drag_splitter(self, event, handle, left_panel, splitter_key) -> None:
         """Drag the splitter."""
         if hasattr(self, "dragging_splitter") and self.dragging_splitter:
             delta_x = event.x_root - self.drag_start_x
@@ -4236,7 +4236,7 @@ class CSVProcessorApp(ctk.CTk):
             )  # Min 150, Max 800
             left_panel.configure(width=new_width)
 
-    def _end_splitter_drag(self):
+    def _end_splitter_drag(self) -> None:
         """End dragging the splitter."""
         if hasattr(self, "dragging_splitter") and self.dragging_splitter:
             # Save the current position
@@ -4258,12 +4258,12 @@ class CSVProcessorApp(ctk.CTk):
                     if isinstance(child, ctk.CTkFrame) and child.winfo_width() == 8:
                         child.configure(fg_color="#666666")
 
-    def _on_closing(self):
+    def _on_closing(self) -> None:
         """Handle application closing."""
         self._save_layout_config()
         self.quit()
 
-    def _on_window_configure(self, event):
+    def _on_window_configure(self, event) -> None:
         """Handle window resize events to save layout."""
         # Only save if this is the main window being resized
         if event.widget == self:
@@ -4272,13 +4272,13 @@ class CSVProcessorApp(ctk.CTk):
                 self.after_cancel(self._resize_timer)
             self._resize_timer = self.after(1000, self._save_layout_config)
 
-    def create_status_bar(self):
+    def create_status_bar(self) -> None:
         """Create the status bar."""
         self.status_label = ctk.CTkLabel(self, text="Ready", anchor="w")
         self.status_label.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
 
     # Placeholder methods for functionality that would be implemented
-    def on_plot_file_select(self, value):
+    def on_plot_file_select(self, value) -> None:
         """Handle plot file selection - simplified for better performance."""
         if value == "Select a file...":
             return
@@ -4340,7 +4340,7 @@ class CSVProcessorApp(ctk.CTk):
                 self.status_label.configure(text="Error selecting file for plotting")
                 self.status_label.configure(text="Ready")
 
-    def update_plot(self, selected_signals=None):
+    def update_plot(self, selected_signals=None) -> None:
         """Update the plot with fixed error handling and canvas management."""
         # Check if plot canvas is initialized
         if not hasattr(self, "plot_canvas") or not hasattr(self, "plot_ax"):
@@ -4628,7 +4628,7 @@ class CSVProcessorApp(ctk.CTk):
             self.plot_canvas.draw()
             self.status_label.configure(text="Plot error - check console for details")
 
-    def _ensure_plot_canvas_ready(self):
+    def _ensure_plot_canvas_ready(self) -> None:
         """Ensure plot canvas is properly initialized."""
         if not hasattr(self, "plot_canvas") or self.plot_canvas is None:
             print("ERROR: Plot canvas not initialized!")
@@ -4646,16 +4646,16 @@ class CSVProcessorApp(ctk.CTk):
             print(f"ERROR: Canvas draw failed - {e}")
             return False
 
-    def enable_plot_debugging(self):
+    def enable_plot_debugging(self) -> None:
         """Enable verbose debugging for plot operations."""
         self.plot_debug = True
 
-    def debug_print(self, message):
+    def debug_print(self, message) -> None:
         """Print debug message if debugging is enabled."""
         if hasattr(self, "plot_debug") and self.plot_debug:
             print(f"[PLOT DEBUG] {message}")
 
-    def _apply_plot_filter(self, df, signal_cols, x_axis_col):
+    def _apply_plot_filter(self, df, signal_cols, x_axis_col) -> None:
         """Apply filter preview to the plot data."""
         filter_type = self.plot_filter_type.get()
 
@@ -4838,7 +4838,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return filtered_df
 
-    def _add_trendline(self, df, signal, x_axis_col):
+    def _add_trendline(self, df, signal, x_axis_col) -> None:
         """Add trendline to the plot."""
         trend_type = self.trendline_type_var.get()
 
@@ -5035,7 +5035,7 @@ class CSVProcessorApp(ctk.CTk):
 
             traceback.print_exc()
 
-    def get_data_for_plotting(self, filename):
+    def get_data_for_plotting(self, filename) -> None:
         """
         Get data for plotting from the specified file - simplified baseline approach.
         """
@@ -5074,7 +5074,7 @@ class CSVProcessorApp(ctk.CTk):
             print(f"Error loading data for plotting: {e}")
             return None
 
-    def _debug_plot_state(self):
+    def _debug_plot_state(self) -> None:
         """Debug helper to print current plotting state."""
         print("\n=== PLOT DEBUG STATE ===")
         print(f"plot_file_menu: {getattr(self, 'plot_file_menu', None)}")
@@ -5111,7 +5111,7 @@ class CSVProcessorApp(ctk.CTk):
         print(f"loaded_data_cache: {loaded_data_cache_len}")
         print("========================\n")
 
-    def _force_signal_selection(self):
+    def _force_signal_selection(self) -> None:
         """Force select at least one signal for debugging."""
         if hasattr(self, "plot_signal_vars") and self.plot_signal_vars:
             # Check if any signals are selected
@@ -5128,35 +5128,35 @@ class CSVProcessorApp(ctk.CTk):
                         print(f"DEBUG: Force-selected signal: {signal}")
                         break
 
-    def _show_setup_help(self):
+    def _show_setup_help(self) -> None:
         """Show setup help."""
         messagebox.showinfo(
             "Setup Help",
             "This tab allows you to configure file processing settings.",
         )
 
-    def _show_plot_help(self):
+    def _show_plot_help(self) -> None:
         """Show plotting help."""
         messagebox.showinfo(
             "Plotting Help",
             "This tab allows you to visualize and analyze your data.",
         )
 
-    def _show_plots_list_help(self):
+    def _show_plots_list_help(self) -> None:
         """Show plots list help."""
         messagebox.showinfo(
             "Plots List Help",
             "This tab allows you to save and manage plot configurations.",
         )
 
-    def _show_dat_import_help(self):
+    def _show_dat_import_help(self) -> None:
         """Show DAT import help."""
         messagebox.showinfo(
             "DAT Import Help",
             "This tab allows you to import DAT files with DBF tag files.",
         )
 
-    def _show_legend_guide(self):
+    def _show_legend_guide(self) -> None:
         """Show comprehensive legend formatting guide."""
         guide_window = ctk.CTkToplevel(self)
         guide_window.title("Custom Legend Guide - LaTeX Formatting")
@@ -5273,7 +5273,7 @@ COMMON MISTAKES TO AVOID:
         y = (guide_window.winfo_screenheight() // 2) - (700 // 2)
         guide_window.geometry(f"600x700+{x}+{y}")
 
-    def save_settings(self):
+    def save_settings(self) -> None:
         """Save current settings to a configuration file."""
         try:
             # Collect all current settings
@@ -5445,7 +5445,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to save settings:\n{e!s}")
 
-    def load_settings(self):
+    def load_settings(self) -> None:
         """Load settings from a configuration file."""
         try:
             file_path = filedialog.askopenfilename(
@@ -5590,7 +5590,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to load settings:\n{e!s}")
 
-    def manage_configurations(self):
+    def manage_configurations(self) -> None:
         """Open a window to manage saved configuration files."""
         try:
             # Create a new window for configuration management
@@ -5695,7 +5695,7 @@ COMMON MISTAKES TO AVOID:
                 f"Failed to open configuration manager:\n{e!s}",
             )
 
-    def _refresh_config_list(self):
+    def _refresh_config_list(self) -> None:
         """Refresh the list of saved configuration files."""
         try:
             self.config_listbox.delete(0, tk.END)
@@ -5765,7 +5765,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             self.config_status_label.configure(text=f"Error refreshing list: {e!s}")
 
-    def _load_selected_config(self):
+    def _load_selected_config(self) -> None:
         """Load the selected configuration file."""
         try:
             selection = self.config_listbox.curselection()
@@ -5808,7 +5808,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to load configuration:\n{e!s}")
 
-    def _delete_selected_config(self):
+    def _delete_selected_config(self) -> None:
         """Delete the selected configuration file."""
         try:
             selection = self.config_listbox.curselection()
@@ -5847,7 +5847,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to delete configuration:\n{e!s}")
 
-    def _open_config_location(self):
+    def _open_config_location(self) -> None:
         """Open the folder containing configuration files."""
         try:
             current_dir = os.getcwd()
@@ -5864,7 +5864,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to open folder:\n{e!s}")
 
-    def _apply_loaded_settings(self, settings):
+    def _apply_loaded_settings(self, settings) -> None:
         """Apply loaded settings to the UI (extracted from load_settings)."""
         try:
             # Apply filter settings
@@ -5991,7 +5991,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to apply settings:\n{e!s}")
 
-    def save_signal_list(self):
+    def save_signal_list(self) -> None:
         """Save the currently selected signals as a signal list."""
         if not self.signal_vars:
             messagebox.showwarning(
@@ -6055,7 +6055,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to save signal list:\n{e}")
 
-    def load_signal_list(self):
+    def load_signal_list(self) -> None:
         """Load a saved signal list from file."""
         print("DEBUG: load_signal_list() called")
         try:
@@ -6121,7 +6121,7 @@ COMMON MISTAKES TO AVOID:
             traceback.print_exc()
             messagebox.showerror("Error", f"Failed to load signal list:\n{e}")
 
-    def _apply_loaded_signals_internal(self):
+    def _apply_loaded_signals_internal(self) -> None:
         """Internal method to apply loaded signals without showing message boxes."""
         print("DEBUG: _apply_loaded_signals_internal() called")
         if not self.saved_signal_list or not self.signal_vars:
@@ -6169,7 +6169,7 @@ COMMON MISTAKES TO AVOID:
         )
         print("DEBUG: _apply_loaded_signals_internal() completed")
 
-    def apply_saved_signals(self):
+    def apply_saved_signals(self) -> None:
         """Apply the saved signal list to the current file's signals."""
         if not self.saved_signal_list:
             messagebox.showwarning(
@@ -6232,7 +6232,7 @@ COMMON MISTAKES TO AVOID:
             text=f"Applied {len(present_signals)} signals from saved list",
         )
 
-    def _copy_plot_settings_to_processing(self):
+    def _copy_plot_settings_to_processing(self) -> None:
         """Copies filter settings from the plot tab to the main processing tab."""
         plot_filter = self.plot_filter_type.get()
         self.filter_type_var.set(plot_filter)
@@ -6302,7 +6302,7 @@ COMMON MISTAKES TO AVOID:
                 processing configuration.",
         )
 
-    def _export_chart_image(self):
+    def _export_chart_image(self) -> None:
         """Export the current chart as an image file."""
         if not hasattr(self, "plot_fig") or not self.plot_fig.get_axes():
             messagebox.showwarning(
@@ -6346,7 +6346,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to export chart:\n{e}")
 
-    def _export_chart_excel(self):
+    def _export_chart_excel(self) -> None:
         """Export the current plot data and chart to Excel."""
         selected_file = self.plot_file_menu.get()
 
@@ -6440,7 +6440,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to export chart data:\n{e}")
 
-    def _add_plot_to_list(self):
+    def _add_plot_to_list(self) -> None:
         """Add plot to the plots list."""
         plot_name = self.plot_name_entry.get().strip()
         plot_desc = self.plot_desc_entry.get().strip()
@@ -6474,7 +6474,7 @@ COMMON MISTAKES TO AVOID:
 
         messagebox.showinfo("Success", f"Plot '{plot_name}' added to list!")
 
-    def _update_selected_plot(self):
+    def _update_selected_plot(self) -> None:
         """Update selected plot in the list."""
         selection = self.plots_listbox.curselection()
         if not selection:
@@ -6508,7 +6508,7 @@ COMMON MISTAKES TO AVOID:
         self._save_plots_to_file()
         messagebox.showinfo("Success", "Plot configuration updated!")
 
-    def _clear_plot_form(self):
+    def _clear_plot_form(self) -> None:
         """Clear the plot form."""
         self.plot_name_entry.delete(0, tk.END)
         self.plot_desc_entry.delete(0, tk.END)
@@ -6520,7 +6520,7 @@ COMMON MISTAKES TO AVOID:
             for var in self.plots_signal_vars.values():
                 var.set(False)
 
-    def _on_plot_select(self, event):
+    def _on_plot_select(self, event) -> None:
         """Handle plot selection in listbox."""
         selection = self.plots_listbox.curselection()
         if not selection:
@@ -6548,7 +6548,7 @@ COMMON MISTAKES TO AVOID:
             for signal, var in self.plots_signal_vars.items():
                 var.set(signal in saved_signals)
 
-    def _load_selected_plot(self):
+    def _load_selected_plot(self) -> None:
         """Load selected plot configuration."""
         selection = self.plots_listbox.curselection()
         if not selection:
@@ -6574,7 +6574,7 @@ COMMON MISTAKES TO AVOID:
                 Plotting tab!",
         )
 
-    def _delete_selected_plot(self):
+    def _delete_selected_plot(self) -> None:
         """Delete selected plot from list."""
         selection = self.plots_listbox.curselection()
         if not selection:
@@ -6594,7 +6594,7 @@ COMMON MISTAKES TO AVOID:
             self._clear_plot_form()
             messagebox.showinfo("Success", f"Plot '{plot_name}' deleted.")
 
-    def _clear_all_plots(self):
+    def _clear_all_plots(self) -> None:
         """Clear all plots from list."""
         if self.plots_list and messagebox.askyesno(
             "Confirm Clear",
@@ -6606,14 +6606,14 @@ COMMON MISTAKES TO AVOID:
             self._clear_plot_form()
             messagebox.showinfo("Success", "All plots cleared.")
 
-    def _update_plots_listbox(self):
+    def _update_plots_listbox(self) -> None:
         """Update the plots listbox with current plots."""
         self.plots_listbox.delete(0, tk.END)
         for plot in self.plots_list:
             display_text = f"{plot['name']} ({len(plot.get('signals', []))} signals)"
             self.plots_listbox.insert(tk.END, display_text)
 
-    def _save_plots_to_file(self):
+    def _save_plots_to_file(self) -> None:
         """Save plots list to file."""
         try:
             plots_file = os.path.join(
@@ -6625,7 +6625,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             print(f"Error saving plots to file: {e}")
 
-    def _load_plots_from_file(self):
+    def _load_plots_from_file(self) -> None:
         """Load plots list from file."""
         try:
             plots_file = os.path.join(
@@ -6641,7 +6641,7 @@ COMMON MISTAKES TO AVOID:
             print(f"Error loading plots from file: {e}")
             self.plots_list = []
 
-    def _select_tag_file(self):
+    def _select_tag_file(self) -> None:
         """Select tag file for DAT import."""
         filepath = filedialog.askopenfilename(
             title="Select Tag File",
@@ -6651,7 +6651,7 @@ COMMON MISTAKES TO AVOID:
             self.dat_import_tag_file_path = filepath
             self.tag_file_label.configure(text=os.path.basename(filepath))
 
-    def _select_data_file(self):
+    def _select_data_file(self) -> None:
         """Select data file for DAT import."""
         filepath = filedialog.askopenfilename(
             title="Select Data File",
@@ -6668,7 +6668,7 @@ COMMON MISTAKES TO AVOID:
             if hasattr(self, "output_label"):
                 self.output_label.configure(text=f"Output: {self.output_directory}")
 
-    def _import_selected_tags(self):
+    def _import_selected_tags(self) -> None:
         """Import selected tags."""
         if not self.dat_import_data_file_path:
             messagebox.showerror("Error", "Please select a data file first.")
@@ -6710,7 +6710,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to import data: {e!s}")
 
-    def trim_and_save(self):
+    def trim_and_save(self) -> None:
         """Trim data and save."""
         if not self.input_file_paths:
             messagebox.showerror("Error", "Please select input files first.")
@@ -6771,7 +6771,7 @@ COMMON MISTAKES TO AVOID:
             f"Files trimmed and saved to {self.output_directory}",
         )
 
-    def _apply_plot_time_range(self):
+    def _apply_plot_time_range(self) -> None:
         """Apply time range to plot."""
         start_time_str = self.plotting_start_time_entry.get()
         end_time_str = self.plotting_end_time_entry.get()
@@ -6943,13 +6943,13 @@ COMMON MISTAKES TO AVOID:
                 f"Invalid time format. Please use HH:MM:SS.\n{e}",
             )
 
-    def _reset_plot_range(self):
+    def _reset_plot_range(self) -> None:
         """Reset plot range."""
         self.plotting_start_time_entry.delete(0, tk.END)
         self.plotting_end_time_entry.delete(0, tk.END)
         self.update_plot()
 
-    def _copy_trim_to_plot_range(self):
+    def _copy_trim_to_plot_range(self) -> None:
         """Copy trim times to plot range."""
         start_time = self.trim_start_entry.get()
         end_time = self.trim_end_entry.get()
@@ -6964,7 +6964,7 @@ COMMON MISTAKES TO AVOID:
 
         self._apply_plot_time_range()
 
-    def _copy_plot_range_to_trim(self):
+    def _copy_plot_range_to_trim(self) -> None:
         """Copy current plot x-axis range to time trimming fields."""
         try:
             # Check if plot exists and has data
@@ -7006,7 +7006,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to copy plot range: {e!s}")
 
-    def _save_current_plot_view(self):
+    def _save_current_plot_view(self) -> None:
         """Save the current plot view state."""
         try:
             if not hasattr(self, "plot_ax"):
@@ -7031,7 +7031,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to save plot view: {e!s}")
 
-    def _copy_current_view_to_processing(self):
+    def _copy_current_view_to_processing(self) -> None:
         """Copy current plot view range to processing tab time trimming."""
         try:
             # This is essentially the same as _copy_plot_range_to_trim but with a
@@ -7077,7 +7077,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to copy current view: {e!s}")
 
-    def _override_home_button(self):
+    def _override_home_button(self) -> None:
         """Override the matplotlib toolbar home button to use saved view."""
         if hasattr(self, "plot_toolbar") and self.saved_plot_view:
             # Store original home function
@@ -7101,7 +7101,7 @@ COMMON MISTAKES TO AVOID:
             # Replace the home function
             self.plot_toolbar.home = custom_home
 
-    def _refresh_legend_entries(self):
+    def _refresh_legend_entries(self) -> None:
         """Refresh legend entries based on currently selected signals."""
         # Clear existing legend widgets
         for widget in self.legend_frame.winfo_children():
@@ -7202,13 +7202,13 @@ COMMON MISTAKES TO AVOID:
                 lambda e, s=signal: self._on_legend_change(s, e.widget.get()),
             )
 
-    def _on_legend_change(self, signal, new_label):
+    def _on_legend_change(self, signal, new_label) -> None:
         """Handle changes to legend labels."""
         self.custom_legend_entries[signal] = new_label
         # Trigger immediate plot update
         self._on_plot_setting_change()
 
-    def _move_legend_up(self, signal):
+    def _move_legend_up(self, signal) -> None:
         """Move a signal up in the legend order."""
         if hasattr(self, "legend_order") and signal in self.legend_order:
             idx = self.legend_order.index(signal)
@@ -7220,7 +7220,7 @@ COMMON MISTAKES TO AVOID:
                 self._refresh_legend_entries()
                 self._on_plot_setting_change()
 
-    def _move_legend_down(self, signal):
+    def _move_legend_down(self, signal) -> None:
         """Move a signal down in the legend order."""
         if hasattr(self, "legend_order") and signal in self.legend_order:
             idx = self.legend_order.index(signal)
@@ -7232,7 +7232,7 @@ COMMON MISTAKES TO AVOID:
                 self._refresh_legend_entries()
                 self._on_plot_setting_change()
 
-    def _add_trendline(self):
+    def _add_trendline(self) -> None:
         """Add trendline to plot."""
         if not hasattr(self, "plot_ax") or not self.plot_ax:
             messagebox.showerror(
@@ -7330,7 +7330,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to add trendline: {e!s}")
 
-    def _create_dat_import_right(self, right_panel):
+    def _create_dat_import_right(self, right_panel) -> None:
         """Create right panel for DAT import."""
         right_panel.grid_rowconfigure(0, weight=1)
         right_panel.grid_columnconfigure(0, weight=1)
@@ -7350,7 +7350,7 @@ COMMON MISTAKES TO AVOID:
         self.import_preview_text = ctk.CTkTextbox(preview_frame, height=200)
         self.import_preview_text.grid(row=1, column=0, padx=10, pady=5, sticky="nsew")
 
-    def create_help_tab(self, tab):
+    def create_help_tab(self, tab) -> None:
         """Create the help tab with comprehensive documentation."""
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(1, weight=1)
@@ -7566,7 +7566,7 @@ For additional support or feature requests, please refer to the
         help_text.insert("1.0", help_content)
         help_text.configure(state="disabled")  # Make read-only
 
-    def _generate_unique_filename(self, base_path, extension):
+    def _generate_unique_filename(self, base_path, extension) -> None:
         """Generate a unique filename to prevent overwriting existing files."""
         directory = os.path.dirname(base_path)
         base_name = os.path.splitext(os.path.basename(base_path))[0]
@@ -7586,7 +7586,7 @@ For additional support or feature requests, please refer to the
                 return full_path
             counter += 1
 
-    def _check_file_overwrite(self, file_path):
+    def _check_file_overwrite(self, file_path) -> None:
         """Check if file exists and prompt user for action."""
         if os.path.exists(file_path):
             filename = os.path.basename(file_path)
@@ -7615,7 +7615,7 @@ For additional support or feature requests, please refer to the
 
         return file_path
 
-    def _save_current_plot_config(self):
+    def _save_current_plot_config(self) -> None:
         """Save the current plot configuration."""
         # Get current plot settings
         plot_name = simpledialog.askstring(
@@ -7791,7 +7791,7 @@ For additional support or feature requests, please refer to the
             f"Plot configuration '{plot_name}' saved successfully!",
         )
 
-    def _modify_plot_config(self):
+    def _modify_plot_config(self) -> None:
         """Modify an existing plot configuration."""
         if not hasattr(self, "plots_list") or not self.plots_list:
             messagebox.showwarning(
@@ -7875,7 +7875,7 @@ For additional support or feature requests, please refer to the
             padx=5,
         )
 
-    def _update_plot_config(self, config_index):
+    def _update_plot_config(self, config_index) -> None:
         """Update an existing plot configuration with current settings."""
         if not hasattr(self, "plots_list") or config_index >= len(self.plots_list):
             return
@@ -8046,7 +8046,7 @@ For additional support or feature requests, please refer to the
         # Save the updated configuration
         self._save_plots_to_file()
 
-    def _on_load_plot_config_select(self, selected_plot_name):
+    def _on_load_plot_config_select(self, selected_plot_name) -> None:
         """Handle selection from the load plot config dropdown."""
         if selected_plot_name == "No saved plots":
             return
@@ -8072,7 +8072,7 @@ For additional support or feature requests, please refer to the
             f"Plot configuration '{selected_plot_name}' loaded!",
         )
 
-    def _apply_plot_config(self, plot_config):
+    def _apply_plot_config(self, plot_config) -> None:
         """Apply a plot configuration to the current plotting tab."""
         # Apply file selection first
         if (
@@ -8090,7 +8090,7 @@ For additional support or feature requests, please refer to the
             # If no file, just apply what we can
             self._apply_plot_config_signals(plot_config)
 
-    def _apply_plot_config_signals(self, plot_config):
+    def _apply_plot_config_signals(self, plot_config) -> None:
         """Apply signal selections and other settings after file is loaded."""
         # Apply x-axis selection
         if (
@@ -8241,7 +8241,7 @@ For additional support or feature requests, please refer to the
         # Update the plot
         self.update_plot()
 
-    def _update_load_plot_config_menu(self):
+    def _update_load_plot_config_menu(self) -> None:
         """Update the load plot config dropdown menu."""
         if not hasattr(self, "load_plot_config_menu"):
             return
@@ -8254,7 +8254,7 @@ For additional support or feature requests, please refer to the
             self.load_plot_config_menu.configure(values=["No saved plots"])
             self.load_plot_config_menu.set("No saved plots")
 
-    def _update_plots_signals(self, signals):
+    def _update_plots_signals(self, signals) -> None:
         """Update signals available in plots list tab."""
         if not hasattr(self, "plots_signals_frame"):
             return
@@ -8284,7 +8284,7 @@ For additional support or feature requests, please refer to the
         # Re-bind mouse wheel to all new checkboxes
         self._bind_mousewheel_to_frame(self.plots_signals_frame)
 
-    def _generate_plot_preview(self):
+    def _generate_plot_preview(self) -> None:
         """Generate plot preview."""
         selection = self.plots_listbox.curselection()
         if not selection:
@@ -8508,7 +8508,7 @@ For additional support or feature requests, please refer to the
             self.preview_ax.set_title("Preview Error")
             self.preview_canvas.draw()
 
-    def _export_all_plots(self):
+    def _export_all_plots(self) -> None:
         """Export all plots."""
         if not self.plots_list:
             messagebox.showwarning("Warning", "No plots to export.")
@@ -8552,7 +8552,7 @@ For additional support or feature requests, please refer to the
         except Exception as e:
             messagebox.showerror("Export Error", f"Error exporting plots: {e}")
 
-    def _on_plot_setting_change(self, *args):
+    def _on_plot_setting_change(self, *args) -> None:
         """Automatically update plot when appearance settings change."""
         # Only update if we have data and signals selected
         if hasattr(self, "plot_signal_vars"):
@@ -8566,7 +8566,7 @@ For additional support or feature requests, please refer to the
                     self.after_cancel(self._update_pending)
                 self._update_pending = self.after_idle(self.update_plot)
 
-    def _on_color_scheme_change(self, scheme):
+    def _on_color_scheme_change(self, scheme) -> None:
         """Handle color scheme change and show/hide custom colors interface."""
         if scheme == "Custom Colors":
             self.custom_colors_frame.grid()
@@ -8576,7 +8576,7 @@ For additional support or feature requests, please refer to the
         # Trigger plot update
         self._on_plot_setting_change()
 
-    def _update_custom_colors_display(self):
+    def _update_custom_colors_display(self) -> None:
         """Update the display of custom colors with color preview buttons."""
         # Clear existing widgets
         for widget in self.colors_scroll_frame.winfo_children():
@@ -8616,7 +8616,7 @@ For additional support or feature requests, please refer to the
             )
             remove_button.pack(side="right", padx=5, pady=5)
 
-    def _add_custom_color(self):
+    def _add_custom_color(self) -> None:
         """Add a new custom color using color picker."""
         color = colorchooser.askcolor(title="Choose Color")[1]  # Get hex value
         if color:
@@ -8625,7 +8625,7 @@ For additional support or feature requests, please refer to the
             if self.color_scheme_var.get() == "Custom Colors":
                 self._on_plot_setting_change()
 
-    def _edit_custom_color(self, index):
+    def _edit_custom_color(self, index) -> None:
         """Edit an existing custom color."""
         if 0 <= index < len(self.custom_colors):
             current_color = self.custom_colors[index]
@@ -8639,7 +8639,7 @@ For additional support or feature requests, please refer to the
                 if self.color_scheme_var.get() == "Custom Colors":
                     self._on_plot_setting_change()
 
-    def _remove_custom_color(self, index):
+    def _remove_custom_color(self, index) -> None:
         """Remove a custom color."""
         if (
             0 <= index < len(self.custom_colors) and len(self.custom_colors) > 1
@@ -8649,7 +8649,7 @@ For additional support or feature requests, please refer to the
             if self.color_scheme_var.get() == "Custom Colors":
                 self._on_plot_setting_change()
 
-    def _reset_custom_colors(self):
+    def _reset_custom_colors(self) -> None:
         """Reset custom colors to default set."""
         self.custom_colors = [
             "#1f77b4",
@@ -8667,7 +8667,7 @@ For additional support or feature requests, please refer to the
         if self.color_scheme_var.get() == "Custom Colors":
             self._on_plot_setting_change()
 
-    def _bind_mousewheel_to_frame(self, frame):
+    def _bind_mousewheel_to_frame(self, frame) -> None:
         """Bind mouse wheel events to a frame for proper scrolling."""
 
         def on_mousewheel(event):
@@ -8698,7 +8698,7 @@ For additional support or feature requests, please refer to the
 
         bind_mousewheel(frame)
 
-    def _on_trendline_window_mode_change(self, mode):
+    def _on_trendline_window_mode_change(self, mode) -> None:
         """Handle trendline window mode change."""
         if mode == "Manual Entry":
             self.trendline_manual_frame.grid()
@@ -8712,7 +8712,7 @@ For additional support or feature requests, please refer to the
 
         self._on_plot_setting_change()
 
-    def _start_trendline_selection(self):
+    def _start_trendline_selection(self) -> None:
         """Start visual selection of trendline window."""
         if not hasattr(self, "plot_canvas") or not self.plot_canvas:
             messagebox.showwarning("Warning", "Please generate a plot first.")
@@ -8739,7 +8739,7 @@ For additional support or feature requests, please refer to the
         )
         self.trendline_selected_range.configure(text="Selection active...")
 
-    def _on_trendline_selection_start(self, event):
+    def _on_trendline_selection_start(self, event) -> None:
         """Handle start of trendline selection."""
         if (
             hasattr(self, "trendline_selection_active")
@@ -8748,7 +8748,7 @@ For additional support or feature requests, please refer to the
         ):
             self.trendline_selection_start = event.xdata
 
-    def _on_trendline_selection_end(self, event):
+    def _on_trendline_selection_end(self, event) -> None:
         """Handle end of trendline selection."""
         if (
             hasattr(self, "trendline_selection_active")
@@ -8781,7 +8781,7 @@ For additional support or feature requests, please refer to the
                 # Update plot
                 self._on_plot_setting_change()
 
-    def _on_dataset_naming_change(self):
+    def _on_dataset_naming_change(self) -> None:
         """Handle changes to dataset naming mode."""
         if self.dataset_naming_var.get() == "custom":
             self.custom_dataset_entry.configure(state="normal")
@@ -8793,7 +8793,7 @@ For additional support or feature requests, please refer to the
             self.custom_dataset_entry.configure(state="disabled")
             self.overwrite_warning_label.configure(text="")
 
-    def _check_custom_name_overwrite(self, event=None):
+    def _check_custom_name_overwrite(self, event=None) -> None:
         """Check if custom dataset name will cause file overwrite."""
         if not hasattr(self, "custom_dataset_entry") or not hasattr(
             self,
@@ -8833,7 +8833,7 @@ For additional support or feature requests, please refer to the
         else:
             self.overwrite_warning_label.configure(text="")
 
-    def _save_zoom_state(self):
+    def _save_zoom_state(self) -> None:
         """Save current zoom/pan state of the plot."""
         if hasattr(self, "plot_ax"):
             self.saved_zoom_state = {
@@ -8842,7 +8842,7 @@ For additional support or feature requests, please refer to the
             }
             messagebox.showinfo("Zoom State", "Current zoom state saved!")
 
-    def _restore_zoom_state(self):
+    def _restore_zoom_state(self) -> None:
         """Restore previously saved zoom/pan state."""
         if hasattr(self, "saved_zoom_state") and self.saved_zoom_state:
             if hasattr(self, "plot_ax"):
@@ -8853,7 +8853,7 @@ For additional support or feature requests, please refer to the
         else:
             messagebox.showwarning("Warning", "No saved zoom state found.")
 
-    def _zoom_out_25(self):
+    def _zoom_out_25(self) -> None:
         """Zoom out by 25% while maintaining center."""
         if hasattr(self, "plot_ax"):
             xlim = self.plot_ax.get_xlim()
@@ -8880,7 +8880,7 @@ For additional support or feature requests, please refer to the
             )
             self.plot_canvas.draw()
 
-    def _zoom_in_25(self):
+    def _zoom_in_25(self) -> None:
         """Zoom in by 25% while maintaining center."""
         if hasattr(self, "plot_ax"):
             xlim = self.plot_ax.get_xlim()
@@ -8907,7 +8907,7 @@ For additional support or feature requests, please refer to the
             )
             self.plot_canvas.draw()
 
-    def _preserve_zoom_during_update(self):
+    def _preserve_zoom_during_update(self) -> None:
         """Store zoom state before plot update and restore after."""
         zoom_state = None
         if hasattr(self, "plot_ax"):
@@ -8917,7 +8917,7 @@ For additional support or feature requests, please refer to the
             }
         return zoom_state
 
-    def _auto_fit_plot(self):
+    def _auto_fit_plot(self) -> None:
         """Auto-fit the plot to show all data."""
         if hasattr(self, "plot_ax"):
             try:
@@ -8927,7 +8927,7 @@ For additional support or feature requests, please refer to the
             except Exception as e:
                 print(f"Error auto-fitting plot: {e}")
 
-    def _should_auto_zoom(self, reason="filter_change"):
+    def _should_auto_zoom(self, reason="filter_change") -> None:
         """Determine if auto-zoom should be applied based on the reason."""
         if not hasattr(self, "auto_zoom_var"):
             return True  # Default to auto-zoom if control doesn't exist
@@ -8939,7 +8939,7 @@ For additional support or feature requests, please refer to the
         # Use user preference for other changes
         return self.auto_zoom_var.get()
 
-    def _detect_new_signals(self, current_signals):
+    def _detect_new_signals(self, current_signals) -> None:
         """Detect if new signals have been added since last plot update."""
         if not hasattr(self, "last_plotted_signals"):
             self.last_plotted_signals = set()
@@ -8953,7 +8953,7 @@ For additional support or feature requests, please refer to the
 
         return len(new_signals) > 0
 
-    def _apply_zoom_state(self, zoom_state):
+    def _apply_zoom_state(self, zoom_state) -> None:
         """Apply stored zoom state after plot update."""
         if zoom_state and hasattr(self, "plot_ax"):
             try:
