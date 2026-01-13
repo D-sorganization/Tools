@@ -1,6 +1,7 @@
 """Verify PDF Renamer installation and dependencies."""
 
 import os
+import sys
 
 # Color codes for terminal output
 GREEN = "\033[92m"
@@ -13,7 +14,8 @@ BOLD = "\033[1m"
 def check_dependency(name: str, import_statement: str) -> bool:
     """Check if a dependency is installed."""
     try:
-        exec(import_statement)
+        # We execute in a local scope, but we need standard modules like sys available if referenced
+        exec(import_statement, {"sys": sys, "os": os})
         print(f"{GREEN}[OK]{RESET} {name}")
         return True
     except ImportError as e:
@@ -24,7 +26,7 @@ def check_dependency(name: str, import_statement: str) -> bool:
         return False
 
 
-def main():
+def main() -> None:
     """Run installation verification."""
     print(f"\n{BOLD}PDF Renamer - Installation Verification{RESET}\n")
     print("=" * 50)
@@ -45,6 +47,9 @@ def main():
 
     # Project modules
     print(f"\n{BOLD}Project Modules:{RESET}")
+    # We need to make sure the project root is in path for these to work if run from this file
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
+
     all_good &= check_dependency("extractors", "from src.pdf_renamer import extractors")
     all_good &= check_dependency("core", "from src.pdf_renamer import core")
     all_good &= check_dependency("worker", "from src.pdf_renamer import worker")
