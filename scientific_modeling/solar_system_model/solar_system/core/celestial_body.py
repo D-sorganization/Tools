@@ -7,10 +7,12 @@ Each body has physical properties, orbital elements, and methods for calculating
 positions and velocities at any given time.
 """
 
+from __future__ import annotations
+
 import math
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 import numpy as np
 
@@ -53,7 +55,7 @@ class StateVector:
     velocity: np.ndarray
     time: float
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.position = np.array(self.position, dtype=np.float64)
         self.velocity = np.array(self.velocity, dtype=np.float64)
 
@@ -77,7 +79,7 @@ class StateVector:
         """Position in kilometers."""
         return self.position / 1000
 
-    def copy(self) -> "StateVector":
+    def copy(self) -> StateVector:
         """Create a copy of this state vector."""
         return StateVector(
             position=self.position.copy(), velocity=self.velocity.copy(), time=self.time
@@ -98,7 +100,7 @@ class CelestialBody:
         body_type: BodyType,
         orbital_elements: OrbitalElements | None = None,
         physical_properties: PhysicalProperties | None = None,
-        parent: Optional["CelestialBody"] = None,
+        parent: CelestialBody | None = None,
     ):
         """
         Initialize a celestial body.
@@ -424,7 +426,7 @@ class CelestialBody:
 
         return np.array(points)
 
-    def clear_cache(self):
+    def clear_cache(self) -> None:
         """Clear the state vector cache."""
         self._state_cache.clear()
         self._orbit_points = None
@@ -589,7 +591,7 @@ class Spacecraft(CelestialBody):
     trajectory rather than orbital elements.
     """
 
-    def __init__(self, name: str, trajectory: list[StateVector] | None = None):
+    def __init__(self, name: str, trajectory: list[StateVector] | None = None) -> None:
         super().__init__(
             name=name,
             body_type=BodyType.SPACECRAFT,
@@ -606,7 +608,7 @@ class Spacecraft(CelestialBody):
         if trajectory:
             self._build_trajectory_arrays()
 
-    def _build_trajectory_arrays(self):
+    def _build_trajectory_arrays(self) -> None:
         """Build numpy arrays from trajectory for interpolation using optimized allocation."""
         if not self.trajectory:
             return
@@ -623,7 +625,7 @@ class Spacecraft(CelestialBody):
             self._trajectory_positions[i] = state.position
             self._trajectory_velocities[i] = state.velocity
 
-    def set_trajectory(self, trajectory: list[StateVector]):
+    def set_trajectory(self, trajectory: list[StateVector]) -> None:
         """Set or update the spacecraft trajectory."""
         self.trajectory = trajectory
         self._build_trajectory_arrays()
