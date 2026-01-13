@@ -492,10 +492,19 @@ function openCustomUnitsModal() {
   hideModalError();
   populateReferenceUnits();
   renderCustomUnitsList();
+
+  // Focus management: Focus the first interactive element
+  const firstFocusable = customUnitsModal.querySelector(
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+  );
+  if (firstFocusable) {
+    firstFocusable.focus();
+  }
 }
 
 function closeCustomUnitsModal() {
   customUnitsModal.style.display = 'none';
+  customUnitsButton.focus(); // Return focus to trigger
 }
 
 function populateReferenceUnits() {
@@ -905,6 +914,30 @@ function setupEventListeners() {
     // Escape to close modal
     if (e.key === 'Escape' && customUnitsModal.style.display === 'flex') {
       closeCustomUnitsModal();
+    }
+
+    // Focus trap for modal
+    if (e.key === 'Tab' && customUnitsModal.style.display === 'flex') {
+      const focusableContent = customUnitsModal.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+
+      if (focusableContent.length === 0) return;
+
+      const first = focusableContent[0];
+      const last = focusableContent[focusableContent.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          last.focus();
+          e.preventDefault();
+        }
+      } else {
+        if (document.activeElement === last) {
+          first.focus();
+          e.preventDefault();
+        }
+      }
     }
   });
 }
