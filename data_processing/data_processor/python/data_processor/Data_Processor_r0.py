@@ -17,8 +17,9 @@ from __future__ import annotations
 import json
 import os
 import tkinter as tk
+from collections.abc import Callable
 from tkinter import colorchooser, filedialog, messagebox, simpledialog
-from typing import Any, Callable
+from typing import Any
 
 import customtkinter as ctk
 import matplotlib.dates as mdates

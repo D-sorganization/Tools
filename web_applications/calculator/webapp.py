@@ -114,11 +114,44 @@ def create_app() -> Flask:
 
 MAX_INPUT_LENGTH = 1000
 
+# Security: Blocklist of dangerous keywords that should not be in mathematical expressions
+FORBIDDEN_KEYWORDS = [
+    "lambda",
+    "class",
+    "def",
+    "import",
+    "exec",
+    "eval",
+    "yield",
+    "return",
+    "raise",
+    "assert",
+    "with",
+    "open",
+    "print",
+]
+
 
 def _validate_security(value: str | None) -> None:
     """Check for potentially dangerous patterns in input."""
-    if value and "__" in value:
+    if not value:
+        return
+    if "__" in value:
         raise ValueError("Security violation: Restricted input pattern detected.")
+
+    for keyword in FORBIDDEN_KEYWORDS:
+        if keyword in value:
+            # We want to avoid false positives (e.g., 'class' in 'classic'),
+            # but for a calculator, variable names containing these are suspicious anyway.
+            # Stricter check: ensure it's a whole word match?
+            # SymPy identifiers can contain these substrings.
+            # Let's check if it appears as a distinct word boundary.
+            import re
+
+            if re.search(rf"\b{keyword}\b", value):
+                raise ValueError(
+                    f"Security violation: Restricted keyword '{keyword}' detected."
+                )
 
 
 def _parse_payload(raw_payload: Mapping[str, object]) -> CalculationPayload:
@@ -173,6 +206,7 @@ def _parse_payload(raw_payload: Mapping[str, object]) -> CalculationPayload:
 
     function = _clean_optional(raw_payload.get("function"))
     _validate_length(function, "Function name")
+    _validate_security(function)
 
     return CalculationPayload(
         operation=operation,
@@ -374,11 +408,12 @@ def _sympify_value(
                 pass
 
     try:
-        # Optimization: Use cached allowed_functions directly if no extra symbols are
-        # needed
-        local_dict = calculator.allowed_functions
-        if symbols:
-            local_dict = {**calculator.allowed_functions, **symbols}
+        # Optimization: Use cached parser for constant expressions
+        if not symbols:
+            return TI89Calculator.parse_constant(value)
+
+        # Use cached allowed_functions directly if symbols are needed
+        local_dict = {**calculator.allowed_functions, **symbols}
 
         return parse_expr(
             value,

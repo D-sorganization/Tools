@@ -325,20 +325,26 @@ function handleAction(action) {
 
 function renderTouchExpression() {
     if (!touchExpression) return;
-    touchExpression.innerHTML = "";
+
+    // Optimization: Use DocumentFragment to batch DOM insertions
+    // This reduces reflows from O(N) to O(1) when typing
+    const fragment = document.createDocumentFragment();
     const text = expressionInput.value;
+
     if (!text) {
         touchExpression.textContent = "Tap anywhere on the screen to start editing";
         return;
     }
 
+    const fragment = document.createDocumentFragment();
     Array.from(text).forEach((character, index) => {
         const span = document.createElement("span");
         span.dataset.index = `${index}`;
         span.className = "touch-char";
         span.textContent = character;
-        touchExpression.append(span);
+        fragment.append(span);
     });
+    touchExpression.append(fragment);
 }
 
 function placeCursorFromTouch(event) {

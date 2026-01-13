@@ -46,6 +46,7 @@ const conversionFactorInput = document.getElementById('conversionFactor');
 const customAliasesInput = document.getElementById('customAliases');
 const addCustomUnitButton = document.getElementById('addCustomUnit');
 const customUnitsList = document.getElementById('customUnitsList');
+const modalMessage = document.getElementById('modalMessage');
 
 // State
 let currentCategory = 'length';
@@ -488,12 +489,22 @@ function loadFromHistory(item) {
 // Custom Units Management
 function openCustomUnitsModal() {
   customUnitsModal.style.display = 'flex';
+  hideModalMessage();
   populateReferenceUnits();
   renderCustomUnitsList();
+
+  // Focus management: Focus the first interactive element
+  const firstFocusable = customUnitsModal.querySelector(
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+  );
+  if (firstFocusable) {
+    firstFocusable.focus();
+  }
 }
 
 function closeCustomUnitsModal() {
   customUnitsModal.style.display = 'none';
+  customUnitsButton.focus(); // Return focus to trigger
 }
 
 function populateReferenceUnits() {
@@ -508,7 +519,12 @@ function populateReferenceUnits() {
 }
 
 function addCustomUnit() {
+  hideModalMessage();
   try {
+    hideModalError();
+    customUnitInput.classList.remove('has-error');
+    conversionFactorInput.classList.remove('has-error');
+
     const category = customCategorySelect.value;
     const unit = customUnitInput.value.trim();
     const refUnit = referenceUnitSelect.value;
@@ -521,13 +537,15 @@ function addCustomUnit() {
           .filter(a => a)
       : [];
 
+    let hasError = false;
+
     if (!unit) {
-      alert('Please enter a unit symbol');
+      showModalError('Please enter a unit symbol');
       return;
     }
 
     if (isNaN(factor) || factor <= 0) {
-      alert('Please enter a valid positive conversion factor');
+      showModalError('Please enter a valid positive conversion factor');
       return;
     }
 
@@ -546,10 +564,31 @@ function addCustomUnit() {
       populateUnits(currentCategory);
     }
 
-    alert(result.message);
+    showModalSuccess(result.message);
   } catch (error) {
-    alert('Error: ' + error.message);
+    showModalError('Error: ' + error.message);
   }
+}
+
+function showModalError(message) {
+  modalErrorMessage.textContent = message;
+  modalErrorMessage.style.display = 'block';
+  modalErrorMessage.classList.remove('success');
+}
+
+function showModalSuccess(message) {
+  modalErrorMessage.textContent = message;
+  modalErrorMessage.style.display = 'block';
+  modalErrorMessage.classList.add('success');
+
+  setTimeout(() => {
+    hideModalError();
+  }, 3000);
+}
+
+function hideModalError() {
+  modalErrorMessage.style.display = 'none';
+  modalErrorMessage.classList.remove('success');
 }
 
 function removeCustomUnit(category, unit) {
@@ -562,10 +601,32 @@ function removeCustomUnit(category, unit) {
       if (currentCategory === category) {
         populateUnits(currentCategory);
       }
+      showModalSuccess(`Custom unit '${unit}' removed`);
     } catch (error) {
-      alert('Error: ' + error.message);
+      showModalError('Error: ' + error.message);
     }
   }
+}
+
+function showModalError(message) {
+  modalMessage.textContent = message;
+  modalMessage.classList.remove('success');
+  modalMessage.style.display = 'block';
+  modalMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function showModalSuccess(message) {
+  modalMessage.textContent = message;
+  modalMessage.classList.add('success');
+  modalMessage.style.display = 'block';
+  modalMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  setTimeout(() => {
+    modalMessage.style.display = 'none';
+  }, 3000);
+}
+
+function hideModalMessage() {
+  modalMessage.style.display = 'none';
 }
 
 function renderCustomUnitsList() {
@@ -620,7 +681,7 @@ async function copyResult() {
     // Visual feedback
     const originalContent = copyResultButton.innerHTML;
     copyResultButton.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="20 6 9 17 4 12"></polyline>
       </svg>
     `;
@@ -871,6 +932,30 @@ function setupEventListeners() {
     // Escape to close modal
     if (e.key === 'Escape' && customUnitsModal.style.display === 'flex') {
       closeCustomUnitsModal();
+    }
+
+    // Focus trap for modal
+    if (e.key === 'Tab' && customUnitsModal.style.display === 'flex') {
+      const focusableContent = customUnitsModal.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+
+      if (focusableContent.length === 0) return;
+
+      const first = focusableContent[0];
+      const last = focusableContent[focusableContent.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          last.focus();
+          e.preventDefault();
+        }
+      } else {
+        if (document.activeElement === last) {
+          first.focus();
+          e.preventDefault();
+        }
+      }
     }
   });
 }

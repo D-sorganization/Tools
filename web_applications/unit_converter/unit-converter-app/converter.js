@@ -362,10 +362,7 @@ let _SEARCH_CACHE = null;
 // Security: Prevent prototype pollution
 function isValidKey(key) {
   return (
-    key !== '__proto__' &&
-    key !== 'constructor' &&
-    key !== 'prototype' &&
-    typeof key === 'string'
+    key !== '__proto__' && key !== 'constructor' && key !== 'prototype' && typeof key === 'string'
   );
 }
 
