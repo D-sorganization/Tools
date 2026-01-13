@@ -1036,7 +1036,9 @@ class CSVProcessorApp(ctk.CTk):
             cb.grid(row=1, column=i - 1, padx=10, pady=2, sticky="w")
             self.derivative_vars[i] = var
 
-    def _create_ma_param_frame(self, parent, time_units) -> None:
+    def _create_ma_param_frame(
+        self, parent: ctk.CTkFrame, time_units: list[str]
+    ) -> tuple[ctk.CTkFrame, ctk.CTkEntry, ctk.CTkOptionMenu]:
         """Create Moving Average parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1066,7 +1068,9 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, value_entry, unit_menu
 
-    def _create_bw_param_frame(self, parent) -> None:
+    def _create_bw_param_frame(
+        self, parent: ctk.CTkFrame
+    ) -> tuple[ctk.CTkFrame, ctk.CTkEntry, ctk.CTkEntry]:
         """Create Butterworth filter parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1094,7 +1098,9 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, order_entry, cutoff_entry
 
-    def _create_median_param_frame(self, parent) -> None:
+    def _create_median_param_frame(
+        self, parent: ctk.CTkFrame
+    ) -> tuple[ctk.CTkFrame, ctk.CTkEntry]:
         """Create Median filter parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1112,7 +1118,9 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, kernel_entry
 
-    def _create_savgol_param_frame(self, parent) -> None:
+    def _create_savgol_param_frame(
+        self, parent: ctk.CTkFrame
+    ) -> tuple[ctk.CTkFrame, ctk.CTkEntry, ctk.CTkEntry]:
         """Create Savitzky-Golay filter parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1140,7 +1148,9 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, window_entry, polyorder_entry
 
-    def _create_hampel_param_frame(self, parent) -> None:
+    def _create_hampel_param_frame(
+        self, parent: ctk.CTkFrame
+    ) -> tuple[ctk.CTkFrame, ctk.CTkEntry, ctk.CTkEntry]:
         """Create Hampel filter parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -1168,7 +1178,9 @@ class CSVProcessorApp(ctk.CTk):
 
         return frame, window_entry, threshold_entry
 
-    def _create_zscore_param_frame(self, parent) -> None:
+    def _create_zscore_param_frame(
+        self, parent: ctk.CTkFrame
+    ) -> tuple[ctk.CTkFrame, ctk.CTkEntry, ctk.CTkOptionMenu]:
         """Create Z-Score filter parameter frame."""
         frame = ctk.CTkFrame(parent)
         frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
@@ -2633,7 +2645,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return df
 
-    def _get_resample_rule(self) -> None:
+    def _get_resample_rule(self) -> str | None:
         """Get the resample rule from UI inputs."""
         if not self.resample_var.get():
             return None
@@ -4110,7 +4122,7 @@ class CSVProcessorApp(ctk.CTk):
         self.import_preview_text = ctk.CTkTextbox(preview_frame, height=200)
         self.import_preview_text.grid(row=1, column=0, padx=10, pady=5, sticky="nsew")
 
-    def _load_layout_config(self) -> None:
+    def _load_layout_config(self) -> dict[str, Any]:
         """Load layout configuration from file."""
         try:
             if os.path.exists(self.layout_config_file):
