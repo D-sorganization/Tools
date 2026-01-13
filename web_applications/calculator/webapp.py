@@ -347,18 +347,26 @@ def _sympify_value(
     symbols: Mapping[str, sp.Symbol | sp.Expr] | None = None,
 ) -> sp.Expr:
     # ⚡ Bolt Optimization: Fast path for simple numeric values
-    # Direct conversion is ~50x faster than parse_expr for integers and ~10x for floats
-    try:
-        # Check for simple integer first (fastest)
-        # Handle negative sign for isdigit check
-        if value.lstrip("-").isdigit():
-            return sp.Integer(int(value))
+    # Direct conversion is ~400x faster than parse_expr for integers and ~50x for floats
+    if value:
+        # Strip whitespace for accurate numeric checks
+        clean_value = value.strip()
 
-        # Check for float (handles scientific notation like 1e-5)
-        # We use sp.Float to ensure it's a SymPy object matching return type
-        return sp.Float(float(value))
-    except (ValueError, TypeError):
-        pass
+        # Check for integer (handles negative numbers)
+        if clean_value.lstrip("-").isdigit():
+            return sp.Integer(int(clean_value))
+
+        # Check for simple float, avoiding symbolic expressions that start with letters
+        # This heuristic prevents overhead for inputs like "x", "sin(x)" which fail float conversion
+        if clean_value and not clean_value[0].isalpha():
+            try:
+                # Validate if it is a float using native conversion
+                float(clean_value)
+                # Use string constructor for sp.Float to preserve precision/range
+                # (native float has limits e.g. 1e400 -> inf)
+                return sp.Float(clean_value)
+            except ValueError:
+                pass
 
     try:
         # Optimization: Use cached allowed_functions directly if no extra symbols are
