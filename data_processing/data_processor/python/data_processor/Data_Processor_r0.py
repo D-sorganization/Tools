@@ -4670,12 +4670,14 @@ class CSVProcessorApp(ctk.CTk):
         """Enable verbose debugging for plot operations."""
         self.plot_debug = True
 
-    def debug_print(self, message) -> None:
+    def debug_print(self, message: str) -> None:
         """Print debug message if debugging is enabled."""
         if hasattr(self, "plot_debug") and self.plot_debug:
             print(f"[PLOT DEBUG] {message}")
 
-    def _apply_plot_filter(self, df, signal_cols, x_axis_col) -> None:
+    def _apply_plot_filter(
+        self, df: pd.DataFrame, signal_cols: list[str], x_axis_col: str
+    ) -> pd.DataFrame:
         """Apply filter preview to the plot data."""
         filter_type = self.plot_filter_type.get()
 
@@ -4858,7 +4860,7 @@ class CSVProcessorApp(ctk.CTk):
 
         return filtered_df
 
-    def _add_trendline(self, df, signal, x_axis_col) -> None:
+    def _add_trendline(self, df: pd.DataFrame, signal: str, x_axis_col: str) -> None:
         """Add trendline to the plot."""
         trend_type = self.trendline_type_var.get()
 
@@ -5884,7 +5886,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to open folder:\n{e!s}")
 
-    def _apply_loaded_settings(self, settings) -> None:
+    def _apply_loaded_settings(self, settings: dict[str, Any]) -> None:
         """Apply loaded settings to the UI (extracted from load_settings)."""
         try:
             # Apply filter settings
