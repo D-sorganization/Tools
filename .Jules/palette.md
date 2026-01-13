@@ -1,3 +1,7 @@
+## 2026-01-13 - [Calculator Clear Button Safety]
+**Learning:** Destructive actions like "Clear" on touch interfaces are prone to accidental activation.
+**Action:** Implemented a "soft confirm" pattern where the first click changes the button text to "CONFIRM?" and a second click is required to execute the action. This prevents data loss without the intrusion of a modal dialog. The state is managed locally in the component.
+
 ## 2026-01-12 - [Calculator Focus Indicators]
 **Learning:** The calculator web app was missing `*:focus-visible` styles, making keyboard navigation difficult. The dark theme background with light interactive elements requires a specific focus color (`var(--accent)`) to ensure visibility on both dark shell and light display areas.
 **Action:** Always verify `*:focus-visible` is present in global CSS for web apps, especially those with custom themes. Test with keyboard navigation (Tab) to ensure the focus ring contrasts well with all backgrounds.
