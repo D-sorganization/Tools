@@ -80,6 +80,12 @@ class TI89Calculator:
 
     @staticmethod
     @lru_cache(maxsize=1024)
+    def parse_constant(expression: str) -> sp.Expr:
+        """Cached parsing for constant expressions (no external symbols)."""
+        return TI89Calculator._parse_expression_static(expression, {})
+
+    @staticmethod
+    @lru_cache(maxsize=1024)
     def _evaluate_cached(
         expression: str,
         variables_tuple: tuple[tuple[str, float | int | sp.Expr], ...],
