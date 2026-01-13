@@ -3,7 +3,7 @@ import pytest
 from web_applications.calculator.webapp import _validate_security
 
 
-def test_security_validation():
+def test_security_validation() -> None:
     # Safe inputs
     assert _validate_security("1 + 1") is None
     assert _validate_security("sin(x)") is None

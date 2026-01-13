@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any, cast
+from typing import Any
 
 import sympy as sp
 from flask import (
@@ -44,13 +44,13 @@ def create_app() -> Flask:
     # Rate limit: 100 requests per 60 seconds per IP
     app.limiter = RateLimiter(limit=100, window=60)  # type: ignore[attr-defined]
 
-    @app.after_request  # type: ignore[misc]
+    @app.after_request
     def add_security_headers(response: Response) -> Response:
         """Add security headers to every response."""
         response.headers["Content-Security-Policy"] = (
             "default-src 'self'; "
-            "style-src 'self' 'unsafe-inline'; "
-            "script-src 'self' 'unsafe-inline'; "
+            "style-src 'self'; "
+            "script-src 'self'; "
             "img-src 'self' data:; "
             "object-src 'none'; "
             "frame-ancestors 'none'; "
@@ -68,11 +68,11 @@ def create_app() -> Flask:
         )
         return response
 
-    @app.get("/")  # type: ignore[misc]
+    @app.get("/")
     def index() -> str:
-        return cast(str, render_template("index.html"))
+        return render_template("index.html")
 
-    @app.post("/api/calculate")  # type: ignore[misc]
+    @app.post("/api/calculate")
     def calculate() -> tuple[Any, int]:
         # Security: Rate limiting to prevent DoS
         if not current_app.testing:
@@ -96,13 +96,15 @@ def create_app() -> Flask:
             logger.exception("Calculation failed")
             return jsonify({"error": "An internal error occurred."}), 500
 
-    @app.get("/manifest.webmanifest")  # type: ignore[misc]
+    @app.get("/manifest.webmanifest")
     def manifest() -> Any:
-        return send_from_directory(app.static_folder, "manifest.webmanifest")
+        return send_from_directory(
+            app.static_folder or "static", "manifest.webmanifest"
+        )
 
-    @app.get("/service-worker.js")  # type: ignore[misc]
+    @app.get("/service-worker.js")
     def service_worker() -> Any:
-        return send_from_directory(app.static_folder, "service-worker.js")
+        return send_from_directory(app.static_folder or "static", "service-worker.js")
 
     return app
 
@@ -315,7 +317,7 @@ def _approximate(result: object, precision: int = 10) -> float | None:
 
 def _pretty(result: object) -> str | None:
     if isinstance(result, sp.Basic):
-        return sp.pretty(result)
+        return str(sp.pretty(result))
     return None
 
 
@@ -347,18 +349,26 @@ def _sympify_value(
     symbols: Mapping[str, sp.Symbol | sp.Expr] | None = None,
 ) -> sp.Expr:
     # ⚡ Bolt Optimization: Fast path for simple numeric values
-    # Direct conversion is ~50x faster than parse_expr for integers and ~10x for floats
-    try:
-        # Check for simple integer first (fastest)
-        # Handle negative sign for isdigit check
-        if value.lstrip("-").isdigit():
-            return sp.Integer(int(value))
+    # Direct conversion is ~400x faster than parse_expr for integers and ~50x for floats
+    if value:
+        # Strip whitespace for accurate numeric checks
+        clean_value = value.strip()
 
-        # Check for float (handles scientific notation like 1e-5)
-        # We use sp.Float to ensure it's a SymPy object matching return type
-        return sp.Float(float(value))
-    except (ValueError, TypeError):
-        pass
+        # Check for integer (handles negative numbers)
+        if clean_value.lstrip("-").isdigit():
+            return sp.Integer(int(clean_value))
+
+        # Check for simple float, avoiding symbolic expressions that start with letters
+        # This heuristic prevents overhead for inputs like "x", "sin(x)" which fail float conversion
+        if clean_value and not clean_value[0].isalpha():
+            try:
+                # Validate if it is a float using native conversion
+                float(clean_value)
+                # Use string constructor for sp.Float to preserve precision/range
+                # (native float has limits e.g. 1e400 -> inf)
+                return sp.Float(clean_value)
+            except ValueError:
+                pass
 
     try:
         # Optimization: Use cached allowed_functions directly if no extra symbols are
