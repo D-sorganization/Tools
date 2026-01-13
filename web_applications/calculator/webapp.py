@@ -98,7 +98,9 @@ def create_app() -> Flask:
 
     @app.get("/manifest.webmanifest")
     def manifest() -> Any:
-        return send_from_directory(app.static_folder or "static", "manifest.webmanifest")
+        return send_from_directory(
+            app.static_folder or "static", "manifest.webmanifest"
+        )
 
     @app.get("/service-worker.js")
     def service_worker() -> Any:
