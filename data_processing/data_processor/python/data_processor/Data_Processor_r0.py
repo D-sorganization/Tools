@@ -18,7 +18,7 @@ import json
 import os
 import tkinter as tk
 from tkinter import colorchooser, filedialog, messagebox, simpledialog
-from typing import Any
+from typing import Any, Callable
 
 import customtkinter as ctk
 import matplotlib.dates as mdates
@@ -3783,7 +3783,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
-    def _create_plots_list_left(self, left_panel) -> None:
+    def _create_plots_list_left(self, left_panel: ctk.CTkFrame) -> None:
         """Create left panel for plots list."""
         left_panel.grid_rowconfigure(1, weight=1)
         left_panel.grid_columnconfigure(0, weight=1)
@@ -3937,7 +3937,7 @@ class CSVProcessorApp(ctk.CTk):
             command=self._clear_all_plots,
         ).grid(row=0, column=2, padx=5, pady=5, sticky="ew")
 
-    def _create_plots_list_right(self, right_panel) -> None:
+    def _create_plots_list_right(self, right_panel: ctk.CTkFrame) -> None:
         """Create right panel for plots list."""
         right_panel.grid_rowconfigure(0, weight=1)
         right_panel.grid_columnconfigure(0, weight=1)
@@ -4014,7 +4014,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
-    def _create_dat_import_left(self, left_panel) -> None:
+    def _create_dat_import_left(self, left_panel: ctk.CTkFrame) -> None:
         """Create left panel for DAT import."""
         left_panel.grid_rowconfigure(1, weight=1)
         left_panel.grid_columnconfigure(0, weight=1)
@@ -4106,7 +4106,7 @@ class CSVProcessorApp(ctk.CTk):
             command=self._import_selected_tags,
         ).grid(row=4, column=0, padx=10, pady=10, sticky="ew")
 
-    def _create_dat_import_right(self, right_panel) -> None:
+    def _create_dat_import_right(self, right_panel: ctk.CTkFrame) -> None:
         """Create right panel for DAT import."""
         right_panel.grid_rowconfigure(0, weight=1)
         right_panel.grid_columnconfigure(0, weight=1)
@@ -4155,12 +4155,12 @@ class CSVProcessorApp(ctk.CTk):
 
     def _create_splitter(
         self,
-        parent,
-        left_creator,
-        right_creator,
-        splitter_key,
-        default_left_width,
-    ):
+        parent: ctk.CTkFrame,
+        left_creator: Callable[[ctk.CTkFrame], None],
+        right_creator: Callable[[ctk.CTkFrame], None],
+        splitter_key: str,
+        default_left_width: int,
+    ) -> ctk.CTkFrame:
         """Create a splitter with left and right panels."""
         splitter_frame = ctk.CTkFrame(parent)
         # Make the right panel expandable rather than the splitter handle
@@ -4223,17 +4223,19 @@ class CSVProcessorApp(ctk.CTk):
 
         return splitter_frame
 
-    def _on_splitter_enter(self, event, handle) -> None:
+    def _on_splitter_enter(self, event: Any, handle: Any) -> None:
         """Handle mouse enter on splitter handle."""
         handle.configure(fg_color="#888888")
         handle.configure(cursor="sb_h_double_arrow")
 
-    def _on_splitter_leave(self, event, handle) -> None:
+    def _on_splitter_leave(self, event: Any, handle: Any) -> None:
         """Handle mouse leave on splitter handle."""
         if not hasattr(self, "dragging_splitter") or not self.dragging_splitter:
             handle.configure(fg_color="#666666")
 
-    def _start_splitter_drag(self, event, handle, left_panel, splitter_key) -> None:
+    def _start_splitter_drag(
+        self, event: Any, handle: Any, left_panel: ctk.CTkFrame, splitter_key: str
+    ) -> None:
         """Start dragging the splitter."""
         self.dragging_splitter = True
         self.drag_splitter_key = splitter_key
@@ -4242,7 +4244,9 @@ class CSVProcessorApp(ctk.CTk):
         self.drag_start_width = left_panel.winfo_width()
         handle.configure(fg_color="#AAAAAA")
 
-    def _drag_splitter(self, event, handle, left_panel, splitter_key) -> None:
+    def _drag_splitter(
+        self, event: Any, handle: Any, left_panel: ctk.CTkFrame, splitter_key: str
+    ) -> None:
         """Drag the splitter."""
         if hasattr(self, "dragging_splitter") and self.dragging_splitter:
             delta_x = event.x_root - self.drag_start_x
@@ -7346,7 +7350,7 @@ COMMON MISTAKES TO AVOID:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to add trendline: {e!s}")
 
-    def _create_dat_import_right(self, right_panel) -> None:
+    def _create_dat_import_right(self, right_panel: ctk.CTkFrame) -> None:
         """Create right panel for DAT import."""
         right_panel.grid_rowconfigure(0, weight=1)
         right_panel.grid_columnconfigure(0, weight=1)
