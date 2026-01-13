@@ -1,3 +1,11 @@
+"""Folder Fix - Enhanced Folder Processor v2.0.
+
+A GUI application for comprehensive folder processing tasks including
+combining, flattening, deduplication, and file organization.
+"""
+
+from __future__ import annotations
+
 import ctypes
 import logging
 import os
@@ -10,6 +18,10 @@ import zipfile
 from collections import defaultdict
 from datetime import datetime
 from tkinter import filedialog, messagebox, ttk
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from tkinter import Event
 
 # Set up logging to capture detailed information
 log_filename = "folder_processor.log"
@@ -25,10 +37,8 @@ class FolderProcessorApp:
     An enhanced GUI application for comprehensive folder processing tasks.
     """
 
-    def __init__(self, root_window):
-        """
-        Initializes the application's user interface.
-        """
+    def __init__(self, root_window: tk.Tk) -> None:
+        """Initialize the application's user interface."""
         self.root = root_window
         self.root.title("Folder Fix - Enhanced Folder Processor v2.0")
         self.root.geometry("700x650")
