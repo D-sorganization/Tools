@@ -10,11 +10,15 @@
 # pip install customtkinter pandas numpy scipy matplotlib openpyxl Pillow simpledbf
 #
 # =============================================================================
+"""Advanced CSV Time Series Processor & Analyzer - Complete Version."""
+
+from __future__ import annotations
 
 import json
 import os
 import tkinter as tk
 from tkinter import colorchooser, filedialog, messagebox, simpledialog
+from typing import Any
 
 import customtkinter as ctk
 import matplotlib.dates as mdates
@@ -31,9 +35,11 @@ from scipy.signal import butter, filtfilt, medfilt, savgol_filter
 # =============================================================================
 # WORKER FUNCTION FOR PARALLEL PROCESSING
 # =============================================================================
-def process_single_csv_file(file_path, settings):
-    """
-    Processes a single CSV file based on a dictionary of settings.
+def process_single_csv_file(
+    file_path: str, settings: dict[str, Any]
+) -> pd.DataFrame | None:
+    """Process a single CSV file based on a dictionary of settings.
+
     This function is designed to be run in a separate process.
     """
     try:
@@ -143,15 +149,17 @@ def process_single_csv_file(file_path, settings):
 
 
 # Helper function for causal derivative calculation
-def _poly_derivative(series, window, poly_order, deriv_order, delta_x):
-    """Calculates the derivative of a series using a rolling polynomial fit."""
+def _poly_derivative(
+    series: pd.Series, window: int, poly_order: int, deriv_order: int, delta_x: float
+) -> pd.Series:
+    """Calculate the derivative of a series using a rolling polynomial fit."""
     if poly_order < deriv_order:
         return pd.Series(np.nan, index=series.index)
 
     # Pad the series at the beginning to get derivatives for the initial points
     padded_series = pd.concat([pd.Series([series.iloc[0]] * (window - 1)), series])
 
-    def get_deriv(w):
+    def get_deriv(w: np.ndarray) -> float:
         # Can't compute if the window is not full or has NaNs
         if len(w) < window or np.isnan(w).any():
             return np.nan
