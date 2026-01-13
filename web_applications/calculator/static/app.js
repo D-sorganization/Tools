@@ -336,7 +336,7 @@ function renderTouchExpression() {
         return;
     }
 
-    // Clear existing content efficiently
+    // Clear existing content efficiently before appending new fragment
     touchExpression.textContent = "";
 
     Array.from(text).forEach((character, index) => {
