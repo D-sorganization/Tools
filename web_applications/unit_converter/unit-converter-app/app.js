@@ -51,6 +51,7 @@ const customUnitsList = document.getElementById('customUnitsList');
 let currentCategory = 'length';
 let conversionHistory = [];
 let searchTimeout = null;
+let clearHistoryTimeout = null;
 
 // Initialize
 function init() {
@@ -418,10 +419,24 @@ function addToHistory(fromValue, fromUnit, toValue, toUnit, category) {
 }
 
 function clearHistory() {
-  if (confirm('Clear all conversion history?')) {
+  if (clearHistoryButton.classList.contains('confirming')) {
     conversionHistory = [];
     localStorage.removeItem('conversionHistory');
     renderHistory();
+    resetClearButton();
+  } else {
+    clearHistoryButton.classList.add('confirming');
+    clearHistoryButton.textContent = 'Confirm?';
+    clearHistoryTimeout = setTimeout(resetClearButton, 3000);
+  }
+}
+
+function resetClearButton() {
+  clearHistoryButton.classList.remove('confirming');
+  clearHistoryButton.textContent = 'Clear';
+  if (clearHistoryTimeout) {
+    clearTimeout(clearHistoryTimeout);
+    clearHistoryTimeout = null;
   }
 }
 
