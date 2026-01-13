@@ -616,7 +616,7 @@ class Spacecraft(CelestialBody):
         self._trajectory_times = np.empty(n_points, dtype=np.float64)
         self._trajectory_positions = np.empty((n_points, 3), dtype=np.float64)
         self._trajectory_velocities = np.empty((n_points, 3), dtype=np.float64)
-        
+
         # Fill arrays directly to avoid list comprehension overhead
         for i, state in enumerate(self.trajectory):
             self._trajectory_times[i] = state.time

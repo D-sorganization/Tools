@@ -1076,14 +1076,14 @@ class FolderPackerPro:
         def scan() -> None:
             """Background task to scan files for preview using optimized scanning."""
             files = []
-            
+
             # Use optimized scanning if available
             try:
                 from python.shared.performance_utils import file_scanner
                 use_optimized = True
             except ImportError:
                 use_optimized = False
-            
+
             if use_optimized:
                 # Use parallel scanner for faster file discovery
                 for file_path in file_scanner.scan_directory_parallel(source_path, "*", max_depth=10):
@@ -1111,10 +1111,9 @@ class FolderPackerPro:
                                     break
                             except OSError:
                                 continue
-                        except Exception:
-                            logger.exception("Error scanning %s", file_path)
-                if len(files) >= 500:
-                    break
+
+                    if len(files) >= 500:
+                        break
 
             self.root.after(0, lambda: self._populate_tree(files, source_path))
 

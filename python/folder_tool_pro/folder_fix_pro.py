@@ -1084,7 +1084,7 @@ class FolderFixPro:
         def scan_files() -> None:
             """Background task to scan files for preview using parallel processing."""
             files: list[Path] = []
-            
+
             # Import performance utilities
             try:
                 from python.shared.performance_utils import file_scanner
@@ -1092,7 +1092,7 @@ class FolderFixPro:
             except ImportError:
                 logger.warning("Performance utilities not available, using standard scanning")
                 use_optimized = False
-            
+
             for folder in self.source_folders:
                 try:
                     if use_optimized:
@@ -1658,7 +1658,7 @@ class FolderFixPro:
     def _count_files(self) -> int:
         """Count total files to process using optimized scanning."""
         total = 0
-        
+
         # Use optimized scanning if available
         try:
             from python.shared.performance_utils import file_scanner
@@ -1671,7 +1671,7 @@ class FolderFixPro:
             for source_folder in self.source_folders:
                 for _, _, filenames in os.walk(source_folder):
                     total += len(filenames)
-        
+
         return total
 
     def _update_progress(self, current: int, total: int, message: str) -> None:

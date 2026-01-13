@@ -636,7 +636,7 @@ class Renderer:
         # Extract positions using pre-allocated array for better performance
         n_points = len(points)
         pos_array = np.empty((n_points, 3), dtype=np.float32)
-        
+
         # Fill array directly to avoid list comprehension overhead (2x speedup)
         for i, state in enumerate(points):
             pos_array[i] = state.position * self.distance_scale
