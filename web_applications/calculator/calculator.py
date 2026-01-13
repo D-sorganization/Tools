@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from functools import lru_cache
@@ -46,7 +47,7 @@ class TI89Calculator:
                 "Integer": sp.Integer,
                 "Rational": sp.Rational,
                 "Float": sp.Float,
-                "Pow": sp.Pow,
+                "Pow": TI89Calculator._safe_pow,
                 "Function": sp.Function,
                 "Derivative": sp.Derivative,
                 "Eq": sp.Eq,
@@ -56,6 +57,87 @@ class TI89Calculator:
             TI89Calculator._TRANSFORMATIONS_CACHE = standard_transformations + (
                 convert_xor,
             )
+
+    @staticmethod
+    def _safe_factorial(n: object, **kwargs: object) -> sp.Expr:
+        """Secure factorial with input validation to prevent DoS."""
+        limit = 5000  # Safety limit for factorial size
+
+        # Check raw numbers
+        if isinstance(n, int | float):
+            if n > limit:
+                raise ValueError(f"Factorial argument exceeds safety limit ({limit})")
+            return sp.factorial(n, **kwargs)
+
+        # Check symbolic numbers
+        if isinstance(n, sp.Number):
+            val = None
+            try:
+                val = int(n)
+            except (TypeError, ValueError):
+                pass
+
+            if val is not None and val > limit:
+                raise ValueError(f"Factorial argument exceeds safety limit ({limit})")
+
+        return sp.factorial(n, **kwargs)
+
+    @staticmethod
+    def _safe_pow(base: object, exp: object, **kwargs: object) -> sp.Expr:
+        """Secure exponentiation with magnitude checking to prevent DoS."""
+        # Check if both are numbers (either primitive or SymPy)
+        is_num_base = isinstance(base, int | float | sp.Number)
+        is_num_exp = isinstance(exp, int | float | sp.Number)
+
+        if is_num_base and is_num_exp:
+            b, e = None, None
+            try:
+                # Convert to native float for magnitude estimation
+                # mypy doesn't know sp.Number is compatible with float, but it is at runtime
+                b = float(base)  # type: ignore[arg-type]
+                e = float(exp)  # type: ignore[arg-type]
+            except (ValueError, TypeError, OverflowError):
+                pass
+
+            if b is not None and e is not None:
+                # Check for potentially massive numbers
+                # Limit result to approx 6000 decimal digits (20kb text)
+                if abs(b) > 1 and e > 0:
+                    digits: float = 0.0
+                    try:
+                        digits = e * math.log10(abs(b))
+                    except (ValueError, TypeError, OverflowError):
+                        pass
+
+                    if digits > 6000:
+                        raise ValueError("Exponentiation result exceeds safety limits")
+
+        return sp.Pow(base, exp, **kwargs)
+
+    @staticmethod
+    def _validate_expression_tree(expr: sp.Basic) -> None:
+        """Walk the expression tree to validate operations that might cause DoS."""
+        if isinstance(expr, sp.Pow):
+            b, e = expr.base, expr.exp
+            if isinstance(b, sp.Number) and isinstance(e, sp.Number):
+                bf, ef = None, None
+                try:
+                    bf = float(b)
+                    ef = float(e)
+                except (ValueError, TypeError, OverflowError):
+                    pass
+
+                if bf is not None and ef is not None:
+                    if abs(bf) > 1 and ef > 0:
+                        digits = ef * math.log10(abs(bf))
+                        if digits > 6000:
+                            raise ValueError(
+                                "Exponentiation result exceeds safety limits"
+                            )
+
+        # Recursively check children
+        for arg in expr.args:
+            TI89Calculator._validate_expression_tree(arg)
 
     @property
     def allowed_functions(self) -> Mapping[str, object]:
@@ -403,6 +485,30 @@ class TI89Calculator:
         if symbols:
             local_dict = {**(allowed_fns if allowed_fns else {}), **symbols}
 
+        # Security: Parse without evaluation first to check for DoS vectors
+        try:
+            expr_tree = parse_expr(
+                expression,
+                local_dict=local_dict,
+                global_dict=TI89Calculator._SAFE_GLOBALS_CACHE,
+                transformations=TI89Calculator._TRANSFORMATIONS_CACHE,
+                evaluate=False,
+            )
+            # Validate expression tree for unsafe operations (e.g. massive powers)
+            TI89Calculator._validate_expression_tree(expr_tree)
+        except Exception as error:
+            # If parsing fails or validation fails, propagate the error
+            if "exceeds safety limits" in str(error):
+                raise
+            # If standard parse failed, allow the second parse to handle it/fail naturally
+            # or if we are strict, raise here.
+            # But wait, if validation failed, we raised ValueError.
+            # If parse failed, we can let the second parse try (maybe it has different behavior?)
+            # No, parse behavior should be consistent.
+            # However, to be safe and consistent with previous behavior:
+            if isinstance(error, ValueError) and "safety limit" in str(error):
+                raise
+
         return parse_expr(
             expression,
             local_dict=local_dict,
@@ -583,9 +689,10 @@ class TI89Calculator:
             "trigsimp": sp.trigsimp,
             "apart": sp.apart,
             "simplify": sp.simplify,
-            "factorial": sp.factorial,
+            "factorial": TI89Calculator._safe_factorial,
             "nCr": sp.binomial,
-            "nPr": lambda n, r: sp.factorial(n) / sp.factorial(n - r),
+            "nPr": lambda n, r: TI89Calculator._safe_factorial(n)
+            / TI89Calculator._safe_factorial(n - r),
             "sum": sp.summation,
             "product": sp.product,
             "Matrix": sp.Matrix,
