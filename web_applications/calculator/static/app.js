@@ -336,9 +336,7 @@ function renderTouchExpression() {
         return;
     }
 
-    // Clear existing content efficiently before appending new fragment
-    touchExpression.textContent = "";
-
+    const fragment = document.createDocumentFragment();
     Array.from(text).forEach((character, index) => {
         const span = document.createElement("span");
         span.dataset.index = `${index}`;
@@ -346,7 +344,6 @@ function renderTouchExpression() {
         span.textContent = character;
         fragment.append(span);
     });
-
     touchExpression.append(fragment);
 }
 

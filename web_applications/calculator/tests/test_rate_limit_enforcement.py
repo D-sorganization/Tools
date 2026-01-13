@@ -5,7 +5,7 @@ import unittest
 # Add the repo root to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
-from calculator.webapp import create_app
+from web_applications.calculator.webapp import create_app
 
 
 class TestRateLimitEnforcement(unittest.TestCase):
