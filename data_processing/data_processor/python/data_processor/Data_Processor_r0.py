@@ -2044,7 +2044,7 @@ class CSVProcessorApp(ctk.CTk):
                     return False
         return True
 
-    def update_signal_list(self, signals) -> None:
+    def update_signal_list(self, signals: list[str]) -> None:
         """Update the signal list with checkboxes - simplified version."""
         # Clear existing widgets
         for widget in self.signal_list_frame.winfo_children():
@@ -2073,7 +2073,7 @@ class CSVProcessorApp(ctk.CTk):
         self._update_differentiation_signals(signals)
         self._update_reference_signals(signals)
 
-    def _update_integration_signals(self, signals) -> None:
+    def _update_integration_signals(self, signals: list[str]) -> None:
         """Update integration signals - simplified."""
         # Clear existing widgets
         for widget in self.integrator_signals_frame.winfo_children():
@@ -2093,7 +2093,7 @@ class CSVProcessorApp(ctk.CTk):
             cb.grid(sticky="w", padx=5, pady=2)
             self.integrator_signal_vars[signal] = {"var": var, "widget": cb}
 
-    def _update_differentiation_signals(self, signals) -> None:
+    def _update_differentiation_signals(self, signals: list[str]) -> None:
         """Update differentiation signals - simplified."""
         # Clear existing widgets
         for widget in self.deriv_signals_frame.winfo_children():
@@ -2109,7 +2109,7 @@ class CSVProcessorApp(ctk.CTk):
             cb.grid(sticky="w", padx=5, pady=2)
             self.deriv_signal_vars[signal] = {"var": var, "widget": cb}
 
-    def _update_reference_signals(self, signals) -> None:
+    def _update_reference_signals(self, signals: list[str]) -> None:
         """Update reference signals - simplified."""
         # Clear existing widgets
         for widget in self.signal_reference_frame.winfo_children():
@@ -2583,7 +2583,7 @@ class CSVProcessorApp(ctk.CTk):
             traceback.print_exc()
             return None
 
-    def _apply_custom_variables(self, df, time_col) -> None:
+    def _apply_custom_variables(self, df: pd.DataFrame, time_col: str) -> None:
         """Apply custom variables to the dataframe."""
         if not self.custom_vars_list:
             return df
@@ -2834,7 +2834,7 @@ class CSVProcessorApp(ctk.CTk):
                 f"Exported compiled MAT file to {final_path}",
             )
 
-    def _apply_sorting(self, df) -> None:
+    def _apply_sorting(self, df: pd.DataFrame) -> None:
         """Apply sorting to the dataframe."""
         sort_col = self.sort_col_menu.get()
         sort_order = self.sort_order_var.get()
@@ -4277,7 +4277,7 @@ class CSVProcessorApp(ctk.CTk):
         self._save_layout_config()
         self.quit()
 
-    def _on_window_configure(self, event) -> None:
+    def _on_window_configure(self, event: Any) -> None:
         """Handle window resize events to save layout."""
         # Only save if this is the main window being resized
         if event.widget == self:
@@ -8268,7 +8268,7 @@ For additional support or feature requests, please refer to the
             self.load_plot_config_menu.configure(values=["No saved plots"])
             self.load_plot_config_menu.set("No saved plots")
 
-    def _update_plots_signals(self, signals) -> None:
+    def _update_plots_signals(self, signals: list[str]) -> None:
         """Update signals available in plots list tab."""
         if not hasattr(self, "plots_signals_frame"):
             return
