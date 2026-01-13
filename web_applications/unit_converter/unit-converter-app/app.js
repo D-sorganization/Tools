@@ -46,6 +46,7 @@ const conversionFactorInput = document.getElementById('conversionFactor');
 const customAliasesInput = document.getElementById('customAliases');
 const addCustomUnitButton = document.getElementById('addCustomUnit');
 const customUnitsList = document.getElementById('customUnitsList');
+const modalErrorMessage = document.getElementById('modalErrorMessage');
 
 // State
 let currentCategory = 'length';
@@ -488,6 +489,7 @@ function loadFromHistory(item) {
 // Custom Units Management
 function openCustomUnitsModal() {
   customUnitsModal.style.display = 'flex';
+  hideModalError();
   populateReferenceUnits();
   renderCustomUnitsList();
 }
@@ -509,6 +511,10 @@ function populateReferenceUnits() {
 
 function addCustomUnit() {
   try {
+    hideModalError();
+    customUnitInput.classList.remove('has-error');
+    conversionFactorInput.classList.remove('has-error');
+
     const category = customCategorySelect.value;
     const unit = customUnitInput.value.trim();
     const refUnit = referenceUnitSelect.value;
@@ -521,13 +527,20 @@ function addCustomUnit() {
           .filter(a => a)
       : [];
 
+    let hasError = false;
+
     if (!unit) {
-      alert('Please enter a unit symbol');
-      return;
+      customUnitInput.classList.add('has-error');
+      hasError = true;
     }
 
     if (isNaN(factor) || factor <= 0) {
-      alert('Please enter a valid positive conversion factor');
+      conversionFactorInput.classList.add('has-error');
+      hasError = true;
+    }
+
+    if (hasError) {
+      showModalError('Please check highlighted fields');
       return;
     }
 
@@ -546,10 +559,31 @@ function addCustomUnit() {
       populateUnits(currentCategory);
     }
 
-    alert(result.message);
+    showModalSuccess(result.message);
   } catch (error) {
-    alert('Error: ' + error.message);
+    showModalError(error.message);
   }
+}
+
+function showModalError(message) {
+  modalErrorMessage.textContent = message;
+  modalErrorMessage.style.display = 'block';
+  modalErrorMessage.classList.remove('success');
+}
+
+function showModalSuccess(message) {
+  modalErrorMessage.textContent = message;
+  modalErrorMessage.style.display = 'block';
+  modalErrorMessage.classList.add('success');
+
+  setTimeout(() => {
+    hideModalError();
+  }, 3000);
+}
+
+function hideModalError() {
+  modalErrorMessage.style.display = 'none';
+  modalErrorMessage.classList.remove('success');
 }
 
 function removeCustomUnit(category, unit) {
