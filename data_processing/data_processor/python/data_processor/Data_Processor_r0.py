@@ -4360,7 +4360,7 @@ class CSVProcessorApp(ctk.CTk):
                 self.status_label.configure(text="Error selecting file for plotting")
                 self.status_label.configure(text="Ready")
 
-    def update_plot(self, selected_signals=None) -> None:
+    def update_plot(self, selected_signals: list[str] | None = None) -> None:
         """Update the plot with fixed error handling and canvas management."""
         # Check if plot canvas is initialized
         if not hasattr(self, "plot_canvas") or not hasattr(self, "plot_ax"):
@@ -8092,7 +8092,7 @@ For additional support or feature requests, please refer to the
             f"Plot configuration '{selected_plot_name}' loaded!",
         )
 
-    def _apply_plot_config(self, plot_config) -> None:
+    def _apply_plot_config(self, plot_config: dict[str, Any]) -> None:
         """Apply a plot configuration to the current plotting tab."""
         # Apply file selection first
         if (
@@ -8110,7 +8110,7 @@ For additional support or feature requests, please refer to the
             # If no file, just apply what we can
             self._apply_plot_config_signals(plot_config)
 
-    def _apply_plot_config_signals(self, plot_config) -> None:
+    def _apply_plot_config_signals(self, plot_config: dict[str, Any]) -> None:
         """Apply signal selections and other settings after file is loaded."""
         # Apply x-axis selection
         if (
