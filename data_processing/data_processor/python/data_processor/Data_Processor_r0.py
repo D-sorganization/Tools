@@ -4294,7 +4294,7 @@ class CSVProcessorApp(ctk.CTk):
         self.status_label.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
 
     # Placeholder methods for functionality that would be implemented
-    def on_plot_file_select(self, value) -> None:
+    def on_plot_file_select(self, value: str) -> None:
         """Handle plot file selection - simplified for better performance."""
         if value == "Select a file...":
             return
@@ -5051,7 +5051,7 @@ class CSVProcessorApp(ctk.CTk):
 
             traceback.print_exc()
 
-    def get_data_for_plotting(self, filename) -> None:
+    def get_data_for_plotting(self, filename: str) -> pd.DataFrame | None:
         """
         Get data for plotting from the specified file - simplified baseline approach.
         """
