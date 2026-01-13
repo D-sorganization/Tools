@@ -96,11 +96,11 @@ def create_app() -> Flask:
             logger.exception("Calculation failed")
             return jsonify({"error": "An internal error occurred."}), 500
 
-    @app.get("/manifest.webmanifest")  # type: ignore[misc]
+    @app.get("/manifest.webmanifest")
     def manifest() -> Any:
         return send_from_directory(app.static_folder or "static", "manifest.webmanifest")
 
-    @app.get("/service-worker.js")  # type: ignore[misc]
+    @app.get("/service-worker.js")
     def service_worker() -> Any:
         return send_from_directory(app.static_folder or "static", "service-worker.js")
 
