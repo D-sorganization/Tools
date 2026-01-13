@@ -11,6 +11,7 @@
   --error-color: #dc2626;
   --error-bg: #fee2e2;
   --success-color: #16a34a;
+  --success-bg: #dcfce7;
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
@@ -31,6 +32,7 @@
   --border-color: #334155;
   --error-color: #f87171;
   --error-bg: #7f1d1d;
+  --success-bg: #14532d;
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
@@ -158,6 +160,11 @@ body {
   margin-bottom: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 0.025em;
+}
+
+.required-star {
+  color: var(--error-color);
+  margin-left: 0.25rem;
 }
 
 .label-row {
@@ -368,9 +375,8 @@ body {
 }
 
 .error-message.success {
-  background-color: var(--surface);
+  background-color: var(--success-bg);
   color: var(--success-color);
-  border: 1px solid var(--success-color);
 }
 
 @keyframes slideIn {
