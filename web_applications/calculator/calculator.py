@@ -360,6 +360,28 @@ class TI89Calculator:
     def _parse_expression_static(
         expression: str, symbols: Mapping[str, sp.Symbol | sp.Expr]
     ) -> sp.Expr:
+        # Optimization: fast-path for simple numbers to avoid expensive parse_expr
+        if expression:
+            # Strip whitespace for accurate numeric checks
+            clean_expr = expression.strip()
+
+            # Check for integer
+            if clean_expr.isdigit():
+                return sp.Integer(int(clean_expr))
+            if clean_expr.startswith("-") and clean_expr[1:].isdigit():
+                return sp.Integer(int(clean_expr))
+
+            # Check for simple float, avoiding symbolic expressions that start with letters
+            if clean_expr and not clean_expr[0].isalpha():
+                try:
+                    # Validate if it is a float using native conversion
+                    float(clean_expr)
+                    # Use string constructor for sp.Float to preserve precision/range
+                    # (native float has limits e.g. 1e400 -> inf)
+                    return sp.Float(clean_expr)
+                except ValueError:
+                    pass
+
         # Optimization: Avoid copying the large allowed_functions dict if no symbols are
         # provided
         allowed_fns = TI89Calculator._ALLOWED_FUNCTIONS_CACHE
