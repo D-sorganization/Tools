@@ -6542,7 +6542,7 @@ COMMON MISTAKES TO AVOID:
             for var in self.plots_signal_vars.values():
                 var.set(False)
 
-    def _on_plot_select(self, event) -> None:
+    def _on_plot_select(self, event: Any) -> None:
         """Handle plot selection in listbox."""
         selection = self.plots_listbox.curselection()
         if not selection:
@@ -7224,13 +7224,13 @@ COMMON MISTAKES TO AVOID:
                 lambda e, s=signal: self._on_legend_change(s, e.widget.get()),
             )
 
-    def _on_legend_change(self, signal, new_label) -> None:
+    def _on_legend_change(self, signal: str, new_label: str) -> None:
         """Handle changes to legend labels."""
         self.custom_legend_entries[signal] = new_label
         # Trigger immediate plot update
         self._on_plot_setting_change()
 
-    def _move_legend_up(self, signal) -> None:
+    def _move_legend_up(self, signal: str) -> None:
         """Move a signal up in the legend order."""
         if hasattr(self, "legend_order") and signal in self.legend_order:
             idx = self.legend_order.index(signal)
@@ -7242,7 +7242,7 @@ COMMON MISTAKES TO AVOID:
                 self._refresh_legend_entries()
                 self._on_plot_setting_change()
 
-    def _move_legend_down(self, signal) -> None:
+    def _move_legend_down(self, signal: str) -> None:
         """Move a signal down in the legend order."""
         if hasattr(self, "legend_order") and signal in self.legend_order:
             idx = self.legend_order.index(signal)
@@ -8761,7 +8761,7 @@ For additional support or feature requests, please refer to the
         )
         self.trendline_selected_range.configure(text="Selection active...")
 
-    def _on_trendline_selection_start(self, event) -> None:
+    def _on_trendline_selection_start(self, event: Any) -> None:
         """Handle start of trendline selection."""
         if (
             hasattr(self, "trendline_selection_active")
@@ -8770,7 +8770,7 @@ For additional support or feature requests, please refer to the
         ):
             self.trendline_selection_start = event.xdata
 
-    def _on_trendline_selection_end(self, event) -> None:
+    def _on_trendline_selection_end(self, event: Any) -> None:
         """Handle end of trendline selection."""
         if (
             hasattr(self, "trendline_selection_active")
