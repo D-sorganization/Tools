@@ -7,7 +7,9 @@ def test_security_validation() -> None:
     # Safe inputs
     assert _validate_security("1 + 1") is None
     assert _validate_security("sin(x)") is None
-    assert _validate_security("classic_variable") is None  # 'class' is a substring but not a keyword
+    assert (
+        _validate_security("classic_variable") is None
+    )  # 'class' is a substring but not a keyword
 
     # Dangerous inputs
     with pytest.raises(ValueError, match="Security violation"):

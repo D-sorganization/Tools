@@ -2,8 +2,9 @@ from collections.abc import Generator
 from unittest.mock import patch
 
 import pytest
-from web_applications.calculator.webapp import create_app
 from flask.testing import FlaskClient
+
+from web_applications.calculator.webapp import create_app
 
 
 @pytest.fixture()
@@ -24,7 +25,8 @@ def test_exception_info_leak(client: FlaskClient) -> None:
 
     # Patch _dispatch_calculation to raise an exception with a sensitive message
     with patch(
-        "web_applications.calculator.webapp._dispatch_calculation", side_effect=Exception(secret_message)
+        "web_applications.calculator.webapp._dispatch_calculation",
+        side_effect=Exception(secret_message),
     ):
         payload = {"operation": "evaluate", "expression": "1+1"}
         response = client.post("/api/calculate", json=payload)
