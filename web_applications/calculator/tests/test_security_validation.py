@@ -1,6 +1,6 @@
 import pytest
 
-from web_applications.calculator.webapp import _validate_security
+from web_applications.calculator.webapp import _parse_payload, _validate_security
 
 
 def test_security_validation() -> None:
@@ -17,3 +17,15 @@ def test_security_validation() -> None:
 
     with pytest.raises(ValueError, match="Security violation"):
         _validate_security("x.__base__")
+
+
+def test_payload_function_security() -> None:
+    """Test that the 'function' parameter in payload is validated for security."""
+    payload = {
+        "operation": "solve_ode",
+        "expression": "y",
+        "function": "__init__",
+    }
+
+    with pytest.raises(ValueError, match="Security violation"):
+        _parse_payload(payload)
