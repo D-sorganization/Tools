@@ -4,7 +4,6 @@ import math
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import Any
 
 import sympy as sp
 from sympy.parsing.sympy_parser import convert_xor, parse_expr, standard_transformations
@@ -65,7 +64,7 @@ class TI89Calculator:
         limit = 5000  # Safety limit for factorial size
 
         # Check raw numbers
-        if isinstance(n, (int, float)):
+        if isinstance(n, int | float):
             if n > limit:
                 raise ValueError(f"Factorial argument exceeds safety limit ({limit})")
             return sp.factorial(n, **kwargs)
@@ -87,8 +86,8 @@ class TI89Calculator:
     def _safe_pow(base: object, exp: object, **kwargs: object) -> sp.Expr:
         """Secure exponentiation with magnitude checking to prevent DoS."""
         # Check if both are numbers (either primitive or SymPy)
-        is_num_base = isinstance(base, (int, float, sp.Number))
-        is_num_exp = isinstance(exp, (int, float, sp.Number))
+        is_num_base = isinstance(base, int | float | sp.Number)
+        is_num_exp = isinstance(exp, int | float | sp.Number)
 
         if is_num_base and is_num_exp:
             b, e = None, None
@@ -96,7 +95,7 @@ class TI89Calculator:
                 # Convert to native float for magnitude estimation
                 # mypy doesn't know sp.Number is compatible with float, but it is at runtime
                 b = float(base)  # type: ignore[arg-type]
-                e = float(exp)   # type: ignore[arg-type]
+                e = float(exp)  # type: ignore[arg-type]
             except (ValueError, TypeError, OverflowError):
                 pass
 
@@ -132,7 +131,9 @@ class TI89Calculator:
                     if abs(bf) > 1 and ef > 0:
                         digits = ef * math.log10(abs(bf))
                         if digits > 6000:
-                            raise ValueError("Exponentiation result exceeds safety limits")
+                            raise ValueError(
+                                "Exponentiation result exceeds safety limits"
+                            )
 
         # Recursively check children
         for arg in expr.args:
