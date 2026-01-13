@@ -22,6 +22,7 @@ class RateLimiter:
         self.window = window
         # Storage: key -> (window_start_timestamp, count)
         self.hits: dict[str, tuple[int, int]] = {}
+        self.last_global_window = 0
         self.lock = threading.Lock()
 
     def is_allowed(self, key: str) -> bool:
@@ -38,10 +39,15 @@ class RateLimiter:
         current_window = int(now / self.window)
 
         with self.lock:
+            # Memory Cleanup: If window has moved forward, clear all old data
+            if current_window > self.last_global_window:
+                self.hits.clear()
+                self.last_global_window = current_window
+
             last_window, count = self.hits.get(key, (0, 0))
 
             if last_window != current_window:
-                # New window, reset count
+                # New window for this key (redundant if cleared, but safe)
                 self.hits[key] = (current_window, 1)
                 return True
 
