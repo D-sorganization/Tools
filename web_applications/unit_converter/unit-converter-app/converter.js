@@ -356,6 +356,8 @@ const UNIT_ALIASES = {
 
 // Optimization: Cache for reverse alias lookup
 let _REVERSE_ALIASES_CACHE = null;
+// Optimization: Cache for flattened searchable units
+let _SEARCH_CACHE = null;
 
 // Security: Prevent prototype pollution
 function isValidKey(key) {
@@ -437,6 +439,7 @@ class CustomUnitManager {
       _REVERSE_ALIASES_CACHE = null; // Invalidate cache
     }
 
+    _SEARCH_CACHE = null; // Invalidate search cache
     this.saveToStorage();
     return { success: true, message: `Custom unit '${unit}' added to ${category}` };
   }
@@ -459,6 +462,7 @@ class CustomUnitManager {
       _REVERSE_ALIASES_CACHE = null; // Invalidate cache
     }
 
+    _SEARCH_CACHE = null; // Invalidate search cache
     this.saveToStorage();
     return { success: true, message: `Custom unit '${unit}' removed` };
   }
@@ -536,6 +540,7 @@ class CustomUnitManager {
           }
         });
         _REVERSE_ALIASES_CACHE = null; // Invalidate cache
+        _SEARCH_CACHE = null; // Invalidate search cache
       }
     } catch {
       // Silent fail for localStorage errors
@@ -558,6 +563,7 @@ class CustomUnitManager {
     });
 
     _REVERSE_ALIASES_CACHE = null; // Invalidate cache
+    _SEARCH_CACHE = null; // Invalidate search cache
     this.customUnits = {};
     this.customAliases = {};
     localStorage.removeItem('customUnits');
@@ -886,6 +892,31 @@ function getCategories() {
   return ['temperature', 'gas_flow', 'heating_value', ...Object.keys(CONVERSION_FACTORS)];
 }
 
+// Helper to build the search cache
+function _buildSearchCache() {
+  const cache = [];
+  const reverseAliases = getReverseAliases();
+  const categories = getCategories();
+
+  categories.forEach(cat => {
+    const units = getUnitsForCategory(cat);
+    units.forEach(unit => {
+      const lowerUnit = unit.toLowerCase();
+      const aliases = reverseAliases[unit] || [];
+      const lowerAliases = aliases.map(a => a.toLowerCase());
+
+      cache.push({
+        unit,
+        category: cat,
+        lowerUnit,
+        lowerAliases
+      });
+    });
+  });
+
+  return cache;
+}
+
 // Search units by query
 function searchUnits(query, category = null) {
   query = query.toLowerCase().trim();
@@ -893,31 +924,36 @@ function searchUnits(query, category = null) {
     return [];
   }
 
-  const results = [];
-  const categories = category ? [category] : getCategories();
-  const reverseAliases = getReverseAliases();
+  // Build cache if needed
+  if (!_SEARCH_CACHE) {
+    _SEARCH_CACHE = _buildSearchCache();
+  }
 
-  categories.forEach(cat => {
-    const units = getUnitsForCategory(cat);
-    units.forEach(unit => {
-      // Check if unit matches
-      if (unit.toLowerCase().includes(query)) {
-        results.push({ unit, category: cat, score: 100 });
-      } else {
-        // Check aliases
-        const aliases = reverseAliases[unit];
-        if (aliases) {
-          for (const alias of aliases) {
-            if (alias.includes(query)) {
-              const score = alias === query ? 75 : 50;
-              results.push({ unit, category: cat, score: score, matchedAlias: alias });
-              break;
-            }
+  const results = [];
+
+  // Use cache for searching
+  for (const item of _SEARCH_CACHE) {
+    // Filter by category if specified
+    if (category && item.category !== category) {
+      continue;
+    }
+
+    // Check if unit matches
+    if (item.lowerUnit.includes(query)) {
+      results.push({ unit: item.unit, category: item.category, score: 100 });
+    } else {
+      // Check aliases
+      if (item.lowerAliases) {
+        for (const alias of item.lowerAliases) {
+          if (alias.includes(query)) {
+            const score = alias === query ? 75 : 50;
+            results.push({ unit: item.unit, category: item.category, score: score, matchedAlias: alias });
+            break;
           }
         }
       }
-    });
-  });
+    }
+  }
 
   // Sort by score (higher first), then alphabetically
   return results.sort((a, b) => {
