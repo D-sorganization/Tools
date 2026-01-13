@@ -1,3 +1,7 @@
+## 2026-01-13 - [Unit Converter Modal Validation]
+**Learning:** Using `alert()` for form validation in modals disrupts flow and feels archaic.
+**Action:** Replace `alert()` with inline error messages (reusing existing `.error-message` styles) and visual input validation states (red borders) for a smoother experience.
+
 ## 2026-01-13 - [Calculator Clear Button Safety]
 **Learning:** Destructive actions like "Clear" on touch interfaces are prone to accidental activation.
 **Action:** Implemented a "soft confirm" pattern where the first click changes the button text to "CONFIRM?" and a second click is required to execute the action. This prevents data loss without the intrusion of a modal dialog. The state is managed locally in the component.

@@ -367,6 +367,12 @@ body {
   animation: slideIn 0.3s ease-out;
 }
 
+.error-message.success {
+  background-color: var(--surface);
+  color: var(--success-color);
+  border: 1px solid var(--success-color);
+}
+
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -589,6 +595,13 @@ body {
 *:focus-visible {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
+}
+
+/* Invalid Input Feedback */
+.input-group input:not(:placeholder-shown):invalid,
+.input-group input.has-error {
+  border-color: var(--error-color);
+  background-color: var(--error-bg);
 }
 /* ===================================================================
    ENHANCED FEATURES v2.0

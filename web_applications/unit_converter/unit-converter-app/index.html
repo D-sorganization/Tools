@@ -336,7 +336,9 @@
         <div class="recent-section">
           <div class="recent-header">
             <h2 class="recent-title">Recent Conversions</h2>
-            <button id="clearHistory" class="clear-button" aria-label="Clear conversion history">Clear</button>
+            <button id="clearHistory" class="clear-button" aria-label="Clear conversion history">
+              Clear
+            </button>
           </div>
           <div id="recentList" class="recent-list">
             <p class="empty-state">No recent conversions</p>
@@ -365,6 +367,8 @@
           <div class="custom-unit-form">
             <h3 class="form-title">Add Custom Unit</h3>
 
+            <div id="modalErrorMessage" class="error-message" style="display: none"></div>
+
             <div class="input-group">
               <label for="customCategory" class="label">Category</label>
               <select id="customCategory" class="select">
@@ -380,7 +384,13 @@
 
             <div class="input-group">
               <label for="customUnit" class="label">Unit Symbol</label>
-              <input type="text" id="customUnit" class="input-text" placeholder="e.g., furlong" />
+              <input
+                type="text"
+                id="customUnit"
+                class="input-text"
+                placeholder="e.g., furlong"
+                required
+              />
             </div>
 
             <div class="input-group">
@@ -396,6 +406,8 @@
                 class="input-number"
                 placeholder="1 [your unit] = ? [reference]"
                 step="any"
+                min="0"
+                required
               />
               <div class="input-hint">
                 How many reference units equal 1 of your unit?<br />
