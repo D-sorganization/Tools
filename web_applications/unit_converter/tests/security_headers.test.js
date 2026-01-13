@@ -27,7 +27,8 @@ describe('Security Headers', () => {
     // Check individual directives
     expect(cspContent).toContain("default-src 'self'");
     expect(cspContent).toContain("script-src 'self'");
-    expect(cspContent).toContain("style-src 'self' 'unsafe-inline'");
+    expect(cspContent).toContain("style-src 'self'");
+    expect(cspContent).not.toContain("'unsafe-inline'");
     expect(cspContent).toContain("img-src 'self' data:");
     expect(cspContent).toContain("object-src 'none'");
     expect(cspContent).toContain("base-uri 'self'");
