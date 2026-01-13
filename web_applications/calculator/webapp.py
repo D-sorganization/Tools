@@ -206,6 +206,7 @@ def _parse_payload(raw_payload: Mapping[str, object]) -> CalculationPayload:
 
     function = _clean_optional(raw_payload.get("function"))
     _validate_length(function, "Function name")
+    _validate_security(function)
 
     return CalculationPayload(
         operation=operation,

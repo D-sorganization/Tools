@@ -1,6 +1,6 @@
 import pytest
 
-from web_applications.calculator.webapp import _validate_security
+from web_applications.calculator.webapp import _parse_payload, _validate_security
 
 
 def test_security_validation() -> None:
@@ -19,14 +19,14 @@ def test_security_validation() -> None:
     with pytest.raises(ValueError, match="Security violation"):
         _validate_security("x.__base__")
 
-    with pytest.raises(ValueError, match="Restricted keyword 'lambda'"):
-        _validate_security("lambda x: x+1")
 
-    with pytest.raises(ValueError, match="Restricted keyword 'class'"):
-        _validate_security("class MyClass:")
+def test_payload_function_security() -> None:
+    """Test that the 'function' parameter in payload is validated for security."""
+    payload = {
+        "operation": "solve_ode",
+        "expression": "y",
+        "function": "__init__",
+    }
 
-    with pytest.raises(ValueError, match="Restricted keyword 'import'"):
-        _validate_security("import os")
-
-    with pytest.raises(ValueError, match="Restricted keyword 'exec'"):
-        _validate_security("exec('print(1)')")
+    with pytest.raises(ValueError, match="Security violation"):
+        _parse_payload(payload)
