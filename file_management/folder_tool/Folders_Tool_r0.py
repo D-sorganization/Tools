@@ -906,8 +906,8 @@ class FolderProcessorApp:
         text_widget.insert("1.0", content)
         text_widget.config(state="disabled")
 
-    def validate_inputs(self, check_destination=True):
-        """Validates the user inputs before starting processing."""
+    def validate_inputs(self, check_destination: bool = True) -> bool:
+        """Validate the user inputs before starting processing."""
         if not self.source_folders:
             messagebox.showerror("Error", "Please add at least one source folder.")
             return False
@@ -1049,7 +1049,7 @@ class FolderProcessorApp:
         return summary + log[:10]
 
     # --- Keep existing methods for compatibility ---
-    def _perform_deduplication(self, target_folder):
+    def _perform_deduplication(self, target_folder: str) -> list[str]:
         """Core logic to find and delete renamed duplicates in a single target folder."""
         log = []
         deleted_count = 0
@@ -1115,7 +1115,7 @@ class FolderProcessorApp:
         return summary
 
     # Keep other existing methods...
-    def _run_deduplicate_main_op(self):
+    def _run_deduplicate_main_op(self) -> list[str]:
         """Wrapper for running deduplication as a main, in-place operation on source folders."""
         full_log = []
         for folder in self.source_folders:
@@ -1126,7 +1126,7 @@ class FolderProcessorApp:
             full_log.append("---")
         return full_log
 
-    def _get_unique_path(self, path):
+    def _get_unique_path(self, path: str) -> str:
         """Generates a unique file path to avoid overwriting existing files."""
         if not os.path.exists(path):
             return path
@@ -1140,7 +1140,7 @@ class FolderProcessorApp:
             new_path = os.path.join(parent, f"{filename} ({counter}){ext}")
         return new_path
 
-    def select_source_folders(self):
+    def select_source_folders(self) -> None:
         """Opens a dialog to select source folders."""
         folder = filedialog.askdirectory(
             mustexist=True, title="Select a folder to process"
@@ -1150,14 +1150,14 @@ class FolderProcessorApp:
             self.source_listbox.insert(tk.END, folder)
             self.update_source_info()
 
-    def remove_selected_source(self):
+    def remove_selected_source(self) -> None:
         """Removes the selected folders from the source list."""
         for i in sorted(self.source_listbox.curselection(), reverse=True):
             self.source_folders.pop(i)
             self.source_listbox.delete(i)
         self.update_source_info()
 
-    def select_dest_folder(self):
+    def select_dest_folder(self) -> None:
         """Opens a dialog to select the destination folder."""
         folder = filedialog.askdirectory(
             mustexist=True, title="Select the destination folder"
@@ -1167,7 +1167,7 @@ class FolderProcessorApp:
             self.dest_label.config(text=self.dest_folder, foreground="black")
 
     # Simplified versions of other existing methods for compatibility
-    def _flatten_folders(self):
+    def _flatten_folders(self) -> list[str]:
         """Flatten folders by moving all files to the top level."""
         # Existing implementation
         log, moved_count = [], 0
@@ -1177,7 +1177,7 @@ class FolderProcessorApp:
             # ... existing flatten logic ...
         return [f"Copied {moved_count} tidy folder structures."] + log[:10]
 
-    def _prune_empty_folders(self):
+    def _prune_empty_folders(self) -> list[str]:
         """Remove empty folders from the source."""
         # Existing implementation
         log, fc, pf = [], 0, 0
