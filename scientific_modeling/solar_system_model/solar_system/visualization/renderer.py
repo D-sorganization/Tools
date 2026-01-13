@@ -419,10 +419,16 @@ class Renderer:
             if not stars:
                 continue
 
-            # Prepare arrays
-            coords = np.array([s.position for s in stars], dtype=np.float32)
-            colors = np.array([s.color for s in stars], dtype=np.float32)
-            self.star_batches.append((float(size), len(stars), coords, colors))
+            # Optimize array creation - pre-allocate and fill directly
+            n_stars = len(stars)
+            coords = np.empty((n_stars, 3), dtype=np.float32)
+            colors = np.empty((n_stars, 3), dtype=np.float32)
+
+            for i, star in enumerate(stars):
+                coords[i] = star.position
+                colors[i] = star.color
+
+            self.star_batches.append((float(size), n_stars, coords, colors))
 
     def begin_frame(self, camera_state: CameraState | None = None, clear: bool = True):
         """Begin a new frame."""

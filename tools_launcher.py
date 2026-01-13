@@ -2,6 +2,10 @@
 """
 Comprehensive Tools Launcher - Professional tabbed interface for all tools.
 This creates a complete launcher system using the new tools_icon.
+
+⚠️  DEPRECATION WARNING ⚠️
+This launcher is deprecated. Please use UnifiedToolsLauncher.py instead.
+The new launcher provides better performance, modern UI, and improved functionality.
 """
 
 import logging
@@ -20,16 +24,37 @@ logger = logging.getLogger(__name__)
 
 
 class ToolsLauncher:
-    """Professional Tools Launcher with tabbed interface."""
+    """Professional Tools Launcher with tabbed interface.
+
+    ⚠️  DEPRECATED: Use UnifiedToolsLauncher.py instead.
+    """
 
     def __init__(self) -> None:
         self.root = tk.Tk()
-        self.root.title("🧰 Tools Launcher")
+        self.root.title("🧰 Tools Launcher (DEPRECATED)")
         self.root.geometry("900x700")
         self.root.configure(bg="#f0f0f0")
 
+        # Show deprecation warning
+        self._show_deprecation_warning()
+
         # Set the new tools_icon
         self.set_application_icon()
+
+        self.setup_ui()
+
+    def _show_deprecation_warning(self) -> None:
+        """Show deprecation warning to users."""
+        messagebox.showwarning(
+            "Deprecated Launcher",
+            "⚠️ This launcher is deprecated!\n\n"
+            "Please use 'UnifiedToolsLauncher.py' instead.\n"
+            "The new launcher provides:\n"
+            "• Better performance\n"
+            "• Modern PyQt6 interface\n"
+            "• Improved functionality\n\n"
+            "This old launcher will be removed in a future version.",
+        )
 
         self.setup_ui()
 
@@ -38,8 +63,11 @@ class ToolsLauncher:
         try:
             # Try different possible locations for the tools_icon
             icon_paths = [
+                Path("assets/tools_icon.ico"),
                 Path("tools_icon.ico"),
+                Path("../assets/tools_icon.ico"),
                 Path("../tools_icon.ico"),
+                Path("../../assets/tools_icon.ico"),
                 Path("../../tools_icon.ico"),
             ]
 

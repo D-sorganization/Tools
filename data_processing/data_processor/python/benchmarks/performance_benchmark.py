@@ -414,10 +414,11 @@ class PerformanceBenchmark:
         dataset_sizes = [1_000, 5_000, 10_000, 50_000, 100_000]
 
         for n_rows in dataset_sizes:
-            # Create test data
-            df = pd.DataFrame(
-                {f"signal_{i}": np.random.randn(n_rows) for i in range(5)},
-            )
+            # Create test data - optimized using direct NumPy operations
+            data = {}
+            for i in range(5):
+                data[f"signal_{i}"] = np.random.randn(n_rows)
+            df = pd.DataFrame(data)
 
             # Apply moving average filter
             config = FilterConfig(filter_type="Moving Average", ma_window=10)

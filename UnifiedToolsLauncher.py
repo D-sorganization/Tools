@@ -180,13 +180,13 @@ QTextEdit {
 # LAUNCHER LOGIC
 # =============================================================================
 class ToolCard(QFrame):
-    def __init__(self, tool_info, launch_callback):
+    def __init__(self, tool_info: dict, launch_callback) -> None:
         super().__init__()
         self.tool_info = tool_info
         self.launch_callback = launch_callback
         self.setup_ui()
 
-    def setup_ui(self):
+    def setup_ui(self) -> None:
         layout = QVBoxLayout(self)
         layout.setContentsMargins(10, 10, 10, 10)
 
@@ -220,20 +220,20 @@ class ToolCard(QFrame):
 
 
 class UnifiedLauncher(QMainWindow):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Antigravity Unified Tools Launcher")
         self.resize(1000, 700)
         self.setStyleSheet(STYLE_SHEET)
 
         # Icon
-        icon_path = REPO_ROOT / "tools_icon.png"
+        icon_path = REPO_ROOT / "assets" / "tools_icon.png"
         if icon_path.exists():
             self.setWindowIcon(QIcon(str(icon_path)))
 
         self.setup_ui()
 
-    def setup_ui(self):
+    def setup_ui(self) -> None:
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         main_layout = QVBoxLayout(central_widget)
@@ -270,7 +270,7 @@ class UnifiedLauncher(QMainWindow):
 
         main_layout.addWidget(log_group)
 
-    def setup_category_tab(self, tab, tools):
+    def setup_category_tab(self, tab: QWidget, tools: list) -> None:
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setStyleSheet("background-color: transparent; border: none;")
@@ -300,7 +300,7 @@ class UnifiedLauncher(QMainWindow):
         tab_layout = QVBoxLayout(tab)
         tab_layout.addWidget(scroll)
 
-    def log(self, message):
+    def log(self, message: str) -> None:
         from datetime import datetime
 
         timestamp = datetime.now().strftime("%H:%M:%S")
@@ -309,7 +309,7 @@ class UnifiedLauncher(QMainWindow):
         cursor.movePosition(cursor.MoveOperation.End)
         self.log_area.setTextCursor(cursor)
 
-    def launch_tool(self, tool_info):
+    def launch_tool(self, tool_info: dict) -> None:
         path = REPO_ROOT / tool_info["path"]
         type_ = tool_info["type"]
 

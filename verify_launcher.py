@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 
-def main():
+def main() -> None:
     print("=" * 60)
     print("🔍 LAUNCHER VERIFICATION SCRIPT")
     print("=" * 60)
