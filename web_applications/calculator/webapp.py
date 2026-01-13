@@ -44,7 +44,7 @@ def create_app() -> Flask:
     # Rate limit: 100 requests per 60 seconds per IP
     app.limiter = RateLimiter(limit=100, window=60)  # type: ignore[attr-defined]
 
-    @app.after_request  # type: ignore[misc]
+    @app.after_request
     def add_security_headers(response: Response) -> Response:
         """Add security headers to every response."""
         response.headers["Content-Security-Policy"] = (
@@ -68,11 +68,11 @@ def create_app() -> Flask:
         )
         return response
 
-    @app.get("/")  # type: ignore[misc]
+    @app.get("/")
     def index() -> str:
-        return cast(str, render_template("index.html"))
+        return render_template("index.html")
 
-    @app.post("/api/calculate")  # type: ignore[misc]
+    @app.post("/api/calculate")
     def calculate() -> tuple[Any, int]:
         # Security: Rate limiting to prevent DoS
         if not current_app.testing:
@@ -96,11 +96,11 @@ def create_app() -> Flask:
             logger.exception("Calculation failed")
             return jsonify({"error": "An internal error occurred."}), 500
 
-    @app.get("/manifest.webmanifest")  # type: ignore[misc]
+    @app.get("/manifest.webmanifest")
     def manifest() -> Any:
         return send_from_directory(app.static_folder, "manifest.webmanifest")
 
-    @app.get("/service-worker.js")  # type: ignore[misc]
+    @app.get("/service-worker.js")
     def service_worker() -> Any:
         return send_from_directory(app.static_folder, "service-worker.js")
 
