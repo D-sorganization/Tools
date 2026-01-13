@@ -417,6 +417,11 @@ body {
   background-color: rgba(37, 99, 235, 0.1);
 }
 
+.clear-button.confirming {
+  color: var(--error-color);
+  background-color: var(--error-bg);
+}
+
 .recent-list {
   display: flex;
   flex-direction: column;
