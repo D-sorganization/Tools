@@ -41,13 +41,15 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          REVIEW_BODY: ${{ github.event.review.body }}
+          REVIEW_USER: ${{ github.event.review.user.login }}
         run: |
           # FIX: Only get comments from THIS review/user
-          echo "Reviewer: ${{ github.event.review.user.login }}" > feedback.txt
-          echo "Summary: ${{ github.event.review.body }}" >> feedback.txt
+          echo "Reviewer: $REVIEW_USER" > feedback.txt
+          echo "Summary: $REVIEW_BODY" >> feedback.txt
 
           echo -e "\nDetailed Inline Comments:" >> feedback.txt
-          gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews/${{ github.event.review.id }}/comments \
+          gh api repos/${{ github.repository }}/pulls/$PR_NUMBER/reviews/${{ github.event.review.id }}/comments \
             --jq '.[] | "- File: " + .path + "\n  Line: " + (.line | tostring) + "\n  Comment: " + .body + "\n"' >> feedback.txt
 
           if grep -iq "lgtm\|looks good" feedback.txt && [ "${{ github.event.review.state }}" == "APPROVED" ]; then

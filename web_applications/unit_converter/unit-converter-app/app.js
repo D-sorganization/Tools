@@ -143,17 +143,29 @@ function setupUnitSearch(searchInput, dropdown, unitSelect) {
       }
 
       const listId = searchInput.getAttribute('aria-controls');
-      dropdown.innerHTML = results
-        .slice(0, 10)
-        .map(
-          (result, index) => `
-        <div class="dropdown-item" role="option" id="${listId}-opt-${index}" aria-selected="false" data-unit="${escapeHtml(result.unit)}">
-          <span class="dropdown-unit">${escapeHtml(result.unit)}</span>
-          ${result.matchedAlias ? `<span class="dropdown-alias">(${escapeHtml(result.matchedAlias)})</span>` : ''}
-        </div>
-      `
-        )
-        .join('');
+      dropdown.innerHTML = '';
+      results.slice(0, 10).forEach((result, index) => {
+        const item = document.createElement('div');
+        item.className = 'dropdown-item';
+        item.role = 'option';
+        item.id = `${listId}-opt-${index}`;
+        item.setAttribute('aria-selected', 'false');
+        item.dataset.unit = result.unit;
+
+        const unitSpan = document.createElement('span');
+        unitSpan.className = 'dropdown-unit';
+        unitSpan.textContent = result.unit;
+        item.appendChild(unitSpan);
+
+        if (result.matchedAlias) {
+          const aliasSpan = document.createElement('span');
+          aliasSpan.className = 'dropdown-alias';
+          aliasSpan.textContent = ` (${result.matchedAlias})`;
+          item.appendChild(aliasSpan);
+        }
+
+        dropdown.appendChild(item);
+      });
 
       dropdown.style.display = 'block';
       searchInput.setAttribute('aria-expanded', 'true');
@@ -474,19 +486,25 @@ function renderHistory() {
     return;
   }
 
-  recentList.innerHTML = conversionHistory
-    .map(item => {
-      const timeAgo = formatTimeAgo(item.timestamp);
-      return `
-      <div class="recent-item" data-index="${conversionHistory.indexOf(item)}">
-        <div class="recent-item-text">
-          ${formatNumber(item.fromValue)} ${escapeHtml(item.fromUnit)} = ${formatNumber(item.toValue)} ${escapeHtml(item.toUnit)}
-        </div>
-        <div class="recent-item-time">${escapeHtml(getCategoryLabel(item.category))} • ${timeAgo}</div>
-      </div>
-    `;
-    })
-    .join('');
+  recentList.innerHTML = '';
+  conversionHistory.forEach((item, index) => {
+    const timeAgo = formatTimeAgo(item.timestamp);
+    const row = document.createElement('div');
+    row.className = 'recent-item';
+    row.dataset.index = index.toString();
+
+    const textDiv = document.createElement('div');
+    textDiv.className = 'recent-item-text';
+    textDiv.textContent = `${formatNumber(item.fromValue)} ${item.fromUnit} = ${formatNumber(item.toValue)} ${item.toUnit}`;
+    row.appendChild(textDiv);
+
+    const timeDiv = document.createElement('div');
+    timeDiv.className = 'recent-item-time';
+    timeDiv.textContent = `${getCategoryLabel(item.category)} • ${timeAgo}`;
+    row.appendChild(timeDiv);
+
+    recentList.appendChild(row);
+  });
 
   // Add click handlers
   document.querySelectorAll('.recent-item').forEach(item => {
@@ -643,28 +661,42 @@ function renderCustomUnitsList() {
     return;
   }
 
-  customUnitsList.innerHTML = Object.keys(customUnits)
-    .map(category => {
-      const units = customUnits[category];
-      return `
-      <div class="custom-category">
-        <h4 class="custom-category-title">${escapeHtml(getCategoryLabel(category))}</h4>
-        <div class="custom-units-items">
-          ${Object.keys(units)
-            .map(
-              unit => `
-            <div class="custom-unit-item">
-              <span class="custom-unit-name">${escapeHtml(unit)}</span>
-              <button class="custom-unit-remove" data-category="${category}" data-unit="${escapeHtml(unit)}">×</button>
-            </div>
-          `
-            )
-            .join('')}
-        </div>
-      </div>
-    `;
-    })
-    .join('');
+  customUnitsList.innerHTML = '';
+  Object.keys(customUnits).forEach(category => {
+    const units = customUnits[category];
+    const categoryDiv = document.createElement('div');
+    categoryDiv.className = 'custom-category';
+
+    const title = document.createElement('h4');
+    title.className = 'custom-category-title';
+    title.textContent = getCategoryLabel(category);
+    categoryDiv.appendChild(title);
+
+    const itemsDiv = document.createElement('div');
+    itemsDiv.className = 'custom-units-items';
+
+    Object.keys(units).forEach(unit => {
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'custom-unit-item';
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'custom-unit-name';
+      nameSpan.textContent = unit;
+      itemDiv.appendChild(nameSpan);
+
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'custom-unit-remove';
+      removeBtn.dataset.category = category;
+      removeBtn.dataset.unit = unit;
+      removeBtn.textContent = '×';
+      itemDiv.appendChild(removeBtn);
+
+      itemsDiv.appendChild(itemDiv);
+    });
+
+    categoryDiv.appendChild(itemsDiv);
+    customUnitsList.appendChild(categoryDiv);
+  });
 
   // Add remove handlers
   customUnitsList.querySelectorAll('.custom-unit-remove').forEach(btn => {
@@ -933,6 +965,14 @@ function setupEventListeners() {
 
   customCategorySelect.addEventListener('change', populateReferenceUnits);
   addCustomUnitButton.addEventListener('click', addCustomUnit);
+
+  // Clear error states on input
+  [customUnitInput, conversionFactorInput].forEach(input => {
+    input.addEventListener('input', () => {
+      input.classList.remove('has-error');
+      hideModalMessage();
+    });
+  });
 
   // Modal backdrop click
   customUnitsModal

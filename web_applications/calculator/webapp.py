@@ -433,8 +433,8 @@ def _sympify_value(
         return TI89Calculator.parse_expression(value, symbols)
     except Exception as error:
         if "exceeds safety limits" in str(error):
-            raise ValueError(str(error)) from error
-        raise ValueError("Invalid numeric or symbolic value provided") from error
+            raise ValueError(str(error)) from None
+        raise ValueError("Invalid numeric or symbolic value provided") from None
 
 
 def _parse_optional_int(value: object | None) -> int | None:
