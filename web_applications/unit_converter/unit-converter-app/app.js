@@ -124,6 +124,8 @@ function setupUnitSearch(searchInput, dropdown, unitSelect) {
 
     if (!query) {
       dropdown.style.display = 'none';
+      searchInput.setAttribute('aria-expanded', 'false');
+      searchInput.removeAttribute('aria-activedescendant');
       return;
     }
 
@@ -132,16 +134,18 @@ function setupUnitSearch(searchInput, dropdown, unitSelect) {
       const results = searchUnits(query, currentCategory);
 
       if (results.length === 0) {
-        dropdown.innerHTML = '<div class="dropdown-item dropdown-empty">No units found</div>';
+        dropdown.innerHTML = '<div class="dropdown-item dropdown-empty" role="option" aria-disabled="true">No units found</div>';
         dropdown.style.display = 'block';
+        searchInput.setAttribute('aria-expanded', 'true');
         return;
       }
 
+      const listId = searchInput.getAttribute('aria-controls');
       dropdown.innerHTML = results
         .slice(0, 10)
         .map(
-          result => `
-        <div class="dropdown-item" data-unit="${escapeHtml(result.unit)}">
+          (result, index) => `
+        <div class="dropdown-item" role="option" id="${listId}-opt-${index}" aria-selected="false" data-unit="${escapeHtml(result.unit)}">
           <span class="dropdown-unit">${escapeHtml(result.unit)}</span>
           ${result.matchedAlias ? `<span class="dropdown-alias">(${escapeHtml(result.matchedAlias)})</span>` : ''}
         </div>
@@ -150,6 +154,7 @@ function setupUnitSearch(searchInput, dropdown, unitSelect) {
         .join('');
 
       dropdown.style.display = 'block';
+      searchInput.setAttribute('aria-expanded', 'true');
 
       // Add click handlers
       dropdown.querySelectorAll('.dropdown-item[data-unit]').forEach(item => {
@@ -158,6 +163,8 @@ function setupUnitSearch(searchInput, dropdown, unitSelect) {
           unitSelect.value = selectedUnit;
           searchInput.value = selectedUnit;
           dropdown.style.display = 'none';
+          searchInput.setAttribute('aria-expanded', 'false');
+          searchInput.removeAttribute('aria-activedescendant');
           performConversion();
         });
       });
@@ -167,6 +174,8 @@ function setupUnitSearch(searchInput, dropdown, unitSelect) {
   searchInput.addEventListener('blur', () => {
     setTimeout(() => {
       dropdown.style.display = 'none';
+      searchInput.setAttribute('aria-expanded', 'false');
+      searchInput.removeAttribute('aria-activedescendant');
       // Show select again if search is empty
       if (!searchInput.value) {
         searchInput.style.display = 'none';
@@ -202,6 +211,8 @@ function setupUnitSearch(searchInput, dropdown, unitSelect) {
       }
     } else if (e.key === 'Escape') {
       dropdown.style.display = 'none';
+      searchInput.setAttribute('aria-expanded', 'false');
+      searchInput.removeAttribute('aria-activedescendant');
       searchInput.blur();
     }
   });
@@ -210,9 +221,12 @@ function setupUnitSearch(searchInput, dropdown, unitSelect) {
     items.forEach((item, index) => {
       if (index === selectedIndex) {
         item.classList.add('selected');
+        item.setAttribute('aria-selected', 'true');
+        searchInput.setAttribute('aria-activedescendant', item.id);
         item.scrollIntoView({ block: 'nearest' });
       } else {
         item.classList.remove('selected');
+        item.setAttribute('aria-selected', 'false');
       }
     });
   }
