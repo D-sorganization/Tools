@@ -136,7 +136,8 @@ function setupUnitSearch(searchInput, dropdown, unitSelect) {
       const results = searchUnits(query, currentCategory);
 
       if (results.length === 0) {
-        dropdown.innerHTML = '<div class="dropdown-item dropdown-empty" role="option" aria-disabled="true">No units found</div>';
+        dropdown.innerHTML =
+          '<div class="dropdown-item dropdown-empty" role="option" aria-disabled="true">No units found</div>';
         dropdown.style.display = 'block';
         searchInput.setAttribute('aria-expanded', 'true');
         return;
