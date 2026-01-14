@@ -987,7 +987,7 @@ function setupEventListeners() {
   // Keyboard shortcuts
   document.addEventListener('keydown', e => {
     // Ctrl/Cmd + K to focus from value
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
       e.preventDefault();
       fromValueInput.focus();
       fromValueInput.select();
