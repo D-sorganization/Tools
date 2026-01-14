@@ -544,7 +544,7 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore
                     window = int(self.ma_window_entry.get())
                     self.filter_config = FilterConfig(
                         filter_type=filter_type,
-                        ma_window=window,
+                        parameters={"ma_window": window},
                     )
 
                 elif "Butterworth" in filter_type:
@@ -552,29 +552,27 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore
                     cutoff = float(self.bw_cutoff_entry.get())
                     self.filter_config = FilterConfig(
                         filter_type=filter_type,
-                        bw_order=order,
-                        bw_cutoff=cutoff,
+                        parameters={"bw_order": order, "bw_cutoff": cutoff},
                     )
 
                 elif "Median" in filter_type:
                     kernel = int(self.median_kernel_entry.get())
                     self.filter_config = FilterConfig(
                         filter_type=filter_type,
-                        median_kernel=kernel,
+                        parameters={"median_kernel": kernel},
                     )
 
                 elif "Gaussian" in filter_type:
                     sigma = float(self.gaussian_sigma_entry.get())
                     self.filter_config = FilterConfig(
                         filter_type=filter_type,
-                        gaussian_sigma=sigma,
+                        parameters={"gaussian_sigma": sigma},
                     )
 
                 # Apply filter using core signal processor
                 self.current_data = self.signal_processor.apply_filter(
                     self.current_data,
                     self.filter_config,
-                    signals=self.available_signals,
                 )
 
             self.update_status(f"Applied {filter_type} filter")
@@ -599,8 +597,8 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore
             with self.busy_cursor():
                 # Use core signal processor for integration
                 int_config = IntegrationConfig(
-                    signals_to_integrate=self.available_signals,
-                    integration_method="cumulative",
+                    signals=self.available_signals,
+                    method="cumulative",
                 )
 
                 self.current_data = self.signal_processor.integrate_signals(
@@ -628,8 +626,8 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore
             with self.busy_cursor():
                 # Use core signal processor for differentiation
                 diff_config = DifferentiationConfig(
-                    signals_to_differentiate=self.available_signals,
-                    differentiation_order=1,
+                    signals=self.available_signals,
+                    order=1,
                     method="central",
                 )
 
@@ -703,9 +701,9 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore
                 self.stats_textbox.insert("end", "=== Signal Statistics ===\n\n")
 
                 for signal in self.available_signals[:10]:  # Limit to first 10
+                    # Pass only the specific signal column as a DataFrame
                     stats = self.signal_processor.detect_signal_statistics(
-                        self.current_data,
-                        signal,
+                        self.current_data[[signal]]
                     )
 
                     self.stats_textbox.insert("end", f"{signal}:\n")

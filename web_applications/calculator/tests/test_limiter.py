@@ -16,7 +16,7 @@ class TestLimiter(unittest.TestCase):
         )
 
         @self.app.route("/test")
-        @self.limiter.limit("1 per second")  # type: ignore[misc]
+        @self.limiter.limit("1 per second")
         def test_route() -> str:
             return "ok"
 

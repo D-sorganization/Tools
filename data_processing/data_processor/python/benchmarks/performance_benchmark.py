@@ -187,30 +187,34 @@ class PerformanceBenchmark:
         filter_tests = [
             (
                 "Moving Average",
-                FilterConfig(filter_type="Moving Average", ma_window=10),
+                FilterConfig(
+                    filter_type="Moving Average", parameters={"ma_window": 10}
+                ),
             ),
             (
                 "Butterworth Low-pass",
                 FilterConfig(
                     filter_type="Butterworth Low-pass",
-                    bw_order=3,
-                    bw_cutoff=0.1,
+                    parameters={"bw_order": 3, "bw_cutoff": 0.1},
                 ),
             ),
             (
                 "Median Filter",
-                FilterConfig(filter_type="Median Filter", median_kernel=5),
+                FilterConfig(
+                    filter_type="Median Filter", parameters={"median_kernel": 5}
+                ),
             ),
             (
                 "Gaussian Filter",
-                FilterConfig(filter_type="Gaussian Filter", gaussian_sigma=2.0),
+                FilterConfig(
+                    filter_type="Gaussian Filter", parameters={"gaussian_sigma": 2.0}
+                ),
             ),
             (
                 "Savitzky-Golay",
                 FilterConfig(
                     filter_type="Savitzky-Golay",
-                    savgol_window=11,
-                    savgol_polyorder=3,
+                    parameters={"savgol_window": 11, "savgol_polyorder": 3},
                 ),
             ),
         ]
@@ -250,8 +254,8 @@ class PerformanceBenchmark:
 
         # Integration benchmark
         int_config = IntegrationConfig(
-            signals_to_integrate=["signal1", "signal2"],
-            integration_method="cumulative",
+            signals=["signal1", "signal2"],
+            method="cumulative",
         )
 
         start = time.perf_counter()
@@ -268,8 +272,8 @@ class PerformanceBenchmark:
 
         # Differentiation benchmark
         diff_config = DifferentiationConfig(
-            signals_to_differentiate=["signal1", "signal2"],
-            differentiation_order=1,
+            signals=["signal1", "signal2"],
+            order=1,
             method="central",
         )
 
@@ -355,7 +359,9 @@ class PerformanceBenchmark:
 
             # Step 3: Apply filtering
             start = time.perf_counter()
-            filter_config = FilterConfig(filter_type="Moving Average", ma_window=10)
+            filter_config = FilterConfig(
+                filter_type="Moving Average", parameters={"ma_window": 10}
+            )
             df = self.processor.apply_filter(df, filter_config)
             filter_time = time.perf_counter() - start
 
@@ -363,15 +369,16 @@ class PerformanceBenchmark:
             start = time.perf_counter()
             signals = self.loader.get_numeric_signals(df)[:5]  # First 5 signals
             int_config = IntegrationConfig(
-                signals_to_integrate=signals,
-                integration_method="cumulative",
+                signals=signals,
+                method="cumulative",
             )
             df = self.processor.integrate_signals(df, int_config)
             integration_time = time.perf_counter() - start
 
             # Step 5: Statistics
             start = time.perf_counter()
-            stats = self.processor.detect_signal_statistics(df, signals[0])
+            # detect_signal_statistics does not accept a signal argument
+            stats = self.processor.detect_signal_statistics(df)
             stats_time = time.perf_counter() - start
 
             # Validate statistics output
@@ -421,7 +428,9 @@ class PerformanceBenchmark:
             df = pd.DataFrame(data)
 
             # Apply moving average filter
-            config = FilterConfig(filter_type="Moving Average", ma_window=10)
+            config = FilterConfig(
+                filter_type="Moving Average", parameters={"ma_window": 10}
+            )
 
             start = time.perf_counter()
             filtered = self.processor.apply_filter(df, config)
@@ -459,7 +468,9 @@ class PerformanceBenchmark:
         memory_before = self.get_memory_usage_mb()
 
         # Apply filter
-        config = FilterConfig(filter_type="Moving Average", ma_window=10)
+        config = FilterConfig(
+            filter_type="Moving Average", parameters={"ma_window": 10}
+        )
         filtered = self.processor.apply_filter(df, config)
 
         # Validate filter was applied

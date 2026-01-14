@@ -1,9 +1,16 @@
+# Add the project directory to path
+import os
 import sys
 import unittest
+from typing import Any
 from unittest.mock import MagicMock, patch
 
-# Add the project directory to path
-project_root = r"c:\Users\diete\Repositories\Tools\data_processing\data_processor\python\data_processor"
+project_root = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__),
+        "../../data_processing/data_processor/python/data_processor",
+    )
+)
 sys.path.insert(0, project_root)
 
 
@@ -12,51 +19,51 @@ sys.path.insert(0, project_root)
 class MockCTkToplevel:
     """Mock for CustomTkinter Toplevel window."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initialize mock window."""
 
-    def transient(self, master):
+    def transient(self, master: Any) -> None:
         """Mock transient method."""
 
-    def grab_set(self):
+    def grab_set(self) -> None:
         """Mock grab_set method."""
 
-    def geometry(self, g):
+    def geometry(self, g: Any) -> None:
         """Mock geometry method."""
 
-    def resizable(self, w, h):
+    def resizable(self, w: Any, h: Any) -> None:
         """Mock resizable method."""
 
-    def title(self, t):
+    def title(self, t: Any) -> None:
         """Mock title method."""
 
-    def destroy(self):
+    def destroy(self) -> None:
         """Mock destroy method."""
 
-    def wait_window(self):
+    def wait_window(self) -> None:
         """Mock wait_window method."""
 
-    def lift(self):
+    def lift(self) -> None:
         """Mock lift method."""
 
-    def attributes(self, *args):
+    def attributes(self, *args: Any) -> None:
         """Mock attributes method."""
 
 
 class MockScrollableFrame:
     """Mock for CustomTkinter ScrollableFrame."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initialize mock scrollable frame."""
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> MagicMock:
         """Return magic mock for any attribute."""
         return MagicMock()
 
-    def grid(self, *args, **kwargs):
+    def grid(self, *args: Any, **kwargs: Any) -> None:
         """Mock grid geometry manager."""
 
-    def pack(self, *args, **kwargs):
+    def pack(self, *args: Any, **kwargs: Any) -> None:
         """Mock pack geometry manager."""
 
 
@@ -138,69 +145,69 @@ mock_r0 = MagicMock()
 class MockCSVProcessorApp:
     """Mock for the base CSV Processor Application."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initialize mock application."""
         self.main_tab_view = MagicMock()
         self.main_tab_view.tab = MagicMock()
 
-    def title(self, t):
+    def title(self, t: Any) -> None:
         """Set window title."""
 
-    def geometry(self, g):
+    def geometry(self, g: Any) -> None:
         """Set window geometry."""
 
-    def update_idletasks(self):
+    def update_idletasks(self) -> None:
         """Update idle tasks."""
 
-    def winfo_screenwidth(self):
+    def winfo_screenwidth(self) -> int:
         """Get screen width."""
         return 1920
 
-    def winfo_screenheight(self):
+    def winfo_screenheight(self) -> int:
         """Get screen height."""
         return 1080
 
-    def bind(self, *args):
+    def bind(self, *args: Any) -> None:
         """Bind event handler."""
 
-    def protocol(self, *args):
+    def protocol(self, *args: Any) -> None:
         """Set protocol handler."""
 
-    def create_status_bar(self):
+    def create_status_bar(self) -> None:
         """Create status bar."""
         self.status_label = MagicMock()
 
-    def create_setup_and_process_tab(self, tab):
+    def create_setup_and_process_tab(self, tab: Any) -> None:
         """Create setup tab."""
 
-    def create_plotting_tab(self, tab):
+    def create_plotting_tab(self, tab: Any) -> None:
         """Create plotting tab."""
 
-    def create_plots_list_tab(self, tab):
+    def create_plots_list_tab(self, tab: Any) -> None:
         """Create plots list tab."""
 
-    def create_dat_import_tab(self, tab):
+    def create_dat_import_tab(self, tab: Any) -> None:
         """Create import tab."""
 
-    def create_help_tab(self, tab):
+    def create_help_tab(self, tab: Any) -> None:
         """Create help tab."""
 
-    def _on_closing(self):
+    def _on_closing(self) -> None:
         """Handle window closing."""
 
-    def _on_window_configure(self, event):
+    def _on_window_configure(self, event: Any) -> None:
         """Handle window configure event."""
 
-    def _load_plots_from_file(self):
+    def _load_plots_from_file(self) -> None:
         """Load plots from file."""
 
-    def grid_rowconfigure(self, *args):
+    def grid_rowconfigure(self, *args: Any) -> None:
         """Configure grid rows."""
 
-    def grid_columnconfigure(self, *args):
+    def grid_columnconfigure(self, *args: Any) -> None:
         """Configure grid columns."""
 
-    def _create_splitter(self, *args):
+    def _create_splitter(self, *args: Any) -> MagicMock:
         """Create splitter widget."""
         return MagicMock()
 

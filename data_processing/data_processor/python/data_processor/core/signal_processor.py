@@ -32,6 +32,12 @@ class SignalProcessor:
         self._validate_dataframe(df)
         engine_params = config.to_engine_parameters()
 
+        # Ensure filter_engine is not None before accessing attributes
+        if self.filter_engine is None:
+            self.filter_engine = VectorizedFilterEngine(
+                logger=self.logger.warning, n_jobs=1
+            )
+
         if config.filter_type not in self.filter_engine.filters:
             msg = f"Filter '{config.filter_type}' is not supported by the filter engine"
             raise ValueError(msg)
