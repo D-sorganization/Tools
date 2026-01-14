@@ -133,9 +133,11 @@ FORBIDDEN_KEYWORDS = [
     "global",
     "async",
     "await",
+    "nonlocal",
     "del",
     "try",
     "except",
+    "finally",
 ]
 
 # ⚡ Bolt Optimization: Compile regex for efficient checking of forbidden keywords as whole words
