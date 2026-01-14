@@ -1,4 +1,3 @@
-
 from playwright.sync_api import sync_playwright, expect
 import os
 
@@ -42,5 +41,6 @@ def run(playwright):
 
     browser.close()
 
-with sync_playwright() as playwright:
-    run(playwright)
+if __name__ == "__main__":
+    with sync_playwright() as playwright:
+        run(playwright)
