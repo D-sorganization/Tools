@@ -328,7 +328,7 @@ function renderTouchExpression() {
 
     // Optimization: Use DocumentFragment to batch DOM insertions
     // This reduces reflows from O(N) to O(1) when typing
-    const fragment = document.createDocumentFragment();
+    // const fragment = document.createDocumentFragment(); // Moved down to avoid unused variable
     const text = expressionInput.value;
 
     if (!text) {
@@ -344,6 +344,7 @@ function renderTouchExpression() {
         span.textContent = character;
         fragment.append(span);
     });
+    touchExpression.innerHTML = "";
     touchExpression.append(fragment);
 }
 
