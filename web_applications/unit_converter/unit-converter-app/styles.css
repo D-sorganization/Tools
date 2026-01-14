@@ -162,6 +162,21 @@ body {
   letter-spacing: 0.025em;
 }
 
+.kbd-shortcut {
+  display: inline-block;
+  font-size: 0.625rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 1px 5px;
+  margin-left: 6px;
+  vertical-align: middle;
+  line-height: 1.4;
+  letter-spacing: normal;
+}
+
 .required-star {
   color: var(--error-color);
   margin-left: 0.25rem;
@@ -512,6 +527,8 @@ body {
   font-family: inherit;
   font-size: inherit;
   color: inherit;
+  margin: 0;
+  display: block;
 }
 
 .recent-item:active {

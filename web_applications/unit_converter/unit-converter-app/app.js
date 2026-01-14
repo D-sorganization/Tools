@@ -492,6 +492,7 @@ function renderHistory() {
     const timeAgo = formatTimeAgo(item.timestamp);
     const row = document.createElement('button');
     row.className = 'recent-item';
+    row.type = 'button';
     row.dataset.index = index.toString();
     row.setAttribute('type', 'button');
 
@@ -790,6 +791,19 @@ function hideWarning() {
 }
 
 // Utilities
+// eslint-disable-next-line no-unused-vars
+function escapeHtml(unsafe) {
+  if (unsafe === undefined || unsafe === null) {
+    return "";
+  }
+  return String(unsafe)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 function formatNumber(num) {
   if (typeof num !== 'number' || isNaN(num)) {
     return '';
