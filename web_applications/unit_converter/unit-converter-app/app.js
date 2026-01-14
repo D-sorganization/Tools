@@ -495,8 +495,14 @@ function renderHistory() {
     row.dataset.index = index.toString();
     row.setAttribute('type', 'button');
 
-    const conversionText = `${formatNumber(item.fromValue)} ${item.fromUnit} = ${formatNumber(item.toValue)} ${item.toUnit}`;
-    row.setAttribute('aria-label', `Restore conversion: ${conversionText}`);
+    const fromVal = formatNumber(item.fromValue);
+    const toVal = formatNumber(item.toValue);
+    const conversionText = `${fromVal} ${item.fromUnit} = ${toVal} ${item.toUnit}`;
+
+    row.setAttribute(
+      'aria-label',
+      `Restore conversion: ${fromVal} ${item.fromUnit} to ${toVal} ${item.toUnit}`
+    );
 
     const textDiv = document.createElement('div');
     textDiv.className = 'recent-item-text';
@@ -784,18 +790,6 @@ function hideWarning() {
 }
 
 // Utilities
-function escapeHtml(unsafe) {
-  if (unsafe === undefined || unsafe === null) {
-    return '';
-  }
-  return String(unsafe)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
-
 function formatNumber(num) {
   if (typeof num !== 'number' || isNaN(num)) {
     return '';
