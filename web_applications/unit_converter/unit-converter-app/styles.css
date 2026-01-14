@@ -321,6 +321,39 @@ body {
   color: var(--success-color);
 }
 
+/* Clear Input Button */
+.clear-input-button {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+.clear-input-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--text-primary);
+}
+
+.clear-input-button:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+[data-theme='dark'] .clear-input-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
 /* Conversion Section */
 .conversion-section {
   display: flex;

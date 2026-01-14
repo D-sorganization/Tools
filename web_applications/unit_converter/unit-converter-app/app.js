@@ -24,6 +24,7 @@ const customUnitsButton = document.getElementById('customUnitsButton');
 const fromUnitSearchTrigger = document.getElementById('fromUnitSearchTrigger');
 const toUnitSearchTrigger = document.getElementById('toUnitSearchTrigger');
 const copyResultButton = document.getElementById('copyResult');
+const clearInputButton = document.getElementById('clearInput');
 const installPrompt = document.getElementById('installPrompt');
 const dismissInstall = document.getElementById('dismissInstall');
 
@@ -67,6 +68,7 @@ function init() {
 
   // Set default values for quick demo
   fromValueInput.value = '1';
+  updateClearInputButton();
   performConversion();
 }
 
@@ -124,6 +126,8 @@ function setupUnitSearch(searchInput, dropdown, unitSelect) {
 
     if (!query) {
       dropdown.style.display = 'none';
+      searchInput.setAttribute('aria-expanded', 'false');
+      searchInput.removeAttribute('aria-activedescendant');
       return;
     }
 
@@ -132,24 +136,39 @@ function setupUnitSearch(searchInput, dropdown, unitSelect) {
       const results = searchUnits(query, currentCategory);
 
       if (results.length === 0) {
-        dropdown.innerHTML = '<div class="dropdown-item dropdown-empty">No units found</div>';
+        dropdown.innerHTML = '<div class="dropdown-item dropdown-empty" role="option" aria-disabled="true">No units found</div>';
         dropdown.style.display = 'block';
+        searchInput.setAttribute('aria-expanded', 'true');
         return;
       }
 
-      dropdown.innerHTML = results
-        .slice(0, 10)
-        .map(
-          result => `
-        <div class="dropdown-item" data-unit="${escapeHtml(result.unit)}">
-          <span class="dropdown-unit">${escapeHtml(result.unit)}</span>
-          ${result.matchedAlias ? `<span class="dropdown-alias">(${escapeHtml(result.matchedAlias)})</span>` : ''}
-        </div>
-      `
-        )
-        .join('');
+      const listId = searchInput.getAttribute('aria-controls');
+      dropdown.innerHTML = '';
+      results.slice(0, 10).forEach((result, index) => {
+        const item = document.createElement('div');
+        item.className = 'dropdown-item';
+        item.role = 'option';
+        item.id = `${listId}-opt-${index}`;
+        item.setAttribute('aria-selected', 'false');
+        item.dataset.unit = result.unit;
+
+        const unitSpan = document.createElement('span');
+        unitSpan.className = 'dropdown-unit';
+        unitSpan.textContent = result.unit;
+        item.appendChild(unitSpan);
+
+        if (result.matchedAlias) {
+          const aliasSpan = document.createElement('span');
+          aliasSpan.className = 'dropdown-alias';
+          aliasSpan.textContent = ` (${result.matchedAlias})`;
+          item.appendChild(aliasSpan);
+        }
+
+        dropdown.appendChild(item);
+      });
 
       dropdown.style.display = 'block';
+      searchInput.setAttribute('aria-expanded', 'true');
 
       // Add click handlers
       dropdown.querySelectorAll('.dropdown-item[data-unit]').forEach(item => {
@@ -158,6 +177,8 @@ function setupUnitSearch(searchInput, dropdown, unitSelect) {
           unitSelect.value = selectedUnit;
           searchInput.value = selectedUnit;
           dropdown.style.display = 'none';
+          searchInput.setAttribute('aria-expanded', 'false');
+          searchInput.removeAttribute('aria-activedescendant');
           performConversion();
         });
       });
@@ -167,6 +188,8 @@ function setupUnitSearch(searchInput, dropdown, unitSelect) {
   searchInput.addEventListener('blur', () => {
     setTimeout(() => {
       dropdown.style.display = 'none';
+      searchInput.setAttribute('aria-expanded', 'false');
+      searchInput.removeAttribute('aria-activedescendant');
       // Show select again if search is empty
       if (!searchInput.value) {
         searchInput.style.display = 'none';
@@ -202,6 +225,8 @@ function setupUnitSearch(searchInput, dropdown, unitSelect) {
       }
     } else if (e.key === 'Escape') {
       dropdown.style.display = 'none';
+      searchInput.setAttribute('aria-expanded', 'false');
+      searchInput.removeAttribute('aria-activedescendant');
       searchInput.blur();
     }
   });
@@ -210,9 +235,12 @@ function setupUnitSearch(searchInput, dropdown, unitSelect) {
     items.forEach((item, index) => {
       if (index === selectedIndex) {
         item.classList.add('selected');
+        item.setAttribute('aria-selected', 'true');
+        searchInput.setAttribute('aria-activedescendant', item.id);
         item.scrollIntoView({ block: 'nearest' });
       } else {
         item.classList.remove('selected');
+        item.setAttribute('aria-selected', 'false');
       }
     });
   }
@@ -272,12 +300,21 @@ function performConversion(direction = 'from') {
     hideError();
     hideWarning();
 
+    // Update clear button visibility
+    if (direction === 'from') {
+      updateClearInputButton();
+    }
+
     const value = parseFloat(direction === 'from' ? fromValueInput.value : toValueInput.value);
     if (isNaN(value)) {
       if (direction === 'from') {
         toValueInput.value = '';
       } else {
         fromValueInput.value = '';
+      }
+      // If converting from empty string, make sure clear button is hidden
+      if (direction === 'from' && !fromValueInput.value) {
+        updateClearInputButton();
       }
       return;
     }
@@ -352,6 +389,8 @@ function swapUnits() {
 
   fromValueInput.value = toValue;
   toValueInput.value = fromValue;
+
+  updateClearInputButton();
 
   // Animate button
   swapButton.style.transform = 'rotate(180deg)';
@@ -447,19 +486,25 @@ function renderHistory() {
     return;
   }
 
-  recentList.innerHTML = conversionHistory
-    .map(item => {
-      const timeAgo = formatTimeAgo(item.timestamp);
-      return `
-      <div class="recent-item" data-index="${conversionHistory.indexOf(item)}">
-        <div class="recent-item-text">
-          ${formatNumber(item.fromValue)} ${escapeHtml(item.fromUnit)} = ${formatNumber(item.toValue)} ${escapeHtml(item.toUnit)}
-        </div>
-        <div class="recent-item-time">${escapeHtml(getCategoryLabel(item.category))} • ${timeAgo}</div>
-      </div>
-    `;
-    })
-    .join('');
+  recentList.innerHTML = '';
+  conversionHistory.forEach((item, index) => {
+    const timeAgo = formatTimeAgo(item.timestamp);
+    const row = document.createElement('div');
+    row.className = 'recent-item';
+    row.dataset.index = index.toString();
+
+    const textDiv = document.createElement('div');
+    textDiv.className = 'recent-item-text';
+    textDiv.textContent = `${formatNumber(item.fromValue)} ${item.fromUnit} = ${formatNumber(item.toValue)} ${item.toUnit}`;
+    row.appendChild(textDiv);
+
+    const timeDiv = document.createElement('div');
+    timeDiv.className = 'recent-item-time';
+    timeDiv.textContent = `${getCategoryLabel(item.category)} • ${timeAgo}`;
+    row.appendChild(timeDiv);
+
+    recentList.appendChild(row);
+  });
 
   // Add click handlers
   document.querySelectorAll('.recent-item').forEach(item => {
@@ -483,6 +528,7 @@ function loadFromHistory(item) {
     fromUnitSearch.value = item.fromUnit;
     toUnitSearch.value = item.toUnit;
     performConversion();
+    updateClearInputButton();
   }, 10);
 }
 
@@ -521,7 +567,6 @@ function populateReferenceUnits() {
 function addCustomUnit() {
   hideModalMessage();
   try {
-    hideModalError();
     customUnitInput.classList.remove('has-error');
     conversionFactorInput.classList.remove('has-error');
 
@@ -537,14 +582,14 @@ function addCustomUnit() {
           .filter(a => a)
       : [];
 
-    let hasError = false;
-
     if (!unit) {
+      customUnitInput.classList.add('has-error');
       showModalError('Please enter a unit symbol');
       return;
     }
 
     if (isNaN(factor) || factor <= 0) {
+      conversionFactorInput.classList.add('has-error');
       showModalError('Please enter a valid positive conversion factor');
       return;
     }
@@ -571,44 +616,6 @@ function addCustomUnit() {
 }
 
 function showModalError(message) {
-  modalErrorMessage.textContent = message;
-  modalErrorMessage.style.display = 'block';
-  modalErrorMessage.classList.remove('success');
-}
-
-function showModalSuccess(message) {
-  modalErrorMessage.textContent = message;
-  modalErrorMessage.style.display = 'block';
-  modalErrorMessage.classList.add('success');
-
-  setTimeout(() => {
-    hideModalError();
-  }, 3000);
-}
-
-function hideModalError() {
-  modalErrorMessage.style.display = 'none';
-  modalErrorMessage.classList.remove('success');
-}
-
-function removeCustomUnit(category, unit) {
-  if (confirm(`Remove custom unit '${unit}'?`)) {
-    try {
-      customUnitManager.removeUnit(category, unit);
-      renderCustomUnitsList();
-
-      // If current category matches, repopulate units
-      if (currentCategory === category) {
-        populateUnits(currentCategory);
-      }
-      showModalSuccess(`Custom unit '${unit}' removed`);
-    } catch (error) {
-      showModalError('Error: ' + error.message);
-    }
-  }
-}
-
-function showModalError(message) {
   modalMessage.textContent = message;
   modalMessage.classList.remove('success');
   modalMessage.style.display = 'block';
@@ -629,6 +636,23 @@ function hideModalMessage() {
   modalMessage.style.display = 'none';
 }
 
+function removeCustomUnit(category, unit) {
+  if (confirm(`Remove custom unit '${unit}'?`)) {
+    try {
+      customUnitManager.removeUnit(category, unit);
+      renderCustomUnitsList();
+
+      // If current category matches, repopulate units
+      if (currentCategory === category) {
+        populateUnits(currentCategory);
+      }
+      showModalSuccess(`Custom unit '${unit}' removed`);
+    } catch (error) {
+      showModalError('Error: ' + error.message);
+    }
+  }
+}
+
 function renderCustomUnitsList() {
   const customUnits = customUnitManager.getCustomUnits();
 
@@ -637,28 +661,42 @@ function renderCustomUnitsList() {
     return;
   }
 
-  customUnitsList.innerHTML = Object.keys(customUnits)
-    .map(category => {
-      const units = customUnits[category];
-      return `
-      <div class="custom-category">
-        <h4 class="custom-category-title">${escapeHtml(getCategoryLabel(category))}</h4>
-        <div class="custom-units-items">
-          ${Object.keys(units)
-            .map(
-              unit => `
-            <div class="custom-unit-item">
-              <span class="custom-unit-name">${escapeHtml(unit)}</span>
-              <button class="custom-unit-remove" data-category="${category}" data-unit="${escapeHtml(unit)}">×</button>
-            </div>
-          `
-            )
-            .join('')}
-        </div>
-      </div>
-    `;
-    })
-    .join('');
+  customUnitsList.innerHTML = '';
+  Object.keys(customUnits).forEach(category => {
+    const units = customUnits[category];
+    const categoryDiv = document.createElement('div');
+    categoryDiv.className = 'custom-category';
+
+    const title = document.createElement('h4');
+    title.className = 'custom-category-title';
+    title.textContent = getCategoryLabel(category);
+    categoryDiv.appendChild(title);
+
+    const itemsDiv = document.createElement('div');
+    itemsDiv.className = 'custom-units-items';
+
+    Object.keys(units).forEach(unit => {
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'custom-unit-item';
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'custom-unit-name';
+      nameSpan.textContent = unit;
+      itemDiv.appendChild(nameSpan);
+
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'custom-unit-remove';
+      removeBtn.dataset.category = category;
+      removeBtn.dataset.unit = unit;
+      removeBtn.textContent = '×';
+      itemDiv.appendChild(removeBtn);
+
+      itemsDiv.appendChild(itemDiv);
+    });
+
+    categoryDiv.appendChild(itemsDiv);
+    customUnitsList.appendChild(categoryDiv);
+  });
 
   // Add remove handlers
   customUnitsList.querySelectorAll('.custom-unit-remove').forEach(btn => {
@@ -701,6 +739,24 @@ async function copyResult() {
     showWarning('Failed to copy to clipboard');
     setTimeout(hideWarning, 3000);
   }
+}
+
+// Clear Input
+function updateClearInputButton() {
+  if (clearInputButton) {
+    if (fromValueInput.value) {
+      clearInputButton.classList.remove('hidden');
+    } else {
+      clearInputButton.classList.add('hidden');
+    }
+  }
+}
+
+function clearInput() {
+  fromValueInput.value = '';
+  toValueInput.value = '';
+  updateClearInputButton();
+  fromValueInput.focus();
 }
 
 // Error/Warning Handling
@@ -901,8 +957,22 @@ function setupEventListeners() {
   if (copyResultButton) {
     copyResultButton.addEventListener('click', copyResult);
   }
+
+  // Clear input
+  if (clearInputButton) {
+    clearInputButton.addEventListener('click', clearInput);
+  }
+
   customCategorySelect.addEventListener('change', populateReferenceUnits);
   addCustomUnitButton.addEventListener('click', addCustomUnit);
+
+  // Clear error states on input
+  [customUnitInput, conversionFactorInput].forEach(input => {
+    input.addEventListener('input', () => {
+      input.classList.remove('has-error');
+      hideModalMessage();
+    });
+  });
 
   // Modal backdrop click
   customUnitsModal
@@ -940,7 +1010,9 @@ function setupEventListeners() {
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
       );
 
-      if (focusableContent.length === 0) return;
+      if (focusableContent.length === 0) {
+        return;
+      }
 
       const first = focusableContent[0];
       const last = focusableContent[focusableContent.length - 1];

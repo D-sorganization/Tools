@@ -498,14 +498,14 @@ class CustomUnitManager {
 
         // Restore to main conversion factors with validation
         Object.keys(parsed).forEach(category => {
-          if (!isValidKey(category)) return;
+          if (!isValidKey(category)) { return; }
 
           if (!this.customUnits[category]) {
             this.customUnits[category] = {};
           }
 
           Object.keys(parsed[category]).forEach(unit => {
-            if (!isValidKey(unit)) return;
+            if (!isValidKey(unit)) { return; }
 
             const value = parsed[category][unit];
             this.customUnits[category][unit] = value;
@@ -524,7 +524,7 @@ class CustomUnitManager {
 
         // Restore aliases with validation
         Object.keys(parsedAliases).forEach(unit => {
-          if (!isValidKey(unit)) return;
+          if (!isValidKey(unit)) { return; }
 
           const aliases = parsedAliases[unit];
           if (Array.isArray(aliases)) {
@@ -944,7 +944,12 @@ function searchUnits(query, category = null) {
         for (const alias of item.aliases) {
           if (alias.includes(query)) {
             const score = alias === query ? 75 : 50;
-            results.push({ unit: item.unit, category: item.category, score: score, matchedAlias: alias });
+            results.push({
+              unit: item.unit,
+              category: item.category,
+              score: score,
+              matchedAlias: alias
+            });
             break;
           }
         }

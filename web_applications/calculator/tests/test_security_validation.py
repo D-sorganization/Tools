@@ -5,11 +5,9 @@ from web_applications.calculator.webapp import _parse_payload, _validate_securit
 
 def test_security_validation() -> None:
     # Safe inputs
-    assert _validate_security("1 + 1") is None
-    assert _validate_security("sin(x)") is None
-    assert (
-        _validate_security("classic_variable") is None
-    )  # 'class' is a substring but not a keyword
+    _validate_security("1 + 1")
+    _validate_security("sin(x)")
+    _validate_security("classic_variable")  # 'class' is a substring but not a keyword
 
     # Dangerous inputs
     with pytest.raises(ValueError, match="Security violation"):
@@ -20,6 +18,25 @@ def test_security_validation() -> None:
 
     with pytest.raises(ValueError, match="Security violation"):
         _validate_security("x.__base__")
+
+    # New blocked keywords
+    with pytest.raises(ValueError, match="Security violation"):
+        _validate_security("async function")
+
+    with pytest.raises(ValueError, match="Security violation"):
+        _validate_security("await result")
+
+    with pytest.raises(ValueError, match="Security violation"):
+        _validate_security("global x")
+
+    with pytest.raises(ValueError, match="Security violation"):
+        _validate_security("del x")
+
+    with pytest.raises(ValueError, match="Security violation"):
+        _validate_security("try: pass")
+
+    with pytest.raises(ValueError, match="Security violation"):
+        _validate_security("except: pass")
 
 
 def test_payload_function_security() -> None:

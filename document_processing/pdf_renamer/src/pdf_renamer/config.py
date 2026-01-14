@@ -177,8 +177,7 @@ def setup_api_key_interactive() -> bool:
 
     except Exception as e:
         print(f"\n✗ Failed to save API key: {e}")
-        print(f"\nYou can manually create {env_path} with:")
-        print(f"  GEMINI_API_KEY={api_key}")
+        print(f"\nYou can manually create {env_path} with your API key.")
         return False
 
 

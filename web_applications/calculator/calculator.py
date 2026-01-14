@@ -164,7 +164,7 @@ class TI89Calculator:
     @lru_cache(maxsize=1024)
     def parse_constant(expression: str) -> sp.Expr:
         """Cached parsing for constant expressions (no external symbols)."""
-        return TI89Calculator._parse_expression_static(expression, {})
+        return TI89Calculator.parse_expression(expression, {})
 
     @staticmethod
     @lru_cache(maxsize=1024)
@@ -212,7 +212,7 @@ class TI89Calculator:
             to these specific Symbol objects.
         """
         expression_symbols = TI89Calculator._build_symbol_map(variable_names)
-        parsed_expression = TI89Calculator._parse_expression_static(
+        parsed_expression = TI89Calculator.parse_expression(
             expression, expression_symbols
         )
         return parsed_expression, expression_symbols
@@ -239,11 +239,11 @@ class TI89Calculator:
     @lru_cache(maxsize=1024)
     def _simplify_expression_cached(expression: str) -> CalculatorResult:
         if "=" in expression:
-            equation = TI89Calculator._parse_equation_static(expression, {})
+            equation = TI89Calculator.parse_equation(expression, {})
             balanced = sp.simplify(equation.lhs - equation.rhs)
             return CalculatorResult(expression, sp.Eq(balanced, 0))
 
-        parsed_expression = TI89Calculator._parse_expression_static(expression, {})
+        parsed_expression = TI89Calculator.parse_expression(expression, {})
         return CalculatorResult(expression, sp.simplify(parsed_expression))
 
     def solve_equation(self, equation: str, variable: str) -> CalculatorResult:
@@ -254,7 +254,7 @@ class TI89Calculator:
     @lru_cache(maxsize=1024)
     def _solve_equation_cached(equation: str, variable: str) -> CalculatorResult:
         target_symbol = sp.Symbol(variable)
-        equation_object = TI89Calculator._parse_equation_static(
+        equation_object = TI89Calculator.parse_equation(
             equation, {variable: target_symbol}
         )
         solutions = sp.solve(equation_object, target_symbol)
@@ -273,7 +273,7 @@ class TI89Calculator:
     ) -> CalculatorResult:
         symbol_map = TI89Calculator._build_symbol_map(variables)
         parsed_equations = [
-            TI89Calculator._parse_equation_static(equation, symbol_map)
+            TI89Calculator.parse_equation(equation, symbol_map)
             for equation in equations
         ]
         solution_symbols = [symbol_map[variable] for variable in variables]
@@ -294,7 +294,7 @@ class TI89Calculator:
         if order <= 0:
             raise ValueError("Derivative order must be a positive integer")
         variable_symbol = sp.Symbol(variable)
-        parsed_expression = TI89Calculator._parse_expression_static(
+        parsed_expression = TI89Calculator.parse_expression(
             expression, {variable: variable_symbol}
         )
         derivative_expression = sp.diff(parsed_expression, variable_symbol, order)
@@ -319,7 +319,7 @@ class TI89Calculator:
         upper: float | int | sp.Expr | None,
     ) -> CalculatorResult:
         variable_symbol = sp.Symbol(variable)
-        parsed_expression = TI89Calculator._parse_expression_static(
+        parsed_expression = TI89Calculator.parse_expression(
             expression, {variable: variable_symbol}
         )
         if lower is None and upper is None:
@@ -350,7 +350,7 @@ class TI89Calculator:
     ) -> CalculatorResult:
         direction_token = TI89Calculator._normalize_limit_direction(direction)
         variable_symbol = sp.Symbol(variable)
-        parsed_expression = TI89Calculator._parse_expression_static(
+        parsed_expression = TI89Calculator.parse_expression(
             expression, {variable: variable_symbol}
         )
         result = sp.limit(
@@ -372,7 +372,7 @@ class TI89Calculator:
         if order <= 0:
             raise ValueError("Series order must be a positive integer")
         variable_symbol = sp.Symbol(variable)
-        parsed_expression = TI89Calculator._parse_expression_static(
+        parsed_expression = TI89Calculator.parse_expression(
             expression, {variable: variable_symbol}
         )
         series_expansion = sp.series(
@@ -442,10 +442,10 @@ class TI89Calculator:
     def _parse_expression(
         self, expression: str, symbols: Mapping[str, sp.Symbol | sp.Expr]
     ) -> sp.Expr:
-        return TI89Calculator._parse_expression_static(expression, symbols)
+        return TI89Calculator.parse_expression(expression, symbols)
 
     @staticmethod
-    def _parse_expression_static(
+    def parse_expression(
         expression: str, symbols: Mapping[str, sp.Symbol | sp.Expr]
     ) -> sp.Expr:
         # Optimization: fast-path for simple numbers to avoid expensive parse_expr
@@ -520,18 +520,18 @@ class TI89Calculator:
     def _parse_equation(
         self, equation: str, symbols: Mapping[str, sp.Symbol | sp.Expr]
     ) -> sp.Eq:
-        return TI89Calculator._parse_equation_static(equation, symbols)
+        return TI89Calculator.parse_equation(equation, symbols)
 
     @staticmethod
-    def _parse_equation_static(
+    def parse_equation(
         equation: str, symbols: Mapping[str, sp.Symbol | sp.Expr]
     ) -> sp.Eq:
         if "=" in equation:
             lhs, rhs = equation.split("=", maxsplit=1)
         else:
             lhs, rhs = equation, "0"
-        lhs_expr = TI89Calculator._parse_expression_static(lhs, symbols)
-        rhs_expr = TI89Calculator._parse_expression_static(rhs, symbols)
+        lhs_expr = TI89Calculator.parse_expression(lhs, symbols)
+        rhs_expr = TI89Calculator.parse_expression(rhs, symbols)
         return sp.Eq(lhs_expr, rhs_expr)
 
     @staticmethod

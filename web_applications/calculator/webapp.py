@@ -16,7 +16,6 @@ from flask import (
     request,
     send_from_directory,
 )
-from sympy.parsing.sympy_parser import convert_xor, parse_expr, standard_transformations
 
 from .calculator import CalculatorResult, TI89Calculator
 from .limiter import RateLimiter
@@ -130,12 +129,31 @@ FORBIDDEN_KEYWORDS = [
     "with",
     "open",
     "print",
+    "global",
+    "async",
+    "await",
+    "nonlocal",
+    "del",
+    "try",
+    "except",
+    "finally",
+    "builtins",
+    "breakpoint",
+    "getattr",
+    "setattr",
+    "hasattr",
+    "delattr",
+    "globals",
+    "locals",
+    "vars",
+    "dir",
 ]
 
-# ⚡ Bolt Optimization: Pre-compile regexes for forbidden keywords
-# This avoids compiling a regex for every potential match, while keeping
-# the fast string search for the common case (clean input).
-KEYWORD_REGEXES = {k: re.compile(rf"\b{k}\b") for k in FORBIDDEN_KEYWORDS}
+# ⚡ Bolt Optimization: Compile regex for efficient checking of forbidden keywords as whole words
+# This avoids multiple string searches and pre-calculates the state machine.
+FORBIDDEN_PATTERN = re.compile(
+    r"\b(" + "|".join(re.escape(k) for k in FORBIDDEN_KEYWORDS) + r")\b"
+)
 
 
 def _validate_security(value: str | None) -> None:
@@ -145,13 +163,11 @@ def _validate_security(value: str | None) -> None:
     if "__" in value:
         raise ValueError("Security violation: Restricted input pattern detected.")
 
-    for keyword in FORBIDDEN_KEYWORDS:
-        if keyword in value:
-            # Check if it appears as a distinct word boundary using pre-compiled regex
-            if KEYWORD_REGEXES[keyword].search(value):
-                raise ValueError(
-                    f"Security violation: Restricted keyword '{keyword}' detected."
-                )
+    match = FORBIDDEN_PATTERN.search(value)
+    if match:
+        raise ValueError(
+            f"Security violation: Restricted keyword '{match.group(1)}' detected."
+        )
 
 
 def _parse_payload(raw_payload: Mapping[str, object]) -> CalculationPayload:
@@ -412,18 +428,13 @@ def _sympify_value(
         if not symbols:
             return TI89Calculator.parse_constant(value)
 
-        # Use cached allowed_functions directly if symbols are needed
-        local_dict = {**calculator.allowed_functions, **symbols}
-
-        return parse_expr(
-            value,
-            local_dict=local_dict,
-            global_dict=calculator.safe_globals,
-            transformations=standard_transformations + (convert_xor,),
-            evaluate=True,
-        )
+        # Use safe expression parsing from calculator which handles
+        # evaluate=False check and DoS validation.
+        return TI89Calculator.parse_expression(value, symbols)
     except Exception as error:
-        raise ValueError("Invalid numeric or symbolic value provided") from error
+        if "exceeds safety limits" in str(error):
+            raise ValueError(str(error)) from None
+        raise ValueError("Invalid numeric or symbolic value provided") from None
 
 
 def _parse_optional_int(value: object | None) -> int | None:
