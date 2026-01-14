@@ -33,6 +33,50 @@ from scipy.io import savemat
 from scipy.signal import butter, filtfilt, medfilt, savgol_filter
 
 
+def _validate_formula_security(formula: str, allowed_names: set[str]) -> None:
+    """Validate that the formula only uses safe operations and allowed names."""
+    import ast
+
+    try:
+        tree = ast.parse(formula, mode="eval")
+    except SyntaxError as e:
+        raise ValueError(f"Invalid syntax: {e}") from e
+
+    for node in ast.walk(tree):
+        if isinstance(
+            node,
+            (
+                ast.Expression,
+                ast.Load,
+                ast.BinOp,
+                ast.UnaryOp,
+                ast.operator,
+                ast.unaryop,
+                ast.cmpop,
+                ast.Compare,
+                ast.BoolOp,
+                ast.boolop,
+                ast.Num,
+                ast.Str,
+                ast.Constant,
+                ast.Name,
+                ast.Call,
+                ast.keyword,
+            ),
+        ):
+            if isinstance(node, ast.Name):
+                if node.id not in allowed_names:
+                    raise ValueError(f"Unknown variable or function: {node.id}")
+            elif isinstance(node, ast.Call):
+                if isinstance(node.func, ast.Name):
+                    if node.func.id not in allowed_names:
+                        raise ValueError(f"Unknown function: {node.func.id}")
+                else:
+                    raise ValueError("Complex function calls not allowed")
+            continue
+        raise ValueError(f"Unsafe operation detected: {type(node).__name__}")
+
+
 # =============================================================================
 # WORKER FUNCTION FOR PARALLEL PROCESSING
 # =============================================================================
@@ -2635,6 +2679,7 @@ class CSVProcessorApp(ctk.CTk):
                 )
 
                 # Evaluate the formula safely
+                _validate_formula_security(formula, set(safe_dict.keys()))
                 result = eval(formula, {"__builtins__": {}}, safe_dict)
                 df[name] = result
 
