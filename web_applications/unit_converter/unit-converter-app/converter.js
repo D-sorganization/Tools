@@ -891,23 +891,30 @@ function getCategories() {
 
 // Helper to build the search cache
 function _buildSearchCache() {
-  const cache = [];
+  const cache = {
+    flat: [],
+    byCategory: {}
+  };
   const reverseAliases = getReverseAliases();
   const categories = getCategories();
 
   categories.forEach(cat => {
+    cache.byCategory[cat] = [];
     const units = getUnitsForCategory(cat);
     units.forEach(unit => {
       const lowerUnit = unit.toLowerCase();
       const aliases = reverseAliases[unit] || [];
       // Optimization: Aliases are already lowercase from UNIT_ALIASES keys, so no need to map/lowerCase them
 
-      cache.push({
+      const item = {
         unit,
         category: cat,
         lowerUnit,
         aliases
-      });
+      };
+
+      cache.flat.push(item);
+      cache.byCategory[cat].push(item);
     });
   });
 
@@ -928,12 +935,16 @@ function searchUnits(query, category = null) {
 
   const results = [];
 
+  // Select the appropriate list to search
+  // Optimization: If category is provided, only search within that category
+  const candidates = category
+    ? _SEARCH_CACHE.byCategory[category] || []
+    : _SEARCH_CACHE.flat;
+
   // Use cache for searching
-  for (const item of _SEARCH_CACHE) {
-    // Filter by category if specified
-    if (category && item.category !== category) {
-      continue;
-    }
+  for (const item of candidates) {
+    // Note: No need to check category if we selected byCategory[category]
+    // because all items in that list are guaranteed to match.
 
     // Check if unit matches
     if (item.lowerUnit.includes(query)) {
