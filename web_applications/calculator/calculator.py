@@ -554,7 +554,9 @@ class TI89Calculator:
         upper = sp.Matrix.hstack(angular_skew, linear)
         return sp.Matrix.vstack(upper, sp.Matrix([[0, 0, 0, 0]]))
 
-    def _se3_vee(self, matrix: Iterable[Iterable[object]], **kwargs: object) -> sp.Matrix:
+    def _se3_vee(
+        self, matrix: Iterable[Iterable[object]], **kwargs: object
+    ) -> sp.Matrix:
         transform = sp.Matrix(matrix)
         if transform.shape != (4, 4):
             raise ValueError("se3_vee expects a 4x4 matrix")
@@ -583,10 +585,14 @@ class TI89Calculator:
         linear = -self._hat(angular) * origin + twist_pitch * angular
         return sp.Matrix.vstack(angular, linear)
 
-    def _matrix_exp(self, matrix: Iterable[Iterable[object]], **kwargs: object) -> sp.Matrix:
+    def _matrix_exp(
+        self, matrix: Iterable[Iterable[object]], **kwargs: object
+    ) -> sp.Matrix:
         return sp.Matrix(matrix).exp()
 
-    def _matrix_log(self, matrix: Iterable[Iterable[object]], **kwargs: object) -> sp.Matrix:
+    def _matrix_log(
+        self, matrix: Iterable[Iterable[object]], **kwargs: object
+    ) -> sp.Matrix:
         return sp.Matrix(matrix).log()
 
     def _matrix_power(
@@ -600,7 +606,9 @@ class TI89Calculator:
         hat_matrix = self._se3_hat(screw)
         return sp.exp(hat_matrix * sp.sympify(theta))
 
-    def _adjoint_transform(self, transform: Iterable[Iterable[object]], **kwargs: object) -> sp.Matrix:
+    def _adjoint_transform(
+        self, transform: Iterable[Iterable[object]], **kwargs: object
+    ) -> sp.Matrix:
         matrix = sp.Matrix(transform)
         if matrix.shape != (4, 4):
             raise ValueError("adjoint expects a 4x4 homogeneous transform")
@@ -611,7 +619,9 @@ class TI89Calculator:
         lower = sp.Matrix.hstack(translation_hat * rotation, rotation)
         return sp.Matrix.vstack(upper, lower)
 
-    def _block_diag(self, *blocks: Iterable[Iterable[object]], **kwargs: object) -> sp.Matrix:
+    def _block_diag(
+        self, *blocks: Iterable[Iterable[object]], **kwargs: object
+    ) -> sp.Matrix:
         matrices = [sp.Matrix(block) for block in blocks]
         return sp.diag(*matrices)
 
