@@ -326,6 +326,8 @@ function handleAction(action) {
 function renderTouchExpression() {
     if (!touchExpression) return;
 
+    // Optimization: Use DocumentFragment to batch DOM insertions
+    // This reduces reflows from O(N) to O(1) when typing
     const text = expressionInput.value;
 
     if (!text) {
