@@ -130,12 +130,19 @@ FORBIDDEN_KEYWORDS = [
     "with",
     "open",
     "print",
+    "global",
+    "async",
+    "await",
+    "del",
+    "try",
+    "except",
 ]
 
-# ⚡ Bolt Optimization: Pre-compile regexes for forbidden keywords
-# This avoids compiling a regex for every potential match, while keeping
-# the fast string search for the common case (clean input).
-KEYWORD_REGEXES = {k: re.compile(rf"\b{k}\b") for k in FORBIDDEN_KEYWORDS}
+# ⚡ Bolt Optimization: Compile regex for efficient checking of forbidden keywords as whole words
+# This avoids multiple string searches and pre-calculates the state machine.
+FORBIDDEN_PATTERN = re.compile(
+    r"\b(" + "|".join(re.escape(k) for k in FORBIDDEN_KEYWORDS) + r")\b"
+)
 
 
 def _validate_security(value: str | None) -> None:
@@ -145,13 +152,11 @@ def _validate_security(value: str | None) -> None:
     if "__" in value:
         raise ValueError("Security violation: Restricted input pattern detected.")
 
-    for keyword in FORBIDDEN_KEYWORDS:
-        if keyword in value:
-            # Check if it appears as a distinct word boundary using pre-compiled regex
-            if KEYWORD_REGEXES[keyword].search(value):
-                raise ValueError(
-                    f"Security violation: Restricted keyword '{keyword}' detected."
-                )
+    match = FORBIDDEN_PATTERN.search(value)
+    if match:
+        raise ValueError(
+            f"Security violation: Restricted keyword '{match.group(1)}' detected."
+        )
 
 
 def _parse_payload(raw_payload: Mapping[str, object]) -> CalculationPayload:
