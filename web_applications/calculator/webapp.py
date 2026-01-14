@@ -139,6 +139,7 @@ FORBIDDEN_KEYWORDS = [
     "try",
     "except",
     "finally",
+    "__import__",
     "builtins",
     "breakpoint",
     "getattr",
