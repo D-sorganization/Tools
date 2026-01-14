@@ -33,6 +33,7 @@ class TI89Calculator:
 
     _ALLOWED_FUNCTIONS_CACHE: Mapping[str, object] | None = None
     _SAFE_GLOBALS_CACHE: Mapping[str, object] | None = None
+    _FULL_GLOBALS_CACHE: dict[str, object] | None = None
     _TRANSFORMATIONS_CACHE: tuple[object, ...] | None = None
 
     def __init__(self) -> None:
@@ -51,6 +52,12 @@ class TI89Calculator:
                 "Function": sp.Function,
                 "Derivative": sp.Derivative,
                 "Eq": sp.Eq,
+            }
+
+        if TI89Calculator._FULL_GLOBALS_CACHE is None:
+            TI89Calculator._FULL_GLOBALS_CACHE = {
+                **(TI89Calculator._SAFE_GLOBALS_CACHE or {}),
+                **(TI89Calculator._ALLOWED_FUNCTIONS_CACHE or {}),
             }
 
         if TI89Calculator._TRANSFORMATIONS_CACHE is None:
@@ -404,35 +411,16 @@ class TI89Calculator:
             # But let's assume the app initializes one calculator.
             pass
 
-        # We will use TI89Calculator._ALLOWED_FUNCTIONS_CACHE directly assuming it is initialized.
-        # If the app has started, it is initialized.
-        allowed_fns = TI89Calculator._ALLOWED_FUNCTIONS_CACHE
-        # If it is None, we are in trouble. But _build_allowed_functions calls instance methods.
-        # Ideally, we should refactor everything to static.
-        # For now, let's assume it's initialized.
-
         function_symbol = sp.Function(function)
         independent_variable = sp.Symbol("x")
-        # We need a safe way to get allowed functions.
-        # Since we are inside the class, we can access _build_allowed_functions if it was static?
-        # It calls self._hat etc.
-        # So we really should make those static too.
-        # But that's a lot of refactoring.
-        # Alternative: The 'calculator' instance passed to dispatch holds the state.
-        # But we are in a static method.
-        # Let's fix this properly: make helpers static.
 
-        # Accessing private class attribute assuming it's populated.
-        local_dict = (
-            dict(allowed_fns) if allowed_fns else {}
-        )  # Fallback empty if not init (should not happen in app)
-        local_dict[function] = function_symbol
-        local_dict["x"] = independent_variable
+        # Optimization: Use global_dict for allowed functions to avoid copy
+        local_dict = {function: function_symbol, "x": independent_variable}
 
         parsed_equation = parse_expr(
             equation,
             local_dict=local_dict,
-            global_dict=TI89Calculator._SAFE_GLOBALS_CACHE,
+            global_dict=TI89Calculator._FULL_GLOBALS_CACHE,
             transformations=TI89Calculator._TRANSFORMATIONS_CACHE,
             evaluate=True,
         )
@@ -470,27 +458,15 @@ class TI89Calculator:
                 except ValueError:
                     pass
 
-        # Optimization: Avoid copying the large allowed_functions dict if no symbols are
-        # provided
-        allowed_fns = TI89Calculator._ALLOWED_FUNCTIONS_CACHE
-        # If allowed_fns is None, we need to populate it. But _build_allowed_functions is instance method.
-        # This is the tricky part.
-        # However, in the static context, we can't easily call instance method.
-        # But we know _ALLOWED_FUNCTIONS_CACHE is populated on first init.
-        # If this is called before any init...
-        # We can construct a temporary instance? No.
-
-        # Let's assume initialized.
-        local_dict = allowed_fns if allowed_fns else {}
-        if symbols:
-            local_dict = {**(allowed_fns if allowed_fns else {}), **symbols}
-
         # Security: Parse without evaluation first to check for DoS vectors
+        # Optimization: Use global_dict for allowed functions to avoid copy
+        local_dict = symbols if symbols else {}
+
         try:
             expr_tree = parse_expr(
                 expression,
                 local_dict=local_dict,
-                global_dict=TI89Calculator._SAFE_GLOBALS_CACHE,
+                global_dict=TI89Calculator._FULL_GLOBALS_CACHE,
                 transformations=TI89Calculator._TRANSFORMATIONS_CACHE,
                 evaluate=False,
             )
@@ -512,7 +488,7 @@ class TI89Calculator:
         return parse_expr(
             expression,
             local_dict=local_dict,
-            global_dict=TI89Calculator._SAFE_GLOBALS_CACHE,
+            global_dict=TI89Calculator._FULL_GLOBALS_CACHE,
             transformations=TI89Calculator._TRANSFORMATIONS_CACHE,
             evaluate=True,
         )
