@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import re
 from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
@@ -131,6 +132,11 @@ FORBIDDEN_KEYWORDS = [
     "print",
 ]
 
+# ⚡ Bolt Optimization: Pre-compile regexes for forbidden keywords
+# This avoids compiling a regex for every potential match, while keeping
+# the fast string search for the common case (clean input).
+KEYWORD_REGEXES = {k: re.compile(rf"\b{k}\b") for k in FORBIDDEN_KEYWORDS}
+
 
 def _validate_security(value: str | None) -> None:
     """Check for potentially dangerous patterns in input."""
@@ -141,14 +147,8 @@ def _validate_security(value: str | None) -> None:
 
     for keyword in FORBIDDEN_KEYWORDS:
         if keyword in value:
-            # We want to avoid false positives (e.g., 'class' in 'classic'),
-            # but for a calculator, variable names containing these are suspicious anyway.
-            # Stricter check: ensure it's a whole word match?
-            # SymPy identifiers can contain these substrings.
-            # Let's check if it appears as a distinct word boundary.
-            import re
-
-            if re.search(rf"\b{keyword}\b", value):
+            # Check if it appears as a distinct word boundary using pre-compiled regex
+            if KEYWORD_REGEXES[keyword].search(value):
                 raise ValueError(
                     f"Security violation: Restricted keyword '{keyword}' detected."
                 )
