@@ -24,6 +24,7 @@ const customUnitsButton = document.getElementById('customUnitsButton');
 const fromUnitSearchTrigger = document.getElementById('fromUnitSearchTrigger');
 const toUnitSearchTrigger = document.getElementById('toUnitSearchTrigger');
 const copyResultButton = document.getElementById('copyResult');
+const clearInputButton = document.getElementById('clearInput');
 const installPrompt = document.getElementById('installPrompt');
 const dismissInstall = document.getElementById('dismissInstall');
 
@@ -67,6 +68,7 @@ function init() {
 
   // Set default values for quick demo
   fromValueInput.value = '1';
+  updateClearInputButton();
   performConversion();
 }
 
@@ -272,12 +274,21 @@ function performConversion(direction = 'from') {
     hideError();
     hideWarning();
 
+    // Update clear button visibility
+    if (direction === 'from') {
+      updateClearInputButton();
+    }
+
     const value = parseFloat(direction === 'from' ? fromValueInput.value : toValueInput.value);
     if (isNaN(value)) {
       if (direction === 'from') {
         toValueInput.value = '';
       } else {
         fromValueInput.value = '';
+      }
+      // If converting from empty string, make sure clear button is hidden
+      if (direction === 'from' && !fromValueInput.value) {
+        updateClearInputButton();
       }
       return;
     }
@@ -352,6 +363,8 @@ function swapUnits() {
 
   fromValueInput.value = toValue;
   toValueInput.value = fromValue;
+
+  updateClearInputButton();
 
   // Animate button
   swapButton.style.transform = 'rotate(180deg)';
@@ -483,6 +496,7 @@ function loadFromHistory(item) {
     fromUnitSearch.value = item.fromUnit;
     toUnitSearch.value = item.toUnit;
     performConversion();
+    updateClearInputButton();
   }, 10);
 }
 
@@ -521,7 +535,6 @@ function populateReferenceUnits() {
 function addCustomUnit() {
   hideModalMessage();
   try {
-    hideModalError();
     customUnitInput.classList.remove('has-error');
     conversionFactorInput.classList.remove('has-error');
 
@@ -536,8 +549,6 @@ function addCustomUnit() {
           .map(a => a.trim())
           .filter(a => a)
       : [];
-
-    let hasError = false;
 
     if (!unit) {
       showModalError('Please enter a unit symbol');
@@ -571,44 +582,6 @@ function addCustomUnit() {
 }
 
 function showModalError(message) {
-  modalErrorMessage.textContent = message;
-  modalErrorMessage.style.display = 'block';
-  modalErrorMessage.classList.remove('success');
-}
-
-function showModalSuccess(message) {
-  modalErrorMessage.textContent = message;
-  modalErrorMessage.style.display = 'block';
-  modalErrorMessage.classList.add('success');
-
-  setTimeout(() => {
-    hideModalError();
-  }, 3000);
-}
-
-function hideModalError() {
-  modalErrorMessage.style.display = 'none';
-  modalErrorMessage.classList.remove('success');
-}
-
-function removeCustomUnit(category, unit) {
-  if (confirm(`Remove custom unit '${unit}'?`)) {
-    try {
-      customUnitManager.removeUnit(category, unit);
-      renderCustomUnitsList();
-
-      // If current category matches, repopulate units
-      if (currentCategory === category) {
-        populateUnits(currentCategory);
-      }
-      showModalSuccess(`Custom unit '${unit}' removed`);
-    } catch (error) {
-      showModalError('Error: ' + error.message);
-    }
-  }
-}
-
-function showModalError(message) {
   modalMessage.textContent = message;
   modalMessage.classList.remove('success');
   modalMessage.style.display = 'block';
@@ -627,6 +600,23 @@ function showModalSuccess(message) {
 
 function hideModalMessage() {
   modalMessage.style.display = 'none';
+}
+
+function removeCustomUnit(category, unit) {
+  if (confirm(`Remove custom unit '${unit}'?`)) {
+    try {
+      customUnitManager.removeUnit(category, unit);
+      renderCustomUnitsList();
+
+      // If current category matches, repopulate units
+      if (currentCategory === category) {
+        populateUnits(currentCategory);
+      }
+      showModalSuccess(`Custom unit '${unit}' removed`);
+    } catch (error) {
+      showModalError('Error: ' + error.message);
+    }
+  }
 }
 
 function renderCustomUnitsList() {
@@ -701,6 +691,24 @@ async function copyResult() {
     showWarning('Failed to copy to clipboard');
     setTimeout(hideWarning, 3000);
   }
+}
+
+// Clear Input
+function updateClearInputButton() {
+  if (clearInputButton) {
+    if (fromValueInput.value) {
+      clearInputButton.classList.remove('hidden');
+    } else {
+      clearInputButton.classList.add('hidden');
+    }
+  }
+}
+
+function clearInput() {
+  fromValueInput.value = '';
+  toValueInput.value = '';
+  updateClearInputButton();
+  fromValueInput.focus();
 }
 
 // Error/Warning Handling
@@ -901,6 +909,12 @@ function setupEventListeners() {
   if (copyResultButton) {
     copyResultButton.addEventListener('click', copyResult);
   }
+
+  // Clear input
+  if (clearInputButton) {
+    clearInputButton.addEventListener('click', clearInput);
+  }
+
   customCategorySelect.addEventListener('change', populateReferenceUnits);
   addCustomUnitButton.addEventListener('click', addCustomUnit);
 
@@ -940,7 +954,9 @@ function setupEventListeners() {
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
       );
 
-      if (focusableContent.length === 0) return;
+      if (focusableContent.length === 0) {
+        return;
+      }
 
       const first = focusableContent[0];
       const last = focusableContent[focusableContent.length - 1];
