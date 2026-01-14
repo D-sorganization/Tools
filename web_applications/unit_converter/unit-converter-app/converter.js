@@ -900,13 +900,13 @@ function _buildSearchCache() {
     units.forEach(unit => {
       const lowerUnit = unit.toLowerCase();
       const aliases = reverseAliases[unit] || [];
-      const lowerAliases = aliases.map(a => a.toLowerCase());
+      // Optimization: Aliases are already lowercase from UNIT_ALIASES keys, so no need to map/lowerCase them
 
       cache.push({
         unit,
         category: cat,
         lowerUnit,
-        lowerAliases
+        aliases
       });
     });
   });
@@ -940,8 +940,8 @@ function searchUnits(query, category = null) {
       results.push({ unit: item.unit, category: item.category, score: 100 });
     } else {
       // Check aliases
-      if (item.lowerAliases) {
-        for (const alias of item.lowerAliases) {
+      if (item.aliases) {
+        for (const alias of item.aliases) {
           if (alias.includes(query)) {
             const score = alias === query ? 75 : 50;
             results.push({ unit: item.unit, category: item.category, score: score, matchedAlias: alias });
