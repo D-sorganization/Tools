@@ -490,13 +490,17 @@ function renderHistory() {
   recentList.innerHTML = '';
   conversionHistory.forEach((item, index) => {
     const timeAgo = formatTimeAgo(item.timestamp);
-    const row = document.createElement('div');
+    const row = document.createElement('button');
     row.className = 'recent-item';
     row.dataset.index = index.toString();
+    row.setAttribute('type', 'button');
+
+    const conversionText = `${formatNumber(item.fromValue)} ${item.fromUnit} = ${formatNumber(item.toValue)} ${item.toUnit}`;
+    row.setAttribute('aria-label', `Restore conversion: ${conversionText}`);
 
     const textDiv = document.createElement('div');
     textDiv.className = 'recent-item-text';
-    textDiv.textContent = `${formatNumber(item.fromValue)} ${item.fromUnit} = ${formatNumber(item.toValue)} ${item.toUnit}`;
+    textDiv.textContent = conversionText;
     row.appendChild(textDiv);
 
     const timeDiv = document.createElement('div');

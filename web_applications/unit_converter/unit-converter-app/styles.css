@@ -502,6 +502,11 @@ body {
   cursor: pointer;
   transition: all 0.2s;
   -webkit-tap-highlight-color: transparent;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
 }
 
 .recent-item:active {
