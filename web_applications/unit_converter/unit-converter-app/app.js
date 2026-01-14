@@ -565,11 +565,13 @@ function addCustomUnit() {
       : [];
 
     if (!unit) {
+      customUnitInput.classList.add('has-error');
       showModalError('Please enter a unit symbol');
       return;
     }
 
     if (isNaN(factor) || factor <= 0) {
+      conversionFactorInput.classList.add('has-error');
       showModalError('Please enter a valid positive conversion factor');
       return;
     }

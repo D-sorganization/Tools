@@ -1,13 +1,17 @@
-from playwright.sync_api import sync_playwright, expect
 import os
 
-def run(playwright):
+from playwright.sync_api import Playwright, expect, sync_playwright
+
+
+def run(playwright: Playwright) -> None:
     browser = playwright.chromium.launch(headless=True)
     page = browser.new_page()
 
     # Load the local HTML file
     cwd = os.getcwd()
-    file_path = f"file://{cwd}/web_applications/unit_converter/unit-converter-app/index.html"
+    file_path = (
+        f"file://{cwd}/web_applications/unit_converter/unit-converter-app/index.html"
+    )
     page.goto(file_path)
 
     # Check initial state: input has value '1' (set by init), button should be visible
@@ -40,6 +44,7 @@ def run(playwright):
     print("Re-entry verified: Button reappears on typing.")
 
     browser.close()
+
 
 if __name__ == "__main__":
     with sync_playwright() as playwright:

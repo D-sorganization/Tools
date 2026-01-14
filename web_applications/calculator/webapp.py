@@ -16,7 +16,6 @@ from flask import (
     request,
     send_from_directory,
 )
-from sympy.parsing.sympy_parser import convert_xor, parse_expr, standard_transformations
 
 from .calculator import CalculatorResult, TI89Calculator
 from .limiter import RateLimiter
@@ -138,6 +137,16 @@ FORBIDDEN_KEYWORDS = [
     "try",
     "except",
     "finally",
+    "builtins",
+    "breakpoint",
+    "getattr",
+    "setattr",
+    "hasattr",
+    "delattr",
+    "globals",
+    "locals",
+    "vars",
+    "dir",
 ]
 
 # ⚡ Bolt Optimization: Compile regex for efficient checking of forbidden keywords as whole words
@@ -419,17 +428,12 @@ def _sympify_value(
         if not symbols:
             return TI89Calculator.parse_constant(value)
 
-        # Use cached allowed_functions directly if symbols are needed
-        local_dict = {**calculator.allowed_functions, **symbols}
-
-        return parse_expr(
-            value,
-            local_dict=local_dict,
-            global_dict=calculator.safe_globals,
-            transformations=standard_transformations + (convert_xor,),
-            evaluate=True,
-        )
+        # Use safe expression parsing from calculator which handles
+        # evaluate=False check and DoS validation.
+        return TI89Calculator.parse_expression(value, symbols)
     except Exception as error:
+        if "exceeds safety limits" in str(error):
+            raise ValueError(str(error)) from error
         raise ValueError("Invalid numeric or symbolic value provided") from error
 
 
