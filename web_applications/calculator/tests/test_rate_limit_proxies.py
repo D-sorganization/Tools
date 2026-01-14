@@ -32,7 +32,9 @@ class TestRateLimitProxies(unittest.TestCase):
         headers_b = {"X-Forwarded-For": "10.0.0.2"}
         resp_b = self.client.post("/api/calculate", json=payload, headers=headers_b)
 
-        self.assertEqual(resp_b.status_code, 200, "Client B should be allowed (distinct IP)")
+        self.assertEqual(
+            resp_b.status_code, 200, "Client B should be allowed (distinct IP)"
+        )
 
     def test_x_forwarded_for_proxy_handling(self) -> None:
         # Test that ProxyFix is active and processing the header.
@@ -55,7 +57,10 @@ class TestRateLimitProxies(unittest.TestCase):
         # and treating it as the client/source.
         headers_d = {"X-Forwarded-For": "10.0.0.4, 192.168.1.2"}
         resp_d = self.client.post("/api/calculate", json=payload, headers=headers_d)
-        self.assertEqual(resp_d.status_code, 200, "Client D (different proxy) should be distinct")
+        self.assertEqual(
+            resp_d.status_code, 200, "Client D (different proxy) should be distinct"
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
