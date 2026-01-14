@@ -1,7 +1,9 @@
-from playwright.sync_api import sync_playwright
 import os
 
-def run():
+from playwright.sync_api import sync_playwright
+
+
+def run() -> None:
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         context = browser.new_context()
@@ -24,27 +26,30 @@ def run():
         hint_text = from_label.locator(".kbd-shortcut").inner_text()
         print(f"Shortcut hint text: {hint_text}")
         if "Ctrl+K" in hint_text:
-             print("SUCCESS: Shortcut hint is correct")
+            print("SUCCESS: Shortcut hint is correct")
         else:
-             print("ERROR: Shortcut hint is incorrect")
+            print("ERROR: Shortcut hint is incorrect")
 
         # 2. Verify Accessibility Attributes
         print("Verifying Accessibility Attributes...")
         gas_flow_hint = page.locator("#gasFlowHint")
         if gas_flow_hint.count() > 0:
-             print("Found #gasFlowHint")
+            print("Found #gasFlowHint")
         else:
-             print("ERROR: #gasFlowHint not found")
+            print("ERROR: #gasFlowHint not found")
 
-        described_by = page.locator("#standardCondition").get_attribute("aria-describedby")
+        described_by = page.locator("#standardCondition").get_attribute(
+            "aria-describedby"
+        )
         print(f"Standard Condition aria-describedby: {described_by}")
 
         if described_by == "gasFlowHint":
-             print("SUCCESS: aria-describedby matches hint ID")
+            print("SUCCESS: aria-describedby matches hint ID")
         else:
-             print("ERROR: aria-describedby mismatch")
+            print("ERROR: aria-describedby mismatch")
 
         browser.close()
+
 
 if __name__ == "__main__":
     run()

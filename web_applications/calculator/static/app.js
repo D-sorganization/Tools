@@ -326,9 +326,6 @@ function handleAction(action) {
 function renderTouchExpression() {
     if (!touchExpression) return;
 
-    // Optimization: Use DocumentFragment to batch DOM insertions
-    // This reduces reflows from O(N) to O(1) when typing
-    // const fragment = document.createDocumentFragment(); // Moved down to avoid unused variable
     const text = expressionInput.value;
 
     if (!text) {
@@ -336,8 +333,9 @@ function renderTouchExpression() {
         return;
     }
 
-    // Clear existing content before appending new content
+    // Clear existing content and use DocumentFragment for performance
     touchExpression.innerHTML = "";
+    const fragment = document.createDocumentFragment();
 
     Array.from(text).forEach((character, index) => {
         const span = document.createElement("span");
@@ -346,7 +344,7 @@ function renderTouchExpression() {
         span.textContent = character;
         fragment.append(span);
     });
-    touchExpression.innerHTML = "";
+
     touchExpression.append(fragment);
 }
 
