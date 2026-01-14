@@ -16,6 +16,7 @@ from flask import (
     request,
     send_from_directory,
 )
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from .calculator import CalculatorResult, TI89Calculator
 from .limiter import RateLimiter
@@ -40,6 +41,9 @@ class CalculationPayload:
 
 def create_app() -> Flask:
     app = Flask(__name__, static_folder="static", template_folder="templates")
+    # Security: Trust one layer of proxy for X-Forwarded-For and X-Forwarded-Proto
+    # This ensures correct IP resolution and HTTPS detection behind a reverse proxy (e.g. Nginx, ALB).
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
     calculator = TI89Calculator()
     # Rate limit: 100 requests per 60 seconds per IP
     app.limiter = RateLimiter(limit=100, window=60)  # Dynamic attribute
@@ -122,6 +126,8 @@ FORBIDDEN_KEYWORDS = [
     "import",
     "exec",
     "eval",
+    "compile",
+    "input",
     "yield",
     "return",
     "raise",
@@ -137,6 +143,7 @@ FORBIDDEN_KEYWORDS = [
     "try",
     "except",
     "finally",
+    "__import__",
     "builtins",
     "breakpoint",
     "getattr",

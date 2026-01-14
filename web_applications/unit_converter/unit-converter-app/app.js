@@ -136,7 +136,8 @@ function setupUnitSearch(searchInput, dropdown, unitSelect) {
       const results = searchUnits(query, currentCategory);
 
       if (results.length === 0) {
-        dropdown.innerHTML = '<div class="dropdown-item dropdown-empty" role="option" aria-disabled="true">No units found</div>';
+        dropdown.innerHTML =
+          '<div class="dropdown-item dropdown-empty" role="option" aria-disabled="true">No units found</div>';
         dropdown.style.display = 'block';
         searchInput.setAttribute('aria-expanded', 'true');
         return;
@@ -489,13 +490,24 @@ function renderHistory() {
   recentList.innerHTML = '';
   conversionHistory.forEach((item, index) => {
     const timeAgo = formatTimeAgo(item.timestamp);
-    const row = document.createElement('div');
+    const row = document.createElement('button');
     row.className = 'recent-item';
+    row.type = 'button';
     row.dataset.index = index.toString();
+    row.setAttribute('type', 'button');
+
+    const fromVal = formatNumber(item.fromValue);
+    const toVal = formatNumber(item.toValue);
+    const conversionText = `${fromVal} ${item.fromUnit} = ${toVal} ${item.toUnit}`;
+
+    row.setAttribute(
+      'aria-label',
+      `Restore conversion: ${fromVal} ${item.fromUnit} to ${toVal} ${item.toUnit}`
+    );
 
     const textDiv = document.createElement('div');
     textDiv.className = 'recent-item-text';
-    textDiv.textContent = `${formatNumber(item.fromValue)} ${item.fromUnit} = ${formatNumber(item.toValue)} ${item.toUnit}`;
+    textDiv.textContent = conversionText;
     row.appendChild(textDiv);
 
     const timeDiv = document.createElement('div');
@@ -779,16 +791,17 @@ function hideWarning() {
 }
 
 // Utilities
+// eslint-disable-next-line no-unused-vars
 function escapeHtml(unsafe) {
   if (unsafe === undefined || unsafe === null) {
-    return '';
+    return "";
   }
   return String(unsafe)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 function formatNumber(num) {
@@ -987,7 +1000,7 @@ function setupEventListeners() {
   // Keyboard shortcuts
   document.addEventListener('keydown', e => {
     // Ctrl/Cmd + K to focus from value
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
       e.preventDefault();
       fromValueInput.focus();
       fromValueInput.select();
