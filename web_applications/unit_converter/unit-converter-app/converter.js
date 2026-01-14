@@ -944,7 +944,12 @@ function searchUnits(query, category = null) {
         for (const alias of item.lowerAliases) {
           if (alias.includes(query)) {
             const score = alias === query ? 75 : 50;
-            results.push({ unit: item.unit, category: item.category, score: score, matchedAlias: alias });
+            results.push({
+              unit: item.unit,
+              category: item.category,
+              score: score,
+              matchedAlias: alias
+            });
             break;
           }
         }
