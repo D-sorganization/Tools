@@ -122,6 +122,8 @@ FORBIDDEN_KEYWORDS = [
     "import",
     "exec",
     "eval",
+    "compile",
+    "input",
     "yield",
     "return",
     "raise",
