@@ -190,9 +190,12 @@
                 class="unit-search-input"
                 placeholder="Search units..."
                 autocomplete="off"
+                aria-autocomplete="list"
+                aria-controls="fromUnitDropdown"
+                aria-expanded="false"
               />
               <select id="fromUnit" class="select unit-select"></select>
-              <div id="fromUnitDropdown" class="unit-dropdown hidden"></div>
+              <div id="fromUnitDropdown" class="unit-dropdown hidden" role="listbox"></div>
             </div>
           </div>
         </div>
@@ -362,9 +365,12 @@
                 class="unit-search-input"
                 placeholder="Search units..."
                 autocomplete="off"
+                aria-autocomplete="list"
+                aria-controls="toUnitDropdown"
+                aria-expanded="false"
               />
               <select id="toUnit" class="select unit-select"></select>
-              <div id="toUnitDropdown" class="unit-dropdown hidden"></div>
+              <div id="toUnitDropdown" class="unit-dropdown hidden" role="listbox"></div>
             </div>
           </div>
         </div>
