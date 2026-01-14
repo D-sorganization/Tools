@@ -5,6 +5,8 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
+import re
+
 import sympy as sp
 from flask import (
     Flask,
@@ -129,7 +131,18 @@ FORBIDDEN_KEYWORDS = [
     "with",
     "open",
     "print",
+    "global",
+    "async",
+    "await",
+    "del",
+    "try",
+    "except",
 ]
+
+# Compile regex for efficient checking of forbidden keywords as whole words
+FORBIDDEN_PATTERN = re.compile(
+    r"\b(" + "|".join(re.escape(k) for k in FORBIDDEN_KEYWORDS) + r")\b"
+)
 
 
 def _validate_security(value: str | None) -> None:
@@ -139,19 +152,11 @@ def _validate_security(value: str | None) -> None:
     if "__" in value:
         raise ValueError("Security violation: Restricted input pattern detected.")
 
-    for keyword in FORBIDDEN_KEYWORDS:
-        if keyword in value:
-            # We want to avoid false positives (e.g., 'class' in 'classic'),
-            # but for a calculator, variable names containing these are suspicious anyway.
-            # Stricter check: ensure it's a whole word match?
-            # SymPy identifiers can contain these substrings.
-            # Let's check if it appears as a distinct word boundary.
-            import re
-
-            if re.search(rf"\b{keyword}\b", value):
-                raise ValueError(
-                    f"Security violation: Restricted keyword '{keyword}' detected."
-                )
+    match = FORBIDDEN_PATTERN.search(value)
+    if match:
+        raise ValueError(
+            f"Security violation: Restricted keyword '{match.group(1)}' detected."
+        )
 
 
 def _parse_payload(raw_payload: Mapping[str, object]) -> CalculationPayload:
