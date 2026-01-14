@@ -122,7 +122,9 @@
         <!-- From Section -->
         <div class="conversion-section">
           <div class="input-group">
-            <label for="fromValue" class="label">From</label>
+            <label for="fromValue" class="label"
+              >From <span class="kbd-shortcut" aria-hidden="true">Ctrl+K</span></label
+            >
             <div class="value-input-wrapper">
               <input
                 type="number"
@@ -204,12 +206,16 @@
         <div id="gasFlowParams" class="param-section hidden">
           <div class="param-header">
             <span class="param-title">Gas Flow Parameters</span>
-            <span class="param-hint">Required for ACFM conversions</span>
+            <span class="param-hint" id="gasFlowHint">Required for ACFM conversions</span>
           </div>
           <div class="param-grid">
             <div class="input-group">
               <label for="standardCondition" class="label">Standard Condition</label>
-              <select id="standardCondition" class="select select-sm">
+              <select
+                id="standardCondition"
+                class="select select-sm"
+                aria-describedby="gasFlowHint"
+              >
                 <option value="SCFM_60F">SCFM @ 60°F, 14.696 psia</option>
                 <option value="SCFM_70F">SCFM @ 70°F, 14.696 psia</option>
                 <option value="STP">STP (0°C, 101.325 kPa)</option>
@@ -219,7 +225,7 @@
             </div>
             <div class="input-group">
               <label for="gasType" class="label">Gas Type</label>
-              <select id="gasType" class="select select-sm">
+              <select id="gasType" class="select select-sm" aria-describedby="gasFlowHint">
                 <option value="air">Air</option>
                 <option value="nitrogen">Nitrogen</option>
                 <option value="oxygen">Oxygen</option>
@@ -238,6 +244,7 @@
                 class="input-number input-sm"
                 placeholder="e.g., 298.15"
                 step="any"
+                aria-describedby="gasFlowHint"
               />
             </div>
             <div class="input-group">
@@ -248,6 +255,7 @@
                 class="input-number input-sm"
                 placeholder="e.g., 101325"
                 step="any"
+                aria-describedby="gasFlowHint"
               />
             </div>
           </div>
@@ -257,7 +265,7 @@
         <div id="heatingValueParams" class="param-section hidden">
           <div class="param-header">
             <span class="param-title">Heating Value Parameters</span>
-            <span class="param-hint">Required for volumetric units</span>
+            <span class="param-hint" id="heatingValHint">Required for volumetric units</span>
           </div>
           <div class="input-group">
             <label for="gasDensity" class="label">Gas Density at STP (kg/m³)</label>
@@ -267,6 +275,7 @@
               class="input-number input-sm"
               placeholder="e.g., 0.717 for methane"
               step="any"
+              aria-describedby="heatingValHint"
             />
             <div class="input-hint">
               Common values: Air (1.29), Methane (0.72), H₂ (0.09), Syngas (~0.89)
@@ -428,8 +437,6 @@
           <!-- Add Custom Unit -->
           <div class="custom-unit-form">
             <h3 class="form-title">Add Custom Unit</h3>
-
-
 
             <div class="input-group">
               <label for="customCategory" class="label"
