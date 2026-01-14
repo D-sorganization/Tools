@@ -489,13 +489,21 @@ function renderHistory() {
   recentList.innerHTML = '';
   conversionHistory.forEach((item, index) => {
     const timeAgo = formatTimeAgo(item.timestamp);
-    const row = document.createElement('div');
+    const row = document.createElement('button');
     row.className = 'recent-item';
     row.dataset.index = index.toString();
 
+    // Accessibility enhancement: Explain what the button does
+    const fromVal = formatNumber(item.fromValue);
+    const toVal = formatNumber(item.toValue);
+    row.setAttribute(
+      'aria-label',
+      `Restore conversion: ${fromVal} ${item.fromUnit} to ${toVal} ${item.toUnit}`
+    );
+
     const textDiv = document.createElement('div');
     textDiv.className = 'recent-item-text';
-    textDiv.textContent = `${formatNumber(item.fromValue)} ${item.fromUnit} = ${formatNumber(item.toValue)} ${item.toUnit}`;
+    textDiv.textContent = `${fromVal} ${item.fromUnit} = ${toVal} ${item.toUnit}`;
     row.appendChild(textDiv);
 
     const timeDiv = document.createElement('div');
@@ -779,18 +787,6 @@ function hideWarning() {
 }
 
 // Utilities
-function escapeHtml(unsafe) {
-  if (unsafe === undefined || unsafe === null) {
-    return '';
-  }
-  return String(unsafe)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
-
 function formatNumber(num) {
   if (typeof num !== 'number' || isNaN(num)) {
     return '';

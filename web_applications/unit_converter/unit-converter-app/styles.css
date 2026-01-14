@@ -481,6 +481,11 @@ body {
 }
 
 .recent-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  color: inherit;
   background-color: var(--background);
   padding: 1rem;
   border-radius: var(--radius-md);
