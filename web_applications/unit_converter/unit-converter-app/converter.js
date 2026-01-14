@@ -941,18 +941,16 @@ function searchUnits(query, category = null) {
 
   const results = [];
 
-  // Optimization: Search only within category if specified
-  const candidates =
-    category && _SEARCH_CACHE.byCategory[category]
-      ? _SEARCH_CACHE.byCategory[category]
-      : _SEARCH_CACHE.flat;
+  // Select the appropriate list to search
+  // Optimization: If category is provided, only search within that category
+  const candidates = category
+    ? _SEARCH_CACHE.byCategory[category] || []
+    : _SEARCH_CACHE.flat;
 
   // Use cache for searching
   for (const item of candidates) {
-    // Filter by category if specified
-    if (category && item.category !== category) {
-      continue;
-    }
+    // Note: No need to check category separately if we selected from byCategory[category]
+    // because all items in that list are guaranteed to match the category.
 
     // Check if unit matches
     if (item.lowerUnit.includes(query)) {
