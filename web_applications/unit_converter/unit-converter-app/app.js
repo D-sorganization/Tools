@@ -136,7 +136,8 @@ function setupUnitSearch(searchInput, dropdown, unitSelect) {
       const results = searchUnits(query, currentCategory);
 
       if (results.length === 0) {
-        dropdown.innerHTML = '<div class="dropdown-item dropdown-empty" role="option" aria-disabled="true">No units found</div>';
+        dropdown.innerHTML =
+          '<div class="dropdown-item dropdown-empty" role="option" aria-disabled="true">No units found</div>';
         dropdown.style.display = 'block';
         searchInput.setAttribute('aria-expanded', 'true');
         return;
@@ -489,8 +490,9 @@ function renderHistory() {
   recentList.innerHTML = '';
   conversionHistory.forEach((item, index) => {
     const timeAgo = formatTimeAgo(item.timestamp);
-    const row = document.createElement('div');
+    const row = document.createElement('button');
     row.className = 'recent-item';
+    row.type = 'button';
     row.dataset.index = index.toString();
 
     const textDiv = document.createElement('div');
@@ -779,6 +781,7 @@ function hideWarning() {
 }
 
 // Utilities
+// eslint-disable-next-line no-unused-vars
 function escapeHtml(unsafe) {
   if (unsafe === undefined || unsafe === null) {
     return '';
