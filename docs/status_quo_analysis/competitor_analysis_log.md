@@ -1,6 +1,6 @@
 # Status Quo & Competitor Analysis Log
 
-**Last Updated:** 2025-05-20
+**Last Updated:** 2026-01-14
 **Maintainer:** Jules
 **Purpose:** A running log of competitor analysis and market positioning for the Tools Monorepo projects.
 
@@ -126,3 +126,69 @@
 - **Type:** Analysis Software.
 - **Features:** Processing Motion Capture data.
 - **Gap:** Focuses on data processing, whereas Aurora focuses on *simulation* and *modeling*.
+
+---
+
+## 5. Research & Education: Star Wars RRT Path Planner
+
+**Status Quo:**
+- **Tech Stack:** Python (PyGame, PyOpenGL) & MATLAB (App Designer).
+- **Core Value:** "Edutainment" focused visualization of RRT algorithms, high-performance Python implementation vs Scientific MATLAB version.
+- **Form Factor:** Desktop Application / Simulation.
+
+### Competitor Landscape (By Estimated Market Share)
+
+#### 1. OMPL (Open Motion Planning Library)
+- **Type:** Standard Library.
+- **Tech:** C++.
+- **Features:** The academic and industrial standard for sampling-based algorithms (RRT, PRM, EST).
+- **Gap:** OMPL is a backend library without inherent visualization; Aurora provides a "gamified" visual experience out of the box.
+
+#### 2. MoveIt! (ROS)
+- **Type:** Robotics Framework.
+- **Tech:** C++/Python (ROS).
+- **Features:** Full robotic manipulation pipeline (Inverse Kinematics + Path Planning + Collision Checking).
+- **Gap:** MoveIt! has a steep learning curve and requires ROS; Aurora is a standalone, lightweight tool for algorithm demonstration.
+
+#### 3. MATLAB Robotics System Toolbox
+- **Type:** Commercial Toolbox.
+- **Tech:** MATLAB.
+- **Features:** Robust, validated algorithms for industry.
+- **Gap:** Expensive commercial license; Aurora's Python version is free and open source.
+
+#### 4. Game Engines (Unity/Unreal Navigation)
+- **Type:** Game Middleware.
+- **Tech:** C#/C++.
+- **Features:** NavMesh based pathfinding (A* variants).
+- **Gap:** Game engines typically use A* on NavMeshes; Aurora specifically visualizes RRT/Sampling-based methods which are better for high-dimensional configuration spaces (like robotic arms).
+
+---
+
+## 6. Industrial Tool: Data Processor
+
+**Status Quo:**
+- **Tech Stack:** Python (CustomTkinter, SciPy, Pandas).
+- **Core Value:** Standalone GUI for Chemical/Industrial signal processing (filtering, smoothing, FFT) without needing coding skills.
+- **Form Factor:** Desktop GUI & CLI.
+
+### Competitor Landscape (By Estimated Market Share)
+
+#### 1. Microsoft Excel
+- **Type:** Spreadsheet.
+- **Features:** Ubiquitous, basic charts.
+- **Gap:** Excel struggles with massive time-series datasets and lacks advanced signal processing (FFT, Savitzky-Golay) out of the box.
+
+#### 2. Seeq
+- **Type:** Advanced Analytics for Process Manufacturing.
+- **Features:** Enterprise-grade time-series search, cleansing, and context adding.
+- **Gap:** Seeq is an expensive enterprise SaaS; Aurora Data Processor is a lightweight, local tool for quick ad-hoc analysis.
+
+#### 3. TrendMiner
+- **Type:** Self-Service Industrial Analytics.
+- **Features:** Pattern recognition, predictive maintenance.
+- **Gap:** Similar to Seeq, high cost and complexity.
+
+#### 4. Python Notebooks (Jupyter/Pandas)
+- **Type:** Development Environment.
+- **Features:** Infinite flexibility.
+- **Gap:** Requires programming knowledge. Aurora Data Processor wraps this power in a GUI accessible to non-coding process engineers.
