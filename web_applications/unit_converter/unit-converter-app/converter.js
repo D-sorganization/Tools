@@ -943,9 +943,7 @@ function searchUnits(query, category = null) {
 
   // Select the appropriate list to search
   // Optimization: If category is provided, only search within that category
-  const candidates = category
-    ? _SEARCH_CACHE.byCategory[category] || []
-    : _SEARCH_CACHE.flat;
+  const candidates = category ? _SEARCH_CACHE.byCategory[category] || [] : _SEARCH_CACHE.flat;
 
   // Use cache for searching
   for (const item of candidates) {
