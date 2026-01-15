@@ -794,14 +794,14 @@ function hideWarning() {
 // eslint-disable-next-line no-unused-vars
 function escapeHtml(unsafe) {
   if (unsafe === undefined || unsafe === null) {
-    return "";
+    return '';
   }
   return String(unsafe)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 function formatNumber(num) {
