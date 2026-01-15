@@ -358,6 +358,8 @@ const UNIT_ALIASES = {
 let _REVERSE_ALIASES_CACHE = null;
 // Optimization: Cache for flattened searchable units
 let _SEARCH_CACHE = null;
+// ⚡ Bolt Optimization: Cache for unit category lookup
+let _UNIT_CATEGORY_CACHE = {};
 
 // Security: Prevent prototype pollution
 function isValidKey(key) {
@@ -437,6 +439,7 @@ class CustomUnitManager {
     }
 
     _SEARCH_CACHE = null; // Invalidate search cache
+    _UNIT_CATEGORY_CACHE = {}; // ⚡ Bolt Optimization: Invalidate category cache
     this.saveToStorage();
     return { success: true, message: `Custom unit '${unit}' added to ${category}` };
   }
@@ -460,6 +463,7 @@ class CustomUnitManager {
     }
 
     _SEARCH_CACHE = null; // Invalidate search cache
+    _UNIT_CATEGORY_CACHE = {}; // ⚡ Bolt Optimization: Invalidate category cache
     this.saveToStorage();
     return { success: true, message: `Custom unit '${unit}' removed` };
   }
@@ -544,6 +548,7 @@ class CustomUnitManager {
         });
         _REVERSE_ALIASES_CACHE = null; // Invalidate cache
         _SEARCH_CACHE = null; // Invalidate search cache
+        _UNIT_CATEGORY_CACHE = {}; // ⚡ Bolt Optimization: Invalidate category cache
       }
     } catch {
       // Silent fail for localStorage errors
@@ -567,6 +572,7 @@ class CustomUnitManager {
 
     _REVERSE_ALIASES_CACHE = null; // Invalidate cache
     _SEARCH_CACHE = null; // Invalidate search cache
+    _UNIT_CATEGORY_CACHE = {}; // ⚡ Bolt Optimization: Invalidate category cache
     this.customUnits = {};
     this.customAliases = {};
     localStorage.removeItem('customUnits');
@@ -788,30 +794,41 @@ function getCategory(unit) {
   // Normalize unit
   unit = UNIT_ALIASES[unit.toLowerCase()] || unit;
 
+  // ⚡ Bolt Optimization: Check cache first
+  if (_UNIT_CATEGORY_CACHE[unit]) {
+    return _UNIT_CATEGORY_CACHE[unit];
+  }
+
+  let result = null;
+
   // Check temperature first
   if (['K', 'C', 'F', 'R'].includes(unit.toUpperCase())) {
-    return 'temperature';
+    result = 'temperature';
   }
-
   // Check gas flow
-  const gasFlowUnits = ['SCFM', 'ACFM', 'NM3/HR', 'NM³/HR'];
-  if (gasFlowUnits.includes(unit.toUpperCase())) {
-    return 'gas_flow';
+  else if (['SCFM', 'ACFM', 'NM3/HR', 'NM³/HR'].includes(unit.toUpperCase())) {
+    result = 'gas_flow';
   }
-
   // Check heating value
-  if (HEATING_VALUE_FACTORS[unit] !== undefined) {
-    return 'heating_value';
+  else if (HEATING_VALUE_FACTORS[unit] !== undefined) {
+    result = 'heating_value';
   }
-
-  // Search in conversion factors
-  for (const [category, units] of Object.entries(CONVERSION_FACTORS)) {
-    if (unit in units) {
-      return category;
+  else {
+    // Search in conversion factors
+    for (const [category, units] of Object.entries(CONVERSION_FACTORS)) {
+      if (unit in units) {
+        result = category;
+        break;
+      }
     }
   }
 
-  return null;
+  // Cache the result (even if null)
+  if (result) {
+    _UNIT_CATEGORY_CACHE[unit] = result;
+  }
+
+  return result;
 }
 
 // Main conversion function
