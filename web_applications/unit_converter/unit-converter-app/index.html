@@ -275,9 +275,9 @@
               class="input-number input-sm"
               placeholder="e.g., 0.717 for methane"
               step="any"
-              aria-describedby="heatingValHint"
+              aria-describedby="heatingValHint gasDensityHint"
             />
-            <div class="input-hint">
+            <div class="input-hint" id="gasDensityHint">
               Common values: Air (1.29), Methane (0.72), H₂ (0.09), Syngas (~0.89)
             </div>
           </div>
@@ -484,8 +484,9 @@
                 placeholder="1 [your unit] = ? [reference]"
                 step="any"
                 required
+                aria-describedby="conversionFactorHint"
               />
-              <div class="input-hint">
+              <div class="input-hint" id="conversionFactorHint">
                 How many reference units equal 1 of your unit?<br />
                 Example: 1 furlong = 201.168 meters → factor = 201.168
               </div>
@@ -498,8 +499,9 @@
                 id="customAliases"
                 class="input-text"
                 placeholder="e.g., furlongs, fl"
+                aria-describedby="customAliasesHint"
               />
-              <div class="input-hint">Comma-separated alternative names</div>
+              <div class="input-hint" id="customAliasesHint">Comma-separated alternative names</div>
             </div>
 
             <button id="addCustomUnit" class="button button-primary">Add Custom Unit</button>
