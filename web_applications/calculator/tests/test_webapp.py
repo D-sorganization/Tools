@@ -41,6 +41,13 @@ class TestWebApp(unittest.TestCase):
         response = self.client.post("/api/calculate", json=payload)
         self.assertEqual(response.status_code, 400)
 
+    def test_security_headers_permissions_policy(self) -> None:
+        """Verify that the Permissions-Policy header is present and robust."""
+        response = self.client.get("/")
+        self.assertIn("Permissions-Policy", response.headers)
+        expected_policy = "geolocation=(), camera=(), microphone=(), payment=(), usb=()"
+        self.assertEqual(response.headers["Permissions-Policy"], expected_policy)
+
 
 if __name__ == "__main__":
     unittest.main()
