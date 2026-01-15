@@ -462,7 +462,6 @@ class TI89Calculator:
         if expression:
             # Strip whitespace for accurate numeric checks
             clean_expr = expression.strip()
-
             # Check for integer
             if clean_expr.isdigit():
                 return sp.Integer(int(clean_expr))
