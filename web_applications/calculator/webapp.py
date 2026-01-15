@@ -70,7 +70,7 @@ def create_app() -> Flask:
         response.headers["Strict-Transport-Security"] = (
             "max-age=31536000; includeSubDomains"
         )
-        # Permissions-Policy: Disable sensitive features
+        # Permissions Policy - Disable sensitive features to reduce attack surface
         response.headers["Permissions-Policy"] = (
             "geolocation=(), camera=(), microphone=(), payment=(), usb=()"
         )
