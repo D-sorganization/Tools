@@ -7,8 +7,10 @@ Enhanced performance with real-time rendering and GPU acceleration
 import logging
 import random
 from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 import pygame
 import trimesh
 from OpenGL.GL import (
@@ -45,7 +47,7 @@ class Obstacle:
     """Obstacle representation"""
 
     type: int  # 0=sphere, 1=cube
-    position: np.ndarray
+    position: npt.NDArray[np.float64]
     size: float
     color: tuple[float, float, float]
 
@@ -54,9 +56,9 @@ class Obstacle:
 class Ship:
     """Ship representation"""
 
-    position: np.ndarray
-    orientation: np.ndarray
-    velocity: np.ndarray
+    position: npt.NDArray[np.float64]
+    orientation: npt.NDArray[np.float64]
+    velocity: npt.NDArray[np.float64]
     model: trimesh.Trimesh | None = None
     color: tuple[float, float, float] = (0.8, 0.8, 0.8)
 
@@ -64,7 +66,9 @@ class Ship:
 class RRTPlanner:
     """High-performance RRT path planner with GPU acceleration"""
 
-    def __init__(self, bounds: np.ndarray, max_iterations: int = 5000) -> None:
+    def __init__(
+        self, bounds: npt.NDArray[np.float64], max_iterations: int = 5000
+    ) -> None:
         """Initialize RRT planner with search bounds and iteration limit"""
         self.bounds = bounds
         self.max_iterations = max_iterations
@@ -73,8 +77,11 @@ class RRTPlanner:
         self.goal_bias = 0.2
 
     def plan_path(
-        self, start: np.ndarray, goal: np.ndarray, obstacles: list[Obstacle]
-    ) -> np.ndarray | None:
+        self,
+        start: npt.NDArray[np.float64],
+        goal: npt.NDArray[np.float64],
+        obstacles: list[Obstacle],
+    ) -> npt.NDArray[np.float64] | None:
         """Plan path using RRT algorithm"""
         if self._check_collision(start, obstacles):
             return None
@@ -125,7 +132,9 @@ class RRTPlanner:
 
         return None
 
-    def _check_collision(self, point: np.ndarray, obstacles: list[Obstacle]) -> bool:
+    def _check_collision(
+        self, point: npt.NDArray[np.float64], obstacles: list[Obstacle]
+    ) -> bool:
         """Fast collision checking using vectorized operations"""
         for obstacle in obstacles:
             if obstacle.type == 0:  # Sphere
@@ -135,7 +144,9 @@ class RRTPlanner:
                 return True
         return False
 
-    def _extract_path(self, nodes: list[np.ndarray], goal_idx: int) -> np.ndarray:
+    def _extract_path(
+        self, nodes: list[npt.NDArray[np.float64]], goal_idx: int
+    ) -> npt.NDArray[np.float64]:
         """Extract path from RRT tree"""
         path = []
         current_idx = goal_idx
@@ -150,7 +161,7 @@ class RRTPlanner:
 class PursuitAI:
     """Intelligent pursuit AI with advanced behavior"""
 
-    def __init__(self, bounds: np.ndarray) -> None:
+    def __init__(self, bounds: npt.NDArray[np.float64]) -> None:
         """Initialize pursuit AI with search bounds"""
         self.bounds = bounds
         self.evasion_radius = 0.15
@@ -160,7 +171,7 @@ class PursuitAI:
 
     def update_target_behavior(
         self, target: Ship, pursuer: Ship, obstacles: list[Obstacle]
-    ) -> np.ndarray:
+    ) -> npt.NDArray[np.float64]:
         """Update target ship behavior (evade or move to goal)"""
         distance = np.linalg.norm(target.position - pursuer.position)
 
@@ -185,7 +196,7 @@ class PursuitAI:
 
         return new_pos
 
-    def _generate_random_goal(self) -> np.ndarray:
+    def _generate_random_goal(self) -> npt.NDArray[np.float64]:
         """Generate random goal within bounds"""
         return np.array(
             [
@@ -219,7 +230,7 @@ class StarWarsRenderer:
         # Starfield
         self.stars = self._generate_starfield(1000)
 
-    def _generate_starfield(self, num_stars: int) -> np.ndarray:
+    def _generate_starfield(self, num_stars: int) -> npt.NDArray[np.float64]:
         """Generate dynamic starfield"""
         return np.random.randn(num_stars, 3) * 3
 
@@ -227,7 +238,7 @@ class StarWarsRenderer:
         self,
         ships: list[Ship],
         obstacles: list[Obstacle],
-        paths: list[np.ndarray],
+        paths: list[npt.NDArray[np.float64]],
         camera_mode: str = "cinematic",
     ) -> None:
         """Render a single frame at 60 FPS"""
@@ -373,7 +384,7 @@ class StarWarsRenderer:
         glVertex3f(size, size / 2, 0)  # Left wing
         glEnd()
 
-    def _render_path(self, path: np.ndarray) -> None:
+    def _render_path(self, path: npt.NDArray[np.float64]) -> None:
         """Render path as line"""
         glDisable(GL_LIGHTING)
         glColor3f(1.0, 1.0, 0.0)  # Yellow path
@@ -396,9 +407,9 @@ class StarWarsRRTApp:
         self.renderer = StarWarsRenderer()
 
         # Game state
-        self.ships = []
-        self.obstacles = []
-        self.paths = []
+        self.ships: list[Ship] = []
+        self.obstacles: list[Obstacle] = []
+        self.paths: list[npt.NDArray[np.float64]] = []
         self.mode = "single"  # "single" or "pursuit"
         self.running = True
         self.clock = pygame.time.Clock()
@@ -406,7 +417,7 @@ class StarWarsRRTApp:
         # Load STL models
         self.ship_models = self._load_ship_models()
 
-    def _load_ship_models(self) -> dict:
+    def _load_ship_models(self) -> dict[str, Any]:
         """Load STL models for ships"""
         models = {}
         try:

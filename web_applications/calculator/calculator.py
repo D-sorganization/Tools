@@ -125,41 +125,47 @@ class TI89Calculator:
 
     @staticmethod
     def _validate_expression_tree(expr: object) -> None:
-        """Walk the expression tree to validate operations that might cause DoS."""
-        if isinstance(expr, sp.Pow):
-            b, e = expr.base, expr.exp
-            if isinstance(b, sp.Number) and isinstance(e, sp.Number):
-                bf, ef = None, None
-                try:
-                    bf = float(b)
-                    ef = float(e)
-                except (ValueError, TypeError, OverflowError):
-                    pass
+        """
+        Walk the expression tree iteratively to validate operations that might cause DoS.
+        Iterative approach prevents RecursionError on deep trees and optimizes performance.
+        """
+        stack = [expr]
 
-                if bf is not None and ef is not None:
-                    if abs(bf) > 1 and ef > 0:
-                        digits = ef * math.log10(abs(bf))
-                        if digits > 6000:
-                            raise ValueError(
-                                "Exponentiation result exceeds safety limits"
-                            )
+        while stack:
+            current = stack.pop()
 
-        # Handle containers (lists, tuples, dicts) returned by some functions
-        if isinstance(expr, dict):
-            for key, value in expr.items():
-                TI89Calculator._validate_expression_tree(key)
-                TI89Calculator._validate_expression_tree(value)
-            return
+            if isinstance(current, sp.Pow):
+                b, e = current.base, current.exp
+                if isinstance(b, sp.Number) and isinstance(e, sp.Number):
+                    bf, ef = None, None
+                    try:
+                        bf = float(b)
+                        ef = float(e)
+                    except (ValueError, TypeError, OverflowError):
+                        pass
 
-        if isinstance(expr, list | tuple):
-            for item in expr:
-                TI89Calculator._validate_expression_tree(item)
-            return
+                    if bf is not None and ef is not None:
+                        if abs(bf) > 1 and ef > 0:
+                            digits = ef * math.log10(abs(bf))
+                            if digits > 6000:
+                                raise ValueError(
+                                    "Exponentiation result exceeds safety limits"
+                                )
 
-        # Recursively check children if it's a SymPy object
-        if hasattr(expr, "args"):
-            for arg in expr.args:
-                TI89Calculator._validate_expression_tree(arg)
+            # Handle containers (lists, tuples, dicts) returned by some functions
+            if isinstance(current, dict):
+                for key, value in current.items():
+                    stack.append(key)
+                    stack.append(value)
+                continue
+
+            if isinstance(current, list | tuple):
+                stack.extend(current)
+                continue
+
+            # Check children if it's a SymPy object
+            if hasattr(current, "args"):
+                stack.extend(current.args)
 
     @property
     def allowed_functions(self) -> Mapping[str, object]:
@@ -462,7 +468,6 @@ class TI89Calculator:
         if expression:
             # Strip whitespace for accurate numeric checks
             clean_expr = expression.strip()
-
             # Check for integer
             if clean_expr.isdigit():
                 return sp.Integer(int(clean_expr))
