@@ -19,12 +19,13 @@ import os
 import tkinter as tk
 from collections.abc import Callable
 from tkinter import colorchooser, filedialog, messagebox, simpledialog
-from typing import Any
+from typing import Any, cast
 
 import customtkinter as ctk
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
@@ -232,6 +233,13 @@ class CSVProcessorApp(ctk.CTk):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+        self._update_pending = None
+        self._resize_timer = None
+        self.trendline_selection_active = False
+        self.trendline_selection_start: float | None = None
+        self.trendline_selection_end: float | None = None
+        self.saved_zoom_state: dict[str, Any] | None = None
+        self.plots_signal_vars: dict[str, Any] = {}
 
         # Layout persistence variables
         self.layout_config_file = os.path.join(
@@ -2644,7 +2652,7 @@ class CSVProcessorApp(ctk.CTk):
                 name = var["name"]
 
                 # Create a safe evaluation environment
-                safe_dict = {}
+                safe_dict: dict[str, Any] = {}
 
                 # Add all numeric columns to the safe dictionary
                 for col in df.columns:
@@ -3737,7 +3745,7 @@ class CSVProcessorApp(ctk.CTk):
                 transform=self.plot_ax.transAxes,
             )
             self.plot_ax.set_title("Select a file to begin plotting")
-            self.plot_canvas.draw()
+            self.plot_canvas.draw()  # type: ignore[no-untyped-call]
 
             toolbar = NavigationToolbar2Tk(
                 self.plot_canvas,
@@ -4436,7 +4444,7 @@ class CSVProcessorApp(ctk.CTk):
                 va="center",
                 wrap=True,
             )
-            self.plot_canvas.draw()
+            self.plot_canvas.draw()  # type: ignore[no-untyped-call]
             self.status_label.configure(text="Error loading data - check console")
             return
 
@@ -4448,7 +4456,7 @@ class CSVProcessorApp(ctk.CTk):
                 ha="center",
                 va="center",
             )
-            self.plot_canvas.draw()
+            self.plot_canvas.draw()  # type: ignore[no-untyped-call]
             return
 
         # Validate x_axis_col
@@ -4464,7 +4472,7 @@ class CSVProcessorApp(ctk.CTk):
                     ha="center",
                     va="center",
                 )
-                self.plot_canvas.draw()
+                self.plot_canvas.draw()  # type: ignore[no-untyped-call]
                 return
 
         # Get signals to plot
@@ -4480,7 +4488,7 @@ class CSVProcessorApp(ctk.CTk):
                 ha="center",
                 va="center",
             )
-            self.plot_canvas.draw()
+            self.plot_canvas.draw()  # type: ignore[no-untyped-call]
             return
 
         # Now do the actual plotting with more granular error handling
@@ -4526,7 +4534,7 @@ class CSVProcessorApp(ctk.CTk):
                     # Get color
                     color_scheme = self.color_scheme_var.get()
                     if color_scheme == "Default":
-                        color = plt.cm.tab10(i % 10)
+                        color = cast(Any, plt.cm).tab10(i % 10)
                     elif color_scheme == "Colorblind-friendly":
                         colors = [
                             "#0173B2",
@@ -4547,7 +4555,7 @@ class CSVProcessorApp(ctk.CTk):
                     label = self.custom_legend_entries.get(signal, signal)
                     line_width = self.line_width_var.get()
 
-                    self.plot_ax.plot(
+                    self.plot_ax.plot(  # type: ignore[no-untyped-call]
                         signal_data[x_axis_col],
                         signal_data[signal],
                         label=label,
@@ -4559,7 +4567,7 @@ class CSVProcessorApp(ctk.CTk):
                     # Show both raw and filtered if requested
                     if show_both and plot_filter != "None":
                         raw_label = f"{label} (raw)"
-                        self.plot_ax.plot(
+                        self.plot_ax.plot(  # type: ignore[no-untyped-call]
                             df[x_axis_col],
                             df[signal],
                             label=raw_label,
@@ -4572,7 +4580,7 @@ class CSVProcessorApp(ctk.CTk):
                     if compare_filters and plot_filter != "None":
                         # Plot raw data first
                         raw_label = f"{label} (raw)"
-                        self.plot_ax.plot(
+                        self.plot_ax.plot(  # type: ignore[no-untyped-call]
                             df[x_axis_col],
                             df[signal],
                             label=raw_label,
@@ -4590,7 +4598,7 @@ class CSVProcessorApp(ctk.CTk):
                                 x_axis_col,
                             )
                             filtered_label = f"{label} ({plot_filter})"
-                            self.plot_ax.plot(
+                            self.plot_ax.plot(  # type: ignore[no-untyped-call]
                                 filtered_df[x_axis_col],
                                 filtered_df[signal],
                                 label=filtered_label,
@@ -4639,7 +4647,9 @@ class CSVProcessorApp(ctk.CTk):
 
             # Format datetime axis if applicable
             if pd.api.types.is_datetime64_any_dtype(df[x_axis_col]):
-                self.plot_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
+                self.plot_ax.xaxis.set_major_formatter(
+                    mdates.DateFormatter("%H:%M")  # type: ignore[no-untyped-call]
+                )
                 self.plot_ax.tick_params(axis="x", rotation=0)
 
             # Smart zoom handling
@@ -4672,7 +4682,7 @@ class CSVProcessorApp(ctk.CTk):
                     print(f"Warning: Could not apply zoom state - {e}")
 
             # Force canvas update
-            self.plot_canvas.draw_idle()
+            self.plot_canvas.draw_idle()  # type: ignore[no-untyped-call]
             self.status_label.configure(text="Plot updated successfully")
 
         except Exception as e:
@@ -4691,10 +4701,10 @@ class CSVProcessorApp(ctk.CTk):
                 va="center",
                 wrap=True,
             )
-            self.plot_canvas.draw()
+            self.plot_canvas.draw()  # type: ignore[no-untyped-call]
             self.status_label.configure(text="Plot error - check console for details")
 
-    def _ensure_plot_canvas_ready(self) -> None:
+    def _ensure_plot_canvas_ready(self) -> bool:
         """Ensure plot canvas is properly initialized."""
         if not hasattr(self, "plot_canvas") or self.plot_canvas is None:
             print("ERROR: Plot canvas not initialized!")
@@ -4706,7 +4716,7 @@ class CSVProcessorApp(ctk.CTk):
 
         # Force a draw to ensure canvas is ready
         try:
-            self.plot_canvas.draw()
+            self.plot_canvas.draw()  # type: ignore[no-untyped-call]
             return True
         except Exception as e:
             print(f"ERROR: Canvas draw failed - {e}")
@@ -4770,8 +4780,12 @@ class CSVProcessorApp(ctk.CTk):
 
                     # Calculate sampling frequency from time data
                     if pd.api.types.is_datetime64_any_dtype(df[x_axis_col]):
-                        time_diff = df[x_axis_col].diff().dt.total_seconds()
-                        fs = 1.0 / time_diff.median() if time_diff.median() > 0 else 1.0
+                        time_delta_series = df[x_axis_col].diff().dt.total_seconds()
+                        fs = (
+                            1.0 / time_delta_series.median()
+                            if time_delta_series.median() > 0
+                            else 1.0
+                        )
                     else:
                         # Assume uniform sampling
                         fs = 1.0
@@ -4790,9 +4804,7 @@ class CSVProcessorApp(ctk.CTk):
                     )
 
                     # Apply filter
-                    signal_data = (
-                        df[signal].fillna(method="ffill").fillna(method="bfill")
-                    )
+                    signal_data = df[signal].ffill().bfill()
                     filtered_df[signal] = filtfilt(b, a, signal_data)
 
                 except ImportError:
@@ -4857,7 +4869,7 @@ class CSVProcessorApp(ctk.CTk):
                 threshold = float(self.plot_zscore_threshold_entry.get() or "3.0")
                 method = self.plot_zscore_method_menu.get()
 
-                signal_data = df[signal].fillna(method="ffill").fillna(method="bfill")
+                signal_data = df[signal].ffill().bfill()
                 mean_val = signal_data.mean()
                 std_val = signal_data.std()
                 z_scores = np.abs((signal_data - mean_val) / std_val)
@@ -4888,9 +4900,7 @@ class CSVProcessorApp(ctk.CTk):
                 try:
                     from scipy.signal import savgol_filter
 
-                    signal_data = (
-                        df[signal].fillna(method="ffill").fillna(method="bfill")
-                    )
+                    signal_data = df[signal].ffill().bfill()
                     filtered_df[signal] = savgol_filter(signal_data, window, polyorder)
                 except ImportError:
                     # Fallback to simple smoothing if scipy not available
@@ -4906,9 +4916,16 @@ class CSVProcessorApp(ctk.CTk):
 
         return filtered_df
 
-    def _add_trendline(self, df: pd.DataFrame, signal: str, x_axis_col: str) -> None:
+    def _add_trendline(
+        self,
+        df: pd.DataFrame,
+        x_axis_col: str,
+        signal: str,
+        trend_type: str | None = None,
+    ) -> None:
         """Add trendline to the plot."""
-        trend_type = self.trendline_type_var.get()
+        if trend_type is None:
+            trend_type = self.trendline_type_var.get()
 
         if trend_type == "None":
             return
@@ -5003,7 +5020,7 @@ class CSVProcessorApp(ctk.CTk):
 
         try:
             if trend_type == "Linear":
-                coeffs = np.polyfit(x_numeric, y_data, 1)
+                coeffs = np.polyfit(x_numeric, cast(npt.NDArray[np.float64], y_data), 1)
                 trend = np.poly1d(coeffs)
                 trendline = trend(x_numeric)
                 equation = f"y = {coeffs[0]:.4f}x + {coeffs[1]:.4f}"
@@ -5049,7 +5066,9 @@ class CSVProcessorApp(ctk.CTk):
             elif trend_type == "Polynomial":
                 order = int(self.poly_order_entry.get() or "2")
                 order = max(2, min(6, order))  # Limit to 2-6
-                coeffs = np.polyfit(x_numeric, y_data, order)
+                coeffs = np.polyfit(
+                    x_numeric, cast(npt.NDArray[np.float64], y_data), order
+                )
                 trend = np.poly1d(coeffs)
                 trendline = trend(x_numeric)
                 # Build equation string
@@ -5066,7 +5085,7 @@ class CSVProcessorApp(ctk.CTk):
                 equation = f"Polynomial (order {order}): " + " + ".join(terms)
 
             # Plot trendline - use the original x_data for plotting
-            self.plot_ax.plot(
+            self.plot_ax.plot(  # type: ignore[no-untyped-call]
                 plot_df[x_axis_col],
                 trendline,
                 "--",
@@ -5094,7 +5113,7 @@ class CSVProcessorApp(ctk.CTk):
             self.trendline_textbox.insert("1.0", equation)
 
             # Redraw the canvas
-            self.plot_canvas.draw()
+            self.plot_canvas.draw()  # type: ignore[no-untyped-call]
 
         except Exception as e:
             messagebox.showerror("Trendline Error", f"Error adding trendline: {e!s}")
@@ -5836,7 +5855,7 @@ COMMON MISTAKES TO AVOID:
     def _load_selected_config(self) -> None:
         """Load the selected configuration file."""
         try:
-            selection = self.config_listbox.curselection()
+            selection = self.config_listbox.curselection()  # type: ignore[no-untyped-call]
             if not selection:
                 messagebox.showwarning(
                     "Warning",
@@ -5879,7 +5898,7 @@ COMMON MISTAKES TO AVOID:
     def _delete_selected_config(self) -> None:
         """Delete the selected configuration file."""
         try:
-            selection = self.config_listbox.curselection()
+            selection = self.config_listbox.curselection()  # type: ignore[no-untyped-call]
             if not selection:
                 messagebox.showwarning(
                     "Warning",
@@ -6544,7 +6563,7 @@ COMMON MISTAKES TO AVOID:
 
     def _update_selected_plot(self) -> None:
         """Update selected plot in the list."""
-        selection = self.plots_listbox.curselection()
+        selection = self.plots_listbox.curselection()  # type: ignore[no-untyped-call]
         if not selection:
             messagebox.showwarning("Warning", "Please select a plot to update.")
             return
@@ -6590,7 +6609,7 @@ COMMON MISTAKES TO AVOID:
 
     def _on_plot_select(self, event: Any) -> None:
         """Handle plot selection in listbox."""
-        selection = self.plots_listbox.curselection()
+        selection = self.plots_listbox.curselection()  # type: ignore[no-untyped-call]
         if not selection:
             return
 
@@ -6618,7 +6637,7 @@ COMMON MISTAKES TO AVOID:
 
     def _load_selected_plot(self) -> None:
         """Load selected plot configuration."""
-        selection = self.plots_listbox.curselection()
+        selection = self.plots_listbox.curselection()  # type: ignore[no-untyped-call]
         if not selection:
             messagebox.showwarning("Warning", "Please select a plot to load.")
             return
@@ -6644,7 +6663,7 @@ COMMON MISTAKES TO AVOID:
 
     def _delete_selected_plot(self) -> None:
         """Delete selected plot from list."""
-        selection = self.plots_listbox.curselection()
+        selection = self.plots_listbox.curselection()  # type: ignore[no-untyped-call]
         if not selection:
             messagebox.showwarning("Warning", "Please select a plot to delete.")
             return
@@ -6932,19 +6951,33 @@ COMMON MISTAKES TO AVOID:
                 # Get color scheme
                 color_scheme = self.color_scheme_var.get()
                 if color_scheme == "Auto (Matplotlib)":
-                    colors = plt.cm.tab10(np.linspace(0, 1, len(signals_to_plot)))
+                    colors = cast(Any, plt.cm).tab10(
+                        np.linspace(0, 1, len(signals_to_plot))
+                    )
                 elif color_scheme == "Viridis":
-                    colors = plt.cm.viridis(np.linspace(0, 1, len(signals_to_plot)))
+                    colors = cast(Any, plt.cm).viridis(
+                        np.linspace(0, 1, len(signals_to_plot))
+                    )
                 elif color_scheme == "Plasma":
-                    colors = plt.cm.plasma(np.linspace(0, 1, len(signals_to_plot)))
+                    colors = cast(Any, plt.cm).plasma(
+                        np.linspace(0, 1, len(signals_to_plot))
+                    )
                 elif color_scheme == "Cool":
-                    colors = plt.cm.cool(np.linspace(0, 1, len(signals_to_plot)))
+                    colors = cast(Any, plt.cm).cool(
+                        np.linspace(0, 1, len(signals_to_plot))
+                    )
                 elif color_scheme == "Warm":
-                    colors = plt.cm.autumn(np.linspace(0, 1, len(signals_to_plot)))
+                    colors = cast(Any, plt.cm).autumn(
+                        np.linspace(0, 1, len(signals_to_plot))
+                    )
                 elif color_scheme == "Rainbow":
-                    colors = plt.cm.rainbow(np.linspace(0, 1, len(signals_to_plot)))
+                    colors = cast(Any, plt.cm).rainbow(
+                        np.linspace(0, 1, len(signals_to_plot))
+                    )
                 else:  # Custom Colors - default to tab10
-                    colors = plt.cm.Set1(np.linspace(0, 1, len(signals_to_plot)))
+                    colors = cast(Any, plt.cm).Set1(
+                        np.linspace(0, 1, len(signals_to_plot))
+                    )
 
                 # Plot each selected signal
                 for i, signal in enumerate(signals_to_plot):
@@ -6955,11 +6988,11 @@ COMMON MISTAKES TO AVOID:
                     plot_style = style_args.copy()
                     plot_style["color"] = colors[i]
                     signal_label = self.custom_legend_entries.get(signal, signal)
-                    self.plot_ax.plot(
+                    self.plot_ax.plot(  # type: ignore[no-untyped-call]
                         plot_df[time_col],
                         plot_df[signal],
                         label=signal_label,
-                        **plot_style,
+                        **cast(dict[str, Any], plot_style),
                     )
 
                 # Add trendline if selected
@@ -6971,8 +7004,8 @@ COMMON MISTAKES TO AVOID:
                     ):
                         self._add_trendline(
                             filtered_df,
-                            selected_trendline_signal,
                             time_col,
+                            selected_trendline_signal,
                         )
 
             # Apply custom labels and title
@@ -6999,11 +7032,13 @@ COMMON MISTAKES TO AVOID:
 
             if pd.api.types.is_datetime64_any_dtype(filtered_df[time_col]):
                 # Use simpler HH:MM format for cleaner plot appearance
-                self.plot_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
+                self.plot_ax.xaxis.set_major_formatter(
+                    mdates.DateFormatter("%H:%M")  # type: ignore[no-untyped-call]
+                )
                 # Keep labels horizontal for better readability
                 self.plot_ax.tick_params(axis="x", rotation=0)
 
-            self.plot_canvas.draw()
+            self.plot_canvas.draw()  # type: ignore[no-untyped-call]
 
         except Exception as e:
             messagebox.showerror(
@@ -7047,8 +7082,8 @@ COMMON MISTAKES TO AVOID:
             xlim = self.plot_ax.get_xlim()
 
             # Convert matplotlib date numbers to datetime
-            start_datetime = mdates.num2date(xlim[0])
-            end_datetime = mdates.num2date(xlim[1])
+            start_datetime = mdates.num2date(xlim[0])  # type: ignore[no-untyped-call]
+            end_datetime = mdates.num2date(xlim[1])  # type: ignore[no-untyped-call]
 
             # Extract date and time components
             date_str = start_datetime.strftime("%Y-%m-%d")
@@ -7115,8 +7150,8 @@ COMMON MISTAKES TO AVOID:
             xlim = self.plot_ax.get_xlim()
 
             # Convert matplotlib date numbers to datetime
-            start_datetime = mdates.num2date(xlim[0])
-            end_datetime = mdates.num2date(xlim[1])
+            start_datetime = mdates.num2date(xlim[0])  # type: ignore[no-untyped-call]
+            end_datetime = mdates.num2date(xlim[1])  # type: ignore[no-untyped-call]
 
             # Extract date and time components
             date_str = start_datetime.strftime("%Y-%m-%d")
@@ -7158,7 +7193,7 @@ COMMON MISTAKES TO AVOID:
                     if self.saved_plot_view:
                         self.plot_ax.set_xlim(self.saved_plot_view["xlim"])
                         self.plot_ax.set_ylim(self.saved_plot_view["ylim"])
-                        self.plot_canvas.draw()
+                        self.plot_canvas.draw()  # type: ignore[no-untyped-call]
                     else:
                         # Fall back to original home if no saved view
                         self._original_home()
@@ -7299,124 +7334,6 @@ COMMON MISTAKES TO AVOID:
                 )
                 self._refresh_legend_entries()
                 self._on_plot_setting_change()
-
-    def _add_trendline(self) -> None:
-        """Add trendline to plot."""
-        if not hasattr(self, "plot_ax") or not self.plot_ax:
-            messagebox.showerror(
-                "Error",
-                "No plot available. Please create a plot first.",
-            )
-            return
-
-        trendline_signal = self.trendline_signal_var.get()
-        trendline_type = self.trendline_type_var.get()
-
-        if trendline_signal == "Select signal..." or trendline_type == "None":
-            return
-
-        try:
-            # Get current plot data
-            selected_file = self.plot_file_menu.get()
-            if selected_file == "Select a file...":
-                messagebox.showerror("Error", "Please select a file for plotting.")
-                return
-
-            # Find the matching file path
-            file_path = None
-            for path in self.input_file_paths:
-                if os.path.basename(path) == selected_file:
-                    file_path = path
-                    break
-
-            if not file_path:
-                messagebox.showerror("Error", "Selected file not found.")
-                return
-
-            # Load data for trendline
-            df = self._load_data_for_plotting(file_path)
-            if df is None:
-                return
-
-            # Get time and signal data
-            time_col = self.plot_xaxis_menu.get()
-            if time_col not in df.columns or trendline_signal not in df.columns:
-                messagebox.showerror("Error", "Selected columns not found in data.")
-                return
-
-            x_data = df[time_col]
-            y_data = df[trendline_signal]
-
-            # Remove NaN values
-            valid_mask = ~(pd.isna(x_data) | pd.isna(y_data))
-            x_clean = x_data[valid_mask]
-            y_clean = y_data[valid_mask]
-
-            if len(x_clean) < 2:
-                messagebox.showerror(
-                    "Error",
-                    "Not enough valid data points for trendline.",
-                )
-                return
-
-            # Convert datetime to numeric for fitting if needed
-            if pd.api.types.is_datetime64_any_dtype(x_clean):
-                x_numeric = pd.to_numeric(x_clean)
-            else:
-                x_numeric = pd.to_numeric(x_clean, errors="coerce")
-
-            y_numeric = pd.to_numeric(y_clean, errors="coerce")
-
-            # Calculate trendline based on type
-            if trendline_type == "Linear":
-                coeffs = np.polyfit(x_numeric, y_numeric, 1)
-                trendline_y = np.polyval(coeffs, x_numeric)
-                label = f"Linear Trend: {trendline_signal}"
-            elif trendline_type == "Polynomial (2nd)":
-                coeffs = np.polyfit(x_numeric, y_numeric, 2)
-                trendline_y = np.polyval(coeffs, x_numeric)
-                label = f"Poly (2nd) Trend: {trendline_signal}"
-            elif trendline_type == "Polynomial (3rd)":
-                coeffs = np.polyfit(x_numeric, y_numeric, 3)
-                trendline_y = np.polyval(coeffs, x_numeric)
-                label = f"Poly (3rd) Trend: {trendline_signal}"
-            else:
-                return
-
-            # Plot trendline
-            self.plot_ax.plot(
-                x_clean,
-                trendline_y,
-                "--",
-                linewidth=2,
-                label=label,
-                alpha=0.8,
-            )
-            self.plot_ax.legend()
-            self.plot_canvas.draw()
-
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to add trendline: {e!s}")
-
-    def _create_dat_import_right(self, right_panel: ctk.CTkFrame) -> None:
-        """Create right panel for DAT import."""
-        right_panel.grid_rowconfigure(0, weight=1)
-        right_panel.grid_columnconfigure(0, weight=1)
-
-        # Preview frame
-        preview_frame = ctk.CTkFrame(right_panel)
-        preview_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-        preview_frame.grid_columnconfigure(0, weight=1)
-        preview_frame.grid_rowconfigure(1, weight=1)
-
-        ctk.CTkLabel(
-            preview_frame,
-            text="Import Preview",
-            font=ctk.CTkFont(weight="bold"),
-        ).grid(row=0, column=0, padx=10, pady=5, sticky="w")
-
-        self.import_preview_text = ctk.CTkTextbox(preview_frame, height=200)
-        self.import_preview_text.grid(row=1, column=0, padx=10, pady=5, sticky="nsew")
 
     def create_help_tab(self, tab: ctk.CTkFrame) -> None:
         """Create the help tab with comprehensive documentation."""
@@ -7907,7 +7824,7 @@ For additional support or feature requests, please refer to the
         button_frame.pack(fill="x", padx=20, pady=10)
 
         def on_modify() -> None:
-            selection = listbox.curselection()
+            selection = listbox.curselection()  # type: ignore[no-untyped-call]
             if not selection:
                 messagebox.showwarning(
                     "No Selection",
@@ -8354,7 +8271,7 @@ For additional support or feature requests, please refer to the
 
     def _generate_plot_preview(self) -> None:
         """Generate plot preview."""
-        selection = self.plots_listbox.curselection()
+        selection = self.plots_listbox.curselection()  # type: ignore[no-untyped-call]
         if not selection:
             messagebox.showwarning("Warning", "Please select a plot to preview.")
             return
@@ -8385,7 +8302,7 @@ For additional support or feature requests, please refer to the
                     fontsize=12,
                 )
                 self.preview_ax.set_title(f"Preview: {plot_config['name']}")
-                self.preview_canvas.draw()
+                self.preview_canvas.draw()  # type: ignore[no-untyped-call]
                 return
 
             if not file_name or file_name == "Select a file...":
@@ -8425,7 +8342,7 @@ For additional support or feature requests, please refer to the
                     fontsize=10,
                 )
                 self.preview_ax.set_title(f"Preview: {plot_config['name']}")
-                self.preview_canvas.draw()
+                self.preview_canvas.draw()  # type: ignore[no-untyped-call]
                 return
 
             # Get the actual data using the same method as main plotting
@@ -8464,7 +8381,7 @@ For additional support or feature requests, please refer to the
                     fontsize=10,
                 )
                 self.preview_ax.set_title(f"Preview: {plot_config['name']}")
-                self.preview_canvas.draw()
+                self.preview_canvas.draw()  # type: ignore[no-untyped-call]
                 return
 
             # Get time column and available signals
@@ -8492,7 +8409,7 @@ For additional support or feature requests, please refer to the
                     fontsize=12,
                 )
                 self.preview_ax.set_title(f"Preview: {plot_config['name']}")
-                self.preview_canvas.draw()
+                self.preview_canvas.draw()  # type: ignore[no-untyped-call]
                 return
 
             # Apply time range if specified
@@ -8520,7 +8437,7 @@ For additional support or feature requests, please refer to the
                             pass
 
             # Plot all available signals
-            colors = plt.cm.tab10(np.linspace(0, 1, len(available_signals)))
+            colors = cast(Any, plt.cm).tab10(np.linspace(0, 1, len(available_signals)))
             for i, signal in enumerate(available_signals):
                 signal_data = plot_df[[time_col, signal]].dropna()
                 if len(signal_data) > 0:
@@ -8557,10 +8474,12 @@ For additional support or feature requests, please refer to the
             if pd.api.types.is_datetime64_any_dtype(plot_df[time_col]):
                 import matplotlib.dates as mdates
 
-                self.preview_ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
+                self.preview_ax.xaxis.set_major_formatter(
+                    mdates.DateFormatter("%H:%M")  # type: ignore[no-untyped-call]
+                )
                 self.preview_ax.tick_params(axis="x", rotation=0)
 
-            self.preview_canvas.draw()
+            self.preview_canvas.draw()  # type: ignore[no-untyped-call]
 
         except Exception as e:
             self.preview_ax.clear()
@@ -8574,7 +8493,7 @@ For additional support or feature requests, please refer to the
                 fontsize=12,
             )
             self.preview_ax.set_title("Preview Error")
-            self.preview_canvas.draw()
+            self.preview_canvas.draw()  # type: ignore[no-untyped-call]
 
     def _export_all_plots(self) -> None:
         """Export all plots."""
@@ -8916,7 +8835,7 @@ For additional support or feature requests, please refer to the
             if hasattr(self, "plot_ax"):
                 self.plot_ax.set_xlim(self.saved_zoom_state["xlim"])
                 self.plot_ax.set_ylim(self.saved_zoom_state["ylim"])
-                self.plot_canvas.draw()
+                self.plot_canvas.draw()  # type: ignore[no-untyped-call]
                 messagebox.showinfo("Zoom State", "Zoom state restored!")
         else:
             messagebox.showwarning("Warning", "No saved zoom state found.")
@@ -8946,7 +8865,7 @@ For additional support or feature requests, please refer to the
                 y_center - new_y_range / 2,
                 y_center + new_y_range / 2,
             )
-            self.plot_canvas.draw()
+            self.plot_canvas.draw()  # type: ignore[no-untyped-call]
 
     def _zoom_in_25(self) -> None:
         """Zoom in by 25% while maintaining center."""
@@ -8973,9 +8892,9 @@ For additional support or feature requests, please refer to the
                 y_center - new_y_range / 2,
                 y_center + new_y_range / 2,
             )
-            self.plot_canvas.draw()
+            self.plot_canvas.draw()  # type: ignore[no-untyped-call]
 
-    def _preserve_zoom_during_update(self) -> None:
+    def _preserve_zoom_during_update(self) -> dict[str, Any] | None:
         """Store zoom state before plot update and restore after."""
         zoom_state = None
         if hasattr(self, "plot_ax"):
@@ -8990,7 +8909,7 @@ For additional support or feature requests, please refer to the
         if hasattr(self, "plot_ax"):
             try:
                 self.plot_ax.autoscale_view()
-                self.plot_canvas.draw()
+                self.plot_canvas.draw()  # type: ignore[no-untyped-call]
                 self.status_label.configure(text="Plot auto-fitted to data")
             except Exception as e:
                 print(f"Error auto-fitting plot: {e}")

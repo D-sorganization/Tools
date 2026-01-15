@@ -1,18 +1,20 @@
+import sys
+import time
 
 import pytest
 import sympy as sp
-import sys
-import time
+
 from web_applications.calculator.calculator import TI89Calculator
 
+
 class TestDeepRecursion:
-    def test_deep_expression_validation(self):
+    def test_deep_expression_validation(self) -> None:
         """
         Test that _validate_expression_tree handles deep expressions without RecursionError.
         """
         # Create a deep expression manually to bypass parse_expr recursion limits
         # if we were to parse a string.
-        x = sp.Symbol('x')
+        x = sp.Symbol("x")
         deep_expr = x
         # Python's default recursion limit is usually 1000.
         # We go deeper to ensure we rely on iteration (if implemented) or crash (if recursive).
@@ -35,7 +37,9 @@ class TestDeepRecursion:
             try:
                 TI89Calculator._validate_expression_tree(deep_expr)
             except RecursionError:
-                pytest.fail("RecursionError raised during validation of deep expression")
+                pytest.fail(
+                    "RecursionError raised during validation of deep expression"
+                )
             except Exception as e:
                 pytest.fail(f"Validation failed with error: {e}")
 
@@ -46,15 +50,18 @@ class TestDeepRecursion:
             # Restore original limit
             sys.setrecursionlimit(original_limit)
 
-    def test_container_handling(self):
+    def test_container_handling(self) -> None:
         """Test that validation handles nested containers correctly."""
-        expr = {"a": [1, sp.Pow(sp.Symbol('x'), 2, evaluate=False)], "b": (sp.Symbol('y'),)}
+        expr = {
+            "a": [1, sp.Pow(sp.Symbol("x"), 2, evaluate=False)],
+            "b": (sp.Symbol("y"),),
+        }
         # Should not raise
         TI89Calculator._validate_expression_tree(expr)
 
-    def test_pow_check(self):
+    def test_pow_check(self) -> None:
         """Test that unsafe powers are still caught."""
         # massive power - must be unevaluated to be a Pow object
         expr = sp.Pow(10, 10000, evaluate=False)
         with pytest.raises(ValueError, match="exceeds safety limits"):
-             TI89Calculator._validate_expression_tree(expr)
+            TI89Calculator._validate_expression_tree(expr)
