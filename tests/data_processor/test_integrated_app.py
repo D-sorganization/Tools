@@ -80,8 +80,8 @@ sys.modules["tkinter"] = MagicMock()
 sys.modules["matplotlib"] = MagicMock()
 sys.modules["matplotlib.pyplot"] = MagicMock()
 sys.modules["matplotlib.backends.backend_tkagg"] = MagicMock()
-sys.modules["scipy.signal"] = MagicMock()
-sys.modules["scipy.ndimage"] = MagicMock()
+# sys.modules["scipy.signal"] = MagicMock() # Use real scipy
+# sys.modules["scipy.ndimage"] = MagicMock() # Use real scipy
 sys.modules["PIL"] = MagicMock()
 # Detailed pyarrow mock to satisfy pandas' deep inspection
 mock_pa = MagicMock()

@@ -2,30 +2,48 @@
 
 ## Executive Summary
 
-- **Status**: 🟢 **Good**
-- **Installation**: Standard `pip install -r python/requirements.txt` works.
-- **Dependencies**: Well-defined in `python/requirements.txt`.
-- **Platform**: Python is cross-platform. MATLAB is the limiting factor for full functionality.
-- **Missing**: No `setup.py` or `pyproject.toml` for installing the repo as a package.
+-   **Dependencies**: Dependencies are managed via `requirements.txt` (Python) and `package.json` (Node.js).
+-   **Setup Scripts**: `scripts/setup_precommit.sh` aids developer onboarding.
+-   **Environment**: The requirement for multiple runtimes (Python 3.11+, Node, MATLAB) complicates the "one-click" setup.
+-   **Deployment**: No Dockerfiles found for containerized deployment of web apps.
+-   **CI/CD**: `ci-standard.yml` suggests an active CI pipeline.
 
-## Installation Matrix
+## Top 10 Installation Risks
 
-| Platform   | Success | Issues |
-| ---------- | ------- | ------ |
-| Linux      | ✅      | None (assuming no MATLAB). |
-| Windows    | ✅      | Works best (PowerShell scripts included). |
-| macOS      | ✅      | Works (assuming no MATLAB). |
+1.  **Environment Sync (Severity: Medium)**: Root `requirements.txt` vs `python/requirements.txt` could diverge.
+2.  **MATLAB Requirement (Severity: High)**: Proprietary dependency is a barrier.
+3.  **Path Issues (Severity: Medium)**: Scripts might rely on execution from root vs subfolder.
+4.  **Node Version (Severity: Low)**: `unit_converter` needs specific Node version?
+5.  **Virtual Env (Severity: Low)**: Instructions rely on user creating venv.
+6.  **Pre-commit (Severity: Low)**: Must be installed manually via script.
+7.  **System Deps (Severity: Low)**: Some Python packages (e.g., audio) might need system libs.
+8.  **Windows/Linux (Severity: Low)**: PowerShell scripts are Windows-only.
+9.  **Updates (Severity: Low)**: How to update all tools? `git pull` + `pip install`?
+10. **Deployment (Severity: Medium)**: No clear path to deploy `calculator` to a server.
 
-## Dependency Audit
+## Scorecard
 
-- **Core**: `numpy`, `pandas`, `PyQt6`.
-- **Constraint**: `requirements.txt` uses loose pinning (e.g., `numpy==2.0.1` is strict, but some others might not be).
-- **Conflict Risk**: Low, as it's a monorepo for tools, not a library.
+| Category                  | Score | Evidence & Remediation                                        |
+| ------------------------- | ----- | ------------------------------------------------------------- |
+| Package Management        | 8/10  | Standard files used.                                          |
+| Cross-Platform            | 7/10  | Windows focused (PS1 scripts), but Python is cross-platform.  |
+| CI/CD Integration         | 9/10  | Workflows exist.                                              |
+| Containerization          | 0/10  | No Dockerfiles found.                                         |
+| Documentation             | 8/10  | Installation steps in README.                                 |
 
-## Remediation Roadmap
+## Findings Table
 
-**48 Hours**
-- Create `setup.sh` and `setup.bat` for one-click installation.
+| ID    | Severity | Category     | Location | Symptom | Root Cause | Fix | Effort |
+| ----- | -------- | ------------ | -------- | ------- | ---------- | --- | ------ |
+| F-001 | Medium   | Installation | Root     | No Docker | N/A        | Add Dockerfile | M |
 
-**2 Weeks**
-- Create `pyproject.toml` to replace `requirements.txt` and modernize packaging.
+## Refactoring Plan
+
+**48 Hours**:
+-   None.
+
+**2 Weeks**:
+-   Consolidate `requirements.txt`.
+
+**6 Weeks**:
+-   Create a `docker-compose.yml` for the web applications.
