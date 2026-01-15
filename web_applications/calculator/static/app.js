@@ -336,7 +336,7 @@ function renderTouchExpression() {
     }
 
     // Clear existing content and use DocumentFragment for performance
-    touchExpression.innerHTML = "";
+    touchExpression.textContent = "";
     const fragment = document.createDocumentFragment();
 
     Array.from(text).forEach((character, index) => {
