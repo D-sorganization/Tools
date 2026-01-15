@@ -358,6 +358,8 @@ const UNIT_ALIASES = {
 let _REVERSE_ALIASES_CACHE = null;
 // Optimization: Cache for flattened searchable units
 let _SEARCH_CACHE = null;
+// Optimization: Cache for unit category lookup
+let _CATEGORY_CACHE = null;
 
 // Security: Prevent prototype pollution
 function isValidKey(key) {
@@ -437,6 +439,7 @@ class CustomUnitManager {
     }
 
     _SEARCH_CACHE = null; // Invalidate search cache
+    _CATEGORY_CACHE = null; // Invalidate category cache
     this.saveToStorage();
     return { success: true, message: `Custom unit '${unit}' added to ${category}` };
   }
@@ -460,6 +463,7 @@ class CustomUnitManager {
     }
 
     _SEARCH_CACHE = null; // Invalidate search cache
+    _CATEGORY_CACHE = null; // Invalidate category cache
     this.saveToStorage();
     return { success: true, message: `Custom unit '${unit}' removed` };
   }
@@ -544,6 +548,7 @@ class CustomUnitManager {
         });
         _REVERSE_ALIASES_CACHE = null; // Invalidate cache
         _SEARCH_CACHE = null; // Invalidate search cache
+        _CATEGORY_CACHE = null; // Invalidate category cache
       }
     } catch {
       // Silent fail for localStorage errors
@@ -567,6 +572,7 @@ class CustomUnitManager {
 
     _REVERSE_ALIASES_CACHE = null; // Invalidate cache
     _SEARCH_CACHE = null; // Invalidate search cache
+    _CATEGORY_CACHE = null; // Invalidate category cache
     this.customUnits = {};
     this.customAliases = {};
     localStorage.removeItem('customUnits');
@@ -783,32 +789,60 @@ function convertHeatingValue(value, fromUnit, toUnit, gasDensityStp = null) {
   }
 }
 
+// Helper to build the category cache
+function _buildCategoryCache() {
+  const cache = {};
+
+  // 4. Conversion Factors (Lowest Priority) - Add first so higher priorities overwrite
+  for (const [category, units] of Object.entries(CONVERSION_FACTORS)) {
+    Object.keys(units).forEach(u => {
+      cache[u] = category;
+    });
+  }
+
+  // 3. Heating Value (Medium Priority)
+  Object.keys(HEATING_VALUE_FACTORS).forEach(u => {
+    cache[u] = 'heating_value';
+  });
+
+  // 2. Gas Flow (High Priority)
+  ['SCFM', 'ACFM', 'NM3/HR', 'NM³/HR'].forEach(u => {
+    cache[u] = 'gas_flow';
+    cache[u.toLowerCase()] = 'gas_flow'; // Explicitly shadow lowercase collisions
+  });
+
+  // 1. Temperature (Highest Priority)
+  ['K', 'C', 'F', 'R'].forEach(u => {
+    cache[u] = 'temperature';
+    cache[u.toLowerCase()] = 'temperature'; // Explicitly shadow lowercase collisions
+  });
+
+  return cache;
+}
+
 // Get category for a unit
 function getCategory(unit) {
   // Normalize unit
   unit = UNIT_ALIASES[unit.toLowerCase()] || unit;
 
-  // Check temperature first
-  if (['K', 'C', 'F', 'R'].includes(unit.toUpperCase())) {
-    return 'temperature';
+  // ⚡ Bolt Optimization: Use cached lookup instead of linear search
+  // Reduces complexity from O(Categories) to O(1)
+  if (!_CATEGORY_CACHE) {
+    _CATEGORY_CACHE = _buildCategoryCache();
   }
 
-  // Check gas flow
-  const gasFlowUnits = ['SCFM', 'ACFM', 'NM3/HR', 'NM³/HR'];
-  if (gasFlowUnits.includes(unit.toUpperCase())) {
-    return 'gas_flow';
+  // Check direct match
+  if (_CATEGORY_CACHE[unit]) {
+    return _CATEGORY_CACHE[unit];
   }
 
-  // Check heating value
-  if (HEATING_VALUE_FACTORS[unit] !== undefined) {
-    return 'heating_value';
-  }
+  // Fallback checks for case-insensitivity (Temperature and Gas Flow only)
+  // This matches the previous logic where only these categories were case-insensitive
+  const upperUnit = unit.toUpperCase();
+  const upperMatch = _CATEGORY_CACHE[upperUnit];
 
-  // Search in conversion factors
-  for (const [category, units] of Object.entries(CONVERSION_FACTORS)) {
-    if (unit in units) {
-      return category;
-    }
+  if (upperMatch === 'temperature' || upperMatch === 'gas_flow') {
+    return upperMatch;
   }
 
   return null;
@@ -943,9 +977,7 @@ function searchUnits(query, category = null) {
 
   // Select the appropriate list to search
   // Optimization: If category is provided, only search within that category
-  const candidates = category
-    ? _SEARCH_CACHE.byCategory[category] || []
-    : _SEARCH_CACHE.flat;
+  const candidates = category ? _SEARCH_CACHE.byCategory[category] || [] : _SEARCH_CACHE.flat;
 
   // Use cache for searching
   for (const item of candidates) {
