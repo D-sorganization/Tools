@@ -359,7 +359,7 @@ let _REVERSE_ALIASES_CACHE = null;
 // Optimization: Cache for flattened searchable units
 let _SEARCH_CACHE = null;
 // Optimization: Cache for unit category lookup
-let _CATEGORY_CACHE = null;
+let _UNIT_CATEGORY_CACHE = null;
 
 // Security: Prevent prototype pollution
 function isValidKey(key) {
@@ -439,7 +439,7 @@ class CustomUnitManager {
     }
 
     _SEARCH_CACHE = null; // Invalidate search cache
-    _CATEGORY_CACHE = null; // Invalidate category cache
+    _UNIT_CATEGORY_CACHE = null; // Invalidate category cache
     this.saveToStorage();
     return { success: true, message: `Custom unit '${unit}' added to ${category}` };
   }
@@ -463,7 +463,7 @@ class CustomUnitManager {
     }
 
     _SEARCH_CACHE = null; // Invalidate search cache
-    _CATEGORY_CACHE = null; // Invalidate category cache
+    _UNIT_CATEGORY_CACHE = null; // Invalidate category cache
     this.saveToStorage();
     return { success: true, message: `Custom unit '${unit}' removed` };
   }
@@ -548,7 +548,7 @@ class CustomUnitManager {
         });
         _REVERSE_ALIASES_CACHE = null; // Invalidate cache
         _SEARCH_CACHE = null; // Invalidate search cache
-        _CATEGORY_CACHE = null; // Invalidate category cache
+        _UNIT_CATEGORY_CACHE = null; // Invalidate category cache
       }
     } catch {
       // Silent fail for localStorage errors
@@ -572,7 +572,7 @@ class CustomUnitManager {
 
     _REVERSE_ALIASES_CACHE = null; // Invalidate cache
     _SEARCH_CACHE = null; // Invalidate search cache
-    _CATEGORY_CACHE = null; // Invalidate category cache
+    _UNIT_CATEGORY_CACHE = null; // Invalidate category cache
     this.customUnits = {};
     this.customAliases = {};
     localStorage.removeItem('customUnits');
@@ -827,19 +827,19 @@ function getCategory(unit) {
 
   // ⚡ Bolt Optimization: Use cached lookup instead of linear search
   // Reduces complexity from O(Categories) to O(1)
-  if (!_CATEGORY_CACHE) {
-    _CATEGORY_CACHE = _buildCategoryCache();
+  if (!_UNIT_CATEGORY_CACHE) {
+    _UNIT_CATEGORY_CACHE = _buildCategoryCache();
   }
 
   // Check direct match
-  if (_CATEGORY_CACHE[unit]) {
-    return _CATEGORY_CACHE[unit];
+  if (_UNIT_CATEGORY_CACHE[unit]) {
+    return _UNIT_CATEGORY_CACHE[unit];
   }
 
   // Fallback checks for case-insensitivity (Temperature and Gas Flow only)
   // This matches the previous logic where only these categories were case-insensitive
   const upperUnit = unit.toUpperCase();
-  const upperMatch = _CATEGORY_CACHE[upperUnit];
+  const upperMatch = _UNIT_CATEGORY_CACHE[upperUnit];
 
   if (upperMatch === 'temperature' || upperMatch === 'gas_flow') {
     return upperMatch;
