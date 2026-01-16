@@ -63,9 +63,12 @@ def set_seeds(seed: int = DEFAULT_SEED) -> None:
     # Modern NumPy recommends Generator instances (np.random.default_rng()),
     # but this function sets global state for reproducibility across the codebase.
     # The noqa comment suppresses NPY002 warning for this intentional legacy usage.
-    import numpy as np
+    try:
+        import numpy as np
 
-    np.random.seed(seed)  # noqa: NPY002  # Set global numpy random state
+        np.random.seed(seed)  # noqa: NPY002  # Set global numpy random state
+    except (ImportError, ModuleNotFoundError):
+        logger.warning("NumPy not available, skipping numpy seed setting")
 
     # Set PyTorch seeds if PyTorch is available
     if TORCH_AVAILABLE:
