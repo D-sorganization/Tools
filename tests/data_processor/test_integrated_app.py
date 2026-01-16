@@ -1,4 +1,5 @@
 # Add the project directory to path
+import importlib
 import os
 import sys
 import unittest
@@ -14,57 +15,51 @@ project_root = os.path.abspath(
 sys.path.insert(0, project_root)
 
 
-# Mock dependencies before importing
-# Define a real class for CTkToplevel so inheritance works correctly
+# Define mock classes
 class MockCTkToplevel:
-    """Mock for CustomTkinter Toplevel window."""
-
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initialize mock window."""
+        pass
 
     def transient(self, master: Any) -> None:
-        """Mock transient method."""
+        pass
 
     def grab_set(self) -> None:
-        """Mock grab_set method."""
+        pass
 
     def geometry(self, g: Any) -> None:
-        """Mock geometry method."""
+        pass
 
     def resizable(self, w: Any, h: Any) -> None:
-        """Mock resizable method."""
+        pass
 
     def title(self, t: Any) -> None:
-        """Mock title method."""
+        pass
 
     def destroy(self) -> None:
-        """Mock destroy method."""
+        pass
 
     def wait_window(self) -> None:
-        """Mock wait_window method."""
+        pass
 
     def lift(self) -> None:
-        """Mock lift method."""
+        pass
 
     def attributes(self, *args: Any) -> None:
-        """Mock attributes method."""
+        pass
 
 
 class MockScrollableFrame:
-    """Mock for CustomTkinter ScrollableFrame."""
-
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initialize mock scrollable frame."""
+        pass
 
     def __getattr__(self, name: str) -> MagicMock:
-        """Return magic mock for any attribute."""
         return MagicMock()
 
     def grid(self, *args: Any, **kwargs: Any) -> None:
-        """Mock grid geometry manager."""
+        pass
 
     def pack(self, *args: Any, **kwargs: Any) -> None:
-        """Mock pack geometry manager."""
+        pass
 
 
 mock_ctk = MagicMock()
@@ -75,15 +70,6 @@ mock_ctk.CTkButton = MagicMock(side_effect=lambda *args, **kwargs: MagicMock())
 mock_ctk.CTkTextbox = MagicMock(side_effect=lambda *args, **kwargs: MagicMock())
 mock_ctk.CTkScrollableFrame = MagicMock(side_effect=lambda *args, **kwargs: MagicMock())
 
-sys.modules["customtkinter"] = mock_ctk
-sys.modules["tkinter"] = MagicMock()
-sys.modules["matplotlib"] = MagicMock()
-sys.modules["matplotlib.pyplot"] = MagicMock()
-sys.modules["matplotlib.backends.backend_tkagg"] = MagicMock()
-# sys.modules["scipy.signal"] = MagicMock() # Use real scipy
-# sys.modules["scipy.ndimage"] = MagicMock() # Use real scipy
-sys.modules["PIL"] = MagicMock()
-# Detailed pyarrow mock to satisfy pandas' deep inspection
 mock_pa = MagicMock()
 mock_pa.__version__ = "14.0.0"
 
@@ -93,8 +79,6 @@ class MockDataType:
 
 
 mock_pa.DataType = MockDataType
-
-# Mock common pyarrow types to return instances of DataType
 common_types = [
     "null",
     "bool_",
@@ -125,132 +109,148 @@ common_types = [
     "struct",
     "dictionary",
 ]
-
 for t in common_types:
     setattr(mock_pa, t, MagicMock(return_value=MockDataType()))
 
-sys.modules["pyarrow"] = mock_pa
-sys.modules["pyarrow.compute"] = MagicMock()
-sys.modules["pyarrow.parquet"] = MagicMock()
-sys.modules["pyarrow.csv"] = MagicMock()
-
-sys.modules["tables"] = MagicMock()
-
-sys.modules["tables"] = MagicMock()
-
-# Mock Data_Processor_r0 since it's the base class
 mock_r0 = MagicMock()
 
 
 class MockCSVProcessorApp:
-    """Mock for the base CSV Processor Application."""
-
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initialize mock application."""
         self.main_tab_view = MagicMock()
         self.main_tab_view.tab = MagicMock()
 
     def title(self, t: Any) -> None:
-        """Set window title."""
+        pass
 
     def geometry(self, g: Any) -> None:
-        """Set window geometry."""
+        pass
 
     def update_idletasks(self) -> None:
-        """Update idle tasks."""
+        pass
 
     def winfo_screenwidth(self) -> int:
-        """Get screen width."""
         return 1920
 
     def winfo_screenheight(self) -> int:
-        """Get screen height."""
         return 1080
 
     def bind(self, *args: Any) -> None:
-        """Bind event handler."""
+        pass
 
     def protocol(self, *args: Any) -> None:
-        """Set protocol handler."""
+        pass
 
     def create_status_bar(self) -> None:
-        """Create status bar."""
         self.status_label = MagicMock()
 
     def create_setup_and_process_tab(self, tab: Any) -> None:
-        """Create setup tab."""
+        pass
 
     def create_plotting_tab(self, tab: Any) -> None:
-        """Create plotting tab."""
+        pass
 
     def create_plots_list_tab(self, tab: Any) -> None:
-        """Create plots list tab."""
+        pass
 
     def create_dat_import_tab(self, tab: Any) -> None:
-        """Create import tab."""
+        pass
 
     def create_help_tab(self, tab: Any) -> None:
-        """Create help tab."""
+        pass
 
     def _on_closing(self) -> None:
-        """Handle window closing."""
+        pass
 
     def _on_window_configure(self, event: Any) -> None:
-        """Handle window configure event."""
+        pass
 
     def _load_plots_from_file(self) -> None:
-        """Load plots from file."""
+        pass
 
     def grid_rowconfigure(self, *args: Any) -> None:
-        """Configure grid rows."""
+        pass
 
     def grid_columnconfigure(self, *args: Any) -> None:
-        """Configure grid columns."""
+        pass
 
     def _create_splitter(self, *args: Any) -> MagicMock:
-        """Create splitter widget."""
         return MagicMock()
 
 
 mock_r0.CSVProcessorApp = MockCSVProcessorApp
-sys.modules["Data_Processor_r0"] = mock_r0
-
-# Now import the class under test
-from Data_Processor_Integrated import (
-    FileFormatDetector,
-    IntegratedCSVProcessorApp,
-    SplitConfig,
-    SplitMethod,
-)
 
 
 class TestIntegratedCSVProcessorApp(unittest.TestCase):
     """Test suite for the Integrated CSV Processor Application."""
 
+    modules_patcher: Any
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        # Create the patcher
+        cls.modules_patcher = patch.dict(
+            sys.modules,
+            {
+                "customtkinter": mock_ctk,
+                "tkinter": MagicMock(),
+                "matplotlib": MagicMock(),
+                "matplotlib.pyplot": MagicMock(),
+                "matplotlib.backends.backend_tkagg": MagicMock(),
+                "PIL": MagicMock(),
+                "pyarrow": mock_pa,
+                "pyarrow.compute": MagicMock(),
+                "pyarrow.parquet": MagicMock(),
+                "pyarrow.csv": MagicMock(),
+                "tables": MagicMock(),
+                "Data_Processor_r0": mock_r0,
+            },
+        )
+        cls.modules_patcher.start()
+
+        # Import the module under test
+        import Data_Processor_Integrated
+
+        # Reload to ensure it uses the mocked modules
+        importlib.reload(Data_Processor_Integrated)
+
+        cls.module = Data_Processor_Integrated  # type: ignore[attr-defined]
+        cls.IntegratedCSVProcessorApp = Data_Processor_Integrated.IntegratedCSVProcessorApp  # type: ignore[attr-defined]
+        cls.SplitConfig = Data_Processor_Integrated.SplitConfig  # type: ignore[attr-defined]
+        cls.SplitMethod = Data_Processor_Integrated.SplitMethod  # type: ignore[attr-defined]
+        cls.FileFormatDetector = Data_Processor_Integrated.FileFormatDetector  # type: ignore[attr-defined]
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.modules_patcher.stop()
+        # Remove the module from sys.modules so subsequent tests don't use the mocked version
+        if "Data_Processor_Integrated" in sys.modules:
+            del sys.modules["Data_Processor_Integrated"]
+
     @patch("Data_Processor_Integrated.ctk.CTk")
-    def test_initialization(self, mock_ctk: MagicMock) -> None:
+    def test_initialization(self, mock_ctk_ctor: MagicMock) -> None:
         """Test application initialization."""
         # Base class is now our MockCSVProcessorApp
-        app = IntegratedCSVProcessorApp()
+        app = self.IntegratedCSVProcessorApp()  # type: ignore[attr-defined]
 
         # Check if converter variables are initialized
         self.assertTrue(hasattr(app, "converter_split_config"))
-        self.assertIsInstance(app.converter_split_config, SplitConfig)
+        self.assertIsInstance(app.converter_split_config, self.SplitConfig)  # type: ignore[attr-defined]
         self.assertTrue(hasattr(app, "converter_input_files"))
         self.assertEqual(app.converter_input_files, [])
 
     def test_split_config_defaults(self) -> None:
         """Test default values of SplitConfig."""
-        config = SplitConfig()
+        config = self.SplitConfig()  # type: ignore[attr-defined]
         self.assertFalse(config.enabled)
-        self.assertEqual(config.method, SplitMethod.ROWS)
+        self.assertEqual(config.method, self.SplitMethod.ROWS)  # type: ignore[attr-defined]
         self.assertEqual(config.rows_per_file, 100000)
         self.assertEqual(config.compression, "snappy")
 
     @patch("os.path.exists", return_value=True)
     def test_file_format_detector(self, mock_exists: MagicMock) -> None:
         """Test file format detection."""
-        detector = FileFormatDetector()
+        detector = self.FileFormatDetector()  # type: ignore[attr-defined]
 
         # Test extension based detection
         self.assertEqual(detector.detect_format("test.csv"), "csv")
@@ -263,7 +263,8 @@ class TestIntegratedCSVProcessorApp(unittest.TestCase):
     @patch("Data_Processor_Integrated.pq")
     def test_parquet_analyzer(self, mock_pq: MagicMock) -> None:
         """Test the Parquet analyzer dialog."""
-        from Data_Processor_Integrated import ParquetAnalyzerDialog
+        # Use the class from the loaded module
+        ParquetAnalyzerDialog = self.module.ParquetAnalyzerDialog  # type: ignore[attr-defined]
 
         # Setup mock parquet file
         mock_file = MagicMock()
@@ -287,9 +288,7 @@ class TestIntegratedCSVProcessorApp(unittest.TestCase):
         mock_col.total_uncompressed_size = 512
         mock_col.total_compressed_size = 256
         mock_col.num_values = 100
-        mock_col.statistics = (
-            None  # Disable stats to avoid MagicMock in f-string if format is used
-        )
+        mock_col.statistics = None
         mock_rg.column_metadata = [mock_col]
         mock_file.metadata.row_group_metadata = [mock_rg]
 
@@ -302,7 +301,7 @@ class TestIntegratedCSVProcessorApp(unittest.TestCase):
             "Data_Processor_Integrated.ctk.CTkButton"
         ), patch(
             "Data_Processor_Integrated.ctk.CTkTextbox"
-        ) as _, patch(
+        ), patch(
             "Data_Processor_Integrated.Path"
         ) as mock_path:
 
@@ -313,20 +312,14 @@ class TestIntegratedCSVProcessorApp(unittest.TestCase):
             mock_path.return_value.name = "test.parquet"
 
             dialog = ParquetAnalyzerDialog(parent=MagicMock())
-            # format_file_size mock removed to test real logic
 
-            # Verify results_text exists
             self.assertTrue(hasattr(dialog, "results_text"), "results_text not created")
 
             dialog.analyze_parquet_file("test.parquet")
 
-            # Check if ParquetFile was called
             self.assertTrue(mock_pq.ParquetFile.called, "ParquetFile not called")
-
-            # Check if results text was updated
             self.assertTrue(dialog.results_text.insert.called)
 
-            # Verify insert was called with expected content
             args = dialog.results_text.insert.call_args[0]
             self.assertIn("=== Parquet File Analysis ===", args[1])
 

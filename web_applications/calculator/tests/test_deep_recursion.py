@@ -1,5 +1,4 @@
 import sys
-import time
 
 import pytest
 import sympy as sp
@@ -33,7 +32,6 @@ class TestDeepRecursion:
             # We enforce a standard limit (1000) to simulate standard environment constraint
             sys.setrecursionlimit(1000)
 
-            start_time = time.time()
             try:
                 TI89Calculator._validate_expression_tree(deep_expr)
             except RecursionError:
@@ -43,8 +41,7 @@ class TestDeepRecursion:
             except Exception as e:
                 pytest.fail(f"Validation failed with error: {e}")
 
-            duration = time.time() - start_time
-            # print(f"\nValidation of depth {depth} took {duration:.4f}s")
+            # Validation completed successfully
 
         finally:
             # Restore original limit

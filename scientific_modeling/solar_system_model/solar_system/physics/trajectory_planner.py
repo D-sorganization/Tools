@@ -130,7 +130,7 @@ class TrajectoryPlanner:
     for visualization.
     """
 
-    def __init__(self, central_body_mu: float = None) -> None:
+    def __init__(self, central_body_mu: float | None = None) -> None:
         """
         Initialize the trajectory planner.
 

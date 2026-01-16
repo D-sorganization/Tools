@@ -123,7 +123,7 @@ class TextCache:
         y: int,
         font_name: str = "default",
         color: tuple[int, int, int] = (255, 255, 255),
-    ):
+    ) -> tuple[int, int]:
         """Render text at position."""
         data, width, height = self.get_text_data(text, font_name, color)
         glRasterPos2i(x, y + height)  # OpenGL draws from bottom-left
@@ -182,7 +182,7 @@ class UIRenderer:
         h: float,
         color: tuple[float, float, float, float],
         filled: bool = True,
-    ):
+    ) -> None:
         """Draw a rectangle."""
         glColor4f(*color)
         if filled:
@@ -201,7 +201,7 @@ class UIRenderer:
         text: str,
         position: tuple[int, int],
         color: tuple[int, int, int] = (255, 255, 255),
-    ):
+    ) -> None:
         """Render a text label ensuring no overlap."""
         # Get dimensions without drawing
         _, width, height = self.text_cache.get_text_data(text, "default", color)
@@ -328,7 +328,7 @@ class UIRenderer:
 
     def render_sidebar(
         self, sidebar_data: dict[str, Any], content_data: dict[str, Any] | None
-    ):
+    ) -> None:
         """Render the sidebar with tabs and content."""
         if not sidebar_data.get("visible", False):
             return
@@ -517,7 +517,7 @@ class UIRenderer:
 
     def render_unified_controls(
         self, ctrl_data: dict[str, Any], time_data: dict[str, Any]
-    ):
+    ) -> None:
         """Render the unified control panel."""
         if not ctrl_data.get("visible", False):
             return

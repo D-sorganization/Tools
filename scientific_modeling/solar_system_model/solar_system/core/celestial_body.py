@@ -640,7 +640,12 @@ class Spacecraft(CelestialBody):
         Returns:
             Interpolated state vector
         """
-        if not self.trajectory or self._trajectory_times is None:
+        if (
+            not self.trajectory
+            or self._trajectory_times is None
+            or self._trajectory_positions is None
+            or self._trajectory_velocities is None
+        ):
             return StateVector(
                 position=np.array([0.0, 0.0, 0.0]),
                 velocity=np.array([0.0, 0.0, 0.0]),

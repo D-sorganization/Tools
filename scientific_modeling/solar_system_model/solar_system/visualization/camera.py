@@ -176,7 +176,9 @@ class Camera:
 
         self.position = self.target + np.array([x, y, z])
 
-    def set_mode(self, mode: CameraMode, target_body: CelestialBody = None) -> None:
+    def set_mode(
+        self, mode: CameraMode, target_body: CelestialBody | None = None
+    ) -> None:
         """
         Change camera mode.
 
@@ -233,7 +235,7 @@ class Camera:
 
     def zoom_at(
         self, delta: float, mouse_ndc: tuple[float, float], aspect_ratio: float
-    ):
+    ) -> None:
         """
         Zoom towards a specific point on the screen (mouse cursor).
 
