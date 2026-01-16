@@ -129,7 +129,7 @@ from ..core.celestial_body import BodyType, CelestialBody, StateVector
 from ..core.constants import AU
 from ..data.star_catalog import iter_catalog
 from .camera import Camera, CameraState
-from .starfield import build_star_vertices, point_size_from_magnitude
+from .starfield import StarVertex, build_star_vertices, point_size_from_magnitude
 from .textures import TextureManager
 from .ui_renderer import UIRenderer
 
@@ -193,7 +193,7 @@ class Renderer:
         self._ring_list: int | None = None
         self._circle_list: int | None = None
         self.star_batches: list[tuple[float, int, np.ndarray, np.ndarray]] = []
-        self.star_vertices: list[Any] = []
+        self.star_vertices: list[StarVertex] = []
 
         # Scale factor for visualization
         self.distance_scale = 1e-9  # Convert meters to viewable units
@@ -407,7 +407,7 @@ class Renderer:
         self.star_vertices = build_star_vertices(iter_catalog())
 
         # Group stars by integer point size for batching
-        stars_by_size: dict[int, list[Any]] = {}
+        stars_by_size: dict[int, list[StarVertex]] = {}
         for star in self.star_vertices:
             size = int(point_size_from_magnitude(star.magnitude))
             if size not in stars_by_size:
