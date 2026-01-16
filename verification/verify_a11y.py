@@ -1,7 +1,6 @@
 from playwright.sync_api import expect, sync_playwright
 
 
-
 def verify_a11y():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
