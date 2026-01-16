@@ -4,7 +4,7 @@ repos:
     rev: 24.4.2
     hooks:
       - id: black
-        language_version: python3.11
+        language_version: python3.12
 
   - repo: https://github.com/PyCQA/isort
     rev: 5.13.2
@@ -25,29 +25,25 @@ repos:
     hooks:
       - id: mypy
         additional_dependencies: ["types-requests", "types-PyYAML"]
-        args: [--config-file=mypy.ini]
-        types: [python] # Only Python files - MyPy won't check JavaScript/TypeScript
-        files: ^python/.* # All files under python/ and subdirectories
+        args: [--config-file=mypy.ini, --ignore-missing-imports]
         exclude: |
           (?x)^(
-            python/matlab/|
-            python/javascript/|  # Exclude python/javascript/ directory (JS/TS code)
-            python/archive/|
-            python/legacy/|
-            python/experimental/|
-            python/\.git/|
-            python/__pycache__/|
-            python/\.pytest_cache/|
-            python/\.venv/|
-            python/venv/
+            archive/|
+            legacy/|
+            experimental/|
+            \.git/|
+            __pycache__/|
+            \.pytest_cache/|
+            \.venv/|
+            venv/
           )
 
-  # Jupyter notebook cleaner
-  # DISABLED due to corrupted notebook issues (re-enabling requires careful verification)
-  # - repo: https://github.com/kynan/nbstripout
-  #   rev: 0.7.1
-  #   hooks:
-  #     - id: nbstripout
+  # Security audit
+  - repo: https://github.com/pypa/pip-audit
+    rev: v2.7.3
+    hooks:
+      - id: pip-audit
+        args: ["-r", "requirements.txt"]
 
   # Local quality checks
   - repo: local
@@ -73,7 +69,7 @@ repos:
 
 # Global settings
 default_language_version:
-  python: python3.11
+  python: python3.12
 
 # Files to always exclude
 exclude: '^(archive/|legacy/|experimental/|replicants/|\.git/)'

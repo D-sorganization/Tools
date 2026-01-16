@@ -780,31 +780,39 @@ class Renderer:
 
     def render_info_panel(
         self, info: dict[str, Any], position: tuple[int, int] = (20, 20)
-    ):
+    ) -> None:
+        """Render info panel (Delegated to UIRenderer)."""
         # Delegated but not strictly used in current Scene, kept for compatibility
         # if needed
         pass  # UI Renderer handles panels now via render_sidebar or similar
 
     def render_status_bar(self, text: str) -> None:
+        """Render status bar (Delegated to UIRenderer)."""
         self.ui_renderer.render_status_bar(text)
 
     def render_help_overlay(self, help_data: dict[str, Any]) -> None:
+        """Render help overlay (Delegated to UIRenderer)."""
         self.ui_renderer.render_help_overlay(help_data)
 
     def render_date_picker(self, picker_data: dict[str, Any]) -> None:
+        """Render date picker (Delegated to UIRenderer)."""
         self.ui_renderer.render_date_picker(picker_data)
 
     def render_time_navigation_panel(self, nav_data: dict[str, Any]) -> None:
+        """Render time navigation panel (Deprecated)."""
         # Not used directly in scene anymore (part of unified) but kept for API compat
         pass
 
     def render_educational_panel(self, edu_data: dict[str, Any]) -> None:
+        """Render educational panel (Delegated to UIRenderer)."""
         self.ui_renderer.render_educational_panel(edu_data)
 
     def render_historical_events(self, events_data: dict[str, Any]) -> None:
+        """Render historical events (Delegated to UIRenderer)."""
         self.ui_renderer.render_historical_events(events_data)
 
     def render_immersion_checklist(self, checklist_data: dict[str, Any]) -> None:
+        """Render immersion checklist (Delegated to UIRenderer)."""
         self.ui_renderer.render_immersion_checklist(checklist_data)
 
     def cleanup(self) -> None:
@@ -821,19 +829,23 @@ class Renderer:
         return self.clock.get_fps() if self.clock else 0.0
 
     def render_settings_panel(self, settings_data: dict[str, Any]) -> None:
+        """Render settings panel (Deprecated/Moved to Unified)."""
         pass  # Moved to Unified
 
     def render_nav_mode_panel(self, nav_data: dict[str, Any]) -> None:
+        """Render navigation mode panel (Deprecated/Moved to Unified)."""
         pass  # Moved to Unified
 
     def render_sidebar(
         self, sidebar_data: dict[str, Any], content_data: dict[str, Any] | None
-    ):
+    ) -> None:
+        """Render sidebar (Delegated to UIRenderer)."""
         self.ui_renderer.render_sidebar(sidebar_data, content_data)
 
     def render_unified_controls(
         self, ctrl_data: dict[str, Any], time_data: dict[str, Any]
-    ):
+    ) -> None:
+        """Render unified controls (Delegated to UIRenderer)."""
         self.ui_renderer.render_unified_controls(ctrl_data, time_data)
 
     def render_speed_indicator(self, time_warp: float) -> None:

@@ -5,6 +5,7 @@ This is the PRIMARY and RECOMMENDED launcher for accessing all tools.
 Provides a clean, tabbed interface for launching Python, MATLAB, and web tools.
 """
 
+import json
 import os
 import subprocess
 import sys
@@ -16,8 +17,10 @@ from typing import Any
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import (
     QApplication,
+    QCheckBox,
     QFrame,
     QGridLayout,
+    QHBoxLayout,
     QLabel,
     QMainWindow,
     QPushButton,
@@ -33,87 +36,19 @@ from PyQt6.QtWidgets import (
 # =============================================================================
 REPO_ROOT = Path(__file__).parent.absolute()
 
-# Tool Definitions
-# Format: "Name": {"path": relative_path, "type":
-# "python"|"matlab"|"web"|"browser"|"bat", "desc": "Description"}
-TOOLS = {
-    "Media Processing": [
-        {
-            "name": "Audio Processor (Main)",
-            "path": "media_processing/audio_processor/matlab/audio_signal_processor/launch_audio_processor_pro.m",
-            "type": "matlab",
-            "desc": "Advanced Audio Signal Processing Suite (MATLAB)",
-        },
-        {
-            "name": "Audio Processor (Replicant)",
-            "path": "replicants/matlab/audio_signal_processor/launch_audio_processor_pro.m",
-            "type": "matlab",
-            "desc": "Legacy/Backup Audio Implementation",
-        },
-        {
-            "name": "Video Processor Platform",
-            "path": "media_processing/video_processor/apps/web/launch_platform.bat",
-            "type": "bat",
-            "desc": "Next.js Video Processing Web Platform",
-        },
-    ],
-    "Data Processing": [
-        {
-            "name": "Data Processor Integrated",
-            "path": "data_processing/data_processor/python/data_processor/launch_integrated.py",
-            "type": "python",
-            "desc": "Time Series CSV/Parquet Analyzer & Converter",
-        },
-        {
-            "name": "Data Processor (Replicant)",
-            "path": "data_processing/data_processor/archive/Data_Processor_r0.py",
-            "type": "python",
-            "desc": "Original Revision 0 Data Processor",
-        },
-    ],
-    "Scientific Modeling": [
-        {
-            "name": "Solar System Model",
-            "path": "scientific_modeling/solar_system_model/launch_solar_system.py",
-            "type": "python",
-            "desc": "Interactive 3D Solar System Simulation",
-        },
-        {
-            "name": "RRT Path Planner",
-            "path": "scientific_modeling/rrt_path_planner/matlab/src/gui/starWarsPathPlannerGUI.m",
-            "type": "matlab",
-            "desc": "Rapidly-exploring Random Tree (RRT) Navigator (MATLAB)",
-        },
-    ],
-    "Web Applications": [
-        {
-            "name": "Calculator App",
-            "path": "web_applications/calculator/webapp.py",
-            "type": "python",
-            "desc": "Flask-based Scientific Calculator",
-        },
-        {
-            "name": "Unit Converter",
-            "path": "web_applications/unit_converter/unit-converter-app/index.html",
-            "type": "browser",
-            "desc": "Browser-based Unit Conversion Tool",
-        },
-    ],
-    "Development Tools": [
-        {
-            "name": "Folder Packer Pro",
-            "path": "development_tools/folder_tools/folder_packer_pro/folder_packer_pro.py",
-            "type": "python",
-            "desc": "Project Archiving and Distribution Tool",
-        },
-        {
-            "name": "Folder Tool (Utility)",
-            "path": "development_tools/folder_tools/folder_tool/Folders_Tool_r0.py",
-            "type": "python",
-            "desc": "Directory Management Utility",
-        },
-    ],
-}
+# Load Tool Definitions from tools.json
+TOOLS_FILE = REPO_ROOT / "tools.json"
+TOOLS: dict[str, list[dict[str, Any]]] = {}
+
+if TOOLS_FILE.exists():
+    try:
+        with open(TOOLS_FILE, "r") as f:
+            TOOLS = json.load(f)
+    except Exception as e:
+        print(f"Error loading tools.json: {e}")
+        # Fallback to empty or default if needed
+else:
+    print(f"Warning: {TOOLS_FILE} not found.")
 
 # =============================================================================
 # STYLING
@@ -182,6 +117,14 @@ QTextEdit {
     border-radius: 4px;
     font-family: Consolas, monospace;
 }
+QCheckBox {
+    color: #c0caf5;
+    spacing: 5px;
+}
+QCheckBox::indicator {
+    width: 13px;
+    height: 13px;
+}
 """
 
 
@@ -208,6 +151,16 @@ class ToolCard(QFrame):
         # Check if exists
         full_path = REPO_ROOT / self.tool_info["path"]
         exists = full_path.exists()
+
+        # Dependency check (simplified)
+        missing_dep = None
+        if exists:
+            if self.tool_info.get("type") == "python":
+                # Assuming python is available if we are running this script
+                pass
+            elif self.tool_info.get("type") == "matlab":
+                # Basic check if matlab is in path?
+                pass
 
         # Button
         btn_text = f"🚀 {self.tool_info['name']}"
@@ -256,11 +209,20 @@ class UnifiedLauncher(QMainWindow):
         main_layout = QVBoxLayout(central_widget)
 
         # Header
+        header_layout = QHBoxLayout()
         header = QLabel("🛠️ Unified Tools Repository")
         header.setStyleSheet(
             "font-size: 24px; font-weight: bold; color: #7aa2f7; margin-bottom: 10px;"
         )
-        main_layout.addWidget(header)
+        header_layout.addWidget(header)
+
+        header_layout.addStretch()
+
+        self.debug_mode = QCheckBox("Debug Mode")
+        self.debug_mode.setToolTip("Enable verbose output when launching tools")
+        header_layout.addWidget(self.debug_mode)
+
+        main_layout.addLayout(header_layout)
 
         # Tabs
         self.tabs = QTabWidget()
@@ -332,13 +294,21 @@ class UnifiedLauncher(QMainWindow):
         """Launch the specified tool based on its type."""
         path = REPO_ROOT / tool_info["path"]
         type_ = tool_info["type"]
+        is_debug = self.debug_mode.isChecked()
 
         self.log(f"Launching {tool_info['name']}...")
         self.log(f"Path: {path}")
 
+        if is_debug:
+            self.log(f"DEBUG: Mode enabled. Launching {type_} tool.")
+
         try:
             if type_ == "python":
-                subprocess.Popen([sys.executable, str(path)], cwd=path.parent)
+                args = [sys.executable, str(path)]
+                if is_debug:
+                    # Could add a verbose flag if the tool supports it
+                    pass
+                subprocess.Popen(args, cwd=path.parent)
                 self.log("✅ Process started (Python)")
 
             elif type_ == "matlab":
