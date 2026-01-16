@@ -43,7 +43,7 @@ class TestDeepRecursion:
             except Exception as e:
                 pytest.fail(f"Validation failed with error: {e}")
 
-            duration = time.time() - start_time
+            time.time() - start_time
             # print(f"\nValidation of depth {depth} took {duration:.4f}s")
 
         finally:
