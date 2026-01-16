@@ -17,10 +17,9 @@ class TestPermissionsPolicy(unittest.TestCase):
     def test_permissions_policy_header_present(self) -> None:
         response = self.client.get("/")
         self.assertIn("Permissions-Policy", response.headers)
-        expected_policy = (
-            "geolocation=(), camera=(), microphone=(), payment=(), usb=()"
-        )
+        expected_policy = "geolocation=(), camera=(), microphone=(), payment=(), usb=()"
         self.assertEqual(response.headers["Permissions-Policy"], expected_policy)
+
 
 if __name__ == "__main__":
     unittest.main()
