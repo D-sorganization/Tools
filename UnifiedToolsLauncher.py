@@ -42,7 +42,7 @@ TOOLS: dict[str, list[dict[str, Any]]] = {}
 
 if TOOLS_FILE.exists():
     try:
-        with open(TOOLS_FILE, "r") as f:
+        with open(TOOLS_FILE) as f:
             TOOLS = json.load(f)
     except Exception as e:
         print(f"Error loading tools.json: {e}")
@@ -153,7 +153,6 @@ class ToolCard(QFrame):
         exists = full_path.exists()
 
         # Dependency check (simplified)
-        missing_dep = None
         if exists:
             if self.tool_info.get("type") == "python":
                 # Assuming python is available if we are running this script
