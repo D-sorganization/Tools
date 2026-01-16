@@ -193,7 +193,7 @@ class Renderer:
         self._ring_list: int | None = None
         self._circle_list: int | None = None
         self.star_batches: list[tuple[float, int, np.ndarray, np.ndarray]] = []
-        self.star_vertices = []
+        self.star_vertices: list[Any] = []
 
         # Scale factor for visualization
         self.distance_scale = 1e-9  # Convert meters to viewable units
@@ -407,7 +407,7 @@ class Renderer:
         self.star_vertices = build_star_vertices(iter_catalog())
 
         # Group stars by integer point size for batching
-        stars_by_size = {}
+        stars_by_size: dict[int, list[Any]] = {}
         for star in self.star_vertices:
             size = int(point_size_from_magnitude(star.magnitude))
             if size not in stars_by_size:
@@ -434,7 +434,8 @@ class Renderer:
         self, camera_state: CameraState | None = None, clear: bool = True
     ) -> None:
         """Begin a new frame."""
-        self.ui_renderer.drawn_labels.clear()
+        if self.ui_renderer:
+            self.ui_renderer.drawn_labels.clear()
         if clear:
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
@@ -456,7 +457,8 @@ class Renderer:
     def end_frame(self) -> None:
         """End current frame and swap buffers."""
         pygame.display.flip()
-        self.clock.tick(60)  # Cap at 60 FPS
+        if self.clock:
+            self.clock.tick(60)  # Cap at 60 FPS
 
     def render_stars(self) -> None:
         """Render the star field background."""
@@ -479,7 +481,7 @@ class Renderer:
 
     def render_body(
         self, body: CelestialBody, julian_date: float, highlight: bool = False
-    ):
+    ) -> None:
         """
         Render a celestial body.
 
@@ -578,7 +580,7 @@ class Renderer:
         body: CelestialBody,
         julian_date: float,
         color: tuple[float, float, float, float] | None = None,
-    ):
+    ) -> None:
         """
         Render the orbital path of a body using Vertex Arrays.
 
@@ -619,7 +621,7 @@ class Renderer:
         points: list[StateVector],
         color: tuple[float, float, float, float] = (0.0, 1.0, 0.5, 0.8),
         line_width: float = 2.0,
-    ):
+    ) -> None:
         """
         Render a spacecraft trajectory using Vertex Arrays.
 
@@ -733,7 +735,7 @@ class Renderer:
         position_3d: np.ndarray,
         color: tuple[int, int, int] = (255, 255, 255),
         offset: tuple[int, int] = (10, -10),
-    ):
+    ) -> None:
         """
         Render a text label at a 3D position using UIRenderer.
         """
@@ -751,7 +753,8 @@ class Renderer:
         y += offset[1]
 
         # Render text using UI renderer
-        self.ui_renderer.render_label_2d(text, (x, y), color)
+        if self.ui_renderer:
+            self.ui_renderer.render_label_2d(text, (x, y), color)
 
     def _project_to_screen(self, position_3d: np.ndarray) -> tuple[int, int] | None:
         """Project 3D position to 2D screen coordinates."""
@@ -778,34 +781,29 @@ class Renderer:
         except Exception:
             return None
 
-    def render_info_panel(
-        self, info: dict[str, Any], position: tuple[int, int] = (20, 20)
-    ):
-        # Delegated but not strictly used in current Scene, kept for compatibility
-        # if needed
-        pass  # UI Renderer handles panels now via render_sidebar or similar
-
     def render_status_bar(self, text: str) -> None:
-        self.ui_renderer.render_status_bar(text)
+        if self.ui_renderer:
+            self.ui_renderer.render_status_bar(text)
 
     def render_help_overlay(self, help_data: dict[str, Any]) -> None:
-        self.ui_renderer.render_help_overlay(help_data)
+        if self.ui_renderer:
+            self.ui_renderer.render_help_overlay(help_data)
 
     def render_date_picker(self, picker_data: dict[str, Any]) -> None:
-        self.ui_renderer.render_date_picker(picker_data)
-
-    def render_time_navigation_panel(self, nav_data: dict[str, Any]) -> None:
-        # Not used directly in scene anymore (part of unified) but kept for API compat
-        pass
+        if self.ui_renderer:
+            self.ui_renderer.render_date_picker(picker_data)
 
     def render_educational_panel(self, edu_data: dict[str, Any]) -> None:
-        self.ui_renderer.render_educational_panel(edu_data)
+        if self.ui_renderer:
+            self.ui_renderer.render_educational_panel(edu_data)
 
     def render_historical_events(self, events_data: dict[str, Any]) -> None:
-        self.ui_renderer.render_historical_events(events_data)
+        if self.ui_renderer:
+            self.ui_renderer.render_historical_events(events_data)
 
     def render_immersion_checklist(self, checklist_data: dict[str, Any]) -> None:
-        self.ui_renderer.render_immersion_checklist(checklist_data)
+        if self.ui_renderer:
+            self.ui_renderer.render_immersion_checklist(checklist_data)
 
     def cleanup(self) -> None:
         """Clean up OpenGL resources."""
@@ -820,26 +818,24 @@ class Renderer:
         """Get current frames per second."""
         return self.clock.get_fps() if self.clock else 0.0
 
-    def render_settings_panel(self, settings_data: dict[str, Any]) -> None:
-        pass  # Moved to Unified
-
-    def render_nav_mode_panel(self, nav_data: dict[str, Any]) -> None:
-        pass  # Moved to Unified
-
     def render_sidebar(
         self, sidebar_data: dict[str, Any], content_data: dict[str, Any] | None
-    ):
-        self.ui_renderer.render_sidebar(sidebar_data, content_data)
+    ) -> None:
+        if self.ui_renderer:
+            self.ui_renderer.render_sidebar(sidebar_data, content_data)
 
     def render_unified_controls(
         self, ctrl_data: dict[str, Any], time_data: dict[str, Any]
-    ):
-        self.ui_renderer.render_unified_controls(ctrl_data, time_data)
+    ) -> None:
+        if self.ui_renderer:
+            self.ui_renderer.render_unified_controls(ctrl_data, time_data)
 
     def render_speed_indicator(self, time_warp: float) -> None:
         """Render speed indicator bar."""
-        self.ui_renderer.render_speed_indicator(time_warp)
+        if self.ui_renderer:
+            self.ui_renderer.render_speed_indicator(time_warp)
 
     def render_compass(self, camera_yaw: float) -> None:
         """Render compass."""
-        self.ui_renderer.render_compass(camera_yaw)
+        if self.ui_renderer:
+            self.ui_renderer.render_compass(camera_yaw)

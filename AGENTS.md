@@ -178,72 +178,20 @@ If sensitive data is accidentally committed:
 
 ---
 
-## 🏗️ System Architecture & Agent Roles
+## ⚖️ Governance & Process
 
-**Reference:** [JULES_ARCHITECTURE.md](JULES_ARCHITECTURE.md)
+### 1. Atomic Commits
+- Commits must be atomic, focusing on a single task or fix.
+- **NEVER** combine documentation updates with feature code or refactoring.
+- **NEVER** introduce "Shadow CI/CD" or unauthorized workflows.
 
-This section defines the active agents within the Jules "Control Tower" Architecture. All agents must operate within their defined scope.
+### 2. Feature Commits in Documentation PRs
+- **STRICTLY FORBIDDEN:** Do not hide feature code inside documentation pull requests.
+- All code changes must be visible and reviewed in appropriate PRs with correct labels (`feat`, `fix`, etc.).
 
-### 1. The Control Tower (Orchestrator)
-
-**Role:** Air Traffic Controller
-**Workflow:** `.github/workflows/jules-control-tower.yml`
-**Responsibilities:**
-
-- **Sole Trigger:** The only agent that listens to GitHub events (Push, PR, Schedule).
-- **Decision Maker:** Analyzes the event context (Triage) and dispatches the appropriate specialized worker.
-- **Loop Prevention:** Enforces `if: github.actor != 'jules-bot'` to prevent infinite recursion.
-
-### 2. Auto-Repair (Medic)
-
-**Role:** Fixer of Broken Builds
-**Workflow:** `.github/workflows/jules-auto-repair.yml`
-**Triggered By:** CI Failure (Standard CI)
-**Capabilities:**
-
-- **Read:** CI Failure Logs
-- **Write:** Fixes to syntax, imports, and simple logic errors.
-- **Constraint:** limited retries (max 2) to prevent "flailing".
-
-### 3. Test-Generator (Architect)
-
-**Role:** Quality Assurance Engineer
-**Workflow:** `.github/workflows/jules-test-generator.yml`
-**Triggered By:** New PR with `.py` changes
-**Capabilities:**
-
-- **Write:** New test files in `tests/`.
-- **Constraint:** Must not modify existing application code, only add tests.
-
-### 4. Doc-Scribe (Librarian)
-
-**Role:** Documentation Maintainer
-**Workflow:** `.github/workflows/jules-documentation-scribe.yml`
-**Triggered By:** Push to `main`
-**Capabilities:**
-
-- **Write:** Updates to `docs/` and markdown files.
-- **Mode:** "CodeWiki" - treats the codebase as a living encyclopedia.
-
-### 5. Scientific-Auditor (The Professor)
-
-**Role:** Peer Reviewer
-**Workflow:** `.github/workflows/jules-scientific-auditor.yml`
-**Triggered By:** Nightly Schedule
-**Capabilities:**
-
-- **Read-Only:** CANNOT modify code.
-- **Output:** Comments on PRs or Issues regarding mathematical correctness and physics fidelity.
-
-### 6. Conflict-Fix (Diplomat)
-
-**Role:** Merge Conflict Resolver
-**Workflow:** `.github/workflows/jules-conflict-fix.yml`
-**Triggered By:** Manual dispatch or specific conflict events (if configured)
-**Capabilities:**
-
-- **Write:** Merge resolution commits.
-- **Constraint:** Prioritizes "Incoming" changes unless specified otherwise.
+### 3. CI/CD Truth
+- The file `.github/workflows/ci-standard.yml` is the **only** source of truth for CI/CD.
+- Unauthorized workflows will be automatically removed.
 
 ---
 
