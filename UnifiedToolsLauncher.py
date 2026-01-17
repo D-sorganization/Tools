@@ -23,13 +23,13 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QMainWindow,
+    QMessageBox,
     QPushButton,
     QScrollArea,
     QTabWidget,
     QTextEdit,
     QVBoxLayout,
     QWidget,
-    QMessageBox,
 )
 
 # =============================================================================
