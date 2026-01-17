@@ -1,39 +1,25 @@
-# Contributing to Tools Repository
+# Contributing Guide
 
-This repository follows a strict "Safety First" contribution policy.
+Welcome to the project! We appreciate your interest in contributing.
 
-## Quick Reference
+## Governance & Standards
 
-- **Policies**: See [AGENTS.md](AGENTS.md) for mandatory standards.
-- **CI/CD**: See `.github/workflows/ci-standard.yml`.
+Please refer to [AGENTS.md](AGENTS.md) for the authoritative guide on:
 
-## Developer Setup
+- **Coding Standards** (Python, JavaScript, MATLAB, C++)
+- **Architecture & Agent Roles**
+- **Git Workflow & Commit Conventions**
+- **Security Protocols**
 
-1.  **Clone the Repository**
-    ```bash
-    git clone <repository-url>
-    cd <repository-directory>
-    ```
+## Quick Start
 
-2.  **Environment Setup**
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # Windows: venv\Scripts\activate
-    pip install -r requirements.txt
-    ```
+1.  **Environment Setup**: Run `python setup_dev.py` to install dependencies.
+2.  **Linting**: Ensure your code passes `ruff`, `black`, and `mypy` checks.
+3.  **Testing**: Run relevant tests before submitting a PR.
+4.  **Tools**: Use `python UnifiedToolsLauncher.py` to access development utilities.
 
-3.  **Pre-commit Hooks**
-    ```bash
-    # Install development dependencies if not already present
-    pip install ruff black mypy pre-commit
-    pre-commit install
-    ```
+## Pull Requests
 
-## Workflow
-
-1.  **Branching**: `git checkout -b feature/your-feature-name`
-2.  **Linting**: Run `pre-commit run --all-files` before committing.
-3.  **Testing**: Run `pytest` to ensure no regressions.
-4.  **Pull Request**: Submit PR targeting `main`.
-
-**Note**: Direct pushes to `main` are blocked.
+- Use **GitHub CLI** (`gh pr create`) for PRs.
+- Ensure all CI/CD checks pass.
+- Follow the Conventional Commits format (e.g., `feat(scope): description`).
