@@ -2,47 +2,47 @@
 
 ## Executive Summary
 
--   **Unified Launcher**: The `UnifiedToolsLauncher` significantly improves the UX by providing a central point of access.
--   **GUI Focus**: The heavy use of GUIs (PyQt, Tkinter, Web) makes the tools accessible to non-technical users.
--   **Developer Experience**: The "Control Tower" architecture and strictly defined agent roles create a structured dev environment.
--   **Onboarding**: The polyglot nature (Python, MATLAB, Node) creates friction for new developers setting up the repo.
+- **Status**: 🟢 **Good**
+- **Onboarding**: "Time to First Hello World" is very low thanks to `UnifiedToolsLauncher.py`.
+- **Friction**: Python environment setup is the main hurdle. `requirements.txt` is provided but virtualenv creation is manual.
+- **Launchers**: The GUI launcher is a huge UX win compared to CLI-only repos.
+- **Feedback**: Console logs in the launcher provide good immediate feedback.
 
-## Top 10 UX Risks
+## Time-to-Value Metrics
 
-1.  **Installation Friction (Severity: High)**: Need to install Python, Node, and MATLAB is a high bar.
-2.  **Launcher Dependencies (Severity: Medium)**: Launcher requires PyQt6.
-3.  **Missing Tools Feedback (Severity: Medium)**: Launcher buttons show "Missing" which is good, but "Why" might be unclear to users.
-4.  **Inconsistent UI (Severity: Low)**: Tkinter vs PyQt vs Web creates disjointed experience.
-5.  **Console Output (Severity: Low)**: Launcher log area is small.
-6.  **Shortcut Creation (Severity: Low)**: PowerShell scripts for shortcuts work only on Windows.
-7.  **Web App Launching (Severity: Medium)**: Launching web apps involves opening a browser, which disconnects from the launcher flow.
-8.  **Error Messages (Severity: Low)**: Need to ensure friendly error messages across all tools.
-9.  **Accessibility (Severity: Medium)**: Web apps have ARIA roles, but desktop apps (PyQt) might lack accessibility features.
-10. **Theme (Severity: Low)**: Dark mode in launcher is nice, but might not match OS theme.
+| Stage             | Time (P50) | Status | Issues |
+| ----------------- | ---------- | ------ | ------ |
+| Installation      | 5 min      | ✅     | Depends on network/pip. |
+| First run         | <1 min     | ✅     | `python UnifiedToolsLauncher.py` works immediately. |
+| First result      | 1 min      | ✅     | Clicking a tool button. |
+| Understand output | 2 min      | ✅     | GUI self-explanatory. |
+
+## Friction Point Heatmap
+
+| Stage     | Friction Points | Severity | Fix Effort |
+| --------- | --------------- | -------- | ---------- |
+| Install   | No setup script | Minor    | S (Add `setup.sh`/`.bat`) |
+| Launch    | Two launchers   | Medium   | S (Remove one) |
+| Runtime   | MATLAB req      | Major    | L (Port to Python) |
 
 ## Scorecard
 
-| Category             | Score | Evidence & Remediation                                    |
-| -------------------- | ----- | --------------------------------------------------------- |
-| Time-to-value        | 7/10  | High for pre-configured machines, low for fresh clones.   |
-| Onboarding           | 7/10  | Docs help, but environment complexity is high.            |
-| Friction Points      | 8/10  | Launcher removes friction of finding scripts.             |
-| UI/UX Consistency    | 6/10  | Mix of technologies.                                      |
-| Developer Journey    | 9/10  | Strong guardrails and agent support.                      |
+| Category              | Score | Evidence |
+| --------------------- | ----- | -------- |
+| Installation Ease     | 8/10  | Standard pip install. |
+| First-Run Success     | 10/10 | Launcher is great. |
+| Documentation Quality | 9/10  | Clear README. |
+| Error Clarity         | 7/10  | Launcher catches exceptions but detailed logs are hidden. |
+| API Ergonomics        | N/A   | Mostly GUI tools. |
+| **Overall UX Score**  | **8.5**| |
 
-## Findings Table
+## Remediation Roadmap
 
-| ID    | Severity | Category | Location | Symptom | Root Cause | Fix | Effort |
-| ----- | -------- | -------- | -------- | ------- | ---------- | --- | ------ |
-| D-001 | Medium   | UX       | Repo Root | Complex setup | Polyglot stack | Containerize (Docker) | L |
+**48 Hours**
+- Add `scripts/setup.py` or `scripts/install.sh` to automate venv creation.
 
-## Refactoring Plan
+**2 Weeks**
+- Consolidate launchers to avoid "which one do I click?" confusion.
 
-**48 Hours**:
--   None.
-
-**2 Weeks**:
--   Create a `devcontainer` definition to standardize the development environment.
-
-**6 Weeks**:
--   Explore Electron or similar for a more unified cross-platform launcher experience? (Maybe too much effort). Stick to improving PyQt launcher.
+**6 Weeks**
+- Port critical MATLAB tools to Python to remove the heavy MATLAB dependency for non-academic users.
