@@ -1,0 +1,67 @@
+name: Jules Issue Resolver (Daily Priority Fixer)
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 7 * * *"  # Daily at 7 AM UTC
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: jules-issue-resolver
+  cancel-in-progress: false
+
+jobs:
+  resolve-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install
+        run: |
+          pip install ruff black || true
+          npm install -g @google/jules
+
+      - name: Gather Issues
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p .jules/resolver_data
+          gh issue list --state open --limit 30 --json number,title,labels \
+            --jq '[.[] | select(.labels | map(.name) | (contains(["critical"]) or contains(["high-priority"])))]' \
+            > .jules/resolver_data/priority_issues.json
+
+      - name: Fix Issues
+        env:
+          JULES_TOKEN: ${{ secrets.JULES_API_KEY }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="jules/fixes-$(date +%Y%m%d-%H%M)"
+          git checkout -b "$BRANCH"
+
+          jules auth --token $JULES_TOKEN
+          jules task fix --prompt "Fix top 5 issues from .jules/resolver_data/. Include 'Fixes #NUM' for resolved issues."
+
+          ruff check . --fix || true
+          black . || true
+
+          git add -A
+          if ! git diff --staged --quiet; then
+            git commit -m "fix: resolve priority issues"
+            git push origin "$BRANCH"
+            gh pr create --title "Issue Resolution - $(date +%Y-%m-%d)" --body "Auto fixes" --label "jules:issue-resolver"
+          fi

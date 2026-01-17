@@ -1,0 +1,44 @@
+name: Jules Completist (Incomplete Implementation Auditor)
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 4 * * *"  # Daily at 4 AM UTC
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install
+        run: npm install -g @google/jules
+
+      - name: Scan
+        run: |
+          mkdir -p .jules/completist_data
+          grep -rn "TODO\|FIXME\|XXX" --include="*.py" --include="*.md" . \
+            --exclude-dir=".git" > .jules/completist_data/todo_markers.txt 2>/dev/null || true
+
+      - name: Analyze
+        env:
+          JULES_TOKEN: ${{ secrets.JULES_API_KEY }}
+        run: |
+          jules auth --token $JULES_TOKEN
+          jules task fix --prompt "Audit .jules/completist_data/ for incomplete work. Create docs/assessments/completist/ report. DO NOT modify code."
+
+      - name: Commit
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs(completist): audit"
+          file_pattern: "docs/assessments/completist/*.md"

@@ -1,0 +1,101 @@
+name: Jules Control Tower
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, closed]
+  workflow_run:
+    workflows: ["CI Standard"]
+    types: [completed]
+  schedule:
+    # DAILY INTENSIVE SCHEDULE - We don't take days off
+    - cron: "0 2 * * *"   # 2 AM - Assessment Generator
+    - cron: "0 3 * * *"   # 3 AM - Code Quality Reviewer
+    - cron: "0 4 * * *"   # 4 AM - Completist
+    - cron: "0 5 * * *"   # 5 AM - Sentinel (security)
+    - cron: "0 7 * * *"   # 7 AM - Issue Resolver
+
+concurrency:
+  group: jules-control-tower-${{ github.run_id }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    if: github.actor != 'jules-bot'
+    outputs:
+      target: ${{ steps.decide.outputs.target }}
+    steps:
+      - name: Analyze Event Context
+        id: decide
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const event = context.eventName;
+            let target = "none";
+
+            if (event === "workflow_run" && context.payload.workflow_run.conclusion === "failure") {
+               target = "auto-repair";
+            }
+            else if (event === "schedule") {
+              const hour = new Date().getUTCHours();
+
+              if (hour === 2) {
+                target = "assessment-generator";
+              } else if (hour === 3) {
+                target = "code-quality-reviewer";
+              } else if (hour === 4) {
+                target = "completist";
+              } else if (hour === 5) {
+                target = "sentinel";
+              } else if (hour === 7) {
+                target = "issue-resolver";
+              }
+            }
+
+            console.log(`Decision: Dispatching [${target}]`);
+            core.setOutput("target", target);
+
+  # --- WORKER DISPATCH ---
+
+  call-sentinel:
+    needs: triage
+    if: needs.triage.outputs.target == 'sentinel'
+    uses: ./.github/workflows/Jules-Sentinel.yml
+    secrets: inherit
+
+  call-code-quality-reviewer:
+    needs: triage
+    if: needs.triage.outputs.target == 'code-quality-reviewer'
+    uses: ./.github/workflows/Jules-Code-Quality-Reviewer.yml
+    secrets: inherit
+
+  call-assessment-generator:
+    needs: triage
+    if: needs.triage.outputs.target == 'assessment-generator'
+    uses: ./.github/workflows/Jules-Assessment-Generator.yml
+    secrets: inherit
+
+  call-issue-resolver:
+    needs: triage
+    if: needs.triage.outputs.target == 'issue-resolver'
+    uses: ./.github/workflows/Jules-Issue-Resolver.yml
+    secrets: inherit
+
+  call-completist:
+    needs: triage
+    if: needs.triage.outputs.target == 'completist'
+    uses: ./.github/workflows/Jules-Completist.yml
+    secrets: inherit
+
+  call-code-quality-fixer:
+    needs: triage
+    if: needs.triage.outputs.target == 'code-quality-fixer'
+    uses: ./.github/workflows/Jules-Code-Quality-Fixer.yml
+    secrets: inherit

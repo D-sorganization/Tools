@@ -1,0 +1,61 @@
+name: Jules Code Quality Reviewer (Worker)
+
+on:
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      days_to_review:
+        description: 'Days to review'
+        required: false
+        default: '2'
+        type: string
+  schedule:
+    - cron: "0 3 * * *"  # Daily at 3 AM UTC
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install
+        run: npm install -g @google/jules
+
+      - name: Gather History
+        id: history
+        run: |
+          mkdir -p .jules/review_data
+          SINCE=$(date -d "${{ inputs.days_to_review || '2' }} days ago" +%Y-%m-%d)
+          git log --since="$SINCE" -p > .jules/review_data/diffs.txt
+          echo "count=$(git log --since="$SINCE" --oneline | wc -l)" >> $GITHUB_OUTPUT
+
+      - name: Review
+        if: steps.history.outputs.count > 0
+        env:
+          JULES_TOKEN: ${{ secrets.JULES_API_KEY }}
+        run: |
+          jules auth --token $JULES_TOKEN
+          mkdir -p docs/assessments/changelog_reviews
+
+          jules task fix --prompt "Review .jules/review_data/ for quality issues. Save to docs/assessments/. Create issues for CRITICAL problems."
+
+      - name: Commit
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs(review): code quality review"
+          file_pattern: "docs/assessments/**/*.md"
