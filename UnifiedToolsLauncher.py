@@ -23,6 +23,7 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QMainWindow,
+    QMessageBox,
     QPushButton,
     QScrollArea,
     QTabWidget,
@@ -248,6 +249,15 @@ class UnifiedLauncher(QMainWindow):
 
         main_layout.addWidget(log_group)
 
+        # Check for tools
+        if not TOOLS:
+            self.log("❌ Warning: tools.json not found or empty.")
+            QMessageBox.warning(
+                self,
+                "Configuration Error",
+                "Could not load tool definitions from tools.json.\nThe launcher will be empty.",
+            )
+
     def setup_category_tab(self, tab: QWidget, tools: list[dict[str, Any]]) -> None:
         """Set up a tab for a category of tools."""
         scroll = QScrollArea()
@@ -343,8 +353,6 @@ class UnifiedLauncher(QMainWindow):
 
         except Exception as e:
             self.log(f"❌ Error: {str(e)}")
-            from PyQt6.QtWidgets import QMessageBox
-
             QMessageBox.critical(
                 self, "Launch Error", f"Failed to launch tool:\n{str(e)}"
             )

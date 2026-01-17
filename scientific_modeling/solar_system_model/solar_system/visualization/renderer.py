@@ -802,10 +802,6 @@ class Renderer:
         if self.ui_renderer:
             self.ui_renderer.render_date_picker(picker_data)
 
-    def render_time_navigation_panel(self, nav_data: dict[str, Any]) -> None:
-        """Render time navigation panel (Deprecated)."""
-        pass  # Not used directly in scene anymore (part of unified)
-
     def render_educational_panel(self, edu_data: dict[str, Any]) -> None:
         """Render educational panel (Delegated to UIRenderer)."""
         if self.ui_renderer:
@@ -833,14 +829,6 @@ class Renderer:
     def get_fps(self) -> float:
         """Get current frames per second."""
         return self.clock.get_fps() if self.clock else 0.0
-
-    def render_settings_panel(self, settings_data: dict[str, Any]) -> None:
-        """Render settings panel (Deprecated/Moved to Unified)."""
-        pass  # Moved to Unified
-
-    def render_nav_mode_panel(self, nav_data: dict[str, Any]) -> None:
-        """Render navigation mode panel (Deprecated/Moved to Unified)."""
-        pass  # Moved to Unified
 
     def render_sidebar(
         self, sidebar_data: dict[str, Any], content_data: dict[str, Any] | None
