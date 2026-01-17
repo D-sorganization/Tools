@@ -1,0 +1,137 @@
+# DRAFT - Jules Code Quality Reviewer Workflow
+# DO NOT IMPLEMENT YET - Awaiting user approval
+#
+# Purpose: Review git history for code quality issues, truncated work, placeholders, workarounds
+# Schedule: Daily at 3 AM UTC
+# Based on: Repository_Management/assessments/code_quality_assessment_prompt.md
+
+name: Jules Code Quality Reviewer (Worker)
+
+on:
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      days_to_review:
+        description: 'Number of days of git history to review'
+        required: false
+        default: '2'
+        type: string
+  schedule:
+    - cron: "0 3 * * *"  # Daily at 3 AM UTC
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for git log analysis
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt || echo "No requirements.txt found"
+          npm install -g @google/jules
+
+      - name: Gather Git History
+        id: history
+        env:
+          DAYS: ${{ inputs.days_to_review || '2' }}
+        run: |
+          mkdir -p .jules/review_data
+
+          # Get commits from last N days
+          SINCE_DATE=$(date -d "$DAYS days ago" +%Y-%m-%d)
+          echo "Reviewing commits since: $SINCE_DATE"
+
+          # Detailed commit log
+          git log --since="$SINCE_DATE" --pretty=format:'%H|%an|%ae|%s|%ad' --date=short > .jules/review_data/commits.txt
+
+          # Get changed files with diff stats
+          git log --since="$SINCE_DATE" --stat --pretty=format:'--- COMMIT: %H ---' > .jules/review_data/changes.txt
+
+          # Get full diffs for code review
+          git log --since="$SINCE_DATE" -p --no-color > .jules/review_data/diffs.txt
+
+          # Count commits
+          COMMIT_COUNT=$(git log --since="$SINCE_DATE" --oneline | wc -l)
+          echo "commit_count=$COMMIT_COUNT" >> $GITHUB_OUTPUT
+          echo "Found $COMMIT_COUNT commits to review"
+
+      - name: Jules Code Quality Review
+        if: steps.history.outputs.commit_count > 0
+        env:
+          JULES_TOKEN: ${{ secrets.JULES_API_KEY }}
+          DAYS: ${{ inputs.days_to_review || '2' }}
+        run: |
+          jules auth --token $JULES_TOKEN
+
+          DATE=$(date +%Y-%m-%d)
+          mkdir -p docs/assessments/changelog_reviews
+
+          jules task fix --prompt "$(cat << 'PROMPT_EOF'
+          You are the CODE QUALITY REVIEWER agent.
+
+          ## Your Mission
+          Review all programming work done to the repo over the last $DAYS days in the git history.
+          The git data has been collected in .jules/review_data/
+
+          ## Review Criteria
+          1. **Coherent Plan**: Verify changes follow a coherent plan aligned with project guidelines
+          2. **Project Guidelines**: Check compliance with docs/assessments folder guidelines
+          3. **Damaging Changes**: Identify potentially damaging or breaking changes
+          4. **Truncated Work**: Flag instances where work was truncated or incomplete
+          5. **Placeholders**: Identify placeholder code (TODO, FIXME, NotImplemented, pass statements)
+          6. **Workarounds**: Flag workarounds or hacks that should be properly fixed
+          7. **CI/CD Gaming**: CRITICAL - Look for agents changing rules to pass CI/CD (modifying test assertions, disabling checks, etc.)
+
+          ## Output Requirements
+          Generate a detailed report with:
+          - Executive Summary (pass/fail with confidence level)
+          - Commits Reviewed (list with brief assessment)
+          - Issues Identified (categorized by severity: Critical, High, Medium, Low)
+          - CI/CD Integrity Check (any suspicious modifications to test/CI files)
+          - Recommendations
+
+          ## File Operations
+          1. Save the full report to: docs/assessments/changelog_reviews/Code_Quality_Review_$DATE.md
+          2. Update docs/assessments/Code_Quality_Review_Latest.md with the current assessment
+          3. Archive any existing latest assessment to the changelog_reviews folder
+
+          ## Issue Creation
+          - For CRITICAL issues: Create a GitHub Issue with label 'jules:code-quality,critical'
+          - For suspected CI/CD gaming: Create issue with label 'jules:code-quality,integrity-alert'
+
+          IMPORTANT: Be thorough but fair. Not all workarounds are bad - consider context.
+          PROMPT_EOF
+          )"
+
+      - name: Skip Notice (No Commits)
+        if: steps.history.outputs.commit_count == 0
+        run: |
+          echo "No commits found in the review period. Skipping review."
+          mkdir -p .jules
+          echo "## $(date +%Y-%m-%d) - Code Quality Review" >> .jules/code_quality.md
+          echo "**Status**: Skipped - No commits in review period" >> .jules/code_quality.md
+          echo "" >> .jules/code_quality.md
+
+      - name: Commit Review Results
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs(review): code quality review $(date +%Y-%m-%d)"
+          file_pattern: |
+            docs/assessments/*.md
+            docs/assessments/changelog_reviews/*.md
+            .jules/*.md

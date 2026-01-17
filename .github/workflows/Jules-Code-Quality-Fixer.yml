@@ -1,0 +1,63 @@
+name: Jules Code Quality Fixer (Worker)
+
+on:
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run'
+        required: false
+        default: 'false'
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: jules-code-quality-fixer
+  cancel-in-progress: false
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install
+        run: |
+          pip install ruff black || true
+          npm install -g @google/jules
+
+      - name: Fix
+        if: inputs.dry_run != 'true'
+        env:
+          JULES_TOKEN: ${{ secrets.JULES_API_KEY }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="jules/fixes-$(date +%Y%m%d-%H%M)"
+          git checkout -b "$BRANCH"
+
+          jules auth --token $JULES_TOKEN
+          jules task fix --prompt "Fix issues from docs/assessments/. DO NOT modify tests. Run ruff/black."
+
+          ruff check . --fix || true
+          black . || true
+
+          git add -A
+          if ! git diff --staged --quiet; then
+            git commit -m "fix: code quality"
+            git push origin "$BRANCH"
+            gh pr create --title "Fixes - $(date +%Y-%m-%d)" --body "Auto fixes" --label "jules:code-quality"
+          fi

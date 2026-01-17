@@ -1,0 +1,51 @@
+name: Jules Assessment Generator (Worker)
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 2 * * 0"  # Weekly Sundays
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install
+        run: npm install -g @google/jules
+
+      - name: Archive Old
+        run: |
+          mkdir -p docs/assessments/archive
+          for f in docs/assessments/Assessment_*.md; do [ -f "$f" ] && mv "$f" docs/assessments/archive/; done
+
+      - name: Generate
+        env:
+          JULES_TOKEN: ${{ secrets.JULES_API_KEY }}
+        run: |
+          jules auth --token $JULES_TOKEN
+
+          jules task fix --prompt "$(cat << 'PROMPT_EOF'
+          Generate graded assessments (0-10) for A-O categories.
+          Save to docs/assessments/. Create comprehensive assessment with weighted grades.
+          For grades < 5: Create GitHub Issue.
+          PROMPT_EOF
+          )"
+
+      - name: Commit
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs(assessment): weekly assessment"
+          file_pattern: "docs/assessments/**/*.md"
