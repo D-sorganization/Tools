@@ -343,6 +343,11 @@ class UnifiedLauncher(QMainWindow):
 
         except Exception as e:
             self.log(f"❌ Error: {str(e)}")
+            from PyQt6.QtWidgets import QMessageBox
+
+            QMessageBox.critical(
+                self, "Launch Error", f"Failed to launch tool:\n{str(e)}"
+            )
 
 
 # =============================================================================

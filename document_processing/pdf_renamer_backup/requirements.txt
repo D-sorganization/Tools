@@ -1,4 +1,0 @@
-pdfplumber
-pytest
-types-setuptools
-PyPDF2
