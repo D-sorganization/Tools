@@ -1,19 +1,18 @@
 # Assessment N Results: Visualization & Export
 
-## Executive Summary
+## Visualization Assessment
 
-- **Visualization**: `data_processor` and `solar_system` have strong viz capabilities (Matplotlib/OpenGL).
-- **Export**: `data_processor` exports to CSV/Excel.
+| Feature | Quality        | Accessibility | Export Options |
+| ------- | -------------- | ------------- | -------------- |
+| Plots   | Unknown (Crash)| Unknown       | Unknown        |
+| Reports | Good           | ✅            | Markdown       |
 
-## Scorecard
+**Analysis**: Code contains `matplotlib` logic, but it cannot be verified due to the application crashing on import.
 
-| Category | Score | Evidence |
-| --- | --- | --- |
-| Plot Quality | 8/10 | Matplotlib is standard. |
-| Export | 8/10 | Multiple formats supported. |
+## Remediation Roadmap
 
-## Findings
-- **N-001**: None major.
+**48 hours:**
+- **Fix Crash**: Enable the application so visualization quality can be audited.
 
-## Remediation
-- None.
+**2 weeks:**
+- **Style Audit**: Review plots against colorblind-safe palettes (once runnable).

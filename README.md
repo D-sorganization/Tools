@@ -40,7 +40,7 @@ The repository is organized into several key areas:
 ### Prerequisites
 
 - **Git**: Version control (ensure LFS is installed).
-- **Python**: Version 3.11+.
+- **Python**: Version 3.10+ (Tests verified on 3.10.12).
 - **MATLAB**: Required for running the core simulations.
 - **Node.js**: Required for web applications and some dev tools.
 

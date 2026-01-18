@@ -7,6 +7,8 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
+from utils.compatibility import UTC
+
 from .constants import (
     BOLD_HEADER_FONT_SIZE,
     DEFAULT_LISTBOX_HEIGHT,
@@ -398,7 +400,7 @@ class FolderPackerGUI:
             message: Status message to display.
 
         """
-        timestamp = datetime.datetime.now(tz=datetime.UTC).strftime("%H:%M:%S")
+        timestamp = datetime.datetime.now(tz=UTC).strftime("%H:%M:%S")
         status_line = f"[{timestamp}] {message}\n"
         self.status_text.insert(tk.END, status_line)
         self.status_text.see(tk.END)

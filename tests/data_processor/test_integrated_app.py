@@ -295,15 +295,14 @@ class TestIntegratedCSVProcessorApp(unittest.TestCase):
         mock_pq.ParquetFile.return_value = mock_file
 
         # Instantiate dialog (mock parent)
-        with patch("Data_Processor_Integrated.ctk.CTkToplevel"), patch(
-            "Data_Processor_Integrated.ctk.CTkFrame"
-        ), patch("Data_Processor_Integrated.ctk.CTkLabel"), patch(
-            "Data_Processor_Integrated.ctk.CTkButton"
-        ), patch(
-            "Data_Processor_Integrated.ctk.CTkTextbox"
-        ), patch(
-            "Data_Processor_Integrated.Path"
-        ) as mock_path:
+        with (
+            patch("Data_Processor_Integrated.ctk.CTkToplevel"),
+            patch("Data_Processor_Integrated.ctk.CTkFrame"),
+            patch("Data_Processor_Integrated.ctk.CTkLabel"),
+            patch("Data_Processor_Integrated.ctk.CTkButton"),
+            patch("Data_Processor_Integrated.ctk.CTkTextbox"),
+            patch("Data_Processor_Integrated.Path") as mock_path,
+        ):
 
             # Configure path mock robustly
             mock_stat = MagicMock()

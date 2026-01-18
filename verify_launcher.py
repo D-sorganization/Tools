@@ -28,7 +28,7 @@ def main() -> None:
     print("=" * 60)
 
     # Check for different launcher files
-    launcher_files = ["tools_launcher.py", "Launcher.py", "launch_tools_main.py"]
+    launcher_files = ["UnifiedToolsLauncher.py", "launch_tools_main.py"]
 
     for launcher in launcher_files:
         launcher_path = current_dir / launcher

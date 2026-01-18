@@ -74,7 +74,9 @@ class TransactionLog:
         except Exception as e:
             logger.error(f"Failed to write transaction log: {e}")
 
-    def get_session_operations(self, session_id: str | None = None) -> list[dict]:
+    def get_session_operations(
+        self, session_id: str | None = None
+    ) -> list[dict[str, Any]]:
         """
         Retrieve all operations from a session.
 
@@ -87,7 +89,7 @@ class TransactionLog:
         if session_id is None:
             session_id = self.session_id
 
-        operations = []
+        operations: list[dict[str, Any]] = []
         if not self.log_path.exists():
             return operations
 

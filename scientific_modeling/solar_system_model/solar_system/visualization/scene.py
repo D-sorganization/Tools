@@ -3,10 +3,11 @@ from __future__ import annotations
 import math
 from calendar import monthrange
 from dataclasses import dataclass
-from datetime import UTC, datetime
-from typing import Any
+from datetime import datetime
+from typing import Any, cast
 
 import numpy as np
+from utils.compatibility import UTC
 
 from ..core.celestial_body import (
     BodyType,
@@ -735,11 +736,12 @@ class SolarSystemScene:
         # Get educational info from PLANET_DESCRIPTIONS
         body_name = self.selected_body.name
         if body_name in PLANET_DESCRIPTIONS:
-            info = PLANET_DESCRIPTIONS[body_name]
+            info = cast(dict[str, Any], PLANET_DESCRIPTIONS[body_name])
 
             # Build properties dict
             properties: dict[str, Any] = {}
-            for key, value in info.items():
+            info_dict = dict(info)
+            for key, value in info_dict.items():
                 if key != "fun_facts":
                     properties[key.replace("_", " ").title()] = value
 
@@ -991,7 +993,8 @@ class SolarSystemScene:
                 if self._should_render_body(planet):
                     renderer.render_orbit(planet, julian_date)
 
-        renderer.render_body(self.sun, julian_date, self.selected_body == self.sun)
+        if self.sun:
+            renderer.render_body(self.sun, julian_date, self.selected_body == self.sun)
 
         if self.view_state.show_labels:
             sun_pos = np.array([0, 0, 0])
@@ -1259,7 +1262,8 @@ class SolarSystemScene:
                     for btn in self.unified_controls.buttons:
                         if bx <= rel_x <= bx + btn.width:
                             if btn.action == "reset_view":
-                                self.renderer.camera.reset()
+                                if self.renderer:
+                                    self.renderer.camera.reset()
                             elif btn.action == "toggle_orbits_btn":
                                 self._handle_setting_action("toggle_orbits")
                             return True
@@ -1297,7 +1301,8 @@ class SolarSystemScene:
             self.view_state.show_orbits = not self.view_state.show_orbits
         elif action == "toggle_labels":
             self.view_state.show_labels = not self.view_state.show_labels
-            self.renderer.settings.show_labels = self.view_state.show_labels
+            if self.renderer:
+                self.renderer.settings.show_labels = self.view_state.show_labels
         elif action == "toggle_grid":
             if self.renderer:
                 self.renderer.settings.show_grid = not self.renderer.settings.show_grid

@@ -1,20 +1,30 @@
 # Assessment H Results: Error Handling & Debugging
 
-## Executive Summary
+## Error Quality Audit
 
-- **Launcher**: Catches exceptions but UI feedback is weak.
-- **Tools**: `data_processor` has robust error handling (checked in earlier turns).
-- **Recovery**: No automatic restart for tools.
+| Error Type     | Current Quality | Fix Priority    |
+| -------------- | --------------- | --------------- |
+| Startup Crash  | POOR            | **Immediate**   |
 
-## Scorecard
+**Observation**:
+The user receives a raw Python traceback:
+```
+ImportError: cannot import name 'StrEnum' from 'enum'
+```
+This is NOT actionable for a non-expert user. It implies the code is broken, not that the environment is wrong.
 
-| Category | Score | Evidence |
-| --- | --- | --- |
-| Actionable Errors | 7/10 | Logs are okay. |
-| Debugging Support | 8/10 | Launcher has "Debug Mode" checkbox. |
+## Remediation Roadmap
 
-## Findings
-- **H-001**: Launcher swallows errors to log.
+**48 hours:**
+- **Add Version Check**: At the very top of `UnifiedToolsLauncher.py` (and other entry points), add a check:
+  ```python
+  import sys
+  if sys.version_info < (3, 11):
+      print("Error: Python 3.11+ is required.")
+      sys.exit(1)
+  ```
+- **Documentation**: Update troubleshooting to explain this error.
 
-## Remediation
-- Add popups (Planned in Assessment A).
+## Recovery Strategies
+- **Current**: None. App termination.
+- **Target**: Graceful exit with helpful message.
