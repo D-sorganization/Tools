@@ -24,6 +24,18 @@ from datetime import datetime
 from pathlib import Path
 from typing import Final
 
+
+# Add python/src to sys.path to find utils package
+# Walk up identifying the project root
+# Add python/src to sys.path to find utils package
+# Walk up identifying the project root
+current_path = Path(__file__).resolve().parent
+while current_path != current_path.parent:
+    if (current_path / "python" / "src" / "utils" / "compatibility.py").exists():
+        sys.path.insert(0, str(current_path / "python" / "src"))
+        break
+    current_path = current_path.parent
+
 from utils.compatibility import UTC
 
 # Constants
