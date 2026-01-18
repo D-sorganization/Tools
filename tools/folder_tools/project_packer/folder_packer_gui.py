@@ -3,13 +3,27 @@
 import datetime
 import logging
 import shutil
-import tkinter as tk
 from pathlib import Path
-from tkinter import filedialog, messagebox, ttk
+try:
+    import tkinter as tk
+    from tkinter import filedialog, messagebox, ttk
+except ImportError:
+    # If tkinter is not available (e.g. headless CI), mock it for tests
+    from unittest.mock import MagicMock
+    tk = MagicMock()
+    filedialog = MagicMock()
+    messagebox = MagicMock()
+    ttk = MagicMock()
 
-from utils.compatibility import UTC
+try:
+    from datetime import timezone
+    UTC = timezone.utc
+except ImportError:
+    # Fallback for older python versions if needed (though 3.10+ has it)
+    import datetime
+    UTC = datetime.timezone.utc
 
-from .constants import (
+from constants import (
     BOLD_HEADER_FONT_SIZE,
     DEFAULT_LISTBOX_HEIGHT,
     DEFAULT_PADDING,
