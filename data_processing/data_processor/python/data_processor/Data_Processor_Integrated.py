@@ -1436,14 +1436,13 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
         self.folder_mode_description.configure(text=descriptions.get(mode, ""))
 
-    def _folder_select_source_folders(self):
+    def _folder_select_source_folders(self) -> None:
         """Select source folders for processing."""
         try:
-            folders = filedialog.askdirectory(
-                title="Select Source Folders", multiple=True
-            )
-            if folders:
-                self.folder_source_folders.extend(folders)
+            # askdirectory does not support multiple selection in standard tkinter
+            folder = filedialog.askdirectory(title="Select Source Folders")
+            if folder:
+                self.folder_source_folders.append(folder)
                 self._folder_update_source_display()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to select source folders: {str(e)}")
