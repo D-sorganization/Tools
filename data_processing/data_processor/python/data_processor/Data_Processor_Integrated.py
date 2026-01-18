@@ -1483,7 +1483,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             )
             self.folder_dest_label.configure(text=folder)
 
-    def _folder_run_processing(self):
+    def _folder_run_processing(self) -> None:
         """Start the folder processing operation."""
         if not self.folder_source_folders:
             messagebox.showwarning(
@@ -1511,7 +1511,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         self.folder_cancel_button.configure(state="normal")
         self.folder_status_var.set("Processing...")
 
-    def _folder_cancel_processing(self):
+    def _folder_cancel_processing(self) -> None:
         """Cancel the folder processing operation."""
         self.folder_cancel_flag = True  # Set flag to signal cancellation
         self.folder_status_var.set("Cancelled")
@@ -1519,7 +1519,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         self.folder_run_button.configure(state="normal")
         self.folder_cancel_button.configure(state="disabled")
 
-    def _folder_perform_processing(self):
+    def _folder_perform_processing(self) -> None:
         """Perform the actual folder processing operation."""
         try:
             mode = self.folder_operation_mode.get()
@@ -1547,7 +1547,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             self.after(0, lambda: self.folder_run_button.configure(state="normal"))
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))
 
-    def _folder_combine_operation(self):
+    def _folder_combine_operation(self) -> None:
         """
         Perform combine operation - copy all files from source folders to destination.
         """
@@ -1640,7 +1640,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             error_msg = f"Error: {str(e)}"
             self.after(0, lambda: self.folder_status_var.set(error_msg))
 
-    def _folder_flatten_operation(self):
+    def _folder_flatten_operation(self) -> None:
         """Perform flatten operation - copy files from nested folders to top level."""
         try:
             import os
@@ -1725,7 +1725,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             error_msg = f"Error: {str(e)}"
             self.after(0, lambda: self.folder_status_var.set(error_msg))
 
-    def _folder_prune_operation(self):
+    def _folder_prune_operation(self) -> None:
         """Perform prune operation - copy folders but skip empty subfolders."""
         try:
             import os
@@ -1820,7 +1820,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             error_msg = f"Error: {str(e)}"
             self.after(0, lambda: self.folder_status_var.set(error_msg))
 
-    def _folder_deduplicate_operation(self):
+    def _folder_deduplicate_operation(self) -> None:
         """Perform deduplicate operation.
 
         Remove renamed duplicates in source folders.
@@ -1910,7 +1910,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             error_msg = f"Error: {str(e)}"
             self.after(0, lambda: self.folder_status_var.set(error_msg))
 
-    def _folder_analyze_operation(self):
+    def _folder_analyze_operation(self) -> None:
         """Perform analyze operation - generate detailed report of folder contents."""
         try:
             import os
