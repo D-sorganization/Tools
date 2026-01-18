@@ -24,7 +24,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import Final
 
-
 # Add python/src to sys.path to find utils package
 # Walk up identifying the project root
 # Add python/src to sys.path to find utils package
@@ -36,7 +35,7 @@ while current_path != current_path.parent:
         break
     current_path = current_path.parent
 
-from utils.compatibility import UTC
+from utils.compatibility import UTC  # noqa: E402
 
 # Constants
 # [s] Timeout for MATLAB script execution - 5 minutes allows for large codebase analysis

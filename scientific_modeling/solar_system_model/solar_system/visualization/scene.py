@@ -3,8 +3,8 @@ from __future__ import annotations
 import math
 from calendar import monthrange
 from dataclasses import dataclass
-from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, Any, cast
+from datetime import datetime
+from typing import Any, cast
 
 import numpy as np
 from utils.compatibility import UTC

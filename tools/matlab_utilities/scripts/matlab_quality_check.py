@@ -29,7 +29,7 @@ while current_path != current_path.parent:
         break
     current_path = current_path.parent
 
-from utils.compatibility import UTC
+from utils.compatibility import UTC  # noqa: E402
 
 # Constants
 MATLAB_SCRIPT_TIMEOUT_SECONDS: int = 300  # 5 minutes - allows time for large codebases
