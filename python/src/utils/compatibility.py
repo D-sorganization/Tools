@@ -12,12 +12,12 @@ try:
     from datetime import UTC  # type: ignore[attr-defined]
 except ImportError:
     from datetime import timezone
+
     UTC = timezone.utc  # noqa: UP017
 
 # Backport StrEnum
 if sys.version_info >= (3, 11):  # noqa: UP036
     from enum import StrEnum as _StrEnum
-
 
     StrEnum = _StrEnum
 else:
