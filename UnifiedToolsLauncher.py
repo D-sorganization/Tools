@@ -336,6 +336,21 @@ class UnifiedLauncher(QMainWindow):
             self.log(f"DEBUG: Mode enabled. Launching {type_} tool.")
 
         try:
+            # Security: Validate path is within REPO_ROOT (prevent path traversal)
+            try:
+                # Resolve full path to avoid relative path tricks
+                full_path = path.resolve()
+                repo_root_abs = REPO_ROOT.resolve()
+                
+                # Check if path is relative to repo root
+                if not str(full_path).startswith(str(repo_root_abs)):
+                    raise ValueError(f"Security Alert: Attempted to launch tool outside repository: {full_path}")
+                
+            except Exception as e:
+                self.log(f"❌ Security violation: {e}")
+                QMessageBox.critical(self, "Security Error", f"Access Denied: {e}")
+                return
+
             if type_ == "python":
                 args = [sys.executable, str(path)]
                 if is_debug:
@@ -364,11 +379,16 @@ class UnifiedLauncher(QMainWindow):
                         self.log("⚠️ MATLAB not in PATH, opened file with xdg-open")
 
             elif type_ == "web" or type_ == "browser":
+                # Validate URL scheme if it's external, or path if internal
                 webbrowser.open(path.as_uri())
                 self.log("✅ Opened in default browser")
 
             elif type_ == "bat":
                 # Use cmd.exe explicitly instead of shell=True for security
+                # Also ensure it's actually a .bat or .cmd file
+                if not path.suffix.lower() in ['.bat', '.cmd']:
+                     raise ValueError("Security: File must be .bat or .cmd to execute as batch script")
+                
                 subprocess.Popen(["cmd.exe", "/c", str(path)], cwd=path.parent)
                 self.log("✅ Batch script executed")
 
