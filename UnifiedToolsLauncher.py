@@ -61,7 +61,9 @@ try:
         ]
 except Exception as e:
     # Fallback if core logic missing (should not happen with sys.path fix)
-    sys.stderr.write(f"Critical: PluginManager failed ({e}). Using fallback JSON load.\n")
+    sys.stderr.write(
+        f"Critical: PluginManager failed ({e}). Using fallback JSON load.\n"
+    )
     TOOLS_FILE = REPO_ROOT / "tools.json"
     TOOLS = {}
     if TOOLS_FILE.exists():
