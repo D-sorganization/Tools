@@ -50,12 +50,8 @@ try:
     from core.plugin_manager import PluginManager
 
     plugin_manager = PluginManager(REPO_ROOT)
-    # Convert PluginManager tools back to simple dict for compatibility with existing UI loop
-    # or updating UI to use Tool objects?
-    # Existing UI expects simple dicts. Let's map it back for minimal refactor, or update UI.
-    # The UI code below uses `tool['name']` access.
-    # Tool objects allow attribute access, but UI might use dict access?
-    # Let's check UI usage.
+    # Convert PluginManager tool objects to simple dicts so the existing UI code
+    # (which relies on dict keys) does not need a massive refactor right now.
     plugin_manager.load_tools()
     TOOLS = {}
     for cat, tool_list in plugin_manager.tools.items():

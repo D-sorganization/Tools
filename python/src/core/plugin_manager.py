@@ -26,7 +26,11 @@ class PluginManager:
     def load_tools(self) -> dict[str, list[Tool]]:
         """Load tools from tools.json."""
         if not self.tools_file.exists():
-            logger.error(f"Tools file not found: {self.tools_file}")
+            logger.error(
+                f"Tools file not found at {self.tools_file}. "
+                f"Create a tools.json file in the repository root ({self.repo_root}) "
+                "or verify that the installation is correct."
+            )
             return {}
 
         try:

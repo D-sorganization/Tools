@@ -300,8 +300,16 @@ class TrajectoryPlanner:
         windows = []
 
         # Get approximate orbital radii
-        r1 = origin.orbital_elements.semi_major_axis * AU
-        r2 = destination.orbital_elements.semi_major_axis * AU
+        r1 = (
+            origin.orbital_elements.semi_major_axis * AU
+            if origin.orbital_elements
+            else 0.0
+        )
+        r2 = (
+            destination.orbital_elements.semi_major_axis * AU
+            if destination.orbital_elements
+            else 0.0
+        )
 
         # Calculate ideal phase angle for Hohmann transfer
         ideal_phase = self.hohmann_phase_angle(r1, r2)
@@ -370,10 +378,14 @@ class TrajectoryPlanner:
         """
         # Get orbital radii at departure
         origin_state = origin.get_state_at_time(departure_date)
-        r1 = np.linalg.norm(origin_state.position)
+        r1 = float(np.linalg.norm(origin_state.position))
 
         # Estimate destination radius (use semi-major axis for planning)
-        r2 = destination.orbital_elements.semi_major_axis * AU
+        r2 = (
+            destination.orbital_elements.semi_major_axis * AU
+            if destination.orbital_elements
+            else 0.0
+        )
 
         if transfer_type == TransferType.HOHMANN:
             return self._calculate_hohmann(origin, destination, departure_date, r1, r2)
@@ -536,8 +548,8 @@ class TrajectoryPlanner:
             if assist_body.gm > 0
             else 0.0
         )
-        assist_heliocentric_speed = np.linalg.norm(
-            assist_body.get_state_at_time(assist_arrival).velocity
+        assist_heliocentric_speed = float(
+            np.linalg.norm(assist_body.get_state_at_time(assist_arrival).velocity)
         )
 
         second_leg = self.calculate_transfer(
@@ -708,8 +720,16 @@ class TrajectoryPlanner:
         Returns:
             Dictionary with transfer information
         """
-        r1 = origin.orbital_elements.semi_major_axis * AU
-        r2 = destination.orbital_elements.semi_major_axis * AU
+        r1 = (
+            origin.orbital_elements.semi_major_axis * AU
+            if origin.orbital_elements
+            else 0.0
+        )
+        r2 = (
+            destination.orbital_elements.semi_major_axis * AU
+            if destination.orbital_elements
+            else 0.0
+        )
 
         # Hohmann transfer
         dv1, dv2, tof, a_transfer = self.hohmann_transfer(r1, r2)

@@ -484,10 +484,9 @@ class PDFRenamerGUI(QMainWindow):
                 "Reject",
             ]
         )
-        if self.proposals_table.horizontalHeader() is not None:
-             self.proposals_table.horizontalHeader().setSectionResizeMode(
-                QHeaderView.ResizeMode.Stretch
-            )
+        header = self.proposals_table.horizontalHeader()
+        if header is not None:
+            header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         table_layout.addWidget(self.proposals_table)
         table_group.setLayout(table_layout)
         layout.addWidget(table_group)

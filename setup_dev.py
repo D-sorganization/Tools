@@ -10,8 +10,16 @@ logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
 
+# ANSI Color Codes
+CYAN = "\033[1;34m"
+GREEN = "\033[1;32m"
+YELLOW = "\033[1;33m"
+RED = "\033[1;31m"
+RESET = "\033[0m"
+
+
 def log_step(message: str) -> None:
-    logger.info(f"\n\033[1;34m[SETUP] {message}\033[0m")
+    logger.info(f"\n{CYAN}[SETUP] {message}{RESET}")
 
 
 def check_python() -> None:
@@ -34,19 +42,19 @@ def install_node_deps() -> None:
     pnpm_path = shutil.which("pnpm")
     if not pnpm_path:
         logger.warning(
-            "\033[1;33mWarning: 'pnpm' not found. Attempting to install via npm...\033[0m"
+            f"{YELLOW}Warning: 'pnpm' not found. Attempting to install via npm...{RESET}"
         )
         npm_path = shutil.which("npm")
         if not npm_path:
             logger.error(
-                "\033[1;31mError: neither 'pnpm' nor 'npm' found. Node.js dependencies skipped.\033[0m"
+                f"{RED}Error: neither 'pnpm' nor 'npm' found. Node.js dependencies skipped.{RESET}"
             )
             return
         try:
             subprocess.check_call(["npm", "install", "-g", "pnpm"])
         except subprocess.CalledProcessError:
             logger.error(
-                "\033[1;31mError: Failed to install pnpm globally. Please install it manually.\033[0m"
+                f"{RED}Error: Failed to install pnpm globally. Please install it manually.{RESET}"
             )
             return
 
@@ -57,7 +65,7 @@ def install_node_deps() -> None:
             subprocess.check_call(["pnpm", "install"], cwd=unit_converter_path)
         except subprocess.CalledProcessError:
             logger.error(
-                "\033[1;31mError: Failed to install dependencies in unit_converter.\033[0m"
+                f"{RED}Error: Failed to install dependencies in unit_converter.{RESET}"
             )
     else:
         logger.warning(f"Path not found: {unit_converter_path}")
@@ -70,7 +78,7 @@ def main() -> None:
         install_node_deps()
         log_step("Setup complete! You are ready to go.")
     except Exception as e:
-        logger.error(f"\n\033[1;31mSetup failed: {e}\033[0m")
+        logger.error(f"\n{RED}Setup failed: {e}{RESET}")
         sys.exit(1)
 
 

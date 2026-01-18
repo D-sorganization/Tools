@@ -10,11 +10,10 @@ from __future__ import annotations
 import hashlib
 import os
 import threading
-from collections.abc import Generator
+from collections.abc import Callable, Generator
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from functools import lru_cache
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 
 class OptimizedFileScanner:
