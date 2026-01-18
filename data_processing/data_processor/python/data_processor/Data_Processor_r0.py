@@ -801,22 +801,22 @@ class CSVProcessorApp(ctk.CTk):
         self.filter_menu.grid(row=1, column=1, padx=10, pady=5, sticky="ew")
 
         # Create filter parameter frames
-        (self.ma_frame, self.ma_value_entry, self.ma_unit_menu) = (
+        self.ma_frame, self.ma_value_entry, self.ma_unit_menu = (
             self._create_ma_param_frame(filter_frame, time_units)
         )
-        (self.bw_frame, self.bw_order_entry, self.bw_cutoff_entry) = (
+        self.bw_frame, self.bw_order_entry, self.bw_cutoff_entry = (
             self._create_bw_param_frame(filter_frame)
         )
-        (self.median_frame, self.median_kernel_entry) = self._create_median_param_frame(
+        self.median_frame, self.median_kernel_entry = self._create_median_param_frame(
             filter_frame,
         )
-        (self.hampel_frame, self.hampel_window_entry, self.hampel_threshold_entry) = (
+        self.hampel_frame, self.hampel_window_entry, self.hampel_threshold_entry = (
             self._create_hampel_param_frame(filter_frame)
         )
-        (self.zscore_frame, self.zscore_threshold_entry, self.zscore_method_menu) = (
+        self.zscore_frame, self.zscore_threshold_entry, self.zscore_method_menu = (
             self._create_zscore_param_frame(filter_frame)
         )
-        (self.savgol_frame, self.savgol_window_entry, self.savgol_polyorder_entry) = (
+        self.savgol_frame, self.savgol_window_entry, self.savgol_polyorder_entry = (
             self._create_savgol_param_frame(filter_frame)
         )
         self._update_filter_ui("None")
@@ -3073,7 +3073,7 @@ class CSVProcessorApp(ctk.CTk):
             )
             self.primary_params_container.grid_columnconfigure(0, weight=1)
 
-            (self.plot_ma_frame, self.plot_ma_value_entry, self.plot_ma_unit_menu) = (
+            self.plot_ma_frame, self.plot_ma_value_entry, self.plot_ma_unit_menu = (
                 self._create_ma_param_frame(self.primary_params_container, time_units)
             )
             (
@@ -3081,7 +3081,7 @@ class CSVProcessorApp(ctk.CTk):
                 self.plot_bw_order_entry,
                 self.plot_bw_cutoff_entry,
             ) = self._create_bw_param_frame(self.primary_params_container)
-            (self.plot_median_frame, self.plot_median_kernel_entry) = (
+            self.plot_median_frame, self.plot_median_kernel_entry = (
                 self._create_median_param_frame(self.primary_params_container)
             )
             (
@@ -3165,7 +3165,7 @@ class CSVProcessorApp(ctk.CTk):
                 self.compare_bw_order_entry,
                 self.compare_bw_cutoff_entry,
             ) = self._create_bw_param_frame(self.compare_params_container)
-            (self.compare_median_frame, self.compare_median_kernel_entry) = (
+            self.compare_median_frame, self.compare_median_kernel_entry = (
                 self._create_median_param_frame(self.compare_params_container)
             )
             (
@@ -6545,8 +6545,7 @@ COMMON MISTAKES TO AVOID:
 
         plot_config = {
             "name": plot_name,
-            "description": plot_desc
-            or f"Plot configuration created on \
+            "description": plot_desc or f"Plot configuration created on \
                 {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}",
             "signals": selected_signals,
             "start_time": self.plots_list_start_time_entry.get(),
