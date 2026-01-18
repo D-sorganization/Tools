@@ -1,19 +1,32 @@
-numpy>=2.0.1
-pandas>=2.2.2
-matplotlib>=3.9.0
-scipy>=1.13.1
-pytest>=8.2.0
-pyyaml>=6.0.1
-pytest-cov
-cryptography
-PyQt6>=6.7.0
-flask>=3.0.0
-sympy>=1.12
-pygame>=2.0.0
-PyOpenGL>=3.1.5
-PyOpenGL_accelerate>=3.1.5
-ruff
-mypy
-types-PyYAML
-types-requests
-playwright>=1.40.0
+# Core Scientific Computing
+numpy>=2.0.1              # Numerical computing foundation for all scientific tools
+pandas>=2.2.2             # Data processing and analysis (Data Processor tool)
+scipy>=1.13.1             # Scientific computing algorithms (simulations, optimizations)
+matplotlib>=3.9.0         # Plotting and visualization (all scientific tools)
+sympy>=1.12               # Symbolic mathematics (scientific modeling)
+
+# Testing & Quality Assurance
+pytest>=8.2.0             # Test framework for unit and integration tests
+pytest-cov                # Code coverage reporting
+ruff                      # Fast Python linter (replaces flake8, isort, etc.)
+mypy                      # Static type checker for type safety
+types-PyYAML              # Type stubs for PyYAML (mypy compatibility)
+types-requests            # Type stubs for requests (mypy compatibility)
+
+# GUI & Desktop Applications
+PyQt6>=6.7.0              # Primary GUI framework for UnifiedToolsLauncher
+pygame>=2.0.0             # Game development library (used in some scientific visualizations)
+PyOpenGL>=3.1.5           # OpenGL bindings for 3D graphics (Solar System Model)
+PyOpenGL_accelerate>=3.1.5  # Performance acceleration for PyOpenGL
+
+# Web Applications
+flask>=3.0.0              # Web framework for calculator and unit converter tools
+
+# Security & Encryption
+cryptography              # Encryption library for folder packer tools (PBKDF2, AES)
+
+# Data Formats & Configuration
+pyyaml>=6.0.1             # YAML parsing for configuration files
+
+# Web Automation & Testing
+playwright>=1.40.0        # Browser automation for web app testing
