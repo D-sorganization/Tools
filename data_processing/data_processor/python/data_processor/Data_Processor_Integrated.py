@@ -2840,17 +2840,17 @@ class ColumnSelectionDialog(ctk.CTkToplevel):
             side="right", padx=5
         )
 
-    def select_all(self):
+    def select_all(self) -> None:
         """Select all columns."""
         for var in self.column_vars.values():
             var.set(True)
 
-    def select_none(self):
+    def select_none(self) -> None:
         """Select no columns."""
         for var in self.column_vars.values():
             var.set(False)
 
-    def ok_clicked(self):
+    def ok_clicked(self) -> None:
         """Handle OK button click."""
         selected_columns = [col for col, var in self.column_vars.items() if var.get()]
         if not selected_columns:
@@ -2860,7 +2860,7 @@ class ColumnSelectionDialog(ctk.CTkToplevel):
         self.result = selected_columns
         self.destroy()
 
-    def cancel_clicked(self):
+    def cancel_clicked(self) -> None:
         """Handle Cancel button click."""
         self.result = None
         self.destroy()
