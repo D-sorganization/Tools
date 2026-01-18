@@ -1,9 +1,0 @@
-tools_launcher.py:795: error: Unused "type: ignore" comment  [unused-ignore]
-Launcher.py:160: error: Cannot infer type of lambda  [misc]
-Launcher.py:162: error: Unused "type: ignore" comment  [unused-ignore]
-Launcher.py:211: error: Unused "type: ignore" comment  [unused-ignore]
-UnifiedToolsLauncher.py:183: error: Function is missing a type annotation for one or more arguments  [no-untyped-def]
-UnifiedToolsLauncher.py:183: error: Missing type parameters for generic type "dict"  [type-arg]
-UnifiedToolsLauncher.py:273: error: Missing type parameters for generic type "list"  [type-arg]
-UnifiedToolsLauncher.py:312: error: Missing type parameters for generic type "dict"  [type-arg]
-Found 8 errors in 3 files (checked 4 source files)

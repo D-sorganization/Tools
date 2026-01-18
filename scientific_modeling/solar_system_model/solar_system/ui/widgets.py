@@ -40,7 +40,7 @@ class InfoPanel:
         self,
         position: tuple[int, int] = (20, 20),
         width: int = 300,
-        style: PanelStyle = None,
+        style: PanelStyle | None = None,
     ):
         """
         Initialize the info panel.
@@ -101,7 +101,7 @@ class StatusBar:
     Displays time, speed, selected object, FPS, etc.
     """
 
-    def __init__(self, style: PanelStyle = None) -> None:
+    def __init__(self, style: PanelStyle | None = None) -> None:
         """Initialize the status bar."""
         self.style = style or PanelStyle()
         self.visible = True
@@ -154,7 +154,7 @@ class HelpOverlay:
     """
 
     def __init__(
-        self, position: tuple[int, int] = None, style: PanelStyle = None
+        self, position: tuple[int, int] | None = None, style: PanelStyle | None = None
     ) -> None:
         """
         Initialize the help overlay.
@@ -198,7 +198,7 @@ class TransferPlanner:
     Allows selection of origin, destination, and departure date.
     """
 
-    def __init__(self, style: PanelStyle = None) -> None:
+    def __init__(self, style: PanelStyle | None = None) -> None:
         """Initialize the transfer planner."""
         self.style = style or PanelStyle()
         self.visible = False
@@ -240,7 +240,7 @@ class TooltipManager:
     Manages tooltips for celestial bodies on hover.
     """
 
-    def __init__(self, style: PanelStyle = None) -> None:
+    def __init__(self, style: PanelStyle | None = None) -> None:
         """Initialize tooltip manager."""
         self.style = style or PanelStyle()
         self._active_tooltip: dict[str, Any] | None = None
@@ -249,7 +249,7 @@ class TooltipManager:
 
     def set_hover(
         self, body_name: str, position: tuple[int, int], info: dict[str, Any]
-    ):
+    ) -> None:
         """
         Set the currently hovered body.
 
@@ -292,7 +292,7 @@ class DateTimePicker:
     def __init__(
         self,
         position: tuple[int, int] = (20, 100),
-        style: PanelStyle = None,
+        style: PanelStyle | None = None,
         on_date_change: Callable[[datetime], None] | None = None,
     ):
         """
@@ -427,7 +427,9 @@ class TimeNavigationPanel:
     - Quick time warp presets
     """
 
-    def __init__(self, position: tuple[int, int] = (20, 250), style: PanelStyle = None):
+    def __init__(
+        self, position: tuple[int, int] = (20, 250), style: PanelStyle | None = None
+    ):
         """
         Initialize the time navigation panel.
 
@@ -494,7 +496,7 @@ class EducationalInfoPanel:
         self,
         position: tuple[int, int] = (20, 20),
         width: int = 350,
-        style: PanelStyle = None,
+        style: PanelStyle | None = None,
     ):
         """
         Initialize the educational info panel.
@@ -514,8 +516,8 @@ class EducationalInfoPanel:
         self._current_fact_index: int = 0
 
     def set_body(
-        self, name: str, properties: dict[str, Any], fun_facts: list[str] = None
-    ):
+        self, name: str, properties: dict[str, Any], fun_facts: list[str] | None = None
+    ) -> None:
         """
         Set the celestial body to display information about.
 
@@ -573,7 +575,7 @@ class HistoricalEventsPanel:
         self,
         position: tuple[int, int] = (20, 450),
         width: int = 400,
-        style: PanelStyle = None,
+        style: PanelStyle | None = None,
     ):
         """
         Initialize the historical events panel.
@@ -651,7 +653,7 @@ class ImmersionChecklistPanel:
         self,
         position: tuple[int, int] = (20, 250),
         width: int = 360,
-        style: PanelStyle = None,
+        style: PanelStyle | None = None,
         tasks: list[ImmersionTask] | None = None,
     ):
         """Initialize the checklist panel."""
@@ -762,7 +764,9 @@ class SettingsPanel:
     Panel for configuring simulation settings.
     """
 
-    def __init__(self, position: tuple[int, int] = (20, 500), style: PanelStyle = None):
+    def __init__(
+        self, position: tuple[int, int] = (20, 500), style: PanelStyle | None = None
+    ):
         """Initialize the settings panel."""
         self.position = position
         self.style = style or PanelStyle()
@@ -799,7 +803,9 @@ class NavigationPanel:
     Panel for changing navigation/interaction modes.
     """
 
-    def __init__(self, position: tuple[int, int] = (20, 300), style: PanelStyle = None):
+    def __init__(
+        self, position: tuple[int, int] = (20, 300), style: PanelStyle | None = None
+    ):
         """Initialize navigation panel."""
         self.position = position
         self.style = style or PanelStyle()
@@ -838,7 +844,7 @@ class SidebarPanel:
         self,
         position: tuple[int, int] = (0, 0),
         height: int = 600,
-        style: PanelStyle = None,
+        style: PanelStyle | None = None,
     ):
         """Initialize sidebar panel."""
         self.position = position
@@ -904,7 +910,7 @@ class UnifiedControlPanel:
         self,
         position: tuple[int, int] = (0, 0),
         width: int = 800,
-        style: PanelStyle = None,
+        style: PanelStyle | None = None,
     ):
         """Initialize unified control panel."""
         self.position = position

@@ -12,12 +12,12 @@ from solar_system.physics.orbital_mechanics import OrbitalMechanics
 
 
 class TestCelestialBody(unittest.TestCase):
-    def test_initialization(self):
+    def test_initialization(self) -> None:
         body = CelestialBody(name="TestBody", body_type=BodyType.PLANET)
         self.assertEqual(body.name, "TestBody")
         self.assertEqual(body.body_type, BodyType.PLANET)
 
-    def test_orbital_period(self):
+    def test_orbital_period(self) -> None:
         # Create a mock parent (Sun)
         sun = CelestialBody(name="Sun", body_type=BodyType.STAR)
 
@@ -44,7 +44,7 @@ class TestCelestialBody(unittest.TestCase):
 
 
 class TestOrbitalMechanics(unittest.TestCase):
-    def test_circular_velocity(self):
+    def test_circular_velocity(self) -> None:
         # V = sqrt(GM/r)
         mu = 1.0e14
         r = 1.0e7
@@ -52,7 +52,7 @@ class TestOrbitalMechanics(unittest.TestCase):
         expected = np.sqrt(mu / r)
         self.assertAlmostEqual(v, expected)
 
-    def test_vis_viva(self):
+    def test_vis_viva(self) -> None:
         # v^2 = GM(2/r - 1/a)
         mu = 1.0e14
         r = 1.0e7

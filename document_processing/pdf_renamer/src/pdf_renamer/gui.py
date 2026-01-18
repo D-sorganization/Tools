@@ -109,7 +109,7 @@ class ProcessingThread(QThread):
 
                 for _file_hash, paths in duplicates.items():
                     if self._is_cancelled:
-                        return
+                        return  # type: ignore[unreachable]
 
                     if self.delete_dups:
                         keep = paths[0]
@@ -140,7 +140,7 @@ class ProcessingThread(QThread):
 
             # 2. Process PDF files
             if self._is_cancelled:
-                return
+                return  # type: ignore[unreachable]
 
             self.log_message.emit("Scanning for PDF files...", "INFO")
             pattern = "**/*.pdf" if self.recursive else "*.pdf"
@@ -163,7 +163,7 @@ class ProcessingThread(QThread):
             transaction_log = TransactionLog()
             llm = GeminiTitleLLM() if self.use_llm else None
 
-            if self.use_llm and not llm.genai:
+            if self.use_llm and llm and not llm.genai:
                 self.log_message.emit(
                     "LLM requested but not available. Falling back to local extraction.",
                     "WARNING",
@@ -196,7 +196,7 @@ class ProcessingThread(QThread):
                 # Process results as they complete
                 for future in as_completed(future_to_file):
                     if self._is_cancelled:
-                        return
+                        return  # type: ignore[unreachable]
 
                     processed_count += 1
                     pdf_file = future_to_file[future]
@@ -484,9 +484,10 @@ class PDFRenamerGUI(QMainWindow):
                 "Reject",
             ]
         )
-        self.proposals_table.horizontalHeader().setSectionResizeMode(
-            QHeaderView.ResizeMode.Stretch
-        )
+        if self.proposals_table.horizontalHeader() is not None:
+             self.proposals_table.horizontalHeader().setSectionResizeMode(
+                QHeaderView.ResizeMode.Stretch
+            )
         table_layout.addWidget(self.proposals_table)
         table_group.setLayout(table_layout)
         layout.addWidget(table_group)

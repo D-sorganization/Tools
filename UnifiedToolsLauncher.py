@@ -36,20 +36,46 @@ from PyQt6.QtWidgets import (
 # CONFIGURATION & PATHS
 # =============================================================================
 REPO_ROOT = Path(__file__).parent.absolute()
+sys.path.append(str(REPO_ROOT / "python" / "src"))
 
-# Load Tool Definitions from tools.json
-TOOLS_FILE = REPO_ROOT / "tools.json"
-TOOLS: dict[str, list[dict[str, Any]]] = {}
+# try to import compatibility shim to verify environment
+try:
+    from utils.compatibility import UTC, StrEnum  # noqa: F401
+except ImportError:
+    # If this fails, we are likely in a very broken state
+    pass
 
-if TOOLS_FILE.exists():
-    try:
-        with open(TOOLS_FILE) as f:
-            TOOLS = json.load(f)
-    except Exception as e:
-        print(f"Error loading tools.json: {e}")
+# Load Tool Definitions using PluginManager
+try:
+    from core.plugin_manager import PluginManager
+
+    plugin_manager = PluginManager(REPO_ROOT)
+    # Convert PluginManager tools back to simple dict for compatibility with existing UI loop
+    # or updating UI to use Tool objects?
+    # Existing UI expects simple dicts. Let's map it back for minimal refactor, or update UI.
+    # The UI code below uses `tool['name']` access.
+    # Tool objects allow attribute access, but UI might use dict access?
+    # Let's check UI usage.
+    plugin_manager.load_tools()
+    TOOLS = {}
+    for cat, tool_list in plugin_manager.tools.items():
+        TOOLS[cat] = [
+            {"name": t.name, "path": t.path, "type": t.type, "desc": t.desc}
+            for t in tool_list
+        ]
+except ImportError:
+    # Fallback if core logic missing (should not happen with sys.path fix)
+    sys.stderr.write("Critical: PluginManager not found. using fallback JSON load.\n")
+    TOOLS_FILE = REPO_ROOT / "tools.json"
+    TOOLS = {}
+    if TOOLS_FILE.exists():
+        try:
+            with open(TOOLS_FILE) as f:
+                TOOLS = json.load(f)
+        except Exception as e:
+            sys.stderr.write(f"Error loading tools.json: {e}\n")
         # Fallback to empty or default if needed
-else:
-    print(f"Warning: {TOOLS_FILE} not found.")
+
 
 # =============================================================================
 # STYLING

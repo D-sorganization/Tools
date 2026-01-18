@@ -3,10 +3,11 @@ from __future__ import annotations
 import math
 from calendar import monthrange
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import datetime
 from typing import Any
 
 import numpy as np
+from utils.compatibility import UTC
 
 from ..core.celestial_body import (
     BodyType,

@@ -7,15 +7,9 @@
             "desc": "Advanced Audio Signal Processing Suite (MATLAB)"
         },
         {
-            "name": "Audio Processor (Replicant)",
-            "path": "replicants/matlab/audio_signal_processor/launch_audio_processor_pro.m",
-            "type": "matlab",
-            "desc": "Legacy/Backup Audio Implementation"
-        },
-        {
             "name": "Video Processor Platform",
-            "path": "media_processing/video_processor/apps/web/launch_platform.bat",
-            "type": "bat",
+            "path": "media_processing/video_processor/apps/web/launch_platform.py",
+            "type": "python",
             "desc": "Next.js Video Processing Web Platform"
         }
     ],
@@ -25,12 +19,6 @@
             "path": "data_processing/data_processor/python/data_processor/launch_integrated.py",
             "type": "python",
             "desc": "Time Series CSV/Parquet Analyzer & Converter"
-        },
-        {
-            "name": "Data Processor (Replicant)",
-            "path": "data_processing/data_processor/archive/Data_Processor_r0.py",
-            "type": "python",
-            "desc": "Original Revision 0 Data Processor"
         }
     ],
     "Scientific Modeling": [

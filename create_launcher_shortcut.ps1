@@ -13,7 +13,7 @@ else {
     $Shortcut.TargetPath = "python"
 }
 
-$Shortcut.Arguments = "tools_launcher.py"
+$Shortcut.Arguments = "UnifiedToolsLauncher.py"
 $Shortcut.WorkingDirectory = "C:\Users\diete\Repositories\Tools"
 $Shortcut.Description = "Launch Professional Tools Launcher"
 $Shortcut.IconLocation = "C:\Users\diete\Repositories\Tools\tools_icon_alt.ico"

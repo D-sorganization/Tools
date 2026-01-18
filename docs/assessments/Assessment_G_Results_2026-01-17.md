@@ -1,21 +1,24 @@
 # Assessment G Results: Testing & Validation
 
-## Executive Summary
+## Coverage Report
 
-- **Coverage**: Tests exist for `pdf_renamer`, `data_processor`, and `calculator`. Coverage likely >50% but not 100%.
-- **Test Quality**: Tests use `pytest`.
-- **CI Integration**: `ci-standard.yml` runs `pytest`.
+| Module   | Line % | Branch % | Critical Gaps   |
+| -------- | ------ | -------- | --------------- |
+| All      | 0%     | 0%       | **ALL modules** |
 
-## Scorecard
+**Status**: **BLOCKER**. `pytest` fails to collect tests due to `ImportError` in source files. Zero tests are running.
 
-| Category | Score | Evidence |
-| --- | --- | --- |
-| Line Coverage | 7/10 | Estimated 60-70%. |
-| Test Reliability | 8/10 | Pytest is stable. |
-| Test Types | 7/10 | Mostly unit tests. |
+## Test Quality Issues
 
-## Findings
-- **G-001**: No coverage reporting (Codecov/Coveralls).
+| ID    | Test   | Issue               | Severity | Fix       |
+| ----- | ------ | ------------------- | -------- | --------- |
+| G-001 | All    | Collection Failure  | BLOCKER  | Fix Code  |
 
-## Remediation
-- Enable coverage reporting in CI.
+## Remediation Roadmap
+
+**48 hours:**
+1.  **Fix Import Errors**: Allow `pytest` to collect.
+2.  **Verify Baseline**: Run tests and see how many actually pass once collection works.
+
+## CI Integration
+- **Current Status**: CI is reported as failing (Weekly Digest). Verification confirms locally that tests are fundamentally broken.

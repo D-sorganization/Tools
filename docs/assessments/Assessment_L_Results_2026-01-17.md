@@ -1,20 +1,21 @@
 # Assessment L Results: Long-Term Maintainability
 
-## Executive Summary
+## Maintainability Assessment
 
-- **Code Quality**: High (Ruff/Black).
-- **Structure**: Modular.
-- **Bus Factor**: Unknown, but code is readable.
+| Area           | Status   | Risk            | Action |
+| -------------- | -------- | --------------- | ------ |
+| Python Ver     | ❌       | **High**        | Enforce 3.11+ or backport |
+| Dependencies   | ⚠️       | Medium          | Pin versions |
+| Test Suite     | ❌       | **High**        | Fix collection errors |
+| Bus Factor     | ⚠️       | Medium          | Improve docs for contributors |
 
-## Scorecard
+## Remediation Roadmap
 
-| Category | Score | Evidence |
-| --- | --- | --- |
-| Code Aging | 8/10 | Active development. |
-| Tech Debt | 7/10 | "Replicant" folders exist. |
+**48 hours:**
+- Fix the immediate "broken window" (Startup Crash).
 
-## Findings
-- **L-001**: Duplicate/Backup folders.
+**2 weeks:**
+- **Technical Debt Paydown**: Remove "Replicant" code paths and missing file references (`tools_launcher.py`).
 
-## Remediation
-- Delete backups.
+## Code Aging
+- **Observation**: Presence of files like `tools_launcher.py` (missing) and `Legacy` entries suggests a refactor was started but not finished.

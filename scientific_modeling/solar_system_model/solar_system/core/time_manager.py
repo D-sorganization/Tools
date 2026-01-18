@@ -11,8 +11,10 @@ from __future__ import annotations
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import datetime
 from enum import Enum
+
+from utils.compatibility import UTC
 
 from .constants import J2000, SECONDS_PER_DAY
 

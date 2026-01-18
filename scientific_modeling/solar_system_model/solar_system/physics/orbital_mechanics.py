@@ -55,7 +55,7 @@ class OrbitalMechanics:
         Returns:
             Orbital velocity in m/s
         """
-        return math.sqrt(mu * (2.0 / r - 1.0 / a))
+        return float(math.sqrt(mu * (2.0 / r - 1.0 / a)))
 
     @staticmethod
     def orbital_period(a: float, mu: float) -> float:
@@ -87,7 +87,7 @@ class OrbitalMechanics:
         Returns:
             Semi-major axis in meters
         """
-        return (mu * period_seconds**2 / (4 * math.pi**2)) ** (1 / 3)
+        return float((mu * period_seconds**2 / (4 * math.pi**2)) ** (1 / 3))
 
     @staticmethod
     def specific_orbital_energy(a: float, mu: float) -> float:
@@ -217,7 +217,7 @@ class OrbitalMechanics:
         Returns:
             Sphere of influence radius in meters
         """
-        return a * (m_body / m_central) ** 0.4
+        return float(a * (m_body / m_central) ** 0.4)
 
     @staticmethod
     def synodic_period(period_one: float, period_two: float) -> float:
@@ -239,7 +239,7 @@ class OrbitalMechanics:
 
     @staticmethod
     def phase_angle(
-        r1: np.ndarray, r2: np.ndarray, reference_up: np.ndarray = None
+        r1: np.ndarray, r2: np.ndarray, reference_up: np.ndarray | None = None
     ) -> float:
         """
         Calculate the phase angle between two bodies as seen from the Sun.

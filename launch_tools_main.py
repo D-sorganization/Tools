@@ -35,6 +35,7 @@ def setup_python_path() -> None:
         / "data_processor",
         current_dir / "replicants" / "python" / "folder_tool",
         current_dir / "tools",
+        current_dir / "python" / "src",
     ]
 
     for path in paths_to_add:

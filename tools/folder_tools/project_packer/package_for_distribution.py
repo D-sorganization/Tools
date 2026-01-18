@@ -5,8 +5,10 @@ import logging
 import shutil
 import sys
 import zipfile
-from datetime import UTC, datetime
+from datetime import datetime
 from pathlib import Path
+
+from utils.compatibility import UTC
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")

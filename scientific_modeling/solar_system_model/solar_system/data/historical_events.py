@@ -17,7 +17,7 @@ from datetime import datetime
 from typing import Any
 
 # List of historical space events
-SPACE_EVENTS = [
+SPACE_EVENTS: list[dict[str, Any]] = [
     # Ancient Astronomy
     {
         "year": 1610,

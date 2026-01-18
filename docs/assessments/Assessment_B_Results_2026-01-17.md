@@ -2,87 +2,90 @@
 
 ## Executive Summary
 
-- **Hygiene Standards**: The repository generally follows good practices with `ruff.toml` and `mypy.ini` present. However, occasional `print()` statements persist in production code (e.g., `pdf_renamer`, `folder_packer_pro`), violating strict AGENTS.md directives.
-- **Security Posture**: Basic security measures are in place (no obvious hardcoded secrets found in a quick scan, though `setup_api_key.py` handles sensitive data). Dependencies are managed via `requirements.txt`.
-- **Linter Configuration**: Modern tooling (`ruff`) is configured, which is a strong positive.
-- **Pre-commit**: `.pre-commit-config.yaml` exists, ensuring some level of automated checking.
+- **Linting Illusion**: While `ruff` reports zero violations (possibly due to config exclusions or recent fix), the codebase violates `AGENTS.md` core standards massively.
+- **Print Statement Proliferation**: `grep` reveals dozens of `print()` statements in production code (`launch_tools_main.py`, `setup_dev.py`, etc.), violating the "No print statements" rule.
+- **Type Safety Failure**: `mypy` is failing catastrophically with a 200KB error log (`mypy_output.txt`).
+- **Test Suite Broken**: `pytest` exits with code 2 (Collection Error), meaning no unit tests are running.
+- **Security Posture**: Generally safe (no secrets found in simple grep), but input validation is weak due to lack of type enforcement.
 
 ## Top 10 Hygiene Risks
 
-1.  **Residual Print Statements (Major)**: Found `print()` in `document_processing/pdf_renamer/setup_api_key.py` and `tools/folder_tools/folder_packer_pro/folder_packer_pro.py`.
-2.  **Missing `pip-audit` (Moderate)**: The tool `pip-audit` is configured in CI but not available in the current environment, potentially hiding vulnerability checks.
-3.  **Loose File Permissions (Minor)**: No explicit checking of file permissions for sensitive tools like `folder_packer_pro` (which handles encryption).
-4.  **Mixed Type Hinting (Minor)**: While core files are typed, older or peripheral scripts might lack full coverage.
-5.  **Docstring Inconsistency (Minor)**: Some files have excellent module docstrings, others are minimal.
-6.  **TODOs in Code (Minor)**: "Legacy" and "Replicant" markers imply technical debt.
-7.  **Dead Code (Minor)**: `pdf_renamer_backup` folder exists alongside `pdf_renamer`, cluttering the repo.
-8.  **Secret Handling in CLI (Moderate)**: `setup_api_key.py` prompts for keys but the handling should be verified to ensure it doesn't log them.
-9.  **Binary Files (Minor)**: `ProfilePhoto.jpg` in `media_processing` – verify necessity and size.
-10. **Test Hygiene (Minor)**: `pdf_renamer_backup` has its own tests, duplicating test execution.
+1.  **Broken CI/CD Pipeline (BLOCKER)**: Tests do not run. Any "passing" CI badge is a lie if tests don't collect.
+2.  **Ignored Type Errors (Critical)**: 200KB of mypy errors means type hints are effectively documentation, not contracts.
+3.  **Production `print()` Usage (Major)**: Hard to debug/log in production environments.
+4.  **Missing Docstrings (Major)**: Many scripts (`setup_dev.py`, `convert_tools_icon.py`) lack proper module/function docstrings.
+5.  **Inconsistent Imports (Minor)**: Some files use `from x import *` (requires verification, none found in `grep` head but needs check).
+6.  **Bare Excepts (Warning)**: `ruff` passes, so these might be handled, but manual review needed for `try...except Exception as e: print(e)`.
+7.  **Unpinned Dependencies (Minor)**: `requirements.txt` has ranges (`>=`), which allows breaking changes (like numpy 2.0) to sneak in.
+8.  **Zombie Code**: `black_output.txt` and `mypy_errors_temp.txt` in root indicate messy local workflow committed to repo.
+9.  **Root Directory Clutter**: `setup_gepetto_env.sh`, `gazebo_install_wsl2.log` (in user root, but checking repo root: `black_output.txt`).
+10. **Legacy Configs**: `mypy.ini` exists but is ignored/failing.
 
 ## Scorecard
 
-| Category                | Score | Evidence & Remediation                                                                   |
-| ----------------------- | ----- | ---------------------------------------------------------------------------------------- |
-| Ruff Compliance         | 9/10  | Config exists, likely enforced in CI.                                                    |
-| Mypy Compliance         | 8/10  | Config exists, strict mode not verified globally.                                        |
-| Black Formatting        | 9/10  | Code appears consistent.                                                                 |
-| AGENTS.md Compliance    | 7/10  | `print()` usage found. **Fix**: Replace with `logging`.                                  |
-| Security Posture        | 8/10  | No hardcoded secrets found. `setup_api_key.py` handles input.                            |
-| Repository Organization | 8/10  | Generally good, but `backup` folders reduce cleanliness. **Fix**: Delete backups.        |
-| Dependency Hygiene      | 8/10  | `requirements.txt` used.                                                                 |
+| Category                | Score | Evidence & Remediation                                                                 |
+| ----------------------- | ----- | -------------------------------------------------------------------------------------- |
+| Ruff Compliance         | 10/10 | Ruff check passed (clean output).                                                      |
+| Mypy Compliance         | 1/10  | **FAIL**: Massive error file present.                                                  |
+| Black Formatting        | 9/10  | Code appears formatted (assuming CI enforces it).                                      |
+| AGENTS.md Compliance    | 3/10  | **FAIL**: Widespread use of `print()`.                                                 |
+| Security Posture        | 8/10  | No obvious hardcoded secrets found.                                                    |
+| Repository Organization | 6/10  | Cluttered root (temp files committed).                                                 |
+| Dependency Hygiene      | 7/10  | Requirements exist but lack strict pinning.                                            |
 
 ## Linting Violation Inventory
 
-| File                                               | Violation | Type        |
-| -------------------------------------------------- | --------- | ----------- |
-| `document_processing/pdf_renamer/setup_api_key.py` | `print()` | Hygiene     |
-| `tools/folder_tools/.../folder_packer_pro.py`      | `print()` | Hygiene     |
+| File                  | Ruff Violations | Mypy Errors | Black Issues |
+| --------------------- | --------------- | ----------- | ------------ |
+| `launch_tools_main.py`| 0               | Many        | 0            |
+| `setup_dev.py`        | 0               | Many        | 0            |
+| `UnifiedToolsLauncher.py`| 0            | Many        | 0            |
 
 ## Security Audit
 
-| Check                        | Status | Evidence |
-| ---------------------------- | ------ | -------- |
-| No hardcoded secrets         | ✅     | Grep scan negative for obvious passwords. |
-| .env.example exists          | ❌     | Not found in root (only `environment.yml` and `requirements.txt`). |
-| No eval()/exec() usage       | ✅     | Not prevalent in examined files. |
-| Safe file I/O                | ✅     | `Path` usage seen generally. |
+| Check                        | Status | Evidence                        |
+| ---------------------------- | ------ | ------------------------------- |
+| No hardcoded secrets         | ✅      | Grep passed.                    |
+| .env.example exists          | ✅      | File present.                   |
+| No eval()/exec() usage       | ❓      | Needs deeper scan.              |
+| No pickle without validation | ❓      | Needs deeper scan.              |
 
 ## AGENTS.md Compliance Report
 
-- **No `print()`**: FAILED. Found usage in CLI tools.
-- **No wildcard imports**: PASSED (mostly).
-- **Type hints required**: PASSED (mostly).
-- **No secrets**: PASSED.
+- **Print Statements**: **FAIL**. Found 20+ instances in critical paths.
+- **Wildcard Imports**: **PASS**. (None found in grep sample).
+- **Bare Except**: **PASS**. (Ruff passes this).
+- **Type Hints**: **PARTIAL**. Hints exist but Mypy fails.
 
 ## Findings Table
 
-| ID    | Severity | Category | Location                                           | Symptom                | Root Cause          | Fix                                   | Effort |
-| ----- | -------- | -------- | -------------------------------------------------- | ---------------------- | ------------------- | ------------------------------------- | ------ |
-| B-001 | Major    | Hygiene  | `document_processing/pdf_renamer/setup_api_key.py` | `print()` usage        | CLI tool design     | Use `logging` or `rich` for CLI output| S      |
-| B-002 | Minor    | Hygiene  | `document_processing/pdf_renamer_backup/`          | Duplicate code         | Backup strategy     | Delete folder                         | S      |
-| B-003 | Minor    | Security | Root                                               | Missing `.env.example` | Setup oversight     | Create file                           | S      |
+| ID    | Severity | Category | Location | Symptom | Root Cause | Fix | Effort |
+| ----- | -------- | -------- | -------- | ------- | ---------- | --- | ------ |
+| B-001 | Critical | Quality  | `mypy_output.txt` | 200KB errors | Neglect | Fix/Ignore errors | L |
+| B-002 | Major    | Standards | `launch_tools_main.py` | `print()` calls | Dev shortcuts | Replace with logger | S |
+| B-003 | Major    | Standards | `setup_dev.py` | `print()` calls | Dev shortcuts | Replace with logger | S |
+| B-004 | Minor    | Hygiene  | Root | `black_output.txt` | Dirty commit | Remove file | XS |
 
 ## Refactoring Plan
 
 **48 Hours**
-- Delete `document_processing/pdf_renamer_backup/`.
-- Create `.env.example`.
+- **Remove committed temp files** (`black_output.txt`, `mypy_output.txt` - strictly, output shouldn't be in repo).
+- **Replace `print()` with `logging`** in `launch_tools_main.py` and `UnifiedToolsLauncher.py`.
 
 **2 Weeks**
-- Replace all `print()` in CLI tools with a proper CLI library (like `typer` or `rich`) or `logging`.
+- **Fix Mypy Errors**: Systematic pass to fix top 50% of type errors.
 
 **6 Weeks**
-- Enforce strict `mypy` across all modules.
+- **Strict Mode**: Enable strict mypy in CI and block PRs on regression.
 
 ## Diff Suggestions
 
-**Replace Print with Logging (Example)**
+**Replace Print with Logging**
 
 ```python
 <<<<<<< SEARCH
-    print(f"Error loading tools.json: {e}")
+    print(f"ERROR: {message}")
 =======
-    logging.error(f"Error loading tools.json: {e}")
+    logger.error(f"{message}")
 >>>>>>> REPLACE
 ```

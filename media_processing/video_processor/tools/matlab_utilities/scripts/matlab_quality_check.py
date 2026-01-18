@@ -20,9 +20,11 @@ import logging
 import re
 import subprocess
 import sys
-from datetime import UTC, datetime
+from datetime import datetime
 from pathlib import Path
 from typing import Final
+
+from utils.compatibility import UTC
 
 # Constants
 # [s] Timeout for MATLAB script execution - 5 minutes allows for large codebase analysis

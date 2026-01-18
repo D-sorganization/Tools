@@ -1,36 +1,28 @@
 # Assessment E Results: Performance & Scalability
 
-## Executive Summary
-
-- **Startup Performance**: `UnifiedToolsLauncher` imports `PyQt6` which is reasonably fast. It loads `tools.json` (small file). Startup should be < 2s.
-- **Dependencies**: The repo imports heavy scientific libraries. If tools import these at module level, startup could be slow. `UnifiedToolsLauncher` does *not* import them, it uses `subprocess`, which is excellent for isolation and startup speed.
-- **Memory Usage**: The launcher itself is lightweight. Launched tools run in separate processes, so memory leaks in one tool won't crash the launcher.
-- **Scalability**: Adding tools is O(1) in `tools.json`.
-
-## Scorecard
-
-| Category           | Score | Evidence & Remediation                                      |
-| ------------------ | ----- | ----------------------------------------------------------- |
-| Startup Time       | 10/10 | Launcher is lightweight.                                    |
-| Memory Usage       | 10/10 | Process isolation strategy is perfect.                      |
-| Operation Time     | 8/10  | Depends on individual tools. `data_processor` uses vectorization. |
-| Memory Leaks       | 9/10  | Python GC handles most; subprocesses ensure cleanup on exit.|
-
 ## Performance Profile
 
-| Operation | P50 Time | Status |
-| --------- | -------- | ------ |
-| Launcher Startup | < 1s | ✅ |
-| Launch Tool | < 200ms (overhead) | ✅ |
+| Operation      | P50 Time | P99 Time | Memory Peak | Status |
+| -------------- | -------- | -------- | ----------- | ------ |
+| Startup        | N/A      | N/A      | N/A         | ❌ (Crash) |
+| Load file      | N/A      | N/A      | N/A         | ❌ (Crash) |
+| Core operation | N/A      | N/A      | N/A         | ❌ (Crash) |
 
-## Findings Table
+**Status**: **BLOCKER**. Performance cannot be profiled because the application hits an unhandled exception (`ImportError`) during module loading on the target environment (Python 3.10).
 
-| ID    | Severity | Category | Location | Symptom | Root Cause | Fix | Effort |
-| ----- | -------- | -------- | -------- | ------- | ---------- | --- | ------ |
-| E-001 | Minor    | Performance | `UnifiedToolsLauncher` | Synchronous subprocess call (if any) | Code inspection | Use `subprocess.Popen` (Async) | S |
+## Hotspot Analysis
 
-*Note: Code inspection confirms `subprocess.Popen` is used, so E-001 is already avoided.*
+| Location            | % CPU Time | Issue       | Fix            |
+| ------------------- | ---------- | ----------- | -------------- |
+| `module imports`    | 100% (Fail)| Crash       | Fix Imports    |
 
 ## Remediation Roadmap
 
-- **Continue** using the `subprocess` pattern.
+**48 hours:**
+- **Technically Enable Startup**: Fix the `StrEnum` and `datetime.UTC` imports so the app can actually launch. Only then can performance be measured.
+
+**2 weeks:**
+- **Profile Startup**: Once runnable, ensure startup < 3s.
+
+## Scalability Testing
+- **1K - 1M records**: Untestable.

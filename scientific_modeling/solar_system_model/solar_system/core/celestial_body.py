@@ -62,12 +62,12 @@ class StateVector:
     @property
     def distance(self) -> float:
         """Distance from origin in meters."""
-        return np.linalg.norm(self.position)
+        return float(np.linalg.norm(self.position))
 
     @property
     def speed(self) -> float:
         """Speed in m/s."""
-        return np.linalg.norm(self.velocity)
+        return float(np.linalg.norm(self.velocity))
 
     @property
     def position_au(self) -> np.ndarray:

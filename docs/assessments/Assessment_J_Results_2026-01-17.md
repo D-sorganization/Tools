@@ -1,19 +1,21 @@
 # Assessment J Results: Extensibility & Plugin Architecture
 
-## Executive Summary
+## Extensibility Assessment
 
-- **Extensibility**: `tools.json` allows easy addition of tools without code changes.
-- **Plugins**: No formal plugin system (DLL/entry points), just process launching.
+| Feature        | Extensible? | Documentation | Effort to Extend |
+| -------------- | ----------- | ------------- | ---------------- |
+| Add new tool   | ✅ (Manual) | ❌            | Medium (JSON edit) |
+| Output formats | ❌          | ❌            | High             |
 
-## Scorecard
+**Analysis**: The "plugin system" is currently a manual entry in `tools.json`. This is fragile and error-prone.
 
-| Category | Score | Evidence |
-| --- | --- | --- |
-| Extension Points | 9/10 | `tools.json` is effective. |
-| API Stability | N/A | Not a library. |
+## Remediation Roadmap
 
-## Findings
-- **J-001**: Adding a tool requires editing a JSON file manually.
+**48 hours:**
+- Document the `tools.json` schema so users know how to add tools safely.
 
-## Remediation
-- Create a UI for adding tools.
+**2 weeks:**
+- **Plugin Discovery**: Implement a `scan_tools()` function that automatically detects tools with a `tool_manifest.json` in their directory, removing the need for a centralized `tools.json`.
+
+## API Stability
+- **Current**: No formal API. Tools are loosely coupled via `subprocess`.

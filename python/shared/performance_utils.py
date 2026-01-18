@@ -12,8 +12,9 @@ import os
 import threading
 from collections.abc import Generator
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from functools import lru_cache
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 
 class OptimizedFileScanner:
@@ -188,7 +189,9 @@ class MemoryOptimizedProcessor:
 
     @staticmethod
     def chunked_processing(
-        items: list[Any], chunk_size: int = 1000, processor_func: callable = None
+        items: list[Any],
+        chunk_size: int = 1000,
+        processor_func: Callable[..., Any] | None = None,
     ) -> Generator[Any, None, None]:
         """
         Process large lists in chunks to avoid memory issues.
@@ -203,7 +206,7 @@ class MemoryOptimizedProcessor:
         """
         for i in range(0, len(items), chunk_size):
             chunk = items[i : i + chunk_size]
-            if processor_func:
+            if processor_func is not None:
                 yield processor_func(chunk)
             else:
                 yield chunk
