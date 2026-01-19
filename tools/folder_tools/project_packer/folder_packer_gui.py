@@ -28,6 +28,7 @@ try:
 except ImportError:
     # If tkinter is not available (e.g. headless CI), mock it for tests
     from unittest.mock import MagicMock
+
     tk = MagicMock()
     filedialog = MagicMock()
     messagebox = MagicMock()

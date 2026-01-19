@@ -344,7 +344,9 @@ class UnifiedLauncher(QMainWindow):
 
                 # Check if path is relative to repo root
                 if not str(full_path).startswith(str(repo_root_abs)):
-                    raise ValueError(f"Security Alert: Attempted to launch tool outside repository: {full_path}")
+                    raise ValueError(
+                        f"Security Alert: Attempted to launch tool outside repository: {full_path}"
+                    )
 
             except Exception as e:
                 self.log(f"❌ Security violation: {e}")
@@ -386,8 +388,10 @@ class UnifiedLauncher(QMainWindow):
             elif type_ == "bat":
                 # Use cmd.exe explicitly instead of shell=True for security
                 # Also ensure it's actually a .bat or .cmd file
-                if path.suffix.lower() not in ['.bat', '.cmd']:
-                     raise ValueError("Security: File must be .bat or .cmd to execute as batch script")
+                if path.suffix.lower() not in [".bat", ".cmd"]:
+                    raise ValueError(
+                        "Security: File must be .bat or .cmd to execute as batch script"
+                    )
 
                 subprocess.Popen(["cmd.exe", "/c", str(path)], cwd=path.parent)
                 self.log("✅ Batch script executed")
