@@ -671,7 +671,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         else:
             self.converter_convert_button.configure(state="disabled")
 
-    def converter_start_conversion(self):
+    def converter_start_conversion(self) -> None:
         """Start the file conversion process."""
         if not self.converter_input_files:
             messagebox.showwarning("No Files", "Please select input files first.")
@@ -895,11 +895,11 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         self.after(0, lambda: self.converter_log_text.insert("end", log_message))
         self.after(0, lambda: self.converter_log_text.see("end"))
 
-    def converter_clear_log(self):
+    def converter_clear_log(self) -> None:
         """Clear the conversion log."""
         self.converter_log_text.delete("1.0", "end")
 
-    def converter_save_log(self):
+    def converter_save_log(self) -> None:
         """Save the conversion log to a file."""
         log_content = self.converter_log_text.get("1.0", "end")
         if log_content.strip():
@@ -916,7 +916,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 except Exception as e:
                     messagebox.showerror("Error", f"Failed to save log: {str(e)}")
 
-    def show_parquet_analyzer(self):
+    def show_parquet_analyzer(self) -> None:
         """Show the parquet analyzer dialog."""
         dialog = ParquetAnalyzerDialog(self)
         dialog.grab_set()  # Make dialog modal
@@ -1138,7 +1138,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         )
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
-    def create_folder_tool_tab(self, parent_tab):
+    def create_folder_tool_tab(self, parent_tab) -> None:
         """Create the folder tool tab with integrated folder processor functionality."""
         parent_tab.grid_columnconfigure(0, weight=1)
         parent_tab.grid_rowconfigure(0, weight=1)
@@ -1163,7 +1163,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         # Initialize mode description
         self._update_folder_mode_description()
 
-    def _create_folder_source_section(self, parent):
+    def _create_folder_source_section(self, parent) -> None:
         """Create the source folders section."""
         source_frame = ctk.CTkFrame(parent)
         source_frame.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
@@ -1436,14 +1436,13 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
         self.folder_mode_description.configure(text=descriptions.get(mode, ""))
 
-    def _folder_select_source_folders(self):
+    def _folder_select_source_folders(self) -> None:
         """Select source folders for processing."""
         try:
-            folders = filedialog.askdirectory(
-                title="Select Source Folders", multiple=True
-            )
-            if folders:
-                self.folder_source_folders.extend(folders)
+            # askdirectory does not support multiple selection in standard tkinter
+            folder = filedialog.askdirectory(title="Select Source Folders")
+            if folder:
+                self.folder_source_folders.append(folder)
                 self._folder_update_source_display()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to select source folders: {str(e)}")
@@ -1484,7 +1483,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             )
             self.folder_dest_label.configure(text=folder)
 
-    def _folder_run_processing(self):
+    def _folder_run_processing(self) -> None:
         """Start the folder processing operation."""
         if not self.folder_source_folders:
             messagebox.showwarning(
@@ -1512,7 +1511,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         self.folder_cancel_button.configure(state="normal")
         self.folder_status_var.set("Processing...")
 
-    def _folder_cancel_processing(self):
+    def _folder_cancel_processing(self) -> None:
         """Cancel the folder processing operation."""
         self.folder_cancel_flag = True  # Set flag to signal cancellation
         self.folder_status_var.set("Cancelled")
@@ -1520,7 +1519,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         self.folder_run_button.configure(state="normal")
         self.folder_cancel_button.configure(state="disabled")
 
-    def _folder_perform_processing(self):
+    def _folder_perform_processing(self) -> None:
         """Perform the actual folder processing operation."""
         try:
             mode = self.folder_operation_mode.get()
@@ -1548,7 +1547,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             self.after(0, lambda: self.folder_run_button.configure(state="normal"))
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))
 
-    def _folder_combine_operation(self):
+    def _folder_combine_operation(self) -> None:
         """
         Perform combine operation - copy all files from source folders to destination.
         """
@@ -1641,7 +1640,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             error_msg = f"Error: {str(e)}"
             self.after(0, lambda: self.folder_status_var.set(error_msg))
 
-    def _folder_flatten_operation(self):
+    def _folder_flatten_operation(self) -> None:
         """Perform flatten operation - copy files from nested folders to top level."""
         try:
             import os
@@ -1726,7 +1725,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             error_msg = f"Error: {str(e)}"
             self.after(0, lambda: self.folder_status_var.set(error_msg))
 
-    def _folder_prune_operation(self):
+    def _folder_prune_operation(self) -> None:
         """Perform prune operation - copy folders but skip empty subfolders."""
         try:
             import os
@@ -1821,7 +1820,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             error_msg = f"Error: {str(e)}"
             self.after(0, lambda: self.folder_status_var.set(error_msg))
 
-    def _folder_deduplicate_operation(self):
+    def _folder_deduplicate_operation(self) -> None:
         """Perform deduplicate operation.
 
         Remove renamed duplicates in source folders.
@@ -1911,7 +1910,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             error_msg = f"Error: {str(e)}"
             self.after(0, lambda: self.folder_status_var.set(error_msg))
 
-    def _folder_analyze_operation(self):
+    def _folder_analyze_operation(self) -> None:
         """Perform analyze operation - generate detailed report of folder contents."""
         try:
             import os
@@ -2841,17 +2840,17 @@ class ColumnSelectionDialog(ctk.CTkToplevel):
             side="right", padx=5
         )
 
-    def select_all(self):
+    def select_all(self) -> None:
         """Select all columns."""
         for var in self.column_vars.values():
             var.set(True)
 
-    def select_none(self):
+    def select_none(self) -> None:
         """Select no columns."""
         for var in self.column_vars.values():
             var.set(False)
 
-    def ok_clicked(self):
+    def ok_clicked(self) -> None:
         """Handle OK button click."""
         selected_columns = [col for col, var in self.column_vars.items() if var.get()]
         if not selected_columns:
@@ -2861,7 +2860,7 @@ class ColumnSelectionDialog(ctk.CTkToplevel):
         self.result = selected_columns
         self.destroy()
 
-    def cancel_clicked(self):
+    def cancel_clicked(self) -> None:
         """Handle Cancel button click."""
         self.result = None
         self.destroy()

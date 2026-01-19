@@ -1,0 +1,18 @@
+[
+    {
+        "number": 200,
+        "title": "CRITICAL: Fix Test Suite (Currently 0% Coverage)"
+    },
+    {
+        "number": 201,
+        "title": "Downgrade/Compat Python support for 3.10"
+    },
+    {
+        "number": 202,
+        "title": "Resolve 200KB of MyPy Errors"
+    },
+    {
+        "number": 203,
+        "title": "Security Audit: Sanitize Launcher Config Inputs (Score: 6/10)"
+    }
+]
