@@ -9,53 +9,139 @@ on:
     workflows: ["CI Standard"]
     types: [completed]
   schedule:
-    # DAILY INTENSIVE SCHEDULE - We don't take days off
-    - cron: "0 2 * * *"   # 2 AM - Assessment Generator
-    - cron: "0 3 * * *"   # 3 AM - Code Quality Reviewer
-    - cron: "0 4 * * *"   # 4 AM - Completist
-    - cron: "0 5 * * *"   # 5 AM - Sentinel (security)
-    - cron: "0 7 * * *"   # 7 AM - Issue Resolver
+    # OVERNIGHT SCHEDULE - PST times (UTC-8)
+    - cron: "0 8 * * *"   # Midnight PST - Assessment Generator
+    - cron: "30 8 * * *"  # 12:30 AM PST - Code Quality Reviewer
+    - cron: "0 9 * * *"   # 1 AM PST - Completist
+    - cron: "30 9 * * *"  # 1:30 AM PST - Sentinel
+    - cron: "0 10 * * *"  # 2 AM PST - Issue Resolver
+    - cron: "30 10 * * *" # 2:30 AM PST - Code Quality Fixer
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Worker to dispatch (auto uses schedule routing)"
+        required: false
+        default: "auto"
+        type: choice
+        options:
+          - auto
+          - assessment-generator
+          - code-quality-reviewer
+          - code-quality-fixer
+          - completist
+          - sentinel
+          - issue-resolver
+
+# SAFEGUARD: Maximum iterations to prevent infinite repair loops
+env:
+  MAX_REPAIR_ITERATIONS: 3
+  MAX_ITERATIONS_WINDOW_HOURS: 1
 
 concurrency:
-  group: jules-control-tower-${{ github.run_id }}
+  group: jules-control-tower-${{ github.repository }}
   cancel-in-progress: false
 
 permissions:
   contents: write
   pull-requests: write
   actions: write
+  issues: write
 
 jobs:
   triage:
     runs-on: ubuntu-latest
-    if: github.actor != 'jules-bot'
+    # Removed global actor check to allow scheduled runs even if file modified by bot
     outputs:
       target: ${{ steps.decide.outputs.target }}
     steps:
+      # SAFEGUARD: Check if we've exceeded max repair iterations
+      - name: Check Iteration Limits
+        id: check-limits
+        if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'failure'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Checking repair iteration limits..."
+          BRANCH="${{ github.event.workflow_run.head_branch }}"
+          HOURS_AGO=$(date -u -d "${{ env.MAX_ITERATIONS_WINDOW_HOURS }} hours ago" +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -v-${{ env.MAX_ITERATIONS_WINDOW_HOURS }}H +%Y-%m-%dT%H:%M:%SZ)
+
+          FAILURE_COUNT=$(gh run list \
+            --workflow="CI Standard" \
+            --branch="$BRANCH" \
+            --limit=20 \
+            --json conclusion,createdAt,status \
+            --jq "[.[] | select(.conclusion == \"failure\" and .createdAt > \"$HOURS_AGO\")] | length" \
+            2>/dev/null || echo "0")
+
+          if [ "$FAILURE_COUNT" -ge "${{ env.MAX_REPAIR_ITERATIONS }}" ]; then
+            echo "::error::Max repair iterations reached. Manual intervention required."
+            echo "exceeded=true" >> $GITHUB_OUTPUT
+          else
+            echo "exceeded=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Analyze Event Context
         id: decide
-        uses: actions/github-script@v7
+        if: steps.check-limits.outcome == 'skipped' || steps.check-limits.outputs.exceeded != 'true'
+        uses: actions/github-script@v8
         with:
           script: |
             const event = context.eventName;
+            const actor = context.actor;
+            const schedule = context.payload.schedule;
+            const manualTarget = context.payload.inputs?.target;
             let target = "none";
 
-            if (event === "workflow_run" && context.payload.workflow_run.conclusion === "failure") {
+            console.log(`Event: ${event}, Actor: ${actor}, Schedule: ${schedule}`);
+
+            // 0. MANUAL DISPATCH - Honor explicit target selection
+            if (event === "workflow_dispatch" && manualTarget && manualTarget !== "auto") {
+              target = manualTarget;
+              console.log(`Manual dispatch: ${target}`);
+            }
+            // 1. CI FAILURE -> AUTO-REPAIR
+            else if (event === "workflow_run" && context.payload.workflow_run.conclusion === "failure") {
                target = "auto-repair";
             }
-            else if (event === "schedule") {
-              const hour = new Date().getUTCHours();
+            // 2. SCHEDULED RUNS - Route by cron pattern (deterministic)
+            else if (event === "schedule" || (event === "workflow_dispatch" && (!manualTarget || manualTarget === "auto"))) {
+              if (schedule) {
+                switch (schedule) {
+                  case "0 8 * * *":
+                    target = "assessment-generator";
+                    break;
+                  case "30 8 * * *":
+                    target = "code-quality-reviewer";
+                    break;
+                  case "0 9 * * *":
+                    target = "completist";
+                    break;
+                  case "30 9 * * *":
+                    target = "sentinel";
+                    break;
+                  case "0 10 * * *":
+                    target = "issue-resolver";
+                    break;
+                  case "30 10 * * *":
+                    target = "code-quality-fixer";
+                    break;
+                  default:
+                    target = "none";
+                }
+              }
 
-              if (hour === 2) {
-                target = "assessment-generator";
-              } else if (hour === 3) {
-                target = "code-quality-reviewer";
-              } else if (hour === 4) {
-                target = "completist";
-              } else if (hour === 5) {
-                target = "sentinel";
-              } else if (hour === 7) {
-                target = "issue-resolver";
+              // Fallback: UTC time-based routing
+              if (target === "none") {
+                const now = new Date();
+                const hour = now.getUTCHours();
+                const minute = now.getUTCMinutes();
+
+                if (hour === 8 && minute < 30) target = "assessment-generator";
+                else if (hour === 8) target = "code-quality-reviewer";
+                else if (hour === 9 && minute < 30) target = "completist";
+                else if (hour === 9) target = "sentinel";
+                else if (hour === 10 && minute < 30) target = "issue-resolver";
+                else if (hour === 10) target = "code-quality-fixer";
               }
             }
 
@@ -76,6 +162,12 @@ jobs:
     uses: ./.github/workflows/Jules-Code-Quality-Reviewer.yml
     secrets: inherit
 
+  call-code-quality-fixer:
+    needs: triage
+    if: needs.triage.outputs.target == 'code-quality-fixer'
+    uses: ./.github/workflows/Jules-Code-Quality-Fixer.yml
+    secrets: inherit
+
   call-assessment-generator:
     needs: triage
     if: needs.triage.outputs.target == 'assessment-generator'
@@ -92,10 +184,4 @@ jobs:
     needs: triage
     if: needs.triage.outputs.target == 'completist'
     uses: ./.github/workflows/Jules-Completist.yml
-    secrets: inherit
-
-  call-code-quality-fixer:
-    needs: triage
-    if: needs.triage.outputs.target == 'code-quality-fixer'
-    uses: ./.github/workflows/Jules-Code-Quality-Fixer.yml
     secrets: inherit
