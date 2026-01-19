@@ -4,26 +4,11 @@ import datetime
 import logging
 import shutil
 from pathlib import Path
-try:
-    import tkinter as tk
-    from tkinter import filedialog, messagebox, ttk
-except ImportError:
-    # If tkinter is not available (e.g. headless CI), mock it for tests
-    from unittest.mock import MagicMock
-    tk = MagicMock()
-    filedialog = MagicMock()
-    messagebox = MagicMock()
-    ttk = MagicMock()
 
-try:
-    from datetime import timezone
-    UTC = timezone.utc
-except ImportError:
-    # Fallback for older python versions if needed (though 3.10+ has it)
-    import datetime
-    UTC = datetime.timezone.utc
+# Python 3.10 compatibility: UTC was added in 3.11
+UTC = datetime.timezone.utc  # noqa: UP017
 
-from constants import (
+from constants import (  # noqa: E402
     BOLD_HEADER_FONT_SIZE,
     DEFAULT_LISTBOX_HEIGHT,
     DEFAULT_PADDING,
@@ -36,6 +21,17 @@ from constants import (
     TINY_PADDING,
     TITLE_FONT_SIZE,
 )
+
+try:
+    import tkinter as tk
+    from tkinter import filedialog, messagebox, ttk
+except ImportError:
+    # If tkinter is not available (e.g. headless CI), mock it for tests
+    from unittest.mock import MagicMock
+    tk = MagicMock()
+    filedialog = MagicMock()
+    messagebox = MagicMock()
+    ttk = MagicMock()
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
