@@ -671,7 +671,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         else:
             self.converter_convert_button.configure(state="disabled")
 
-    def converter_start_conversion(self):
+    def converter_start_conversion(self) -> None:
         """Start the file conversion process."""
         if not self.converter_input_files:
             messagebox.showwarning("No Files", "Please select input files first.")
@@ -895,11 +895,11 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         self.after(0, lambda: self.converter_log_text.insert("end", log_message))
         self.after(0, lambda: self.converter_log_text.see("end"))
 
-    def converter_clear_log(self):
+    def converter_clear_log(self) -> None:
         """Clear the conversion log."""
         self.converter_log_text.delete("1.0", "end")
 
-    def converter_save_log(self):
+    def converter_save_log(self) -> None:
         """Save the conversion log to a file."""
         log_content = self.converter_log_text.get("1.0", "end")
         if log_content.strip():
@@ -916,7 +916,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 except Exception as e:
                     messagebox.showerror("Error", f"Failed to save log: {str(e)}")
 
-    def show_parquet_analyzer(self):
+    def show_parquet_analyzer(self) -> None:
         """Show the parquet analyzer dialog."""
         dialog = ParquetAnalyzerDialog(self)
         dialog.grab_set()  # Make dialog modal
@@ -1138,7 +1138,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         )
         splitter_frame.grid(row=0, column=0, sticky="nsew")
 
-    def create_folder_tool_tab(self, parent_tab):
+    def create_folder_tool_tab(self, parent_tab) -> None:
         """Create the folder tool tab with integrated folder processor functionality."""
         parent_tab.grid_columnconfigure(0, weight=1)
         parent_tab.grid_rowconfigure(0, weight=1)
@@ -1163,7 +1163,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         # Initialize mode description
         self._update_folder_mode_description()
 
-    def _create_folder_source_section(self, parent):
+    def _create_folder_source_section(self, parent) -> None:
         """Create the source folders section."""
         source_frame = ctk.CTkFrame(parent)
         source_frame.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
