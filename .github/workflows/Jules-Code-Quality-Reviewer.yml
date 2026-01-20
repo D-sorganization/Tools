@@ -52,7 +52,7 @@ jobs:
           # Authentication handled via API Key
           mkdir -p docs/assessments/changelog_reviews
 
-                    set -e
+          set -e
           DATE=$(date +%Y-%m-%d)
           REPO="${{ github.repository }}"
           API_BASE="https://jules.googleapis.com/v1alpha"

@@ -35,7 +35,7 @@ jobs:
           JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
         run: |
           # Authentication handled via API Key
-                    set -e
+          set -e
           DATE=$(date +%Y-%m-%d)
           REPO="${{ github.repository }}"
           API_BASE="https://jules.googleapis.com/v1alpha"

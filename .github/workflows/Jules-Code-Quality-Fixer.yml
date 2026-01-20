@@ -50,7 +50,7 @@ jobs:
           git checkout -b "$BRANCH"
 
           # Authentication handled via API Key
-                    set -e
+          set -e
           DATE=$(date +%Y-%m-%d)
           REPO="${{ github.repository }}"
           API_BASE="https://jules.googleapis.com/v1alpha"
