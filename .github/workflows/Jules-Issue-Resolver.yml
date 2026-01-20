@@ -66,5 +66,6 @@ jobs:
           if ! git diff --staged --quiet; then
             git commit -m "fix: resolve priority issues"
             git push origin "$BRANCH"
-            gh pr create --title "Issue Resolution - $(date +%Y-%m-%d)" --body "Auto fixes" --label "jules:issue-resolver"
+            gh pr create --title "Issue Resolution - $(date +%Y-%m-%d)" --body "Auto fixes" --label "jules:issue-resolver" || \
+            gh pr create --title "Issue Resolution - $(date +%Y-%m-%d)" --body "Auto fixes"
           fi
