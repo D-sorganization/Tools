@@ -32,10 +32,89 @@ jobs:
 
       - name: Analyze
         env:
-          JULES_TOKEN: ${{ secrets.JULES_API_KEY }}
+          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
         run: |
-          jules auth --token $JULES_TOKEN
-          jules task fix --prompt "Audit .jules/completist_data/ for incomplete work. Create docs/assessments/completist/ report. DO NOT modify code."
+          # Authentication handled via API Key
+                    set -e
+          DATE=$(date +%Y-%m-%d)
+          REPO="${{ github.repository }}"
+          API_BASE="https://jules.googleapis.com/v1alpha"
+
+          if [ -z "$JULES_API_KEY" ]; then
+          echo "::warning::JULES_API_KEY not configured. Skipping."
+          exit 0
+          fi
+
+          # Lookup source
+          SOURCES=$(curl -sf -H "X-Goog-Api-Key: $JULES_API_KEY" "$API_BASE/sources" || echo '{"sources":[]}')
+          OWNER=$(echo "$REPO" | cut -d'/' -f1)
+          REPO_NAME=$(echo "$REPO" | cut -d'/' -f2)
+          SOURCE_ID=$(echo "$SOURCES" | jq -r ".sources[] | select(.githubRepo.owner == \"$OWNER\" and .githubRepo.repo == \"$REPO_NAME\") | .name" | head -1)
+
+          if [ -z "$SOURCE_ID" ] || [ "$SOURCE_ID" = "null" ]; then
+          echo "::warning::Repo not found in Jules sources: $REPO"
+          exit 0
+          fi
+
+          PROMPT="Audit .jules/completist_data/ for incomplete work. Create docs/assessments/completist/ report. DO NOT modify code."
+
+          echo "Creating Jules session..."
+          REQUEST_JSON=$(jq -n \
+          --arg prompt "$PROMPT" \
+          --arg source "$SOURCE_ID" \
+          '{
+          prompt: $prompt,
+          sourceContext: {
+          source: $source,
+          githubRepoContext: {
+          startingBranch: "main"
+          }
+          },
+          automationMode: "AUTO_CREATE_PR"
+          }')
+
+          echo "Request: $REQUEST_JSON"
+
+          HTTP_CODE=$(curl -s -o /tmp/session_response.json -w "%{http_code}" -X POST \
+          -H "X-Goog-Api-Key: $JULES_API_KEY" \
+          -H "Content-Type: application/json" \
+          -d "$REQUEST_JSON" \
+          "$API_BASE/sessions")
+
+          SESSION_RESPONSE=$(cat /tmp/session_response.json)
+          echo "HTTP Status: $HTTP_CODE"
+
+          if [ "$HTTP_CODE" != "200" ]; then
+          echo "::error::API Failure: $SESSION_RESPONSE"
+          exit 1
+          fi
+
+          SESSION_ID=$(echo "$SESSION_RESPONSE" | jq -r '.name')
+          echo "Created session: $SESSION_ID"
+
+          MAX_WAIT=1800
+          POLL_INTERVAL=30
+          ELAPSED=0
+
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+          SESSION_STATUS=$(curl -sf -H "X-Goog-Api-Key: $JULES_API_KEY" "$API_BASE/$SESSION_ID")
+          STATE=$(echo "$SESSION_STATUS" | jq -r '.state')
+          echo "Session state: $STATE (elapsed: ${ELAPSED}s)"
+
+          case "$STATE" in
+          "COMPLETED"|"SUBMITTED")
+          echo "Session completed!"
+          break
+          ;;
+          "FAILED"|"CANCELLED")
+          echo "::error::Session $STATE"
+          exit 1
+          ;;
+          esac
+          sleep $POLL_INTERVAL
+          ELAPSED=$((ELAPSED + POLL_INTERVAL))
+          done
+
 
       - name: Commit
         uses: stefanzweifel/git-auto-commit-action@v5

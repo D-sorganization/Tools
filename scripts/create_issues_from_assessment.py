@@ -23,15 +23,7 @@ def get_existing_issues() -> list[dict[str, Any]]:
     """Fetch existing GitHub issues."""
     try:
         result = subprocess.run(
-            [
-                "gh",
-                "issue",
-                "list",
-                "--limit",
-                "200",
-                "--json",
-                "number,title,state,labels",
-            ],
+            ["gh", "issue", "list", "--limit", "200", "--json", "number,title,state,labels"],
             capture_output=True,
             text=True,
             check=True,
@@ -211,8 +203,7 @@ This issue was identified during automated repository assessment and requires at
     return 0
 
 
-def main() -> int:
-    """Parse CLI arguments and create GitHub issues from assessment."""
+def main():
     parser = argparse.ArgumentParser(description="Create GitHub issues from assessment")
     parser.add_argument(
         "--input",
