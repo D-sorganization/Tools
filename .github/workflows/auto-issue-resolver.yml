@@ -155,8 +155,8 @@ jobs:
               severity = 'MINOR'
               for sev in ['BLOCKER', 'CRITICAL', 'MAJOR', 'MINOR']:
                   if sev in title.upper():
-                      severity = sev
-                      break
+            severity = sev
+            break
 
               # Extract effort estimate (look for patterns like "M (4 hours)" or "S (2 hours)")
               effort_match = re.search(r'Effort:?\s*([XSML])\s*\((\d+)', body)
