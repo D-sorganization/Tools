@@ -8,9 +8,9 @@ allowing the codebase to run on Python 3.10 (Ubuntu 22.04 default).
 import sys
 from enum import Enum
 
-try:
-    from datetime import UTC  # type: ignore[attr-defined]
-except ImportError:
+if sys.version_info >= (3, 11):
+    from datetime import UTC
+else:
     from datetime import timezone
 
     UTC = timezone.utc  # noqa: UP017

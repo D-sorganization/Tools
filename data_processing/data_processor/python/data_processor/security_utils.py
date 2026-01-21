@@ -74,7 +74,7 @@ def validate_python_expression(
         ):
             continue
         # Allow numbers, strings, constants
-        if isinstance(node, ast.Num | ast.Str | ast.Constant):
+        if isinstance(node, ast.Constant):
             continue
 
         # Check names
