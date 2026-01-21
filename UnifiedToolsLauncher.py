@@ -5,12 +5,18 @@ This is the PRIMARY and RECOMMENDED launcher for accessing all tools.
 Provides a clean, tabbed interface for launching Python, MATLAB, and web tools.
 """
 
+import html
 import json
 import os
 import subprocess
 import sys
 import webbrowser
 from collections.abc import Callable
+
+if sys.version_info < (3, 10):
+    print("Critical Error: UnifiedToolsLauncher requires Python 3.10 or newer.", file=sys.stderr)
+    print(f"Current version: {sys.version}", file=sys.stderr)
+    sys.exit(1)
 from pathlib import Path
 from typing import Any
 
@@ -187,20 +193,24 @@ class ToolCard(QFrame):
                 pass
 
         # Button
-        btn_text = f"🚀 {self.tool_info['name']}"
+        # Sanitize name to prevent HTML injection
+        safe_name = html.escape(self.tool_info.get("name", "Unknown"))
+        btn_text = f"🚀 {safe_name}"
         self.btn = QPushButton(btn_text)
         self.btn.clicked.connect(lambda: self.launch_callback(self.tool_info))
         self.btn.setEnabled(exists)
 
         if not exists:
             self.btn.setStyleSheet("background-color: #f7768e; color: #1a1b26;")
-            self.btn.setText(f"❌ {self.tool_info['name']} (Missing)")
+            self.btn.setText(f"❌ {safe_name} (Missing)")
             self.btn.setToolTip(f"File not found: {full_path}")
 
         layout.addWidget(self.btn)
 
         # Description
-        desc = QLabel(self.tool_info["desc"])
+        # Sanitize description to prevent HTML injection
+        safe_desc = html.escape(self.tool_info.get("desc", ""))
+        desc = QLabel(safe_desc)
         desc.setObjectName("DescLabel")
         desc.setWordWrap(True)
         layout.addWidget(desc)
