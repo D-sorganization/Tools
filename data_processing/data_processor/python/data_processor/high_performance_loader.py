@@ -397,50 +397,38 @@ class HighPerformanceDataLoader:
 
                 # Handle object and string columns (convert_dtypes makes them string)
                 if pd.api.types.is_string_dtype(col_dtype) or col_dtype == "object":
-                    # Optimization: Check sample to avoid expensive full-column attempts
-                    sample = df[col].dropna().iloc[:100]
-                    if len(sample) == 0:
+                    # Skip empty columns
+                    if df[col].dropna().empty:
                         continue
 
                     is_numeric = False
 
-                    # 1. Try numeric conversion if sample looks numeric
-                    try:
-                        # Fast check with sample
-                        pd.to_numeric(sample, errors="raise")
+                    # 1. Try numeric conversion directly (single pass, no sample check)
+                    numeric_col = pd.to_numeric(df[col], errors="coerce")
 
-                        # Sample passed, try full column
-                        numeric_col = pd.to_numeric(df[col], errors="coerce")
+                    # Validate enough values were converted (>50% success rate)
+                    if numeric_col.notna().sum() / len(df[col]) > 0.5:
+                        df[col] = numeric_col
+                        col_dtype = df[col].dtype
+                        is_numeric = True
 
-                        # Validate enough values were converted
-                        if numeric_col.notna().sum() / len(df[col]) > 0.5:
-                            df[col] = numeric_col
-                            col_dtype = df[col].dtype
-                            is_numeric = True
-                    except (ValueError, TypeError):
-                        pass
-
-                    # 2. Try datetime conversion if not numeric
+                    # 2. Try datetime conversion if not numeric (single pass)
                     if not is_numeric:
-                        try:
-                            # Try converting sample first
-                            with warnings.catch_warnings():
-                                warnings.simplefilter("ignore")
-                                pd.to_datetime(sample, errors="raise")
+                        with warnings.catch_warnings():
+                            warnings.simplefilter("ignore")
+                            datetime_col = pd.to_datetime(df[col], errors="coerce")
 
-                            # Sample passed, try full column
-                            df[col] = pd.to_datetime(df[col], errors="coerce")
+                        # Check if conversion was successful (>50% non-null)
+                        if datetime_col.notna().sum() / len(df[col]) > 0.5:
+                            df[col] = datetime_col
                             col_dtype = df[col].dtype
-                        except (ValueError, TypeError):
+                        else:
                             # 3. Try categorical if string and low cardinality
                             # Only if dataset is large enough to matter
                             if len(df) > 1000:
-                                # Heuristic: check for duplicates in sample
-                                if sample.nunique() < len(sample):
-                                    # Check true cardinality
-                                    n_unique = df[col].nunique()
-                                    if n_unique / len(df) < 0.3:  # < 30% unique
-                                        df[col] = df[col].astype("category")
+                                n_unique = df[col].nunique()
+                                if n_unique / len(df) < 0.3:  # < 30% unique
+                                    df[col] = df[col].astype("category")
 
                 # Downcast numeric types in same pass
                 if pd.api.types.is_integer_dtype(df[col]):

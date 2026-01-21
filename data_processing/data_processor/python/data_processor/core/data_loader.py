@@ -258,21 +258,20 @@ class DataLoader:
 
         logger.info(f"Combining {len(dfs)} DataFrames")
 
-        # Start with first DataFrame
-        result = dfs[0]
+        if on_column:
+            # For column-based merge, use functools.reduce for cleaner code
+            from functools import reduce
+            result = reduce(
+                lambda left, right: pd.merge(left, right, on=on_column, how=how),
+                dfs
+            )
+        else:
+            # For index-based joins, use pd.concat with axis=1 (much more efficient)
+            # This avoids repeated merge operations and memory allocations
+            result = pd.concat(dfs, axis=1, join=how)
 
-        # Merge remaining DataFrames
-        for df in dfs[1:]:
-            if on_column:
-                result = pd.merge(result, df, on=on_column, how=how)
-            else:
-                result = pd.merge(
-                    result,
-                    df,
-                    left_index=True,
-                    right_index=True,
-                    how=how,
-                )
+            # Handle duplicate column names by keeping first occurrence
+            result = result.loc[:, ~result.columns.duplicated()]
 
         logger.info(
             f"Combined result: {len(result)} rows, {len(result.columns)} columns",

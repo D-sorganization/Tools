@@ -1725,38 +1725,38 @@ class CSVProcessorApp(ctk.CTk):
                     signal_data = pd.to_numeric(df[signal], errors="coerce")
 
                     if method == "Trapezoidal":
-                        # Trapezoidal rule
-                        cumulative = np.zeros(len(signal_data))
-                        for i in range(1, len(signal_data)):
-                            if not np.isnan(signal_data.iloc[i]) and not np.isnan(
-                                signal_data.iloc[i - 1],
-                            ):
-                                cumulative[i] = (
-                                    cumulative[i - 1]
-                                    + 0.5
-                                    * (signal_data.iloc[i] + signal_data.iloc[i - 1])
-                                    * dt.iloc[i]
-                                )
-                            else:
-                                cumulative[i] = cumulative[i - 1]
+                        # Trapezoidal rule - vectorized for O(n) performance
+                        signal_values = signal_data.values
+                        dt_values = dt.values
+                        n = len(signal_values)
+                        cumulative = np.zeros(n)
+
+                        # Vectorized: compute valid mask and increments
+                        valid_mask = ~np.isnan(signal_values[1:]) & ~np.isnan(signal_values[:-1])
+                        increments = np.where(
+                            valid_mask,
+                            0.5 * (signal_values[1:] + signal_values[:-1]) * dt_values[1:],
+                            0.0
+                        )
+                        cumulative[1:] = np.cumsum(increments)
                     elif method == "Rectangular":
                         # Rectangular rule (left endpoint)
                         cumulative = np.cumsum(signal_data.fillna(0).values * dt.values)
                     else:  # Simpson's rule
-                        # Simplified implementation
-                        cumulative = np.zeros(len(signal_data))
-                        for i in range(1, len(signal_data)):
-                            if not np.isnan(signal_data.iloc[i]) and not np.isnan(
-                                signal_data.iloc[i - 1],
-                            ):
-                                cumulative[i] = (
-                                    cumulative[i - 1]
-                                    + 0.5
-                                    * (signal_data.iloc[i] + signal_data.iloc[i - 1])
-                                    * dt.iloc[i]
-                                )
-                            else:
-                                cumulative[i] = cumulative[i - 1]
+                        # Simplified implementation - vectorized for O(n) performance
+                        signal_values = signal_data.values
+                        dt_values = dt.values
+                        n = len(signal_values)
+                        cumulative = np.zeros(n)
+
+                        # Vectorized: compute valid mask and increments
+                        valid_mask = ~np.isnan(signal_values[1:]) & ~np.isnan(signal_values[:-1])
+                        increments = np.where(
+                            valid_mask,
+                            0.5 * (signal_values[1:] + signal_values[:-1]) * dt_values[1:],
+                            0.0
+                        )
+                        cumulative[1:] = np.cumsum(increments)
 
                     df[f"cumulative_{signal}"] = cumulative
 
@@ -2515,8 +2515,14 @@ class CSVProcessorApp(ctk.CTk):
                                 medfilt(signal_data, kernel_size=window),
                                 index=signal_data.index,
                             )
+
+                            # Optimized MAD calculation - compute median once per window
+                            def compute_mad(x):
+                                median_val = np.median(x)
+                                return np.median(np.abs(x - median_val))
+
                             mad = signal_data.rolling(window=window, center=True).apply(
-                                lambda x: np.median(np.abs(x - np.median(x))),
+                                compute_mad, raw=True
                             )
                             threshold_value = (
                                 threshold * 1.4826 * mad
@@ -2782,13 +2788,14 @@ class CSVProcessorApp(ctk.CTk):
         """Export all files as a single compiled CSV."""
         if not processed_files:
             return
-        compiled_df = pd.concat(
-            [
-                df.assign(Source_File=os.path.splitext(os.path.basename(fp))[0])
-                for fp, df in processed_files
-            ],
-            ignore_index=True,
-        )
+
+        # Add Source_File column directly to avoid DataFrame copy from assign()
+        dfs_with_source = []
+        for fp, df in processed_files:
+            df["Source_File"] = os.path.splitext(os.path.basename(fp))[0]
+            dfs_with_source.append(df)
+
+        compiled_df = pd.concat(dfs_with_source, ignore_index=True)
         compiled_df = self._apply_sorting(compiled_df)
 
         output_path = os.path.join(self.output_directory, "compiled_processed_data.csv")
@@ -5940,14 +5947,14 @@ COMMON MISTAKES TO AVOID:
             current_dir = os.getcwd()
             if os.name == "nt":  # Windows
                 os.startfile(current_dir)
-            elif os.name == "posix":  # macOS and Linux
+            else:  # macOS and Linux - use non-blocking Popen
                 import subprocess
+                import sys
 
-                subprocess.run(["open", current_dir], check=False)  # macOS
-            else:
-                import subprocess
-
-                subprocess.run(["xdg-open", current_dir], check=False)  # Linux
+                if sys.platform == "darwin":  # macOS
+                    subprocess.Popen(["open", current_dir], start_new_session=True)
+                else:  # Linux
+                    subprocess.Popen(["xdg-open", current_dir], start_new_session=True)
         except Exception as e:
             messagebox.showerror("Error", f"Failed to open folder:\n{e!s}")
 
@@ -7559,7 +7566,8 @@ For additional support or feature requests, please refer to the
         base_name = base_name.removesuffix("_processed")  # Remove '_processed'
 
         counter = 1
-        while True:
+        max_iterations = 10000  # Prevent infinite loops
+        while counter <= max_iterations:
             if counter == 1:
                 filename = f"{base_name}_processed{extension}"
             else:
@@ -7569,6 +7577,8 @@ For additional support or feature requests, please refer to the
             if not os.path.exists(full_path):
                 return full_path
             counter += 1
+
+        raise RuntimeError(f"Could not generate unique filename after {max_iterations} attempts")
 
     def _check_file_overwrite(self, file_path: str) -> str | None:
         """Check if file exists and prompt user for action."""

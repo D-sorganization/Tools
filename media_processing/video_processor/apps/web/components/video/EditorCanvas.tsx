@@ -1,7 +1,7 @@
 'use client';
 
 import { fabric } from 'fabric';
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 interface EditorCanvasProps {
   videoElement: HTMLVideoElement | null;
@@ -24,6 +24,15 @@ export interface EditorCanvasHandle {
   getStrokeWidth: () => number;
 }
 
+// Debounce utility function
+function debounce<T extends (...args: unknown[]) => void>(fn: T, delay: number): T {
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+  return ((...args: unknown[]) => {
+    if (timeoutId) clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn(...args), delay);
+  }) as T;
+}
+
 const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
   ({ videoElement, currentTime: _currentTime, onAnnotationChange }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -32,6 +41,20 @@ const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
     const [currentColor, setCurrentColor] = useState<DrawingColor>('#FF0000');
     const [strokeWidth, setStrokeWidth] = useState<DrawingStrokeWidth>(2);
     const [isDrawing, setIsDrawing] = useState(false);
+
+    // Memoized annotation change handler to avoid recreating on every render
+    const notifyAnnotationChange = useCallback(() => {
+      const canvas = fabricCanvasRef.current;
+      if (canvas && onAnnotationChange) {
+        onAnnotationChange(canvas.getObjects());
+      }
+    }, [onAnnotationChange]);
+
+    // Debounced version for frequent events
+    const debouncedNotifyAnnotationChange = useCallback(
+      debounce(notifyAnnotationChange, 16), // ~60fps
+      [notifyAnnotationChange]
+    );
 
     useImperativeHandle(ref, () => ({
       setTool: (tool: DrawingTool) => setCurrentTool(tool),
@@ -52,9 +75,7 @@ const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
         activeObjects.forEach((obj: fabric.Object) => canvas.remove(obj));
         canvas.discardActiveObject();
         canvas.renderAll();
-        if (onAnnotationChange) {
-          onAnnotationChange(canvas.getObjects());
-        }
+        notifyAnnotationChange();
       },
       getTool: () => currentTool,
       getColor: () => currentColor,
@@ -76,7 +97,8 @@ const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
         onAnnotationChange(canvas.getObjects());
       }
 
-      const resizeCanvas = () => {
+      // Debounced resize handler to prevent excessive renders
+      const resizeCanvas = debounce(() => {
         if (!videoElement || !canvas) return;
         const container = canvas.getElement().parentElement;
         if (!container) return;
@@ -90,7 +112,7 @@ const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
           height: canvasHeight,
         });
         canvas.renderAll();
-      };
+      }, 100); // 100ms debounce for resize
 
       if (videoElement) {
         resizeCanvas();
@@ -107,34 +129,21 @@ const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
       const canvas = fabricCanvasRef.current;
       if (!canvas) return;
 
-      const handleObjectAdded = () => {
-        if (onAnnotationChange) {
-          onAnnotationChange(canvas.getObjects());
-        }
+      // Unified handler for all annotation changes
+      const handleAnnotationChange = () => {
+        debouncedNotifyAnnotationChange();
       };
 
-      const handleObjectRemoved = () => {
-        if (onAnnotationChange) {
-          onAnnotationChange(canvas.getObjects());
-        }
-      };
-
-      const handleObjectModified = () => {
-        if (onAnnotationChange) {
-          onAnnotationChange(canvas.getObjects());
-        }
-      };
-
-      canvas.on('object:added', handleObjectAdded);
-      canvas.on('object:removed', handleObjectRemoved);
-      canvas.on('object:modified', handleObjectModified);
+      canvas.on('object:added', handleAnnotationChange);
+      canvas.on('object:removed', handleAnnotationChange);
+      canvas.on('object:modified', handleAnnotationChange);
 
       return () => {
-        canvas.off('object:added', handleObjectAdded);
-        canvas.off('object:removed', handleObjectRemoved);
-        canvas.off('object:modified', handleObjectModified);
+        canvas.off('object:added', handleAnnotationChange);
+        canvas.off('object:removed', handleAnnotationChange);
+        canvas.off('object:modified', handleAnnotationChange);
       };
-    }, [onAnnotationChange]);
+    }, [debouncedNotifyAnnotationChange]);
 
     useEffect(() => {
       const canvas = fabricCanvasRef.current;
