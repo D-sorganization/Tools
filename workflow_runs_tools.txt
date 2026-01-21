@@ -1,0 +1,20 @@
+completed	success	fix(ci): fix indentation in Tools workflows (#285)	Stale PR/Issue Cleanup	main	schedule	21193823951	11s	8m
+completed	success	fix(ci): fix indentation in Tools workflows (#285)	Jules PR Compiler (Consolidate Open PRs)	main	workflow_dispatch	21188982038	13s	3h
+completed	failure	fix(ci): fix indentation in Tools workflows (#285)	Jules Code Quality Fixer (Worker)	main	workflow_dispatch	21188531675	31m9s	3h
+completed	failure	fix(ci): fix indentation in Tools workflows (#285)	Auto-Update PRs	main	push	21188150257	8s	4h
+completed	failure	fix(ci): fix indentation in Tools workflows (#285)	CI Standard	main	push	21188150255	59s	4h
+completed	failure	fix(ci): fix indentation in Tools workflows (#285)	.github/workflows/Jules-Control-Tower.yml	main	push	21188149910	0s	4h
+completed	success	fix(ci): fix indentation in Tools workflows (#285)	Push on main	main	dynamic	21188149638	1m13s	4h
+completed	failure	fix(ci): fix indentation in Tools workflows (#285)	.github/workflows/auto-issue-resolver.yml	main	push	21188149633	0s	4h
+completed	success	fix(ci): fix indentation in Tools workflows	PR Auto-Labeler	fix/tools-indentation	pull_request	21188149343	12s	4h
+completed	cancelled	fix(ci): fix indentation in Tools workflows	CI Standard	fix/tools-indentation	pull_request	21188149342	3s	4h
+completed	success	fix(ci): fix indentation in Tools workflows	PR #285	refs/pull/285/head	dynamic	21188148356	1m13s	4h
+completed	failure	fix(ci): fix indentation in Tools workflows	.github/workflows/auto-issue-resolver.yml	fix/tools-indentation	push	21188147763	0s	4h
+completed	failure	fix(ci): fix indentation in Tools workflows	.github/workflows/Jules-Control-Tower.yml	fix/tools-indentation	push	21188147512	0s	4h
+completed	failure	fix(ci): correction indentation in Jules worker workflows (#283)	.github/workflows/Jules-Control-Tower.yml	main	workflow_run	21187841431	0s	4h
+completed	failure	docs: add Sentinel security scan summary	.github/workflows/Jules-Control-Tower.yml	sentinel-security-analysis-9522238119420461793	pull_request	21187813985	0s	4h
+completed	failure	docs: add Sentinel security scan summary	CI Standard	sentinel-security-analysis-9522238119420461793	pull_request	21187813960	55s	4h
+completed	success	docs: add Sentinel security scan summary	PR Auto-Labeler	sentinel-security-analysis-9522238119420461793	pull_request	21187813918	11s	4h
+completed	success	docs: add Sentinel security scan summary	PR #284	refs/pull/284/head	dynamic	21187812524	1m17s	4h
+completed	failure	docs: add Sentinel security scan summary	.github/workflows/auto-issue-resolver.yml	sentinel-security-analysis-9522238119420461793	push	21187811697	0s	4h
+completed	success	fix(ci): correction indentation in Jules worker workflows (#283)	Jules Sentinel (Security Audit)	main	workflow_dispatch	21187646266	6m11s	4h
