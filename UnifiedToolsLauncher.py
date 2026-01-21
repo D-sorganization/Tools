@@ -13,7 +13,7 @@ import sys
 import webbrowser
 from collections.abc import Callable
 
-if sys.version_info < (3, 10):
+if sys.version_info < (3, 10):  # noqa: UP036
     print("Critical Error: UnifiedToolsLauncher requires Python 3.10 or newer.", file=sys.stderr)
     print(f"Current version: {sys.version}", file=sys.stderr)
     sys.exit(1)

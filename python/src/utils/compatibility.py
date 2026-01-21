@@ -8,7 +8,7 @@ allowing the codebase to run on Python 3.10 (Ubuntu 22.04 default).
 import sys
 from enum import Enum
 
-if sys.version_info >= (3, 11):
+if sys.version_info >= (3, 11):  # noqa: UP036
     from datetime import UTC
 else:
     from datetime import timezone
