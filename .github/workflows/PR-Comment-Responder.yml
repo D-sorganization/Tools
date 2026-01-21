@@ -1,0 +1,329 @@
+name: PR Comment Responder
+
+# This workflow triggers when comments are added to PRs
+# It can be configured to use Claude API or other AI services
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to review comments on'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: read
+
+jobs:
+  respond-to-comments:
+    # Run on PR comments (from issue_comment), review comments (from pull_request_review_comment), or manual dispatch
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request_review_comment' || github.event.issue.pull_request != null
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Get PR Details
+        id: pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            PR_NUMBER="${{ inputs.pr_number }}"
+          elif [ "${{ github.event_name }}" = "pull_request_review_comment" ]; then
+            PR_NUMBER="${{ github.event.pull_request.number }}"
+          else
+            PR_NUMBER="${{ github.event.issue.number }}"
+          fi
+
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+
+          # Get PR details
+          gh pr view $PR_NUMBER --json headRefName,headRepository,headRepositoryOwner,isCrossRepository,title,body,comments,reviewComments \
+            > .pr_details.json
+
+          # Get the branch
+          BRANCH=$(cat .pr_details.json | jq -r '.headRefName')
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+
+          IS_FORK=$(cat .pr_details.json | jq -r '.isCrossRepository // false')
+          HEAD_REPO=$(cat .pr_details.json | jq -r '.headRepository.nameWithOwner // ""')
+          echo "is_fork=$IS_FORK" >> $GITHUB_OUTPUT
+          echo "head_repo=$HEAD_REPO" >> $GITHUB_OUTPUT
+
+      - name: Analyze Comments
+        id: analyze
+        run: |
+          python3 << 'PYEOF'
+          import json
+          import os
+
+          with open('.pr_details.json', 'r') as f:
+              pr = json.load(f)
+
+          # Collect all comments that might need response
+          actionable_comments = []
+
+          # Check review comments (inline code comments)
+          for comment in pr.get('reviewComments', []):
+              body = comment.get('body', '').lower()
+              # Look for actionable patterns
+              if any(word in body for word in ['please', 'should', 'could you', 'can you', 'fix', 'change', 'update', 'add', 'remove', '?']):
+                  actionable_comments.append({
+            'type': 'review',
+            'path': comment.get('path', ''),
+            'line': comment.get('line', 0),
+            'body': comment.get('body', '')
+                  })
+
+          # Check PR comments
+          for comment in pr.get('comments', []):
+              body = comment.get('body', '').lower()
+              if any(word in body for word in ['please', 'should', 'could you', 'can you', 'fix', 'change', 'update', 'add', 'remove', '?']):
+                  actionable_comments.append({
+            'type': 'pr',
+            'body': comment.get('body', '')
+                  })
+
+          with open('.actionable_comments.json', 'w') as f:
+              json.dump(actionable_comments, f, indent=2)
+
+          count = len(actionable_comments)
+          print(f"Found {count} actionable comments")
+
+          with open(os.environ.get('GITHUB_OUTPUT', '/dev/null'), 'a') as f:
+              f.write(f"count={count}\n")
+              f.write(f"has_comments={'true' if count > 0 else 'false'}\n")
+          PYEOF
+
+      - name: Skip if No Actionable Comments
+        if: steps.analyze.outputs.has_comments != 'true'
+        run: |
+          echo "No actionable comments found. Exiting."
+
+      - name: Skip Forked PRs
+        if: steps.analyze.outputs.has_comments == 'true' && steps.pr.outputs.is_fork == 'true'
+        run: |
+          echo "PR is from a fork. Skipping branch checkout and push-based automation."
+
+      - name: Checkout PR Branch
+        if: steps.analyze.outputs.has_comments == 'true' && steps.pr.outputs.is_fork != 'true'
+        run: |
+          git fetch origin ${{ steps.pr.outputs.branch }}
+          git checkout ${{ steps.pr.outputs.branch }}
+
+      # Option 1: Use Jules if available
+      - name: Address Comments with Jules
+        id: jules
+        if: steps.analyze.outputs.has_comments == 'true' && steps.pr.outputs.is_fork != 'true'
+        env:
+          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+        run: |
+          set -e
+          DATE=$(date +%Y-%m-%d)
+          REPO="${{ github.repository }}"
+          API_BASE="https://jules.googleapis.com/v1alpha"
+          
+          # Check if API key is configured
+          if [ -z "$JULES_API_KEY" ]; then
+            echo "::warning::JULES_API_KEY not configured. Skipping Jules task."
+            echo "ran=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          
+          echo "Looking up repository source..."
+          SOURCES=$(curl -sf -H "X-Goog-Api-Key: $JULES_API_KEY" "$API_BASE/sources" || echo '{"sources":[]}')
+          
+          OWNER=$(echo "$REPO" | cut -d'/' -f1)
+          REPO_NAME=$(echo "$REPO" | cut -d'/' -f2)
+          
+          SOURCE_ID=$(echo "$SOURCES" | jq -r ".sources[] | select(.githubRepo.owner == \"$OWNER\" and .githubRepo.repo == \"$REPO_NAME\") | .name" | head -1)
+          
+          if [ -z "$SOURCE_ID" ] || [ "$SOURCE_ID" = "null" ]; then
+            echo "::warning::Repository $REPO not found in Jules sources."
+            echo "ran=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          
+          echo "Found source: $SOURCE_ID"
+          
+          # Create session prompt
+          PROMPT=$(cat << 'PROMPT_EOF'
+          Review and address the PR comments in .actionable_comments.json
+          
+          For each comment:
+          1. Understand what change is being requested
+          2. Make the appropriate code change
+          3. Keep changes minimal and focused
+          
+          Do NOT respond to comments that are just acknowledgments or thank-yous.
+          PROMPT_EOF
+          )
+          
+          echo "Creating Jules session..."
+          REQUEST_JSON=$(jq -n \
+            --arg prompt "$PROMPT" \
+            --arg source "$SOURCE_ID" \
+            '{
+              prompt: $prompt,
+              sourceContext: {
+                source: $source,
+                githubRepoContext: {
+                  startingBranch: "main"
+                }
+              },
+              automationMode: "AUTO_CREATE_PR"
+            }')
+          
+          echo "Request: $REQUEST_JSON"
+          
+          HTTP_CODE=$(curl -s -o /tmp/session_response.json -w "%{http_code}" -X POST \
+            -H "X-Goog-Api-Key: $JULES_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "$REQUEST_JSON" \
+            "$API_BASE/sessions")
+          
+          SESSION_RESPONSE=$(cat /tmp/session_response.json)
+          echo "HTTP Status: $HTTP_CODE"
+          
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::error::Jules API returned HTTP $HTTP_CODE"
+            exit 1
+          fi
+          
+          SESSION_ID=$(echo "$SESSION_RESPONSE" | jq -r '.name')
+          echo "Created session: $SESSION_ID"
+          
+          # Poll for completion
+          MAX_WAIT=1800
+          POLL_INTERVAL=30
+          ELAPSED=0
+          JULES_DONE=false
+          
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            SESSION_STATUS=$(curl -sf -H "X-Goog-Api-Key: $JULES_API_KEY" "$API_BASE/$SESSION_ID")
+            STATE=$(echo "$SESSION_STATUS" | jq -r '.state')
+            echo "Session state: $STATE (elapsed: ${ELAPSED}s)"
+          
+            case "$STATE" in
+              "COMPLETED"|"SUBMITTED")
+                JULES_DONE=true
+                echo "Session completed successfully!"
+                break
+                ;;
+              "FAILED"|"CANCELLED")
+                echo "::error::Session $STATE"
+                exit 1
+                ;;
+            esac
+            sleep $POLL_INTERVAL
+            ELAPSED=$((ELAPSED + POLL_INTERVAL))
+          done
+          
+          if [ "$JULES_DONE" = "true" ]; then
+            echo "ran=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::Jules session timed out after ${MAX_WAIT}s."
+            echo "ran=false" >> "$GITHUB_OUTPUT"
+          fi
+
+
+
+      # Option 2: Use Claude API directly (requires ANTHROPIC_API_KEY secret)
+      # Only runs if Jules was skipped (no JULES_API_KEY) and ANTHROPIC_API_KEY is set
+      - name: Address Comments with Claude API
+        if: steps.analyze.outputs.has_comments == 'true' && steps.pr.outputs.is_fork != 'true' && steps.jules.outputs.ran != 'true'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+        run: |
+          # Skip if no Anthropic key
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "ANTHROPIC_API_KEY not configured, skipping"
+            exit 0
+          fi
+          pip install anthropic
+
+          python3 << 'PYEOF'
+          import anthropic
+          import json
+          import subprocess
+          import os
+
+          client = anthropic.Anthropic()
+
+          with open('.actionable_comments.json', 'r') as f:
+              comments = json.load(f)
+
+          # Read relevant files mentioned in comments
+          files_to_read = set()
+          for c in comments:
+              if c.get('path'):
+                  files_to_read.add(c['path'])
+
+          file_contents = {}
+          for path in files_to_read:
+              try:
+                  with open(path, 'r') as f:
+            file_contents[path] = f.read()
+              except:
+                  pass
+
+          prompt = f"""You are a code reviewer assistant. Address these PR comments by suggesting specific code changes.
+
+          Comments to address:
+          {json.dumps(comments, indent=2)}
+
+          Relevant file contents:
+          {json.dumps(file_contents, indent=2)}
+
+          For each comment, provide:
+          1. The file path
+          2. The exact change needed (as a diff or replacement)
+          3. Brief explanation
+
+          Format your response as JSON with structure:
+          {{"changes": [{{"file": "path", "old": "old code", "new": "new code", "explanation": "why"}}]}}
+          """
+
+          message = client.messages.create(
+              model="claude-sonnet-4-20250514",
+              max_tokens=4096,
+              messages=[{"role": "user", "content": prompt}]
+          )
+
+          print(message.content[0].text)
+          # Note: In a full implementation, you would parse the response
+          # and apply the changes automatically
+          PYEOF
+
+      - name: Commit Changes
+        if: steps.analyze.outputs.has_comments == 'true' && steps.pr.outputs.is_fork != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add -A
+          if ! git diff --staged --quiet; then
+            git commit -m "Address PR review comments
+
+          Automated response to reviewer feedback.
+
+          Co-Authored-By: Claude <noreply@anthropic.com>"
+
+            git push origin ${{ steps.pr.outputs.branch }}
+
+            gh pr comment ${{ steps.pr.outputs.pr_number }} --body "I've addressed the review comments. Please take another look!"
+          else
+            echo "No changes made"
+          fi
