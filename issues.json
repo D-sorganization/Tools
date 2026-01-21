@@ -14,5 +14,9 @@
     {
         "number": 203,
         "title": "Security Audit: Sanitize Launcher Config Inputs (Score: 6/10)"
+    },
+    {
+        "number": 204,
+        "title": "CRITICAL: UnifiedToolsLauncher crashes on <3.11 (Missing Version Check)"
     }
 ]
