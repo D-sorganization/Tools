@@ -1,0 +1,86 @@
+./config/project_template/tools/code_quality_check.py:34:    (re.compile(r"\bTODO\b"), "TODO placeholder found"),
+./config/project_template/tools/code_quality_check.py:35:    (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
+./web_applications/unit_converter/agent_templates/pragmatist.md:58:* TODOs that never move
+./.cursor/rules/.cursorrules.md:14:- **NEVER USE PLACEHOLDERS** → No `TODO`, `FIXME`, `...`, `pass`, `NotImplementedError`, `<your-value-here>`
+./.cursor/rules/.cursorrules.md:515:- [X] Zero TODO/FIXME/pass in diff
+./.cursor/rules/.cursorrules.md:560:    # TODO: implement this properly
+./tools/README.md:26:- **Banned Patterns**: TODO, FIXME, placeholders, NotImplementedError
+./tools/matlab_utilities/README.md:261:- TODO, FIXME, HACK, XXX placeholders
+./tools/matlab_utilities/scripts/matlab_quality_check.py:310:                    (r"\bTODO\b", "TODO placeholder found"),
+./tools/matlab_utilities/scripts/matlab_quality_check.py:311:                    (r"\bFIXME\b", "FIXME placeholder found"),
+./tools/matlab_utilities/scripts/matlab_quality_check.py:313:                    (r"\bXXX\b", "XXX comment found"),
+./tools/code_quality_check.py:34:    (re.compile(r"\bTODO\b"), "TODO placeholder found"),
+./tools/code_quality_check.py:35:    (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
+./.github/workflows/Jules-Tech-Custodian.yml:49:          # TODO: Jules CLI API changed in v0.1.x
+./.github/workflows/Jules-Completist.yml:30:          grep -rn "TODO\|FIXME\|XXX" --include="*.py" --include="*.md" . \
+./.github/copilot-instructions.md:22:- BANNED: `TODO`, `FIXME`, `...`, `pass`, `NotImplementedError`, `<placeholder>`, "approximately"
+./.github/copilot-instructions.md:285:    # TODO: implement processing
+./quality_check_script.py:11:    (re.compile(r"\bTODO\b"), "TODO placeholder found"),
+./quality_check_script.py:12:    (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
+./quality_check_script.py:21:        re.compile(r"<[^<>]*TODO[^<>]*>", re.IGNORECASE),
+./quality_check_script.py:22:        "Angle bracket TODO placeholder",
+./quality_check_script.py:25:        re.compile(r"<[^<>]*FIXME[^<>]*>", re.IGNORECASE),
+./quality_check_script.py:26:        "Angle bracket FIXME placeholder",
+./drafts/Jules-Code-Quality-Reviewer.yml:96:          5. **Placeholders**: Identify placeholder code (TODO, FIXME, NotImplemented, pass statements)
+./scripts/quality-check.py:11:    (re.compile(r"\bTODO\b"), "TODO placeholder found"),
+./scripts/quality-check.py:12:    (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
+./scripts/quality-check.py:21:    # Note: Angle bracket TODO/FIXME patterns removed to avoid false positives in regex
+./docs/assessments/Assessment_B_Results_2026-01-17_REFRESH.md:468:+    'style-src': ["'self'", "'unsafe-inline'"],  # TODO: Remove unsafe-inline
+./docs/assessments/Assessment_B_Results_2026-01-17_REFRESH.md:492:+disallow_untyped_defs = False  # TODO: Change to True after fixing errors
+./docs/assessments/Assessment_B_Results_2026-01-17_REFRESH.md:493:+disallow_any_generics = False  # TODO: Enable
+./docs/assessments/archive/Assessment_ChangeLog_2026-01-12.md:37:    *   Found `TODO` and `FIXME` in `tools/matlab_utilities` and regex patterns in `code_quality_check.py`.
+./docs/assessments/archive/Assessment_B_Results_2026-01-11.md:304:+ # - development_tools/folder_tools/: Legacy code, typing TODO tracked in issue #XXX
+./docs/assessments/archive/Assessment_Highlight_2026-01-14.md:56:*   TODO: Freeze dependencies.
+./docs/assessments/archive/Assessment_B_Results.md:20:7.  **TODOs**: `TODO` patterns found in config files and hooks, though not in core logic. (Severity: **Nit**)
+./docs/assessments/archive/Documentation_Cleanup_Prompt.md:23:3. ❌ Add placeholder content (e.g., "TODO: document this")
+./docs/assessments/archive/Documentation_Cleanup_Prompt.md:325:6. ✅ No "TODO" or placeholder text remains
+./docs/assessments/completist/audit_report.md:7:An audit of the codebase for incomplete work markers (`TODO`, `FIXME`, `XXX`) reveals a high degree of completion. No active TODOs were found in the Python source code. The majority of matches are false positives located in:
+./docs/assessments/completist/audit_report.md:8:1.  **Tooling Scripts**: Regular expressions used to enforce the "no TODO" policy.
+./docs/assessments/completist/audit_report.md:10:3.  **Assessment Reports**: Suggested code changes (diffs) that include TODO comments for future implementation.
+./docs/assessments/completist/audit_report.md:16:- No active `TODO`, `FIXME`, or `XXX` markers were found in the scanned `.py` files.
+./docs/assessments/completist/audit_report.md:21:-   `tools/code_quality_check.py`: Contains `re.compile(r"\bTODO\b")`.
+./docs/assessments/completist/audit_report.md:22:-   `tools/matlab_utilities/scripts/matlab_quality_check.py`: Contains `re.compile(r"\bTODO\b")`.
+./docs/assessments/completist/audit_report.md:23:-   `quality_check_script.py`: Contains `re.compile(r"\bTODO\b")`.
+./docs/assessments/completist/audit_report.md:24:-   `scripts/quality-check.py`: Contains `re.compile(r"\bTODO\b")`.
+./docs/assessments/completist/audit_report.md:27:Documentation files reference `TODO` as a banned pattern:
+./docs/assessments/completist/audit_report.md:28:-   `.cursor/rules/.cursorrules.md`: "**NEVER USE PLACEHOLDERS** → No `TODO`, `FIXME`...".
+./docs/assessments/completist/audit_report.md:29:-   `.github/copilot-instructions.md`: "BANNED: `TODO`, `FIXME`...".
+./docs/assessments/completist/audit_report.md:30:-   `tools/README.md`: Lists "TODO" as a banned pattern.
+./docs/assessments/completist/audit_report.md:33:Several assessment reports contain TODOs in the context of:
+./docs/assessments/completist/audit_report.md:34:-   **Diff Suggestions**: `docs/assessments/Assessment_B_Results_2026-01-17_REFRESH.md` includes proposed changes like `# TODO: Remove unsafe-inline` or `# TODO: Enable`. These represent identified technical debt to be addressed in future sprints.
+./docs/assessments/completist/audit_report.md:35:-   **Archived Plans**: `media_processing/video_processor/docs/archive/ACTION_PLAN_CODE_QUALITY.md` contains historical TODOs.
+./docs/assessments/completist/audit_report.md:38:1.  **Maintain Strict Enforcement**: Continue using the quality check scripts to prevent new TODOs from entering the codebase.
+./docs/assessments/completist/audit_report.md:39:2.  **Address Assessment Debt**: The TODOs identified in `Assessment_B_Results_2026-01-17_REFRESH.md` (e.g., Mypy strict mode, Security Headers) should be converted into formal issues or active tasks, rather than remaining as comments in a markdown report.
+./docs/architecture/JULES_ARCHITECTURE.md:140:- **Fixes applied:** Less aggressive Ruff, specific MyPy paths, fixed grep regex for TODOs.
+./docs/architecture/JULES_ARCHITECTURE.md:172:      # FIX: Correct Regex for TODOs
+./docs/architecture/JULES_ARCHITECTURE.md:175:          if grep -r "TODO\|FIXME" --include="*.py" src/; then
+./media_processing/audio_processor/matlab/audio_signal_processor/GUI_REVIEW_AND_FIXES.md:302:✅ **No Placeholders:** All TODOs are intentional future features
+./media_processing/audio_processor/matlab/audio_signal_processor/PULL_REQUEST_SUMMARY.md:160:- ✅ **No placeholders:** All TODOs are intentional future features
+./media_processing/video_processor/package-lock.json:8346:      "integrity": "sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==",
+./media_processing/video_processor/tools/matlab_utilities/scripts/matlab_quality_check.py:308:                    (r"\bTODO\b", "TODO placeholder found"),
+./media_processing/video_processor/tools/matlab_utilities/scripts/matlab_quality_check.py:309:                    (r"\bFIXME\b", "FIXME placeholder found"),
+./media_processing/video_processor/tools/matlab_utilities/scripts/matlab_quality_check.py:311:                    (r"\bXXX\b", "XXX comment found"),
+./media_processing/video_processor/tools/code_quality_check.py:34:    (re.compile(r"\bTODO\b"), "TODO placeholder found"),
+./media_processing/video_processor/tools/code_quality_check.py:35:    (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
+./media_processing/video_processor/docs/archive/PR_DESCRIPTION.md:105:- No `TODO` comments
+./media_processing/video_processor/docs/archive/PR_DESCRIPTION.md:106:- No `FIXME` comments
+./media_processing/video_processor/docs/archive/PR_DESCRIPTION.md:215:- [x] Zero TODO/FIXME/pass in diff
+./media_processing/video_processor/docs/archive/ACTION_PLAN_CODE_QUALITY.md:617:    // TODO: Save to database when backend is ready
+./media_processing/video_processor/docs/archive/ACTION_PLAN_CODE_QUALITY.md:951:   - No TODOs left
+./media_processing/video_processor/docs/VS_CODE_SETUP.md:68:    - Highlights TODO, FIXME, etc.
+./media_processing/video_processor/apps/web/app/page.tsx:36:  // TODO: Move fps to client-side config or use from video metadata
+./media_processing/video_processor/apps/web/app/page.tsx:122:      // TODO: Save to database when backend is ready
+./media_processing/video_processor/apps/web/app/page.tsx:169:      // TODO: Save pose data to state or database when ready
+./media_processing/video_processor/apps/web/lib/sanitize.ts:8: * TODO: Add DOMPurify when ready for production.
+./media_processing/video_processor/apps/web/lib/sanitize.ts:93:  // TODO: Use DOMPurify to allow safe HTML tags
+./media_processing/video_processor/apps/web/lib/sanitize.ts:222:    // TODO: Parse and validate RGB values
+./media_processing/video_processor/apps/web/lib/logger.ts:9: * TODO: Add pino when ready for production.
+./media_processing/video_processor/agent_templates/pragmatist.md:58:* TODOs that never move
+./media_processing/video_processor/JULES_ARCHITECTURE.md:140:- **Fixes applied:** Less aggressive Ruff, specific MyPy paths, fixed grep regex for TODOs.
+./media_processing/video_processor/JULES_ARCHITECTURE.md:172:      # FIX: Correct Regex for TODOs
+./media_processing/video_processor/JULES_ARCHITECTURE.md:175:          if grep -r "TODO\|FIXME" --include="*.py" src/; then
+./media_processing/video_processor/matlab/models/pendulum_model.m:41:    % TODO: Implement pendulum model
+./media_processing/video_processor/javascript/README.md:37:- No placeholders (no TODO, FIXME, etc.)
+./agent_templates/pragmatist.md:58:- TODOs that never move
+./data_processing/data_processor/tools/code_quality_check.py:34:    (re.compile(r"\bTODO\b"), "TODO placeholder found"),
+./data_processing/data_processor/tools/code_quality_check.py:35:    (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
