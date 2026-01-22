@@ -14,7 +14,7 @@ import re
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -135,7 +135,7 @@ def generate_summary(
 
     for assessment_id, score in scores.items():
         if assessment_id in categories:
-            weight = cast(float, categories[assessment_id]["weight"])
+            weight = categories[assessment_id]["weight"]
             total_weighted_score += score * weight
             total_weight += weight
 
@@ -232,7 +232,7 @@ Recommended: 30 days from today
     return 0
 
 
-def main() -> None:
+def main():
     parser = argparse.ArgumentParser(description="Generate assessment summary")
     parser.add_argument(
         "--input",
@@ -257,7 +257,7 @@ def main() -> None:
     args = parser.parse_args()
 
     # Expand wildcards if needed
-    input_reports: list[Path] = []
+    input_reports = []
     for pattern in args.input:
         if "*" in str(pattern):
             # Expand glob pattern
@@ -270,7 +270,7 @@ def main() -> None:
 
     if not input_reports:
         logger.error("No valid input reports found")
-        sys.exit(1)
+        return 1
 
     exit_code = generate_summary(input_reports, args.output, args.json_output)
     sys.exit(exit_code)
