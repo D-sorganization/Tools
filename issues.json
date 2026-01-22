@@ -18,5 +18,9 @@
     {
         "number": 204,
         "title": "CRITICAL: UnifiedToolsLauncher crashes on <3.11 (Missing Version Check)"
+    },
+    {
+        "number": 205,
+        "title": "CRITICAL: CI Workflow masks installation failures in Jules-Assessment-Generator"
     }
 ]
