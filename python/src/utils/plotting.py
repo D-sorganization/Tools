@@ -44,7 +44,7 @@ COLORBLIND_SAFE_PALETTE_ALT = [
 ]
 
 
-def get_colorblind_safe_colormap(name: str = "default") -> ListedColormap | None:
+def get_colorblind_safe_colormap(name: str = "default") -> Any | None:
     """
     Get a colorblind-safe colormap.
 
@@ -54,7 +54,7 @@ def get_colorblind_safe_colormap(name: str = "default") -> ListedColormap | None
     Returns:
         ListedColormap instance or None if matplotlib not available
     """
-    if plt is None or ListedColormap is None:
+    if not HAS_MATPLOTLIB or plt is None or ListedColormap is None:
         return None
 
     palette = COLORBLIND_SAFE_PALETTE_ALT if name == "alt" else COLORBLIND_SAFE_PALETTE
@@ -108,7 +108,7 @@ def export_plot(
     Raises:
         ValueError: If matplotlib is not available or invalid format specified
     """
-    if plt is None:
+    if not HAS_MATPLOTLIB or plt is None:
         raise ValueError("matplotlib is not available")
 
     if formats is None:
@@ -150,10 +150,14 @@ def get_colorblind_safe_color(index: int, palette: str = "default") -> str:
 
 
 # Register colorblind-safe colormaps with matplotlib if available
-if plt is not None:
+if HAS_MATPLOTLIB and plt is not None:
     try:
-        plt.colormaps.register(get_colorblind_safe_colormap("default"))
-        plt.colormaps.register(get_colorblind_safe_colormap("alt"))
+        default_cmap = get_colorblind_safe_colormap("default")
+        alt_cmap = get_colorblind_safe_colormap("alt")
+        if default_cmap is not None:
+            plt.colormaps.register(default_cmap)
+        if alt_cmap is not None:
+            plt.colormaps.register(alt_cmap)
     except Exception:
         # Colormap registration may fail in some matplotlib versions
         pass
