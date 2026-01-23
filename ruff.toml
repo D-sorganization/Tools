@@ -17,6 +17,7 @@ exclude = [
     "node_modules",
     "*.ipynb",  # Jupyter notebooks often fail standard linting
     "**/*.json",  # JSON files don't need Python linting
+    "python/src/tile_launcher/app_catalog.json",  # JSON config file
     "**/archive",
     "**/legacy",
     "replicants", # Enable linting for replicants
