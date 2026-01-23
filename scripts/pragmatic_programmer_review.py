@@ -155,7 +155,7 @@ def check_dry_violations(files: list[Path]) -> list[dict]:
     for file_path in files:
         try:
             content = file_path.read_text(encoding="utf-8", errors="ignore")
-        except Exception:
+        except (OSError, UnicodeDecodeError):
             continue
 
         # Check for duplicate code blocks (5+ line chunks)
@@ -230,7 +230,7 @@ def check_orthogonality(files: list[Path]) -> list[dict]:
         try:
             content = file_path.read_text(encoding="utf-8", errors="ignore")
             tree = ast.parse(content)
-        except Exception:
+        except (OSError, UnicodeDecodeError, SyntaxError):
             continue
 
         module_name = file_path.stem
@@ -311,7 +311,7 @@ def check_reversibility(root_path: Path) -> list[dict]:
     for file_path in python_files:
         try:
             content = file_path.read_text(encoding="utf-8", errors="ignore")
-        except Exception:
+        except (OSError, UnicodeDecodeError):
             continue
 
         for pattern, description in config_patterns:
@@ -370,7 +370,7 @@ def check_quality(files: list[Path]) -> list[dict]:
     for file_path in files:
         try:
             content = file_path.read_text(encoding="utf-8", errors="ignore")
-        except Exception:
+        except (OSError, UnicodeDecodeError):
             continue
 
         # Check for unfinished work markers
@@ -447,7 +447,7 @@ def check_robustness(files: list[Path]) -> list[dict]:
         try:
             content = file_path.read_text(encoding="utf-8", errors="ignore")
             tree = ast.parse(content)
-        except Exception:
+        except (OSError, UnicodeDecodeError, SyntaxError):
             continue
 
         for node in ast.walk(tree):
@@ -959,7 +959,7 @@ Based on principles from "The Pragmatic Programmer" by David Thomas and Andrew H
                 created.append(issue_data)
             else:
                 logger.warning(f"Failed to create issue: {result.stderr}")
-        except Exception as e:
+        except (subprocess.SubprocessError, OSError) as e:
             logger.error(f"Error creating issue: {e}")
 
     return created
