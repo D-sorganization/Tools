@@ -14,12 +14,18 @@ Please refer to [AGENTS.md](AGENTS.md) for the authoritative guide on:
 ## Quick Start
 
 1.  **Environment Setup**:
+    - Python 3.10+ required (3.11+ recommended for best compatibility)
     - Install dependencies: `pip install -r requirements.txt`
     - Optional: Run `python setup_dev.py` for additional development setup
-2.  **Linting**: Ensure your code passes `ruff`, `black`, and `mypy` checks.
+2.  **Linting**: Ensure your code passes quality checks before committing.
     - Run `ruff check .` and `ruff format .` before committing
     - Run `black --check .` to verify formatting
-    - Run `mypy . --config-file mypy.ini` for type checking
+    - Run `mypy . --config-file mypy.ini` for type checking (advisory - see note below)
+
+    > **Note on Type Checking**: While `mypy` is part of our quality toolchain, strict type
+    > checking is not yet fully enforced across the legacy codebase. New code should include
+    > type hints. Existing type errors are tracked in issue #219.
+
 3.  **Testing**: Run relevant tests before submitting a PR.
     - Run `pytest .` to execute all tests
     - Ensure test coverage is maintained or improved

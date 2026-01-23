@@ -127,6 +127,14 @@ The repository provides a unified launcher system for accessing all tools. The c
     bash scripts/setup_precommit.sh
     ```
 
+4.  **Use the Makefile** (Optional but recommended)
+    ```bash
+    make help      # Show available targets
+    make install   # Install all dependencies
+    make check     # Run linters and tests
+    make format    # Format code with black and ruff
+    ```
+
 ### Running the Tools
 
 The easiest way to explore the available tools is via the unified launcher:
