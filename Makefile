@@ -32,8 +32,8 @@ install:
 lint:
 	@echo "Running ruff check..."
 	ruff check .
-	@echo "Running mypy..."
-	mypy . --config-file mypy.ini || echo "Note: mypy errors are advisory (see CONTRIBUTING.md)"
+	@echo "Running mypy (errors are advisory; see CONTRIBUTING.md)..."
+	mypy . --config-file mypy.ini || true
 
 # Format code
 format:
@@ -56,14 +56,8 @@ check: lint test
 # Clean build artifacts
 clean:
 	@echo "Cleaning build artifacts..."
-	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
-	find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
-	find . -type d -name ".mypy_cache" -exec rm -rf {} + 2>/dev/null || true
-	find . -type d -name ".ruff_cache" -exec rm -rf {} + 2>/dev/null || true
-	find . -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true
-	find . -type f -name "*.pyc" -delete 2>/dev/null || true
-	find . -type f -name "*_output.txt" -delete 2>/dev/null || true
-	find . -type f -name "*_temp.txt" -delete 2>/dev/null || true
+	find . -type d \( -name "__pycache__" -o -name ".pytest_cache" -o -name ".mypy_cache" -o -name ".ruff_cache" -o -name "*.egg-info" \) -exec rm -rf {} + 2>/dev/null || true
+	find . -type f \( -name "*.pyc" -o -name "*_output.txt" -o -name "*_temp.txt" \) -delete 2>/dev/null || true
 	@echo "Clean complete."
 
 # Run everything
