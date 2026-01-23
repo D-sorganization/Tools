@@ -12,7 +12,7 @@ import logging
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -23,20 +23,12 @@ def get_existing_issues() -> list[dict[str, Any]]:
     """Fetch existing GitHub issues."""
     try:
         result = subprocess.run(
-            [
-                "gh",
-                "issue",
-                "list",
-                "--limit",
-                "200",
-                "--json",
-                "number,title,state,labels",
-            ],
+            ["gh", "issue", "list", "--limit", "200", "--json", "number,title,state,labels"],
             capture_output=True,
             text=True,
             check=True,
         )
-        return cast(list[dict[str, Any]], json.loads(result.stdout))
+        return json.loads(result.stdout)
     except Exception as e:
         logger.warning(f"Could not fetch existing issues: {e}")
         return []
@@ -145,6 +137,59 @@ def process_assessment_findings(
         f"Filtered to {len(filtered_issues)} issues with severities: {', '.join(severities)}"
     )
 
+    # Get repository name from current directory
+    repo_name = Path.cwd().name
+    repo_short_names = {
+        "Gasification_Model": "GasModel",
+        "Tools": "Tools",
+        "AffineDrift": "AffineDrift",
+        "Games": "Games",
+        "Golf_Modeling_Suite": "GolfSuite",
+        "MLProjects": "MLProj",
+        "Playground": "Playground",
+        "MEB_Conversion": "MEBConv",
+        "Repository_Management": "RepoMgmt",
+    }
+    repo_short = repo_short_names.get(repo_name, repo_name[:8])
+
+    # Category classification based on source
+    def classify_category(source_name: str, description: str) -> str:
+        """Classify issue into a category."""
+        text = (source_name + " " + description).lower()
+
+        if "architecture" in text or "implementation" in text or "Assessment_A" in source_name:
+            return "Architecture"
+        elif "quality" in text or "hygiene" in text or "Assessment_B" in source_name:
+            return "Code Quality"
+        elif "documentation" in text or "Assessment_C" in source_name:
+            return "Documentation"
+        elif "user" in text or "ux" in text or "Assessment_D" in source_name:
+            return "User Experience"
+        elif "performance" in text or "Assessment_E" in source_name:
+            return "Performance"
+        elif "installation" in text or "deployment" in text or "Assessment_F" in source_name:
+            return "Installation"
+        elif "test" in text or "Assessment_G" in source_name:
+            return "Testing"
+        elif "error" in text or "Assessment_H" in source_name:
+            return "Error Handling"
+        elif "security" in text or "Assessment_I" in source_name:
+            return "Security"
+        elif "extensibility" in text or "Assessment_J" in source_name:
+            return "Extensibility"
+        elif "reproducibility" in text or "Assessment_K" in source_name:
+            return "Reproducibility"
+        elif "maintainability" in text or "Assessment_L" in source_name:
+            return "Maintainability"
+        elif "educational" in text or "Assessment_M" in source_name:
+            return "Documentation"
+        elif "visualization" in text or "Assessment_N" in source_name:
+            return "Visualization"
+        elif "ci" in text or "cd" in text or "Assessment_O" in source_name:
+            return "CI/CD"
+        else:
+            return "General"
+
     # Create issues
     created_count = 0
     skipped_count = 0
@@ -154,18 +199,29 @@ def process_assessment_findings(
         description = issue.get("description", "No description")
         source = issue.get("source", "Unknown")
 
-        # Generate title and body
-        title = f"{severity}: {description[:80]}"
+        # Classify category
+        category = classify_category(source, description)
+
+        # Clean description for title (remove markdown, truncate)
+        clean_desc = description.replace("**", "").replace("*", "").replace("`", "")
+        clean_desc = clean_desc.split("\n")[0]  # First line only
+        if len(clean_desc) > 60:
+            clean_desc = clean_desc[:57] + "..."
+
+        # Generate standardized title
+        title = f"[{repo_short}] {severity} {category}: {clean_desc}"
 
         body = f"""## Issue Description
 
 **Severity**: {severity}
+**Category**: {category}
 **Source**: {source}
-**Identified**: {summary.get("timestamp", "Unknown")}
+**Identified**: {summary.get('timestamp', 'Unknown')}
 
 ### Problem
 
 {description}
+
 
 ### Impact
 
@@ -174,7 +230,7 @@ This issue was identified during automated repository assessment and requires at
 ### References
 
 - Assessment Report: {source}
-- Full Assessment: docs/assessments/COMPREHENSIVE_ASSESSMENT_SUMMARY_{summary.get("timestamp", "")[:10]}.md
+- Full Assessment: docs/assessments/COMPREHENSIVE_ASSESSMENT_SUMMARY_{summary.get('timestamp', '')[:10]}.md
 
 ### Next Steps
 
@@ -211,7 +267,7 @@ This issue was identified during automated repository assessment and requires at
     return 0
 
 
-def main() -> None:
+def main():
     parser = argparse.ArgumentParser(description="Create GitHub issues from assessment")
     parser.add_argument(
         "--input",
