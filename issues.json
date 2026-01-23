@@ -22,5 +22,20 @@
     {
         "number": 205,
         "title": "CRITICAL: CI Workflow masks installation failures in Jules-Assessment-Generator"
+    },
+    {
+        "number": 206,
+        "title": "jules:assessment,needs-attention: Refactor Data_Processor_r0.py (Scalability/Maintainability)",
+        "labels": ["jules:assessment", "needs-attention"]
+    },
+    {
+        "number": 207,
+        "title": "jules:assessment,needs-attention: Improve Test Coverage for Signal Processor and CLI",
+        "labels": ["jules:assessment", "needs-attention"]
+    },
+    {
+        "number": 208,
+        "title": "jules:assessment,needs-attention: Fix Logging Violations in launch_tools_main.py",
+        "labels": ["jules:assessment", "needs-attention"]
     }
 ]
