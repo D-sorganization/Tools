@@ -26,8 +26,8 @@
   {
     "id": "video_platform",
     "name": "Video Platform (Next.js)",
-    "relative_path": "media_processing/video_processor/apps/web/launch_platform.bat",
-    "launch_type": "bat",
+    "relative_path": "media_processing/video_processor/apps/web/launch_platform.py",
+    "launch_type": "python",
     "logo": "tools_icon_simple.ico",
     "description": "Launch the Next.js video processing platform."
   },
@@ -48,11 +48,11 @@
     "description": "Launch the Python folder packing utility."
   },
   {
-    "id": "folder_fix_pro",
-    "name": "Folder Fix Pro",
-    "relative_path": "replicants/python/folder_tool_pro/folder_fix_pro.py",
+    "id": "folder_tool",
+    "name": "Folder Tool",
+    "relative_path": "tools/folder_tools/folder_tool/Folders_Tool_r0.py",
     "launch_type": "python",
     "logo": "tools_icon_alt.ico",
-    "description": "Open the enhanced folder repair tool."
+    "description": "Directory management utility (replaces legacy replicant)."
   }
 ]

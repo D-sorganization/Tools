@@ -437,10 +437,35 @@ class UnifiedLauncher(QMainWindow):
                         # Note: For full output capture in debug mode, consider using
                         # subprocess.run with capture_output=True or threading for real-time display
 
-                except Exception as e:
-                    error_msg = f"Failed to start Python process: {e}"
+                except FileNotFoundError:
+                    error_msg = (
+                        f"Python executable not found: {sys.executable}\n\n"
+                        "Please ensure Python is installed and in your system PATH."
+                    )
                     self.log(f"❌ {error_msg}")
                     QMessageBox.critical(self, "Launch Error", error_msg)
+                    return
+                except PermissionError:
+                    error_msg = (
+                        f"Permission denied: Cannot execute {path}\n\n"
+                        "Please check file permissions or run with appropriate privileges."
+                    )
+                    self.log(f"❌ {error_msg}")
+                    QMessageBox.critical(self, "Launch Error", error_msg)
+                    return
+                except Exception as e:
+                    error_msg = (
+                        f"Failed to start Python process: {e}\n\n"
+                        f"Tool: {tool_info.get('name', 'Unknown')}\n"
+                        f"Path: {path}\n"
+                        f"Type: {type_}"
+                    )
+                    self.log(f"❌ {error_msg}")
+                    QMessageBox.critical(
+                        self,
+                        "Launch Error",
+                        error_msg,
+                    )
                     return
 
             elif type_ == "matlab":
@@ -464,13 +489,30 @@ class UnifiedLauncher(QMainWindow):
                         self.log(f"DEBUG: MATLAB process PID: {process.pid}")
                 except FileNotFoundError:
                     # MATLAB not in PATH, try opening file directly
+                    error_msg = (
+                        f"MATLAB not found in system PATH.\n\n"
+                        f"Tool: {tool_info.get('name', 'Unknown')}\n"
+                        f"Path: {path}\n\n"
+                        "Attempting to open file in default editor..."
+                    )
+                    self.log(f"⚠️ {error_msg}")
+                    QMessageBox.warning(self, "MATLAB Not Found", error_msg)
                     # Use hasattr pattern for Windows-specific startfile
-                    if hasattr(os, "startfile"):
-                        os.startfile(path)
-                        self.log("⚠️ MATLAB not in PATH, opened file in default editor")
-                    else:
-                        subprocess.Popen(["xdg-open", str(path)])
-                        self.log("⚠️ MATLAB not in PATH, opened file with xdg-open")
+                    try:
+                        if hasattr(os, "startfile"):
+                            os.startfile(path)  # type: ignore[attr-defined]
+                            self.log("Opened file in default editor (Windows)")
+                        else:
+                            subprocess.Popen(["xdg-open", str(path)])
+                            self.log("Opened file with xdg-open (Linux/macOS)")
+                    except Exception as open_error:
+                        final_error = (
+                            f"Could not open MATLAB file: {open_error}\n\n"
+                            "Please install MATLAB R2020a or later and add it to PATH."
+                        )
+                        self.log(f"❌ {final_error}")
+                        QMessageBox.critical(self, "File Open Error", final_error)
+                        return
 
             elif type_ == "web" or type_ == "browser":
                 # Validate URL scheme if it's external, or path if internal
@@ -510,20 +552,55 @@ class UnifiedLauncher(QMainWindow):
                     self.log("✅ Batch script executed")
                     if is_debug:
                         self.log(f"DEBUG: Batch process PID: {process.pid}")
+                except FileNotFoundError:
+                    error_msg = (
+                        f"Windows command processor (cmd.exe) not found.\n\n"
+                        f"Tool: {tool_info.get('name', 'Unknown')}\n"
+                        f"Path: {path}\n\n"
+                        "This tool requires Windows. Consider using the Python launcher instead."
+                    )
+                    self.log(f"❌ {error_msg}")
+                    QMessageBox.critical(self, "Platform Error", error_msg)
+                    return
                 except Exception as e:
-                    error_msg = f"Failed to execute batch script: {e}"
+                    error_msg = (
+                        f"Failed to execute batch script: {e}\n\n"
+                        f"Tool: {tool_info.get('name', 'Unknown')}\n"
+                        f"Path: {path}\n\n"
+                        "Consider using the cross-platform Python launcher if available."
+                    )
                     self.log(f"❌ {error_msg}")
                     QMessageBox.critical(self, "Launch Error", error_msg)
                     return
 
             else:
-                self.log(f"❌ Unknown type: {type_}")
+                error_msg = (
+                    f"Unknown tool type: {type_}\n\n"
+                    f"Tool: {tool_info.get('name', 'Unknown')}\n"
+                    f"Supported types: python, matlab, web, browser, bat"
+                )
+                self.log(f"❌ {error_msg}")
+                QMessageBox.warning(self, "Unknown Tool Type", error_msg)
 
-        except Exception as e:
-            self.log(f"❌ Error: {str(e)}")
-            QMessageBox.critical(
-                self, "Launch Error", f"Failed to launch tool:\n{str(e)}"
+        except ValueError as e:
+            # Path validation errors
+            error_msg = (
+                f"Path validation failed: {e}\n\n"
+                f"Tool: {tool_info.get('name', 'Unknown')}\n"
+                f"Path: {tool_info.get('path', 'Unknown')}"
             )
+            self.log(f"❌ {error_msg}")
+            QMessageBox.critical(self, "Security Error", error_msg)
+        except Exception as e:
+            error_msg = (
+                f"Unexpected error: {e}\n\n"
+                f"Tool: {tool_info.get('name', 'Unknown')}\n"
+                f"Type: {type_}\n"
+                f"Path: {path}\n\n"
+                "Please check the activity log for more details."
+            )
+            self.log(f"❌ {error_msg}")
+            QMessageBox.critical(self, "Launch Error", error_msg)
 
 
 # =============================================================================
