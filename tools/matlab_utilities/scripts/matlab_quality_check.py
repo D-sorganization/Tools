@@ -561,8 +561,11 @@ def main() -> None:
 
     # Output results
     if args.output_format == "json":
-        logger.info(json.dumps(results, indent=2, default=str))
+        # For JSON output, use print() to stdout to avoid logging format prefixes
+        # This ensures pure JSON output for parsing by other tools/workflows
+        print(json.dumps(results, indent=2, default=str))  # noqa: T201
     else:
+        # For text output, use logger for proper formatting
         logger.info("\n" + "=" * 60)
         logger.info("MATLAB QUALITY CHECK RESULTS")
         logger.info("=" * 60)

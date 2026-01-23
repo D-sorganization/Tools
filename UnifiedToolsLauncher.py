@@ -420,23 +420,22 @@ class UnifiedLauncher(QMainWindow):
                 if is_debug:
                     # Could add a verbose flag if the tool supports it
                     pass
-                # Capture output and errors (issue #237)
+                # Launch process without capturing output to avoid deadlock
+                # Use DEVNULL to prevent pipe buffer overflow when tools produce output
                 try:
                     process = subprocess.Popen(
                         args,
                         cwd=path.parent,
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.PIPE,
-                        text=True,
+                        stdout=subprocess.DEVNULL if not is_debug else None,
+                        stderr=subprocess.DEVNULL if not is_debug else None,
                     )
                     self.log("✅ Process started (Python)")
 
-                    # In debug mode, show output in log
+                    # In debug mode, show process info
                     if is_debug:
-                        # Read output asynchronously (non-blocking)
-                        # Note: For full output capture, consider using subprocess.run
-                        # or threading for real-time output display
                         self.log("DEBUG: Process PID: " + str(process.pid))
+                        # Note: For full output capture in debug mode, consider using
+                        # subprocess.run with capture_output=True or threading for real-time display
 
                 except Exception as e:
                     error_msg = f"Failed to start Python process: {e}"
@@ -452,13 +451,13 @@ class UnifiedLauncher(QMainWindow):
                 matlab_script = f"run('{sanitized_path}');"
                 cmd_list = ["matlab", "-nosplash", "-nodesktop", "-r", matlab_script]
                 try:
-                    # Capture output and errors (issue #237)
+                    # Launch MATLAB without capturing output to avoid deadlock
+                    # MATLAB can produce significant output that would fill pipe buffers
                     process = subprocess.Popen(
                         cmd_list,
                         cwd=path.parent,
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.PIPE,
-                        text=True,
+                        stdout=subprocess.DEVNULL if not is_debug else None,
+                        stderr=subprocess.DEVNULL if not is_debug else None,
                     )
                     self.log("✅ MATLAB command sent")
                     if is_debug:
@@ -500,14 +499,13 @@ class UnifiedLauncher(QMainWindow):
                         "Security: File must be .bat or .cmd to execute as batch script"
                     )
 
-                # Capture output and errors (issue #237)
+                # Launch batch script without capturing output to avoid deadlock
                 try:
                     process = subprocess.Popen(
                         ["cmd.exe", "/c", str(path)],
                         cwd=path.parent,
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.PIPE,
-                        text=True,
+                        stdout=subprocess.DEVNULL if not is_debug else None,
+                        stderr=subprocess.DEVNULL if not is_debug else None,
                     )
                     self.log("✅ Batch script executed")
                     if is_debug:

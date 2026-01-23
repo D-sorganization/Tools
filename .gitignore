@@ -78,3 +78,7 @@ pnpm-lock.yaml
 # Assessment temporary files
 *_temp.txt
 Assessment_*_TEMP.md
+
+# CI/CD generated files
+all_runs.json
+runs.json

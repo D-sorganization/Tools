@@ -29,6 +29,9 @@ def check_python_version() -> None:
         sys.exit(1)
 
 
+# Check Python version when module is imported
+check_python_version()
+
 if sys.version_info >= (3, 11):  # noqa: UP036
     from datetime import UTC
 else:
