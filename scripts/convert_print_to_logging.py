@@ -4,6 +4,72 @@ import re
 import sys
 from pathlib import Path
 
+PRINT_PATTERN = re.compile(r"^(\s*)print\((.+)\)(\s*)$")
+
+
+def _has_logging_import(lines: list[str]) -> bool:
+    """Check if file already has logging imports."""
+    return any(
+        "import logging" in line
+        or "from logging" in line
+        or "logging_config" in line
+        or "logger_utils" in line
+        for line in lines[:50]
+    )
+
+
+def _determine_log_level(content: str) -> str:
+    """Determine appropriate log level based on message content."""
+    content_lower = content.lower()
+    if "error" in content_lower:
+        return "error"
+    if "warn" in content_lower:
+        return "warning"
+    if "debug" in content_lower:
+        return "debug"
+    return "info"
+
+
+def _convert_print_line(line: str) -> tuple[str, bool]:
+    """Convert a single print statement to logging call.
+
+    Returns:
+        Tuple of (converted line, was_converted).
+    """
+    match = PRINT_PATTERN.match(line)
+    if not match:
+        return line, False
+
+    indent = match.group(1)
+    content_inside = match.group(2)
+    trailing = match.group(3)
+    level = _determine_log_level(content_inside)
+
+    return f"{indent}logger.{level}({content_inside}){trailing}", True
+
+
+def _find_import_insert_position(lines: list[str]) -> int:
+    """Find the position to insert logger import after existing imports."""
+    insert_pos = 0
+    in_docstring = False
+
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        if stripped.startswith('"""') or stripped.startswith("'''"):
+            if in_docstring:
+                in_docstring = False
+                continue
+            if stripped.count('"""') == 2 or stripped.count("'''") == 2:
+                continue
+            in_docstring = True
+            continue
+        if in_docstring:
+            continue
+        if stripped.startswith("import ") or stripped.startswith("from "):
+            insert_pos = i + 1
+
+    return insert_pos
+
 
 def convert_print_to_logging(file_path: Path) -> tuple[int, str]:
     """Convert print() statements to logging calls.
@@ -15,73 +81,25 @@ def convert_print_to_logging(file_path: Path) -> tuple[int, str]:
         Tuple of (number of conversions, modified content)
     """
     content = file_path.read_text(encoding="utf-8")
-    lines = content.splitlines()  # More efficient than split("\n")
+    lines = content.splitlines()
     modified_lines = []
     conversions = 0
 
-    # Add logging import if not present - check for various logging patterns
-    has_logging_import = any(
-        "import logging" in line
-        or "from logging" in line
-        or "logging_config" in line
-        or "logger_utils" in line
-        for line in lines[:50]
-    )
+    has_logging = _has_logging_import(lines)
 
     for line in lines:
-        # Skip if line is a comment or in a docstring context
         stripped = line.strip()
         if stripped.startswith("#"):
             modified_lines.append(line)
             continue
 
-        # Match print statements
-        # Pattern: print(...)
-        match = re.match(r"^(\s*)print\((.+)\)(\s*)$", line)
-        if match:
-            indent = match.group(1)
-            content_inside = match.group(2)
-            trailing = match.group(3)
-
-            # Determine log level based on content
-            if "error" in content_inside.lower() or "Error" in content_inside:
-                level = "error"
-            elif "warn" in content_inside.lower():
-                level = "warning"
-            elif "debug" in content_inside.lower() or "DEBUG" in content_inside:
-                level = "debug"
-            else:
-                level = "info"
-
-            # Convert f-strings to logging format if simple enough
-            # For now, keep f-strings as they work with logging
-            new_line = f"{indent}logger.{level}({content_inside}){trailing}"
-            modified_lines.append(new_line)
+        converted_line, was_converted = _convert_print_line(line)
+        modified_lines.append(converted_line)
+        if was_converted:
             conversions += 1
-        else:
-            modified_lines.append(line)
 
-    # Add logger import at the top after other imports if we made changes
-    if conversions > 0 and not has_logging_import:
-        # Find the first non-import line after the imports
-        insert_pos = 0
-        in_docstring = False
-        for i, line in enumerate(modified_lines):
-            stripped = line.strip()
-            if stripped.startswith('"""') or stripped.startswith("'''"):
-                if in_docstring:
-                    in_docstring = False
-                    continue
-                if stripped.count('"""') == 2 or stripped.count("'''") == 2:
-                    continue
-                in_docstring = True
-                continue
-            if in_docstring:
-                continue
-            if stripped.startswith("import ") or stripped.startswith("from "):
-                insert_pos = i + 1
-
-        # Insert logger import - use standard logging module for portability
+    if conversions > 0 and not has_logging:
+        insert_pos = _find_import_insert_position(modified_lines)
         logger_import = "import logging\n\nlogger = logging.getLogger(__name__)\n"
         modified_lines.insert(insert_pos, logger_import)
 
