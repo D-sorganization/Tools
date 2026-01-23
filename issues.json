@@ -37,5 +37,15 @@
         "number": 208,
         "title": "jules:assessment,needs-attention: Fix Logging Violations in launch_tools_main.py",
         "labels": ["jules:assessment", "needs-attention"]
+    },
+    {
+        "number": 209,
+        "title": "CRITICAL: CI Standard Workflow Failing on Main",
+        "labels": ["critical", "ci"]
+    },
+    {
+        "number": 210,
+        "title": "CRITICAL: Jules Code Quality Fixer Workflow Failing",
+        "labels": ["critical", "ci"]
     }
 ]
