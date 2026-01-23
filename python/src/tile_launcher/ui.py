@@ -150,8 +150,7 @@ class LauncherWindow(QMainWindow):
         palette.setColor(QPalette.ColorRole.Highlight, Qt.GlobalColor.gray)
         palette.setColor(QPalette.ColorRole.HighlightedText, Qt.GlobalColor.black)
         self.setPalette(palette)
-        self.setStyleSheet(
-            """
+        self.setStyleSheet("""
             QWidget { background-color: #121212; color: #f0f0f0; }
             QListWidget { background-color: #181818; border: 1px solid #2c2c2c; }
             QListWidget::item { border-radius: 12px; margin: 8px; padding: 12px; }
@@ -164,8 +163,7 @@ class LauncherWindow(QMainWindow):
             }
             QPushButton:hover { background-color: #3a3a3a; }
             QPushButton:checked { background-color: #2f4f6a; }
-            """
-        )
+            """)
 
     def _refresh_tiles(self) -> None:
         """Reload the list of tiles from the manager."""
