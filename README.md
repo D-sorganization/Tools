@@ -18,11 +18,25 @@ The repository is organized into several key areas:
 
 ### 🛠️ Python Tools
 
-- **`python/`**: A collection of Python-based utilities and applications.
-  - **`folder_tool/`** & **`folder_tool_pro/`**: Advanced directory management and cleanup tools.
-  - **`project_packer/`** & **`folder_packer_pro/`**: Secure project packaging and encryption tools.
-  - **`data_processing/`**: Scripts and pipelines for data analysis.
-- **`tools/`**: General purpose utility scripts.
+**Directory Structure:**
+- **`python/`**: Core infrastructure and shared utilities
+  - **`python/src/core/`**: Plugin system and core launcher functionality
+  - **`python/src/utils/`**: Shared utilities (compatibility shims, logger utils)
+  - **`python/src/tile_launcher/`**: Tile launcher components
+  - **`python/shared/`**: Performance utilities and shared code
+  - **`python/tests/`**: Test suite for core functionality
+
+- **`tools/`**: Tool implementations and utilities
+  - **`tools/folder_tools/`**: Folder management tools (folder_tool, folder_packer_pro, project_packer)
+  - **`tools/matlab_utilities/`**: MATLAB quality checking and testing utilities
+  - **`tools/matlab_code_analyzer_gui/`**: MATLAB code analyzer GUI
+  - **`tools/scientific_auditor.py`**: Scientific code auditing tool
+
+**Note:** The distinction between `python/` and `tools/` is:
+- `python/` = Core infrastructure, plugin system, shared utilities
+- `tools/` = Individual tool implementations and standalone utilities
+
+Future consolidation may merge these, but current structure supports the plugin system architecture.
 
 ### 🌐 Web Applications
 
