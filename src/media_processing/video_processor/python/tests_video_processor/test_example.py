@@ -14,7 +14,8 @@ import pytest
 # Add parent directory (python/) to path to access src module
 sys.path.insert(0, str(Path(__file__).parent.parent))
 # Import from local src module (not repository root src/)
-from src import constants, logger_utils  # type: ignore[import-untyped]
+# Type ignore needed: mypy sees "src" as repo root, but this is local src/ module
+from src import constants, logger_utils  # type: ignore[attr-defined]
 
 
 class TestConstants:
