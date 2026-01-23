@@ -12,8 +12,9 @@ try:
 
     _HAS_MATPLOTLIB = True
 except ImportError:
-    plt = None  # type: ignore[assignment]
-    ListedColormap = None  # type: ignore[assignment,misc]
+    # Matplotlib not available - set to None for optional dependency handling
+    plt = None  # type: ignore[assignment,unused-ignore]
+    ListedColormap = None  # type: ignore[assignment,misc,unused-ignore]
     _HAS_MATPLOTLIB = False
 
 
