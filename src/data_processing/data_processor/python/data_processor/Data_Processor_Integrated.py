@@ -1993,14 +1993,15 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             )
 
                 report_lines.append(
-                    f"  Files: {folder_files}, Size: {folder_size/(1024*1024):.1f} MB"
+                    f"  Files: {folder_files}, "
+                    f"Size: {folder_size / (1024 * 1024):.1f} MB"
                 )
 
             report_lines.extend(
                 [
                     "",
                     f"TOTAL FILES: {processed_files}",
-                    f"TOTAL SIZE: {total_size/(1024*1024):.1f} MB",
+                    f"TOTAL SIZE: {total_size / (1024 * 1024):.1f} MB",
                     "",
                     "FILE TYPES:",
                 ]

@@ -356,17 +356,17 @@ class TimeManager:
         elif warp < 60:
             return f"{warp:.1f}x{direction}"
         elif warp < 3600:
-            return f"{warp/60:.1f} min/sec{direction}"
+            return f"{warp / 60:.1f} min/sec{direction}"
         elif warp < SECONDS_PER_DAY:
-            return f"{warp/3600:.1f} hr/sec{direction}"
+            return f"{warp / 3600:.1f} hr/sec{direction}"
         elif warp < 7 * SECONDS_PER_DAY:
-            return f"{warp/SECONDS_PER_DAY:.1f} day/sec{direction}"
+            return f"{warp / SECONDS_PER_DAY:.1f} day/sec{direction}"
         elif warp < 30 * SECONDS_PER_DAY:
-            return f"{warp/(7*SECONDS_PER_DAY):.1f} week/sec{direction}"
+            return f"{warp / (7 * SECONDS_PER_DAY):.1f} week/sec{direction}"
         elif warp < 365.25 * SECONDS_PER_DAY:
-            return f"{warp/(30*SECONDS_PER_DAY):.1f} month/sec{direction}"
+            return f"{warp / (30 * SECONDS_PER_DAY):.1f} month/sec{direction}"
         else:
-            return f"{warp/(365.25*SECONDS_PER_DAY):.1f} year/sec{direction}"
+            return f"{warp / (365.25 * SECONDS_PER_DAY):.1f} year/sec{direction}"
 
     def format_current_time(self) -> str:
         """Get formatted current simulation time."""

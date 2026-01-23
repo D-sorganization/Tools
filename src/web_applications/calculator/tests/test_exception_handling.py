@@ -3,6 +3,7 @@ from unittest.mock import patch
 
 import pytest
 from flask.testing import FlaskClient
+
 from web_applications.calculator.webapp import create_app
 
 
@@ -35,7 +36,7 @@ def test_exception_info_leak(client: FlaskClient) -> None:
         assert "error" in json_data
 
         # Verify fix: The secret message should NOT be in the response
-        assert (
-            secret_message not in json_data["error"]
-        ), "Vulnerability present: Secret message found in response"
+        assert secret_message not in json_data["error"], (
+            "Vulnerability present: Secret message found in response"
+        )
         assert json_data["error"] == "An internal error occurred."

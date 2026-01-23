@@ -133,7 +133,6 @@ class OutputConfig:
 
     @classmethod
     def from_mapping(cls, mapping: Mapping[str, Any]) -> OutputConfig:
-
         if "path" not in mapping:
             msg = "output.path is required when an output section is provided"
             raise ValueError(msg)
@@ -171,7 +170,6 @@ class PipelineConfig:
 
     @classmethod
     def from_mapping(cls, mapping: Mapping[str, Any]) -> PipelineConfig:
-
         normalized: MutableMapping[str, Any] = dict(mapping)
         files = _normalize_files(normalized.get("files"))
         combine = bool(normalized.get("combine", True))
@@ -223,7 +221,6 @@ def _normalize_files(value: Any) -> list[str]:
         raise ValueError(msg)
 
     if isinstance(value, str | Path):
-
         return [str(value)]
 
     if isinstance(value, Sequence):
@@ -242,7 +239,6 @@ def _normalize_optional_str_list(value: Any) -> list[str] | None:
     if value is None:
         return None
     if isinstance(value, str | Path):
-
         return [str(value)]
     if isinstance(value, Sequence):
         result = [str(item) for item in value if isinstance(item, str | Path)]
