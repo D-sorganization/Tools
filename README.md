@@ -1,7 +1,7 @@
 # Tools Monorepo 🛠️
 
 [![CI Standard](https://github.com/D-sorganization/Tools/actions/workflows/ci-standard.yml/badge.svg)](https://github.com/D-sorganization/Tools/actions/workflows/ci-standard.yml)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
@@ -48,8 +48,8 @@ The repository is organized into several key areas:
 ### Prerequisites
 
 - **Git**: Version control (ensure LFS is installed).
-- **Python**: Version **3.11+** required (3.12 recommended for best performance).
-  - Python 3.10 has limited compatibility (see Troubleshooting below)
+- **Python**: Version **3.10+** required (3.12 recommended for best performance).
+  - Compatibility shims are included for Python 3.10 support (see Troubleshooting below)
   - Python 3.13+ not yet tested
 - **MATLAB**: Required for running the core simulations (R2020a or later).
 - **Node.js**: Required for web applications and some dev tools.
@@ -119,7 +119,7 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
 **Cause:** You're running Python 3.10, which lacks some features introduced in Python 3.11+.
 
 **Solutions:**
-1. **Recommended:** Upgrade to Python 3.11 or 3.12
+1. **Recommended:** Use Python 3.10 or newer (3.12 recommended)
    ```bash
    # Ubuntu/Debian
    sudo apt update
@@ -129,7 +129,7 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
    brew install python@3.12
    ```
 
-2. **Alternative:** The repository includes compatibility shims for Python 3.10 in `python/src/utils/compatibility.py`, but full compatibility is not guaranteed.
+2. **Note:** The repository includes compatibility shims in `python/src/utils/compatibility.py` that allow running on Python 3.10+. The application will provide a friendly error message if your Python version is incompatible.
 
 ### Launcher Won't Start
 
@@ -167,7 +167,7 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
 1. Ensure you're in the repository root: `cd /path/to/Tools`
 2. Install test dependencies: `pip install pytest>=8.2.0`
 3. Run from virtual environment: `source venv/bin/activate`
-4. Check Python version compatibility (3.11+ required)
+4. Check Python version compatibility (3.10+ required, 3.12 recommended)
 
 For more help, see [GitHub Issues](https://github.com/D-sorganization/Tools/issues) or create a new issue.
 
