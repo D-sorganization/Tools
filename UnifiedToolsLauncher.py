@@ -47,12 +47,25 @@ from PyQt6.QtWidgets import (
 REPO_ROOT = Path(__file__).parent.absolute()
 sys.path.append(str(REPO_ROOT / "python" / "src"))
 
-# try to import compatibility shim to verify environment
+# Import compatibility shim early to verify environment and provide friendly errors
 try:
     from utils.compatibility import UTC, StrEnum  # noqa: F401
-except ImportError:
-    # If this fails, we are likely in a very broken state
-    pass
+except ImportError as e:
+    print(
+        "Critical Error: Failed to import compatibility shim.",
+        file=sys.stderr,
+    )
+    print(
+        "This may indicate a Python version incompatibility or missing dependencies.",
+        file=sys.stderr,
+    )
+    print(f"Python version: {sys.version}", file=sys.stderr)
+    print(f"Error: {e}", file=sys.stderr)
+    print(
+        "\nPlease ensure you are using Python 3.10 or newer.",
+        file=sys.stderr,
+    )
+    sys.exit(1)
 
 # Load Tool Definitions using PluginManager
 try:

@@ -3,10 +3,16 @@
 import datetime
 import logging
 import shutil
+import sys
 from pathlib import Path
 
-# Python 3.10 compatibility: UTC was added in 3.11
-UTC = datetime.timezone.utc  # noqa: UP017
+# Python 3.10 compatibility: Use compatibility shim for UTC
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "python" / "src"))
+try:
+    from utils.compatibility import UTC
+except ImportError:
+    # Fallback if compatibility module not available
+    UTC = datetime.timezone.utc  # noqa: UP017
 
 from constants import (  # noqa: E402
     BOLD_HEADER_FONT_SIZE,
