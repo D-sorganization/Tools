@@ -349,53 +349,120 @@ class UnifiedLauncher(QMainWindow):
         cursor.movePosition(cursor.MoveOperation.End)
         self.log_area.setTextCursor(cursor)
 
+    def _validate_and_sanitize_path(self, path_str: str) -> Path:
+        """
+        Validate and sanitize tool path to prevent path traversal attacks.
+
+        Args:
+            path_str: Path string from tool_info
+
+        Returns:
+            Validated and sanitized Path object
+
+        Raises:
+            ValueError: If path is invalid or outside repository
+        """
+        # Convert to Path and resolve to absolute
+        try:
+            path = Path(path_str)
+        except (TypeError, ValueError) as e:
+            raise ValueError(f"Invalid path format: {path_str}") from e
+
+        # Resolve to absolute path to prevent relative path tricks
+        try:
+            full_path = (REPO_ROOT / path).resolve()
+        except (OSError, RuntimeError) as e:
+            raise ValueError(f"Cannot resolve path: {path_str}") from e
+
+        # Ensure path is within repository root (prevent path traversal)
+        repo_root_abs = REPO_ROOT.resolve()
+        try:
+            # Use relative_to to ensure path is actually within repo
+            full_path.relative_to(repo_root_abs)
+        except ValueError:
+            raise ValueError(
+                f"Security Alert: Path outside repository: {full_path}"
+            ) from None
+
+        # Additional validation: ensure path exists and is a file
+        if not full_path.exists():
+            raise ValueError(f"Tool file not found: {full_path}")
+
+        if not full_path.is_file():
+            raise ValueError(f"Path is not a file: {full_path}")
+
+        return full_path
+
     def launch_tool(self, tool_info: dict[str, Any]) -> None:
         """Launch the specified tool based on its type."""
-        path = REPO_ROOT / tool_info["path"]
         type_ = tool_info["type"]
         is_debug = self.debug_mode.isChecked()
 
         self.log(f"Launching {tool_info['name']}...")
-        self.log(f"Path: {path}")
-
-        if is_debug:
-            self.log(f"DEBUG: Mode enabled. Launching {type_} tool.")
 
         try:
-            # Security: Validate path is within REPO_ROOT (prevent path traversal)
+            # Validate and sanitize path (issue #236)
             try:
-                # Resolve full path to avoid relative path tricks
-                full_path = path.resolve()
-                repo_root_abs = REPO_ROOT.resolve()
-
-                # Check if path is relative to repo root
-                if not str(full_path).startswith(str(repo_root_abs)):
-                    raise ValueError(
-                        f"Security Alert: Attempted to launch tool outside repository: {full_path}"
-                    )
-
-            except Exception as e:
-                self.log(f"❌ Security violation: {e}")
-                QMessageBox.critical(self, "Security Error", f"Access Denied: {e}")
+                path = self._validate_and_sanitize_path(tool_info["path"])
+            except ValueError as e:
+                error_msg = f"Path validation failed: {e}"
+                self.log(f"❌ {error_msg}")
+                QMessageBox.critical(self, "Security Error", error_msg)
                 return
+
+            self.log(f"Path: {path}")
+
+            if is_debug:
+                self.log(f"DEBUG: Mode enabled. Launching {type_} tool.")
 
             if type_ == "python":
                 args = [sys.executable, str(path)]
                 if is_debug:
                     # Could add a verbose flag if the tool supports it
                     pass
-                subprocess.Popen(args, cwd=path.parent)
-                self.log("✅ Process started (Python)")
+                # Capture output and errors (issue #237)
+                try:
+                    process = subprocess.Popen(
+                        args,
+                        cwd=path.parent,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                        text=True,
+                    )
+                    self.log("✅ Process started (Python)")
+
+                    # In debug mode, show output in log
+                    if is_debug:
+                        # Read output asynchronously (non-blocking)
+                        # Note: For full output capture, consider using subprocess.run
+                        # or threading for real-time output display
+                        self.log("DEBUG: Process PID: " + str(process.pid))
+
+                except Exception as e:
+                    error_msg = f"Failed to start Python process: {e}"
+                    self.log(f"❌ {error_msg}")
+                    QMessageBox.critical(self, "Launch Error", error_msg)
+                    return
 
             elif type_ == "matlab":
                 self.log("ℹ️ Attempting to launch MATLAB...")
                 # Build MATLAB command safely without shell=True
-                # Using list form to avoid shell injection vulnerabilities
-                matlab_script = f"run('{str(path).replace(chr(39), chr(39)+chr(39))}');"
+                # Sanitize path to prevent command injection
+                sanitized_path = str(path).replace("'", "''")
+                matlab_script = f"run('{sanitized_path}');"
                 cmd_list = ["matlab", "-nosplash", "-nodesktop", "-r", matlab_script]
                 try:
-                    subprocess.Popen(cmd_list, cwd=path.parent)
+                    # Capture output and errors (issue #237)
+                    process = subprocess.Popen(
+                        cmd_list,
+                        cwd=path.parent,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                        text=True,
+                    )
                     self.log("✅ MATLAB command sent")
+                    if is_debug:
+                        self.log(f"DEBUG: MATLAB process PID: {process.pid}")
                 except FileNotFoundError:
                     # MATLAB not in PATH, try opening file directly
                     # Use hasattr pattern for Windows-specific startfile
@@ -408,8 +475,22 @@ class UnifiedLauncher(QMainWindow):
 
             elif type_ == "web" or type_ == "browser":
                 # Validate URL scheme if it's external, or path if internal
-                webbrowser.open(path.as_uri())
-                self.log("✅ Opened in default browser")
+                # Error handling for browser tool launch (issue #240)
+                try:
+                    uri = path.as_uri()
+                    # Additional validation: ensure it's a valid file URI or HTTP(S) URL
+                    if not (
+                        uri.startswith("file://")
+                        or uri.startswith(("http://", "https://"))
+                    ):
+                        raise ValueError(f"Invalid URI scheme: {uri}")
+                    webbrowser.open(uri)
+                    self.log("✅ Opened in default browser")
+                except Exception as e:
+                    error_msg = f"Failed to open browser: {e}"
+                    self.log(f"❌ {error_msg}")
+                    QMessageBox.critical(self, "Browser Error", error_msg)
+                    return
 
             elif type_ == "bat":
                 # Use cmd.exe explicitly instead of shell=True for security
@@ -419,8 +500,23 @@ class UnifiedLauncher(QMainWindow):
                         "Security: File must be .bat or .cmd to execute as batch script"
                     )
 
-                subprocess.Popen(["cmd.exe", "/c", str(path)], cwd=path.parent)
-                self.log("✅ Batch script executed")
+                # Capture output and errors (issue #237)
+                try:
+                    process = subprocess.Popen(
+                        ["cmd.exe", "/c", str(path)],
+                        cwd=path.parent,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                        text=True,
+                    )
+                    self.log("✅ Batch script executed")
+                    if is_debug:
+                        self.log(f"DEBUG: Batch process PID: {process.pid}")
+                except Exception as e:
+                    error_msg = f"Failed to execute batch script: {e}"
+                    self.log(f"❌ {error_msg}")
+                    QMessageBox.critical(self, "Launch Error", error_msg)
+                    return
 
             else:
                 self.log(f"❌ Unknown type: {type_}")

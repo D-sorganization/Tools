@@ -1,7 +1,11 @@
 import ast
 import json
+import logging
 import sys
 from pathlib import Path
+
+logging.basicConfig(level=logging.INFO, format="%(message)s")
+logger = logging.getLogger(__name__)
 
 RISKS = []
 
@@ -67,10 +71,10 @@ def main() -> None:
             sys.stderr.write(f"Error analyzing {py_file}: {e}\n")
 
     if RISKS:
-        print(json.dumps(RISKS, indent=2))  # noqa: T201
+        logger.info(json.dumps(RISKS, indent=2))
         sys.exit(1)
     else:
-        print("[]")  # noqa: T201
+        logger.info("[]")
 
 
 if __name__ == "__main__":
