@@ -26,6 +26,11 @@ jobs:
       - name: Lint (Ruff)
         run: ruff check .
 
+      - name: Normalize Line Endings
+        run: |
+          # Convert CRLF to LF for consistent Black formatting
+          find . -name "*.py" -type f -exec sed -i 's/\r$//' {} \;
+
       - name: Format Check (Black)
         run: black --check .
 
