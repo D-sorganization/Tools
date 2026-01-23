@@ -54,7 +54,7 @@ def get_colorblind_safe_colormap(name: str = "default") -> Any | None:
     Returns:
         ListedColormap instance or None if matplotlib not available
     """
-    if not HAS_MATPLOTLIB or plt is None or ListedColormap is None:
+    if not _HAS_MATPLOTLIB or plt is None or ListedColormap is None:
         return None
 
     palette = COLORBLIND_SAFE_PALETTE_ALT if name == "alt" else COLORBLIND_SAFE_PALETTE
@@ -150,7 +150,7 @@ def get_colorblind_safe_color(index: int, palette: str = "default") -> str:
 
 
 # Register colorblind-safe colormaps with matplotlib if available
-if HAS_MATPLOTLIB and plt is not None:
+if _HAS_MATPLOTLIB and plt is not None:
     try:
         default_cmap = get_colorblind_safe_colormap("default")
         alt_cmap = get_colorblind_safe_colormap("alt")
