@@ -49,7 +49,6 @@ def create_app() -> Flask:
     app.limiter = RateLimiter(limit=100, window=60)  # Dynamic attribute
 
     @app.after_request
-    @app.after_request
     def add_security_headers(response: Response) -> Response:
         """Add security headers to every response."""
         response.headers["Content-Security-Policy"] = (
