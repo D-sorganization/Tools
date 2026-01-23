@@ -329,7 +329,6 @@ class SolarSystemScene:
         """
         # Ensure timezone aware
         if new_date.tzinfo is None:
-
             new_date = new_date.replace(tzinfo=UTC)
 
         # Update simulation time
@@ -685,7 +684,7 @@ class SolarSystemScene:
                 self._mark_immersion_task("plan_transfer")
                 self._action_message = (
                     "Earth→Mars transfer: ΔV "
-                    f"{trajectory.total_delta_v/1000:.2f} km/s, "
+                    f"{trajectory.total_delta_v / 1000:.2f} km/s, "
                     f"flight {trajectory.time_of_flight:.1f} days"
                 )
             else:

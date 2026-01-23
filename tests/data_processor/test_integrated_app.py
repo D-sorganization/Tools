@@ -215,7 +215,9 @@ class TestIntegratedCSVProcessorApp(unittest.TestCase):
         importlib.reload(Data_Processor_Integrated)
 
         cls.module = Data_Processor_Integrated  # type: ignore[attr-defined]
-        cls.IntegratedCSVProcessorApp = Data_Processor_Integrated.IntegratedCSVProcessorApp  # type: ignore[attr-defined]
+        cls.IntegratedCSVProcessorApp = (
+            Data_Processor_Integrated.IntegratedCSVProcessorApp
+        )  # type: ignore[attr-defined]
         cls.SplitConfig = Data_Processor_Integrated.SplitConfig  # type: ignore[attr-defined]
         cls.SplitMethod = Data_Processor_Integrated.SplitMethod  # type: ignore[attr-defined]
         cls.FileFormatDetector = Data_Processor_Integrated.FileFormatDetector  # type: ignore[attr-defined]
@@ -303,7 +305,6 @@ class TestIntegratedCSVProcessorApp(unittest.TestCase):
             patch("Data_Processor_Integrated.ctk.CTkTextbox"),
             patch("Data_Processor_Integrated.Path") as mock_path,
         ):
-
             # Configure path mock robustly
             mock_stat = MagicMock()
             mock_stat.st_size = 2048

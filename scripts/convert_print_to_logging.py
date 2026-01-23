@@ -82,7 +82,7 @@ def convert_print_to_logging(file_path: Path) -> tuple[int, str]:
                 insert_pos = i + 1
 
         # Insert logger import - use standard logging module for portability
-        logger_import = "import logging\n\n" "logger = logging.getLogger(__name__)\n"
+        logger_import = "import logging\n\nlogger = logging.getLogger(__name__)\n"
         modified_lines.insert(insert_pos, logger_import)
 
     return conversions, "\n".join(modified_lines)

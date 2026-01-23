@@ -91,10 +91,10 @@ class TransferTrajectory:
             "Transfer Type": self.transfer_type.value.replace("_", " ").title(),
             "Time of Flight": (
                 f"{self.time_of_flight:.1f} days "
-                f"({self.time_of_flight/365.25:.2f} years)"
+                f"({self.time_of_flight / 365.25:.2f} years)"
             ),
             "Total Δv": (
-                f"{self.total_delta_v:.1f} m/s " f"({self.total_delta_v/1000:.2f} km/s)"
+                f"{self.total_delta_v:.1f} m/s ({self.total_delta_v / 1000:.2f} km/s)"
             ),
             "Phase Angle": f"{self.phase_angle:.1f}°",
             "Maneuvers": len(self.maneuvers),
@@ -740,15 +740,15 @@ class TrajectoryPlanner:
 
         summary = {
             "Route": f"{origin.name} → {destination.name}",
-            "Distance": f"{abs(r2-r1)/AU:.2f} AU",
+            "Distance": f"{abs(r2 - r1) / AU:.2f} AU",
             "Hohmann Transfer": {
                 "Departure Δv": f"{dv1:.1f} m/s",
                 "Arrival Δv": f"{dv2:.1f} m/s",
-                "Total Δv": f"{dv1+dv2:.1f} m/s",
-                "Time of Flight": f"{tof/SECONDS_PER_DAY:.1f} days",
+                "Total Δv": f"{dv1 + dv2:.1f} m/s",
+                "Time of Flight": f"{tof / SECONDS_PER_DAY:.1f} days",
                 "Phase Angle": f"{phase:.1f}°",
             },
-            "Synodic Period": f"{synodic:.1f} days ({synodic/365.25:.2f} years)",
+            "Synodic Period": f"{synodic:.1f} days ({synodic / 365.25:.2f} years)",
         }
 
         return summary

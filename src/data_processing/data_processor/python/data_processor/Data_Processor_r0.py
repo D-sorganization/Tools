@@ -1950,20 +1950,20 @@ class CSVProcessorApp(ctk.CTk):
 
         print(f"DEBUG: Creating display for {len(self.input_file_paths)} files")
         for i, file_path in enumerate(self.input_file_paths):
-            print(f"DEBUG: Creating widget for file {i+1}: {file_path}")
+            print(f"DEBUG: Creating widget for file {i + 1}: {file_path}")
             file_frame = ctk.CTkFrame(self.file_list_frame)
             file_frame.pack(fill="x", padx=5, pady=2)
-            print(f"DEBUG: File frame created and packed for file {i+1}")
+            print(f"DEBUG: File frame created and packed for file {i + 1}")
 
             filename = os.path.basename(file_path)
             print(f"DEBUG: Filename: {filename}")
             label = ctk.CTkLabel(
                 file_frame,
-                text=f"{i+1}. {filename}",
+                text=f"{i + 1}. {filename}",
                 font=ctk.CTkFont(size=11),
             )
             label.pack(side="left", padx=5, pady=2)
-            print(f"DEBUG: Label created and packed for file {i+1}")
+            print(f"DEBUG: Label created and packed for file {i + 1}")
 
             button = ctk.CTkButton(
                 file_frame,
@@ -1972,7 +1972,7 @@ class CSVProcessorApp(ctk.CTk):
                 command=lambda f=file_path: self.remove_file(f),
             )
             button.pack(side="right", padx=5, pady=2)
-            print(f"DEBUG: Remove button created and packed for file {i+1}")
+            print(f"DEBUG: Remove button created and packed for file {i + 1}")
 
         print("DEBUG: update_file_list() completed")
 
@@ -2198,7 +2198,7 @@ class CSVProcessorApp(ctk.CTk):
 
         print(f"Input files: {len(self.input_file_paths)} files")
         for i, path in enumerate(self.input_file_paths):
-            print(f"  {i+1}: {path}")
+            print(f"  {i + 1}: {path}")
 
         selected_signals = [
             s for s, data in self.signal_vars.items() if data["var"].get()
@@ -8328,7 +8328,7 @@ For additional support or feature requests, please refer to the
                         available_files[:3],
                     )
                     if len(available_files) > 3:
-                        debug_text += f"\n... and {len(available_files)-3} more"
+                        debug_text += f"\n... and {len(available_files) - 3} more"
                 else:
                     debug_text += (
                         "\n\nNo files currently loaded.\n"
@@ -8369,7 +8369,7 @@ For additional support or feature requests, please refer to the
                         + "\n".join(set(available_files)[:5])
                     )
                     if len(set(available_files)) > 5:
-                        debug_text += f"\n... and {len(set(available_files))-5} more"
+                        debug_text += f"\n... and {len(set(available_files)) - 5} more"
                 else:
                     debug_text = "No data files loaded\n\nPlease:\n1. Select \
                         CSV files on Setup tab\n2. Process files or plot directly"
@@ -8579,7 +8579,7 @@ For additional support or feature requests, please refer to the
             # Color preview button
             color_button = ctk.CTkButton(
                 color_frame,
-                text=f"Color {i+1}",
+                text=f"Color {i + 1}",
                 width=80,
                 height=30,
                 fg_color=color,
@@ -8621,7 +8621,7 @@ For additional support or feature requests, please refer to the
             current_color = self.custom_colors[index]
             color = colorchooser.askcolor(
                 color=current_color,
-                title=f"Edit Color {index+1}",
+                title=f"Edit Color {index + 1}",
             )[1]
             if color:
                 self.custom_colors[index] = color
