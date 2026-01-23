@@ -47,7 +47,7 @@ def _validate_formula_security(formula: str, allowed_names: set[str]) -> None:
         # isinstance() requires tuple syntax, not union types
         # UP038 incorrectly suggests X | Y, but isinstance() doesn't support
         # union syntax
-        if isinstance(
+        if isinstance(  # noqa: UP038
             node,
             (
                 ast.Expression,
@@ -67,7 +67,7 @@ def _validate_formula_security(formula: str, allowed_names: set[str]) -> None:
                 ast.Call,
                 ast.keyword,
             ),
-        ):  # noqa: UP038
+        ):
             if isinstance(node, ast.Name):
                 if node.id not in allowed_names:
                     raise ValueError(f"Unknown variable or function: {node.id}")

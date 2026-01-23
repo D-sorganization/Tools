@@ -16,11 +16,13 @@ exclude = [
     ".env",
     "node_modules",
     "*.ipynb",  # Jupyter notebooks often fail standard linting
+    "**/*.json",  # JSON files don't need Python linting
+    "python/src/tile_launcher/app_catalog.json",  # JSON config file
     "**/archive",
     "**/legacy",
     "replicants", # Enable linting for replicants
-    "data_processing/data_processor/archive",
-    "data_processing/data_processor/python/data_processor/Data_Processor_r0.py",  # Exclude problematic file
+    "src/data_processing/data_processor/archive",
+    "src/data_processing/data_processor/python/data_processor/Data_Processor_r0.py",  # Exclude problematic file
 ]
 
 [lint]
@@ -52,7 +54,7 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 # Ignore boolean argument warnings in replicants
 "replicants/**/*.py" = ["FBT001"]
 # UP038 false positive: isinstance() requires tuple syntax, not union types
-"data_processing/data_processor/python/data_processor/Data_Processor_r0.py" = ["UP038"]
+"**/Data_Processor_r0.py" = ["UP038"]
 
 [lint.isort]
 # Tells Ruff how to group your own code vs. libraries

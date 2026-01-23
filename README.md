@@ -14,7 +14,7 @@ The repository is organized into several key areas:
 ### 🔬 Scientific Computing
 
 - **`matlab/`**: Core scientific code for golf swing modeling and simulations.
-- **`scientific_modeling/`**: Additional modeling resources and documentation.
+- **`src/scientific_modeling/`**: Additional modeling resources and documentation.
 
 ### 🛠️ Python Tools
 
@@ -32,15 +32,20 @@ The repository is organized into several key areas:
   - **`tools/matlab_code_analyzer_gui/`**: MATLAB code analyzer GUI
   - **`tools/scientific_auditor.py`**: Scientific code auditing tool
 
+- **`src/`**: Major tool categories organized under standardized structure
+  - **`src/data_processing/`**: Data processing tools and pipelines
+  - **`src/document_processing/`**: Document processing utilities
+  - **`src/media_processing/`**: Audio and video processing tools
+  - **`src/scientific_modeling/`**: Scientific modeling and simulation tools
+  - **`src/web_applications/`**: Web-based dashboards and interfaces
+  - **`src/verification/`**: Verification and testing utilities
+
 **Note:** The distinction between `python/` and `tools/` is:
 - `python/` = Core infrastructure, plugin system, shared utilities
 - `tools/` = Individual tool implementations and standalone utilities
+- `src/` = Major tool categories following standardized `src/` layout pattern
 
 Future consolidation may merge these, but current structure supports the plugin system architecture.
-
-### 🌐 Web Applications
-
-- **`web_applications/`**: Web-based dashboards and interfaces for the simulators and tools.
 
 ### 🚀 Launcher
 
