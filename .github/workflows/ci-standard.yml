@@ -37,7 +37,7 @@ jobs:
         run: mypy . --ignore-missing-imports --install-types --non-interactive || true
 
       - name: Security Scan (pip-audit)
-        run: pip-audit -r requirements.txt || true
+        run: pip-audit -r requirements.txt
 
   tests:
     needs: quality-gate
