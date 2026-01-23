@@ -41,6 +41,51 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+
+def validate_tools_config(
+    tools_dict: dict[str, list[dict[str, Any]]],
+) -> dict[str, list[dict[str, Any]]]:
+    """
+    Validate and sanitize tools configuration.
+
+    Args:
+        tools_dict: Dictionary of tool categories and lists of tools.
+
+    Returns:
+        Validated dictionary with invalid entries removed.
+    """
+    valid_tools = {}
+    allowed_types = {"python", "matlab", "web", "browser", "bat"}
+
+    for category, tool_list in tools_dict.items():
+        valid_list = []
+        for tool in tool_list:
+            # Validate type
+            tool_type = tool.get("type")
+            if tool_type not in allowed_types:
+                print(
+                    f"Warning: Skipping tool '{tool.get('name')}' with invalid type '{tool_type}'",
+                    file=sys.stderr,
+                )
+                continue
+
+            # Validate path for directory traversal
+            path_str = str(tool.get("path", ""))
+            if ".." in path_str:
+                print(
+                    f"Warning: Skipping tool '{tool.get('name')}' with suspicious path '{path_str}'",
+                    file=sys.stderr,
+                )
+                continue
+
+            valid_list.append(tool)
+
+        if valid_list:
+            valid_tools[category] = valid_list
+
+    return valid_tools
+
+
 # =============================================================================
 # CONFIGURATION & PATHS
 # =============================================================================
@@ -95,6 +140,9 @@ except Exception as e:
         except Exception as e:
             sys.stderr.write(f"Error loading tools.json: {e}\n")
         # Fallback to empty or default if needed
+
+# Validate loaded tools
+TOOLS = validate_tools_config(TOOLS)
 
 
 # =============================================================================

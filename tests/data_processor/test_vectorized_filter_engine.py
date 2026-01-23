@@ -11,7 +11,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 # Go up two levels to reach the repo root, then down to the package
 project_root = os.path.abspath(
     os.path.join(
-        current_dir, "../../data_processing/data_processor/python/data_processor"
+        current_dir, "../../src/data_processing/data_processor/python/data_processor"
     )
 )
 sys.path.insert(0, project_root)

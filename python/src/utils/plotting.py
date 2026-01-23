@@ -74,7 +74,7 @@ def apply_colorblind_safe_style(fig: Any = None, ax: Any = None) -> None:
         ax: Matplotlib axes (optional)
     """
     if plt is None:
-        return
+        return  # type: ignore[unreachable]
 
     if fig is None and ax is None:
         fig = plt.gcf()

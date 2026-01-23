@@ -31,8 +31,9 @@ def convert_png_to_ico(png_path: Path, ico_path: Path) -> bool:
         logger.info(f"Converting {png_path} to {ico_path}")
 
         # Open the PNG image
-        with Image.open(png_path) as img:
-            logger.info(f"Original image mode: {img.mode}, size: {img.size}")
+        with Image.open(png_path) as img_file:
+            logger.info(f"Original image mode: {img_file.mode}, size: {img_file.size}")
+            img: Image.Image = img_file
 
             # Handle transparency properly
             if img.mode in ("RGBA", "LA"):

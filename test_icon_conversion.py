@@ -27,10 +27,11 @@ def create_alternative_ico() -> None:
     ico_path = Path("tools_icon_alt.ico")
 
     try:
-        with Image.open(png_path) as img:
+        with Image.open(png_path) as img_file:
             logger.info(
-                f"Original: mode={img.mode}, size={img.size}, format={img.format}"
+                f"Original: mode={img_file.mode}, size={img_file.size}, format={img_file.format}"
             )
+            img: Image.Image = img_file
 
             # Method 1: Direct conversion with explicit RGB
             if img.mode != "RGB":
@@ -57,8 +58,9 @@ def create_simple_ico() -> None:
     ico_path = Path("tools_icon_simple.ico")
 
     try:
-        with Image.open(png_path) as img:
+        with Image.open(png_path) as img_file:
             # Convert to RGB and resize to 32x32
+            img: Image.Image = img_file
             if img.mode != "RGB":
                 img = img.convert("RGB")
 

@@ -9,7 +9,7 @@ from unittest.mock import MagicMock, patch
 project_root = os.path.abspath(
     os.path.join(
         os.path.dirname(__file__),
-        "../../data_processing/data_processor/python/data_processor",
+        "../../src/data_processing/data_processor/python/data_processor",
     )
 )
 sys.path.insert(0, project_root)
@@ -185,6 +185,11 @@ class TestIntegratedCSVProcessorApp(unittest.TestCase):
     """Test suite for the Integrated CSV Processor Application."""
 
     modules_patcher: Any
+    IntegratedCSVProcessorApp: Any
+    SplitConfig: Any
+    SplitMethod: Any
+    FileFormatDetector: Any
+    module: Any
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -214,13 +219,13 @@ class TestIntegratedCSVProcessorApp(unittest.TestCase):
         # Reload to ensure it uses the mocked modules
         importlib.reload(Data_Processor_Integrated)
 
-        cls.module = Data_Processor_Integrated  # type: ignore[attr-defined]
+        cls.module = Data_Processor_Integrated
         cls.IntegratedCSVProcessorApp = (
             Data_Processor_Integrated.IntegratedCSVProcessorApp
-        )  # type: ignore[attr-defined]
-        cls.SplitConfig = Data_Processor_Integrated.SplitConfig  # type: ignore[attr-defined]
-        cls.SplitMethod = Data_Processor_Integrated.SplitMethod  # type: ignore[attr-defined]
-        cls.FileFormatDetector = Data_Processor_Integrated.FileFormatDetector  # type: ignore[attr-defined]
+        )
+        cls.SplitConfig = Data_Processor_Integrated.SplitConfig
+        cls.SplitMethod = Data_Processor_Integrated.SplitMethod
+        cls.FileFormatDetector = Data_Processor_Integrated.FileFormatDetector
 
     @classmethod
     def tearDownClass(cls) -> None:
@@ -233,26 +238,26 @@ class TestIntegratedCSVProcessorApp(unittest.TestCase):
     def test_initialization(self, mock_ctk_ctor: MagicMock) -> None:
         """Test application initialization."""
         # Base class is now our MockCSVProcessorApp
-        app = self.IntegratedCSVProcessorApp()  # type: ignore[attr-defined]
+        app = self.IntegratedCSVProcessorApp()
 
         # Check if converter variables are initialized
         self.assertTrue(hasattr(app, "converter_split_config"))
-        self.assertIsInstance(app.converter_split_config, self.SplitConfig)  # type: ignore[attr-defined]
+        self.assertIsInstance(app.converter_split_config, self.SplitConfig)
         self.assertTrue(hasattr(app, "converter_input_files"))
         self.assertEqual(app.converter_input_files, [])
 
     def test_split_config_defaults(self) -> None:
         """Test default values of SplitConfig."""
-        config = self.SplitConfig()  # type: ignore[attr-defined]
+        config = self.SplitConfig()
         self.assertFalse(config.enabled)
-        self.assertEqual(config.method, self.SplitMethod.ROWS)  # type: ignore[attr-defined]
+        self.assertEqual(config.method, self.SplitMethod.ROWS)
         self.assertEqual(config.rows_per_file, 100000)
         self.assertEqual(config.compression, "snappy")
 
     @patch("os.path.exists", return_value=True)
     def test_file_format_detector(self, mock_exists: MagicMock) -> None:
         """Test file format detection."""
-        detector = self.FileFormatDetector()  # type: ignore[attr-defined]
+        detector = self.FileFormatDetector()
 
         # Test extension based detection
         self.assertEqual(detector.detect_format("test.csv"), "csv")
@@ -266,7 +271,7 @@ class TestIntegratedCSVProcessorApp(unittest.TestCase):
     def test_parquet_analyzer(self, mock_pq: MagicMock) -> None:
         """Test the Parquet analyzer dialog."""
         # Use the class from the loaded module
-        ParquetAnalyzerDialog = self.module.ParquetAnalyzerDialog  # type: ignore[attr-defined]
+        ParquetAnalyzerDialog = self.module.ParquetAnalyzerDialog
 
         # Setup mock parquet file
         mock_file = MagicMock()
