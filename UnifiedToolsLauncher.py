@@ -500,7 +500,10 @@ class UnifiedLauncher(QMainWindow):
                     # Use hasattr pattern for Windows-specific startfile
                     try:
                         if hasattr(os, "startfile"):
-                            os.startfile(path)  # type: ignore[attr-defined]
+                            # os.startfile is Windows-specific, available via hasattr check
+                            # On Windows, this exists; on Linux/macOS, hasattr returns False
+                            # Type ignore needed for Windows compatibility (os.startfile not in all type stubs)
+                            os.startfile(path)  # type: ignore[attr-defined,unused-ignore]
                             self.log("Opened file in default editor (Windows)")
                         else:
                             subprocess.Popen(["xdg-open", str(path)])
