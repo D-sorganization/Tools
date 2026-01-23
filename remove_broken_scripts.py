@@ -10,10 +10,61 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 
+def remove_known_broken_scripts(broken_scripts: list[str]) -> int:
+    """Remove scripts from a known list of broken scripts.
+
+    Args:
+        broken_scripts: List of script filenames to remove.
+
+    Returns:
+        Number of scripts successfully removed.
+    """
+    removed_count = 0
+    for script in broken_scripts:
+        if os.path.exists(script):
+            try:
+                os.remove(script)
+                logger.info(f"✅ Removed broken script: {script}")
+                removed_count += 1
+            except PermissionError as e:
+                logger.error(f"❌ Permission denied removing {script}: {e}")
+            except OSError as e:
+                logger.error(f"❌ OS error removing {script}: {e}")
+        else:
+            logger.info(f"⚠️  Script not found: {script}")
+    return removed_count
+
+
+def find_and_remove_syntax_error_scripts() -> int:
+    """Find and remove fix scripts with syntax errors.
+
+    Returns:
+        Number of scripts successfully removed.
+    """
+    removed_count = 0
+    for file_path in Path(".").glob("fix_*.py"):
+        try:
+            with open(file_path, encoding="utf-8") as f:
+                content = f.read()
+            compile(content, str(file_path), "exec")
+            logger.info(f"✅ Script is valid: {file_path}")
+        except SyntaxError as e:
+            logger.warning(f"🔥 Found broken script: {file_path} - {e}")
+            try:
+                os.remove(file_path)
+                logger.info(f"✅ Removed broken script: {file_path}")
+                removed_count += 1
+            except PermissionError as remove_error:
+                logger.error(f"❌ Permission denied removing {file_path}: {remove_error}")
+            except OSError as remove_error:
+                logger.error(f"❌ OS error removing {file_path}: {remove_error}")
+        except (OSError, UnicodeDecodeError) as e:
+            logger.warning(f"⚠️  Could not check {file_path}: {e}")
+    return removed_count
+
+
 def main() -> None:
     """Remove all broken fix scripts."""
-
-    # List of broken scripts to remove
     broken_scripts = [
         "comprehensive_fix.py",
         "comprehensive_syntax_fix.py",
@@ -26,41 +77,11 @@ def main() -> None:
         "final_data_processor_fix.py",
     ]
 
-    removed_count = 0
+    removed_count = remove_known_broken_scripts(broken_scripts)
+    logger.info(f"🎯 Removed {removed_count} known broken scripts")
 
-    for script in broken_scripts:
-        if os.path.exists(script):
-            try:
-                os.remove(script)
-                logger.info(f"✅ Removed broken script: {script}")
-                removed_count += 1
-            except Exception as e:
-                logger.error(f"❌ Failed to remove {script}: {e}")
-        else:
-            logger.info(f"⚠️  Script not found: {script}")
-
-    logger.info(f"🎯 Removed {removed_count} broken scripts")
-
-    # Also remove any other fix scripts that might be broken
-    for file_path in Path(".").glob("fix_*.py"):
-        try:
-            # Try to compile the script
-            with open(file_path, encoding="utf-8") as f:
-                content = f.read()
-
-            compile(content, str(file_path), "exec")
-            logger.info(f"✅ Script is valid: {file_path}")
-
-        except SyntaxError as e:
-            logger.warning(f"🔥 Found broken script: {file_path} - {e}")
-            try:
-                os.remove(file_path)
-                logger.info(f"✅ Removed broken script: {file_path}")
-                removed_count += 1
-            except Exception as remove_error:
-                logger.error(f"❌ Failed to remove {file_path}: {remove_error}")
-        except Exception as e:
-            logger.warning(f"⚠️  Could not check {file_path}: {e}")
+    additional_removed = find_and_remove_syntax_error_scripts()
+    removed_count += additional_removed
 
     logger.info(f"🎉 Total removed: {removed_count} broken scripts")
 

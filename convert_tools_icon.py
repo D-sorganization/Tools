@@ -21,6 +21,47 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 
+# Windows standard ICO sizes
+ICO_SIZES = [(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)]
+
+
+def _convert_image_mode(img: Image.Image) -> Image.Image:
+    """Convert image to appropriate mode for ICO format.
+
+    Args:
+        img: PIL Image to convert.
+
+    Returns:
+        Converted image in RGBA or RGB mode.
+    """
+    if img.mode in ("RGBA", "LA"):
+        logger.info("Image has transparency - preserving alpha channel")
+        return img.convert("RGBA")
+    elif img.mode == "P":
+        logger.info("Converting palette image to RGBA")
+        return img.convert("RGBA")
+    else:
+        logger.info("No transparency detected - converting to RGB")
+        if img.mode != "RGB":
+            return img.convert("RGB")
+        return img
+
+
+def _create_resized_images(
+    img: Image.Image, sizes: list[tuple[int, int]]
+) -> list[Image.Image]:
+    """Create resized versions of an image for ICO format.
+
+    Args:
+        img: Source image to resize.
+        sizes: List of (width, height) tuples for each size.
+
+    Returns:
+        List of resized images.
+    """
+    return [img.resize(size, Image.Resampling.LANCZOS) for size in sizes]
+
+
 def convert_png_to_ico(png_path: Path, ico_path: Path) -> bool:
     """Convert PNG to high-quality ICO format."""
     try:
@@ -30,55 +71,35 @@ def convert_png_to_ico(png_path: Path, ico_path: Path) -> bool:
 
         logger.info(f"Converting {png_path} to {ico_path}")
 
-        # Open the PNG image
         with Image.open(png_path) as img_file:
             logger.info(f"Original image mode: {img_file.mode}, size: {img_file.size}")
-            img: Image.Image = img_file
 
-            # Handle transparency properly
-            if img.mode in ("RGBA", "LA"):
-                # Image has transparency
-                logger.info("Image has transparency - preserving alpha channel")
-                # Keep as RGBA for transparency
-                converted_img = img.convert("RGBA")
-            elif img.mode == "P":
-                # Palette mode - convert to RGBA to handle transparency
-                logger.info("Converting palette image to RGBA")
-                converted_img = img.convert("RGBA")
-            else:
-                # No transparency - convert to RGB with white background
-                logger.info("No transparency detected - converting to RGB")
-                if img.mode != "RGB":
-                    img = img.convert("RGB")
-                converted_img = img
+            converted_img = _convert_image_mode(img_file)
+            resized_images = _create_resized_images(converted_img, ICO_SIZES)
 
-            # Create multiple sizes for the ICO file (Windows standard sizes)
-            sizes = [(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)]
-
-            # Create a list of resized images
-            resized_images = []
-            for size in sizes:
-                resized = converted_img.resize(size, Image.Resampling.LANCZOS)
-                resized_images.append(resized)
-
-            # Save as ICO with multiple sizes
             converted_img.save(
                 ico_path,
                 format="ICO",
-                sizes=sizes,
-                append_images=resized_images[
-                    1:
-                ],  # First image is the base, rest are appended
+                sizes=ICO_SIZES,
+                append_images=resized_images[1:],
             )
 
         logger.info(f"✓ Successfully converted to high-quality ICO: {ico_path}")
         logger.info(f"Original PNG size: {png_path.stat().st_size:,} bytes")
         logger.info(f"New ICO size: {ico_path.stat().st_size:,} bytes")
-
         return True
 
-    except Exception as e:
-        logger.error(f"Failed to convert PNG to ICO: {e}")
+    except FileNotFoundError as e:
+        logger.error(f"File not found during conversion: {e}")
+        return False
+    except PermissionError as e:
+        logger.error(f"Permission denied during conversion: {e}")
+        return False
+    except OSError as e:
+        logger.error(f"OS error during conversion: {e}")
+        return False
+    except ValueError as e:
+        logger.error(f"Invalid image data: {e}")
         return False
 
 

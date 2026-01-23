@@ -301,37 +301,23 @@ class UnifiedLauncher(QMainWindow):
 
         self.setup_ui()
 
-    def setup_ui(self) -> None:
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
-        main_layout = QVBoxLayout(central_widget)
-
-        # Header
+    def _create_header_layout(self) -> QHBoxLayout:
+        """Create the header layout with title and debug checkbox."""
         header_layout = QHBoxLayout()
         header = QLabel("🛠️ Unified Tools Repository")
         header.setStyleSheet(
             "font-size: 24px; font-weight: bold; color: #7aa2f7; margin-bottom: 10px;"
         )
         header_layout.addWidget(header)
-
         header_layout.addStretch()
 
         self.debug_mode = QCheckBox("Debug Mode")
         self.debug_mode.setToolTip("Enable verbose output when launching tools")
         header_layout.addWidget(self.debug_mode)
+        return header_layout
 
-        main_layout.addLayout(header_layout)
-
-        # Tabs
-        self.tabs = QTabWidget()
-        main_layout.addWidget(self.tabs)
-
-        for category, tools in TOOLS.items():
-            tab = QWidget()
-            self.setup_category_tab(tab, tools)
-            self.tabs.addTab(tab, category)
-
-        # Status Log
+    def _create_log_area(self) -> QFrame:
+        """Create the activity log area widget."""
         log_group = QFrame()
         log_layout = QVBoxLayout(log_group)
         log_layout.setContentsMargins(0, 10, 0, 0)
@@ -344,10 +330,30 @@ class UnifiedLauncher(QMainWindow):
         self.log_area.setReadOnly(True)
         self.log_area.setMaximumHeight(150)
         log_layout.addWidget(self.log_area)
+        return log_group
 
-        main_layout.addWidget(log_group)
+    def _create_tool_tabs(self) -> QTabWidget:
+        """Create the tabbed interface for tool categories."""
+        tabs = QTabWidget()
+        for category, tools in TOOLS.items():
+            tab = QWidget()
+            self.setup_category_tab(tab, tools)
+            tabs.addTab(tab, category)
+        return tabs
 
-        # Check for tools
+    def setup_ui(self) -> None:
+        """Set up the main user interface."""
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
+        main_layout = QVBoxLayout(central_widget)
+
+        main_layout.addLayout(self._create_header_layout())
+
+        self.tabs = self._create_tool_tabs()
+        main_layout.addWidget(self.tabs)
+
+        main_layout.addWidget(self._create_log_area())
+
         if not TOOLS:
             self.log("❌ Warning: tools.json not found or empty.")
             QMessageBox.warning(
