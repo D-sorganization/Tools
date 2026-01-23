@@ -2,13 +2,13 @@
     "Media Processing": [
         {
             "name": "Audio Processor (Main)",
-            "path": "media_processing/audio_processor/matlab/audio_signal_processor/launch_audio_processor_pro.m",
+            "path": "src/media_processing/audio_processor/matlab/audio_signal_processor/launch_audio_processor_pro.m",
             "type": "matlab",
             "desc": "Advanced Audio Signal Processing Suite (MATLAB)"
         },
         {
             "name": "Video Processor Platform",
-            "path": "media_processing/video_processor/apps/web/launch_platform.py",
+            "path": "src/media_processing/video_processor/apps/web/launch_platform.py",
             "type": "python",
             "desc": "Next.js Video Processing Web Platform"
         }
@@ -16,7 +16,7 @@
     "Data Processing": [
         {
             "name": "Data Processor Integrated",
-            "path": "data_processing/data_processor/python/data_processor/launch_integrated.py",
+            "path": "src/data_processing/data_processor/python/data_processor/launch_integrated.py",
             "type": "python",
             "desc": "Time Series CSV/Parquet Analyzer & Converter"
         }
@@ -24,13 +24,13 @@
     "Scientific Modeling": [
         {
             "name": "Solar System Model",
-            "path": "scientific_modeling/solar_system_model/launch_solar_system.py",
+            "path": "src/scientific_modeling/solar_system_model/launch_solar_system.py",
             "type": "python",
             "desc": "Interactive 3D Solar System Simulation"
         },
         {
             "name": "RRT Path Planner",
-            "path": "scientific_modeling/rrt_path_planner/matlab/src/gui/starWarsPathPlannerGUI.m",
+            "path": "src/scientific_modeling/rrt_path_planner/matlab/src/gui/starWarsPathPlannerGUI.m",
             "type": "matlab",
             "desc": "Rapidly-exploring Random Tree (RRT) Navigator (MATLAB)"
         }
@@ -38,13 +38,13 @@
     "Web Applications": [
         {
             "name": "Calculator App",
-            "path": "web_applications/calculator/webapp.py",
+            "path": "src/web_applications/calculator/webapp.py",
             "type": "python",
             "desc": "Flask-based Scientific Calculator"
         },
         {
             "name": "Unit Converter",
-            "path": "web_applications/unit_converter/unit-converter-app/index.html",
+            "path": "src/web_applications/unit_converter/unit-converter-app/index.html",
             "type": "browser",
             "desc": "Browser-based Unit Conversion Tool"
         }

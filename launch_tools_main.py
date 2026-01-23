@@ -123,7 +123,7 @@ def install_missing_packages(packages: list[str]) -> bool:
 
 def create_constants_file() -> bool:
     """Create a minimal constants file if it doesn't exist."""
-    constants_path = Path("data_processing/data_processor/archive/constants.py")
+    constants_path = Path("src/data_processing/data_processor/archive/constants.py")
 
     if not constants_path.exists():
         logger.info("Creating missing constants.py file...")
@@ -171,7 +171,7 @@ def launch_integrated_app() -> bool:
     """Launch the integrated Tools application."""
     try:
         # Change to the correct directory
-        app_dir = Path("data_processing/data_processor/archive")
+        app_dir = Path("src/data_processing/data_processor/archive")
         original_cwd = os.getcwd()
 
         if app_dir.exists():
