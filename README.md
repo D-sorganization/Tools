@@ -30,18 +30,44 @@ The repository is organized into several key areas:
 
 ### 🚀 Launcher
 
-- **`UnifiedToolsLauncher.py`**: **Primary entry point** - A modern PyQt6-based launcher for accessing all tools in the repository.
+The repository provides a unified launcher system for accessing all tools. The canonical entry point is:
+
+- **`UnifiedToolsLauncher.py`**: **PRIMARY AND RECOMMENDED** - Modern PyQt6-based GUI launcher
   ```bash
   python UnifiedToolsLauncher.py
   ```
-  This is the **recommended launcher** with full plugin support, error handling, and tool management.
+  
+  **Features:**
+  - Full plugin system support via `core/plugin_manager.py`
+  - Comprehensive error handling and user feedback
+  - Tool path validation and sanitization
+  - Output/error capture for launched tools
+  - Debug mode for troubleshooting
+  - Activity log for monitoring tool launches
 
-#### Alternative Launchers (Legacy)
+#### Launcher Hierarchy
 
-- **`launch_tools_main.py`**: Command-line launcher with basic tool discovery. **Deprecated** - use `UnifiedToolsLauncher.py` for best experience.
-- **`Launcher.py`**: Original GUI launcher. **No longer maintained** - migrated to `UnifiedToolsLauncher.py`.
+1. **`UnifiedToolsLauncher.py`** (Primary) - Use this for all new development and general usage
+   - Location: Repository root
+   - Type: PyQt6 GUI application
+   - Status: ✅ Active and maintained
+   - Entry point: `python UnifiedToolsLauncher.py`
 
-> **Note:** Legacy launchers are retained for backwards compatibility but will be removed in v2.0. Please migrate to `UnifiedToolsLauncher.py`.
+2. **`launch_tools_main.py`** (Legacy CLI) - Deprecated
+   - Location: Repository root
+   - Type: Command-line interface
+   - Status: ⚠️ Deprecated - retained for backwards compatibility only
+   - Migration: Use `UnifiedToolsLauncher.py` instead
+
+3. **`Launcher.py`** (Legacy GUI) - No longer maintained
+   - Location: Repository root (if exists)
+   - Type: Original GUI launcher
+   - Status: ❌ Migrated to `UnifiedToolsLauncher.py`
+   - Migration: Use `UnifiedToolsLauncher.py` instead
+
+> **Important:** `tools_launcher.py` does not exist and any references to it are outdated. Use `UnifiedToolsLauncher.py` as the canonical entry point.
+
+> **Note:** Legacy launchers will be removed in v2.0. Please migrate to `UnifiedToolsLauncher.py`.
 
 ## 🚀 Quick Start
 
@@ -143,21 +169,58 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
 
 ### MATLAB Tools Not Working
 
-**Problem:** Audio Processor or RRT Path Planner tools fail silently.
+**Problem:** MATLAB-based tools (Audio Processor, RRT Path Planner, Scientific Modeling tools) fail silently or cannot be launched.
 
-**Cause:** These tools require MATLAB to be installed and in your system PATH.
+**Cause:** These tools require MATLAB to be installed and accessible in your system PATH.
+
+**MATLAB Requirements:**
+- **Minimum Version:** MATLAB R2020a or later
+- **Required Toolboxes:** 
+  - Signal Processing Toolbox (for audio processing tools)
+  - Statistics and Machine Learning Toolbox (for some modeling tools)
+  - Image Processing Toolbox (for visualization tools)
 
 **Solutions:**
-1. Install MATLAB R2020a or later
-2. Add MATLAB to PATH:
+
+1. **Install MATLAB**
+   - Download from [MathWorks](https://www.mathworks.com/products/matlab.html)
+   - Ensure R2020a or later is installed
+   - Install required toolboxes during setup
+
+2. **Add MATLAB to System PATH**
    ```bash
    # Linux/macOS
+   export PATH="/usr/local/MATLAB/R2023a/bin:$PATH"
+   # Or for your specific installation:
    export PATH="/path/to/matlab/bin:$PATH"
 
    # Windows (PowerShell)
    $env:PATH += ";C:\Program Files\MATLAB\R2023a\bin"
+   
+   # Windows (Command Prompt) - Add to System Environment Variables permanently
    ```
-3. Verify MATLAB is accessible: `matlab -batch "version"`
+
+3. **Verify MATLAB Installation**
+   ```bash
+   # Check MATLAB version
+   matlab -batch "version"
+   
+   # Test MATLAB execution
+   matlab -batch "disp('MATLAB is working')"
+   ```
+
+4. **Tool Availability**
+   - **Audio Processor**: Requires MATLAB + Signal Processing Toolbox
+   - **RRT Path Planner**: Requires MATLAB + Statistics Toolbox
+   - **Solar System Model**: Requires MATLAB (basic installation sufficient)
+   - **Golf Modeling Suite**: Requires MATLAB + Optimization Toolbox
+
+5. **If MATLAB is Not Available**
+   - Python-only tools will still work
+   - Web applications are independent of MATLAB
+   - Some tools have Python alternatives (check individual tool documentation)
+
+**Note:** The launcher will attempt to open MATLAB files in your default editor if MATLAB is not found in PATH, but full functionality requires MATLAB to be properly installed and configured.
 
 ### Tests Not Running
 
