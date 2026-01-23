@@ -11,8 +11,10 @@ from pathlib import Path
 
 import pytest
 
+# Add parent directory (python/) to path to access src module
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from src import constants, logger_utils
+# Import from local src module (not repository root src/)
+from src import constants, logger_utils  # type: ignore[import-untyped]
 
 
 class TestConstants:
