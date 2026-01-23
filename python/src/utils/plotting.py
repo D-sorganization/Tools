@@ -9,9 +9,12 @@ from typing import Any
 try:
     import matplotlib.pyplot as plt
     from matplotlib.colors import ListedColormap
+
+    _HAS_MATPLOTLIB = True
 except ImportError:
     plt = None  # type: ignore[assignment]
     ListedColormap = None  # type: ignore[assignment,misc]
+    _HAS_MATPLOTLIB = False
 
 
 # Colorblind-safe color palettes
@@ -108,7 +111,7 @@ def export_plot(
     Raises:
         ValueError: If matplotlib is not available or invalid format specified
     """
-    if not HAS_MATPLOTLIB or plt is None:
+    if not _HAS_MATPLOTLIB or plt is None:
         raise ValueError("matplotlib is not available")
 
     if formats is None:
