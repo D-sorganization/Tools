@@ -27,8 +27,9 @@ def setup_python_path() -> None:
     # Add paths for different components
     paths_to_add = [
         current_dir,
-        current_dir / "data_processing" / "data_processor" / "archive",
+        current_dir / "src" / "data_processing" / "data_processor" / "archive",
         current_dir
+        / "src"
         / "data_processing"
         / "data_processor"
         / "python"

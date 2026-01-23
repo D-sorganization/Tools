@@ -48,6 +48,16 @@ def main() -> None:
         print("Please install Node.js from https://nodejs.org/")
         sys.exit(1)
 
+    # Check if npm is available (npm may not be installed even if Node.js is)
+    try:
+        subprocess.run(["npm", "--version"], check=True, capture_output=True)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        print("ERROR: npm is not installed or not in PATH")
+        print(
+            "npm usually comes with Node.js. Please reinstall Node.js from https://nodejs.org/"
+        )
+        sys.exit(1)
+
     # Check if package.json exists
     package_json = script_dir / "package.json"
     if not package_json.exists():
@@ -69,8 +79,11 @@ def main() -> None:
     print("Starting Video Processor Platform...")
     try:
         subprocess.run(["npm", "run", "dev"], cwd=script_dir, check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"ERROR: Failed to start platform (exit code {e.returncode})")
+    except (subprocess.CalledProcessError, FileNotFoundError) as e:
+        if isinstance(e, FileNotFoundError):
+            print("ERROR: npm not found. This should have been caught earlier.")
+        else:
+            print(f"ERROR: Failed to start platform (exit code {e.returncode})")
         sys.exit(1)
     except KeyboardInterrupt:
         print("\nPlatform stopped by user.")
