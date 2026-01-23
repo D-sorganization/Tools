@@ -561,24 +561,27 @@ def main() -> None:
 
     # Output results
     if args.output_format == "json":
-        print(json.dumps(results, indent=2, default=str))
+        # For JSON output, use print() to stdout to avoid logging format prefixes
+        # This ensures pure JSON output for parsing by other tools/workflows
+        print(json.dumps(results, indent=2, default=str))  # noqa: T201
     else:
-        print("\n" + "=" * 60)
-        print("MATLAB QUALITY CHECK RESULTS")
-        print("=" * 60)
-        print(f"Timestamp: {results.get('timestamp', 'N/A')}")
-        print(f"Total Files: {results.get('total_files', 0)}")
-        print(
+        # For text output, use logger for proper formatting
+        logger.info("\n" + "=" * 60)
+        logger.info("MATLAB QUALITY CHECK RESULTS")
+        logger.info("=" * 60)
+        logger.info(f"Timestamp: {results.get('timestamp', 'N/A')}")
+        logger.info(f"Total Files: {results.get('total_files', 0)}")
+        logger.info(
             f"Status: {'PASSED' if results.get('passed', False) else 'FAILED'}",
         )
-        print(f"Summary: {results.get('summary', 'N/A')}")
+        logger.info(f"Summary: {results.get('summary', 'N/A')}")
 
         if results.get("issues"):
-            print(f"\nIssues Found ({len(results['issues'])}):")
+            logger.info(f"\nIssues Found ({len(results['issues'])}):")
             for i, issue in enumerate(results["issues"], 1):
-                print(f"  {i}. {issue}")
+                logger.info(f"  {i}. {issue}")
 
-        print("\n" + "=" * 60)
+        logger.info("\n" + "=" * 60)
 
     # Exit with appropriate code
     # In strict mode, fail if any issues are found; otherwise fail only if

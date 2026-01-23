@@ -13,10 +13,18 @@ Please refer to [AGENTS.md](AGENTS.md) for the authoritative guide on:
 
 ## Quick Start
 
-1.  **Environment Setup**: Run `python setup_dev.py` to install dependencies.
+1.  **Environment Setup**:
+    - Install dependencies: `pip install -r requirements.txt`
+    - Optional: Run `python setup_dev.py` for additional development setup
 2.  **Linting**: Ensure your code passes `ruff`, `black`, and `mypy` checks.
+    - Run `ruff check .` and `ruff format .` before committing
+    - Run `black --check .` to verify formatting
+    - Run `mypy . --config-file mypy.ini` for type checking
 3.  **Testing**: Run relevant tests before submitting a PR.
+    - Run `pytest .` to execute all tests
+    - Ensure test coverage is maintained or improved
 4.  **Tools**: Use `python UnifiedToolsLauncher.py` to access development utilities.
+    - This is the canonical entry point (not `tools_launcher.py` which does not exist)
 
 ## Pull Requests
 

@@ -6,27 +6,27 @@ matplotlib>=3.9.0  # Data visualization
 sympy>=1.12  # Symbolic mathematics
 
 # Testing & Quality Assurance
-pytest>=8.2.0
-pytest-cov
-ruff
-mypy
-types-PyYAML
-types-requests
+pytest>=8.2.0  # Testing framework
+pytest-cov  # Coverage plugin for pytest
+ruff  # Fast Python linter and formatter
+mypy  # Static type checker
+types-PyYAML  # Type stubs for PyYAML
+types-requests  # Type stubs for requests library
 
 # GUI & Desktop Applications
-PyQt6>=6.7.0
-pygame>=2.0.0
-PyOpenGL>=3.1.5
-PyOpenGL_accelerate>=3.1.5
+PyQt6>=6.7.0  # Qt6 Python bindings for GUI applications
+pygame>=2.0.0  # Game development and multimedia library
+PyOpenGL>=3.1.5  # OpenGL bindings for Python
+PyOpenGL_accelerate>=3.1.5  # Accelerated OpenGL extensions
 
 # Web Applications
-flask>=3.0.0
+flask>=3.0.0  # Web framework for building web applications
 
 # Security & Encryption
-cryptography
+cryptography  # Cryptographic recipes and primitives
 
 # Data Formats & Configuration
-pyyaml>=6.0.1
+pyyaml>=6.0.1  # YAML parser and emitter
 
 # Web Automation & Testing
-playwright>=1.40.0
+playwright>=1.40.0  # Browser automation and testing framework

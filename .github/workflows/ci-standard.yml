@@ -35,28 +35,29 @@ jobs:
         run: black --check .
 
       - name: Type Check (Mypy)
-        # We want to see errors but maybe not fail immediately if there are 300+
-        # But strict governance suggests we should fail.
-        # However, to "Address top 30 items", one is "Fix Mypy".
-        # So I will allow failure for now, or just run it.
-        run: mypy . --ignore-missing-imports --install-types --non-interactive || true
+        # Mypy type checking with configuration file
+        # Errors are now fixed, so we enforce strict checking
+        run: mypy . --config-file mypy.ini --ignore-missing-imports --install-types --non-interactive
 
       - name: Security Scan (pip-audit)
-        run: pip-audit -r requirements.txt || true
+        run: pip-audit -r requirements.txt
 
   tests:
     needs: quality-gate
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: { python-version: "3.12" }
+        with: { python-version: ${{ matrix.python-version }} }
 
       - name: Install Dependencies
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Tests
+      - name: Run Tests (Python ${{ matrix.python-version }})
         # Run all tests discovered in the repo
         run: pytest .

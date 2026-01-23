@@ -247,7 +247,7 @@ def show_error_dialog(message: str) -> None:
         root.destroy()
     except Exception:
         # If GUI fails, just print to console
-        print(f"ERROR: {message}")
+        logger.error(f"ERROR: {message}")
 
 
 def main() -> bool:

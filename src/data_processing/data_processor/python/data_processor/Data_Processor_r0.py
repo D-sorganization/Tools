@@ -44,6 +44,9 @@ def _validate_formula_security(formula: str, allowed_names: set[str]) -> None:
         raise ValueError(f"Invalid syntax: {e}") from e
 
     for node in ast.walk(tree):
+        # isinstance() requires tuple syntax, not union types
+        # UP038 incorrectly suggests X | Y, but isinstance() doesn't support
+        # union syntax
         if isinstance(
             node,
             (
@@ -64,7 +67,7 @@ def _validate_formula_security(formula: str, allowed_names: set[str]) -> None:
                 ast.Call,
                 ast.keyword,
             ),
-        ):
+        ):  # noqa: UP038
             if isinstance(node, ast.Name):
                 if node.id not in allowed_names:
                     raise ValueError(f"Unknown variable or function: {node.id}")

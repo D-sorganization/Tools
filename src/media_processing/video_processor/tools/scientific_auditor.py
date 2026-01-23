@@ -1,7 +1,12 @@
 import ast
 import json
+import logging
 import sys
 from pathlib import Path
+
+# Configure logging for error messages only (stderr)
+logging.basicConfig(level=logging.WARNING, format="%(message)s")
+logger = logging.getLogger(__name__)
 
 RISKS = []
 
@@ -66,6 +71,8 @@ def main() -> None:
             # various errors and we don't want to crash the entire audit.
             sys.stderr.write(f"Error analyzing {py_file}: {e}\n")
 
+    # Output JSON to stdout for proper piping/redirection
+    # Script is used in workflows like: python scientific_auditor.py . > report.json
     if RISKS:
         print(json.dumps(RISKS, indent=2))  # noqa: T201
         sys.exit(1)
