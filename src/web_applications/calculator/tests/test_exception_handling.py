@@ -3,7 +3,6 @@ from unittest.mock import patch
 
 import pytest
 from flask.testing import FlaskClient
-
 from web_applications.calculator.webapp import create_app
 
 

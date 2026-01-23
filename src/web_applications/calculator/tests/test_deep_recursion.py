@@ -2,7 +2,6 @@ import sys
 
 import pytest
 import sympy as sp
-
 from web_applications.calculator.calculator import TI89Calculator
 
 
