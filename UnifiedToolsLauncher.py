@@ -437,7 +437,8 @@ class UnifiedLauncher(QMainWindow):
                         # Note: For real-time output display, consider threading
                     else:
                         # Production mode: use DEVNULL but check for immediate failures
-                        process = subprocess.Popen(
+                        # Type differs based on text mode, but we only use common attributes
+                        process = subprocess.Popen(  # type: ignore[assignment]
                             args,
                             cwd=path.parent,
                             stdout=subprocess.DEVNULL,
@@ -501,7 +502,8 @@ class UnifiedLauncher(QMainWindow):
                 try:
                     # Launch MATLAB without capturing output to avoid deadlock
                     # MATLAB can produce significant output that would fill pipe buffers
-                    process = subprocess.Popen(
+                    # Type annotation not needed - only using common Popen attributes
+                    process = subprocess.Popen(  # type: ignore[assignment]
                         cmd_list,
                         cwd=path.parent,
                         stdout=subprocess.DEVNULL if not is_debug else None,
@@ -569,7 +571,8 @@ class UnifiedLauncher(QMainWindow):
 
                 # Launch batch script without capturing output to avoid deadlock
                 try:
-                    process = subprocess.Popen(
+                    # Type annotation not needed - only using common Popen attributes
+                    process = subprocess.Popen(  # type: ignore[assignment]
                         ["cmd.exe", "/c", str(path)],
                         cwd=path.parent,
                         stdout=subprocess.DEVNULL if not is_debug else None,
