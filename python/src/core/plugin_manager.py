@@ -23,8 +23,49 @@ class PluginManager:
         self.tools_file = repo_root / "tools.json"
         self.tools: dict[str, list[Tool]] = {}
 
+    def validate_tool_path(self, tool_path: str) -> tuple[bool, str | None]:
+        """
+        Validate that a tool path exists and is within repository root.
+
+        Args:
+            tool_path: Relative path string from tool configuration
+
+        Returns:
+            Tuple of (is_valid, error_message)
+        """
+        try:
+            path = Path(tool_path)
+            # Resolve to absolute path relative to repo root
+            full_path = (self.repo_root / path).resolve()
+            repo_root_abs = self.repo_root.resolve()
+
+            # Check path exists
+            if not full_path.exists():
+                return False, f"Tool file not found: {full_path}"
+
+            # Check path is within repository (prevent path traversal)
+            try:
+                full_path.relative_to(repo_root_abs)
+            except ValueError:
+                return (
+                    False,
+                    f"Security Alert: Path outside repository: {full_path}",
+                )
+
+            # Check path is a file (not a directory)
+            if not full_path.is_file():
+                return False, f"Path is not a file: {full_path}"
+
+            return True, None
+        except (TypeError, ValueError, OSError, RuntimeError) as e:
+            return False, f"Invalid path format: {tool_path} ({e})"
+
     def load_tools(self) -> dict[str, list[Tool]]:
-        """Load tools from tools.json."""
+        """
+        Load tools from tools.json with path validation.
+
+        Tools with invalid paths are logged but not included in the result.
+        """
         if not self.tools_file.exists():
             logger.error(
                 f"Tools file not found at {self.tools_file}. "
@@ -42,9 +83,19 @@ class PluginManager:
                 tool_list = []
                 for item in items:
                     try:
+                        tool_path = item["path"]
+                        # Validate path exists and is within repository (issue #236)
+                        is_valid, error_msg = self.validate_tool_path(tool_path)
+                        if not is_valid:
+                            logger.warning(
+                                f"Skipping tool '{item.get('name', 'Unknown')}' "
+                                f"in {category}: {error_msg}"
+                            )
+                            continue
+
                         tool = Tool(
                             name=item["name"],
-                            path=item["path"],
+                            path=tool_path,
                             type=item["type"],
                             desc=item["desc"],
                             category=category,
@@ -124,6 +175,14 @@ class PluginManager:
                         "description", manifest_data.get("desc", "")
                     )
                     tool_category = manifest_data.get("category", "Development Tools")
+
+                    # Validate path exists and is within repository (issue #236)
+                    is_valid, error_msg = self.validate_tool_path(tool_path)
+                    if not is_valid:
+                        logger.warning(
+                            f"Skipping discovered tool '{tool_name}': {error_msg}"
+                        )
+                        continue
 
                     tool = Tool(
                         name=tool_name,

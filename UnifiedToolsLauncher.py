@@ -420,22 +420,45 @@ class UnifiedLauncher(QMainWindow):
                 if is_debug:
                     # Could add a verbose flag if the tool supports it
                     pass
-                # Launch process without capturing output to avoid deadlock
-                # Use DEVNULL to prevent pipe buffer overflow when tools produce output
+                # Launch process with output capture for error detection (issue #237)
+                # In debug mode, capture output; otherwise use DEVNULL to prevent deadlock
                 try:
-                    process = subprocess.Popen(
-                        args,
-                        cwd=path.parent,
-                        stdout=subprocess.DEVNULL if not is_debug else None,
-                        stderr=subprocess.DEVNULL if not is_debug else None,
-                    )
-                    self.log("✅ Process started (Python)")
-
-                    # In debug mode, show process info
                     if is_debug:
+                        # Debug mode: capture output for display
+                        process = subprocess.Popen(
+                            args,
+                            cwd=path.parent,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                            text=True,
+                        )
+                        self.log("✅ Process started (Python)")
                         self.log("DEBUG: Process PID: " + str(process.pid))
-                        # Note: For full output capture in debug mode, consider using
-                        # subprocess.run with capture_output=True or threading for real-time display
+                        # Note: For real-time output display, consider threading
+                    else:
+                        # Production mode: use DEVNULL but check for immediate failures
+                        process = subprocess.Popen(
+                            args,
+                            cwd=path.parent,
+                            stdout=subprocess.DEVNULL,
+                            stderr=subprocess.DEVNULL,
+                        )
+                        self.log("✅ Process started (Python)")
+                        # Wait briefly to detect immediate failures (issue #237)
+                        import time
+
+                        time.sleep(0.5)  # 500ms wait
+                        if process.poll() is not None:
+                            # Process exited immediately - likely an error
+                            error_msg = (
+                                f"Tool exited immediately (exit code: {process.returncode})\n\n"
+                                f"Tool: {tool_info.get('name', 'Unknown')}\n"
+                                f"Path: {path}\n\n"
+                                "Check the tool's requirements and dependencies."
+                            )
+                            self.log(f"❌ {error_msg}")
+                            QMessageBox.warning(self, "Tool Launch Warning", error_msg)
+                            return
 
                 except FileNotFoundError:
                     error_msg = (
