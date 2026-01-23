@@ -61,16 +61,20 @@ def main() -> None:
     print("💡 RECOMMENDATIONS")
     print("=" * 60)
 
-    tools_launcher = current_dir / "tools_launcher.py"
-    if tools_launcher.exists():
-        print("✅ Use 'tools_launcher.py' - This is the PROFESSIONAL version with:")
-        print("   • Tabbed interface with 5 categories")
-        print("   • Professional UI with icons")
-        print("   • Integrated data processor support")
-        print("   • All enhanced features")
-        print(f"\n🚀 To launch: python {tools_launcher}")
+    unified_launcher = current_dir / "UnifiedToolsLauncher.py"
+    if unified_launcher.exists():
+        print("✅ Use 'UnifiedToolsLauncher.py' - This is the PRIMARY launcher with:")
+        print("   • Modern PyQt6 GUI interface")
+        print("   • Full plugin system support")
+        print("   • Comprehensive error handling")
+        print("   • Tool path validation and security")
+        print("   • Output/error capture")
+        print(f"\n🚀 To launch: python {unified_launcher}")
     else:
-        print("❌ tools_launcher.py not found!")
+        print("❌ UnifiedToolsLauncher.py not found!")
+
+    print("\n⚠️  Note: 'tools_launcher.py' does not exist.")
+    print("   Any references to it are outdated. Use UnifiedToolsLauncher.py instead.")
 
     print("\n" + "=" * 60)
     print("🔗 DESKTOP SHORTCUTS")

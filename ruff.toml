@@ -51,6 +51,8 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "**/*.py" = ["E501"]
 # Ignore boolean argument warnings in replicants
 "replicants/**/*.py" = ["FBT001"]
+# UP038 false positive: isinstance() requires tuple syntax, not union types
+"data_processing/data_processor/python/data_processor/Data_Processor_r0.py" = ["UP038"]
 
 [lint.isort]
 # Tells Ruff how to group your own code vs. libraries

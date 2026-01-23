@@ -8,6 +8,30 @@ allowing the codebase to run on Python 3.10 (Ubuntu 22.04 default).
 import sys
 from enum import Enum
 
+
+def check_python_version() -> None:
+    """
+    Check Python version and provide a friendly error message if incompatible.
+
+    Raises:
+        SystemExit: If Python version is < 3.10
+    """
+    if sys.version_info < (3, 10):  # noqa: UP036
+        print(
+            "Critical Error: This application requires Python 3.10 or newer.",
+            file=sys.stderr,
+        )
+        print(f"Current version: {sys.version}", file=sys.stderr)
+        print(
+            "\nPlease upgrade Python or use a Python 3.10+ environment.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+
+# Check Python version when module is imported
+check_python_version()
+
 if sys.version_info >= (3, 11):  # noqa: UP036
     from datetime import UTC
 else:

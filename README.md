@@ -1,7 +1,7 @@
 # Tools Monorepo 🛠️
 
 [![CI Standard](https://github.com/D-sorganization/Tools/actions/workflows/ci-standard.yml/badge.svg)](https://github.com/D-sorganization/Tools/actions/workflows/ci-standard.yml)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
@@ -18,11 +18,25 @@ The repository is organized into several key areas:
 
 ### 🛠️ Python Tools
 
-- **`python/`**: A collection of Python-based utilities and applications.
-  - **`folder_tool/`** & **`folder_tool_pro/`**: Advanced directory management and cleanup tools.
-  - **`project_packer/`** & **`folder_packer_pro/`**: Secure project packaging and encryption tools.
-  - **`data_processing/`**: Scripts and pipelines for data analysis.
-- **`tools/`**: General purpose utility scripts.
+**Directory Structure:**
+- **`python/`**: Core infrastructure and shared utilities
+  - **`python/src/core/`**: Plugin system and core launcher functionality
+  - **`python/src/utils/`**: Shared utilities (compatibility shims, logger utils)
+  - **`python/src/tile_launcher/`**: Tile launcher components
+  - **`python/shared/`**: Performance utilities and shared code
+  - **`python/tests/`**: Test suite for core functionality
+
+- **`tools/`**: Tool implementations and utilities
+  - **`tools/folder_tools/`**: Folder management tools (folder_tool, folder_packer_pro, project_packer)
+  - **`tools/matlab_utilities/`**: MATLAB quality checking and testing utilities
+  - **`tools/matlab_code_analyzer_gui/`**: MATLAB code analyzer GUI
+  - **`tools/scientific_auditor.py`**: Scientific code auditing tool
+
+**Note:** The distinction between `python/` and `tools/` is:
+- `python/` = Core infrastructure, plugin system, shared utilities
+- `tools/` = Individual tool implementations and standalone utilities
+
+Future consolidation may merge these, but current structure supports the plugin system architecture.
 
 ### 🌐 Web Applications
 
@@ -30,27 +44,54 @@ The repository is organized into several key areas:
 
 ### 🚀 Launcher
 
-- **`UnifiedToolsLauncher.py`**: **Primary entry point** - A modern PyQt6-based launcher for accessing all tools in the repository.
+The repository provides a unified launcher system for accessing all tools. The canonical entry point is:
+
+- **`UnifiedToolsLauncher.py`**: **PRIMARY AND RECOMMENDED** - Modern PyQt6-based GUI launcher
   ```bash
   python UnifiedToolsLauncher.py
   ```
-  This is the **recommended launcher** with full plugin support, error handling, and tool management.
+  
+  **Features:**
+  - Full plugin system support via `core/plugin_manager.py`
+  - Comprehensive error handling and user feedback
+  - Tool path validation and sanitization
+  - Output/error capture for launched tools
+  - Debug mode for troubleshooting
+  - Activity log for monitoring tool launches
 
-#### Alternative Launchers (Legacy)
+#### Launcher Hierarchy
 
-- **`launch_tools_main.py`**: Command-line launcher with basic tool discovery. **Deprecated** - use `UnifiedToolsLauncher.py` for best experience.
-- **`Launcher.py`**: Original GUI launcher. **No longer maintained** - migrated to `UnifiedToolsLauncher.py`.
+1. **`UnifiedToolsLauncher.py`** (Primary) - Use this for all new development and general usage
+   - Location: Repository root
+   - Type: PyQt6 GUI application
+   - Status: ✅ Active and maintained
+   - Entry point: `python UnifiedToolsLauncher.py`
 
-> **Note:** Legacy launchers are retained for backwards compatibility but will be removed in v2.0. Please migrate to `UnifiedToolsLauncher.py`.
+2. **`launch_tools_main.py`** (Legacy CLI) - Deprecated
+   - Location: Repository root
+   - Type: Command-line interface
+   - Status: ⚠️ Deprecated - retained for backwards compatibility only
+   - Migration: Use `UnifiedToolsLauncher.py` instead
+
+3. **`Launcher.py`** (Legacy GUI) - No longer maintained
+   - Location: Repository root (if exists)
+   - Type: Original GUI launcher
+   - Status: ❌ Migrated to `UnifiedToolsLauncher.py`
+   - Migration: Use `UnifiedToolsLauncher.py` instead
+
+> **Important:** `tools_launcher.py` does not exist and any references to it are outdated. Use `UnifiedToolsLauncher.py` as the canonical entry point.
+
+> **Note:** Legacy launchers will be removed in v2.0. Please migrate to `UnifiedToolsLauncher.py`.
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
 - **Git**: Version control (ensure LFS is installed).
-- **Python**: Version **3.11+** required (3.12 recommended for best performance).
-  - Python 3.10 has limited compatibility (see Troubleshooting below)
+- **Python**: Version **3.10+** required (3.12 recommended for best performance).
+  - Compatibility shims are included for Python 3.10 support (see Troubleshooting below)
   - Python 3.13+ not yet tested
+  - **CI Testing**: The repository is tested against Python 3.10, 3.11, and 3.12 (see CI/CD section)
 - **MATLAB**: Required for running the core simulations (R2020a or later).
 - **Node.js**: Required for web applications and some dev tools.
 
@@ -97,6 +138,9 @@ Detailed documentation is available in the `docs/` directory:
 - **[Development Guidelines](docs/development/GUARDRAILS_GUIDELINES.md)**: Coding standards, guardrails, and safety protocols.
 - **[Branching Strategy](docs/development/BRANCHING_WORKFLOW_RULE.md)**: Mandatory workflow for feature branches and PRs.
 - **[Enhanced Tools](docs/tools/ENHANCED_TOOLS.md)**: Documentation for the "Pro" versions of the folder and project tools.
+- **[Visualization Guide](docs/VISUALIZATION_GUIDE.md)**: Colorblind-safe plotting and accessibility guidelines.
+- **[Plugin System](docs/PLUGIN_SYSTEM.md)**: Automatic tool discovery via manifest files.
+- **[Quick Start Guide](QUICKSTART.md)**: Getting started with the Tools repository.
 - **[Release Notes](docs/release/CHANGELOG.md)**: History of changes and updates.
 
 ## 🤝 Contribution
@@ -104,9 +148,16 @@ Detailed documentation is available in the `docs/` directory:
 We follow a strict **"Safety First"** contribution policy.
 
 1.  **Branching**: Always use feature branches (`feature/your-feature`). Direct commits to `main` are blocked.
-2.  **Testing**: All new features must be accompanied by tests.
+2.  **Testing**: All new features must be accompanied by tests. Tests run on Python 3.10, 3.11, and 3.12.
 3.  **Linting**: Ensure your code passes all `pre-commit` checks (Ruff, MyPy, etc.).
 4.  **Review**: All changes require a Pull Request review.
+
+### CI/CD Testing
+
+The repository uses GitHub Actions for continuous integration:
+- **Quality Gate**: Linting (Ruff), formatting (Black), type checking (Mypy), security scanning (pip-audit)
+- **Multi-Version Testing**: Tests run on Python 3.10, 3.11, and 3.12 to ensure compatibility
+- **Code Analysis**: Automated code quality checks and security scanning
 
 For more details, please read the [Development Guidelines](docs/development/GUARDRAILS_GUIDELINES.md).
 
@@ -119,7 +170,7 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
 **Cause:** You're running Python 3.10, which lacks some features introduced in Python 3.11+.
 
 **Solutions:**
-1. **Recommended:** Upgrade to Python 3.11 or 3.12
+1. **Recommended:** Use Python 3.10 or newer (3.12 recommended)
    ```bash
    # Ubuntu/Debian
    sudo apt update
@@ -129,7 +180,7 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
    brew install python@3.12
    ```
 
-2. **Alternative:** The repository includes compatibility shims for Python 3.10 in `python/src/utils/compatibility.py`, but full compatibility is not guaranteed.
+2. **Note:** The repository includes compatibility shims in `python/src/utils/compatibility.py` that allow running on Python 3.10+. The application will provide a friendly error message if your Python version is incompatible.
 
 ### Launcher Won't Start
 
@@ -143,21 +194,58 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
 
 ### MATLAB Tools Not Working
 
-**Problem:** Audio Processor or RRT Path Planner tools fail silently.
+**Problem:** MATLAB-based tools (Audio Processor, RRT Path Planner, Scientific Modeling tools) fail silently or cannot be launched.
 
-**Cause:** These tools require MATLAB to be installed and in your system PATH.
+**Cause:** These tools require MATLAB to be installed and accessible in your system PATH.
+
+**MATLAB Requirements:**
+- **Minimum Version:** MATLAB R2020a or later
+- **Required Toolboxes:** 
+  - Signal Processing Toolbox (for audio processing tools)
+  - Statistics and Machine Learning Toolbox (for some modeling tools)
+  - Image Processing Toolbox (for visualization tools)
 
 **Solutions:**
-1. Install MATLAB R2020a or later
-2. Add MATLAB to PATH:
+
+1. **Install MATLAB**
+   - Download from [MathWorks](https://www.mathworks.com/products/matlab.html)
+   - Ensure R2020a or later is installed
+   - Install required toolboxes during setup
+
+2. **Add MATLAB to System PATH**
    ```bash
    # Linux/macOS
+   export PATH="/usr/local/MATLAB/R2023a/bin:$PATH"
+   # Or for your specific installation:
    export PATH="/path/to/matlab/bin:$PATH"
 
    # Windows (PowerShell)
    $env:PATH += ";C:\Program Files\MATLAB\R2023a\bin"
+   
+   # Windows (Command Prompt) - Add to System Environment Variables permanently
    ```
-3. Verify MATLAB is accessible: `matlab -batch "version"`
+
+3. **Verify MATLAB Installation**
+   ```bash
+   # Check MATLAB version
+   matlab -batch "version"
+   
+   # Test MATLAB execution
+   matlab -batch "disp('MATLAB is working')"
+   ```
+
+4. **Tool Availability**
+   - **Audio Processor**: Requires MATLAB + Signal Processing Toolbox
+   - **RRT Path Planner**: Requires MATLAB + Statistics Toolbox
+   - **Solar System Model**: Requires MATLAB (basic installation sufficient)
+   - **Golf Modeling Suite**: Requires MATLAB + Optimization Toolbox
+
+5. **If MATLAB is Not Available**
+   - Python-only tools will still work
+   - Web applications are independent of MATLAB
+   - Some tools have Python alternatives (check individual tool documentation)
+
+**Note:** The launcher will attempt to open MATLAB files in your default editor if MATLAB is not found in PATH, but full functionality requires MATLAB to be properly installed and configured.
 
 ### Tests Not Running
 
@@ -167,7 +255,7 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
 1. Ensure you're in the repository root: `cd /path/to/Tools`
 2. Install test dependencies: `pip install pytest>=8.2.0`
 3. Run from virtual environment: `source venv/bin/activate`
-4. Check Python version compatibility (3.11+ required)
+4. Check Python version compatibility (3.10+ required, 3.12 recommended)
 
 For more help, see [GitHub Issues](https://github.com/D-sorganization/Tools/issues) or create a new issue.
 
