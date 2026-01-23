@@ -91,6 +91,7 @@ The repository provides a unified launcher system for accessing all tools. The c
 - **Python**: Version **3.10+** required (3.12 recommended for best performance).
   - Compatibility shims are included for Python 3.10 support (see Troubleshooting below)
   - Python 3.13+ not yet tested
+  - **CI Testing**: The repository is tested against Python 3.10, 3.11, and 3.12 (see CI/CD section)
 - **MATLAB**: Required for running the core simulations (R2020a or later).
 - **Node.js**: Required for web applications and some dev tools.
 
@@ -137,6 +138,9 @@ Detailed documentation is available in the `docs/` directory:
 - **[Development Guidelines](docs/development/GUARDRAILS_GUIDELINES.md)**: Coding standards, guardrails, and safety protocols.
 - **[Branching Strategy](docs/development/BRANCHING_WORKFLOW_RULE.md)**: Mandatory workflow for feature branches and PRs.
 - **[Enhanced Tools](docs/tools/ENHANCED_TOOLS.md)**: Documentation for the "Pro" versions of the folder and project tools.
+- **[Visualization Guide](docs/VISUALIZATION_GUIDE.md)**: Colorblind-safe plotting and accessibility guidelines.
+- **[Plugin System](docs/PLUGIN_SYSTEM.md)**: Automatic tool discovery via manifest files.
+- **[Quick Start Guide](QUICKSTART.md)**: Getting started with the Tools repository.
 - **[Release Notes](docs/release/CHANGELOG.md)**: History of changes and updates.
 
 ## 🤝 Contribution
@@ -144,9 +148,16 @@ Detailed documentation is available in the `docs/` directory:
 We follow a strict **"Safety First"** contribution policy.
 
 1.  **Branching**: Always use feature branches (`feature/your-feature`). Direct commits to `main` are blocked.
-2.  **Testing**: All new features must be accompanied by tests.
+2.  **Testing**: All new features must be accompanied by tests. Tests run on Python 3.10, 3.11, and 3.12.
 3.  **Linting**: Ensure your code passes all `pre-commit` checks (Ruff, MyPy, etc.).
 4.  **Review**: All changes require a Pull Request review.
+
+### CI/CD Testing
+
+The repository uses GitHub Actions for continuous integration:
+- **Quality Gate**: Linting (Ruff), formatting (Black), type checking (Mypy), security scanning (pip-audit)
+- **Multi-Version Testing**: Tests run on Python 3.10, 3.11, and 3.12 to ensure compatibility
+- **Code Analysis**: Automated code quality checks and security scanning
 
 For more details, please read the [Development Guidelines](docs/development/GUARDRAILS_GUIDELINES.md).
 
