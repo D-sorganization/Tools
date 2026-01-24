@@ -76,10 +76,9 @@ def load_env_file(
         return False
 
     if env_path:
-        env_file = Path(env_path)
+        env_file: Path | None = Path(env_path)
     else:
-        found_file = find_env_file(filename, search_locations=search_locations)
-        env_file = found_file if found_file else None
+        env_file = find_env_file(filename, search_locations=search_locations)
 
     if env_file and env_file.exists():
         load_dotenv(env_file)
