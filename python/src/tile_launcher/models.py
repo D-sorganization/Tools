@@ -11,8 +11,11 @@ except ImportError:
     # Fallback
     def safe_read_json(path, default=None):
         import json
+
         with open(path, encoding="utf-8") as f:
             return json.load(f)
+
+
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path

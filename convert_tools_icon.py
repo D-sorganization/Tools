@@ -12,6 +12,8 @@ except ImportError:
     # Fallback
     def init_default_logging():
         init_default_logging()
+
+
 from pathlib import Path
 
 try:

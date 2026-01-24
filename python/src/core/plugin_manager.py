@@ -36,6 +36,7 @@ class PluginManager:
             # Use shared file utility for consistent JSON handling
             try:
                 from utils.file_utils import safe_read_json
+
                 data = safe_read_json(self.tools_file, default={})
                 if data is None:
                     data = {}

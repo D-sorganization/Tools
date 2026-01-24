@@ -8,6 +8,8 @@ except ImportError:
     # Fallback
     def init_default_logging():
         init_default_logging()
+
+
 import shutil
 import subprocess
 
@@ -17,6 +19,7 @@ try:
 except ImportError:
     # Fallback
     import subprocess
+
     run_command = subprocess.run
 import sys
 

@@ -62,6 +62,7 @@ class DataReader:
             # Use csv_utils for consistent error handling
             try:
                 from utils.csv_utils import safe_read_csv
+
                 return safe_read_csv(file_path, **kwargs)
             except ImportError:
                 # Fallback
@@ -70,6 +71,7 @@ class DataReader:
             # Use csv_utils for consistent error handling
             try:
                 from utils.csv_utils import safe_read_csv
+
                 return safe_read_csv(file_path, sep="\t", **kwargs)
             except ImportError:
                 # Fallback

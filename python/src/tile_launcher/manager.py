@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-
 # Use shared file utility
 try:
     from utils.file_utils import safe_read_json
@@ -10,8 +9,11 @@ except ImportError:
     # Fallback
     def safe_read_json(path, default=None):
         import json
+
         with open(path, encoding="utf-8") as f:
             return json.load(f)
+
+
 import logging
 from collections.abc import Iterable, Sequence
 from pathlib import Path
@@ -35,7 +37,9 @@ def load_catalog(catalog_path: Path) -> list[AppDefinition]:
         logger.error(message)
         raise AppCatalogError(message)
 
-    catalog_data = safe_read_json(catalog_path.read_text(encoding="utf-8", default=None))
+    catalog_data = safe_read_json(
+        catalog_path.read_text(encoding="utf-8", default=None)
+    )
     catalog: list[AppDefinition] = []
     for entry in catalog_data:
         app = AppDefinition(

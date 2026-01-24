@@ -21,6 +21,8 @@ except ImportError:
     # Fallback
     def init_default_logging():
         init_default_logging()
+
+
 import re
 import subprocess
 
@@ -30,6 +32,7 @@ try:
 except ImportError:
     # Fallback
     import subprocess
+
     run_command = subprocess.run
 import sys
 from datetime import datetime

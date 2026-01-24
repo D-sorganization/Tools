@@ -7,8 +7,11 @@ except ImportError:
     # Fallback
     def safe_read_json(path, default=None):
         import json
+
         with open(path, encoding="utf-8") as f:
             return json.load(f)
+
+
 import logging
 import time
 from pathlib import Path

@@ -15,6 +15,7 @@ import sys
 # Use shared path utility
 try:
     from utils.path_helpers import ensure_utils_in_path
+
     ensure_utils_in_path()
 except ImportError:
     # Fallback

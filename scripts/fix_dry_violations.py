@@ -8,7 +8,7 @@ This script systematically replaces common patterns with shared utilities.
 import re
 import sys
 from pathlib import Path
-from typing import Match
+from re import Match
 
 # Track fixes
 fix_count = 0
@@ -20,44 +20,42 @@ def fix_sys_path_manipulations(content: str, file_path: Path) -> tuple[str, int]
     fixes = 0
 
     # Pattern 1: sys.path.insert(0, str(...))
-    pattern1 = r'sys\.path\.insert\s*\(\s*0\s*,\s*str\s*\([^)]+\)\s*\)'
+    pattern1 = r"sys\.path\.insert\s*\(\s*0\s*,\s*str\s*\([^)]+\)\s*\)"
 
     def replace1(match: Match[str]) -> str:
         nonlocal fixes
         fixes += 1
-        return 'ensure_utils_in_path()'
+        return "ensure_utils_in_path()"
 
     content = re.sub(pattern1, replace1, content)
 
     # Pattern 2: sys.path.append(str(...))
-    pattern2 = r'sys\.path\.append\s*\(\s*str\s*\([^)]+\)\s*\)'
+    pattern2 = r"sys\.path\.append\s*\(\s*str\s*\([^)]+\)\s*\)"
 
     def replace2(match: Match[str]) -> str:
         nonlocal fixes
         fixes += 1
-        return 'ensure_utils_in_path()'
+        return "ensure_utils_in_path()"
 
     content = re.sub(pattern2, replace2, content)
 
     # Add import if we made replacements
     if fixes > 0:
         # Check if import already exists
-        if 'from utils.path_helpers import ensure_utils_in_path' not in content:
+        if "from utils.path_helpers import ensure_utils_in_path" not in content:
             # Find where to insert import (after other imports)
-            import_pattern = r'(import sys\n|from pathlib import Path\n)'
+            import_pattern = r"(import sys\n|from pathlib import Path\n)"
             match = re.search(import_pattern, content)
             if match:
                 insert_pos = match.end()
                 content = (
-                    content[:insert_pos] +
-                    '\n# Use shared path utility\n'
-                    'try:\n'
-                    '    from utils.path_helpers import ensure_utils_in_path\n'
-                    'except ImportError:\n'
-                    '    # Fallback\n'
-                    '    def ensure_utils_in_path() -> None:\n'
-                    '        pass\n' +
-                    content[insert_pos:]
+                    content[:insert_pos] + "\n# Use shared path utility\n"
+                    "try:\n"
+                    "    from utils.path_helpers import ensure_utils_in_path\n"
+                    "except ImportError:\n"
+                    "    # Fallback\n"
+                    "    def ensure_utils_in_path() -> None:\n"
+                    "        pass\n" + content[insert_pos:]
                 )
 
     fix_count += fixes
@@ -70,19 +68,19 @@ def fix_os_path_join(content: str) -> tuple[str, int]:
     fixes = 0
 
     # Pattern: Path(a) / b / c
-    pattern = r'os\.path\.join\s*\(([^)]+)\)'
+    pattern = r"os\.path\.join\s*\(([^)]+)\)"
 
     def replace(match: Match[str]) -> str:
         nonlocal fixes
         fixes += 1
         args = match.group(1)
         # Convert to Path(...) / ... / ...
-        parts = [p.strip().strip('"\'') for p in args.split(',')]
+        parts = [p.strip().strip("\"'") for p in args.split(",")]
         if len(parts) == 1:
-            return f'Path({parts[0]})'
-        result = f'Path({parts[0]})'
+            return f"Path({parts[0]})"
+        result = f"Path({parts[0]})"
         for part in parts[1:]:
-            result += f' / {part}'
+            result += f" / {part}"
         return result
 
     content = re.sub(pattern, replace, content)
@@ -93,7 +91,7 @@ def fix_os_path_join(content: str) -> tuple[str, int]:
 def process_file(file_path: Path) -> int:
     """Process a single file and fix DRY violations."""
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, encoding="utf-8") as f:
             content = f.read()
 
         original_content = content
@@ -105,7 +103,7 @@ def process_file(file_path: Path) -> int:
 
         # Only write if changes were made
         if content != original_content:
-            with open(file_path, 'w', encoding='utf-8') as f:
+            with open(file_path, "w", encoding="utf-8") as f:
                 f.write(content)
             return total_fixes
 
@@ -120,16 +118,16 @@ def main():
     if len(sys.argv) > 1:
         target = Path(sys.argv[1])
     else:
-        target = Path('.')
+        target = Path(".")
 
     # Find all Python files
-    python_files = list(target.rglob('*.py'))
+    python_files = list(target.rglob("*.py"))
 
     print(f"Processing {len(python_files)} Python files...")
 
     total_fixes = 0
     for file_path in python_files:
-        if '__pycache__' in str(file_path) or '.git' in str(file_path):
+        if "__pycache__" in str(file_path) or ".git" in str(file_path):
             continue
 
         fixes = process_file(file_path)
@@ -141,5 +139,5 @@ def main():
     return 0 if total_fixes > 0 else 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())
