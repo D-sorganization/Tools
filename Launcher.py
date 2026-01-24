@@ -67,6 +67,14 @@ class ToolsLauncher(tk.Tk):
         self.title("Tools Launcher")
         self.geometry("950x700")
 
+        # Set icon
+        try:
+            from tools.ui_utils import set_tk_icon
+
+            set_tk_icon(self)
+        except ImportError:
+            pass
+
         # Style
         style = ttk.Style()
         style.theme_use("clam")

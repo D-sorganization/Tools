@@ -37,8 +37,16 @@ def main() -> None:
     # Optional: Load stylesheet or platform specific tweaks
     app.setStyle("Fusion")
 
-    window = UnifiedLauncher()
-    window.show()
+    try:
+        from tools.gui.windows.unified_launcher_window import UnifiedLauncher
+        from tools.ui_utils import set_qt_icon
+
+        window = UnifiedLauncher()
+        set_qt_icon(window)
+        window.show()
+    except Exception as e:
+        logger.error(f"Failed to create window: {e}")
+        sys.exit(1)
 
     sys.exit(app.exec())
 
