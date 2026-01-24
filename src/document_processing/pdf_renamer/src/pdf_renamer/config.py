@@ -31,7 +31,7 @@ try:
         project_root = get_project_root_from_file(__file__)
     except ImportError:
         project_root = Path(__file__).parent.parent.parent
-    
+
     env_file = find_env_file(
         search_locations=[
             project_root,  # Project root
