@@ -48,7 +48,7 @@ except ImportError:
 # Import the original data processor
 import sys
 
-sys.path.append(Path(os.path.abspath(__file__).parent))
+sys.path.append(str(Path(__file__).parent))
 from Data_Processor_r0 import CSVProcessorApp as OriginalCSVProcessorApp
 
 # Import folder tool functionality
