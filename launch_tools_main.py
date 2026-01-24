@@ -95,7 +95,13 @@ def launch_integrated_app() -> bool:
     original_cwd = os.getcwd()
 
     try:
-        from tools.ui_utils import set_tk_icon
+        try:
+            from tools.ui_utils import set_tk_icon
+        except ImportError:
+            logger.warning("Could not import tools.ui_utils.set_tk_icon. Icon setting will be skipped.")
+            
+            def set_tk_icon(app):
+                pass
 
         if app_dir.exists():
             os.chdir(app_dir)

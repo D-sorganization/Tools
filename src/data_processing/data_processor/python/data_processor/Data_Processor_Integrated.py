@@ -56,6 +56,15 @@ except ImportError:
     sys.path.append(str(Path(__file__).parent))
 from Data_Processor_r0 import CSVProcessorApp as OriginalCSVProcessorApp
 
+try:
+    from utils.csv_utils import safe_read_csv, safe_write_csv
+    from utils.file_utils import safe_read_text, safe_write_text
+except ImportError:
+    # If utils are not directly importable, we might rely on sys.path adjustments
+    # that happened above, but explicit imports are safer if path is correct.
+    logging.warning("Could not import safe io utils from utils package")
+
+
 # Import folder tool functionality
 try:
     FOLDER_TOOL_AVAILABLE = True
