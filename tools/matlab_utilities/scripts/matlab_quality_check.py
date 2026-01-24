@@ -51,8 +51,7 @@ from utils.compatibility import UTC  # noqa: E402
 MATLAB_SCRIPT_TIMEOUT_SECONDS: int = 300  # 5 minutes - allows time for large codebases
 
 # Set up logging
-init_default_logging()s - %(levelname)s - %(message)s",
-)
+init_default_logging()
 logger = logging.getLogger(__name__)
 
 

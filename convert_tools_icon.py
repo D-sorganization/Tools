@@ -25,7 +25,7 @@ except ImportError:
     from PIL import Image
 
 # Configure logging
-init_default_logging()s: %(message)s")
+init_default_logging()
 logger = logging.getLogger(__name__)
 
 
