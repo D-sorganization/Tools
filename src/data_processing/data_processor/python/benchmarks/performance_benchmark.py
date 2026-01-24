@@ -406,7 +406,7 @@ class PerformanceBenchmark:
 
         finally:
             # Clean up test data
-            import shutil
+            pass
 
 
 try:
@@ -417,19 +417,23 @@ except ImportError:
 try:
     from utils.csv_utils import safe_read_csv, safe_write_csv
 except ImportError:
-    import pandas as pd
     from pathlib import Path
+
+    import pandas as pd
+
     def safe_read_csv(path, default=None, **kwargs):
         try:
             return pd.read_csv(path, **kwargs)
         except Exception:
             return default if default is not None else pd.DataFrame()
+
     def safe_write_csv(df, path, create_parents=True, **kwargs):
         Path(path).parent.mkdir(parents=True, exist_ok=True)
         safe_write_csv(df, path, **kwargs)
+
     def safe_write_json(path, data, indent=2, create_parents=True):
         Path(path).parent.mkdir(parents=True, exist_ok=True)
-        with open(path, 'w', encoding='utf-8') as f:
+        with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=indent)
             if tmp_path.exists():
                 shutil.rmtree(tmp_path)

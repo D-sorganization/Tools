@@ -15,9 +15,8 @@ import sys
 # Add parent directory to path for imports
 sys.path.insert(0, Path(os.path.abspath(__file__).parent))
 
+
 from solar_system.main import main
 
-
-from pathlib import Path
 if __name__ == "__main__":
     sys.exit(main())

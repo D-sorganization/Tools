@@ -9,11 +9,10 @@ import subprocess
 import sys
 import tkinter as tk
 import webbrowser
+from pathlib import Path
 from tkinter import messagebox, ttk
 from typing import Any
 
-
-from pathlib import Path
 # Path helpers
 BASE_DIR = Path(os.path.abspath(__file__).parent)
 

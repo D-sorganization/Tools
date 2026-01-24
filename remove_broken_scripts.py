@@ -5,21 +5,24 @@ import logging
 import os
 from pathlib import Path
 
-
 try:
     from utils.file_utils import safe_read_text, safe_write_text
 except ImportError:
     from pathlib import Path
-    def safe_read_text(path, encoding='utf-8', default=''):
+
+    def safe_read_text(path, encoding="utf-8", default=""):
         try:
             return Path(path).read_text(encoding=encoding)
         except Exception:
             return default
-    def safe_write_text(path, content, encoding='utf-8', create_parents=True):
+
+    def safe_write_text(path, content, encoding="utf-8", create_parents=True):
         p = Path(path)
         if create_parents:
             p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(content, encoding=encoding)
+
+
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
@@ -59,7 +62,7 @@ def find_and_remove_syntax_error_scripts() -> int:
     removed_count = 0
     for file_path in Path(".").glob("fix_*.py"):
         try:
-            content = safe_read_text(file_path, default='')
+            content = safe_read_text(file_path, default="")
             compile(content, str(file_path), "exec")
             logger.info(f"✅ Script is valid: {file_path}")
         except SyntaxError as e:

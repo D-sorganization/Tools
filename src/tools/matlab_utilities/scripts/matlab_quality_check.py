@@ -38,12 +38,14 @@ except ImportError:
 
 from utils.compatibility import UTC  # noqa: E402
 
-
 try:
     from utils.path_helpers import ensure_utils_in_path
 except ImportError:
+
     def ensure_utils_in_path():
         pass
+
+
 # Constants
 MATLAB_SCRIPT_TIMEOUT_SECONDS: int = 300  # 5 minutes - allows time for large codebases
 

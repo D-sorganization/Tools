@@ -40,12 +40,13 @@ except ImportError:
         return subprocess.run([sys.executable, str(script_path)], **kwargs)
 
     def get_logger(name):
-        import logging
+        pass
 
 
 try:
     from utils.path_helpers import ensure_utils_in_path
 except ImportError:
+
     def ensure_utils_in_path():
         pass
         return logging.getLogger(name)

@@ -1,6 +1,5 @@
 """Tests for Folders_Tool_r0.py."""
 
-import os
 import sys
 from unittest.mock import MagicMock
 

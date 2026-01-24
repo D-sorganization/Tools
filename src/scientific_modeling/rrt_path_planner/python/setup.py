@@ -3,13 +3,12 @@
 Setup script for Star Wars RRT Path Planner - Python Version
 """
 
-import os
+
+from pathlib import Path
 
 from setuptools import find_packages, setup
 
 
-
-from pathlib import Path
 def read_readme() -> str:
     """Read the README file and return its contents"""
     readme_path = Path(Path(__file__).parent, "README.md")

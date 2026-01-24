@@ -7,11 +7,10 @@ from typing import Any
 # Add the parent directory to sys.path to import webapp
 sys.path.append(os.path.abspath(Path(Path(__file__).parent, "../../..")))
 
+
 from web_applications.calculator.webapp import create_app
 
 
-
-from pathlib import Path
 def perform_request(client: Any, payload: dict[str, object]) -> dict[str, object]:
     response = client.post("/api/calculate", json=payload)
     assert response.status_code == 200

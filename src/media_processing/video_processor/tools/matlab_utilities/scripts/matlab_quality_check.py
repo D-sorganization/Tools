@@ -44,12 +44,14 @@ except ImportError:
 
 from utils.compatibility import UTC  # noqa: E402
 
-
 try:
     from utils.path_helpers import ensure_utils_in_path
 except ImportError:
+
     def ensure_utils_in_path():
         pass
+
+
 # Constants
 # [s] Timeout for MATLAB script execution - 5 minutes allows for large codebase analysis
 MATLAB_SCRIPT_TIMEOUT_SECONDS: Final[int] = 300

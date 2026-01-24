@@ -7,11 +7,10 @@ import logging
 import os
 import re
 import sys
+from pathlib import Path
 
 from PyPDF2 import PdfReader
 
-
-from pathlib import Path
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,

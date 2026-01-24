@@ -14,17 +14,19 @@ import sys
 from pathlib import Path
 from typing import Any
 
-
 try:
     from utils.file_utils import safe_read_json
 except ImportError:
     import json
+
     def safe_read_json(path, default=None):
         try:
-            with open(path, encoding='utf-8') as f:
+            with open(path, encoding="utf-8") as f:
                 return json.load(f)
         except Exception:
             return default
+
+
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)

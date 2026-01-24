@@ -5,11 +5,10 @@ import unittest
 # Add the repo root to sys.path
 sys.path.append(os.path.abspath(Path(Path(__file__).parent, "../..")))
 
+
 from web_applications.calculator.webapp import create_app
 
 
-
-from pathlib import Path
 class TestRateLimitProxies(unittest.TestCase):
     def setUp(self) -> None:
         self.app = create_app()

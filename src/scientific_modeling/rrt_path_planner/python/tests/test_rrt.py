@@ -7,11 +7,10 @@ import numpy as np
 # Add src to path
 sys.path.append(os.path.abspath(Path(Path(__file__).parent, "../src")))
 
+
 from star_wars_rrt import Obstacle, PursuitAI, RRTPlanner, Ship
 
 
-
-from pathlib import Path
 class TestRRTPlanner(unittest.TestCase):
     def setUp(self) -> None:
         self.bounds = np.array([-10, 10, -10, 10, -10, 10])
