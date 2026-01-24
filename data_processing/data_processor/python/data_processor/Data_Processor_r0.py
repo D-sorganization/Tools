@@ -27,6 +27,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
+# Use shared CSV utility
+try:
+    from utils.csv_utils import safe_read_csv
+except ImportError:
+    # Fallback
+    def safe_read_csv(*args, **kwargs):
+        return pd.read_csv(*args, **kwargs)
+
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 from scipy.interpolate import UnivariateSpline
@@ -89,7 +97,7 @@ def process_single_csv_file(
     This function is designed to be run in a separate process.
     """
     try:
-        df = pd.read_csv(file_path, low_memory=False)
+        df = safe_read_csv(file_path, low_memory=False)
 
         # Determine which signals to keep for this specific file
         signals_in_this_file = [
@@ -2013,7 +2021,7 @@ class CSVProcessorApp(ctk.CTk):
                         self.update()
 
                 # Just read header for efficiency
-                df = pd.read_csv(file_path, nrows=1)
+                df = safe_read_csv(file_path, nrows=1)
                 signals = df.columns.tolist()
                 all_signals.update(signals)
 
@@ -2078,7 +2086,7 @@ class CSVProcessorApp(ctk.CTk):
 
             if full_path and Path(full_path).exists():
                 try:
-                    df = pd.read_csv(full_path, low_memory=False)
+                    df = safe_read_csv(full_path, low_memory=False)
                     # Simple time column conversion
                     for col in df.columns:
                         if any(
@@ -2356,7 +2364,7 @@ class CSVProcessorApp(ctk.CTk):
         print(f"\n_process_single_file called for: {os.path.basename(file_path)}")
         try:
             print("  Loading CSV file...")
-            df = pd.read_csv(file_path, low_memory=False)
+            df = safe_read_csv(file_path, low_memory=False)
             print(f"  Loaded DataFrame shape: {df.shape}")
             print(f"  Original columns: {list(df.columns)}")
 
@@ -5129,7 +5137,7 @@ class CSVProcessorApp(ctk.CTk):
                     break
 
             if full_path and Path(full_path).exists():
-                df = pd.read_csv(full_path)
+                df = safe_read_csv(full_path)
                 # Try to identify time column
                 time_col = None
                 for col in df.columns:
@@ -6755,7 +6763,7 @@ COMMON MISTAKES TO AVOID:
 
         try:
             # Load and process the DAT file with selected tags
-            df = pd.read_csv(self.dat_import_data_file_path, sep="\t", low_memory=False)
+            df = safe_read_csv(self.dat_import_data_file_path, sep="\t", low_memory=False)
 
             # Filter to only selected tags
             if "Time" in df.columns:
@@ -6803,7 +6811,7 @@ COMMON MISTAKES TO AVOID:
 
         for file_path in self.input_file_paths:
             try:
-                df = pd.read_csv(file_path, low_memory=False)
+                df = safe_read_csv(file_path, low_memory=False)
                 time_col = df.columns[0]
 
                 # Convert time column
