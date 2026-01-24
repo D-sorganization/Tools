@@ -4,6 +4,9 @@ import re
 import sys
 from pathlib import Path
 
+# Match single-line print() statements. Note: This pattern may not correctly handle
+# multiline print statements or deeply nested parentheses. For complex cases,
+# manual review is recommended.
 PRINT_PATTERN = re.compile(r"^(\s*)print\((.+)\)(\s*)$")
 
 

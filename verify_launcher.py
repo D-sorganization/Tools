@@ -6,6 +6,7 @@ This script helps identify which launcher file is being executed.
 
 import os
 import sys
+from datetime import datetime
 from pathlib import Path
 
 
@@ -22,8 +23,6 @@ def _print_environment_info(current_file: Path) -> None:
 
 def _check_launcher_file(launcher_path: Path) -> None:
     """Check and display info about a launcher file."""
-    from datetime import datetime
-
     if not launcher_path.exists():
         print(f"❌ {launcher_path.name} - NOT FOUND")
         return

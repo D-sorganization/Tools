@@ -491,6 +491,7 @@ class UnifiedLauncher(QMainWindow):
             )
             self.log(f"❌ {error_msg}")
             QMessageBox.critical(self, "Launch Error", error_msg)
+            return
         except PermissionError:
             error_msg = (
                 f"Permission denied: Cannot execute {path}\n\n"
@@ -498,6 +499,7 @@ class UnifiedLauncher(QMainWindow):
             )
             self.log(f"❌ {error_msg}")
             QMessageBox.critical(self, "Launch Error", error_msg)
+            return
         except OSError as e:
             error_msg = (
                 f"Failed to start Python process: {e}\n\n"
@@ -506,6 +508,7 @@ class UnifiedLauncher(QMainWindow):
             )
             self.log(f"❌ {error_msg}")
             QMessageBox.critical(self, "Launch Error", error_msg)
+            return
 
     def _launch_matlab_tool(
         self, path: Path, tool_info: dict[str, Any], is_debug: bool
@@ -536,7 +539,9 @@ class UnifiedLauncher(QMainWindow):
             QMessageBox.warning(self, "MATLAB Not Found", error_msg)
             self._open_file_with_default_app(path, tool_info)
 
-    def _open_file_with_default_app(self, path: Path, tool_info: dict[str, Any]) -> None:
+    def _open_file_with_default_app(
+        self, path: Path, tool_info: dict[str, Any]
+    ) -> None:
         """Open a file with the system's default application."""
         try:
             if hasattr(os, "startfile"):
@@ -553,14 +558,14 @@ class UnifiedLauncher(QMainWindow):
             )
             self.log(f"❌ {final_error}")
             QMessageBox.critical(self, "File Open Error", final_error)
+            return
 
     def _launch_browser_tool(self, path: Path) -> None:
         """Launch a web/browser tool."""
         try:
             uri = path.as_uri()
             if not (
-                uri.startswith("file://")
-                or uri.startswith(("http://", "https://"))
+                uri.startswith("file://") or uri.startswith(("http://", "https://"))
             ):
                 raise ValueError(f"Invalid URI scheme: {uri}")
             webbrowser.open(uri)
@@ -569,6 +574,7 @@ class UnifiedLauncher(QMainWindow):
             error_msg = f"Failed to open browser: {e}"
             self.log(f"❌ {error_msg}")
             QMessageBox.critical(self, "Browser Error", error_msg)
+            return
 
     def _launch_batch_tool(
         self, path: Path, tool_info: dict[str, Any], is_debug: bool
