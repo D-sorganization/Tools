@@ -48,7 +48,12 @@ except ImportError:
 # Import the original data processor
 import sys
 
-sys.path.append(str(Path(__file__).parent))
+try:
+    from utils.path_helpers import ensure_utils_in_path
+
+    ensure_utils_in_path()
+except ImportError:
+    sys.path.append(str(Path(__file__).parent))
 from Data_Processor_r0 import CSVProcessorApp as OriginalCSVProcessorApp
 
 # Import folder tool functionality
@@ -828,7 +833,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                                 continue
 
                         # Generate output filename
-                        base_name = os.path.splitext(Path(file_path).name)[0]
+                        base_name = Path(file_path).stem
                         output_filename = self._generate_output_filename(
                             output_format, base_name
                         )
@@ -1985,7 +1990,7 @@ except ImportError:
                         try:
                             file_size = os.path.getsize(file_path)
                             file_ext = (
-                                os.path.splitext(file)[1].lower() or "no_extension"
+                                Path(file).suffix.lower() or "no_extension"
                             )
 
                             total_size += file_size
@@ -2091,7 +2096,7 @@ except ImportError:
         extensions = self.folder_filter_extensions.get().strip()
         if extensions:
             ext_list = [ext.strip().lower() for ext in extensions.split(",")]
-            file_ext = os.path.splitext(file_path)[1].lower()
+            file_ext = Path(file_path).suffix.lower()
             if file_ext not in ext_list:
                 return False
 
@@ -2120,7 +2125,7 @@ except ImportError:
 
         # Organize by type
         if self.folder_organize_by_type_var.get():
-            file_ext = os.path.splitext(filename)[1].lower()
+            file_ext = Path(filename).suffix.lower()
             type_mapping = {
                 ".jpg": "Images",
                 ".jpeg": "Images",
@@ -2165,7 +2170,8 @@ except ImportError:
             return path
         parent, name = os.path.split(path)
         is_file = "." in name and not os.path.isdir(path)
-        filename, ext = os.path.splitext(name) if is_file else (name, "")
+        filename = Path(name).stem if is_file else name
+        ext = Path(name).suffix if is_file else ""
         counter = 1
         new_path = Path(parent) / f"{filename} ({counter}{ext}")
         while Path(new_path).exists():
