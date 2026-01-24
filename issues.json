@@ -70,11 +70,21 @@
     },
     {
         "number": 215,
+        "title": "CRITICAL: CI Standard and Control Tower Workflows Failing",
+        "labels": ["critical", "ci", "jules:assessment"]
+    },
+    {
+        "number": 216,
+        "title": "CRITICAL: Missing Tests for New Unit Converter PWA",
+        "labels": ["critical", "quality", "jules:assessment"]
+    },
+    {
+        "number": 217,
         "title": "CRITICAL: Remove non-blocking 'echo warning' hacks from CI/CD",
         "labels": ["critical", "ci", "jules:assessment", "needs-attention"]
     },
     {
-        "number": 216,
+        "number": 218,
         "title": "jules:assessment,needs-attention: Consolidate legacy 'tools/' directory into 'src/'",
         "labels": ["jules:assessment", "refactor", "needs-attention"]
     }
