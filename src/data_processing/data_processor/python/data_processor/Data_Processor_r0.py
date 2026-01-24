@@ -23,8 +23,6 @@ from tkinter import colorchooser, filedialog, messagebox, simpledialog
 from typing import Any, cast
 
 import customtkinter as ctk
-
-logger = logging.getLogger(__name__)
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
@@ -35,6 +33,8 @@ from matplotlib.figure import Figure
 from scipy.interpolate import UnivariateSpline
 from scipy.io import savemat
 from scipy.signal import butter, filtfilt, medfilt, savgol_filter
+
+logger = logging.getLogger(__name__)
 
 
 def _validate_formula_security(formula: str, allowed_names: set[str]) -> None:
