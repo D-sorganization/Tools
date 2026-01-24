@@ -62,5 +62,10 @@
         "number": 213,
         "title": "jules:assessment,needs-attention: Migrate Legacy Data Handling to Parquet/SQLite",
         "labels": ["jules:assessment", "needs-attention"]
+    },
+    {
+        "number": 214,
+        "title": "CRITICAL: Fix Calculator Logic Gaps and Empty Tests",
+        "labels": ["critical", "bug", "jules:assessment"]
     }
 ]
