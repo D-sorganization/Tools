@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 # Use shared path setup utility
 try:
-    from utils.path_setup import setup_python_path, get_repo_root
+    from utils.path_setup import get_repo_root, setup_python_path
 
     # Standard setup
     REPO_ROOT = get_repo_root()
@@ -33,7 +33,7 @@ except ImportError:
     current_dir = Path(__file__).resolve().parent
     sys.path.insert(0, str(current_dir / "src" / "python" / "src"))
     try:
-        from utils.path_setup import setup_python_path, get_repo_root
+        from utils.path_setup import get_repo_root, setup_python_path
 
         REPO_ROOT = get_repo_root()
         setup_python_path(repo_root=REPO_ROOT)

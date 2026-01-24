@@ -427,10 +427,10 @@ class UnifiedLauncher(QMainWindow):
         """Launch the specified tool using shared utils."""
         # Late import to prevent circular dependency issues during startup
         from tools.launch_utils import (
-            launch_tool,
             LaunchError,
             SecurityError,
             ToolNotFoundError,
+            launch_tool,
         )
 
         is_debug = self.debug_mode.isChecked()

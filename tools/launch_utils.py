@@ -4,8 +4,9 @@ import os
 import subprocess
 import sys
 import webbrowser
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Any
 
 
 # Custom Exceptions
@@ -78,7 +79,7 @@ def launch_python_tool(
     path: Path,
     tool_name: str,
     is_debug: bool = False,
-    log_func: Optional[Callable[[str], None]] = None,
+    log_func: Callable[[str], None] | None = None,
 ) -> None:
     """Launch a Python tool."""
     if log_func:
@@ -114,7 +115,7 @@ def launch_matlab_tool(
     path: Path,
     tool_name: str,
     is_debug: bool = False,
-    log_func: Optional[Callable[[str], None]] = None,
+    log_func: Callable[[str], None] | None = None,
 ) -> None:
     """Launch a MATLAB tool."""
     if log_func:
@@ -147,7 +148,7 @@ def launch_matlab_tool(
 
 
 def launch_browser_tool(
-    path: Path, log_func: Optional[Callable[[str], None]] = None
+    path: Path, log_func: Callable[[str], None] | None = None
 ) -> None:
     """Launch a browser tool."""
     try:
@@ -163,7 +164,7 @@ def launch_batch_tool(
     path: Path,
     tool_name: str,
     is_debug: bool = False,
-    log_func: Optional[Callable[[str], None]] = None,
+    log_func: Callable[[str], None] | None = None,
 ) -> None:
     """Launch a batch script."""
     if sys.platform != "win32":
@@ -192,7 +193,7 @@ def launch_tool(
     tool_info: dict[str, Any],
     repo_root: Path,
     is_debug: bool = False,
-    log_func: Optional[Callable[[str], None]] = None,
+    log_func: Callable[[str], None] | None = None,
 ) -> None:
     """
     Main entry point to launch a tool.

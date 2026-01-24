@@ -5,7 +5,6 @@ This is a simpler alternative for environments where PyQt6 is not available.
 """
 
 import json
-import os
 import sys
 import tkinter as tk
 from pathlib import Path
@@ -18,11 +17,11 @@ BASE_DIR = Path(__file__).resolve().parent
 # Import shared utilities
 try:
     from tools.launch_utils import (
-        launch_tool,
         LaunchError,
+        PlatformError,
         SecurityError,
         ToolNotFoundError,
-        PlatformError,
+        launch_tool,
     )
 except ImportError:
     # If tools package not found, we can't function safely
@@ -40,7 +39,7 @@ def load_tools_config() -> dict[str, list[Any]]:
         return {}
 
     try:
-        with open(json_path, "r", encoding="utf-8") as f:
+        with open(json_path, encoding="utf-8") as f:
             config = json.load(f)
 
         # Transform JSON format to match what Launcher expects if needed,

@@ -6,9 +6,9 @@ import logging
 import re
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, List, Dict, Optional
+from typing import Any
 
 # Constants
 MATLAB_SCRIPT_TIMEOUT_SECONDS: int = 300
@@ -32,8 +32,8 @@ class MATLABQualityChecker:
         """Initialize the MATLAB quality checker."""
         self.project_root = project_root
         self.matlab_dir = project_root / "matlab"
-        self.results: Dict[str, Any] = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+        self.results: dict[str, Any] = {
+            "timestamp": datetime.now(UTC).isoformat(),
             "total_files": 0,
             "issues": [],
             "passed": True,
@@ -60,7 +60,7 @@ class MATLABQualityChecker:
         logger.info("Found %d MATLAB files", len(m_files))
         return True
 
-    def run_matlab_quality_checks(self) -> Dict[str, Any]:
+    def run_matlab_quality_checks(self) -> dict[str, Any]:
         """Run MATLAB quality checks using the MATLAB script."""
         try:
             matlab_script = self.matlab_dir / "matlab_quality_config.m"
@@ -80,7 +80,7 @@ class MATLABQualityChecker:
             logger.exception("Error running MATLAB quality checks")
             return {"error": str(e)}
 
-    def _run_matlab_script(self, script_path: Path) -> Dict[str, Any]:
+    def _run_matlab_script(self, script_path: Path) -> dict[str, Any]:
         """Attempt to run MATLAB script from command line."""
         try:
             commands = [
@@ -131,7 +131,7 @@ class MATLABQualityChecker:
             logger.exception("Error running MATLAB script")
             return {"error": str(e)}
 
-    def _static_matlab_analysis(self) -> Dict[str, Any]:
+    def _static_matlab_analysis(self) -> dict[str, Any]:
         """Perform static analysis of MATLAB files without running MATLAB."""
         logger.info("Performing static MATLAB file analysis")
 
@@ -157,7 +157,7 @@ class MATLABQualityChecker:
             "passed": len(issues) == 0,
         }
 
-    def _analyze_matlab_file(self, file_path: Path) -> List[str]:
+    def _analyze_matlab_file(self, file_path: Path) -> list[str]:
         """Analyze a single MATLAB file for quality issues."""
         issues = []
 
@@ -378,7 +378,7 @@ class MATLABQualityChecker:
 
         return issues
 
-    def run_all_checks(self) -> Dict[str, Any]:
+    def run_all_checks(self) -> dict[str, Any]:
         """Run all MATLAB quality checks."""
         logger.info("Starting MATLAB quality checks")
 

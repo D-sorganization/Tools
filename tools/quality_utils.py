@@ -4,7 +4,7 @@ import ast
 import re
 import sys
 from pathlib import Path
-from typing import List, Tuple, Pattern
+from re import Pattern
 
 
 # ANSI colors for terminal output
@@ -30,7 +30,7 @@ class Colors:
 
 
 # Configuration
-BANNED_PATTERNS: List[Tuple[Pattern, str]] = [
+BANNED_PATTERNS: list[tuple[Pattern, str]] = [
     (re.compile(r"\bTODO\b"), "TODO placeholder found"),
     (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
     (re.compile(r"^\s*\.\.\.\s*$"), "Ellipsis placeholder"),
@@ -52,7 +52,7 @@ BANNED_PATTERNS: List[Tuple[Pattern, str]] = [
     (re.compile(r"insert.*here", re.IGNORECASE), "Template placeholder"),
 ]
 
-PASS_PATTERNS: List[Tuple[Pattern, str]] = [
+PASS_PATTERNS: list[tuple[Pattern, str]] = [
     # Empty pass statements that are likely placeholders
     (re.compile(r"^\s*pass\s*$"), "Empty pass statement"),
     # Pass statements in empty blocks that might be placeholders
@@ -70,14 +70,14 @@ PASS_PATTERNS: List[Tuple[Pattern, str]] = [
     ),
 ]
 
-MAGIC_NUMBERS: List[Tuple[Pattern, str]] = [
+MAGIC_NUMBERS: list[tuple[Pattern, str]] = [
     (re.compile(r"(?<![0-9])3\.141"), "Use math.pi instead of 3.141"),
     (re.compile(r"(?<![0-9])9\.8[0-9]?(?![0-9])"), "Define GRAVITY_M_S2 constant"),
     (re.compile(r"(?<![0-9])6\.67[0-9]?(?![0-9])"), "Define gravitational constant"),
 ]
 
 
-def is_legitimate_pass_context(lines: List[str], line_num: int) -> bool:
+def is_legitimate_pass_context(lines: list[str], line_num: int) -> bool:
     """Check if a pass statement is in a legitimate context."""
     if line_num <= 0 or line_num > len(lines):
         return False
@@ -142,11 +142,11 @@ def is_legitimate_tkinter_binding(line: str) -> bool:
 
 
 def check_banned_patterns(
-    lines: List[str],
+    lines: list[str],
     filepath: Path,
-) -> List[Tuple[int, str, str]]:
+) -> list[tuple[int, str, str]]:
     """Check for banned patterns in lines."""
-    issues: List[Tuple[int, str, str]] = []
+    issues: list[tuple[int, str, str]] = []
     # Skip checking files that contain placeholder detection patterns themselves
     excluded_files = {
         "quality_check_script.py",
@@ -231,9 +231,9 @@ def strip_comments_from_line(line: str) -> str:
     return line
 
 
-def check_magic_numbers(lines: List[str], filepath: Path) -> List[Tuple[int, str, str]]:
+def check_magic_numbers(lines: list[str], filepath: Path) -> list[tuple[int, str, str]]:
     """Check for magic numbers in lines."""
-    issues: List[Tuple[int, str, str]] = []
+    issues: list[tuple[int, str, str]] = []
     excluded_files = {
         "quality_check_script.py",
         "matlab_quality_check.py",
@@ -251,9 +251,9 @@ def check_magic_numbers(lines: List[str], filepath: Path) -> List[Tuple[int, str
     return issues
 
 
-def check_ast_issues(content: str, filepath: Path) -> List[Tuple[int, str, str]]:
+def check_ast_issues(content: str, filepath: Path) -> list[tuple[int, str, str]]:
     """Check AST for quality issues."""
-    issues: List[Tuple[int, str, str]] = []
+    issues: list[tuple[int, str, str]] = []
     try:
         tree = ast.parse(content)
         for node in ast.walk(tree):
@@ -267,7 +267,7 @@ def check_ast_issues(content: str, filepath: Path) -> List[Tuple[int, str, str]]
     return issues
 
 
-def check_file(filepath: Path) -> List[Tuple[int, str, str]]:
+def check_file(filepath: Path) -> list[tuple[int, str, str]]:
     """Check a Python file for quality issues."""
     try:
         content = filepath.read_text(encoding="utf-8")

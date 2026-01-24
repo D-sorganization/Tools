@@ -7,8 +7,8 @@ from pathlib import Path
 # Try to find the tools package
 try:
     from tools.quality_utils import (
-        check_file,
         Colors,
+        check_file,
     )
 except ImportError:
     # Walk up until we find the repo root or give up
@@ -19,12 +19,12 @@ except ImportError:
             repo_root = current
             break
         current = current.parent
-    
+
     if repo_root:
         sys.path.append(str(repo_root))
         from tools.quality_utils import (
-            check_file,
             Colors,
+            check_file,
         )
     else:
         # Fallback for when running from elsewhere
