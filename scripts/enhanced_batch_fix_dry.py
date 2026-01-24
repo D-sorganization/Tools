@@ -398,9 +398,7 @@ except ImportError:
 
     def safe_write_csv(df, path, create_parents=True, **kwargs):
         Path(path).parent.mkdir(parents=True, exist_ok=True)
-        safe_write_csv(df, path, **kwargs)
-        traceback.print_exc()
-        return 0
+        df.to_csv(path, **kwargs)
 
 
 def find_python_files(root: Path) -> list[Path]:
