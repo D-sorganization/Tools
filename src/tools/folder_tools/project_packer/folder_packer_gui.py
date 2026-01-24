@@ -18,7 +18,7 @@ except ImportError:
     PROJECT_ROOT = Path(__file__).resolve().parents[3]
     PYTHON_SRC_PATH = PROJECT_ROOT / "src" / "python" / "src"
     if str(PYTHON_SRC_PATH) not in sys.path:
-        sys.path.insert(0, str(PYTHON_SRC_PATH))
+        ensure_utils_in_path()
 
 try:
     from utils.compatibility import UTC
@@ -48,6 +48,12 @@ except ImportError:
     # If tkinter is not available (e.g. headless CI), mock it for tests
     from unittest.mock import MagicMock
 
+
+try:
+    from utils.path_helpers import ensure_utils_in_path
+except ImportError:
+    def ensure_utils_in_path():
+        pass
     tk = MagicMock()
     filedialog = MagicMock()
     messagebox = MagicMock()

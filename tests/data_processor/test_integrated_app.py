@@ -7,8 +7,7 @@ from typing import Any
 from unittest.mock import MagicMock, patch
 
 project_root = os.path.abspath(
-    os.path.join(
-        os.path.dirname(__file__),
+    Path(Path(__file__).parent,
         "../../src/data_processing/data_processor/python/data_processor",
     )
 )
@@ -216,6 +215,8 @@ class TestIntegratedCSVProcessorApp(unittest.TestCase):
         # Import the module under test
         import Data_Processor_Integrated
 
+
+from pathlib import Path
         # Reload to ensure it uses the mocked modules
         importlib.reload(Data_Processor_Integrated)
 

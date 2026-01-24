@@ -341,7 +341,7 @@ def fix_csv_patterns(content: str) -> tuple[str, int]:
     if fixes > 0:
         content = ensure_import(
             content,
-            "try:\n    from utils.csv_utils import safe_read_csv, safe_write_csv\nexcept ImportError:\n    import pandas as pd\n    from pathlib import Path\n    def safe_read_csv(path, default=None, **kwargs):\n        try:\n            return pd.read_csv(path, **kwargs)\n        except Exception:\n            return default if default is not None else pd.DataFrame()\n    def safe_write_csv(df, path, create_parents=True, **kwargs):\n        Path(path).parent.mkdir(parents=True, exist_ok=True)\n        df.to_csv(path, **kwargs)",
+            "try:\n    from utils.csv_utils import safe_read_csv, safe_write_csv\nexcept ImportError:\n    import pandas as pd\n    from pathlib import Path\n    def safe_read_csv(path, default=None, **kwargs):\n        try:\n            return pd.read_csv(path, **kwargs)\n        except Exception:\n            return default if default is not None else pd.DataFrame()\n    def safe_write_csv(df, path, create_parents=True, **kwargs):\n        Path(path).parent.mkdir(parents=True, exist_ok=True)\n        safe_write_csv(df, path, **kwargs)",
         )
 
     return content, fixes
@@ -383,6 +383,20 @@ def process_file(file_path: Path) -> int:
         print(f"Error processing {file_path}: {e}", file=sys.stderr)
         import traceback
 
+
+try:
+    from utils.csv_utils import safe_read_csv, safe_write_csv
+except ImportError:
+    import pandas as pd
+    from pathlib import Path
+    def safe_read_csv(path, default=None, **kwargs):
+        try:
+            return pd.read_csv(path, **kwargs)
+        except Exception:
+            return default if default is not None else pd.DataFrame()
+    def safe_write_csv(df, path, create_parents=True, **kwargs):
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        safe_write_csv(df, path, **kwargs)
         traceback.print_exc()
         return 0
 

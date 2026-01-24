@@ -18,7 +18,7 @@ except ImportError:
     from utils.path_helpers import get_project_root_from_file
 
     repo_root = get_project_root_from_file(__file__)
-    sys.path.insert(0, str(repo_root / "src" / "python" / "src"))
+    ensure_utils_in_path()
 
 try:
     from utils.logging_utils import (
@@ -40,6 +40,12 @@ except ImportError:
     import logging
     from typing import Any
 
+
+try:
+    from utils.path_helpers import ensure_utils_in_path
+except ImportError:
+    def ensure_utils_in_path():
+        pass
     DEFAULT_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
     class JsonFormatter(logging.Formatter):

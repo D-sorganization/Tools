@@ -10,6 +10,8 @@ import sys
 
 from PyPDF2 import PdfReader
 
+
+from pathlib import Path
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -89,18 +91,18 @@ def rename_pdfs(root_folder: str) -> None:
         # Sort filenames alphabetically
         for filename in sorted(filenames, key=lambda x: x.lower()):
             if filename.lower().endswith(".pdf"):
-                full_path = os.path.join(dirpath, filename)
+                full_path = Path(dirpath) / filename
                 author, title = extract_title_author(full_path)
                 new_name = f"{author} - {title}.pdf"
-                new_path = os.path.join(dirpath, new_name)
+                new_path = Path(dirpath) / new_name
 
                 # Avoid overwriting by appending a number if needed
                 base_new_name = new_name
                 count = 1
-                while os.path.exists(new_path) and new_path != full_path:
+                while Path(new_path).exists() and new_path != full_path:
                     name_wo_ext, ext = os.path.splitext(base_new_name)
                     new_name = f"{name_wo_ext} ({count}){ext}"
-                    new_path = os.path.join(dirpath, new_name)
+                    new_path = Path(dirpath) / new_name
                     count += 1
 
                 if new_path != full_path:

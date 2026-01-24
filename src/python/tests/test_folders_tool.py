@@ -291,7 +291,7 @@ class TestFolderProcessorApp:
 
             zip_path = app.create_output_zip()
 
-            assert os.path.exists(zip_path)
+            assert Path(zip_path).exists()
             assert zip_path.endswith(".zip")
 
             # Verify zip content

@@ -27,7 +27,7 @@ except ImportError:
         from utils.path_helpers import get_project_root_from_file
 
         repo_root = get_project_root_from_file(__file__)
-        sys.path.insert(0, str(repo_root / "src" / "python" / "src"))
+        ensure_utils_in_path()
 
 try:
     from utils.logging_utils import get_logger
@@ -42,6 +42,12 @@ except ImportError:
     def get_logger(name):
         import logging
 
+
+try:
+    from utils.path_helpers import ensure_utils_in_path
+except ImportError:
+    def ensure_utils_in_path():
+        pass
         return logging.getLogger(name)
 
 

@@ -20,7 +20,7 @@ try:
     from pathlib import Path as PathLib
 
     repo_root = PathLib(__file__).parent.parent.parent.parent.parent.parent.parent
-    sys.path.insert(0, str(repo_root / "src" / "python" / "src"))
+    ensure_utils_in_path()
 
     from utils.env_utils import find_env_file, load_env_file
 
@@ -293,6 +293,12 @@ def update_last_directory(directory: str) -> None:
 try:
     from dotenv import load_dotenv
 
+
+try:
+    from utils.path_helpers import ensure_utils_in_path
+except ImportError:
+    def ensure_utils_in_path():
+        pass
     for env_path in [
         Path(__file__).parent.parent.parent / ".env",
         TOOLS_ENV_PATH,

@@ -14,6 +14,17 @@ import sys
 from pathlib import Path
 from typing import Any
 
+
+try:
+    from utils.file_utils import safe_read_json
+except ImportError:
+    import json
+    def safe_read_json(path, default=None):
+        try:
+            with open(path, encoding='utf-8') as f:
+                return json.load(f)
+        except Exception:
+            return default
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
@@ -221,8 +232,7 @@ def process_assessment_findings(
         Exit code (0 = success, 1 = failure)
     """
     try:
-        with open(summary_file) as f:
-            summary = json.load(f)
+        summary = safe_read_json(summary_file, default=None)
     except (OSError, json.JSONDecodeError) as e:
         logger.error(f"Could not load summary file: {e}")
         return 1

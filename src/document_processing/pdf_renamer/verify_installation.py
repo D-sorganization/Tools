@@ -3,6 +3,8 @@
 import os
 import sys
 
+
+from pathlib import Path
 # Color codes for terminal output
 GREEN = "\033[92m"
 RED = "\033[91m"
@@ -49,7 +51,7 @@ def main() -> None:
     print(f"\n{BOLD}Project Modules:{RESET}")
     # We need to make sure the project root is in path for these to work if run from this file
     sys.path.append(
-        os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
+        os.path.abspath(Path(Path(__file__).parent, "../../.."))
     )
 
     all_good &= check_dependency("extractors", "from src.pdf_renamer import extractors")

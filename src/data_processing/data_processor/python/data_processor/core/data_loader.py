@@ -68,7 +68,7 @@ class DataLoader:
                 df = safe_read_csv(file_path, low_memory=False)
             except ImportError:
                 # Fallback to direct pandas if utils not available
-                df = pd.read_csv(file_path, low_memory=False)
+                df = safe_read_csv(file_path, low_memory=False)
 
             if df is None or df.empty:
                 logger.warning(f"CSV file {file_path} is empty or could not be loaded")
@@ -162,7 +162,7 @@ class DataLoader:
                     df_header = safe_read_csv(file_path, nrows=0)
                 except ImportError:
                     # Fallback
-                    df_header = pd.read_csv(file_path, nrows=0)
+                    df_header = safe_read_csv(file_path, nrows=0)
                 if df_header is not None and not df_header.empty:
                     all_signals.update(df_header.columns)
 
@@ -369,7 +369,7 @@ class DataLoader:
             logger.info(f"Saving DataFrame to {output_path} (format: {format_type})")
 
             if format_type == "csv":
-                df.to_csv(output_path, **kwargs)
+                safe_write_csv(df, output_path, **kwargs)
             elif format_type in ["excel", "xlsx"]:
                 df.to_excel(output_path, **kwargs)
             elif format_type == "parquet":
@@ -378,6 +378,20 @@ class DataLoader:
                 # Use DataWriter for other formats
                 from data_processor.file_utils import DataWriter
 
+
+try:
+    from utils.csv_utils import safe_read_csv, safe_write_csv
+except ImportError:
+    import pandas as pd
+    from pathlib import Path
+    def safe_read_csv(path, default=None, **kwargs):
+        try:
+            return pd.read_csv(path, **kwargs)
+        except Exception:
+            return default if default is not None else pd.DataFrame()
+    def safe_write_csv(df, path, create_parents=True, **kwargs):
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        safe_write_csv(df, path, **kwargs)
                 DataWriter.write_file(df, output_path, format_type, **kwargs)
 
             logger.info(f"Successfully saved to {output_path}")

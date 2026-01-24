@@ -8,10 +8,12 @@ import os
 from setuptools import find_packages, setup
 
 
+
+from pathlib import Path
 def read_readme() -> str:
     """Read the README file and return its contents"""
-    readme_path = os.path.join(os.path.dirname(__file__), "README.md")
-    if os.path.exists(readme_path):
+    readme_path = Path(Path(__file__).parent, "README.md")
+    if Path(readme_path).exists():
         with open(readme_path, encoding="utf-8") as f:
             return f.read()
     return "Star Wars RRT Path Planner - Python Version"
@@ -19,8 +21,8 @@ def read_readme() -> str:
 
 def read_requirements() -> list[str]:
     """Read requirements.txt and return list of dependencies"""
-    requirements_path = os.path.join(os.path.dirname(__file__), "requirements.txt")
-    if os.path.exists(requirements_path):
+    requirements_path = Path(Path(__file__).parent, "requirements.txt")
+    if Path(requirements_path).exists():
         with open(requirements_path, encoding="utf-8") as f:
             return [
                 line.strip() for line in f if line.strip() and not line.startswith("#")

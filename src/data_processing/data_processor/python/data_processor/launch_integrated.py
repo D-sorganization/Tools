@@ -21,8 +21,8 @@ current_dir = Path(__file__).resolve().parent
 parent_dir = current_dir.parent
 
 # Add both directories to the Python path
-sys.path.insert(0, str(parent_dir))
-sys.path.insert(0, str(current_dir))
+ensure_utils_in_path()
+ensure_utils_in_path()
 
 # Preserve existing PYTHONPATH and prepend project directories for child processes
 existing_pythonpath = os.environ.get("PYTHONPATH")
@@ -34,6 +34,12 @@ os.environ["PYTHONPATH"] = (
 try:
     from Data_Processor_Integrated import IntegratedCSVProcessorApp
 
+
+try:
+    from utils.path_helpers import ensure_utils_in_path
+except ImportError:
+    def ensure_utils_in_path():
+        pass
     if __name__ == "__main__":
         logging.info("Starting Integrated Data Processor...")
         logging.info("This version includes:")

@@ -5,12 +5,14 @@ import unittest
 import numpy as np
 
 # Add project root to path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.abspath(Path(Path(__file__).parent, "..")))
 
 from solar_system.core.celestial_body import BodyType, CelestialBody, OrbitalElements
 from solar_system.physics.orbital_mechanics import OrbitalMechanics
 
 
+
+from pathlib import Path
 class TestCelestialBody(unittest.TestCase):
     def test_initialization(self) -> None:
         body = CelestialBody(name="TestBody", body_type=BodyType.PLANET)
