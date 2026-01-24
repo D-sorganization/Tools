@@ -1,255 +1,23 @@
 #!/usr/bin/env python3
 """Quality check script to verify AI-generated code meets standards."""
 
-import ast
-import re
 import sys
 from pathlib import Path
 
-# Configuration
-BANNED_PATTERNS = [
-    (re.compile(r"\bTODO\b"), "TODO placeholder found"),
-    (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
-    (re.compile(r"^\s*\.\.\.\s*$"), "Ellipsis placeholder"),
-    (re.compile(r"NotImplementedError"), "NotImplementedError placeholder"),
-    # More specific angle bracket patterns to avoid Tkinter event bindings
-    (
-        re.compile(r"<[^<>]*placeholder[^<>]*>", re.IGNORECASE),
-        "Angle bracket placeholder",
-    ),
-    (
-        re.compile(r"<[^<>]*TODO[^<>]*>", re.IGNORECASE),
-        "Angle bracket TODO placeholder",
-    ),
-    (
-        re.compile(r"<[^<>]*FIXME[^<>]*>", re.IGNORECASE),
-        "Angle bracket FIXME placeholder",
-    ),
-    (re.compile(r"your.*here", re.IGNORECASE), "Template placeholder"),
-    (re.compile(r"insert.*here", re.IGNORECASE), "Template placeholder"),
-]
-
-# More intelligent pass statement detection
-PASS_PATTERNS = [
-    # Empty pass statements that are likely placeholders
-    (re.compile(r"^\s*pass\s*$"), "Empty pass statement"),
-    # Pass statements in empty blocks that might be placeholders
-    (
-        re.compile(r"^\s*if\s+.*:\s*$"),
-        "Empty if block - consider adding logic or comment",
-    ),
-    (
-        re.compile(r"^\s*else:\s*$"),
-        "Empty else block - consider adding logic or comment",
-    ),
-    (
-        re.compile(r"^\s*except\s+.*:\s*$"),
-        "Empty except block - consider adding error handling",
-    ),
-]
-
-MAGIC_NUMBERS = [
-    (re.compile(r"(?<![0-9])3\.141"), "Use math.pi instead of 3.141"),
-    (re.compile(r"(?<![0-9])9\.8[0-9]?(?![0-9])"), "Define GRAVITY_M_S2 constant"),
-    (re.compile(r"(?<![0-9])6\.67[0-9]?(?![0-9])"), "Define gravitational constant"),
-]
-
-
-def is_legitimate_pass_context(lines: list[str], line_num: int) -> bool:
-    """Check if a pass statement is in a legitimate context."""
-    if line_num <= 0 or line_num > len(lines):
-        return False
-
-    line = lines[line_num - 1].strip()
-    if line != "pass":
-        return False
-
-    # Check if this is in a class definition (legitimate)
-    for i in range(line_num - 1, max(0, line_num - 10), -1):
-        prev_line = lines[i - 1].strip()
-        if prev_line.startswith("class "):
-            return True
-        if prev_line.startswith("def "):
-            return False
-        if prev_line.endswith(":") and any(
-            keyword in prev_line
-            for keyword in ["try:", "except", "finally:", "with ", "if __name__"]
-        ):
-            return True
-
-    # Check if this is in a try/except block (legitimate)
-    for i in range(line_num - 1, max(0, line_num - 5), -1):
-        prev_line = lines[i - 1].strip()
-        if "try:" in prev_line or "except" in prev_line:
-            return True
-
-    # Check if this is in a context manager (legitimate)
-    for i in range(line_num - 1, max(0, line_num - 3), -1):
-        prev_line = lines[i - 1].strip()
-        if prev_line.startswith("with "):
-            return True
-
-    return False
-
-
-def is_legitimate_tkinter_binding(line: str) -> bool:
-    """Check if a line contains legitimate Tkinter event bindings."""
-    # Common Tkinter event patterns
-    tkinter_events = [
-        r"<KeyRelease>",
-        r"<KeyPress>",
-        r"<Key>",
-        r"<Return>",
-        r"<Enter>",
-        r"<Leave>",
-        r"<Button-1>",
-        r"<ButtonRelease-1>",
-        r"<B1-Motion>",
-        r"<Configure>",
-        r"<MouseWheel>",
-        r"<Button-4>",
-        r"<Button-5>",
-        r"<FocusIn>",
-        r"<FocusOut>",
-        r"<<ListboxSelect>>",
-        r"<<ComboboxSelected>>",
-        r"<<TreeviewSelect>>",
-    ]
-
-    return any(re.search(event_pattern, line) for event_pattern in tkinter_events)
-
-
-def check_banned_patterns(
-    lines: list[str],
-    filepath: Path,
-) -> list[tuple[int, str, str]]:
-    """Check for banned patterns in lines."""
-    issues: list[tuple[int, str, str]] = []
-    # Skip checking files that contain placeholder detection patterns themselves
-    excluded_files = {
-        "quality_check_script.py",
-        "matlab_quality_check.py",
-    }
-    if filepath.name in excluded_files:
-        return issues
-
-    for line_num, line in enumerate(lines, 1):
-        # Check for basic banned patterns
-        # Only skip angle bracket patterns for Tkinter bindings, not all patterns
-        for pattern, message in BANNED_PATTERNS:
-            # Skip angle bracket patterns if line contains legitimate Tkinter bindings
-            # Check pattern string before compilation to avoid accessing internal regex
-            pattern_str = (
-                pattern.pattern if hasattr(pattern, "pattern") else str(pattern)
-            )
-            if "<" in pattern_str and is_legitimate_tkinter_binding(line):
-                continue
-            if pattern.search(line):
-                issues.append((line_num, message, line.strip()))
-
-        # Special handling for pass statements
-        if re.match(r"^\s*pass\s*$", line) and not is_legitimate_pass_context(
-            lines,
-            line_num,
-        ):
-            issues.append(
-                (
-                    line_num,
-                    "Empty pass statement - consider adding logic or comment",
-                    line.strip(),
-                ),
-            )
-
-    return issues
-
-
-def strip_comments_from_line(line: str) -> str:
-    """Strip comments from a line, handling string literals correctly.
-
-    Handles single quotes, double quotes, triple quotes, and escaped characters.
-    Returns the line without the comment portion.
-    """
-    in_single_quote = False
-    in_double_quote = False
-    in_triple_single = False
-    in_triple_double = False
-    escaped = False
-    i = 0
-
-    while i < len(line):
-        char = line[i]
-
-        if escaped:
-            escaped = False
-            i += 1
-            continue
-
-        if char == "\\":
-            escaped = True
-            i += 1
-            continue
-
-        # Check for triple quotes first (they take precedence)
-        if i + 2 < len(line):
-            triple = line[i : i + 3]
-            if triple == '"""' and not in_single_quote and not in_triple_single:
-                in_triple_double = not in_triple_double
-                i += 3
-                continue
-            if triple == "'''" and not in_double_quote and not in_triple_double:
-                in_triple_single = not in_triple_single
-                i += 3
-                continue
-
-        # Only process single/double quotes if not in triple quotes
-        if not in_triple_single and not in_triple_double:
-            if char == "'" and not in_double_quote:
-                in_single_quote = not in_single_quote
-            elif char == '"' and not in_single_quote:
-                in_double_quote = not in_double_quote
-            elif char == "#" and not in_single_quote and not in_double_quote:
-                # Found a comment marker outside of strings
-                return line[:i].rstrip()
-
-        i += 1
-
-    return line
-
-
-def check_magic_numbers(lines: list[str], filepath: Path) -> list[tuple[int, str, str]]:
-    """Check for magic numbers in lines."""
-    issues: list[tuple[int, str, str]] = []
-    # Skip checking files that contain placeholder detection patterns themselves
-    excluded_files = {
-        "quality_check_script.py",
-        "matlab_quality_check.py",
-    }
-    if filepath.name in excluded_files:
-        return issues
-
-    for line_num, line in enumerate(lines, 1):
-        line_content = strip_comments_from_line(line)
-        for pattern, message in MAGIC_NUMBERS:
-            if pattern.search(line_content):
-                issues.append((line_num, message, line.strip()))
-    return issues
-
-
-def check_ast_issues(content: str) -> list[tuple[int, str, str]]:
-    """Check AST for quality issues."""
-    issues: list[tuple[int, str, str]] = []
-    try:
-        tree = ast.parse(content)
-        # Skip docstring and return type checks - handled by ruff
-        # Only check for syntax errors
-        for node in ast.walk(tree):
-            if isinstance(node, ast.FunctionDef):
-                # Skip docstring and return type checks
-                # These are handled by ruff with appropriate ignores
-                pass
-    except SyntaxError as e:
-        issues.append((0, f"Syntax error: {e}", ""))
-    return issues
+try:
+    from tools.quality_utils import (
+        check_banned_patterns,
+        check_magic_numbers,
+        check_ast_issues,
+    )
+except ImportError:
+    # If tools package not found (e.g. running from different dir), try to add to path
+    sys.path.append(str(Path(__file__).parent))
+    from tools.quality_utils import (
+        check_banned_patterns,
+        check_magic_numbers,
+        check_ast_issues,
+    )
 
 
 def check_file(filepath: Path) -> list[tuple[int, str, str]]:
@@ -270,7 +38,9 @@ def check_file(filepath: Path) -> list[tuple[int, str, str]]:
 
 def main() -> None:
     """Run quality checks on Python files."""
-    python_files = list(Path().rglob("*.py"))
+    # Start from current directory
+    root_dir = Path(".")
+    python_files = list(root_dir.rglob("*.py"))
 
     # Exclude certain directories
     exclude_dirs = {
@@ -283,9 +53,11 @@ def main() -> None:
         ".mypy_cache",
         "matlab",
         "output",
-        ".ipynb_checkpoints",  # Add checkpoint files to exclusion
-        ".Trash",  # Add trash files to exclusion
+        ".ipynb_checkpoints",
+        ".Trash",
     }
+
+    # Filter files
     python_files = [
         f for f in python_files if not any(part in exclude_dirs for part in f.parts)
     ]
