@@ -82,7 +82,7 @@ class PluginManager:
             return {}
 
         self.tools = {}
-            for category, items in data.items():
+        for category, items in data.items():
                 tool_list = []
                 for item in items:
                     try:
