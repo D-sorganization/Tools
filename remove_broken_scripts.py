@@ -13,6 +13,21 @@ except ImportError:
 import os
 from pathlib import Path
 
+
+try:
+    from utils.file_utils import safe_read_text, safe_write_text
+except ImportError:
+    from pathlib import Path
+    def safe_read_text(path, encoding='utf-8', default=''):
+        try:
+            return Path(path).read_text(encoding=encoding)
+        except Exception:
+            return default
+    def safe_write_text(path, content, encoding='utf-8', create_parents=True):
+        p = Path(path)
+        if create_parents:
+            p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(content, encoding=encoding)
 # Configure logging
 init_default_logging()s: %(message)s")
 logger = logging.getLogger(__name__)
@@ -53,8 +68,7 @@ def main() -> None:
     for file_path in Path(".").glob("fix_*.py"):
         try:
             # Try to compile the script
-            with open(file_path, encoding="utf-8") as f:
-                content = f.read()
+            content = safe_read_text(file_path, default='')
 
             compile(content, str(file_path), "exec")
             logger.info(f"✅ Script is valid: {file_path}")

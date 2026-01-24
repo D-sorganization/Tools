@@ -203,7 +203,7 @@ class HighPerformanceDataLoader:
                         progress_callback(
                             completed,
                             total,
-                            f"Processed {os.path.basename(file_path)}",
+                            f"Processed {Path(file_path).name}",
                         )
 
                 except Exception as e:
@@ -296,7 +296,7 @@ class HighPerformanceDataLoader:
         try:
             # Use file size and modification time for quick hash
             stat = os.stat(file_path)
-            content = f"{stat.st_size}_{stat.st_mtime}_{os.path.basename(file_path)}"
+            content = f"{stat.st_size}_{stat.st_mtime}_{Path(file_path).name}"
             return hashlib.md5(content.encode()).hexdigest()
         except Exception:
             return "unknown"

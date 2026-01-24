@@ -24,6 +24,30 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+
+try:
+    from utils.file_utils import safe_write_json
+except ImportError:
+    import json
+
+try:
+    from utils.file_utils import safe_read_text, safe_write_text
+except ImportError:
+    from pathlib import Path
+    def safe_read_text(path, encoding='utf-8', default=''):
+        try:
+            return Path(path).read_text(encoding=encoding)
+        except Exception:
+            return default
+    def safe_write_text(path, content, encoding='utf-8', create_parents=True):
+        p = Path(path)
+        if create_parents:
+            p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(content, encoding=encoding)
+    def safe_write_json(path, data, indent=2, create_parents=True):
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=indent)
 # Configure logging
 init_default_logging()s: %(message)s")
 logger = logging.getLogger(__name__)
@@ -32,8 +56,7 @@ logger = logging.getLogger(__name__)
 def extract_score_from_report(report_path: Path) -> float:
     """Extract numerical score from assessment report."""
     try:
-        with open(report_path) as f:
-            content = f.read()
+        content = safe_read_text(report_path, default='')
 
         # Look for score patterns like "Overall: 8.5" or "Score: 8.5/10"
         patterns = [
@@ -60,8 +83,7 @@ def extract_issues_from_report(report_path: Path) -> list[dict[str, Any]]:
     issues = []
 
     try:
-        with open(report_path) as f:
-            content = f.read()
+        content = safe_read_text(report_path, default='')
 
         # Look for severity markers
         severity_patterns = {
@@ -208,8 +230,7 @@ Recommended: 30 days from today
 
     # Save markdown
     output_md.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_md, "w") as f:
-        f.write(md_content)
+    safe_write_text(output_md, md_content)
 
     logger.info(f"✓ Markdown summary saved to {output_md}")
 
@@ -232,8 +253,7 @@ Recommended: 30 days from today
     }
 
     # Save JSON
-    with open(output_json, "w") as f:
-        json.dump(json_data, f, indent=2)
+    safe_write_json(output_json, json_data, indent=2)
 
     logger.info(f"✓ JSON metrics saved to {output_json}")
 

@@ -58,6 +58,17 @@ except ImportError:
     FOLDER_TOOL_AVAILABLE = False
     print("Warning: Folder tool not available. Folder Tool tab will be disabled.")
 
+# Use shared file utilities
+try:
+    from utils.file_utils import safe_write_text
+except ImportError:
+    # Fallback
+    def safe_write_text(path, content, encoding='utf-8', create_parents=True):
+        p = Path(path)
+        if create_parents:
+            p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(content, encoding=encoding)
+
 # =============================================================================
 # COMPILER CONVERTER CLASSES
 # =============================================================================

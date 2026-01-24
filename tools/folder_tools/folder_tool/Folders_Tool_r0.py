@@ -463,8 +463,7 @@ class FolderProcessorApp:
         try:
             constants_info = self.get_constants_info()
 
-            with open(output_path, "w", encoding="utf-8") as f:
-                f.write("# Folder Tool Constants Documentation\n")
+            safe_write_text(output_path, "# Folder Tool Constants Documentation\n")
                 f.write(f"Generated: {datetime.now()}\n\n")
                 f.write("## Constants Overview\n\n")
 
@@ -566,6 +565,21 @@ class FolderProcessorApp:
             logger.info("ICO not found, using PNG fallback")
             from PIL import Image, ImageTk
 
+
+try:
+    from utils.file_utils import safe_read_text, safe_write_text
+except ImportError:
+    from pathlib import Path
+    def safe_read_text(path, encoding='utf-8', default=''):
+        try:
+            return Path(path).read_text(encoding=encoding)
+        except Exception:
+            return default
+    def safe_write_text(path, content, encoding='utf-8', create_parents=True):
+        p = Path(path)
+        if create_parents:
+            p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(content, encoding=encoding)
             image: Image.Image = Image.open(png_path)
 
             # Convert to RGBA for transparency support
@@ -1306,7 +1320,7 @@ class FolderProcessorApp:
         Raises:
             OSError: If file system operations fail during path construction
         """
-        filename = os.path.basename(file_path)
+        filename = Path(file_path).name
         dest_path = dest_base
 
         # Organize by type
@@ -1482,7 +1496,7 @@ class FolderProcessorApp:
             return (
                 True,
                 f"Successfully extracted and deleted "
-                f"'{os.path.basename(archive_path)}' "
+                f"'{Path(archive_path).name}' "
                 f"({'known' if 'extracted_files' in locals() else 'unknown'} "
                 "files)",
             )
@@ -1501,7 +1515,7 @@ class FolderProcessorApp:
                         f"{cleanup_error}",
                     )
 
-            return False, f"Failed to extract '{os.path.basename(archive_path)}': {e}"
+            return False, f"Failed to extract '{Path(archive_path).name}': {e}"
 
     def create_backup(self) -> str | None:
         """Creates a backup of source folders before processing.
@@ -1828,7 +1842,7 @@ class FolderProcessorApp:
         report.extend(["", "LARGEST FILES:"])
         for file_path, size in sorted(largest_files, key=lambda x: x[1], reverse=True):
             size_mb = size / (1024 * 1024)
-            report.append(f"  {os.path.basename(file_path)}: {size_mb:.1f} MB")
+            report.append(f"  {Path(file_path).name}: {size_mb:.1f} MB")
 
         # Add error summary if any occurred
         if analysis_errors:
@@ -2691,7 +2705,7 @@ class FolderProcessorApp:
                     if final_dest_path != dest_path:
                         log.append(
                             f"Renamed: '{file}' to "
-                            f"'{os.path.basename(final_dest_path)}'",
+                            f"'{Path(final_dest_path).name}'",
                         )
                         renamed_count += 1
 
@@ -2995,7 +3009,7 @@ class FolderProcessorApp:
 
             # Confirm removal
             if len(selected_indices) == 1:
-                folder_name = os.path.basename(self.source_folders[selected_indices[0]])
+                folder_name = Path(self.source_folders[selected_indices[0]]).name
                 confirm = messagebox.askyesno(
                     "Confirm Removal",
                     f"Remove folder '{folder_name}' from source list?",
@@ -3116,7 +3130,7 @@ class FolderProcessorApp:
                     if final_dest_path != dest_path:
                         log.append(
                             f"Renamed: '{file}' to "
-                            f"'{os.path.basename(final_dest_path)}'",
+                            f"'{Path(final_dest_path).name}'",
                         )
 
                     try:
@@ -3185,7 +3199,7 @@ class FolderProcessorApp:
             if self.cancel_operation:
                 break
 
-            src_name = os.path.basename(src)
+            src_name = Path(src).name
             dest_src_path = Path(self.dest_folder) / src_name
 
             for root, dirs, files in os.walk(src):
@@ -3227,7 +3241,7 @@ class FolderProcessorApp:
                     if final_dest_path != dest_file_path:
                         log.append(
                             f"Renamed: '{file}' to "
-                            f"'{os.path.basename(final_dest_path)}'",
+                            f"'{Path(final_dest_path).name}'",
                         )
 
                     try:

@@ -51,6 +51,30 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
+
+try:
+    from utils.file_utils import safe_write_json
+except ImportError:
+    import json
+
+try:
+    from utils.file_utils import safe_read_text, safe_write_text
+except ImportError:
+    from pathlib import Path
+    def safe_read_text(path, encoding='utf-8', default=''):
+        try:
+            return Path(path).read_text(encoding=encoding)
+        except Exception:
+            return default
+    def safe_write_text(path, content, encoding='utf-8', create_parents=True):
+        p = Path(path)
+        if create_parents:
+            p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(content, encoding=encoding)
+    def safe_write_json(path, data, indent=2, create_parents=True):
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=indent)
 # Constants with professional standards
 MAX_FILE_SIZE_MB: Final[int] = 1024  # 1GB max per file
 COMPRESSION_LEVELS: Final[dict[str, int]] = {
@@ -1406,8 +1430,7 @@ class FolderPackerPro:
                     "total_files": total_files,
                     "package_size": output_path.stat().st_size,
                 }
-                with open(manifest_path, "w", encoding="utf-8") as manifest_file:
-                    json.dump(manifest, manifest_file, indent=2)
+                safe_write_json(manifest_path, manifest, indent=2)
 
             self._log_message(f"Package created successfully: {output_path}", "success")
             self._log_message(
@@ -1711,8 +1734,7 @@ class FolderPackerPro:
 
         if file_path:
             try:
-                with open(file_path, "w") as f:
-                    f.write(self.manifest.to_json())
+                safe_write_text(file_path, self.manifest.to_json())
                 messagebox.showinfo("Success", f"Manifest exported to:\n{file_path}")
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to export manifest:\n{e}")
@@ -1794,8 +1816,7 @@ class FolderPackerPro:
         )
 
         if file_path:
-            with open(file_path, "w", encoding="utf-8") as f:
-                f.write(self.log_text.get("1.0", "end"))
+            safe_write_text(file_path, self.log_text.get("1.0", "end"))
             messagebox.showinfo("Log Saved", f"Log saved to:\n{file_path}")
 
     def _open_log_file(self) -> None:

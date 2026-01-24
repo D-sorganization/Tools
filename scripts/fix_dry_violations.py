@@ -10,6 +10,27 @@ import sys
 from pathlib import Path
 from re import Match
 
+
+try:
+    from utils.path_helpers import ensure_utils_in_path
+
+try:
+    from utils.file_utils import safe_read_text, safe_write_text
+except ImportError:
+    from pathlib import Path
+    def safe_read_text(path, encoding='utf-8', default=''):
+        try:
+            return Path(path).read_text(encoding=encoding)
+        except Exception:
+            return default
+    def safe_write_text(path, content, encoding='utf-8', create_parents=True):
+        p = Path(path)
+        if create_parents:
+            p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(content, encoding=encoding)
+except ImportError:
+    def ensure_utils_in_path():
+        pass
 # Track fixes
 fix_count = 0
 
@@ -19,7 +40,7 @@ def fix_sys_path_manipulations(content: str, file_path: Path) -> tuple[str, int]
     global fix_count
     fixes = 0
 
-    # Pattern 1: sys.path.insert(0, str(...))
+    # Pattern 1: ensure_utils_in_path()
     pattern1 = r"sys\.path\.insert\s*\(\s*0\s*,\s*str\s*\([^)]+\)\s*\)"
 
     def replace1(match: Match[str]) -> str:
@@ -29,7 +50,7 @@ def fix_sys_path_manipulations(content: str, file_path: Path) -> tuple[str, int]
 
     content = re.sub(pattern1, replace1, content)
 
-    # Pattern 2: sys.path.append(str(...))
+    # Pattern 2: ensure_utils_in_path()
     pattern2 = r"sys\.path\.append\s*\(\s*str\s*\([^)]+\)\s*\)"
 
     def replace2(match: Match[str]) -> str:
@@ -91,8 +112,7 @@ def fix_os_path_join(content: str) -> tuple[str, int]:
 def process_file(file_path: Path) -> int:
     """Process a single file and fix DRY violations."""
     try:
-        with open(file_path, encoding="utf-8") as f:
-            content = f.read()
+        content = safe_read_text(file_path, default='')
 
         original_content = content
         total_fixes = 0
@@ -103,8 +123,7 @@ def process_file(file_path: Path) -> int:
 
         # Only write if changes were made
         if content != original_content:
-            with open(file_path, "w", encoding="utf-8") as f:
-                f.write(content)
+            safe_write_text(file_path, content)
             return total_fixes
 
         return 0

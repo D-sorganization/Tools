@@ -1627,8 +1627,7 @@ class CSVProcessorApp(ctk.CTk):
 
         if file_path:
             try:
-                with open(file_path, "w") as f:
-                    json.dump(self.custom_vars_list, f, indent=2)
+                safe_write_json(file_path, self.custom_vars_list, indent=2)
                 messagebox.showinfo("Success", f"Custom variables saved to {file_path}")
             except Exception as e:
                 messagebox.showerror(
@@ -1645,8 +1644,7 @@ class CSVProcessorApp(ctk.CTk):
 
         if file_path:
             try:
-                with open(file_path) as f:
-                    loaded_vars = json.load(f)
+                loaded_vars = safe_read_json(file_path, default=None)
 
                 # Validate the loaded data
                 if not isinstance(loaded_vars, list):
@@ -1959,7 +1957,7 @@ class CSVProcessorApp(ctk.CTk):
             file_frame.pack(fill="x", padx=5, pady=2)
             print(f"DEBUG: File frame created and packed for file {i+1}")
 
-            filename = os.path.basename(file_path)
+            filename = Path(file_path).name
             print(f"DEBUG: Filename: {filename}")
             label = ctk.CTkLabel(
                 file_frame,
@@ -2013,7 +2011,7 @@ class CSVProcessorApp(ctk.CTk):
             try:
                 # Update progress
                 if hasattr(self, "status_label"):
-                    filename = os.path.basename(file_path)
+                    filename = Path(file_path).name
                     self.status_label.configure(
                         text=f"Reading file {i + 1}/{total_files}: {filename}"
                     )
@@ -2041,7 +2039,7 @@ class CSVProcessorApp(ctk.CTk):
 
         # Update plot file menu with smart defaults
         file_names = ["Select a file..."] + [
-            os.path.basename(f) for f in self.input_file_paths
+            Path(f).name for f in self.input_file_paths
         ]
         if hasattr(self, "plot_file_menu"):
             self.plot_file_menu.configure(values=file_names)
@@ -2049,7 +2047,7 @@ class CSVProcessorApp(ctk.CTk):
             # Auto-select the first file if there's only one - immediate execution like
             # baseline
             if len(self.input_file_paths) == 1:
-                single_file = os.path.basename(self.input_file_paths[0])
+                single_file = Path(self.input_file_paths[0]).name
                 self.plot_file_menu.set(single_file)
                 # Direct call - no scheduling delays
                 self._auto_select_single_file(single_file)
@@ -2080,7 +2078,7 @@ class CSVProcessorApp(ctk.CTk):
             # Try to load the file
             full_path = None
             for file_path in self.input_file_paths:
-                if os.path.basename(file_path) == filename:
+                if Path(file_path).name == filename:
                     full_path = file_path
                     break
 
@@ -2274,12 +2272,12 @@ class CSVProcessorApp(ctk.CTk):
         for i, file_path in enumerate(self.input_file_paths):
             print(
                 f"\n--- Processing file {i + 1}/{len(self.input_file_paths)}: "
-                f"{os.path.basename(file_path)} ---"
+                f"{Path(file_path).name} ---"
             )
             try:
                 self.status_label.configure(
                     text=f"Processing file {i + 1}/{len(self.input_file_paths)}: "
-                    f"{os.path.basename(file_path)}"
+                    f"{Path(file_path).name}"
                 )
                 self.update()
 
@@ -2299,7 +2297,7 @@ class CSVProcessorApp(ctk.CTk):
                     print(f"Columns: {list(processed_df.columns)}")
                     processed_files.append((file_path, processed_df))
                     # Store processed data for plotting
-                    filename = os.path.basename(file_path)
+                    filename = Path(file_path).name
                     self.processed_files[filename] = processed_df.copy()
                     print(f"Stored in processed_files cache as: {filename}")
                 else:
@@ -2361,7 +2359,7 @@ class CSVProcessorApp(ctk.CTk):
         self, file_path: str, settings: dict[str, Any]
     ) -> pd.DataFrame | None:
         """Process a single file with all advanced features."""
-        print(f"\n_process_single_file called for: {os.path.basename(file_path)}")
+        print(f"\n_process_single_file called for: {Path(file_path).name}")
         try:
             print("  Loading CSV file...")
             df = safe_read_csv(file_path, low_memory=False)
@@ -2756,7 +2754,7 @@ class CSVProcessorApp(ctk.CTk):
         print(f"_export_csv_separate called with {len(processed_files)} files")
         exported_count = 0
         for file_path, df in processed_files:
-            base_name = os.path.splitext(os.path.basename(file_path))[0]
+            base_name = os.path.splitext(Path(file_path).name)[0]
             output_path = Path(self.output_directory) / f"{base_name}_processed.csv / 
             print(f"Exporting to: {output_path}")
 
@@ -2788,7 +2786,7 @@ class CSVProcessorApp(ctk.CTk):
             return
         compiled_df = pd.concat(
             [
-                df.assign(Source_File=os.path.splitext(os.path.basename(fp))[0])
+                df.assign(Source_File=os.path.splitext(Path(fp).name)[0])
                 for fp, df in processed_files
             ],
             ignore_index=True,
@@ -2812,7 +2810,7 @@ class CSVProcessorApp(ctk.CTk):
 
         with pd.ExcelWriter(final_path, engine="openpyxl") as writer:
             for file_path, df in processed_files:
-                sheet_name = os.path.splitext(os.path.basename(file_path))[0][:31]
+                sheet_name = os.path.splitext(Path(file_path).name)[0][:31]
                 df = self._apply_sorting(df)
                 df.to_excel(writer, sheet_name=sheet_name, index=False)
 
@@ -2822,7 +2820,7 @@ class CSVProcessorApp(ctk.CTk):
         """Export each file as a separate Excel file."""
         exported_count = 0
         for file_path, df in processed_files:
-            base_name = os.path.splitext(os.path.basename(file_path))[0]
+            base_name = os.path.splitext(Path(file_path).name)[0]
             output_path = Path(self.output_directory) / f"{base_name}_processed.xlsx / 
 
             final_path = self._check_file_overwrite(output_path)
@@ -2845,7 +2843,7 @@ class CSVProcessorApp(ctk.CTk):
         """Export each file as a separate MAT file."""
         exported_count = 0
         for file_path, df in processed_files:
-            base_name = os.path.splitext(os.path.basename(file_path))[0]
+            base_name = os.path.splitext(Path(file_path).name)[0]
             output_path = Path(self.output_directory) / f"{base_name}_processed.mat / 
 
             final_path = self._check_file_overwrite(output_path)
@@ -2871,7 +2869,7 @@ class CSVProcessorApp(ctk.CTk):
             return
         compiled_df = pd.concat(
             [
-                df.assign(Source_File=os.path.splitext(os.path.basename(fp))[0])
+                df.assign(Source_File=os.path.splitext(Path(fp).name)[0])
                 for fp, df in processed_files
             ],
             ignore_index=True,
@@ -4200,8 +4198,7 @@ class CSVProcessorApp(ctk.CTk):
                 if hasattr(splitter, "winfo_width"):
                     self.layout_data[splitter_key] = splitter.winfo_width()
 
-            with open(self.layout_config_file, "w") as f:
-                json.dump(self.layout_data, f, indent=2)
+            safe_write_json(self.layout_config_file, self.layout_data, indent=2)
         except Exception as e:
             print(f"Error saving layout config: {e}")
 
@@ -5132,7 +5129,7 @@ class CSVProcessorApp(ctk.CTk):
             # Find the full path of the file
             full_path = None
             for file_path in self.input_file_paths:
-                if os.path.basename(file_path) == filename:
+                if Path(file_path).name == filename:
                     full_path = file_path
                     break
 
@@ -5523,8 +5520,7 @@ COMMON MISTAKES TO AVOID:
             )
 
             if file_path:
-                with open(file_path, "w") as f:
-                    json.dump(settings, f, indent=2)
+                safe_write_json(file_path, settings, indent=2)
                 messagebox.showinfo("Success", f"Settings saved to:\n{file_path}")
 
         except Exception as e:
@@ -5541,8 +5537,7 @@ COMMON MISTAKES TO AVOID:
             if not file_path:
                 return
 
-            with open(file_path) as f:
-                settings = json.load(f)
+            settings = safe_read_json(file_path, default=None)
 
             # Apply filter settings
             if "filter_settings" in settings:
@@ -5793,8 +5788,7 @@ COMMON MISTAKES TO AVOID:
                     file_path = Path(current_dir) / file
                     try:
                         # Try to read the file to see if it's a valid configuration
-                        with open(file_path) as f:
-                            data = json.load(f)
+                        data = safe_read_json(file_path, default=None)
                             # Check if it has the expected structure:
                             # processing configs have 'saved_at',
                             # plotting configs have 'plot_name'
@@ -5870,8 +5864,7 @@ COMMON MISTAKES TO AVOID:
             filepath = Path(os.getcwd(), filename)
 
             # Load the configuration
-            with open(filepath) as f:
-                settings = json.load(f)
+            settings = safe_read_json(filepath, default=None)
 
             # Check if it's a processing config or plot config
             if "saved_at" in settings:
@@ -6124,8 +6117,7 @@ COMMON MISTAKES TO AVOID:
             )
 
             if file_path:
-                with open(file_path, "w") as f:
-                    json.dump(signal_list_data, f, indent=2)
+                safe_write_json(file_path, signal_list_data, indent=2)
 
                 # No popup message - just update status bar for better user experience
                 self.status_label.configure(
@@ -6156,8 +6148,7 @@ COMMON MISTAKES TO AVOID:
                 return  # User cancelled
 
             print(f"DEBUG: Loading file: {file_path}")
-            with open(file_path) as f:
-                signal_list_data = json.load(f)
+            signal_list_data = safe_read_json(file_path, default=None)
             print(f"DEBUG: Successfully loaded JSON data: {signal_list_data}")
             print(f"DEBUG: Successfully loaded JSON data: {signal_list_data}")
 
@@ -6425,7 +6416,7 @@ COMMON MISTAKES TO AVOID:
                 )
                 messagebox.showinfo("Success", f"Chart exported to:\n{final_path}")
                 self.status_label.configure(
-                    text=f"Chart exported: {os.path.basename(final_path)}",
+                    text=f"Chart exported: {Path(final_path).name}",
                 )
 
         except Exception as e:
@@ -6512,7 +6503,7 @@ COMMON MISTAKES TO AVOID:
                             f"Chart data exported to:\n{final_path}",
                         )
                         self.status_label.configure(
-                            text=f"Chart data exported: {os.path.basename(final_path)}",
+                            text=f"Chart data exported: {Path(final_path).name}",
                         )
                     else:
                         messagebox.showwarning(
@@ -6703,8 +6694,7 @@ COMMON MISTAKES TO AVOID:
             plots_file = Path(os.path.expanduser("~),
                 ".csv_processor_plots.json",
             )
-            with open(plots_file, "w") as f:
-                json.dump(self.plots_list, f, indent=2)
+            safe_write_json(plots_file, self.plots_list, indent=2)
         except Exception as e:
             print(f"Error saving plots to file: {e}")
 
@@ -6731,7 +6721,7 @@ COMMON MISTAKES TO AVOID:
         )
         if filepath:
             self.dat_import_tag_file_path = filepath
-            self.tag_file_label.configure(text=os.path.basename(filepath))
+            self.tag_file_label.configure(text=Path(filepath).name)
 
     def _select_data_file(self) -> None:
         """Select data file for DAT import."""
@@ -6741,7 +6731,7 @@ COMMON MISTAKES TO AVOID:
         )
         if filepath:
             self.dat_import_data_file_path = filepath
-            self.data_file_label.configure(text=os.path.basename(filepath))
+            self.data_file_label.configure(text=Path(filepath).name)
 
             # Set default output directory to the folder of the selected DAT file
             dat_file_dir = Path(filepath).parent
@@ -6838,7 +6828,7 @@ COMMON MISTAKES TO AVOID:
                     )
 
                 # Save trimmed file
-                base_name = os.path.splitext(os.path.basename(file_path))[0]
+                base_name = os.path.splitext(Path(file_path).name)[0]
                 output_path = Path(self.output_directory) / f"{base_name}_Trimmed.csv / 
                 df.to_csv(output_path, index=False)
 
@@ -7546,7 +7536,7 @@ For additional support or feature requests, please refer to the
     def _generate_unique_filename(self, base_path: str, extension: str) -> str:
         """Generate a unique filename to prevent overwriting existing files."""
         directory = Path(base_path).parent
-        base_name = os.path.splitext(os.path.basename(base_path))[0]
+        base_name = os.path.splitext(Path(base_path).name)[0]
 
         # Remove any existing suffix like _processed, _1, _2, etc.
         base_name = base_name.removesuffix("_processed")  # Remove '_processed'
@@ -7566,7 +7556,7 @@ For additional support or feature requests, please refer to the
     def _check_file_overwrite(self, file_path: str) -> str | None:
         """Check if file exists and prompt user for action."""
         if Path(file_path).exists():
-            filename = os.path.basename(file_path)
+            filename = Path(file_path).name
             response = messagebox.askyesnocancel(
                 "File Already Exists",
                 f"The file '{filename}' already exists.\n\n"
@@ -7583,7 +7573,7 @@ For additional support or feature requests, please refer to the
                 return file_path
             # No - generate unique name
             directory = Path(file_path).parent
-            base_name = os.path.splitext(os.path.basename(file_path))[0]
+            base_name = os.path.splitext(Path(file_path).name)[0]
             extension = os.path.splitext(file_path)[1]
             return self._generate_unique_filename(
                 Path(directory) / base_name,
@@ -8345,11 +8335,11 @@ For additional support or feature requests, please refer to the
                 available_files = []
                 if hasattr(self, "processed_files") and self.processed_files:
                     available_files.extend(
-                        [os.path.basename(fp) for fp in self.processed_files.keys()],
+                        [Path(fp).name for fp in self.processed_files.keys()],
                     )
                 if hasattr(self, "input_file_paths") and self.input_file_paths:
                     available_files.extend(
-                        [os.path.basename(fp) for fp in self.input_file_paths],
+                        [Path(fp).name for fp in self.input_file_paths],
                     )
 
                 if available_files:
@@ -8466,6 +8456,43 @@ For additional support or feature requests, please refer to the
             if pd.api.types.is_datetime64_any_dtype(plot_df[time_col]):
                 import matplotlib.dates as mdates
 
+
+try:
+    from utils.file_utils import safe_read_json
+except ImportError:
+    import json
+
+try:
+    from utils.file_utils import safe_write_json
+except ImportError:
+    import json
+
+from pathlib import Path
+
+try:
+    from utils.file_utils import safe_read_text, safe_write_text
+except ImportError:
+    from pathlib import Path
+    def safe_read_text(path, encoding='utf-8', default=''):
+        try:
+            return Path(path).read_text(encoding=encoding)
+        except Exception:
+            return default
+    def safe_write_text(path, content, encoding='utf-8', create_parents=True):
+        p = Path(path)
+        if create_parents:
+            p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(content, encoding=encoding)
+    def safe_write_json(path, data, indent=2, create_parents=True):
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=indent)
+    def safe_read_json(path, default=None):
+        try:
+            with open(path, encoding='utf-8') as f:
+                return json.load(f)
+        except Exception:
+            return default
                 self.preview_ax.xaxis.set_major_formatter(
                     mdates.DateFormatter("%H:%M")  # type: ignore[no-untyped-call]
                 )
@@ -8505,8 +8532,7 @@ For additional support or feature requests, please refer to the
                 filename = f"{plot_config['name'].replace(' ', '_')}_config.txt"
                 filepath = Path(export_dir) / filename
 
-                with open(filepath, "w") as f:
-                    f.write(f"Plot Configuration: {plot_config['name']}\n")
+                safe_write_text(filepath, f"Plot Configuration: {plot_config['name']}\n")
                     f.write(f"Description: {plot_config.get('description', 'N/A')}\n")
                     f.write(f"Created: {plot_config.get('created_date', 'N/A')}\n")
                     f.write(f"Signals: {', '.join(plot_config.get('signals', []))}\n")

@@ -45,7 +45,7 @@ from PyQt6.QtWidgets import (
 # CONFIGURATION & PATHS
 # =============================================================================
 REPO_ROOT = Path(__file__).parent.absolute()
-sys.path.append(str(REPO_ROOT / "python" / "src"))
+ensure_utils_in_path()
 
 # try to import compatibility shim to verify environment
 try:
@@ -77,8 +77,7 @@ except Exception as e:
     TOOLS = {}
     if TOOLS_FILE.exists():
         try:
-            with open(TOOLS_FILE) as f:
-                TOOLS = json.load(f)
+            TOOLS = safe_read_json(TOOLS_FILE, default=None)
         except Exception as e:
             sys.stderr.write(f"Error loading tools.json: {e}\n")
         # Fallback to empty or default if needed
@@ -330,6 +329,23 @@ class UnifiedLauncher(QMainWindow):
         """Log a message to the activity log area."""
         from datetime import datetime
 
+
+try:
+    from utils.file_utils import safe_read_json
+except ImportError:
+    import json
+
+try:
+    from utils.path_helpers import ensure_utils_in_path
+except ImportError:
+    def ensure_utils_in_path():
+        pass
+    def safe_read_json(path, default=None):
+        try:
+            with open(path, encoding='utf-8') as f:
+                return json.load(f)
+        except Exception:
+            return default
         timestamp = datetime.now().strftime("%H:%M:%S")
         self.log_area.append(f"[{timestamp}] {message}")
         cursor = self.log_area.textCursor()
