@@ -3,7 +3,6 @@
 Convert tools_icon.png to high-quality ICO format for Windows shortcuts.
 """
 
-import logging
 from pathlib import Path
 
 # Use shared utility
@@ -17,9 +16,11 @@ except ImportError:
     sys.path.append(str(Path(__file__).resolve().parent))
     from tools.icon_utils import convert_png_to_ico
 
+
 # Configure logging
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
-logger = logging.getLogger(__name__)
+from tools.logger import setup_logging
+
+logger = setup_logging(__name__, format_string="%(levelname)s: %(message)s")
 
 
 def main() -> None:

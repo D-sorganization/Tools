@@ -12,12 +12,18 @@ from pathlib import Path
 from tkinter import Tk, messagebox
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[logging.FileHandler("tools_launcher.log"), logging.StreamHandler()],
-)
-logger = logging.getLogger(__name__)
+try:
+    from tools.logger import setup_logging
+
+    logger = setup_logging(__name__, "tools_launcher.log")
+except ImportError:
+    # Fallback if tools package issue (e.g. during very early bootstrap)
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+        handlers=[logging.FileHandler("tools_launcher.log"), logging.StreamHandler()],
+    )
+    logger = logging.getLogger(__name__)
 
 
 # Use shared path setup utility

@@ -6,18 +6,14 @@ This is the PRIMARY and RECOMMENDED launcher for accessing all tools.
 Provides a clean, tabbed interface for launching Python, MATLAB, and web tools.
 """
 
-import logging
 import sys
 
 from PyQt6.QtWidgets import QApplication
 
+from tools.logger import setup_logging
+
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[logging.FileHandler("unified_launcher.log"), logging.StreamHandler()],
-)
-logger = logging.getLogger(__name__)
+logger = setup_logging(__name__, "unified_launcher.log")
 
 
 def main() -> None:
