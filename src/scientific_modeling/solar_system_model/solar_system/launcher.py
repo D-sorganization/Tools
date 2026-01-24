@@ -50,7 +50,6 @@ def check_dependencies(
     try:
         # Try to use shared utility
         import sys
-        from pathlib import Path
 
         # Add utils to path
         try:
