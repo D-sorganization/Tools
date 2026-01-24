@@ -733,19 +733,17 @@ class SolarSystemScene:
         """
         current_dt = self.time_manager.current_time.datetime_utc
         target_day = current_dt.day
-        
+
         # Calculate new year and month
-        total_months = current_dt.month + months - 1 # 0-indexed month for math
+        total_months = current_dt.month + months - 1  # 0-indexed month for math
         new_year = current_dt.year + (total_months // 12)
         new_month = (total_months % 12) + 1
-        
+
         # Clamp day to valid range for new month
         max_days = monthrange(new_year, new_month)[1]
         actual_day = min(target_day, max_days)
-        
-        new_date = current_dt.replace(
-            year=new_year, month=new_month, day=actual_day
-        )
+
+        new_date = current_dt.replace(year=new_year, month=new_month, day=actual_day)
         self.time_manager.set_datetime(new_date)
         self._update_ui_date()
         self._mark_immersion_task("navigate_time")
@@ -771,7 +769,7 @@ class SolarSystemScene:
             self._jump_month(1)
         elif action == "prev_year":
             self.time_manager.advance_years(-1)
-            self._update_ui_date() # Years logic is simple enough to leave or could wrap too
+            self._update_ui_date()  # Years logic is simple enough to leave or could wrap too
             self._mark_immersion_task("navigate_time")
         elif action == "next_year":
             self.time_manager.advance_years(1)
