@@ -61,8 +61,17 @@ class DataLoader:
 
             logger.info(f"Loading CSV file: {file_path}")
 
-            # Load using pandas
-            df = pd.read_csv(file_path, low_memory=False)
+            # Use csv_utils for consistent error handling
+            try:
+                from utils.csv_utils import safe_read_csv
+                df = safe_read_csv(file_path, low_memory=False)
+            except ImportError:
+                # Fallback to direct pandas if utils not available
+                df = pd.read_csv(file_path, low_memory=False)
+
+            if df is None or df.empty:
+                logger.warning(f"CSV file {file_path} is empty or could not be loaded")
+                return None
 
             logger.info(f"Loaded {len(df)} rows, {len(df.columns)} columns")
 
@@ -145,9 +154,15 @@ class DataLoader:
         all_signals = set()
         for i, file_path in enumerate(file_paths):
             try:
-                # Read just the header
-                df_header = pd.read_csv(file_path, nrows=0)
-                all_signals.update(df_header.columns)
+                # Read just the header using csv_utils for consistency
+                try:
+                    from utils.csv_utils import safe_read_csv
+                    df_header = safe_read_csv(file_path, nrows=0)
+                except ImportError:
+                    # Fallback
+                    df_header = pd.read_csv(file_path, nrows=0)
+                if df_header is not None and not df_header.empty:
+                    all_signals.update(df_header.columns)
 
                 if progress_callback:
                     progress_callback(
