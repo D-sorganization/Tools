@@ -13,7 +13,7 @@ try:
 except ImportError:
     # Fallback
     def init_default_logging():
-        logging.basicConfig(level=logging.INFO)
+        init_default_logging()
 import os
 import sys
 from pathlib import Path
