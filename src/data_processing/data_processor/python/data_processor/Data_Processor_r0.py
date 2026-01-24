@@ -5782,30 +5782,30 @@ COMMON MISTAKES TO AVOID:
                     try:
                         # Try to read the file to see if it's a valid configuration
                         data = safe_read_json(file_path, default=None)
-                            # Check if it has the expected structure:
-                            # processing configs have 'saved_at',
-                            # plotting configs have 'plot_name'
-                            if isinstance(data, dict) and (
-                                "saved_at" in data or "plot_name" in data
-                            ):
-                                if "saved_at" in data:
-                                    config_files.append(
-                                        (
-                                            file,
-                                            file_path,
-                                            data.get("saved_at", "Unknown"),
-                                            "Processing Config",
-                                        ),
-                                    )
-                                elif "plot_name" in data:
-                                    config_files.append(
-                                        (
-                                            file,
-                                            file_path,
-                                            data.get("created_date", "Unknown"),
-                                            "Plot Config",
-                                        ),
-                                    )
+                        # Check if it has the expected structure:
+                        # processing configs have 'saved_at',
+                        # plotting configs have 'plot_name'
+                        if isinstance(data, dict) and (
+                            "saved_at" in data or "plot_name" in data
+                        ):
+                            if "saved_at" in data:
+                                config_files.append(
+                                    (
+                                        file,
+                                        file_path,
+                                        data.get("saved_at", "Unknown"),
+                                        "Processing Config",
+                                    ),
+                                )
+                            elif "plot_name" in data:
+                                config_files.append(
+                                    (
+                                        file,
+                                        file_path,
+                                        data.get("created_date", "Unknown"),
+                                        "Plot Config",
+                                    ),
+                                )
                     except Exception:
                         # Skip files that can't be read as JSON or don't have the right
                         # structure
