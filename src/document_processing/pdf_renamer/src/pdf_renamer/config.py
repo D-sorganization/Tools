@@ -25,9 +25,16 @@ try:
     from utils.env_utils import find_env_file, load_env_file
 
     # Search for .env file in multiple locations
+    # Use get_project_root_from_file for consistent path resolution
+    try:
+        from utils.path_helpers import get_project_root_from_file
+        project_root = get_project_root_from_file(__file__)
+    except ImportError:
+        project_root = Path(__file__).parent.parent.parent
+    
     env_file = find_env_file(
         search_locations=[
-            Path(__file__).parent.parent.parent,  # Project root
+            project_root,  # Project root
             Path.cwd(),  # Current working directory
             TOOLS_ENV_PATH.parent,  # Tools version
         ]
