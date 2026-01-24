@@ -15,23 +15,44 @@ TOOLS_ENV_PATH = Path(
 
 # Try to load from .env file if available
 try:
-    from dotenv import load_dotenv
-
+    # Add utils to path
+    import sys
+    from pathlib import Path as PathLib
+    
+    repo_root = PathLib(__file__).parent.parent.parent.parent.parent.parent.parent
+    sys.path.insert(0, str(repo_root / "src" / "python" / "src"))
+    
+    from utils.env_utils import load_env_file, find_env_file
+    
     # Search for .env file in multiple locations
-    env_locations = [
-        Path(__file__).parent.parent.parent / ".env",  # Project root
-        Path.cwd() / ".env",  # Current working directory
-        Path.home() / ".pdf_renamer" / ".env",  # User home directory
-        TOOLS_ENV_PATH,  # Tools version
-    ]
-
-    for env_path in env_locations:
-        if env_path.exists():
-            load_dotenv(env_path)
-            break
+    env_file = find_env_file(
+        search_locations=[
+            Path(__file__).parent.parent.parent,  # Project root
+            Path.cwd(),  # Current working directory
+            TOOLS_ENV_PATH.parent,  # Tools version
+        ]
+    )
+    if env_file:
+        load_env_file(env_file)
 except ImportError:
-    # python-dotenv not installed, will fall back to environment variables
-    pass
+    # Fallback: try direct dotenv import
+    try:
+        from dotenv import load_dotenv
+        
+        env_locations = [
+            Path(__file__).parent.parent.parent / ".env",
+            Path.cwd() / ".env",
+            Path.home() / ".pdf_renamer" / ".env",
+            TOOLS_ENV_PATH,
+        ]
+        
+        for env_path in env_locations:
+            if env_path.exists():
+                load_dotenv(env_path)
+                break
+    except ImportError:
+        # python-dotenv not installed, will fall back to environment variables
+        pass
 
 
 def get_api_key(key_name: str = "GEMINI_API_KEY") -> str | None:
