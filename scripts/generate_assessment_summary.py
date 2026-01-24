@@ -192,9 +192,7 @@ Found {len(critical_issues)} critical issues requiring immediate attention:
 """
 
     for i, issue in enumerate(critical_issues[:10], 1):
-        md_content += (
-            f"{i}. **[{issue['severity']}]** {issue['description']} (Source: {issue['source']})\n"
-        )
+        md_content += f"{i}. **[{issue['severity']}]** {issue['description']} (Source: {issue['source']})\n"
 
     md_content += """
 ## Recommendations
@@ -276,7 +274,9 @@ def generate_summary(
     overall_score = _calculate_weighted_score(scores)
 
     # Filter critical issues
-    critical_issues = [i for i in all_issues if i["severity"] in ("BLOCKER", "CRITICAL")]
+    critical_issues = [
+        i for i in all_issues if i["severity"] in ("BLOCKER", "CRITICAL")
+    ]
 
     # Generate and save markdown
     md_content = _generate_markdown_content(scores, overall_score, critical_issues)

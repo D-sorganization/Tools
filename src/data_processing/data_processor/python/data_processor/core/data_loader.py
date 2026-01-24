@@ -64,6 +64,7 @@ class DataLoader:
             # Use csv_utils for consistent error handling
             try:
                 from utils.csv_utils import safe_read_csv
+
                 df = safe_read_csv(file_path, low_memory=False)
             except ImportError:
                 # Fallback to direct pandas if utils not available
@@ -157,6 +158,7 @@ class DataLoader:
                 # Read just the header using csv_utils for consistency
                 try:
                     from utils.csv_utils import safe_read_csv
+
                     df_header = safe_read_csv(file_path, nrows=0)
                 except ImportError:
                     # Fallback
