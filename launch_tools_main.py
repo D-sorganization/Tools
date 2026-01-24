@@ -336,7 +336,7 @@ def main() -> bool:
 
         return True
 
-    except RuntimeError as e:
+    except Exception as e:
         error_msg = f"Tools Launcher failed to start: {e}"
         logger.error(error_msg)
         logger.error(traceback.format_exc())
