@@ -178,20 +178,61 @@ If sensitive data is accidentally committed:
 
 ---
 
-## ⚖️ Governance & Process
+## 🏗️ System Architecture & Agent Roles
 
-### 1. Atomic Commits
-- Commits must be atomic, focusing on a single task or fix.
-- **NEVER** combine documentation updates with feature code or refactoring.
-- **NEVER** introduce "Shadow CI/CD" or unauthorized workflows.
+**Reference:** [JULES_ARCHITECTURE.md](JULES_ARCHITECTURE.md)
 
-### 2. Feature Commits in Documentation PRs
-- **STRICTLY FORBIDDEN:** Do not hide feature code inside documentation pull requests.
-- All code changes must be visible and reviewed in appropriate PRs with correct labels (`feat`, `fix`, etc.).
+This section defines the active agents within the Jules "Control Tower" Architecture. All agents must operate within their defined scope.
 
-### 3. CI/CD Truth
-- The file `.github/workflows/ci-standard.yml` is the **only** source of truth for CI/CD.
-- Unauthorized workflows will be automatically removed.
+### 1. The Control Tower (Orchestrator)
+**Role:** Air Traffic Controller
+**Workflow:** `.github/workflows/Jules-Control-Tower.yml`
+**Responsibilities:**
+-  **Orchestrator:** Coordinates specialized agent workflows. Note that CI and Guard workflows run independently.
+-  **Decision Maker:** Analyzes the event context (Triage) and dispatches the appropriate specialized worker.
+-  **Loop Prevention:** Enforces `if: github.actor != 'jules-bot'` to prevent infinite recursion.
+
+### 2. Auto-Repair (Medic)
+**Role:** Fixer of Broken Builds
+**Workflow:** `.github/workflows/Jules-Auto-Repair.yml`
+**Triggered By:** CI Failure (Standard CI)
+**Capabilities:**
+-  **Read:** CI Failure Logs
+-  **Write:** Fixes to syntax, imports, and simple logic errors.
+-  **Constraint:** limited retries (max 3) to prevent "flailing".
+
+### 3. Test-Generator (Architect)
+**Role:** Quality Assurance Engineer
+**Workflow:** `.github/workflows/Jules-Test-Generator.yml`
+**Triggered By:** New PR with `.py` changes
+**Capabilities:**
+-  **Write:** New test files in `tests/`.
+-  **Constraint:** Must not modify existing application code, only add tests.
+
+### 4. Doc-Scribe (Librarian)
+**Role:** Documentation Maintainer
+**Workflow:** `.github/workflows/Jules-Documentation-Scribe.yml`
+**Triggered By:** Push to `main`
+**Capabilities:**
+-  **Write:** Updates to `docs/` and markdown files.
+-  **Mode:** "CodeWiki" - treats the codebase as a living encyclopedia.
+
+### 5. Scientific-Auditor (The Professor)
+**Role:** Peer Reviewer
+**Workflow:** `.github/workflows/Jules-Scientific-Auditor.yml`
+**Triggered By:** Nightly Schedule
+**Capabilities:**
+- **Read/Write:** Analyzes mathematical correctness; can commit reports to `docs/assessments/` or open GitHub Issues.
+- **Justification:** This agent requires limited write access only to publish audit artifacts (reports and issues) so that all mathematical reviews are transparent, reproducible, and traceable over time. It remains strictly read-only with respect to source, configuration, and test code.
+- **Constraints:** MUST NOT modify application source code, configuration files, or tests; MAY ONLY create or update files under `docs/assessments/` and open or comment on GitHub Issues/PRs to recommend changes.
+
+### 6. Conflict-Fix (Diplomat)
+**Role:** Merge Conflict Resolver
+**Workflow:** `.github/workflows/Jules-Conflict-Fix.yml`
+**Triggered By:** Manual dispatch or specific conflict events (if configured)
+**Capabilities:**
+-  **Write:** Merge resolution commits.
+-  **Constraint:** Prioritizes "Incoming" changes unless specified otherwise.
 
 ---
 
@@ -323,3 +364,20 @@ Before pushing workflow changes:
 ### Reference Documentation:
 
 See `Repository_Management/workflow-fixes/` for documented fixes and patterns to avoid.
+
+---
+
+
+### 🔄 Workflow & Automation Governance
+
+Agents must refer to the [Workflow Tracking Document](docs/workflows/WORKFLOW_TRACKING.md) to understand available tools.
+All workflows follow the Governing Workflow Guidance documented in the `Repository_Management` repository (see `docs/architecture/WORKFLOW_GOVERNANCE.md` in that repository).
+The **GitHub Issue Tracker** is the primary authority for tasking and gap remediation. Check existing issues before starting work.
+
+---
+
+
+### 📂 Repository Decluttering & Organization
+To maintain a clean repository root, all development-related documentation (summaries, plans, analysis reports, technical debt assessments, etc.) MUST be stored in the `docs/development/` directory. 
+- **DO NOT** create new `.md` files in the root unless they are critical project-wide files (e.g., README, AGENTS, CHANGELOG).
+- Prefer creating issues for task tracking rather than temporary markdown files.

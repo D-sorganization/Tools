@@ -1,8 +1,8 @@
 # Core Scientific Computing
-numpy>=2.0.1  # Numerical computing and array operations
-pandas>=2.2.2  # Data manipulation and analysis
-scipy>=1.13.1  # Scientific computing library (optimization, signal processing, etc.)
-matplotlib>=3.9.0  # Plotting and visualization
+numpy>=2.0.1  # Fundamental array processing
+pandas>=2.2.2  # Data analysis and manipulation
+scipy>=1.13.1  # Scientific algorithms
+matplotlib>=3.9.0  # Data visualization
 sympy>=1.12  # Symbolic mathematics
 
 # Testing & Quality Assurance

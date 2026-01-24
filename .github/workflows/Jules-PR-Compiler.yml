@@ -130,27 +130,29 @@ jobs:
               # Create compiled branch
               subprocess.run(['git', 'checkout', '-b', compiled_branch], check=True)
 
-              # Track which PRs we successfully merged
+              # Check if a compiled PR for this category already exists
+              existing_compiled = subprocess.run([
+                  'gh', 'pr', 'list',
+                  '--state', 'open',
+                  '--label', f'{category},jules:compiled',
+                  '--json', 'number',
+                  '--jq', 'length'
+              ], capture_output=True, text=True)
+
+              # Track which PRs we successfully merged (initialize before continue)
               merged_prs = []
               failed_prs = []
+              
+              if existing_compiled.returncode == 0 and int(existing_compiled.stdout.strip() or 0) > 0:
+                  print(f"  ⚠️ Skipping category {category}: Compiled PR already exists.")
+                  continue # Skip this category
 
               for pr in prs:
                   pr_num = pr['number']
                   pr_branch = pr['branch']
                   pr_title = pr['title']
 
-                  # Check if a compiled PR for this category already exists
-                  existing_compiled = subprocess.run([
-                      'gh', 'pr', 'list',
-                      '--state', 'open',
-                      '--label', f'{category},jules:compiled',
-                      '--json', 'number',
-                      '--jq', 'length'
-                  ], capture_output=True, text=True)
 
-                  if existing_compiled.returncode == 0 and int(existing_compiled.stdout.strip() or 0) > 0:
-                      print(f"  ⚠️ Skipping category {category}: Compiled PR already exists.")
-                      break # Skip the entire group if a compiled PR exists
 
                   print(f"\n  Merging PR #{pr_num}: {pr_title}")
 

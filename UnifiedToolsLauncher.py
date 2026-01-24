@@ -90,7 +90,16 @@ def validate_tools_config(
 # CONFIGURATION & PATHS
 # =============================================================================
 REPO_ROOT = Path(__file__).parent.absolute()
-sys.path.append(str(REPO_ROOT / "python" / "src"))
+sys.path.append(str(REPO_ROOT / "src" / "python" / "src"))
+
+# Use shared path setup utility for consistency
+try:
+    from utils.path_setup import setup_python_path
+
+    setup_python_path(repo_root=REPO_ROOT)
+except ImportError:
+    # Fallback if shared utility not available
+    sys.path.append(str(REPO_ROOT / "src" / "python" / "src"))
 
 # Import compatibility shim early to verify environment and provide friendly errors
 try:

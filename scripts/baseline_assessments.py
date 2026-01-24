@@ -1,4 +1,8 @@
+import logging
 from pathlib import Path
+
+logging.basicConfig(level=logging.INFO, format="%(message)s")
+logger = logging.getLogger(__name__)
 
 repo_name = "Tools"
 date = "2026-01-22"
@@ -18,19 +22,19 @@ categories = {
     "L": "Long-Term Maintainability",
     "M": "Educational Resources",
     "N": "Visualization & Export",
-    "O": "CI/CD & DevOps"
+    "O": "CI/CD & DevOps",
 }
 
 output_dir = Path("docs/assessments")
 output_dir.mkdir(parents=True, exist_ok=True)
 
-# Analysis findings for Golf
+# Analysis findings for Tools
 findings = {
-    "A": "Good monorepo structure with engines/ and shared/. PyQt6 and Tkinter launchers present.",
-    "B": "Ruff and Black configured. .gitignore updated to include coverage artifacts.",
-    "C": "Comprehensive README. Added .env.example. Documentation Hub is well-structured.",
-    "G": "Test coverage crisis: 0.7% detected. Need to wire more tests into the suite.",
-    "O": "Global pause mechanism implemented. Control tower and nightly organizer added."
+    "A": "Good monorepo structure with engines/ and shared/. Good launchers.",
+    "B": "Ruff and Black configured. Coverage artifacts in .gitignore.",
+    "C": "Comprehensive README. Added .env.example. Good documentation.",
+    "G": "Test coverage crisis: 0.7%. Need more tests in the suite.",
+    "O": "Global pause mechanism. Control tower and nightly organizer added.",
 }
 
 for cat_id, cat_name in categories.items():
@@ -39,11 +43,11 @@ Date: {date}
 Category: {cat_name}
 
 ## Findings
-{findings.get(cat_id, "Standard patterns followed. No major blockers identified in this category.")}
+{findings.get(cat_id, "Standard patterns followed. No blockers in this category.")}
 
 ## Score: 8.5/10
 """
     with open(output_dir / f"Assessment_{cat_id}_Results_{date}.md", "w") as f:
         f.write(content)
 
-print("Generated A-O assessments for Golf.")
+logger.info("Generated A-O assessments for Tools.")

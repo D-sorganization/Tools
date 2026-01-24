@@ -32,29 +32,63 @@ def _has_module(name: str, spec_finder: Callable[[str], object] = find_spec) -> 
 
     The optional ``spec_finder`` argument makes the function easy to test by
     injecting a deterministic stub.
-    """
 
+    Note: This function is kept for backward compatibility and testing.
+    For new code, use utils.dependency_checker.has_module instead.
+    """
     return spec_finder(name) is not None
 
 
 def check_dependencies(
     spec_finder: Callable[[str], object] = find_spec,
 ) -> DependencyStatus:
-    """Check whether required visualization dependencies are available."""
+    """Check whether required visualization dependencies are available.
 
-    required = {
-        "numpy": "pip install numpy",
-        "pygame": "pip install pygame",
-        "OpenGL": "pip install PyOpenGL PyOpenGL_accelerate",
-    }
+    Uses shared dependency checker utility when available, with fallback
+    to local implementation for backward compatibility.
+    """
+    try:
+        # Try to use shared utility
+        import sys
+        from pathlib import Path
 
-    missing = [name for name in required if not _has_module(name, spec_finder)]
+        # Add utils to path
+        try:
+            from utils.path_helpers import ensure_utils_in_path
 
-    return DependencyStatus(
-        ok=not missing,
-        missing=missing,
-        guidance={name: required[name] for name in missing},
-    )
+            ensure_utils_in_path()
+        except ImportError:
+            # Fallback
+            from utils.path_helpers import get_project_root_from_file
+
+            repo_root = get_project_root_from_file(__file__)
+            sys.path.insert(0, str(repo_root / "src" / "python" / "src"))
+
+        from utils.dependency_checker import DependencyStatus
+        from utils.dependency_checker import check_dependencies as check_deps
+
+        required = {
+            "numpy": "pip install numpy",
+            "pygame": "pip install pygame",
+            "OpenGL": "pip install PyOpenGL PyOpenGL_accelerate",
+        }
+
+        return check_deps(required, spec_finder=spec_finder)
+    except ImportError:
+        # Fallback to local implementation
+        required = {
+            "numpy": "pip install numpy",
+            "pygame": "pip install pygame",
+            "OpenGL": "pip install PyOpenGL PyOpenGL_accelerate",
+        }
+
+        missing = [name for name in required if not _has_module(name, spec_finder)]
+
+        return DependencyStatus(
+            ok=not missing,
+            missing=missing,
+            guidance={name: required[name] for name in missing},
+        )
 
 
 def build_launch_command(
