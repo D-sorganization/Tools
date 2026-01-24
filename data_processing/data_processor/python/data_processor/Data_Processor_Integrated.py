@@ -229,9 +229,9 @@ class DataWriter:
         """Write DataFrame to file based on format type."""
         try:
             if format_type == "csv":
-                df.to_csv(file_path, index=False, **kwargs)
+                safe_write_csv(df, file_path, index=False, **kwargs)
             elif format_type == "tsv":
-                df.to_csv(file_path, sep="\t", index=False, **kwargs)
+                safe_write_csv(df, file_path, sep="\t", index=False, **kwargs)
             elif format_type == "parquet":
                 if not PYARROW_AVAILABLE:
                     raise ImportError("PyArrow is required for parquet files")
@@ -1928,6 +1928,20 @@ try:
     from utils.file_utils import safe_read_text, safe_write_text
 except ImportError:
     from pathlib import Path
+
+try:
+    from utils.csv_utils import safe_read_csv, safe_write_csv
+except ImportError:
+    import pandas as pd
+    from pathlib import Path
+    def safe_read_csv(path, default=None, **kwargs):
+        try:
+            return pd.read_csv(path, **kwargs)
+        except Exception:
+            return default if default is not None else pd.DataFrame()
+    def safe_write_csv(df, path, create_parents=True, **kwargs):
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        df.to_csv(path, **kwargs)
     def safe_read_text(path, encoding='utf-8', default=''):
         try:
             return Path(path).read_text(encoding=encoding)

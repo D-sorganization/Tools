@@ -2765,7 +2765,7 @@ class CSVProcessorApp(ctk.CTk):
 
             print(f"Final export path: {final_path}")
             df = self._apply_sorting(df)
-            df.to_csv(final_path, index=False)
+            safe_write_csv(df, final_path, index=False)
             exported_count += 1
             print(f"Successfully exported: {final_path}")
 
@@ -2796,7 +2796,7 @@ class CSVProcessorApp(ctk.CTk):
         output_path = Path(self.output_directory) / compiled_processed_data.csv
         final_path = self._check_file_overwrite(output_path)
         if final_path:
-            compiled_df.to_csv(final_path, index=False)
+            safe_write_csv(compiled_df, final_path, index=False)
             messagebox.showinfo("Success", f"Exported compiled data to {final_path}")
 
     def _export_excel_multisheet(
@@ -6773,7 +6773,7 @@ COMMON MISTAKES TO AVOID:
             )
 
             if output_path:
-                filtered_df.to_csv(output_path, index=False)
+                safe_write_csv(filtered_df, output_path, index=False)
                 messagebox.showinfo(
                     "Success",
                     f"Data imported and saved to {output_path}",
@@ -6830,7 +6830,7 @@ COMMON MISTAKES TO AVOID:
                 # Save trimmed file
                 base_name = os.path.splitext(Path(file_path).name)[0]
                 output_path = Path(self.output_directory) / f"{base_name}_Trimmed.csv / 
-                df.to_csv(output_path, index=False)
+                safe_write_csv(df, output_path, index=False)
 
             except Exception as e:
                 print(f"Error trimming {file_path}: {e}")
@@ -8473,6 +8473,20 @@ try:
     from utils.file_utils import safe_read_text, safe_write_text
 except ImportError:
     from pathlib import Path
+
+try:
+    from utils.csv_utils import safe_read_csv, safe_write_csv
+except ImportError:
+    import pandas as pd
+    from pathlib import Path
+    def safe_read_csv(path, default=None, **kwargs):
+        try:
+            return pd.read_csv(path, **kwargs)
+        except Exception:
+            return default if default is not None else pd.DataFrame()
+    def safe_write_csv(df, path, create_parents=True, **kwargs):
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        df.to_csv(path, **kwargs)
     def safe_read_text(path, encoding='utf-8', default=''):
         try:
             return Path(path).read_text(encoding=encoding)

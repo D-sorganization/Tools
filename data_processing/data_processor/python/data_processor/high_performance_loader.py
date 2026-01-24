@@ -47,6 +47,20 @@ try:
 except ImportError:
     from security_utils import FileSizeError, check_file_size  # type: ignore
 
+
+try:
+    from utils.csv_utils import safe_read_csv, safe_write_csv
+except ImportError:
+    import pandas as pd
+    from pathlib import Path
+    def safe_read_csv(path, default=None, **kwargs):
+        try:
+            return pd.read_csv(path, **kwargs)
+        except Exception:
+            return default if default is not None else pd.DataFrame()
+    def safe_write_csv(df, path, create_parents=True, **kwargs):
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        df.to_csv(path, **kwargs)
 # Module logger
 logger = get_logger(__name__)
 
@@ -269,20 +283,18 @@ class HighPerformanceDataLoader:
             if self.config.lazy_loading:
                 try:
                     # Read a small sample for data type analysis (includes header)
-                    sample_df = pd.read_csv(
-                        file_path,
-                        nrows=self.config.sample_size,
+                    sample_df = safe_read_csv(file_path, nrows=self.config.sample_size,
                         low_memory=False,
                     )
                     signals = set(sample_df.columns)
                 except Exception as e:
                     logger.warning(f"Could not read sample data from {file_path}: {e}")
                     # Fallback to header-only read
-                    header_df = pd.read_csv(file_path, nrows=0)
+                    header_df = safe_read_csv(file_path, nrows=0)
                     signals = set(header_df.columns)
             else:
                 # Just read header when not lazy loading
-                header_df = pd.read_csv(file_path, nrows=0)
+                header_df = safe_read_csv(file_path, nrows=0)
                 signals = set(header_df.columns)
 
             return signals, sample_df
@@ -386,7 +398,7 @@ class HighPerformanceDataLoader:
             if signals:
                 read_kwargs["usecols"] = signals
 
-            df = pd.read_csv(file_path, **read_kwargs)
+            df = safe_read_csv(file_path, **read_kwargs)
 
             # Optimize data types
             return self._optimize_dtypes(df)
