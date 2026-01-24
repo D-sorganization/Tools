@@ -49,21 +49,27 @@ except ImportError:
 
 def check_dependencies() -> list[str]:
     """Check if required dependencies are available."""
+    required_packages = [
+        "customtkinter",
+        "pandas",
+        "numpy",
+        "matplotlib",
+        "PIL",
+    ]
+
     try:
         from tools.dependency_utils import check_dependencies as check_deps
-
-        required_packages = [
-            "customtkinter",
-            "pandas",
-            "numpy",
-            "matplotlib",
-            "PIL",
-        ]
         return check_deps(required_packages)
     except ImportError:
-        logger.warning("Could not import tools.dependency_utils")
+        logger.warning("Could not import tools.dependency_utils. Using fallback check.")
         # Fallback minimal check
-        return []
+        missing = []
+        for pkg in required_packages:
+            try:
+                __import__(pkg)
+            except ImportError:
+                missing.append(pkg)
+        return missing
 
 
 def install_missing_packages(packages: list[str]) -> bool:
