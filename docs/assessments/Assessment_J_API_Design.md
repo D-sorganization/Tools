@@ -1,14 +1,18 @@
 # Assessment: API Design (Category J)
 
-## Grade: 5/10
+## Grade: 7/10
 
-## Evidence
-- **Unified Launcher**: The launcher provides a clean, unified "API" (visual) for users to access tools.
-- **Calculator**: The `TI89Calculator` class has a well-defined public interface (`evaluate`, `derivative`, etc.) and internal caches.
-- **No Shared Library**: There is no distinct "SDK" or shared library that other tools import. Each tool feels like a standalone silo.
-- **Data Processor**: The Data Processor logic is tightly coupled to the GUI, making it impossible to use as an API for automation.
+## Summary
+The `UnifiedToolsLauncher.py` introduces a solid plugin-based architecture, which is a significant improvement over previous ad-hoc scripts. However, the individual tools themselves often lack a consistent programmatic interface.
+
+## Strengths
+- **Plugin System**: The launcher's discovery mechanism (`core/plugin_manager.py`) is well-designed.
+- **Unified Entry**: Single entry point for diverse tools.
+
+## Weaknesses
+- **Tool APIs**: Many tools are designed as standalone scripts/GUIs rather than importable libraries.
+- **Inconsistency**: Parameter passing mechanisms vary between tools.
 
 ## Recommendations
-1. **Extract Core Library**: Create a `pytools` or similar package that contains the core logic of the data processor, calculator, and other tools.
-2. **CLI Interfaces**: Ensure every GUI tool has a corresponding CLI entry point (using `argparse` or `click`) exposing its functionality as an API.
-3. **Standardize Inputs**: Define standard data formats (e.g., JSON schemas, pandas DataFrames) for passing data between tools.
+1. **Standard Interface**: Define a `Tool` Protocol/Interface that all tools must implement.
+2. **Library First**: Refactor tools to be libraries first, with a thin CLI/GUI wrapper.
