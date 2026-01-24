@@ -12,19 +12,20 @@ from pathlib import Path
 from pathlib import Path as PathLib
 
 # Import path_setup utility
+# Add utils to path using shared utility
 try:
-    import importlib.util
-    import sys
-    repo_root = PathLib(__file__).parent.parent.parent.parent.parent.parent.parent
-    utils_path = repo_root / "src" / "python" / "src"
-    if utils_path.exists():
-        sys.path.insert(0, str(utils_path))
-    from utils.path_setup import add_utils_to_path
-    add_utils_to_path()
+    from utils.path_helpers import ensure_utils_in_path
+    ensure_utils_in_path()
 except ImportError:
-    # Fallback
-    repo_root = PathLib(__file__).parent.parent.parent.parent.parent.parent.parent
-    sys.path.insert(0, str(repo_root / "src" / "python" / "src"))
+    # Fallback: try to add utils manually
+    try:
+        from utils.path_setup import add_utils_to_path
+        add_utils_to_path()
+    except ImportError:
+        # Last resort fallback
+        from utils.path_helpers import get_project_root_from_file
+        repo_root = get_project_root_from_file(__file__)
+        sys.path.insert(0, str(repo_root / "src" / "python" / "src"))
 
 try:
     from utils.subprocess_utils import run_python_script
