@@ -46,7 +46,7 @@ def get_current_dir() -> Path:
 
 
 @contextmanager
-def change_directory(path: Path | str):
+def change_directory(path: Path | str) -> None:
     """Context manager for temporarily changing directory.
 
     Args:

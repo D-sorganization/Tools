@@ -85,6 +85,10 @@ class ConfigLoader:
         config = self._config
 
         # Navigate to the parent dict
+        if self._config is None:
+            self._config = {}
+        config = self._config
+        
         for k in keys[:-1]:
             if k not in config:
                 config[k] = {}

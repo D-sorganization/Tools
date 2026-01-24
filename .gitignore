@@ -83,3 +83,9 @@ Assessment_*_TEMP.md
 # CI/CD generated files
 all_runs.json
 runs.json
+
+# Environment files with API keys
+.env
+*.env
+!*.env.example
+document_processing/pdf_renamer/.env

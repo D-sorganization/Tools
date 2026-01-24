@@ -128,7 +128,7 @@ def setup_logging(
 
     # Choose formatter
     if json_logs:
-        formatter = JsonFormatter()
+        formatter: logging.Formatter = JsonFormatter()
     else:
         formatter = logging.Formatter(format_string or DEFAULT_FORMAT)
 
