@@ -61,7 +61,7 @@ class DataLoader:
 
             logger.info(f"Loading CSV file: {file_path}")
 
-            # Load using pandas
+            # Load using pandas (consider using csv_utils.safe_read_csv for better error handling)
             df = pd.read_csv(file_path, low_memory=False)
 
             logger.info(f"Loaded {len(df)} rows, {len(df.columns)} columns")
