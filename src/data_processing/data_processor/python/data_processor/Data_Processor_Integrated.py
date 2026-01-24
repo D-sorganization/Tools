@@ -841,8 +841,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
                         DataWriter.write_file(df, output_path, output_format)
                         self._log_conversion_message(
-                            f"Converted {Path(file_path).name}"
-                            "-> {output_filename}"
+                            f"Converted {Path(file_path).name}" "-> {output_filename}"
                         )
 
                         processed_files += 1
@@ -1917,8 +1916,6 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             from collections import defaultdict
             from datetime import datetime
 
-
-
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
@@ -1962,9 +1959,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         file_path = Path(root) / file
                         try:
                             file_size = os.path.getsize(file_path)
-                            file_ext = (
-                                Path(file).suffix.lower() or "no_extension"
-                            )
+                            file_ext = Path(file).suffix.lower() or "no_extension"
 
                             total_size += file_size
                             folder_files += 1
@@ -2020,9 +2015,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             top_10_files = heapq.nlargest(10, largest_files, key=lambda x: x[1])
             for file_path, size in top_10_files:
                 size_mb = size / (1024 * 1024)
-                report_lines.append(
-                    f"  {Path(file_path).name}: {size_mb:.1f} MB"
-                )
+                report_lines.append(f"  {Path(file_path).name}: {size_mb:.1f} MB")
 
             # Show report in a dialog
             report_text = "\n".join(report_lines)

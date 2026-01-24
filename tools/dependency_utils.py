@@ -3,12 +3,11 @@
 import logging
 import subprocess
 import sys
-from typing import List
 
 logger = logging.getLogger(__name__)
 
 
-def check_dependencies(packages: List[str]) -> List[str]:
+def check_dependencies(packages: list[str]) -> list[str]:
     """Check if required packages are installed.
 
     Args:
@@ -38,7 +37,7 @@ def check_dependencies(packages: List[str]) -> List[str]:
     return missing_packages
 
 
-def install_packages(packages: List[str]) -> bool:
+def install_packages(packages: list[str]) -> bool:
     """Attempt to install packages using pip.
 
     Args:
