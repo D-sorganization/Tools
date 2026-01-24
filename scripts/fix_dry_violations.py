@@ -13,23 +13,29 @@ from re import Match
 try:
     from utils.path_helpers import ensure_utils_in_path
 except ImportError:
+
     def ensure_utils_in_path():
         pass
+
 
 try:
     from utils.file_utils import safe_read_text, safe_write_text
 except ImportError:
     from pathlib import Path
-    def safe_read_text(path, encoding='utf-8', default=''):
+
+    def safe_read_text(path, encoding="utf-8", default=""):
         try:
             return Path(path).read_text(encoding=encoding)
         except Exception:
             return default
-    def safe_write_text(path, content, encoding='utf-8', create_parents=True):
+
+    def safe_write_text(path, content, encoding="utf-8", create_parents=True):
         p = Path(path)
         if create_parents:
             p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(content, encoding=encoding)
+
+
 # Track fixes
 fix_count = 0
 
@@ -111,7 +117,7 @@ def fix_os_path_join(content: str) -> tuple[str, int]:
 def process_file(file_path: Path) -> int:
     """Process a single file and fix DRY violations."""
     try:
-        content = safe_read_text(file_path, default='')
+        content = safe_read_text(file_path, default="")
 
         original_content = content
         total_fixes = 0

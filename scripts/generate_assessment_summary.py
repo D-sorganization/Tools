@@ -17,8 +17,11 @@ try:
 except ImportError:
     # Fallback
     import logging
+
     def init_default_logging():
-        logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+        logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+
+
 import re
 import sys
 from datetime import datetime
@@ -34,20 +37,25 @@ try:
     from utils.file_utils import safe_read_text, safe_write_text
 except ImportError:
     from pathlib import Path
-    def safe_read_text(path, encoding='utf-8', default=''):
+
+    def safe_read_text(path, encoding="utf-8", default=""):
         try:
             return Path(path).read_text(encoding=encoding)
         except Exception:
             return default
-    def safe_write_text(path, content, encoding='utf-8', create_parents=True):
+
+    def safe_write_text(path, content, encoding="utf-8", create_parents=True):
         p = Path(path)
         if create_parents:
             p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(content, encoding=encoding)
+
     def safe_write_json(path, data, indent=2, create_parents=True):
         Path(path).parent.mkdir(parents=True, exist_ok=True)
-        with open(path, 'w', encoding='utf-8') as f:
+        with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=indent)
+
+
 # Configure logging
 init_default_logging()
 logger = logging.getLogger(__name__)
@@ -56,7 +64,7 @@ logger = logging.getLogger(__name__)
 def extract_score_from_report(report_path: Path) -> float:
     """Extract numerical score from assessment report."""
     try:
-        content = safe_read_text(report_path, default='')
+        content = safe_read_text(report_path, default="")
 
         # Look for score patterns like "Overall: 8.5" or "Score: 8.5/10"
         patterns = [
@@ -83,7 +91,7 @@ def extract_issues_from_report(report_path: Path) -> list[dict[str, Any]]:
     issues = []
 
     try:
-        content = safe_read_text(report_path, default='')
+        content = safe_read_text(report_path, default="")
 
         # Look for severity markers
         severity_patterns = {
