@@ -16,14 +16,14 @@ try:
     from utils.logging_utils import init_default_logging
 except ImportError:
     # Fallback
+    import logging
     def init_default_logging():
-        init_default_logging()
+        logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 import re
 import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any
-
 
 try:
     from utils.file_utils import safe_write_json
@@ -49,7 +49,7 @@ except ImportError:
         with open(path, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=indent)
 # Configure logging
-init_default_logging()s: %(message)s")
+init_default_logging()
 logger = logging.getLogger(__name__)
 
 

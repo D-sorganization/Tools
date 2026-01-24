@@ -10,9 +10,11 @@ import sys
 from pathlib import Path
 from re import Match
 
-
 try:
     from utils.path_helpers import ensure_utils_in_path
+except ImportError:
+    def ensure_utils_in_path():
+        pass
 
 try:
     from utils.file_utils import safe_read_text, safe_write_text
@@ -28,9 +30,6 @@ except ImportError:
         if create_parents:
             p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(content, encoding=encoding)
-except ImportError:
-    def ensure_utils_in_path():
-        pass
 # Track fixes
 fix_count = 0
 
