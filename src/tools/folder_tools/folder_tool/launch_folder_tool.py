@@ -28,21 +28,24 @@ try:
     from utils.logging_utils import get_logger
 except ImportError:
     # Fallback if shared utilities not available
+    import logging
     import subprocess
 
-    def run_python_script(script_path: Path, **kwargs):
-        return subprocess.run([sys.executable, str(script_path)], **kwargs)
+    def run_python_script(
+        script_path: Path,
+        args: list[str] | None = None,
+        cwd: Path | str | None = None,
+        timeout: int | None = None,
+        check: bool = False,
+    ):
+        command = [sys.executable, str(script_path)]
+        if args:
+            command.extend(args)
+        return subprocess.run(
+            command, cwd=str(cwd) if cwd else None, timeout=timeout, check=check
+        )
 
     def get_logger(name):
-        pass
-
-
-try:
-    from utils.path_helpers import ensure_utils_in_path
-except ImportError:
-
-    def ensure_utils_in_path():
-        pass
         return logging.getLogger(name)
 
 
