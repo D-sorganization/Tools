@@ -383,56 +383,6 @@ def process_file(file_path: Path) -> int:
         print(f"Error processing {file_path}: {e}", file=sys.stderr)
 
 
-try:
-    from utils.csv_utils import safe_read_csv, safe_write_csv
-except ImportError:
-    from pathlib import Path
-
-    import pandas as pd
-
-
-try:
-    from utils.csv_utils import safe_read_csv, safe_write_csv
-except ImportError:
-    from pathlib import Path
-
-    import pandas as pd
-
-
-try:
-    from utils.csv_utils import safe_read_csv, safe_write_csv
-except ImportError:
-    import pandas as pd
-    from pathlib import Path
-    def safe_read_csv(path, default=None, **kwargs):
-        try:
-            return pd.read_csv(path, **kwargs)
-        except Exception:
-            return default if default is not None else pd.DataFrame()
-    def safe_write_csv(df, path, create_parents=True, **kwargs):
-        Path(path).parent.mkdir(parents=True, exist_ok=True)
-        safe_write_csv(df, path, **kwargs)
-    def safe_read_csv(path, default=None, **kwargs):
-        try:
-            return pd.read_csv(path, **kwargs)
-        except Exception:
-            return default if default is not None else pd.DataFrame()
-
-    def safe_write_csv(df, path, create_parents=True, **kwargs):
-        Path(path).parent.mkdir(parents=True, exist_ok=True)
-        safe_write_csv(df, path, **kwargs)
-
-    def safe_read_csv(path, default=None, **kwargs):
-        try:
-            return pd.read_csv(path, **kwargs)
-        except Exception:
-            return default if default is not None else pd.DataFrame()
-
-    def safe_write_csv(df, path, create_parents=True, **kwargs):
-        Path(path).parent.mkdir(parents=True, exist_ok=True)
-        safe_write_csv(df, path, **kwargs)
-
-
 def find_python_files(root: Path) -> list[Path]:
     """Find all Python files to process."""
     files = []
