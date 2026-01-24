@@ -5,9 +5,7 @@ This module provides convenience functions for common path operations
 that are frequently duplicated across the codebase.
 """
 
-import sys
 from pathlib import Path
-from typing import Callable
 
 from .path_setup import add_utils_to_path, get_repo_root
 
