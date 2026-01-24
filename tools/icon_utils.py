@@ -114,7 +114,7 @@ def convert_png_to_ico(
                 append_images=resized_images[1:],
             )
 
-        logger.info(f"✓ Successfully converted to high-quality ICO: {ico_path}")
+        logger.info(f"Successfully converted to high-quality ICO: {ico_path}")
         if png_path.exists():
             logger.info(f"Original PNG size: {png_path.stat().st_size:,} bytes")
         if ico_path.exists():

@@ -37,7 +37,7 @@ def main() -> None:
             content = shortcut_script.read_text()
             updated_content = content.replace("tools_icon.ico", "tools_icon_hq.ico")
             shortcut_script.write_text(updated_content)
-            logger.info("✓ Updated shortcut script to use high-quality ICO")
+            logger.info("Updated shortcut script to use high-quality ICO")
     else:
         logger.error("Conversion failed!")
 

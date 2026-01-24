@@ -29,7 +29,7 @@ def create_alternative_ico() -> None:
     alt_sizes = [(256, 256), (64, 64), (32, 32), (16, 16)]
 
     if convert_png_to_ico(png_path, ico_path, sizes=alt_sizes):
-        logger.info(f"✓ Created alternative ICO: {ico_path}")
+        logger.info(f"Created alternative ICO: {ico_path}")
     else:
         logger.error(f"Failed to create alternative ICO: {ico_path}")
 
@@ -43,7 +43,7 @@ def create_simple_ico() -> None:
     simple_size = [(32, 32)]
 
     if convert_png_to_ico(png_path, ico_path, sizes=simple_size):
-        logger.info(f"✓ Created simple ICO: {ico_path}")
+        logger.info(f"Created simple ICO: {ico_path}")
     else:
         logger.error(f"Failed to create simple ICO: {ico_path}")
 

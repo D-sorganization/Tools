@@ -63,8 +63,8 @@ def validate_and_sanitize_path(path_str: str, repo_root: Path) -> Path:
     # Ensure path is within repository root
     try:
         full_path.relative_to(repo_root)
-    except ValueError:
-        raise SecurityError(f"Path traversal attempt: {full_path}")
+    except ValueError as err:
+        raise SecurityError(f"Path traversal attempt: {full_path}") from err
 
     if not full_path.exists():
         raise ToolNotFoundError(f"Tool file not found: {full_path}")
@@ -108,7 +108,7 @@ def launch_python_tool(
                 log_func("✅ Process started")
 
     except Exception as e:
-        raise LaunchError(f"Failed to start Python process: {e}")
+        raise LaunchError(f"Failed to start Python process: {e}") from e
 
 
 def launch_matlab_tool(
@@ -144,7 +144,7 @@ def launch_matlab_tool(
             else:
                 subprocess.Popen(["xdg-open", str(path)])
         except Exception as e:
-            raise LaunchError(f"Could not open file in editor: {e}")
+            raise LaunchError(f"Could not open file in editor: {e}") from e
 
 
 def launch_browser_tool(
@@ -157,7 +157,7 @@ def launch_browser_tool(
         if log_func:
             log_func("✅ Opened in default browser")
     except Exception as e:
-        raise LaunchError(f"Failed to open browser: {e}")
+        raise LaunchError(f"Failed to open browser: {e}") from e
 
 
 def launch_batch_tool(
@@ -186,7 +186,7 @@ def launch_batch_tool(
         if log_func:
             log_func("✅ Batch script executed")
     except Exception as e:
-        raise LaunchError(f"Failed to execute batch script: {e}")
+        raise LaunchError(f"Failed to execute batch script: {e}") from e
 
 
 def launch_tool(
