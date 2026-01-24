@@ -67,5 +67,15 @@
         "number": 214,
         "title": "CRITICAL: Fix Calculator Logic Gaps and Empty Tests",
         "labels": ["critical", "bug", "jules:assessment"]
+    },
+    {
+        "number": 215,
+        "title": "CRITICAL: CI Standard and Control Tower Workflows Failing",
+        "labels": ["critical", "ci", "jules:assessment"]
+    },
+    {
+        "number": 216,
+        "title": "CRITICAL: Missing Tests for New Unit Converter PWA",
+        "labels": ["critical", "quality", "jules:assessment"]
     }
 ]
