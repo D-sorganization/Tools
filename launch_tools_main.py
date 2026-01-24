@@ -41,7 +41,7 @@ def setup_python_path() -> None:
 
     for path in paths_to_add:
         if path.exists():
-            ensure_utils_in_path()
+            sys.path.insert(0, str(path))
             logger.info(f"Added to Python path: {path}")
 
     # Also set PYTHONPATH environment variable
