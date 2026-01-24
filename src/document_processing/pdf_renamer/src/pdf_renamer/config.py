@@ -28,6 +28,7 @@ try:
     # Use get_project_root_from_file for consistent path resolution
     try:
         from utils.path_helpers import get_project_root_from_file
+
         project_root = get_project_root_from_file(__file__)
     except ImportError:
         project_root = Path(__file__).parent.parent.parent
