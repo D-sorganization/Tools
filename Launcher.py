@@ -13,11 +13,11 @@ from tkinter import messagebox, ttk
 from typing import Any
 
 # Path helpers
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = Path(os.path.abspath(__file__).parent)
 
 
 def get_path(rel_path: str) -> str:
-    return os.path.normpath(os.path.join(BASE_DIR, rel_path))
+    return os.path.normpath(Path(BASE_DIR) / rel_path)
 
 
 # Tool Configuration
@@ -152,7 +152,7 @@ class ToolsLauncher(tk.Tk):
                 lbl.pack(pady=(15, 5))
 
                 # Launch Button
-                exists = os.path.exists(full_path)
+                exists = Path(full_path).exists()
                 state = "normal" if exists else "disabled"
                 btn_text = "Launch" if exists else "Not Found"
 
@@ -203,7 +203,7 @@ class ToolsLauncher(tk.Tk):
 
     def launch_tool(self, path: str, kind: str) -> None:
         try:
-            cwd = os.path.dirname(path)
+            cwd = Path(path).parent
             if kind == "python":
                 # Use the same python executable
                 subprocess.Popen([sys.executable, path], cwd=cwd)

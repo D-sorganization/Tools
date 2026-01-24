@@ -6,14 +6,20 @@ converter functionality.
 """
 
 import logging
+
+# Use shared logging utility
+try:
+    from utils.logging_utils import init_default_logging
+except ImportError:
+    # Fallback
+    def init_default_logging():
+        logging.basicConfig(level=logging.INFO)
 import os
 import sys
 from pathlib import Path
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
+init_default_logging()s - %(levelname)s - %(message)s",
 )
 
 # Get the current script directory and parent directory

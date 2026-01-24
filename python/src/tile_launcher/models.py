@@ -3,6 +3,16 @@
 from __future__ import annotations
 
 import json
+
+# Use shared file utility
+try:
+    from utils.file_utils import safe_read_json
+except ImportError:
+    # Fallback
+    def safe_read_json(path, default=None):
+        import json
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -62,7 +72,7 @@ class FileLayoutStore:
         if not content.strip():
             return []
 
-        return list(json.loads(content))
+        return list(safe_read_json(content, default=None))
 
     def save(self, layout_ids: Sequence[str]) -> None:
         """Save the layout to the JSON file."""

@@ -4,7 +4,7 @@ import sys
 import sympy as sp
 
 # Add the parent directory to sys.path to import calculator
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.append(os.path.abspath(Path(Path(__file__).parent, "..")))
 
 from calculator import TI89Calculator
 

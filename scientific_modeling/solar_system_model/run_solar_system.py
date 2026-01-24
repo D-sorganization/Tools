@@ -18,7 +18,7 @@ try:
     ensure_utils_in_path()
 except ImportError:
     # Fallback
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    sys.path.insert(0, Path(os.path.abspath(__file__).parent))
 
 from solar_system.main import main
 

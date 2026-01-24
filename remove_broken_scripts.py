@@ -2,11 +2,19 @@
 """Remove broken fix scripts that are causing CI failures."""
 
 import logging
+
+# Use shared logging utility
+try:
+    from utils.logging_utils import init_default_logging
+except ImportError:
+    # Fallback
+    def init_default_logging():
+        logging.basicConfig(level=logging.INFO)
 import os
 from pathlib import Path
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+init_default_logging()s: %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -29,7 +37,7 @@ def main() -> None:
     removed_count = 0
 
     for script in broken_scripts:
-        if os.path.exists(script):
+        if Path(script).exists():
             try:
                 os.remove(script)
                 logger.info(f"✅ Removed broken script: {script}")

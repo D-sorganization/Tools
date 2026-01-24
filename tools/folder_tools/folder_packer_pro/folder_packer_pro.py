@@ -17,7 +17,25 @@ A comprehensive project packaging application with advanced features:
 import base64
 import gzip
 import json
+
+# Use shared file utility
+try:
+    from utils.file_utils import safe_read_json
+except ImportError:
+    # Fallback
+    def safe_read_json(path, default=None):
+        import json
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
 import logging
+
+# Use shared logging utility
+try:
+    from utils.logging_utils import init_default_logging
+except ImportError:
+    # Fallback
+    def init_default_logging():
+        logging.basicConfig(level=logging.INFO)
 import os
 import re
 import sys
@@ -151,9 +169,7 @@ LIGHT_THEME = {
 
 # Set up professional logging
 log_filename = "folder_packer_pro.log"
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(funcName)s - %(message)s",
+init_default_logging()s - %(levelname)s - %(funcName)s - %(message)s",
     handlers=[
         logging.FileHandler(log_filename, mode="w"),
         logging.StreamHandler(),
@@ -271,7 +287,7 @@ class PackageManifest:
     @classmethod
     def from_json(cls, json_str: str) -> "PackageManifest":
         """Create manifest from JSON string."""
-        data = json.loads(json_str)
+        data = safe_read_json(json_str, default=None)
         manifest = cls()
         manifest.created_at = datetime.fromisoformat(data["created_at"])
         manifest.files = data["files"]
@@ -1487,7 +1503,7 @@ class FolderPackerPro:
                 pass
 
             # Parse JSON
-            package_data = json.loads(data.decode("utf-8"))
+            package_data = safe_read_json(data.decode("utf-8", default=None))
 
             files = package_data.get("files", {})
             total_files = len(files)
@@ -1566,7 +1582,7 @@ class FolderPackerPro:
             try:
                 # Try to decompress
                 decompressed = gzip.decompress(data)
-                json.loads(decompressed.decode("utf-8"))
+                safe_read_json(decompressed.decode("utf-8", default=None))
             except Exception:
                 is_encrypted = True
 
@@ -1581,7 +1597,7 @@ class FolderPackerPro:
 
             if not is_encrypted:
                 decompressed = gzip.decompress(data)
-                package_data = json.loads(decompressed.decode("utf-8"))
+                package_data = safe_read_json(decompressed.decode("utf-8", default=None))
                 metadata = package_data.get("metadata", {})
 
                 info += f"Created: {metadata.get('created_at', 'Unknown')}\n"

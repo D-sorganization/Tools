@@ -1,6 +1,5 @@
 """Tests for Folders_Tool_r0.py."""
 
-import os
 import sys
 from unittest.mock import MagicMock
 
@@ -291,7 +290,7 @@ class TestFolderProcessorApp:
 
             zip_path = app.create_output_zip()
 
-            assert os.path.exists(zip_path)
+            assert Path(zip_path).exists()
             assert zip_path.endswith(".zip")
 
             # Verify zip content

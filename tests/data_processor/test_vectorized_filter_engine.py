@@ -7,12 +7,10 @@ import pandas as pd
 
 # Adjust path to find the module under test
 # This is required because the test file is outside the package structure
-current_dir = os.path.dirname(os.path.abspath(__file__))
+current_dir = Path(os.path.abspath(__file__).parent)
 # Go up two levels to reach the repo root, then down to the package
 project_root = os.path.abspath(
-    os.path.join(
-        current_dir, "../../data_processing/data_processor/python/data_processor"
-    )
+    Path(current_dir) / ../../data_processing/data_processor/python/data_processor
 )
 sys.path.insert(0, project_root)
 

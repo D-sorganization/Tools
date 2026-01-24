@@ -4,6 +4,14 @@ Test different icon conversion methods to fix the white icon issue.
 """
 
 import logging
+
+# Use shared logging utility
+try:
+    from utils.logging_utils import init_default_logging
+except ImportError:
+    # Fallback
+    def init_default_logging():
+        logging.basicConfig(level=logging.INFO)
 from pathlib import Path
 
 try:
@@ -17,7 +25,7 @@ except ImportError:
     from PIL import Image
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+init_default_logging()s: %(message)s")
 logger = logging.getLogger(__name__)
 
 

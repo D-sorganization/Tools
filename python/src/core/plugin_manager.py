@@ -1,4 +1,3 @@
-import json
 import logging
 from dataclasses import dataclass
 from pathlib import Path
@@ -42,8 +41,7 @@ class PluginManager:
                     data = {}
             except ImportError:
                 # Fallback
-                with open(self.tools_file, encoding="utf-8") as f:
-                    data = json.load(f)
+                data = safe_read_json(self.tools_file, default=None)
                 if data is None:
                     data = {}
 

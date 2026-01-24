@@ -2,6 +2,14 @@
 
 import datetime
 import logging
+
+# Use shared logging utility
+try:
+    from utils.logging_utils import init_default_logging
+except ImportError:
+    # Fallback
+    def init_default_logging():
+        logging.basicConfig(level=logging.INFO)
 import shutil
 from pathlib import Path
 
@@ -35,7 +43,7 @@ except ImportError:
     ttk = MagicMock()
 
 # Set up logging
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+init_default_logging()s: %(message)s")
 logger = logging.getLogger(__name__)
 
 # Constants for file filtering

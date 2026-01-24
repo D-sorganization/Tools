@@ -1,6 +1,16 @@
 """Transaction logging system for rollback capability."""
 
 import json
+
+# Use shared file utility
+try:
+    from utils.file_utils import safe_read_json
+except ImportError:
+    # Fallback
+    def safe_read_json(path, default=None):
+        import json
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
 import logging
 from datetime import datetime
 from pathlib import Path
@@ -97,7 +107,7 @@ class TransactionLog:
             with open(self.log_path, encoding="utf-8") as f:
                 for line in f:
                     try:
-                        entry = json.loads(line.strip())
+                        entry = safe_read_json(line.strip(, default=None))
                         if entry.get("session_id") == session_id:
                             operations.append(entry)
                     except json.JSONDecodeError:

@@ -8,21 +8,47 @@ for untracked critical findings.
 
 import argparse
 import json
+
+# Use shared file utility
+try:
+    from utils.file_utils import safe_read_json
+except ImportError:
+    # Fallback
+    def safe_read_json(path, default=None):
+        import json
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
 import logging
+
+# Use shared logging utility
+try:
+    from utils.logging_utils import init_default_logging
+except ImportError:
+    # Fallback
+    def init_default_logging():
+        logging.basicConfig(level=logging.INFO)
 import subprocess
+
+# Use shared subprocess utility
+try:
+    from utils.subprocess_utils import run_command
+except ImportError:
+    # Fallback
+    import subprocess
+    run_command = subprocess.run
 import sys
 from pathlib import Path
 from typing import Any, cast
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+init_default_logging()s: %(message)s")
 logger = logging.getLogger(__name__)
 
 
 def get_existing_issues() -> list[dict[str, Any]]:
     """Fetch existing GitHub issues."""
     try:
-        result = subprocess.run(
+        result = run_command(
             [
                 "gh",
                 "issue",
@@ -36,7 +62,7 @@ def get_existing_issues() -> list[dict[str, Any]]:
             text=True,
             check=True,
         )
-        return cast(list[dict[str, Any]], json.loads(result.stdout))
+        return cast(list[dict[str, Any]], safe_read_json(result.stdout, default=None))
     except Exception as e:
         logger.warning(f"Could not fetch existing issues: {e}")
         return []
@@ -87,7 +113,7 @@ def create_github_issue(
         if labels:
             cmd.extend(["--label", ",".join(labels)])
 
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        result = run_command(cmd, capture_output=True, text=True, check=True)
         issue_url = result.stdout.strip()
         logger.info(f"✓ Created issue: {issue_url}")
         return True

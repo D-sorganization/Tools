@@ -10,7 +10,7 @@ try:
     ensure_utils_in_path()
 except ImportError:
     # Fallback
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
+    sys.path.append(os.path.abspath(Path(Path(__file__).parent, "../src")))
 
 from star_wars_rrt import Obstacle, PursuitAI, RRTPlanner, Ship
 

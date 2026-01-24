@@ -5,7 +5,7 @@ import sys
 from typing import Any
 
 # Add the parent directory to sys.path to import webapp
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
+sys.path.append(os.path.abspath(Path(Path(__file__).parent, "../../..")))
 
 from web_applications.calculator.webapp import create_app
 

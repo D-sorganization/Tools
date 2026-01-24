@@ -61,6 +61,14 @@ from __future__ import annotations
 
 import argparse
 import logging
+
+# Use shared logging utility
+try:
+    from utils.logging_utils import init_default_logging
+except ImportError:
+    # Fallback
+    def init_default_logging():
+        logging.basicConfig(level=logging.INFO)
 import sys
 from datetime import datetime
 
@@ -121,7 +129,7 @@ def main() -> int:
     scene = SolarSystemScene(settings)
 
     # Configure logging
-    logging.basicConfig(level=logging.INFO, format="%(message)s")
+    init_default_logging()s")
 
     # Initialize
     logging.info("\n" + "=" * 70)

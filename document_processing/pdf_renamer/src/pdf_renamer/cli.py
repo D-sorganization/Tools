@@ -1,5 +1,13 @@
 import argparse
 import logging
+
+# Use shared logging utility
+try:
+    from utils.logging_utils import init_default_logging
+except ImportError:
+    # Fallback
+    def init_default_logging():
+        logging.basicConfig(level=logging.INFO)
 import sys
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -10,7 +18,7 @@ from .llm_layer import GeminiTitleLLM
 from .types import TitleResult
 from .utils import sanitize_filename, sha256_file
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s")
+init_default_logging()s - %(message)s")
 logger = logging.getLogger("pdf_renamer")
 
 

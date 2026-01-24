@@ -5,16 +5,30 @@ This script launches the integrated Tools application with proper error handling
 """
 
 import logging
+
+# Use shared logging utility
+try:
+    from utils.logging_utils import init_default_logging
+except ImportError:
+    # Fallback
+    def init_default_logging():
+        logging.basicConfig(level=logging.INFO)
 import os
 import sys
 import traceback
 from pathlib import Path
+
+# Use shared subprocess utility
+try:
+    from utils.subprocess_utils import run_command
+except ImportError:
+    # Fallback
+    import subprocess
+    run_command = subprocess.run
 from tkinter import Tk, messagebox
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
+init_default_logging()s - %(levelname)s - %(message)s",
     handlers=[logging.FileHandler("tools_launcher.log"), logging.StreamHandler()],
 )
 logger = logging.getLogger(__name__)
@@ -102,7 +116,7 @@ def install_missing_packages(packages: list[str]) -> bool:
             pip_name = pip_names.get(package, package)
             logger.info(f"Installing {pip_name}...")
 
-            result = subprocess.run(
+            result = run_command(
                 [sys.executable, "-m", "pip", "install", pip_name],
                 capture_output=True,
                 text=True,

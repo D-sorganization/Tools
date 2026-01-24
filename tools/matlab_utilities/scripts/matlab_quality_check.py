@@ -13,8 +13,24 @@ Usage:
 import argparse
 import json
 import logging
+
+# Use shared logging utility
+try:
+    from utils.logging_utils import init_default_logging
+except ImportError:
+    # Fallback
+    def init_default_logging():
+        logging.basicConfig(level=logging.INFO)
 import re
 import subprocess
+
+# Use shared subprocess utility
+try:
+    from utils.subprocess_utils import run_command
+except ImportError:
+    # Fallback
+    import subprocess
+    run_command = subprocess.run
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -35,9 +51,7 @@ from utils.compatibility import UTC  # noqa: E402
 MATLAB_SCRIPT_TIMEOUT_SECONDS: int = 300  # 5 minutes - allows time for large codebases
 
 # Set up logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
+init_default_logging()s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
 
@@ -148,7 +162,7 @@ class MATLABQualityChecker:
             for cmd in commands:
                 try:
                     logger.info("Trying command: %s", " ".join(cmd))
-                    result = subprocess.run(
+                    result = run_command(
                         cmd,
                         capture_output=True,
                         text=True,

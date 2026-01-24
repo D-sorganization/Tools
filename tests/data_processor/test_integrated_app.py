@@ -7,8 +7,7 @@ from typing import Any
 from unittest.mock import MagicMock, patch
 
 project_root = os.path.abspath(
-    os.path.join(
-        os.path.dirname(__file__),
+    Path(Path(__file__).parent,
         "../../data_processing/data_processor/python/data_processor",
     )
 )

@@ -14,6 +14,16 @@ from __future__ import annotations
 
 import hashlib
 import json
+
+# Use shared file utility
+try:
+    from utils.file_utils import safe_read_json
+except ImportError:
+    # Fallback
+    def safe_read_json(path, default=None):
+        import json
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
 import os
 import threading
 import warnings
@@ -204,7 +214,7 @@ class HighPerformanceDataLoader:
 
     def _get_file_metadata(self, file_path: str) -> FileMetadata | None:
         """Get metadata for a single file with caching."""
-        if not os.path.exists(file_path):
+        if not Path(file_path).exists():
             return None
 
         # Check file size for security
@@ -298,8 +308,7 @@ class HighPerformanceDataLoader:
                 self.cache_dir / f"{hashlib.md5(file_path.encode()).hexdigest()}.json"
             )
             if cache_file.exists():
-                with open(cache_file, encoding="utf-8") as f:
-                    data = json.load(f)
+                data = safe_read_json(cache_file, default=None)
                     # Convert signals list back to set
                     data["signals"] = set(data["signals"])
                     # Sample data is not cached (too large for JSON)

@@ -1,4 +1,14 @@
 import json
+
+# Use shared file utility
+try:
+    from utils.file_utils import safe_read_json
+except ImportError:
+    # Fallback
+    def safe_read_json(path, default=None):
+        import json
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
 import logging
 import time
 from pathlib import Path
@@ -101,7 +111,7 @@ class GeminiTitleLLM:
 
             text = response.text
             try:
-                data = json.loads(text)
+                data = safe_read_json(text, default=None)
                 title = data.get("title")
                 conf = float(data.get("confidence", 0.0))
                 details = data.get("reason", "")

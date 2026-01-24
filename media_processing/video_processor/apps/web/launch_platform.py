@@ -1,10 +1,26 @@
 #!/usr/bin/env python3
 import logging
+
+# Use shared logging utility
+try:
+    from utils.logging_utils import init_default_logging
+except ImportError:
+    # Fallback
+    def init_default_logging():
+        logging.basicConfig(level=logging.INFO)
 import shutil
 import subprocess
+
+# Use shared subprocess utility
+try:
+    from utils.subprocess_utils import run_command
+except ImportError:
+    # Fallback
+    import subprocess
+    run_command = subprocess.run
 import sys
 
-logging.basicConfig(level=logging.INFO)
+init_default_logging()
 logger = logging.getLogger("VideoPlatformLauncher")
 
 
@@ -26,7 +42,7 @@ def main() -> None:
 
     try:
         # Run in the current directory
-        subprocess.run(cmd, check=True)
+        run_command(cmd, check=True)
     except KeyboardInterrupt:
         logger.info("Stopped.")
     except Exception as e:

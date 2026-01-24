@@ -10,6 +10,14 @@ This script aggregates all A-O assessment results and creates:
 import argparse
 import json
 import logging
+
+# Use shared logging utility
+try:
+    from utils.logging_utils import init_default_logging
+except ImportError:
+    # Fallback
+    def init_default_logging():
+        logging.basicConfig(level=logging.INFO)
 import re
 import sys
 from datetime import datetime
@@ -17,7 +25,7 @@ from pathlib import Path
 from typing import Any
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+init_default_logging()s: %(message)s")
 logger = logging.getLogger(__name__)
 
 

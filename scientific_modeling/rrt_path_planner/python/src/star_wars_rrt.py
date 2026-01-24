@@ -5,6 +5,14 @@ Enhanced performance with real-time rendering and GPU acceleration
 """
 
 import logging
+
+# Use shared logging utility
+try:
+    from utils.logging_utils import init_default_logging
+except ImportError:
+    # Fallback
+    def init_default_logging():
+        logging.basicConfig(level=logging.INFO)
 import random
 from dataclasses import dataclass
 from typing import Any
@@ -565,8 +573,7 @@ class StarWarsRRTApp:
 
 def main() -> None:
     """Main entry point"""
-    logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+    init_default_logging()s - %(levelname)s - %(message)s"
     )
     app = StarWarsRRTApp()
     app.setup_scenario("single")

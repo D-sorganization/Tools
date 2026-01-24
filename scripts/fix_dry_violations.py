@@ -69,7 +69,7 @@ def fix_os_path_join(content: str) -> tuple[str, int]:
     global fix_count
     fixes = 0
 
-    # Pattern: os.path.join(a, b, c)
+    # Pattern: Path(a) / b / c
     pattern = r'os\.path\.join\s*\(([^)]+)\)'
 
     def replace(match: Match[str]) -> str:

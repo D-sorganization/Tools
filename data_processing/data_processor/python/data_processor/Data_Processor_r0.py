@@ -242,8 +242,7 @@ class CSVProcessorApp(ctk.CTk):
         self.plots_signal_vars: dict[str, Any] = {}
 
         # Layout persistence variables
-        self.layout_config_file = os.path.join(
-            os.path.expanduser("~"),
+        self.layout_config_file = Path(os.path.expanduser("~),
             ".csv_processor_layout.json",
         )
         self.splitters = {}
@@ -1901,7 +1900,7 @@ class CSVProcessorApp(ctk.CTk):
 
             # Set default output directory to the folder of the first selected file
             if self.input_file_paths:
-                first_file_dir = os.path.dirname(self.input_file_paths[0])
+                first_file_dir = Path(self.input_file_paths[0]).parent
                 self.output_directory = first_file_dir
                 print(f"DEBUG: Set output directory to: {self.output_directory}")
                 # Update the output label to reflect the new default directory
@@ -2077,7 +2076,7 @@ class CSVProcessorApp(ctk.CTk):
                     full_path = file_path
                     break
 
-            if full_path and os.path.exists(full_path):
+            if full_path and Path(full_path).exists():
                 try:
                     df = pd.read_csv(full_path, low_memory=False)
                     # Simple time column conversion
@@ -2277,7 +2276,7 @@ class CSVProcessorApp(ctk.CTk):
                 self.update()
 
                 # Check if file exists
-                if not os.path.exists(file_path):
+                if not Path(file_path).exists():
                     print(f"ERROR: File not found: {file_path}")
                     error_count += 1
                     continue
@@ -2750,10 +2749,7 @@ class CSVProcessorApp(ctk.CTk):
         exported_count = 0
         for file_path, df in processed_files:
             base_name = os.path.splitext(os.path.basename(file_path))[0]
-            output_path = os.path.join(
-                self.output_directory,
-                f"{base_name}_processed.csv",
-            )
+            output_path = Path(self.output_directory) / f"{base_name}_processed.csv / 
             print(f"Exporting to: {output_path}")
 
             final_path = self._check_file_overwrite(output_path)
@@ -2791,7 +2787,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         compiled_df = self._apply_sorting(compiled_df)
 
-        output_path = os.path.join(self.output_directory, "compiled_processed_data.csv")
+        output_path = Path(self.output_directory) / compiled_processed_data.csv
         final_path = self._check_file_overwrite(output_path)
         if final_path:
             compiled_df.to_csv(final_path, index=False)
@@ -2801,7 +2797,7 @@ class CSVProcessorApp(ctk.CTk):
         self, processed_files: dict[str, pd.DataFrame]
     ) -> None:
         """Export all files to a single Excel file with multiple sheets."""
-        output_path = os.path.join(self.output_directory, "processed_data.xlsx")
+        output_path = Path(self.output_directory) / processed_data.xlsx
         final_path = self._check_file_overwrite(output_path)
         if not final_path:
             return
@@ -2819,10 +2815,7 @@ class CSVProcessorApp(ctk.CTk):
         exported_count = 0
         for file_path, df in processed_files:
             base_name = os.path.splitext(os.path.basename(file_path))[0]
-            output_path = os.path.join(
-                self.output_directory,
-                f"{base_name}_processed.xlsx",
-            )
+            output_path = Path(self.output_directory) / f"{base_name}_processed.xlsx / 
 
             final_path = self._check_file_overwrite(output_path)
             if final_path is None:
@@ -2845,10 +2838,7 @@ class CSVProcessorApp(ctk.CTk):
         exported_count = 0
         for file_path, df in processed_files:
             base_name = os.path.splitext(os.path.basename(file_path))[0]
-            output_path = os.path.join(
-                self.output_directory,
-                f"{base_name}_processed.mat",
-            )
+            output_path = Path(self.output_directory) / f"{base_name}_processed.mat / 
 
             final_path = self._check_file_overwrite(output_path)
             if final_path is None:
@@ -2880,7 +2870,7 @@ class CSVProcessorApp(ctk.CTk):
         )
         compiled_df = self._apply_sorting(compiled_df)
 
-        output_path = os.path.join(self.output_directory, "compiled_processed_data.mat")
+        output_path = Path(self.output_directory) / compiled_processed_data.mat
         final_path = self._check_file_overwrite(output_path)
         if final_path:
             mat_data = {col: compiled_df[col].values for col in compiled_df.columns}
@@ -4183,7 +4173,7 @@ class CSVProcessorApp(ctk.CTk):
     def _load_layout_config(self) -> dict[str, Any]:
         """Load layout configuration from file."""
         try:
-            if os.path.exists(self.layout_config_file):
+            if Path(self.layout_config_file).exists():
                 with open(self.layout_config_file) as f:
                     return json.load(f)
         except Exception as e:
@@ -5138,7 +5128,7 @@ class CSVProcessorApp(ctk.CTk):
                     full_path = file_path
                     break
 
-            if full_path and os.path.exists(full_path):
+            if full_path and Path(full_path).exists():
                 df = pd.read_csv(full_path)
                 # Try to identify time column
                 time_col = None
@@ -5792,7 +5782,7 @@ COMMON MISTAKES TO AVOID:
             current_dir = os.getcwd()
             for file in os.listdir(current_dir):
                 if file.endswith(".json"):
-                    file_path = os.path.join(current_dir, file)
+                    file_path = Path(current_dir) / file
                     try:
                         # Try to read the file to see if it's a valid configuration
                         with open(file_path) as f:
@@ -5869,7 +5859,7 @@ COMMON MISTAKES TO AVOID:
 
             # Extract filename from the display text
             filename = selected_text.split(" (")[0]
-            filepath = os.path.join(os.getcwd(), filename)
+            filepath = Path(os.getcwd(), filename)
 
             # Load the configuration
             with open(filepath) as f:
@@ -5912,7 +5902,7 @@ COMMON MISTAKES TO AVOID:
 
             # Extract filename from the display text
             filename = selected_text.split(" (")[0]
-            filepath = os.path.join(os.getcwd(), filename)
+            filepath = Path(os.getcwd(), filename)
 
             # Confirm deletion
             result = messagebox.askyesno(
@@ -5943,11 +5933,11 @@ COMMON MISTAKES TO AVOID:
             elif os.name == "posix":  # macOS and Linux
                 import subprocess
 
-                subprocess.run(["open", current_dir], check=False)  # macOS
+                run_command(["open", current_dir], check=False)  # macOS
             else:
                 import subprocess
 
-                subprocess.run(["xdg-open", current_dir], check=False)  # Linux
+                run_command(["xdg-open", current_dir], check=False)  # Linux
         except Exception as e:
             messagebox.showerror("Error", f"Failed to open folder:\n{e!s}")
 
@@ -6702,8 +6692,7 @@ COMMON MISTAKES TO AVOID:
     def _save_plots_to_file(self) -> None:
         """Save plots list to file."""
         try:
-            plots_file = os.path.join(
-                os.path.expanduser("~"),
+            plots_file = Path(os.path.expanduser("~),
                 ".csv_processor_plots.json",
             )
             with open(plots_file, "w") as f:
@@ -6714,11 +6703,10 @@ COMMON MISTAKES TO AVOID:
     def _load_plots_from_file(self) -> None:
         """Load plots list from file."""
         try:
-            plots_file = os.path.join(
-                os.path.expanduser("~"),
+            plots_file = Path(os.path.expanduser("~),
                 ".csv_processor_plots.json",
             )
-            if os.path.exists(plots_file):
+            if Path(plots_file).exists():
                 with open(plots_file) as f:
                     self.plots_list = json.load(f)
                 self._update_plots_listbox()
@@ -6748,7 +6736,7 @@ COMMON MISTAKES TO AVOID:
             self.data_file_label.configure(text=os.path.basename(filepath))
 
             # Set default output directory to the folder of the selected DAT file
-            dat_file_dir = os.path.dirname(filepath)
+            dat_file_dir = Path(filepath).parent
             self.output_directory = dat_file_dir
             # Update the output label to reflect the new default directory
             if hasattr(self, "output_label"):
@@ -6843,10 +6831,7 @@ COMMON MISTAKES TO AVOID:
 
                 # Save trimmed file
                 base_name = os.path.splitext(os.path.basename(file_path))[0]
-                output_path = os.path.join(
-                    self.output_directory,
-                    f"{base_name}_Trimmed.csv",
-                )
+                output_path = Path(self.output_directory) / f"{base_name}_Trimmed.csv / 
                 df.to_csv(output_path, index=False)
 
             except Exception as e:
@@ -7552,7 +7537,7 @@ For additional support or feature requests, please refer to the
 
     def _generate_unique_filename(self, base_path: str, extension: str) -> str:
         """Generate a unique filename to prevent overwriting existing files."""
-        directory = os.path.dirname(base_path)
+        directory = Path(base_path).parent
         base_name = os.path.splitext(os.path.basename(base_path))[0]
 
         # Remove any existing suffix like _processed, _1, _2, etc.
@@ -7565,14 +7550,14 @@ For additional support or feature requests, please refer to the
             else:
                 filename = f"{base_name}_processed_{counter}{extension}"
 
-            full_path = os.path.join(directory, filename)
-            if not os.path.exists(full_path):
+            full_path = Path(directory) / filename
+            if not Path(full_path).exists():
                 return full_path
             counter += 1
 
     def _check_file_overwrite(self, file_path: str) -> str | None:
         """Check if file exists and prompt user for action."""
-        if os.path.exists(file_path):
+        if Path(file_path).exists():
             filename = os.path.basename(file_path)
             response = messagebox.askyesnocancel(
                 "File Already Exists",
@@ -7589,11 +7574,11 @@ For additional support or feature requests, please refer to the
             if response:  # Yes - overwrite
                 return file_path
             # No - generate unique name
-            directory = os.path.dirname(file_path)
+            directory = Path(file_path).parent
             base_name = os.path.splitext(os.path.basename(file_path))[0]
             extension = os.path.splitext(file_path)[1]
             return self._generate_unique_filename(
-                os.path.join(directory, base_name),
+                Path(directory) / base_name,
                 extension,
             )
 
@@ -8510,7 +8495,7 @@ For additional support or feature requests, please refer to the
             for plot_config in self.plots_list:
                 # Create a simple text file with plot configuration
                 filename = f"{plot_config['name'].replace(' ', '_')}_config.txt"
-                filepath = os.path.join(export_dir, filename)
+                filepath = Path(export_dir) / filename
 
                 with open(filepath, "w") as f:
                     f.write(f"Plot Configuration: {plot_config['name']}\n")
@@ -8794,14 +8779,14 @@ For additional support or feature requests, please refer to the
 
         # Check for existing files with the custom name
         output_dir = self.output_directory
-        if os.path.exists(output_dir):
+        if Path(output_dir).exists():
             # Check for various file extensions that might be created
             extensions = [".csv", ".xlsx", ".mat"]
             existing_files = []
 
             for ext in extensions:
-                potential_file = os.path.join(output_dir, f"{custom_name}{ext}")
-                if os.path.exists(potential_file):
+                potential_file = Path(output_dir) / f"{custom_name}{ext}
+                if Path(potential_file).exists():
                     existing_files.append(f"{custom_name}{ext}")
 
             if existing_files:

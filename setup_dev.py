@@ -1,12 +1,20 @@
 #!/usr/bin/env python3
 import logging
+
+# Use shared logging utility
+try:
+    from utils.logging_utils import init_default_logging
+except ImportError:
+    # Fallback
+    def init_default_logging():
+        logging.basicConfig(level=logging.INFO)
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format="%(message)s")
+init_default_logging()s")
 logger = logging.getLogger(__name__)
 
 

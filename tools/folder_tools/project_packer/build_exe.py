@@ -3,13 +3,29 @@
 
 import importlib.util
 import logging
+
+# Use shared logging utility
+try:
+    from utils.logging_utils import init_default_logging
+except ImportError:
+    # Fallback
+    def init_default_logging():
+        logging.basicConfig(level=logging.INFO)
 import shutil
 import subprocess
+
+# Use shared subprocess utility
+try:
+    from utils.subprocess_utils import run_command
+except ImportError:
+    # Fallback
+    import subprocess
+    run_command = subprocess.run
 import sys
 from pathlib import Path
 
 # Set up logging
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+init_default_logging()s: %(message)s")
 logger = logging.getLogger(__name__)
 
 # Constants for build configuration
@@ -41,7 +57,7 @@ def install_pyinstaller() -> bool:
     """
     logger.info("Installing PyInstaller...")
     try:
-        subprocess.run(  # noqa: S603
+        run_command(  # noqa: S603
             [sys.executable, "-m", "pip", "install", "pyinstaller"],
             check=True,
             capture_output=True,
@@ -96,7 +112,7 @@ def build_executable() -> bool:
     logger.info("Command: %s", " ".join(cmd))
 
     try:
-        subprocess.run(  # noqa: S603
+        run_command(  # noqa: S603
             cmd, cwd=Path.cwd(), check=True, capture_output=True, text=True
         )
     except subprocess.CalledProcessError:
