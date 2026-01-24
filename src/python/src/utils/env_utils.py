@@ -47,8 +47,14 @@ def find_env_file(
             if repo_root:
                 locations.append(repo_root / filename)
         except ImportError:
-            # Fallback
-            locations.append(Path(__file__).parent.parent.parent.parent.parent / filename)
+            # Fallback - use path_helpers if available
+            try:
+                from utils.path_helpers import get_project_root_from_file
+                repo_root = get_project_root_from_file(__file__)
+                locations.append(repo_root / filename)
+            except ImportError:
+                # Last resort fallback
+                locations.append(Path(__file__).parent.parent.parent.parent.parent / filename)
 
     # Add user home directory
     locations.append(Path.home() / ".pdf_renamer" / filename)
