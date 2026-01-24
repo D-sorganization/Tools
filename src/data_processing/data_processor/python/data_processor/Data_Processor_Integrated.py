@@ -48,7 +48,12 @@ except ImportError:
 # Import the original data processor
 import sys
 
-sys.path.append(Path(os.path.abspath(__file__).parent))
+try:
+    from utils.path_helpers import ensure_utils_in_path
+
+    ensure_utils_in_path()
+except ImportError:
+    sys.path.append(str(Path(__file__).parent))
 from Data_Processor_r0 import CSVProcessorApp as OriginalCSVProcessorApp
 
 # Import folder tool functionality
@@ -2165,7 +2170,8 @@ except ImportError:
             return path
         parent, name = os.path.split(path)
         is_file = "." in name and not os.path.isdir(path)
-        filename, ext = os.path.splitext(name) if is_file else (name, "")
+        filename = Path(name).stem if is_file else name
+        ext = Path(name).suffix if is_file else ""
         counter = 1
         new_path = Path(parent) / f"{filename} ({counter}{ext}")
         while Path(new_path).exists():
