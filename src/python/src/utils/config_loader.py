@@ -17,7 +17,9 @@ logger = logging.getLogger(__name__)
 class ConfigLoader:
     """Load and manage configuration from JSON files."""
 
-    def __init__(self, config_path: Path | str, default_config: dict[str, Any] | None = None):
+    def __init__(
+        self, config_path: Path | str, default_config: dict[str, Any] | None = None
+    ):
         """Initialize configuration loader.
 
         Args:

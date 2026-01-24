@@ -25,6 +25,7 @@ def get_repo_root(start_path: Path | str | None = None) -> Path:
     if start_path is None:
         # Try to get calling file's path
         import inspect
+
         frame = inspect.currentframe()
         if frame and frame.f_back:
             calling_file = frame.f_back.f_globals.get("__file__")
@@ -80,7 +81,12 @@ def get_standard_paths(repo_root: Path | None = None) -> list[Path]:
     paths_to_add = [
         repo_root,
         repo_root / "src" / "python" / "src",
-        repo_root / "src" / "data_processing" / "data_processor" / "python" / "data_processor",
+        repo_root
+        / "src"
+        / "data_processing"
+        / "data_processor"
+        / "python"
+        / "data_processor",
         repo_root / "src" / "tools",
     ]
 
@@ -88,7 +94,9 @@ def get_standard_paths(repo_root: Path | None = None) -> list[Path]:
     return [p for p in paths_to_add if p.exists()]
 
 
-def setup_python_path(repo_root: Path | None = None, additional_paths: list[Path] | None = None) -> None:
+def setup_python_path(
+    repo_root: Path | None = None, additional_paths: list[Path] | None = None
+) -> None:
     """Setup Python path for all required modules.
 
     Args:

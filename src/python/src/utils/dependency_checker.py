@@ -110,7 +110,9 @@ def install_package(
         True if installation succeeded, False otherwise
     """
     # Map import name to pip name if needed
-    pip_name = package_map.get(package_name, package_name) if package_map else package_name
+    pip_name = (
+        package_map.get(package_name, package_name) if package_map else package_name
+    )
 
     cmd = [sys.executable, "-m", "pip", "install"]
     if upgrade:

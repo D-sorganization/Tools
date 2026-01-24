@@ -97,9 +97,7 @@ def read_csv_with_validation(
     if required_columns:
         missing = [col for col in required_columns if col not in df.columns]
         if missing:
-            logger.error(
-                f"CSV file {file_path} missing required columns: {missing}"
-            )
+            logger.error(f"CSV file {file_path} missing required columns: {missing}")
             return None
 
     return df
