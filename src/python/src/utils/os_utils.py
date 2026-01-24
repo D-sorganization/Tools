@@ -7,6 +7,7 @@ replacing direct os.path usage with Path objects where possible.
 
 import logging
 import os
+from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path
 
