@@ -1,21 +1,14 @@
 # Assessment: Test Coverage (Category C)
 
-## Grade: 6/10
+## Grade: 4/10
 
-## Analysis
-Test coverage is a mix of high-quality recent additions and legacy gaps.
-
-### Strengths
-- **Critical Security Coverage**: Security utilities now have ~90% coverage.
-- **Recent Push**: `TEST_COVERAGE_ANALYSIS.md` details a significant effort to add 65+ new tests.
-- **Build System**: The build system is well-tested.
-
-### Weaknesses
-- **Major Gaps**: Key components like `Signal Processor` (data_processor) and `CLI` modules have 0% coverage.
-- **Large Files**: `Folders_Tool_r0.py` and `folder_packer_pro.py` have low coverage relative to their complexity.
-- **Integration Tests**: There is a noted lack of end-to-end integration tests.
+## Evidence
+- **Excluded Tests**: `pytest.ini` explicitly excludes `calculator` and `rrt_path_planner` from test discovery.
+- **Broken Tests**: Attempting to run `calculator` tests fails due to missing dependencies (`flask`, `sympy`) and import errors (`ModuleNotFoundError`).
+- **Legacy Tool Coverage**: `Data_Processor_r0.py` is a GUI application and likely has zero automated test coverage for its business logic.
+- **CI Integration**: The CI pipeline runs tests, but the exclusion list hides the broken state of significant components.
 
 ## Recommendations
-1. **Target Signal Processor**: Prioritize unit tests for `data_processor/core/signal_processor.py`.
-2. **Break Down Large Files**: Refactoring massive files will make them easier to test.
-3. **CI Integration**: Ensure `pytest` runs on every PR and enforces a minimum coverage threshold (e.g., fail if under 50% for new code).
+1. **Fix Calculator Tests**: Install missing dependencies (`flask`, `sympy`) and fix `PYTHONPATH` issues to enable `calculator` tests.
+2. **Extract Logic for Testing**: Refactor business logic out of `Data_Processor_r0.py` (GUI) so it can be unit tested.
+3. **Increase Coverage**: Add tests for `UnifiedToolsLauncher.py` core logic (e.g., path validation), mocking the filesystem.

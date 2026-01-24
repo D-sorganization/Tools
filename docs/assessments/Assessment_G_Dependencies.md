@@ -1,19 +1,14 @@
 # Assessment: Dependencies (Category G)
 
-## Grade: 8/10
+## Grade: 6/10
 
-## Analysis
-Dependency management is decent but fragmented.
-
-### Strengths
-- **Requirements Files**: Most projects have `requirements.txt`.
-- **Virtual Environment**: Setup scripts encourage `venv`.
-- **CI Installation**: CI pipeline installs dependencies correctly.
-
-### Weaknesses
-- **Fragmentation**: 11 different `requirements.txt` files found. This can lead to "dependency hell" where tools require conflicting versions of libraries.
-- **Lock Files**: `requirements-lock.txt` exists but isn't consistently used across all sub-projects.
+## Evidence
+- **Centralized Requirements**: A root `requirements.txt` exists, but there are also per-tool requirements (e.g., in `python/requirements.txt`).
+- **Incomplete Lists**: The `calculator` tool requires `flask`, `sympy`, and `cryptography`, but these are not all listed in the root `requirements.txt` based on the import errors.
+- **Legacy Dependencies**: The project relies on specific versions (e.g., `PyQt6==6.7.0`, `numpy==2.0.1`), which is good for reproducibility.
+- **Installation Issues**: The "Test Coverage" failure indicates that the environment setup is not automatically installing all necessary dependencies for all tools.
 
 ## Recommendations
-1. **Consolidate Dependencies**: Try to maintain a core `requirements.txt` for shared libraries and specific ones for apps, or use a tool like `poetry` or `uv` to manage the workspace.
-2. **Dependency Audit**: Check for conflicting versions across the 11 requirements files.
+1. **Consolidate Requirements**: Create a master `requirements.txt` or a `dev-requirements.txt` that includes all dependencies for all tools and tests.
+2. **Lock Files**: Use `pip-tools` or `uv` to generate `requirements.lock` files to ensure reproducible builds.
+3. **Optional Groups**: Define optional dependency groups (e.g., `tools[calculator]`, `tools[data_proc]`) in `pyproject.toml` if migrating to a standard packaging structure.
