@@ -2,13 +2,16 @@
 
 ## Grade: 4/10
 
-## Evidence
-- **Memory Bound**: The Data Processor's "load-all-to-RAM" approach prevents it from handling large datasets (e.g., gigabytes of telemetry).
-- **Monolithic Logic**: The tight coupling of UI and logic in legacy tools makes it hard to scale processing across multiple cores or machines.
-- **Plugin System**: `UnifiedToolsLauncher.py` has a plugin system (`core/plugin_manager.py`), which *supports* scalability by allowing easy addition of new tools.
-- **Web Apps**: The web apps (calculator, unit converter) are stateless and can scale horizontally if deployed properly.
+## Summary
+The monorepo structure supports codebase growth, but the architecture of individual legacy tools (monoliths) inhibits functional scalability.
+
+## Strengths
+- **Structure**: The directory layout can accommodate many new tools.
+
+## Weaknesses
+- **Monoliths**: `Data_Processor_r0.py` is a prime example of non-scalable code (9000+ lines).
+- **Resource Usage**: Inefficient data handling limits the scale of data that can be processed.
 
 ## Recommendations
-1. **Async Processing**: Use `asyncio` or threading in the launcher to prevent GUI freezing during tool execution (partially implemented).
-2. **Dask/Vaex**: Replace pandas with Dask or Vaex in the Data Processor to handle out-of-core computing for large datasets.
-3. **Microservices**: For web apps, ensure they are containerized (Docker) to allow easy scaling.
+1. **Decompose Monoliths**: Break large files into packages with focused modules.
+2. **Async**: Adopt asynchronous patterns for I/O bound tasks.

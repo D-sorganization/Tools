@@ -67,5 +67,15 @@
         "number": 214,
         "title": "CRITICAL: Fix Calculator Logic Gaps and Empty Tests",
         "labels": ["critical", "bug", "jules:assessment"]
+    },
+    {
+        "number": 215,
+        "title": "CRITICAL: Remove non-blocking 'echo warning' hacks from CI/CD",
+        "labels": ["critical", "ci", "jules:assessment", "needs-attention"]
+    },
+    {
+        "number": 216,
+        "title": "jules:assessment,needs-attention: Consolidate legacy 'tools/' directory into 'src/'",
+        "labels": ["jules:assessment", "refactor", "needs-attention"]
     }
 ]

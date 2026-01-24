@@ -1,14 +1,17 @@
 # Assessment: Data Handling (Category K)
 
-## Grade: 5/10
+## Grade: 4/10
 
-## Evidence
-- **CSV Dominance**: The system heavily relies on CSVs. `Data_Processor_r0.py` reads them entirely into memory.
-- **No Database**: There is no evidence of a local database (SQLite) or remote DB for structured data storage, limiting query capabilities.
-- **Web App State**: The `unit_converter` uses `localStorage` for state persistence, which is appropriate for a client-side app.
-- **Legacy Formats**: Support for `DBF` files in the data processor indicates reliance on legacy formats.
+## Summary
+Data handling practices are inconsistent. While some newer components likely use `pandas` effectively, legacy parts rely on inefficient CSV handling and in-memory loading of large datasets, creating scalability bottlenecks.
+
+## Strengths
+- **Pandas Usage**: Present in modern data analysis tools.
+
+## Weaknesses
+- **Inefficiency**: Issue #212 and #213 highlight performance issues with large data.
+- **Legacy Formats**: Heavy reliance on raw CSVs without optimization.
 
 ## Recommendations
-1. **Use Parquet/HDF5**: Switch internal data storage from CSV to Parquet or HDF5 for faster I/O and type preservation.
-2. **Implement SQLite**: Use SQLite for storing tool configurations, history, and structured data instead of ad-hoc JSON/text files.
-3. **Data Validation**: Implement Pydantic models to validate data schemas at boundaries (input/output).
+1. **Modern Formats**: Migrate storage to Parquet or SQLite for structured data.
+2. **Chunking**: Implement chunked data processing for large files.
