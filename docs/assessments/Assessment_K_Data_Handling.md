@@ -1,19 +1,14 @@
 # Assessment: Data Handling (Category K)
 
-## Grade: 8/10
+## Grade: 5/10
 
-## Analysis
-Data handling capabilities are robust, especially for specific domains.
-
-### Strengths
-- **Format Support**: Good support for CSV, Excel, Parquet, JSON.
-- **Validation**: Input sanitization and size checks are present.
-- **Scientific Data**: Solar system and RRT planner handle complex mathematical data structures.
-
-### Weaknesses
-- **Hardcoded Paths**: Some scripts seem to rely on relative paths to `archive/` or specific data folders, which can be brittle.
-- **Large Data**: It's unclear how well the system handles truly massive datasets (memory usage in `Data_Processor_r0.py` is a concern).
+## Evidence
+- **CSV Dominance**: The system heavily relies on CSVs. `Data_Processor_r0.py` reads them entirely into memory.
+- **No Database**: There is no evidence of a local database (SQLite) or remote DB for structured data storage, limiting query capabilities.
+- **Web App State**: The `unit_converter` uses `localStorage` for state persistence, which is appropriate for a client-side app.
+- **Legacy Formats**: Support for `DBF` files in the data processor indicates reliance on legacy formats.
 
 ## Recommendations
-1. **Configurable Paths**: Move all hardcoded data paths to a configuration file or environment variables.
-2. **Streaming**: Ensure data processors use streaming/chunking for large files (seems to be the case for some, but verify for all).
+1. **Use Parquet/HDF5**: Switch internal data storage from CSV to Parquet or HDF5 for faster I/O and type preservation.
+2. **Implement SQLite**: Use SQLite for storing tool configurations, history, and structured data instead of ad-hoc JSON/text files.
+3. **Data Validation**: Implement Pydantic models to validate data schemas at boundaries (input/output).

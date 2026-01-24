@@ -1,18 +1,14 @@
 # Assessment: API Design (Category J)
 
-## Grade: 7/10
+## Grade: 5/10
 
-## Analysis
-API design is a mix of internal library calls and command-line interfaces.
-
-### Strengths
-- **Modular Utilities**: `tools/` and `src/utils` provide reusable functions.
-- **Launcher Interface**: `UnifiedToolsLauncher` uses a plugin-like system (via `tools.json`).
-
-### Weaknesses
-- **Implicit APIs**: Many interactions seem to happen via shared file paths or global state (environment variables) rather than clean function contracts.
-- **Untested APIs**: `api_mode.py` in PDF Renamer is 0% covered, suggesting it might be broken or unused.
+## Evidence
+- **Unified Launcher**: The launcher provides a clean, unified "API" (visual) for users to access tools.
+- **Calculator**: The `TI89Calculator` class has a well-defined public interface (`evaluate`, `derivative`, etc.) and internal caches.
+- **No Shared Library**: There is no distinct "SDK" or shared library that other tools import. Each tool feels like a standalone silo.
+- **Data Processor**: The Data Processor logic is tightly coupled to the GUI, making it impossible to use as an API for automation.
 
 ## Recommendations
-1. **Formalize Contracts**: Define clear interfaces (using Abstract Base Classes or Protocols) for plugins and tools.
-2. **Test API Layers**: Ensure `api_mode.py` and similar entry points are tested.
+1. **Extract Core Library**: Create a `pytools` or similar package that contains the core logic of the data processor, calculator, and other tools.
+2. **CLI Interfaces**: Ensure every GUI tool has a corresponding CLI entry point (using `argparse` or `click`) exposing its functionality as an API.
+3. **Standardize Inputs**: Define standard data formats (e.g., JSON schemas, pandas DataFrames) for passing data between tools.

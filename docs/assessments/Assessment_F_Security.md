@@ -1,21 +1,15 @@
 # Assessment: Security (Category F)
 
-## Grade: 9/10
+## Grade: 7/10
 
-## Analysis
-Security is a primary focus of the repository, with strict governance.
-
-### Strengths
-- **Governance**: `AGENTS.md` clearly outlines security protocols (Secrets, Input Validation).
-- **Automated Scanning**: `pip-audit` and `bandit` (implied by requirements) are in the CI pipeline.
-- **Input Sanitization**: Recent updates mention sanitization in `UnifiedToolsLauncher`.
-- **Permissions Policy**: Web apps implement `Permissions-Policy` headers.
-- **Path Validation**: `UnifiedToolsLauncher` validates paths to prevent traversal.
-
-### Weaknesses
-- **CI Failure Allowed**: `pip-audit` is run with `|| true`, meaning vulnerabilities won't block builds.
-- **Legacy Code**: Older tools might not adhere to the new strict standards.
+## Evidence
+- **Path Traversal Protection**: `UnifiedToolsLauncher.py` explicitly validates paths against `..` and ensures they are within the repo root.
+- **Input Sanitization**: `TI89Calculator` sanitizes inputs and restricts globals (`_SAFE_GLOBALS_CACHE`) to prevent code execution vulnerabilities.
+- **Dependency Scanning**: The CI/CD pipeline runs `pip-audit`, although it is currently configured to not fail on error (`|| true`), which weakens its enforcement.
+- **Secret Management**: `AGENTS.md` strictly forbids committing secrets.
+- **Permissions Policy**: The calculator web app explicitly sets `Permissions-Policy` headers to disable sensitive features (camera, mic, etc.).
 
 ## Recommendations
-1. **Enforce Audit**: Remove `|| true` from `pip-audit` in CI once known vulnerabilities are addressed.
-2. **Secret Scanning**: Ensure a secret scanner (like `trufflehog` or GitHub Advanced Security) is active.
+1. **Enforce Audit**: Configure `pip-audit` to fail the build on critical vulnerabilities (remove `|| true` in CI for high severity).
+2. **Sanitize HTML**: Ensure all user-supplied data in `UnifiedToolsLauncher.py` (tool names/descriptions) is HTML-escaped before rendering in Qt widgets.
+3. **AST Safety**: Verify `Data_Processor_r0.py` custom variable formula evaluation uses `ast.literal_eval` or a restricted environment, not `eval()`.

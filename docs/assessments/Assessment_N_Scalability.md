@@ -1,17 +1,14 @@
 # Assessment: Scalability (Category N)
 
-## Grade: 5/10
+## Grade: 4/10
 
-## Analysis
-Scalability is the area needing most improvement, largely due to legacy code.
-
-### Strengths
-- **Modular Architecture**: The directory structure supports adding new modules easily.
-
-### Weaknesses
-- **Monoliths**: `Data_Processor_r0.py` (9k lines) is a scalability nightmare. It combines GUI, logic, and data handling.
-- **Dependency coupling**: The shared `launch_tools_main.py` tries to set up paths for everything, which will become unmanageable as the repo grows.
+## Evidence
+- **Memory Bound**: The Data Processor's "load-all-to-RAM" approach prevents it from handling large datasets (e.g., gigabytes of telemetry).
+- **Monolithic Logic**: The tight coupling of UI and logic in legacy tools makes it hard to scale processing across multiple cores or machines.
+- **Plugin System**: `UnifiedToolsLauncher.py` has a plugin system (`core/plugin_manager.py`), which *supports* scalability by allowing easy addition of new tools.
+- **Web Apps**: The web apps (calculator, unit converter) are stateless and can scale horizontally if deployed properly.
 
 ## Recommendations
-1. **Decompose Monoliths**: Aggressively refactor `Data_Processor_r0.py` into MVC (Model-View-Controller) components.
-2. **Decouple Launcher**: Make the launcher purely data-driven (which `UnifiedToolsLauncher` attempts to do) and avoid hardcoded imports/path hacks.
+1. **Async Processing**: Use `asyncio` or threading in the launcher to prevent GUI freezing during tool execution (partially implemented).
+2. **Dask/Vaex**: Replace pandas with Dask or Vaex in the Data Processor to handle out-of-core computing for large datasets.
+3. **Microservices**: For web apps, ensure they are containerized (Docker) to allow easy scaling.

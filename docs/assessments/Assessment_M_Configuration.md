@@ -1,17 +1,14 @@
 # Assessment: Configuration (Category M)
 
-## Grade: 8/10
+## Grade: 7/10
 
-## Analysis
-Configuration management is solid.
-
-### Strengths
-- **Tools Registry**: `tools.json` is a great way to manage tool metadata.
-- **Environment Variables**: usage of `.env` is encouraged.
-- **TOML Configs**: `pyproject.toml`, `ruff.toml` are standard.
-
-### Weaknesses
-- **Hardcoded Fallbacks**: `launch_tools_main.py` creates a `constants.py` file dynamically if missing. This is a bit "magical" and might be better handled by a static config file or proper package installation.
+## Evidence
+- **Environment Variables**: `.env.example` exists, and usage of `python-dotenv` is recommended.
+- **JSON Configs**: `tools.json` provides centralized configuration for the launcher.
+- **User Configs**: `Data_Processor_r0.py` saves user layouts to `~/.csv_processor_layout.json`, polluting the home directory (should follow XDG base directory spec).
+- **Hardcoded Paths**: Some tools might have hardcoded paths or assumptions about the directory structure.
 
 ## Recommendations
-1. **Externalize Defaults**: Move the default constants from `launch_tools_main.py` code into a `defaults.json` or similar.
+1. **XDG Compliance**: Store user configurations in `~/.config/tools_repo/` (Linux) or `%APPDATA%` (Windows) instead of the home root.
+2. **Schema Validation**: Use JSON Schema to validate `tools.json` and user configuration files.
+3. **Configuration Class**: Create a `Configuration` class/module to manage loading/saving settings centrally.
