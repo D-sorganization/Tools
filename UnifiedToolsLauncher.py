@@ -6,7 +6,6 @@ Provides a clean, tabbed interface for launching Python, MATLAB, and web tools.
 """
 
 import html
-import json
 import os
 import subprocess
 import sys
@@ -480,6 +479,7 @@ class UnifiedLauncher(QMainWindow):
                 )
                 self.log("✅ Process started (Python)")
                 import time
+
                 time.sleep(0.5)
                 if process.poll() is not None:
                     error_msg = (
