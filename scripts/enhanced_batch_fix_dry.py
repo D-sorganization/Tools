@@ -379,6 +379,49 @@ def fix_csv_patterns(content: str) -> tuple[str, int]:
     return content, fixes
 
 
+def fix_path_read_write_patterns(content: str) -> tuple[str, int]:
+    """Replace Path(...).read_text() and Path(...).write_text() with safe_read_text/safe_write_text."""
+    fixes = 0
+
+    # Pattern: Path(...).read_text(...)
+    pattern1 = re.compile(
+        r"Path\s*\(([^)]+)\)\.read_text\s*\((?:[^)]+)?\)",
+        re.MULTILINE,
+    )
+
+    def replace1(match):
+        nonlocal fixes
+        fixes += 1
+        path_expr = match.group(1)
+        return f"safe_read_text({path_expr}, default='')"
+
+    content = pattern1.sub(replace1, content)
+
+    # Pattern: Path(...).write_text(...)
+    pattern2 = re.compile(
+        r"Path\s*\(([^)]+)\)\.write_text\s*\(([^)]+)\)",
+        re.MULTILINE,
+    )
+
+    def replace2(match):
+        nonlocal fixes
+        fixes += 1
+        path_expr = match.group(1)
+        content_expr = match.group(2)
+        return f"safe_write_text({path_expr}, {content_expr})"
+
+    content = pattern2.sub(replace2, content)
+
+    # Add import if fixes made
+    if fixes > 0:
+        content = ensure_import(
+            content,
+            "try:\n    from utils.file_utils import safe_read_text, safe_write_text\nexcept ImportError:\n    from pathlib import Path\n    def safe_read_text(path, encoding='utf-8', default=''):\n        try:\n            return Path(path).read_text(encoding=encoding)\n        except Exception:\n            return default\n    def safe_write_text(path, content, encoding='utf-8', create_parents=True):\n        p = Path(path)\n        if create_parents:\n            p.parent.mkdir(parents=True, exist_ok=True)\n        p.write_text(content, encoding=encoding)",
+        )
+
+    return content, fixes
+
+
 def process_file(file_path: Path) -> int:
     """Process a single file and fix all DRY violations."""
     try:
