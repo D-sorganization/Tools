@@ -21,13 +21,17 @@ from pathlib import Path
 from typing import Any
 
 # Add python/src to sys.path to find utils package
-# Walk up identifying the project root
-current_path = Path(__file__).resolve().parent
-while current_path != current_path.parent:
-    if (current_path / "python" / "src" / "utils" / "compatibility.py").exists():
-        sys.path.insert(0, str(current_path / "python" / "src"))
-        break
-    current_path = current_path.parent
+try:
+    from utils.path_helpers import ensure_utils_in_path
+    ensure_utils_in_path()
+except ImportError:
+    # Fallback: walk up to find project root
+    current_path = Path(__file__).resolve().parent
+    while current_path != current_path.parent:
+        if (current_path / "src" / "python" / "src" / "utils" / "compatibility.py").exists():
+            sys.path.insert(0, str(current_path / "src" / "python" / "src"))
+            break
+        current_path = current_path.parent
 
 from utils.compatibility import UTC  # noqa: E402
 
