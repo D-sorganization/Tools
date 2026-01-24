@@ -17,7 +17,7 @@ except ImportError:
             return default if default is not None else pd.DataFrame()
     def safe_write_csv(df, path, create_parents=True, **kwargs):
         Path(path).parent.mkdir(parents=True, exist_ok=True)
-        df.to_csv(path, **kwargs)
+        safe_write_csv(df, path, **kwargs)
 # Load CSV file
 file_path = "2024-04-17 Data.csv"  # Use relative path
 df = safe_read_csv(file_path)

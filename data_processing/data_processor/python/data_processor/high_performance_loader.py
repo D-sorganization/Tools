@@ -60,7 +60,7 @@ except ImportError:
             return default if default is not None else pd.DataFrame()
     def safe_write_csv(df, path, create_parents=True, **kwargs):
         Path(path).parent.mkdir(parents=True, exist_ok=True)
-        df.to_csv(path, **kwargs)
+        safe_write_csv(df, path, **kwargs)
 # Module logger
 logger = get_logger(__name__)
 
