@@ -241,12 +241,6 @@ def launch_fallback_app() -> bool:
         # Try the refactored GUI
         from gui_refactored import DataProcessorGUI
 
-
-try:
-    from utils.path_helpers import ensure_utils_in_path
-except ImportError:
-    def ensure_utils_in_path():
-        pass
         app = DataProcessorGUI()
         app.mainloop()
 
