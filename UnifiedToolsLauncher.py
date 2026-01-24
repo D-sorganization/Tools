@@ -495,23 +495,6 @@ class UnifiedLauncher(QMainWindow):
                 self.log("✅ Process started (Python)")
                 import time
 
-
-try:
-    from utils.file_utils import safe_read_json
-except ImportError:
-    import json
-
-try:
-    from utils.path_helpers import ensure_utils_in_path
-except ImportError:
-    def ensure_utils_in_path():
-        pass
-    def safe_read_json(path, default=None):
-        try:
-            with open(path, encoding='utf-8') as f:
-                return json.load(f)
-        except Exception:
-            return default
                 time.sleep(0.5)
                 if process.poll() is not None:
                     error_msg = (
