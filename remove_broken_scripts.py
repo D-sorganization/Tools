@@ -55,7 +55,9 @@ def find_and_remove_syntax_error_scripts() -> int:
                 logger.info(f"✅ Removed broken script: {file_path}")
                 removed_count += 1
             except PermissionError as remove_error:
-                logger.error(f"❌ Permission denied removing {file_path}: {remove_error}")
+                logger.error(
+                    f"❌ Permission denied removing {file_path}: {remove_error}"
+                )
             except OSError as remove_error:
                 logger.error(f"❌ OS error removing {file_path}: {remove_error}")
         except (OSError, UnicodeDecodeError) as e:

@@ -382,6 +382,7 @@ def process_file(file_path: Path) -> int:
     except Exception as e:
         print(f"Error processing {file_path}: {e}", file=sys.stderr)
         import traceback
+
         traceback.print_exc()
         return 0
 

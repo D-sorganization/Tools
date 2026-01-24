@@ -33,10 +33,12 @@ def _build_pyinstaller_command(script_dir: Path, main_script: Path) -> list[str]
     ]
 
     if has_icon:
-        cmd.extend([
-            "--icon=paper_plane_icon.ico",
-            "--add-data=paper_plane_icon.ico;.",
-        ])
+        cmd.extend(
+            [
+                "--icon=paper_plane_icon.ico",
+                "--add-data=paper_plane_icon.ico;.",
+            ]
+        )
 
     cmd.append(str(main_script))
     return cmd

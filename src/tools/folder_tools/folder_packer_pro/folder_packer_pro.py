@@ -1565,7 +1565,12 @@ class FolderPackerPro:
                 # Try to decompress
                 decompressed = gzip.decompress(data)
                 json.loads(decompressed.decode("utf-8"))
-            except (gzip.BadGzipFile, OSError, json.JSONDecodeError, UnicodeDecodeError):
+            except (
+                gzip.BadGzipFile,
+                OSError,
+                json.JSONDecodeError,
+                UnicodeDecodeError,
+            ):
                 is_encrypted = True
 
             # Display info
@@ -1589,7 +1594,12 @@ class FolderPackerPro:
             self.package_info_text.insert("1.0", info)
             self.package_info_text.configure(state="disabled")
 
-        except (OSError, gzip.BadGzipFile, json.JSONDecodeError, UnicodeDecodeError) as e:
+        except (
+            OSError,
+            gzip.BadGzipFile,
+            json.JSONDecodeError,
+            UnicodeDecodeError,
+        ) as e:
             messagebox.showerror("Error", f"Failed to inspect package:\n\n{e}")
 
     def _manage_exclusions(self) -> None:

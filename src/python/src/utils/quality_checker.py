@@ -230,9 +230,7 @@ def _get_python_files() -> list[Path]:
     ]
 
 
-def _report_issues(
-    all_issues: list[tuple[Path, list[tuple[int, str, str]]]]
-) -> None:
+def _report_issues(all_issues: list[tuple[Path, list[tuple[int, str, str]]]]) -> None:
     """Report quality check issues to stderr."""
     sys.stderr.write(
         f"{Colors.FAIL}{Colors.BOLD}❌ Quality check FAILED{Colors.ENDC}\n\n"

@@ -43,6 +43,7 @@ def find_env_file(
         # Use get_repo_root for consistent path resolution
         try:
             from utils.path_setup import get_repo_root
+
             repo_root = get_repo_root()
             if repo_root:
                 locations.append(repo_root / filename)
@@ -50,11 +51,14 @@ def find_env_file(
             # Fallback - use path_helpers if available
             try:
                 from utils.path_helpers import get_project_root_from_file
+
                 repo_root = get_project_root_from_file(__file__)
                 locations.append(repo_root / filename)
             except ImportError:
                 # Last resort fallback
-                locations.append(Path(__file__).parent.parent.parent.parent.parent / filename)
+                locations.append(
+                    Path(__file__).parent.parent.parent.parent.parent / filename
+                )
 
     # Add user home directory
     locations.append(Path.home() / ".pdf_renamer" / filename)
