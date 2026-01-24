@@ -2138,10 +2138,10 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         is_file = "." in name and not os.path.isdir(path)
         filename, ext = os.path.splitext(name) if is_file else (name, "")
         counter = 1
-        new_path = Path(parent) / f"{filename} ({counter}{ext}")
+        new_path = Path(parent) / f"{filename} ({counter}){ext}"
         while Path(new_path).exists():
             counter += 1
-            new_path = Path(parent) / f"{filename} ({counter}{ext}")
+            new_path = Path(parent) / f"{filename} ({counter}){ext}")
         return new_path
 
     def create_help_tab(self, tab):
