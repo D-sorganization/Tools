@@ -20,41 +20,25 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def setup_python_path() -> None:
-    """Setup Python path for all required modules."""
+# Use shared path setup utility
+try:
+    from utils.path_setup import setup_python_path, get_repo_root
+
+    # Standard setup
+    REPO_ROOT = get_repo_root()
+    setup_python_path(repo_root=REPO_ROOT)
+
+except ImportError:
+    # Fallback if unimportable (should rarely happen if structure is valid)
     current_dir = Path(__file__).resolve().parent
+    sys.path.insert(0, str(current_dir / "src" / "python" / "src"))
+    try:
+        from utils.path_setup import setup_python_path, get_repo_root
 
-    # Add paths for different components
-    paths_to_add = [
-        current_dir,
-        current_dir / "src" / "data_processing" / "data_processor" / "archive",
-        current_dir
-        / "src"
-        / "data_processing"
-        / "data_processor"
-        / "python"
-        / "data_processor",
-        current_dir / "replicants" / "python" / "folder_tool",
-        current_dir / "tools",
-        current_dir / "python" / "src",
-    ]
-
-    for path in paths_to_add:
-        if path.exists():
-            sys.path.insert(0, str(path))
-            logger.info(f"Added to Python path: {path}")
-
-    # Also set PYTHONPATH environment variable
-    existing_pythonpath = os.environ.get("PYTHONPATH", "")
-    new_paths = [str(p) for p in paths_to_add if p.exists()]
-
-    if existing_pythonpath:
-        new_pythonpath = os.pathsep.join(new_paths + [existing_pythonpath])
-    else:
-        new_pythonpath = os.pathsep.join(new_paths)
-
-    os.environ["PYTHONPATH"] = new_pythonpath
-    logger.info(f"Set PYTHONPATH: {new_pythonpath}")
+        REPO_ROOT = get_repo_root()
+        setup_python_path(repo_root=REPO_ROOT)
+    except ImportError:
+        logger.warning("Could not import utils.path_setup even after path patch.")
 
 
 def check_dependencies() -> list[str]:
@@ -71,6 +55,7 @@ def check_dependencies() -> list[str]:
 
     for package in required_packages:
         try:
+            # Basic import check using importlib or __import__
             __import__(package)
             logger.info(f"✓ {package} is available")
         except ImportError:
@@ -322,7 +307,7 @@ def main() -> bool:
     logger.info("=" * 60)
 
     try:
-        setup_python_path()
+        # Path setup is handled at module level now
 
         if not create_constants_file():
             raise RuntimeError("Failed to create required constants file")
