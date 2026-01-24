@@ -4,9 +4,28 @@ Cross-platform launcher for Folder Tool.
 Replaces Launch_FolderFix.bat for better portability.
 """
 
-import subprocess
 import sys
 from pathlib import Path
+
+# Add utils to path
+repo_root = Path(__file__).parent.parent.parent.parent.parent.parent.parent
+sys.path.insert(0, str(repo_root / "src" / "python" / "src"))
+
+try:
+    from utils.subprocess_utils import run_python_script
+    from utils.logging_utils import get_logger
+except ImportError:
+    # Fallback if shared utilities not available
+    import subprocess
+
+    def run_python_script(script_path: Path, **kwargs):
+        return subprocess.run([sys.executable, str(script_path)], **kwargs)
+
+    def get_logger(name):
+        import logging
+        return logging.getLogger(name)
+
+logger = get_logger(__name__)
 
 
 def main() -> None:
@@ -15,18 +34,18 @@ def main() -> None:
     tool_script = script_dir / "Folders_Tool_r0.py"
 
     if not tool_script.exists():
-        print(f"ERROR: Tool script not found: {tool_script}")
+        logger.error(f"Tool script not found: {tool_script}")
         sys.exit(1)
 
-    print("Starting Folder Tool...")
+    logger.info("Starting Folder Tool...")
     try:
-        subprocess.run([sys.executable, str(tool_script)], check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"ERROR: Failed to launch tool (exit code {e.returncode})")
-        sys.exit(1)
+        run_python_script(tool_script, check=True)
     except KeyboardInterrupt:
-        print("\nTool stopped by user.")
+        logger.info("Tool stopped by user.")
         sys.exit(0)
+    except Exception as e:
+        logger.error(f"Failed to launch tool: {e}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":

@@ -1,94 +1,64 @@
-"""Logging utilities for scientific computing with reproducibility.
+"""Logging utilities - DEPRECATED: Use utils.logging_utils instead.
 
-This module provides logging setup and seed management for deterministic
-scientific computations.
+This module is maintained for backward compatibility.
+New code should use src/python/src/utils/logging_utils.py
 """
 
-import logging
-import random
 import sys
+import warnings
+from pathlib import Path
+
+# Add utils to path for import
+repo_root = Path(__file__).parent.parent.parent.parent.parent.parent.parent
+sys.path.insert(0, str(repo_root / "src" / "python" / "src"))
 
 try:
-    import torch
-
-    TORCH_AVAILABLE = True
-except ImportError:
-    TORCH_AVAILABLE = False
-
-# Reproducibility constants
-DEFAULT_SEED: int = 42  # Answer to everything
-LOG_FORMAT: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-LOG_LEVEL: int = logging.INFO
-
-logger = logging.getLogger(__name__)
-
-
-def setup_logging(level: int = LOG_LEVEL, format_string: str = LOG_FORMAT) -> None:
-    """Set up logging configuration for the application.
-
-    Args:
-        level: Logging level (default: INFO)
-        format_string: Log message format string
-
-    """
-    logging.basicConfig(
-        level=level,
-        format=format_string,
-        handlers=[logging.StreamHandler(sys.stdout)],
+    from utils.logging_utils import (
+        DEFAULT_SEED,
+        get_logger,
+        logger,
+        set_seeds,
+        setup_logging,
     )
-    logger.info("Logging configured with level %s", logging.getLevelName(level))
 
+    # Backward compatibility constants
+    LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    LOG_LEVEL = 20  # logging.INFO
 
-def set_seeds(seed: int = DEFAULT_SEED) -> None:
-    """Set random seeds for reproducible computations.
+    # Issue deprecation warning
+    warnings.warn(
+        "logger_utils is deprecated. Use utils.logging_utils instead.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+except ImportError:
+    # Fallback if shared utility not available
+    import logging
 
-    Sets seeds for Python's random module, NumPy's random generator,
-    and PyTorch if available.
+    DEFAULT_SEED = 42
+    LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    LOG_LEVEL = logging.INFO
+    logger = logging.getLogger(__name__)
 
-    Args:
-        seed: Random seed value (default: 42)
+    def get_logger(name: str) -> logging.Logger:
+        return logging.getLogger(name)
 
-    Raises:
-        ValueError: If seed is negative
+    def setup_logging(level: int = LOG_LEVEL, format_string: str = LOG_FORMAT) -> None:
+        logging.basicConfig(
+            level=level,
+            format=format_string,
+            handlers=[logging.StreamHandler(sys.stdout)],
+        )
 
-    """
-    if seed < 0:
-        msg = f"expected non-negative integer, got: {seed}"
-        raise ValueError(msg)
+    def set_seeds(seed: int = DEFAULT_SEED) -> None:
+        import random
 
-    random.seed(seed)
+        random.seed(seed)
+        try:
+            import numpy as np
 
-    # Import numpy only when needed to set global random state
-    # Note: Using legacy np.random.seed() for global state compatibility.
-    # Modern NumPy recommends Generator instances (np.random.default_rng()),
-    # but this function sets global state for reproducibility across the codebase.
-    # The noqa comment suppresses NPY002 warning for this intentional legacy usage.
-    try:
-        import numpy as np
+            np.random.seed(seed)  # noqa: NPY002
+        except ImportError:
+            pass
 
-        np.random.seed(seed)  # noqa: NPY002  # Set global numpy random state
-    except (ImportError, ModuleNotFoundError):
-        logger.warning("NumPy not available, skipping numpy seed setting")
-
-    # Set PyTorch seeds if PyTorch is available
-    if TORCH_AVAILABLE:
-        torch.manual_seed(seed)
-        if torch.cuda.is_available():
-            torch.cuda.manual_seed_all(seed)
-            torch.cuda.manual_seed(seed)
-        logger.info("PyTorch seeds set: %d", seed)
-
-    logger.info("All random seeds set to: %d", seed)
-
-
-def get_logger(name: str) -> logging.Logger:
-    """Get a logger instance with the specified name.
-
-    Args:
-        name: Logger name (typically __name__)
-
-    Returns:
-        Configured logger instance
-
-    """
-    return logging.getLogger(name)
+__all__ = ["DEFAULT_SEED", "LOG_FORMAT", "LOG_LEVEL", "get_logger", "logger", "set_seeds", "setup_logging"]
