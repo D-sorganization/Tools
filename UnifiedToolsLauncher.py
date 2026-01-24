@@ -495,17 +495,16 @@ class UnifiedLauncher(QMainWindow):
                 self.log("✅ Process started (Python)")
                 import time
 
-
-try:
-    from utils.file_utils import safe_read_json
-except ImportError:
-    import json
-    def safe_read_json(path, default=None):
-        try:
-            with open(path, encoding='utf-8') as f:
-                return json.load(f)
-        except Exception:
-            return default
+                time.sleep(0.5)
+                if process.poll() is not None:
+                    error_msg = (
+                        f"Tool exited immediately (exit code: {process.returncode})\n\n"
+                        f"Tool: {tool_info.get('name', 'Unknown')}\n"
+                        f"Path: {path}\n\n"
+                        "Check the tool's requirements and dependencies."
+                    )
+                    self.log(f"❌ {error_msg}")
+                    QMessageBox.warning(self, "Tool Launch Warning", error_msg)
                 time.sleep(0.5)
                 if process.poll() is not None:
                     error_msg = (
