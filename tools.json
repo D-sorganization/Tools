@@ -16,7 +16,7 @@
     "Data Processing": [
         {
             "name": "Data Processor Integrated",
-            "path": "src/data_processing/data_processor/python/data_processor/launch_integrated.py",
+            "path": "launch_tools_main.py",
             "type": "python",
             "desc": "Time Series CSV/Parquet Analyzer & Converter"
         }

@@ -1,14 +1,4 @@
-#!/usr/bin/env python3
-"""
-MATLAB Quality Check Script
-
-This script runs comprehensive quality checks on MATLAB code following the project's
-.cursorrules.md requirements. It can be run from the command line and integrates
-with the project's quality control system.
-
-Usage:
-    python scripts/matlab_quality_check.py [--strict] [--output-format json|text]
-"""
+"""Shared utilities for MATLAB quality checks."""
 
 import argparse
 import json
@@ -16,38 +6,12 @@ import logging
 import re
 import subprocess
 import sys
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-# Add python/src to sys.path to find utils package
-try:
-    from utils.path_helpers import ensure_utils_in_path
-
-    ensure_utils_in_path()
-except ImportError:
-    # Fallback: walk up to find project root
-    current_path = Path(__file__).resolve().parent
-    while current_path != current_path.parent:
-        if (
-            current_path / "src" / "python" / "src" / "utils" / "compatibility.py"
-        ).exists():
-            ensure_utils_in_path()
-            break
-        current_path = current_path.parent
-
-from utils.compatibility import UTC  # noqa: E402
-
-try:
-    from utils.path_helpers import ensure_utils_in_path
-except ImportError:
-
-    def ensure_utils_in_path():
-        pass
-
-
 # Constants
-MATLAB_SCRIPT_TIMEOUT_SECONDS: int = 300  # 5 minutes - allows time for large codebases
+MATLAB_SCRIPT_TIMEOUT_SECONDS: int = 300
 
 # Set up logging
 logging.basicConfig(
@@ -60,16 +24,12 @@ logger = logging.getLogger(__name__)
 class MATLABQualityChecker:
     """Comprehensive MATLAB code quality checker."""
 
-    # Compiled regex patterns for performance (compiled once, reused many times)
+    # Compiled regex patterns for performance
     LOAD_PATTERN = re.compile(r"^\s*load\s+(?:\w+|\([^)]+\))")
     ASSIGNMENT_PATTERN = re.compile(r"\w+\s*=\s*load\s*[\(]")
 
     def __init__(self, project_root: Path) -> None:
-        """Initialize the MATLAB quality checker.
-
-        Args:
-            project_root: Path to the project root directory
-        """
+        """Initialize the MATLAB quality checker."""
         self.project_root = project_root
         self.matlab_dir = project_root / "matlab"
         self.results: dict[str, Any] = {
@@ -82,11 +42,7 @@ class MATLABQualityChecker:
         }
 
     def check_matlab_files_exist(self) -> bool:
-        """Check if MATLAB files exist in the project.
-
-        Returns:
-            True if MATLAB files are found, False otherwise
-        """
+        """Check if MATLAB files exist in the project."""
         if not self.matlab_dir.exists():
             logger.info(
                 "MATLAB directory not found: %s (skipping MATLAB checks)",
@@ -94,7 +50,6 @@ class MATLABQualityChecker:
             )
             return False
 
-        # Exclude archive directories from quality checks
         m_files = [f for f in self.matlab_dir.rglob("*.m") if "archive" not in f.parts]
         self.results["total_files"] = len(m_files)
 
@@ -106,31 +61,19 @@ class MATLABQualityChecker:
         return True
 
     def run_matlab_quality_checks(self) -> dict[str, Any]:
-        """Run MATLAB quality checks using the MATLAB script.
-
-        Returns:
-            Dictionary containing quality check results
-        """
+        """Run MATLAB quality checks using the MATLAB script."""
         try:
-            # Check if we can run MATLAB from command line
             matlab_script = self.matlab_dir / "matlab_quality_config.m"
             if not matlab_script.exists():
-                # Config script not found - fall back to static analysis
-                # (primary use case)
                 logger.info(
                     "MATLAB quality config script not found, using static analysis",
                 )
                 return self._static_matlab_analysis()
 
-            # Try to run MATLAB quality checks
-            # Note: This requires MATLAB to be installed and accessible from
-            # command line
             try:
-                # First, try to run the MATLAB script directly if possible
                 return self._run_matlab_script(matlab_script)
             except Exception as e:
                 logger.warning("Could not run MATLAB script directly: %s", e)
-                # Fall back to static analysis
                 return self._static_matlab_analysis()
 
         except Exception as e:
@@ -138,16 +81,8 @@ class MATLABQualityChecker:
             return {"error": str(e)}
 
     def _run_matlab_script(self, script_path: Path) -> dict[str, Any]:
-        """Attempt to run MATLAB script from command line.
-
-        Args:
-            script_path: Path to the MATLAB script
-
-        Returns:
-            Dictionary containing script results
-        """
+        """Attempt to run MATLAB script from command line."""
         try:
-            # Try different ways to run MATLAB
             commands = [
                 ["matlab", "-batch", f"run('{script_path}')"],
                 [
@@ -189,7 +124,6 @@ class MATLABQualityChecker:
                 except (subprocess.TimeoutExpired, FileNotFoundError):
                     continue
 
-            # If all commands fail, fall back to static analysis
             logger.info("All MATLAB commands failed, falling back to static analysis")
             return self._static_matlab_analysis()
 
@@ -198,19 +132,13 @@ class MATLABQualityChecker:
             return {"error": str(e)}
 
     def _static_matlab_analysis(self) -> dict[str, Any]:
-        """Perform static analysis of MATLAB files without running MATLAB.
-
-        Returns:
-            Dictionary containing static analysis results
-        """
+        """Perform static analysis of MATLAB files without running MATLAB."""
         logger.info("Performing static MATLAB file analysis")
 
         issues = []
         total_files = 0
 
-        # Analyze each MATLAB file (exclude archive directories)
         for m_file in self.matlab_dir.rglob("*.m"):
-            # Skip files in archive directories
             if "archive" in m_file.parts:
                 continue
             total_files += 1
@@ -230,42 +158,26 @@ class MATLABQualityChecker:
         }
 
     def _analyze_matlab_file(self, file_path: Path) -> list[str]:
-        """Analyze a single MATLAB file for quality issues.
-
-        Args:
-            file_path: Path to the MATLAB file
-
-        Returns:
-            List of quality issues found
-        """
+        """Analyze a single MATLAB file for quality issues."""
         issues = []
 
         try:
             with file_path.open(encoding="utf-8", errors="ignore") as f:
-                # Optimize: Use splitlines() instead of split("\n") for better performance
                 lines = f.read().splitlines()
 
-            # Track if we're in a function and nesting level
             in_function = False
             nesting_level = 0
 
-            # Check for basic quality issues
             for i, line in enumerate(lines, 1):
                 line_stripped = line.strip()
-                line_original = line  # Keep original for indentation checks
+                line_original = line
 
-                # Skip empty lines
                 if not line_stripped:
                     continue
 
-                # Skip comment-only lines for most checks
-                # (but check comments for banned patterns)
                 is_comment = line_stripped.startswith("%")
 
-                # Track function scope by monitoring nesting level
                 if not is_comment:
-                    # Check for keywords that increase nesting
-                    # Note: arguments, properties, methods, events also have 'end'
                     if re.match(
                         r"\b(function|if|for|while|switch|try|parfor|classdef|arguments|properties|methods|events)\b",
                         line_stripped,
@@ -274,16 +186,13 @@ class MATLABQualityChecker:
                             in_function = True
                         nesting_level += 1
 
-                    # Check for 'end' keyword that decreases nesting
                     if re.match(r"\bend\b", line_stripped):
                         nesting_level -= 1
                         if nesting_level <= 0:
                             in_function = False
-                            nesting_level = 0  # Prevent negative nesting
+                            nesting_level = 0
 
-                # Check for function definition (for docstring and arguments validation)
                 if line_stripped.startswith("function") and not is_comment:
-                    # Check if next non-empty line has docstring
                     has_docstring = False
                     min_docstring_length = 3
                     for j in range(i, min(i + 5, len(lines))):
@@ -302,12 +211,9 @@ class MATLABQualityChecker:
                             f"{file_path.name} (line {i}): Missing function docstring",
                         )
 
-                    # Check for arguments validation block
-                    # Skip comment lines to avoid false positives
                     has_arguments = False
                     for j in range(i, min(i + 25, len(lines))):
                         line_check = lines[j].strip()
-                        # Skip comment lines
                         if line_check.startswith("%"):
                             continue
                         if re.search(r"\barguments\b", line_check):
@@ -320,7 +226,6 @@ class MATLABQualityChecker:
                             "Missing arguments validation block",
                         )
 
-                # Check for banned patterns (in comments and code)
                 banned_patterns = [
                     (r"\bTODO\b", "TODO placeholder found"),
                     (r"\bFIXME\b", "FIXME placeholder found"),
@@ -334,11 +239,9 @@ class MATLABQualityChecker:
                     if re.search(pattern, line_stripped):
                         issues.append(f"{file_path.name} (line {i}): {message}")
 
-                # Skip further checks for comment lines
                 if is_comment:
                     continue
 
-                # Check for common MATLAB anti-patterns
                 if re.search(r"\beval\s*\(", line_stripped):
                     issues.append(
                         f"{file_path.name} (line {i}): "
@@ -358,18 +261,12 @@ class MATLABQualityChecker:
                         "Avoid using evalin() - violates encapsulation",
                     )
 
-                # Check for global variables (often code smell)
                 if re.search(r"\bglobal\s+\w+", line_stripped):
                     issues.append(
                         f"{file_path.name} (line {i}): "
                         "Global variable usage - consider passing as argument",
                     )
 
-                # Check for load without output (loads into workspace)
-                # Match both command syntax (load file.mat) and function syntax
-                # (load('file.mat'))
-                # Check for specific assignment pattern rather than just presence of =
-                # This avoids false negatives from = in comments or comparisons
                 if self.LOAD_PATTERN.search(
                     line_stripped,
                 ) and not self.ASSIGNMENT_PATTERN.search(line_stripped):
@@ -378,17 +275,9 @@ class MATLABQualityChecker:
                         "load without output variable - use 'data = load(...)' instead",
                     )
 
-                # Check for magic numbers (but allow common values and known constants)
-                # Matches both integer and floating-point literals (e.g., 3.14, 42, 0.5)
-                # that are not part of scientific notation, array indices, or
-                # embedded in words.
-                # Uses lookbehind/lookahead to avoid matching numbers adjacent to dots
-                # or word characters. This helps flag "magic numbers" in code while
-                # avoiding false positives from common patterns.
                 magic_number_pattern = r"(?<![.\w])(?:\d+\.\d+|\d+)(?![.\w])"
                 magic_numbers = re.findall(magic_number_pattern, line_stripped)
 
-                # Known acceptable values (include integer and float representations)
                 acceptable_numbers = {
                     "0",
                     "0.0",
@@ -404,7 +293,7 @@ class MATLABQualityChecker:
                     "5.0",
                     "10",
                     "10.0",
-                    "42",  # Common reproducibility seed in scientific computing
+                    "42",
                     "42.0",
                     "100",
                     "100.0",
@@ -414,11 +303,9 @@ class MATLABQualityChecker:
                     "0.1",
                     "0.01",
                     "0.001",
-                    "0.0001",  # Common tolerances
+                    "0.0001",
                 }
 
-                # Known physics constants (should be defined but at least flag
-                # with context). Includes units and sources per coding guidelines
                 known_constants = {
                     "3.14159": "pi constant [dimensionless] - mathematical constant",
                     "3.1416": "pi constant [dimensionless] - mathematical constant",
@@ -427,23 +314,18 @@ class MATLABQualityChecker:
                     "1.57": "pi/2 constant [dimensionless] - mathematical constant",
                     "0.7854": "pi/4 constant [dimensionless] - mathematical constant",
                     "0.785": "pi/4 constant [dimensionless] - mathematical constant",
-                    "9.81": "gravitational acceleration [m/s²] - approximate standard "
-                    "gravity",
-                    "9.8": "gravitational acceleration [m/s²] - approximate standard "
-                    "gravity",
-                    "9.807": "gravitational acceleration [m/s²] - approximate standard "
-                    "gravity",
+                    "9.81": "gravitational acceleration [m/s²] - approximate standard gravity",
+                    "9.8": "gravitational acceleration [m/s²] - approximate standard gravity",
+                    "9.807": "gravitational acceleration [m/s²] - approximate standard gravity",
                 }
 
                 for num in magic_numbers:
-                    # Check if it's a known constant
                     if num in known_constants:
                         issues.append(
                             f"{file_path.name} (line {i}): Magic number {num} "
                             f"({known_constants[num]}) - define as named constant",
                         )
                     elif num not in acceptable_numbers:
-                        # Check if the number appears before a comment on same line
                         comment_idx = line_original.find("%")
                         num_idx = line_original.find(num)
                         if comment_idx == -1 or (
@@ -454,14 +336,9 @@ class MATLABQualityChecker:
                                 "should be defined as constant with units and source",
                             )
 
-                # Check for clear/clc/close all in functions (bad practice)
                 if in_function:
-                    # Check for clear without variable (dangerous) or clear all/global
-                    # (very dangerous)
                     if re.search(
-                        r"\bclear\s+(all|global)\b",
-                        line_stripped,
-                        re.IGNORECASE,
+                        r"\bclear\s+(all|global)\b", line_stripped, re.IGNORECASE
                     ):
                         issues.append(
                             f"{file_path.name} (line {i}): Avoid 'clear all' or "
@@ -484,16 +361,12 @@ class MATLABQualityChecker:
                             "functions - closes user's figures",
                         )
 
-                # Check for exist() usage (often code smell,
-                # prefer try/catch or validation)
                 if re.search(r"\bexist\s*\(", line_stripped):
                     issues.append(
                         f"{file_path.name} (line {i}): Consider using validation or "
                         "try/catch instead of exist()",
                     )
 
-                # Check for addpath in functions (should be in startup.m or
-                # managed externally)
                 if in_function and re.search(r"\baddpath\s*\(", line_stripped):
                     issues.append(
                         f"{file_path.name} (line {i}): Avoid addpath in functions "
@@ -506,20 +379,14 @@ class MATLABQualityChecker:
         return issues
 
     def run_all_checks(self) -> dict[str, Any]:
-        """Run all MATLAB quality checks.
-
-        Returns:
-            Dictionary containing all quality check results
-        """
+        """Run all MATLAB quality checks."""
         logger.info("Starting MATLAB quality checks")
 
-        # Check if MATLAB files exist
         if not self.check_matlab_files_exist():
             self.results["passed"] = True
             self.results["summary"] = "[SKIP] No MATLAB files to check - passed"
             return self.results
 
-        # Run MATLAB quality checks
         matlab_results = self.run_matlab_quality_checks()
 
         if "error" in matlab_results:
@@ -545,8 +412,8 @@ class MATLABQualityChecker:
         return self.results
 
 
-def main() -> None:
-    """Main entry point for the MATLAB quality check script."""
+def run_matlab_quality_checks_cli() -> None:
+    """Main entry point for command line execution."""
     parser = argparse.ArgumentParser(description="MATLAB Code Quality Checker")
     parser.add_argument("--strict", action="store_true", help="Enable strict mode")
     parser.add_argument(
@@ -564,23 +431,17 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    # Get project root
     project_root = Path(args.project_root).resolve()
     if not project_root.exists():
         logger.error("Project root does not exist: %s", project_root)
         sys.exit(1)
 
-    # Initialize and run quality checks
     checker = MATLABQualityChecker(project_root)
     results = checker.run_all_checks()
 
-    # Output results
     if args.output_format == "json":
-        # For JSON output, use print() to stdout to avoid logging format prefixes
-        # This ensures pure JSON output for parsing by other tools/workflows
-        print(json.dumps(results, indent=2, default=str))  # noqa: T201
+        print(json.dumps(results, indent=2, default=str))
     else:
-        # For text output, use logger for proper formatting
         logger.info("\n" + "=" * 60)
         logger.info("MATLAB QUALITY CHECK RESULTS")
         logger.info("=" * 60)
@@ -598,9 +459,6 @@ def main() -> None:
 
         logger.info("\n" + "=" * 60)
 
-    # Exit with appropriate code
-    # In strict mode, fail if any issues are found; otherwise fail only if
-    # checks didn't pass
     passed = results.get("passed", False)
     has_issues = bool(results.get("issues"))
 
@@ -611,7 +469,3 @@ def main() -> None:
     )
 
     sys.exit(exit_code)
-
-
-if __name__ == "__main__":
-    main()

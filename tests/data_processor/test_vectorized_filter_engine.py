@@ -1,6 +1,7 @@
 import os
 import sys
 import unittest
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -16,8 +17,6 @@ sys.path.insert(0, project_root)
 
 try:
     from vectorized_filter_engine import VectorizedFilterEngine
-
-from pathlib import Path
 except ImportError:
     # Fail loudly if we can't import the module under test
     raise

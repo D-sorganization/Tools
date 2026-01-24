@@ -6,15 +6,14 @@ Test different icon conversion methods to fix the white icon issue.
 import logging
 from pathlib import Path
 
+# Use shared utility
 try:
-    from PIL import Image
+    from tools.icon_utils import convert_png_to_ico, ensure_pil_installed
 except ImportError:
-    print("PIL (Pillow) not found. Installing...")
-    import subprocess
     import sys
 
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "Pillow"])
-    from PIL import Image
+    sys.path.append(str(Path(__file__).resolve().parent))
+    from tools.icon_utils import convert_png_to_ico, ensure_pil_installed
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -26,30 +25,13 @@ def create_alternative_ico() -> None:
     png_path = Path("tools_icon.png")
     ico_path = Path("tools_icon_alt.ico")
 
-    try:
-        with Image.open(png_path) as img_file:
-            logger.info(
-                f"Original: mode={img_file.mode}, size={img_file.size}, format={img_file.format}"
-            )
-            img: Image.Image = img_file
+    # Custom sizes for alternative test
+    alt_sizes = [(256, 256), (64, 64), (32, 32), (16, 16)]
 
-            # Method 1: Direct conversion with explicit RGB
-            if img.mode != "RGB":
-                img = img.convert("RGB")
-
-            # Resize to a single standard size first
-            img_256 = img.resize((256, 256), Image.Resampling.LANCZOS)
-
-            # Save with explicit format
-            img_256.save(
-                ico_path, format="ICO", sizes=[(256, 256), (64, 64), (32, 32), (16, 16)]
-            )
-
-            logger.info(f"✓ Created alternative ICO: {ico_path}")
-            logger.info(f"Size: {ico_path.stat().st_size:,} bytes")
-
-    except Exception as e:
-        logger.error(f"Failed to create alternative ICO: {e}")
+    if convert_png_to_ico(png_path, ico_path, sizes=alt_sizes):
+        logger.info(f"✓ Created alternative ICO: {ico_path}")
+    else:
+        logger.error(f"Failed to create alternative ICO: {ico_path}")
 
 
 def create_simple_ico() -> None:
@@ -57,28 +39,20 @@ def create_simple_ico() -> None:
     png_path = Path("tools_icon.png")
     ico_path = Path("tools_icon_simple.ico")
 
-    try:
-        with Image.open(png_path) as img_file:
-            # Convert to RGB and resize to 32x32
-            img: Image.Image = img_file
-            if img.mode != "RGB":
-                img = img.convert("RGB")
+    # Single size test
+    simple_size = [(32, 32)]
 
-            img_32 = img.resize((32, 32), Image.Resampling.LANCZOS)
-
-            # Save as simple ICO
-            img_32.save(ico_path, format="ICO")
-
-            logger.info(f"✓ Created simple ICO: {ico_path}")
-            logger.info(f"Size: {ico_path.stat().st_size:,} bytes")
-
-    except Exception as e:
-        logger.error(f"Failed to create simple ICO: {e}")
+    if convert_png_to_ico(png_path, ico_path, sizes=simple_size):
+        logger.info(f"✓ Created simple ICO: {ico_path}")
+    else:
+        logger.error(f"Failed to create simple ICO: {ico_path}")
 
 
 def main() -> None:
     """Test different conversion methods."""
     logger.info("Testing alternative icon conversion methods...")
+
+    ensure_pil_installed()
 
     create_alternative_ico()
     create_simple_ico()

@@ -4,83 +4,56 @@ Note: UnifiedToolsLauncher.py (PyQt6) is the preferred launcher.
 This is a simpler alternative for environments where PyQt6 is not available.
 """
 
-import os
-import subprocess
+import json
 import sys
 import tkinter as tk
-import webbrowser
 from pathlib import Path
 from tkinter import messagebox, ttk
 from typing import Any
 
 # Path helpers
-BASE_DIR = Path(os.path.abspath(__file__).parent)
+BASE_DIR = Path(__file__).resolve().parent
+
+# Import shared utilities
+try:
+    from tools.launch_utils import (
+        LaunchError,
+        PlatformError,
+        SecurityError,
+        ToolNotFoundError,
+        launch_tool,
+    )
+except ImportError:
+    # If tools package not found, we can't function safely
+    messagebox.showerror(
+        "Critical Error",
+        "Could not import tools.launch_utils. Please ensure the 'tools' package is available.",
+    )
+    sys.exit(1)
 
 
-def get_path(rel_path: str) -> str:
-    return os.path.normpath(Path(BASE_DIR) / rel_path)
+def load_tools_config() -> dict[str, list[Any]]:
+    """Load tools configuration from tools.json."""
+    json_path = BASE_DIR / "tools.json"
+    if not json_path.exists():
+        return {}
+
+    try:
+        with open(json_path, encoding="utf-8") as f:
+            config = json.load(f)
+
+        # Transform JSON format to match what Launcher expects if needed,
+        # but actually Launcher constructs GUI from the dictionary structure.
+        # tools.json structure is: {"Category": [{"name":..., "path":..., "type":...}]}
+        # This matches what we need.
+        return config
+    except Exception as e:
+        print(f"Error loading tools.json: {e}", file=sys.stderr)
+        return {}
 
 
-# Tool Configuration
-# Category -> List of (Name, Relative Path, Type)
-# Type: 'python', 'bat', 'html', 'file' or 'matlab'
-# Note: 'matlab' type simply opens the file/folder in OS as we can't reliably assume CLI
-# matlab activation.
-# But 'file' is usually enough. 'python' launches with current sys.executable.
-TOOLS = {
-    "Unit Converters": [
-        ("Calculator App", "web_applications/calculator/webapp.py", "python"),
-        (
-            "Unit Converter (Web)",
-            "web_applications/unit_converter/unit-converter-app/index.html",
-            "html",
-        ),
-    ],
-    "Data Processors": [
-        (
-            "Data Processor (Integrated)",
-            "data_processing/data_processor/python/data_processor/launch_integrated.py",
-            "python",
-        ),
-        (
-            "Data Processor (Replicant r0)",
-            "data_processing/data_processor/archive/Data_Processor_r0.py",
-            "python",
-        ),
-        (
-            "Data Processor (Archive Integrated)",
-            "data_processing/data_processor/archive/Data_Processor_Integrated.py",
-            "python",
-        ),
-    ],
-    "Video Processors": [
-        (
-            "Web Platform (Next.js)",
-            "media_processing/video_processor/apps/web/launch_platform.bat",
-            "bat",
-        ),
-        ("MATLAB Engine", "media_processing/video_processor/matlab/run_all.m", "file"),
-    ],
-    "Audio Processors": [
-        (
-            "Audio Processor Pro",
-            "media_processing/audio_processor/matlab/audio_signal_processor/launch_audio_processor_pro.m",
-            "file",
-        ),
-    ],
-    "Folder Tools": [
-        (
-            "Folder Packer Pro",
-            "development_tools/folder_tools/folder_packer_pro/folder_packer_pro.py",
-            "python",
-        ),
-        (
-            "Folder Fix",
-            "development_tools/folder_tools/folder_tool/Launch_FolderFix.bat",
-            "bat",
-        ),
-    ],
-}
+# Load configuration dynamically
+TOOLS = load_tools_config()
 
 
 class ToolsLauncher(tk.Tk):
@@ -111,42 +84,53 @@ class ToolsLauncher(tk.Tk):
 
     def _get_ordered_categories(self) -> list[str]:
         """Get categories in preferred display order."""
-        categories = [
+        # Define some preferred order, but allow others
+        preferred = [
             "Unit Converters",
             "Data Processors",
             "Video Processors",
             "Audio Processors",
             "Folder Tools",
         ]
+        categories = list(preferred)
         for cat in TOOLS.keys():
             if cat not in categories:
                 categories.append(cat)
-        return categories
+
+        # Only include categories that actually exist
+        return [c for c in categories if c in TOOLS]
 
     def _create_tool_button(
-        self, parent: ttk.Frame, name: str, rel_path: str, kind: str
+        self, parent: ttk.Frame, tool_info: dict[str, Any]
     ) -> ttk.Frame:
         """Create a tool button frame with label and launch button."""
-        full_path = get_path(rel_path)
+        name = tool_info.get("name", "Unknown")
+        rel_path = tool_info.get("path", "")
+
+        full_path = BASE_DIR / rel_path
         btn_frame = ttk.Frame(parent, borderwidth=1, relief="solid")
 
         lbl = ttk.Label(btn_frame, text=name, font=("Helvetica", 11, "bold"))
         lbl.pack(pady=(15, 5))
 
-        exists = Path(full_path).exists()
+        exists = full_path.exists()
         state = "normal" if exists else "disabled"
-        btn_text = "Launch" if exists else "Not Found"
-        if kind == "file" and exists:
+
+        # Determine button text
+        btn_text = "Launch"
+        if not exists:
+            btn_text = "Not Found"
+        elif tool_info.get("type") == "file":
             btn_text = "Open File"
 
-        def make_launcher(p: str, k: str) -> Any:
-            return lambda: self.launch_tool(p, k)
+        def make_launcher(info: dict[str, Any]) -> Any:
+            return lambda: self.launch_tool_wrapper(info)
 
         btn = ttk.Button(
             btn_frame,
             text=btn_text,
             state=state,
-            command=make_launcher(full_path, kind),
+            command=make_launcher(tool_info),
         )
         btn.pack(pady=10, padx=10, fill=tk.X)
 
@@ -178,8 +162,8 @@ class ToolsLauncher(tk.Tk):
         max_cols = 2
         row, col = 0, 0
 
-        for name, rel_path, kind in tool_list:
-            btn_frame = self._create_tool_button(grid_frame, name, rel_path, kind)
+        for tool_info in tool_list:
+            btn_frame = self._create_tool_button(grid_frame, tool_info)
             btn_frame.grid(row=row, column=col, padx=10, pady=10, sticky="nsew")
 
             col += 1
@@ -206,34 +190,28 @@ class ToolsLauncher(tk.Tk):
             self.notebook.add(frame, text=category)
 
         if not has_tools:
-            ttk.Label(self, text="No tools configured.").pack()
+            ttk.Label(self, text="No tools configured or tools.json missing.").pack()
 
-    def launch_tool(self, path: str, kind: str) -> None:
-        """Launch a tool with the appropriate method based on its type."""
+    def launch_tool_wrapper(self, tool_info: dict[str, Any]) -> None:
+        """Launch a tool using repeated logic from launch_utils."""
+
+        # Simple logging callback for Tkinter (print to stdout)
+        def log_msg(msg: str) -> None:
+            print(f"[Launcher] {msg}")
+
         try:
-            cwd = Path(path).parent
-            if kind == "python":
-                subprocess.Popen([sys.executable, path], cwd=cwd)
-            elif kind == "bat":
-                subprocess.Popen(["cmd.exe", "/c", path], cwd=cwd)
-            elif kind == "html":
-                webbrowser.open(f"file://{path}")
-            elif kind == "exe":
-                subprocess.Popen([path], cwd=cwd)
-            else:
-                if hasattr(os, "startfile"):
-                    os.startfile(path)  # type: ignore[attr-defined]
-                elif sys.platform == "darwin":
-                    subprocess.Popen(["open", path], cwd=cwd)
-                else:
-                    subprocess.Popen(["xdg-open", path], cwd=cwd)
-
-        except FileNotFoundError as e:
-            messagebox.showerror("Error", f"File not found: {path}\n{e}")
-        except PermissionError as e:
-            messagebox.showerror("Error", f"Permission denied: {path}\n{e}")
-        except OSError as e:
-            messagebox.showerror("Error", f"Failed to launch {path}:\n{e}")
+            launch_tool(
+                tool_info=tool_info,
+                repo_root=BASE_DIR,
+                is_debug=False,
+                log_func=log_msg,
+            )
+        except (LaunchError, SecurityError, ToolNotFoundError, PlatformError) as e:
+            messagebox.showerror("Launch Error", str(e))
+        except Exception as e:
+            messagebox.showerror(
+                "Unexpected Error", f"An unexpected error occurred:\n{e}"
+            )
 
 
 def main() -> None:
