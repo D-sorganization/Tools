@@ -245,9 +245,7 @@ class CSVProcessorApp(ctk.CTk):
         self.plots_signal_vars: dict[str, Any] = {}
 
         # Layout persistence variables
-        self.layout_config_file = Path(os.path.expanduser("~"),
-            ".csv_processor_layout.json",
-        )
+        self.layout_config_file = Path.home() / ".csv_processor_layout.json"
         self.splitters = {}
         self.layout_data = self._load_layout_config()
 
@@ -277,7 +275,7 @@ class CSVProcessorApp(ctk.CTk):
         self.input_file_paths = []
         self.loaded_data_cache = {}
         self.processed_files = {}  # Store processed data for plotting
-        self.output_directory = os.path.expanduser("~/Documents")
+        self.output_directory = Path.home() / "Documents"
         self.signal_vars = {}
         self.plot_signal_vars = {}
         self.filter_names = [

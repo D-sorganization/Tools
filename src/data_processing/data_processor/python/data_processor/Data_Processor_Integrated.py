@@ -1938,14 +1938,12 @@ except ImportError:
         safe_write_csv(df, path, **kwargs)
     def safe_read_text(path, encoding='utf-8', default=''):
         try:
-            return Path(path).read_text(encoding=encoding)
-        except Exception:
-            return default
+            return safe_read_text(path, default=default, encoding=encoding)
     def safe_write_text(path, content, encoding='utf-8', create_parents=True):
         p = Path(path)
         if create_parents:
             p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_text(content, encoding=encoding)
+        safe_write_text(p, content, encoding=encoding)
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
