@@ -586,63 +586,19 @@ class SolarSystemScene:
 
         elif key == K_LEFTBRACKET:
             # Jump backward 1 day
-            self.time_manager.advance_days(-1)
-            self._update_ui_date()
-            self._mark_immersion_task("navigate_time")
+            self._jump_time(-1)
 
         elif key == K_RIGHTBRACKET:
             # Jump forward 1 day
-            self.time_manager.advance_days(1)
-            self._update_ui_date()
-            self._mark_immersion_task("navigate_time")
+            self._jump_time(1)
 
         elif key == K_PAGEUP:
             # Jump backward 1 month, preserving day of month when possible
-            current_dt = self.time_manager.current_time.datetime_utc
-            target_day = current_dt.day
-
-            # Calculate previous month
-            if current_dt.month == 1:
-                prev_month = 12
-                prev_year = current_dt.year - 1
-            else:
-                prev_month = current_dt.month - 1
-                prev_year = current_dt.year
-
-            # Ensure day exists in previous month (handle cases like Jan 31 -> Dec 31)
-            max_days_in_prev = monthrange(prev_year, prev_month)[1]
-            actual_day = min(target_day, max_days_in_prev)
-
-            prev_date = current_dt.replace(
-                year=prev_year, month=prev_month, day=actual_day
-            )
-            self.time_manager.set_datetime(prev_date)
-            self._update_ui_date()
-            self._mark_immersion_task("navigate_time")
+            self._jump_month(-1)
 
         elif key == K_PAGEDOWN:
             # Jump forward 1 month, preserving day of month when possible
-            current_dt = self.time_manager.current_time.datetime_utc
-            target_day = current_dt.day
-
-            # Calculate next month
-            if current_dt.month == 12:
-                next_month = 1
-                next_year = current_dt.year + 1
-            else:
-                next_month = current_dt.month + 1
-                next_year = current_dt.year
-
-            # Ensure day exists in next month (handle cases like Jan 31 -> Feb 28/29)
-            max_days_in_next = monthrange(next_year, next_month)[1]
-            actual_day = min(target_day, max_days_in_next)
-
-            next_date = current_dt.replace(
-                year=next_year, month=next_month, day=actual_day
-            )
-            self.time_manager.set_datetime(next_date)
-            self._update_ui_date()
-            self._mark_immersion_task("navigate_time")
+            self._jump_month(1)
 
         elif key == K_HOME:
             self.renderer.camera.reset()
@@ -756,6 +712,44 @@ class SolarSystemScene:
         if self.immersion_checklist:
             self.immersion_checklist.mark_complete(task_id)
 
+    def _jump_time(self, days: float) -> None:
+        """
+        Jump time forward or backward by a number of days.
+
+        Args:
+            days: Number of days to jump (can be negative).
+        """
+        self.time_manager.advance_days(days)
+        self._update_ui_date()
+        self._mark_immersion_task("navigate_time")
+
+    def _jump_month(self, months: int) -> None:
+        """
+        Jump time forward or backward by a number of months.
+        Preserves the day of the month where possible to avoid skipping days.
+
+        Args:
+            months: Number of months to jump (can be negative).
+        """
+        current_dt = self.time_manager.current_time.datetime_utc
+        target_day = current_dt.day
+        
+        # Calculate new year and month
+        total_months = current_dt.month + months - 1 # 0-indexed month for math
+        new_year = current_dt.year + (total_months // 12)
+        new_month = (total_months % 12) + 1
+        
+        # Clamp day to valid range for new month
+        max_days = monthrange(new_year, new_month)[1]
+        actual_day = min(target_day, max_days)
+        
+        new_date = current_dt.replace(
+            year=new_year, month=new_month, day=actual_day
+        )
+        self.time_manager.set_datetime(new_date)
+        self._update_ui_date()
+        self._mark_immersion_task("navigate_time")
+
     def _handle_time_nav_action(self, action: str) -> None:
         """
         Handle time navigation panel button actions.
@@ -764,30 +758,38 @@ class SolarSystemScene:
             action: The navigation action to perform
         """
         if action == "prev_day":
-            self.time_manager.advance_days(-1)
+            self._jump_time(-1)
         elif action == "next_day":
-            self.time_manager.advance_days(1)
+            self._jump_time(1)
         elif action == "prev_week":
-            self.time_manager.advance_days(-7)
+            self._jump_time(-7)
         elif action == "next_week":
-            self.time_manager.advance_days(7)
+            self._jump_time(7)
         elif action == "prev_month":
-            self.time_manager.advance_days(-30)
+            self._jump_month(-1)
         elif action == "next_month":
-            self.time_manager.advance_days(30)
+            self._jump_month(1)
         elif action == "prev_year":
             self.time_manager.advance_years(-1)
+            self._update_ui_date() # Years logic is simple enough to leave or could wrap too
+            self._mark_immersion_task("navigate_time")
         elif action == "next_year":
             self.time_manager.advance_years(1)
+            self._update_ui_date()
+            self._mark_immersion_task("navigate_time")
         elif action == "goto_today":
             self.time_manager.set_to_now()
+            self._update_ui_date()
         elif action == "goto_j2000":
             self.time_manager.set_to_j2000()
+            self._update_ui_date()
         elif action == "goto_j2030":
             if hasattr(self.time_manager, "J2030"):
                 self.time_manager.set_datetime(self.time_manager.J2030)
+                self._update_ui_date()
         elif action == "reset":
             self.time_manager.set_to_now()
+            self._update_ui_date()
         elif action == "faster":
             self.time_manager.increase_time_warp()
         elif action == "slower":
@@ -796,10 +798,6 @@ class SolarSystemScene:
             self.time_manager.reverse_time()
         elif action == "toggle_pause":
             self.time_manager.toggle_pause()
-
-        # Update UI after time change
-        self._update_ui_date()
-        self._mark_immersion_task("navigate_time")
 
     def _handle_mouse_button(self, button: int, pressed: bool) -> None:
         """Handle mouse button events."""
