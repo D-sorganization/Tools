@@ -34,19 +34,24 @@ except ImportError:
 
 def load_tools_config() -> dict[str, list[Any]]:
     """Load tools configuration from tools.json."""
-    json_path = BASE_DIR / "tools.json"
-    if not json_path.exists():
-        return {}
-
     try:
-        with open(json_path, encoding="utf-8") as f:
-            config = json.load(f)
+        from tools.config_loader import load_tools_config
 
-        # Transform JSON format to match what Launcher expects if needed,
-        # but actually Launcher constructs GUI from the dictionary structure.
-        # tools.json structure is: {"Category": [{"name":..., "path":..., "type":...}]}
-        # This matches what we need.
+        # Load config relative to this script's location (BASE_DIR)
+        config = load_tools_config(BASE_DIR)
         return config
+    except ImportError:
+        # Fallback if tools package isn't fully installed
+        json_path = BASE_DIR / "tools.json"
+
+        try:
+            with open(json_path, encoding="utf-8") as f:
+                config = json.load(f)
+            return config
+        except Exception as e:
+            print(f"Error loading tools.json: {e}", file=sys.stderr)
+            return {}
+
     except Exception as e:
         print(f"Error loading tools.json: {e}", file=sys.stderr)
         return {}
