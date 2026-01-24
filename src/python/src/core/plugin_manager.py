@@ -3,6 +3,8 @@ import logging
 from dataclasses import dataclass
 from pathlib import Path
 
+from ..utils.file_utils import safe_read_json
+
 logger = logging.getLogger(__name__)
 
 
@@ -74,11 +76,12 @@ class PluginManager:
             )
             return {}
 
-        try:
-            with open(self.tools_file, encoding="utf-8") as f:
-                data = json.load(f)
+        # Use shared utility for safe JSON reading
+        data = safe_read_json(self.tools_file, default={})
+        if not data:
+            return {}
 
-            self.tools = {}
+        self.tools = {}
             for category, items in data.items():
                 tool_list = []
                 for item in items:
@@ -147,9 +150,12 @@ class PluginManager:
 
             # Recursively search for tool_manifest.json files
             for manifest_path in tool_dir.rglob("tool_manifest.json"):
+                # Use shared utility for safe JSON reading
+                manifest_data = safe_read_json(manifest_path, default={})
+                if not manifest_data:
+                    continue
+                
                 try:
-                    with open(manifest_path, encoding="utf-8") as f:
-                        manifest_data = json.load(f)
 
                     # Extract tool information from manifest
                     tool_name = manifest_data.get("name", manifest_path.parent.name)

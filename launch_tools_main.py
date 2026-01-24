@@ -70,68 +70,66 @@ def setup_python_path() -> None:
 
 
 def check_dependencies() -> list[str]:
-    """Check if required dependencies are available."""
-    required_packages = [
-        "customtkinter",
-        "pandas",
-        "numpy",
-        "matplotlib",
-        "PIL",  # Pillow
-    ]
+    """Check if required dependencies are available (uses shared utility)."""
+    try:
+        from utils.dependency_checker import check_dependencies as check_deps
 
-    missing_packages = []
+        required_packages = [
+            "customtkinter",
+            "pandas",
+            "numpy",
+            "matplotlib",
+            "PIL",  # Pillow
+        ]
 
-    for package in required_packages:
-        try:
-            __import__(package)
-            logger.info(f"✓ {package} is available")
-        except ImportError:
-            missing_packages.append(package)
-            logger.warning(f"✗ {package} is missing")
+        package_map = {
+            "PIL": "Pillow",
+        }
 
-    return missing_packages
+        status = check_deps(required_packages, package_map=package_map)
+        return status.missing
+    except ImportError:
+        # Fallback if shared utility not available
+        logger.warning("Shared dependency checker not available, using fallback")
+        missing_packages = []
+        for package in ["customtkinter", "pandas", "numpy", "matplotlib", "PIL"]:
+            try:
+                __import__(package)
+            except ImportError:
+                missing_packages.append(package)
+        return missing_packages
 
 
 def install_missing_packages(packages: list[str]) -> bool:
-    """Attempt to install missing packages."""
+    """Attempt to install missing packages (uses shared utility)."""
     if not packages:
         return True
 
-    logger.info(f"Attempting to install missing packages: {packages}")
-
     try:
-        import subprocess
+        from utils.dependency_checker import install_missing_packages as install_packages
 
-        # Map package names to pip names if different
-        pip_names = {
+        package_map = {
             "PIL": "Pillow",
-            "customtkinter": "customtkinter",
-            "pandas": "pandas",
-            "numpy": "numpy",
-            "matplotlib": "matplotlib",
         }
 
+        return install_packages(packages, package_map=package_map)
+    except ImportError:
+        # Fallback if shared utility not available
+        logger.warning("Shared dependency installer not available, using fallback")
+        import subprocess
+
+        package_map = {"PIL": "Pillow"}
         for package in packages:
-            pip_name = pip_names.get(package, package)
-            logger.info(f"Installing {pip_name}...")
-
-            result = subprocess.run(
-                [sys.executable, "-m", "pip", "install", pip_name],
-                capture_output=True,
-                text=True,
-            )
-
-            if result.returncode == 0:
-                logger.info(f"✓ Successfully installed {pip_name}")
-            else:
-                logger.error(f"✗ Failed to install {pip_name}: {result.stderr}")
+            pip_name = package_map.get(package, package)
+            try:
+                subprocess.run(
+                    [sys.executable, "-m", "pip", "install", pip_name],
+                    check=True,
+                    capture_output=True,
+                )
+            except subprocess.CalledProcessError:
                 return False
-
         return True
-
-    except Exception as e:
-        logger.error(f"Error installing packages: {e}")
-        return False
 
 
 def create_constants_file() -> bool:
