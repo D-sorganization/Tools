@@ -44,6 +44,8 @@ class PluginManager:
                 # Fallback
                 with open(self.tools_file, encoding="utf-8") as f:
                     data = json.load(f)
+                if data is None:
+                    data = {}
 
             self.tools = {}
             for category, items in data.items():

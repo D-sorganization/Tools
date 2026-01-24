@@ -59,9 +59,21 @@ class DataReader:
         fmt = format_type.lower()
 
         if fmt == "csv":
-            return pd.read_csv(file_path, **kwargs)
+            # Use csv_utils for consistent error handling
+            try:
+                from utils.csv_utils import safe_read_csv
+                return safe_read_csv(file_path, **kwargs)
+            except ImportError:
+                # Fallback
+                return pd.read_csv(file_path, **kwargs)
         if fmt == "tsv":
-            return pd.read_csv(file_path, sep="\t", **kwargs)
+            # Use csv_utils for consistent error handling
+            try:
+                from utils.csv_utils import safe_read_csv
+                return safe_read_csv(file_path, sep="\t", **kwargs)
+            except ImportError:
+                # Fallback
+                return pd.read_csv(file_path, sep="\t", **kwargs)
         if fmt == "excel":
             return pd.read_excel(file_path, **kwargs)
         if fmt == "parquet":
