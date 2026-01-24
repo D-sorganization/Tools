@@ -398,8 +398,6 @@ except ImportError:
 
     import pandas as pd
 
-
-
     def safe_read_csv(path, default=None, **kwargs):
         try:
             return pd.read_csv(path, **kwargs)
