@@ -2141,7 +2141,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         new_path = Path(parent) / f"{filename} ({counter}){ext}"
         while Path(new_path).exists():
             counter += 1
-            new_path = Path(parent) / f"{filename} ({counter}){ext}")
+            new_path = Path(parent) / f"{filename} ({counter}){ext}"
         return new_path
 
     def create_help_tab(self, tab):
