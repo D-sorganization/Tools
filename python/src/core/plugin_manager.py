@@ -34,8 +34,16 @@ class PluginManager:
             return {}
 
         try:
-            with open(self.tools_file, encoding="utf-8") as f:
-                data = json.load(f)
+            # Use shared file utility for consistent JSON handling
+            try:
+                from utils.file_utils import safe_read_json
+                data = safe_read_json(self.tools_file, default={})
+                if data is None:
+                    data = {}
+            except ImportError:
+                # Fallback
+                with open(self.tools_file, encoding="utf-8") as f:
+                    data = json.load(f)
 
             self.tools = {}
             for category, items in data.items():

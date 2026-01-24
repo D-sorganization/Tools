@@ -4,8 +4,13 @@ import unittest
 
 import numpy as np
 
-# Add src to path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
+# Use shared path utility
+try:
+    from utils.path_helpers import ensure_utils_in_path
+    ensure_utils_in_path()
+except ImportError:
+    # Fallback
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
 
 from star_wars_rrt import Obstacle, PursuitAI, RRTPlanner, Ship
 
