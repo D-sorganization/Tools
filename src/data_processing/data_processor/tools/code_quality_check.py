@@ -11,10 +11,12 @@ from pathlib import Path
 # Add utils to path for import
 try:
     from utils.path_helpers import ensure_utils_in_path
+
     ensure_utils_in_path()
 except ImportError:
     # Fallback
     from utils.path_helpers import get_project_root_from_file
+
     repo_root = get_project_root_from_file(__file__)
     sys.path.insert(0, str(repo_root / "src" / "python" / "src"))
 

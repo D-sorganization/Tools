@@ -33,11 +33,17 @@ except ImportError:
         paths_to_add = [
             current_dir,
             current_dir / "src" / "python" / "src",
-            current_dir / "src" / "data_processing" / "data_processor" / "python" / "data_processor",
+            current_dir
+            / "src"
+            / "data_processing"
+            / "data_processor"
+            / "python"
+            / "data_processor",
         ]
         for path in paths_to_add:
             if path.exists():
                 sys.path.insert(0, str(path))
+
 
 # Configure logging
 logging.basicConfig(
@@ -106,7 +112,9 @@ def install_missing_packages(packages: list[str]) -> bool:
         return True
 
     try:
-        from utils.dependency_checker import install_missing_packages as install_packages
+        from utils.dependency_checker import (
+            install_missing_packages as install_packages,
+        )
 
         package_map = {
             "PIL": "Pillow",

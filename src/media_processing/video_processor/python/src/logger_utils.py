@@ -6,15 +6,16 @@ New code should use src/python/src/utils/logging_utils.py
 
 import sys
 import warnings
-from pathlib import Path
 
 # Add utils to path for import
 try:
     from utils.path_helpers import ensure_utils_in_path
+
     ensure_utils_in_path()
 except ImportError:
     # Fallback
     from utils.path_helpers import get_project_root_from_file
+
     repo_root = get_project_root_from_file(__file__)
     sys.path.insert(0, str(repo_root / "src" / "python" / "src"))
 
@@ -67,4 +68,13 @@ except ImportError:
         except ImportError:
             pass
 
-__all__ = ["DEFAULT_SEED", "LOG_FORMAT", "LOG_LEVEL", "get_logger", "logger", "set_seeds", "setup_logging"]
+
+__all__ = [
+    "DEFAULT_SEED",
+    "LOG_FORMAT",
+    "LOG_LEVEL",
+    "get_logger",
+    "logger",
+    "set_seeds",
+    "setup_logging",
+]

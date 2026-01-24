@@ -10,11 +10,13 @@ from pathlib import Path
 # Add utils to path using shared utility
 try:
     from utils.path_helpers import ensure_utils_in_path, get_project_root_from_file
+
     ensure_utils_in_path()
 except ImportError:
     # Fallback: try to add utils manually
     try:
         from utils.path_setup import add_utils_to_path
+
         add_utils_to_path()
     except ImportError:
         # Last resort fallback
@@ -33,7 +35,9 @@ except ImportError:
 
     def get_logger(name):
         import logging
+
         return logging.getLogger(name)
+
 
 logger = get_logger(__name__)
 

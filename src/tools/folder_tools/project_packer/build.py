@@ -9,27 +9,29 @@ import sys
 from pathlib import Path
 
 # Add utils to path using shared utility
-from pathlib import Path as PathLib
 
 # Import path_setup utility
 # Add utils to path using shared utility
 try:
     from utils.path_helpers import ensure_utils_in_path
+
     ensure_utils_in_path()
 except ImportError:
     # Fallback: try to add utils manually
     try:
         from utils.path_setup import add_utils_to_path
+
         add_utils_to_path()
     except ImportError:
         # Last resort fallback
         from utils.path_helpers import get_project_root_from_file
+
         repo_root = get_project_root_from_file(__file__)
         sys.path.insert(0, str(repo_root / "src" / "python" / "src"))
 
 try:
-    from utils.subprocess_utils import run_python_script
     from utils.logging_utils import get_logger
+    from utils.subprocess_utils import run_python_script
 except ImportError:
     # Fallback if shared utilities not available
     import subprocess
@@ -39,7 +41,9 @@ except ImportError:
 
     def get_logger(name):
         import logging
+
         return logging.getLogger(name)
+
 
 logger = get_logger(__name__)
 
@@ -54,7 +58,9 @@ def main() -> None:
 
     # Run the build script
     try:
-        run_python_script(script_dir / "build_exe.py", cwd=script_dir, capture_output=False)
+        run_python_script(
+            script_dir / "build_exe.py", cwd=script_dir, capture_output=False
+        )
         logger.info("Build process completed.")
 
         exe_path = script_dir / "dist" / "FolderPacker.exe"

@@ -2302,7 +2302,9 @@ class CSVProcessorApp(ctk.CTk):
                     self.processed_files[filename] = processed_df.copy()
                     logger.info(f"Stored in processed_files cache as: {filename}")
                 else:
-                    logger.error("ERROR: File processing returned None or empty DataFrame")
+                    logger.error(
+                        "ERROR: File processing returned None or empty DataFrame"
+                    )
                     error_count += 1
 
             except Exception as e:
@@ -2583,7 +2585,9 @@ class CSVProcessorApp(ctk.CTk):
                         processed_df.resample(resample_rule).mean().dropna(how="all")
                     )
                     after_resample = len(processed_df)
-                    logger.info(f"  Resampling: {before_resample} -> {after_resample} rows")
+                    logger.info(
+                        f"  Resampling: {before_resample} -> {after_resample} rows"
+                    )
             else:
                 logger.info("  Resampling disabled")
 
@@ -2610,14 +2614,18 @@ class CSVProcessorApp(ctk.CTk):
                     signals_to_integrate,
                     integration_method,
                 )
-                logger.info(f"  DataFrame shape after integration: {processed_df.shape}")
+                logger.info(
+                    f"  DataFrame shape after integration: {processed_df.shape}"
+                )
 
             # Apply differentiation if signals are selected
             signals_to_differentiate = [
                 s for s, data in self.deriv_signal_vars.items() if data["var"].get()
             ]
             if signals_to_differentiate:
-                logger.info(f"  Applying differentiation to: {signals_to_differentiate}")
+                logger.info(
+                    f"  Applying differentiation to: {signals_to_differentiate}"
+                )
                 differentiation_method = self.deriv_method_var.get()
                 processed_df = self._apply_differentiation(
                     processed_df,
@@ -2625,7 +2633,9 @@ class CSVProcessorApp(ctk.CTk):
                     signals_to_differentiate,
                     differentiation_method,
                 )
-                logger.info(f"  DataFrame shape after differentiation: {processed_df.shape}")
+                logger.info(
+                    f"  DataFrame shape after differentiation: {processed_df.shape}"
+                )
 
             if processed_df.empty:
                 logger.error("  ERROR: Final DataFrame is empty")
@@ -4676,14 +4686,18 @@ class CSVProcessorApp(ctk.CTk):
                 # Auto-fit to show all data
                 try:
                     self.plot_ax.autoscale_view()
-                    logger.info(f"Auto-zoom applied ({zoom_reason}): fitting to all data")
+                    logger.info(
+                        f"Auto-zoom applied ({zoom_reason}): fitting to all data"
+                    )
                 except Exception as e:
                     logger.warning(f"Warning: Could not auto-fit plot - {e}")
             elif zoom_state:
                 # Restore previous zoom state
                 try:
                     self._apply_zoom_state(zoom_state)
-                    logger.info(f"Zoom state restored ({zoom_reason}): preserving user view")
+                    logger.info(
+                        f"Zoom state restored ({zoom_reason}): preserving user view"
+                    )
                 except Exception as e:
                     logger.warning(f"Warning: Could not apply zoom state - {e}")
 
@@ -6183,7 +6197,9 @@ COMMON MISTAKES TO AVOID:
             logger.debug("DEBUG: Storing loaded signal list")
             self.saved_signal_list = signal_list_data.get("signals", [])
             self.saved_signal_list_name = signal_list_data.get("name", "Unknown")
-            logger.debug(f"DEBUG: Saved signal list: {len(self.saved_signal_list)} signals")
+            logger.debug(
+                f"DEBUG: Saved signal list: {len(self.saved_signal_list)} signals"
+            )
 
             # Update status
             logger.debug("DEBUG: Updating status label")
@@ -6194,7 +6210,9 @@ COMMON MISTAKES TO AVOID:
             )
 
             # Automatically apply the loaded signals if we have signals available
-            logger.debug(f"DEBUG: Checking if signal_vars exist: {bool(self.signal_vars)}")
+            logger.debug(
+                f"DEBUG: Checking if signal_vars exist: {bool(self.signal_vars)}"
+            )
             if self.signal_vars:
                 logger.debug("DEBUG: Applying loaded signals internally")
                 self._apply_loaded_signals_internal()
@@ -6551,8 +6569,7 @@ COMMON MISTAKES TO AVOID:
 
         plot_config = {
             "name": plot_name,
-            "description": plot_desc
-            or f"Plot configuration created on \
+            "description": plot_desc or f"Plot configuration created on \
                 {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}",
             "signals": selected_signals,
             "start_time": self.plots_list_start_time_entry.get(),
@@ -6651,7 +6668,9 @@ COMMON MISTAKES TO AVOID:
         idx = selection[0]
         plot_config = self.plots_list[idx]
 
-        logger.debug(f"DEBUG: Loading plot config: {plot_config.get('name', 'Unknown')}")
+        logger.debug(
+            f"DEBUG: Loading plot config: {plot_config.get('name', 'Unknown')}"
+        )
         logger.debug(f"DEBUG: File in config: '{plot_config.get('file', '')}'")
 
         # Apply the plot configuration using the same method as the main plotting tab
@@ -8479,7 +8498,6 @@ For additional support or feature requests, please refer to the
             # Format x-axis for time data
             if pd.api.types.is_datetime64_any_dtype(plot_df[time_col]):
                 import matplotlib.dates as mdates
-
 
                 self.preview_ax.xaxis.set_major_formatter(
                     mdates.DateFormatter("%H:%M")  # type: ignore[no-untyped-call]

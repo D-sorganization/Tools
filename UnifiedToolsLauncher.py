@@ -50,6 +50,7 @@ sys.path.append(str(REPO_ROOT / "src" / "python" / "src"))
 # Use shared path setup utility for consistency
 try:
     from utils.path_setup import setup_python_path
+
     setup_python_path(repo_root=REPO_ROOT)
 except ImportError:
     # Fallback if shared utility not available

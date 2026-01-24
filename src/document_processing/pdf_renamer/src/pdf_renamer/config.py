@@ -18,12 +18,12 @@ try:
     # Add utils to path
     import sys
     from pathlib import Path as PathLib
-    
+
     repo_root = PathLib(__file__).parent.parent.parent.parent.parent.parent.parent
     sys.path.insert(0, str(repo_root / "src" / "python" / "src"))
-    
-    from utils.env_utils import load_env_file, find_env_file
-    
+
+    from utils.env_utils import find_env_file, load_env_file
+
     # Search for .env file in multiple locations
     env_file = find_env_file(
         search_locations=[
@@ -38,14 +38,14 @@ except ImportError:
     # Fallback: try direct dotenv import
     try:
         from dotenv import load_dotenv
-        
+
         env_locations = [
             Path(__file__).parent.parent.parent / ".env",
             Path.cwd() / ".env",
             Path.home() / ".pdf_renamer" / ".env",
             TOOLS_ENV_PATH,
         ]
-        
+
         for env_path in env_locations:
             if env_path.exists():
                 load_dotenv(env_path)

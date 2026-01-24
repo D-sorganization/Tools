@@ -7,15 +7,16 @@ from __future__ import annotations
 
 import sys
 import warnings
-from pathlib import Path
 
 # Add utils to path for import
 try:
     from utils.path_helpers import ensure_utils_in_path
+
     ensure_utils_in_path()
 except ImportError:
     # Fallback
     from utils.path_helpers import get_project_root_from_file
+
     repo_root = get_project_root_from_file(__file__)
     sys.path.insert(0, str(repo_root / "src" / "python" / "src"))
 
@@ -75,5 +76,6 @@ except ImportError:
     def get_logger(name: str = __name__) -> logging.Logger:
         init_default_logging()
         return logging.getLogger(name)
+
 
 __all__ = ["DEFAULT_FORMAT", "JsonFormatter", "get_logger", "init_default_logging"]
