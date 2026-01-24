@@ -8,9 +8,23 @@ import os
 import sys
 from pathlib import Path
 
-# Add utils to path
-repo_root = Path(__file__).parent.parent.parent.parent.parent.parent.parent
-sys.path.insert(0, str(repo_root / "src" / "python" / "src"))
+# Add utils to path using shared utility
+from pathlib import Path as PathLib
+
+# Import path_setup utility
+try:
+    import importlib.util
+    import sys
+    repo_root = PathLib(__file__).parent.parent.parent.parent.parent.parent.parent
+    utils_path = repo_root / "src" / "python" / "src"
+    if utils_path.exists():
+        sys.path.insert(0, str(utils_path))
+    from utils.path_setup import add_utils_to_path
+    add_utils_to_path()
+except ImportError:
+    # Fallback
+    repo_root = PathLib(__file__).parent.parent.parent.parent.parent.parent.parent
+    sys.path.insert(0, str(repo_root / "src" / "python" / "src"))
 
 try:
     from utils.subprocess_utils import run_python_script

@@ -9,7 +9,6 @@ import logging
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +63,7 @@ def run_command(
         else:
             logger.warning(f"Command exited with code {result.returncode}")
         return result
-    except subprocess.TimeoutExpired as e:
+    except subprocess.TimeoutExpired:
         logger.error(f"Command timed out after {timeout}s: {' '.join(command)}")
         raise
     except subprocess.CalledProcessError as e:

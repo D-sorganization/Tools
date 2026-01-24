@@ -13,20 +13,33 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 
-def get_repo_root(start_path: Path | None = None) -> Path:
+def get_repo_root(start_path: Path | str | None = None) -> Path:
     """Get the repository root directory.
 
     Args:
-        start_path: Starting path to search from. Defaults to current file's parent.
+        start_path: Starting path to search from. If None, uses calling file's location.
 
     Returns:
         Path to repository root directory.
     """
     if start_path is None:
-        start_path = Path(__file__).resolve().parent.parent.parent.parent.parent
+        # Try to get calling file's path
+        import inspect
+        frame = inspect.currentframe()
+        if frame and frame.f_back:
+            calling_file = frame.f_back.f_globals.get("__file__")
+            if calling_file:
+                start_path = Path(calling_file).parent
+            else:
+                start_path = Path.cwd()
+        else:
+            start_path = Path.cwd()
 
     current = Path(start_path).resolve()
-    while current != current.parent:
+    max_depth = 20  # Prevent infinite loops
+    depth = 0
+
+    while current != current.parent and depth < max_depth:
         # Look for common repository root indicators
         if any(
             (current / marker).exists()
@@ -34,9 +47,22 @@ def get_repo_root(start_path: Path | None = None) -> Path:
         ):
             return current
         current = current.parent
+        depth += 1
 
     # Fallback: return the starting path's parent
     return Path(start_path).resolve().parent
+
+
+def add_utils_to_path() -> None:
+    """Add utils directory to sys.path from anywhere in the repository.
+
+    This is a convenience function that can be called from any file
+    to ensure utils modules are importable.
+    """
+    repo_root = get_repo_root()
+    utils_path = repo_root / "src" / "python" / "src"
+    if utils_path.exists() and str(utils_path) not in sys.path:
+        sys.path.insert(0, str(utils_path))
 
 
 def get_standard_paths(repo_root: Path | None = None) -> list[Path]:

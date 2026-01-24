@@ -11,7 +11,6 @@ import sys
 from collections.abc import Callable
 from dataclasses import dataclass
 from importlib.util import find_spec
-from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -120,7 +119,7 @@ def install_package(
 
     try:
         logger.info(f"Installing {pip_name}...")
-        result = subprocess.run(
+        subprocess.run(
             cmd,
             capture_output=True,
             text=True,
@@ -204,7 +203,7 @@ def install_from_requirements(
 
         # Install from requirements
         logger.info(f"Installing packages from {requirements_path}...")
-        result = subprocess.run(
+        subprocess.run(
             [sys.executable, "-m", "pip", "install", "-r", str(req_path)],
             check=True,
             capture_output=True,
