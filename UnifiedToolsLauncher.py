@@ -103,7 +103,7 @@ except ImportError:
         ensure_utils_in_path()
     except ImportError:
         # Last resort fallback
-        sys.path.append(str(REPO_ROOT / "src" / "python" / "src"))
+        ensure_utils_in_path()
 
 # Import compatibility shim early to verify environment and provide friendly errors
 try:
@@ -156,8 +156,7 @@ except Exception as e:
             import json
 
             try:
-                with open(TOOLS_FILE, encoding="utf-8") as f:
-                    TOOLS = json.load(f)
+                TOOLS = safe_read_json(TOOLS_FILE, default=None)
             except Exception as e:
                 sys.stderr.write(f"Error loading tools.json: {e}\n")
         except Exception as e:
@@ -496,6 +495,23 @@ class UnifiedLauncher(QMainWindow):
                 self.log("✅ Process started (Python)")
                 import time
 
+
+try:
+    from utils.file_utils import safe_read_json
+except ImportError:
+    import json
+
+try:
+    from utils.path_helpers import ensure_utils_in_path
+except ImportError:
+    def ensure_utils_in_path():
+        pass
+    def safe_read_json(path, default=None):
+        try:
+            with open(path, encoding='utf-8') as f:
+                return json.load(f)
+        except Exception:
+            return default
                 time.sleep(0.5)
                 if process.poll() is not None:
                     error_msg = (

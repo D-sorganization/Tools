@@ -8452,57 +8452,6 @@ For additional support or feature requests, please refer to the
             if pd.api.types.is_datetime64_any_dtype(plot_df[time_col]):
                 import matplotlib.dates as mdates
 
-
-try:
-    from utils.file_utils import safe_read_json
-except ImportError:
-    import json
-
-try:
-    from utils.file_utils import safe_write_json
-except ImportError:
-    import json
-
-from pathlib import Path
-
-try:
-    from utils.file_utils import safe_read_text, safe_write_text
-except ImportError:
-    from pathlib import Path
-
-try:
-    from utils.csv_utils import safe_read_csv, safe_write_csv
-except ImportError:
-    import pandas as pd
-    from pathlib import Path
-    def safe_read_csv(path, default=None, **kwargs):
-        try:
-            return pd.read_csv(path, **kwargs)
-        except Exception:
-            return default if default is not None else pd.DataFrame()
-    def safe_write_csv(df, path, create_parents=True, **kwargs):
-        Path(path).parent.mkdir(parents=True, exist_ok=True)
-        safe_write_csv(df, path, **kwargs)
-    def safe_read_text(path, encoding='utf-8', default=''):
-        try:
-            return Path(path).read_text(encoding=encoding)
-        except Exception:
-            return default
-    def safe_write_text(path, content, encoding='utf-8', create_parents=True):
-        p = Path(path)
-        if create_parents:
-            p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_text(content, encoding=encoding)
-    def safe_write_json(path, data, indent=2, create_parents=True):
-        Path(path).parent.mkdir(parents=True, exist_ok=True)
-        with open(path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=indent)
-    def safe_read_json(path, default=None):
-        try:
-            with open(path, encoding='utf-8') as f:
-                return json.load(f)
-        except Exception:
-            return default
                 self.preview_ax.xaxis.set_major_formatter(
                     mdates.DateFormatter("%H:%M")  # type: ignore[no-untyped-call]
                 )
@@ -8542,11 +8491,14 @@ except ImportError:
                 filename = f"{plot_config['name'].replace(' ', '_')}_config.txt"
                 filepath = Path(export_dir) / filename
 
-                safe_write_text(filepath, f"Plot Configuration: {plot_config['name']}\n")
-                    f.write(f"Description: {plot_config.get('description', 'N/A')}\n")
-                    f.write(f"Created: {plot_config.get('created_date', 'N/A')}\n")
-                    f.write(f"Signals: {', '.join(plot_config.get('signals', []))}\n")
-                    f.write(f"Start Time: {plot_config.get('start_time', 'N/A')}\n")
+                content = (
+                    f"Plot Configuration: {plot_config['name']}\n"
+                    f"Description: {plot_config.get('description', 'N/A')}\n"
+                    f"Created: {plot_config.get('created_date', 'N/A')}\n"
+                    f"Signals: {', '.join(plot_config.get('signals', []))}\n"
+                    f"Start Time: {plot_config.get('start_time', 'N/A')}\n"
+                )
+                safe_write_text(filepath, content)
                     f.write(f"End Time: {plot_config.get('end_time', 'N/A')}\n")
 
                     if "filter_type" in plot_config:
