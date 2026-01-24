@@ -153,7 +153,6 @@ except Exception as e:
             TOOLS = safe_read_json(TOOLS_FILE, default=None)
         except ImportError:
             # Fallback to direct json.load
-            import json
 
             try:
                 TOOLS = safe_read_json(TOOLS_FILE, default=None)
