@@ -23,6 +23,7 @@ try:
         ToolNotFoundError,
         launch_tool,
     )
+    from tools.logger import get_logger
 except ImportError:
     # If tools package not found, we can't function safely
     messagebox.showerror(
@@ -30,6 +31,9 @@ except ImportError:
         "Could not import tools.launch_utils. Please ensure the 'tools' package is available.",
     )
     sys.exit(1)
+
+# Set up logging
+logger = get_logger(__name__)
 
 
 def load_tools_config() -> dict[str, list[Any]]:
@@ -49,11 +53,11 @@ def load_tools_config() -> dict[str, list[Any]]:
                 config = json.load(f)
             return config
         except Exception as e:
-            print(f"Error loading tools.json: {e}", file=sys.stderr)
+            logger.error("Error loading tools.json: %s", e)
             return {}
 
     except Exception as e:
-        print(f"Error loading tools.json: {e}", file=sys.stderr)
+        logger.error("Error loading tools.json: %s", e)
         return {}
 
 
@@ -210,7 +214,7 @@ class ToolsLauncher(tk.Tk):
 
         # Simple logging callback for Tkinter (print to stdout)
         def log_msg(msg: str) -> None:
-            print(f"[Launcher] {msg}")
+            logger.info(msg)
 
         try:
             launch_tool(

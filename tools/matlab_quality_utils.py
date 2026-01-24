@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from tools.compatibility import UTC
+from tools.quality_utils import check_patterns_in_content
 
 # Constants
 MATLAB_SCRIPT_TIMEOUT_SECONDS: int = 300
@@ -29,6 +30,15 @@ class MATLABQualityChecker:
     # Compiled regex patterns for performance
     LOAD_PATTERN = re.compile(r"^\s*load\s+(?:\w+|\([^)]+\))")
     ASSIGNMENT_PATTERN = re.compile(r"\w+\s*=\s*load\s*[\(]")
+
+    BANNED_PATTERNS = [
+        (r"\bTODO\b", "TODO placeholder found"),
+        (r"\bFIXME\b", "FIXME placeholder found"),
+        (r"\bHACK\b", "HACK comment found"),
+        (r"\bXXX\b", "XXX comment found"),
+        (r"<[A-Z_][A-Z0-9_]*>", "Angle bracket placeholder found"),
+        (r"\{\{.*?\}\}", "Template placeholder found"),
+    ]
 
     def __init__(self, project_root: Path) -> None:
         """Initialize the MATLAB quality checker."""
@@ -167,6 +177,11 @@ class MATLABQualityChecker:
             with file_path.open(encoding="utf-8", errors="ignore") as f:
                 lines = f.read().splitlines()
 
+            # Use shared pattern checker
+            issues.extend(
+                check_patterns_in_content(lines, self.BANNED_PATTERNS, file_path)
+            )
+
             in_function = False
             nesting_level = 0
 
@@ -227,19 +242,6 @@ class MATLABQualityChecker:
                             f"{file_path.name} (line {i}): "
                             "Missing arguments validation block",
                         )
-
-                banned_patterns = [
-                    (r"\bTODO\b", "TODO placeholder found"),
-                    (r"\bFIXME\b", "FIXME placeholder found"),
-                    (r"\bHACK\b", "HACK comment found"),
-                    (r"\bXXX\b", "XXX comment found"),
-                    (r"<[A-Z_][A-Z0-9_]*>", "Angle bracket placeholder found"),
-                    (r"\{\{.*?\}\}", "Template placeholder found"),
-                ]
-
-                for pattern, message in banned_patterns:
-                    if re.search(pattern, line_stripped):
-                        issues.append(f"{file_path.name} (line {i}): {message}")
 
                 if is_comment:
                     continue

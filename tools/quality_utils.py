@@ -281,3 +281,39 @@ def check_file(filepath: Path) -> list[tuple[int, str, str]]:
         return [(0, f"Error reading file: {e}", "")]
     else:
         return issues
+
+def check_patterns_in_content(
+    lines: list[str],
+    patterns: list[tuple[str, str]],
+    filepath: Path,
+    ignore_comments: bool = True,
+) -> list[str]:
+    """Check for patterns in lines and return formatted issues.
+
+    Args:
+        lines: List of line strings to check.
+        patterns: List of (regex_pattern_str, message) tuples.
+        filepath: Path to the file (for reporting).
+        ignore_comments: If True, ignore (MATLAB/Python) comments.
+
+    Returns:
+        List of strings formatting like "{filename} (line {i}): {message}"
+    """
+    issues = []
+    compiled_patterns = [(re.compile(p), m) for p, m in patterns]
+
+    for i, line in enumerate(lines, 1):
+        line_stripped = line.strip()
+        
+        # Simple comment check (supports % for MATLAB and # for Python approx)
+        # For more robust parsing, use specific parsers, but this is a helper.
+        is_comment = line_stripped.startswith("%") or line_stripped.startswith("#")
+        
+        if ignore_comments and is_comment:
+            continue
+
+        for pattern, message in compiled_patterns:
+            if pattern.search(line_stripped):
+                issues.append(f"{filepath.name} (line {i}): {message}")
+
+    return issues
