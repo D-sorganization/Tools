@@ -394,8 +394,9 @@ except ImportError:
 try:
     from utils.csv_utils import safe_read_csv, safe_write_csv
 except ImportError:
-    import pandas as pd
     from pathlib import Path
+
+    import pandas as pd
 
     def safe_read_csv(path, default=None, **kwargs):
         try:

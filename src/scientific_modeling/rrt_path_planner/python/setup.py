@@ -3,7 +3,6 @@
 Setup script for Star Wars RRT Path Planner - Python Version
 """
 
-
 from pathlib import Path
 
 from setuptools import find_packages, setup
