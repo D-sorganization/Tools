@@ -161,7 +161,7 @@ def safe_join_path(base: Path | str, *parts: str) -> Path:
     # Ensure result is still within base
     try:
         result.resolve().relative_to(base_path)
-    except ValueError:
-        raise ValueError(f"Path traversal detected: {result}")
+    except ValueError as e:
+        raise ValueError(f"Path traversal detected: {result}") from e
 
     return result.resolve()
