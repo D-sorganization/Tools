@@ -154,9 +154,15 @@ class DataLoader:
         all_signals = set()
         for i, file_path in enumerate(file_paths):
             try:
-                # Read just the header
-                df_header = pd.read_csv(file_path, nrows=0)
-                all_signals.update(df_header.columns)
+                # Read just the header using csv_utils for consistency
+                try:
+                    from utils.csv_utils import safe_read_csv
+                    df_header = safe_read_csv(file_path, nrows=0)
+                except ImportError:
+                    # Fallback
+                    df_header = pd.read_csv(file_path, nrows=0)
+                if df_header is not None and not df_header.empty:
+                    all_signals.update(df_header.columns)
 
                 if progress_callback:
                     progress_callback(
