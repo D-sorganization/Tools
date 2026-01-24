@@ -2,8 +2,32 @@
 
 import ast
 import re
+import sys
 from pathlib import Path
 from re import Pattern
+
+
+# ANSI colors for terminal output
+class Colors:
+    if sys.stderr.isatty():
+        HEADER = "\033[95m"
+        BLUE = "\033[94m"
+        CYAN = "\033[96m"
+        GREEN = "\033[92m"
+        WARNING = "\033[93m"
+        FAIL = "\033[91m"
+        ENDC = "\033[0m"
+        BOLD = "\033[1m"
+    else:
+        HEADER = ""
+        BLUE = ""
+        CYAN = ""
+        GREEN = ""
+        WARNING = ""
+        FAIL = ""
+        ENDC = ""
+        BOLD = ""
+
 
 # Configuration
 BANNED_PATTERNS: list[tuple[Pattern, str]] = [
@@ -227,14 +251,33 @@ def check_magic_numbers(lines: list[str], filepath: Path) -> list[tuple[int, str
     return issues
 
 
-def check_ast_issues(content: str) -> list[tuple[int, str, str]]:
+def check_ast_issues(content: str, filepath: Path) -> list[tuple[int, str, str]]:
     """Check AST for quality issues."""
     issues: list[tuple[int, str, str]] = []
     try:
         tree = ast.parse(content)
         for node in ast.walk(tree):
             if isinstance(node, ast.FunctionDef):
-                pass
+                if not ast.get_docstring(node):
+                    issues.append(
+                        (node.lineno, f"Function '{node.name}' missing docstring", ""),
+                    )
     except SyntaxError as e:
         issues.append((0, f"Syntax error: {e}", ""))
     return issues
+
+
+def check_file(filepath: Path) -> list[tuple[int, str, str]]:
+    """Check a Python file for quality issues."""
+    try:
+        content = filepath.read_text(encoding="utf-8")
+        lines = content.splitlines()
+
+        issues = []
+        issues.extend(check_banned_patterns(lines, filepath))
+        issues.extend(check_magic_numbers(lines, filepath))
+        issues.extend(check_ast_issues(content, filepath))
+    except (OSError, UnicodeDecodeError) as e:
+        return [(0, f"Error reading file: {e}", "")]
+    else:
+        return issues
