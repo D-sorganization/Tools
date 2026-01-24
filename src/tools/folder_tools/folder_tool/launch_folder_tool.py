@@ -31,11 +31,19 @@ except ImportError:
     import logging
     import subprocess
 
-    def run_python_script(script_path: Path, args: list[str] | None = None, cwd: Path | str | None = None, timeout: int | None = None, check: bool = False):
+    def run_python_script(
+        script_path: Path,
+        args: list[str] | None = None,
+        cwd: Path | str | None = None,
+        timeout: int | None = None,
+        check: bool = False,
+    ):
         command = [sys.executable, str(script_path)]
         if args:
             command.extend(args)
-        return subprocess.run(command, cwd=str(cwd) if cwd else None, timeout=timeout, check=check)
+        return subprocess.run(
+            command, cwd=str(cwd) if cwd else None, timeout=timeout, check=check
+        )
 
     def get_logger(name):
         return logging.getLogger(name)
