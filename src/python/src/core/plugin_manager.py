@@ -81,8 +81,9 @@ class PluginManager:
         if not data:
             return {}
 
-        self.tools = {}
-        for category, items in data.items():
+        try:
+            self.tools = {}
+            for category, items in data.items():
                 tool_list = []
                 for item in items:
                     try:
@@ -112,7 +113,8 @@ class PluginManager:
                 if tool_list:
                     self.tools[category] = tool_list
 
-        return self.tools
+            return self.tools
+        except Exception as e:
             logger.error(f"Failed to load tools: {e}")
             return {}
 
@@ -153,7 +155,7 @@ class PluginManager:
                 manifest_data = safe_read_json(manifest_path, default={})
                 if not manifest_data:
                     continue
-                
+
                 try:
 
                     # Extract tool information from manifest
