@@ -5,7 +5,8 @@ Convert tools_icon.png to high-quality ICO format for Windows shortcuts.
 
 import logging
 from pathlib import Path
-from tools.icon_utils import ensure_pil_installed, save_ico, ICO_SIZES
+
+from tools.icon_utils import ICO_SIZES, ensure_pil_installed, save_ico
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")

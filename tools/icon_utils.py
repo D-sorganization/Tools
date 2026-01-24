@@ -4,10 +4,9 @@ Shared utilities for icon conversion.
 """
 
 import logging
-import sys
 import subprocess
+import sys
 from pathlib import Path
-from typing import List, Tuple, Optional
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -59,8 +58,8 @@ def convert_image_mode(img: Image.Image) -> Image.Image:
 
 
 def create_resized_images(
-    img: Image.Image, sizes: List[Tuple[int, int]]
-) -> List[Image.Image]:
+    img: Image.Image, sizes: list[tuple[int, int]]
+) -> list[Image.Image]:
     """Create resized versions of an image for ICO format.
 
     Args:
@@ -76,7 +75,7 @@ def create_resized_images(
 def save_ico(
     img: Image.Image,
     path: Path,
-    sizes: Optional[List[Tuple[int, int]]] = None,
+    sizes: list[tuple[int, int]] | None = None,
 ) -> None:
     """Save image as ICO with multiple sizes.
 
@@ -121,12 +120,12 @@ def save_ico(
     # If `converted_img` is 512x512, it is saved as the first image?
     # Actually, `sizes` param in `save` is slightly magical.
     # Let's write `save_ico` to behave safely: Use the resized images explicitly.
-    
+
     # Better implementation:
     # Use the first resized image as the primary one to save, and append the rest.
-    
+
     if not resized_images:
-         return
+        return
 
     resized_images[0].save(
         path,

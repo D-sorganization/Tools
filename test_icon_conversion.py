@@ -5,7 +5,8 @@ Test different icon conversion methods to fix the white icon issue.
 
 import logging
 from pathlib import Path
-from tools.icon_utils import ensure_pil_installed, save_ico, convert_image_mode
+
+from tools.icon_utils import ensure_pil_installed, save_ico
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")

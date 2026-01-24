@@ -6,17 +6,17 @@ from pathlib import Path
 
 try:
     from tools.quality_utils import (
+        check_ast_issues,
         check_banned_patterns,
         check_magic_numbers,
-        check_ast_issues,
     )
 except ImportError:
     # If tools package not found (e.g. running from different dir), try to add to path
     sys.path.append(str(Path(__file__).parent))
     from tools.quality_utils import (
+        check_ast_issues,
         check_banned_patterns,
         check_magic_numbers,
-        check_ast_issues,
     )
 
 
