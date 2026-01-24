@@ -1415,7 +1415,7 @@ except ImportError:
             )
 
         # Generate unique extraction directory
-        extract_dir = self._get_unique_path(Path(archive_path).stem)
+        extract_dir = self._get_unique_path(os.path.splitext(archive_path)[0])
         extract_dir_obj = Path(extract_dir)
 
         try:

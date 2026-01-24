@@ -233,15 +233,6 @@ def fix_path_join_patterns(content: str) -> tuple[str, int]:
 
     content = pattern5.sub(replace5, content)
 
-    # Pattern: Path(path).stem -> Path(path).stem
-    pattern6 = re.compile(r"os\.path\.splitext\s*\(\s*([^)]+)\s*\)\s*\[\s*0\s*\]")
-
-    def replace6(match):
-        nonlocal fixes
-        fixes += 1
-        return f"Path({match.group(1)}).stem"
-
-    content = pattern6.sub(replace6, content)
 
     # Pattern: Path(path).suffix -> Path(path).suffix
     pattern7 = re.compile(r"os\.path\.splitext\s*\(\s*([^)]+)\s*\)\s*\[\s*1\s*\]")
@@ -373,7 +364,7 @@ def fix_csv_patterns(content: str) -> tuple[str, int]:
     if fixes > 0:
         content = ensure_import(
             content,
-            "try:\n    from utils.csv_utils import safe_read_csv, safe_write_csv\nexcept ImportError:\n    import pandas as pd\n    from pathlib import Path\n    def safe_read_csv(path, default=None, **kwargs):\n        try:\n            return pd.read_csv(path, **kwargs)\n        except Exception:\n            return default if default is not None else pd.DataFrame()\n    def safe_write_csv(df, path, create_parents=True, **kwargs):\n        Path(path).parent.mkdir(parents=True, exist_ok=True)\n        safe_write_csv(df, path, **kwargs)",
+            "try:\n    from utils.csv_utils import safe_read_csv, safe_write_csv\nexcept ImportError:\n    import pandas as pd\n    from pathlib import Path\n    def safe_read_csv(path, default=None, **kwargs):\n        try:\n            return pd.read_csv(path, **kwargs)\n        except Exception:\n            return default if default is not None else pd.DataFrame()\n    def safe_write_csv(df, path, create_parents=True, **kwargs):\n        Path(path).parent.mkdir(parents=True, exist_ok=True)\n        df.to_csv(path, **kwargs)",
         )
 
     return content, fixes
@@ -484,7 +475,7 @@ except ImportError:
             return default if default is not None else pd.DataFrame()
     def safe_write_csv(df, path, create_parents=True, **kwargs):
         Path(path).parent.mkdir(parents=True, exist_ok=True)
-        safe_write_csv(df, path, **kwargs)
+        df.to_csv(path, **kwargs)
     def safe_read_csv(path, default=None, **kwargs):
         try:
             return pd.read_csv(path, **kwargs)
@@ -493,7 +484,7 @@ except ImportError:
 
     def safe_write_csv(df, path, create_parents=True, **kwargs):
         Path(path).parent.mkdir(parents=True, exist_ok=True)
-        safe_write_csv(df, path, **kwargs)
+        df.to_csv(path, **kwargs)
 
     def safe_read_csv(path, default=None, **kwargs):
         try:
@@ -503,7 +494,7 @@ except ImportError:
 
     def safe_write_csv(df, path, create_parents=True, **kwargs):
         Path(path).parent.mkdir(parents=True, exist_ok=True)
-        safe_write_csv(df, path, **kwargs)
+        df.to_csv(path, **kwargs)
 
 
 def find_python_files(root: Path) -> list[Path]:
