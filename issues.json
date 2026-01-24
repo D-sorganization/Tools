@@ -22,5 +22,45 @@
     {
         "number": 205,
         "title": "CRITICAL: CI Workflow masks installation failures in Jules-Assessment-Generator"
+    },
+    {
+        "number": 206,
+        "title": "jules:assessment,needs-attention: Refactor Data_Processor_r0.py (Scalability/Maintainability)",
+        "labels": ["jules:assessment", "needs-attention"]
+    },
+    {
+        "number": 207,
+        "title": "jules:assessment,needs-attention: Improve Test Coverage for Signal Processor and CLI",
+        "labels": ["jules:assessment", "needs-attention"]
+    },
+    {
+        "number": 208,
+        "title": "jules:assessment,needs-attention: Fix Logging Violations in launch_tools_main.py",
+        "labels": ["jules:assessment", "needs-attention"]
+    },
+    {
+        "number": 209,
+        "title": "CRITICAL: CI Standard Workflow Failing on Main",
+        "labels": ["critical", "ci"]
+    },
+    {
+        "number": 210,
+        "title": "CRITICAL: Jules Code Quality Fixer Workflow Failing",
+        "labels": ["critical", "ci"]
+    },
+    {
+        "number": 211,
+        "title": "jules:assessment,needs-attention: Fix Calculator Dependencies and Enable Tests",
+        "labels": ["jules:assessment", "needs-attention"]
+    },
+    {
+        "number": 212,
+        "title": "jules:assessment,needs-attention: Implement Chunked Data Loading for Performance",
+        "labels": ["jules:assessment", "needs-attention"]
+    },
+    {
+        "number": 213,
+        "title": "jules:assessment,needs-attention: Migrate Legacy Data Handling to Parquet/SQLite",
+        "labels": ["jules:assessment", "needs-attention"]
     }
 ]

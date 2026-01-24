@@ -108,8 +108,8 @@ class ToolsLauncher(tk.Tk):
 
         self.create_tabs()
 
-    def create_tabs(self) -> None:
-        has_tools = False
+    def _get_ordered_categories(self) -> list[str]:
+        """Get categories in preferred display order."""
         categories = [
             "Unit Converters",
             "Data Processors",
@@ -117,113 +117,121 @@ class ToolsLauncher(tk.Tk):
             "Audio Processors",
             "Folder Tools",
         ]
-
-        # Add any other categories that might exist in TOOLS but not in the ordered list
         for cat in TOOLS.keys():
             if cat not in categories:
                 categories.append(cat)
+        return categories
 
-        for category in categories:
+    def _create_tool_button(
+        self, parent: ttk.Frame, name: str, rel_path: str, kind: str
+    ) -> ttk.Frame:
+        """Create a tool button frame with label and launch button."""
+        full_path = get_path(rel_path)
+        btn_frame = ttk.Frame(parent, borderwidth=1, relief="solid")
+
+        lbl = ttk.Label(btn_frame, text=name, font=("Helvetica", 11, "bold"))
+        lbl.pack(pady=(15, 5))
+
+        exists = os.path.exists(full_path)
+        state = "normal" if exists else "disabled"
+        btn_text = "Launch" if exists else "Not Found"
+        if kind == "file" and exists:
+            btn_text = "Open File"
+
+        def make_launcher(p: str, k: str) -> Any:
+            return lambda: self.launch_tool(p, k)
+
+        btn = ttk.Button(
+            btn_frame,
+            text=btn_text,
+            state=state,
+            command=make_launcher(full_path, kind),
+        )
+        btn.pack(pady=10, padx=10, fill=tk.X)
+
+        path_lbl = ttk.Label(
+            btn_frame,
+            text=rel_path,
+            font=("Courier", 8),
+            foreground="#555",
+            wraplength=400,
+        )
+        path_lbl.pack(pady=(0, 10))
+
+        if not exists:
+            ttk.Label(
+                btn_frame,
+                text="File missing on disk",
+                font=("Helvetica", 8),
+                foreground="red",
+            ).pack(pady=2)
+
+        return btn_frame
+
+    def _create_category_tab(self, category: str, tool_list: list[Any]) -> ttk.Frame:
+        """Create a tab frame for a category of tools."""
+        frame = ttk.Frame(self.notebook)
+        grid_frame = ttk.Frame(frame)
+        grid_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
+
+        max_cols = 2
+        row, col = 0, 0
+
+        for name, rel_path, kind in tool_list:
+            btn_frame = self._create_tool_button(grid_frame, name, rel_path, kind)
+            btn_frame.grid(row=row, column=col, padx=10, pady=10, sticky="nsew")
+
+            col += 1
+            if col >= max_cols:
+                col = 0
+                row += 1
+
+        for i in range(max_cols):
+            grid_frame.columnconfigure(i, weight=1)
+
+        return frame
+
+    def create_tabs(self) -> None:
+        """Create tabs for each tool category."""
+        has_tools = False
+
+        for category in self._get_ordered_categories():
             tool_list = TOOLS.get(category, [])
             if not tool_list:
                 continue
 
             has_tools = True
-            frame = ttk.Frame(self.notebook)
+            frame = self._create_category_tab(category, tool_list)
             self.notebook.add(frame, text=category)
-
-            # Grid for icons
-            grid_frame = ttk.Frame(frame)
-            grid_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
-
-            row = 0
-            col = 0
-            MAX_COLS = 2
-
-            for name, rel_path, kind in tool_list:
-                full_path = get_path(rel_path)
-
-                # Button Frame
-                btn_frame = ttk.Frame(grid_frame, borderwidth=1, relief="solid")
-                btn_frame.grid(row=row, column=col, padx=10, pady=10, sticky="nsew")
-
-                # Label
-                lbl = ttk.Label(btn_frame, text=name, font=("Helvetica", 11, "bold"))
-                lbl.pack(pady=(15, 5))
-
-                # Launch Button
-                exists = os.path.exists(full_path)
-                state = "normal" if exists else "disabled"
-                btn_text = "Launch" if exists else "Not Found"
-
-                # Check for "file" type to be more descriptive
-                if kind == "file" and exists:
-                    btn_text = "Open File"
-
-                def make_launcher(p: str, k: str) -> Any:
-                    return lambda: self.launch_tool(p, k)
-
-                btn = ttk.Button(
-                    btn_frame,
-                    text=btn_text,
-                    state=state,
-                    command=make_launcher(full_path, kind),
-                )
-                btn.pack(pady=10, padx=10, fill=tk.X)
-
-                # Path Label (Small)
-                path_lbl = ttk.Label(
-                    btn_frame,
-                    text=rel_path,
-                    font=("Courier", 8),
-                    foreground="#555",
-                    wraplength=400,
-                )
-                path_lbl.pack(pady=(0, 10))
-
-                if not exists:
-                    ttk.Label(
-                        btn_frame,
-                        text="File missing on disk",
-                        font=("Helvetica", 8),
-                        foreground="red",
-                    ).pack(pady=2)
-
-                col += 1
-                if col >= MAX_COLS:
-                    col = 0
-                    row += 1
-
-            # Configure grid weights
-            for i in range(MAX_COLS):
-                grid_frame.columnconfigure(i, weight=1)
 
         if not has_tools:
             ttk.Label(self, text="No tools configured.").pack()
 
     def launch_tool(self, path: str, kind: str) -> None:
+        """Launch a tool with the appropriate method based on its type."""
         try:
             cwd = os.path.dirname(path)
             if kind == "python":
-                # Use the same python executable
                 subprocess.Popen([sys.executable, path], cwd=cwd)
             elif kind == "bat":
-                # Use cmd.exe explicitly instead of shell=True for security
                 subprocess.Popen(["cmd.exe", "/c", path], cwd=cwd)
             elif kind == "html":
                 webbrowser.open(f"file://{path}")
             elif kind == "exe":
                 subprocess.Popen([path], cwd=cwd)
             else:
-                # Use hasattr pattern for Windows-specific startfile
                 if hasattr(os, "startfile"):
-                    os.startfile(path)
+                    os.startfile(path)  # type: ignore[attr-defined]
                 elif sys.platform == "darwin":
                     subprocess.Popen(["open", path], cwd=cwd)
                 else:
                     subprocess.Popen(["xdg-open", path], cwd=cwd)
 
-        except Exception as e:
+        except FileNotFoundError as e:
+            messagebox.showerror("Error", f"File not found: {path}\n{e}")
+        except PermissionError as e:
+            messagebox.showerror("Error", f"Permission denied: {path}\n{e}")
+        except OSError as e:
             messagebox.showerror("Error", f"Failed to launch {path}:\n{e}")
 
 

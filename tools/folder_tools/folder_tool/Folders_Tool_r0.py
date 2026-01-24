@@ -2014,8 +2014,7 @@ class FolderProcessorApp:
                 raise ValueError("Destination folder is empty - nothing to archive")
         except (OSError, PermissionError) as e:
             raise PermissionError(
-                f"Cannot access destination folder contents: {self.dest_folder} - "
-                f"{e}",
+                f"Cannot access destination folder contents: {self.dest_folder} - {e}",
             ) from e
 
         # Generate ZIP filename with timestamp
@@ -2786,7 +2785,7 @@ class FolderProcessorApp:
                                     else "DEL"
                                 )
                                 log.append(
-                                    f"  - {mode_str}: " f"'{Path(file_path).name}'",
+                                    f"  - {mode_str}: '{Path(file_path).name}'",
                                 )
                                 deleted_count += 1
                             except OSError as e:

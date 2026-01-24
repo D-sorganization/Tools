@@ -4,13 +4,18 @@ on:
   workflow_call:
   workflow_dispatch:
   schedule:
-    - cron: "0 5 * * 1"  # Weekly on Mondays at 5 AM UTC
+    - cron: "30 1 * * 1"  # Weekly on Mondays at 1:30 AM UTC (overnight window)
 
 permissions:
   contents: write
   pull-requests: write
   issues: write
   security-events: write
+
+# HARDENING: Prevent concurrent runs
+concurrency:
+  group: jules-sentinel-${{ github.repository }}
+  cancel-in-progress: false
 
 jobs:
   security-audit:
@@ -37,8 +42,13 @@ jobs:
         run: |
           mkdir -p reports
 
+          echo "Running pip-audit..."
           pip-audit --format json -o reports/pip_audit.json 2>/dev/null || echo "[]" > reports/pip_audit.json
+
+          echo "Running bandit..."
           bandit -r . -f json -o reports/bandit.json --exclude './.venv,./venv,./env,./.git' 2>/dev/null || echo "[]" > reports/bandit.json
+
+          echo "Running semgrep..."
           semgrep --config=auto --json -o reports/semgrep.json . 2>/dev/null || echo "{}" > reports/semgrep.json
 
       - name: Jules Sentinel Analysis
@@ -73,20 +83,27 @@ jobs:
           
           # Create session prompt
           PROMPT=$(cat << 'PROMPT_EOF'
-
+          '
           You are the SENTINEL security agent.
           
-          Analyze security reports in ./reports/. DO NOT MODIFY CODE.
+          Analyze the security audit reports in ./reports/ and document findings.
           
-          - HIGH severity: Create GitHub Issue with labels: security, high-priority, jules:sentinel
-          - MEDIUM severity: Journal + Issue
-          - LOW severity: Journal only
+          ## DO NOT MODIFY CODE directly. Instead:
           
-          Update .jules/sentinel.md with scan summary.
+          ### For HIGH severity: Create GitHub Issue with labels: security, high-priority, jules:sentinel
+          ### For MEDIUM severity: Add to .jules/sentinel.md and create Issue
+          ### For LOW severity: Document in .jules/sentinel.md only
+          
+          Update .jules/sentinel.md with scan results summary.
+          
+          CRITICAL: This is a READ-ONLY audit. Do not fix code - only document and create issues.
           PROMPT_EOF
           )
           
           echo "Creating Jules session..."
+          # HARDENING: Do NOT use automationMode: AUTO_CREATE_PR
+          # Sentinel is read-only - it documents findings but doesn't create PRs autonomously
+          # This prevents cascade issues where Jules creates PRs that trigger more workflows
           REQUEST_JSON=$(jq -n \
             --arg prompt "$PROMPT" \
             --arg source "$SOURCE_ID" \
@@ -97,8 +114,7 @@ jobs:
                 githubRepoContext: {
                   startingBranch: "main"
                 }
-              },
-              automationMode: "AUTO_CREATE_PR"
+              }
             }')
           
           echo "Request: $REQUEST_JSON"

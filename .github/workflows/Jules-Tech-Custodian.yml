@@ -10,14 +10,14 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v6
-        with: { python-version: "3.12" }
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - uses: actions/setup-node@v4
         with: { node-version: "20" }
       - run: |
           npm install -g @google/jules
-          pip install ruff==0.5.0
+          pip install ruff==0.14.10
 
       - name: Identify Target File
         id: target
@@ -36,27 +36,18 @@ jobs:
         env:
           TARGET: ${{ steps.target.outputs.file }}
         run: |
-          # Quote $TARGET to handle paths with spaces
           BRANCH_NAME="refactor/custodian-$(date +%Y%m%d)-$(basename "$TARGET")"
-          git checkout -b "$BRANCH_NAME"
-          git push -u origin "$BRANCH_NAME"
+          git checkout -b $BRANCH_NAME
+          git push -u origin $BRANCH_NAME
           # FIX: This output now belongs to step 'branch', not 'target'
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
-      - name: Jules Integration (Disabled - API Migration Required)
+      - name: Authenticate Jules
         if: steps.target.outputs.has_issues == 'true'
-        run: |
-          # TODO: Jules CLI API changed in v0.1.x
-          # Old: jules auth --token / jules task fix --prompt
-          # New: jules new "prompt" / jules remote pull --session <id>
-          # See: workflow-fixes/2026-01-19-jules-cli-migration in Repository_Management
-          echo "::warning::Jules CLI integration disabled pending API migration"
-          echo "Target: ${{ steps.target.outputs.file }}"
-          echo "Branch: ${{ steps.branch.outputs.branch_name }}"
-          # Exit gracefully - PR creation below will be skipped since no changes made
+        run: jules auth --token ${{ secrets.JULES_API_KEY }}
 
-      - name: Dispatch Jules (Disabled)
-        if: false  # Disabled until Jules CLI migration complete
+      - name: Dispatch Jules
+        if: steps.target.outputs.has_issues == 'true'
         env:
           TARGET: ${{ steps.target.outputs.file }}
           # FIX: Reference the correct step output
@@ -75,7 +66,7 @@ jobs:
         run: |
           # 1. Create the PR (Capture the URL)
           PR_URL=$(gh pr create \
-            --title "chore: weekly refactor of $TARGET" \
+            --title "[Jules/Tech-Custodian] chore: weekly refactor of $TARGET" \
             --body "Automated cleanup." \
             --base main \
             --head $BRANCH \

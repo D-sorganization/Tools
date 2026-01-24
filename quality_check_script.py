@@ -163,6 +163,59 @@ def check_banned_patterns(
     return issues
 
 
+def strip_comments_from_line(line: str) -> str:
+    """Strip comments from a line, handling string literals correctly.
+
+    Handles single quotes, double quotes, triple quotes, and escaped characters.
+    Returns the line without the comment portion.
+    """
+    in_single_quote = False
+    in_double_quote = False
+    in_triple_single = False
+    in_triple_double = False
+    escaped = False
+    i = 0
+
+    while i < len(line):
+        char = line[i]
+
+        if escaped:
+            escaped = False
+            i += 1
+            continue
+
+        if char == "\\":
+            escaped = True
+            i += 1
+            continue
+
+        # Check for triple quotes first (they take precedence)
+        if i + 2 < len(line):
+            triple = line[i : i + 3]
+            if triple == '"""' and not in_single_quote and not in_triple_single:
+                in_triple_double = not in_triple_double
+                i += 3
+                continue
+            if triple == "'''" and not in_double_quote and not in_triple_double:
+                in_triple_single = not in_triple_single
+                i += 3
+                continue
+
+        # Only process single/double quotes if not in triple quotes
+        if not in_triple_single and not in_triple_double:
+            if char == "'" and not in_double_quote:
+                in_single_quote = not in_single_quote
+            elif char == '"' and not in_single_quote:
+                in_double_quote = not in_double_quote
+            elif char == "#" and not in_single_quote and not in_double_quote:
+                # Found a comment marker outside of strings
+                return line[:i].rstrip()
+
+        i += 1
+
+    return line
+
+
 def check_magic_numbers(lines: list[str], filepath: Path) -> list[tuple[int, str, str]]:
     """Check for magic numbers in lines."""
     issues: list[tuple[int, str, str]] = []
@@ -174,60 +227,8 @@ def check_magic_numbers(lines: list[str], filepath: Path) -> list[tuple[int, str
     if filepath.name in excluded_files:
         return issues
 
-    def strip_comments(line: str) -> str:
-        """Strip comments from a line, handling string literals correctly.
-
-        Handles single quotes, double quotes, triple quotes, and escaped characters.
-        """
-        # Find the first # that's not inside a string literal
-        in_single_quote = False
-        in_double_quote = False
-        in_triple_single = False
-        in_triple_double = False
-        escaped = False
-        i = 0
-
-        while i < len(line):
-            char = line[i]
-
-            if escaped:
-                escaped = False
-                i += 1
-                continue
-
-            if char == "\\":
-                escaped = True
-                i += 1
-                continue
-
-            # Check for triple quotes first (they take precedence)
-            if i + 2 < len(line):
-                triple = line[i : i + 3]
-                if triple == '"""' and not in_single_quote and not in_triple_single:
-                    in_triple_double = not in_triple_double
-                    i += 3
-                    continue
-                if triple == "'''" and not in_double_quote and not in_triple_double:
-                    in_triple_single = not in_triple_single
-                    i += 3
-                    continue
-
-            # Only process single/double quotes if not in triple quotes
-            if not in_triple_single and not in_triple_double:
-                if char == "'" and not in_double_quote:
-                    in_single_quote = not in_single_quote
-                elif char == '"' and not in_single_quote:
-                    in_double_quote = not in_double_quote
-                elif char == "#" and not in_single_quote and not in_double_quote:
-                    # Found a comment marker outside of strings
-                    return line[:i].rstrip()
-
-            i += 1
-
-        return line
-
     for line_num, line in enumerate(lines, 1):
-        line_content = strip_comments(line)
+        line_content = strip_comments_from_line(line)
         for pattern, message in MAGIC_NUMBERS:
             if pattern.search(line_content):
                 issues.append((line_num, message, line.strip()))

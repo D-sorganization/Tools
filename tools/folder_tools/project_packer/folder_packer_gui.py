@@ -3,10 +3,22 @@
 import datetime
 import logging
 import shutil
+import sys
+from datetime import timedelta
 from pathlib import Path
 
-# Python 3.10 compatibility: UTC was added in 3.11
-UTC = datetime.timezone.utc  # noqa: UP017
+# Python 3.10 compatibility: Use compatibility shim for UTC
+# Use robust path resolution to find project root
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
+PYTHON_SRC_PATH = PROJECT_ROOT / "python" / "src"
+if str(PYTHON_SRC_PATH) not in sys.path:
+    sys.path.insert(0, str(PYTHON_SRC_PATH))
+try:
+    from utils.compatibility import UTC
+except ImportError:
+    # Fallback if compatibility module not available
+    # Use timedelta-based timezone for true Python 3.10 compatibility
+    UTC = datetime.timezone(timedelta(0))  # noqa: UP017
 
 from constants import (  # noqa: E402
     BOLD_HEADER_FONT_SIZE,

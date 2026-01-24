@@ -41,18 +41,76 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+
+def validate_tools_config(
+    tools_dict: dict[str, list[dict[str, Any]]],
+) -> dict[str, list[dict[str, Any]]]:
+    """
+    Validate and sanitize tools configuration.
+
+    Args:
+        tools_dict: Dictionary of tool categories and lists of tools.
+
+    Returns:
+        Validated dictionary with invalid entries removed.
+    """
+    valid_tools = {}
+    allowed_types = {"python", "matlab", "web", "browser", "bat"}
+
+    for category, tool_list in tools_dict.items():
+        valid_list = []
+        for tool in tool_list:
+            # Validate type
+            tool_type = tool.get("type")
+            if tool_type not in allowed_types:
+                print(
+                    f"Warning: Skipping tool '{tool.get('name')}' with invalid type '{tool_type}'",
+                    file=sys.stderr,
+                )
+                continue
+
+            # Validate path for directory traversal
+            path_str = str(tool.get("path", ""))
+            if ".." in path_str:
+                print(
+                    f"Warning: Skipping tool '{tool.get('name')}' with suspicious path '{path_str}'",
+                    file=sys.stderr,
+                )
+                continue
+
+            valid_list.append(tool)
+
+        if valid_list:
+            valid_tools[category] = valid_list
+
+    return valid_tools
+
+
 # =============================================================================
 # CONFIGURATION & PATHS
 # =============================================================================
 REPO_ROOT = Path(__file__).parent.absolute()
 sys.path.append(str(REPO_ROOT / "python" / "src"))
 
-# try to import compatibility shim to verify environment
+# Import compatibility shim early to verify environment and provide friendly errors
 try:
     from utils.compatibility import UTC, StrEnum  # noqa: F401
-except ImportError:
-    # If this fails, we are likely in a very broken state
-    pass
+except ImportError as e:
+    print(
+        "Critical Error: Failed to import compatibility shim.",
+        file=sys.stderr,
+    )
+    print(
+        "This may indicate a Python version incompatibility or missing dependencies.",
+        file=sys.stderr,
+    )
+    print(f"Python version: {sys.version}", file=sys.stderr)
+    print(f"Error: {e}", file=sys.stderr)
+    print(
+        "\nPlease ensure you are using Python 3.10 or newer.",
+        file=sys.stderr,
+    )
+    sys.exit(1)
 
 # Load Tool Definitions using PluginManager
 try:
@@ -82,6 +140,9 @@ except Exception as e:
         except Exception as e:
             sys.stderr.write(f"Error loading tools.json: {e}\n")
         # Fallback to empty or default if needed
+
+# Validate loaded tools
+TOOLS = validate_tools_config(TOOLS)
 
 
 # =============================================================================
@@ -240,37 +301,23 @@ class UnifiedLauncher(QMainWindow):
 
         self.setup_ui()
 
-    def setup_ui(self) -> None:
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
-        main_layout = QVBoxLayout(central_widget)
-
-        # Header
+    def _create_header_layout(self) -> QHBoxLayout:
+        """Create the header layout with title and debug checkbox."""
         header_layout = QHBoxLayout()
         header = QLabel("🛠️ Unified Tools Repository")
         header.setStyleSheet(
             "font-size: 24px; font-weight: bold; color: #7aa2f7; margin-bottom: 10px;"
         )
         header_layout.addWidget(header)
-
         header_layout.addStretch()
 
         self.debug_mode = QCheckBox("Debug Mode")
         self.debug_mode.setToolTip("Enable verbose output when launching tools")
         header_layout.addWidget(self.debug_mode)
+        return header_layout
 
-        main_layout.addLayout(header_layout)
-
-        # Tabs
-        self.tabs = QTabWidget()
-        main_layout.addWidget(self.tabs)
-
-        for category, tools in TOOLS.items():
-            tab = QWidget()
-            self.setup_category_tab(tab, tools)
-            self.tabs.addTab(tab, category)
-
-        # Status Log
+    def _create_log_area(self) -> QFrame:
+        """Create the activity log area widget."""
         log_group = QFrame()
         log_layout = QVBoxLayout(log_group)
         log_layout.setContentsMargins(0, 10, 0, 0)
@@ -283,10 +330,30 @@ class UnifiedLauncher(QMainWindow):
         self.log_area.setReadOnly(True)
         self.log_area.setMaximumHeight(150)
         log_layout.addWidget(self.log_area)
+        return log_group
 
-        main_layout.addWidget(log_group)
+    def _create_tool_tabs(self) -> QTabWidget:
+        """Create the tabbed interface for tool categories."""
+        tabs = QTabWidget()
+        for category, tools in TOOLS.items():
+            tab = QWidget()
+            self.setup_category_tab(tab, tools)
+            tabs.addTab(tab, category)
+        return tabs
 
-        # Check for tools
+    def setup_ui(self) -> None:
+        """Set up the main user interface."""
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
+        main_layout = QVBoxLayout(central_widget)
+
+        main_layout.addLayout(self._create_header_layout())
+
+        self.tabs = self._create_tool_tabs()
+        main_layout.addWidget(self.tabs)
+
+        main_layout.addWidget(self._create_log_area())
+
         if not TOOLS:
             self.log("❌ Warning: tools.json not found or empty.")
             QMessageBox.warning(
@@ -336,87 +403,270 @@ class UnifiedLauncher(QMainWindow):
         cursor.movePosition(cursor.MoveOperation.End)
         self.log_area.setTextCursor(cursor)
 
+    def _validate_and_sanitize_path(self, path_str: str) -> Path:
+        """
+        Validate and sanitize tool path to prevent path traversal attacks.
+
+        Args:
+            path_str: Path string from tool_info
+
+        Returns:
+            Validated and sanitized Path object
+
+        Raises:
+            ValueError: If path is invalid or outside repository
+        """
+        # Convert to Path and resolve to absolute
+        try:
+            path = Path(path_str)
+        except (TypeError, ValueError) as e:
+            raise ValueError(f"Invalid path format: {path_str}") from e
+
+        # Resolve to absolute path to prevent relative path tricks
+        try:
+            full_path = (REPO_ROOT / path).resolve()
+        except (OSError, RuntimeError) as e:
+            raise ValueError(f"Cannot resolve path: {path_str}") from e
+
+        # Ensure path is within repository root (prevent path traversal)
+        repo_root_abs = REPO_ROOT.resolve()
+        try:
+            # Use relative_to to ensure path is actually within repo
+            full_path.relative_to(repo_root_abs)
+        except ValueError:
+            raise ValueError(
+                f"Security Alert: Path outside repository: {full_path}"
+            ) from None
+
+        # Additional validation: ensure path exists and is a file
+        if not full_path.exists():
+            raise ValueError(f"Tool file not found: {full_path}")
+
+        if not full_path.is_file():
+            raise ValueError(f"Path is not a file: {full_path}")
+
+        return full_path
+
+    def _launch_python_tool(
+        self, path: Path, tool_info: dict[str, Any], is_debug: bool
+    ) -> None:
+        """Launch a Python tool."""
+        args = [sys.executable, str(path)]
+        try:
+            if is_debug:
+                process = subprocess.Popen(
+                    args,
+                    cwd=path.parent,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                )
+                self.log("✅ Process started (Python)")
+                self.log("DEBUG: Process PID: " + str(process.pid))
+            else:
+                process = subprocess.Popen(
+                    args,
+                    cwd=path.parent,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+                self.log("✅ Process started (Python)")
+                import time
+
+                time.sleep(0.5)
+                if process.poll() is not None:
+                    error_msg = (
+                        f"Tool exited immediately (exit code: {process.returncode})\n\n"
+                        f"Tool: {tool_info.get('name', 'Unknown')}\n"
+                        f"Path: {path}\n\n"
+                        "Check the tool's requirements and dependencies."
+                    )
+                    self.log(f"❌ {error_msg}")
+                    QMessageBox.warning(self, "Tool Launch Warning", error_msg)
+
+        except FileNotFoundError:
+            error_msg = (
+                f"Python executable not found: {sys.executable}\n\n"
+                "Please ensure Python is installed and in your system PATH."
+            )
+            self.log(f"❌ {error_msg}")
+            QMessageBox.critical(self, "Launch Error", error_msg)
+            return
+        except PermissionError:
+            error_msg = (
+                f"Permission denied: Cannot execute {path}\n\n"
+                "Please check file permissions or run with appropriate privileges."
+            )
+            self.log(f"❌ {error_msg}")
+            QMessageBox.critical(self, "Launch Error", error_msg)
+            return
+        except OSError as e:
+            error_msg = (
+                f"Failed to start Python process: {e}\n\n"
+                f"Tool: {tool_info.get('name', 'Unknown')}\n"
+                f"Path: {path}"
+            )
+            self.log(f"❌ {error_msg}")
+            QMessageBox.critical(self, "Launch Error", error_msg)
+            return
+
+    def _launch_matlab_tool(
+        self, path: Path, tool_info: dict[str, Any], is_debug: bool
+    ) -> None:
+        """Launch a MATLAB tool."""
+        self.log("ℹ️ Attempting to launch MATLAB...")
+        sanitized_path = str(path).replace("'", "''")
+        matlab_script = f"run('{sanitized_path}');"
+        cmd_list = ["matlab", "-nosplash", "-nodesktop", "-r", matlab_script]
+        try:
+            process = subprocess.Popen(
+                cmd_list,
+                cwd=path.parent,
+                stdout=subprocess.DEVNULL if not is_debug else None,
+                stderr=subprocess.DEVNULL if not is_debug else None,
+            )
+            self.log("✅ MATLAB command sent")
+            if is_debug:
+                self.log(f"DEBUG: MATLAB process PID: {process.pid}")
+        except FileNotFoundError:
+            error_msg = (
+                f"MATLAB not found in system PATH.\n\n"
+                f"Tool: {tool_info.get('name', 'Unknown')}\n"
+                f"Path: {path}\n\n"
+                "Attempting to open file in default editor..."
+            )
+            self.log(f"⚠️ {error_msg}")
+            QMessageBox.warning(self, "MATLAB Not Found", error_msg)
+            self._open_file_with_default_app(path, tool_info)
+
+    def _open_file_with_default_app(
+        self, path: Path, tool_info: dict[str, Any]
+    ) -> None:
+        """Open a file with the system's default application."""
+        try:
+            if hasattr(os, "startfile"):
+                os.startfile(path)  # type: ignore[attr-defined]
+                self.log("Opened file in default editor (Windows)")
+            else:
+                subprocess.Popen(["xdg-open", str(path)])
+                self.log("Opened file with xdg-open (Linux/macOS)")
+        except OSError as open_error:
+            final_error = (
+                f"Could not open file: {open_error}\n\n"
+                f"Tool: {tool_info.get('name', 'Unknown')}\n"
+                f"Path: {path}"
+            )
+            self.log(f"❌ {final_error}")
+            QMessageBox.critical(self, "File Open Error", final_error)
+            return
+
+    def _launch_browser_tool(self, path: Path) -> None:
+        """Launch a web/browser tool."""
+        try:
+            uri = path.as_uri()
+            if not (
+                uri.startswith("file://") or uri.startswith(("http://", "https://"))
+            ):
+                raise ValueError(f"Invalid URI scheme: {uri}")
+            webbrowser.open(uri)
+            self.log("✅ Opened in default browser")
+        except (ValueError, OSError) as e:
+            error_msg = f"Failed to open browser: {e}"
+            self.log(f"❌ {error_msg}")
+            QMessageBox.critical(self, "Browser Error", error_msg)
+            return
+
+    def _launch_batch_tool(
+        self, path: Path, tool_info: dict[str, Any], is_debug: bool
+    ) -> None:
+        """Launch a Windows batch script."""
+        if path.suffix.lower() not in [".bat", ".cmd"]:
+            raise ValueError(
+                "Security: File must be .bat or .cmd to execute as batch script"
+            )
+        try:
+            process = subprocess.Popen(
+                ["cmd.exe", "/c", str(path)],
+                cwd=path.parent,
+                stdout=subprocess.DEVNULL if not is_debug else None,
+                stderr=subprocess.DEVNULL if not is_debug else None,
+            )
+            self.log("✅ Batch script executed")
+            if is_debug:
+                self.log(f"DEBUG: Batch process PID: {process.pid}")
+        except FileNotFoundError:
+            error_msg = (
+                f"Windows command processor (cmd.exe) not found.\n\n"
+                f"Tool: {tool_info.get('name', 'Unknown')}\n"
+                f"Path: {path}\n\n"
+                "This tool requires Windows."
+            )
+            self.log(f"❌ {error_msg}")
+            QMessageBox.critical(self, "Platform Error", error_msg)
+        except OSError as e:
+            error_msg = (
+                f"Failed to execute batch script: {e}\n\n"
+                f"Tool: {tool_info.get('name', 'Unknown')}\n"
+                f"Path: {path}"
+            )
+            self.log(f"❌ {error_msg}")
+            QMessageBox.critical(self, "Launch Error", error_msg)
+
     def launch_tool(self, tool_info: dict[str, Any]) -> None:
         """Launch the specified tool based on its type."""
-        path = REPO_ROOT / tool_info["path"]
         type_ = tool_info["type"]
         is_debug = self.debug_mode.isChecked()
 
         self.log(f"Launching {tool_info['name']}...")
-        self.log(f"Path: {path}")
-
-        if is_debug:
-            self.log(f"DEBUG: Mode enabled. Launching {type_} tool.")
 
         try:
-            # Security: Validate path is within REPO_ROOT (prevent path traversal)
             try:
-                # Resolve full path to avoid relative path tricks
-                full_path = path.resolve()
-                repo_root_abs = REPO_ROOT.resolve()
-
-                # Check if path is relative to repo root
-                if not str(full_path).startswith(str(repo_root_abs)):
-                    raise ValueError(
-                        f"Security Alert: Attempted to launch tool outside repository: {full_path}"
-                    )
-
-            except Exception as e:
-                self.log(f"❌ Security violation: {e}")
-                QMessageBox.critical(self, "Security Error", f"Access Denied: {e}")
+                path = self._validate_and_sanitize_path(tool_info["path"])
+            except ValueError as e:
+                error_msg = f"Path validation failed: {e}"
+                self.log(f"❌ {error_msg}")
+                QMessageBox.critical(self, "Security Error", error_msg)
                 return
 
+            self.log(f"Path: {path}")
+
+            if is_debug:
+                self.log(f"DEBUG: Mode enabled. Launching {type_} tool.")
+
             if type_ == "python":
-                args = [sys.executable, str(path)]
-                if is_debug:
-                    # Could add a verbose flag if the tool supports it
-                    pass
-                subprocess.Popen(args, cwd=path.parent)
-                self.log("✅ Process started (Python)")
-
+                self._launch_python_tool(path, tool_info, is_debug)
             elif type_ == "matlab":
-                self.log("ℹ️ Attempting to launch MATLAB...")
-                # Build MATLAB command safely without shell=True
-                # Using list form to avoid shell injection vulnerabilities
-                matlab_script = f"run('{str(path).replace(chr(39), chr(39)+chr(39))}');"
-                cmd_list = ["matlab", "-nosplash", "-nodesktop", "-r", matlab_script]
-                try:
-                    subprocess.Popen(cmd_list, cwd=path.parent)
-                    self.log("✅ MATLAB command sent")
-                except FileNotFoundError:
-                    # MATLAB not in PATH, try opening file directly
-                    # Use hasattr pattern for Windows-specific startfile
-                    if hasattr(os, "startfile"):
-                        os.startfile(path)
-                        self.log("⚠️ MATLAB not in PATH, opened file in default editor")
-                    else:
-                        subprocess.Popen(["xdg-open", str(path)])
-                        self.log("⚠️ MATLAB not in PATH, opened file with xdg-open")
-
-            elif type_ == "web" or type_ == "browser":
-                # Validate URL scheme if it's external, or path if internal
-                webbrowser.open(path.as_uri())
-                self.log("✅ Opened in default browser")
-
+                self._launch_matlab_tool(path, tool_info, is_debug)
+            elif type_ in ("web", "browser"):
+                self._launch_browser_tool(path)
             elif type_ == "bat":
-                # Use cmd.exe explicitly instead of shell=True for security
-                # Also ensure it's actually a .bat or .cmd file
-                if path.suffix.lower() not in [".bat", ".cmd"]:
-                    raise ValueError(
-                        "Security: File must be .bat or .cmd to execute as batch script"
-                    )
-
-                subprocess.Popen(["cmd.exe", "/c", str(path)], cwd=path.parent)
-                self.log("✅ Batch script executed")
-
+                self._launch_batch_tool(path, tool_info, is_debug)
             else:
-                self.log(f"❌ Unknown type: {type_}")
+                error_msg = (
+                    f"Unknown tool type: {type_}\n\n"
+                    f"Tool: {tool_info.get('name', 'Unknown')}\n"
+                    f"Supported types: python, matlab, web, browser, bat"
+                )
+                self.log(f"❌ {error_msg}")
+                QMessageBox.warning(self, "Unknown Tool Type", error_msg)
 
-        except Exception as e:
-            self.log(f"❌ Error: {str(e)}")
-            QMessageBox.critical(
-                self, "Launch Error", f"Failed to launch tool:\n{str(e)}"
+        except ValueError as e:
+            error_msg = (
+                f"Path validation failed: {e}\n\n"
+                f"Tool: {tool_info.get('name', 'Unknown')}\n"
+                f"Path: {tool_info.get('path', 'Unknown')}"
             )
+            self.log(f"❌ {error_msg}")
+            QMessageBox.critical(self, "Security Error", error_msg)
+        except OSError as e:
+            error_msg = (
+                f"Unexpected error: {e}\n\n"
+                f"Tool: {tool_info.get('name', 'Unknown')}\n"
+                f"Type: {type_}\n\n"
+                "Please check the activity log for more details."
+            )
+            self.log(f"❌ {error_msg}")
+            QMessageBox.critical(self, "Launch Error", error_msg)
 
 
 # =============================================================================

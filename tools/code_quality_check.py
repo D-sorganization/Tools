@@ -204,34 +204,58 @@ def check_file(filepath: Path) -> list[tuple[int, str, str]]:
         return issues
 
 
+EXCLUDE_DIRS = {
+    "archive",
+    "legacy",
+    "experimental",
+    ".git",
+    "__pycache__",
+    ".ruff_cache",
+    ".mypy_cache",
+    "matlab",
+    "output",
+    ".ipynb_checkpoints",
+    ".Trash",
+}
+
+
+def _get_python_files() -> list[Path]:
+    """Get list of Python files to check."""
+    if len(sys.argv) > 1:
+        return [Path(arg) for arg in sys.argv[1:]]
+
+    python_files = list(Path().rglob("*.py"))
+    return [
+        f for f in python_files if not any(part in EXCLUDE_DIRS for part in f.parts)
+    ]
+
+
+def _report_issues(
+    all_issues: list[tuple[Path, list[tuple[int, str, str]]]]
+) -> None:
+    """Report quality check issues to stderr."""
+    sys.stderr.write(
+        f"{Colors.FAIL}{Colors.BOLD}❌ Quality check FAILED{Colors.ENDC}\n\n"
+    )
+    for filepath, issues in all_issues:
+        sys.stderr.write(f"\n{Colors.CYAN}{filepath}:{Colors.ENDC}\n")
+        for line_num, message, code in issues:
+            if line_num > 0:
+                sys.stderr.write(
+                    f"  Line {Colors.BOLD}{line_num}{Colors.ENDC}: {message}\n"
+                )
+                if code:
+                    sys.stderr.write(f"    > {Colors.WARNING}{code}{Colors.ENDC}\n")
+            else:
+                sys.stderr.write(f"  {message}\n")
+
+    total_issues = sum(len(issues) for _, issues in all_issues)
+    sys.stderr.write(f"\n{Colors.FAIL}Total issues: {total_issues}{Colors.ENDC}\n")
+
+
 def main() -> None:
     """Run quality checks on Python files."""
-    # Support direct file arguments from pre-commit
-    if len(sys.argv) > 1:
-        python_files = [Path(arg) for arg in sys.argv[1:]]
-    else:
-        python_files = list(Path().rglob("*.py"))
-
-    # Exclude certain directories
-    exclude_dirs = {
-        "archive",
-        "legacy",
-        "experimental",
-        ".git",
-        "__pycache__",
-        ".ruff_cache",
-        ".mypy_cache",
-        "matlab",
-        "output",
-        ".ipynb_checkpoints",  # Add checkpoint files to exclusion
-        ".Trash",  # Add trash files to exclusion
-    }
-
-    # Filter if scanning directory
-    if len(sys.argv) <= 1:
-        python_files = [
-            f for f in python_files if not any(part in exclude_dirs for part in f.parts)
-        ]
+    python_files = _get_python_files()
 
     all_issues = []
     for filepath in python_files:
@@ -239,31 +263,10 @@ def main() -> None:
         if issues:
             all_issues.append((filepath, issues))
 
-    # Report
     if all_issues:
-        sys.stderr.write(
-            f"{Colors.FAIL}{Colors.BOLD}❌ Quality check FAILED{Colors.ENDC}\n\n"
-        )
-        for filepath, issues in all_issues:
-            sys.stderr.write(f"\n{Colors.CYAN}{filepath}:{Colors.ENDC}\n")
-            for line_num, message, code in issues:
-                if line_num > 0:
-                    sys.stderr.write(
-                        f"  Line {Colors.BOLD}{line_num}{Colors.ENDC}: {message}\n"
-                    )
-                    if code:
-                        sys.stderr.write(f"    > {Colors.WARNING}{code}{Colors.ENDC}\n")
-                else:
-                    sys.stderr.write(f"  {message}\n")
-
-        total_issues = sum(len(issues) for _, issues in all_issues)
-        sys.stderr.write(
-            f"\n{Colors.FAIL}Total issues: {total_issues}{Colors.ENDC}\n",
-        )
+        _report_issues(all_issues)
         sys.exit(1)
     else:
-        # success silent for pre-commit usually, but ok to print
-        pass
         sys.exit(0)
 
 

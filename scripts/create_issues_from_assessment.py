@@ -12,7 +12,7 @@ import logging
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -23,21 +23,13 @@ def get_existing_issues() -> list[dict[str, Any]]:
     """Fetch existing GitHub issues."""
     try:
         result = subprocess.run(
-            [
-                "gh",
-                "issue",
-                "list",
-                "--limit",
-                "200",
-                "--json",
-                "number,title,state,labels",
-            ],
+            ["gh", "issue", "list", "--limit", "200", "--json", "number,title,state,labels"],
             capture_output=True,
             text=True,
             check=True,
         )
-        return cast(list[dict[str, Any]], json.loads(result.stdout))
-    except Exception as e:
+        return json.loads(result.stdout)
+    except (subprocess.SubprocessError, json.JSONDecodeError, OSError) as e:
         logger.warning(f"Could not fetch existing issues: {e}")
         return []
 
@@ -97,75 +89,67 @@ def create_github_issue(
         return False
 
 
-def process_assessment_findings(
-    summary_file: Path,
-    severities: list[str],
-    check_existing: bool = True,
-    dry_run: bool = False,
-) -> int:
-    """
-    Process assessment findings and create issues.
+REPO_SHORT_NAMES = {
+    "Gasification_Model": "GasModel",
+    "Tools": "Tools",
+    "AffineDrift": "AffineDrift",
+    "Games": "Games",
+    "Golf_Modeling_Suite": "GolfSuite",
+    "MLProjects": "MLProj",
+    "Playground": "Playground",
+    "MEB_Conversion": "MEBConv",
+    "Repository_Management": "RepoMgmt",
+}
 
-    Args:
-        summary_file: Path to assessment summary JSON
-        severities: List of severities to create issues for
-        check_existing: If True, skip issues that already exist
-        dry_run: If True, log instead of creating
 
-    Returns:
-        Exit code (0 = success, 1 = failure)
-    """
-    # Load assessment summary
-    try:
-        with open(summary_file) as f:
-            summary = json.load(f)
-    except Exception as e:
-        logger.error(f"Could not load summary file: {e}")
-        return 1
+def _classify_category(source_name: str, description: str) -> str:
+    """Classify issue into a category based on source and description."""
+    text = (source_name + " " + description).lower()
 
-    critical_issues = summary.get("critical_issues", [])
+    category_keywords = [
+        (("architecture", "implementation", "Assessment_A"), "Architecture"),
+        (("quality", "hygiene", "Assessment_B"), "Code Quality"),
+        (("documentation", "Assessment_C"), "Documentation"),
+        (("user", "ux", "Assessment_D"), "User Experience"),
+        (("performance", "Assessment_E"), "Performance"),
+        (("installation", "deployment", "Assessment_F"), "Installation"),
+        (("test", "Assessment_G"), "Testing"),
+        (("error", "Assessment_H"), "Error Handling"),
+        (("security", "Assessment_I"), "Security"),
+        (("extensibility", "Assessment_J"), "Extensibility"),
+        (("reproducibility", "Assessment_K"), "Reproducibility"),
+        (("maintainability", "Assessment_L"), "Maintainability"),
+        (("educational", "Assessment_M"), "Documentation"),
+        (("visualization", "Assessment_N"), "Visualization"),
+        (("ci", "cd", "Assessment_O"), "CI/CD"),
+    ]
 
-    if not critical_issues:
-        logger.info("No critical issues found in assessment")
-        return 0
+    for keywords, category in category_keywords:
+        if any(kw in text or kw in source_name for kw in keywords):
+            return category
 
-    logger.info(f"Found {len(critical_issues)} critical issues in assessment")
+    return "General"
 
-    # Get existing issues if checking
-    existing_issues = []
-    if check_existing:
-        logger.info("Fetching existing GitHub issues...")
-        existing_issues = get_existing_issues()
-        logger.info(f"Found {len(existing_issues)} existing issues")
 
-    # Filter by severity
-    filtered_issues = [i for i in critical_issues if i.get("severity") in severities]
-
-    logger.info(
-        f"Filtered to {len(filtered_issues)} issues with severities: {', '.join(severities)}"
-    )
-
-    # Create issues
-    created_count = 0
-    skipped_count = 0
-
-    for issue in filtered_issues[:20]:  # Limit to 20 to avoid spam
-        severity = issue.get("severity", "UNKNOWN")
-        description = issue.get("description", "No description")
-        source = issue.get("source", "Unknown")
-
-        # Generate title and body
-        title = f"{severity}: {description[:80]}"
-
-        body = f"""## Issue Description
+def _generate_issue_body(
+    severity: str,
+    category: str,
+    source: str,
+    description: str,
+    timestamp: str,
+) -> str:
+    """Generate the body for a GitHub issue."""
+    return f"""## Issue Description
 
 **Severity**: {severity}
+**Category**: {category}
 **Source**: {source}
-**Identified**: {summary.get('timestamp', 'Unknown')}
+**Identified**: {timestamp}
 
 ### Problem
 
 {description}
+
 
 ### Impact
 
@@ -174,7 +158,7 @@ This issue was identified during automated repository assessment and requires at
 ### References
 
 - Assessment Report: {source}
-- Full Assessment: docs/assessments/COMPREHENSIVE_ASSESSMENT_SUMMARY_{summary.get('timestamp', '')[:10]}.md
+- Full Assessment: docs/assessments/COMPREHENSIVE_ASSESSMENT_SUMMARY_{timestamp[:10]}.md
 
 ### Next Steps
 
@@ -189,29 +173,101 @@ This issue was identified during automated repository assessment and requires at
 🤖 Auto-generated by [Jules Assessment Auto-Fix](https://github.com/D-sorganization/Gasification_Model/actions/workflows/Jules-Assessment-AutoFix.yml)
 """
 
-        # Determine labels
-        labels = ["auto-generated", "quality-control"]
-        if severity in ("BLOCKER", "CRITICAL"):
-            labels.append("bug")
-        else:
-            labels.append("enhancement")
 
-        # Check if already exists
+def _generate_issue_title(
+    repo_short: str, severity: str, category: str, description: str
+) -> str:
+    """Generate a standardized issue title."""
+    clean_desc = description.replace("**", "").replace("*", "").replace("`", "")
+    clean_desc = clean_desc.split("\n")[0]
+    if len(clean_desc) > 60:
+        clean_desc = clean_desc[:57] + "..."
+    return f"[{repo_short}] {severity} {category}: {clean_desc}"
+
+
+def _get_issue_labels(severity: str) -> list[str]:
+    """Get appropriate labels for an issue based on severity."""
+    labels = ["auto-generated", "quality-control"]
+    if severity in ("BLOCKER", "CRITICAL"):
+        labels.append("bug")
+    else:
+        labels.append("enhancement")
+    return labels
+
+
+def process_assessment_findings(
+    summary_file: Path,
+    severities: list[str],
+    check_existing: bool = True,
+    dry_run: bool = False,
+) -> int:
+    """Process assessment findings and create issues.
+
+    Args:
+        summary_file: Path to assessment summary JSON
+        severities: List of severities to create issues for
+        check_existing: If True, skip issues that already exist
+        dry_run: If True, log instead of creating
+
+    Returns:
+        Exit code (0 = success, 1 = failure)
+    """
+    try:
+        with open(summary_file) as f:
+            summary = json.load(f)
+    except (OSError, json.JSONDecodeError) as e:
+        logger.error(f"Could not load summary file: {e}")
+        return 1
+
+    critical_issues = summary.get("critical_issues", [])
+
+    if not critical_issues:
+        logger.info("No critical issues found in assessment")
+        return 0
+
+    logger.info(f"Found {len(critical_issues)} critical issues in assessment")
+
+    existing_issues = []
+    if check_existing:
+        logger.info("Fetching existing GitHub issues...")
+        existing_issues = get_existing_issues()
+        logger.info(f"Found {len(existing_issues)} existing issues")
+
+    filtered_issues = [i for i in critical_issues if i.get("severity") in severities]
+    logger.info(
+        f"Filtered to {len(filtered_issues)} issues with severities: {', '.join(severities)}"
+    )
+
+    repo_name = Path.cwd().name
+    repo_short = REPO_SHORT_NAMES.get(repo_name, repo_name[:8])
+    timestamp = summary.get("timestamp", "Unknown")
+
+    created_count = 0
+    skipped_count = 0
+
+    for issue in filtered_issues[:20]:
+        severity = issue.get("severity", "UNKNOWN")
+        description = issue.get("description", "No description")
+        source = issue.get("source", "Unknown")
+
+        category = _classify_category(source, description)
+        title = _generate_issue_title(repo_short, severity, category, description)
+        body = _generate_issue_body(severity, category, source, description, timestamp)
+        labels = _get_issue_labels(severity)
+
         if check_existing and issue_exists(title, existing_issues):
             logger.info(f"⊘ Skipping (already exists): {title}")
             skipped_count += 1
             continue
 
-        # Create the issue
         if create_github_issue(title, body, labels, dry_run):
             created_count += 1
 
     logger.info(f"\n✓ Summary: Created {created_count} issues, skipped {skipped_count}")
-
     return 0
 
 
-def main() -> None:
+def main():
     parser = argparse.ArgumentParser(description="Create GitHub issues from assessment")
     parser.add_argument(
         "--input",

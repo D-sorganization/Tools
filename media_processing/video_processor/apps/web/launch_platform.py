@@ -1,37 +1,53 @@
 #!/usr/bin/env python3
-import logging
-import shutil
+"""
+Cross-platform launcher for Video Processor Platform.
+Replaces launch_platform.bat for better portability.
+"""
+
 import subprocess
 import sys
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("VideoPlatformLauncher")
+from pathlib import Path
 
 
 def main() -> None:
-    logger.info("Starting Video Processor Platform...")
+    """Launch the Video Processor Platform."""
+    script_dir = Path(__file__).parent.absolute()
 
-    # Check for npm/pnpm
-    pnpm = shutil.which("pnpm")
-    npm = shutil.which("npm")
-
-    cmd = []
-    if pnpm:
-        cmd = [pnpm, "run", "dev"]
-    elif npm:
-        cmd = [npm, "run", "dev"]
-    else:
-        logger.error("Node.js package manager (npm or pnpm) not found!")
-        sys.exit(1)
-
+    # Check if Node.js is available
     try:
-        # Run in the current directory
-        subprocess.run(cmd, check=True)
-    except KeyboardInterrupt:
-        logger.info("Stopped.")
-    except Exception as e:
-        logger.error(f"Failed to run platform: {e}")
+        subprocess.run(["node", "--version"], check=True, capture_output=True)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        print("ERROR: Node.js is not installed or not in PATH")
+        print("Please install Node.js from https://nodejs.org/")
         sys.exit(1)
+
+    # Check if package.json exists
+    package_json = script_dir / "package.json"
+    if not package_json.exists():
+        print("ERROR: package.json not found")
+        print(f"Expected at: {package_json}")
+        sys.exit(1)
+
+    # Install dependencies if node_modules doesn't exist
+    node_modules = script_dir / "node_modules"
+    if not node_modules.exists():
+        print("Installing dependencies...")
+        try:
+            subprocess.run(["npm", "install"], cwd=script_dir, check=True)
+        except subprocess.CalledProcessError:
+            print("ERROR: Failed to install dependencies")
+            sys.exit(1)
+
+    # Launch the platform
+    print("Starting Video Processor Platform...")
+    try:
+        subprocess.run(["npm", "run", "dev"], cwd=script_dir, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"ERROR: Failed to start platform (exit code {e.returncode})")
+        sys.exit(1)
+    except KeyboardInterrupt:
+        print("\nPlatform stopped by user.")
+        sys.exit(0)
 
 
 if __name__ == "__main__":

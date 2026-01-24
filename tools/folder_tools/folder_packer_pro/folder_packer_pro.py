@@ -1030,7 +1030,7 @@ class FolderPackerPro:
                     stats["total_size"] += size
                     ext = file_path.suffix.lower() or "no extension"
                     stats["file_types"][ext] += 1
-                except Exception:
+                except (OSError, PermissionError):
                     logger.exception("Error scanning %s", file_path)
 
         return stats
@@ -1088,7 +1088,7 @@ class FolderPackerPro:
                             files.append((file_path, stat))
                             if len(files) >= 500:  # Limit preview
                                 break
-                        except Exception:
+                        except (OSError, PermissionError):
                             logger.exception("Error scanning %s", file_path)
                 if len(files) >= 500:
                     break
@@ -1152,7 +1152,7 @@ class FolderPackerPro:
                 # Insert with basic syntax highlighting
                 self._insert_with_highlighting(content, file_path.suffix)
 
-        except Exception as e:
+        except (OSError, UnicodeDecodeError) as e:
             self.preview_text.insert("1.0", f"Error previewing file: {e}")
 
         self.preview_text.configure(state="disabled")
@@ -1351,13 +1351,11 @@ class FolderPackerPro:
                         f"Packing {file_path.name} ({i + 1}/{total_files})",
                     )
 
-                except Exception as e:
+                except (OSError, UnicodeDecodeError) as e:
                     self._log_message(f"Error packing {file_path}: {e}", "error")
 
             if self.cancel_operation:
-                self._log_message(
-                    "Pack operation cancelled", "warning"
-                )  # type: ignore[unreachable]
+                self._log_message("Pack operation cancelled", "warning")  # type: ignore[unreachable]
                 return
 
             # Serialize to JSON
@@ -1473,7 +1471,7 @@ class FolderPackerPro:
                 password = self.unpack_password_entry.get()
                 try:
                     data = EncryptionManager.decrypt_data(data, password)
-                except Exception as e:
+                except (ValueError, TypeError) as e:
                     raise ValueError(
                         f"Decryption failed - incorrect password? {e}",
                     ) from e
@@ -1482,8 +1480,8 @@ class FolderPackerPro:
             try:
                 self._update_unpack_status("Decompressing...")
                 data = gzip.decompress(data)
-            except Exception:
-                # Not compressed
+            except (gzip.BadGzipFile, OSError):
+                # Not compressed or invalid gzip
                 pass
 
             # Parse JSON
@@ -1517,7 +1515,7 @@ class FolderPackerPro:
                         f"Extracting {Path(rel_path).name} ({i + 1}/{total_files})",
                     )
 
-                except Exception as e:
+                except (OSError, ValueError) as e:
                     self._log_message(f"Error extracting {rel_path}: {e}", "error")
 
             if self.cancel_operation:
@@ -1567,7 +1565,7 @@ class FolderPackerPro:
                 # Try to decompress
                 decompressed = gzip.decompress(data)
                 json.loads(decompressed.decode("utf-8"))
-            except Exception:
+            except (gzip.BadGzipFile, OSError, json.JSONDecodeError, UnicodeDecodeError):
                 is_encrypted = True
 
             # Display info
@@ -1591,7 +1589,7 @@ class FolderPackerPro:
             self.package_info_text.insert("1.0", info)
             self.package_info_text.configure(state="disabled")
 
-        except Exception as e:
+        except (OSError, gzip.BadGzipFile, json.JSONDecodeError, UnicodeDecodeError) as e:
             messagebox.showerror("Error", f"Failed to inspect package:\n\n{e}")
 
     def _manage_exclusions(self) -> None:
@@ -1698,7 +1696,7 @@ class FolderPackerPro:
                 with open(file_path, "w") as f:
                     f.write(self.manifest.to_json())
                 messagebox.showinfo("Success", f"Manifest exported to:\n{file_path}")
-            except Exception as e:
+            except (OSError, TypeError, ValueError) as e:
                 messagebox.showerror("Error", f"Failed to export manifest:\n{e}")
 
     def _update_pack_status(self, message: str) -> None:
@@ -1791,7 +1789,7 @@ class FolderPackerPro:
                 os.system(f"open {log_filename}")
             else:
                 os.system(f"xdg-open {log_filename}")
-        except Exception as e:
+        except (OSError, FileNotFoundError, AttributeError) as e:
             messagebox.showerror("Error", f"Could not open log file:\n{e}")
 
     def _show_about(self) -> None:

@@ -27,8 +27,9 @@ def setup_python_path() -> None:
     # Add paths for different components
     paths_to_add = [
         current_dir,
-        current_dir / "data_processing" / "data_processor" / "archive",
+        current_dir / "src" / "data_processing" / "data_processor" / "archive",
         current_dir
+        / "src"
         / "data_processing"
         / "data_processor"
         / "python"
@@ -116,14 +117,14 @@ def install_missing_packages(packages: list[str]) -> bool:
 
         return True
 
-    except Exception as e:
+    except (subprocess.SubprocessError, OSError) as e:
         logger.error(f"Error installing packages: {e}")
         return False
 
 
 def create_constants_file() -> bool:
     """Create a minimal constants file if it doesn't exist."""
-    constants_path = Path("data_processing/data_processor/archive/constants.py")
+    constants_path = Path("src/data_processing/data_processor/archive/constants.py")
 
     if not constants_path.exists():
         logger.info("Creating missing constants.py file...")
@@ -160,63 +161,75 @@ MAX_LOG_SIZE = 10 * 1024 * 1024  # 10MB
             constants_path.write_text(constants_content)
             logger.info(f"Created constants file: {constants_path}")
             return True
-        except Exception as e:
-            logger.error(f"Failed to create constants file: {e}")
+        except PermissionError as e:
+            logger.error(f"Permission denied creating constants file: {e}")
+            return False
+        except OSError as e:
+            logger.error(f"OS error creating constants file: {e}")
             return False
 
     return True
 
 
+def _set_app_icon(app: object) -> None:
+    """Set the application icon from available locations.
+
+    Args:
+        app: The application instance with iconbitmap method.
+    """
+    icon_paths = [
+        Path("../../../tools_icon.ico"),
+        Path("tools_icon.ico"),
+    ]
+    for icon_path in icon_paths:
+        if icon_path.exists():
+            try:
+                app.iconbitmap(str(icon_path))  # type: ignore[attr-defined]
+                logger.info("✓ Applied tools_icon.ico to Integrated Data Processor")
+                return
+            except (OSError, AttributeError) as e:
+                logger.warning(f"Could not set tools_icon from {icon_path}: {e}")
+
+
+def _log_available_tabs() -> None:
+    """Log the available tabs in the integrated launcher."""
+    logger.info("Starting Integrated Tools Launcher...")
+    logger.info("Available tabs:")
+    logger.info("- Data Processing & Analysis")
+    logger.info("- Format Converter")
+    logger.info("- Folder Tool")
+    logger.info("- DAT File Import")
+    logger.info("- Plotting & Visualization")
+    logger.info("- Help & Documentation")
+
+
 def launch_integrated_app() -> bool:
     """Launch the integrated Tools application."""
-    try:
-        # Change to the correct directory
-        app_dir = Path("data_processing/data_processor/archive")
-        original_cwd = os.getcwd()
+    app_dir = Path("src/data_processing/data_processor/archive")
+    original_cwd = os.getcwd()
 
+    try:
         if app_dir.exists():
             os.chdir(app_dir)
             logger.info(f"Changed directory to: {app_dir.resolve()}")
 
-        # Import and launch the application
         from Data_Processor_Integrated import IntegratedCSVProcessorApp
 
-        logger.info("Starting Integrated Tools Launcher...")
-        logger.info("Available tabs:")
-        logger.info("- Data Processing & Analysis")
-        logger.info("- Format Converter")
-        logger.info("- Folder Tool")
-        logger.info("- DAT File Import")
-        logger.info("- Plotting & Visualization")
-        logger.info("- Help & Documentation")
-
+        _log_available_tabs()
         app = IntegratedCSVProcessorApp()
-
-        # Set the new tools_icon for the application
-        try:
-            tools_icon_path = Path("../../../tools_icon.ico")
-            if tools_icon_path.exists():
-                app.iconbitmap(str(tools_icon_path))
-                logger.info("✓ Applied tools_icon.ico to Integrated Data Processor")
-            else:
-                # Try relative path
-                tools_icon_path = Path("tools_icon.ico")
-                if tools_icon_path.exists():
-                    app.iconbitmap(str(tools_icon_path))
-                    logger.info("✓ Applied tools_icon.ico to Integrated Data Processor")
-        except Exception as e:
-            logger.warning(f"Could not set tools_icon: {e}")
-
+        _set_app_icon(app)
         app.mainloop()
-
         return True
 
-    except Exception as e:
+    except ImportError as e:
+        logger.error(f"Import error launching integrated app: {e}")
+        logger.error(traceback.format_exc())
+        return False
+    except (OSError, RuntimeError) as e:
         logger.error(f"Failed to launch integrated app: {e}")
         logger.error(traceback.format_exc())
         return False
     finally:
-        # Restore original directory
         os.chdir(original_cwd)
 
 
@@ -233,7 +246,7 @@ def launch_fallback_app() -> bool:
 
         return True
 
-    except Exception as e:
+    except (ImportError, OSError, RuntimeError) as e:
         logger.error(f"Fallback launcher also failed: {e}")
         return False
 
@@ -245,9 +258,61 @@ def show_error_dialog(message: str) -> None:
         root.withdraw()  # Hide the main window
         messagebox.showerror("Tools Launcher Error", message)
         root.destroy()
-    except Exception:
+    except (OSError, RuntimeError):
         # If GUI fails, just print to console
-        print(f"ERROR: {message}")
+        logger.error(f"ERROR: {message}")
+
+
+def _handle_missing_dependencies(missing_packages: list[str]) -> bool:
+    """Handle missing package dependencies by prompting user to install.
+
+    Args:
+        missing_packages: List of missing package names.
+
+    Returns:
+        True if dependencies were resolved, False otherwise.
+    """
+    logger.warning(f"Missing packages: {missing_packages}")
+    try:
+        root = Tk()
+        root.withdraw()
+        install = messagebox.askyesno(
+            "Missing Dependencies",
+            f"The following packages are missing:\n{', '.join(missing_packages)}\n\n"
+            "Would you like to install them automatically?",
+        )
+        root.destroy()
+
+        if install:
+            return install_missing_packages(missing_packages)
+        return False
+
+    except (OSError, RuntimeError) as e:
+        logger.error(f"Dependency installation dialog failed: {e}")
+        show_error_dialog(
+            f"Missing required packages: {', '.join(missing_packages)}\n\n"
+            "Please install them manually:\n"
+            f"pip install {' '.join(missing_packages)}"
+        )
+        return False
+
+
+def _try_launch_apps() -> bool:
+    """Try to launch the main app, falling back to alternative if needed.
+
+    Returns:
+        True if any app launched successfully, False otherwise.
+    """
+    if launch_integrated_app():
+        logger.info("Tools Launcher completed successfully")
+        return True
+
+    logger.warning("Main app failed, trying fallback...")
+    if launch_fallback_app():
+        logger.info("Fallback launcher completed successfully")
+        return True
+
+    return False
 
 
 def main() -> bool:
@@ -257,58 +322,19 @@ def main() -> bool:
     logger.info("=" * 60)
 
     try:
-        # Setup Python path
         setup_python_path()
 
-        # Create missing constants file
         if not create_constants_file():
-            raise Exception("Failed to create required constants file")
+            raise RuntimeError("Failed to create required constants file")
 
-        # Check dependencies
         missing_packages = check_dependencies()
+        if missing_packages and not _handle_missing_dependencies(missing_packages):
+            raise RuntimeError("Required packages are missing")
 
-        if missing_packages:
-            logger.warning(f"Missing packages: {missing_packages}")
+        if not _try_launch_apps():
+            raise RuntimeError("All launcher attempts failed")
 
-            # Ask user if they want to install
-            try:
-                root = Tk()
-                root.withdraw()
-                install = messagebox.askyesno(
-                    "Missing Dependencies",
-                    f"The following packages are missing:\n{', '.join(missing_packages)}\n\n"
-                    "Would you like to install them automatically?",
-                )
-                root.destroy()
-
-                if install:
-                    if not install_missing_packages(missing_packages):
-                        raise Exception("Failed to install required packages")
-                else:
-                    raise Exception("Required packages are missing")
-
-            except Exception as e:
-                logger.error(f"Dependency installation failed: {e}")
-                show_error_dialog(
-                    f"Missing required packages: {', '.join(missing_packages)}\n\n"
-                    "Please install them manually:\n"
-                    f"pip install {' '.join(missing_packages)}"
-                )
-                return False
-
-        # Try to launch the main integrated app
-        if launch_integrated_app():
-            logger.info("Tools Launcher completed successfully")
-            return True
-
-        # If main app fails, try fallback
-        logger.warning("Main app failed, trying fallback...")
-        if launch_fallback_app():
-            logger.info("Fallback launcher completed successfully")
-            return True
-
-        # If everything fails
-        raise Exception("All launcher attempts failed")
+        return True
 
     except Exception as e:
         error_msg = f"Tools Launcher failed to start: {e}"

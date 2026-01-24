@@ -1,58 +1,58 @@
 [
-  {
-    "id": "calculator_app",
-    "name": "Calculator App",
-    "relative_path": "web_applications/calculator/webapp.py",
-    "launch_type": "python",
-    "logo": "tools_icon.png",
-    "description": "Run the calculator web application."
-  },
-  {
-    "id": "unit_converter_web",
-    "name": "Unit Converter (Web)",
-    "relative_path": "web_applications/unit_converter/unit-converter-app/index.html",
-    "launch_type": "html",
-    "logo": "tools_icon_alt.ico",
-    "description": "Open the browser-based unit converter."
-  },
-  {
-    "id": "data_processor_integrated",
-    "name": "Data Processor (Integrated)",
-    "relative_path": "data_processing/data_processor/python/data_processor/launch_integrated.py",
-    "launch_type": "python",
-    "logo": "tools_icon.png",
-    "description": "Start the integrated Python data processor."
-  },
-  {
-    "id": "video_platform",
-    "name": "Video Platform (Next.js)",
-    "relative_path": "media_processing/video_processor/apps/web/launch_platform.bat",
-    "launch_type": "bat",
-    "logo": "tools_icon_simple.ico",
-    "description": "Launch the Next.js video processing platform."
-  },
-  {
-    "id": "audio_processor_pro",
-    "name": "Audio Processor Pro",
-    "relative_path": "media_processing/audio_processor/matlab/audio_signal_processor/launch_audio_processor_pro.m",
-    "launch_type": "file",
-    "logo": "tools_icon_hq.ico",
-    "description": "Open the MATLAB-based audio processor."
-  },
-  {
-    "id": "folder_packer_pro",
-    "name": "Folder Packer Pro",
-    "relative_path": "development_tools/folder_tools/folder_packer_pro/folder_packer_pro.py",
-    "launch_type": "python",
-    "logo": "tools_icon.png",
-    "description": "Launch the Python folder packing utility."
-  },
-  {
-    "id": "folder_fix_pro",
-    "name": "Folder Fix Pro",
-    "relative_path": "replicants/python/folder_tool_pro/folder_fix_pro.py",
-    "launch_type": "python",
-    "logo": "tools_icon_alt.ico",
-    "description": "Open the enhanced folder repair tool."
-  }
+    {
+        "id": "calculator_app",
+        "name": "Calculator App",
+        "relative_path": "src/web_applications/calculator/webapp.py",
+        "launch_type": "python",
+        "logo": "tools_icon.png",
+        "description": "Run the calculator web application.",
+    },
+    {
+        "id": "unit_converter_web",
+        "name": "Unit Converter (Web)",
+        "relative_path": "src/web_applications/unit_converter/unit-converter-app/index.html",
+        "launch_type": "html",
+        "logo": "tools_icon_alt.ico",
+        "description": "Open the browser-based unit converter.",
+    },
+    {
+        "id": "data_processor_integrated",
+        "name": "Data Processor (Integrated)",
+        "relative_path": "src/data_processing/data_processor/python/data_processor/launch_integrated.py",
+        "launch_type": "python",
+        "logo": "tools_icon.png",
+        "description": "Start the integrated Python data processor.",
+    },
+    {
+        "id": "video_platform",
+        "name": "Video Platform (Next.js)",
+        "relative_path": "src/media_processing/video_processor/apps/web/launch_platform.py",
+        "launch_type": "python",
+        "logo": "tools_icon_simple.ico",
+        "description": "Launch the Next.js video processing platform.",
+    },
+    {
+        "id": "audio_processor_pro",
+        "name": "Audio Processor Pro",
+        "relative_path": "src/media_processing/audio_processor/matlab/audio_signal_processor/launch_audio_processor_pro.m",
+        "launch_type": "file",
+        "logo": "tools_icon_hq.ico",
+        "description": "Open the MATLAB-based audio processor.",
+    },
+    {
+        "id": "folder_packer_pro",
+        "name": "Folder Packer Pro",
+        "relative_path": "development_tools/folder_tools/folder_packer_pro/folder_packer_pro.py",
+        "launch_type": "python",
+        "logo": "tools_icon.png",
+        "description": "Launch the Python folder packing utility.",
+    },
+    {
+        "id": "folder_tool",
+        "name": "Folder Tool",
+        "relative_path": "tools/folder_tools/folder_tool/Folders_Tool_r0.py",
+        "launch_type": "python",
+        "logo": "tools_icon_alt.ico",
+        "description": "Directory management utility (replaces legacy replicant).",
+    },
 ]
