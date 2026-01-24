@@ -15,6 +15,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 import tkinter as tk
 from collections.abc import Callable
@@ -22,6 +23,8 @@ from tkinter import colorchooser, filedialog, messagebox, simpledialog
 from typing import Any, cast
 
 import customtkinter as ctk
+
+logger = logging.getLogger(__name__)
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
@@ -193,7 +196,7 @@ def process_single_csv_file(
         processed_df.reset_index(inplace=True)
         return processed_df
     except Exception as e:
-        print(f"Error processing {file_path}: {e!s}")
+        logger.error(f"Error processing {file_path}: {e!s}")
         return None
 
 
@@ -1764,7 +1767,7 @@ class CSVProcessorApp(ctk.CTk):
                     df[f"cumulative_{signal}"] = cumulative
 
         except Exception as e:
-            print(f"Error in integration: {e}")
+            logger.error(f"Error in integration: {e}")
 
         return df
 
@@ -1853,9 +1856,9 @@ class CSVProcessorApp(ctk.CTk):
                             else:
                                 df[f"{signal}_d{order}"] = np.nan
                         except Exception as e:
-                            print(
-                                f"Error in spline differentiation for \
-                                    {signal}, order {order}: {e}",
+                            logger.error(
+                                f"Error in spline differentiation for "
+                                f"{signal}, order {order}: {e}",
                             )
                             df[f"{signal}_d{order}"] = np.nan
 
@@ -1881,9 +1884,9 @@ class CSVProcessorApp(ctk.CTk):
                             else:
                                 df[f"{signal}_d{order}"] = np.nan
                         except Exception as e:
-                            print(
-                                f"Error in polynomial differentiation for \
-                                    {signal}, order {order}: {e}",
+                            logger.error(
+                                f"Error in polynomial differentiation for "
+                                f"{signal}, order {order}: {e}",
                             )
                             df[f"{signal}_d{order}"] = np.nan
 
@@ -1891,33 +1894,33 @@ class CSVProcessorApp(ctk.CTk):
 
     def select_files(self) -> None:
         """Select input CSV files."""
-        print("DEBUG: select_files() called")
+        logger.debug("DEBUG: select_files() called")
         file_paths = filedialog.askopenfilenames(
             title="Select CSV Files",
             filetypes=[("CSV files", "*.csv"), ("All files", "*.*")],
         )
-        print(f"DEBUG: File dialog returned: {file_paths}")
+        logger.debug(f"DEBUG: File dialog returned: {file_paths}")
 
         if file_paths:
             self.input_file_paths = list(file_paths)
-            print(f"DEBUG: Set input_file_paths to: {self.input_file_paths}")
+            logger.debug(f"DEBUG: Set input_file_paths to: {self.input_file_paths}")
 
             # Set default output directory to the folder of the first selected file
             if self.input_file_paths:
                 first_file_dir = os.path.dirname(self.input_file_paths[0])
                 self.output_directory = first_file_dir
-                print(f"DEBUG: Set output directory to: {self.output_directory}")
+                logger.debug(f"DEBUG: Set output directory to: {self.output_directory}")
                 # Update the output label to reflect the new default directory
                 if hasattr(self, "output_label"):
                     self.output_label.configure(text=f"Output: {self.output_directory}")
-                    print("DEBUG: Updated output label")
+                    logger.debug("DEBUG: Updated output label")
 
-            print("DEBUG: Calling update_file_list()")
+            logger.debug("DEBUG: Calling update_file_list()")
             self.update_file_list()
-            print("DEBUG: Calling load_signals_from_files()")
+            logger.debug("DEBUG: Calling load_signals_from_files()")
             self.load_signals_from_files()
         else:
-            print("DEBUG: No files selected (user cancelled)")
+            logger.debug("DEBUG: No files selected (user cancelled)")
 
     def select_output_folder(self) -> None:
         """Select output directory for processed files."""
@@ -1928,42 +1931,42 @@ class CSVProcessorApp(ctk.CTk):
 
     def update_file_list(self) -> None:
         """Update the file list display."""
-        print("DEBUG: update_file_list() called")
-        print(
+        logger.debug("DEBUG: update_file_list() called")
+        logger.debug(
             f"DEBUG: input_file_paths = {getattr(self, 'input_file_paths', 'NOT SET')}",
         )
 
         # Clear existing widgets
         for widget in self.file_list_frame.winfo_children():
             widget.destroy()
-        print("DEBUG: Cleared existing widgets")
+        logger.debug("DEBUG: Cleared existing widgets")
 
         if not self.input_file_paths:
-            print("DEBUG: No input file paths, showing default message")
+            logger.debug("DEBUG: No input file paths, showing default message")
             label = ctk.CTkLabel(
                 self.file_list_frame,
                 text="Files you select will be listed here.",
             )
             label.pack(padx=5, pady=5)
-            print("DEBUG: Default label created and packed")
+            logger.debug("DEBUG: Default label created and packed")
             return
 
-        print(f"DEBUG: Creating display for {len(self.input_file_paths)} files")
+        logger.debug(f"DEBUG: Creating display for {len(self.input_file_paths)} files")
         for i, file_path in enumerate(self.input_file_paths):
-            print(f"DEBUG: Creating widget for file {i+1}: {file_path}")
+            logger.debug(f"DEBUG: Creating widget for file {i+1}: {file_path}")
             file_frame = ctk.CTkFrame(self.file_list_frame)
             file_frame.pack(fill="x", padx=5, pady=2)
-            print(f"DEBUG: File frame created and packed for file {i+1}")
+            logger.debug(f"DEBUG: File frame created and packed for file {i+1}")
 
             filename = os.path.basename(file_path)
-            print(f"DEBUG: Filename: {filename}")
+            logger.debug(f"DEBUG: Filename: {filename}")
             label = ctk.CTkLabel(
                 file_frame,
                 text=f"{i+1}. {filename}",
                 font=ctk.CTkFont(size=11),
             )
             label.pack(side="left", padx=5, pady=2)
-            print(f"DEBUG: Label created and packed for file {i+1}")
+            logger.debug(f"DEBUG: Label created and packed for file {i+1}")
 
             button = ctk.CTkButton(
                 file_frame,
@@ -1972,13 +1975,13 @@ class CSVProcessorApp(ctk.CTk):
                 command=lambda f=file_path: self.remove_file(f),
             )
             button.pack(side="right", padx=5, pady=2)
-            print(f"DEBUG: Remove button created and packed for file {i+1}")
+            logger.debug(f"DEBUG: Remove button created and packed for file {i+1}")
 
-        print("DEBUG: update_file_list() completed")
+        logger.debug("DEBUG: update_file_list() completed")
 
         # Force GUI update
         self.file_list_frame.update_idletasks()
-        print("DEBUG: Forced file_list_frame update_idletasks()")
+        logger.debug("DEBUG: Forced file_list_frame update_idletasks()")
 
     def remove_file(self, file_path: str) -> None:
         """Remove a file from the list."""
@@ -1989,10 +1992,10 @@ class CSVProcessorApp(ctk.CTk):
 
     def load_signals_from_files(self) -> None:
         """Load signals from all selected files (optimized)."""
-        print("DEBUG: load_signals_from_files() called")
+        logger.debug("DEBUG: load_signals_from_files() called")
 
         if not self.input_file_paths:
-            print("DEBUG: No input file paths, returning early")
+            logger.debug("DEBUG: No input file paths, returning early")
             return
 
         # Update status
@@ -2022,9 +2025,9 @@ class CSVProcessorApp(ctk.CTk):
                 all_signals.update(signals)
 
             except Exception as e:
-                print(f"Error reading {file_path}: {e}")
+                logger.error(f"Error reading {file_path}: {e}")
 
-        print(f"DEBUG: All signals collected: {len(all_signals)} unique signals")
+        logger.debug(f"DEBUG: All signals collected: {len(all_signals)} unique signals")
 
         # Update status
         if hasattr(self, "status_label"):
@@ -2058,7 +2061,7 @@ class CSVProcessorApp(ctk.CTk):
                             loaded. Go to Plotting tab to visualize.",
                     )
 
-        print("DEBUG: load_signals_from_files() completed")
+        logger.debug("DEBUG: load_signals_from_files() completed")
 
     def _auto_select_single_file(self, filename: str) -> None:
         """Auto-select single file - simplified."""
@@ -2068,7 +2071,7 @@ class CSVProcessorApp(ctk.CTk):
                 if current_selection == filename:  # Only proceed if still selected
                     self.on_plot_file_select(filename)
         except Exception as e:
-            print(f"Error in auto-select: {e}")
+            logger.error(f"Error in auto-select: {e}")
 
     def _ensure_data_loaded(self, filename: str) -> None:
         """Ensure data is loaded for the given filename."""
@@ -2096,7 +2099,7 @@ class CSVProcessorApp(ctk.CTk):
                                 pass
                     return True
                 except Exception as e:
-                    print(f"Error loading {filename}: {e}")
+                    logger.error(f"Error loading {filename}: {e}")
                     return False
         return True
 
@@ -2190,25 +2193,25 @@ class CSVProcessorApp(ctk.CTk):
 
     def process_files(self) -> None:
         """Process all selected files with current settings."""
-        print("\n=== STARTING PROCESS_FILES DEBUG ===")
+        logger.debug("\n=== STARTING PROCESS_FILES DEBUG ===")
         if not self.input_file_paths:
-            print("ERROR: No input file paths selected")
+            logger.error("ERROR: No input file paths selected")
             messagebox.showerror("Error", "Please select input files first.")
             return
 
-        print(f"Input files: {len(self.input_file_paths)} files")
+        logger.info(f"Input files: {len(self.input_file_paths)} files")
         for i, path in enumerate(self.input_file_paths):
-            print(f"  {i+1}: {path}")
+            logger.info(f"  {i+1}: {path}")
 
         selected_signals = [
             s for s, data in self.signal_vars.items() if data["var"].get()
         ]
-        print(f"Selected signals: {len(selected_signals)} signals")
+        logger.info(f"Selected signals: {len(selected_signals)} signals")
         for signal in selected_signals:
-            print(f"  - {signal}")
+            logger.info(f"  - {signal}")
 
         if not selected_signals:
-            print("ERROR: No signals selected")
+            logger.error("ERROR: No signals selected")
             messagebox.showerror(
                 "Error",
                 "Please select at least one signal to process.",
@@ -2247,15 +2250,15 @@ class CSVProcessorApp(ctk.CTk):
             ),
         }
 
-        print("\nProcessing settings:")
+        logger.info("\nProcessing settings:")
         for key, value in settings.items():
-            print(f"  {key}: {value}")
+            logger.info(f"  {key}: {value}")
 
         # Check output directory
         if not self.output_directory:
-            print("WARNING: No output directory set, using default")
+            logger.warning("WARNING: No output directory set, using default")
         else:
-            print(f"Output directory: {self.output_directory}")
+            logger.info(f"Output directory: {self.output_directory}")
 
         # Update status
         self.status_label.configure(text="Processing files...")
@@ -2265,10 +2268,10 @@ class CSVProcessorApp(ctk.CTk):
         processed_files = []
         error_count = 0
 
-        print(f"\nStarting processing of {len(self.input_file_paths)} files...")
+        logger.info(f"\nStarting processing of {len(self.input_file_paths)} files...")
 
         for i, file_path in enumerate(self.input_file_paths):
-            print(
+            logger.info(
                 f"\n--- Processing file {i + 1}/{len(self.input_file_paths)}: "
                 f"{os.path.basename(file_path)} ---"
             )
@@ -2281,50 +2284,50 @@ class CSVProcessorApp(ctk.CTk):
 
                 # Check if file exists
                 if not os.path.exists(file_path):
-                    print(f"ERROR: File not found: {file_path}")
+                    logger.error(f"ERROR: File not found: {file_path}")
                     error_count += 1
                     continue
 
-                print(f"File exists, size: {os.path.getsize(file_path)} bytes")
+                logger.info(f"File exists, size: {os.path.getsize(file_path)} bytes")
 
                 # Process the file
                 processed_df = self._process_single_file(file_path, settings)
 
                 if processed_df is not None and not processed_df.empty:
-                    print(f"SUCCESS: File processed. Shape: {processed_df.shape}")
-                    print(f"Columns: {list(processed_df.columns)}")
+                    logger.info(f"SUCCESS: File processed. Shape: {processed_df.shape}")
+                    logger.info(f"Columns: {list(processed_df.columns)}")
                     processed_files.append((file_path, processed_df))
                     # Store processed data for plotting
                     filename = os.path.basename(file_path)
                     self.processed_files[filename] = processed_df.copy()
-                    print(f"Stored in processed_files cache as: {filename}")
+                    logger.info(f"Stored in processed_files cache as: {filename}")
                 else:
-                    print("ERROR: File processing returned None or empty DataFrame")
+                    logger.error("ERROR: File processing returned None or empty DataFrame")
                     error_count += 1
 
             except Exception as e:
-                print(f"EXCEPTION processing {file_path}: {e}")
+                logger.info(f"EXCEPTION processing {file_path}: {e}")
                 import traceback
 
                 traceback.print_exc()
                 error_count += 1
 
-        print("\nProcessing complete. Results:")
-        print(f"  Processed files: {len(processed_files)}")
-        print(f"  Errors: {error_count}")
+        logger.info("\nProcessing complete. Results:")
+        logger.info(f"  Processed files: {len(processed_files)}")
+        logger.error(f"  Errors: {error_count}")
 
         if not processed_files:
-            print("ERROR: No files were successfully processed")
+            logger.error("ERROR: No files were successfully processed")
             messagebox.showerror("Error", "No files were successfully processed.")
             self.status_label.configure(text="Processing failed - no files processed")
             return
 
         # Export processed files
-        print("\nStarting export process...")
-        print(f"Export type: {self.export_type_var.get()}")
+        logger.info("\nStarting export process...")
+        logger.info(f"Export type: {self.export_type_var.get()}")
         try:
             self._export_processed_files(processed_files)
-            print("Export completed successfully")
+            logger.info("Export completed successfully")
 
             # Update status
             success_count = len(processed_files)
@@ -2357,32 +2360,32 @@ class CSVProcessorApp(ctk.CTk):
         self, file_path: str, settings: dict[str, Any]
     ) -> pd.DataFrame | None:
         """Process a single file with all advanced features."""
-        print(f"\n_process_single_file called for: {os.path.basename(file_path)}")
+        logger.info(f"\n_process_single_file called for: {os.path.basename(file_path)}")
         try:
-            print("  Loading CSV file...")
+            logger.info("  Loading CSV file...")
             df = pd.read_csv(file_path, low_memory=False)
-            print(f"  Loaded DataFrame shape: {df.shape}")
-            print(f"  Original columns: {list(df.columns)}")
+            logger.info(f"  Loaded DataFrame shape: {df.shape}")
+            logger.info(f"  Original columns: {list(df.columns)}")
 
             # Determine which signals to keep for this specific file
             signals_in_this_file = [
                 s for s in settings["selected_signals"] if s in df.columns
             ]
             time_col = df.columns[0]
-            print(f"  Time column: {time_col}")
-            print(f"  Signals found in file: {len(signals_in_this_file)}")
+            logger.info(f"  Time column: {time_col}")
+            logger.info(f"  Signals found in file: {len(signals_in_this_file)}")
 
             if time_col not in signals_in_this_file:
                 signals_in_this_file.insert(0, time_col)
-                print("  Added time column to signals")
+                logger.info("  Added time column to signals")
 
-            print(f"  Final signals to process: {signals_in_this_file}")
+            logger.info(f"  Final signals to process: {signals_in_this_file}")
 
             processed_df = df[signals_in_this_file].copy()
-            print(f"  Copied DataFrame shape: {processed_df.shape}")
+            logger.info(f"  Copied DataFrame shape: {processed_df.shape}")
 
             # Data type conversion
-            print("  Converting data types...")
+            logger.info("  Converting data types...")
             processed_df[time_col] = pd.to_datetime(
                 processed_df[time_col],
                 errors="coerce",
@@ -2390,7 +2393,7 @@ class CSVProcessorApp(ctk.CTk):
             before_drop = len(processed_df)
             processed_df.dropna(subset=[time_col], inplace=True)
             after_drop = len(processed_df)
-            print(f"  Dropped {before_drop - after_drop} rows with invalid time")
+            logger.info(f"  Dropped {before_drop - after_drop} rows with invalid time")
 
             for col in processed_df.columns:
                 if col != time_col:
@@ -2400,13 +2403,13 @@ class CSVProcessorApp(ctk.CTk):
                         errors="coerce",
                     )
                     after_numeric = processed_df[col].notna().sum()
-                    print(
-                        f"  Column {col}: {before_numeric} -> {after_numeric} \
-                            valid values",
+                    logger.debug(
+                        f"  Column {col}: {before_numeric} -> {after_numeric} "
+                        f"valid values",
                     )
 
             if processed_df.empty:
-                print("  ERROR: DataFrame is empty after data type conversion")
+                logger.error("  ERROR: DataFrame is empty after data type conversion")
                 return None
 
             # Apply time trimming if specified
@@ -2415,22 +2418,22 @@ class CSVProcessorApp(ctk.CTk):
             trim_end = self.trim_end_entry.get().strip()
 
             if trim_date or trim_start or trim_end:
-                print(
-                    f"  Applying time trimming: date={trim_date}, \
-                        start={trim_start}, end={trim_end}",
+                logger.debug(
+                    f"  Applying time trimming: date={trim_date}, "
+                    f"start={trim_start}, end={trim_end}",
                 )
                 try:
                     # Get the date from the data if not specified
                     if not trim_date:
                         trim_date = processed_df[time_col].iloc[0].strftime("%Y-%m-%d")
-                        print(f"  Using date from data: {trim_date}")
+                        logger.info(f"  Using date from data: {trim_date}")
 
                     # Create full datetime strings
                     start_time_str = trim_start or "00:00:00"
                     end_time_str = trim_end or "23:59:59"
                     start_full_str = f"{trim_date} {start_time_str}"
                     end_full_str = f"{trim_date} {end_time_str}"
-                    print(f"  Time range: {start_full_str} to {end_full_str}")
+                    logger.info(f"  Time range: {start_full_str} to {end_full_str}")
 
                     before_trim = len(processed_df)
                     # Filter the data by time range
@@ -2440,28 +2443,28 @@ class CSVProcessorApp(ctk.CTk):
                         .reset_index()
                     )
                     after_trim = len(processed_df)
-                    print(f"  Trimming: {before_trim} -> {after_trim} rows")
+                    logger.info(f"  Trimming: {before_trim} -> {after_trim} rows")
 
                     if processed_df.empty:
-                        print("  ERROR: Time trimming resulted in empty dataset")
+                        logger.error("  ERROR: Time trimming resulted in empty dataset")
                         return None
 
                 except Exception as e:
-                    print(f"  ERROR in time trimming: {e}")
+                    logger.error(f"  ERROR in time trimming: {e}")
 
-            print("  Setting time column as index...")
+            logger.info("  Setting time column as index...")
             processed_df.set_index(time_col, inplace=True)
-            print(f"  DataFrame shape after indexing: {processed_df.shape}")
+            logger.info(f"  DataFrame shape after indexing: {processed_df.shape}")
 
             # Apply Filtering
             filter_type = settings.get("filter_type")
-            print(f"  Filter type: {filter_type}")
+            logger.info(f"  Filter type: {filter_type}")
             if filter_type and filter_type != "None":
-                print("  Applying filtering...")
+                logger.info("  Applying filtering...")
                 numeric_cols = processed_df.select_dtypes(
                     include=np.number,
                 ).columns.tolist()
-                print(f"  Numeric columns for filtering: {numeric_cols}")
+                logger.info(f"  Numeric columns for filtering: {numeric_cols}")
                 for col in numeric_cols:
                     signal_data = processed_df[col].dropna()
                     if len(signal_data) < 2:
@@ -2531,7 +2534,7 @@ class CSVProcessorApp(ctk.CTk):
                             )
                             processed_df.loc[outliers, col] = median_filtered[outliers]
                         except Exception as e:
-                            print(f"Error applying Hampel filter: {e}")
+                            logger.error(f"Error applying Hampel filter: {e}")
                             # Fallback to simple median filter
                             processed_df[col] = pd.Series(
                                 medfilt(signal_data, kernel_size=window),
@@ -2573,24 +2576,24 @@ class CSVProcessorApp(ctk.CTk):
             # Apply Resampling
             if settings.get("resample_enabled"):
                 resample_rule = settings.get("resample_rule")
-                print(f"  Applying resampling with rule: {resample_rule}")
+                logger.info(f"  Applying resampling with rule: {resample_rule}")
                 if resample_rule:
                     before_resample = len(processed_df)
                     processed_df = (
                         processed_df.resample(resample_rule).mean().dropna(how="all")
                     )
                     after_resample = len(processed_df)
-                    print(f"  Resampling: {before_resample} -> {after_resample} rows")
+                    logger.info(f"  Resampling: {before_resample} -> {after_resample} rows")
             else:
-                print("  Resampling disabled")
+                logger.info("  Resampling disabled")
 
-            print("  Resetting index...")
+            logger.info("  Resetting index...")
             processed_df.reset_index(inplace=True)
-            print(f"  DataFrame shape after reset: {processed_df.shape}")
+            logger.info(f"  DataFrame shape after reset: {processed_df.shape}")
 
-            print("  Applying custom variables...")
+            logger.info("  Applying custom variables...")
             processed_df = self._apply_custom_variables(processed_df, time_col)
-            print(f"  DataFrame shape after custom vars: {processed_df.shape}")
+            logger.info(f"  DataFrame shape after custom vars: {processed_df.shape}")
 
             # Apply integration if signals are selected
             signals_to_integrate = [
@@ -2599,7 +2602,7 @@ class CSVProcessorApp(ctk.CTk):
                 if data["var"].get()
             ]
             if signals_to_integrate:
-                print(f"  Applying integration to: {signals_to_integrate}")
+                logger.info(f"  Applying integration to: {signals_to_integrate}")
                 integration_method = self.integrator_method_var.get()
                 processed_df = self._apply_integration(
                     processed_df,
@@ -2607,14 +2610,14 @@ class CSVProcessorApp(ctk.CTk):
                     signals_to_integrate,
                     integration_method,
                 )
-                print(f"  DataFrame shape after integration: {processed_df.shape}")
+                logger.info(f"  DataFrame shape after integration: {processed_df.shape}")
 
             # Apply differentiation if signals are selected
             signals_to_differentiate = [
                 s for s, data in self.deriv_signal_vars.items() if data["var"].get()
             ]
             if signals_to_differentiate:
-                print(f"  Applying differentiation to: {signals_to_differentiate}")
+                logger.info(f"  Applying differentiation to: {signals_to_differentiate}")
                 differentiation_method = self.deriv_method_var.get()
                 processed_df = self._apply_differentiation(
                     processed_df,
@@ -2622,20 +2625,20 @@ class CSVProcessorApp(ctk.CTk):
                     signals_to_differentiate,
                     differentiation_method,
                 )
-                print(f"  DataFrame shape after differentiation: {processed_df.shape}")
+                logger.info(f"  DataFrame shape after differentiation: {processed_df.shape}")
 
             if processed_df.empty:
-                print("  ERROR: Final DataFrame is empty")
+                logger.error("  ERROR: Final DataFrame is empty")
                 return None
 
-            print(
-                f"  SUCCESS: Returning processed DataFrame with shape \
-                    {processed_df.shape}",
+            logger.info(
+                f"  SUCCESS: Returning processed DataFrame with shape "
+                f"{processed_df.shape}",
             )
             return processed_df
 
         except Exception as e:
-            print(f"  EXCEPTION in _process_single_file: {e}")
+            logger.info(f"  EXCEPTION in _process_single_file: {e}")
             import traceback
 
             traceback.print_exc()
@@ -2695,7 +2698,7 @@ class CSVProcessorApp(ctk.CTk):
                 df[name] = result
 
             except Exception as e:
-                print(f"Error applying custom variable '{var['name']}': {e}")
+                logger.error(f"Error applying custom variable '{var['name']}': {e}")
                 df[var["name"]] = np.nan
                 messagebox.showwarning(
                     "Custom Variable Error",
@@ -2749,7 +2752,7 @@ class CSVProcessorApp(ctk.CTk):
 
     def _export_csv_separate(self, processed_files: dict[str, pd.DataFrame]) -> None:
         """Export each file as a separate CSV."""
-        print(f"_export_csv_separate called with {len(processed_files)} files")
+        logger.info(f"_export_csv_separate called with {len(processed_files)} files")
         exported_count = 0
         for file_path, df in processed_files:
             base_name = os.path.splitext(os.path.basename(file_path))[0]
@@ -2757,28 +2760,28 @@ class CSVProcessorApp(ctk.CTk):
                 self.output_directory,
                 f"{base_name}_processed.csv",
             )
-            print(f"Exporting to: {output_path}")
+            logger.info(f"Exporting to: {output_path}")
 
             final_path = self._check_file_overwrite(output_path)
             if final_path is None:
-                print(f"Export cancelled for {base_name}")
+                logger.info(f"Export cancelled for {base_name}")
                 continue
 
-            print(f"Final export path: {final_path}")
+            logger.info(f"Final export path: {final_path}")
             df = self._apply_sorting(df)
             df.to_csv(final_path, index=False)
             exported_count += 1
-            print(f"Successfully exported: {final_path}")
+            logger.info(f"Successfully exported: {final_path}")
 
-        print(f"Export summary: {exported_count} files exported")
+        logger.info(f"Export summary: {exported_count} files exported")
         if exported_count > 0:
-            print(f"Showing success message for {exported_count} files")
+            logger.info(f"Showing success message for {exported_count} files")
             messagebox.showinfo(
                 "Export Success",
                 f"Exported {exported_count} files to {self.output_directory}",
             )
         else:
-            print("Showing cancelled message")
+            logger.info("Showing cancelled message")
             messagebox.showinfo("Export Cancelled", "No files were exported.")
 
     def _export_csv_compiled(self, processed_files: dict[str, pd.DataFrame]) -> None:
@@ -4190,7 +4193,7 @@ class CSVProcessorApp(ctk.CTk):
                 with open(self.layout_config_file) as f:
                     return json.load(f)
         except Exception as e:
-            print(f"Error loading layout config: {e}")
+            logger.error(f"Error loading layout config: {e}")
         return {}
 
     def _save_layout_config(self) -> None:
@@ -4208,7 +4211,7 @@ class CSVProcessorApp(ctk.CTk):
             with open(self.layout_config_file, "w") as f:
                 json.dump(self.layout_data, f, indent=2)
         except Exception as e:
-            print(f"Error saving layout config: {e}")
+            logger.error(f"Error saving layout config: {e}")
 
     def _create_splitter(
         self,
@@ -4405,7 +4408,7 @@ class CSVProcessorApp(ctk.CTk):
                 self.update_plot()
 
         except Exception as e:
-            print(f"ERROR in on_plot_file_select: {e}")
+            logger.error(f"ERROR in on_plot_file_select: {e}")
             import traceback
 
             traceback.print_exc()
@@ -4421,7 +4424,7 @@ class CSVProcessorApp(ctk.CTk):
         """Update the plot with fixed error handling and canvas management."""
         # Check if plot canvas is initialized
         if not hasattr(self, "plot_canvas") or not hasattr(self, "plot_ax"):
-            print("Warning: Plot canvas not initialized")
+            logger.warning("Warning: Plot canvas not initialized")
             return
 
         selected_file = self.plot_file_menu.get()
@@ -4438,7 +4441,7 @@ class CSVProcessorApp(ctk.CTk):
         try:
             df = self.get_data_for_plotting(selected_file)
         except Exception as e:
-            print(f"Error loading data: {e}")
+            logger.error(f"Error loading data: {e}")
             self.plot_ax.text(
                 0.5,
                 0.5,
@@ -4519,18 +4522,18 @@ class CSVProcessorApp(ctk.CTk):
                         x_axis_col,
                     )
                 except Exception as e:
-                    print(f"Warning: Filter failed - {e}")
+                    logger.warning(f"Warning: Filter failed - {e}")
                     # Continue with unfiltered data
 
             # Plot signals
             for i, signal in enumerate(signals_to_plot):
                 if signal not in plot_df.columns:
-                    print(f"Warning: Signal {signal} not found in data")
+                    logger.warning(f"Warning: Signal {signal} not found in data")
                     continue
 
                 signal_data = plot_df[[x_axis_col, signal]].dropna()
                 if len(signal_data) == 0:
-                    print(f"Warning: No valid data for signal {signal}")
+                    logger.warning(f"Warning: No valid data for signal {signal}")
                     continue
 
                 try:
@@ -4609,10 +4612,10 @@ class CSVProcessorApp(ctk.CTk):
                                 linewidth=line_width,
                             )
                         except Exception as e:
-                            print(f"Warning: Filter comparison failed - {e}")
+                            logger.warning(f"Warning: Filter comparison failed - {e}")
 
                 except Exception as e:
-                    print(f"Error plotting signal {signal}: {e}")
+                    logger.error(f"Error plotting signal {signal}: {e}")
                     continue
 
             # Add trendline if configured
@@ -4628,7 +4631,7 @@ class CSVProcessorApp(ctk.CTk):
                         trendline_type,
                     )
             except Exception as e:
-                print(f"Warning: Trendline failed - {e}")
+                logger.warning(f"Warning: Trendline failed - {e}")
 
             # Configure plot appearance
             title = self.plot_title_entry.get() or f"Signals from {selected_file}"
@@ -4673,23 +4676,23 @@ class CSVProcessorApp(ctk.CTk):
                 # Auto-fit to show all data
                 try:
                     self.plot_ax.autoscale_view()
-                    print(f"Auto-zoom applied ({zoom_reason}): fitting to all data")
+                    logger.info(f"Auto-zoom applied ({zoom_reason}): fitting to all data")
                 except Exception as e:
-                    print(f"Warning: Could not auto-fit plot - {e}")
+                    logger.warning(f"Warning: Could not auto-fit plot - {e}")
             elif zoom_state:
                 # Restore previous zoom state
                 try:
                     self._apply_zoom_state(zoom_state)
-                    print(f"Zoom state restored ({zoom_reason}): preserving user view")
+                    logger.info(f"Zoom state restored ({zoom_reason}): preserving user view")
                 except Exception as e:
-                    print(f"Warning: Could not apply zoom state - {e}")
+                    logger.warning(f"Warning: Could not apply zoom state - {e}")
 
             # Force canvas update
             self.plot_canvas.draw_idle()  # type: ignore[no-untyped-call]
             self.status_label.configure(text="Plot updated successfully")
 
         except Exception as e:
-            print(f"Error in plotting: {e}")
+            logger.error(f"Error in plotting: {e}")
             import traceback
 
             traceback.print_exc()
@@ -4710,11 +4713,11 @@ class CSVProcessorApp(ctk.CTk):
     def _ensure_plot_canvas_ready(self) -> bool:
         """Ensure plot canvas is properly initialized."""
         if not hasattr(self, "plot_canvas") or self.plot_canvas is None:
-            print("ERROR: Plot canvas not initialized!")
+            logger.error("ERROR: Plot canvas not initialized!")
             return False
 
         if not hasattr(self, "plot_ax") or self.plot_ax is None:
-            print("ERROR: Plot axes not initialized!")
+            logger.error("ERROR: Plot axes not initialized!")
             return False
 
         # Force a draw to ensure canvas is ready
@@ -4722,7 +4725,7 @@ class CSVProcessorApp(ctk.CTk):
             self.plot_canvas.draw()  # type: ignore[no-untyped-call]
             return True
         except Exception as e:
-            print(f"ERROR: Canvas draw failed - {e}")
+            logger.error(f"ERROR: Canvas draw failed - {e}")
             return False
 
     def enable_plot_debugging(self) -> None:
@@ -4732,7 +4735,7 @@ class CSVProcessorApp(ctk.CTk):
     def debug_print(self, message: str) -> None:
         """Print debug message if debugging is enabled."""
         if hasattr(self, "plot_debug") and self.plot_debug:
-            print(f"[PLOT DEBUG] {message}")
+            logger.debug(f"[PLOT DEBUG] {message}")
 
     def _apply_plot_filter(
         self, df: pd.DataFrame, signal_cols: list[str], x_axis_col: str
@@ -4816,7 +4819,7 @@ class CSVProcessorApp(ctk.CTk):
                         df[signal].rolling(window=order * 2 + 1, center=True).mean()
                     )
                 except Exception as e:
-                    print(f"Error applying Butterworth filter: {e}")
+                    logger.error(f"Error applying Butterworth filter: {e}")
                     # Fallback to simple smoothing
                     filtered_df[signal] = (
                         df[signal].rolling(window=order * 2 + 1, center=True).mean()
@@ -4862,7 +4865,7 @@ class CSVProcessorApp(ctk.CTk):
                         df[signal].rolling(window=window, center=True).median()
                     )
                 except Exception as e:
-                    print(f"Error applying Hampel filter: {e}")
+                    logger.error(f"Error applying Hampel filter: {e}")
                     # Fallback to simple median filter
                     filtered_df[signal] = (
                         df[signal].rolling(window=window, center=True).median()
@@ -4911,7 +4914,7 @@ class CSVProcessorApp(ctk.CTk):
                         df[signal].rolling(window=window, center=True).mean()
                     )
                 except Exception as e:
-                    print(f"Error applying Savitzky-Golay filter: {e}")
+                    logger.error(f"Error applying Savitzky-Golay filter: {e}")
                     # Fallback to simple smoothing
                     filtered_df[signal] = (
                         df[signal].rolling(window=window, center=True).mean()
@@ -4998,7 +5001,7 @@ class CSVProcessorApp(ctk.CTk):
                                 & (plot_df[x_axis_col] <= self.trendline_selection_end)
                             ]
                     except Exception as e:
-                        print(f"Error applying visual selection: {e}")
+                        logger.error(f"Error applying visual selection: {e}")
 
         # Check if we still have enough data after filtering
         if len(plot_df) < 2:
@@ -5120,7 +5123,7 @@ class CSVProcessorApp(ctk.CTk):
 
         except Exception as e:
             messagebox.showerror("Trendline Error", f"Error adding trendline: {e!s}")
-            print(f"Error adding trendline: {e}")
+            logger.error(f"Error adding trendline: {e}")
             import traceback
 
             traceback.print_exc()
@@ -5161,45 +5164,45 @@ class CSVProcessorApp(ctk.CTk):
 
                 return df
         except Exception as e:
-            print(f"Error loading data for plotting: {e}")
+            logger.error(f"Error loading data for plotting: {e}")
             return None
 
     def _debug_plot_state(self) -> None:
         """Debug helper to print current plotting state."""
-        print("\n=== PLOT DEBUG STATE ===")
-        print(f"plot_file_menu: {getattr(self, 'plot_file_menu', None)}")
+        logger.debug("\n=== PLOT DEBUG STATE ===")
+        logger.info(f"plot_file_menu: {getattr(self, 'plot_file_menu', None)}")
         if hasattr(self, "plot_file_menu"):
-            print(f"  selected file: {self.plot_file_menu.get()}")
+            logger.info(f"  selected file: {self.plot_file_menu.get()}")
 
-        print(f"plot_xaxis_menu: {getattr(self, 'plot_xaxis_menu', None)}")
+        logger.info(f"plot_xaxis_menu: {getattr(self, 'plot_xaxis_menu', None)}")
         if hasattr(self, "plot_xaxis_menu"):
-            print(f"  selected x-axis: {self.plot_xaxis_menu.get()}")
+            logger.info(f"  selected x-axis: {self.plot_xaxis_menu.get()}")
 
-        print(f"plot_signal_vars: {getattr(self, 'plot_signal_vars', None)}")
+        logger.info(f"plot_signal_vars: {getattr(self, 'plot_signal_vars', None)}")
         if hasattr(self, "plot_signal_vars"):
-            print(f"  number of signals: {len(self.plot_signal_vars)}")
+            logger.info(f"  number of signals: {len(self.plot_signal_vars)}")
             selected = [
                 s for s, data in self.plot_signal_vars.items() if data["var"].get()
             ]
-            print(f"  selected signals: {selected}")
+            logger.info(f"  selected signals: {selected}")
 
-        print(f"plot_canvas: {getattr(self, 'plot_canvas', None)}")
-        print(f"plot_ax: {getattr(self, 'plot_ax', None)}")
+        logger.info(f"plot_canvas: {getattr(self, 'plot_canvas', None)}")
+        logger.info(f"plot_ax: {getattr(self, 'plot_ax', None)}")
 
         processed_files_len = (
             len(getattr(self, "processed_files", {}))
             if hasattr(self, "processed_files")
             else "None"
         )
-        print(f"processed_files: {processed_files_len}")
+        logger.info(f"processed_files: {processed_files_len}")
 
         loaded_data_cache_len = (
             len(getattr(self, "loaded_data_cache", {}))
             if hasattr(self, "loaded_data_cache")
             else "None"
         )
-        print(f"loaded_data_cache: {loaded_data_cache_len}")
-        print("========================\n")
+        logger.info(f"loaded_data_cache: {loaded_data_cache_len}")
+        logger.info("========================\n")
 
     def _force_signal_selection(self) -> None:
         """Force select at least one signal for debugging."""
@@ -5215,7 +5218,7 @@ class CSVProcessorApp(ctk.CTk):
                         word in signal.lower() for word in ["time", "date", "timestamp"]
                     ):
                         data["var"].set(True)
-                        print(f"DEBUG: Force-selected signal: {signal}")
+                        logger.debug(f"DEBUG: Force-selected signal: {signal}")
                         break
 
     def _show_setup_help(self) -> None:
@@ -6137,9 +6140,9 @@ COMMON MISTAKES TO AVOID:
                     text=f"Signal list saved: {signal_list_name} \
                         ({len(selected_signals)} signals)",
                 )
-                print(
-                    f"DEBUG: Signal list '{signal_list_name}' saved \
-                        successfully with {len(selected_signals)} signals",
+                logger.debug(
+                    f"DEBUG: Signal list '{signal_list_name}' saved "
+                    f"successfully with {len(selected_signals)} signals",
                 )
 
         except Exception as e:
@@ -6147,43 +6150,43 @@ COMMON MISTAKES TO AVOID:
 
     def load_signal_list(self) -> None:
         """Load a saved signal list from file."""
-        print("DEBUG: load_signal_list() called")
+        logger.debug("DEBUG: load_signal_list() called")
         try:
-            print("DEBUG: Opening file dialog")
+            logger.debug("DEBUG: Opening file dialog")
             file_path = filedialog.askopenfilename(
                 title="Load Signal List",
                 filetypes=[("JSON files", "*.json"), ("All files", "*.*")],
             )
-            print(f"DEBUG: File dialog returned: {file_path}")
+            logger.debug(f"DEBUG: File dialog returned: {file_path}")
 
             if not file_path:
-                print("DEBUG: No file selected, returning")
+                logger.debug("DEBUG: No file selected, returning")
                 return  # User cancelled
 
-            print(f"DEBUG: Loading file: {file_path}")
+            logger.debug(f"DEBUG: Loading file: {file_path}")
             with open(file_path) as f:
                 signal_list_data = json.load(f)
-            print(f"DEBUG: Successfully loaded JSON data: {signal_list_data}")
-            print(f"DEBUG: Successfully loaded JSON data: {signal_list_data}")
+            logger.debug(f"DEBUG: Successfully loaded JSON data: {signal_list_data}")
+            logger.debug(f"DEBUG: Successfully loaded JSON data: {signal_list_data}")
 
             # Validate the loaded data
-            print("DEBUG: Validating loaded data")
+            logger.debug("DEBUG: Validating loaded data")
             if (
                 not isinstance(signal_list_data, dict)
                 or "signals" not in signal_list_data
             ):
-                print("DEBUG: Invalid signal list file format")
+                logger.debug("DEBUG: Invalid signal list file format")
                 messagebox.showerror("Error", "Invalid signal list file format.")
                 return
 
             # Store the loaded signal list
-            print("DEBUG: Storing loaded signal list")
+            logger.debug("DEBUG: Storing loaded signal list")
             self.saved_signal_list = signal_list_data.get("signals", [])
             self.saved_signal_list_name = signal_list_data.get("name", "Unknown")
-            print(f"DEBUG: Saved signal list: {len(self.saved_signal_list)} signals")
+            logger.debug(f"DEBUG: Saved signal list: {len(self.saved_signal_list)} signals")
 
             # Update status
-            print("DEBUG: Updating status label")
+            logger.debug("DEBUG: Updating status label")
             self.signal_list_status_label.configure(
                 text=f"Loaded: {self.saved_signal_list_name} \
                     ({len(self.saved_signal_list)} signals)",
@@ -6191,21 +6194,21 @@ COMMON MISTAKES TO AVOID:
             )
 
             # Automatically apply the loaded signals if we have signals available
-            print(f"DEBUG: Checking if signal_vars exist: {bool(self.signal_vars)}")
+            logger.debug(f"DEBUG: Checking if signal_vars exist: {bool(self.signal_vars)}")
             if self.signal_vars:
-                print("DEBUG: Applying loaded signals internally")
+                logger.debug("DEBUG: Applying loaded signals internally")
                 self._apply_loaded_signals_internal()
 
-            print("DEBUG: Signal list loaded successfully without popup")
+            logger.debug("DEBUG: Signal list loaded successfully without popup")
             # No popup message - just update status bar for better user experience
             self.status_label.configure(
                 text=f"Signal list loaded: {self.saved_signal_list_name} \
                     ({len(self.saved_signal_list)} signals)",
             )
-            print("DEBUG: load_signal_list() completed successfully")
+            logger.debug("DEBUG: load_signal_list() completed successfully")
 
         except Exception as e:
-            print(f"DEBUG: Exception in load_signal_list: {e}")
+            logger.debug(f"DEBUG: Exception in load_signal_list: {e}")
             import traceback
 
             traceback.print_exc()
@@ -6213,9 +6216,9 @@ COMMON MISTAKES TO AVOID:
 
     def _apply_loaded_signals_internal(self) -> None:
         """Internal method to apply loaded signals without showing message boxes."""
-        print("DEBUG: _apply_loaded_signals_internal() called")
+        logger.debug("DEBUG: _apply_loaded_signals_internal() called")
         if not self.saved_signal_list or not self.signal_vars:
-            print(
+            logger.debug(
                 f"DEBUG: Early return - saved_signal_list: "
                 f"{bool(self.saved_signal_list)}, "
                 f"signal_vars: {bool(self.signal_vars)}"
@@ -6224,26 +6227,26 @@ COMMON MISTAKES TO AVOID:
 
         # Get current available signals (use set for O(1) lookup)
         available_signals = set(self.signal_vars.keys())
-        print(f"DEBUG: Available signals: {len(available_signals)}")
+        logger.debug(f"DEBUG: Available signals: {len(available_signals)}")
 
         # Find which saved signals are present
         present_signals = []
         missing_signals = []
 
-        print("DEBUG: Checking saved signals against available signals")
+        logger.debug("DEBUG: Checking saved signals against available signals")
         for saved_signal in self.saved_signal_list:
             if saved_signal in available_signals:  # O(1) lookup with set
                 present_signals.append(saved_signal)
             else:
                 missing_signals.append(saved_signal)
 
-        print(
+        logger.debug(
             f"DEBUG: Present signals: {len(present_signals)}, "
             f"Missing signals: {len(missing_signals)}"
         )
 
         # Apply the saved signals (select present ones, deselect others)
-        print("DEBUG: Applying signal selections")
+        logger.debug("DEBUG: Applying signal selections")
         for signal, data in self.signal_vars.items():
             if signal in present_signals:
                 data["var"].set(True)
@@ -6251,13 +6254,13 @@ COMMON MISTAKES TO AVOID:
                 data["var"].set(False)
 
         # Update status
-        print("DEBUG: Updating status label")
+        logger.debug("DEBUG: Updating status label")
         self.signal_list_status_label.configure(
             text=f"Applied: {self.saved_signal_list_name} \
                 ({len(present_signals)}/{len(self.saved_signal_list)} signals)",
             text_color="blue",
         )
-        print("DEBUG: _apply_loaded_signals_internal() completed")
+        logger.debug("DEBUG: _apply_loaded_signals_internal() completed")
 
     def apply_saved_signals(self) -> None:
         """Apply the saved signal list to the current file's signals."""
@@ -6648,8 +6651,8 @@ COMMON MISTAKES TO AVOID:
         idx = selection[0]
         plot_config = self.plots_list[idx]
 
-        print(f"DEBUG: Loading plot config: {plot_config.get('name', 'Unknown')}")
-        print(f"DEBUG: File in config: '{plot_config.get('file', '')}'")
+        logger.debug(f"DEBUG: Loading plot config: {plot_config.get('name', 'Unknown')}")
+        logger.debug(f"DEBUG: File in config: '{plot_config.get('file', '')}'")
 
         # Apply the plot configuration using the same method as the main plotting tab
         self._apply_plot_config(plot_config)
@@ -6713,7 +6716,7 @@ COMMON MISTAKES TO AVOID:
             with open(plots_file, "w") as f:
                 json.dump(self.plots_list, f, indent=2)
         except Exception as e:
-            print(f"Error saving plots to file: {e}")
+            logger.error(f"Error saving plots to file: {e}")
 
     def _load_plots_from_file(self) -> None:
         """Load plots list from file."""
@@ -6728,7 +6731,7 @@ COMMON MISTAKES TO AVOID:
                 self._update_plots_listbox()
                 self._update_load_plot_config_menu()
         except Exception as e:
-            print(f"Error loading plots from file: {e}")
+            logger.error(f"Error loading plots from file: {e}")
             self.plots_list = []
 
     def _select_tag_file(self) -> None:
@@ -6854,7 +6857,7 @@ COMMON MISTAKES TO AVOID:
                 df.to_csv(output_path, index=False)
 
             except Exception as e:
-                print(f"Error trimming {file_path}: {e}")
+                logger.error(f"Error trimming {file_path}: {e}")
 
         messagebox.showinfo(
             "Success",
@@ -8290,7 +8293,7 @@ For additional support or feature requests, please refer to the
             signals = plot_config.get("signals", [])
             file_name = plot_config.get("file", "")
 
-            print(
+            logger.debug(
                 f"DEBUG: Preview plot config - File: '{file_name}', Signals: {signals}",
             )
 
@@ -8476,6 +8479,7 @@ For additional support or feature requests, please refer to the
             # Format x-axis for time data
             if pd.api.types.is_datetime64_any_dtype(plot_df[time_col]):
                 import matplotlib.dates as mdates
+
 
                 self.preview_ax.xaxis.set_major_formatter(
                     mdates.DateFormatter("%H:%M")  # type: ignore[no-untyped-call]
@@ -8915,7 +8919,7 @@ For additional support or feature requests, please refer to the
                 self.plot_canvas.draw()  # type: ignore[no-untyped-call]
                 self.status_label.configure(text="Plot auto-fitted to data")
             except Exception as e:
-                print(f"Error auto-fitting plot: {e}")
+                logger.error(f"Error auto-fitting plot: {e}")
 
     def _should_auto_zoom(self, reason: str = "filter_change") -> bool:
         """Determine if auto-zoom should be applied based on the reason."""
@@ -8950,13 +8954,13 @@ For additional support or feature requests, please refer to the
                 self.plot_ax.set_xlim(zoom_state["xlim"])
                 self.plot_ax.set_ylim(zoom_state["ylim"])
             except Exception as e:
-                print(f"Error restoring zoom state: {e}")
+                logger.error(f"Error restoring zoom state: {e}")
 
 
 # =============================================================================
 # MAIN EXECUTION
 # =============================================================================
 if __name__ == "__main__":
-    print("Starting Advanced CSV Processor - Complete Version...")
+    logger.info("Starting Advanced CSV Processor - Complete Version...")
     app = CSVProcessorApp()
     app.mainloop()

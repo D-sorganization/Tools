@@ -1,7 +1,16 @@
 #!/usr/bin/env python3
 """
-Main Tools Launcher - Robust launcher with error handling and dependency management.
+Main Tools Launcher - DEPRECATED
+
+⚠️  DEPRECATION NOTICE: This launcher is deprecated in favor of UnifiedToolsLauncher.py
+    Please use UnifiedToolsLauncher.py instead, which provides:
+    - Modern PyQt6 interface
+    - Better tool discovery
+    - Improved error handling
+    - Consistent with repository standards
+
 This script launches the integrated Tools application with proper error handling.
+It is maintained for backward compatibility only.
 """
 
 import logging
@@ -11,6 +20,25 @@ import traceback
 from pathlib import Path
 from tkinter import Tk, messagebox
 
+# Add python/src to path for shared utilities
+sys.path.insert(0, str(Path(__file__).parent / "src" / "python" / "src"))
+
+try:
+    from utils.path_setup import setup_python_path as setup_python_path_shared
+except ImportError:
+    # Fallback if shared utility not available
+    def setup_python_path_shared() -> None:
+        """Fallback path setup."""
+        current_dir = Path(__file__).resolve().parent
+        paths_to_add = [
+            current_dir,
+            current_dir / "src" / "python" / "src",
+            current_dir / "src" / "data_processing" / "data_processor" / "python" / "data_processor",
+        ]
+        for path in paths_to_add:
+            if path.exists():
+                sys.path.insert(0, str(path))
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -19,41 +47,26 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Warn about deprecation
+logger.warning(
+    "⚠️  DEPRECATED: launch_tools_main.py is deprecated. "
+    "Please use UnifiedToolsLauncher.py instead."
+)
+
 
 def setup_python_path() -> None:
-    """Setup Python path for all required modules."""
+    """Setup Python path for all required modules (uses shared utility)."""
+    setup_python_path_shared()
+    # Add legacy-specific paths if needed
     current_dir = Path(__file__).resolve().parent
-
-    # Add paths for different components
-    paths_to_add = [
-        current_dir,
+    legacy_paths = [
         current_dir / "data_processing" / "data_processor" / "archive",
-        current_dir
-        / "data_processing"
-        / "data_processor"
-        / "python"
-        / "data_processor",
         current_dir / "replicants" / "python" / "folder_tool",
-        current_dir / "tools",
-        current_dir / "python" / "src",
     ]
-
-    for path in paths_to_add:
-        if path.exists():
+    for path in legacy_paths:
+        if path.exists() and str(path) not in sys.path:
             sys.path.insert(0, str(path))
-            logger.info(f"Added to Python path: {path}")
-
-    # Also set PYTHONPATH environment variable
-    existing_pythonpath = os.environ.get("PYTHONPATH", "")
-    new_paths = [str(p) for p in paths_to_add if p.exists()]
-
-    if existing_pythonpath:
-        new_pythonpath = os.pathsep.join(new_paths + [existing_pythonpath])
-    else:
-        new_pythonpath = os.pathsep.join(new_paths)
-
-    os.environ["PYTHONPATH"] = new_pythonpath
-    logger.info(f"Set PYTHONPATH: {new_pythonpath}")
+            logger.debug(f"Added legacy path: {path}")
 
 
 def check_dependencies() -> list[str]:
