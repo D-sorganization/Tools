@@ -6,9 +6,11 @@ import logging
 import re
 import subprocess
 import sys
-from datetime import UTC, datetime
+from datetime import datetime
 from pathlib import Path
 from typing import Any
+
+from tools.compatibility import UTC
 
 # Constants
 MATLAB_SCRIPT_TIMEOUT_SECONDS: int = 300

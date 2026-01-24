@@ -43,67 +43,31 @@ except ImportError:
 
 def check_dependencies() -> list[str]:
     """Check if required dependencies are available."""
-    required_packages = [
-        "customtkinter",
-        "pandas",
-        "numpy",
-        "matplotlib",
-        "PIL",  # Pillow
-    ]
+    try:
+        from tools.dependency_utils import check_dependencies as check_deps
 
-    missing_packages = []
-
-    for package in required_packages:
-        try:
-            # Basic import check using importlib or __import__
-            __import__(package)
-            logger.info(f"✓ {package} is available")
-        except ImportError:
-            missing_packages.append(package)
-            logger.warning(f"✗ {package} is missing")
-
-    return missing_packages
+        required_packages = [
+            "customtkinter",
+            "pandas",
+            "numpy",
+            "matplotlib",
+            "PIL",
+        ]
+        return check_deps(required_packages)
+    except ImportError:
+        logger.warning("Could not import tools.dependency_utils")
+        # Fallback minimal check
+        return []
 
 
 def install_missing_packages(packages: list[str]) -> bool:
     """Attempt to install missing packages."""
-    if not packages:
-        return True
-
-    logger.info(f"Attempting to install missing packages: {packages}")
-
     try:
-        import subprocess
+        from tools.dependency_utils import install_packages
 
-        # Map package names to pip names if different
-        pip_names = {
-            "PIL": "Pillow",
-            "customtkinter": "customtkinter",
-            "pandas": "pandas",
-            "numpy": "numpy",
-            "matplotlib": "matplotlib",
-        }
-
-        for package in packages:
-            pip_name = pip_names.get(package, package)
-            logger.info(f"Installing {pip_name}...")
-
-            result = subprocess.run(
-                [sys.executable, "-m", "pip", "install", pip_name],
-                capture_output=True,
-                text=True,
-            )
-
-            if result.returncode == 0:
-                logger.info(f"✓ Successfully installed {pip_name}")
-            else:
-                logger.error(f"✗ Failed to install {pip_name}: {result.stderr}")
-                return False
-
-        return True
-
-    except (subprocess.SubprocessError, OSError) as e:
-        logger.error(f"Error installing packages: {e}")
+        return install_packages(packages)
+    except ImportError:
+        logger.error("Could not import tools.dependency_utils for installation")
         return False
 
 

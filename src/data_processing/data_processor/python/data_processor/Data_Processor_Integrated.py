@@ -1918,32 +1918,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             from datetime import datetime
 
 
-try:
-    from utils.file_utils import safe_read_text, safe_write_text
-except ImportError:
-    from pathlib import Path
 
-try:
-    from utils.csv_utils import safe_read_csv, safe_write_csv
-except ImportError:
-    import pandas as pd
-    from pathlib import Path
-    def safe_read_csv(path, default=None, **kwargs):
-        try:
-            return pd.read_csv(path, **kwargs)
-        except Exception:
-            return default if default is not None else pd.DataFrame()
-    def safe_write_csv(df, path, create_parents=True, **kwargs):
-        Path(path).parent.mkdir(parents=True, exist_ok=True)
-        safe_write_csv(df, path, **kwargs)
-    def safe_read_text(path, encoding='utf-8', default=''):
-        try:
-            return safe_read_text(path, default=default, encoding=encoding)
-    def safe_write_text(path, content, encoding='utf-8', create_parents=True):
-        p = Path(path)
-        if create_parents:
-            p.parent.mkdir(parents=True, exist_ok=True)
-        safe_write_text(p, content, encoding=encoding)
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
@@ -2171,10 +2146,10 @@ except ImportError:
         filename = Path(name).stem if is_file else name
         ext = Path(name).suffix if is_file else ""
         counter = 1
-        new_path = Path(parent) / f"{filename} ({counter}{ext}")
+        new_path = Path(parent) / f"{filename} ({counter}){ext}"
         while Path(new_path).exists():
             counter += 1
-            new_path = Path(parent) / f"{filename} ({counter}{ext}")
+            new_path = Path(parent) / f"{filename} ({counter}){ext}"
         return new_path
 
     def create_help_tab(self, tab):
