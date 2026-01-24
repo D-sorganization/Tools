@@ -1190,7 +1190,7 @@ except ImportError:
         extensions = self.filter_extensions.get().strip()
         if extensions:
             ext_list = [ext.strip().lower() for ext in extensions.split(",")]
-            file_ext = os.path.splitext(file_path)[1].lower()
+            file_ext = Path(file_path).suffix.lower()
             if file_ext not in ext_list:
                 return False
 
@@ -1319,7 +1319,7 @@ except ImportError:
 
         # Organize by type
         if self.organize_by_type_var.get():
-            file_ext = os.path.splitext(filename)[1].lower()
+            file_ext = Path(filename).suffix.lower()
             type_mapping = {
                 ".jpg": "Images",
                 ".jpeg": "Images",
@@ -1415,7 +1415,7 @@ except ImportError:
             )
 
         # Generate unique extraction directory
-        extract_dir = self._get_unique_path(os.path.splitext(archive_path)[0])
+        extract_dir = self._get_unique_path(Path(archive_path).stem)
         extract_dir_obj = Path(extract_dir)
 
         try:
@@ -1759,7 +1759,7 @@ except ImportError:
 
                             file_size = os.path.getsize(file_path)
                             file_ext = (
-                                os.path.splitext(file)[1].lower() or "no_extension"
+                                Path(file).suffix.lower() or "no_extension"
                             )
 
                             # Validate file size

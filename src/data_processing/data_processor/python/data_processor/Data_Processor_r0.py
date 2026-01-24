@@ -2749,7 +2749,7 @@ class CSVProcessorApp(ctk.CTk):
         print(f"_export_csv_separate called with {len(processed_files)} files")
         exported_count = 0
         for file_path, df in processed_files:
-            base_name = os.path.splitext(Path(file_path).name)[0]
+            base_name = Path(file_path).stem
             output_path = Path(self.output_directory) / f"{base_name}_processed.csv"
             print(f"Exporting to: {output_path}")
 
@@ -2781,7 +2781,7 @@ class CSVProcessorApp(ctk.CTk):
             return
         compiled_df = pd.concat(
             [
-                df.assign(Source_File=os.path.splitext(Path(fp).name)[0])
+                df.assign(Source_File=Path(fp).stem)
                 for fp, df in processed_files
             ],
             ignore_index=True,
@@ -2805,7 +2805,7 @@ class CSVProcessorApp(ctk.CTk):
 
         with pd.ExcelWriter(final_path, engine="openpyxl") as writer:
             for file_path, df in processed_files:
-                sheet_name = os.path.splitext(Path(file_path).name)[0][:31]
+                sheet_name = Path(file_path).stem[:31]
                 df = self._apply_sorting(df)
                 df.to_excel(writer, sheet_name=sheet_name, index=False)
 
@@ -2815,7 +2815,7 @@ class CSVProcessorApp(ctk.CTk):
         """Export each file as a separate Excel file."""
         exported_count = 0
         for file_path, df in processed_files:
-            base_name = os.path.splitext(Path(file_path).name)[0]
+            base_name = Path(file_path).stem
             output_path = Path(self.output_directory) / f"{base_name}_processed.xlsx"
 
             final_path = self._check_file_overwrite(output_path)
@@ -2838,7 +2838,7 @@ class CSVProcessorApp(ctk.CTk):
         """Export each file as a separate MAT file."""
         exported_count = 0
         for file_path, df in processed_files:
-            base_name = os.path.splitext(Path(file_path).name)[0]
+            base_name = Path(file_path).stem
             output_path = Path(self.output_directory) / f"{base_name}_processed.mat"
 
             final_path = self._check_file_overwrite(output_path)
@@ -2864,7 +2864,7 @@ class CSVProcessorApp(ctk.CTk):
             return
         compiled_df = pd.concat(
             [
-                df.assign(Source_File=os.path.splitext(Path(fp).name)[0])
+                df.assign(Source_File=Path(fp).stem)
                 for fp, df in processed_files
             ],
             ignore_index=True,
@@ -6824,7 +6824,7 @@ COMMON MISTAKES TO AVOID:
                     )
 
                 # Save trimmed file
-                base_name = os.path.splitext(Path(file_path).name)[0]
+                base_name = Path(file_path).stem
                 output_path = Path(self.output_directory) / f"{base_name}_Trimmed.csv"
                 safe_write_csv(df, output_path, index=False)
 
@@ -7532,7 +7532,7 @@ For additional support or feature requests, please refer to the
     def _generate_unique_filename(self, base_path: str, extension: str) -> str:
         """Generate a unique filename to prevent overwriting existing files."""
         directory = Path(base_path).parent
-        base_name = os.path.splitext(Path(base_path).name)[0]
+        base_name = Path(base_path).stem
 
         # Remove any existing suffix like _processed, _1, _2, etc.
         base_name = base_name.removesuffix("_processed")  # Remove '_processed'
@@ -7569,8 +7569,8 @@ For additional support or feature requests, please refer to the
                 return file_path
             # No - generate unique name
             directory = Path(file_path).parent
-            base_name = os.path.splitext(Path(file_path).name)[0]
-            extension = os.path.splitext(file_path)[1]
+            base_name = Path(file_path).stem
+            extension = Path(file_path).suffix
             return self._generate_unique_filename(
                 Path(directory) / base_name,
                 extension,
@@ -8452,6 +8452,8 @@ For additional support or feature requests, please refer to the
             if pd.api.types.is_datetime64_any_dtype(plot_df[time_col]):
                 import matplotlib.dates as mdates
 
+
+from pathlib import Path
                 self.preview_ax.xaxis.set_major_formatter(
                     mdates.DateFormatter("%H:%M")  # type: ignore[no-untyped-call]
                 )

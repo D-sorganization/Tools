@@ -221,6 +221,38 @@ def fix_path_join_patterns(content: str) -> tuple[str, int]:
 
     content = pattern4.sub(replace4, content)
 
+    # Pattern: Path(...).stem -> Path(...).stem
+    pattern5 = re.compile(
+        r"os\.path\.splitext\s*\(\s*Path\s*\(([^)]+)\)\.name\s*\)\s*\[\s*0\s*\]"
+    )
+
+    def replace5(match):
+        nonlocal fixes
+        fixes += 1
+        return f"Path({match.group(1)}).stem"
+
+    content = pattern5.sub(replace5, content)
+
+    # Pattern: Path(path).stem -> Path(path).stem
+    pattern6 = re.compile(r"os\.path\.splitext\s*\(\s*([^)]+)\s*\)\s*\[\s*0\s*\]")
+
+    def replace6(match):
+        nonlocal fixes
+        fixes += 1
+        return f"Path({match.group(1)}).stem"
+
+    content = pattern6.sub(replace6, content)
+
+    # Pattern: Path(path).suffix -> Path(path).suffix
+    pattern7 = re.compile(r"os\.path\.splitext\s*\(\s*([^)]+)\s*\)\s*\[\s*1\s*\]")
+
+    def replace7(match):
+        nonlocal fixes
+        fixes += 1
+        return f"Path({match.group(1)}).suffix"
+
+    content = pattern7.sub(replace7, content)
+
     # Add Path import if fixes made
     if fixes > 0 and "from pathlib import Path" not in content:
         content = ensure_import(content, "from pathlib import Path")
@@ -386,52 +418,15 @@ def process_file(file_path: Path) -> int:
 try:
     from utils.csv_utils import safe_read_csv, safe_write_csv
 except ImportError:
-    from pathlib import Path
-
     import pandas as pd
+    from pathlib import Path
 
 
 try:
     from utils.csv_utils import safe_read_csv, safe_write_csv
 except ImportError:
-    from pathlib import Path
-
     import pandas as pd
-
-
-try:
-    from utils.csv_utils import safe_read_csv, safe_write_csv
-except ImportError:
     from pathlib import Path
-
-    import pandas as pd
-
-try:
-    from utils.csv_utils import safe_read_csv, safe_write_csv
-except ImportError:
-    from pathlib import Path
-
-    import pandas as pd
-
-    def safe_read_csv(path, default=None, **kwargs):
-        try:
-            return pd.read_csv(path, **kwargs)
-        except Exception:
-            return default if default is not None else pd.DataFrame()
-
-    def safe_write_csv(df, path, create_parents=True, **kwargs):
-        Path(path).parent.mkdir(parents=True, exist_ok=True)
-        safe_write_csv(df, path, **kwargs)
-
-    def safe_read_csv(path, default=None, **kwargs):
-        try:
-            return pd.read_csv(path, **kwargs)
-        except Exception:
-            return default if default is not None else pd.DataFrame()
-
-    def safe_write_csv(df, path, create_parents=True, **kwargs):
-        Path(path).parent.mkdir(parents=True, exist_ok=True)
-        safe_write_csv(df, path, **kwargs)
 
     def safe_read_csv(path, default=None, **kwargs):
         try:
