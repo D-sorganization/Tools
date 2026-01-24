@@ -12,7 +12,7 @@ try:
 except ImportError:
     # Fallback
     def init_default_logging():
-        logging.basicConfig(level=logging.INFO)
+        init_default_logging()
 import random
 from dataclasses import dataclass
 from typing import Any

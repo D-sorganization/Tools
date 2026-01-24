@@ -10,7 +10,7 @@ try:
 except ImportError:
     # Fallback
     def init_default_logging():
-        logging.basicConfig(level=logging.INFO)
+        init_default_logging()
 import shutil
 import subprocess
 

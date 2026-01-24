@@ -17,7 +17,7 @@ try:
 except ImportError:
     # Fallback
     def init_default_logging():
-        logging.basicConfig(level=logging.INFO)
+        init_default_logging()
 import re
 import sys
 from datetime import datetime
