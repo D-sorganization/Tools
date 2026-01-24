@@ -18,27 +18,27 @@ def fix_sys_path_manipulations(content: str, file_path: Path) -> tuple[str, int]
     """Replace sys.path manipulations with ensure_utils_in_path()."""
     global fix_count
     fixes = 0
-    
+
     # Pattern 1: sys.path.insert(0, str(...))
     pattern1 = r'sys\.path\.insert\s*\(\s*0\s*,\s*str\s*\([^)]+\)\s*\)'
-    
+
     def replace1(match: Match[str]) -> str:
         nonlocal fixes
         fixes += 1
         return 'ensure_utils_in_path()'
-    
+
     content = re.sub(pattern1, replace1, content)
-    
+
     # Pattern 2: sys.path.append(str(...))
     pattern2 = r'sys\.path\.append\s*\(\s*str\s*\([^)]+\)\s*\)'
-    
+
     def replace2(match: Match[str]) -> str:
         nonlocal fixes
         fixes += 1
         return 'ensure_utils_in_path()'
-    
+
     content = re.sub(pattern2, replace2, content)
-    
+
     # Add import if we made replacements
     if fixes > 0:
         # Check if import already exists
@@ -59,7 +59,7 @@ def fix_sys_path_manipulations(content: str, file_path: Path) -> tuple[str, int]
                     '        pass\n' +
                     content[insert_pos:]
                 )
-    
+
     fix_count += fixes
     return content, fixes
 
@@ -68,10 +68,10 @@ def fix_os_path_join(content: str) -> tuple[str, int]:
     """Replace os.path.join with Path operations."""
     global fix_count
     fixes = 0
-    
+
     # Pattern: os.path.join(a, b, c)
     pattern = r'os\.path\.join\s*\(([^)]+)\)'
-    
+
     def replace(match: Match[str]) -> str:
         nonlocal fixes
         fixes += 1
@@ -84,7 +84,7 @@ def fix_os_path_join(content: str) -> tuple[str, int]:
         for part in parts[1:]:
             result += f' / {part}'
         return result
-    
+
     content = re.sub(pattern, replace, content)
     fix_count += fixes
     return content, fixes
@@ -95,20 +95,20 @@ def process_file(file_path: Path) -> int:
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
-        
+
         original_content = content
         total_fixes = 0
-        
+
         # Apply fixes
         content, fixes = fix_sys_path_manipulations(content, file_path)
         total_fixes += fixes
-        
+
         # Only write if changes were made
         if content != original_content:
             with open(file_path, 'w', encoding='utf-8') as f:
                 f.write(content)
             return total_fixes
-        
+
         return 0
     except Exception as e:
         print(f"Error processing {file_path}: {e}", file=sys.stderr)
@@ -121,22 +121,22 @@ def main():
         target = Path(sys.argv[1])
     else:
         target = Path('.')
-    
+
     # Find all Python files
     python_files = list(target.rglob('*.py'))
-    
+
     print(f"Processing {len(python_files)} Python files...")
-    
+
     total_fixes = 0
     for file_path in python_files:
         if '__pycache__' in str(file_path) or '.git' in str(file_path):
             continue
-        
+
         fixes = process_file(file_path)
         if fixes > 0:
             print(f"Fixed {fixes} violations in {file_path}")
             total_fixes += fixes
-    
+
     print(f"\nTotal fixes applied: {total_fixes}")
     return 0 if total_fixes > 0 else 1
 
