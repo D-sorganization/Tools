@@ -8,11 +8,17 @@ from datetime import timedelta
 from pathlib import Path
 
 # Python 3.10 compatibility: Use compatibility shim for UTC
-# Use robust path resolution to find project root
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
-PYTHON_SRC_PATH = PROJECT_ROOT / "python" / "src"
-if str(PYTHON_SRC_PATH) not in sys.path:
-    sys.path.insert(0, str(PYTHON_SRC_PATH))
+# Use shared path utilities
+try:
+    from utils.path_helpers import ensure_utils_in_path
+    ensure_utils_in_path()
+except ImportError:
+    # Fallback: use robust path resolution to find project root
+    PROJECT_ROOT = Path(__file__).resolve().parents[3]
+    PYTHON_SRC_PATH = PROJECT_ROOT / "src" / "python" / "src"
+    if str(PYTHON_SRC_PATH) not in sys.path:
+        sys.path.insert(0, str(PYTHON_SRC_PATH))
+
 try:
     from utils.compatibility import UTC
 except ImportError:
