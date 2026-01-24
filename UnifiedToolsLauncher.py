@@ -6,8 +6,9 @@ This is the PRIMARY and RECOMMENDED launcher for accessing all tools.
 Provides a clean, tabbed interface for launching Python, MATLAB, and web tools.
 """
 
-import sys
 import logging
+import sys
+
 from PyQt6.QtWidgets import QApplication
 
 # Configure logging

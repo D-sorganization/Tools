@@ -1,23 +1,19 @@
 """Main window for the Unified Tools Launcher."""
 
 import html
-import locale
 import queue
-import sys
 import threading
 from datetime import datetime
 from typing import Any
 
 from PyQt6.QtCore import Qt, QTimer
-from PyQt6.QtGui import QFont, QIcon, QAction
+from PyQt6.QtGui import QFont, QIcon
 from PyQt6.QtWidgets import (
-    QApplication,
     QCheckBox,
     QGridLayout,
     QHBoxLayout,
     QLabel,
     QMainWindow,
-    QMessageBox,
     QScrollArea,
     QTabWidget,
     QTextEdit,
@@ -32,8 +28,8 @@ from tools.launch_utils import (
     PlatformError,
     SecurityError,
     ToolNotFoundError,
-    launch_tool,
     get_repo_root,
+    launch_tool,
 )
 
 
@@ -96,8 +92,7 @@ class UnifiedLauncher(QMainWindow):
         log_area.setReadOnly(True)
         log_area.setMaximumHeight(150)
         log_area.setPlaceholderText("Activity log will appear here...")
-        log_area.setStyleSheet(
-            """
+        log_area.setStyleSheet("""
             QTextEdit {
                 background-color: #f5f5f5;
                 border: 1px solid #ddd;
@@ -106,15 +101,13 @@ class UnifiedLauncher(QMainWindow):
                 font-size: 10pt;
                 padding: 5px;
             }
-        """
-        )
+        """)
         return log_area
 
     def _create_tool_tabs(self) -> QTabWidget:
         """Create the tabbed interface for tool categories."""
         tabs = QTabWidget()
-        tabs.setStyleSheet(
-            """
+        tabs.setStyleSheet("""
             QTabWidget::pane {
                 border: 1px solid #ddd;
                 background: white;
@@ -132,8 +125,7 @@ class UnifiedLauncher(QMainWindow):
                 border-bottom: 2px solid #2196F3;
                 font-weight: bold;
             }
-        """
-        )
+        """)
 
         tools_config = load_tools_config(self.repo_root)
 
