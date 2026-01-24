@@ -6,10 +6,7 @@ Provides a clean, tabbed interface for launching Python, MATLAB, and web tools.
 """
 
 import html
-import os
-import subprocess
 import sys
-import webbrowser
 from collections.abc import Callable
 
 if sys.version_info < (3, 10):  # noqa: UP036
