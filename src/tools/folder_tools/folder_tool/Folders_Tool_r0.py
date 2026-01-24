@@ -457,8 +457,7 @@ class FolderProcessorApp:
         try:
             constants_info = self.get_constants_info()
 
-            with open(output_path, "w", encoding="utf-8") as f:
-                f.write("# Folder Tool Constants Documentation\n")
+            safe_write_text(output_path, "# Folder Tool Constants Documentation\n")
                 f.write(f"Generated: {datetime.now()}\n\n")
                 f.write("## Constants Overview\n\n")
 
@@ -482,18 +481,18 @@ class FolderProcessorApp:
             if getattr(sys, "frozen", False):
                 # Running as compiled executable
                 base_dir = getattr(
-                    sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__))
+                    sys, "_MEIPASS", Path(os.path.abspath(__file__).parent)
                 )
             else:
                 # Running as script
-                base_dir = os.path.dirname(__file__)
+                base_dir = Path(__file__).parent
 
             # On Windows, set the app ID FIRST for better taskbar behavior
             self._set_windows_app_id()
 
             # Try ICO file first (best for Windows)
-            ico_path = os.path.join(base_dir, "paper_plane_icon.ico")
-            if os.path.exists(ico_path):
+            ico_path = Path(base_dir) / "paper_plane_icon.ico"
+            if Path(ico_path).exists():
                 self._load_ico_icon(ico_path)
             else:
                 # Fallback to PNG if ICO doesn't exist
@@ -555,11 +554,26 @@ class FolderProcessorApp:
 
     def _load_png_fallback(self, base_dir: str) -> None:
         """Loads PNG icon as fallback when ICO is not available."""
-        png_path = os.path.join(base_dir, "paper_plane_icon.png")
-        if os.path.exists(png_path):
+        png_path = Path(base_dir) / "paper_plane_icon.png"
+        if Path(png_path).exists():
             logger.info("ICO not found, using PNG fallback")
             from PIL import Image, ImageTk
 
+
+try:
+    from utils.file_utils import safe_read_text, safe_write_text
+except ImportError:
+    from pathlib import Path
+    def safe_read_text(path, encoding='utf-8', default=''):
+        try:
+            return Path(path).read_text(encoding=encoding)
+        except Exception:
+            return default
+    def safe_write_text(path, content, encoding='utf-8', create_parents=True):
+        p = Path(path)
+        if create_parents:
+            p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(content, encoding=encoding)
             image: Image.Image = Image.open(png_path)
 
             # Convert to RGBA for transparency support
@@ -1037,7 +1051,7 @@ class FolderProcessorApp:
 
         for folder in self.source_folders:
             try:
-                if not os.path.exists(folder):
+                if not Path(folder).exists():
                     logger.warning(f"Source folder no longer exists: {folder}")
                     continue
 
@@ -1050,8 +1064,8 @@ class FolderProcessorApp:
                 for root, _dirs, files in os.walk(folder):
                     for file in files:
                         try:
-                            file_path = os.path.join(root, file)
-                            if os.path.exists(file_path) and os.access(
+                            file_path = Path(root) / file
+                            if Path(file_path).exists() and os.access(
                                 file_path,
                                 os.R_OK,
                             ):
@@ -1300,7 +1314,7 @@ class FolderProcessorApp:
         Raises:
             OSError: If file system operations fail during path construction
         """
-        filename = os.path.basename(file_path)
+        filename = Path(file_path).name
         dest_path = dest_base
 
         # Organize by type
@@ -1331,18 +1345,18 @@ class FolderProcessorApp:
                 ".tar": "Archives",
             }
             file_type = type_mapping.get(file_ext, "Other")
-            dest_path = os.path.join(dest_path, file_type)
+            dest_path = Path(dest_path) / file_type
 
         # Organize by date
         if self.organize_by_date_var.get():
             try:
                 mtime = os.path.getmtime(file_path)
                 date_folder = datetime.fromtimestamp(mtime).strftime("%Y/%m")
-                dest_path = os.path.join(dest_path, date_folder)
+                dest_path = Path(dest_path) / date_folder
             except OSError:
-                dest_path = os.path.join(dest_path, "Unknown_Date")
+                dest_path = Path(dest_path) / "Unknown_Date"
 
-        return os.path.join(dest_path, filename)
+        return Path(dest_path) / filename
 
     def safe_extract_archive(self, archive_path: str) -> tuple[bool, str]:
         """Safely extracts an archive with validation.
@@ -1436,7 +1450,7 @@ class FolderProcessorApp:
 
                 for root, _dirs, files in os.walk(extract_dir):
                     for file in files:
-                        file_path = os.path.join(root, file)
+                        file_path = Path(root) / file
                         try:
                             file_size = os.path.getsize(file_path)
                             extracted_files.append(file_path)
@@ -1476,7 +1490,7 @@ class FolderProcessorApp:
             return (
                 True,
                 f"Successfully extracted and deleted "
-                f"'{os.path.basename(archive_path)}' "
+                f"'{Path(archive_path).name}' "
                 f"({'known' if 'extracted_files' in locals() else 'unknown'} "
                 "files)",
             )
@@ -1495,7 +1509,7 @@ class FolderProcessorApp:
                         f"{cleanup_error}",
                     )
 
-            return False, f"Failed to extract '{os.path.basename(archive_path)}': {e}"
+            return False, f"Failed to extract '{Path(archive_path).name}': {e}"
 
     def create_backup(self) -> str | None:
         """Creates a backup of source folders before processing.
@@ -1523,7 +1537,7 @@ class FolderProcessorApp:
             if not folder or not isinstance(folder, str):
                 logger.warning(f"Invalid source folder: {folder}")
                 continue
-            if not os.path.exists(folder):
+            if not Path(folder).exists():
                 logger.warning(f"Source folder no longer exists: {folder}")
                 continue
             if not os.access(folder, os.R_OK):
@@ -1569,7 +1583,7 @@ class FolderProcessorApp:
                     logger.info("Backup operation cancelled by user")
                     return None
 
-                if not os.path.exists(folder):
+                if not Path(folder).exists():
                     logger.warning(f"Source folder no longer exists: {folder}")
                     continue
 
@@ -1693,7 +1707,7 @@ class FolderProcessorApp:
             if not folder or not isinstance(folder, str):
                 logger.warning(f"Invalid source folder: {folder}")
                 continue
-            if not os.path.exists(folder):
+            if not Path(folder).exists():
                 logger.warning(f"Source folder no longer exists: {folder}")
                 continue
             if not os.access(folder, os.R_OK):
@@ -1733,10 +1747,10 @@ class FolderProcessorApp:
                         if self.cancel_operation:
                             break  # type: ignore[unreachable]
 
-                        file_path = os.path.join(root, file)
+                        file_path = Path(root) / file
                         try:
                             # Validate file exists and is accessible
-                            if not os.path.exists(file_path):
+                            if not Path(file_path).exists():
                                 folder_errors += 1
                                 continue
                             if not os.access(file_path, os.R_OK):
@@ -1822,7 +1836,7 @@ class FolderProcessorApp:
         report.extend(["", "LARGEST FILES:"])
         for file_path, size in sorted(largest_files, key=lambda x: x[1], reverse=True):
             size_mb = size / (1024 * 1024)
-            report.append(f"  {os.path.basename(file_path)}: {size_mb:.1f} MB")
+            report.append(f"  {Path(file_path).name}: {size_mb:.1f} MB")
 
         # Add error summary if any occurred
         if analysis_errors:
@@ -2040,9 +2054,9 @@ class FolderProcessorApp:
 
             for root, _dirs, files in os.walk(self.dest_folder):
                 for file in files:
-                    file_path = os.path.join(root, file)
+                    file_path = Path(root) / file
                     try:
-                        if os.path.exists(file_path) and os.access(file_path, os.R_OK):
+                        if Path(file_path).exists() and os.access(file_path, os.R_OK):
                             total_files += 1
                             total_size += os.path.getsize(file_path)
                     except (OSError, PermissionError):
@@ -2067,11 +2081,11 @@ class FolderProcessorApp:
                         if self.cancel_operation:
                             raise Exception("ZIP creation cancelled by user")
 
-                        file_path = os.path.join(root, file)
+                        file_path = Path(root) / file
 
                         # Validate file before adding to ZIP
                         try:
-                            if not os.path.exists(file_path):
+                            if not Path(file_path).exists():
                                 failed_files += 1
                                 logger.warning(f"File no longer exists: {file_path}")
                                 continue
@@ -2418,7 +2432,7 @@ class FolderProcessorApp:
 
         # Check source folders
         validation_results["source_folders_exist"] = (
-            all(os.path.exists(folder) for folder in self.source_folders)
+            all(Path(folder).exists() for folder in self.source_folders)
             if self.source_folders
             else True
         )
@@ -2431,7 +2445,7 @@ class FolderProcessorApp:
 
         # Check destination folder
         if self.dest_folder:
-            validation_results["destination_exists"] = os.path.exists(self.dest_folder)
+            validation_results["destination_exists"] = Path(self.dest_folder).exists()
             validation_results["destination_writable"] = os.access(
                 self.dest_folder,
                 os.W_OK,
@@ -2664,7 +2678,7 @@ class FolderProcessorApp:
                     if self.cancel_operation:
                         break  # type: ignore[unreachable]
 
-                    source_path = os.path.join(root, file)
+                    source_path = Path(root) / file
 
                     # Apply filters
                     if not self.validate_file_filters(source_path):
@@ -2684,7 +2698,7 @@ class FolderProcessorApp:
                     if final_dest_path != dest_path:
                         log.append(
                             f"Renamed: '{file}' to "
-                            f"'{os.path.basename(final_dest_path)}'",
+                            f"'{Path(final_dest_path).name}'",
                         )
                         renamed_count += 1
 
@@ -2848,7 +2862,7 @@ class FolderProcessorApp:
                 # Ensure drive exists on Windows
                 if sys.platform == "win32" and len(path_obj.parts) > 0:
                     drive = path_obj.parts[0]
-                    if not os.path.exists(drive):
+                    if not Path(drive).exists():
                         raise ValueError(f"Drive does not exist: {drive}")
         except Exception as e:
             raise ValueError(f"Invalid path format: {path} - {e}") from e
@@ -2988,7 +3002,7 @@ class FolderProcessorApp:
 
             # Confirm removal
             if len(selected_indices) == 1:
-                folder_name = os.path.basename(self.source_folders[selected_indices[0]])
+                folder_name = Path(self.source_folders[selected_indices[0]]).name
                 confirm = messagebox.askyesno(
                     "Confirm Removal",
                     f"Remove folder '{folder_name}' from source list?",
@@ -3089,7 +3103,7 @@ class FolderProcessorApp:
                     if self.cancel_operation:
                         break  # type: ignore[unreachable]
 
-                    source_path = os.path.join(root, file)
+                    source_path = Path(root) / file
 
                     # Apply filters
                     if not self.validate_file_filters(source_path):
@@ -3099,7 +3113,7 @@ class FolderProcessorApp:
 
                     # Get organized destination path (flattened to root)
                     dest_path = self.get_organized_path(source_path, self.dest_folder)
-                    dest_dir = os.path.dirname(dest_path)
+                    dest_dir = Path(dest_path).parent
 
                     # Create destination directory if needed
                     os.makedirs(dest_dir, exist_ok=True)
@@ -3109,7 +3123,7 @@ class FolderProcessorApp:
                     if final_dest_path != dest_path:
                         log.append(
                             f"Renamed: '{file}' to "
-                            f"'{os.path.basename(final_dest_path)}'",
+                            f"'{Path(final_dest_path).name}'",
                         )
 
                     try:
@@ -3178,8 +3192,8 @@ class FolderProcessorApp:
             if self.cancel_operation:
                 break
 
-            src_name = os.path.basename(src)
-            dest_src_path = os.path.join(self.dest_folder, src_name)
+            src_name = Path(src).name
+            dest_src_path = Path(self.dest_folder) / src_name
 
             for root, dirs, files in os.walk(src):
                 if self.cancel_operation:
@@ -3189,14 +3203,14 @@ class FolderProcessorApp:
                 if not files and not any(
                     any(Path(root, d).iterdir())
                     for d in dirs
-                    if os.path.exists(os.path.join(root, d))
+                    if Path(Path(root).exists() / d)
                 ):
                     empty_folders_skipped += 1
                     continue
 
                 # Calculate relative path from source root
                 rel_path = os.path.relpath(root, src)
-                dest_path = os.path.join(dest_src_path, rel_path)
+                dest_path = Path(dest_src_path) / rel_path
 
                 # Create destination directory
                 os.makedirs(dest_path, exist_ok=True)
@@ -3206,21 +3220,21 @@ class FolderProcessorApp:
                     if self.cancel_operation:
                         break  # type: ignore[unreachable]
 
-                    source_file_path = os.path.join(root, file)
+                    source_file_path = Path(root) / file
 
                     # Apply filters
                     if not self.validate_file_filters(source_file_path):
                         processed_files += 1
                         continue
 
-                    dest_file_path = os.path.join(dest_path, file)
+                    dest_file_path = Path(dest_path) / file
 
                     # Handle naming conflicts
                     final_dest_path = self._get_unique_path(dest_file_path)
                     if final_dest_path != dest_file_path:
                         log.append(
                             f"Renamed: '{file}' to "
-                            f"'{os.path.basename(final_dest_path)}'",
+                            f"'{Path(final_dest_path).name}'",
                         )
 
                     try:

@@ -61,11 +61,17 @@ def check_dependencies(
             from utils.path_helpers import get_project_root_from_file
 
             repo_root = get_project_root_from_file(__file__)
-            sys.path.insert(0, str(repo_root / "src" / "python" / "src"))
+            ensure_utils_in_path()
 
         from utils.dependency_checker import DependencyStatus
         from utils.dependency_checker import check_dependencies as check_deps
 
+
+try:
+    from utils.path_helpers import ensure_utils_in_path
+except ImportError:
+    def ensure_utils_in_path():
+        pass
         required = {
             "numpy": "pip install numpy",
             "pygame": "pip install pygame",

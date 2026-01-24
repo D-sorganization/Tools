@@ -38,11 +38,19 @@ except ImportError:
         if (
             current_path / "src" / "python" / "src" / "utils" / "compatibility.py"
         ).exists():
-            sys.path.insert(0, str(current_path / "src" / "python" / "src"))
+            ensure_utils_in_path()
             break
         current_path = current_path.parent
 
 from utils.compatibility import UTC  # noqa: E402
+
+try:
+    from utils.path_helpers import ensure_utils_in_path
+except ImportError:
+
+    def ensure_utils_in_path():
+        pass
+
 
 # Constants
 # [s] Timeout for MATLAB script execution - 5 minutes allows for large codebase analysis

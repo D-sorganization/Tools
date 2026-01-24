@@ -18,9 +18,15 @@ except ImportError:
     from utils.path_helpers import get_project_root_from_file
 
     repo_root = get_project_root_from_file(__file__)
-    sys.path.insert(0, str(repo_root / "src" / "python" / "src"))
+    ensure_utils_in_path()
 
 from utils.quality_checker import (
+
+try:
+    from utils.path_helpers import ensure_utils_in_path
+except ImportError:
+    def ensure_utils_in_path():
+        pass
     check_file,
     find_python_files,
     get_default_exclude_dirs,

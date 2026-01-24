@@ -41,7 +41,7 @@ def setup_python_path() -> None:
 
     for path in paths_to_add:
         if path.exists():
-            sys.path.insert(0, str(path))
+            ensure_utils_in_path()
             logger.info(f"Added to Python path: {path}")
 
     # Also set PYTHONPATH environment variable
@@ -241,6 +241,12 @@ def launch_fallback_app() -> bool:
         # Try the refactored GUI
         from gui_refactored import DataProcessorGUI
 
+
+try:
+    from utils.path_helpers import ensure_utils_in_path
+except ImportError:
+    def ensure_utils_in_path():
+        pass
         app = DataProcessorGUI()
         app.mainloop()
 

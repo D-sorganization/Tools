@@ -98,7 +98,7 @@ class PerformanceBenchmark:
 
         # Save to CSV
         csv_file = tmp_path / f"benchmark_data_{n_rows}x{n_signals}{suffix}.csv"
-        df.to_csv(csv_file, index=False)
+        safe_write_csv(df, csv_file, index=False)
 
         return str(csv_file)
 
@@ -406,8 +406,35 @@ class PerformanceBenchmark:
 
         finally:
             # Clean up test data
-            import shutil
+            pass
 
+
+try:
+    from utils.file_utils import safe_write_json
+except ImportError:
+    import json
+
+try:
+    from utils.csv_utils import safe_read_csv, safe_write_csv
+except ImportError:
+    from pathlib import Path
+
+    import pandas as pd
+
+    def safe_read_csv(path, default=None, **kwargs):
+        try:
+            return pd.read_csv(path, **kwargs)
+        except Exception:
+            return default if default is not None else pd.DataFrame()
+
+    def safe_write_csv(df, path, create_parents=True, **kwargs):
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        safe_write_csv(df, path, **kwargs)
+
+    def safe_write_json(path, data, indent=2, create_parents=True):
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=indent)
             if tmp_path.exists():
                 shutil.rmtree(tmp_path)
 
@@ -508,8 +535,7 @@ class PerformanceBenchmark:
 
     def save_results(self, output_file: str) -> None:
         """Save benchmark results to JSON file."""
-        with open(output_file, "w") as f:
-            json.dump(self.results, f, indent=2)
+        safe_write_json(output_file, self.results, indent=2)
 
     def print_summary(self) -> None:
         """Print benchmark summary."""

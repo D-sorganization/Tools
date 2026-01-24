@@ -48,7 +48,7 @@ except ImportError:
 # Import the original data processor
 import sys
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(Path(os.path.abspath(__file__).parent))
 from Data_Processor_r0 import CSVProcessorApp as OriginalCSVProcessorApp
 
 # Import folder tool functionality
@@ -99,7 +99,7 @@ class FileFormatDetector:
     @staticmethod
     def detect_format(file_path: str) -> str | None:
         """Detect file format from path and content."""
-        if not os.path.exists(file_path):
+        if not Path(file_path).exists():
             return None
 
         # Check by extension first
@@ -218,9 +218,9 @@ class DataWriter:
         """Write DataFrame to file based on format type."""
         try:
             if format_type == "csv":
-                df.to_csv(file_path, index=False, **kwargs)
+                safe_write_csv(df, file_path, index=False, **kwargs)
             elif format_type == "tsv":
-                df.to_csv(file_path, sep="\t", index=False, **kwargs)
+                safe_write_csv(df, file_path, sep="\t", index=False, **kwargs)
             elif format_type == "parquet":
                 if not PYARROW_AVAILABLE:
                     raise ImportError("PyArrow is required for parquet files")
@@ -558,7 +558,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             for root, _dirs, filenames in os.walk(folder):
                 for filename in filenames:
                     if Path(filename).suffix.lower() in supported_extensions:
-                        files.append(os.path.join(root, filename))
+                        files.append(Path(root) / filename)
 
             if files:
                 self.converter_input_files = files
@@ -596,7 +596,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             file_frame.pack(fill="x", padx=5, pady=2)
 
             # File name (truncated if too long)
-            filename = os.path.basename(file_path)
+            filename = Path(file_path).name
             if len(filename) > 40:
                 filename = filename[:37] + "..."
 
@@ -733,7 +733,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         if not format_type:
                             self._log_conversion_message(
                                 "Warning: Could not detect format for "
-                                "{os.path.basename(file_path)}"
+                                "{Path(file_path).name}"
                             )
                             continue
 
@@ -751,13 +751,13 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             else:
                                 self._log_conversion_message(
                                     "Warning: No selected"
-                                    "columns found in {os.path.basename(file_path)}"
+                                    "columns found in {Path(file_path).name}"
                                 )
                                 continue
 
                         combined_data.append(df)
                         self._log_conversion_message(
-                            f"Loaded {os.path.basename(file_path)}: {len(df)} rows, "
+                            f"Loaded {Path(file_path).name}: {len(df)} rows, "
                             f"{len(df.columns)} columns"
                         )
 
@@ -766,7 +766,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
                     except Exception as e:
                         self._log_conversion_message(
-                            f"Error reading {os.path.basename(file_path)}: {str(e)}"
+                            f"Error reading {Path(file_path).name}: {str(e)}"
                         )
 
                 if combined_data:
@@ -775,9 +775,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         output_filename = self._generate_output_filename(
                             output_format, "combined_data"
                         )
-                        output_path = os.path.join(
-                            self.converter_output_path, output_filename
-                        )
+                        output_path = Path(self.converter_output_path) / output_filename
 
                         DataWriter.write_file(combined_df, output_path, output_format)
                         self._log_conversion_message(
@@ -807,7 +805,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         if not format_type:
                             self._log_conversion_message(
                                 "Warning: Could not detect format for "
-                                "{os.path.basename(file_path)}"
+                                "{Path(file_path).name}"
                             )
                             continue
 
@@ -825,22 +823,20 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             else:
                                 self._log_conversion_message(
                                     "Warning: No selected"
-                                    "columns found in {os.path.basename(file_path)}"
+                                    "columns found in {Path(file_path).name}"
                                 )
                                 continue
 
                         # Generate output filename
-                        base_name = os.path.splitext(os.path.basename(file_path))[0]
+                        base_name = os.path.splitext(Path(file_path).name)[0]
                         output_filename = self._generate_output_filename(
                             output_format, base_name
                         )
-                        output_path = os.path.join(
-                            self.converter_output_path, output_filename
-                        )
+                        output_path = Path(self.converter_output_path) / output_filename
 
                         DataWriter.write_file(df, output_path, output_format)
                         self._log_conversion_message(
-                            f"Converted {os.path.basename(file_path)}"
+                            f"Converted {Path(file_path).name}"
                             "-> {output_filename}"
                         )
 
@@ -849,7 +845,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
                     except Exception as e:
                         self._log_conversion_message(
-                            f"Error converting {os.path.basename(file_path)}: {str(e)}"
+                            f"Error converting {Path(file_path).name}: {str(e)}"
                         )
 
             self.converter_status_label.configure(
@@ -910,8 +906,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             )
             if file_path:
                 try:
-                    with open(file_path, "w") as f:
-                        f.write(log_content)
+                    safe_write_text(file_path, log_content)
                     messagebox.showinfo("Success", f"Log saved to {file_path}")
                 except Exception as e:
                     messagebox.showerror("Error", f"Failed to save log: {str(e)}")
@@ -1563,7 +1558,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             for src in self.folder_source_folders:
                 for root, _dirs, files in os.walk(src):
                     for file in files:
-                        all_file_paths.append(os.path.join(root, file))
+                        all_file_paths.append(Path(root) / file)
 
             total_files = len(all_file_paths)
             if total_files == 0:
@@ -1594,7 +1589,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 dest_path = self._folder_get_organized_path(
                     source_path, self.folder_destination
                 )
-                dest_dir = os.path.dirname(dest_path)
+                dest_dir = Path(dest_path).parent
 
                 # Create destination directory if needed
                 os.makedirs(dest_dir, exist_ok=True)
@@ -1609,7 +1604,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         shutil.copy2(source_path, final_dest_path)
                     copied_count += 1
                 except Exception as e:
-                    print(f"Error copying '{os.path.basename(source_path)}': {e}")
+                    print(f"Error copying '{Path(source_path).name}': {e}")
 
                 processed_files += 1
                 if processed_files % 10 == 0:  # Update progress every 10 files
@@ -1654,7 +1649,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             for src in self.folder_source_folders:
                 for root, _dirs, files in os.walk(src):
                     for file in files:
-                        all_file_paths.append((os.path.join(root, file), file))
+                        all_file_paths.append((Path(root) / file, file))
 
             total_files = len(all_file_paths)
             if total_files == 0:
@@ -1682,7 +1677,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                     continue
 
                 # For flatten operation, files go directly to destination root
-                dest_path = os.path.join(self.folder_destination, file)
+                dest_path = Path(self.folder_destination) / file
 
                 # Handle naming conflicts
                 final_dest_path = self._folder_get_unique_path(dest_path)
@@ -1741,7 +1736,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 for root, _dirs, files in os.walk(src):
                     if files:  # Skip empty directories
                         for file in files:
-                            source_path = os.path.join(root, file)
+                            source_path = Path(root) / file
                             all_file_data.append((source_path, file, src, root))
 
             total_files = len(all_file_data)
@@ -1765,10 +1760,10 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                     break
 
                 # Calculate destination path
-                src_name = os.path.basename(src)
-                dest_src_path = os.path.join(self.folder_destination, src_name)
+                src_name = Path(src).name
+                dest_src_path = Path(self.folder_destination) / src_name
                 rel_path = os.path.relpath(root, src)
-                dest_dir = os.path.join(dest_src_path, rel_path)
+                dest_dir = Path(dest_src_path) / rel_path
 
                 # Create destination directory if not already created
                 if dest_dir not in created_dirs:
@@ -1782,7 +1777,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                     processed_files += 1
                     continue
 
-                dest_path = os.path.join(dest_dir, file)
+                dest_path = Path(dest_dir) / file
 
                 try:
                     if not self.folder_preview_mode_var.get():
@@ -1864,7 +1859,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         base, _, ext = match.groups()
                         base_name = f"{base}{ext}"
                         files_by_base_name.setdefault(base_name, []).append(
-                            os.path.join(root, filename)
+                            Path(root) / filename
                         )
 
                 for _base_name, file_list in files_by_base_name.items():
@@ -1917,6 +1912,35 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             from collections import defaultdict
             from datetime import datetime
 
+
+try:
+    from utils.file_utils import safe_read_text, safe_write_text
+except ImportError:
+    from pathlib import Path
+
+try:
+    from utils.csv_utils import safe_read_csv, safe_write_csv
+except ImportError:
+    import pandas as pd
+    from pathlib import Path
+    def safe_read_csv(path, default=None, **kwargs):
+        try:
+            return pd.read_csv(path, **kwargs)
+        except Exception:
+            return default if default is not None else pd.DataFrame()
+    def safe_write_csv(df, path, create_parents=True, **kwargs):
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        safe_write_csv(df, path, **kwargs)
+    def safe_read_text(path, encoding='utf-8', default=''):
+        try:
+            return Path(path).read_text(encoding=encoding)
+        except Exception:
+            return default
+    def safe_write_text(path, content, encoding='utf-8', create_parents=True):
+        p = Path(path)
+        if create_parents:
+            p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(content, encoding=encoding)
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
@@ -1957,7 +1981,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         if self.folder_cancel_flag:
                             break
 
-                        file_path = os.path.join(root, file)
+                        file_path = Path(root) / file
                         try:
                             file_size = os.path.getsize(file_path)
                             file_ext = (
@@ -2019,7 +2043,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             for file_path, size in top_10_files:
                 size_mb = size / (1024 * 1024)
                 report_lines.append(
-                    f"  {os.path.basename(file_path)}: {size_mb:.1f} MB"
+                    f"  {Path(file_path).name}: {size_mb:.1f} MB"
                 )
 
             # Show report in a dialog
@@ -2091,7 +2115,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
     def _folder_get_organized_path(self, file_path, dest_base):
         """Returns the organized destination path based on organization options."""
-        filename = os.path.basename(file_path)
+        filename = Path(file_path).name
         dest_path = dest_base
 
         # Organize by type
@@ -2122,31 +2146,31 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 ".tar": "Archives",
             }
             file_type = type_mapping.get(file_ext, "Other")
-            dest_path = os.path.join(dest_path, file_type)
+            dest_path = Path(dest_path) / file_type
 
         # Organize by date
         if self.folder_organize_by_date_var.get():
             try:
                 mtime = os.path.getmtime(file_path)
                 date_folder = datetime.fromtimestamp(mtime).strftime("%Y/%m")
-                dest_path = os.path.join(dest_path, date_folder)
+                dest_path = Path(dest_path) / date_folder
             except OSError:
-                dest_path = os.path.join(dest_path, "Unknown_Date")
+                dest_path = Path(dest_path) / "Unknown_Date"
 
-        return os.path.join(dest_path, filename)
+        return Path(dest_path) / filename
 
     def _folder_get_unique_path(self, path):
         """Get a unique path by adding a number if the file already exists."""
-        if not os.path.exists(path):
+        if not Path(path).exists():
             return path
         parent, name = os.path.split(path)
         is_file = "." in name and not os.path.isdir(path)
         filename, ext = os.path.splitext(name) if is_file else (name, "")
         counter = 1
-        new_path = os.path.join(parent, f"{filename} ({counter}){ext}")
-        while os.path.exists(new_path):
+        new_path = Path(parent) / f"{filename} ({counter}{ext}")
+        while Path(new_path).exists():
             counter += 1
-            new_path = os.path.join(parent, f"{filename} ({counter}){ext}")
+            new_path = Path(parent) / f"{filename} ({counter}{ext}")
         return new_path
 
     def create_help_tab(self, tab):

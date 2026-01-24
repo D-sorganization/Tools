@@ -11,9 +11,15 @@ from pathlib import Path
 try:
     from utils.path_helpers import ensure_utils_in_path
 
+
+try:
+    from utils.path_helpers import ensure_utils_in_path
+except ImportError:
+    def ensure_utils_in_path():
+        pass
     ensure_utils_in_path()
 except ImportError:
     # Fallback
     src_path = Path(__file__).parent.parent / "src"
     if str(src_path) not in sys.path:
-        sys.path.insert(0, str(src_path))
+        ensure_utils_in_path()

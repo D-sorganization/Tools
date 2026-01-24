@@ -6,7 +6,6 @@ Provides a clean, tabbed interface for launching Python, MATLAB, and web tools.
 """
 
 import html
-import json
 import os
 import subprocess
 import sys
@@ -90,7 +89,6 @@ def validate_tools_config(
 # CONFIGURATION & PATHS
 # =============================================================================
 REPO_ROOT = Path(__file__).parent.absolute()
-sys.path.append(str(REPO_ROOT / "src" / "python" / "src"))
 
 # Use shared path setup utility for consistency
 try:
@@ -99,7 +97,13 @@ try:
     setup_python_path(repo_root=REPO_ROOT)
 except ImportError:
     # Fallback if shared utility not available
-    sys.path.append(str(REPO_ROOT / "src" / "python" / "src"))
+    try:
+        from utils.path_helpers import ensure_utils_in_path
+
+        ensure_utils_in_path()
+    except ImportError:
+        # Last resort fallback
+        ensure_utils_in_path()
 
 # Import compatibility shim early to verify environment and provide friendly errors
 try:
@@ -144,8 +148,16 @@ except Exception as e:
     TOOLS = {}
     if TOOLS_FILE.exists():
         try:
-            with open(TOOLS_FILE) as f:
-                TOOLS = json.load(f)
+            from utils.file_utils import safe_read_json
+
+            TOOLS = safe_read_json(TOOLS_FILE, default=None)
+        except ImportError:
+            # Fallback to direct json.load
+
+            try:
+                TOOLS = safe_read_json(TOOLS_FILE, default=None)
+            except Exception as e:
+                sys.stderr.write(f"Error loading tools.json: {e}\n")
         except Exception as e:
             sys.stderr.write(f"Error loading tools.json: {e}\n")
         # Fallback to empty or default if needed
@@ -482,6 +494,16 @@ class UnifiedLauncher(QMainWindow):
                 self.log("✅ Process started (Python)")
                 import time
 
+                time.sleep(0.5)
+                if process.poll() is not None:
+                    error_msg = (
+                        f"Tool exited immediately (exit code: {process.returncode})\n\n"
+                        f"Tool: {tool_info.get('name', 'Unknown')}\n"
+                        f"Path: {path}\n\n"
+                        "Check the tool's requirements and dependencies."
+                    )
+                    self.log(f"❌ {error_msg}")
+                    QMessageBox.warning(self, "Tool Launch Warning", error_msg)
                 time.sleep(0.5)
                 if process.poll() is not None:
                     error_msg = (

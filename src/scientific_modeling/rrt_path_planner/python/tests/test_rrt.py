@@ -5,7 +5,8 @@ import unittest
 import numpy as np
 
 # Add src to path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
+sys.path.append(os.path.abspath(Path(Path(__file__).parent, "../src")))
+
 
 from star_wars_rrt import Obstacle, PursuitAI, RRTPlanner, Ship
 

@@ -3,7 +3,8 @@ import sys
 import unittest
 
 # Add the repo root to sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+sys.path.append(os.path.abspath(Path(Path(__file__).parent, "../..")))
+
 
 from web_applications.calculator.webapp import create_app
 

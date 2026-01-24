@@ -14,7 +14,7 @@ def check_python() -> bool:
     try:
         # Add utils to path
         repo_root = Path(__file__).parent.parent.parent.parent
-        sys.path.insert(0, str(repo_root / "src" / "python" / "src"))
+        ensure_utils_in_path()
         from utils.dependency_checker import check_python_version
 
         is_valid, version_str = check_python_version(min_major=3, min_minor=10)
@@ -42,9 +42,15 @@ def check_dependencies(script_dir: Path) -> bool:
     try:
         # Add utils to path
         repo_root = Path(__file__).parent.parent.parent.parent
-        sys.path.insert(0, str(repo_root / "src" / "python" / "src"))
+        ensure_utils_in_path()
         from utils.dependency_checker import install_from_requirements
 
+
+try:
+    from utils.path_helpers import ensure_utils_in_path
+except ImportError:
+    def ensure_utils_in_path():
+        pass
         verify_script = script_dir / "verify_installation.py"
         if verify_script.exists():
             try:
