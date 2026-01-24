@@ -406,16 +406,17 @@ class PerformanceBenchmark:
 
         finally:
             # Clean up test data
-            import shutil
+            pass
 
 
 try:
     from utils.file_utils import safe_write_json
 except ImportError:
     import json
+
     def safe_write_json(path, data, indent=2, create_parents=True):
         Path(path).parent.mkdir(parents=True, exist_ok=True)
-        with open(path, 'w', encoding='utf-8') as f:
+        with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=indent)
             if tmp_path.exists():
                 shutil.rmtree(tmp_path)

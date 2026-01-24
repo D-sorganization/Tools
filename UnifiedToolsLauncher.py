@@ -327,7 +327,6 @@ class UnifiedLauncher(QMainWindow):
 
     def log(self, message: str) -> None:
         """Log a message to the activity log area."""
-        from datetime import datetime
 
 
 try:
@@ -338,11 +337,13 @@ except ImportError:
 try:
     from utils.path_helpers import ensure_utils_in_path
 except ImportError:
+
     def ensure_utils_in_path():
         pass
+
     def safe_read_json(path, default=None):
         try:
-            with open(path, encoding='utf-8') as f:
+            with open(path, encoding="utf-8") as f:
                 return json.load(f)
         except Exception:
             return default
