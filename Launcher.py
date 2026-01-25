@@ -22,8 +22,23 @@ try:
         launch_tool,
     )
     BASE_DIR = get_repo_root()
-except ImportError:
-    BASE_DIR = Path(__file__).resolve().parent
+    except ImportError:
+        BASE_DIR = Path(__file__).resolve().parent
+
+        class LaunchError(Exception):
+            pass
+
+        class PlatformError(Exception):
+            pass
+
+        class SecurityError(Exception):
+            pass
+
+        class ToolNotFoundError(Exception):
+            pass
+
+        def launch_tool(*args, **kwargs):
+            raise LaunchError("Launch utilities not found. Please reinstall.")
 
 
 def load_tools_config() -> dict[str, list[Any]]:

@@ -48,13 +48,40 @@ try:
         sys.path.insert(0, str(utils_path))
     from utils.file_utils import safe_read_json, safe_read_text, safe_write_text
     from utils.csv_utils import safe_read_csv, safe_write_csv
-except ImportError:
-    # Minimal fallback logic if utils not found
-    def safe_read_json(path, default=None): return default
-    def safe_read_csv(path, default=None, **kwargs): return pd.DataFrame()
-    def safe_write_csv(df, path, **kwargs): pass
-    def safe_read_text(path, default=""): return default
-    def safe_write_text(path, content): pass
+    except ImportError:
+        # Minimal fallback logic if utils not found
+        def safe_read_json(path, default=None):
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception:
+                return default
+
+        def safe_read_csv(path, default=None, **kwargs):
+            try:
+                return pd.read_csv(path, **kwargs)
+            except Exception:
+                return default if default is not None else pd.DataFrame()
+
+        def safe_write_csv(df, path, **kwargs):
+            try:
+                df.to_csv(path, **kwargs)
+            except Exception:
+                pass
+
+        def safe_read_text(path, default=""):
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    return f.read()
+            except Exception:
+                return default
+
+        def safe_write_text(path, content):
+            try:
+                with open(path, "w", encoding="utf-8") as f:
+                    f.write(content)
+            except Exception:
+                pass
 # Module logger
 logger = get_logger(__name__)
 
