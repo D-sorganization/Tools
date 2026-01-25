@@ -457,15 +457,22 @@ class FolderProcessorApp:
         try:
             constants_info = self.get_constants_info()
 
-            safe_write_text(output_path, "# Folder Tool Constants Documentation\n")
-                f.write(f"Generated: {datetime.now()}\n\n")
-                f.write("## Constants Overview\n\n")
+            content = [
+                "# Folder Tool Constants Documentation",
+                f"Generated: {datetime.now()}",
+                "",
+                "## Constants Overview",
+                "",
+            ]
 
-                for const_name, info in constants_info.items():
-                    f.write(f"### {const_name}\n")
-                    f.write(f"- **Value**: {info['value']}\n")
-                    f.write(f"- **Units**: {info['units']}\n")
-                    f.write(f"- **Source**: {info['source']}\n\n")
+            for const_name, info in constants_info.items():
+                content.append(f"### {const_name}")
+                content.append(f"- **Value**: {info['value']}")
+                content.append(f"- **Units**: {info['units']}")
+                content.append(f"- **Source**: {info['source']}")
+                content.append("")
+
+            safe_write_text(output_path, "\n".join(content))
 
             logger.info(f"Constants documentation exported to: {output_path}")
             return True
@@ -556,42 +563,26 @@ class FolderProcessorApp:
         """Loads PNG icon as fallback when ICO is not available."""
         png_path = Path(base_dir) / "paper_plane_icon.png"
         if Path(png_path).exists():
-            logger.info("ICO not found, using PNG fallback")
             from PIL import Image, ImageTk
 
+            try:
+                image = Image.open(png_path)
+                if image.mode != "RGBA":
+                    image = image.convert("RGBA")
 
-try:
-    from utils.file_utils import safe_read_text, safe_write_text
-except ImportError:
-    from pathlib import Path
-    def safe_read_text(path, encoding='utf-8', default=''):
-        try:
-            return Path(path).read_text(encoding=encoding)
-        except Exception:
-            return default
-    def safe_write_text(path, content, encoding='utf-8', create_parents=True):
-        p = Path(path)
-        if create_parents:
-            p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_text(content, encoding=encoding)
-            image: Image.Image = Image.open(png_path)
+                photos = []
+                for size in ICON_SIZES:
+                    resized = image.resize((size, size), Image.Resampling.LANCZOS)
+                    photo = ImageTk.PhotoImage(resized)
+                    photos.append(photo)
 
-            # Convert to RGBA for transparency support
-            if image.mode != "RGBA":
-                image = image.convert("RGBA")
+                if photos:
+                    self.root.iconphoto(True, *photos)
+                    self.icon_photos = photos
+                    logger.info(f"Loaded PNG icon: {png_path}")
+            except Exception as e:
+                logger.warning(f"Failed to load PNG icon: {e}")
 
-            # Create multiple sizes for better scaling using constants
-            photos = []
-            for size in ICON_SIZES:
-                resized = image.resize((size, size), Image.Resampling.LANCZOS)
-                photo = ImageTk.PhotoImage(resized)
-                photos.append(photo)
-
-            if photos:
-                self.root.iconphoto(True, *photos)
-                # Keep references to prevent garbage collection
-                self.icon_photos = photos
-                logger.info(f"Loaded PNG icon: {png_path}")
         else:
             logger.warning(
                 "No icon files found (paper_plane_icon.ico or paper_plane_icon.png)",
@@ -1758,9 +1749,7 @@ except ImportError:
                                 continue
 
                             file_size = os.path.getsize(file_path)
-                            file_ext = (
-                                Path(file).suffix.lower() or "no_extension"
-                            )
+                            file_ext = Path(file).suffix.lower() or "no_extension"
 
                             # Validate file size
                             if file_size < MIN_FILE_SIZE_BYTES:
@@ -2697,8 +2686,7 @@ except ImportError:
                     final_dest_path = self._get_unique_path(dest_path)
                     if final_dest_path != dest_path:
                         log.append(
-                            f"Renamed: '{file}' to "
-                            f"'{Path(final_dest_path).name}'",
+                            f"Renamed: '{file}' to " f"'{Path(final_dest_path).name}'",
                         )
                         renamed_count += 1
 
@@ -3122,8 +3110,7 @@ except ImportError:
                     final_dest_path = self._get_unique_path(dest_path)
                     if final_dest_path != dest_path:
                         log.append(
-                            f"Renamed: '{file}' to "
-                            f"'{Path(final_dest_path).name}'",
+                            f"Renamed: '{file}' to " f"'{Path(final_dest_path).name}'",
                         )
 
                     try:
@@ -3233,8 +3220,7 @@ except ImportError:
                     final_dest_path = self._get_unique_path(dest_file_path)
                     if final_dest_path != dest_file_path:
                         log.append(
-                            f"Renamed: '{file}' to "
-                            f"'{Path(final_dest_path).name}'",
+                            f"Renamed: '{file}' to " f"'{Path(final_dest_path).name}'",
                         )
 
                     try:

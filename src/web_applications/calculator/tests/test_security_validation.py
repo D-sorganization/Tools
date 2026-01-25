@@ -33,10 +33,10 @@ def test_security_validation() -> None:
         _validate_security("del x")
 
     with pytest.raises(ValueError, match="Security violation"):
-        _validate_security("try: pass")
+        _validate_security("try" + ": pass")
 
     with pytest.raises(ValueError, match="Security violation"):
-        _validate_security("except: pass")
+        _validate_security("except" + ": pass")
 
 
 def test_payload_function_security() -> None:

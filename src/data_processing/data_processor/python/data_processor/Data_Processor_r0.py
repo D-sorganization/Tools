@@ -2778,10 +2778,7 @@ class CSVProcessorApp(ctk.CTk):
         if not processed_files:
             return
         compiled_df = pd.concat(
-            [
-                df.assign(Source_File=Path(fp).stem)
-                for fp, df in processed_files
-            ],
+            [df.assign(Source_File=Path(fp).stem) for fp, df in processed_files],
             ignore_index=True,
         )
         compiled_df = self._apply_sorting(compiled_df)
@@ -2861,10 +2858,7 @@ class CSVProcessorApp(ctk.CTk):
         if not processed_files:
             return
         compiled_df = pd.concat(
-            [
-                df.assign(Source_File=Path(fp).stem)
-                for fp, df in processed_files
-            ],
+            [df.assign(Source_File=Path(fp).stem) for fp, df in processed_files],
             ignore_index=True,
         )
         compiled_df = self._apply_sorting(compiled_df)
@@ -5782,33 +5776,32 @@ COMMON MISTAKES TO AVOID:
                     try:
                         # Try to read the file to see if it's a valid configuration
                         data = safe_read_json(file_path, default=None)
-                            # Check if it has the expected structure:
-                            # processing configs have 'saved_at',
-                            # plotting configs have 'plot_name'
-                            if isinstance(data, dict) and (
-                                "saved_at" in data or "plot_name" in data
-                            ):
-                                if "saved_at" in data:
-                                    config_files.append(
-                                        (
-                                            file,
-                                            file_path,
-                                            data.get("saved_at", "Unknown"),
-                                            "Processing Config",
-                                        ),
-                                    )
-                                elif "plot_name" in data:
-                                    config_files.append(
-                                        (
-                                            file,
-                                            file_path,
-                                            data.get("created_date", "Unknown"),
-                                            "Plot Config",
-                                        ),
-                                    )
+                        # Check if it has the expected structure:
+                        # processing configs have 'saved_at',
+                        # plotting configs have 'plot_name'
+                        if isinstance(data, dict) and (
+                            "saved_at" in data or "plot_name" in data
+                        ):
+                            if "saved_at" in data:
+                                config_files.append(
+                                    (
+                                        file,
+                                        file_path,
+                                        data.get("saved_at", "Unknown"),
+                                        "Processing Config",
+                                    ),
+                                )
+                            elif "plot_name" in data:
+                                config_files.append(
+                                    (
+                                        file,
+                                        file_path,
+                                        data.get("created_date", "Unknown"),
+                                        "Plot Config",
+                                    ),
+                                )
                     except Exception:
-                        # Skip files that can't be read as JSON or don't have the right
-                        # structure
+                        # Skip files that can't be read as JSON or don't have the right structure
                         continue
 
             # Sort by creation date (newest first)
@@ -6685,7 +6678,8 @@ COMMON MISTAKES TO AVOID:
     def _save_plots_to_file(self) -> None:
         """Save plots list to file."""
         try:
-            plots_file = Path(os.path.expanduser("~"),
+            plots_file = Path(
+                os.path.expanduser("~"),
                 ".csv_processor_plots.json",
             )
             safe_write_json(plots_file, self.plots_list, indent=2)
@@ -6695,7 +6689,8 @@ COMMON MISTAKES TO AVOID:
     def _load_plots_from_file(self) -> None:
         """Load plots list from file."""
         try:
-            plots_file = Path(os.path.expanduser("~"),
+            plots_file = Path(
+                os.path.expanduser("~"),
                 ".csv_processor_plots.json",
             )
             if Path(plots_file).exists():
@@ -6747,7 +6742,9 @@ COMMON MISTAKES TO AVOID:
 
         try:
             # Load and process the DAT file with selected tags
-            df = safe_read_csv(self.dat_import_data_file_path, sep="\t", low_memory=False)
+            df = safe_read_csv(
+                self.dat_import_data_file_path, sep="\t", low_memory=False
+            )
 
             # Filter to only selected tags
             if "Time" in df.columns:
@@ -8450,8 +8447,6 @@ For additional support or feature requests, please refer to the
             if pd.api.types.is_datetime64_any_dtype(plot_df[time_col]):
                 import matplotlib.dates as mdates
 
-
-from pathlib import Path
                 self.preview_ax.xaxis.set_major_formatter(
                     mdates.DateFormatter("%H:%M")  # type: ignore[no-untyped-call]
                 )
@@ -8498,17 +8493,16 @@ from pathlib import Path
                     f"Signals: {', '.join(plot_config.get('signals', []))}\n"
                     f"Start Time: {plot_config.get('start_time', 'N/A')}\n"
                 )
+                content += f"End Time: {plot_config.get('end_time', 'N/A')}\n"
+
+                if "filter_type" in plot_config:
+                    content += f"Filter: {plot_config['filter_type']}\n"
+
+                content += "\nFull Configuration:\n"
+                for key, value in plot_config.items():
+                    content += f"  {key}: {value}\n"
+
                 safe_write_text(filepath, content)
-                    f.write(f"End Time: {plot_config.get('end_time', 'N/A')}\n")
-
-                    if "filter_type" in plot_config:
-                        f.write(f"Filter: {plot_config['filter_type']}\n")
-
-                    f.write("\nFull Configuration:\n")
-                    f.writelines(
-                        f"  {key}: {value}\n" for key, value in plot_config.items()
-                    )
-
                 exported_count += 1
 
             messagebox.showinfo(

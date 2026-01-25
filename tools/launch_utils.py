@@ -9,6 +9,23 @@ from pathlib import Path
 from typing import Any
 
 
+def get_repo_root() -> Path:
+    """Get the absolute path to the repository root.
+
+    Returns:
+        Path: Absolute path to the repository root.
+    """
+    # Start looking from the directory of this file
+    current = Path(__file__).resolve().parent
+    # Walk up until we find tools.json or .git
+    for _ in range(5):
+        if (current / "tools.json").exists() or (current / ".git").exists():
+            return current
+        current = current.parent
+    # Fallback to current working directory but this is less reliable
+    return Path.cwd()
+
+
 # Custom Exceptions
 class LaunchError(Exception):
     """Base class for launch errors."""

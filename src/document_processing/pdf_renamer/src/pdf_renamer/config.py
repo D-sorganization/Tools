@@ -292,20 +292,5 @@ def update_last_directory(directory: str) -> None:
 # Auto-load .env on import
 try:
     from dotenv import load_dotenv
-
-
-try:
-    from utils.path_helpers import ensure_utils_in_path
-except ImportError:
-    def ensure_utils_in_path():
-        pass
-    for env_path in [
-        Path(__file__).parent.parent.parent / ".env",
-        TOOLS_ENV_PATH,
-        Path.home() / ".pdf_renamer" / ".env",
-    ]:
-        if env_path.exists():
-            load_dotenv(env_path)
-            break
 except ImportError:
     pass

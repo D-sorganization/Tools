@@ -1,18 +1,22 @@
 # Assessment: Error Handling (Category D)
 
-## Grade: 7/10
+## Grade: 4 / 10
 
-## Summary
-Modern components like `UnifiedToolsLauncher.py` demonstrate good error handling practices (try-except with logging/user feedback). However, legacy scripts often use bare `except:` clauses or print statements instead of proper logging.
+## Analysis
+Error handling is inconsistent. Modern components use `try/except` blocks and custom exceptions, but legacy code relies on broad `except Exception:` blocks or simply printing errors. The CI pipeline's "False Green" behavior is a major error handling failure at the system level.
 
-## Strengths
-- **Modern Standards**: `AGENTS.md` explicitly forbids bare excepts.
-- **Launcher Stability**: The launcher handles missing tools and dependencies gracefully.
+## Key Findings
 
-## Weaknesses
-- **Legacy Violations**: Older scripts (`Data_Processor_r0.py`) likely contain bare excepts.
-- **Inconsistent UX**: Error messages vary widely between tools.
+### Strengths
+-   **Modern Apps**: `web_applications` generally show better error handling patterns.
+-   **Launchers**: `UnifiedToolsLauncher.py` attempts to catch and display errors via GUI dialogs.
+
+### Weaknesses
+-   **CI/CD Masking**: The CI pipeline suppresses exit codes, hiding critical errors.
+-   **Legacy Patterns**: Bare `except:` or broad `except Exception:` are found in legacy scripts.
+-   **Silent Failures**: Some scripts print errors to stdout but do not exit with a non-zero status code.
 
 ## Recommendations
-1. **Audit Legacy Code**: Scan for and replace bare `except:` clauses.
-2. **Standardize Errors**: Use custom exception classes for domain-specific errors.
+1.  **Fix CI**: Remove `|| echo` hacks from `ci-standard.yml`.
+2.  **Linting**: Enable `B` (flake8-bugbear) rules in `ruff` to catch bare excepts.
+3.  **Standardize**: Use a shared error handling utility for consistent logging and user feedback.

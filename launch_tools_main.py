@@ -41,70 +41,15 @@ except ImportError:
         logger.warning("Could not import utils.path_setup even after path patch.")
 
 
-def check_dependencies() -> list[str]:
-    """Check if required dependencies are available."""
-    required_packages = [
-        "customtkinter",
-        "pandas",
-        "numpy",
-        "matplotlib",
-        "PIL",  # Pillow
-    ]
+try:
+    from tools.dependency_utils import check_dependencies, install_packages
+except ImportError:
+    # Fallback to internal dummy if tools package not found
+    def check_dependencies(packages: list[str]) -> list[str]:
+        return []
 
-    missing_packages = []
-
-    for package in required_packages:
-        try:
-            # Basic import check using importlib or __import__
-            __import__(package)
-            logger.info(f"✓ {package} is available")
-        except ImportError:
-            missing_packages.append(package)
-            logger.warning(f"✗ {package} is missing")
-
-    return missing_packages
-
-
-def install_missing_packages(packages: list[str]) -> bool:
-    """Attempt to install missing packages."""
-    if not packages:
+    def install_packages(packages: list[str]) -> bool:
         return True
-
-    logger.info(f"Attempting to install missing packages: {packages}")
-
-    try:
-        import subprocess
-
-        # Map package names to pip names if different
-        pip_names = {
-            "PIL": "Pillow",
-            "customtkinter": "customtkinter",
-            "pandas": "pandas",
-            "numpy": "numpy",
-            "matplotlib": "matplotlib",
-        }
-
-        for package in packages:
-            pip_name = pip_names.get(package, package)
-            logger.info(f"Installing {pip_name}...")
-
-            result = subprocess.run(
-                [sys.executable, "-m", "pip", "install", pip_name],
-                capture_output=True,
-                text=True,
-            )
-
-            if result.returncode == 0:
-                logger.info(f"✓ Successfully installed {pip_name}")
-            else:
-                logger.error(f"✗ Failed to install {pip_name}: {result.stderr}")
-                return False
-
-        return True
-
-    except (subprocess.SubprocessError, OSError) as e:
-        logger.error(f"Error installing packages: {e}")
-        return False
 
 
 def create_constants_file() -> bool:
@@ -269,7 +214,7 @@ def _handle_missing_dependencies(missing_packages: list[str]) -> bool:
         root.destroy()
 
         if install:
-            return install_missing_packages(missing_packages)
+            return install_packages(missing_packages)
         return False
 
     except (OSError, RuntimeError) as e:
@@ -312,7 +257,8 @@ def main() -> bool:
         if not create_constants_file():
             raise RuntimeError("Failed to create required constants file")
 
-        missing_packages = check_dependencies()
+        required_packages = ["customtkinter", "pandas", "numpy", "matplotlib", "PIL"]
+        missing_packages = check_dependencies(required_packages)
         if missing_packages and not _handle_missing_dependencies(missing_packages):
             raise RuntimeError("Required packages are missing")
 

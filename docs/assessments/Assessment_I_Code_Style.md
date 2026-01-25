@@ -1,18 +1,21 @@
 # Assessment: Code Style (Category I)
 
-## Grade: 7/10
+## Grade: 7 / 10
 
-## Summary
-The project has adopted modern Python styling tools (`ruff`, `black`), which is excellent. However, the enforcement is lax in the CI pipeline, and a significant portion of legacy code likely violates these standards.
+## Analysis
+The project has adopted modern Python tooling (`ruff`, `black`) which is excellent. Configuration files exist (`ruff.toml`, `pyproject.toml`). However, the legacy codebase is largely non-compliant, and the CI check for formatting is often ignored or warns only.
 
-## Strengths
-- **Tooling**: `ruff` and `black` are configured and used.
-- **Config**: `ruff.toml` and `pyproject.toml` exist.
+## Key Findings
 
-## Weaknesses
-- **Enforcement**: CI allows style checks to fail (warning only).
-- **Legacy Debt**: Older files require significant manual intervention to pass formatting.
+### Strengths
+-   **Tooling**: `black` and `ruff` are the standard.
+-   **Config**: Clear configuration files are present at the root.
+
+### Weaknesses
+-   **Legacy Exclusion**: Large parts of the codebase (legacy) likely violate these standards.
+-   **Enforcement**: CI checks for style are advisory in some contexts (due to "False Green" setup).
 
 ## Recommendations
-1. **Strict CI**: Make `black --check` and `ruff check` blocking for all new files.
-2. **Baseline**: Use `ruff`'s baseline feature to ignore existing errors while enforcing standards on new code.
+1.  **Strict Enforcement**: Make style checks blocking in CI.
+2.  **Baseline**: Use a baseline file (e.g., `.flake8` exclude or `ruff` per-file-ignores) to strictly enforce style on new code while tolerating legacy debt temporarily.
+3.  **Auto-fix**: Configure a pre-commit hook to automatically format code.

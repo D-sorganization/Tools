@@ -8,15 +8,14 @@ import sys
 from pathlib import Path
 
 # Add python/src to PYTHONPATH for test imports using shared utility
-try:
-    from utils.path_helpers import ensure_utils_in_path
-
 
 try:
     from utils.path_helpers import ensure_utils_in_path
 except ImportError:
+
     def ensure_utils_in_path():
         pass
+
     ensure_utils_in_path()
 except ImportError:
     # Fallback

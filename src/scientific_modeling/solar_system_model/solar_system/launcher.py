@@ -66,19 +66,6 @@ def check_dependencies(
         from utils.dependency_checker import DependencyStatus
         from utils.dependency_checker import check_dependencies as check_deps
 
-
-try:
-    from utils.path_helpers import ensure_utils_in_path
-except ImportError:
-    def ensure_utils_in_path():
-        pass
-        required = {
-            "numpy": "pip install numpy",
-            "pygame": "pip install pygame",
-            "OpenGL": "pip install PyOpenGL PyOpenGL_accelerate",
-        }
-
-        return check_deps(required, spec_finder=spec_finder)
     except ImportError:
         # Fallback to local implementation
         required = {

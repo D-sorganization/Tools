@@ -1,18 +1,20 @@
 # Assessment: API Design (Category J)
 
-## Grade: 7/10
+## Grade: 7 / 10
 
-## Summary
-The `UnifiedToolsLauncher.py` introduces a solid plugin-based architecture, which is a significant improvement over previous ad-hoc scripts. However, the individual tools themselves often lack a consistent programmatic interface.
+## Analysis
+API design is improving. The `UnifiedToolsLauncher` system suggests a move towards a plugin-like architecture. Web applications show decent separation of concerns. However, legacy scripts are standalone and lack programmatic APIs, making them hard to reuse.
 
-## Strengths
-- **Plugin System**: The launcher's discovery mechanism (`core/plugin_manager.py`) is well-designed.
-- **Unified Entry**: Single entry point for diverse tools.
+## Key Findings
 
-## Weaknesses
-- **Tool APIs**: Many tools are designed as standalone scripts/GUIs rather than importable libraries.
-- **Inconsistency**: Parameter passing mechanisms vary between tools.
+### Strengths
+-   **Unified Launcher**: Defines a clear schema (`tools.json`) for integrating tools.
+-   **Web Apps**: `calculator` and `unit_converter` have distinct internal APIs.
+
+### Weaknesses
+-   **Legacy Scripts**: `Data_Processor_r0.py` mixes UI, logic, and data access, offering no clean API.
+-   **Inconsistency**: Different tools use different invocation methods (CLI args vs config files).
 
 ## Recommendations
-1. **Standard Interface**: Define a `Tool` Protocol/Interface that all tools must implement.
-2. **Library First**: Refactor tools to be libraries first, with a thin CLI/GUI wrapper.
+1.  **Standardize**: Enforce the `tools.json` schema for all runnable tools.
+2.  **Extract Libraries**: Refactor logic from scripts into importable libraries (e.g., `src/data_processing/lib`).

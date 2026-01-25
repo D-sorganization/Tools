@@ -4,11 +4,11 @@ import os
 import sys
 import unittest
 
+from pathlib import Path
+
 sys.path.insert(0, Path(Path(os.path.abspath(__file__).parent.parent)))
 
 from launcher import (
-
-from pathlib import Path
     DEFAULT_HEIGHT,
     DEFAULT_WIDTH,
     build_launch_command,

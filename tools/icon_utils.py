@@ -28,14 +28,15 @@ def ensure_pil_installed() -> None:
     if HAS_PIL:
         return
 
-    print("PIL (Pillow) not found. Installing...")
-    import subprocess
-    import sys
+    from tools.dependency_utils import install_packages
 
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "Pillow"])
-    from PIL import Image
+    logger.info("PIL (Pillow) not found. Attempting to install...")
+    if install_packages(["PIL"]):
+        from PIL import Image
 
-    HAS_PIL = True
+        HAS_PIL = True
+    else:
+        logger.error("Failed to install Pillow. Icon conversion may fail.")
 
 
 def convert_image_mode(img: "Image.Image") -> "Image.Image":

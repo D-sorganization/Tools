@@ -7,27 +7,28 @@ This is a simpler alternative for environments where PyQt6 is not available.
 import json
 import sys
 import tkinter as tk
-from pathlib import Path
 from tkinter import messagebox, ttk
 from typing import Any
 
 # Path helpers
-BASE_DIR = Path(__file__).resolve().parent
-
-# Import shared utilities
 try:
     from tools.launch_utils import (
         LaunchError,
         PlatformError,
         SecurityError,
         ToolNotFoundError,
+        get_repo_root,
         launch_tool,
     )
+
+    BASE_DIR = get_repo_root()
 except ImportError:
-    # If tools package not found, we can't function safely
+    root = tk.Tk()
+    root.withdraw()
     messagebox.showerror(
         "Critical Error",
-        "Could not import tools.launch_utils. Please ensure the 'tools' package is available.",
+        "Could not import required modules from 'tools.launch_utils'.\n"
+        "The application cannot start.",
     )
     sys.exit(1)
 
@@ -89,21 +90,23 @@ class ToolsLauncher(tk.Tk):
 
     def _get_ordered_categories(self) -> list[str]:
         """Get categories in preferred display order."""
-        # Define some preferred order, but allow others
-        preferred = [
-            "Unit Converters",
-            "Data Processors",
-            "Video Processors",
-            "Audio Processors",
-            "Folder Tools",
-        ]
-        categories = list(preferred)
+        try:
+            from tools.config_loader import CATEGORY_ORDER
+        except ImportError:
+            CATEGORY_ORDER = []
+
+        categories = []
+        # Add preferred categories first
+        for cat in CATEGORY_ORDER:
+            if cat in TOOLS:
+                categories.append(cat)
+
+        # Add any remaining categories
         for cat in TOOLS.keys():
             if cat not in categories:
                 categories.append(cat)
 
-        # Only include categories that actually exist
-        return [c for c in categories if c in TOOLS]
+        return categories
 
     def _create_tool_button(
         self, parent: ttk.Frame, tool_info: dict[str, Any]

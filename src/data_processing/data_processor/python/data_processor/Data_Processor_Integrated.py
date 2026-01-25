@@ -45,15 +45,33 @@ except ImportError:
     PYARROW_AVAILABLE = False
 
 
-# Import the original data processor
+# Find repo root and add standard paths
 import sys
+from pathlib import Path
 
 try:
-    from utils.path_helpers import ensure_utils_in_path
+    repo_root = Path(__file__).resolve().parent.parent.parent.parent.parent.parent
+    utils_path = repo_root / "src" / "python" / "src"
+    if utils_path.exists() and str(utils_path) not in sys.path:
+        sys.path.insert(0, str(utils_path))
 
-    ensure_utils_in_path()
-except ImportError:
-    sys.path.append(str(Path(__file__).parent))
+    from utils.file_utils import safe_read_text, safe_write_text
+    from utils.csv_utils import safe_read_csv, safe_write_csv
+except Exception:
+    # Minimal fallbacks if paths can't be resolved or utils not found
+    def safe_read_csv(path, **kwargs):
+        return pd.read_csv(path, **kwargs)
+
+    def safe_write_csv(df, path, **kwargs):
+        df.to_csv(path, **kwargs)
+
+    def safe_read_text(p, **kwargs):
+        return Path(p).read_text(**kwargs)
+
+    def safe_write_text(p, c, **kwargs):
+        Path(p).write_text(c, **kwargs)
+
+
 from Data_Processor_r0 import CSVProcessorApp as OriginalCSVProcessorApp
 
 # Import folder tool functionality
@@ -165,7 +183,7 @@ class DataReader:
         """Read file based on format type."""
         try:
             if format_type == "csv":
-                return pd.read_csv(file_path, **kwargs)
+                return safe_read_csv(file_path, **kwargs)
             elif format_type == "tsv":
                 return pd.read_csv(file_path, sep="\t", **kwargs)
             elif format_type == "parquet":
@@ -841,8 +859,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
                         DataWriter.write_file(df, output_path, output_format)
                         self._log_conversion_message(
-                            f"Converted {Path(file_path).name}"
-                            "-> {output_filename}"
+                            f"Converted {Path(file_path).name}" "-> {output_filename}"
                         )
 
                         processed_files += 1
@@ -1917,33 +1934,6 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             from collections import defaultdict
             from datetime import datetime
 
-
-try:
-    from utils.file_utils import safe_read_text, safe_write_text
-except ImportError:
-    from pathlib import Path
-
-try:
-    from utils.csv_utils import safe_read_csv, safe_write_csv
-except ImportError:
-    import pandas as pd
-    from pathlib import Path
-    def safe_read_csv(path, default=None, **kwargs):
-        try:
-            return pd.read_csv(path, **kwargs)
-        except Exception:
-            return default if default is not None else pd.DataFrame()
-    def safe_write_csv(df, path, create_parents=True, **kwargs):
-        Path(path).parent.mkdir(parents=True, exist_ok=True)
-        safe_write_csv(df, path, **kwargs)
-    def safe_read_text(path, encoding='utf-8', default=''):
-        try:
-            return safe_read_text(path, default=default, encoding=encoding)
-    def safe_write_text(path, content, encoding='utf-8', create_parents=True):
-        p = Path(path)
-        if create_parents:
-            p.parent.mkdir(parents=True, exist_ok=True)
-        safe_write_text(p, content, encoding=encoding)
             # Count total files for progress tracking
             total_files = 0
             for src in self.folder_source_folders:
@@ -1987,9 +1977,7 @@ except ImportError:
                         file_path = Path(root) / file
                         try:
                             file_size = os.path.getsize(file_path)
-                            file_ext = (
-                                Path(file).suffix.lower() or "no_extension"
-                            )
+                            file_ext = Path(file).suffix.lower() or "no_extension"
 
                             total_size += file_size
                             folder_files += 1
@@ -1997,8 +1985,7 @@ except ImportError:
                             file_types[file_ext] += 1
                             size_by_type[file_ext] += file_size
 
-                            # Track largest files (optimized: collect all,
-                            # sort once at end)
+                            # Track largest files
                             largest_files.append((file_path, file_size))
 
                         except OSError:
@@ -2045,9 +2032,7 @@ except ImportError:
             top_10_files = heapq.nlargest(10, largest_files, key=lambda x: x[1])
             for file_path, size in top_10_files:
                 size_mb = size / (1024 * 1024)
-                report_lines.append(
-                    f"  {Path(file_path).name}: {size_mb:.1f} MB"
-                )
+                report_lines.append(f"  {Path(file_path).name}: {size_mb:.1f} MB")
 
             # Show report in a dialog
             report_text = "\n".join(report_lines)
@@ -2171,10 +2156,10 @@ except ImportError:
         filename = Path(name).stem if is_file else name
         ext = Path(name).suffix if is_file else ""
         counter = 1
-        new_path = Path(parent) / f"{filename} ({counter}{ext}")
+        new_path = Path(parent) / f"{filename}_{counter}{ext}"
         while Path(new_path).exists():
             counter += 1
-            new_path = Path(parent) / f"{filename} ({counter}{ext}")
+            new_path = Path(parent) / f"{filename}_{counter}{ext}"
         return new_path
 
     def create_help_tab(self, tab):
