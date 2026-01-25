@@ -2778,10 +2778,7 @@ class CSVProcessorApp(ctk.CTk):
         if not processed_files:
             return
         compiled_df = pd.concat(
-            [
-                df.assign(Source_File=Path(fp).stem)
-                for fp, df in processed_files
-            ],
+            [df.assign(Source_File=Path(fp).stem) for fp, df in processed_files],
             ignore_index=True,
         )
         compiled_df = self._apply_sorting(compiled_df)
@@ -2861,10 +2858,7 @@ class CSVProcessorApp(ctk.CTk):
         if not processed_files:
             return
         compiled_df = pd.concat(
-            [
-                df.assign(Source_File=Path(fp).stem)
-                for fp, df in processed_files
-            ],
+            [df.assign(Source_File=Path(fp).stem) for fp, df in processed_files],
             ignore_index=True,
         )
         compiled_df = self._apply_sorting(compiled_df)
@@ -6526,8 +6520,7 @@ COMMON MISTAKES TO AVOID:
 
         plot_config = {
             "name": plot_name,
-            "description": plot_desc
-            or f"Plot configuration created on \
+            "description": plot_desc or f"Plot configuration created on \
                 {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}",
             "signals": selected_signals,
             "start_time": self.plots_list_start_time_entry.get(),
@@ -6684,7 +6677,8 @@ COMMON MISTAKES TO AVOID:
     def _save_plots_to_file(self) -> None:
         """Save plots list to file."""
         try:
-            plots_file = Path(os.path.expanduser("~"),
+            plots_file = Path(
+                os.path.expanduser("~"),
                 ".csv_processor_plots.json",
             )
             safe_write_json(plots_file, self.plots_list, indent=2)
@@ -6694,7 +6688,8 @@ COMMON MISTAKES TO AVOID:
     def _load_plots_from_file(self) -> None:
         """Load plots list from file."""
         try:
-            plots_file = Path(os.path.expanduser("~"),
+            plots_file = Path(
+                os.path.expanduser("~"),
                 ".csv_processor_plots.json",
             )
             if Path(plots_file).exists():
@@ -6746,7 +6741,9 @@ COMMON MISTAKES TO AVOID:
 
         try:
             # Load and process the DAT file with selected tags
-            df = safe_read_csv(self.dat_import_data_file_path, sep="\t", low_memory=False)
+            df = safe_read_csv(
+                self.dat_import_data_file_path, sep="\t", low_memory=False
+            )
 
             # Filter to only selected tags
             if "Time" in df.columns:
@@ -8503,7 +8500,7 @@ For additional support or feature requests, please refer to the
                 content += "\nFull Configuration:\n"
                 for key, value in plot_config.items():
                     content += f"  {key}: {value}\n"
-                
+
                 safe_write_text(filepath, content)
                 exported_count += 1
 

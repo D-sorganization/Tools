@@ -34,8 +34,7 @@ class ToolCard(QFrame):
     def setup_ui(self) -> None:
         """Initialize the card UI."""
         self.setFrameStyle(QFrame.Shape.StyledPanel | QFrame.Shadow.Raised)
-        self.setStyleSheet(
-            """
+        self.setStyleSheet("""
             ToolCard {
                 background-color: #ffffff;
                 border: 1px solid #e0e0e0;
@@ -45,8 +44,7 @@ class ToolCard(QFrame):
                 border: 1px solid #2196F3;
                 background-color: #f8fbff;
             }
-        """
-        )
+        """)
 
         layout = QVBoxLayout(self)
         layout.setSpacing(10)
@@ -55,29 +53,25 @@ class ToolCard(QFrame):
         header = QHBoxLayout()
         name = self.tool_info.get("name", "Unknown Tool")
         title = QLabel(name)
-        title.setStyleSheet(
-            """
+        title.setStyleSheet("""
             font-size: 14px;
             font-weight: bold;
             color: #333;
-        """
-        )
+        """)
         header.addWidget(title)
         header.addStretch()
 
         # Type badge
         tool_type = self.tool_info.get("type", "unknown")
         badge = QLabel(f" {tool_type.upper()} ")
-        badge.setStyleSheet(
-            f"""
+        badge.setStyleSheet(f"""
             background-color: {self._get_type_color(tool_type)};
             color: white;
             border-radius: 4px;
             font-size: 10px;
             font-weight: bold;
             padding: 2px;
-        """
-        )
+        """)
         header.addWidget(badge)
         layout.addLayout(header)
 
@@ -92,13 +86,11 @@ class ToolCard(QFrame):
         path_text = self.tool_info.get("path", "")
         path_lbl = QLabel(path_text)
         path_lbl.setWordWrap(True)
-        path_lbl.setStyleSheet(
-            """
+        path_lbl.setStyleSheet("""
             color: #999;
             font-family: monospace;
             font-size: 10px;
-        """
-        )
+        """)
         layout.addWidget(path_lbl)
         layout.addStretch()
 
@@ -106,8 +98,7 @@ class ToolCard(QFrame):
         btn = QPushButton("Launch Tool")
         btn.setCursor(Qt.CursorShape.PointingHandCursor)
         btn.clicked.connect(lambda: self.launch_callback(self.tool_info))
-        btn.setStyleSheet(
-            """
+        btn.setStyleSheet("""
             QPushButton {
                 background-color: #2196F3;
                 color: white;
@@ -122,8 +113,7 @@ class ToolCard(QFrame):
             QPushButton:pressed {
                 background-color: #0D47A1;
             }
-        """
-        )
+        """)
         layout.addWidget(btn)
 
     def _get_type_color(self, tool_type: str) -> str:

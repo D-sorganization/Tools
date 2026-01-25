@@ -28,15 +28,18 @@ try:
         sys.path.insert(0, str(utils_path))
     from utils.csv_utils import safe_read_csv, safe_write_csv
 except ImportError:
+
     def safe_read_csv(path, default=None, **kwargs):
         try:
             return pd.read_csv(path, **kwargs)
         except Exception:
             return default if default is not None else pd.DataFrame()
+
     def safe_write_csv(df, path, create_parents=True, **kwargs):
         if create_parents:
             Path(path).parent.mkdir(parents=True, exist_ok=True)
         df.to_csv(path, **kwargs)
+
 
 logger = get_logger(__name__)
 
@@ -165,7 +168,7 @@ class DataLoader:
                 progress_callback=progress_callback,
             )
             return signals
-            
+
         # Sequential signal detection
         all_signals = set()
         for i, file_path in enumerate(file_paths):
@@ -259,7 +262,9 @@ class DataLoader:
                     how=how,
                 )
 
-        logger.info(f"Combined result: {len(result)} rows, {len(result.columns)} columns")
+        logger.info(
+            f"Combined result: {len(result)} rows, {len(result.columns)} columns"
+        )
         return result
 
     def filter_by_time_range(
@@ -278,7 +283,9 @@ class DataLoader:
             t_end = pd.to_datetime(end_time).time()
 
             if t_start > t_end:
-                logger.warning(f"Start time {t_start} > End time {t_end}, returning empty")
+                logger.warning(
+                    f"Start time {t_start} > End time {t_end}, returning empty"
+                )
                 return df.iloc[0:0]
 
             filtered = df.between_time(start_time, end_time)
@@ -309,6 +316,7 @@ class DataLoader:
                 return True
             else:
                 from data_processor.file_utils import DataWriter
+
                 DataWriter.write_file(df, output_path, format_type, **kwargs)
                 return True
         except Exception as e:
