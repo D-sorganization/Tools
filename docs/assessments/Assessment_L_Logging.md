@@ -1,18 +1,21 @@
 # Assessment: Logging (Category L)
 
-## Grade: 6/10
+## Grade: 3 / 10
 
-## Summary
-The governance (`AGENTS.md`) correctly mandates the use of the `logging` module. However, the repository is in a transition state where many legacy files still rely on `print()` statements, making debugging and monitoring difficult.
+## Analysis
+Logging is substandard. The codebase contains significantly more `print()` statements than proper `logging` calls. This makes debugging in production or CI environments difficult and clutters the standard output.
 
-## Strengths
-- **Standards**: Clear rules against `print()` in production code.
-- **Adoption**: `UnifiedToolsLauncher.py` uses proper logging.
+## Key Findings
 
-## Weaknesses
-- **Legacy Violations**: `Data_Processor_r0.py` and other older scripts use `print`.
-- **Inconsistent Levels**: Lack of standardized logging levels across tools.
+### Strengths
+-   **Setup**: `setup_dev.py` and `UnifiedToolsLauncher.py` correctly configure logging.
+
+### Weaknesses
+-   **Print Debugging**: `print()` is used extensively (~394 occurrences) vs `logging` (~232).
+-   **Inconsistency**: No standardized logging format across modules.
+-   **Legacy**: `Data_Processor_r0.py` relies almost exclusively on `print`.
 
 ## Recommendations
-1. **Global Logger**: Ensure a centralized logging configuration is used by all tools.
-2. **Refactoring**: Systematically replace `print()` with `logger.info/debug/error`.
+1.  **Ban Print**: Enforce a linter rule (e.g., `flake8-print`) to forbid `print()` in production code.
+2.  **Migrate**: Mass migrate `print()` calls to `logger.info()` or `logger.debug()`.
+3.  **Config**: Centralize logging configuration in `src/utils/logger.py`.

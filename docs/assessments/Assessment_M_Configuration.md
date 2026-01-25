@@ -1,18 +1,20 @@
 # Assessment: Configuration (Category M)
 
-## Grade: 7/10
+## Grade: 6 / 10
 
-## Summary
-Configuration management is generally good, with `.env` files for secrets and `tools.json` for app config.
+## Analysis
+Configuration management is average. The project uses standard files (`tools.json`, `pytest.ini`, `pyproject.toml`) and supports environment variables (`.env`). However, some configuration is hardcoded or scattered.
 
-## Strengths
-- **Secrets**: `python-dotenv` is used; `.env.example` is present.
-- **Central Config**: `tools.json` centralizes tool definitions.
+## Key Findings
 
-## Weaknesses
-- **Hardcoding**: Some legacy scripts may still have hardcoded paths or settings.
-- **Validation**: `tools.json` validation was recently improved but can be stricter.
+### Strengths
+-   **Standard Formats**: usage of JSON and TOML for configuration.
+-   **Environment**: Support for `.env` files via `python-dotenv`.
+
+### Weaknesses
+-   **Hardcoding**: Some paths and settings are hardcoded in legacy scripts.
+-   **Fragmentation**: Configuration is split between root files and sub-directories without a clear hierarchy.
 
 ## Recommendations
-1. **Pydantic**: Use Pydantic models to validate `tools.json` and other config files strictly.
-2. **Environment Variables**: Audit for any remaining hardcoded constants.
+1.  **Centralize**: Use `dynaconf` or `pydantic-settings` to manage configuration from a single source.
+2.  **Externalize**: Move all hardcoded paths/constants to config files or env vars.
