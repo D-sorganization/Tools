@@ -7,6 +7,15 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
+# Preferred order for tool categories in launchers
+CATEGORY_ORDER = [
+    "Media Processing",
+    "Data Processing",
+    "Scientific Modeling",
+    "Web Applications",
+    "Development Tools",
+]
+
 
 def load_tools_config(repo_root: Path) -> dict[str, list[Any]]:
     """Load tools configuration from tools.json.

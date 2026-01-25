@@ -22,7 +22,6 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from tools.config_loader import load_tools_config
 from tools.gui.components.tool_card import ToolCard
 from tools.launch_utils import (
     LaunchError,
@@ -93,7 +92,8 @@ class UnifiedLauncher(QMainWindow):
         log_area.setReadOnly(True)
         log_area.setMaximumHeight(150)
         log_area.setPlaceholderText("Activity log will appear here...")
-        log_area.setStyleSheet("""
+        log_area.setStyleSheet(
+            """
             QTextEdit {
                 background-color: #f5f5f5;
                 border: 1px solid #ddd;
@@ -102,13 +102,15 @@ class UnifiedLauncher(QMainWindow):
                 font-size: 10pt;
                 padding: 5px;
             }
-        """)
+        """
+        )
         return log_area
 
     def _create_tool_tabs(self) -> QTabWidget:
         """Create the tabbed interface for tool categories."""
         tabs = QTabWidget()
-        tabs.setStyleSheet("""
+        tabs.setStyleSheet(
+            """
             QTabWidget::pane {
                 border: 1px solid #ddd;
                 background: white;
@@ -126,7 +128,10 @@ class UnifiedLauncher(QMainWindow):
                 border-bottom: 2px solid #2196F3;
                 font-weight: bold;
             }
-        """)
+        """
+        )
+
+        from tools.config_loader import CATEGORY_ORDER, load_tools_config
 
         tools_config = load_tools_config(self.repo_root)
 
@@ -142,16 +147,9 @@ class UnifiedLauncher(QMainWindow):
             return tabs
 
         # Sort categories to keep UI consistent
-        preferred_order = [
-            "Media Processing",
-            "Data Processing",
-            "Scientific Modeling",
-            "Web Applications",
-            "Development Tools",
-        ]
         sorted_cats = sorted(
             tools_config.keys(),
-            key=lambda x: preferred_order.index(x) if x in preferred_order else 999,
+            key=lambda x: CATEGORY_ORDER.index(x) if x in CATEGORY_ORDER else 999,
         )
 
         for category in sorted_cats:

@@ -38,30 +38,23 @@ except ImportError:
     from security_utils import FileSizeError, check_file_size  # type: ignore
 
 
+# Add utils to path
 try:
-    from utils.file_utils import safe_read_json
-except ImportError:
-    import json
-
-try:
+    from pathlib import Path
+    import sys
+    repo_root = Path(__file__).resolve().parent.parent.parent.parent.parent.parent
+    utils_path = repo_root / "src" / "python" / "src"
+    if utils_path.exists() and str(utils_path) not in sys.path:
+        sys.path.insert(0, str(utils_path))
+    from utils.file_utils import safe_read_json, safe_read_text, safe_write_text
     from utils.csv_utils import safe_read_csv, safe_write_csv
 except ImportError:
-    import pandas as pd
-    from pathlib import Path
-    def safe_read_csv(path, default=None, **kwargs):
-        try:
-            return pd.read_csv(path, **kwargs)
-        except Exception:
-            return default if default is not None else pd.DataFrame()
-    def safe_write_csv(df, path, create_parents=True, **kwargs):
-        Path(path).parent.mkdir(parents=True, exist_ok=True)
-        safe_write_csv(df, path, **kwargs)
-    def safe_read_json(path, default=None):
-        try:
-            with open(path, encoding='utf-8') as f:
-                return json.load(f)
-        except Exception:
-            return default
+    # Minimal fallback logic if utils not found
+    def safe_read_json(path, default=None): return default
+    def safe_read_csv(path, default=None, **kwargs): return pd.DataFrame()
+    def safe_write_csv(df, path, **kwargs): pass
+    def safe_read_text(path, default=""): return default
+    def safe_write_text(path, content): pass
 # Module logger
 logger = get_logger(__name__)
 
@@ -322,6 +315,7 @@ class HighPerformanceDataLoader:
             )
             if cache_file.exists():
                 data = safe_read_json(cache_file, default=None)
+                if data:
                     # Convert signals list back to set
                     data["signals"] = set(data["signals"])
                     # Sample data is not cached (too large for JSON)
