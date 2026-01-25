@@ -47,6 +47,7 @@ except ImportError:
     # Fallback to internal dummy if tools package not found
     def check_dependencies(packages: list[str]) -> list[str]:
         return []
+
     def install_packages(packages: list[str]) -> bool:
         return True
 

@@ -48,20 +48,29 @@ except ImportError:
 # Find repo root and add standard paths
 import sys
 from pathlib import Path
+
 try:
     repo_root = Path(__file__).resolve().parent.parent.parent.parent.parent
     utils_path = repo_root / "src" / "python" / "src"
     if utils_path.exists() and str(utils_path) not in sys.path:
         sys.path.insert(0, str(utils_path))
-    
+
     from utils.file_utils import safe_read_text, safe_write_text
     from utils.csv_utils import safe_read_csv, safe_write_csv
 except Exception:
     # Minimal fallbacks if paths can't be resolved or utils not found
-    def safe_read_csv(path, **kwargs): return pd.read_csv(path, **kwargs)
-    def safe_write_csv(df, path, **kwargs): df.to_csv(path, **kwargs)
-    def safe_read_text(p, **kwargs): return Path(p).read_text(**kwargs)
-    def safe_write_text(p, c, **kwargs): Path(p).write_text(c, **kwargs)
+    def safe_read_csv(path, **kwargs):
+        return pd.read_csv(path, **kwargs)
+
+    def safe_write_csv(df, path, **kwargs):
+        df.to_csv(path, **kwargs)
+
+    def safe_read_text(p, **kwargs):
+        return Path(p).read_text(**kwargs)
+
+    def safe_write_text(p, c, **kwargs):
+        Path(p).write_text(c, **kwargs)
+
 
 from Data_Processor_r0 import CSVProcessorApp as OriginalCSVProcessorApp
 
@@ -850,8 +859,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
                         DataWriter.write_file(df, output_path, output_format)
                         self._log_conversion_message(
-                            f"Converted {Path(file_path).name}"
-                            "-> {output_filename}"
+                            f"Converted {Path(file_path).name}" "-> {output_filename}"
                         )
 
                         processed_files += 1
@@ -1969,9 +1977,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         file_path = Path(root) / file
                         try:
                             file_size = os.path.getsize(file_path)
-                            file_ext = (
-                                Path(file).suffix.lower() or "no_extension"
-                            )
+                            file_ext = Path(file).suffix.lower() or "no_extension"
 
                             total_size += file_size
                             folder_files += 1
@@ -2026,9 +2032,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             top_10_files = heapq.nlargest(10, largest_files, key=lambda x: x[1])
             for file_path, size in top_10_files:
                 size_mb = size / (1024 * 1024)
-                report_lines.append(
-                    f"  {Path(file_path).name}: {size_mb:.1f} MB"
-                )
+                report_lines.append(f"  {Path(file_path).name}: {size_mb:.1f} MB")
 
             # Show report in a dialog
             report_text = "\n".join(report_lines)
@@ -2152,10 +2156,10 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         filename = Path(name).stem if is_file else name
         ext = Path(name).suffix if is_file else ""
         counter = 1
-        new_path = Path(parent) / f"{filename} ({counter}{ext}")
+        new_path = Path(parent) / f"{filename}_{counter}{ext}"
         while Path(new_path).exists():
             counter += 1
-            new_path = Path(parent) / f"{filename} ({counter}{ext}")
+            new_path = Path(parent) / f"{filename}_{counter}{ext}"
         return new_path
 
     def create_help_tab(self, tab):

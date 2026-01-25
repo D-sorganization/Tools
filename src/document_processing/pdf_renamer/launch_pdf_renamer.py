@@ -15,15 +15,19 @@ try:
     if repo_root not in sys.path:
         sys.path.append(str(repo_root))
     from utils.path_helpers import ensure_utils_in_path
+
     ensure_utils_in_path()
 except ImportError:
+
     def ensure_utils_in_path():
         pass
+
 
 def check_python() -> bool:
     """Check if Python is available (uses shared utility)."""
     try:
         from utils.dependency_checker import check_python_version
+
         is_valid, version_str = check_python_version(min_major=3, min_minor=10)
         if not is_valid:
             print("ERROR: Python 3.10 or higher is required")
@@ -40,11 +44,12 @@ def check_python() -> bool:
             return False
         return True
 
+
 def check_dependencies(script_dir: Path) -> bool:
     """Check and install dependencies if needed (uses shared utility)."""
     try:
         from utils.dependency_checker import install_from_requirements
-        
+
         verify_script = script_dir / "verify_installation.py"
         if verify_script.exists():
             try:
@@ -92,6 +97,7 @@ def check_dependencies(script_dir: Path) -> bool:
                 return False
         return True
 
+
 def main() -> None:
     """Launch PDF Renamer GUI."""
     # Change to script directory
@@ -111,7 +117,7 @@ def main() -> None:
     if not launch_script.exists():
         # Fallback to direct script
         launch_script = script_dir / "src" / "pdf_renamer" / "main.py"
-        
+
     try:
         subprocess.run([sys.executable, str(launch_script)], check=True)
     except subprocess.CalledProcessError as e:
@@ -122,6 +128,7 @@ def main() -> None:
         print()
         print("Launch cancelled by user.")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

@@ -42,6 +42,7 @@ except ImportError:
 try:
     from pathlib import Path
     import sys
+
     repo_root = Path(__file__).resolve().parent.parent.parent.parent.parent.parent
     utils_path = repo_root / "src" / "python" / "src"
     if utils_path.exists() and str(utils_path) not in sys.path:
@@ -50,11 +51,22 @@ try:
     from utils.csv_utils import safe_read_csv, safe_write_csv
 except ImportError:
     # Minimal fallback logic if utils not found
-    def safe_read_json(path, default=None): return default
-    def safe_read_csv(path, default=None, **kwargs): return pd.DataFrame()
-    def safe_write_csv(df, path, **kwargs): pass
-    def safe_read_text(path, default=""): return default
-    def safe_write_text(path, content): pass
+    def safe_read_json(path, default=None):
+        return default
+
+    def safe_read_csv(path, default=None, **kwargs):
+        return pd.DataFrame()
+
+    def safe_write_csv(df, path, **kwargs):
+        pass
+
+    def safe_read_text(path, default=""):
+        return default
+
+    def safe_write_text(path, content):
+        pass
+
+
 # Module logger
 logger = get_logger(__name__)
 
@@ -277,7 +289,9 @@ class HighPerformanceDataLoader:
             if self.config.lazy_loading:
                 try:
                     # Read a small sample for data type analysis (includes header)
-                    sample_df = safe_read_csv(file_path, nrows=self.config.sample_size,
+                    sample_df = safe_read_csv(
+                        file_path,
+                        nrows=self.config.sample_size,
                         low_memory=False,
                     )
                     signals = set(sample_df.columns)

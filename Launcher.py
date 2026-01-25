@@ -21,6 +21,7 @@ try:
         get_repo_root,
         launch_tool,
     )
+
     BASE_DIR = get_repo_root()
 except ImportError:
     BASE_DIR = Path(__file__).resolve().parent
