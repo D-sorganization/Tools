@@ -1,18 +1,22 @@
 # Assessment: Maintainability (Category O)
 
-## Grade: 5/10
+## Grade: 5 / 10
 
-## Summary
-Maintainability is a tale of two cities: the modern infrastructure (`src/`, `UnifiedToolsLauncher.py`, `docs/`) is highly maintainable, while the legacy `tools/` and monolithic scripts represent significant technical debt.
+## Analysis
+Maintainability is a tale of two cities. The new code (web apps, launchers) is reasonably maintainable with good structure and documentation. The legacy code is a maintenance nightmare—monolithic, untested, and poorly styled. The "False Green" CI further hurts maintainability by allowing regressions.
 
-## Strengths
-- **Documentation**: Good docs help new maintainers.
-- **Standards**: Clear coding standards are defined.
+## Key Findings
 
-## Weaknesses
-- **Tech Debt**: Large monolithic files are hard to modify safely.
-- **Fragmentation**: Split codebase increases cognitive load.
+### Strengths
+-   **Documentation**: Excellent docs make it easier to understand the system's intent.
+-   **Modern Tooling**: The presence of `ruff` and `black` helps keep new code clean.
+
+### Weaknesses
+-   **Legacy Anchor**: The `Data_Processor_r0.py` file is a major liability.
+-   **Testing**: Lack of tests means changes are high-risk.
+-   **CI Trust**: Developers cannot trust the CI pipeline, leading to manual verification overhead.
 
 ## Recommendations
-1. **Debt Paydown**: Dedicate specific sprints to refactoring legacy code.
-2. **Strict Gates**: Do not allow new technical debt to enter (fix CI).
+1.  **Strangler Fig**: Apply the "Strangler Fig" pattern to slowly replace `Data_Processor_r0.py` with modern components.
+2.  **Test Gating**: Enforce high test coverage on all *new* code to prevent the hole from getting deeper.
+3.  **Refactoring Sprints**: Dedicate time specifically to paying down technical debt.

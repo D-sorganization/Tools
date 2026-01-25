@@ -26,15 +26,15 @@ The repository demonstrates a strong foundation with excellent documentation, mo
 3.  **Unified Launcher**: The move to `UnifiedToolsLauncher.py` provides a solid integration point.
 
 ### ⚠️ Weaknesses
-1.  **CI/CD Integrity**: The pipeline swallows errors (`|| echo "warning"`), making it unreliable.
+1.  **CI/CD Integrity**: The pipeline swallows errors (`|| echo`), making it unreliable.
 2.  **Test Coverage**: Near zero effective coverage for critical logic.
 3.  **Legacy Debt**: Massive monolithic scripts (e.g., `Data_Processor_r0.py`) pose a maintenance risk.
-4.  **Fragmentation**: Coexistence of `tools/` and `src/` confuses the architectural model.
+4.  **Logging**: Excessive use of `print` statements instead of structured logging.
 
 ## Top 5 Recommendations
 
 1.  **Restore CI Integrity (CRITICAL)**: Remove `|| echo "::warning..."` from `ci-standard.yml`. A failing check must fail the build.
 2.  **Mandate Testing**: Enforce a strict "No Tests, No Merge" policy. Prioritize covering `UnifiedToolsLauncher.py` and `shared` utilities.
 3.  **Decompose Monoliths**: Refactor `Data_Processor_r0.py` into a package structure within `src/data_processing/`.
-4.  **Consolidate Directory Structure**: Migrate all active tools from `tools/` to the standardized `src/` hierarchy and archive the rest.
+4.  **Fix Logging**: Replace `print()` statements with `logging` calls and enforce via linter.
 5.  **Enforce Security Gates**: Make `pip-audit` a blocking check in the CI pipeline.

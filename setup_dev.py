@@ -58,7 +58,7 @@ def install_node_deps() -> None:
             )
             return
 
-    unit_converter_path = Path("web_applications/unit_converter")
+    unit_converter_path = Path("src/web_applications/unit_converter")
     if unit_converter_path.exists():
         logger.info(f"Installing dependencies in {unit_converter_path}...")
         try:

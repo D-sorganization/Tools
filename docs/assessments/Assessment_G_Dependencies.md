@@ -1,17 +1,21 @@
 # Assessment: Dependencies (Category G)
 
-## Grade: 8/10
+## Grade: 7 / 10
 
-## Summary
-Dependency management is standard and well-organized. `requirements.txt` and `setup_dev.py` provide a clear path for environment setup.
+## Analysis
+Dependency management is generally good. Python dependencies are tracked in `requirements.txt` and Node.js dependencies in `package.json`. A `setup_dev.py` script automates installation. However, the lack of strict version pinning (lock files) for Python and the ignored audit failures lower the score.
 
-## Strengths
-- **Standardization**: Single `requirements.txt` for Python.
-- **Automation**: `setup_dev.py` simplifies installation.
+## Key Findings
 
-## Weaknesses
-- **Lock Files**: `requirements-lock.txt` exists but usage isn't strictly enforced in all docs.
+### Strengths
+-   **Manifests**: Clear `requirements.txt` and `package.json` files.
+-   **Automation**: `setup_dev.py` simplifies environment setup.
+-   **Modern**: Usage of `pnpm` for Node.js projects.
+
+### Weaknesses
+-   **Locking**: No `requirements.lock` or `Pipfile.lock` for Python, leading to potential reproducibility issues (though `requirements-lock.txt` exists, it's not strictly enforced in all docs).
+-   **Audit Failures**: Known vulnerabilities are currently ignored in CI.
 
 ## Recommendations
-1. **Dependabot**: Enable automated dependency updates.
-2. **Strict Locking**: Enforce usage of lock files in CI.
+1.  **Enforce Locks**: Use `pip-tools` or `uv` to generate and enforce strict lock files.
+2.  **Prune**: Review and remove unused dependencies from the root `requirements.txt`.
