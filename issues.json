@@ -87,5 +87,10 @@
         "number": 218,
         "title": "jules:assessment,needs-attention: Consolidate legacy 'tools/' directory into 'src/'",
         "labels": ["jules:assessment", "refactor", "needs-attention"]
+    },
+    {
+        "number": 219,
+        "title": "CRITICAL: Verify and Mock External API Dependencies in Jules-Assessment-Generator",
+        "labels": ["critical", "security", "jules:assessment"]
     }
 ]
