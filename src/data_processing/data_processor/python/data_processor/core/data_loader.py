@@ -22,7 +22,9 @@ from data_processor.security_utils import validate_and_check_file
 
 # Setup utils path
 try:
-    repo_root = Path(__file__).resolve().parent.parent.parent.parent.parent.parent.parent
+    repo_root = (
+        Path(__file__).resolve().parent.parent.parent.parent.parent.parent.parent
+    )
     utils_path = repo_root / "src" / "python" / "src"
     if utils_path.exists() and str(utils_path) not in sys.path:
         sys.path.insert(0, str(utils_path))
