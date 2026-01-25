@@ -7,7 +7,6 @@ This is a simpler alternative for environments where PyQt6 is not available.
 import json
 import sys
 import tkinter as tk
-from pathlib import Path
 from tkinter import messagebox, ttk
 from typing import Any
 
@@ -24,7 +23,14 @@ try:
 
     BASE_DIR = get_repo_root()
 except ImportError:
-    BASE_DIR = Path(__file__).resolve().parent
+    root = tk.Tk()
+    root.withdraw()
+    messagebox.showerror(
+        "Critical Error",
+        "Could not import required modules from 'tools.launch_utils'.\n"
+        "The application cannot start.",
+    )
+    sys.exit(1)
 
 
 def load_tools_config() -> dict[str, list[Any]]:
