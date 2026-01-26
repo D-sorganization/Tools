@@ -2,7 +2,7 @@ name: Nightly Documentation Organizer
 
 on:
   schedule:
-    - cron: "30 5 * * *"  # 5:30 AM UTC
+    - cron: "0 11 * * *"  # Daily at 3 AM PST (11 UTC)
   workflow_dispatch:
 
 permissions:
