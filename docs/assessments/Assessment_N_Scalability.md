@@ -1,20 +1,13 @@
-# Assessment: Scalability (Category N)
+# Assessment: Scalability
 
-## Grade: 4 / 10
+## Grade: 4/10
 
 ## Analysis
-Scalability is limited. The monorepo structure provides a good foundation, but the heavy reliance on monolithic scripts and manual file handling prevents the system from scaling to handle larger datasets or more complex workflows efficiently.
-
-## Key Findings
-
-### Strengths
--   **Monorepo**: The directory structure (if cleaned up) supports modular growth.
-
-### Weaknesses
--   **Monoliths**: Large files like `Data_Processor_r0.py` are hard to extend or parallelize.
--   **Memory**: Loading entire datasets into memory (pandas default) limits data scale.
--   **Coupling**: High coupling in legacy code makes adding new features risky.
+Scalability is limited by the current structure:
+- **Monolithic Files**: `Data_Processor_r0.py` (300KB) is a bottleneck for maintenance and loading.
+- **Test Scalability**: The test suite is broken, meaning adding new features risks undetected regressions.
+- **Repository Size**: Storing large binaries (if any) or large legacy archives in the main repo slows down operations (though `git-lfs` is mentioned).
 
 ## Recommendations
-1.  **Modularize**: Break down monoliths into small, single-purpose functions.
-2.  **Streaming**: Implement chunked processing for data to handle files larger than RAM.
+1. **Decompose Monoliths**: Aggressively refactor large files into smaller modules.
+2. **Optimize Imports**: Ensure lazy loading for heavy dependencies (like `pandas` or `matplotlib` if optional).

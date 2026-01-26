@@ -1,22 +1,13 @@
-# Assessment: Maintainability (Category O)
+# Assessment: Maintainability
 
-## Grade: 5 / 10
+## Grade: 4/10
 
 ## Analysis
-Maintainability is a tale of two cities. The new code (web apps, launchers) is reasonably maintainable with good structure and documentation. The legacy code is a maintenance nightmare—monolithic, untested, and poorly styled. The "False Green" CI further hurts maintainability by allowing regressions.
-
-## Key Findings
-
-### Strengths
--   **Documentation**: Excellent docs make it easier to understand the system's intent.
--   **Modern Tooling**: The presence of `ruff` and `black` helps keep new code clean.
-
-### Weaknesses
--   **Legacy Anchor**: The `Data_Processor_r0.py` file is a major liability.
--   **Testing**: Lack of tests means changes are high-risk.
--   **CI Trust**: Developers cannot trust the CI pipeline, leading to manual verification overhead.
+Maintainability is the primary concern for this repository:
+- **Technical Debt**: The "legacy" code weighs down the "modern" `src/` improvements.
+- **False Confidence**: The CI pipeline reports "Success" when it is actually failing to check code, leading to a false sense of security.
+- **Bus Factor**: The reliance on specific, potentially fragile scripts implies high knowledge burden.
 
 ## Recommendations
-1.  **Strangler Fig**: Apply the "Strangler Fig" pattern to slowly replace `Data_Processor_r0.py` with modern components.
-2.  **Test Gating**: Enforce high test coverage on all *new* code to prevent the hole from getting deeper.
-3.  **Refactoring Sprints**: Dedicate time specifically to paying down technical debt.
+1. **Truthful CI**: Make the CI pipeline fail on errors. It is better to have a red build that reflects reality than a green build that lies.
+2. **Delete Dead Code**: aggressively remove code in `tools/` that has been superseded by `src/`.

@@ -1,21 +1,13 @@
-# Assessment: Code Style (Category I)
+# Assessment: Code Style
 
-## Grade: 7 / 10
+## Grade: 5/10
 
 ## Analysis
-The project has adopted modern Python tooling (`ruff`, `black`) which is excellent. Configuration files exist (`ruff.toml`, `pyproject.toml`). However, the legacy codebase is largely non-compliant, and the CI check for formatting is often ignored or warns only.
-
-## Key Findings
-
-### Strengths
--   **Tooling**: `black` and `ruff` are the standard.
--   **Config**: Clear configuration files are present at the root.
-
-### Weaknesses
--   **Legacy Exclusion**: Large parts of the codebase (legacy) likely violate these standards.
--   **Enforcement**: CI checks for style are advisory in some contexts (due to "False Green" setup).
+The repository exhibits a dichotomy in code style:
+- **Modern Standards**: `src/` files generally follow PEP 8, enforced by `ruff` and `black`. The `AGENTS.md` explicitly prohibits `var` in JS and encourages type hinting.
+- **Legacy Debt**: Files like `Data_Processor_r0.py` ignore these standards entirely, with inconsistent naming, formatting, and structure.
+- **Exclusions**: The `ruff.toml` config excludes `legacy`, `archive`, and `data_processing`, allowing style violations to persist unchecked in these areas.
 
 ## Recommendations
-1.  **Strict Enforcement**: Make style checks blocking in CI.
-2.  **Baseline**: Use a baseline file (e.g., `.flake8` exclude or `ruff` per-file-ignores) to strictly enforce style on new code while tolerating legacy debt temporarily.
-3.  **Auto-fix**: Configure a pre-commit hook to automatically format code.
+1. **Enforce Style Globally**: Remove exclusions from `ruff.toml` and fix the resulting errors (auto-fix where possible).
+2. **Standardize Linting**: Ensure all developers (and agents) use the same `ruff` configuration.
