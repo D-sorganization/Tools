@@ -15,13 +15,20 @@ except ImportError:
     current = Path(__file__).resolve().parent
     repo_root = None
     for _ in range(5):
-        if (current / "tools" / "quality_utils.py").exists():
+        if (current / "pyproject.toml").exists() or (current / ".git").exists():
             repo_root = current
             break
         current = current.parent
 
     if repo_root:
-        sys.path.append(str(repo_root))
+        # Add src to path to resolve tools package
+        src_path = repo_root / "src"
+        if src_path.exists():
+            sys.path.append(str(src_path))
+        else:
+            # Fallback if src doesn't exist (unlikely in this repo structure)
+            sys.path.append(str(repo_root))
+
         from tools.quality_utils import (
             Colors,
             check_file,

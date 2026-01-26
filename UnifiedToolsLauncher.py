@@ -19,6 +19,13 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Add src to path to resolve tools package
+from pathlib import Path
+
+SRC_DIR = Path(__file__).resolve().parent / "src"
+if SRC_DIR.exists() and str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
+
 
 def main() -> None:
     """Entry point for the Unified Tools Launcher application."""

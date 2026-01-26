@@ -14,7 +14,9 @@ except ImportError:
     # try to import relative to script location
     import sys
 
-    sys.path.append(str(Path(__file__).resolve().parent))
+    src_path = Path(__file__).resolve().parent / "src"
+    if src_path.exists():
+        sys.path.append(str(src_path))
     from tools.icon_utils import convert_png_to_ico
 
 # Configure logging
