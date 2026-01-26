@@ -116,18 +116,18 @@ class DataReader:
         raise ValueError(msg)
 
     @staticmethod
-    def detect_format(file_path: str | Path) -> str:
+    def detect_format(file_path: str | Path) -> str | None:
         """Detect the format of a file based on its extension.
 
         Args:
             file_path: Path to the file
 
         Returns:
-            str: Detected format type
+            str | None: Detected format type, or None if file doesn't exist or format is undetectable
         """
         file_path = Path(file_path)
         if not file_path.exists():
-            return "csv"  # Fallback
+            return None  # Return None for non-existent files
 
         # Check by extension first
         extension = file_path.suffix.lower()
@@ -172,7 +172,7 @@ class DataReader:
         except Exception:
             pass
 
-        return "csv"
+        return None  # Return None for unrecognizable formats
 
 
 class DataWriter:
@@ -255,14 +255,14 @@ class FileFormatDetector:
     """Class for detecting file formats and providing format information."""
 
     @staticmethod
-    def detect_format(file_path: str | Path) -> str:
+    def detect_format(file_path: str | Path) -> str | None:
         """Detect the format of a file based on its extension.
 
         Args:
             file_path: Path to the file
 
         Returns:
-            str: Detected format type
+            str | None: Detected format type, or None if detection fails
         """
         return DataReader.detect_format(file_path)
 
