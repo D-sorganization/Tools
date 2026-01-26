@@ -57,6 +57,9 @@ try:
 
     from utils.file_utils import safe_read_text, safe_write_text
     from utils.csv_utils import safe_read_csv, safe_write_csv
+    
+    # Import shared file classes
+    from .file_utils import DataReader, DataWriter, FileFormatDetector
 except Exception:
     # Minimal fallbacks if paths can't be resolved or utils not found
     def safe_read_csv(path, **kwargs):
@@ -116,175 +119,8 @@ class SplitConfig:
         return int(self.max_file_size_mb * 1024 * 1024)
 
 
-class FileFormatDetector:
-    """Detects file format based on extension and content."""
-
-    @staticmethod
-    def detect_format(file_path: str) -> str | None:
-        """Detect file format from path and content."""
-        if not Path(file_path).exists():
-            return None
-
-        # Check by extension first
-        ext = Path(file_path).suffix.lower()
-
-        # Extension-based detection
-        if ext in [".csv"]:
-            return "csv"
-        elif ext in [".tsv", ".txt"]:
-            return "tsv"
-        elif ext in [".parquet", ".pq"]:
-            return "parquet"
-        elif ext in [".xlsx", ".xls"]:
-            return "excel"
-        elif ext in [".json"]:
-            return "json"
-        elif ext in [".h5", ".hdf5"]:
-            return "hdf5"
-        elif ext in [".pkl", ".pickle"]:
-            return "pickle"
-        elif ext in [".npy"]:
-            return "numpy"
-        elif ext in [".mat"]:
-            return "matlab"
-        elif ext in [".feather"]:
-            return "feather"
-        elif ext in [".arrow"]:
-            return "arrow"
-        elif ext in [".db", ".sqlite"]:
-            return "sqlite"
-
-        # Content-based detection for ambiguous extensions
-        try:
-            with open(file_path, "rb") as f:
-                header = f.read(1024)
-
-            # Check for CSV/TSV
-            if b"," in header and b"\n" in header:
-                return "csv"
-            elif b"\t" in header and b"\n" in header:
-                return "tsv"
-            elif header.startswith(b"{") or header.startswith(b"["):
-                return "json"
-            elif header.startswith(b"PK"):
-                return "excel"  # ZIP-based format
-
-        except Exception:
-            pass
-
-        return None
-
-
-class DataReader:
-    """Handles reading data from various file formats."""
-
-    @staticmethod
-    def read_file(file_path: str, format_type: str, **kwargs) -> pd.DataFrame:
-        """Read file based on format type."""
-        try:
-            if format_type == "csv":
-                return safe_read_csv(file_path, **kwargs)
-            elif format_type == "tsv":
-                return pd.read_csv(file_path, sep="\t", **kwargs)
-            elif format_type == "parquet":
-                if not PYARROW_AVAILABLE:
-                    raise ImportError("PyArrow is required for parquet files")
-                return pd.read_parquet(file_path, **kwargs)
-            elif format_type == "excel":
-                return pd.read_excel(file_path, **kwargs)
-            elif format_type == "json":
-                return pd.read_json(file_path, **kwargs)
-            elif format_type == "hdf5":
-                return pd.read_hdf(file_path, **kwargs)
-            elif format_type == "pickle":
-                return pd.read_pickle(file_path)
-            elif format_type == "numpy":
-                data = np.load(file_path)
-                if isinstance(data, np.ndarray):
-                    return pd.DataFrame(data)
-                else:
-                    return pd.DataFrame(data.item())
-            elif format_type == "matlab":
-                if not SCIPY_AVAILABLE:
-                    raise ImportError("SciPy is required for MATLAB files")
-                data = scipy.io.loadmat(file_path)
-                # Convert MATLAB struct to DataFrame
-                if len(data) == 1:
-                    return pd.DataFrame(data[list(data.keys())[0]])
-                else:
-                    return pd.DataFrame(data)
-            elif format_type == "feather":
-                if not PYARROW_AVAILABLE:
-                    raise ImportError("PyArrow is required for feather files")
-                return pd.read_feather(file_path, **kwargs)
-            elif format_type == "arrow":
-                if not PYARROW_AVAILABLE:
-                    raise ImportError("PyArrow is required for arrow files")
-                table = pa.ipc.open_file(file_path).read_all()
-                return table.to_pandas()
-            elif format_type == "sqlite":
-                return pd.read_sql_query("SELECT * FROM data", f"sqlite:///{file_path}")
-            else:
-                raise ValueError(f"Unsupported format: {format_type}")
-
-        except Exception as e:
-            raise Exception(f"Error reading {file_path}: {str(e)}") from e
-
-
-class DataWriter:
-    """Handles writing data to various file formats."""
-
-    @staticmethod
-    def write_file(
-        df: pd.DataFrame, file_path: str, format_type: str, **kwargs
-    ) -> None:
-        """Write DataFrame to file based on format type."""
-        try:
-            if format_type == "csv":
-                safe_write_csv(df, file_path, index=False, **kwargs)
-            elif format_type == "tsv":
-                safe_write_csv(df, file_path, sep="\t", index=False, **kwargs)
-            elif format_type == "parquet":
-                if not PYARROW_AVAILABLE:
-                    raise ImportError("PyArrow is required for parquet files")
-                df.to_parquet(file_path, **kwargs)
-            elif format_type == "excel":
-                df.to_excel(file_path, index=False, **kwargs)
-            elif format_type == "json":
-                df.to_json(file_path, orient="records", **kwargs)
-            elif format_type == "hdf5":
-                df.to_hdf(file_path, key="data", **kwargs)
-            elif format_type == "pickle":
-                df.to_pickle(file_path)
-            elif format_type == "numpy":
-                np.save(file_path, df.values)
-            elif format_type == "matlab":
-                if not SCIPY_AVAILABLE:
-                    raise ImportError("SciPy is required for MATLAB files")
-                scipy.io.savemat(
-                    file_path, {"data": df.values, "columns": df.columns.tolist()}
-                )
-            elif format_type == "feather":
-                if not PYARROW_AVAILABLE:
-                    raise ImportError("PyArrow is required for feather files")
-                df.to_feather(file_path, **kwargs)
-            elif format_type == "arrow":
-                if not PYARROW_AVAILABLE:
-                    raise ImportError("PyArrow is required for arrow files")
-                table = pa.Table.from_pandas(df)
-                with pa.ipc.open_file(file_path, "w") as writer:
-                    writer.write(table)
-            elif format_type == "sqlite":
-                import sqlite3
-
-                conn = sqlite3.connect(file_path)
-                df.to_sql("data", conn, if_exists="replace", index=False)
-                conn.close()
-            else:
-                raise ValueError(f"Unsupported format: {format_type}")
-
-        except Exception as e:
-            raise Exception(f"Error writing {file_path}: {str(e)}") from e
+# Classes imported from file_utils
+# FileFormatDetector, DataReader, DataWriter are now shared
 
 
 # =============================================================================

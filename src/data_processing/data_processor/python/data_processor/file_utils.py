@@ -126,8 +126,11 @@ class DataReader:
             str: Detected format type
         """
         file_path = Path(file_path)
-        extension = file_path.suffix.lower()
+        if not file_path.exists():
+            return "csv"  # Fallback
 
+        # Check by extension first
+        extension = file_path.suffix.lower()
         format_mapping = {
             ".csv": "csv",
             ".tsv": "tsv",
@@ -148,8 +151,28 @@ class DataReader:
             ".db": "sqlite",
             ".sqlite": "sqlite",
         }
+        
+        if extension in format_mapping:
+            return format_mapping[extension]
 
-        return format_mapping.get(extension, "csv")
+        # Content-based detection for ambiguous extensions
+        try:
+            with open(file_path, "rb") as f:
+                header = f.read(1024)
+
+            # Check for CSV/TSV
+            if b"," in header and b"\n" in header:
+                return "csv"
+            elif b"\t" in header and b"\n" in header:
+                return "tsv"
+            elif header.startswith(b"{") or header.startswith(b"["):
+                return "json"
+            elif header.startswith(b"PK"):
+                return "excel"  # ZIP-based format
+        except Exception:
+            pass
+
+        return "csv"
 
 
 class DataWriter:

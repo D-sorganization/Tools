@@ -33,16 +33,24 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
+# Helper to find repo root and setup paths
+current_file = Path(__file__).resolve()
+repo_root = current_file.parent.parent.parent.parent.parent
+utils_path = repo_root / "src" / "python" / "src"
+if utils_path.exists() and str(utils_path) not in sys.path:
+    sys.path.insert(0, str(utils_path))
+
 try:
-    from utils.file_utils import safe_write_json
+    from utils.file_utils import (
+        safe_read_text,
+        safe_write_text,
+        safe_read_json,
+        safe_write_json,
+    )
 except ImportError:
+    # Fallback if utils cannot be found (e.g. distributed without source)
     import json
-
-try:
-    from utils.file_utils import safe_read_text, safe_write_text
-except ImportError:
-    from pathlib import Path
-
+    
     def safe_read_text(path, encoding="utf-8", default=""):
         try:
             return Path(path).read_text(encoding=encoding)
@@ -56,9 +64,14 @@ except ImportError:
         p.write_text(content, encoding=encoding)
 
     def safe_write_json(path, data, indent=2, create_parents=True):
-        Path(path).parent.mkdir(parents=True, exist_ok=True)
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=indent)
+        data_str = json.dumps(data, indent=indent)
+        safe_write_text(path, data_str)
+        
+    def safe_read_json(path, default=None):
+        try:
+            return json.loads(safe_read_text(path))
+        except Exception:
+            return default
 
 
 # Constants with professional standards
