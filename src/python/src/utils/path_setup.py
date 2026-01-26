@@ -88,6 +88,7 @@ def get_standard_paths(repo_root: Path | None = None) -> list[Path]:
         / "python"
         / "data_processor",
         repo_root / "src" / "tools",
+        repo_root / "src",
     ]
 
     # Filter to only existing paths

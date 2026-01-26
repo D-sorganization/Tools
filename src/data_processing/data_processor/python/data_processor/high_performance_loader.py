@@ -40,15 +40,15 @@ except ImportError:
 
 # Add utils to path
 try:
-    from pathlib import Path
     import sys
+    from pathlib import Path
 
     repo_root = Path(__file__).resolve().parent.parent.parent.parent.parent.parent
     utils_path = repo_root / "src" / "python" / "src"
     if utils_path.exists() and str(utils_path) not in sys.path:
         sys.path.insert(0, str(utils_path))
-    from utils.file_utils import safe_read_json, safe_read_text, safe_write_text
     from utils.csv_utils import safe_read_csv, safe_write_csv
+    from utils.file_utils import safe_read_json, safe_read_text, safe_write_text
 except ImportError:
     # Minimal fallback logic if utils not found
     def safe_read_json(path, default=None):

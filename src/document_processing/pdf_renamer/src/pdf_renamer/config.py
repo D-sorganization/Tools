@@ -16,7 +16,6 @@ TOOLS_ENV_PATH = Path(
 # Try to load from .env file if available
 try:
     # Add utils to path
-    import sys
     from pathlib import Path as PathLib
 
     repo_root = PathLib(__file__).parent.parent.parent.parent.parent.parent.parent

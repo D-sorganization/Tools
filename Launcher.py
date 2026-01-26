@@ -7,10 +7,17 @@ This is a simpler alternative for environments where PyQt6 is not available.
 import json
 import sys
 import tkinter as tk
+
+# Path helpers
+from pathlib import Path
 from tkinter import messagebox, ttk
 from typing import Any
 
-# Path helpers
+# Add src to path to find tools package
+SRC_DIR = Path(__file__).resolve().parent / "src"
+if SRC_DIR.exists() and str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
+
 try:
     from tools.launch_utils import (
         LaunchError,

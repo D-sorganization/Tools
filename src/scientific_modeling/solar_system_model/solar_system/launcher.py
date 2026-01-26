@@ -49,7 +49,7 @@ def check_dependencies(
     """
     try:
         # Try to use shared utility
-        import sys
+        pass
 
         # Add utils to path
         try:
@@ -64,7 +64,6 @@ def check_dependencies(
             ensure_utils_in_path()
 
         from utils.dependency_checker import DependencyStatus
-        from utils.dependency_checker import check_dependencies as check_deps
 
     except ImportError:
         # Fallback to local implementation

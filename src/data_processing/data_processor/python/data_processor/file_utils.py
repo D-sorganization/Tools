@@ -116,18 +116,21 @@ class DataReader:
         raise ValueError(msg)
 
     @staticmethod
-    def detect_format(file_path: str | Path) -> str:
+    def detect_format(file_path: str | Path) -> str | None:
         """Detect the format of a file based on its extension.
 
         Args:
             file_path: Path to the file
 
         Returns:
-            str: Detected format type
+            str | None: Detected format type, or None if file doesn't exist or format is undetectable
         """
         file_path = Path(file_path)
-        extension = file_path.suffix.lower()
+        if not file_path.exists():
+            return None  # Return None for non-existent files
 
+        # Check by extension first
+        extension = file_path.suffix.lower()
         format_mapping = {
             ".csv": "csv",
             ".tsv": "tsv",
@@ -149,7 +152,27 @@ class DataReader:
             ".sqlite": "sqlite",
         }
 
-        return format_mapping.get(extension, "csv")
+        if extension in format_mapping:
+            return format_mapping[extension]
+
+        # Content-based detection for ambiguous extensions
+        try:
+            with open(file_path, "rb") as f:
+                header = f.read(1024)
+
+            # Check for CSV/TSV
+            if b"," in header and b"\n" in header:
+                return "csv"
+            elif b"\t" in header and b"\n" in header:
+                return "tsv"
+            elif header.startswith(b"{") or header.startswith(b"["):
+                return "json"
+            elif header.startswith(b"PK"):
+                return "excel"  # ZIP-based format
+        except Exception:
+            pass
+
+        return None  # Return None for unrecognizable formats
 
 
 class DataWriter:
@@ -232,14 +255,14 @@ class FileFormatDetector:
     """Class for detecting file formats and providing format information."""
 
     @staticmethod
-    def detect_format(file_path: str | Path) -> str:
+    def detect_format(file_path: str | Path) -> str | None:
         """Detect the format of a file based on its extension.
 
         Args:
             file_path: Path to the file
 
         Returns:
-            str: Detected format type
+            str | None: Detected format type, or None if detection fails
         """
         return DataReader.detect_format(file_path)
 

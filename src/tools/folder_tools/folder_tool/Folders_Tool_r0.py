@@ -22,6 +22,25 @@ MAX_LOG_ENTRIES: Final[int] = (
     20  # Maximum number of log entries to display per operation
     # - UI performance limit
 )
+
+# Setup path to find shared utils
+current_file = Path(__file__).resolve()
+repo_root = current_file.parent.parent.parent.parent.parent
+utils_path = repo_root / "src" / "python" / "src"
+if utils_path.exists() and str(utils_path) not in sys.path:
+    sys.path.insert(0, str(utils_path))
+
+try:
+    from utils.file_utils import safe_write_text
+except ImportError:
+    # Fallback definition if utils not found
+    def safe_write_text(path, content, encoding="utf-8", create_parents=True):
+        p = Path(path)
+        if create_parents:
+            p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(content, encoding=encoding)
+
+
 PROGRESS_INCREMENT: Final[int] = (
     10  # Progress bar increment percentage [%]
     # - standard UI update frequency
