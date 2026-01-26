@@ -157,7 +157,6 @@ class PluginManager:
                     continue
 
                 try:
-
                     # Extract tool information from manifest
                     tool_name = manifest_data.get("name", manifest_path.parent.name)
                     tool_path = manifest_data.get("path")
