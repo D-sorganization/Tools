@@ -31,20 +31,16 @@ class LaunchError(Exception):
     """Base class for launch errors."""
 
 
-
 class ToolNotFoundError(LaunchError):
     """Raised when a tool file is not found."""
-
 
 
 class SecurityError(LaunchError):
     """Raised when a path is invalid or unsafe."""
 
 
-
 class PlatformError(LaunchError):
     """Raised when a tool is not supported on the current platform."""
-
 
 
 def validate_and_sanitize_path(path_str: str, repo_root: Path) -> Path:
