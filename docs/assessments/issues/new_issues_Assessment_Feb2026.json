@@ -1,0 +1,32 @@
+[
+  {
+    "title": "Fix Broken Test Collection",
+    "body": "The test suite fails to collect due to `ModuleNotFoundError` and `NameError`. `pytest --collect-only` reports errors in multiple files. Fix imports and paths.",
+    "labels": ["jules:assessment", "needs-attention", "priority:high", "area:testing"]
+  },
+  {
+    "title": "Remove False Green CI Configuration",
+    "body": "The CI pipeline (`ci-standard.yml`) uses `|| echo` or `|| true` to mask failures in Black, Mypy, and Pytest. Remove these bypasses to ensure build failures reflect code quality.",
+    "labels": ["jules:assessment", "needs-attention", "priority:critical", "area:cicd"]
+  },
+  {
+    "title": "Refactor Data_Processor_r0.py",
+    "body": "The file `src/data_processing/data_processor/python/data_processor/Data_Processor_r0.py` is a monolithic script (300KB+). Refactor it into a modular package structure.",
+    "labels": ["jules:assessment", "needs-attention", "priority:medium", "area:refactoring"]
+  },
+  {
+    "title": "Migrate from Print to Logging",
+    "body": "Over 400 `print()` statements were found in the codebase. Migrate them to use the `logging` module as per `AGENTS.md`.",
+    "labels": ["jules:assessment", "needs-attention", "priority:low", "area:logging"]
+  },
+  {
+    "title": "Standardize Directory Structure",
+    "body": "Merge the `tools/` directory into `src/` to unify the codebase structure and eliminate legacy/modern confusion.",
+    "labels": ["jules:assessment", "needs-attention", "priority:medium", "area:structure"]
+  },
+  {
+    "title": "Enable Linting for Legacy Code",
+    "body": "Remove exclusions in `ruff.toml` for `data_processing` and `legacy` directories. Fix the resulting lint errors.",
+    "labels": ["jules:assessment", "needs-attention", "priority:medium", "area:style"]
+  }
+]

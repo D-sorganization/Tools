@@ -1,20 +1,13 @@
-# Assessment: Data Handling (Category K)
+# Assessment: Data Handling
 
-## Grade: 4 / 10
+## Grade: 4/10
 
 ## Analysis
-Data handling is primitive. While `pandas` is used for processing, data management relies heavily on manual file selection and local file systems. There is no evidence of a structured database or abstract data layer for the core tools.
-
-## Key Findings
-
-### Strengths
--   **Pandas**: Effective use of `pandas` for tabular data manipulation.
-
-### Weaknesses
--   **Manual I/O**: Heavy reliance on file dialogs and manual path management.
--   **No Schema**: Data structures in legacy code are implicit and loosely typed.
--   **Persistence**: Lack of a proper database for persistent state (beyond simple JSON/config files).
+Data handling practices need improvement:
+- **Hardcoded Paths**: Tests and scripts often rely on hardcoded paths (e.g., `../../src/...`), leading to brittleness and `NameError` / `ModuleNotFoundError` in tests.
+- **Format Dependency**: Heavy reliance on CSV files without a unified schema or data abstraction layer.
+- **State Management**: The `unit_converter` uses `localStorage` correctly, but Python state management is often global or file-based.
 
 ## Recommendations
-1.  **Abstraction**: Create a Data Access Layer (DAL) to abstract file I/O.
-2.  **Validation**: Use Pydantic or similar libraries to validate data schemas at runtime.
+1. **Use `pathlib`**: Replace string-based path manipulation with `pathlib.Path`.
+2. **Configurable Paths**: Move file paths to a configuration file or environment variables.

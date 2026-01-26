@@ -1,22 +1,13 @@
-# Assessment: CI/CD (Category H)
+# Assessment: CI/CD
 
-## Grade: 4 / 10
+## Grade: 4/10
 
 ## Analysis
-The CI/CD pipeline is unreliable. While workflows exist (`ci-standard.yml`), they are configured to ignore failures (`|| echo`), creating "False Green" builds. This defeats the purpose of Continuous Integration and provides a false sense of security.
-
-## Key Findings
-
-### Strengths
--   **Existence**: GitHub Actions are defined and trigger on push/PR.
--   **Matrix**: Python version matrix testing is configured.
-
-### Weaknesses
--   **False Greens**: Critical steps (lint, test, audit) swallow errors.
--   **No Deployment**: No automated deployment steps are visible for the web applications.
--   **Slow Feedback**: monolithic jobs rather than optimized, cached stages.
+The CI/CD pipeline (`.github/workflows/ci-standard.yml`) is the weakest link due to "False Green" configurations:
+- **Ignored Failures**: `black`, `mypy`, `pip-audit`, and `pytest` are all executed with `|| echo` or `|| true`, meaning the build passes even if these checks fail.
+- **Ruff Limitations**: `ruff` is the only blocking check, but `ruff.toml` excludes the most problematic parts of the codebase (`legacy`, `data_processing`).
+- **Infrastructure**: The workflow definitions themselves are well-structured (using matrix strategies), but the logic is flawed.
 
 ## Recommendations
-1.  **Stop masking errors**: Remove `|| echo` immediately. A failing test must fail the build.
-2.  **Split Jobs**: Separate fast checks (lint) from slow checks (tests) for better feedback.
-3.  **Add Deployment**: Create a workflow to deploy the web apps (e.g., to a staging environment).
+1. **Remove `|| true`**: Make checks blocking.
+2. **Reduce Exclusions**: Update `ruff.toml` to include more directories as they are cleaned up.

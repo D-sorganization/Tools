@@ -1,21 +1,13 @@
-# Assessment: Logging (Category L)
+# Assessment: Logging
 
-## Grade: 3 / 10
+## Grade: 4/10
 
 ## Analysis
-Logging is substandard. The codebase contains significantly more `print()` statements than proper `logging` calls. This makes debugging in production or CI environments difficult and clutters the standard output.
-
-## Key Findings
-
-### Strengths
--   **Setup**: `setup_dev.py` and `UnifiedToolsLauncher.py` correctly configure logging.
-
-### Weaknesses
--   **Print Debugging**: `print()` is used extensively (~394 occurrences) vs `logging` (~232).
--   **Inconsistency**: No standardized logging format across modules.
--   **Legacy**: `Data_Processor_r0.py` relies almost exclusively on `print`.
+Logging is inconsistent:
+- **Print Usage**: Approx 400 `print()` statements exist in the codebase, violating the `AGENTS.md` directive to use the `logging` module.
+- **Logger Config**: A `logging_config.py` exists, but its usage is spotty.
+- **Error Tracing**: Without proper logging, debugging failures in CI or production is difficult.
 
 ## Recommendations
-1.  **Ban Print**: Enforce a linter rule (e.g., `flake8-print`) to forbid `print()` in production code.
-2.  **Migrate**: Mass migrate `print()` calls to `logger.info()` or `logger.debug()`.
-3.  **Config**: Centralize logging configuration in `src/utils/logger.py`.
+1. **Ban Print**: Configure a custom lint rule to forbid `print()` in `src/`.
+2. **Universal Logger**: Ensure every module instantiates a named logger (`logger = logging.getLogger(__name__)`).
