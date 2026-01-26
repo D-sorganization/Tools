@@ -48,7 +48,6 @@ try:
 except ImportError:
 
     def ensure_utils_in_path():
-        pass
         return logging.getLogger(name)
 
 

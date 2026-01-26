@@ -39,6 +39,8 @@ except ImportError:
         if create_parents:
             p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(content, encoding=encoding)
+
+
 PROGRESS_INCREMENT: Final[int] = (
     10  # Progress bar increment percentage [%]
     # - standard UI update frequency

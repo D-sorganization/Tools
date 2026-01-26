@@ -42,15 +42,15 @@ if utils_path.exists() and str(utils_path) not in sys.path:
 
 try:
     from utils.file_utils import (
-        safe_read_text,
-        safe_write_text,
         safe_read_json,
+        safe_read_text,
         safe_write_json,
+        safe_write_text,
     )
 except ImportError:
     # Fallback if utils cannot be found (e.g. distributed without source)
     import json
-    
+
     def safe_read_text(path, encoding="utf-8", default=""):
         try:
             return Path(path).read_text(encoding=encoding)
@@ -66,7 +66,7 @@ except ImportError:
     def safe_write_json(path, data, indent=2, create_parents=True):
         data_str = json.dumps(data, indent=indent)
         safe_write_text(path, data_str)
-        
+
     def safe_read_json(path, default=None):
         try:
             return json.loads(safe_read_text(path))

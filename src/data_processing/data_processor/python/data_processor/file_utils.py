@@ -151,7 +151,7 @@ class DataReader:
             ".db": "sqlite",
             ".sqlite": "sqlite",
         }
-        
+
         if extension in format_mapping:
             return format_mapping[extension]
 

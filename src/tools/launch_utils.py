@@ -30,25 +30,21 @@ def get_repo_root() -> Path:
 class LaunchError(Exception):
     """Base class for launch errors."""
 
-    pass
 
 
 class ToolNotFoundError(LaunchError):
     """Raised when a tool file is not found."""
 
-    pass
 
 
 class SecurityError(LaunchError):
     """Raised when a path is invalid or unsafe."""
 
-    pass
 
 
 class PlatformError(LaunchError):
     """Raised when a tool is not supported on the current platform."""
 
-    pass
 
 
 def validate_and_sanitize_path(path_str: str, repo_root: Path) -> Path:

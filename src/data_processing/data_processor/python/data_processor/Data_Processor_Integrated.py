@@ -24,12 +24,11 @@ from pathlib import Path
 from tkinter import filedialog, messagebox
 
 import customtkinter as ctk
-import numpy as np
 import pandas as pd
 
 # Additional ML-specific imports
 try:
-    import scipy.io
+    pass
 
     SCIPY_AVAILABLE = True
 except ImportError:
@@ -37,7 +36,6 @@ except ImportError:
 
 # PyArrow imports for parquet handling
 try:
-    import pyarrow as pa
     import pyarrow.parquet as pq
 
     PYARROW_AVAILABLE = True
@@ -55,9 +53,9 @@ try:
     if utils_path.exists() and str(utils_path) not in sys.path:
         sys.path.insert(0, str(utils_path))
 
-    from utils.file_utils import safe_read_text, safe_write_text
     from utils.csv_utils import safe_read_csv, safe_write_csv
-    
+    from utils.file_utils import safe_read_text, safe_write_text
+
     # Import shared file classes
     from .file_utils import DataReader, DataWriter, FileFormatDetector
 except Exception:

@@ -24,8 +24,8 @@ except ImportError:
         ensure_utils_in_path()
 
 try:
-    from utils.subprocess_utils import run_python_script
     from utils.logging_utils import get_logger
+    from utils.subprocess_utils import run_python_script
 except ImportError:
     # Fallback if shared utilities not available
     import logging

@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from typing import Any
 
 import pandas as pd
-
 from data_processor.logging_config import get_logger
 from data_processor.models import FilterConfig
 from data_processor.vectorized_filter_engine import VectorizedFilterEngine
