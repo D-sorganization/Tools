@@ -28,6 +28,11 @@ from unittest.mock import Mock, patch
 # Add python directory to path
 sys.path.append(str(Path(__file__).parent.parent))
 
+# Add tools directory to path
+tools_path = Path(__file__).parents[3] / "src" / "tools" / "folder_tools"
+if tools_path.exists():
+    sys.path.append(str(tools_path))
+
 # Skip entire module if folder_packer_pro is not available
 try:
     from folder_packer_pro.folder_packer_pro import (
@@ -369,3 +374,51 @@ class TestFolderPackerPro:
             app._browse_unpack_dest()
             app.unpack_dest_entry.delete.assert_called()
             app.unpack_dest_entry.insert.assert_called_with(0, str(tmp_path / "dest"))
+
+    def test_theme_switching(
+        self, mock_root: Mock, mock_tk_vars: dict[str, Mock]
+    ) -> None:
+        """Test theme switching functionality."""
+        with (
+            patch("tkinter.Menu"),
+            patch("tkinter.ttk.Notebook"),
+            patch("tkinter.ttk.Frame"),
+            patch("tkinter.ttk.Label"),
+            patch("tkinter.ttk.LabelFrame"),
+            patch("tkinter.ttk.Entry"),
+            patch("tkinter.ttk.Button"),
+            patch("tkinter.scrolledtext.ScrolledText"),
+            patch("tkinter.ttk.Progressbar"),
+            patch("tkinter.ttk.Radiobutton"),
+            patch("tkinter.ttk.Checkbutton"),
+            patch("tkinter.ttk.Treeview"),
+            patch("tkinter.ttk.Scrollbar"),
+            patch("tkinter.Text"),
+            patch("tkinter.ttk.Style"),
+        ):
+            app = FolderPackerPro(mock_root)
+            app._log_message = Mock()  # type: ignore[method-assign]
+
+            # Default theme
+            assert app.current_theme == "dark"
+
+            # Switch to light
+            app._set_theme("light")
+            assert app.current_theme == "light"
+            app._log_message.assert_called_with("Switched to light theme", "info")
+
+            # Switch to legal pad
+            app._set_theme("legal pad")
+            assert app.current_theme == "legal pad"
+
+            # Switch to word
+            app._set_theme("word")
+            assert app.current_theme == "word"
+
+            # Switch to excel
+            app._set_theme("excel")
+            assert app.current_theme == "excel"
+
+            # Try invalid theme (should not change)
+            app._set_theme("invalid_theme")
+            assert app.current_theme == "excel"

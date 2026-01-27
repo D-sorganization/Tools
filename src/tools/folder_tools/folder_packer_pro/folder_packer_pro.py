@@ -190,6 +190,47 @@ LIGHT_THEME = {
     "error": "#dc3545",
 }
 
+LEGAL_PAD_THEME = {
+    "bg": "#ffffcc",
+    "fg": "#000000",
+    "select_bg": "#e6e600",
+    "entry_bg": "#ffffff",
+    "accent": "#0000ff",
+    "success": "#28a745",
+    "warning": "#ffc107",
+    "error": "#dc3545",
+}
+
+WORD_THEME = {
+    "bg": "#f3f2f1",
+    "fg": "#252423",
+    "select_bg": "#c7e0f4",
+    "entry_bg": "#ffffff",
+    "accent": "#2b579a",
+    "success": "#28a745",
+    "warning": "#ffc107",
+    "error": "#dc3545",
+}
+
+EXCEL_THEME = {
+    "bg": "#f3f2f1",
+    "fg": "#252423",
+    "select_bg": "#e6f2e6",
+    "entry_bg": "#ffffff",
+    "accent": "#217346",
+    "success": "#28a745",
+    "warning": "#ffc107",
+    "error": "#dc3545",
+}
+
+THEMES = {
+    "dark": DARK_THEME,
+    "light": LIGHT_THEME,
+    "legal pad": LEGAL_PAD_THEME,
+    "word": WORD_THEME,
+    "excel": EXCEL_THEME,
+}
+
 # Set up professional logging
 log_filename = "folder_packer_pro.log"
 logging.basicConfig(
@@ -370,7 +411,16 @@ class FolderPackerPro:
         # View menu
         view_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="View", menu=view_menu)
-        view_menu.add_command(label="Toggle Theme", command=self._toggle_theme)
+
+        # Themes submenu
+        themes_menu = tk.Menu(view_menu, tearoff=0)
+        view_menu.add_cascade(label="Themes", menu=themes_menu)
+
+        for theme_name in THEMES:
+            themes_menu.add_command(
+                label=theme_name.title(),
+                command=lambda t=theme_name: self._set_theme(t),
+            )
 
         # Tools menu
         tools_menu = tk.Menu(menubar, tearoff=0)
@@ -948,7 +998,7 @@ class FolderPackerPro:
 
     def _apply_theme(self) -> None:
         """Apply color theme to application."""
-        theme = DARK_THEME if self.current_theme == "dark" else LIGHT_THEME
+        theme = THEMES.get(self.current_theme, DARK_THEME)
 
         # Configure ttk styles
         style = ttk.Style()
@@ -963,11 +1013,12 @@ class FolderPackerPro:
             "No operation in progress",
         )
 
-    def _toggle_theme(self) -> None:
-        """Toggle between dark and light themes."""
-        self.current_theme = "light" if self.current_theme == "dark" else "dark"
-        self._apply_theme()
-        self._log_message(f"Switched to {self.current_theme} theme", "info")
+    def _set_theme(self, theme_name: str) -> None:
+        """Set the application theme."""
+        if theme_name in THEMES:
+            self.current_theme = theme_name
+            self._apply_theme()
+            self._log_message(f"Switched to {theme_name} theme", "info")
 
     def _browse_pack_source(self) -> None:
         """Browse for source folder to pack."""
