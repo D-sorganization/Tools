@@ -1,12 +1,13 @@
-# Assessment: Configuration
+# Assessment: Configuration (Category M)
 
-## Grade: 6/10
+## Grade: 5/10
 
 ## Analysis
-Configuration management is adequate but could be better:
-- **Environment Variables**: `.env` and `.env.example` are used for secrets and environment-specific settings.
-- **JSON Configs**: `tools.json` and `issues.json` are used effectively for data-driven configuration.
-- **Hardcoding**: Some configuration (like default paths or timeouts) is still hardcoded in Python files.
+Configuration is scattered.
+
+## Key Findings
+1.  **Multiple Configs**: `tools.json`, `.env`, `pyproject.toml`, hardcoded constants.
+2.  **Secrets**: No secrets detected in code (based on memory), which is good.
 
 ## Recommendations
-1. **Centralize Config**: Use a library like `pydantic-settings` to manage configuration in a typed, validated way.
+1.  **Centralize Config**: Use a library like `pydantic-settings` to centralize configuration management.

@@ -1,13 +1,15 @@
-# Assessment: Dependencies
+# Assessment: Dependencies (Category G)
 
 ## Grade: 7/10
 
 ## Analysis
-Dependency management is generally standard:
-- **Requirements**: `requirements.txt` exists and uses version pinning (e.g., `pandas>=2.2.2`).
-- **Isolation**: Venv instructions are clear.
-- **Locking**: `requirements-lock.txt` exists, which is excellent for reproducibility.
-- **Complexity**: The number of dependencies is large (PyQt6, Pandas, SciPy, Flask), reflecting the "Tools Monorepo" nature.
+Dependencies are managed via `requirements.txt`, which is good practice.
+
+## Key Findings
+1.  **Managed Deps**: `requirements.txt` exists and is used in CI.
+2.  **Large Dependency Set**: The list is extensive, increasing the attack surface and install times.
+3.  **Lock File**: `requirements-lock.txt` exists, ensuring reproducible builds.
 
 ## Recommendations
-1. **Split Requirements**: Consider separating `requirements.txt` into core, dev, and tool-specific files to reduce install time for smaller tasks.
+1.  **Audit Dependencies**: Remove unused packages to slim down the installation.
+2.  **Separate Dev Deps**: clearly separate dev dependencies from production ones if not already done.

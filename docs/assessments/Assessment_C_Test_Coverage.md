@@ -1,14 +1,16 @@
-# Assessment: Test Coverage
+# Assessment: Test Coverage (Category C)
 
 ## Grade: 2/10
 
 ## Analysis
-Testing is currently in a critical state:
-- **Collection Failures**: Running `pytest --collect-only` reveals widespread errors (`ModuleNotFoundError`, `NameError`, `AttributeError`) preventing tests from even being listed.
-- **Exclusions**: `pytest.ini` and `ruff.toml` exclude large portions of the codebase (`data_processing`, `scientific_modeling`, `legacy`), meaning "passing" tests do not reflect reality.
-- **False Green**: The CI pipeline allows tests to fail (`pytest . || echo "::warning::Tests failed"`), masking the broken state.
+Test coverage is critically low and the test suite is currently non-functional due to collection errors.
+
+## Key Findings
+1.  **Broken Test Collection**: Running `pytest` results in multiple `ModuleNotFoundError` and `ImportError` exceptions, preventing tests from even running.
+2.  **Missing Tests**: Large portions of the codebase, particularly legacy data processing scripts, appear to have no effective test coverage.
+3.  **Exclusions**: `ruff.toml` and other configs exclude test directories, hiding potential issues.
 
 ## Recommendations
-1. **Fix Collection Errors**: Immediately resolve import errors in `tests/` to allow test collection.
-2. **Remove Exclusions**: Gradually remove directories from `norecursedirs` in `pytest.ini`.
-3. **Enforce Passing Tests**: Remove `|| echo` from the CI pipeline once collection errors are fixed.
+1.  **Fix Test Collection**: Prioritize fixing import paths so `pytest` can collect and run tests.
+2.  **Add Legacy Tests**: Write characterization tests for `Data_Processor_r0.py` before refactoring.
+3.  **Enforce Coverage**: Once tests run, enable coverage reporting and set a baseline.
