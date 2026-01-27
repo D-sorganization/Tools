@@ -1,32 +1,32 @@
 [
   {
-    "title": "Fix Broken Test Collection",
-    "body": "The test suite fails to collect due to `ModuleNotFoundError` and `NameError`. `pytest --collect-only` reports errors in multiple files. Fix imports and paths.",
-    "labels": ["jules:assessment", "needs-attention", "priority:high", "area:testing"]
+    "title": "Fix Broken Test Collection (Category C)",
+    "body": "Test coverage is critically low (2/10) because `pytest` fails to collect tests due to `ModuleNotFoundError` and `ImportError`. This prevents any verification of the codebase. Immediate action is required to fix import paths and ensure tests can run.",
+    "labels": ["jules:assessment", "needs-attention", "priority:critical", "category:testing"]
   },
   {
-    "title": "Remove False Green CI Configuration",
-    "body": "The CI pipeline (`ci-standard.yml`) uses `|| echo` or `|| true` to mask failures in Black, Mypy, and Pytest. Remove these bypasses to ensure build failures reflect code quality.",
-    "labels": ["jules:assessment", "needs-attention", "priority:critical", "area:cicd"]
+    "title": "Eliminate False Green CI (Category H)",
+    "body": "The CI/CD pipeline (Category H, Grade 4/10) uses `|| echo` to mask failures in linting, type checking, and testing. This creates a false sense of security. The pipeline must be updated to fail fast on errors.",
+    "labels": ["jules:assessment", "needs-attention", "priority:critical", "category:cicd"]
   },
   {
-    "title": "Refactor Data_Processor_r0.py",
-    "body": "The file `src/data_processing/data_processor/python/data_processor/Data_Processor_r0.py` is a monolithic script (300KB+). Refactor it into a modular package structure.",
-    "labels": ["jules:assessment", "needs-attention", "priority:medium", "area:refactoring"]
+    "title": "Standardize Error Handling (Category D)",
+    "body": "Error handling (Category D, Grade 4/10) is inconsistent, with legacy code likely using broad exception handlers. Standardize on custom exceptions and remove broad `except Exception:` blocks.",
+    "labels": ["jules:assessment", "needs-attention", "priority:medium", "category:error-handling"]
   },
   {
-    "title": "Migrate from Print to Logging",
-    "body": "Over 400 `print()` statements were found in the codebase. Migrate them to use the `logging` module as per `AGENTS.md`.",
-    "labels": ["jules:assessment", "needs-attention", "priority:low", "area:logging"]
+    "title": "Modernize Data Handling (Category K)",
+    "body": "Data handling (Category K, Grade 4/10) relies on monolithic scripts and likely inefficient in-memory processing. Refactor `Data_Processor_r0.py` to use stream processing and schema validation.",
+    "labels": ["jules:assessment", "needs-attention", "priority:medium", "category:data-handling"]
   },
   {
-    "title": "Standardize Directory Structure",
-    "body": "Merge the `tools/` directory into `src/` to unify the codebase structure and eliminate legacy/modern confusion.",
-    "labels": ["jules:assessment", "needs-attention", "priority:medium", "area:structure"]
+    "title": "Implement Universal Logging (Category L)",
+    "body": "Logging (Category L, Grade 4/10) is inconsistent and relies on `print` statements. Replace all `print` calls with `logging` module calls and consider structured logging.",
+    "labels": ["jules:assessment", "needs-attention", "priority:medium", "category:logging"]
   },
   {
-    "title": "Enable Linting for Legacy Code",
-    "body": "Remove exclusions in `ruff.toml` for `data_processing` and `legacy` directories. Fix the resulting lint errors.",
-    "labels": ["jules:assessment", "needs-attention", "priority:medium", "area:style"]
+    "title": "Improve Scalability (Category N)",
+    "body": "Scalability (Category N, Grade 4/10) is limited by monolithic architecture. Break down the data processor into modular components to allow independent scaling.",
+    "labels": ["jules:assessment", "needs-attention", "priority:low", "category:scalability"]
   }
 ]
