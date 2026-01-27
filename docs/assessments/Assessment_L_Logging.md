@@ -1,13 +1,14 @@
-# Assessment: Logging
+# Assessment: Logging (Category L)
 
 ## Grade: 4/10
 
 ## Analysis
-Logging is inconsistent:
-- **Print Usage**: Approx 400 `print()` statements exist in the codebase, violating the `AGENTS.md` directive to use the `logging` module.
-- **Logger Config**: A `logging_config.py` exists, but its usage is spotty.
-- **Error Tracing**: Without proper logging, debugging failures in CI or production is difficult.
+Logging is inconsistent and often relies on `print`.
+
+## Key Findings
+1.  **Print Debugging**: Legacy code uses `print` instead of the `logging` module.
+2.  **Configuration**: Logging configuration exists but is not universally applied.
 
 ## Recommendations
-1. **Ban Print**: Configure a custom lint rule to forbid `print()` in `src/`.
-2. **Universal Logger**: Ensure every module instantiates a named logger (`logger = logging.getLogger(__name__)`).
+1.  **Universal Logging**: Replace all `print` statements with `logger.info/debug/error`.
+2.  **Structured Logging**: Consider structured logging (JSON) for better observability.

@@ -1,13 +1,14 @@
-# Assessment: Maintainability
+# Assessment: Maintainability (Category O)
 
-## Grade: 4/10
+## Grade: 5/10
 
 ## Analysis
-Maintainability is the primary concern for this repository:
-- **Technical Debt**: The "legacy" code weighs down the "modern" `src/` improvements.
-- **False Confidence**: The CI pipeline reports "Success" when it is actually failing to check code, leading to a false sense of security.
-- **Bus Factor**: The reliance on specific, potentially fragile scripts implies high knowledge burden.
+Maintainability is the biggest challenge. The "False Green" CI and broken tests make it hard to modify code with confidence.
+
+## Key Findings
+1.  **Fear of Change**: Without reliable tests and CI, developers cannot refactor safely.
+2.  **Legacy Burden**: The legacy code weighs down the project.
 
 ## Recommendations
-1. **Truthful CI**: Make the CI pipeline fail on errors. It is better to have a red build that reflects reality than a green build that lies.
-2. **Delete Dead Code**: aggressively remove code in `tools/` that has been superseded by `src/`.
+1.  **Fix CI First**: Truthful CI is the prerequisite for maintainability.
+2.  **Incremental Refactoring**: Tackle the monolith piece by piece.
