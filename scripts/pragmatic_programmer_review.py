@@ -115,7 +115,7 @@ def check_dry_violations(files: list[Path]) -> list[dict]:
     issues = []
     chunk_size = 6
     code_blocks = defaultdict(list)
-    magic_numbers = defaultdict(list)
+    defaultdict(list)
 
     for file_path in files:
         try:
