@@ -3,13 +3,11 @@
 ## Grade: 7/10
 
 ## Analysis
-Modern tools (`ruff`, `black`) are present, but their effectiveness is limited by broad exclusions.
-
-## Key Findings
-1.  **Tooling**: `black` and `ruff` are configured.
-2.  **Exclusions**: `ruff.toml` excludes large parts of the codebase (`data_processing`, etc.), leaving them unformatted and unlinted.
-3.  **Inconsistency**: The repo is a mix of well-formatted code and legacy spaghetti code.
+Code style is enforced but unevenly applied:
+1.  **Tooling**: `ruff` and `black` are correctly configured in the CI pipeline.
+2.  **Exclusions**: `ruff.toml` explicitly excludes large portions of the codebase (`data_processing`, `scientific_modeling`, `legacy`), meaning "style" is only enforced on a subset of files.
+3.  **Modern Code**: New code (e.g., `web_applications`) adheres to strict standards.
 
 ## Recommendations
-1.  **Reduce Exclusions**: Gradually remove directories from the exclusion list and fix the issues.
-2.  **Enforce Strictness**: Once exclusions are gone, enforce strict linting in CI.
+1.  **Reduce Exclusions**: Incrementally remove directories from `ruff.toml` exclude list and fix the resulting errors.
+2.  **Standardize**: Apply `black` formatting to the legacy `Data_Processor_r0.py` (even if linting is harder) to at least have consistent whitespace.

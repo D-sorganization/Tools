@@ -39,13 +39,13 @@ jobs:
           find . -name "*.py" -type f -exec sed -i 's/\r$//' {} \;
 
       - name: Format Check (Black)
-        run: black --check . || echo "::warning::Some files need Black formatting"
+        run: black --check .
 
       - name: Type Check (Mypy)
-        run: mypy . --ignore-missing-imports --install-types --non-interactive || echo "::warning::Type checking has issues"
+        run: mypy . --ignore-missing-imports --install-types --non-interactive
 
       - name: Security Scan (pip-audit)
-        run: pip-audit -r requirements.txt || echo "::warning::Security scan found issues"
+        run: pip-audit -r requirements.txt
 
   tests:
     needs: quality-gate
@@ -66,5 +66,4 @@ jobs:
 
       - name: Run Tests (Python ${{ matrix.python-version }})
         # Run all tests discovered in the repo
-        # Non-blocking: Import issues due to directory restructuring need fixing
-        run: pytest . || echo "::warning::Tests failed - import issues need fixing"
+        run: pytest .

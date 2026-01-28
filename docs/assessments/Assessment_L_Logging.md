@@ -3,12 +3,11 @@
 ## Grade: 4/10
 
 ## Analysis
-Logging is inconsistent and often relies on `print`.
-
-## Key Findings
-1.  **Print Debugging**: Legacy code uses `print` instead of the `logging` module.
-2.  **Configuration**: Logging configuration exists but is not universally applied.
+Logging standards defined in `AGENTS.md` are not consistently followed:
+1.  **Violation**: Legacy code relies heavily on `print()` statements for debug and status information.
+2.  **Standard**: The `AGENTS.md` file explicitly forbids `print()` in favor of the `logging` module.
+3.  **Observability**: Lack of structured logging makes debugging in production/CI environments difficult.
 
 ## Recommendations
-1.  **Universal Logging**: Replace all `print` statements with `logger.info/debug/error`.
-2.  **Structured Logging**: Consider structured logging (JSON) for better observability.
+1.  **Migrate to Logger**: Replace all `print()` calls in `src/` with `logger.info()`, `logger.debug()`, etc.
+2.  **Configure Handlers**: Ensure a central logging configuration exists (console + file rotation).
