@@ -3,12 +3,11 @@
 ## Grade: 5/10
 
 ## Analysis
-Maintainability is the biggest challenge. The "False Green" CI and broken tests make it hard to modify code with confidence.
-
-## Key Findings
-1.  **Fear of Change**: Without reliable tests and CI, developers cannot refactor safely.
-2.  **Legacy Burden**: The legacy code weighs down the project.
+Maintainability is the repository's biggest challenge:
+1.  **Technical Debt**: The existence of `r0` files (revision 0) and large monoliths indicates significant debt.
+2.  **Test Gap**: The inability to run tests makes refactoring extremely risky, hurting maintainability.
+3.  **Modern vs Legacy**: A sharp divide exists between clean modern code and unmaintainable legacy scripts.
 
 ## Recommendations
-1.  **Fix CI First**: Truthful CI is the prerequisite for maintainability.
-2.  **Incremental Refactoring**: Tackle the monolith piece by piece.
+1.  **Fix Tests First**: Tests are the safety net for maintenance. They must be fixed immediately.
+2.  **Strangler Fig Pattern**: Gradually replace parts of the monolith with new, tested modules.

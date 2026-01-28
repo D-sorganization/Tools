@@ -1,16 +1,15 @@
 # Assessment: Test Coverage (Category C)
 
-## Grade: 2/10
+## Grade: 1/10
 
 ## Analysis
-Test coverage is critically low and the test suite is currently non-functional due to collection errors.
-
-## Key Findings
-1.  **Broken Test Collection**: Running `pytest` results in multiple `ModuleNotFoundError` and `ImportError` exceptions, preventing tests from even running.
-2.  **Missing Tests**: Large portions of the codebase, particularly legacy data processing scripts, appear to have no effective test coverage.
-3.  **Exclusions**: `ruff.toml` and other configs exclude test directories, hiding potential issues.
+Test coverage is critically deficient due to execution failures:
+1.  **Broken Collection**: `pytest` fails to collect tests due to `ModuleNotFoundError` (missing `numpy`, `pandas` in environment or incorrect import paths).
+2.  **Import Errors**: Tests in `src/python/tests` and `src/data_processing` fail with relative import errors.
+3.  **No Metrics**: Since tests cannot run, no coverage metrics (lines/branches) can be generated.
+4.  **Existence**: Tests *do* exist, which prevents a 0/10, but they are currently non-functional.
 
 ## Recommendations
-1.  **Fix Test Collection**: Prioritize fixing import paths so `pytest` can collect and run tests.
-2.  **Add Legacy Tests**: Write characterization tests for `Data_Processor_r0.py` before refactoring.
-3.  **Enforce Coverage**: Once tests run, enable coverage reporting and set a baseline.
+1.  **Fix Imports**: Restructure test imports to work with the `src/` layout (e.g., use `PYTHONPATH` or editable installs).
+2.  **Environment Sync**: Ensure CI and local environments have all required dependencies (`requirements.txt` includes them, but they appear missing in test runtime).
+3.  **Prioritize Fix**: This is a critical blocker. Tests must run before code quality can be improved.

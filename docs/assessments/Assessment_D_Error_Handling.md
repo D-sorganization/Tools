@@ -3,13 +3,12 @@
 ## Grade: 4/10
 
 ## Analysis
-Error handling is inconsistent. Modern components likely use proper exceptions, but legacy parts rely on broad checks or crash on unexpected input.
-
-## Key Findings
-1.  **Import Errors in Tests**: The current state of the test suite (crashing on imports) demonstrates fragile environment handling.
-2.  **Legacy Patterns**: Legacy code likely uses `try...except Exception:` patterns that mask root causes (inferred from general legacy code traits in this repo).
-3.  **CI masking**: The CI pipeline itself masks errors using `|| echo`, which is a form of bad error handling at the infrastructure level.
+Error handling quality varies significantly across the codebase:
+1.  **Modern Code (High)**: The `unit-converter-app` (`converter.js`) uses explicit `throw new Error` with clear messages and input validation (e.g., `isValidKey`).
+2.  **Legacy Code (Low)**: The legacy Python scripts (`Data_Processor_r0.py`) often rely on `print` statements for error reporting or lack specific exception handling (bare `except:`).
+3.  **CI/CD**: The previous use of `|| echo` in CI workflows effectively silenced errors, a major anti-pattern (now fixed).
 
 ## Recommendations
-1.  **Remove CI Masks**: Fix the CI workflow to fail on errors.
-2.  **Standardize Exceptions**: Define custom exception classes for the domain.
+1.  **Refactor Legacy**: Replace `print` error logging with the standard `logging` module in Python.
+2.  **Strict Exceptions**: Ban bare `except:` clauses via linting rules (Ruff `E722`).
+3.  **UI Feedback**: Ensure web apps handle errors gracefully in the UI (e.g., toast notifications) rather than just console errors.

@@ -1,32 +1,22 @@
 [
   {
-    "title": "Fix Broken Test Collection (Category C)",
-    "body": "Test coverage is critically low (2/10) because `pytest` fails to collect tests due to `ModuleNotFoundError` and `ImportError`. This prevents any verification of the codebase. Immediate action is required to fix import paths and ensure tests can run.",
-    "labels": ["jules:assessment", "needs-attention", "priority:critical", "category:testing"]
+    "title": "Critical: Fix Broken Test Collection",
+    "body": "The `pytest` execution fails immediately during collection due to `ModuleNotFoundError` (missing `numpy`, `pandas`) and incorrect relative imports in `src/`. This effectively results in 0% test coverage availability. \n\n**Action Items:**\n1. Ensure CI environment installs all dependencies.\n2. Fix import paths in test files to align with `src/` structure.",
+    "labels": ["jules:assessment", "needs-attention", "priority:critical", "type:bug"]
   },
   {
-    "title": "Eliminate False Green CI (Category H)",
-    "body": "The CI/CD pipeline (Category H, Grade 4/10) uses `|| echo` to mask failures in linting, type checking, and testing. This creates a false sense of security. The pipeline must be updated to fail fast on errors.",
-    "labels": ["jules:assessment", "needs-attention", "priority:critical", "category:cicd"]
+    "title": "Refactor Legacy Data Processor Monolith",
+    "body": "`src/data_processing/data_processor/python/data_processor/Data_Processor_r0.py` is a massive legacy script that defies modern standards. It uses `print` for logging and has poor error handling.\n\n**Action Items:**\n1. Break into smaller modules (e.g., `loader`, `processor`, `reporter`).\n2. Replace `print` with `logging`.\n3. Add unit tests for new modules.",
+    "labels": ["jules:assessment", "needs-attention", "priority:high", "type:refactor"]
   },
   {
-    "title": "Standardize Error Handling (Category D)",
-    "body": "Error handling (Category D, Grade 4/10) is inconsistent, with legacy code likely using broad exception handlers. Standardize on custom exceptions and remove broad `except Exception:` blocks.",
-    "labels": ["jules:assessment", "needs-attention", "priority:medium", "category:error-handling"]
+    "title": "Unify Tools Directory Structure",
+    "body": "The repository has a split personality regarding tools: `tools/` (root) vs `src/tools/`. This causes confusion.\n\n**Action Items:**\n1. Audit root `tools/`.\n2. Move active scripts to `src/tools/`.\n3. Delete or archive the rest.",
+    "labels": ["jules:assessment", "needs-attention", "priority:medium", "type:chore"]
   },
   {
-    "title": "Modernize Data Handling (Category K)",
-    "body": "Data handling (Category K, Grade 4/10) relies on monolithic scripts and likely inefficient in-memory processing. Refactor `Data_Processor_r0.py` to use stream processing and schema validation.",
-    "labels": ["jules:assessment", "needs-attention", "priority:medium", "category:data-handling"]
-  },
-  {
-    "title": "Implement Universal Logging (Category L)",
-    "body": "Logging (Category L, Grade 4/10) is inconsistent and relies on `print` statements. Replace all `print` calls with `logging` module calls and consider structured logging.",
-    "labels": ["jules:assessment", "needs-attention", "priority:medium", "category:logging"]
-  },
-  {
-    "title": "Improve Scalability (Category N)",
-    "body": "Scalability (Category N, Grade 4/10) is limited by monolithic architecture. Break down the data processor into modular components to allow independent scaling.",
-    "labels": ["jules:assessment", "needs-attention", "priority:low", "category:scalability"]
+    "title": "Enforce Global Linting",
+    "body": "`ruff.toml` currently excludes `data_processing`, `scientific_modeling`, and other key areas. This allows technical debt to accumulate.\n\n**Action Items:**\n1. Remove one exclusion at a time.\n2. Fix the resulting linting errors.\n3. Commit changes.",
+    "labels": ["jules:assessment", "needs-attention", "priority:medium", "type:style"]
   }
 ]

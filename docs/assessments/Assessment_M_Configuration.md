@@ -1,13 +1,13 @@
 # Assessment: Configuration (Category M)
 
-## Grade: 5/10
+## Grade: 7/10
 
 ## Analysis
-Configuration is scattered.
-
-## Key Findings
-1.  **Multiple Configs**: `tools.json`, `.env`, `pyproject.toml`, hardcoded constants.
-2.  **Secrets**: No secrets detected in code (based on memory), which is good.
+Configuration management is solid but has gaps:
+1.  **Standard Files**: `ruff.toml`, `pytest.ini`, `pyproject.toml`, and `.pre-commit-config.yaml` are present and well-structured.
+2.  **Environment**: `.env.example` is provided, promoting best practices for secrets.
+3.  **Exclusions**: The heavy use of exclusions in `ruff.toml` and `pytest.ini` (historical) indicates "configuration as a workaround" rather than fixing underlying issues.
 
 ## Recommendations
-1.  **Centralize Config**: Use a library like `pydantic-settings` to centralize configuration management.
+1.  **Audit Exclusions**: Regularly review and remove exclusions from configuration files as code is improved.
+2.  **Centralize**: Ensure all tool configuration lives in `pyproject.toml` where possible (e.g., move `pytest.ini` config there if feasible, though `pytest.ini` is acceptable).
