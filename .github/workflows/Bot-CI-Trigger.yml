@@ -20,7 +20,7 @@ on:
 
   # Also run on a schedule to catch any missed PRs
   schedule:
-    - cron: '*/15 * * * *'  # Every 15 minutes
+    - cron: '0 */2 * * *'  # Every 2 hours (reduced from 15 min for cost control)
 
   workflow_dispatch:
     inputs:
@@ -47,6 +47,7 @@ jobs:
       (github.event_name == 'pull_request' &&
        (contains(github.event.pull_request.user.login, 'bot') ||
         contains(github.event.pull_request.user.login, 'github-actions') ||
+        contains(github.event.pull_request.user.login, 'google-labs-jules') ||
         github.event.pull_request.user.type == 'Bot'))
 
     steps:
@@ -60,14 +61,14 @@ jobs:
         run: |
           # Check recent commits for loop indicators
           loop_count=0
-          for msg in $(git log --format="%s" -n 5); do
+          while IFS= read -r msg; do
             if [[ "$msg" == *"[skip ci]"* ]] || [[ "$msg" == *"[ci skip]"* ]]; then
               continue
             fi
             if [[ "$msg" == *"trigger-ci"* ]] || [[ "$msg" == *"bot-ci-trigger"* ]]; then
               ((loop_count++))
             fi
-          done
+          done < <(git log --format="%s" -n 5)
 
           if [ $loop_count -ge 3 ]; then
             echo "skip=true" >> $GITHUB_OUTPUT
@@ -116,7 +117,7 @@ jobs:
             done
 
             # Also check PRs from other bot-like authors
-            for author in "dependabot[bot]" "renovate[bot]" "claude[bot]"; do
+            for author in "dependabot[bot]" "renovate[bot]" "claude[bot]" "google-labs-jules[bot]"; do
               more_prs=$(gh pr list --author "$author" --state open --json number --jq '.[].number' 2>/dev/null || echo "")
               for pr in $more_prs; do
                 checks=$(gh pr checks "$pr" 2>/dev/null || echo "")
@@ -146,12 +147,10 @@ jobs:
             echo "Triggering CI for PR #$pr"
 
             # Method 1: Try to trigger workflow_dispatch on ci-standard
-            gh workflow run ci-standard.yml \
-              --ref "$(gh pr view $pr --json headRefName --jq '.headRefName')" \
-              2>/dev/null || true
-
             # Method 2: If workflow_dispatch fails, add empty commit to trigger
-            if [ $? -ne 0 ]; then
+            if ! gh workflow run ci-standard.yml \
+              --ref "$(gh pr view $pr --json headRefName --jq '.headRefName')" \
+              2>/dev/null; then
               echo "workflow_dispatch failed, trying empty commit method"
 
               # Get PR branch
@@ -160,6 +159,9 @@ jobs:
               git fetch origin "$branch"
               git checkout "$branch"
 
+              # Configure git identity for commit
+              git config user.name "github-actions[bot]"
+              git config user.email "github-actions[bot]@users.noreply.github.com"
               # Create empty commit with special marker
               git commit --allow-empty -m "chore: trigger CI checks [bot-ci-trigger]
 
