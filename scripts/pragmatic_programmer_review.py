@@ -20,6 +20,7 @@ import argparse
 import ast
 import hashlib
 import json
+import logging
 import re
 import sys
 from collections import defaultdict
@@ -34,9 +35,7 @@ if str(_REPO_ROOT) not in sys.path:
 
 # Mock imports/utils if shared/python doesn't exist in all repos
 # We will define minimal utils here to ensure standalone execution
-def setup_script_logging(name):
-    import logging
-
+def setup_script_logging(name: str) -> logging.Logger:
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
     )
@@ -91,7 +90,7 @@ def compute_file_hash(content: str) -> str:
     return hashlib.md5(normalized.encode(), usedforsecurity=False).hexdigest()
 
 
-def get_detailed_function_metrics(content: str):
+def get_detailed_function_metrics(content: str) -> list[dict]:
     """Simple AST parser to get function metrics."""
     try:
         tree = ast.parse(content)
@@ -243,7 +242,7 @@ def check_testing(root_path: Path) -> list[dict]:
     return issues
 
 
-def run_review(root_path: Path):
+def run_review(root_path: Path) -> dict:
     logger.info(f"Running Pragmatic Review on {root_path}")
     files = find_python_files(root_path)
 
@@ -262,7 +261,7 @@ def run_review(root_path: Path):
     }
 
 
-def generate_markdown_report(results, output_path):
+def generate_markdown_report(results: dict, output_path: Path) -> None:
     md = [f"# Pragmatic Programmer Review: {results['repository']}"]
     md.append(f"**Date**: {results['timestamp'][:10]}")
     md.append(f"**Files**: {results['files_analyzed']}")
