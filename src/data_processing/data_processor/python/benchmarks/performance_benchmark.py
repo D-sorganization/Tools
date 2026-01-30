@@ -48,23 +48,32 @@ except ImportError:
 try:
     from utils.file_utils import safe_write_json
 except ImportError:
-    def safe_write_json(path: str | Path, data: Any, indent: int = 2, create_parents: bool = True) -> None:
+
+    def safe_write_json(
+        path: str | Path, data: Any, indent: int = 2, create_parents: bool = True
+    ) -> None:
         p = Path(path)
         if create_parents:
             p.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=indent)
 
+
 try:
     from utils.csv_utils import safe_read_csv, safe_write_csv
 except ImportError:
-    def safe_read_csv(path: str | Path, default: Any = None, **kwargs: Any) -> pd.DataFrame:
+
+    def safe_read_csv(
+        path: str | Path, default: Any = None, **kwargs: Any
+    ) -> pd.DataFrame:
         try:
             return pd.read_csv(path, **kwargs)
         except Exception:
             return default if default is not None else pd.DataFrame()
 
-    def safe_write_csv(df: pd.DataFrame, path: str | Path, create_parents: bool = True, **kwargs: Any) -> None:
+    def safe_write_csv(
+        df: pd.DataFrame, path: str | Path, create_parents: bool = True, **kwargs: Any
+    ) -> None:
         p = Path(path)
         if create_parents:
             p.parent.mkdir(parents=True, exist_ok=True)

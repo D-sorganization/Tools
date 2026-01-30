@@ -16,8 +16,8 @@ TOOLS_ENV_PATH = Path(
 # Try to load from .env file if available
 try:
     # Add utils to path
-    from pathlib import Path as PathLib
     import sys
+    from pathlib import Path as PathLib
 
     # Try to find repo root and add src/python/src to path
     # config.py is in src/document_processing/pdf_renamer/src/pdf_renamer/config.py

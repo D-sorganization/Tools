@@ -37,7 +37,9 @@ except ImportError:
     import subprocess
     from typing import Any
 
-    def run_python_script(script_path: Path, **kwargs: Any) -> subprocess.CompletedProcess:
+    def run_python_script(
+        script_path: Path, **kwargs: Any
+    ) -> subprocess.CompletedProcess:
         return subprocess.run([sys.executable, str(script_path)], **kwargs)
 
     import logging
