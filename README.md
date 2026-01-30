@@ -1,6 +1,6 @@
 # Tools Monorepo 🛠️
 
-[![CI Standard](https://github.com/D-sorganization/Tools/actions/workflows/ci-standard.yml/badge.svg)](https://github.com/D-sorganization/Tools/actions/workflows/ci-standard.yml)
+[![CI Standard](https://github.com/dieterolson/Tools/actions/workflows/ci-standard.yml/badge.svg)](https://github.com/dieterolson/Tools/actions/workflows/ci-standard.yml)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
@@ -154,6 +154,7 @@ python UnifiedToolsLauncher.py
 Detailed documentation is available in the `docs/` directory:
 
 - **[Architecture](docs/architecture/JULES_ARCHITECTURE.md)**: Overview of the CI/CD system and "Control Tower" architecture.
+- **[Fleet Architecture](docs/architecture/FLEET_ARCHITECTURE.md)**: Shared tools architecture across the repository fleet.
 - **[Development Guidelines](docs/development/GUARDRAILS_GUIDELINES.md)**: Coding standards, guardrails, and safety protocols.
 - **[Branching Strategy](docs/development/BRANCHING_WORKFLOW_RULE.md)**: Mandatory workflow for feature branches and PRs.
 - **[Enhanced Tools](docs/tools/ENHANCED_TOOLS.md)**: Documentation for the "Pro" versions of the folder and project tools.
@@ -284,7 +285,7 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
 3. Run from virtual environment: `source venv/bin/activate`
 4. Check Python version compatibility (3.10+ required, 3.12 recommended)
 
-For more help, see [GitHub Issues](https://github.com/D-sorganization/Tools/issues) or create a new issue.
+For more help, see [GitHub Issues](https://github.com/dieterolson/Tools/issues) or create a new issue.
 
 ## 🛡️ License
 
