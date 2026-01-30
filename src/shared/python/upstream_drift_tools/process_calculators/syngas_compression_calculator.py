@@ -47,6 +47,7 @@ try:
         QVBoxLayout,
         QWidget,
     )
+
     HAS_PYQT = True
 except ImportError:
     HAS_PYQT = False
@@ -56,13 +57,17 @@ except ImportError:
 # Try to import logging and validation utilities
 try:
     from integrated_process_simulator.utilities.logging_config import get_logger
+
     logger = get_logger(__name__)
 except ImportError:
     logger = logging.getLogger(__name__)
 
 try:
-    from integrated_process_simulator.utilities.validation import validate_gas_composition
+    from integrated_process_simulator.utilities.validation import (
+        validate_gas_composition,
+    )
 except ImportError:
+
     def validate_gas_composition(comp: dict) -> tuple[bool, str]:
         """Simple validation fallback."""
         if not comp:
@@ -71,6 +76,7 @@ except ImportError:
         if abs(total - 1.0) > 0.01 and abs(total - 100.0) > 1.0:
             return False, f"Composition sum {total} not normalized"
         return True, ""
+
 
 if os.environ.get("HEADLESS", "false").lower() == "true":
     try:
@@ -101,6 +107,7 @@ try:
     from integrated_process_simulator.ui.mixins.base_calculator_widget import (
         BaseCalculatorWidget,
     )
+
     BASE_CALCULATOR_AVAILABLE = True
 except ImportError:
     BASE_CALCULATOR_AVAILABLE = False
@@ -114,8 +121,16 @@ except ImportError:
     # Minimal fallback for standalone use
     class _MinimalSpeciesDB:
         def get_molecular_weight(self, species: str) -> float | None:
-            mw = {"CO": 0.028, "CO2": 0.044, "H2": 0.002, "H2O": 0.018,
-                  "CH4": 0.016, "N2": 0.028, "O2": 0.032, "H2S": 0.034}
+            mw = {
+                "CO": 0.028,
+                "CO2": 0.044,
+                "H2": 0.002,
+                "H2O": 0.018,
+                "CH4": 0.016,
+                "N2": 0.028,
+                "O2": 0.032,
+                "H2S": 0.034,
+            }
             return mw.get(species)
 
     def get_species_database():

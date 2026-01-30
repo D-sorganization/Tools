@@ -8,12 +8,12 @@ engine. When the thermo module is not available, it uses simplified ideal gas ca
 """
 
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 from .constants import (
-    R_UNIVERSAL,
-    CELSIUS_TO_KELVIN_OFFSET,
     ATM_PA,
+    CELSIUS_TO_KELVIN_OFFSET,
+    R_UNIVERSAL,
     STP_TEMPERATURE_K,
 )
 
@@ -25,6 +25,7 @@ try:
         ThermodynamicCalculator,
     )
     from tools.unit_converter import convert
+
     HAS_THERMO = True
 except ImportError:
     HAS_THERMO = False
@@ -75,7 +76,7 @@ class BaghouseCalculator:
     2. Simplified mode (standalone): Uses ideal gas approximations
     """
 
-    def __init__(self, thermo_calc: Optional[Any] = None) -> None:
+    def __init__(self, thermo_calc: Any | None = None) -> None:
         """Initialize the baghouse calculator.
 
         Args:
@@ -102,13 +103,25 @@ class BaghouseCalculator:
         """
         # Approximate Cp values at ~500K in J/(mol·K)
         cp_data = {
-            "H2": 29.1, "CO": 29.2, "CO2": 41.3, "H2O": 35.5,
-            "N2": 29.5, "CH4": 44.5, "O2": 30.1, "Ar": 20.8,
+            "H2": 29.1,
+            "CO": 29.2,
+            "CO2": 41.3,
+            "H2O": 35.5,
+            "N2": 29.5,
+            "CH4": 44.5,
+            "O2": 30.1,
+            "Ar": 20.8,
         }
         # Molecular weights in kg/mol
         mw_data = {
-            "H2": 0.002, "CO": 0.028, "CO2": 0.044, "H2O": 0.018,
-            "N2": 0.028, "CH4": 0.016, "O2": 0.032, "Ar": 0.040,
+            "H2": 0.002,
+            "CO": 0.028,
+            "CO2": 0.044,
+            "H2O": 0.018,
+            "N2": 0.028,
+            "CH4": 0.016,
+            "O2": 0.032,
+            "Ar": 0.040,
         }
 
         cp_mol = 0.0
@@ -135,12 +148,19 @@ class BaghouseCalculator:
         """
         # Molecular weights in kg/mol
         mw_data = {
-            "H2": 0.002, "CO": 0.028, "CO2": 0.044, "H2O": 0.018,
-            "N2": 0.028, "CH4": 0.016, "O2": 0.032, "Ar": 0.040,
+            "H2": 0.002,
+            "CO": 0.028,
+            "CO2": 0.044,
+            "H2O": 0.018,
+            "N2": 0.028,
+            "CH4": 0.016,
+            "O2": 0.032,
+            "Ar": 0.040,
         }
 
-        mw_avg = sum(frac * mw_data.get(species, 0.028)
-                     for species, frac in composition.items())
+        mw_avg = sum(
+            frac * mw_data.get(species, 0.028) for species, frac in composition.items()
+        )
 
         if mw_avg > 0:
             molar_flow = mass_flow_kg_s / mw_avg  # mol/s
@@ -223,7 +243,9 @@ class BaghouseCalculator:
                     pressure=pressure_pa,
                     composition=composition,
                 )
-                outlet_props = self.thermo_calc.calculate_stream_properties(outlet_stream)
+                outlet_props = self.thermo_calc.calculate_stream_properties(
+                    outlet_stream
+                )
                 flow_acfm = outlet_props.acfm_flow
                 flow_scfm = outlet_props.scfm_flow
 

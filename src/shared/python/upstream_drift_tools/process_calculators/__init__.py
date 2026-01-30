@@ -30,22 +30,22 @@ logger = logging.getLogger(__name__)
 
 # Core calculators that work standalone
 from .acid_gas_dewpoint_calculator import AcidGasDewpointCalculator
-from .flare_calculator import FlareCalculator, FlareDesign
 from .baghouse_calculator import BaghouseCalculator, BaghouseResult
-from .electrode_advancement_calculator import ElectrodeAdvancementCalculator
-from .financial_calculator import FinancialCalculator
-from .ode_solver import ODESolver
-from .thermal_profile_predictor import ThermalProfilePredictor
 
 # Constants module
 from .constants import (
-    R_UNIVERSAL,
-    R_GAS_J_MOL_K,
-    STANDARD_GRAVITY,
     ATOL_ZERO,
+    R_GAS_J_MOL_K,
+    R_UNIVERSAL,
+    STANDARD_GRAVITY,
     celsius_to_kelvin,
     kelvin_to_celsius,
 )
+from .electrode_advancement_calculator import ElectrodeAdvancementCalculator
+from .financial_calculator import FinancialCalculator
+from .flare_calculator import FlareCalculator, FlareDesign
+from .ode_solver import ODESolver
+from .thermal_profile_predictor import ThermalProfilePredictor
 
 # Calculators with numpy/scipy dependencies
 try:
@@ -64,6 +64,7 @@ except ImportError as e:
 
 try:
     from .wgs_reactor_calculator import WGSReactorEngine
+
     WGSReactorCalculator = WGSReactorEngine  # Alias
 except ImportError as e:
     logger.debug(f"WGSReactorCalculator not available: {e}")
@@ -71,7 +72,7 @@ except ImportError as e:
     WGSReactorEngine = None  # type: ignore
 
 try:
-    from .optimization import Optimizer, AdamOptimizer
+    from .optimization import AdamOptimizer, Optimizer
 except ImportError as e:
     logger.debug(f"Optimization not available: {e}")
     Optimizer = None  # type: ignore

@@ -99,6 +99,7 @@ try:
         DEFAULT_DATABASE_PATH,
         get_species_database,
     )
+
     HAS_SPECIES_DB = True
 except ImportError:
     HAS_SPECIES_DB = False
@@ -109,14 +110,24 @@ except ImportError:
 
         # Standard formation enthalpies at 298.15 K [kJ/mol]
         _FORMATION_ENTHALPIES = {
-            "CO": -110.525, "CO2": -393.509, "H2": 0.0, "H2O": -241.826,
-            "CH4": -74.81, "N2": 0.0, "O2": 0.0,
+            "CO": -110.525,
+            "CO2": -393.509,
+            "H2": 0.0,
+            "H2O": -241.826,
+            "CH4": -74.81,
+            "N2": 0.0,
+            "O2": 0.0,
         }
 
         # Standard entropies at 298.15 K [J/(mol·K)]
         _STANDARD_ENTROPIES = {
-            "CO": 197.66, "CO2": 213.74, "H2": 130.68, "H2O": 188.83,
-            "CH4": 186.26, "N2": 191.61, "O2": 205.14,
+            "CO": 197.66,
+            "CO2": 213.74,
+            "H2": 130.68,
+            "H2O": 188.83,
+            "CH4": 186.26,
+            "N2": 191.61,
+            "O2": 205.14,
         }
 
         def get_formation_enthalpy(self, species: str) -> float | None:
@@ -126,14 +137,22 @@ except ImportError:
             return self._STANDARD_ENTROPIES.get(species)
 
         def get_molecular_weight(self, species: str) -> float | None:
-            mw = {"CO": 0.028, "CO2": 0.044, "H2": 0.002, "H2O": 0.018,
-                  "CH4": 0.016, "N2": 0.028, "O2": 0.032}
+            mw = {
+                "CO": 0.028,
+                "CO2": 0.044,
+                "H2": 0.002,
+                "H2O": 0.018,
+                "CH4": 0.016,
+                "N2": 0.028,
+                "O2": 0.032,
+            }
             return mw.get(species)
 
     _minimal_db = _MinimalSpeciesDB()
 
     def get_species_database():
         return _minimal_db
+
 
 try:
     from integrated_process_simulator.ui.mixins.base_calculator_widget import (
