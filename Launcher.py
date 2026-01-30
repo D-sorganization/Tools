@@ -47,15 +47,16 @@ def load_tools_config() -> dict[str, list[Any]]:
 
         # Load config relative to this script's location (BASE_DIR)
         config = load_tools_config(BASE_DIR)
-        return config
+        return config  # type: ignore[no-any-return]
     except ImportError:
         # Fallback if tools package isn't fully installed
         json_path = BASE_DIR / "tools.json"
 
         try:
             with open(json_path, encoding="utf-8") as f:
-                config = json.load(f)
-            return config
+                # Use a new variable to avoid redefinition error
+                fallback_config: dict[str, list[Any]] = json.load(f)
+            return fallback_config
         except Exception as e:
             print(f"Error loading tools.json: {e}", file=sys.stderr)
             return {}

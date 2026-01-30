@@ -17,9 +17,9 @@ logger = logging.getLogger(__name__)
 
 def find_icon(name: str = "tools_icon.ico") -> Path | None:
     """Find a UI icon by searching standard locations."""
-    repo_root = get_repo_root()
+    repo_root: Path = get_repo_root()
 
-    candidates = [
+    candidates: list[Path] = [
         repo_root / name,
         repo_root / "resources" / name,
         repo_root / "tools" / "gui" / "resources" / name,

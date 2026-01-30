@@ -19,7 +19,7 @@ try:
     ensure_utils_in_path()
 except ImportError:
 
-    def ensure_utils_in_path():
+    def ensure_utils_in_path() -> None:
         pass
 
 

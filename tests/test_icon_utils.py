@@ -12,7 +12,7 @@ from tools.icon_utils import convert_png_to_ico, ensure_pil_installed
 
 
 @pytest.fixture
-def source_png():
+def source_png() -> Path:
     # Assuming tests are run from repo root
     path = Path("assets/tools_icon.png")
     if not path.exists():
@@ -24,7 +24,7 @@ def source_png():
     return path
 
 
-def test_convert_simple_ico(source_png, tmp_path):
+def test_convert_simple_ico(source_png: Path, tmp_path: Path) -> None:
     """Test converting to a simple 32x32 ICO."""
     output_path = tmp_path / "test_simple.ico"
     simple_size = [(32, 32)]
@@ -37,7 +37,7 @@ def test_convert_simple_ico(source_png, tmp_path):
     assert output_path.stat().st_size > 0
 
 
-def test_convert_multi_size_ico(source_png, tmp_path):
+def test_convert_multi_size_ico(source_png: Path, tmp_path: Path) -> None:
     """Test converting to a multi-size ICO."""
     output_path = tmp_path / "test_multi.ico"
     alt_sizes = [(256, 256), (64, 64), (32, 32), (16, 16)]
