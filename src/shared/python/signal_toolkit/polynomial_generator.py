@@ -11,6 +11,7 @@ for joint control. It allows users to:
 
 from __future__ import annotations
 
+import logging
 import sys
 from functools import partial
 
@@ -20,8 +21,6 @@ import sympy
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 from PyQt6 import QtCore, QtWidgets
-
-import logging
 
 # Configure logging - use standard logging for standalone operation
 try:
