@@ -16,9 +16,9 @@ Run with: python performance_benchmark.py
 from __future__ import annotations
 
 import json
+import shutil
 import sys
 import time
-import shutil
 from pathlib import Path
 from typing import Any
 
