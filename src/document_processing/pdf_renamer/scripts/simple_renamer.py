@@ -20,10 +20,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def extract_title_author(pdf_path: str) -> tuple[str, str]:
+def extract_title_author(pdf_path: str | Path) -> tuple[str, str]:
     """Extract author (last name) and title from PDF metadata or text."""
     try:
-        reader = PdfReader(pdf_path)
+        reader = PdfReader(str(pdf_path))
         # Try metadata first
         info = reader.metadata
         title = info.title if info and info.title else None

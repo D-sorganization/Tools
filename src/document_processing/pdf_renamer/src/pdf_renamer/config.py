@@ -17,11 +17,23 @@ TOOLS_ENV_PATH = Path(
 try:
     # Add utils to path
     from pathlib import Path as PathLib
+    import sys
 
-    repo_root = PathLib(__file__).parent.parent.parent.parent.parent.parent.parent
-    ensure_utils_in_path()
+    # Calculate repo root (Tools/)
+    # current: src/document_processing/pdf_renamer/src/pdf_renamer/config.py (depth 7?)
+    # desired: Tools/
+    repo_root = PathLib(__file__).parents[6]
+    if str(repo_root) not in sys.path:
+        sys.path.append(str(repo_root))
 
-    from utils.env_utils import find_env_file, load_env_file
+    try:
+        from utils.env_utils import find_env_file, load_env_file
+        from utils.path_helpers import ensure_utils_in_path
+        ensure_utils_in_path()
+    except ImportError:
+        # Fallback if utils not available
+        find_env_file = None
+        load_env_file = None
 
     # Search for .env file in multiple locations
     # Use get_project_root_from_file for consistent path resolution
