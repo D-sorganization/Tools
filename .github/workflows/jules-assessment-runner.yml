@@ -15,7 +15,7 @@ on:
   # Scheduled runs - adjust time as needed (UTC)
   schedule:
     # Run at 2 AM UTC daily
-    - cron: "0 2 * * *"
+    - cron: "0 0 */3 * *"
 
   # Manual trigger with assessment selection
   workflow_dispatch:
