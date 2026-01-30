@@ -12,14 +12,14 @@ import logging
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 try:
     from utils.file_utils import safe_read_json
 except ImportError:
     import json
 
-    def safe_read_json(path, default=None):
+    def safe_read_json(path: str | Path, default: Any = None) -> Any:
         try:
             with open(path, encoding="utf-8") as f:
                 return json.load(f)
@@ -49,7 +49,7 @@ def get_existing_issues() -> list[dict[str, Any]]:
             text=True,
             check=True,
         )
-        return json.loads(result.stdout)
+        return cast(list[dict[str, Any]], json.loads(result.stdout))
     except (subprocess.SubprocessError, json.JSONDecodeError, OSError) as e:
         logger.warning(f"Could not fetch existing issues: {e}")
         return []
@@ -239,6 +239,10 @@ def process_assessment_findings(
         logger.error(f"Could not load summary file: {e}")
         return 1
 
+    if not summary:
+        logger.error("Summary file is empty or invalid")
+        return 1
+
     critical_issues = summary.get("critical_issues", [])
 
     if not critical_issues:
@@ -287,7 +291,7 @@ def process_assessment_findings(
     return 0
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Create GitHub issues from assessment")
     parser.add_argument(
         "--input",

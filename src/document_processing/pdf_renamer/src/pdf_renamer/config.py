@@ -3,6 +3,7 @@
 import json
 import logging
 import os
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -18,7 +19,14 @@ try:
     # Add utils to path
     from pathlib import Path as PathLib
 
-    repo_root = PathLib(__file__).parent.parent.parent.parent.parent.parent.parent
+    # Resolve repo root relative to this file
+    # src/document_processing/pdf_renamer/src/pdf_renamer/config.py -> Tools/
+    repo_root = PathLib(__file__).resolve().parents[6]
+
+    if str(repo_root) not in sys.path:
+        sys.path.insert(0, str(repo_root))
+
+    from utils.path_helpers import ensure_utils_in_path
     ensure_utils_in_path()
 
     from utils.env_utils import find_env_file, load_env_file

@@ -67,7 +67,9 @@ class UnifiedLauncher(QMainWindow):
         main_layout.addWidget(self.log_area, stretch=0)
 
         # Status Bar
-        self.statusBar().showMessage(f"Repository Root: {self.repo_root}")
+        status_bar = self.statusBar()
+        if status_bar:
+            status_bar.showMessage(f"Repository Root: {self.repo_root}")
 
     def _create_header_layout(self) -> QHBoxLayout:
         """Create the header layout with title and debug checkbox."""

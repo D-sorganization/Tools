@@ -27,7 +27,7 @@ def find_icon(name: str = "tools_icon.ico") -> Path | None:
 
     for path in candidates:
         if path.exists():
-            return path
+            return Path(path)
 
     return None
 

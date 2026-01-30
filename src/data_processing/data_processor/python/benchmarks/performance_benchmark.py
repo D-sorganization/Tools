@@ -16,6 +16,7 @@ Run with: python performance_benchmark.py
 from __future__ import annotations
 
 import json
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -42,6 +43,27 @@ try:
     PSUTIL_AVAILABLE = True
 except ImportError:
     PSUTIL_AVAILABLE = False
+
+try:
+    from utils.file_utils import safe_write_json
+except ImportError:
+    def safe_write_json(path: str | Path, data: Any, indent: int = 2, create_parents: bool = True) -> None:
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=indent)
+
+try:
+    from utils.csv_utils import safe_read_csv, safe_write_csv
+except ImportError:
+    def safe_read_csv(path: str | Path, default: Any = None, **kwargs: Any) -> pd.DataFrame:
+        try:
+            return pd.read_csv(path, **kwargs)
+        except Exception:
+            return default if default is not None else pd.DataFrame()
+
+    def safe_write_csv(df: pd.DataFrame, path: str | Path, create_parents: bool = True, **kwargs: Any) -> None:
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        df.to_csv(path, **kwargs)
 
 
 class PerformanceBenchmark:
@@ -105,7 +127,7 @@ class PerformanceBenchmark:
     def benchmark_file_loading(self) -> dict[str, dict[str, float | int]]:
         """Benchmark file loading performance."""
 
-        results = {}
+        results: dict[str, dict[str, float | int]] = {}
 
         # Use benchmarks directory for test data (security-approved location)
         tmp_path = Path(__file__).parent / "test_data"
@@ -159,8 +181,6 @@ class PerformanceBenchmark:
 
         finally:
             # Clean up test data
-            import shutil
-
             if tmp_path.exists():
                 shutil.rmtree(tmp_path)
 
@@ -406,35 +426,6 @@ class PerformanceBenchmark:
 
         finally:
             # Clean up test data
-            pass
-
-
-try:
-    from utils.file_utils import safe_write_json
-except ImportError:
-    import json
-
-try:
-    from utils.csv_utils import safe_read_csv, safe_write_csv
-except ImportError:
-    from pathlib import Path
-
-    import pandas as pd
-
-    def safe_read_csv(path, default=None, **kwargs):
-        try:
-            return pd.read_csv(path, **kwargs)
-        except Exception:
-            return default if default is not None else pd.DataFrame()
-
-    def safe_write_csv(df, path, create_parents=True, **kwargs):
-        Path(path).parent.mkdir(parents=True, exist_ok=True)
-        safe_write_csv(df, path, **kwargs)
-
-    def safe_write_json(path, data, indent=2, create_parents=True):
-        Path(path).parent.mkdir(parents=True, exist_ok=True)
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=indent)
             if tmp_path.exists():
                 shutil.rmtree(tmp_path)
 
@@ -543,7 +534,7 @@ except ImportError:
         # File loading summary
         if "file_loading" in self.results:
             for value in self.results["file_loading"].values():
-                if "throughput" in value:
+                if isinstance(value, dict) and "throughput" in value:
                     pass  # Throughput data found, no action needed
 
         # Filtering summary
@@ -551,7 +542,7 @@ except ImportError:
             throughputs = [
                 v["throughput"]
                 for v in self.results["filtering"].values()
-                if "throughput" in v
+                if isinstance(v, dict) and "throughput" in v and isinstance(v["throughput"], (int, float))
             ]
             if throughputs:
                 np.mean(throughputs)
@@ -561,14 +552,14 @@ except ImportError:
             "end_to_end" in self.results
             and "workflow_complete" in self.results["end_to_end"]
         ):
-            self.results["end_to_end"]["workflow_complete"]
+            _ = self.results["end_to_end"]["workflow_complete"]
 
         # Memory usage
         if (
             "memory" in self.results
             and "memory_100k_20signals" in self.results["memory"]
         ):
-            self.results["memory"]["memory_100k_20signals"]
+            _ = self.results["memory"]["memory_100k_20signals"]
 
 
 def main() -> None:

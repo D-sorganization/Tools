@@ -41,7 +41,7 @@ def load_tools_config(repo_root: Path) -> dict[str, list[Any]]:
 
 
 def validate_tools_config(
-    tools_dict: dict[str, list[dict[str, Any]]],
+    tools_dict: Any,
 ) -> dict[str, list[dict[str, Any]]]:
     """Validate and sanitize tools configuration.
 
@@ -52,6 +52,9 @@ def validate_tools_config(
         Validated dictionary with invalid entries removed.
     """
     validated = {}
+
+    if not isinstance(tools_dict, dict):
+        return {}
 
     for category, tools in tools_dict.items():
         if not isinstance(tools, list):
