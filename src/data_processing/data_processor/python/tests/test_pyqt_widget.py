@@ -1,7 +1,7 @@
 """Tests for the PyQt6 DataProcessorWidget."""
 
 import sys
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pandas as pd
 import pytest
@@ -20,8 +20,10 @@ from data_processor.pyqt_widget import DataProcessorWidget  # noqa: E402
 def widget(qtbot):
     """Fixture to create the widget with mocked backend."""
     # Patch the backend classes before instantiating the widget
-    with patch("data_processor.pyqt_widget.DataLoader") as MockDataLoader, \
-         patch("data_processor.pyqt_widget.SignalProcessor") as MockSignalProcessor:
+    with (
+        patch("data_processor.pyqt_widget.DataLoader") as MockDataLoader,
+        patch("data_processor.pyqt_widget.SignalProcessor") as MockSignalProcessor,
+    ):
 
         mock_loader = MockDataLoader.return_value
         mock_processor = MockSignalProcessor.return_value
@@ -94,7 +96,7 @@ def test_process_no_selection(widget, tmp_path):
     # Simulate loaded file
     widget.current_df = pd.DataFrame({"A": [1, 2], "B": [3, 4]})
     widget.mock_loader.get_numeric_signals.return_value = ["A", "B"]
-    widget._populate_signals() # Helper to populate list
+    widget._populate_signals()  # Helper to populate list
 
     with patch("PyQt6.QtWidgets.QMessageBox.warning") as mock_warning:
         widget.process_data()
