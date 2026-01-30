@@ -16,9 +16,9 @@ Run with: python performance_benchmark.py
 from __future__ import annotations
 
 import json
+import shutil
 import sys
 import time
-import shutil
 from pathlib import Path
 from typing import Any
 
@@ -48,14 +48,17 @@ except ImportError:
 try:
     from utils.file_utils import safe_write_json
 except ImportError:
+
     def safe_write_json(path, data, indent=2, create_parents=True):
         Path(path).parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=indent)
 
+
 try:
     from utils.csv_utils import safe_read_csv, safe_write_csv
 except ImportError:
+
     def safe_read_csv(path, default=None, **kwargs):
         try:
             return pd.read_csv(path, **kwargs)
