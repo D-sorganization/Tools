@@ -84,7 +84,9 @@ class UnitConversionService:
 
     def _init_tables(self) -> None:
         """Initialize conversion tables from constants."""
-        self.category_map = {category: dict(table) for category, table in CATEGORY_TABLES.items()}
+        self.category_map = {
+            category: dict(table) for category, table in CATEGORY_TABLES.items()
+        }
         self.length_factors = self.category_map["length"]
         self.volume_factors = self.category_map["volume"]
         self.mass_factors = self.category_map["mass"]
@@ -150,7 +152,9 @@ class UnitConversionService:
 
         if from_category in self.category_map:
             factors = self.category_map[from_category]
-            converted = self._convert_via_table(value, from_unit_norm, to_unit_norm, factors)
+            converted = self._convert_via_table(
+                value, from_unit_norm, to_unit_norm, factors
+            )
         elif from_category == "temperature":
             converted = self._convert_temperature(value, from_unit_norm, to_unit_norm)
         elif from_category == "gas_flow":
@@ -161,14 +165,18 @@ class UnitConversionService:
                 temperature=kwargs.get("temperature"),
                 pressure=kwargs.get("pressure"),
                 gas_type=kwargs.get("gas_type", "air"),
-                standard_condition=kwargs.get("standard_condition", StandardCondition.SCFM_60F),
+                standard_condition=kwargs.get(
+                    "standard_condition", StandardCondition.SCFM_60F
+                ),
             )
         else:
             msg = f"Unsupported unit category for {from_unit}"
             raise UnknownUnitError(msg)
 
         warnings.extend(
-            self._user_unit_warnings(from_category, to_category, from_unit_norm, to_unit_norm)
+            self._user_unit_warnings(
+                from_category, to_category, from_unit_norm, to_unit_norm
+            )
         )
 
         return ConversionResult(converted, from_unit, to_unit, warnings=warnings)
@@ -230,7 +238,9 @@ class UnitConversionService:
             return "gas_flow"
         return None
 
-    def _validate_value(self, value: float, category: str, unit: str | None = None) -> list[str]:
+    def _validate_value(
+        self, value: float, category: str, unit: str | None = None
+    ) -> list[str]:
         """Validate input value against physical constraints."""
         if category == "temperature":
             # Convert to Kelvin to check if below absolute zero
@@ -261,7 +271,9 @@ class UnitConversionService:
         """Convert temperature value."""
         try:
             return convert_temperature(value, from_unit, to_unit)
-        except ValueError as exc:  # pragma: no cover - converted to domain-specific error
+        except (
+            ValueError
+        ) as exc:  # pragma: no cover - converted to domain-specific error
             msg = str(exc)
             raise UnknownUnitError(msg) from exc
 
@@ -326,7 +338,9 @@ class UnitConversionService:
         elif from_unit == "ACFM":
             assert temperature is not None
             assert pressure is not None
-            scfm = actual_to_standard_flow(value, temperature, pressure, standard_condition)
+            scfm = actual_to_standard_flow(
+                value, temperature, pressure, standard_condition
+            )
             m3_hr_std = scfm_to_standard_m3_per_hour(
                 scfm, standard_condition, StandardCondition.STP
             )
@@ -355,7 +369,9 @@ class UnitConversionService:
             )
             assert temperature is not None
             assert pressure is not None
-            return standard_to_actual_flow(scfm, temperature, pressure, standard_condition)
+            return standard_to_actual_flow(
+                scfm, temperature, pressure, standard_condition
+            )
         if to_unit in {"Nm3/hr", "Nm³/hr"}:
             return m3_hr_std
         if to_unit in self.mass_flow_factors:
@@ -409,7 +425,9 @@ class UnitConversionService:
         std_temp, std_pressure_pa, _ = standard_condition.value
         temperature = actual_temp_K or std_temp
         pressure_pa = (
-            actual_pressure_kPa * 1000.0 if actual_pressure_kPa is not None else std_pressure_pa
+            actual_pressure_kPa * 1000.0
+            if actual_pressure_kPa is not None
+            else std_pressure_pa
         )
 
         result = self._convert_gas_flow(
@@ -520,7 +538,9 @@ class UnitConversionService:
         elif from_key in {"mg/m³", "mg/m3"}:
             mg_nm3_value = value * (temperature / 273.15) * (101.325 / pressure)
         elif from_key in {"g/m³", "g/m3"}:
-            mg_nm3_value = value * 1000.0 * (temperature / 273.15) * (101.325 / pressure)
+            mg_nm3_value = (
+                value * 1000.0 * (temperature / 273.15) * (101.325 / pressure)
+            )
         elif from_key == "ppm_mass":
             if molecular_weight is None:
                 msg = "Molecular weight required for ppm conversion"
@@ -646,10 +666,14 @@ class UnitConversionService:
             if category == "heating_value":
                 return {"heating_value": list(self.heating_value_conversions.keys())}
             if category == "tar_concentration":
-                return {"tar_concentration": list(self.concentration_conversions.keys())}
+                return {
+                    "tar_concentration": list(self.concentration_conversions.keys())
+                }
             if category == "performance":
                 return {
-                    "performance": [u for units in self.performance_units.values() for u in units]
+                    "performance": [
+                        u for units in self.performance_units.values() for u in units
+                    ]
                 }
             return {}
 
@@ -660,7 +684,9 @@ class UnitConversionService:
         result["gas_flow"] = ["SCFM", "ACFM", "Nm3/hr", "Nm³/hr"]
         result["heating_value"] = list(self.heating_value_conversions.keys())
         result["tar_concentration"] = list(self.concentration_conversions.keys())
-        result["performance"] = [u for units in self.performance_units.values() for u in units]
+        result["performance"] = [
+            u for units in self.performance_units.values() for u in units
+        ]
         return result
 
 

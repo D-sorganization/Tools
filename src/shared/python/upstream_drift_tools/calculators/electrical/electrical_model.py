@@ -95,7 +95,9 @@ class ThreePhaseElectricalModelEnhanced:
                     direct_fraction = via_metal_resistance / (
                         direct_resistance + via_metal_resistance
                     )
-                    metal_fraction = direct_resistance / (direct_resistance + via_metal_resistance)
+                    metal_fraction = direct_resistance / (
+                        direct_resistance + via_metal_resistance
+                    )
                 else:
                     direct_fraction = 0.5
                     metal_fraction = 0.5
@@ -121,7 +123,9 @@ class ThreePhaseElectricalModelEnhanced:
 
         # Calculate actual currents if voltages are provided
         actual_currents = (
-            self._calculate_path_currents(resistances, voltages) if voltages is not None else None
+            self._calculate_path_currents(resistances, voltages)
+            if voltages is not None
+            else None
         )
 
         return {
@@ -242,7 +246,9 @@ class ThreePhaseElectricalModelEnhanced:
                 wall_next = e1_wall_glass + t_next * (e2_wall_glass - e1_wall_glass)
                 segment_distance = np.linalg.norm(wall_next - wall_pos)
             else:
-                segment_distance = np.linalg.norm(e2_wall_glass - e1_wall_glass) / num_segments
+                segment_distance = (
+                    np.linalg.norm(e2_wall_glass - e1_wall_glass) / num_segments
+                )
 
             segment_distance_m = segment_distance * 0.0254  # Convert to m
 
@@ -312,7 +318,9 @@ class ThreePhaseElectricalModelEnhanced:
         conductivity_glass = self.glass_interface.get_conductivity(temperature)
 
         if area_down_m2 > 0 and distance_1_m > 0:
-            resistance_1: float = float(distance_1_m / (conductivity_glass * area_down_m2))
+            resistance_1: float = float(
+                distance_1_m / (conductivity_glass * area_down_m2)
+            )
         else:
             resistance_1 = 0.001
 
@@ -336,7 +344,9 @@ class ThreePhaseElectricalModelEnhanced:
         )
 
         if area_metal_m2 > 0 and distance_2_m > 0:
-            resistance_2: float = float(distance_2_m / (conductivity_metal * area_metal_m2))
+            resistance_2: float = float(
+                distance_2_m / (conductivity_metal * area_metal_m2)
+            )
         else:
             resistance_2 = 0.0001
 
@@ -349,7 +359,9 @@ class ThreePhaseElectricalModelEnhanced:
         distance_3_m = vertical_distance_3 * 0.0254  # Convert to m
 
         if area_up_m2 > 0 and distance_3_m > 0:
-            resistance_3: float = float(distance_3_m / (conductivity_glass * area_up_m2))
+            resistance_3: float = float(
+                distance_3_m / (conductivity_glass * area_up_m2)
+            )
         else:
             resistance_3 = 0.001
 
@@ -377,9 +389,13 @@ class ThreePhaseElectricalModelEnhanced:
                 "direct_glass_power_fraction": (
                     direct_power / total_power if total_power > 0 else 0.5
                 ),
-                "via_metal_power_fraction": (metal_power / total_power if total_power > 0 else 0.5),
+                "via_metal_power_fraction": (
+                    metal_power / total_power if total_power > 0 else 0.5
+                ),
                 "resistance_ratio": (
-                    paths["direct_glass"] / paths["via_metal"] if paths["via_metal"] > 0 else np.inf
+                    paths["direct_glass"] / paths["via_metal"]
+                    if paths["via_metal"] > 0
+                    else np.inf
                 ),
             }
 

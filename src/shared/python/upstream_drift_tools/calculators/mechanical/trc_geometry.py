@@ -134,7 +134,9 @@ class TRCGeometryEngine:
                 )
 
                 # Inner radius at bottom for this layer
-                layer_cone_bottom_radius_inner = layer_cone_bottom_radius_outer - layer_thickness
+                layer_cone_bottom_radius_inner = (
+                    layer_cone_bottom_radius_outer - layer_thickness
+                )
                 layer_cone_bottom_radius_inner = max(
                     layer_cone_bottom_radius_inner, interior_hole_radius
                 )
@@ -164,7 +166,9 @@ class TRCGeometryEngine:
 
             # Top disk volume for each layer (if lid is displayed)
             top_disk_vol = (
-                math.pi * inner_radius**2 * layer_thickness if dimensions.display_lid else 0
+                math.pi * inner_radius**2 * layer_thickness
+                if dimensions.display_lid
+                else 0
             )
 
             # Total layer volume (convert to ft³)
@@ -192,10 +196,14 @@ class TRCGeometryEngine:
                         dimensions.cylinder_diameter / 2 - current_radius
                     )
                     slant_height = math.sqrt(
-                        dimensions.cone_height**2 + (current_radius - layer_cone_bottom_radius) ** 2
+                        dimensions.cone_height**2
+                        + (current_radius - layer_cone_bottom_radius) ** 2
                     )
                     layer_outer_surface += (
-                        math.pi * (current_radius + layer_cone_bottom_radius) * slant_height / 144
+                        math.pi
+                        * (current_radius + layer_cone_bottom_radius)
+                        * slant_height
+                        / 144
                     )
                 outside_surface_area += layer_outer_surface
 
@@ -230,7 +238,9 @@ class TRCGeometryEngine:
             total_thickness = (dimensions.cylinder_diameter / 2) - last_inner_radius
 
             # Void bottom radius
-            void_cone_bottom_radius = (dimensions.cone_bottom_diameter / 2) - total_thickness
+            void_cone_bottom_radius = (
+                dimensions.cone_bottom_diameter / 2
+            ) - total_thickness
             void_cone_bottom_radius = max(void_cone_bottom_radius, interior_hole_radius)
 
             void_cone_vol = (
@@ -252,7 +262,9 @@ class TRCGeometryEngine:
 
         return results
 
-    def calculate_residence_time(self, volume_ft3: float, gas_flow_acfm: float) -> float:
+    def calculate_residence_time(
+        self, volume_ft3: float, gas_flow_acfm: float
+    ) -> float:
         """
         Calculate residence time in seconds.
 

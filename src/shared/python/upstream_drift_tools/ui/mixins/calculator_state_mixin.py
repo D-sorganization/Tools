@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 """Calculator State Mixin
 =====================
@@ -365,7 +364,7 @@ class CalculatorStateMixin:
 
     def get_calculator_state(self) -> dict[str, Any]:
         """Get current calculator state for saving
-        
+
         Override this method in subclasses to include calculator-specific data
         """
         state = {
@@ -389,14 +388,14 @@ class CalculatorStateMixin:
 
     def get_calculator_specific_state(self) -> dict[str, Any]:
         """Get calculator-specific state data
-        
+
         Override this method in subclasses to include specific data
         """
         return {}
 
     def set_calculator_state(self, state: dict[str, Any]) -> None:
         """Set calculator state from loaded data
-        
+
         Override this method in subclasses to handle calculator-specific data
         """
         try:
@@ -428,7 +427,7 @@ class CalculatorStateMixin:
 
     def set_calculator_specific_state(self, state: dict[str, Any]) -> None:
         """Set calculator-specific state data
-        
+
         Override this method in subclasses to handle specific data
         """
 
@@ -465,7 +464,9 @@ class CalculatorStateMixin:
         except Exception:
             return False
 
-    def load_calculator_state(self, state_name: str | None = None) -> dict[str, Any] | None:
+    def load_calculator_state(
+        self, state_name: str | None = None
+    ) -> dict[str, Any] | None:
         """Load calculator state
 
         Args:
@@ -644,7 +645,9 @@ class CalculatorStateMixin:
 
         menu.exec(cast(QWidget, self).mapToGlobal(position))
 
-    def show_widget_context_menu(self, position: Any, widget_info: dict[str, Any]) -> None:
+    def show_widget_context_menu(
+        self, position: Any, widget_info: dict[str, Any]
+    ) -> None:
         """Show context menu for a specific widget"""
         menu = QMenu(cast(QWidget, self))
         widget = widget_info["widget"]

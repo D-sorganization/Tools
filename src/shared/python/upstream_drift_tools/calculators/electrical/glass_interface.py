@@ -10,7 +10,8 @@ Date: July 8, 2025
 from __future__ import annotations
 
 import logging
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
@@ -49,7 +50,7 @@ class GlassPropertiesInterface:
         # Check cache first
         # Convert composition dict to a hashable type (tuple of sorted items) for caching
         comp_key = tuple(sorted(composition.items())) if composition else None
-        
+
         cache_key = (
             temperature_celsius,
             comp_key,
@@ -111,8 +112,10 @@ class GlassPropertiesInterface:
         # Simulating Arrhenius behavior: sigma = sigma0 * exp(-Ea / RT)
         # We model it relative to a reference conductivity at a reference temp
         # ln(sigma) = ln(sigma_ref) - (Ea/R) * (1/T - 1/T_ref)
-        
-        exponent = (-props["activation_energy"] / 8.314) * (1 / temp_kelvin - 1 / props["reference_temp"])
+
+        exponent = (-props["activation_energy"] / 8.314) * (
+            1 / temp_kelvin - 1 / props["reference_temp"]
+        )
         base_sigma = props["base_conductivity"] * np.exp(exponent)
 
         # Power density heating effect (simplified local heating)
@@ -120,10 +123,14 @@ class GlassPropertiesInterface:
             # Assume power density causes a local temperature rise that increases conductivity
             delta_t = power_density * 0.0001  # Simplified coefficient
             temp_effective = temp_kelvin + delta_t
-            
-            exponent_effective = (-props["activation_energy"] / 8.314) * (1 / temp_effective - 1 / props["reference_temp"])
-            base_sigma_effective = props["base_conductivity"] * np.exp(exponent_effective)
-            
+
+            exponent_effective = (-props["activation_energy"] / 8.314) * (
+                1 / temp_effective - 1 / props["reference_temp"]
+            )
+            base_sigma_effective = props["base_conductivity"] * np.exp(
+                exponent_effective
+            )
+
             # Use the effective conductivity
             base_sigma = base_sigma_effective
 

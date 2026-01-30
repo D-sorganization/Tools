@@ -10,7 +10,6 @@ Date: July 8, 2025
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Optional
 
 import numpy as np
 
@@ -46,7 +45,9 @@ class ElectrodeConfig:
     bath_temperature: float = 1350.0  # °C
 
     # Electrical parameters
-    k_factors: dict[str, float] = field(default_factory=lambda: {"K_tt": 1.0, "K_vert": 1.0})
+    k_factors: dict[str, float] = field(
+        default_factory=lambda: {"K_tt": 1.0, "K_vert": 1.0}
+    )
     electrode_depths: np.ndarray = field(default_factory=lambda: np.zeros(3))
     phase_voltages: np.ndarray = field(default_factory=lambda: np.ones(3) * 100.0)
     phase_currents: np.ndarray = field(default_factory=lambda: np.zeros(3))
@@ -57,24 +58,24 @@ class ElectrodeConfig:
 
     # Display colors (Hex strings) - Decoupled from Qt
     colors: dict[str, str] | None = None
-    
+
     # Color schemes for current/power visualization
     color_schemes: dict[str, dict] | None = None
 
     def __post_init__(self) -> None:
         if self.colors is None:
             self.colors = {
-                "window_bg": "#E6F0FF", # QColor(230, 240, 255)
-                "input_panel_bg": "#F0FFF0", # QColor(240, 255, 240)
-                "status_ok": "#C8FFC8", # QColor(200, 255, 200)
-                "status_warn": "#FFFFB4", # QColor(255, 255, 180)
-                "status_err": "#FF9696", # QColor(255, 150, 150)
-                "electrode": "#808080", # QColor(128, 128, 128)
+                "window_bg": "#E6F0FF",  # QColor(230, 240, 255)
+                "input_panel_bg": "#F0FFF0",  # QColor(240, 255, 240)
+                "status_ok": "#C8FFC8",  # QColor(200, 255, 200)
+                "status_warn": "#FFFFB4",  # QColor(255, 255, 180)
+                "status_err": "#FF9696",  # QColor(255, 150, 150)
+                "electrode": "#808080",  # QColor(128, 128, 128)
                 "glass_cold": "#FFA500",  # Orange for cold glass
                 "glass_hot": "#FF4500",  # Red-orange for hot molten glass
                 "glass_molten": "#FF8C00",  # Dark orange for molten glass
-                "metal_layer": "#505050", # QColor(80, 80, 80)
-                "current_path": "#0072BD", # QColor(0, 114, 189)
+                "metal_layer": "#505050",  # QColor(80, 80, 80)
+                "current_path": "#0072BD",  # QColor(0, 114, 189)
                 "metal_path": "#C0C0C0",  # Silver for metal paths
                 "metal_shell": "#646464",  # Dark grey for metal shell
             }
