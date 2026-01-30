@@ -1,6 +1,6 @@
 # Fleet-Wide Shared Tools Architecture
 
-**Version**: 1.0
+**Version**: 2.0
 **Last Updated**: January 2026
 **Status**: Production
 
@@ -8,301 +8,228 @@
 
 ## Overview
 
-This document describes the shared tools architecture across the D-sorganization repository fleet. The architecture enables code reuse, maintains consistency, and reduces duplication across multiple projects.
+This document describes the shared tools architecture across the repository fleet. The architecture separates **core business logic** (which stays with each application) from **standalone utility tools** (which are shared).
+
+## Architecture Principles
+
+1. **Core logic stays local**: Thermodynamic engines, equilibrium solvers, and application-specific calculations remain in their respective repositories
+2. **Standalone tools are shared**: Independent calculators that can work without application context are in the Tools repo
+3. **Backward compatibility**: Shims allow gradual migration without breaking existing code
 
 ## Repository Fleet
 
-| Repository | Purpose | Shared Tools Integration |
-|------------|---------|-------------------------|
-| **Tools** | Central shared library | Source of truth |
-| **Gasification_Model** | Chemical process simulation | Consumer via `src/tools/` |
-| **UpstreamDrift** | Biomechanical golf swing analysis | Consumer via shared utils |
-| **AffineDrift** | Financial drift analysis | Standalone |
+| Repository | Purpose | Relationship to Tools |
+|------------|---------|----------------------|
+| **Tools** | Shared utility library | Source of standalone calculators |
+| **Gasification_Model** | Chemical process simulation | Core thermo + consumes shared tools |
+| **UpstreamDrift** | Biomechanical golf analysis | Consumes shared physics utilities |
 
 ## Architecture Diagram
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                         TOOLS REPOSITORY                                 │
-│                    (Central Shared Library)                              │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                          │
-│   upstream_drift_tools/                                                  │
-│   ├── unit_converter/         # Unit conversion utilities                │
-│   │   ├── __init__.py         # Main converter service                  │
-│   │   └── constants.py        # Physical constants database             │
-│   ├── thermo/                 # Thermodynamic calculations              │
-│   │   ├── core.py             # Basic thermodynamic engine              │
-│   │   ├── optimized_core.py   # Performance-optimized engine            │
-│   │   ├── species_database.py # Chemical species properties             │
-│   │   ├── math_utils.py       # Mathematical utilities                  │
-│   │   └── widget.py           # PyQt6 UI components                     │
-│   ├── steam/                  # Steam cycle calculations                │
-│   │   ├── iapws.py            # IAPWS-IF97 steam tables                 │
-│   │   └── steam_tables.py     # Convenience wrappers                    │
-│   └── visualization/          # Shared plotting utilities               │
-│       └── plotters.py         # Common chart types                      │
-│                                                                          │
-└───────────────────────────────────┬─────────────────────────────────────┘
-                                    │
-                                    │ Git submodule / Copy
-                                    │
-        ┌───────────────────────────┴───────────────────────────┐
-        │                                                       │
-        ▼                                                       ▼
-┌───────────────────────────────────┐   ┌───────────────────────────────────┐
-│      GASIFICATION_MODEL           │   │         UPSTREAM_DRIFT            │
-│   (Chemical Process Simulator)    │   │   (Biomechanical Golf Analysis)   │
-├───────────────────────────────────┤   ├───────────────────────────────────┤
-│                                   │   │                                   │
-│  src/                             │   │  shared/                          │
-│  ├── tools/         ◄── SYNCED   │   │  ├── python/                      │
-│  │   ├── unit_converter/         │   │  │   ├── physics_constants.py    │
-│  │   ├── thermo/                 │   │  │   └── interfaces.py            │
-│  │   └── steam/                  │   │  └── data/                        │
-│  └── integrated_process_simulator │   │                                   │
-│      └── utilities/              │   │  engines/                          │
-│          ├── unit_conversion/    │   │  ├── mujoco/                      │
-│          │   └── __init__.py     │   │  ├── drake/                       │
-│          │       (backward compat)│   │  ├── pinocchio/                   │
-│          └── unit_constants.py   │   │  └── opensim/                     │
-│              (backward compat)   │   │                                   │
-│                                   │   │                                   │
-└───────────────────────────────────┘   └───────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           TOOLS REPOSITORY                                   │
+│                      (Standalone Utility Library)                            │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│   src/shared/python/upstream_drift_tools/                                    │
+│   │                                                                          │
+│   ├── process_calculators/     # STANDALONE PROCESS CALCULATORS              │
+│   │   ├── acid_gas_dewpoint_calculator.py    # Acid gas dewpoint            │
+│   │   ├── baghouse_calculator.py             # Baghouse filter sizing       │
+│   │   ├── flare_calculator.py                # Flare system design          │
+│   │   ├── scrubber_calculator.py             # Packed bed scrubber          │
+│   │   ├── financial_calculator.py            # NPV/IRR analysis             │
+│   │   ├── electrode_advancement_calculator.py # Electrode tracking          │
+│   │   ├── ode_solver.py                      # Generic ODE solver           │
+│   │   ├── thermal_profile_predictor.py       # Thermal analysis             │
+│   │   ├── wgs_reactor_calculator.py          # Water-gas shift reactor      │
+│   │   ├── syngas_water_calculator.py         # Syngas water content         │
+│   │   ├── syngas_compression_calculator.py   # Compression analysis         │
+│   │   ├── optimization.py                    # Optimization utilities       │
+│   │   ├── multi_param_analysis.py            # Parameter sweeps             │
+│   │   ├── constants.py                       # Physical constants           │
+│   │   ├── pressure_drop_calculator/          # Pipe pressure drop           │
+│   │   ├── psa_package/                       # PSA H2 separation            │
+│   │   └── syngas_compression/                # Compression stages           │
+│   │                                                                          │
+│   ├── utils/                   # General utilities                           │
+│   │   └── unit_constants.py    # NIST physical constants                    │
+│   │                                                                          │
+│   └── calculators/             # Legacy location (being migrated)            │
+│                                                                              │
+└─────────────────────────────────┬───────────────────────────────────────────┘
+                                  │
+                                  │ Import as dependency
+                                  │
+┌─────────────────────────────────┴───────────────────────────────────────────┐
+│                        GASIFICATION_MODEL                                    │
+│                   (Chemical Process Simulator)                               │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  src/integrated_process_simulator/                                           │
+│  │                                                                           │
+│  ├── core/                         # CORE CALCULATION ENGINES                │
+│  │   ├── equilibrium_solver.py     # Gibbs minimization (STAYS HERE)        │
+│  │   ├── energy_balance.py         # Energy balance engine (STAYS HERE)     │
+│  │   ├── unified_gibbs_minimizer.py                                         │
+│  │   └── calculation_engines/      # Enthalpy, etc.                         │
+│  │                                                                           │
+│  ├── calculators/                                                            │
+│  │   ├── thermodynamic_properties/ # CORE THERMO ENGINE (STAYS HERE)        │
+│  │   │   ├── core.py               # Main thermo calculator                 │
+│  │   │   ├── optimized_core.py     # Performance-optimized version          │
+│  │   │   ├── species_database.py   # Species property database              │
+│  │   │   └── engines/              # Backend engines (Cantera, CoolProp)    │
+│  │   │                                                                       │
+│  │   ├── gasification_solver.py    # Main solver (STAYS HERE)               │
+│  │   ├── quench_components/        # Quench calculator (STAYS HERE)         │
+│  │   ├── heating_value_calculator.py                                        │
+│  │   └── standalone_shims.py       # Backward compat for migrated calcs     │
+│  │                                                                           │
+│  └── tools/                        # Backward compatibility shims            │
+│      ├── thermo/                   # Shim → thermodynamic_properties         │
+│      ├── unit_converter/           # Shim → Tools repo or local             │
+│      └── steam/                    # Steam calculations                      │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Shared Tools Modules
+## Shared Tools (Tools Repo)
 
-### 1. Unit Converter (`unit_converter/`)
+### Process Calculators (`process_calculators/`)
 
-**Purpose**: Comprehensive unit conversion service for scientific computing.
+These are standalone calculators that can work independently:
 
-**Key Components**:
-- `UnitConversionService`: Main service class with all conversion methods
-- `constants.py`: Physical constants (R, kB, NA, etc.) and conversion factors
+| Calculator | Purpose | Dependencies |
+|------------|---------|--------------|
+| `AcidGasDewpointCalculator` | HF, HCl, H2S dewpoint | numpy, pandas |
+| `BaghouseCalculator` | Filter sizing, drum fill time | numpy (optional thermo) |
+| `FlareCalculator` | Flare system design, radiation zones | math only |
+| `ScrubberCalculator` | Packed bed scrubber design | numpy |
+| `FinancialCalculator` | NPV, IRR, payback analysis | numpy |
+| `ElectrodeAdvancementCalculator` | Arc furnace electrode tracking | None |
+| `ODESolver` | Generic ODE system solver | scipy, sympy |
+| `ThermalProfilePredictor` | Thermal transient analysis | scipy |
+| `WGSReactorCalculator` | Water-gas shift equilibrium | numpy, scipy |
+| `SyngasWaterCalculator` | Water saturation in syngas | numpy, scipy |
+| `SyngasCompressionCalculator` | Multi-stage compression | PyQt6 (optional) |
+| `PressureDropCalculator` | Pipe flow pressure drop | numpy |
+| `PSAModel` | Pressure swing adsorption | numpy |
 
-**Usage**:
+**Usage:**
 ```python
-from tools.unit_converter import UnitConversionService, PHYSICAL_CONSTANTS
+from upstream_drift_tools.process_calculators import (
+    FlareCalculator,
+    ScrubberCalculator,
+    FinancialCalculator,
+)
 
-converter = UnitConversionService()
-temp_kelvin = converter.celsius_to_kelvin(25.0)
+# These work standalone without Gasification_Model
+flare = FlareCalculator()
+design = flare.calculate_flare_size(
+    total_flow=1000,  # kg/hr
+    gas_composition={"H2": 50, "CO": 30, "CH4": 20},
+    temperature=500,  # K
+    pressure=1.5,  # bar
+)
 ```
 
-### 2. Thermodynamic Calculator (`thermo/`)
+## Core Logic (Gasification_Model)
 
-**Purpose**: High-performance thermodynamic property calculations for gas mixtures.
+These components remain in Gasification_Model because they are core business logic:
 
-**Key Components**:
-- `OptimizedThermodynamicCalculator`: Vectorized calculations with caching
-- `GasStream`: Data model for gas stream properties
-- `SpeciesDatabase`: Chemical species properties (Cp, Hf, S, etc.)
-- `ThermodynamicPropertiesWidget`: PyQt6 UI component
+| Module | Purpose | Why It Stays |
+|--------|---------|--------------|
+| `thermodynamic_properties/` | Thermo property calculations | Core to equilibrium solver |
+| `gasification_solver.py` | Main Gibbs minimization | Primary application logic |
+| `quench_components/` | Quench system calculations | Coupled to solver |
+| `heating_value_calculator.py` | HHV/LHV calculations | Integrated with thermo |
+| `energy_balance.py` | Energy balance engine | Core calculation |
 
-**Usage**:
+## Backward Compatibility
+
+### Shim Pattern
+
+For migrated calculators, backward compatibility is maintained via shims:
+
 ```python
-from tools.thermo import (
+# src/integrated_process_simulator/calculators/standalone_shims.py
+
+# This allows old imports to continue working:
+from integrated_process_simulator.calculators.flare_calculator import FlareCalculator
+# Actually imports from: upstream_drift_tools.process_calculators
+```
+
+### Thermodynamic Shims
+
+The `tools/thermo/` directory in Gasification_Model contains shims pointing to the canonical location:
+
+```python
+# src/tools/thermo/__init__.py
+"""Backward compatibility shim - actual code in calculators/thermodynamic_properties/"""
+from integrated_process_simulator.calculators.thermodynamic_properties import *
+```
+
+## Migration Guide
+
+### For New Code
+
+Import directly from the canonical location:
+
+```python
+# Standalone tools
+from upstream_drift_tools.process_calculators import FlareCalculator
+
+# Core thermo (in Gasification_Model)
+from integrated_process_simulator.calculators.thermodynamic_properties import (
     GasStream,
-    FlowUnit,
-    get_optimized_thermodynamic_calculator
+    get_optimized_thermodynamic_calculator,
 )
-
-calc = get_optimized_thermodynamic_calculator()
-stream = GasStream(
-    flow_rate=100.0,
-    flow_unit=FlowUnit.MASS,
-    temperature=500.0,
-    pressure=101325.0,
-    composition={"CO": 0.3, "H2": 0.5, "CO2": 0.2}
-)
-props = calc.calculate_stream_properties(stream)
 ```
 
-### 3. Steam Engine (`steam/`)
+### For Existing Code
 
-**Purpose**: IAPWS-IF97 steam tables and Rankine cycle calculations.
-
-**Key Components**:
-- `iapws.py`: Core IAPWS-IF97 implementation
-- `SteamTables`: High-level API for steam properties
-- Rankine cycle analysis utilities
-
-**Usage**:
-```python
-from tools.steam import SteamTables
-
-steam = SteamTables()
-props = steam.get_properties(temperature=400.0, pressure=1000.0)
-```
-
-## Backward Compatibility Architecture
-
-When migrating modules to the shared tools library, we maintain backward compatibility through import shims:
-
-```
-Old Import Path                          New Import Path
-─────────────────                        ─────────────────
-integrated_process_simulator             tools.unit_converter
-  .utilities.unit_conversion      ───►
-
-integrated_process_simulator             tools.unit_converter.constants
-  .utilities.unit_constants       ───►
-
-integrated_process_simulator             tools.thermo
-  .calculators.thermodynamic_properties
-                                  ───►
-```
-
-**Shim Implementation Pattern**:
+Existing imports continue to work via shims, but will show deprecation warnings:
 
 ```python
-# src/integrated_process_simulator/utilities/unit_conversion/__init__.py
-"""Backward compatibility shim for unit_conversion module.
-
-This module has been moved to tools.unit_converter.
-This shim provides backward compatibility for existing imports.
-"""
-
-# Re-export all public symbols from the new location
-from tools.unit_converter import *  # noqa: F401, F403
-```
-
-This pattern:
-1. Preserves existing import statements in consumer code
-2. Allows gradual migration without breaking changes
-3. Enables deprecation warnings when needed
-4. Maintains single source of truth in `tools/`
-
-## Migration Status
-
-### Completed Migrations
-
-| Module | Old Location | New Location | Status |
-|--------|-------------|--------------|--------|
-| Unit Converter | `utilities.unit_conversion` | `tools.unit_converter` | ✅ Complete |
-| Unit Constants | `utilities.unit_constants` | `tools.unit_converter.constants` | ✅ Complete |
-| Thermodynamic Calculator | `calculators.thermodynamic_properties` | `tools.thermo` | ✅ Complete |
-| Species Database | `calculators.thermodynamic_properties` | `tools.thermo.species_database` | ✅ Complete |
-
-### Candidates for Future Migration
-
-| Module | Current Location | Priority | Notes |
-|--------|------------------|----------|-------|
-| Steam Tables | `tools.steam` | Low | Already in tools |
-| Plotting Utilities | Various | Medium | Needs consolidation |
-| Data Validation | Various | Medium | Common patterns exist |
-
-## Testing Strategy
-
-### Shared Tools Tests
-
-Located in `tests/` within Tools repository:
-- Unit tests for each module
-- Integration tests for cross-module functionality
-- Performance benchmarks
-
-### Consumer Tests
-
-Each consuming repository maintains tests that:
-1. Verify shim imports work correctly
-2. Test integration with shared tools
-3. Mock shared tools for isolated unit tests
-
-**Example Mock Pattern**:
-```python
-# test_service_registry.py
-unit_conversion = types.ModuleType("tools.unit_converter")
-unit_conversion.UnitConversionService = _DummyClass
-monkeypatch.setitem(sys.modules, "tools.unit_converter", unit_conversion)
-```
-
-## Development Workflow
-
-### Making Changes to Shared Tools
-
-1. **Develop in Tools repo**: Make changes in `upstream_drift_tools/`
-2. **Test locally**: Run `pytest tests/`
-3. **Create PR**: Submit changes for review
-4. **Sync consumers**: After merge, update consuming repos
-
-### Syncing Changes to Consumers
-
-```bash
-# In Gasification_Model repository
-cd src/tools
-git pull origin main  # If using submodule
-
-# Or manually copy updated files
-cp -r /path/to/Tools/upstream_drift_tools/* ./
+# These still work but are deprecated:
+from tools.thermo import ThermodynamicCalculator  # → shows warning
+from integrated_process_simulator.calculators.flare_calculator import FlareCalculator  # → shows warning
 ```
 
 ## Best Practices
 
 ### For Shared Tools
 
-1. **No application-specific logic**: Keep tools generic and reusable
-2. **Comprehensive docstrings**: Document all public APIs
-3. **Type hints**: Use typing throughout
-4. **Backward compatibility**: Never break existing APIs without deprecation period
-5. **Performance**: Optimize for common use cases
+1. **No application-specific dependencies**: Shared tools should not import from `integrated_process_simulator` core
+2. **Optional heavy dependencies**: Make PyQt6, CoolProp, Cantera optional with fallbacks
+3. **Comprehensive constants**: Use `constants.py` for all physical constants
+4. **Self-contained**: Each calculator should work independently
 
-### For Consumers
+### For Core Logic
 
-1. **Use canonical imports**: Import from `tools.*` not from shims
-2. **Don't modify shared tools locally**: Changes go through Tools repo
-3. **Document dependencies**: List shared tools requirements
-4. **Test with mocks**: Don't couple tests to shared tools implementation
+1. **Stay in application repo**: Core business logic belongs with the application
+2. **Use canonical imports**: Import thermo from `calculators/thermodynamic_properties/`
+3. **Avoid circular dependencies**: Use lazy imports where needed
 
-## Architecture Decision Records
+## Testing
 
-### ADR-001: Shared Tools in Tools Repository
+### Shared Tools Tests
 
-**Decision**: Maintain shared tools in the Tools repository as the single source of truth.
+```bash
+cd Tools
+pytest src/shared/python/upstream_drift_tools/process_calculators/
+```
 
-**Rationale**:
-- Centralized maintenance
-- Clear ownership
-- Easier versioning
-- Consistent testing
+### Gasification_Model Tests
 
-### ADR-002: Backward Compatibility Shims
-
-**Decision**: Use import shims during migration rather than immediate breaking changes.
-
-**Rationale**:
-- Allows gradual migration
-- Reduces risk of breaking existing code
-- Enables deprecation warnings
-- Supports parallel development
-
-### ADR-003: Direct Imports in Core Logic
-
-**Decision**: Core calculation engines should import directly from `tools.*` not through shims.
-
-**Rationale**:
-- Cleaner dependency graph
-- Better for testing/mocking
-- Avoids double-indirection
-- Makes true dependencies visible
-
-## Monitoring and Maintenance
-
-### Deprecation Timeline
-
-1. **Phase 1**: Add shim with no warning (current)
-2. **Phase 2**: Add deprecation warning (6 months)
-3. **Phase 3**: Remove shim, breaking change (12 months)
-
-### Health Checks
-
-- CI runs tests across all consuming repos
-- Dependency audits track shared tools versions
-- Performance benchmarks detect regressions
-
----
+```bash
+cd Gasification_Model
+pytest tests/
+```
 
 ## Related Documents
 
-- [Tools Repository README](../../README.md)
-- [Gasification Model Architecture](../../../Linux_Gasification_Model/Gasification_Model/docs/architecture/)
-- [UpstreamDrift Architecture](../../../Linux_Golf_Modeling_Suite/Golf_Modeling_Suite/docs/architecture/)
+- [Gasification_Model README](../../../Gasification_Model/README.md)
+- [UpstreamDrift Architecture](../../../UpstreamDrift/docs/architecture/)
