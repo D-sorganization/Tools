@@ -13,9 +13,13 @@
 #
 # =============================================================================
 
+import heapq
+import logging
 import os
 import threading
+from dataclasses import dataclass
 from datetime import datetime
+from enum import Enum
 from pathlib import Path
 from tkinter import filedialog, messagebox
 
@@ -57,16 +61,15 @@ try:
     from utils.csv_utils import safe_read_csv, safe_write_csv
     from utils.file_utils import safe_read_text, safe_write_text
 
-    from shared.data_processing.file_converter import FileConverter
+    # Import shared data processing classes
+    from shared.data_processing.models import SplitMethod, SplitConfig
     from shared.data_processing.file_io import (
         DataReader,
         DataWriter,
         FileFormatDetector,
     )
+    from shared.data_processing.file_converter import FileConverter
     from shared.data_processing.folder_processor import FolderProcessor
-
-    # Import shared data processing classes
-    from shared.data_processing.models import SplitConfig
 
 except Exception as e:
     print(f"Error importing shared modules: {e}")

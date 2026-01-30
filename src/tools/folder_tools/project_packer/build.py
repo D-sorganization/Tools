@@ -6,6 +6,7 @@ Replaces build.bat for better portability.
 
 import os
 import sys
+import logging
 from pathlib import Path
 
 # Add utils to path using shared utility
@@ -40,7 +41,7 @@ except ImportError:
         return subprocess.run([sys.executable, str(script_path)], **kwargs)
 
     def get_logger(name):
-        pass
+        return logging.getLogger(name)
 
 
 try:
@@ -48,7 +49,7 @@ try:
 except ImportError:
 
     def ensure_utils_in_path():
-        return logging.getLogger(name)
+        pass
 
 
 logger = get_logger(__name__)

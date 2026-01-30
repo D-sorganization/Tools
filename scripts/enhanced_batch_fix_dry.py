@@ -381,6 +381,7 @@ def process_file(file_path: Path) -> int:
         return 0
     except Exception as e:
         print(f"Error processing {file_path}: {e}", file=sys.stderr)
+        return 0
 
 
 def find_python_files(root: Path) -> list[Path]:
@@ -404,7 +405,7 @@ def find_python_files(root: Path) -> list[Path]:
     return files
 
 
-def main():
+def main() -> int:
     """Main entry point."""
     repo_root = Path("/home/dieterolson/Linux_Tools/Tools")
 

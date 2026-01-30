@@ -1,9 +1,8 @@
 from __future__ import annotations
 
+import pandas as pd
 from pathlib import Path
 from typing import Callable, Set
-
-import pandas as pd
 
 from .file_io import DataReader, DataWriter, FileFormatDetector
 from .models import SplitConfig

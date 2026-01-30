@@ -41,7 +41,7 @@ def load_tools_config(repo_root: Path) -> dict[str, list[Any]]:
 
 
 def validate_tools_config(
-    tools_dict: dict[str, list[dict[str, Any]]],
+    tools_dict: dict[str, Any],
 ) -> dict[str, list[dict[str, Any]]]:
     """Validate and sanitize tools configuration.
 

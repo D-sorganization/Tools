@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-import heapq
-import logging
 import os
-import re
 import shutil
-from collections import defaultdict
-from datetime import datetime
+import logging
+import re
+import heapq
 from pathlib import Path
-from typing import Any, Callable
+from datetime import datetime
+from collections import defaultdict
+from typing import Callable, Any
 
 
 class FolderProcessor:
@@ -59,10 +59,16 @@ class FolderProcessor:
             self.cancel_flag = False
 
             if mode == "combine":
+                if destination_folder is None:
+                    raise ValueError("Destination folder is required for combine mode")
                 self._combine_operation(source_folders, destination_folder, options)
             elif mode == "flatten":
+                if destination_folder is None:
+                    raise ValueError("Destination folder is required for flatten mode")
                 self._flatten_operation(source_folders, destination_folder, options)
             elif mode == "prune":
+                if destination_folder is None:
+                    raise ValueError("Destination folder is required for prune mode")
                 self._prune_operation(source_folders, destination_folder, options)
             elif mode == "deduplicate":
                 self._deduplicate_operation(source_folders, options)
@@ -325,7 +331,7 @@ class FolderProcessor:
             if self.cancel_flag:
                 break
 
-            files_by_base_name = {}
+            files_by_base_name: dict[str, list[Path]] = {}
             for filename in files:
                 match = pattern.match(filename)
                 if match:
@@ -376,8 +382,8 @@ class FolderProcessor:
 
         processed_files = 0
         total_size = 0
-        file_types = defaultdict(int)
-        size_by_type = defaultdict(int)
+        file_types: dict[str, int] = defaultdict(int)
+        size_by_type: dict[str, int] = defaultdict(int)
         largest_files = []
 
         report_lines = [
@@ -447,7 +453,7 @@ class FolderProcessor:
             size_mb = size / (1024 * 1024)
             report_lines.append(f"  {Path(file_path).name}: {size_mb:.1f} MB")
 
-        return "\n".join(report_lines)
+        return "\n".join(report_lines)  # type: ignore[unreachable]
 
     def _validate_file_filters(
         self, file_path: str | Path, options: dict[str, Any]

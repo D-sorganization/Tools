@@ -152,7 +152,7 @@ def launch_matlab_tool(
                 os.startfile(path)
             else:
                 subprocess.Popen(["xdg-open", str(path)])
-        except Exception as e:
+        except Exception as e:  # type: ignore[unreachable]
             raise LaunchError(f"Could not open file in editor: {e}") from e
 
 
