@@ -6,7 +6,9 @@ Replaces build.bat for better portability.
 
 import os
 import sys
+import logging
 from pathlib import Path
+from typing import Any
 
 # Add utils to path using shared utility
 
@@ -24,10 +26,14 @@ except ImportError:
         add_utils_to_path()
     except ImportError:
         # Last resort fallback
-        from utils.path_helpers import get_project_root_from_file
+        try:
+            from utils.path_helpers import get_project_root_from_file
 
-        repo_root = get_project_root_from_file(__file__)
-        ensure_utils_in_path()
+            repo_root = get_project_root_from_file(__file__)
+            # ensure_utils_in_path() # This was recursive or circular if import failed
+        except ImportError:
+            pass
+
 
 try:
     from utils.logging_utils import get_logger
@@ -36,19 +42,21 @@ except ImportError:
     # Fallback if shared utilities not available
     import subprocess
 
-    def run_python_script(script_path: Path, **kwargs):
+    def run_python_script(script_path: Path, **kwargs: Any) -> Any:
         return subprocess.run([sys.executable, str(script_path)], **kwargs)
 
-    def get_logger(name):
-        pass
+    def get_logger(name: str) -> logging.Logger:
+        logger = logging.getLogger(name)
+        if not logger.handlers:
+            logging.basicConfig(level=logging.INFO)
+        return logger
 
 
 try:
     from utils.path_helpers import ensure_utils_in_path
 except ImportError:
-
-    def ensure_utils_in_path():
-        return logging.getLogger(name)
+    def ensure_utils_in_path() -> None:
+        pass
 
 
 logger = get_logger(__name__)
@@ -73,9 +81,15 @@ def main() -> None:
         if exe_path.exists():
             logger.info(f"✅ SUCCESS: Executable created at {exe_path}")
             if sys.platform == "win32":
-                response = input("Would you like to run the executable now? (y/n): ")
-                if response.lower() == "y":
-                    os.startfile(exe_path)  # type: ignore[attr-defined]
+                try:
+                    # Use input with timeout if possible, but standard input is fine
+                    # Check if we are interactive
+                    if sys.stdin.isatty():
+                        response = input("Would you like to run the executable now? (y/n): ")
+                        if response.lower() == "y":
+                            os.startfile(exe_path)  # type: ignore[attr-defined]
+                except (EOFError, OSError):
+                    pass
         else:
             logger.error("❌ Build failed. Check the output above for errors.")
             sys.exit(1)

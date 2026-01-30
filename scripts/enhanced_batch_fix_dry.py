@@ -9,6 +9,7 @@ with better pattern matching and import management.
 import re
 import sys
 from pathlib import Path
+from typing import Match, Optional
 
 # Track total fixes
 TOTAL_FIXES = 0
@@ -63,7 +64,7 @@ def fix_json_load_patterns(content: str) -> tuple[str, int]:
         re.MULTILINE,
     )
 
-    def replace1(match):
+    def replace1(match: Match[str]) -> str:
         nonlocal fixes
         fixes += 1
         file_path = match.group(1).strip()
@@ -78,7 +79,7 @@ def fix_json_load_patterns(content: str) -> tuple[str, int]:
         re.MULTILINE,
     )
 
-    def replace2(match):
+    def replace2(match: Match[str]) -> str:
         nonlocal fixes
         fixes += 1
         var_name = match.group(1)
@@ -107,7 +108,7 @@ def fix_json_dump_patterns(content: str) -> tuple[str, int]:
         re.MULTILINE,
     )
 
-    def replace(match):
+    def replace(match: Match[str]) -> str:
         nonlocal fixes
         fixes += 1
         data = match.group(1).strip()
@@ -123,7 +124,7 @@ def fix_json_dump_patterns(content: str) -> tuple[str, int]:
         re.MULTILINE,
     )
 
-    def replace2(match):
+    def replace2(match: Match[str]) -> str:
         nonlocal fixes
         fixes += 1
         file_path = match.group(1).strip()
@@ -150,7 +151,7 @@ def fix_path_join_patterns(content: str) -> tuple[str, int]:
     # Pattern: Path(a) / b / c -> Path(a) / b / c
     pattern = re.compile(r"os\.path\.join\s*\(\s*([^)]+)\s*\)")
 
-    def replace(match):
+    def replace(match: Match[str]) -> str:
         nonlocal fixes
         fixes += 1
         args = match.group(1)
@@ -158,7 +159,7 @@ def fix_path_join_patterns(content: str) -> tuple[str, int]:
         parts = []
         current = ""
         in_string = False
-        string_char = None
+        string_char: Optional[str] = None
 
         for char in args:
             if char in ('"', "'") and not in_string:
@@ -194,7 +195,7 @@ def fix_path_join_patterns(content: str) -> tuple[str, int]:
     # Pattern: Path(path).exists() -> Path(path).exists()
     pattern2 = re.compile(r"os\.path\.exists\s*\(\s*([^)]+)\s*\)")
 
-    def replace2(match):
+    def replace2(match: Match[str]) -> str:
         nonlocal fixes
         fixes += 1
         return f"Path({match.group(1)}).exists()"
@@ -204,7 +205,7 @@ def fix_path_join_patterns(content: str) -> tuple[str, int]:
     # Pattern: Path(path).parent -> Path(path).parent
     pattern3 = re.compile(r"os\.path\.dirname\s*\(\s*([^)]+)\s*\)")
 
-    def replace3(match):
+    def replace3(match: Match[str]) -> str:
         nonlocal fixes
         fixes += 1
         return f"Path({match.group(1)}).parent"
@@ -214,7 +215,7 @@ def fix_path_join_patterns(content: str) -> tuple[str, int]:
     # Pattern: Path(path).name -> Path(path).name
     pattern4 = re.compile(r"os\.path\.basename\s*\(\s*([^)]+)\s*\)")
 
-    def replace4(match):
+    def replace4(match: Match[str]) -> str:
         nonlocal fixes
         fixes += 1
         return f"Path({match.group(1)}).name"
@@ -238,7 +239,7 @@ def fix_sys_path_patterns(content: str) -> tuple[str, int]:
         re.MULTILINE,
     )
 
-    def replace(match):
+    def replace(match: Match[str]) -> str:
         nonlocal fixes
         fixes += 1
         return "ensure_utils_in_path()"
@@ -265,7 +266,7 @@ def fix_text_file_patterns(content: str) -> tuple[str, int]:
         re.MULTILINE,
     )
 
-    def replace1(match):
+    def replace1(match: Match[str]) -> str:
         nonlocal fixes
         fixes += 1
         file_path = match.group(1).strip()
@@ -280,7 +281,7 @@ def fix_text_file_patterns(content: str) -> tuple[str, int]:
         re.MULTILINE,
     )
 
-    def replace2(match):
+    def replace2(match: Match[str]) -> str:
         nonlocal fixes
         fixes += 1
         file_path = match.group(1).strip()
@@ -308,7 +309,7 @@ def fix_csv_patterns(content: str) -> tuple[str, int]:
         r"(\w+)\s*=\s*pd\.read_csv\s*\(\s*([^,)]+)(?:,\s*([^)]+))?\s*\)", re.MULTILINE
     )
 
-    def replace1(match):
+    def replace1(match: Match[str]) -> str:
         nonlocal fixes
         fixes += 1
         var_name = match.group(1)
@@ -325,7 +326,7 @@ def fix_csv_patterns(content: str) -> tuple[str, int]:
         r"(\w+)\.to_csv\s*\(\s*([^,)]+)(?:,\s*([^)]+))?\s*\)", re.MULTILINE
     )
 
-    def replace2(match):
+    def replace2(match: Match[str]) -> str:
         nonlocal fixes
         fixes += 1
         df_var = match.group(1)
@@ -381,6 +382,7 @@ def process_file(file_path: Path) -> int:
         return 0
     except Exception as e:
         print(f"Error processing {file_path}: {e}", file=sys.stderr)
+        return 0
 
 
 def find_python_files(root: Path) -> list[Path]:
@@ -404,7 +406,7 @@ def find_python_files(root: Path) -> list[Path]:
     return files
 
 
-def main():
+def main() -> int:
     """Main entry point."""
     repo_root = Path("/home/dieterolson/Linux_Tools/Tools")
 
