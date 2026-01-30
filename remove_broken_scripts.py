@@ -10,13 +10,20 @@ try:
 except ImportError:
     from pathlib import Path
 
-    def safe_read_text(path, encoding="utf-8", default=""):
+    def safe_read_text(
+        path: str | Path, encoding: str = "utf-8", default: str = ""
+    ) -> str:
         try:
             return Path(path).read_text(encoding=encoding)
         except Exception:
             return default
 
-    def safe_write_text(path, content, encoding="utf-8", create_parents=True):
+    def safe_write_text(
+        path: str | Path,
+        content: str,
+        encoding: str = "utf-8",
+        create_parents: bool = True,
+    ) -> None:
         p = Path(path)
         if create_parents:
             p.parent.mkdir(parents=True, exist_ok=True)

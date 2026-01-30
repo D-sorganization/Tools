@@ -54,14 +54,13 @@ def validate_tools_config(
     validated = {}
 
     for category, tools in tools_dict.items():
-        if not isinstance(tools, list):
-            continue
-
         valid_tools = []
         for tool in tools:
             # Basic validation
+            # Mypy sees this as unreachable because of strict typing in signature,
+            # but runtime data from JSON might not match the type hint.
             if not isinstance(tool, dict):
-                continue
+                continue  # type: ignore[unreachable]
 
             if "name" not in tool or "path" not in tool:
                 continue

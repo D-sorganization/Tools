@@ -91,7 +91,7 @@ def rename_pdfs(root_folder: str) -> None:
         for filename in sorted(filenames, key=lambda x: x.lower()):
             if filename.lower().endswith(".pdf"):
                 full_path = Path(dirpath) / filename
-                author, title = extract_title_author(full_path)
+                author, title = extract_title_author(str(full_path))
                 new_name = f"{author} - {title}.pdf"
                 new_path = Path(dirpath) / new_name
 

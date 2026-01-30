@@ -18,8 +18,9 @@ try:
     from utils.file_utils import safe_read_json
 except ImportError:
     import json
+    from pathlib import Path
 
-    def safe_read_json(path, default=None):
+    def safe_read_json(path: str | Path, default: Any = None) -> Any:
         try:
             with open(path, encoding="utf-8") as f:
                 return json.load(f)
@@ -49,7 +50,10 @@ def get_existing_issues() -> list[dict[str, Any]]:
             text=True,
             check=True,
         )
-        return json.loads(result.stdout)
+        # Use a list comprehension to ensure type correctness if needed, or just return
+        # But Mypy complains about Any return.
+        issues: list[dict[str, Any]] = json.loads(result.stdout)
+        return issues
     except (subprocess.SubprocessError, json.JSONDecodeError, OSError) as e:
         logger.warning(f"Could not fetch existing issues: {e}")
         return []
@@ -287,7 +291,7 @@ def process_assessment_findings(
     return 0
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Create GitHub issues from assessment")
     parser.add_argument(
         "--input",

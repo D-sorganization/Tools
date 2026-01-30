@@ -214,7 +214,7 @@ def _handle_missing_dependencies(missing_packages: list[str]) -> bool:
         root.destroy()
 
         if install:
-            return install_packages(missing_packages)
+            return install_packages(missing_packages)  # type: ignore[no-any-return]
         return False
 
     except (OSError, RuntimeError) as e:
