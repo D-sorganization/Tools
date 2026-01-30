@@ -4,9 +4,9 @@ Cross-platform launcher for building Folder Packer executable.
 Replaces build.bat for better portability.
 """
 
-import logging
 import os
 import sys
+import logging
 from pathlib import Path
 
 # Add utils to path using shared utility
