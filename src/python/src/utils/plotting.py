@@ -13,8 +13,8 @@ try:
     _HAS_MATPLOTLIB = True
 except ImportError:
     # Matplotlib not available - set to None for optional dependency handling
-    plt = None  # type: ignore[assignment,unused-ignore]
-    ListedColormap = None  # type: ignore[assignment,misc,unused-ignore]
+    plt = None
+    ListedColormap = None
     _HAS_MATPLOTLIB = False
 
 
@@ -74,7 +74,7 @@ def apply_colorblind_safe_style(fig: Any = None, ax: Any = None) -> None:
         ax: Matplotlib axes (optional)
     """
     if plt is None:
-        return  # type: ignore[unreachable]
+        return
 
     if fig is None and ax is None:
         fig = plt.gcf()

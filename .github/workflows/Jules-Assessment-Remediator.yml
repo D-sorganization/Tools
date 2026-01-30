@@ -38,7 +38,7 @@ on:
         type: boolean
   schedule:
     # Daily at 5 AM PST (13:00 UTC) - runs after overnight assessments complete
-    - cron: "0 0 */3 * *"
+    - cron: '0 13 * * *'
 
 permissions:
   contents: write

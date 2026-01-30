@@ -47,7 +47,7 @@ def check_dependencies(
     Uses shared dependency checker utility when available, with fallback
     to local implementation for backward compatibility.
     """
-    # Local implementation
+    # Fallback to local implementation
     required = {
         "numpy": "pip install numpy",
         "pygame": "pip install pygame",

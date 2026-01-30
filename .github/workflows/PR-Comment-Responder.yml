@@ -75,7 +75,6 @@ jobs:
       - uses: actions/checkout@v4
         if: steps.filter.outputs.is_bot != 'true' && steps.pr_state.outputs.should_skip != 'true'
         with:
-          ref: main
           fetch-depth: 1
 
       - name: Analyze Comment
@@ -216,8 +215,7 @@ jobs:
 
           This comment will be processed by Jules-Comment-Processor on the next scheduled run."
 
-            git pull --rebase origin main || git pull origin main
-            git push origin main
+            git push
             echo "::notice::Comment queued for batch processing"
           else
             echo "No changes to commit"

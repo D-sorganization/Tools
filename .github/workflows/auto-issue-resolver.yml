@@ -61,7 +61,7 @@ on:
 
   # Weekly scheduled run
   schedule:
-    - cron: "0 0 */3 * *"  # Monday at 3 AM UTC
+    - cron: "0 3 * * 1"  # Monday at 3 AM UTC
 
 concurrency:
   group: auto-issue-resolver

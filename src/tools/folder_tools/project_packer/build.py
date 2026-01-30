@@ -4,11 +4,9 @@ Cross-platform launcher for building Folder Packer executable.
 Replaces build.bat for better portability.
 """
 
-import logging
 import os
 import sys
 from pathlib import Path
-from typing import Any
 
 # Add utils to path using shared utility
 
@@ -37,12 +35,18 @@ try:
 except ImportError:
     # Fallback if shared utilities not available
     import subprocess
+    from typing import Any
 
-    def run_python_script(script_path: Path, **kwargs: Any) -> Any:
+    def run_python_script(script_path: Path, **kwargs: Any) -> subprocess.CompletedProcess:
         return subprocess.run([sys.executable, str(script_path)], **kwargs)
 
+    import logging
+
     def get_logger(name: str) -> logging.Logger:
-        return logging.getLogger(name)
+        logger = logging.getLogger(name)
+        if not logger.handlers:
+            logging.basicConfig(level=logging.INFO)
+        return logger
 
 
 try:

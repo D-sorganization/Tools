@@ -179,7 +179,7 @@ def launch_batch_tool(
     if sys.platform != "win32":
         raise PlatformError("Batch scripts are only supported on Windows")
 
-    if path.suffix.lower() not in [".bat", ".cmd"]:  # type: ignore
+    if path.suffix.lower() not in [".bat", ".cmd"]:  # type: ignore[unreachable]
         raise SecurityError("File must be .bat or .cmd to execute as batch script")
 
     if log_func:

@@ -26,19 +26,19 @@ try:
 except ImportError:
     from pathlib import Path
 
-    def safe_read_text(path, encoding="utf-8", default=""):
+    def safe_read_text(path: str | Path, encoding: str = "utf-8", default: str = "") -> str:
         try:
             return Path(path).read_text(encoding=encoding)
         except Exception:
             return default
 
-    def safe_write_text(path, content, encoding="utf-8", create_parents=True):
+    def safe_write_text(path: str | Path, content: str, encoding: str = "utf-8", create_parents: bool = True) -> None:
         p = Path(path)
         if create_parents:
             p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(content, encoding=encoding)
 
-    def safe_write_json(path, data, indent=2, create_parents=True):
+    def safe_write_json(path: str | Path, data: Any, indent: int = 2, create_parents: bool = True) -> None:
         Path(path).parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=indent)
@@ -107,7 +107,7 @@ def extract_issues_from_report(report_path: Path) -> list[dict[str, Any]]:
 
 
 # Category mapping for assessment reports
-ASSESSMENT_CATEGORIES = {
+ASSESSMENT_CATEGORIES: dict[str, dict[str, Any]] = {
     "A": {"name": "Architecture & Implementation", "weight": 2.0},
     "B": {"name": "Hygiene, Security & Quality", "weight": 2.0},
     "C": {"name": "Documentation & Integration", "weight": 1.5},
@@ -320,7 +320,7 @@ def generate_summary(
     return 0
 
 
-def main():
+def main() -> int | None:
     """Parse CLI arguments and generate assessment summary."""
     parser = argparse.ArgumentParser(description="Generate assessment summary")
     parser.add_argument(
@@ -346,7 +346,7 @@ def main():
     args = parser.parse_args()
 
     # Expand wildcards if needed
-    input_reports = []
+    input_reports: list[Path] = []
     for pattern in args.input:
         if "*" in str(pattern):
             # Expand glob pattern

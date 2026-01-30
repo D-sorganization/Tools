@@ -19,7 +19,7 @@ try:
 except ImportError:
     import json
 
-    def safe_read_json(path, default=None):
+    def safe_read_json(path: str | Path, default: Any = None) -> Any:
         try:
             with open(path, encoding="utf-8") as f:
                 return json.load(f)
@@ -49,7 +49,8 @@ def get_existing_issues() -> list[dict[str, Any]]:
             text=True,
             check=True,
         )
-        return json.loads(result.stdout)
+        # Explicitly cast or ignore the type check here since json.loads returns Any
+        return list(json.loads(result.stdout))
     except (subprocess.SubprocessError, json.JSONDecodeError, OSError) as e:
         logger.warning(f"Could not fetch existing issues: {e}")
         return []
@@ -287,7 +288,7 @@ def process_assessment_findings(
     return 0
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Create GitHub issues from assessment")
     parser.add_argument(
         "--input",
