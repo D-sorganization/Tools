@@ -46,47 +46,9 @@ from __future__ import annotations
 
 import logging
 
-logger = logging.getLogger(__name__)
-
-# Core signal classes
-from .core import Signal, SignalGenerator
-
-# Fitting utilities
-from .fitting import (
-    CosineFitter,
-    CustomFunctionFitter,
-    ExponentialFitter,
-    FitResult,
-    FunctionFitter,
-    LinearFitter,
-    PolynomialFitter,
-    SinusoidFitter,
-)
-
-# Filter system
-from .filters import (
-    AdaptiveFilter,
-    FilterDesign,
-    FilterDesigner,
-    FilterSpec,
-    FilterType,
-    apply_filter,
-    apply_bilateral_filter,
-    apply_exponential_smoothing,
-    apply_gaussian_smoothing,
-    apply_median_filter,
-    apply_moving_average,
-    apply_savgol,
-    create_butterworth_filter,
-    create_chebyshev_filter,
-    create_moving_average_filter,
-    create_savgol_filter,
-)
-
-# Calculus operations
 from .calculus import (
-    Differentiator,
     DifferentiationMethod,
+    Differentiator,
     IntegralResult,
     IntegrationMethod,
     Integrator,
@@ -99,8 +61,43 @@ from .calculus import (
     find_extrema,
     find_inflection_points,
 )
-
-# Limits and saturation
+from .core import Signal, SignalGenerator
+from .filters import (
+    AdaptiveFilter,
+    FilterDesign,
+    FilterDesigner,
+    FilterSpec,
+    FilterType,
+    apply_bilateral_filter,
+    apply_exponential_smoothing,
+    apply_filter,
+    apply_gaussian_smoothing,
+    apply_median_filter,
+    apply_moving_average,
+    apply_savgol,
+    create_butterworth_filter,
+    create_chebyshev_filter,
+    create_moving_average_filter,
+    create_savgol_filter,
+)
+from .fitting import (
+    CosineFitter,
+    CustomFunctionFitter,
+    ExponentialFitter,
+    FitResult,
+    FunctionFitter,
+    LinearFitter,
+    PolynomialFitter,
+    SinusoidFitter,
+)
+from .io import (
+    BatchProcessor,
+    SignalExporter,
+    SignalImporter,
+    SignalLoader,
+    export_to_csv,
+    import_from_csv,
+)
 from .limits import (
     SaturationMode,
     apply_backlash,
@@ -111,8 +108,6 @@ from .limits import (
     create_saturation_function,
     visualize_saturation_curves,
 )
-
-# Noise generation
 from .noise import (
     DisturbanceSimulator,
     NoiseGenerator,
@@ -121,31 +116,25 @@ from .noise import (
     generate_disturbance_profile,
 )
 
-# I/O utilities
-from .io import (
-    BatchProcessor,
-    SignalExporter,
-    SignalImporter,
-    SignalLoader,
-    export_to_csv,
-    import_from_csv,
-)
+logger = logging.getLogger(__name__)
 
 # Optional: Polynomial generator (PyQt6 required)
 try:
     from .polynomial_generator import PolynomialGeneratorWidget
+
     HAS_POLYNOMIAL_GENERATOR = True
 except ImportError:
-    PolynomialGeneratorWidget = None  # type: ignore
+    PolynomialGeneratorWidget = None  # type: ignore[misc, assignment]
     HAS_POLYNOMIAL_GENERATOR = False
     logger.debug("PolynomialGeneratorWidget not available (requires PyQt6)")
 
 # Optional: Interactive widget (PyQt6 + matplotlib required)
 try:
     from .widget import SignalToolkitWidget
+
     HAS_WIDGET = True
 except ImportError:
-    SignalToolkitWidget = None  # type: ignore
+    SignalToolkitWidget = None  # type: ignore[misc, assignment]
     HAS_WIDGET = False
     logger.debug("SignalToolkitWidget not available (requires PyQt6 + matplotlib)")
 
