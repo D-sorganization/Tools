@@ -36,7 +36,9 @@ except ImportError:
     # Fallback if shared utilities not available
     import subprocess
 
-    def run_python_script(script_path: Path, **kwargs: Any) -> subprocess.CompletedProcess[Any]:
+    def run_python_script(
+        script_path: Path, **kwargs: Any
+    ) -> subprocess.CompletedProcess[Any]:
         return subprocess.run([sys.executable, str(script_path)], **kwargs)
 
     def get_logger(name: str) -> logging.Logger:

@@ -27,6 +27,7 @@ try:
         sys.path.insert(0, str(repo_root))
 
     from utils.path_helpers import ensure_utils_in_path
+
     ensure_utils_in_path()
 
     from utils.env_utils import find_env_file, load_env_file
