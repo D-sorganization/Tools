@@ -19,11 +19,13 @@ The repository is organized into several key areas:
 ### 🛠️ Python Tools
 
 **Directory Structure:**
+
 - **`python/`**: Core infrastructure and shared utilities
   - **`python/src/core/`**: Plugin system and core launcher functionality
   - **`python/src/utils/`**: Shared utilities (compatibility shims, logger utils)
   - **`python/src/tile_launcher/`**: Tile launcher components
   - **`python/shared/`**: Performance utilities and shared code
+  - **`src/shared/python/upstream_drift_tools/`**: **NEW** Centralized shared library for fleet-wide logic (Thermo, Conversion, Robotics)
   - **`python/tests/`**: Test suite for core functionality
 
 - **`tools/`**: Tool implementations and utilities
@@ -41,6 +43,7 @@ The repository is organized into several key areas:
   - **`src/verification/`**: Verification and testing utilities
 
 **Note:** The distinction between `python/` and `tools/` is:
+
 - `python/` = Core infrastructure, plugin system, shared utilities
 - `tools/` = Individual tool implementations and standalone utilities
 - `src/` = Major tool categories following standardized `src/` layout pattern
@@ -52,6 +55,7 @@ Future consolidation may merge these, but current structure supports the plugin 
 The repository provides a unified launcher system for accessing all tools. The canonical entry point is:
 
 - **`UnifiedToolsLauncher.py`**: **PRIMARY AND RECOMMENDED** - Modern PyQt6-based GUI launcher
+
   ```bash
   python UnifiedToolsLauncher.py
   ```
@@ -102,7 +106,7 @@ The repository provides a unified launcher system for accessing all tools. The c
 
 ### Installation
 
-1.  **Clone the Repository**
+1. **Clone the Repository**
 
     ```bash
     git clone <repository-url>
@@ -111,7 +115,7 @@ The repository provides a unified launcher system for accessing all tools. The c
     git lfs pull
     ```
 
-2.  **Set Up Python Environment**
+2. **Set Up Python Environment**
 
     ```bash
     # Create a virtual environment
@@ -122,12 +126,14 @@ The repository provides a unified launcher system for accessing all tools. The c
     pip install -r python/requirements.txt
     ```
 
-3.  **Install Pre-commit Hooks** (For developers)
+3. **Install Pre-commit Hooks** (For developers)
+
     ```bash
     bash scripts/setup_precommit.sh
     ```
 
-4.  **Use the Makefile** (Optional but recommended)
+4. **Use the Makefile** (Optional but recommended)
+
     ```bash
     make help      # Show available targets
     make install   # Install all dependencies
@@ -160,14 +166,15 @@ Detailed documentation is available in the `docs/` directory:
 
 We follow a strict **"Safety First"** contribution policy.
 
-1.  **Branching**: Always use feature branches (`feature/your-feature`). Direct commits to `main` are blocked.
-2.  **Testing**: All new features must be accompanied by tests. Tests run on Python 3.10, 3.11, and 3.12.
-3.  **Linting**: Ensure your code passes all `pre-commit` checks (Ruff, MyPy, etc.).
-4.  **Review**: All changes require a Pull Request review.
+1. **Branching**: Always use feature branches (`feature/your-feature`). Direct commits to `main` are blocked.
+2. **Testing**: All new features must be accompanied by tests. Tests run on Python 3.10, 3.11, and 3.12.
+3. **Linting**: Ensure your code passes all `pre-commit` checks (Ruff, MyPy, etc.).
+4. **Review**: All changes require a Pull Request review.
 
 ### CI/CD Testing
 
 The repository uses GitHub Actions for continuous integration:
+
 - **Quality Gate**: Linting (Ruff), formatting (Black), type checking (Mypy), security scanning (pip-audit)
 - **Multi-Version Testing**: Tests run on Python 3.10, 3.11, and 3.12 to ensure compatibility
 - **Code Analysis**: Automated code quality checks and security scanning
@@ -183,7 +190,9 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
 **Cause:** You're running Python 3.10, which lacks some features introduced in Python 3.11+.
 
 **Solutions:**
+
 1. **Recommended:** Use Python 3.10 or newer (3.12 recommended)
+
    ```bash
    # Ubuntu/Debian
    sudo apt update
@@ -200,6 +209,7 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
 **Problem:** `UnifiedToolsLauncher.py` fails to launch or crashes immediately.
 
 **Solutions:**
+
 1. Ensure all dependencies are installed: `pip install -r requirements.txt`
 2. Check Python version: `python --version` (must be 3.11+)
 3. Try running with verbose output: `python UnifiedToolsLauncher.py --verbose`
@@ -212,8 +222,9 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
 **Cause:** These tools require MATLAB to be installed and accessible in your system PATH.
 
 **MATLAB Requirements:**
+
 - **Minimum Version:** MATLAB R2020a or later
-- **Required Toolboxes:** 
+- **Required Toolboxes:**
   - Signal Processing Toolbox (for audio processing tools)
   - Statistics and Machine Learning Toolbox (for some modeling tools)
   - Image Processing Toolbox (for visualization tools)
@@ -226,6 +237,7 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
    - Install required toolboxes during setup
 
 2. **Add MATLAB to System PATH**
+
    ```bash
    # Linux/macOS
    export PATH="/usr/local/MATLAB/R2023a/bin:$PATH"
@@ -239,6 +251,7 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
    ```
 
 3. **Verify MATLAB Installation**
+
    ```bash
    # Check MATLAB version
    matlab -batch "version"
@@ -265,6 +278,7 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
 **Problem:** `pytest` fails with collection errors or import errors.
 
 **Solutions:**
+
 1. Ensure you're in the repository root: `cd /path/to/Tools`
 2. Install test dependencies: `pip install pytest>=8.2.0`
 3. Run from virtual environment: `source venv/bin/activate`
