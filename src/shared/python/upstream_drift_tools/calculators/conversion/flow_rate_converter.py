@@ -371,7 +371,9 @@ def standard_volumetric_to_mass(
     logger.debug(
         f"Std volumetric to mass: {vol_flow_std} {vol_unit} @ {standard} = {result:.6f} {mass_unit}"
     )
-    logger.debug(f"  Standard conditions: T={T_std}K, P={P_std}Pa, ρ={rho_std:.4f} kg/m³")
+    logger.debug(
+        f"  Standard conditions: T={T_std}K, P={P_std}Pa, ρ={rho_std:.4f} kg/m³"
+    )
 
     return result
 
@@ -438,7 +440,9 @@ def mass_to_standard_volumetric(
     return result
 
 
-def scfm_to_acfm(scfm: float, temperature: float, pressure: float, standard: str = "SCFM") -> float:
+def scfm_to_acfm(
+    scfm: float, temperature: float, pressure: float, standard: str = "SCFM"
+) -> float:
     """Convert SCFM to ACFM (Actual Cubic Feet per Minute).
 
     ACFM = SCFM × (T_actual/T_std) × (P_std/P_actual)
@@ -467,7 +471,9 @@ def scfm_to_acfm(scfm: float, temperature: float, pressure: float, standard: str
     return acfm
 
 
-def acfm_to_scfm(acfm: float, temperature: float, pressure: float, standard: str = "SCFM") -> float:
+def acfm_to_scfm(
+    acfm: float, temperature: float, pressure: float, standard: str = "SCFM"
+) -> float:
     """Convert ACFM to SCFM.
 
     SCFM = ACFM × (T_std/T_actual) × (P_actual/P_std)
@@ -535,12 +541,19 @@ def convert_flow_rate_to_mass(
 
     # Check for standard volumetric units
     if from_unit.upper() in ["SCFM", "NM3/H", "NM³/H", "SM3/H", "SM³/H"]:
-        return standard_volumetric_to_mass(value, from_unit, molecular_weight, standard, "kg/s")
+        return standard_volumetric_to_mass(
+            value, from_unit, molecular_weight, standard, "kg/s"
+        )
 
     # Check for actual volumetric units
-    if from_unit.upper() in ["ACFM", "CFM"] or from_unit in VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S:
+    if (
+        from_unit.upper() in ["ACFM", "CFM"]
+        or from_unit in VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S
+    ):
         if density is None:
-            raise ValueError(f"Density required for actual volumetric flow unit '{from_unit}'")
+            raise ValueError(
+                f"Density required for actual volumetric flow unit '{from_unit}'"
+            )
         return volumetric_actual_to_mass(value, from_unit, density, "kg/s")
 
     raise ValueError(f"Unknown or unsupported flow rate unit: {from_unit}")
