@@ -44,6 +44,8 @@ jobs:
       - name: Type Check (Mypy)
         run: mypy . --ignore-missing-imports --install-types --non-interactive
 
+      # CodeQL is explicitly disabled via codeql-analysis.yml to reduce costs.
+      # Security scanning is performed by pip-audit and bandit.
       - name: Security Scan (pip-audit)
         run: pip-audit -r requirements.txt
 

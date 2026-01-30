@@ -11,9 +11,10 @@ For full options, run:
 
 import os
 import sys
+from pathlib import Path
 
 # Add parent directory to path for imports
-sys.path.insert(0, Path(os.path.abspath(__file__).parent))
+sys.path.insert(0, str(Path(os.path.abspath(__file__)).parent))
 
 
 from solar_system.main import main

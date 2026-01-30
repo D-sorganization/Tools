@@ -47,39 +47,20 @@ def check_dependencies(
     Uses shared dependency checker utility when available, with fallback
     to local implementation for backward compatibility.
     """
-    try:
-        # Try to use shared utility
-        pass
+    # Local implementation
+    required = {
+        "numpy": "pip install numpy",
+        "pygame": "pip install pygame",
+        "OpenGL": "pip install PyOpenGL PyOpenGL_accelerate",
+    }
 
-        # Add utils to path
-        try:
-            from utils.path_helpers import ensure_utils_in_path
+    missing = [name for name in required if not _has_module(name, spec_finder)]
 
-            ensure_utils_in_path()
-        except ImportError:
-            # Fallback
-            from utils.path_helpers import get_project_root_from_file
-
-            repo_root = get_project_root_from_file(__file__)
-            ensure_utils_in_path()
-
-        from utils.dependency_checker import DependencyStatus
-
-    except ImportError:
-        # Fallback to local implementation
-        required = {
-            "numpy": "pip install numpy",
-            "pygame": "pip install pygame",
-            "OpenGL": "pip install PyOpenGL PyOpenGL_accelerate",
-        }
-
-        missing = [name for name in required if not _has_module(name, spec_finder)]
-
-        return DependencyStatus(
-            ok=not missing,
-            missing=missing,
-            guidance={name: required[name] for name in missing},
-        )
+    return DependencyStatus(
+        ok=not missing,
+        missing=missing,
+        guidance={name: required[name] for name in missing},
+    )
 
 
 def build_launch_command(
