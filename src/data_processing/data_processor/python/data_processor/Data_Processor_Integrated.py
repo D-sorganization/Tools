@@ -53,12 +53,27 @@ try:
     if utils_path.exists() and str(utils_path) not in sys.path:
         sys.path.insert(0, str(utils_path))
 
+    # Add src to path to import shared modules
+    src_path = repo_root / "src"
+    if src_path.exists() and str(src_path) not in sys.path:
+        sys.path.insert(0, str(src_path))
+
     from utils.csv_utils import safe_read_csv, safe_write_csv
     from utils.file_utils import safe_read_text, safe_write_text
 
-    # Import shared file classes
-    from .file_utils import DataReader, DataWriter, FileFormatDetector
-except Exception:
+    # Import shared data processing classes
+    from shared.data_processing.models import SplitMethod, SplitConfig
+    from shared.data_processing.file_io import (
+        DataReader,
+        DataWriter,
+        FileFormatDetector,
+    )
+    from shared.data_processing.file_converter import FileConverter
+    from shared.data_processing.folder_processor import FolderProcessor
+
+except Exception as e:
+    print(f"Error importing shared modules: {e}")
+
     # Minimal fallbacks if paths can't be resolved or utils not found
     def safe_read_csv(path, **kwargs):
         return pd.read_csv(path, **kwargs)
@@ -72,86 +87,36 @@ except Exception:
     def safe_write_text(p, c, **kwargs):
         Path(p).write_text(c, **kwargs)
 
-    # Fallback classes for file operations
+    # Define minimal fallbacks for shared classes if import fails
     class DataReader:
-        """Fallback DataReader class for reading data files."""
-
         @staticmethod
         def read_file(file_path, format_type, **kwargs):
-            """Read a data file based on its format."""
-            file_path = Path(file_path)
-            fmt = format_type.lower() if format_type else "csv"
-            if fmt == "csv":
-                return pd.read_csv(file_path, **kwargs)
-            if fmt == "tsv":
-                return pd.read_csv(file_path, sep="\t", **kwargs)
-            if fmt == "excel":
-                return pd.read_excel(file_path, **kwargs)
-            if fmt == "parquet" and PYARROW_AVAILABLE:
-                return pd.read_parquet(file_path, **kwargs)
-            if fmt == "json":
-                return pd.read_json(file_path, **kwargs)
-            # Default to CSV
             return pd.read_csv(file_path, **kwargs)
 
-        @staticmethod
-        def detect_format(file_path):
-            """Detect the format of a file based on its extension."""
-            file_path = Path(file_path)
-            if not file_path.exists():
-                return None
-            extension = file_path.suffix.lower()
-            format_mapping = {
-                ".csv": "csv",
-                ".tsv": "tsv",
-                ".txt": "tsv",
-                ".xlsx": "excel",
-                ".xls": "excel",
-                ".parquet": "parquet",
-                ".json": "json",
-            }
-            return format_mapping.get(extension, None)
-
     class DataWriter:
-        """Fallback DataWriter class for writing data files."""
-
         @staticmethod
         def write_file(data, file_path, format_type, **kwargs):
-            """Write data to a file in the specified format."""
-            file_path = Path(file_path)
-            fmt = format_type.lower() if format_type else "csv"
-            if fmt == "csv":
-                data.to_csv(file_path, index=False, **kwargs)
-            elif fmt == "tsv":
-                data.to_csv(file_path, sep="\t", index=False, **kwargs)
-            elif fmt == "excel":
-                data.to_excel(file_path, index=False, **kwargs)
-            elif fmt == "parquet" and PYARROW_AVAILABLE:
-                data.to_parquet(file_path, **kwargs)
-            elif fmt == "json":
-                data.to_json(file_path, orient="records", indent=2, **kwargs)
-            else:
-                data.to_csv(file_path, index=False, **kwargs)
+            data.to_csv(file_path, **kwargs)
 
     class FileFormatDetector:
-        """Fallback FileFormatDetector class for detecting file formats."""
-
         @staticmethod
         def detect_format(file_path):
-            """Detect the format of a file based on its extension."""
-            return DataReader.detect_format(file_path)
+            return "csv"
 
-        @staticmethod
-        def get_supported_formats():
-            """Get list of supported file formats."""
-            return [".csv", ".tsv", ".txt", ".xlsx", ".xls", ".parquet", ".json"]
+    class FileConverter:
+        def __init__(self, *args, **kwargs):
+            pass
 
-        @staticmethod
-        def is_format_supported(file_path):
-            """Check if a file format is supported."""
-            file_path = Path(file_path)
-            extension = file_path.suffix.lower()
-            return extension in FileFormatDetector.get_supported_formats()
+        def convert_files(self, *args, **kwargs):
+            print("FileConverter not available")
+            return 0
+
+    class FolderProcessor:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def process_folders(self, *args, **kwargs):
+            print("FolderProcessor not available")
 
 
 from Data_Processor_r0 import CSVProcessorApp as OriginalCSVProcessorApp
@@ -162,44 +127,6 @@ try:
 except ImportError:
     FOLDER_TOOL_AVAILABLE = False
     print("Warning: Folder tool not available. Folder Tool tab will be disabled.")
-
-# =============================================================================
-# COMPILER CONVERTER CLASSES
-# =============================================================================
-
-
-class SplitMethod(Enum):
-    """Methods for splitting large files."""
-
-    ROWS = "rows"
-    SIZE = "size"
-    TIME = "time"
-    CUSTOM = "custom"
-
-
-@dataclass
-class SplitConfig:
-    """Configuration for file splitting."""
-
-    enabled: bool = False
-    method: SplitMethod = SplitMethod.ROWS
-    rows_per_file: int = 100000
-    max_file_size_mb: float = 100.0
-    time_column: str = ""
-    time_interval_hours: float = 24.0
-    custom_condition: str = ""
-    output_directory: str = ""
-    filename_pattern: str = "{base_name}_part_{part_number:04d}{extension}"
-    compression: str = "snappy"  # For parquet files
-    include_header: bool = True  # For CSV files
-
-    def get_file_size_bytes(self) -> int:
-        """Convert MB to bytes."""
-        return int(self.max_file_size_mb * 1024 * 1024)
-
-
-# Classes imported from file_utils
-# FileFormatDetector, DataReader, DataWriter are now shared
 
 
 # =============================================================================
@@ -381,6 +308,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         self.folder_source_folders = []
         self.folder_destination = ""
         self.folder_cancel_flag = False  # For cancelling processing
+        self.current_folder_processor = None  # To hold the processor instance
 
         # Initialize the parent class
         super().__init__(*args, **kwargs)
@@ -654,150 +582,51 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             self.converter_progress.set(0)
             self.converter_convert_button.configure(state="disabled")
 
-            total_files = len(self.converter_input_files)
-            processed_files = 0
+            # Setup callbacks
+            def log_cb(msg):
+                self._log_conversion_message(msg)
 
-            if combine_files:
-                # Combine all files into one
-                self._log_conversion_message(
-                    f"Starting conversion: combining {total_files} files into "
-                    "{output_format.upper()}"
-                )
+            def progress_cb(val):
+                self.converter_progress.set(val)
 
-                combined_data = []
-                for _i, file_path in enumerate(self.converter_input_files):
-                    try:
-                        format_type = FileFormatDetector.detect_format(file_path)
-                        if not format_type:
-                            self._log_conversion_message(
-                                "Warning: Could not detect format for "
-                                "{Path(file_path).name}"
-                            )
-                            continue
+            def status_cb(msg):
+                self.after(0, lambda: self.converter_status_label.configure(text=msg))
 
-                        df = DataReader.read_file(file_path, format_type)
-
-                        # Apply column selection
-                        if not use_all_columns and self.converter_selected_columns:
-                            available_columns = [
-                                col
-                                for col in self.converter_selected_columns
-                                if col in df.columns
-                            ]
-                            if available_columns:
-                                df = df[available_columns]
-                            else:
-                                self._log_conversion_message(
-                                    "Warning: No selected"
-                                    "columns found in {Path(file_path).name}"
-                                )
-                                continue
-
-                        combined_data.append(df)
-                        self._log_conversion_message(
-                            f"Loaded {Path(file_path).name}: {len(df)} rows, "
-                            f"{len(df.columns)} columns"
-                        )
-
-                        processed_files += 1
-                        self.converter_progress.set(processed_files / total_files)
-
-                    except Exception as e:
-                        self._log_conversion_message(
-                            f"Error reading {Path(file_path).name}: {str(e)}"
-                        )
-
-                if combined_data:
-                    try:
-                        combined_df = pd.concat(combined_data, ignore_index=True)
-                        output_filename = self._generate_output_filename(
-                            output_format, "combined_data"
-                        )
-                        output_path = Path(self.converter_output_path) / output_filename
-
-                        DataWriter.write_file(combined_df, output_path, output_format)
-                        self._log_conversion_message(
-                            f"Successfully created: {output_filename}"
-                        )
-                        self._log_conversion_message(
-                            f"Combined data: {len(combined_df)} rows, "
-                            f"{len(combined_df.columns)} columns"
-                        )
-
-                    except Exception as e:
-                        self._log_conversion_message(
-                            f"Error writing combined file: {str(e)}"
-                        )
-                else:
-                    self._log_conversion_message("No valid data to combine")
-
-            else:
-                # Process files individually
-                self._log_conversion_message(
-                    f"Starting conversion: processing {total_files} files individually"
-                )
-
-                for _i, file_path in enumerate(self.converter_input_files):
-                    try:
-                        format_type = FileFormatDetector.detect_format(file_path)
-                        if not format_type:
-                            self._log_conversion_message(
-                                "Warning: Could not detect format for "
-                                "{Path(file_path).name}"
-                            )
-                            continue
-
-                        df = DataReader.read_file(file_path, format_type)
-
-                        # Apply column selection
-                        if not use_all_columns and self.converter_selected_columns:
-                            available_columns = [
-                                col
-                                for col in self.converter_selected_columns
-                                if col in df.columns
-                            ]
-                            if available_columns:
-                                df = df[available_columns]
-                            else:
-                                self._log_conversion_message(
-                                    "Warning: No selected"
-                                    "columns found in {Path(file_path).name}"
-                                )
-                                continue
-
-                        # Generate output filename
-                        base_name = Path(file_path).stem
-                        output_filename = self._generate_output_filename(
-                            output_format, base_name
-                        )
-                        output_path = Path(self.converter_output_path) / output_filename
-
-                        DataWriter.write_file(df, output_path, output_format)
-                        self._log_conversion_message(
-                            f"Converted {Path(file_path).name}" "-> {output_filename}"
-                        )
-
-                        processed_files += 1
-                        self.converter_progress.set(processed_files / total_files)
-
-                    except Exception as e:
-                        self._log_conversion_message(
-                            f"Error converting {Path(file_path).name}: {str(e)}"
-                        )
-
-            self.converter_status_label.configure(
-                text=f"Conversion complete. {processed_files} files processed."
+            # Initialize converter
+            converter = FileConverter(
+                log_callback=log_cb,
+                progress_callback=progress_cb,
+                status_callback=status_cb,
             )
-            self.converter_progress.set(1.0)
+
+            # Use SplitConfig if split_files is enabled
+            split_config = self.converter_split_config if split_files else None
+
+            # Run conversion
+            converter.convert_files(
+                input_files=self.converter_input_files,
+                output_directory=self.converter_output_path,
+                output_format=output_format,
+                combine_files=combine_files,
+                selected_columns=self.converter_selected_columns,
+                use_all_columns=use_all_columns,
+                split_config=split_config,
+            )
 
         except Exception as e:
             self._log_conversion_message(f"Conversion error: {str(e)}")
-            self.converter_status_label.configure(text="Conversion failed")
+            self.after(
+                0,
+                lambda: self.converter_status_label.configure(text="Conversion failed"),
+            )
         finally:
-            self.converter_convert_button.configure(state="normal")
+            self.after(
+                0, lambda: self.converter_convert_button.configure(state="normal")
+            )
 
     def _generate_output_filename(self, output_format, base_name=None):
         """Generate output filename with proper extension."""
+        # Kept for compatibility if used elsewhere, but ideally used from FileConverter
         if not base_name:
             base_name = "converted_data"
 
@@ -1409,11 +1238,11 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             folder = filedialog.askdirectory(title="Select Destination Folder")
             if folder:
                 self.folder_destination = folder
+                self.folder_dest_label.configure(text=folder)
         except Exception as e:
             messagebox.showerror(
                 "Error", f"Failed to select destination folder: {str(e)}"
             )
-            self.folder_dest_label.configure(text=folder)
 
     def _folder_run_processing(self) -> None:
         """Start the folder processing operation."""
@@ -1446,30 +1275,62 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
     def _folder_cancel_processing(self) -> None:
         """Cancel the folder processing operation."""
         self.folder_cancel_flag = True  # Set flag to signal cancellation
+        if self.current_folder_processor:
+            self.current_folder_processor.cancel_flag = True
+
         self.folder_status_var.set("Cancelled")
         self.folder_progress_bar.set(0)
         self.folder_run_button.configure(state="normal")
         self.folder_cancel_button.configure(state="disabled")
 
     def _folder_perform_processing(self) -> None:
-        """Perform the actual folder processing operation."""
+        """Perform the actual folder processing operation using shared logic."""
         try:
-            mode = self.folder_operation_mode.get()
+            # Setup callbacks
+            def log_cb(msg):
+                print(msg)  # Simple logging for now
 
-            if mode == "combine":
-                self._folder_combine_operation()
-            elif mode == "flatten":
-                self._folder_flatten_operation()
-            elif mode == "prune":
-                self._folder_prune_operation()
-            elif mode == "deduplicate":
-                self._folder_deduplicate_operation()
-            elif mode == "analyze":
-                self._folder_analyze_operation()
+            def progress_cb(val):
+                self.folder_progress_bar.set(val)
+
+            def status_cb(msg):
+                self.after(0, lambda: self.folder_status_var.set(msg))
+
+            # Setup options
+            options = {
+                "filter_extensions": self.folder_filter_extensions.get(),
+                "min_file_size": self.folder_min_file_size.get(),
+                "max_file_size": self.folder_max_file_size.get(),
+                "organize_by_type": self.folder_organize_by_type_var.get(),
+                "organize_by_date": self.folder_organize_by_date_var.get(),
+                "preview_mode": self.folder_preview_mode_var.get(),
+                "deduplicate_dest": self.folder_deduplicate_var.get(),
+                "backup_before": self.folder_backup_before_var.get(),
+            }
+
+            # Callback for analysis report
+            def show_report(report_text):
+                self.after(0, lambda: self._show_folder_analysis_report(report_text))
+
+            options["report_callback"] = show_report
+
+            # Initialize processor
+            processor = FolderProcessor(
+                log_callback=log_cb,
+                progress_callback=progress_cb,
+                status_callback=status_cb,
+            )
+            self.current_folder_processor = processor
+
+            # Run processing
+            processor.process_folders(
+                mode=self.folder_operation_mode.get(),
+                source_folders=self.folder_source_folders,
+                destination_folder=self.folder_destination,
+                options=options,
+            )
 
             # Complete
-            self.after(0, lambda: self.folder_status_var.set("Processing complete"))
-            self.after(0, lambda: self.folder_progress_bar.set(1.0))
             self.after(0, lambda: self.folder_run_button.configure(state="normal"))
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))
 
@@ -1478,491 +1339,6 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             self.after(0, lambda: self.folder_status_var.set(error_msg))
             self.after(0, lambda: self.folder_run_button.configure(state="normal"))
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))
-
-    def _folder_combine_operation(self) -> None:
-        """
-        Perform combine operation - copy all files from source folders to destination.
-        """
-        try:
-            import os
-            import shutil
-
-            # Create destination directory
-            os.makedirs(self.folder_destination, exist_ok=True)
-
-            # Collect all file paths in a single walk (avoid O(2n) double traversal)
-            all_file_paths = []
-            for src in self.folder_source_folders:
-                for root, _dirs, files in os.walk(src):
-                    for file in files:
-                        all_file_paths.append(Path(root) / file)
-
-            total_files = len(all_file_paths)
-            if total_files == 0:
-                self.after(
-                    0,
-                    lambda: self.folder_status_var.set(
-                        "No files found in source folders"
-                    ),
-                )
-                return
-
-            processed_files = 0
-            copied_count = 0
-            renamed_count = 0
-            skipped_count = 0
-
-            for source_path in all_file_paths:
-                if self.folder_cancel_flag:
-                    break
-
-                # Apply file filters
-                if not self._folder_validate_file_filters(source_path):
-                    skipped_count += 1
-                    processed_files += 1
-                    continue
-
-                # Get organized destination path
-                dest_path = self._folder_get_organized_path(
-                    source_path, self.folder_destination
-                )
-                dest_dir = Path(dest_path).parent
-
-                # Create destination directory if needed
-                os.makedirs(dest_dir, exist_ok=True)
-
-                # Handle naming conflicts
-                final_dest_path = self._folder_get_unique_path(dest_path)
-                if final_dest_path != dest_path:
-                    renamed_count += 1
-
-                try:
-                    if not self.folder_preview_mode_var.get():
-                        shutil.copy2(source_path, final_dest_path)
-                    copied_count += 1
-                except Exception as e:
-                    print(f"Error copying '{Path(source_path).name}': {e}")
-
-                processed_files += 1
-                if processed_files % 10 == 0:  # Update progress every 10 files
-                    progress = processed_files / total_files
-                    self.after(0, lambda p=progress: self.folder_progress_bar.set(p))
-                    self.after(
-                        0,
-                        lambda p=processed_files, t=total_files: (
-                            self.folder_status_var.set(f"Processed {p}/{t} files")
-                        ),
-                    )
-
-            # Final status
-            if self.folder_preview_mode_var.get():
-                status = (
-                    f"PREVIEW: Would copy {copied_count} files, "
-                    f"rename {renamed_count}, skip {skipped_count}"
-                )
-            else:
-                status = (
-                    f"Copied {copied_count} files,"
-                    "renamed {renamed_count}, skipped {skipped_count}"
-                )
-
-            self.after(0, lambda: self.folder_status_var.set(status))
-
-        except Exception as e:
-            error_msg = f"Error: {str(e)}"
-            self.after(0, lambda: self.folder_status_var.set(error_msg))
-
-    def _folder_flatten_operation(self) -> None:
-        """Perform flatten operation - copy files from nested folders to top level."""
-        try:
-            import os
-            import shutil
-
-            # Create destination directory
-            os.makedirs(self.folder_destination, exist_ok=True)
-
-            # Collect all file paths in a single walk (avoid O(2n) double traversal)
-            all_file_paths = []
-            for src in self.folder_source_folders:
-                for root, _dirs, files in os.walk(src):
-                    for file in files:
-                        all_file_paths.append((Path(root) / file, file))
-
-            total_files = len(all_file_paths)
-            if total_files == 0:
-                self.after(
-                    0,
-                    lambda: self.folder_status_var.set(
-                        "No files found in source folders"
-                    ),
-                )
-                return
-
-            processed_files = 0
-            copied_count = 0
-            renamed_count = 0
-            skipped_count = 0
-
-            for source_path, file in all_file_paths:
-                if self.folder_cancel_flag:
-                    break
-
-                # Apply file filters
-                if not self._folder_validate_file_filters(source_path):
-                    skipped_count += 1
-                    processed_files += 1
-                    continue
-
-                # For flatten operation, files go directly to destination root
-                dest_path = Path(self.folder_destination) / file
-
-                # Handle naming conflicts
-                final_dest_path = self._folder_get_unique_path(dest_path)
-                if final_dest_path != dest_path:
-                    renamed_count += 1
-
-                try:
-                    if not self.folder_preview_mode_var.get():
-                        shutil.copy2(source_path, final_dest_path)
-                    copied_count += 1
-                except Exception as e:
-                    print(f"Error copying '{file}': {e}")
-
-                processed_files += 1
-                if processed_files % 10 == 0:
-                    progress = processed_files / total_files
-                    self.after(0, lambda p=progress: self.folder_progress_bar.set(p))
-                    self.after(
-                        0,
-                        lambda p=processed_files, t=total_files: (
-                            self.folder_status_var.set(f"Processed {p}/{t} files")
-                        ),
-                    )
-
-            # Final status
-            if self.folder_preview_mode_var.get():
-                status = (
-                    f"PREVIEW: Would flatten {copied_count} files, "
-                    f"rename {renamed_count}, skip {skipped_count}"
-                )
-            else:
-                status = (
-                    f"Flattened {copied_count} files, "
-                    f"renamed {renamed_count}, skipped {skipped_count}"
-                )
-
-            self.after(0, lambda: self.folder_status_var.set(status))
-
-        except Exception as e:
-            error_msg = f"Error: {str(e)}"
-            self.after(0, lambda: self.folder_status_var.set(error_msg))
-
-    def _folder_prune_operation(self) -> None:
-        """Perform prune operation - copy folders but skip empty subfolders."""
-        try:
-            import os
-            import shutil
-
-            # Create destination directory
-            os.makedirs(self.folder_destination, exist_ok=True)
-
-            # Collect all file paths with metadata in a single walk
-            # (avoid O(2n) traversal)
-            all_file_data = []  # (source_path, file, src, root)
-            for src in self.folder_source_folders:
-                for root, _dirs, files in os.walk(src):
-                    if files:  # Skip empty directories
-                        for file in files:
-                            source_path = Path(root) / file
-                            all_file_data.append((source_path, file, src, root))
-
-            total_files = len(all_file_data)
-            if total_files == 0:
-                self.after(
-                    0,
-                    lambda: self.folder_status_var.set(
-                        "No files found in source folders"
-                    ),
-                )
-                return
-
-            processed_files = 0
-            copied_count = 0
-            skipped_count = 0
-
-            # Process files and create directory structure as needed
-            created_dirs = set()
-            for source_path, file, src, root in all_file_data:
-                if self.folder_cancel_flag:
-                    break
-
-                # Calculate destination path
-                src_name = Path(src).name
-                dest_src_path = Path(self.folder_destination) / src_name
-                rel_path = os.path.relpath(root, src)
-                dest_dir = Path(dest_src_path) / rel_path
-
-                # Create destination directory if not already created
-                if dest_dir not in created_dirs:
-                    if not self.folder_preview_mode_var.get():
-                        os.makedirs(dest_dir, exist_ok=True)
-                    created_dirs.add(dest_dir)
-
-                # Apply file filters
-                if not self._folder_validate_file_filters(source_path):
-                    skipped_count += 1
-                    processed_files += 1
-                    continue
-
-                dest_path = Path(dest_dir) / file
-
-                try:
-                    if not self.folder_preview_mode_var.get():
-                        shutil.copy2(source_path, dest_path)
-                    copied_count += 1
-                except Exception as e:
-                    print(f"Error copying '{file}': {e}")
-
-                processed_files += 1
-                if processed_files % 10 == 0:
-                    progress = processed_files / total_files
-                    self.after(0, lambda p=progress: self.folder_progress_bar.set(p))
-                    self.after(
-                        0,
-                        lambda p=processed_files, t=total_files: (
-                            self.folder_status_var.set(f"Processed {p}/{t} files")
-                        ),
-                    )
-
-            # Final status
-            if self.folder_preview_mode_var.get():
-                status = (
-                    f"PREVIEW: Would copy {copied_count} files, "
-                    f"skip {skipped_count} (pruned empty folders)"
-                )
-            else:
-                status = (
-                    f"Copied {copied_count} files, "
-                    f"skipped {skipped_count} (pruned empty folders)"
-                )
-
-            self.after(0, lambda: self.folder_status_var.set(status))
-
-        except Exception as e:
-            error_msg = f"Error: {str(e)}"
-            self.after(0, lambda: self.folder_status_var.set(error_msg))
-
-    def _folder_deduplicate_operation(self) -> None:
-        """Perform deduplicate operation.
-
-        Remove renamed duplicates in source folders.
-        """
-        try:
-            import os
-            import re
-
-            # Collect all files grouped by directory in a single walk
-            # (avoid O(2n) traversal)
-            pattern = re.compile(r"(.+?)(?: \((\d+)\))?(\.\w+)$")
-            all_dir_files = []  # List of (root, files_list) tuples
-            total_files = 0
-
-            for src in self.folder_source_folders:
-                for root, _dirs, files in os.walk(src):
-                    if files:
-                        all_dir_files.append((root, files))
-                        total_files += len(files)
-
-            if total_files == 0:
-                self.after(
-                    0,
-                    lambda: self.folder_status_var.set(
-                        "No files found in source folders"
-                    ),
-                )
-                return
-
-            processed_files = 0
-            deleted_count = 0
-
-            for root, files in all_dir_files:
-                if self.folder_cancel_flag:
-                    break
-
-                files_by_base_name = {}
-                for filename in files:
-                    match = pattern.match(filename)
-                    if match:
-                        base, _, ext = match.groups()
-                        base_name = f"{base}{ext}"
-                        files_by_base_name.setdefault(base_name, []).append(
-                            Path(root) / filename
-                        )
-
-                for _base_name, file_list in files_by_base_name.items():
-                    if len(file_list) > 1:
-                        try:
-                            # Keep the newest file
-                            file_to_keep = max(
-                                file_list, key=lambda f: os.path.getmtime(f)
-                            )
-                        except (OSError, FileNotFoundError):
-                            continue
-
-                        for file_path in file_list:
-                            if file_path != file_to_keep:
-                                try:
-                                    if not self.folder_preview_mode_var.get():
-                                        os.remove(file_path)
-                                    deleted_count += 1
-                                except OSError as e:
-                                    logging.warning("Failed to delete file: %s", str(e))
-                            # Update progress for each file processed
-                            processed_files += 1
-                            # Update every 50 files for better granularity
-                            if processed_files % 50 == 0:
-                                self.after(
-                                    0,
-                                    lambda p=processed_files, t=total_files: (
-                                        self.folder_status_var.set(
-                                            f"Processed {p}/{t} files"
-                                        )
-                                    ),
-                                )
-
-            # Final status
-            if self.folder_preview_mode_var.get():
-                status = f"PREVIEW: Would delete {deleted_count} duplicate files"
-            else:
-                status = f"Deleted {deleted_count} duplicate files"
-
-            self.after(0, lambda: self.folder_status_var.set(status))
-
-        except Exception as e:
-            error_msg = f"Error: {str(e)}"
-            self.after(0, lambda: self.folder_status_var.set(error_msg))
-
-    def _folder_analyze_operation(self) -> None:
-        """Perform analyze operation - generate detailed report of folder contents."""
-        try:
-            import os
-            from collections import defaultdict
-            from datetime import datetime
-
-            # Count total files for progress tracking
-            total_files = 0
-            for src in self.folder_source_folders:
-                for _root, _dirs, files in os.walk(src):
-                    total_files += len(files)
-
-            if total_files == 0:
-                self.after(
-                    0,
-                    lambda: self.folder_status_var.set(
-                        "No files found in source folders"
-                    ),
-                )
-                return
-
-            processed_files = 0
-            total_size = 0
-            file_types = defaultdict(int)
-            size_by_type = defaultdict(int)
-            largest_files = []
-
-            report_lines = [
-                "=== FOLDER ANALYSIS REPORT ===",
-                f"Generated: {datetime.now()}",
-                "",
-            ]
-
-            for src in self.folder_source_folders:
-                if self.folder_cancel_flag:
-                    break
-
-                report_lines.append(f"Analyzing: {src}")
-                folder_files = 0
-                folder_size = 0
-
-                for root, _dirs, files in os.walk(src):
-                    for file in files:
-                        if self.folder_cancel_flag:
-                            break
-
-                        file_path = Path(root) / file
-                        try:
-                            file_size = os.path.getsize(file_path)
-                            file_ext = Path(file).suffix.lower() or "no_extension"
-
-                            total_size += file_size
-                            folder_files += 1
-                            folder_size += file_size
-                            file_types[file_ext] += 1
-                            size_by_type[file_ext] += file_size
-
-                            # Track largest files
-                            largest_files.append((file_path, file_size))
-
-                        except OSError:
-                            continue
-
-                        processed_files += 1
-                        if processed_files % 10 == 0:
-                            progress = processed_files / total_files
-                            self.after(
-                                0, lambda p=progress: self.folder_progress_bar.set(p)
-                            )
-                            self.after(
-                                0,
-                                lambda p=processed_files, t=total_files: (
-                                    self.folder_status_var.set(
-                                        f"Processed {p}/{t} files"
-                                    )
-                                ),
-                            )
-
-                report_lines.append(
-                    f"  Files: {folder_files}, "
-                    f"Size: {folder_size / (1024 * 1024):.1f} MB"
-                )
-
-            report_lines.extend(
-                [
-                    "",
-                    f"TOTAL FILES: {processed_files}",
-                    f"TOTAL SIZE: {total_size / (1024 * 1024):.1f} MB",
-                    "",
-                    "FILE TYPES:",
-                ]
-            )
-
-            for ext, count in sorted(
-                file_types.items(), key=lambda x: x[1], reverse=True
-            ):
-                size_mb = size_by_type[ext] / (1024 * 1024)
-                report_lines.append(f"  {ext}: {count} files, {size_mb:.1f} MB")
-
-            report_lines.extend(["", "LARGEST FILES:"])
-            # Use heapq.nlargest for O(n log k) performance instead of O(n log n)
-            top_10_files = heapq.nlargest(10, largest_files, key=lambda x: x[1])
-            for file_path, size in top_10_files:
-                size_mb = size / (1024 * 1024)
-                report_lines.append(f"  {Path(file_path).name}: {size_mb:.1f} MB")
-
-            # Show report in a dialog
-            report_text = "\n".join(report_lines)
-            self.after(0, lambda: self._show_folder_analysis_report(report_text))
-
-            self.after(
-                0,
-                lambda: self.folder_status_var.set(
-                    f"Analysis complete: {processed_files} files analyzed"
-                ),
-            )
-
-        except Exception as e:
-            error_msg = f"Error: {str(e)}"
-            self.after(0, lambda: self.folder_status_var.set(error_msg))
 
     def _show_folder_analysis_report(self, report_text):
         """Show the analysis report in a dialog."""
@@ -1984,98 +1360,6 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
         # Add close button
         close_button = ctk.CTkButton(dialog, text="Close", command=dialog.destroy)
         close_button.pack(pady=10)
-
-    def _folder_validate_file_filters(self, file_path):
-        """Validate if a file meets the filtering criteria."""
-        if self.folder_cancel_flag:
-            return False
-
-        # Extension filter
-        extensions = self.folder_filter_extensions.get().strip()
-        if extensions:
-            ext_list = [ext.strip().lower() for ext in extensions.split(",")]
-            file_ext = Path(file_path).suffix.lower()
-            if file_ext not in ext_list:
-                return False
-
-        # Size filter
-        try:
-            file_size_mb = os.path.getsize(file_path) / (1024 * 1024)
-
-            min_size = float(self.folder_min_file_size.get() or 0)
-            if file_size_mb < min_size:
-                return False
-
-            max_size_str = self.folder_max_file_size.get().strip()
-            if max_size_str:
-                max_size = float(max_size_str)
-                if file_size_mb > max_size:
-                    return False
-        except (ValueError, OSError):
-            return False
-
-        return True
-
-    def _folder_get_organized_path(self, file_path, dest_base):
-        """Returns the organized destination path based on organization options."""
-        filename = Path(file_path).name
-        dest_path = dest_base
-
-        # Organize by type
-        if self.folder_organize_by_type_var.get():
-            file_ext = Path(filename).suffix.lower()
-            type_mapping = {
-                ".jpg": "Images",
-                ".jpeg": "Images",
-                ".png": "Images",
-                ".gif": "Images",
-                ".bmp": "Images",
-                ".mp4": "Videos",
-                ".avi": "Videos",
-                ".mov": "Videos",
-                ".wmv": "Videos",
-                ".mkv": "Videos",
-                ".mp3": "Audio",
-                ".wav": "Audio",
-                ".flac": "Audio",
-                ".aac": "Audio",
-                ".pdf": "Documents",
-                ".doc": "Documents",
-                ".docx": "Documents",
-                ".txt": "Documents",
-                ".zip": "Archives",
-                ".rar": "Archives",
-                ".7z": "Archives",
-                ".tar": "Archives",
-            }
-            file_type = type_mapping.get(file_ext, "Other")
-            dest_path = Path(dest_path) / file_type
-
-        # Organize by date
-        if self.folder_organize_by_date_var.get():
-            try:
-                mtime = os.path.getmtime(file_path)
-                date_folder = datetime.fromtimestamp(mtime).strftime("%Y/%m")
-                dest_path = Path(dest_path) / date_folder
-            except OSError:
-                dest_path = Path(dest_path) / "Unknown_Date"
-
-        return Path(dest_path) / filename
-
-    def _folder_get_unique_path(self, path):
-        """Get a unique path by adding a number if the file already exists."""
-        if not Path(path).exists():
-            return path
-        parent, name = os.path.split(path)
-        is_file = "." in name and not os.path.isdir(path)
-        filename = Path(name).stem if is_file else name
-        ext = Path(name).suffix if is_file else ""
-        counter = 1
-        new_path = Path(parent) / f"{filename}_{counter}{ext}"
-        while Path(new_path).exists():
-            counter += 1
-            new_path = Path(parent) / f"{filename}_{counter}{ext}"
-        return new_path
 
     def create_help_tab(self, tab):
         """Create the help tab with comprehensive documentation.
@@ -2422,190 +1706,6 @@ Consolidate files from multiple source folders into a single organized destinati
 - **📊 Progress Tracking**: Real-time progress with ETA calculations
 - **🔄 Incremental Processing**: Resume interrupted operations
 - **📈 Performance Monitoring**: Track operation performance metrics
-
----
-
-## 📈 Plotting & Analysis Tab - Interactive Visualization
-
-### 🎯 Purpose & Capabilities
-Professional interactive visualization and analysis of processed data with
-advanced plotting capabilities.
-
-### 🔧 Key Features
-
-#### 🎯 Smart Auto-Zoom System
-- **🤖 Auto-zoom Control**: Intelligent automatic zoom behavior
-- **🧠 Smart Detection**: Distinguish between new signals and filter changes
-- **🎮 Manual Control**: "Fit to Data" button for manual zoom control
-- **💾 Zoom Preservation**: Maintain view when changing filters or signals
-- **📊 Zoom History**: Navigate through zoom states
-
-#### 📊 Professional Plotting Capabilities
-- **📈 Interactive Charts**: Full zoom, pan, and explore functionality
-- **🎨 Multiple Chart Types**: Line, scatter, bar, area, and combination plots
-- **📊 Signal Selection**: Dynamic signal selection with search
-- **🎨 Color Schemes**: 20+ color schemes plus custom color creation
-- **📋 Legend Management**: Customize signal labels, order, and visibility
-- **📏 Axis Control**: Custom axis ranges, labels, and scaling
-
-#### 📈 Advanced Trendline Analysis
-- **📊 Linear Regression**: Straight line trend analysis with R² values
-- **📈 Exponential Fit**: Exponential growth/decay trend analysis
-- **📊 Power Law**: Power function relationship analysis
-- **📈 Polynomial**: Higher-order polynomial fits (2nd-6th order)
-- **📊 Statistical Metrics**: R-squared, p-values, confidence intervals
-- **📈 Multiple Trendlines**: Compare multiple trendline types
-
-#### 💾 Professional Export Options
-- **🖼️ Image Export**: Save plots as PNG, JPG, PDF, SVG, TIFF
-- **📊 Excel Export**: Export data and plots to Excel with formatting
-- **📋 Configuration Save**: Save plot settings for reuse
-- **📈 Animation Export**: Create animated plots for presentations
-- **📊 Report Generation**: Generate comprehensive analysis reports
-
-### 🚀 Usage Workflow
-1. **📁 Select File**: Choose data file from dropdown with preview
-2. **📊 Select Signals**: Choose which signals to plot with search
-3. **🎨 Configure Display**: Set colors, styles, layout, and themes
-4. **📈 Add Analysis**: Include trendlines, statistics, and annotations
-5. **💾 Export Results**: Save plots, data, or reports as needed
-
-### 📊 Advanced Features
-- **🔍 Data Exploration**: Interactive data exploration tools
-- **📈 Statistical Analysis**: Built-in statistical analysis functions
-- **🎨 Custom Themes**: Create and save custom plot themes
-- **📊 Multi-panel Plots**: Create complex multi-panel visualizations
-- **🔄 Real-time Updates**: Live plot updates during data changes
-
----
-
-## 📋 Plots List Tab - Configuration Management
-
-### 🎯 Purpose & Capabilities
-Professional plot configuration management with
-batch processing and library organization.
-
-### 🔧 Features
-- **💾 Configuration Save**: Save plot settings with names and descriptions
-- **🔄 Batch Export**: Generate all saved plots automatically
-- **👁️ Preview System**: Preview plots before saving
-- **📚 Library Management**: Organize and manage plot collection
-- **📊 Template System**: Create and use plot templates
-- **🔄 Version Control**: Track plot configuration versions
-
-### 🚀 Usage
-1. **📈 Create Plot**: Configure plot in Plotting tab
-2. **💾 Save Configuration**: Add to plots library with metadata
-3. **🔄 Batch Export**: Generate all saved plots at once
-4. **📚 Manage Library**: Edit, delete, or reorganize saved plots
-
----
-
-## 📄 DAT File Import Tab - Structured Data Processing
-
-### 🎯 Purpose & Capabilities
-Process DAT files with associated DBF tag files for structured data import and analysis.
-
-### 🔧 Features
-- **📁 DAT File Selection**: Choose data files with preview
-- **🏷️ DBF Tag Import**: Import tag information from DBF files
-- **✂️ Data Trimming**: Set precise time ranges for data extraction
-- **📤 Export Options**: Save processed data in multiple formats
-- **📊 Data Validation**: Validate data integrity and structure
-- **🔍 Tag Mapping**: Map DBF tags to data columns
-
-### 🚀 Usage
-1. **📁 Select DAT File**: Choose the data file with preview
-2. **🏷️ Import Tags**: Load associated DBF tag file
-3. **⏰ Configure Trimming**: Set start/end times with precision
-4. **🔄 Process & Export**: Generate output files with validation
-
----
-
-## ⚙️ Configuration Management - Professional Settings
-
-### 💾 Save/Load Settings
-- **💾 Configuration Save**: Save all current settings with metadata
-- **📂 Configuration Load**: Restore previous settings with validation
-- **📚 Configuration Management**: Delete and organize saved configs
-- **📁 File Location**: Access configuration files directly
-- **🔄 Auto-save**: Automatic configuration backup
-- **📊 Version Control**: Track configuration changes
-
-### 📊 Signal List Management
-- **💾 Save Signal Lists**: Save selected signals for reuse
-- **📂 Load Signal Lists**: Restore previous signal selections
-- **🔄 Apply Saved Lists**: Quickly apply saved signal configurations
-- **📚 Template System**: Create signal list templates
-- **🔍 Search & Filter**: Find signals in large lists
-
----
-
-## 🎨 User Interface Features - Modern Design
-
-### 🖥️ Responsive Design
-- **📐 Splitter Panels**: Adjustable panel sizes with memory
-- **📜 Scrollable Content**: Handle large datasets efficiently
-- **🎨 Modern UI**: CustomTkinter-based modern interface
-- **⌨️ Keyboard Shortcuts**: Efficient navigation and operation
-- **🎯 Touch Support**: Touch-friendly interface elements
-- **🌙 Dark/Light Mode**: Theme switching capability
-
-### 📊 Progress Tracking
-- **📈 Real-time Updates**: Live progress indicators with ETA
-- **💬 Status Messages**: Clear operation feedback
-- **⏹️ Cancellation Support**: Stop operations at any time
-- **🛡️ Error Handling**: Comprehensive error reporting
-- **📊 Performance Metrics**: Track operation performance
-- **🔍 Debug Information**: Detailed debug information
-
----
-
-## 🚀 Performance Features - Optimized Operations
-
-### ⚡ Optimization
-- **🔄 Background Processing**: Non-blocking operations with threading
-- **💾 Memory Management**: Efficient data handling and cleanup
-- **📊 Batch Operations**: Process multiple files efficiently
-- **📈 Progress Feedback**: Real-time operation status
-- **🔧 Resource Management**: Optimal resource utilization
-- **📊 Caching**: Intelligent caching for repeated operations
-
-### 📁 File Handling
-- **📊 Large File Support**: Handle files of any size with chunking
-- **🔄 Multiple Formats**: Support for 15+ file formats
-- **🗜️ Compression**: Built-in compression for output files
-- **🛡️ Error Recovery**: Robust error handling and recovery
-- **📊 Format Detection**: Automatic format detection
-- **🔍 Integrity Checking**: File integrity validation
-
----
-
-## 📚 Tips & Best Practices - Professional Usage
-
-### 📊 Data Processing
-1. **🔬 Start Small**: Test with small datasets before processing large files
-2. **👁️ Use Preview Mode**: Always preview folder operations before execution
-3. **💾 Save Configurations**: Save frequently used settings
-4. **💾 Backup Data**: Create backups before major operations
-5. **📊 Monitor Progress**: Watch progress indicators for large operations
-6. **🔍 Validate Results**: Always validate processing results
-
-### 📁 File Organization
-1. **🏷️ Use Descriptive Names**: Name configurations and plots clearly
-2. **📂 Organize by Type**: Use folder tool's intelligent type organization
-3. **🧹 Regular Cleanup**: Use deduplication features regularly
-4. **💾 Backup Important Data**: Always backup before major changes
-5. **📊 Plan Structure**: Plan folder structure before large operations
-6. **🔍 Document Changes**: Keep records of major organizational changes
-
-### ⚡ Performance
-1. **🔄 Batch Processing**: Use batch modes for multiple files
-2. **🔍 Filter Early**: Apply filters early in the process
-3. **💾 Monitor Memory**: Watch memory usage with large datasets
-4. **📊 Use Appropriate Formats**: Choose efficient formats for your data
-5. **🔧 Optimize Settings**: Adjust settings for optimal performance
-6. **📊 Monitor Resources**: Track CPU and memory usage
 
 ---
 
