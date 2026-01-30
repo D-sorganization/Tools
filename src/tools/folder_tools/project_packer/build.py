@@ -4,9 +4,9 @@ Cross-platform launcher for building Folder Packer executable.
 Replaces build.bat for better portability.
 """
 
+import logging
 import os
 import sys
-import logging
 from pathlib import Path
 from typing import Any
 
@@ -55,6 +55,7 @@ except ImportError:
 try:
     from utils.path_helpers import ensure_utils_in_path
 except ImportError:
+
     def ensure_utils_in_path() -> None:
         pass
 
@@ -85,7 +86,9 @@ def main() -> None:
                     # Use input with timeout if possible, but standard input is fine
                     # Check if we are interactive
                     if sys.stdin.isatty():
-                        response = input("Would you like to run the executable now? (y/n): ")
+                        response = input(
+                            "Would you like to run the executable now? (y/n): "
+                        )
                         if response.lower() == "y":
                             os.startfile(exe_path)  # type: ignore[attr-defined]
                 except (EOFError, OSError):

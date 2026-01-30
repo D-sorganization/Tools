@@ -9,7 +9,7 @@ with better pattern matching and import management.
 import re
 import sys
 from pathlib import Path
-from typing import Match, Optional
+from re import Match
 
 # Track total fixes
 TOTAL_FIXES = 0
@@ -159,7 +159,7 @@ def fix_path_join_patterns(content: str) -> tuple[str, int]:
         parts = []
         current = ""
         in_string = False
-        string_char: Optional[str] = None
+        string_char: str | None = None
 
         for char in args:
             if char in ('"', "'") and not in_string:
