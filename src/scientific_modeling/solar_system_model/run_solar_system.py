@@ -9,6 +9,7 @@ For full options, run:
     python run_solar_system.py --help
 """
 
+import os
 import sys
 from pathlib import Path
 

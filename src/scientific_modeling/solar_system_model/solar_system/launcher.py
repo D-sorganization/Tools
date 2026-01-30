@@ -67,9 +67,7 @@ def check_dependencies(
             _ = get_project_root_from_file(__file__)
             ensure_utils_in_path()
 
-        from utils.dependency_checker import (
-            check_dependencies as shared_check_dependencies,
-        )
+        from utils.dependency_checker import check_dependencies as shared_check_dependencies
 
         result = shared_check_dependencies(required, spec_finder=spec_finder)
         return DependencyStatus(
