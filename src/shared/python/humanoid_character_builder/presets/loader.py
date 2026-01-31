@@ -277,7 +277,6 @@ def load_preset_from_file(file_path: Path | str) -> BodyParameters:
     import json
 
     import yaml  # type: ignore
-    import yaml  # type: ignore
 
     file_path = Path(file_path)
 
