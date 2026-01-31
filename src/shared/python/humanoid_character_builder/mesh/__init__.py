@@ -5,6 +5,10 @@ Provides mesh-based inertia calculation, mesh loading/processing,
 and primitive shape fallbacks.
 """
 
+from humanoid_character_builder.mesh.collision_geometry import (
+    CollisionGeometry,
+    CollisionGeometryGenerator,
+)
 from humanoid_character_builder.mesh.inertia_calculator import (
     InertiaMode,
     InertiaResult,
@@ -33,4 +37,6 @@ __all__ = [
     "LODGenerator",
     "LODLevel",
     "LODGenerationResult",
+    "CollisionGeometry",
+    "CollisionGeometryGenerator",
 ]
