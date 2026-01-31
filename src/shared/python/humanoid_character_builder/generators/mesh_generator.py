@@ -352,7 +352,7 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
         self, modifiers: dict[str, float], output_dir: Path
     ) -> str:
         """Create a MakeHuman Python script for mesh generation."""
-        script = """
+        script = f"""
 import mh
 import human
 import export
@@ -362,7 +362,7 @@ def generate_human():
     h = human.human
 
     # Apply modifiers
-    modifiers = %s
+    modifiers = {repr(modifiers)}
     for key, value in modifiers.items():
         try:
             h.setDetail(key, value)
@@ -370,18 +370,15 @@ def generate_human():
             pass
 
     # Export as OBJ with vertex groups
-    export_path = "%s/humanoid.obj"
-    export.exportObj(h, export_path, config={
+    export_path = "{str(output_dir)}/humanoid.obj"
+    export.exportObj(h, export_path, config={{
         'exportGroups': True,
         'helper': False,
         'scale': 1.0,
-    })
+    }})
 
 generate_human()
-""" % (
-            repr(modifiers),
-            str(output_dir),
-        )
+"""
         return script
 
     def _generate_from_presets(
@@ -394,8 +391,8 @@ generate_human()
         """Load pre-exported MakeHuman mesh based on parameters."""
         try:
             import trimesh
-        except ImportError:
-            raise RuntimeError("trimesh required for mesh processing")
+        except ImportError as e:
+            raise RuntimeError("trimesh required for mesh processing") from e
 
         # Look for pre-exported mesh files in MakeHuman data directory
         presets_dir = self.makehuman_path / "data" / "exports"
@@ -430,8 +427,8 @@ generate_human()
         """Segment a generated mesh by vertex groups."""
         try:
             import trimesh
-        except ImportError:
-            raise RuntimeError("trimesh required for mesh segmentation")
+        except ImportError as e:
+            raise RuntimeError("trimesh required for mesh segmentation") from e
 
         obj_file = visual_dir / "humanoid.obj"
         if not obj_file.exists():
@@ -523,10 +520,10 @@ generate_human()
                 "right_foot": (0.0, 0.08),
             }
 
-            for segment_name, (z_low, z_high) in segment_z_ranges.items():
+            for segment_name, (z_low, _z_high) in segment_z_ranges.items():
                 if segment_name in HUMANOID_SEGMENTS:
                     z_min = bounds[0][2] + z_low * height
-                    z_max = bounds[0][2] + z_high * height
+                    # z_max = bounds[0][2] + _z_high * height
 
                     try:
                         # Slice mesh at z-bounds
@@ -589,7 +586,7 @@ generate_human()
 
         # Height is handled by overall scale
         # MakeHuman default is ~1.68m, adjust proportionally
-        height_scale = params.height_m / 1.68
+        # height_scale = params.height_m / 1.68
 
         # Gender (MakeHuman: 0 = female, 1 = male)
         modifiers["macrodetails/Gender"] = params.get_effective_gender_factor()

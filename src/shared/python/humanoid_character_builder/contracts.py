@@ -19,6 +19,7 @@ R = TypeVar("R")
 class ContractViolationError(AssertionError):
     """Exception raised when a contract is violated."""
 
+    pass
 
 
 def precondition(
