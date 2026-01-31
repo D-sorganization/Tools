@@ -133,7 +133,7 @@ class PhysicsValidator:
         )
 
         # Build the 3x3 inertia matrix
-        inertia_matrix = np.array(
+        tensor = np.array(
             [
                 [inertia.ixx, inertia.ixy, inertia.ixz],
                 [inertia.ixy, inertia.iyy, inertia.iyz],
@@ -142,7 +142,7 @@ class PhysicsValidator:
         )
 
         # Check symmetry
-        if not np.allclose(inertia_matrix, inertia_matrix.T, rtol=1e-10):
+        if not np.allclose(tensor, tensor.T, rtol=1e-10):
             result.is_symmetric = False
             result.is_valid = False
             result.errors.append(
@@ -151,7 +151,7 @@ class PhysicsValidator:
 
         # Compute eigenvalues
         try:
-            eigenvalues = np.linalg.eigvalsh(inertia_matrix)
+            eigenvalues = np.linalg.eigvalsh(tensor)
             result.eigenvalues = tuple(eigenvalues.tolist())
 
             # Check positive definiteness
@@ -173,7 +173,7 @@ class PhysicsValidator:
                     )
 
             # Compute principal axes
-            _, eigenvectors = np.linalg.eigh(inertia_matrix)
+            _, eigenvectors = np.linalg.eigh(tensor)
             result.principal_axes = eigenvectors
 
         except np.linalg.LinAlgError as e:
@@ -355,7 +355,7 @@ class PhysicsValidator:
 
         # Check pairwise distances
         for i, (name1, center1, radius1) in enumerate(collision_spheres):
-            for _, (name2, center2, radius2) in enumerate(collision_spheres[i + 1 :]):
+            for _j, (name2, center2, radius2) in enumerate(collision_spheres[i + 1 :]):
                 distance = np.linalg.norm(center1 - center2)
                 min_separation = distance - radius1 - radius2
 

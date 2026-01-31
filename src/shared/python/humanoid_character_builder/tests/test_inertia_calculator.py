@@ -197,23 +197,23 @@ class TestValidateInertiaTensor:
 
     def test_valid_tensor(self):
         # Valid diagonal tensor
-        inertia_tensor = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-        errors = validate_inertia_tensor(inertia_tensor)
+        tensor = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+        errors = validate_inertia_tensor(tensor)
         assert len(errors) == 0
 
     def test_non_symmetric(self):
-        inertia_tensor = np.array([[1.0, 0.5, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-        errors = validate_inertia_tensor(inertia_tensor)
+        tensor = np.array([[1.0, 0.5, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+        errors = validate_inertia_tensor(tensor)
         assert any("symmetric" in e for e in errors)
 
     def test_negative_diagonal(self):
-        inertia_tensor = np.array([[-1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-        errors = validate_inertia_tensor(inertia_tensor)
+        tensor = np.array([[-1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+        errors = validate_inertia_tensor(tensor)
         assert any("positive" in e.lower() for e in errors)
 
     def test_wrong_shape(self):
-        inertia_tensor = np.array([[1.0, 0.0], [0.0, 1.0]])
-        errors = validate_inertia_tensor(inertia_tensor)
+        tensor = np.array([[1.0, 0.0], [0.0, 1.0]])
+        errors = validate_inertia_tensor(tensor)
         assert any("3x3" in e for e in errors)
 
 

@@ -152,11 +152,11 @@ def precondition(
                                 message=message,
                                 function_name=func.__name__,
                             )
-                    except Exception:
+                    except Exception as inner_e:
                         raise PreconditionError(
                             message=f"Failed to check precondition: {e}",
                             function_name=func.__name__,
-                        ) from e
+                        ) from inner_e
             return func(*args, **kwargs)
 
         return wrapper

@@ -328,7 +328,6 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
 
         try:
             # Run MakeHuman in scripted mode
-            assert self.makehuman_path is not None
             mh_executable = self.makehuman_path / "makehuman.py"
             if not mh_executable.exists():
                 mh_executable = self.makehuman_path / "makehuman"
@@ -371,7 +370,7 @@ def generate_human():
             pass
 
     # Export as OBJ with vertex groups
-    export_path = "{str(output_dir)}/humanoid.obj"
+    export_path = "{output_dir}/humanoid.obj"
     export.exportObj(h, export_path, config={{
         'exportGroups': True,
         'helper': False,
@@ -392,11 +391,10 @@ generate_human()
         """Load pre-exported MakeHuman mesh based on parameters."""
         try:
             import trimesh
-        except ImportError:
-            raise RuntimeError("trimesh required for mesh processing") from None
+        except ImportError as err:
+            raise RuntimeError("trimesh required for mesh processing") from err
 
         # Look for pre-exported mesh files in MakeHuman data directory
-        assert self.makehuman_path is not None
         presets_dir = self.makehuman_path / "data" / "exports"
         if not presets_dir.exists():
             presets_dir = self.makehuman_path / "exports"
@@ -429,8 +427,8 @@ generate_human()
         """Segment a generated mesh by vertex groups."""
         try:
             import trimesh
-        except ImportError:
-            raise RuntimeError("trimesh required for mesh segmentation") from None
+        except ImportError as err:
+            raise RuntimeError("trimesh required for mesh segmentation") from err
 
         obj_file = visual_dir / "humanoid.obj"
         if not obj_file.exists():
@@ -522,10 +520,10 @@ generate_human()
                 "right_foot": (0.0, 0.08),
             }
 
-            for segment_name, (z_low, _) in segment_z_ranges.items():
+            for segment_name, (z_low, _z_high) in segment_z_ranges.items():
                 if segment_name in HUMANOID_SEGMENTS:
                     z_min = bounds[0][2] + z_low * height
-                    # z_max = bounds[0][2] + z_high * height
+                    # z_max was unused
 
                     try:
                         # Slice mesh at z-bounds
@@ -791,9 +789,7 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
         # Hip width
         betas[6] = np.clip(params.hip_width_factor - 1.0, -0.5, 0.5) * 2
 
-        from typing import cast
-
-        return cast("list[float]", betas.tolist())
+        return betas.tolist()
 
     def _segment_smplx_mesh(
         self,
