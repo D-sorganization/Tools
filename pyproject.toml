@@ -3,20 +3,89 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "upstream_drift_tools"
-version = "0.1.0"
-description = "A shared library of engineering tools and utilities."
+name = "ud-tools"
+version = "0.2.0"
+description = "Shared engineering tools: URDF generation, signal processing, and process calculators."
+readme = "src/shared/python/README.md"
 requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "UpstreamDrift Team"}
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Physics",
+]
 dependencies = [
-    "pandas>=2.0.0",
     "numpy>=1.24.0",
+    "PyYAML>=6.0",
+    "defusedxml>=0.7.0",
+]
+
+[project.optional-dependencies]
+# Full installation with all features
+all = [
+    "scipy>=1.10.0",
+    "pandas>=2.0.0",
+    "matplotlib>=3.7.0",
+    "trimesh>=4.0.0",
+    "mujoco>=3.0.0",
+    "PyQt6>=6.5.0",
+    "sympy>=1.12",
+]
+# URDF/Model generation only
+urdf = [
+    "trimesh>=4.0.0",
+    "scipy>=1.10.0",
+]
+# Signal processing
+signal = [
     "scipy>=1.10.0",
     "matplotlib>=3.7.0",
+    "sympy>=1.12",
 ]
+# Process calculators
+process = [
+    "scipy>=1.10.0",
+    "pandas>=2.0.0",
+    "matplotlib>=3.7.0",
+]
+# GUI components
+gui = [
+    "PyQt6>=6.5.0",
+    "matplotlib>=3.7.0",
+]
+# Development tools
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "ruff>=0.1.0",
+    "black>=23.0.0",
+    "mypy>=1.0.0",
+]
+
+[project.scripts]
+urdf-gen = "model_generation.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/D-sorganization/Tools"
+Repository = "https://github.com/D-sorganization/Tools"
 
 [tool.setuptools.packages.find]
 where = ["src/shared/python"]
-include = ["upstream_drift_tools*"]
+include = [
+    "upstream_drift_tools*",
+    "model_generation*",
+    "humanoid_character_builder*",
+    "signal_toolkit*",
+]
 
 [tool.ruff]
 target-version = "py310"

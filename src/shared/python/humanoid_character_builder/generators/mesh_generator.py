@@ -316,7 +316,6 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
         """
         import subprocess
         import tempfile
-        import json
 
         # Create MakeHuman script
         script_content = self._create_makehuman_script(modifiers, visual_dir)
@@ -456,7 +455,6 @@ generate_human()
         vertex_groups: dict[str, list[int]] | None = None,
     ) -> GeneratedMeshResult:
         """Segment mesh into body parts using vertex groups or geometry."""
-        import trimesh
         from humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
         )
@@ -668,7 +666,6 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
             )
 
         try:
-            import numpy as np
             import smplx
             import torch
             import trimesh
@@ -810,7 +807,6 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
         SMPL-X provides joint positions that we use to segment the mesh.
         """
         import numpy as np
-        import trimesh
         from humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
         )
@@ -922,7 +918,6 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
         params: BodyParameters,
     ) -> GeneratedMeshResult:
         """Fallback segmentation using z-coordinate slicing."""
-        import trimesh
         from humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
         )
