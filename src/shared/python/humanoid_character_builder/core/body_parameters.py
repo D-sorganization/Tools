@@ -310,7 +310,7 @@ class BodyParameters:
 
         Returns empty list if valid.
         """
-        errors = []
+        errors: list[str] = []
 
         if self.height_m <= 0:
             errors.append("height_m must be positive")
