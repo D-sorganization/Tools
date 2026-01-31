@@ -25,13 +25,16 @@ from PyQt6 import QtCore, QtWidgets
 # Configure logging - use standard logging for standalone operation
 try:
     from src.shared.python.logging_config import configure_gui_logging, get_logger
+
     configure_gui_logging()
     logger = get_logger(__name__)
 except ImportError:
     logger = logging.getLogger(__name__)
     if not logger.handlers:
         handler = logging.StreamHandler()
-        handler.setFormatter(logging.Formatter('%(name)s - %(levelname)s - %(message)s'))
+        handler.setFormatter(
+            logging.Formatter("%(name)s - %(levelname)s - %(message)s")
+        )
         logger.addHandler(handler)
         logger.setLevel(logging.INFO)
 
@@ -83,7 +86,8 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
         self.mode = "view"  # view, draw, add_points, drag
 
         # Dark Theme Palette
-        self.setStyleSheet("""
+        self.setStyleSheet(
+            """
             QWidget {
                 background-color: #2b2b2b;
                 color: #ffffff;
@@ -148,7 +152,8 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
             QPushButton#fitBtn:hover {
                 background-color: #388e3c;
             }
-        """)
+        """
+        )
 
         # UI Setup
         self._setup_ui()
