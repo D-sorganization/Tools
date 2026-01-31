@@ -15,6 +15,10 @@ from pathlib import Path
 from typing import Any
 from xml.dom import minidom
 
+from humanoid_character_builder.contracts import (
+    postcondition,
+    precondition,
+)
 from humanoid_character_builder.core.anthropometry import (
     estimate_segment_dimensions,
     estimate_segment_masses,
@@ -138,6 +142,10 @@ class HumanoidURDFGenerator:
         self._joints: list[GeneratedJoint] = []
         self._materials: dict[str, tuple[float, float, float, float]] = {}
 
+    @postcondition(
+        lambda xml: "<robot" in xml and "</robot>" in xml,
+        "Generated URDF must be valid XML",
+    )
     def generate(
         self,
         params: BodyParameters,
@@ -154,6 +162,9 @@ class HumanoidURDFGenerator:
 
         Returns:
             URDF XML string
+
+        Contracts:
+            - Postcondition: Returns valid URDF XML string (contains <robot> tags).
         """
         # Validate parameters
         errors = params.validate()
@@ -260,6 +271,7 @@ class HumanoidURDFGenerator:
         # Default material
         self._materials["default"] = (0.7, 0.7, 0.7, 1.0)
 
+    @precondition(lambda mass: mass > 0, "Mass must be positive")
     def _generate_link(
         self,
         segment_name: str,
@@ -270,7 +282,12 @@ class HumanoidURDFGenerator:
         gender_factor: float,
         mesh_dir: Path | str | None,
     ) -> None:
-        """Generate a single URDF link."""
+        """
+        Generate a single URDF link.
+
+        Contracts:
+            - Precondition: mass > 0.
+        """
         seg_params = params.get_segment_params(segment_name)
 
         # Determine mass
@@ -314,6 +331,9 @@ class HumanoidURDFGenerator:
             origin_rpy=(0.0, 0.0, 0.0),
         )
 
+    @postcondition(
+        lambda i: i.validate_positive_definite(), "Inertia must be positive definite"
+    )
     def _compute_segment_inertia(
         self,
         segment_name: str,
@@ -324,7 +344,12 @@ class HumanoidURDFGenerator:
         gender_factor: float,
         mesh_dir: Path | str | None,
     ) -> InertiaResult:
-        """Compute inertia for a segment."""
+        """
+        Compute inertia for a segment.
+
+        Contracts:
+            - Postcondition: Inertia matrix must be Positive Definite.
+        """
         # Check for manual override
         if seg_params.has_inertia_override():
             override = seg_params.inertia_override
@@ -437,12 +462,22 @@ class HumanoidURDFGenerator:
         else:
             self._generate_single_joint(joint_name, joint_def)
 
+    @precondition(
+        lambda joint_def: joint_def.limits is None
+        or joint_def.limits.lower < joint_def.limits.upper,
+        "Joint limits invalid",
+    )
     def _generate_single_joint(
         self,
         joint_name: str,
         joint_def: JointDefinition,
     ) -> None:
-        """Generate a single URDF joint."""
+        """
+        Generate a single URDF joint.
+
+        Contracts:
+            - Precondition: Joint limits (if present) must have lower < upper.
+        """
         # Map joint type
         urdf_type = self._map_joint_type(joint_def.joint_type)
 
@@ -496,7 +531,7 @@ class HumanoidURDFGenerator:
         # Create intermediate links for composite joints
         parent = joint_def.parent_segment
 
-        for i, (axis, suffix) in enumerate(zip(axes, suffixes)):
+        for i, (axis, suffix) in enumerate(zip(axes, suffixes, strict=True)):
             is_last = i == len(axes) - 1
             child = joint_def.child_segment if is_last else f"{joint_name}{suffix}_link"
 

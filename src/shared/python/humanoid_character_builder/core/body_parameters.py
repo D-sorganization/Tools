@@ -11,6 +11,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
+from humanoid_character_builder.contracts import invariant
+
 
 class BuildType(Enum):
     """Predefined body build types."""
@@ -145,6 +147,10 @@ class AppearanceParameters:
     hair_color: RGBA = field(default_factory=lambda: RGBA(0.2, 0.15, 0.1, 1.0))
 
 
+@invariant(
+    lambda self: self.mass_kg > 0 and self.height_m > 0,
+    "Body parameters invalid: mass and height must be positive",
+)
 @dataclass
 class BodyParameters:
     """
