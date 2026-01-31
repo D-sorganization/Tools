@@ -1,0 +1,287 @@
+"""
+GitHub Importer for Model Library.
+
+Enables batch import of URDF models from GitHub repositories.
+"""
+
+from __future__ import annotations
+
+import json
+import logging
+import os
+import urllib.parse
+import urllib.request
+from dataclasses import dataclass
+
+from model_generation.library.model_library import ModelLibrary
+
+logger = logging.getLogger(__name__)
+
+
+@dataclass
+class ImportResult:
+    """Result of an import operation."""
+
+    source_url: str
+    status: str  # "success", "failed", "skipped", "exists", "found"
+    model_id: str | None = None
+    name: str | None = None
+    description: str | None = None
+    stars: int = 0
+    error: str | None = None
+
+
+class GitHubImporter:
+    """
+    Importer for GitHub repositories.
+    """
+
+    API_BASE = "https://api.github.com"
+
+    # Popular model libraries (pre-configured)
+    POPULAR_REPOSITORIES = [
+        "ros-industrial/universal_robot",
+        "ros-controls/ros_controllers",
+        "RobotLocomotion/drake",
+        "google-deepmind/mujoco_menagerie",
+        "bulletphysics/bullet3",
+    ]
+
+    def __init__(self, library: ModelLibrary | None = None):
+        """Initialize importer."""
+        self.library = library or ModelLibrary()
+
+    def import_from_search(
+        self,
+        query: str = "urdf robot",
+        min_stars: int = 10,
+        file_pattern: str = "*.urdf",
+        max_results: int = 50,
+        dry_run: bool = False,
+    ) -> list[ImportResult]:
+        """
+        Search and import URDF models from GitHub.
+
+        Args:
+            query: Search query
+            min_stars: Minimum stars to filter
+            file_pattern: Pattern to check for (unused in repo search)
+            max_results: Maximum number of results to process
+            dry_run: If True, only search and return candidates without importing
+
+        Returns:
+            List of import results
+        """
+        results = []
+
+        # 1. Search Repositories
+        # GitHub Search API: https://api.github.com/search/repositories
+        # Query qualifiers: stars:>=N
+
+        full_query = f"{query} stars:>={min_stars}"
+        params = {
+            "q": full_query,
+            "sort": "stars",
+            "order": "desc",
+            "per_page": min(max_results, 100),
+        }
+
+        query_string = urllib.parse.urlencode(params)
+        url = f"{self.API_BASE}/search/repositories?{query_string}"
+
+        try:
+            logger.info(f"Searching GitHub: {url}")
+            req = urllib.request.Request(url)
+            req.add_header("Accept", "application/vnd.github.v3+json")
+            # Add user agent to avoid strict rate limiting
+            req.add_header("User-Agent", "ModelGeneration-GitHubImporter")
+            token = os.environ.get("GITHUB_TOKEN")
+            if token:
+                req.add_header("Authorization", f"token {token}")
+
+            with urllib.request.urlopen(req) as response:
+                data = json.loads(response.read().decode())
+
+            items = data.get("items", [])
+            logger.info(f"Found {len(items)} repositories")
+
+            for item in items[:max_results]:
+                owner = item["owner"]["login"]
+                repo_name = item["name"]
+                html_url = item["html_url"]
+                description = item["description"]
+                stars = item["stargazers_count"]
+                default_branch = item.get("default_branch", "main")
+
+                if dry_run:
+                    results.append(
+                        ImportResult(
+                            source_url=html_url,
+                            status="found",
+                            name=f"{owner}/{repo_name}",
+                            description=description,
+                            stars=stars,
+                        )
+                    )
+                    continue
+
+                # Import logic
+                try:
+                    # Add as repository source
+                    repo_id = f"github_{owner}_{repo_name}"
+
+                    self.library.add_repository(
+                        name=repo_id,
+                        repo_type="github",
+                        owner=owner,
+                        repo=repo_name,
+                        branch=default_branch,
+                        description=description or "",
+                    )
+
+                    # Trigger a refresh to find models
+                    models = self.library.refresh_repository(repo_id)
+
+                    if models:
+                        results.append(
+                            ImportResult(
+                                source_url=html_url,
+                                status="success",
+                                model_id=repo_id,
+                                name=f"{owner}/{repo_name}",
+                                description=f"Imported {len(models)} models",
+                                stars=stars,
+                            )
+                        )
+                    else:
+                        results.append(
+                            ImportResult(
+                                source_url=html_url,
+                                status="skipped",  # No models found
+                                name=f"{owner}/{repo_name}",
+                                error="No URDF models found in repository",
+                            )
+                        )
+
+                except Exception as e:
+                    results.append(
+                        ImportResult(
+                            source_url=html_url,
+                            status="failed",
+                            name=f"{owner}/{repo_name}",
+                            error=str(e),
+                        )
+                    )
+
+        except Exception as e:
+            logger.error(f"Search failed: {e}")
+            return [ImportResult(source_url=url, status="failed", error=str(e))]
+
+        return results
+
+    def import_from_urls(
+        self,
+        urls: list[str],
+        flatten_structure: bool = False,
+        skip_existing: bool = True,
+    ) -> list[ImportResult]:
+        """
+        Import models from specific GitHub URLs.
+
+        Args:
+            urls: List of GitHub repository URLs
+            flatten_structure: Flatten directory structure
+            skip_existing: Skip if already exists
+
+        Returns:
+            List of import results
+        """
+        results = []
+
+        for url in urls:
+            try:
+                # Parse URL
+                # Expected: https://github.com/owner/repo
+                parsed = urllib.parse.urlparse(url)
+                path_parts = parsed.path.strip("/").split("/")
+
+                if len(path_parts) < 2:
+                    results.append(
+                        ImportResult(
+                            source_url=url,
+                            status="failed",
+                            error="Invalid GitHub URL",
+                        )
+                    )
+                    continue
+
+                owner = path_parts[0]
+                repo_name = path_parts[1]
+
+                repo_id = f"github_{owner}_{repo_name}"
+
+                if skip_existing and hasattr(self.library, "_repositories"):
+                    if repo_id in self.library._repositories:
+                        results.append(
+                            ImportResult(
+                                source_url=url,
+                                status="exists",
+                                model_id=repo_id,
+                                name=f"{owner}/{repo_name}",
+                                description="Repository already exists in library",
+                            )
+                        )
+                        continue
+
+                # Try to determine branch? Assuming main/master if not specified is risky but standard.
+                # Ideally we'd query the repo metadata first.
+                # For now, let's try to fetch repo info first.
+                api_url = f"{self.API_BASE}/repos/{owner}/{repo_name}"
+                branch = "main"
+
+                try:
+                    req = urllib.request.Request(api_url)
+                    req.add_header("Accept", "application/vnd.github.v3+json")
+                    req.add_header("User-Agent", "ModelGeneration-GitHubImporter")
+                    token = os.environ.get("GITHUB_TOKEN")
+                    if token:
+                        req.add_header("Authorization", f"token {token}")
+                    with urllib.request.urlopen(req) as response:
+                        repo_data = json.loads(response.read().decode())
+                        branch = repo_data.get("default_branch", "main")
+                        description = repo_data.get("description", "")
+                except Exception:
+                    logger.warning(
+                        f"Could not fetch repo metadata for {url}, assuming branch '{branch}'"
+                    )
+                    description = f"Imported from {url}"
+
+                self.library.add_repository(
+                    name=repo_id,
+                    repo_type="github",
+                    owner=owner,
+                    repo=repo_name,
+                    branch=branch,
+                    description=description,
+                )
+
+                models = self.library.refresh_repository(repo_id)
+
+                results.append(
+                    ImportResult(
+                        source_url=url,
+                        status="success",
+                        model_id=repo_id,
+                        name=f"{owner}/{repo_name}",
+                        description=f"Imported {len(models)} models",
+                    )
+                )
+
+            except Exception as e:
+                results.append(
+                    ImportResult(
+                        source_url=url, status="failed", error=str(e), name=url
+                    )
+                )
+
+        return results

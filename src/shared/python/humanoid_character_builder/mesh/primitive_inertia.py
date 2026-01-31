@@ -179,6 +179,17 @@ class PrimitiveInertiaCalculator:
         v_sphere = (4.0 / 3.0) * math.pi * r**3  # Both hemispheres = one sphere
         v_total = v_cylinder + v_sphere
 
+        if v_total <= 0:
+            # Handle zero volume (degenerate case)
+            return InertiaResult(
+                ixx=0.0,
+                iyy=0.0,
+                izz=0.0,
+                volume=0.0,
+                mass=mass,
+                mode=InertiaMode.PRIMITIVE_APPROXIMATION,
+            )
+
         # Mass distribution (proportional to volume assuming uniform density)
         if v_total > 0:
             m_cylinder = mass * (v_cylinder / v_total)
