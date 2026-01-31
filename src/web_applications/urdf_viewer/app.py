@@ -32,15 +32,13 @@ MODELS_DIR.mkdir(parents=True, exist_ok=True)
 
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
-
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
     return FileResponse(STATIC_DIR / "index.html")
 
-
 def get_safe_path(filename: str) -> Path:
     safe_name = os.path.basename(filename)
-    if not safe_name or safe_name in [".", ".."]:
+    if not safe_name or safe_name in ['.', '..']:
         raise HTTPException(status_code=400, detail="Invalid filename")
 
     file_path = MODELS_DIR / safe_name
@@ -48,18 +46,17 @@ def get_safe_path(filename: str) -> Path:
     try:
         # Resolve to absolute paths to check containment
         if not file_path.resolve().is_relative_to(MODELS_DIR.resolve()):
-            raise HTTPException(status_code=403, detail="Access denied")
+             raise HTTPException(status_code=403, detail="Access denied")
     except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid path")
+         raise HTTPException(status_code=400, detail="Invalid path") from None
 
     return file_path
-
 
 @app.post("/api/upload")
 async def upload_file(file: UploadFile):
     try:
         if not file.filename:
-            raise HTTPException(status_code=400, detail="Filename is missing")
+             raise HTTPException(status_code=400, detail="Filename is missing")
 
         file_path = get_safe_path(file.filename)
         logger.info(f"Uploading file to {file_path}")
@@ -74,21 +71,14 @@ async def upload_file(file: UploadFile):
         logger.error(f"Failed to upload file: {e}")
         raise HTTPException(status_code=500, detail=str(e)) from e
 
-
 @app.get("/api/models")
 async def list_models():
     try:
-        files = [
-            f
-            for f in os.listdir(MODELS_DIR)
-            if (f.endswith(".urdf") or f.endswith(".xml"))
-            and os.path.isfile(MODELS_DIR / f)
-        ]
+        files = [f for f in os.listdir(MODELS_DIR) if (f.endswith(".urdf") or f.endswith(".xml")) and os.path.isfile(MODELS_DIR / f)]
         return {"models": files}
     except Exception as e:
         logger.error(f"Failed to list models: {e}")
         raise HTTPException(status_code=500, detail=str(e)) from e
-
 
 @app.get("/api/models/{filename}")
 async def get_model(filename: str):
@@ -97,8 +87,6 @@ async def get_model(filename: str):
         raise HTTPException(status_code=404, detail="File not found")
     return FileResponse(file_path)
 
-
 if __name__ == "__main__":
     import uvicorn
-
     uvicorn.run(app, host="0.0.0.0", port=8000)
