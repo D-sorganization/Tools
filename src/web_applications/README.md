@@ -30,6 +30,14 @@ A NIST-compliant unit converter PWA featuring:
 - **Custom Units**: Add your own units with conversion factors
 - **No Backend Required**: 100% client-side JavaScript
 
+### [URDF Viewer](urdf_viewer/README.md)
+
+A web-based 3D model explorer featuring:
+
+- **Three.js Rendering**: Interactive 3D visualization of URDF models
+- **FastAPI Backend**: Python-powered backend for model management
+- **React Frontend**: Modern UI with direct file uploads
+
 ## Quick Start
 
 ### Calculator
@@ -56,6 +64,17 @@ python -m http.server 8000
 
 Or simply open `unit-converter-app/index.html` in a browser.
 
+### URDF Viewer
+
+```bash
+cd web_applications/urdf_viewer
+
+# Start server
+uvicorn app:app --reload
+
+# Access at http://localhost:8000
+```
+
 ## Dependencies
 
 ### Calculator
@@ -65,6 +84,11 @@ pip install flask sympy
 
 ### Unit Converter
 No dependencies required - pure HTML/CSS/JavaScript.
+
+### URDF Viewer
+```bash
+pip install -r web_applications/urdf_viewer/requirements.txt
+```
 
 ## Integration
 
