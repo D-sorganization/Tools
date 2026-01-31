@@ -66,7 +66,7 @@ class TestCharacterBuilder:
 
         with tempfile.TemporaryDirectory() as tmpdir:
             output_path = Path(tmpdir) / "test.urdf"
-            _urdf = builder.generate_urdf(params, output_path=output_path)
+            builder.generate_urdf(params, output_path=output_path)
 
             assert output_path.exists()
 
@@ -194,8 +194,8 @@ class TestCharacterBuildResult:
         total_mass = result.get_total_mass()
 
         # Should be approximately the specified mass
-        # Increased variance tolerance as implementation details might cause slight shifts
-        assert abs(total_mass - 75.0) < 6.0  # Allow slightly more variance
+        # Allow slightly more variance (e.g. virtual segments, overlap)
+        assert abs(total_mass - 75.0) < 6.0
 
     def test_to_dict(self):
         builder = CharacterBuilder()

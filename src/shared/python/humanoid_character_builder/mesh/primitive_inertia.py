@@ -179,25 +179,20 @@ class PrimitiveInertiaCalculator:
         v_sphere = (4.0 / 3.0) * math.pi * r**3  # Both hemispheres = one sphere
         v_total = v_cylinder + v_sphere
 
-        if v_total <= 0:
-            # Handle zero volume (degenerate case)
-            return InertiaResult(
-                ixx=0.0,
-                iyy=0.0,
-                izz=0.0,
-                volume=0.0,
-                mass=mass,
-                mode=InertiaMode.PRIMITIVE_APPROXIMATION,
-            )
-
         # Mass distribution (proportional to volume assuming uniform density)
-        if v_total > 0:
+        if v_total > 1e-9:
             m_cylinder = mass * (v_cylinder / v_total)
             m_sphere = mass * (v_sphere / v_total)
         else:
-            # Degenerate case, split mass evenly? or zero?
-            m_cylinder = mass * 0.5
-            m_sphere = mass * 0.5
+            # Handle degenerate case (zero volume) where radius is effectively 0
+            # If length > 0, treat as thin rod (mass in cylinder)
+            # If length = 0, treat as point mass
+            if h > 0:
+                m_cylinder = mass
+                m_sphere = 0.0
+            else:
+                m_cylinder = 0.0
+                m_sphere = mass
 
         # Cylinder inertia (along Z)
         i_cyl_long = 0.5 * m_cylinder * r**2
@@ -308,30 +303,30 @@ class PrimitiveInertiaCalculator:
             dimensions = cls._tuple_to_dict(shape, dimensions)
 
         if shape == PrimitiveShape.BOX:
-            return cls.compute_box(
+            result = cls.compute_box(
                 mass,
                 dimensions.get("x", dimensions.get("size_x", 0.1)),
                 dimensions.get("y", dimensions.get("size_y", 0.1)),
                 dimensions.get("z", dimensions.get("size_z", 0.1)),
             )
         elif shape == PrimitiveShape.CYLINDER:
-            return cls.compute_cylinder(
+            result = cls.compute_cylinder(
                 mass,
                 dimensions.get("radius", 0.05),
                 dimensions.get("length", dimensions.get("height", 0.1)),
                 axis,
             )
         elif shape == PrimitiveShape.SPHERE:
-            return cls.compute_sphere(mass, dimensions.get("radius", 0.05))
+            result = cls.compute_sphere(mass, dimensions.get("radius", 0.05))
         elif shape == PrimitiveShape.CAPSULE:
-            return cls.compute_capsule(
+            result = cls.compute_capsule(
                 mass,
                 dimensions.get("radius", 0.05),
                 dimensions.get("length", dimensions.get("height", 0.1)),
                 axis,
             )
         elif shape == PrimitiveShape.ELLIPSOID:
-            return cls.compute_ellipsoid(
+            result = cls.compute_ellipsoid(
                 mass,
                 dimensions.get("a", dimensions.get("semi_a", 0.1)),
                 dimensions.get("b", dimensions.get("semi_b", 0.1)),
@@ -339,6 +334,17 @@ class PrimitiveInertiaCalculator:
             )
         else:
             raise ValueError(f"Unknown shape: {shape}")
+
+        # Enforce minimum inertia for numerical stability (and SPD contract)
+        min_inertia = 1e-6
+        if result.ixx < min_inertia:
+            result.ixx = min_inertia
+        if result.iyy < min_inertia:
+            result.iyy = min_inertia
+        if result.izz < min_inertia:
+            result.izz = min_inertia
+
+        return result
 
     @staticmethod
     def _tuple_to_dict(

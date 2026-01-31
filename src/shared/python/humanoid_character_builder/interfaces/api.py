@@ -343,9 +343,7 @@ class CharacterBuilder:
         Returns:
             URDF XML string
         """
-        # Ensure result is always a string, even if generator returns Any
-        result = self._urdf_generator.generate(params, output_path)
-        return str(result)
+        return str(self._urdf_generator.generate(params, output_path))
 
     def compute_segment_inertia(
         self,
@@ -517,14 +515,12 @@ class CharacterBuilder:
         """List available body presets."""
         from humanoid_character_builder.presets.loader import list_available_presets
 
-        presets = list_available_presets()
-        return list(presets)
+        return list(list_available_presets())
 
     @staticmethod
     def list_segments() -> list[str]:
         """List all available segment names."""
-        segments = get_all_segment_names()
-        return list(segments)
+        return list(get_all_segment_names())
 
     @staticmethod
     def get_segment_definition(segment_name: str) -> dict[str, Any] | None:

@@ -276,7 +276,7 @@ class TestGenerateHumanoidURDF:
 
         with tempfile.TemporaryDirectory() as tmpdir:
             output_path = Path(tmpdir) / "humanoid.urdf"
-            _urdf = generate_humanoid_urdf(params, output_path=output_path)
+            generate_humanoid_urdf(params, output_path=output_path)
 
             assert output_path.exists()
 

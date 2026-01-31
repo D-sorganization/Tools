@@ -501,28 +501,28 @@ def validate_inertia_tensor(inertia_matrix: NDArray[np.float64]) -> list[str]:
     """
     errors = []
 
-    inertia = np.asarray(inertia_matrix)
+    inertia_tensor = np.asarray(inertia_matrix)
 
-    if inertia.shape != (3, 3):
-        errors.append(f"Inertia must be 3x3, got {inertia.shape}")
+    if inertia_tensor.shape != (3, 3):
+        errors.append(f"Inertia must be 3x3, got {inertia_tensor.shape}")
         return errors
 
     # Check symmetry
-    if not np.allclose(inertia, inertia.T, rtol=1e-6):
+    if not np.allclose(inertia_tensor, inertia_tensor.T, rtol=1e-6):
         errors.append("Inertia tensor is not symmetric")
 
     # Check positive diagonal
-    if np.any(np.diag(inertia) <= 0):
+    if np.any(np.diag(inertia_tensor) <= 0):
         errors.append("Diagonal elements must be positive")
 
     # Check positive definite
     try:
-        np.linalg.cholesky(inertia)
+        np.linalg.cholesky(inertia_tensor)
     except np.linalg.LinAlgError:
         errors.append("Inertia tensor is not positive definite")
 
     # Check triangle inequality
-    ixx, iyy, izz = inertia[0, 0], inertia[1, 1], inertia[2, 2]
+    ixx, iyy, izz = inertia_tensor[0, 0], inertia_tensor[1, 1], inertia_tensor[2, 2]
     if not (abs(ixx - iyy) <= izz <= ixx + iyy):
         errors.append("Triangle inequality violated: Izz")
     if not (abs(iyy - izz) <= ixx <= iyy + izz):
