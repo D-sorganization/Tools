@@ -328,6 +328,7 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
 
         try:
             # Run MakeHuman in scripted mode
+            assert self.makehuman_path is not None
             mh_executable = self.makehuman_path / "makehuman.py"
             if not mh_executable.exists():
                 mh_executable = self.makehuman_path / "makehuman"
@@ -395,6 +396,7 @@ generate_human()
             raise RuntimeError("trimesh required for mesh processing") from None
 
         # Look for pre-exported mesh files in MakeHuman data directory
+        assert self.makehuman_path is not None
         presets_dir = self.makehuman_path / "data" / "exports"
         if not presets_dir.exists():
             presets_dir = self.makehuman_path / "exports"
@@ -789,7 +791,9 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
         # Hip width
         betas[6] = np.clip(params.hip_width_factor - 1.0, -0.5, 0.5) * 2
 
-        return betas.tolist()
+        from typing import cast
+
+        return cast("list[float]", betas.tolist())
 
     def _segment_smplx_mesh(
         self,
