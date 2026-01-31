@@ -328,6 +328,7 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
 
         try:
             # Run MakeHuman in scripted mode
+            assert self.makehuman_path is not None
             mh_executable = self.makehuman_path / "makehuman.py"
             if not mh_executable.exists():
                 mh_executable = self.makehuman_path / "makehuman"
@@ -391,10 +392,11 @@ generate_human()
         """Load pre-exported MakeHuman mesh based on parameters."""
         try:
             import trimesh
-        except ImportError as err:
-            raise RuntimeError("trimesh required for mesh processing") from err
+        except ImportError:
+            raise RuntimeError("trimesh required for mesh processing") from None
 
         # Look for pre-exported mesh files in MakeHuman data directory
+        assert self.makehuman_path is not None
         presets_dir = self.makehuman_path / "data" / "exports"
         if not presets_dir.exists():
             presets_dir = self.makehuman_path / "exports"
@@ -427,8 +429,8 @@ generate_human()
         """Segment a generated mesh by vertex groups."""
         try:
             import trimesh
-        except ImportError as err:
-            raise RuntimeError("trimesh required for mesh segmentation") from err
+        except ImportError:
+            raise RuntimeError("trimesh required for mesh segmentation") from None
 
         obj_file = visual_dir / "humanoid.obj"
         if not obj_file.exists():
@@ -520,10 +522,9 @@ generate_human()
                 "right_foot": (0.0, 0.08),
             }
 
-            for segment_name, (z_low, _z_high) in segment_z_ranges.items():
+            for segment_name, (z_low, _) in segment_z_ranges.items():
                 if segment_name in HUMANOID_SEGMENTS:
                     z_min = bounds[0][2] + z_low * height
-                    # z_max is unused, but we calculate it for potential future use or debugging
                     # z_max = bounds[0][2] + z_high * height
 
                     try:
@@ -585,8 +586,9 @@ generate_human()
         # MakeHuman uses modifiers in range [-1, 1] or [0, 1]
         modifiers = {}
 
-        # Height is handled by overall scale (params.height_m)
-        # MakeHuman default is ~1.68m, adjust proportionally (unused var removed)
+        # Height is handled by overall scale
+        # MakeHuman default is ~1.68m, adjust proportionally
+        # height_scale = params.height_m / 1.68
 
         # Gender (MakeHuman: 0 = female, 1 = male)
         modifiers["macrodetails/Gender"] = params.get_effective_gender_factor()
@@ -789,7 +791,9 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
         # Hip width
         betas[6] = np.clip(params.hip_width_factor - 1.0, -0.5, 0.5) * 2
 
-        return betas.tolist()
+        from typing import cast
+
+        return cast("list[float]", betas.tolist())
 
     def _segment_smplx_mesh(
         self,

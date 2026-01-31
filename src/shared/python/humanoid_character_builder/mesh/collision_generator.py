@@ -317,7 +317,7 @@ class CollisionGeometryGenerator:
         try:
             convex = mesh.convex_hull
             volume_ratio = mesh.volume / convex.volume
-            return volume_ratio > threshold
+            return bool(volume_ratio > threshold)
         except Exception:
             return False
 

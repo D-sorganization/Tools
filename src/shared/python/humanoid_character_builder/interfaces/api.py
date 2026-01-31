@@ -34,7 +34,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-import yaml
+import yaml  # type: ignore
 from humanoid_character_builder.core.anthropometry import (
     estimate_segment_dimensions,
     estimate_segment_masses,
@@ -175,12 +175,12 @@ class CharacterBuildResult:
         if self.mesh_result and options.generate_meshes:
             mesh_dir = output_dir / options.mesh_subdirectory
 
-            for _seg_name, src_path in self.mesh_result.mesh_paths.items():
+            for _, src_path in self.mesh_result.mesh_paths.items():
                 if src_path and src_path.exists():
                     dst_path = mesh_dir / "visual" / src_path.name
                     shutil.copy2(src_path, dst_path)
 
-            for _seg_name, src_path in self.mesh_result.collision_paths.items():
+            for _, src_path in self.mesh_result.collision_paths.items():
                 if src_path and src_path.exists():
                     dst_path = mesh_dir / "collision" / src_path.name
                     shutil.copy2(src_path, dst_path)
@@ -343,7 +343,10 @@ class CharacterBuilder:
         Returns:
             URDF XML string
         """
-        return str(self._urdf_generator.generate(params, output_path))
+        result = self._urdf_generator.generate(params, output_path)
+        if not isinstance(result, str):
+            return str(result)
+        return result
 
     def compute_segment_inertia(
         self,
