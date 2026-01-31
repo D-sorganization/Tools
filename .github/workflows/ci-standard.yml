@@ -67,5 +67,5 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Tests (Python ${{ matrix.python-version }})
-        # Run all tests discovered in the repo
-        run: pytest .
+        # Run tests from testpaths defined in pytest.ini (tests/ directory)
+        run: pytest
