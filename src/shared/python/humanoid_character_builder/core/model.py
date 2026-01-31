@@ -85,12 +85,14 @@ class SupportPolygon:
     def distance_to_edge(self, point: tuple[float, float]) -> float:
         """Compute minimum distance from point to the polygon edge."""
         if not self.contains(point):
-            return -1.0 # Or positive distance to polygon? Convention usually margin > 0 is stable.
+            return (
+                -1.0
+            )  # Or positive distance to polygon? Convention usually margin > 0 is stable.
             # If outside, negative margin.
 
         px, py = point
         n = len(self.vertices)
-        min_dist = float('inf')
+        min_dist = float("inf")
 
         # Distance from point to line segment P1-P2
         for i in range(n):
@@ -99,7 +101,7 @@ class SupportPolygon:
             p = np.array([px, py])
 
             # Project p onto line containing p1-p2
-            l2 = np.sum((p1 - p2)**2)
+            l2 = np.sum((p1 - p2) ** 2)
             if l2 == 0:
                 dist = np.linalg.norm(p - p1)
             else:
@@ -120,14 +122,16 @@ class HumanoidModel:
         self,
         links: dict[str, GeneratedLink],
         joints: list[GeneratedJoint],
-        root_link_name: str = "pelvis"
+        root_link_name: str = "pelvis",
     ):
         self.links = links
         self.joints = joints
         self.root_link_name = root_link_name
 
         # Build tree structure
-        self.children_map: dict[str, list[GeneratedJoint]] = {name: [] for name in links}
+        self.children_map: dict[str, list[GeneratedJoint]] = {
+            name: [] for name in links
+        }
         self.joint_map: dict[str, GeneratedJoint] = {j.name: j for j in joints}
 
         for joint in joints:
@@ -165,7 +169,7 @@ class HumanoidModel:
 
                 T_joint = np.eye(4)
                 T_joint[:3, 3] = xyz
-                T_joint[:3, :3] = R.from_euler('xyz', rpy).as_matrix()
+                T_joint[:3, :3] = R.from_euler("xyz", rpy).as_matrix()
 
                 child_transform = parent_transform @ T_joint
                 stack.append((joint.child, child_transform))
@@ -225,9 +229,11 @@ class HumanoidModel:
             # Fallback: find lowest links
             sorted_links = sorted(
                 self.links.keys(),
-                key=lambda name: transforms[name][2, 3] if name in transforms else float('inf')
+                key=lambda name: (
+                    transforms[name][2, 3] if name in transforms else float("inf")
+                ),
             )
-            feet_links = sorted_links[:2] # Take lowest 2
+            feet_links = sorted_links[:2]  # Take lowest 2
 
         for link_name in feet_links:
             if link_name not in transforms:
@@ -247,8 +253,10 @@ class HumanoidModel:
             # Default footprint relative to link frame
             footprint = []
 
-            if geom and geom.get('type') == 'box':
-                size = geom['size'] # (w, d, h) ? In create_geometry_dict: (width, depth, length) -> size=(width, depth, length)
+            if geom and geom.get("type") == "box":
+                size = geom[
+                    "size"
+                ]  # (w, d, h) ? In create_geometry_dict: (width, depth, length) -> size=(width, depth, length)
                 # Usually z is length for limbs? No, box size is (x, y, z).
                 # In urdf generator:
                 # "box", "size": (width, depth, length)
@@ -262,19 +270,23 @@ class HumanoidModel:
                 # box size (width, depth, length).
 
                 # Let's just project the 8 corners of the box
-                for dx in [-sx/2, sx/2]:
-                    for dy in [-sy/2, sy/2]:
-                        for dz in [-sz/2, sz/2]:
+                for dx in [-sx / 2, sx / 2]:
+                    for dy in [-sy / 2, sy / 2]:
+                        for dz in [-sz / 2, sz / 2]:
                             footprint.append([dx, dy, dz])
 
-            elif geom and geom.get('type') in ('cylinder', 'capsule'):
-                 # radius, length. Cylinder along Z usually.
-                 r = geom['radius']
-                 cyl_len = geom['length']
-                 # Project circle? Just 4 points around
-                 for theta in [0, np.pi/2, np.pi, 3*np.pi/2]:
-                     footprint.append([r*np.cos(theta), r*np.sin(theta), -cyl_len/2])
-                     footprint.append([r*np.cos(theta), r*np.sin(theta), cyl_len/2])
+            elif geom and geom.get("type") in ("cylinder", "capsule"):
+                # radius, length. Cylinder along Z usually.
+                r = geom["radius"]
+                cyl_len = geom["length"]
+                # Project circle? Just 4 points around
+                for theta in [0, np.pi / 2, np.pi, 3 * np.pi / 2]:
+                    footprint.append(
+                        [r * np.cos(theta), r * np.sin(theta), -cyl_len / 2]
+                    )
+                    footprint.append(
+                        [r * np.cos(theta), r * np.sin(theta), cyl_len / 2]
+                    )
             else:
                 # Just use COM
                 footprint.append(list(link.origin_xyz))
@@ -282,7 +294,7 @@ class HumanoidModel:
             # Transform points to global
             for pt in footprint:
                 pt_global = T_global[:3, :3] @ np.array(pt) + T_global[:3, 3]
-                points.append((pt_global[0], pt_global[1])) # Keep only X, Y
+                points.append((pt_global[0], pt_global[1]))  # Keep only X, Y
 
         if len(points) < 3:
             return SupportPolygon(points)
@@ -294,4 +306,4 @@ class HumanoidModel:
             vertices = points_array[hull.vertices]
             return SupportPolygon([tuple(p) for p in vertices])
         except Exception:
-             return SupportPolygon(points)
+            return SupportPolygon(points)

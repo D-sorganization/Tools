@@ -119,14 +119,12 @@ class PhysicsValidator:
             # Angle to tip over: atan(margin / com_height)
             tipping_angle = np.arctan(margin / com_z)
         elif not is_stable:
-             # If unstable, tipping angle is undefined or 0?
-             # Or negative angle indicating it's already tipped?
-             tipping_angle = 0.0
+            # If unstable, tipping angle is undefined or 0?
+            # Or negative angle indicating it's already tipped?
+            tipping_angle = 0.0
 
         return StabilityResult(
-            is_stable=is_stable,
-            margin=margin,
-            tipping_angle=tipping_angle
+            is_stable=is_stable, margin=margin, tipping_angle=tipping_angle
         )
 
     def check_self_collisions(self, model: HumanoidModel) -> list[str]:
@@ -158,19 +156,19 @@ class PhysicsValidator:
             max_bound = np.array([0.05, 0.05, 0.05])
 
             if geom:
-                gtype = geom.get('type')
-                if gtype == 'box':
-                    s = geom.get('size', (0.1, 0.1, 0.1))
-                    min_bound = np.array([-s[0]/2, -s[1]/2, -s[2]/2])
-                    max_bound = np.array([s[0]/2, s[1]/2, s[2]/2])
-                elif gtype in ('cylinder', 'capsule'):
-                    r = geom.get('radius', 0.05)
-                    cyl_len = geom.get('length', 0.1)
+                gtype = geom.get("type")
+                if gtype == "box":
+                    s = geom.get("size", (0.1, 0.1, 0.1))
+                    min_bound = np.array([-s[0] / 2, -s[1] / 2, -s[2] / 2])
+                    max_bound = np.array([s[0] / 2, s[1] / 2, s[2] / 2])
+                elif gtype in ("cylinder", "capsule"):
+                    r = geom.get("radius", 0.05)
+                    cyl_len = geom.get("length", 0.1)
                     # Cylinder along Z usually (in URDF primitive)
-                    min_bound = np.array([-r, -r, -cyl_len/2])
-                    max_bound = np.array([r, r, cyl_len/2])
-                elif gtype == 'sphere':
-                    r = geom.get('radius', 0.05)
+                    min_bound = np.array([-r, -r, -cyl_len / 2])
+                    max_bound = np.array([r, r, cyl_len / 2])
+                elif gtype == "sphere":
+                    r = geom.get("radius", 0.05)
                     min_bound = np.array([-r, -r, -r])
                     max_bound = np.array([r, r, r])
 
@@ -210,9 +208,14 @@ class PhysicsValidator:
                 min2, max2 = aabbs[name2]
 
                 # Check AABB overlap
-                if (min1[0] <= max2[0] and max1[0] >= min2[0] and
-                    min1[1] <= max2[1] and max1[1] >= min2[1] and
-                    min1[2] <= max2[2] and max1[2] >= min2[2]):
+                if (
+                    min1[0] <= max2[0]
+                    and max1[0] >= min2[0]
+                    and min1[1] <= max2[1]
+                    and max1[1] >= min2[1]
+                    and min1[2] <= max2[2]
+                    and max1[2] >= min2[2]
+                ):
 
                     messages.append(f"Potential collision between {name1} and {name2}")
 

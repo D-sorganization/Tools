@@ -29,8 +29,8 @@ class TestPhysicsValidator:
             inertia=InertiaResult.create_default(1.0),
             visual_geometry=None,
             collision_geometry=None,
-            origin_xyz=(0,0,0),
-            origin_rpy=(0,0,0)
+            origin_xyz=(0, 0, 0),
+            origin_rpy=(0, 0, 0),
         )
 
     def test_validate_inertia_valid(self, validator, mock_link):
@@ -42,8 +42,8 @@ class TestPhysicsValidator:
     def test_validate_inertia_not_symmetric(self, validator, mock_link):
         # Manually set invalid inertia
         inertia_mat = np.eye(3)
-        inertia_mat[0, 1] = 0.5 # Asymmetric
-        mock_link.inertia.ixx = inertia_mat[0,0]
+        inertia_mat[0, 1] = 0.5  # Asymmetric
+        mock_link.inertia.ixx = inertia_mat[0, 0]
         # InertiaResult.as_matrix constructs symmetric from stored values
         # So it's hard to make InertiaResult asymmetric unless I mock .as_matrix or subclass
 
@@ -53,10 +53,9 @@ class TestPhysicsValidator:
         # Since the code checks `link.inertia.as_matrix()`, and `InertiaResult` enforces symmetry, this check might pass vacuously unless `InertiaResult` is mocked to return garbage.
 
         # Let's skip asymmetry test or mock as_matrix
-        pass
 
     def test_validate_inertia_not_positive_definite(self, validator, mock_link):
-        mock_link.inertia.ixx = -1.0 # Invalid
+        mock_link.inertia.ixx = -1.0  # Invalid
         result = validator.validate_inertia(mock_link)
         assert not result.is_valid
         assert "positive definite" in result.messages[0]
@@ -79,22 +78,54 @@ class TestPhysicsValidator:
         # Root (pelvis) at (0, 0, 1)
 
         # Links
-        pelvis = GeneratedLink("pelvis", 1.0, InertiaResult.create_default(1), {}, {}, (0,0,1), (0,0,0))
-        left_foot = GeneratedLink("left_foot", 0.1, InertiaResult.create_default(0.1),
-                                 {"type": "box", "size": (0.2, 0.2, 0.1)}, # Visual
-                                 {"type": "box", "size": (0.2, 0.2, 0.1)}, # Collision
-                                 (0,0,0), (0,0,0))
-        right_foot = GeneratedLink("right_foot", 0.1, InertiaResult.create_default(0.1),
-                                  {"type": "box", "size": (0.2, 0.2, 0.1)},
-                                  {"type": "box", "size": (0.2, 0.2, 0.1)},
-                                  (0,0,0), (0,0,0))
+        pelvis = GeneratedLink(
+            "pelvis", 1.0, InertiaResult.create_default(1), {}, {}, (0, 0, 1), (0, 0, 0)
+        )
+        left_foot = GeneratedLink(
+            "left_foot",
+            0.1,
+            InertiaResult.create_default(0.1),
+            {"type": "box", "size": (0.2, 0.2, 0.1)},  # Visual
+            {"type": "box", "size": (0.2, 0.2, 0.1)},  # Collision
+            (0, 0, 0),
+            (0, 0, 0),
+        )
+        right_foot = GeneratedLink(
+            "right_foot",
+            0.1,
+            InertiaResult.create_default(0.1),
+            {"type": "box", "size": (0.2, 0.2, 0.1)},
+            {"type": "box", "size": (0.2, 0.2, 0.1)},
+            (0, 0, 0),
+            (0, 0, 0),
+        )
 
         links = {"pelvis": pelvis, "left_foot": left_foot, "right_foot": right_foot}
 
         # Joints
         # Pelvis -> Left Foot (fixed for simplicity of test)
-        j1 = GeneratedJoint("j1", "fixed", "pelvis", "left_foot", (-1, 0, -1), (0,0,0), (0,0,1), None, {})
-        j2 = GeneratedJoint("j2", "fixed", "pelvis", "right_foot", (1, 0, -1), (0,0,0), (0,0,1), None, {})
+        j1 = GeneratedJoint(
+            "j1",
+            "fixed",
+            "pelvis",
+            "left_foot",
+            (-1, 0, -1),
+            (0, 0, 0),
+            (0, 0, 1),
+            None,
+            {},
+        )
+        j2 = GeneratedJoint(
+            "j2",
+            "fixed",
+            "pelvis",
+            "right_foot",
+            (1, 0, -1),
+            (0, 0, 0),
+            (0, 0, 1),
+            None,
+            {},
+        )
 
         model = HumanoidModel(links, [j1, j2], root_link_name="pelvis")
 
@@ -113,13 +144,38 @@ class TestPhysicsValidator:
         # If I want COM at x=10, but feet at x=0.
 
         # Links
-        pelvis = GeneratedLink("pelvis", 1.0, InertiaResult.create_default(1), {}, {}, (10,0,0), (0,0,0)) # COM at 10 locally
-        left_foot = GeneratedLink("left_foot", 0.1, InertiaResult.create_default(0.1),
-                                 {"type": "box", "size": (0.1, 0.1, 0.1)}, {}, (0,0,0), (0,0,0))
+        pelvis = GeneratedLink(
+            "pelvis",
+            1.0,
+            InertiaResult.create_default(1),
+            {},
+            {},
+            (10, 0, 0),
+            (0, 0, 0),
+        )  # COM at 10 locally
+        left_foot = GeneratedLink(
+            "left_foot",
+            0.1,
+            InertiaResult.create_default(0.1),
+            {"type": "box", "size": (0.1, 0.1, 0.1)},
+            {},
+            (0, 0, 0),
+            (0, 0, 0),
+        )
 
         links = {"pelvis": pelvis, "left_foot": left_foot}
 
-        j1 = GeneratedJoint("j1", "fixed", "pelvis", "left_foot", (0, 0, -1), (0,0,0), (0,0,1), None, {})
+        j1 = GeneratedJoint(
+            "j1",
+            "fixed",
+            "pelvis",
+            "left_foot",
+            (0, 0, -1),
+            (0, 0, 0),
+            (0, 0, 1),
+            None,
+            {},
+        )
 
         model = HumanoidModel(links, [j1], root_link_name="pelvis")
 
@@ -134,10 +190,24 @@ class TestPhysicsValidator:
 
     def test_collision_detected(self, validator):
         # Two boxes overlapping
-        link1 = GeneratedLink("link1", 1.0, InertiaResult.create_default(1),
-                             {}, {"type": "box", "size": (1, 1, 1)}, (0,0,0), (0,0,0))
-        link2 = GeneratedLink("link2", 1.0, InertiaResult.create_default(1),
-                             {}, {"type": "box", "size": (1, 1, 1)}, (0,0,0), (0,0,0))
+        link1 = GeneratedLink(
+            "link1",
+            1.0,
+            InertiaResult.create_default(1),
+            {},
+            {"type": "box", "size": (1, 1, 1)},
+            (0, 0, 0),
+            (0, 0, 0),
+        )
+        link2 = GeneratedLink(
+            "link2",
+            1.0,
+            InertiaResult.create_default(1),
+            {},
+            {"type": "box", "size": (1, 1, 1)},
+            (0, 0, 0),
+            (0, 0, 0),
+        )
 
         # Not connected
         links = {"link1": link1, "link2": link2}
@@ -146,12 +216,18 @@ class TestPhysicsValidator:
         # Need to connect them to something or make one child of another (but then adjacent skipping applies).
         # I'll make a root "world" and connect both to it.
 
-        root = GeneratedLink("root", 0, InertiaResult.create_default(0), {}, {}, (0,0,0), (0,0,0))
+        root = GeneratedLink(
+            "root", 0, InertiaResult.create_default(0), {}, {}, (0, 0, 0), (0, 0, 0)
+        )
         links["root"] = root
 
         # Connect link1 and link2 to root at same position
-        j1 = GeneratedJoint("j1", "fixed", "root", "link1", (0,0,0), (0,0,0), (0,0,1), None, {})
-        j2 = GeneratedJoint("j2", "fixed", "root", "link2", (0.5,0,0), (0,0,0), (0,0,1), None, {})
+        j1 = GeneratedJoint(
+            "j1", "fixed", "root", "link1", (0, 0, 0), (0, 0, 0), (0, 0, 1), None, {}
+        )
+        j2 = GeneratedJoint(
+            "j2", "fixed", "root", "link2", (0.5, 0, 0), (0, 0, 0), (0, 0, 1), None, {}
+        )
         # link2 offset by 0.5, size is 1. Overlap!
 
         model = HumanoidModel(links, [j1, j2], root_link_name="root")
