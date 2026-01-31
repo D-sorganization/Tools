@@ -180,8 +180,13 @@ class PrimitiveInertiaCalculator:
         v_total = v_cylinder + v_sphere
 
         # Mass distribution (proportional to volume assuming uniform density)
-        m_cylinder = mass * (v_cylinder / v_total)
-        m_sphere = mass * (v_sphere / v_total)
+        if v_total > 0:
+            m_cylinder = mass * (v_cylinder / v_total)
+            m_sphere = mass * (v_sphere / v_total)
+        else:
+            # Degenerate case, split mass evenly? or zero?
+            m_cylinder = mass * 0.5
+            m_sphere = mass * 0.5
 
         # Cylinder inertia (along Z)
         i_cyl_long = 0.5 * m_cylinder * r**2
