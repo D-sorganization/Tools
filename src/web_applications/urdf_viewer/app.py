@@ -39,20 +39,31 @@ async def read_root():
 
 
 def get_safe_path(filename: str) -> Path:
+    """
+    Sanitize and validate the filename to prevent path traversal.
+    """
+    # 1. Sanitize the filename to remove directory components
     safe_name = os.path.basename(filename)
+
+    # 2. Basic validation
     if not safe_name or safe_name in [".", ".."]:
         raise HTTPException(status_code=400, detail="Invalid filename")
 
+    # 3. Construct the full path
     file_path = MODELS_DIR / safe_name
-    # Ensure path is within MODELS_DIR
+
+    # 4. Canonicalize paths to check for traversal
     try:
-        # Resolve to absolute paths to check containment
-        if not file_path.resolve().is_relative_to(MODELS_DIR.resolve()):
+        resolved_path = file_path.resolve()
+        resolved_root = MODELS_DIR.resolve()
+
+        # 5. Verify containment
+        if not resolved_path.is_relative_to(resolved_root):
             raise HTTPException(status_code=403, detail="Access denied")
+
+        return file_path
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid path") from None
-
-    return file_path
 
 
 @app.post("/api/upload")
