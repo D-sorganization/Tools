@@ -152,11 +152,11 @@ def precondition(
                                 message=message,
                                 function_name=func.__name__,
                             )
-                    except Exception:
+                    except Exception as inner_e:
                         raise PreconditionError(
                             message=f"Failed to check precondition: {e}",
                             function_name=func.__name__,
-                        )
+                        ) from inner_e
             return func(*args, **kwargs)
 
         return wrapper
@@ -200,7 +200,7 @@ def postcondition(
                     raise PostconditionError(
                         message=f"Failed to check postcondition: {e}",
                         function_name=func.__name__,
-                    )
+                    ) from e
             return result
 
         return wrapper
@@ -299,7 +299,7 @@ def _wrap_with_invariant(
                 raise InvariantError(
                     message=f"Failed to check invariant: {e}",
                     function_name=method.__name__,
-                )
+                ) from e
         return result
 
     return wrapper
