@@ -64,7 +64,7 @@ class SupportPolygon:
         # Check winding order first or just assume consistency?
         # A safer way for convex polygon is to check cross product signs
 
-        prev_cross = 0
+        prev_cross: float = 0.0
         for i in range(n):
             p1x, p1y = self.vertices[i]
             p2x, p2y = self.vertices[(i + 1) % n]
@@ -110,7 +110,7 @@ class SupportPolygon:
                 dist = np.linalg.norm(p - projection)
 
             if dist < min_dist:
-                min_dist = dist
+                min_dist = float(dist)
 
         return min_dist
 

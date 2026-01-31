@@ -58,7 +58,7 @@ class CollisionGeometryGenerator:
     - Hybrid/Auto selection
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the generator."""
         self._check_dependencies()
 

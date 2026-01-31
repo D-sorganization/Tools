@@ -34,7 +34,7 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
 @app.get("/", response_class=HTMLResponse)
-async def read_root():
+async def read_root() -> FileResponse:
     return FileResponse(STATIC_DIR / "index.html")
 
 
@@ -67,7 +67,7 @@ def get_safe_path(filename: str) -> Path:
 
 
 @app.post("/api/upload")
-async def upload_file(file: UploadFile):
+async def upload_file(file: UploadFile) -> dict[str, str]:
     try:
         if not file.filename:
             raise HTTPException(status_code=400, detail="Filename is missing")
@@ -87,7 +87,7 @@ async def upload_file(file: UploadFile):
 
 
 @app.get("/api/models")
-async def list_models():
+async def list_models() -> dict[str, list[str]]:
     try:
         files = [
             f
@@ -102,7 +102,7 @@ async def list_models():
 
 
 @app.get("/api/models/{filename}")
-async def get_model(filename: str):
+async def get_model(filename: str) -> FileResponse:
     file_path = get_safe_path(filename)
     if not file_path.exists():
         raise HTTPException(status_code=404, detail="File not found")

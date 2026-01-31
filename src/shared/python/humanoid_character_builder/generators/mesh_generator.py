@@ -328,6 +328,8 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
 
         try:
             # Run MakeHuman in scripted mode
+            if self.makehuman_path is None:
+                raise RuntimeError("MakeHuman path not configured")
             mh_executable = self.makehuman_path / "makehuman.py"
             if not mh_executable.exists():
                 mh_executable = self.makehuman_path / "makehuman"
@@ -395,6 +397,8 @@ generate_human()
             raise RuntimeError("trimesh required for mesh processing") from err
 
         # Look for pre-exported mesh files in MakeHuman data directory
+        if self.makehuman_path is None:
+            raise RuntimeError("MakeHuman path not configured")
         presets_dir = self.makehuman_path / "data" / "exports"
         if not presets_dir.exists():
             presets_dir = self.makehuman_path / "exports"

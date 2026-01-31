@@ -185,9 +185,9 @@ class PhysicsValidator:
                 gc = T[:3, :3] @ np.array(c) + T[:3, 3]
                 global_corners.append(gc)
 
-            global_corners = np.array(global_corners)
-            aabb_min = np.min(global_corners, axis=0)
-            aabb_max = np.max(global_corners, axis=0)
+            global_corners_array = np.array(global_corners)
+            aabb_min = np.min(global_corners_array, axis=0)
+            aabb_max = np.max(global_corners_array, axis=0)
             aabbs[name] = (aabb_min, aabb_max)
 
         # Check intersections

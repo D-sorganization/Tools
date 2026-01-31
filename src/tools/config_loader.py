@@ -57,10 +57,9 @@ def validate_tools_config(
         valid_tools = []
         for tool in tools:
             # Basic validation
-            # Mypy sees this as unreachable because of strict typing in signature,
-            # but runtime data from JSON might not match the type hint.
+            # Runtime validation for JSON data that might not match the type hint
             if not isinstance(tool, dict):
-                continue  # type: ignore[unreachable]
+                continue
 
             if "name" not in tool or "path" not in tool:
                 continue
