@@ -362,7 +362,7 @@ def generate_human():
     h = human.human
 
     # Apply modifiers
-    modifiers = {modifiers!r}
+    modifiers = {repr(modifiers)}
     for key, value in modifiers.items():
         try:
             h.setDetail(key, value)
@@ -370,7 +370,7 @@ def generate_human():
             pass
 
     # Export as OBJ with vertex groups
-    export_path = "{output_dir}/humanoid.obj"
+    export_path = "{str(output_dir)}/humanoid.obj"
     export.exportObj(h, export_path, config={{
         'exportGroups': True,
         'helper': False,
@@ -523,7 +523,8 @@ generate_human()
             for segment_name, (z_low, _z_high) in segment_z_ranges.items():
                 if segment_name in HUMANOID_SEGMENTS:
                     z_min = bounds[0][2] + z_low * height
-                    # z_max = bounds[0][2] + _z_high * height  # Unused
+                    # z_max is unused, but we calculate it for potential future use or debugging
+                    # z_max = bounds[0][2] + z_high * height
 
                     try:
                         # Slice mesh at z-bounds
@@ -584,9 +585,8 @@ generate_human()
         # MakeHuman uses modifiers in range [-1, 1] or [0, 1]
         modifiers = {}
 
-        # Height is handled by overall scale
-        # MakeHuman default is ~1.68m, adjust proportionally
-        # height_scale = params.height_m / 1.68  # Unused
+        # Height is handled by overall scale (params.height_m)
+        # MakeHuman default is ~1.68m, adjust proportionally (unused var removed)
 
         # Gender (MakeHuman: 0 = female, 1 = male)
         modifiers["macrodetails/Gender"] = params.get_effective_gender_factor()

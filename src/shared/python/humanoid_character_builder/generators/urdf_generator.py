@@ -21,6 +21,11 @@ from humanoid_character_builder.core.anthropometry import (
     get_com_location,
 )
 from humanoid_character_builder.core.body_parameters import BodyParameters
+from humanoid_character_builder.core.model import (
+    GeneratedJoint,
+    GeneratedLink,
+    HumanoidModel,
+)
 from humanoid_character_builder.core.segment_definitions import (
     HUMANOID_JOINTS,
     HUMANOID_SEGMENTS,
@@ -81,34 +86,6 @@ class URDFGeneratorConfig:
     include_comments: bool = True
 
 
-@dataclass
-class GeneratedLink:
-    """Generated URDF link data."""
-
-    name: str
-    mass: float
-    inertia: InertiaResult
-    visual_geometry: dict[str, Any]
-    collision_geometry: dict[str, Any] | None
-    origin_xyz: tuple[float, float, float]
-    origin_rpy: tuple[float, float, float]
-
-
-@dataclass
-class GeneratedJoint:
-    """Generated URDF joint data."""
-
-    name: str
-    joint_type: str
-    parent: str
-    child: str
-    origin_xyz: tuple[float, float, float]
-    origin_rpy: tuple[float, float, float]
-    axis: tuple[float, float, float]
-    limits: dict[str, float] | None
-    dynamics: dict[str, float]
-
-
 class HumanoidURDFGenerator:
     """
     Generate URDF files for humanoid characters.
@@ -138,22 +115,20 @@ class HumanoidURDFGenerator:
         self._joints: list[GeneratedJoint] = []
         self._materials: dict[str, tuple[float, float, float, float]] = {}
 
-    def generate(
+    def build_model(
         self,
         params: BodyParameters,
-        output_path: Path | str | None = None,
         mesh_dir: Path | str | None = None,
-    ) -> str:
+    ) -> HumanoidModel:
         """
-        Generate URDF from body parameters.
+        Build HumanoidModel from body parameters.
 
         Args:
             params: Body parameters
-            output_path: Optional path to write URDF file
             mesh_dir: Optional directory containing mesh files
 
         Returns:
-            URDF XML string
+            HumanoidModel instance
         """
         # Validate parameters
         errors = params.validate()
@@ -193,6 +168,27 @@ class HumanoidURDFGenerator:
         # Generate joints
         for joint_name, joint_def in HUMANOID_JOINTS.items():
             self._generate_joint(joint_name, joint_def, segment_dimensions)
+
+        return HumanoidModel(self._links, self._joints)
+
+    def generate(
+        self,
+        params: BodyParameters,
+        output_path: Path | str | None = None,
+        mesh_dir: Path | str | None = None,
+    ) -> str:
+        """
+        Generate URDF from body parameters.
+
+        Args:
+            params: Body parameters
+            output_path: Optional path to write URDF file
+            mesh_dir: Optional directory containing mesh files
+
+        Returns:
+            URDF XML string
+        """
+        self.build_model(params, mesh_dir)
 
         # Build URDF XML
         urdf_xml = self._build_urdf_xml(params.name)
@@ -496,7 +492,7 @@ class HumanoidURDFGenerator:
         # Create intermediate links for composite joints
         parent = joint_def.parent_segment
 
-        for i, (axis, suffix) in enumerate(zip(axes, suffixes, strict=False)):
+        for i, (axis, suffix) in enumerate(zip(axes, suffixes, strict=True)):
             is_last = i == len(axes) - 1
             child = joint_def.child_segment if is_last else f"{joint_name}{suffix}_link"
 
