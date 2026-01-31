@@ -257,7 +257,7 @@ _MALE_SEGMENTS = {
     ),
     "hip": SegmentAnthropometry(
         mass_ratio=0.0010,
-        length_ratio=0.000,
+        length_ratio=0.02,  # Small non-zero length for inertia
         com_proximal_ratio=0.50,
         gyration_sagittal=0.30,
         gyration_transverse=0.30,
@@ -392,7 +392,7 @@ _FEMALE_SEGMENTS = {
     ),
     "hip": SegmentAnthropometry(
         mass_ratio=0.0010,
-        length_ratio=0.000,
+        length_ratio=0.02,  # Small non-zero length for inertia
         com_proximal_ratio=0.50,
         gyration_sagittal=0.30,
         gyration_transverse=0.30,
@@ -482,9 +482,18 @@ def estimate_segment_masses(
         Dict mapping segment name to mass in kg
     """
     masses = {}
+    total_ratio = 0.0
     for segment_name in _SEGMENT_NAME_MAP.keys():
         ratio = get_segment_mass_ratio(segment_name, gender_factor)
         masses[segment_name] = total_mass_kg * ratio
+        total_ratio += ratio
+
+    # Normalize to ensure total mass matches input
+    if total_ratio > 0:
+        normalization = 1.0 / total_ratio
+        for name in masses:
+            masses[name] *= normalization
+
     return masses
 
 
