@@ -9,6 +9,7 @@ This module provides a comprehensive library for managing URDF models:
 """
 
 from model_generation.library.cache import ModelCache
+from model_generation.library.github_importer import GitHubImporter, ImportResult
 from model_generation.library.model_library import (
     ModelCategory,
     ModelEntry,
@@ -30,4 +31,6 @@ __all__ = [
     "GitHubRepository",
     "LocalRepository",
     "ModelCache",
+    "GitHubImporter",
+    "ImportResult",
 ]

@@ -421,6 +421,60 @@ def cmd_library_download(args: argparse.Namespace) -> int:
         return 1
 
 
+def cmd_library_import_github(args: argparse.Namespace) -> int:
+    """Import models from GitHub."""
+    from model_generation.library import GitHubImporter
+
+    importer = GitHubImporter()
+
+    # Handle popular libraries
+    if args.popular:
+        urls = [
+            f"https://github.com/{repo}" for repo in GitHubImporter.POPULAR_REPOSITORIES
+        ]
+        results = importer.import_from_urls(urls)
+
+    elif args.url:
+        results = importer.import_from_urls([args.url])
+
+    elif args.query:
+        results = importer.import_from_search(
+            query=args.query,
+            min_stars=args.min_stars,
+            max_results=args.limit,
+            dry_run=args.dry_run,
+        )
+    else:
+        logger.error("Must specify --query, --url, or --popular")
+        return 1
+
+    # Print results
+    if args.json:
+        output = [
+            {
+                "url": r.source_url,
+                "status": r.status,
+                "model_id": r.model_id,
+                "error": r.error,
+                "name": r.name,
+            }
+            for r in results
+        ]
+        print(json.dumps(output, indent=2))
+    else:
+        for r in results:
+            status_icon = (
+                "✓" if r.status == "success" else "✗" if r.status == "failed" else "?"
+            )
+            print(f"{status_icon} {r.name or r.source_url}: {r.status}")
+            if r.description:
+                print(f"  {r.description}")
+            if r.error:
+                print(f"  Error: {r.error}")
+
+    return 0
+
+
 def cmd_edit_compose(args: argparse.Namespace) -> int:
     """Compose a model from multiple sources."""
     from model_generation.editor import FrankensteinEditor
@@ -673,6 +727,23 @@ def create_parser() -> argparse.ArgumentParser:
         "-f", "--force", action="store_true", help="Force re-download"
     )
     lib_download.set_defaults(func=cmd_library_download)
+
+    # library import-github
+    lib_import = lib_subparsers.add_parser(
+        "import-github", aliases=["igh"], help="Import from GitHub"
+    )
+    lib_import.add_argument("--query", help="Search query")
+    lib_import.add_argument("--url", help="GitHub URL")
+    lib_import.add_argument(
+        "--popular", action="store_true", help="Import from popular libraries"
+    )
+    lib_import.add_argument("--min-stars", type=int, default=10, help="Minimum stars")
+    lib_import.add_argument("--limit", type=int, default=10, help="Max results")
+    lib_import.add_argument(
+        "--dry-run", action="store_true", help="Search without importing"
+    )
+    lib_import.add_argument("--json", action="store_true", help="Output as JSON")
+    lib_import.set_defaults(func=cmd_library_import_github)
 
     # Compose command
     compose_parser = subparsers.add_parser(
