@@ -20,7 +20,6 @@ class ContractViolationError(AssertionError):
     """Exception raised when a contract is violated."""
 
 
-
 def precondition(
     condition: Callable[..., bool], message: str = "Precondition failed"
 ) -> Callable[[Callable[..., R]], Callable[..., R]]:
