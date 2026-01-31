@@ -1,22 +1,17 @@
 [
   {
-    "title": "Critical: Fix Broken Test Collection",
-    "body": "The `pytest` execution fails immediately during collection due to `ModuleNotFoundError` (missing `numpy`, `pandas`) and incorrect relative imports in `src/`. This effectively results in 0% test coverage availability. \n\n**Action Items:**\n1. Ensure CI environment installs all dependencies.\n2. Fix import paths in test files to align with `src/` structure.",
-    "labels": ["jules:assessment", "needs-attention", "priority:critical", "type:bug"]
+    "title": "CRITICAL: Fix Test Suite Environment Configuration",
+    "body": "The test suite fails to collect tests due to `ModuleNotFoundError: No module named 'pandas'`, even when dependencies are installed. This indicates a disconnect between the pytest environment and the installed packages, or incorrect `PYTHONPATH` configuration. \n\n**Action Items**:\n1. Debug `pytest` configuration in CI and local environments.\n2. Ensure `sys.path` correctly includes site-packages or the virtualenv is activated.\n3. Verify by running `pytest src/data_processing/data_processor/python/tests/test_signal_processor.py` successfully.",
+    "labels": ["jules:assessment", "needs-attention", "priority:critical", "category:testing"]
   },
   {
-    "title": "Refactor Legacy Data Processor Monolith",
-    "body": "`src/data_processing/data_processor/python/data_processor/Data_Processor_r0.py` is a massive legacy script that defies modern standards. It uses `print` for logging and has poor error handling.\n\n**Action Items:**\n1. Break into smaller modules (e.g., `loader`, `processor`, `reporter`).\n2. Replace `print` with `logging`.\n3. Add unit tests for new modules.",
-    "labels": ["jules:assessment", "needs-attention", "priority:high", "type:refactor"]
+    "title": "Security: Replace Bare Except Clauses",
+    "body": "Multiple instances of `except:` (bare except) were found in the codebase (e.g., `src/media_processing/video_processor/apps/web/middleware.ts`). This pattern catches `SystemExit` and `KeyboardInterrupt` and hides unexpected errors.\n\n**Action Items**:\n1. Run `ruff --select E722 .` or `grep -r 'except:' src`.\n2. Replace all instances with `except Exception:` or specific exceptions.",
+    "labels": ["jules:assessment", "needs-attention", "priority:high", "category:security"]
   },
   {
-    "title": "Unify Tools Directory Structure",
-    "body": "The repository has a split personality regarding tools: `tools/` (root) vs `src/tools/`. This causes confusion.\n\n**Action Items:**\n1. Audit root `tools/`.\n2. Move active scripts to `src/tools/`.\n3. Delete or archive the rest.",
-    "labels": ["jules:assessment", "needs-attention", "priority:medium", "type:chore"]
-  },
-  {
-    "title": "Enforce Global Linting",
-    "body": "`ruff.toml` currently excludes `data_processing`, `scientific_modeling`, and other key areas. This allows technical debt to accumulate.\n\n**Action Items:**\n1. Remove one exclusion at a time.\n2. Fix the resulting linting errors.\n3. Commit changes.",
-    "labels": ["jules:assessment", "needs-attention", "priority:medium", "type:style"]
+    "title": "Refactor: Performance Benchmark Script",
+    "body": "The `performance_benchmark.py` script relies on `sys.path` hacks and try-import fallbacks. It should be refactored to use standard imports and proper package structure.\n\n**Action Items**:\n1. Move benchmark script to a location where it can import `data_processor` naturally.\n2. Remove `sys.path.insert` hacks.",
+    "labels": ["jules:assessment", "needs-attention", "priority:medium", "category:refactoring"]
   }
 ]

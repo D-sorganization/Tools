@@ -650,6 +650,9 @@ class CustomFunctionFitter:
         """
         # Build the function dynamically
         # Note: This uses eval which should only be used with trusted input
+        if "__" in expression:
+            raise ValueError("Expression contains forbidden pattern '__'")
+
         import numpy as np_module
 
         safe_dict = {
