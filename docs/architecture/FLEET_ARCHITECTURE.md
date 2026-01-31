@@ -56,6 +56,17 @@ This document describes the shared tools architecture across the repository flee
 │   ├── utils/                   # General utilities                           │
 │   │   └── unit_constants.py    # NIST physical constants                    │
 │   │                                                                          │
+│   ├── signal_toolkit/          # SIGNAL PROCESSING LIBRARY                   │
+│   │   ├── core.py              # Signal class and generator                 │
+│   │   ├── fitting.py           # Curve fitting (sin, exp, poly, custom)     │
+│   │   ├── filters.py           # Digital filters (Butterworth, etc.)        │
+│   │   ├── calculus.py          # Differentiation and integration            │
+│   │   ├── noise.py             # Noise generation (white, pink, brown)      │
+│   │   ├── limits.py            # Saturation, rate limiting, deadband        │
+│   │   ├── io.py                # Import/export (CSV, JSON, MAT, NPZ)        │
+│   │   ├── widget.py            # PyQt6 interactive visualization            │
+│   │   └── polynomial_generator.py  # Interactive polynomial generator       │
+│   │                                                                          │
 │   └── calculators/             # Legacy location (being migrated)            │
 │                                                                              │
 └─────────────────────────────────┬───────────────────────────────────────────┘
@@ -133,6 +144,42 @@ design = flare.calculate_flare_size(
     temperature=500,  # K
     pressure=1.5,  # bar
 )
+```
+
+### Signal Toolkit (`signal_toolkit/`)
+
+A comprehensive signal processing library for control systems, simulation, and data analysis:
+
+| Module | Purpose | Dependencies |
+|--------|---------|--------------|
+| `Signal`, `SignalGenerator` | Signal creation (13 types) | numpy |
+| `FunctionFitter` | Curve fitting (sinusoid, exponential, polynomial, custom) | numpy, scipy |
+| `FilterDesigner` | Digital filters (Butterworth, Chebyshev, Bessel, adaptive) | scipy |
+| `Differentiator`, `Integrator` | Calculus operations | numpy, scipy |
+| `NoiseGenerator` | Noise generation (white, pink, brown, blue, violet) | numpy |
+| `apply_saturation`, `apply_rate_limiter` | Limits and constraints | numpy |
+| `SignalImporter`, `SignalExporter` | File I/O (CSV, JSON, MAT, NPZ) | numpy, scipy |
+| `PolynomialGeneratorWidget` | Interactive polynomial fitting | PyQt6, sympy |
+| `SignalToolkitWidget` | Interactive signal visualization | PyQt6, matplotlib |
+
+**Usage:**
+```python
+from signal_toolkit import Signal, SignalGenerator, FunctionFitter, apply_filter
+
+# Generate a noisy sinusoid
+import numpy as np
+t = np.linspace(0, 10, 1000)
+signal = SignalGenerator.sinusoid(t, amplitude=1.0, frequency=2.0)
+
+# Fit a function to data
+fitter = FunctionFitter()
+result = fitter.auto_fit(signal)  # Tries multiple models, returns best
+print(f"Best fit: {result.fit_type}, R-squared: {result.r_squared:.4f}")
+
+# Apply a low-pass filter
+from signal_toolkit import create_butterworth_filter
+filter_spec = create_butterworth_filter('lowpass', cutoff=5, fs=100, order=4)
+filtered = apply_filter(signal, filter_spec)
 ```
 
 ## Core Logic (Gasification_Model)

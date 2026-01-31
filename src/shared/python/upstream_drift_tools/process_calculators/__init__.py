@@ -24,15 +24,13 @@ Note:
     Core calculation functionality works without UI dependencies.
 """
 
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
 
-logger = logging.getLogger(__name__)
-
-# Core calculators that work standalone
 from .acid_gas_dewpoint_calculator import AcidGasDewpointCalculator
 from .baghouse_calculator import BaghouseCalculator, BaghouseResult
-
-# Constants module
 from .constants import (
     ATOL_ZERO,
     R_GAS_J_MOL_K,
@@ -47,56 +45,86 @@ from .flare_calculator import FlareCalculator, FlareDesign
 from .ode_solver import ODESolver
 from .thermal_profile_predictor import ThermalProfilePredictor
 
+if TYPE_CHECKING:
+    from .multi_param_analysis import (
+        MultiParameterAnalysis as MultiParameterAnalysisType,
+    )
+    from .optimization import AdamOptimizer as AdamOptimizerType
+    from .optimization import Optimizer as OptimizerType
+    from .pressure_drop_calculator import (
+        PressureDropCalculator as PressureDropCalculatorType,
+    )
+    from .scrubber_calculator import ScrubberCalculator as ScrubberCalculatorType
+    from .syngas_compression_calculator import (
+        SyngasCompressionCalculator as SyngasCompressionCalculatorType,
+    )
+    from .syngas_water_calculator import (
+        SyngasWaterCalculator as SyngasWaterCalculatorType,
+    )
+    from .water_vapor_pressure_calculator import (
+        WaterVaporPressureCalculator as WaterVaporPressureCalculatorType,
+    )
+    from .wgs_reactor_calculator import WGSReactorEngine as WGSReactorEngineType
+
+logger = logging.getLogger(__name__)
+
+# Track import errors for optional modules
+_import_errors: list[str] = []
+
 # Calculators with numpy/scipy dependencies
 try:
     from .scrubber_calculator import ScrubberCalculator
 except ImportError as e:
-    logger.debug(f"ScrubberCalculator not available: {e}")
-    ScrubberCalculator = None  # type: ignore
+    _import_errors.append(f"ScrubberCalculator not available: {e}")
+    ScrubberCalculator: type[ScrubberCalculatorType] | None = None  # type: ignore[no-redef]
 
 try:
     from .syngas_water_calculator import SyngasWaterCalculator
     from .water_vapor_pressure_calculator import WaterVaporPressureCalculator
 except ImportError as e:
-    logger.debug(f"Water calculators not available: {e}")
-    SyngasWaterCalculator = None  # type: ignore
-    WaterVaporPressureCalculator = None  # type: ignore
+    _import_errors.append(f"Water calculators not available: {e}")
+    SyngasWaterCalculator: type[SyngasWaterCalculatorType] | None = None  # type: ignore[no-redef]
+    WaterVaporPressureCalculator: type[WaterVaporPressureCalculatorType] | None = None  # type: ignore[no-redef]
 
 try:
     from .wgs_reactor_calculator import WGSReactorEngine
 
     WGSReactorCalculator = WGSReactorEngine  # Alias
 except ImportError as e:
-    logger.debug(f"WGSReactorCalculator not available: {e}")
-    WGSReactorCalculator = None  # type: ignore
-    WGSReactorEngine = None  # type: ignore
+    _import_errors.append(f"WGSReactorCalculator not available: {e}")
+    WGSReactorCalculator: type[WGSReactorEngineType] | None = None  # type: ignore[no-redef]
+    WGSReactorEngine: type[WGSReactorEngineType] | None = None  # type: ignore[no-redef]
 
 try:
     from .optimization import AdamOptimizer, Optimizer
 except ImportError as e:
-    logger.debug(f"Optimization not available: {e}")
-    Optimizer = None  # type: ignore
-    AdamOptimizer = None  # type: ignore
+    _import_errors.append(f"Optimization not available: {e}")
+    Optimizer: type[OptimizerType] | None = None  # type: ignore[no-redef]
+    AdamOptimizer: type[AdamOptimizerType] | None = None  # type: ignore[no-redef]
 
 try:
     from .multi_param_analysis import MultiParameterAnalysis
 except ImportError as e:
-    logger.debug(f"MultiParameterAnalysis not available: {e}")
-    MultiParameterAnalysis = None  # type: ignore
+    _import_errors.append(f"MultiParameterAnalysis not available: {e}")
+    MultiParameterAnalysis: type[MultiParameterAnalysisType] | None = None  # type: ignore[no-redef]
 
 # UI-dependent calculators (require PyQt6)
 try:
     from .syngas_compression_calculator import SyngasCompressionCalculator
 except ImportError as e:
-    logger.debug(f"SyngasCompressionCalculator not available: {e}")
-    SyngasCompressionCalculator = None  # type: ignore
+    _import_errors.append(f"SyngasCompressionCalculator not available: {e}")
+    SyngasCompressionCalculator: type[SyngasCompressionCalculatorType] | None = None  # type: ignore[no-redef]
 
 # Modular packages
 try:
     from .pressure_drop_calculator import PressureDropCalculator
 except ImportError as e:
-    logger.debug(f"PressureDropCalculator not available: {e}")
-    PressureDropCalculator = None  # type: ignore
+    _import_errors.append(f"PressureDropCalculator not available: {e}")
+    PressureDropCalculator: type[PressureDropCalculatorType] | None = None  # type: ignore[no-redef]
+
+# Log any import errors that occurred
+for error in _import_errors:
+    logger.debug(error)
 
 __all__ = [
     # Always available
