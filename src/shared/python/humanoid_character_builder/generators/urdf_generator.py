@@ -608,14 +608,15 @@ class HumanoidURDFGenerator:
 
         # Format XML
         if self.config.pretty_print:
-            xml_str = minidom.parseString(ET.tostring(root)).toprettyxml(
-                indent=self.config.indent
+            xml_bytes = ET.tostring(root)
+            xml_str = str(
+                minidom.parseString(xml_bytes).toprettyxml(indent=self.config.indent)
             )
             # Remove extra blank lines
-            lines = [line for line in xml_str.split("\n") if line.strip()]
+            lines: list[str] = [line for line in xml_str.split("\n") if line.strip()]
             return "\n".join(lines)
         else:
-            return ET.tostring(root, encoding="unicode")
+            return str(ET.tostring(root, encoding="unicode"))
 
     def _add_link_element(self, root: ET.Element, link: GeneratedLink) -> None:
         """Add a link element to the URDF."""
@@ -741,4 +742,4 @@ def generate_humanoid_urdf(
         URDF XML string
     """
     generator = HumanoidURDFGenerator(config)
-    return generator.generate(params, output_path)
+    return str(generator.generate(params, output_path))

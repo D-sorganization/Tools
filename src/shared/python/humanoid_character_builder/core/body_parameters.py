@@ -7,6 +7,7 @@ including overall build, individual segment scaling, and appearance.
 
 from __future__ import annotations
 
+from collections.abc import Iterator
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
@@ -44,7 +45,7 @@ class Vector3:
         """Return as tuple."""
         return (self.x, self.y, self.z)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[float]:
         """Allow unpacking."""
         return iter([self.x, self.y, self.z])
 

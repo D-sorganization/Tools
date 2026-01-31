@@ -19,6 +19,7 @@ R = TypeVar("R")
 class ContractViolationError(AssertionError):
     """Exception raised when a contract is violated."""
 
+    pass
 
 
 def precondition(
@@ -39,7 +40,7 @@ def precondition(
             try:
                 bound_args = sig.bind(*args, **kwargs)
                 bound_args.apply_defaults()
-                arguments = bound_args.arguments
+                arguments: dict[str, Any] = dict(bound_args.arguments)
             except TypeError:
                 # Fallback for when binding fails
                 arguments = {}
@@ -142,10 +143,10 @@ def invariant(
 
     def decorator(cls: type) -> type:
         # Wrap __init__
-        original_init = cls.__init__
+        original_init = cls.__init__  # type: ignore[misc]
 
         @functools.wraps(original_init)
-        def new_init(self, *args, **kwargs):
+        def new_init(self: Any, *args: Any, **kwargs: Any) -> None:
             original_init(self, *args, **kwargs)
             try:
                 if not condition(self):
@@ -163,9 +164,11 @@ def invariant(
         for name, method in inspect.getmembers(cls, inspect.isfunction):
             if not name.startswith("_") and name != "__init__":
                 # We need to capture the original method properly
-                def make_wrapper(orig_method, method_name):
+                def make_wrapper(
+                    orig_method: Callable[..., Any], method_name: str
+                ) -> Callable[..., Any]:
                     @functools.wraps(orig_method)
-                    def wrapper(self, *args, **kwargs):
+                    def wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
                         result = orig_method(self, *args, **kwargs)
                         try:
                             if not condition(self):
