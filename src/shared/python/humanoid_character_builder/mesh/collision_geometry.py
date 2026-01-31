@@ -93,6 +93,7 @@ class CollisionGeometryGenerator:
             CollisionGeometry object containing simplified meshes
         """
         import time
+
         start_time = time.time()
 
         # Configure parameters based on complexity preset
@@ -113,7 +114,9 @@ class CollisionGeometryGenerator:
         elif method == "decimation":
             result_meshes = self._generate_decimation(visual_mesh, max_triangles)
         elif method == "auto":
-            result_meshes = self._generate_auto(visual_mesh, max_primitives, max_triangles)
+            result_meshes = self._generate_auto(
+                visual_mesh, max_primitives, max_triangles
+            )
         else:
             # Fallback to convex hull
             result_meshes = [visual_mesh.convex_hull]
@@ -132,7 +135,7 @@ class CollisionGeometryGenerator:
             volume_preservation=metrics["volume_preservation"],
             vertex_count=total_verts,
             face_count=total_faces,
-            processing_time=processing_time
+            processing_time=processing_time,
         )
 
     def _generate_vhacd(self, mesh: Any, max_hulls: int) -> list[Any]:
@@ -147,10 +150,7 @@ class CollisionGeometryGenerator:
             # trimesh.decomposition.convex_decomposition uses testVHACD or vhacd binary
             # This might fail if binary is missing.
             components = trimesh.decomposition.convex_decomposition(
-                mesh,
-                maxhulls=max_hulls,
-                resolution=100000,
-                depth=20
+                mesh, maxhulls=max_hulls, resolution=100000, depth=20
             )
 
             if not isinstance(components, list):
@@ -175,7 +175,7 @@ class CollisionGeometryGenerator:
         # 1. Oriented Bounding Box
         try:
             obb = mesh.bounding_box_oriented
-            candidates.append(('box', obb, obb.volume))
+            candidates.append(("box", obb, obb.volume))
         except Exception:
             pass
 
@@ -185,7 +185,7 @@ class CollisionGeometryGenerator:
             sphere = trimesh.creation.icosphere(radius=radius, subdivisions=3)
             # Center the sphere
             sphere.apply_translation(center)
-            candidates.append(('sphere', sphere, sphere.volume))
+            candidates.append(("sphere", sphere, sphere.volume))
         except Exception:
             pass
 
@@ -205,15 +205,19 @@ class CollisionGeometryGenerator:
             # Align cylinder/capsule to the correct local axis (default is Z)
             align_transform = np.eye(4)
             if axis_idx == 0:  # Align Z to X
-                align_transform = trimesh.transformations.rotation_matrix(np.pi/2, [0, 1, 0])
+                align_transform = trimesh.transformations.rotation_matrix(
+                    np.pi / 2, [0, 1, 0]
+                )
             elif axis_idx == 1:  # Align Z to Y
-                align_transform = trimesh.transformations.rotation_matrix(-np.pi/2, [1, 0, 0])
+                align_transform = trimesh.transformations.rotation_matrix(
+                    -np.pi / 2, [1, 0, 0]
+                )
 
             # Cylinder
             cyl = trimesh.creation.cylinder(radius=radius, height=height)
             cyl.apply_transform(align_transform)
             cyl.apply_transform(transform)
-            candidates.append(('cylinder', cyl, cyl.volume))
+            candidates.append(("cylinder", cyl, cyl.volume))
 
             # Capsule
             # trimesh capsule height is length of cylinder segment
@@ -221,7 +225,7 @@ class CollisionGeometryGenerator:
             cap = trimesh.creation.capsule(radius=radius, height=cyl_len)
             cap.apply_transform(align_transform)
             cap.apply_transform(transform)
-            candidates.append(('capsule', cap, cap.volume))
+            candidates.append(("capsule", cap, cap.volume))
 
         except Exception:
             pass
@@ -270,14 +274,16 @@ class CollisionGeometryGenerator:
                 logger.warning(f"Decimation failed: {e}")
                 return [mesh]
 
-    def _generate_auto(self, mesh: Any, max_primitives: int, max_triangles: int) -> list[Any]:
+    def _generate_auto(
+        self, mesh: Any, max_primitives: int, max_triangles: int
+    ) -> list[Any]:
         """Automatically select best method."""
         # Simple heuristic:
         # If mesh is convex-ish (high volume/convex_volume ratio), use convex hull or primitives
         # If mesh is complex (many components), try VHACD or decimation
 
         if mesh.is_convex:
-            return [mesh] # Already convex
+            return [mesh]  # Already convex
 
         convex_ratio = mesh.volume / mesh.convex_hull.volume
 
@@ -287,14 +293,16 @@ class CollisionGeometryGenerator:
             return self._generate_primitives(mesh)
 
         if len(mesh.faces) > max_triangles * 2:
-             # Very high detail, decimate first?
-             # For collision, we usually want convex hulls or simple mesh.
-             # If complex shape, VHACD is best for physics.
-             return self._generate_vhacd(mesh, max_primitives)
+            # Very high detail, decimate first?
+            # For collision, we usually want convex hulls or simple mesh.
+            # If complex shape, VHACD is best for physics.
+            return self._generate_vhacd(mesh, max_primitives)
 
         return self._generate_decimation(mesh, max_triangles)
 
-    def compute_quality_metrics(self, original: Any, generated: list[Any]) -> dict[str, float]:
+    def compute_quality_metrics(
+        self, original: Any, generated: list[Any]
+    ) -> dict[str, float]:
         """Compute quality metrics comparing generated collision geometry to original."""
         import trimesh
 
@@ -308,7 +316,9 @@ class CollisionGeometryGenerator:
             vol_orig = original.volume
             vol_gen = combined_gen.volume
             if vol_orig > 1e-6:
-                vol_preservation = min(vol_gen / vol_orig, vol_orig / vol_gen) if vol_gen > 0 else 0
+                vol_preservation = (
+                    min(vol_gen / vol_orig, vol_orig / vol_gen) if vol_gen > 0 else 0
+                )
             else:
                 vol_preservation = 1.0
         except Exception:
@@ -333,14 +343,13 @@ class CollisionGeometryGenerator:
             scale = original.scale
             normalized_hausdorff = hausdorff / scale if scale > 0 else hausdorff
 
-            quality_score = max(0.0, 1.0 - normalized_hausdorff * 10) # Arbitrary scaling
+            quality_score = max(
+                0.0, 1.0 - normalized_hausdorff * 10
+            )  # Arbitrary scaling
             quality_score = (quality_score + vol_preservation) / 2.0
 
         except Exception as e:
             logger.warning(f"Quality metrics calculation failed: {e}")
             quality_score = 0.0
 
-        return {
-            "quality_score": quality_score,
-            "volume_preservation": vol_preservation
-        }
+        return {"quality_score": quality_score, "volume_preservation": vol_preservation}
