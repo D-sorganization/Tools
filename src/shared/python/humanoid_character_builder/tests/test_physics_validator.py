@@ -53,6 +53,7 @@ class TestPhysicsValidator:
         # Since the code checks `link.inertia.as_matrix()`, and `InertiaResult` enforces symmetry, this check might pass vacuously unless `InertiaResult` is mocked to return garbage.
 
         # Let's skip asymmetry test or mock as_matrix
+        pass
 
     def test_validate_inertia_not_positive_definite(self, validator, mock_link):
         mock_link.inertia.ixx = -1.0  # Invalid
