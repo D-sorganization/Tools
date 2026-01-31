@@ -1,0 +1,6 @@
+./scripts/analyze_completist_data.py:177:        if f_path and l_no and c_txt and "@abstractmethod" in c_txt:
+./scripts/analyze_completist_data.py-178-            return {"file": f_path, "line": l_no, "text": c_txt, "type": "Abstract"}
+./scripts/analyze_completist_data.py-179-        return None
+./scripts/analyze_completist_data.py-180-
+./scripts/analyze_completist_data.py-181-    return _scan_completist_file("ABSTRACT", _parser)
+./scripts/analyze_completist_data.py-182-
