@@ -255,7 +255,7 @@ class TestIntegratedCSVProcessorApp(unittest.TestCase):
         self.assertEqual(config.rows_per_file, 100000)
         self.assertEqual(config.compression, "snappy")
 
-    @patch("os.path.exists", return_value=True)
+    @patch("pathlib.Path.exists", return_value=True)
     def test_file_format_detector(self, mock_exists: MagicMock) -> None:
         """Test file format detection."""
         detector = self.FileFormatDetector()

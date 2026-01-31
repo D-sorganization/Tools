@@ -32,7 +32,7 @@ import logging
 import shutil
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import yaml
 from humanoid_character_builder.core.anthropometry import (
@@ -175,12 +175,12 @@ class CharacterBuildResult:
         if self.mesh_result and options.generate_meshes:
             mesh_dir = output_dir / options.mesh_subdirectory
 
-            for seg_name, src_path in self.mesh_result.mesh_paths.items():
+            for _seg_name, src_path in self.mesh_result.mesh_paths.items():
                 if src_path and src_path.exists():
                     dst_path = mesh_dir / "visual" / src_path.name
                     shutil.copy2(src_path, dst_path)
 
-            for seg_name, src_path in self.mesh_result.collision_paths.items():
+            for _seg_name, src_path in self.mesh_result.collision_paths.items():
                 if src_path and src_path.exists():
                     dst_path = mesh_dir / "collision" / src_path.name
                     shutil.copy2(src_path, dst_path)
@@ -343,7 +343,7 @@ class CharacterBuilder:
         Returns:
             URDF XML string
         """
-        return self._urdf_generator.generate(params, output_path)
+        return cast(str, self._urdf_generator.generate(params, output_path))
 
     def compute_segment_inertia(
         self,
@@ -515,12 +515,12 @@ class CharacterBuilder:
         """List available body presets."""
         from humanoid_character_builder.presets.loader import list_available_presets
 
-        return list_available_presets()
+        return cast(list[str], list_available_presets())
 
     @staticmethod
     def list_segments() -> list[str]:
         """List all available segment names."""
-        return get_all_segment_names()
+        return cast(list[str], get_all_segment_names())
 
     @staticmethod
     def get_segment_definition(segment_name: str) -> dict[str, Any] | None:

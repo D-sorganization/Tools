@@ -25,19 +25,6 @@ from typing import Any
 
 import pandas as pd
 
-# Import logging
-try:
-    from .logging_config import get_logger
-except ImportError:
-    from logging_config import get_logger  # type: ignore
-
-# Import security utilities
-try:
-    from .security_utils import FileSizeError, check_file_size
-except ImportError:
-    from security_utils import FileSizeError, check_file_size  # type: ignore
-
-
 # Add utils to path
 try:
     import sys
@@ -65,6 +52,22 @@ except ImportError:
 
     def safe_write_text(path, content):
         pass
+
+
+# Import logging
+try:
+    from utils.logging_utils import get_logger
+except ImportError:
+    try:
+        from .logging_config import get_logger
+    except ImportError:
+        from logging_config import get_logger  # type: ignore
+
+# Import security utilities
+try:
+    from .security_utils import FileSizeError, check_file_size
+except ImportError:
+    from security_utils import FileSizeError, check_file_size  # type: ignore
 
 
 # Module logger

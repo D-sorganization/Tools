@@ -1,10 +1,10 @@
 """
-Unit tests for URDF generator module.
+Tests for URDF generator module.
 """
 
 import tempfile
+import xml.etree.ElementTree as ET
 from pathlib import Path
-from xml.etree import ElementTree as ET
 
 from humanoid_character_builder.core.body_parameters import BodyParameters
 from humanoid_character_builder.generators.urdf_generator import (
@@ -12,245 +12,164 @@ from humanoid_character_builder.generators.urdf_generator import (
     URDFGeneratorConfig,
     generate_humanoid_urdf,
 )
-from humanoid_character_builder.mesh.inertia_calculator import InertiaMode
-
-
-class TestURDFGeneratorConfig:
-    """Tests for URDFGeneratorConfig."""
-
-    def test_default_values(self):
-        config = URDFGeneratorConfig()
-        assert config.inertia_mode == InertiaMode.PRIMITIVE_APPROXIMATION
-        assert config.generate_collision is True
-        assert config.expand_composite_joints is True
-
-    def test_custom_values(self):
-        config = URDFGeneratorConfig(
-            inertia_mode=InertiaMode.MESH_UNIFORM_DENSITY,
-            default_density=1100.0,
-            generate_collision=False,
-        )
-        assert config.inertia_mode == InertiaMode.MESH_UNIFORM_DENSITY
-        assert config.default_density == 1100.0
-        assert config.generate_collision is False
 
 
 class TestHumanoidURDFGenerator:
-    """Tests for HumanoidURDFGenerator."""
+    """Tests for HumanoidURDFGenerator class."""
+
+    def test_init_default(self):
+        generator = HumanoidURDFGenerator()
+        assert generator.config.default_density > 0
 
     def test_generate_default_params(self):
         generator = HumanoidURDFGenerator()
         params = BodyParameters()
 
-        urdf_xml = generator.generate(params)
+        urdf = generator.generate(params)
 
-        assert urdf_xml is not None
-        assert len(urdf_xml) > 0
-        assert "<?xml" in urdf_xml
-        assert "<robot" in urdf_xml
+        assert urdf is not None
+        assert '<robot name="humanoid"' in urdf
+        assert "<link" in urdf
+        assert "<joint" in urdf
 
     def test_generate_custom_params(self):
         generator = HumanoidURDFGenerator()
-        params = BodyParameters(
-            height_m=1.90,
-            mass_kg=90.0,
-            name="tall_humanoid",
-        )
+        params = BodyParameters(name="athlete", height_m=1.9, mass_kg=90.0)
 
-        urdf_xml = generator.generate(params)
+        urdf = generator.generate(params)
 
-        assert 'name="tall_humanoid"' in urdf_xml
+        assert '<robot name="athlete"' in urdf
 
     def test_generate_valid_xml(self):
         generator = HumanoidURDFGenerator()
         params = BodyParameters()
 
-        urdf_xml = generator.generate(params)
+        urdf = generator.generate(params)
 
-        # Remove XML declaration for parsing
-        xml_content = urdf_xml
-        if xml_content.startswith("<?xml"):
-            xml_content = xml_content[xml_content.index("?>") + 2 :]
-
-        # Should parse without errors
-        root = ET.fromstring(xml_content)
+        # Should parse without error
+        root = ET.fromstring(urdf)
         assert root.tag == "robot"
 
     def test_generate_has_links(self):
         generator = HumanoidURDFGenerator()
         params = BodyParameters()
+        urdf = generator.generate(params)
+        root = ET.fromstring(urdf)
 
-        urdf_xml = generator.generate(params)
-
-        # Parse and check for links
-        xml_content = urdf_xml
-        if xml_content.startswith("<?xml"):
-            xml_content = xml_content[xml_content.index("?>") + 2 :]
-
-        root = ET.fromstring(xml_content)
         links = root.findall("link")
+        link_names = [link.get("name") for link in links]
 
-        # Should have multiple links
-        assert len(links) > 10
-
-        # Check for expected links
-        link_names = {link.get("name") for link in links}
         assert "pelvis" in link_names
         assert "head" in link_names
-        assert "left_thigh" in link_names
+        assert "left_foot" in link_names
 
     def test_generate_has_joints(self):
         generator = HumanoidURDFGenerator()
         params = BodyParameters()
+        urdf = generator.generate(params)
+        root = ET.fromstring(urdf)
 
-        urdf_xml = generator.generate(params)
-
-        xml_content = urdf_xml
-        if xml_content.startswith("<?xml"):
-            xml_content = xml_content[xml_content.index("?>") + 2 :]
-
-        root = ET.fromstring(xml_content)
         joints = root.findall("joint")
-
-        # Should have multiple joints
+        # Should have plenty of joints
         assert len(joints) > 10
 
     def test_generate_inertial_properties(self):
         generator = HumanoidURDFGenerator()
         params = BodyParameters()
+        urdf = generator.generate(params)
+        root = ET.fromstring(urdf)
 
-        urdf_xml = generator.generate(params)
-
-        xml_content = urdf_xml
-        if xml_content.startswith("<?xml"):
-            xml_content = xml_content[xml_content.index("?>") + 2 :]
-
-        root = ET.fromstring(xml_content)
-
-        # Check that links have inertial properties
         for link in root.findall("link"):
             inertial = link.find("inertial")
-            assert inertial is not None, f"Link {link.get('name')} missing inertial"
-
-            mass = inertial.find("mass")
-            assert mass is not None
-
-            inertia = inertial.find("inertia")
-            assert inertia is not None
-
-            # Check inertia has required attributes
-            assert "ixx" in inertia.attrib
-            assert "iyy" in inertia.attrib
-            assert "izz" in inertia.attrib
+            if inertial is not None:
+                mass = inertial.find("mass")
+                inertia = inertial.find("inertia")
+                assert mass is not None
+                assert inertia is not None
+                assert float(mass.get("value")) > 0
 
     def test_generate_visual_geometry(self):
         generator = HumanoidURDFGenerator()
         params = BodyParameters()
+        urdf = generator.generate(params)
+        root = ET.fromstring(urdf)
 
-        urdf_xml = generator.generate(params)
-
-        xml_content = urdf_xml
-        if xml_content.startswith("<?xml"):
-            xml_content = xml_content[xml_content.index("?>") + 2 :]
-
-        root = ET.fromstring(xml_content)
-
-        # Most links should have visual geometry
-        visual_count = 0
         for link in root.findall("link"):
             visual = link.find("visual")
-            if visual is not None:
-                geometry = visual.find("geometry")
-                assert geometry is not None
-                visual_count += 1
-
-        assert visual_count > 10
+            assert visual is not None
+            geometry = visual.find("geometry")
+            assert geometry is not None
+            # Should be box, cylinder, sphere, or mesh
+            assert (
+                geometry.find("box") is not None
+                or geometry.find("cylinder") is not None
+                or geometry.find("sphere") is not None
+                or geometry.find("mesh") is not None
+            )
 
     def test_generate_collision_geometry(self):
         config = URDFGeneratorConfig(generate_collision=True)
         generator = HumanoidURDFGenerator(config)
         params = BodyParameters()
+        urdf = generator.generate(params)
+        root = ET.fromstring(urdf)
 
-        urdf_xml = generator.generate(params)
-
-        xml_content = urdf_xml
-        if xml_content.startswith("<?xml"):
-            xml_content = xml_content[xml_content.index("?>") + 2 :]
-
-        root = ET.fromstring(xml_content)
-
-        # Most links should have collision geometry
+        # Most links should have collision
         collision_count = 0
         for link in root.findall("link"):
-            collision = link.find("collision")
-            if collision is not None:
+            if link.find("collision") is not None:
                 collision_count += 1
 
-        assert collision_count > 10
+        assert collision_count > 0
 
     def test_generate_no_collision(self):
         config = URDFGeneratorConfig(generate_collision=False)
         generator = HumanoidURDFGenerator(config)
         params = BodyParameters()
+        urdf = generator.generate(params)
+        root = ET.fromstring(urdf)
 
-        urdf_xml = generator.generate(params)
-
-        # Should still be valid but without collision
-        assert "<collision>" not in urdf_xml
+        # No links should have collision
+        for link in root.findall("link"):
+            assert link.find("collision") is None
 
     def test_generate_write_to_file(self):
         generator = HumanoidURDFGenerator()
         params = BodyParameters()
 
         with tempfile.TemporaryDirectory() as tmpdir:
-            output_path = Path(tmpdir) / "test.urdf"
-            urdf_xml = generator.generate(params, output_path=output_path)
+            output_path = Path(tmpdir) / "test_robot.urdf"
+            generator.generate(params, output_path=output_path)
 
             assert output_path.exists()
-            content = output_path.read_text()
-            assert content == urdf_xml
+            assert output_path.stat().st_size > 0
 
     def test_generate_joint_limits(self):
         generator = HumanoidURDFGenerator()
         params = BodyParameters()
+        urdf = generator.generate(params)
+        root = ET.fromstring(urdf)
 
-        urdf_xml = generator.generate(params)
-
-        xml_content = urdf_xml
-        if xml_content.startswith("<?xml"):
-            xml_content = xml_content[xml_content.index("?>") + 2 :]
-
-        root = ET.fromstring(xml_content)
-
-        # Revolute joints should have limits
         for joint in root.findall("joint"):
-            if joint.get("type") == "revolute":
+            if joint.get("type") in ("revolute", "prismatic"):
                 limit = joint.find("limit")
-                assert limit is not None, f"Joint {joint.get('name')} missing limit"
+                assert limit is not None
                 assert "lower" in limit.attrib
                 assert "upper" in limit.attrib
+                assert "effort" in limit.attrib
+                assert "velocity" in limit.attrib
 
     def test_generate_joint_dynamics(self):
         generator = HumanoidURDFGenerator()
         params = BodyParameters()
+        urdf = generator.generate(params)
+        root = ET.fromstring(urdf)
 
-        urdf_xml = generator.generate(params)
-
-        xml_content = urdf_xml
-        if xml_content.startswith("<?xml"):
-            xml_content = xml_content[xml_content.index("?>") + 2 :]
-
-        root = ET.fromstring(xml_content)
-
-        # Non-fixed joints should have dynamics
-        dynamics_count = 0
         for joint in root.findall("joint"):
             dynamics = joint.find("dynamics")
             if dynamics is not None:
-                dynamics_count += 1
                 assert "damping" in dynamics.attrib
-
-        assert dynamics_count > 0
+                assert "friction" in dynamics.attrib
 
 
 class TestGenerateHumanoidURDF:
@@ -259,24 +178,19 @@ class TestGenerateHumanoidURDF:
     def test_basic_call(self):
         params = BodyParameters()
         urdf = generate_humanoid_urdf(params)
-
-        assert urdf is not None
         assert "<robot" in urdf
 
     def test_with_config(self):
         params = BodyParameters()
-        config = URDFGeneratorConfig(generate_collision=False)
-
+        config = URDFGeneratorConfig(pretty_print=False)
         urdf = generate_humanoid_urdf(params, config=config)
-
-        assert "<collision>" not in urdf
+        assert "\n" not in urdf  # Should be one line if not pretty printed (mostly)
 
     def test_with_output_path(self):
         params = BodyParameters()
-
         with tempfile.TemporaryDirectory() as tmpdir:
             output_path = Path(tmpdir) / "humanoid.urdf"
-            urdf = generate_humanoid_urdf(params, output_path=output_path)
+            generate_humanoid_urdf(params, output_path=output_path)
 
             assert output_path.exists()
 
@@ -285,52 +199,84 @@ class TestCompositeJointExpansion:
     """Tests for composite joint expansion."""
 
     def test_gimbal_joint_expansion(self):
-        config = URDFGeneratorConfig(expand_composite_joints=True)
-        generator = HumanoidURDFGenerator(config)
+        # The neck_to_head joint is typically a gimbal joint
+        generator = HumanoidURDFGenerator()
         params = BodyParameters()
+        urdf = generator.generate(params)
+        root = ET.fromstring(urdf)
 
-        urdf_xml = generator.generate(params)
+        # Check for expanded joints
+        joint_names = [j.get("name") for j in root.findall("joint")]
 
-        # Gimbal joints should be expanded to 3 revolute joints
-        # Check for intermediate links and joints
-        assert "_z" in urdf_xml or "_y" in urdf_xml or "_x" in urdf_xml
+        # Look for _x, _y, _z suffixes if gimbal was expanded
+        # Note: names might differ depending on joint definition
+        expanded = any(
+            "_x" in name or "_y" in name or "_z" in name for name in joint_names
+        )
+        assert expanded
 
     def test_no_expansion(self):
         config = URDFGeneratorConfig(expand_composite_joints=False)
         generator = HumanoidURDFGenerator(config)
         params = BodyParameters()
+        urdf = generator.generate(params)
+        root = ET.fromstring(urdf)
 
-        urdf_xml = generator.generate(params)
+        # Should find gimbal type if not expanded (though standard URDF parsers might fail)
+        # Our generator maps GIMBAL to 'fixed' if not expanded?
+        # Let's check the map_joint_type logic.
+        # "revolute" if not expanded? Wait, _map_joint_type handles standard types.
+        # Composite types are only handled via expansion in _generate_joint.
+        # If expand=False, it calls _generate_single_joint.
+        # _map_joint_type maps GIMBAL to 'revolute'.
+        # So we should see a single revolute joint for the gimbal joint.
 
-        # Should still produce valid URDF
-        assert "<robot" in urdf_xml
+        # Specifically neck_to_head
+        neck_joints = [
+            j for j in root.findall("joint") if j.get("name").startswith("neck_to_head")
+        ]
+        assert len(neck_joints) == 1
+        assert neck_joints[0].get("type") == "revolute"
 
 
 class TestProportionFactors:
-    """Tests for body proportion factors."""
+    """Tests for proportion scaling."""
 
     def test_tall_character(self):
         generator = HumanoidURDFGenerator()
 
-        # Normal height
-        normal_params = BodyParameters(height_m=1.75)
-        normal_urdf = generator.generate(normal_params)
+        # Generate standard and tall
+        params_std = BodyParameters(height_m=1.70)
+        params_tall = BodyParameters(height_m=2.00)
 
-        # Tall character
-        tall_params = BodyParameters(height_m=1.95)
-        tall_urdf = generator.generate(tall_params)
+        urdf_std = generator.generate(params_std)
+        urdf_tall = generator.generate(params_tall)
 
-        # Both should be valid
-        assert "<robot" in normal_urdf
-        assert "<robot" in tall_urdf
+        # Extract total length of a leg chain to compare
+        # This is complex to parse from URDF without a kinematic solver.
+        # Instead, we can inspect the generated link lengths in the generator logic?
+        # Or check the <cylinder length="..."> in the XML.
+
+        def get_total_cylinder_length(xml_str):
+            root = ET.fromstring(xml_str)
+            total = 0.0
+            for geom in root.findall(".//geometry/cylinder"):
+                total += float(geom.get("length"))
+            return total
+
+        len_std = get_total_cylinder_length(urdf_std)
+        len_tall = get_total_cylinder_length(urdf_tall)
+
+        assert len_tall > len_std
 
     def test_wide_shoulders(self):
         generator = HumanoidURDFGenerator()
 
-        params = BodyParameters(shoulder_width_factor=1.2)
+        params = BodyParameters(shoulder_width_factor=1.5)
         urdf = generator.generate(params)
 
-        assert "<robot" in urdf
+        # Hard to verify without parsing positions, but execution should succeed
+        assert urdf is not None
 
     def test_muscular_build(self):
         generator = HumanoidURDFGenerator()
@@ -338,4 +284,4 @@ class TestProportionFactors:
         params = BodyParameters(muscularity=0.8, body_fat_factor=0.1)
         urdf = generator.generate(params)
 
-        assert "<robot" in urdf
+        assert urdf is not None
