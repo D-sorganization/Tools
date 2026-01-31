@@ -353,7 +353,7 @@ def list_materials() -> dict[str, dict[str, float]]:
     )
 
     result = {}
-    for material, (roughness_mm, roughness_ft, desc) in sorted(
+    for material, (roughness_mm, _roughness_ft, _desc) in sorted(
         MATERIAL_ROUGHNESS.items()
     ):
         result[material] = {
