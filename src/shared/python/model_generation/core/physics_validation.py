@@ -21,10 +21,9 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import numpy as np
-
 from model_generation.core.validation import ValidationResult, Validator
 
 if TYPE_CHECKING:
@@ -134,11 +133,13 @@ class PhysicsValidator:
         )
 
         # Build the 3x3 inertia matrix
-        I = np.array([
-            [inertia.ixx, inertia.ixy, inertia.ixz],
-            [inertia.ixy, inertia.iyy, inertia.iyz],
-            [inertia.ixz, inertia.iyz, inertia.izz],
-        ])
+        I = np.array(
+            [
+                [inertia.ixx, inertia.ixy, inertia.ixz],
+                [inertia.ixy, inertia.iyy, inertia.iyz],
+                [inertia.ixz, inertia.iyz, inertia.izz],
+            ]
+        )
 
         # Check symmetry
         if not np.allclose(I, I.T, rtol=1e-10):
@@ -286,9 +287,7 @@ class PhysicsValidator:
 
                 points = np.array(support_points)
                 hull = ConvexHull(points)
-                support_polygon = [
-                    tuple(points[i].tolist()) for i in hull.vertices
-                ]
+                support_polygon = [tuple(points[i].tolist()) for i in hull.vertices]
 
                 # Check if COM projection is inside polygon
                 com_2d = com[:2]
@@ -400,7 +399,9 @@ class PhysicsValidator:
                 inertial = link.inertial
 
                 # Check if inertial has full tensor attributes
-                has_inertia_tensor = hasattr(inertial, "ixx") and hasattr(inertial, "iyy")
+                has_inertia_tensor = hasattr(inertial, "ixx") and hasattr(
+                    inertial, "iyy"
+                )
 
                 if has_inertia_tensor:
                     inertia_result = self.validate_inertia_tensor(

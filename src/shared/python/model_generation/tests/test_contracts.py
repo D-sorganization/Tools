@@ -1,21 +1,19 @@
 """Tests for Design by Contract decorators."""
 
-import pytest
 import numpy as np
-
+import pytest
 from model_generation.core.contracts import (
-    precondition,
-    postcondition,
+    InvariantError,
+    PostconditionError,
+    PreconditionError,
     contract,
     invariant,
-    PreconditionError,
-    PostconditionError,
-    InvariantError,
-    require_positive,
+    postcondition,
+    precondition,
     require_finite,
+    require_positive,
     require_unit_vector,
     set_contracts_enabled,
-    CONTRACTS_ENABLED,
 )
 
 

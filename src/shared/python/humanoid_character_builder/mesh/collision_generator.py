@@ -390,10 +390,11 @@ class CollisionGeometryGenerator:
         params: VHACDParameters,
     ) -> list[Any]:
         """Use pybullet for VHACD decomposition."""
+        import os
+        import tempfile
+
         import pybullet as p
         import trimesh
-        import tempfile
-        import os
 
         # Export mesh temporarily
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -623,7 +624,6 @@ class CollisionGeometryGenerator:
         except Exception:
             # Fallback to vertex clustering
             try:
-                import trimesh
 
                 reduction = max_triangles / len(mesh.faces)
                 pitch = mesh.extents.max() * (1 - reduction) / 10
@@ -639,7 +639,9 @@ class CollisionGeometryGenerator:
             original_triangles=len(mesh.faces),
             final_triangles=len(simplified.faces),
             reduction_ratio=1.0 - len(simplified.faces) / len(mesh.faces),
-            volume_preservation=simplified.volume / mesh.volume if mesh.volume > 0 else 1.0,
+            volume_preservation=(
+                simplified.volume / mesh.volume if mesh.volume > 0 else 1.0
+            ),
             hausdorff_distance=0.0,
         )
 
@@ -669,7 +671,10 @@ class CollisionGeometryGenerator:
         prim_result = self._generate_primitives(mesh, max_primitives)
 
         # If primitives fit well, use them
-        if prim_result.primitive_fits and prim_result.primitive_fits[0].volume_ratio > 0.8:
+        if (
+            prim_result.primitive_fits
+            and prim_result.primitive_fits[0].volume_ratio > 0.8
+        ):
             return prim_result
 
         # Otherwise use decimation for remaining detail

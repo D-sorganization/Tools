@@ -22,7 +22,7 @@ import functools
 import inspect
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, TypeVar, ParamSpec
+from typing import Any, ParamSpec, TypeVar
 
 from model_generation.core.validation import ValidationResult
 
@@ -354,9 +354,7 @@ def require_unit_vector(vector: Any, name: str = "vector", tol: float = 1e-6) ->
     if CONTRACTS_ENABLED:
         norm = np.linalg.norm(vector)
         if abs(norm - 1.0) > tol:
-            raise PreconditionError(
-                f"{name} must be a unit vector (norm = {norm})"
-            )
+            raise PreconditionError(f"{name} must be a unit vector (norm = {norm})")
 
 
 def ensure_valid_result(result: ValidationResult) -> None:

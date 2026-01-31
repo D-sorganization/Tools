@@ -1,19 +1,17 @@
 """Tests for Physics Validation module."""
 
-import pytest
-import numpy as np
 from dataclasses import dataclass
 
+import pytest
 from model_generation.core.physics_validation import (
     PhysicsValidator,
-    InertiaValidationResult,
-    StabilityResult,
 )
 
 
 @dataclass
 class MockOrigin:
     """Mock origin for testing."""
+
     x: float = 0.0
     y: float = 0.0
     z: float = 0.0
@@ -22,6 +20,7 @@ class MockOrigin:
 @dataclass
 class MockInertia:
     """Mock inertia for testing."""
+
     mass: float = 1.0
     ixx: float = 1.0
     iyy: float = 1.0
@@ -34,6 +33,7 @@ class MockInertia:
 @dataclass
 class MockInertial:
     """Mock inertial for testing."""
+
     mass: float = 1.0
     origin: MockOrigin = None
 
@@ -45,12 +45,14 @@ class MockInertial:
 @dataclass
 class MockGeometry:
     """Mock geometry for testing."""
+
     radius: float = 0.1
 
 
 @dataclass
 class MockCollision:
     """Mock collision for testing."""
+
     geometry: MockGeometry = None
     origin: MockOrigin = None
 
@@ -64,6 +66,7 @@ class MockCollision:
 @dataclass
 class MockLink:
     """Mock link for testing."""
+
     name: str
     inertial: MockInertial = None
     collision: MockCollision = None
