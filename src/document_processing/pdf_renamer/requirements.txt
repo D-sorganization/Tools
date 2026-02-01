@@ -1,16 +1,16 @@
 # Core dependencies
-pypdf>=4.0.0
-pymupdf>=1.23.0
-google-generativeai>=0.3.0
-PyQt6>=6.6.0
-python-dotenv>=1.0.0
+pypdf>=4.0.0  # Pure Python PDF library for reading and writing
+pymupdf>=1.23.0  # High-performance PDF rendering and parsing (fitz)
+google-generativeai>=0.3.0  # Google AI Python SDK for Gemini models
+PyQt6>=6.6.0  # Python bindings for Qt6 application framework
+python-dotenv>=1.0.0  # Reads key-value pairs from .env file
 
 # Development dependencies
-pytest>=7.4.0
-pytest-cov>=4.1.0
-pytest-qt>=4.2.0
-types-setuptools>=68.0.0
-mypy>=1.0.0
+pytest>=7.4.0  # Testing framework
+pytest-cov>=4.1.0  # Coverage plugin for pytest
+pytest-qt>=4.2.0  # Pytest plugin for PyQt applications
+types-setuptools>=68.0.0  # Type hints for setuptools
+mypy>=1.0.0  # Static type checker
 
 # Optional dependencies
-pdfplumber>=0.10.0
+pdfplumber>=0.10.0  # Pluggable PDF tables extraction

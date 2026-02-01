@@ -30,7 +30,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install -r requirements.txt || true
+          pip install -r requirements.txt
           sudo apt-get install -y jq
 
       - name: Archive Existing Assessments

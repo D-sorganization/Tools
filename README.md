@@ -68,6 +68,8 @@ The repository provides a unified launcher system for accessing all tools. The c
   - Debug mode for troubleshooting
   - Activity log for monitoring tool launches
 
+See [Launcher Hierarchy & Guide](docs/LAUNCHERS.md) for detailed documentation.
+
 #### Launcher Hierarchy
 
 1. **`UnifiedToolsLauncher.py`** (Primary) - Use this for all new development and general usage

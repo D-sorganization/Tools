@@ -127,7 +127,7 @@ jobs:
       - name: Run Assessment I (Security)
         run: |
           # Run security scans
-          pip-audit --output security_audit.json --format json || true
+          pip-audit --output security_audit.json --format json
           bandit -r python/ -f json -o bandit_results.json || true
 
           python scripts/run_assessment.py --assessment I --output docs/assessments/Assessment_I_Results_$(date +%Y-%m-%d).md

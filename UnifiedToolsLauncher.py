@@ -10,6 +10,12 @@ import logging
 import sys
 from pathlib import Path
 
+# Ensure Python 3.11+
+if sys.version_info < (3, 11):
+    print("CRITICAL: UnifiedToolsLauncher requires Python 3.11 or higher.", file=sys.stderr)
+    print(f"Current version: {sys.version}", file=sys.stderr)
+    sys.exit(1)
+
 from PyQt6.QtWidgets import QApplication
 
 # Configure logging

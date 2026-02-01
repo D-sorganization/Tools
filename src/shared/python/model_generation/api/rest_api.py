@@ -287,6 +287,13 @@ class ModelGenerationAPI:
         """Get all registered routes."""
         return self._routes
 
+    def _add_security_headers(self, response: APIResponse) -> None:
+        """Add security headers to response."""
+        response.headers["Content-Security-Policy"] = "default-src 'self'"
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+
     def handle_request(self, request: APIRequest) -> APIResponse:
         """Handle an API request."""
         # Find matching route
@@ -315,14 +322,20 @@ class ModelGenerationAPI:
                 # Add path params to query params
                 request.query_params.update(params)
                 try:
-                    return route.handler(request)
+                    response = route.handler(request)
+                    self._add_security_headers(response)
+                    return response
                 except Exception as e:
                     logger.exception("Error handling request")
-                    return APIResponse.error(str(e), 500)
+                    response = APIResponse.error(str(e), 500)
+                    self._add_security_headers(response)
+                    return response
 
-        return APIResponse.not_found(
+        response = APIResponse.not_found(
             f"No route for {request.method.value} {request.path}"
         )
+        self._add_security_headers(response)
+        return response
 
     # ============================================================
     # Health/Info Handlers
