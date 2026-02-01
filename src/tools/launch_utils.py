@@ -199,26 +199,26 @@ def launch_batch_tool(
     log_func: Callable[[str], None] | None = None,
 ) -> None:
     """Launch a batch script."""
-    if sys.platform != "win32":
-        raise PlatformError("Batch scripts are only supported on Windows")
+    if sys.platform == "win32":
+        if path.suffix.lower() not in [".bat", ".cmd"]:
+            raise SecurityError("File must be .bat or .cmd to execute as batch script")
 
-    if path.suffix.lower() not in [".bat", ".cmd"]:
-        raise SecurityError("File must be .bat or .cmd to execute as batch script")
-
-    if log_func:
-        log_func(f"Launching batch tool: {tool_name}")
-
-    try:
-        subprocess.Popen(
-            ["cmd.exe", "/c", str(path)],
-            cwd=path.parent,
-            stdout=subprocess.DEVNULL if not is_debug else None,
-            stderr=subprocess.DEVNULL if not is_debug else None,
-        )
         if log_func:
-            log_func("✅ Batch script executed")
-    except Exception as e:
-        raise LaunchError(f"Failed to execute batch script: {e}") from e
+            log_func(f"Launching batch tool: {tool_name}")
+
+        try:
+            subprocess.Popen(
+                ["cmd.exe", "/c", str(path)],
+                cwd=path.parent,
+                stdout=subprocess.DEVNULL if not is_debug else None,
+                stderr=subprocess.DEVNULL if not is_debug else None,
+            )
+            if log_func:
+                log_func("✅ Batch script executed")
+        except Exception as e:
+            raise LaunchError(f"Failed to execute batch script: {e}") from e
+    else:
+        raise PlatformError("Batch scripts are only supported on Windows")
 
 
 def launch_tool(
