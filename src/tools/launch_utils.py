@@ -122,9 +122,13 @@ def launch_python_tool(
                         stream.close()
 
                 if process.stdout:
-                    threading.Thread(target=read_stream, args=(process.stdout, "[OUT]"), daemon=True).start()
+                    threading.Thread(
+                        target=read_stream, args=(process.stdout, "[OUT]"), daemon=True
+                    ).start()
                 if process.stderr:
-                    threading.Thread(target=read_stream, args=(process.stderr, "[ERR]"), daemon=True).start()
+                    threading.Thread(
+                        target=read_stream, args=(process.stderr, "[ERR]"), daemon=True
+                    ).start()
         else:
             subprocess.Popen(
                 args,
