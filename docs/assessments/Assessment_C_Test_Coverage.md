@@ -1,6 +1,6 @@
-# Assessment: Performance (Category E)
+# Assessment: Test Coverage (Category C)
 
-## Grade: 7/10
+## Grade: 5/10
 
 ## Analysis
 Analysis based on automated scan and heuristic evaluation.

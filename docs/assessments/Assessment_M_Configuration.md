@@ -1,6 +1,6 @@
-# Assessment: Performance (Category E)
+# Assessment: Configuration (Category M)
 
-## Grade: 7/10
+## Grade: 8/10
 
 ## Analysis
 Analysis based on automated scan and heuristic evaluation.
