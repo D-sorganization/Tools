@@ -5,6 +5,7 @@ This is a simpler alternative for environments where PyQt6 is not available.
 """
 
 import json
+import logging
 import sys
 import tkinter as tk
 
@@ -65,6 +66,14 @@ def load_tools_config() -> dict[str, list[Any]]:
         print(f"Error loading tools.json: {e}", file=sys.stderr)
         return {}
 
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[logging.FileHandler("launcher_legacy.log"), logging.StreamHandler()],
+)
+logger = logging.getLogger(__name__)
 
 # Load configuration dynamically
 TOOLS = load_tools_config()
@@ -211,9 +220,9 @@ class ToolsLauncher(tk.Tk):
     def launch_tool_wrapper(self, tool_info: dict[str, Any]) -> None:
         """Launch a tool using repeated logic from launch_utils."""
 
-        # Simple logging callback for Tkinter (print to stdout)
+        # Simple logging callback for Tkinter
         def log_msg(msg: str) -> None:
-            print(f"[Launcher] {msg}")
+            logger.info(f"[Launcher] {msg}")
 
         try:
             launch_tool(

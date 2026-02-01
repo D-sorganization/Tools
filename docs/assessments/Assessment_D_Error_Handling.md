@@ -1,4 +1,4 @@
-# Assessment: Performance (Category E)
+# Assessment: Error Handling (Category D)
 
 ## Grade: 7/10
 
