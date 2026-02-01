@@ -42,117 +42,20 @@ try:
 except ImportError:
     PYARROW_AVAILABLE = False
 
+# Use shared path utilities
+from utils.path_helpers import ensure_utils_in_path
 
-# Find repo root and add standard paths
-import sys
-from pathlib import Path
+ensure_utils_in_path()
 
+# Import from centralized utilities
+from utils.csv_utils import safe_read_csv, safe_write_csv
+from utils.file_utils import safe_read_text, safe_write_text
+
+# Import shared file classes
 try:
-    repo_root = Path(__file__).resolve().parent.parent.parent.parent.parent.parent
-    utils_path = repo_root / "src" / "python" / "src"
-    if utils_path.exists() and str(utils_path) not in sys.path:
-        sys.path.insert(0, str(utils_path))
-
-    from utils.csv_utils import safe_read_csv, safe_write_csv
-    from utils.file_utils import safe_read_text, safe_write_text
-
-    # Import shared file classes
     from .file_utils import DataReader, DataWriter, FileFormatDetector
-except Exception:
-    # Minimal fallbacks if paths can't be resolved or utils not found
-    def safe_read_csv(path, **kwargs):
-        return pd.read_csv(path, **kwargs)
-
-    def safe_write_csv(df, path, **kwargs):
-        df.to_csv(path, **kwargs)
-
-    def safe_read_text(p, **kwargs):
-        return Path(p).read_text(**kwargs)
-
-    def safe_write_text(p, c, **kwargs):
-        Path(p).write_text(c, **kwargs)
-
-    # Fallback classes for file operations
-    class DataReader:
-        """Fallback DataReader class for reading data files."""
-
-        @staticmethod
-        def read_file(file_path, format_type, **kwargs):
-            """Read a data file based on its format."""
-            file_path = Path(file_path)
-            fmt = format_type.lower() if format_type else "csv"
-            if fmt == "csv":
-                return pd.read_csv(file_path, **kwargs)
-            if fmt == "tsv":
-                return pd.read_csv(file_path, sep="\t", **kwargs)
-            if fmt == "excel":
-                return pd.read_excel(file_path, **kwargs)
-            if fmt == "parquet" and PYARROW_AVAILABLE:
-                return pd.read_parquet(file_path, **kwargs)
-            if fmt == "json":
-                return pd.read_json(file_path, **kwargs)
-            # Default to CSV
-            return pd.read_csv(file_path, **kwargs)
-
-        @staticmethod
-        def detect_format(file_path):
-            """Detect the format of a file based on its extension."""
-            file_path = Path(file_path)
-            if not file_path.exists():
-                return None
-            extension = file_path.suffix.lower()
-            format_mapping = {
-                ".csv": "csv",
-                ".tsv": "tsv",
-                ".txt": "tsv",
-                ".xlsx": "excel",
-                ".xls": "excel",
-                ".parquet": "parquet",
-                ".json": "json",
-            }
-            return format_mapping.get(extension, None)
-
-    class DataWriter:
-        """Fallback DataWriter class for writing data files."""
-
-        @staticmethod
-        def write_file(data, file_path, format_type, **kwargs):
-            """Write data to a file in the specified format."""
-            file_path = Path(file_path)
-            fmt = format_type.lower() if format_type else "csv"
-            if fmt == "csv":
-                data.to_csv(file_path, index=False, **kwargs)
-            elif fmt == "tsv":
-                data.to_csv(file_path, sep="\t", index=False, **kwargs)
-            elif fmt == "excel":
-                data.to_excel(file_path, index=False, **kwargs)
-            elif fmt == "parquet" and PYARROW_AVAILABLE:
-                data.to_parquet(file_path, **kwargs)
-            elif fmt == "json":
-                data.to_json(file_path, orient="records", indent=2, **kwargs)
-            else:
-                data.to_csv(file_path, index=False, **kwargs)
-
-    class FileFormatDetector:
-        """Fallback FileFormatDetector class for detecting file formats."""
-
-        @staticmethod
-        def detect_format(file_path):
-            """Detect the format of a file based on its extension."""
-            return DataReader.detect_format(file_path)
-
-        @staticmethod
-        def get_supported_formats():
-            """Get list of supported file formats."""
-            return [".csv", ".tsv", ".txt", ".xlsx", ".xls", ".parquet", ".json"]
-
-        @staticmethod
-        def is_format_supported(file_path):
-            """Check if a file format is supported."""
-            file_path = Path(file_path)
-            extension = file_path.suffix.lower()
-            return extension in FileFormatDetector.get_supported_formats()
-
+except ImportError:
+    from file_utils import DataReader, DataWriter, FileFormatDetector  # type: ignore
 
 from Data_Processor_r0 import CSVProcessorApp as OriginalCSVProcessorApp
 
