@@ -13,12 +13,11 @@ compatibility.
 from __future__ import annotations
 
 import logging
-import warnings
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
+from .collision_generator import CollisionGeometryGenerator as _CoreGenerator
 from .collision_generator import (
-    CollisionGeometryGenerator as _CoreGenerator,
     CollisionGeometryResult,
     ComplexityLevel,
     PrimitiveFit,
@@ -73,7 +72,9 @@ class CollisionGeometry:
             combined.export(path)
 
     @classmethod
-    def from_result(cls, result: CollisionGeometryResult, processing_time: float = 0.0) -> "CollisionGeometry":
+    def from_result(
+        cls, result: CollisionGeometryResult, processing_time: float = 0.0
+    ) -> CollisionGeometry:
         """Create CollisionGeometry from CollisionGeometryResult.
 
         Args:
@@ -200,6 +201,7 @@ class CollisionGeometryGenerator:
             _, dist_g_o, _ = trimesh.proximity.closest_point(original, samples_gen)
 
             import numpy as np
+
             hausdorff = max(np.max(dist_o_g), np.max(dist_g_o))
 
             scale = original.scale

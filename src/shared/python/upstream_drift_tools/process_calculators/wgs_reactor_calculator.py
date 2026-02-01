@@ -29,18 +29,19 @@ from scipy.optimize import minimize
 
 # Try to import centralized utilities
 try:
-    from utils.file_utils import safe_read_json
     from utils.error_handling import handle_import_error
+    from utils.file_utils import safe_read_json
 except ImportError:
     # Fallback if utils not in path
     _src_path = Path(__file__).resolve().parents[3] / "python" / "src"
     if str(_src_path) not in sys.path:
         sys.path.insert(0, str(_src_path))
     try:
-        from utils.file_utils import safe_read_json
         from utils.error_handling import handle_import_error
+        from utils.file_utils import safe_read_json
     except ImportError:
         import json
+
         # Fallback implementations
         def safe_read_json(file_path: Path | str, default: Any = None) -> Any:
             """Fallback safe JSON reader."""
@@ -53,12 +54,15 @@ except ImportError:
             except (json.JSONDecodeError, OSError):
                 return default
 
-        def handle_import_error(module_name: str, package_name: str | None = None, default: Any = None) -> Any:
+        def handle_import_error(
+            module_name: str, package_name: str | None = None, default: Any = None
+        ) -> Any:
             """Fallback import error handler."""
             try:
                 return __import__(module_name)
             except ImportError:
                 return default
+
 
 if TYPE_CHECKING:
     from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas

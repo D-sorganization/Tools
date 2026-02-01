@@ -20,6 +20,7 @@ except ImportError:
         from utils.file_utils import safe_read_json, safe_write_json
     except ImportError:
         import json
+
         # Final fallback - inline implementations
         def safe_read_json(file_path: Path | str, default: Any = None) -> Any:
             """Fallback safe JSON reader."""
@@ -32,7 +33,12 @@ except ImportError:
             except (json.JSONDecodeError, OSError):
                 return default
 
-        def safe_write_json(file_path: Path | str, data: Any, indent: int = 2, create_parents: bool = True) -> bool:
+        def safe_write_json(
+            file_path: Path | str,
+            data: Any,
+            indent: int = 2,
+            create_parents: bool = True,
+        ) -> bool:
             """Fallback safe JSON writer."""
             path = Path(file_path)
             try:
@@ -43,6 +49,7 @@ except ImportError:
                 return True
             except (TypeError, OSError):
                 return False
+
 
 # Constants for configuration paths
 TOOLS_ENV_PATH = Path(
