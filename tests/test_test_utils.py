@@ -7,9 +7,7 @@ from pathlib import Path
 
 import pytest
 
-# Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "python" / "src"))
-
+# Path setup handled by conftest.py
 from utils.test_utils import (
     BaseTestCase,
     MockFactory,

@@ -1,16 +1,12 @@
 """Unit tests for debug_utils module."""
 
 import logging
-import sys
 import time
-from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-# Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "python" / "src"))
-
+# Path setup handled by conftest.py
 from utils.debug_utils import (
     ExecutionTracer,
     MemoryStats,

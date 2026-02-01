@@ -1,12 +1,48 @@
 """Configuration management for PDF Renamer with secure API key handling."""
 
-import json
 import logging
 import os
+import sys
 from pathlib import Path
 from typing import Any
 
 logger = logging.getLogger(__name__)
+
+# Try to import centralized file utilities
+try:
+    from utils.file_utils import safe_read_json, safe_write_json
+except ImportError:
+    # Fallback if utils not in path
+    _src_path = Path(__file__).resolve().parents[5] / "python" / "src"
+    if str(_src_path) not in sys.path:
+        sys.path.insert(0, str(_src_path))
+    try:
+        from utils.file_utils import safe_read_json, safe_write_json
+    except ImportError:
+        import json
+        # Final fallback - inline implementations
+        def safe_read_json(file_path: Path | str, default: Any = None) -> Any:
+            """Fallback safe JSON reader."""
+            path = Path(file_path)
+            if not path.exists():
+                return default
+            try:
+                with open(path, encoding="utf-8") as f:
+                    return json.load(f)
+            except (json.JSONDecodeError, OSError):
+                return default
+
+        def safe_write_json(file_path: Path | str, data: Any, indent: int = 2, create_parents: bool = True) -> bool:
+            """Fallback safe JSON writer."""
+            path = Path(file_path)
+            try:
+                if create_parents:
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                with open(path, "w", encoding="utf-8") as f:
+                    json.dump(data, f, indent=indent, ensure_ascii=False)
+                return True
+            except (TypeError, OSError):
+                return False
 
 # Constants for configuration paths
 TOOLS_ENV_PATH = Path(
@@ -267,31 +303,23 @@ def get_user_preferences() -> dict[str, Any]:
         "failed_folder_name": "failed_renames",
     }
 
-    if not config_file.exists():
+    prefs = safe_read_json(config_file, default=None)
+    if prefs is None:
         save_user_preferences(default_prefs)
         return default_prefs
 
-    try:
-        with open(config_file, encoding="utf-8") as f:
-            prefs: dict[str, Any] = json.load(f)
-            # Merge with defaults to handle new settings
-            for key, value in default_prefs.items():
-                if key not in prefs:
-                    prefs[key] = value
-            return prefs
-    except Exception as e:
-        logger.warning(f"Failed to load preferences: {e}. Using defaults.")
-        return default_prefs
+    # Merge with defaults to handle new settings
+    for key, value in default_prefs.items():
+        if key not in prefs:
+            prefs[key] = value
+    return prefs
 
 
 def save_user_preferences(preferences: dict[str, Any]) -> None:
     """Save user preferences to config file."""
     config_file = get_config_dir() / "preferences.json"
-    try:
-        with open(config_file, "w", encoding="utf-8") as f:
-            json.dump(preferences, f, indent=2, ensure_ascii=False)
-    except Exception as e:
-        logger.error(f"Failed to save preferences: {e}")
+    if not safe_write_json(config_file, preferences):
+        logger.error("Failed to save preferences")
 
 
 def update_last_directory(directory: str) -> None:

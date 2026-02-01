@@ -1,9 +1,23 @@
-"""Configuration loader utility for generic tool launchers."""
+"""Configuration loader utility for generic tool launchers.
 
-import json
+This module provides tool-specific configuration loading functionality
+that builds on the centralized ConfigLoader from utils.
+"""
+
 import logging
+import sys
 from pathlib import Path
 from typing import Any
+
+# Try to import from centralized utils
+try:
+    from utils.file_utils import safe_read_json
+except ImportError:
+    # Fallback if utils not in path
+    _src_path = Path(__file__).resolve().parent.parent / "python" / "src"
+    if str(_src_path) not in sys.path:
+        sys.path.insert(0, str(_src_path))
+    from utils.file_utils import safe_read_json
 
 logger = logging.getLogger(__name__)
 
@@ -15,29 +29,6 @@ CATEGORY_ORDER = [
     "Web Applications",
     "Development Tools",
 ]
-
-
-def load_tools_config(repo_root: Path) -> dict[str, list[Any]]:
-    """Load tools configuration from tools.json.
-
-    Args:
-        repo_root: Root directory of the repository.
-
-    Returns:
-        Dictionary mapping categories to lists of tools.
-    """
-    json_path = repo_root / "tools.json"
-    if not json_path.exists():
-        logger.warning(f"tools.json not found at {json_path}")
-        return {}
-
-    try:
-        with open(json_path, encoding="utf-8") as f:
-            config = json.load(f)
-        return validate_tools_config(config)
-    except Exception as e:
-        logger.error(f"Error loading tools.json: {e}")
-        return {}
 
 
 def validate_tools_config(
@@ -56,7 +47,6 @@ def validate_tools_config(
     for category, tools in tools_dict.items():
         valid_tools = []
         for tool in tools:
-            # Basic validation
             # Runtime validation for JSON data that might not match the type hint
             if not isinstance(tool, dict):
                 continue
@@ -76,3 +66,25 @@ def validate_tools_config(
             validated[category] = valid_tools
 
     return validated
+
+
+def load_tools_config(repo_root: Path) -> dict[str, list[Any]]:
+    """Load tools configuration from tools.json.
+
+    Uses the centralized safe_read_json for consistent error handling.
+
+    Args:
+        repo_root: Root directory of the repository.
+
+    Returns:
+        Dictionary mapping categories to lists of tools.
+    """
+    json_path = repo_root / "tools.json"
+
+    config = safe_read_json(json_path, default={})
+
+    if not config:
+        logger.warning(f"tools.json not found or empty at {json_path}")
+        return {}
+
+    return validate_tools_config(config)
