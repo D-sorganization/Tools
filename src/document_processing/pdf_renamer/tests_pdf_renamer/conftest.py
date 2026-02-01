@@ -1,13 +1,9 @@
-from pathlib import Path
+"""Pytest configuration for pdf_renamer tests.
 
-try:
-    from utils.path_helpers import ensure_utils_in_path
-except ImportError:
+Uses shared path setup from utils.path_helpers.
+"""
 
-    def ensure_utils_in_path() -> None:
-        pass
+from utils.path_helpers import ensure_utils_in_path
 
-
-# Add src to sys.path
-src_path = Path(__file__).resolve().parent.parent / "src"
+# Ensure utils is available for test imports
 ensure_utils_in_path()

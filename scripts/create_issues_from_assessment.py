@@ -7,26 +7,17 @@ for untracked critical findings.
 """
 
 import argparse
-import json
 import logging
 import subprocess
-import sys
-from pathlib import Path
 from typing import Any
 
-try:
-    from utils.file_utils import safe_read_json
-except ImportError:
-    import json
-    from pathlib import Path
+# Use shared path utilities
+from utils.path_helpers import ensure_utils_in_path
 
-    def safe_read_json(path: str | Path, default: Any = None) -> Any:
-        try:
-            with open(path, encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            return default
+ensure_utils_in_path()
 
+# Import from centralized utilities
+from utils.file_utils import safe_read_json
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")

@@ -8,50 +8,19 @@ This script aggregates all A-O assessment results and creates:
 """
 
 import argparse
-import json
 import logging
 import re
-import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-try:
-    from utils.file_utils import safe_write_json
-except ImportError:
-    import json
+# Use shared path utilities
+from utils.path_helpers import ensure_utils_in_path
 
-try:
-    from utils.file_utils import safe_read_text, safe_write_text
-except ImportError:
-    from pathlib import Path
+ensure_utils_in_path()
 
-    def safe_read_text(
-        path: str | Path, encoding: str = "utf-8", default: str = ""
-    ) -> str:
-        try:
-            return Path(path).read_text(encoding=encoding)
-        except Exception:
-            return default
-
-    def safe_write_text(
-        path: str | Path,
-        content: str,
-        encoding: str = "utf-8",
-        create_parents: bool = True,
-    ) -> None:
-        p = Path(path)
-        if create_parents:
-            p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_text(content, encoding=encoding)
-
-    def safe_write_json(
-        path: str | Path, data: Any, indent: int = 2, create_parents: bool = True
-    ) -> None:
-        Path(path).parent.mkdir(parents=True, exist_ok=True)
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=indent)
-
+# Import from centralized utilities
+from utils.file_utils import safe_read_text, safe_write_json, safe_write_text
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")

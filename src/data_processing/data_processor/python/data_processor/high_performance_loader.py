@@ -25,43 +25,15 @@ from typing import Any
 
 import pandas as pd
 
-# Add utils to path
-try:
-    import sys
-    from pathlib import Path
+# Use shared path utilities
+from utils.path_helpers import ensure_utils_in_path
 
-    repo_root = Path(__file__).resolve().parent.parent.parent.parent.parent.parent
-    utils_path = repo_root / "src" / "python" / "src"
-    if utils_path.exists() and str(utils_path) not in sys.path:
-        sys.path.insert(0, str(utils_path))
-    from utils.csv_utils import safe_read_csv, safe_write_csv
-    from utils.file_utils import safe_read_json, safe_read_text, safe_write_text
-except ImportError:
-    # Minimal fallback logic if utils not found
-    def safe_read_json(path, default=None):
-        return default
+ensure_utils_in_path()
 
-    def safe_read_csv(path, default=None, **kwargs):
-        return pd.DataFrame()
-
-    def safe_write_csv(df, path, **kwargs):
-        pass
-
-    def safe_read_text(path, default=""):
-        return default
-
-    def safe_write_text(path, content):
-        pass
-
-
-# Import logging
-try:
-    from utils.logging_utils import get_logger
-except ImportError:
-    try:
-        from .logging_config import get_logger
-    except ImportError:
-        from logging_config import get_logger  # type: ignore
+# Import from centralized utilities
+from utils.csv_utils import safe_read_csv
+from utils.file_utils import safe_read_json
+from utils.logging_utils import get_logger
 
 # Import security utilities
 try:

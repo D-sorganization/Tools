@@ -17,24 +17,23 @@ logger = logging.getLogger(__name__)
 def safe_join_path(base: Path | str, *parts: str) -> Path:
     """Safely join path parts using Path objects.
 
+    Note:
+        This function re-exports from path_helpers.safe_join_path for backward
+        compatibility. The path_helpers version prevents directory traversal.
+
     Args:
         base: Base path
         *parts: Path parts to join
 
     Returns:
         Joined Path object
+
+    Raises:
+        ValueError: If path traversal detected
     """
-    base_path = Path(base)
-    result = base_path
+    from utils.path_helpers import safe_join_path as _safe_join_path
 
-    for part in parts:
-        # Normalize part (remove leading slashes, handle ..)
-        part = part.lstrip("/")
-        if ".." in part:
-            logger.warning(f"Path traversal detected in part: {part}")
-        result = result / part
-
-    return result.resolve()
+    return _safe_join_path(base, *parts)
 
 
 def get_current_dir() -> Path:
@@ -95,23 +94,31 @@ def path_exists(path: Path | str) -> bool:
 def ensure_dir(path: Path | str, create: bool = True) -> Path:
     """Ensure directory exists, optionally creating it.
 
+    Note:
+        This function wraps file_utils.ensure_directory for backward compatibility.
+        Consider using file_utils.ensure_directory for new code.
+
     Args:
         path: Directory path
         create: Whether to create directory if it doesn't exist
 
     Returns:
         Path object of directory
+
+    Raises:
+        NotADirectoryError: If path exists but is not a directory
+        FileNotFoundError: If directory doesn't exist and create=False
     """
+    from utils.file_utils import ensure_directory
+
     dir_path = Path(path)
+    success = ensure_directory(dir_path, create=create)
 
-    if dir_path.exists():
-        if not dir_path.is_dir():
-            raise NotADirectoryError(f"Path exists but is not a directory: {path}")
+    if success:
         return dir_path
 
-    if create:
-        dir_path.mkdir(parents=True, exist_ok=True)
-        logger.debug(f"Created directory: {dir_path}")
-        return dir_path
+    # Handle failure cases with appropriate exceptions
+    if dir_path.exists() and not dir_path.is_dir():
+        raise NotADirectoryError(f"Path exists but is not a directory: {path}")
 
     raise FileNotFoundError(f"Directory does not exist: {dir_path}")

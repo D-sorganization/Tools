@@ -1,9 +1,9 @@
-import sys
-from pathlib import Path
+"""Pytest configuration for upstream_drift_tools tests.
 
-# Add the source directory to sys.path to allow imports of upstream_drift_tools
-# This assumes the tests are located at src/shared/python/upstream_drift_tools/tests
-# and the package root is at src/shared/python
-TEST_DIR = Path(__file__).resolve().parent
-SHARED_PYTHON_DIR = TEST_DIR.parents[1]
-sys.path.insert(0, str(SHARED_PYTHON_DIR))
+Uses shared path setup from utils.path_helpers.
+"""
+
+from utils.path_helpers import ensure_utils_in_path
+
+# Ensure utils is available for test imports
+ensure_utils_in_path()

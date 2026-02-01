@@ -337,25 +337,14 @@ def capture_logs() -> Generator[list[logging.LogRecord], None, None]:
 
     Yields:
         List of captured LogRecord objects
+
+    Note:
+        Uses captured_logs context manager from utils.test_utils for consistency.
     """
-    records: list[logging.LogRecord] = []
+    from utils.test_utils import captured_logs as captured_logs_ctx
 
-    class RecordCapturingHandler(logging.Handler):
-        def emit(self, record: logging.LogRecord) -> None:
-            records.append(record)
-
-    handler = RecordCapturingHandler()
-    handler.setLevel(logging.DEBUG)
-
-    root_logger = logging.getLogger()
-    original_level = root_logger.level
-    root_logger.setLevel(logging.DEBUG)
-    root_logger.addHandler(handler)
-
-    yield records
-
-    root_logger.removeHandler(handler)
-    root_logger.setLevel(original_level)
+    with captured_logs_ctx() as records:
+        yield records
 
 
 @pytest.fixture

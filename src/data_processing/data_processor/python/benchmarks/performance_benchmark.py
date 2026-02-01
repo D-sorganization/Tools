@@ -15,7 +15,6 @@ Run with: python performance_benchmark.py
 
 from __future__ import annotations
 
-import json
 import shutil
 import sys
 import time
@@ -24,6 +23,11 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+
+# Use shared path utilities
+from utils.path_helpers import ensure_utils_in_path
+
+ensure_utils_in_path()
 
 # Add parent directory to path so we can import data_processor package
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -44,40 +48,9 @@ try:
 except ImportError:
     PSUTIL_AVAILABLE = False
 
-# Import shared utilities or define fallbacks
-try:
-    from utils.file_utils import safe_write_json
-except ImportError:
-
-    def safe_write_json(
-        path: str | Path, data: Any, indent: int = 2, create_parents: bool = True
-    ) -> None:
-        p = Path(path)
-        if create_parents:
-            p.parent.mkdir(parents=True, exist_ok=True)
-        with open(p, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=indent)
-
-
-try:
-    from utils.csv_utils import safe_read_csv, safe_write_csv
-except ImportError:
-
-    def safe_read_csv(
-        path: str | Path, default: Any = None, **kwargs: Any
-    ) -> pd.DataFrame:
-        try:
-            return pd.read_csv(path, **kwargs)
-        except Exception:
-            return default if default is not None else pd.DataFrame()
-
-    def safe_write_csv(
-        df: pd.DataFrame, path: str | Path, create_parents: bool = True, **kwargs: Any
-    ) -> None:
-        p = Path(path)
-        if create_parents:
-            p.parent.mkdir(parents=True, exist_ok=True)
-        df.to_csv(p, **kwargs)
+# Import from centralized utilities
+from utils.csv_utils import safe_write_csv
+from utils.file_utils import safe_write_json
 
 
 class PerformanceBenchmark:

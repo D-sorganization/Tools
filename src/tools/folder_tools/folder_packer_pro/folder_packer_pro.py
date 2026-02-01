@@ -16,11 +16,9 @@ A comprehensive project packaging application with advanced features:
 
 import base64
 import gzip
-import json
 import logging
 import os
 import re
-import sys
 import threading
 import tkinter as tk
 from collections import defaultdict
@@ -33,46 +31,16 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
-# Helper to find repo root and setup paths
-current_file = Path(__file__).resolve()
-repo_root = current_file.parent.parent.parent.parent.parent
-utils_path = repo_root / "src" / "python" / "src"
-if utils_path.exists() and str(utils_path) not in sys.path:
-    sys.path.insert(0, str(utils_path))
+# Use shared path utilities
+from utils.path_helpers import ensure_utils_in_path
 
-try:
-    from utils.file_utils import (
-        safe_read_json,
-        safe_read_text,
-        safe_write_json,
-        safe_write_text,
-    )
-except ImportError:
-    # Fallback if utils cannot be found (e.g. distributed without source)
-    import json
+ensure_utils_in_path()
 
-    def safe_read_text(path, encoding="utf-8", default=""):
-        try:
-            return Path(path).read_text(encoding=encoding)
-        except Exception:
-            return default
-
-    def safe_write_text(path, content, encoding="utf-8", create_parents=True):
-        p = Path(path)
-        if create_parents:
-            p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_text(content, encoding=encoding)
-
-    def safe_write_json(path, data, indent=2, create_parents=True):
-        data_str = json.dumps(data, indent=indent)
-        safe_write_text(path, data_str)
-
-    def safe_read_json(path, default=None):
-        try:
-            return json.loads(safe_read_text(path))
-        except Exception:
-            return default
-
+# Import from centralized utilities
+from utils.file_utils import (
+    safe_write_json,
+    safe_write_text,
+)
 
 # Constants with professional standards
 MAX_FILE_SIZE_MB: Final[int] = 1024  # 1GB max per file

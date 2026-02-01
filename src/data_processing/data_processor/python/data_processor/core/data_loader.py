@@ -6,40 +6,25 @@ and managing data operations.
 
 from __future__ import annotations
 
-import sys
 from collections.abc import Callable, Iterable
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 import pandas as pd
+
+# Use shared path utilities
+from utils.path_helpers import ensure_utils_in_path
+
+ensure_utils_in_path()
+
 from data_processor.constants import TIME_COLUMN_KEYWORDS
 from data_processor.high_performance_loader import HighPerformanceDataLoader
-from data_processor.logging_config import get_logger
 from data_processor.security_utils import validate_and_check_file
 
-# Setup utils path
-try:
-    repo_root = (
-        Path(__file__).resolve().parent.parent.parent.parent.parent.parent.parent
-    )
-    utils_path = repo_root / "src" / "python" / "src"
-    if utils_path.exists() and str(utils_path) not in sys.path:
-        sys.path.insert(0, str(utils_path))
-    from utils.csv_utils import safe_read_csv, safe_write_csv
-except ImportError:
-
-    def safe_read_csv(path, default=None, **kwargs):
-        try:
-            return pd.read_csv(path, **kwargs)
-        except Exception:
-            return default if default is not None else pd.DataFrame()
-
-    def safe_write_csv(df, path, create_parents=True, **kwargs):
-        if create_parents:
-            Path(path).parent.mkdir(parents=True, exist_ok=True)
-        df.to_csv(path, **kwargs)
-
+# Import from centralized utilities
+from utils.csv_utils import safe_read_csv, safe_write_csv
+from utils.logging_utils import get_logger
 
 logger = get_logger(__name__)
 

@@ -3,31 +3,14 @@
 import datetime
 import logging
 import shutil
-import sys
-from datetime import timedelta
 from pathlib import Path
 
-# Python 3.10 compatibility: Use compatibility shim for UTC
 # Use shared path utilities
-try:
-    from utils.path_helpers import ensure_utils_in_path
+from utils.path_helpers import ensure_utils_in_path
 
-    ensure_utils_in_path()
-except ImportError:
-    # Fallback: use robust path resolution to find project root
-    PROJECT_ROOT = Path(__file__).resolve().parents[3]
-    PYTHON_SRC_PATH = PROJECT_ROOT / "src" / "python" / "src"
-    if str(PYTHON_SRC_PATH) not in sys.path:
-        ensure_utils_in_path()
+ensure_utils_in_path()
 
-try:
-    from utils.compatibility import UTC
-except ImportError:
-    # Fallback if compatibility module not available
-    # Use timedelta-based timezone for true Python 3.10 compatibility
-    UTC = datetime.timezone(timedelta(0))  # noqa: UP017
-
-from constants import (  # noqa: E402
+from constants import (
     BOLD_HEADER_FONT_SIZE,
     DEFAULT_LISTBOX_HEIGHT,
     DEFAULT_PADDING,
@@ -41,20 +24,15 @@ from constants import (  # noqa: E402
     TITLE_FONT_SIZE,
 )
 
+# Import UTC from compatibility module
+from utils.compatibility import UTC
+
 try:
     import tkinter as tk
     from tkinter import filedialog, messagebox, ttk
 except ImportError:
     # If tkinter is not available (e.g. headless CI), mock it for tests
     from unittest.mock import MagicMock
-
-
-try:
-    from utils.path_helpers import ensure_utils_in_path
-except ImportError:
-
-    def ensure_utils_in_path() -> None:
-        pass
 
     tk = MagicMock()
     filedialog = MagicMock()

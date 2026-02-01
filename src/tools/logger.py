@@ -1,50 +1,24 @@
-"""Unified logging configuration for Tools repository."""
+"""Unified logging configuration for Tools repository.
 
-import logging
-import sys
+DEPRECATED: Use utils.logging_utils directly for new code.
+This module re-exports from the centralized logging_utils module.
+"""
 
+import warnings
 
-def setup_logging(
-    name: str,
-    log_file: str | None = None,
-    level: int = logging.INFO,
-    format_string: str = "%(asctime)s - %(levelname)s - %(message)s",
-) -> logging.Logger:
-    """Configure and return a standard logger.
+# Re-export from centralized logging utilities
+from utils.logging_utils import (
+    DEFAULT_FORMAT,
+    get_logger,
+    init_default_logging,
+    setup_logging,
+)
 
-    Args:
-        name: Logger name (usually __name__).
-        log_file: Optional filename to write logs to.
-        level: Logging level (default INFO).
-        format_string: Log message format.
+# Issue deprecation warning
+warnings.warn(
+    "tools.logger is deprecated. Use utils.logging_utils instead.",
+    DeprecationWarning,
+    stacklevel=2,
+)
 
-    Returns:
-        Configured Logger instance.
-    """
-    logger = logging.getLogger(name)
-    logger.setLevel(level)
-
-    # Avoid adding handlers multiple times
-    if logger.hasHandlers():
-        return logger
-
-    formatter = logging.Formatter(format_string)
-
-    # Stream Handler (Console)
-    console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setFormatter(formatter)
-    logger.addHandler(console_handler)
-
-    # File Handler
-    if log_file:
-        try:
-            # You might want to ensure a logs directory exists?
-            # For now, keeping original behavior of local file or specified path
-            file_handler = logging.FileHandler(log_file, encoding="utf-8")
-            file_handler.setFormatter(formatter)
-            logger.addHandler(file_handler)
-        except Exception as e:
-            # Don't crash if file logging fails, just warn to stderr
-            sys.stderr.write(f"Failed to setup file logging to {log_file}: {e}\n")
-
-    return logger
+__all__ = ["DEFAULT_FORMAT", "get_logger", "init_default_logging", "setup_logging"]
