@@ -1,5 +1,13 @@
+"""Logging utilities for upstream_drift_tools.
+
+Uses shared logging configuration from utils.logging_utils.
+"""
+
 import logging
 import sys
+
+# Import shared logging configuration
+from utils.logging_utils import DEFAULT_FORMAT
 
 
 def get_logger(
@@ -23,9 +31,7 @@ def get_logger(
         # Console handler
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setLevel(level)
-        formatter = logging.Formatter(
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        )
+        formatter = logging.Formatter(DEFAULT_FORMAT)
         console_handler.setFormatter(formatter)
         logger.addHandler(console_handler)
 

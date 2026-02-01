@@ -8,19 +8,10 @@ import subprocess
 import sys
 from pathlib import Path
 
-# Add utils to path if available
-try:
-    # Try to find utils package relative to script
-    repo_root = Path(__file__).resolve().parent.parent.parent.parent
-    if repo_root not in sys.path:
-        sys.path.append(str(repo_root))
-    from utils.path_helpers import ensure_utils_in_path
+# Use shared path utilities
+from utils.path_helpers import ensure_utils_in_path
 
-    ensure_utils_in_path()
-except ImportError:
-
-    def ensure_utils_in_path() -> None:
-        pass
+ensure_utils_in_path()
 
 
 def check_python() -> bool:

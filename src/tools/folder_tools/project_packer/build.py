@@ -8,49 +8,15 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Any
 
-# Add utils to path using shared utility
+# Use shared path utilities
+from utils.path_helpers import ensure_utils_in_path
 
-# Import path_setup utility
-# Add utils to path using shared utility
-try:
-    from utils.path_helpers import ensure_utils_in_path
+ensure_utils_in_path()
 
-    ensure_utils_in_path()
-except ImportError:
-    # Fallback: try to add utils manually
-    try:
-        from utils.path_setup import add_utils_to_path
-
-        add_utils_to_path()
-    except ImportError:
-        # Last resort fallback
-        from utils.path_helpers import get_project_root_from_file
-
-        repo_root = get_project_root_from_file(__file__)
-        ensure_utils_in_path()
-
-try:
-    from utils.logging_utils import get_logger
-    from utils.subprocess_utils import run_python_script
-except ImportError:
-    # Fallback if shared utilities not available
-    import subprocess
-
-    def run_python_script(script_path: Path, **kwargs: Any) -> Any:
-        return subprocess.run([sys.executable, str(script_path)], **kwargs)
-
-    def get_logger(name: str) -> logging.Logger:
-        return logging.getLogger(name)
-
-
-try:
-    from utils.path_helpers import ensure_utils_in_path
-except ImportError:
-
-    def ensure_utils_in_path() -> None:
-        pass
+# Import shared utilities
+from utils.logging_utils import get_logger
+from utils.subprocess_utils import run_python_script
 
 
 logger = get_logger(__name__)

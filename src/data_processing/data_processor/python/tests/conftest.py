@@ -1,16 +1,9 @@
-"""Pytest configuration for data_processor tests."""
+"""Pytest configuration for data_processor tests.
 
-from pathlib import Path
+Uses shared path setup from utils.path_helpers.
+"""
 
-try:
-    from utils.path_helpers import ensure_utils_in_path
-except ImportError:
+from utils.path_helpers import ensure_utils_in_path
 
-    def ensure_utils_in_path():
-        pass
-
-
-# Add parent directory to Python path for imports
-test_dir = Path(__file__).parent
-project_root = test_dir.parent
+# Ensure utils is available for test imports
 ensure_utils_in_path()

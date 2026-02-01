@@ -7,10 +7,13 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
+# Import shared logging configuration
+from utils.logging_utils import DEFAULT_FORMAT
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    format=DEFAULT_FORMAT,
     handlers=[
         logging.FileHandler("pdf_renamer.log"),
         logging.StreamHandler(sys.stdout),
