@@ -77,7 +77,7 @@ def main() -> None:
             if sys.platform == "win32":
                 response = input("Would you like to run the executable now? (y/n): ")
                 if response.lower() == "y":
-                    os.startfile(exe_path)  # type: ignore[attr-defined]
+                    os.startfile(exe_path)
         else:
             logger.error("❌ Build failed. Check the output above for errors.")
             sys.exit(1)
