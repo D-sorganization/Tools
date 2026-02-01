@@ -10,7 +10,6 @@ This module provides standardized testing utilities including:
 - Test case base classes
 """
 
-import contextlib
 import functools
 import io
 import json
@@ -20,12 +19,12 @@ import re
 import sys
 import tempfile
 import time
-from collections.abc import Callable, Generator, Iterator
+from collections.abc import Callable, Generator
 from contextlib import contextmanager
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, TypeVar
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import MagicMock, patch
 
 # Type variables for generic functions
 T = TypeVar("T")
@@ -81,8 +80,7 @@ def generate_sample_data(
     elif data_type == "string":
         chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         return [
-            "".join(random.choices(chars, k=random.randint(5, 20)))
-            for _ in range(size)
+            "".join(random.choices(chars, k=random.randint(5, 20))) for _ in range(size)
         ]
     else:  # mixed
         generators = [
@@ -199,8 +197,7 @@ class AssertionHelpers:
             if superset[key] != value:
                 error_msg = (
                     msg
-                    or f"Value mismatch for key '{key}': "
-                    f"{superset[key]} != {value}"
+                    or f"Value mismatch for key '{key}': " f"{superset[key]} != {value}"
                 )
                 raise AssertionError(error_msg)
 
@@ -301,7 +298,9 @@ class AssertionHelpers:
             msg: Optional message on failure
         """
         for record in logs:
-            if record.levelno == level and re.search(message_pattern, record.getMessage()):
+            if record.levelno == level and re.search(
+                message_pattern, record.getMessage()
+            ):
                 return
         error_msg = (
             msg
@@ -374,7 +373,6 @@ class MockFactory:
         mock_response.ok = 200 <= status_code < 300
         mock_response.raise_for_status = MagicMock()
         if not mock_response.ok:
-            from unittest.mock import PropertyMock
 
             mock_response.raise_for_status.side_effect = Exception(
                 f"HTTP Error: {status_code}"
@@ -773,20 +771,16 @@ class BaseTestCase:
     @classmethod
     def setup_class(cls) -> None:
         """Set up class-level fixtures."""
-        pass
 
     @classmethod
     def teardown_class(cls) -> None:
         """Tear down class-level fixtures."""
-        pass
 
     def setup_method(self) -> None:
         """Set up method-level fixtures."""
-        pass
 
     def teardown_method(self) -> None:
         """Tear down method-level fixtures."""
-        pass
 
     @staticmethod
     def create_temp_file(content: str = "", suffix: str = ".txt") -> Path:
@@ -799,9 +793,7 @@ class BaseTestCase:
         Returns:
             Path to temporary file
         """
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=suffix, delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=suffix, delete=False) as f:
             f.write(content)
             return Path(f.name)
 
@@ -834,9 +826,7 @@ class IntegrationTestCase(BaseTestCase):
         import pytest
 
         # Check environment variables
-        missing_vars = [
-            var for var in cls.required_env_vars if var not in os.environ
-        ]
+        missing_vars = [var for var in cls.required_env_vars if var not in os.environ]
         if missing_vars:
             pytest.skip(f"Missing environment variables: {missing_vars}")
 

@@ -16,16 +16,14 @@ import logging
 import os
 import socket
 import subprocess
-import sys
 import threading
 import time
-from abc import ABC, abstractmethod
+from abc import ABC
 from collections.abc import Callable, Generator
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, TypeVar
-from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -70,7 +68,7 @@ def check_port_available(host: str, port: int, timeout: float = 2.0) -> bool:
         result = sock.connect_ex((host, port))
         sock.close()
         return result == 0
-    except (socket.error, OSError):
+    except OSError:
         return False
 
 
@@ -90,8 +88,8 @@ def check_http_service(
         ServiceStatus with check results
     """
     try:
-        import urllib.request
         import urllib.error
+        import urllib.request
 
         start = time.perf_counter()
         request = urllib.request.Request(url, method="GET")
@@ -349,9 +347,7 @@ class IntegrationTestBase(ABC):
             pytest.skip("Skipping integration test in CI")
 
         # Check required environment variables
-        missing_vars = [
-            var for var in cls.required_env_vars if var not in os.environ
-        ]
+        missing_vars = [var for var in cls.required_env_vars if var not in os.environ]
         if missing_vars:
             pytest.skip(f"Missing required environment variables: {missing_vars}")
 
@@ -393,12 +389,10 @@ class IntegrationTestBase(ABC):
     @classmethod
     def _setup_environment(cls) -> None:
         """Set up test environment. Override in subclasses."""
-        pass
 
     @classmethod
     def _teardown_environment(cls) -> None:
         """Tear down test environment. Override in subclasses."""
-        pass
 
 
 class DatabaseTestBase(IntegrationTestBase):
@@ -412,9 +406,7 @@ class DatabaseTestBase(IntegrationTestBase):
         """Set up database test class."""
         # Check database availability
         if cls.db_connection_string:
-            status = check_database_connection(
-                cls.db_connection_string, cls.db_type
-            )
+            status = check_database_connection(cls.db_connection_string, cls.db_type)
             if not status.available:
                 pytest.skip(f"Database not available: {status.error}")
 
@@ -430,11 +422,9 @@ class DatabaseTestBase(IntegrationTestBase):
 
     def _setup_database(self) -> None:
         """Set up fresh database state. Override in subclasses."""
-        pass
 
     def _teardown_database(self) -> None:
         """Clean up database state. Override in subclasses."""
-        pass
 
 
 class APITestBase(IntegrationTestBase):
@@ -454,7 +444,9 @@ class APITestBase(IntegrationTestBase):
 
         super().setup_class()
 
-    def get_headers(self, extra_headers: dict[str, str] | None = None) -> dict[str, str]:
+    def get_headers(
+        self, extra_headers: dict[str, str] | None = None
+    ) -> dict[str, str]:
         """Get request headers.
 
         Args:
@@ -651,8 +643,8 @@ class MockServer:
 
     def start(self) -> None:
         """Start the mock server."""
-        from http.server import HTTPServer, BaseHTTPRequestHandler
         import json
+        from http.server import BaseHTTPRequestHandler, HTTPServer
 
         server_instance = self
 

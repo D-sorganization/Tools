@@ -1,7 +1,6 @@
 """Unit tests for debug_utils module."""
 
 import logging
-import os
 import sys
 import time
 from pathlib import Path
@@ -411,9 +410,7 @@ class TestPerformanceWatchdog:
 
     def test_watchdog_record(self) -> None:
         """Test recording timings."""
-        watchdog = PerformanceWatchdog(
-            warn_threshold_ms=100, error_threshold_ms=500
-        )
+        watchdog = PerformanceWatchdog(warn_threshold_ms=100, error_threshold_ms=500)
         watchdog.record("operation1", 50.0)
         watchdog.record("operation1", 75.0)
 

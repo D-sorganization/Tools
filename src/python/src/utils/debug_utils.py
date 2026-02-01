@@ -24,7 +24,6 @@ import pstats
 import sys
 import threading
 import time
-import traceback
 import tracemalloc
 import warnings
 from collections.abc import Callable, Generator
@@ -149,9 +148,7 @@ def profile(
                 # Log or save results
                 stats_text = stream.getvalue()
                 if _DEBUG_MODE:
-                    logger.debug(
-                        "Profile for %s:\n%s", func.__name__, stats_text
-                    )
+                    logger.debug("Profile for %s:\n%s", func.__name__, stats_text)
 
                 if output_file:
                     Path(output_file).write_text(stats_text)
@@ -379,10 +376,7 @@ def memory_tracker(
 
         # Get top allocations
         top_stats = snapshot.statistics("lineno")[:10]
-        stats.top_allocations = [
-            (str(stat.traceback), stat.size)
-            for stat in top_stats
-        ]
+        stats.top_allocations = [(str(stat.traceback), stat.size) for stat in top_stats]
 
         end_memory = get_memory_usage()
         stats.current_mb = current / (1024 * 1024)
@@ -476,9 +470,7 @@ class ExecutionTracer:
                 func_name = frame.f_code.co_name
                 filename = frame.f_code.co_filename
                 lineno = frame.f_lineno
-                self._trace_log.append(
-                    f"{indent}-> {func_name} ({filename}:{lineno})"
-                )
+                self._trace_log.append(f"{indent}-> {func_name} ({filename}:{lineno})")
             self._depth += 1
 
         elif event == "return":
@@ -770,7 +762,7 @@ def format_exception_with_locals(
         filename = frame.f_code.co_filename
         func_name = frame.f_code.co_name
 
-        lines.append(f"  File \"{filename}\", line {lineno}, in {func_name}")
+        lines.append(f'  File "{filename}", line {lineno}, in {func_name}')
 
         # Get source line
         line = linecache.getline(filename, lineno).strip()

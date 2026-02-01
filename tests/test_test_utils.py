@@ -1,12 +1,9 @@
 """Unit tests for test_utils module."""
 
-import json
 import logging
 import os
 import sys
-import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock
 
 import pytest
 
@@ -14,12 +11,8 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "python" / "src"))
 
 from utils.test_utils import (
-    AssertionHelpers,
     BaseTestCase,
-    IntegrationTestCase,
     MockFactory,
-    TestDataConfig,
-    TestMarkers,
     TimingResult,
     assert_helpers,
     assert_performance,
@@ -30,7 +23,6 @@ from utils.test_utils import (
     generate_sample_data,
     markers,
     retry_on_failure,
-    skip_if_no_module,
     temporary_directory,
     temporary_file,
     time_function,
@@ -166,9 +158,7 @@ class TestAssertionHelpers:
             raise TypeError("wrong type")
 
         with pytest.raises(AssertionError, match="Expected ValueError"):
-            assert_helpers.assert_raises_with_message(
-                ValueError, ".*", raise_error
-            )
+            assert_helpers.assert_raises_with_message(ValueError, ".*", raise_error)
 
     def test_assert_raises_with_message_no_exception(self) -> None:
         """Test fails when no exception raised."""
@@ -177,9 +167,7 @@ class TestAssertionHelpers:
             pass
 
         with pytest.raises(AssertionError, match="was not raised"):
-            assert_helpers.assert_raises_with_message(
-                ValueError, ".*", no_error
-            )
+            assert_helpers.assert_raises_with_message(ValueError, ".*", no_error)
 
     def test_assert_file_contains(self, tmp_path: Path) -> None:
         """Test file contains assertion."""
@@ -237,9 +225,7 @@ class TestMockFactory:
 
     def test_create_mock_path(self) -> None:
         """Test creating mock path."""
-        mock_path = MockFactory.create_mock_path(
-            exists=True, content="file content"
-        )
+        mock_path = MockFactory.create_mock_path(exists=True, content="file content")
         assert mock_path.exists() is True
         assert mock_path.read_text() == "file content"
 
@@ -407,9 +393,7 @@ class TestBaseTestCase:
 
     def test_create_temp_file(self) -> None:
         """Test temporary file creation."""
-        temp_file = BaseTestCase.create_temp_file(
-            content="test content", suffix=".txt"
-        )
+        temp_file = BaseTestCase.create_temp_file(content="test content", suffix=".txt")
         try:
             assert temp_file.exists()
             assert temp_file.read_text() == "test content"

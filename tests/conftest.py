@@ -63,7 +63,8 @@ def pytest_collection_modifyitems(
     for item in items:
         # Auto-mark tests without explicit markers as unit tests
         if not any(
-            marker.name in ("integration", "e2e", "unit") for marker in item.iter_markers()
+            marker.name in ("integration", "e2e", "unit")
+            for marker in item.iter_markers()
         ):
             item.add_marker(pytest.mark.unit)
 
@@ -489,7 +490,6 @@ def cleanup_temp_files(tmp_path: Path) -> Generator[None, None, None]:
     """
     yield
     # tmp_path is automatically cleaned up by pytest
-    pass
 
 
 # =============================================================================

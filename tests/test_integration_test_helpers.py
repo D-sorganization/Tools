@@ -2,14 +2,10 @@
 
 import asyncio
 import json
-import logging
 import os
 import sys
-import tempfile
-import time
 from pathlib import Path
 from typing import Any
-from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -18,7 +14,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "python" / "src"))
 
 from utils.integration_test_helpers import (
     APITestBase,
-    DatabaseTestBase,
     IntegrationTestBase,
     MockServer,
     ResourceManager,
@@ -269,6 +264,7 @@ class TestAsyncUtilities:
     def test_async_event_loop_context(self) -> None:
         """Test async_event_loop context manager."""
         with async_event_loop() as loop:
+
             async def coro() -> int:
                 return 42
 
