@@ -184,9 +184,12 @@ def launch_fallback_app() -> bool:
 def show_error_dialog(message: str) -> None:
     """Show error dialog to user."""
     try:
+        log_path = os.path.abspath("tools_launcher.log")
+        enhanced_message = f"{message}\n\nLog file location: {log_path}"
+
         root = Tk()
         root.withdraw()  # Hide the main window
-        messagebox.showerror("Tools Launcher Error", message)
+        messagebox.showerror("Tools Launcher Error", enhanced_message)
         root.destroy()
     except (OSError, RuntimeError):
         # If GUI fails, just print to console

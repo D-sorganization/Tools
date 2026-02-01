@@ -1,17 +1,17 @@
 # Core Scientific Computing
-numpy>=2.0.1  # Fundamental array processing
-pandas>=2.2.2  # Data analysis and manipulation
-scipy>=1.13.1  # Scientific algorithms
-matplotlib>=3.9.0  # Data visualization
-sympy>=1.12  # Symbolic mathematics
+numpy>=2.0.1  # Fundamental array processing and matrix operations
+pandas>=2.2.2  # Data analysis, manipulation, and time series
+scipy>=1.13.1  # Scientific algorithms (integration, optimization)
+matplotlib>=3.9.0  # Data visualization and plotting library
+sympy>=1.12  # Symbolic mathematics and algebra
 
 # Testing & Quality Assurance
 pytest>=8.2.0  # Testing framework
-pytest-cov  # Coverage plugin for pytest
-ruff  # Fast Python linter and formatter
-mypy  # Static type checker
-types-PyYAML  # Type stubs for PyYAML
-types-requests  # Type stubs for requests library
+pytest-cov  # Coverage plugin for pytest (code coverage metrics)
+ruff  # Fast Python linter and formatter (replaces flake8/black)
+mypy  # Static type checker for Python
+types-PyYAML  # Type stubs for PyYAML (static typing)
+types-requests  # Type stubs for requests library (static typing)
 
 # GUI & Desktop Applications
 PyQt6>=6.7.0  # Qt6 Python bindings for GUI applications
