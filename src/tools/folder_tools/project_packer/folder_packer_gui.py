@@ -3,17 +3,12 @@
 import datetime
 import logging
 import shutil
-import sys
-from datetime import timedelta
 from pathlib import Path
 
 # Use shared path utilities
 from utils.path_helpers import ensure_utils_in_path
 
 ensure_utils_in_path()
-
-# Import UTC from compatibility module
-from utils.compatibility import UTC
 
 from constants import (
     BOLD_HEADER_FONT_SIZE,
@@ -28,6 +23,9 @@ from constants import (
     TINY_PADDING,
     TITLE_FONT_SIZE,
 )
+
+# Import UTC from compatibility module
+from utils.compatibility import UTC
 
 try:
     import tkinter as tk
