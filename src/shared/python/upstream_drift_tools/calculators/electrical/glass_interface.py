@@ -30,9 +30,9 @@ class GlassPropertiesInterface:
             "reference_temp": 1473.15,  # K (1200°C)
             "metal_conductivity": 10000.0,  # S/m - Very high for molten metal
         }
-        self._temperature_dependent_data: dict[tuple[float, Any, float], float] = (
-            {}
-        )  # Cache for temperature-dependent properties
+        self._temperature_dependent_data: dict[
+            tuple[float, Any, float], float
+        ] = {}  # Cache for temperature-dependent properties
         self._current_properties: dict[str, Any] = {}  # Store current glass properties
 
     def get_conductivity(

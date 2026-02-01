@@ -196,8 +196,7 @@ class AssertionHelpers:
                 raise AssertionError(error_msg)
             if superset[key] != value:
                 error_msg = (
-                    msg
-                    or f"Value mismatch for key '{key}': " f"{superset[key]} != {value}"
+                    msg or f"Value mismatch for key '{key}': {superset[key]} != {value}"
                 )
                 raise AssertionError(error_msg)
 
@@ -373,7 +372,6 @@ class MockFactory:
         mock_response.ok = 200 <= status_code < 300
         mock_response.raise_for_status = MagicMock()
         if not mock_response.ok:
-
             mock_response.raise_for_status.side_effect = Exception(
                 f"HTTP Error: {status_code}"
             )

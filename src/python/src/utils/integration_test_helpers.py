@@ -18,7 +18,6 @@ import socket
 import subprocess
 import threading
 import time
-from abc import ABC
 from collections.abc import Callable, Generator
 from contextlib import contextmanager
 from dataclasses import dataclass, field
@@ -317,7 +316,7 @@ TestEnvironment = EnvironmentManager
 # =============================================================================
 
 
-class IntegrationTestBase(ABC):
+class IntegrationTestBase:
     """Abstract base class for integration tests.
 
     Subclasses should define required services and implement service checks.

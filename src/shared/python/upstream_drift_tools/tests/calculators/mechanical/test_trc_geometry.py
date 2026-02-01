@@ -26,7 +26,10 @@ class TestTRCGeometry:
     def layers(self):
         return [
             LayerConfig(
-                name="Shell", thickness=0.5, density=490.0, color="grey"  # Steel approx
+                name="Shell",
+                thickness=0.5,
+                density=490.0,
+                color="grey",  # Steel approx
             ),
             LayerConfig(
                 name="Refractory", thickness=4.0, density=150.0, color="orange"

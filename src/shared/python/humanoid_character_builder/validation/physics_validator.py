@@ -216,7 +216,6 @@ class PhysicsValidator:
                     and min1[2] <= max2[2]
                     and max1[2] >= min2[2]
                 ):
-
                     messages.append(f"Potential collision between {name1} and {name2}")
 
         return messages
