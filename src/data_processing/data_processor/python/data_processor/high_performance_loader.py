@@ -31,8 +31,8 @@ from utils.path_helpers import ensure_utils_in_path
 ensure_utils_in_path()
 
 # Import from centralized utilities
-from utils.csv_utils import safe_read_csv, safe_write_csv
-from utils.file_utils import safe_read_json, safe_read_text, safe_write_text
+from utils.csv_utils import safe_read_csv
+from utils.file_utils import safe_read_json
 from utils.logging_utils import get_logger
 
 # Import security utilities

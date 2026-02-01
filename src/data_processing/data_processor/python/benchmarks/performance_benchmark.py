@@ -49,7 +49,7 @@ except ImportError:
     PSUTIL_AVAILABLE = False
 
 # Import from centralized utilities
-from utils.csv_utils import safe_read_csv, safe_write_csv
+from utils.csv_utils import safe_write_csv
 from utils.file_utils import safe_write_json
 
 
