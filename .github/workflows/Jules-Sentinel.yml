@@ -36,7 +36,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install safety bandit pip-audit semgrep || true
+          pip install safety bandit pip-audit semgrep
           npm install -g @google/jules
 
       - name: Run Security Scanners
@@ -44,13 +44,13 @@ jobs:
           mkdir -p reports
 
           echo "Running pip-audit..."
-          pip-audit --format json -o reports/pip_audit.json 2>/dev/null || echo "[]" > reports/pip_audit.json
+          pip-audit --format json -o reports/pip_audit.json || true
 
           echo "Running bandit..."
-          bandit -r . -f json -o reports/bandit.json --exclude './.venv,./venv,./env,./.git' 2>/dev/null || echo "[]" > reports/bandit.json
+          bandit -r . -f json -o reports/bandit.json --exclude './.venv,./venv,./env,./.git' || true
 
           echo "Running semgrep..."
-          semgrep --config=auto --json -o reports/semgrep.json . 2>/dev/null || echo "{}" > reports/semgrep.json
+          semgrep --config=auto --json -o reports/semgrep.json . || true
 
       - name: Jules Sentinel Analysis
         env:

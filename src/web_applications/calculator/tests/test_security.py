@@ -29,6 +29,26 @@ class TestSecurity(unittest.TestCase):
             response.status_code, 400, "Should reject excessively large input"
         )
 
+    def test_security_headers(self) -> None:
+        """Test that security headers are present in responses."""
+        response = self.client.get("/")
+
+        # HSTS
+        self.assertIn("Strict-Transport-Security", response.headers)
+        self.assertIn("max-age=31536000", response.headers["Strict-Transport-Security"])
+
+        # CSP
+        self.assertIn("Content-Security-Policy", response.headers)
+        self.assertIn("default-src 'self'", response.headers["Content-Security-Policy"])
+
+        # X-Content-Type-Options
+        self.assertIn("X-Content-Type-Options", response.headers)
+        self.assertEqual(response.headers["X-Content-Type-Options"], "nosniff")
+
+        # X-Frame-Options
+        self.assertIn("X-Frame-Options", response.headers)
+        self.assertEqual(response.headers["X-Frame-Options"], "DENY")
+
 
 if __name__ == "__main__":
     unittest.main()

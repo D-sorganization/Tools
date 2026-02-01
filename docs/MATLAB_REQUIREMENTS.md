@@ -1,35 +1,42 @@
-# MATLAB Requirements & Tool Availability
+# MATLAB Requirements
 
-This repository contains several tools written in MATLAB. To run these tools, a local MATLAB installation is required.
+This repository contains tools that integrate with MATLAB. To use these features, the following requirements must be met.
 
-## Requirements
+## Version Requirements
+- **MATLAB Version:** R2020a or later is required.
+- **Python Integration:** Ensure your Python version is compatible with your MATLAB version (check [MathWorks Python Compatibility](https://www.mathworks.com/support/requirements/python-compatibility.html)).
 
-- **MATLAB Version:** R2020a or later is recommended.
-- **Toolboxes:** Specific tools may require additional toolboxes (e.g., Signal Processing, Statistics).
+## Required Toolboxes
+The following toolboxes are typically required for the MATLAB tools in this repository:
+- **Symbolic Math Toolbox** (for symbolic calculations)
+- **Control System Toolbox** (for control theory analysis)
+- **Signal Processing Toolbox** (for signal analysis)
+- **Simulink** (if running Simulink models)
 
-## Launching MATLAB Tools
+## Setup
+1. **Install MATLAB Engine API for Python:**
+   Run the following commands in your terminal (adjust path to your MATLAB installation):
+   ```bash
+   cd "C:\Program Files\MATLAB\R202Xy\extern\engines\python"
+   python setup.py install
+   ```
+   Or on Linux/macOS:
+   ```bash
+   cd /usr/local/MATLAB/R202Xy/extern/engines/python
+   python setup.py install
+   ```
 
-When you launch a MATLAB tool via `UnifiedToolsLauncher.py`, the system attempts to:
+2. **Verify Installation:**
+   Run the following Python code:
+   ```python
+   import matlab.engine
+   eng = matlab.engine.start_matlab()
+   eng.quit()
+   ```
 
-1.  Run the tool using the `matlab` command-line interface.
-2.  If `matlab` is not in your PATH, it will attempt to open the `.m` file in your default editor/viewer.
-
-## Configuration
-
-Ensure `matlab` is in your system PATH.
-
-### Windows
-Add the MATLAB `bin` directory (e.g., `C:\Program Files\MATLAB\R2023b\bin`) to your system PATH environment variable.
-
-### Linux / macOS
-Ensure `matlab` command works in your terminal. You may need to create a symlink:
-```bash
-sudo ln -s /usr/local/MATLAB/R2023b/bin/matlab /usr/local/bin/matlab
-```
+## Fallback Mechanism
+If MATLAB is not installed or the engine API is unavailable, the tools will attempt to use fallback Python implementations (e.g., using `numpy`, `scipy`, or `sympy`) where possible. However, some specialized features may be disabled.
 
 ## Troubleshooting
-
-If MATLAB tools fail to launch:
-1.  Verify `matlab` command runs in your terminal.
-2.  Check the `unified_launcher.log` for error messages.
-3.  Open the `.m` file manually in MATLAB.
+- **"No module named matlab":** The MATLAB Engine API is not installed in your current Python environment.
+- **"MATLAB execution error":** Check your license and path configuration.

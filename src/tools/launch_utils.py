@@ -6,7 +6,7 @@ import sys
 import webbrowser
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any
+from typing import IO, Any
 
 
 def get_repo_root() -> Path:
@@ -106,6 +106,29 @@ def launch_python_tool(
             )
             if log_func:
                 log_func(f"✅ Process started (PID: {process.pid})")
+
+                # Create threads to read stdout/stderr to prevent deadlock and log output
+                import threading
+
+                def read_stream(stream: IO[str], prefix: str) -> None:
+                    try:
+                        for line in stream:
+                            if log_func is not None:
+                                log_func(f"{prefix} {line.strip()}")
+                    except Exception as e:
+                        if log_func is not None:
+                            log_func(f"Error reading stream: {e}")
+                    finally:
+                        stream.close()
+
+                if process.stdout:
+                    threading.Thread(
+                        target=read_stream, args=(process.stdout, "[OUT]"), daemon=True
+                    ).start()
+                if process.stderr:
+                    threading.Thread(
+                        target=read_stream, args=(process.stderr, "[ERR]"), daemon=True
+                    ).start()
         else:
             subprocess.Popen(
                 args,
