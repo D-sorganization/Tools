@@ -1,2 +1,2 @@
-Pillow>=10.0.0
-pyinstaller>=5.13.0
+Pillow>=10.0.0  # Python Imaging Library (Fork) for image processing
+pyinstaller>=5.13.0  # Bundles Python applications into stand-alone executables

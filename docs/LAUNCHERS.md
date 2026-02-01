@@ -1,54 +1,29 @@
-# Launcher Hierarchy & Guide
+# Launcher Hierarchy
 
-This repository contains multiple entry points for launching tools. This document clarifies the purpose of each launcher and the recommended hierarchy.
+This repository utilizes a specific hierarchy for launching tools to ensure compatibility and ease of use.
 
-## 🚀 Primary Launcher
+## Primary Launcher
+**`UnifiedToolsLauncher.py`**
+- **Type:** PyQt6 (Modern GUI)
+- **Role:** The **canonical entry point** for the repository. It provides a modern, tabbed interface to access all tools, including Python, MATLAB, and Web Applications.
+- **Requirement:** Python 3.11+
+- **Usage:**
+  ```bash
+  python UnifiedToolsLauncher.py
+  ```
 
-### `UnifiedToolsLauncher.py` (Recommended)
-This is the **canonical entry point** for the entire repository.
-- **Technology:** PyQt6 (Modern GUI)
-- **Features:**
-  - Tabbed interface for all tools.
-  - Robust error handling.
-  - Python 3.11+ requirement check.
-  - Launches other tools as subprocesses or integrated windows.
+## Legacy Launcher (Fallback)
+**`launch_tools_main.py`**
+- **Type:** Tkinter (Legacy GUI)
+- **Role:** A robust fallback launcher used if PyQt6 is unavailable or if the unified launcher fails. It focuses on core data processing tools.
+- **Usage:**
+  ```bash
+  python launch_tools_main.py
+  ```
 
-## ⚠️ Legacy / Integrated Launchers
+## Specialized Launchers
+Individual tools may have their own specific launchers (e.g., `src/web_applications/urdf_viewer/main.py`), but users are encouraged to use the `UnifiedToolsLauncher.py` for a unified experience.
 
-### `launch_tools_main.py`
-This script launches the **Integrated Data Processor** application directly.
-- **Technology:** Tkinter / CustomTkinter
-- **Purpose:** Specifically for the Data Processor toolset (CSV processing, plotting).
-- **Status:** Maintained as a sub-component, but users should prefer `UnifiedToolsLauncher.py`.
-
-### `run_tile_launcher.py` / `src/python/src/tile_launcher/main.py`
-A tile-based launcher interface.
-- **Technology:** PyQt6
-- **Purpose:** Visual grid of available tools.
-- **Status:** Integrated into the Unified Launcher.
-
-### `Launcher.py`
-Legacy entry point. **Deprecated**.
-- **Status:** Do not use. Redirects or fails.
-
-## Launcher Architecture
-
-```mermaid
-graph TD
-    A[UnifiedToolsLauncher.py] -->|Launches| B[Integrated Data Processor]
-    A -->|Launches| C[Tile Launcher]
-    A -->|Launches| D[Matlab Tools]
-    A -->|Launches| E[Web Tools]
-
-    B --> launch_tools_main.py
-    C --> run_tile_launcher.py
-```
-
-## Usage
-
-To start the tools suite:
-
-```bash
-# Ensure you are in the repository root
-python UnifiedToolsLauncher.py
-```
+## Launcher Selection Logic
+1. Users should attempt to run `UnifiedToolsLauncher.py` first.
+2. If dependencies (PyQt6) are missing or the environment is restricted, `launch_tools_main.py` serves as a reliable alternative using the standard Tkinter library.

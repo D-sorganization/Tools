@@ -64,6 +64,12 @@ def validate_tools_config(
             if "name" not in tool or "path" not in tool:
                 continue
 
+            # Security: Sanitize path input
+            path = str(tool["path"])
+            if ".." in path:
+                logger.warning(f"Skipping potentially unsafe tool path: {path}")
+                continue
+
             valid_tools.append(tool)
 
         if valid_tools:
