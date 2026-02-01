@@ -9,16 +9,9 @@ on:
     workflows: ["CI Standard"]
     types: [completed]
   schedule:
-    # OVERNIGHT SCHEDULE - All work done before morning (midnight-6 AM PST / 8 AM-2 PM UTC)
-    - cron: "0 8 */3 * *"   # Midnight PST - Assessment Generator
-    - cron: "0 8 */3 * *"  # 12:30 AM PST - Code Quality Reviewer
-    - cron: "0 8 */3 * *"   # 1 AM PST - Completist (incomplete impl)
-    - cron: "0 8 */3 * *"  # 1:30 AM PST - Documentation Auditor
-    - cron: "0 8 */3 * *" # 2:30 AM PST - Sentinel (security)
-    - cron: "0 8 */3 * *"  # 3 AM PST - Auto-Refactor
-    - cron: "0 8 */3 * *" # 3:30 AM PST - Issue Resolver (daily fix)
-    - cron: "0 8 */3 * *"  # 5 AM PST - Auto-Rebase
-    - cron: "0 8 */3 * *"  # 4 AM PST - PR Compiler (consolidate PRs)
+    # OVERNIGHT SCHEDULE - Runs Mon/Thu (effectively every 3-4 days) at 8 AM UTC (midnight PST)
+    # IMPORTANT: Only ONE schedule line needed - routing is done by time in the triage step
+    - cron: "0 8 * * 1,4" # Monday and Thursday at midnight PST
   workflow_dispatch:
     inputs:
       target:
@@ -123,32 +116,9 @@ jobs:
               // Primary: Match exact cron pattern for deterministic routing
               if (schedule) {
                 switch (schedule) {
-                  case "0 8 */3 * *":
-                    target = "assessment-generator";
-                    break;
-                  case "30 8 */3 * *":
-                    target = "code-quality-reviewer";
-                    break;
-                  case "0 9 */3 * *":
-                    target = "completist";
-                    break;
-                  case "30 9 */3 * *":
-                    target = "documentation-auditor";
-                    break;
-                  case "30 10 */3 * *":
-                    target = "sentinel";
-                    break;
-                  case "0 11 */3 * *":
-                    target = "auto-refactor";
-                    break;
-                  case "30 11 */3 * *":
-                    target = "issue-resolver";
-                    break;
-                  case "0 12 */3 * *":
-                    target = "pr-compiler";
-                    break;
-                  case "0 13 */3 * *":
-                    target = "auto-rebase";
+                  case "0 8 * * 1,4":
+                    // Single schedule triggers all work - use time-based routing below
+                    target = "none";
                     break;
                   default:
                     target = "none";
