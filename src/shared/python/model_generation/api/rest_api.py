@@ -292,7 +292,9 @@ class ModelGenerationAPI:
         response.headers["Content-Security-Policy"] = "default-src 'self'"
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
-        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        response.headers["Strict-Transport-Security"] = (
+            "max-age=31536000; includeSubDomains"
+        )
 
     def handle_request(self, request: APIRequest) -> APIResponse:
         """Handle an API request."""
