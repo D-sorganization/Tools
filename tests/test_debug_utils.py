@@ -122,7 +122,7 @@ class TestProfilingUtilities:
     def test_profile_block(self) -> None:
         """Test profile_block context manager."""
         with profile_block(name="test_block", log_result=False) as result:
-            total = sum(range(100))
+            _total = sum(range(100))  # noqa: F841  # Used for profiling
 
         assert result.function_name == "test_block"
         assert result.total_time >= 0
@@ -203,7 +203,7 @@ class TestMemoryProfiling:
         """Test memory_tracker context manager."""
         with memory_tracker(name="test_memory", log_result=False) as stats:
             # Allocate some memory
-            data = [0] * 10000
+            _data = [0] * 10000  # noqa: F841  # Used for memory allocation
 
         assert stats.current_mb >= 0
         assert stats.peak_mb >= 0

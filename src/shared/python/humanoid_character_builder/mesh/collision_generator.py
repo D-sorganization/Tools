@@ -624,7 +624,6 @@ class CollisionGeometryGenerator:
         except Exception:
             # Fallback to vertex clustering
             try:
-
                 reduction = max_triangles / len(mesh.faces)
                 pitch = mesh.extents.max() * (1 - reduction) / 10
                 voxelized = mesh.voxelized(pitch)

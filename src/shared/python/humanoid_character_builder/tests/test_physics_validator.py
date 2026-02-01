@@ -16,7 +16,6 @@ from humanoid_character_builder.validation.physics_validator import (
 
 
 class TestPhysicsValidator:
-
     @pytest.fixture
     def validator(self):
         return PhysicsValidator()
