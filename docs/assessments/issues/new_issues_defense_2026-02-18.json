@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Critical Security: Command Injection in Folder Packer Pro",
+    "body": "The `Folder Packer Pro` tool uses `os.system` with interpolated strings (e.g., `os.system(f'open {log_filename}')`), which allows for arbitrary command execution if the filename contains shell metacharacters. This must be replaced with `subprocess.run` and proper argument handling immediately.",
+    "labels": ["thesis-defense", "needs-work", "priority:critical", "area:security", "project:folder-packer"]
+  },
+  {
+    "title": "High Security: Path Traversal Vulnerability in PDF Renamer",
+    "body": "The `PDF Renamer` relies on an AI model for filename generation but does not explicitly verify that the output lacks directory traversal sequences (`../`). While `sanitize_filename` is used, explicit test cases and containment checks (e.g., `path.is_relative_to()`) are required to prevent file system overwrite attacks.",
+    "labels": ["thesis-defense", "needs-work", "priority:high", "area:security", "project:pdf-renamer"]
+  },
+  {
+    "title": "High Security: Zip Bomb Vulnerability in Folder Tools",
+    "body": "The `Folder Tool` and `Folder Packer Pro` extract archives without checking for compression ratios or absolute decompressed size limits. This exposes the application to 'Zip Bomb' Denial of Service attacks. Implement limits on extraction size and ratio.",
+    "labels": ["thesis-defense", "needs-work", "priority:high", "area:security", "project:folder-packer", "project:folder-tool"]
+  },
+  {
+    "title": "Security: Insufficient Input Sanitization in Calculator",
+    "body": "The Calculator web app only checks for `__` to prevent malicious input. This is insufficient for preventing Denial of Service via complex calculations (`sp.simplify`). While not an RCE risk in the current deployment, it is a robustness failure. A computation timeout mechanism is required.",
+    "labels": ["thesis-defense", "needs-work", "priority:medium", "area:security", "project:calculator"]
+  }
+]
