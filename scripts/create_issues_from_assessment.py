@@ -7,8 +7,11 @@ for untracked critical findings.
 """
 
 import argparse
+import json
 import logging
 import subprocess
+import sys
+from pathlib import Path
 from typing import Any
 
 # Use shared path utilities
@@ -17,7 +20,7 @@ from utils.path_helpers import ensure_utils_in_path
 ensure_utils_in_path()
 
 # Import from centralized utilities
-from utils.file_utils import safe_read_json
+from utils.file_utils import safe_read_json  # noqa: E402
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")

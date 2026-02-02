@@ -11,9 +11,51 @@ from __future__ import annotations
 import json
 import logging
 import shutil
+import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+
+# Try to import centralized file utilities
+try:
+    from utils.file_utils import safe_read_json, safe_write_json
+except ImportError:
+    # Fallback if utils not in path
+    _src_path = Path(__file__).resolve().parents[4] / "python" / "src"
+    if str(_src_path) not in sys.path:
+        sys.path.insert(0, str(_src_path))
+    try:
+        from utils.file_utils import safe_read_json, safe_write_json
+    except ImportError:
+        # Final fallback - inline implementations
+        def safe_read_json(file_path: Path | str, default: Any = None) -> Any:
+            """Fallback safe JSON reader."""
+            path = Path(file_path)
+            if not path.exists():
+                return default
+            try:
+                with open(path, encoding="utf-8") as f:
+                    return json.load(f)
+            except (json.JSONDecodeError, OSError):
+                return default
+
+        def safe_write_json(
+            file_path: Path | str,
+            data: Any,
+            indent: int = 2,
+            create_parents: bool = True,
+        ) -> bool:
+            """Fallback safe JSON writer."""
+            path = Path(file_path)
+            try:
+                if create_parents:
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                with open(path, "w", encoding="utf-8") as f:
+                    json.dump(data, f, indent=indent, ensure_ascii=False)
+                return True
+            except (TypeError, OSError):
+                return False
+
 
 # Setup logging
 logger = logging.getLogger(__name__)
@@ -70,24 +112,15 @@ class StateManager:
 
     def _load_protected_states(self) -> None:
         """Load list of protected states from file"""
-        try:
-            protected_file = self.base_directory / "protected_states.json"
-            if protected_file.exists():
-                with open(protected_file) as f:
-                    protected_list = json.load(f)
-                    self.protected_states = set(protected_list)
-        except Exception as e:
-            logger.warning("Could not load protected states: %s", e)
-            self.protected_states = set()
+        protected_file = self.base_directory / "protected_states.json"
+        protected_list = safe_read_json(protected_file, default=[])
+        self.protected_states = set(protected_list) if protected_list else set()
 
     def _save_protected_states(self) -> None:
         """Save list of protected states to file"""
-        try:
-            protected_file = self.base_directory / "protected_states.json"
-            with open(protected_file, "w") as f:
-                json.dump(list(self.protected_states), f, indent=2)
-        except Exception as e:
-            logger.exception("Could not save protected states: %s", e)
+        protected_file = self.base_directory / "protected_states.json"
+        if not safe_write_json(protected_file, list(self.protected_states)):
+            logger.warning("Could not save protected states")
 
     def save_state(
         self,

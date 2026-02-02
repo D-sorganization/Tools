@@ -10,6 +10,7 @@ This script aggregates all A-O assessment results and creates:
 import argparse
 import logging
 import re
+import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -20,7 +21,11 @@ from utils.path_helpers import ensure_utils_in_path
 ensure_utils_in_path()
 
 # Import from centralized utilities
-from utils.file_utils import safe_read_text, safe_write_json, safe_write_text
+from utils.file_utils import (  # noqa: E402
+    safe_read_text,
+    safe_write_json,
+    safe_write_text,
+)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")

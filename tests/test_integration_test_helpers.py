@@ -3,15 +3,12 @@
 import asyncio
 import json
 import os
-import sys
 from pathlib import Path
 from typing import Any
 
 import pytest
 
-# Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "python" / "src"))
-
+# Path setup handled by conftest.py
 from utils.integration_test_helpers import (
     APITestBase,
     IntegrationTestBase,
