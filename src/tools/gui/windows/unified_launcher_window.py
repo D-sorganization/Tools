@@ -94,8 +94,7 @@ class UnifiedLauncher(QMainWindow):
         log_area.setReadOnly(True)
         log_area.setMaximumHeight(150)
         log_area.setPlaceholderText("Activity log will appear here...")
-        log_area.setStyleSheet(
-            """
+        log_area.setStyleSheet("""
             QTextEdit {
                 background-color: #f5f5f5;
                 border: 1px solid #ddd;
@@ -104,15 +103,13 @@ class UnifiedLauncher(QMainWindow):
                 font-size: 10pt;
                 padding: 5px;
             }
-        """
-        )
+        """)
         return log_area
 
     def _create_tool_tabs(self) -> QTabWidget:
         """Create the tabbed interface for tool categories."""
         tabs = QTabWidget()
-        tabs.setStyleSheet(
-            """
+        tabs.setStyleSheet("""
             QTabWidget::pane {
                 border: 1px solid #ddd;
                 background: white;
@@ -130,8 +127,7 @@ class UnifiedLauncher(QMainWindow):
                 border-bottom: 2px solid #2196F3;
                 font-weight: bold;
             }
-        """
-        )
+        """)
 
         from tools.config_loader import CATEGORY_ORDER, load_tools_config
 
