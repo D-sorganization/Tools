@@ -3,6 +3,7 @@
 import logging
 import time
 from pathlib import Path
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -270,9 +271,9 @@ class TestStackInspection:
         """Test getting call stack."""
 
         def inner() -> list[StackFrame]:
-            return get_call_stack(skip_frames=1, max_frames=5)
+            return list(get_call_stack(skip_frames=1, max_frames=5))
 
-        def outer() -> list[StackFrame]:
+        def outer() -> Any:
             return inner()
 
         frames = outer()
@@ -283,19 +284,22 @@ class TestStackInspection:
         """Test getting call stack with local variables."""
         local_var = 42  # noqa: F841
 
-        frames = get_call_stack(skip_frames=1, max_frames=3, include_locals=True)
+        frames: list[StackFrame] = get_call_stack(skip_frames=1, max_frames=3, include_locals=True)
         assert len(frames) >= 1
 
     def test_get_caller_info(self) -> None:
         """Test getting caller information."""
 
         def inner() -> tuple[str, str, int]:
-            return get_caller_info(skip_frames=1)
+            # Explicit cast to tuple to satisfy MyPy
+            val = get_caller_info(skip_frames=1)
+            return (val[0], val[1], val[2])
 
-        def outer() -> tuple[str, str, int]:
+        def outer() -> Any:
             return inner()
 
-        filename, func, lineno = outer()
+        result = outer()
+        filename, func, lineno = result
         assert func == "outer"
         assert lineno > 0
 

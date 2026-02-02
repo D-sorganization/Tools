@@ -28,7 +28,7 @@ try:  # Optional dependency during headless testing
 
     TEXTURE_BACKEND_AVAILABLE = True
 except Exception:  # pragma: no cover - OpenGL unavailable in tests
-    pygame = None  # type: ignore[assignment]
+    pygame = None
     TEXTURE_BACKEND_AVAILABLE = False
 
 
