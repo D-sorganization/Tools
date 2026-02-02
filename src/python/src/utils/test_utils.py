@@ -870,7 +870,7 @@ def fixture_factory(
 
     def decorator(func: Callable[..., T]) -> Any:
         # Note: pytest.fixture returns a FixtureFunctionMarker, not just the callable
-        return pytest.fixture(scope=scope, autouse=autouse)(func)
+        return pytest.fixture(scope=scope, autouse=autouse)(func)  # type: ignore[call-overload]
 
     return decorator
 
