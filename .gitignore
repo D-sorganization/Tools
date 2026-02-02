@@ -89,3 +89,4 @@ runs.json
 *.env
 !*.env.example
 document_processing/pdf_renamer/.env
+*.msg

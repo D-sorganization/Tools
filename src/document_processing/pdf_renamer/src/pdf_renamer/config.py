@@ -319,7 +319,7 @@ def get_user_preferences() -> dict[str, Any]:
     for key, value in default_prefs.items():
         if key not in prefs:
             prefs[key] = value
-    return prefs
+    return dict(prefs)
 
 
 def save_user_preferences(preferences: dict[str, Any]) -> None:

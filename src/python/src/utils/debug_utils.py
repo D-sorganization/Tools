@@ -326,15 +326,15 @@ def get_memory_usage() -> float:
         usage = resource.getrusage(resource.RUSAGE_SELF)
         # maxrss is in KB on Linux, bytes on macOS
         if sys.platform == "darwin":
-            return usage.ru_maxrss / (1024 * 1024)
-        return usage.ru_maxrss / 1024
+            return float(usage.ru_maxrss / (1024 * 1024))
+        return float(usage.ru_maxrss / 1024)
     except ImportError:
         # Windows fallback
         try:
             import psutil
 
             process = psutil.Process()
-            return process.memory_info().rss / (1024 * 1024)
+            return float(process.memory_info().rss / (1024 * 1024))
         except ImportError:
             return 0.0
 

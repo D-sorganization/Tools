@@ -8,6 +8,14 @@ from typing import Any
 
 import pytest
 
+# Check if pytest-asyncio is available
+try:
+    import pytest_asyncio  # noqa: F401
+
+    HAS_PYTEST_ASYNCIO = True
+except ImportError:
+    HAS_PYTEST_ASYNCIO = False
+
 # Path setup handled by conftest.py
 from utils.integration_test_helpers import (
     APITestBase,
@@ -268,6 +276,7 @@ class TestAsyncUtilities:
             result = loop.run_until_complete(coro())
             assert result == 42
 
+    @pytest.mark.skipif(not HAS_PYTEST_ASYNCIO, reason="pytest-asyncio not installed")
     @pytest.mark.asyncio
     async def test_wait_for_condition_success(self) -> None:
         """Test wait_for_condition succeeds."""
@@ -282,6 +291,7 @@ class TestAsyncUtilities:
         assert result is True
         assert counter >= 3
 
+    @pytest.mark.skipif(not HAS_PYTEST_ASYNCIO, reason="pytest-asyncio not installed")
     @pytest.mark.asyncio
     async def test_wait_for_condition_timeout(self) -> None:
         """Test wait_for_condition times out."""

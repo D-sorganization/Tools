@@ -793,7 +793,7 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
         # Hip width
         betas[6] = np.clip(params.hip_width_factor - 1.0, -0.5, 0.5) * 2
 
-        return betas.tolist()
+        return list(betas.tolist())
 
     def _segment_smplx_mesh(
         self,

@@ -723,7 +723,7 @@ class DataFileLoader:
         file_path = self.data_dir / filename
         if not file_path.exists():
             raise FileNotFoundError(f"Test data file not found: {file_path}")
-        return json.loads(file_path.read_text())
+        return dict(json.loads(file_path.read_text()))
 
     def load_text(self, filename: str) -> str:
         """Load text test data.

@@ -33,7 +33,7 @@ def safe_join_path(base: Path | str, *parts: str) -> Path:
     """
     from utils.path_helpers import safe_join_path as _safe_join_path
 
-    return _safe_join_path(base, *parts)
+    return Path(_safe_join_path(base, *parts))
 
 
 def get_current_dir() -> Path:

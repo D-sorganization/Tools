@@ -694,7 +694,7 @@ def skip_if_no_module(module_name: str, reason: str | None = None) -> Callable[[
             return func
         except ImportError:
             skip_reason = reason or f"Module '{module_name}' not available"
-            return pytest.mark.skip(reason=skip_reason)(func)  # type: ignore[return-value]
+            return pytest.mark.skip(reason=skip_reason)(func)  # type: ignore
 
     return decorator
 
@@ -753,7 +753,7 @@ def parametrize_with_edge_cases(
     all_values = base_values + generate_edge_case_data(data_type)
 
     def decorator(func: F) -> F:
-        return pytest.mark.parametrize(param_name, all_values)(func)  # type: ignore[return-value]
+        return pytest.mark.parametrize(param_name, all_values)(func)  # type: ignore
 
     return decorator
 
@@ -856,7 +856,7 @@ class IntegrationTestCase(BaseTestCase):
 def fixture_factory(
     scope: str = "function",
     autouse: bool = False,
-) -> Callable[[Callable[..., T]], Callable[..., T]]:
+) -> Callable[[Callable[..., T]], Any]:
     """Factory for creating pytest fixtures with common configuration.
 
     Args:
@@ -868,8 +868,9 @@ def fixture_factory(
     """
     import pytest
 
-    def decorator(func: Callable[..., T]) -> Callable[..., T]:
-        return pytest.fixture(scope=scope, autouse=autouse)(func)
+    def decorator(func: Callable[..., T]) -> Any:
+        # Note: pytest.fixture returns a FixtureFunctionMarker, not just the callable
+        return pytest.fixture(scope=scope, autouse=autouse)(func)  # type: ignore[call-overload]
 
     return decorator
 
