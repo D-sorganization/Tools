@@ -16,9 +16,12 @@ A comprehensive project packaging application with advanced features:
 
 import base64
 import gzip
+import json
 import logging
 import os
 import re
+import subprocess
+import sys
 import threading
 import tkinter as tk
 from collections import defaultdict
@@ -1802,9 +1805,11 @@ class FolderPackerPro:
             if sys.platform == "win32":
                 os.startfile(log_filename)
             elif sys.platform == "darwin":
-                os.system(f"open {log_filename}")
+                # Use subprocess with list args to prevent command injection
+                subprocess.run(["open", str(log_filename)], check=False)
             else:
-                os.system(f"xdg-open {log_filename}")
+                # Use subprocess with list args to prevent command injection
+                subprocess.run(["xdg-open", str(log_filename)], check=False)
         except (OSError, FileNotFoundError, AttributeError) as e:
             messagebox.showerror("Error", f"Could not open log file:\n{e}")
 
