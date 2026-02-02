@@ -1,13 +1,7 @@
+"""Extended tests for calculator web application."""
 from __future__ import annotations
 
-import os
-import sys
-from pathlib import Path
 from typing import Any
-
-# Add the parent directory to sys.path to import webapp
-sys.path.append(os.path.abspath(Path(Path(__file__).parent, "../../..")))
-
 
 from web_applications.calculator.webapp import create_app
 

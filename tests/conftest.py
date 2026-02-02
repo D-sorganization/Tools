@@ -7,7 +7,6 @@ all test suites in the repository.
 
 import logging
 import os
-import sys
 import tempfile
 from collections.abc import Generator
 from pathlib import Path
@@ -17,18 +16,15 @@ from unittest.mock import MagicMock
 import pytest
 
 # =============================================================================
-# Path Setup
+# Path Constants
 # =============================================================================
+# Note: Python path is now configured via pytest.ini pythonpath setting.
+# These constants are kept for use in fixtures that need path references.
 
-# Ensure repository root and src directories are in path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SRC_DIR = REPO_ROOT / "src"
 PYTHON_SRC_DIR = SRC_DIR / "python" / "src"
 TOOLS_DIR = SRC_DIR / "tools"
-
-for path in [SRC_DIR, PYTHON_SRC_DIR, TOOLS_DIR]:
-    if path.exists() and str(path) not in sys.path:
-        sys.path.insert(0, str(path))
 
 
 # =============================================================================

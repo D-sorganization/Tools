@@ -16,21 +16,12 @@ Run with: python performance_benchmark.py
 from __future__ import annotations
 
 import shutil
-import sys
 import time
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 import pandas as pd
-
-# Use shared path utilities
-from utils.path_helpers import ensure_utils_in_path
-
-ensure_utils_in_path()
-
-# Add parent directory to path so we can import data_processor package
-sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from data_processor.core.data_loader import DataLoader
 from data_processor.core.signal_processor import SignalProcessor

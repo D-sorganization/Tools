@@ -25,12 +25,9 @@ from collections.abc import Generator
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-# Add folder_tool directory to path
-sys.path.append(str(Path(__file__).parent.parent / "folder_tool"))
-
 # Skip entire module if Folders_Tool_r0 is not available
 try:
-    from Folders_Tool_r0 import FolderProcessorApp
+    from tools.folder_tools.folder_tool.Folders_Tool_r0 import FolderProcessorApp
 except ImportError:
     pytest.skip("Folders_Tool_r0 module not available", allow_module_level=True)
 

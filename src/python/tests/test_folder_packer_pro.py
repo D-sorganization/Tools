@@ -25,12 +25,9 @@ from collections.abc import Callable, Generator
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-# Add python directory to path
-sys.path.append(str(Path(__file__).parent.parent))
-
 # Skip entire module if folder_packer_pro is not available
 try:
-    from folder_packer_pro.folder_packer_pro import (
+    from tools.folder_tools.folder_packer_pro.folder_packer_pro import (
         EncryptionManager,
         FolderPackerPro,
         PackageManifest,

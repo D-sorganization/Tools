@@ -2,16 +2,11 @@
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import pandas as pd
 import pytest
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from core.signal_processor import SignalProcessor  # noqa: E402, PGH003
-from models import FilterConfig  # noqa: E402, PGH003
+from data_processor.core.signal_processor import SignalProcessor
+from data_processor.models import FilterConfig
 
 
 def test_signal_processor_applies_moving_average() -> None:

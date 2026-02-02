@@ -1,15 +1,12 @@
 """Tests for package_for_distribution.py module."""
 
-import sys
 import zipfile
 from pathlib import Path
 from unittest.mock import patch
 
 import pytest
 
-# Import the module to test
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from package_for_distribution import (
+from tools.folder_tools.project_packer.package_for_distribution import (
     copy_required_files,
     create_deployment_package,
     create_zip_archive,

@@ -1,14 +1,10 @@
 """Tests for folder_packer_gui.py module."""
 
-import sys
-from pathlib import Path
 from unittest.mock import Mock, patch
 
 import pytest
 
-# Import the module to test
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from folder_packer_gui import (
+from tools.folder_tools.project_packer.folder_packer_gui import (
     EXCLUDE_PATTERNS,
     INCLUDE_EXTENSIONS,
     FolderPackerGUI,

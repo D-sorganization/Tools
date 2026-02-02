@@ -1,13 +1,7 @@
-import os
-import sys
+"""Basic tests for solar system model."""
 import unittest
-from pathlib import Path
 
 import numpy as np
-
-# Add project root to path
-sys.path.insert(0, os.path.abspath(Path(Path(__file__).parent, "..")))
-
 
 from solar_system.core.celestial_body import BodyType, CelestialBody, OrbitalElements
 from solar_system.physics.orbital_mechanics import OrbitalMechanics
