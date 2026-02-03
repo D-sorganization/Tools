@@ -298,7 +298,9 @@ class ModelLibrary:
         return self._entries.get(model_id)
 
     @precondition(lambda model_id: model_id is not None, "Model ID cannot be None")
-    @precondition(lambda model_id: len(model_id.strip()) > 0, "Model ID cannot be empty")
+    @precondition(
+        lambda model_id: len(model_id.strip()) > 0, "Model ID cannot be empty"
+    )
     def load_model(
         self,
         model_id: str,
@@ -623,7 +625,9 @@ class ModelLibrary:
             return False
 
     @precondition(lambda model_id: model_id is not None, "Model ID cannot be None")
-    @precondition(lambda model_id: len(model_id.strip()) > 0, "Model ID cannot be empty")
+    @precondition(
+        lambda model_id: len(model_id.strip()) > 0, "Model ID cannot be empty"
+    )
     def create_editable_copy(
         self,
         model_id: str,

@@ -256,7 +256,9 @@ class Validator:
 
     @classmethod
     @precondition(lambda joint: joint is not None, "Joint cannot be None")
-    @precondition(lambda link_names: link_names is not None, "Link names cannot be None")
+    @precondition(
+        lambda link_names: link_names is not None, "Link names cannot be None"
+    )
     @postcondition(lambda result: result is not None, "Must return ValidationResult")
     def validate_joint(cls, joint: Joint, link_names: set[str]) -> ValidationResult:
         """
