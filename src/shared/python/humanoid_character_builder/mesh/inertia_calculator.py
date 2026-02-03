@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import numpy as np
+from humanoid_character_builder.contracts import precondition
 from numpy.typing import NDArray
 
 if TYPE_CHECKING:
@@ -434,6 +435,7 @@ class MeshInertiaCalculator:
         mesh = trimesh.Trimesh(vertices=vertices, faces=faces)
         return self.compute_from_trimesh(mesh, mass=mass, density=density)
 
+    @precondition(lambda inertia: inertia is not None, "Inertia cannot be None")
     def transform_inertia(
         self,
         inertia: InertiaResult,
@@ -455,45 +457,67 @@ class MeshInertiaCalculator:
         mass = inertia.mass
         com = np.array(inertia.center_of_mass)
 
-        # Apply rotation: I_new = R @ I_old @ R.T
+        I_rotated, com = self._apply_rotation(I_original, com, rotation)
+        I_final, new_com = self._apply_translation(I_rotated, com, mass, translation)
+
+        return self._create_transformed_result(I_final, new_com, inertia)
+
+    def _apply_rotation(
+        self,
+        inertia_matrix: NDArray[np.float64],
+        com: NDArray[np.float64],
+        rotation: NDArray[np.float64] | None,
+    ) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
+        """Apply rotation transformation to inertia matrix and COM."""
         if rotation is not None:
             R = np.asarray(rotation)
-            I_rotated = R @ I_original @ R.T
-            com = R @ com
-        else:
-            I_rotated = I_original
+            return R @ inertia_matrix @ R.T, R @ com
+        return inertia_matrix, com
 
-        # Apply parallel axis theorem for translation
+    def _apply_translation(
+        self,
+        inertia_matrix: NDArray[np.float64],
+        com: NDArray[np.float64],
+        mass: float,
+        translation: NDArray[np.float64] | None,
+    ) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
+        """Apply parallel axis theorem for translation."""
         if translation is not None:
             d = np.asarray(translation)
-            # New COM position
             new_com = com - d
-
-            # Parallel axis: I_new = I_com + m * (d.d*I - d*d^T)
-            # where d is vector from new origin to COM
             d_sq = np.dot(new_com, new_com)
-            I_translated = I_rotated + mass * (
+            I_translated = inertia_matrix + mass * (
                 d_sq * np.eye(3) - np.outer(new_com, new_com)
             )
-        else:
-            I_translated = I_rotated
-            new_com = com
+            return I_translated, new_com
+        return inertia_matrix, com
 
+    def _create_transformed_result(
+        self,
+        inertia_matrix: NDArray[np.float64],
+        com: NDArray[np.float64],
+        original: InertiaResult,
+    ) -> InertiaResult:
+        """Create InertiaResult from transformed matrix."""
         return InertiaResult(
-            ixx=float(I_translated[0, 0]),
-            iyy=float(I_translated[1, 1]),
-            izz=float(I_translated[2, 2]),
-            ixy=float(I_translated[0, 1]),
-            ixz=float(I_translated[0, 2]),
-            iyz=float(I_translated[1, 2]),
-            center_of_mass=(float(new_com[0]), float(new_com[1]), float(new_com[2])),
-            volume=inertia.volume,
-            mass=mass,
-            was_watertight=inertia.was_watertight,
-            mode=inertia.mode,
+            ixx=float(inertia_matrix[0, 0]),
+            iyy=float(inertia_matrix[1, 1]),
+            izz=float(inertia_matrix[2, 2]),
+            ixy=float(inertia_matrix[0, 1]),
+            ixz=float(inertia_matrix[0, 2]),
+            iyz=float(inertia_matrix[1, 2]),
+            center_of_mass=(float(com[0]), float(com[1]), float(com[2])),
+            volume=original.volume,
+            mass=original.mass,
+            was_watertight=original.was_watertight,
+            mode=original.mode,
         )
 
     @staticmethod
+    @precondition(lambda ixx: ixx > 0, "ixx must be positive")
+    @precondition(lambda iyy: iyy > 0, "iyy must be positive")
+    @precondition(lambda izz: izz > 0, "izz must be positive")
+    @precondition(lambda mass: mass > 0, "Mass must be positive")
     def create_manual_inertia(
         ixx: float,
         iyy: float,

@@ -17,7 +17,7 @@ from model_generation.core.constants import (
     MIN_INERTIA_KG_M2,
     MIN_MASS_KG,
 )
-from model_generation.core.contracts import precondition
+from model_generation.core.contracts import postcondition, precondition
 
 if TYPE_CHECKING:
     from model_generation.core.types import Inertia, Joint, Link
@@ -128,6 +128,11 @@ class Validator:
     JOINT_MISSING_CHILD = "JOINT_004"
 
     @classmethod
+    @postcondition(lambda result: result is not None, "Must return ValidationResult")
+    @postcondition(
+        lambda result: isinstance(result, ValidationResult),
+        "Result must be ValidationResult type",
+    )
     def validate_mass(
         cls, mass: float, component: str | None = None
     ) -> ValidationResult:
@@ -159,6 +164,8 @@ class Validator:
         return result
 
     @classmethod
+    @precondition(lambda inertia: inertia is not None, "Inertia cannot be None")
+    @postcondition(lambda result: result is not None, "Must return ValidationResult")
     def validate_inertia(
         cls, inertia: Inertia, component: str | None = None, strict: bool = True
     ) -> ValidationResult:
@@ -222,6 +229,8 @@ class Validator:
         return result
 
     @classmethod
+    @precondition(lambda link: link is not None, "Link cannot be None")
+    @postcondition(lambda result: result is not None, "Must return ValidationResult")
     def validate_link(cls, link: Link, strict: bool = True) -> ValidationResult:
         """
         Validate a link definition.
@@ -246,6 +255,9 @@ class Validator:
         return result
 
     @classmethod
+    @precondition(lambda joint: joint is not None, "Joint cannot be None")
+    @precondition(lambda link_names: link_names is not None, "Link names cannot be None")
+    @postcondition(lambda result: result is not None, "Must return ValidationResult")
     def validate_joint(cls, joint: Joint, link_names: set[str]) -> ValidationResult:
         """
         Validate a joint definition.
@@ -314,6 +326,7 @@ class Validator:
     @classmethod
     @precondition(lambda links: links is not None, "Links list cannot be None")
     @precondition(lambda joints: joints is not None, "Joints list cannot be None")
+    @postcondition(lambda result: result is not None, "Must return ValidationResult")
     def validate_hierarchy(
         cls, links: list[Link], joints: list[Joint]
     ) -> ValidationResult:
@@ -423,6 +436,9 @@ class Validator:
         return False
 
     @classmethod
+    @precondition(lambda links: links is not None, "Links list cannot be None")
+    @precondition(lambda joints: joints is not None, "Joints list cannot be None")
+    @postcondition(lambda result: result is not None, "Must return ValidationResult")
     def validate_model(
         cls,
         links: list[Link],
