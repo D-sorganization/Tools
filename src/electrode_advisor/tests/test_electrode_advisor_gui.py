@@ -105,9 +105,7 @@ class TestElectrodeAdvisorGUI:
             )
 
             # Mock the Qt widgets to avoid display issues
-            with patch.object(
-                ElectrodeAdvisorWidget, "_init_ui", return_value=None
-            ):
+            with patch.object(ElectrodeAdvisorWidget, "_init_ui", return_value=None):
                 with patch.object(
                     ElectrodeAdvisorWidget, "_apply_styling", return_value=None
                 ):
@@ -124,9 +122,7 @@ class TestElectrodeAdvisorGUI:
         # Import the launcher module
         sys.path.insert(
             0,
-            str(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            ),
+            str(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
         )
 
         from launch_pyqt6 import check_dependencies

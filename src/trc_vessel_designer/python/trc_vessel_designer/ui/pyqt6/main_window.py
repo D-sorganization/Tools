@@ -247,7 +247,9 @@ class TRCVesselDesignerWidget(QWidget):
         ref_layout = QFormLayout(ref_group)
 
         self.preset_combo = QComboBox()
-        self.preset_combo.addItems(["Standard (3-layer)", "High Temperature (4-layer)", "Economy (2-layer)"])
+        self.preset_combo.addItems(
+            ["Standard (3-layer)", "High Temperature (4-layer)", "Economy (2-layer)"]
+        )
         self.preset_combo.currentIndexChanged.connect(self._on_preset_changed)
         ref_layout.addRow("Preset:", self.preset_combo)
 
@@ -314,7 +316,9 @@ class TRCVesselDesignerWidget(QWidget):
         vol_layout = QGridLayout(vol_group)
 
         self.net_volume_label = QLabel("-- ft3")
-        self.net_volume_label.setStyleSheet("font-size: 16px; font-weight: bold; color: #2563eb;")
+        self.net_volume_label.setStyleSheet(
+            "font-size: 16px; font-weight: bold; color: #2563eb;"
+        )
         vol_layout.addWidget(QLabel("Net Internal Volume:"), 0, 0)
         vol_layout.addWidget(self.net_volume_label, 0, 1)
 
@@ -348,7 +352,9 @@ class TRCVesselDesignerWidget(QWidget):
         res_layout = QGridLayout(res_group)
 
         self.residence_time_label = QLabel("-- s")
-        self.residence_time_label.setStyleSheet("font-size: 18px; font-weight: bold; color: #16a34a;")
+        self.residence_time_label.setStyleSheet(
+            "font-size: 18px; font-weight: bold; color: #16a34a;"
+        )
         res_layout.addWidget(QLabel("Residence Time:"), 0, 0)
         res_layout.addWidget(self.residence_time_label, 0, 1)
 
@@ -380,8 +386,7 @@ class TRCVesselDesignerWidget(QWidget):
         palette.setColor(QPalette.ColorRole.Window, QColor(240, 248, 255))
         self.setPalette(palette)
 
-        self.results_tabs.setStyleSheet(
-            """
+        self.results_tabs.setStyleSheet("""
             QTabWidget::pane {
                 border: 1px solid #cccccc;
                 background: white;
@@ -396,8 +401,7 @@ class TRCVesselDesignerWidget(QWidget):
             QTabBar::tab:selected {
                 background: white;
             }
-            """
-        )
+            """)
 
     def _on_input_changed(self) -> None:
         """Handle input parameter changes."""
@@ -428,7 +432,9 @@ class TRCVesselDesignerWidget(QWidget):
                 cone_height=self.cone_height_input.value(),
                 cone_bottom_diameter=self.cone_bottom_input.value(),
                 cone_interior_hole=4.0,
-                top_refractory_thickness=self.layers[0].thickness if self.layers else 6.0,
+                top_refractory_thickness=(
+                    self.layers[0].thickness if self.layers else 6.0
+                ),
             )
 
             # Calculate geometry using shared engine
@@ -455,12 +461,16 @@ class TRCVesselDesignerWidget(QWidget):
         self.net_volume_label.setText(f"{self.results.interior_volume_ft3:.2f} ft3")
         self.gross_volume_label.setText(f"{self.results.total_volume_ft3:.2f} ft3")
 
-        refractory_vol = self.results.total_volume_ft3 - self.results.interior_volume_ft3
+        refractory_vol = (
+            self.results.total_volume_ft3 - self.results.interior_volume_ft3
+        )
         self.refractory_volume_label.setText(f"{refractory_vol:.2f} ft3")
 
         # Mass results
         self.total_mass_label.setText(f"{self.results.total_mass_lb:.1f} lb")
-        self.surface_area_label.setText(f"{self.results.outside_surface_area_ft2:.1f} ft2")
+        self.surface_area_label.setText(
+            f"{self.results.outside_surface_area_ft2:.1f} ft2"
+        )
 
         # Void dimensions
         self.void_diameter_label.setText(f"{self.results.void_diameter_inches:.1f} in")

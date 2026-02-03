@@ -133,16 +133,16 @@ class TestTRCVesselDesignerGUI:
                 TRCVesselDesignerWidget,
             )
 
-            with patch.object(
-                TRCVesselDesignerWidget, "_init_ui", return_value=None
-            ):
+            with patch.object(TRCVesselDesignerWidget, "_init_ui", return_value=None):
                 with patch.object(
                     TRCVesselDesignerWidget, "_apply_styling", return_value=None
                 ):
                     with patch.object(
                         TRCVesselDesignerWidget, "calculate_geometry", return_value=None
                     ):
-                        widget = TRCVesselDesignerWidget.__new__(TRCVesselDesignerWidget)
+                        widget = TRCVesselDesignerWidget.__new__(
+                            TRCVesselDesignerWidget
+                        )
                         assert widget is not None
         except ImportError as e:
             pytest.skip(f"Qt not available: {e}")
@@ -151,9 +151,7 @@ class TestTRCVesselDesignerGUI:
         """Test that the launcher can check dependencies."""
         sys.path.insert(
             0,
-            str(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            ),
+            str(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
         )
 
         from launch_pyqt6 import check_dependencies

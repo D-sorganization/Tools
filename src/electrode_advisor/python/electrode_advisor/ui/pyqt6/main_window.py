@@ -323,12 +323,8 @@ class ElectrodeAdvisorWidget(QWidget):
         info_group = QGroupBox("Engine Information")
         info_layout = QFormLayout(info_group)
 
-        info_layout.addRow(
-            "Engine:", QLabel("ThreePhaseElectricalModelEnhanced")
-        )
-        info_layout.addRow(
-            "Source:", QLabel("Tools/shared/upstream_drift_tools")
-        )
+        info_layout.addRow("Engine:", QLabel("ThreePhaseElectricalModelEnhanced"))
+        info_layout.addRow("Source:", QLabel("Tools/shared/upstream_drift_tools"))
         info_layout.addRow("Version:", QLabel("1.0.0 (Consolidated)"))
 
         layout.addWidget(info_group)
@@ -351,8 +347,7 @@ class ElectrodeAdvisorWidget(QWidget):
         palette.setColor(QPalette.ColorRole.Window, QColor(230, 240, 255))
         self.setPalette(palette)
 
-        self.results_tabs.setStyleSheet(
-            """
+        self.results_tabs.setStyleSheet("""
             QTabWidget::pane {
                 border: 1px solid #cccccc;
                 background: white;
@@ -371,8 +366,7 @@ class ElectrodeAdvisorWidget(QWidget):
             QTabBar::tab:hover {
                 background: #e0e0e0;
             }
-        """
-        )
+        """)
 
     def _on_input_changed(self) -> None:
         """Handle input parameter changes."""
@@ -387,9 +381,7 @@ class ElectrodeAdvisorWidget(QWidget):
             # Gather inputs
             import numpy as np
 
-            depths = np.array(
-                [self.depth_inputs[i].value() for i in range(3)]
-            )
+            depths = np.array([self.depth_inputs[i].value() for i in range(3)])
             voltages = np.array(
                 [
                     self.phase_inputs[phase]["voltage"].value()
@@ -428,9 +420,9 @@ class ElectrodeAdvisorWidget(QWidget):
 
         resistances = results.get("resistances", {})
         if resistances:
-            avg_resistance = sum(
-                r.get("total", 0) for r in resistances.values()
-            ) / len(resistances)
+            avg_resistance = sum(r.get("total", 0) for r in resistances.values()) / len(
+                resistances
+            )
             self.avg_resistance_label.setText(f"{avg_resistance:.4f} Ω")
 
         # Update phase results
@@ -459,8 +451,8 @@ class ElectrodeAdvisorWidget(QWidget):
 
         # Update config display
         self.config_display.setText(
-            f"Bath: {self.bath_diameter_input.value()}\" dia, "
-            f"Tip: {self.tip_diameter_input.value()}\", "
+            f'Bath: {self.bath_diameter_input.value()}" dia, '
+            f'Tip: {self.tip_diameter_input.value()}", '
             f"Temp: {self.bath_temp_input.value()}°C"
         )
 

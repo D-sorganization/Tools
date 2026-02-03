@@ -6,6 +6,13 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from data_processor.core.data_loader import DataLoader
+from data_processor.core.signal_processor import SignalProcessor
+from data_processor.models.processing_config import (
+    DifferentiationConfig,
+    FilterConfig,
+    IntegrationConfig,
+)
 from PyQt6.QtCore import QSettings, Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QAction, QFont, QKeySequence, QShortcut
 from PyQt6.QtWidgets import (
@@ -26,14 +33,6 @@ from PyQt6.QtWidgets import (
     QTextEdit,
     QVBoxLayout,
     QWidget,
-)
-
-from data_processor.core.data_loader import DataLoader
-from data_processor.core.signal_processor import SignalProcessor
-from data_processor.models.processing_config import (
-    DifferentiationConfig,
-    FilterConfig,
-    IntegrationConfig,
 )
 
 from .widgets import (
