@@ -234,48 +234,13 @@ class URDFParser:
         if not name:
             raise ValueError("Link missing 'name' attribute")
 
-        # Parse inertial
-        inertia = Inertia(ixx=0.1, iyy=0.1, izz=0.1, mass=1.0)
-        inertial_elem = elem.find("inertial")
-        if inertial_elem is not None:
-            inertia = self._parse_inertial(inertial_elem)
-
-        # Parse visual
-        visual_geometry = None
-        visual_origin = Origin()
-        visual_material = None
-
-        visual_elem = elem.find("visual")
-        if visual_elem is not None:
-            origin_elem = visual_elem.find("origin")
-            if origin_elem is not None:
-                visual_origin = self._parse_origin(origin_elem)
-
-            geom_elem = visual_elem.find("geometry")
-            if geom_elem is not None:
-                visual_geometry = self._parse_geometry(geom_elem, base_path)
-
-            mat_elem = visual_elem.find("material")
-            if mat_elem is not None:
-                mat_name = mat_elem.get("name")
-                if mat_name and mat_name in materials:
-                    visual_material = materials[mat_name]
-                else:
-                    visual_material = self._parse_material(mat_elem)
-
-        # Parse collision
-        collision_geometry = None
-        collision_origin = Origin()
-
-        collision_elem = elem.find("collision")
-        if collision_elem is not None:
-            origin_elem = collision_elem.find("origin")
-            if origin_elem is not None:
-                collision_origin = self._parse_origin(origin_elem)
-
-            geom_elem = collision_elem.find("geometry")
-            if geom_elem is not None:
-                collision_geometry = self._parse_geometry(geom_elem, base_path)
+        inertia = self._parse_link_inertial(elem)
+        visual_geometry, visual_origin, visual_material = self._parse_link_visual(
+            elem, materials, base_path
+        )
+        collision_geometry, collision_origin = self._parse_link_collision(
+            elem, base_path
+        )
 
         return Link(
             name=name,
@@ -287,60 +252,83 @@ class URDFParser:
             collision_origin=collision_origin,
         )
 
+    def _parse_link_inertial(self, elem: ET.Element) -> Inertia:
+        """Parse the inertial element of a link."""
+        inertial_elem = elem.find("inertial")
+        if inertial_elem is not None:
+            return self._parse_inertial(inertial_elem)
+        return Inertia(ixx=0.1, iyy=0.1, izz=0.1, mass=1.0)
+
+    def _parse_link_visual(
+        self,
+        elem: ET.Element,
+        materials: dict[str, Material],
+        base_path: Path | None,
+    ) -> tuple[Geometry | None, Origin, Material | None]:
+        """Parse the visual element of a link."""
+        visual_elem = elem.find("visual")
+        if visual_elem is None:
+            return None, Origin(), None
+
+        visual_origin = Origin()
+        origin_elem = visual_elem.find("origin")
+        if origin_elem is not None:
+            visual_origin = self._parse_origin(origin_elem)
+
+        visual_geometry = None
+        geom_elem = visual_elem.find("geometry")
+        if geom_elem is not None:
+            visual_geometry = self._parse_geometry(geom_elem, base_path)
+
+        visual_material = self._parse_visual_material(visual_elem, materials)
+
+        return visual_geometry, visual_origin, visual_material
+
+    def _parse_visual_material(
+        self, visual_elem: ET.Element, materials: dict[str, Material]
+    ) -> Material | None:
+        """Parse material from visual element."""
+        mat_elem = visual_elem.find("material")
+        if mat_elem is None:
+            return None
+
+        mat_name = mat_elem.get("name")
+        if mat_name and mat_name in materials:
+            return materials[mat_name]
+        return self._parse_material(mat_elem)
+
+    def _parse_link_collision(
+        self, elem: ET.Element, base_path: Path | None
+    ) -> tuple[Geometry | None, Origin]:
+        """Parse the collision element of a link."""
+        collision_elem = elem.find("collision")
+        if collision_elem is None:
+            return None, Origin()
+
+        collision_origin = Origin()
+        origin_elem = collision_elem.find("origin")
+        if origin_elem is not None:
+            collision_origin = self._parse_origin(origin_elem)
+
+        collision_geometry = None
+        geom_elem = collision_elem.find("geometry")
+        if geom_elem is not None:
+            collision_geometry = self._parse_geometry(geom_elem, base_path)
+
+        return collision_geometry, collision_origin
+
     def _parse_joint(self, elem: ET.Element) -> Joint:
         """Parse a joint element."""
         name = elem.get("name")
         if not name:
             raise ValueError("Joint missing 'name' attribute")
 
-        joint_type_str = elem.get("type", "fixed")
-        try:
-            joint_type = JointType(joint_type_str)
-        except ValueError:
-            logger.warning(f"Unknown joint type '{joint_type_str}', using fixed")
-            joint_type = JointType.FIXED
-
-        # Parent and child
-        parent_elem = elem.find("parent")
-        child_elem = elem.find("child")
-        if parent_elem is None or child_elem is None:
-            raise ValueError(f"Joint '{name}' missing parent or child")
-
-        parent = parent_elem.get("link", "")
-        child = child_elem.get("link", "")
-
-        # Origin
-        origin = Origin()
-        origin_elem = elem.find("origin")
-        if origin_elem is not None:
-            origin = self._parse_origin(origin_elem)
-
-        # Axis
-        axis = (0.0, 0.0, 1.0)
-        axis_elem = elem.find("axis")
-        if axis_elem is not None:
-            xyz_str = axis_elem.get("xyz", "0 0 1")
-            axis = tuple(float(v) for v in xyz_str.split())
-
-        # Limits
-        limits = None
-        limit_elem = elem.find("limit")
-        if limit_elem is not None:
-            limits = JointLimits(
-                lower=float(limit_elem.get("lower", -math.pi)),
-                upper=float(limit_elem.get("upper", math.pi)),
-                effort=float(limit_elem.get("effort", 1000)),
-                velocity=float(limit_elem.get("velocity", 10)),
-            )
-
-        # Dynamics
-        dynamics = JointDynamics()
-        dynamics_elem = elem.find("dynamics")
-        if dynamics_elem is not None:
-            dynamics = JointDynamics(
-                damping=float(dynamics_elem.get("damping", 0.5)),
-                friction=float(dynamics_elem.get("friction", 0.0)),
-            )
+        joint_type = self._parse_joint_type(elem)
+        parent, child = self._parse_joint_parent_child(elem, name)
+        origin = self._parse_joint_origin(elem)
+        axis = self._parse_joint_axis(elem)
+        limits = self._parse_joint_limits(elem)
+        dynamics = self._parse_joint_dynamics(elem)
 
         return Joint(
             name=name,
@@ -352,6 +340,64 @@ class URDFParser:
             limits=limits,
             dynamics=dynamics,
         )
+
+    def _parse_joint_type(self, elem: ET.Element) -> JointType:
+        """Parse joint type from element."""
+        joint_type_str = elem.get("type", "fixed")
+        try:
+            return JointType(joint_type_str)
+        except ValueError:
+            logger.warning(f"Unknown joint type '{joint_type_str}', using fixed")
+            return JointType.FIXED
+
+    def _parse_joint_parent_child(
+        self, elem: ET.Element, joint_name: str
+    ) -> tuple[str, str]:
+        """Parse parent and child link names from joint element."""
+        parent_elem = elem.find("parent")
+        child_elem = elem.find("child")
+
+        if parent_elem is None or child_elem is None:
+            raise ValueError(f"Joint '{joint_name}' missing parent or child")
+
+        return parent_elem.get("link", ""), child_elem.get("link", "")
+
+    def _parse_joint_origin(self, elem: ET.Element) -> Origin:
+        """Parse origin from joint element."""
+        origin_elem = elem.find("origin")
+        if origin_elem is not None:
+            return self._parse_origin(origin_elem)
+        return Origin()
+
+    def _parse_joint_axis(self, elem: ET.Element) -> tuple[float, ...]:
+        """Parse axis from joint element."""
+        axis_elem = elem.find("axis")
+        if axis_elem is not None:
+            xyz_str = axis_elem.get("xyz", "0 0 1")
+            return tuple(float(v) for v in xyz_str.split())
+        return (0.0, 0.0, 1.0)
+
+    def _parse_joint_limits(self, elem: ET.Element) -> JointLimits | None:
+        """Parse limits from joint element."""
+        limit_elem = elem.find("limit")
+        if limit_elem is not None:
+            return JointLimits(
+                lower=float(limit_elem.get("lower", -math.pi)),
+                upper=float(limit_elem.get("upper", math.pi)),
+                effort=float(limit_elem.get("effort", 1000)),
+                velocity=float(limit_elem.get("velocity", 10)),
+            )
+        return None
+
+    def _parse_joint_dynamics(self, elem: ET.Element) -> JointDynamics:
+        """Parse dynamics from joint element."""
+        dynamics_elem = elem.find("dynamics")
+        if dynamics_elem is not None:
+            return JointDynamics(
+                damping=float(dynamics_elem.get("damping", 0.5)),
+                friction=float(dynamics_elem.get("friction", 0.0)),
+            )
+        return JointDynamics()
 
     def _parse_inertial(self, elem: ET.Element) -> Inertia:
         """Parse inertial element."""

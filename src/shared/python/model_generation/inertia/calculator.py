@@ -15,6 +15,7 @@ from typing import Any
 
 import numpy as np
 from model_generation.core.constants import DEFAULT_DENSITY_KG_M3, DEFAULT_INERTIA_KG_M2
+from model_generation.core.contracts import precondition
 from model_generation.core.types import Geometry, GeometryType, Inertia
 from model_generation.inertia.primitives import (
     box_inertia,
@@ -112,6 +113,7 @@ class InertiaResult:
         """Check if inertia values are physically valid."""
         return self.to_inertia().is_positive_definite()
 
+    @precondition(lambda new_mass: new_mass > 0, "New mass must be positive")
     def scale_to_mass(self, new_mass: float) -> InertiaResult:
         """Return new result scaled to different mass."""
         if self.mass <= 0:
@@ -395,33 +397,46 @@ class InertiaCalculator:
         mode: InertiaMode,
     ) -> InertiaResult:
         """Compute from mesh file using trimesh."""
-        if isinstance(source, Geometry) and source.mesh_filename:
-            mesh_path = Path(source.mesh_filename)
-        elif isinstance(source, (str, Path)):
-            mesh_path = Path(source)
-        else:
-            raise ValueError(f"Mesh mode requires path, got {type(source)}")
-
-        # Check cache
+        mesh_path = self._resolve_mesh_path(source)
         cache_key = f"{mesh_path}:{density}:{mass}"
+
         if cache_key in self._cache:
             return self._cache[cache_key]
 
-        # Try to import trimesh
+        mesh = self._load_mesh(mesh_path, mode, mass)
+        if mesh is None:
+            return self._create_default_inertia_result(mass, mode, str(mesh_path))
+
+        mesh_props = self._extract_mesh_properties(mesh, mesh_path, mode, mass)
+        if mesh_props is None:
+            return self._create_default_inertia_result(mass, mode, str(mesh_path))
+
+        result = self._scale_and_create_result(
+            mesh_props, mass, density, mode, str(mesh_path)
+        )
+
+        self._cache[cache_key] = result
+        return result
+
+    def _resolve_mesh_path(self, source: Any) -> Path:
+        """Resolve source to a mesh file path."""
+        if isinstance(source, Geometry) and source.mesh_filename:
+            return Path(source.mesh_filename)
+        elif isinstance(source, (str, Path)):
+            return Path(source)
+        else:
+            raise ValueError(f"Mesh mode requires path, got {type(source)}")
+
+    def _load_mesh(
+        self, mesh_path: Path, mode: InertiaMode, mass: float | None
+    ) -> Any | None:
+        """Load mesh from file, returning None on failure."""
         try:
             import trimesh
         except ImportError:
             logger.warning("trimesh not available, falling back to default inertia")
-            return InertiaResult(
-                ixx=DEFAULT_INERTIA_KG_M2,
-                iyy=DEFAULT_INERTIA_KG_M2,
-                izz=DEFAULT_INERTIA_KG_M2,
-                mass=mass or 1.0,
-                mode=mode,
-                source=str(mesh_path),
-            )
+            return None
 
-        # Load mesh
         try:
             mesh = trimesh.load(str(mesh_path))
             if isinstance(mesh, trimesh.Scene):
@@ -430,61 +445,51 @@ class InertiaCalculator:
                     mesh = trimesh.util.concatenate(meshes)
                 else:
                     raise ValueError("Scene contains no geometry")
+            return mesh
         except Exception as e:
             logger.warning(f"Failed to load mesh {mesh_path}: {e}")
-            return InertiaResult(
-                ixx=DEFAULT_INERTIA_KG_M2,
-                iyy=DEFAULT_INERTIA_KG_M2,
-                izz=DEFAULT_INERTIA_KG_M2,
-                mass=mass or 1.0,
-                mode=mode,
-                source=str(mesh_path),
-            )
+            return None
 
+    def _extract_mesh_properties(
+        self, mesh: Any, mesh_path: Path, mode: InertiaMode, mass: float | None
+    ) -> dict[str, Any] | None:
+        """Extract inertia properties from mesh, returning None on failure."""
         is_watertight = mesh.is_watertight
         if not is_watertight:
             logger.warning(
                 f"Mesh {mesh_path} is not watertight, inertia may be inaccurate"
             )
 
-        # Get inertia at COM (assuming unit density)
         try:
-            raw_inertia = mesh.moment_inertia
-            volume = float(mesh.volume) if is_watertight else None
-            com = mesh.center_mass if is_watertight else mesh.centroid
+            return {
+                "raw_inertia": mesh.moment_inertia,
+                "volume": float(mesh.volume) if is_watertight else None,
+                "com": mesh.center_mass if is_watertight else mesh.centroid,
+                "is_watertight": is_watertight,
+            }
         except Exception as e:
             logger.warning(f"Failed to compute mesh properties: {e}")
-            return InertiaResult(
-                ixx=DEFAULT_INERTIA_KG_M2,
-                iyy=DEFAULT_INERTIA_KG_M2,
-                izz=DEFAULT_INERTIA_KG_M2,
-                mass=mass or 1.0,
-                mode=mode,
-                source=str(mesh_path),
-            )
+            return None
 
-        # Scale inertia based on mode
-        if mode == InertiaMode.MESH_SPECIFIED_MASS and mass is not None:
-            # Scale to specified mass
-            if volume and volume > 0:
-                computed_density = mass / volume
-                scaled_inertia = raw_inertia * computed_density
-                final_mass = mass
-            else:
-                # Can't compute density, use raw inertia and scale
-                raw_mass = np.trace(raw_inertia) / 3.0  # Rough estimate
-                if raw_mass > 0:
-                    scale = mass / raw_mass
-                    scaled_inertia = raw_inertia * scale
-                else:
-                    scaled_inertia = raw_inertia
-                final_mass = mass
-        else:
-            # Uniform density mode
-            scaled_inertia = raw_inertia * density
-            final_mass = volume * density if volume else mass or 1.0
+    def _scale_and_create_result(
+        self,
+        mesh_props: dict[str, Any],
+        mass: float | None,
+        density: float,
+        mode: InertiaMode,
+        source_path: str,
+    ) -> InertiaResult:
+        """Scale inertia based on mode and create result."""
+        raw_inertia = mesh_props["raw_inertia"]
+        volume = mesh_props["volume"]
+        com = mesh_props["com"]
+        is_watertight = mesh_props["is_watertight"]
 
-        result = InertiaResult(
+        scaled_inertia, final_mass = self._compute_scaled_inertia(
+            raw_inertia, volume, mass, density, mode
+        )
+
+        return InertiaResult(
             ixx=float(scaled_inertia[0, 0]),
             iyy=float(scaled_inertia[1, 1]),
             izz=float(scaled_inertia[2, 2]),
@@ -496,13 +501,44 @@ class InertiaCalculator:
             volume=volume,
             mode=mode,
             is_watertight=is_watertight,
-            source=str(mesh_path),
+            source=source_path,
         )
 
-        # Cache result
-        self._cache[cache_key] = result
+    def _compute_scaled_inertia(
+        self,
+        raw_inertia: np.ndarray,
+        volume: float | None,
+        mass: float | None,
+        density: float,
+        mode: InertiaMode,
+    ) -> tuple[np.ndarray, float]:
+        """Compute scaled inertia and final mass based on mode."""
+        if mode == InertiaMode.MESH_SPECIFIED_MASS and mass is not None:
+            if volume and volume > 0:
+                computed_density = mass / volume
+                return raw_inertia * computed_density, mass
+            else:
+                raw_mass = np.trace(raw_inertia) / 3.0
+                if raw_mass > 0:
+                    scale = mass / raw_mass
+                    return raw_inertia * scale, mass
+                return raw_inertia, mass
+        else:
+            final_mass = volume * density if volume else mass or 1.0
+            return raw_inertia * density, final_mass
 
-        return result
+    def _create_default_inertia_result(
+        self, mass: float | None, mode: InertiaMode, source_path: str
+    ) -> InertiaResult:
+        """Create a default inertia result for fallback cases."""
+        return InertiaResult(
+            ixx=DEFAULT_INERTIA_KG_M2,
+            iyy=DEFAULT_INERTIA_KG_M2,
+            izz=DEFAULT_INERTIA_KG_M2,
+            mass=mass or 1.0,
+            mode=mode,
+            source=source_path,
+        )
 
     def _compute_anthropometric(
         self,

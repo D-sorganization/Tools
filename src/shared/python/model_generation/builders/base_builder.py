@@ -11,6 +11,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from model_generation.core.contracts import precondition
 from model_generation.core.types import Joint, Link
 from model_generation.core.validation import ValidationResult
 
@@ -147,6 +148,36 @@ class BaseURDFBuilder(ABC):
     def get_joint_names(self) -> list[str]:
         """Get all joint names."""
         return [joint.name for joint in self._joints]
+
+    @precondition(lambda link: link is not None, "Link cannot be None")
+    @precondition(lambda link: link.name, "Link must have a name")
+    def add_link(self, link: Link) -> None:
+        """
+        Add a link to the model.
+
+        Args:
+            link: Link to add
+
+        Raises:
+            ContractViolationError: If link is None or has no name
+        """
+        self._links.append(link)
+
+    @precondition(lambda joint: joint is not None, "Joint cannot be None")
+    @precondition(lambda joint: joint.name, "Joint must have a name")
+    @precondition(lambda joint: joint.parent, "Joint must have a parent")
+    @precondition(lambda joint: joint.child, "Joint must have a child")
+    def add_joint(self, joint: Joint) -> None:
+        """
+        Add a joint to the model.
+
+        Args:
+            joint: Joint to add
+
+        Raises:
+            ContractViolationError: If joint is None or missing required fields
+        """
+        self._joints.append(joint)
 
     @abstractmethod
     def build(self, **kwargs: Any) -> BuildResult:

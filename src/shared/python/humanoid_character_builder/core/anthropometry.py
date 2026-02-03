@@ -16,6 +16,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from humanoid_character_builder.contracts import precondition
+
 
 @dataclass
 class SegmentAnthropometry:
@@ -468,6 +470,11 @@ def get_segment_length_ratio(segment_name: str, gender_factor: float = 0.5) -> f
     return data.length_ratio
 
 
+@precondition(lambda total_mass_kg: total_mass_kg > 0, "Total mass must be positive")
+@precondition(
+    lambda gender_factor: 0.0 <= gender_factor <= 1.0,
+    "Gender factor must be between 0 and 1",
+)
 def estimate_segment_masses(
     total_mass_kg: float, gender_factor: float = 0.5
 ) -> dict[str, float]:
@@ -497,6 +504,13 @@ def estimate_segment_masses(
     return masses
 
 
+@precondition(
+    lambda total_height_m: total_height_m > 0, "Total height must be positive"
+)
+@precondition(
+    lambda gender_factor: 0.0 <= gender_factor <= 1.0,
+    "Gender factor must be between 0 and 1",
+)
 def estimate_segment_dimensions(
     total_height_m: float, gender_factor: float = 0.5
 ) -> dict[str, dict[str, float]]:
@@ -525,6 +539,12 @@ def estimate_segment_dimensions(
     return dimensions
 
 
+@precondition(lambda mass_kg: mass_kg > 0, "Mass must be positive")
+@precondition(lambda length_m: length_m > 0, "Length must be positive")
+@precondition(
+    lambda gender_factor: 0.0 <= gender_factor <= 1.0,
+    "Gender factor must be between 0 and 1",
+)
 def estimate_segment_inertia_from_gyration(
     segment_name: str,
     mass_kg: float,
@@ -561,6 +581,11 @@ def estimate_segment_inertia_from_gyration(
     return {"ixx": ixx, "iyy": iyy, "izz": izz, "ixy": 0.0, "ixz": 0.0, "iyz": 0.0}
 
 
+@precondition(lambda length_m: length_m > 0, "Length must be positive")
+@precondition(
+    lambda gender_factor: 0.0 <= gender_factor <= 1.0,
+    "Gender factor must be between 0 and 1",
+)
 def get_com_location(
     segment_name: str, length_m: float, gender_factor: float = 0.5
 ) -> tuple[float, float, float]:

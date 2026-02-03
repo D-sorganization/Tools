@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 
 from model_generation.converters.urdf_parser import ParsedModel, URDFParser
+from model_generation.core.contracts import postcondition, precondition
 
 logger = logging.getLogger(__name__)
 
@@ -296,6 +297,10 @@ class ModelLibrary:
         """Get a model entry by ID."""
         return self._entries.get(model_id)
 
+    @precondition(lambda model_id: model_id is not None, "Model ID cannot be None")
+    @precondition(
+        lambda model_id: len(model_id.strip()) > 0, "Model ID cannot be empty"
+    )
     def load_model(
         self,
         model_id: str,
@@ -332,6 +337,9 @@ class ModelLibrary:
             logger.error(f"Failed to load model {model_id}: {e}")
             return None
 
+    @precondition(lambda urdf_path: urdf_path is not None, "URDF path cannot be None")
+    @postcondition(lambda result: result is not None, "Must return a valid ModelEntry")
+    @postcondition(lambda result: result.id, "ModelEntry must have an ID")
     def add_local_model(
         self,
         urdf_path: str | Path,
@@ -616,6 +624,10 @@ class ModelLibrary:
             logger.error(f"Failed to download {entry.id}: {e}")
             return False
 
+    @precondition(lambda model_id: model_id is not None, "Model ID cannot be None")
+    @precondition(
+        lambda model_id: len(model_id.strip()) > 0, "Model ID cannot be empty"
+    )
     def create_editable_copy(
         self,
         model_id: str,
@@ -689,6 +701,7 @@ class ModelLibrary:
 
         return new_entry
 
+    @precondition(lambda model_id: model_id is not None, "Model ID cannot be None")
     def remove_model(self, model_id: str, delete_files: bool = False) -> bool:
         """
         Remove a model from the library.

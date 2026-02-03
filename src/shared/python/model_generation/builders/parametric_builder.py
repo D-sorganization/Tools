@@ -8,6 +8,8 @@ like height, weight, and body proportions.
 from __future__ import annotations
 
 import logging
+import math
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -245,9 +247,20 @@ class ParametricBuilder(BaseURDFBuilder):
         Returns:
             Self for method chaining
         """
-        import math
+        get_mass, get_length = self._get_anthropometry_helpers()
 
-        # Load anthropometry data if available
+        # Add body segments in logical groups
+        segment_heights = self._add_torso_segments(get_mass, get_length)
+        self._add_head_neck_segments(get_mass, get_length, segment_heights)
+        self._add_arm_segments(get_mass, get_length, segment_heights)
+        self._add_leg_segments(get_mass, get_length, segment_heights)
+
+        return self
+
+    def _get_anthropometry_helpers(
+        self,
+    ) -> tuple[Callable[[str, float], float], Callable[[str, float], float]]:
+        """Get helper functions for anthropometric data lookup."""
         try:
             from model_generation.humanoid.anthropometry import (
                 get_segment_length_ratio,
@@ -274,6 +287,14 @@ class ParametricBuilder(BaseURDFBuilder):
                     pass
             return default
 
+        return get_mass, get_length
+
+    def _add_torso_segments(
+        self,
+        get_mass: Callable[[str, float], float],
+        get_length: Callable[[str, float], float],
+    ) -> dict[str, float]:
+        """Add torso segments (pelvis, lumbar, thorax)."""
         # Pelvis (root)
         self.add_segment(
             name="pelvis",
@@ -285,8 +306,9 @@ class ParametricBuilder(BaseURDFBuilder):
             material=Material.skin(),
         )
 
-        # Lumbar spine
         pelvis_height = self._height_m * get_length("pelvis", 0.078)
+
+        # Lumbar spine
         self.add_segment(
             name="lumbar",
             parent="pelvis",
@@ -299,8 +321,9 @@ class ParametricBuilder(BaseURDFBuilder):
             origin_offset=(0, 0, pelvis_height / 2),
         )
 
-        # Thorax
         lumbar_height = self._height_m * get_length("lumbar", 0.108)
+
+        # Thorax
         self.add_segment(
             name="thorax",
             parent="lumbar",
@@ -313,8 +336,24 @@ class ParametricBuilder(BaseURDFBuilder):
             origin_offset=(0, 0, lumbar_height),
         )
 
-        # Neck
         thorax_height = self._height_m * get_length("thorax", 0.170)
+
+        return {
+            "pelvis": pelvis_height,
+            "lumbar": lumbar_height,
+            "thorax": thorax_height,
+        }
+
+    def _add_head_neck_segments(
+        self,
+        get_mass: Callable[[str, float], float],
+        get_length: Callable[[str, float], float],
+        segment_heights: dict[str, float],
+    ) -> None:
+        """Add head and neck segments."""
+        thorax_height = segment_heights["thorax"]
+
+        # Neck
         self.add_segment(
             name="neck",
             parent="thorax",
@@ -327,8 +366,9 @@ class ParametricBuilder(BaseURDFBuilder):
             origin_offset=(0, 0, thorax_height),
         )
 
-        # Head
         neck_height = self._height_m * get_length("neck", 0.052)
+
+        # Head
         self.add_segment(
             name="head",
             parent="neck",
@@ -340,114 +380,158 @@ class ParametricBuilder(BaseURDFBuilder):
             origin_offset=(0, 0, neck_height),
         )
 
-        # Arms (left and right)
+    def _add_arm_segments(
+        self,
+        get_mass: Callable[[str, float], float],
+        get_length: Callable[[str, float], float],
+        segment_heights: dict[str, float],
+    ) -> None:
+        """Add arm segments (shoulder, upper arm, forearm, hand) for both sides."""
+        thorax_height = segment_heights["thorax"]
         shoulder_width = (
             self._height_m * 0.23 * self._proportions.get("shoulder_width_factor", 1.0)
         )
 
         for side, y_sign in [("left", 1), ("right", -1)]:
-            # Shoulder
-            self.add_segment(
-                name=f"{side}_shoulder",
-                parent="thorax",
-                mass_ratio=0.005,
-                length_ratio=0.04,
-                geometry_type=GeometryType.SPHERE,
-                joint_type=JointType.FIXED,
-                origin_offset=(0, y_sign * shoulder_width / 2, thorax_height * 0.9),
+            self._add_single_arm(
+                side, y_sign, get_mass, get_length, thorax_height, shoulder_width
             )
 
-            # Upper arm
-            self.add_segment(
-                name=f"{side}_upper_arm",
-                parent=f"{side}_shoulder",
-                mass_ratio=get_mass("upper_arm", 0.027),
-                length_ratio=get_length("upper_arm", 0.186),
-                geometry_type=GeometryType.CAPSULE,
-                width_ratio=0.18,
-                joint_type=JointType.GIMBAL,
-                joint_limits=(-math.pi, math.pi),
-                origin_offset=(0, y_sign * 0.02, -0.02),
-            )
+    def _add_single_arm(
+        self,
+        side: str,
+        y_sign: int,
+        get_mass: Callable[[str, float], float],
+        get_length: Callable[[str, float], float],
+        thorax_height: float,
+        shoulder_width: float,
+    ) -> None:
+        """Add segments for a single arm."""
+        # Shoulder
+        self.add_segment(
+            name=f"{side}_shoulder",
+            parent="thorax",
+            mass_ratio=0.005,
+            length_ratio=0.04,
+            geometry_type=GeometryType.SPHERE,
+            joint_type=JointType.FIXED,
+            origin_offset=(0, y_sign * shoulder_width / 2, thorax_height * 0.9),
+        )
 
-            # Forearm
-            upper_arm_length = self._height_m * get_length("upper_arm", 0.186)
-            self.add_segment(
-                name=f"{side}_forearm",
-                parent=f"{side}_upper_arm",
-                mass_ratio=get_mass("forearm", 0.016),
-                length_ratio=get_length("forearm", 0.146),
-                geometry_type=GeometryType.CAPSULE,
-                width_ratio=0.14,
-                joint_type=JointType.REVOLUTE,
-                joint_axis=(1, 0, 0),
-                joint_limits=(0, math.radians(150)),
-                origin_offset=(0, 0, -upper_arm_length),
-            )
+        # Upper arm
+        self.add_segment(
+            name=f"{side}_upper_arm",
+            parent=f"{side}_shoulder",
+            mass_ratio=get_mass("upper_arm", 0.027),
+            length_ratio=get_length("upper_arm", 0.186),
+            geometry_type=GeometryType.CAPSULE,
+            width_ratio=0.18,
+            joint_type=JointType.GIMBAL,
+            joint_limits=(-math.pi, math.pi),
+            origin_offset=(0, y_sign * 0.02, -0.02),
+        )
 
-            # Hand
-            forearm_length = self._height_m * get_length("forearm", 0.146)
-            self.add_segment(
-                name=f"{side}_hand",
-                parent=f"{side}_forearm",
-                mass_ratio=get_mass("hand", 0.006),
-                length_ratio=get_length("hand", 0.108),
-                geometry_type=GeometryType.BOX,
-                width_ratio=0.5,
-                joint_type=JointType.UNIVERSAL,
-                joint_limits=(-math.radians(80), math.radians(80)),
-                origin_offset=(0, 0, -forearm_length),
-            )
+        upper_arm_length = self._height_m * get_length("upper_arm", 0.186)
 
-        # Legs (left and right)
+        # Forearm
+        self.add_segment(
+            name=f"{side}_forearm",
+            parent=f"{side}_upper_arm",
+            mass_ratio=get_mass("forearm", 0.016),
+            length_ratio=get_length("forearm", 0.146),
+            geometry_type=GeometryType.CAPSULE,
+            width_ratio=0.14,
+            joint_type=JointType.REVOLUTE,
+            joint_axis=(1, 0, 0),
+            joint_limits=(0, math.radians(150)),
+            origin_offset=(0, 0, -upper_arm_length),
+        )
+
+        forearm_length = self._height_m * get_length("forearm", 0.146)
+
+        # Hand
+        self.add_segment(
+            name=f"{side}_hand",
+            parent=f"{side}_forearm",
+            mass_ratio=get_mass("hand", 0.006),
+            length_ratio=get_length("hand", 0.108),
+            geometry_type=GeometryType.BOX,
+            width_ratio=0.5,
+            joint_type=JointType.UNIVERSAL,
+            joint_limits=(-math.radians(80), math.radians(80)),
+            origin_offset=(0, 0, -forearm_length),
+        )
+
+    def _add_leg_segments(
+        self,
+        get_mass: Callable[[str, float], float],
+        get_length: Callable[[str, float], float],
+        segment_heights: dict[str, float],
+    ) -> None:
+        """Add leg segments (thigh, shin, foot) for both sides."""
+        pelvis_height = segment_heights["pelvis"]
         hip_width = (
             self._height_m * 0.1 * self._proportions.get("hip_width_factor", 1.0)
         )
 
         for side, y_sign in [("left", 1), ("right", -1)]:
-            # Thigh
-            self.add_segment(
-                name=f"{side}_thigh",
-                parent="pelvis",
-                mass_ratio=get_mass("thigh", 0.142),
-                length_ratio=get_length("thigh", 0.245),
-                geometry_type=GeometryType.CAPSULE,
-                width_ratio=0.22,
-                joint_type=JointType.GIMBAL,
-                joint_limits=(-math.radians(120), math.radians(30)),
-                origin_offset=(0, y_sign * hip_width, -pelvis_height / 2),
+            self._add_single_leg(
+                side, y_sign, get_mass, get_length, pelvis_height, hip_width
             )
 
-            # Shin
-            thigh_length = self._height_m * get_length("thigh", 0.245)
-            self.add_segment(
-                name=f"{side}_shin",
-                parent=f"{side}_thigh",
-                mass_ratio=get_mass("shin", 0.043),
-                length_ratio=get_length("shin", 0.246),
-                geometry_type=GeometryType.CAPSULE,
-                width_ratio=0.14,
-                joint_type=JointType.REVOLUTE,
-                joint_axis=(1, 0, 0),
-                joint_limits=(-math.radians(150), 0),
-                origin_offset=(0, 0, -thigh_length),
-            )
+    def _add_single_leg(
+        self,
+        side: str,
+        y_sign: int,
+        get_mass: Callable[[str, float], float],
+        get_length: Callable[[str, float], float],
+        pelvis_height: float,
+        hip_width: float,
+    ) -> None:
+        """Add segments for a single leg."""
+        # Thigh
+        self.add_segment(
+            name=f"{side}_thigh",
+            parent="pelvis",
+            mass_ratio=get_mass("thigh", 0.142),
+            length_ratio=get_length("thigh", 0.245),
+            geometry_type=GeometryType.CAPSULE,
+            width_ratio=0.22,
+            joint_type=JointType.GIMBAL,
+            joint_limits=(-math.radians(120), math.radians(30)),
+            origin_offset=(0, y_sign * hip_width, -pelvis_height / 2),
+        )
 
-            # Foot
-            shin_length = self._height_m * get_length("shin", 0.246)
-            self.add_segment(
-                name=f"{side}_foot",
-                parent=f"{side}_shin",
-                mass_ratio=get_mass("foot", 0.014),
-                length_ratio=get_length("foot", 0.152),
-                geometry_type=GeometryType.BOX,
-                width_ratio=0.35,
-                joint_type=JointType.UNIVERSAL,
-                joint_limits=(-math.radians(45), math.radians(45)),
-                origin_offset=(0, 0, -shin_length),
-            )
+        thigh_length = self._height_m * get_length("thigh", 0.245)
 
-        return self
+        # Shin
+        self.add_segment(
+            name=f"{side}_shin",
+            parent=f"{side}_thigh",
+            mass_ratio=get_mass("shin", 0.043),
+            length_ratio=get_length("shin", 0.246),
+            geometry_type=GeometryType.CAPSULE,
+            width_ratio=0.14,
+            joint_type=JointType.REVOLUTE,
+            joint_axis=(1, 0, 0),
+            joint_limits=(-math.radians(150), 0),
+            origin_offset=(0, 0, -thigh_length),
+        )
+
+        shin_length = self._height_m * get_length("shin", 0.246)
+
+        # Foot
+        self.add_segment(
+            name=f"{side}_foot",
+            parent=f"{side}_shin",
+            mass_ratio=get_mass("foot", 0.014),
+            length_ratio=get_length("foot", 0.152),
+            geometry_type=GeometryType.BOX,
+            width_ratio=0.35,
+            joint_type=JointType.UNIVERSAL,
+            joint_limits=(-math.radians(45), math.radians(45)),
+            origin_offset=(0, 0, -shin_length),
+        )
 
     def clear(self) -> None:
         """Clear all segments."""
