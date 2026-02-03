@@ -18,7 +18,12 @@ logger = logging.getLogger(__name__)
 
 
 class ThreePhaseElectricalModelEnhanced:
-    """Enhanced 3-phase delta model with new conductive path geometry"""
+    """Enhanced 3-phase delta model with new conductive path geometry.
+
+    Performance optimizations:
+    - Electrode position caching to avoid redundant 3D calculations
+    - Vectorized resistance calculations
+    """
 
     def __init__(
         self,
@@ -29,6 +34,9 @@ class ThreePhaseElectricalModelEnhanced:
         self.glass_interface = glass_interface
         self.electrode_positions = np.array([0, 120, 240]) * np.pi / 180  # radians
         self.power_history: deque[float] = deque(maxlen=100)
+        # Cache for electrode positions (avoids recalculation when params unchanged)
+        self._position_cache_key: tuple | None = None
+        self._position_cache_value: list[dict] | None = None
 
     def calculate_system_state(
         self,
@@ -146,31 +154,52 @@ class ThreePhaseElectricalModelEnhanced:
         r_bath: float,
         metal_depth: float,
     ) -> list[dict]:
-        """Calculate 3D electrode positions including tip and base locations"""
+        """Calculate 3D electrode positions including tip and base locations.
+
+        Performance: Results are cached and reused when parameters unchanged.
+        """
+        # Build cache key from parameters
+        cache_key = (tuple(depths), r_bath, metal_depth, self.config.glass_depth)
+
+        # Return cached value if parameters match
+        if (
+            self._position_cache_key == cache_key
+            and self._position_cache_value is not None
+        ):
+            return self._position_cache_value
+
+        # Calculate positions
         positions = []
+        glass_center_z = metal_depth + self.config.glass_depth / 2
 
         for i in range(3):
             angle = self.electrode_positions[i]
             depth = depths[i]
 
+            # Pre-compute trig values (used twice per electrode)
+            cos_angle = np.cos(angle)
+            sin_angle = np.sin(angle)
+
             # Electrode tip position (inside vessel)
-            tip_x = (r_bath - depth) * np.cos(angle)
-            tip_y = (r_bath - depth) * np.sin(angle)
-            tip_z = metal_depth + self.config.glass_depth / 2  # Middle of glass layer
+            tip_x = (r_bath - depth) * cos_angle
+            tip_y = (r_bath - depth) * sin_angle
 
             # Electrode base position (at vessel wall)
-            base_x = r_bath * np.cos(angle)
-            base_y = r_bath * np.sin(angle)
-            base_z = metal_depth + self.config.glass_depth / 2
+            base_x = r_bath * cos_angle
+            base_y = r_bath * sin_angle
 
             positions.append(
                 {
-                    "tip": np.array([tip_x, tip_y, tip_z]),
-                    "base": np.array([base_x, base_y, base_z]),
+                    "tip": np.array([tip_x, tip_y, glass_center_z]),
+                    "base": np.array([base_x, base_y, glass_center_z]),
                     "angle": angle,
                     "depth": depth,
                 },
             )
+
+        # Update cache
+        self._position_cache_key = cache_key
+        self._position_cache_value = positions
 
         return positions
 
@@ -189,6 +218,8 @@ class ThreePhaseElectricalModelEnhanced:
         - Line connecting the tips
         - Line connecting the glass wall entry points
         This trapezoid is extruded vertically by conductive_height × vertical_spreading_factor
+
+        Performance: Vectorized numpy operations replace 30-iteration loop.
         """
         # Get glass wall intersection points
         e1_angle = electrode1_pos["angle"]
@@ -213,56 +244,49 @@ class ThreePhaseElectricalModelEnhanced:
         e1_tip = electrode1_pos["tip"]
         e2_tip = electrode2_pos["tip"]
 
-        # Get electrode lengths within glass bath
-        np.linalg.norm(e1_tip - e1_wall_glass)
-        np.linalg.norm(e2_tip - e2_wall_glass)
-
         # Apply vertical spreading factor to conductive height
         effective_height = conductive_height * self.config.vertical_spreading_factor
 
-        # For resistance calculation, we use a simplified model
-        # dividing the trapezoid into segments perpendicular to current flow
+        # Get glass conductivity (single call - temperature is constant across segments)
+        conductivity = self.glass_interface.get_conductivity(temperature)  # S/m
+
+        # Vectorized calculation for all segments
         num_segments = 30
-        total_resistance: float = 0.0
 
-        for i in range(num_segments):
-            # Parameter t goes from 0 (E1 side) to 1 (E2 side)
-            t = (i + 0.5) / num_segments
+        # Pre-compute direction vectors
+        wall_diff = e2_wall_glass - e1_wall_glass
+        tip_diff = e2_tip - e1_tip
 
-            # Interpolate wall and tip positions
-            wall_pos = e1_wall_glass + t * (e2_wall_glass - e1_wall_glass)
-            tip_pos = e1_tip + t * (e2_tip - e1_tip)
+        # Generate all t values at segment centers: (0.5, 1.5, ..., 29.5) / 30
+        t_values = (np.arange(num_segments) + 0.5) / num_segments
 
-            # Width at this cross-section is the distance from wall to tip
-            section_width = np.linalg.norm(tip_pos - wall_pos)
+        # Vectorized interpolation: wall_positions[i] = e1_wall_glass + t[i] * wall_diff
+        # Shape: (num_segments, 3)
+        wall_positions = e1_wall_glass + np.outer(t_values, wall_diff)
+        tip_positions = e1_tip + np.outer(t_values, tip_diff)
 
-            # Cross-sectional area = width × effective_height
-            cross_section_area = section_width * effective_height  # inches²
-            cross_section_area_m2 = cross_section_area * 0.00064516  # Convert to m²
+        # Section widths: distance from wall to tip at each segment
+        # Shape: (num_segments,)
+        section_widths = np.linalg.norm(tip_positions - wall_positions, axis=1)
 
-            # Distance to next segment (perpendicular to electrodes)
-            if i < num_segments - 1:
-                t_next = (i + 1.5) / num_segments
-                wall_next = e1_wall_glass + t_next * (e2_wall_glass - e1_wall_glass)
-                segment_distance = np.linalg.norm(wall_next - wall_pos)
-            else:
-                segment_distance = (
-                    np.linalg.norm(e2_wall_glass - e1_wall_glass) / num_segments
-                )
+        # Cross-sectional areas in m²
+        cross_section_areas_m2 = section_widths * effective_height * 0.00064516
 
-            segment_distance_m = segment_distance * 0.0254  # Convert to m
+        # Segment distances (uniform for trapezoidal approximation)
+        # All interior segments use the same distance
+        base_segment_distance = np.linalg.norm(wall_diff) / num_segments
+        segment_distance_m = base_segment_distance * 0.0254  # Convert to m
 
-            # Get glass conductivity
-            conductivity = self.glass_interface.get_conductivity(temperature)  # S/m
+        # Calculate resistances for all segments at once
+        # R = L / (σ * A), where L is distance, σ is conductivity, A is area
+        # Avoid division by zero
+        valid_mask = cross_section_areas_m2 > 0
+        segment_resistances = np.zeros(num_segments)
+        segment_resistances[valid_mask] = segment_distance_m / (
+            conductivity * cross_section_areas_m2[valid_mask]
+        )
 
-            # Segment resistance
-            if cross_section_area_m2 > 0:
-                segment_resistance = float(
-                    segment_distance_m / (conductivity * cross_section_area_m2)
-                )
-                total_resistance += segment_resistance
-
-        return total_resistance
+        return float(np.sum(segment_resistances))
 
     def _calculate_via_metal_path_resistance(
         self,

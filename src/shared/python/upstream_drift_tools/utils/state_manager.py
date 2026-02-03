@@ -66,6 +66,10 @@ class StateManager:
 
     This class handles saving, loading, and managing calculation states,
     user preferences, and session data.
+
+    Performance optimizations:
+    - Metadata index caching to avoid reading all state files on every list_states() call
+    - Index invalidation based on directory modification time
     """
 
     def __init__(self, base_directory: str = "saved_states") -> None:
@@ -88,6 +92,10 @@ class StateManager:
         self.current_session: dict[str, Any] = {}
         self.auto_save_enabled = True
         self.auto_save_interval = 300  # seconds
+
+        # Performance: Metadata index cache
+        self._states_index_cache: list[dict[str, Any]] | None = None
+        self._states_index_mtime: float = 0.0  # Last known directory mtime
 
         # Initialize directories
         self._initialize_directories()
@@ -155,6 +163,9 @@ class StateManager:
             with open(state_file, "w") as f:
                 json.dump(full_state, f, indent=2, default=self._json_serializer)
 
+            # Invalidate cache since we modified the states directory
+            self._invalidate_states_cache()
+
             # Add to protected states if requested
             if protected:
                 self.protected_states.add(state_name)
@@ -215,6 +226,9 @@ class StateManager:
             # Delete the file
             state_file.unlink()
 
+            # Invalidate cache since we modified the states directory
+            self._invalidate_states_cache()
+
             # Remove from protected states if present
             self.protected_states.discard(state_name)
             self._save_protected_states()
@@ -227,37 +241,67 @@ class StateManager:
             return False
 
     def list_states(self) -> list[dict[str, Any]]:
-        """List all available states with metadata"""
+        """List all available states with metadata.
+
+        Performance: Uses cached index when directory hasn't changed.
+        """
         try:
+            # Check if cache is still valid by comparing directory mtime
+            if self.states_dir.exists():
+                current_mtime = self.states_dir.stat().st_mtime
+                if (
+                    self._states_index_cache is not None
+                    and self._states_index_mtime == current_mtime
+                ):
+                    # Return cached results (already sorted)
+                    return self._states_index_cache.copy()
+
             states = []
 
-            for state_file in self.states_dir.glob("*.json"):
-                try:
-                    with open(state_file) as f:
-                        full_state = json.load(f)
+            # Use iterdir for better performance than glob (no pattern matching overhead)
+            if self.states_dir.exists():
+                for state_file in self.states_dir.iterdir():
+                    if not state_file.suffix == ".json":
+                        continue
+                    try:
+                        with open(state_file) as f:
+                            full_state = json.load(f)
 
-                    if self._validate_state(full_state):
-                        metadata = full_state["metadata"]
-                        states.append(
-                            {
-                                "name": metadata["name"],
-                                "description": metadata.get("description", ""),
-                                "created_date": metadata.get("created_date", ""),
-                                "protected": metadata.get("protected", False),
-                                "file_size": state_file.stat().st_size,
-                            },
+                        if self._validate_state(full_state):
+                            metadata = full_state["metadata"]
+                            states.append(
+                                {
+                                    "name": metadata["name"],
+                                    "description": metadata.get("description", ""),
+                                    "created_date": metadata.get("created_date", ""),
+                                    "protected": metadata.get("protected", False),
+                                    "file_size": state_file.stat().st_size,
+                                },
+                            )
+                    except Exception as e:
+                        logger.warning(
+                            "Could not read state file %s: %s", state_file, e
                         )
-                except Exception as e:
-                    logger.warning("Could not read state file %s: %s", state_file, e)
-                    continue
+                        continue
 
             # Sort by creation date (newest first)
             states.sort(key=lambda x: x["created_date"], reverse=True)
-            return states
+
+            # Update cache
+            self._states_index_cache = states
+            if self.states_dir.exists():
+                self._states_index_mtime = self.states_dir.stat().st_mtime
+
+            return states.copy()
 
         except Exception as e:
             logger.exception("Error listing states: %s", e)
             return []
+
+    def _invalidate_states_cache(self) -> None:
+        """Invalidate the states index cache."""
+        self._states_index_cache = None
+        self._states_index_mtime = 0.0
 
     def protect_state(self, state_name: str) -> bool:
         """Protect a state from deletion"""
