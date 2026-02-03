@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any
 from xml.dom import minidom
 
+from humanoid_character_builder.contracts import postcondition, precondition
 from humanoid_character_builder.core.anthropometry import (
     estimate_segment_dimensions,
     estimate_segment_masses,
@@ -115,6 +116,18 @@ class HumanoidURDFGenerator:
         self._joints: list[GeneratedJoint] = []
         self._materials: dict[str, tuple[float, float, float, float]] = {}
 
+    @precondition(
+        lambda params: params.height_m > 0,
+        "Height must be positive",
+    )
+    @precondition(
+        lambda params: params.mass_kg > 0,
+        "Mass must be positive",
+    )
+    @postcondition(
+        lambda result: len(result.links) > 0,
+        "Model must have at least one link",
+    )
     def build_model(
         self,
         params: BodyParameters,
@@ -171,6 +184,18 @@ class HumanoidURDFGenerator:
 
         return HumanoidModel(self._links, self._joints)
 
+    @precondition(
+        lambda params: params.height_m > 0,
+        "Height must be positive",
+    )
+    @precondition(
+        lambda params: params.mass_kg > 0,
+        "Mass must be positive",
+    )
+    @postcondition(
+        lambda result: len(result) > 0,
+        "URDF output must not be empty",
+    )
     def generate(
         self,
         params: BodyParameters,

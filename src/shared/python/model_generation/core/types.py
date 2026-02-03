@@ -13,6 +13,7 @@ from enum import Enum
 from typing import Any
 
 import numpy as np
+from model_generation.core.contracts import precondition
 from numpy.typing import NDArray
 
 
@@ -127,6 +128,10 @@ class Inertia:
         )
 
     @classmethod
+    @precondition(lambda mass: mass > 0, "Mass must be positive")
+    @precondition(lambda size_x: size_x > 0, "size_x must be positive")
+    @precondition(lambda size_y: size_y > 0, "size_y must be positive")
+    @precondition(lambda size_z: size_z > 0, "size_z must be positive")
     def from_box(
         cls, mass: float, size_x: float, size_y: float, size_z: float
     ) -> Inertia:
@@ -143,6 +148,9 @@ class Inertia:
         return cls(ixx=ixx, iyy=iyy, izz=izz, mass=mass)
 
     @classmethod
+    @precondition(lambda mass: mass > 0, "Mass must be positive")
+    @precondition(lambda radius: radius > 0, "Radius must be positive")
+    @precondition(lambda length: length > 0, "Length must be positive")
     def from_cylinder(
         cls, mass: float, radius: float, length: float, axis: str = "z"
     ) -> Inertia:
@@ -168,6 +176,8 @@ class Inertia:
             return cls(ixx=i_perp, iyy=i_perp, izz=i_axial, mass=mass)
 
     @classmethod
+    @precondition(lambda mass: mass > 0, "Mass must be positive")
+    @precondition(lambda radius: radius > 0, "Radius must be positive")
     def from_sphere(cls, mass: float, radius: float) -> Inertia:
         """
         Create inertia for a solid sphere.
@@ -180,6 +190,9 @@ class Inertia:
         return cls(ixx=i, iyy=i, izz=i, mass=mass)
 
     @classmethod
+    @precondition(lambda mass: mass > 0, "Mass must be positive")
+    @precondition(lambda radius: radius > 0, "Radius must be positive")
+    @precondition(lambda length: length >= 0, "Length must be non-negative")
     def from_capsule(
         cls, mass: float, radius: float, length: float, axis: str = "z"
     ) -> Inertia:

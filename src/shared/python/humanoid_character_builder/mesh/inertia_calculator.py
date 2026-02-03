@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import numpy as np
+from humanoid_character_builder.contracts import postcondition, precondition
 from numpy.typing import NDArray
 
 if TYPE_CHECKING:
@@ -267,9 +268,23 @@ class MeshInertiaCalculator:
         if not isinstance(mesh, trimesh.Trimesh):
             raise TypeError(f"Expected Trimesh, got {type(mesh)}")
 
+        mesh, was_watertight = self._validate_and_repair_mesh(mesh, repair_mesh)
+        effective_density = density if density is not None else self.default_density
+
+        mesh_props = self._extract_mesh_mass_properties(mesh, mass)
+        if mesh_props is None:
+            return InertiaResult.create_default(mass or 1.0)
+
+        return self._create_inertia_result(
+            mesh_props, mass, effective_density, was_watertight
+        )
+
+    def _validate_and_repair_mesh(
+        self, mesh: Any, repair_mesh: bool
+    ) -> tuple[Any, bool]:
+        """Validate mesh watertightness and optionally repair."""
         was_watertight = mesh.is_watertight
 
-        # Try to repair if needed
         if not was_watertight and repair_mesh:
             mesh = self._repair_mesh(mesh)
             was_watertight = mesh.is_watertight
@@ -279,11 +294,12 @@ class MeshInertiaCalculator:
                 "Mesh is not watertight. Inertia calculation may be inaccurate."
             )
 
-        # Use specified density or default
-        effective_density = density if density is not None else self.default_density
+        return mesh, was_watertight
 
-        # Get mesh mass properties
-        # trimesh computes inertia assuming density=1, so we scale
+    def _extract_mesh_mass_properties(
+        self, mesh: Any, mass: float | None
+    ) -> dict[str, Any] | None:
+        """Extract volume, center of mass, and inertia from mesh."""
         try:
             volume = mesh.volume
             center_mass = mesh.center_mass
@@ -293,26 +309,30 @@ class MeshInertiaCalculator:
                 volume = mesh.bounding_box.volume
                 center_mass = mesh.bounding_box.centroid
 
-            # Get inertia at center of mass (unit density)
-            inertia_unit = mesh.moment_inertia
-
+            return {
+                "volume": volume,
+                "center_mass": center_mass,
+                "inertia_unit": mesh.moment_inertia,
+            }
         except Exception as e:
             logger.warning(f"Failed to compute mesh properties: {e}. Using defaults.")
-            return InertiaResult.create_default(mass or 1.0)
+            return None
 
-        # Determine mode and compute final inertia
-        if mass is not None:
-            # Scale inertia to match specified mass
-            mode = InertiaMode.MESH_SPECIFIED_MASS
-            # Inertia scales with mass (and we computed at unit density)
-            scale_factor = mass / volume if volume > 0 else 1.0
-            inertia = inertia_unit * scale_factor
-            final_mass = mass
-        else:
-            # Use uniform density
-            mode = InertiaMode.MESH_UNIFORM_DENSITY
-            final_mass = volume * effective_density
-            inertia = inertia_unit * effective_density
+    def _create_inertia_result(
+        self,
+        mesh_props: dict[str, Any],
+        mass: float | None,
+        effective_density: float,
+        was_watertight: bool,
+    ) -> InertiaResult:
+        """Create InertiaResult from mesh properties."""
+        volume = mesh_props["volume"]
+        center_mass = mesh_props["center_mass"]
+        inertia_unit = mesh_props["inertia_unit"]
+
+        inertia, final_mass, mode = self._scale_inertia(
+            inertia_unit, volume, mass, effective_density
+        )
 
         return InertiaResult(
             ixx=float(inertia[0, 0]),
@@ -331,6 +351,29 @@ class MeshInertiaCalculator:
             was_watertight=was_watertight,
             mode=mode,
         )
+
+    def _scale_inertia(
+        self,
+        inertia_unit: np.ndarray,
+        volume: float,
+        mass: float | None,
+        effective_density: float,
+    ) -> tuple[np.ndarray, float, InertiaMode]:
+        """Scale inertia based on mass or density."""
+        if mass is not None:
+            scale_factor = mass / volume if volume > 0 else 1.0
+            return (
+                inertia_unit * scale_factor,
+                mass,
+                InertiaMode.MESH_SPECIFIED_MASS,
+            )
+        else:
+            final_mass = volume * effective_density
+            return (
+                inertia_unit * effective_density,
+                final_mass,
+                InertiaMode.MESH_UNIFORM_DENSITY,
+            )
 
     def _repair_mesh(self, mesh: Any) -> Any:
         """

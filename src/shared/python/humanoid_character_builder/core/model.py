@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from typing import Any
 
 import numpy as np
+from humanoid_character_builder.contracts import postcondition, precondition
 from humanoid_character_builder.mesh.inertia_calculator import InertiaResult
 from scipy.spatial import ConvexHull
 from scipy.spatial.transform import Rotation as R
@@ -118,6 +119,14 @@ class SupportPolygon:
 class HumanoidModel:
     """Representation of the complete humanoid model."""
 
+    @precondition(
+        lambda links, joints: len(links) > 0,
+        "Model must have at least one link",
+    )
+    @precondition(
+        lambda links, joints, root_link_name: root_link_name in links,
+        "Root link must exist in links",
+    )
     def __init__(
         self,
         links: dict[str, GeneratedLink],
@@ -219,9 +228,14 @@ class HumanoidModel:
         Assumes feet are the support.
         """
         transforms = self.get_global_transforms()
-        points = []
+        feet_links = self._identify_feet_links(transforms)
+        points = self._collect_footprint_points(feet_links, transforms)
+        return self._create_support_polygon_from_points(points)
 
-        # Identify feet links
+    def _identify_feet_links(
+        self, transforms: dict[str, np.ndarray]
+    ) -> list[str]:
+        """Identify links that form the support base (feet)."""
         # Heuristic: links containing "foot" in name
         feet_links = [name for name in self.links if "foot" in name]
 
@@ -235,71 +249,80 @@ class HumanoidModel:
             )
             feet_links = sorted_links[:2]  # Take lowest 2
 
+        return feet_links
+
+    def _collect_footprint_points(
+        self,
+        feet_links: list[str],
+        transforms: dict[str, np.ndarray],
+    ) -> list[tuple[float, float]]:
+        """Collect 2D footprint points from feet links."""
+        points: list[tuple[float, float]] = []
+
         for link_name in feet_links:
             if link_name not in transforms:
                 continue
 
             T_global = transforms[link_name]
             link = self.links[link_name]
+            footprint = self._compute_link_footprint(link)
 
-            # Get collision geometry bounds or corners
-            # If box: corners
-            # If cylinder/capsule: ends?
-            # Simplified: Use link origin (COM) projected to ground?
-            # Better: Assume standard foot box size if available, or just use COM +/- some margin
-
-            geom = link.collision_geometry or link.visual_geometry
-
-            # Default footprint relative to link frame
-            footprint = []
-
-            if geom and geom.get("type") == "box":
-                size = geom[
-                    "size"
-                ]  # (w, d, h) ? In create_geometry_dict: (width, depth, length) -> size=(width, depth, length)
-                # Usually z is length for limbs? No, box size is (x, y, z).
-                # In urdf generator:
-                # "box", "size": (width, depth, length)
-                # length corresponds to Z axis in URDF usually?
-                # Actually, urdf box size is "x y z".
-
-                sx, sy, sz = size
-                # Corners of the bottom face (assuming z is up in link frame? usually x is along bone?)
-                # HumanoidBuilder usually aligns bone along Z or Y.
-                # In create_geometry_dict:
-                # box size (width, depth, length).
-
-                # Let's just project the 8 corners of the box
-                for dx in [-sx / 2, sx / 2]:
-                    for dy in [-sy / 2, sy / 2]:
-                        for dz in [-sz / 2, sz / 2]:
-                            footprint.append([dx, dy, dz])
-
-            elif geom and geom.get("type") in ("cylinder", "capsule"):
-                # radius, length. Cylinder along Z usually.
-                r = geom["radius"]
-                cyl_len = geom["length"]
-                # Project circle? Just 4 points around
-                for theta in [0, np.pi / 2, np.pi, 3 * np.pi / 2]:
-                    footprint.append(
-                        [r * np.cos(theta), r * np.sin(theta), -cyl_len / 2]
-                    )
-                    footprint.append(
-                        [r * np.cos(theta), r * np.sin(theta), cyl_len / 2]
-                    )
-            else:
-                # Just use COM
-                footprint.append(list(link.origin_xyz))
-
-            # Transform points to global
+            # Transform points to global XY
             for pt in footprint:
                 pt_global = T_global[:3, :3] @ np.array(pt) + T_global[:3, 3]
-                points.append((pt_global[0], pt_global[1]))  # Keep only X, Y
+                points.append((float(pt_global[0]), float(pt_global[1])))
 
+        return points
+
+    def _compute_link_footprint(
+        self, link: GeneratedLink
+    ) -> list[list[float]]:
+        """Compute local footprint points for a link based on its geometry."""
+        geom = link.collision_geometry or link.visual_geometry
+
+        if geom and geom.get("type") == "box":
+            return self._compute_box_footprint(geom["size"])
+        elif geom and geom.get("type") in ("cylinder", "capsule"):
+            return self._compute_cylinder_footprint(
+                geom["radius"], geom["length"]
+            )
+        else:
+            # Just use COM
+            return [list(link.origin_xyz)]
+
+    def _compute_box_footprint(
+        self, size: tuple[float, float, float]
+    ) -> list[list[float]]:
+        """Compute footprint points for box geometry (8 corners)."""
+        sx, sy, sz = size
+        footprint = []
+        for dx in [-sx / 2, sx / 2]:
+            for dy in [-sy / 2, sy / 2]:
+                for dz in [-sz / 2, sz / 2]:
+                    footprint.append([dx, dy, dz])
+        return footprint
+
+    def _compute_cylinder_footprint(
+        self, radius: float, length: float
+    ) -> list[list[float]]:
+        """Compute footprint points for cylinder/capsule geometry."""
+        footprint = []
+        for theta in [0, np.pi / 2, np.pi, 3 * np.pi / 2]:
+            footprint.append(
+                [radius * np.cos(theta), radius * np.sin(theta), -length / 2]
+            )
+            footprint.append(
+                [radius * np.cos(theta), radius * np.sin(theta), length / 2]
+            )
+        return footprint
+
+    def _create_support_polygon_from_points(
+        self, points: list[tuple[float, float]]
+    ) -> SupportPolygon:
+        """Create support polygon from 2D points using convex hull."""
         if len(points) < 3:
             return SupportPolygon(points)
 
-        # Compute Convex Hull
         points_array = np.array(points)
         try:
             hull = ConvexHull(points_array)

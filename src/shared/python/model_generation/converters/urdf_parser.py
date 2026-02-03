@@ -234,48 +234,13 @@ class URDFParser:
         if not name:
             raise ValueError("Link missing 'name' attribute")
 
-        # Parse inertial
-        inertia = Inertia(ixx=0.1, iyy=0.1, izz=0.1, mass=1.0)
-        inertial_elem = elem.find("inertial")
-        if inertial_elem is not None:
-            inertia = self._parse_inertial(inertial_elem)
-
-        # Parse visual
-        visual_geometry = None
-        visual_origin = Origin()
-        visual_material = None
-
-        visual_elem = elem.find("visual")
-        if visual_elem is not None:
-            origin_elem = visual_elem.find("origin")
-            if origin_elem is not None:
-                visual_origin = self._parse_origin(origin_elem)
-
-            geom_elem = visual_elem.find("geometry")
-            if geom_elem is not None:
-                visual_geometry = self._parse_geometry(geom_elem, base_path)
-
-            mat_elem = visual_elem.find("material")
-            if mat_elem is not None:
-                mat_name = mat_elem.get("name")
-                if mat_name and mat_name in materials:
-                    visual_material = materials[mat_name]
-                else:
-                    visual_material = self._parse_material(mat_elem)
-
-        # Parse collision
-        collision_geometry = None
-        collision_origin = Origin()
-
-        collision_elem = elem.find("collision")
-        if collision_elem is not None:
-            origin_elem = collision_elem.find("origin")
-            if origin_elem is not None:
-                collision_origin = self._parse_origin(origin_elem)
-
-            geom_elem = collision_elem.find("geometry")
-            if geom_elem is not None:
-                collision_geometry = self._parse_geometry(geom_elem, base_path)
+        inertia = self._parse_link_inertial(elem)
+        visual_geometry, visual_origin, visual_material = self._parse_link_visual(
+            elem, materials, base_path
+        )
+        collision_geometry, collision_origin = self._parse_link_collision(
+            elem, base_path
+        )
 
         return Link(
             name=name,
@@ -286,6 +251,71 @@ class URDFParser:
             collision_geometry=collision_geometry,
             collision_origin=collision_origin,
         )
+
+    def _parse_link_inertial(self, elem: ET.Element) -> Inertia:
+        """Parse the inertial element of a link."""
+        inertial_elem = elem.find("inertial")
+        if inertial_elem is not None:
+            return self._parse_inertial(inertial_elem)
+        return Inertia(ixx=0.1, iyy=0.1, izz=0.1, mass=1.0)
+
+    def _parse_link_visual(
+        self,
+        elem: ET.Element,
+        materials: dict[str, Material],
+        base_path: Path | None,
+    ) -> tuple[Geometry | None, Origin, Material | None]:
+        """Parse the visual element of a link."""
+        visual_elem = elem.find("visual")
+        if visual_elem is None:
+            return None, Origin(), None
+
+        visual_origin = Origin()
+        origin_elem = visual_elem.find("origin")
+        if origin_elem is not None:
+            visual_origin = self._parse_origin(origin_elem)
+
+        visual_geometry = None
+        geom_elem = visual_elem.find("geometry")
+        if geom_elem is not None:
+            visual_geometry = self._parse_geometry(geom_elem, base_path)
+
+        visual_material = self._parse_visual_material(visual_elem, materials)
+
+        return visual_geometry, visual_origin, visual_material
+
+    def _parse_visual_material(
+        self, visual_elem: ET.Element, materials: dict[str, Material]
+    ) -> Material | None:
+        """Parse material from visual element."""
+        mat_elem = visual_elem.find("material")
+        if mat_elem is None:
+            return None
+
+        mat_name = mat_elem.get("name")
+        if mat_name and mat_name in materials:
+            return materials[mat_name]
+        return self._parse_material(mat_elem)
+
+    def _parse_link_collision(
+        self, elem: ET.Element, base_path: Path | None
+    ) -> tuple[Geometry | None, Origin]:
+        """Parse the collision element of a link."""
+        collision_elem = elem.find("collision")
+        if collision_elem is None:
+            return None, Origin()
+
+        collision_origin = Origin()
+        origin_elem = collision_elem.find("origin")
+        if origin_elem is not None:
+            collision_origin = self._parse_origin(origin_elem)
+
+        collision_geometry = None
+        geom_elem = collision_elem.find("geometry")
+        if geom_elem is not None:
+            collision_geometry = self._parse_geometry(geom_elem, base_path)
+
+        return collision_geometry, collision_origin
 
     def _parse_joint(self, elem: ET.Element) -> Joint:
         """Parse a joint element."""
