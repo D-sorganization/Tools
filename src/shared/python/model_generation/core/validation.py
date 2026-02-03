@@ -17,6 +17,7 @@ from model_generation.core.constants import (
     MIN_INERTIA_KG_M2,
     MIN_MASS_KG,
 )
+from model_generation.core.contracts import postcondition, precondition
 
 if TYPE_CHECKING:
     from model_generation.core.types import Inertia, Joint, Link
@@ -311,6 +312,8 @@ class Validator:
         return result
 
     @classmethod
+    @precondition(lambda links: links is not None, "Links list cannot be None")
+    @precondition(lambda joints: joints is not None, "Joints list cannot be None")
     def validate_hierarchy(
         cls, links: list[Link], joints: list[Joint]
     ) -> ValidationResult:
@@ -332,38 +335,41 @@ class Validator:
         """
         result = ValidationResult(is_valid=True)
 
-        # Check for duplicate link names
         link_names = [link.name for link in links]
-        seen = set()
-        for name in link_names:
+        cls._check_duplicate_names(result, link_names, "link")
+        cls._check_duplicate_names(
+            result, [joint.name for joint in joints], "joint"
+        )
+        cls._check_root_links(result, set(link_names), joints)
+        cls._check_circular_dependencies(result, link_names, joints)
+
+        return result
+
+    @classmethod
+    def _check_duplicate_names(
+        cls, result: ValidationResult, names: list[str], entity_type: str
+    ) -> None:
+        """Check for duplicate names in a list."""
+        seen: set[str] = set()
+        for name in names:
             if name in seen:
                 result.add_error(
                     cls.HIERARCHY_DUPLICATE,
-                    f"Duplicate link name: {name}",
+                    f"Duplicate {entity_type} name: {name}",
                 )
             seen.add(name)
 
-        # Check for duplicate joint names
-        joint_names = [joint.name for joint in joints]
-        seen = set()
-        for name in joint_names:
-            if name in seen:
-                result.add_error(
-                    cls.HIERARCHY_DUPLICATE,
-                    f"Duplicate joint name: {name}",
-                )
-            seen.add(name)
-
-        # Build parent map
-        link_name_set = set(link_names)
-        parent_map: dict[str, str | None] = {name: None for name in link_names}
-        for joint in joints:
-            if joint.child in parent_map:
-                parent_map[joint.child] = joint.parent
-
-        # Check for orphaned links (except root)
+    @classmethod
+    def _check_root_links(
+        cls,
+        result: ValidationResult,
+        link_name_set: set[str],
+        joints: list[Joint],
+    ) -> None:
+        """Check for valid root link configuration."""
         children = {j.child for j in joints}
         roots = link_name_set - children
+
         if len(roots) == 0:
             result.add_error(
                 cls.HIERARCHY_CIRCULAR,
@@ -375,31 +381,48 @@ class Validator:
                 f"Multiple root links found: {roots}",
             )
 
-        # Check for circular dependencies using DFS
-        def has_cycle(start: str, visited: set[str], path: set[str]) -> bool:
-            if start in path:
-                return True
-            if start in visited:
-                return False
-            visited.add(start)
-            path.add(start)
-            for joint in joints:
-                if joint.parent == start:
-                    if has_cycle(joint.child, visited, path):
-                        return True
-            path.remove(start)
-            return False
-
+    @classmethod
+    def _check_circular_dependencies(
+        cls,
+        result: ValidationResult,
+        link_names: list[str],
+        joints: list[Joint],
+    ) -> None:
+        """Check for circular dependencies using DFS."""
         visited: set[str] = set()
+
         for link_name in link_names:
-            if has_cycle(link_name, visited, set()):
+            if cls._has_cycle(link_name, visited, set(), joints):
                 result.add_error(
                     cls.HIERARCHY_CIRCULAR,
                     f"Circular dependency detected involving {link_name}",
                 )
                 break
 
-        return result
+    @classmethod
+    def _has_cycle(
+        cls,
+        start: str,
+        visited: set[str],
+        path: set[str],
+        joints: list[Joint],
+    ) -> bool:
+        """Detect if there's a cycle starting from the given node."""
+        if start in path:
+            return True
+        if start in visited:
+            return False
+
+        visited.add(start)
+        path.add(start)
+
+        for joint in joints:
+            if joint.parent == start:
+                if cls._has_cycle(joint.child, visited, path, joints):
+                    return True
+
+        path.remove(start)
+        return False
 
     @classmethod
     def validate_model(

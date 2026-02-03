@@ -374,41 +374,77 @@ def estimate_segment_primitive(
     Returns:
         Tuple of (PrimitiveShape, dimension_dict)
     """
-    # Default width/depth as fractions of length if not specified
+    width, depth = _normalize_dimensions(length, width, depth)
+    segment_lower = segment_type.lower()
+
+    if _matches_category(segment_lower, ["head"]):
+        return _create_sphere_primitive(length)
+
+    if _matches_category(
+        segment_lower, ["arm", "forearm", "thigh", "shin", "shank", "leg"]
+    ):
+        return _create_limb_capsule_primitive(length, width, depth)
+
+    if _matches_category(segment_lower, ["torso", "thorax", "lumbar", "pelvis"]):
+        return _create_torso_box_primitive(length, width, depth)
+
+    if _matches_category(segment_lower, ["hand", "foot"]):
+        return _create_extremity_box_primitive(length, width, depth)
+
+    if _matches_category(segment_lower, ["neck"]):
+        return _create_neck_cylinder_primitive(length, width, depth)
+
+    # Default -> capsule
+    return _create_limb_capsule_primitive(length, width, depth)
+
+
+def _normalize_dimensions(
+    length: float, width: float | None, depth: float | None
+) -> tuple[float, float]:
+    """Normalize width/depth to default fractions of length if not specified."""
     if width is None:
         width = length * 0.2
     if depth is None:
         depth = length * 0.15
+    return width, depth
 
-    segment_lower = segment_type.lower()
 
-    # Head -> sphere
-    if "head" in segment_lower:
-        radius = length / 2
-        return PrimitiveShape.SPHERE, {"radius": radius}
+def _matches_category(segment_lower: str, keywords: list[str]) -> bool:
+    """Check if segment name matches any of the keywords."""
+    return any(keyword in segment_lower for keyword in keywords)
 
-    # Limb segments -> capsule
-    if any(
-        x in segment_lower for x in ["arm", "forearm", "thigh", "shin", "shank", "leg"]
-    ):
-        radius = (width + depth) / 4  # Average of width/depth divided by 2
-        cyl_length = max(0.01, length - 2 * radius)  # Subtract hemispherical caps
-        return PrimitiveShape.CAPSULE, {"radius": radius, "length": cyl_length}
 
-    # Torso segments -> box or ellipsoid
-    if any(x in segment_lower for x in ["torso", "thorax", "lumbar", "pelvis"]):
-        return PrimitiveShape.BOX, {"x": width, "y": depth, "z": length}
+def _create_sphere_primitive(length: float) -> tuple[PrimitiveShape, dict[str, float]]:
+    """Create sphere primitive for head-like segments."""
+    return PrimitiveShape.SPHERE, {"radius": length / 2}
 
-    # Hands/feet -> box
-    if any(x in segment_lower for x in ["hand", "foot"]):
-        return PrimitiveShape.BOX, {"x": width, "y": length, "z": depth}
 
-    # Neck -> cylinder
-    if "neck" in segment_lower:
-        radius = (width + depth) / 4
-        return PrimitiveShape.CYLINDER, {"radius": radius, "length": length}
-
-    # Default -> capsule
+def _create_limb_capsule_primitive(
+    length: float, width: float, depth: float
+) -> tuple[PrimitiveShape, dict[str, float]]:
+    """Create capsule primitive for limb segments."""
     radius = (width + depth) / 4
     cyl_length = max(0.01, length - 2 * radius)
     return PrimitiveShape.CAPSULE, {"radius": radius, "length": cyl_length}
+
+
+def _create_torso_box_primitive(
+    length: float, width: float, depth: float
+) -> tuple[PrimitiveShape, dict[str, float]]:
+    """Create box primitive for torso segments."""
+    return PrimitiveShape.BOX, {"x": width, "y": depth, "z": length}
+
+
+def _create_extremity_box_primitive(
+    length: float, width: float, depth: float
+) -> tuple[PrimitiveShape, dict[str, float]]:
+    """Create box primitive for hands/feet."""
+    return PrimitiveShape.BOX, {"x": width, "y": length, "z": depth}
+
+
+def _create_neck_cylinder_primitive(
+    length: float, width: float, depth: float
+) -> tuple[PrimitiveShape, dict[str, float]]:
+    """Create cylinder primitive for neck segment."""
+    radius = (width + depth) / 4
+    return PrimitiveShape.CYLINDER, {"radius": radius, "length": length}

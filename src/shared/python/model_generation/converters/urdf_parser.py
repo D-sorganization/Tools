@@ -323,54 +323,12 @@ class URDFParser:
         if not name:
             raise ValueError("Joint missing 'name' attribute")
 
-        joint_type_str = elem.get("type", "fixed")
-        try:
-            joint_type = JointType(joint_type_str)
-        except ValueError:
-            logger.warning(f"Unknown joint type '{joint_type_str}', using fixed")
-            joint_type = JointType.FIXED
-
-        # Parent and child
-        parent_elem = elem.find("parent")
-        child_elem = elem.find("child")
-        if parent_elem is None or child_elem is None:
-            raise ValueError(f"Joint '{name}' missing parent or child")
-
-        parent = parent_elem.get("link", "")
-        child = child_elem.get("link", "")
-
-        # Origin
-        origin = Origin()
-        origin_elem = elem.find("origin")
-        if origin_elem is not None:
-            origin = self._parse_origin(origin_elem)
-
-        # Axis
-        axis = (0.0, 0.0, 1.0)
-        axis_elem = elem.find("axis")
-        if axis_elem is not None:
-            xyz_str = axis_elem.get("xyz", "0 0 1")
-            axis = tuple(float(v) for v in xyz_str.split())
-
-        # Limits
-        limits = None
-        limit_elem = elem.find("limit")
-        if limit_elem is not None:
-            limits = JointLimits(
-                lower=float(limit_elem.get("lower", -math.pi)),
-                upper=float(limit_elem.get("upper", math.pi)),
-                effort=float(limit_elem.get("effort", 1000)),
-                velocity=float(limit_elem.get("velocity", 10)),
-            )
-
-        # Dynamics
-        dynamics = JointDynamics()
-        dynamics_elem = elem.find("dynamics")
-        if dynamics_elem is not None:
-            dynamics = JointDynamics(
-                damping=float(dynamics_elem.get("damping", 0.5)),
-                friction=float(dynamics_elem.get("friction", 0.0)),
-            )
+        joint_type = self._parse_joint_type(elem)
+        parent, child = self._parse_joint_parent_child(elem, name)
+        origin = self._parse_joint_origin(elem)
+        axis = self._parse_joint_axis(elem)
+        limits = self._parse_joint_limits(elem)
+        dynamics = self._parse_joint_dynamics(elem)
 
         return Joint(
             name=name,
@@ -382,6 +340,64 @@ class URDFParser:
             limits=limits,
             dynamics=dynamics,
         )
+
+    def _parse_joint_type(self, elem: ET.Element) -> JointType:
+        """Parse joint type from element."""
+        joint_type_str = elem.get("type", "fixed")
+        try:
+            return JointType(joint_type_str)
+        except ValueError:
+            logger.warning(f"Unknown joint type '{joint_type_str}', using fixed")
+            return JointType.FIXED
+
+    def _parse_joint_parent_child(
+        self, elem: ET.Element, joint_name: str
+    ) -> tuple[str, str]:
+        """Parse parent and child link names from joint element."""
+        parent_elem = elem.find("parent")
+        child_elem = elem.find("child")
+
+        if parent_elem is None or child_elem is None:
+            raise ValueError(f"Joint '{joint_name}' missing parent or child")
+
+        return parent_elem.get("link", ""), child_elem.get("link", "")
+
+    def _parse_joint_origin(self, elem: ET.Element) -> Origin:
+        """Parse origin from joint element."""
+        origin_elem = elem.find("origin")
+        if origin_elem is not None:
+            return self._parse_origin(origin_elem)
+        return Origin()
+
+    def _parse_joint_axis(self, elem: ET.Element) -> tuple[float, ...]:
+        """Parse axis from joint element."""
+        axis_elem = elem.find("axis")
+        if axis_elem is not None:
+            xyz_str = axis_elem.get("xyz", "0 0 1")
+            return tuple(float(v) for v in xyz_str.split())
+        return (0.0, 0.0, 1.0)
+
+    def _parse_joint_limits(self, elem: ET.Element) -> JointLimits | None:
+        """Parse limits from joint element."""
+        limit_elem = elem.find("limit")
+        if limit_elem is not None:
+            return JointLimits(
+                lower=float(limit_elem.get("lower", -math.pi)),
+                upper=float(limit_elem.get("upper", math.pi)),
+                effort=float(limit_elem.get("effort", 1000)),
+                velocity=float(limit_elem.get("velocity", 10)),
+            )
+        return None
+
+    def _parse_joint_dynamics(self, elem: ET.Element) -> JointDynamics:
+        """Parse dynamics from joint element."""
+        dynamics_elem = elem.find("dynamics")
+        if dynamics_elem is not None:
+            return JointDynamics(
+                damping=float(dynamics_elem.get("damping", 0.5)),
+                friction=float(dynamics_elem.get("friction", 0.0)),
+            )
+        return JointDynamics()
 
     def _parse_inertial(self, elem: ET.Element) -> Inertia:
         """Parse inertial element."""
