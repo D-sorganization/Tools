@@ -1,14 +1,7 @@
-import os
-import sys
-from pathlib import Path
-
+"""Extended calculator tests."""
 import sympy as sp
 
-# Add the parent directory to sys.path to import calculator
-sys.path.append(os.path.abspath(Path(Path(__file__).parent, "..")))
-
-
-from calculator import TI89Calculator
+from web_applications.calculator.calculator import TI89Calculator
 
 
 def test_evaluate_with_trigonometric_identity() -> None:

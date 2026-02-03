@@ -1,11 +1,5 @@
-import os
-import sys
+"""Rate limit enforcement tests for calculator web application."""
 import unittest
-from pathlib import Path
-
-# Add the repo root to sys.path
-sys.path.append(os.path.abspath(Path(Path(__file__).parent, "../..")))
-
 
 from web_applications.calculator.webapp import create_app
 

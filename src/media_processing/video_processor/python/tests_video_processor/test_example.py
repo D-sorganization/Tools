@@ -6,14 +6,9 @@ including positive tests, negative tests, and edge cases.
 
 import logging
 import math
-import sys
-from pathlib import Path
 
 import pytest
 
-# Add parent directory (python/) to path to access src module
-sys.path.insert(0, str(Path(__file__).parent.parent))
-# Import from local src module (not repository root src/)
 from video_processor_src import constants, logger_utils
 
 

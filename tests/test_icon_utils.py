@@ -1,14 +1,12 @@
-import sys
+"""Tests for icon utility functions."""
 from pathlib import Path
 
 import pytest
 
-# Ensure tools package is importable
-repo_root = Path(__file__).resolve().parent.parent
-if str(repo_root / "src") not in sys.path:
-    sys.path.insert(0, str(repo_root / "src"))
-
 from tools.icon_utils import convert_png_to_ico, ensure_pil_installed
+
+# Repository root for test fixtures
+repo_root = Path(__file__).resolve().parent.parent
 
 
 @pytest.fixture

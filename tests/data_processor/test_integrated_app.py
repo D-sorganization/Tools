@@ -1,19 +1,9 @@
-# Add the project directory to path
+"""Tests for integrated data processor application."""
 import importlib
-import os
 import sys
 import unittest
-from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock, patch
-
-project_root = os.path.abspath(
-    Path(
-        Path(__file__).parent,
-        "../../src/data_processing/data_processor/python/data_processor",
-    )
-)
-sys.path.insert(0, project_root)
 
 
 # Define mock classes
@@ -215,7 +205,7 @@ class TestIntegratedCSVProcessorApp(unittest.TestCase):
         cls.modules_patcher.start()
 
         # Import the module under test
-        import Data_Processor_Integrated
+        import data_processor.Data_Processor_Integrated as Data_Processor_Integrated
 
         # Reload to ensure it uses the mocked modules
         importlib.reload(Data_Processor_Integrated)
@@ -232,10 +222,10 @@ class TestIntegratedCSVProcessorApp(unittest.TestCase):
     def tearDownClass(cls) -> None:
         cls.modules_patcher.stop()
         # Remove the module from sys.modules so subsequent tests don't use the mocked version
-        if "Data_Processor_Integrated" in sys.modules:
-            del sys.modules["Data_Processor_Integrated"]
+        if "data_processor.Data_Processor_Integrated" in sys.modules:
+            del sys.modules["data_processor.Data_Processor_Integrated"]
 
-    @patch("Data_Processor_Integrated.ctk.CTk")
+    @patch("data_processor.Data_Processor_Integrated.ctk.CTk")
     def test_initialization(self, mock_ctk_ctor: MagicMock) -> None:
         """Test application initialization."""
         # Base class is now our MockCSVProcessorApp
@@ -268,7 +258,7 @@ class TestIntegratedCSVProcessorApp(unittest.TestCase):
         # txt falls back to tsv or content check in code?
         self.assertEqual(detector.detect_format("test.txt"), "tsv")
 
-    @patch("Data_Processor_Integrated.pq")
+    @patch("data_processor.Data_Processor_Integrated.pq")
     def test_parquet_analyzer(self, mock_pq: MagicMock) -> None:
         """Test the Parquet analyzer dialog."""
         # Use the class from the loaded module
@@ -304,12 +294,12 @@ class TestIntegratedCSVProcessorApp(unittest.TestCase):
 
         # Instantiate dialog (mock parent)
         with (
-            patch("Data_Processor_Integrated.ctk.CTkToplevel"),
-            patch("Data_Processor_Integrated.ctk.CTkFrame"),
-            patch("Data_Processor_Integrated.ctk.CTkLabel"),
-            patch("Data_Processor_Integrated.ctk.CTkButton"),
-            patch("Data_Processor_Integrated.ctk.CTkTextbox"),
-            patch("Data_Processor_Integrated.Path") as mock_path,
+            patch("data_processor.Data_Processor_Integrated.ctk.CTkToplevel"),
+            patch("data_processor.Data_Processor_Integrated.ctk.CTkFrame"),
+            patch("data_processor.Data_Processor_Integrated.ctk.CTkLabel"),
+            patch("data_processor.Data_Processor_Integrated.ctk.CTkButton"),
+            patch("data_processor.Data_Processor_Integrated.ctk.CTkTextbox"),
+            patch("data_processor.Data_Processor_Integrated.Path") as mock_path,
         ):
             # Configure path mock robustly
             mock_stat = MagicMock()

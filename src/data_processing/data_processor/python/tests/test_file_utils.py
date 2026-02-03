@@ -1,14 +1,9 @@
-import sys
-from pathlib import Path
-
+"""Tests for file utility functions."""
 import numpy as np
 import pandas as pd
 import pytest
 
-# Add python/data_processor to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "data_processor"))
-
-from file_utils import (  # noqa: PGH003
+from data_processor.file_utils import (
     OPENPYXL_AVAILABLE,
     PYARROW_AVAILABLE,
     DataReader,

@@ -26,12 +26,9 @@ from collections.abc import Generator
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-# Add folder_tool_pro directory to path
-sys.path.append(str(Path(__file__).parent.parent / "folder_tool_pro"))
-
 # Skip entire module if folder_fix_pro is not available
 try:
-    from folder_fix_pro import (
+    from tools.folder_tools.folder_tool_pro.folder_fix_pro import (
         FileHasher,
         FolderFixPro,
         OperationReport,

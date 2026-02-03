@@ -1,15 +1,11 @@
 """Tests for build_exe.py module."""
 
 import subprocess
-import sys
-from pathlib import Path
 from unittest.mock import Mock, patch
 
 import pytest
 
-# Import the module to test
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from build_exe import (
+from tools.folder_tools.project_packer.build_exe import (
     build_executable,
     check_pyinstaller,
     clean_build_dirs,

@@ -2,14 +2,9 @@
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import pytest
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from models import FilterConfig, PipelineConfig  # noqa: E402, PGH003
+from data_processor.models import FilterConfig, PipelineConfig
 
 
 def test_pipeline_config_normalizes_and_validates(tmp_path: Path) -> None:
