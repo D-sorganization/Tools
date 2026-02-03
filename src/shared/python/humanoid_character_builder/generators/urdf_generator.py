@@ -12,7 +12,7 @@ import logging
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 from xml.dom import minidom
 
 from humanoid_character_builder.contracts import postcondition, precondition
@@ -727,4 +727,4 @@ def generate_humanoid_urdf(
         URDF XML string
     """
     generator = HumanoidURDFGenerator(config)
-    return generator.generate(params, output_path)
+    return cast(str, generator.generate(params, output_path))
