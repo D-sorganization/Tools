@@ -213,7 +213,9 @@ class PressureDropCalculatorWidget(QWidget):
         self.results_table = QTableWidget()
         self.results_table.setColumnCount(2)
         self.results_table.setHorizontalHeaderLabels(["Parameter", "Value"])
-        self.results_table.horizontalHeader().setStretchLastSection(True)
+        results_header = self.results_table.horizontalHeader()
+        if results_header is not None:
+            results_header.setStretchLastSection(True)
         results_tab_layout.addWidget(self.results_table)
 
         self.tabs.addTab(results_tab, "Results")
@@ -225,7 +227,9 @@ class PressureDropCalculatorWidget(QWidget):
         self.flow_table = QTableWidget()
         self.flow_table.setColumnCount(2)
         self.flow_table.setHorizontalHeaderLabels(["Property", "Value"])
-        self.flow_table.horizontalHeader().setStretchLastSection(True)
+        flow_header = self.flow_table.horizontalHeader()
+        if flow_header is not None:
+            flow_header.setStretchLastSection(True)
         flow_tab_layout.addWidget(self.flow_table)
 
         self.tabs.addTab(flow_tab, "Flow Properties")
@@ -273,8 +277,8 @@ class PressureDropCalculatorWidget(QWidget):
             )
 
             # Get gas composition
-            gas_comp = {}
-            total = 0
+            gas_comp: dict[str, float] = {}
+            total: float = 0.0
             for comp, spin in self.gas_spins.items():
                 val = spin.value()
                 if val > 0:
@@ -409,7 +413,8 @@ class PressureDropCalculatorWidget(QWidget):
 
     def _apply_styling(self) -> None:
         """Apply dark theme styling."""
-        self.setStyleSheet("""
+        self.setStyleSheet(
+            """
             QWidget {
                 background-color: #1e1e2e;
                 color: #cdd6f4;
@@ -477,4 +482,5 @@ class PressureDropCalculatorWidget(QWidget):
                 background-color: #89b4fa;
                 color: #1e1e2e;
             }
-        """)
+        """
+        )
