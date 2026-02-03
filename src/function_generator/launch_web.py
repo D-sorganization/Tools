@@ -76,10 +76,12 @@ def main() -> int:
 
     def open_browser() -> None:
         import time
+
         time.sleep(2)
         webbrowser.open("http://localhost:5174")
 
     import threading
+
     threading.Thread(target=open_browser, daemon=True).start()
 
     env = os.environ.copy()

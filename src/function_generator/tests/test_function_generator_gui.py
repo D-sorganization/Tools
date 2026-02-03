@@ -140,10 +140,20 @@ class TestFunctionGeneratorGUI:
             )
 
             with patch.object(FunctionGeneratorWidget, "_init_ui", return_value=None):
-                with patch.object(FunctionGeneratorWidget, "_apply_styling", return_value=None):
-                    with patch.object(FunctionGeneratorWidget, "_connect_signals", return_value=None):
-                        with patch.object(FunctionGeneratorWidget, "_generate_signal", return_value=None):
-                            widget = FunctionGeneratorWidget.__new__(FunctionGeneratorWidget)
+                with patch.object(
+                    FunctionGeneratorWidget, "_apply_styling", return_value=None
+                ):
+                    with patch.object(
+                        FunctionGeneratorWidget, "_connect_signals", return_value=None
+                    ):
+                        with patch.object(
+                            FunctionGeneratorWidget,
+                            "_generate_signal",
+                            return_value=None,
+                        ):
+                            widget = FunctionGeneratorWidget.__new__(
+                                FunctionGeneratorWidget
+                            )
                             assert widget is not None
         except ImportError as e:
             pytest.skip(f"Qt not available: {e}")

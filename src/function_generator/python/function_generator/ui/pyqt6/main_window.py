@@ -7,27 +7,26 @@ using the SignalGenerator engine from signal_toolkit.
 from __future__ import annotations
 
 import os
-from typing import Any
 
 import numpy as np
 
 # Handle matplotlib backend
 if os.environ.get("HEADLESS", "false").lower() == "true":
     import matplotlib
+
     matplotlib.use("Agg")
 
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.figure import Figure
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
     QComboBox,
     QDoubleSpinBox,
     QFormLayout,
-    QGridLayout,
     QGroupBox,
     QHBoxLayout,
-    QLabel,
-    QMainWindow,
     QPushButton,
-    QSlider,
     QSpinBox,
     QSplitter,
     QTabWidget,
@@ -35,10 +34,6 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
-from matplotlib.figure import Figure
 
 from shared.python.signal_toolkit import Signal, SignalGenerator
 
@@ -144,7 +139,7 @@ class FunctionGeneratorWidget(QWidget):
         # Time domain tab
         time_tab = QWidget()
         time_layout_inner = QVBoxLayout(time_tab)
-        self.time_figure = Figure(figsize=(8, 5), facecolor='#1e1e2e')
+        self.time_figure = Figure(figsize=(8, 5), facecolor="#1e1e2e")
         self.time_canvas = FigureCanvas(self.time_figure)
         self.time_toolbar = NavigationToolbar(self.time_canvas, time_tab)
         time_layout_inner.addWidget(self.time_toolbar)
@@ -154,7 +149,7 @@ class FunctionGeneratorWidget(QWidget):
         # Frequency domain tab
         freq_tab = QWidget()
         freq_layout_inner = QVBoxLayout(freq_tab)
-        self.freq_figure = Figure(figsize=(8, 5), facecolor='#1e1e2e')
+        self.freq_figure = Figure(figsize=(8, 5), facecolor="#1e1e2e")
         self.freq_canvas = FigureCanvas(self.freq_figure)
         self.freq_toolbar = NavigationToolbar(self.freq_canvas, freq_tab)
         freq_layout_inner.addWidget(self.freq_toolbar)
@@ -465,22 +460,22 @@ class FunctionGeneratorWidget(QWidget):
         # Time domain plot
         self.time_figure.clear()
         ax = self.time_figure.add_subplot(111)
-        ax.set_facecolor('#313244')
-        ax.plot(signal.time, signal.values, color='#89b4fa', linewidth=1.5)
-        ax.set_xlabel('Time (s)', color='#cdd6f4')
-        ax.set_ylabel('Amplitude', color='#cdd6f4')
-        ax.set_title(f'{self.waveform_combo.currentText()}', color='#cdd6f4')
-        ax.tick_params(colors='#cdd6f4')
-        ax.grid(True, alpha=0.3, color='#585b70')
+        ax.set_facecolor("#313244")
+        ax.plot(signal.time, signal.values, color="#89b4fa", linewidth=1.5)
+        ax.set_xlabel("Time (s)", color="#cdd6f4")
+        ax.set_ylabel("Amplitude", color="#cdd6f4")
+        ax.set_title(f"{self.waveform_combo.currentText()}", color="#cdd6f4")
+        ax.tick_params(colors="#cdd6f4")
+        ax.grid(True, alpha=0.3, color="#585b70")
         for spine in ax.spines.values():
-            spine.set_color('#585b70')
+            spine.set_color("#585b70")
         self.time_figure.tight_layout()
         self.time_canvas.draw()
 
         # Frequency domain plot
         self.freq_figure.clear()
         ax2 = self.freq_figure.add_subplot(111)
-        ax2.set_facecolor('#313244')
+        ax2.set_facecolor("#313244")
 
         # Compute FFT
         n = len(signal.values)
@@ -492,17 +487,24 @@ class FunctionGeneratorWidget(QWidget):
         fft_freq = fft_freq[pos_mask]
         fft_magnitude = np.abs(fft_vals[pos_mask]) * 2 / n
 
-        ax2.plot(fft_freq, fft_magnitude, color='#a6e3a1', linewidth=1.5)
-        ax2.set_xlabel('Frequency (Hz)', color='#cdd6f4')
-        ax2.set_ylabel('Magnitude', color='#cdd6f4')
-        ax2.set_title('Frequency Spectrum', color='#cdd6f4')
-        ax2.tick_params(colors='#cdd6f4')
-        ax2.grid(True, alpha=0.3, color='#585b70')
+        ax2.plot(fft_freq, fft_magnitude, color="#a6e3a1", linewidth=1.5)
+        ax2.set_xlabel("Frequency (Hz)", color="#cdd6f4")
+        ax2.set_ylabel("Magnitude", color="#cdd6f4")
+        ax2.set_title("Frequency Spectrum", color="#cdd6f4")
+        ax2.tick_params(colors="#cdd6f4")
+        ax2.grid(True, alpha=0.3, color="#585b70")
         for spine in ax2.spines.values():
-            spine.set_color('#585b70')
+            spine.set_color("#585b70")
 
         # Limit x-axis to meaningful frequencies
-        max_freq = min(signal.fs / 2, self.frequency_spin.value() * 10 if self.frequency_spin.value() > 0 else signal.fs / 2)
+        max_freq = min(
+            signal.fs / 2,
+            (
+                self.frequency_spin.value() * 10
+                if self.frequency_spin.value() > 0
+                else signal.fs / 2
+            ),
+        )
         ax2.set_xlim(0, max_freq)
 
         self.freq_figure.tight_layout()
