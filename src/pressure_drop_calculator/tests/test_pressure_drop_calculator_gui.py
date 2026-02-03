@@ -20,6 +20,7 @@ class TestPressureDropEngine:
         from shared.python.upstream_drift_tools.process_calculators.pressure_drop_calculator import (
             PressureDropCalculationEngine,
         )
+
         assert PressureDropCalculationEngine is not None
 
     def test_interface_imports(self) -> None:
@@ -27,6 +28,7 @@ class TestPressureDropEngine:
         from shared.python.upstream_drift_tools.process_calculators.pressure_drop_calculator import (
             calculate_pressure_drop,
         )
+
         assert callable(calculate_pressure_drop)
 
     def test_basic_calculation(self) -> None:
@@ -40,15 +42,15 @@ class TestPressureDropEngine:
             pipe_schedule="40",
             pipe_length=100,
             flow_rate=1000,
-            flow_unit='kg/h',
+            flow_unit="kg/h",
             pressure=10,
             temperature=300,
-            gas_composition={'N2': 0.78, 'O2': 0.21, 'Ar': 0.01},
+            gas_composition={"N2": 0.78, "O2": 0.21, "Ar": 0.01},
         )
 
         assert result is not None
-        assert 'total_pressure_drop' in result
-        assert result['total_pressure_drop'] > 0
+        assert "total_pressure_drop" in result
+        assert result["total_pressure_drop"] > 0
 
 
 class TestPressureDropGUI:
@@ -64,6 +66,7 @@ class TestPressureDropGUI:
         """Test that the launcher can check dependencies."""
         sys.path.insert(0, str(Path(__file__).parent.parent))
         from launch_pyqt6 import check_dependencies
+
         missing = check_dependencies()
         assert isinstance(missing, list)
 
@@ -73,6 +76,7 @@ class TestPressureDropGUI:
             PressureDropCalculationEngine,
             calculate_pressure_drop,
         )
+
         assert PressureDropCalculationEngine is not None
         assert callable(calculate_pressure_drop)
 
@@ -86,10 +90,21 @@ class TestPressureDropGUI:
             from pressure_drop_calculator.python.pressure_drop_calculator.ui.pyqt6.main_window import (
                 PressureDropCalculatorWidget,
             )
-            with patch.object(PressureDropCalculatorWidget, "_init_ui", return_value=None):
-                with patch.object(PressureDropCalculatorWidget, "_apply_styling", return_value=None):
-                    with patch.object(PressureDropCalculatorWidget, "_connect_signals", return_value=None):
-                        widget = PressureDropCalculatorWidget.__new__(PressureDropCalculatorWidget)
+
+            with patch.object(
+                PressureDropCalculatorWidget, "_init_ui", return_value=None
+            ):
+                with patch.object(
+                    PressureDropCalculatorWidget, "_apply_styling", return_value=None
+                ):
+                    with patch.object(
+                        PressureDropCalculatorWidget,
+                        "_connect_signals",
+                        return_value=None,
+                    ):
+                        widget = PressureDropCalculatorWidget.__new__(
+                            PressureDropCalculatorWidget
+                        )
                         assert widget is not None
         except ImportError as e:
             pytest.skip(f"Qt not available: {e}")
@@ -102,6 +117,7 @@ class TestGUIRegistration:
         """Test that registration module can be imported."""
         try:
             from shared.python.gui_launcher import GUIType, LaunchConfig, register_gui
+
             assert GUIType is not None
             assert LaunchConfig is not None
             assert register_gui is not None

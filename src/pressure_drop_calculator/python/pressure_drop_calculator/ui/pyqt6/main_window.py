@@ -11,8 +11,11 @@ from typing import Any
 
 if os.environ.get("HEADLESS", "false").lower() == "true":
     import matplotlib
+
     matplotlib.use("Agg")
 
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QComboBox,
@@ -24,8 +27,6 @@ from PyQt6.QtWidgets import (
     QLabel,
     QMessageBox,
     QPushButton,
-    QScrollArea,
-    QSpinBox,
     QSplitter,
     QTableWidget,
     QTableWidgetItem,
@@ -35,15 +36,46 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
-
 
 class PressureDropCalculatorWidget(QWidget):
     """Main widget for the Pressure Drop Calculator application."""
 
-    PIPE_SCHEDULES = ["5", "10", "20", "30", "40", "60", "80", "100", "120", "140", "160", "STD", "XS", "XXS"]
-    PIPE_SIZES = ["0.5", "0.75", "1", "1.25", "1.5", "2", "2.5", "3", "4", "6", "8", "10", "12", "14", "16", "18", "20", "24"]
+    PIPE_SCHEDULES = [
+        "5",
+        "10",
+        "20",
+        "30",
+        "40",
+        "60",
+        "80",
+        "100",
+        "120",
+        "140",
+        "160",
+        "STD",
+        "XS",
+        "XXS",
+    ]
+    PIPE_SIZES = [
+        "0.5",
+        "0.75",
+        "1",
+        "1.25",
+        "1.5",
+        "2",
+        "2.5",
+        "3",
+        "4",
+        "6",
+        "8",
+        "10",
+        "12",
+        "14",
+        "16",
+        "18",
+        "20",
+        "24",
+    ]
     FLOW_UNITS = ["kg/h", "kg/s", "lb/hr", "m³/h", "SCFM", "Nm³/h"]
     FRICTION_METHODS = ["colebrook", "swamee-jain", "churchill", "haaland"]
     MATERIALS = ["Carbon Steel", "Stainless Steel", "Copper", "PVC", "HDPE", "Concrete"]
@@ -212,7 +244,7 @@ class PressureDropCalculatorWidget(QWidget):
         chart_tab = QWidget()
         chart_layout = QVBoxLayout(chart_tab)
 
-        self.figure = Figure(figsize=(8, 5), facecolor='#1e1e2e')
+        self.figure = Figure(figsize=(8, 5), facecolor="#1e1e2e")
         self.canvas = FigureCanvas(self.figure)
         chart_layout.addWidget(self.canvas)
 
@@ -250,8 +282,11 @@ class PressureDropCalculatorWidget(QWidget):
                     total += val
 
             if abs(total - 100) > 1:
-                QMessageBox.warning(self, "Invalid Composition",
-                    f"Gas composition must sum to 100% (current: {total:.1f}%)")
+                QMessageBox.warning(
+                    self,
+                    "Invalid Composition",
+                    f"Gas composition must sum to 100% (current: {total:.1f}%)",
+                )
                 return
 
             # Normalize if needed
@@ -294,10 +329,16 @@ class PressureDropCalculatorWidget(QWidget):
             ("Outlet Pressure", f"{r.get('outlet_pressure', 0) / 1e5:.4f} bar"),
             ("Friction Pressure Drop", f"{r.get('friction_pressure_drop', 0):.2f} Pa"),
             ("Fitting Pressure Drop", f"{r.get('fitting_pressure_drop', 0):.2f} Pa"),
-            ("Elevation Pressure Drop", f"{r.get('elevation_pressure_drop', 0):.2f} Pa"),
+            (
+                "Elevation Pressure Drop",
+                f"{r.get('elevation_pressure_drop', 0):.2f} Pa",
+            ),
             ("Friction Factor", f"{r.get('friction_factor', 0):.6f}"),
-            ("Pressure Drop per 100ft", f"{r.get('pressure_drop_per_100ft', 0):.2f} Pa/100ft"),
-            ("Flow Regime", r.get('flow_regime', 'Unknown')),
+            (
+                "Pressure Drop per 100ft",
+                f"{r.get('pressure_drop_per_100ft', 0):.2f} Pa/100ft",
+            ),
+            ("Flow Regime", r.get("flow_regime", "Unknown")),
         ]
 
         self.results_table.setRowCount(len(results_data))
@@ -306,7 +347,7 @@ class PressureDropCalculatorWidget(QWidget):
             self.results_table.setItem(i, 1, QTableWidgetItem(str(value)))
 
         # Flow properties table
-        flow_props = r.get('flow_properties', {})
+        flow_props = r.get("flow_properties", {})
         if isinstance(flow_props, dict):
             flow_data = [
                 ("Velocity", f"{flow_props.get('velocity', 0):.3f} m/s"),
@@ -324,11 +365,13 @@ class PressureDropCalculatorWidget(QWidget):
                 self.flow_table.setItem(i, 1, QTableWidgetItem(str(value)))
 
         # Warnings
-        warnings = r.get('warnings', [])
+        warnings = r.get("warnings", [])
         if warnings:
             self.warnings_text.setText("\n".join(f"⚠ {w}" for w in warnings))
         else:
-            self.warnings_text.setText("✓ No warnings. All parameters within acceptable ranges.")
+            self.warnings_text.setText(
+                "✓ No warnings. All parameters within acceptable ranges."
+            )
 
         # Update chart
         self._update_chart()
@@ -340,26 +383,26 @@ class PressureDropCalculatorWidget(QWidget):
 
         self.figure.clear()
         ax = self.figure.add_subplot(111)
-        ax.set_facecolor('#313244')
+        ax.set_facecolor("#313244")
 
         inlet_p = self.pressure_spin.value() * 1e5  # Convert bar to Pa
-        outlet_p = self.results.get('outlet_pressure', inlet_p)
+        outlet_p = self.results.get("outlet_pressure", inlet_p)
         length = self.pipe_length_spin.value()
 
         x = [0, length]
         y = [inlet_p / 1e5, outlet_p / 1e5]
 
-        ax.plot(x, y, color='#89b4fa', linewidth=2, marker='o', markersize=8)
-        ax.fill_between(x, y, alpha=0.3, color='#89b4fa')
+        ax.plot(x, y, color="#89b4fa", linewidth=2, marker="o", markersize=8)
+        ax.fill_between(x, y, alpha=0.3, color="#89b4fa")
 
-        ax.set_xlabel('Distance (m)', color='#cdd6f4')
-        ax.set_ylabel('Pressure (bar)', color='#cdd6f4')
-        ax.set_title('Pressure Profile Along Pipe', color='#cdd6f4')
-        ax.tick_params(colors='#cdd6f4')
-        ax.grid(True, alpha=0.3, color='#585b70')
+        ax.set_xlabel("Distance (m)", color="#cdd6f4")
+        ax.set_ylabel("Pressure (bar)", color="#cdd6f4")
+        ax.set_title("Pressure Profile Along Pipe", color="#cdd6f4")
+        ax.tick_params(colors="#cdd6f4")
+        ax.grid(True, alpha=0.3, color="#585b70")
 
         for spine in ax.spines.values():
-            spine.set_color('#585b70')
+            spine.set_color("#585b70")
 
         self.figure.tight_layout()
         self.canvas.draw()

@@ -18,7 +18,9 @@ def check_dependencies() -> list[str]:
     except (subprocess.CalledProcessError, FileNotFoundError):
         missing.append("node")
     try:
-        subprocess.run(["npm", "--version"], capture_output=True, check=True, shell=True)
+        subprocess.run(
+            ["npm", "--version"], capture_output=True, check=True, shell=True
+        )
     except (subprocess.CalledProcessError, FileNotFoundError):
         missing.append("npm")
     return missing
@@ -52,13 +54,17 @@ def main() -> int:
 
     def open_browser() -> None:
         import time
+
         time.sleep(2)
         webbrowser.open("http://localhost:5175")
 
     import threading
+
     threading.Thread(target=open_browser, daemon=True).start()
 
-    result = subprocess.run(["npm", "run", "dev"], cwd=str(web_dir), shell=True, env=os.environ.copy())
+    result = subprocess.run(
+        ["npm", "run", "dev"], cwd=str(web_dir), shell=True, env=os.environ.copy()
+    )
     return result.returncode
 
 
