@@ -491,7 +491,7 @@ class TRCVesselDesignerWidget(QWidget):
         # Clear existing widgets
         while self.layer_details_layout.count():
             item = self.layer_details_layout.takeAt(0)
-            if item.widget():
+            if item is not None and item.widget() is not None:
                 item.widget().deleteLater()
 
         if not self.results:
