@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 from .launcher import GUIType, LaunchConfig
 
@@ -177,7 +178,7 @@ def register_gui(
     display_name: str,
     description: str,
     gui_configs: dict[GUIType, LaunchConfig],
-    **kwargs,
+    **kwargs: Any,
 ) -> None:
     """Convenience function to register a GUI with the global registry.
 

@@ -47,6 +47,32 @@
             "desc": "Rapidly-exploring Random Tree (RRT) Navigator (MATLAB)"
         }
     ],
+    "Process Simulation": [
+        {
+            "name": "Electrode Advisor (PyQt6)",
+            "path": "src/electrode_advisor/launch_pyqt6.py",
+            "type": "python",
+            "desc": "AC Electrode Advancement Module - Desktop Application"
+        },
+        {
+            "name": "Electrode Advisor (Web)",
+            "path": "src/electrode_advisor/launch_web.py",
+            "type": "python",
+            "desc": "AC Electrode Advancement Module - React Web Application"
+        },
+        {
+            "name": "TRC Vessel Designer (PyQt6)",
+            "path": "src/trc_vessel_designer/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Thermal Reaction Chamber Design - Desktop Application"
+        },
+        {
+            "name": "TRC Vessel Designer (Web)",
+            "path": "src/trc_vessel_designer/launch_web.py",
+            "type": "python",
+            "desc": "Thermal Reaction Chamber Design - React Web Application"
+        }
+    ],
     "Web Applications": [
         {
             "name": "Calculator App",

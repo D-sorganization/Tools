@@ -12,6 +12,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from importlib.util import find_spec
 from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -119,7 +120,7 @@ class GUILauncher:
         *,
         tool_name: str = "",
         gui_type: GUIType = GUIType.PYQT6,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initialize the launcher.
 
@@ -179,11 +180,8 @@ class GUILauncher:
                 return self._launch_react()
             elif self.config.gui_type == GUIType.TKINTER:
                 return self._launch_tkinter()
-            elif self.config.gui_type == GUIType.BROWSER:
+            else:  # GUIType.BROWSER
                 return self._launch_browser()
-            else:
-                logger.error(f"Unsupported GUI type: {self.config.gui_type}")
-                return 1
         except Exception as e:
             logger.error(f"Failed to launch {self.config.tool_name}: {e}")
             return 1
@@ -295,7 +293,7 @@ class GUILauncher:
 def create_launcher(
     tool_name: str,
     gui_type: GUIType,
-    **kwargs,
+    **kwargs: Any,
 ) -> GUILauncher:
     """Factory function to create a launcher with common configuration.
 
