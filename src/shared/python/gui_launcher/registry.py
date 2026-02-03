@@ -5,7 +5,6 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional
 
 from .launcher import GUIType, LaunchConfig
 
@@ -19,10 +18,10 @@ class GUIRegistration:
     tool_name: str
     display_name: str
     description: str
-    gui_configs: Dict[GUIType, LaunchConfig]
+    gui_configs: dict[GUIType, LaunchConfig]
     category: str = "General"
-    icon: Optional[str] = None
-    repository: Optional[str] = None
+    icon: str | None = None
+    repository: str | None = None
 
 
 class GUIRegistry:
@@ -32,14 +31,14 @@ class GUIRegistry:
     and be discovered by launcher applications.
     """
 
-    _instance: Optional["GUIRegistry"] = None
+    _instance: GUIRegistry | None = None
 
     def __init__(self) -> None:
         """Initialize the registry."""
-        self._registrations: Dict[str, GUIRegistration] = {}
+        self._registrations: dict[str, GUIRegistration] = {}
 
     @classmethod
-    def instance(cls) -> "GUIRegistry":
+    def instance(cls) -> GUIRegistry:
         """Get the singleton registry instance."""
         if cls._instance is None:
             cls._instance = cls()
@@ -50,10 +49,10 @@ class GUIRegistry:
         tool_name: str,
         display_name: str,
         description: str,
-        gui_configs: Dict[GUIType, LaunchConfig],
+        gui_configs: dict[GUIType, LaunchConfig],
         category: str = "General",
-        icon: Optional[str] = None,
-        repository: Optional[str] = None,
+        icon: str | None = None,
+        repository: str | None = None,
     ) -> None:
         """Register a GUI component.
 
@@ -92,7 +91,7 @@ class GUIRegistry:
             return True
         return False
 
-    def get(self, tool_name: str) -> Optional[GUIRegistration]:
+    def get(self, tool_name: str) -> GUIRegistration | None:
         """Get a registration by tool name.
 
         Args:
@@ -107,7 +106,7 @@ class GUIRegistry:
         self,
         tool_name: str,
         gui_type: GUIType,
-    ) -> Optional[LaunchConfig]:
+    ) -> LaunchConfig | None:
         """Get the launch config for a specific tool and GUI type.
 
         Args:
@@ -122,7 +121,7 @@ class GUIRegistry:
             return registration.gui_configs.get(gui_type)
         return None
 
-    def list_tools(self, category: Optional[str] = None) -> List[GUIRegistration]:
+    def list_tools(self, category: str | None = None) -> list[GUIRegistration]:
         """List all registered tools.
 
         Args:
@@ -136,7 +135,7 @@ class GUIRegistry:
             tools = [t for t in tools if t.category == category]
         return sorted(tools, key=lambda t: t.display_name)
 
-    def list_categories(self) -> List[str]:
+    def list_categories(self) -> list[str]:
         """Get all unique categories.
 
         Returns:
@@ -145,7 +144,7 @@ class GUIRegistry:
         categories = set(reg.category for reg in self._registrations.values())
         return sorted(categories)
 
-    def get_available_gui_types(self, tool_name: str) -> List[GUIType]:
+    def get_available_gui_types(self, tool_name: str) -> list[GUIType]:
         """Get available GUI types for a tool.
 
         Args:
@@ -177,7 +176,7 @@ def register_gui(
     tool_name: str,
     display_name: str,
     description: str,
-    gui_configs: Dict[GUIType, LaunchConfig],
+    gui_configs: dict[GUIType, LaunchConfig],
     **kwargs,
 ) -> None:
     """Convenience function to register a GUI with the global registry.
@@ -199,7 +198,7 @@ def register_gui(
     )
 
 
-def auto_discover_guis(search_paths: List[Path]) -> int:
+def auto_discover_guis(search_paths: list[Path]) -> int:
     """Automatically discover and register GUI components.
 
     Searches for gui_registration.py files in the given paths

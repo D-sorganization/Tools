@@ -21,7 +21,7 @@ Example:
 """
 
 from .launcher import GUILauncher, GUIType, LaunchConfig
-from .registry import GUIRegistry, register_gui, get_registry
+from .registry import GUIRegistry, get_registry, register_gui
 
 __all__ = [
     "GUILauncher",

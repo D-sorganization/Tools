@@ -6,12 +6,18 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from data_processor.core.data_loader import DataLoader
+from data_processor.core.signal_processor import SignalProcessor
+from data_processor.models.processing_config import (
+    DifferentiationConfig,
+    FilterConfig,
+    IntegrationConfig,
+)
 from PyQt6.QtCore import QSettings, Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QAction, QFont, QKeySequence, QShortcut
 from PyQt6.QtWidgets import (
     QApplication,
     QComboBox,
-    QDoubleSpinBox,
     QFileDialog,
     QFormLayout,
     QGroupBox,
@@ -20,7 +26,6 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QMainWindow,
     QMessageBox,
-    QProgressDialog,
     QPushButton,
     QSpinBox,
     QSplitter,
@@ -28,14 +33,6 @@ from PyQt6.QtWidgets import (
     QTextEdit,
     QVBoxLayout,
     QWidget,
-)
-
-from data_processor.core.data_loader import DataLoader
-from data_processor.core.signal_processor import SignalProcessor
-from data_processor.models.processing_config import (
-    DifferentiationConfig,
-    FilterConfig,
-    IntegrationConfig,
 )
 
 from .widgets import (
@@ -582,7 +579,9 @@ class DataProcessorMainWindow(QMainWindow):
         export_layout = QFormLayout(export_group)
 
         self.export_format_combo = QComboBox()
-        self.export_format_combo.addItems(["csv", "excel", "parquet", "hdf5", "feather"])
+        self.export_format_combo.addItems(
+            ["csv", "excel", "parquet", "hdf5", "feather"]
+        )
         export_layout.addRow("Format:", self.export_format_combo)
 
         layout.addWidget(export_group)
@@ -657,7 +656,9 @@ class DataProcessorMainWindow(QMainWindow):
             QApplication.processEvents()
 
             if len(self.selected_files) == 1:
-                self.current_data = self.data_loader.load_csv_file(self.selected_files[0])
+                self.current_data = self.data_loader.load_csv_file(
+                    self.selected_files[0]
+                )
             else:
                 dataframes = self.data_loader.load_multiple_files(self.selected_files)
                 self.current_data = self.data_loader.combine_dataframes(dataframes)
@@ -740,7 +741,9 @@ class DataProcessorMainWindow(QMainWindow):
             self.status_bar.hide_progress()
             self.status_bar.set_status(f"Applied {filter_type}")
 
-            QMessageBox.information(self, "Success", f"{filter_type} applied successfully")
+            QMessageBox.information(
+                self, "Success", f"{filter_type} applied successfully"
+            )
 
         except Exception as e:
             self.status_bar.hide_progress()

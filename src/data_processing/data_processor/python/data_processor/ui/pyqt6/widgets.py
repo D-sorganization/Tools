@@ -5,25 +5,22 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
     QAbstractItemView,
     QComboBox,
     QDoubleSpinBox,
     QFormLayout,
-    QGroupBox,
     QHBoxLayout,
     QLabel,
     QListWidget,
-    QListWidgetItem,
     QProgressBar,
     QPushButton,
     QSpinBox,
     QStackedWidget,
     QTableWidget,
     QTableWidgetItem,
-    QTextEdit,
     QVBoxLayout,
     QWidget,
 )
@@ -60,7 +57,9 @@ class SignalListWidget(QWidget):
 
         # List widget
         self.list_widget = QListWidget()
-        self.list_widget.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
+        self.list_widget.setSelectionMode(
+            QAbstractItemView.SelectionMode.MultiSelection
+        )
         self.list_widget.setAlternatingRowColors(True)
         self.list_widget.itemSelectionChanged.connect(self._on_selection_changed)
         layout.addWidget(self.list_widget)
@@ -405,7 +404,9 @@ class DataPreviewWidget(QWidget):
         for i in range(len(display_df)):
             for j, col in enumerate(display_df.columns):
                 val = display_df.iloc[i, j]
-                item = QTableWidgetItem(f"{val:.6g}" if isinstance(val, float) else str(val))
+                item = QTableWidgetItem(
+                    f"{val:.6g}" if isinstance(val, float) else str(val)
+                )
                 self.table.setItem(i, j, item)
 
     def clear(self) -> None:

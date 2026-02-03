@@ -7,11 +7,11 @@ import os
 import subprocess
 import sys
 import webbrowser
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
 from importlib.util import find_spec
 from pathlib import Path
-from typing import Callable, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -31,12 +31,12 @@ class LaunchConfig:
 
     tool_name: str
     gui_type: GUIType
-    module_path: Optional[str] = None
-    web_path: Optional[str] = None
-    entry_point: Optional[str] = None
+    module_path: str | None = None
+    web_path: str | None = None
+    entry_point: str | None = None
     dependencies: list[str] = field(default_factory=list)
     env_vars: dict[str, str] = field(default_factory=dict)
-    working_dir: Optional[str] = None
+    working_dir: str | None = None
     port: int = 3000
     auto_open_browser: bool = True
 
@@ -115,7 +115,7 @@ class GUILauncher:
 
     def __init__(
         self,
-        config: Optional[LaunchConfig] = None,
+        config: LaunchConfig | None = None,
         *,
         tool_name: str = "",
         gui_type: GUIType = GUIType.PYQT6,
@@ -138,7 +138,7 @@ class GUILauncher:
                 **kwargs,
             )
 
-        self._process: Optional[subprocess.Popen] = None
+        self._process: subprocess.Popen | None = None
 
     def check_dependencies(self) -> DependencyStatus:
         """Check all required dependencies.
