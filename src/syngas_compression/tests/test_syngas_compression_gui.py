@@ -51,7 +51,6 @@ class TestSyngasCompressionEngine:
     def test_engine_calculation(self) -> None:
         """Test that the engine produces valid results."""
         from shared.python.upstream_drift_tools.process_calculators.syngas_compression_calculator import (
-            CompressionStage,
             SyngasCompressionEngine,
         )
 
