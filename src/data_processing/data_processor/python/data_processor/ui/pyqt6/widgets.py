@@ -392,8 +392,9 @@ class DataPreviewWidget(QWidget):
             self.table.clear()
             return
 
+        rows_shown = min(len(df), max_rows)
         self.info_label.setText(
-            f"Showing {min(len(df), max_rows)} of {len(df)} rows, {len(df.columns)} columns"
+            f"Showing {rows_shown} of {len(df)} rows, {len(df.columns)} columns"
         )
 
         display_df = df.head(max_rows)
@@ -402,11 +403,10 @@ class DataPreviewWidget(QWidget):
         self.table.setHorizontalHeaderLabels(display_df.columns.astype(str).tolist())
 
         for i in range(len(display_df)):
-            for j, col in enumerate(display_df.columns):
+            for j, _col in enumerate(display_df.columns):
                 val = display_df.iloc[i, j]
-                item = QTableWidgetItem(
-                    f"{val:.6g}" if isinstance(val, float) else str(val)
-                )
+                text = f"{val:.6g}" if isinstance(val, float) else str(val)
+                item = QTableWidgetItem(text)
                 self.table.setItem(i, j, item)
 
     def clear(self) -> None:
