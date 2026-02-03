@@ -15,7 +15,7 @@ from typing import Any
 
 import numpy as np
 from model_generation.core.constants import DEFAULT_DENSITY_KG_M3, DEFAULT_INERTIA_KG_M2
-from model_generation.core.contracts import postcondition, precondition
+from model_generation.core.contracts import precondition
 from model_generation.core.types import Geometry, GeometryType, Inertia
 from model_generation.inertia.primitives import (
     box_inertia,

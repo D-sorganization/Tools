@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from typing import Any
 
 import numpy as np
-from humanoid_character_builder.contracts import postcondition, precondition
+from humanoid_character_builder.contracts import precondition
 from humanoid_character_builder.mesh.inertia_calculator import InertiaResult
 from scipy.spatial import ConvexHull
 from scipy.spatial.transform import Rotation as R
@@ -232,9 +232,7 @@ class HumanoidModel:
         points = self._collect_footprint_points(feet_links, transforms)
         return self._create_support_polygon_from_points(points)
 
-    def _identify_feet_links(
-        self, transforms: dict[str, np.ndarray]
-    ) -> list[str]:
+    def _identify_feet_links(self, transforms: dict[str, np.ndarray]) -> list[str]:
         """Identify links that form the support base (feet)."""
         # Heuristic: links containing "foot" in name
         feet_links = [name for name in self.links if "foot" in name]
@@ -274,18 +272,14 @@ class HumanoidModel:
 
         return points
 
-    def _compute_link_footprint(
-        self, link: GeneratedLink
-    ) -> list[list[float]]:
+    def _compute_link_footprint(self, link: GeneratedLink) -> list[list[float]]:
         """Compute local footprint points for a link based on its geometry."""
         geom = link.collision_geometry or link.visual_geometry
 
         if geom and geom.get("type") == "box":
             return self._compute_box_footprint(geom["size"])
         elif geom and geom.get("type") in ("cylinder", "capsule"):
-            return self._compute_cylinder_footprint(
-                geom["radius"], geom["length"]
-            )
+            return self._compute_cylinder_footprint(geom["radius"], geom["length"])
         else:
             # Just use COM
             return [list(link.origin_xyz)]

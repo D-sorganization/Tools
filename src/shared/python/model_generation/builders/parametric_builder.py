@@ -9,8 +9,9 @@ from __future__ import annotations
 
 import logging
 import math
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any
 
 from model_generation.builders.base_builder import BaseURDFBuilder, BuildResult
 from model_generation.core.constants import (

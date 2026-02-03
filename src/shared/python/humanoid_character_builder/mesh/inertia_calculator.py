@@ -18,7 +18,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import numpy as np
-from humanoid_character_builder.contracts import postcondition, precondition
 from numpy.typing import NDArray
 
 if TYPE_CHECKING:
