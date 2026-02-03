@@ -1,4 +1,5 @@
 """Web application tests for calculator."""
+
 import unittest
 
 from web_applications.calculator.webapp import create_app

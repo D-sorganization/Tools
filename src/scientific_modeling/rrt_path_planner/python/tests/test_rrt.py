@@ -1,8 +1,8 @@
 """Tests for RRT path planner."""
+
 import unittest
 
 import numpy as np
-
 from star_wars_rrt import Obstacle, PursuitAI, RRTPlanner, Ship
 
 

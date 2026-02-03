@@ -1,4 +1,5 @@
 """Extended calculator tests."""
+
 import sympy as sp
 
 from web_applications.calculator.calculator import TI89Calculator

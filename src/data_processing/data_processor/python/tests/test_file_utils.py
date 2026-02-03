@@ -1,8 +1,8 @@
 """Tests for file utility functions."""
+
 import numpy as np
 import pandas as pd
 import pytest
-
 from data_processor.file_utils import (
     OPENPYXL_AVAILABLE,
     PYARROW_AVAILABLE,

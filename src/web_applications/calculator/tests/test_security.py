@@ -1,4 +1,5 @@
 """Security tests for calculator web application."""
+
 import unittest
 
 from web_applications.calculator.webapp import create_app

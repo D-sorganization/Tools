@@ -1,4 +1,5 @@
 """Extended tests for calculator web application."""
+
 from __future__ import annotations
 
 from typing import Any

@@ -1,9 +1,9 @@
 """Tests for vectorized filter engine."""
+
 import unittest
 
 import numpy as np
 import pandas as pd
-
 from data_processor.vectorized_filter_engine import VectorizedFilterEngine
 
 

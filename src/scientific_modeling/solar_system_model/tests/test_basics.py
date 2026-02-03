@@ -1,8 +1,8 @@
 """Basic tests for solar system model."""
+
 import unittest
 
 import numpy as np
-
 from solar_system.core.celestial_body import BodyType, CelestialBody, OrbitalElements
 from solar_system.physics.orbital_mechanics import OrbitalMechanics
 
