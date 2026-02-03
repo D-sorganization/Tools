@@ -8,7 +8,6 @@ import logging
 import math
 
 import pytest
-
 from video_processor_src import constants, logger_utils
 
 

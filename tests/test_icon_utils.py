@@ -1,4 +1,5 @@
 """Tests for icon utility functions."""
+
 from pathlib import Path
 
 import pytest

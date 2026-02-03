@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import pytest
-
 from data_processor.models import FilterConfig, PipelineConfig
 
 

@@ -1,4 +1,5 @@
 """Tests for integrated data processor application."""
+
 import importlib
 import sys
 import unittest

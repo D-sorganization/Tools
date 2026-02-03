@@ -22,7 +22,6 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-
 from data_processor.core.data_loader import DataLoader
 from data_processor.core.signal_processor import SignalProcessor
 from data_processor.models.processing_config import (
