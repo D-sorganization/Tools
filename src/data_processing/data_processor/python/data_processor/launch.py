@@ -41,7 +41,6 @@ def launch_api_server(host: str = "0.0.0.0", port: int = 8000) -> None:
     """Launch the API server."""
     try:
         import uvicorn
-
         from data_processor.api.app import create_app
 
         app = create_app()

@@ -7,9 +7,8 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-from fastapi import APIRouter, Depends
-
 from data_processor.core.data_loader import DataLoader
+from fastapi import APIRouter, Depends
 
 from ..dependencies import get_app_state, get_data_loader, get_loaded_file
 from ..schemas.processing_schemas import ExportRequest, ExportResponse
@@ -41,7 +40,9 @@ def export_data(
         success = _export_dataframe(loader, df, output_path, request.format.value)
         if success:
             return _success_export_response(output_path, request.format.value)
-        return _error_export_response(output_path, request.format.value, "Export failed")
+        return _error_export_response(
+            output_path, request.format.value, "Export failed"
+        )
     except Exception as e:
         logger.exception("Export failed")
         return _error_export_response(output_path, request.format.value, str(e))

@@ -4,10 +4,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from fastapi import Depends, HTTPException, Request
-
 from data_processor.core.data_loader import DataLoader
 from data_processor.core.signal_processor import SignalProcessor
+from fastapi import Depends, HTTPException, Request
 
 from .state import AppState, LoadedFile
 

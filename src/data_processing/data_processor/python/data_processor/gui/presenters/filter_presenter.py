@@ -5,10 +5,9 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Any
 
-from PyQt6.QtCore import QObject, pyqtSignal
-
 from data_processor.core.signal_processor import SignalProcessor
 from data_processor.models.processing_config import FilterConfig
+from PyQt6.QtCore import QObject, pyqtSignal
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -81,9 +80,7 @@ class FilterPresenter(QObject):
             parameters=config.get("parameters", {}),
         )
 
-    def _select_signals(
-        self, df: pd.DataFrame, signals: list[str]
-    ) -> pd.DataFrame:
+    def _select_signals(self, df: pd.DataFrame, signals: list[str]) -> pd.DataFrame:
         """Select signals from DataFrame."""
         valid_signals = [s for s in signals if s in df.columns]
         if not valid_signals:

@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock, patch
 
 import pandas as pd
 import pytest
@@ -23,7 +21,9 @@ def client():
 @pytest.fixture
 def sample_csv(tmp_path: Path) -> Path:
     """Create a sample CSV file for testing."""
-    df = pd.DataFrame({"time": [1, 2, 3], "signal_a": [1.0, 2.0, 3.0], "signal_b": [4.0, 5.0, 6.0]})
+    df = pd.DataFrame(
+        {"time": [1, 2, 3], "signal_a": [1.0, 2.0, 3.0], "signal_b": [4.0, 5.0, 6.0]}
+    )
     csv_path = tmp_path / "test_data.csv"
     df.to_csv(csv_path, index=False)
     return csv_path
@@ -65,7 +65,9 @@ class TestLoadFileEndpoint:
         assert data["success"] is False
         assert data["error"] is not None
 
-    def test_load_file_validates_extension(self, client: TestClient, tmp_path: Path) -> None:
+    def test_load_file_validates_extension(
+        self, client: TestClient, tmp_path: Path
+    ) -> None:
         """Loading rejects files with invalid extensions."""
         bad_file = tmp_path / "test.exe"
         bad_file.write_text("malicious content")

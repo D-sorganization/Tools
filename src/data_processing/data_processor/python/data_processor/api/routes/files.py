@@ -7,10 +7,9 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
+from data_processor.core.data_loader import DataLoader
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
-
-from data_processor.core.data_loader import DataLoader
 
 from ..dependencies import get_app_state, get_data_loader, get_loaded_file
 from ..schemas.file_schemas import (

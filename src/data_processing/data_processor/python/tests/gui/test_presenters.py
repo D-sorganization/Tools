@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import sys
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pandas as pd
 import pytest
@@ -41,11 +41,13 @@ class TestDataPresenter:
 
     def test_get_signals_returns_numeric_columns(self, presenter) -> None:
         """get_signals returns list of numeric column names."""
-        presenter.current_data = pd.DataFrame({
-            "numeric_a": [1.0, 2.0],
-            "numeric_b": [3.0, 4.0],
-            "text_c": ["a", "b"],
-        })
+        presenter.current_data = pd.DataFrame(
+            {
+                "numeric_a": [1.0, 2.0],
+                "numeric_b": [3.0, 4.0],
+                "text_c": ["a", "b"],
+            }
+        )
         signals = presenter.get_signals()
         assert "numeric_a" in signals
         assert "numeric_b" in signals

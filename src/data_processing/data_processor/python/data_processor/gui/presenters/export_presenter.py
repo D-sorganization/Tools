@@ -6,9 +6,8 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from PyQt6.QtCore import QObject, pyqtSignal
-
 from data_processor.core.data_loader import DataLoader
+from PyQt6.QtCore import QObject, pyqtSignal
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -76,9 +75,7 @@ class ExportPresenter(QObject):
         format_type: str,
     ) -> bool:
         """Save data to file."""
-        return self.data_loader.save_dataframe(
-            df, output_path, format_type=format_type
-        )
+        return self.data_loader.save_dataframe(df, output_path, format_type=format_type)
 
     def get_export_formats(self) -> list[str]:
         """Get list of available export formats."""

@@ -110,10 +110,7 @@ class FilePanel(QWidget):
     def get_file_paths(self) -> list[str]:
         """Get list of selected file paths."""
         # Note: This returns display names, actual paths should be stored
-        return [
-            self.file_list.item(i).text()
-            for i in range(self.file_list.count())
-        ]
+        return [self.file_list.item(i).text() for i in range(self.file_list.count())]
 
     def set_files(self, files: list[str]) -> None:
         """Set the file list."""

@@ -10,7 +10,6 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QApplication,
     QFileDialog,
-    QHBoxLayout,
     QMainWindow,
     QMessageBox,
     QSplitter,
@@ -145,9 +144,7 @@ class DataProcessorMainWindow(QMainWindow):
         self.export_panel.export_requested.connect(self._on_export_requested)
 
         # Statistics panel signals
-        self.statistics_panel.calculate_requested.connect(
-            self._on_statistics_requested
-        )
+        self.statistics_panel.calculate_requested.connect(self._on_statistics_requested)
 
         # Presenter signals
         self.data_presenter.data_loaded.connect(self._on_data_loaded)
@@ -163,7 +160,6 @@ class DataProcessorMainWindow(QMainWindow):
     def _setup_shortcuts(self) -> None:
         """Set up keyboard shortcuts."""
         # Shortcuts are handled by widgets or can be added here
-        pass
 
     # Event handlers - kept short
 
@@ -289,9 +285,7 @@ class DataProcessorMainWindow(QMainWindow):
     def _get_export_path(self, format_type: str) -> str | None:
         """Get export file path from user."""
         file_filter = self.export_presenter.get_file_filter(format_type)
-        path, _ = QFileDialog.getSaveFileName(
-            self, "Export Data", "", file_filter
-        )
+        path, _ = QFileDialog.getSaveFileName(self, "Export Data", "", file_filter)
         return path if path else None
 
     def _calculate_statistics(

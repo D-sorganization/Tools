@@ -21,11 +21,13 @@ def client():
 @pytest.fixture
 def sample_csv(tmp_path: Path) -> Path:
     """Create a sample CSV file for testing."""
-    df = pd.DataFrame({
-        "time": range(100),
-        "signal_a": [float(i) + 0.1 * (i % 10) for i in range(100)],
-        "signal_b": [float(i) * 2 for i in range(100)],
-    })
+    df = pd.DataFrame(
+        {
+            "time": range(100),
+            "signal_a": [float(i) + 0.1 * (i % 10) for i in range(100)],
+            "signal_b": [float(i) * 2 for i in range(100)],
+        }
+    )
     csv_path = tmp_path / "test_data.csv"
     df.to_csv(csv_path, index=False)
     return csv_path
@@ -96,9 +98,7 @@ class TestApplyFilterEndpoint:
         # Should process all numeric signals
         assert len(data["signals_processed"]) >= 2
 
-    def test_apply_filter_invalid_file_returns_404(
-        self, client: TestClient
-    ) -> None:
+    def test_apply_filter_invalid_file_returns_404(self, client: TestClient) -> None:
         """Applying filter to invalid file returns 404."""
         response = client.post(
             "/api/v1/processing/filter",
@@ -166,9 +166,7 @@ class TestStatisticsEndpoint:
 class TestPreviewEndpoint:
     """Tests for data preview endpoint."""
 
-    def test_preview_returns_data(
-        self, client: TestClient, loaded_file: str
-    ) -> None:
+    def test_preview_returns_data(self, client: TestClient, loaded_file: str) -> None:
         """Preview returns data rows."""
         response = client.post(
             "/api/v1/processing/preview",
@@ -181,9 +179,7 @@ class TestPreviewEndpoint:
         assert data["total_rows"] == 100
         assert data["limit"] == 10
 
-    def test_preview_with_offset(
-        self, client: TestClient, loaded_file: str
-    ) -> None:
+    def test_preview_with_offset(self, client: TestClient, loaded_file: str) -> None:
         """Preview with offset skips rows."""
         response = client.post(
             "/api/v1/processing/preview",

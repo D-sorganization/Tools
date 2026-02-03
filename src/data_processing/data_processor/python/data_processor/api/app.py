@@ -40,7 +40,9 @@ def _configure_cors(app: FastAPI) -> None:
 def _configure_routes(app: FastAPI) -> None:
     """Register API route handlers."""
     app.include_router(files_router, prefix="/api/v1/files", tags=["files"])
-    app.include_router(processing_router, prefix="/api/v1/processing", tags=["processing"])
+    app.include_router(
+        processing_router, prefix="/api/v1/processing", tags=["processing"]
+    )
     app.include_router(export_router, prefix="/api/v1/export", tags=["export"])
 
     @app.get("/health")

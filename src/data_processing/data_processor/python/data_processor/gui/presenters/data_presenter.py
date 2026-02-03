@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any
-
-from PyQt6.QtCore import QObject, pyqtSignal
+from typing import TYPE_CHECKING
 
 from data_processor.core.data_loader import DataLoader
+from PyQt6.QtCore import QObject, pyqtSignal
 
 if TYPE_CHECKING:
     import pandas as pd

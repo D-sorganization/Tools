@@ -6,10 +6,9 @@ import logging
 from typing import Any
 
 import numpy as np
-from fastapi import APIRouter, Depends
-
 from data_processor.core.signal_processor import SignalProcessor
 from data_processor.models.processing_config import FilterConfig
+from fastapi import APIRouter, Depends
 
 from ..dependencies import get_app_state, get_loaded_file, get_signal_processor
 from ..schemas.processing_schemas import (

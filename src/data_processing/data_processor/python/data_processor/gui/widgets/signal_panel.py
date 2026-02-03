@@ -101,8 +101,7 @@ class SignalPanel(QWidget):
     def get_all_signals(self) -> list[str]:
         """Get all signal names."""
         return [
-            self.signal_list.item(i).text()
-            for i in range(self.signal_list.count())
+            self.signal_list.item(i).text() for i in range(self.signal_list.count())
         ]
 
     def clear(self) -> None:

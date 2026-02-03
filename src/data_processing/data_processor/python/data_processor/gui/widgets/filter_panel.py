@@ -131,9 +131,7 @@ class FilterPanel(QWidget):
             if item.widget():
                 item.widget().deleteLater()
 
-    def _create_param_widget(
-        self, config: tuple[str, str, Any, Any, Any]
-    ) -> QWidget:
+    def _create_param_widget(self, config: tuple[str, str, Any, Any, Any]) -> QWidget:
         """Create appropriate widget for parameter type."""
         _, param_type, default, min_val, max_val = config
 
@@ -141,9 +139,7 @@ class FilterPanel(QWidget):
             return self._create_int_spinbox(default, min_val, max_val)
         return self._create_float_spinbox(default, min_val, max_val)
 
-    def _create_int_spinbox(
-        self, default: int, min_val: int, max_val: int
-    ) -> QSpinBox:
+    def _create_int_spinbox(self, default: int, min_val: int, max_val: int) -> QSpinBox:
         """Create integer spinbox."""
         spinbox = QSpinBox()
         spinbox.setRange(min_val, max_val)
