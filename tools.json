@@ -33,6 +33,20 @@
             "desc": "Signal Processing & Analysis - React Web Application"
         }
     ],
+    "Signal Processing": [
+        {
+            "name": "Function Generator (PyQt6)",
+            "path": "src/function_generator/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Waveform Generator - Desktop Application"
+        },
+        {
+            "name": "Function Generator (Web)",
+            "path": "src/function_generator/launch_web.py",
+            "type": "python",
+            "desc": "Waveform Generator - React Web Application"
+        }
+    ],
     "Scientific Modeling": [
         {
             "name": "Solar System Model",
