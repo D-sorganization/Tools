@@ -17,7 +17,7 @@ from model_generation.core.constants import (
     MIN_INERTIA_KG_M2,
     MIN_MASS_KG,
 )
-from model_generation.core.contracts import postcondition, precondition
+from model_generation.core.contracts import precondition
 
 if TYPE_CHECKING:
     from model_generation.core.types import Inertia, Joint, Link
@@ -337,9 +337,7 @@ class Validator:
 
         link_names = [link.name for link in links]
         cls._check_duplicate_names(result, link_names, "link")
-        cls._check_duplicate_names(
-            result, [joint.name for joint in joints], "joint"
-        )
+        cls._check_duplicate_names(result, [joint.name for joint in joints], "joint")
         cls._check_root_links(result, set(link_names), joints)
         cls._check_circular_dependencies(result, link_names, joints)
 

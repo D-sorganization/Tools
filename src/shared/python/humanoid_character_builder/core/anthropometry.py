@@ -504,7 +504,9 @@ def estimate_segment_masses(
     return masses
 
 
-@precondition(lambda total_height_m: total_height_m > 0, "Total height must be positive")
+@precondition(
+    lambda total_height_m: total_height_m > 0, "Total height must be positive"
+)
 @precondition(
     lambda gender_factor: 0.0 <= gender_factor <= 1.0,
     "Gender factor must be between 0 and 1",

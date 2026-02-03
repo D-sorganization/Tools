@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from model_generation.core.contracts import postcondition, precondition
+from model_generation.core.contracts import precondition
 from model_generation.core.types import Joint, Link
 from model_generation.core.validation import ValidationResult
 
