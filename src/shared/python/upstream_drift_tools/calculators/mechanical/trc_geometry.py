@@ -160,13 +160,18 @@ class TRCGeometryEngine:
                 layer_cone_bottom_radius_outer = max(
                     cone_bottom_radius - radius_offset, interior_hole_radius
                 )
-                outer_bottom_sq = layer_cone_bottom_radius_outer * layer_cone_bottom_radius_outer
+                outer_bottom_sq = (
+                    layer_cone_bottom_radius_outer * layer_cone_bottom_radius_outer
+                )
 
                 # Inner radius at bottom for this layer
                 layer_cone_bottom_radius_inner = max(
-                    layer_cone_bottom_radius_outer - layer_thickness, interior_hole_radius
+                    layer_cone_bottom_radius_outer - layer_thickness,
+                    interior_hole_radius,
                 )
-                inner_bottom_sq = layer_cone_bottom_radius_inner * layer_cone_bottom_radius_inner
+                inner_bottom_sq = (
+                    layer_cone_bottom_radius_inner * layer_cone_bottom_radius_inner
+                )
 
                 # Truncated cone volume formula: V = (π/3) * h * (R² + Rr + r²)
                 cone_outer_vol = cone_height_factor * (
@@ -185,7 +190,9 @@ class TRCGeometryEngine:
 
             # Top disk volume for each layer (if lid is displayed)
             top_disk_vol = (
-                _PI * inner_radius_sq * layer_thickness if dimensions.display_lid else 0.0
+                _PI * inner_radius_sq * layer_thickness
+                if dimensions.display_lid
+                else 0.0
             )
 
             # Total layer volume (convert to ft³)
@@ -203,7 +210,10 @@ class TRCGeometryEngine:
                 if dimensions.display_cylinder:
                     # Lateral surface: 2πrh
                     layer_outer_surface += (
-                        2.0 * _PI * current_radius * dimensions.cylinder_height
+                        2.0
+                        * _PI
+                        * current_radius
+                        * dimensions.cylinder_height
                         * _SQUARE_INCHES_TO_SQUARE_FEET
                     )
                 if dimensions.display_cone:
@@ -217,7 +227,9 @@ class TRCGeometryEngine:
                     )
                     # Lateral surface of frustum: π(R + r) * slant
                     layer_outer_surface += (
-                        _PI * (current_radius + layer_cone_bottom_radius) * slant_height
+                        _PI
+                        * (current_radius + layer_cone_bottom_radius)
+                        * slant_height
                         * _SQUARE_INCHES_TO_SQUARE_FEET
                     )
                 outside_surface_area += layer_outer_surface
@@ -269,7 +281,9 @@ class TRCGeometryEngine:
         else:
             void_cone_vol = 0.0
 
-        results.interior_volume_ft3 = (void_cyl_vol + void_cone_vol) * _CUBIC_INCHES_TO_CUBIC_FEET
+        results.interior_volume_ft3 = (
+            void_cyl_vol + void_cone_vol
+        ) * _CUBIC_INCHES_TO_CUBIC_FEET
         results.void_radius_inches = last_inner_radius
         results.void_diameter_inches = last_inner_radius * 2.0
         results.interior_height_inches = interior_height
