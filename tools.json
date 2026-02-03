@@ -18,7 +18,19 @@
             "name": "Data Processor Integrated",
             "path": "launch_tools_main.py",
             "type": "python",
-            "desc": "Time Series CSV/Parquet Analyzer & Converter"
+            "desc": "Time Series CSV/Parquet Analyzer & Converter (Legacy)"
+        },
+        {
+            "name": "Data Processor (PyQt6)",
+            "path": "src/data_processing/data_processor/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Signal Processing & Analysis - Desktop Application"
+        },
+        {
+            "name": "Data Processor (Web)",
+            "path": "src/data_processing/data_processor/launch_web.py",
+            "type": "python",
+            "desc": "Signal Processing & Analysis - React Web Application"
         }
     ],
     "Scientific Modeling": [

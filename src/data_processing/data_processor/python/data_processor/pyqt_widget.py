@@ -7,9 +7,6 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
-from data_processor.core.data_loader import DataLoader
-from data_processor.core.signal_processor import SignalProcessor
-from data_processor.models.processing_config import FilterConfig
 from PyQt6.QtWidgets import (
     QAbstractItemView,
     QComboBox,
@@ -24,6 +21,10 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+
+from data_processor.core.data_loader import DataLoader
+from data_processor.core.signal_processor import SignalProcessor
+from data_processor.models.processing_config import FilterConfig
 
 logger = logging.getLogger(__name__)
 
