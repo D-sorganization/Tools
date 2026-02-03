@@ -71,6 +71,18 @@
             "path": "src/trc_vessel_designer/launch_web.py",
             "type": "python",
             "desc": "Thermal Reaction Chamber Design - React Web Application"
+        },
+        {
+            "name": "Syngas Compression Calculator (PyQt6)",
+            "path": "src/syngas_compression/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Multi-stage Compression Analysis - Desktop Application"
+        },
+        {
+            "name": "Syngas Compression Calculator (Web)",
+            "path": "src/syngas_compression/launch_web.py",
+            "type": "python",
+            "desc": "Multi-stage Compression Analysis - React Web Application"
         }
     ],
     "Web Applications": [

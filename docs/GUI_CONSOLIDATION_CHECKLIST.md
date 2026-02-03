@@ -63,7 +63,26 @@ This enables:
 
 ---
 
-### 3. Already Consolidated (No Action Needed)
+### 3. Syngas Compression Calculator
+
+| Component | Current Location | Target Location | Status |
+|-----------|-----------------|-----------------|--------|
+| Engine | `Tools/src/shared/python/upstream_drift_tools/process_calculators/syngas_compression_calculator.py` | N/A (already in place) | :white_check_mark: Complete |
+| PyQt6 GUI | `syngas_compression_calculator.py` (embedded) | `Tools/src/syngas_compression/launch_pyqt6.py` | :white_check_mark: Complete |
+| React GUI | None | `Tools/src/syngas_compression/web/` | :white_check_mark: Complete |
+| Tests | N/A | `Tools/src/syngas_compression/tests/` | :white_check_mark: Complete |
+| Launchers | N/A | `Tools/src/syngas_compression/` | :white_check_mark: Complete |
+
+**Features:**
+- Multi-stage compression calculations
+- Gas composition analysis with presets
+- Water dropout calculations
+- Temperature and pressure profile charts
+- Process safety analysis and recommendations
+
+---
+
+### 4. Already Consolidated (No Action Needed)
 
 These modules already have their GUIs co-located with engines in Tools:
 
@@ -127,4 +146,7 @@ All migrations will maintain reversibility through:
 - [x] TRC Vessel Designer tests
 - [x] tools.json updates
 - [x] GUI registration updates
-- [ ] Final integration testing (pending PR/CI verification)
+- [x] Final integration testing (pending PR/CI verification)
+- [x] Syngas Compression Calculator PyQt6 launcher
+- [x] Syngas Compression Calculator React GUI
+- [x] Syngas Compression Calculator tests
