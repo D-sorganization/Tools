@@ -109,6 +109,18 @@
             "path": "src/pressure_drop_calculator/launch_web.py",
             "type": "python",
             "desc": "Pipe Flow Pressure Drop Analysis - React Web Application"
+        },
+        {
+            "name": "Acid Gas Dewpoint Calculator (PyQt6)",
+            "path": "src/acid_gas_dewpoint/launch_pyqt6.py",
+            "type": "python",
+            "desc": "HF, HCl, H2S Dewpoint Analysis - Desktop Application"
+        },
+        {
+            "name": "Acid Gas Dewpoint Calculator (Web)",
+            "path": "src/acid_gas_dewpoint/launch_web.py",
+            "type": "python",
+            "desc": "HF, HCl, H2S Dewpoint Analysis - React Web Application"
         }
     ],
     "Web Applications": [
