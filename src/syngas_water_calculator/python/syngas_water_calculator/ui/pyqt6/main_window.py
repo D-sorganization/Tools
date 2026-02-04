@@ -180,9 +180,7 @@ class SyngasWaterCalculatorWindow(QMainWindow):
         # Central widget with scroll area
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
-        scroll_area.setHorizontalScrollBarPolicy(
-            Qt.ScrollBarPolicy.ScrollBarAlwaysOff
-        )
+        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setCentralWidget(scroll_area)
 
         central_widget = QWidget()
@@ -306,9 +304,7 @@ class SyngasWaterCalculatorWindow(QMainWindow):
         layout.setSpacing(8)
 
         # Dew point margin
-        layout.addWidget(
-            QLabel("Temperature Margin (°C):"), 0, 0
-        )
+        layout.addWidget(QLabel("Temperature Margin (°C):"), 0, 0)
         self.margin_label = QLabel("--")
         self.margin_label.setStyleSheet(
             f"color: {CATPPUCCIN_MOCHA['green']}; font-weight: bold;"
@@ -324,9 +320,7 @@ class SyngasWaterCalculatorWindow(QMainWindow):
         layout.addWidget(self.risk_label, 1, 1)
 
         # Recommended temperature
-        layout.addWidget(
-            QLabel("Recommended Min Temp (°C):"), 2, 0
-        )
+        layout.addWidget(QLabel("Recommended Min Temp (°C):"), 2, 0)
         self.recommended_temp_label = QLabel("--")
         self.recommended_temp_label.setStyleSheet(
             f"color: {CATPPUCCIN_MOCHA['yellow']}; font-weight: bold;"
@@ -382,9 +376,7 @@ class SyngasWaterCalculatorWindow(QMainWindow):
                 f"{result.water_content_mg_per_nm3:,.2f}"
             )
             self.result_labels["ppmv"].setText(f"{result.water_content_ppmv:,.1f}")
-            self.result_labels["g_m3"].setText(
-                f"{result.water_content_g_per_m3:,.4f}"
-            )
+            self.result_labels["g_m3"].setText(f"{result.water_content_g_per_m3:,.4f}")
             self.result_labels["lb_mmscf"].setText(
                 f"{result.water_content_lb_per_mmscf:,.2f}"
             )

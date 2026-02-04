@@ -150,9 +150,7 @@ class TestSyngasWaterCalculatorEngineIntegration:
             )
 
             # Test normal operation (well above dew point)
-            risk = estimate_condensation_risk(
-                temperature_c=100.0, pressure_bar=30.0
-            )
+            risk = estimate_condensation_risk(temperature_c=100.0, pressure_bar=30.0)
             assert "dew_point_c" in risk
             assert "temperature_margin_c" in risk
             assert "condensation_risk" in risk
