@@ -22,13 +22,12 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QScrollArea,
     QSpinBox,
-    QTabWidget,
     QTableWidget,
     QTableWidgetItem,
+    QTabWidget,
     QVBoxLayout,
     QWidget,
 )
-
 
 # Catppuccin Mocha colors
 COLORS = {
@@ -527,7 +526,9 @@ class FinancialCalculatorMainWindow(QMainWindow):
 
     def _update_results(self, results: FinancialDesign) -> None:
         """Update results display."""
-        self.metric_labels["annual_tons"].setText(f"{results.annual_feedstock_tons:,.0f} tons")
+        self.metric_labels["annual_tons"].setText(
+            f"{results.annual_feedstock_tons:,.0f} tons"
+        )
         self.metric_labels["revenue"].setText(f"${results.total_revenue:,.0f}")
         self.metric_labels["costs"].setText(f"${results.total_costs:,.0f}")
         self.metric_labels["net_income"].setText(f"${results.net_income:,.0f}")

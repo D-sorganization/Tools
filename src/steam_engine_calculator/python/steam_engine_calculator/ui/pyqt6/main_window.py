@@ -26,7 +26,6 @@ from PyQt6.QtWidgets import (
     QMessageBox,
     QPushButton,
     QScrollArea,
-    QSizePolicy,
     QVBoxLayout,
     QWidget,
 )
@@ -36,25 +35,25 @@ if TYPE_CHECKING:
 
 # Catppuccin Mocha color palette
 COLORS = {
-    'base': '#1e1e2e',
-    'mantle': '#181825',
-    'crust': '#11111b',
-    'surface0': '#313244',
-    'surface1': '#45475a',
-    'surface2': '#585b70',
-    'text': '#cdd6f4',
-    'subtext0': '#a6adc8',
-    'subtext1': '#bac2de',
-    'blue': '#89b4fa',
-    'green': '#a6e3a1',
-    'red': '#f38ba8',
-    'yellow': '#f9e2af',
-    'peach': '#fab387',
-    'mauve': '#cba6f7',
-    'teal': '#94e2d5',
-    'lavender': '#b4befe',
-    'sky': '#89dceb',
-    'sapphire': '#74c7ec',
+    "base": "#1e1e2e",
+    "mantle": "#181825",
+    "crust": "#11111b",
+    "surface0": "#313244",
+    "surface1": "#45475a",
+    "surface2": "#585b70",
+    "text": "#cdd6f4",
+    "subtext0": "#a6adc8",
+    "subtext1": "#bac2de",
+    "blue": "#89b4fa",
+    "green": "#a6e3a1",
+    "red": "#f38ba8",
+    "yellow": "#f9e2af",
+    "peach": "#fab387",
+    "mauve": "#cba6f7",
+    "teal": "#94e2d5",
+    "lavender": "#b4befe",
+    "sky": "#89dceb",
+    "sapphire": "#74c7ec",
 }
 
 
@@ -108,20 +107,33 @@ class SteamEngineCalculatorWindow(QMainWindow):
     """Main window for the Steam Engine Calculator."""
 
     # Calculation mode constants
-    MODE_TP = 0       # Temperature and Pressure
-    MODE_SAT_T = 1    # Saturated from Temperature
-    MODE_SAT_P = 2    # Saturated from Pressure
+    MODE_TP = 0  # Temperature and Pressure
+    MODE_SAT_T = 1  # Saturated from Temperature
+    MODE_SAT_P = 2  # Saturated from Pressure
 
     # Input field definitions
-    INPUT_FIELDS = ['temperature', 'pressure']
+    INPUT_FIELDS = ["temperature", "pressure"]
 
     # Result field definitions
     RESULT_FIELDS = [
-        'temperature', 'pressure', 'density', 'specific_volume',
-        'enthalpy', 'entropy', 'internal_energy', 'cp', 'cv',
-        'speed_of_sound', 'thermal_conductivity', 'dynamic_viscosity',
-        'kinematic_viscosity', 'quality', 'phase',
-        'compressibility_factor', 'prandtl_number', 'specific_heat_ratio'
+        "temperature",
+        "pressure",
+        "density",
+        "specific_volume",
+        "enthalpy",
+        "entropy",
+        "internal_energy",
+        "cp",
+        "cv",
+        "speed_of_sound",
+        "thermal_conductivity",
+        "dynamic_viscosity",
+        "kinematic_viscosity",
+        "quality",
+        "phase",
+        "compressibility_factor",
+        "prandtl_number",
+        "specific_heat_ratio",
     ]
 
     def __init__(self) -> None:
@@ -137,6 +149,7 @@ class SteamEngineCalculatorWindow(QMainWindow):
             from upstream_drift_tools.calculators.thermo.steam_engine import (
                 SteamCalculationEngine,
             )
+
             self.engine = SteamCalculationEngine()
         except ImportError:
             self.engine = None
@@ -189,11 +202,13 @@ class SteamEngineCalculatorWindow(QMainWindow):
         mode_layout = QVBoxLayout()
 
         self.mode_combo = QComboBox()
-        self.mode_combo.addItems([
-            "Temperature & Pressure",
-            "Saturated (from Temperature)",
-            "Saturated (from Pressure)"
-        ])
+        self.mode_combo.addItems(
+            [
+                "Temperature & Pressure",
+                "Saturated (from Temperature)",
+                "Saturated (from Pressure)",
+            ]
+        )
         self.mode_combo.currentIndexChanged.connect(self._on_mode_changed)
         mode_layout.addWidget(self.mode_combo)
         mode_group.setLayout(mode_layout)
@@ -291,15 +306,15 @@ class SteamEngineCalculatorWindow(QMainWindow):
 
         self.result_labels = {}
         properties = [
-            ("Temperature", "temp", COLORS['blue']),
-            ("Pressure", "pressure", COLORS['blue']),
-            ("Density", "density", COLORS['peach']),
-            ("Specific Volume", "spec_vol", COLORS['peach']),
-            ("Enthalpy", "enthalpy", COLORS['green']),
-            ("Entropy", "entropy", COLORS['green']),
-            ("Internal Energy", "int_energy", COLORS['teal']),
-            ("Cp", "cp", COLORS['yellow']),
-            ("Cv", "cv", COLORS['yellow']),
+            ("Temperature", "temp", COLORS["blue"]),
+            ("Pressure", "pressure", COLORS["blue"]),
+            ("Density", "density", COLORS["peach"]),
+            ("Specific Volume", "spec_vol", COLORS["peach"]),
+            ("Enthalpy", "enthalpy", COLORS["green"]),
+            ("Entropy", "entropy", COLORS["green"]),
+            ("Internal Energy", "int_energy", COLORS["teal"]),
+            ("Cp", "cp", COLORS["yellow"]),
+            ("Cv", "cv", COLORS["yellow"]),
         ]
 
         for i, (name, key, color) in enumerate(properties):
@@ -316,10 +331,10 @@ class SteamEngineCalculatorWindow(QMainWindow):
         transport_layout.setSpacing(8)
 
         transport_props = [
-            ("Speed of Sound", "sound", COLORS['mauve']),
-            ("Thermal Conductivity", "therm_cond", COLORS['lavender']),
-            ("Dynamic Viscosity", "dyn_visc", COLORS['sky']),
-            ("Kinematic Viscosity", "kin_visc", COLORS['sapphire']),
+            ("Speed of Sound", "sound", COLORS["mauve"]),
+            ("Thermal Conductivity", "therm_cond", COLORS["lavender"]),
+            ("Dynamic Viscosity", "dyn_visc", COLORS["sky"]),
+            ("Kinematic Viscosity", "kin_visc", COLORS["sapphire"]),
         ]
 
         for i, (name, key, color) in enumerate(transport_props):
@@ -335,9 +350,9 @@ class SteamEngineCalculatorWindow(QMainWindow):
         derived_layout.setSpacing(8)
 
         derived_props = [
-            ("Compressibility (Z)", "compress", COLORS['teal']),
-            ("Prandtl Number", "prandtl", COLORS['peach']),
-            ("Cp/Cv Ratio (k)", "gamma", COLORS['yellow']),
+            ("Compressibility (Z)", "compress", COLORS["teal"]),
+            ("Prandtl Number", "prandtl", COLORS["peach"]),
+            ("Cp/Cv Ratio (k)", "gamma", COLORS["yellow"]),
         ]
 
         for i, (name, key, color) in enumerate(derived_props):
@@ -499,7 +514,6 @@ class SteamEngineCalculatorWindow(QMainWindow):
     def _convert_pressure_display(self) -> None:
         """Convert pressure display between units."""
         # Not converting, just for consistency
-        pass
 
     def _update_engine_status(self) -> None:
         """Update engine availability status."""
@@ -509,6 +523,7 @@ class SteamEngineCalculatorWindow(QMainWindow):
                 CANTERA_AVAILABLE,
                 COOLPROP_AVAILABLE,
             )
+
             if COOLPROP_AVAILABLE:
                 status_parts.append("CoolProp: Available")
             else:
@@ -521,7 +536,9 @@ class SteamEngineCalculatorWindow(QMainWindow):
             status_parts.append("Engine: Not available")
 
         self.engine_status.setText(" | ".join(status_parts))
-        self.engine_status.setStyleSheet(f"color: {COLORS['subtext0']}; font-size: 10px;")
+        self.engine_status.setStyleSheet(
+            f"color: {COLORS['subtext0']}; font-size: 10px;"
+        )
 
     def _get_temperature_k(self) -> float:
         """Get temperature in Kelvin from input."""
@@ -554,7 +571,7 @@ class SteamEngineCalculatorWindow(QMainWindow):
             QMessageBox.warning(
                 self,
                 "Engine Not Available",
-                "Steam calculation engine is not available.\nPlease check your installation."
+                "Steam calculation engine is not available.\nPlease check your installation.",
             )
             return
 
@@ -578,9 +595,7 @@ class SteamEngineCalculatorWindow(QMainWindow):
                     return
 
                 result = self.engine.calculate_properties(
-                    temperature=temp_k,
-                    pressure=pressure_pa,
-                    engine=engine_name
+                    temperature=temp_k, pressure=pressure_pa, engine=engine_name
                 )
 
             elif mode == self.MODE_SAT_T:
@@ -592,8 +607,7 @@ class SteamEngineCalculatorWindow(QMainWindow):
                     return
 
                 result = self.engine.calculate_saturated_properties_from_temperature(
-                    temperature=temp_k,
-                    engine=engine_name
+                    temperature=temp_k, engine=engine_name
                 )
 
             else:  # MODE_SAT_P
@@ -605,8 +619,7 @@ class SteamEngineCalculatorWindow(QMainWindow):
                     return
 
                 result = self.engine.calculate_saturated_properties_from_pressure(
-                    pressure=pressure_pa,
-                    engine=engine_name
+                    pressure=pressure_pa, engine=engine_name
                 )
 
             self._display_results(result)
@@ -620,50 +633,66 @@ class SteamEngineCalculatorWindow(QMainWindow):
         """Display calculation results."""
         # Phase state
         phase_colors = {
-            'liquid': COLORS['blue'],
-            'vapor': COLORS['peach'],
-            'two-phase': COLORS['yellow'],
-            'supercritical': COLORS['red'],
+            "liquid": COLORS["blue"],
+            "vapor": COLORS["peach"],
+            "two-phase": COLORS["yellow"],
+            "supercritical": COLORS["red"],
         }
-        phase_color = phase_colors.get(result.phase.lower(), COLORS['text'])
+        phase_color = phase_colors.get(result.phase.lower(), COLORS["text"])
         self.phase_label.setText(result.phase.upper())
-        self.phase_label.setStyleSheet(f"color: {phase_color}; font-size: 16px; font-weight: bold;")
+        self.phase_label.setStyleSheet(
+            f"color: {phase_color}; font-size: 16px; font-weight: bold;"
+        )
 
-        quality_text = f"Quality: {result.quality:.4f}" if result.quality is not None else "Quality: N/A"
+        quality_text = (
+            f"Quality: {result.quality:.4f}"
+            if result.quality is not None
+            else "Quality: N/A"
+        )
         self.quality_label.setText(quality_text)
 
         # Thermodynamic properties
-        self.result_labels['temp'].setText(f"{result.temperature:.2f} K ({result.temperature - 273.15:.2f} °C)")
-        self.result_labels['pressure'].setText(f"{result.pressure / 1000:.2f} kPa ({result.pressure / 1e5:.4f} bar)")
-        self.result_labels['density'].setText(f"{result.density:.4f} kg/m³")
-        self.result_labels['spec_vol'].setText(f"{result.specific_volume:.6f} m³/kg")
-        self.result_labels['enthalpy'].setText(f"{result.enthalpy / 1000:.2f} kJ/kg")
-        self.result_labels['entropy'].setText(f"{result.entropy / 1000:.4f} kJ/kg-K")
-        self.result_labels['int_energy'].setText(f"{result.internal_energy / 1000:.2f} kJ/kg")
-        self.result_labels['cp'].setText(f"{result.cp:.2f} J/kg-K")
-        self.result_labels['cv'].setText(f"{result.cv:.2f} J/kg-K")
+        self.result_labels["temp"].setText(
+            f"{result.temperature:.2f} K ({result.temperature - 273.15:.2f} °C)"
+        )
+        self.result_labels["pressure"].setText(
+            f"{result.pressure / 1000:.2f} kPa ({result.pressure / 1e5:.4f} bar)"
+        )
+        self.result_labels["density"].setText(f"{result.density:.4f} kg/m³")
+        self.result_labels["spec_vol"].setText(f"{result.specific_volume:.6f} m³/kg")
+        self.result_labels["enthalpy"].setText(f"{result.enthalpy / 1000:.2f} kJ/kg")
+        self.result_labels["entropy"].setText(f"{result.entropy / 1000:.4f} kJ/kg-K")
+        self.result_labels["int_energy"].setText(
+            f"{result.internal_energy / 1000:.2f} kJ/kg"
+        )
+        self.result_labels["cp"].setText(f"{result.cp:.2f} J/kg-K")
+        self.result_labels["cv"].setText(f"{result.cv:.2f} J/kg-K")
 
         # Transport properties
-        self.result_labels['sound'].setText(f"{result.speed_of_sound:.2f} m/s")
-        self.result_labels['therm_cond'].setText(f"{result.thermal_conductivity:.6f} W/m-K")
-        self.result_labels['dyn_visc'].setText(f"{result.dynamic_viscosity:.2e} Pa·s")
-        self.result_labels['kin_visc'].setText(f"{result.kinematic_viscosity:.2e} m²/s")
+        self.result_labels["sound"].setText(f"{result.speed_of_sound:.2f} m/s")
+        self.result_labels["therm_cond"].setText(
+            f"{result.thermal_conductivity:.6f} W/m-K"
+        )
+        self.result_labels["dyn_visc"].setText(f"{result.dynamic_viscosity:.2e} Pa·s")
+        self.result_labels["kin_visc"].setText(f"{result.kinematic_viscosity:.2e} m²/s")
 
         # Derived properties
         if result.compressibility_factor is not None:
-            self.result_labels['compress'].setText(f"{result.compressibility_factor:.4f}")
+            self.result_labels["compress"].setText(
+                f"{result.compressibility_factor:.4f}"
+            )
         else:
-            self.result_labels['compress'].setText("--")
+            self.result_labels["compress"].setText("--")
 
         if result.prandtl_number is not None:
-            self.result_labels['prandtl'].setText(f"{result.prandtl_number:.4f}")
+            self.result_labels["prandtl"].setText(f"{result.prandtl_number:.4f}")
         else:
-            self.result_labels['prandtl'].setText("--")
+            self.result_labels["prandtl"].setText("--")
 
         if result.specific_heat_ratio is not None:
-            self.result_labels['gamma'].setText(f"{result.specific_heat_ratio:.4f}")
+            self.result_labels["gamma"].setText(f"{result.specific_heat_ratio:.4f}")
         else:
-            self.result_labels['gamma'].setText("--")
+            self.result_labels["gamma"].setText("--")
 
 
 def main() -> None:

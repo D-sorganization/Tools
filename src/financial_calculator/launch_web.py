@@ -6,7 +6,6 @@ This launcher starts a development server for the React application.
 
 from __future__ import annotations
 
-import os
 import subprocess
 import sys
 from pathlib import Path

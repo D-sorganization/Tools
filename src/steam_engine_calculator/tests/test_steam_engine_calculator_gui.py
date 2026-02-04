@@ -7,9 +7,10 @@ Tests cover PyQt6 main window, input validation, calculation integration,
 and result display.
 """
 
-import pytest
-from unittest.mock import MagicMock, patch
 import sys
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 
 class TestSteamEngineCalculatorMainWindow:
@@ -18,47 +19,60 @@ class TestSteamEngineCalculatorMainWindow:
     @pytest.fixture
     def mock_qt_app(self):
         """Create mock Qt application for headless testing."""
-        with patch.dict(sys.modules, {
-            'PyQt6': MagicMock(),
-            'PyQt6.QtWidgets': MagicMock(),
-            'PyQt6.QtCore': MagicMock(),
-            'PyQt6.QtGui': MagicMock(),
-        }):
+        with patch.dict(
+            sys.modules,
+            {
+                "PyQt6": MagicMock(),
+                "PyQt6.QtWidgets": MagicMock(),
+                "PyQt6.QtCore": MagicMock(),
+                "PyQt6.QtGui": MagicMock(),
+            },
+        ):
             yield
 
     def test_main_window_imports(self, mock_qt_app):
         """Test that main window module can be imported."""
         try:
             from steam_engine_calculator.ui.pyqt6 import main_window
-            assert hasattr(main_window, 'SteamEngineCalculatorWindow')
+
+            assert hasattr(main_window, "SteamEngineCalculatorWindow")
         except ImportError:
             pytest.skip("PyQt6 main window not yet implemented")
 
     def test_main_window_has_calculation_modes(self, mock_qt_app):
         """Test that window has calculation mode selector."""
         try:
-            from steam_engine_calculator.ui.pyqt6.main_window import SteamEngineCalculatorWindow
+            from steam_engine_calculator.ui.pyqt6.main_window import (
+                SteamEngineCalculatorWindow,
+            )
+
             # Check class has expected mode constants
-            assert hasattr(SteamEngineCalculatorWindow, 'MODE_TP')
-            assert hasattr(SteamEngineCalculatorWindow, 'MODE_SAT_T')
-            assert hasattr(SteamEngineCalculatorWindow, 'MODE_SAT_P')
+            assert hasattr(SteamEngineCalculatorWindow, "MODE_TP")
+            assert hasattr(SteamEngineCalculatorWindow, "MODE_SAT_T")
+            assert hasattr(SteamEngineCalculatorWindow, "MODE_SAT_P")
         except ImportError:
             pytest.skip("Main window not yet implemented")
 
     def test_main_window_has_input_fields(self, mock_qt_app):
         """Test that window defines required input fields."""
         try:
-            from steam_engine_calculator.ui.pyqt6.main_window import SteamEngineCalculatorWindow
+            from steam_engine_calculator.ui.pyqt6.main_window import (
+                SteamEngineCalculatorWindow,
+            )
+
             # Verify class defines input field names
-            assert hasattr(SteamEngineCalculatorWindow, 'INPUT_FIELDS')
+            assert hasattr(SteamEngineCalculatorWindow, "INPUT_FIELDS")
         except ImportError:
             pytest.skip("Main window not yet implemented")
 
     def test_main_window_has_result_fields(self, mock_qt_app):
         """Test that window defines expected result fields."""
         try:
-            from steam_engine_calculator.ui.pyqt6.main_window import SteamEngineCalculatorWindow
-            assert hasattr(SteamEngineCalculatorWindow, 'RESULT_FIELDS')
+            from steam_engine_calculator.ui.pyqt6.main_window import (
+                SteamEngineCalculatorWindow,
+            )
+
+            assert hasattr(SteamEngineCalculatorWindow, "RESULT_FIELDS")
         except ImportError:
             pytest.skip("Main window not yet implemented")
 
@@ -113,6 +127,7 @@ class TestSteamEngineCalculatorIntegration:
                 SteamCalculationEngine,
                 SteamProperties,
             )
+
             assert SteamCalculationEngine is not None
             assert SteamProperties is not None
         except ImportError:
@@ -121,13 +136,15 @@ class TestSteamEngineCalculatorIntegration:
     def test_engine_calculation_tp_mode(self):
         """Test T-P mode calculation through engine."""
         try:
-            from upstream_drift_tools.calculators.thermo.steam_engine import SteamCalculationEngine
+            from upstream_drift_tools.calculators.thermo.steam_engine import (
+                SteamCalculationEngine,
+            )
 
             engine = SteamCalculationEngine()
             result = engine.calculate_properties(
                 temperature=373.15,  # 100°C
-                pressure=101325.0,   # 1 atm
-                engine="simplified"
+                pressure=101325.0,  # 1 atm
+                engine="simplified",
             )
 
             assert result is not None
@@ -140,12 +157,13 @@ class TestSteamEngineCalculatorIntegration:
     def test_engine_saturated_from_temp(self):
         """Test saturated properties from temperature."""
         try:
-            from upstream_drift_tools.calculators.thermo.steam_engine import SteamCalculationEngine
+            from upstream_drift_tools.calculators.thermo.steam_engine import (
+                SteamCalculationEngine,
+            )
 
             engine = SteamCalculationEngine()
             result = engine.calculate_saturated_properties_from_temperature(
-                temperature=373.15,  # 100°C
-                engine="simplified"
+                temperature=373.15, engine="simplified"  # 100°C
             )
 
             assert result is not None
@@ -158,12 +176,13 @@ class TestSteamEngineCalculatorIntegration:
     def test_engine_saturated_from_pressure(self):
         """Test saturated properties from pressure."""
         try:
-            from upstream_drift_tools.calculators.thermo.steam_engine import SteamCalculationEngine
+            from upstream_drift_tools.calculators.thermo.steam_engine import (
+                SteamCalculationEngine,
+            )
 
             engine = SteamCalculationEngine()
             result = engine.calculate_saturated_properties_from_pressure(
-                pressure=101325.0,  # 1 atm
-                engine="simplified"
+                pressure=101325.0, engine="simplified"  # 1 atm
             )
 
             assert result is not None
@@ -225,13 +244,13 @@ class TestSteamEngineCalculatorGUIRegistration:
         try:
             from steam_engine_calculator import gui_registration
 
-            assert hasattr(gui_registration, 'GUI_METADATA')
+            assert hasattr(gui_registration, "GUI_METADATA")
             metadata = gui_registration.GUI_METADATA
 
-            assert 'name' in metadata
-            assert 'description' in metadata
-            assert 'category' in metadata
-            assert 'entry_point' in metadata
+            assert "name" in metadata
+            assert "description" in metadata
+            assert "category" in metadata
+            assert "entry_point" in metadata
         except ImportError:
             pytest.skip("GUI registration not yet implemented")
 
@@ -240,6 +259,6 @@ class TestSteamEngineCalculatorGUIRegistration:
         try:
             from steam_engine_calculator import gui_registration
 
-            assert gui_registration.GUI_METADATA['category'] == 'thermodynamics'
+            assert gui_registration.GUI_METADATA["category"] == "thermodynamics"
         except ImportError:
             pytest.skip("GUI registration not yet implemented")

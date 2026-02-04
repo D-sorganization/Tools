@@ -34,12 +34,14 @@ def check_dependencies() -> bool:
     # Check optional dependencies
     try:
         import CoolProp  # noqa: F401
+
         print("CoolProp: Available (high-accuracy calculations)")
     except ImportError:
         print("CoolProp: Not installed (optional - pip install CoolProp)")
 
     try:
         import cantera  # noqa: F401
+
         print("Cantera: Available")
     except ImportError:
         print("Cantera: Not installed (optional)")
@@ -76,6 +78,7 @@ def main() -> None:
     setup_path()
 
     from steam_engine_calculator.ui.pyqt6.main_window import main as run_app
+
     run_app()
 
 
