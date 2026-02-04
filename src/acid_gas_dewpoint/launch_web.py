@@ -47,12 +47,12 @@ def main() -> int:
 
     # Start dev server
     print(f"Starting Acid Gas Dewpoint Calculator on http://localhost:{port}")
-    result = subprocess.run(
+    dev_result = subprocess.run(
         ["npm", "run", "dev", "--", "--port", str(port)],
         cwd=web_dir,
         shell=True,
     )
-    return result.returncode
+    return dev_result.returncode
 
 
 if __name__ == "__main__":
