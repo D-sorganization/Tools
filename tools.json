@@ -145,6 +145,18 @@
             "path": "src/wgs_reactor/launch_web.py",
             "type": "python",
             "desc": "Water-Gas Shift Reactor Design - React Web Application"
+        },
+        {
+            "name": "Flare Calculator (PyQt6)",
+            "path": "src/flare_calculator/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Flare Sizing & Safety Zone Analysis - Desktop Application"
+        },
+        {
+            "name": "Flare Calculator (Web)",
+            "path": "src/flare_calculator/launch_web.py",
+            "type": "python",
+            "desc": "Flare Sizing & Safety Zone Analysis - React Web Application"
         }
     ],
     "Web Applications": [
