@@ -1,75 +1,170 @@
+# =============================================================================
+# Pre-commit Configuration - Fast Checks Only
+# =============================================================================
+# These hooks run on EVERY commit and must complete in <15 seconds.
+# Slower checks (mypy, tests) run in pre-push hooks.
+#
+# Installation:
+#   pip install pre-commit
+#   pre-commit install
+#   pre-commit install --hook-type pre-push
+#
+# Manual run:
+#   pre-commit run --all-files
+# =============================================================================
+
 repos:
-  # Python formatters
-  - repo: https://github.com/psf/black
-    rev: 24.4.2
-    hooks:
-      - id: black
-        language_version: python3.12
+  # -------------------------------------------------------------------------
+  # Stage 1: Code Formatting (auto-fix)
+  # -------------------------------------------------------------------------
 
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-        args: ["--profile", "black"]
-
-  # Python linter
+  # Ruff - Fast Python linter with auto-fix
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.5.0
+    rev: v0.14.10
     hooks:
       - id: ruff
-        args: ["--fix", "--select", "E,F,W,I,B,UP", "--ignore", "D"]
+        name: "ruff (lint + fix)"
+        args: ["--fix", "--exit-non-zero-on-fix"]
+        types: [python]
 
-  # Type checker
+      - id: ruff-format
+        name: "ruff format"
+        types: [python]
+
+  # Black - Python code formatter (backup for ruff-format edge cases)
+  - repo: https://github.com/psf/black
+    rev: 26.1.0
+    hooks:
+      - id: black
+        name: "black (format)"
+        language_version: python3.12
+
+  # -------------------------------------------------------------------------
+  # Stage 2: Quick Quality Checks
+  # -------------------------------------------------------------------------
+
+  # Local quality checks
+  - repo: local
+    hooks:
+      # Prevent wildcard imports (bad practice)
+      - id: no-wildcard-imports
+        name: "no wildcard imports"
+        entry: "from .* import \\*"
+        language: pygrep
+        types: [python]
+        exclude: ^(archive/|legacy/|experimental/|tests/)
+
+      # Quality check - no TODOs, FIXMEs, placeholders
+      - id: quality-check
+        name: "quality check (no placeholders)"
+        entry: python scripts/tools/code_quality_check.py
+        language: python
+        pass_filenames: true
+        types: [python]
+        exclude: ^(archive/|legacy/|experimental/|scripts/tools/code_quality_check\.py)
+
+      # Check for debug statements
+      - id: no-debug-statements
+        name: "no debug statements"
+        entry: "(?:^|\\s)(breakpoint\\(|import pdb|pdb\\.set_trace)"
+        language: pygrep
+        types: [python]
+        exclude: ^(tests/|archive/|legacy/)
+
+  # -------------------------------------------------------------------------
+  # Stage 3: Config File Formatting
+  # -------------------------------------------------------------------------
+
+  # Prettier - Format YAML, JSON, Markdown
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.1.0
+    hooks:
+      - id: prettier
+        name: "prettier (yaml/json/md)"
+        types_or: [yaml, markdown, json]
+        exclude: '(\.py|\.m|package-lock\.json|\.ipynb)$'
+
+  # -------------------------------------------------------------------------
+  # Stage 4: Pre-push Hooks (Slower - only run before push)
+  # -------------------------------------------------------------------------
+
+  # MyPy - Type checking (pre-push only)
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.13.0
     hooks:
       - id: mypy
-        additional_dependencies: ["types-requests", "types-PyYAML"]
-        args: [--config-file=mypy.ini, --ignore-missing-imports]
+        name: "mypy (type check)"
+        stages: [pre-push]
+        additional_dependencies:
+          - types-requests
+          - types-PyYAML
+        args: [--config-file=pyproject.toml, --ignore-missing-imports]
+        files: ^src/
         exclude: |
           (?x)^(
             archive/|
             legacy/|
             experimental/|
-            \.git/|
             __pycache__/|
             \.pytest_cache/|
-            \.venv/|
-            venv/
+            \.venv/
           )
 
-  # Security audit
-  - repo: https://github.com/pypa/pip-audit
-    rev: v2.7.3
+  # Bandit - Security scanning (pre-push only)
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.7
     hooks:
-      - id: pip-audit
-        args: ["-r", "requirements.txt"]
+      - id: bandit
+        name: "bandit (security scan)"
+        stages: [pre-push]
+        args: ["-r", "src/", "-ll", "-ii", "-x", "tests/,archive/,legacy/"]
+        pass_filenames: false
 
-  # Local quality checks
+  # Pytest - Unit tests (pre-push only)
   - repo: local
     hooks:
-      # Main quality gate
-      - id: quality-check
-        name: Quality check (no placeholders/magic numbers)
-        entry: python tools/code_quality_check.py
-        language: python
+      - id: pytest-unit
+        name: "pytest (unit tests)"
+        stages: [pre-push]
+        entry: python -m pytest tests/ -x -q --tb=short -m "not slow and not integration"
+        language: system
         pass_filenames: false
         always_run: true
-        additional_dependencies: []
 
-  # Infrastructure formatter (YAML, JSON, MD)
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v3.1.0
-    hooks:
-      - id: prettier
-        # Only target the files we care about
-        types_or: [yaml, markdown, json, css, javascript]
-        # explicitly exclude python/matlab just in case
-        exclude: '\.(py|m)$'
+# =============================================================================
+# Global Settings
+# =============================================================================
 
-# Global settings
 default_language_version:
   python: python3.12
 
-# Files to always exclude
-exclude: '^(archive/|legacy/|experimental/|replicants/|\.git/)'
+# Files to always exclude from all hooks
+exclude: |
+  (?x)^(
+    archive/|
+    legacy/|
+    experimental/|
+    replicants/|
+    \.git/|
+    __pycache__/|
+    \.mypy_cache/|
+    \.ruff_cache/|
+    \.pytest_cache/|
+    node_modules/|
+    \.venv/|
+    venv/|
+    build/|
+    dist/|
+    .*\.egg-info/
+  )
+
+# Fail fast - stop on first failure
+fail_fast: false
+
+# CI configuration
+ci:
+  autofix_commit_msg: "style: auto-fix from pre-commit hooks"
+  autofix_prs: true
+  autoupdate_branch: "main"
+  autoupdate_commit_msg: "chore: update pre-commit hooks"
+  skip: [pytest-unit] # Skip tests in CI (they run in dedicated workflow)
