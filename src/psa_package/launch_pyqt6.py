@@ -64,7 +64,9 @@ def main() -> int:
     setup_path()
 
     try:
-        from upstream_drift_tools.process_calculators.psa_package.psa_gui import main as run_app
+        from upstream_drift_tools.process_calculators.psa_package.psa_gui import (
+            main as run_app,
+        )
 
         run_app()
         return 0
