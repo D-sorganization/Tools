@@ -30,7 +30,9 @@ SCRUBBER_MODULE_PATH = (
 
 def load_scrubber_module():
     """Load scrubber calculator module directly."""
-    spec = importlib.util.spec_from_file_location("scrubber_calculator", SCRUBBER_MODULE_PATH)
+    spec = importlib.util.spec_from_file_location(
+        "scrubber_calculator", SCRUBBER_MODULE_PATH
+    )
     if spec is None or spec.loader is None:
         return None
     module = importlib.util.module_from_spec(spec)
