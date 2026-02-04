@@ -106,7 +106,9 @@ class TestFinancialCalculatorMainWindow:
 
     def test_main_window_creation(self, app):
         """Test that main window can be created."""
-        from financial_calculator.ui.pyqt6.main_window import FinancialCalculatorMainWindow
+        from financial_calculator.ui.pyqt6.main_window import (
+            FinancialCalculatorMainWindow,
+        )
 
         window = FinancialCalculatorMainWindow()
         assert window is not None
@@ -114,14 +116,18 @@ class TestFinancialCalculatorMainWindow:
 
     def test_main_window_has_engine(self, app):
         """Test that main window has calculation engine."""
-        from financial_calculator.ui.pyqt6.main_window import FinancialCalculatorMainWindow
+        from financial_calculator.ui.pyqt6.main_window import (
+            FinancialCalculatorMainWindow,
+        )
 
         window = FinancialCalculatorMainWindow()
         assert window.engine is not None
 
     def test_main_window_has_input_fields(self, app):
         """Test that main window has required input fields."""
-        from financial_calculator.ui.pyqt6.main_window import FinancialCalculatorMainWindow
+        from financial_calculator.ui.pyqt6.main_window import (
+            FinancialCalculatorMainWindow,
+        )
 
         window = FinancialCalculatorMainWindow()
         # Check for key input fields
@@ -131,7 +137,9 @@ class TestFinancialCalculatorMainWindow:
 
     def test_calculate_button_exists(self, app):
         """Test that calculate button exists."""
-        from financial_calculator.ui.pyqt6.main_window import FinancialCalculatorMainWindow
+        from financial_calculator.ui.pyqt6.main_window import (
+            FinancialCalculatorMainWindow,
+        )
 
         window = FinancialCalculatorMainWindow()
         assert hasattr(window, "calculate_btn")

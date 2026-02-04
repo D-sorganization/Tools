@@ -22,13 +22,12 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QScrollArea,
     QSpinBox,
-    QTabWidget,
     QTableWidget,
     QTableWidgetItem,
+    QTabWidget,
     QVBoxLayout,
     QWidget,
 )
-
 
 # Catppuccin Mocha colors
 COLORS = {
@@ -224,7 +223,8 @@ class FinancialCalculatorEngine:
 
     def generate_projections(self, years: int = 10) -> list[dict]:
         """Generate yearly projections."""
-        return self._calculator.generate_yearly_projections(years)
+        result = self._calculator.generate_yearly_projections(years)
+        return list(result)
 
 
 class FinancialCalculatorMainWindow(QMainWindow):
@@ -493,7 +493,9 @@ class FinancialCalculatorMainWindow(QMainWindow):
         self.projections_table.setHorizontalHeaderLabels(
             ["Year", "Revenue", "Costs", "EBITDA", "Net Income", "Cumulative CF"]
         )
-        self.projections_table.horizontalHeader().setStretchLastSection(True)
+        header = self.projections_table.horizontalHeader()
+        if header is not None:
+            header.setStretchLastSection(True)
 
         layout.addWidget(self.projections_table)
 
@@ -527,7 +529,9 @@ class FinancialCalculatorMainWindow(QMainWindow):
 
     def _update_results(self, results: FinancialDesign) -> None:
         """Update results display."""
-        self.metric_labels["annual_tons"].setText(f"{results.annual_feedstock_tons:,.0f} tons")
+        self.metric_labels["annual_tons"].setText(
+            f"{results.annual_feedstock_tons:,.0f} tons"
+        )
         self.metric_labels["revenue"].setText(f"${results.total_revenue:,.0f}")
         self.metric_labels["costs"].setText(f"${results.total_costs:,.0f}")
         self.metric_labels["net_income"].setText(f"${results.net_income:,.0f}")
