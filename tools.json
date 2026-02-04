@@ -121,6 +121,18 @@
             "path": "src/acid_gas_dewpoint/launch_web.py",
             "type": "python",
             "desc": "HF, HCl, H2S Dewpoint Analysis - React Web Application"
+        },
+        {
+            "name": "Scrubber Calculator (PyQt6)",
+            "path": "src/scrubber_calculator/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Packed Bed Scrubber Design - Desktop Application"
+        },
+        {
+            "name": "Scrubber Calculator (Web)",
+            "path": "src/scrubber_calculator/launch_web.py",
+            "type": "python",
+            "desc": "Packed Bed Scrubber Design - React Web Application"
         }
     ],
     "Web Applications": [
