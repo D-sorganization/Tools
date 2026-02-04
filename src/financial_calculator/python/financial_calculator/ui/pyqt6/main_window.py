@@ -223,7 +223,8 @@ class FinancialCalculatorEngine:
 
     def generate_projections(self, years: int = 10) -> list[dict]:
         """Generate yearly projections."""
-        return self._calculator.generate_yearly_projections(years)
+        result = self._calculator.generate_yearly_projections(years)
+        return list(result)
 
 
 class FinancialCalculatorMainWindow(QMainWindow):
@@ -492,7 +493,9 @@ class FinancialCalculatorMainWindow(QMainWindow):
         self.projections_table.setHorizontalHeaderLabels(
             ["Year", "Revenue", "Costs", "EBITDA", "Net Income", "Cumulative CF"]
         )
-        self.projections_table.horizontalHeader().setStretchLastSection(True)
+        header = self.projections_table.horizontalHeader()
+        if header is not None:
+            header.setStretchLastSection(True)
 
         layout.addWidget(self.projections_table)
 

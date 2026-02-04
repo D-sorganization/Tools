@@ -9,7 +9,7 @@ Uses Catppuccin Mocha dark theme for modern appearance.
 from __future__ import annotations
 
 import sys
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
@@ -138,7 +138,8 @@ class SteamEngineCalculatorWindow(QMainWindow):
 
     def __init__(self) -> None:
         super().__init__()
-        self.engine = None
+        self.engine: Any = None
+        self.result_labels: dict[str, QLabel] = {}
         self._init_engine()
         self._init_ui()
         self._apply_styles()
@@ -304,7 +305,6 @@ class SteamEngineCalculatorWindow(QMainWindow):
         thermo_layout = QGridLayout()
         thermo_layout.setSpacing(8)
 
-        self.result_labels = {}
         properties = [
             ("Temperature", "temp", COLORS["blue"]),
             ("Pressure", "pressure", COLORS["blue"]),
