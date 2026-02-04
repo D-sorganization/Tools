@@ -25,6 +25,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+
 # Catppuccin Mocha colors
 COLORS = {
     "base": "#1e1e2e",

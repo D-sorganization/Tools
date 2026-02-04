@@ -79,9 +79,7 @@ class TestBaghouseCalculatorMainWindow:
 
     def test_main_window_creation(self, app):
         """Test that main window can be created."""
-        from baghouse_calculator.ui.pyqt6.main_window import (
-            BaghouseCalculatorMainWindow,
-        )
+        from baghouse_calculator.ui.pyqt6.main_window import BaghouseCalculatorMainWindow
 
         window = BaghouseCalculatorMainWindow()
         assert window is not None
@@ -89,18 +87,14 @@ class TestBaghouseCalculatorMainWindow:
 
     def test_main_window_has_engine(self, app):
         """Test that main window has calculation engine."""
-        from baghouse_calculator.ui.pyqt6.main_window import (
-            BaghouseCalculatorMainWindow,
-        )
+        from baghouse_calculator.ui.pyqt6.main_window import BaghouseCalculatorMainWindow
 
         window = BaghouseCalculatorMainWindow()
         assert window.engine is not None
 
     def test_calculate_button_exists(self, app):
         """Test that calculate button exists."""
-        from baghouse_calculator.ui.pyqt6.main_window import (
-            BaghouseCalculatorMainWindow,
-        )
+        from baghouse_calculator.ui.pyqt6.main_window import BaghouseCalculatorMainWindow
 
         window = BaghouseCalculatorMainWindow()
         assert hasattr(window, "calculate_btn")
