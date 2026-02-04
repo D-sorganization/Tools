@@ -133,6 +133,18 @@
             "path": "src/scrubber_calculator/launch_web.py",
             "type": "python",
             "desc": "Packed Bed Scrubber Design - React Web Application"
+        },
+        {
+            "name": "WGS Reactor Calculator (PyQt6)",
+            "path": "src/wgs_reactor/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Water-Gas Shift Reactor Design - Desktop Application"
+        },
+        {
+            "name": "WGS Reactor Calculator (Web)",
+            "path": "src/wgs_reactor/launch_web.py",
+            "type": "python",
+            "desc": "Water-Gas Shift Reactor Design - React Web Application"
         }
     ],
     "Web Applications": [
