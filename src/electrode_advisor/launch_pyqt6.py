@@ -32,6 +32,7 @@ def main() -> int:
     from PyQt6.QtWidgets import QApplication, QMainWindow
 
     from electrode_advisor.ui.pyqt6.main_window import ElectrodeAdvisorWidget
+    from shared.python.theme import setup_themed_app
 
     app = QApplication(sys.argv)
     app.setApplicationName("Electrode Advisor")
@@ -46,6 +47,7 @@ def main() -> int:
     advisor_widget = ElectrodeAdvisorWidget()
     window.setCentralWidget(advisor_widget)
 
+    setup_themed_app(app, window, settings_app="ElectrodeAdvisor")
     window.show()
     return app.exec()
 

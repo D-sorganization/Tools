@@ -49,6 +49,12 @@ from .stylesheets import generate_minimal_stylesheet, generate_stylesheet
 # PyQt6-dependent imports - only available when PyQt6 is installed
 try:
     from .colors import get_qcolor
+    from .integration import (
+        ThemedWindowMixin,
+        apply_theme_to_window,
+        create_theme_menu,
+        setup_themed_app,
+    )
     from .theme_manager import ThemeManager, get_theme_manager
 
     _PYQT6_AVAILABLE = True
@@ -57,11 +63,20 @@ except ImportError:
     ThemeManager = None  # type: ignore[assignment, misc]
     get_theme_manager = None  # type: ignore[assignment]
     get_qcolor = None  # type: ignore[assignment]
+    ThemedWindowMixin = None  # type: ignore[assignment, misc]
+    apply_theme_to_window = None  # type: ignore[assignment]
+    create_theme_menu = None  # type: ignore[assignment]
+    setup_themed_app = None  # type: ignore[assignment]
 
 __all__ = [
     # Theme manager (requires PyQt6)
     "ThemeManager",
     "get_theme_manager",
+    # Integration helpers (requires PyQt6)
+    "ThemedWindowMixin",
+    "apply_theme_to_window",
+    "create_theme_menu",
+    "setup_themed_app",
     # Color utilities
     "BUILTIN_THEMES",
     "CHART_COLORS",

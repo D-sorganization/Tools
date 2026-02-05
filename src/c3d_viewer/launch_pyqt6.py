@@ -52,9 +52,11 @@ def main() -> int:
         from PyQt6.QtWidgets import QApplication
 
         from c3d_viewer.ui.pyqt6.main_window import C3DViewerWindow
+        from shared.python.theme import setup_themed_app
 
         app = QApplication(sys.argv)
         window = C3DViewerWindow()
+        setup_themed_app(app, window, settings_app="C3DViewer")
         window.show()
         return app.exec()
     except ImportError as e:

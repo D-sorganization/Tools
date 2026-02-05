@@ -18,7 +18,7 @@ def check_dependencies() -> list[str]:
 
 
 def main() -> int:
-    """Main entry point for the Financial Calculator PyQt6 GUI."""
+    """Main point for the Financial Calculator PyQt6 GUI."""
     # Check dependencies
     missing = check_dependencies()
     if missing:
@@ -32,11 +32,14 @@ def main() -> int:
     from financial_calculator.ui.pyqt6.main_window import FinancialCalculatorMainWindow
     from PyQt6.QtWidgets import QApplication
 
+    from shared.python.theme import setup_themed_app
+
     app = QApplication(sys.argv)
     app.setApplicationName("Financial Calculator")
     app.setApplicationVersion("1.0.0")
 
     window = FinancialCalculatorMainWindow()
+    setup_themed_app(app, window, settings_app="FinancialCalculator")
     window.show()
 
     return app.exec()

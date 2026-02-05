@@ -48,9 +48,11 @@ def main() -> int:
         from multi_param_analysis.ui.pyqt6.main_window import (
             MultiParamAnalysisWindow,
         )
+        from shared.python.theme import setup_themed_app
 
         app = QApplication(sys.argv)
         window = MultiParamAnalysisWindow()
+        setup_themed_app(app, window, settings_app="MultiParamAnalysis")
         window.show()
         return app.exec()
     except ImportError as e:

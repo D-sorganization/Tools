@@ -20,6 +20,7 @@ def main() -> int:
         from acid_gas_dewpoint.python.acid_gas_dewpoint.ui.pyqt6.main_window import (
             AcidGasDewpointCalculatorWidget,
         )
+        from shared.python.theme import setup_themed_app
     except ImportError as e:
         print(f"Error: Missing dependencies - {e}")
         print("Please install: pip install PyQt6 matplotlib numpy")
@@ -27,7 +28,6 @@ def main() -> int:
 
     app = QApplication(sys.argv)
     app.setApplicationName("Acid Gas Dewpoint Calculator")
-    app.setStyle("Fusion")
 
     window = QMainWindow()
     window.setWindowTitle("Acid Gas Dewpoint Calculator")
@@ -35,6 +35,7 @@ def main() -> int:
 
     calculator = AcidGasDewpointCalculatorWidget()
     window.setCentralWidget(calculator)
+    setup_themed_app(app, window, settings_app="AcidGasDewpointCalculator")
     window.show()
 
     return app.exec()

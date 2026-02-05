@@ -697,8 +697,11 @@ class SteamEngineCalculatorWindow(QMainWindow):
 
 def main() -> None:
     """Main entry point for standalone execution."""
+    from shared.python.theme import setup_themed_app
+
     app = QApplication(sys.argv)
     window = SteamEngineCalculatorWindow()
+    setup_themed_app(app, window, settings_app="SteamEngineCalculator")
     window.show()
     sys.exit(app.exec())
 
