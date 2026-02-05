@@ -123,7 +123,7 @@ class DataReader:
             file_path: Path to the file
 
         Returns:
-            str | None: Detected format type, or None if file doesn't exist or format is undetectable
+            str | None: Detected format type, or None if undetectable.
         """
         file_path = Path(file_path)
         if not file_path.exists():
