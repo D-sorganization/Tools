@@ -36,7 +36,7 @@ class TestUTCConstant:
         """Test that UTC matches timezone.utc."""
         from utils.compatibility import UTC
 
-        assert UTC == timezone.utc
+        assert UTC == timezone.utc  # noqa: UP017 - Python 3.10 compatibility
 
 
 class TestStrEnumContract:
