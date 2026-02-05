@@ -4,10 +4,7 @@ These tests verify the CSV utility functions using
 Design by Contract principles.
 """
 
-from pathlib import Path
-
 import pandas as pd
-import pytest
 
 
 class TestSafeReadCsvContract:

@@ -7,8 +7,6 @@ Design by Contract principles.
 import json
 from pathlib import Path
 
-import pytest
-
 
 class TestSafeReadJsonContract:
     """Design by Contract tests for safe_read_json function."""

@@ -7,9 +7,6 @@ Design by Contract principles.
 import os
 import sys
 from pathlib import Path
-from unittest.mock import MagicMock, patch
-
-import pytest
 
 
 class TestGetRepoRootContract:

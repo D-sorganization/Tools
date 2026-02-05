@@ -201,9 +201,7 @@ class TestHandleImportErrorContract:
         """Postcondition: Returns default on import failure."""
         from utils.error_handling import handle_import_error
 
-        result = handle_import_error(
-            "nonexistent_module_xyz_123", default="not_found"
-        )
+        result = handle_import_error("nonexistent_module_xyz_123", default="not_found")
         assert result == "not_found"
 
 

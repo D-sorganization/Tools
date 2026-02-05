@@ -7,7 +7,6 @@ Design by Contract principles.
 import json
 import logging
 import random
-from unittest.mock import patch
 
 import pytest
 

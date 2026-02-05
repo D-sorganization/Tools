@@ -6,8 +6,7 @@ Design by Contract principles.
 
 import subprocess
 import sys
-from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -61,7 +60,9 @@ class TestRunCommand:
         """Test respecting working directory."""
         from utils.subprocess_utils import run_command
 
-        result = run_command([sys.executable, "-c", "import os; print(os.getcwd())"], cwd=tmp_path)
+        result = run_command(
+            [sys.executable, "-c", "import os; print(os.getcwd())"], cwd=tmp_path
+        )
         assert str(tmp_path) in result.stdout or tmp_path.name in result.stdout
 
     def test_raises_on_timeout(self):
