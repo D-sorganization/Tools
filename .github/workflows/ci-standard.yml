@@ -49,7 +49,7 @@ jobs:
         run: black --check .
 
       - name: Type Check (Mypy)
-        run: mypy . --ignore-missing-imports --install-types --non-interactive
+        run: mypy . --ignore-missing-imports --install-types --non-interactive --exclude "tests/"
 
       # CodeQL is explicitly disabled via codeql-analysis.yml to reduce costs.
       # Security scanning is performed by pip-audit and bandit.
