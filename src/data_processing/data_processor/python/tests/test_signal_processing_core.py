@@ -6,8 +6,6 @@ Covers: integration, differentiation, resampling, custom variables, trendlines.
 
 from __future__ import annotations
 
-import math
-from datetime import datetime, timedelta
 
 import numpy as np
 import pandas as pd
