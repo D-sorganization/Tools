@@ -1,3 +1,5 @@
+"""Accessibility verification script for Gas Density and Custom Unit inputs."""
+
 from playwright.sync_api import expect, sync_playwright
 
 

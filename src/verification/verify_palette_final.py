@@ -1,3 +1,5 @@
+"""Final verification script for Unit Converter accessibility attributes and keyboard shortcuts."""
+
 import os
 
 from playwright.sync_api import sync_playwright
