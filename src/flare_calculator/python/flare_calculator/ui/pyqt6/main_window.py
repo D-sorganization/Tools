@@ -386,12 +386,12 @@ class FlareCalculatorMainWindow(QMainWindow):
         """Apply Catppuccin Mocha dark theme."""
         self.setStyleSheet(f"""
             QMainWindow, QWidget {{
-                background-color: {CATPPUCCIN_MOCHA['base']};
-                color: {CATPPUCCIN_MOCHA['text']};
+                background-color: {CATPPUCCIN_MOCHA["base"]};
+                color: {CATPPUCCIN_MOCHA["text"]};
             }}
             QGroupBox {{
                 font-weight: bold;
-                border: 1px solid {CATPPUCCIN_MOCHA['surface1']};
+                border: 1px solid {CATPPUCCIN_MOCHA["surface1"]};
                 border-radius: 6px;
                 margin-top: 12px;
                 padding-top: 10px;
@@ -400,37 +400,37 @@ class FlareCalculatorMainWindow(QMainWindow):
                 subcontrol-origin: margin;
                 left: 10px;
                 padding: 0 5px;
-                color: {CATPPUCCIN_MOCHA['blue']};
+                color: {CATPPUCCIN_MOCHA["blue"]};
             }}
             QDoubleSpinBox, QSpinBox, QComboBox {{
-                background-color: {CATPPUCCIN_MOCHA['surface0']};
-                border: 1px solid {CATPPUCCIN_MOCHA['surface1']};
+                background-color: {CATPPUCCIN_MOCHA["surface0"]};
+                border: 1px solid {CATPPUCCIN_MOCHA["surface1"]};
                 border-radius: 4px;
                 padding: 4px;
-                color: {CATPPUCCIN_MOCHA['text']};
+                color: {CATPPUCCIN_MOCHA["text"]};
             }}
             QPushButton {{
-                background-color: {CATPPUCCIN_MOCHA['blue']};
-                color: {CATPPUCCIN_MOCHA['base']};
+                background-color: {CATPPUCCIN_MOCHA["blue"]};
+                color: {CATPPUCCIN_MOCHA["base"]};
                 border: none;
                 border-radius: 4px;
                 padding: 8px 16px;
                 font-weight: bold;
             }}
             QPushButton:hover {{
-                background-color: {CATPPUCCIN_MOCHA['mauve']};
+                background-color: {CATPPUCCIN_MOCHA["mauve"]};
             }}
             QTableWidget {{
-                background-color: {CATPPUCCIN_MOCHA['surface0']};
-                border: 1px solid {CATPPUCCIN_MOCHA['surface1']};
-                gridline-color: {CATPPUCCIN_MOCHA['surface1']};
+                background-color: {CATPPUCCIN_MOCHA["surface0"]};
+                border: 1px solid {CATPPUCCIN_MOCHA["surface1"]};
+                gridline-color: {CATPPUCCIN_MOCHA["surface1"]};
             }}
             QTableWidget::item {{
                 padding: 4px;
             }}
             QHeaderView::section {{
-                background-color: {CATPPUCCIN_MOCHA['surface1']};
-                color: {CATPPUCCIN_MOCHA['text']};
+                background-color: {CATPPUCCIN_MOCHA["surface1"]};
+                color: {CATPPUCCIN_MOCHA["text"]};
                 padding: 4px;
                 border: none;
             }}

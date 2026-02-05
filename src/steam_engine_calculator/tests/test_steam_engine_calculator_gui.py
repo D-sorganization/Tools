@@ -163,7 +163,8 @@ class TestSteamEngineCalculatorIntegration:
 
             engine = SteamCalculationEngine()
             result = engine.calculate_saturated_properties_from_temperature(
-                temperature=373.15, engine="simplified"  # 100°C
+                temperature=373.15,
+                engine="simplified",  # 100°C
             )
 
             assert result is not None
@@ -182,7 +183,8 @@ class TestSteamEngineCalculatorIntegration:
 
             engine = SteamCalculationEngine()
             result = engine.calculate_saturated_properties_from_pressure(
-                pressure=101325.0, engine="simplified"  # 1 atm
+                pressure=101325.0,
+                engine="simplified",  # 1 atm
             )
 
             assert result is not None

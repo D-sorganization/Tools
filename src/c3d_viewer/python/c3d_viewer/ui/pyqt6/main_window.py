@@ -703,7 +703,7 @@ class C3DViewerWindow(QMainWindow):
 
         except ImportError:
             self.export_status.setPlainText(
-                "Export requires ezc3d library.\n" "Install with: pip install ezc3d"
+                "Export requires ezc3d library.\nInstall with: pip install ezc3d"
             )
             self.export_status.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']};")
         except Exception as e:
