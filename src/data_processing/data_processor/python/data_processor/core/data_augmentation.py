@@ -18,9 +18,9 @@ Features:
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
 
 import numpy as np
 
@@ -317,10 +317,14 @@ class DataAugmenter:
             result = np.zeros_like(data)
             for i in range(data.shape[0]):
                 if data.ndim == 2:
-                    warp_factors = self._generate_warp_curve(data.shape[1], sigma, knots)
+                    warp_factors = self._generate_warp_curve(
+                        data.shape[1], sigma, knots
+                    )
                     result[i] = data[i] * warp_factors
                 else:
-                    warp_factors = self._generate_warp_curve(data.shape[1], sigma, knots)
+                    warp_factors = self._generate_warp_curve(
+                        data.shape[1], sigma, knots
+                    )
                     result[i] = data[i] * warp_factors[:, np.newaxis]
             return result
 
@@ -349,7 +353,9 @@ class DataAugmenter:
                     result[i] = self._window_warp_1d(data[i], ratio, scales)
                 else:
                     for j in range(data.shape[2]):
-                        result[i, :, j] = self._window_warp_1d(data[i, :, j], ratio, scales)
+                        result[i, :, j] = self._window_warp_1d(
+                            data[i, :, j], ratio, scales
+                        )
             return result
 
     # Transformation augmentations
@@ -450,9 +456,7 @@ class DataAugmenter:
 
     # Sampling augmentations
 
-    def window_slice(
-        self, data: np.ndarray, ratio: float | None = None
-    ) -> np.ndarray:
+    def window_slice(self, data: np.ndarray, ratio: float | None = None) -> np.ndarray:
         """Extract random window slices.
 
         Args:
@@ -475,9 +479,7 @@ class DataAugmenter:
             start = self._rng.integers(0, seq_len - window_size + 1)
             return data[:, start : start + window_size]
 
-    def window_crop(
-        self, data: np.ndarray, ratio: float | None = None
-    ) -> np.ndarray:
+    def window_crop(self, data: np.ndarray, ratio: float | None = None) -> np.ndarray:
         """Random crop and resize to original size.
 
         Args:
@@ -507,9 +509,7 @@ class DataAugmenter:
                         )
             return result
 
-    def subsample(
-        self, data: np.ndarray, keep_ratio: float = 0.5
-    ) -> np.ndarray:
+    def subsample(self, data: np.ndarray, keep_ratio: float = 0.5) -> np.ndarray:
         """Randomly subsample data points.
 
         Args:
@@ -597,7 +597,10 @@ class DataAugmenter:
         return augmented_data, None
 
     def mixup(
-        self, data: np.ndarray, labels: np.ndarray | None = None, alpha: float | None = None
+        self,
+        data: np.ndarray,
+        labels: np.ndarray | None = None,
+        alpha: float | None = None,
     ) -> tuple[np.ndarray, np.ndarray | None]:
         """Apply mixup augmentation.
 
@@ -652,9 +655,7 @@ class DataAugmenter:
 
         return mixed_data, mixed_labels
 
-    def cutout(
-        self, data: np.ndarray, ratio: float | None = None
-    ) -> np.ndarray:
+    def cutout(self, data: np.ndarray, ratio: float | None = None) -> np.ndarray:
         """Apply cutout augmentation (mask random regions).
 
         Args:
@@ -688,7 +689,10 @@ class DataAugmenter:
         return result
 
     def cutmix(
-        self, data: np.ndarray, labels: np.ndarray | None = None, ratio: float | None = None
+        self,
+        data: np.ndarray,
+        labels: np.ndarray | None = None,
+        ratio: float | None = None,
     ) -> tuple[np.ndarray, np.ndarray | None]:
         """Apply CutMix augmentation.
 
@@ -713,7 +717,9 @@ class DataAugmenter:
                 length = len(data)
                 mask_size = int(length * ratio)
                 start = self._rng.integers(0, length - mask_size + 1)
-                result[start : start + mask_size] = data[indices[i], start : start + mask_size]
+                result[start : start + mask_size] = data[
+                    indices[i], start : start + mask_size
+                ]
             elif data.ndim == 2:
                 length = data.shape[1]
                 mask_size = int(length * ratio)
@@ -815,7 +821,9 @@ class DataAugmenter:
         method_map = {
             AugmentationMethod.GAUSSIAN_NOISE: self.add_gaussian_noise,
             AugmentationMethod.UNIFORM_NOISE: self.add_uniform_noise,
-            AugmentationMethod.COLORED_NOISE: lambda d: self.add_colored_noise(d, "pink"),
+            AugmentationMethod.COLORED_NOISE: lambda d: self.add_colored_noise(
+                d, "pink"
+            ),
             AugmentationMethod.SALT_PEPPER: self.add_salt_pepper_noise,
             AugmentationMethod.TIME_WARP: self.time_warp,
             AugmentationMethod.MAGNITUDE_WARP: self.magnitude_warp,
@@ -859,9 +867,7 @@ class DataAugmenter:
         }
         return param_map.get(method, {})
 
-    def _time_warp_1d(
-        self, data: np.ndarray, sigma: float, knots: int
-    ) -> np.ndarray:
+    def _time_warp_1d(self, data: np.ndarray, sigma: float, knots: int) -> np.ndarray:
         """Apply time warping to 1D data."""
         n = len(data)
 
@@ -876,9 +882,7 @@ class DataAugmenter:
         original_indices = np.arange(n)
         return np.interp(original_indices, time_steps, data)
 
-    def _generate_warp_curve(
-        self, length: int, sigma: float, knots: int
-    ) -> np.ndarray:
+    def _generate_warp_curve(self, length: int, sigma: float, knots: int) -> np.ndarray:
         """Generate smooth random warp curve."""
         knot_positions = np.linspace(0, length - 1, knots + 2)
         knot_values = self._rng.normal(1.0, sigma, knots + 2)
@@ -950,9 +954,7 @@ class DataAugmenter:
 
         return np.interp(x_target, x_original, data)
 
-    def _generate_colored_noise(
-        self, shape: tuple[int, ...], color: str
-    ) -> np.ndarray:
+    def _generate_colored_noise(self, shape: tuple[int, ...], color: str) -> np.ndarray:
         """Generate colored noise."""
         # Start with white noise
         white = self._rng.standard_normal(shape)
@@ -1041,7 +1043,9 @@ def augment_data(
         method_enums = None
     else:
         method_map = {m.value: m for m in AugmentationMethod}
-        method_enums = [method_map.get(m, AugmentationMethod.GAUSSIAN_NOISE) for m in methods]
+        method_enums = [
+            method_map.get(m, AugmentationMethod.GAUSSIAN_NOISE) for m in methods
+        ]
 
     augmenter = DataAugmenter()
     return augmenter.augment(data, method_enums, n_augmentations)

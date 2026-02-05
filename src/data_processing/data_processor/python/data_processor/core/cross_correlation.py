@@ -19,7 +19,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
 
 import numpy as np
 
@@ -370,9 +370,7 @@ class CrossCorrelationAnalyzer:
         mean_corr = float(np.mean(valid_corr)) if len(valid_corr) > 0 else 0.0
         std_corr = float(np.std(valid_corr)) if len(valid_corr) > 0 else 0.0
 
-        stability = (
-            1 - abs(std_corr / mean_corr) if mean_corr != 0 else 0.0
-        )
+        stability = 1 - abs(std_corr / mean_corr) if mean_corr != 0 else 0.0
 
         return RollingCorrelationResult(
             timestamps=timestamps,
@@ -408,8 +406,12 @@ class CrossCorrelationAnalyzer:
         max_lag = max_lag or self.config.granger_max_lag
 
         # Find optimal lag using information criterion
-        optimal_lag_xy = self._select_lag_order(y, x, max_lag, self.config.granger_criterion)
-        optimal_lag_yx = self._select_lag_order(x, y, max_lag, self.config.granger_criterion)
+        optimal_lag_xy = self._select_lag_order(
+            y, x, max_lag, self.config.granger_criterion
+        )
+        optimal_lag_yx = self._select_lag_order(
+            x, y, max_lag, self.config.granger_criterion
+        )
 
         # Test X causes Y
         f_stat_xy, p_value_xy = self._granger_test(y, x, optimal_lag_xy)
@@ -592,16 +594,15 @@ class CrossCorrelationAnalyzer:
                     "leader": name_x if ccf_result.optimal_lag > 0 else name_y,
                     "follower": name_y if ccf_result.optimal_lag > 0 else name_x,
                     "lag_magnitude": abs(ccf_result.optimal_lag),
-                    "is_significant": abs(ccf_result.max_correlation) > ccf_result.confidence_interval[1],
+                    "is_significant": abs(ccf_result.max_correlation)
+                    > ccf_result.confidence_interval[1],
                 }
 
         return results
 
     # Private helper methods
 
-    def _compute_ccf_at_lag(
-        self, x: np.ndarray, y: np.ndarray, lag: int
-    ) -> float:
+    def _compute_ccf_at_lag(self, x: np.ndarray, y: np.ndarray, lag: int) -> float:
         """Compute cross-correlation at a specific lag."""
         n = len(x)
 
@@ -639,18 +640,14 @@ class CrossCorrelationAnalyzer:
         slope, intercept = np.polyfit(x, data, 1)
         return data - (slope * x + intercept)
 
-    def _compute_confidence_interval(
-        self, n: int, alpha: float
-    ) -> tuple[float, float]:
+    def _compute_confidence_interval(self, n: int, alpha: float) -> tuple[float, float]:
         """Compute confidence interval for CCF."""
         # Approximate using normal distribution
         z = self._normal_ppf(1 - alpha / 2)
         ci = z / np.sqrt(n)
         return (-ci, ci)
 
-    def _compute_pvalues(
-        self, ccf: np.ndarray, n: int
-    ) -> np.ndarray:
+    def _compute_pvalues(self, ccf: np.ndarray, n: int) -> np.ndarray:
         """Compute p-values for CCF values."""
         # Using Fisher's z-transformation approximation
         p_values = np.zeros(len(ccf))
@@ -710,10 +707,8 @@ class CrossCorrelationAnalyzer:
         integral = np.sum(integrand) * dt
 
         # Normalize by beta function (approximation)
-        beta_func = (
-            np.exp(
-                self._log_gamma(a) + self._log_gamma(b) - self._log_gamma(a + b)
-            )
+        beta_func = np.exp(
+            self._log_gamma(a) + self._log_gamma(b) - self._log_gamma(a + b)
         )
 
         return integral / beta_func if beta_func > 0 else 0.0
@@ -870,9 +865,7 @@ class CrossCorrelationAnalyzer:
         edges = np.percentile(data, percentiles)
         return np.digitize(data, edges[1:-1])
 
-    def _conditional_entropy(
-        self, x: np.ndarray, y: np.ndarray, y_bins: int
-    ) -> float:
+    def _conditional_entropy(self, x: np.ndarray, y: np.ndarray, y_bins: int) -> float:
         """Compute conditional entropy H(X|Y)."""
         # Joint probability
         n = len(x)

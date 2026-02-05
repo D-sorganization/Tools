@@ -17,9 +17,9 @@ Includes:
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Callable
+from typing import Callable
 
 import numpy as np
 import pandas as pd
@@ -290,9 +290,9 @@ class KalmanFilter:
 
             # Smooth
             smoothed_states[t] = x_filt + J @ (smoothed_states[t + 1] - x_pred)
-            smoothed_covariances[t] = P_filt + J @ (
-                smoothed_covariances[t + 1] - P_pred
-            ) @ J.T
+            smoothed_covariances[t] = (
+                P_filt + J @ (smoothed_covariances[t + 1] - P_pred) @ J.T
+            )
 
         # Update result
         return KalmanFilterResult(
@@ -418,9 +418,7 @@ class ExtendedKalmanFilter:
                 sign, logdet = np.linalg.slogdet(S)
                 if sign > 0:
                     log_likelihood += -0.5 * (
-                        self.m * np.log(2 * np.pi) +
-                        logdet +
-                        y @ np.linalg.inv(S) @ y
+                        self.m * np.log(2 * np.pi) + logdet + y @ np.linalg.inv(S) @ y
                     )
             else:
                 x = x_pred
@@ -475,7 +473,7 @@ class UnscentedKalmanFilter:
         self.alpha = alpha
         self.beta = beta
         self.kappa = kappa
-        self.lambda_ = alpha ** 2 * (state_dim + kappa) - state_dim
+        self.lambda_ = alpha**2 * (state_dim + kappa) - state_dim
 
         # Weights
         self._compute_weights()
@@ -492,7 +490,7 @@ class UnscentedKalmanFilter:
 
         # Covariance weights
         self.Wc = np.zeros(2 * n + 1)
-        self.Wc[0] = lambda_ / (n + lambda_) + (1 - self.alpha ** 2 + self.beta)
+        self.Wc[0] = lambda_ / (n + lambda_) + (1 - self.alpha**2 + self.beta)
         self.Wc[1:] = 1 / (2 * (n + lambda_))
 
     def _sigma_points(self, x: np.ndarray, P: np.ndarray) -> np.ndarray:
@@ -582,9 +580,7 @@ class UnscentedKalmanFilter:
                 sign, logdet = np.linalg.slogdet(Pzz)
                 if sign > 0:
                     log_likelihood += -0.5 * (
-                        self.m * np.log(2 * np.pi) +
-                        logdet +
-                        y @ np.linalg.inv(Pzz) @ y
+                        self.m * np.log(2 * np.pi) + logdet + y @ np.linalg.inv(Pzz) @ y
                     )
             else:
                 x = x_pred

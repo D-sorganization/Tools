@@ -44,6 +44,18 @@ from data_processor.core.anova import (
     format_anova_report,
 )
 from data_processor.core.config_manager import ConfigManager
+from data_processor.core.cross_correlation import (
+    CausalityMethod,
+    CrossCorrelationAnalyzer,
+    CrossCorrelationConfig,
+    CrossCorrelationResult,
+    GrangerCausalityResult,
+    NormalizationMethod,
+    RollingCorrelationResult,
+    TransferEntropyResult,
+    cross_correlate,
+    granger_causality,
+)
 from data_processor.core.dat_importer import (
     DBF_AVAILABLE,
     export_dat_to_csv,
@@ -53,6 +65,13 @@ from data_processor.core.dat_importer import (
     preview_dat_file,
     read_dat_file,
     read_dbf_tags,
+)
+from data_processor.core.data_augmentation import (
+    AugmentationConfig,
+    AugmentationMethod,
+    AugmentationResult,
+    DataAugmenter,
+    augment_data,
 )
 
 # New analysis modules
@@ -68,6 +87,28 @@ from data_processor.core.dataset_naming import (
     sanitize_dataset_name,
     validate_dataset_name,
 )
+from data_processor.core.feature_engineering import (
+    FeatureCategory,
+    FeatureConfig,
+    FeatureExtractor,
+    FeatureResult,
+    FeatureSelector,
+    FeatureTransformer,
+    SelectionResult,
+    TransformationType,
+    extract_features,
+    select_features,
+)
+
+# Advanced analysis modules
+from data_processor.core.kalman_filter import (
+    ExtendedKalmanFilter,
+    KalmanFilter,
+    KalmanFilterConfig,
+    KalmanFilterResult,
+    UnscentedKalmanFilter,
+    kalman_smooth,
+)
 from data_processor.core.neural_network import (
     ActivationFunction,
     DataSplitConfig,
@@ -79,6 +120,13 @@ from data_processor.core.neural_network import (
     NeuralNetworkInterface,
     Optimizer,
     TrainingResult,
+)
+from data_processor.core.outlier_detection import (
+    OutlierConfig,
+    OutlierDetectionMethod,
+    OutlierDetector,
+    OutlierResult,
+    detect_outliers,
 )
 from data_processor.core.pca_analysis import (
     PCAAnalyzer,
@@ -126,41 +174,6 @@ from data_processor.core.signal_processing import (
     resample_data,
     trim_time_range,
 )
-from data_processor.core.surface_plot import (
-    InterpolationMethod,
-    SmoothingMethod,
-    SurfacePlotConfig,
-    SurfacePlotEngine,
-    SurfacePlotResult,
-    plot_surface_matplotlib,
-)
-from data_processor.core.undo_redo import (
-    ColumnOperationCommand,
-    Command,
-    CompositeCommand,
-    FilterCommand,
-    LambdaCommand,
-    RowFilterCommand,
-    UndoRedoManager,
-)
-
-# Advanced analysis modules
-from data_processor.core.kalman_filter import (
-    ExtendedKalmanFilter,
-    KalmanFilter,
-    KalmanFilterConfig,
-    KalmanFilterResult,
-    UnscentedKalmanFilter,
-    kalman_smooth,
-)
-from data_processor.core.wavelet_denoising import (
-    ThresholdingMethod,
-    WaveletDenoiseConfig,
-    WaveletDenoiseResult,
-    WaveletDenoiser,
-    WaveletFamily,
-    denoise_signal,
-)
 from data_processor.core.spectral_analysis import (
     CoherenceResult,
     SpectralAnalyzer,
@@ -170,12 +183,29 @@ from data_processor.core.spectral_analysis import (
     WindowFunction,
     compute_spectrum,
 )
-from data_processor.core.outlier_detection import (
-    OutlierConfig,
-    OutlierDetectionMethod,
-    OutlierDetector,
-    OutlierResult,
-    detect_outliers,
+from data_processor.core.state_space import (
+    ARIMAStateSpace,
+    BaseStateSpaceModel,
+    ForecastResult,
+    LocalLevelModel,
+    LocalLinearTrendModel,
+    OptimizationMethod,
+)
+from data_processor.core.state_space import SeasonalModel as SeasonalStateSpaceModel
+from data_processor.core.state_space import (
+    StateSpaceConfig,
+    StateSpaceModelFactory,
+    StateSpaceModelType,
+    StateSpaceResult,
+    fit_state_space,
+)
+from data_processor.core.surface_plot import (
+    InterpolationMethod,
+    SmoothingMethod,
+    SurfacePlotConfig,
+    SurfacePlotEngine,
+    SurfacePlotResult,
+    plot_surface_matplotlib,
 )
 from data_processor.core.time_series_decomposition import (
     DecompositionConfig,
@@ -186,32 +216,6 @@ from data_processor.core.time_series_decomposition import (
     TimeSeriesDecomposer,
     TrendModel,
     decompose_time_series,
-)
-from data_processor.core.cross_correlation import (
-    CausalityMethod,
-    CrossCorrelationAnalyzer,
-    CrossCorrelationConfig,
-    CrossCorrelationResult,
-    GrangerCausalityResult,
-    NormalizationMethod,
-    RollingCorrelationResult,
-    TransferEntropyResult,
-    cross_correlate,
-    granger_causality,
-)
-from data_processor.core.state_space import (
-    ARIMAStateSpace,
-    BaseStateSpaceModel,
-    ForecastResult,
-    LocalLevelModel,
-    LocalLinearTrendModel,
-    OptimizationMethod,
-    SeasonalModel as SeasonalStateSpaceModel,
-    StateSpaceConfig,
-    StateSpaceModelFactory,
-    StateSpaceModelType,
-    StateSpaceResult,
-    fit_state_space,
 )
 from data_processor.core.uncertainty_quantification import (
     BootstrapMethod,
@@ -226,24 +230,22 @@ from data_processor.core.uncertainty_quantification import (
     bootstrap_confidence_interval,
     propagate_uncertainty,
 )
-from data_processor.core.data_augmentation import (
-    AugmentationConfig,
-    AugmentationMethod,
-    AugmentationResult,
-    DataAugmenter,
-    augment_data,
+from data_processor.core.undo_redo import (
+    ColumnOperationCommand,
+    Command,
+    CompositeCommand,
+    FilterCommand,
+    LambdaCommand,
+    RowFilterCommand,
+    UndoRedoManager,
 )
-from data_processor.core.feature_engineering import (
-    FeatureCategory,
-    FeatureConfig,
-    FeatureExtractor,
-    FeatureResult,
-    FeatureSelector,
-    FeatureTransformer,
-    SelectionResult,
-    TransformationType,
-    extract_features,
-    select_features,
+from data_processor.core.wavelet_denoising import (
+    ThresholdingMethod,
+    WaveletDenoiseConfig,
+    WaveletDenoiser,
+    WaveletDenoiseResult,
+    WaveletFamily,
+    denoise_signal,
 )
 
 __all__ = [

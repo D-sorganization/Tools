@@ -17,9 +17,9 @@ from __future__ import annotations
 
 import logging
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
 
 import numpy as np
 
@@ -173,22 +173,18 @@ class BaseStateSpaceModel(ABC):
     @abstractmethod
     def _initialize_matrices(self, y: np.ndarray) -> None:
         """Initialize model matrices based on data."""
-        pass
 
     @abstractmethod
     def _update_matrices(self, parameters: np.ndarray) -> None:
         """Update matrices with new parameter values."""
-        pass
 
     @abstractmethod
     def _get_initial_parameters(self) -> np.ndarray:
         """Get initial parameter values for optimization."""
-        pass
 
     @abstractmethod
     def _parameters_to_dict(self, parameters: np.ndarray) -> dict[str, float]:
         """Convert parameter array to dictionary."""
-        pass
 
     def fit(self, y: np.ndarray) -> StateSpaceResult:
         """Fit the state space model to data.
@@ -210,7 +206,9 @@ class BaseStateSpaceModel(ABC):
 
         # Optimize parameters
         if self.config.optimization_method == OptimizationMethod.EM:
-            opt_params, log_lik, converged, n_iter = self._em_algorithm(y, initial_params)
+            opt_params, log_lik, converged, n_iter = self._em_algorithm(
+                y, initial_params
+            )
         else:
             opt_params, log_lik, converged, n_iter = self._optimize_parameters(
                 y, initial_params
@@ -323,9 +321,7 @@ class BaseStateSpaceModel(ABC):
             confidence_level=confidence_level,
         )
 
-    def _kalman_filter(
-        self, y: np.ndarray
-    ) -> tuple[np.ndarray, np.ndarray, float]:
+    def _kalman_filter(self, y: np.ndarray) -> tuple[np.ndarray, np.ndarray, float]:
         """Run Kalman filter.
 
         Args:
@@ -414,9 +410,7 @@ class BaseStateSpaceModel(ABC):
         for t in range(n - 2, -1, -1):
             # Predicted state at t+1 given t
             state_pred = self.T @ filtered_states[t].reshape(-1, 1)
-            cov_pred = (
-                self.T @ filtered_cov[t] @ self.T.T + self.R @ self.Q @ self.R.T
-            )
+            cov_pred = self.T @ filtered_cov[t] @ self.T.T + self.R @ self.Q @ self.R.T
 
             # Smoother gain
             try:
@@ -425,9 +419,8 @@ class BaseStateSpaceModel(ABC):
                 J = filtered_cov[t] @ self.T.T @ np.linalg.pinv(cov_pred)
 
             # Smoothed estimates
-            smoothed_states[t] = (
-                filtered_states[t]
-                + J @ (smoothed_states[t + 1] - state_pred.flatten())
+            smoothed_states[t] = filtered_states[t] + J @ (
+                smoothed_states[t + 1] - state_pred.flatten()
             )
             smoothed_cov[t] = (
                 filtered_cov[t] + J @ (smoothed_cov[t + 1] - cov_pred) @ J.T

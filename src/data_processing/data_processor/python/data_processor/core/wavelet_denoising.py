@@ -19,11 +19,9 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any
 
 import numpy as np
 import pandas as pd
-from scipy import signal as scipy_signal
 
 logger = logging.getLogger(__name__)
 
@@ -161,7 +159,9 @@ class WaveletDenoiser:
         noise_estimate = self._estimate_noise(coefficients[-1])
 
         # Calculate thresholds for each level
-        thresholds = self._calculate_thresholds(coefficients, noise_estimate, len(signal))
+        thresholds = self._calculate_thresholds(
+            coefficients, noise_estimate, len(signal)
+        )
 
         # Apply thresholding
         thresholded = self._apply_thresholds(coefficients, thresholds)
@@ -250,7 +250,7 @@ class WaveletDenoiser:
         # Periodic extension
         n = len(signal)
         flen = len(filter_coeffs)
-        extended = np.concatenate([signal[-(flen - 1):], signal, signal[: flen - 1]])
+        extended = np.concatenate([signal[-(flen - 1) :], signal, signal[: flen - 1]])
 
         # Convolve
         conv = np.convolve(extended, filter_coeffs, mode="valid")
@@ -399,11 +399,7 @@ class WaveletDenoiser:
         risks = np.zeros(n)
         for i in range(n):
             t = sorted_coeffs[i]
-            risks[i] = (
-                n
-                - 2 * (i + 1)
-                + np.sum(np.minimum(sorted_coeffs, t))
-            )
+            risks[i] = n - 2 * (i + 1) + np.sum(np.minimum(sorted_coeffs, t))
 
         # Find minimum risk threshold
         min_idx = np.argmin(risks)
@@ -440,7 +436,7 @@ class WaveletDenoiser:
             # Non-negative garrote
             result = coeffs.copy()
             mask = np.abs(coeffs) > threshold
-            result[mask] = coeffs[mask] - threshold ** 2 / coeffs[mask]
+            result[mask] = coeffs[mask] - threshold**2 / coeffs[mask]
             result[~mask] = 0
             return result
 
@@ -452,9 +448,9 @@ class WaveletDenoiser:
             small = np.abs(coeffs) <= t1
             medium = (np.abs(coeffs) > t1) & (np.abs(coeffs) <= t2)
             result[small] = 0
-            result[medium] = np.sign(coeffs[medium]) * t2 * (
-                np.abs(coeffs[medium]) - t1
-            ) / (t2 - t1)
+            result[medium] = (
+                np.sign(coeffs[medium]) * t2 * (np.abs(coeffs[medium]) - t1) / (t2 - t1)
+            )
             return result
 
     def _interpolate_nans(self, signal: np.ndarray) -> np.ndarray:

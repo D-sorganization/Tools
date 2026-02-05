@@ -208,13 +208,17 @@ class FeatureExtractor:
 
                     # Time domain features
                     if self.config.compute_trend or self.config.compute_peaks:
-                        time_feats, time_names = self._extract_time_domain(series, col_name)
+                        time_feats, time_names = self._extract_time_domain(
+                            series, col_name
+                        )
                         sample_features.extend(time_feats)
                         sample_names.extend(time_names)
 
                     # Frequency domain features
                     if self.config.compute_spectral:
-                        freq_feats, freq_names = self._extract_frequency_domain(series, col_name)
+                        freq_feats, freq_names = self._extract_frequency_domain(
+                            series, col_name
+                        )
                         sample_features.extend(freq_feats)
                         sample_names.extend(freq_names)
 
@@ -237,7 +241,9 @@ class FeatureExtractor:
                 features_list.append(stat_feats)
                 all_names.extend(stat_names)
 
-            features_array = np.column_stack(features_list) if features_list else np.array([])
+            features_array = (
+                np.column_stack(features_list) if features_list else np.array([])
+            )
 
         # Categorize features
         for name in all_names:
@@ -569,7 +575,8 @@ class FeatureExtractor:
         # Spectral spread
         if np.sum(power_spectrum) > 0:
             spread = np.sqrt(
-                np.sum((freqs - centroid) ** 2 * power_spectrum) / np.sum(power_spectrum)
+                np.sum((freqs - centroid) ** 2 * power_spectrum)
+                / np.sum(power_spectrum)
             )
         else:
             spread = 0
@@ -728,9 +735,37 @@ class FeatureExtractor:
 
     def _categorize_feature(self, name: str) -> str:
         """Categorize a feature by its name."""
-        if any(x in name for x in ["mean", "std", "min", "max", "median", "skewness", "kurtosis", "range", "iqr", "cv", "p25", "p50", "p75"]):
+        if any(
+            x in name
+            for x in [
+                "mean",
+                "std",
+                "min",
+                "max",
+                "median",
+                "skewness",
+                "kurtosis",
+                "range",
+                "iqr",
+                "cv",
+                "p25",
+                "p50",
+                "p75",
+            ]
+        ):
             return "statistical"
-        elif any(x in name for x in ["trend", "peak", "crossing", "autocorr", "first", "last", "change"]):
+        elif any(
+            x in name
+            for x in [
+                "trend",
+                "peak",
+                "crossing",
+                "autocorr",
+                "first",
+                "last",
+                "change",
+            ]
+        ):
             return "time_domain"
         elif any(x in name for x in ["spectral", "freq", "power"]):
             return "frequency_domain"
@@ -827,7 +862,9 @@ class FeatureSelector:
                         avg_corr_j = np.mean(np.abs(corr_matrix[j, :]))
                         to_remove.add(j if avg_corr_i <= avg_corr_j else i)
 
-        selected_indices = np.array([i for i in range(n_features) if i not in to_remove])
+        selected_indices = np.array(
+            [i for i in range(n_features) if i not in to_remove]
+        )
         selected_names = [feature_names[i] for i in selected_indices]
         removed_names = [feature_names[i] for i in to_remove]
 
@@ -874,7 +911,9 @@ class FeatureSelector:
         selected_names = [feature_names[i] for i in selected_indices]
         removed_names = [feature_names[i] for i, m in enumerate(mask) if not m]
 
-        scores = {feature_names[i]: float(variances[i]) for i in range(len(feature_names))}
+        scores = {
+            feature_names[i]: float(variances[i]) for i in range(len(feature_names))
+        }
 
         return SelectionResult(
             selected_indices=selected_indices,
@@ -917,7 +956,9 @@ class FeatureSelector:
         # Sort and select top-k
         sorted_features = sorted(mi_scores.items(), key=lambda x: x[1], reverse=True)
         selected_names = [name for name, _ in sorted_features[:k]]
-        selected_indices = np.array([feature_names.index(name) for name in selected_names])
+        selected_indices = np.array(
+            [feature_names.index(name) for name in selected_names]
+        )
         removed_names = [name for name, _ in sorted_features[k:]]
 
         return SelectionResult(

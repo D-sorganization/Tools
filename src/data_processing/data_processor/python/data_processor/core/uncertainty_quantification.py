@@ -17,7 +17,7 @@ Features:
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Callable
 
@@ -255,7 +255,13 @@ class UncertaintyQuantifier:
 
         elif method == BootstrapMethod.STUDENTIZED:
             ci_lower, ci_upper = self._studentized_interval(
-                data, statistic, bootstrap_samples, bootstrap_stats, theta_hat, se, alpha
+                data,
+                statistic,
+                bootstrap_samples,
+                bootstrap_stats,
+                theta_hat,
+                se,
+                alpha,
             )
             bias = 0.0
             acceleration = 0.0
@@ -304,7 +310,9 @@ class UncertaintyQuantifier:
         # Generate samples for each parameter
         param_samples = {}
         for name, (dist_type, params) in param_distributions.items():
-            param_samples[name] = self._sample_distribution(dist_type, params, n_samples)
+            param_samples[name] = self._sample_distribution(
+                dist_type, params, n_samples
+            )
 
         # Evaluate function for each sample
         outputs = np.zeros(n_samples)
@@ -324,7 +332,8 @@ class UncertaintyQuantifier:
 
         # Percentiles
         percentiles = {
-            p: float(np.percentile(outputs, p)) for p in [1, 5, 10, 25, 50, 75, 90, 95, 99]
+            p: float(np.percentile(outputs, p))
+            for p in [1, 5, 10, 25, 50, 75, 90, 95, 99]
         }
 
         # Higher moments
@@ -460,9 +469,7 @@ class UncertaintyQuantifier:
         ranking = sorted(params, key=lambda p: total_order[p], reverse=True)
 
         # Variance explained
-        variance_explained = {
-            param: first_order[param] for param in params
-        }
+        variance_explained = {param: first_order[param] for param in params}
 
         return SensitivityResult(
             first_order=first_order,
@@ -587,7 +594,9 @@ class UncertaintyQuantifier:
 
         # Posterior parameters (conjugate update)
         posterior_var = 1 / (1 / prior_var + n / sample_var)
-        posterior_mean = posterior_var * (prior_mean / prior_var + n * sample_mean / sample_var)
+        posterior_mean = posterior_var * (
+            prior_mean / prior_var + n * sample_mean / sample_var
+        )
         posterior_std = np.sqrt(posterior_var)
 
         # Credible interval
@@ -634,7 +643,9 @@ class UncertaintyQuantifier:
             estimates_minus = estimates.copy()
             estimates_minus[name] -= step
 
-            gradient[i] = (func(**estimates_plus) - func(**estimates_minus)) / (2 * step)
+            gradient[i] = (func(**estimates_plus) - func(**estimates_minus)) / (
+                2 * step
+            )
 
         # Point estimate
         theta = func(**estimates)
@@ -776,7 +787,10 @@ class UncertaintyQuantifier:
             return self._rng.gamma(params.get("shape", 1), params.get("scale", 1), n)
         elif dist_type == "triangular":
             return self._rng.triangular(
-                params.get("left", 0), params.get("mode", 0.5), params.get("right", 1), n
+                params.get("left", 0),
+                params.get("mode", 0.5),
+                params.get("right", 1),
+                n,
             )
         else:
             raise ValueError(f"Unknown distribution: {dist_type}")

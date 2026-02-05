@@ -137,7 +137,10 @@ class TestSpectralAnalysis:
 
     def test_fft_spectrum(self) -> None:
         """Test FFT-based spectrum computation."""
-        from data_processor.core.spectral_analysis import SpectralAnalyzer, SpectralConfig
+        from data_processor.core.spectral_analysis import (
+            SpectralAnalyzer,
+            SpectralConfig,
+        )
 
         # Create signal with known frequency
         fs = 100  # Sample rate
@@ -158,7 +161,10 @@ class TestSpectralAnalysis:
 
     def test_welch_periodogram(self) -> None:
         """Test Welch's method."""
-        from data_processor.core.spectral_analysis import SpectralAnalyzer, SpectralConfig
+        from data_processor.core.spectral_analysis import (
+            SpectralAnalyzer,
+            SpectralConfig,
+        )
 
         np.random.seed(42)
         signal = np.random.randn(1000)
@@ -172,7 +178,10 @@ class TestSpectralAnalysis:
 
     def test_spectrogram(self) -> None:
         """Test spectrogram computation."""
-        from data_processor.core.spectral_analysis import SpectralAnalyzer, SpectralConfig
+        from data_processor.core.spectral_analysis import (
+            SpectralAnalyzer,
+            SpectralConfig,
+        )
 
         # Chirp signal
         fs = 100

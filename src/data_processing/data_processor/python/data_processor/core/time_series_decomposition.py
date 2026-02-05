@@ -18,7 +18,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
 
 import numpy as np
 
@@ -708,7 +708,9 @@ class TimeSeriesDecomposer:
             if period % 2 == 0:
                 # For even periods, use weighted average
                 result[i] = (
-                    0.5 * data[i - half] + np.sum(data[i - half + 1 : i + half]) + 0.5 * data[i + half]
+                    0.5 * data[i - half]
+                    + np.sum(data[i - half + 1 : i + half])
+                    + 0.5 * data[i + half]
                 ) / period
             else:
                 result[i] = np.mean(data[i - half : i + half + 1])
@@ -847,7 +849,9 @@ class TimeSeriesDecomposer:
         acf[0] = 1.0
 
         for lag in range(1, max_lag + 1):
-            acf[lag] = np.sum(data_centered[lag:] * data_centered[:-lag]) / ((n - lag) * var)
+            acf[lag] = np.sum(data_centered[lag:] * data_centered[:-lag]) / (
+                (n - lag) * var
+            )
 
         return acf
 
@@ -862,9 +866,7 @@ class TimeSeriesDecomposer:
 
         return peaks
 
-    def _extrapolate_exponential(
-        self, trend: np.ndarray, horizon: int
-    ) -> np.ndarray:
+    def _extrapolate_exponential(self, trend: np.ndarray, horizon: int) -> np.ndarray:
         """Extrapolate trend exponentially."""
         # Fit exponential to last portion of trend
         n = len(trend)
