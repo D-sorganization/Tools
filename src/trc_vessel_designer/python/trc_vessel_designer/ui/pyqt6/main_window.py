@@ -386,8 +386,7 @@ class TRCVesselDesignerWidget(QWidget):
         palette.setColor(QPalette.ColorRole.Window, QColor(240, 248, 255))
         self.setPalette(palette)
 
-        self.results_tabs.setStyleSheet(
-            """
+        self.results_tabs.setStyleSheet("""
             QTabWidget::pane {
                 border: 1px solid #cccccc;
                 background: white;
@@ -402,8 +401,7 @@ class TRCVesselDesignerWidget(QWidget):
             QTabBar::tab:selected {
                 background: white;
             }
-            """
-        )
+            """)
 
     def _on_input_changed(self) -> None:
         """Handle input parameter changes."""

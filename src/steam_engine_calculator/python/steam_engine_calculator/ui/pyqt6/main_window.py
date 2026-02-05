@@ -403,8 +403,7 @@ class SteamEngineCalculatorWindow(QMainWindow):
 
     def _apply_styles(self) -> None:
         """Apply Catppuccin Mocha theme styles."""
-        self.setStyleSheet(
-            f"""
+        self.setStyleSheet(f"""
             QMainWindow, QWidget {{
                 background-color: {COLORS['base']};
                 color: {COLORS['text']};
@@ -478,8 +477,7 @@ class SteamEngineCalculatorWindow(QMainWindow):
                 border-radius: 6px;
                 min-height: 20px;
             }}
-        """
-        )
+        """)
 
     def _on_mode_changed(self, index: int) -> None:
         """Handle calculation mode change."""

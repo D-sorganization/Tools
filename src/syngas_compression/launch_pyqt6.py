@@ -61,8 +61,7 @@ def main() -> int:
     window.setCentralWidget(calculator)
 
     # Apply dark theme styling
-    window.setStyleSheet(
-        """
+    window.setStyleSheet("""
         QMainWindow {
             background-color: #1e1e2e;
         }
@@ -148,8 +147,7 @@ def main() -> int:
         QScrollBar::handle:vertical:hover {
             background-color: #6c7086;
         }
-    """
-    )
+    """)
 
     window.show()
     return app.exec()
