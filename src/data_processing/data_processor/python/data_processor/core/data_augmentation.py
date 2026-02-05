@@ -198,7 +198,11 @@ class DataAugmenter:
             Noisy data
         """
         std = std or self.config.noise_std
-        noise = self._rng.normal(0, std * np.std(data), data.shape)
+        data_std = np.std(data)
+        if data_std == 0:
+            data_std = 1.0  # Fallback for constant data
+
+        noise = self._rng.normal(0, std * data_std, data.shape)
         return data + noise
 
     def add_uniform_noise(
@@ -566,6 +570,9 @@ class DataAugmenter:
         data = np.atleast_2d(data)
         n_samples = data.shape[0]
 
+        if n_samples < 2:
+            return data, labels
+
         if n_samples < k_neighbors + 1:
             k_neighbors = max(1, n_samples - 1)
 
@@ -715,12 +722,9 @@ class DataAugmenter:
 
         for i in range(n_samples):
             if data.ndim == 1:
-                length = len(data)
-                mask_size = int(length * ratio)
-                start = self._rng.integers(0, length - mask_size + 1)
-                result[start : start + mask_size] = data[
-                    indices[i], start : start + mask_size
-                ]
+                # CutMix requires at least 2 dimensions (batch, feature)
+                # Fallback to no-op for 1D arrays to prevent crash
+                continue
             elif data.ndim == 2:
                 length = data.shape[1]
                 mask_size = int(length * ratio)

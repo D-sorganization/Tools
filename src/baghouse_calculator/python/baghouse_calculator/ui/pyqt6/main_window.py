@@ -48,42 +48,42 @@ def get_stylesheet() -> str:
     """Generate Catppuccin Mocha stylesheet."""
     return f"""
         QMainWindow, QWidget {{
-            background-color: {COLORS['base']};
-            color: {COLORS['text']};
+            background-color: {COLORS["base"]};
+            color: {COLORS["text"]};
         }}
         QGroupBox {{
             font-weight: bold;
-            border: 1px solid {COLORS['surface1']};
+            border: 1px solid {COLORS["surface1"]};
             border-radius: 6px;
             margin-top: 12px;
             padding: 10px;
-            background-color: {COLORS['mantle']};
+            background-color: {COLORS["mantle"]};
         }}
         QGroupBox::title {{
             subcontrol-origin: margin;
             left: 10px;
             padding: 0 5px;
-            color: {COLORS['lavender']};
+            color: {COLORS["lavender"]};
         }}
-        QLabel {{ color: {COLORS['text']}; }}
+        QLabel {{ color: {COLORS["text"]}; }}
         QDoubleSpinBox {{
-            background-color: {COLORS['surface0']};
-            color: {COLORS['text']};
-            border: 1px solid {COLORS['surface1']};
+            background-color: {COLORS["surface0"]};
+            color: {COLORS["text"]};
+            border: 1px solid {COLORS["surface1"]};
             border-radius: 4px;
             padding: 4px 8px;
             min-width: 100px;
         }}
-        QDoubleSpinBox:focus {{ border-color: {COLORS['blue']}; }}
+        QDoubleSpinBox:focus {{ border-color: {COLORS["blue"]}; }}
         QPushButton {{
-            background-color: {COLORS['blue']};
-            color: {COLORS['base']};
+            background-color: {COLORS["blue"]};
+            color: {COLORS["base"]};
             border: none;
             border-radius: 6px;
             padding: 10px 20px;
             font-weight: bold;
         }}
-        QPushButton:hover {{ background-color: {COLORS['lavender']}; }}
+        QPushButton:hover {{ background-color: {COLORS["lavender"]}; }}
         QScrollArea {{ border: none; background-color: transparent; }}
     """
 

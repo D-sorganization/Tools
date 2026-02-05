@@ -260,9 +260,13 @@ class TimeSeriesDecomposer:
                 period_strengths[peak] = float(acf[peak])
 
         # Determine dominant period
+        # Prefer smaller periods if strengths are similar (e.g. 10 vs 20)
         dominant_period = None
         if period_strengths:
-            dominant_period = max(period_strengths, key=period_strengths.get)
+            max_strength = max(period_strengths.values())
+            # Get all periods with strength at least 95% of max
+            candidates = [p for p, s in period_strengths.items() if s >= 0.95 * max_strength]
+            dominant_period = min(candidates)
 
         # Determine if data is seasonal
         is_seasonal = bool(period_strengths) and max(period_strengths.values()) > 0.3
@@ -895,11 +899,11 @@ class TimeSeriesDecomposer:
         if detrended_var > 0:
             result.trend_strength = max(0, 1 - residual_var / detrended_var)
 
-        # Seasonal strength
-        deseasonalized = result.get_deseasonalized()
-        deseasonalized_var = np.var(deseasonalized - result.trend)
-        if deseasonalized_var > 0:
-            result.seasonal_strength = max(0, 1 - residual_var / deseasonalized_var)
+        # Seasonal strength: 1 - var(res) / var(sea + res)
+        # sea + res = observed - trend
+        detrended_var = np.var(result.observed - result.trend)
+        if detrended_var > 0:
+            result.seasonal_strength = max(0, 1 - residual_var / detrended_var)
 
         # Residual statistics
         result.residual_variance = residual_var

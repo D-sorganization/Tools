@@ -491,7 +491,7 @@ class DatasetManager:
 
         workspace_index_path = load_dir / "workspace.json"
         if not workspace_index_path.exists():
-            raise ValueError(f"Invalid workspace: missing workspace.json")
+            raise ValueError("Invalid workspace: missing workspace.json")
 
         with open(workspace_index_path) as f:
             workspace_index = json.load(f)

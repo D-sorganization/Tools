@@ -834,7 +834,7 @@ class NeuralNetworkInterface:
         """Generate PyTorch training script."""
         lines = [
             '"""',
-            f"Neural Network Training Script (PyTorch)",
+            "Neural Network Training Script (PyTorch)",
             f"Generated: {datetime.now().isoformat()}",
             "",
             "Configuration:",
@@ -861,7 +861,7 @@ class NeuralNetworkInterface:
                 "    def __init__(self, input_size, output_size):",
                 "        super(NeuralNetwork, self).__init__()",
                 "        layers = []",
-                f"        prev_size = input_size",
+                "        prev_size = input_size",
             ]
         )
 
@@ -1026,7 +1026,7 @@ class NeuralNetworkInterface:
         """Generate TensorFlow/Keras training script."""
         lines = [
             '"""',
-            f"Neural Network Training Script (TensorFlow/Keras)",
+            "Neural Network Training Script (TensorFlow/Keras)",
             f"Generated: {datetime.now().isoformat()}",
             '"""',
             "",
@@ -1044,7 +1044,7 @@ class NeuralNetworkInterface:
                 "# Model Definition",
                 "def create_model(input_size, output_size):",
                 "    model = keras.Sequential([",
-                f"        layers.Input(shape=(input_size,)),",
+                "        layers.Input(shape=(input_size,)),",
             ]
         )
 
@@ -1101,7 +1101,7 @@ class NeuralNetworkInterface:
                 [
                     "# Create and compile model",
                     f"model = create_model({config.input_features}, {config.output_features})",
-                    f"model.compile(",
+                    "model.compile(",
                     f"    optimizer='{opt_name}',",
                     f"    loss='{loss_name}',",
                     "    metrics=['mae']",
@@ -1160,7 +1160,7 @@ class NeuralNetworkInterface:
         """Generate scikit-learn training script."""
         lines = [
             '"""',
-            f"Neural Network Training Script (scikit-learn)",
+            "Neural Network Training Script (scikit-learn)",
             f"Generated: {datetime.now().isoformat()}",
             '"""',
             "",
@@ -1227,7 +1227,7 @@ class NeuralNetworkInterface:
                     f"    learning_rate_init={config.learning_rate},",
                     f"    max_iter={config.epochs},",
                     f"    batch_size={config.batch_size},",
-                    f"    early_stopping=True,",
+                    "    early_stopping=True,",
                     f"    validation_fraction={config.validation_split},",
                     f"    n_iter_no_change={config.early_stopping_patience},",
                     "    verbose=True,",

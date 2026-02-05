@@ -226,7 +226,7 @@ class TestCheckCommandAvailable:
         from utils.subprocess_utils import check_command_available
 
         # Python should always be available since we're running tests
-        result = check_command_available("python")
+        result = check_command_available("python") or check_command_available("python3")
         assert result is True
 
     def test_nonexistent_command_not_available(self):

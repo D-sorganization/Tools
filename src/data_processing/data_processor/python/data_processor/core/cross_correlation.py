@@ -207,7 +207,8 @@ class CrossCorrelationAnalyzer:
         ccf = np.zeros(len(lags))
 
         for i, lag in enumerate(lags):
-            ccf[i] = self._compute_ccf_at_lag(x, y, lag)
+            # Use -lag to match convention: positive lag = Y lags X
+            ccf[i] = self._compute_ccf_at_lag(x, y, -lag)
 
         # Find optimal lag
         optimal_idx = np.argmax(np.abs(ccf))

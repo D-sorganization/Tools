@@ -38,14 +38,7 @@ class PostHocMethod(Enum):
     SIDAK = "sidak"
 
 
-class EffectSizeType(Enum):
-    """Types of effect size measures."""
 
-    ETA_SQUARED = "eta_squared"
-    PARTIAL_ETA_SQUARED = "partial_eta_squared"
-    OMEGA_SQUARED = "omega_squared"
-    COHENS_D = "cohens_d"
-    COHENS_F = "cohens_f"
 
 
 @dataclass
@@ -381,9 +374,6 @@ class ANOVAAnalyzer:
 
         # Calculate cell means
         cell_means = data.groupby([factor_a, factor_b])[dependent_var].mean().unstack()
-        cell_counts = (
-            data.groupby([factor_a, factor_b])[dependent_var].count().unstack()
-        )
 
         # Marginal means
         marginal_a = data.groupby(factor_a)[dependent_var].mean().to_dict()
@@ -404,17 +394,18 @@ class ANOVAAnalyzer:
             for level in levels_b
         )
 
-        # SS for interaction
+        # Sum of squares for interaction
         ss_ab = 0
-        for level_a in levels_a:
-            for level_b in levels_b:
-                cell_data = data[
-                    (data[factor_a] == level_a) & (data[factor_b] == level_b)
-                ]
-                if len(cell_data) > 0:
-                    cell_mean = cell_data[dependent_var].mean()
-                    expected = marginal_a[level_a] + marginal_b[level_b] - grand_mean
-                    ss_ab += len(cell_data) * (cell_mean - expected) ** 2
+        if test_interaction:
+            for level_a in levels_a:
+                for level_b in levels_b:
+                    cell_data = data[
+                        (data[factor_a] == level_a) & (data[factor_b] == level_b)
+                    ]
+                    if len(cell_data) > 0:
+                        cell_mean = cell_data[dependent_var].mean()
+                        expected = marginal_a[level_a] + marginal_b[level_b] - grand_mean
+                        ss_ab += len(cell_data) * (cell_mean - expected) ** 2
 
         # SS error
         ss_error = ss_total - ss_a - ss_b - ss_ab
@@ -676,7 +667,8 @@ class ANOVAAnalyzer:
         """Perform post-hoc pairwise comparisons."""
         results = []
         group_names = list(groups.keys())
-        n_comparisons = len(group_names) * (len(group_names) - 1) // 2
+        n_groups = len(group_names)
+        n_comparisons = n_groups * (n_groups - 1) // 2
 
         for name1, name2 in combinations(group_names, 2):
             arr1 = groups[name1]
@@ -703,10 +695,13 @@ class ANOVAAnalyzer:
                 # Note: Proper Holm requires sorting all p-values
                 p_adj = min(1.0, p_raw * n_comparisons)  # Simplified
             else:  # Tukey HSD (default)
-                # Use studentized range distribution
+                # Use studentized range distribution if available
                 q = abs(t_stat) * np.sqrt(2)
-                # Approximate p-value using t-distribution
-                p_adj = min(1.0, p_raw * n_comparisons)
+                try:
+                    p_adj = stats.studentized_range.sf(q, n_groups, df_error)
+                except AttributeError:
+                    # Fallback for older scipy versions
+                    p_adj = min(1.0, p_raw * n_comparisons)
 
             # Confidence interval
             t_crit = stats.t.ppf(1 - self.alpha / 2, df_error)
@@ -877,7 +872,6 @@ def format_anova_report(result: OneWayANOVAResult | TwoWayANOVAResult) -> str:
 
 __all__ = [
     "PostHocMethod",
-    "EffectSizeType",
     "AssumptionTestResult",
     "PostHocComparison",
     "ANOVATable",

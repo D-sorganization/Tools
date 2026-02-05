@@ -22,6 +22,7 @@ from enum import Enum
 from typing import Any
 
 import numpy as np
+from scipy.optimize import minimize
 
 logger = logging.getLogger(__name__)
 
@@ -63,8 +64,8 @@ class StateSpaceConfig:
 
     # Estimation settings
     optimization_method: OptimizationMethod = OptimizationMethod.BFGS
-    max_iterations: int = 1000
-    tolerance: float = 1e-6
+    max_iterations: int = 2000
+    tolerance: float = 1e-4
 
     # Initial values
     initial_state: np.ndarray | None = None
@@ -166,6 +167,9 @@ class BaseStateSpaceModel(ABC):
         # Dimensions
         self.n_states = 0
         self.n_obs = 1
+
+        self._last_state: np.ndarray | None = None
+        self._last_cov: np.ndarray | None = None
 
         # Estimated parameters
         self._parameters: dict[str, float] = {}
@@ -431,7 +435,7 @@ class BaseStateSpaceModel(ABC):
     def _optimize_parameters(
         self, y: np.ndarray, initial_params: np.ndarray
     ) -> tuple[np.ndarray, float, bool, int]:
-        """Optimize parameters using gradient-based method.
+        """Optimize parameters using scipy.optimize.minimize.
 
         Args:
             y: Observations
@@ -440,40 +444,37 @@ class BaseStateSpaceModel(ABC):
         Returns:
             Tuple of (optimal_params, log_likelihood, converged, n_iterations)
         """
-        params = initial_params.copy()
-        max_iter = self.config.max_iterations
-        tol = self.config.tolerance
-
-        # Simple gradient descent / Nelder-Mead approximation
-        best_ll = -np.inf
-        best_params = params.copy()
-
-        for iteration in range(max_iter):
-            # Evaluate at current point
+        def objective(params):
+            # Ensure positive variances if needed
             self._update_matrices(params)
             _, _, ll = self._kalman_filter(y)
+            return -ll if np.isfinite(ll) else 1e10
 
-            if ll > best_ll:
-                best_ll = ll
-                best_params = params.copy()
+        res = minimize(
+            objective,
+            initial_params,
+            method=(
+                "BFGS"
+                if self.config.optimization_method == OptimizationMethod.BFGS
+                else "Nelder-Mead"
+            ),
+            tol=self.config.tolerance,
+            options={"maxiter": self.config.max_iterations},
+        )
 
-            # Numerical gradient
-            grad = self._numerical_gradient(y, params)
+        # Fallback to Nelder-Mead if BFGS fails
+        if not res.success and (
+            self.config.optimization_method == OptimizationMethod.BFGS
+        ):
+            res = minimize(
+                objective,
+                initial_params,
+                method="Nelder-Mead",
+                tol=self.config.tolerance,
+                options={"maxiter": self.config.max_iterations},
+            )
 
-            # Update with adaptive step size
-            step_size = 0.01 / (1 + iteration * 0.1)
-            new_params = params + step_size * grad
-
-            # Ensure positive variances
-            new_params = np.maximum(new_params, 1e-10)
-
-            # Check convergence
-            if np.max(np.abs(new_params - params)) < tol:
-                return best_params, best_ll, True, iteration + 1
-
-            params = new_params
-
-        return best_params, best_ll, False, max_iter
+        return res.x, -res.fun, res.success, res.nit
 
     def _em_algorithm(
         self, y: np.ndarray, initial_params: np.ndarray
@@ -601,18 +602,18 @@ class LocalLevelModel(BaseStateSpaceModel):
 
     def _update_matrices(self, parameters: np.ndarray) -> None:
         """Update Q and H with parameter values."""
-        self.Q = np.array([[parameters[0]]])
-        self.H = np.array([[parameters[1]]])
+        self.Q = np.array([[parameters[0]**2]])
+        self.H = np.array([[parameters[1]**2]])
 
     def _get_initial_parameters(self) -> np.ndarray:
         """Initial parameter estimates."""
-        return np.array([self.Q[0, 0], self.H[0, 0]])
+        return np.array([np.sqrt(np.abs(self.Q[0, 0])), np.sqrt(np.abs(self.H[0, 0]))])
 
     def _parameters_to_dict(self, parameters: np.ndarray) -> dict[str, float]:
         """Convert to dictionary."""
         return {
-            "sigma_eta_sq": float(parameters[0]),
-            "sigma_eps_sq": float(parameters[1]),
+            "sigma_eta_sq": float(parameters[0]**2),
+            "sigma_eps_sq": float(parameters[1]**2),
         }
 
 
@@ -647,20 +648,24 @@ class LocalLinearTrendModel(BaseStateSpaceModel):
         self.H = np.array([[var_y * 0.5]])
 
     def _update_matrices(self, parameters: np.ndarray) -> None:
-        """Update with parameter values."""
-        self.Q = np.diag([parameters[0], parameters[1]])
-        self.H = np.array([[parameters[2]]])
+        """Update matrices with parameter values."""
+        self.Q = np.array([[parameters[0]**2, 0], [0, parameters[1]**2]])
+        self.H = np.array([[parameters[2]**2]])
 
     def _get_initial_parameters(self) -> np.ndarray:
         """Initial parameter estimates."""
-        return np.array([self.Q[0, 0], self.Q[1, 1], self.H[0, 0]])
+        return np.array([
+            np.sqrt(np.abs(self.Q[0, 0])),
+            np.sqrt(np.abs(self.Q[1, 1])),
+            np.sqrt(np.abs(self.H[0, 0]))
+        ])
 
     def _parameters_to_dict(self, parameters: np.ndarray) -> dict[str, float]:
         """Convert to dictionary."""
         return {
-            "sigma_eta_sq": float(parameters[0]),
-            "sigma_zeta_sq": float(parameters[1]),
-            "sigma_eps_sq": float(parameters[2]),
+            "sigma_eta_sq": float(parameters[0]**2),
+            "sigma_zeta_sq": float(parameters[1]**2),
+            "sigma_eps_sq": float(parameters[2]**2),
         }
 
 

@@ -14,9 +14,10 @@ from noisy sources like gasification and robotics data.
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
 
 import numpy as np
 import pandas as pd

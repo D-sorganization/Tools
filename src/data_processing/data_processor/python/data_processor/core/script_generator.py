@@ -18,7 +18,10 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 logger = logging.getLogger(__name__)
 
@@ -888,9 +891,9 @@ class PipelineExecutor:
     def execute(
         self,
         pipeline: ProcessingPipeline,
-        input_data: str | Path | "pd.DataFrame",
+        input_data: str | Path | pd.DataFrame,
         output_path: str | Path | None = None,
-    ) -> "pd.DataFrame":
+    ) -> pd.DataFrame:
         """Execute a pipeline on input data.
 
         Args:
@@ -936,7 +939,7 @@ class PipelineExecutor:
 
         return df
 
-    def _execute_step(self, df: "pd.DataFrame", step: ProcessingStep) -> "pd.DataFrame":
+    def _execute_step(self, df: pd.DataFrame, step: ProcessingStep) -> pd.DataFrame:
         """Execute a single processing step."""
         params = step.parameters
 

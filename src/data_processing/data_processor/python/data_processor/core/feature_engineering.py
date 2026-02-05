@@ -515,12 +515,12 @@ class FeatureExtractor:
             names.append(f"{prefix}_peak_prominence")
 
         if self.config.compute_crossings:
-            # Zero crossings
-            zero_crossings = self._count_zero_crossings(data - np.mean(data))
+            # Zero crossings (relative to absolute zero)
+            zero_crossings = self._count_zero_crossings(data)
             features.append(float(zero_crossings / n))
             names.append(f"{prefix}_zero_crossing_rate")
 
-            # Mean crossings
+            # Mean crossings (relative to the mean)
             mean_crossings = self._count_zero_crossings(data - np.mean(data))
             features.append(float(mean_crossings / n))
             names.append(f"{prefix}_mean_crossing_rate")
@@ -1148,7 +1148,7 @@ def select_features(
     features: np.ndarray,
     feature_names: list[str],
     target: np.ndarray | None = None,
-    method: str = "correlation",
+    method: str | SelectionMethod = SelectionMethod.CORRELATION,
 ) -> SelectionResult:
     """Convenience function for feature selection.
 
@@ -1163,11 +1163,13 @@ def select_features(
     """
     selector = FeatureSelector()
 
-    if method == "correlation":
+    if method == SelectionMethod.CORRELATION or method == "correlation":
         return selector.select_by_correlation(features, feature_names, target)
-    elif method == "variance":
+    elif method == SelectionMethod.VARIANCE or method == "variance":
         return selector.select_by_variance(features, feature_names)
-    elif method == "mutual_info" and target is not None:
+    elif (
+        method == SelectionMethod.MUTUAL_INFO or method == "mutual_info"
+    ) and target is not None:
         return selector.select_by_mutual_info(features, target, feature_names)
     else:
         return selector.select_by_correlation(features, feature_names, target)

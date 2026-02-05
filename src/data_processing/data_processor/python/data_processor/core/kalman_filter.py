@@ -35,7 +35,6 @@ class KalmanFilterType(Enum):
     UNSCENTED = "unscented"
 
 
-@dataclass
 class KalmanFilterConfig:
     """Configuration for Kalman filter."""
 
@@ -44,6 +43,14 @@ class KalmanFilterConfig:
 
     # Measurement dimension
     measurement_dim: int = 1
+
+    def __init__(self, **kwargs) -> None:
+        if "obs_dim" in kwargs:
+            self.measurement_dim = kwargs.pop("obs_dim")
+
+        # Set all passed values
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
     # Process noise covariance (Q)
     process_noise: float | np.ndarray = 1.0
@@ -73,6 +80,15 @@ class KalmanFilterConfig:
     ukf_alpha: float = 0.001
     ukf_beta: float = 2.0
     ukf_kappa: float = 0.0
+
+    @property
+    def obs_dim(self) -> int:
+        """Alias for measurement_dim for backward compatibility."""
+        return self.measurement_dim
+
+    @obs_dim.setter
+    def obs_dim(self, value: int) -> None:
+        self.measurement_dim = value
 
 
 @dataclass
@@ -170,6 +186,28 @@ class KalmanFilter:
         else:
             self.P0 = np.asarray(self.config.initial_covariance)
 
+    def set_transition_matrix(self, A: np.ndarray) -> None:
+        """Set the state transition matrix."""
+        self.A = np.asarray(A)
+
+    def set_observation_matrix(self, H: np.ndarray) -> None:
+        """Set the measurement/observation matrix."""
+        self.H = np.asarray(H)
+
+    def set_process_noise(self, Q: np.ndarray | float) -> None:
+        """Set the process noise covariance."""
+        if isinstance(Q, (int, float)):
+            self.Q = np.eye(self.config.state_dim) * Q
+        else:
+            self.Q = np.asarray(Q)
+
+    def set_observation_noise(self, R: np.ndarray | float) -> None:
+        """Set the measurement/observation noise covariance."""
+        if isinstance(R, (int, float)):
+            self.R = np.eye(self.config.measurement_dim) * R
+        else:
+            self.R = np.asarray(R)
+
     def filter(
         self,
         measurements: np.ndarray,
@@ -184,8 +222,11 @@ class KalmanFilter:
         Returns:
             KalmanFilterResult with filtered states and diagnostics
         """
-        measurements = np.atleast_2d(measurements)
-        if measurements.shape[1] == 1 and measurements.shape[0] > 1:
+        if measurements.ndim == 1:
+            measurements = measurements.reshape(-1, self.config.measurement_dim)
+        elif (measurements.ndim == 2 and
+              measurements.shape[1] != self.config.measurement_dim and
+              measurements.shape[0] == self.config.measurement_dim):
             measurements = measurements.T
 
         T = measurements.shape[0]
@@ -332,49 +373,52 @@ class ExtendedKalmanFilter:
     def __init__(
         self,
         state_dim: int,
-        measurement_dim: int,
-        f: Callable[[np.ndarray, np.ndarray | None], np.ndarray],
-        h: Callable[[np.ndarray], np.ndarray],
-        F_jacobian: Callable[[np.ndarray], np.ndarray],
-        H_jacobian: Callable[[np.ndarray], np.ndarray],
-        Q: np.ndarray,
-        R: np.ndarray,
+        measurement_dim: int | None = None,
+        f: Callable[[np.ndarray, np.ndarray | None], np.ndarray] | None = None,
+        h: Callable[[np.ndarray], np.ndarray] | None = None,
+        F_jacobian: Callable[[np.ndarray], np.ndarray] | None = None,
+        H_jacobian: Callable[[np.ndarray], np.ndarray] | None = None,
+        Q: np.ndarray | None = None,
+        R: np.ndarray | None = None,
         x0: np.ndarray | None = None,
         P0: np.ndarray | None = None,
+        obs_dim: int | None = None,
     ) -> None:
-        """Initialize EKF.
-
-        Args:
-            state_dim: State vector dimension
-            measurement_dim: Measurement vector dimension
-            f: State transition function f(x, u) -> x_next
-            h: Measurement function h(x) -> z
-            F_jacobian: Jacobian of f w.r.t. state
-            H_jacobian: Jacobian of h w.r.t. state
-            Q: Process noise covariance
-            R: Measurement noise covariance
-            x0: Initial state estimate
-            P0: Initial covariance estimate
-        """
+        """Initialize EKF."""
         self.n = state_dim
-        self.m = measurement_dim
+        self.m = measurement_dim or obs_dim or state_dim
         self.f = f
         self.h = h
         self.F_jacobian = F_jacobian
         self.H_jacobian = H_jacobian
-        self.Q = Q
-        self.R = R
-        self.x0 = x0 if x0 is not None else np.zeros(state_dim)
-        self.P0 = P0 if P0 is not None else np.eye(state_dim)
+        self.Q = Q if Q is not None else np.eye(self.n)
+        self.R = R if R is not None else np.eye(self.m)
+        self.x0 = x0 if x0 is not None else np.zeros(self.n)
+        self.P0 = P0 if P0 is not None else np.eye(self.n)
 
     def filter(
         self,
         measurements: np.ndarray,
         control_inputs: np.ndarray | None = None,
+        transition_func: Callable | None = None,
+        observation_func: Callable | None = None,
+        transition_jacobian: Callable | None = None,
+        observation_jacobian: Callable | None = None,
     ) -> KalmanFilterResult:
         """Run EKF on measurements."""
-        measurements = np.atleast_2d(measurements)
-        if measurements.shape[1] == 1 and measurements.shape[0] > 1:
+        f = transition_func or self.f
+        h = observation_func or self.h
+        F_jac = transition_jacobian or self.F_jacobian
+        H_jac = observation_jacobian or self.H_jacobian
+
+        if f is None or h is None:
+            raise ValueError("Transition and observation functions must be provided")
+
+        if measurements.ndim == 1:
+            measurements = measurements.reshape(-1, self.m)
+        elif (measurements.ndim == 2 and
+              measurements.shape[1] != self.m and
+              measurements.shape[0] == self.m):
             measurements = measurements.T
 
         T = measurements.shape[0]
@@ -394,8 +438,8 @@ class ExtendedKalmanFilter:
             u = control_inputs[t] if control_inputs is not None else None
 
             # Predict
-            x_pred = self.f(x, u)
-            F = self.F_jacobian(x)
+            x_pred = f(x, u) if u is not None else f(x)
+            F = F_jac(x) if F_jac else np.eye(self.n)
             P_pred = F @ P @ F.T + self.Q
 
             predicted_states[t] = x_pred
@@ -403,8 +447,8 @@ class ExtendedKalmanFilter:
             # Update
             z = measurements[t]
             if not np.any(np.isnan(z)):
-                H = self.H_jacobian(x_pred)
-                y = z - self.h(x_pred)
+                H = H_jac(x_pred) if H_jac else np.eye(self.m, self.n)
+                y = z - h(x_pred)
                 S = H @ P_pred @ H.T + self.R
                 K = P_pred @ H.T @ np.linalg.inv(S)
 
@@ -515,8 +559,11 @@ class UnscentedKalmanFilter:
         control_inputs: np.ndarray | None = None,
     ) -> KalmanFilterResult:
         """Run UKF on measurements."""
-        measurements = np.atleast_2d(measurements)
-        if measurements.shape[1] == 1 and measurements.shape[0] > 1:
+        if measurements.ndim == 1:
+            measurements = measurements.reshape(-1, self.m)
+        elif (measurements.ndim == 2 and
+              measurements.shape[1] != self.m and
+              measurements.shape[0] == self.m):
             measurements = measurements.T
 
         T = measurements.shape[0]
@@ -650,6 +697,42 @@ def apply_kalman_filter(
     return output_df
 
 
+def kalman_smooth(
+    signal: np.ndarray,
+    process_noise: float = 0.01,
+    measurement_noise: float = 0.25,
+) -> np.ndarray:
+    """Convenience function for Kalman smoothing of a 1D signal.
+
+    Args:
+        signal: 1D array of measurements
+        process_noise: Process noise variance
+        measurement_noise: Measurement noise variance
+
+    Returns:
+        Smoothed 1D signal
+    """
+    signal = np.asarray(signal).flatten()
+    n = len(signal)
+
+    config = KalmanFilterConfig(
+        state_dim=1,
+        measurement_dim=1,
+        process_noise=process_noise,
+        measurement_noise=measurement_noise,
+        initial_state=np.array([signal[0]]) if n > 0 else None,
+        initial_covariance=1.0,
+    )
+
+    kf = KalmanFilter(config)
+    result = kf.filter(signal.reshape(-1, 1))
+    result = kf.smooth(result)
+
+    if result.smoothed_states is not None:
+        return result.smoothed_states.flatten()
+    return result.filtered_states.flatten()
+
+
 def estimate_kalman_params(
     signal: np.ndarray,
     method: str = "innovation",
@@ -690,5 +773,6 @@ __all__ = [
     "ExtendedKalmanFilter",
     "UnscentedKalmanFilter",
     "apply_kalman_filter",
+    "kalman_smooth",
     "estimate_kalman_params",
 ]

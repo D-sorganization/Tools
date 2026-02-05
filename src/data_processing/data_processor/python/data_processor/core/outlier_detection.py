@@ -43,43 +43,45 @@ class OutlierMethod(Enum):
     ENSEMBLE = "ensemble"
 
 
-@dataclass
+# Alias for backward compatibility with tests
+OutlierDetectionMethod = OutlierMethod
+
+
 class OutlierConfig:
     """Configuration for outlier detection."""
 
-    # Method selection
-    method: OutlierMethod = OutlierMethod.ENSEMBLE
-
-    # Statistical thresholds
-    zscore_threshold: float = 3.0
-    iqr_multiplier: float = 1.5
-    grubbs_alpha: float = 0.05
-
-    # Isolation Forest parameters
-    if_n_estimators: int = 100
-    if_contamination: float = 0.1
-    if_max_samples: str | int = "auto"
-
-    # LOF parameters
-    lof_n_neighbors: int = 20
-    lof_contamination: float = 0.1
-
-    # DBSCAN parameters
-    dbscan_eps: float | None = None  # Auto-estimate if None
-    dbscan_min_samples: int = 5
-
-    # Mahalanobis parameters
-    mahalanobis_threshold: float = 3.0
-
-    # Ensemble parameters
-    ensemble_methods: list[OutlierMethod] = field(
-        default_factory=lambda: [
+    def __init__(self, **kwargs) -> None:
+        # Default values
+        self.method: OutlierMethod = OutlierMethod.ENSEMBLE
+        self.zscore_threshold: float = 3.0
+        self.iqr_multiplier: float = 1.5
+        self.grubbs_alpha: float = 0.05
+        self.if_n_estimators: int = 100
+        self.if_contamination: float = 0.1
+        self.if_max_samples: str | int = "auto"
+        self.lof_n_neighbors: int = 20
+        self.lof_contamination: float = 0.1
+        self.dbscan_eps: float | None = None
+        self.dbscan_min_samples: int = 5
+        self.mahalanobis_threshold: float = 3.0
+        self.ensemble_methods: list[OutlierMethod] = [
             OutlierMethod.ZSCORE,
+            OutlierMethod.MODIFIED_ZSCORE,
             OutlierMethod.IQR,
             OutlierMethod.LOF,
         ]
-    )
-    ensemble_voting: str = "majority"  # "majority", "any", "all"
+        self.ensemble_voting: str = "majority"
+
+        # Handle aliases
+        if "methods" in kwargs:
+            methods = kwargs.pop("methods")
+            if isinstance(methods, list) and len(methods) > 0:
+                self.method = OutlierMethod(methods[0])
+                self.ensemble_methods = [OutlierMethod(m) for m in methods]
+
+        # Set all passed values
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
 
 @dataclass
@@ -107,6 +109,11 @@ class OutlierResult:
 
     # Statistics
     statistics: dict[str, Any] = field(default_factory=dict)
+
+    @property
+    def method_agreement(self) -> np.ndarray:
+        """Alias for agreement scores."""
+        return self.scores
 
 
 class OutlierDetector:
@@ -213,8 +220,8 @@ class OutlierDetector:
         if self.config.ensemble_voting == "majority":
             # Outlier if majority of methods agree
             votes = np.sum(all_masks, axis=0)
-            threshold = len(all_masks) / 2
-            combined_mask = votes > threshold
+            threshold = len(all_masks) / 2.0
+            combined_mask = votes >= threshold
         elif self.config.ensemble_voting == "any":
             # Outlier if any method flags it
             combined_mask = np.any(all_masks, axis=0)

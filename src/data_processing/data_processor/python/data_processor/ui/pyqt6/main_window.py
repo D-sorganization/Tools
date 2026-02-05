@@ -7,31 +7,6 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from data_processor.core.config_manager import ConfigManager
-from data_processor.core.dat_importer import (
-    export_dat_to_csv,
-    read_dat_file,
-)
-from data_processor.core.data_loader import DataLoader
-from data_processor.core.dataset_naming import (
-    generate_dataset_name,
-)
-from data_processor.core.plot_config_manager import PlotConfigManager
-from data_processor.core.signal_list_manager import SignalListManager
-from data_processor.core.signal_processing import (
-    apply_custom_variable,
-    calculate_trendline,
-    differentiate_signals,
-    integrate_signals,
-    resample_data,
-    trim_time_range,
-)
-from data_processor.core.signal_processor import SignalProcessor
-from data_processor.models.processing_config import (
-    DifferentiationConfig,
-    FilterConfig,
-    IntegrationConfig,
-)
 from PyQt6.QtCore import QSettings, Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QAction, QFont, QKeySequence, QShortcut
 from PyQt6.QtWidgets import (
@@ -56,6 +31,32 @@ from PyQt6.QtWidgets import (
     QTextEdit,
     QVBoxLayout,
     QWidget,
+)
+
+from data_processor.core.config_manager import ConfigManager
+from data_processor.core.dat_importer import (
+    export_dat_to_csv,
+    read_dat_file,
+)
+from data_processor.core.data_loader import DataLoader
+from data_processor.core.dataset_naming import (
+    generate_dataset_name,
+)
+from data_processor.core.plot_config_manager import PlotConfigManager
+from data_processor.core.signal_list_manager import SignalListManager
+from data_processor.core.signal_processing import (
+    apply_custom_variable,
+    calculate_trendline,
+    differentiate_signals,
+    integrate_signals,
+    resample_data,
+    trim_time_range,
+)
+from data_processor.core.signal_processor import SignalProcessor
+from data_processor.models.processing_config import (
+    DifferentiationConfig,
+    FilterConfig,
+    IntegrationConfig,
 )
 
 from .widgets import (
