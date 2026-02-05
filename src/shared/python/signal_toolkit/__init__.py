@@ -12,6 +12,7 @@ Features:
     - Function Fitting: Sinusoid, exponential, linear, polynomial, custom
     - Digital Filters: Butterworth, Chebyshev, Bessel, adaptive (LMS/RLS)
     - Calculus: Differentiation, integration, tangent lines, curvature
+    - Series: Taylor/Maclaurin series expansions with convergence analysis
     - Noise Generation: White, pink, brown, blue, violet, impulse
     - Limits: Saturation, rate limiting, deadband, hysteresis, backlash
     - I/O: CSV, JSON, NPZ, MAT, numpy array support
@@ -39,7 +40,7 @@ Dependencies:
     Required: numpy, scipy
     Optional: matplotlib (visualization), PyQt6 (GUI widget)
 
-Version: 2.0.0
+Version: 2.1.0
 """
 
 from __future__ import annotations
@@ -114,6 +115,18 @@ from .noise import (
     NoiseType,
     add_noise_to_signal,
     generate_disturbance_profile,
+)
+from .series import (
+    SeriesExpansion,
+    SeriesResult,
+    arctan_series,
+    cos_series,
+    cosh_series,
+    exp_series,
+    geometric_series,
+    ln_series,
+    sin_series,
+    sinh_series,
 )
 
 logger = logging.getLogger(__name__)
@@ -205,6 +218,17 @@ __all__ = [
     "BatchProcessor",
     "import_from_csv",
     "export_to_csv",
+    # Series (Taylor/Maclaurin)
+    "SeriesExpansion",
+    "SeriesResult",
+    "exp_series",
+    "sin_series",
+    "cos_series",
+    "ln_series",
+    "geometric_series",
+    "arctan_series",
+    "sinh_series",
+    "cosh_series",
     # Optional (GUI)
     "PolynomialGeneratorWidget",
     "SignalToolkitWidget",
@@ -212,4 +236,4 @@ __all__ = [
     "HAS_WIDGET",
 ]
 
-__version__ = "2.0.0"
+__version__ = "2.1.0"
