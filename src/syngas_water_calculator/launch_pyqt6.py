@@ -55,12 +55,14 @@ def main() -> int:
     try:
         from PyQt6.QtWidgets import QApplication
 
+        from shared.python.theme import setup_themed_app
         from syngas_water_calculator.ui.pyqt6.main_window import (
             SyngasWaterCalculatorWindow,
         )
 
         app = QApplication(sys.argv)
         window = SyngasWaterCalculatorWindow()
+        setup_themed_app(app, window, settings_app="SyngasWaterCalculator")
         window.show()
         return app.exec()
     except ImportError as e:

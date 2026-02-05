@@ -26,6 +26,7 @@ def main() -> int:
 
     from PyQt6.QtWidgets import QApplication, QMainWindow
 
+    from shared.python.theme import setup_themed_app
     from trc_vessel_designer.ui.pyqt6.main_window import TRCVesselDesignerWidget
 
     app = QApplication(sys.argv)
@@ -39,6 +40,7 @@ def main() -> int:
     designer_widget = TRCVesselDesignerWidget()
     window.setCentralWidget(designer_widget)
 
+    setup_themed_app(app, window, settings_app="TRCVesselDesigner")
     window.show()
     return app.exec()
 

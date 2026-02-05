@@ -22,6 +22,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.theme import ThemedWindowMixin
 from tools.gui.components.tool_card import ToolCard
 from tools.launch_utils import (
     LaunchError,
@@ -33,7 +34,7 @@ from tools.launch_utils import (
 )
 
 
-class UnifiedLauncher(QMainWindow):
+class UnifiedLauncher(ThemedWindowMixin, QMainWindow):
     """Main launcher window with tabbed interface for all tools."""
 
     def __init__(self) -> None:
@@ -50,6 +51,9 @@ class UnifiedLauncher(QMainWindow):
         self.log_queue: queue.Queue[str] = queue.Queue()
         self.setup_ui()
         self.setup_log_consumer()
+
+        # Initialize theme support with Theme menu
+        self.setup_theme_support(settings_app="UnifiedToolsLauncher")
 
     def setup_ui(self) -> None:
         """Set up the main user interface."""
@@ -77,7 +81,7 @@ class UnifiedLauncher(QMainWindow):
 
         title = QLabel("Unified Tools Launcher")
         title.setFont(QFont("Segoe UI", 24, QFont.Weight.Bold))
-        title.setStyleSheet("color: #2c3e50;")
+        title.setObjectName("titleLabel")  # For theme-specific styling
         header_layout.addWidget(title)
 
         header_layout.addStretch()
@@ -94,40 +98,13 @@ class UnifiedLauncher(QMainWindow):
         log_area.setReadOnly(True)
         log_area.setMaximumHeight(150)
         log_area.setPlaceholderText("Activity log will appear here...")
-        log_area.setStyleSheet("""
-            QTextEdit {
-                background-color: #f5f5f5;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                font-family: Consolas, monospace;
-                font-size: 10pt;
-                padding: 5px;
-            }
-        """)
+        log_area.setObjectName("activityLog")  # For theme-specific styling
         return log_area
 
     def _create_tool_tabs(self) -> QTabWidget:
         """Create the tabbed interface for tool categories."""
         tabs = QTabWidget()
-        tabs.setStyleSheet("""
-            QTabWidget::pane {
-                border: 1px solid #ddd;
-                background: white;
-                border-radius: 4px;
-            }
-            QTabBar::tab {
-                background: #f0f0f0;
-                padding: 8px 16px;
-                margin-right: 2px;
-                border-top-left-radius: 4px;
-                border-top-right-radius: 4px;
-            }
-            QTabBar::tab:selected {
-                background: white;
-                border-bottom: 2px solid #2196F3;
-                font-weight: bold;
-            }
-        """)
+        tabs.setObjectName("toolTabs")  # For theme-specific styling
 
         from tools.config_loader import CATEGORY_ORDER, load_tools_config
 

@@ -38,6 +38,7 @@ def main() -> int:
     from pressure_drop_calculator.python.pressure_drop_calculator.ui.pyqt6.main_window import (
         PressureDropCalculatorWidget,
     )
+    from shared.python.theme import setup_themed_app
 
     app = QApplication(sys.argv)
     app.setApplicationName("Pressure Drop Calculator")
@@ -50,6 +51,7 @@ def main() -> int:
     widget = PressureDropCalculatorWidget(window)
     window.setCentralWidget(widget)
 
+    setup_themed_app(app, window, settings_app="PressureDropCalculator")
     window.show()
     return app.exec()
 

@@ -51,6 +51,7 @@ def main() -> int:
     from function_generator.python.function_generator.ui.pyqt6.main_window import (
         FunctionGeneratorWidget,
     )
+    from shared.python.theme import setup_themed_app
 
     app = QApplication(sys.argv)
     app.setApplicationName("Function Generator")
@@ -65,6 +66,7 @@ def main() -> int:
     widget = FunctionGeneratorWidget(window)
     window.setCentralWidget(widget)
 
+    setup_themed_app(app, window, settings_app="FunctionGenerator")
     window.show()
     return app.exec()
 

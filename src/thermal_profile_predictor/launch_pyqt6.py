@@ -50,12 +50,14 @@ def main() -> int:
     try:
         from PyQt6.QtWidgets import QApplication
 
+        from shared.python.theme import setup_themed_app
         from thermal_profile_predictor.ui.pyqt6.main_window import (
             ThermalProfilePredictorWindow,
         )
 
         app = QApplication(sys.argv)
         window = ThermalProfilePredictorWindow()
+        setup_themed_app(app, window, settings_app="ThermalProfilePredictor")
         window.show()
         return app.exec()
     except ImportError as e:

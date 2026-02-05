@@ -534,8 +534,11 @@ class FlowRateConverterWindow(QMainWindow):
 
 def main() -> int:
     """Run the Flow Rate Converter application."""
+    from shared.python.theme import setup_themed_app
+
     app = QApplication(sys.argv)
     window = FlowRateConverterWindow()
+    setup_themed_app(app, window, settings_app="FlowRateConverter")
     window.show()
     return app.exec()
 
