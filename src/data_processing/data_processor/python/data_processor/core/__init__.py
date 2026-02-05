@@ -12,6 +12,15 @@ Modules:
     dat_importer: DAT/DBF file import
     data_loader: CSV/data file loading
     signal_processor: Filter orchestration
+    dataset_manager: Dataset state management with undo/redo
+    undo_redo: Command pattern undo/redo system
+    surface_plot: 3D surface plotting with smoothing
+    pca_analysis: Principal Component Analysis
+    anova: Comprehensive ANOVA statistical suite
+    regression: Multivariable regression analysis
+    neural_network: Neural network training interface
+    script_generator: Automated processing script generation
+    plot_zoom: Mouse wheel zoom for plots
 """
 
 from data_processor.core.config_manager import ConfigManager
@@ -45,6 +54,86 @@ from data_processor.core.signal_processing import (
     trim_time_range,
 )
 
+# New analysis modules
+from data_processor.core.dataset_manager import (
+    DatasetHistory,
+    DatasetManager,
+    DatasetMetadata,
+    DatasetVersion,
+)
+from data_processor.core.undo_redo import (
+    ColumnOperationCommand,
+    Command,
+    CompositeCommand,
+    FilterCommand,
+    LambdaCommand,
+    RowFilterCommand,
+    UndoRedoManager,
+)
+from data_processor.core.surface_plot import (
+    InterpolationMethod,
+    SmoothingMethod,
+    SurfacePlotConfig,
+    SurfacePlotEngine,
+    SurfacePlotResult,
+    plot_surface_matplotlib,
+)
+from data_processor.core.pca_analysis import (
+    PCAAnalyzer,
+    PCAComponent,
+    PCAConfig,
+    PCAResult,
+    create_loading_plot,
+    create_scree_plot,
+)
+from data_processor.core.anova import (
+    ANOVAAnalyzer,
+    ANOVATable,
+    OneWayANOVAResult,
+    PostHocComparison,
+    PostHocMethod,
+    RepeatedMeasuresResult,
+    TwoWayANOVAResult,
+    format_anova_report,
+)
+from data_processor.core.regression import (
+    CoefficientInfo,
+    MultivariateRegressor,
+    RegularizationType,
+    RegressionConfig,
+    RegressionDiagnostics,
+    RegressionResult,
+    SelectionMethod,
+    format_regression_report,
+)
+from data_processor.core.neural_network import (
+    ActivationFunction,
+    DataSplitConfig,
+    Framework,
+    LayerConfig,
+    LossFunction,
+    NetworkConfig,
+    NetworkType,
+    NeuralNetworkInterface,
+    Optimizer,
+    TrainingResult,
+)
+from data_processor.core.script_generator import (
+    OperationType,
+    PipelineExecutor,
+    PipelineRecorder,
+    ProcessingPipeline,
+    ProcessingStep,
+    ScriptGenerator,
+)
+from data_processor.core.plot_zoom import (
+    InteractivePlotManager,
+    MouseWheelZoom,
+    ZoomConfig,
+    enable_wheel_zoom,
+    enable_wheel_zoom_all_figures,
+)
+
 __all__ = [
     # Signal processing
     "integrate_signals",
@@ -74,4 +163,73 @@ __all__ = [
     "preview_dat_file",
     "get_dat_file_info",
     "DBF_AVAILABLE",
+    # Dataset management
+    "DatasetManager",
+    "DatasetVersion",
+    "DatasetHistory",
+    "DatasetMetadata",
+    # Undo/Redo
+    "UndoRedoManager",
+    "Command",
+    "FilterCommand",
+    "ColumnOperationCommand",
+    "RowFilterCommand",
+    "CompositeCommand",
+    "LambdaCommand",
+    # Surface plots
+    "SurfacePlotEngine",
+    "SurfacePlotConfig",
+    "SurfacePlotResult",
+    "InterpolationMethod",
+    "SmoothingMethod",
+    "plot_surface_matplotlib",
+    # PCA
+    "PCAAnalyzer",
+    "PCAConfig",
+    "PCAComponent",
+    "PCAResult",
+    "create_scree_plot",
+    "create_loading_plot",
+    # ANOVA
+    "ANOVAAnalyzer",
+    "ANOVATable",
+    "OneWayANOVAResult",
+    "TwoWayANOVAResult",
+    "RepeatedMeasuresResult",
+    "PostHocMethod",
+    "PostHocComparison",
+    "format_anova_report",
+    # Regression
+    "MultivariateRegressor",
+    "RegressionConfig",
+    "RegressionResult",
+    "RegressionDiagnostics",
+    "CoefficientInfo",
+    "RegularizationType",
+    "SelectionMethod",
+    "format_regression_report",
+    # Neural Networks
+    "NeuralNetworkInterface",
+    "NetworkConfig",
+    "NetworkType",
+    "LayerConfig",
+    "ActivationFunction",
+    "LossFunction",
+    "Optimizer",
+    "Framework",
+    "TrainingResult",
+    "DataSplitConfig",
+    # Script generation
+    "ScriptGenerator",
+    "PipelineRecorder",
+    "PipelineExecutor",
+    "ProcessingPipeline",
+    "ProcessingStep",
+    "OperationType",
+    # Plot zoom
+    "MouseWheelZoom",
+    "ZoomConfig",
+    "InteractivePlotManager",
+    "enable_wheel_zoom",
+    "enable_wheel_zoom_all_figures",
 ]
