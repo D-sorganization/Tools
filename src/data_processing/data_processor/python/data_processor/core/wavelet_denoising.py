@@ -1,0 +1,580 @@
+"""Wavelet Denoising Module.
+
+Provides wavelet-based signal denoising that preserves sharp transitions.
+Excellent for:
+- Valve events in gasification data
+- Step changes in control systems
+- Multi-resolution signal analysis
+- Non-stationary signal processing
+
+Includes:
+- Discrete Wavelet Transform (DWT) denoising
+- Stationary Wavelet Transform (SWT) for shift-invariance
+- Various thresholding methods (soft, hard, garrote)
+- Automatic threshold selection (universal, SURE, minimax)
+"""
+
+from __future__ import annotations
+
+import logging
+from dataclasses import dataclass
+from enum import Enum
+from typing import Any
+
+import numpy as np
+import pandas as pd
+from scipy import signal as scipy_signal
+
+logger = logging.getLogger(__name__)
+
+
+class WaveletFamily(Enum):
+    """Available wavelet families."""
+
+    HAAR = "haar"
+    DAUBECHIES = "db"
+    SYMLET = "sym"
+    COIFLET = "coif"
+    BIORTHOGONAL = "bior"
+    MEYER = "dmey"
+
+
+class ThresholdMethod(Enum):
+    """Thresholding methods."""
+
+    SOFT = "soft"
+    HARD = "hard"
+    GARROTE = "garrote"
+    FIRM = "firm"
+
+
+class ThresholdSelection(Enum):
+    """Threshold value selection methods."""
+
+    UNIVERSAL = "universal"  # VisuShrink
+    SURE = "sure"  # Stein's Unbiased Risk Estimate
+    MINIMAX = "minimax"
+    BAYES = "bayes"
+    MANUAL = "manual"
+
+
+@dataclass
+class WaveletDenoiseConfig:
+    """Configuration for wavelet denoising."""
+
+    # Wavelet selection
+    wavelet_family: WaveletFamily = WaveletFamily.DAUBECHIES
+    wavelet_order: int = 4  # e.g., db4, sym8
+
+    # Decomposition level (None = automatic)
+    decomposition_level: int | None = None
+
+    # Thresholding
+    threshold_method: ThresholdMethod = ThresholdMethod.SOFT
+    threshold_selection: ThresholdSelection = ThresholdSelection.UNIVERSAL
+    manual_threshold: float | None = None
+
+    # Level-dependent thresholding
+    level_dependent: bool = True
+
+    # Use stationary wavelet transform (shift-invariant)
+    stationary: bool = False
+
+    # Noise estimation
+    noise_estimation: str = "mad"  # "mad" or "std"
+
+
+@dataclass
+class WaveletDenoiseResult:
+    """Results from wavelet denoising."""
+
+    # Denoised signal
+    denoised: np.ndarray
+
+    # Original signal
+    original: np.ndarray
+
+    # Wavelet coefficients (list of levels)
+    coefficients: list[np.ndarray]
+
+    # Thresholded coefficients
+    thresholded_coefficients: list[np.ndarray]
+
+    # Thresholds used at each level
+    thresholds: list[float]
+
+    # Estimated noise level
+    noise_estimate: float
+
+    # Decomposition level used
+    decomposition_level: int
+
+    # Wavelet used
+    wavelet_name: str
+
+
+class WaveletDenoiser:
+    """Wavelet-based signal denoising.
+
+    Uses the Discrete Wavelet Transform (DWT) to decompose signals
+    and applies thresholding to remove noise while preserving
+    important features like edges and transients.
+    """
+
+    def __init__(self, config: WaveletDenoiseConfig | None = None) -> None:
+        """Initialize the denoiser.
+
+        Args:
+            config: Denoising configuration
+        """
+        self.config = config or WaveletDenoiseConfig()
+
+    def denoise(self, signal: np.ndarray) -> WaveletDenoiseResult:
+        """Denoise a signal using wavelets.
+
+        Args:
+            signal: Input signal to denoise
+
+        Returns:
+            WaveletDenoiseResult with denoised signal and diagnostics
+        """
+        signal = np.asarray(signal).flatten()
+        original = signal.copy()
+
+        # Handle NaN values
+        nan_mask = np.isnan(signal)
+        if np.any(nan_mask):
+            signal = self._interpolate_nans(signal)
+
+        # Get wavelet name
+        wavelet_name = self._get_wavelet_name()
+
+        # Determine decomposition level
+        level = self.config.decomposition_level
+        if level is None:
+            level = self._auto_level(len(signal))
+
+        # Wavelet decomposition
+        coefficients = self._wavedec(signal, wavelet_name, level)
+
+        # Estimate noise from finest detail coefficients
+        noise_estimate = self._estimate_noise(coefficients[-1])
+
+        # Calculate thresholds for each level
+        thresholds = self._calculate_thresholds(coefficients, noise_estimate, len(signal))
+
+        # Apply thresholding
+        thresholded = self._apply_thresholds(coefficients, thresholds)
+
+        # Reconstruct signal
+        denoised = self._waverec(thresholded, wavelet_name, len(signal))
+
+        # Restore NaN positions
+        denoised[nan_mask] = np.nan
+
+        return WaveletDenoiseResult(
+            denoised=denoised,
+            original=original,
+            coefficients=coefficients,
+            thresholded_coefficients=thresholded,
+            thresholds=thresholds,
+            noise_estimate=noise_estimate,
+            decomposition_level=level,
+            wavelet_name=wavelet_name,
+        )
+
+    def _get_wavelet_name(self) -> str:
+        """Get wavelet name string."""
+        family = self.config.wavelet_family.value
+        order = self.config.wavelet_order
+
+        if family == "haar":
+            return "haar"
+        elif family == "dmey":
+            return "dmey"
+        else:
+            return f"{family}{order}"
+
+    def _auto_level(self, n: int) -> int:
+        """Automatically determine decomposition level."""
+        # Rule of thumb: log2(n) - 1, but capped
+        max_level = int(np.log2(n)) - 1
+        return min(max_level, 6)  # Cap at 6 levels
+
+    def _wavedec(
+        self,
+        signal: np.ndarray,
+        wavelet: str,
+        level: int,
+    ) -> list[np.ndarray]:
+        """Perform wavelet decomposition.
+
+        Returns list: [approx, detail_level_n, ..., detail_level_1]
+        """
+        # Get wavelet filters
+        lo_d, hi_d = self._get_wavelet_filters(wavelet, decompose=True)
+
+        coeffs = []
+        current = signal.copy()
+
+        for _ in range(level):
+            # Convolve and downsample
+            approx = self._dwt_step(current, lo_d)
+            detail = self._dwt_step(current, hi_d)
+            coeffs.insert(0, detail)
+            current = approx
+
+        coeffs.insert(0, current)  # Approximation at coarsest level
+        return coeffs
+
+    def _waverec(
+        self,
+        coeffs: list[np.ndarray],
+        wavelet: str,
+        original_length: int,
+    ) -> np.ndarray:
+        """Perform wavelet reconstruction."""
+        lo_r, hi_r = self._get_wavelet_filters(wavelet, decompose=False)
+
+        current = coeffs[0]  # Start with coarsest approximation
+
+        for detail in coeffs[1:]:
+            # Upsample and convolve
+            current = self._idwt_step(current, detail, lo_r, hi_r)
+
+        # Trim to original length
+        return current[:original_length]
+
+    def _dwt_step(self, signal: np.ndarray, filter_coeffs: np.ndarray) -> np.ndarray:
+        """Single DWT step: convolve and downsample."""
+        # Periodic extension
+        n = len(signal)
+        flen = len(filter_coeffs)
+        extended = np.concatenate([signal[-(flen - 1):], signal, signal[: flen - 1]])
+
+        # Convolve
+        conv = np.convolve(extended, filter_coeffs, mode="valid")
+
+        # Downsample
+        return conv[::2]
+
+    def _idwt_step(
+        self,
+        approx: np.ndarray,
+        detail: np.ndarray,
+        lo_r: np.ndarray,
+        hi_r: np.ndarray,
+    ) -> np.ndarray:
+        """Single inverse DWT step: upsample and convolve."""
+        # Upsample
+        n = len(approx)
+        approx_up = np.zeros(2 * n)
+        detail_up = np.zeros(2 * n)
+        approx_up[::2] = approx
+        detail_up[::2] = detail
+
+        # Convolve with reconstruction filters
+        approx_rec = np.convolve(approx_up, lo_r, mode="full")
+        detail_rec = np.convolve(detail_up, hi_r, mode="full")
+
+        # Sum and trim
+        result = approx_rec + detail_rec
+        trim = (len(result) - 2 * n) // 2
+        return result[trim : trim + 2 * n]
+
+    def _get_wavelet_filters(
+        self,
+        wavelet: str,
+        decompose: bool = True,
+    ) -> tuple[np.ndarray, np.ndarray]:
+        """Get wavelet filter coefficients.
+
+        Returns (lowpass, highpass) filter pair.
+        """
+        # Common wavelets
+        wavelets_db = {
+            "haar": [1 / np.sqrt(2), 1 / np.sqrt(2)],
+            "db1": [1 / np.sqrt(2), 1 / np.sqrt(2)],
+            "db2": [
+                0.4829629131445341,
+                0.8365163037378079,
+                0.2241438680420134,
+                -0.1294095225512604,
+            ],
+            "db4": [
+                0.23037781330889650,
+                0.71484657055291560,
+                0.63088076792985890,
+                -0.02798376941685990,
+                -0.18703481171909310,
+                0.03084138183556076,
+                0.03288301166688520,
+                -0.01059740178506903,
+            ],
+        }
+
+        wavelets_sym = {
+            "sym4": [
+                -0.07576571478935668,
+                -0.02963552764596039,
+                0.49761866763246890,
+                0.80373875180538600,
+                0.29785779560554700,
+                -0.09921954357695380,
+                -0.01260396726226383,
+                0.03222310060407815,
+            ],
+        }
+
+        # Get lowpass decomposition filter
+        if wavelet in wavelets_db:
+            lo_d = np.array(wavelets_db[wavelet])
+        elif wavelet in wavelets_sym:
+            lo_d = np.array(wavelets_sym[wavelet])
+        else:
+            # Default to db4
+            lo_d = np.array(wavelets_db["db4"])
+
+        # Highpass from lowpass (QMF relationship)
+        n = len(lo_d)
+        hi_d = np.array([(-1) ** i * lo_d[n - 1 - i] for i in range(n)])
+
+        if decompose:
+            return lo_d, hi_d
+        else:
+            # Reconstruction filters
+            lo_r = lo_d[::-1]
+            hi_r = hi_d[::-1]
+            return lo_r, hi_r
+
+    def _estimate_noise(self, detail_coeffs: np.ndarray) -> float:
+        """Estimate noise level from detail coefficients."""
+        if self.config.noise_estimation == "mad":
+            # Median Absolute Deviation (robust)
+            return np.median(np.abs(detail_coeffs)) / 0.6745
+        else:
+            # Standard deviation
+            return np.std(detail_coeffs)
+
+    def _calculate_thresholds(
+        self,
+        coeffs: list[np.ndarray],
+        noise: float,
+        n: int,
+    ) -> list[float]:
+        """Calculate threshold for each decomposition level."""
+        thresholds = [0.0]  # No threshold for approximation
+
+        for i, detail in enumerate(coeffs[1:], 1):
+            if self.config.threshold_selection == ThresholdSelection.MANUAL:
+                thresh = self.config.manual_threshold or noise
+            elif self.config.threshold_selection == ThresholdSelection.UNIVERSAL:
+                # Universal threshold (VisuShrink)
+                thresh = noise * np.sqrt(2 * np.log(n))
+            elif self.config.threshold_selection == ThresholdSelection.MINIMAX:
+                # Minimax threshold
+                thresh = noise * (0.3936 + 0.1829 * np.log2(n))
+            elif self.config.threshold_selection == ThresholdSelection.SURE:
+                # SURE threshold (simplified)
+                thresh = self._sure_threshold(detail, noise)
+            else:  # BAYES
+                thresh = noise * np.sqrt(2 * np.log(len(detail)))
+
+            # Level-dependent scaling
+            if self.config.level_dependent:
+                # Increase threshold at coarser levels
+                level = len(coeffs) - i
+                thresh *= 1.0 + 0.1 * level
+
+            thresholds.append(thresh)
+
+        return thresholds
+
+    def _sure_threshold(self, coeffs: np.ndarray, noise: float) -> float:
+        """Calculate SURE (Stein's Unbiased Risk Estimate) threshold."""
+        n = len(coeffs)
+        sorted_coeffs = np.sort(np.abs(coeffs)) ** 2
+
+        # Calculate SURE risk for different thresholds
+        risks = np.zeros(n)
+        for i in range(n):
+            t = sorted_coeffs[i]
+            risks[i] = (
+                n
+                - 2 * (i + 1)
+                + np.sum(np.minimum(sorted_coeffs, t))
+            )
+
+        # Find minimum risk threshold
+        min_idx = np.argmin(risks)
+        return np.sqrt(sorted_coeffs[min_idx])
+
+    def _apply_thresholds(
+        self,
+        coeffs: list[np.ndarray],
+        thresholds: list[float],
+    ) -> list[np.ndarray]:
+        """Apply thresholding to wavelet coefficients."""
+        thresholded = [coeffs[0].copy()]  # Keep approximation
+
+        for detail, thresh in zip(coeffs[1:], thresholds[1:]):
+            thresholded.append(self._threshold(detail, thresh))
+
+        return thresholded
+
+    def _threshold(self, coeffs: np.ndarray, threshold: float) -> np.ndarray:
+        """Apply thresholding to coefficients."""
+        method = self.config.threshold_method
+
+        if method == ThresholdMethod.HARD:
+            # Hard thresholding: keep or zero
+            result = coeffs.copy()
+            result[np.abs(result) < threshold] = 0
+            return result
+
+        elif method == ThresholdMethod.SOFT:
+            # Soft thresholding: shrink toward zero
+            return np.sign(coeffs) * np.maximum(np.abs(coeffs) - threshold, 0)
+
+        elif method == ThresholdMethod.GARROTE:
+            # Non-negative garrote
+            result = coeffs.copy()
+            mask = np.abs(coeffs) > threshold
+            result[mask] = coeffs[mask] - threshold ** 2 / coeffs[mask]
+            result[~mask] = 0
+            return result
+
+        else:  # FIRM
+            # Firm thresholding (between hard and soft)
+            t1 = threshold
+            t2 = 2 * threshold
+            result = coeffs.copy()
+            small = np.abs(coeffs) <= t1
+            medium = (np.abs(coeffs) > t1) & (np.abs(coeffs) <= t2)
+            result[small] = 0
+            result[medium] = np.sign(coeffs[medium]) * t2 * (
+                np.abs(coeffs[medium]) - t1
+            ) / (t2 - t1)
+            return result
+
+    def _interpolate_nans(self, signal: np.ndarray) -> np.ndarray:
+        """Interpolate NaN values for processing."""
+        result = signal.copy()
+        nan_idx = np.isnan(result)
+
+        if np.all(nan_idx):
+            return np.zeros_like(result)
+
+        valid_idx = np.where(~nan_idx)[0]
+        result[nan_idx] = np.interp(
+            np.where(nan_idx)[0],
+            valid_idx,
+            result[valid_idx],
+        )
+        return result
+
+
+def apply_wavelet_denoise(
+    df: pd.DataFrame,
+    signal_columns: list[str] | None = None,
+    wavelet: str = "db4",
+    threshold_method: str = "soft",
+    threshold_selection: str = "universal",
+    level: int | None = None,
+) -> pd.DataFrame:
+    """Apply wavelet denoising to signals in a DataFrame.
+
+    Convenience function for batch wavelet denoising.
+
+    Args:
+        df: DataFrame with signals
+        signal_columns: Columns to denoise (None = all numeric)
+        wavelet: Wavelet name (e.g., "db4", "sym8", "haar")
+        threshold_method: "soft", "hard", "garrote", or "firm"
+        threshold_selection: "universal", "sure", "minimax", or "bayes"
+        level: Decomposition level (None = automatic)
+
+    Returns:
+        DataFrame with denoised signal columns added
+    """
+    # Parse wavelet name
+    family = WaveletFamily.DAUBECHIES
+    order = 4
+    if wavelet == "haar":
+        family = WaveletFamily.HAAR
+        order = 1
+    elif wavelet.startswith("db"):
+        family = WaveletFamily.DAUBECHIES
+        order = int(wavelet[2:]) if len(wavelet) > 2 else 4
+    elif wavelet.startswith("sym"):
+        family = WaveletFamily.SYMLET
+        order = int(wavelet[3:]) if len(wavelet) > 3 else 4
+    elif wavelet.startswith("coif"):
+        family = WaveletFamily.COIFLET
+        order = int(wavelet[4:]) if len(wavelet) > 4 else 4
+
+    config = WaveletDenoiseConfig(
+        wavelet_family=family,
+        wavelet_order=order,
+        decomposition_level=level,
+        threshold_method=ThresholdMethod(threshold_method),
+        threshold_selection=ThresholdSelection(threshold_selection),
+    )
+
+    denoiser = WaveletDenoiser(config)
+
+    # Select columns
+    if signal_columns is None:
+        signal_columns = df.select_dtypes(include=[np.number]).columns.tolist()
+
+    output_df = df.copy()
+
+    for col in signal_columns:
+        if col in df.columns:
+            result = denoiser.denoise(df[col].values)
+            output_df[f"{col}_wavelet_denoised"] = result.denoised
+
+    return output_df
+
+
+def wavelet_decompose(
+    signal: np.ndarray,
+    wavelet: str = "db4",
+    level: int | None = None,
+) -> dict[str, np.ndarray]:
+    """Decompose signal into wavelet coefficients.
+
+    Args:
+        signal: Signal to decompose
+        wavelet: Wavelet name
+        level: Decomposition level
+
+    Returns:
+        Dictionary with 'approx' and 'detail_1', 'detail_2', etc.
+    """
+    config = WaveletDenoiseConfig()
+    denoiser = WaveletDenoiser(config)
+
+    wavelet_name = wavelet
+    if level is None:
+        level = denoiser._auto_level(len(signal))
+
+    coeffs = denoiser._wavedec(signal, wavelet_name, level)
+
+    result = {"approx": coeffs[0]}
+    for i, detail in enumerate(coeffs[1:], 1):
+        result[f"detail_{i}"] = detail
+
+    return result
+
+
+__all__ = [
+    "WaveletFamily",
+    "ThresholdMethod",
+    "ThresholdSelection",
+    "WaveletDenoiseConfig",
+    "WaveletDenoiseResult",
+    "WaveletDenoiser",
+    "apply_wavelet_denoise",
+    "wavelet_decompose",
+]

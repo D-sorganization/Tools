@@ -21,6 +21,16 @@ Modules:
     neural_network: Neural network training interface
     script_generator: Automated processing script generation
     plot_zoom: Mouse wheel zoom for plots
+    kalman_filter: Kalman filtering (Standard, Extended, Unscented)
+    wavelet_denoising: Wavelet-based signal denoising
+    spectral_analysis: Spectral and frequency domain analysis
+    outlier_detection: Ensemble outlier detection methods
+    time_series_decomposition: STL and classical decomposition
+    cross_correlation: Cross-correlation and causality analysis
+    state_space: State space modeling and estimation
+    uncertainty_quantification: Bootstrap and Monte Carlo uncertainty
+    data_augmentation: Data augmentation techniques
+    feature_engineering: Automated feature extraction and selection
 """
 
 from data_processor.core.anova import (
@@ -134,6 +144,108 @@ from data_processor.core.undo_redo import (
     UndoRedoManager,
 )
 
+# Advanced analysis modules
+from data_processor.core.kalman_filter import (
+    ExtendedKalmanFilter,
+    KalmanFilter,
+    KalmanFilterConfig,
+    KalmanFilterResult,
+    UnscentedKalmanFilter,
+    kalman_smooth,
+)
+from data_processor.core.wavelet_denoising import (
+    ThresholdingMethod,
+    WaveletDenoiseConfig,
+    WaveletDenoiseResult,
+    WaveletDenoiser,
+    WaveletFamily,
+    denoise_signal,
+)
+from data_processor.core.spectral_analysis import (
+    CoherenceResult,
+    SpectralAnalyzer,
+    SpectralConfig,
+    SpectralResult,
+    SpectrogramResult,
+    WindowFunction,
+    compute_spectrum,
+)
+from data_processor.core.outlier_detection import (
+    OutlierConfig,
+    OutlierDetectionMethod,
+    OutlierDetector,
+    OutlierResult,
+    detect_outliers,
+)
+from data_processor.core.time_series_decomposition import (
+    DecompositionConfig,
+    DecompositionMethod,
+    DecompositionResult,
+    SeasonalityDetectionResult,
+    SeasonalModel,
+    TimeSeriesDecomposer,
+    TrendModel,
+    decompose_time_series,
+)
+from data_processor.core.cross_correlation import (
+    CausalityMethod,
+    CrossCorrelationAnalyzer,
+    CrossCorrelationConfig,
+    CrossCorrelationResult,
+    GrangerCausalityResult,
+    NormalizationMethod,
+    RollingCorrelationResult,
+    TransferEntropyResult,
+    cross_correlate,
+    granger_causality,
+)
+from data_processor.core.state_space import (
+    ARIMAStateSpace,
+    BaseStateSpaceModel,
+    ForecastResult,
+    LocalLevelModel,
+    LocalLinearTrendModel,
+    OptimizationMethod,
+    SeasonalModel as SeasonalStateSpaceModel,
+    StateSpaceConfig,
+    StateSpaceModelFactory,
+    StateSpaceModelType,
+    StateSpaceResult,
+    fit_state_space,
+)
+from data_processor.core.uncertainty_quantification import (
+    BootstrapMethod,
+    BootstrapResult,
+    ConfidenceInterval,
+    MonteCarloResult,
+    PredictionInterval,
+    SensitivityResult,
+    UncertaintyConfig,
+    UncertaintyMethod,
+    UncertaintyQuantifier,
+    bootstrap_confidence_interval,
+    propagate_uncertainty,
+)
+from data_processor.core.data_augmentation import (
+    AugmentationConfig,
+    AugmentationMethod,
+    AugmentationResult,
+    DataAugmenter,
+    augment_data,
+)
+from data_processor.core.feature_engineering import (
+    FeatureCategory,
+    FeatureConfig,
+    FeatureExtractor,
+    FeatureResult,
+    FeatureSelector,
+    FeatureTransformer,
+    SelectionResult,
+    TransformationType,
+    extract_features,
+    select_features,
+)
+
 __all__ = [
     # Signal processing
     "integrate_signals",
@@ -232,4 +344,94 @@ __all__ = [
     "InteractivePlotManager",
     "enable_wheel_zoom",
     "enable_wheel_zoom_all_figures",
+    # Kalman Filter
+    "KalmanFilter",
+    "ExtendedKalmanFilter",
+    "UnscentedKalmanFilter",
+    "KalmanFilterConfig",
+    "KalmanFilterResult",
+    "kalman_smooth",
+    # Wavelet Denoising
+    "WaveletDenoiser",
+    "WaveletDenoiseConfig",
+    "WaveletDenoiseResult",
+    "WaveletFamily",
+    "ThresholdingMethod",
+    "denoise_signal",
+    # Spectral Analysis
+    "SpectralAnalyzer",
+    "SpectralConfig",
+    "SpectralResult",
+    "SpectrogramResult",
+    "CoherenceResult",
+    "WindowFunction",
+    "compute_spectrum",
+    # Outlier Detection
+    "OutlierDetector",
+    "OutlierConfig",
+    "OutlierResult",
+    "OutlierDetectionMethod",
+    "detect_outliers",
+    # Time Series Decomposition
+    "TimeSeriesDecomposer",
+    "DecompositionConfig",
+    "DecompositionResult",
+    "DecompositionMethod",
+    "SeasonalModel",
+    "TrendModel",
+    "SeasonalityDetectionResult",
+    "decompose_time_series",
+    # Cross-Correlation
+    "CrossCorrelationAnalyzer",
+    "CrossCorrelationConfig",
+    "CrossCorrelationResult",
+    "GrangerCausalityResult",
+    "TransferEntropyResult",
+    "RollingCorrelationResult",
+    "NormalizationMethod",
+    "CausalityMethod",
+    "cross_correlate",
+    "granger_causality",
+    # State Space
+    "BaseStateSpaceModel",
+    "LocalLevelModel",
+    "LocalLinearTrendModel",
+    "SeasonalStateSpaceModel",
+    "ARIMAStateSpace",
+    "StateSpaceModelFactory",
+    "StateSpaceConfig",
+    "StateSpaceResult",
+    "ForecastResult",
+    "StateSpaceModelType",
+    "OptimizationMethod",
+    "fit_state_space",
+    # Uncertainty Quantification
+    "UncertaintyQuantifier",
+    "UncertaintyConfig",
+    "ConfidenceInterval",
+    "BootstrapResult",
+    "MonteCarloResult",
+    "SensitivityResult",
+    "PredictionInterval",
+    "BootstrapMethod",
+    "UncertaintyMethod",
+    "bootstrap_confidence_interval",
+    "propagate_uncertainty",
+    # Data Augmentation
+    "DataAugmenter",
+    "AugmentationConfig",
+    "AugmentationResult",
+    "AugmentationMethod",
+    "augment_data",
+    # Feature Engineering
+    "FeatureExtractor",
+    "FeatureSelector",
+    "FeatureTransformer",
+    "FeatureConfig",
+    "FeatureResult",
+    "SelectionResult",
+    "FeatureCategory",
+    "TransformationType",
+    "extract_features",
+    "select_features",
 ]
