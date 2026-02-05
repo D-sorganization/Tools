@@ -26,20 +26,23 @@ from typing import Any
 import pandas as pd
 
 # Use shared path utilities
-from utils.path_helpers import ensure_utils_in_path
+from utils.path_helpers import ensure_utils_in_path  # noqa: E402
 
 ensure_utils_in_path()
 
 # Import from centralized utilities
-from utils.csv_utils import safe_read_csv
-from utils.file_utils import safe_read_json
-from utils.logging_utils import get_logger
+from utils.csv_utils import safe_read_csv  # noqa: E402
+from utils.file_utils import safe_read_json  # noqa: E402
+from utils.logging_utils import get_logger  # noqa: E402
 
 # Import security utilities
 try:
-    from .security_utils import FileSizeError, check_file_size
+    from .security_utils import FileSizeError, check_file_size  # noqa: E402
 except ImportError:
-    from security_utils import FileSizeError, check_file_size  # type: ignore
+    from security_utils import (  # type: ignore  # noqa: E402
+        FileSizeError,
+        check_file_size,
+    )
 
 
 # Module logger

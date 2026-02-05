@@ -34,7 +34,8 @@ repos:
       - id: ruff-format
         name: "ruff format (Python)"
         types: [python]
-        exclude: ^(\.github/|docs/|.*\.md$)
+        # Exclude data_processing from ruff-format (black handles it to avoid conflicts)
+        exclude: ^(\.github/|docs/|.*\.md$|src/data_processing/)
 
   # Black - Python code formatter (backup)
   - repo: https://github.com/psf/black
@@ -206,7 +207,15 @@ repos:
       - id: bandit
         name: "bandit (Python security)"
         stages: [pre-push]
-        args: ["-r", ".", "-ll", "-ii", "-x", "tests/,archive/,legacy/,.github/,node_modules/"]
+        args:
+          [
+            "-r",
+            ".",
+            "-ll",
+            "-ii",
+            "-x",
+            "tests/,archive/,legacy/,.github/,node_modules/",
+          ]
         pass_filenames: false
         types: [python]
 
@@ -220,7 +229,6 @@ repos:
         language: system
         pass_filenames: false
         types: [python]
-
 
   # Semgrep - Free local security + code quality scanning (pre-push)
   - repo: https://github.com/semgrep/semgrep
@@ -286,4 +294,4 @@ ci:
   autofix_prs: true
   autoupdate_branch: "main"
   autoupdate_commit_msg: "chore: update pre-commit hooks"
-  skip: [pytest-unit, bandit, mypy, semgrep, radon]  # Skip slow hooks in CI
+  skip: [pytest-unit, bandit, mypy, semgrep, radon] # Skip slow hooks in CI

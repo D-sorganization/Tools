@@ -43,27 +43,29 @@ except ImportError:
     PYARROW_AVAILABLE = False
 
 # Use shared path utilities
-from utils.path_helpers import ensure_utils_in_path
+from utils.path_helpers import ensure_utils_in_path  # noqa: E402
 
 ensure_utils_in_path()
 
 # Import from centralized utilities
-from utils.file_utils import safe_write_text
+from utils.file_utils import safe_write_text  # noqa: E402
 
 # Import shared file classes
 try:
-    from .file_utils import DataReader, DataWriter, FileFormatDetector
+    from .file_utils import DataReader, DataWriter, FileFormatDetector  # noqa: E402
 except ImportError:
-    from file_utils import DataReader, DataWriter, FileFormatDetector  # type: ignore
+    from file_utils import (  # type: ignore  # noqa: E402
+        DataReader,
+        DataWriter,
+        FileFormatDetector,
+    )
 
-from Data_Processor_r0 import CSVProcessorApp as OriginalCSVProcessorApp
+from Data_Processor_r0 import CSVProcessorApp as OriginalCSVProcessorApp  # noqa: E402
 
-# Import folder tool functionality
-try:
-    FOLDER_TOOL_AVAILABLE = True
-except ImportError:
-    FOLDER_TOOL_AVAILABLE = False
-    print("Warning: Folder tool not available. Folder Tool tab will be disabled.")
+# Folder tool availability flag
+FOLDER_TOOL_AVAILABLE = True
+
+logger = logging.getLogger(__name__)
 
 # =============================================================================
 # COMPILER CONVERTER CLASSES
@@ -676,7 +678,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
                         DataWriter.write_file(df, output_path, output_format)
                         self._log_conversion_message(
-                            f"Converted {Path(file_path).name}" "-> {output_filename}"
+                            f"Converted {Path(file_path).name}-> {{output_filename}}"
                         )
 
                         processed_files += 1
@@ -1443,7 +1445,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         shutil.copy2(source_path, final_dest_path)
                     copied_count += 1
                 except Exception as e:
-                    print(f"Error copying '{Path(source_path).name}': {e}")
+                    logger.error(f"Error copying '{Path(source_path).name}': {e}")
 
                 processed_files += 1
                 if processed_files % 10 == 0:  # Update progress every 10 files
@@ -1528,7 +1530,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         shutil.copy2(source_path, final_dest_path)
                     copied_count += 1
                 except Exception as e:
-                    print(f"Error copying '{file}': {e}")
+                    logger.error(f"Error copying '{file}': {e}")
 
                 processed_files += 1
                 if processed_files % 10 == 0:
@@ -1623,7 +1625,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         shutil.copy2(source_path, dest_path)
                     copied_count += 1
                 except Exception as e:
-                    print(f"Error copying '{file}': {e}")
+                    logger.error(f"Error copying '{file}': {e}")
 
                 processed_files += 1
                 if processed_files % 10 == 0:
