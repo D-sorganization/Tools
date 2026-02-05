@@ -14,7 +14,9 @@ from PyQt6.QtWidgets import (
     QFormLayout,
     QHBoxLayout,
     QLabel,
+    QLineEdit,
     QListWidget,
+    QListWidgetItem,
     QProgressBar,
     QPushButton,
     QSpinBox,
@@ -32,12 +34,13 @@ logger = logging.getLogger(__name__)
 
 
 class SignalListWidget(QWidget):
-    """Widget for displaying and selecting signals."""
+    """Widget for displaying and selecting signals with search functionality."""
 
     selectionChanged = pyqtSignal(list)
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
+        self._all_signals: list[str] = []
         self._init_ui()
 
     def _init_ui(self) -> None:
@@ -54,6 +57,13 @@ class SignalListWidget(QWidget):
         header_layout.addWidget(self.count_label)
         header_layout.addStretch()
         layout.addLayout(header_layout)
+
+        # Search field
+        self.search_edit = QLineEdit()
+        self.search_edit.setPlaceholderText("Search signals... (Ctrl+F)")
+        self.search_edit.setClearButtonEnabled(True)
+        self.search_edit.textChanged.connect(self._filter_signals)
+        layout.addWidget(self.search_edit)
 
         # List widget
         self.list_widget = QListWidget()
@@ -76,14 +86,44 @@ class SignalListWidget(QWidget):
 
     def set_signals(self, signals: list[str]) -> None:
         """Set the list of available signals."""
+        self._all_signals = signals.copy()
+        self._populate_list(signals)
+        self.count_label.setText(f"({len(signals)})")
+        self.search_edit.clear()
+
+    def _populate_list(self, signals: list[str]) -> None:
+        """Populate list widget with signals."""
         self.list_widget.clear()
         for signal in signals:
             self.list_widget.addItem(signal)
-        self.count_label.setText(f"({len(signals)})")
+
+    def _filter_signals(self, search_text: str) -> None:
+        """Filter signals based on search text."""
+        search_lower = search_text.lower().strip()
+        if not search_lower:
+            filtered = self._all_signals
+        else:
+            filtered = [s for s in self._all_signals if search_lower in s.lower()]
+
+        self._populate_list(filtered)
+        visible_count = len(filtered)
+        total_count = len(self._all_signals)
+        if search_lower:
+            self.count_label.setText(f"({visible_count}/{total_count})")
+        else:
+            self.count_label.setText(f"({total_count})")
 
     def get_selected_signals(self) -> list[str]:
         """Get currently selected signals."""
         return [item.text() for item in self.list_widget.selectedItems()]
+
+    def select_signals(self, signals: list[str]) -> None:
+        """Select specific signals by name."""
+        self.list_widget.clearSelection()
+        for i in range(self.list_widget.count()):
+            item = self.list_widget.item(i)
+            if item and item.text() in signals:
+                item.setSelected(True)
 
     def _select_all(self) -> None:
         self.list_widget.selectAll()
@@ -93,6 +133,11 @@ class SignalListWidget(QWidget):
 
     def _on_selection_changed(self) -> None:
         self.selectionChanged.emit(self.get_selected_signals())
+
+    def focus_search(self) -> None:
+        """Focus the search field."""
+        self.search_edit.setFocus()
+        self.search_edit.selectAll()
 
 
 class FilterConfigWidget(QWidget):

@@ -45,6 +45,18 @@
             "path": "src/function_generator/launch_web.py",
             "type": "python",
             "desc": "Waveform Generator - React Web Application"
+        },
+        {
+            "name": "Polynomial Generator",
+            "path": "src/shared/python/signal_toolkit/polynomial_generator.py",
+            "type": "python",
+            "desc": "Interactive Click-to-Fit Polynomial Curve Generator"
+        },
+        {
+            "name": "Signal Toolkit Widget",
+            "path": "src/shared/python/signal_toolkit/widget.py",
+            "type": "python",
+            "desc": "Full-featured Signal Analysis & Visualization GUI"
         }
     ],
     "Scientific Modeling": [
@@ -59,6 +71,30 @@
             "path": "src/scientific_modeling/rrt_path_planner/matlab/src/gui/starWarsPathPlannerGUI.m",
             "type": "matlab",
             "desc": "Rapidly-exploring Random Tree (RRT) Navigator (MATLAB)"
+        },
+        {
+            "name": "ODE Solver (PyQt6)",
+            "path": "src/ode_solver/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Differential Equation Solver - Desktop Application"
+        },
+        {
+            "name": "Thermal Profile Predictor (PyQt6)",
+            "path": "src/thermal_profile_predictor/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Temperature Distribution Analysis - Desktop Application"
+        },
+        {
+            "name": "Multi-Parameter Analysis (PyQt6)",
+            "path": "src/multi_param_analysis/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Parameter Sweep & Sensitivity Analysis - Desktop Application"
+        },
+        {
+            "name": "Optimizer GUI (PyQt6)",
+            "path": "src/optimizer_gui/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Optimization Interface - Desktop Application"
         }
     ],
     "Process Simulation": [
@@ -97,6 +133,12 @@
             "path": "src/syngas_compression/launch_web.py",
             "type": "python",
             "desc": "Multi-stage Compression Analysis - React Web Application"
+        },
+        {
+            "name": "Syngas Water Calculator (PyQt6)",
+            "path": "src/syngas_water_calculator/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Syngas Water Content Analysis - Desktop Application"
         },
         {
             "name": "Pressure Drop Calculator (PyQt6)",
@@ -157,6 +199,82 @@
             "path": "src/flare_calculator/launch_web.py",
             "type": "python",
             "desc": "Flare Sizing & Safety Zone Analysis - React Web Application"
+        },
+        {
+            "name": "Baghouse Calculator (PyQt6)",
+            "path": "src/baghouse_calculator/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Baghouse Filter Sizing & Design - Desktop Application"
+        },
+        {
+            "name": "Baghouse Calculator (Web)",
+            "path": "src/baghouse_calculator/launch_web.py",
+            "type": "python",
+            "desc": "Baghouse Filter Sizing & Design - React Web Application"
+        },
+        {
+            "name": "PSA Package (PyQt6)",
+            "path": "src/psa_package/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Pressure Swing Adsorption Design - Desktop Application"
+        },
+        {
+            "name": "PSA Package (Web)",
+            "path": "src/psa_package/launch_web.py",
+            "type": "python",
+            "desc": "Pressure Swing Adsorption Design - React Web Application"
+        },
+        {
+            "name": "Steam Engine Calculator (PyQt6)",
+            "path": "src/steam_engine_calculator/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Steam Engine Performance Analysis - Desktop Application"
+        },
+        {
+            "name": "Flow Rate Converter (PyQt6)",
+            "path": "src/flow_rate_converter/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Gas/Liquid Flow Rate Unit Conversion - Desktop Application"
+        }
+    ],
+    "Financial Tools": [
+        {
+            "name": "Financial Calculator (PyQt6)",
+            "path": "src/financial_calculator/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Financial Analysis & Calculations - Desktop Application"
+        },
+        {
+            "name": "Financial Calculator (Web)",
+            "path": "src/financial_calculator/launch_web.py",
+            "type": "python",
+            "desc": "Financial Analysis & Calculations - React Web Application"
+        }
+    ],
+    "Engineering Tools": [
+        {
+            "name": "Inertia Calculator (PyQt6)",
+            "path": "src/inertia_calculator/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Mass & Inertia Tensor Calculations - Desktop Application"
+        },
+        {
+            "name": "URDF Builder (PyQt6)",
+            "path": "src/urdf_builder_gui/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Robot Model URDF Editor - Desktop Application"
+        },
+        {
+            "name": "Humanoid Builder (PyQt6)",
+            "path": "src/humanoid_builder_gui/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Humanoid Character Model Generator - Desktop Application"
+        },
+        {
+            "name": "C3D Viewer (PyQt6)",
+            "path": "src/c3d_viewer/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Motion Capture C3D File Viewer - Desktop Application"
         }
     ],
     "Web Applications": [
@@ -176,15 +294,21 @@
     "Development Tools": [
         {
             "name": "Folder Packer Pro",
-            "path": "tools/folder_tools/folder_packer_pro/folder_packer_pro.py",
+            "path": "src/tools/folder_tools/folder_packer_pro/folder_packer_pro.py",
             "type": "python",
             "desc": "Project Archiving and Distribution Tool"
         },
         {
             "name": "Folder Tool (Utility)",
-            "path": "tools/folder_tools/folder_tool/Folders_Tool_r0.py",
+            "path": "src/tools/folder_tools/folder_tool/launch_folder_tool.py",
             "type": "python",
             "desc": "Directory Management Utility"
+        },
+        {
+            "name": "PDF Renamer",
+            "path": "src/document_processing/pdf_renamer/launch_gui.py",
+            "type": "python",
+            "desc": "Intelligent PDF File Renaming Tool"
         }
     ]
 }

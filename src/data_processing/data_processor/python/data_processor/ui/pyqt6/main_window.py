@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -357,6 +358,21 @@ class DataProcessorMainWindow(QMainWindow):
 
         file_menu.addSeparator()
 
+        # Signal Set submenu
+        signal_set_menu = file_menu.addMenu("Signal &Set")
+
+        load_signal_set_action = QAction("&Load Signal Set...", self)
+        load_signal_set_action.setShortcut(QKeySequence("Ctrl+Shift+L"))
+        load_signal_set_action.triggered.connect(self._load_signal_set)
+        signal_set_menu.addAction(load_signal_set_action)
+
+        save_signal_set_action = QAction("&Save Signal Set...", self)
+        save_signal_set_action.setShortcut(QKeySequence("Ctrl+Shift+S"))
+        save_signal_set_action.triggered.connect(self._save_signal_set)
+        signal_set_menu.addAction(save_signal_set_action)
+
+        file_menu.addSeparator()
+
         exit_action = QAction("E&xit", self)
         exit_action.setShortcut(QKeySequence.StandardKey.Quit)
         exit_action.triggered.connect(self.close)
@@ -600,6 +616,7 @@ class DataProcessorMainWindow(QMainWindow):
     def _setup_shortcuts(self) -> None:
         """Setup keyboard shortcuts."""
         QShortcut(QKeySequence("Ctrl+L"), self, self._load_data)
+        QShortcut(QKeySequence("Ctrl+F"), self, self._focus_search)
 
     def _restore_state(self) -> None:
         """Restore window state from settings."""
@@ -918,9 +935,111 @@ class DataProcessorMainWindow(QMainWindow):
             "- Multiple filter types\n"
             "- Integration and differentiation\n"
             "- Custom formulas\n"
-            "- Multiple export formats\n\n"
+            "- Multiple export formats\n"
+            "- Load/Save signal sets\n"
+            "- Signal search\n\n"
             "Built with PyQt6",
         )
+
+    def _focus_search(self) -> None:
+        """Focus the signal search field."""
+        self.signal_list.focus_search()
+
+    def _load_signal_set(self) -> None:
+        """Load a signal set from JSON file."""
+        filename, _ = QFileDialog.getOpenFileName(
+            self,
+            "Load Signal Set",
+            "",
+            "Signal Set Files (*.json);;All Files (*)",
+        )
+        if not filename:
+            return
+
+        try:
+            with open(filename, encoding="utf-8") as f:
+                signal_set = json.load(f)
+
+            if not isinstance(signal_set, dict):
+                raise ValueError("Invalid signal set format")
+
+            selected_signals = signal_set.get("selected_signals", [])
+            if not isinstance(selected_signals, list):
+                raise ValueError("Invalid selected_signals format")
+
+            # Select the signals
+            self.signal_list.select_signals(selected_signals)
+            self.status_bar.set_status(
+                f"Loaded signal set: {len(selected_signals)} signals"
+            )
+
+            QMessageBox.information(
+                self,
+                "Success",
+                f"Loaded signal set from:\n{filename}\n\n"
+                f"Selected {len(selected_signals)} signals",
+            )
+
+        except json.JSONDecodeError as e:
+            logger.error(f"JSON decode error: {e}")
+            QMessageBox.critical(
+                self, "Error", f"Invalid JSON file:\n{e}"
+            )
+        except Exception as e:
+            logger.error(f"Load signal set error: {e}", exc_info=True)
+            QMessageBox.critical(
+                self, "Error", f"Failed to load signal set:\n{e}"
+            )
+
+    def _save_signal_set(self) -> None:
+        """Save current signal selection to JSON file."""
+        selected_signals = self.signal_list.get_selected_signals()
+
+        if not selected_signals:
+            QMessageBox.warning(
+                self, "No Selection", "Please select signals to save."
+            )
+            return
+
+        filename, _ = QFileDialog.getSaveFileName(
+            self,
+            "Save Signal Set",
+            "",
+            "Signal Set Files (*.json);;All Files (*)",
+        )
+        if not filename:
+            return
+
+        # Ensure .json extension
+        if not filename.endswith(".json"):
+            filename += ".json"
+
+        try:
+            signal_set = {
+                "selected_signals": selected_signals,
+                "total_available": len(self.available_signals),
+                "source_files": [str(f) for f in self.selected_files],
+            }
+
+            with open(filename, "w", encoding="utf-8") as f:
+                json.dump(signal_set, f, indent=2)
+
+            self.status_bar.set_status(
+                f"Saved signal set: {len(selected_signals)} signals"
+            )
+
+            QMessageBox.information(
+                self,
+                "Success",
+                f"Signal set saved to:\n{filename}\n\n"
+                f"Saved {len(selected_signals)} signals",
+            )
+
+        except Exception as e:
+            logger.error(f"Save signal set error: {e}", exc_info=True)
+            QMessageBox.critical(
+                self, "Error", f"Failed to save signal set:\n{e}"
+            )
 
 
 def main() -> None:

@@ -556,6 +556,12 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
             f_lambdified = sympy.lambdify(x, expr, "numpy")
             y_vals = f_lambdified(x_vals)
 
+            # Ensure y_vals is an array (handles constant expressions)
+            y_vals = np.atleast_1d(y_vals)
+            if y_vals.shape[0] == 1:
+                # Constant expression - broadcast to match x_vals
+                y_vals = np.full_like(x_vals, y_vals[0])
+
             # Check for complex results or errors
             if np.iscomplexobj(y_vals):
                 raise ValueError("Equation resulted in complex numbers")

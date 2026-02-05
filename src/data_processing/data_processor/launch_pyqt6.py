@@ -57,6 +57,12 @@ def main() -> int:
     if src_path.exists():
         sys.path.insert(0, str(src_path))
 
+    # Also add the shared utils path (for utils.path_helpers, etc.)
+    tools_root = Path(__file__).parent.parent.parent.parent
+    utils_path = tools_root / "src" / "python" / "src"
+    if utils_path.exists():
+        sys.path.insert(0, str(utils_path))
+
     try:
         from data_processor.ui.pyqt6.main_window import main as gui_main
 
