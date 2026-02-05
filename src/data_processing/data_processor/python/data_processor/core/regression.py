@@ -18,12 +18,11 @@ import logging
 from dataclasses import dataclass, field
 from enum import Enum
 from itertools import combinations
-from typing import Any, Callable
+from typing import Callable
 
 import numpy as np
 import pandas as pd
 from scipy import stats
-from scipy.optimize import minimize
 
 logger = logging.getLogger(__name__)
 
@@ -194,7 +193,9 @@ class MultivariateRegressor:
         """
         # Select predictors
         if predictors is None:
-            predictors = [c for c in df.select_dtypes(include=[np.number]).columns if c != target]
+            predictors = [
+                c for c in df.select_dtypes(include=[np.number]).columns if c != target
+            ]
 
         if not predictors:
             raise ValueError("No predictors available")
@@ -307,11 +308,13 @@ class MultivariateRegressor:
         pred_data = {}
 
         # Find original predictor names (without polynomial/interaction suffixes)
-        original_predictors = list(set(
-            name.split("^")[0].split("×")[0]
-            for name in result.feature_names
-            if name != "intercept"
-        ))
+        original_predictors = list(
+            set(
+                name.split("^")[0].split("×")[0]
+                for name in result.feature_names
+                if name != "intercept"
+            )
+        )
 
         for var in original_predictors:
             if var == x_var:
@@ -331,7 +334,10 @@ class MultivariateRegressor:
         X_features, _ = self._build_features(X_raw, original_predictors)
 
         # Predict
-        z_pred = X_features @ np.array([c.estimate for c in result.coefficients]) + result.intercept
+        z_pred = (
+            X_features @ np.array([c.estimate for c in result.coefficients])
+            + result.intercept
+        )
         z_grid = z_pred.reshape(x_grid.shape)
 
         return x_grid, y_grid, z_grid
@@ -351,7 +357,7 @@ class MultivariateRegressor:
         if degree > 1:
             for d in range(2, degree + 1):
                 for i, name in enumerate(names):
-                    features.append(X[:, i:i+1] ** d)
+                    features.append(X[:, i : i + 1] ** d)
                     feature_names.append(f"{name}^{d}")
 
         # Interaction terms
@@ -681,7 +687,7 @@ class MultivariateRegressor:
         beta, intercept = self._fit_ols(X, y)
         y_pred = X @ beta + intercept
         residuals = y - y_pred
-        ss_res = np.sum(residuals ** 2)
+        ss_res = np.sum(residuals**2)
         mse = ss_res / n
 
         if criterion == "aic":
@@ -706,13 +712,15 @@ class MultivariateRegressor:
         n, p = X.shape
 
         # Sum of squares
-        ss_res = np.sum(residuals ** 2)
+        ss_res = np.sum(residuals**2)
         ss_tot = np.sum((y - np.mean(y)) ** 2)
         ss_reg = ss_tot - ss_res
 
         # R-squared and adjusted R-squared
         r_squared = 1 - ss_res / ss_tot if ss_tot > 0 else 0
-        adj_r_squared = 1 - (1 - r_squared) * (n - 1) / (n - p - 1) if n > p + 1 else r_squared
+        adj_r_squared = (
+            1 - (1 - r_squared) * (n - 1) / (n - p - 1) if n > p + 1 else r_squared
+        )
 
         # RMSE and MAE
         rmse = np.sqrt(ss_res / n)
@@ -734,7 +742,7 @@ class MultivariateRegressor:
 
         # Confidence intervals
         alpha = 1 - self.config.confidence_level
-        t_crit = stats.t.ppf(1 - alpha/2, n - p - 1) if n > p + 1 else 1.96
+        t_crit = stats.t.ppf(1 - alpha / 2, n - p - 1) if n > p + 1 else 1.96
 
         # Calculate VIF
         vifs = self._calculate_vif(X)
@@ -745,16 +753,18 @@ class MultivariateRegressor:
             t_stat = coeffs[i] / coef_se[i] if coef_se[i] > 0 else 0
             p_val = 2 * (1 - stats.t.cdf(abs(t_stat), n - p - 1)) if n > p + 1 else 1
 
-            coef_info.append(CoefficientInfo(
-                name=name,
-                estimate=float(coeffs[i]),
-                std_error=float(coef_se[i]),
-                t_statistic=float(t_stat),
-                p_value=float(p_val),
-                ci_lower=float(coeffs[i] - t_crit * coef_se[i]),
-                ci_upper=float(coeffs[i] + t_crit * coef_se[i]),
-                vif=float(vifs[i]) if i < len(vifs) else 1.0,
-            ))
+            coef_info.append(
+                CoefficientInfo(
+                    name=name,
+                    estimate=float(coeffs[i]),
+                    std_error=float(coef_se[i]),
+                    t_statistic=float(t_stat),
+                    p_value=float(p_val),
+                    ci_lower=float(coeffs[i] - t_crit * coef_se[i]),
+                    ci_upper=float(coeffs[i] + t_crit * coef_se[i]),
+                    vif=float(vifs[i]) if i < len(vifs) else 1.0,
+                )
+            )
 
         # F-statistic
         df_model = p
@@ -834,13 +844,17 @@ class MultivariateRegressor:
         # Hat matrix for leverage
         X_with_intercept = np.column_stack([np.ones(n), X])
         try:
-            H = X_with_intercept @ np.linalg.inv(X_with_intercept.T @ X_with_intercept) @ X_with_intercept.T
+            H = (
+                X_with_intercept
+                @ np.linalg.inv(X_with_intercept.T @ X_with_intercept)
+                @ X_with_intercept.T
+            )
             leverage = np.diag(H)
         except np.linalg.LinAlgError:
             leverage = np.zeros(n)
 
         # MSE
-        mse = np.sum(residuals ** 2) / (n - p - 1) if n > p + 1 else np.var(residuals)
+        mse = np.sum(residuals**2) / (n - p - 1) if n > p + 1 else np.var(residuals)
 
         # Standardized residuals
         std_residuals = residuals / np.sqrt(mse) if mse > 0 else residuals
@@ -852,15 +866,19 @@ class MultivariateRegressor:
 
         # Cook's distance
         with np.errstate(divide="ignore", invalid="ignore"):
-            cooks_d = (std_residuals ** 2 / (p + 1)) * (leverage / (1 - leverage))
+            cooks_d = (std_residuals**2 / (p + 1)) * (leverage / (1 - leverage))
             cooks_d = np.nan_to_num(cooks_d)
 
         # Durbin-Watson statistic
         diff_residuals = np.diff(residuals)
-        durbin_watson = np.sum(diff_residuals ** 2) / np.sum(residuals ** 2) if np.sum(residuals ** 2) > 0 else 2
+        durbin_watson = (
+            np.sum(diff_residuals**2) / np.sum(residuals**2)
+            if np.sum(residuals**2) > 0
+            else 2
+        )
 
         # Breusch-Pagan test for heteroscedasticity
-        residuals_sq = residuals ** 2
+        residuals_sq = residuals**2
         beta_bp, intercept_bp = self._fit_ols(X, residuals_sq)
         fitted_bp = X @ beta_bp + intercept_bp
         ss_res_bp = np.sum((residuals_sq - fitted_bp) ** 2)
@@ -874,7 +892,9 @@ class MultivariateRegressor:
             shapiro_stat, shapiro_p = stats.shapiro(residuals)
         else:
             # Use subset for large samples
-            shapiro_stat, shapiro_p = stats.shapiro(np.random.choice(residuals, 5000, replace=False))
+            shapiro_stat, shapiro_p = stats.shapiro(
+                np.random.choice(residuals, 5000, replace=False)
+            )
 
         # Identify problematic points
         leverage_threshold = 2 * (p + 1) / n
@@ -884,7 +904,9 @@ class MultivariateRegressor:
         influential = [i for i, c in enumerate(cooks_d) if c > cooks_threshold]
 
         outlier_threshold = 3
-        outliers = [i for i, r in enumerate(student_residuals) if abs(r) > outlier_threshold]
+        outliers = [
+            i for i, r in enumerate(student_residuals) if abs(r) > outlier_threshold
+        ]
 
         return RegressionDiagnostics(
             residuals=residuals,
@@ -931,6 +953,7 @@ class MultivariateRegressor:
         original_predictors: list[str],
     ) -> Callable[[np.ndarray], np.ndarray]:
         """Create prediction function for the model."""
+
         def predict(X: np.ndarray) -> np.ndarray:
             # Build features if needed
             X_features, _ = self._build_features(X, original_predictors)
@@ -960,18 +983,24 @@ def format_regression_report(result: RegressionResult) -> str:
     lines.append("")
 
     # Overall model test
-    lines.append(f"F-statistic: {result.f_statistic:.4f} (df={result.df_model}, {result.df_residual})")
+    lines.append(
+        f"F-statistic: {result.f_statistic:.4f} (df={result.df_model}, {result.df_residual})"
+    )
     lines.append(f"p-value: {result.f_p_value:.4e}")
     lines.append("")
 
     # Coefficients table
     lines.append("Coefficients:")
     lines.append("-" * 70)
-    lines.append(f"{'Variable':<20} {'Estimate':>12} {'Std.Err':>10} {'t-stat':>10} {'p-value':>10}")
+    lines.append(
+        f"{'Variable':<20} {'Estimate':>12} {'Std.Err':>10} {'t-stat':>10} {'p-value':>10}"
+    )
     lines.append("-" * 70)
 
     # Intercept
-    lines.append(f"{'(Intercept)':<20} {result.intercept:>12.4f} {result.intercept_se:>10.4f}")
+    lines.append(
+        f"{'(Intercept)':<20} {result.intercept:>12.4f} {result.intercept_se:>10.4f}"
+    )
 
     # Coefficients
     for coef in result.coefficients:
@@ -988,7 +1017,9 @@ def format_regression_report(result: RegressionResult) -> str:
     if result.variable_importance:
         lines.append("")
         lines.append("Variable Importance (standardized):")
-        sorted_imp = sorted(result.variable_importance.items(), key=lambda x: x[1], reverse=True)
+        sorted_imp = sorted(
+            result.variable_importance.items(), key=lambda x: x[1], reverse=True
+        )
         for name, imp in sorted_imp[:10]:
             lines.append(f"  {name}: {imp:.4f}")
 
@@ -998,8 +1029,12 @@ def format_regression_report(result: RegressionResult) -> str:
         lines.append("")
         lines.append("Diagnostics:")
         lines.append(f"  Durbin-Watson:     {diag.durbin_watson:.4f}")
-        lines.append(f"  Breusch-Pagan:     χ² = {diag.breusch_pagan_stat:.4f}, p = {diag.breusch_pagan_p:.4f}")
-        lines.append(f"  Shapiro-Wilk:      W = {diag.shapiro_stat:.4f}, p = {diag.shapiro_p:.4f}")
+        lines.append(
+            f"  Breusch-Pagan:     χ² = {diag.breusch_pagan_stat:.4f}, p = {diag.breusch_pagan_p:.4f}"
+        )
+        lines.append(
+            f"  Shapiro-Wilk:      W = {diag.shapiro_stat:.4f}, p = {diag.shapiro_p:.4f}"
+        )
 
         if diag.high_leverage_points:
             lines.append(f"  High leverage points: {len(diag.high_leverage_points)}")

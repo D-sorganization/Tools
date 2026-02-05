@@ -14,15 +14,11 @@ Following TDD principles with comprehensive edge case coverage.
 
 from __future__ import annotations
 
-import json
-import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pandas as pd
 import pytest
-
 
 # =============================================================================
 # FIXTURES
@@ -34,12 +30,16 @@ def sample_df() -> pd.DataFrame:
     """Create a sample DataFrame for testing."""
     np.random.seed(42)
     n = 100
-    return pd.DataFrame({
-        "time": pd.date_range("2024-01-01", periods=n, freq="s"),
-        "signal_a": np.sin(np.linspace(0, 4 * np.pi, n)) + np.random.normal(0, 0.1, n),
-        "signal_b": np.cos(np.linspace(0, 4 * np.pi, n)) + np.random.normal(0, 0.1, n),
-        "signal_c": np.linspace(0, 10, n) + np.random.normal(0, 0.5, n),
-    })
+    return pd.DataFrame(
+        {
+            "time": pd.date_range("2024-01-01", periods=n, freq="s"),
+            "signal_a": np.sin(np.linspace(0, 4 * np.pi, n))
+            + np.random.normal(0, 0.1, n),
+            "signal_b": np.cos(np.linspace(0, 4 * np.pi, n))
+            + np.random.normal(0, 0.1, n),
+            "signal_c": np.linspace(0, 10, n) + np.random.normal(0, 0.5, n),
+        }
+    )
 
 
 @pytest.fixture
@@ -53,12 +53,14 @@ def multivariate_df() -> pd.DataFrame:
     noise = np.random.normal(0, 0.5, n)
     y = 2 * x1 + 3 * x2 - 1.5 * x3 + 5 + noise
 
-    return pd.DataFrame({
-        "x1": x1,
-        "x2": x2,
-        "x3": x3,
-        "y": y,
-    })
+    return pd.DataFrame(
+        {
+            "x1": x1,
+            "x2": x2,
+            "x3": x3,
+            "y": y,
+        }
+    )
 
 
 @pytest.fixture
@@ -80,10 +82,12 @@ def anova_df() -> pd.DataFrame:
     groups.extend(["C"] * 30)
     values.extend(np.random.normal(15, 2, 30))
 
-    return pd.DataFrame({
-        "group": groups,
-        "value": values,
-    })
+    return pd.DataFrame(
+        {
+            "group": groups,
+            "value": values,
+        }
+    )
 
 
 @pytest.fixture
@@ -442,7 +446,9 @@ class TestANOVA:
                 effect_b = 3 if factor_b == "treatment" else 0
                 for _ in range(20):
                     value = 10 + effect_a + effect_b + np.random.normal(0, 2)
-                    data.append({"factor_a": factor_a, "factor_b": factor_b, "value": value})
+                    data.append(
+                        {"factor_a": factor_a, "factor_b": factor_b, "value": value}
+                    )
 
         df = pd.DataFrame(data)
 
@@ -512,7 +518,10 @@ class TestRegression:
 
     def test_regression_diagnostics(self, multivariate_df: pd.DataFrame) -> None:
         """Test diagnostic calculations."""
-        from data_processor.core.regression import MultivariateRegressor, RegressionConfig
+        from data_processor.core.regression import (
+            MultivariateRegressor,
+            RegressionConfig,
+        )
 
         config = RegressionConfig(compute_diagnostics=True)
         regressor = MultivariateRegressor(config)
@@ -532,9 +541,7 @@ class TestRegression:
             RegularizationType,
         )
 
-        config = RegressionConfig(
-            regularization=RegularizationType.RIDGE, alpha=0.1
-        )
+        config = RegressionConfig(regularization=RegularizationType.RIDGE, alpha=0.1)
         regressor = MultivariateRegressor(config)
         result = regressor.fit(
             multivariate_df, target="y", predictors=["x1", "x2", "x3"]
@@ -699,9 +706,9 @@ class TestScriptGenerator:
     def test_python_script_generation(self, temp_dir: Path) -> None:
         """Test Python script generation."""
         from data_processor.core.script_generator import (
+            OperationType,
             ProcessingPipeline,
             ProcessingStep,
-            OperationType,
             ScriptGenerator,
         )
 
@@ -729,9 +736,9 @@ class TestScriptGenerator:
     def test_pipeline_save_and_load(self, temp_dir: Path) -> None:
         """Test pipeline configuration save/load."""
         from data_processor.core.script_generator import (
+            OperationType,
             ProcessingPipeline,
             ProcessingStep,
-            OperationType,
             ScriptGenerator,
         )
 

@@ -23,6 +23,16 @@ Modules:
     plot_zoom: Mouse wheel zoom for plots
 """
 
+from data_processor.core.anova import (
+    ANOVAAnalyzer,
+    ANOVATable,
+    OneWayANOVAResult,
+    PostHocComparison,
+    PostHocMethod,
+    RepeatedMeasuresResult,
+    TwoWayANOVAResult,
+    format_anova_report,
+)
 from data_processor.core.config_manager import ConfigManager
 from data_processor.core.dat_importer import (
     DBF_AVAILABLE,
@@ -34,25 +44,6 @@ from data_processor.core.dat_importer import (
     read_dat_file,
     read_dbf_tags,
 )
-from data_processor.core.dataset_naming import (
-    generate_dataset_name,
-    generate_unique_name,
-    sanitize_dataset_name,
-    validate_dataset_name,
-)
-from data_processor.core.plot_config_manager import PlotConfigManager
-from data_processor.core.signal_list_manager import SignalListManager
-from data_processor.core.signal_processing import (
-    DifferentiationMethod,
-    IntegrationMethod,
-    TrendlineType,
-    apply_custom_variable,
-    calculate_trendline,
-    differentiate_signals,
-    integrate_signals,
-    resample_data,
-    trim_time_range,
-)
 
 # New analysis modules
 from data_processor.core.dataset_manager import (
@@ -61,50 +52,11 @@ from data_processor.core.dataset_manager import (
     DatasetMetadata,
     DatasetVersion,
 )
-from data_processor.core.undo_redo import (
-    ColumnOperationCommand,
-    Command,
-    CompositeCommand,
-    FilterCommand,
-    LambdaCommand,
-    RowFilterCommand,
-    UndoRedoManager,
-)
-from data_processor.core.surface_plot import (
-    InterpolationMethod,
-    SmoothingMethod,
-    SurfacePlotConfig,
-    SurfacePlotEngine,
-    SurfacePlotResult,
-    plot_surface_matplotlib,
-)
-from data_processor.core.pca_analysis import (
-    PCAAnalyzer,
-    PCAComponent,
-    PCAConfig,
-    PCAResult,
-    create_loading_plot,
-    create_scree_plot,
-)
-from data_processor.core.anova import (
-    ANOVAAnalyzer,
-    ANOVATable,
-    OneWayANOVAResult,
-    PostHocComparison,
-    PostHocMethod,
-    RepeatedMeasuresResult,
-    TwoWayANOVAResult,
-    format_anova_report,
-)
-from data_processor.core.regression import (
-    CoefficientInfo,
-    MultivariateRegressor,
-    RegularizationType,
-    RegressionConfig,
-    RegressionDiagnostics,
-    RegressionResult,
-    SelectionMethod,
-    format_regression_report,
+from data_processor.core.dataset_naming import (
+    generate_dataset_name,
+    generate_unique_name,
+    sanitize_dataset_name,
+    validate_dataset_name,
 )
 from data_processor.core.neural_network import (
     ActivationFunction,
@@ -118,6 +70,32 @@ from data_processor.core.neural_network import (
     Optimizer,
     TrainingResult,
 )
+from data_processor.core.pca_analysis import (
+    PCAAnalyzer,
+    PCAComponent,
+    PCAConfig,
+    PCAResult,
+    create_loading_plot,
+    create_scree_plot,
+)
+from data_processor.core.plot_config_manager import PlotConfigManager
+from data_processor.core.plot_zoom import (
+    InteractivePlotManager,
+    MouseWheelZoom,
+    ZoomConfig,
+    enable_wheel_zoom,
+    enable_wheel_zoom_all_figures,
+)
+from data_processor.core.regression import (
+    CoefficientInfo,
+    MultivariateRegressor,
+    RegressionConfig,
+    RegressionDiagnostics,
+    RegressionResult,
+    RegularizationType,
+    SelectionMethod,
+    format_regression_report,
+)
 from data_processor.core.script_generator import (
     OperationType,
     PipelineExecutor,
@@ -126,12 +104,34 @@ from data_processor.core.script_generator import (
     ProcessingStep,
     ScriptGenerator,
 )
-from data_processor.core.plot_zoom import (
-    InteractivePlotManager,
-    MouseWheelZoom,
-    ZoomConfig,
-    enable_wheel_zoom,
-    enable_wheel_zoom_all_figures,
+from data_processor.core.signal_list_manager import SignalListManager
+from data_processor.core.signal_processing import (
+    DifferentiationMethod,
+    IntegrationMethod,
+    TrendlineType,
+    apply_custom_variable,
+    calculate_trendline,
+    differentiate_signals,
+    integrate_signals,
+    resample_data,
+    trim_time_range,
+)
+from data_processor.core.surface_plot import (
+    InterpolationMethod,
+    SmoothingMethod,
+    SurfacePlotConfig,
+    SurfacePlotEngine,
+    SurfacePlotResult,
+    plot_surface_matplotlib,
+)
+from data_processor.core.undo_redo import (
+    ColumnOperationCommand,
+    Command,
+    CompositeCommand,
+    FilterCommand,
+    LambdaCommand,
+    RowFilterCommand,
+    UndoRedoManager,
 )
 
 __all__ = [

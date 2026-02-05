@@ -35,23 +35,19 @@ class Command(ABC):
     @abstractmethod
     def name(self) -> str:
         """Human-readable name for the command."""
-        pass
 
     @property
     @abstractmethod
     def description(self) -> str:
         """Detailed description of what the command does."""
-        pass
 
     @abstractmethod
     def execute(self) -> Any:
         """Execute the command and return the result."""
-        pass
 
     @abstractmethod
     def undo(self) -> Any:
         """Reverse the command and return the previous state."""
-        pass
 
     def redo(self) -> Any:
         """Re-execute the command. Default implementation calls execute()."""

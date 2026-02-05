@@ -89,14 +89,16 @@ class ANOVATable:
 
     def to_dataframe(self) -> pd.DataFrame:
         """Convert to pandas DataFrame for display."""
-        return pd.DataFrame({
-            "Source": self.source,
-            "SS": self.sum_of_squares,
-            "df": self.df,
-            "MS": self.mean_square,
-            "F": self.f_statistic,
-            "p-value": self.p_value,
-        })
+        return pd.DataFrame(
+            {
+                "Source": self.source,
+                "SS": self.sum_of_squares,
+                "df": self.df,
+                "MS": self.mean_square,
+                "F": self.f_statistic,
+                "p-value": self.p_value,
+            }
+        )
 
 
 @dataclass
@@ -267,12 +269,10 @@ class ANOVAAnalyzer:
 
         # Sum of squares
         ss_between = sum(
-            len(arr) * (np.mean(arr) - grand_mean) ** 2
-            for arr in group_arrays.values()
+            len(arr) * (np.mean(arr) - grand_mean) ** 2 for arr in group_arrays.values()
         )
         ss_within = sum(
-            np.sum((arr - np.mean(arr)) ** 2)
-            for arr in group_arrays.values()
+            np.sum((arr - np.mean(arr)) ** 2) for arr in group_arrays.values()
         )
         ss_total = ss_between + ss_within
 
@@ -318,8 +318,12 @@ class ANOVAAnalyzer:
             )
 
         # Observed power
-        noncentrality = np.sqrt(n_total * eta_squared / (1 - eta_squared)) if eta_squared < 1 else 0
-        observed_power = self._calculate_power(f_stat, df_between, df_within, noncentrality)
+        noncentrality = (
+            np.sqrt(n_total * eta_squared / (1 - eta_squared)) if eta_squared < 1 else 0
+        )
+        observed_power = self._calculate_power(
+            f_stat, df_between, df_within, noncentrality
+        )
 
         return OneWayANOVAResult(
             f_statistic=f_stat,
@@ -377,7 +381,9 @@ class ANOVAAnalyzer:
 
         # Calculate cell means
         cell_means = data.groupby([factor_a, factor_b])[dependent_var].mean().unstack()
-        cell_counts = data.groupby([factor_a, factor_b])[dependent_var].count().unstack()
+        cell_counts = (
+            data.groupby([factor_a, factor_b])[dependent_var].count().unstack()
+        )
 
         # Marginal means
         marginal_a = data.groupby(factor_a)[dependent_var].mean().to_dict()
@@ -402,7 +408,9 @@ class ANOVAAnalyzer:
         ss_ab = 0
         for level_a in levels_a:
             for level_b in levels_b:
-                cell_data = data[(data[factor_a] == level_a) & (data[factor_b] == level_b)]
+                cell_data = data[
+                    (data[factor_a] == level_a) & (data[factor_b] == level_b)
+                ]
                 if len(cell_data) > 0:
                     cell_mean = cell_data[dependent_var].mean()
                     expected = marginal_a[level_a] + marginal_b[level_b] - grand_mean
@@ -460,7 +468,9 @@ class ANOVAAnalyzer:
             cell_data = {}
             for level_a in levels_a:
                 for level_b in levels_b:
-                    cell = data[(data[factor_a] == level_a) & (data[factor_b] == level_b)]
+                    cell = data[
+                        (data[factor_a] == level_a) & (data[factor_b] == level_b)
+                    ]
                     if len(cell) > 2:
                         cell_data[f"{level_a}_{level_b}"] = cell[dependent_var].values
             if cell_data:
@@ -550,7 +560,9 @@ class ANOVAAnalyzer:
 
         corrected_df_conditions_hf = hf_epsilon * df_conditions
         corrected_df_error_hf = hf_epsilon * df_error
-        p_hf = 1 - stats.f.cdf(f_stat, corrected_df_conditions_hf, corrected_df_error_hf)
+        p_hf = 1 - stats.f.cdf(
+            f_stat, corrected_df_conditions_hf, corrected_df_error_hf
+        )
 
         # Effect sizes
         eta_squared = ss_conditions / ss_total
@@ -606,36 +618,51 @@ class ANOVAAnalyzer:
                 if p < self.alpha:
                     normality_passed = False
 
-        results.append(AssumptionTestResult(
-            test_name="Normality (Shapiro-Wilk)",
-            statistic=np.nan,
-            p_value=np.nan,
-            passed=normality_passed,
-            message="All groups pass normality test" if normality_passed else "Some groups violate normality",
-            details=normality_details,
-        ))
+        results.append(
+            AssumptionTestResult(
+                test_name="Normality (Shapiro-Wilk)",
+                statistic=np.nan,
+                p_value=np.nan,
+                passed=normality_passed,
+                message=(
+                    "All groups pass normality test"
+                    if normality_passed
+                    else "Some groups violate normality"
+                ),
+                details=normality_details,
+            )
+        )
 
         # 2. Homogeneity of variance (Levene's test)
         group_arrays = list(groups.values())
         if all(len(arr) >= 2 for arr in group_arrays):
             levene_stat, levene_p = stats.levene(*group_arrays)
-            results.append(AssumptionTestResult(
-                test_name="Homogeneity of Variance (Levene's)",
-                statistic=levene_stat,
-                p_value=levene_p,
-                passed=levene_p >= self.alpha,
-                message="Variances are homogeneous" if levene_p >= self.alpha else "Variances are heterogeneous",
-            ))
+            results.append(
+                AssumptionTestResult(
+                    test_name="Homogeneity of Variance (Levene's)",
+                    statistic=levene_stat,
+                    p_value=levene_p,
+                    passed=levene_p >= self.alpha,
+                    message=(
+                        "Variances are homogeneous"
+                        if levene_p >= self.alpha
+                        else "Variances are heterogeneous"
+                    ),
+                )
+            )
 
         # 3. Sample size check
         min_size = min(len(arr) for arr in group_arrays)
-        results.append(AssumptionTestResult(
-            test_name="Sample Size",
-            statistic=min_size,
-            p_value=np.nan,
-            passed=min_size >= 20,
-            message=f"Minimum group size: {min_size}" + (" (adequate)" if min_size >= 20 else " (small, use caution)"),
-        ))
+        results.append(
+            AssumptionTestResult(
+                test_name="Sample Size",
+                statistic=min_size,
+                p_value=np.nan,
+                passed=min_size >= 20,
+                message=f"Minimum group size: {min_size}"
+                + (" (adequate)" if min_size >= 20 else " (small, use caution)"),
+            )
+        )
 
         return results
 
@@ -659,7 +686,7 @@ class ANOVAAnalyzer:
             n1, n2 = len(arr1), len(arr2)
 
             # Standard error
-            se = np.sqrt(ms_error * (1/n1 + 1/n2))
+            se = np.sqrt(ms_error * (1 / n1 + 1 / n2))
 
             # t-statistic
             t_stat = mean_diff / se
@@ -682,22 +709,24 @@ class ANOVAAnalyzer:
                 p_adj = min(1.0, p_raw * n_comparisons)
 
             # Confidence interval
-            t_crit = stats.t.ppf(1 - self.alpha/2, df_error)
+            t_crit = stats.t.ppf(1 - self.alpha / 2, df_error)
             ci_lower = mean_diff - t_crit * se
             ci_upper = mean_diff + t_crit * se
 
-            results.append(PostHocComparison(
-                group1=str(name1),
-                group2=str(name2),
-                mean_diff=mean_diff,
-                std_error=se,
-                t_statistic=t_stat,
-                p_value=p_raw,
-                p_adjusted=p_adj,
-                ci_lower=ci_lower,
-                ci_upper=ci_upper,
-                significant=p_adj < self.alpha,
-            ))
+            results.append(
+                PostHocComparison(
+                    group1=str(name1),
+                    group2=str(name2),
+                    mean_diff=mean_diff,
+                    std_error=se,
+                    t_statistic=t_stat,
+                    p_value=p_raw,
+                    p_adjusted=p_adj,
+                    ci_lower=ci_lower,
+                    ci_upper=ci_upper,
+                    significant=p_adj < self.alpha,
+                )
+            )
 
         return results
 
@@ -741,21 +770,23 @@ class ANOVAAnalyzer:
 
         # Chi-square approximation for p-value
         df = p * (p + 1) / 2 - 1
-        chi_sq = -(n - 1 - (2 * p ** 2 + p + 2) / (6 * p)) * np.log(max(w, 1e-10))
+        chi_sq = -(n - 1 - (2 * p**2 + p + 2) / (6 * p)) * np.log(max(w, 1e-10))
         mauchly_p = 1 - stats.chi2.cdf(chi_sq, df)
 
         # Greenhouse-Geisser epsilon
         eigenvalues = np.linalg.eigvalsh(s_star)
         sum_lambda = np.sum(eigenvalues)
-        sum_lambda_sq = np.sum(eigenvalues ** 2)
+        sum_lambda_sq = np.sum(eigenvalues**2)
 
         if sum_lambda_sq > 0:
-            gg_epsilon = sum_lambda ** 2 / (p * sum_lambda_sq)
+            gg_epsilon = sum_lambda**2 / (p * sum_lambda_sq)
         else:
             gg_epsilon = 1.0
 
         # Huynh-Feldt epsilon
-        hf_epsilon = (n * (p - 1) * gg_epsilon - 2) / ((p - 1) * (n - 1 - (p - 1) * gg_epsilon))
+        hf_epsilon = (n * (p - 1) * gg_epsilon - 2) / (
+            (p - 1) * (n - 1 - (p - 1) * gg_epsilon)
+        )
         hf_epsilon = min(1.0, max(gg_epsilon, hf_epsilon))
 
         return w, mauchly_p, gg_epsilon, hf_epsilon
@@ -772,7 +803,7 @@ class ANOVAAnalyzer:
             # Critical F value
             f_crit = stats.f.ppf(1 - self.alpha, df1, df2)
             # Power using non-central F distribution
-            power = 1 - stats.ncf.cdf(f_crit, df1, df2, noncentrality ** 2)
+            power = 1 - stats.ncf.cdf(f_crit, df1, df2, noncentrality**2)
             return float(power)
         except Exception:
             return 0.0

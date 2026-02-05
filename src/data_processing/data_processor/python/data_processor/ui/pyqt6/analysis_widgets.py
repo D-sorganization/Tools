@@ -15,13 +15,13 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 import numpy as np
 import pandas as pd
 
 try:
-    from PyQt6.QtCore import Qt, pyqtSignal
+    from PyQt6.QtCore import pyqtSignal
     from PyQt6.QtWidgets import (
         QCheckBox,
         QComboBox,
@@ -30,23 +30,18 @@ try:
         QFormLayout,
         QGroupBox,
         QHBoxLayout,
-        QLabel,
         QLineEdit,
         QListWidget,
         QListWidgetItem,
-        QMessageBox,
         QPlainTextEdit,
         QProgressBar,
         QPushButton,
-        QScrollArea,
         QSpinBox,
-        QSplitter,
         QStackedWidget,
         QTableWidget,
         QTableWidgetItem,
         QTabWidget,
         QTextEdit,
-        QToolButton,
         QVBoxLayout,
         QWidget,
     )
@@ -129,7 +124,6 @@ if PYQT6_AVAILABLE:
         def _on_selection_changed(self) -> None:
             """Emit signal when selection changes."""
             self.selection_changed.emit(self.get_selected())
-
 
     class PCAWidget(QWidget):
         """Widget for PCA analysis configuration and results."""
@@ -232,9 +226,9 @@ if PYQT6_AVAILABLE:
             # Components table
             self.components_table.setRowCount(len(result.components))
             self.components_table.setColumnCount(4)
-            self.components_table.setHorizontalHeaderLabels([
-                "Component", "Variance", "% Variance", "Cumulative %"
-            ])
+            self.components_table.setHorizontalHeaderLabels(
+                ["Component", "Variance", "% Variance", "Cumulative %"]
+            )
 
             for i, comp in enumerate(result.components):
                 self.components_table.setItem(i, 0, QTableWidgetItem(f"PC{comp.index}"))
@@ -260,7 +254,6 @@ if PYQT6_AVAILABLE:
                     value = loading_df.loc[row, col]
                     self.loadings_table.setItem(i, j, QTableWidgetItem(f"{value:.4f}"))
 
-
     class ANOVAWidget(QWidget):
         """Widget for ANOVA analysis configuration and results."""
 
@@ -278,7 +271,9 @@ if PYQT6_AVAILABLE:
             type_layout = QVBoxLayout(type_group)
 
             self.type_combo = QComboBox()
-            self.type_combo.addItems(["One-Way ANOVA", "Two-Way ANOVA", "Repeated Measures"])
+            self.type_combo.addItems(
+                ["One-Way ANOVA", "Two-Way ANOVA", "Repeated Measures"]
+            )
             self.type_combo.currentIndexChanged.connect(self._update_config_ui)
             type_layout.addWidget(self.type_combo)
 
@@ -316,7 +311,9 @@ if PYQT6_AVAILABLE:
             self.subject_combo = QComboBox()
             rm_layout.addRow("Subject ID:", self.subject_combo)
             self.measures_list = QListWidget()
-            self.measures_list.setSelectionMode(QListWidget.SelectionMode.MultiSelection)
+            self.measures_list.setSelectionMode(
+                QListWidget.SelectionMode.MultiSelection
+            )
             rm_layout.addRow("Measures:", self.measures_list)
             self.config_stack.addWidget(rm_widget)
 
@@ -327,9 +324,7 @@ if PYQT6_AVAILABLE:
             posthoc_layout = QFormLayout(posthoc_group)
 
             self.posthoc_combo = QComboBox()
-            self.posthoc_combo.addItems([
-                "Tukey HSD", "Bonferroni", "Scheffé", "None"
-            ])
+            self.posthoc_combo.addItems(["Tukey HSD", "Bonferroni", "Scheffé", "None"])
             posthoc_layout.addRow("Method:", self.posthoc_combo)
 
             self.alpha_spin = QDoubleSpinBox()
@@ -363,7 +358,12 @@ if PYQT6_AVAILABLE:
                 combo.clear()
                 combo.addItems(numeric_cols)
 
-            for combo in [self.group_combo, self.factor_a_combo, self.factor_b_combo, self.subject_combo]:
+            for combo in [
+                self.group_combo,
+                self.factor_a_combo,
+                self.factor_b_combo,
+                self.subject_combo,
+            ]:
                 combo.clear()
                 combo.addItems(all_cols)
 
@@ -400,7 +400,6 @@ if PYQT6_AVAILABLE:
             """Display ANOVA results."""
             self.results_text.setText(report)
 
-
     class RegressionWidget(QWidget):
         """Widget for regression analysis."""
 
@@ -432,7 +431,9 @@ if PYQT6_AVAILABLE:
             options_layout = QFormLayout(options_group)
 
             self.regularization_combo = QComboBox()
-            self.regularization_combo.addItems(["None", "Ridge", "Lasso", "Elastic Net"])
+            self.regularization_combo.addItems(
+                ["None", "Ridge", "Lasso", "Elastic Net"]
+            )
             options_layout.addRow("Regularization:", self.regularization_combo)
 
             self.alpha_spin = QDoubleSpinBox()
@@ -503,23 +504,34 @@ if PYQT6_AVAILABLE:
             n_coefs = len(result.coefficients)
             self.coefficients_table.setRowCount(n_coefs + 1)
             self.coefficients_table.setColumnCount(6)
-            self.coefficients_table.setHorizontalHeaderLabels([
-                "Variable", "Estimate", "Std.Error", "t-stat", "p-value", "VIF"
-            ])
+            self.coefficients_table.setHorizontalHeaderLabels(
+                ["Variable", "Estimate", "Std.Error", "t-stat", "p-value", "VIF"]
+            )
 
             # Intercept row
             self.coefficients_table.setItem(0, 0, QTableWidgetItem("(Intercept)"))
-            self.coefficients_table.setItem(0, 1, QTableWidgetItem(f"{result.intercept:.4f}"))
+            self.coefficients_table.setItem(
+                0, 1, QTableWidgetItem(f"{result.intercept:.4f}")
+            )
 
             for i, coef in enumerate(result.coefficients):
                 row = i + 1
                 self.coefficients_table.setItem(row, 0, QTableWidgetItem(coef.name))
-                self.coefficients_table.setItem(row, 1, QTableWidgetItem(f"{coef.estimate:.4f}"))
-                self.coefficients_table.setItem(row, 2, QTableWidgetItem(f"{coef.std_error:.4f}"))
-                self.coefficients_table.setItem(row, 3, QTableWidgetItem(f"{coef.t_statistic:.4f}"))
-                self.coefficients_table.setItem(row, 4, QTableWidgetItem(f"{coef.p_value:.4e}"))
-                self.coefficients_table.setItem(row, 5, QTableWidgetItem(f"{coef.vif:.2f}"))
-
+                self.coefficients_table.setItem(
+                    row, 1, QTableWidgetItem(f"{coef.estimate:.4f}")
+                )
+                self.coefficients_table.setItem(
+                    row, 2, QTableWidgetItem(f"{coef.std_error:.4f}")
+                )
+                self.coefficients_table.setItem(
+                    row, 3, QTableWidgetItem(f"{coef.t_statistic:.4f}")
+                )
+                self.coefficients_table.setItem(
+                    row, 4, QTableWidgetItem(f"{coef.p_value:.4e}")
+                )
+                self.coefficients_table.setItem(
+                    row, 5, QTableWidgetItem(f"{coef.vif:.2f}")
+                )
 
     class SurfacePlotWidget(QWidget):
         """Widget for 3D surface plot configuration."""
@@ -564,10 +576,16 @@ if PYQT6_AVAILABLE:
             interp_layout = QFormLayout(interp_group)
 
             self.interp_combo = QComboBox()
-            self.interp_combo.addItems([
-                "Linear", "Cubic", "Nearest",
-                "RBF Thin Plate", "RBF Multiquadric", "RBF Gaussian"
-            ])
+            self.interp_combo.addItems(
+                [
+                    "Linear",
+                    "Cubic",
+                    "Nearest",
+                    "RBF Thin Plate",
+                    "RBF Multiquadric",
+                    "RBF Gaussian",
+                ]
+            )
             interp_layout.addRow("Method:", self.interp_combo)
 
             layout.addWidget(interp_group)
@@ -577,9 +595,9 @@ if PYQT6_AVAILABLE:
             smooth_layout = QFormLayout(smooth_group)
 
             self.smooth_combo = QComboBox()
-            self.smooth_combo.addItems([
-                "None", "Gaussian", "Median", "Uniform", "Savitzky-Golay"
-            ])
+            self.smooth_combo.addItems(
+                ["None", "Gaussian", "Median", "Uniform", "Savitzky-Golay"]
+            )
             smooth_layout.addRow("Method:", self.smooth_combo)
 
             self.sigma_spin = QDoubleSpinBox()
@@ -614,10 +632,18 @@ if PYQT6_AVAILABLE:
             appear_layout = QFormLayout(appear_group)
 
             self.colormap_combo = QComboBox()
-            self.colormap_combo.addItems([
-                "viridis", "plasma", "inferno", "magma",
-                "coolwarm", "RdBu", "jet", "terrain"
-            ])
+            self.colormap_combo.addItems(
+                [
+                    "viridis",
+                    "plasma",
+                    "inferno",
+                    "magma",
+                    "coolwarm",
+                    "RdBu",
+                    "jet",
+                    "terrain",
+                ]
+            )
             appear_layout.addRow("Colormap:", self.colormap_combo)
 
             self.alpha_spin = QDoubleSpinBox()
@@ -650,7 +676,9 @@ if PYQT6_AVAILABLE:
                 "y_column": self.y_combo.currentText(),
                 "z_column": self.z_combo.currentText(),
                 "grid_resolution": self.resolution_spin.value(),
-                "interpolation": self.interp_combo.currentText().lower().replace(" ", "_"),
+                "interpolation": self.interp_combo.currentText()
+                .lower()
+                .replace(" ", "_"),
                 "smoothing": self.smooth_combo.currentText().lower(),
                 "smoothing_sigma": self.sigma_spin.value(),
                 "smoothing_kernel": self.kernel_spin.value(),
@@ -661,7 +689,6 @@ if PYQT6_AVAILABLE:
                 "show_scatter": self.show_scatter_check.isChecked(),
             }
             self.plot_requested.emit(config)
-
 
     class NeuralNetworkWidget(QWidget):
         """Widget for neural network configuration and training."""
@@ -694,9 +721,9 @@ if PYQT6_AVAILABLE:
             arch_form.addRow("Hidden Layers:", self.hidden_layers_edit)
 
             self.activation_combo = QComboBox()
-            self.activation_combo.addItems([
-                "ReLU", "Leaky ReLU", "ELU", "SELU", "Tanh", "Sigmoid", "GELU"
-            ])
+            self.activation_combo.addItems(
+                ["ReLU", "Leaky ReLU", "ELU", "SELU", "Tanh", "Sigmoid", "GELU"]
+            )
             arch_form.addRow("Activation:", self.activation_combo)
 
             self.dropout_spin = QDoubleSpinBox()
@@ -778,11 +805,15 @@ if PYQT6_AVAILABLE:
             btn_layout.addWidget(self.train_btn)
 
             self.export_pytorch_btn = QPushButton("Export PyTorch")
-            self.export_pytorch_btn.clicked.connect(lambda: self._request_export("pytorch"))
+            self.export_pytorch_btn.clicked.connect(
+                lambda: self._request_export("pytorch")
+            )
             btn_layout.addWidget(self.export_pytorch_btn)
 
             self.export_tf_btn = QPushButton("Export TensorFlow")
-            self.export_tf_btn.clicked.connect(lambda: self._request_export("tensorflow"))
+            self.export_tf_btn.clicked.connect(
+                lambda: self._request_export("tensorflow")
+            )
             btn_layout.addWidget(self.export_tf_btn)
 
             layout.addLayout(btn_layout)
@@ -817,7 +848,9 @@ if PYQT6_AVAILABLE:
             return {
                 "network_type": self.network_type_combo.currentText().lower(),
                 "hidden_layers": hidden_layers,
-                "activation": self.activation_combo.currentText().lower().replace(" ", "_"),
+                "activation": self.activation_combo.currentText()
+                .lower()
+                .replace(" ", "_"),
                 "dropout": self.dropout_spin.value(),
                 "optimizer": self.optimizer_combo.currentText().lower(),
                 "learning_rate": self.lr_spin.value(),
@@ -856,7 +889,6 @@ if PYQT6_AVAILABLE:
                 lines.append("(Stopped early)")
 
             self.results_text.setText("\n".join(lines))
-
 
     class ScriptGeneratorWidget(QWidget):
         """Widget for script generation."""
@@ -951,7 +983,6 @@ if PYQT6_AVAILABLE:
         def set_script(self, script: str) -> None:
             """Set the script preview text."""
             self.script_preview.setPlainText(script)
-
 
     class AnalysisPanel(QWidget):
         """Main panel containing all analysis widgets."""

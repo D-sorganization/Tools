@@ -454,10 +454,14 @@ class DatasetManager:
             metadata_list = [v.metadata.to_dict() for v in history.versions]
             index_path = dataset_dir / "index.json"
             with open(index_path, "w") as f:
-                json.dump({
-                    "versions": metadata_list,
-                    "current_index": history.current_index,
-                }, f, indent=2)
+                json.dump(
+                    {
+                        "versions": metadata_list,
+                        "current_index": history.current_index,
+                    },
+                    f,
+                    indent=2,
+                )
 
             # Save data for each version
             for version in history.versions:

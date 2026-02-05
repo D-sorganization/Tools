@@ -17,7 +17,6 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from scipy import stats
 
 logger = logging.getLogger(__name__)
 
@@ -206,7 +205,9 @@ class PCAAnalyzer:
             feature_contributions=feature_contributions,
             loading_matrix=loading_matrix,
             correlation_matrix=correlation_matrix,
-            total_variance_explained=float(cumulative_var[-1]) if len(cumulative_var) > 0 else 0.0,
+            total_variance_explained=(
+                float(cumulative_var[-1]) if len(cumulative_var) > 0 else 0.0
+            ),
             kaiser_criterion_components=kaiser_components,
             elbow_point_components=elbow_components,
             feature_names=feature_names,
@@ -282,7 +283,9 @@ class PCAAnalyzer:
                 if abs(loading) >= loading_threshold
             ]
             # Sort by absolute loading
-            influential.sort(key=lambda x: abs(float(x.split("(")[1].rstrip(")"))), reverse=True)
+            influential.sort(
+                key=lambda x: abs(float(x.split("(")[1].rstrip(")"))), reverse=True
+            )
             interpretations[f"PC{comp.index}"] = influential
 
         return interpretations
@@ -351,7 +354,7 @@ class PCAAnalyzer:
         components = Vt[:n_components]
 
         # Explained variance
-        explained_variance = (S ** 2) / (n_samples - 1)
+        explained_variance = (S**2) / (n_samples - 1)
         total_variance = np.sum(explained_variance)
         explained_variance_ratio = explained_variance / total_variance
 
@@ -407,9 +410,15 @@ class PCAAnalyzer:
 
         # Add weighted importance column
         weights = explained_var_ratio[: len(contributions.columns)]
-        contributions["Weighted_Importance"] = sum(
-            contributions[col] * w for col, w in zip(contributions.columns[:-1], weights)
-        ) / sum(weights) if sum(weights) > 0 else 0
+        contributions["Weighted_Importance"] = (
+            sum(
+                contributions[col] * w
+                for col, w in zip(contributions.columns[:-1], weights)
+            )
+            / sum(weights)
+            if sum(weights) > 0
+            else 0
+        )
 
         return contributions
 
@@ -534,12 +543,19 @@ def create_loading_plot(
     # Draw arrows
     for i, feature in enumerate(result.feature_names):
         ax.arrow(
-            0, 0, x.iloc[i], y.iloc[i],
-            head_width=0.03, head_length=0.02,
-            fc="blue", ec="blue", alpha=0.7,
+            0,
+            0,
+            x.iloc[i],
+            y.iloc[i],
+            head_width=0.03,
+            head_length=0.02,
+            fc="blue",
+            ec="blue",
+            alpha=0.7,
         )
         ax.text(
-            x.iloc[i] * 1.1, y.iloc[i] * 1.1,
+            x.iloc[i] * 1.1,
+            y.iloc[i] * 1.1,
             feature,
             fontsize=9,
             ha="center",
@@ -551,8 +567,12 @@ def create_loading_plot(
 
     ax.set_xlim(-1.2, 1.2)
     ax.set_ylim(-1.2, 1.2)
-    ax.set_xlabel(f"PC{pc_x} ({result.components[pc_x-1].explained_variance_ratio*100:.1f}%)")
-    ax.set_ylabel(f"PC{pc_y} ({result.components[pc_y-1].explained_variance_ratio*100:.1f}%)")
+    ax.set_xlabel(
+        f"PC{pc_x} ({result.components[pc_x-1].explained_variance_ratio*100:.1f}%)"
+    )
+    ax.set_ylabel(
+        f"PC{pc_y} ({result.components[pc_y-1].explained_variance_ratio*100:.1f}%)"
+    )
     ax.set_title("PCA Loading Plot")
     ax.axhline(y=0, color="k", linestyle="-", linewidth=0.5)
     ax.axvline(x=0, color="k", linestyle="-", linewidth=0.5)

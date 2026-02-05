@@ -288,59 +288,74 @@ class NeuralNetworkInterface:
 
         if network_type == NetworkType.MLP:
             for units in hidden_layers:
-                layers.append(LayerConfig(
-                    layer_type="dense",
-                    units=units,
-                    activation=activation,
-                ))
+                layers.append(
+                    LayerConfig(
+                        layer_type="dense",
+                        units=units,
+                        activation=activation,
+                    )
+                )
                 if dropout_rate > 0:
-                    layers.append(LayerConfig(
-                        layer_type="dropout",
-                        dropout_rate=dropout_rate,
-                    ))
+                    layers.append(
+                        LayerConfig(
+                            layer_type="dropout",
+                            dropout_rate=dropout_rate,
+                        )
+                    )
 
         elif network_type in (NetworkType.LSTM, NetworkType.GRU):
             layer_type = "lstm" if network_type == NetworkType.LSTM else "gru"
             for i, units in enumerate(hidden_layers):
                 is_last = i == len(hidden_layers) - 1
-                layers.append(LayerConfig(
-                    layer_type=layer_type,
-                    units=units,
-                    return_sequences=not is_last,
-                ))
+                layers.append(
+                    LayerConfig(
+                        layer_type=layer_type,
+                        units=units,
+                        return_sequences=not is_last,
+                    )
+                )
                 if dropout_rate > 0:
-                    layers.append(LayerConfig(
-                        layer_type="dropout",
-                        dropout_rate=dropout_rate,
-                    ))
+                    layers.append(
+                        LayerConfig(
+                            layer_type="dropout",
+                            dropout_rate=dropout_rate,
+                        )
+                    )
 
         elif network_type == NetworkType.CNN_1D:
             filters = [32, 64, 128]
             for f in filters:
-                layers.append(LayerConfig(
-                    layer_type="conv1d",
-                    units=f,
-                    kernel_size=3,
-                    activation=activation,
-                ))
+                layers.append(
+                    LayerConfig(
+                        layer_type="conv1d",
+                        units=f,
+                        kernel_size=3,
+                        activation=activation,
+                    )
+                )
             layers.append(LayerConfig(layer_type="flatten"))
             for units in hidden_layers:
-                layers.append(LayerConfig(
-                    layer_type="dense",
-                    units=units,
-                    activation=activation,
-                ))
+                layers.append(
+                    LayerConfig(
+                        layer_type="dense",
+                        units=units,
+                        activation=activation,
+                    )
+                )
 
         # Output layer
         output_activation = (
-            ActivationFunction.LINEAR if kwargs.get("task_type", "regression") == "regression"
+            ActivationFunction.LINEAR
+            if kwargs.get("task_type", "regression") == "regression"
             else ActivationFunction.SOFTMAX
         )
-        layers.append(LayerConfig(
-            layer_type="dense",
-            units=output_features,
-            activation=output_activation,
-        ))
+        layers.append(
+            LayerConfig(
+                layer_type="dense",
+                units=output_features,
+                activation=output_activation,
+            )
+        )
 
         config = NetworkConfig(
             network_type=network_type,
@@ -401,11 +416,15 @@ class NeuralNetworkInterface:
         X_train = X[:n_train]
         y_train = y[:n_train] if y.ndim == 1 else y[:n_train]
 
-        X_val = X[n_train:n_train + n_val]
-        y_val = y[n_train:n_train + n_val] if y.ndim == 1 else y[n_train:n_train + n_val]
+        X_val = X[n_train : n_train + n_val]
+        y_val = (
+            y[n_train : n_train + n_val]
+            if y.ndim == 1
+            else y[n_train : n_train + n_val]
+        )
 
-        X_test = X[n_train + n_val:]
-        y_test = y[n_train + n_val:] if y.ndim == 1 else y[n_train + n_val:]
+        X_test = X[n_train + n_val :]
+        y_test = y[n_train + n_val :] if y.ndim == 1 else y[n_train + n_val :]
 
         # Normalize
         if self._config and self._config.normalize_inputs:
@@ -507,6 +526,7 @@ class NeuralNetworkInterface:
         patience_counter = 0
 
         import time
+
         start_time = time.time()
 
         for epoch in range(config.epochs):
@@ -515,7 +535,7 @@ class NeuralNetworkInterface:
             batch_losses = []
 
             for i in range(0, len(X_train), config.batch_size):
-                batch_idx = indices[i:i + config.batch_size]
+                batch_idx = indices[i : i + config.batch_size]
                 X_batch = X_train[batch_idx]
                 y_batch = y_train[batch_idx]
 
@@ -523,9 +543,7 @@ class NeuralNetworkInterface:
                 activations = self._forward_pass(X_batch, weights, biases, config)
 
                 # Backward pass
-                gradients = self._backward_pass(
-                    activations, y_batch, weights, config
-                )
+                gradients = self._backward_pass(activations, y_batch, weights, config)
 
                 # Update weights
                 weights, biases = self._update_weights(
@@ -567,10 +585,14 @@ class NeuralNetworkInterface:
         actual_values = None
 
         if "X_test" in data and len(data["X_test"]) > 0:
-            test_activations = self._forward_pass(data["X_test"], weights, biases, config)
+            test_activations = self._forward_pass(
+                data["X_test"], weights, biases, config
+            )
             predictions = test_activations[-1]
             actual_values = data["y_test"]
-            test_loss = np.mean((predictions - actual_values.reshape(predictions.shape)) ** 2)
+            test_loss = np.mean(
+                (predictions - actual_values.reshape(predictions.shape)) ** 2
+            )
 
         return TrainingResult(
             train_loss_history=train_losses,
@@ -709,7 +731,9 @@ class NeuralNetworkInterface:
 
         return weights, biases
 
-    def _apply_activation(self, z: np.ndarray, activation: ActivationFunction) -> np.ndarray:
+    def _apply_activation(
+        self, z: np.ndarray, activation: ActivationFunction
+    ) -> np.ndarray:
         """Apply activation function."""
         if activation == ActivationFunction.RELU:
             return np.maximum(0, z)
@@ -727,14 +751,16 @@ class NeuralNetworkInterface:
         else:
             return z
 
-    def _activation_derivative(self, a: np.ndarray, activation: ActivationFunction) -> np.ndarray:
+    def _activation_derivative(
+        self, a: np.ndarray, activation: ActivationFunction
+    ) -> np.ndarray:
         """Compute activation derivative."""
         if activation == ActivationFunction.RELU:
             return (a > 0).astype(float)
         elif activation == ActivationFunction.LEAKY_RELU:
             return np.where(a > 0, 1, 0.01)
         elif activation == ActivationFunction.TANH:
-            return 1 - a ** 2
+            return 1 - a**2
         elif activation == ActivationFunction.SIGMOID:
             return a * (1 - a)
         elif activation == ActivationFunction.LINEAR:
@@ -770,15 +796,27 @@ class NeuralNetworkInterface:
 
         if framework == Framework.PYTORCH:
             script = self._generate_pytorch_script(
-                config, data_path, include_data_loading, include_training, include_evaluation
+                config,
+                data_path,
+                include_data_loading,
+                include_training,
+                include_evaluation,
             )
         elif framework == Framework.TENSORFLOW:
             script = self._generate_tensorflow_script(
-                config, data_path, include_data_loading, include_training, include_evaluation
+                config,
+                data_path,
+                include_data_loading,
+                include_training,
+                include_evaluation,
             )
         else:  # sklearn
             script = self._generate_sklearn_script(
-                config, data_path, include_data_loading, include_training, include_evaluation
+                config,
+                data_path,
+                include_data_loading,
+                include_training,
+                include_evaluation,
             )
 
         output_path.write_text(script)
@@ -816,148 +854,164 @@ class NeuralNetworkInterface:
         ]
 
         # Model definition
-        lines.extend([
-            "# Model Definition",
-            "class NeuralNetwork(nn.Module):",
-            "    def __init__(self, input_size, output_size):",
-            "        super(NeuralNetwork, self).__init__()",
-            "        layers = []",
-            f"        prev_size = input_size",
-        ])
+        lines.extend(
+            [
+                "# Model Definition",
+                "class NeuralNetwork(nn.Module):",
+                "    def __init__(self, input_size, output_size):",
+                "        super(NeuralNetwork, self).__init__()",
+                "        layers = []",
+                f"        prev_size = input_size",
+            ]
+        )
 
         for layer in config.layers:
             if layer.layer_type == "dense":
                 act = self._pytorch_activation(layer.activation)
-                lines.append(f"        layers.append(nn.Linear(prev_size, {layer.units}))")
+                lines.append(
+                    f"        layers.append(nn.Linear(prev_size, {layer.units}))"
+                )
                 if act:
                     lines.append(f"        layers.append({act})")
                 lines.append(f"        prev_size = {layer.units}")
             elif layer.layer_type == "dropout":
                 lines.append(f"        layers.append(nn.Dropout({layer.dropout_rate}))")
 
-        lines.extend([
-            "        self.network = nn.Sequential(*layers)",
-            "",
-            "    def forward(self, x):",
-            "        return self.network(x)",
-            "",
-        ])
+        lines.extend(
+            [
+                "        self.network = nn.Sequential(*layers)",
+                "",
+                "    def forward(self, x):",
+                "        return self.network(x)",
+                "",
+            ]
+        )
 
         # Data loading
         if include_data_loading:
             data_path_str = data_path or "data.csv"
-            lines.extend([
-                "# Data Loading",
-                f'data = pd.read_csv("{data_path_str}")',
-                "# Specify your feature and target columns",
-                "feature_cols = []  # Fill in feature column names",
-                "target_cols = []   # Fill in target column names",
-                "",
-                "X = data[feature_cols].values.astype(np.float32)",
-                "y = data[target_cols].values.astype(np.float32)",
-                "",
-                "# Train/val/test split",
-                f"train_size = int(len(X) * {1 - config.validation_split - 0.15})",
-                f"val_size = int(len(X) * {config.validation_split})",
-                "",
-                "X_train, y_train = X[:train_size], y[:train_size]",
-                "X_val, y_val = X[train_size:train_size+val_size], y[train_size:train_size+val_size]",
-                "X_test, y_test = X[train_size+val_size:], y[train_size+val_size:]",
-                "",
-            ])
+            lines.extend(
+                [
+                    "# Data Loading",
+                    f'data = pd.read_csv("{data_path_str}")',
+                    "# Specify your feature and target columns",
+                    "feature_cols = []  # Fill in feature column names",
+                    "target_cols = []   # Fill in target column names",
+                    "",
+                    "X = data[feature_cols].values.astype(np.float32)",
+                    "y = data[target_cols].values.astype(np.float32)",
+                    "",
+                    "# Train/val/test split",
+                    f"train_size = int(len(X) * {1 - config.validation_split - 0.15})",
+                    f"val_size = int(len(X) * {config.validation_split})",
+                    "",
+                    "X_train, y_train = X[:train_size], y[:train_size]",
+                    "X_val, y_val = X[train_size:train_size+val_size], y[train_size:train_size+val_size]",
+                    "X_test, y_test = X[train_size+val_size:], y[train_size+val_size:]",
+                    "",
+                ]
+            )
 
             if config.normalize_inputs:
-                lines.extend([
-                    "# Normalization",
-                    "X_mean, X_std = X_train.mean(axis=0), X_train.std(axis=0)",
-                    "X_std[X_std == 0] = 1",
-                    "X_train = (X_train - X_mean) / X_std",
-                    "X_val = (X_val - X_mean) / X_std",
-                    "X_test = (X_test - X_mean) / X_std",
-                    "",
-                ])
+                lines.extend(
+                    [
+                        "# Normalization",
+                        "X_mean, X_std = X_train.mean(axis=0), X_train.std(axis=0)",
+                        "X_std[X_std == 0] = 1",
+                        "X_train = (X_train - X_mean) / X_std",
+                        "X_val = (X_val - X_mean) / X_std",
+                        "X_test = (X_test - X_mean) / X_std",
+                        "",
+                    ]
+                )
 
-            lines.extend([
-                "# Create DataLoaders",
-                "train_dataset = TensorDataset(torch.FloatTensor(X_train), torch.FloatTensor(y_train))",
-                "val_dataset = TensorDataset(torch.FloatTensor(X_val), torch.FloatTensor(y_val))",
-                f"train_loader = DataLoader(train_dataset, batch_size={config.batch_size}, shuffle=True)",
-                f"val_loader = DataLoader(val_dataset, batch_size={config.batch_size})",
-                "",
-            ])
+            lines.extend(
+                [
+                    "# Create DataLoaders",
+                    "train_dataset = TensorDataset(torch.FloatTensor(X_train), torch.FloatTensor(y_train))",
+                    "val_dataset = TensorDataset(torch.FloatTensor(X_val), torch.FloatTensor(y_val))",
+                    f"train_loader = DataLoader(train_dataset, batch_size={config.batch_size}, shuffle=True)",
+                    f"val_loader = DataLoader(val_dataset, batch_size={config.batch_size})",
+                    "",
+                ]
+            )
 
         # Training
         if include_training:
             opt = self._pytorch_optimizer(config.optimizer)
             loss = self._pytorch_loss(config.loss_function)
 
-            lines.extend([
-                "# Training Setup",
-                "device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')",
-                f"model = NeuralNetwork(input_size={config.input_features}, output_size={config.output_features}).to(device)",
-                f"optimizer = {opt}(model.parameters(), lr={config.learning_rate})",
-                f"criterion = {loss}()",
-                "",
-                "# Early stopping",
-                "best_val_loss = float('inf')",
-                "patience_counter = 0",
-                f"patience = {config.early_stopping_patience}",
-                "",
-                "# Training Loop",
-                f"for epoch in range({config.epochs}):",
-                "    model.train()",
-                "    train_loss = 0",
-                "    for X_batch, y_batch in train_loader:",
-                "        X_batch, y_batch = X_batch.to(device), y_batch.to(device)",
-                "        optimizer.zero_grad()",
-                "        outputs = model(X_batch)",
-                "        loss = criterion(outputs, y_batch)",
-                "        loss.backward()",
-                "        optimizer.step()",
-                "        train_loss += loss.item()",
-                "",
-                "    # Validation",
-                "    model.eval()",
-                "    val_loss = 0",
-                "    with torch.no_grad():",
-                "        for X_batch, y_batch in val_loader:",
-                "            X_batch, y_batch = X_batch.to(device), y_batch.to(device)",
-                "            outputs = model(X_batch)",
-                "            val_loss += criterion(outputs, y_batch).item()",
-                "",
-                "    val_loss /= len(val_loader)",
-                "    print(f'Epoch {epoch+1}: Train Loss = {train_loss/len(train_loader):.4f}, Val Loss = {val_loss:.4f}')",
-                "",
-                "    # Early stopping check",
-                "    if val_loss < best_val_loss:",
-                "        best_val_loss = val_loss",
-                "        patience_counter = 0",
-                "        torch.save(model.state_dict(), 'best_model.pth')",
-                "    else:",
-                "        patience_counter += 1",
-                "        if patience_counter >= patience:",
-                "            print(f'Early stopping at epoch {epoch+1}')",
-                "            break",
-                "",
-            ])
+            lines.extend(
+                [
+                    "# Training Setup",
+                    "device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')",
+                    f"model = NeuralNetwork(input_size={config.input_features}, output_size={config.output_features}).to(device)",
+                    f"optimizer = {opt}(model.parameters(), lr={config.learning_rate})",
+                    f"criterion = {loss}()",
+                    "",
+                    "# Early stopping",
+                    "best_val_loss = float('inf')",
+                    "patience_counter = 0",
+                    f"patience = {config.early_stopping_patience}",
+                    "",
+                    "# Training Loop",
+                    f"for epoch in range({config.epochs}):",
+                    "    model.train()",
+                    "    train_loss = 0",
+                    "    for X_batch, y_batch in train_loader:",
+                    "        X_batch, y_batch = X_batch.to(device), y_batch.to(device)",
+                    "        optimizer.zero_grad()",
+                    "        outputs = model(X_batch)",
+                    "        loss = criterion(outputs, y_batch)",
+                    "        loss.backward()",
+                    "        optimizer.step()",
+                    "        train_loss += loss.item()",
+                    "",
+                    "    # Validation",
+                    "    model.eval()",
+                    "    val_loss = 0",
+                    "    with torch.no_grad():",
+                    "        for X_batch, y_batch in val_loader:",
+                    "            X_batch, y_batch = X_batch.to(device), y_batch.to(device)",
+                    "            outputs = model(X_batch)",
+                    "            val_loss += criterion(outputs, y_batch).item()",
+                    "",
+                    "    val_loss /= len(val_loader)",
+                    "    print(f'Epoch {epoch+1}: Train Loss = {train_loss/len(train_loader):.4f}, Val Loss = {val_loss:.4f}')",
+                    "",
+                    "    # Early stopping check",
+                    "    if val_loss < best_val_loss:",
+                    "        best_val_loss = val_loss",
+                    "        patience_counter = 0",
+                    "        torch.save(model.state_dict(), 'best_model.pth')",
+                    "    else:",
+                    "        patience_counter += 1",
+                    "        if patience_counter >= patience:",
+                    "            print(f'Early stopping at epoch {epoch+1}')",
+                    "            break",
+                    "",
+                ]
+            )
 
         # Evaluation
         if include_evaluation:
-            lines.extend([
-                "# Evaluation",
-                "model.load_state_dict(torch.load('best_model.pth'))",
-                "model.eval()",
-                "with torch.no_grad():",
-                "    X_test_tensor = torch.FloatTensor(X_test).to(device)",
-                "    predictions = model(X_test_tensor).cpu().numpy()",
-                "",
-                "# Metrics",
-                "from sklearn.metrics import mean_squared_error, r2_score",
-                "mse = mean_squared_error(y_test, predictions)",
-                "r2 = r2_score(y_test, predictions)",
-                "print(f'Test MSE: {mse:.4f}')",
-                "print(f'Test R2: {r2:.4f}')",
-            ])
+            lines.extend(
+                [
+                    "# Evaluation",
+                    "model.load_state_dict(torch.load('best_model.pth'))",
+                    "model.eval()",
+                    "with torch.no_grad():",
+                    "    X_test_tensor = torch.FloatTensor(X_test).to(device)",
+                    "    predictions = model(X_test_tensor).cpu().numpy()",
+                    "",
+                    "# Metrics",
+                    "from sklearn.metrics import mean_squared_error, r2_score",
+                    "mse = mean_squared_error(y_test, predictions)",
+                    "r2 = r2_score(y_test, predictions)",
+                    "print(f'Test MSE: {mse:.4f}')",
+                    "print(f'Test R2: {r2:.4f}')",
+                ]
+            )
 
         return "\n".join(lines)
 
@@ -985,101 +1039,113 @@ class NeuralNetworkInterface:
         ]
 
         # Model definition
-        lines.extend([
-            "# Model Definition",
-            "def create_model(input_size, output_size):",
-            "    model = keras.Sequential([",
-            f"        layers.Input(shape=(input_size,)),",
-        ])
+        lines.extend(
+            [
+                "# Model Definition",
+                "def create_model(input_size, output_size):",
+                "    model = keras.Sequential([",
+                f"        layers.Input(shape=(input_size,)),",
+            ]
+        )
 
         for layer in config.layers[:-1]:  # Skip last layer
             if layer.layer_type == "dense":
                 act = layer.activation.value
-                lines.append(f"        layers.Dense({layer.units}, activation='{act}'),")
+                lines.append(
+                    f"        layers.Dense({layer.units}, activation='{act}'),"
+                )
             elif layer.layer_type == "dropout":
                 lines.append(f"        layers.Dropout({layer.dropout_rate}),")
 
         # Output layer
         output_layer = config.layers[-1]
         output_act = output_layer.activation.value
-        lines.extend([
-            f"        layers.Dense(output_size, activation='{output_act}'),",
-            "    ])",
-            "    return model",
-            "",
-        ])
+        lines.extend(
+            [
+                f"        layers.Dense(output_size, activation='{output_act}'),",
+                "    ])",
+                "    return model",
+                "",
+            ]
+        )
 
         # Data loading (similar to PyTorch)
         if include_data_loading:
             data_path_str = data_path or "data.csv"
-            lines.extend([
-                "# Data Loading",
-                f'data = pd.read_csv("{data_path_str}")',
-                "feature_cols = []  # Fill in feature column names",
-                "target_cols = []   # Fill in target column names",
-                "",
-                "X = data[feature_cols].values.astype(np.float32)",
-                "y = data[target_cols].values.astype(np.float32)",
-                "",
-                f"train_size = int(len(X) * {1 - config.validation_split - 0.15})",
-                f"val_size = int(len(X) * {config.validation_split})",
-                "",
-                "X_train, y_train = X[:train_size], y[:train_size]",
-                "X_val, y_val = X[train_size:train_size+val_size], y[train_size:train_size+val_size]",
-                "X_test, y_test = X[train_size+val_size:], y[train_size+val_size:]",
-                "",
-            ])
+            lines.extend(
+                [
+                    "# Data Loading",
+                    f'data = pd.read_csv("{data_path_str}")',
+                    "feature_cols = []  # Fill in feature column names",
+                    "target_cols = []   # Fill in target column names",
+                    "",
+                    "X = data[feature_cols].values.astype(np.float32)",
+                    "y = data[target_cols].values.astype(np.float32)",
+                    "",
+                    f"train_size = int(len(X) * {1 - config.validation_split - 0.15})",
+                    f"val_size = int(len(X) * {config.validation_split})",
+                    "",
+                    "X_train, y_train = X[:train_size], y[:train_size]",
+                    "X_val, y_val = X[train_size:train_size+val_size], y[train_size:train_size+val_size]",
+                    "X_test, y_test = X[train_size+val_size:], y[train_size+val_size:]",
+                    "",
+                ]
+            )
 
         # Training
         if include_training:
             opt_name = config.optimizer.value
             loss_name = self._keras_loss(config.loss_function)
 
-            lines.extend([
-                "# Create and compile model",
-                f"model = create_model({config.input_features}, {config.output_features})",
-                f"model.compile(",
-                f"    optimizer='{opt_name}',",
-                f"    loss='{loss_name}',",
-                "    metrics=['mae']",
-                ")",
-                "",
-                "# Callbacks",
-                "early_stop = callbacks.EarlyStopping(",
-                f"    patience={config.early_stopping_patience},",
-                "    restore_best_weights=True",
-                ")",
-                "reduce_lr = callbacks.ReduceLROnPlateau(",
-                f"    patience={config.reduce_lr_patience},",
-                "    factor=0.5",
-                ")",
-                "",
-                "# Training",
-                "history = model.fit(",
-                "    X_train, y_train,",
-                f"    epochs={config.epochs},",
-                f"    batch_size={config.batch_size},",
-                "    validation_data=(X_val, y_val),",
-                "    callbacks=[early_stop, reduce_lr],",
-                "    verbose=1",
-                ")",
-                "",
-                "# Save model",
-                "model.save('trained_model.keras')",
-            ])
+            lines.extend(
+                [
+                    "# Create and compile model",
+                    f"model = create_model({config.input_features}, {config.output_features})",
+                    f"model.compile(",
+                    f"    optimizer='{opt_name}',",
+                    f"    loss='{loss_name}',",
+                    "    metrics=['mae']",
+                    ")",
+                    "",
+                    "# Callbacks",
+                    "early_stop = callbacks.EarlyStopping(",
+                    f"    patience={config.early_stopping_patience},",
+                    "    restore_best_weights=True",
+                    ")",
+                    "reduce_lr = callbacks.ReduceLROnPlateau(",
+                    f"    patience={config.reduce_lr_patience},",
+                    "    factor=0.5",
+                    ")",
+                    "",
+                    "# Training",
+                    "history = model.fit(",
+                    "    X_train, y_train,",
+                    f"    epochs={config.epochs},",
+                    f"    batch_size={config.batch_size},",
+                    "    validation_data=(X_val, y_val),",
+                    "    callbacks=[early_stop, reduce_lr],",
+                    "    verbose=1",
+                    ")",
+                    "",
+                    "# Save model",
+                    "model.save('trained_model.keras')",
+                ]
+            )
 
         # Evaluation
         if include_evaluation:
-            lines.extend([
-                "",
-                "# Evaluation",
-                "results = model.evaluate(X_test, y_test)",
-                "print(f'Test Loss: {results[0]:.4f}')",
-                "print(f'Test MAE: {results[1]:.4f}')",
-                "",
-                "# Predictions",
-                "predictions = model.predict(X_test)",
-            ])
+            lines.extend(
+                [
+                    "",
+                    "# Evaluation",
+                    "results = model.evaluate(X_test, y_test)",
+                    "print(f'Test Loss: {results[0]:.4f}')",
+                    "print(f'Test MAE: {results[1]:.4f}')",
+                    "",
+                    "# Predictions",
+                    "predictions = model.predict(X_test)",
+                ]
+            )
 
         return "\n".join(lines)
 
@@ -1113,71 +1179,81 @@ class NeuralNetworkInterface:
 
         if include_data_loading:
             data_path_str = data_path or "data.csv"
-            lines.extend([
-                "# Data Loading",
-                f'data = pd.read_csv("{data_path_str}")',
-                "feature_cols = []  # Fill in feature column names",
-                "target_cols = []   # Fill in target column names",
-                "",
-                "X = data[feature_cols].values",
-                "y = data[target_cols].values.ravel()",
-                "",
-                "# Split data",
-                "X_train, X_temp, y_train, y_temp = train_test_split(",
-                f"    X, y, test_size={config.validation_split + 0.15}, random_state=42",
-                ")",
-                "X_val, X_test, y_val, y_test = train_test_split(",
-                "    X_temp, y_temp, test_size=0.5, random_state=42",
-                ")",
-                "",
-            ])
+            lines.extend(
+                [
+                    "# Data Loading",
+                    f'data = pd.read_csv("{data_path_str}")',
+                    "feature_cols = []  # Fill in feature column names",
+                    "target_cols = []   # Fill in target column names",
+                    "",
+                    "X = data[feature_cols].values",
+                    "y = data[target_cols].values.ravel()",
+                    "",
+                    "# Split data",
+                    "X_train, X_temp, y_train, y_temp = train_test_split(",
+                    f"    X, y, test_size={config.validation_split + 0.15}, random_state=42",
+                    ")",
+                    "X_val, X_test, y_val, y_test = train_test_split(",
+                    "    X_temp, y_temp, test_size=0.5, random_state=42",
+                    ")",
+                    "",
+                ]
+            )
 
             if config.normalize_inputs:
-                lines.extend([
-                    "# Normalization",
-                    "scaler = StandardScaler()",
-                    "X_train = scaler.fit_transform(X_train)",
-                    "X_val = scaler.transform(X_val)",
-                    "X_test = scaler.transform(X_test)",
-                    "joblib.dump(scaler, 'scaler.joblib')",
-                    "",
-                ])
+                lines.extend(
+                    [
+                        "# Normalization",
+                        "scaler = StandardScaler()",
+                        "X_train = scaler.fit_transform(X_train)",
+                        "X_val = scaler.transform(X_val)",
+                        "X_test = scaler.transform(X_test)",
+                        "joblib.dump(scaler, 'scaler.joblib')",
+                        "",
+                    ]
+                )
 
         if include_training:
-            model_class = "MLPRegressor" if config.task_type == "regression" else "MLPClassifier"
-            lines.extend([
-                "# Model",
-                f"model = {model_class}(",
-                f"    hidden_layer_sizes={tuple(hidden_sizes)},",
-                f"    activation='{config.layers[0].activation.value}',",
-                f"    solver='{config.optimizer.value}',",
-                f"    learning_rate_init={config.learning_rate},",
-                f"    max_iter={config.epochs},",
-                f"    batch_size={config.batch_size},",
-                f"    early_stopping=True,",
-                f"    validation_fraction={config.validation_split},",
-                f"    n_iter_no_change={config.early_stopping_patience},",
-                "    verbose=True,",
-                "    random_state=42",
-                ")",
-                "",
-                "# Training",
-                "model.fit(X_train, y_train)",
-                "",
-                "# Save model",
-                "joblib.dump(model, 'trained_model.joblib')",
-            ])
+            model_class = (
+                "MLPRegressor" if config.task_type == "regression" else "MLPClassifier"
+            )
+            lines.extend(
+                [
+                    "# Model",
+                    f"model = {model_class}(",
+                    f"    hidden_layer_sizes={tuple(hidden_sizes)},",
+                    f"    activation='{config.layers[0].activation.value}',",
+                    f"    solver='{config.optimizer.value}',",
+                    f"    learning_rate_init={config.learning_rate},",
+                    f"    max_iter={config.epochs},",
+                    f"    batch_size={config.batch_size},",
+                    f"    early_stopping=True,",
+                    f"    validation_fraction={config.validation_split},",
+                    f"    n_iter_no_change={config.early_stopping_patience},",
+                    "    verbose=True,",
+                    "    random_state=42",
+                    ")",
+                    "",
+                    "# Training",
+                    "model.fit(X_train, y_train)",
+                    "",
+                    "# Save model",
+                    "joblib.dump(model, 'trained_model.joblib')",
+                ]
+            )
 
         if include_evaluation:
-            lines.extend([
-                "",
-                "# Evaluation",
-                "predictions = model.predict(X_test)",
-                "mse = mean_squared_error(y_test, predictions)",
-                "r2 = r2_score(y_test, predictions)",
-                "print(f'Test MSE: {mse:.4f}')",
-                "print(f'Test R2: {r2:.4f}')",
-            ])
+            lines.extend(
+                [
+                    "",
+                    "# Evaluation",
+                    "predictions = model.predict(X_test)",
+                    "mse = mean_squared_error(y_test, predictions)",
+                    "r2 = r2_score(y_test, predictions)",
+                    "print(f'Test MSE: {mse:.4f}')",
+                    "print(f'Test R2: {r2:.4f}')",
+                ]
+            )
 
         return "\n".join(lines)
 
