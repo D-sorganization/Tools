@@ -22,9 +22,8 @@ def main() -> int:
             print(f"  - {pkg}: pip install {pkg}")
         return 1
 
-    from PyQt6.QtWidgets import QApplication
-
     from baghouse_calculator.ui.pyqt6.main_window import BaghouseCalculatorMainWindow
+    from PyQt6.QtWidgets import QApplication
 
     app = QApplication(sys.argv)
     app.setApplicationName("Baghouse Calculator")

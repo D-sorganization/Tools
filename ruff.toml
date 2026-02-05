@@ -67,39 +67,7 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [lint.isort]
 # Tells Ruff how to group your own code vs. libraries
-known-first-party = [
-    "src",
-    "games",
-    "tools",
-    "acid_gas_dewpoint",
-    "baghouse_calculator",
-    "c3d_viewer",
-    "data_processing",
-    "document_processing",
-    "electrode_advisor",
-    "financial_calculator",
-    "flare_calculator",
-    "flow_rate_converter",
-    "function_generator",
-    "humanoid_builder_gui",
-    "inertia_calculator",
-    "multi_param_analysis",
-    "ode_solver",
-    "optimizer_gui",
-    "pressure_drop_calculator",
-    "psa_package",
-    "scientific_modeling",
-    "scrubber_calculator",
-    "shared",
-    "steam_engine_calculator",
-    "syngas_compression",
-    "syngas_water_calculator",
-    "thermal_profile_predictor",
-    "trc_vessel_designer",
-    "urdf_builder_gui",
-    "wgs_reactor",
-    "data_processor",
-]
+known-first-party = ["src", "games", "tools"]
 
 [format]
 # Make ruff-format produce identical output to black

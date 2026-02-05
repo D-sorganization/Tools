@@ -3,9 +3,8 @@
 
 import sys
 
-from PyQt6.QtWidgets import QApplication
-
 from flare_calculator.ui.pyqt6.main_window import FlareCalculatorMainWindow
+from PyQt6.QtWidgets import QApplication
 
 
 def main() -> None:
