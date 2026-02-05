@@ -7,32 +7,6 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from PyQt6.QtCore import QSettings, Qt, QThread, pyqtSignal
-from PyQt6.QtGui import QAction, QFont, QKeySequence, QShortcut
-from PyQt6.QtWidgets import (
-    QApplication,
-    QCheckBox,
-    QComboBox,
-    QDoubleSpinBox,
-    QFileDialog,
-    QFormLayout,
-    QGroupBox,
-    QHBoxLayout,
-    QLabel,
-    QLineEdit,
-    QListWidget,
-    QMainWindow,
-    QMessageBox,
-    QPushButton,
-    QSpinBox,
-    QSplitter,
-    QTabWidget,
-    QTextBrowser,
-    QTextEdit,
-    QVBoxLayout,
-    QWidget,
-)
-
 from data_processor.core.config_manager import ConfigManager
 from data_processor.core.dat_importer import (
     export_dat_to_csv,
@@ -57,6 +31,31 @@ from data_processor.models.processing_config import (
     DifferentiationConfig,
     FilterConfig,
     IntegrationConfig,
+)
+from PyQt6.QtCore import QSettings, Qt, QThread, pyqtSignal
+from PyQt6.QtGui import QAction, QFont, QKeySequence, QShortcut
+from PyQt6.QtWidgets import (
+    QApplication,
+    QCheckBox,
+    QComboBox,
+    QDoubleSpinBox,
+    QFileDialog,
+    QFormLayout,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QListWidget,
+    QMainWindow,
+    QMessageBox,
+    QPushButton,
+    QSpinBox,
+    QSplitter,
+    QTabWidget,
+    QTextBrowser,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
 )
 
 from .widgets import (
