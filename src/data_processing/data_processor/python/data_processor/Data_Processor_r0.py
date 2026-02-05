@@ -18,6 +18,7 @@ import json
 import os
 import tkinter as tk
 from collections.abc import Callable
+from pathlib import Path
 from tkinter import colorchooser, filedialog, messagebox, simpledialog
 from typing import Any, cast
 
@@ -32,6 +33,26 @@ from matplotlib.figure import Figure
 from scipy.interpolate import UnivariateSpline
 from scipy.io import savemat
 from scipy.signal import butter, filtfilt, medfilt, savgol_filter
+
+
+def safe_read_csv(
+    path: str | Path, default: pd.DataFrame | None = None, **kwargs: Any
+) -> pd.DataFrame:
+    """Safely read a CSV file, returning a default DataFrame on error."""
+    try:
+        return pd.read_csv(path, **kwargs)
+    except Exception:
+        return default if default is not None else pd.DataFrame()
+
+
+def safe_write_csv(
+    df: pd.DataFrame, path: str | Path, create_parents: bool = True, **kwargs: Any
+) -> None:
+    """Safely write a DataFrame to CSV, creating parent directories if needed."""
+    path = Path(path)
+    if create_parents:
+        path.parent.mkdir(parents=True, exist_ok=True)
+    df.to_csv(path, **kwargs)
 
 
 def _validate_formula_security(formula: str, allowed_names: set[str]) -> None:

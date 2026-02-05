@@ -4,3 +4,8 @@ export { FilterPanel } from './FilterPanel';
 export { DataChart } from './DataChart';
 export { StatisticsPanel } from './StatisticsPanel';
 export { ExportPanel } from './ExportPanel';
+export { AdvancedPanel } from './AdvancedPanel';
+export { ResamplePanel } from './ResamplePanel';
+export { TimeRangePanel } from './TimeRangePanel';
+export { TrendlinePanel } from './TrendlinePanel';
+export { HelpPanel } from './HelpPanel';
