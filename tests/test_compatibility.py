@@ -4,10 +4,7 @@ These tests verify the compatibility utility functions using
 Design by Contract principles.
 """
 
-import sys
 from datetime import datetime, timezone
-
-import pytest
 
 
 class TestCheckPythonVersionContract:

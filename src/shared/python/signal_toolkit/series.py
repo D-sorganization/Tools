@@ -13,8 +13,8 @@ Following pragmatic programming and Design by Contract principles.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable, Union
 
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
@@ -35,7 +35,7 @@ class SeriesResult:
     coefficients: NDArray[np.floating]
     n_terms: int
     center: float
-    function: Callable[[ArrayLike], Union[float, NDArray[np.floating]]]
+    function: Callable[[ArrayLike], float | NDArray[np.floating]]
     radius_of_convergence: float | None = None
 
 
@@ -72,7 +72,7 @@ class SeriesExpansion:
         f: Callable[[ArrayLike], ArrayLike],
         center: float,
         n_terms: int,
-    ) -> Callable[[ArrayLike], Union[float, NDArray[np.floating]]]:
+    ) -> Callable[[ArrayLike], float | NDArray[np.floating]]:
         """Compute Taylor series expansion of a function.
 
         The Taylor series of f(x) around center a is:
@@ -98,7 +98,7 @@ class SeriesExpansion:
         n_terms = min(n_terms, self.max_terms)
         coefficients = self.get_coefficients(f, center, n_terms)
 
-        def taylor_func(x: ArrayLike) -> Union[float, NDArray[np.floating]]:
+        def taylor_func(x: ArrayLike) -> float | NDArray[np.floating]:
             """Evaluate the Taylor series at x."""
             x_arr = np.asarray(x)
             dx = x_arr - center
@@ -118,7 +118,7 @@ class SeriesExpansion:
         self,
         f: Callable[[ArrayLike], ArrayLike],
         n_terms: int,
-    ) -> Callable[[ArrayLike], Union[float, NDArray[np.floating]]]:
+    ) -> Callable[[ArrayLike], float | NDArray[np.floating]]:
         """Compute Maclaurin series expansion of a function.
 
         The Maclaurin series is a Taylor series centered at x=0:
@@ -482,7 +482,7 @@ class SeriesExpansion:
 
 def exp_series(
     n_terms: int = 20,
-) -> Callable[[ArrayLike], Union[float, NDArray[np.floating]]]:
+) -> Callable[[ArrayLike], float | NDArray[np.floating]]:
     """Create exponential series approximation: e^x = Σ x^n/n!
 
     Args:
@@ -492,7 +492,7 @@ def exp_series(
         Callable that computes the exponential series
     """
 
-    def exp_func(x: ArrayLike) -> Union[float, NDArray[np.floating]]:
+    def exp_func(x: ArrayLike) -> float | NDArray[np.floating]:
         x_arr = np.asarray(x, dtype=np.float64)
         result = np.zeros_like(x_arr)
         term = np.ones_like(x_arr)
@@ -510,7 +510,7 @@ def exp_series(
 
 def sin_series(
     n_terms: int = 20,
-) -> Callable[[ArrayLike], Union[float, NDArray[np.floating]]]:
+) -> Callable[[ArrayLike], float | NDArray[np.floating]]:
     """Create sine series approximation: sin(x) = Σ (-1)^n * x^(2n+1)/(2n+1)!
 
     Args:
@@ -520,7 +520,7 @@ def sin_series(
         Callable that computes the sine series
     """
 
-    def sin_func(x: ArrayLike) -> Union[float, NDArray[np.floating]]:
+    def sin_func(x: ArrayLike) -> float | NDArray[np.floating]:
         x_arr = np.asarray(x, dtype=np.float64)
         result = np.zeros_like(x_arr)
         term = x_arr.copy()  # First term is x
@@ -539,7 +539,7 @@ def sin_series(
 
 def cos_series(
     n_terms: int = 20,
-) -> Callable[[ArrayLike], Union[float, NDArray[np.floating]]]:
+) -> Callable[[ArrayLike], float | NDArray[np.floating]]:
     """Create cosine series approximation: cos(x) = Σ (-1)^n * x^(2n)/(2n)!
 
     Args:
@@ -549,7 +549,7 @@ def cos_series(
         Callable that computes the cosine series
     """
 
-    def cos_func(x: ArrayLike) -> Union[float, NDArray[np.floating]]:
+    def cos_func(x: ArrayLike) -> float | NDArray[np.floating]:
         x_arr = np.asarray(x, dtype=np.float64)
         result = np.zeros_like(x_arr)
         term = np.ones_like(x_arr)  # First term is 1
@@ -568,7 +568,7 @@ def cos_series(
 
 def ln_series(
     n_terms: int = 50,
-) -> Callable[[ArrayLike], Union[float, NDArray[np.floating]]]:
+) -> Callable[[ArrayLike], float | NDArray[np.floating]]:
     """Create natural log series approximation: ln(1+x) = Σ (-1)^(n+1) * x^n/n
 
     Valid for |x| < 1.
@@ -580,7 +580,7 @@ def ln_series(
         Callable that computes the ln(1+x) series
     """
 
-    def ln_func(x: ArrayLike) -> Union[float, NDArray[np.floating]]:
+    def ln_func(x: ArrayLike) -> float | NDArray[np.floating]:
         x_arr = np.asarray(x, dtype=np.float64)
         result = np.zeros_like(x_arr)
         term = x_arr.copy()  # First term is x
@@ -599,7 +599,7 @@ def ln_series(
 
 def geometric_series(
     n_terms: int = 50,
-) -> Callable[[ArrayLike], Union[float, NDArray[np.floating]]]:
+) -> Callable[[ArrayLike], float | NDArray[np.floating]]:
     """Create geometric series approximation: 1/(1-x) = Σ x^n
 
     Valid for |x| < 1.
@@ -611,7 +611,7 @@ def geometric_series(
         Callable that computes the geometric series
     """
 
-    def geo_func(x: ArrayLike) -> Union[float, NDArray[np.floating]]:
+    def geo_func(x: ArrayLike) -> float | NDArray[np.floating]:
         x_arr = np.asarray(x, dtype=np.float64)
         result = np.zeros_like(x_arr)
         term = np.ones_like(x_arr)
@@ -629,7 +629,7 @@ def geometric_series(
 
 def arctan_series(
     n_terms: int = 50,
-) -> Callable[[ArrayLike], Union[float, NDArray[np.floating]]]:
+) -> Callable[[ArrayLike], float | NDArray[np.floating]]:
     """Create arctan series approximation: arctan(x) = Σ (-1)^n * x^(2n+1)/(2n+1)
 
     Valid for |x| <= 1.
@@ -641,7 +641,7 @@ def arctan_series(
         Callable that computes the arctan series
     """
 
-    def arctan_func(x: ArrayLike) -> Union[float, NDArray[np.floating]]:
+    def arctan_func(x: ArrayLike) -> float | NDArray[np.floating]:
         x_arr = np.asarray(x, dtype=np.float64)
         result = np.zeros_like(x_arr)
         term = x_arr.copy()  # First term is x
@@ -661,7 +661,7 @@ def arctan_series(
 
 def sinh_series(
     n_terms: int = 20,
-) -> Callable[[ArrayLike], Union[float, NDArray[np.floating]]]:
+) -> Callable[[ArrayLike], float | NDArray[np.floating]]:
     """Create sinh series approximation: sinh(x) = Σ x^(2n+1)/(2n+1)!
 
     Args:
@@ -671,7 +671,7 @@ def sinh_series(
         Callable that computes the sinh series
     """
 
-    def sinh_func(x: ArrayLike) -> Union[float, NDArray[np.floating]]:
+    def sinh_func(x: ArrayLike) -> float | NDArray[np.floating]:
         x_arr = np.asarray(x, dtype=np.float64)
         result = np.zeros_like(x_arr)
         term = x_arr.copy()  # First term is x
@@ -690,7 +690,7 @@ def sinh_series(
 
 def cosh_series(
     n_terms: int = 20,
-) -> Callable[[ArrayLike], Union[float, NDArray[np.floating]]]:
+) -> Callable[[ArrayLike], float | NDArray[np.floating]]:
     """Create cosh series approximation: cosh(x) = Σ x^(2n)/(2n)!
 
     Args:
@@ -700,7 +700,7 @@ def cosh_series(
         Callable that computes the cosh series
     """
 
-    def cosh_func(x: ArrayLike) -> Union[float, NDArray[np.floating]]:
+    def cosh_func(x: ArrayLike) -> float | NDArray[np.floating]:
         x_arr = np.asarray(x, dtype=np.float64)
         result = np.zeros_like(x_arr)
         term = np.ones_like(x_arr)  # First term is 1

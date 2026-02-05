@@ -4,10 +4,6 @@ These tests verify the validation functions using
 Design by Contract principles.
 """
 
-from pathlib import Path
-
-import pytest
-
 
 class TestValidatePathContract:
     """Design by Contract tests for validate_path function."""

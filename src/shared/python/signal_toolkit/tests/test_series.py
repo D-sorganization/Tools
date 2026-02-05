@@ -13,11 +13,9 @@ Following TDD and Design by Contract principles.
 from __future__ import annotations
 
 import math
-from typing import Callable
 
 import numpy as np
 import pytest
-
 
 # =============================================================================
 # SeriesExpansion Class Contract Tests
@@ -529,7 +527,9 @@ class TestConvergenceAnalysis:
         # For numerical methods, convergence is reliable close to the center
         # Far from center (|x| > 2), many terms are needed
         for x in [-1, 0, 1]:
-            analysis = expansion.analyze_convergence(np.exp, center=0, x_test=x, tolerance=1e-6)
+            analysis = expansion.analyze_convergence(
+                np.exp, center=0, x_test=x, tolerance=1e-6
+            )
             assert analysis["convergent"]
 
     def test_ln_diverges_outside_radius(self) -> None:
@@ -540,7 +540,9 @@ class TestConvergenceAnalysis:
         f = lambda x: np.log(1 + x)
 
         # Should diverge for x = 2 (outside |x| < 1)
-        analysis = expansion.analyze_convergence(f, center=0, x_test=2.0, tolerance=1e-6)
+        analysis = expansion.analyze_convergence(
+            f, center=0, x_test=2.0, tolerance=1e-6
+        )
         assert not analysis["convergent"]
 
 
@@ -602,7 +604,9 @@ class TestErrorBounds:
 
         taylor_func = expansion.taylor_series(f, center=0, n_terms=n_terms)
         actual_error = abs(taylor_func(x_test) - f(x_test))
-        bound = expansion.estimate_error_bound(f, center=0, x_test=x_test, n_terms=n_terms)
+        bound = expansion.estimate_error_bound(
+            f, center=0, x_test=x_test, n_terms=n_terms
+        )
 
         # Bound should be >= actual error (with some margin)
         assert actual_error <= bound * 2  # Allow factor of 2 margin
@@ -677,7 +681,7 @@ class TestSignalToolkitIntegration:
 
     def test_generate_series_approximation_signal(self) -> None:
         """Test generating a signal from series approximation."""
-        from signal_toolkit.core import Signal, SignalGenerator
+        from signal_toolkit.core import SignalGenerator
         from signal_toolkit.series import exp_series
 
         t = np.linspace(0, 2, 100)
