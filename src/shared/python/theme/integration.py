@@ -251,7 +251,6 @@ class ThemedWindowMixin:
         Args:
             theme_name: Name of the new theme
         """
-        pass
 
     def get_theme_manager(self):
         """Get the theme manager instance."""
