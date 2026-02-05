@@ -1,86 +1,87 @@
-./config/project_template/tools/code_quality_check.py:34:    (re.compile(r"\bTODO\b"), "TODO placeholder found"),
-./config/project_template/tools/code_quality_check.py:35:    (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
-./web_applications/unit_converter/agent_templates/pragmatist.md:58:* TODOs that never move
-./.cursor/rules/.cursorrules.md:14:- **NEVER USE PLACEHOLDERS** → No `TODO`, `FIXME`, `...`, `pass`, `NotImplementedError`, `<your-value-here>`
-./.cursor/rules/.cursorrules.md:515:- [X] Zero TODO/FIXME/pass in diff
-./.cursor/rules/.cursorrules.md:560:    # TODO: implement this properly
-./tools/README.md:26:- **Banned Patterns**: TODO, FIXME, placeholders, NotImplementedError
-./tools/matlab_utilities/README.md:261:- TODO, FIXME, HACK, XXX placeholders
-./tools/matlab_utilities/scripts/matlab_quality_check.py:310:                    (r"\bTODO\b", "TODO placeholder found"),
-./tools/matlab_utilities/scripts/matlab_quality_check.py:311:                    (r"\bFIXME\b", "FIXME placeholder found"),
-./tools/matlab_utilities/scripts/matlab_quality_check.py:313:                    (r"\bXXX\b", "XXX comment found"),
-./tools/code_quality_check.py:34:    (re.compile(r"\bTODO\b"), "TODO placeholder found"),
-./tools/code_quality_check.py:35:    (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
-./.github/workflows/Jules-Tech-Custodian.yml:49:          # TODO: Jules CLI API changed in v0.1.x
-./.github/workflows/Jules-Completist.yml:30:          grep -rn "TODO\|FIXME\|XXX" --include="*.py" --include="*.md" . \
-./.github/copilot-instructions.md:22:- BANNED: `TODO`, `FIXME`, `...`, `pass`, `NotImplementedError`, `<placeholder>`, "approximately"
-./.github/copilot-instructions.md:285:    # TODO: implement processing
-./quality_check_script.py:11:    (re.compile(r"\bTODO\b"), "TODO placeholder found"),
-./quality_check_script.py:12:    (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
-./quality_check_script.py:21:        re.compile(r"<[^<>]*TODO[^<>]*>", re.IGNORECASE),
-./quality_check_script.py:22:        "Angle bracket TODO placeholder",
-./quality_check_script.py:25:        re.compile(r"<[^<>]*FIXME[^<>]*>", re.IGNORECASE),
-./quality_check_script.py:26:        "Angle bracket FIXME placeholder",
-./drafts/Jules-Code-Quality-Reviewer.yml:96:          5. **Placeholders**: Identify placeholder code (TODO, FIXME, NotImplemented, pass statements)
-./scripts/quality-check.py:11:    (re.compile(r"\bTODO\b"), "TODO placeholder found"),
-./scripts/quality-check.py:12:    (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
-./scripts/quality-check.py:21:    # Note: Angle bracket TODO/FIXME patterns removed to avoid false positives in regex
-./docs/assessments/Assessment_B_Results_2026-01-17_REFRESH.md:468:+    'style-src': ["'self'", "'unsafe-inline'"],  # TODO: Remove unsafe-inline
-./docs/assessments/Assessment_B_Results_2026-01-17_REFRESH.md:492:+disallow_untyped_defs = False  # TODO: Change to True after fixing errors
-./docs/assessments/Assessment_B_Results_2026-01-17_REFRESH.md:493:+disallow_any_generics = False  # TODO: Enable
-./docs/assessments/archive/Assessment_ChangeLog_2026-01-12.md:37:    *   Found `TODO` and `FIXME` in `tools/matlab_utilities` and regex patterns in `code_quality_check.py`.
-./docs/assessments/archive/Assessment_B_Results_2026-01-11.md:304:+ # - development_tools/folder_tools/: Legacy code, typing TODO tracked in issue #XXX
-./docs/assessments/archive/Assessment_Highlight_2026-01-14.md:56:*   TODO: Freeze dependencies.
-./docs/assessments/archive/Assessment_B_Results.md:20:7.  **TODOs**: `TODO` patterns found in config files and hooks, though not in core logic. (Severity: **Nit**)
-./docs/assessments/archive/Documentation_Cleanup_Prompt.md:23:3. ❌ Add placeholder content (e.g., "TODO: document this")
-./docs/assessments/archive/Documentation_Cleanup_Prompt.md:325:6. ✅ No "TODO" or placeholder text remains
-./docs/assessments/completist/audit_report.md:7:An audit of the codebase for incomplete work markers (`TODO`, `FIXME`, `XXX`) reveals a high degree of completion. No active TODOs were found in the Python source code. The majority of matches are false positives located in:
-./docs/assessments/completist/audit_report.md:8:1.  **Tooling Scripts**: Regular expressions used to enforce the "no TODO" policy.
-./docs/assessments/completist/audit_report.md:10:3.  **Assessment Reports**: Suggested code changes (diffs) that include TODO comments for future implementation.
-./docs/assessments/completist/audit_report.md:16:- No active `TODO`, `FIXME`, or `XXX` markers were found in the scanned `.py` files.
-./docs/assessments/completist/audit_report.md:21:-   `tools/code_quality_check.py`: Contains `re.compile(r"\bTODO\b")`.
-./docs/assessments/completist/audit_report.md:22:-   `tools/matlab_utilities/scripts/matlab_quality_check.py`: Contains `re.compile(r"\bTODO\b")`.
-./docs/assessments/completist/audit_report.md:23:-   `quality_check_script.py`: Contains `re.compile(r"\bTODO\b")`.
-./docs/assessments/completist/audit_report.md:24:-   `scripts/quality-check.py`: Contains `re.compile(r"\bTODO\b")`.
-./docs/assessments/completist/audit_report.md:27:Documentation files reference `TODO` as a banned pattern:
-./docs/assessments/completist/audit_report.md:28:-   `.cursor/rules/.cursorrules.md`: "**NEVER USE PLACEHOLDERS** → No `TODO`, `FIXME`...".
-./docs/assessments/completist/audit_report.md:29:-   `.github/copilot-instructions.md`: "BANNED: `TODO`, `FIXME`...".
-./docs/assessments/completist/audit_report.md:30:-   `tools/README.md`: Lists "TODO" as a banned pattern.
-./docs/assessments/completist/audit_report.md:33:Several assessment reports contain TODOs in the context of:
-./docs/assessments/completist/audit_report.md:34:-   **Diff Suggestions**: `docs/assessments/Assessment_B_Results_2026-01-17_REFRESH.md` includes proposed changes like `# TODO: Remove unsafe-inline` or `# TODO: Enable`. These represent identified technical debt to be addressed in future sprints.
-./docs/assessments/completist/audit_report.md:35:-   **Archived Plans**: `media_processing/video_processor/docs/archive/ACTION_PLAN_CODE_QUALITY.md` contains historical TODOs.
-./docs/assessments/completist/audit_report.md:38:1.  **Maintain Strict Enforcement**: Continue using the quality check scripts to prevent new TODOs from entering the codebase.
-./docs/assessments/completist/audit_report.md:39:2.  **Address Assessment Debt**: The TODOs identified in `Assessment_B_Results_2026-01-17_REFRESH.md` (e.g., Mypy strict mode, Security Headers) should be converted into formal issues or active tasks, rather than remaining as comments in a markdown report.
-./docs/architecture/JULES_ARCHITECTURE.md:140:- **Fixes applied:** Less aggressive Ruff, specific MyPy paths, fixed grep regex for TODOs.
-./docs/architecture/JULES_ARCHITECTURE.md:172:      # FIX: Correct Regex for TODOs
-./docs/architecture/JULES_ARCHITECTURE.md:175:          if grep -r "TODO\|FIXME" --include="*.py" src/; then
-./media_processing/audio_processor/matlab/audio_signal_processor/GUI_REVIEW_AND_FIXES.md:302:✅ **No Placeholders:** All TODOs are intentional future features
-./media_processing/audio_processor/matlab/audio_signal_processor/PULL_REQUEST_SUMMARY.md:160:- ✅ **No placeholders:** All TODOs are intentional future features
-./media_processing/video_processor/package-lock.json:8346:      "integrity": "sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==",
-./media_processing/video_processor/tools/matlab_utilities/scripts/matlab_quality_check.py:308:                    (r"\bTODO\b", "TODO placeholder found"),
-./media_processing/video_processor/tools/matlab_utilities/scripts/matlab_quality_check.py:309:                    (r"\bFIXME\b", "FIXME placeholder found"),
-./media_processing/video_processor/tools/matlab_utilities/scripts/matlab_quality_check.py:311:                    (r"\bXXX\b", "XXX comment found"),
-./media_processing/video_processor/tools/code_quality_check.py:34:    (re.compile(r"\bTODO\b"), "TODO placeholder found"),
-./media_processing/video_processor/tools/code_quality_check.py:35:    (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
-./media_processing/video_processor/docs/archive/PR_DESCRIPTION.md:105:- No `TODO` comments
-./media_processing/video_processor/docs/archive/PR_DESCRIPTION.md:106:- No `FIXME` comments
-./media_processing/video_processor/docs/archive/PR_DESCRIPTION.md:215:- [x] Zero TODO/FIXME/pass in diff
-./media_processing/video_processor/docs/archive/ACTION_PLAN_CODE_QUALITY.md:617:    // TODO: Save to database when backend is ready
-./media_processing/video_processor/docs/archive/ACTION_PLAN_CODE_QUALITY.md:951:   - No TODOs left
-./media_processing/video_processor/docs/VS_CODE_SETUP.md:68:    - Highlights TODO, FIXME, etc.
-./media_processing/video_processor/apps/web/app/page.tsx:36:  // TODO: Move fps to client-side config or use from video metadata
-./media_processing/video_processor/apps/web/app/page.tsx:122:      // TODO: Save to database when backend is ready
-./media_processing/video_processor/apps/web/app/page.tsx:169:      // TODO: Save pose data to state or database when ready
-./media_processing/video_processor/apps/web/lib/sanitize.ts:8: * TODO: Add DOMPurify when ready for production.
-./media_processing/video_processor/apps/web/lib/sanitize.ts:93:  // TODO: Use DOMPurify to allow safe HTML tags
-./media_processing/video_processor/apps/web/lib/sanitize.ts:222:    // TODO: Parse and validate RGB values
-./media_processing/video_processor/apps/web/lib/logger.ts:9: * TODO: Add pino when ready for production.
-./media_processing/video_processor/agent_templates/pragmatist.md:58:* TODOs that never move
-./media_processing/video_processor/JULES_ARCHITECTURE.md:140:- **Fixes applied:** Less aggressive Ruff, specific MyPy paths, fixed grep regex for TODOs.
-./media_processing/video_processor/JULES_ARCHITECTURE.md:172:      # FIX: Correct Regex for TODOs
-./media_processing/video_processor/JULES_ARCHITECTURE.md:175:          if grep -r "TODO\|FIXME" --include="*.py" src/; then
-./media_processing/video_processor/matlab/models/pendulum_model.m:41:    % TODO: Implement pendulum model
-./media_processing/video_processor/javascript/README.md:37:- No placeholders (no TODO, FIXME, etc.)
-./agent_templates/pragmatist.md:58:- TODOs that never move
-./data_processing/data_processor/tools/code_quality_check.py:34:    (re.compile(r"\bTODO\b"), "TODO placeholder found"),
-./data_processing/data_processor/tools/code_quality_check.py:35:    (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
+./scripts/analyze_completist_data.py:103:    fixme_markers = ["FIX" + "ME", "XXX", "HACK", "TEMP"]
+./scripts/analyze_completist_data.py:111:            return {"file": filepath, "line": lineno, "text": content, "type": "TODO"}
+./scripts/analyze_completist_data.py:125:        if marker_item["type"] == "TODO":
+./scripts/analyze_completist_data.py:200:        "FIXME": 2,
+./scripts/analyze_completist_data.py:201:        "TODO": 3,
+./scripts/analyze_completist_data.py:274:    chart.append(f'    "Feature Requests (TODO)" : {len(todos)}')
+./scripts/analyze_completist_data.py:275:    chart.append(f'    "Technical Debt (FIXME)" : {len(fixmes)}')
+./scripts/analyze_completist_data.py:320:        f"- **Feature Gaps (TODO)**: {len(todos)}",
+./scripts/pragmatic_programmer_review.py:206:            if "TODO" in content:
+./scripts/pragmatic_programmer_review.py:216:                "title": f"High TODO count ({len(todos)})",
+./scripts/pragmatic_programmer_review.py:219:                "recommendation": "Review TODOs",
+./scripts/tools/code_quality_check.py:34:    (re.compile(r"\bTODO\b"), "TODO placeholder found"),
+./scripts/tools/code_quality_check.py:35:    (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
+./scripts/setup_hooks.py:106:  - quality-check (no TODOs/FIXMEs)
+./src/scientific_modeling/solar_system_model/solar_system/core/constants.py:52:SUN_TEMPERATURE = 5778  # K (effective)
+./src/tools/quality_utils.py:34:    (re.compile(r"\bTODO\b"), "TODO placeholder found"),
+./src/tools/quality_utils.py:35:    (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
+./src/tools/quality_utils.py:44:        re.compile(r"<[^<>]*TODO[^<>]*>", re.IGNORECASE),
+./src/tools/quality_utils.py:45:        "Angle bracket TODO placeholder",
+./src/tools/quality_utils.py:48:        re.compile(r"<[^<>]*FIXME[^<>]*>", re.IGNORECASE),
+./src/tools/quality_utils.py:49:        "Angle bracket FIXME placeholder",
+./src/tools/folder_tools/folder_tool/Folders_Tool_r0.py:60:MAX_RETRY_ATTEMPTS: Final[int] = (
+./src/tools/folder_tools/folder_tool/Folders_Tool_r0.py:102:MAX_COUNTER_ATTEMPTS: Final[int] = (
+./src/tools/folder_tools/folder_tool/Folders_Tool_r0.py:267:        if MAX_RETRY_ATTEMPTS <= 0:
+./src/tools/folder_tools/folder_tool/Folders_Tool_r0.py:269:                f"MAX_RETRY_ATTEMPTS must be positive, got {MAX_RETRY_ATTEMPTS}",
+./src/tools/folder_tools/folder_tool/Folders_Tool_r0.py:281:        if MAX_COUNTER_ATTEMPTS <= 0:
+./src/tools/folder_tools/folder_tool/Folders_Tool_r0.py:283:                f"MAX_COUNTER_ATTEMPTS must be positive, got {MAX_COUNTER_ATTEMPTS}",
+./src/tools/folder_tools/folder_tool/Folders_Tool_r0.py:370:            "MAX_RETRY_ATTEMPTS": {
+./src/tools/folder_tools/folder_tool/Folders_Tool_r0.py:371:                "value": str(MAX_RETRY_ATTEMPTS),
+./src/tools/folder_tools/folder_tool/Folders_Tool_r0.py:425:            "MAX_COUNTER_ATTEMPTS": {
+./src/tools/folder_tools/folder_tool/Folders_Tool_r0.py:426:                "value": str(MAX_COUNTER_ATTEMPTS),
+./src/tools/folder_tools/folder_tool/Folders_Tool_r0.py:2598:        for attempt in range(MAX_RETRY_ATTEMPTS):
+./src/tools/folder_tools/folder_tool/Folders_Tool_r0.py:2632:                            if attempt < MAX_RETRY_ATTEMPTS - 1:
+./src/tools/folder_tools/folder_tool/Folders_Tool_r0.py:2635:                                    f"(attempt {attempt + 1}/{MAX_RETRY_ATTEMPTS})",
+./src/tools/folder_tools/folder_tool/Folders_Tool_r0.py:2640:                        if attempt < MAX_RETRY_ATTEMPTS - 1:
+./src/tools/folder_tools/folder_tool/Folders_Tool_r0.py:2644:                    if attempt < MAX_RETRY_ATTEMPTS - 1:
+./src/tools/folder_tools/folder_tool/Folders_Tool_r0.py:2649:                if attempt < MAX_RETRY_ATTEMPTS - 1:
+./src/tools/folder_tools/folder_tool/Folders_Tool_r0.py:2656:                        f"{MAX_RETRY_ATTEMPTS} attempts: {e}",
+./src/tools/folder_tools/folder_tool/Folders_Tool_r0.py:2907:        while counter <= MAX_COUNTER_ATTEMPTS:
+./src/tools/matlab_quality_utils.py:230:                    (r"\bTODO\b", "TODO placeholder found"),
+./src/tools/matlab_quality_utils.py:231:                    (r"\bFIXME\b", "FIXME placeholder found"),
+./src/tools/matlab_quality_utils.py:232:                    (r"\bHACK\b", "HACK comment found"),
+./src/tools/matlab_quality_utils.py:233:                    (r"\bXXX\b", "XXX comment found"),
+./src/media_processing/video_processor/apps/web/lib/golf/swingAnalyzer.ts:110:    swingType: SwingType.UNKNOWN, // TODO: Implement swing type detection
+./src/media_processing/video_processor/apps/web/lib/golf/swingAnalyzer.ts:441:      armHang: 'good', // TODO: Implement arm hang detection
+./src/media_processing/video_processor/apps/web/lib/logger.ts:9: * TODO: Add pino when ready for production.
+./src/media_processing/video_processor/apps/web/lib/sanitize.ts:8: * TODO: Add DOMPurify when ready for production.
+./src/media_processing/video_processor/apps/web/lib/sanitize.ts:93:  // TODO: Use DOMPurify to allow safe HTML tags
+./src/media_processing/video_processor/apps/web/lib/sanitize.ts:222:    // TODO: Parse and validate RGB values
+./src/media_processing/video_processor/constants_file.py:37:TEMPERATURE_C: float = 20.0  # [°C] Standard temperature
+./src/shared/python/upstream_drift_tools/utils/unit_constants.py:40:STP_TEMPERATURE_K: Final[float] = 273.15  # 0°C
+./src/shared/python/upstream_drift_tools/utils/unit_constants.py:48:NTP_TEMPERATURE_K: Final[float] = 293.15  # 20°C
+./src/shared/python/upstream_drift_tools/utils/unit_constants.py:52:SATP_TEMPERATURE_K: Final[float] = 298.15  # 25°C
+./src/shared/python/upstream_drift_tools/utils/unit_constants.py:58:SCFM_60F_TEMPERATURE_K: Final[float] = 288.706  # 60°F
+./src/shared/python/upstream_drift_tools/utils/unit_constants.py:59:SCFM_70F_TEMPERATURE_K: Final[float] = 294.261  # 70°F
+./src/shared/python/upstream_drift_tools/utils/unit_constants.py:163:# TEMPERATURE - Note: These require special handling as they're not linear
+./src/shared/python/upstream_drift_tools/process_calculators/constants.py:43:STP_TEMPERATURE_K: Final[float] = 273.15  # 0°C
+./src/shared/python/upstream_drift_tools/process_calculators/constants.py:52:NTP_TEMPERATURE_K: Final[float] = 293.15  # 20°C
+./src/shared/python/upstream_drift_tools/process_calculators/constants.py:56:SATP_TEMPERATURE_K: Final[float] = 298.15  # 25°C
+./src/shared/python/upstream_drift_tools/process_calculators/constants.py:57:SATP_TEMPERATURE_C: Final[float] = 25.0
+./src/shared/python/upstream_drift_tools/process_calculators/constants.py:66:SCFM_60F_TEMPERATURE_K: Final[float] = 288.706  # 60°F
+./src/shared/python/upstream_drift_tools/process_calculators/constants.py:67:SCFM_70F_TEMPERATURE_K: Final[float] = 294.261  # 70°F
+./src/shared/python/upstream_drift_tools/process_calculators/constants.py:78:# TEMPERATURE CONVERSIONS
+./src/shared/python/upstream_drift_tools/process_calculators/baghouse_calculator.py:17:    STP_TEMPERATURE_K,
+./src/shared/python/upstream_drift_tools/process_calculators/baghouse_calculator.py:174:        vol_std_m3_s = molar_flow * R_UNIVERSAL * STP_TEMPERATURE_K / ATM_PA
+./src/shared/python/upstream_drift_tools/calculators/thermo/steam_engine.py:43:BOILING_TEMPERATURE_WATER: float = 373.15  # [K] Boiling temperature of water at 1 atm
+./src/shared/python/upstream_drift_tools/calculators/thermo/steam_engine.py:74:MIN_TEMPERATURE_UI_K: float = 273.15  # [K] Minimum temperature for UI (0°C)
+./src/shared/python/upstream_drift_tools/calculators/thermo/steam_engine.py:75:MAX_TEMPERATURE_UI_K: float = 647.15  # [K] Maximum temperature for UI (374°C)
+./src/shared/python/upstream_drift_tools/calculators/thermo/steam_engine.py:114:CRITICAL_TEMPERATURE_WATER: float = 647.15  # [K] Critical temperature of water
+./src/shared/python/upstream_drift_tools/calculators/thermo/steam_engine.py:116:TRIPLE_POINT_TEMPERATURE: float = 273.16  # [K] Triple point temperature of water
+./src/shared/python/upstream_drift_tools/calculators/thermo/steam_engine.py:120:DEFAULT_DEW_POINT_TEMPERATURE_CELSIUS: float = (
+./src/shared/python/upstream_drift_tools/calculators/thermo/steam_engine.py:129:FALLBACK_BOILING_TEMPERATURE: float = (
+./src/shared/python/upstream_drift_tools/calculators/thermo/steam_engine.py:135:SATURATED_FROM_TEMP_STATE: int = (
+./src/shared/python/upstream_drift_tools/calculators/thermo/steam_engine.py:382:            T_guess = DEFAULT_DEW_POINT_TEMPERATURE_CELSIUS
+./src/shared/python/upstream_drift_tools/calculators/thermo/steam_engine.py:408:            return DEFAULT_DEW_POINT_TEMPERATURE_CELSIUS
+./src/shared/python/upstream_drift_tools/calculators/thermo/steam_engine.py:557:            return FALLBACK_BOILING_TEMPERATURE
+./src/shared/python/upstream_drift_tools/calculators/thermo/steam_engine.py:643:            if temperature < TRIPLE_POINT_TEMPERATURE or temperature > 1000:
+./src/shared/python/upstream_drift_tools/calculators/thermo/steam_engine.py:647:                    TRIPLE_POINT_TEMPERATURE,
+./src/shared/python/upstream_drift_tools/calculators/thermo/steam_engine.py:651:                    f"[{TRIPLE_POINT_TEMPERATURE}, 1000] K for CoolProp"
+./src/shared/python/upstream_drift_tools/calculators/conversion/tables.py:108:    SCFM_60F_TEMPERATURE_K,
+./src/shared/python/upstream_drift_tools/calculators/conversion/tables.py:109:    SCFM_70F_TEMPERATURE_K,
+./src/shared/python/upstream_drift_tools/calculators/conversion/tables.py:122:    STP_TEMPERATURE_K,
+./src/shared/python/upstream_drift_tools/calculators/conversion/tables.py:152:    STP = (STP_TEMPERATURE_K, STP_PRESSURE_PA, "STP (0°C, 100 kPa)")
+./src/shared/python/upstream_drift_tools/calculators/conversion/tables.py:156:    STP_OLD = (STP_TEMPERATURE_K, STP_OLD_PRESSURE_PA, "Old STP (0°C, 101.325 kPa)")
+./src/shared/python/upstream_drift_tools/calculators/conversion/tables.py:159:    SCFM_60F = (SCFM_60F_TEMPERATURE_K, SCFM_PRESSURE_PA, "SCFM at 60°F, 14.696 psia")
+./src/shared/python/upstream_drift_tools/calculators/conversion/tables.py:160:    SCFM_70F = (SCFM_70F_TEMPERATURE_K, SCFM_PRESSURE_PA, "SCFM at 70°F, 14.696 psia")
+./src/shared/python/upstream_drift_tools/calculators/conversion/tables.py:172:    STP_SI = (STP_TEMPERATURE_K, 100000.0, "SI Standard (0°C, 1 bar)")

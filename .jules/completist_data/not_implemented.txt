@@ -1,13 +1,17 @@
 ./scripts/analyze_completist_data.py:199:        "NotImplementedError": 4,
+./scripts/tools/code_quality_check.py:37:    (re.compile(r"NotImplementedError"), "NotImplementedError placeholder"),
 ./src/scientific_modeling/solar_system_model/solar_system/ui/widgets.py:393:            pass  # Invalid input, ignore
 ./src/scientific_modeling/solar_system_model/solar_system/visualization/renderer.py:788:        pass  # UI Renderer handles panels now via render_sidebar or similar
 ./src/scientific_modeling/solar_system_model/solar_system/visualization/scene.py:1198:            pass  # Placeholder for future hit testing logic
 ./src/python/shared/performance_utils.py:82:                pass  # Skip inaccessible directories
 ./src/python/shared/performance_utils.py:102:                        pass  # Skip failed directories
+./src/python/src/utils/integration_test_helpers.py:663:                pass  # Suppress logging
+./src/pressure_drop_calculator/python/pressure_drop_calculator/ui/pyqt6/main_window.py:270:        pass  # Roughness is looked up during calculation
 ./src/tools/quality_utils.py:37:    (re.compile(r"NotImplementedError"), "NotImplementedError placeholder"),
+./src/syngas_water_calculator/tests/test_syngas_water_calculator_gui.py:141:                    pass  # Some methods have limited ranges
 ./src/shared/python/signal_toolkit/io.py:543:        raise NotImplementedError(msg)
 ./src/shared/python/model_generation/library/repository.py:303:            pass  # Meshes not found or not accessible
 ./src/shared/python/model_generation/converters/format_utils.py:161:    raise NotImplementedError(
-./src/shared/python/humanoid_character_builder/mesh/inertia_calculator.py:24:    pass  # For type hints without runtime import
+./src/shared/python/humanoid_character_builder/mesh/inertia_calculator.py:25:    pass  # For type hints without runtime import
 ./src/shared/python/upstream_drift_tools/calculators/thermo/steam_engine.py:363:                pass  # Fall back to Buck equation
-./src/data_processing/data_processor/python/benchmarks/performance_benchmark.py:552:                    pass  # Throughput data found, no action needed
+./src/data_processing/data_processor/python/benchmarks/performance_benchmark.py:515:                    pass  # Throughput data found, no action needed

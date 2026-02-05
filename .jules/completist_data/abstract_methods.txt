@@ -5,19 +5,19 @@
 ./scripts/analyze_completist_data.py-181-    return _scan_completist_file("ABSTRACT", _parser)
 ./scripts/analyze_completist_data.py-182-
 --
-./src/shared/python/model_generation/builders/base_builder.py:151:    @abstractmethod
-./src/shared/python/model_generation/builders/base_builder.py-152-    def build(self, **kwargs: Any) -> BuildResult:
-./src/shared/python/model_generation/builders/base_builder.py-153-        """
-./src/shared/python/model_generation/builders/base_builder.py-154-        Build the URDF model.
-./src/shared/python/model_generation/builders/base_builder.py-155-
-./src/shared/python/model_generation/builders/base_builder.py-156-        Returns:
+./src/shared/python/model_generation/builders/base_builder.py:182:    @abstractmethod
+./src/shared/python/model_generation/builders/base_builder.py-183-    def build(self, **kwargs: Any) -> BuildResult:
+./src/shared/python/model_generation/builders/base_builder.py-184-        """
+./src/shared/python/model_generation/builders/base_builder.py-185-        Build the URDF model.
+./src/shared/python/model_generation/builders/base_builder.py-186-
+./src/shared/python/model_generation/builders/base_builder.py-187-        Returns:
 --
-./src/shared/python/model_generation/builders/base_builder.py:161:    @abstractmethod
-./src/shared/python/model_generation/builders/base_builder.py-162-    def clear(self) -> None:
-./src/shared/python/model_generation/builders/base_builder.py-163-        """Clear all links and joints."""
-./src/shared/python/model_generation/builders/base_builder.py-164-        ...
-./src/shared/python/model_generation/builders/base_builder.py-165-
-./src/shared/python/model_generation/builders/base_builder.py-166-    def validate(self) -> ValidationResult:
+./src/shared/python/model_generation/builders/base_builder.py:192:    @abstractmethod
+./src/shared/python/model_generation/builders/base_builder.py-193-    def clear(self) -> None:
+./src/shared/python/model_generation/builders/base_builder.py-194-        """Clear all links and joints."""
+./src/shared/python/model_generation/builders/base_builder.py-195-        ...
+./src/shared/python/model_generation/builders/base_builder.py-196-
+./src/shared/python/model_generation/builders/base_builder.py-197-    def validate(self) -> ValidationResult:
 --
 ./src/shared/python/model_generation/library/repository.py:39:    @abstractmethod
 ./src/shared/python/model_generation/library/repository.py-40-    def name(self) -> str:
