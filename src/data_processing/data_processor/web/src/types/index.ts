@@ -67,3 +67,87 @@ export interface Statistics {
 }
 
 export type ExportFormat = 'csv' | 'json' | 'excel';
+
+// Integration types
+export type IntegrationMethod = 'trapezoidal' | 'simpson' | 'rectangular';
+
+export interface IntegrationConfig {
+  method: IntegrationMethod;
+  signals: string[];
+  timeColumn: string;
+}
+
+// Differentiation types
+export type DifferentiationMethod = 'spline' | 'rolling_polynomial';
+
+export interface DifferentiationConfig {
+  method: DifferentiationMethod;
+  signals: string[];
+  timeColumn: string;
+  order: number;
+  windowSize?: number;
+  polyOrder?: number;
+}
+
+// Resampling types
+export type ResampleMethod = 'mean' | 'median' | 'first' | 'last' | 'min' | 'max' | 'sum';
+
+export interface ResampleConfig {
+  targetFrequency: string;
+  method: ResampleMethod;
+  interpolate: boolean;
+  timeColumn: string;
+}
+
+// Time range types
+export interface TimeRangeConfig {
+  startTime?: number | string;
+  endTime?: number | string;
+  timeColumn: string;
+}
+
+// Trendline types
+export type TrendlineType = 'linear' | 'polynomial' | 'exponential' | 'power';
+
+export interface TrendlineConfig {
+  type: TrendlineType;
+  xColumn: string;
+  yColumn: string;
+  degree?: number;
+  xMin?: number;
+  xMax?: number;
+}
+
+export interface TrendlineResult {
+  type: TrendlineType;
+  equation: string;
+  rSquared: number;
+  coefficients: number[];
+  predictions?: number[];
+}
+
+// Custom formula types
+export interface FormulaConfig {
+  name: string;
+  formula: string;
+}
+
+// Plot configuration types
+export interface PlotConfig {
+  name: string;
+  xAxis: string;
+  ySignals: string[];
+  trendline?: TrendlineConfig;
+  colors?: Record<string, string>;
+}
+
+// App configuration types
+export interface AppConfig {
+  outputDirectory?: string;
+  exportFormat?: ExportFormat;
+  includeTimestamp?: boolean;
+  resampleRule?: string;
+  resampleMethod?: ResampleMethod;
+  integrationMethod?: IntegrationMethod;
+  differentiationMethod?: DifferentiationMethod;
+}
