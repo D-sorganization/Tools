@@ -71,8 +71,10 @@ class TestTaylorSeriesContract:
         from signal_toolkit.series import SeriesExpansion
 
         expansion = SeriesExpansion()
+
         def f(x):
             return np.sin(x)
+
         taylor_func = expansion.taylor_series(f, center=0, n_terms=5)
 
         assert callable(taylor_func)
@@ -82,8 +84,10 @@ class TestTaylorSeriesContract:
         from signal_toolkit.series import SeriesExpansion
 
         expansion = SeriesExpansion()
+
         def f(x):
             return np.exp(x)
+
         taylor_func = expansion.taylor_series(f, center=0, n_terms=5)
 
         result = taylor_func(1.0)
@@ -94,8 +98,10 @@ class TestTaylorSeriesContract:
         from signal_toolkit.series import SeriesExpansion
 
         expansion = SeriesExpansion()
+
         def f(x):
             return np.cos(x)
+
         taylor_func = expansion.taylor_series(f, center=0, n_terms=5)
 
         x = np.linspace(-1, 1, 10)
@@ -116,8 +122,10 @@ class TestTaylorSeriesContract:
         from signal_toolkit.series import SeriesExpansion
 
         expansion = SeriesExpansion()
+
         def f(x):
             return x**2
+
         with pytest.raises(ValueError):
             expansion.taylor_series(f, center=0, n_terms=0)
 
@@ -138,8 +146,10 @@ class TestMaclaurinSeriesContract:
         from signal_toolkit.series import SeriesExpansion
 
         expansion = SeriesExpansion()
+
         def f(x):
             return np.sin(x)
+
         maclaurin_func = expansion.maclaurin_series(f, n_terms=5)
 
         assert callable(maclaurin_func)
@@ -149,6 +159,7 @@ class TestMaclaurinSeriesContract:
         from signal_toolkit.series import SeriesExpansion
 
         expansion = SeriesExpansion()
+
         def f(x):
             return np.exp(x)
 
@@ -172,8 +183,10 @@ class TestGetCoefficientsContract:
         from signal_toolkit.series import SeriesExpansion
 
         expansion = SeriesExpansion()
+
         def f(x):
             return np.exp(x)
+
         coeffs = expansion.get_coefficients(f, center=0, n_terms=5)
 
         assert isinstance(coeffs, np.ndarray)
@@ -183,6 +196,7 @@ class TestGetCoefficientsContract:
         from signal_toolkit.series import SeriesExpansion
 
         expansion = SeriesExpansion()
+
         def f(x):
             return np.sin(x)
 
@@ -261,9 +275,11 @@ class TestTaylorSeriesFunctional:
         from signal_toolkit.series import SeriesExpansion
 
         expansion = SeriesExpansion()
+
         # f(x) = 1 + 2x + 3x^2
         def f(x):
             return 1 + 2 * x + 3 * x**2
+
         taylor_func = expansion.taylor_series(f, center=0, n_terms=5)
 
         x_test = np.linspace(-2, 2, 50)
@@ -546,6 +562,7 @@ class TestConvergenceAnalysis:
         from signal_toolkit.series import SeriesExpansion
 
         expansion = SeriesExpansion()
+
         def f(x):
             return np.log(1 + x)
 
@@ -734,6 +751,7 @@ class TestUtilityFunctions:
         # For polynomial f(x) = x^3, f'(0) = 0, f''(0) = 0, f'''(0) = 6
         def f(x):
             return x**3
+
         coeffs = expansion.get_coefficients(f, center=0, n_terms=5)
 
         # Coefficients: c0=0, c1=0, c2=0, c3=1 (since 6/3! = 1), c4=0

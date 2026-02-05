@@ -982,23 +982,17 @@ class DataProcessorMainWindow(QMainWindow):
 
         except json.JSONDecodeError as e:
             logger.error(f"JSON decode error: {e}")
-            QMessageBox.critical(
-                self, "Error", f"Invalid JSON file:\n{e}"
-            )
+            QMessageBox.critical(self, "Error", f"Invalid JSON file:\n{e}")
         except Exception as e:
             logger.error(f"Load signal set error: {e}", exc_info=True)
-            QMessageBox.critical(
-                self, "Error", f"Failed to load signal set:\n{e}"
-            )
+            QMessageBox.critical(self, "Error", f"Failed to load signal set:\n{e}")
 
     def _save_signal_set(self) -> None:
         """Save current signal selection to JSON file."""
         selected_signals = self.signal_list.get_selected_signals()
 
         if not selected_signals:
-            QMessageBox.warning(
-                self, "No Selection", "Please select signals to save."
-            )
+            QMessageBox.warning(self, "No Selection", "Please select signals to save.")
             return
 
         filename, _ = QFileDialog.getSaveFileName(
@@ -1037,9 +1031,7 @@ class DataProcessorMainWindow(QMainWindow):
 
         except Exception as e:
             logger.error(f"Save signal set error: {e}", exc_info=True)
-            QMessageBox.critical(
-                self, "Error", f"Failed to save signal set:\n{e}"
-            )
+            QMessageBox.critical(self, "Error", f"Failed to save signal set:\n{e}")
 
 
 def main() -> None:
