@@ -190,7 +190,6 @@ class OutlierDetector:
 
     def _detect_ensemble(self, X: np.ndarray) -> OutlierResult:
         """Detect outliers using ensemble of methods."""
-        n = len(X)
         method_results = {}
         all_masks = []
 
@@ -606,8 +605,7 @@ class OutlierDetector:
         diff = X_clean - mean
         distances = np.sqrt(np.sum(diff @ cov_inv * diff, axis=1))
 
-        # Chi-squared threshold
-        threshold = np.sqrt(stats.chi2.ppf(0.975, p))
+        # Use configured threshold
         mask = distances > self.config.mahalanobis_threshold
 
         return mask, distances

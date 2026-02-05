@@ -248,7 +248,6 @@ class WaveletDenoiser:
     def _dwt_step(self, signal: np.ndarray, filter_coeffs: np.ndarray) -> np.ndarray:
         """Single DWT step: convolve and downsample."""
         # Periodic extension
-        n = len(signal)
         flen = len(filter_coeffs)
         extended = np.concatenate([signal[-(flen - 1) :], signal, signal[: flen - 1]])
 
@@ -413,7 +412,7 @@ class WaveletDenoiser:
         """Apply thresholding to wavelet coefficients."""
         thresholded = [coeffs[0].copy()]  # Keep approximation
 
-        for detail, thresh in zip(coeffs[1:], thresholds[1:]):
+        for detail, thresh in zip(coeffs[1:], thresholds[1:], strict=False):
             thresholded.append(self._threshold(detail, thresh))
 
         return thresholded

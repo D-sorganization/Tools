@@ -514,8 +514,6 @@ class TimeSeriesDecomposer:
 
     def _stl_decompose(self, data: np.ndarray, period: int) -> DecompositionResult:
         """STL decomposition implementation."""
-        n = len(data)
-
         # Initial trend using moving average
         trend = self._moving_average(data, period)
 

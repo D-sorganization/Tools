@@ -18,9 +18,10 @@ Features:
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
 
 import numpy as np
 
@@ -851,7 +852,7 @@ class FeatureSelector:
                     continue
 
                 if abs(corr_matrix[i, j]) > threshold:
-                    # If target is provided, keep the one with higher correlation to target
+                    # Keep feature with higher target correlation if provided
                     if target is not None:
                         corr_i = abs(np.corrcoef(features[:, i], target)[0, 1])
                         corr_j = abs(np.corrcoef(features[:, j], target)[0, 1])

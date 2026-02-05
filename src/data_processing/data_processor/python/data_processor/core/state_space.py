@@ -897,7 +897,8 @@ def fit_state_space(
 
     Args:
         y: Time series data
-        model_type: Model type ('local_level', 'local_linear_trend', 'seasonal', 'arima')
+        model_type: Model type ('local_level', 'local_linear_trend',
+            'seasonal', 'arima')
         **kwargs: Additional configuration options
 
     Returns:

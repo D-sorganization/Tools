@@ -270,7 +270,8 @@ class DataAugmenter:
         """Apply time warping using smooth random curves.
 
         Args:
-            data: Input time series (n_samples, seq_len) or (n_samples, seq_len, n_features)
+            data: Input time series (n_samples, seq_len) or
+                (n_samples, seq_len, n_features)
             sigma: Warping strength
             knots: Number of warping knots
 
@@ -635,11 +636,11 @@ class DataAugmenter:
                 # Convert to one-hot if needed
                 unique_labels = np.unique(labels)
                 n_classes = len(unique_labels)
-                label_map = {l: i for i, l in enumerate(unique_labels)}
+                label_map = {lbl: i for i, lbl in enumerate(unique_labels)}
 
                 one_hot = np.zeros((n_samples, n_classes))
-                for i, l in enumerate(labels):
-                    one_hot[i, label_map[l]] = 1.0
+                for i, lbl in enumerate(labels):
+                    one_hot[i, label_map[lbl]] = 1.0
 
                 mixed_labels = np.zeros((n_samples, n_classes))
                 for i in range(n_samples):
@@ -743,11 +744,11 @@ class DataAugmenter:
             if labels.ndim == 1:
                 unique_labels = np.unique(labels)
                 n_classes = len(unique_labels)
-                label_map = {l: i for i, l in enumerate(unique_labels)}
+                label_map = {lbl: i for i, lbl in enumerate(unique_labels)}
 
                 one_hot = np.zeros((n_samples, n_classes))
-                for i, l in enumerate(labels):
-                    one_hot[i, label_map[l]] = 1.0
+                for i, lbl in enumerate(labels):
+                    one_hot[i, label_map[lbl]] = 1.0
 
                 mixed_labels = np.zeros((n_samples, n_classes))
                 for i in range(n_samples):
@@ -832,7 +833,7 @@ class DataAugmenter:
             AugmentationMethod.ROTATION: self.rotate,
             AugmentationMethod.PERMUTATION: self.permute,
             AugmentationMethod.FLIP: self.flip,
-            AugmentationMethod.WINDOW_SLICE: self.window_crop,  # Use crop to maintain size
+            AugmentationMethod.WINDOW_SLICE: self.window_crop,  # Maintains size
             AugmentationMethod.WINDOW_CROP: self.window_crop,
             AugmentationMethod.SUBSAMPLE: self.subsample,
             AugmentationMethod.CUTOUT: self.cutout,

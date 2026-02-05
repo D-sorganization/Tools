@@ -222,7 +222,9 @@ class CrossCorrelationAnalyzer:
         ci = self._compute_confidence_interval(n, self.config.significance_level)
 
         # Find significant lags
-        significant_lags = [int(lag) for lag, c in zip(lags, ccf) if abs(c) > ci[1]]
+        significant_lags = [
+            int(lag) for lag, c in zip(lags, ccf, strict=False) if abs(c) > ci[1]
+        ]
 
         # Compute p-values if needed
         p_values = self._compute_pvalues(ccf, n)
@@ -724,8 +726,6 @@ class CrossCorrelationAnalyzer:
         self, y: np.ndarray, x: np.ndarray, lag: int
     ) -> tuple[float, float]:
         """Perform Granger causality F-test."""
-        n = len(y)
-
         if lag < 1:
             lag = 1
 
@@ -835,8 +835,6 @@ class CrossCorrelationAnalyzer:
         bins: int,
     ) -> float:
         """Compute transfer entropy from source to target."""
-        n = len(source)
-
         # Discretize
         source_binned = self._discretize(source, bins)
         target_binned = self._discretize(target, bins)

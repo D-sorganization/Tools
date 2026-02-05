@@ -17,9 +17,10 @@ Features:
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
 
 import numpy as np
 
@@ -429,8 +430,8 @@ class UncertaintyQuantifier:
         B = self._sobol_sample(n_samples, n_params, param_bounds, params)
 
         # Evaluate model on A and B
-        y_A = np.array([func(**dict(zip(params, row))) for row in A])
-        y_B = np.array([func(**dict(zip(params, row))) for row in B])
+        y_A = np.array([func(**dict(zip(params, row, strict=False))) for row in A])
+        y_B = np.array([func(**dict(zip(params, row, strict=False))) for row in B])
 
         total_variance = np.var(np.concatenate([y_A, y_B]))
 
@@ -443,7 +444,9 @@ class UncertaintyQuantifier:
             AB_i = A.copy()
             AB_i[:, i] = B[:, i]
 
-            y_AB_i = np.array([func(**dict(zip(params, row))) for row in AB_i])
+            y_AB_i = np.array(
+                [func(**dict(zip(params, row, strict=False))) for row in AB_i]
+            )
 
             # First-order index
             if total_variance > 0:
@@ -461,7 +464,6 @@ class UncertaintyQuantifier:
 
         # Interactions (simplified - just residual from first-order)
         interactions = {}
-        sum_first = sum(max(0, v) for v in first_order.values())
         for param in params:
             interactions[param] = max(0, total_order[param] - first_order[param])
 
@@ -846,7 +848,6 @@ class UncertaintyQuantifier:
 
     def _kurtosis(self, data: np.ndarray) -> float:
         """Compute excess kurtosis."""
-        n = len(data)
         mean = np.mean(data)
         std = np.std(data, ddof=1)
 

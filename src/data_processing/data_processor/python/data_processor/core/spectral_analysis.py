@@ -627,7 +627,7 @@ def plot_spectrum(
         ax.plot(result.peak_frequencies, peak_psd, "ro", markersize=6, label="Peaks")
 
         # Annotate top peaks
-        for i, (f, p) in enumerate(zip(result.peak_frequencies[:3], peak_psd[:3])):
+        for f, p in zip(result.peak_frequencies[:3], peak_psd[:3], strict=False):
             ax.annotate(
                 f"{f:.2f} Hz",
                 (f, p),
