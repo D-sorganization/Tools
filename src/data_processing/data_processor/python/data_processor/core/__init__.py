@@ -190,13 +190,15 @@ from data_processor.core.state_space import (
     LocalLevelModel,
     LocalLinearTrendModel,
     OptimizationMethod,
+)
+from data_processor.core.state_space import SeasonalModel as SeasonalStateSpaceModel
+from data_processor.core.state_space import (
     StateSpaceConfig,
     StateSpaceModelFactory,
     StateSpaceModelType,
     StateSpaceResult,
     fit_state_space,
 )
-from data_processor.core.state_space import SeasonalModel as SeasonalStateSpaceModel
 from data_processor.core.surface_plot import (
     InterpolationMethod,
     SmoothingMethod,

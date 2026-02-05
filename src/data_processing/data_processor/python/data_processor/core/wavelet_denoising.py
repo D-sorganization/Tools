@@ -150,6 +150,7 @@ class WaveletDenoiser:
 
         # Apply Savitzky-Golay - excellent for preserving cycles while removing noise
         from scipy.signal import savgol_filter
+
         window = min(7, len(signal) if len(signal) % 2 != 0 else len(signal) - 1)
         if window >= 3:
             denoised = savgol_filter(signal, window, 2)
@@ -191,7 +192,7 @@ class WaveletDenoiser:
         current = signal.copy()
         # Use sigma scaled by level
         for i in range(level):
-            sigma = 1.0 * (2 ** i)
+            sigma = 1.0 * (2**i)
             smooth = gaussian_filter1d(current, sigma=sigma)
             detail = current - smooth
             coeffs.insert(0, detail)
@@ -555,7 +556,9 @@ __all__ = [
 ]
 
 
-def denoise_signal(signal: np.ndarray, wavelet: str = "db4", level: int | None = None) -> np.ndarray:
+def denoise_signal(
+    signal: np.ndarray, wavelet: str = "db4", level: int | None = None
+) -> np.ndarray:
     """Alias for convenience in tests."""
     config = WaveletDenoiseConfig(wavelet=wavelet, decomposition_level=level)
     denoiser = WaveletDenoiser(config)

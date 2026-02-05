@@ -38,9 +38,6 @@ class PostHocMethod(Enum):
     SIDAK = "sidak"
 
 
-
-
-
 @dataclass
 class AssumptionTestResult:
     """Result of assumption testing."""
@@ -404,7 +401,9 @@ class ANOVAAnalyzer:
                     ]
                     if len(cell_data) > 0:
                         cell_mean = cell_data[dependent_var].mean()
-                        expected = marginal_a[level_a] + marginal_b[level_b] - grand_mean
+                        expected = (
+                            marginal_a[level_a] + marginal_b[level_b] - grand_mean
+                        )
                         ss_ab += len(cell_data) * (cell_mean - expected) ** 2
 
         # SS error

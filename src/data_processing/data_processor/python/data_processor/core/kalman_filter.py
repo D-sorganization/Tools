@@ -224,9 +224,11 @@ class KalmanFilter:
         """
         if measurements.ndim == 1:
             measurements = measurements.reshape(-1, self.config.measurement_dim)
-        elif (measurements.ndim == 2 and
-              measurements.shape[1] != self.config.measurement_dim and
-              measurements.shape[0] == self.config.measurement_dim):
+        elif (
+            measurements.ndim == 2
+            and measurements.shape[1] != self.config.measurement_dim
+            and measurements.shape[0] == self.config.measurement_dim
+        ):
             measurements = measurements.T
 
         T = measurements.shape[0]
@@ -416,9 +418,11 @@ class ExtendedKalmanFilter:
 
         if measurements.ndim == 1:
             measurements = measurements.reshape(-1, self.m)
-        elif (measurements.ndim == 2 and
-              measurements.shape[1] != self.m and
-              measurements.shape[0] == self.m):
+        elif (
+            measurements.ndim == 2
+            and measurements.shape[1] != self.m
+            and measurements.shape[0] == self.m
+        ):
             measurements = measurements.T
 
         T = measurements.shape[0]
@@ -561,9 +565,11 @@ class UnscentedKalmanFilter:
         """Run UKF on measurements."""
         if measurements.ndim == 1:
             measurements = measurements.reshape(-1, self.m)
-        elif (measurements.ndim == 2 and
-              measurements.shape[1] != self.m and
-              measurements.shape[0] == self.m):
+        elif (
+            measurements.ndim == 2
+            and measurements.shape[1] != self.m
+            and measurements.shape[0] == self.m
+        ):
             measurements = measurements.T
 
         T = measurements.shape[0]

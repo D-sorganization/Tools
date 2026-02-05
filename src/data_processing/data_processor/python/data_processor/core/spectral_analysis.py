@@ -77,7 +77,7 @@ class SpectralConfig:
 
         # Set all passed values
         for key, value in kwargs.items():
-            if hasattr(self, key) or True: # Be very flexible
+            if hasattr(self, key) or True:  # Be very flexible
                 setattr(self, key, value)
 
     @property
@@ -245,7 +245,9 @@ class SpectralAnalyzer:
             sampling_freq=fs,
         )
 
-    def compute_fft(self, signal: np.ndarray, fs: float | None = None) -> SpectralResult:
+    def compute_fft(
+        self, signal: np.ndarray, fs: float | None = None
+    ) -> SpectralResult:
         """Compatibility wrapper for FFT computation."""
         fs = fs or self.config.sampling_freq or 1.0
         freqs, power = self._compute_fft(signal, fs)
@@ -261,10 +263,12 @@ class SpectralAnalyzer:
         )
 
     @property
-    def power(self) -> np.ndarray: # For SpectralResult
+    def power(self) -> np.ndarray:  # For SpectralResult
         return self.psd
 
-    def compute_welch(self, signal: np.ndarray, fs: float | None = None) -> SpectralResult:
+    def compute_welch(
+        self, signal: np.ndarray, fs: float | None = None
+    ) -> SpectralResult:
         """Compatibility wrapper for Welch computation."""
         fs = fs or self.config.sampling_freq or 1.0
         freqs, power = self._compute_welch(signal, fs)

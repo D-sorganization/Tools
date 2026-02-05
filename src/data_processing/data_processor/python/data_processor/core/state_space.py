@@ -444,6 +444,7 @@ class BaseStateSpaceModel(ABC):
         Returns:
             Tuple of (optimal_params, log_likelihood, converged, n_iterations)
         """
+
         def objective(params):
             # Ensure positive variances if needed
             self._update_matrices(params)
@@ -602,8 +603,8 @@ class LocalLevelModel(BaseStateSpaceModel):
 
     def _update_matrices(self, parameters: np.ndarray) -> None:
         """Update Q and H with parameter values."""
-        self.Q = np.array([[parameters[0]**2]])
-        self.H = np.array([[parameters[1]**2]])
+        self.Q = np.array([[parameters[0] ** 2]])
+        self.H = np.array([[parameters[1] ** 2]])
 
     def _get_initial_parameters(self) -> np.ndarray:
         """Initial parameter estimates."""
@@ -612,8 +613,8 @@ class LocalLevelModel(BaseStateSpaceModel):
     def _parameters_to_dict(self, parameters: np.ndarray) -> dict[str, float]:
         """Convert to dictionary."""
         return {
-            "sigma_eta_sq": float(parameters[0]**2),
-            "sigma_eps_sq": float(parameters[1]**2),
+            "sigma_eta_sq": float(parameters[0] ** 2),
+            "sigma_eps_sq": float(parameters[1] ** 2),
         }
 
 
@@ -649,23 +650,25 @@ class LocalLinearTrendModel(BaseStateSpaceModel):
 
     def _update_matrices(self, parameters: np.ndarray) -> None:
         """Update matrices with parameter values."""
-        self.Q = np.array([[parameters[0]**2, 0], [0, parameters[1]**2]])
-        self.H = np.array([[parameters[2]**2]])
+        self.Q = np.array([[parameters[0] ** 2, 0], [0, parameters[1] ** 2]])
+        self.H = np.array([[parameters[2] ** 2]])
 
     def _get_initial_parameters(self) -> np.ndarray:
         """Initial parameter estimates."""
-        return np.array([
-            np.sqrt(np.abs(self.Q[0, 0])),
-            np.sqrt(np.abs(self.Q[1, 1])),
-            np.sqrt(np.abs(self.H[0, 0]))
-        ])
+        return np.array(
+            [
+                np.sqrt(np.abs(self.Q[0, 0])),
+                np.sqrt(np.abs(self.Q[1, 1])),
+                np.sqrt(np.abs(self.H[0, 0])),
+            ]
+        )
 
     def _parameters_to_dict(self, parameters: np.ndarray) -> dict[str, float]:
         """Convert to dictionary."""
         return {
-            "sigma_eta_sq": float(parameters[0]**2),
-            "sigma_zeta_sq": float(parameters[1]**2),
-            "sigma_eps_sq": float(parameters[2]**2),
+            "sigma_eta_sq": float(parameters[0] ** 2),
+            "sigma_zeta_sq": float(parameters[1] ** 2),
+            "sigma_eps_sq": float(parameters[2] ** 2),
         }
 
 

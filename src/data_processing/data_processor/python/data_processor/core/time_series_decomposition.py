@@ -265,7 +265,9 @@ class TimeSeriesDecomposer:
         if period_strengths:
             max_strength = max(period_strengths.values())
             # Get all periods with strength at least 95% of max
-            candidates = [p for p, s in period_strengths.items() if s >= 0.95 * max_strength]
+            candidates = [
+                p for p, s in period_strengths.items() if s >= 0.95 * max_strength
+            ]
             dominant_period = min(candidates)
 
         # Determine if data is seasonal
