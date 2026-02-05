@@ -4,7 +4,7 @@ These tests verify the compatibility utility functions using
 Design by Contract principles.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class TestCheckPythonVersionContract:
@@ -36,7 +36,7 @@ class TestUTCConstant:
         """Test that UTC matches timezone.utc."""
         from utils.compatibility import UTC
 
-        assert UTC == datetime.UTC
+        assert UTC == timezone.utc
 
 
 class TestStrEnumContract:
