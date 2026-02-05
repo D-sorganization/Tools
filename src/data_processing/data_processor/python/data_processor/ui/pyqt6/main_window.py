@@ -2346,6 +2346,7 @@ def main() -> None:
     """Run the Data Processor application."""
     import sys
 
+    from shared.python.plot_theme import setup_plot_theme_for_app
     from shared.python.theme import setup_themed_app
 
     app = QApplication(sys.argv)
@@ -2353,6 +2354,7 @@ def main() -> None:
 
     window = DataProcessorMainWindow()
     setup_themed_app(app, window, settings_app="DataProcessor")
+    setup_plot_theme_for_app(app, window, settings_app="DataProcessor")
     window.show()
 
     sys.exit(app.exec())
