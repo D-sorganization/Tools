@@ -43,6 +43,7 @@ def main() -> int:
 
     from PyQt6.QtWidgets import QApplication, QMainWindow
 
+    from shared.python.theme import setup_themed_app
     from shared.python.upstream_drift_tools.process_calculators.syngas_compression_calculator import (
         create_syngas_compression_calculator,
     )
@@ -60,95 +61,7 @@ def main() -> int:
     calculator = create_syngas_compression_calculator(window)
     window.setCentralWidget(calculator)
 
-    # Apply dark theme styling
-    window.setStyleSheet("""
-        QMainWindow {
-            background-color: #1e1e2e;
-        }
-        QWidget {
-            background-color: #1e1e2e;
-            color: #cdd6f4;
-            font-family: 'Segoe UI', Arial, sans-serif;
-        }
-        QGroupBox {
-            border: 1px solid #45475a;
-            border-radius: 4px;
-            margin-top: 8px;
-            padding-top: 8px;
-            background-color: #313244;
-        }
-        QGroupBox::title {
-            color: #cba6f7;
-            subcontrol-origin: margin;
-            left: 10px;
-            padding: 0 5px;
-        }
-        QPushButton {
-            background-color: #89b4fa;
-            color: #1e1e2e;
-            border: none;
-            border-radius: 4px;
-            padding: 8px 16px;
-            font-weight: bold;
-        }
-        QPushButton:hover {
-            background-color: #b4befe;
-        }
-        QPushButton:pressed {
-            background-color: #7287fd;
-        }
-        QSpinBox, QDoubleSpinBox, QComboBox, QLineEdit {
-            background-color: #45475a;
-            border: 1px solid #585b70;
-            border-radius: 4px;
-            padding: 4px 8px;
-            color: #cdd6f4;
-        }
-        QTabWidget::pane {
-            border: 1px solid #45475a;
-            border-radius: 4px;
-            background-color: #313244;
-        }
-        QTabBar::tab {
-            background-color: #45475a;
-            color: #cdd6f4;
-            padding: 8px 16px;
-            border-top-left-radius: 4px;
-            border-top-right-radius: 4px;
-        }
-        QTabBar::tab:selected {
-            background-color: #89b4fa;
-            color: #1e1e2e;
-        }
-        QTableWidget {
-            background-color: #313244;
-            border: 1px solid #45475a;
-            gridline-color: #45475a;
-        }
-        QTableWidget::item {
-            padding: 4px;
-        }
-        QHeaderView::section {
-            background-color: #45475a;
-            color: #cdd6f4;
-            padding: 4px;
-            border: none;
-        }
-        QScrollBar:vertical {
-            background-color: #313244;
-            width: 12px;
-            border-radius: 6px;
-        }
-        QScrollBar::handle:vertical {
-            background-color: #585b70;
-            border-radius: 6px;
-            min-height: 20px;
-        }
-        QScrollBar::handle:vertical:hover {
-            background-color: #6c7086;
-        }
-    """)
-
+    setup_themed_app(app, window, settings_app="SyngasCompressionCalculator")
     window.show()
     return app.exec()
 

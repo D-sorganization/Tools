@@ -43,9 +43,11 @@ def main() -> int:
         from humanoid_builder_gui.ui.pyqt6.main_window import (
             HumanoidBuilderWindow,
         )
+        from shared.python.theme import setup_themed_app
 
         app = QApplication(sys.argv)
         window = HumanoidBuilderWindow()
+        setup_themed_app(app, window, settings_app="HumanoidBuilder")
         window.show()
         return app.exec()
     except ImportError as e:

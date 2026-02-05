@@ -1013,10 +1013,13 @@ class PSAMainWindow(QMainWindow):
 
 def main() -> None:
     """Main entry point for the GUI application."""
+    from shared.python.theme import setup_themed_app
+
     app = QApplication(sys.argv)
     app.setStyle("Fusion")
 
     window = PSAMainWindow()
+    setup_themed_app(app, window, settings_app="PSAPackage")
     window.show()
 
     sys.exit(app.exec())

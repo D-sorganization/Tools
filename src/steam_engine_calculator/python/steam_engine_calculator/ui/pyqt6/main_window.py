@@ -405,12 +405,12 @@ class SteamEngineCalculatorWindow(QMainWindow):
         """Apply Catppuccin Mocha theme styles."""
         self.setStyleSheet(f"""
             QMainWindow, QWidget {{
-                background-color: {COLORS['base']};
-                color: {COLORS['text']};
+                background-color: {COLORS["base"]};
+                color: {COLORS["text"]};
             }}
             QGroupBox {{
-                background-color: {COLORS['mantle']};
-                border: 1px solid {COLORS['surface1']};
+                background-color: {COLORS["mantle"]};
+                border: 1px solid {COLORS["surface1"]};
                 border-radius: 8px;
                 margin-top: 12px;
                 padding-top: 8px;
@@ -419,24 +419,24 @@ class SteamEngineCalculatorWindow(QMainWindow):
                 subcontrol-origin: margin;
                 left: 12px;
                 padding: 0 8px;
-                color: {COLORS['lavender']};
+                color: {COLORS["lavender"]};
             }}
             QLineEdit {{
-                background-color: {COLORS['surface0']};
-                border: 1px solid {COLORS['surface1']};
+                background-color: {COLORS["surface0"]};
+                border: 1px solid {COLORS["surface1"]};
                 border-radius: 4px;
                 padding: 8px;
-                color: {COLORS['text']};
+                color: {COLORS["text"]};
             }}
             QLineEdit:focus {{
-                border-color: {COLORS['blue']};
+                border-color: {COLORS["blue"]};
             }}
             QComboBox {{
-                background-color: {COLORS['surface0']};
-                border: 1px solid {COLORS['surface1']};
+                background-color: {COLORS["surface0"]};
+                border: 1px solid {COLORS["surface1"]};
                 border-radius: 4px;
                 padding: 8px;
-                color: {COLORS['text']};
+                color: {COLORS["text"]};
                 min-width: 80px;
             }}
             QComboBox::drop-down {{
@@ -444,36 +444,36 @@ class SteamEngineCalculatorWindow(QMainWindow):
                 width: 20px;
             }}
             QComboBox QAbstractItemView {{
-                background-color: {COLORS['surface0']};
-                color: {COLORS['text']};
-                selection-background-color: {COLORS['surface1']};
+                background-color: {COLORS["surface0"]};
+                color: {COLORS["text"]};
+                selection-background-color: {COLORS["surface1"]};
             }}
             QPushButton {{
-                background-color: {COLORS['blue']};
-                color: {COLORS['base']};
+                background-color: {COLORS["blue"]};
+                color: {COLORS["base"]};
                 border: none;
                 border-radius: 6px;
                 padding: 10px 20px;
             }}
             QPushButton:hover {{
-                background-color: {COLORS['sapphire']};
+                background-color: {COLORS["sapphire"]};
             }}
             QPushButton:pressed {{
-                background-color: {COLORS['sky']};
+                background-color: {COLORS["sky"]};
             }}
             QFrame {{
-                background-color: {COLORS['surface0']};
+                background-color: {COLORS["surface0"]};
                 border-radius: 6px;
             }}
             QScrollArea {{
                 border: none;
             }}
             QScrollBar:vertical {{
-                background-color: {COLORS['mantle']};
+                background-color: {COLORS["mantle"]};
                 width: 12px;
             }}
             QScrollBar::handle:vertical {{
-                background-color: {COLORS['surface1']};
+                background-color: {COLORS["surface1"]};
                 border-radius: 6px;
                 min-height: 20px;
             }}
@@ -697,8 +697,11 @@ class SteamEngineCalculatorWindow(QMainWindow):
 
 def main() -> None:
     """Main entry point for standalone execution."""
+    from shared.python.theme import setup_themed_app
+
     app = QApplication(sys.argv)
     window = SteamEngineCalculatorWindow()
+    setup_themed_app(app, window, settings_app="SteamEngineCalculator")
     window.show()
     sys.exit(app.exec())
 

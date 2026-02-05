@@ -40,10 +40,12 @@ def main() -> int:
     try:
         from PyQt6.QtWidgets import QApplication
 
+        from shared.python.theme import setup_themed_app
         from urdf_builder_gui.ui.pyqt6.main_window import URDFBuilderWindow
 
         app = QApplication(sys.argv)
         window = URDFBuilderWindow()
+        setup_themed_app(app, window, settings_app="URDFBuilder")
         window.show()
         return app.exec()
     except ImportError as e:

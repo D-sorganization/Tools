@@ -767,10 +767,13 @@ class ScrubberCalculatorWindow(QMainWindow):
 
 def main() -> None:
     """Run the Scrubber Calculator application."""
+    from shared.python.theme import setup_themed_app
+
     app = QApplication(sys.argv)
     app.setStyle("Fusion")
 
     window = ScrubberCalculatorWindow()
+    setup_themed_app(app, window, settings_app="ScrubberCalculator")
     window.show()
 
     sys.exit(app.exec())

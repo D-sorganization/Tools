@@ -46,9 +46,11 @@ def main() -> int:
         from PyQt6.QtWidgets import QApplication
 
         from inertia_calculator.ui.pyqt6.main_window import InertiaCalculatorWindow
+        from shared.python.theme import setup_themed_app
 
         app = QApplication(sys.argv)
         window = InertiaCalculatorWindow()
+        setup_themed_app(app, window, settings_app="InertiaCalculator")
         window.show()
         return app.exec()
     except ImportError as e:

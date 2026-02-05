@@ -46,9 +46,11 @@ def main() -> int:
         from PyQt6.QtWidgets import QApplication
 
         from optimizer_gui.ui.pyqt6.main_window import OptimizerWindow
+        from shared.python.theme import setup_themed_app
 
         app = QApplication(sys.argv)
         window = OptimizerWindow()
+        setup_themed_app(app, window, settings_app="OptimizerGui")
         window.show()
         return app.exec()
     except ImportError as e:

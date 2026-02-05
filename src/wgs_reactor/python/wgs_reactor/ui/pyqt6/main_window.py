@@ -647,10 +647,13 @@ class WGSReactorWindow(QMainWindow):
 
 def main() -> None:
     """Run the WGS Reactor Calculator application."""
+    from shared.python.theme import setup_themed_app
+
     app = QApplication(sys.argv)
     app.setStyle("Fusion")
 
     window = WGSReactorWindow()
+    setup_themed_app(app, window, settings_app="WGSReactorCalculator")
     window.show()
 
     sys.exit(app.exec())
