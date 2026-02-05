@@ -173,7 +173,7 @@ class TestRunPipCommand:
             mock_run.return_value = subprocess.CompletedProcess(
                 args=[], returncode=0, stdout="pip list output", stderr=""
             )
-            result = run_pip_command("list", packages=["dummy"])
+            run_pip_command("list", packages=["dummy"])
             assert mock_run.called
 
     def test_adds_upgrade_flag(self):

@@ -347,7 +347,8 @@ class ElectrodeAdvisorWidget(QWidget):
         palette.setColor(QPalette.ColorRole.Window, QColor(230, 240, 255))
         self.setPalette(palette)
 
-        self.results_tabs.setStyleSheet("""
+        self.results_tabs.setStyleSheet(
+            """
             QTabWidget::pane {
                 border: 1px solid #cccccc;
                 background: white;
@@ -366,7 +367,8 @@ class ElectrodeAdvisorWidget(QWidget):
             QTabBar::tab:hover {
                 background: #e0e0e0;
             }
-        """)
+        """
+        )
 
     def _on_input_changed(self) -> None:
         """Handle input parameter changes."""

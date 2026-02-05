@@ -384,7 +384,8 @@ class FlareCalculatorMainWindow(QMainWindow):
 
     def _apply_theme(self) -> None:
         """Apply Catppuccin Mocha dark theme."""
-        self.setStyleSheet(f"""
+        self.setStyleSheet(
+            f"""
             QMainWindow, QWidget {{
                 background-color: {CATPPUCCIN_MOCHA['base']};
                 color: {CATPPUCCIN_MOCHA['text']};
@@ -434,7 +435,8 @@ class FlareCalculatorMainWindow(QMainWindow):
                 padding: 4px;
                 border: none;
             }}
-        """)
+        """
+        )
 
 
 def main() -> None:
