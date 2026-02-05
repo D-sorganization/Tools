@@ -5,9 +5,6 @@ Design by Contract principles.
 """
 
 import json
-from pathlib import Path
-
-import pytest
 
 
 class TestConfigLoaderContract:
