@@ -1,123 +1,202 @@
 # Data Processor
 
-A comprehensive, high-performance data processing application designed for chemical plant data analysis, signal processing, and visualization.
+A high-performance data processing application for filtering, smoothing, and transforming time-series data. Features a GUI built with CustomTkinter, vectorized NumPy/SciPy operations, and support for CSV/Excel import/export.
 
-## Overview
+## Purpose
 
-Data Processor is a full-featured application that provides both GUI and CLI interfaces for processing time-series data from industrial sensors and scientific instruments. It features vectorized filtering operations, batch processing, and extensive export capabilities.
+The Data Processor provides comprehensive signal processing capabilities for:
 
-## Features
+- Loading and combining multiple data files
+- Applying digital filters (low-pass, high-pass, band-pass)
+- Removing outliers and noise from sensor data
+- Performing integration and differentiation
+- Exporting processed data in multiple formats
 
-### Core Functionality
-- **Multi-format Support**: CSV, Excel, JSON, Parquet file import/export
-- **Signal Discovery**: Quickly inspect files to discover available signals
-- **Batch Processing**: Process multiple files in automated pipelines
-- **High-performance Filtering**: Vectorized operations using NumPy/SciPy
+## Key Features
 
-### Advanced Filtering Suite
-- **Butterworth Filters**: Low-pass, high-pass, band-pass, band-stop
-- **Moving Average**: Configurable window size
-- **Median Filter**: Kernel-based noise reduction
-- **Savitzky-Golay**: Smoothing with polynomial fitting
-- **Gaussian Filter**: Sigma-controlled smoothing
-- **FFT Filters**: Frequency-domain filtering with customizable windows
-- **Hampel Filter**: Outlier detection and removal
-- **Z-Score Filter**: Statistical outlier removal
-
-### Visualization
-- Interactive plotting with Matplotlib
-- Multi-signal overlay support
-- Zoom and pan controls
-- Export plots at configurable DPI (default: 300)
-
-### GUI Application
-- Modern interface with CustomTkinter
-- Signal browser and selector
-- Real-time filter preview
-- Format converter (CSV, Excel, Parquet)
-- Parquet file analyzer
-
-## Directory Structure
-
-```
-data_processor/
-├── README.md                           # This file
-├── ruff.toml                           # Linter configuration
-├── archive/                            # Legacy versions
-├── data/                               # Sample data files
-├── python/
-│   ├── benchmarks/
-│   │   └── performance_benchmark.py    # Performance testing
-│   ├── data_processor/
-│   │   ├── __init__.py
-│   │   ├── cli.py                      # Command-line interface
-│   │   ├── constants.py                # Application constants
-│   │   ├── file_utils.py               # File handling utilities
-│   │   ├── gui_refactored.py           # Main GUI application
-│   │   ├── high_performance_loader.py  # Optimized data loading
-│   │   ├── launch_integrated.py        # GUI launcher
-│   │   ├── logging_config.py           # Logging setup
-│   │   ├── security_utils.py           # Security functions
-│   │   ├── vectorized_filter_engine.py # High-performance filters
-│   │   ├── core/                       # Core processing modules
-│   │   ├── data/                       # Data assets
-│   │   └── models/                     # Data models
-│   └── tests/
-│       ├── test_signal_processor.py
-│       ├── test_processing_config.py
-│       └── test_file_utils.py
-└── tools/                              # Additional utilities
-```
+- **Multiple Filter Types**: Moving Average, Butterworth, Median, Gaussian, Hampel, Z-Score, Savitzky-Golay, FFT filters
+- **High-Performance Engine**: Vectorized operations using NumPy and SciPy
+- **Parallel Processing**: Multi-threaded batch processing for large datasets
+- **Signal Detection**: Automatic identification of numeric signals in data files
+- **Custom Formulas**: Create derived signals using mathematical expressions
+- **Multiple Export Formats**: CSV, Excel, Parquet, HDF5, Feather
+- **Statistics Calculation**: Mean, std, min, max, median for all signals
+- **Unit Conversion**: Built-in support for common engineering units
 
 ## Installation
 
-### Dependencies
+### Prerequisites
+
+- Python 3.10 or higher
+- CustomTkinter
+- Pandas
+- NumPy
+- SciPy
+
+### Install Dependencies
 
 ```bash
-pip install customtkinter pandas numpy scipy matplotlib openpyxl \
-    Pillow simpledbf pyarrow tables feather-format typer rich
+pip install customtkinter pandas numpy scipy openpyxl pyarrow tables feather-format
 ```
 
-### Quick Start
+### From Repository
 
 ```bash
-cd data_processing/data_processor/python
+cd Tools/src/data_processing/data_processor
+python -m data_processor.gui_refactored
+```
 
-# Launch GUI
+## Usage Instructions
+
+### Launching the Application
+
+```bash
+# Using module
+python -m data_processor.gui_refactored
+
+# Or launcher script
 python -m data_processor.launch_integrated
 
-# Or use CLI
+# CLI mode
 python -m data_processor.cli --help
 ```
 
-## Usage
+### Basic Workflow
 
-### GUI Application
+1. **File Selection Tab**:
+   - Click "Select Files" (Ctrl+O)
+   - Choose one or more CSV files
+   - Click "Load Data" (Ctrl+L)
+   - Click "Detect Signals" to identify columns
 
-```bash
-python -m data_processor.launch_integrated
+2. **Signal Processing Tab**:
+   - Select filter type from dropdown
+   - Configure filter parameters
+   - Click "Apply Filter"
+
+3. **Advanced Operations Tab**:
+   - Integrate or differentiate signals
+   - Apply custom formulas
+
+4. **Export Tab**:
+   - Select export format
+   - Click "Export Data" (Ctrl+S)
+   - View statistics
+
+## Input Parameters
+
+### Filter Types and Parameters
+
+#### Moving Average
+| Parameter | Description | Default | Range |
+|-----------|-------------|---------|-------|
+| Window Size | Averaging window | 10 | 3-1000 |
+
+#### Butterworth (Low-pass/High-pass)
+| Parameter | Description | Default | Range |
+|-----------|-------------|---------|-------|
+| Order | Filter order | 3 | 1-10 |
+| Cutoff Frequency | Normalized frequency | 0.1 | 0.01-0.99 |
+
+#### Median Filter
+| Parameter | Description | Default | Range |
+|-----------|-------------|---------|-------|
+| Kernel Size | Filter kernel (odd) | 5 | 3-101 |
+
+#### Gaussian Filter
+| Parameter | Description | Default | Range |
+|-----------|-------------|---------|-------|
+| Sigma | Standard deviation | 1.0 | 0.1-100 |
+
+#### Hampel Filter
+| Parameter | Description | Default | Range |
+|-----------|-------------|---------|-------|
+| Window Size | Detection window | 5 | 3-100 |
+| Threshold | MAD multiplier | 3.0 | 1.0-10.0 |
+
+#### Z-Score Filter
+| Parameter | Description | Default | Range |
+|-----------|-------------|---------|-------|
+| Threshold | Outlier threshold | 3.0 | 1.0-10.0 |
+| Method | Standard/Modified | Standard | Dropdown |
+
+#### Savitzky-Golay
+| Parameter | Description | Default | Range |
+|-----------|-------------|---------|-------|
+| Window Length | Must be odd | 11 | 3-101 |
+| Polynomial Order | Fitting order | 2 | 1-6 |
+
+#### FFT Filters
+| Parameter | Description | Default | Range |
+|-----------|-------------|---------|-------|
+| Frequency Low | Low cutoff | 0.01 | 0.0-0.5 |
+| Frequency High | High cutoff | 0.1 | 0.0-0.5 |
+| Window Shape | Window function | Gaussian | Dropdown |
+| Transition BW | Rolloff width | 0.01 | 0.001-0.1 |
+| Zero Phase | Phase preservation | True | Checkbox |
+
+## Output Format
+
+### Processed Data
+
+Data maintains original structure with filtered columns:
+```
+Time,Signal1,Signal2,Signal3,...
+0.0,1.234,5.678,9.012,...
+0.1,1.235,5.679,9.013,...
 ```
 
-Features:
-- Original CSV processing functionality
-- Format converter with support for multiple file formats
-- Parquet file analyzer
-- All existing plotting and analysis features
+### Statistics Output
+
+```
+=== Signal Statistics ===
+
+Temperature:
+  Mean: 823.45
+  Std: 12.34
+  Min: 798.12
+  Max: 856.78
+  Median: 822.50
+
+Pressure:
+  Mean: 1.02
+  Std: 0.05
+  Min: 0.89
+  Max: 1.15
+  Median: 1.01
+```
+
+### Export Formats
+
+| Format | Extension | Best For |
+|--------|-----------|----------|
+| CSV | .csv | Universal compatibility |
+| Excel | .xlsx | Spreadsheet analysis |
+| Parquet | .parquet | Large datasets, fast I/O |
+| HDF5 | .h5 | Hierarchical data, metadata |
+| Feather | .feather | Python/R interchange |
+
+## Example Usage
+
+### Basic Filtering (GUI)
+
+```bash
+# Launch application
+python -m data_processor.gui_refactored
+
+# 1. Select CSV files
+# 2. Load data
+# 3. Apply Moving Average filter (window=20)
+# 4. Export as CSV
+```
 
 ### Command Line Interface
 
-The CLI focuses on two core automated workflows:
-
-#### 1. Inspect Files
-
 ```bash
+# Inspect file contents
 python -m data_processor.cli inspect ./data/example.csv
-```
 
-#### 2. Run Processing Pipeline
-
-Using CLI flags:
-```bash
+# Run processing pipeline
 python -m data_processor.cli run \
     --files ./data/example.csv \
     --signals time,pressure,temperature \
@@ -125,12 +204,9 @@ python -m data_processor.cli run \
     --output ./output/processed.csv
 ```
 
-Using JSON configuration:
-```bash
-python -m data_processor.cli run --config pipeline.json
-```
+### JSON Configuration Pipeline
 
-Example `pipeline.json`:
+Create `pipeline.json`:
 ```json
 {
   "files": ["./data/example.csv"],
@@ -147,49 +223,133 @@ Example `pipeline.json`:
 }
 ```
 
-## Filter Configuration
-
-### Butterworth Filter
-```python
-{
-    "filter_type": "Butterworth",
-    "cutoff": 0.1,      # Normalized cutoff frequency
-    "order": 4,         # Filter order
-    "btype": "lowpass"  # lowpass, highpass, bandpass, bandstop
-}
+Run with:
+```bash
+python -m data_processor.cli run --config pipeline.json
 ```
 
-### Moving Average
+### Programmatic Usage
+
 ```python
-{
-    "filter_type": "Moving Average",
-    "ma_window": 5      # Window size
-}
+import pandas as pd
+from data_processor.vectorized_filter_engine import VectorizedFilterEngine
+
+# Load data
+df = pd.read_csv('sensor_data.csv')
+
+# Create filter engine
+engine = VectorizedFilterEngine(n_jobs=4)
+
+# Apply filter
+params = {'ma_window': 20}
+filtered_df = engine.apply_filter_batch(
+    df,
+    'Moving Average',
+    params,
+    signal_names=['Temperature', 'Pressure']
+)
+
+# Export
+filtered_df.to_csv('processed_data.csv', index=False)
 ```
 
-### FFT Filter
+### Batch Processing Multiple Files
+
 ```python
-{
-    "filter_type": "FFT",
-    "freq_low": 0.1,           # Low frequency cutoff (Hz)
-    "freq_high": 100.0,        # High frequency cutoff (Hz)
-    "transition_bw": 0.1,      # Transition bandwidth
-    "window_shape": "hann",    # Window function
-    "zero_phase": true         # Zero-phase filtering
-}
+from data_processor.core.data_loader import DataLoader
+
+loader = DataLoader(use_high_performance=True)
+
+# Load multiple files
+files = ['data1.csv', 'data2.csv', 'data3.csv']
+dataframes = loader.load_multiple_files(files)
+combined = loader.combine_dataframes(dataframes)
+
+# Process combined data
+engine = VectorizedFilterEngine()
+processed = engine.apply_filter_batch(
+    combined,
+    'Butterworth Low-pass',
+    {'bw_order': 3, 'bw_cutoff': 0.1}
+)
 ```
 
-## Constants Reference
+### Custom Formula Application
 
-Key processing constants (from `constants.py`):
+```python
+from data_processor.core.signal_processor import SignalProcessor
 
-| Constant | Value | Description |
-|----------|-------|-------------|
-| `MAX_FILE_SIZE_MB` | 500 | Maximum file size in MB |
-| `CHUNK_SIZE` | 10000 | Processing chunk size |
-| `DEFAULT_SAMPLE_RATE` | 1000 | Default sample rate (Hz) |
-| `MAX_PLOT_POINTS` | 10000 | Maximum points to plot |
-| `DEFAULT_DPI` | 300 | Export image resolution |
+processor = SignalProcessor()
+
+# Create derived signal
+df, success = processor.apply_custom_formula(
+    df,
+    'Power',
+    'Voltage * Current'
+)
+
+# Integration
+from data_processor.models.processing_config import IntegrationConfig
+
+int_config = IntegrationConfig(
+    signals=['Velocity'],
+    method='cumulative'
+)
+df = processor.integrate_signals(df, int_config)
+```
+
+## Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| Ctrl+O | Select files |
+| Ctrl+L | Load data |
+| Ctrl+S | Export data |
+| Ctrl+Q | Quit application |
+
+## Troubleshooting
+
+### File Loading Errors
+
+**Issue**: "Failed to load data" error
+
+**Solutions**:
+- Verify file is valid CSV format
+- Check file encoding (UTF-8 recommended)
+- Ensure no locked files (close Excel)
+
+### Filter Application Fails
+
+**Issue**: "Signal too short for filtering"
+
+**Solutions**:
+- Reduce filter window/kernel size
+- Ensure minimum data points (typically 10+)
+- Check for excessive NaN values
+
+### Memory Issues with Large Files
+
+**Solutions**:
+- Process files one at a time
+- Use Parquet format for efficiency
+- Increase system virtual memory
+- Reduce parallel workers (n_jobs=1)
+
+### Butterworth Filter Instability
+
+**Issue**: Oscillations or artifacts
+
+**Solutions**:
+- Reduce filter order
+- Adjust cutoff frequency
+- Ensure adequate data length (order x 10 minimum)
+
+### FFT Filter Ringing
+
+**Solutions**:
+- Increase transition bandwidth
+- Use Gaussian or Tukey window
+- Enable zero-phase filtering
 
 ## Running Tests
 
@@ -206,21 +366,96 @@ pytest tests/ --cov=data_processor
 pytest tests/test_signal_processor.py -v
 ```
 
-## Performance
+## Related Tools
 
-The vectorized filter engine is optimized for:
-- NumPy/SciPy vectorized operations
-- Batch processing of multiple signals
-- Memory-efficient streaming operations
-- Parallel processing via ThreadPoolExecutor
+- **Multi-Parameter Analysis**: For analyzing processed data sensitivities
+- **Optimizer GUI**: For optimizing filter parameters
+- **Financial Calculator**: For processing financial time series
 
-## Integration
+## Technical Notes
 
-This tool integrates with:
-- **Scientific Modeling** (`scientific_modeling/`) - Advanced analysis
-- **MATLAB** (`matlab/`) - Cross-platform compatibility
-- **Tools** (`tools/`) - Quality checking and auditing
+### Vectorized Operations
 
-## License
+The filter engine uses NumPy/SciPy vectorization for performance:
 
-Part of the Tools repository. See main repository license for details.
+```python
+# Moving Average using scipy.ndimage
+from scipy.ndimage import uniform_filter1d
+filtered = uniform_filter1d(signal, size=window, mode='nearest')
+
+# Butterworth using scipy.signal
+from scipy.signal import butter, filtfilt
+b, a = butter(N=order, Wn=cutoff, btype='low', fs=sample_rate)
+filtered = filtfilt(b, a, signal)
+```
+
+### Parallel Processing
+
+Thread pool executor for batch operations:
+
+```python
+from concurrent.futures import ThreadPoolExecutor
+
+with ThreadPoolExecutor(max_workers=n_jobs) as executor:
+    futures = {executor.submit(filter_func, signal): name
+               for name, signal in signals.items()}
+```
+
+### NaN Handling
+
+Filters preserve NaN positions:
+```python
+result[original_signal.isna()] = np.nan
+```
+
+### Hampel Algorithm
+
+Robust outlier detection using Median Absolute Deviation:
+```python
+MAD = median(|x_i - median(x)|)
+threshold = k * 1.4826 * MAD  # k typically 3.0
+```
+
+### Constants Reference
+
+Key processing constants (from `constants.py`):
+
+| Constant | Value | Description |
+|----------|-------|-------------|
+| `MAX_FILE_SIZE_MB` | 500 | Maximum file size in MB |
+| `CHUNK_SIZE` | 10000 | Processing chunk size |
+| `DEFAULT_SAMPLE_RATE` | 1000 | Default sample rate (Hz) |
+| `MAX_PLOT_POINTS` | 10000 | Maximum points to plot |
+| `DEFAULT_DPI` | 300 | Export image resolution |
+
+## Directory Structure
+
+```
+data_processor/
+├── README.md                           # This file
+├── ruff.toml                           # Linter configuration
+├── data/                               # Sample data files
+├── python/
+│   ├── data_processor/
+│   │   ├── __init__.py
+│   │   ├── cli.py                      # Command-line interface
+│   │   ├── constants.py                # Application constants
+│   │   ├── gui_refactored.py           # Main GUI application
+│   │   ├── logging_config.py           # Logging setup
+│   │   ├── security_utils.py           # Security functions
+│   │   ├── vectorized_filter_engine.py # High-performance filters
+│   │   ├── core/                       # Core processing modules
+│   │   └── models/                     # Data models
+│   └── tests/                          # Unit tests
+└── web/                                # Web application (Tauri)
+```
+
+## Version History
+
+- **1.0.0**: Initial release with basic filters
+- **1.1.0**: Added FFT filters and batch processing
+- **1.2.0**: Vectorized engine for 10x performance
+- **1.3.0**: CustomTkinter GUI refactoring
+- **1.4.0**: Added Hampel and Z-Score filters
+- **1.5.0**: Multi-format export support
+- **1.6.0**: CLI interface with JSON configuration

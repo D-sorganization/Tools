@@ -33,16 +33,21 @@ CATEGORY_ORDER = [
 
 def validate_tools_config(
     tools_dict: dict[str, Any],
+    repo_root: Path | None = None,
 ) -> dict[str, list[dict[str, Any]]]:
     """Validate and sanitize tools configuration.
 
     Args:
         tools_dict: Dictionary of tool categories and lists of tools.
+        repo_root: Root directory of the repository for path validation.
 
     Returns:
         Validated dictionary with invalid entries removed.
     """
     validated = {}
+
+    # Resolve repo_root once for consistent comparison
+    resolved_root = repo_root.resolve() if repo_root is not None else None
 
     for category, tools in tools_dict.items():
         valid_tools = []
@@ -54,11 +59,18 @@ def validate_tools_config(
             if "name" not in tool or "path" not in tool:
                 continue
 
-            # Security: Sanitize path input
+            # Security: Validate path does not escape the repository root
             path = str(tool["path"])
-            if ".." in path:
-                logger.warning(f"Skipping potentially unsafe tool path: {path}")
-                continue
+            if resolved_root is not None:
+                resolved_path = (resolved_root / path).resolve()
+                if not str(resolved_path).startswith(str(resolved_root)):
+                    logger.warning(f"Skipping tool path that escapes repo root: {path}")
+                    continue
+            else:
+                # Fallback: reject paths containing ".." when no repo_root provided
+                if ".." in path:
+                    logger.warning(f"Skipping potentially unsafe tool path: {path}")
+                    continue
 
             valid_tools.append(tool)
 
@@ -87,4 +99,4 @@ def load_tools_config(repo_root: Path) -> dict[str, list[Any]]:
         logger.warning(f"tools.json not found or empty at {json_path}")
         return {}
 
-    return validate_tools_config(config)
+    return validate_tools_config(config, repo_root=repo_root)

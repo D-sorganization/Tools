@@ -1,6 +1,8 @@
 """Verify PDF Renamer installation and dependencies."""
 
+import importlib
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -15,8 +17,36 @@ BOLD = "\033[1m"
 def check_dependency(name: str, import_statement: str) -> bool:
     """Check if a dependency is installed."""
     try:
-        # We execute in a local scope, but we need standard modules like sys available if referenced
-        exec(import_statement, {"sys": sys, "os": os})
+        # Handle 'assert' statements (e.g., version checks) directly
+        if import_statement.startswith("assert"):
+            # Parse "assert sys.version_info >= (3, 11)" style checks
+            if "sys.version_info" in import_statement:
+                match = re.search(r"\((\d+),\s*(\d+)\)", import_statement)
+                if match:
+                    major, minor = int(match.group(1)), int(match.group(2))
+                    assert sys.version_info >= (major, minor)
+                else:
+                    raise ValueError(
+                        f"Cannot parse version assertion: {import_statement}"
+                    )
+            else:
+                raise ValueError(f"Unsupported assertion: {import_statement}")
+        # Handle 'from X import Y' statements
+        elif import_statement.startswith("from "):
+            match = re.match(r"from\s+([\w.]+)\s+import\s+(\w+)", import_statement)
+            if match:
+                module_path, attr_name = match.group(1), match.group(2)
+                mod = importlib.import_module(module_path)
+                getattr(mod, attr_name)
+            else:
+                raise ValueError(f"Cannot parse from-import: {import_statement}")
+        # Handle 'import X' statements
+        elif import_statement.startswith("import "):
+            module_name = import_statement.replace("import ", "").strip()
+            importlib.import_module(module_name)
+        else:
+            raise ValueError(f"Unsupported statement: {import_statement}")
+
         print(f"{GREEN}[OK]{RESET} {name}")
         return True
     except ImportError as e:

@@ -34,7 +34,7 @@ def check_dependencies() -> list[str]:
             ["npm", "--version"],
             capture_output=True,
             check=True,
-            shell=True,  # Required on Windows
+            shell=False,
         )
     except (subprocess.CalledProcessError, FileNotFoundError):
         missing.append("npm")
@@ -50,7 +50,7 @@ def install_dependencies(web_dir: Path) -> bool:
         result = subprocess.run(
             ["npm", "install"],
             cwd=str(web_dir),
-            shell=True,  # Required on Windows
+            shell=False,
         )
         return result.returncode == 0
     return True
@@ -93,7 +93,7 @@ def main() -> int:
     result = subprocess.run(
         ["npm", "run", "dev"],
         cwd=str(web_dir),
-        shell=True,  # Required on Windows
+        shell=False,
         env=env,
     )
 

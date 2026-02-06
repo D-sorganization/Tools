@@ -19,7 +19,7 @@ def check_dependencies() -> list[str]:
         missing.append("node")
     try:
         subprocess.run(
-            ["npm", "--version"], capture_output=True, check=True, shell=True
+            ["npm", "--version"], capture_output=True, check=True, shell=False
         )
     except (subprocess.CalledProcessError, FileNotFoundError):
         missing.append("npm")
@@ -30,7 +30,7 @@ def install_dependencies(web_dir: Path) -> bool:
     """Install npm dependencies if needed."""
     if not (web_dir / "node_modules").exists():
         print("Installing npm dependencies...")
-        result = subprocess.run(["npm", "install"], cwd=str(web_dir), shell=True)
+        result = subprocess.run(["npm", "install"], cwd=str(web_dir), shell=False)
         return result.returncode == 0
     return True
 
@@ -63,7 +63,7 @@ def main() -> int:
     threading.Thread(target=open_browser, daemon=True).start()
 
     result = subprocess.run(
-        ["npm", "run", "dev"], cwd=str(web_dir), shell=True, env=os.environ.copy()
+        ["npm", "run", "dev"], cwd=str(web_dir), shell=False, env=os.environ.copy()
     )
     return result.returncode
 

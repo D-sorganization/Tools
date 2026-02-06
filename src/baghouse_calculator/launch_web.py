@@ -19,7 +19,7 @@ def main() -> int:
     node_modules = web_dir / "node_modules"
     if not node_modules.exists():
         print("Installing dependencies...")
-        result = subprocess.run(["npm", "install"], cwd=web_dir, shell=True)
+        result = subprocess.run(["npm", "install"], cwd=web_dir, shell=False)
         if result.returncode != 0:
             return 1
 
@@ -27,7 +27,7 @@ def main() -> int:
     print("Open http://localhost:5173 in your browser")
 
     try:
-        subprocess.run(["npm", "run", "dev"], cwd=web_dir, shell=True)
+        subprocess.run(["npm", "run", "dev"], cwd=web_dir, shell=False)
     except KeyboardInterrupt:
         print("\nShutting down...")
 

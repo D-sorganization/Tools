@@ -1,83 +1,76 @@
-# Advanced Pressure Drop Calculator
+# Pressure Drop Calculator
 
-Comprehensive pressure drop calculator for combustion and gasification gases with support for variable composition, multiple friction factor correlations, and extensive unit conversions.
+## Overview
 
-## Features
+An advanced pressure drop calculation engine for combustion and gasification gases. Implements comprehensive pressure drop calculations using industry-standard correlations (Darcy-Weisbach, Colebrook-White, Fanning) with support for compressible flow corrections, multiple friction factor methods, fitting K-factors from Crane TP-410, and extensive gas property databases.
 
-- **Variable Gas Compositions**: Support for H₂, CO, CO₂, CH₄, N₂, H₂O, O₂, Ar, H₂S, NH₃, and more
-- **Advanced Friction Factor Correlations**: Colebrook-White, Swamee-Jain, Churchill, Haaland
-- **Standard and Custom Pipe Sizes**: ASME B36.10M pipe database with all common schedules
-- **Comprehensive Unit Support**:
-  - Mass flow: kg/s, kg/h, lb/hr
-  - Molar flow: mol/s, kmol/h, lbmol/hr
-  - Volumetric flow: SCFM, ACFM, Nm³/h, m³/s
-- **Fitting and Valve Losses**: Extensive database of K-factors from Crane TP-410
-- **Compressible Flow Corrections**: Real gas effects with Z-factor calculations
-- **Erosional Velocity Checks**: API RP 14E correlations
-- **Professional Accuracy**: All correlations sourced from established references
+## Key Features
 
-## Quick Start
+- Darcy-Weisbach equation for pipe friction losses
+- Multiple friction factor correlations (Colebrook, Swamee-Jain, Churchill, Haaland)
+- Compressible flow corrections for high pressure drop scenarios
+- Extensive gas property database for syngas mixtures (H2, CO, CO2, CH4, etc.)
+- ASME B36.10M standard pipe size database (1/2" to 24")
+- Fitting and valve K-factor database (Crane TP-410)
+- Two-K method for improved fitting accuracy at low Reynolds numbers
+- Erosional velocity calculations per API RP 14E
+- Real gas compressibility (Z-factor) corrections
+- Flexible unit conversions (mass, molar, volumetric flows)
 
-### Basic Usage
+## Installation / Prerequisites
+
+### Required Dependencies
+
+```bash
+pip install numpy
+```
+
+### Standard Library Dependencies (No Installation Required)
+
+- `math`, `logging`, `dataclasses`
+
+## Usage Instructions
+
+### Quick Start
 
 ```python
-from calculators.pressure_drop_calculator import calculate_pressure_drop, print_results
+from pressure_drop_calculator import calculate_pressure_drop, print_results
 
-# Calculate pressure drop for air in 4" Schedule 40 pipe
+# Simple calculation with standard pipe
 result = calculate_pressure_drop(
     pipe_size='4',
     pipe_schedule='40',
-    pipe_length=100,  # meters
-    flow_rate=1000,  # SCFM
-    flow_unit='SCFM',
-    pressure=5,  # bar
-    temperature=400  # K
+    pipe_length=100,           # meters
+    flow_rate=1000,
+    flow_unit='kg/h',
+    pressure=10,               # bar
+    temperature=500            # K
 )
 
+print(f"Pressure Drop: {result['pressure_drop_bar']:.4f} bar")
 print_results(result)
 ```
 
 ### Custom Gas Composition
 
 ```python
-from calculators.pressure_drop_calculator import calculate_pressure_drop_custom_gas
+# Syngas composition (mole fractions)
+syngas = {'H2': 0.30, 'CO': 0.40, 'CO2': 0.15, 'N2': 0.10, 'CH4': 0.05}
 
-# Syngas composition
-syngas = {
-    'H2': 0.30,
-    'CO': 0.40,
-    'CO2': 0.15,
-    'N2': 0.10,
-    'CH4': 0.05
-}
-
-result = calculate_pressure_drop_custom_gas(
-    pipe_diameter=0.1543,  # 6" Schedule 40 (meters)
+result = calculate_pressure_drop(
+    pipe_diameter=0.1543,      # 6" Schedule 40 (meters)
     pipe_length=50,
     gas_composition=syngas,
     flow_rate=2000,
     flow_unit='kg/h',
-    pressure=25,  # bar
-    temperature=800  # K
+    pressure=25,               # bar
+    temperature=800            # K
 )
-
-print(f"Pressure drop: {result['pressure_drop_bar']:.4f} bar")
-print(f"Outlet pressure: {result['outlet_pressure_bar']:.2f} bar")
-print(f"Reynolds number: {result['reynolds_number']:.0f}")
-print(f"Flow velocity: {result['flow_velocity_m_s']:.2f} m/s")
 ```
 
 ### With Fittings and Valves
 
 ```python
-# Add fittings to calculation
-fittings = [
-    {'type': '90_elbow_std', 'quantity': 4},
-    {'type': '45_elbow_std', 'quantity': 2},
-    {'type': 'gate_valve_open', 'quantity': 2},
-    {'type': 'tee_through_run', 'quantity': 1}
-]
-
 result = calculate_pressure_drop(
     pipe_size='6',
     pipe_schedule='40',
@@ -85,381 +78,309 @@ result = calculate_pressure_drop(
     flow_rate=5000,
     flow_unit='kg/h',
     pressure=20,
-    temperature=700,
-    gas_composition=syngas,
-    fittings=fittings
+    temperature=750,
+    gas_composition={'H2': 0.3, 'CO': 0.5, 'CO2': 0.2},
+    fittings=[
+        {'type': '90_elbow_std', 'quantity': 4},
+        {'type': 'gate_valve_open', 'quantity': 2},
+        {'type': 'tee_through_run', 'quantity': 1}
+    ]
 )
 ```
 
-## Advanced Usage
+## Input Parameters
 
-### Low-Level API (Direct Engine Access)
+### Pipe Geometry
 
-```python
-from calculators.pressure_drop_calculator import (
-    PressureDropCalculationEngine,
-    PressureDropInputs,
-    GasComposition,
-    PipeFitting
-)
+| Parameter | Type | Range | Units | Description |
+|-----------|------|-------|-------|-------------|
+| pipe_size | str | 1/2 - 24 | inches | Nominal pipe size (NPS) |
+| pipe_schedule | str | 5S, 10S, 40, 80, 160, XXS | - | Pipe schedule |
+| pipe_diameter | float | > 0 | m | Internal diameter (alternative to pipe_size) |
+| pipe_length | float | > 0 | m | Total pipe length |
+| pipe_material | str | - | - | Commercial Steel, Stainless, Cast Iron, etc. |
+| pipe_roughness | float | > 0 | m | Absolute roughness (overrides material) |
+| elevation_change | float | any | m | Elevation change (+ = upward flow) |
 
-# Define gas composition
-composition = GasComposition(components={
-    'H2': 0.30,
-    'CO': 0.40,
-    'CO2': 0.20,
-    'N2': 0.10
-})
+### Flow Conditions
 
-# Define fittings
-fittings = [
-    PipeFitting('90_elbow_std', quantity=4, k_factor=30),
-    PipeFitting('gate_valve_open', quantity=2, k_factor=8),
-]
+| Parameter | Type | Range | Units | Description |
+|-----------|------|-------|-------|-------------|
+| flow_rate | float | > 0 | varies | Flow rate value |
+| flow_unit | str | - | - | kg/h, kg/s, lb/hr, SCFM, ACFM, kmol/h, Nm3/h |
+| pressure | float | 0.1-1000 | bar | Inlet pressure (absolute) |
+| pressure_unit | str | - | - | bar, psi, Pa, kPa, atm |
+| temperature | float | 200-2000 | K | Inlet temperature |
+| temperature_unit | str | - | - | K, C, F |
 
-# Create inputs
-inputs = PressureDropInputs(
-    pipe_diameter=0.1023,  # 4" Schedule 40
-    pipe_length=100.0,
-    pipe_roughness=0.000045,  # Commercial steel
-    elevation_change=0.0,
-    mass_flow_rate=0.556,  # kg/s
-    inlet_pressure=10e5,  # Pa
-    inlet_temperature=700,  # K
-    gas_composition=composition,
-    fittings=fittings,
-    compressibility_correction=True,
-    friction_method='colebrook'
-)
+### Gas Composition
 
-# Calculate
-engine = PressureDropCalculationEngine()
-results = engine.calculate(inputs)
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| gas_composition | dict | {component: mole_fraction}, auto-normalized to 1.0 |
 
-# Access detailed results
-print(f"Friction factor: {results.friction_factor:.6f}")
-print(f"Flow regime: {results.flow_regime}")
-print(f"Friction loss: {results.friction_pressure_drop/1e5:.4f} bar")
-print(f"Fitting loss: {results.fitting_pressure_drop/1e5:.4f} bar")
-print(f"Mach number: {results.flow_properties.mach_number:.4f}")
-```
+**Available Gas Components:**
+H2, CO, CO2, CH4, C2H6, C2H4, N2, O2, H2O, Ar, H2S, NH3, Air
 
-### Using Pipe Database
+### Calculation Options
 
-```python
-from calculators.pressure_drop_calculator import (
-    get_pipe_spec,
-    list_available_sizes,
-    list_schedules_for_size
-)
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| friction_method | str | 'colebrook' | 'colebrook', 'swamee-jain', 'churchill', 'haaland' |
+| compressibility_correction | bool | True | Apply real gas Z-factor corrections |
+| standard_condition | str | 'STP' | 'STP', 'NTP', 'SCFM' for volumetric conversions |
 
-# List all available pipe sizes
-sizes = list_available_sizes()
-print(f"Available sizes: {sizes}")
+## Output Format
 
-# List schedules for 6" pipe
-schedules = list_schedules_for_size('6')
-print(f"Schedules for 6\" pipe: {schedules}")
+### Primary Results
 
-# Get specific pipe specification
-spec = get_pipe_spec('6', '40')
-print(f"6\" Schedule 40:")
-print(f"  OD: {spec.outer_diameter} mm")
-print(f"  Wall: {spec.wall_thickness} mm")
-print(f"  ID: {spec.inner_diameter} mm")
-```
+| Field | Units | Description |
+|-------|-------|-------------|
+| pressure_drop_pa | Pa | Total pressure drop |
+| pressure_drop_bar | bar | Total pressure drop |
+| pressure_drop_psi | psi | Total pressure drop |
+| pressure_drop_kpa | kPa | Total pressure drop |
+| outlet_pressure_bar | bar | Outlet pressure (absolute) |
 
-### Material Roughness Values
+### Pressure Drop Components
 
-```python
-from calculators.pressure_drop_calculator import get_roughness, MATERIAL_ROUGHNESS
-
-# Get roughness for a material
-roughness_m = get_roughness('Commercial Steel', 'm')
-roughness_mm = get_roughness('Stainless Steel', 'mm')
-roughness_ft = get_roughness('Cast Iron', 'ft')
-
-# List all available materials
-for material, (rough_mm, rough_ft, desc) in MATERIAL_ROUGHNESS.items():
-    print(f"{material:30s}: ε = {rough_mm:8.5f} mm - {desc}")
-```
-
-### Fitting K-Factors
-
-```python
-from calculators.pressure_drop_calculator import (
-    get_fitting_k_factor,
-    list_available_fittings
-)
-
-# Get K-factor for a fitting
-k_elbow = get_fitting_k_factor('90_elbow_std')
-k_valve = get_fitting_k_factor('gate_valve_open')
-
-# List all available fittings
-fittings_db = list_available_fittings()
-for fitting_name, k_value in sorted(fittings_db.items()):
-    print(f"{fitting_name:40s}: K = {k_value:6.0f}")
-```
-
-### Flow Rate Unit Conversions
-
-```python
-from calculators.pressure_drop_calculator import (
-    mass_to_mass,
-    molar_to_mass,
-    scfm_to_acfm,
-    STANDARD_CONDITIONS
-)
-
-# Convert mass flow units
-flow_lbhr = mass_to_mass(1000, 'kg/h', 'lb/hr')
-print(f"1000 kg/h = {flow_lbhr:.1f} lb/hr")
-
-# Convert molar to mass flow
-MW_air = 29.0  # kg/kmol
-mass_flow = molar_to_mass(10, 'kmol/h', MW_air, 'kg/h')
-print(f"10 kmol/h of air = {mass_flow:.1f} kg/h")
-
-# SCFM to ACFM conversion
-T_actual = 800  # K
-P_actual = 5e5  # Pa
-acfm = scfm_to_acfm(1000, T_actual, P_actual, 'SCFM')
-print(f"1000 SCFM @ {T_actual}K, {P_actual/1e5:.0f} bar = {acfm:.0f} ACFM")
-
-# Available standard conditions
-for name, (T, P, desc) in STANDARD_CONDITIONS.items():
-    print(f"{name:10s}: {desc}")
-```
-
-## Gas Component Database
-
-Supported gas components with thermophysical properties:
-
-| Component | Name | MW (kg/kmol) | Tc (K) | Pc (bar) |
-|-----------|------|--------------|--------|----------|
-| H₂ | Hydrogen | 2.016 | 33.2 | 12.96 |
-| CO | Carbon Monoxide | 28.010 | 132.9 | 34.94 |
-| CO₂ | Carbon Dioxide | 44.010 | 304.2 | 73.82 |
-| CH₄ | Methane | 16.043 | 190.6 | 45.99 |
-| C₂H₆ | Ethane | 30.070 | 305.4 | 48.80 |
-| C₂H₄ | Ethylene | 28.054 | 282.4 | 50.42 |
-| N₂ | Nitrogen | 28.014 | 126.2 | 33.94 |
-| O₂ | Oxygen | 31.999 | 154.6 | 50.43 |
-| H₂O | Water Vapor | 18.015 | 647.1 | 220.64 |
-| Ar | Argon | 39.948 | 150.9 | 48.98 |
-| H₂S | Hydrogen Sulfide | 34.082 | 373.5 | 90.00 |
-| NH₃ | Ammonia | 17.031 | 405.7 | 113.57 |
-| Air | Air (pseudo) | 28.97 | 132.5 | 37.74 |
-
-## Friction Factor Methods
-
-Available friction factor correlations:
-
-1. **Colebrook-White** (`'colebrook'`): Most accurate, requires iteration
-   - Reference: Colebrook (1939)
-   - Recommended for final calculations
-
-2. **Swamee-Jain** (`'swamee-jain'`): Explicit approximation
-   - Accurate within 1% of Colebrook
-   - Fast, no iteration required
-   - Valid: 5000 < Re < 10⁸, 10⁻⁶ < ε/D < 10⁻²
-
-3. **Churchill** (`'churchill'`): Valid for all flow regimes
-   - Reference: Churchill (1977)
-   - Works for laminar, transitional, and turbulent flow
-   - Single equation for all Re
-
-4. **Haaland** (`'haaland'`): Simple explicit formula
-   - Accurate within 1.5%
-   - Very fast computation
-
-## Output Variables
-
-The calculator returns a comprehensive dictionary with:
-
-### Pressure Drops
-- `pressure_drop_pa`, `pressure_drop_bar`, `pressure_drop_psi`, `pressure_drop_kpa`
-- `friction_loss_pa`, `friction_loss_bar`
-- `fitting_loss_pa`, `fitting_loss_bar`
-- `elevation_loss_pa`
-- `pressure_drop_per_100ft_pa`
-
-### Outlet Conditions
-- `outlet_pressure_pa`, `outlet_pressure_bar`, `outlet_pressure_psi`
+| Field | Units | Description |
+|-------|-------|-------------|
+| friction_loss_pa / friction_loss_bar | Pa / bar | Pipe wall friction losses |
+| fitting_loss_pa / fitting_loss_bar | Pa / bar | Fittings and valve losses |
+| elevation_loss_pa | Pa | Hydrostatic head change |
+| pressure_drop_per_100ft_pa | Pa/100ft | Pressure gradient |
 
 ### Flow Characteristics
-- `friction_factor`: Darcy friction factor
-- `reynolds_number`: Reynolds number
-- `flow_velocity_m_s`, `flow_velocity_ft_s`
-- `mach_number`: Mach number
-- `flow_regime`: 'laminar', 'transitional', or 'turbulent'
+
+| Field | Units | Description |
+|-------|-------|-------------|
+| reynolds_number | - | Reynolds number (Re) |
+| friction_factor | - | Darcy friction factor (f) |
+| flow_velocity_m_s / flow_velocity_ft_s | m/s / ft/s | Flow velocity |
+| mach_number | - | Mach number (M) |
+| flow_regime | str | 'laminar', 'transitional', 'turbulent' |
 
 ### Gas Properties
-- `density_kg_m3`: Gas density
-- `viscosity_pa_s`: Dynamic viscosity
-- `compressibility_factor`: Z-factor
-- `molecular_weight`: Mixture molecular weight
 
-### Performance Metrics
-- `erosional_velocity_m_s`: Erosional velocity limit (API RP 14E)
-- `erosion_ratio`, `erosion_ratio_percent`: Actual/erosional velocity ratio
-- `velocity_pressure_pa`: Dynamic pressure
+| Field | Units | Description |
+|-------|-------|-------------|
+| density_kg_m3 | kg/m3 | Gas mixture density |
+| viscosity_pa_s | Pa-s | Dynamic viscosity |
+| molecular_weight | kg/kmol | Mixture molecular weight |
+| compressibility_factor | - | Real gas Z-factor |
 
-### Warnings
-- `warnings`: List of warning messages
+### Safety Metrics
 
-## Example Applications
+| Field | Units | Description |
+|-------|-------|-------------|
+| erosional_velocity_m_s | m/s | API RP 14E erosional velocity limit |
+| erosion_ratio | - | V_actual / V_erosional |
+| erosion_ratio_percent | % | Erosion ratio as percentage |
+| velocity_pressure_pa | Pa | Dynamic pressure (rho*V^2/2) |
+| warnings | list | Warning messages |
 
-### 1. Gasifier Syngas Line Design
+## Mathematical Models
 
-```python
-# Design syngas transfer line from gasifier to quench
-syngas = {'H2': 0.28, 'CO': 0.42, 'CO2': 0.18, 'N2': 0.08, 'CH4': 0.04}
+### Darcy-Weisbach Equation
 
-result = calculate_pressure_drop(
-    pipe_size='8',
-    pipe_schedule='80',  # Heavy wall for high temperature
-    pipe_length=25,
-    pipe_material='Stainless Steel 316',
-    flow_rate=8000,  # kg/h
-    flow_unit='kg/h',
-    pressure=30,  # bar
-    temperature=1000,  # K (~727°C)
-    gas_composition=syngas,
-    elevation_change=5,  # 5 m rise
-    friction_method='colebrook'
-)
-
-print_results(result, "Gasifier Syngas Line")
+```
+Delta_P = f * (L/D) * (rho * V^2 / 2)
 ```
 
-### 2. Combustion Air Blower Sizing
+Where:
+- f = Darcy friction factor (dimensionless)
+- L = pipe length (m)
+- D = pipe internal diameter (m)
+- rho = gas density (kg/m3)
+- V = flow velocity (m/s)
+
+### Fanning Friction Factor Relation
+
+```
+f_Darcy = 4 * f_Fanning
+```
+
+### Friction Factor Correlations
+
+**Colebrook-White (Implicit, Iterative):**
+```
+1/sqrt(f) = -2.0 * log10(epsilon/(3.7*D) + 2.51/(Re*sqrt(f)))
+```
+
+**Swamee-Jain (Explicit, within 1% of Colebrook):**
+```
+f = 0.25 / [log10(epsilon/(3.7*D) + 5.74/Re^0.9)]^2
+```
+
+**Churchill (All Flow Regimes):**
+```
+f = 8 * [(8/Re)^12 + 1/(A + B)^1.5]^(1/12)
+A = [-2.457 * ln((7/Re)^0.9 + 0.27*(epsilon/D))]^16
+B = (37530/Re)^16
+```
+
+**Haaland (Explicit, within 1.5%):**
+```
+1/sqrt(f) = -1.8 * log10[(epsilon/D / 3.7)^1.11 + 6.9/Re]
+```
+
+**Laminar Flow (Re < 2300):**
+```
+f = 64 / Re
+```
+
+### Reynolds Number
+
+```
+Re = (rho * V * D) / mu
+```
+
+### Fitting Pressure Drop (K-Factor Method)
+
+```
+Delta_P_fitting = Sum(K_i * n_i) * (rho * V^2 / 2)
+```
+
+### Elevation Pressure Change
+
+```
+Delta_P_elevation = rho * g * Delta_h
+```
+
+Where g = 9.80665 m/s^2 (standard gravity)
+
+### Compressible Flow Correction (Isothermal)
+
+```
+P1^2 - P2^2 = G^2 * (Z*R*T/M) * [f*L/D + Sum(K) + 2*ln(P1/P2)]
+```
+
+Where:
+- G = mass flux (kg/(m2-s))
+- Z = compressibility factor
+- R = 8314.5 J/(kmol-K)
+- M = molecular weight (kg/kmol)
+
+### Erosional Velocity (API RP 14E)
+
+```
+V_erosion = C / sqrt(rho)
+```
+
+Where C = 100 (continuous), 125 (intermittent), 150 (non-corrosive)
+
+## Fitting K-Factors (Crane TP-410)
+
+| Fitting Type | K-Factor | Fitting Type | K-Factor |
+|--------------|----------|--------------|----------|
+| 90_elbow_std | 0.75 | gate_valve_open | 0.17 |
+| 90_elbow_long | 0.45 | globe_valve_open | 6.00 |
+| 45_elbow_std | 0.35 | ball_valve_open | 0.05 |
+| tee_through_run | 0.40 | check_valve_swing | 2.50 |
+| tee_through_branch | 1.50 | butterfly_valve_open | 0.25 |
+| entrance_sharp | 0.50 | exit_sharp | 1.00 |
+
+## Pipe Material Roughness
+
+| Material | epsilon (mm) | epsilon (m) |
+|----------|-------------|-------------|
+| Commercial Steel | 0.045 | 0.000045 |
+| Stainless Steel | 0.015 | 0.000015 |
+| Drawn Tubing | 0.0015 | 0.0000015 |
+| Cast Iron | 0.26 | 0.00026 |
+| Concrete | 1.0-3.0 | 0.001-0.003 |
+| PVC/Plastic | 0.0015 | 0.0000015 |
+
+## Example Usage
+
+### Complete Syngas Pipeline Analysis
 
 ```python
-# Size blower for combustion air supply
-result = calculate_pressure_drop(
-    pipe_size='12',
+from pressure_drop_calculator import (
+    calculate_pressure_drop_syngas,
+    print_results,
+    compare_friction_methods
+)
+
+# Compare friction methods at operating conditions
+compare_friction_methods(reynolds_number=100000, relative_roughness=0.0003)
+
+# Syngas pipeline calculation
+result = calculate_pressure_drop_syngas(
+    pipe_size='8',
     pipe_schedule='40',
-    pipe_length=150,
-    flow_rate=50000,  # SCFM
-    flow_unit='SCFM',
-    pressure=1.5,  # bar
-    temperature=300,  # K (ambient)
-    gas_composition={'Air': 1.0},
+    pipe_length=500,
+    flow_rate=10000,
+    flow_unit='kg/h',
+    pressure=30,
+    temperature=650,
+    H2_fraction=0.35,
+    CO_fraction=0.40,
+    CO2_fraction=0.15,
+    N2_fraction=0.05,
+    CH4_fraction=0.05,
     fittings=[
         {'type': '90_elbow_long', 'quantity': 6},
-        {'type': 'butterfly_valve_open', 'quantity': 1},
-    ]
+        {'type': 'gate_valve_open', 'quantity': 3},
+        {'type': 'tee_through_branch', 'quantity': 2}
+    ],
+    friction_method='colebrook',
+    compressibility_correction=True
 )
 
-# Blower must overcome this pressure drop
-required_dp = result['pressure_drop_bar']
-print(f"Required blower head: {required_dp:.3f} bar")
+# Print formatted results with recommendations
+print_results(result, show_recommendations=True)
+
+# Access specific values
+print(f"Total Pressure Drop: {result['pressure_drop_bar']:.4f} bar")
+print(f"Reynolds Number: {result['reynolds_number']:.0f}")
+print(f"Erosion Ratio: {result['erosion_ratio_percent']:.1f}%")
 ```
 
-### 3. Product Gas Cooling Line
+## Troubleshooting
 
-```python
-# Cooled product gas from gasifier
-cooled_gas = {'H2': 0.30, 'CO': 0.35, 'CO2': 0.25, 'N2': 0.10}
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Unknown pipe size | Size not in ASME database | Use pipe_diameter directly in meters |
+| Unknown flow unit | Unit not recognized | Run list_flow_units() for options |
+| Unknown gas component | Component not in database | Run list_gas_components() for options |
+| Choked flow warning | Pressure drop > inlet pressure | Increase pipe diameter or reduce flow |
+| High erosion ratio | Velocity exceeds erosional limit | Use larger pipe diameter |
+| Composition != 1.0 | Mole fractions don't sum to 1 | Composition auto-normalizes |
+| Negative outlet pressure | Excessive pressure drop | Check inputs; flow may be choked |
+| Large compressibility effect | High Delta P / P ratio | Enable compressibility_correction=True |
 
-result = calculate_pressure_drop(
-    pipe_size='6',
-    pipe_schedule='40',
-    pipe_length=50,
-    flow_rate=150,  # kmol/h
-    flow_unit='kmol/h',
-    pressure=20,  # bar
-    temperature=400,  # K (cooled)
-    gas_composition=cooled_gas,
-    fittings=[
-        {'type': '90_elbow_std', 'quantity': 3},
-        {'type': 'gate_valve_open', 'quantity': 1},
-    ]
-)
+## Helper Functions
 
-print_results(result)
-```
+| Function | Description |
+|----------|-------------|
+| show_help() | Display comprehensive help |
+| list_gas_components() | Show available gas components with properties |
+| list_fittings(category) | Show fittings with K-factors (filter by category) |
+| list_pipe_sizes() | Show standard ASME pipe sizes and schedules |
+| list_flow_units() | Show available flow rate units |
+| list_materials() | Show pipe materials and roughness values |
+| compare_friction_methods(Re, eps_D) | Compare friction factor correlations |
+| validate_inputs(...) | Pre-validate inputs before calculation |
 
-## Validation and Accuracy
+## Literature References
 
-### Verified Against
+- Darcy, H. (1857), Weisbach, J. (1845): Pipe flow friction equation
+- Colebrook, C.F. (1939): J. Inst. Civil Engineers, London, 11, 133-156
+- Swamee, P.K., Jain, A.K. (1976): J. Hydraulics Division, ASCE, 102(5), 657-664
+- Churchill, S.W. (1977): Chemical Engineering, 84(24), 91-92
+- Haaland, S.E. (1983): J. Fluids Engineering, 105(1), 89-90
+- Crane Technical Paper No. 410: Flow of Fluids Through Valves, Fittings, and Pipe
+- Perry's Chemical Engineers' Handbook, 9th Edition
+- API RP 14E: Offshore Production Piping Systems
+- ASME B36.10M: Welded and Seamless Wrought Steel Pipe
+- GPSA Engineering Data Book, 14th Edition
+- Reid, Prausnitz, Poling: The Properties of Gases and Liquids, 5th Ed.
 
-- Crane TP-410 example problems
-- Perry's Chemical Engineers' Handbook calculations
-- GPSA Engineering Data Book examples
-- Published literature data for gas flow
+## Related Tools
 
-### Typical Accuracy
-
-- Friction factor: ±1% (Colebrook-White)
-- Pressure drop: ±3-5% for turbulent flow
-- Gas properties: ±2-3% at typical conditions
-
-### Limitations
-
-- Assumes single-phase gas flow (no liquids or solids)
-- Isothermal flow (temperature constant along pipe)
-- Fully developed flow (entrance effects neglected)
-- Steady-state conditions
-
-## Technical References
-
-### Primary Sources
-
-1. **Crane Technical Paper No. 410** (TP-410)
-   - "Flow of Fluids Through Valves, Fittings, and Pipe"
-   - Fitting K-factors, resistance coefficients
-
-2. **Perry's Chemical Engineers' Handbook**, 9th Edition
-   - Chapter 6: Fluid and Particle Dynamics
-   - Friction factor correlations, compressible flow
-
-3. **API RP 14E**
-   - "Recommended Practice for Design and Installation of Offshore Production Platform Piping Systems"
-   - Erosional velocity correlations
-
-4. **ASME B36.10M-2015**
-   - "Welded and Seamless Wrought Steel Pipe"
-   - Pipe dimensions and specifications
-
-5. **Reid, Prausnitz, Poling** (2001)
-   - "The Properties of Gases and Liquids", 5th Edition
-   - Gas property correlations, viscosity, compressibility
-
-### Key Publications
-
-- Colebrook, C.F. (1939): "Turbulent Flow in Pipes", J. Inst. Civil Engineers
-- Swamee, P.K., Jain, A.K. (1976): "Explicit Equations for Pipe-Flow Problems", ASCE
-- Churchill, S.W. (1977): "Friction Factor Equation Spans All Fluid Flow Regimes", Chem. Eng.
-- Moody, L.F. (1944): "Friction factors for pipe flow", Trans. ASME
-- Wilke, C.R. (1950): "A Viscosity Equation for Gas Mixtures", J. Chem. Phys.
-
-## Testing
-
-Run the example calculations:
-
-```bash
-python -m calculators.pressure_drop_calculator.pressure_drop_interface
-```
-
-Run unit tests:
-
-```bash
-pytest tests/test_pressure_drop_calculator.py -v
-```
-
-## Support and Contributing
-
-For issues, feature requests, or contributions, please contact the development team.
-
-## License
-
-Professional use authorized for gasification and combustion system design.
-
----
-
-**Version**: 1.0.0
-**Last Updated**: 2024
-**Status**: Production Ready
+- **Scrubber Calculator**: Packed column pressure drop and sizing
+- **Flare Calculator**: Relief header and flare tip sizing
+- **Baghouse Calculator**: Ductwork and filter pressure losses
+- **Acid Gas Dewpoint Calculator**: Corrosion prevention in piping

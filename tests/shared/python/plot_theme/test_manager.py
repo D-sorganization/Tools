@@ -13,13 +13,15 @@ from shared.python.plot_theme.themes import DEFAULT_THEME, PLOT_THEMES
 class TestPlotThemeManager:
     """Tests for PlotThemeManager class."""
 
-    def test_manager_creation(self) -> None:
+    @patch.object(PlotThemeManager, "_load_saved_theme")
+    def test_manager_creation(self, mock_load: MagicMock) -> None:
         """Test creating a PlotThemeManager."""
         manager = PlotThemeManager()
         assert manager is not None
         assert manager.current_theme_name == DEFAULT_THEME
 
-    def test_current_theme_property(self) -> None:
+    @patch.object(PlotThemeManager, "_load_saved_theme")
+    def test_current_theme_property(self, mock_load: MagicMock) -> None:
         """Test current_theme property returns PlotTheme."""
         manager = PlotThemeManager()
         theme = manager.current_theme

@@ -22,7 +22,7 @@ def check_node() -> bool:
             ["npm", "--version"],
             capture_output=True,
             text=True,
-            shell=True,
+            shell=False,
         )
         return result.returncode == 0
     except FileNotFoundError:
@@ -40,7 +40,7 @@ def install_dependencies(web_path: Path) -> bool:
     result = subprocess.run(
         ["npm", "install"],
         cwd=web_path,
-        shell=True,
+        shell=False,
     )
     return result.returncode == 0
 
@@ -90,7 +90,7 @@ def main() -> int:
     process = subprocess.Popen(
         ["npm", "run", "dev"],
         cwd=web_path,
-        shell=True,
+        shell=False,
         env=env,
     )
 
