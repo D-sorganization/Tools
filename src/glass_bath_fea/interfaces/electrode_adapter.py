@@ -7,7 +7,7 @@ calculations from the electrode adviser shared module.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, cast
 
 import numpy as np
 
@@ -35,11 +35,11 @@ class ElectrodeAdapter:
             config: Glass bath FEA configuration
         """
         self.config = config
-        self._electrode_config = None
-        self._glass_interface = None
-        self._electrical_model = None
+        self._electrode_config: Any = None
+        self._glass_interface: Any = None
+        self._electrical_model: Any = None
 
-    def get_electrode_config(self):
+    def get_electrode_config(self) -> Any:
         """Get or create electrode adviser compatible config.
 
         Returns:
@@ -58,7 +58,7 @@ class ElectrodeAdapter:
 
         return self._electrode_config
 
-    def get_glass_interface(self):
+    def get_glass_interface(self) -> Any:
         """Get or create glass properties interface.
 
         Returns:
@@ -74,7 +74,7 @@ class ElectrodeAdapter:
 
         return self._glass_interface
 
-    def get_electrical_model(self):
+    def get_electrical_model(self) -> Any:
         """Get or create electrical model instance.
 
         Returns:
@@ -94,7 +94,7 @@ class ElectrodeAdapter:
 
     def calculate_electrode_positions(
         self, depths: np.ndarray | None = None
-    ) -> list[dict]:
+    ) -> list[dict[str, Any]]:
         """Calculate electrode positions using electrode adviser logic.
 
         Args:
@@ -125,7 +125,7 @@ class ElectrodeAdapter:
             metal_depth=metal_depth,
         )
 
-        return positions
+        return cast(list[dict[str, Any]], positions)
 
     def get_glass_conductivity(self, temperature_celsius: float) -> float:
         """Get glass conductivity at specified temperature.
@@ -144,7 +144,8 @@ class ElectrodeAdapter:
             "fe2o3": self.config.glass_composition.fe2o3,
         }
 
-        return glass.get_conductivity(temperature_celsius, composition=composition)
+        result = glass.get_conductivity(temperature_celsius, composition=composition)
+        return float(result)
 
     def calculate_phase_resistances(
         self, depths: np.ndarray | None = None
@@ -161,11 +162,13 @@ class ElectrodeAdapter:
 
         # Results from electrical model have a "resistances" key
         if "resistances" in results:
-            return results["resistances"]
+            return cast(dict[str, float], results["resistances"])
 
         return {}
 
-    def calculate_system_state(self, depths: np.ndarray | None = None) -> dict:
+    def calculate_system_state(
+        self, depths: np.ndarray | None = None
+    ) -> dict[str, Any]:
         """Calculate full electrical system state.
 
         Args:
@@ -196,7 +199,7 @@ class ElectrodeAdapter:
             conductive_height=self.config.glass_depth,
         )
 
-        return results
+        return cast(dict[str, Any], results)
 
     def export_boundary_conditions(self, output_path: Path | str) -> None:
         """Export boundary condition data for MATLAB.

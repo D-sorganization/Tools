@@ -155,7 +155,7 @@ class GlassMaterialModel:
         # Fulcher equation
         log_viscosity = FULCHER_A + FULCHER_B / (temp_k - FULCHER_T0)
 
-        return 10.0**log_viscosity
+        return float(10.0**log_viscosity)
 
     def get_arrhenius_params(self) -> dict[str, float]:
         """Get Arrhenius equation parameters for MATLAB export.

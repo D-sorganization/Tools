@@ -261,7 +261,7 @@ class MeshGenerator:
 
         # Simple check: mesh is "watertight" if it has valid elements
         # A real implementation would check surface face connectivity
-        return elements.shape[1] > 0
+        return bool(elements.shape[1] > 0)
 
     def get_mesh_statistics(self, mesh: dict) -> dict:
         """Calculate mesh statistics.
