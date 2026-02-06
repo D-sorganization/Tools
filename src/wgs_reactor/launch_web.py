@@ -24,7 +24,7 @@ def main() -> int:
         install_result = subprocess.run(
             ["npm", "install"],
             cwd=WEB_DIR,
-            shell=True,
+            shell=False,
         )
         if install_result.returncode != 0:
             print("Error: Failed to install dependencies")
@@ -36,7 +36,7 @@ def main() -> int:
     dev_result = subprocess.run(
         ["npm", "run", "dev"],
         cwd=WEB_DIR,
-        shell=True,
+        shell=False,
     )
     return dev_result.returncode
 

@@ -25,7 +25,7 @@ def main() -> int:
         result = subprocess.run(
             ["npm", "install"],
             cwd=web_dir,
-            shell=True,
+            shell=False,
             capture_output=True,
             text=True,
         )
@@ -50,7 +50,7 @@ def main() -> int:
     dev_result = subprocess.run(
         ["npm", "run", "dev", "--", "--port", str(port)],
         cwd=web_dir,
-        shell=True,
+        shell=False,
     )
     return dev_result.returncode
 

@@ -48,7 +48,7 @@ def install_dependencies(web_path: Path) -> bool:
         result = subprocess.run(
             ["npm", "install"],
             cwd=web_path,
-            shell=True,
+            shell=False,
         )
         return result.returncode == 0
     return True
@@ -88,7 +88,7 @@ def main() -> int:
         ["npm", "run", "dev"],
         cwd=web_path,
         env=env,
-        shell=True,
+        shell=False,
     )
 
     # Open browser after delay

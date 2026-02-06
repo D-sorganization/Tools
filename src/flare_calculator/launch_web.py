@@ -18,7 +18,7 @@ def main() -> None:
     node_modules = web_dir / "node_modules"
     if not node_modules.exists():
         print("Installing dependencies...")
-        subprocess.run(["npm", "install"], cwd=web_dir, check=True, shell=True)
+        subprocess.run(["npm", "install"], cwd=web_dir, check=True, shell=False)
 
     # Start the development server
     print("Starting Flare Calculator web application on http://localhost:5179")
@@ -26,7 +26,7 @@ def main() -> None:
         ["npm", "run", "dev", "--", "--port", "5179"],
         cwd=web_dir,
         check=True,
-        shell=True,
+        shell=False,
     )
 
 
