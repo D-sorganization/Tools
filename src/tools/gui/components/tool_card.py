@@ -4,18 +4,27 @@ from collections.abc import Callable
 from typing import Any
 
 try:
-    from PyQt6.QtCore import Qt
+    from PyQt6.QtCore import QSize, Qt
     from PyQt6.QtWidgets import (
         QFrame,
         QHBoxLayout,
         QLabel,
         QPushButton,
+        QToolButton,
         QVBoxLayout,
     )
 
     HAS_PYQT6 = True
 except ImportError:
     HAS_PYQT6 = False
+
+# Try to import help system
+try:
+    import python.src.help  # noqa: F401
+
+    HELP_AVAILABLE = True
+except ImportError:
+    HELP_AVAILABLE = False
 
 
 class ToolCard(QFrame):
@@ -94,6 +103,9 @@ class ToolCard(QFrame):
         layout.addWidget(path_lbl)
         layout.addStretch()
 
+        # Button row (Launch + Help)
+        button_row = QHBoxLayout()
+
         # Launch Button
         btn = QPushButton("Launch Tool")
         btn.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -114,7 +126,36 @@ class ToolCard(QFrame):
                 background-color: #0D47A1;
             }
         """)
-        layout.addWidget(btn)
+        button_row.addWidget(btn)
+
+        # Help Button
+        if HELP_AVAILABLE:
+            help_btn = QToolButton()
+            help_btn.setText("?")
+            help_btn.setToolTip("Show help for this tool")
+            help_btn.setFixedSize(QSize(30, 30))
+            help_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+            help_btn.setStyleSheet("""
+                QToolButton {
+                    background-color: #45475a;
+                    color: #89b4fa;
+                    border: 1px solid #585b70;
+                    border-radius: 4px;
+                    font-weight: bold;
+                    font-size: 14px;
+                }
+                QToolButton:hover {
+                    background-color: #585b70;
+                    border-color: #89b4fa;
+                }
+                QToolButton:pressed {
+                    background-color: #313244;
+                }
+            """)
+            help_btn.clicked.connect(self._show_tool_help)
+            button_row.addWidget(help_btn)
+
+        layout.addLayout(button_row)
 
     def _get_type_color(self, tool_type: str) -> str:
         """Get badge color based on tool type."""
@@ -125,3 +166,55 @@ class ToolCard(QFrame):
             "browser": "#9C27B0",  # Purple
         }
         return colors.get(tool_type.lower(), "#9E9E9E")  # Grey default
+
+    def _show_tool_help(self) -> None:
+        """Show help dialog for this tool."""
+        if not HELP_AVAILABLE:
+            return
+
+        try:
+            # Get tool category for help lookup
+            category = self.tool_info.get("category", "")
+
+            # Build a tool-specific help message
+            tool_name = self.tool_info.get("name", "Unknown Tool")
+            tool_desc = self.tool_info.get("desc", "No description available.")
+            tool_type = self.tool_info.get("type", "unknown")
+            tool_path = self.tool_info.get("path", "")
+
+            help_content = f"""# {tool_name}
+
+**Type:** {tool_type.upper()}
+
+## Description
+
+{tool_desc}
+
+## Location
+
+`{tool_path}`
+
+## How to Use
+
+1. Click **Launch Tool** to start this tool
+2. The tool will open in a new window
+3. Follow the tool's specific instructions
+
+## Category
+
+This tool is part of the **{category}** category.
+
+For more information about this category, see the Tool Help menu option
+or press F1 to open the User Manual.
+"""
+
+            # Import HelpDialog directly for display
+            from python.src.help.help_system import HelpDialog
+
+            dialog = HelpDialog(self, tool_name, help_content)
+            dialog.resize(600, 450)
+            dialog.exec()
+
+        except Exception:
+            # Silently fail if help system has issues
+            pass
