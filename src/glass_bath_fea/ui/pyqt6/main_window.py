@@ -11,6 +11,10 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from glass_bath_fea.core.config import GlassBathFEAConfig
 
 try:
     from PyQt6.QtCore import pyqtSignal
@@ -296,7 +300,7 @@ class GlassBathFEAWidget(QWidget):
             }
         """)
 
-    def _get_config(self):
+    def _get_config(self) -> GlassBathFEAConfig:
         """Create configuration from current UI values."""
         from glass_bath_fea.core.config import (
             GlassBathFEAConfig,

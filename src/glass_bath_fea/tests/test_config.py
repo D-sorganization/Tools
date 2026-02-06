@@ -5,12 +5,16 @@ from __future__ import annotations
 import math
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 
 # Add paths for imports (when running tests directly)
 TOOLS_ROOT = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(TOOLS_ROOT / "src"))
+
+if TYPE_CHECKING:
+    from glass_bath_fea.core.config import GlassBathFEAConfig, GlassComposition
 
 
 class TestGlassBathFEAConfig:
@@ -47,19 +51,21 @@ class TestGlassBathFEAConfig:
         assert config.metal_layer_thickness == 3.0
         assert config.operating_temperature == 1400.0
 
-    def test_total_height_property(self, default_fea_config) -> None:
+    def test_total_height_property(
+        self, default_fea_config: GlassBathFEAConfig
+    ) -> None:
         """Test that total height is correctly computed."""
         expected = (
             default_fea_config.glass_depth + default_fea_config.metal_layer_thickness
         )
         assert default_fea_config.total_height == expected
 
-    def test_bath_radius_property(self, default_fea_config) -> None:
+    def test_bath_radius_property(self, default_fea_config: GlassBathFEAConfig) -> None:
         """Test that bath radius is correctly computed."""
         expected = default_fea_config.bath_diameter / 2.0
         assert default_fea_config.bath_radius == expected
 
-    def test_dimensions_in_meters(self, default_fea_config) -> None:
+    def test_dimensions_in_meters(self, default_fea_config: GlassBathFEAConfig) -> None:
         """Test conversion to SI units (meters)."""
         inches_to_meters = 0.0254
 
@@ -73,7 +79,7 @@ class TestGlassBathFEAConfig:
             2.0 * inches_to_meters, rel=1e-6
         )
 
-    def test_electrode_angles(self, default_fea_config) -> None:
+    def test_electrode_angles(self, default_fea_config: GlassBathFEAConfig) -> None:
         """Test that electrode angles are correctly computed."""
         angles = default_fea_config.get_electrode_angles_radians()
 
@@ -96,14 +102,16 @@ class TestGlassBathFEAConfig:
 class TestGlassComposition:
     """Tests for glass composition specification."""
 
-    def test_default_soda_lime(self, soda_lime_composition) -> None:
+    def test_default_soda_lime(self, soda_lime_composition: GlassComposition) -> None:
         """Test default soda-lime glass composition."""
         assert soda_lime_composition.sio2 == 74.0
         assert soda_lime_composition.na2o == 13.0
         assert soda_lime_composition.cao == 10.5
         assert soda_lime_composition.fe2o3 == 0.1
 
-    def test_composition_validation_valid(self, soda_lime_composition) -> None:
+    def test_composition_validation_valid(
+        self, soda_lime_composition: GlassComposition
+    ) -> None:
         """Test that valid composition passes validation."""
         assert soda_lime_composition.validate()
 
@@ -137,7 +145,7 @@ class TestGlassComposition:
 
         assert not invalid.validate()
 
-    def test_total_percent(self, soda_lime_composition) -> None:
+    def test_total_percent(self, soda_lime_composition: GlassComposition) -> None:
         """Test that total percentage is computed correctly."""
         total = soda_lime_composition.total_percent()
         # 74 + 13 + 10.5 + 0 + 1.5 + 0.1 = 99.1

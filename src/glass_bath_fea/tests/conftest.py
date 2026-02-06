@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
+import numpy.typing as npt
 import pytest
 
 # Add paths for imports (when running tests directly)
@@ -13,9 +15,16 @@ TOOLS_ROOT = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(TOOLS_ROOT / "src"))
 sys.path.insert(0, str(TOOLS_ROOT / "src" / "shared" / "python"))
 
+if TYPE_CHECKING:
+    from glass_bath_fea.core.config import (
+        GlassBathFEAConfig,
+        GlassComposition,
+        MeshConfig,
+    )
+
 
 @pytest.fixture
-def default_fea_config():
+def default_fea_config() -> GlassBathFEAConfig:
     """Standard glass bath FEA configuration for testing."""
     from glass_bath_fea.core.config import GlassBathFEAConfig
 
@@ -32,7 +41,7 @@ def default_fea_config():
 
 
 @pytest.fixture
-def default_mesh_config():
+def default_mesh_config() -> MeshConfig:
     """Standard mesh configuration for testing."""
     from glass_bath_fea.core.config import MeshConfig
 
@@ -45,7 +54,7 @@ def default_mesh_config():
 
 
 @pytest.fixture
-def soda_lime_composition():
+def soda_lime_composition() -> GlassComposition:
     """Standard soda-lime glass composition."""
     from glass_bath_fea.core.config import GlassComposition
 
@@ -60,7 +69,7 @@ def soda_lime_composition():
 
 
 @pytest.fixture
-def high_iron_composition():
+def high_iron_composition() -> GlassComposition:
     """High iron glass composition for testing composition effects."""
     from glass_bath_fea.core.config import GlassComposition
 
@@ -75,7 +84,7 @@ def high_iron_composition():
 
 
 @pytest.fixture
-def mock_mesh_data():
+def mock_mesh_data() -> dict[str, npt.NDArray[np.float64]]:
     """Pre-generated mesh data for testing exporters."""
     # Simple tetrahedral mesh (4 vertices forming 1 tetrahedron)
     nodes = np.array(
@@ -99,6 +108,6 @@ def mock_mesh_data():
 
 
 @pytest.fixture
-def temperature_range():
+def temperature_range() -> npt.NDArray[np.float64]:
     """Standard temperature range for testing material properties."""
     return np.linspace(1000, 1400, 5)  # 1000°C to 1400°C

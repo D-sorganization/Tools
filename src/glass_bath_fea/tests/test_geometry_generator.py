@@ -5,6 +5,7 @@ from __future__ import annotations
 import math
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
@@ -13,11 +14,16 @@ import pytest
 TOOLS_ROOT = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(TOOLS_ROOT / "src"))
 
+if TYPE_CHECKING:
+    from glass_bath_fea.core.config import GlassBathFEAConfig
+
 
 class TestGeometryGenerator:
     """Tests for cylindrical vessel geometry generation."""
 
-    def test_create_vessel_geometry(self, default_fea_config) -> None:
+    def test_create_vessel_geometry(
+        self, default_fea_config: GlassBathFEAConfig
+    ) -> None:
         """Test creating basic cylindrical vessel geometry."""
         from glass_bath_fea.core.geometry_generator import GeometryGenerator
 
@@ -29,7 +35,7 @@ class TestGeometryGenerator:
         assert "glass_region" in geometry
         assert "metal_region" in geometry
 
-    def test_vessel_dimensions(self, default_fea_config) -> None:
+    def test_vessel_dimensions(self, default_fea_config: GlassBathFEAConfig) -> None:
         """Test that vessel dimensions match configuration."""
         from glass_bath_fea.core.geometry_generator import GeometryGenerator
 
@@ -50,7 +56,7 @@ class TestGeometryGenerator:
             expected_metal_thickness, rel=1e-6
         )
 
-    def test_vessel_volume(self, default_fea_config) -> None:
+    def test_vessel_volume(self, default_fea_config: GlassBathFEAConfig) -> None:
         """Test that vessel volumes are physically reasonable."""
         from glass_bath_fea.core.geometry_generator import GeometryGenerator
 
@@ -67,7 +73,9 @@ class TestGeometryGenerator:
             volumes["glass"] + volumes["metal"], rel=1e-6
         )
 
-    def test_cylindrical_coordinates(self, default_fea_config) -> None:
+    def test_cylindrical_coordinates(
+        self, default_fea_config: GlassBathFEAConfig
+    ) -> None:
         """Test cylindrical coordinate system setup."""
         from glass_bath_fea.core.geometry_generator import GeometryGenerator
 
@@ -87,7 +95,7 @@ class TestGeometryGenerator:
 class TestElectrodeGeometry:
     """Tests for electrode geometry generation."""
 
-    def test_electrode_positions(self, default_fea_config) -> None:
+    def test_electrode_positions(self, default_fea_config: GlassBathFEAConfig) -> None:
         """Test that electrode positions are correctly computed."""
         from glass_bath_fea.core.geometry_generator import GeometryGenerator
 
@@ -103,7 +111,9 @@ class TestElectrodeGeometry:
             assert "base" in pos
             assert "angle" in pos
 
-    def test_electrode_angular_spacing(self, default_fea_config) -> None:
+    def test_electrode_angular_spacing(
+        self, default_fea_config: GlassBathFEAConfig
+    ) -> None:
         """Test that electrodes are spaced at 120 degrees."""
         from glass_bath_fea.core.geometry_generator import GeometryGenerator
 
@@ -119,7 +129,9 @@ class TestElectrodeGeometry:
             spacing = (angles[j] - angles[i]) % (2 * math.pi)
             assert spacing == pytest.approx(expected_spacing, rel=1e-6)
 
-    def test_electrode_tip_inside_vessel(self, default_fea_config) -> None:
+    def test_electrode_tip_inside_vessel(
+        self, default_fea_config: GlassBathFEAConfig
+    ) -> None:
         """Test that electrode tips are inside the vessel boundary."""
         from glass_bath_fea.core.geometry_generator import GeometryGenerator
 
@@ -133,7 +145,9 @@ class TestElectrodeGeometry:
             r_tip = np.sqrt(tip[0] ** 2 + tip[1] ** 2)
             assert r_tip < radius
 
-    def test_electrode_base_on_vessel_wall(self, default_fea_config) -> None:
+    def test_electrode_base_on_vessel_wall(
+        self, default_fea_config: GlassBathFEAConfig
+    ) -> None:
         """Test that electrode bases are on the vessel wall."""
         from glass_bath_fea.core.geometry_generator import GeometryGenerator
 
@@ -147,7 +161,9 @@ class TestElectrodeGeometry:
             r_base = np.sqrt(base[0] ** 2 + base[1] ** 2)
             assert r_base == pytest.approx(radius, rel=1e-6)
 
-    def test_electrode_insertion_depth(self, default_fea_config) -> None:
+    def test_electrode_insertion_depth(
+        self, default_fea_config: GlassBathFEAConfig
+    ) -> None:
         """Test that electrode insertion depth matches configuration."""
         from glass_bath_fea.core.geometry_generator import GeometryGenerator
 
@@ -168,7 +184,7 @@ class TestElectrodeGeometry:
 class TestRegionDefinitions:
     """Tests for material region definitions."""
 
-    def test_glass_region_bounds(self, default_fea_config) -> None:
+    def test_glass_region_bounds(self, default_fea_config: GlassBathFEAConfig) -> None:
         """Test glass region Z-bounds."""
         from glass_bath_fea.core.geometry_generator import GeometryGenerator
 
@@ -185,7 +201,7 @@ class TestRegionDefinitions:
         assert bounds["glass"]["z_min"] == pytest.approx(metal_top, rel=1e-6)
         assert bounds["glass"]["z_max"] == pytest.approx(glass_top, rel=1e-6)
 
-    def test_metal_region_bounds(self, default_fea_config) -> None:
+    def test_metal_region_bounds(self, default_fea_config: GlassBathFEAConfig) -> None:
         """Test metal region Z-bounds."""
         from glass_bath_fea.core.geometry_generator import GeometryGenerator
 
@@ -199,7 +215,7 @@ class TestRegionDefinitions:
         assert bounds["metal"]["z_min"] == pytest.approx(0.0, abs=1e-10)
         assert bounds["metal"]["z_max"] == pytest.approx(metal_top, rel=1e-6)
 
-    def test_regions_connected(self, default_fea_config) -> None:
+    def test_regions_connected(self, default_fea_config: GlassBathFEAConfig) -> None:
         """Test that glass and metal regions share an interface."""
         from glass_bath_fea.core.geometry_generator import GeometryGenerator
 
@@ -211,7 +227,9 @@ class TestRegionDefinitions:
             bounds["glass"]["z_min"], rel=1e-6
         )
 
-    def test_material_id_assignment(self, default_fea_config) -> None:
+    def test_material_id_assignment(
+        self, default_fea_config: GlassBathFEAConfig
+    ) -> None:
         """Test that material IDs are correctly assigned."""
         from glass_bath_fea.core.geometry_generator import GeometryGenerator
 
@@ -227,7 +245,7 @@ class TestRegionDefinitions:
 class TestGeometryExport:
     """Tests for geometry export functionality."""
 
-    def test_export_to_dict(self, default_fea_config) -> None:
+    def test_export_to_dict(self, default_fea_config: GlassBathFEAConfig) -> None:
         """Test exporting geometry as dictionary for mesh generation."""
         from glass_bath_fea.core.geometry_generator import GeometryGenerator
 
@@ -240,7 +258,9 @@ class TestGeometryExport:
         assert "regions" in data
         assert "material_ids" in data
 
-    def test_export_electrode_cylinders(self, default_fea_config) -> None:
+    def test_export_electrode_cylinders(
+        self, default_fea_config: GlassBathFEAConfig
+    ) -> None:
         """Test that electrode geometry includes cylinder definitions."""
         from glass_bath_fea.core.geometry_generator import GeometryGenerator
 

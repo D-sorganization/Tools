@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
@@ -17,11 +18,16 @@ import importlib.util
 
 HAS_PYGMSH = importlib.util.find_spec("pygmsh") is not None
 
+if TYPE_CHECKING:
+    from glass_bath_fea.core.config import GlassBathFEAConfig
+
 
 class TestMeshGeneratorCreation:
     """Tests for mesh generator initialization."""
 
-    def test_create_mesh_generator(self, default_fea_config) -> None:
+    def test_create_mesh_generator(
+        self, default_fea_config: GlassBathFEAConfig
+    ) -> None:
         """Test creating mesh generator instance."""
         from glass_bath_fea.core.mesh_generator import MeshGenerator
 
@@ -30,7 +36,9 @@ class TestMeshGeneratorCreation:
         assert gen is not None
         assert gen.config is not None
 
-    def test_mesh_generator_has_geometry(self, default_fea_config) -> None:
+    def test_mesh_generator_has_geometry(
+        self, default_fea_config: GlassBathFEAConfig
+    ) -> None:
         """Test that mesh generator has access to geometry."""
         from glass_bath_fea.core.mesh_generator import MeshGenerator
 
@@ -44,7 +52,7 @@ class TestMeshGeneratorCreation:
 class TestMeshGeneration:
     """Tests for actual mesh generation (requires pygmsh)."""
 
-    def test_generate_simple_mesh(self, default_fea_config) -> None:
+    def test_generate_simple_mesh(self, default_fea_config: GlassBathFEAConfig) -> None:
         """Test generating a simple mesh."""
         from glass_bath_fea.core.mesh_generator import MeshGenerator
 
@@ -57,7 +65,7 @@ class TestMeshGeneration:
         assert "nodes" in mesh
         assert "elements" in mesh
 
-    def test_mesh_has_nodes(self, default_fea_config) -> None:
+    def test_mesh_has_nodes(self, default_fea_config: GlassBathFEAConfig) -> None:
         """Test that generated mesh has node coordinates."""
         from glass_bath_fea.core.mesh_generator import MeshGenerator
 
@@ -70,7 +78,7 @@ class TestMeshGeneration:
         assert nodes.ndim == 2
         assert nodes.shape[0] == 3  # x, y, z coordinates
 
-    def test_mesh_has_elements(self, default_fea_config) -> None:
+    def test_mesh_has_elements(self, default_fea_config: GlassBathFEAConfig) -> None:
         """Test that generated mesh has element connectivity."""
         from glass_bath_fea.core.mesh_generator import MeshGenerator
 
@@ -83,7 +91,9 @@ class TestMeshGeneration:
         assert elements.ndim == 2
         assert elements.shape[0] >= 4  # At least tetrahedral (4 nodes)
 
-    def test_mesh_has_material_ids(self, default_fea_config) -> None:
+    def test_mesh_has_material_ids(
+        self, default_fea_config: GlassBathFEAConfig
+    ) -> None:
         """Test that mesh elements have material IDs."""
         from glass_bath_fea.core.mesh_generator import MeshGenerator
 
@@ -98,7 +108,7 @@ class TestMeshGeneration:
 class TestMeshDataStructure:
     """Tests for mesh data structure (without full generation)."""
 
-    def test_create_mock_mesh(self, default_fea_config) -> None:
+    def test_create_mock_mesh(self, default_fea_config: GlassBathFEAConfig) -> None:
         """Test creating a mock mesh data structure."""
         from glass_bath_fea.core.mesh_generator import MeshGenerator
 
@@ -111,7 +121,7 @@ class TestMeshDataStructure:
         assert "elements" in mock_mesh
         assert "material_ids" in mock_mesh
 
-    def test_mock_mesh_geometry(self, default_fea_config) -> None:
+    def test_mock_mesh_geometry(self, default_fea_config: GlassBathFEAConfig) -> None:
         """Test that mock mesh respects geometry bounds."""
         from glass_bath_fea.core.mesh_generator import MeshGenerator
 
@@ -133,7 +143,7 @@ class TestMeshDataStructure:
 class TestMeshQuality:
     """Tests for mesh quality metrics."""
 
-    def test_mesh_quality_check(self, default_fea_config) -> None:
+    def test_mesh_quality_check(self, default_fea_config: GlassBathFEAConfig) -> None:
         """Test mesh quality validation."""
         from glass_bath_fea.core.mesh_generator import MeshGenerator
 
@@ -148,7 +158,7 @@ class TestMeshQuality:
         assert quality["min_quality"] >= 0
         assert quality["mean_quality"] <= 1.0
 
-    def test_mesh_is_watertight(self, default_fea_config) -> None:
+    def test_mesh_is_watertight(self, default_fea_config: GlassBathFEAConfig) -> None:
         """Test that mesh is watertight (closed surface)."""
         from glass_bath_fea.core.mesh_generator import MeshGenerator
 
@@ -164,7 +174,7 @@ class TestMeshQuality:
 class TestMeshStatistics:
     """Tests for mesh statistics calculation."""
 
-    def test_mesh_statistics(self, default_fea_config) -> None:
+    def test_mesh_statistics(self, default_fea_config: GlassBathFEAConfig) -> None:
         """Test calculating mesh statistics."""
         from glass_bath_fea.core.mesh_generator import MeshGenerator
 
@@ -179,7 +189,9 @@ class TestMeshStatistics:
         assert stats["num_nodes"] > 0
         assert stats["num_elements"] > 0
 
-    def test_element_count_by_region(self, default_fea_config) -> None:
+    def test_element_count_by_region(
+        self, default_fea_config: GlassBathFEAConfig
+    ) -> None:
         """Test counting elements by material region."""
         from glass_bath_fea.core.mesh_generator import MeshGenerator
 

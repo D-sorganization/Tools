@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
 
@@ -12,11 +13,16 @@ TOOLS_ROOT = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(TOOLS_ROOT / "src"))
 sys.path.insert(0, str(TOOLS_ROOT / "src" / "shared" / "python"))
 
+if TYPE_CHECKING:
+    from glass_bath_fea.core.config import GlassBathFEAConfig
+
 
 class TestElectrodeAdapter:
     """Tests for the electrode adviser adapter interface."""
 
-    def test_adapter_initialization(self, default_fea_config) -> None:
+    def test_adapter_initialization(
+        self, default_fea_config: GlassBathFEAConfig
+    ) -> None:
         """Test that adapter can be initialized with FEA config."""
         from glass_bath_fea.interfaces.electrode_adapter import ElectrodeAdapter
 
@@ -25,7 +31,7 @@ class TestElectrodeAdapter:
         assert adapter is not None
         assert adapter.config is not None
 
-    def test_get_electrode_config(self, default_fea_config) -> None:
+    def test_get_electrode_config(self, default_fea_config: GlassBathFEAConfig) -> None:
         """Test conversion to electrode adviser config format."""
         from glass_bath_fea.interfaces.electrode_adapter import ElectrodeAdapter
 
@@ -36,7 +42,7 @@ class TestElectrodeAdapter:
         assert hasattr(electrode_config, "bath_diameter")
         assert hasattr(electrode_config, "glass_depth")
 
-    def test_get_glass_interface(self, default_fea_config) -> None:
+    def test_get_glass_interface(self, default_fea_config: GlassBathFEAConfig) -> None:
         """Test getting glass properties interface."""
         from glass_bath_fea.interfaces.electrode_adapter import ElectrodeAdapter
 
@@ -46,7 +52,9 @@ class TestElectrodeAdapter:
         # Should have conductivity method
         assert hasattr(glass_interface, "get_conductivity")
 
-    def test_calculate_electrode_positions(self, default_fea_config) -> None:
+    def test_calculate_electrode_positions(
+        self, default_fea_config: GlassBathFEAConfig
+    ) -> None:
         """Test using electrode adviser to calculate positions."""
         from glass_bath_fea.interfaces.electrode_adapter import ElectrodeAdapter
 
@@ -68,7 +76,9 @@ class TestElectrodeAdapter:
             assert "tip" in pos
             assert "base" in pos
 
-    def test_conductivity_from_adapter(self, default_fea_config) -> None:
+    def test_conductivity_from_adapter(
+        self, default_fea_config: GlassBathFEAConfig
+    ) -> None:
         """Test getting conductivity through adapter."""
         from glass_bath_fea.interfaces.electrode_adapter import ElectrodeAdapter
 
@@ -81,7 +91,9 @@ class TestElectrodeAdapter:
         # Should be positive
         assert sigma > 0
 
-    def test_resistivity_calculation(self, default_fea_config) -> None:
+    def test_resistivity_calculation(
+        self, default_fea_config: GlassBathFEAConfig
+    ) -> None:
         """Test resistance calculation using electrode adviser model."""
         from glass_bath_fea.interfaces.electrode_adapter import ElectrodeAdapter
 
@@ -97,7 +109,9 @@ class TestElectrodeAdapter:
 class TestAdapterCompatibility:
     """Tests for compatibility with electrode adviser code."""
 
-    def test_electrical_model_creation(self, default_fea_config) -> None:
+    def test_electrical_model_creation(
+        self, default_fea_config: GlassBathFEAConfig
+    ) -> None:
         """Test creating electrical model through adapter."""
         from glass_bath_fea.interfaces.electrode_adapter import ElectrodeAdapter
 
@@ -107,7 +121,9 @@ class TestAdapterCompatibility:
         # Should have the calculate_system_state method
         assert hasattr(model, "calculate_system_state")
 
-    def test_system_state_calculation(self, default_fea_config) -> None:
+    def test_system_state_calculation(
+        self, default_fea_config: GlassBathFEAConfig
+    ) -> None:
         """Test full system state calculation through adapter."""
         from glass_bath_fea.interfaces.electrode_adapter import ElectrodeAdapter
 
@@ -119,7 +135,9 @@ class TestAdapterCompatibility:
         assert results is not None
         assert isinstance(results, dict)
 
-    def test_temperature_effect_on_conductivity(self, default_fea_config) -> None:
+    def test_temperature_effect_on_conductivity(
+        self, default_fea_config: GlassBathFEAConfig
+    ) -> None:
         """Test that temperature affects conductivity through adapter."""
         from glass_bath_fea.interfaces.electrode_adapter import ElectrodeAdapter
 
@@ -135,7 +153,9 @@ class TestAdapterCompatibility:
 class TestDataExport:
     """Tests for exporting data to FEA format."""
 
-    def test_export_boundary_conditions(self, default_fea_config, tmp_path) -> None:
+    def test_export_boundary_conditions(
+        self, default_fea_config: GlassBathFEAConfig, tmp_path: Path
+    ) -> None:
         """Test exporting boundary condition data."""
         from glass_bath_fea.interfaces.electrode_adapter import ElectrodeAdapter
 
@@ -146,7 +166,9 @@ class TestDataExport:
 
         assert output_path.exists()
 
-    def test_export_contains_voltages(self, default_fea_config, tmp_path) -> None:
+    def test_export_contains_voltages(
+        self, default_fea_config: GlassBathFEAConfig, tmp_path: Path
+    ) -> None:
         """Test that exported data contains electrode voltages."""
         from scipy.io import loadmat
 

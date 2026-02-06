@@ -4,7 +4,10 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
+import numpy as np
+import numpy.typing as npt
 import pytest
 
 # Add paths for imports (when running tests directly)
@@ -12,12 +15,17 @@ TOOLS_ROOT = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(TOOLS_ROOT / "src"))
 sys.path.insert(0, str(TOOLS_ROOT / "src" / "shared" / "python"))
 
+if TYPE_CHECKING:
+    from glass_bath_fea.core.config import GlassComposition
+
 
 class TestGlassMaterialModel:
     """Tests for the glass material property model."""
 
     def test_conductivity_increases_with_temperature(
-        self, soda_lime_composition, temperature_range
+        self,
+        soda_lime_composition: GlassComposition,
+        temperature_range: npt.NDArray[np.float64],
     ) -> None:
         """Arrhenius behavior: higher T -> higher conductivity."""
         from glass_bath_fea.core.material_properties import GlassMaterialModel
@@ -30,7 +38,9 @@ class TestGlassMaterialModel:
         for i in range(1, len(conductivities)):
             assert conductivities[i] > conductivities[i - 1]
 
-    def test_conductivity_arrhenius_form(self, soda_lime_composition) -> None:
+    def test_conductivity_arrhenius_form(
+        self, soda_lime_composition: GlassComposition
+    ) -> None:
         """Test that conductivity follows Arrhenius equation."""
         from glass_bath_fea.core.material_properties import GlassMaterialModel
 
@@ -45,7 +55,9 @@ class TestGlassMaterialModel:
         assert 0.1 < sigma_ref < 100.0
 
     def test_conductivity_positive(
-        self, soda_lime_composition, temperature_range
+        self,
+        soda_lime_composition: GlassComposition,
+        temperature_range: npt.NDArray[np.float64],
     ) -> None:
         """Conductivity must always be positive."""
         from glass_bath_fea.core.material_properties import GlassMaterialModel
@@ -57,7 +69,9 @@ class TestGlassMaterialModel:
             assert sigma > 0
 
     def test_composition_effect_on_conductivity(
-        self, soda_lime_composition, high_iron_composition
+        self,
+        soda_lime_composition: GlassComposition,
+        high_iron_composition: GlassComposition,
     ) -> None:
         """Higher iron content should increase conductivity."""
         from glass_bath_fea.core.material_properties import GlassMaterialModel
@@ -73,7 +87,7 @@ class TestGlassMaterialModel:
         assert sigma_iron > sigma_soda
 
     def test_resistivity_is_inverse_of_conductivity(
-        self, soda_lime_composition
+        self, soda_lime_composition: GlassComposition
     ) -> None:
         """Resistivity should be 1/conductivity."""
         from glass_bath_fea.core.material_properties import GlassMaterialModel
@@ -87,7 +101,9 @@ class TestGlassMaterialModel:
         assert rho == pytest.approx(1.0 / sigma, rel=1e-6)
 
     def test_viscosity_decreases_with_temperature(
-        self, soda_lime_composition, temperature_range
+        self,
+        soda_lime_composition: GlassComposition,
+        temperature_range: npt.NDArray[np.float64],
     ) -> None:
         """Viscosity should decrease as temperature increases."""
         from glass_bath_fea.core.material_properties import GlassMaterialModel
@@ -100,7 +116,11 @@ class TestGlassMaterialModel:
         for i in range(1, len(viscosities)):
             assert viscosities[i] < viscosities[i - 1]
 
-    def test_viscosity_positive(self, soda_lime_composition, temperature_range) -> None:
+    def test_viscosity_positive(
+        self,
+        soda_lime_composition: GlassComposition,
+        temperature_range: npt.NDArray[np.float64],
+    ) -> None:
         """Viscosity must always be positive."""
         from glass_bath_fea.core.material_properties import GlassMaterialModel
 
@@ -110,7 +130,9 @@ class TestGlassMaterialModel:
             eta = model.get_viscosity(temp)
             assert eta > 0
 
-    def test_viscosity_fulcher_form(self, soda_lime_composition) -> None:
+    def test_viscosity_fulcher_form(
+        self, soda_lime_composition: GlassComposition
+    ) -> None:
         """Test that viscosity follows Fulcher equation form."""
         from glass_bath_fea.core.material_properties import GlassMaterialModel
 
@@ -140,7 +162,9 @@ class TestMetalConductivity:
         ratio = sigma_1350 / sigma_1200
         assert 0.8 < ratio < 1.2
 
-    def test_metal_much_higher_than_glass(self, soda_lime_composition) -> None:
+    def test_metal_much_higher_than_glass(
+        self, soda_lime_composition: GlassComposition
+    ) -> None:
         """Metal conductivity should be orders of magnitude higher than glass."""
         from glass_bath_fea.core.material_properties import (
             GlassMaterialModel,
@@ -160,7 +184,9 @@ class TestMetalConductivity:
 class TestMaterialDataExport:
     """Tests for exporting material data to MATLAB format."""
 
-    def test_export_material_data(self, soda_lime_composition, tmp_path) -> None:
+    def test_export_material_data(
+        self, soda_lime_composition: GlassComposition, tmp_path: Path
+    ) -> None:
         """Test exporting material properties to .mat file."""
         from glass_bath_fea.core.material_properties import (
             GlassMaterialModel,
@@ -181,7 +207,7 @@ class TestMaterialDataExport:
         assert "arrhenius_params" in data or "base_conductivity" in data
 
     def test_export_contains_required_fields(
-        self, soda_lime_composition, tmp_path
+        self, soda_lime_composition: GlassComposition, tmp_path: Path
     ) -> None:
         """Test that exported data contains all required fields for MATLAB."""
         from glass_bath_fea.core.material_properties import (
