@@ -26,7 +26,7 @@ def main() -> int:
         result = subprocess.run(
             ["npm", "install"],
             cwd=web_dir,
-            shell=True,
+            shell=False,
         )
         if result.returncode != 0:
             print("Failed to install dependencies")
@@ -40,7 +40,7 @@ def main() -> int:
         subprocess.run(
             ["npm", "run", "dev"],
             cwd=web_dir,
-            shell=True,
+            shell=False,
         )
     except KeyboardInterrupt:
         print("\nShutting down...")
