@@ -37,6 +37,7 @@ Usage:
 from .colors import (
     BUILTIN_THEMES,
     CHART_COLORS,
+    SEMANTIC_COLOR_KEYS,
     THEME_COLOR_KEYS,
     get_matplotlib_colors,
     get_rgba,
@@ -80,6 +81,7 @@ __all__ = [
     # Color utilities
     "BUILTIN_THEMES",
     "CHART_COLORS",
+    "SEMANTIC_COLOR_KEYS",
     "THEME_COLOR_KEYS",
     "get_matplotlib_colors",
     "get_qcolor",
