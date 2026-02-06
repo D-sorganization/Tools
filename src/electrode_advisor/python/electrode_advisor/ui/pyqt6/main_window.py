@@ -1884,7 +1884,9 @@ class ElectrodeAdvisorWidget(QWidget):
         }
 
         color = color_map.get(status_type, self.config.colors["status_ok"])
-        self.status_panel.setStyleSheet(f"background-color: {color.name()}")
+        # Colors may be hex strings (shared engine) or QColor objects
+        color_str = color.name() if hasattr(color, "name") else str(color)
+        self.status_panel.setStyleSheet(f"background-color: {color_str}")
 
     def _update_3d_visualization(self) -> None:
         """Update the 3D electrode visualization with new path geometry"""
@@ -3376,7 +3378,8 @@ class ElectrodeAdvisorWidget(QWidget):
             if self.config.colors is None:
                 shell_color = "#444444"  # fallback
             else:
-                shell_color = self.config.colors["metal_shell"].name()
+                mc = self.config.colors["metal_shell"]
+                shell_color = mc.name() if hasattr(mc, "name") else str(mc)
 
             # Draw all surfaces
             # Draw all surfaces
