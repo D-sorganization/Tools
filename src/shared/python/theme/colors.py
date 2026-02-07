@@ -83,7 +83,7 @@ def _load_themes_from_json() -> dict[str, dict[str, str]] | None:
             data = json.load(f)
 
         themes: dict[str, dict[str, str]] = {}
-        for theme_id, theme_def in data.get("themes", {}).items():
+        for _theme_id, theme_def in data.get("themes", {}).items():
             # Convert kebab-case ID to display name and merge colors + semantic
             flat: dict[str, str] = {"name": theme_def["name"]}
             flat.update(theme_def.get("colors", {}))
