@@ -50,14 +50,6 @@ from .stylesheets import generate_minimal_stylesheet, generate_stylesheet
 # PyQt6-dependent imports - only available when PyQt6 is installed
 try:
     from .colors import get_qcolor
-    from .integration import (
-        ThemedWindowMixin,
-        apply_theme_to_window,
-        create_theme_menu,
-        setup_themed_app,
-    )
-    from .theme_manager import ThemeManager, get_theme_manager
-
     from .dialogs import (
         ColorFieldEditor,
         ColorPickerButton,
@@ -67,6 +59,13 @@ try:
         ThemeManagerDialog,
         ThemePreviewWidget,
     )
+    from .integration import (
+        ThemedWindowMixin,
+        apply_theme_to_window,
+        create_theme_menu,
+        setup_themed_app,
+    )
+    from .theme_manager import ThemeManager, get_theme_manager
 
     _PYQT6_AVAILABLE = True
 except ImportError:

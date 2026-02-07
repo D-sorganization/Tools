@@ -17,14 +17,31 @@ THEMES_JSON = REPO_ROOT / "src" / "shared" / "theme-definitions" / "themes.json"
 SCHEMA_JSON = REPO_ROOT / "src" / "shared" / "theme-definitions" / "theme-schema.json"
 
 REQUIRED_BASE_KEYS = {
-    "bg", "group_bg", "border", "text", "text_secondary", "label",
-    "focus", "input_bg", "accent", "title_bg", "title_border",
-    "table_header", "table_alt", "button_hover",
+    "bg",
+    "group_bg",
+    "border",
+    "text",
+    "text_secondary",
+    "label",
+    "focus",
+    "input_bg",
+    "accent",
+    "title_bg",
+    "title_border",
+    "table_header",
+    "table_alt",
+    "button_hover",
 }
 
 REQUIRED_SEMANTIC_KEYS = {
-    "success", "warning", "error", "info",
-    "link", "link_hover", "selection_bg", "selection_text",
+    "success",
+    "warning",
+    "error",
+    "info",
+    "link",
+    "link_hover",
+    "selection_bg",
+    "selection_text",
 }
 
 HEX_PATTERN = re.compile(r"^#[0-9a-fA-F]{6,8}$")
@@ -41,6 +58,7 @@ def luminance(hex_color: str) -> float:
 
 def contrast_ratio(fg: str, bg: str) -> float:
     """Calculate WCAG contrast ratio between two colors."""
+
     def srgb_to_linear(c: float) -> float:
         return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
 
