@@ -396,8 +396,11 @@ CHART_COLORS: list[str] = _load_chart_colors_from_json() or _HARDCODED_CHART_COL
 def is_valid_hex_color(value: str) -> bool:
     """Return True if value is a valid hexadecimal color string.
 
+    Accepts 3, 4, 6, or 8 hex digit formats (with or without leading #).
+    4 and 8 digit formats include an alpha channel.
+
     Args:
-        value: Color string to validate (e.g., "#ff0000", "#f00", "ff0000")
+        value: Color string to validate (e.g., "#ff0000", "#f00", "#ff000080")
 
     Returns:
         True if valid hex color, False otherwise
@@ -409,10 +412,7 @@ def is_valid_hex_color(value: str) -> bool:
     if value.startswith("#"):
         value = value[1:]
 
-    if len(value) == 3:
-        return bool(re.fullmatch(r"[0-9a-fA-F]{3}", value))
-
-    return bool(re.fullmatch(r"[0-9a-fA-F]{6}", value))
+    return bool(re.fullmatch(r"[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8}", value))
 
 
 def normalise_hex_color(value: str) -> str:
