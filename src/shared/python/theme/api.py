@@ -197,9 +197,7 @@ def create_theme_router(theme_manager: Any) -> APIRouter:
         name = theme_manager.get_current_theme_name()
         colors = theme_manager.get_current_colors()
         is_builtin = name in theme_manager.get_builtin_themes()
-        return ActiveThemeResponse(
-            name=name, is_builtin=is_builtin, colors=colors
-        )
+        return ActiveThemeResponse(name=name, is_builtin=is_builtin, colors=colors)
 
     @router.put(
         "/active",
