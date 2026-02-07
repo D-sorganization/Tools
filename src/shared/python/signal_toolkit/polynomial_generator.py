@@ -435,14 +435,11 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
     def _on_canvas_release(self, event: matplotlib.backend_bases.MouseEvent) -> None:
         """Handle mouse release events."""
         if self.mode == "draw" and self.drawn_points:
-            # When drawing finishes, convert drawn path to points for fitting
-            # Simplify drawn points to avoid overcrowding
-            if len(self.drawn_points) > 20:
-                indices = np.linspace(0, len(self.drawn_points) - 1, 20, dtype=int)
-                sampled = [self.drawn_points[i] for i in indices]
-                self.current_points.extend(sampled)
-            else:
-                self.current_points.extend(self.drawn_points)
+            # Resample drawn path to evenly-spaced x positions.
+            # Raw mouse events produce unevenly-spaced points (clustered
+            # where the mouse moved slowly), which biases polynomial fits.
+            resampled = self._resample_drawn_points(self.drawn_points, n=30)
+            self.current_points.extend(resampled)
             self.drawn_points = []
             self._update_plot()
 
@@ -491,6 +488,53 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
         self.polynomial_coeffs = None
         self.result_text.clear()
         self._update_plot()
+
+    @staticmethod
+    def _resample_drawn_points(
+        points: list[tuple[float, float]],
+        n: int = 30,
+    ) -> list[tuple[float, float]]:
+        """Resample drawn points to evenly-spaced x positions.
+
+        Freehand drawing produces points clustered where the mouse moved
+        slowly and sparse where it moved fast.  This interpolates the
+        drawn path and resamples at *n* uniformly-spaced x values so
+        the polynomial fit is not biased by drawing speed.
+
+        Args:
+            points: Raw (x, y) pairs from mouse events.
+            n: Number of evenly-spaced output points.
+
+        Returns:
+            List of (x, y) tuples with uniform x spacing.
+        """
+        if len(points) < 2:
+            return list(points)
+
+        xs = np.array([p[0] for p in points])
+        ys = np.array([p[1] for p in points])
+
+        # Sort by x so interpolation is well-defined
+        order = np.argsort(xs)
+        xs_sorted = xs[order]
+        ys_sorted = ys[order]
+
+        # Remove duplicate x values (keep mean y)
+        unique_xs, inverse = np.unique(xs_sorted, return_inverse=True)
+        if len(unique_xs) < 2:
+            return list(points)
+        unique_ys = np.zeros_like(unique_xs)
+        counts = np.zeros_like(unique_xs)
+        for i, idx in enumerate(inverse):
+            unique_ys[idx] += ys_sorted[i]
+            counts[idx] += 1
+        unique_ys /= counts
+
+        # Interpolate at evenly-spaced x positions
+        x_uniform = np.linspace(unique_xs[0], unique_xs[-1], n)
+        y_uniform = np.interp(x_uniform, unique_xs, unique_ys)
+
+        return list(zip(x_uniform.tolist(), y_uniform.tolist(), strict=True))
 
     def _calculate_poly_fit(self) -> bool:
         """Calculate the polynomial fit without UI interactions.
