@@ -57,8 +57,15 @@ def main() -> int:
     if src_path.exists():
         sys.path.insert(0, str(src_path))
 
-    # Also add the shared utils path (for utils.path_helpers, etc.)
+    # Tools repo root paths needed for cross-module imports
     tools_root = Path(__file__).parent.parent.parent.parent
+
+    # src/ - for shared.python.* imports (theme, plot_theme)
+    tools_src = tools_root / "src"
+    if tools_src.exists():
+        sys.path.insert(0, str(tools_src))
+
+    # src/python/src/ - for utils.path_helpers
     utils_path = tools_root / "src" / "python" / "src"
     if utils_path.exists():
         sys.path.insert(0, str(utils_path))

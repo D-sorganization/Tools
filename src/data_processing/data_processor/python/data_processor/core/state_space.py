@@ -231,7 +231,7 @@ class BaseStateSpaceModel(ABC):
         # Calculate fitted values and residuals
         fitted = np.zeros(n)
         for t in range(n):
-            fitted[t] = self.Z @ smoothed_states[t]
+            fitted[t] = (self.Z @ smoothed_states[t]).item()
 
         residuals = y - fitted
 
@@ -302,7 +302,7 @@ class BaseStateSpaceModel(ABC):
             state_cov = self.T @ state_cov @ self.T.T + self.R @ self.Q @ self.R.T
 
             # Predict observation
-            forecast[h] = self.Z @ state
+            forecast[h] = (self.Z @ state).item()
             obs_var = self.Z @ state_cov @ self.Z.T + self.H
             forecast_std[h] = np.sqrt(obs_var[0, 0])
 
@@ -529,7 +529,7 @@ class BaseStateSpaceModel(ABC):
         # Estimate observation variance
         residuals = np.zeros(n)
         for t in range(n):
-            residuals[t] = y[t] - self.Z @ smoothed_states[t]
+            residuals[t] = y[t] - (self.Z @ smoothed_states[t]).item()
 
         obs_var = np.mean(residuals**2)
 

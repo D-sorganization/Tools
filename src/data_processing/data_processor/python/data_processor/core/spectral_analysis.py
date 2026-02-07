@@ -27,6 +27,9 @@ import pandas as pd
 from scipy import fft as scipy_fft
 from scipy import signal as scipy_signal
 
+# Backward-compatible trapezoid integration (np.trapz removed in NumPy 2.0+)
+_trapz = getattr(np, "trapezoid", None) or np.trapz
+
 logger = logging.getLogger(__name__)
 
 
@@ -231,7 +234,7 @@ class SpectralAnalyzer:
         dominant_power = psd[dom_idx]
 
         # Total power
-        total_power = np.trapz(psd, freqs)
+        total_power = _trapz(psd, freqs)
 
         return SpectralResult(
             frequencies=freqs,
@@ -429,7 +432,7 @@ class SpectralAnalyzer:
         for name, (f_low, f_high) in bands.items():
             mask = (result.frequencies >= f_low) & (result.frequencies <= f_high)
             if np.any(mask):
-                band_powers[name] = np.trapz(
+                band_powers[name] = _trapz(
                     result.psd[mask],
                     result.frequencies[mask],
                 )
