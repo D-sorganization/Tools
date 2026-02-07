@@ -16,7 +16,6 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
-
 # Molecular weights (g/mol)
 MOLECULAR_WEIGHTS: dict[str, float] = {
     "N2": 28.014,

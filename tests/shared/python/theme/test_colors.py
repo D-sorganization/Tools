@@ -29,11 +29,18 @@ class TestHexColorValidation:
         assert is_valid_hex_color("#FFF")
         assert is_valid_hex_color("abc")
 
+    def test_valid_4_char_hex(self) -> None:
+        """Test valid 4-character hex colors (#RGBA shorthand)."""
+        assert is_valid_hex_color("#ff00")
+        assert is_valid_hex_color("#abcd")
+
     def test_invalid_hex(self) -> None:
         """Test invalid hex colors."""
         assert not is_valid_hex_color("")
         assert not is_valid_hex_color("#gg0000")
-        assert not is_valid_hex_color("#ff00")
+        assert not is_valid_hex_color("#f")
+        assert not is_valid_hex_color("#ff")
+        assert not is_valid_hex_color("#fffff")
         assert not is_valid_hex_color("not-a-color")
 
     def test_normalise_6_char(self) -> None:
