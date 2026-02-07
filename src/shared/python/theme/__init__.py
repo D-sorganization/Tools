@@ -58,6 +58,16 @@ try:
     )
     from .theme_manager import ThemeManager, get_theme_manager
 
+    from .dialogs import (
+        ColorFieldEditor,
+        ColorPickerButton,
+        CustomThemeDialog,
+        CustomThemeEditor,
+        ThemeListItem,
+        ThemeManagerDialog,
+        ThemePreviewWidget,
+    )
+
     _PYQT6_AVAILABLE = True
 except ImportError:
     _PYQT6_AVAILABLE = False
@@ -68,6 +78,13 @@ except ImportError:
     apply_theme_to_window = None  # type: ignore[assignment]
     create_theme_menu = None  # type: ignore[assignment]
     setup_themed_app = None  # type: ignore[assignment]
+    ColorFieldEditor = None  # type: ignore[assignment, misc]
+    ColorPickerButton = None  # type: ignore[assignment, misc]
+    CustomThemeDialog = None  # type: ignore[assignment, misc]
+    CustomThemeEditor = None  # type: ignore[assignment, misc]
+    ThemeListItem = None  # type: ignore[assignment, misc]
+    ThemeManagerDialog = None  # type: ignore[assignment, misc]
+    ThemePreviewWidget = None  # type: ignore[assignment, misc]
 
 __all__ = [
     # Theme manager (requires PyQt6)
@@ -78,6 +95,14 @@ __all__ = [
     "apply_theme_to_window",
     "create_theme_menu",
     "setup_themed_app",
+    # Dialogs (requires PyQt6)
+    "ColorFieldEditor",
+    "ColorPickerButton",
+    "CustomThemeDialog",
+    "CustomThemeEditor",
+    "ThemeListItem",
+    "ThemeManagerDialog",
+    "ThemePreviewWidget",
     # Color utilities
     "BUILTIN_THEMES",
     "CHART_COLORS",
