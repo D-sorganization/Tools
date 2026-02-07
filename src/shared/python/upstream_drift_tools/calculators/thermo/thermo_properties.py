@@ -16,7 +16,6 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
-
 # Molecular weights (g/mol)
 MOLECULAR_WEIGHTS: dict[str, float] = {
     "N2": 28.014,
@@ -123,9 +122,7 @@ class ThermoPropertiesCalculator:
         )
 
         # Mixture molar Cp
-        mix_cp = sum(
-            fractions.get(s, 0) * MOLAR_CP_298.get(s, 29.0) for s in fractions
-        )
+        mix_cp = sum(fractions.get(s, 0) * MOLAR_CP_298.get(s, 29.0) for s in fractions)
         mix_cv = mix_cp - R_GAS
         gamma = mix_cp / mix_cv if mix_cv > 0 else 1.4
 
