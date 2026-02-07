@@ -40,10 +40,13 @@ from .constants import (
     kelvin_to_celsius,
 )
 from .electrode_advancement_calculator import ElectrodeAdvancementCalculator
-from .financial_calculator import FinancialCalculator
+from .financial_calculator import FinancialModelCalculator as FinancialCalculator
 from .flare_calculator import FlareCalculator, FlareDesign
 from .ode_solver import ODESolver
-from .thermal_profile_predictor import ThermalProfilePredictor
+from .thermal_profile_predictor import (
+    fit_heating_parameters,
+    predict_temperature_profile,
+)
 
 if TYPE_CHECKING:
     from .multi_param_analysis import (
@@ -136,7 +139,8 @@ __all__ = [
     "ElectrodeAdvancementCalculator",
     "FinancialCalculator",
     "ODESolver",
-    "ThermalProfilePredictor",
+    "fit_heating_parameters",
+    "predict_temperature_profile",
     # Constants
     "R_UNIVERSAL",
     "R_GAS_J_MOL_K",
