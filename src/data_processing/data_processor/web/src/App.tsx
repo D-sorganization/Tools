@@ -4,7 +4,7 @@ import {
   FileUpload,
   SignalList,
   FilterPanel,
-  DataChart,
+  PlotView,
   StatisticsPanel,
   ExportPanel,
   AdvancedPanel,
@@ -273,10 +273,11 @@ function App() {
 
             {/* Tab Content */}
             {activeTab === 'chart' ? (
-              <DataChart
+              <PlotView
                 data={filteredData}
                 selectedSignals={selectedSignals}
                 title="Filtered Data"
+                height={400}
               />
             ) : (
               <DataTableView data={filteredData} selectedSignals={selectedSignals} />
@@ -284,10 +285,11 @@ function App() {
 
             {/* Original vs Filtered Comparison */}
             {hasData && filteredData !== data && (
-              <DataChart
+              <PlotView
                 data={data}
                 selectedSignals={selectedSignals}
                 title="Original Data"
+                height={350}
               />
             )}
           </div>
