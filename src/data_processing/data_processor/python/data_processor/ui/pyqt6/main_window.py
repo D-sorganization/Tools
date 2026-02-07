@@ -7,31 +7,6 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from data_processor.core.config_manager import ConfigManager
-from data_processor.core.dat_importer import (
-    export_dat_to_csv,
-    read_dat_file,
-)
-from data_processor.core.data_loader import DataLoader
-from data_processor.core.dataset_naming import (
-    generate_dataset_name,
-)
-from data_processor.core.plot_config_manager import PlotConfigManager
-from data_processor.core.signal_list_manager import SignalListManager
-from data_processor.core.signal_processing import (
-    apply_custom_variable,
-    calculate_trendline,
-    differentiate_signals,
-    integrate_signals,
-    resample_data,
-    trim_time_range,
-)
-from data_processor.core.signal_processor import SignalProcessor
-from data_processor.models.processing_config import (
-    DifferentiationConfig,
-    FilterConfig,
-    IntegrationConfig,
-)
 from PyQt6.QtCore import QSettings, Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QAction, QFont, QKeySequence, QShortcut
 from PyQt6.QtWidgets import (
@@ -58,6 +33,38 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from data_processor.core.config_manager import ConfigManager
+from data_processor.core.dat_importer import (
+    export_dat_to_csv,
+    read_dat_file,
+)
+from data_processor.core.data_loader import DataLoader
+from data_processor.core.dataset_naming import (
+    generate_dataset_name,
+)
+from data_processor.core.plot_config_manager import PlotConfigManager
+from data_processor.core.signal_list_manager import SignalListManager
+from data_processor.core.signal_processing import (
+    apply_custom_variable,
+    calculate_trendline,
+    differentiate_signals,
+    integrate_signals,
+    resample_data,
+    trim_time_range,
+)
+from data_processor.core.signal_processor import SignalProcessor
+from data_processor.models.processing_config import (
+    DifferentiationConfig,
+    FilterConfig,
+    IntegrationConfig,
+)
+
+from .analysis_widgets import (
+    ChartStylePanel,
+    ContourPlotDialog,
+    FilterComparisonDialog,
+    HeatmapDialog,
+)
 from .widgets import (
     DataPreviewWidget,
     FilterConfigWidget,
@@ -429,6 +436,23 @@ class DataProcessorMainWindow(QMainWindow):
         clear_action.triggered.connect(self._clear_data)
         edit_menu.addAction(clear_action)
 
+        # Analysis menu
+        analysis_menu = menu_bar.addMenu("&Analysis")
+
+        contour_action = QAction("&Contour Plot...", self)
+        contour_action.triggered.connect(self._show_contour_plot)
+        analysis_menu.addAction(contour_action)
+
+        heatmap_action = QAction("&Heatmap...", self)
+        heatmap_action.triggered.connect(self._show_heatmap)
+        analysis_menu.addAction(heatmap_action)
+
+        analysis_menu.addSeparator()
+
+        filter_compare_action = QAction("Compare &Filters...", self)
+        filter_compare_action.triggered.connect(self._show_filter_comparison)
+        analysis_menu.addAction(filter_compare_action)
+
         # Help menu
         help_menu = menu_bar.addMenu("&Help")
 
@@ -549,6 +573,11 @@ class DataProcessorMainWindow(QMainWindow):
         self.apply_filter_btn.setMinimumWidth(150)
         self.apply_filter_btn.clicked.connect(self._apply_filter)
         btn_layout.addWidget(self.apply_filter_btn)
+
+        self.compare_filters_btn = QPushButton("Compare Filters")
+        self.compare_filters_btn.setMinimumWidth(150)
+        self.compare_filters_btn.clicked.connect(self._show_filter_comparison)
+        btn_layout.addWidget(self.compare_filters_btn)
         btn_layout.addStretch()
         layout.addLayout(btn_layout)
 
@@ -869,6 +898,10 @@ class DataProcessorMainWindow(QMainWindow):
 
         saved_layout.addLayout(saved_btn_layout)
         layout.addWidget(saved_group)
+
+        # Chart style controls (shared plot engine integration)
+        self.chart_style_panel = ChartStylePanel()
+        layout.addWidget(self.chart_style_panel)
 
         # Calculate trendline button
         btn_layout = QHBoxLayout()
@@ -1666,6 +1699,47 @@ class DataProcessorMainWindow(QMainWindow):
             "- Signal search\n\n"
             "Built with PyQt6",
         )
+
+    def _show_contour_plot(self) -> None:
+        """Show contour plot dialog."""
+        if self.current_data is None:
+            QMessageBox.warning(self, "No Data", "Load data first.")
+            return
+        dialog = ContourPlotDialog(self.current_data, self)
+        dialog.exec()
+
+    def _show_heatmap(self) -> None:
+        """Show heatmap dialog."""
+        if self.current_data is None:
+            QMessageBox.warning(self, "No Data", "Load data first.")
+            return
+        dialog = HeatmapDialog(self.current_data, self)
+        dialog.exec()
+
+    def _show_filter_comparison(self) -> None:
+        """Show filter comparison dialog."""
+        if self.current_data is None or self.filtered_data is None:
+            QMessageBox.warning(
+                self,
+                "No Filtered Data",
+                "Apply a filter first to compare original vs filtered.",
+            )
+            return
+        if self.time_column is None:
+            QMessageBox.warning(self, "No Time Column", "Set a time column first.")
+            return
+        signals = self.signal_list.get_selected_signals()
+        if not signals:
+            QMessageBox.warning(self, "No Signals", "Select signals to compare.")
+            return
+        dialog = FilterComparisonDialog(
+            self.current_data,
+            self.filtered_data,
+            self.time_column,
+            signals,
+            self,
+        )
+        dialog.exec()
 
     def _focus_search(self) -> None:
         """Focus the signal search field."""

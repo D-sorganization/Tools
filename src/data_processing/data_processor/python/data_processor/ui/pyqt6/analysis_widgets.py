@@ -7,6 +7,10 @@ Provides UI components for:
 - Surface Plot configuration
 - Neural Network configuration
 - Script generation interface
+- Contour Plot dialog
+- Heatmap dialog
+- Filter Comparison dialog
+- Chart Style panel
 
 All widgets follow PyQt6 patterns and integrate with the main window.
 """
@@ -24,7 +28,9 @@ try:
     from PyQt6.QtCore import pyqtSignal
     from PyQt6.QtWidgets import (
         QCheckBox,
+        QColorDialog,
         QComboBox,
+        QDialog,
         QDoubleSpinBox,
         QFileDialog,
         QFormLayout,
@@ -51,7 +57,10 @@ except ImportError:
     PYQT6_AVAILABLE = False
     # Create dummy classes for type hints
     QWidget = object
-    pyqtSignal = lambda *args: None
+
+    def pyqtSignal(*args):  # noqa: N802
+        return None
+
 
 logger = logging.getLogger(__name__)
 
@@ -1025,6 +1034,510 @@ if PYQT6_AVAILABLE:
             self.surface_widget.set_dataframe(df)
             self.nn_widget.set_dataframe(df)
 
+    class ContourPlotDialog(QDialog):
+        """Dialog for creating contour plots from DataFrame columns."""
+
+        def __init__(
+            self,
+            df: pd.DataFrame,
+            parent: QWidget | None = None,
+        ) -> None:
+            super().__init__(parent)
+            self.df = df
+            self.setWindowTitle("Contour Plot")
+            self.setMinimumSize(900, 700)
+            self._setup_ui()
+
+        def _setup_ui(self) -> None:
+            from shared.python.plot_engine.pyqt6_widget import PlotWidget
+
+            layout = QVBoxLayout(self)
+
+            config_group = QGroupBox("Configuration")
+            config_layout = QFormLayout(config_group)
+
+            numeric_cols = self.df.select_dtypes(include=[np.number]).columns.tolist()
+
+            self._x_combo = QComboBox()
+            self._x_combo.addItems(numeric_cols)
+            config_layout.addRow("X Column:", self._x_combo)
+
+            self._y_combo = QComboBox()
+            self._y_combo.addItems(numeric_cols)
+            if len(numeric_cols) > 1:
+                self._y_combo.setCurrentIndex(1)
+            config_layout.addRow("Y Column:", self._y_combo)
+
+            self._z_combo = QComboBox()
+            self._z_combo.addItems(numeric_cols)
+            if len(numeric_cols) > 2:
+                self._z_combo.setCurrentIndex(2)
+            config_layout.addRow("Z Column:", self._z_combo)
+
+            self._levels_spin = QSpinBox()
+            self._levels_spin.setRange(5, 100)
+            self._levels_spin.setValue(20)
+            config_layout.addRow("Contour Levels:", self._levels_spin)
+
+            self._filled_check = QCheckBox("Filled Contour")
+            self._filled_check.setChecked(True)
+            config_layout.addRow("", self._filled_check)
+
+            self._labels_check = QCheckBox("Show Labels")
+            config_layout.addRow("", self._labels_check)
+
+            self._colormap_combo = QComboBox()
+            self._colormap_combo.addItems(
+                [
+                    "viridis",
+                    "plasma",
+                    "inferno",
+                    "magma",
+                    "coolwarm",
+                    "RdBu",
+                    "YlGnBu",
+                    "Spectral",
+                    "jet",
+                ]
+            )
+            config_layout.addRow("Colormap:", self._colormap_combo)
+
+            self._resolution_spin = QSpinBox()
+            self._resolution_spin.setRange(20, 500)
+            self._resolution_spin.setValue(100)
+            config_layout.addRow("Grid Resolution:", self._resolution_spin)
+
+            layout.addWidget(config_group)
+
+            plot_btn = QPushButton("Generate Contour Plot")
+            plot_btn.clicked.connect(self._generate_plot)
+            layout.addWidget(plot_btn)
+
+            self._plot_widget = PlotWidget(self)
+            layout.addWidget(self._plot_widget, stretch=1)
+
+        def _generate_plot(self) -> None:
+            from shared.python.plot_engine.contour import scatter_to_grid
+            from shared.python.plot_engine.specs import AxisSpec, ContourPlotSpec
+
+            x_col = self._x_combo.currentText()
+            y_col = self._y_combo.currentText()
+            z_col = self._z_combo.currentText()
+            if not all([x_col, y_col, z_col]):
+                return
+
+            try:
+                x = self.df[x_col].values.astype(float)
+                y = self.df[y_col].values.astype(float)
+                z = self.df[z_col].values.astype(float)
+
+                x_grid, y_grid, z_grid = scatter_to_grid(
+                    x,
+                    y,
+                    z,
+                    resolution=self._resolution_spin.value(),
+                )
+                z_grid = np.nan_to_num(z_grid, nan=0.0)
+
+                spec = ContourPlotSpec(
+                    title=f"Contour: {z_col} vs ({x_col}, {y_col})",
+                    z_data=z_grid.tolist(),
+                    x_grid=x_grid.tolist(),
+                    y_grid=y_grid.tolist(),
+                    x_axis=AxisSpec(label=x_col),
+                    y_axis=AxisSpec(label=y_col),
+                    levels=self._levels_spin.value(),
+                    filled=self._filled_check.isChecked(),
+                    show_labels=self._labels_check.isChecked(),
+                    colormap=self._colormap_combo.currentText(),
+                )
+                self._plot_widget.set_spec(spec)
+            except Exception as e:
+                logger.error(f"Contour plot failed: {e}")
+
+    class HeatmapDialog(QDialog):
+        """Dialog for creating heatmaps (correlation matrix or custom)."""
+
+        def __init__(
+            self,
+            df: pd.DataFrame,
+            parent: QWidget | None = None,
+        ) -> None:
+            super().__init__(parent)
+            self.df = df
+            self.setWindowTitle("Heatmap")
+            self.setMinimumSize(800, 700)
+            self._setup_ui()
+
+        def _setup_ui(self) -> None:
+            from shared.python.plot_engine.pyqt6_widget import PlotWidget
+
+            layout = QVBoxLayout(self)
+
+            config_group = QGroupBox("Configuration")
+            config_layout = QFormLayout(config_group)
+
+            self._mode_combo = QComboBox()
+            self._mode_combo.addItems(["Correlation Matrix", "Custom Z Data"])
+            config_layout.addRow("Mode:", self._mode_combo)
+
+            self._colormap_combo = QComboBox()
+            self._colormap_combo.addItems(
+                [
+                    "YlGnBu",
+                    "viridis",
+                    "coolwarm",
+                    "RdBu",
+                    "Spectral",
+                    "plasma",
+                ]
+            )
+            config_layout.addRow("Colormap:", self._colormap_combo)
+
+            self._annotate_check = QCheckBox("Show Values")
+            self._annotate_check.setChecked(True)
+            config_layout.addRow("", self._annotate_check)
+
+            layout.addWidget(config_group)
+
+            plot_btn = QPushButton("Generate Heatmap")
+            plot_btn.clicked.connect(self._generate_plot)
+            layout.addWidget(plot_btn)
+
+            self._plot_widget = PlotWidget(self)
+            layout.addWidget(self._plot_widget, stretch=1)
+
+        def _generate_plot(self) -> None:
+            from shared.python.plot_engine.contour import correlation_matrix
+            from shared.python.plot_engine.specs import HeatmapSpec
+
+            try:
+                numeric_df = self.df.select_dtypes(include=[np.number])
+                if numeric_df.empty:
+                    return
+
+                if self._mode_combo.currentText() == "Correlation Matrix":
+                    corr_mat, labels = correlation_matrix(
+                        numeric_df.values, list(numeric_df.columns)
+                    )
+                    spec = HeatmapSpec(
+                        title="Correlation Matrix",
+                        z_data=np.round(corr_mat, 3).tolist(),
+                        x_labels=labels,
+                        y_labels=labels,
+                        colormap=self._colormap_combo.currentText(),
+                        annotate=self._annotate_check.isChecked(),
+                    )
+                else:
+                    cols = numeric_df.columns[: min(20, len(numeric_df.columns))]
+                    data = numeric_df[cols].head(20).values
+                    spec = HeatmapSpec(
+                        title="Data Heatmap",
+                        z_data=np.nan_to_num(data, nan=0.0).tolist(),
+                        x_labels=list(cols),
+                        y_labels=[str(i) for i in range(data.shape[0])],
+                        colormap=self._colormap_combo.currentText(),
+                        annotate=self._annotate_check.isChecked(),
+                    )
+
+                self._plot_widget.set_spec(spec)
+            except Exception as e:
+                logger.error(f"Heatmap generation failed: {e}")
+
+    class FilterComparisonDialog(QDialog):
+        """Dialog for comparing original vs filtered signals."""
+
+        def __init__(
+            self,
+            original_df: pd.DataFrame,
+            filtered_df: pd.DataFrame,
+            time_col: str,
+            signals: list[str],
+            parent: QWidget | None = None,
+        ) -> None:
+            super().__init__(parent)
+            self.original_df = original_df
+            self.filtered_df = filtered_df
+            self.time_col = time_col
+            self.signals = signals
+            self.setWindowTitle("Filter Comparison")
+            self.setMinimumSize(1000, 700)
+            self._setup_ui()
+            self._generate_plot()
+
+        def _setup_ui(self) -> None:
+            from shared.python.plot_engine.pyqt6_widget import PlotWidget
+
+            layout = QVBoxLayout(self)
+
+            config_layout = QHBoxLayout()
+            self._diff_check = QCheckBox("Show Difference")
+            self._diff_check.setChecked(True)
+            self._diff_check.toggled.connect(self._generate_plot)
+            config_layout.addWidget(self._diff_check)
+            config_layout.addStretch()
+            layout.addLayout(config_layout)
+
+            self._plot_widget = PlotWidget(self)
+            layout.addWidget(self._plot_widget, stretch=1)
+
+        def _generate_plot(self) -> None:
+            from shared.python.plot_engine.specs import (
+                AxisSpec,
+                FilterComparisonSpec,
+                SeriesData,
+                SeriesStyle,
+            )
+
+            try:
+                time_data = self.original_df[self.time_col].values.astype(float)
+                orig_series = []
+                filt_series = []
+
+                for sig in self.signals:
+                    if sig not in self.original_df.columns:
+                        continue
+                    orig_y = self.original_df[sig].values.astype(float)
+                    orig_series.append(
+                        SeriesData(
+                            name=sig,
+                            x=time_data.tolist(),
+                            y=orig_y.tolist(),
+                            style=SeriesStyle(line_style="solid"),
+                        )
+                    )
+
+                    if sig in self.filtered_df.columns:
+                        filt_y = self.filtered_df[sig].values.astype(float)
+                        filt_series.append(
+                            SeriesData(
+                                name=sig,
+                                x=time_data.tolist(),
+                                y=filt_y.tolist(),
+                                style=SeriesStyle(line_style="dashed"),
+                            )
+                        )
+
+                spec = FilterComparisonSpec(
+                    title="Original vs Filtered Signals",
+                    x_axis=AxisSpec(label=self.time_col),
+                    y_axis=AxisSpec(label="Value"),
+                    original_series=orig_series,
+                    filtered_series=filt_series,
+                    show_difference=self._diff_check.isChecked(),
+                )
+                self._plot_widget.set_spec(spec)
+            except Exception as e:
+                logger.error(f"Filter comparison failed: {e}")
+
+    class ChartStylePanel(QWidget):
+        """Panel for per-series chart style controls."""
+
+        def __init__(self, parent: QWidget | None = None) -> None:
+            super().__init__(parent)
+            self._setup_ui()
+
+        def _setup_ui(self) -> None:
+            layout = QVBoxLayout(self)
+            layout.setContentsMargins(0, 0, 0, 0)
+
+            # Display mode
+            mode_group = QGroupBox("Display Mode")
+            mode_layout = QFormLayout(mode_group)
+
+            self._mode_combo = QComboBox()
+            self._mode_combo.addItems(["line", "scatter", "line+scatter"])
+            mode_layout.addRow("Mode:", self._mode_combo)
+
+            self._line_style_combo = QComboBox()
+            self._line_style_combo.addItems(
+                [
+                    "solid",
+                    "dashed",
+                    "dotted",
+                    "dashdot",
+                ]
+            )
+            mode_layout.addRow("Line Style:", self._line_style_combo)
+
+            self._line_width_spin = QDoubleSpinBox()
+            self._line_width_spin.setRange(0.5, 5.0)
+            self._line_width_spin.setValue(1.5)
+            self._line_width_spin.setSingleStep(0.5)
+            mode_layout.addRow("Line Width:", self._line_width_spin)
+
+            self._marker_combo = QComboBox()
+            self._marker_combo.addItems(
+                [
+                    "none",
+                    "circle",
+                    "square",
+                    "triangle",
+                    "diamond",
+                    "cross",
+                    "plus",
+                    "star",
+                ]
+            )
+            mode_layout.addRow("Marker:", self._marker_combo)
+
+            self._marker_size_spin = QDoubleSpinBox()
+            self._marker_size_spin.setRange(1.0, 20.0)
+            self._marker_size_spin.setValue(6.0)
+            mode_layout.addRow("Marker Size:", self._marker_size_spin)
+
+            self._opacity_spin = QDoubleSpinBox()
+            self._opacity_spin.setRange(0.0, 1.0)
+            self._opacity_spin.setValue(1.0)
+            self._opacity_spin.setSingleStep(0.1)
+            mode_layout.addRow("Opacity:", self._opacity_spin)
+
+            self._color_btn = QPushButton("Pick Color")
+            self._color_btn.clicked.connect(self._pick_color)
+            self._selected_color: str | None = None
+            mode_layout.addRow("Color:", self._color_btn)
+
+            layout.addWidget(mode_group)
+
+            # Trendline
+            trend_group = QGroupBox("Trendline")
+            trend_layout = QFormLayout(trend_group)
+
+            self._trend_type_combo = QComboBox()
+            self._trend_type_combo.addItems(
+                [
+                    "None",
+                    "linear",
+                    "polynomial",
+                    "exponential",
+                    "power",
+                ]
+            )
+            trend_layout.addRow("Type:", self._trend_type_combo)
+
+            self._trend_degree_spin = QSpinBox()
+            self._trend_degree_spin.setRange(2, 10)
+            self._trend_degree_spin.setValue(2)
+            trend_layout.addRow("Poly Degree:", self._trend_degree_spin)
+
+            self._show_equation_check = QCheckBox("Show Equation")
+            self._show_equation_check.setChecked(True)
+            trend_layout.addRow("", self._show_equation_check)
+
+            self._show_r2_check = QCheckBox("Show R\u00b2")
+            self._show_r2_check.setChecked(True)
+            trend_layout.addRow("", self._show_r2_check)
+
+            layout.addWidget(trend_group)
+
+            # Axis controls
+            axis_group = QGroupBox("Axes")
+            axis_layout = QFormLayout(axis_group)
+
+            self._x_label_edit = QComboBox()
+            self._x_label_edit.setEditable(True)
+            axis_layout.addRow("X Label:", self._x_label_edit)
+
+            self._y_label_edit = QComboBox()
+            self._y_label_edit.setEditable(True)
+            axis_layout.addRow("Y Label:", self._y_label_edit)
+
+            self._x_log_check = QCheckBox("Log Scale X")
+            axis_layout.addRow("", self._x_log_check)
+
+            self._y_log_check = QCheckBox("Log Scale Y")
+            axis_layout.addRow("", self._y_log_check)
+
+            self._grid_check = QCheckBox("Show Grid")
+            self._grid_check.setChecked(True)
+            axis_layout.addRow("", self._grid_check)
+
+            layout.addWidget(axis_group)
+
+            # Legend
+            legend_group = QGroupBox("Legend")
+            legend_layout = QFormLayout(legend_group)
+
+            self._legend_visible_check = QCheckBox("Show Legend")
+            self._legend_visible_check.setChecked(True)
+            legend_layout.addRow("", self._legend_visible_check)
+
+            self._legend_pos_combo = QComboBox()
+            self._legend_pos_combo.addItems(
+                [
+                    "right",
+                    "left",
+                    "top",
+                    "bottom",
+                    "none",
+                ]
+            )
+            legend_layout.addRow("Position:", self._legend_pos_combo)
+
+            layout.addWidget(legend_group)
+            layout.addStretch()
+
+        def _pick_color(self) -> None:
+            color = QColorDialog.getColor()
+            if color.isValid():
+                self._selected_color = color.name()
+                self._color_btn.setStyleSheet(
+                    f"background-color: {self._selected_color};"
+                )
+
+        def get_series_style(self):
+            """Build a SeriesStyle from current widget state."""
+            from shared.python.plot_engine.specs import SeriesStyle
+
+            return SeriesStyle(
+                color=self._selected_color,
+                line_style=self._line_style_combo.currentText(),
+                line_width=self._line_width_spin.value(),
+                marker=self._marker_combo.currentText(),
+                marker_size=self._marker_size_spin.value(),
+                opacity=self._opacity_spin.value(),
+                display_mode=self._mode_combo.currentText(),
+            )
+
+        def get_trendline_spec(self):
+            """Build a TrendlineSpec or None."""
+            from shared.python.plot_engine.specs import TrendlineSpec
+
+            trend_type = self._trend_type_combo.currentText()
+            if trend_type == "None":
+                return None
+            return TrendlineSpec(
+                type=trend_type,
+                degree=self._trend_degree_spin.value(),
+                show_equation=self._show_equation_check.isChecked(),
+                show_r_squared=self._show_r2_check.isChecked(),
+            )
+
+        def get_axis_specs(self):
+            """Build X and Y AxisSpec from current widget state."""
+            from shared.python.plot_engine.specs import AxisSpec
+
+            x_axis = AxisSpec(
+                label=self._x_label_edit.currentText(),
+                log_scale=self._x_log_check.isChecked(),
+                grid=self._grid_check.isChecked(),
+            )
+            y_axis = AxisSpec(
+                label=self._y_label_edit.currentText(),
+                log_scale=self._y_log_check.isChecked(),
+                grid=self._grid_check.isChecked(),
+            )
+            return x_axis, y_axis
+
+        def get_legend_spec(self):
+            """Build a LegendSpec from current widget state."""
+            from shared.python.plot_engine.specs import LegendSpec
+
+            return LegendSpec(
+                visible=self._legend_visible_check.isChecked(),
+                position=self._legend_pos_combo.currentText(),
+            )
+
 
 __all__ = [
     "VariableSelector",
@@ -1035,5 +1548,9 @@ __all__ = [
     "NeuralNetworkWidget",
     "ScriptGeneratorWidget",
     "AnalysisPanel",
+    "ContourPlotDialog",
+    "HeatmapDialog",
+    "FilterComparisonDialog",
+    "ChartStylePanel",
     "PYQT6_AVAILABLE",
 ]
