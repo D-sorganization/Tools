@@ -72,7 +72,14 @@ This index catalogs every tool and project in the repository to ensure nothing i
 
 ---
 
-## Data Processing & Signal Analysis (4 tools)
+## Data Processing & Signal Analysis (5 tools)
+
+### Signal Processing Studio (NEW - unified launcher)
+
+- **Path**: `src/signal_processing_studio/`
+- **Entry**: `launch_pyqt6.py`
+- **Type**: PyQt6 GUI
+- **Description**: Unified signal processing application combining Function Generator, Signal Toolkit, and Polynomial Generator as tabs with cross-widget signal routing and fleet theme support. Signals generated in Function Generator or Polynomial Generator are automatically routed to Signal Toolkit for analysis.
 
 ### Data Processor
 - **Path**: `src/data_processing/data_processor/`
