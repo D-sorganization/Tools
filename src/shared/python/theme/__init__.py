@@ -37,6 +37,7 @@ Usage:
 from .colors import (
     BUILTIN_THEMES,
     CHART_COLORS,
+    SEMANTIC_COLOR_KEYS,
     THEME_COLOR_KEYS,
     get_matplotlib_colors,
     get_rgba,
@@ -49,6 +50,15 @@ from .stylesheets import generate_minimal_stylesheet, generate_stylesheet
 # PyQt6-dependent imports - only available when PyQt6 is installed
 try:
     from .colors import get_qcolor
+    from .dialogs import (
+        ColorFieldEditor,
+        ColorPickerButton,
+        CustomThemeDialog,
+        CustomThemeEditor,
+        ThemeListItem,
+        ThemeManagerDialog,
+        ThemePreviewWidget,
+    )
     from .integration import (
         ThemedWindowMixin,
         apply_theme_to_window,
@@ -67,6 +77,13 @@ except ImportError:
     apply_theme_to_window = None  # type: ignore[assignment]
     create_theme_menu = None  # type: ignore[assignment]
     setup_themed_app = None  # type: ignore[assignment]
+    ColorFieldEditor = None  # type: ignore[assignment, misc]
+    ColorPickerButton = None  # type: ignore[assignment, misc]
+    CustomThemeDialog = None  # type: ignore[assignment, misc]
+    CustomThemeEditor = None  # type: ignore[assignment, misc]
+    ThemeListItem = None  # type: ignore[assignment, misc]
+    ThemeManagerDialog = None  # type: ignore[assignment, misc]
+    ThemePreviewWidget = None  # type: ignore[assignment, misc]
 
 __all__ = [
     # Theme manager (requires PyQt6)
@@ -77,9 +94,18 @@ __all__ = [
     "apply_theme_to_window",
     "create_theme_menu",
     "setup_themed_app",
+    # Dialogs (requires PyQt6)
+    "ColorFieldEditor",
+    "ColorPickerButton",
+    "CustomThemeDialog",
+    "CustomThemeEditor",
+    "ThemeListItem",
+    "ThemeManagerDialog",
+    "ThemePreviewWidget",
     # Color utilities
     "BUILTIN_THEMES",
     "CHART_COLORS",
+    "SEMANTIC_COLOR_KEYS",
     "THEME_COLOR_KEYS",
     "get_matplotlib_colors",
     "get_qcolor",

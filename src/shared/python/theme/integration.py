@@ -79,12 +79,15 @@ def apply_theme_to_window(window: QMainWindow, theme_name: str | None = None) ->
 def create_theme_menu(
     window: QMainWindow,
     parent_menu: QMenuBar | QMenu | None = None,
+    show_custom_options: bool = False,
 ) -> QMenu:
     """Create a Theme menu with all available themes.
 
     Args:
         window: Main window to apply themes to
         parent_menu: Parent menubar or menu to add to
+        show_custom_options: If True, add "Create Custom Theme..." and
+            "Manage Themes..." actions at the bottom of the menu
 
     Returns:
         The created QMenu
@@ -123,6 +126,22 @@ def create_theme_menu(
 
     manager.themeChanged.connect(update_checkmarks)
 
+    # Add custom theme options if requested
+    if show_custom_options:
+        theme_menu.addSeparator()
+
+        create_action = QAction("Create Custom Theme...", window)
+        create_action.triggered.connect(
+            lambda: _open_custom_theme_editor(manager, window)
+        )
+        theme_menu.addAction(create_action)
+
+        manage_action = QAction("Manage Themes...", window)
+        manage_action.triggered.connect(
+            lambda: _open_theme_manager_dialog(manager, window)
+        )
+        theme_menu.addAction(manage_action)
+
     # Add to parent if provided
     if parent_menu is not None:
         if isinstance(parent_menu, QMenuBar):
@@ -133,10 +152,27 @@ def create_theme_menu(
     return theme_menu
 
 
+def _open_custom_theme_editor(manager, window: QMainWindow) -> None:
+    """Open the custom theme editor dialog."""
+    from .dialogs import CustomThemeEditor
+
+    editor = CustomThemeEditor(manager, window)
+    editor.exec()
+
+
+def _open_theme_manager_dialog(manager, window: QMainWindow) -> None:
+    """Open the theme manager dialog."""
+    from .dialogs import ThemeManagerDialog
+
+    dialog = ThemeManagerDialog(manager, window)
+    dialog.exec()
+
+
 def setup_themed_app(
     app: QApplication,
     window: QMainWindow,
     add_menu: bool = True,
+    show_custom_options: bool = False,
     settings_org: str = "D-sorganization",
     settings_app: str | None = None,
 ) -> None:
@@ -151,6 +187,7 @@ def setup_themed_app(
         app: QApplication instance
         window: Main window to theme
         add_menu: Whether to add a Theme menu to the menubar
+        show_custom_options: If True, include custom theme create/manage actions
         settings_org: QSettings organization name
         settings_app: QSettings application name (defaults to window class name)
     """
@@ -168,7 +205,7 @@ def setup_themed_app(
     if add_menu:
         menubar = window.menuBar()
         if menubar is not None:
-            create_theme_menu(window, menubar)
+            create_theme_menu(window, menubar, show_custom_options=show_custom_options)
 
     logger.info(
         "Theme support initialized: theme=%s, app=%s",
@@ -200,6 +237,7 @@ class ThemedWindowMixin:
     def setup_theme_support(
         self,
         add_menu: bool = True,
+        show_custom_options: bool = False,
         settings_org: str | None = None,
         settings_app: str | None = None,
     ) -> None:
@@ -207,6 +245,7 @@ class ThemedWindowMixin:
 
         Args:
             add_menu: Whether to add a Theme menu
+            show_custom_options: If True, include custom theme create/manage actions
             settings_org: Override default settings organization
             settings_app: Override default settings application name
         """
@@ -231,7 +270,9 @@ class ThemedWindowMixin:
         if add_menu:
             menubar = self.menuBar()
             if menubar is not None:
-                create_theme_menu(self, menubar)
+                create_theme_menu(
+                    self, menubar, show_custom_options=show_custom_options
+                )
 
         # Connect to theme changes for custom handling
         self._theme_manager.themeChanged.connect(self._on_theme_changed)

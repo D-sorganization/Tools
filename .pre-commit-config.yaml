@@ -122,7 +122,7 @@ repos:
         name: "rustfmt (Rust format)"
       - id: cargo-check
         name: "cargo check (Rust)"
-        stages: [pre-push]
+        stages: [push]
 
   # ===========================================================================
   # UNIVERSAL FORMATTING (All Languages)
@@ -197,7 +197,7 @@ repos:
     hooks:
       - id: mypy
         name: "mypy (Python type check)"
-        stages: [pre-push]
+        stages: [push]
         additional_dependencies:
           - types-requests
           - types-PyYAML
@@ -224,7 +224,7 @@ repos:
     hooks:
       - id: bandit
         name: "bandit (Python security)"
-        stages: [pre-push]
+        stages: [push]
         args:
           [
             "-r",
@@ -243,7 +243,7 @@ repos:
     hooks:
       - id: pytest-unit
         name: "pytest (Python tests)"
-        stages: [pre-push]
+        stages: [push]
         entry: pytest
         args: ["tests/unit", "-x", "-q", "--tb=short", "-m", "not slow and not integration"]
         language: python
@@ -257,7 +257,7 @@ repos:
     hooks:
       - id: semgrep
         name: "semgrep (security + quality)"
-        stages: [pre-push]
+        stages: [push]
         args: ["--config", "auto", "--error", "--quiet"]
         types: [python]
         exclude: ^(tests/|archive/|legacy/|experimental/|\.github/)
@@ -269,7 +269,7 @@ repos:
     hooks:
       - id: radon
         name: "radon (complexity check)"
-        stages: [pre-push]
+        stages: [push]
         entry: radon
         args: ["cc", "--min", "C", "--show-complexity", "--total-average"]
         language: python
