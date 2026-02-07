@@ -206,13 +206,19 @@ if HAS_MATPLOTLIB and HAS_PYQT:
         signal_generated = pyqtSignal(str, list)  # joint_name, coefficients
         signal_updated = pyqtSignal(object)  # Signal object
 
-        def __init__(self, parent: QWidget | None = None) -> None:
+        def __init__(
+            self,
+            parent: QWidget | None = None,
+            *,
+            use_builtin_theme: bool = True,
+        ) -> None:
             """Initialize the widget."""
             super().__init__(parent)
 
             self.setWindowTitle("Signal Processing Toolkit")
             self.resize(1200, 800)
-            self.setStyleSheet(DARK_STYLESHEET)
+            if use_builtin_theme:
+                self.setStyleSheet(DARK_STYLESHEET)
 
             # State
             self.current_signal: Signal | None = None
@@ -1649,6 +1655,24 @@ if HAS_MATPLOTLIB and HAS_PYQT:
                     self._log(f"Exported to {Path(path).name}")
                 except Exception as e:
                     QMessageBox.warning(self, "Export Error", f"Failed: {e}")
+
+        def load_external_signal(self, signal: Signal) -> None:
+            """Load a signal from an external source.
+
+            Allows other widgets (e.g., Function Generator) to send
+            signals to the toolkit for analysis, filtering, or fitting.
+
+            Args:
+                signal: Signal object to load.
+            """
+            self.current_signal = signal
+            self.original_signal = signal.copy()
+            self._update_plot()
+            self._log(
+                f"Loaded external signal: {signal.name or 'unnamed'} "
+                f"({signal.n_samples} samples)"
+            )
+            self.signal_updated.emit(signal)
 
         def _update_plot(
             self,

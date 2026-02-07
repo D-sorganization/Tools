@@ -58,12 +58,18 @@ class FunctionGeneratorWidget(QWidget):
         "Constant",
     ]
 
-    def __init__(self, parent: QWidget | None = None) -> None:
+    def __init__(
+        self,
+        parent: QWidget | None = None,
+        *,
+        use_builtin_theme: bool = True,
+    ) -> None:
         """Initialize the Function Generator widget."""
         super().__init__(parent)
         self.current_signal: Signal | None = None
         self._init_ui()
-        self._apply_styling()
+        if use_builtin_theme:
+            self._apply_styling()
         self._connect_signals()
         self._generate_signal()
 
