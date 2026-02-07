@@ -67,7 +67,12 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
     # Signals
     polynomial_generated = QtCore.pyqtSignal(str, list)  # joint_name, coefficients
 
-    def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
+    def __init__(
+        self,
+        parent: QtWidgets.QWidget | None = None,
+        *,
+        use_builtin_theme: bool = True,
+    ) -> None:
         """Initialize the widget."""
         super().__init__(parent)
 
@@ -86,7 +91,10 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
         self.mode = "view"  # view, draw, add_points, drag
 
         # Dark Theme Palette
-        self.setStyleSheet("""
+        if not use_builtin_theme:
+            pass  # Skip built-in theme; host app provides styling
+        else:
+            self.setStyleSheet("""
             QWidget {
                 background-color: #2b2b2b;
                 color: #ffffff;
