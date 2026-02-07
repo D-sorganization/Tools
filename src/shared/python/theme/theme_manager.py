@@ -228,6 +228,9 @@ class ThemeManager(QObject):
             return dict(self.custom_themes[theme_name])
         return None
 
+    # Alias used by custom theme dialogs
+    get_theme_definition = get_theme_colors
+
     def get_theme_stylesheet(self, theme_name: str) -> str:
         """Get the stylesheet for a specific theme without applying it.
 

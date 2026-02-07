@@ -24,13 +24,18 @@ Theme Structure:
 
 from __future__ import annotations
 
+import json
+import logging
 import re
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from PyQt6.QtGui import QColor
 
-# Required color keys for all themes
+logger = logging.getLogger(__name__)
+
+# Required base color keys for all themes
 THEME_COLOR_KEYS: tuple[str, ...] = (
     "bg",
     "group_bg",
@@ -48,14 +53,75 @@ THEME_COLOR_KEYS: tuple[str, ...] = (
     "button_hover",
 )
 
+# Optional semantic color keys (added in v2.0)
+SEMANTIC_COLOR_KEYS: tuple[str, ...] = (
+    "success",
+    "warning",
+    "error",
+    "info",
+    "link",
+    "link_hover",
+    "selection_bg",
+    "selection_text",
+)
+
+
+def _load_themes_from_json() -> dict[str, dict[str, str]] | None:
+    """Load theme definitions from the canonical themes.json file.
+
+    Returns:
+        Dictionary of theme definitions, or None if JSON not available.
+    """
+    json_path = (
+        Path(__file__).parent.parent.parent / "theme-definitions" / "themes.json"
+    )
+    if not json_path.exists():
+        return None
+
+    try:
+        with open(json_path, encoding="utf-8") as f:
+            data = json.load(f)
+
+        themes: dict[str, dict[str, str]] = {}
+        for _theme_id, theme_def in data.get("themes", {}).items():
+            # Convert kebab-case ID to display name and merge colors + semantic
+            flat: dict[str, str] = {"name": theme_def["name"]}
+            flat.update(theme_def.get("colors", {}))
+            flat.update(theme_def.get("semantic", {}))
+            themes[theme_def["name"]] = flat
+
+        if themes:
+            logger.debug("Loaded %d themes from %s", len(themes), json_path)
+            return themes
+    except Exception as e:
+        logger.warning("Failed to load themes from JSON: %s", e)
+
+    return None
+
+
+def _load_chart_colors_from_json() -> list[str] | None:
+    """Load chart colors from themes.json."""
+    json_path = (
+        Path(__file__).parent.parent.parent / "theme-definitions" / "themes.json"
+    )
+    if not json_path.exists():
+        return None
+
+    try:
+        with open(json_path, encoding="utf-8") as f:
+            data = json.load(f)
+        return data.get("chartColors")
+    except Exception:
+        return None
+
 
 # ============================================================================
 # BUILT-IN THEMES
 # ============================================================================
-# These themes are available across all applications in the fleet.
-# When adding a new theme, add it here and it will be available everywhere.
+# Themes are loaded from themes.json when available, with hardcoded fallback.
+# When adding a new theme, edit src/shared/theme-definitions/themes.json.
 
-BUILTIN_THEMES: dict[str, dict[str, str]] = {
+_HARDCODED_BUILTIN_THEMES: dict[str, dict[str, str]] = {
     # ------------------------------------------------------------------
     # Standard Light/Dark Themes
     # ------------------------------------------------------------------
@@ -304,7 +370,7 @@ BUILTIN_THEMES: dict[str, dict[str, str]] = {
 # Consistent chart colors for matplotlib and other plotting libraries.
 # These are designed for distinguishability and color-blind accessibility.
 
-CHART_COLORS: list[str] = [
+_HARDCODED_CHART_COLORS: list[str] = [
     "#0A84FF",  # Blue
     "#30D158",  # Green
     "#FF9F0A",  # Orange
@@ -315,6 +381,12 @@ CHART_COLORS: list[str] = [
     "#AC8E68",  # Brown
 ]
 
+# Load from JSON if available, otherwise use hardcoded definitions
+BUILTIN_THEMES: dict[str, dict[str, str]] = (
+    _load_themes_from_json() or _HARDCODED_BUILTIN_THEMES
+)
+CHART_COLORS: list[str] = _load_chart_colors_from_json() or _HARDCODED_CHART_COLORS
+
 
 # ============================================================================
 # COLOR UTILITIES
@@ -324,8 +396,11 @@ CHART_COLORS: list[str] = [
 def is_valid_hex_color(value: str) -> bool:
     """Return True if value is a valid hexadecimal color string.
 
+    Accepts 3, 4, 6, or 8 hex digit formats (with or without leading #).
+    4 and 8 digit formats include an alpha channel.
+
     Args:
-        value: Color string to validate (e.g., "#ff0000", "#f00", "ff0000")
+        value: Color string to validate (e.g., "#ff0000", "#f00", "#ff000080")
 
     Returns:
         True if valid hex color, False otherwise
@@ -337,10 +412,7 @@ def is_valid_hex_color(value: str) -> bool:
     if value.startswith("#"):
         value = value[1:]
 
-    if len(value) == 3:
-        return bool(re.fullmatch(r"[0-9a-fA-F]{3}", value))
-
-    return bool(re.fullmatch(r"[0-9a-fA-F]{6}", value))
+    return bool(re.fullmatch(r"[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8}", value))
 
 
 def normalise_hex_color(value: str) -> str:
@@ -476,6 +548,7 @@ def is_dark_theme(theme_name: str) -> bool:
 __all__ = [
     "BUILTIN_THEMES",
     "CHART_COLORS",
+    "SEMANTIC_COLOR_KEYS",
     "THEME_COLOR_KEYS",
     "get_matplotlib_colors",
     "get_qcolor",
