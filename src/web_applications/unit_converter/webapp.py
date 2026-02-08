@@ -114,9 +114,7 @@ def create_app() -> Flask:
             temperature = payload.get("temperature")
             pressure = payload.get("pressure")
             gas_type = str(payload.get("gas_type", "air"))
-            standard_condition = str(
-                payload.get("standard_condition", "SCFM_60F")
-            )
+            standard_condition = str(payload.get("standard_condition", "SCFM_60F"))
             gas_density_stp = payload.get("gas_density_stp")
 
             if temperature is not None:

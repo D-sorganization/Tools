@@ -90,9 +90,17 @@ class TestThemeToCssVars:
         assert theme is not None
         css = theme_to_css_vars(theme)
         expected_vars = [
-            "--bg:", "--bg-card:", "--border:", "--text-primary:",
-            "--text-secondary:", "--text-muted:", "--border-focus:",
-            "--bg-input:", "--accent:", "--bg-elevated:", "--accent-hover:",
+            "--bg:",
+            "--bg-card:",
+            "--border:",
+            "--text-primary:",
+            "--text-secondary:",
+            "--text-muted:",
+            "--border-focus:",
+            "--bg-input:",
+            "--accent:",
+            "--bg-elevated:",
+            "--accent-hover:",
         ]
         for var in expected_vars:
             assert var in css, f"Missing CSS variable: {var}"
@@ -145,6 +153,7 @@ class TestThemeApiEndpoints:
     @pytest.fixture
     def client(self):
         from web_applications.unit_converter.webapp import create_app
+
         app = create_app()
         app.config["TESTING"] = True
         with app.test_client() as client:

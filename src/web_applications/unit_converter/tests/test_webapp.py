@@ -33,9 +33,7 @@ class TestConvertAPI:
     def test_basic_length_conversion(self, client) -> None:
         response = client.post(
             "/api/convert",
-            data=json.dumps(
-                {"value": 1, "from_unit": "m", "to_unit": "ft"}
-            ),
+            data=json.dumps({"value": 1, "from_unit": "m", "to_unit": "ft"}),
             content_type="application/json",
         )
         assert response.status_code == 200
@@ -45,9 +43,7 @@ class TestConvertAPI:
     def test_temperature_conversion(self, client) -> None:
         response = client.post(
             "/api/convert",
-            data=json.dumps(
-                {"value": 100, "from_unit": "C", "to_unit": "F"}
-            ),
+            data=json.dumps({"value": 100, "from_unit": "C", "to_unit": "F"}),
             content_type="application/json",
         )
         assert response.status_code == 200
@@ -57,9 +53,7 @@ class TestConvertAPI:
     def test_mass_conversion(self, client) -> None:
         response = client.post(
             "/api/convert",
-            data=json.dumps(
-                {"value": 1, "from_unit": "kg", "to_unit": "lb"}
-            ),
+            data=json.dumps({"value": 1, "from_unit": "kg", "to_unit": "lb"}),
             content_type="application/json",
         )
         assert response.status_code == 200
@@ -77,9 +71,7 @@ class TestConvertAPI:
     def test_unknown_unit_returns_400(self, client) -> None:
         response = client.post(
             "/api/convert",
-            data=json.dumps(
-                {"value": 1, "from_unit": "xyz", "to_unit": "ft"}
-            ),
+            data=json.dumps({"value": 1, "from_unit": "xyz", "to_unit": "ft"}),
             content_type="application/json",
         )
         assert response.status_code == 400
@@ -89,9 +81,7 @@ class TestConvertAPI:
     def test_incompatible_categories_returns_400(self, client) -> None:
         response = client.post(
             "/api/convert",
-            data=json.dumps(
-                {"value": 1, "from_unit": "m", "to_unit": "kg"}
-            ),
+            data=json.dumps({"value": 1, "from_unit": "m", "to_unit": "kg"}),
             content_type="application/json",
         )
         assert response.status_code == 400
@@ -99,9 +89,7 @@ class TestConvertAPI:
     def test_response_has_formatted_field(self, client) -> None:
         response = client.post(
             "/api/convert",
-            data=json.dumps(
-                {"value": 1, "from_unit": "m", "to_unit": "cm"}
-            ),
+            data=json.dumps({"value": 1, "from_unit": "m", "to_unit": "cm"}),
             content_type="application/json",
         )
         data = response.get_json()
@@ -111,9 +99,7 @@ class TestConvertAPI:
     def test_pressure_conversion(self, client) -> None:
         response = client.post(
             "/api/convert",
-            data=json.dumps(
-                {"value": 1, "from_unit": "atm", "to_unit": "psi"}
-            ),
+            data=json.dumps({"value": 1, "from_unit": "atm", "to_unit": "psi"}),
             content_type="application/json",
         )
         assert response.status_code == 200

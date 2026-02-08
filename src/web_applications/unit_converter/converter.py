@@ -22,7 +22,11 @@ RANKINE_RATIO = 5.0 / 9.0
 
 # Standard conditions for gas flow
 STANDARD_CONDITIONS: dict[str, dict[str, float | str]] = {
-    "STP": {"temp": 273.15, "pressure": 101325.0, "label": "STP (0 deg C, 101.325 kPa)"},
+    "STP": {
+        "temp": 273.15,
+        "pressure": 101325.0,
+        "label": "STP (0 deg C, 101.325 kPa)",
+    },
     "SCFM_60F": {
         "temp": 288.706,
         "pressure": 101325.0,
@@ -33,7 +37,11 @@ STANDARD_CONDITIONS: dict[str, dict[str, float | str]] = {
         "pressure": 101325.0,
         "label": "SCFM at 70 deg F, 14.696 psia",
     },
-    "NTP": {"temp": 293.15, "pressure": 101325.0, "label": "NTP (20 deg C, 101.325 kPa)"},
+    "NTP": {
+        "temp": 293.15,
+        "pressure": 101325.0,
+        "label": "NTP (20 deg C, 101.325 kPa)",
+    },
     "SATP": {"temp": 298.15, "pressure": 100000.0, "label": "SATP (25 deg C, 1 bar)"},
 }
 
@@ -374,9 +382,9 @@ class UnitConverter:
 
         if from_category != to_category:
             # Allow mass_flow <-> gas_flow cross-category
-            is_gas_flow = (from_category == "gas_flow" and to_category == "mass_flow") or (
-                from_category == "mass_flow" and to_category == "gas_flow"
-            )
+            is_gas_flow = (
+                from_category == "gas_flow" and to_category == "mass_flow"
+            ) or (from_category == "mass_flow" and to_category == "gas_flow")
             if not is_gas_flow:
                 raise ValueError(
                     f"Cannot convert {from_unit} ({from_category}) "
@@ -412,9 +420,7 @@ class UnitConverter:
             category=category,
         )
 
-    def _convert_temperature(
-        self, value: float, from_unit: str, to_unit: str
-    ) -> float:
+    def _convert_temperature(self, value: float, from_unit: str, to_unit: str) -> float:
         """Convert temperature units via Kelvin as intermediate."""
         fu = from_unit.upper()
         tu = to_unit.upper()
@@ -483,9 +489,7 @@ class UnitConverter:
         tu = to_unit.upper()
 
         # Validate ACFM requires T/P
-        if (fu == "ACFM" or tu == "ACFM") and (
-            temperature is None or pressure is None
-        ):
+        if (fu == "ACFM" or tu == "ACFM") and (temperature is None or pressure is None):
             raise ValueError(
                 "Temperature and pressure are required for ACFM conversions"
             )
@@ -526,9 +530,7 @@ class UnitConverter:
             m3_hr_at_scfm = m3_hr_std
             if stp_temp != std_temp or stp_pressure != std_pressure:
                 m3_hr_at_scfm = (
-                    m3_hr_std
-                    * (std_temp / stp_temp)
-                    * (stp_pressure / std_pressure)
+                    m3_hr_std * (std_temp / stp_temp) * (stp_pressure / std_pressure)
                 )
             return m3_hr_at_scfm / SCFM_TO_CU_METER_PER_HOUR_AT_60F
         elif tu == "ACFM":
@@ -536,9 +538,7 @@ class UnitConverter:
             m3_hr_at_scfm = m3_hr_std
             if stp_temp != std_temp or stp_pressure != std_pressure:
                 m3_hr_at_scfm = (
-                    m3_hr_std
-                    * (std_temp / stp_temp)
-                    * (stp_pressure / std_pressure)
+                    m3_hr_std * (std_temp / stp_temp) * (stp_pressure / std_pressure)
                 )
             scfm_val = m3_hr_at_scfm / SCFM_TO_CU_METER_PER_HOUR_AT_60F
             return scfm_val * (std_pressure / pressure) * (temperature / std_temp)
@@ -576,9 +576,7 @@ class UnitConverter:
         # Convert to MJ/kg
         if HEATING_VALUE_FACTORS[from_unit] is None:
             if gas_density_stp is None:
-                raise ValueError(
-                    f"Gas density required for {from_unit} conversion"
-                )
+                raise ValueError(f"Gas density required for {from_unit} conversion")
             if from_key in ("mj/nm3",):
                 mj_per_kg = value / gas_density_stp
             elif from_key == "btu/scf":
@@ -595,9 +593,7 @@ class UnitConverter:
         # Convert from MJ/kg to target
         if HEATING_VALUE_FACTORS[to_unit] is None:
             if gas_density_stp is None:
-                raise ValueError(
-                    f"Gas density required for {to_unit} conversion"
-                )
+                raise ValueError(f"Gas density required for {to_unit} conversion")
             if to_key in ("mj/nm3",):
                 return mj_per_kg * gas_density_stp
             elif to_key == "btu/scf":
