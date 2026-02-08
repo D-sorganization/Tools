@@ -1,313 +1,313 @@
 import os
+import glob
+import re
+import datetime
 
+# Constants
 ASSESSMENT_DIR = "docs/assessments"
+COMPLETIST_DIR = "docs/assessments/completist"
 ISSUES_DIR = "docs/assessments/issues"
+PRAGMATIC_REVIEW_FILE = "docs/assessments/pragmatic_programmer/review_2026-02-08.md"
+COMPLETIST_DATA_DIR = ".jules/completist_data"
 
+# Ensure directories exist
 os.makedirs(ASSESSMENT_DIR, exist_ok=True)
+os.makedirs(COMPLETIST_DIR, exist_ok=True)
 os.makedirs(ISSUES_DIR, exist_ok=True)
 
-assessments = {
-    "A": (
-        "Code Structure",
-        8,
-        """
-The repository exhibits a mature and well-organized structure.
-- **Source Separation**: `src/` is cleanly separated from `tests/`, `docs/`, and configuration files.
-- **Domain Segmentation**: Inside `src/`, code is logically grouped by domain (e.g., `data_processing`, `scientific_modeling`).
-- **Hierarchy**: The nesting level is appropriate (max depth ~3-4 for core logic).
-- **Consistency**: Most modules follow the `src/category/tool/python/package` pattern.
-""",
-    ),
-    "B": (
-        "Documentation",
-        9,
-        """
-Documentation coverage is exceptional.
-- **Docstrings**: Over 6,500 docstrings found across 646 files (~10 per file).
-- **READMEs**: 35 README files cover almost every tool and category.
-- **Guides**: Comprehensive guides in `docs/` (Architecture, Launchers, Plugin System).
+def get_files(pattern):
+    return set(glob.glob(pattern, recursive=True))
 
-## Auto-Fixes
-- Added missing module docstrings to `src/verification/verify_palette.py`, `src/verification/verify_palette_final.py`, and `src/verification/verify_a11y.py`.
-""",
-    ),
-    "C": (
-        "Test Coverage",
-        5,
-        """
-Test coverage is the primary weakness.
-- **Ratio**: 119 test files for 646 source files (~18% ratio).
-- **Gaps**: Many shared utilities and complex logic in `src/shared` appear under-tested.
-- **Risk**: Low coverage increases regression risk during refactoring.
-""",
-    ),
-    "D": (
-        "Error Handling",
-        7,
-        """
-Error handling follows standard practices.
-- **Mechanisms**: Use of `try...except` blocks is visible in key areas.
-- **UI**: GUI applications (PyQt) handle execution loops correctly (`sys.exit(app.exec())`).
-- **Safety**: Some use of `eval` is wrapped in try-blocks or commented, though the usage itself is a risk (covered in Security).
-""",
-    ),
-    "E": (
-        "Performance",
-        6,
-        """
-Performance is adequate but unoptimized.
-- **Logging**: Heavy reliance on `print()` (700+) vs `logging` (1299+) impacts runtime performance and monitoring.
-- **Imports**: Standard heavy imports (pandas, numpy) are used; no obvious lazy loading in critical paths observed.
-- **Concurrency**: `launch_web.py` scripts use blocking subprocess calls in some places.
-""",
-    ),
-    "F": (
-        "Security",
-        4,
-        """
-**CRITICAL FINDINGS**:
-1.  **Data Leakage**: `.msg` (Outlook email) files found in `src/shared/python/upstream_drift_tools/...`. This is a major PII/IP risk.
-2.  **Unsafe Functions**: `eval()` usage detected in `Data_Processor_r0.py`, `signal_processing.py`, and `fitting.py`.
-3.  **Shell Injection**: Extensive use of `shell=True` in launcher scripts.
-4.  **SAST**: CodeQL workflow is present but disabled (`codeql-analysis.yml.disabled`).
-""",
-    ),
-    "G": (
-        "Dependencies",
-        9,
-        """
-Dependency management is very strong.
-- **Manifests**: Clean `requirements.txt` with inline comments explaining usage.
-- **Locking**: `requirements-lock.txt` and `pnpm-lock.yaml` ensure reproducible builds.
-- **Isolation**: Virtual environment usage is enforced/encouraged in docs.
-""",
-    ),
-    "H": (
-        "CI/CD",
-        9,
-        """
-CI/CD is robust and extensive.
-- **Workflows**: Over 40 GitHub Actions workflows covering everything from linting (`ci-standard.yml`) to stale issue cleanup.
-- **Gates**: Strict quality gates for formatting (Black), linting (Ruff), and types (MyPy).
-- **Automation**: "Jules" agent automation is highly integrated.
-""",
-    ),
-    "I": (
-        "Code Style",
-        8,
-        """
-Code style is strictly enforced.
-- **Tooling**: `ruff` and `black` are used in CI, ensuring consistent formatting.
-- **Typing**: `mypy` is configured and used, though some `type: ignore` usage was spotted.
-- **Conventions**: Variable naming and structure generally follow PEP 8.
-""",
-    ),
-    "J": (
-        "API Design",
-        7,
-        """
-API design is modular but implicit.
-- **Modularity**: Tools are well-separated.
-- **Contracts**: `src/shared` provides reusable components, but explicit interfaces (Protocols/ABCs) could be stronger to enforce contracts.
-- **REST**: Web apps use standard REST patterns.
-""",
-    ),
-    "K": (
-        "Data Handling",
-        6,
-        """
-Data handling is mixed.
-- **I/O**: Standard pandas/numpy usage for data processing.
-- **Safety**: The presence of `.msg` files indicates poor hygiene regarding binary/personal data committing.
-- **Validation**: Input validation in web apps is present but could be more robust.
-""",
-    ),
-    "L": (
-        "Logging",
-        6,
-        """
-Logging is inconsistent.
-- **Hybrid**: The codebase is split between `print()` (debugging style) and `logging` (production style).
-- **Standardization**: Need to migrate all `print()` statements in `src/` to the shared logger.
-""",
-    ),
-    "M": (
-        "Configuration",
-        8,
-        """
-Configuration management is good.
-- **Environment**: `.env` and `.env.example` usage is documented.
-- **Files**: Config files (JSON, YAML) are used appropriately.
-- **Launchers**: Launchers handle configuration loading dynamically.
-""",
-    ),
-    "N": (
-        "Scalability",
-        7,
-        """
-The architecture supports scaling.
-- **Plugin System**: The `core/plugin_manager.py` allows easy addition of new tools.
-- **Monorepo**: The structure supports adding many tools without clutter, though checking out the whole repo is heavy.
-""",
-    ),
-    "O": (
-        "Maintainability",
-        5,
-        """
-Technical debt is accumulating.
-- **Markers**: 445 `TODO` and 140 `FIXME` markers indicate significant unfinished work.
-- **Legacy**: Existence of "legacy" launchers (`Launcher.py`, `launch_tools_main.py`) alongside `UnifiedToolsLauncher.py` creates confusion (though documented).
-""",
-    ),
-}
+def count_files(pattern):
+    return len(get_files(pattern))
 
-# Generate Category Assessments
-for code, (name, grade, analysis) in assessments.items():
-    safe_name = name.replace(" ", "_").replace("/", "-")
-    filename = f"Assessment_{code}_{safe_name}.md"
-    filepath = os.path.join(ASSESSMENT_DIR, filename)
+def count_lines_in_file(filepath):
+    try:
+        with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+            return sum(1 for _ in f)
+    except FileNotFoundError:
+        return 0
+
+def analyze_completist_data():
+    todos = 0
+    fixmes = 0
+    not_implemented = 0
+
+    todo_file = os.path.join(COMPLETIST_DATA_DIR, "todo_markers.txt")
+    if os.path.exists(todo_file):
+        with open(todo_file, 'r', encoding='utf-8', errors='ignore') as f:
+            content = f.read()
+            todos = content.count("TODO")
+            fixmes = content.count("FIXME")
+
+    not_implemented_file = os.path.join(COMPLETIST_DATA_DIR, "not_implemented.txt")
+    if os.path.exists(not_implemented_file):
+        with open(not_implemented_file, 'r', encoding='utf-8', errors='ignore') as f:
+            not_implemented = sum(1 for _ in f)
+
+    return todos, fixmes, not_implemented
+
+def analyze_pragmatic_review():
+    dry_violations = 0
+    god_functions = 0
+
+    if os.path.exists(PRAGMATIC_REVIEW_FILE):
+        with open(PRAGMATIC_REVIEW_FILE, 'r', encoding='utf-8', errors='ignore') as f:
+            content = f.read()
+            dry_violations = content.count("**DRY**")
+            god_functions = content.count("**ORTHOGONALITY**") # Assuming "God function" is listed under Orthogonality or similar
+            if god_functions == 0:
+                 god_functions = content.count("God function")
+
+    return dry_violations, god_functions
+
+def check_security_issues():
+    msg_files = glob.glob("**/*.msg", recursive=True)
+    eval_usage = 0
+    # Simple grep for eval
+    for filepath in glob.glob("src/**/*.py", recursive=True):
+        try:
+            with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+                if "eval(" in f.read():
+                    eval_usage += 1
+        except:
+            pass
+    return len(msg_files), eval_usage
+
+def generate_completist_report(todos, fixmes, not_implemented):
+    date_str = datetime.date.today().strftime("%Y-%m-%d")
+    filename = f"Completist_Report_{date_str}.md"
+    filepath = os.path.join(COMPLETIST_DIR, filename)
+
     with open(filepath, "w") as f:
-        f.write(f"# Assessment: {name} (Category {code})\n\n")
-        f.write(f"## Grade: {grade}/10\n\n")
+        f.write(f"# Completist Report: {date_str}\n\n")
+        f.write("## Summary\n")
+        f.write(f"- **TODO Markers**: {todos}\n")
+        f.write(f"- **FIXME Markers**: {fixmes}\n")
+        f.write(f"- **Not Implemented Methods**: {not_implemented}\n\n")
+
         f.write("## Analysis\n")
-        f.write(analysis.strip() + "\n")
+        if todos > 100:
+            f.write("The codebase has a high volume of TODO markers, indicating significant planned work or technical debt.\n")
+        elif todos > 50:
+            f.write("The codebase has a moderate number of TODO markers.\n")
+        else:
+            f.write("The codebase has a low number of TODO markers.\n")
+
+        if fixmes > 0:
+            f.write(f"There are {fixmes} FIXME markers that require attention.\n")
+
+        f.write("\n## Recommendations\n")
+        f.write("1. Review high-priority FIXME markers.\n")
+        f.write("2. Convert TODOs to GitHub issues where appropriate.\n")
+        f.write("3. Implement missing methods identified in `not_implemented.txt`.\n")
+
     print(f"Generated {filepath}")
+    return filepath
 
-# Generate Issues for Low Grades (< 5)
-issues = {
-    "F": (
-        "Security",
-        "CRITICAL: Data Leakage and Unsafe Eval Usage",
-        """
-The security assessment identified critical vulnerabilities:
-1.  **Data Leakage**: Binary Outlook `.msg` files containing email correspondence are present in `src/shared/python/upstream_drift_tools/...`.
-2.  **Unsafe Code**: `eval()` is used in `Data_Processor_r0.py` and others without sufficient sanitization.
-3.  **SAST**: CodeQL is disabled.
+def main():
+    # Data Collection
+    src_files = count_files("src/**/*.py")
+    test_files = len(get_files("tests/**/*.py") | get_files("**/test_*.py"))
 
-**Action Items**:
--   Remove `.msg` files from history (BFG/filter-branch).
--   Refactor `eval()` usage to use `ast.literal_eval` or a math parser library.
--   Enable CodeQL workflow.
-""",
-    ),
-    "C": (
-        "Test Coverage",
-        "Low Test Coverage (18%)",
-        """
-Test coverage is significantly below industry standards.
--   Only 119 test files for 646 source files.
--   Critical shared libraries in `src/shared` lack comprehensive unit tests.
+    todos, fixmes, not_implemented = analyze_completist_data()
+    dry_violations, god_functions = analyze_pragmatic_review()
+    msg_files_count, eval_usage_count = check_security_issues()
 
-**Action Items**:
--   Enforce strict TDD for new features.
--   Add unit tests for `src/shared/python` utilities.
--   Target 60% file coverage ratio.
-""",
-    ),
-    "O": (
-        "Maintainability",
-        "High Technical Debt (445 TODOs)",
-        """
-The codebase has accumulated significant technical debt.
--   445 `TODO` markers.
--   140 `FIXME` markers.
+    test_ratio = test_files / src_files if src_files > 0 else 0
 
-**Action Items**:
--   Audit all `FIXME` items and resolve high-priority ones.
--   Convert valid `TODO` items into GitHub Issues.
--   Remove obsolete code.
-""",
-    ),
-}
+    # Categories A-O Assessments
+    assessments = {
+        "A": {
+            "name": "Architecture & Implementation",
+            "grade": 8,
+            "analysis": f"""
+The repository demonstrates a solid architectural foundation.
+- **Structure**: Separation of `src`, `tests`, and `docs` is standard and effective.
+- **Modularity**: Domain logic is segmented into packages (e.g., `data_processing`, `scientific_modeling`).
+- **Issues**: Some 'God Class' patterns detected in UI files (see Category L).
+"""
+        },
+        "B": {
+            "name": "Code Quality & Hygiene",
+            "grade": 6,
+            "analysis": f"""
+Code quality is generally good but inconsistent.
+- **Linting**: Formatting is enforced via Black.
+- **DRY Violations**: {dry_violations} significant DRY violations identified in the Pragmatic Programmer review.
+- **Complexity**: High cyclomatic complexity in some UI `main_window.py` files.
+"""
+        },
+        "C": {
+            "name": "Documentation & Comments",
+            "grade": 8,
+            "analysis": f"""
+Documentation is a strong point.
+- **Coverage**: High docstring coverage across modules.
+- **Gaps**: {not_implemented} methods marked as not implemented or incomplete.
+- **Completeness**: READMEs are present for most major tools.
+"""
+        },
+        "D": {
+            "name": "User Experience & Developer Journey",
+            "grade": 7,
+            "analysis": f"""
+UX is functional but utilitarian.
+- **Launchers**: Multiple launchers (`UnifiedToolsLauncher.py`, `launch_tools_main.py`) can be confusing.
+- **Setup**: `setup_dev.py` automates environment creation.
+- **Feedback**: Console output is sometimes verbose; GUI feedback varies by tool.
+"""
+        },
+        "E": {
+            "name": "Performance & Scalability",
+            "grade": 6,
+            "analysis": f"""
+Performance is adequate for current scale.
+- **Optimization**: No significant performance bottlenecks reported, but extensive use of Python for computation-heavy tasks (e.g., FEA) may need C++ extensions.
+- **Startup**: Application startup times are reasonable.
+"""
+        },
+        "F": {
+            "name": "Installation & Deployment",
+            "grade": 8,
+            "analysis": f"""
+Deployment is well-supported.
+- **Dependencies**: `requirements.txt` and lock files ensure reproducibility.
+- **Packaging**: Tools for building executables (`folder_packer_pro`) are present.
+- **Cross-Platform**: Python-based stack ensures broad compatibility.
+"""
+        },
+        "G": {
+            "name": "Testing & Validation",
+            "grade": 5,
+            "analysis": f"""
+Testing is the primary weakness.
+- **Ratio**: Test-to-Source file ratio is {test_ratio:.2f} (Target: >0.5).
+- **Coverage**: {test_files} test files for {src_files} source files.
+- **Gaps**: Many UI components and shared utilities lack automated tests.
+"""
+        },
+        "H": {
+            "name": "Error Handling & Debugging",
+            "grade": 7,
+            "analysis": f"""
+Error handling is standard.
+- **Exceptions**: Broad `try-except` blocks are used in launchers to prevent crashes.
+- **Logging**: Transitioning from `print` to `logging` module is in progress.
+- **Feedback**: Error dialogs in UI tools provide user feedback.
+"""
+        },
+        "I": {
+            "name": "Security & Input Validation",
+            "grade": 4,
+            "analysis": f"""
+**CRITICAL FINDINGS**:
+- **Data Leakage**: {msg_files_count} `.msg` files found (Outlook emails). These must be removed.
+- **Unsafe Code**: {eval_usage_count} instances of `eval()` detected.
+- **Validation**: Input sanitization in web apps needs hardening.
+"""
+        },
+        "J": {
+            "name": "Extensibility & Plugin Architecture",
+            "grade": 8,
+            "analysis": f"""
+The system is designed for extensibility.
+- **Plugins**: A clear plugin architecture exists for adding new tools.
+- **Discovery**: Dynamic tool discovery in launchers facilitates expansion.
+"""
+        },
+        "K": {
+            "name": "Reproducibility & Provenance",
+            "grade": 7,
+            "analysis": f"""
+Reproducibility is supported.
+- **Version Control**: Git usage is standard.
+- **Environment**: Lock files help, but Docker containers for complex tools would improve this.
+"""
+        },
+        "L": {
+            "name": "Long-Term Maintainability",
+            "grade": 5,
+            "analysis": f"""
+Maintainability is threatened by technical debt.
+- **God Functions**: {god_functions} 'God Functions' identified (overly long/complex methods).
+- **TODOs**: {todos} TODO markers indicate a large backlog of unaddressed tasks.
+- **Refactoring**: Significant refactoring needed in UI code to improve orthogonality.
+"""
+        },
+        "M": {
+            "name": "Educational Resources & Tutorials",
+            "grade": 6,
+            "analysis": f"""
+Resources are available but could be better.
+- **Docs**: Good static documentation.
+- **Tutorials**: Lack of interactive tutorials or video guides.
+"""
+        },
+        "N": {
+            "name": "Visualization & Export",
+            "grade": 8,
+            "analysis": f"""
+Visualization capabilities are strong.
+- **Tools**: Matplotlib and PyQtGraph integration is mature.
+- **Export**: PDF export features are present in several tools.
+"""
+        },
+        "O": {
+            "name": "CI/CD & DevOps",
+            "grade": 8,
+            "analysis": f"""
+CI/CD is robust.
+- **Workflows**: GitHub Actions cover linting, testing, and static analysis.
+- **Automation**: Automated scripts for assessment and maintenance.
+"""
+        }
+    }
 
-for code, (name, title, body) in issues.items():
-    if assessments[code][1] <= 5:
-        filename = f"Issue_{code}_{name.replace(' ', '_')}.md"
-        filepath = os.path.join(ISSUES_DIR, filename)
+    # Generate Category Files
+    for code, data in assessments.items():
+        safe_name = data["name"].replace(" ", "_").replace("&", "and").replace("/", "-")
+        filename = f"Assessment_{code}_{safe_name}.md"
+        filepath = os.path.join(ASSESSMENT_DIR, filename)
+
         with open(filepath, "w") as f:
-            f.write("--- \nlabels: jules:assessment, needs-attention\n---\n\n")
-            f.write(f"# {title}\n\n")
-            f.write(body.strip() + "\n")
+            f.write(f"# Assessment: {data['name']} (Category {code})\n\n")
+            f.write(f"## Grade: {data['grade']}/10\n\n")
+            f.write("## Analysis\n")
+            f.write(data['analysis'].strip() + "\n")
         print(f"Generated {filepath}")
 
+    # Generate Completist Report
+    generate_completist_report(todos, fixmes, not_implemented)
 
-# Generate Comprehensive Assessment
-# Calculate dynamic scores
-def get_avg(keys):
-    values = [assessments[k][1] for k in keys]
-    return sum(values) / len(values)
+    # Generate Comprehensive Report
+    avg_grade = sum(d['grade'] for d in assessments.values()) / len(assessments)
 
+    comp_filepath = os.path.join(ASSESSMENT_DIR, "Comprehensive_Assessment.md")
+    with open(comp_filepath, "w") as f:
+        f.write("# Comprehensive Repository Assessment\n\n")
+        f.write(f"**Date**: {datetime.date.today().strftime('%Y-%m-%d')}\n\n")
+        f.write(f"## Unified Scorecard\n")
+        f.write(f"**Overall Grade**: {avg_grade:.2f}/10\n\n")
 
-avg_code = get_avg(["A", "I"])
-avg_test = get_avg(["C"])
-avg_docs = get_avg(["B"])
-avg_sec = get_avg(["F", "D"])
-avg_perf = get_avg(["E"])
-avg_ops = get_avg(["H", "M", "G"])
-avg_design = get_avg(["J", "K", "L", "N", "O"])
+        f.write("| Category | Name | Grade |\n")
+        f.write("|----------|------|-------|\n")
+        for code, data in assessments.items():
+            f.write(f"| {code} | {data['name']} | {data['grade']}/10 |\n")
 
-final_score = (
-    avg_code * 0.25
-    + avg_test * 0.15
-    + avg_docs * 0.10
-    + avg_sec * 0.15
-    + avg_perf * 0.15
-    + avg_ops * 0.10
-    + avg_design * 0.10
-)
+        f.write("\n## Top 10 Recommendations\n\n")
+        f.write(f"1.  **URGENT (Security):** Remove {msg_files_count} `.msg` files containing potential PII.\n")
+        f.write(f"2.  **URGENT (Security):** Replace `eval()` usages with safer alternatives ({eval_usage_count} instances found).\n")
+        f.write(f"3.  **Critical (Testing):** Increase test coverage. Current ratio {test_ratio:.2f} is well below target.\n")
+        f.write(f"4.  **Major (Maintainability):** Address {god_functions} identified 'God Functions' to improve orthogonality.\n")
+        f.write(f"5.  **Major (Maintainability):** Reduce the backlog of {todos} TODO markers.\n")
+        f.write(f"6.  **Major (Code Quality):** Refactor code to resolve {dry_violations} DRY violations.\n")
+        f.write("7.  **Minor (UX):** Consolidate launcher scripts to reduce user confusion.\n")
+        f.write("8.  **Minor (Performance):** Continue migration from `print` to `logging`.\n")
+        f.write("9.  **Minor (Docs):** Implement missing methods in shared libraries.\n")
+        f.write("10. **Minor (Education):** Create video tutorials for complex tools.\n")
 
-with open(os.path.join(ASSESSMENT_DIR, "Comprehensive_Assessment.md"), "w") as f:
-    f.write("# Comprehensive Repository Assessment\n\n")
-    f.write(f"## Weighted Score: {final_score:.2f}/10\n\n")
-    f.write(
-        "The repository demonstrates high standards in automation, tooling, and code style, but is held back by specific security hygiene issues (data leakage) and low test coverage.\n\n"
-    )
-    f.write("## Grade Table\n")
-    f.write("| Category | Name | Grade |\n")
-    f.write("|----------|------|-------|\n")
-    for code, (name, grade, _) in sorted(assessments.items()):
-        f.write(f"| {code} | {name} | {grade}/10 |\n")
+    print(f"Generated {comp_filepath}")
 
-    f.write("\n## Weighted Scoring Breakdown\n")
-    f.write(f"- **Code Quality (25%)**: {avg_code:.2f}/10\n")
-    f.write(f"- **Testing (15%)**: {avg_test:.2f}/10\n")
-    f.write(f"- **Documentation (10%)**: {avg_docs:.2f}/10\n")
-    f.write(f"- **Security (15%)**: {avg_sec:.2f}/10\n")
-    f.write(f"- **Performance (15%)**: {avg_perf:.2f}/10\n")
-    f.write(f"- **Operations (10%)**: {avg_ops:.2f}/10\n")
-    f.write(f"- **Design (10%)**: {avg_design:.2f}/10\n")
-
-    f.write("\n## Top 5 Recommendations\n\n")
-    f.write("1.  **URGENT: Data Leakage Cleanup (Category F)**\n")
-    f.write(
-        "    - **Issue**: Binary Outlook `.msg` files containing email correspondence are present in the repository.\n"
-    )
-    f.write(
-        "    - **Action**: Immediately remove these files from the git history and file system.\n\n"
-    )
-
-    f.write("2.  **Increase Test Coverage (Category C)**\n")
-    f.write("    - **Issue**: Only ~18% test file ratio.\n")
-    f.write(
-        "    - **Action**: Implement a requirement for unit tests for all new code in `src/shared`.\n\n"
-    )
-
-    f.write("3.  **Secure Eval Usage (Category F)**\n")
-    f.write("    - **Issue**: Unsafe `eval()` usage in data processing tools.\n")
-    f.write(
-        "    - **Action**: Replace `eval()` with safer alternatives like `ast.literal_eval` or expression parsers.\n\n"
-    )
-
-    f.write("4.  **Pay Down Technical Debt (Category O)**\n")
-    f.write("    - **Issue**: 445 `TODO` markers.\n")
-    f.write(
-        "    - **Action**: Conduct a specific sprint to resolve or ticket these items.\n\n"
-    )
-
-    f.write("5.  **Standardize Logging (Category L)**\n")
-    f.write("    - **Issue**: Mixed use of `print()` and `logging`.\n")
-    f.write(
-        "    - **Action**: Enforce a linting rule to ban `print()` in library code.\n"
-    )
-
-print(f"Generated {os.path.join(ASSESSMENT_DIR, 'Comprehensive_Assessment.md')}")
+if __name__ == "__main__":
+    main()
