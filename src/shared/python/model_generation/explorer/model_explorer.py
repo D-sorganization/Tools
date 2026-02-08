@@ -16,10 +16,13 @@ from __future__ import annotations
 
 import logging
 import sys
-from pathlib import Path
-from typing import Any
 
-from PyQt6.QtCore import QSize, Qt, pyqtSignal
+from model_generation.library.unified_loader import (
+    LoadResult,
+    UnifiedModelLoader,
+    UserPreferences,
+)
+from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
     QApplication,
@@ -33,7 +36,6 @@ from PyQt6.QtWidgets import (
     QListWidget,
     QListWidgetItem,
     QMainWindow,
-    QMessageBox,
     QPushButton,
     QScrollArea,
     QSplitter,
@@ -43,12 +45,6 @@ from PyQt6.QtWidgets import (
     QTextEdit,
     QVBoxLayout,
     QWidget,
-)
-
-from model_generation.library.unified_loader import (
-    LoadResult,
-    UnifiedModelLoader,
-    UserPreferences,
 )
 
 logger = logging.getLogger(__name__)
@@ -329,9 +325,7 @@ class ModelExplorerWindow(QMainWindow):
         # Central widget
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
-        scroll_area.setHorizontalScrollBarPolicy(
-            Qt.ScrollBarPolicy.ScrollBarAlwaysOff
-        )
+        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setCentralWidget(scroll_area)
 
         central = QWidget()
@@ -436,9 +430,7 @@ class ModelExplorerWindow(QMainWindow):
             display = f"{entry['name']} ({entry['format'].upper()})"
             self.default_combo.addItem(display, model_id)
             if model_id == current_default:
-                self.default_combo.setCurrentIndex(
-                    self.default_combo.count() - 1
-                )
+                self.default_combo.setCurrentIndex(self.default_combo.count() - 1)
 
     # -- Library Panel --
 
@@ -475,15 +467,11 @@ class ModelExplorerWindow(QMainWindow):
         for entry in self._loader.list_bundled_models():
             if category_filter and entry.get("category") != category_filter:
                 continue
-            item = QListWidgetItem(
-                f"{entry['name']}  [{entry['format'].upper()}]"
-            )
+            item = QListWidgetItem(f"{entry['name']}  [{entry['format'].upper()}]")
             item.setData(Qt.ItemDataRole.UserRole, entry["id"])
             default_id = self._loader.preferences.default_model_id
             if entry["id"] == default_id:
-                item.setForeground(
-                    item.foreground().color()
-                )
+                item.setForeground(item.foreground().color())
                 font = item.font()
                 font.setBold(True)
                 item.setFont(font)
@@ -514,9 +502,7 @@ class ModelExplorerWindow(QMainWindow):
         for row, (label_text, key) in enumerate(labels):
             info_layout.addWidget(QLabel(label_text), row, 0)
             value_label = QLabel("-")
-            value_label.setStyleSheet(
-                f"color: {CATPPUCCIN_MOCHA['sapphire']};"
-            )
+            value_label.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['sapphire']};")
             self.info_labels[key] = value_label
             info_layout.addWidget(value_label, row, 1)
 
@@ -600,9 +586,7 @@ class ModelExplorerWindow(QMainWindow):
                 f"color: {CATPPUCCIN_MOCHA['green']}; padding: 4px;"
             )
             # Refresh list to update bold indicator
-            self._populate_model_list(
-                self.category_combo.currentData() or ""
-            )
+            self._populate_model_list(self.category_combo.currentData() or "")
 
     def _on_model_selected(self, item: QListWidgetItem) -> None:
         """Handle single click: show model info."""
@@ -662,9 +646,7 @@ class ModelExplorerWindow(QMainWindow):
         # Links table
         self.links_table.setRowCount(len(model.links))
         for row, link in enumerate(model.links):
-            self.links_table.setItem(
-                row, 0, QTableWidgetItem(link.name)
-            )
+            self.links_table.setItem(row, 0, QTableWidgetItem(link.name))
             self.links_table.setItem(
                 row, 1, QTableWidgetItem(f"{link.inertia.mass:.4f}")
             )
@@ -680,21 +662,11 @@ class ModelExplorerWindow(QMainWindow):
         # Joints table
         self.joints_table.setRowCount(len(model.joints))
         for row, joint in enumerate(model.joints):
-            self.joints_table.setItem(
-                row, 0, QTableWidgetItem(joint.name)
-            )
-            self.joints_table.setItem(
-                row, 1, QTableWidgetItem(joint.joint_type.value)
-            )
-            self.joints_table.setItem(
-                row, 2, QTableWidgetItem(joint.parent)
-            )
-            self.joints_table.setItem(
-                row, 3, QTableWidgetItem(joint.child)
-            )
-            axis_str = (
-                f"{joint.axis[0]:.2f}, {joint.axis[1]:.2f}, {joint.axis[2]:.2f}"
-            )
+            self.joints_table.setItem(row, 0, QTableWidgetItem(joint.name))
+            self.joints_table.setItem(row, 1, QTableWidgetItem(joint.joint_type.value))
+            self.joints_table.setItem(row, 2, QTableWidgetItem(joint.parent))
+            self.joints_table.setItem(row, 3, QTableWidgetItem(joint.child))
+            axis_str = f"{joint.axis[0]:.2f}, {joint.axis[1]:.2f}, {joint.axis[2]:.2f}"
             self.joints_table.setItem(row, 4, QTableWidgetItem(axis_str))
 
         # XML tab

@@ -26,7 +26,8 @@ from model_generation.library.repository import (
 )
 from model_generation.library.unified_loader import (
     LoadResult,
-    ModelFormat as UnifiedModelFormat,
+)
+from model_generation.library.unified_loader import (
     UnifiedModelLoader,
     UserPreferences,
     detect_format,

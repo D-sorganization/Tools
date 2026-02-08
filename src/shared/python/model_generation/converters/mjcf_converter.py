@@ -477,9 +477,7 @@ class MJCFConverter:
                 mat_name = geom_elem.get("material")
                 if rgba_str:
                     rgba = tuple(float(v) for v in rgba_str.split())
-                    visual_material = Material(
-                        name=f"{body_name}_material", color=rgba
-                    )
+                    visual_material = Material(name=f"{body_name}_material", color=rgba)
                 elif mat_name:
                     visual_material = Material(name=mat_name)
 
@@ -511,9 +509,7 @@ class MJCFConverter:
                         "name", f"{parent_name}_to_{body_name}"
                     )
                     mjcf_type = primary_joint.get("type", "hinge")
-                    joint_type = MJCF_TO_URDF_JOINT.get(
-                        mjcf_type, JointType.REVOLUTE
-                    )
+                    joint_type = MJCF_TO_URDF_JOINT.get(mjcf_type, JointType.REVOLUTE)
 
                     axis_str = primary_joint.get("axis", "0 0 1")
                     axis = tuple(float(v) for v in axis_str.split())
@@ -527,9 +523,7 @@ class MJCFConverter:
                     range_str = primary_joint.get("range")
                     if range_str:
                         range_vals = [float(v) for v in range_str.split()]
-                        limits = JointLimits(
-                            lower=range_vals[0], upper=range_vals[1]
-                        )
+                        limits = JointLimits(lower=range_vals[0], upper=range_vals[1])
 
                     damping = float(primary_joint.get("damping", 0.5))
                     dynamics = JointDynamics(damping=damping)
@@ -559,9 +553,7 @@ class MJCFConverter:
             # Recurse into children
             self._parse_mjcf_body(body_elem, body_name, links, joints)
 
-    def _parse_mjcf_geom(
-        self, geom_elem: ET.Element
-    ) -> tuple[Geometry | None, Origin]:
+    def _parse_mjcf_geom(self, geom_elem: ET.Element) -> tuple[Geometry | None, Origin]:
         """Parse a MuJoCo geom element into a Geometry and Origin."""
         geom_type = geom_elem.get("type", "sphere")
         pos_str = geom_elem.get("pos", "0 0 0")

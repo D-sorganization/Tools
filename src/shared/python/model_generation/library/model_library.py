@@ -367,9 +367,12 @@ class ModelLibrary:
         """Get a model entry by ID."""
         return self._entries.get(model_id)
 
-    @precondition(lambda self, model_id, **kw: model_id is not None, "Model ID cannot be None")
     @precondition(
-        lambda self, model_id, **kw: len(model_id.strip()) > 0, "Model ID cannot be empty"
+        lambda self, model_id, **kw: model_id is not None, "Model ID cannot be None"
+    )
+    @precondition(
+        lambda self, model_id, **kw: len(model_id.strip()) > 0,
+        "Model ID cannot be empty",
     )
     def load_model(
         self,
@@ -404,9 +407,7 @@ class ModelLibrary:
             if entry.model_format == ModelFormat.MJCF:
                 return self._load_mjcf(entry.urdf_path, entry.is_read_only)
             else:
-                return self._parser.parse(
-                    entry.urdf_path, read_only=entry.is_read_only
-                )
+                return self._parser.parse(entry.urdf_path, read_only=entry.is_read_only)
         except Exception as e:
             logger.error(f"Failed to load model {model_id}: {e}")
             return None
@@ -724,9 +725,12 @@ class ModelLibrary:
             logger.error(f"Failed to download {entry.id}: {e}")
             return False
 
-    @precondition(lambda self, model_id, **kw: model_id is not None, "Model ID cannot be None")
     @precondition(
-        lambda self, model_id, **kw: len(model_id.strip()) > 0, "Model ID cannot be empty"
+        lambda self, model_id, **kw: model_id is not None, "Model ID cannot be None"
+    )
+    @precondition(
+        lambda self, model_id, **kw: len(model_id.strip()) > 0,
+        "Model ID cannot be empty",
     )
     def create_editable_copy(
         self,
@@ -801,7 +805,9 @@ class ModelLibrary:
 
         return new_entry
 
-    @precondition(lambda self, model_id, **kw: model_id is not None, "Model ID cannot be None")
+    @precondition(
+        lambda self, model_id, **kw: model_id is not None, "Model ID cannot be None"
+    )
     def remove_model(self, model_id: str, delete_files: bool = False) -> bool:
         """
         Remove a model from the library.
