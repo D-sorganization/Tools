@@ -418,6 +418,8 @@ class MJCFConverter:
         joints: list[Joint],
     ) -> None:
         """Recursively parse body elements."""
+        from model_generation.core.types import Material
+
         for body_elem in elem.findall("body"):
             body_name = body_elem.get("name", f"body_{len(links)}")
 
@@ -463,20 +465,74 @@ class MJCFConverter:
                         ixx=0.1, iyy=0.1, izz=0.1, mass=mass, center_of_mass=com
                     )
 
-            # Create link
-            link = Link(name=body_name, inertia=inertia)
+            # Parse first geom for visual/collision geometry
+            visual_geom = None
+            visual_origin = Origin()
+            visual_material = None
+            geom_elems = body_elem.findall("geom")
+            if geom_elems:
+                geom_elem = geom_elems[0]
+                visual_geom, visual_origin = self._parse_mjcf_geom(geom_elem)
+                rgba_str = geom_elem.get("rgba")
+                mat_name = geom_elem.get("material")
+                if rgba_str:
+                    rgba = tuple(float(v) for v in rgba_str.split())
+                    visual_material = Material(
+                        name=f"{body_name}_material", color=rgba
+                    )
+                elif mat_name:
+                    visual_material = Material(name=mat_name)
+
+            # Create link with geometry
+            link = Link(
+                name=body_name,
+                inertia=inertia,
+                visual_geometry=visual_geom,
+                visual_origin=visual_origin,
+                visual_material=visual_material,
+                collision_geometry=visual_geom,
+                collision_origin=visual_origin,
+            )
             links.append(link)
 
-            # Parse joint and create URDF joint to parent
+            # Parse joints and create URDF joints to parent
             if parent_name:
-                joint_elem = body_elem.find("joint")
-                if joint_elem is not None:
-                    joint_name = joint_elem.get("name", f"{parent_name}_to_{body_name}")
-                    mjcf_type = joint_elem.get("type", "hinge")
-                    joint_type = MJCF_TO_URDF_JOINT.get(mjcf_type, JointType.REVOLUTE)
+                joint_elems = body_elem.findall("joint")
+                if joint_elems:
+                    # Use the first non-free joint, or the first joint
+                    primary_joint = joint_elems[0]
+                    for je in joint_elems:
+                        jtype = je.get("type", "hinge")
+                        if jtype != "free":
+                            primary_joint = je
+                            break
 
-                    axis_str = joint_elem.get("axis", "0 0 1")
+                    joint_name = primary_joint.get(
+                        "name", f"{parent_name}_to_{body_name}"
+                    )
+                    mjcf_type = primary_joint.get("type", "hinge")
+                    joint_type = MJCF_TO_URDF_JOINT.get(
+                        mjcf_type, JointType.REVOLUTE
+                    )
+
+                    axis_str = primary_joint.get("axis", "0 0 1")
                     axis = tuple(float(v) for v in axis_str.split())
+
+                    from model_generation.core.types import (
+                        JointDynamics,
+                        JointLimits,
+                    )
+
+                    limits = None
+                    range_str = primary_joint.get("range")
+                    if range_str:
+                        range_vals = [float(v) for v in range_str.split()]
+                        limits = JointLimits(
+                            lower=range_vals[0], upper=range_vals[1]
+                        )
+
+                    damping = float(primary_joint.get("damping", 0.5))
+                    dynamics = JointDynamics(damping=damping)
 
                     joint = Joint(
                         name=joint_name,
@@ -485,6 +541,8 @@ class MJCFConverter:
                         child=body_name,
                         origin=Origin(xyz=pos),
                         axis=axis,
+                        limits=limits,
+                        dynamics=dynamics,
                     )
                     joints.append(joint)
                 else:
@@ -500,3 +558,49 @@ class MJCFConverter:
 
             # Recurse into children
             self._parse_mjcf_body(body_elem, body_name, links, joints)
+
+    def _parse_mjcf_geom(
+        self, geom_elem: ET.Element
+    ) -> tuple[Geometry | None, Origin]:
+        """Parse a MuJoCo geom element into a Geometry and Origin."""
+        geom_type = geom_elem.get("type", "sphere")
+        pos_str = geom_elem.get("pos", "0 0 0")
+        pos = tuple(float(v) for v in pos_str.split())
+        origin = Origin(xyz=pos)
+
+        size_str = geom_elem.get("size", "")
+        sizes = [float(v) for v in size_str.split()] if size_str else []
+
+        fromto_str = geom_elem.get("fromto")
+
+        if geom_type == "box" and len(sizes) >= 3:
+            # MuJoCo uses half-sizes
+            return (
+                Geometry.box(sizes[0] * 2, sizes[1] * 2, sizes[2] * 2),
+                origin,
+            )
+        elif geom_type == "sphere" and len(sizes) >= 1:
+            return Geometry.sphere(sizes[0]), origin
+        elif geom_type == "cylinder" and len(sizes) >= 2:
+            # MuJoCo: size="radius half-length"
+            return Geometry.cylinder(sizes[0], sizes[1] * 2), origin
+        elif geom_type == "capsule":
+            if fromto_str:
+                vals = [float(v) for v in fromto_str.split()]
+                dx = vals[3] - vals[0]
+                dy = vals[4] - vals[1]
+                dz = vals[5] - vals[2]
+                length = (dx**2 + dy**2 + dz**2) ** 0.5
+                radius = sizes[0] if sizes else 0.05
+                midpoint = (
+                    (vals[0] + vals[3]) / 2,
+                    (vals[1] + vals[4]) / 2,
+                    (vals[2] + vals[5]) / 2,
+                )
+                return Geometry.capsule(radius, length), Origin(xyz=midpoint)
+            elif len(sizes) >= 2:
+                return Geometry.capsule(sizes[0], sizes[1] * 2), origin
+            elif len(sizes) >= 1:
+                return Geometry.sphere(sizes[0]), origin
+
+        return None, origin

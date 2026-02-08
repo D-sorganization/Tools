@@ -24,8 +24,6 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any, ParamSpec, TypeVar
 
-from model_generation.core.validation import ValidationResult
-
 P = ParamSpec("P")
 R = TypeVar("R")
 
@@ -357,7 +355,7 @@ def require_unit_vector(vector: Any, name: str = "vector", tol: float = 1e-6) ->
             raise PreconditionError(f"{name} must be a unit vector (norm = {norm})")
 
 
-def ensure_valid_result(result: ValidationResult) -> None:
+def ensure_valid_result(result: Any) -> None:
     """Ensure a ValidationResult is valid.
 
     Args:
@@ -384,7 +382,7 @@ def is_non_negative(value: float) -> bool:
     return value >= 0
 
 
-def is_valid_result(result: ValidationResult) -> bool:
+def is_valid_result(result: Any) -> bool:
     """Check if validation result is valid."""
     return result.is_valid
 

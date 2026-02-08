@@ -22,6 +22,13 @@ from model_generation.core.contracts import postcondition, precondition
 logger = logging.getLogger(__name__)
 
 
+class ModelFormat(Enum):
+    """Supported model file formats."""
+
+    URDF = "urdf"
+    MJCF = "mjcf"
+
+
 class ModelCategory(Enum):
     """Categories for organizing models."""
 
@@ -68,6 +75,7 @@ class ModelEntry:
     source_path: str | None = None
 
     # File information
+    model_format: ModelFormat = ModelFormat.URDF
     urdf_path: Path | None = None
     mesh_dir: Path | None = None
 
@@ -96,6 +104,7 @@ class ModelEntry:
             "name": self.name,
             "description": self.description,
             "category": self.category.value,
+            "model_format": self.model_format.value,
             "source": self.source.value,
             "source_url": self.source_url,
             "source_path": self.source_path,
@@ -115,11 +124,18 @@ class ModelEntry:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> ModelEntry:
         """Create from dictionary."""
+        fmt_str = data.get("model_format", "urdf")
+        try:
+            model_format = ModelFormat(fmt_str)
+        except ValueError:
+            model_format = ModelFormat.URDF
+
         return cls(
             id=data["id"],
             name=data["name"],
             description=data.get("description", ""),
             category=ModelCategory(data.get("category", "other")),
+            model_format=model_format,
             source=RepositorySource(data.get("source", "local")),
             source_url=data.get("source_url"),
             source_path=data.get("source_path"),
@@ -223,6 +239,60 @@ class ModelLibrary:
         # Load existing index
         self._load_index()
 
+        # Register bundled models
+        self._register_bundled_models()
+
+    def _register_bundled_models(self) -> None:
+        """Register models from the bundled library if not already present."""
+        bundled_dir = Path(__file__).parent / "bundled"
+        manifest_path = bundled_dir / "manifest.json"
+        if not manifest_path.exists():
+            return
+
+        try:
+            manifest = json.loads(manifest_path.read_text())
+        except Exception as exc:
+            logger.warning("Failed to load bundled manifest: %s", exc)
+            return
+
+        for entry_data in manifest.get("models", []):
+            model_id = entry_data["id"]
+            if model_id in self._entries:
+                continue
+
+            model_path = bundled_dir / entry_data["file"]
+            if not model_path.exists():
+                continue
+
+            fmt_str = entry_data.get("format", "urdf")
+            try:
+                model_format = ModelFormat(fmt_str)
+            except ValueError:
+                model_format = ModelFormat.URDF
+
+            try:
+                category = ModelCategory(entry_data.get("category", "other"))
+            except ValueError:
+                category = ModelCategory.OTHER
+
+            self._entries[model_id] = ModelEntry(
+                id=model_id,
+                name=entry_data["name"],
+                description=entry_data.get("description", ""),
+                category=category,
+                model_format=model_format,
+                source=RepositorySource.BUNDLED,
+                urdf_path=model_path,
+                author=entry_data.get("author"),
+                license=entry_data.get("license"),
+                tags=entry_data.get("tags", []),
+                link_count=entry_data.get("link_count", 0),
+                joint_count=entry_data.get("joint_count", 0),
+                dof_count=entry_data.get("dof_count", 0),
+                is_cached=True,
+                is_read_only=True,
+            )
+
     def _load_index(self) -> None:
         """Load model index from disk."""
         if self.config.index_file.exists():
@@ -297,9 +367,9 @@ class ModelLibrary:
         """Get a model entry by ID."""
         return self._entries.get(model_id)
 
-    @precondition(lambda model_id: model_id is not None, "Model ID cannot be None")
+    @precondition(lambda self, model_id, **kw: model_id is not None, "Model ID cannot be None")
     @precondition(
-        lambda model_id: len(model_id.strip()) > 0, "Model ID cannot be empty"
+        lambda self, model_id, **kw: len(model_id.strip()) > 0, "Model ID cannot be empty"
     )
     def load_model(
         self,
@@ -307,7 +377,7 @@ class ModelLibrary:
         force_download: bool = False,
     ) -> ParsedModel | None:
         """
-        Load a model from the library.
+        Load a model from the library (URDF or MJCF).
 
         Args:
             model_id: Model identifier
@@ -327,17 +397,35 @@ class ModelLibrary:
                 self._download_model(entry)
 
         if not entry.urdf_path or not entry.urdf_path.exists():
-            logger.error(f"URDF file not found for model: {model_id}")
+            logger.error(f"Model file not found for model: {model_id}")
             return None
 
         try:
-            model = self._parser.parse(entry.urdf_path, read_only=entry.is_read_only)
-            return model
+            if entry.model_format == ModelFormat.MJCF:
+                return self._load_mjcf(entry.urdf_path, entry.is_read_only)
+            else:
+                return self._parser.parse(
+                    entry.urdf_path, read_only=entry.is_read_only
+                )
         except Exception as e:
             logger.error(f"Failed to load model {model_id}: {e}")
             return None
 
-    @precondition(lambda urdf_path: urdf_path is not None, "URDF path cannot be None")
+    def _load_mjcf(self, path: Path, read_only: bool = False) -> ParsedModel:
+        """Load an MJCF file into a ParsedModel."""
+        import xml.etree.ElementTree as ET
+
+        from model_generation.converters.mjcf_converter import MJCFConverter
+
+        converter = MJCFConverter()
+        xml_string = path.read_text()
+        root = ET.fromstring(xml_string)
+        model = converter._parse_mjcf(root)
+        model.source_path = path
+        model.original_xml = xml_string
+        model.read_only = read_only
+        return model
+
     @postcondition(lambda result: result is not None, "Must return a valid ModelEntry")
     @postcondition(lambda result: result.id, "ModelEntry must have an ID")
     def add_local_model(
@@ -523,46 +611,58 @@ class ModelLibrary:
             with urllib.request.urlopen(api_url) as response:
                 contents = json.loads(response.read().decode())
 
-            # Look for URDF files
+            # Look for URDF and MJCF files
+            model_extensions = {".urdf": ModelFormat.URDF, ".xml": ModelFormat.MJCF}
             for item in contents:
-                if item["type"] == "file" and item["name"].endswith(".urdf"):
-                    model_id = f"{repo_name}/{item['name'][:-5]}"
-                    models.append(
-                        ModelEntry(
-                            id=model_id,
-                            name=item["name"][:-5],
-                            description=f"From {owner}/{repo}",
-                            source=RepositorySource.GITHUB,
-                            source_url=item["download_url"],
-                            source_path=f"{owner}/{repo}/{subpath}",
-                            is_cached=False,
-                            is_read_only=True,
-                        )
-                    )
+                if item["type"] == "file":
+                    name = item["name"]
+                    for ext, fmt in model_extensions.items():
+                        if name.endswith(ext):
+                            model_id = f"{repo_name}/{name[: -len(ext)]}"
+                            models.append(
+                                ModelEntry(
+                                    id=model_id,
+                                    name=name[: -len(ext)],
+                                    description=f"From {owner}/{repo}",
+                                    model_format=fmt,
+                                    source=RepositorySource.GITHUB,
+                                    source_url=item["download_url"],
+                                    source_path=f"{owner}/{repo}/{subpath}",
+                                    is_cached=False,
+                                    is_read_only=True,
+                                )
+                            )
+                            break
                 elif item["type"] == "dir":
-                    # Check subdirectory for URDF
+                    # Check subdirectory for model files
                     subdir_url = item["url"]
                     try:
                         with urllib.request.urlopen(subdir_url) as sub_response:
                             sub_contents = json.loads(sub_response.read().decode())
                         for sub_item in sub_contents:
-                            if sub_item["type"] == "file" and sub_item["name"].endswith(
-                                ".urdf"
-                            ):
-                                model_id = f"{repo_name}/{item['name']}"
-                                models.append(
-                                    ModelEntry(
-                                        id=model_id,
-                                        name=item["name"],
-                                        description=f"From {owner}/{repo}",
-                                        source=RepositorySource.GITHUB,
-                                        source_url=sub_item["download_url"],
-                                        source_path=f"{owner}/{repo}/{subpath}/{item['name']}",
-                                        is_cached=False,
-                                        is_read_only=True,
+                            if sub_item["type"] != "file":
+                                continue
+                            sub_name = sub_item["name"]
+                            for ext, fmt in model_extensions.items():
+                                if sub_name.endswith(ext):
+                                    model_id = f"{repo_name}/{item['name']}"
+                                    models.append(
+                                        ModelEntry(
+                                            id=model_id,
+                                            name=item["name"],
+                                            description=f"From {owner}/{repo}",
+                                            model_format=fmt,
+                                            source=RepositorySource.GITHUB,
+                                            source_url=sub_item["download_url"],
+                                            source_path=f"{owner}/{repo}/{subpath}/{item['name']}",
+                                            is_cached=False,
+                                            is_read_only=True,
+                                        )
                                     )
-                                )
-                                break
+                                    break
+                            else:
+                                continue
+                            break
                     except Exception:
                         pass
 
@@ -624,9 +724,9 @@ class ModelLibrary:
             logger.error(f"Failed to download {entry.id}: {e}")
             return False
 
-    @precondition(lambda model_id: model_id is not None, "Model ID cannot be None")
+    @precondition(lambda self, model_id, **kw: model_id is not None, "Model ID cannot be None")
     @precondition(
-        lambda model_id: len(model_id.strip()) > 0, "Model ID cannot be empty"
+        lambda self, model_id, **kw: len(model_id.strip()) > 0, "Model ID cannot be empty"
     )
     def create_editable_copy(
         self,
@@ -701,7 +801,7 @@ class ModelLibrary:
 
         return new_entry
 
-    @precondition(lambda model_id: model_id is not None, "Model ID cannot be None")
+    @precondition(lambda self, model_id, **kw: model_id is not None, "Model ID cannot be None")
     def remove_model(self, model_id: str, delete_files: bool = False) -> bool:
         """
         Remove a model from the library.
