@@ -26,6 +26,9 @@ const temperatureInput = document.getElementById('temperature');
 const pressureInput = document.getElementById('pressure');
 const gasDensityInput = document.getElementById('gasDensity');
 
+// Theme selector
+const themeSelect = document.getElementById('themeSelect');
+
 // State
 let categoryData = {};
 let conversionHistory = [];
@@ -36,12 +39,30 @@ let debounceTimer = null;
 // ============================================================================
 
 async function init() {
+  loadTheme();
   loadHistory();
   await fetchCategories();
   setupEventListeners();
   populateUnits(categorySelect.value);
   updateConditionalParams();
   performConversion();
+}
+
+// ============================================================================
+// THEME (inherits from shared/theme-definitions/themes.json)
+// ============================================================================
+
+function loadTheme() {
+  var saved = localStorage.getItem('unitConverterTheme');
+  if (saved && themeSelect) {
+    document.documentElement.setAttribute('data-theme', saved);
+    themeSelect.value = saved;
+  }
+}
+
+function changeTheme(themeName) {
+  document.documentElement.setAttribute('data-theme', themeName);
+  localStorage.setItem('unitConverterTheme', themeName);
 }
 
 async function fetchCategories() {
@@ -346,6 +367,13 @@ function setupEventListeners() {
   temperatureInput.addEventListener('input', debounce(performConversion, 300));
   pressureInput.addEventListener('input', debounce(performConversion, 300));
   gasDensityInput.addEventListener('input', debounce(performConversion, 300));
+
+  // Theme switching
+  if (themeSelect) {
+    themeSelect.addEventListener('change', function() {
+      changeTheme(themeSelect.value);
+    });
+  }
 
   // Keyboard shortcut: Enter to convert
   document.addEventListener('keydown', function(e) {

@@ -1,61 +1,33 @@
 /*
- * Unit Converter - Catppuccin Mocha Theme
- * Mirrors the PyQt6 Flow Rate Converter styling.
+ * Unit Converter - Shared Theme System
+ * Colors are inherited from src/shared/theme-definitions/themes.json
+ * via CSS custom properties set by /api/theme.css.
  *
- * Color palette from: https://github.com/catppuccin/catppuccin
- * Mocha variant
+ * The same theme definitions drive PyQt6 stylesheets, matplotlib plots,
+ * and this web frontend -- ensuring visual consistency across platforms.
+ *
+ * Variable mapping (from themes.json keys):
+ *   bg           -> --bg
+ *   group_bg     -> --bg-card
+ *   border       -> --border
+ *   text         -> --text-primary
+ *   text_secondary -> --text-secondary
+ *   label        -> --text-muted
+ *   focus        -> --border-focus
+ *   input_bg     -> --bg-input
+ *   accent       -> --accent
+ *   title_bg     -> --bg-elevated
+ *   title_border -> --title-border
+ *   button_hover -> --accent-hover
+ *   success      -> --success
+ *   warning      -> --warning
+ *   error        -> --error
  */
 
 :root {
-  /* Catppuccin Mocha palette */
-  --rosewater: #f5e0dc;
-  --flamingo: #f2cdcd;
-  --pink: #f5c2e7;
-  --mauve: #cba6f7;
-  --red: #f38ba8;
-  --maroon: #eba0ac;
-  --peach: #fab387;
-  --yellow: #f9e2af;
-  --green: #a6e3a1;
-  --teal: #94e2d5;
-  --sky: #89dceb;
-  --sapphire: #74c7ec;
-  --blue: #89b4fa;
-  --lavender: #b4befe;
-  --text: #cdd6f4;
-  --subtext1: #bac2de;
-  --subtext0: #a6adc8;
-  --overlay2: #9399b2;
-  --overlay1: #7f849c;
-  --overlay0: #6c7086;
-  --surface2: #585b70;
-  --surface1: #45475a;
-  --surface0: #313244;
-  --base: #1e1e2e;
-  --mantle: #181825;
-  --crust: #11111b;
-
-  /* Semantic tokens */
-  --bg: var(--base);
-  --bg-card: var(--surface0);
-  --bg-input: var(--surface0);
-  --bg-elevated: var(--surface1);
-  --text-primary: var(--text);
-  --text-secondary: var(--subtext1);
-  --text-muted: var(--overlay1);
-  --border: var(--surface1);
-  --border-focus: var(--blue);
-  --accent: var(--blue);
-  --accent-hover: var(--sapphire);
-  --accent-pressed: var(--lavender);
-  --success: var(--green);
-  --error: var(--red);
-  --warning: var(--yellow);
-
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
-
   --font-family: "Segoe UI", "Arial", sans-serif;
 }
 
@@ -91,10 +63,10 @@ body {
   background-color: var(--bg);
 }
 
-/* Header - matches PyQt6 header-label style */
+/* Header - matches PyQt6 QMainWindow title bar styling */
 .header {
-  background-color: var(--mantle);
-  border-bottom: 1px solid var(--surface1);
+  background-color: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
   padding: 16px;
   display: flex;
   align-items: center;
@@ -104,7 +76,7 @@ body {
 .header-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--blue);
+  color: var(--accent);
 }
 
 .header-badge {
@@ -112,8 +84,8 @@ body {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--crust);
-  background-color: var(--mauve);
+  color: var(--bg);
+  background-color: var(--accent);
   padding: 2px 8px;
   border-radius: var(--radius-sm);
 }
@@ -136,7 +108,7 @@ body {
 }
 
 .card-title {
-  color: var(--mauve);
+  color: var(--accent);
   font-size: 0.875rem;
   font-weight: 700;
   margin-bottom: 10px;
@@ -179,7 +151,7 @@ body {
   padding: 6px 10px;
   background-color: var(--bg-input);
   color: var(--text-primary);
-  border: 1px solid var(--surface2);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   font-size: 0.9375rem;
   font-family: var(--font-family);
@@ -189,7 +161,7 @@ body {
 }
 
 .select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%23cdd6f4' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%23888888' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 10px center;
   padding-right: 28px;
@@ -204,11 +176,11 @@ body {
 
 .input:hover,
 .select:hover {
-  border-color: var(--blue);
+  border-color: var(--accent);
 }
 
 .input::placeholder {
-  color: var(--overlay0);
+  color: var(--text-muted);
 }
 
 /* Remove number spinners */
@@ -249,7 +221,7 @@ body {
 .btn-primary {
   width: 100%;
   background-color: var(--accent);
-  color: var(--crust);
+  color: var(--bg);
 }
 
 .btn-primary:hover {
@@ -257,12 +229,12 @@ body {
 }
 
 .btn-primary:active {
-  background-color: var(--accent-pressed);
+  background-color: var(--border-focus);
 }
 
 .btn-primary:disabled {
-  background-color: var(--surface2);
-  color: var(--overlay0);
+  background-color: var(--border);
+  color: var(--text-muted);
   cursor: not-allowed;
 }
 
@@ -272,9 +244,9 @@ body {
 }
 
 .btn-swap {
-  background-color: var(--surface0);
+  background-color: var(--bg-card);
   color: var(--text-secondary);
-  border: 1px solid var(--surface2);
+  border: 1px solid var(--border);
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -283,20 +255,20 @@ body {
 }
 
 .btn-swap:hover {
-  border-color: var(--blue);
-  color: var(--blue);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .btn-swap:active {
-  background-color: var(--blue);
-  color: var(--crust);
-  border-color: var(--blue);
+  background-color: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
 }
 
 .btn-text {
   background: none;
   border: none;
-  color: var(--blue);
+  color: var(--accent);
   font-size: 0.8125rem;
   font-weight: 600;
   cursor: pointer;
@@ -306,12 +278,12 @@ body {
 }
 
 .btn-text:hover {
-  background-color: var(--surface1);
+  background-color: var(--bg-elevated);
 }
 
-/* Result display - match PyQt6 result-label styling */
+/* Result display - match PyQt6 result label styling */
 .result-display {
-  color: var(--green);
+  color: var(--success, var(--accent));
   font-size: 1.5rem;
   font-weight: 700;
   text-align: center;
@@ -320,7 +292,7 @@ body {
 }
 
 .result-unit {
-  color: var(--subtext0);
+  color: var(--text-muted);
   font-size: 0.8125rem;
   text-align: center;
   margin-top: 2px;
@@ -328,13 +300,13 @@ body {
 
 /* Error Message */
 .error-message {
-  background-color: rgba(243, 139, 168, 0.15);
-  color: var(--red);
+  color: var(--error);
   padding: 10px 12px;
   border-radius: var(--radius-md);
   font-size: 0.8125rem;
   font-weight: 500;
-  border-left: 3px solid var(--red);
+  border-left: 3px solid var(--error);
+  background-color: var(--bg-card);
 }
 
 /* Recent conversions */
@@ -345,7 +317,7 @@ body {
 }
 
 .empty-state {
-  color: var(--overlay1);
+  color: var(--text-muted);
   font-size: 0.8125rem;
   text-align: center;
   padding: 16px 0;
@@ -357,22 +329,22 @@ body {
   width: 100%;
   text-align: left;
   font-family: var(--font-family);
-  background-color: var(--mantle);
+  background-color: var(--bg-elevated);
   color: var(--text-primary);
   padding: 8px 10px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--surface1);
+  border: 1px solid var(--border);
   cursor: pointer;
   transition: border-color 0.15s;
   font-size: inherit;
 }
 
 .recent-item:hover {
-  border-color: var(--blue);
+  border-color: var(--accent);
 }
 
 .recent-item:active {
-  background-color: var(--surface0);
+  background-color: var(--bg-card);
 }
 
 .recent-item-text {
@@ -383,18 +355,38 @@ body {
 
 .recent-item-time {
   font-size: 0.6875rem;
-  color: var(--overlay1);
+  color: var(--text-muted);
   margin-top: 2px;
+}
+
+/* Theme Selector */
+.theme-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-selector .label {
+  margin: 0;
+  font-size: 0.6875rem;
+  white-space: nowrap;
+}
+
+.theme-selector .select {
+  width: auto;
+  min-width: 130px;
+  padding: 3px 26px 3px 8px;
+  font-size: 0.75rem;
 }
 
 /* Footer */
 .footer {
-  background-color: var(--mantle);
-  border-top: 1px solid var(--surface1);
+  background-color: var(--bg-elevated);
+  border-top: 1px solid var(--border);
   padding: 12px 16px;
   text-align: center;
   font-size: 0.6875rem;
-  color: var(--overlay1);
+  color: var(--text-muted);
 }
 
 .footer-version {
@@ -409,7 +401,7 @@ body {
 
 /* Focus accessibility */
 *:focus-visible {
-  outline: 2px solid var(--blue);
+  outline: 2px solid var(--border-focus);
   outline-offset: 2px;
 }
 
@@ -429,12 +421,12 @@ body {
 }
 
 /* Animation for result updates */
-@keyframes flash-green {
-  0% { color: var(--green); }
-  50% { color: var(--teal); }
-  100% { color: var(--green); }
+@keyframes flash-result {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
 }
 
 .result-flash {
-  animation: flash-green 0.3s ease-out;
+  animation: flash-result 0.3s ease-out;
 }

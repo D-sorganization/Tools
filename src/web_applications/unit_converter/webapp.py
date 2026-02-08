@@ -1,7 +1,7 @@
 """Unit Converter Flask web application.
 
-Provides a REST API for unit conversions with a Catppuccin Mocha-themed
-frontend that mirrors the PyQt6 flow rate converter styling.
+Provides a REST API for unit conversions with a theme system that inherits
+from the shared theme-definitions used by all PyQt6 and web applications.
 """
 
 from __future__ import annotations
@@ -19,6 +19,11 @@ from flask import (
 )
 
 from .converter import UnitConverter
+from .web_theme import (
+    all_themes_as_css,
+    get_default_theme_name,
+    get_themes_for_api,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +37,9 @@ def create_app() -> Flask:
     )
 
     converter = UnitConverter()
+
+    # Pre-generate theme CSS from the shared themes.json
+    _theme_css = all_themes_as_css()
 
     @app.after_request
     def add_security_headers(response: Response) -> Response:
@@ -72,8 +80,22 @@ def create_app() -> Flask:
                 "index.html",
                 categories=categories,
                 category_data=category_data,
+                themes=get_themes_for_api(),
+                default_theme=get_default_theme_name(),
             )
         )
+
+    @app.get("/api/theme.css")
+    def api_theme_css() -> Response:
+        """Serve dynamically-generated theme CSS from shared themes.json."""
+        response = Response(_theme_css, mimetype="text/css")
+        response.headers["Cache-Control"] = "public, max-age=3600"
+        return response
+
+    @app.get("/api/themes")
+    def api_themes() -> tuple[Any, int]:
+        """Return list of available themes from the shared theme system."""
+        return jsonify(get_themes_for_api()), 200
 
     @app.post("/api/convert")
     def api_convert() -> tuple[Any, int]:
