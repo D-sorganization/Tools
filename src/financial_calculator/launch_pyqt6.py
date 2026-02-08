@@ -29,9 +29,9 @@ def main() -> int:
         return 1
 
     # Import and launch
+    from financial_calculator.ui.pyqt6.main_window import FinancialCalculatorMainWindow
     from PyQt6.QtWidgets import QApplication
 
-    from financial_calculator.ui.pyqt6.main_window import FinancialCalculatorMainWindow
     from shared.python.theme import setup_themed_app
 
     app = QApplication(sys.argv)
