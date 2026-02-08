@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en" data-theme="{{ default_theme }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="NIST-compliant unit converter" />
+    <title>Unit Converter</title>
+    <!-- Theme CSS generated from shared/theme-definitions/themes.json -->
+    <link rel="stylesheet" href="/api/theme.css" />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Header -->
+      <header class="header">
+        <h1 class="header-title">Unit Converter</h1>
+        <div class="theme-selector">
+          <label for="themeSelect" class="label">Theme</label>
+          <select id="themeSelect" class="select">
+            {% for theme in themes %}
+            <option value="{{ theme.name }}"
+              {% if theme.name == default_theme %}selected{% endif %}
+            >{{ theme.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <span class="header-badge">NIST</span>
+      </header>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Category Selector -->
+        <div class="form-group">
+          <label for="category" class="label">Category</label>
+          <select id="category" class="select">
+            {% for cat in categories %}
+            <option value="{{ cat }}">{{ category_data[cat].label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Input Section -->
+        <div class="card">
+          <div class="card-title">Input</div>
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="fromValue" class="label">Value</label>
+              <input
+                type="number"
+                id="fromValue"
+                class="input"
+                placeholder="Enter value"
+                step="any"
+                value="1"
+              />
+            </div>
+            <div class="form-group flex-1">
+              <label for="fromUnit" class="label">From Unit</label>
+              <select id="fromUnit" class="select"></select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="toUnit" class="label">To Unit</label>
+              <select id="toUnit" class="select"></select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gas Flow Parameters (conditional) -->
+        <div id="gasFlowParams" class="card hidden">
+          <div class="card-title">Gas Flow Parameters</div>
+          <div class="form-hint">Required for ACFM conversions</div>
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="standardCondition" class="label">Standard</label>
+              <select id="standardCondition" class="select select-sm">
+                <option value="SCFM_60F">SCFM @ 60F</option>
+                <option value="SCFM_70F">SCFM @ 70F</option>
+                <option value="STP">STP (0C)</option>
+                <option value="NTP">NTP (20C)</option>
+                <option value="SATP">SATP (25C)</option>
+              </select>
+            </div>
+            <div class="form-group flex-1">
+              <label for="gasType" class="label">Gas Type</label>
+              <select id="gasType" class="select select-sm">
+                <option value="air">Air</option>
+                <option value="nitrogen">Nitrogen</option>
+                <option value="oxygen">Oxygen</option>
+                <option value="hydrogen">Hydrogen</option>
+                <option value="methane">Methane</option>
+                <option value="co">Carbon Monoxide</option>
+                <option value="co2">Carbon Dioxide</option>
+                <option value="h2o">Water Vapor</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="temperature" class="label">Temp (K)</label>
+              <input
+                type="number"
+                id="temperature"
+                class="input input-sm"
+                placeholder="298.15"
+                step="any"
+              />
+            </div>
+            <div class="form-group flex-1">
+              <label for="pressure" class="label">Press (Pa)</label>
+              <input
+                type="number"
+                id="pressure"
+                class="input input-sm"
+                placeholder="101325"
+                step="any"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Heating Value Parameters (conditional) -->
+        <div id="heatingValueParams" class="card hidden">
+          <div class="card-title">Heating Value Parameters</div>
+          <div class="form-hint">Required for volumetric units</div>
+          <div class="form-group">
+            <label for="gasDensity" class="label">Density at STP (kg/m3)</label>
+            <input
+              type="number"
+              id="gasDensity"
+              class="input input-sm"
+              placeholder="0.717 (methane)"
+              step="any"
+            />
+            <div class="form-hint">
+              Air: 1.29, Methane: 0.72, H2: 0.09, Syngas: ~0.89
+            </div>
+          </div>
+        </div>
+
+        <!-- Convert Button -->
+        <button id="convertBtn" class="btn btn-primary">Convert</button>
+
+        <!-- Swap Button -->
+        <div class="swap-row">
+          <button id="swapBtn" class="btn btn-swap" title="Swap units">
+            &#x21C5;
+          </button>
+        </div>
+
+        <!-- Result Section -->
+        <div class="card">
+          <div class="card-title">Result</div>
+          <div id="resultDisplay" class="result-display">--</div>
+          <div id="resultUnit" class="result-unit"></div>
+        </div>
+
+        <!-- Error Message -->
+        <div id="errorMessage" class="error-message hidden" role="alert"></div>
+
+        <!-- Recent Conversions -->
+        <div class="card">
+          <div class="card-header-row">
+            <div class="card-title">Recent Conversions</div>
+            <button id="clearHistory" class="btn-text">Clear</button>
+          </div>
+          <div id="recentList" class="recent-list">
+            <p class="empty-state">No recent conversions</p>
+          </div>
+        </div>
+      </main>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <p>NIST-compliant conversions &bull; Python backend</p>
+        <p class="footer-version">v3.0.0 &bull; Shared Theme System</p>
+      </footer>
+    </div>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

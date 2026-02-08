@@ -1,0 +1,432 @@
+/*
+ * Unit Converter - Shared Theme System
+ * Colors are inherited from src/shared/theme-definitions/themes.json
+ * via CSS custom properties set by /api/theme.css.
+ *
+ * The same theme definitions drive PyQt6 stylesheets, matplotlib plots,
+ * and this web frontend -- ensuring visual consistency across platforms.
+ *
+ * Variable mapping (from themes.json keys):
+ *   bg           -> --bg
+ *   group_bg     -> --bg-card
+ *   border       -> --border
+ *   text         -> --text-primary
+ *   text_secondary -> --text-secondary
+ *   label        -> --text-muted
+ *   focus        -> --border-focus
+ *   input_bg     -> --bg-input
+ *   accent       -> --accent
+ *   title_bg     -> --bg-elevated
+ *   title_border -> --title-border
+ *   button_hover -> --accent-hover
+ *   success      -> --success
+ *   warning      -> --warning
+ *   error        -> --error
+ */
+
+:root {
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --font-family: "Segoe UI", "Arial", sans-serif;
+}
+
+/* Reset */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg);
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* App Container */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 640px;
+  margin: 0 auto;
+  background-color: var(--bg);
+}
+
+/* Header - matches PyQt6 QMainWindow title bar styling */
+.header {
+  background-color: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.header-badge {
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--bg);
+  background-color: var(--accent);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Cards - match PyQt6 QGroupBox styling */
+.card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+}
+
+.card-title {
+  color: var(--accent);
+  font-size: 0.875rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.card-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* Form elements - match PyQt6 QLineEdit/QComboBox/QDoubleSpinBox styling */
+.form-group {
+  margin-bottom: 10px;
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.input,
+.select {
+  width: 100%;
+  padding: 6px 10px;
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.9375rem;
+  font-family: var(--font-family);
+  transition: border-color 0.2s;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%23888888' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+  cursor: pointer;
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--border-focus);
+}
+
+.input:hover,
+.select:hover {
+  border-color: var(--accent);
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Remove number spinners */
+.input[type="number"]::-webkit-inner-spin-button,
+.input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.input-sm,
+.select-sm {
+  padding: 4px 8px;
+  font-size: 0.8125rem;
+}
+
+.form-hint {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+/* Buttons - match PyQt6 QPushButton styling */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 20px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 0.875rem;
+  font-family: var(--font-family);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.btn-primary {
+  width: 100%;
+  background-color: var(--accent);
+  color: var(--bg);
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-hover);
+}
+
+.btn-primary:active {
+  background-color: var(--border-focus);
+}
+
+.btn-primary:disabled {
+  background-color: var(--border);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.swap-row {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-swap {
+  background-color: var(--bg-card);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.25rem;
+  padding: 0;
+}
+
+.btn-swap:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn-swap:active {
+  background-color: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+.btn-text {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family);
+}
+
+.btn-text:hover {
+  background-color: var(--bg-elevated);
+}
+
+/* Result display - match PyQt6 result label styling */
+.result-display {
+  color: var(--success, var(--accent));
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 8px 0;
+  word-break: break-all;
+}
+
+.result-unit {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  text-align: center;
+  margin-top: 2px;
+}
+
+/* Error Message */
+.error-message {
+  color: var(--error);
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border-left: 3px solid var(--error);
+  background-color: var(--bg-card);
+}
+
+/* Recent conversions */
+.recent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.empty-state {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  text-align: center;
+  padding: 16px 0;
+  font-style: italic;
+}
+
+.recent-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-family: var(--font-family);
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: border-color 0.15s;
+  font-size: inherit;
+}
+
+.recent-item:hover {
+  border-color: var(--accent);
+}
+
+.recent-item:active {
+  background-color: var(--bg-card);
+}
+
+.recent-item-text {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.recent-item-time {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Theme Selector */
+.theme-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-selector .label {
+  margin: 0;
+  font-size: 0.6875rem;
+  white-space: nowrap;
+}
+
+.theme-selector .select {
+  width: auto;
+  min-width: 130px;
+  padding: 3px 26px 3px 8px;
+  font-size: 0.75rem;
+}
+
+/* Footer */
+.footer {
+  background-color: var(--bg-elevated);
+  border-top: 1px solid var(--border);
+  padding: 12px 16px;
+  text-align: center;
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+}
+
+.footer-version {
+  margin-top: 2px;
+  opacity: 0.7;
+}
+
+/* Utility */
+.hidden {
+  display: none !important;
+}
+
+/* Focus accessibility */
+*:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Responsive */
+@media (min-width: 640px) {
+  .main-content {
+    padding: 24px;
+  }
+
+  .header {
+    padding: 16px 24px;
+  }
+
+  .header-title {
+    font-size: 1.5rem;
+  }
+}
+
+/* Animation for result updates */
+@keyframes flash-result {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+.result-flash {
+  animation: flash-result 0.3s ease-out;
+}
