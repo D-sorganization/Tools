@@ -52,23 +52,12 @@ def main() -> int:
         print("\nPlease install the missing packages and try again.")
         return 1
 
-    # Set up path for module import
-    src_path = Path(__file__).parent / "python"
-    if src_path.exists():
-        sys.path.insert(0, str(src_path))
+    # Bootstrap imports for development mode (before pip install -e .)
+    _repo_root = Path(__file__).resolve().parents[3]
+    sys.path.insert(0, str(_repo_root / "src" / "shared" / "python"))
+    from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
 
-    # Tools repo root paths needed for cross-module imports
-    tools_root = Path(__file__).parent.parent.parent.parent
-
-    # src/ - for shared.python.* imports (theme, plot_theme)
-    tools_src = tools_root / "src"
-    if tools_src.exists():
-        sys.path.insert(0, str(tools_src))
-
-    # src/python/src/ - for utils.path_helpers
-    utils_path = tools_root / "src" / "python" / "src"
-    if utils_path.exists():
-        sys.path.insert(0, str(utils_path))
+    ensure_paths(_repo_root)
 
     try:
         from data_processor.ui.pyqt6.main_window import main as gui_main

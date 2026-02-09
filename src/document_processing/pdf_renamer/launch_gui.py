@@ -4,7 +4,12 @@ import logging
 import sys
 from pathlib import Path
 
-# Add src to path
+# Bootstrap imports for development mode (before pip install -e .)
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
+from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
+
+ensure_paths(_REPO_ROOT)
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 # Import shared logging configuration

@@ -22,9 +22,9 @@ def main() -> int:
             print(f"  - {pkg}: pip install {pkg}")
         return 1
 
+    from baghouse_calculator.ui.pyqt6.main_window import BaghouseCalculatorMainWindow
     from PyQt6.QtWidgets import QApplication
 
-    from baghouse_calculator.ui.pyqt6.main_window import BaghouseCalculatorMainWindow
     from shared.python.theme import setup_themed_app
 
     app = QApplication(sys.argv)

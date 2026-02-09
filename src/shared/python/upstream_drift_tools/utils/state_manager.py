@@ -11,50 +11,39 @@ from __future__ import annotations
 import json
 import logging
 import shutil
-import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-# Try to import centralized file utilities
-try:
-    from utils.file_utils import safe_read_json, safe_write_json
-except ImportError:
-    # Fallback if utils not in path
-    _src_path = Path(__file__).resolve().parents[4] / "python" / "src"
-    if str(_src_path) not in sys.path:
-        sys.path.insert(0, str(_src_path))
-    try:
-        from utils.file_utils import safe_read_json, safe_write_json
-    except ImportError:
-        # Final fallback - inline implementations
-        def safe_read_json(file_path: Path | str, default: Any = None) -> Any:
-            """Fallback safe JSON reader."""
-            path = Path(file_path)
-            if not path.exists():
-                return default
-            try:
-                with open(path, encoding="utf-8") as f:
-                    return json.load(f)
-            except (json.JSONDecodeError, OSError):
-                return default
 
-        def safe_write_json(
-            file_path: Path | str,
-            data: Any,
-            indent: int = 2,
-            create_parents: bool = True,
-        ) -> bool:
-            """Fallback safe JSON writer."""
-            path = Path(file_path)
-            try:
-                if create_parents:
-                    path.parent.mkdir(parents=True, exist_ok=True)
-                with open(path, "w", encoding="utf-8") as f:
-                    json.dump(data, f, indent=indent, ensure_ascii=False)
-                return True
-            except (TypeError, OSError):
-                return False
+def safe_read_json(file_path: Path | str, default: Any = None) -> Any:
+    """Read JSON from a file, returning a default on failure."""
+    path = Path(file_path)
+    if not path.exists():
+        return default
+    try:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return default
+
+
+def safe_write_json(
+    file_path: Path | str,
+    data: Any,
+    indent: int = 2,
+    create_parents: bool = True,
+) -> bool:
+    """Write data as JSON to a file."""
+    path = Path(file_path)
+    try:
+        if create_parents:
+            path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=indent, ensure_ascii=False)
+        return True
+    except (TypeError, OSError):
+        return False
 
 
 # Setup logging
@@ -543,10 +532,19 @@ class StateManager:
             logger.exception("Error cleaning up backups: %s", e)
 
 
-# Create global instance
-state_manager = StateManager()
+_state_manager: StateManager | None = None
 
 
-def get_state_manager() -> StateManager:
-    """Get the global state manager instance"""
-    return state_manager
+def get_state_manager(base_directory: str = "saved_states") -> StateManager:
+    """Get or create the global state manager instance (lazy initialization).
+
+    Args:
+        base_directory: Base directory for state storage.
+
+    Returns:
+        The singleton StateManager instance.
+    """
+    global _state_manager
+    if _state_manager is None:
+        _state_manager = StateManager(base_directory)
+    return _state_manager

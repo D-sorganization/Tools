@@ -6,25 +6,20 @@ and the unified studio launcher.
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pytest
 
-# Path setup (mirrors launch_pyqt6.py) - inner python/ dirs inserted first
-TOOLS_ROOT = Path(__file__).parent.parent.parent.parent
-_PATHS = [
-    TOOLS_ROOT / "src" / "signal_processing_studio" / "python",
-    TOOLS_ROOT / "src" / "function_generator" / "python",
-    TOOLS_ROOT / "src" / "shared" / "python",
-    TOOLS_ROOT / "src",
-]
-for p in reversed(_PATHS):
-    s = str(p)
-    if s not in sys.path:
-        sys.path.insert(0, s)
+# Bootstrap for test discovery
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+import sys
+
+sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
+from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
+
+ensure_paths(_REPO_ROOT)
 
 # Force the inner signal_processing_studio package to take precedence.
 # pytest may have already resolved the outer __init__.py from src/.
@@ -327,7 +322,7 @@ class TestLauncher:
         """Launcher should detect required dependencies."""
         import importlib
 
-        launcher_dir = str(TOOLS_ROOT / "src" / "signal_processing_studio")
+        launcher_dir = str(_REPO_ROOT / "src" / "signal_processing_studio")
         if launcher_dir not in sys.path:
             sys.path.insert(0, launcher_dir)
 
@@ -335,7 +330,7 @@ class TestLauncher:
         # (which would shadow the Function Generator's launch_pyqt6 in other tests)
         spec = importlib.util.spec_from_file_location(
             "studio_launch_pyqt6",
-            TOOLS_ROOT / "src" / "signal_processing_studio" / "launch_pyqt6.py",
+            _REPO_ROOT / "src" / "signal_processing_studio" / "launch_pyqt6.py",
         )
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)

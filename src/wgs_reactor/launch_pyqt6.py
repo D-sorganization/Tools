@@ -6,11 +6,12 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-# Add paths for imports
-MODULE_DIR = Path(__file__).parent
-TOOLS_ROOT = MODULE_DIR.parent.parent
-sys.path.insert(0, str(MODULE_DIR / "python"))
-sys.path.insert(0, str(TOOLS_ROOT / "src"))
+# Bootstrap imports for development mode (before pip install -e .)
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
+from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
+
+ensure_paths(_REPO_ROOT)
 
 
 def main() -> int:

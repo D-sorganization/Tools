@@ -6,11 +6,19 @@ Tests the PyQt6 GUI launcher and its integration with the shared engine.
 from __future__ import annotations
 
 import os
-import sys
 from pathlib import Path
 from unittest.mock import patch
 
 import pytest
+
+# Bootstrap for test discovery
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+import sys
+
+sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
+from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
+
+ensure_paths(_REPO_ROOT)
 
 # Set headless mode for testing
 os.environ["HEADLESS"] = "true"

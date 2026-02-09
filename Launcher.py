@@ -14,10 +14,12 @@ from pathlib import Path
 from tkinter import messagebox, ttk
 from typing import Any
 
-# Add src to path to find tools package
-SRC_DIR = Path(__file__).resolve().parent / "src"
-if SRC_DIR.exists() and str(SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(SRC_DIR))
+# Bootstrap imports for development mode (before pip install -e .)
+_REPO_ROOT = Path(__file__).resolve().parents[0]
+sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
+from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
+
+ensure_paths(_REPO_ROOT)
 
 try:
     from tools.launch_utils import (
