@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from shared.python.chat.models import (
+pydantic = pytest.importorskip("pydantic")
+
+from shared.python.chat.models import (  # noqa: E402
     ChatChunkResponse,
     ChatHistoryResponse,
     ChatMessageRequest,

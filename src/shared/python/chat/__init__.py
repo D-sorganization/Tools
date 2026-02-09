@@ -16,12 +16,21 @@ Usage::
     main_window.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, dock)
 """
 
-from .models import (
-    ChatChunkResponse,
-    ChatHistoryResponse,
-    ChatMessageRequest,
-    ChatSessionInfo,
-)
+try:
+    from .models import (
+        ChatChunkResponse,
+        ChatHistoryResponse,
+        ChatMessageRequest,
+        ChatSessionInfo,
+    )
+
+    _PYDANTIC_AVAILABLE = True
+except ImportError:
+    _PYDANTIC_AVAILABLE = False
+    ChatChunkResponse = None  # type: ignore[assignment, misc]
+    ChatHistoryResponse = None  # type: ignore[assignment, misc]
+    ChatMessageRequest = None  # type: ignore[assignment, misc]
+    ChatSessionInfo = None  # type: ignore[assignment, misc]
 
 try:
     from .chat_dock_widget import ChatDockWidget, ChatMessageBubble
