@@ -3,6 +3,7 @@ Python-specific shared utilities and libraries.
 This package contains reusable Python logic for tools.
 
 Available packages:
+    - chat: Portable AI chat dock widget and Pydantic models
     - theme: Fleet-wide color theme management for PyQt6 applications
     - upstream_drift_tools: Process engineering calculators
     - signal_toolkit: Signal processing and analysis
@@ -18,6 +19,7 @@ Usage:
 """
 
 __all__ = [
+    "chat",
     "humanoid_character_builder",
     "model_generation",
     "signal_toolkit",

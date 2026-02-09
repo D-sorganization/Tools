@@ -22,6 +22,9 @@ PyOpenGL_accelerate>=3.1.5  # Accelerated OpenGL extensions
 # Web Applications
 flask>=3.0.0  # Web framework for building web applications
 
+# Data Validation & Serialization
+pydantic>=2.0.0  # Data validation using Python type annotations
+
 # Security & Encryption
 cryptography  # Cryptographic recipes and primitives
 
