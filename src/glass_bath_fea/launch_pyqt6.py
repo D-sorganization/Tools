@@ -45,9 +45,12 @@ def main() -> int:
         sys.stderr.write("Install with: pip install PyQt6 numpy scipy\n")
         return 1
 
-    # Add paths
-    tools_root = Path(__file__).parent.parent.parent
-    sys.path.insert(0, str(tools_root / "src"))
+    # Bootstrap imports for development mode (before pip install -e .)
+    _repo_root = Path(__file__).resolve().parents[2]
+    sys.path.insert(0, str(_repo_root / "src" / "shared" / "python"))
+    from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
+
+    ensure_paths(_repo_root)
 
     # Launch application
     try:

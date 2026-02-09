@@ -43,10 +43,12 @@ def check_dependencies() -> bool:
 
 def setup_path() -> None:
     """Add necessary paths for imports."""
-    # Add shared modules
-    shared_dir = Path(__file__).parent.parent / "shared" / "python"
-    if shared_dir.exists():
-        sys.path.insert(0, str(shared_dir))
+    # Bootstrap imports for development mode (before pip install -e .)
+    _repo_root = Path(__file__).resolve().parents[2]
+    sys.path.insert(0, str(_repo_root / "src" / "shared" / "python"))
+    from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
+
+    ensure_paths(_repo_root)
 
 
 def main() -> int:

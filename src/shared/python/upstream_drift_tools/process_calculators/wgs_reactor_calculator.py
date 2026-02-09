@@ -19,7 +19,6 @@ from __future__ import annotations
 import logging
 import math
 import os
-import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -27,41 +26,19 @@ import matplotlib as mpl
 import numpy as np
 from scipy.optimize import minimize
 
-# Try to import centralized utilities
-try:
-    from utils.error_handling import handle_import_error
-    from utils.file_utils import safe_read_json
-except ImportError:
-    # Fallback if utils not in path
-    _src_path = Path(__file__).resolve().parents[3] / "python" / "src"
-    if str(_src_path) not in sys.path:
-        sys.path.insert(0, str(_src_path))
+import json
+
+
+def safe_read_json(file_path: Path | str, default: Any = None) -> Any:
+    """Read JSON from a file, returning a default on failure."""
+    path = Path(file_path)
+    if not path.exists():
+        return default
     try:
-        from utils.error_handling import handle_import_error
-        from utils.file_utils import safe_read_json
-    except ImportError:
-        import json
-
-        # Fallback implementations
-        def safe_read_json(file_path: Path | str, default: Any = None) -> Any:
-            """Fallback safe JSON reader."""
-            path = Path(file_path)
-            if not path.exists():
-                return default
-            try:
-                with open(path, encoding="utf-8") as f:
-                    return json.load(f)
-            except (json.JSONDecodeError, OSError):
-                return default
-
-        def handle_import_error(
-            module_name: str, package_name: str | None = None, default: Any = None
-        ) -> Any:
-            """Fallback import error handler."""
-            try:
-                return __import__(module_name)
-            except ImportError:
-                return default
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return default
 
 
 if TYPE_CHECKING:

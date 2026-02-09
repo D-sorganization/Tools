@@ -3,22 +3,24 @@
 from __future__ import annotations
 
 import importlib.util
-import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-# Add paths for imports
+# Bootstrap for test discovery
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+import sys
+sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
+from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
+ensure_paths(_REPO_ROOT)
+
 MODULE_DIR = Path(__file__).parent.parent
-TOOLS_ROOT = MODULE_DIR.parent.parent
-sys.path.insert(0, str(MODULE_DIR / "python"))
-sys.path.insert(0, str(TOOLS_ROOT / "src"))
 
 # Directly load the scrubber_calculator module to avoid import issues
 # in the shared package's __init__.py
 SCRUBBER_MODULE_PATH = (
-    TOOLS_ROOT
+    _REPO_ROOT
     / "src"
     / "shared"
     / "python"

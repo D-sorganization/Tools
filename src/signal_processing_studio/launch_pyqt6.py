@@ -15,12 +15,14 @@ from pathlib import Path
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
-# Path setup - match the standard Tools repo pattern
-TOOLS_ROOT = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(TOOLS_ROOT / "src"))
-sys.path.insert(0, str(TOOLS_ROOT / "src" / "shared" / "python"))
-sys.path.insert(0, str(TOOLS_ROOT / "src" / "function_generator" / "python"))
-sys.path.insert(0, str(TOOLS_ROOT / "src" / "signal_processing_studio" / "python"))
+# Bootstrap imports for development mode (before pip install -e .)
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
+from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
+
+ensure_paths(_REPO_ROOT)
+sys.path.insert(0, str(_REPO_ROOT / "src" / "function_generator" / "python"))
+sys.path.insert(0, str(_REPO_ROOT / "src" / "signal_processing_studio" / "python"))
 
 
 def check_dependencies() -> tuple[bool, list[str]]:

@@ -20,25 +20,12 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-# Use shared path setup utility
-try:
-    from utils.path_setup import get_repo_root, setup_python_path
+# Bootstrap imports for development mode (before pip install -e .)
+_REPO_ROOT = Path(__file__).resolve().parents[0]
+sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
+from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
 
-    # Standard setup
-    REPO_ROOT = get_repo_root()
-    setup_python_path(repo_root=REPO_ROOT)
-
-except ImportError:
-    # Fallback if unimportable (should rarely happen if structure is valid)
-    current_dir = Path(__file__).resolve().parent
-    sys.path.insert(0, str(current_dir / "src" / "python" / "src"))
-    try:
-        from utils.path_setup import get_repo_root, setup_python_path
-
-        REPO_ROOT = get_repo_root()
-        setup_python_path(repo_root=REPO_ROOT)
-    except ImportError:
-        logger.warning("Could not import utils.path_setup even after path patch.")
+REPO_ROOT = ensure_paths(_REPO_ROOT)
 
 
 try:

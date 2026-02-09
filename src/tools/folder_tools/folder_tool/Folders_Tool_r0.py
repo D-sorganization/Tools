@@ -23,12 +23,12 @@ MAX_LOG_ENTRIES: Final[int] = (
     # - UI performance limit
 )
 
-# Setup path to find shared utils
-current_file = Path(__file__).resolve()
-repo_root = current_file.parent.parent.parent.parent.parent
-utils_path = repo_root / "src" / "python" / "src"
-if utils_path.exists() and str(utils_path) not in sys.path:
-    sys.path.insert(0, str(utils_path))
+# Bootstrap imports for development mode (before pip install -e .)
+_REPO_ROOT = Path(__file__).resolve().parents[4]
+sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
+from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
+
+ensure_paths(_REPO_ROOT)
 
 try:
     from utils.file_utils import safe_write_text

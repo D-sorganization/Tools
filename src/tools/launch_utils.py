@@ -12,18 +12,20 @@ from typing import IO, Any
 def get_repo_root() -> Path:
     """Get the absolute path to the repository root.
 
-    Returns:
-        Path: Absolute path to the repository root.
+    Delegates to the canonical implementation in upstream_drift_tools.utils.paths.
     """
-    # Start looking from the directory of this file
-    current = Path(__file__).resolve().parent
-    # Walk up until we find tools.json or .git
-    for _ in range(5):
-        if (current / "tools.json").exists() or (current / ".git").exists():
-            return current
-        current = current.parent
-    # Fallback to current working directory but this is less reliable
-    return Path.cwd()
+    try:
+        from upstream_drift_tools.utils.paths import get_repo_root as _get_repo_root
+
+        return _get_repo_root()
+    except ImportError:
+        # Fallback for when package is not installed
+        current = Path(__file__).resolve().parent
+        for _ in range(5):
+            if (current / "tools.json").exists() or (current / ".git").exists():
+                return current
+            current = current.parent
+        return Path.cwd()
 
 
 # Custom Exceptions
