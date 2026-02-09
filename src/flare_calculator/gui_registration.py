@@ -1,6 +1,6 @@
 """GUI registration for Flare Calculator."""
 
-from shared.python.gui_launcher import GUIType, LaunchConfig, register_gui
+from gui_launcher import GUIType, LaunchConfig, register_gui
 
 
 def register_flare_calculator_guis() -> None:

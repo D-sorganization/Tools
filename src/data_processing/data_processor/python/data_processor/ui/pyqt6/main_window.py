@@ -2713,7 +2713,7 @@ def main() -> None:
     """Run the Data Processor application."""
     import sys
 
-    from shared.python.plot_theme import setup_plot_theme_for_app
+    from plot_theme import setup_plot_theme_for_app
     from shared.python.theme import setup_themed_app
 
     app = QApplication(sys.argv)

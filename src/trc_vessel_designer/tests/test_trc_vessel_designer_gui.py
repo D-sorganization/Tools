@@ -29,7 +29,7 @@ class TestTRCVesselDesignerEngine:
 
     def test_engine_imports(self):
         """Test that all engine imports work correctly."""
-        from shared.python.upstream_drift_tools.calculators.mechanical.trc_geometry import (
+        from upstream_drift_tools.calculators.mechanical.trc_geometry import (
             LayerConfig,
             LayerResult,
             TRCGeometryEngine,
@@ -45,7 +45,7 @@ class TestTRCVesselDesignerEngine:
 
     def test_engine_calculation(self):
         """Test that the engine produces valid results."""
-        from shared.python.upstream_drift_tools.calculators.mechanical.trc_geometry import (
+        from upstream_drift_tools.calculators.mechanical.trc_geometry import (
             LayerConfig,
             TRCGeometryEngine,
             VesselDimensions,
@@ -85,7 +85,7 @@ class TestTRCVesselDesignerEngine:
 
     def test_layer_config_creation(self):
         """Test that LayerConfig can be created with defaults."""
-        from shared.python.upstream_drift_tools.calculators.mechanical.trc_geometry import (
+        from upstream_drift_tools.calculators.mechanical.trc_geometry import (
             LayerConfig,
         )
 
@@ -103,7 +103,7 @@ class TestTRCVesselDesignerEngine:
 
     def test_vessel_dimensions_creation(self):
         """Test that VesselDimensions can be created."""
-        from shared.python.upstream_drift_tools.calculators.mechanical.trc_geometry import (
+        from upstream_drift_tools.calculators.mechanical.trc_geometry import (
             VesselDimensions,
         )
 
@@ -175,7 +175,7 @@ class TestGUIRegistration:
     def test_registration_imports(self):
         """Test that registration module can be imported."""
         try:
-            from shared.python.gui_launcher import (
+            from gui_launcher import (
                 GUIType,
                 LaunchConfig,
                 register_gui,

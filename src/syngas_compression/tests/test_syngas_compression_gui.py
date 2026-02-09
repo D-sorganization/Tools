@@ -29,7 +29,7 @@ class TestSyngasCompressionEngine:
 
     def test_engine_imports(self) -> None:
         """Test that all engine imports work correctly."""
-        from shared.python.upstream_drift_tools.process_calculators.syngas_compression_calculator import (
+        from upstream_drift_tools.process_calculators.syngas_compression_calculator import (
             CompressionStage,
             SyngasCompressionEngine,
         )
@@ -39,7 +39,7 @@ class TestSyngasCompressionEngine:
 
     def test_compression_stage_creation(self) -> None:
         """Test that CompressionStage can be created."""
-        from shared.python.upstream_drift_tools.process_calculators.syngas_compression_calculator import (
+        from upstream_drift_tools.process_calculators.syngas_compression_calculator import (
             CompressionStage,
         )
 
@@ -58,7 +58,7 @@ class TestSyngasCompressionEngine:
 
     def test_engine_calculation(self) -> None:
         """Test that the engine produces valid results."""
-        from shared.python.upstream_drift_tools.process_calculators.syngas_compression_calculator import (
+        from upstream_drift_tools.process_calculators.syngas_compression_calculator import (
             SyngasCompressionEngine,
         )
 
@@ -84,7 +84,7 @@ class TestSyngasCompressionEngine:
 
     def test_compression_work_calculation(self) -> None:
         """Test compression work calculation."""
-        from shared.python.upstream_drift_tools.process_calculators.syngas_compression_calculator import (
+        from upstream_drift_tools.process_calculators.syngas_compression_calculator import (
             CompressionStage,
             SyngasCompressionEngine,
         )
@@ -158,7 +158,7 @@ class TestSyngasCompressionGUI:
     def test_factory_function_exists(self, mock_qt_app) -> None:
         """Test that the factory function exists and is callable."""
         try:
-            from shared.python.upstream_drift_tools.process_calculators.syngas_compression_calculator import (
+            from upstream_drift_tools.process_calculators.syngas_compression_calculator import (
                 create_syngas_compression_calculator,
             )
 
@@ -173,7 +173,7 @@ class TestGUIRegistration:
     def test_registration_imports(self) -> None:
         """Test that registration module can be imported."""
         try:
-            from shared.python.gui_launcher import (
+            from gui_launcher import (
                 GUIType,
                 LaunchConfig,
                 register_gui,

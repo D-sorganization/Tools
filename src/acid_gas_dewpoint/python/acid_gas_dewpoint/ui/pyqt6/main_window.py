@@ -218,7 +218,7 @@ class AcidGasDewpointCalculatorWidget(QWidget):
     def _calculate(self) -> None:
         """Perform the dewpoint calculation."""
         try:
-            from shared.python.upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (
+            from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (
                 AcidGasComposition,
                 AcidGasDewpointCalculator,
             )

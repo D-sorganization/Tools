@@ -4,7 +4,7 @@ This module provides a consistent color theme system for plots across all
 D-sorganization applications, similar to the app theme system for PyQt6.
 
 Usage:
-    from shared.python.plot_theme import PlotThemeManager, apply_plot_theme
+    from plot_theme import PlotThemeManager, apply_plot_theme
 
     # Apply a theme to matplotlib
     manager = PlotThemeManager()

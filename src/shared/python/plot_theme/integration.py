@@ -27,7 +27,7 @@ def apply_plot_theme(
 
     This is the simplest way to use the plot theme system:
 
-        from shared.python.plot_theme import apply_plot_theme
+        from plot_theme import apply_plot_theme
 
         apply_plot_theme("scientific_violet")
 

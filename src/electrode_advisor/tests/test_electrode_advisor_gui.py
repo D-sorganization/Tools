@@ -36,7 +36,7 @@ class TestElectrodeAdvisorGUI:
     def test_imports(self):
         """Test that all imports work correctly."""
         # Test shared engine imports
-        from shared.python.upstream_drift_tools.calculators.electrical import (
+        from upstream_drift_tools.calculators.electrical import (
             ElectrodeConfig,
             GlassPropertiesInterface,
             ThreePhaseElectricalModelEnhanced,
@@ -48,7 +48,7 @@ class TestElectrodeAdvisorGUI:
 
     def test_config_creation(self):
         """Test that ElectrodeConfig can be created with defaults."""
-        from shared.python.upstream_drift_tools.calculators.electrical import (
+        from upstream_drift_tools.calculators.electrical import (
             ElectrodeConfig,
         )
 
@@ -59,7 +59,7 @@ class TestElectrodeAdvisorGUI:
 
     def test_electrical_model_creation(self):
         """Test that the electrical model can be instantiated."""
-        from shared.python.upstream_drift_tools.calculators.electrical import (
+        from upstream_drift_tools.calculators.electrical import (
             ElectrodeConfig,
             GlassPropertiesInterface,
             ThreePhaseElectricalModelEnhanced,
@@ -75,8 +75,7 @@ class TestElectrodeAdvisorGUI:
     def test_electrical_model_calculation(self):
         """Test that the electrical model produces results."""
         import numpy as np
-
-        from shared.python.upstream_drift_tools.calculators.electrical import (
+        from upstream_drift_tools.calculators.electrical import (
             ElectrodeConfig,
             GlassPropertiesInterface,
             ThreePhaseElectricalModelEnhanced,
@@ -148,7 +147,7 @@ class TestGUIRegistration:
     def test_registration_imports(self):
         """Test that registration module can be imported."""
         try:
-            from shared.python.gui_launcher import (
+            from gui_launcher import (
                 GUIType,
                 LaunchConfig,
                 register_gui,

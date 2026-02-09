@@ -9,7 +9,7 @@ with no application-specific imports.
 
 Usage::
 
-    from shared.python.chat import ChatDockWidget
+    from chat import ChatDockWidget
 
     dock = ChatDockWidget(
         app_context="gasification",

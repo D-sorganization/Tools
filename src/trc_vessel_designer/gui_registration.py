@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from shared.python.gui_launcher import GUIType, LaunchConfig, register_gui
+from gui_launcher import GUIType, LaunchConfig, register_gui
 
 CURRENT_DIR = Path(__file__).parent
 

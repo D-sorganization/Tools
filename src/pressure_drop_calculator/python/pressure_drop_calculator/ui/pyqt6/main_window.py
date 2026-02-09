@@ -272,7 +272,7 @@ class PressureDropCalculatorWidget(QWidget):
     def _calculate(self) -> None:
         """Perform the pressure drop calculation."""
         try:
-            from shared.python.upstream_drift_tools.process_calculators.pressure_drop_calculator import (
+            from upstream_drift_tools.process_calculators.pressure_drop_calculator import (
                 calculate_pressure_drop,
             )
 

@@ -25,7 +25,7 @@ class TestPressureDropEngine:
 
     def test_engine_imports(self) -> None:
         """Test that all engine imports work correctly."""
-        from shared.python.upstream_drift_tools.process_calculators.pressure_drop_calculator import (
+        from upstream_drift_tools.process_calculators.pressure_drop_calculator import (
             PressureDropCalculationEngine,
         )
 
@@ -33,7 +33,7 @@ class TestPressureDropEngine:
 
     def test_interface_imports(self) -> None:
         """Test that interface imports work correctly."""
-        from shared.python.upstream_drift_tools.process_calculators.pressure_drop_calculator import (
+        from upstream_drift_tools.process_calculators.pressure_drop_calculator import (
             calculate_pressure_drop,
         )
 
@@ -41,7 +41,7 @@ class TestPressureDropEngine:
 
     def test_basic_calculation(self) -> None:
         """Test a basic pressure drop calculation."""
-        from shared.python.upstream_drift_tools.process_calculators.pressure_drop_calculator import (
+        from upstream_drift_tools.process_calculators.pressure_drop_calculator import (
             calculate_pressure_drop,
         )
 
@@ -124,7 +124,7 @@ class TestGUIRegistration:
     def test_registration_imports(self) -> None:
         """Test that registration module can be imported."""
         try:
-            from shared.python.gui_launcher import GUIType, LaunchConfig, register_gui
+            from gui_launcher import GUIType, LaunchConfig, register_gui
 
             assert GUIType is not None
             assert LaunchConfig is not None

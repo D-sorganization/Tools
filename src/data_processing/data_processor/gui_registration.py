@@ -11,7 +11,7 @@ from pathlib import Path
 
 # Try to import from shared gui_launcher
 try:
-    from shared.python.gui_launcher import (
+    from gui_launcher import (
         GUIType,
         LaunchConfig,
         register_gui,

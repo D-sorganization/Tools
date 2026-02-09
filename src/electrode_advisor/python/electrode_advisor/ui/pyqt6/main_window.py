@@ -87,8 +87,7 @@ from PyQt6.QtWidgets import (  # noqa: E402
     QVBoxLayout,
     QWidget,
 )
-
-from shared.python.upstream_drift_tools.calculators.electrical import (  # noqa: E402
+from upstream_drift_tools.calculators.electrical import (  # noqa: E402
     ElectrodeConfig,
     GlassPropertiesInterface,
     ThreePhaseElectricalModelEnhanced,

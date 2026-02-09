@@ -8,7 +8,7 @@ from __future__ import annotations
 from pathlib import Path
 
 try:
-    from shared.python.gui_launcher import GUIType, LaunchConfig, register_gui
+    from gui_launcher import GUIType, LaunchConfig, register_gui
 
     # Register Syngas Compression Calculator
     MODULE_DIR = Path(__file__).parent

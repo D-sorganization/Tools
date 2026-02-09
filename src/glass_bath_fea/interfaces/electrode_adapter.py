@@ -46,7 +46,7 @@ class ElectrodeAdapter:
             ElectrodeConfig instance from electrode adviser.
         """
         if self._electrode_config is None:
-            from shared.python.upstream_drift_tools.calculators.electrical.config import (
+            from upstream_drift_tools.calculators.electrical.config import (
                 ElectrodeConfig,
             )
 
@@ -65,7 +65,7 @@ class ElectrodeAdapter:
             GlassPropertiesInterface instance.
         """
         if self._glass_interface is None:
-            from shared.python.upstream_drift_tools.calculators.electrical.glass_interface import (
+            from upstream_drift_tools.calculators.electrical.glass_interface import (
                 GlassPropertiesInterface,
             )
 
@@ -81,7 +81,7 @@ class ElectrodeAdapter:
             ThreePhaseElectricalModelEnhanced instance.
         """
         if self._electrical_model is None:
-            from shared.python.upstream_drift_tools.calculators.electrical.electrical_model import (
+            from upstream_drift_tools.calculators.electrical.electrical_model import (
                 ThreePhaseElectricalModelEnhanced,
             )
 

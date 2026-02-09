@@ -8,8 +8,7 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
-
-from shared.python.plot_engine.trendline import TrendlineResult, compute_trendline
+from plot_engine.trendline import TrendlineResult, compute_trendline
 
 # ── Linear trendline ─────────────────────────────────────────────────────────
 

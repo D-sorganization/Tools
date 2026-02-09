@@ -6,7 +6,7 @@ import pytest
 
 pydantic = pytest.importorskip("pydantic")
 
-from shared.python.chat.models import (  # noqa: E402
+from chat.models import (  # noqa: E402
     ChatChunkResponse,
     ChatHistoryResponse,
     ChatMessageRequest,

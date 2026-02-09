@@ -28,8 +28,7 @@ from .trendline import compute_trendline
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
-
-    from shared.python.plot_theme.manager import PlotThemeManager
+    from plot_theme.manager import PlotThemeManager
 
 logger = logging.getLogger(__name__)
 

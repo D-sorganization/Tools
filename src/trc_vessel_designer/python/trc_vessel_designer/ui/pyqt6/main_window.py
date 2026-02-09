@@ -26,7 +26,7 @@ from PyQt6.QtWidgets import (
 )
 
 # Import the shared engine from Tools
-from shared.python.upstream_drift_tools.calculators.mechanical.trc_geometry import (
+from upstream_drift_tools.calculators.mechanical.trc_geometry import (
     LayerConfig,
     TRCGeometryEngine,
     VesselDimensions,

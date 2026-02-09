@@ -7,9 +7,8 @@ with correct type fields, data arrays, and layout settings.
 from __future__ import annotations
 
 import pytest
-
-from shared.python.plot_engine.plotly_converter import PlotlyConverter
-from shared.python.plot_engine.specs import (
+from plot_engine.plotly_converter import PlotlyConverter
+from plot_engine.specs import (
     AxisSpec,
     ContourPlotSpec,
     FilterComparisonSpec,
