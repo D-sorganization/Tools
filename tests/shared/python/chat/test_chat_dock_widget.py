@@ -4,14 +4,14 @@ from __future__ import annotations
 
 import pytest
 
-from shared.python.chat.chat_dock_widget import (
+# Skip all tests if PyQt6 is unavailable (module imports PyQt6 at top level)
+PyQt6 = pytest.importorskip("PyQt6", reason="PyQt6 required for chat dock widget tests")
+
+from shared.python.chat.chat_dock_widget import (  # noqa: E402
     _read_shared_session_id,
     _session_file_path,
     _write_shared_session_id,
 )
-
-# Skip widget tests if PyQt6 is unavailable
-PyQt6 = pytest.importorskip("PyQt6")
 
 
 class TestSessionFileHelpers:
