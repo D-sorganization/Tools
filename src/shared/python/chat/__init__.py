@@ -6,7 +6,7 @@ for the chat protocol.
 
 Usage::
 
-    from shared.python.chat import ChatDockWidget
+    from chat import ChatDockWidget
 
     dock = ChatDockWidget(
         app_context="gasification",

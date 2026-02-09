@@ -7,7 +7,7 @@ Uses the shared TRC geometry engine from upstream_drift_tools.
 from __future__ import annotations
 
 # Re-export the shared engine components
-from shared.python.upstream_drift_tools.calculators.mechanical.trc_geometry import (
+from upstream_drift_tools.calculators.mechanical.trc_geometry import (
     LayerConfig,
     LayerResult,
     TRCGeometryEngine,

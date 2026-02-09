@@ -5,13 +5,12 @@ from __future__ import annotations
 from unittest.mock import MagicMock, patch
 
 import pytest
-
-from shared.python.plot_theme.integration import (
+from plot_theme.integration import (
     PlotThemeMixin,
     apply_plot_theme,
     get_theme_colors,
 )
-from shared.python.plot_theme.manager import PlotThemeManager
+from plot_theme.manager import PlotThemeManager
 
 
 class TestApplyPlotTheme:
@@ -20,7 +19,7 @@ class TestApplyPlotTheme:
     def test_returns_manager(self) -> None:
         """Test that apply_plot_theme returns a PlotThemeManager."""
         with patch(
-            "shared.python.plot_theme.integration.get_plot_theme_manager"
+            "plot_theme.integration.get_plot_theme_manager"
         ) as mock_get:
             mock_manager = MagicMock(spec=PlotThemeManager)
             mock_get.return_value = mock_manager
@@ -34,7 +33,7 @@ class TestApplyPlotTheme:
     def test_without_theme_name(self) -> None:
         """Test apply_plot_theme without theme name."""
         with patch(
-            "shared.python.plot_theme.integration.get_plot_theme_manager"
+            "plot_theme.integration.get_plot_theme_manager"
         ) as mock_get:
             mock_manager = MagicMock(spec=PlotThemeManager)
             mock_get.return_value = mock_manager
@@ -138,7 +137,7 @@ class TestCreateThemedFigure:
     )
     def test_creates_figure_and_axes(self) -> None:
         """Test that create_themed_figure returns figure and axes."""
-        from shared.python.plot_theme.integration import create_themed_figure
+        from plot_theme.integration import create_themed_figure
 
         fig, ax = create_themed_figure(figsize=(8, 6))
 
@@ -156,8 +155,7 @@ class TestStyleAxis:
     def test_styles_axis(self) -> None:
         """Test that style_axis applies theme to axes."""
         import matplotlib.pyplot as plt
-
-        from shared.python.plot_theme.integration import style_axis
+        from plot_theme.integration import style_axis
 
         fig, ax = plt.subplots()
         style_axis(ax, "scientific_violet")

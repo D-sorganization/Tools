@@ -9,9 +9,7 @@ from __future__ import annotations
 import json
 
 import pytest
-from pydantic import ValidationError
-
-from shared.python.plot_engine.specs import (
+from plot_engine.specs import (
     AxisSpec,
     ContourPlotSpec,
     FilterComparisonSpec,
@@ -24,6 +22,7 @@ from shared.python.plot_engine.specs import (
     SurfacePlotSpec,
     TrendlineSpec,
 )
+from pydantic import ValidationError
 
 # ── SeriesStyle ──────────────────────────────────────────────────────────────
 

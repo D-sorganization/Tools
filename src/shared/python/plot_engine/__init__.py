@@ -4,9 +4,9 @@ This module provides a DRY plotting system that renders the same PlotSpec
 contracts to both matplotlib (PyQt6) and Plotly.js JSON (React/Tauri).
 
 Usage:
-    from shared.python.plot_engine.specs import PlotSpec, SeriesData
-    from shared.python.plot_engine.matplotlib_renderer import MatplotlibRenderer
-    from shared.python.plot_engine.plotly_converter import PlotlyConverter
+    from plot_engine.specs import PlotSpec, SeriesData
+    from plot_engine.matplotlib_renderer import MatplotlibRenderer
+    from plot_engine.plotly_converter import PlotlyConverter
 
     spec = PlotSpec(title="My Plot", series=[...])
 

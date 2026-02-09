@@ -9,7 +9,7 @@ The launcher handles dependency checking, environment setup, and provides
 consistent launch mechanisms across different GUI frameworks.
 
 Example:
-    from shared.python.gui_launcher import GUILauncher, GUIType
+    from gui_launcher import GUILauncher, GUIType
 
     # Launch PyQt6 app
     launcher = GUILauncher(tool_name="data_processor", gui_type=GUIType.PYQT6)

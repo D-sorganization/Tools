@@ -13,7 +13,7 @@ import pytest
 # requires libEGL.so.1 on Linux. Skip the entire file when unavailable.
 pytest.importorskip("PyQt6.QtWidgets", reason="PyQt6.QtWidgets requires display server")
 
-from shared.python.chat.chat_dock_widget import (  # noqa: E402
+from chat.chat_dock_widget import (  # noqa: E402
     _read_shared_session_id,
     _session_file_path,
     _write_shared_session_id,
@@ -53,7 +53,7 @@ class TestChatMessageBubble:
     """Tests for ChatMessageBubble widget."""
 
     def test_user_bubble(self, qtbot):
-        from shared.python.chat.chat_dock_widget import ChatMessageBubble
+        from chat.chat_dock_widget import ChatMessageBubble
 
         bubble = ChatMessageBubble("user", "Hello")
         qtbot.addWidget(bubble)
@@ -61,14 +61,14 @@ class TestChatMessageBubble:
         assert bubble._content == "Hello"
 
     def test_assistant_bubble(self, qtbot):
-        from shared.python.chat.chat_dock_widget import ChatMessageBubble
+        from chat.chat_dock_widget import ChatMessageBubble
 
         bubble = ChatMessageBubble("assistant", "Hi there")
         qtbot.addWidget(bubble)
         assert bubble._role == "assistant"
 
     def test_append_content(self, qtbot):
-        from shared.python.chat.chat_dock_widget import ChatMessageBubble
+        from chat.chat_dock_widget import ChatMessageBubble
 
         bubble = ChatMessageBubble("assistant", "")
         qtbot.addWidget(bubble)
@@ -77,7 +77,7 @@ class TestChatMessageBubble:
         assert bubble._content == "Hello world"
 
     def test_set_content(self, qtbot):
-        from shared.python.chat.chat_dock_widget import ChatMessageBubble
+        from chat.chat_dock_widget import ChatMessageBubble
 
         bubble = ChatMessageBubble("user", "old")
         qtbot.addWidget(bubble)
@@ -85,7 +85,7 @@ class TestChatMessageBubble:
         assert bubble._content == "new"
 
     def test_custom_accent_color(self, qtbot):
-        from shared.python.chat.chat_dock_widget import ChatMessageBubble
+        from chat.chat_dock_widget import ChatMessageBubble
 
         bubble = ChatMessageBubble("user", "test", accent_color="#3498db")
         qtbot.addWidget(bubble)
@@ -96,7 +96,7 @@ class TestChatDockWidget:
     """Tests for ChatDockWidget construction."""
 
     def test_construction_defaults(self, qtbot):
-        from shared.python.chat.chat_dock_widget import ChatDockWidget
+        from chat.chat_dock_widget import ChatDockWidget
 
         ChatDockWidget._shared_session_id = None
         widget = ChatDockWidget(app_name="test_app")
@@ -107,7 +107,7 @@ class TestChatDockWidget:
         widget.close()
 
     def test_custom_parameters(self, qtbot):
-        from shared.python.chat.chat_dock_widget import ChatDockWidget
+        from chat.chat_dock_widget import ChatDockWidget
 
         ChatDockWidget._shared_session_id = None
         widget = ChatDockWidget(
@@ -123,7 +123,7 @@ class TestChatDockWidget:
         widget.close()
 
     def test_explicit_session_id(self, qtbot):
-        from shared.python.chat.chat_dock_widget import ChatDockWidget
+        from chat.chat_dock_widget import ChatDockWidget
 
         ChatDockWidget._shared_session_id = None
         widget = ChatDockWidget(app_name="test_app", session_id="explicit-123")

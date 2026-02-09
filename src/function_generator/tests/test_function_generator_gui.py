@@ -29,14 +29,14 @@ class TestSignalGeneratorEngine:
 
     def test_engine_imports(self) -> None:
         """Test that all engine imports work correctly."""
-        from shared.python.signal_toolkit import Signal, SignalGenerator
+        from signal_toolkit import Signal, SignalGenerator
 
         assert Signal is not None
         assert SignalGenerator is not None
 
     def test_sinusoid_generation(self) -> None:
         """Test sinusoid signal generation."""
-        from shared.python.signal_toolkit import SignalGenerator
+        from signal_toolkit import SignalGenerator
 
         t = np.linspace(0, 1, 1000)
         signal = SignalGenerator.sinusoid(t, amplitude=2.0, frequency=5.0)
@@ -48,7 +48,7 @@ class TestSignalGeneratorEngine:
 
     def test_square_wave_generation(self) -> None:
         """Test square wave generation."""
-        from shared.python.signal_toolkit import SignalGenerator
+        from signal_toolkit import SignalGenerator
 
         t = np.linspace(0, 1, 1000)
         signal = SignalGenerator.square(t, frequency=5.0, amplitude=1.0, duty_cycle=0.5)
@@ -58,7 +58,7 @@ class TestSignalGeneratorEngine:
 
     def test_triangle_wave_generation(self) -> None:
         """Test triangle wave generation."""
-        from shared.python.signal_toolkit import SignalGenerator
+        from signal_toolkit import SignalGenerator
 
         t = np.linspace(0, 1, 1000)
         signal = SignalGenerator.triangle(t, frequency=5.0, amplitude=1.0)
@@ -68,7 +68,7 @@ class TestSignalGeneratorEngine:
 
     def test_exponential_generation(self) -> None:
         """Test exponential signal generation."""
-        from shared.python.signal_toolkit import SignalGenerator
+        from signal_toolkit import SignalGenerator
 
         t = np.linspace(0, 1, 1000)
         signal = SignalGenerator.exponential(t, amplitude=1.0, decay_rate=2.0)
@@ -78,7 +78,7 @@ class TestSignalGeneratorEngine:
 
     def test_chirp_generation(self) -> None:
         """Test chirp signal generation."""
-        from shared.python.signal_toolkit import SignalGenerator
+        from signal_toolkit import SignalGenerator
 
         t = np.linspace(0, 1, 1000)
         signal = SignalGenerator.chirp(t, f0=1.0, f1=10.0)
@@ -88,7 +88,7 @@ class TestSignalGeneratorEngine:
 
     def test_polynomial_generation(self) -> None:
         """Test polynomial signal generation."""
-        from shared.python.signal_toolkit import SignalGenerator
+        from signal_toolkit import SignalGenerator
 
         t = np.linspace(0, 1, 100)
         coeffs = [1, 2, 3]  # 1 + 2t + 3t^2
@@ -100,7 +100,7 @@ class TestSignalGeneratorEngine:
 
     def test_superposition(self) -> None:
         """Test signal superposition."""
-        from shared.python.signal_toolkit import SignalGenerator
+        from signal_toolkit import SignalGenerator
 
         t = np.linspace(0, 1, 1000)
         s1 = SignalGenerator.sinusoid(t, amplitude=1.0, frequency=5.0)
@@ -173,7 +173,7 @@ class TestGUIRegistration:
     def test_registration_imports(self) -> None:
         """Test that registration module can be imported."""
         try:
-            from shared.python.gui_launcher import GUIType, LaunchConfig, register_gui
+            from gui_launcher import GUIType, LaunchConfig, register_gui
 
             assert GUIType is not None
             assert LaunchConfig is not None

@@ -16,9 +16,8 @@ from PyQt6.QtWidgets import (
     QMessageBox,
     QTabWidget,
 )
-
-from shared.python.signal_toolkit.polynomial_generator import PolynomialGeneratorWidget
-from shared.python.signal_toolkit.widget import SignalToolkitWidget
+from signal_toolkit.polynomial_generator import PolynomialGeneratorWidget
+from signal_toolkit.widget import SignalToolkitWidget
 
 from .signal_bus import SignalBus
 
@@ -138,8 +137,7 @@ class SignalProcessingStudio(*_get_base_classes()):
     def _on_poly_fallback(self, joint_name: str, coeffs: list) -> None:
         """Fallback when Function Generator is unavailable."""
         import numpy as np
-
-        from shared.python.signal_toolkit.core import SignalGenerator
+        from signal_toolkit.core import SignalGenerator
 
         if self.toolkit.current_signal is not None:
             t = self.toolkit.current_signal.time

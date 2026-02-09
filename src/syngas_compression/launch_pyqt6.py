@@ -44,11 +44,11 @@ def main() -> int:
         return 1
 
     from PyQt6.QtWidgets import QApplication, QMainWindow
-
-    from shared.python.theme import setup_themed_app
-    from shared.python.upstream_drift_tools.process_calculators.syngas_compression_calculator import (
+    from upstream_drift_tools.process_calculators.syngas_compression_calculator import (
         create_syngas_compression_calculator,
     )
+
+    from shared.python.theme import setup_themed_app
 
     app = QApplication(sys.argv)
     app.setApplicationName("Syngas Compression Calculator")

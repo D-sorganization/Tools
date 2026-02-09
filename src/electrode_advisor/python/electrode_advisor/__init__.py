@@ -7,7 +7,7 @@ Uses the shared electrical model engine from upstream_drift_tools.
 from __future__ import annotations
 
 # Re-export the shared engine components
-from shared.python.upstream_drift_tools.calculators.electrical import (
+from upstream_drift_tools.calculators.electrical import (
     ElectrodeConfig,
     GlassPropertiesInterface,
     ThreePhaseElectricalModelEnhanced,

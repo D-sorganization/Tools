@@ -26,7 +26,7 @@ from .matplotlib_renderer import MatplotlibRenderer
 from .specs import PlotSpec
 
 if TYPE_CHECKING:
-    from shared.python.plot_theme.manager import PlotThemeManager
+    from plot_theme.manager import PlotThemeManager
 
 logger = logging.getLogger(__name__)
 

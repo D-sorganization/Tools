@@ -3,8 +3,7 @@
 from __future__ import annotations
 
 import pytest
-
-from shared.python.plot_theme.themes import (
+from plot_theme.themes import (
     DEFAULT_THEME,
     PLOT_THEMES,
     PlotTheme,

@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 
 # Import the scrubber calculator engine
 try:
-    from shared.python.upstream_drift_tools.process_calculators.scrubber_calculator import (
+    from upstream_drift_tools.process_calculators.scrubber_calculator import (
         PACKING_DATABASE,
         calculate_caustic_requirement,
         calculate_column_diameter,

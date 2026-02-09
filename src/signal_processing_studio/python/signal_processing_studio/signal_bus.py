@@ -6,8 +6,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from PyQt6.QtCore import QObject, pyqtSignal
-
-from shared.python.signal_toolkit.core import Signal, SignalGenerator
+from signal_toolkit.core import Signal, SignalGenerator
 
 if TYPE_CHECKING:
     from collections.abc import Callable

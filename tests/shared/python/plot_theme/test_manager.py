@@ -5,9 +5,8 @@ from __future__ import annotations
 from unittest.mock import MagicMock, patch
 
 import pytest
-
-from shared.python.plot_theme.manager import PlotThemeManager, get_plot_theme_manager
-from shared.python.plot_theme.themes import DEFAULT_THEME, PLOT_THEMES
+from plot_theme.manager import PlotThemeManager, get_plot_theme_manager
+from plot_theme.themes import DEFAULT_THEME, PLOT_THEMES
 
 
 class TestPlotThemeManager:

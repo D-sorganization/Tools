@@ -14,9 +14,8 @@ matplotlib.use("Agg")  # Non-interactive backend for testing
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-
-from shared.python.plot_engine.matplotlib_renderer import MatplotlibRenderer
-from shared.python.plot_engine.specs import (
+from plot_engine.matplotlib_renderer import MatplotlibRenderer
+from plot_engine.specs import (
     AxisSpec,
     ContourPlotSpec,
     FilterComparisonSpec,
