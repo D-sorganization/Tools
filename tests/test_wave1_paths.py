@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 
@@ -90,7 +89,9 @@ class TestStateManagerLazy:
         """Importing the module should NOT create a StateManager."""
         import upstream_drift_tools.utils.state_manager as sm
 
-        assert sm._state_manager is None or isinstance(sm._state_manager, sm.StateManager)
+        assert sm._state_manager is None or isinstance(
+            sm._state_manager, sm.StateManager
+        )
 
     def test_get_state_manager_creates_instance(self, tmp_path: Path) -> None:
         """get_state_manager() should create instance on first call."""

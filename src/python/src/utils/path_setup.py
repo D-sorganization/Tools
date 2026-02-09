@@ -13,6 +13,7 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
+
 def get_repo_root(start_path: Path | str | None = None) -> Path:
     """Get the repository root directory.
 

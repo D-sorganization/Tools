@@ -15,8 +15,10 @@ import pytest
 # Bootstrap for test discovery
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 import sys
+
 sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
 from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
+
 ensure_paths(_REPO_ROOT)
 
 # Force the inner signal_processing_studio package to take precedence.

@@ -16,6 +16,7 @@ Version: 1.0
 
 from __future__ import annotations
 
+import json
 import logging
 import math
 import os
@@ -25,8 +26,6 @@ from typing import TYPE_CHECKING, Any
 import matplotlib as mpl
 import numpy as np
 from scipy.optimize import minimize
-
-import json
 
 
 def safe_read_json(file_path: Path | str, default: Any = None) -> Any:
