@@ -16,7 +16,7 @@ from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
 
 ensure_paths(_REPO_ROOT)
 
-from utils.file_utils import safe_read_json
+from utils.file_utils import safe_read_json  # noqa: E402
 
 logger = logging.getLogger(__name__)
 

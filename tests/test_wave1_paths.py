@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 
@@ -28,8 +27,7 @@ class TestGetRepoRoot:
     def test_finds_repo_root_from_deep_path(self) -> None:
         from upstream_drift_tools.utils.paths import get_repo_root
 
-        deep_path = Path(__file__).parent / "src" / "shared" / "python"
-        # Even if this path doesn't exist, it should search upward
+        # Even if a deep path doesn't exist, it should search upward
         root = get_repo_root(start_path=Path(__file__).parent)
         assert root.is_absolute()
         assert (root / "pyproject.toml").exists()
