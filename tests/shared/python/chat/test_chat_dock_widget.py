@@ -1,11 +1,17 @@
-"""Tests for shared ChatDockWidget and helpers."""
+"""Tests for shared ChatDockWidget and helpers.
+
+Session-file helpers and widget tests all require importing from
+chat_dock_widget, which imports PyQt6.QtWidgets at module level.
+The entire file is skipped on headless CI where libEGL is unavailable.
+"""
 
 from __future__ import annotations
 
 import pytest
 
-# Skip all tests if PyQt6 is unavailable (module imports PyQt6 at top level)
-PyQt6 = pytest.importorskip("PyQt6", reason="PyQt6 required for chat dock widget tests")
+# chat_dock_widget.py imports PyQt6.QtWidgets at module level, which
+# requires libEGL.so.1 on Linux. Skip the entire file when unavailable.
+pytest.importorskip("PyQt6.QtWidgets", reason="PyQt6.QtWidgets requires display server")
 
 from shared.python.chat.chat_dock_widget import (  # noqa: E402
     _read_shared_session_id,
