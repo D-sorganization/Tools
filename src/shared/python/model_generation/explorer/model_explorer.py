@@ -17,6 +17,7 @@ from __future__ import annotations
 import logging
 import sys
 
+from model_generation.explorer.display_config import DISPLAY_OPTIONS
 from model_generation.library.unified_loader import (
     LoadResult,
     UnifiedModelLoader,
@@ -241,9 +242,6 @@ QPushButton#setDefaultBtn:hover {{
     background-color: {CATPPUCCIN_MOCHA["yellow"]};
 }}
 """
-
-
-from model_generation.explorer.display_config import DISPLAY_OPTIONS
 
 
 class DisplayPreviewPanel(QGroupBox):
