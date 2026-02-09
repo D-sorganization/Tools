@@ -15,6 +15,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+
 def safe_read_json(file_path: Path | str, default: Any = None) -> Any:
     """Read JSON from a file, returning a default on failure."""
     path = Path(file_path)
