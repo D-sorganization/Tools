@@ -8,6 +8,7 @@ from .acid_gas_dewpoint import AcidGasDewpointRequest, AcidGasDewpointResponse
 from .baghouse import BaghouseRequest, BaghouseResponse
 from .financial import FinancialRequest, FinancialResponse
 from .flare import FlareRequest, FlareResponse
+from .flow_rate import FlowRateConvertRequest, FlowRateConvertResponse
 from .pressure_drop import PressureDropRequest, PressureDropResponse
 from .scrubber import ScrubberRequest, ScrubberResponse
 from .wgs_reactor import WGSReactorRequest, WGSReactorResponse
@@ -27,4 +28,6 @@ __all__ = [
     "AcidGasDewpointResponse",
     "PressureDropRequest",
     "PressureDropResponse",
+    "FlowRateConvertRequest",
+    "FlowRateConvertResponse",
 ]

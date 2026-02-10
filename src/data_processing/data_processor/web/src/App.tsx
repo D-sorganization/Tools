@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Database, Settings, BarChart3, Table, Calculator, Clock, Scissors, LineChart, HelpCircle } from 'lucide-react';
+import { Database, Settings, BarChart3, Table, Calculator, Clock, Scissors, LineChart, HelpCircle, FlaskConical } from 'lucide-react';
 import {
   FileUpload,
   SignalList,
@@ -12,6 +12,7 @@ import {
   TimeRangePanel,
   TrendlinePanel,
   HelpPanel,
+  AnalyticsSuite,
 } from './components';
 import { useDataProcessor } from './hooks';
 import type {
@@ -27,7 +28,7 @@ import type {
 
 type TabType = 'chart' | 'table';
 type LeftPanelTab = 'signals' | 'advanced' | 'resample' | 'timerange';
-type RightPanelTab = 'stats' | 'trendline' | 'export' | 'help';
+type RightPanelTab = 'stats' | 'analytics' | 'trendline' | 'export' | 'help';
 
 function App() {
   const [activeTab, setActiveTab] = useState<TabType>('chart');
@@ -305,6 +306,13 @@ function App() {
                 Stats
               </button>
               <button
+                onClick={() => setRightPanelTab('analytics')}
+                className={`px-3 py-2 ${rightPanelTab === 'analytics' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-dark-400'}`}
+              >
+                <FlaskConical className="w-3 h-3 inline mr-1" />
+                Analytics
+              </button>
+              <button
                 onClick={() => setRightPanelTab('trendline')}
                 className={`px-3 py-2 ${rightPanelTab === 'trendline' ? 'border-b-2 border-blue-500 text-blue-400' : 'text-dark-400'}`}
               >
@@ -330,6 +338,14 @@ function App() {
             {rightPanelTab === 'stats' && (
               <StatisticsPanel
                 statistics={statistics}
+                selectedSignals={selectedSignals}
+              />
+            )}
+
+            {rightPanelTab === 'analytics' && (
+              <AnalyticsSuite
+                data={filteredData}
+                signals={signals}
                 selectedSignals={selectedSignals}
               />
             )}

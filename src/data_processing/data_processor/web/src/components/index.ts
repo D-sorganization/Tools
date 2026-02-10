@@ -10,3 +10,4 @@ export { ResamplePanel } from './ResamplePanel';
 export { TimeRangePanel } from './TimeRangePanel';
 export { TrendlinePanel } from './TrendlinePanel';
 export { HelpPanel } from './HelpPanel';
+export { AnalyticsSuite } from './AnalyticsSuite';

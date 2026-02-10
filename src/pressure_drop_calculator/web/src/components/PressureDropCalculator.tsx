@@ -1,6 +1,11 @@
 import { useState, useCallback, useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 
+// API base URL -- defaults to shared calc backend.
+// Override via VITE_CALC_API_URL environment variable.
+// See issue #608.
+const CALC_API_BASE = import.meta.env.VITE_CALC_API_URL ?? 'http://localhost:8010';
+
 const PIPE_SIZES = ['0.5', '0.75', '1', '1.25', '1.5', '2', '2.5', '3', '4', '6', '8', '10', '12', '14', '16', '18', '20', '24'];
 const PIPE_SCHEDULES = ['5', '10', '20', '30', '40', '60', '80', '100', '120', '140', '160', 'STD', 'XS', 'XXS'];
 const FLOW_UNITS = ['kg/h', 'kg/s', 'lb/hr', 'm³/h', 'SCFM', 'Nm³/h'];
@@ -36,6 +41,51 @@ interface Results {
   erosionalVelocity: number;
   erosionRatio: number;
   warnings: string[];
+  engine: string;
+}
+
+// ---------------------------------------------------------------------------
+// Backend integration -- See issue #608
+// ---------------------------------------------------------------------------
+
+async function fetchFromBackend(
+  diameter: number,
+  pipeLength: number,
+  roughness: number,
+  massFlowKgS: number,
+  temperature: number,
+  pressurePa: number,
+  mw: number,
+): Promise<{ pressureDropPa: number; reynolds: number; frictionFactor: number; velocity: number; flowRegime: string; density: number; viscosity: number }> {
+  const response = await fetch(`${CALC_API_BASE}/api/calc/pressure-drop`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      pipe_diameter_m: diameter,
+      pipe_length_m: pipeLength,
+      roughness_m: roughness,
+      flow_rate_kg_s: massFlowKgS,
+      temperature_k: temperature,
+      pressure_pa: pressurePa,
+      molecular_weight_kg_mol: mw / 1000,
+    }),
+  });
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({ detail: response.statusText }));
+    throw new Error(body.detail ?? `API error ${response.status}`);
+  }
+
+  const data = await response.json();
+  return {
+    pressureDropPa: data.pressure_drop_pa,
+    reynolds: data.reynolds_number,
+    frictionFactor: data.friction_factor,
+    velocity: data.velocity_m_s,
+    flowRegime: data.flow_regime,
+    density: data.density_kg_m3,
+    viscosity: data.viscosity_pa_s,
+  };
 }
 
 // Physical constants and helper functions
@@ -90,7 +140,7 @@ export function PressureDropCalculator() {
     setGasComp(prev => ({ ...prev, [key]: val }));
   }, []);
 
-  const calculate = useCallback(() => {
+  const calculate = useCallback(async () => {
     // Normalize composition
     const total = Object.values(gasComp).reduce((a, b) => a + b, 0);
     if (Math.abs(total - 100) > 1) {
@@ -114,17 +164,38 @@ export function PressureDropCalculator() {
       massFlowKgS = flowRate * rho / 3600;
     }
 
-    // Calculate properties
+    // Calculate properties (client-side, used as fallback and for derived metrics)
     const mw = calcMixtureMW(normComp);
     const P_Pa = pressure * 1e5;
-    const rho = calcDensity(P_Pa, temperature, mw);
-    const mu = calcViscosity(temperature);
-    const velocity = massFlowKgS / (rho * area);
-    const Re = rho * velocity * diameter / mu;
-    const f = colebrookFrictionFactor(Re, roughness, diameter);
 
-    // Friction pressure drop (Darcy-Weisbach)
-    const dP_friction = f * (pipeLength / diameter) * 0.5 * rho * velocity * velocity;
+    // Try the validated Python backend first; fall back to client-side.
+    // See issue #608.
+    let engine = 'client-fallback';
+    let rho: number;
+    let velocity: number;
+    let Re: number;
+    let f: number;
+    let dP_friction: number;
+
+    try {
+      const backend = await fetchFromBackend(
+        diameter, pipeLength, roughness, massFlowKgS, temperature, P_Pa, mw,
+      );
+      rho = backend.density;
+      velocity = backend.velocity;
+      Re = backend.reynolds;
+      f = backend.frictionFactor;
+      dP_friction = backend.pressureDropPa;
+      engine = 'python-backend';
+    } catch {
+      // Fallback: local Darcy-Weisbach
+      rho = calcDensity(P_Pa, temperature, mw);
+      const mu = calcViscosity(temperature);
+      velocity = massFlowKgS / (rho * area);
+      Re = rho * velocity * diameter / mu;
+      f = colebrookFrictionFactor(Re, roughness, diameter);
+      dP_friction = f * (pipeLength / diameter) * 0.5 * rho * velocity * velocity;
+    }
 
     // Elevation pressure drop
     const dP_elevation = rho * 9.81 * elevation;
@@ -161,6 +232,7 @@ export function PressureDropCalculator() {
       erosionalVelocity: erosionalVel,
       erosionRatio: velocity / erosionalVel,
       warnings,
+      engine,
     });
     setActiveTab('results');
   }, [pipeSize, pipeLength, material, elevation, flowRate, flowUnit, pressure, temperature, gasComp, frictionMethod]);
@@ -341,9 +413,14 @@ export function PressureDropCalculator() {
                   ))}
                 </ul>
               ) : (
-                <p className="text-green-400 text-sm">✓ No warnings. All parameters within acceptable ranges.</p>
+                <p className="text-green-400 text-sm">No warnings. All parameters within acceptable ranges.</p>
               )}
             </div>
+          </div>
+
+          {/* Engine indicator -- See issue #608 */}
+          <div className="text-right">
+            <span className="text-xs text-slate-500">Engine: {results.engine}</span>
           </div>
         </div>
       )}

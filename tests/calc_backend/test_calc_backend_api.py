@@ -338,3 +338,104 @@ class TestWGSReactorEndpoint:
         self._skip_if_unavailable(resp)
         assert resp.status_code == 200
         assert resp.json()["sizing"] is None
+
+
+# ---------------------------------------------------------------------------
+# Flow Rate Converter -- See issue #608
+# ---------------------------------------------------------------------------
+
+
+class TestFlowRateEndpoint:
+    """POST /api/calc/flow-rate"""
+
+    def test_mass_kg_h_to_lb_h(self) -> None:
+        """Convert 1000 kg/h to lb/h."""
+        resp = client.post(
+            "/api/calc/flow-rate",
+            json={
+                "value": 1000.0,
+                "from_unit": "kg/h",
+                "to_unit": "lb/h",
+                "category": "mass",
+            },
+        )
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["from_unit"] == "kg/h"
+        assert data["to_unit"] == "lb/h"
+        # 1 kg = 2.20462 lb
+        assert abs(data["result"] - 2204.62) < 1.0
+
+    def test_mass_identity(self) -> None:
+        """Same unit should return the same value."""
+        resp = client.post(
+            "/api/calc/flow-rate",
+            json={
+                "value": 42.0,
+                "from_unit": "kg/s",
+                "to_unit": "kg/s",
+                "category": "mass",
+            },
+        )
+        assert resp.status_code == 200
+        assert abs(resp.json()["result"] - 42.0) < 1e-9
+
+    def test_molar_kmol_h_to_mol_s(self) -> None:
+        """Convert 100 kmol/h to mol/s."""
+        resp = client.post(
+            "/api/calc/flow-rate",
+            json={
+                "value": 100.0,
+                "from_unit": "kmol/h",
+                "to_unit": "mol/s",
+                "category": "molar",
+            },
+        )
+        assert resp.status_code == 200
+        # 100 * 1000 / 3600 = 27.778 mol/s
+        assert abs(resp.json()["result"] - 27.778) < 0.01
+
+    def test_volumetric_m3_h_to_cfm(self) -> None:
+        """Convert 1000 m3/h to CFM."""
+        resp = client.post(
+            "/api/calc/flow-rate",
+            json={
+                "value": 1000.0,
+                "from_unit": "m3/h",
+                "to_unit": "CFM",
+                "category": "volumetric",
+            },
+        )
+        assert resp.status_code == 200
+        # 1 m3/h = 0.5886 CFM, so 1000 m3/h = 588.6 CFM
+        assert abs(resp.json()["result"] - 588.58) < 1.0
+
+    def test_invalid_category(self) -> None:
+        resp = client.post(
+            "/api/calc/flow-rate",
+            json={
+                "value": 1.0,
+                "from_unit": "kg/s",
+                "to_unit": "lb/h",
+                "category": "invalid",
+            },
+        )
+        assert resp.status_code == 422
+
+    def test_invalid_unit(self) -> None:
+        resp = client.post(
+            "/api/calc/flow-rate",
+            json={
+                "value": 1.0,
+                "from_unit": "bananas/s",
+                "to_unit": "lb/h",
+                "category": "mass",
+            },
+        )
+        assert resp.status_code == 422
+
+    def test_endpoints_list_includes_flow_rate(self) -> None:
+        resp = client.get("/api/calc/endpoints")
+        assert resp.status_code == 200
+        endpoints = resp.json()["calculators"]
+        assert any("flow-rate" in ep for ep in endpoints)
