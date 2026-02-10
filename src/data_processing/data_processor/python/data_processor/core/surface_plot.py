@@ -406,7 +406,7 @@ class SurfacePlotEngine:
             grid_points = np.column_stack([x_grid.ravel(), y_grid.ravel()])
             z_interp = rbf(grid_points)
             return z_interp.reshape(x_grid.shape)
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.warning(f"RBF interpolation failed: {e}, falling back to linear")
             return self._interpolate_linear(x, y, z, x_grid, y_grid)
 
@@ -505,7 +505,7 @@ class SurfacePlotEngine:
             result[mask] = np.nan
 
             return result
-        except Exception as e:
+        except ImportError as e:
             logger.warning(f"Savgol smoothing failed: {e}, using Gaussian")
             return self._smooth_gaussian(z, config)
 

@@ -23,8 +23,7 @@ def get_repo_root() -> Path:
         current = Path(__file__).resolve().parent
         for _ in range(10):
             if any(
-                (current / m).exists()
-                for m in (".git", "pyproject.toml", "tools.json")
+                (current / m).exists() for m in (".git", "pyproject.toml", "tools.json")
             ):
                 return current
             parent = current.parent
@@ -147,7 +146,7 @@ def launch_python_tool(
             if log_func:
                 log_func("✅ Process started")
 
-    except Exception as e:
+    except (PermissionError, OSError) as e:
         raise LaunchError(f"Failed to start Python process: {e}") from e
 
 
@@ -183,7 +182,7 @@ def launch_matlab_tool(
                 os.startfile(path)
             else:
                 subprocess.Popen(["xdg-open", str(path)])
-        except Exception as e:
+        except (PermissionError, OSError) as e:
             raise LaunchError(f"Could not open file in editor: {e}") from e
 
 
@@ -196,7 +195,7 @@ def launch_browser_tool(
         webbrowser.open(uri)
         if log_func:
             log_func("✅ Opened in default browser")
-    except Exception as e:
+    except (PermissionError, OSError) as e:
         raise LaunchError(f"Failed to open browser: {e}") from e
 
 
@@ -223,7 +222,7 @@ def launch_batch_tool(
             )
             if log_func:
                 log_func("✅ Batch script executed")
-        except Exception as e:
+        except (PermissionError, OSError) as e:
             raise LaunchError(f"Failed to execute batch script: {e}") from e
     else:
         raise PlatformError("Batch scripts are only supported on Windows")

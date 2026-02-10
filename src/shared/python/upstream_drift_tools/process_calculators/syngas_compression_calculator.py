@@ -86,7 +86,7 @@ if os.environ.get("HEADLESS", "false").lower() == "true":
 else:
     try:
         mpl.use("QtAgg")
-    except Exception:
+    except (RuntimeError, AttributeError):
         mpl.use("Agg")
 
 if TYPE_CHECKING:
@@ -796,7 +796,7 @@ if BASE_CALCULATOR_AVAILABLE:
             except RuntimeError:
                 # Widget might be deleted (e.g. tab closed immediately), ignore
                 pass
-            except Exception as e:
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
                 logger.warning(f"Failed to set default values: {e}")
 
         def calculate_compression(self) -> None:
@@ -852,7 +852,7 @@ if BASE_CALCULATOR_AVAILABLE:
                 self.worker.error.connect(self.on_calculation_error)
                 self.worker.start()
 
-            except Exception as e:
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
                 QMessageBox.critical(
                     self,
                     "Calculation Error",

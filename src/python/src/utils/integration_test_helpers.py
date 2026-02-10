@@ -108,7 +108,7 @@ def check_http_service(
             available=False,
             error=str(e),
         )
-    except Exception as e:
+    except (PermissionError, OSError) as e:
         return ServiceStatus(
             name=url,
             available=False,
@@ -167,7 +167,7 @@ def check_database_connection(
             latency_ms=latency,
         )
 
-    except Exception as e:
+    except ImportError as e:
         return ServiceStatus(
             name=f"database:{db_type}",
             available=False,
@@ -207,7 +207,7 @@ def check_command_available(command: str) -> ServiceStatus:
             available=False,
             error="Command timed out",
         )
-    except Exception as e:
+    except (subprocess.SubprocessError, OSError) as e:
         return ServiceStatus(
             name=f"command:{command}",
             available=False,
@@ -295,7 +295,7 @@ class EnvironmentManager:
         for temp_dir in self._temp_dirs:
             try:
                 shutil.rmtree(temp_dir)
-            except Exception as e:
+            except (PermissionError, OSError) as e:
                 logger.warning("Failed to remove temp dir %s: %s", temp_dir, e)
 
     def __enter__(self) -> "EnvironmentManager":

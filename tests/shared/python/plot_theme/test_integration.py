@@ -18,9 +18,7 @@ class TestApplyPlotTheme:
 
     def test_returns_manager(self) -> None:
         """Test that apply_plot_theme returns a PlotThemeManager."""
-        with patch(
-            "plot_theme.integration.get_plot_theme_manager"
-        ) as mock_get:
+        with patch("plot_theme.integration.get_plot_theme_manager") as mock_get:
             mock_manager = MagicMock(spec=PlotThemeManager)
             mock_get.return_value = mock_manager
 
@@ -32,9 +30,7 @@ class TestApplyPlotTheme:
 
     def test_without_theme_name(self) -> None:
         """Test apply_plot_theme without theme name."""
-        with patch(
-            "plot_theme.integration.get_plot_theme_manager"
-        ) as mock_get:
+        with patch("plot_theme.integration.get_plot_theme_manager") as mock_get:
             mock_manager = MagicMock(spec=PlotThemeManager)
             mock_get.return_value = mock_manager
 

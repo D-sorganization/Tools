@@ -70,7 +70,7 @@ def cmd_generate(args: argparse.Namespace) -> int:
         output_path.write_text(urdf_string)
         logger.info(f"Wrote URDF to {output_path}")
     else:
-        print(urdf_string)
+        logger.info(urdf_string)
 
     return 0
 
@@ -115,7 +115,7 @@ def cmd_convert(args: argparse.Namespace) -> int:
                 logger.warning(warning)
 
             if not output_path:
-                print(result.urdf_string)
+                logger.info(result.urdf_string)
 
             logger.info(
                 f"Converted {len(result.links)} links, {len(result.joints)} joints"
@@ -128,7 +128,7 @@ def cmd_convert(args: argparse.Namespace) -> int:
             urdf_string = converter.mjcf_to_urdf(source_path, output_path)
 
             if not output_path:
-                print(urdf_string)
+                logger.info(urdf_string)
 
         elif args.from_format == "urdf" and args.to_format == "mjcf":
             from model_generation.converters.mjcf_converter import MJCFConverter
@@ -137,7 +137,7 @@ def cmd_convert(args: argparse.Namespace) -> int:
             mjcf_string = converter.urdf_to_mjcf(source_path, output_path)
 
             if not output_path:
-                print(mjcf_string)
+                logger.info(mjcf_string)
 
         else:
             logger.error(
@@ -145,7 +145,7 @@ def cmd_convert(args: argparse.Namespace) -> int:
             )
             return 1
 
-    except Exception as e:
+    except ImportError as e:
         logger.error(f"Conversion error: {e}")
         if args.verbose:
             import traceback
@@ -192,13 +192,13 @@ def cmd_validate(args: argparse.Namespace) -> int:
                 for m in messages
             ],
         }
-        print(json.dumps(output, indent=2))
+        logger.info(json.dumps(output, indent=2))
     else:
         if messages:
             for msg in messages:
-                print(str(msg))
+                logger.info(str(msg))
         else:
-            print(f"OK: {source_path}")
+            logger.info(f"OK: {source_path}")
 
     # Return code
     has_errors = any(m.severity == ValidationSeverity.ERROR for m in messages)
@@ -235,20 +235,20 @@ def cmd_diff(args: argparse.Namespace) -> int:
             "deletions": diff_result.deletions,
             "hunks": len(diff_result.hunks),
         }
-        print(json.dumps(output, indent=2))
+        logger.info(json.dumps(output, indent=2))
     elif args.side_by_side:
         side_by_side = editor.get_side_by_side_diff(content_a, content_b)
         for left, right, change_type in side_by_side:
             if change_type == "equal":
-                print(f"  {left or '':<40} | {right or ''}")
+                logger.info(f"  {left or '':<40} | {right or ''}")
             elif change_type == "delete":
-                print(f"- {left or '':<40} |")
+                logger.info(f"- {left or '':<40} |")
             elif change_type == "insert":
-                print(f"  {'':<40} | + {right or ''}")
+                logger.info(f"  {'':<40} | + {right or ''}")
             elif change_type == "replace":
-                print(f"! {left or '':<40} | ! {right or ''}")
+                logger.info(f"! {left or '':<40} | ! {right or ''}")
     else:
-        print(diff_result.unified_diff)
+        logger.info(diff_result.unified_diff)
 
     return 0 if not diff_result.has_changes or not args.fail_on_diff else 1
 
@@ -289,31 +289,31 @@ def cmd_info(args: argparse.Namespace) -> int:
         }
         if model.warnings:
             output["warnings"] = model.warnings
-        print(json.dumps(output, indent=2))
+        logger.info(json.dumps(output, indent=2))
     else:
-        print(f"Model: {model.name}")
-        print(f"Source: {source_path}")
-        print(f"Links: {len(model.links)}")
-        print(f"Joints: {len(model.joints)}")
-        print(f"Materials: {len(model.materials)}")
-        print(f"Total Mass: {total_mass:.3f} kg")
-        print(f"Root Link: {root.name if root else 'N/A'}")
-        print(f"Joint Types: {joint_types}")
+        logger.info(f"Model: {model.name}")
+        logger.info(f"Source: {source_path}")
+        logger.info(f"Links: {len(model.links)}")
+        logger.info(f"Joints: {len(model.joints)}")
+        logger.info(f"Materials: {len(model.materials)}")
+        logger.info(f"Total Mass: {total_mass:.3f} kg")
+        logger.info(f"Root Link: {root.name if root else 'N/A'}")
+        logger.info(f"Joint Types: {joint_types}")
 
         if args.verbose:
-            print("\nLinks:")
+            logger.info("\nLinks:")
             for link in model.links:
-                print(f"  - {link.name} (mass: {link.inertia.mass:.3f} kg)")
-            print("\nJoints:")
+                logger.info(f"  - {link.name} (mass: {link.inertia.mass:.3f} kg)")
+            logger.info("\nJoints:")
             for joint in model.joints:
                 print(
                     f"  - {joint.name}: {joint.parent} -> {joint.child} ({joint.joint_type.value})"
                 )
 
         if model.warnings:
-            print("\nWarnings:")
+            logger.warning("\nWarnings:")
             for w in model.warnings:
-                print(f"  - {w}")
+                logger.info(f"  - {w}")
 
     return 0
 
@@ -345,19 +345,21 @@ def cmd_library_list(args: argparse.Namespace) -> int:
                 for m in models
             ],
         }
-        print(json.dumps(output, indent=2))
+        logger.info(json.dumps(output, indent=2))
     else:
         if models:
-            print(f"Found {len(models)} models:\n")
+            logger.info(f"Found {len(models)} models:\n")
             for model in models:
                 source = f"[{model.source.value}]" if model.source else ""
-                print(f"  {model.model_id:<30} {model.category.value:<12} {source}")
+                logger.info(
+                    f"  {model.model_id:<30} {model.category.value:<12} {source}"
+                )
                 if args.verbose:
-                    print(f"    Path: {model.urdf_path}")
+                    logger.info(f"    Path: {model.urdf_path}")
                     if model.tags:
-                        print(f"    Tags: {', '.join(model.tags)}")
+                        logger.info(f"    Tags: {', '.join(model.tags)}")
         else:
-            print("No models found")
+            logger.info("No models found")
 
     return 0
 
@@ -460,17 +462,17 @@ def cmd_library_import_github(args: argparse.Namespace) -> int:
             }
             for r in results
         ]
-        print(json.dumps(output, indent=2))
+        logger.info(json.dumps(output, indent=2))
     else:
         for r in results:
             status_icon = (
                 "✓" if r.status == "success" else "✗" if r.status == "failed" else "?"
             )
-            print(f"{status_icon} {r.name or r.source_url}: {r.status}")
+            logger.info(f"{status_icon} {r.name or r.source_url}: {r.status}")
             if r.description:
-                print(f"  {r.description}")
+                logger.info(f"  {r.description}")
             if r.error:
-                print(f"  Error: {r.error}")
+                logger.error(f"  Error: {r.error}")
 
     return 0
 
@@ -588,21 +590,21 @@ def cmd_inertia(args: argparse.Namespace) -> int:
                 "iyz": inertia.iyz,
             },
         }
-        print(json.dumps(output, indent=2))
+        logger.info(json.dumps(output, indent=2))
     else:
-        print(f"Shape: {args.shape}")
-        print(f"Mass: {mass} kg")
-        print(f"Dimensions: {args.dimensions}")
-        print("\nInertia tensor:")
-        print(f"  ixx: {inertia.ixx:.6g}")
-        print(f"  iyy: {inertia.iyy:.6g}")
-        print(f"  izz: {inertia.izz:.6g}")
-        print(f"  ixy: {inertia.ixy:.6g}")
-        print(f"  ixz: {inertia.ixz:.6g}")
-        print(f"  iyz: {inertia.iyz:.6g}")
+        logger.info(f"Shape: {args.shape}")
+        logger.info(f"Mass: {mass} kg")
+        logger.info(f"Dimensions: {args.dimensions}")
+        logger.info("\nInertia tensor:")
+        logger.info(f"  ixx: {inertia.ixx:.6g}")
+        logger.info(f"  iyy: {inertia.iyy:.6g}")
+        logger.info(f"  izz: {inertia.izz:.6g}")
+        logger.info(f"  ixy: {inertia.ixy:.6g}")
+        logger.info(f"  ixz: {inertia.ixz:.6g}")
+        logger.info(f"  iyz: {inertia.iyz:.6g}")
 
-        print("\nURDF element:")
-        print(f"  {inertia.to_urdf_string()}")
+        logger.info("\nURDF element:")
+        logger.info(f"  {inertia.to_urdf_string()}")
 
     return 0
 

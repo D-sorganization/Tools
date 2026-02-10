@@ -2,6 +2,9 @@
 
 import sys
 from pathlib import Path
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Bootstrap imports for development mode (before pip install -e .)
 _REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -20,47 +23,47 @@ from pdf_renamer.config import (
 
 def main() -> None:
     """Run interactive API key setup."""
-    print("\n" + "=" * 60)
-    print("PDF Renamer - API Key Configuration")
-    print("=" * 60)
+    logger.info("\n" + "=" * 60)
+    logger.info("PDF Renamer - API Key Configuration")
+    logger.info("=" * 60)
 
     # Check current status
     existing_key = get_api_key()
 
     if existing_key:
-        print("\n✓ API key is already configured!")
-        print(f"  Location: {_find_key_location()}")
-        print("  Key: [hidden for security]")
-        print("\nAI features are enabled and ready to use.")
+        logger.info("\n✓ API key is already configured!")
+        logger.info(f"  Location: {_find_key_location()}")
+        logger.info("  Key: [hidden for security]")
+        logger.info("\nAI features are enabled and ready to use.")
 
         response = input("\nDo you want to reconfigure? (y/N): ").strip().lower()
         if response != "y":
-            print("\nNo changes made. Exiting.")
+            logger.info("\nNo changes made. Exiting.")
             return
     else:
-        print("\n⚠ No API key found.")
-        print("\nAI features require a Gemini API key for title extraction.")
+        logger.info("\n⚠ No API key found.")
+        logger.info("\nAI features require a Gemini API key for title extraction.")
         print(
             "Without it, the tool will use local extraction only (metadata + heuristics)."
         )
 
     # Run interactive setup
     if setup_api_key_interactive():
-        print("\n" + "=" * 60)
-        print("Setup Complete!")
-        print("=" * 60)
-        print("\n✓ API key configured successfully")
-        print("✓ AI features are now enabled")
-        print("\nYou can now use the PDF Renamer with AI-powered extraction:")
-        print("  • GUI: python launch_gui.py")
-        print("  • CLI: python -m src.pdf_renamer.cli /path/to/pdfs --provider gemini")
+        logger.info("\n" + "=" * 60)
+        logger.info("Setup Complete!")
+        logger.info("=" * 60)
+        logger.info("\n✓ API key configured successfully")
+        logger.info("✓ AI features are now enabled")
+        logger.info("\nYou can now use the PDF Renamer with AI-powered extraction:")
+        logger.info("  • GUI: python launch_gui.py")
+        logger.info("  • CLI: python -m src.pdf_renamer.cli /path/to/pdfs --provider gemini")
     else:
-        print("\n" + "=" * 60)
-        print("Setup Cancelled or Failed")
-        print("=" * 60)
-        print("\nYou can still use the PDF Renamer with local extraction only.")
-        print("To set up the API key later, run this script again:")
-        print("  python setup_api_key.py")
+        logger.info("\n" + "=" * 60)
+        logger.error("Setup Cancelled or Failed")
+        logger.info("=" * 60)
+        logger.info("\nYou can still use the PDF Renamer with local extraction only.")
+        logger.info("To set up the API key later, run this script again:")
+        logger.info("  python setup_api_key.py")
 
 
 if __name__ == "__main__":
@@ -68,7 +71,7 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         print("\n\nSetup cancelled by user.")
-    except Exception as e:
+    except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
         print(f"\n\nError: {e}")
         import traceback
 

@@ -143,7 +143,7 @@ class APIRenameManager:
                 confidence=result.confidence,
             )
 
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             logger.error(f"Error creating proposal for {file_path}: {e}")
             return None
 
@@ -239,7 +239,7 @@ class APIRenameManager:
                     )
                     results["success"] += 1
 
-            except Exception as e:
+            except (IOError, PermissionError, OSError) as e:
                 logger.error(f"Failed to rename {proposal.current_name}: {e}")
                 results["failed"] += 1
 

@@ -35,7 +35,7 @@ def safe_read_json(file_path: Path | str, default: Any = None) -> Any:
     except json.JSONDecodeError as e:
         logger.error(f"Invalid JSON in {path}: {e}")
         return default
-    except Exception as e:
+    except (PermissionError, OSError) as e:
         logger.error(f"Error reading JSON file {path}: {e}")
         return default
 
@@ -71,7 +71,7 @@ def safe_write_json(
     except TypeError as e:
         logger.error(f"Data not JSON serializable for {path}: {e}")
         return False
-    except Exception as e:
+    except (PermissionError, OSError) as e:
         logger.error(f"Error writing JSON file {path}: {e}")
         return False
 
@@ -99,7 +99,7 @@ def ensure_directory(path: Path | str, create: bool = True) -> bool:
             dir_path.mkdir(parents=True, exist_ok=True)
             logger.debug(f"Created directory: {dir_path}")
             return True
-        except Exception as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Failed to create directory {dir_path}: {e}")
             return False
 
@@ -191,6 +191,6 @@ def safe_write_text(
         path.write_text(content, encoding=encoding)
         logger.debug(f"Successfully wrote text to {path}")
         return True
-    except Exception as e:
+    except (PermissionError, OSError) as e:
         logger.error(f"Error writing text file {path}: {e}")
         return False

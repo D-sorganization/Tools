@@ -418,7 +418,7 @@ class ThemeManagerDialog(QDialog):
                     )
                     logger.info(f"Exported theme {item.theme_name} to {filename}")
 
-                except Exception as e:
+                except (PermissionError, OSError) as e:
                     QMessageBox.critical(
                         self, "Export Error", f"Failed to export theme: {e}"
                     )
@@ -477,7 +477,7 @@ class ThemeManagerDialog(QDialog):
                 )
                 logger.info(f"Imported theme {theme_name} from {filename}")
 
-            except Exception as e:
+            except (PermissionError, OSError) as e:
                 QMessageBox.critical(
                     self, "Import Error", f"Failed to import theme: {e}"
                 )

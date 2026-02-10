@@ -136,7 +136,7 @@ class VisualizationBuilder:
 
             viz_layout.addWidget(self.electrode_canvas, 3)  # 3D plot gets most space
 
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             logger.exception(
                 "Error creating matplotlib widgets in VisualizationBuilder: %s", e
             )

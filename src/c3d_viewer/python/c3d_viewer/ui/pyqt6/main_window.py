@@ -706,9 +706,6 @@ class C3DViewerWindow(QMainWindow):
                 "Export requires ezc3d library.\nInstall with: pip install ezc3d"
             )
             self.export_status.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']};")
-        except Exception as e:
-            self.export_status.setPlainText(f"Export failed: {e}")
-            self.export_status.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']};")
 
 
 def main() -> int:

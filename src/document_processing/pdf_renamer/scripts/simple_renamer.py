@@ -37,7 +37,7 @@ def extract_title_author(pdf_path: str | Path) -> tuple[str, str]:
                     text = first_page.extract_text() if first_page else ""
                 else:
                     text = ""
-            except Exception:
+            except (KeyError, ValueError, TypeError):
                 text = ""
 
             # Try to extract title (first non-empty line)
@@ -79,7 +79,7 @@ def extract_title_author(pdf_path: str | Path) -> tuple[str, str]:
 
         return author_last_clean, title_clean
 
-    except Exception as e:
+    except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
         logger.error(f"Error processing {pdf_path}: {e}")
         return "Unknown", "Unknown Title"
 

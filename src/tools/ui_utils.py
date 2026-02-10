@@ -80,6 +80,3 @@ def set_qt_icon(window: Any, icon_name: str = "tools_icon.ico") -> bool:
     except ImportError:
         logger.warning("PyQt6 not installed, cannot set Qt icon")
         return False
-    except Exception as e:
-        logger.warning(f"Could not set Qt icon {icon_path}: {e}")
-        return False

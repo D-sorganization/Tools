@@ -496,7 +496,7 @@ class FolderProcessorApp:
             logger.info(f"Constants documentation exported to: {output_path}")
             return True
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.error(f"Failed to export constants documentation: {e}")
             return False
 
@@ -524,7 +524,7 @@ class FolderProcessorApp:
                 # Fallback to PNG if ICO doesn't exist
                 self._load_png_fallback(base_dir)
 
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             logger.error(f"Could not load icon: {e}")
 
     def _set_windows_app_id(self) -> None:
@@ -535,7 +535,7 @@ class FolderProcessorApp:
                     "FolderFix.Tool.2.0",
                 )
                 logger.info("Set Windows App User Model ID for taskbar grouping")
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             logger.warning(f"Could not set app ID: {e}")
 
     def _load_ico_icon(self, ico_path: str) -> None:
@@ -575,7 +575,7 @@ class FolderProcessorApp:
                 self.icon_photos = photos
                 logger.info(f"Set iconphoto with {len(photos)} different sizes")
 
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             logger.warning(f"Could not set iconphoto from ICO: {e}")
 
     def _load_png_fallback(self, base_dir: str) -> None:
@@ -599,7 +599,7 @@ class FolderProcessorApp:
                     self.root.iconphoto(True, *photos)
                     self.icon_photos = photos
                     logger.info(f"Loaded PNG icon: {png_path}")
-            except Exception as e:
+            except (IOError, PermissionError, OSError) as e:
                 logger.warning(f"Failed to load PNG icon: {e}")
 
         else:
@@ -652,7 +652,7 @@ class FolderProcessorApp:
                 # Scroll the canvas
                 canvas.yview_scroll(int(-1 * (delta / 120)), "units")
 
-            except Exception as e:
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
                 logger.debug(f"Mouse wheel scroll error: {e}")
                 # Silently continue - mouse wheel errors shouldn't crash the app
 
@@ -1159,7 +1159,7 @@ class FolderProcessorApp:
             # Update UI
             self.root.update_idletasks()
 
-        except Exception:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             logger.exception("Error updating progress")
 
     def update_status(self, status: str) -> None:
@@ -1177,7 +1177,7 @@ class FolderProcessorApp:
             self.status_var.set(status)
             self.root.update_idletasks()
 
-        except Exception:
+        except (RuntimeError, AttributeError):
             logger.exception("Error updating status")
 
     def validate_file_filters(self, file_path: str) -> bool:
@@ -1505,7 +1505,7 @@ class FolderProcessorApp:
                 "files)",
             )
 
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             # Clean up failed extraction directory
             if extract_dir_obj.exists():
                 try:
@@ -1513,7 +1513,7 @@ class FolderProcessorApp:
                     logger.info(
                         f"Cleaned up failed extraction directory: {extract_dir}",
                     )
-                except Exception as cleanup_error:
+                except (IOError, PermissionError, OSError) as cleanup_error:
                     logger.warning(
                         f"Failed to cleanup extraction directory: {extract_dir} - "
                         f"{cleanup_error}",
@@ -1566,7 +1566,7 @@ class FolderProcessorApp:
         try:
             first_source_parent = Path(valid_source_folders[0]).parent
             backup_base = first_source_parent / backup_base_name
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             raise ValueError(f"Cannot determine backup location: {e}") from e
 
         self.update_status("Creating backup...")
@@ -1606,7 +1606,7 @@ class FolderProcessorApp:
                     if backup_path.exists():
                         unique_path = self._get_unique_path(str(backup_path))
                         backup_path = Path(unique_path)
-                except Exception as e:
+                except (IOError, PermissionError, OSError) as e:
                     logger.error(f"Failed to create backup path for {folder}: {e}")
                     failed_backups += 1
                     continue
@@ -1623,7 +1623,7 @@ class FolderProcessorApp:
                     if not any(backup_path.iterdir()):
                         raise Exception("Backup directory is empty")
 
-                except Exception as e:
+                except (IOError, PermissionError, OSError) as e:
                     failed_backups += 1
                     logger.error(f"Failed to backup folder {folder}: {e}")
 
@@ -1632,7 +1632,7 @@ class FolderProcessorApp:
                         try:
                             shutil.rmtree(backup_path, ignore_errors=True)
                             logger.info(f"Cleaned up failed backup: {backup_path}")
-                        except Exception as cleanup_error:
+                        except (IOError, PermissionError, OSError) as cleanup_error:
                             logger.warning(
                                 f"Failed to cleanup failed backup: {backup_path} - "
                                 f"{cleanup_error}",
@@ -1658,7 +1658,7 @@ class FolderProcessorApp:
                     try:
                         shutil.rmtree(backup_base, ignore_errors=True)
                         logger.info(f"Cleaned up empty backup directory: {backup_base}")
-                    except Exception as cleanup_error:
+                    except (IOError, PermissionError, OSError) as cleanup_error:
                         logger.warning(
                             f"Failed to cleanup empty backup directory: "
                             f"{backup_base} - {cleanup_error}",
@@ -1677,14 +1677,14 @@ class FolderProcessorApp:
                 logger.error("Backup directory is empty or was not created")
                 return None
 
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             logger.error(f"Backup creation failed: {e}")
             # Cleanup failed backup
             if backup_base.exists():
                 try:
                     shutil.rmtree(backup_base, ignore_errors=True)
                     logger.info(f"Cleaned up failed backup: {backup_base}")
-                except Exception as cleanup_error:
+                except (IOError, PermissionError, OSError) as cleanup_error:
                     logger.warning(
                         f"Failed to cleanup failed backup: {backup_base} - "
                         f"{cleanup_error}",
@@ -2046,7 +2046,7 @@ class FolderProcessorApp:
         # Create ZIP in parent directory of destination
         try:
             zip_path = dest_path_obj.parent / zip_filename
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             raise ValueError(f"Cannot determine ZIP location: {e}") from e
 
         # Check if ZIP file already exists and generate unique name
@@ -2123,7 +2123,7 @@ class FolderProcessorApp:
                                     "to ZIP",
                                 )
 
-                        except Exception as e:
+                        except (IOError, PermissionError, OSError) as e:
                             failed_files += 1
                             logger.warning(
                                 f"Failed to add file to ZIP: {file_path} - {e}",
@@ -2155,7 +2155,7 @@ class FolderProcessorApp:
                 else:
                     logger.info("ZIP creation completed successfully")
 
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             # Cleanup failed ZIP file
             if zip_path.exists():
                 try:
@@ -2282,7 +2282,7 @@ class FolderProcessorApp:
                 text_widget.mark_set("insert", "1.0")
                 text_widget.see("1.0")
 
-            except Exception as e:
+            except (KeyError, ValueError, TypeError) as e:
                 logger.error(f"Failed to insert content into text widget: {e}")
                 # Fallback: show truncated content
                 safe_content = (
@@ -2354,7 +2354,7 @@ class FolderProcessorApp:
             messagebox.showinfo(title, fallback_content)
             raise
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.error(f"Failed to show text dialog: {e}")
             # Fallback to simple message box
             fallback_content = (
@@ -2412,7 +2412,7 @@ class FolderProcessorApp:
                             "(e.g., '.txt').",
                         )
                         return False
-            except Exception:
+            except (KeyError, ValueError, TypeError):
                 messagebox.showerror(
                     "Error",
                     "Invalid extension filter format. Use comma-separated values "
@@ -2486,7 +2486,7 @@ class FolderProcessorApp:
                 validation_results["extension_filter_valid"] = all(
                     ext.startswith(".") for ext in ext_list if ext
                 )
-            except Exception:
+            except (KeyError, ValueError, TypeError):
                 validation_results["extension_filter_valid"] = False
         else:
             validation_results["extension_filter_valid"] = True
@@ -2718,7 +2718,7 @@ class FolderProcessorApp:
                                 log.append(f"FAILED to copy '{file}' after retries")
                         else:
                             file_count += 1  # Count in preview mode
-                    except Exception as e:
+                    except (KeyError, ValueError, TypeError) as e:
                         failed_count += 1
                         log.append(f"ERROR copying '{file}': {e}")
 
@@ -2871,7 +2871,7 @@ class FolderProcessorApp:
                     drive = path_obj.parts[0]
                     if not Path(drive).exists():
                         raise ValueError(f"Drive does not exist: {drive}")
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             raise ValueError(f"Invalid path format: {path} - {e}") from e
 
         # Check if path already exists
@@ -2980,7 +2980,7 @@ class FolderProcessorApp:
             else:
                 logger.debug("Folder selection cancelled by user")
 
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             logger.exception("Error selecting source folder")
             messagebox.showerror("Error", f"Failed to select source folder: {e}")
 
@@ -3030,7 +3030,7 @@ class FolderProcessorApp:
 
                 self.update_source_info()
 
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             logger.exception("Error removing source folders")
             messagebox.showerror("Error", f"Failed to remove source folders: {e}")
 
@@ -3076,7 +3076,7 @@ class FolderProcessorApp:
             else:
                 logger.debug("Destination folder selection cancelled by user")
 
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             logger.exception("Error selecting destination folder")
             messagebox.showerror("Error", f"Failed to select destination folder: {e}")
 
@@ -3141,7 +3141,7 @@ class FolderProcessorApp:
                                 log.append(f"FAILED to copy '{file}' after retries")
                         else:
                             moved_count += 1  # Count in preview mode
-                    except Exception as e:
+                    except (KeyError, ValueError, TypeError) as e:
                         failed_count += 1
                         log.append(f"ERROR copying '{file}': {e}")
 
@@ -3251,7 +3251,7 @@ class FolderProcessorApp:
                                 log.append(f"FAILED to copy '{file}' after retries")
                         else:
                             file_count += 1  # Count in preview mode
-                    except Exception as e:
+                    except (KeyError, ValueError, TypeError) as e:
                         failed_count += 1
                         log.append(f"ERROR copying '{file}': {e}")
 

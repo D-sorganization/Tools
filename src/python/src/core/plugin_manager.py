@@ -114,7 +114,7 @@ class PluginManager:
                     self.tools[category] = tool_list
 
             return self.tools
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             logger.error(f"Failed to load tools: {e}")
             return {}
 

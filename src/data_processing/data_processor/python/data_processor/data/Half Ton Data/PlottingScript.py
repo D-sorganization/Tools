@@ -14,7 +14,7 @@ except ImportError:
     def safe_read_csv(path, default=None, **kwargs):
         try:
             return pd.read_csv(path, **kwargs)
-        except Exception:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             return default if default is not None else pd.DataFrame()
 
     def safe_write_csv(df, path, create_parents=True, **kwargs):

@@ -1152,7 +1152,7 @@ if PYQT6_AVAILABLE:
                     colormap=self._colormap_combo.currentText(),
                 )
                 self._plot_widget.set_spec(spec)
-            except Exception as e:
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
                 logger.error(f"Contour plot failed: {e}")
 
     class HeatmapDialog(QDialog):
@@ -1241,7 +1241,7 @@ if PYQT6_AVAILABLE:
                     )
 
                 self._plot_widget.set_spec(spec)
-            except Exception as e:
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
                 logger.error(f"Heatmap generation failed: {e}")
 
     class FilterComparisonDialog(QDialog):
@@ -1327,7 +1327,7 @@ if PYQT6_AVAILABLE:
                     show_difference=self._diff_check.isChecked(),
                 )
                 self._plot_widget.set_spec(spec)
-            except Exception as e:
+            except (RuntimeError, AttributeError) as e:
                 logger.error(f"Filter comparison failed: {e}")
 
     class ChartStylePanel(QWidget):

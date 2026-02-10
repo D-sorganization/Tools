@@ -112,7 +112,7 @@ class ProcessingThread(QThread):
 
             self._process_pdf_files(pdf_files)
 
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             error_msg = f"Critical error: {e}"
             self.log_message.emit(error_msg, "ERROR")
             self.finished.emit(False, error_msg)
@@ -774,7 +774,7 @@ class PDFRenamerGUI(QMainWindow):
                 f"Generated {len(proposals)} rename proposals. Review and approve them below.",
             )
 
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             self.generate_btn.setEnabled(True)
             self.generate_btn.setText("🔍 Generate Proposals")
             QMessageBox.critical(self, "Error", f"Failed to generate proposals: {e}")
@@ -839,7 +839,7 @@ class PDFRenamerGUI(QMainWindow):
                 QMessageBox.information(
                     self, "Export Complete", f"Proposals exported to: {filename}"
                 )
-            except Exception as e:
+            except (IOError, PermissionError, OSError) as e:
                 QMessageBox.critical(
                     self, "Export Failed", f"Failed to export proposals: {e}"
                 )
@@ -881,7 +881,7 @@ class PDFRenamerGUI(QMainWindow):
                     if status_item and status_item.text() == "✅ Approved":
                         status_item.setText("✅ Completed")
 
-            except Exception as e:
+            except (KeyError, ValueError, TypeError) as e:
                 QMessageBox.critical(
                     self, "Execution Failed", f"Failed to execute renames: {e}"
                 )
@@ -900,7 +900,7 @@ class PDFRenamerGUI(QMainWindow):
                 QMessageBox.information(
                     self, "API Key Setup", "API key setup was cancelled or failed."
                 )
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             QMessageBox.critical(self, "Setup Error", f"Failed to setup API key: {e}")
 
     def test_api_key(self) -> None:
@@ -927,7 +927,7 @@ class PDFRenamerGUI(QMainWindow):
                     "API Key Test",
                     "❌ API key test failed. Please check your configuration.",
                 )
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             QMessageBox.critical(self, "API Key Test", f"❌ API key test failed: {e}")
 
 

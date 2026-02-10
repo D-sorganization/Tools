@@ -134,6 +134,3 @@ def convert_png_to_ico(
     except ValueError as e:
         logger.error(f"Invalid image data: {e}")
         return False
-    except Exception as e:
-        logger.error(f"Unexpected error during conversion: {e}")
-        return False

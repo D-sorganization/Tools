@@ -93,7 +93,7 @@ def _load_themes_from_json() -> dict[str, dict[str, str]] | None:
         if themes:
             logger.debug("Loaded %d themes from %s", len(themes), json_path)
             return themes
-    except Exception as e:
+    except (PermissionError, OSError) as e:
         logger.warning("Failed to load themes from JSON: %s", e)
 
     return None
@@ -111,7 +111,7 @@ def _load_chart_colors_from_json() -> list[str] | None:
         with open(json_path, encoding="utf-8") as f:
             data = json.load(f)
         return data.get("chartColors")
-    except Exception:
+    except (PermissionError, OSError):
         return None
 
 

@@ -116,7 +116,7 @@ class MeshExportPipeline:
         # Step 1: Resolve configuration
         try:
             self.config = self._resolve_config(warnings)
-        except Exception as exc:
+        except (KeyError, ValueError, TypeError) as exc:
             return MeshExportResult(
                 success=False,
                 mesh_stats={},
@@ -133,7 +133,7 @@ class MeshExportPipeline:
             warnings.append("pygmsh not available -- using mock mesh for export")
             mesh_gen = MeshGenerator(self.config)
             self.mesh_data = mesh_gen.create_mock_mesh()
-        except Exception as exc:
+        except (KeyError, ValueError, TypeError) as exc:
             return MeshExportResult(
                 success=False,
                 mesh_stats={},
@@ -172,7 +172,7 @@ class MeshExportPipeline:
                 )
                 exported_files.append(str(msh_path))
                 logger.info("Exported MSH to %s", msh_path)
-            except Exception as exc:
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError) as exc:
                 errors.append(f"MSH export error: {exc}")
 
         if "mat" in formats:
@@ -181,7 +181,7 @@ class MeshExportPipeline:
                 export_mesh_to_mat(self.mesh_data, mat_path)
                 exported_files.append(str(mat_path))
                 logger.info("Exported MAT to %s", mat_path)
-            except Exception as exc:
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError) as exc:
                 errors.append(f"MAT export error: {exc}")
 
         if "json" in formats:
@@ -190,7 +190,7 @@ class MeshExportPipeline:
                 self._export_json_metadata(json_path, quality)
                 exported_files.append(str(json_path))
                 logger.info("Exported JSON metadata to %s", json_path)
-            except Exception as exc:
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError) as exc:
                 errors.append(f"JSON metadata export error: {exc}")
 
         return MeshExportResult(

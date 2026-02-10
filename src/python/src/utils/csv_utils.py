@@ -37,7 +37,7 @@ def safe_read_csv(
 
     try:
         return pd.read_csv(path, **kwargs)
-    except Exception as e:
+    except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
         logger.error(f"Error reading CSV file {path}: {e}")
         return default if default is not None else pd.DataFrame()
 
@@ -68,7 +68,7 @@ def safe_write_csv(
         df.to_csv(path, **kwargs)
         logger.debug(f"Successfully wrote CSV to {path}")
         return True
-    except Exception as e:
+    except (PermissionError, OSError) as e:
         logger.error(f"Error writing CSV file {path}: {e}")
         return False
 
@@ -131,6 +131,6 @@ def merge_csv_files(
 
         merged = pd.concat(dataframes, ignore_index=True, **kwargs)
         return safe_write_csv(merged, output_path)
-    except Exception as e:
+    except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
         logger.error(f"Error merging CSV files: {e}")
         return False

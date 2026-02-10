@@ -145,7 +145,7 @@ class UnifiedLauncher(ThemedWindowMixin, QMainWindow):
             try:
                 if self.setup_category_tab(cat_tab, tools_config[category]):
                     tabs.addTab(cat_tab, category)
-            except Exception as e:
+            except (KeyError, ValueError, TypeError) as e:
                 self.log(f"Error creating tab for {category}: {e}")
 
         return tabs
@@ -226,7 +226,7 @@ class UnifiedLauncher(ThemedWindowMixin, QMainWindow):
             except (LaunchError, SecurityError, ToolNotFoundError, PlatformError) as e:
                 self.log(f"❌ Launch Error: {e}")
                 # We can't show message box from thread easily, but log is visible
-            except Exception as e:
+            except (KeyError, ValueError, TypeError) as e:
                 self.log(f"❌ Unexpected Error: {e}")
 
         # Launch in thread to keep UI responsive
@@ -260,7 +260,7 @@ class UnifiedLauncher(ThemedWindowMixin, QMainWindow):
             f1_shortcut.activated.connect(self._show_user_manual)
 
             self.log("Help system initialized successfully")
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             self.log(f"Warning: Failed to initialize help system: {e}")
             self.help_manager = None
 

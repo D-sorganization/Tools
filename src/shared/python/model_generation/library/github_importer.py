@@ -163,7 +163,7 @@ class GitHubImporter:
                             )
                         )
 
-                except Exception as e:
+                except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
                     results.append(
                         ImportResult(
                             source_url=html_url,
@@ -173,7 +173,7 @@ class GitHubImporter:
                         )
                     )
 
-        except Exception as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Search failed: {e}")
             return [ImportResult(source_url=url, status="failed", error=str(e))]
 
@@ -250,7 +250,7 @@ class GitHubImporter:
                         repo_data = json.loads(response.read().decode())
                         branch = repo_data.get("default_branch", "main")
                         description = repo_data.get("description", "")
-                except Exception:
+                except (PermissionError, OSError):
                     logger.warning(
                         f"Could not fetch repo metadata for {url}, assuming branch '{branch}'"
                     )
@@ -277,7 +277,7 @@ class GitHubImporter:
                     )
                 )
 
-            except Exception as e:
+            except (PermissionError, OSError) as e:
                 results.append(
                     ImportResult(
                         source_url=url, status="failed", error=str(e), name=url

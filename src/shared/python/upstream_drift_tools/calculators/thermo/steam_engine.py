@@ -358,7 +358,7 @@ class SteamCalculationEngine:
             try:
                 temperature_k = temperature_c + 273.15
                 return float(PropsSI("P", "T", temperature_k, "Q", 0, "Water"))
-            except Exception:
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError):
                 # CoolProp not available, fall back to Buck equation
                 pass  # Fall back to Buck equation
 
@@ -403,7 +403,7 @@ class SteamCalculationEngine:
 
             return T_guess
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Dew point calculation failed: %s", e)
             return DEFAULT_DEW_POINT_TEMPERATURE_CELSIUS
 
@@ -537,7 +537,7 @@ class SteamCalculationEngine:
             log_p_mmhg = ANTOINE_A - ANTOINE_B / (temperature - ANTOINE_C_KELVIN)
             pressure_mmhg = 10**log_p_mmhg
             return pressure_mmhg * MMHG_TO_PASCAL_FACTOR
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Saturation pressure calculation failed: %s", e)
             return FALLBACK_ATMOSPHERIC_PRESSURE
 
@@ -552,7 +552,7 @@ class SteamCalculationEngine:
             pressure_mmhg = pressure * PASCAL_TO_MMHG_FACTOR
             log_p = np.log10(pressure_mmhg)
             return float(ANTOINE_B / (ANTOINE_A - log_p) + ANTOINE_C_KELVIN)
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Saturation temperature calculation failed: %s", e)
             return FALLBACK_BOILING_TEMPERATURE
 
@@ -581,7 +581,7 @@ class SteamCalculationEngine:
                 thermal_conductivity = self.water.thermal_conductivity
                 dynamic_viscosity = self.water.viscosity
                 kinematic_viscosity = dynamic_viscosity / density
-            except Exception:
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError):
                 # Fallback values if transport properties not available
                 thermal_conductivity = 0.6  # Approximate for water/steam
                 dynamic_viscosity = 1e-6  # Approximate
@@ -590,7 +590,7 @@ class SteamCalculationEngine:
             # Speed of sound (approximate)
             try:
                 speed_of_sound = np.sqrt(cp / cv * pressure / density)
-            except Exception:
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError):
                 speed_of_sound = 1500.0  # Approximate for water
 
             # Determine phase and quality
@@ -629,7 +629,7 @@ class SteamCalculationEngine:
                 specific_heat_ratio=specific_heat_ratio,
             )
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Cantera steam calculation failed: %s", e)
             return self._calculate_simplified_properties(temperature, pressure)
 
@@ -709,7 +709,7 @@ class SteamCalculationEngine:
                 quality = PropsSI("Q", "T", temperature, "P", pressure, "Water")
                 if np.isnan(quality):
                     quality = 0.0 if phase_str.lower() == "liquid" else 1.0
-            except Exception:
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError):
                 quality = 0.0
 
             return SteamProperties(
@@ -732,7 +732,7 @@ class SteamCalculationEngine:
                 prandtl_number=prandtl_number,
                 specific_heat_ratio=specific_heat_ratio,
             )
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("CoolProp steam calculation failed: %s", e)
             return self._calculate_simplified_properties(temperature, pressure)
 
@@ -760,10 +760,10 @@ class SteamCalculationEngine:
                 else:
                     return "vapor", 1.0
 
-            except Exception:
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError):
                 return "unknown", 0.0
 
-        except Exception:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             return "unknown", 0.0
 
     def _calculate_simplified_properties(
@@ -842,7 +842,7 @@ class SteamCalculationEngine:
                 specific_heat_ratio=cp / cv if cv else None,
             )
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Simplified calculation failed: %s", e)
             # Return empty/zero properties on catastrophic failure
             return SteamProperties(

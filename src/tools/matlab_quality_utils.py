@@ -76,7 +76,7 @@ class MATLABQualityChecker:
                 logger.warning("Could not run MATLAB script directly: %s", e)
                 return self._static_matlab_analysis()
 
-        except Exception as e:
+        except (PermissionError, OSError) as e:
             logger.exception("Error running MATLAB quality checks")
             return {"error": str(e)}
 
@@ -127,7 +127,7 @@ class MATLABQualityChecker:
             logger.info("All MATLAB commands failed, falling back to static analysis")
             return self._static_matlab_analysis()
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error running MATLAB script")
             return {"error": str(e)}
 
@@ -373,7 +373,7 @@ class MATLABQualityChecker:
                         "- manage paths externally",
                     )
 
-        except Exception as e:
+        except (PermissionError, OSError) as e:
             issues.append(f"{file_path.name}: Could not analyze file - {e!s}")
 
         return issues
@@ -440,7 +440,7 @@ def run_matlab_quality_checks_cli() -> None:
     results = checker.run_all_checks()
 
     if args.output_format == "json":
-        print(json.dumps(results, indent=2, default=str))
+        logger.info(json.dumps(results, indent=2, default=str))
     else:
         logger.info("\n" + "=" * 60)
         logger.info("MATLAB QUALITY CHECK RESULTS")

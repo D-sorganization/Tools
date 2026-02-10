@@ -675,7 +675,7 @@ class ModelExplorerWindow(QMainWindow):
         else:
             try:
                 self.xml_view.setPlainText(model.to_urdf())
-            except Exception:
+            except (RuntimeError, AttributeError):
                 self.xml_view.setPlainText("(source XML not available)")
 
         # Status

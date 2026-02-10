@@ -168,8 +168,8 @@ class TestGUIInfoWebConfig:
                 rel = str(path.relative_to(REPO_ROOT))
                 problems.append(f"{rel}: web config missing 'port'")
 
-        assert problems == [], (
-            "web config problems:\n" + "\n".join(f"  - {p}" for p in problems)
+        assert problems == [], "web config problems:\n" + "\n".join(
+            f"  - {p}" for p in problems
         )
 
 

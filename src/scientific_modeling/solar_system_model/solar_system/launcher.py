@@ -7,6 +7,9 @@ clear guidance instead of obscure import errors.
 """
 
 from __future__ import annotations
+import logging
+
+logger = logging.getLogger(__name__)
 
 import subprocess
 import sys
@@ -110,11 +113,11 @@ def launch_quickstart(
 
     status = check_dependencies()
     if not status.ok:
-        print("Missing dependencies detected:")
+        logger.info("Missing dependencies detected:")
         for name in status.missing:
             guidance = status.guidance.get(name)
             hint = f" ({guidance})" if guidance else ""
-            print(f"  - {name}{hint}")
+            logger.info(f"  - {name}{hint}")
         print(
             "\nInstall the missing packages and try again. "
             "Recommended: pip install -r solar_system/requirements.txt"
@@ -129,13 +132,13 @@ def launch_quickstart(
         enable_antialiasing=enable_antialiasing,
     )
 
-    print("Starting Solar System Simulation...")
-    print(f"  Resolution: {width}x{height}")
+    logger.info("Starting Solar System Simulation...")
+    logger.info(f"  Resolution: {width}x{height}")
     if fullscreen:
-        print("  Mode: fullscreen")
+        logger.info("  Mode: fullscreen")
     else:
-        print("  Mode: windowed (toggle fullscreen via OS controls)")
-    print("  Tip: Use H to toggle on-screen help once the window opens.\n")
+        logger.info("  Mode: windowed (toggle fullscreen via OS controls)")
+    logger.info("  Tip: Use H to toggle on-screen help once the window opens.\n")
 
     return subprocess.call(command)
 

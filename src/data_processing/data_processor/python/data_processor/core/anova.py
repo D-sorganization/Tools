@@ -799,7 +799,7 @@ class ANOVAAnalyzer:
             # Power using non-central F distribution
             power = 1 - stats.ncf.cdf(f_crit, df1, df2, noncentrality**2)
             return float(power)
-        except Exception:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             return 0.0
 
 

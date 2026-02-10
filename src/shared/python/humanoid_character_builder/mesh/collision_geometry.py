@@ -189,7 +189,7 @@ class CollisionGeometryGenerator:
                 )
             else:
                 vol_preservation = 1.0
-        except Exception:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             vol_preservation = 0.0
 
         # Hausdorff distance (approximate)
@@ -210,7 +210,7 @@ class CollisionGeometryGenerator:
             quality_score = max(0.0, 1.0 - normalized_hausdorff * 10)
             quality_score = (quality_score + vol_preservation) / 2.0
 
-        except Exception as e:
+        except ImportError as e:
             logger.warning(f"Quality metrics calculation failed: {e}")
             quality_score = 0.0
 

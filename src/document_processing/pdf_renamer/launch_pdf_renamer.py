@@ -7,6 +7,9 @@ Replaces PDF_Renamer.bat for better portability.
 import subprocess
 import sys
 from pathlib import Path
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Use shared path utilities
 from utils.path_helpers import ensure_utils_in_path
@@ -21,17 +24,17 @@ def check_python() -> bool:
 
         is_valid, version_str = check_python_version(min_major=3, min_minor=10)
         if not is_valid:
-            print("ERROR: Python 3.10 or higher is required")
-            print(f"Current version: {version_str}")
-            print("Please install Python 3.10+ from https://www.python.org/")
+            logger.error("ERROR: Python 3.10 or higher is required")
+            logger.info(f"Current version: {version_str}")
+            logger.info("Please install Python 3.10+ from https://www.python.org/")
             return False
         return True
     except ImportError:
         # Fallback if shared utility not available
         version = sys.version_info
         if version.major < 3 or (version.major == 3 and version.minor < 10):
-            print("ERROR: Python 3.10 or higher is required")
-            print(f"Current version: {sys.version}")
+            logger.error("ERROR: Python 3.10 or higher is required")
+            logger.info(f"Current version: {sys.version}")
             return False
         return True
 
@@ -51,23 +54,23 @@ def check_dependencies(script_dir: Path) -> bool:
                 )
                 if result.returncode == 0:
                     return True
-            except Exception:
+            except (subprocess.SubprocessError, OSError):
                 pass
 
         # Try to install dependencies
-        print("Some dependencies are missing. Installing...")
+        logger.info("Some dependencies are missing. Installing...")
         requirements = script_dir / "requirements.txt"
         if requirements.exists():
             success = install_from_requirements(str(requirements), upgrade_pip=True)
             if success:
-                print("Dependencies installed successfully!")
+                logger.info("Dependencies installed successfully!")
                 print()
                 return True
             else:
-                print("ERROR: Failed to install dependencies")
+                logger.error("ERROR: Failed to install dependencies")
                 print()
-                print("Please try manually:")
-                print(f"  pip install -r {requirements}")
+                logger.info("Please try manually:")
+                logger.info(f"  pip install -r {requirements}")
                 return False
         return True
     except ImportError:
@@ -103,7 +106,7 @@ def main() -> None:
         sys.exit(1)
 
     # Launch the GUI
-    print("Starting PDF Renamer...")
+    logger.info("Starting PDF Renamer...")
     launch_script = script_dir / "launch_gui.py"
     if not launch_script.exists():
         # Fallback to direct script
@@ -113,11 +116,11 @@ def main() -> None:
         subprocess.run([sys.executable, str(launch_script)], check=True)
     except subprocess.CalledProcessError as e:
         print()
-        print(f"An error occurred (exit code {e.returncode}).")
+        logger.error(f"An error occurred (exit code {e.returncode}).")
         sys.exit(1)
     except KeyboardInterrupt:
         print()
-        print("Launch cancelled by user.")
+        logger.info("Launch cancelled by user.")
         sys.exit(1)
 
 

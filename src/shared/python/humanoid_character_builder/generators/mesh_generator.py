@@ -196,7 +196,7 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
                 collision_mesh.export(str(collision_path))
                 collision_paths[segment_name] = collision_path
 
-            except Exception as e:
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
                 logger.warning(f"Failed to generate mesh for {segment_name}: {e}")
 
         return GeneratedMeshResult(
@@ -286,7 +286,7 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
             return self._generate_via_api(
                 params, modifiers, visual_dir, collision_dir, **kwargs
             )
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.warning(f"MakeHuman API generation failed: {e}")
 
         # Fallback: Try to load pre-exported MakeHuman mesh
@@ -294,7 +294,7 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
             return self._generate_from_presets(
                 params, visual_dir, collision_dir, **kwargs
             )
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.warning(f"MakeHuman preset loading failed: {e}")
 
         # Final fallback to primitive generator
@@ -503,7 +503,12 @@ generate_human()
                         collision_path = collision_dir / f"{segment_name}.stl"
                         collision_mesh.export(str(collision_path))
                         collision_paths[segment_name] = collision_path
-                    except Exception as e:
+                    except (
+                        ValueError,
+                        ZeroDivisionError,
+                        OverflowError,
+                        TypeError,
+                    ) as e:
                         logger.warning(f"Failed to extract {segment_name}: {e}")
         else:
             # Fallback: Use bounding box geometry to segment
@@ -543,7 +548,12 @@ generate_human()
                             collision_path = collision_dir / f"{segment_name}.stl"
                             submesh.convex_hull.export(str(collision_path))
                             collision_paths[segment_name] = collision_path
-                    except Exception as e:
+                    except (
+                        ValueError,
+                        ZeroDivisionError,
+                        OverflowError,
+                        TypeError,
+                    ) as e:
                         logger.warning(f"Failed to slice {segment_name}: {e}")
 
         return GeneratedMeshResult(
@@ -730,7 +740,7 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
                 mesh, model, visual_dir, collision_dir, params
             )
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.error(f"SMPL-X generation failed: {e}")
             # Fallback to primitive generator
             primitive_gen = PrimitiveMeshGenerator()
@@ -890,10 +900,10 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
                     collision_mesh.export(str(collision_path))
                     collision_paths[segment_name] = collision_path
 
-                except Exception as e:
+                except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
                     logger.warning(f"Failed to extract segment {segment_name}: {e}")
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.warning(f"Vertex group extraction failed: {e}")
             # Fallback to z-slice segmentation
             return self._fallback_z_segmentation(
@@ -995,7 +1005,7 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
                 collision_mesh.export(str(collision_path))
                 collision_paths[segment_name] = collision_path
 
-            except Exception as e:
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
                 logger.warning(f"Failed z-segmentation for {segment_name}: {e}")
 
         return GeneratedMeshResult(

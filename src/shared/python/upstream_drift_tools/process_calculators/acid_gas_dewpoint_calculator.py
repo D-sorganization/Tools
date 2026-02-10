@@ -47,7 +47,7 @@ try:
     import thermo
 
     THERMO_AVAILABLE = True
-except Exception:  # pragma: no cover - optional dependency
+except ImportError:  # pragma: no cover - optional dependency
     thermo = None
     THERMO_AVAILABLE = False
 
@@ -55,7 +55,7 @@ try:
     from CoolProp.CoolProp import PropsSI
 
     COOLPROP_AVAILABLE = True
-except Exception:  # pragma: no cover - optional dependency
+except ImportError:  # pragma: no cover - optional dependency
     PropsSI = None
     COOLPROP_AVAILABLE = False
 
@@ -352,7 +352,7 @@ class AcidGasDewpointCalculator:
                 name = self.thermo_names.get(component, component)
                 chem = Chemical(name, T=T)
                 return float(chem.Psat)
-            except Exception as e:  # pragma: no cover - fallback
+            except ImportError as e:  # pragma: no cover - fallback
                 logger.warning("Thermo vapor pressure failed: %s; using Antoine", e)
                 return self.calculate_vapor_pressure(
                     temperature_c, component, "antoine"
@@ -365,7 +365,12 @@ class AcidGasDewpointCalculator:
             try:
                 fluid = self.coolprop_names.get(component, component)
                 return float(PropsSI("P", "T", T, "Q", 0, fluid))
-            except Exception as e:  # pragma: no cover - fallback
+            except (
+                ValueError,
+                ZeroDivisionError,
+                OverflowError,
+                TypeError,
+            ) as e:  # pragma: no cover - fallback
                 logger.warning("CoolProp vapor pressure failed: %s; using Antoine", e)
                 return self.calculate_vapor_pressure(
                     temperature_c, component, "antoine"

@@ -155,7 +155,7 @@ class PressureDropInputs:
 
             return True, "All validations passed"
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.error(f"Input validation error: {e}")
             return False, f"Validation error: {str(e)}"
 

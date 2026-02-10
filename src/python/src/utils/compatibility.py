@@ -5,8 +5,11 @@ This module provides backports for features introduced in Python 3.11,
 allowing the codebase to run on Python 3.10 (Ubuntu 22.04 default).
 """
 
+import logging
 import sys
 from enum import Enum
+
+logger = logging.getLogger(__name__)
 
 
 def check_python_version() -> None:
@@ -21,7 +24,7 @@ def check_python_version() -> None:
             "Critical Error: This application requires Python 3.10 or newer.",
             file=sys.stderr,
         )
-        print(f"Current version: {sys.version}", file=sys.stderr)
+        logger.info(f"Current version: {sys.version}")
         print(
             "\nPlease upgrade Python or use a Python 3.10+ environment.",
             file=sys.stderr,

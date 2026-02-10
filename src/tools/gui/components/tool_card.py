@@ -166,6 +166,6 @@ or press F1 to open the User Manual.
             dialog.resize(600, 450)
             dialog.exec()
 
-        except Exception:
+        except ImportError:
             # Silently fail if help system has issues
             pass

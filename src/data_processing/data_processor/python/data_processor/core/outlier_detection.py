@@ -206,7 +206,7 @@ class OutlierDetector:
                 mask, scores = self._detect_single(X, method)
                 method_results[method.value] = mask
                 all_masks.append(mask)
-            except Exception as e:
+            except (KeyError, ValueError, TypeError) as e:
                 logger.warning(f"Method {method.value} failed: {e}")
 
         if not all_masks:

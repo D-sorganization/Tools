@@ -279,7 +279,11 @@ class LauncherWindow(QMainWindow):
                     "Unsupported",
                     f"Unsupported launch type: {app.launch_type}",
                 )
-        except Exception as exc:  # pragma: no cover - OS-specific
+        except (
+            FileNotFoundError,
+            PermissionError,
+            OSError,
+        ) as exc:  # pragma: no cover - OS-specific
             logger.exception("Failed to launch %s", app.name)
             QMessageBox.critical(
                 self,

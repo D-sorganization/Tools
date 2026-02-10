@@ -163,7 +163,7 @@ class StateManager:
             logger.info("State '%s' saved successfully", state_name)
             return True
 
-        except Exception:
+        except (PermissionError, OSError):
             logger.exception("Error saving state '%s'", state_name)
             return False
 
@@ -190,7 +190,7 @@ class StateManager:
 
             return cast(dict[str, Any], full_state["data"])
 
-        except Exception:
+        except (PermissionError, OSError):
             logger.exception("Error loading state '%s'", state_name)
             return None
 
@@ -225,7 +225,7 @@ class StateManager:
             logger.info("State '%s' deleted successfully", state_name)
             return True
 
-        except Exception:
+        except (PermissionError, OSError):
             logger.exception("Error deleting state '%s'", state_name)
             return False
 
@@ -267,7 +267,7 @@ class StateManager:
                                     "file_size": state_file.stat().st_size,
                                 },
                             )
-                    except Exception as e:
+                    except (PermissionError, OSError) as e:
                         logger.warning(
                             "Could not read state file %s: %s", state_file, e
                         )
@@ -283,7 +283,7 @@ class StateManager:
 
             return states.copy()
 
-        except Exception as e:
+        except (PermissionError, OSError) as e:
             logger.exception("Error listing states: %s", e)
             return []
 
@@ -314,7 +314,7 @@ class StateManager:
             logger.info("State '%s' protected from deletion", state_name)
             return True
 
-        except Exception:
+        except (PermissionError, OSError):
             logger.exception("Error protecting state '%s'", state_name)
             return False
 
@@ -340,7 +340,7 @@ class StateManager:
             logger.info("State '%s' unprotected", state_name)
             return True
 
-        except Exception:
+        except (PermissionError, OSError):
             logger.exception("Error unprotecting state '%s'", state_name)
             return False
 
@@ -377,7 +377,7 @@ class StateManager:
             logger.info("State '%s' exported to %s", state_name, final_export_path)
             return str(final_export_path)
 
-        except Exception:
+        except (PermissionError, OSError):
             logger.exception("Error exporting state '%s'", state_name)
             return None
 
@@ -419,7 +419,7 @@ class StateManager:
 
             return success
 
-        except Exception:
+        except (PermissionError, OSError):
             logger.exception("Error importing state from '%s'", import_path)
             return False
 
@@ -440,7 +440,7 @@ class StateManager:
             logger.debug("Session data saved")
             return True
 
-        except Exception as e:
+        except (PermissionError, OSError) as e:
             logger.exception("Error saving session: %s", e)
             return False
 
@@ -459,7 +459,7 @@ class StateManager:
             logger.debug("Session data loaded")
             return self.current_session
 
-        except Exception as e:
+        except (PermissionError, OSError) as e:
             logger.exception("Error loading session: %s", e)
             return None
 
@@ -484,7 +484,7 @@ class StateManager:
             metadata = state_data["metadata"]
             return not (not isinstance(metadata, dict) or "name" not in metadata)
 
-        except Exception:
+        except (KeyError, ValueError, TypeError):
             return False
 
     def _state_exists(self, state_name: str) -> bool:
@@ -503,7 +503,7 @@ class StateManager:
             shutil.copy2(state_file, backup_path)
             logger.debug("Backup created: %s", backup_path)
 
-        except Exception as e:
+        except (PermissionError, OSError) as e:
             logger.warning("Could not create backup: %s", e)
 
     def _json_serializer(self, obj: Any) -> Any:
@@ -528,7 +528,7 @@ class StateManager:
                     backup_file.unlink()
                     logger.debug("Removed old backup: %s", backup_file)
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error cleaning up backups: %s", e)
 
 

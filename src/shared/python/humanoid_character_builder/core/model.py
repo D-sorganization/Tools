@@ -86,9 +86,7 @@ class SupportPolygon:
     def distance_to_edge(self, point: tuple[float, float]) -> float:
         """Compute minimum distance from point to the polygon edge."""
         if not self.contains(point):
-            return (
-                -1.0
-            )  # Or positive distance to polygon? Convention usually margin > 0 is stable.
+            return -1.0  # Or positive distance to polygon? Convention usually margin > 0 is stable.
             # If outside, negative margin.
 
         px, py = point
@@ -322,5 +320,5 @@ class HumanoidModel:
             hull = ConvexHull(points_array)
             vertices = points_array[hull.vertices]
             return SupportPolygon([tuple(p) for p in vertices])
-        except Exception:
+        except (KeyError, ValueError, TypeError):
             return SupportPolygon(points)

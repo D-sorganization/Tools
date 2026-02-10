@@ -228,7 +228,7 @@ class MDLParser:
         model = parser.parse("/path/to/robot.slx")
 
         for body in model.get_body_blocks():
-            print(f"Body: {body.name}")
+            logger.info(f"Body: {body.name}")
     """
 
     # Block type mapping from SimScape names

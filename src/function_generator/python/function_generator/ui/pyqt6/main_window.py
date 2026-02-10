@@ -452,7 +452,7 @@ class FunctionGeneratorWidget(QWidget):
             self._update_info()
             self.signal_generated.emit(signal)
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             self.info_text.setText(f"Error generating signal:\n{e}")
 
     def _update_plots(self) -> None:

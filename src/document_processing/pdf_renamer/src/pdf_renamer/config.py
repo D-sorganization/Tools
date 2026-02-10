@@ -147,7 +147,7 @@ def get_api_key(key_name: str = "GEMINI_API_KEY") -> str | None:
                             var_name, var_value = line.split("=", 1)
                             if var_name.strip() in key_names:
                                 return var_value.strip().strip('"').strip("'")
-            except Exception:
+            except (IOError, PermissionError, OSError):
                 continue
 
     return None
@@ -160,21 +160,21 @@ def setup_api_key_interactive() -> bool:
     Returns:
         True if API key was set up successfully, False otherwise
     """
-    print("\n" + "=" * 60)
-    print("API Key Setup")
-    print("=" * 60)
+    logger.info("\n" + "=" * 60)
+    logger.info("API Key Setup")
+    logger.info("=" * 60)
 
     existing_key = get_api_key()
     if existing_key:
-        print("\n✓ API key already configured!")
-        print(f"  Found in: {_find_key_location()}")
+        logger.info("\n✓ API key already configured!")
+        logger.info(f"  Found in: {_find_key_location()}")
 
         response = input("\nDo you want to update it? (y/N): ").strip().lower()
         if response != "y":
             return True
 
-    print("\nTo use AI-powered title extraction, you need a Gemini API key.")
-    print("Get your free API key at: https://makersuite.google.com/app/apikey")
+    logger.info("\nTo use AI-powered title extraction, you need a Gemini API key.")
+    logger.info("Get your free API key at: https://makersuite.google.com/app/apikey")
     print(
         "\nNote: AI features are optional. You can skip this and use local extraction only."
     )
@@ -183,21 +183,21 @@ def setup_api_key_interactive() -> bool:
         input("\nWould you like to set up your API key now? (y/N): ").strip().lower()
     )
     if response != "y":
-        print("\nSkipping API key setup. You can set it later by:")
-        print("  1. Creating a .env file with: GEMINI_API_KEY=your_key")
-        print("  2. Setting environment variable: GEMINI_API_KEY=your_key")
+        logger.info("\nSkipping API key setup. You can set it later by:")
+        logger.info("  1. Creating a .env file with: GEMINI_API_KEY=your_key")
+        logger.info("  2. Setting environment variable: GEMINI_API_KEY=your_key")
         return False
 
     api_key = input("\nEnter your Gemini API key: ").strip()
     if not api_key:
-        print("\n✗ No API key entered. Setup cancelled.")
+        logger.info("\n✗ No API key entered. Setup cancelled.")
         return False
 
     # Choose save location
-    print("\nWhere should I save the API key?")
-    print("  1. Project folder (Playground/PDFRenamer/.env)")
-    print("  2. Tools folder (Tools/document_processing/pdf_renamer/.env)")
-    print("  3. User home (~/.pdf_renamer/.env)")
+    logger.info("\nWhere should I save the API key?")
+    logger.info("  1. Project folder (Playground/PDFRenamer/.env)")
+    logger.info("  2. Tools folder (Tools/document_processing/pdf_renamer/.env)")
+    logger.info("  3. User home (~/.pdf_renamer/.env)")
 
     choice = input("\nChoice (1-3, default=1): ").strip() or "1"
 
@@ -242,14 +242,14 @@ def setup_api_key_interactive() -> bool:
                     if line.strip() and not line.strip().startswith("#"):
                         f.write(line)
 
-        print(f"\n✓ API key saved to: {env_path}")
-        print("  File is gitignored and secure.")
-        print("\nAI features are now enabled!")
+        logger.info(f"\n✓ API key saved to: {env_path}")
+        logger.info("  File is gitignored and secure.")
+        logger.info("\nAI features are now enabled!")
         return True
 
-    except Exception as e:
-        print(f"\n✗ Failed to save API key: {e}")
-        print(f"\nYou can manually create {env_path} with your API key.")
+    except (IOError, PermissionError, OSError) as e:
+        logger.error(f"\n✗ Failed to save API key: {e}")
+        logger.info(f"\nYou can manually create {env_path} with your API key.")
         return False
 
 
@@ -273,7 +273,7 @@ def _find_key_location() -> str:
                             "GEMINI_API_KEY="
                         ) or line.strip().startswith("GOOGLE_API_KEY="):
                             return f"{location} ({env_path})"
-            except Exception:
+            except (IOError, PermissionError, OSError):
                 continue
 
     return "Unknown"

@@ -594,7 +594,7 @@ def get_call_stack(
             for key, value in frame_info.frame.f_locals.items():
                 try:
                     local_vars[key] = repr(value)[:100]
-                except Exception:
+                except (KeyError, ValueError, TypeError):
                     local_vars[key] = "<unprintable>"
 
         code_context = ""
@@ -633,16 +633,16 @@ def print_call_stack(
 
     frames = get_call_stack(skip_frames + 1, max_frames, include_locals)
 
-    print("\n=== Call Stack ===", file=file)
+    logger.info("\n=== Call Stack ===", file=file)
     for i, frame in enumerate(frames):
-        print(f"\n[{i}] {frame}", file=file)
+        logger.info(f"\n[{i}] {frame}", file=file)
         if frame.code_context:
-            print(f"    > {frame.code_context}", file=file)
+            logger.info(f"    > {frame.code_context}", file=file)
         if frame.local_vars:
-            print("    Locals:", file=file)
+            logger.info("    Locals:", file=file)
             for key, value in frame.local_vars.items():
-                print(f"      {key} = {value}", file=file)
-    print("\n==================\n", file=file)
+                logger.info(f"      {key} = {value}", file=file)
+    logger.info("\n==================\n", file=file)
 
 
 def get_caller_info(skip_frames: int = 1) -> tuple[str, str, int]:
@@ -723,7 +723,7 @@ def debug_vars(**variables: Any) -> None:
     for name, value in variables.items():
         try:
             value_repr = repr(value)[:200]
-        except Exception:
+        except (KeyError, ValueError, TypeError):
             value_repr = "<unprintable>"
         var_strs.append(f"{name}={value_repr}")
 
@@ -776,7 +776,7 @@ def format_exception_with_locals(
                 if not key.startswith("__"):
                     try:
                         value_repr = repr(value)[:100]
-                    except Exception:
+                    except (KeyError, ValueError, TypeError):
                         value_repr = "<unprintable>"
                     lines.append(f"      {key} = {value_repr}")
             lines.append("")
@@ -910,17 +910,17 @@ def print_diagnostics(file: Any = None) -> None:
 
     diag = get_system_diagnostics()
 
-    print("\n=== System Diagnostics ===", file=file)
-    print(f"Python: {diag.python_version.split()[0]}", file=file)
-    print(f"Platform: {diag.platform}", file=file)
-    print(f"PID: {diag.process_id}", file=file)
-    print(f"Threads: {diag.thread_count}", file=file)
-    print(f"Memory: {diag.memory_mb:.2f} MB", file=file)
-    print(f"CPUs: {diag.cpu_count}", file=file)
-    print("\nEnvironment:", file=file)
+    logger.info("\n=== System Diagnostics ===", file=file)
+    logger.info(f"Python: {diag.python_version.split()[0]}", file=file)
+    logger.info(f"Platform: {diag.platform}", file=file)
+    logger.info(f"PID: {diag.process_id}", file=file)
+    logger.info(f"Threads: {diag.thread_count}", file=file)
+    logger.info(f"Memory: {diag.memory_mb:.2f} MB", file=file)
+    logger.info(f"CPUs: {diag.cpu_count}", file=file)
+    logger.info("\nEnvironment:", file=file)
     for key, value in diag.environment.items():
-        print(f"  {key}={value[:50]}...", file=file)
-    print("==========================\n", file=file)
+        logger.info(f"  {key}={value[:50]}...", file=file)
+    logger.info("==========================\n", file=file)
 
 
 # =============================================================================
@@ -940,7 +940,7 @@ def conditional_breakpoint(
     """
     if condition:
         if message:
-            print(f"Breakpoint: {message}", file=sys.stderr)
+            logger.info(f"Breakpoint: {message}")
         breakpoint()
 
 

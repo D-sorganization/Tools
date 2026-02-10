@@ -448,7 +448,7 @@ class TRCVesselDesignerWidget(QWidget):
             # Emit signal
             self.calculation_complete.emit(self._get_results_dict())
 
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             logger.exception("Calculation failed")
             self._update_status(f"Error: {e}", "error")
 

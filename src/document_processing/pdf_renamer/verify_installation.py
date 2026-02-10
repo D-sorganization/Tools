@@ -5,6 +5,9 @@ import os
 import re
 import sys
 from pathlib import Path
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Color codes for terminal output
 GREEN = "\033[92m"
@@ -47,37 +50,32 @@ def check_dependency(name: str, import_statement: str) -> bool:
         else:
             raise ValueError(f"Unsupported statement: {import_statement}")
 
-        print(f"{GREEN}[OK]{RESET} {name}")
+        logger.info(f"{GREEN}[OK]{RESET} {name}")
         return True
     except ImportError as e:
-        print(f"{RED}[FAIL]{RESET} {name} - {e}")
+        logger.error(f"{RED}[FAIL]{RESET} {name} - {e}")
         return False
-    except Exception as e:
-        print(f"{YELLOW}[WARN]{RESET} {name} - {e}")
-        return False
-
-
 def main() -> None:
     """Run installation verification."""
-    print(f"\n{BOLD}PDF Renamer - Installation Verification{RESET}\n")
-    print("=" * 50)
+    logger.info(f"\n{BOLD}PDF Renamer - Installation Verification{RESET}\n")
+    logger.info("=" * 50)
 
     all_good = True
 
     # Core dependencies
-    print(f"\n{BOLD}Core Dependencies:{RESET}")
+    logger.info(f"\n{BOLD}Core Dependencies:{RESET}")
     all_good &= check_dependency("Python 3.11+", "assert sys.version_info >= (3, 11)")
     all_good &= check_dependency("PyPDF", "import pypdf")
     all_good &= check_dependency("PyMuPDF (fitz)", "import fitz")
     all_good &= check_dependency("PyQt6", "from PyQt6.QtWidgets import QApplication")
 
     # Optional dependencies
-    print(f"\n{BOLD}Optional Dependencies:{RESET}")
+    logger.info(f"\n{BOLD}Optional Dependencies:{RESET}")
     llm_ok = check_dependency("Google Generative AI", "import google.generativeai")
     check_dependency("pdfplumber", "import pdfplumber")
 
     # Project modules
-    print(f"\n{BOLD}Project Modules:{RESET}")
+    logger.info(f"\n{BOLD}Project Modules:{RESET}")
     # We need to make sure the project root is in path for these to work if run from this file
     sys.path.append(os.path.abspath(Path(Path(__file__).parent, "../../..")))
 
@@ -93,20 +91,20 @@ def main() -> None:
     all_good &= check_dependency("gui", "from src.pdf_renamer import gui")
 
     # Environment checks
-    print(f"\n{BOLD}Environment:{RESET}")
+    logger.info(f"\n{BOLD}Environment:{RESET}")
     gemini_key = os.environ.get("GEMINI_API_KEY")
     if gemini_key:
-        print(f"{GREEN}[OK]{RESET} GEMINI_API_KEY set (AI features available)")
+        logger.info(f"{GREEN}[OK]{RESET} GEMINI_API_KEY set (AI features available)")
     else:
-        print(f"{YELLOW}[WARN]{RESET} GEMINI_API_KEY not set (AI features disabled)")
+        logger.warning(f"{YELLOW}[WARN]{RESET} GEMINI_API_KEY not set (AI features disabled)")
 
     # Summary
-    print("\n" + "=" * 50)
+    logger.info("\n" + "=" * 50)
     if all_good:
-        print(f"\n{GREEN}{BOLD}[SUCCESS] All required dependencies installed!{RESET}")
-        print(f"\n{BOLD}Ready to use:{RESET}")
-        print("  - GUI: python launch_gui.py")
-        print("  - CLI: python -m src.pdf_renamer.cli /path/to/pdfs --dry-run")
+        logger.info(f"\n{GREEN}{BOLD}[SUCCESS] All required dependencies installed!{RESET}")
+        logger.info(f"\n{BOLD}Ready to use:{RESET}")
+        logger.info("  - GUI: python launch_gui.py")
+        logger.info("  - CLI: python -m src.pdf_renamer.cli /path/to/pdfs --dry-run")
         if not llm_ok:
             print(
                 f"\n{YELLOW}Note:{RESET} AI features require google-generativeai (optional)"
@@ -116,9 +114,9 @@ def main() -> None:
                 f"{YELLOW}Note:{RESET} Set GEMINI_API_KEY environment variable to enable AI"
             )
     else:
-        print(f"\n{RED}{BOLD}[FAILED] Some dependencies are missing!{RESET}")
-        print(f"\n{BOLD}To fix:{RESET}")
-        print("  pip install -r requirements.txt")
+        logger.error(f"\n{RED}{BOLD}[FAILED] Some dependencies are missing!{RESET}")
+        logger.info(f"\n{BOLD}To fix:{RESET}")
+        logger.info("  pip install -r requirements.txt")
 
     print()
 

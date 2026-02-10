@@ -150,7 +150,7 @@ def create_app() -> Flask:
             )
         except ValueError as e:
             return jsonify({"error": str(e)}), 400
-        except Exception:
+        except (ZeroDivisionError, OverflowError, TypeError):
             logger.exception("Conversion failed")
             return jsonify({"error": "An internal error occurred."}), 500
 

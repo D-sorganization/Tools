@@ -44,7 +44,7 @@ def safe_read_csv(
     """Safely read a CSV file, returning a default DataFrame on error."""
     try:
         return pd.read_csv(path, **kwargs)
-    except Exception:
+    except (ValueError, ZeroDivisionError, OverflowError, TypeError):
         return default if default is not None else pd.DataFrame()
 
 
@@ -63,7 +63,7 @@ def safe_read_json(path: str | Path, default: Any = None, **kwargs: Any) -> Any:
     try:
         with open(path, encoding="utf-8") as f:
             return json.load(f, **kwargs)
-    except Exception:
+    except (IOError, PermissionError, OSError):
         return default
 
 
@@ -247,7 +247,7 @@ def process_single_csv_file(
 
         processed_df.reset_index(inplace=True)
         return processed_df
-    except Exception as e:
+    except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
         logger.error(f"Error processing {file_path}: {e!s}")
         return None
 
@@ -1813,7 +1813,7 @@ class CSVProcessorApp(ctk.CTk):
 
                     df[f"cumulative_{signal}"] = cumulative
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.error(f"Error in integration: {e}")
 
         return df
@@ -1902,7 +1902,7 @@ class CSVProcessorApp(ctk.CTk):
                                 df[f"{signal}_d{order}"] = derivative
                             else:
                                 df[f"{signal}_d{order}"] = np.nan
-                        except Exception as e:
+                        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
                             logger.debug(
                                 f"Error in spline differentiation for \
                                     {signal}, order {order}: {e}",
@@ -1930,7 +1930,7 @@ class CSVProcessorApp(ctk.CTk):
                                 df[f"{signal}_d{order}"] = derivative
                             else:
                                 df[f"{signal}_d{order}"] = np.nan
-                        except Exception as e:
+                        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
                             logger.debug(
                                 f"Error in polynomial differentiation for \
                                     {signal}, order {order}: {e}",
@@ -2071,7 +2071,7 @@ class CSVProcessorApp(ctk.CTk):
                 signals = df.columns.tolist()
                 all_signals.update(signals)
 
-            except Exception as e:
+            except (IOError, PermissionError, OSError) as e:
                 logger.error(f"Error reading {file_path}: {e}")
 
         logger.debug(f" All signals collected: {len(all_signals)} unique signals")
@@ -2117,7 +2117,7 @@ class CSVProcessorApp(ctk.CTk):
                 current_selection = self.plot_file_menu.get()
                 if current_selection == filename:  # Only proceed if still selected
                     self.on_plot_file_select(filename)
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             logger.error(f"Error in auto-select: {e}")
 
     def _ensure_data_loaded(self, filename: str) -> None:
@@ -2142,10 +2142,10 @@ class CSVProcessorApp(ctk.CTk):
                             try:
                                 df[col] = pd.to_datetime(df[col])
                                 break  # Only convert first time column found
-                            except Exception:
+                            except (KeyError, ValueError, TypeError):
                                 pass
                     return True
-                except Exception as e:
+                except (KeyError, ValueError, TypeError) as e:
                     logger.error(f"Error loading {filename}: {e}")
                     return False
         return True
@@ -2352,7 +2352,7 @@ class CSVProcessorApp(ctk.CTk):
                     logger.error(" File processing returned None or empty DataFrame")
                     error_count += 1
 
-            except Exception as e:
+            except (IOError, PermissionError, OSError) as e:
                 logger.error(f"EXCEPTION processing {file_path}: {e}")
                 import traceback
 
@@ -2399,7 +2399,7 @@ class CSVProcessorApp(ctk.CTk):
                     f"All {success_count} files processed and exported successfully!",
                 )
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             messagebox.showerror("Export Error", f"Error exporting files: {e!s}")
             self.status_label.configure(text="Export failed")
 
@@ -2496,7 +2496,7 @@ class CSVProcessorApp(ctk.CTk):
                         logger.debug("  ERROR: Time trimming resulted in empty dataset")
                         return None
 
-                except Exception as e:
+                except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
                     logger.debug(f"  ERROR in time trimming: {e}")
 
             logger.debug("  Setting time column as index...")
@@ -2580,7 +2580,7 @@ class CSVProcessorApp(ctk.CTk):
                                 np.abs(signal_data - median_filtered) > threshold_value
                             )
                             processed_df.loc[outliers, col] = median_filtered[outliers]
-                        except Exception as e:
+                        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
                             logger.error(f"Error applying Hampel filter: {e}")
                             # Fallback to simple median filter
                             processed_df[col] = pd.Series(
@@ -2692,7 +2692,7 @@ class CSVProcessorApp(ctk.CTk):
             )
             return processed_df
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.debug(f"  EXCEPTION in _process_single_file: {e}")
             import traceback
 
@@ -2753,7 +2753,7 @@ class CSVProcessorApp(ctk.CTk):
                 result = safe_eval(formula, safe_dict)
                 df[name] = result
 
-            except Exception as e:
+            except ImportError as e:
                 logger.error(f"Error applying custom variable '{var['name']}': {e}")
                 df[var["name"]] = np.nan
                 messagebox.showwarning(
@@ -4233,7 +4233,7 @@ class CSVProcessorApp(ctk.CTk):
             if Path(self.layout_config_file).exists():
                 with open(self.layout_config_file) as f:
                     return json.load(f)
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             logger.error(f"Error loading layout config: {e}")
         return {}
 
@@ -4250,7 +4250,7 @@ class CSVProcessorApp(ctk.CTk):
                     self.layout_data[splitter_key] = splitter.winfo_width()
 
             safe_write_json(self.layout_config_file, self.layout_data, indent=2)
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             logger.error(f"Error saving layout config: {e}")
 
     def _create_splitter(
@@ -4447,7 +4447,7 @@ class CSVProcessorApp(ctk.CTk):
                 # Update plot immediately - no delays
                 self.update_plot()
 
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             logger.debug(f"ERROR in on_plot_file_select: {e}")
             import traceback
 
@@ -4651,10 +4651,10 @@ class CSVProcessorApp(ctk.CTk):
                                 color=color,
                                 linewidth=line_width,
                             )
-                        except Exception as e:
+                        except (KeyError, ValueError, TypeError) as e:
                             logger.debug(f"Warning: Filter comparison failed - {e}")
 
-                except Exception as e:
+                except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
                     logger.error(f"Error plotting signal {signal}: {e}")
                     continue
 
@@ -4670,7 +4670,7 @@ class CSVProcessorApp(ctk.CTk):
                         trendline_signal,
                         trendline_type,
                     )
-            except Exception as e:
+            except (KeyError, ValueError, TypeError) as e:
                 logger.debug(f"Warning: Trendline failed - {e}")
 
             # Configure plot appearance
@@ -4735,7 +4735,7 @@ class CSVProcessorApp(ctk.CTk):
             self.plot_canvas.draw_idle()  # type: ignore[no-untyped-call]
             self.status_label.configure(text="Plot updated successfully")
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.error(f"Error in plotting: {e}")
             import traceback
 
@@ -4768,7 +4768,7 @@ class CSVProcessorApp(ctk.CTk):
         try:
             self.plot_canvas.draw()  # type: ignore[no-untyped-call]
             return True
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             logger.error(f" Canvas draw failed - {e}")
             return False
 
@@ -4862,13 +4862,6 @@ class CSVProcessorApp(ctk.CTk):
                     filtered_df[signal] = (
                         df[signal].rolling(window=order * 2 + 1, center=True).mean()
                     )
-                except Exception as e:
-                    logger.error(f"Error applying Butterworth filter: {e}")
-                    # Fallback to simple smoothing
-                    filtered_df[signal] = (
-                        df[signal].rolling(window=order * 2 + 1, center=True).mean()
-                    )
-
             elif filter_type == "Median Filter":
                 kernel = int(self.plot_median_kernel_entry.get() or "5")
                 filtered_df[signal] = (
@@ -4908,13 +4901,6 @@ class CSVProcessorApp(ctk.CTk):
                     filtered_df[signal] = (
                         df[signal].rolling(window=window, center=True).median()
                     )
-                except Exception as e:
-                    logger.error(f"Error applying Hampel filter: {e}")
-                    # Fallback to simple median filter
-                    filtered_df[signal] = (
-                        df[signal].rolling(window=window, center=True).median()
-                    )
-
             elif filter_type == "Z-Score Filter":
                 threshold = float(self.plot_zscore_threshold_entry.get() or "3.0")
                 method = self.plot_zscore_method_menu.get()
@@ -4957,13 +4943,6 @@ class CSVProcessorApp(ctk.CTk):
                     filtered_df[signal] = (
                         df[signal].rolling(window=window, center=True).mean()
                     )
-                except Exception as e:
-                    logger.error(f"Error applying Savitzky-Golay filter: {e}")
-                    # Fallback to simple smoothing
-                    filtered_df[signal] = (
-                        df[signal].rolling(window=window, center=True).mean()
-                    )
-
         return filtered_df
 
     def _add_trendline(
@@ -5044,7 +5023,7 @@ class CSVProcessorApp(ctk.CTk):
                                 (plot_df[x_axis_col] >= self.trendline_selection_start)
                                 & (plot_df[x_axis_col] <= self.trendline_selection_end)
                             ]
-                    except Exception as e:
+                    except (KeyError, ValueError, TypeError) as e:
                         logger.error(f"Error applying visual selection: {e}")
 
         # Check if we still have enough data after filtering
@@ -5165,7 +5144,7 @@ class CSVProcessorApp(ctk.CTk):
             # Redraw the canvas
             self.plot_canvas.draw()  # type: ignore[no-untyped-call]
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             messagebox.showerror("Trendline Error", f"Error adding trendline: {e!s}")
             logger.error(f"Error adding trendline: {e}")
             import traceback
@@ -5203,11 +5182,11 @@ class CSVProcessorApp(ctk.CTk):
                 if time_col and pd.api.types.is_object_dtype(df[time_col]):
                     try:
                         df[time_col] = pd.to_datetime(df[time_col])
-                    except Exception:
+                    except (KeyError, ValueError, TypeError):
                         pass
 
                 return df
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             logger.error(f"Error loading data for plotting: {e}")
             return None
 
@@ -5578,7 +5557,7 @@ COMMON MISTAKES TO AVOID:
                 safe_write_json(file_path, settings, indent=2)
                 messagebox.showinfo("Success", f"Settings saved to:\n{file_path}")
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             messagebox.showerror("Error", f"Failed to save settings:\n{e!s}")
 
     def load_settings(self) -> None:
@@ -5722,7 +5701,7 @@ COMMON MISTAKES TO AVOID:
                 f"Settings loaded successfully!\n\nConfiguration saved at: {saved_at}",
             )
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             messagebox.showerror("Error", f"Failed to load settings:\n{e!s}")
 
     def manage_configurations(self) -> None:
@@ -5824,7 +5803,7 @@ COMMON MISTAKES TO AVOID:
             # Load initial list
             self._refresh_config_list()
 
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             messagebox.showerror(
                 "Error",
                 f"Failed to open configuration manager:\n{e!s}",
@@ -5868,7 +5847,7 @@ COMMON MISTAKES TO AVOID:
                                         "Plot Config",
                                     ),
                                 )
-                    except Exception:
+                    except (KeyError, ValueError, TypeError):
                         # Skip files that can't be read as JSON
                         continue
 
@@ -5895,7 +5874,7 @@ COMMON MISTAKES TO AVOID:
                 text=f"Found {len(config_files)} configuration file(s)",
             )
 
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             self.config_status_label.configure(text=f"Error refreshing list: {e!s}")
 
     def _load_selected_config(self) -> None:
@@ -5937,7 +5916,7 @@ COMMON MISTAKES TO AVOID:
                 f"Configuration loaded successfully:\n{filename}",
             )
 
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             messagebox.showerror("Error", f"Failed to load configuration:\n{e!s}")
 
     def _delete_selected_config(self) -> None:
@@ -5976,7 +5955,7 @@ COMMON MISTAKES TO AVOID:
                     f"Configuration deleted successfully:\n{filename}",
                 )
 
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             messagebox.showerror("Error", f"Failed to delete configuration:\n{e!s}")
 
     def _open_config_location(self) -> None:
@@ -5993,7 +5972,7 @@ COMMON MISTAKES TO AVOID:
                 import subprocess
 
                 subprocess.run(["xdg-open", current_dir], check=False)  # Linux
-        except Exception as e:
+        except ImportError as e:
             messagebox.showerror("Error", f"Failed to open folder:\n{e!s}")
 
     def _apply_loaded_settings(self, settings: dict[str, Any]) -> None:
@@ -6120,7 +6099,7 @@ COMMON MISTAKES TO AVOID:
                 if hasattr(self, "output_label"):
                     self.output_label.configure(text=f"Output: {self.output_directory}")
 
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             messagebox.showerror("Error", f"Failed to apply settings:\n{e!s}")
 
     def save_signal_list(self) -> None:
@@ -6183,7 +6162,7 @@ COMMON MISTAKES TO AVOID:
                         successfully with {len(selected_signals)} signals",
                 )
 
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             messagebox.showerror("Error", f"Failed to save signal list:\n{e}")
 
     def load_signal_list(self) -> None:
@@ -6244,7 +6223,7 @@ COMMON MISTAKES TO AVOID:
             )
             logger.debug(" load_signal_list() completed successfully")
 
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             logger.debug(f" Exception in load_signal_list: {e}")
             import traceback
 
@@ -6473,7 +6452,7 @@ COMMON MISTAKES TO AVOID:
                     text=f"Chart exported: {Path(final_path).name}",
                 )
 
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             messagebox.showerror("Error", f"Failed to export chart:\n{e}")
 
     def _export_chart_excel(self) -> None:
@@ -6567,7 +6546,7 @@ COMMON MISTAKES TO AVOID:
                 else:
                     messagebox.showerror("Error", "Could not load data for export.")
 
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             messagebox.showerror("Error", f"Failed to export chart data:\n{e}")
 
     def _add_plot_to_list(self) -> None:
@@ -6751,7 +6730,7 @@ COMMON MISTAKES TO AVOID:
                 ".csv_processor_plots.json",
             )
             safe_write_json(plots_file, self.plots_list, indent=2)
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             logger.error(f"Error saving plots to file: {e}")
 
     def _load_plots_from_file(self) -> None:
@@ -6766,7 +6745,7 @@ COMMON MISTAKES TO AVOID:
                     self.plots_list = json.load(f)
                 self._update_plots_listbox()
                 self._update_load_plot_config_menu()
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             logger.error(f"Error loading plots from file: {e}")
             self.plots_list = []
 
@@ -6838,7 +6817,7 @@ COMMON MISTAKES TO AVOID:
                     f"Data imported and saved to {output_path}",
                 )
 
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             messagebox.showerror("Error", f"Failed to import data: {e!s}")
 
     def trim_and_save(self) -> None:
@@ -6891,7 +6870,7 @@ COMMON MISTAKES TO AVOID:
                 output_path = Path(self.output_directory) / f"{base_name}_Trimmed.csv"
                 safe_write_csv(df, output_path, index=False)
 
-            except Exception as e:
+            except (IOError, PermissionError, OSError) as e:
                 logger.error(f"Error trimming {file_path}: {e}")
 
         messagebox.showinfo(
@@ -7081,7 +7060,7 @@ COMMON MISTAKES TO AVOID:
 
             self.plot_canvas.draw()  # type: ignore[no-untyped-call]
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             messagebox.showerror(
                 "Time Range Error",
                 f"Invalid time format. Please use HH:MM:SS.\n{e}",
@@ -7147,7 +7126,7 @@ COMMON MISTAKES TO AVOID:
                     {date_str}\nStart: {start_time_str}\nEnd: {end_time_str}",
             )
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             messagebox.showerror("Error", f"Failed to copy plot range: {e!s}")
 
     def _save_current_plot_view(self) -> None:
@@ -7218,7 +7197,7 @@ COMMON MISTAKES TO AVOID:
                     {date_str}\nStart: {start_time_str}\nEnd: {end_time_str}",
             )
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             messagebox.showerror("Error", f"Failed to copy current view: {e!s}")
 
     def _override_home_button(self) -> None:
@@ -7238,7 +7217,7 @@ COMMON MISTAKES TO AVOID:
                     else:
                         # Fall back to original home if no saved view
                         self._original_home()
-                except Exception:
+                except (RuntimeError, AttributeError):
                     # Fall back to original home on any error
                     self._original_home()
 
@@ -8466,7 +8445,7 @@ For additional support or feature requests, please refer to the
                                 f"{plot_df[time_col].dt.date.iloc[0]} {start_time}",
                             )
                             plot_df = plot_df[plot_df[time_col] >= start_datetime]
-                        except Exception:
+                        except (KeyError, ValueError, TypeError):
                             pass
                     if end_time:
                         try:
@@ -8474,7 +8453,7 @@ For additional support or feature requests, please refer to the
                                 f"{plot_df[time_col].dt.date.iloc[0]} {end_time}",
                             )
                             plot_df = plot_df[plot_df[time_col] <= end_datetime]
-                        except Exception:
+                        except (KeyError, ValueError, TypeError):
                             pass
 
             # Plot all available signals
@@ -8522,7 +8501,7 @@ For additional support or feature requests, please refer to the
 
             self.preview_canvas.draw()  # type: ignore[no-untyped-call]
 
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             self.preview_ax.clear()
             self.preview_ax.text(
                 0.5,
@@ -8578,7 +8557,7 @@ For additional support or feature requests, please refer to the
                 f"Exported {exported_count} plot configurations to {export_dir}",
             )
 
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             messagebox.showerror("Export Error", f"Error exporting plots: {e}")
 
     def _on_plot_setting_change(self, *args: Any) -> None:
@@ -8706,7 +8685,7 @@ For additional support or feature requests, please refer to the
                     int(-1 * (event.delta / 120)),
                     "units",
                 )
-            except Exception:
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError):
                 # Fallback for different systems
                 frame._parent_canvas.yview_scroll(int(-1 * event.delta), "units")
 
@@ -8953,7 +8932,7 @@ For additional support or feature requests, please refer to the
                 self.plot_ax.autoscale_view()
                 self.plot_canvas.draw()  # type: ignore[no-untyped-call]
                 self.status_label.configure(text="Plot auto-fitted to data")
-            except Exception as e:
+            except (KeyError, ValueError, TypeError) as e:
                 logger.error(f"Error auto-fitting plot: {e}")
 
     def _should_auto_zoom(self, reason: str = "filter_change") -> bool:
@@ -8988,7 +8967,7 @@ For additional support or feature requests, please refer to the
             try:
                 self.plot_ax.set_xlim(zoom_state["xlim"])
                 self.plot_ax.set_ylim(zoom_state["ylim"])
-            except Exception as e:
+            except (RuntimeError, AttributeError) as e:
                 logger.error(f"Error restoring zoom state: {e}")
 
 

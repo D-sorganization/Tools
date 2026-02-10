@@ -3,8 +3,11 @@
 
 from __future__ import annotations
 
+import logging
 import sys
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 # Bootstrap imports for development mode (before pip install -e .)
 _REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -22,10 +25,7 @@ def main() -> int:
         run_app()
         return 0
     except ImportError as e:
-        print(f"Error importing GUI components: {e}")
-        return 1
-    except Exception as e:
-        print(f"Error launching application: {e}")
+        logger.error(f"Error importing GUI components: {e}")
         return 1
 
 

@@ -491,7 +491,7 @@ class ODESolverWindow(QMainWindow):
             self.results_text.setPlainText("\n".join(results))
             self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['green']};")
 
-        except Exception as e:
+        except ImportError as e:
             self.results_text.setPlainText(f"Error: {e}")
             self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']};")
 

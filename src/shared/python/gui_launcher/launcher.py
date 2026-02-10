@@ -196,7 +196,7 @@ class GUILauncher:
                 return self._launch_tkinter()
             else:  # GUIType.BROWSER
                 return self._launch_browser()
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             logger.error(f"Failed to launch {self.config.tool_name}: {e}")
             return 1
 
@@ -297,11 +297,11 @@ class GUILauncher:
 
     def _print_missing_deps(self, status: DependencyStatus) -> None:
         """Print missing dependency information."""
-        print("Missing dependencies detected:")
+        logger.info("Missing dependencies detected:")
         for pkg in status.missing:
             hint = status.guidance.get(pkg, "")
-            print(f"  - {pkg}: {hint}")
-        print("\nInstall the missing packages and try again.")
+            logger.info(f"  - {pkg}: {hint}")
+        logger.info("\nInstall the missing packages and try again.")
 
     def stop(self) -> None:
         """Stop the running application (for React dev servers)."""
@@ -353,11 +353,11 @@ def launch_pyqt6_app(config: LaunchConfig) -> int:
         all_deps.insert(0, "PyQt6")
     status = check_python_dependencies(all_deps)
     if not status.ok:
-        print("Missing required packages:")
+        logger.info("Missing required packages:")
         for pkg in status.missing:
             hint = status.guidance.get(pkg, f"pip install {pkg}")
-            print(f"  - {pkg}: {hint}")
-        print("\nInstall the missing packages and try again.")
+            logger.info(f"  - {pkg}: {hint}")
+        logger.info("\nInstall the missing packages and try again.")
         return 1
 
     if not config.module_path or not config.class_name:
@@ -412,12 +412,8 @@ def launch_pyqt6_app(config: LaunchConfig) -> int:
 
     except ImportError as e:
         logger.error("Failed to import GUI components: %s", e)
-        print(f"Error importing GUI components: {e}")
-        print("\nMake sure the package is installed correctly.")
-        return 1
-    except Exception as e:
-        logger.error("Failed to launch application: %s", e)
-        print(f"Error launching application: {e}")
+        logger.error(f"Error importing GUI components: {e}")
+        logger.info("\nMake sure the package is installed correctly.")
         return 1
 
 
@@ -439,7 +435,9 @@ def launch_from_gui_info(gui_info: dict[str, Any]) -> int:
     """
     pyqt6 = gui_info.get("pyqt6")
     if not pyqt6:
-        print(f"No pyqt6 config found in GUI_INFO for {gui_info.get('name', '?')}")
+        logger.info(
+            f"No pyqt6 config found in GUI_INFO for {gui_info.get('name', '?')}"
+        )
         return 1
 
     min_size = pyqt6.get("min_size")
@@ -491,25 +489,25 @@ def launch_web_app(
                 check=True,
             )
         except (subprocess.CalledProcessError, FileNotFoundError):
-            print(f"Error: {cmd_name} is not installed or not in PATH")
+            logger.error(f"Error: {cmd_name} is not installed or not in PATH")
             if cmd_name == "node":
-                print("Install Node.js from https://nodejs.org/")
+                logger.info("Install Node.js from https://nodejs.org/")
             return 1
 
     if not web_dir.exists():
-        print(f"Error: Web directory not found at {web_dir}")
+        logger.error(f"Error: Web directory not found at {web_dir}")
         return 1
 
     # Install dependencies if needed
     if not (web_dir / "node_modules").exists():
-        print("Installing dependencies...")
+        logger.info("Installing dependencies...")
         install_result = subprocess.run(
             ["npm", "install"],
             cwd=str(web_dir),
             shell=False,
         )
         if install_result.returncode != 0:
-            print("Error: Failed to install npm dependencies")
+            logger.error("Error: Failed to install npm dependencies")
             return 1
 
     # Build dev server command
@@ -520,7 +518,7 @@ def launch_web_app(
     env = os.environ.copy()
     env["PORT"] = str(port)
 
-    print(f"Starting {tool_name} web application on http://localhost:{port}")
+    logger.info(f"Starting {tool_name} web application on http://localhost:{port}")
 
     process = subprocess.Popen(
         dev_cmd,
@@ -542,7 +540,7 @@ def launch_web_app(
     try:
         return process.wait()
     except KeyboardInterrupt:
-        print("\nShutting down...")
+        logger.info("\nShutting down...")
         process.terminate()
         return 0
 
@@ -596,17 +594,17 @@ def launch_tool_by_name(tool_name: str) -> int:
     registry = get_registry()
     registration = registry.get(tool_name)
     if registration is None:
-        print(f"Tool '{tool_name}' not found in registry.")
+        logger.info(f"Tool '{tool_name}' not found in registry.")
         available = registry.list_tools()
         if available:
-            print("\nAvailable tools:")
+            logger.info("\nAvailable tools:")
             for reg in available:
-                print(f"  - {reg.tool_name} ({reg.display_name})")
+                logger.info(f"  - {reg.tool_name} ({reg.display_name})")
         return 1
 
     config = registration.gui_configs.get(GUIType.PYQT6)
     if config is None:
-        print(f"Tool '{tool_name}' has no PyQt6 configuration.")
+        logger.info(f"Tool '{tool_name}' has no PyQt6 configuration.")
         return 1
 
     return launch_pyqt6_app(config)

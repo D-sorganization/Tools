@@ -486,7 +486,7 @@ class FlowRateConverterWindow(QMainWindow):
             result = mass_to_mass(value, from_unit, to_unit)
             self.mass_result_label.setText(f"{result:,.6g} {to_unit}")
             self.mass_result_label.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['green']};")
-        except Exception as e:
+        except ImportError as e:
             self.mass_result_label.setText(f"Error: {e}")
             self.mass_result_label.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']};")
 
@@ -506,7 +506,7 @@ class FlowRateConverterWindow(QMainWindow):
             self.molar_result_label.setStyleSheet(
                 f"color: {CATPPUCCIN_MOCHA['green']};"
             )
-        except Exception as e:
+        except ImportError as e:
             self.molar_result_label.setText(f"Error: {e}")
             self.molar_result_label.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']};")
 
@@ -527,7 +527,7 @@ class FlowRateConverterWindow(QMainWindow):
 
             self.vol_result_label.setText(f"{result:,.6g} {to_unit}")
             self.vol_result_label.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['green']};")
-        except Exception as e:
+        except ImportError as e:
             self.vol_result_label.setText(f"Error: {e}")
             self.vol_result_label.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']};")
 

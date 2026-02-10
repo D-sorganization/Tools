@@ -42,8 +42,7 @@ def get_repo_root(start_path: Path | str | None = None) -> Path:
     current = Path(start_path).resolve()
     for _ in range(10):
         if any(
-            (current / m).exists()
-            for m in (".git", "pyproject.toml", "tools.json")
+            (current / m).exists() for m in (".git", "pyproject.toml", "tools.json")
         ):
             return current
         parent = current.parent

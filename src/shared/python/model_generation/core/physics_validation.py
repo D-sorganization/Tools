@@ -14,7 +14,7 @@ Example:
     validator = PhysicsValidator()
     result = validator.validate_physics(model)
     if not result.is_stable:
-        print(f"Stability margin: {result.stability_margin}")
+        logger.info(f"Stability margin: {result.stability_margin}")
 """
 
 from __future__ import annotations
@@ -296,7 +296,7 @@ class PhysicsValidator:
                 # Compute margin to edge
                 margin = self._distance_to_polygon_edge(com_2d, support_polygon)
 
-            except Exception:
+            except ImportError:
                 is_stable = True
                 support_polygon = list(support_points)
                 margin = 0.0

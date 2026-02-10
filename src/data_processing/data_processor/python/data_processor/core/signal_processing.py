@@ -224,7 +224,7 @@ def _spline_derivative(
 
         return derivative
 
-    except Exception:
+    except (ValueError, ZeroDivisionError, OverflowError, TypeError):
         return np.full(len(signal_data), np.nan)
 
 
@@ -400,7 +400,7 @@ def apply_custom_variable(
     try:
         calculated = safe_eval(parsed_formula, eval_context)
         result[name] = calculated
-    except Exception as e:
+    except (KeyError, ValueError, TypeError) as e:
         raise ValueError(f"Error evaluating formula: {e}") from e
 
     return result

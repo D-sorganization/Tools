@@ -249,7 +249,7 @@ class BaghouseCalculator:
                 flow_acfm = outlet_props.acfm_flow
                 flow_scfm = outlet_props.scfm_flow
 
-            except Exception:
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError):
                 # Fall through to simplified calculation
                 self.thermo_calc = None
 

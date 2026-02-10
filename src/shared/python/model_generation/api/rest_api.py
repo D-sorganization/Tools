@@ -690,7 +690,7 @@ class ModelGenerationAPI:
             else:
                 return APIResponse.error(f"Unknown shape: {shape}")
 
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             return APIResponse.error(f"Calculation failed: {e}")
 
         return APIResponse.ok(
@@ -770,7 +770,7 @@ class ModelGenerationAPI:
                 "trimesh library not available for mesh-based inertia calculation",
                 501,
             )
-        except Exception as e:
+        except (PermissionError, OSError) as e:
             return APIResponse.error(f"Mesh processing failed: {e}")
 
     # ============================================================

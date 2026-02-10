@@ -174,7 +174,7 @@ def exit_on_error(
             except Exception as e:
                 if log_error:
                     logger.error(f"{error_message}: {e}")
-                print(f"ERROR: {error_message}: {e}", file=sys.stderr)
+                logger.error(f"ERROR: {error_message}: {e}")
                 sys.exit(exit_code)
 
         return wrapper

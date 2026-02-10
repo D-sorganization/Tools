@@ -54,7 +54,7 @@ def _read_shared_session_id(path: Path) -> str | None:
             text = path.read_text(encoding="utf-8").strip()
             if text:
                 return text
-    except Exception:
+    except (PermissionError, OSError):
         pass
     return None
 
@@ -64,7 +64,7 @@ def _write_shared_session_id(session_id: str, path: Path) -> None:
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(session_id, encoding="utf-8")
-    except Exception:
+    except (PermissionError, OSError):
         pass
 
 

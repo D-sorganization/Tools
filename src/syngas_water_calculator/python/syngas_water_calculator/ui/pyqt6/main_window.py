@@ -433,7 +433,7 @@ class SyngasWaterCalculatorWindow(QMainWindow):
                     f"color: {CATPPUCCIN_MOCHA['green']}; font-weight: bold;"
                 )
 
-        except Exception as e:
+        except ImportError as e:
             # Show error in results
             error_msg = f"Error: {e}"
             for label in self.result_labels.values():

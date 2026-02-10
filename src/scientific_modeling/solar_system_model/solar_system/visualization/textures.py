@@ -27,7 +27,7 @@ try:  # Optional dependency during headless testing
     )
 
     TEXTURE_BACKEND_AVAILABLE = True
-except Exception:  # pragma: no cover - OpenGL unavailable in tests
+except ImportError:  # pragma: no cover - OpenGL unavailable in tests
     pygame = None
     TEXTURE_BACKEND_AVAILABLE = False
 
@@ -77,7 +77,7 @@ class TextureManager:
         path.parent.mkdir(parents=True, exist_ok=True)
         try:
             urllib.request.urlretrieve(url, path)
-        except Exception:
+        except (ConnectionError, TimeoutError, OSError):
             return None
 
         return path if path.exists() else None

@@ -65,7 +65,7 @@ def calculate_scrubber(request: ScrubberRequest) -> ScrubberResponse:
             acid_gas_removed=request.acid_gas_removed_kg_hr,
             caustic_concentration=request.caustic_concentration_pct,
         )
-    except Exception as exc:
+    except (ValueError, ZeroDivisionError, OverflowError, TypeError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     return ScrubberResponse(

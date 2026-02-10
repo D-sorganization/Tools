@@ -241,7 +241,7 @@ class GitHubRepository(Repository):
                     sub_models = self._scan_directory(item["path"], depth + 1)
                     models.extend(sub_models)
 
-        except Exception as e:
+        except (PermissionError, OSError) as e:
             logger.warning(f"Failed to scan {path}: {e}")
 
         return models
@@ -271,7 +271,7 @@ class GitHubRepository(Repository):
 
             return local_path
 
-        except Exception as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Failed to download {model_path}: {e}")
             return None
 
@@ -299,7 +299,7 @@ class GitHubRepository(Repository):
                     local_file = local_mesh_dir / item["name"]
                     urllib.request.urlretrieve(raw_url, local_file)
 
-        except Exception:
+        except (PermissionError, OSError):
             pass  # Meshes not found or not accessible
 
     def download_archive(self, destination: Path) -> bool:
@@ -317,7 +317,7 @@ class GitHubRepository(Repository):
 
             return True
 
-        except Exception as e:
+        except (ConnectionError, TimeoutError, OSError) as e:
             logger.error(f"Failed to download archive: {e}")
             return False
 
@@ -365,7 +365,7 @@ class CompositeRepository(Repository):
                 for m in repo_models:
                     m.path = f"{repo.name}/{m.path}"
                 models.extend(repo_models)
-            except Exception as e:
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
                 logger.warning(f"Failed to list from {repo.name}: {e}")
         return models
 

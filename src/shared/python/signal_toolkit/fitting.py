@@ -799,7 +799,7 @@ class FunctionFitter:
                     results[candidate] = self.fit_exponential_decay(signal)
                 elif candidate == "exp_growth":
                     results[candidate] = self.fit_exponential_growth(signal)
-            except Exception:
+            except (KeyError, ValueError, TypeError):
                 continue
 
         if not results:

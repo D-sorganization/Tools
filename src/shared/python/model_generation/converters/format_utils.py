@@ -226,5 +226,5 @@ def validate_mjcf(source: str | Path) -> list[str]:
             return []
         except StdET.ParseError as e:
             return [f"XML parse error: {e}"]
-    except Exception as e:
+    except (PermissionError, OSError) as e:
         return [str(e)]
