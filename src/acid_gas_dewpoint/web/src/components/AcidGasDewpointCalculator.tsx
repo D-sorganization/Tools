@@ -11,7 +11,12 @@ import {
   ReferenceLine,
 } from 'recharts'
 
-// Antoine equation constants for acid gases
+// API base URL -- defaults to shared calc backend.
+// Override via VITE_CALC_API_URL environment variable.
+// See issue #609.
+const CALC_API_BASE = import.meta.env.VITE_CALC_API_URL ?? 'http://localhost:8010'
+
+// Antoine equation constants for acid gases (client-side fallback)
 const ANTOINE_CONSTANTS: Record<string, { A: number; B: number; C: number }> = {
   H2O: { A: 8.07131, B: 1730.63, C: 233.426 },
   HF: { A: 7.158, B: 1111.0, C: 235.0 },
@@ -41,7 +46,13 @@ interface CalculationResults {
   margin: number
   risk: string
   warnings: string[]
+  engine: string
 }
+
+// ---------------------------------------------------------------------------
+// Client-side fallback (used when shared calc backend is unreachable)
+// See issue #609 for context on why the Python backend is preferred.
+// ---------------------------------------------------------------------------
 
 function calculateVaporPressure(tempC: number, component: string): number {
   const constants = ANTOINE_CONSTANTS[component]
@@ -71,12 +82,106 @@ function getRiskLevel(margin: number): string {
   return 'VERY LOW - Large safety margin'
 }
 
+function calculateFallback(
+  temperature: number,
+  pressure: number,
+  composition: Record<string, number>,
+): CalculationResults {
+  const pressurePa = pressure * 1e5
+  const warnings: string[] = []
+
+  if (temperature < -100 || temperature > 400) {
+    warnings.push('Temperature outside recommended range (-100 to 400 deg C)')
+  }
+  if (pressure < 0.1 || pressure > 300) {
+    warnings.push('Pressure outside recommended range (0.1 to 300 bar)')
+  }
+
+  const components = ['H2O', 'HF', 'HCl', 'H2S']
+  const dewpointResults: DewpointResult[] = []
+
+  for (const comp of components) {
+    const moleFraction = (composition[comp] || 0) / 100
+    const partialPressure = moleFraction * pressurePa
+    const vaporPressure = calculateVaporPressure(temperature, comp)
+    const dewpoint = calculateDewpoint(partialPressure, comp)
+
+    dewpointResults.push({ component: comp, dewpoint, partialPressure, vaporPressure })
+  }
+
+  const validDewpoints = dewpointResults.filter((r) => !isNaN(r.dewpoint))
+  const overallDewpoint = validDewpoints.length > 0
+    ? Math.max(...validDewpoints.map((r) => r.dewpoint))
+    : NaN
+
+  const limitingComponent = validDewpoints.length > 0
+    ? validDewpoints.reduce((a, b) => (a.dewpoint > b.dewpoint ? a : b)).component
+    : 'Unknown'
+
+  const margin = temperature - overallDewpoint
+  const risk = getRiskLevel(margin)
+
+  return { dewpoints: dewpointResults, overallDewpoint, limitingComponent, margin, risk, warnings, engine: 'client-fallback' }
+}
+
+/**
+ * Call the shared Python backend for acid gas dewpoint calculation.
+ * Falls back to client-side Antoine equations when the API is unreachable.
+ * See issue #609.
+ */
+async function fetchFromBackend(
+  temperature: number,
+  pressure: number,
+  composition: Record<string, number>,
+): Promise<CalculationResults> {
+  const response = await fetch(`${CALC_API_BASE}/api/calc/acid-gas-dewpoint`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      temperature_c: temperature,
+      pressure_bar: pressure,
+      h2o_fraction: (composition.H2O || 0) / 100,
+      hf_fraction: (composition.HF || 0) / 100,
+      hcl_fraction: (composition.HCl || 0) / 100,
+      h2s_fraction: (composition.H2S || 0) / 100,
+      method: 'antoine',
+    }),
+  })
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({ detail: response.statusText }))
+    throw new Error(body.detail ?? `API error ${response.status}`)
+  }
+
+  const data = await response.json()
+
+  // Map backend response to frontend CalculationResults shape
+  const componentKeys = ['H2O', 'HF', 'HCl', 'H2S'] as const
+  const dewpoints: DewpointResult[] = componentKeys.map((comp) => ({
+    component: comp,
+    dewpoint: data.components[comp]?.dewpoint_c ?? NaN,
+    partialPressure: data.components[comp]?.partial_pressure_pa ?? 0,
+    vaporPressure: data.components[comp]?.vapor_pressure_pa ?? 0,
+  }))
+
+  return {
+    dewpoints,
+    overallDewpoint: data.overall_dewpoint_c ?? NaN,
+    limitingComponent: data.limiting_component,
+    margin: data.dewpoint_margin_c ?? NaN,
+    risk: data.condensation_risk,
+    warnings: data.warnings ?? [],
+    engine: 'python-backend',
+  }
+}
+
 export function AcidGasDewpointCalculator() {
   const [temperature, setTemperature] = useState(150)
   const [pressure, setPressure] = useState(30)
   const [preset, setPreset] = useState('Typical Syngas')
   const [composition, setComposition] = useState(PRESETS['Typical Syngas'])
   const [results, setResults] = useState<CalculationResults | null>(null)
+  const [loading, setLoading] = useState(false)
 
   const handlePresetChange = useCallback((newPreset: string) => {
     setPreset(newPreset)
@@ -90,55 +195,21 @@ export function AcidGasDewpointCalculator() {
     setPreset('Custom')
   }, [])
 
-  const calculate = useCallback(() => {
-    const pressurePa = pressure * 1e5
-    const warnings: string[] = []
-
-    if (temperature < -100 || temperature > 400) {
-      warnings.push('Temperature outside recommended range (-100 to 400°C)')
+  const calculate = useCallback(async () => {
+    setLoading(true)
+    try {
+      // Try the validated Python backend first; fall back to client-side
+      // Antoine calculations if the API is unreachable.  See issue #609.
+      let res: CalculationResults
+      try {
+        res = await fetchFromBackend(temperature, pressure, composition)
+      } catch {
+        res = calculateFallback(temperature, pressure, composition)
+      }
+      setResults(res)
+    } finally {
+      setLoading(false)
     }
-    if (pressure < 0.1 || pressure > 300) {
-      warnings.push('Pressure outside recommended range (0.1 to 300 bar)')
-    }
-
-    const components = ['H2O', 'HF', 'HCl', 'H2S']
-    const dewpointResults: DewpointResult[] = []
-
-    for (const comp of components) {
-      const moleFraction = (composition[comp] || 0) / 100
-      const partialPressure = moleFraction * pressurePa
-      const vaporPressure = calculateVaporPressure(temperature, comp)
-      const dewpoint = calculateDewpoint(partialPressure, comp)
-
-      dewpointResults.push({
-        component: comp,
-        dewpoint,
-        partialPressure,
-        vaporPressure,
-      })
-    }
-
-    // Find overall dewpoint (highest valid dewpoint)
-    const validDewpoints = dewpointResults.filter((r) => !isNaN(r.dewpoint))
-    const overallDewpoint = validDewpoints.length > 0
-      ? Math.max(...validDewpoints.map((r) => r.dewpoint))
-      : NaN
-
-    const limitingComponent = validDewpoints.length > 0
-      ? validDewpoints.reduce((a, b) => (a.dewpoint > b.dewpoint ? a : b)).component
-      : 'Unknown'
-
-    const margin = temperature - overallDewpoint
-    const risk = getRiskLevel(margin)
-
-    setResults({
-      dewpoints: dewpointResults,
-      overallDewpoint,
-      limitingComponent,
-      margin,
-      risk,
-      warnings,
-    })
   }, [temperature, pressure, composition])
 
   const chartData = results?.dewpoints.map((d) => ({
@@ -221,9 +292,10 @@ export function AcidGasDewpointCalculator() {
         {/* Calculate Button */}
         <button
           onClick={calculate}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
+          disabled={loading}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors disabled:opacity-50"
         >
-          Calculate Dewpoints
+          {loading ? 'Calculating...' : 'Calculate Dewpoints'}
         </button>
       </div>
 
@@ -320,6 +392,13 @@ export function AcidGasDewpointCalculator() {
                   </tbody>
                 </table>
               </div>
+            </div>
+
+            {/* Engine Info -- See issue #609 */}
+            <div className="bg-slate-800 rounded-lg p-3 text-right">
+              <span className="text-xs text-slate-500">
+                Engine: {results.engine}
+              </span>
             </div>
 
             {/* Warnings */}
