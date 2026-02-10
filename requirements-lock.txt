@@ -1,39 +1,35 @@
-# Locked dependency versions for reproducibility
-# Generated from requirements.txt - pin exact versions to ensure consistent builds
-# To update: pip install -r requirements.txt && pip freeze | grep -E "(numpy|pandas|scipy|matplotlib|sympy|pytest|ruff|mypy|PyQt6|pygame|PyOpenGL|flask|cryptography|pyyaml|playwright|pytest-cov|types-PyYAML|types-requests)" > requirements-lock.txt
+# Locked dependency versions for reproducible builds
+# Generated: 2026-02-10
+# To regenerate: pip install -r requirements.txt && pip freeze > requirements-lock.txt
 
 # Core Scientific Computing
-numpy==2.2.6
-pandas>=2.2.2  # Note: Exact version depends on environment
-scipy==1.15.3
-matplotlib==3.5.1
-sympy==1.9
+numpy==2.4.1
+pandas==2.2.3
+scipy==1.16.0
+matplotlib==3.10.3
+sympy==1.14.0
 
 # Testing & Quality Assurance
-pytest==9.0.2
-pytest-cov  # Version depends on pytest version
-ruff==0.5.0
-mypy==1.19.1
-types-PyYAML  # Version depends on PyYAML version
-types-requests  # Version depends on requests version
+pytest==8.4.1
+pytest-cov==7.0.0
+ruff==0.14.10
+black==26.1.0
+mypy==1.13.0
+bandit==1.9.3
+types-PyYAML==6.0.12.20250915
+types-requests==2.32.4.20250913
 
 # GUI & Desktop Applications
-PyQt6>=6.7.0  # Note: Exact version depends on environment
-pygame>=2.0.0  # Note: Exact version depends on environment
-PyOpenGL>=3.1.5  # Note: Exact version depends on environment
-PyOpenGL_accelerate>=3.1.5  # Note: Exact version depends on environment
+PyQt6==6.9.1
+pygame==2.6.1
+PyOpenGL==3.1.9
 
 # Web Applications
-flask>=3.0.0  # Note: Exact version depends on environment
+flask==3.1.1
 
-# Security & Encryption
-cryptography==3.4.8
-
-# Data Formats & Configuration
-pyyaml>=6.0.1  # Note: Exact version depends on environment
-
-# Web Automation & Testing
-playwright>=1.40.0  # Note: Exact version depends on environment
-
-# Note: Some packages show >= because they weren't installed in the current environment.
-# For full reproducibility, run: pip install -r requirements.txt && pip freeze > requirements-lock.txt
+# Security & Utilities
+cryptography==45.0.5
+defusedxml==0.7.1
+PyYAML==6.0.2
+pillow==11.2.1
+trimesh==4.11.1
