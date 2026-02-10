@@ -52,11 +52,14 @@ jobs:
       - name: Collect Changed Python Files
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            git fetch origin "${{ github.base_ref }}" --depth=1
-            BASE_SHA=$(git merge-base "origin/${{ github.base_ref }}" "${{ github.sha }}")
-            git diff --name-only "$BASE_SHA" "${{ github.sha }}" -- '*.py' > changed_python_files.txt
+            git fetch origin "${{ github.base_ref }}"
+            BASE_SHA=$(git merge-base "origin/${{ github.base_ref }}" HEAD || true)
+            if [ -z "$BASE_SHA" ]; then
+              BASE_SHA="${{ github.event.pull_request.base.sha }}"
+            fi
+            git diff --name-only "$BASE_SHA" HEAD -- '*.py' > changed_python_files.txt
           elif [ -n "${{ github.event.before }}" ]; then
-            git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" -- '*.py' > changed_python_files.txt
+            git diff --name-only "${{ github.event.before }}" HEAD -- '*.py' > changed_python_files.txt
           else
             git diff --name-only HEAD~1 HEAD -- '*.py' > changed_python_files.txt
           fi
@@ -108,11 +111,14 @@ jobs:
       - name: Collect Changed Test Files
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            git fetch origin "${{ github.base_ref }}" --depth=1
-            BASE_SHA=$(git merge-base "origin/${{ github.base_ref }}" "${{ github.sha }}")
-            git diff --name-only "$BASE_SHA" "${{ github.sha }}" -- 'tests/test_*.py' 'tests/**/*test.py' > changed_test_files.txt
+            git fetch origin "${{ github.base_ref }}"
+            BASE_SHA=$(git merge-base "origin/${{ github.base_ref }}" HEAD || true)
+            if [ -z "$BASE_SHA" ]; then
+              BASE_SHA="${{ github.event.pull_request.base.sha }}"
+            fi
+            git diff --name-only "$BASE_SHA" HEAD -- 'tests/test_*.py' 'tests/**/*test.py' > changed_test_files.txt
           elif [ -n "${{ github.event.before }}" ]; then
-            git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" -- 'tests/test_*.py' 'tests/**/*test.py' > changed_test_files.txt
+            git diff --name-only "${{ github.event.before }}" HEAD -- 'tests/test_*.py' 'tests/**/*test.py' > changed_test_files.txt
           else
             git diff --name-only HEAD~1 HEAD -- 'tests/test_*.py' 'tests/**/*test.py' > changed_test_files.txt
           fi
