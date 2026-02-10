@@ -1902,7 +1902,12 @@ class CSVProcessorApp(ctk.CTk):
                                 df[f"{signal}_d{order}"] = derivative
                             else:
                                 df[f"{signal}_d{order}"] = np.nan
-                        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
+                        except (
+                            ValueError,
+                            ZeroDivisionError,
+                            OverflowError,
+                            TypeError,
+                        ) as e:
                             logger.debug(
                                 f"Error in spline differentiation for \
                                     {signal}, order {order}: {e}",
@@ -1930,7 +1935,12 @@ class CSVProcessorApp(ctk.CTk):
                                 df[f"{signal}_d{order}"] = derivative
                             else:
                                 df[f"{signal}_d{order}"] = np.nan
-                        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
+                        except (
+                            ValueError,
+                            ZeroDivisionError,
+                            OverflowError,
+                            TypeError,
+                        ) as e:
                             logger.debug(
                                 f"Error in polynomial differentiation for \
                                     {signal}, order {order}: {e}",
@@ -2580,7 +2590,12 @@ class CSVProcessorApp(ctk.CTk):
                                 np.abs(signal_data - median_filtered) > threshold_value
                             )
                             processed_df.loc[outliers, col] = median_filtered[outliers]
-                        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
+                        except (
+                            ValueError,
+                            ZeroDivisionError,
+                            OverflowError,
+                            TypeError,
+                        ) as e:
                             logger.error(f"Error applying Hampel filter: {e}")
                             # Fallback to simple median filter
                             processed_df[col] = pd.Series(
@@ -6567,8 +6582,7 @@ COMMON MISTAKES TO AVOID:
 
         plot_config = {
             "name": plot_name,
-            "description": plot_desc
-            or f"Plot configuration created on \
+            "description": plot_desc or f"Plot configuration created on \
                 {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}",
             "signals": selected_signals,
             "start_time": self.plots_list_start_time_entry.get(),

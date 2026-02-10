@@ -107,9 +107,9 @@ class GeometrySynchronizer:
             bath_diameter=ec.bath_diameter,
             glass_depth=ec.glass_depth,
             metal_layer_thickness=getattr(ec, "metal_depth", 2.0),
-            num_electrodes=len(ec.electrode_depths)
-            if hasattr(ec, "electrode_depths")
-            else 3,
+            num_electrodes=(
+                len(ec.electrode_depths) if hasattr(ec, "electrode_depths") else 3
+            ),
             electrode_spacing_degrees=ec.electrode_spacing_degrees,
             electrode_diameter=ec.tip_diameter,
             electrode_insertion_depth=self._compute_insertion_depth(ec),

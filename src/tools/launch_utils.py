@@ -17,7 +17,7 @@ def get_repo_root() -> Path:
     try:
         from upstream_drift_tools.utils.paths import get_repo_root as _get_repo_root
 
-        return _get_repo_root()
+        return Path(_get_repo_root())
     except ImportError:
         # Minimal fallback -- uses same markers as canonical implementation
         current = Path(__file__).resolve().parent

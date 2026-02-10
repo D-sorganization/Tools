@@ -320,10 +320,10 @@ def get_memory_usage() -> float:
         Memory usage in megabytes
     """
     try:
-        import resource
+        import resource  # type: ignore[import-not-found]  # Unix only
 
         # Unix-based systems
-        usage = resource.getrusage(resource.RUSAGE_SELF)
+        usage = resource.getrusage(resource.RUSAGE_SELF)  # type: ignore[attr-defined]
         # maxrss is in KB on Linux, bytes on macOS
         if sys.platform == "darwin":
             return float(usage.ru_maxrss / (1024 * 1024))
@@ -633,16 +633,16 @@ def print_call_stack(
 
     frames = get_call_stack(skip_frames + 1, max_frames, include_locals)
 
-    logger.info("\n=== Call Stack ===", file=file)
+    print("\n=== Call Stack ===", file=file)
     for i, frame in enumerate(frames):
-        logger.info(f"\n[{i}] {frame}", file=file)
+        print(f"\n[{i}] {frame}", file=file)
         if frame.code_context:
-            logger.info(f"    > {frame.code_context}", file=file)
+            print(f"    > {frame.code_context}", file=file)
         if frame.local_vars:
-            logger.info("    Locals:", file=file)
+            print("    Locals:", file=file)
             for key, value in frame.local_vars.items():
-                logger.info(f"      {key} = {value}", file=file)
-    logger.info("\n==================\n", file=file)
+                print(f"      {key} = {value}", file=file)
+    print("\n==================\n", file=file)
 
 
 def get_caller_info(skip_frames: int = 1) -> tuple[str, str, int]:
@@ -910,17 +910,17 @@ def print_diagnostics(file: Any = None) -> None:
 
     diag = get_system_diagnostics()
 
-    logger.info("\n=== System Diagnostics ===", file=file)
-    logger.info(f"Python: {diag.python_version.split()[0]}", file=file)
-    logger.info(f"Platform: {diag.platform}", file=file)
-    logger.info(f"PID: {diag.process_id}", file=file)
-    logger.info(f"Threads: {diag.thread_count}", file=file)
-    logger.info(f"Memory: {diag.memory_mb:.2f} MB", file=file)
-    logger.info(f"CPUs: {diag.cpu_count}", file=file)
-    logger.info("\nEnvironment:", file=file)
+    print("\n=== System Diagnostics ===", file=file)
+    print(f"Python: {diag.python_version.split()[0]}", file=file)
+    print(f"Platform: {diag.platform}", file=file)
+    print(f"PID: {diag.process_id}", file=file)
+    print(f"Threads: {diag.thread_count}", file=file)
+    print(f"Memory: {diag.memory_mb:.2f} MB", file=file)
+    print(f"CPUs: {diag.cpu_count}", file=file)
+    print("\nEnvironment:", file=file)
     for key, value in diag.environment.items():
-        logger.info(f"  {key}={value[:50]}...", file=file)
-    logger.info("==========================\n", file=file)
+        print(f"  {key}={value[:50]}...", file=file)
+    print("==========================\n", file=file)
 
 
 # =============================================================================

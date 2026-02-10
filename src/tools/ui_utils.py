@@ -11,7 +11,7 @@ except ImportError:
         from tools.launch_utils import get_repo_root
     except ImportError:
 
-        def get_repo_root() -> Path:  # type: ignore[misc]
+        def get_repo_root() -> Path:
             return Path(__file__).resolve().parent.parent
 
 
