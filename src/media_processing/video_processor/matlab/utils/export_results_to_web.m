@@ -17,7 +17,7 @@ function export_results_to_web(results, output_file)
     %   results = pendulum_model(pose_data);
     %   export_results_to_web(results, 'results.json');
     %
-    % See also: pendulum_model, import_matlab_results
+    % See also: import_matlab_results
 
     arguments
         results (1,1) struct
