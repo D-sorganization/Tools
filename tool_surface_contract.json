@@ -1,0 +1,285 @@
+{
+  "version": "1.0.0",
+  "tools": [
+    {
+      "id": "acid_gas_dewpoint",
+      "name": "Acid Gas Dewpoint Calculator",
+      "description": "HF, HCl, H2S dewpoint analysis for syngas applications",
+      "category": "Process Simulation",
+      "surfaces": {
+        "pyqt6": true,
+        "web": true
+      }
+    },
+    {
+      "id": "baghouse_calculator",
+      "name": "Baghouse Calculator",
+      "description": "Baghouse filter performance and drum sizing calculator",
+      "category": "Process Simulation",
+      "surfaces": {
+        "pyqt6": true,
+        "web": true
+      }
+    },
+    {
+      "id": "c3d_viewer",
+      "name": "C3D Motion Capture Viewer",
+      "description": "View and analyze C3D motion capture files",
+      "category": "Biomechanics",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false
+      }
+    },
+    {
+      "id": "data_processor",
+      "name": "Data Processor",
+      "description": "Signal processing and time-series data analysis tool",
+      "category": "Data Processing",
+      "surfaces": {
+        "pyqt6": true,
+        "web": true
+      }
+    },
+    {
+      "id": "electrode_advisor",
+      "name": "Electrode Advisor",
+      "description": "AC Electrode Advancement Module for electrode system analysis",
+      "category": "Process Simulation",
+      "surfaces": {
+        "pyqt6": true,
+        "web": true
+      }
+    },
+    {
+      "id": "financial_calculator",
+      "name": "Financial Calculator",
+      "description": "Comprehensive financial modeling for plant operations",
+      "category": "Process Simulation",
+      "surfaces": {
+        "pyqt6": true,
+        "web": true
+      }
+    },
+    {
+      "id": "flare_calculator",
+      "name": "Flare Calculator",
+      "description": "Flare sizing and safety zone calculator",
+      "category": "Process Simulation",
+      "surfaces": {
+        "pyqt6": true,
+        "web": true
+      }
+    },
+    {
+      "id": "flow_rate_converter",
+      "name": "Flow Rate Converter",
+      "description": "Convert between mass, molar, and volumetric flow rate units",
+      "category": "Utilities",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false
+      }
+    },
+    {
+      "id": "folder_packer_pro",
+      "name": "Folder Packer Pro",
+      "description": "Professional Project Archiving and Distribution Tool",
+      "category": "Development Tools",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false
+      }
+    },
+    {
+      "id": "folder_tool",
+      "name": "Folder Tool (Utility)",
+      "description": "Directory Management Utility",
+      "category": "Development Tools",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false
+      }
+    },
+    {
+      "id": "function_generator",
+      "name": "Function Generator",
+      "description": "Generate and visualize various waveforms (sine, square, triangle, etc.)",
+      "category": "Signal Processing",
+      "surfaces": {
+        "pyqt6": true,
+        "web": true
+      }
+    },
+    {
+      "id": "humanoid_builder_gui",
+      "name": "Humanoid Character Builder",
+      "description": "Build parametric humanoid characters with anthropometric calculations",
+      "category": "Robotics",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false
+      }
+    },
+    {
+      "id": "inertia_calculator",
+      "name": "Inertia Calculator",
+      "description": "Calculate and validate inertia tensors for rigid bodies",
+      "category": "Robotics",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false
+      }
+    },
+    {
+      "id": "multi_param_analysis",
+      "name": "Multi-Parameter Analysis",
+      "description": "Run multi-parameter sensitivity analysis with grid evaluation",
+      "category": "Analysis",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false
+      }
+    },
+    {
+      "id": "ode_solver",
+      "name": "ODE Solver",
+      "description": "Solve systems of ordinary differential equations symbolically",
+      "category": "Mathematics",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false
+      }
+    },
+    {
+      "id": "optimizer_gui",
+      "name": "Adam Optimizer",
+      "description": "Configure and run Adam-based optimization",
+      "category": "Optimization",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false
+      }
+    },
+    {
+      "id": "pdf_renamer",
+      "name": "PDF Renamer",
+      "description": "Intelligent PDF File Renaming Tool",
+      "category": "Development Tools",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false
+      }
+    },
+    {
+      "id": "pressure_drop_calculator",
+      "name": "Pressure Drop Calculator",
+      "description": "Pipe flow pressure drop analysis with multiple friction methods",
+      "category": "Process Simulation",
+      "surfaces": {
+        "pyqt6": true,
+        "web": true
+      }
+    },
+    {
+      "id": "psa_package",
+      "name": "PSA System Analysis",
+      "description": "Two-stage Pressure Swing Adsorption system analysis",
+      "category": "Process Simulation",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false
+      }
+    },
+    {
+      "id": "scrubber_calculator",
+      "name": "Scrubber Calculator",
+      "description": "Packed bed scrubber design with NTU/HTU mass transfer",
+      "category": "Process Simulation",
+      "surfaces": {
+        "pyqt6": true,
+        "web": true
+      }
+    },
+    {
+      "id": "signal_processing_studio",
+      "name": "Signal Processing Studio",
+      "description": "Unified signal processing: waveform generation, analysis, filtering, curve fitting",
+      "category": "Signal Processing",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false
+      }
+    },
+    {
+      "id": "steam_engine_calculator",
+      "name": "Steam Engine Calculator",
+      "description": "Calculate thermodynamic properties of steam/water",
+      "category": "Thermodynamics",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false
+      }
+    },
+    {
+      "id": "syngas_compression",
+      "name": "Syngas Compression Calculator",
+      "description": "Multi-stage compression analysis with water dropout calculations",
+      "category": "Process Simulation",
+      "surfaces": {
+        "pyqt6": true,
+        "web": true
+      }
+    },
+    {
+      "id": "syngas_water_calculator",
+      "name": "Syngas Water Calculator",
+      "description": "Calculate water content and dew point in syngas systems",
+      "category": "Process Simulation",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false
+      }
+    },
+    {
+      "id": "thermal_profile_predictor",
+      "name": "Thermal Profile Predictor",
+      "description": "Predict temperature profiles for heated vessels",
+      "category": "Process Simulation",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false
+      }
+    },
+    {
+      "id": "trc_vessel_designer",
+      "name": "TRC Vessel Designer",
+      "description": "Thermal Reaction Chamber vessel design tool",
+      "category": "Process Simulation",
+      "surfaces": {
+        "pyqt6": true,
+        "web": true
+      }
+    },
+    {
+      "id": "urdf_builder_gui",
+      "name": "Parametric URDF Builder",
+      "description": "Generate parametric URDF models for robotics applications",
+      "category": "Robotics",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false
+      }
+    },
+    {
+      "id": "wgs_reactor",
+      "name": "WGS Reactor Calculator",
+      "description": "Water-Gas Shift reactor equilibrium and sizing calculations",
+      "category": "Process Simulation",
+      "surfaces": {
+        "pyqt6": true,
+        "web": true
+      }
+    }
+  ]
+}
