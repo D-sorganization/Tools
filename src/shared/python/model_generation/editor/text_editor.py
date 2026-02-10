@@ -22,6 +22,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
+import defusedxml.ElementTree as DefusedET
+
 logger = logging.getLogger(__name__)
 
 
@@ -371,7 +373,7 @@ class URDFTextEditor:
         messages = []
 
         try:
-            ET.fromstring(self._content)
+            DefusedET.fromstring(self._content)
         except ET.ParseError as e:
             # Parse error message for line/column
             error_str = str(e)
@@ -402,7 +404,7 @@ class URDFTextEditor:
         messages = []
 
         try:
-            root = ET.fromstring(self._content)
+            root = DefusedET.fromstring(self._content)
         except ET.ParseError:
             return messages  # Already reported in XML validation
 
@@ -1062,7 +1064,7 @@ class URDFTextEditor:
             Validation messages
         """
         try:
-            root = ET.fromstring(self._content)
+            root = DefusedET.fromstring(self._content)
             self._indent_xml(root, indent=indent)
             formatted = ET.tostring(root, encoding="unicode")
 

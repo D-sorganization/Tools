@@ -356,10 +356,10 @@ class UnifiedModelLoader:
         """Load an MJCF file by converting to ParsedModel."""
         try:
             # Use the MJCF converter's internal parser to get a ParsedModel
-            import xml.etree.ElementTree as ET
+            import defusedxml.ElementTree as DefusedET
 
             xml_string = path.read_text()
-            root = ET.fromstring(xml_string)
+            root = DefusedET.fromstring(xml_string)
             model = self._mjcf_converter._parse_mjcf(root)
             model.source_path = path
             model.original_xml = xml_string

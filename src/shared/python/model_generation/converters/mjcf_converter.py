@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import defusedxml.ElementTree as DefusedET
 from model_generation.converters.urdf_parser import ParsedModel, URDFParser
 from model_generation.core.types import (
     Geometry,
@@ -141,7 +142,7 @@ class MJCFConverter:
             xml_string = source
 
         # Parse MJCF
-        root = ET.fromstring(xml_string)
+        root = DefusedET.fromstring(xml_string)
         model = self._parse_mjcf(root)
 
         # Convert to URDF

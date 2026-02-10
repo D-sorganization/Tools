@@ -12,6 +12,8 @@ from pathlib import Path
 
 import numpy as np
 
+from shared.python.safe_eval import safe_eval
+
 try:
     from matplotlib.backends.backend_qtagg import (
         FigureCanvasQTAgg,
@@ -1188,9 +1190,7 @@ if HAS_MATPLOTLIB and HAS_PYQT:
                             "pi": np.pi,
                             "t": t,
                         }
-                        values = eval(
-                            expr, {"__builtins__": {}}, safe_dict
-                        )  # noqa: S307
+                        values = safe_eval(expr, safe_dict)
                         self.current_signal = Signal(t, values, name="custom")
                     else:
                         return

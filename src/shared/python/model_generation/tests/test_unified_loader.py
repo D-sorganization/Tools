@@ -298,8 +298,7 @@ class TestMJCFParsing:
 
     def test_mjcf_geom_parsing_capsule(self) -> None:
         """Test that capsule geoms are parsed from fromto attribute."""
-        import xml.etree.ElementTree as ET
-
+        import defusedxml.ElementTree as ET
         from model_generation.converters.mjcf_converter import MJCFConverter
 
         converter = MJCFConverter()
@@ -318,8 +317,7 @@ class TestMJCFParsing:
         assert link.visual_geometry.geometry_type.value == "capsule"
 
     def test_mjcf_geom_parsing_box(self) -> None:
-        import xml.etree.ElementTree as ET
-
+        import defusedxml.ElementTree as ET
         from model_generation.converters.mjcf_converter import MJCFConverter
 
         converter = MJCFConverter()
@@ -341,8 +339,7 @@ class TestMJCFParsing:
         assert abs(dims[1] - 0.09) < 0.001  # 0.045 * 2
 
     def test_mjcf_geom_parsing_sphere(self) -> None:
-        import xml.etree.ElementTree as ET
-
+        import defusedxml.ElementTree as ET
         from model_generation.converters.mjcf_converter import MJCFConverter
 
         converter = MJCFConverter()

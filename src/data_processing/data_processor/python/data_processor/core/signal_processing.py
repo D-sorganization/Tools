@@ -23,6 +23,7 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import UnivariateSpline
 from scipy.optimize import curve_fit
+from shared.python.safe_eval import safe_eval
 
 
 class IntegrationMethod(Enum):
@@ -395,10 +396,9 @@ def apply_custom_variable(
         else:
             eval_context[col] = pd.to_numeric(df[col], errors="coerce").values
 
-    # Evaluate the formula
+    # Evaluate the formula using AST-validated safe evaluator
     try:
-        # Use numpy for array operations
-        calculated = eval(parsed_formula, {"__builtins__": {}}, eval_context)
+        calculated = safe_eval(parsed_formula, eval_context)
         result[name] = calculated
     except Exception as e:
         raise ValueError(f"Error evaluating formula: {e}") from e

@@ -414,13 +414,12 @@ class ModelLibrary:
 
     def _load_mjcf(self, path: Path, read_only: bool = False) -> ParsedModel:
         """Load an MJCF file into a ParsedModel."""
-        import xml.etree.ElementTree as ET
-
+        import defusedxml.ElementTree as DefusedET
         from model_generation.converters.mjcf_converter import MJCFConverter
 
         converter = MJCFConverter()
         xml_string = path.read_text()
-        root = ET.fromstring(xml_string)
+        root = DefusedET.fromstring(xml_string)
         model = converter._parse_mjcf(root)
         model.source_path = path
         model.original_xml = xml_string

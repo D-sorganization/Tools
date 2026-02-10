@@ -12,6 +12,8 @@ from dataclasses import dataclass
 import numpy as np
 from scipy import optimize
 
+from shared.python.safe_eval import safe_eval
+
 from .core import Signal
 
 
@@ -673,7 +675,7 @@ class CustomFunctionFitter:
             local_dict["t"] = t
             for name, val in zip(param_names, args, strict=False):
                 local_dict[name] = val
-            return eval(expression, {"__builtins__": {}}, local_dict)  # noqa: S307
+            return safe_eval(expression, local_dict)
 
         return cls(custom_func, param_names, expression)
 
