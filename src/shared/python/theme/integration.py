@@ -25,7 +25,7 @@ Usage:
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from PyQt6.QtWidgets import QApplication, QMenu, QMenuBar
 
@@ -39,7 +39,7 @@ def get_theme_manager(
     window: QMainWindow | None = None,
     settings_org: str = "D-sorganization",
     settings_app: str = "FleetTheme",
-):
+) -> Any:
     """Get or create the singleton ThemeManager.
 
     Args:
@@ -120,7 +120,7 @@ def create_theme_menu(
         theme_menu.addAction(action)
 
     # Connect to theme changed signal to update checkmarks
-    def update_checkmarks(new_theme: str):
+    def update_checkmarks(new_theme: str) -> None:
         for action in theme_group.actions():
             action.setChecked(action.data() == new_theme)
 
@@ -152,7 +152,7 @@ def create_theme_menu(
     return theme_menu
 
 
-def _open_custom_theme_editor(manager, window: QMainWindow) -> None:
+def _open_custom_theme_editor(manager: Any, window: QMainWindow) -> None:
     """Open the custom theme editor dialog."""
     from .dialogs import CustomThemeEditor
 
@@ -160,7 +160,7 @@ def _open_custom_theme_editor(manager, window: QMainWindow) -> None:
     editor.exec()
 
 
-def _open_theme_manager_dialog(manager, window: QMainWindow) -> None:
+def _open_theme_manager_dialog(manager: Any, window: QMainWindow) -> None:
     """Open the theme manager dialog."""
     from .dialogs import ThemeManagerDialog
 
@@ -293,7 +293,7 @@ class ThemedWindowMixin:
             theme_name: Name of the new theme
         """
 
-    def get_theme_manager(self):
+    def get_theme_manager(self) -> Any:
         """Get the theme manager instance."""
         return self._theme_manager
 
@@ -309,7 +309,7 @@ class ThemedWindowMixin:
     def get_current_theme(self) -> str:
         """Get the current theme name."""
         if self._theme_manager:
-            return self._theme_manager.get_current_theme_name()
+            return str(self._theme_manager.get_current_theme_name())
         return "Light"
 
 

@@ -284,7 +284,7 @@ class GeometrySynchronizer:
             if len(nonzero) > 0:
                 return float(np.mean(nonzero))
         # Fallback: 40% of radius
-        return ec.bath_diameter / 2.0 * 0.4
+        return float(ec.bath_diameter / 2.0 * 0.4)
 
     @staticmethod
     def _compute_minimum_tip_clearance(ec: Any) -> float:
@@ -299,4 +299,4 @@ class GeometrySynchronizer:
 
         # Subtract one electrode diameter from the chord for clearance
         clearance = chord - ec.tip_diameter
-        return max(clearance, 0.0)
+        return float(max(clearance, 0.0))

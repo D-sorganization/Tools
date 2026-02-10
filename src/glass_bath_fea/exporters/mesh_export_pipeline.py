@@ -220,14 +220,14 @@ class MeshExportPipeline:
         """Generate mesh using MeshGenerator."""
         assert self.config is not None
         mesh_gen = MeshGenerator(self.config)
-        return mesh_gen.generate_mesh(coarse=coarse)
+        return dict(mesh_gen.generate_mesh(coarse=coarse))
 
     def _mesh_statistics(self) -> dict[str, Any]:
         """Calculate statistics for the current mesh."""
         if self.mesh_data is None or self.config is None:
             return {}
         mesh_gen = MeshGenerator(self.config)
-        return mesh_gen.get_mesh_statistics(self.mesh_data)
+        return dict(mesh_gen.get_mesh_statistics(self.mesh_data))
 
     def _export_json_metadata(self, path: Path, quality: dict) -> None:
         """Export mesh metadata as JSON."""
