@@ -10,18 +10,20 @@ from .models import RecycledNoteItem
 from .storage import NotesStorage
 
 try:
-    from .integration import attach_notes_dock
     from .notes_dock_widget import NotesDockWidget
 
     _PYQT6_AVAILABLE = True
 except ImportError:
     _PYQT6_AVAILABLE = False
-    NotesDockWidget = None  # type: ignore[assignment, misc]
-    attach_notes_dock = None  # type: ignore[assignment, misc]
+
+    class NotesDockWidget:  # type: ignore[no-redef]
+        """Fallback placeholder when PyQt6 is unavailable."""
+
+        def __init__(self, *_args: object, **_kwargs: object) -> None:
+            raise ImportError("PyQt6 is required for NotesDockWidget")
 
 __all__ = [
     "NotesStorage",
     "RecycledNoteItem",
     "NotesDockWidget",
-    "attach_notes_dock",
 ]

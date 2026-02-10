@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import shutil
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from .models import RecycledNoteItem
@@ -54,7 +54,7 @@ class NotesStorage:
         if not self.notes_path.exists():
             raise FileNotFoundError("notes file does not exist")
 
-        timestamp = datetime.now(tz=UTC).strftime("%Y%m%dT%H%M%SZ")
+        timestamp = datetime.now(tz=timezone.utc).strftime("%Y%m%dT%H%M%SZ")
         item_id = f"{timestamp}_{self.notes_path.stem}"
 
         self.recycle_bin_dir.mkdir(parents=True, exist_ok=True)

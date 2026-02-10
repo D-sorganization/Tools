@@ -9,8 +9,9 @@ import sys
 import webbrowser
 from collections.abc import Iterable
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-from notes import attach_notes_dock
+from notes.integration import attach_notes_dock
 from PyQt6.QtCore import QSize, Qt
 from PyQt6.QtGui import QIcon, QPalette, QPixmap
 from PyQt6.QtWidgets import (
@@ -32,6 +33,9 @@ from tile_launcher.manager import AppManager
 from tile_launcher.models import AppDefinition, LaunchType
 
 logger = logging.getLogger(__name__)
+
+if TYPE_CHECKING:
+    from notes.notes_dock_widget import NotesDockWidget
 
 
 class SelectionDialog(QDialog):
@@ -84,7 +88,7 @@ class LauncherWindow(QMainWindow):
         super().__init__()
         self.manager = manager
         self.edit_mode = False
-        self.notes_dock = None
+        self.notes_dock: NotesDockWidget | None = None
         self.setWindowTitle("Tools Tile Launcher")
         self.resize(1100, 750)
 
