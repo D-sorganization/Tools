@@ -100,6 +100,7 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install fastapi
+          pip install httpx
 
       - name: Run Tests (Python ${{ matrix.python-version }})
         # Run tests from testpaths defined in pytest.ini (tests/ directory)
