@@ -7,8 +7,12 @@ See issue #613.
 from __future__ import annotations
 
 import pytest
-from calc_backend.app import app
-from fastapi.testclient import TestClient
+
+pytest.importorskip("fastapi", reason="fastapi not installed")
+pytest.importorskip("calc_backend", reason="calc_backend not installed")
+
+from calc_backend.app import app  # noqa: E402
+from fastapi.testclient import TestClient  # noqa: E402
 
 client = TestClient(app)
 
