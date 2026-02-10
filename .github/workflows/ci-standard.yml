@@ -28,6 +28,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
 
@@ -45,8 +47,22 @@ jobs:
           # Convert CRLF to LF for consistent Black formatting
           find . -name "*.py" -type f -exec sed -i 's/\r$//' {} \;
 
+      - name: Collect Changed Python Files
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git diff --name-only "${{ github.event.pull_request.base.sha }}" "${{ github.sha }}" -- '*.py' > changed_python_files.txt
+          else
+            git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" -- '*.py' > changed_python_files.txt
+          fi
+          cat changed_python_files.txt
+
       - name: Format Check (Black)
-        run: black --check .
+        run: |
+          if [ -s changed_python_files.txt ]; then
+            black --check $(cat changed_python_files.txt)
+          else
+            echo "No changed Python files to format-check."
+          fi
 
       - name: Type Check (Mypy)
         run: mypy . --ignore-missing-imports --install-types --non-interactive --exclude "tests/"
