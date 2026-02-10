@@ -22,8 +22,11 @@ from .routers import (
     financial,
     flare,
     flow_rate,
+    ode_solver,
     pressure_drop,
     scrubber,
+    syngas_water,
+    thermal_profile,
     wgs_reactor,
 )
 
@@ -63,6 +66,9 @@ app.include_router(financial.router)
 app.include_router(acid_gas_dewpoint.router)
 app.include_router(pressure_drop.router)
 app.include_router(flow_rate.router)
+app.include_router(syngas_water.router)
+app.include_router(thermal_profile.router)
+app.include_router(ode_solver.router)
 
 
 # ---------------------------------------------------------------------------
@@ -89,5 +95,8 @@ def list_endpoints() -> dict[str, list[str]]:
             "POST /api/calc/acid-gas-dewpoint",
             "POST /api/calc/pressure-drop",
             "POST /api/calc/flow-rate",
+            "POST /api/calc/syngas-water",
+            "POST /api/calc/thermal-profile",
+            "POST /api/calc/ode-solver",
         ],
     }
