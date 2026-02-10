@@ -338,8 +338,8 @@ class MeshProcessor:
         try:
             simplified = mesh.simplify_quadric_decimation(target_faces)
             return simplified
-        except Exception:
-            pass
+        except (AttributeError, ValueError, RuntimeError) as e:
+            logger.debug("quadric_decimation unavailable, trying fallback: %s", e)
 
         # Fallback: vertex clustering
         try:

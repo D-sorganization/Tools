@@ -324,8 +324,8 @@ class InteractivePlotManager:
         def on_resize(event: Any) -> None:
             try:
                 fig.tight_layout()
-            except Exception:
-                pass
+            except (ValueError, RuntimeError) as e:
+                logger.debug("tight_layout failed during resize: %s", e)
 
         fig.canvas.mpl_connect("resize_event", on_resize)
 

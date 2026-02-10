@@ -81,8 +81,8 @@ except ImportError:
 if os.environ.get("HEADLESS", "false").lower() == "true":
     try:
         mpl.use("Agg")
-    except Exception:
-        pass
+    except (ImportError, RuntimeError) as e:
+        logging.getLogger(__name__).debug("Failed to set Agg backend: %s", e)
 else:
     try:
         mpl.use("QtAgg")

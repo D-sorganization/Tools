@@ -275,16 +275,18 @@ class ParametricBuilder(BaseURDFBuilder):
             if use_anthropometry:
                 try:
                     return get_segment_mass_ratio(name, self._gender_factor)
-                except Exception:
-                    pass
+                except (KeyError, ValueError, TypeError) as e:
+                    logger.debug("Anthropometry mass lookup failed for %s: %s", name, e)
             return default
 
         def get_length(name: str, default: float) -> float:
             if use_anthropometry:
                 try:
                     return get_segment_length_ratio(name, self._gender_factor)
-                except Exception:
-                    pass
+                except (KeyError, ValueError, TypeError) as e:
+                    logger.debug(
+                        "Anthropometry length lookup failed for %s: %s", name, e
+                    )
             return default
 
         return get_mass, get_length
