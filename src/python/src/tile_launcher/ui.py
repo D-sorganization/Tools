@@ -10,6 +10,7 @@ import webbrowser
 from collections.abc import Iterable
 from pathlib import Path
 
+from notes import attach_notes_dock
 from PyQt6.QtCore import QSize, Qt
 from PyQt6.QtGui import QIcon, QPalette, QPixmap
 from PyQt6.QtWidgets import (
@@ -83,6 +84,7 @@ class LauncherWindow(QMainWindow):
         super().__init__()
         self.manager = manager
         self.edit_mode = False
+        self.notes_dock = None
         self.setWindowTitle("Tools Tile Launcher")
         self.resize(1100, 750)
 
@@ -134,8 +136,25 @@ class LauncherWindow(QMainWindow):
         reset_button.clicked.connect(self._reset_layout)
         button_row.addWidget(reset_button)
 
+        notes_button = QPushButton("Notes")
+        notes_button.clicked.connect(self._toggle_notes_workspace)
+        button_row.addWidget(notes_button)
+
         button_row.addStretch(1)
         return button_row
+
+    def _toggle_notes_workspace(self) -> None:
+        """Show/hide the shared notes dock for launcher-level project notes."""
+        if self.notes_dock is None:
+            self.notes_dock = attach_notes_dock(
+                main_window=self,
+                project_dir=self.manager.repository_root,
+                title="Project Notes",
+                area=Qt.DockWidgetArea.RightDockWidgetArea,
+            )
+            return
+
+        self.notes_dock.setVisible(not self.notes_dock.isVisible())
 
     def _apply_dark_theme(self) -> None:
         """Apply a dark color scheme to the window."""

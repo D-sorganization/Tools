@@ -104,6 +104,24 @@ design = flare.calculate_flare_size(
 - Financial analysis (NPV/IRR)
 - ODE solver and optimization tools
 
+### `notes/`
+Reusable project notes workspace with file-backed persistence and reversible deletion.
+
+```python
+from notes import NotesStorage
+
+storage = NotesStorage(project_dir="./my_project")
+storage.save_text("Design notes and copied snippets")
+recycled = storage.move_to_recycle(reason="cleanup")
+storage.restore(recycled.item_id)
+```
+
+**Features:**
+- Plain-text notes file stored with each project (`project.notes.txt`)
+- Safe deletion to per-project recycle bin (`.notes_recycle_bin`)
+- Restore/purge controls for reversible workflows
+- Optional PyQt dock widget for embedded or pop-out usage
+
 ## Dependencies
 
 | Package | Required | Optional |
@@ -112,6 +130,7 @@ design = flare.calculate_flare_size(
 | `model_generation` | numpy, defusedxml | trimesh, mujoco |
 | `signal_toolkit` | numpy, scipy | PyQt6, matplotlib, sympy |
 | `upstream_drift_tools` | numpy | scipy, CoolProp, PyQt6 |
+| `notes` | none | PyQt6 (for dock widget UI) |
 
 ## Usage in Other Repositories
 

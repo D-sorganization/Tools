@@ -86,6 +86,8 @@ Repository = "https://github.com/D-sorganization/Tools"
 [tool.setuptools.packages.find]
 where = ["src/shared/python", "src/python/src", "src"]
 include = [
+    "chat*",
+    "notes*",
     "upstream_drift_tools*",
     "model_generation*",
     "humanoid_character_builder*",
