@@ -15,6 +15,10 @@ GUI_INFO = {
         "settings_app": "SyngasCompressionCalculator",
         "min_size": [1200, 800],
     },
+    "web": {
+        "port": 5173,
+        "auto_open_browser": True,
+    },
 }
 
 

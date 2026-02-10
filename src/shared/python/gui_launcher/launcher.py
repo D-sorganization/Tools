@@ -449,6 +449,129 @@ def launch_from_gui_info(gui_info: dict[str, Any]) -> int:
     return launch_pyqt6_app(config)
 
 
+def launch_web_app(
+    tool_name: str,
+    web_dir: Path,
+    port: int = 5173,
+    auto_open_browser: bool = True,
+    npm_args: list[str] | None = None,
+) -> int:
+    """Launch a React/Vite web application dev server.
+
+    This is the consolidated web launcher that eliminates boilerplate from
+    individual launch_web.py scripts. It handles:
+    - Node.js and npm availability checks
+    - npm dependency installation
+    - Dev server startup
+    - Optional browser opening
+
+    Args:
+        tool_name: Human-readable name for log messages.
+        web_dir: Path to the web project directory (containing package.json).
+        port: Port number for the dev server.
+        auto_open_browser: Whether to open the browser automatically.
+        npm_args: Additional arguments to pass to ``npm run dev``.
+
+    Returns:
+        Process exit code (0 for success, 1 for error).
+    """
+    # Check Node.js / npm
+    for cmd_name in ("node", "npm"):
+        try:
+            subprocess.run(
+                [cmd_name, "--version"],
+                capture_output=True,
+                check=True,
+            )
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            print(f"Error: {cmd_name} is not installed or not in PATH")
+            if cmd_name == "node":
+                print("Install Node.js from https://nodejs.org/")
+            return 1
+
+    if not web_dir.exists():
+        print(f"Error: Web directory not found at {web_dir}")
+        return 1
+
+    # Install dependencies if needed
+    if not (web_dir / "node_modules").exists():
+        print("Installing dependencies...")
+        install_result = subprocess.run(
+            ["npm", "install"],
+            cwd=str(web_dir),
+            shell=False,
+        )
+        if install_result.returncode != 0:
+            print("Error: Failed to install npm dependencies")
+            return 1
+
+    # Build dev server command
+    dev_cmd: list[str] = ["npm", "run", "dev"]
+    if npm_args:
+        dev_cmd.extend(npm_args)
+
+    env = os.environ.copy()
+    env["PORT"] = str(port)
+
+    print(f"Starting {tool_name} web application on http://localhost:{port}")
+
+    process = subprocess.Popen(
+        dev_cmd,
+        cwd=str(web_dir),
+        env=env,
+        shell=False,
+    )
+
+    if auto_open_browser:
+        import threading
+        import time
+
+        def _open_browser() -> None:
+            time.sleep(2)
+            webbrowser.open(f"http://localhost:{port}")
+
+        threading.Thread(target=_open_browser, daemon=True).start()
+
+    try:
+        return process.wait()
+    except KeyboardInterrupt:
+        print("\nShutting down...")
+        process.terminate()
+        return 0
+
+
+def launch_web_from_gui_info(gui_info: dict[str, Any], caller_file: str) -> int:
+    """Launch a React web app from a GUI_INFO dict.
+
+    Each launch_web.py script can be reduced to::
+
+        from my_tool.gui_registration import GUI_INFO
+        from gui_launcher import launch_web_from_gui_info
+        sys.exit(launch_web_from_gui_info(GUI_INFO, __file__))
+
+    Args:
+        gui_info: The GUI_INFO dictionary from gui_registration.py.
+        caller_file: ``__file__`` of the calling launch_web.py script,
+            used to locate the ``web/`` directory relative to the caller.
+
+    Returns:
+        Application exit code.
+    """
+    web_cfg = gui_info.get("web", {})
+    tool_name = gui_info.get("name", gui_info.get("tool_name", "Unknown"))
+
+    web_dir = Path(caller_file).parent / "web"
+    port = web_cfg.get("port", 5173)
+    auto_open = web_cfg.get("auto_open_browser", True)
+
+    return launch_web_app(
+        tool_name=tool_name,
+        web_dir=web_dir,
+        port=port,
+        auto_open_browser=auto_open,
+    )
+
+
 def launch_tool_by_name(tool_name: str) -> int:
     """Launch a tool by its registered name.
 

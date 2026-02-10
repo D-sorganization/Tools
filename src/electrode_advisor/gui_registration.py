@@ -15,6 +15,10 @@ GUI_INFO = {
         "settings_app": "ElectrodeAdvisor",
         "min_size": [1200, 800],
     },
+    "web": {
+        "port": 3001,
+        "auto_open_browser": True,
+    },
 }
 
 

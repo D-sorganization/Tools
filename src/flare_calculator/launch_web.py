@@ -1,34 +1,21 @@
 #!/usr/bin/env python3
 """Launch the Flare Calculator React web application."""
 
-import subprocess
+from __future__ import annotations
+
 import sys
 from pathlib import Path
 
+# Bootstrap imports for development mode (before pip install -e .)
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
+from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
 
-def main() -> None:
-    """Entry point for the Flare Calculator web application."""
-    web_dir = Path(__file__).parent / "web"
+ensure_paths(_REPO_ROOT)
 
-    if not web_dir.exists():
-        print(f"Error: Web directory not found at {web_dir}")
-        sys.exit(1)
+from gui_launcher import launch_web_from_gui_info  # noqa: E402
 
-    # Check if node_modules exists
-    node_modules = web_dir / "node_modules"
-    if not node_modules.exists():
-        print("Installing dependencies...")
-        subprocess.run(["npm", "install"], cwd=web_dir, check=True, shell=False)
-
-    # Start the development server
-    print("Starting Flare Calculator web application on http://localhost:5179")
-    subprocess.run(
-        ["npm", "run", "dev", "--", "--port", "5179"],
-        cwd=web_dir,
-        check=True,
-        shell=False,
-    )
-
+from flare_calculator.gui_registration import GUI_INFO  # noqa: E402
 
 if __name__ == "__main__":
-    main()
+    sys.exit(launch_web_from_gui_info(GUI_INFO, __file__))

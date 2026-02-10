@@ -15,6 +15,10 @@ GUI_INFO = {
         "settings_app": "PressureDropCalculator",
         "min_size": [1100, 700],
     },
+    "web": {
+        "port": 5175,
+        "auto_open_browser": True,
+    },
 }
 
 

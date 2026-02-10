@@ -1,38 +1,21 @@
 #!/usr/bin/env python3
-"""Standalone launcher for Baghouse Calculator React web application."""
+"""Launch the Baghouse Calculator React web application."""
 
 from __future__ import annotations
 
-import subprocess
 import sys
 from pathlib import Path
 
+# Bootstrap imports for development mode (before pip install -e .)
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
+from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
 
-def main() -> int:
-    """Main entry point for the Baghouse Calculator web launcher."""
-    web_dir = Path(__file__).parent / "web"
+ensure_paths(_REPO_ROOT)
 
-    if not web_dir.exists():
-        print(f"Error: Web directory not found at {web_dir}")
-        return 1
+from gui_launcher import launch_web_from_gui_info  # noqa: E402
 
-    node_modules = web_dir / "node_modules"
-    if not node_modules.exists():
-        print("Installing dependencies...")
-        result = subprocess.run(["npm", "install"], cwd=web_dir, shell=False)
-        if result.returncode != 0:
-            return 1
-
-    print("Starting Baghouse Calculator web application...")
-    print("Open http://localhost:5173 in your browser")
-
-    try:
-        subprocess.run(["npm", "run", "dev"], cwd=web_dir, shell=False)
-    except KeyboardInterrupt:
-        print("\nShutting down...")
-
-    return 0
-
+from baghouse_calculator.gui_registration import GUI_INFO  # noqa: E402
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(launch_web_from_gui_info(GUI_INFO, __file__))

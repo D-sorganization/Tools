@@ -14,6 +14,10 @@ GUI_INFO = {
         "dependencies": ["PyQt6"],
         "settings_app": "FlareCalculator",
     },
+    "web": {
+        "port": 5179,
+        "auto_open_browser": True,
+    },
 }
 
 

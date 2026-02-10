@@ -15,6 +15,10 @@ GUI_INFO = {
         "settings_app": "TRCVesselDesigner",
         "min_size": [1200, 800],
     },
+    "web": {
+        "port": 3002,
+        "auto_open_browser": True,
+    },
 }
 
 

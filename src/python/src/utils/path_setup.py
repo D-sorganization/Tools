@@ -38,12 +38,12 @@ def get_repo_root(start_path: Path | str | None = None) -> Path:
     except (ImportError, FileNotFoundError):
         pass
 
-    # Backward-compatible fallback with wider marker search
+    # Minimal fallback -- kept thin to avoid duplicating the canonical impl
     current = Path(start_path).resolve()
-    for _ in range(20):
+    for _ in range(10):
         if any(
             (current / m).exists()
-            for m in (".git", "pyproject.toml", "requirements.txt", "tools.json")
+            for m in (".git", "pyproject.toml", "tools.json")
         ):
             return current
         parent = current.parent

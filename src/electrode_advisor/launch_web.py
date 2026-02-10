@@ -1,106 +1,21 @@
 #!/usr/bin/env python3
-"""Standalone launcher for Electrode Advisor Web GUI.
-
-This launcher checks dependencies and starts the React development server.
-"""
+"""Launch the Electrode Advisor React web application."""
 
 from __future__ import annotations
 
-import os
-import subprocess
 import sys
-import webbrowser
 from pathlib import Path
-from time import sleep
 
+# Bootstrap imports for development mode (before pip install -e .)
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
+from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
 
-def check_node() -> bool:
-    """Check if Node.js is available."""
-    try:
-        subprocess.run(
-            ["node", "--version"],
-            capture_output=True,
-            check=True,
-        )
-        return True
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        return False
+ensure_paths(_REPO_ROOT)
 
+from gui_launcher import launch_web_from_gui_info  # noqa: E402
 
-def check_npm() -> bool:
-    """Check if npm is available."""
-    try:
-        subprocess.run(
-            ["npm", "--version"],
-            capture_output=True,
-            check=True,
-        )
-        return True
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        return False
-
-
-def install_dependencies(web_path: Path) -> bool:
-    """Install npm dependencies if needed."""
-    node_modules = web_path / "node_modules"
-    if not node_modules.exists():
-        print("Installing dependencies...")
-        result = subprocess.run(
-            ["npm", "install"],
-            cwd=web_path,
-            shell=False,
-        )
-        return result.returncode == 0
-    return True
-
-
-def main() -> int:
-    """Main entry point for the Electrode Advisor Web GUI."""
-    # Check dependencies
-    if not check_node():
-        print("Error: Node.js is not installed or not in PATH")
-        print("Install Node.js from https://nodejs.org/")
-        return 1
-
-    if not check_npm():
-        print("Error: npm is not installed or not in PATH")
-        return 1
-
-    # Get web directory
-    web_path = Path(__file__).parent / "web"
-    if not web_path.exists():
-        print(f"Error: Web directory not found at {web_path}")
-        return 1
-
-    # Install dependencies if needed
-    if not install_dependencies(web_path):
-        print("Error: Failed to install dependencies")
-        return 1
-
-    # Start dev server
-    port = 3001
-    print(f"Starting Electrode Advisor Web GUI on port {port}...")
-
-    env = os.environ.copy()
-    env["PORT"] = str(port)
-
-    process = subprocess.Popen(
-        ["npm", "run", "dev"],
-        cwd=web_path,
-        env=env,
-        shell=False,
-    )
-
-    # Open browser after delay
-    sleep(2)
-    webbrowser.open(f"http://localhost:{port}")
-
-    try:
-        return process.wait()
-    except KeyboardInterrupt:
-        process.terminate()
-        return 0
-
+from electrode_advisor.gui_registration import GUI_INFO  # noqa: E402
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(launch_web_from_gui_info(GUI_INFO, __file__))

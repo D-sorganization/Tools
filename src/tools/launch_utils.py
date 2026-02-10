@@ -19,12 +19,18 @@ def get_repo_root() -> Path:
 
         return _get_repo_root()
     except ImportError:
-        # Fallback for when package is not installed
+        # Minimal fallback -- uses same markers as canonical implementation
         current = Path(__file__).resolve().parent
-        for _ in range(5):
-            if (current / "tools.json").exists() or (current / ".git").exists():
+        for _ in range(10):
+            if any(
+                (current / m).exists()
+                for m in (".git", "pyproject.toml", "tools.json")
+            ):
                 return current
-            current = current.parent
+            parent = current.parent
+            if parent == current:
+                break
+            current = parent
         return Path.cwd()
 
 
