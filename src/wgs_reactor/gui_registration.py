@@ -14,6 +14,10 @@ GUI_INFO = {
         "dependencies": ["PyQt6"],
         "settings_app": "WGSReactor",
     },
+    "web": {
+        "port": 5178,
+        "auto_open_browser": False,
+    },
 }
 
 

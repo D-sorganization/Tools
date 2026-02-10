@@ -1,59 +1,21 @@
 #!/usr/bin/env python3
-"""Launch script for Acid Gas Dewpoint Calculator React Web GUI."""
+"""Launch the Acid Gas Dewpoint Calculator React web application."""
 
 from __future__ import annotations
 
-import os
-import subprocess
 import sys
-import webbrowser
 from pathlib import Path
-from time import sleep
 
+# Bootstrap imports for development mode (before pip install -e .)
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
+from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
 
-def main() -> int:
-    """Launch the Acid Gas Dewpoint Calculator React application."""
-    web_dir = Path(__file__).parent / "web"
+ensure_paths(_REPO_ROOT)
 
-    if not web_dir.exists():
-        print(f"Error: Web directory not found at {web_dir}")
-        return 1
+from gui_launcher import launch_web_from_gui_info  # noqa: E402
 
-    # Check for node_modules
-    if not (web_dir / "node_modules").exists():
-        print("Installing dependencies...")
-        result = subprocess.run(
-            ["npm", "install"],
-            cwd=web_dir,
-            shell=False,
-            capture_output=True,
-            text=True,
-        )
-        if result.returncode != 0:
-            print(f"Error installing dependencies: {result.stderr}")
-            return 1
-
-    # Set port
-    port = int(os.environ.get("PORT", "5176"))
-
-    # Open browser after delay
-    def open_browser() -> None:
-        sleep(2)
-        webbrowser.open(f"http://localhost:{port}")
-
-    import threading
-
-    threading.Thread(target=open_browser, daemon=True).start()
-
-    # Start dev server
-    print(f"Starting Acid Gas Dewpoint Calculator on http://localhost:{port}")
-    dev_result = subprocess.run(
-        ["npm", "run", "dev", "--", "--port", str(port)],
-        cwd=web_dir,
-        shell=False,
-    )
-    return dev_result.returncode
-
+from acid_gas_dewpoint.gui_registration import GUI_INFO  # noqa: E402
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(launch_web_from_gui_info(GUI_INFO, __file__))

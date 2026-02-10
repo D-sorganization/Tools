@@ -18,6 +18,10 @@ GUI_INFO = {
         "module": "upstream_drift_tools.process_calculators.baghouse_calculator",
         "class": "BaghouseCalculator",
     },
+    "web": {
+        "port": 5173,
+        "auto_open_browser": False,
+    },
 }
 
 

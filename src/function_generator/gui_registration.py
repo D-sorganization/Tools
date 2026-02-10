@@ -15,6 +15,10 @@ GUI_INFO = {
         "settings_app": "FunctionGenerator",
         "min_size": [1200, 700],
     },
+    "web": {
+        "port": 5174,
+        "auto_open_browser": True,
+    },
 }
 
 

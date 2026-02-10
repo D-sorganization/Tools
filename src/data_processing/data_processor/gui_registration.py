@@ -14,6 +14,10 @@ GUI_INFO = {
         "dependencies": ["PyQt6", "pandas", "numpy"],
         "settings_app": "DataProcessor",
     },
+    "web": {
+        "port": 3000,
+        "auto_open_browser": True,
+    },
 }
 
 

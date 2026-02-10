@@ -14,6 +14,10 @@ GUI_INFO = {
         "dependencies": ["PyQt6", "matplotlib"],
         "settings_app": "ScrubberCalculator",
     },
+    "web": {
+        "port": 5177,
+        "auto_open_browser": False,
+    },
 }
 
 

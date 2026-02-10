@@ -5,11 +5,14 @@ from pathlib import Path
 from typing import Any
 
 try:
-    from tools.launch_utils import get_repo_root
+    from upstream_drift_tools.utils.paths import get_repo_root
 except ImportError:
-    # Fallback only if absolutely necessary
-    def get_repo_root() -> Path:
-        return Path(__file__).resolve().parent.parent
+    try:
+        from tools.launch_utils import get_repo_root
+    except ImportError:
+
+        def get_repo_root() -> Path:  # type: ignore[misc]
+            return Path(__file__).resolve().parent.parent
 
 
 logger = logging.getLogger(__name__)

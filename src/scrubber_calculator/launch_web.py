@@ -1,45 +1,21 @@
 #!/usr/bin/env python3
-"""Launch script for Scrubber Calculator React web application."""
+"""Launch the Scrubber Calculator React web application."""
 
 from __future__ import annotations
 
-import subprocess
 import sys
 from pathlib import Path
 
-MODULE_DIR = Path(__file__).parent
-WEB_DIR = MODULE_DIR / "web"
+# Bootstrap imports for development mode (before pip install -e .)
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
+from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
 
+ensure_paths(_REPO_ROOT)
 
-def main() -> int:
-    """Launch the Scrubber Calculator React web application."""
-    if not WEB_DIR.exists():
-        print(f"Error: Web directory not found: {WEB_DIR}")
-        return 1
+from gui_launcher import launch_web_from_gui_info  # noqa: E402
 
-    # Check if node_modules exists
-    node_modules = WEB_DIR / "node_modules"
-    if not node_modules.exists():
-        print("Installing dependencies...")
-        install_result = subprocess.run(
-            ["npm", "install"],
-            cwd=WEB_DIR,
-            shell=False,
-        )
-        if install_result.returncode != 0:
-            print("Error: Failed to install dependencies")
-            return 1
-
-    # Run the dev server
-    print("Starting Scrubber Calculator web application...")
-    print("Open http://localhost:5177 in your browser")
-    dev_result = subprocess.run(
-        ["npm", "run", "dev"],
-        cwd=WEB_DIR,
-        shell=False,
-    )
-    return dev_result.returncode
-
+from scrubber_calculator.gui_registration import GUI_INFO  # noqa: E402
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(launch_web_from_gui_info(GUI_INFO, __file__))

@@ -15,6 +15,10 @@ GUI_INFO = {
         "settings_app": "AcidGasDewpointCalculator",
         "min_size": [1000, 700],
     },
+    "web": {
+        "port": 5176,
+        "auto_open_browser": True,
+    },
 }
 
 
