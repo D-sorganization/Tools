@@ -151,3 +151,42 @@ export interface AppConfig {
   integrationMethod?: IntegrationMethod;
   differentiationMethod?: DifferentiationMethod;
 }
+
+// ---------------------------------------------------------------------------
+// Advanced analytics types -- See issue #607
+// ---------------------------------------------------------------------------
+
+/** Correlation matrix between selected signals. */
+export interface CorrelationMatrix {
+  signals: string[];
+  matrix: number[][];
+}
+
+/** Result of a PCA (Principal Component Analysis). */
+export interface PCAResult {
+  /** Proportion of variance explained by each component. */
+  explainedVariance: number[];
+  /** Cumulative variance explained. */
+  cumulativeVariance: number[];
+  /** Number of components retained. */
+  numComponents: number;
+  /** PCA scores for each data row (rows x numComponents). */
+  scores: number[][];
+  /** Loading vectors (signals x numComponents). */
+  loadings: number[][];
+  /** Signal names in the same order as loadings rows. */
+  signals: string[];
+}
+
+/** Result of a regression analysis. */
+export interface RegressionResult {
+  type: 'linear' | 'polynomial';
+  equation: string;
+  rSquared: number;
+  adjustedRSquared: number;
+  coefficients: number[];
+  residuals: number[];
+  predictions: number[];
+  xSignal: string;
+  ySignal: string;
+}

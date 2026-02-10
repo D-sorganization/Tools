@@ -1,0 +1,665 @@
+/**
+ * Advanced Analytics Suite for the Data Processor.
+ *
+ * Provides:
+ *  - Correlation matrix with heatmap visualization
+ *  - PCA (Principal Component Analysis) with scree plot
+ *  - Regression analysis with residual diagnostics
+ *
+ * See issue #607.
+ */
+import React, { useState, useMemo, useCallback } from 'react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  ScatterChart,
+  Scatter,
+  Cell,
+  LineChart,
+  Line,
+  Legend,
+} from 'recharts';
+import type {
+  DataRow,
+  CorrelationMatrix,
+  PCAResult,
+  RegressionResult,
+} from '../types';
+
+// ---------------------------------------------------------------------------
+// Props
+// ---------------------------------------------------------------------------
+
+interface AnalyticsSuiteProps {
+  data: DataRow[];
+  signals: string[];
+  selectedSignals: string[];
+}
+
+type AnalyticsTab = 'correlation' | 'pca' | 'regression';
+
+// ---------------------------------------------------------------------------
+// Math helpers
+// ---------------------------------------------------------------------------
+
+function pearsonCorrelation(x: number[], y: number[]): number {
+  const n = x.length;
+  if (n < 2) return NaN;
+  const meanX = x.reduce((a, b) => a + b, 0) / n;
+  const meanY = y.reduce((a, b) => a + b, 0) / n;
+  let num = 0;
+  let denX = 0;
+  let denY = 0;
+  for (let i = 0; i < n; i++) {
+    const dx = x[i] - meanX;
+    const dy = y[i] - meanY;
+    num += dx * dy;
+    denX += dx * dx;
+    denY += dy * dy;
+  }
+  const den = Math.sqrt(denX * denY);
+  return den === 0 ? 0 : num / den;
+}
+
+function computeCorrelation(data: DataRow[], signals: string[]): CorrelationMatrix {
+  const n = signals.length;
+  const matrix: number[][] = Array.from({ length: n }, () => Array(n).fill(0));
+
+  const columns = signals.map((sig) =>
+    data.map((row) => (typeof row[sig] === 'number' ? (row[sig] as number) : NaN)),
+  );
+
+  for (let i = 0; i < n; i++) {
+    for (let j = i; j < n; j++) {
+      const valid = columns[i]
+        .map((v, k) => ({ x: v, y: columns[j][k] }))
+        .filter(({ x, y }) => !isNaN(x) && !isNaN(y));
+      const r = pearsonCorrelation(
+        valid.map((d) => d.x),
+        valid.map((d) => d.y),
+      );
+      matrix[i][j] = r;
+      matrix[j][i] = r;
+    }
+  }
+
+  return { signals, matrix };
+}
+
+/**
+ * Simple PCA via covariance eigen-decomposition (power iteration for the
+ * top-k eigenvalues).  Good enough for interactive analytics on moderate
+ * datasets.
+ */
+function computePCA(data: DataRow[], signals: string[], numComponents?: number): PCAResult {
+  const n = data.length;
+  const p = signals.length;
+  const nc = Math.min(numComponents ?? p, p);
+
+  // Build centered/scaled column matrix
+  const cols = signals.map((sig) =>
+    data.map((row) => (typeof row[sig] === 'number' ? (row[sig] as number) : 0)),
+  );
+
+  const means = cols.map((c) => c.reduce((a, b) => a + b, 0) / n);
+  const stds = cols.map((c, ci) => {
+    const s = Math.sqrt(c.reduce((a, v) => a + (v - means[ci]) ** 2, 0) / n);
+    return s === 0 ? 1 : s;
+  });
+
+  // Standardized matrix (n x p)
+  const Z: number[][] = Array.from({ length: n }, (_, i) =>
+    cols.map((c, j) => (c[i] - means[j]) / stds[j]),
+  );
+
+  // Covariance matrix (p x p)
+  const cov: number[][] = Array.from({ length: p }, () => Array(p).fill(0));
+  for (let i = 0; i < p; i++) {
+    for (let j = i; j < p; j++) {
+      let s = 0;
+      for (let k = 0; k < n; k++) s += Z[k][i] * Z[k][j];
+      s /= n - 1 || 1;
+      cov[i][j] = s;
+      cov[j][i] = s;
+    }
+  }
+
+  // Power-iteration for top eigenvalues (simple Jacobi-like)
+  const eigenvalues: number[] = [];
+  const eigenvectors: number[][] = [];
+  const A = cov.map((row) => [...row]);
+
+  for (let comp = 0; comp < nc; comp++) {
+    let v = Array.from({ length: p }, () => Math.random());
+    let norm = Math.sqrt(v.reduce((a, b) => a + b * b, 0));
+    v = v.map((x) => x / norm);
+
+    for (let iter = 0; iter < 300; iter++) {
+      const Av = A.map((row) => row.reduce((s, aij, j) => s + aij * v[j], 0));
+      norm = Math.sqrt(Av.reduce((a, b) => a + b * b, 0));
+      if (norm === 0) break;
+      v = Av.map((x) => x / norm);
+    }
+
+    eigenvalues.push(norm);
+    eigenvectors.push(v);
+
+    // Deflate
+    for (let i = 0; i < p; i++) {
+      for (let j = 0; j < p; j++) {
+        A[i][j] -= norm * v[i] * v[j];
+      }
+    }
+  }
+
+  const totalVar = eigenvalues.reduce((a, b) => a + b, 0) || 1;
+  const explained = eigenvalues.map((e) => e / totalVar);
+  const cumulative: number[] = [];
+  explained.reduce((acc, e, i) => {
+    cumulative[i] = acc + e;
+    return cumulative[i];
+  }, 0);
+
+  // Scores (n x nc)
+  const scores = Z.map((row) =>
+    eigenvectors.map((ev) => row.reduce((s, z, j) => s + z * ev[j], 0)),
+  );
+
+  // Loadings (p x nc)
+  const loadings = eigenvectors.map((ev) => [...ev]);
+
+  return {
+    explainedVariance: explained,
+    cumulativeVariance: cumulative,
+    numComponents: nc,
+    scores,
+    loadings: loadings[0].map((_, ci) => eigenvectors.map((ev) => ev[ci])),
+    signals,
+  };
+}
+
+function computeRegression(
+  data: DataRow[],
+  xSignal: string,
+  ySignal: string,
+  degree: number,
+): RegressionResult {
+  const pairs = data
+    .map((row) => ({
+      x: typeof row[xSignal] === 'number' ? (row[xSignal] as number) : NaN,
+      y: typeof row[ySignal] === 'number' ? (row[ySignal] as number) : NaN,
+    }))
+    .filter(({ x, y }) => !isNaN(x) && !isNaN(y));
+
+  const xs = pairs.map((d) => d.x);
+  const ys = pairs.map((d) => d.y);
+  const n = xs.length;
+
+  let coefficients: number[];
+  let predictions: number[];
+
+  if (degree === 1) {
+    // Simple linear regression
+    const meanX = xs.reduce((a, b) => a + b, 0) / n;
+    const meanY = ys.reduce((a, b) => a + b, 0) / n;
+    let num = 0;
+    let den = 0;
+    for (let i = 0; i < n; i++) {
+      num += (xs[i] - meanX) * (ys[i] - meanY);
+      den += (xs[i] - meanX) ** 2;
+    }
+    const slope = den === 0 ? 0 : num / den;
+    const intercept = meanY - slope * meanX;
+    coefficients = [intercept, slope];
+    predictions = xs.map((x) => intercept + slope * x);
+  } else {
+    // Polynomial regression via normal equations
+    // Build Vandermonde matrix
+    const X: number[][] = xs.map((x) =>
+      Array.from({ length: degree + 1 }, (_, d) => x ** d),
+    );
+    // X^T X
+    const XtX: number[][] = Array.from({ length: degree + 1 }, (_, i) =>
+      Array.from({ length: degree + 1 }, (__, j) =>
+        X.reduce((s, row) => s + row[i] * row[j], 0),
+      ),
+    );
+    // X^T y
+    const XtY: number[] = Array.from({ length: degree + 1 }, (_, i) =>
+      X.reduce((s, row, k) => s + row[i] * ys[k], 0),
+    );
+
+    // Solve via Gaussian elimination
+    coefficients = solveLinearSystem(XtX, XtY);
+    predictions = xs.map((x) =>
+      coefficients.reduce((s, c, d) => s + c * x ** d, 0),
+    );
+  }
+
+  const residuals = ys.map((y, i) => y - predictions[i]);
+  const meanY = ys.reduce((a, b) => a + b, 0) / n;
+  const ssTotal = ys.reduce((s, y) => s + (y - meanY) ** 2, 0);
+  const ssResidual = residuals.reduce((s, r) => s + r * r, 0);
+  const rSquared = ssTotal === 0 ? 1 : 1 - ssResidual / ssTotal;
+  const p = coefficients.length;
+  const adjustedRSquared = n <= p ? rSquared : 1 - ((1 - rSquared) * (n - 1)) / (n - p);
+
+  // Build equation string
+  let equation: string;
+  if (degree === 1) {
+    equation = `y = ${coefficients[1].toFixed(4)}x + ${coefficients[0].toFixed(4)}`;
+  } else {
+    const terms = coefficients
+      .map((c, d) => {
+        if (d === 0) return c.toFixed(4);
+        const sign = c >= 0 ? ' + ' : ' - ';
+        const coef = Math.abs(c).toFixed(4);
+        const xPart = d === 1 ? 'x' : `x^${d}`;
+        return `${sign}${coef}${xPart}`;
+      })
+      .join('');
+    equation = `y = ${terms}`;
+  }
+
+  return {
+    type: degree === 1 ? 'linear' : 'polynomial',
+    equation,
+    rSquared,
+    adjustedRSquared,
+    coefficients,
+    residuals,
+    predictions,
+    xSignal,
+    ySignal,
+  };
+}
+
+function solveLinearSystem(A: number[][], b: number[]): number[] {
+  const n = A.length;
+  const aug = A.map((row, i) => [...row, b[i]]);
+
+  // Forward elimination
+  for (let i = 0; i < n; i++) {
+    let maxRow = i;
+    for (let k = i + 1; k < n; k++) {
+      if (Math.abs(aug[k][i]) > Math.abs(aug[maxRow][i])) maxRow = k;
+    }
+    [aug[i], aug[maxRow]] = [aug[maxRow], aug[i]];
+
+    if (Math.abs(aug[i][i]) < 1e-12) continue;
+
+    for (let k = i + 1; k < n; k++) {
+      const factor = aug[k][i] / aug[i][i];
+      for (let j = i; j <= n; j++) {
+        aug[k][j] -= factor * aug[i][j];
+      }
+    }
+  }
+
+  // Back substitution
+  const x = Array(n).fill(0);
+  for (let i = n - 1; i >= 0; i--) {
+    let s = aug[i][n];
+    for (let j = i + 1; j < n; j++) s -= aug[i][j] * x[j];
+    x[i] = Math.abs(aug[i][i]) < 1e-12 ? 0 : s / aug[i][i];
+  }
+  return x;
+}
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
+const COLORS_POSITIVE = ['#0d47a1', '#1565c0', '#1976d2', '#42a5f5', '#90caf9'];
+const COLORS_NEGATIVE = ['#b71c1c', '#c62828', '#d32f2f', '#ef5350', '#ef9a9a'];
+
+function correlationColor(r: number): string {
+  if (isNaN(r)) return '#4a4a4a';
+  const idx = Math.min(4, Math.floor(Math.abs(r) * 5));
+  return r >= 0 ? COLORS_POSITIVE[4 - idx] : COLORS_NEGATIVE[4 - idx];
+}
+
+export function AnalyticsSuite({ data, signals, selectedSignals }: AnalyticsSuiteProps) {
+  const [tab, setTab] = useState<AnalyticsTab>('correlation');
+  const [regXSignal, setRegXSignal] = useState<string>(selectedSignals[0] ?? '');
+  const [regYSignal, setRegYSignal] = useState<string>(selectedSignals[1] ?? selectedSignals[0] ?? '');
+  const [regDegree, setRegDegree] = useState<number>(1);
+
+  const activeSignals = selectedSignals.length > 0 ? selectedSignals : signals.slice(0, 5);
+
+  // Correlation
+  const correlation = useMemo<CorrelationMatrix | null>(() => {
+    if (data.length === 0 || activeSignals.length < 2) return null;
+    return computeCorrelation(data, activeSignals);
+  }, [data, activeSignals]);
+
+  // PCA
+  const pca = useMemo<PCAResult | null>(() => {
+    if (data.length === 0 || activeSignals.length < 2) return null;
+    return computePCA(data, activeSignals);
+  }, [data, activeSignals]);
+
+  // Regression (on demand)
+  const [regression, setRegression] = useState<RegressionResult | null>(null);
+
+  const runRegression = useCallback(() => {
+    if (!regXSignal || !regYSignal || data.length === 0) return;
+    const result = computeRegression(data, regXSignal, regYSignal, regDegree);
+    setRegression(result);
+  }, [data, regXSignal, regYSignal, regDegree]);
+
+  if (data.length === 0 || activeSignals.length < 2) {
+    return (
+      <div className="card">
+        <div className="card-header">Analytics Suite</div>
+        <div className="card-body text-dark-400 text-center py-8">
+          Load data and select at least 2 signals to use analytics.
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Tab Selector */}
+      <div className="flex border-b border-dark-700 text-sm">
+        {(['correlation', 'pca', 'regression'] as const).map((t) => (
+          <button
+            key={t}
+            onClick={() => setTab(t)}
+            className={`px-4 py-2 capitalize ${
+              tab === t
+                ? 'border-b-2 border-blue-500 text-blue-400'
+                : 'text-dark-400 hover:text-dark-300'
+            }`}
+          >
+            {t === 'pca' ? 'PCA' : t}
+          </button>
+        ))}
+      </div>
+
+      {/* --- Correlation Matrix --- */}
+      {tab === 'correlation' && correlation && (
+        <div className="card">
+          <div className="card-header">Correlation Matrix</div>
+          <div className="card-body overflow-x-auto">
+            <table className="text-xs w-full">
+              <thead>
+                <tr>
+                  <th className="py-1 px-2 text-left text-dark-400"></th>
+                  {correlation.signals.map((s) => (
+                    <th key={s} className="py-1 px-2 text-dark-400 text-center truncate max-w-[6rem]">
+                      {s}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {correlation.signals.map((rowSig, ri) => (
+                  <tr key={rowSig}>
+                    <td className="py-1 px-2 text-dark-400 font-medium truncate max-w-[6rem]">
+                      {rowSig}
+                    </td>
+                    {correlation.matrix[ri].map((r, ci) => (
+                      <td
+                        key={ci}
+                        className="py-1 px-2 text-center font-mono"
+                        style={{
+                          backgroundColor: correlationColor(r),
+                          color: Math.abs(r) > 0.5 ? '#fff' : '#ccc',
+                        }}
+                      >
+                        {isNaN(r) ? '-' : r.toFixed(2)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* --- PCA --- */}
+      {tab === 'pca' && pca && (
+        <div className="space-y-4">
+          {/* Scree Plot */}
+          <div className="card">
+            <div className="card-header">Scree Plot (Variance Explained)</div>
+            <div className="card-body h-56">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={pca.explainedVariance.map((ev, i) => ({
+                    name: `PC${i + 1}`,
+                    variance: +(ev * 100).toFixed(1),
+                    cumulative: +(pca.cumulativeVariance[i] * 100).toFixed(1),
+                  }))}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                  <XAxis dataKey="name" stroke="#94a3b8" />
+                  <YAxis stroke="#94a3b8" label={{ value: '%', angle: -90, position: 'insideLeft', fill: '#94a3b8' }} />
+                  <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none' }} />
+                  <Legend />
+                  <Bar dataKey="variance" name="Individual %" fill="#3b82f6" />
+                  <Bar dataKey="cumulative" name="Cumulative %" fill="#22c55e" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* PCA Biplot (PC1 vs PC2) */}
+          {pca.numComponents >= 2 && (
+            <div className="card">
+              <div className="card-header">
+                PCA Score Plot (PC1 vs PC2)
+              </div>
+              <div className="card-body h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <ScatterChart>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                    <XAxis
+                      type="number"
+                      dataKey="x"
+                      name="PC1"
+                      stroke="#94a3b8"
+                      label={{ value: `PC1 (${(pca.explainedVariance[0] * 100).toFixed(1)}%)`, position: 'bottom', fill: '#94a3b8' }}
+                    />
+                    <YAxis
+                      type="number"
+                      dataKey="y"
+                      name="PC2"
+                      stroke="#94a3b8"
+                      label={{ value: `PC2 (${(pca.explainedVariance[1] * 100).toFixed(1)}%)`, angle: -90, position: 'insideLeft', fill: '#94a3b8' }}
+                    />
+                    <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none' }} />
+                    <Scatter
+                      data={pca.scores.map((s) => ({ x: s[0], y: s[1] }))}
+                      fill="#3b82f6"
+                    >
+                      {pca.scores.map((_, i) => (
+                        <Cell key={i} fill="#3b82f6" opacity={0.6} />
+                      ))}
+                    </Scatter>
+                  </ScatterChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          )}
+
+          {/* Loadings table */}
+          <div className="card">
+            <div className="card-header">Component Loadings</div>
+            <div className="card-body overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="text-dark-400 border-b border-dark-700">
+                    <th className="text-left py-1 px-2">Signal</th>
+                    {pca.explainedVariance.map((_, i) => (
+                      <th key={i} className="text-right py-1 px-2">PC{i + 1}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {pca.signals.map((sig, si) => (
+                    <tr key={sig} className="border-b border-dark-800">
+                      <td className="py-1 px-2 text-dark-300">{sig}</td>
+                      {pca.loadings[si]?.map((l, ci) => (
+                        <td key={ci} className="text-right py-1 px-2 font-mono text-dark-300">
+                          {l.toFixed(3)}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- Regression --- */}
+      {tab === 'regression' && (
+        <div className="space-y-4">
+          {/* Controls */}
+          <div className="card">
+            <div className="card-header">Regression Setup</div>
+            <div className="card-body space-y-3">
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-xs text-dark-400 mb-1">X Signal</label>
+                  <select
+                    value={regXSignal}
+                    onChange={(e) => setRegXSignal(e.target.value)}
+                    className="w-full bg-dark-700 text-dark-100 rounded px-2 py-1 text-sm border border-dark-600"
+                  >
+                    {signals.map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs text-dark-400 mb-1">Y Signal</label>
+                  <select
+                    value={regYSignal}
+                    onChange={(e) => setRegYSignal(e.target.value)}
+                    className="w-full bg-dark-700 text-dark-100 rounded px-2 py-1 text-sm border border-dark-600"
+                  >
+                    {signals.map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs text-dark-400 mb-1">Degree</label>
+                  <select
+                    value={regDegree}
+                    onChange={(e) => setRegDegree(Number(e.target.value))}
+                    className="w-full bg-dark-700 text-dark-100 rounded px-2 py-1 text-sm border border-dark-600"
+                  >
+                    {[1, 2, 3, 4, 5].map((d) => (
+                      <option key={d} value={d}>{d === 1 ? 'Linear' : `Polynomial (${d})`}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <button
+                onClick={runRegression}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded transition-colors"
+              >
+                Run Regression
+              </button>
+            </div>
+          </div>
+
+          {/* Results */}
+          {regression && (
+            <>
+              {/* Summary */}
+              <div className="card">
+                <div className="card-header">Regression Results</div>
+                <div className="card-body space-y-2 text-sm">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <span className="text-dark-400">Equation:</span>{' '}
+                      <span className="text-dark-100 font-mono text-xs">{regression.equation}</span>
+                    </div>
+                    <div>
+                      <span className="text-dark-400">R-squared:</span>{' '}
+                      <span className="text-green-400 font-mono">{regression.rSquared.toFixed(4)}</span>
+                    </div>
+                    <div>
+                      <span className="text-dark-400">Adj. R-squared:</span>{' '}
+                      <span className="text-green-400 font-mono">{regression.adjustedRSquared.toFixed(4)}</span>
+                    </div>
+                    <div>
+                      <span className="text-dark-400">Type:</span>{' '}
+                      <span className="text-dark-100 capitalize">{regression.type}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Scatter + Fit */}
+              <div className="card">
+                <div className="card-header">Fit Plot</div>
+                <div className="card-body h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <ScatterChart>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                      <XAxis type="number" dataKey="x" name={regression.xSignal} stroke="#94a3b8" />
+                      <YAxis type="number" dataKey="y" name={regression.ySignal} stroke="#94a3b8" />
+                      <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none' }} />
+                      <Scatter
+                        name="Data"
+                        data={data
+                          .map((row) => ({
+                            x: typeof row[regression.xSignal] === 'number' ? row[regression.xSignal] : undefined,
+                            y: typeof row[regression.ySignal] === 'number' ? row[regression.ySignal] : undefined,
+                          }))
+                          .filter((d) => d.x !== undefined && d.y !== undefined)
+                        }
+                        fill="#3b82f6"
+                        opacity={0.5}
+                      />
+                    </ScatterChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Residual Plot */}
+              <div className="card">
+                <div className="card-header">Residual Plot</div>
+                <div className="card-body h-48">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart
+                      data={regression.residuals.map((r, i) => ({ index: i, residual: r }))}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                      <XAxis dataKey="index" stroke="#94a3b8" />
+                      <YAxis stroke="#94a3b8" />
+                      <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none' }} />
+                      <Line
+                        type="monotone"
+                        dataKey="residual"
+                        stroke="#f59e0b"
+                        dot={false}
+                        strokeWidth={1}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default AnalyticsSuite;
