@@ -111,7 +111,7 @@ class DataProcessorWidget(QWidget):
                     self.processed_df = None
                 else:
                     QMessageBox.warning(self, "Error", "Failed to load file.")
-            except Exception as e:
+            except (IOError, PermissionError, OSError) as e:
                 logger.error(f"Error loading file: {e}")
                 QMessageBox.critical(self, "Error", f"An error occurred: {e}")
 
@@ -164,7 +164,7 @@ class DataProcessorWidget(QWidget):
             self._update_table(self.processed_df)
             QMessageBox.information(self, "Success", "Processing complete.")
 
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             logger.error(f"Error processing data: {e}")
             QMessageBox.critical(self, "Error", f"Processing failed: {e}")
 

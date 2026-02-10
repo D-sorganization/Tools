@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 
 from ..contracts.syngas_water import (
     CondensationRiskOut,
@@ -44,9 +44,6 @@ def calculate_syngas_water(request: SyngasWaterRequest) -> SyngasWaterResponse:
     except ImportError:
         # Fallback: basic calculation without the full calculator
         return _fallback_calculate(request)
-    except Exception as exc:
-        raise HTTPException(status_code=422, detail=str(exc)) from exc
-
     return SyngasWaterResponse(
         water_content=WaterContentOut(
             mole_fraction_water=_sanitize(result.mole_fraction_water),

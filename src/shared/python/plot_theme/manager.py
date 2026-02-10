@@ -72,8 +72,6 @@ class PlotThemeManager:
                 logger.debug(f"Loaded saved plot theme: {saved_theme}")
         except ImportError:
             logger.debug("PyQt6 not available, using default theme")
-        except Exception as e:
-            logger.warning(f"Failed to load saved plot theme: {e}")
 
     def _save_theme(self) -> None:
         """Save the current theme to QSettings."""
@@ -85,8 +83,6 @@ class PlotThemeManager:
             settings.sync()
         except ImportError:
             pass
-        except Exception as e:
-            logger.warning(f"Failed to save plot theme: {e}")
 
     @property
     def current_theme(self) -> PlotTheme:
@@ -180,8 +176,6 @@ class PlotThemeManager:
 
         except ImportError:
             logger.warning("matplotlib not available")
-        except Exception as e:
-            logger.error(f"Failed to apply plot theme: {e}")
 
     def apply_to_figure(self, fig: Figure) -> None:
         """Apply the current theme to a specific figure.

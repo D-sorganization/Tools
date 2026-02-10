@@ -275,7 +275,7 @@ class CollisionGeometryGenerator:
         if isinstance(mesh_or_path, (str, Path)):
             try:
                 return trimesh.load(str(mesh_or_path))
-            except Exception as e:
+            except (ValueError, KeyError, TypeError) as e:
                 logger.error(f"Failed to load mesh: {e}")
                 return None
 
@@ -318,7 +318,7 @@ class CollisionGeometryGenerator:
             convex = mesh.convex_hull
             volume_ratio = mesh.volume / convex.volume
             return bool(volume_ratio > threshold)
-        except Exception:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             return False
 
     def _primitives_would_fit(self, mesh: Any, max_primitives: int) -> bool:
@@ -338,7 +338,7 @@ class CollisionGeometryGenerator:
                 estimated_primitives = int(1 / fill_ratio)
                 return estimated_primitives <= max_primitives
 
-        except Exception:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             pass
 
         return False
@@ -488,7 +488,7 @@ class CollisionGeometryGenerator:
                 volume_ratio=volume_ratio,
                 error_metric=error,
             )
-        except Exception as e:
+        except ImportError as e:
             logger.warning(f"Box fitting failed: {e}")
             return PrimitiveFit(
                 primitive_type="box",
@@ -518,7 +518,7 @@ class CollisionGeometryGenerator:
                 volume_ratio=volume_ratio,
                 error_metric=1.0 - volume_ratio,
             )
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.warning(f"Sphere fitting failed: {e}")
             return PrimitiveFit(
                 primitive_type="sphere",
@@ -562,7 +562,7 @@ class CollisionGeometryGenerator:
                 volume_ratio=volume_ratio,
                 error_metric=1.0 - volume_ratio,
             )
-        except Exception as e:
+        except ImportError as e:
             logger.warning(f"Cylinder fitting failed: {e}")
             return PrimitiveFit(
                 primitive_type="cylinder",
@@ -628,7 +628,7 @@ class CollisionGeometryGenerator:
                 pitch = mesh.extents.max() * (1 - reduction) / 10
                 voxelized = mesh.voxelized(pitch)
                 simplified = voxelized.marching_cubes
-            except Exception:
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError):
                 simplified = mesh.copy()
 
         return CollisionGeometryResult(
@@ -721,7 +721,7 @@ class CollisionGeometryGenerator:
                     max_dist = max(max_dist, distances.max())
 
             return float(max_dist)
-        except Exception:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             return float("inf")
 
 

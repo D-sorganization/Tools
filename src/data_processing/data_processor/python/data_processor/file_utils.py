@@ -168,7 +168,7 @@ class DataReader:
                     return "json"
                 elif header.startswith(b"PK"):
                     return "excel"  # ZIP-based format
-            except Exception:
+            except (IOError, PermissionError, OSError):
                 pass
 
         return "csv"  # Default to csv for unrecognizable formats
@@ -332,7 +332,7 @@ def get_file_info(file_path: str | Path) -> dict[str, Any]:
             "format": FileFormatDetector.detect_format(file_path),
             "is_supported": FileFormatDetector.is_format_supported(file_path),
         }
-    except Exception as e:
+    except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
         return {"error": str(e)}
 
 
@@ -348,5 +348,5 @@ def validate_file_path(file_path: str | Path) -> bool:
     try:
         path = Path(file_path)
         return path.exists() and path.is_file()
-    except Exception:
+    except (IOError, PermissionError, OSError):
         return False

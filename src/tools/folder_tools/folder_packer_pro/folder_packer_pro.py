@@ -1418,7 +1418,7 @@ class FolderPackerPro:
                 ),
             )
 
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             logger.exception("Pack operation failed")
             self._log_message(f"Pack operation failed: {e}", "error")
             error_msg = str(e)
@@ -1547,7 +1547,7 @@ class FolderPackerPro:
                 ),
             )
 
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             logger.exception("Unpack operation failed")
             self._log_message(f"Unpack operation failed: {e}", "error")
             error_msg = str(e)
@@ -1810,7 +1810,7 @@ class FolderPackerPro:
             else:
                 # Use subprocess with list args to prevent command injection
                 subprocess.run(["xdg-open", str(log_filename)], check=False)
-        except (OSError, FileNotFoundError, AttributeError) as e:
+        except (OSError, AttributeError) as e:
             messagebox.showerror("Error", f"Could not open log file:\n{e}")
 
     def _show_about(self) -> None:

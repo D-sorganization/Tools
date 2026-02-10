@@ -283,7 +283,7 @@ class ProcessingWorker(QThread):
                 result = self.data
 
             self.finished.emit(result)
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             logger.error(f"Processing error: {e}", exc_info=True)
             self.error.emit(str(e))
 
@@ -1341,7 +1341,7 @@ class DataProcessorMainWindow(QMainWindow):
                 self.status_bar.set_status("Failed to load data")
                 QMessageBox.warning(self, "Error", "Failed to load data")
 
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             self.status_bar.hide_progress()
             self.status_bar.set_status("Error loading data")
             logger.error(f"Error loading data: {e}", exc_info=True)
@@ -1410,7 +1410,7 @@ class DataProcessorMainWindow(QMainWindow):
                 self, "Success", f"{filter_type} applied successfully"
             )
 
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             self.status_bar.hide_progress()
             self.status_bar.set_status("Filter failed")
             logger.error(f"Filter error: {e}", exc_info=True)
@@ -1458,7 +1458,7 @@ class DataProcessorMainWindow(QMainWindow):
                 f"Method: {method}\n"
                 f"Signals: {len(signals)}",
             )
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             logger.error(f"Integration error: {e}", exc_info=True)
             QMessageBox.critical(self, "Error", f"Integration failed:\n{e}")
 
@@ -1515,7 +1515,7 @@ class DataProcessorMainWindow(QMainWindow):
                 f"Order: {order}\n"
                 f"Signals: {len(signals)}",
             )
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.error(f"Differentiation error: {e}", exc_info=True)
             QMessageBox.critical(self, "Error", f"Differentiation failed:\n{e}")
 
@@ -1561,7 +1561,7 @@ class DataProcessorMainWindow(QMainWindow):
                 f"Signal '{name}' created successfully\n" f"Formula: {formula}",
             )
 
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             logger.error(f"Formula error: {e}", exc_info=True)
             QMessageBox.critical(self, "Error", f"Formula failed:\n{e}")
 
@@ -1648,7 +1648,7 @@ class DataProcessorMainWindow(QMainWindow):
             else:
                 QMessageBox.warning(self, "Error", "Export failed")
 
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             logger.error(f"Export error: {e}", exc_info=True)
             QMessageBox.critical(self, "Error", f"Export failed:\n{e}")
 
@@ -1679,7 +1679,7 @@ class DataProcessorMainWindow(QMainWindow):
         if include_filter:
             try:
                 filter_type = self.filter_config.get_filter_type()
-            except Exception:
+            except (KeyError, ValueError, TypeError):
                 pass
 
         name = generate_dataset_name(
@@ -1792,7 +1792,7 @@ class DataProcessorMainWindow(QMainWindow):
                 f"PCA complete: {result.n_components} components, "
                 f"{result.total_variance_explained:.1%} variance explained"
             )
-        except Exception as e:
+        except ImportError as e:
             logger.error(f"PCA analysis failed: {e}", exc_info=True)
             QMessageBox.critical(self, "PCA Error", f"Analysis failed:\n{e}")
 
@@ -1874,7 +1874,7 @@ class DataProcessorMainWindow(QMainWindow):
             self.analysis_panel.anova_widget.display_results(report)
             self.status_bar.set_status(f"ANOVA complete ({anova_type})")
 
-        except Exception as e:
+        except ImportError as e:
             logger.error(f"ANOVA analysis failed: {e}", exc_info=True)
             QMessageBox.critical(self, "ANOVA Error", f"Analysis failed:\n{e}")
 
@@ -1933,7 +1933,7 @@ class DataProcessorMainWindow(QMainWindow):
                 f"Regression complete: R² = {result.r_squared:.4f}"
             )
 
-        except Exception as e:
+        except ImportError as e:
             logger.error(f"Regression analysis failed: {e}", exc_info=True)
             QMessageBox.critical(self, "Regression Error", f"Analysis failed:\n{e}")
 
@@ -2011,7 +2011,7 @@ class DataProcessorMainWindow(QMainWindow):
             plt.show()
             self.status_bar.set_status("Surface plot generated")
 
-        except Exception as e:
+        except ImportError as e:
             logger.error(f"Surface plot failed: {e}", exc_info=True)
             QMessageBox.critical(self, "Surface Plot Error", f"Plot failed:\n{e}")
 
@@ -2029,7 +2029,7 @@ class DataProcessorMainWindow(QMainWindow):
             self.analysis_panel.nn_widget.display_results(result)
             self.status_bar.set_status("Neural network training complete")
 
-        except Exception as e:
+        except ImportError as e:
             logger.error(f"Neural network training failed: {e}", exc_info=True)
             QMessageBox.critical(self, "NN Error", f"Training failed:\n{e}")
 
@@ -2075,7 +2075,7 @@ class DataProcessorMainWindow(QMainWindow):
         except json.JSONDecodeError as e:
             logger.error(f"JSON decode error: {e}")
             QMessageBox.critical(self, "Error", f"Invalid JSON file:\n{e}")
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             logger.error(f"Load signal set error: {e}", exc_info=True)
             QMessageBox.critical(self, "Error", f"Failed to load signal set:\n{e}")
 
@@ -2121,7 +2121,7 @@ class DataProcessorMainWindow(QMainWindow):
                 f"Saved {len(selected_signals)} signals",
             )
 
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             logger.error(f"Save signal set error: {e}", exc_info=True)
             QMessageBox.critical(self, "Error", f"Failed to save signal set:\n{e}")
 
@@ -2167,7 +2167,7 @@ class DataProcessorMainWindow(QMainWindow):
                 f"Configuration '{name}' saved successfully.",
             )
 
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             logger.error(f"Save config error: {e}", exc_info=True)
             QMessageBox.critical(self, "Error", f"Failed to save configuration:\n{e}")
 
@@ -2262,7 +2262,7 @@ class DataProcessorMainWindow(QMainWindow):
                 f"Configuration '{name}' loaded successfully.",
             )
 
-        except Exception as e:
+        except ImportError as e:
             logger.error(f"Load config error: {e}", exc_info=True)
             QMessageBox.critical(self, "Error", f"Failed to load configuration:\n{e}")
 
@@ -2318,7 +2318,7 @@ class DataProcessorMainWindow(QMainWindow):
                 f"Rows: {len(self.current_data)}",
             )
 
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             logger.error(f"Resample error: {e}", exc_info=True)
             QMessageBox.critical(self, "Error", f"Resampling failed:\n{e}")
 
@@ -2344,10 +2344,10 @@ class DataProcessorMainWindow(QMainWindow):
             try:
                 duration = end - start
                 self.data_duration_label.setText(str(duration))
-            except Exception:
+            except (RuntimeError, AttributeError):
                 self.data_duration_label.setText("-")
 
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             logger.error(f"Time range info error: {e}")
 
     def _trim_time_range(self) -> None:
@@ -2399,7 +2399,7 @@ class DataProcessorMainWindow(QMainWindow):
                 "Invalid Input",
                 "Please enter valid numeric time values.",
             )
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.error(f"Trim time range error: {e}", exc_info=True)
             QMessageBox.critical(self, "Error", f"Time range trim failed:\n{e}")
 
@@ -2413,7 +2413,7 @@ class DataProcessorMainWindow(QMainWindow):
             self.start_time_edit.setText(str(time_data.min()))
             self.end_time_edit.setText(str(time_data.max()))
             self.status_bar.set_status("Time range copied")
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             logger.error(f"Copy time range error: {e}")
 
     # Plot Config handlers
@@ -2444,7 +2444,7 @@ class DataProcessorMainWindow(QMainWindow):
 
             self.status_bar.set_status(f"Saved plot config: {name}")
 
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             logger.error(f"Save plot config error: {e}", exc_info=True)
             QMessageBox.critical(self, "Error", f"Failed to save plot config:\n{e}")
 
@@ -2489,7 +2489,7 @@ class DataProcessorMainWindow(QMainWindow):
 
                 self.status_bar.set_status(f"Loaded plot config: {name}")
 
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             logger.error(f"Load plot config error: {e}", exc_info=True)
             QMessageBox.critical(self, "Error", f"Failed to load plot config:\n{e}")
 
@@ -2515,7 +2515,7 @@ class DataProcessorMainWindow(QMainWindow):
                 self.plot_config_manager.delete_plot_config(name)
                 self._refresh_saved_plots_list()
                 self.status_bar.set_status(f"Deleted plot config: {name}")
-            except Exception as e:
+            except (RuntimeError, AttributeError) as e:
                 logger.error(f"Delete plot config error: {e}", exc_info=True)
                 QMessageBox.critical(self, "Error", f"Failed to delete:\n{e}")
 
@@ -2526,7 +2526,7 @@ class DataProcessorMainWindow(QMainWindow):
             configs = self.plot_config_manager.list_plot_configs()
             for name in configs:
                 self.saved_plots_list.addItem(name)
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             logger.error(f"Refresh plots list error: {e}")
 
     def _calculate_trendline(self) -> None:
@@ -2593,7 +2593,7 @@ class DataProcessorMainWindow(QMainWindow):
             self.trendline_results.setText(result_text)
             self.status_bar.set_status("Trendline calculated")
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.error(f"Trendline error: {e}", exc_info=True)
             QMessageBox.critical(self, "Error", f"Trendline calculation failed:\n{e}")
 
@@ -2625,7 +2625,7 @@ class DataProcessorMainWindow(QMainWindow):
             preview_text = "".join(lines)
             self.dat_preview_text.setText(preview_text)
 
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             logger.error(f"DAT preview error: {e}", exc_info=True)
             QMessageBox.critical(self, "Error", f"Failed to preview file:\n{e}")
 
@@ -2669,7 +2669,7 @@ class DataProcessorMainWindow(QMainWindow):
                     f"Columns: {len(self.current_data.columns)}",
                 )
 
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             logger.error(f"DAT import error: {e}", exc_info=True)
             QMessageBox.critical(self, "Error", f"Failed to import DAT file:\n{e}")
 
@@ -2704,7 +2704,7 @@ class DataProcessorMainWindow(QMainWindow):
                 f"DAT file converted to CSV:\n{output_path}",
             )
 
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             logger.error(f"DAT conversion error: {e}", exc_info=True)
             QMessageBox.critical(self, "Error", f"Failed to convert DAT file:\n{e}")
 

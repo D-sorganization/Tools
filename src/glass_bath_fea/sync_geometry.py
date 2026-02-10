@@ -121,7 +121,7 @@ def main(argv: list[str] | None = None) -> int:
         "insertion_depth_in": fea_config.electrode_insertion_depth,
         "output_file": str(output_path),
     }
-    print(json.dumps(summary, indent=2))
+    logger.info(json.dumps(summary, indent=2))
 
     return 0
 

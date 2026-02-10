@@ -86,7 +86,7 @@ class TextCache:
             self._fonts["default"] = pygame.font.SysFont("segoeui", 28, bold=True)
             self._fonts["small"] = pygame.font.SysFont("segoeui", 20)
             self._fonts["title"] = pygame.font.SysFont("segoeui", 32, bold=True)
-        except Exception:
+        except (KeyError, ValueError, TypeError):
             self._fonts["default"] = pygame.font.Font(None, 28)
             self._fonts["small"] = pygame.font.Font(None, 20)
             self._fonts["title"] = pygame.font.Font(None, 32)

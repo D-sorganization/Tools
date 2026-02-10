@@ -250,7 +250,7 @@ class UnitConversionService:
                     kelvin = self._convert_temperature(value, unit, "K")
                     if kelvin < 0:
                         return ["Temperature below absolute zero"]
-                except Exception:
+                except (KeyError, ValueError, TypeError):
                     # If conversion fails, skip validation
                     pass
         if category == "pressure" and value < 0:

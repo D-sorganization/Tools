@@ -745,7 +745,7 @@ class PFDWidget(QWidget):
                     self.image_label.setText("PFD image could not be loaded")
             else:
                 self.image_label.setText(f"PFD image not found at: {image_path}")
-        except Exception as e:
+        except (PermissionError, OSError) as e:
             self.image_label.setText(f"Error loading PFD: {e}")
 
         layout.addWidget(self.image_label)
@@ -1007,7 +1007,7 @@ class PSAMainWindow(QMainWindow):
 
         except ValueError as e:
             QMessageBox.warning(self, "Input Error", f"Invalid input: {e}")
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             QMessageBox.critical(self, "Calculation Error", f"Error: {e}")
 
 

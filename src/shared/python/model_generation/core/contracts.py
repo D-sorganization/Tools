@@ -194,7 +194,7 @@ def postcondition(
                         )
                 except PostconditionError:
                     raise
-                except Exception as e:
+                except (KeyError, ValueError, TypeError) as e:
                     raise PostconditionError(
                         message=f"Failed to check postcondition: {e}",
                         function_name=func.__name__,

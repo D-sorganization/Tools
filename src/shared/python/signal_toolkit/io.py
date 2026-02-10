@@ -591,7 +591,7 @@ class BatchProcessor:
         for file_path in files:
             try:
                 signals[file_path.stem] = SignalLoader.load(file_path, **kwargs)
-            except Exception as e:
+            except (ValueError, KeyError, json.JSONDecodeError, TypeError) as e:
                 logger.warning("Failed to load %s: %s", file_path, e)
 
         return signals
@@ -647,7 +647,7 @@ class BatchProcessor:
                     elif output_format == "npz":
                         SignalExporter.to_npz(processed, output_path)
 
-            except Exception as e:
-                print(f"Warning: Failed to process {file_path}: {e}")
+            except (ValueError, KeyError, json.JSONDecodeError, TypeError) as e:
+                logger.error(f"Warning: Failed to process {file_path}: {e}")
 
         return results

@@ -7,6 +7,9 @@ Replaces build.bat for better portability.
 import os
 import sys
 from pathlib import Path
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Use shared path utilities
 from utils.path_helpers import ensure_utils_in_path
@@ -48,7 +51,7 @@ def main() -> None:
 
     except KeyboardInterrupt:
         print()
-        print("Build cancelled by user.")
+        logger.info("Build cancelled by user.")
         sys.exit(1)
 
 

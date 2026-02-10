@@ -183,7 +183,7 @@ class UnifiedModelLoader:
             try:
                 data = json.loads(path.read_text())
                 return UserPreferences.from_dict(data)
-            except Exception as exc:
+            except (ValueError, KeyError, json.JSONDecodeError, TypeError) as exc:
                 logger.warning("Failed to load preferences: %s", exc)
         return UserPreferences()
 
@@ -220,7 +220,7 @@ class UnifiedModelLoader:
         if manifest_path.exists():
             try:
                 self._bundled_manifest = json.loads(manifest_path.read_text())
-            except Exception as exc:
+            except (ValueError, KeyError, json.JSONDecodeError, TypeError) as exc:
                 logger.warning("Failed to load manifest: %s", exc)
                 self._bundled_manifest = {"models": []}
         else:
@@ -371,7 +371,7 @@ class UnifiedModelLoader:
                 success=True,
                 warnings=model.warnings,
             )
-        except Exception as exc:
+        except ImportError as exc:
             return LoadResult(
                 source_path=path,
                 source_format=ModelFormat.MJCF,

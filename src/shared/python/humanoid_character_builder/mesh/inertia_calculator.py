@@ -229,7 +229,7 @@ class MeshInertiaCalculator:
         # Load mesh
         try:
             mesh = trimesh.load(str(mesh_path))
-        except Exception as e:
+        except (ValueError, KeyError, TypeError) as e:
             raise ValueError(f"Failed to load mesh: {e}") from e
 
         # Handle scene objects (multiple meshes)

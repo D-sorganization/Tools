@@ -118,11 +118,11 @@ class URDFTextEditor:
         # Validate
         messages = editor.validate()
         for msg in messages:
-            print(msg)
+            logger.info(msg)
 
         # Get diff
         diff = editor.get_diff_from_original()
-        print(diff.unified_diff)
+        logger.info(diff.unified_diff)
 
         # Save
         editor.save_file()

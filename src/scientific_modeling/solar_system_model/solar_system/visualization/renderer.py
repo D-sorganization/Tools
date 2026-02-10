@@ -360,7 +360,7 @@ class Renderer:
             glUseProgram(program)
             self._shader_program = program
             self._shaders_enabled = True
-        except Exception:
+        except (KeyError, ValueError, TypeError):
             self._shader_program = None
             self._shaders_enabled = False
 
@@ -778,7 +778,7 @@ class Renderer:
 
             # Flip Y for pygame coordinates
             return int(x), int(self.settings.window_height - y)
-        except Exception:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             return None
 
     def render_info_panel(

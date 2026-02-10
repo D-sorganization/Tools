@@ -53,7 +53,7 @@ def title_from_metadata(pdf_path: Path) -> TitleResult:
             if looks_like_title(t):
                 return TitleResult(t, 0.95, "metadata", "pypdf metadata /Title")
         return TitleResult(None, 0.0, "metadata", "no usable metadata title")
-    except Exception as e:
+    except ImportError as e:
         logger.debug(f"Metadata extraction failed: {e}")
         return TitleResult(None, 0.0, "metadata", f"metadata error: {e}")
 
@@ -120,7 +120,7 @@ def title_from_first_page(pdf_path: Path) -> TitleResult:
     except ImportError:
         logger.warning("PyMuPDF (fitz) not installed. Skipping heuristic layer.")
         return TitleResult(None, 0.0, "heuristic", "pymupdf not installed")
-    except Exception as e:
+    except (IOError, PermissionError, OSError) as e:
         logger.debug(f"Heuristic extraction failed: {e}")
         return TitleResult(None, 0.0, "heuristic", f"heuristic error: {e}")
 
@@ -152,7 +152,7 @@ def author_from_metadata(pdf_path: Path) -> str | None:
                 ):
                     return author
         return None
-    except Exception as e:
+    except ImportError as e:
         logger.debug(f"Author metadata extraction failed: {e}")
         return None
 

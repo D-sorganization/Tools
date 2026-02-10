@@ -378,7 +378,7 @@ class GlassBathFEAWidget(QWidget):
 
             self.mesh_info.setText(info)
             self.status_label.setText("Mesh generated successfully")
-        except Exception as e:
+        except ImportError as e:
             self.mesh_info.setText(f"Error: {e}")
             self.status_label.setText("Mesh generation failed")
 
@@ -404,7 +404,7 @@ class GlassBathFEAWidget(QWidget):
             self.export_log.append(f"Export complete: {export_dir}")
             self.status_label.setText("Export successful")
             self.exportComplete.emit(str(export_dir))
-        except Exception as e:
+        except (PermissionError, OSError) as e:
             self.export_log.append(f"Error: {e}")
             self.status_label.setText("Export failed")
 

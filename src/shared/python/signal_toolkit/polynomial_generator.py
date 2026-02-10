@@ -561,7 +561,7 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
             # Fit selected order
             self.polynomial_coeffs = np.polyfit(xs, ys, order)
             return True
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.error(f"Fitting error: {e}")
             return False
 
@@ -633,7 +633,7 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
             # Auto fit
             self._fit_polynomial()
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             QtWidgets.QMessageBox.warning(
                 self, "Equation Error", f"Invalid equation: {e}"
             )

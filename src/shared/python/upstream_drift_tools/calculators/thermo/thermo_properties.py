@@ -13,8 +13,11 @@ use CoolProp or Cantera directly.
 
 from __future__ import annotations
 
+import logging
 import math
 from dataclasses import dataclass
+
+logger = logging.getLogger(__name__)
 
 # Molecular weights (g/mol)
 MOLECULAR_WEIGHTS: dict[str, float] = {
@@ -88,7 +91,7 @@ class ThermoPropertiesCalculator:
             pressure_kpa=101.325,
             composition={"N2": 79, "O2": 21},
         )
-        print(result.density_kg_m3)
+        logger.info(result.density_kg_m3)
     """
 
     def calculate(

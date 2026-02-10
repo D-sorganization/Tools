@@ -250,7 +250,7 @@ class AssertionHelpers:
                     f"Exception message '{e}' does not match pattern '{message_pattern}'"
                 ) from e
             return e
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             raise AssertionError(
                 f"Expected {exception_type.__name__} but got {type(e).__name__}: {e}"
             ) from e

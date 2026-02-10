@@ -288,7 +288,7 @@ class ElectrodeVisualization:
                         color="darkblue",
                     )
 
-        except Exception:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             pass
 
     def draw_correct_via_metal_path(
@@ -365,7 +365,7 @@ class ElectrodeVisualization:
                         color="darkred",
                     )
 
-        except Exception:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             pass
 
     def draw_electrode_length_extrusion(
@@ -474,7 +474,7 @@ class ElectrodeVisualization:
                 )
                 ax.add_collection3d(face_collection)
 
-        except Exception:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             pass
 
     def draw_3d_vessel(self, ax, radius, total_height) -> None:
@@ -979,7 +979,7 @@ class ElectrodeVisualization:
                 alpha=0.8,
             )
 
-        except Exception:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             pass
 
     def draw_3d_metal_shell(
@@ -1100,7 +1100,7 @@ class ElectrodeVisualization:
                 alpha=0.9,
             )
 
-        except Exception:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             pass
 
     # ...existing code...

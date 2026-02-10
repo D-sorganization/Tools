@@ -251,7 +251,7 @@ class ModelLibrary:
 
         try:
             manifest = json.loads(manifest_path.read_text())
-        except Exception as exc:
+        except (ValueError, KeyError, json.JSONDecodeError, TypeError) as exc:
             logger.warning("Failed to load bundled manifest: %s", exc)
             return
 
@@ -302,7 +302,7 @@ class ModelLibrary:
                     entry = ModelEntry.from_dict(entry_data)
                     self._entries[entry.id] = entry
                 logger.info(f"Loaded {len(self._entries)} models from index")
-            except Exception as e:
+            except (ValueError, KeyError, json.JSONDecodeError, TypeError) as e:
                 logger.warning(f"Failed to load index: {e}")
 
     def _save_index(self) -> None:
@@ -313,7 +313,7 @@ class ModelLibrary:
                 "version": "1.0",
             }
             self.config.index_file.write_text(json.dumps(data, indent=2))
-        except Exception as e:
+        except (ValueError, KeyError, json.JSONDecodeError, TypeError) as e:
             logger.error(f"Failed to save index: {e}")
 
     def list_models(
@@ -663,10 +663,10 @@ class ModelLibrary:
                             else:
                                 continue
                             break
-                    except Exception:
+                    except (PermissionError, OSError):
                         pass
 
-        except Exception as e:
+        except (PermissionError, OSError) as e:
             logger.warning(f"Failed to fetch from GitHub: {e}")
 
         return models
@@ -720,7 +720,7 @@ class ModelLibrary:
             logger.info(f"Downloaded model: {entry.id}")
             return True
 
-        except Exception as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Failed to download {entry.id}: {e}")
             return False
 

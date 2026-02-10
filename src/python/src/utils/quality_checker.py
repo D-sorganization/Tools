@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 """Quality check script to verify AI-generated code meets standards."""
 
+import logging
 import sys
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 # Try to find the tools package
 try:
@@ -28,7 +31,7 @@ except ImportError:
         )
     else:
         # Fallback for when running from elsewhere
-        print("Error: Could not locate tools package.", file=sys.stderr)
+        logger.error("Error: Could not locate tools package.")
         sys.exit(1)
 
 

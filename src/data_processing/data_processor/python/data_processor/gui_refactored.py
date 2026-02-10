@@ -498,7 +498,7 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore
 
                 logger.info(f"Loaded data: {len(self.current_data)} rows")
 
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             logger.error(f"Error loading data: {e}", exc_info=True)
             messagebox.showerror("Error", f"Failed to load data:\n{e}")
 
@@ -523,7 +523,7 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore
 
             logger.info(f"Detected {len(signals)} signals")
 
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             logger.error(f"Error detecting signals: {e}", exc_info=True)
             messagebox.showerror("Error", f"Failed to detect signals:\n{e}")
 
@@ -582,7 +582,7 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore
             )
             logger.info(f"Applied filter: {filter_type}")
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.error(f"Error applying filter: {e}", exc_info=True)
             messagebox.showerror("Error", f"Failed to apply filter:\n{e}")
 
@@ -611,7 +611,7 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore
 
             logger.info("Applied integration")
 
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             logger.error(f"Error integrating signals: {e}", exc_info=True)
             messagebox.showerror("Error", f"Failed to integrate:\n{e}")
 
@@ -641,7 +641,7 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore
 
             logger.info("Applied differentiation")
 
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             logger.error(f"Error differentiating signals: {e}", exc_info=True)
             messagebox.showerror("Error", f"Failed to differentiate:\n{e}")
 
@@ -718,7 +718,7 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore
 
             self.update_status("Statistics calculated")
 
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             logger.error(f"Error calculating statistics: {e}", exc_info=True)
             messagebox.showerror("Error", f"Failed to calculate statistics:\n{e}")
 
@@ -771,7 +771,7 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore
                 self.update_status("Export failed")
                 messagebox.showerror("Error", "Failed to export data")
 
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             logger.error(f"Error exporting data: {e}", exc_info=True)
             messagebox.showerror("Error", f"Failed to export data:\n{e}")
 

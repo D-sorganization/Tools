@@ -629,7 +629,7 @@ if BASE_CALCULATOR_AVAILABLE:
                 results = {"equilibrium": equilibrium, "sizing": sizing}
                 self.calculation_finished.emit(results)
 
-            except Exception as e:
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
                 from PyQt6.QtWidgets import QMessageBox
 
                 QMessageBox.critical(self, "Calculation Error", str(e))

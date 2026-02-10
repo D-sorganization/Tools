@@ -118,7 +118,7 @@ class CalculatorStateMixin:
             widget.customContextMenuRequested.connect(self.show_context_menu)
             # Setup keyboard shortcuts
             self.setup_shortcuts()
-        except Exception:
+        except (RuntimeError, AttributeError):
             pass
 
     def setup_shortcuts(self) -> None:
@@ -308,7 +308,7 @@ class CalculatorStateMixin:
                     self.change_tracking_enabled = False
                     splitter.setSizes(state.get("sizes", splitter.sizes()))
                     self.change_tracking_enabled = True
-        except Exception:
+        except (KeyError, ValueError, TypeError):
             pass
 
     def save_input_states(self) -> dict[str, Any]:
@@ -351,13 +351,18 @@ class CalculatorStateMixin:
                                 if isinstance(value, float) or "." in str(value)
                                 else widget.setValue(int(value))
                             )
-                        except Exception:
+                        except (
+                            ValueError,
+                            ZeroDivisionError,
+                            OverflowError,
+                            TypeError,
+                        ):
                             widget.setValue(value)
                     elif hasattr(widget, "setCurrentText"):
                         widget.setCurrentText(str(value))
                     elif hasattr(widget, "setChecked"):
                         widget.setChecked(bool(value))
-        except Exception:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             pass
         finally:
             self.change_tracking_enabled = True
@@ -422,7 +427,7 @@ class CalculatorStateMixin:
 
             self.unsaved_changes = False
 
-        except Exception:
+        except ImportError:
             pass
 
     def set_calculator_specific_state(self, state: dict[str, Any]) -> None:
@@ -461,7 +466,7 @@ class CalculatorStateMixin:
 
             return bool(success)
 
-        except Exception:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             return False
 
     def load_calculator_state(
@@ -488,7 +493,7 @@ class CalculatorStateMixin:
 
             return state_data
 
-        except Exception:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             return None
 
     def auto_save_state(self) -> None:
@@ -515,7 +520,7 @@ class CalculatorStateMixin:
                         self.copy_to_clipboard(text)
                         return
 
-        except Exception:
+        except (KeyError, ValueError, TypeError):
             pass
 
     def copy_all_results(self, checked: bool = False) -> None:
@@ -537,7 +542,7 @@ class CalculatorStateMixin:
             else:
                 logger.debug("No copyable results available")
 
-        except Exception:
+        except (KeyError, ValueError, TypeError):
             pass
 
     def get_text_from_widget(self, widget: Any) -> str:
@@ -592,7 +597,7 @@ class CalculatorStateMixin:
             clipboard = QApplication.clipboard()
             if clipboard:
                 clipboard.setText(text)
-        except Exception:
+        except (RuntimeError, AttributeError):
             pass
 
     def paste_text(self, checked: bool = False) -> None:
@@ -610,7 +615,7 @@ class CalculatorStateMixin:
                 elif focused_widget and hasattr(focused_widget, "insertPlainText"):
                     focused_widget.insertPlainText(text)
 
-        except Exception:
+        except (RuntimeError, AttributeError):
             pass
 
     def show_context_menu(self, position: Any) -> None:

@@ -206,7 +206,7 @@ class URDFParser:
             try:
                 joint = self._parse_joint(joint_elem)
                 joints.append(joint)
-            except Exception as e:
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
                 warnings.append(f"Failed to parse joint: {e}")
 
         return ParsedModel(

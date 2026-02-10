@@ -132,7 +132,7 @@ def install_package(
     except subprocess.CalledProcessError as e:
         logger.error(f"✗ Failed to install {pip_name}: {e.stderr}")
         return False
-    except Exception as e:
+    except (subprocess.SubprocessError, OSError) as e:
         logger.error(f"✗ Error installing {pip_name}: {e}")
         return False
 
@@ -216,7 +216,7 @@ def install_from_requirements(
     except subprocess.CalledProcessError as e:
         logger.error(f"✗ Failed to install packages: {e.stderr}")
         return False
-    except Exception as e:
+    except (subprocess.SubprocessError, OSError) as e:
         logger.error(f"✗ Error installing packages: {e}")
         return False
 

@@ -66,12 +66,7 @@ def run_command(
     except subprocess.TimeoutExpired:
         logger.error(f"Command timed out after {timeout}s: {' '.join(command)}")
         raise
-    except subprocess.CalledProcessError as e:
-        logger.error(f"Command failed: {' '.join(command)}")
-        if e.stderr:
-            logger.error(f"Error output: {e.stderr}")
-        raise
-    except Exception as e:
+    except (subprocess.SubprocessError, OSError, FileNotFoundError) as e:
         logger.error(f"Unexpected error running command: {e}")
         raise
 
@@ -161,7 +156,7 @@ def check_command_available(command: str) -> bool:
             check=False,
         )
         return result.returncode == 0
-    except Exception:
+    except (KeyError, ValueError, TypeError):
         return False
 
 

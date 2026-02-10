@@ -183,7 +183,7 @@ class ElectrodeAdvisorWidget(QWidget):
             )
             if icon_path.exists():
                 self.setWindowIcon(QIcon(str(icon_path)))
-        except Exception as e:
+        except (PermissionError, OSError) as e:
             logger.warning(f"Failed to set window icon: {e}")
 
         # Initialize electrode advisor widget
@@ -261,7 +261,7 @@ class ElectrodeAdvisorWidget(QWidget):
             filename = f"{self.calculator_name}_state.json"
             state_manager.save_state(filename, state_data)
             logger.info("Electrode Advisor state saved to %s", filename)
-        except Exception as e:
+        except ImportError as e:
             logger.warning("Warning: Could not save state: %s", e)
 
     def load_state(self) -> None:
@@ -284,7 +284,7 @@ class ElectrodeAdvisorWidget(QWidget):
                     logger.error("Failed to restore state from %s", filename)
             else:
                 logger.info("No saved state found for %s", filename)
-        except Exception as e:
+        except ImportError as e:
             logger.warning("Warning: Could not load state: %s", e)
 
     def show_context_menu(self, position: QPoint) -> None:
@@ -346,7 +346,7 @@ class ElectrodeAdvisorWidget(QWidget):
                 logger.info("Results copied to clipboard")
             else:
                 logger.info("No results available to copy.")
-        except Exception as e:
+        except ImportError as e:
             logger.warning("Warning: Could not copy results: %s", e)
 
     def _init_ui(self) -> None:
@@ -517,7 +517,7 @@ class ElectrodeAdvisorWidget(QWidget):
                     margin-top: 2px;
                 }
             """)
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             logger.exception("Error styling tabs: %s", e)
 
     def _create_input_panel(self) -> None:
@@ -978,7 +978,7 @@ class ElectrodeAdvisorWidget(QWidget):
             # Trigger initial calculation and visualization
             QTimer.singleShot(50, self._calculate_system)
 
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             logger.exception("Error creating matplotlib widgets: %s", e)
             # Create fallback placeholder
             if viz_layout:
@@ -1593,7 +1593,7 @@ class ElectrodeAdvisorWidget(QWidget):
             # Continue with normal calculation
             self._calculate_system()
 
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             logger.exception("Error in glass height validation: %s", e)
             # Fall back to normal calculation
             self._calculate_system()
@@ -1636,7 +1636,7 @@ class ElectrodeAdvisorWidget(QWidget):
             self._update_results_tables()
             self._update_analysis_display()
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error handling metal conductivity change: %s", e)
             import traceback
 
@@ -1863,7 +1863,7 @@ class ElectrodeAdvisorWidget(QWidget):
             self._update_analysis_display()
             self._update_status("Calculation completed successfully", "ok")
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             # Handle calculation errors gracefully
             error_msg = f"Calculation error: {e!s}"
             logger.exception(error_msg)
@@ -2070,7 +2070,7 @@ class ElectrodeAdvisorWidget(QWidget):
             if self.electrode_canvas is not None:
                 self.electrode_canvas.draw()
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error updating 3D visualization: %s", e)
 
     def _draw_3d_conductive_paths_new(
@@ -2396,7 +2396,7 @@ class ElectrodeAdvisorWidget(QWidget):
                     color="darkgreen",
                 )
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error drawing correct trapezoidal path: %s", e)
 
     def _draw_correct_via_metal_path(
@@ -2522,7 +2522,7 @@ class ElectrodeAdvisorWidget(QWidget):
                     color="darkred",
                 )
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error drawing correct via-metal path: %s", e)
 
     def _draw_electrode_length_extrusion(
@@ -2635,7 +2635,7 @@ class ElectrodeAdvisorWidget(QWidget):
                 )
                 ax.add_collection3d(face_collection)
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error drawing electrode length extrusion: %s", e)
 
     def _update_results_tables(self) -> None:
@@ -2712,7 +2712,7 @@ class ElectrodeAdvisorWidget(QWidget):
             #         power = current * voltage * power_factor / 1000  # kW with power factor
             #         self.phase_inputs[phase]['power'].setText(f"{power:.1f}")
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error updating results tables: %s", e)
 
     def _update_analysis_display(self) -> None:
@@ -2763,7 +2763,7 @@ class ElectrodeAdvisorWidget(QWidget):
                 self.path_labels["Path Resistance Ratio"].setText(f"{avg_ratio:.2f}")
                 self.path_labels["Thermal Efficiency"].setText(f"{thermal_eff:.1%}")
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error updating analysis display: %s", e)
 
     def _get_current_based_color(self, path_type: str, phase_index: int = 0) -> str:
@@ -3330,7 +3330,7 @@ class ElectrodeAdvisorWidget(QWidget):
                 alpha=0.8,
             )
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error drawing refractory layer: %s", e)
 
     def _draw_3d_metal_shell(
@@ -3432,7 +3432,7 @@ class ElectrodeAdvisorWidget(QWidget):
                 alpha=0.9,
             )
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error drawing metal vessel shell: %s", e)
 
     def _update_temperature_profile(self) -> None:
@@ -3525,7 +3525,7 @@ class ElectrodeAdvisorWidget(QWidget):
             if self.current_canvas is not None:
                 self.current_canvas.draw()
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error updating current distribution: %s", e)
 
     def _update_power_distribution(self) -> None:
@@ -3620,7 +3620,7 @@ class ElectrodeAdvisorWidget(QWidget):
             if self.power_canvas is not None:
                 self.power_canvas.draw()
 
-        except Exception as e:
+        except ImportError as e:
             logger.exception("Error updating power distribution: %s", e)
             import traceback
 
@@ -3658,7 +3658,7 @@ class ElectrodeAdvisorWidget(QWidget):
                 new_zoom = max(50, min(200, new_zoom))  # Clamp to range
                 self.zoom_slider.setValue(new_zoom)
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error in scroll handler: %s", e)
 
     def _on_mouse_press(self, event: Any) -> None:
@@ -3739,7 +3739,7 @@ class ElectrodeAdvisorWidget(QWidget):
                     if self.electrode_canvas is not None:
                         self.electrode_canvas.draw_idle()
                 self._last_mouse_pos = (event.x, event.y)
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error in mouse motion handler: %s", e)
 
     def _on_interaction_mode_changed(self) -> None:
@@ -3750,7 +3750,7 @@ class ElectrodeAdvisorWidget(QWidget):
             else:
                 self.interaction_mode = "pan"
             logger.info("3D interaction mode changed to: %s", self.interaction_mode)
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error changing interaction mode: %s", e)
 
     def _reset_3d_view(self) -> None:
@@ -3768,7 +3768,7 @@ class ElectrodeAdvisorWidget(QWidget):
 
             self.electrode_canvas.draw_idle()
             logger.info("3D view reset to default")
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error resetting 3D view: %s", e)
 
     # Public methods for external integration
@@ -3825,7 +3825,7 @@ class ElectrodeAdvisorWidget(QWidget):
                 return True
             return False
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error connecting to glass calculator: %s", e)
             return False
 
@@ -3852,7 +3852,7 @@ class ElectrodeAdvisorWidget(QWidget):
                 self.connect_glass_calculator_btn.setEnabled(False)
                 self._update_glass_integration_status("Disabled", "neutral")
 
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             logger.exception("Error in glass integration change handler: %s", e)
 
     def _check_glass_calculator_availability(self) -> bool:
@@ -3929,7 +3929,7 @@ class ElectrodeAdvisorWidget(QWidget):
                     "Please ensure the Glass Properties tab is loaded.",
                 )
 
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             self._update_glass_integration_status("Connection Error", "error")
             self._update_status(
                 f"Failed to connect to glass calculator: {e!s}", "error"
@@ -3948,7 +3948,7 @@ class ElectrodeAdvisorWidget(QWidget):
                 self.glass_integration_status.setStyleSheet(
                     f"QLabel {{ color: {color}; font-size: 9pt; }}"
                 )
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             logger.exception("Error updating glass integration status: %s", e)
 
     def _on_glass_properties_updated(self, properties: dict[str, Any]) -> None:
@@ -3976,7 +3976,7 @@ class ElectrodeAdvisorWidget(QWidget):
                 "Glass properties updated and system recalculated", "ok"
             )
 
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             self._update_status(f"Glass properties update failed: {e!s}", "error")
 
     def _set_view_preset(self, preset: str) -> None:
@@ -4011,7 +4011,7 @@ class ElectrodeAdvisorWidget(QWidget):
 
             if self.electrode_canvas is not None:
                 self.electrode_canvas.draw()
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error setting view preset: %s", e)
 
     def _on_color_scheme_changed(self, scheme: str) -> None:
@@ -4137,7 +4137,7 @@ class ElectrodeAdvisorWidget(QWidget):
                 },
                 "results": self.calculation_results,
             }
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error getting current state: %s", e)
             return {"calculator_name": "ElectrodeAdvisor", "error": str(e)}
 
@@ -4204,7 +4204,7 @@ class ElectrodeAdvisorWidget(QWidget):
             logger.info("State restored for ElectrodeAdvisor")
             return True
 
-        except Exception as e:
+        except (RuntimeError, AttributeError) as e:
             logger.exception("Error restoring state for ElectrodeAdvisor: %s", e)
             return False
 
@@ -4257,7 +4257,7 @@ class ElectrodeAdvisorWidget(QWidget):
                 json.dump(export_data, f, indent=2)
                 logger.info("Results exported to %s", filename)
                 return True
-        except Exception as e:
+        except (PermissionError, OSError) as e:
             logger.exception("Error exporting results: %s", e)
             return False
 
@@ -4278,7 +4278,7 @@ class ElectrodeAdvisorWidget(QWidget):
                 self.electrode_fig.savefig(filename, dpi=300, bbox_inches="tight")
                 self._update_status(f"3D plot exported to {filename}", "ok")
 
-        except Exception as e:
+        except ImportError as e:
             self._update_status(f"Error exporting 3D plot: {e!s}", "error")
             logger.exception("Export error: %s", e)
 
@@ -4366,7 +4366,7 @@ class ElectrodeAdvisorWidget(QWidget):
 
                 self._update_status(f"Charts exported to {filename}", "ok")
 
-        except Exception as e:
+        except ImportError as e:
             self._update_status(f"Error exporting charts: {e!s}", "error")
             logger.exception("Export error: %s", e)
 

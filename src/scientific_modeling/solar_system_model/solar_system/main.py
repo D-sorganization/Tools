@@ -185,7 +185,7 @@ def main() -> int:
         scene.run()
     except KeyboardInterrupt:
         logging.info("\nSimulation interrupted by user")
-    except Exception as e:
+    except (subprocess.SubprocessError, OSError) as e:
         logging.error(f"\nError: {e}")
         raise
 

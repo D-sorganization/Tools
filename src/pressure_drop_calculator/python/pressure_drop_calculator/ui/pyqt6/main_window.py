@@ -317,7 +317,7 @@ class PressureDropCalculatorWidget(QWidget):
             self.results = result
             self._update_results_display()
 
-        except Exception as e:
+        except ImportError as e:
             QMessageBox.critical(self, "Calculation Error", str(e))
 
     def _update_results_display(self) -> None:

@@ -8,9 +8,12 @@ Launch the PSA System Analysis as a Streamlit web application.
 
 from __future__ import annotations
 
+import logging
 import subprocess
 import sys
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 
 def check_dependencies() -> bool:
@@ -33,10 +36,10 @@ def check_dependencies() -> bool:
         missing.append("plotly")
 
     if missing:
-        print("Missing required dependencies:")
+        logger.info("Missing required dependencies:")
         for dep in missing:
-            print(f"  - {dep}")
-        print("\nInstall with: pip install " + " ".join(missing))
+            logger.info(f"  - {dep}")
+        logger.info("\nInstall with: pip install " + " ".join(missing))
         return False
 
     return True
@@ -44,8 +47,8 @@ def check_dependencies() -> bool:
 
 def main() -> int:
     """Main entry point."""
-    print("PSA Package - Streamlit Web Application")
-    print("=" * 50)
+    logger.info("PSA Package - Streamlit Web Application")
+    logger.info("=" * 50)
     print()
 
     if not check_dependencies():
@@ -62,11 +65,11 @@ def main() -> int:
     )
 
     if not webapp_path.exists():
-        print(f"Error: Web app not found at {webapp_path}")
+        logger.error(f"Error: Web app not found at {webapp_path}")
         return 1
 
-    print(f"Launching Streamlit app from: {webapp_path}")
-    print("The app will open in your default browser.")
+    logger.info(f"Launching Streamlit app from: {webapp_path}")
+    logger.info("The app will open in your default browser.")
     print()
 
     try:
@@ -77,10 +80,10 @@ def main() -> int:
         )
         return result.returncode
     except KeyboardInterrupt:
-        print("\nShutting down...")
+        logger.info("\nShutting down...")
         return 0
-    except Exception as e:
-        print(f"Error launching Streamlit: {e}")
+    except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
+        logger.error(f"Error launching Streamlit: {e}")
         return 1
 
 

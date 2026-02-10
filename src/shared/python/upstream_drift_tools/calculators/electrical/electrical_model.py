@@ -449,5 +449,5 @@ class ThreePhaseElectricalModelEnhanced:
                     phase_currents[phase] = 0.0
 
             return phase_currents
-        except Exception:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             return {"1-2": 0.0, "2-3": 0.0, "3-1": 0.0}

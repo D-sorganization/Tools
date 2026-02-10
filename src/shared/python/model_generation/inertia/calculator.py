@@ -446,7 +446,7 @@ class InertiaCalculator:
                 else:
                     raise ValueError("Scene contains no geometry")
             return mesh
-        except Exception as e:
+        except (ValueError, KeyError, TypeError) as e:
             logger.warning(f"Failed to load mesh {mesh_path}: {e}")
             return None
 
@@ -467,7 +467,7 @@ class InertiaCalculator:
                 "com": mesh.center_mass if is_watertight else mesh.centroid,
                 "is_watertight": is_watertight,
             }
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.warning(f"Failed to compute mesh properties: {e}")
             return None
 

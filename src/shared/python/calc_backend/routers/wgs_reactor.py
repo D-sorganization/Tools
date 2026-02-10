@@ -62,7 +62,7 @@ def calculate_wgs(request: WGSReactorRequest) -> WGSReactorResponse:
                 heat_duty_kw=sz["heat_duty"],
                 ghsv=sz["ghsv"],
             )
-        except Exception as exc:
+        except (KeyError, ValueError, TypeError) as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     return WGSReactorResponse(equilibrium=equilibrium, sizing=sizing)

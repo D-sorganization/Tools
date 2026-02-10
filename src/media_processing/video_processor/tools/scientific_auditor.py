@@ -60,7 +60,7 @@ def main() -> None:
         try:
             with py_file.open(encoding="utf-8") as source:
                 ScienceAuditor().visit(ast.parse(source.read()))
-        except Exception as e:  # noqa: BLE001
+        except (PermissionError, OSError) as e:  # noqa: BLE001
             # Log error but continue scanning
             # We catch generic Exception because ast.parse can raise
             # various errors and we don't want to crash the entire audit.

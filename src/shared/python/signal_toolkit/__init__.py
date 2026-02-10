@@ -29,7 +29,7 @@ Usage:
     # Fit a function
     fitter = FunctionFitter()
     result = fitter.fit_sinusoid(signal)
-    print(f"R-squared: {result.r_squared:.4f}")
+    logger.info(f"R-squared: {result.r_squared:.4f}")
 
     # Apply a filter
     from signal_toolkit import create_butterworth_filter, apply_filter

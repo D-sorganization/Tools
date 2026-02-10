@@ -86,7 +86,7 @@ def calculate_pressure_drop(request: PressureDropRequest) -> PressureDropRespons
         else:
             flow_regime = "Turbulent"
 
-    except Exception as exc:
+    except (ValueError, ZeroDivisionError, OverflowError, TypeError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     return PressureDropResponse(

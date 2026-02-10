@@ -58,7 +58,7 @@ except ImportError:
             return default if default is not None else pd.DataFrame()
         try:
             return pd.read_csv(path, **kwargs)
-        except Exception:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             return default if default is not None else pd.DataFrame()
 
     def safe_write_csv(df: pd.DataFrame, file_path: Path | str, **kwargs: Any) -> None:
@@ -215,7 +215,7 @@ class DataLoader:
                         len(file_paths),
                         f"Scanned {Path(file_path).name}",
                     )
-            except Exception as e:
+            except (IOError, PermissionError, OSError) as e:
                 logger.exception(f"Error reading {file_path}: {e}")
 
         return all_signals
@@ -249,7 +249,7 @@ class DataLoader:
             df = df.set_index(time_column)
             logger.info(f"Converted {time_column} to DatetimeIndex")
             return df
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             logger.error(f"Error converting time column: {e}", exc_info=True)
             return df
 
@@ -322,7 +322,7 @@ class DataLoader:
             filtered = df.between_time(start_time, end_time)
             logger.info(f"Filtered to {len(filtered)} rows")
             return filtered
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             logger.error(f"Error filtering: {e}", exc_info=True)
             return df
 
@@ -350,7 +350,7 @@ class DataLoader:
 
                 DataWriter.write_file(df, output_path, format_type, **kwargs)
                 return True
-        except Exception as e:
+        except ImportError as e:
             logger.error(f"Error saving DataFrame: {e}", exc_info=True)
             return False
 

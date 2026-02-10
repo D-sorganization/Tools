@@ -90,7 +90,7 @@ async def upload_file(file: UploadFile) -> dict[str, str]:
         return {"filename": file_path.name, "url": f"/api/models/{file_path.name}"}
     except HTTPException:
         raise
-    except Exception as e:
+    except (PermissionError, OSError) as e:
         logger.error(f"Failed to upload file: {e}")
         raise HTTPException(status_code=500, detail=str(e)) from e
 
@@ -105,7 +105,7 @@ async def list_models() -> dict[str, list[str]]:
             and os.path.isfile(MODELS_DIR / f)
         ]
         return {"models": files}
-    except Exception as e:
+    except (PermissionError, OSError) as e:
         logger.error(f"Failed to list models: {e}")
         raise HTTPException(status_code=500, detail=str(e)) from e
 

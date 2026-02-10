@@ -204,7 +204,7 @@ class HighPerformanceDataLoader:
                             f"Processed {Path(file_path).name}",
                         )
 
-                except Exception as e:
+                except (IOError, PermissionError, OSError) as e:
                     logger.error(f"Error processing {file_path}: {e}", exc_info=True)
                     completed += 1
 
@@ -252,7 +252,7 @@ class HighPerformanceDataLoader:
 
             return metadata
 
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             logger.error(f"Error reading metadata for {file_path}: {e}", exc_info=True)
             return None
 
@@ -273,7 +273,7 @@ class HighPerformanceDataLoader:
                         low_memory=False,
                     )
                     signals = set(sample_df.columns)
-                except Exception as e:
+                except (KeyError, ValueError, TypeError) as e:
                     logger.warning(f"Could not read sample data from {file_path}: {e}")
                     # Fallback to header-only read
                     header_df = safe_read_csv(file_path, nrows=0)
@@ -285,7 +285,7 @@ class HighPerformanceDataLoader:
 
             return signals, sample_df
 
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             logger.error(f"Error reading file {file_path}: {e}", exc_info=True)
             return set(), None
 
@@ -296,7 +296,7 @@ class HighPerformanceDataLoader:
             stat = os.stat(file_path)
             content = f"{stat.st_size}_{stat.st_mtime}_{Path(file_path).name}"
             return hashlib.md5(content.encode()).hexdigest()
-        except Exception:
+        except (IOError, PermissionError, OSError):
             return "unknown"
 
     def _get_cached_metadata(self, file_path: str) -> FileMetadata | None:
@@ -313,7 +313,7 @@ class HighPerformanceDataLoader:
                     # Sample data is not cached (too large for JSON)
                     data["sample_data"] = None
                     return FileMetadata(**data)
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             logger.error(f"Error reading cache for {file_path}: {e}", exc_info=True)
         return None
 
@@ -331,7 +331,7 @@ class HighPerformanceDataLoader:
                 # Don't cache sample_data (too large for JSON, will be regenerated)
                 data["sample_data"] = None
                 json.dump(data, f, indent=2)
-        except Exception as e:
+        except (IOError, PermissionError, OSError) as e:
             logger.error(
                 f"Error caching metadata for {metadata.path}: {e}",
                 exc_info=True,
@@ -389,7 +389,7 @@ class HighPerformanceDataLoader:
 
             # Optimize data types
             return self._optimize_dtypes(df)
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.error(f"Error loading data from {file_path}: {e}", exc_info=True)
             return None
 
@@ -458,7 +458,7 @@ class HighPerformanceDataLoader:
 
             return df
 
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.warning(f"Could not optimize dtypes: {e}")
             return df
 
@@ -508,7 +508,7 @@ class HighPerformanceDataLoader:
                         df = future.result()
                         if df is not None:
                             results[file_path] = df
-                    except Exception as e:
+                    except (KeyError, ValueError, TypeError) as e:
                         logger.error(f"Error loading {file_path}: {e}", exc_info=True)
 
             # Update progress
@@ -549,7 +549,7 @@ class HighPerformanceDataLoader:
                 "total_size_mb": total_size / (1024 * 1024),
                 "cache_dir": str(self.cache_dir),
             }
-        except Exception as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.error(f"Error getting cache stats: {e}", exc_info=True)
             return {}
 

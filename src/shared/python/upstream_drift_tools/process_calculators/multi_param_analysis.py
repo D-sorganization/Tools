@@ -119,7 +119,7 @@ def run_multi_parameter_analysis_parallel(
             try:
                 i, j, output = future.result()
                 results[i, j] = output
-            except Exception as e:
+            except (KeyError, ValueError, TypeError) as e:
                 # Log error but continue with other calculations
                 logger.error(f"Error in parallel calculation: {e}")
                 # Default to zero for failed calculations

@@ -191,7 +191,7 @@ def process_single_file(
                 target_path,
             )
 
-    except Exception as e:
+    except (IOError, PermissionError, OSError) as e:
         logger.error(f"Error processing {file_path}: {e}")
         return ProcessingResult(
             file_path, False, f"Error processing {file_path.name}: {e}"
@@ -270,6 +270,6 @@ def _move_to_failed_folder(
 
         return target_path
 
-    except Exception as e:
+    except (IOError, PermissionError, OSError) as e:
         logger.error(f"Failed to move {file_path} to failed folder: {e}")
         return None

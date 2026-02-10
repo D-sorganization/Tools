@@ -121,7 +121,7 @@ class GeminiTitleLLM:
                     f"Gemini response parsing failed: {text[:100]}",
                 )
 
-        except Exception as e:
+        except (ValueError, KeyError, json.JSONDecodeError, TypeError) as e:
             logger.error(f"Gemini LLM error: {e}")
             return TitleResult(None, 0.0, "llm", f"Gemini error: {e}")
         finally:

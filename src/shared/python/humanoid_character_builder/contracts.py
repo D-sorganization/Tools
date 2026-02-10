@@ -64,7 +64,7 @@ def precondition(
                         raise ContractViolationError(
                             f"{message}. Args: {args}, Kwargs: {kwargs}"
                         )
-                except Exception as e:
+                except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
                     if isinstance(e, ContractViolationError):
                         raise
                     raise ContractViolationError(
@@ -81,16 +81,11 @@ def precondition(
                         raise ContractViolationError(
                             f"{message}. Arguments: {call_args}"
                         )
-                except TypeError as e:
-                    # This usually happens if we missed an argument
-                    raise ContractViolationError(
-                        f"Error checking precondition '{message}': {e}. Available args: {list(arguments.keys())}"
-                    ) from e
-                except Exception as e:
+                except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
                     if isinstance(e, ContractViolationError):
                         raise
                     raise ContractViolationError(
-                        f"Error checking precondition '{message}': {e}"
+                        f"Error checking precondition '{message}': {e}. Available args: {list(arguments.keys())}"
                     ) from e
 
             return func(*args, **kwargs)

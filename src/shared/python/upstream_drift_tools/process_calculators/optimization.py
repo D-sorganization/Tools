@@ -376,7 +376,7 @@ def find_optimal_on_surface(
             if np.isnan(val):
                 return OPTIMIZATION_PENALTY_VALUE
             return -float(val)
-        except Exception:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             return OPTIMIZATION_PENALTY_VALUE
 
     if method == "Grid Search":
@@ -418,7 +418,7 @@ def _run_grid_search(interpolator, bounds, callback) -> dict:
                     best_z = z
                     best_x = x
                     best_y = y
-            except Exception:
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError):
                 pass
 
     return {

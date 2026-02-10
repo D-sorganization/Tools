@@ -258,12 +258,6 @@ class AcidGasDewpointCalculatorWidget(QWidget):
                 f"Could not import required modules:\n{e}\n\n"
                 "Please ensure the shared library is available.",
             )
-        except Exception as e:
-            QMessageBox.critical(
-                self,
-                "Calculation Error",
-                f"An error occurred during calculation:\n{e}",
-            )
 
     def _update_display(self) -> None:
         """Update the display with calculation results."""

@@ -42,9 +42,7 @@ class TestGUIInfoPattern:
 
         missing = []
         for path in files:
-            spec = importlib.util.spec_from_file_location(
-                f"gui_reg_{path.stem}", path
-            )
+            spec = importlib.util.spec_from_file_location(f"gui_reg_{path.stem}", path)
             if spec and spec.loader:
                 module = importlib.util.module_from_spec(spec)
                 try:
@@ -65,9 +63,7 @@ class TestGUIInfoPattern:
 
         problems = []
         for path in files:
-            spec = importlib.util.spec_from_file_location(
-                f"gui_reg_{path.stem}", path
-            )
+            spec = importlib.util.spec_from_file_location(f"gui_reg_{path.stem}", path)
             if spec and spec.loader:
                 module = importlib.util.module_from_spec(spec)
                 try:
@@ -90,9 +86,7 @@ class TestGUIInfoPattern:
 
         problems = []
         for path in files:
-            spec = importlib.util.spec_from_file_location(
-                f"gui_reg_{path.stem}", path
-            )
+            spec = importlib.util.spec_from_file_location(f"gui_reg_{path.stem}", path)
             if spec and spec.loader:
                 module = importlib.util.module_from_spec(spec)
                 try:
@@ -115,9 +109,7 @@ class TestGUIInfoPattern:
 
         missing = []
         for path in files:
-            spec = importlib.util.spec_from_file_location(
-                f"gui_reg_{path.stem}", path
-            )
+            spec = importlib.util.spec_from_file_location(f"gui_reg_{path.stem}", path)
             if spec and spec.loader:
                 module = importlib.util.module_from_spec(spec)
                 try:
@@ -253,9 +245,7 @@ class TestAutoDiscoverGuis:
         registry = GUIRegistry.instance()
         tools = registry.list_tools()
 
-        tools_with_pyqt6 = [
-            t for t in tools if GUIType.PYQT6 in t.gui_configs
-        ]
+        tools_with_pyqt6 = [t for t in tools if GUIType.PYQT6 in t.gui_configs]
         assert len(tools_with_pyqt6) > 0, "At least one tool should have PyQt6 config"
 
         # Cleanup
