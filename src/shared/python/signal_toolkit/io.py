@@ -539,8 +539,11 @@ class SignalLoader:
         elif fmt == "mat":
             return SignalImporter.from_mat(file_path, **kwargs)
 
+        # All keys in SUPPORTED_EXTENSIONS are handled above; this is a
+        # safeguard in case a new key is added without a handler.
+        # See issue #627
         msg = f"Format handler not implemented: {fmt}"
-        raise NotImplementedError(msg)
+        raise ValueError(msg)
 
 
 class BatchProcessor:

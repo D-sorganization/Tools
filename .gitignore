@@ -90,3 +90,10 @@ runs.json
 !*.env.example
 document_processing/pdf_renamer/.env
 *.msg
+
+# Legacy stub directories (migrated to src/). See issue #612
+/tools/
+/python/
+/development_tools/
+/web_applications/calculator/
+/scientific_modeling/

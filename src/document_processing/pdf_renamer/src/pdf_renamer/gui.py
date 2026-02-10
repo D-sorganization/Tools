@@ -929,6 +929,15 @@ def main() -> None:
     app = QApplication(sys.argv)
     app.setStyle("Fusion")  # Modern look
     window = PDFRenamerGUI()
+
+    # Apply fleet-wide theme. See issue #549
+    try:
+        from shared.python.theme.integration import setup_themed_app
+
+        setup_themed_app(app, window, settings_app="PDFRenamer")
+    except ImportError:
+        pass  # theme system not installed
+
     window.show()
     sys.exit(app.exec())
 

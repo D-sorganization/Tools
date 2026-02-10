@@ -62,6 +62,11 @@ gui = [
     "PyQt6>=6.5.0",
     "matplotlib>=3.7.0",
 ]
+# Fleet-wide theme system (PyQt6 required for full features;
+# color utilities work without Qt). See issue #551
+theme = [
+    "PyQt6>=6.5.0",
+]
 # Development tools
 dev = [
     "pytest>=7.0.0",
