@@ -84,7 +84,11 @@ class ProcessingThread(QThread):
         self._is_cancelled = True
 
     def run(self) -> None:
-        """Run the processing in background thread."""
+        """Run the processing in background thread.
+
+        Refactored in issue #531 -- extracted sub-methods for duplicate
+        handling, PDF scanning, and parallel processing.
+        """
         try:
             self.log_message.emit(f"Starting processing in: {self.directory}", "INFO")
             self.log_message.emit(
@@ -94,149 +98,152 @@ class ProcessingThread(QThread):
                 "INFO",
             )
 
-            # 1. Find and handle duplicates
             if self._is_cancelled:
                 return
 
-            self.log_message.emit("Scanning for duplicates...", "INFO")
-            finder = DuplicateFinder(self.directory, recursive=self.recursive)
-            duplicates = finder.find_duplicates()
+            self._handle_duplicates()
 
-            if duplicates:
-                self.log_message.emit(
-                    f"Found {len(duplicates)} sets of duplicates", "WARNING"
-                )
-
-                for _file_hash, paths in duplicates.items():
-                    if self._is_cancelled:
-                        return  # type: ignore[unreachable]
-
-                    if self.delete_dups:
-                        keep = paths[0]
-                        to_delete = paths[1:]
-                        self.log_message.emit(f"Keeping: {keep.name}", "SUCCESS")
-
-                        for p in to_delete:
-                            if self.dry_run:
-                                self.log_message.emit(
-                                    f"[DRY RUN] Would delete: {p.name}", "WARNING"
-                                )
-                            else:
-                                try:
-                                    p.unlink()
-                                    self.log_message.emit(
-                                        f"Deleted duplicate: {p.name}", "WARNING"
-                                    )
-                                except Exception as e:
-                                    self.log_message.emit(
-                                        f"Failed to delete {p.name}: {e}", "ERROR"
-                                    )
-                    else:
-                        self.log_message.emit(
-                            f"Duplicate set: {[p.name for p in paths]}", "WARNING"
-                        )
-            else:
-                self.log_message.emit("No duplicates found", "SUCCESS")
-
-            # 2. Process PDF files
             if self._is_cancelled:
                 return  # type: ignore[unreachable]
 
-            self.log_message.emit("Scanning for PDF files...", "INFO")
-            pattern = "**/*.pdf" if self.recursive else "*.pdf"
-            pdf_files = list(self.directory.glob(pattern))
-            # Filter out symlinks
-            pdf_files = [f for f in pdf_files if f.is_file() and not f.is_symlink()]
-            total_files = len(pdf_files)
-
-            if total_files == 0:
-                self.log_message.emit("No PDF files found", "WARNING")
-                self.finished.emit(True, "No files to process")
+            pdf_files = self._scan_pdf_files()
+            if pdf_files is None:
                 return
 
-            self.log_message.emit(
-                f"Found {total_files} PDF files. Starting processing...", "INFO"
-            )
-
-            # Initialize components
-            cache = ResultCache(self.db_path)
-            transaction_log = TransactionLog()
-            llm = GeminiTitleLLM() if self.use_llm else None
-
-            if self.use_llm and llm and not llm.genai:
-                self.log_message.emit(
-                    "LLM requested but not available. Falling back to local extraction.",
-                    "WARNING",
-                )
-                llm = None
-
-            # Process files in parallel
-            processed_count = 0
-            success_count = 0
-            fail_count = 0
-
-            with ThreadPoolExecutor(max_workers=self.workers) as executor:
-                # Submit all tasks
-                future_to_file = {
-                    executor.submit(
-                        process_single_file,
-                        pdf_file,
-                        cache,
-                        transaction_log,
-                        llm,
-                        self.dry_run,
-                        self.style,
-                        self.include_author,
-                        self.move_failed,
-                        self.failed_folder,
-                    ): pdf_file
-                    for pdf_file in pdf_files
-                }
-
-                # Process results as they complete
-                for future in as_completed(future_to_file):
-                    if self._is_cancelled:
-                        return  # type: ignore[unreachable]
-
-                    processed_count += 1
-                    pdf_file = future_to_file[future]
-
-                    try:
-                        result = future.result()
-
-                        # Determine log level
-                        if result.success:
-                            level = "SUCCESS"
-                            success_count += 1
-                        else:
-                            level = "ERROR"
-                            fail_count += 1
-
-                        self.log_message.emit(result.message, level)
-
-                    except Exception as e:
-                        fail_count += 1
-                        self.log_message.emit(
-                            f"Executor failed for {pdf_file.name}: {e}", "ERROR"
-                        )
-
-                    self.progress_updated.emit(
-                        processed_count,
-                        total_files,
-                        f"Processed {processed_count}/{total_files} files",
-                    )
-
-            # Summary
-            summary = (
-                f"Processing complete! {success_count} succeeded, {fail_count} failed"
-            )
-            self.log_message.emit(summary, "SUCCESS")
-            self.finished.emit(True, summary)
+            self._process_pdf_files(pdf_files)
 
         except Exception as e:
             error_msg = f"Critical error: {e}"
             self.log_message.emit(error_msg, "ERROR")
             self.finished.emit(False, error_msg)
+
+    # -- Extracted sub-methods (see issue #531) --
+
+    def _handle_duplicates(self) -> None:
+        """Scan for and optionally delete duplicate PDF files."""
+        self.log_message.emit("Scanning for duplicates...", "INFO")
+        finder = DuplicateFinder(self.directory, recursive=self.recursive)
+        duplicates = finder.find_duplicates()
+
+        if not duplicates:
+            self.log_message.emit("No duplicates found", "SUCCESS")
+            return
+
+        self.log_message.emit(f"Found {len(duplicates)} sets of duplicates", "WARNING")
+
+        for _file_hash, paths in duplicates.items():
+            if self._is_cancelled:
+                return
+
+            if self.delete_dups:
+                self._delete_duplicate_set(paths)
+            else:
+                self.log_message.emit(
+                    f"Duplicate set: {[p.name for p in paths]}", "WARNING"
+                )
+
+    def _delete_duplicate_set(self, paths: list[Path]) -> None:
+        """Delete all but the first file in a duplicate set."""
+        keep = paths[0]
+        to_delete = paths[1:]
+        self.log_message.emit(f"Keeping: {keep.name}", "SUCCESS")
+
+        for p in to_delete:
+            if self.dry_run:
+                self.log_message.emit(f"[DRY RUN] Would delete: {p.name}", "WARNING")
+            else:
+                try:
+                    p.unlink()
+                    self.log_message.emit(f"Deleted duplicate: {p.name}", "WARNING")
+                except Exception as e:
+                    self.log_message.emit(f"Failed to delete {p.name}: {e}", "ERROR")
+
+    def _scan_pdf_files(self) -> list[Path] | None:
+        """Scan directory for PDF files, returning None if none found."""
+        self.log_message.emit("Scanning for PDF files...", "INFO")
+        pattern = "**/*.pdf" if self.recursive else "*.pdf"
+        pdf_files = [
+            f
+            for f in self.directory.glob(pattern)
+            if f.is_file() and not f.is_symlink()
+        ]
+
+        if not pdf_files:
+            self.log_message.emit("No PDF files found", "WARNING")
+            self.finished.emit(True, "No files to process")
+            return None
+
+        self.log_message.emit(
+            f"Found {len(pdf_files)} PDF files. Starting processing...", "INFO"
+        )
+        return pdf_files
+
+    def _process_pdf_files(self, pdf_files: list[Path]) -> None:
+        """Process PDF files in parallel using ThreadPoolExecutor."""
+        cache = ResultCache(self.db_path)
+        transaction_log = TransactionLog()
+        llm = GeminiTitleLLM() if self.use_llm else None
+
+        if self.use_llm and llm and not llm.genai:
+            self.log_message.emit(
+                "LLM requested but not available. Falling back to local extraction.",
+                "WARNING",
+            )
+            llm = None
+
+        total_files = len(pdf_files)
+        processed_count = 0
+        success_count = 0
+        fail_count = 0
+
+        with ThreadPoolExecutor(max_workers=self.workers) as executor:
+            future_to_file = {
+                executor.submit(
+                    process_single_file,
+                    pdf_file,
+                    cache,
+                    transaction_log,
+                    llm,
+                    self.dry_run,
+                    self.style,
+                    self.include_author,
+                    self.move_failed,
+                    self.failed_folder,
+                ): pdf_file
+                for pdf_file in pdf_files
+            }
+
+            for future in as_completed(future_to_file):
+                if self._is_cancelled:
+                    return
+
+                processed_count += 1
+                pdf_file = future_to_file[future]
+
+                try:
+                    result = future.result()
+                    if result.success:
+                        level = "SUCCESS"
+                        success_count += 1
+                    else:
+                        level = "ERROR"
+                        fail_count += 1
+                    self.log_message.emit(result.message, level)
+                except Exception as e:
+                    fail_count += 1
+                    self.log_message.emit(
+                        f"Executor failed for {pdf_file.name}: {e}", "ERROR"
+                    )
+
+                self.progress_updated.emit(
+                    processed_count,
+                    total_files,
+                    f"Processed {processed_count}/{total_files} files",
+                )
+
+        summary = f"Processing complete! {success_count} succeeded, {fail_count} failed"
+        self.log_message.emit(summary, "SUCCESS")
+        self.finished.emit(True, summary)
 
 
 class PDFRenamerGUI(QMainWindow):

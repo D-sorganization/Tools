@@ -384,14 +384,14 @@ def is_non_negative(value: float) -> bool:
 
 def is_valid_result(result: Any) -> bool:
     """Check if validation result is valid."""
-    return result.is_valid
+    return bool(result.is_valid)
 
 
 def has_finite_elements(array: Any) -> bool:
     """Check if all array elements are finite."""
     import numpy as np
 
-    return np.all(np.isfinite(array))
+    return bool(np.all(np.isfinite(array)))
 
 
 __all__ = [

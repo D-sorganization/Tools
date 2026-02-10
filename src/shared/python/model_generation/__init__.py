@@ -8,7 +8,7 @@ Features:
 - Parametric humanoid model generation
 - Manual segment-by-segment construction
 - Mesh-based inertia calculation (trimesh)
-- URDF ↔ MJCF ↔ SDF format conversion
+- URDF <-> MJCF <-> SDF format conversion
 - Model library with repository integration
 - Frankenstein editor for component composition
 - Text-based URDF editing with diff view
@@ -38,105 +38,29 @@ Quick Start:
     # Convert formats
     from model_generation import convert_urdf_to_mjcf
     mjcf = convert_urdf_to_mjcf("robot.urdf")
+
+Lazy-loading strategy (see issue #611):
+    All heavy imports are deferred to first access via ``__getattr__``.
+    This breaks the circular import chain:
+        __init__ -> builders.base_builder -> core.contracts -> core.validation -> core.contracts
+    Only lightweight constants are imported eagerly.
 """
 
 from __future__ import annotations
 
+import importlib
+from typing import Any
+
 __version__ = "0.1.0"
 __author__ = "Golf Modeling Suite"
 
-# Core types
-# REST API
-from model_generation.api import (
-    APIRequest,
-    APIResponse,
-    HTTPMethod,
-    ModelGenerationAPI,
-)
-
-# Builders
-from model_generation.builders.base_builder import BaseURDFBuilder, BuildResult
-from model_generation.builders.manual_builder import Handedness, ManualBuilder
-from model_generation.builders.parametric_builder import (
-    ParametricBuilder,
-    ParametricConfig,
-)
-from model_generation.builders.urdf_writer import URDFWriter
-
-# CLI
-from model_generation.cli import main as cli_main
-from model_generation.converters.mjcf_converter import MJCFConverter
-
-# SimScape converter
-from model_generation.converters.simscape import (
-    ConversionConfig,
-    MDLParser,
-    SimscapeToURDFConverter,
-    convert_simscape_to_urdf,
-)
-
-# Converters
-from model_generation.converters.urdf_parser import ParsedModel, URDFParser
-
-# Constants
-from model_generation.core.constants import (
+# --- Only lightweight constants are imported eagerly ---
+from model_generation.core.constants import (  # noqa: E402
     DEFAULT_DENSITY_KG_M3,
     DEFAULT_HEIGHT_M,
     DEFAULT_INERTIA_KG_M2,
     DEFAULT_MASS_KG,
     GRAVITY_M_S2,
-)
-from model_generation.core.types import (
-    Geometry,
-    GeometryType,
-    Inertia,
-    Joint,
-    JointDynamics,
-    JointLimits,
-    JointType,
-    Link,
-    Material,
-    Origin,
-)
-
-# Validation
-from model_generation.core.validation import (
-    ValidationError,
-    ValidationResult,
-    ValidationWarning,
-    Validator,
-)
-
-# Editor
-from model_generation.editor import (
-    ComponentType,
-    DiffResult,
-    FrankensteinEditor,
-    URDFTextEditor,
-    ValidationMessage,
-    ValidationSeverity,
-)
-
-# Inertia calculation
-from model_generation.inertia.calculator import (
-    InertiaCalculator,
-    InertiaMode,
-    InertiaResult,
-)
-from model_generation.inertia.primitives import (
-    box_inertia,
-    capsule_inertia,
-    cylinder_inertia,
-    sphere_inertia,
-)
-
-# Library
-from model_generation.library import (
-    ModelCache,
-    ModelCategory,
-    ModelEntry,
-    ModelLibrary,
-    RepositorySource,
 )
 
 __all__ = [
@@ -214,8 +138,118 @@ __all__ = [
     "quick_build",
 ]
 
+# ---------------------------------------------------------------------------
+# Lazy import mapping: name -> (module_path, attribute_name)
+# See issue #611 -- all heavy imports are deferred to avoid circular
+# dependency chains during package initialisation.
+# ---------------------------------------------------------------------------
 
-# Convenience functions
+_LAZY_IMPORTS: dict[str, tuple[str, str]] = {
+    # Core types
+    "Link": ("model_generation.core.types", "Link"),
+    "Joint": ("model_generation.core.types", "Joint"),
+    "Inertia": ("model_generation.core.types", "Inertia"),
+    "Geometry": ("model_generation.core.types", "Geometry"),
+    "GeometryType": ("model_generation.core.types", "GeometryType"),
+    "Material": ("model_generation.core.types", "Material"),
+    "Origin": ("model_generation.core.types", "Origin"),
+    "JointType": ("model_generation.core.types", "JointType"),
+    "JointLimits": ("model_generation.core.types", "JointLimits"),
+    "JointDynamics": ("model_generation.core.types", "JointDynamics"),
+    # Validation
+    "Validator": ("model_generation.core.validation", "Validator"),
+    "ValidationResult": ("model_generation.core.validation", "ValidationResult"),
+    "ValidationError": ("model_generation.core.validation", "ValidationError"),
+    "ValidationWarning": ("model_generation.core.validation", "ValidationWarning"),
+    # Inertia
+    "InertiaCalculator": ("model_generation.inertia.calculator", "InertiaCalculator"),
+    "InertiaMode": ("model_generation.inertia.calculator", "InertiaMode"),
+    "InertiaResult": ("model_generation.inertia.calculator", "InertiaResult"),
+    "box_inertia": ("model_generation.inertia.primitives", "box_inertia"),
+    "cylinder_inertia": ("model_generation.inertia.primitives", "cylinder_inertia"),
+    "sphere_inertia": ("model_generation.inertia.primitives", "sphere_inertia"),
+    "capsule_inertia": ("model_generation.inertia.primitives", "capsule_inertia"),
+    # Builders
+    "BaseURDFBuilder": ("model_generation.builders.base_builder", "BaseURDFBuilder"),
+    "BuildResult": ("model_generation.builders.base_builder", "BuildResult"),
+    "ManualBuilder": ("model_generation.builders.manual_builder", "ManualBuilder"),
+    "Handedness": ("model_generation.builders.manual_builder", "Handedness"),
+    "ParametricBuilder": (
+        "model_generation.builders.parametric_builder",
+        "ParametricBuilder",
+    ),
+    "ParametricConfig": (
+        "model_generation.builders.parametric_builder",
+        "ParametricConfig",
+    ),
+    "URDFWriter": ("model_generation.builders.urdf_writer", "URDFWriter"),
+    # Converters
+    "URDFParser": ("model_generation.converters.urdf_parser", "URDFParser"),
+    "ParsedModel": ("model_generation.converters.urdf_parser", "ParsedModel"),
+    "MJCFConverter": ("model_generation.converters.mjcf_converter", "MJCFConverter"),
+    # SimScape
+    "SimscapeToURDFConverter": (
+        "model_generation.converters.simscape",
+        "SimscapeToURDFConverter",
+    ),
+    "MDLParser": ("model_generation.converters.simscape", "MDLParser"),
+    "ConversionConfig": (
+        "model_generation.converters.simscape",
+        "ConversionConfig",
+    ),
+    "convert_simscape_to_urdf": (
+        "model_generation.converters.simscape",
+        "convert_simscape_to_urdf",
+    ),
+    # Library
+    "ModelLibrary": ("model_generation.library", "ModelLibrary"),
+    "ModelEntry": ("model_generation.library", "ModelEntry"),
+    "ModelCategory": ("model_generation.library", "ModelCategory"),
+    "RepositorySource": ("model_generation.library", "RepositorySource"),
+    "ModelCache": ("model_generation.library", "ModelCache"),
+    # Editor
+    "FrankensteinEditor": ("model_generation.editor", "FrankensteinEditor"),
+    "URDFTextEditor": ("model_generation.editor", "URDFTextEditor"),
+    "ComponentType": ("model_generation.editor", "ComponentType"),
+    "ValidationMessage": ("model_generation.editor", "ValidationMessage"),
+    "ValidationSeverity": ("model_generation.editor", "ValidationSeverity"),
+    "DiffResult": ("model_generation.editor", "DiffResult"),
+    # REST API
+    "ModelGenerationAPI": ("model_generation.api", "ModelGenerationAPI"),
+    "APIRequest": ("model_generation.api", "APIRequest"),
+    "APIResponse": ("model_generation.api", "APIResponse"),
+    "HTTPMethod": ("model_generation.api", "HTTPMethod"),
+    # CLI
+    "cli_main": ("model_generation.cli", "main"),
+}
+
+
+def __getattr__(name: str) -> Any:
+    """Lazy-load attributes on first access (see issue #611)."""
+    if name in _LAZY_IMPORTS:
+        module_path, attr_name = _LAZY_IMPORTS[name]
+        module = importlib.import_module(module_path)
+        value = getattr(module, attr_name)
+        # Cache on the module so subsequent accesses are fast
+        globals()[name] = value
+        return value
+
+    # Convenience functions are resolved here (they need lazy deps)
+    if name == "quick_urdf":
+        globals()["quick_urdf"] = quick_urdf
+        return quick_urdf
+    if name == "quick_build":
+        globals()["quick_build"] = quick_build
+        return quick_build
+
+    raise AttributeError(f"module 'model_generation' has no attribute {name!r}")
+
+
+# ---------------------------------------------------------------------------
+# Convenience functions (use lazy imports internally)
+# ---------------------------------------------------------------------------
+
+
 def quick_urdf(
     height_m: float = DEFAULT_HEIGHT_M,
     mass_kg: float = DEFAULT_MASS_KG,
@@ -237,9 +271,10 @@ def quick_urdf(
     Example:
         urdf = quick_urdf(height_m=1.85, preset="athletic")
     """
+    from model_generation.builders.parametric_builder import ParametricBuilder
+
     builder = ParametricBuilder(robot_name)
 
-    # Apply preset if specified
     if preset:
         presets = {
             "athletic": {"gender_factor": 0.7, "shoulder_width_factor": 1.1},
@@ -266,7 +301,7 @@ def quick_build(
     mass_kg: float = DEFAULT_MASS_KG,
     preset: str | None = None,
     output_path: str | None = None,
-) -> BuildResult:
+) -> Any:
     """
     Build a humanoid model quickly with minimal configuration.
 
@@ -282,6 +317,10 @@ def quick_build(
     Example:
         result = quick_build(height_m=1.80, output_path="./humanoid.urdf")
     """
+    from pathlib import Path
+
+    from model_generation.builders.parametric_builder import ParametricBuilder
+
     builder = ParametricBuilder("humanoid")
 
     if preset:
@@ -300,8 +339,6 @@ def quick_build(
     result = builder.build()
 
     if output_path and result.success:
-        from pathlib import Path
-
         path = Path(output_path)
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(result.urdf_xml)
