@@ -124,15 +124,24 @@ class DataProcessor:
             raise ValueError(f"Unsupported file format: {suffix}")
 
         self._source_path = str(path)
-        self._history = [f"Loaded {path.name} ({len(self._df)} rows, {len(self._df.columns)} cols)"]
-        logger.info("Loaded %s: %d rows x %d cols", path.name, len(self._df), len(self._df.columns))
+        self._history = [
+            f"Loaded {path.name} ({len(self._df)} rows, {len(self._df.columns)} cols)"
+        ]
+        logger.info(
+            "Loaded %s: %d rows x %d cols",
+            path.name,
+            len(self._df),
+            len(self._df.columns),
+        )
         return self
 
     def load_dataframe(self, df: pd.DataFrame, name: str = "inline") -> DataProcessor:
         """Load from an existing DataFrame."""
         self._df = df.copy()
         self._source_path = ""
-        self._history = [f"Loaded DataFrame '{name}' ({len(df)} rows, {len(df.columns)} cols)"]
+        self._history = [
+            f"Loaded DataFrame '{name}' ({len(df)} rows, {len(df.columns)} cols)"
+        ]
         return self
 
     # ------------------------------------------------------------------
@@ -172,7 +181,9 @@ class DataProcessor:
         try:
             from data_processor.core.signal_processing import resample_data
 
-            self._df = resample_data(df, target_rate, time_col=time_column, method=method)
+            self._df = resample_data(
+                df, target_rate, time_col=time_column, method=method
+            )
         except ImportError:
             # Fallback using pandas
             import numpy as np
@@ -228,24 +239,34 @@ class DataProcessor:
                     b, a = butter(order, cutoff, btype="low", fs=1000)
                     df[col] = filtfilt(b, a, values)
                 elif filter_type == "moving_average":
-                    df[col] = pd.Series(values).rolling(window_size, center=True).mean().values
+                    df[col] = (
+                        pd.Series(values)
+                        .rolling(window_size, center=True)
+                        .mean()
+                        .values
+                    )
                 elif filter_type == "median":
                     kernel = window_size if window_size % 2 == 1 else window_size + 1
                     df[col] = medfilt(values, kernel_size=kernel)
                 elif filter_type == "savgol":
-                    df[col] = savgol_filter(values, window_size, min(order, window_size - 1))
+                    df[col] = savgol_filter(
+                        values, window_size, min(order, window_size - 1)
+                    )
                 else:
                     raise ValueError(f"Unknown filter type: {filter_type}")
         except ImportError:
             # Minimal fallback: moving average only
             for col in columns:
                 if col in df.columns:
-                    df[col] = pd.Series(df[col]).rolling(window_size, center=True).mean().values
+                    df[col] = (
+                        pd.Series(df[col])
+                        .rolling(window_size, center=True)
+                        .mean()
+                        .values
+                    )
 
         self._df = df
-        self._history.append(
-            f"Applied {filter_type} filter to {len(columns)} columns"
-        )
+        self._history.append(f"Applied {filter_type} filter to {len(columns)} columns")
         return self
 
     def apply_formula(
@@ -258,6 +279,8 @@ class DataProcessor:
         Example: ``dp.apply_formula("speed", "distance / time")``
         """
         df = self.dataframe
+        # pandas DataFrame.eval() is safe -- it only resolves column names
+        # within the dataframe and does not execute arbitrary Python code.
         df[new_column] = df.eval(expression)
         self._history.append(f"Created column '{new_column}' = {expression}")
         return self
@@ -276,7 +299,9 @@ class DataProcessor:
 
     def sort(self, by: str, ascending: bool = True) -> DataProcessor:
         """Sort by a column."""
-        self._df = self.dataframe.sort_values(by=by, ascending=ascending).reset_index(drop=True)
+        self._df = self.dataframe.sort_values(by=by, ascending=ascending).reset_index(
+            drop=True
+        )
         self._history.append(f"Sorted by '{by}' ({'asc' if ascending else 'desc'})")
         return self
 
@@ -322,7 +347,10 @@ class DataProcessor:
             columns = list(df.select_dtypes(include="number").columns)
 
         try:
-            from data_processor.core.outlier_detection import OutlierConfig, OutlierDetector
+            from data_processor.core.outlier_detection import (
+                OutlierConfig,
+                OutlierDetector,
+            )
 
             detector = OutlierDetector(OutlierConfig(threshold=threshold))
             result = detector.detect(df[columns])

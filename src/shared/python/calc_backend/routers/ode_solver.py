@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import math
-import re
 
 from fastapi import APIRouter, HTTPException
+
+from shared.python.safe_eval import safe_eval
 
 from ..contracts.ode_solver import (
     ODESolverRequest,
@@ -50,37 +51,33 @@ def _safe_eval(
     variables: dict[str, float],
     parameters: dict[str, float],
 ) -> float:
-    """Safely evaluate a mathematical expression."""
-    ctx = {**parameters, **variables}
+    """Safely evaluate a mathematical expression.
 
-    processed = expr
-    # Sort by length descending to avoid partial replacements
-    for name in sorted(ctx.keys(), key=len, reverse=True):
-        pattern = r"\b" + re.escape(name) + r"\b"
-        processed = re.sub(pattern, f"({ctx[name]})", processed)
+    Uses AST-validated safe_eval instead of raw eval().  Math function names
+    (sin, cos, etc.) are resolved directly in the namespace rather than
+    via attribute access on the ``math`` module.
+    """
+    # Build the evaluation namespace with math functions exposed directly
+    namespace: dict[str, object] = {
+        "sin": math.sin,
+        "cos": math.cos,
+        "exp": math.exp,
+        "sqrt": math.sqrt,
+        "abs": abs,
+        "pow": math.pow,
+        "log": math.log,
+        "log10": math.log10,
+        "tan": math.tan,
+        "pi": math.pi,
+        "PI": math.pi,
+        "e": math.e,
+    }
 
-    # Map math functions
-    processed = re.sub(r"\bsin\b", "math.sin", processed)
-    processed = re.sub(r"\bcos\b", "math.cos", processed)
-    processed = re.sub(r"\bexp\b", "math.exp", processed)
-    processed = re.sub(r"\bsqrt\b", "math.sqrt", processed)
-    processed = re.sub(r"\babs\b", "abs", processed)
-    processed = re.sub(r"\bPI\b", "math.pi", processed)
-    # Handle ** operator
-    processed = re.sub(
-        r"\(([^)]+)\)\s*\*\*\s*(\d+(?:\.\d+)?)",
-        r"math.pow(\1,\2)",
-        processed,
-    )
+    # Add parameters and variables (variables override parameters)
+    namespace.update(parameters)
+    namespace.update(variables)
 
-    # Only allow safe characters
-    allowed = set("0123456789.+-*/() ,mathsincosexpqrtabpow")
-    stripped = processed.replace("math.", "").replace("abs", "").replace("pow", "")
-    for ch in stripped:
-        if ch not in allowed and not ch.isspace():
-            raise ValueError(f"Unsafe character in expression: '{ch}'")
-
-    return float(eval(processed, {"__builtins__": {}}, {"math": math}))  # noqa: S307
+    return float(safe_eval(expr, namespace))
 
 
 def _rk4_solve(

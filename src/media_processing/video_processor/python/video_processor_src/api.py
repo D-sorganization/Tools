@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import os
 import time
 import uuid
 from enum import Enum
@@ -96,9 +97,19 @@ app = FastAPI(
     version="0.1.0",
 )
 
+# Restrict CORS to known local development origins.
+# Override with CORS_ORIGINS env var (comma-separated) if needed.
+_DEFAULT_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:5173",
+]
+_env_origins = os.environ.get("CORS_ORIGINS")
+_cors_origins = _env_origins.split(",") if _env_origins else _DEFAULT_ORIGINS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

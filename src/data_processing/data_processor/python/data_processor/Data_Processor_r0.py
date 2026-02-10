@@ -2747,9 +2747,10 @@ class CSVProcessorApp(ctk.CTk):
                     },
                 )
 
-                # Evaluate the formula safely
-                _validate_formula_security(formula, set(safe_dict.keys()))
-                result = eval(formula, {"__builtins__": {}}, safe_dict)
+                # Evaluate the formula safely using AST-validated evaluator
+                from shared.python.safe_eval import safe_eval
+
+                result = safe_eval(formula, safe_dict)
                 df[name] = result
 
             except Exception as e:
@@ -6587,7 +6588,8 @@ COMMON MISTAKES TO AVOID:
 
         plot_config = {
             "name": plot_name,
-            "description": plot_desc or f"Plot configuration created on \
+            "description": plot_desc
+            or f"Plot configuration created on \
                 {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}",
             "signals": selected_signals,
             "start_time": self.plots_list_start_time_entry.get(),

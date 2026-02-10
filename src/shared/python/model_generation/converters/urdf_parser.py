@@ -13,6 +13,7 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from pathlib import Path
 
+import defusedxml.ElementTree as DefusedET
 from model_generation.core.types import (
     Geometry,
     GeometryType,
@@ -173,7 +174,7 @@ class URDFParser:
 
         # Parse XML
         try:
-            root = ET.fromstring(xml_string)
+            root = DefusedET.fromstring(xml_string)
         except ET.ParseError as e:
             raise ValueError(f"Invalid URDF XML: {e}") from e
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import os
+import shutil
 import subprocess
 import sys
 import webbrowser
@@ -223,9 +224,15 @@ class GUILauncher:
 
         web_path = Path(self.config.web_path)
 
-        # Check if npm is available
+        # Find the npm executable (npm.cmd on Windows, npm elsewhere)
+        npm_path = shutil.which("npm")
+        if npm_path is None:
+            logger.error("npm is not installed or not in PATH")
+            return 1
+
+        # Verify npm works
         try:
-            subprocess.run(["npm", "--version"], capture_output=True, check=True)
+            subprocess.run([npm_path, "--version"], capture_output=True, check=True)
         except (subprocess.CalledProcessError, FileNotFoundError):
             logger.error("npm is not installed or not in PATH")
             return 1
@@ -238,14 +245,14 @@ class GUILauncher:
         env.update(self.config.env_vars)
         env["PORT"] = str(self.config.port)
 
-        # Start the dev server
-        cmd = ["npm", "run", "dev"]
+        # Start the dev server without shell=True (security hardening).
+        # Using the resolved npm_path avoids the need for shell resolution.
+        cmd = [npm_path, "run", "dev"]
 
         self._process = subprocess.Popen(
             cmd,
             cwd=web_path,
             env=env,
-            shell=True,
         )
 
         if self.config.auto_open_browser:

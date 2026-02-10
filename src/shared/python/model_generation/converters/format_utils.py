@@ -213,16 +213,18 @@ def validate_mjcf(source: str | Path) -> list[str]:
         return []
     except ImportError:
         # MuJoCo not available, do basic XML validation
-        import xml.etree.ElementTree as ET
+        import xml.etree.ElementTree as StdET
+
+        import defusedxml.ElementTree as DefusedET
 
         try:
             if isinstance(source, Path) or not source.strip().startswith("<"):
                 content = Path(source).read_text()
             else:
                 content = source
-            ET.fromstring(content)
+            DefusedET.fromstring(content)
             return []
-        except ET.ParseError as e:
+        except StdET.ParseError as e:
             return [f"XML parse error: {e}"]
     except Exception as e:
         return [str(e)]

@@ -16,6 +16,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
+import defusedxml.ElementTree as DefusedET
+
 logger = logging.getLogger(__name__)
 
 
@@ -324,7 +326,7 @@ class MDLParser:
     def _parse_slx_xml(self, file, model: SimscapeModel) -> None:
         """Parse SLX model XML content."""
         try:
-            tree = ET.parse(file)
+            tree = DefusedET.parse(file)
             root = tree.getroot()
         except ET.ParseError as e:
             model.warnings.append(f"XML parse error: {e}")
@@ -574,7 +576,7 @@ class MDLParser:
         if format.lower() == "xml":
             # Parse as SLX XML
             try:
-                root = ET.fromstring(content)
+                root = DefusedET.fromstring(content)
                 self._parse_slx_blocks(root, model)
                 self._parse_slx_connections(root, model)
             except ET.ParseError as e:
