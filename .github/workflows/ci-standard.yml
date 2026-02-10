@@ -51,8 +51,10 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             git diff --name-only "${{ github.event.pull_request.base.sha }}" "${{ github.sha }}" -- '*.py' > changed_python_files.txt
-          else
+          elif [ -n "${{ github.event.before }}" ]; then
             git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" -- '*.py' > changed_python_files.txt
+          else
+            git diff --name-only HEAD~1 HEAD -- '*.py' > changed_python_files.txt
           fi
           cat changed_python_files.txt
 

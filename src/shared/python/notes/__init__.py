@@ -22,6 +22,7 @@ except ImportError:
         def __init__(self, *_args: object, **_kwargs: object) -> None:
             raise ImportError("PyQt6 is required for NotesDockWidget")
 
+
 __all__ = [
     "NotesStorage",
     "RecycledNoteItem",
