@@ -1,34 +1,61 @@
 name: Check Tools Manifest
 
 on:
-    push:
-        paths:
-            - "src/**/gui_registration.py"
-            - "scripts/generate_tools_json.py"
-            - "tools.json"
-    pull_request:
-        paths:
-            - "src/**/gui_registration.py"
-            - "scripts/generate_tools_json.py"
-            - "tools.json"
+  push:
+    paths:
+      - "src/**/gui_registration.py"
+      - "scripts/generate_tools_json.py"
+      - "tools.json"
+      - "tool_surface_contract.json"
+  pull_request:
+    paths:
+      - "src/**/gui_registration.py"
+      - "scripts/generate_tools_json.py"
+      - "tools.json"
+      - "tool_surface_contract.json"
 
 jobs:
-    check-manifest:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
+  check-manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-            - uses: actions/setup-python@v5
-              with:
-                  python-version: "3.11"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-            - name: Generate tools.json
-              run: python scripts/generate_tools_json.py
+      - name: Generate tools.json and tool_surface_contract.json
+        run: python scripts/generate_tools_json.py
 
-            - name: Check for changes
-              run: |
-                  git diff --exit-code tools.json || {
-                    echo "tools.json is out of sync with gui_registration.py files."
-                    echo "Please run python scripts/generate_tools_json.py and commit the result."
-                    exit 1
-                  }
+      - name: Check tools.json for changes
+        run: |
+          git diff --exit-code tools.json || {
+            echo "::error::tools.json is out of sync with gui_registration.py files."
+            echo "Run: python scripts/generate_tools_json.py"
+            exit 1
+          }
+
+      - name: Check tool_surface_contract.json for changes
+        run: |
+          git diff --exit-code tool_surface_contract.json || {
+            echo "::error::tool_surface_contract.json is out of sync with gui_registration.py files."
+            echo "Run: python scripts/generate_tools_json.py"
+            exit 1
+          }
+
+      - name: Publish contract summary
+        if: always()
+        run: |
+          echo "## Tool Surface Contract" >> "$GITHUB_STEP_SUMMARY"
+          python -c "
+          import json
+          c = json.load(open('tool_surface_contract.json'))
+          tools = c['tools']
+          dual = sum(1 for t in tools if t['surfaces']['pyqt6'] and t['surfaces']['web'])
+          pyqt_only = sum(1 for t in tools if t['surfaces']['pyqt6'] and not t['surfaces']['web'])
+          web_only = sum(1 for t in tools if not t['surfaces']['pyqt6'] and t['surfaces']['web'])
+          print(f'- **Total tools**: {len(tools)}')
+          print(f'- **Dual surface** (PyQt6 + Web): {dual}')
+          print(f'- **PyQt6 only**: {pyqt_only}')
+          print(f'- **Web only**: {web_only}')
+          " >> "$GITHUB_STEP_SUMMARY"
