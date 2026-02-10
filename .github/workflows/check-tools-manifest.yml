@@ -1,0 +1,34 @@
+name: Check Tools Manifest
+
+on:
+    push:
+        paths:
+            - "src/**/gui_registration.py"
+            - "scripts/generate_tools_json.py"
+            - "tools.json"
+    pull_request:
+        paths:
+            - "src/**/gui_registration.py"
+            - "scripts/generate_tools_json.py"
+            - "tools.json"
+
+jobs:
+    check-manifest:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: "3.11"
+
+            - name: Generate tools.json
+              run: python scripts/generate_tools_json.py
+
+            - name: Check for changes
+              run: |
+                  git diff --exit-code tools.json || {
+                    echo "tools.json is out of sync with gui_registration.py files."
+                    echo "Please run python scripts/generate_tools_json.py and commit the result."
+                    exit 1
+                  }
