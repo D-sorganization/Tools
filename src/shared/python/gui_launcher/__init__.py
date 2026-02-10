@@ -20,14 +20,25 @@ Example:
     launcher.launch()
 """
 
-from .launcher import GUILauncher, GUIType, LaunchConfig
-from .registry import GUIRegistry, get_registry, register_gui
+from .launcher import (
+    GUILauncher,
+    GUIType,
+    LaunchConfig,
+    launch_from_gui_info,
+    launch_pyqt6_app,
+    launch_tool_by_name,
+)
+from .registry import GUIRegistry, auto_discover_guis, get_registry, register_gui
 
 __all__ = [
     "GUILauncher",
     "GUIType",
     "LaunchConfig",
     "GUIRegistry",
+    "auto_discover_guis",
+    "launch_from_gui_info",
+    "launch_pyqt6_app",
+    "launch_tool_by_name",
     "register_gui",
     "get_registry",
 ]

@@ -1,38 +1,22 @@
-"""
-Steam Engine Calculator - GUI Registration
-===========================================
+"""GUI registration for Steam Engine Calculator."""
 
-Metadata for GUI framework integration.
-"""
+from __future__ import annotations
 
-GUI_METADATA = {
+GUI_INFO = {
     "name": "Steam Engine Calculator",
-    "description": "Calculate thermodynamic properties of steam/water using CoolProp, Cantera, or simplified correlations",
-    "category": "thermodynamics",
-    "version": "1.0.0",
-    "entry_point": "steam_engine_calculator.ui.pyqt6.main_window:SteamEngineCalculatorWindow",
-    "web_entry_point": "web/src/components/SteamEngineCalculator.tsx",
+    "tool_name": "steam_engine_calculator",
+    "description": "Calculate thermodynamic properties of steam/water",
+    "category": "Thermodynamics",
     "icon": "steam",
-    "keywords": [
-        "steam",
-        "water",
-        "thermodynamics",
-        "properties",
-        "enthalpy",
-        "entropy",
-    ],
-    "dependencies": {
-        "required": ["PyQt6"],
-        "optional": ["CoolProp", "cantera", "numpy"],
+    "pyqt6": {
+        "module": "steam_engine_calculator.ui.pyqt6.main_window",
+        "class": "SteamEngineCalculatorWindow",
+        "dependencies": ["PyQt6", "numpy"],
+        "settings_app": "SteamEngineCalculator",
     },
-    "calculation_modes": [
-        "Temperature & Pressure",
-        "Saturated from Temperature",
-        "Saturated from Pressure",
-    ],
 }
 
 
-def get_metadata() -> dict:
-    """Return GUI metadata for framework registration."""
-    return GUI_METADATA
+def get_gui_info() -> dict:
+    """Return GUI registration information."""
+    return GUI_INFO

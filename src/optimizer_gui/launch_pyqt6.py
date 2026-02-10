@@ -1,66 +1,21 @@
 #!/usr/bin/env python3
-"""
-Adam Optimizer - PyQt6 Launcher
-===============================
-
-Launch the Adam Optimizer as a standalone PyQt6 application.
-"""
+"""Standalone PyQt6 launcher for Adam Optimizer."""
 
 from __future__ import annotations
 
 import sys
+from pathlib import Path
 
+# Bootstrap imports for development mode (before pip install -e .)
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
+from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
 
-def check_dependencies() -> list[str]:
-    """Check if required dependencies are available."""
-    missing = []
+ensure_paths(_REPO_ROOT)
 
-    try:
-        import PyQt6  # noqa: F401
-    except ImportError:
-        missing.append("PyQt6")
+from gui_launcher import launch_from_gui_info  # noqa: E402
 
-    try:
-        import numpy  # noqa: F401
-    except ImportError:
-        missing.append("numpy")
-
-    return missing
-
-
-def main() -> int:
-    """Main entry point for the Adam Optimizer GUI."""
-    print("Adam Optimizer - PyQt6 GUI")
-    print("=" * 50)
-    print()
-
-    missing = check_dependencies()
-    if missing:
-        print("Missing required dependencies:")
-        for dep in missing:
-            print(f"  - {dep}")
-        print("\nInstall with: pip install " + " ".join(missing))
-        return 1
-
-    try:
-        from PyQt6.QtWidgets import QApplication
-
-        from optimizer_gui.ui.pyqt6.main_window import OptimizerWindow
-        from shared.python.theme import setup_themed_app
-
-        app = QApplication(sys.argv)
-        window = OptimizerWindow()
-        setup_themed_app(app, window, settings_app="OptimizerGui")
-        window.show()
-        return app.exec()
-    except ImportError as e:
-        print(f"Error importing GUI components: {e}")
-        print("\nMake sure the package is installed correctly.")
-        return 1
-    except Exception as e:
-        print(f"Error launching application: {e}")
-        return 1
-
+from optimizer_gui.gui_registration import GUI_INFO  # noqa: E402
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(launch_from_gui_info(GUI_INFO))

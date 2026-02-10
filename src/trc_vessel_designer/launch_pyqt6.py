@@ -1,49 +1,21 @@
 #!/usr/bin/env python3
-"""Standalone launcher for TRC Vessel Designer PyQt6 GUI."""
+"""Standalone PyQt6 launcher for TRC Vessel Designer."""
 
 from __future__ import annotations
 
 import sys
-from importlib.util import find_spec
+from pathlib import Path
 
+# Bootstrap imports for development mode (before pip install -e .)
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
+from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
 
-def check_dependencies() -> list[str]:
-    """Check if required dependencies are available."""
-    required = ["PyQt6", "numpy"]
-    missing = [pkg for pkg in required if find_spec(pkg) is None]
-    return missing
+ensure_paths(_REPO_ROOT)
 
+from gui_launcher import launch_from_gui_info  # noqa: E402
 
-def main() -> int:
-    """Main entry point for the TRC Vessel Designer PyQt6 GUI."""
-    missing = check_dependencies()
-    if missing:
-        print("Missing required packages:")
-        for pkg in missing:
-            print(f"  - {pkg}: pip install {pkg}")
-        print("\nInstall the missing packages and try again.")
-        return 1
-
-    from PyQt6.QtWidgets import QApplication, QMainWindow
-
-    from shared.python.theme import setup_themed_app
-    from trc_vessel_designer.ui.pyqt6.main_window import TRCVesselDesignerWidget
-
-    app = QApplication(sys.argv)
-    app.setApplicationName("TRC Vessel Designer")
-    app.setApplicationVersion("1.0.0")
-
-    window = QMainWindow()
-    window.setWindowTitle("TRC Vessel Designer - Thermal Reaction Chamber Design Tool")
-    window.setMinimumSize(1200, 800)
-
-    designer_widget = TRCVesselDesignerWidget()
-    window.setCentralWidget(designer_widget)
-
-    setup_themed_app(app, window, settings_app="TRCVesselDesigner")
-    window.show()
-    return app.exec()
-
+from trc_vessel_designer.gui_registration import GUI_INFO  # noqa: E402
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(launch_from_gui_info(GUI_INFO))

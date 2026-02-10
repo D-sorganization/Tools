@@ -28,11 +28,20 @@ class GUIType(Enum):
 
 @dataclass
 class LaunchConfig:
-    """Configuration for launching a GUI application."""
+    """Configuration for launching a GUI application.
+
+    Fields for subprocess-based launch:
+        module_path, entry_point, web_path, working_dir, port, env_vars,
+        auto_open_browser
+
+    Fields for in-process PyQt6 launch (used by launch_pyqt6_app):
+        class_name, title, settings_app, min_size, organization
+    """
 
     tool_name: str
     gui_type: GUIType
     module_path: str | None = None
+    class_name: str | None = None
     web_path: str | None = None
     entry_point: str | None = None
     dependencies: list[str] = field(default_factory=list)
@@ -40,6 +49,10 @@ class LaunchConfig:
     working_dir: str | None = None
     port: int = 3000
     auto_open_browser: bool = True
+    title: str | None = None
+    settings_app: str | None = None
+    min_size: tuple[int, int] | None = None
+    organization: str = "D-sorganization"
 
 
 @dataclass
@@ -307,3 +320,163 @@ def create_launcher(
     """
     config = LaunchConfig(tool_name=tool_name, gui_type=gui_type, **kwargs)
     return GUILauncher(config=config)
+
+
+def launch_pyqt6_app(config: LaunchConfig) -> int:
+    """Launch a PyQt6 application in-process with theme support.
+
+    This is the consolidated launcher that eliminates boilerplate from
+    individual launch_pyqt6.py scripts. It handles:
+    - Dependency checking
+    - QApplication creation and configuration
+    - Dynamic import of the window/widget class
+    - Theme system setup via setup_themed_app()
+    - Window display and event loop
+
+    Args:
+        config: LaunchConfig with at least module_path and class_name set.
+            Optional: title, settings_app, min_size, dependencies.
+
+    Returns:
+        Application exit code (0 for success, 1 for error).
+    """
+    # Check dependencies first (before importing PyQt6)
+    all_deps = list(config.dependencies)
+    if "PyQt6" not in all_deps:
+        all_deps.insert(0, "PyQt6")
+    status = check_python_dependencies(all_deps)
+    if not status.ok:
+        print("Missing required packages:")
+        for pkg in status.missing:
+            hint = status.guidance.get(pkg, f"pip install {pkg}")
+            print(f"  - {pkg}: {hint}")
+        print("\nInstall the missing packages and try again.")
+        return 1
+
+    if not config.module_path or not config.class_name:
+        logger.error(
+            "launch_pyqt6_app requires both module_path and class_name in config"
+        )
+        return 1
+
+    try:
+        import importlib
+
+        from PyQt6.QtWidgets import QApplication, QMainWindow
+
+        # Dynamically import the window/widget class
+        module = importlib.import_module(config.module_path)
+        window_class = getattr(module, config.class_name)
+
+        # Create the application
+        app = QApplication(sys.argv)
+        display_name = config.title or config.tool_name
+        app.setApplicationName(display_name)
+        app.setOrganizationName(config.organization)
+
+        # Create the window
+        window_obj = window_class()
+
+        # If the class is a QMainWindow, use it directly.
+        # If it's a QWidget, wrap it in a QMainWindow.
+        if isinstance(window_obj, QMainWindow):
+            window = window_obj
+        else:
+            window = QMainWindow()
+            window.setCentralWidget(window_obj)
+
+        window.setWindowTitle(display_name)
+        if config.min_size:
+            window.setMinimumSize(*config.min_size)
+
+        # Apply theme system
+        try:
+            from shared.python.theme import setup_themed_app
+
+            settings_app = config.settings_app or config.tool_name.replace(
+                " ", ""
+            ).replace("_", "")
+            setup_themed_app(app, window, settings_app=settings_app)
+        except ImportError:
+            logger.warning("Theme system not available, launching without theme")
+
+        window.show()
+        return app.exec()
+
+    except ImportError as e:
+        logger.error("Failed to import GUI components: %s", e)
+        print(f"Error importing GUI components: {e}")
+        print("\nMake sure the package is installed correctly.")
+        return 1
+    except Exception as e:
+        logger.error("Failed to launch application: %s", e)
+        print(f"Error launching application: {e}")
+        return 1
+
+
+def launch_from_gui_info(gui_info: dict[str, Any]) -> int:
+    """Launch a PyQt6 app directly from a GUI_INFO dict.
+
+    This is the simplest way to launch a tool from its gui_registration.py.
+    Each launch_pyqt6.py script can be reduced to::
+
+        from my_tool.gui_registration import GUI_INFO
+        from gui_launcher import launch_from_gui_info
+        sys.exit(launch_from_gui_info(GUI_INFO))
+
+    Args:
+        gui_info: The GUI_INFO dictionary from gui_registration.py
+
+    Returns:
+        Application exit code.
+    """
+    pyqt6 = gui_info.get("pyqt6")
+    if not pyqt6:
+        print(f"No pyqt6 config found in GUI_INFO for {gui_info.get('name', '?')}")
+        return 1
+
+    min_size = pyqt6.get("min_size")
+    config = LaunchConfig(
+        tool_name=gui_info.get("tool_name", ""),
+        gui_type=GUIType.PYQT6,
+        module_path=pyqt6.get("module"),
+        class_name=pyqt6.get("class"),
+        dependencies=pyqt6.get("dependencies", []),
+        title=gui_info.get("name"),
+        settings_app=pyqt6.get("settings_app"),
+        min_size=tuple(min_size) if min_size else None,
+    )
+    return launch_pyqt6_app(config)
+
+
+def launch_tool_by_name(tool_name: str) -> int:
+    """Launch a tool by its registered name.
+
+    Looks up the tool in the global GUI registry and launches the
+    PyQt6 variant using launch_pyqt6_app().
+
+    Args:
+        tool_name: The tool_name used during registration.
+
+    Returns:
+        Application exit code.
+    """
+    from .registry import get_registry
+
+    registry = get_registry()
+    registration = registry.get(tool_name)
+    if registration is None:
+        print(f"Tool '{tool_name}' not found in registry.")
+        available = registry.list_tools()
+        if available:
+            print("\nAvailable tools:")
+            for reg in available:
+                print(f"  - {reg.tool_name} ({reg.display_name})")
+        return 1
+
+    config = registration.gui_configs.get(GUIType.PYQT6)
+    if config is None:
+        print(f"Tool '{tool_name}' has no PyQt6 configuration.")
+        return 1
+
+    return launch_pyqt6_app(config)

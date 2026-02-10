@@ -503,6 +503,65 @@ def generate_stylesheet(theme: dict[str, str]) -> str:
         QFrame[frameShape="4"], QFrame[frameShape="5"] {{
             border: 1px solid {theme["border"]};
         }}
+
+        /* ================================================================ */
+        /* ToolCard (Launcher) */
+        /* ================================================================ */
+        ToolCard {{
+            background-color: {theme["input_bg"]};
+            border: 1px solid {theme["border"]};
+            border-radius: 8px;
+        }}
+        ToolCard:hover {{
+            border: 1px solid {theme["accent"]};
+            background-color: {theme["group_bg"]};
+        }}
+        #toolCardTitle {{
+            font-size: 14px;
+            font-weight: bold;
+            color: {theme["text"]};
+            background: transparent;
+        }}
+        #toolCardDescription {{
+            color: {theme["text_secondary"]};
+            font-size: 12px;
+            background: transparent;
+        }}
+        #toolCardPath {{
+            color: {theme["label"]};
+            font-family: monospace;
+            font-size: 10px;
+            background: transparent;
+        }}
+        #launchButton {{
+            background-color: {theme["accent"]};
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px;
+            font-weight: bold;
+        }}
+        #launchButton:hover {{
+            background-color: {theme["button_hover"]};
+        }}
+        #launchButton:pressed {{
+            background-color: {theme["focus"]};
+        }}
+        #helpButton {{
+            background-color: {theme["group_bg"]};
+            color: {theme["accent"]};
+            border: 1px solid {theme["border"]};
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 14px;
+        }}
+        #helpButton:hover {{
+            background-color: {theme["title_bg"]};
+            border-color: {theme["accent"]};
+        }}
+        #helpButton:pressed {{
+            background-color: {theme["bg"]};
+        }}
     """
 
 

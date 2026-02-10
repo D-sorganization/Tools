@@ -1,22 +1,21 @@
 #!/usr/bin/env python3
-"""Launch the Flare Calculator PyQt6 application."""
+"""Standalone PyQt6 launcher for Flare Calculator."""
+
+from __future__ import annotations
 
 import sys
+from pathlib import Path
 
-from flare_calculator.ui.pyqt6.main_window import FlareCalculatorMainWindow
-from PyQt6.QtWidgets import QApplication
+# Bootstrap imports for development mode (before pip install -e .)
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
+from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
 
-from shared.python.theme import setup_themed_app
+ensure_paths(_REPO_ROOT)
 
+from gui_launcher import launch_from_gui_info  # noqa: E402
 
-def main() -> None:
-    """Entry point for the Flare Calculator PyQt6 application."""
-    app = QApplication(sys.argv)
-    window = FlareCalculatorMainWindow()
-    setup_themed_app(app, window, settings_app="FlareCalculator")
-    window.show()
-    sys.exit(app.exec())
-
+from flare_calculator.gui_registration import GUI_INFO  # noqa: E402
 
 if __name__ == "__main__":
-    main()
+    sys.exit(launch_from_gui_info(GUI_INFO))

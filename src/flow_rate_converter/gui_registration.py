@@ -1,42 +1,22 @@
-"""
-Flow Rate Converter - GUI Registration
-======================================
+"""GUI registration for Flow Rate Converter."""
 
-Metadata for GUI framework integration.
-"""
+from __future__ import annotations
 
-GUI_METADATA = {
+GUI_INFO = {
     "name": "Flow Rate Converter",
+    "tool_name": "flow_rate_converter",
     "description": "Convert between mass, molar, and volumetric flow rate units",
-    "category": "utilities",
-    "version": "1.0.0",
-    "entry_point": "flow_rate_converter.ui.pyqt6.main_window:FlowRateConverterWindow",
-    "web_entry_point": "web/src/components/FlowRateConverter.tsx",
+    "category": "Utilities",
     "icon": "exchange",
-    "keywords": [
-        "flow rate",
-        "unit conversion",
-        "mass flow",
-        "molar flow",
-        "volumetric flow",
-        "SCFM",
-        "ACFM",
-    ],
-    "dependencies": {
-        "required": ["PyQt6"],
-        "optional": [],
+    "pyqt6": {
+        "module": "flow_rate_converter.ui.pyqt6.main_window",
+        "class": "FlowRateConverterWindow",
+        "dependencies": ["PyQt6"],
+        "settings_app": "FlowRateConverter",
     },
-    "conversion_types": [
-        "Mass to Mass",
-        "Molar to Molar",
-        "Mass to Molar",
-        "Molar to Mass",
-        "Volumetric (Actual)",
-        "Standard Volumetric (SCFM/Nm3)",
-    ],
 }
 
 
-def get_metadata() -> dict:
-    """Return GUI metadata for framework registration."""
-    return GUI_METADATA
+def get_gui_info() -> dict:
+    """Return GUI registration information."""
+    return GUI_INFO

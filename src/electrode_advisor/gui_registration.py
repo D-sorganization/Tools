@@ -1,43 +1,23 @@
-"""GUI Registration for Electrode Advisor.
-
-Registers Electrode Advisor GUI configurations with the shared launcher system.
-"""
+"""GUI registration for Electrode Advisor."""
 
 from __future__ import annotations
 
-from pathlib import Path
-
-from gui_launcher import GUIType, LaunchConfig, register_gui
-
-# Get the current directory for relative paths
-CURRENT_DIR = Path(__file__).parent
-
-
-def register_electrode_advisor() -> None:
-    """Register Electrode Advisor GUIs with the launcher system."""
-    register_gui(
-        tool_name="electrode_advisor",
-        display_name="Electrode Advisor",
-        description="AC Electrode Advancement Module for electrode system analysis",
-        gui_configs={
-            GUIType.PYQT6: LaunchConfig(
-                tool_name="electrode_advisor",
-                gui_type=GUIType.PYQT6,
-                module_path="electrode_advisor.ui.pyqt6.main_window",
-                entry_point=str(CURRENT_DIR / "launch_pyqt6.py"),
-                dependencies=["PyQt6", "numpy", "matplotlib"],
-            ),
-            GUIType.REACT: LaunchConfig(
-                tool_name="electrode_advisor",
-                gui_type=GUIType.REACT,
-                web_path=str(CURRENT_DIR / "web"),
-                port=3001,
-            ),
-        },
-        category="Process Simulation",
-        repository="Tools",
-    )
+GUI_INFO = {
+    "name": "Electrode Advisor",
+    "tool_name": "electrode_advisor",
+    "description": "AC Electrode Advancement Module for electrode system analysis",
+    "category": "Process Simulation",
+    "icon": "electrode",
+    "pyqt6": {
+        "module": "electrode_advisor.ui.pyqt6.main_window",
+        "class": "ElectrodeAdvisorWidget",
+        "dependencies": ["PyQt6", "numpy", "matplotlib"],
+        "settings_app": "ElectrodeAdvisor",
+        "min_size": [1200, 800],
+    },
+}
 
 
-# Auto-register when module is imported
-register_electrode_advisor()
+def get_gui_info() -> dict:
+    """Return GUI registration information."""
+    return GUI_INFO

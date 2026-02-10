@@ -1,41 +1,22 @@
-"""
-Syngas Water Calculator - GUI Registration
-==========================================
+"""GUI registration for Syngas Water Calculator."""
 
-Metadata for GUI framework integration.
-"""
+from __future__ import annotations
 
-GUI_METADATA = {
+GUI_INFO = {
     "name": "Syngas Water Calculator",
+    "tool_name": "syngas_water_calculator",
     "description": "Calculate water content and dew point in syngas systems",
-    "category": "process_simulation",
-    "version": "1.0.0",
-    "entry_point": "syngas_water_calculator.ui.pyqt6.main_window:SyngasWaterCalculatorWindow",
+    "category": "Process Simulation",
     "icon": "droplet",
-    "keywords": [
-        "syngas",
-        "water content",
-        "dew point",
-        "vapor pressure",
-        "saturation",
-        "condensation",
-        "gasification",
-    ],
-    "dependencies": {
-        "required": ["PyQt6", "numpy", "scipy", "pandas"],
-        "optional": [],
+    "pyqt6": {
+        "module": "syngas_water_calculator.ui.pyqt6.main_window",
+        "class": "SyngasWaterCalculatorWindow",
+        "dependencies": ["PyQt6", "numpy", "scipy", "pandas"],
+        "settings_app": "SyngasWaterCalculator",
     },
-    "features": [
-        "Water content calculation (mg/Nm3, ppmv, g/m3)",
-        "Dew point temperature",
-        "Multiple vapor pressure methods (Antoine, Buck, IAPWS, Magnus)",
-        "Predefined syngas compositions",
-        "Custom composition input",
-        "Condensation risk assessment",
-    ],
 }
 
 
-def get_metadata() -> dict:
-    """Return GUI metadata for framework registration."""
-    return GUI_METADATA
+def get_gui_info() -> dict:
+    """Return GUI registration information."""
+    return GUI_INFO

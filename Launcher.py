@@ -1,5 +1,12 @@
 """Basic Tools Launcher using Tkinter.
 
+.. deprecated::
+    This legacy Tkinter launcher is deprecated. Use ``launch.py`` (unified
+    CLI entry point) or ``UnifiedToolsLauncher.py`` (PyQt6 GUI) instead::
+
+        python launch.py --list          # see all tools
+        python launch.py --tool <name>   # launch a specific tool
+
 Note: UnifiedToolsLauncher.py (PyQt6) is the preferred launcher.
 This is a simpler alternative for environments where PyQt6 is not available.
 """

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Launch script for Acid Gas Dewpoint Calculator PyQt6 GUI."""
+"""Standalone PyQt6 launcher for Acid Gas Dewpoint Calculator."""
 
 from __future__ import annotations
 
@@ -13,35 +13,9 @@ from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
 
 ensure_paths(_REPO_ROOT)
 
+from gui_launcher import launch_from_gui_info  # noqa: E402
 
-def main() -> int:
-    """Launch the Acid Gas Dewpoint Calculator PyQt6 application."""
-    try:
-        from PyQt6.QtWidgets import QApplication, QMainWindow
-
-        from acid_gas_dewpoint.python.acid_gas_dewpoint.ui.pyqt6.main_window import (
-            AcidGasDewpointCalculatorWidget,
-        )
-        from shared.python.theme import setup_themed_app
-    except ImportError as e:
-        print(f"Error: Missing dependencies - {e}")
-        print("Please install: pip install PyQt6 matplotlib numpy")
-        return 1
-
-    app = QApplication(sys.argv)
-    app.setApplicationName("Acid Gas Dewpoint Calculator")
-
-    window = QMainWindow()
-    window.setWindowTitle("Acid Gas Dewpoint Calculator")
-    window.setMinimumSize(1000, 700)
-
-    calculator = AcidGasDewpointCalculatorWidget()
-    window.setCentralWidget(calculator)
-    setup_themed_app(app, window, settings_app="AcidGasDewpointCalculator")
-    window.show()
-
-    return app.exec()
-
+from acid_gas_dewpoint.gui_registration import GUI_INFO  # noqa: E402
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(launch_from_gui_info(GUI_INFO))
