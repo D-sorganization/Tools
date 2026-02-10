@@ -157,11 +157,13 @@ def convert(
     if source_format == ModelFormat.MJCF and target_format == ModelFormat.URDF:
         return convert_mjcf_to_urdf(source, output_path)
 
-    # Other conversions not yet implemented
-    raise NotImplementedError(
+    # Only URDF<->MJCF is supported; SDF and other pairs are not yet
+    # available. See issue #627 for tracking.
+    msg = (
         f"Conversion from {source_format.value} to {target_format.value} "
-        "is not yet implemented"
+        "is not supported. Currently only URDF <-> MJCF is implemented."
     )
+    raise NotImplementedError(msg)
 
 
 def validate_urdf(source: str | Path) -> list[str]:

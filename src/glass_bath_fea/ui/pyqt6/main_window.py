@@ -438,6 +438,15 @@ def main() -> None:
     app.setApplicationName("Glass Bath FEA")
 
     window = GlassBathFEAMainWindow()
+
+    # Apply fleet-wide theme. See issue #549
+    try:
+        from shared.python.theme.integration import setup_themed_app
+
+        setup_themed_app(app, window, settings_app="GlassBathFEA")
+    except ImportError:
+        pass  # theme system not installed
+
     window.show()
 
     sys.exit(app.exec())
