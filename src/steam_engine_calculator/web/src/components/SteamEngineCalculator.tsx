@@ -40,28 +40,60 @@ interface SteamProperties {
   compressibilityFactor: number
   prandtlNumber: number
   specificHeatRatio: number
+  engine: string
 }
 
-// Simplified steam calculation (for demonstration - real implementation would use a backend)
-function calculateSteamProperties(
+// API base URL -- defaults to localhost FastAPI backend.
+// Override via VITE_STEAM_API_URL environment variable.
+const API_BASE = import.meta.env.VITE_STEAM_API_URL ?? 'http://localhost:8002'
+
+/**
+ * Fetch steam properties from the validated Python backend.
+ *
+ * The Python engine uses CoolProp / Cantera / simplified correlations
+ * (in that priority order) and returns physically accurate results.
+ * See issue #605 for context on why the old hardcoded constants were wrong.
+ */
+async function fetchSteamProperties(
   mode: CalculationMode,
+  temperature: number,
+  pressure: number,
+): Promise<SteamProperties> {
+  const response = await fetch(`${API_BASE}/api/steam/calculate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mode, temperature, pressure, engine: 'auto' }),
+  })
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({ detail: response.statusText }))
+    throw new Error(body.detail ?? `API error ${response.status}`)
+  }
+
+  return response.json()
+}
+
+// ---------------------------------------------------------------------------
+// Fallback: simplified client-side calculation (used when API is unreachable)
+// These correlations match the Python simplified backend so results are
+// consistent, but they are NOT as accurate as CoolProp / Cantera.
+// ---------------------------------------------------------------------------
+
+function calculateSteamPropertiesFallback(
+  _mode: CalculationMode,
   temperature: number,
   pressure: number
 ): SteamProperties {
-  // Convert temperature to Kelvin if in Celsius
-  const tempK = temperature
-
-  // Simplified ideal gas / correlation-based calculations
   const R = 461.5 // J/kg-K for water vapor
-  const Tsat = 373.15 // Boiling point at 1 atm
 
   let phase: string
-  let quality = 1.0
+  let quality: number
   let density: number
   let cp: number
   let cv: number
 
-  if (tempK < Tsat && pressure > 50000) {
+  // Match Python simplified engine thresholds exactly
+  if (temperature < 373.15 && pressure > 50000) {
     phase = 'liquid'
     quality = 0.0
     density = 1000.0
@@ -69,29 +101,31 @@ function calculateSteamProperties(
     cv = 4186.0
   } else {
     phase = 'vapor'
-    density = pressure / (R * tempK)
+    density = pressure / (R * temperature)
+    // Python uses VAPOR_SPECIFIC_HEAT_CP = 1.9 kJ/kg-K -> 1900 J/kg-K
     cp = 1900.0
+    // Python uses VAPOR_SPECIFIC_HEAT_CV = 1.4 kJ/kg-K -> 1400 J/kg-K
     cv = 1400.0
   }
 
   const specificVolume = 1.0 / density
   const enthalpy = phase === 'liquid'
-    ? 4186.0 * (tempK - 273.15)
-    : (2500 + 1.9 * (tempK - 273.15)) * 1000
+    ? 4186.0 * (temperature - 273.15)
+    : (2500 + 1.9 * (temperature - 273.15)) * 1000
   const entropy = phase === 'liquid'
-    ? 4186.0 * Math.log(tempK / 273.15)
-    : 8000 + 2000 * Math.log(tempK / 373.15)
+    ? 4186.0 * Math.log(temperature / 273.15)
+    : 8000 + 2000 * Math.log(temperature / 373.15)
   const internalEnergy = enthalpy - pressure * specificVolume
-  const speedOfSound = phase === 'liquid' ? 1500 : Math.sqrt(1.3 * R * tempK)
+  const speedOfSound = phase === 'liquid' ? 1500 : Math.sqrt(1.3 * R * temperature)
   const thermalConductivity = phase === 'liquid' ? 0.6 : 0.025
   const dynamicViscosity = phase === 'liquid' ? 2.8e-4 : 1.2e-5
   const kinematicViscosity = dynamicViscosity / density
-  const compressibilityFactor = pressure * specificVolume / (R * tempK)
+  const compressibilityFactor = pressure * specificVolume / (R * temperature)
   const specificHeatRatio = cp / cv
   const prandtlNumber = cp * dynamicViscosity / thermalConductivity
 
   return {
-    temperature: tempK,
+    temperature,
     pressure,
     density,
     specificVolume,
@@ -109,20 +143,20 @@ function calculateSteamProperties(
     compressibilityFactor,
     prandtlNumber,
     specificHeatRatio,
+    engine: 'simplified-fallback',
   }
 }
 
-// Simplified saturation pressure from temperature (Antoine equation)
+// Antoine equation helpers (kept for saturation mode fallbacks)
 function getSaturationPressure(tempK: number): number {
   const A = 8.07131
   const B = 1730.63
   const C = 39.724
   const logP = A - B / (tempK - C)
   const pMmHg = Math.pow(10, logP)
-  return pMmHg * 133.322 // Convert to Pa
+  return pMmHg * 133.322
 }
 
-// Simplified saturation temperature from pressure
 function getSaturationTemperature(pressurePa: number): number {
   const A = 8.07131
   const B = 1730.63
@@ -140,6 +174,7 @@ function SteamEngineCalculator() {
   const [pressureUnit, setPressureUnit] = useState<'Pa' | 'kPa' | 'bar' | 'MPa'>('Pa')
   const [results, setResults] = useState<SteamProperties | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
   const getTemperatureK = (): number => {
     return tempUnit === 'C' ? temperature + 273.15 : temperature
@@ -154,8 +189,9 @@ function SteamEngineCalculator() {
     }
   }
 
-  const calculate = () => {
+  const calculate = async () => {
     setError(null)
+    setLoading(true)
 
     try {
       let tempK = getTemperatureK()
@@ -164,25 +200,37 @@ function SteamEngineCalculator() {
       // Validate inputs
       if (mode !== 'sat_p' && (tempK < 273.16 || tempK > 647.15)) {
         setError('Temperature must be between 273.16 K and 647.15 K')
+        setLoading(false)
         return
       }
 
       if (mode !== 'sat_t' && pressurePa <= 0) {
         setError('Pressure must be positive')
+        setLoading(false)
         return
       }
 
-      // Handle saturation modes
+      // Handle saturation modes for fallback path
       if (mode === 'sat_t') {
         pressurePa = getSaturationPressure(tempK)
       } else if (mode === 'sat_p') {
         tempK = getSaturationTemperature(pressurePa)
       }
 
-      const props = calculateSteamProperties(mode, tempK, pressurePa)
+      // Try the validated Python backend first; fall back to client-side
+      // simplified calculation if the API is unreachable.  See issue #605.
+      let props: SteamProperties
+      try {
+        props = await fetchSteamProperties(mode, tempK, pressurePa)
+      } catch {
+        // API unreachable -- use client-side fallback
+        props = calculateSteamPropertiesFallback(mode, tempK, pressurePa)
+      }
       setResults(props)
     } catch (e) {
       setError(`Calculation error: ${e}`)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -246,7 +294,7 @@ function SteamEngineCalculator() {
                 style={{ backgroundColor: colors.surface0, color: colors.text, border: `1px solid ${colors.surface1}` }}
               >
                 <option value="K">K</option>
-                <option value="C">°C</option>
+                <option value="C">C</option>
               </select>
             </div>
 
@@ -282,10 +330,15 @@ function SteamEngineCalculator() {
           {/* Calculate Button */}
           <button
             onClick={calculate}
+            disabled={loading}
             className="w-full py-4 rounded-lg font-bold text-lg"
-            style={{ backgroundColor: colors.blue, color: colors.base }}
+            style={{
+              backgroundColor: loading ? colors.surface1 : colors.blue,
+              color: colors.base,
+              cursor: loading ? 'wait' : 'pointer',
+            }}
           >
-            Calculate Properties
+            {loading ? 'Calculating...' : 'Calculate Properties'}
           </button>
 
           {error && (
@@ -314,6 +367,12 @@ function SteamEngineCalculator() {
                     Quality: {results.quality.toFixed(4)}
                   </span>
                 </div>
+                {/* Show which engine produced the results */}
+                <div className="mt-2">
+                  <span className="text-xs" style={{ color: colors.subtext0 }}>
+                    Engine: {results.engine}
+                  </span>
+                </div>
               </Section>
 
               {/* Thermodynamic Properties */}
@@ -322,7 +381,7 @@ function SteamEngineCalculator() {
                   <MetricCard
                     label="Temperature"
                     value={`${results.temperature.toFixed(2)} K`}
-                    subvalue={`${(results.temperature - 273.15).toFixed(2)} °C`}
+                    subvalue={`${(results.temperature - 273.15).toFixed(2)} C`}
                     color={colors.blue}
                   />
                   <MetricCard
@@ -333,12 +392,12 @@ function SteamEngineCalculator() {
                   />
                   <MetricCard
                     label="Density"
-                    value={`${results.density.toFixed(4)} kg/m³`}
+                    value={`${results.density.toFixed(4)} kg/m3`}
                     color={colors.peach}
                   />
                   <MetricCard
                     label="Specific Volume"
-                    value={`${results.specificVolume.toFixed(6)} m³/kg`}
+                    value={`${results.specificVolume.toFixed(6)} m3/kg`}
                     color={colors.peach}
                   />
                   <MetricCard
@@ -384,12 +443,12 @@ function SteamEngineCalculator() {
                   />
                   <MetricCard
                     label="Dynamic Viscosity"
-                    value={`${results.dynamicViscosity.toExponential(2)} Pa·s`}
+                    value={`${results.dynamicViscosity.toExponential(2)} Pa-s`}
                     color={colors.sky}
                   />
                   <MetricCard
                     label="Kinematic Viscosity"
-                    value={`${results.kinematicViscosity.toExponential(2)} m²/s`}
+                    value={`${results.kinematicViscosity.toExponential(2)} m2/s`}
                     color={colors.sapphire}
                   />
                 </div>

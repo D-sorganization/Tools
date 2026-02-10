@@ -2,10 +2,16 @@
 
 This module handles loading CSV files, detecting signals,
 and managing data operations.
+
+Fixed in issue #530: removed fragile dependency on ``utils.path_helpers``
+which required ``src/python/src`` to already be on ``sys.path``.  Now uses
+a self-contained path bootstrap and local fallbacks for csv/logging utils.
 """
 
 from __future__ import annotations
 
+import logging
+import sys
 from collections.abc import Callable, Iterable
 from pathlib import Path
 from typing import Any
@@ -13,10 +19,52 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-# Use shared path utilities
-from utils.path_helpers import ensure_utils_in_path  # noqa: E402
+# ---------------------------------------------------------------------------
+# Self-contained path bootstrap (see issue #530)
+# ---------------------------------------------------------------------------
 
-ensure_utils_in_path()
+
+def _ensure_utils_on_path() -> None:
+    """Add the shared utils directory to sys.path if not already present."""
+    # Walk up from this file to find the repo root
+    current = Path(__file__).resolve().parent
+    for _ in range(15):
+        if any((current / marker).exists() for marker in (".git", "pyproject.toml")):
+            utils_path = current / "src" / "python" / "src"
+            if utils_path.exists() and str(utils_path) not in sys.path:
+                sys.path.insert(0, str(utils_path))
+            return
+        parent = current.parent
+        if parent == current:
+            break
+        current = parent
+
+
+_ensure_utils_on_path()
+
+# Try to import shared csv_utils; fall back to inline implementations
+try:
+    from utils.csv_utils import safe_read_csv, safe_write_csv
+except ImportError:
+
+    def safe_read_csv(
+        file_path: Path | str,
+        default: pd.DataFrame | None = None,
+        **kwargs: Any,
+    ) -> pd.DataFrame:
+        """Read CSV with error handling (inline fallback)."""
+        path = Path(file_path)
+        if not path.exists():
+            return default if default is not None else pd.DataFrame()
+        try:
+            return pd.read_csv(path, **kwargs)
+        except Exception:
+            return default if default is not None else pd.DataFrame()
+
+    def safe_write_csv(df: pd.DataFrame, file_path: Path | str, **kwargs: Any) -> None:
+        """Write CSV with error handling (inline fallback)."""
+        df.to_csv(file_path, **kwargs)
+
 
 from data_processor.constants import TIME_COLUMN_KEYWORDS  # noqa: E402
 from data_processor.high_performance_loader import (  # noqa: E402
@@ -24,11 +72,7 @@ from data_processor.high_performance_loader import (  # noqa: E402
 )
 from data_processor.security_utils import validate_and_check_file  # noqa: E402
 
-# Import from centralized utilities
-from utils.csv_utils import safe_read_csv, safe_write_csv  # noqa: E402
-from utils.logging_utils import get_logger  # noqa: E402
-
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class DataLoader:
