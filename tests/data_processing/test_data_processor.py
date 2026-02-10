@@ -189,6 +189,7 @@ class TestExport:
         assert out.exists()
 
     def test_export_parquet(self, sample_df: pd.DataFrame, tmp_path: Path) -> None:
+        pytest.importorskip("pyarrow", reason="pyarrow not installed")
         dp = DataProcessor()
         dp.load_dataframe(sample_df)
         out = dp.export(tmp_path / "out.parquet")
