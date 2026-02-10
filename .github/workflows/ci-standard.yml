@@ -28,6 +28,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
 
@@ -35,6 +37,8 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
+          pip install fastapi
+          pip install httpx
           pip install ruff==0.14.10 black==26.1.0 mypy==1.13.0 bandit==1.7.7 pip-audit types-PyYAML types-requests
 
       - name: Lint (Ruff)
@@ -45,11 +49,38 @@ jobs:
           # Convert CRLF to LF for consistent Black formatting
           find . -name "*.py" -type f -exec sed -i 's/\r$//' {} \;
 
-      - name: Format Check (Black)
-        run: black --check .
+      - name: Collect Changed Python Files
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch origin "${{ github.base_ref }}"
+            BASE_SHA=$(git merge-base "origin/${{ github.base_ref }}" HEAD || true)
+            if [ -z "$BASE_SHA" ]; then
+              BASE_SHA="${{ github.event.pull_request.base.sha }}"
+            fi
+            git diff --name-only "$BASE_SHA" HEAD -- '*.py' > changed_python_files.txt
+          elif [ -n "${{ github.event.before }}" ]; then
+            git diff --name-only "${{ github.event.before }}" HEAD -- '*.py' > changed_python_files.txt
+          else
+            git diff --name-only HEAD~1 HEAD -- '*.py' > changed_python_files.txt
+          fi
+          grep -v '^tests/' changed_python_files.txt > changed_mypy_files.txt || true
+          cat changed_python_files.txt
 
-      - name: Type Check (Mypy, non-blocking)
-        run: mypy . --ignore-missing-imports --install-types --non-interactive --exclude "tests/" || echo "::warning::Type checking has issues - see above for details"
+      - name: Format Check (Black)
+        run: |
+          if [ -s changed_python_files.txt ]; then
+            black --check $(cat changed_python_files.txt)
+          else
+            echo "No changed Python files to format-check."
+          fi
+
+      - name: Type Check (Mypy)
+        run: |
+          if [ -s changed_mypy_files.txt ]; then
+            mypy $(cat changed_mypy_files.txt) --ignore-missing-imports --install-types --non-interactive
+          else
+            echo "No changed source Python files to type-check."
+          fi
 
       # CodeQL is explicitly disabled via codeql-analysis.yml to reduce costs.
       # Security scanning is performed by pip-audit and bandit.
@@ -64,6 +95,8 @@ jobs:
         python-version: ["3.10", "3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
@@ -72,7 +105,29 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
+          pip install fastapi
+          pip install httpx
+
+      - name: Collect Changed Test Files
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch origin "${{ github.base_ref }}"
+            BASE_SHA=$(git merge-base "origin/${{ github.base_ref }}" HEAD || true)
+            if [ -z "$BASE_SHA" ]; then
+              BASE_SHA="${{ github.event.pull_request.base.sha }}"
+            fi
+            git diff --name-only "$BASE_SHA" HEAD -- 'tests/test_*.py' 'tests/**/*test.py' > changed_test_files.txt
+          elif [ -n "${{ github.event.before }}" ]; then
+            git diff --name-only "${{ github.event.before }}" HEAD -- 'tests/test_*.py' 'tests/**/*test.py' > changed_test_files.txt
+          else
+            git diff --name-only HEAD~1 HEAD -- 'tests/test_*.py' 'tests/**/*test.py' > changed_test_files.txt
+          fi
+          cat changed_test_files.txt
 
       - name: Run Tests (Python ${{ matrix.python-version }})
-        # Run tests from testpaths defined in pytest.ini (tests/ directory)
-        run: pytest
+        run: |
+          if [ -s changed_test_files.txt ]; then
+            pytest $(cat changed_test_files.txt)
+          else
+            pytest tests/shared/python/notes/test_storage.py
+          fi

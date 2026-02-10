@@ -4,6 +4,7 @@ This package contains reusable Python logic for tools.
 
 Available packages:
     - chat: Portable AI chat dock widget and Pydantic models
+    - notes: Project-backed notes workspace with recycle-bin semantics
     - theme: Fleet-wide color theme management for PyQt6 applications
     - upstream_drift_tools: Process engineering calculators
     - signal_toolkit: Signal processing and analysis
@@ -25,6 +26,7 @@ __all__ = [
     "chat",
     "humanoid_character_builder",
     "model_generation",
+    "notes",
     "signal_toolkit",
     "theme",
     "upstream_drift_tools",

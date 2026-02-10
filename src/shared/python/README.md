@@ -5,6 +5,7 @@ This directory contains reusable Python libraries and utilities shared across mu
 ## Available Packages
 
 ### `humanoid_character_builder/`
+
 Standalone URDF humanoid model generation with video game-style character customization.
 
 ```python
@@ -17,12 +18,14 @@ result.export_urdf("./output/my_humanoid")
 ```
 
 **Features:**
+
 - Parametric body generation from height/mass
 - Mesh-based inertia calculation (trimesh)
 - LOD generation for rendering/physics
 - De Leva anthropometry data
 
 ### `model_generation/`
+
 Comprehensive URDF/MJCF model building, editing, and conversion tools.
 
 ```python
@@ -43,6 +46,7 @@ editor.copy_component("left_arm", source=0, target=1)
 ```
 
 **Features:**
+
 - Parametric and manual URDF builders
 - Frankenstein editor for component composition
 - URDF/MJCF/SDF format conversion
@@ -51,6 +55,7 @@ editor.copy_component("left_arm", source=0, target=1)
 - REST API for headless operation
 
 ### `signal_toolkit/`
+
 Comprehensive signal processing library for control systems, simulation, and data analysis.
 
 ```python
@@ -71,6 +76,7 @@ filtered = apply_filter(signal, create_butterworth_filter('lowpass', cutoff=5, f
 ```
 
 **Features:**
+
 - 13 signal types (sine, cosine, chirp, square, etc.)
 - Curve fitting (sinusoid, exponential, polynomial, custom)
 - Digital filters (Butterworth, Chebyshev, Bessel, adaptive)
@@ -80,6 +86,7 @@ filtered = apply_filter(signal, create_butterworth_filter('lowpass', cutoff=5, f
 - I/O (CSV, JSON, MAT, NPZ)
 
 ### `upstream_drift_tools/`
+
 Process engineering calculators for chemical and industrial applications.
 
 ```python
@@ -99,19 +106,41 @@ design = flare.calculate_flare_size(
 ```
 
 **Features:**
+
 - Equipment sizing (flare, scrubber, baghouse)
 - Thermodynamic calculators (acid gas dewpoint, WGS reactor)
 - Financial analysis (NPV/IRR)
 - ODE solver and optimization tools
 
+### `notes/`
+
+Reusable project notes workspace with file-backed persistence and reversible deletion.
+
+```python
+from notes import NotesStorage
+
+storage = NotesStorage(project_dir="./my_project")
+storage.save_text("Design notes and copied snippets")
+recycled = storage.move_to_recycle(reason="cleanup")
+storage.restore(recycled.item_id)
+```
+
+**Features:**
+
+- Plain-text notes file stored with each project (`project.notes.txt`)
+- Safe deletion to per-project recycle bin (`.notes_recycle_bin`)
+- Restore/purge controls for reversible workflows
+- Optional PyQt dock widget for embedded or pop-out usage
+
 ## Dependencies
 
-| Package | Required | Optional |
-|---------|----------|----------|
-| `humanoid_character_builder` | numpy, PyYAML | trimesh |
-| `model_generation` | numpy, defusedxml | trimesh, mujoco |
-| `signal_toolkit` | numpy, scipy | PyQt6, matplotlib, sympy |
-| `upstream_drift_tools` | numpy | scipy, CoolProp, PyQt6 |
+| Package                      | Required          | Optional                   |
+| ---------------------------- | ----------------- | -------------------------- |
+| `humanoid_character_builder` | numpy, PyYAML     | trimesh                    |
+| `model_generation`           | numpy, defusedxml | trimesh, mujoco            |
+| `signal_toolkit`             | numpy, scipy      | PyQt6, matplotlib, sympy   |
+| `upstream_drift_tools`       | numpy             | scipy, CoolProp, PyQt6     |
+| `notes`                      | none              | PyQt6 (for dock widget UI) |
 
 ## Usage in Other Repositories
 
