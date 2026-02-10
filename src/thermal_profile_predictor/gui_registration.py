@@ -1,39 +1,22 @@
-"""
-Thermal Profile Predictor - GUI Registration
-=============================================
+"""GUI registration for Thermal Profile Predictor."""
 
-Metadata for GUI framework integration.
-"""
+from __future__ import annotations
 
-GUI_METADATA = {
+GUI_INFO = {
     "name": "Thermal Profile Predictor",
+    "tool_name": "thermal_profile_predictor",
     "description": "Predict temperature profiles for heated vessels",
-    "category": "process_simulation",
-    "version": "1.0.0",
-    "entry_point": "thermal_profile_predictor.ui.pyqt6.main_window:ThermalProfilePredictorWindow",
+    "category": "Process Simulation",
     "icon": "thermometer",
-    "keywords": [
-        "thermal",
-        "temperature",
-        "heating",
-        "vessel",
-        "profile",
-        "prediction",
-        "ODE",
-    ],
-    "dependencies": {
-        "required": ["PyQt6", "numpy", "scipy"],
-        "optional": [],
+    "pyqt6": {
+        "module": "thermal_profile_predictor.ui.pyqt6.main_window",
+        "class": "ThermalProfilePredictorWindow",
+        "dependencies": ["PyQt6", "numpy", "scipy"],
+        "settings_app": "ThermalProfilePredictor",
     },
-    "features": [
-        "Temperature profile prediction",
-        "Configurable power input function",
-        "Thermal mass and heat loss parameters",
-        "Time series visualization",
-    ],
 }
 
 
-def get_metadata() -> dict:
-    """Return GUI metadata for framework registration."""
-    return GUI_METADATA
+def get_gui_info() -> dict:
+    """Return GUI registration information."""
+    return GUI_INFO

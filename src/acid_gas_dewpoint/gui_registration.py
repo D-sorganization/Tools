@@ -1,37 +1,23 @@
-"""GUI Registration for Acid Gas Dewpoint Calculator."""
+"""GUI registration for Acid Gas Dewpoint Calculator."""
 
 from __future__ import annotations
 
-from pathlib import Path
+GUI_INFO = {
+    "name": "Acid Gas Dewpoint Calculator",
+    "tool_name": "acid_gas_dewpoint",
+    "description": "HF, HCl, H2S dewpoint analysis for syngas applications",
+    "category": "Process Simulation",
+    "icon": "chemistry",
+    "pyqt6": {
+        "module": "acid_gas_dewpoint.python.acid_gas_dewpoint.ui.pyqt6.main_window",
+        "class": "AcidGasDewpointCalculatorWidget",
+        "dependencies": ["PyQt6", "matplotlib", "numpy"],
+        "settings_app": "AcidGasDewpointCalculator",
+        "min_size": [1000, 700],
+    },
+}
 
-try:
-    from gui_launcher import GUIType, LaunchConfig, register_gui
 
-    MODULE_DIR = Path(__file__).parent
-
-    register_gui(
-        tool_name="acid_gas_dewpoint",
-        display_name="Acid Gas Dewpoint Calculator",
-        description="HF, HCl, H2S dewpoint analysis for syngas applications",
-        gui_configs={
-            GUIType.PYQT6: LaunchConfig(
-                tool_name="acid_gas_dewpoint",
-                gui_type=GUIType.PYQT6,
-                script_path=str(MODULE_DIR / "launch_pyqt6.py"),
-                title="Acid Gas Dewpoint Calculator",
-                dependencies=["PyQt6", "matplotlib", "numpy"],
-            ),
-            GUIType.REACT: LaunchConfig(
-                tool_name="acid_gas_dewpoint",
-                gui_type=GUIType.REACT,
-                script_path=str(MODULE_DIR / "launch_web.py"),
-                title="Acid Gas Dewpoint Calculator (Web)",
-                working_directory=str(MODULE_DIR / "web"),
-                dev_command="npm run dev",
-                port=5176,
-            ),
-        },
-        category="Process Simulation",
-    )
-except ImportError:
-    pass
+def get_gui_info() -> dict:
+    """Return GUI registration information."""
+    return GUI_INFO

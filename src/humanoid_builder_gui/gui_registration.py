@@ -1,44 +1,22 @@
-"""
-Humanoid Character Builder - GUI Registration
-==============================================
+"""GUI registration for Humanoid Character Builder."""
 
-Metadata for GUI framework integration.
-"""
+from __future__ import annotations
 
-GUI_METADATA = {
+GUI_INFO = {
     "name": "Humanoid Character Builder",
+    "tool_name": "humanoid_builder_gui",
     "description": "Build parametric humanoid characters with anthropometric calculations",
-    "category": "robotics",
-    "version": "1.0.0",
-    "entry_point": "humanoid_builder_gui.ui.pyqt6.main_window:HumanoidBuilderWindow",
+    "category": "Robotics",
     "icon": "person",
-    "keywords": [
-        "humanoid",
-        "character",
-        "anthropometry",
-        "URDF",
-        "biomechanics",
-        "body",
-        "mesh",
-        "inertia",
-    ],
-    "dependencies": {
-        "required": ["PyQt6"],
-        "optional": ["numpy", "trimesh"],
+    "pyqt6": {
+        "module": "humanoid_builder_gui.ui.pyqt6.main_window",
+        "class": "HumanoidBuilderWindow",
+        "dependencies": ["PyQt6"],
+        "settings_app": "HumanoidBuilder",
     },
-    "features": [
-        "Height-based anthropometry calculations",
-        "Mass distribution by body segment",
-        "Configurable body proportions",
-        "Build type presets (ectomorph, mesomorph, endomorph)",
-        "Gender-specific anthropometric data",
-        "URDF export",
-        "Segment details table",
-        "BMI calculation",
-    ],
 }
 
 
-def get_metadata() -> dict:
-    """Return GUI metadata for framework registration."""
-    return GUI_METADATA
+def get_gui_info() -> dict:
+    """Return GUI registration information."""
+    return GUI_INFO

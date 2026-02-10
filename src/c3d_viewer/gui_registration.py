@@ -1,42 +1,22 @@
-"""
-C3D Motion Capture Viewer - GUI Registration
-=============================================
+"""GUI registration for C3D Motion Capture Viewer."""
 
-Metadata for GUI framework integration.
-"""
+from __future__ import annotations
 
-GUI_METADATA = {
+GUI_INFO = {
     "name": "C3D Motion Capture Viewer",
+    "tool_name": "c3d_viewer",
     "description": "View and analyze C3D motion capture files",
-    "category": "biomechanics",
-    "version": "1.0.0",
-    "entry_point": "c3d_viewer.ui.pyqt6.main_window:C3DViewerWindow",
+    "category": "Biomechanics",
     "icon": "body",
-    "keywords": [
-        "C3D",
-        "motion capture",
-        "biomechanics",
-        "markers",
-        "force plate",
-        "trajectory",
-        "gait analysis",
-    ],
-    "dependencies": {
-        "required": ["PyQt6"],
-        "optional": ["ezc3d", "pandas", "numpy"],
+    "pyqt6": {
+        "module": "c3d_viewer.ui.pyqt6.main_window",
+        "class": "C3DViewerWindow",
+        "dependencies": ["PyQt6"],
+        "settings_app": "C3DViewer",
     },
-    "features": [
-        "C3D file parsing and loading",
-        "Marker label and trajectory display",
-        "Analog channel visualization",
-        "Force plate analysis",
-        "Event marker display",
-        "Export to CSV, JSON, NPZ",
-        "Unit conversion support",
-    ],
 }
 
 
-def get_metadata() -> dict:
-    """Return GUI metadata for framework registration."""
-    return GUI_METADATA
+def get_gui_info() -> dict:
+    """Return GUI registration information."""
+    return GUI_INFO

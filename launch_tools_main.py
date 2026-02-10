@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
-"""
-Main Tools Launcher - Robust launcher with error handling and dependency management.
+"""Main Tools Launcher - Robust launcher with error handling and dependency management.
+
+.. deprecated::
+    This legacy launcher is deprecated. Use ``launch.py`` (unified CLI entry
+    point) or ``UnifiedToolsLauncher.py`` (PyQt6 GUI) instead::
+
+        python launch.py --list          # see all tools
+        python launch.py --tool <name>   # launch a specific tool
+
 This script launches the integrated Tools application with proper error handling.
 """
 

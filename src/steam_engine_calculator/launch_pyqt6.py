@@ -1,83 +1,21 @@
 #!/usr/bin/env python3
-"""
-Steam Engine Calculator - Standalone Launcher
-==============================================
+"""Standalone PyQt6 launcher for Steam Engine Calculator."""
 
-Launch the Steam Engine Calculator as a standalone PyQt6 application.
-"""
+from __future__ import annotations
 
 import sys
 from pathlib import Path
 
+# Bootstrap imports for development mode (before pip install -e .)
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
+from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
 
-def check_dependencies() -> bool:
-    """Check if required dependencies are available."""
-    missing = []
+ensure_paths(_REPO_ROOT)
 
-    try:
-        import PyQt6  # noqa: F401
-    except ImportError:
-        missing.append("PyQt6")
+from gui_launcher import launch_from_gui_info  # noqa: E402
 
-    try:
-        import numpy  # noqa: F401
-    except ImportError:
-        missing.append("numpy")
-
-    if missing:
-        print("Missing required dependencies:")
-        for dep in missing:
-            print(f"  - {dep}")
-        print("\nInstall with: pip install " + " ".join(missing))
-        return False
-
-    # Check optional dependencies
-    try:
-        import CoolProp  # noqa: F401
-
-        print("CoolProp: Available (high-accuracy calculations)")
-    except ImportError:
-        print("CoolProp: Not installed (optional - pip install CoolProp)")
-
-    try:
-        import cantera  # noqa: F401
-
-        print("Cantera: Available")
-    except ImportError:
-        print("Cantera: Not installed (optional)")
-
-    return True
-
-
-def setup_path() -> None:
-    """Add necessary paths for imports."""
-    # Bootstrap imports for development mode (before pip install -e .)
-    _repo_root = Path(__file__).resolve().parents[2]
-    sys.path.insert(0, str(_repo_root / "src" / "shared" / "python"))
-    from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
-
-    ensure_paths(_repo_root)
-
-
-def main() -> None:
-    """Main entry point."""
-    print("Steam Engine Calculator")
-    print("=" * 40)
-    print()
-
-    if not check_dependencies():
-        sys.exit(1)
-
-    print()
-    print("Starting application...")
-    print()
-
-    setup_path()
-
-    from steam_engine_calculator.ui.pyqt6.main_window import main as run_app
-
-    run_app()
-
+from steam_engine_calculator.gui_registration import GUI_INFO  # noqa: E402
 
 if __name__ == "__main__":
-    main()
+    sys.exit(launch_from_gui_info(GUI_INFO))

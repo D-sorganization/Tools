@@ -1,22 +1,24 @@
-"""ToolCard component for the Unified Launcher."""
+"""ToolCard component for the Unified Launcher.
+
+Styles for this component are managed by the fleet-wide theme system.
+See ``shared.python.theme.stylesheets.generate_stylesheet`` for the
+ToolCard QSS rules.  Each sub-widget is identified by its object name
+(e.g. ``#launchButton``, ``#toolCardTitle``) so the theme engine can
+apply colours consistently across Light, Dark, Monokai, etc. themes.
+"""
 
 from collections.abc import Callable
 from typing import Any
 
-try:
-    from PyQt6.QtCore import QSize, Qt
-    from PyQt6.QtWidgets import (
-        QFrame,
-        QHBoxLayout,
-        QLabel,
-        QPushButton,
-        QToolButton,
-        QVBoxLayout,
-    )
-
-    HAS_PYQT6 = True
-except ImportError:
-    HAS_PYQT6 = False
+from PyQt6.QtCore import QSize, Qt
+from PyQt6.QtWidgets import (
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QToolButton,
+    QVBoxLayout,
+)
 
 # Try to import help system
 try:
@@ -28,7 +30,11 @@ except ImportError:
 
 
 class ToolCard(QFrame):
-    """A card widget representing a single launchable tool."""
+    """A card widget representing a single launchable tool.
+
+    All colours are provided by the theme engine via object-name selectors
+    (e.g. ``#launchButton``).  No inline ``setStyleSheet`` calls remain.
+    """
 
     def __init__(
         self,
@@ -43,17 +49,7 @@ class ToolCard(QFrame):
     def setup_ui(self) -> None:
         """Initialize the card UI."""
         self.setFrameStyle(QFrame.Shape.StyledPanel | QFrame.Shadow.Raised)
-        self.setStyleSheet("""
-            ToolCard {
-                background-color: #ffffff;
-                border: 1px solid #e0e0e0;
-                border-radius: 8px;
-            }
-            ToolCard:hover {
-                border: 1px solid #2196F3;
-                background-color: #f8fbff;
-            }
-        """)
+        # ToolCard QSS is applied by the theme engine (see stylesheets.py)
 
         layout = QVBoxLayout(self)
         layout.setSpacing(10)
@@ -62,25 +58,19 @@ class ToolCard(QFrame):
         header = QHBoxLayout()
         name = self.tool_info.get("name", "Unknown Tool")
         title = QLabel(name)
-        title.setStyleSheet("""
-            font-size: 14px;
-            font-weight: bold;
-            color: #333;
-        """)
+        title.setObjectName("toolCardTitle")
         header.addWidget(title)
         header.addStretch()
 
-        # Type badge
+        # Type badge - keeps dynamic colour via _get_type_color since it
+        # depends on the tool type value, not the current theme.
         tool_type = self.tool_info.get("type", "unknown")
         badge = QLabel(f" {tool_type.upper()} ")
-        badge.setStyleSheet(f"""
-            background-color: {self._get_type_color(tool_type)};
-            color: white;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: bold;
-            padding: 2px;
-        """)
+        badge.setStyleSheet(
+            f"background-color: {self._get_type_color(tool_type)};"
+            " color: white; border-radius: 4px;"
+            " font-size: 10px; font-weight: bold; padding: 2px;"
+        )
         header.addWidget(badge)
         layout.addLayout(header)
 
@@ -88,18 +78,14 @@ class ToolCard(QFrame):
         desc_text = self.tool_info.get("desc", "No description available.")
         desc = QLabel(desc_text)
         desc.setWordWrap(True)
-        desc.setStyleSheet("color: #666; font-size: 12px;")
+        desc.setObjectName("toolCardDescription")
         layout.addWidget(desc)
 
         # Path
         path_text = self.tool_info.get("path", "")
         path_lbl = QLabel(path_text)
         path_lbl.setWordWrap(True)
-        path_lbl.setStyleSheet("""
-            color: #999;
-            font-family: monospace;
-            font-size: 10px;
-        """)
+        path_lbl.setObjectName("toolCardPath")
         layout.addWidget(path_lbl)
         layout.addStretch()
 
@@ -108,50 +94,19 @@ class ToolCard(QFrame):
 
         # Launch Button
         btn = QPushButton("Launch Tool")
+        btn.setObjectName("launchButton")
         btn.setCursor(Qt.CursorShape.PointingHandCursor)
         btn.clicked.connect(lambda: self.launch_callback(self.tool_info))
-        btn.setStyleSheet("""
-            QPushButton {
-                background-color: #2196F3;
-                color: white;
-                border: none;
-                border-radius: 4px;
-                padding: 8px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #1976D2;
-            }
-            QPushButton:pressed {
-                background-color: #0D47A1;
-            }
-        """)
         button_row.addWidget(btn)
 
         # Help Button
         if HELP_AVAILABLE:
             help_btn = QToolButton()
+            help_btn.setObjectName("helpButton")
             help_btn.setText("?")
             help_btn.setToolTip("Show help for this tool")
             help_btn.setFixedSize(QSize(30, 30))
             help_btn.setCursor(Qt.CursorShape.PointingHandCursor)
-            help_btn.setStyleSheet("""
-                QToolButton {
-                    background-color: #45475a;
-                    color: #89b4fa;
-                    border: 1px solid #585b70;
-                    border-radius: 4px;
-                    font-weight: bold;
-                    font-size: 14px;
-                }
-                QToolButton:hover {
-                    background-color: #585b70;
-                    border-color: #89b4fa;
-                }
-                QToolButton:pressed {
-                    background-color: #313244;
-                }
-            """)
             help_btn.clicked.connect(self._show_tool_help)
             button_row.addWidget(help_btn)
 
@@ -173,10 +128,7 @@ class ToolCard(QFrame):
             return
 
         try:
-            # Get tool category for help lookup
             category = self.tool_info.get("category", "")
-
-            # Build a tool-specific help message
             tool_name = self.tool_info.get("name", "Unknown Tool")
             tool_desc = self.tool_info.get("desc", "No description available.")
             tool_type = self.tool_info.get("type", "unknown")
@@ -208,7 +160,6 @@ For more information about this category, see the Tool Help menu option
 or press F1 to open the User Manual.
 """
 
-            # Import HelpDialog directly for display
             from python.src.help.help_system import HelpDialog
 
             dialog = HelpDialog(self, tool_name, help_content)

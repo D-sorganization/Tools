@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Launch script for Scrubber Calculator PyQt6 application."""
+"""Standalone PyQt6 launcher for Scrubber Calculator."""
 
 from __future__ import annotations
 
@@ -13,14 +13,9 @@ from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
 
 ensure_paths(_REPO_ROOT)
 
+from gui_launcher import launch_from_gui_info  # noqa: E402
 
-def main() -> int:
-    """Launch the Scrubber Calculator PyQt6 application."""
-    from scrubber_calculator.ui.pyqt6.main_window import main as run_app
-
-    run_app()
-    return 0
-
+from scrubber_calculator.gui_registration import GUI_INFO  # noqa: E402
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(launch_from_gui_info(GUI_INFO))

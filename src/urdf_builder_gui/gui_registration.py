@@ -1,42 +1,22 @@
-"""
-Parametric URDF Builder - GUI Registration
-==========================================
+"""GUI registration for Parametric URDF Builder."""
 
-Metadata for GUI framework integration.
-"""
+from __future__ import annotations
 
-GUI_METADATA = {
+GUI_INFO = {
     "name": "Parametric URDF Builder",
+    "tool_name": "urdf_builder_gui",
     "description": "Generate parametric URDF models for robotics applications",
-    "category": "robotics",
-    "version": "1.0.0",
-    "entry_point": "urdf_builder_gui.ui.pyqt6.main_window:URDFBuilderWindow",
+    "category": "Robotics",
     "icon": "robot",
-    "keywords": [
-        "URDF",
-        "parametric",
-        "robotics",
-        "humanoid",
-        "model generation",
-        "simulation",
-        "ROS",
-    ],
-    "dependencies": {
-        "required": ["PyQt6"],
-        "optional": ["model_generation"],
+    "pyqt6": {
+        "module": "urdf_builder_gui.ui.pyqt6.main_window",
+        "class": "URDFBuilderWindow",
+        "dependencies": ["PyQt6"],
+        "settings_app": "URDFBuilder",
     },
-    "features": [
-        "Height/weight-based parametric generation",
-        "Gender factor adjustment",
-        "Body proportion customization",
-        "Geometry type selection",
-        "Joint parameter configuration",
-        "URDF file export",
-        "Structure preview",
-    ],
 }
 
 
-def get_metadata() -> dict:
-    """Return GUI metadata for framework registration."""
-    return GUI_METADATA
+def get_gui_info() -> dict:
+    """Return GUI registration information."""
+    return GUI_INFO

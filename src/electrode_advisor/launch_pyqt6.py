@@ -1,56 +1,21 @@
 #!/usr/bin/env python3
-"""Standalone launcher for Electrode Advisor PyQt6 GUI.
-
-This launcher checks dependencies and starts the PyQt6 GUI application.
-"""
+"""Standalone PyQt6 launcher for Electrode Advisor."""
 
 from __future__ import annotations
 
 import sys
-from importlib.util import find_spec
+from pathlib import Path
 
+# Bootstrap imports for development mode (before pip install -e .)
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
+from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
 
-def check_dependencies() -> list[str]:
-    """Check if required dependencies are available."""
-    required = ["PyQt6", "numpy", "matplotlib"]
-    missing = [pkg for pkg in required if find_spec(pkg) is None]
-    return missing
+ensure_paths(_REPO_ROOT)
 
+from gui_launcher import launch_from_gui_info  # noqa: E402
 
-def main() -> int:
-    """Main entry point for the Electrode Advisor PyQt6 GUI."""
-    # Check dependencies
-    missing = check_dependencies()
-    if missing:
-        print("Missing required packages:")
-        for pkg in missing:
-            print(f"  - {pkg}: pip install {pkg}")
-        print("\nInstall the missing packages and try again.")
-        return 1
-
-    # Import and launch
-    from PyQt6.QtWidgets import QApplication, QMainWindow
-
-    from electrode_advisor.ui.pyqt6.main_window import ElectrodeAdvisorWidget
-    from shared.python.theme import setup_themed_app
-
-    app = QApplication(sys.argv)
-    app.setApplicationName("Electrode Advisor")
-    app.setApplicationVersion("1.0.0")
-
-    # Create main window
-    window = QMainWindow()
-    window.setWindowTitle("Electrode Advisor - AC Electrode Advancement Module")
-    window.setMinimumSize(1200, 800)
-
-    # Create and set central widget
-    advisor_widget = ElectrodeAdvisorWidget()
-    window.setCentralWidget(advisor_widget)
-
-    setup_themed_app(app, window, settings_app="ElectrodeAdvisor")
-    window.show()
-    return app.exec()
-
+from electrode_advisor.gui_registration import GUI_INFO  # noqa: E402
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(launch_from_gui_info(GUI_INFO))

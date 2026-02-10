@@ -1,40 +1,22 @@
-"""
-Inertia Calculator - GUI Registration
-=====================================
+"""GUI registration for Inertia Calculator."""
 
-Metadata for GUI framework integration.
-"""
+from __future__ import annotations
 
-GUI_METADATA = {
+GUI_INFO = {
     "name": "Inertia Calculator",
+    "tool_name": "inertia_calculator",
     "description": "Calculate and validate inertia tensors for rigid bodies",
-    "category": "robotics",
-    "version": "1.0.0",
-    "entry_point": "inertia_calculator.ui.pyqt6.main_window:InertiaCalculatorWindow",
+    "category": "Robotics",
     "icon": "cube",
-    "keywords": [
-        "inertia",
-        "tensor",
-        "moment of inertia",
-        "rigid body",
-        "URDF",
-        "robotics",
-        "dynamics",
-    ],
-    "dependencies": {
-        "required": ["PyQt6", "numpy"],
-        "optional": ["trimesh"],
+    "pyqt6": {
+        "module": "inertia_calculator.ui.pyqt6.main_window",
+        "class": "InertiaCalculatorWindow",
+        "dependencies": ["PyQt6", "numpy"],
+        "settings_app": "InertiaCalculator",
     },
-    "features": [
-        "Manual inertia input",
-        "Primitive shape calculations (box, cylinder, sphere)",
-        "Inertia tensor validation",
-        "URDF format output",
-        "Matrix visualization",
-    ],
 }
 
 
-def get_metadata() -> dict:
-    """Return GUI metadata for framework registration."""
-    return GUI_METADATA
+def get_gui_info() -> dict:
+    """Return GUI registration information."""
+    return GUI_INFO

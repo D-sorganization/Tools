@@ -1,41 +1,22 @@
-"""
-PSA Package - GUI Registration
-==============================
+"""GUI registration for PSA System Analysis."""
 
-Metadata for GUI framework integration.
-"""
+from __future__ import annotations
 
-GUI_METADATA = {
+GUI_INFO = {
     "name": "PSA System Analysis",
-    "description": "Two-stage Pressure Swing Adsorption system analysis with sensitivity analysis and O2 safety calculations",
-    "category": "process_simulation",
-    "version": "1.0.0",
-    "entry_point": "upstream_drift_tools.process_calculators.psa_package.psa_gui:PSAMainWindow",
+    "tool_name": "psa_package",
+    "description": "Two-stage Pressure Swing Adsorption system analysis",
+    "category": "Process Simulation",
     "icon": "filter",
-    "keywords": [
-        "psa",
-        "pressure swing adsorption",
-        "hydrogen",
-        "separation",
-        "gas processing",
-        "sensitivity analysis",
-    ],
-    "dependencies": {
-        "required": ["PyQt6", "numpy", "matplotlib"],
-        "optional": ["streamlit", "jupyter"],
+    "pyqt6": {
+        "module": "upstream_drift_tools.process_calculators.psa_package.psa_gui",
+        "class": "PSAMainWindow",
+        "dependencies": ["PyQt6", "numpy", "matplotlib"],
+        "settings_app": "PSAPackage",
     },
-    "features": [
-        "Two-stage PSA mass balance",
-        "Component-wise flow calculations",
-        "H2 recovery and purity metrics",
-        "O2 safety analysis",
-        "Interactive sensitivity plots",
-        "3D surface and contour visualizations",
-        "Process flow diagram view",
-    ],
 }
 
 
-def get_metadata() -> dict:
-    """Return GUI metadata for framework registration."""
-    return GUI_METADATA
+def get_gui_info() -> dict:
+    """Return GUI registration information."""
+    return GUI_INFO

@@ -199,11 +199,73 @@ def register_gui(
     )
 
 
+def _gui_info_to_registration(gui_info: dict[str, Any]) -> None:
+    """Convert a GUI_INFO dict into a proper registry entry.
+
+    The GUI_INFO dict pattern looks like::
+
+        GUI_INFO = {
+            "name": "My Tool",
+            "tool_name": "my_tool",
+            "description": "...",
+            "category": "Process Simulation",
+            "icon": "icon_name",
+            "pyqt6": {
+                "module": "my_tool.ui.pyqt6.main_window",
+                "class": "MyToolWindow",
+                "dependencies": ["PyQt6", "numpy"],
+                "settings_app": "MyTool",
+                "min_size": [1200, 800],
+            },
+        }
+
+    Args:
+        gui_info: The GUI_INFO dictionary from a gui_registration.py module
+    """
+    tool_name = gui_info.get("tool_name", "")
+    display_name = gui_info.get("name", tool_name)
+    description = gui_info.get("description", "")
+    category = gui_info.get("category", "General")
+    icon = gui_info.get("icon")
+
+    gui_configs: dict[GUIType, LaunchConfig] = {}
+
+    # Parse pyqt6 config
+    pyqt6_info = gui_info.get("pyqt6")
+    if pyqt6_info:
+        min_size = pyqt6_info.get("min_size")
+        gui_configs[GUIType.PYQT6] = LaunchConfig(
+            tool_name=tool_name,
+            gui_type=GUIType.PYQT6,
+            module_path=pyqt6_info.get("module"),
+            class_name=pyqt6_info.get("class"),
+            dependencies=pyqt6_info.get("dependencies", []),
+            title=display_name,
+            settings_app=pyqt6_info.get("settings_app"),
+            min_size=tuple(min_size) if min_size else None,
+        )
+
+    if gui_configs:
+        register_gui(
+            tool_name=tool_name,
+            display_name=display_name,
+            description=description,
+            gui_configs=gui_configs,
+            category=category,
+            icon=icon,
+        )
+
+
 def auto_discover_guis(search_paths: list[Path]) -> int:
     """Automatically discover and register GUI components.
 
-    Searches for gui_registration.py files in the given paths
-    and executes them to register GUIs.
+    Searches for gui_registration.py files in the given paths.
+    Supports two patterns:
+
+    1. **GUI_INFO dict** (preferred): The module defines a ``GUI_INFO`` dict
+       which is converted to a registry entry.
+    2. **Legacy register_gui call**: The module calls ``register_gui()`` at
+       import time (backward compatible).
 
     Args:
         search_paths: List of paths to search for GUI registrations
@@ -228,9 +290,17 @@ def auto_discover_guis(search_paths: list[Path]) -> int:
                 if spec and spec.loader:
                     module = importlib.util.module_from_spec(spec)
                     spec.loader.exec_module(module)
+
+                    # Check for GUI_INFO dict pattern
+                    gui_info = getattr(module, "GUI_INFO", None)
+                    if gui_info and isinstance(gui_info, dict):
+                        _gui_info_to_registration(gui_info)
+
                     count += 1
-                    logger.debug(f"Loaded GUI registration from: {reg_file}")
+                    logger.debug("Loaded GUI registration from: %s", reg_file)
             except Exception as e:
-                logger.warning(f"Failed to load GUI registration from {reg_file}: {e}")
+                logger.warning(
+                    "Failed to load GUI registration from %s: %s", reg_file, e
+                )
 
     return count
