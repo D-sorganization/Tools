@@ -128,5 +128,7 @@ class GeminiTitleLLM:
             if uploaded_file:
                 try:
                     self.genai.delete_file(uploaded_file.name)
-                except Exception:
-                    pass
+                except (RuntimeError, ValueError, OSError) as e:
+                    logger.debug(
+                        "Failed to delete uploaded file %s: %s", uploaded_file.name, e
+                    )

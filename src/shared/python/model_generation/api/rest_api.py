@@ -1094,8 +1094,8 @@ class FastAPIAdapter:
                     body = None
                     try:
                         body = await request.json()
-                    except Exception:
-                        pass
+                    except (ValueError, UnicodeDecodeError) as e:
+                        logger.debug("Failed to parse request JSON body: %s", e)
 
                     files = {}
                     form = await request.form()

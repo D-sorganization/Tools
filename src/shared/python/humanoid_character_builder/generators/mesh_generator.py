@@ -368,8 +368,8 @@ def generate_human():
     for key, value in modifiers.items():
         try:
             h.setDetail(key, value)
-        except Exception:
-            pass
+        except Exception as exc:
+            print(f"Warning: Failed to set modifier {{key}}={{value}}: {{exc}}")
 
     # Export as OBJ with vertex groups
     export_path = "{output_dir}/humanoid.obj"
@@ -1071,8 +1071,8 @@ class MeshGenerator:
                 generator = generator_class()
                 if generator.is_available:
                     available.append(backend)
-            except Exception:
-                pass
+            except (ImportError, RuntimeError, OSError) as e:
+                logger.debug("Backend %s not available: %s", backend.value, e)
         return available
 
     @classmethod
@@ -1093,7 +1093,8 @@ class MeshGenerator:
                 generator = cls.create(backend)
                 if generator.is_available:
                     return generator
-            except Exception:
+            except (ImportError, RuntimeError, OSError) as e:
+                logger.debug("Backend %s not available: %s", backend.value, e)
                 continue
 
         # Final fallback
