@@ -107,9 +107,9 @@ class GeometrySynchronizer:
             bath_diameter=ec.bath_diameter,
             glass_depth=ec.glass_depth,
             metal_layer_thickness=getattr(ec, "metal_depth", 2.0),
-            num_electrodes=len(ec.electrode_depths)
-            if hasattr(ec, "electrode_depths")
-            else 3,
+            num_electrodes=(
+                len(ec.electrode_depths) if hasattr(ec, "electrode_depths") else 3
+            ),
             electrode_spacing_degrees=ec.electrode_spacing_degrees,
             electrode_diameter=ec.tip_diameter,
             electrode_insertion_depth=self._compute_insertion_depth(ec),
@@ -284,7 +284,7 @@ class GeometrySynchronizer:
             if len(nonzero) > 0:
                 return float(np.mean(nonzero))
         # Fallback: 40% of radius
-        return ec.bath_diameter / 2.0 * 0.4
+        return float(ec.bath_diameter / 2.0 * 0.4)
 
     @staticmethod
     def _compute_minimum_tip_clearance(ec: Any) -> float:
@@ -299,4 +299,4 @@ class GeometrySynchronizer:
 
         # Subtract one electrode diameter from the chord for clearance
         clearance = chord - ec.tip_diameter
-        return max(clearance, 0.0)
+        return float(max(clearance, 0.0))

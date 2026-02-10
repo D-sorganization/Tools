@@ -411,4 +411,4 @@ class DataProcessor:
             if c in df.columns:
                 return c
         # Fall back to first column
-        return df.columns[0]
+        return str(df.columns[0])

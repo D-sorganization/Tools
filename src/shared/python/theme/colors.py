@@ -110,7 +110,8 @@ def _load_chart_colors_from_json() -> list[str] | None:
     try:
         with open(json_path, encoding="utf-8") as f:
             data = json.load(f)
-        return data.get("chartColors")
+        chart_colors: list[str] | None = data.get("chartColors")
+        return chart_colors
     except (PermissionError, OSError):
         return None
 

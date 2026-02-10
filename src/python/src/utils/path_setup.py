@@ -34,7 +34,7 @@ def get_repo_root(start_path: Path | str | None = None) -> Path:
     try:
         from upstream_drift_tools.utils.paths import get_repo_root as _canonical
 
-        return _canonical(start_path)
+        return Path(_canonical(start_path))
     except (ImportError, FileNotFoundError):
         pass
 

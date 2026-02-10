@@ -39,7 +39,6 @@ jobs:
           pip install -r requirements.txt
           pip install fastapi
           pip install httpx
-          pip install fastapi
           pip install ruff==0.14.10 black==26.1.0 mypy==1.13.0 bandit==1.7.7 pip-audit types-PyYAML types-requests
 
       - name: Lint (Ruff)

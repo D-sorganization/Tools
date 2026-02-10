@@ -16,24 +16,24 @@ logger = logging.getLogger(__name__)
 class ElectrodeVisualization:
     """Handles all 3D visualization and drawing operations for electrode systems"""
 
-    def __init__(self, ax=None) -> None:
+    def __init__(self, ax: Any = None) -> None:
         """Initialize with optional matplotlib 3D axis"""
         self.ax = ax
 
-    def set_axis(self, ax) -> None:
+    def set_axis(self, ax: Any) -> None:
         """Set the matplotlib 3D axis for drawing"""
         self.ax = ax
 
     def draw_cylinder(
         self,
-        ax,
-        radius,
-        height,
-        z0,
-        color,
-        alpha=1.0,
-        linewidth=0,
-        wireframe=False,
+        ax: Any,
+        radius: float,
+        height: float,
+        z0: float,
+        color: str,
+        alpha: float = 1.0,
+        linewidth: float = 0,
+        wireframe: bool = False,
     ) -> None:
         """Draw a 3D cylinder"""
         if radius <= 0 or height <= 0:
@@ -59,7 +59,15 @@ class ElectrodeVisualization:
         else:
             ax.plot_surface(x_mesh, y_mesh, z_mesh, color=color, alpha=alpha)
 
-    def draw_cylinder_between(self, ax, base, tip, radius, color, alpha=1.0) -> None:
+    def draw_cylinder_between(
+        self,
+        ax: Any,
+        base: Any,
+        tip: Any,
+        radius: float,
+        color: str,
+        alpha: float = 1.0,
+    ) -> None:
         """Draw cylinder from base point to tip point"""
         base = np.array(base)
         tip = np.array(tip)
@@ -88,13 +96,13 @@ class ElectrodeVisualization:
 
     def draw_trapezoidal_prism(
         self,
-        ax,
-        pos1,
-        pos2,
-        bath_radius,
-        glass_depth,
-        color,
-        alpha=1.0,
+        ax: Any,
+        pos1: dict[str, Any],
+        pos2: dict[str, Any],
+        bath_radius: float,
+        glass_depth: float,
+        color: str,
+        alpha: float = 1.0,
     ) -> None:
         """Draw the real trapezoidal prism between two electrodes in glass"""
         # Get wall intersection points
@@ -125,14 +133,14 @@ class ElectrodeVisualization:
 
     def draw_via_metal_path(
         self,
-        ax,
-        pos1,
-        pos2,
-        bath_radius,
-        metal_depth,
-        glass_depth,
-        color,
-        alpha=1.0,
+        ax: Any,
+        pos1: dict[str, Any],
+        pos2: dict[str, Any],
+        bath_radius: float,
+        metal_depth: float,
+        glass_depth: float,
+        color: str,
+        alpha: float = 1.0,
     ) -> None:
         """Draw the real via-metal path as three segments"""
         # Down from tip1 to metal
@@ -176,18 +184,18 @@ class ElectrodeVisualization:
 
     def draw_correct_trapezoidal_path(
         self,
-        ax,
+        ax: Any,
         electrode1_pos: dict,
         electrode2_pos: dict,
         glass_height: float,
         electrode_radius: float,
         bath_radius: float,
         horizontal_spreading_factor: float,
-        color="blue",
-        alpha=0.3,
-        label="",
-        current_value=0.0,
-        show_current_values=False,
+        color: str = "blue",
+        alpha: float = 0.3,
+        label: str = "",
+        current_value: float = 0.0,
+        show_current_values: bool = False,
     ) -> None:
         """Draw the correct trapezoidal glass path between electrodes with horizontal spreading"""
         try:
@@ -293,18 +301,18 @@ class ElectrodeVisualization:
 
     def draw_correct_via_metal_path(
         self,
-        ax,
+        ax: Any,
         electrode1_pos: dict,
         electrode2_pos: dict,
         metal_height: float,
         electrode_radius: float,
         bath_radius: float,
         horizontal_spreading_factor: float,
-        color="red",
-        alpha=0.3,
-        label="",
-        current_value=0.0,
-        show_current_values=False,
+        color: str = "red",
+        alpha: float = 0.3,
+        label: str = "",
+        current_value: float = 0.0,
+        show_current_values: bool = False,
     ) -> None:
         """Draw the correct 3-segment via-metal path with vertical extrusions only"""
         try:
@@ -477,7 +485,7 @@ class ElectrodeVisualization:
         except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             pass
 
-    def draw_3d_vessel(self, ax, radius, total_height) -> None:
+    def draw_3d_vessel(self, ax: Any, radius: float, total_height: float) -> None:
         """Draw the cylindrical vessel in 3D"""
         # Create cylinder wall
         theta = np.linspace(0, 2 * np.pi, 50)
@@ -499,7 +507,9 @@ class ElectrodeVisualization:
         # Top circle
         ax.plot(x_circle, y_circle, total_height, "k-", alpha=0.5, linewidth=2)
 
-    def draw_3d_metal_layer(self, ax, radius, height, metal_alpha=0.6) -> None:
+    def draw_3d_metal_layer(
+        self, ax: Any, radius: float, height: float, metal_alpha: float = 0.6
+    ) -> None:
         """Draw the metal layer as a fully shaded grey cylinder volume"""
         if height <= 0:
             return
@@ -573,11 +583,11 @@ class ElectrodeVisualization:
 
     def draw_3d_glass_layer(
         self,
-        ax,
-        radius,
-        metal_height,
-        glass_height,
-        glass_alpha=0.4,
+        ax: Any,
+        radius: float,
+        metal_height: float,
+        glass_height: float,
+        glass_alpha: float = 0.4,
     ) -> None:
         """Draw the full glass layer volume above the metal as translucent orange molten glass"""
         total_height = metal_height + glass_height
@@ -654,15 +664,15 @@ class ElectrodeVisualization:
 
     def draw_3d_electrodes(
         self,
-        ax,
-        depths,
-        electrode_radius,
-        bath_radius,
-        metal_height,
-        glass_height,
-        electrode_alpha=0.8,
-        extension_length=5.0,
-        show_electrode_labels=False,
+        ax: Any,
+        depths: Any,
+        electrode_radius: float,
+        bath_radius: float,
+        metal_height: float,
+        glass_height: float,
+        electrode_alpha: float = 0.8,
+        extension_length: float = 5.0,
+        show_electrode_labels: bool = False,
     ) -> None:
         """Draw the three electrodes as horizontal cylinders with spherical tips"""
         # Electrode positions (120 degrees apart)
@@ -731,16 +741,16 @@ class ElectrodeVisualization:
 
     def draw_horizontal_cylinder(
         self,
-        ax,
-        x_start,
-        y_start,
-        x_end,
-        y_end,
-        z_center,
-        radius,
-        color,
-        alpha,
-        label,
+        ax: Any,
+        x_start: float,
+        y_start: float,
+        x_end: float,
+        y_end: float,
+        z_center: float,
+        radius: float,
+        color: str,
+        alpha: float,
+        label: str,
     ) -> None:
         """Draw a horizontal cylindrical electrode with proper 3D geometry"""
         # Number of segments for smooth cylinder
@@ -810,13 +820,13 @@ class ElectrodeVisualization:
 
     def draw_electrode_sphere(
         self,
-        ax,
-        x_center,
-        y_center,
-        z_center,
-        radius,
-        color,
-        alpha,
+        ax: Any,
+        x_center: float,
+        y_center: float,
+        z_center: float,
+        radius: float,
+        color: str,
+        alpha: float,
     ) -> None:
         """Draw a spherical tip at the electrode end"""
         # Create sphere
@@ -859,11 +869,11 @@ class ElectrodeVisualization:
 
     def draw_3d_refractory_layer(
         self,
-        ax,
-        inner_radius,
-        total_height,
-        thickness,
-        refractory_alpha=0.3,
+        ax: Any,
+        inner_radius: float,
+        total_height: float,
+        thickness: float,
+        refractory_alpha: float = 0.3,
     ) -> None:
         """Draw the refractory layer as a translucent light brown tube around the reactor"""
         try:

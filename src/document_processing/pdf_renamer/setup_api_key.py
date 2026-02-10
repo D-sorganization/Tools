@@ -56,7 +56,9 @@ def main() -> None:
         logger.info("✓ AI features are now enabled")
         logger.info("\nYou can now use the PDF Renamer with AI-powered extraction:")
         logger.info("  • GUI: python launch_gui.py")
-        logger.info("  • CLI: python -m src.pdf_renamer.cli /path/to/pdfs --provider gemini")
+        logger.info(
+            "  • CLI: python -m src.pdf_renamer.cli /path/to/pdfs --provider gemini"
+        )
     else:
         logger.info("\n" + "=" * 60)
         logger.error("Setup Cancelled or Failed")
