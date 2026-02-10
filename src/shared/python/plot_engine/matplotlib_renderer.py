@@ -385,9 +385,10 @@ class MatplotlibRenderer:
         """Get color cycle from theme or default matplotlib."""
         if self._theme_manager:
             colors_dict = self._theme_manager.get_colors()
-            return colors_dict.get("primary_colors", []) + colors_dict.get(
+            result: list[str] = colors_dict.get("primary_colors", []) + colors_dict.get(
                 "secondary_colors", []
             )
+            return result
         # Default color cycle
         return [
             "#1f77b4",

@@ -3808,8 +3808,10 @@ class ElectrodeAdvisorWidget(QWidget):
                             )
                         )
                     # Fallback to default model
-                    return self.glass_interface._default_conductivity_model(
-                        temperature, power_density
+                    return float(
+                        self.glass_interface._default_conductivity_model(
+                            temperature, power_density
+                        )
                     )
 
                 # Set the callback

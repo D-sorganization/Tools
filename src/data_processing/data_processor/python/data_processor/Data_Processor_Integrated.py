@@ -1710,7 +1710,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             file_to_keep = max(
                                 file_list, key=lambda f: os.path.getmtime(f)
                             )
-                        except (OSError):
+                        except OSError:
                             continue
 
                         for file_path in file_list:

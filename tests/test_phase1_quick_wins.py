@@ -108,6 +108,7 @@ class TestDataIO:
 
     def test_read_data_prefers_parquet_sibling(self, tmp_path):
         """read_data should prefer .parquet sibling when prefer_parquet=True."""
+        pytest.importorskip("pyarrow", reason="pyarrow not installed")
         import pandas as pd
 
         csv_path = tmp_path / "data.csv"
@@ -142,6 +143,7 @@ class TestDataIO:
 
     def test_write_data_parquet(self, tmp_path):
         """write_data can write Parquet files."""
+        pytest.importorskip("pyarrow", reason="pyarrow not installed")
         import pandas as pd
         from upstream_drift_tools.data_io import write_data
 

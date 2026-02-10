@@ -55,6 +55,8 @@ def check_dependency(name: str, import_statement: str) -> bool:
     except ImportError as e:
         logger.error(f"{RED}[FAIL]{RESET} {name} - {e}")
         return False
+
+
 def main() -> None:
     """Run installation verification."""
     logger.info(f"\n{BOLD}PDF Renamer - Installation Verification{RESET}\n")
@@ -96,12 +98,16 @@ def main() -> None:
     if gemini_key:
         logger.info(f"{GREEN}[OK]{RESET} GEMINI_API_KEY set (AI features available)")
     else:
-        logger.warning(f"{YELLOW}[WARN]{RESET} GEMINI_API_KEY not set (AI features disabled)")
+        logger.warning(
+            f"{YELLOW}[WARN]{RESET} GEMINI_API_KEY not set (AI features disabled)"
+        )
 
     # Summary
     logger.info("\n" + "=" * 50)
     if all_good:
-        logger.info(f"\n{GREEN}{BOLD}[SUCCESS] All required dependencies installed!{RESET}")
+        logger.info(
+            f"\n{GREEN}{BOLD}[SUCCESS] All required dependencies installed!{RESET}"
+        )
         logger.info(f"\n{BOLD}Ready to use:{RESET}")
         logger.info("  - GUI: python launch_gui.py")
         logger.info("  - CLI: python -m src.pdf_renamer.cli /path/to/pdfs --dry-run")

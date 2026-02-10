@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import Any
 
 from PyQt6.QtCore import Qt, QTimer, QUrl
 from PyQt6.QtWebSockets import QWebSocket
@@ -359,8 +360,9 @@ class ChatDockWidget(QDockWidget):
         # Remove existing bubbles (keep the stretch)
         while self._message_layout.count() > 1:
             item = self._message_layout.takeAt(0)
-            if item and item.widget():
-                item.widget().deleteLater()
+            widget = item.widget() if item else None
+            if widget is not None:
+                widget.deleteLater()
 
         for msg in messages:
             role = msg.get("role", "user")
@@ -373,17 +375,15 @@ class ChatDockWidget(QDockWidget):
         QTimer.singleShot(
             10,
             lambda: (
-                self._scroll_area.verticalScrollBar().setValue(
-                    self._scroll_area.verticalScrollBar().maximum()
-                )
-                if self._scroll_area.verticalScrollBar()
+                scrollbar.setValue(scrollbar.maximum())
+                if (scrollbar := self._scroll_area.verticalScrollBar()) is not None
                 else None
             ),
         )
 
     # ── Cleanup ──────────────────────────────────────────────────────
 
-    def closeEvent(self, event) -> None:  # type: ignore[override]
+    def closeEvent(self, event: Any) -> None:
         """Clean up WebSocket on close."""
         self._reconnect_timer.stop()
         if self._socket:

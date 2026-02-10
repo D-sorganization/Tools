@@ -33,7 +33,8 @@ def load_themes() -> dict:
         return {"themes": {}, "chartColors": []}
 
     with open(_THEMES_JSON_PATH, encoding="utf-8") as f:
-        return json.load(f)
+        result: dict = json.load(f)
+        return result
 
 
 def get_theme_names() -> list[str]:
@@ -54,7 +55,7 @@ def get_theme_by_name(name: str) -> dict | None:
     data = load_themes()
     for theme_def in data.get("themes", {}).values():
         if theme_def["name"] == name:
-            return theme_def
+            return dict(theme_def)
     return None
 
 

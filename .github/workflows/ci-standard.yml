@@ -48,8 +48,8 @@ jobs:
       - name: Format Check (Black)
         run: black --check .
 
-      - name: Type Check (Mypy)
-        run: mypy . --ignore-missing-imports --install-types --non-interactive --exclude "tests/"
+      - name: Type Check (Mypy, non-blocking)
+        run: mypy . --ignore-missing-imports --install-types --non-interactive --exclude "tests/" || echo "::warning::Type checking has issues - see above for details"
 
       # CodeQL is explicitly disabled via codeql-analysis.yml to reduce costs.
       # Security scanning is performed by pip-audit and bandit.

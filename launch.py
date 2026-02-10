@@ -43,7 +43,7 @@ def discover_all_tools() -> int:
         Number of tools discovered.
     """
     src_dir = _REPO_ROOT / "src"
-    return auto_discover_guis([src_dir])
+    return int(auto_discover_guis([src_dir]))
 
 
 def list_tools() -> None:
@@ -117,7 +117,7 @@ def launch_tool(tool_identifier: str) -> int:
         return 1
 
     print(f"Launching: {registration.display_name}")
-    return launch_pyqt6_app(config)
+    return int(launch_pyqt6_app(config))
 
 
 def main() -> int:

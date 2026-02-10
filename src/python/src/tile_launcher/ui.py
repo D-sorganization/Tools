@@ -295,7 +295,7 @@ class LauncherWindow(QMainWindow):
     def _open_file(target_path: Path) -> None:
         """Open a file using the system default handler."""
         if sys.platform.startswith("win"):
-            os.startfile(target_path)  # type: ignore[attr-defined]
+            os.startfile(target_path)
         elif sys.platform == "darwin":
             subprocess.Popen(["open", str(target_path)])
         else:
