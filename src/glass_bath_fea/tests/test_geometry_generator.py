@@ -11,7 +11,6 @@ import pytest
 
 # Bootstrap for test discovery
 _REPO_ROOT = Path(__file__).resolve().parents[3]
-import sys
 
 from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
 
