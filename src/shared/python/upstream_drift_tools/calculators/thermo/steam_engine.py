@@ -447,7 +447,7 @@ class SteamCalculationEngine:
         """Calculate saturated steam properties from temperature using Cantera"""
         try:
             # Set state to saturated conditions at given temperature
-            self.water.TX = temperature, 1.0  # Saturated vapor
+            self.water.TQ = temperature, 1.0  # Saturated vapor
 
             # Get saturation pressure
             pressure = self.water.P
@@ -467,7 +467,7 @@ class SteamCalculationEngine:
         """Calculate saturated steam properties from pressure using Cantera"""
         try:
             # Set state to saturated conditions at given pressure
-            self.water.PX = pressure, 1.0  # Saturated vapor
+            self.water.PQ = pressure, 1.0  # Saturated vapor
 
             # Get saturation temperature
             temperature = self.water.T
@@ -531,7 +531,7 @@ class SteamCalculationEngine:
             if CANTERA_AVAILABLE and self.water is not None:
                 # Check for None explicitly for mypy, though self.water is Any now
                 if self.water:
-                    self.water.TX = temperature, 1.0
+                    self.water.TQ = temperature, 1.0
                     return float(self.water.P)
             # Use Antoine equation
             log_p_mmhg = ANTOINE_A - ANTOINE_B / (temperature - ANTOINE_C_KELVIN)
@@ -546,7 +546,7 @@ class SteamCalculationEngine:
         try:
             if CANTERA_AVAILABLE and self.water is not None:
                 if self.water:
-                    self.water.PX = pressure, 1.0
+                    self.water.PQ = pressure, 1.0
                     return float(self.water.T)
             # Use inverse Antoine equation
             pressure_mmhg = pressure * PASCAL_TO_MMHG_FACTOR
