@@ -9,12 +9,9 @@ import sys
 from pathlib import Path
 from typing import Any
 
-# Bootstrap imports for development mode (before pip install -e .)
-_REPO_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
-from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
+from _bootstrap import bootstrap  # noqa: E402
 
-ensure_paths(_REPO_ROOT)
+_REPO_ROOT = bootstrap(__file__)
 
 from utils.file_utils import safe_read_json  # noqa: E402
 

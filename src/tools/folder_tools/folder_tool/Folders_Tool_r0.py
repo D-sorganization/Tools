@@ -23,12 +23,9 @@ MAX_LOG_ENTRIES: Final[int] = (
     # - UI performance limit
 )
 
-# Bootstrap imports for development mode (before pip install -e .)
-_REPO_ROOT = Path(__file__).resolve().parents[4]
-sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
-from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
+from _bootstrap import bootstrap  # noqa: E402
 
-ensure_paths(_REPO_ROOT)
+_REPO_ROOT = bootstrap(__file__)
 
 try:
     from utils.file_utils import safe_write_text

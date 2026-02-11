@@ -5,7 +5,6 @@ from unittest.mock import MagicMock, patch
 
 # Bootstrap for test discovery
 _REPO_ROOT = Path(__file__).resolve().parents[5]
-sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
 from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
 
 ensure_paths(_REPO_ROOT)

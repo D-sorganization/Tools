@@ -40,12 +40,9 @@ try:
 except ImportError:
     HAS_PYQT6 = False
 
-# Bootstrap imports for development mode
-_REPO_ROOT = Path(__file__).resolve().parents[5]
-sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
-from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
+from _bootstrap import bootstrap  # noqa: E402
 
-ensure_paths(_REPO_ROOT)
+_REPO_ROOT = bootstrap(__file__)
 
 
 class GlassBathFEAWidget(QWidget):

@@ -6,12 +6,9 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-# Bootstrap imports for development mode (before pip install -e .)
-_REPO_ROOT = Path(__file__).resolve().parents[3]
-sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
-from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
+from _bootstrap import bootstrap  # noqa: E402
 
-ensure_paths(_REPO_ROOT)
+_REPO_ROOT = bootstrap(__file__)
 
 from gui_launcher import launch_from_gui_info  # noqa: E402
 

@@ -107,6 +107,7 @@ exclude = [
 [tool.pytest.ini_options]
 # Add source directories to Python path for imports
 pythonpath = [
+    ".",
     "src",
     "src/python/src",
     "src/shared/python",
