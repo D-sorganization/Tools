@@ -94,9 +94,10 @@ class TestWebLauncherDRY:
                 rel = str(path.relative_to(REPO_ROOT))
                 problems.append(rel)
 
-        assert problems == [], (
-            "launch_web.py files not importing GUI_INFO:\n"
-            + "\n".join(f"  - {p}" for p in problems)
+        assert (
+            problems == []
+        ), "launch_web.py files not importing GUI_INFO:\n" + "\n".join(
+            f"  - {p}" for p in problems
         )
 
 
@@ -250,9 +251,10 @@ class TestPyQt6LauncherDRY:
                 rel = str(path.relative_to(REPO_ROOT))
                 problems.append(rel)
 
-        assert problems == [], (
-            "launch_pyqt6.py files not using ensure_paths:\n"
-            + "\n".join(f"  - {p}" for p in problems)
+        assert (
+            problems == []
+        ), "launch_pyqt6.py files not using ensure_paths:\n" + "\n".join(
+            f"  - {p}" for p in problems
         )
 
 
