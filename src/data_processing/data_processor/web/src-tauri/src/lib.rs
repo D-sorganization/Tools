@@ -30,8 +30,7 @@ struct TrendlineResult {
 fn compute_plot(spec_json: String) -> Result<String, String> {
     let script = format!(
         r#"
-import sys, json
-sys.path.insert(0, '../../../../src')
+import json
 from shared.python.plot_engine.plotly_converter import PlotlyConverter
 from shared.python.plot_engine.specs import PlotSpec
 spec = PlotSpec.model_validate_json('{}')
@@ -62,9 +61,8 @@ fn compute_trendline(
 
     let script = format!(
         r#"
-import sys, json
+import json
 import numpy as np
-sys.path.insert(0, '../../../../src')
 from shared.python.plot_engine.trendline import compute_trendline
 x = np.array({x_json})
 y = np.array({y_json})
@@ -90,10 +88,8 @@ print(json.dumps({{
 fn apply_filter(data_json: String, filter_config_json: String) -> Result<String, String> {
     let script = format!(
         r#"
-import sys, json
+import json
 import pandas as pd
-sys.path.insert(0, '../../../../src')
-sys.path.insert(0, '../../../../src/data_processing/data_processor/python')
 from data_processor.core.signal_processor import SignalProcessor
 data = pd.DataFrame(json.loads('{data_json}'))
 config = json.loads('{filter_config_json}')
@@ -107,9 +103,18 @@ print(result.to_json(orient='records'))
 }
 
 /// Helper: run a Python script and capture stdout.
+///
+/// Sets PYTHONPATH so that imports resolve without sys.path hacks.
+/// Assumes the binary runs from the `src-tauri` directory (4 levels
+/// below `src/`).
 fn run_python_script(script: &str) -> Result<String, String> {
+    let src_root = "../../../../src";
+    let data_proc = "../../../../src/data_processing/data_processor/python";
+    let pythonpath = format!("{}:{}", src_root, data_proc);
+
     let output = Command::new("python")
         .args(["-c", script])
+        .env("PYTHONPATH", &pythonpath)
         .output()
         .map_err(|e| format!("Failed to spawn Python: {}", e))?;
 

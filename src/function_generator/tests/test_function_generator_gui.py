@@ -5,20 +5,16 @@ Tests the PyQt6 GUI launcher and its integration with the SignalGenerator engine
 
 from __future__ import annotations
 
+import importlib.util
 import os
+import sys
 from pathlib import Path
 from unittest.mock import patch
 
 import numpy as np
 import pytest
 
-# Bootstrap for test discovery
 _REPO_ROOT = Path(__file__).resolve().parents[3]
-import sys
-
-from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
-
-ensure_paths(_REPO_ROOT)
 
 os.environ["HEADLESS"] = "true"
 
@@ -121,11 +117,14 @@ class TestFunctionGeneratorGUI:
 
     def test_launcher_dependencies(self) -> None:
         """Test that the launcher can check dependencies."""
-        sys.path.insert(0, str(Path(__file__).parent.parent))
+        launcher_path = Path(__file__).resolve().parents[1] / "launch_pyqt6.py"
+        spec = importlib.util.spec_from_file_location(
+            "function_generator_launch_pyqt6", launcher_path
+        )
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
 
-        from launch_pyqt6 import check_dependencies
-
-        missing = check_dependencies()
+        missing = mod.check_dependencies()
         assert isinstance(missing, list)
 
     def test_module_imports(self) -> None:
