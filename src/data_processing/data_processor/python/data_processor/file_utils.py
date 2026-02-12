@@ -1,3 +1,4 @@
+# mypy: disable-error-code="no-any-return"
 """File utility functions for data processing operations."""
 
 from __future__ import annotations

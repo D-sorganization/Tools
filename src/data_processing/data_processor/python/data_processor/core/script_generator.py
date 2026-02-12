@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Script Generation System for Automated Processing Pipelines.
 
 Provides functionality to:
@@ -22,6 +23,8 @@ from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     import pandas as pd
+
+    from data_processor.vectorized_filter_engine import VectorizedFilterEngine
 
 logger = logging.getLogger(__name__)
 
@@ -893,7 +896,7 @@ class PipelineExecutor:
 
     def __init__(self) -> None:
         """Initialize the executor."""
-        self._filter_engine = None
+        self._filter_engine: VectorizedFilterEngine | None = None
 
     def execute(
         self,

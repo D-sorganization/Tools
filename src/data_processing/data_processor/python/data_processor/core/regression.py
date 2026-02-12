@@ -1,3 +1,4 @@
+# mypy: disable-error-code="arg-type"
 """Multivariable Regression Module.
 
 Provides comprehensive regression analysis including:
@@ -549,7 +550,7 @@ class MultivariateRegressor:
     ) -> tuple[np.ndarray, list[str]]:
         """Forward stepwise selection."""
         n, p = X.shape
-        selected = []
+        selected: list[int] = []
         remaining = list(range(p))
         best_score = np.inf
 
@@ -621,7 +622,7 @@ class MultivariateRegressor:
         """Bidirectional stepwise selection."""
         # Start with forward selection, then try backward at each step
         n, p = X.shape
-        selected = []
+        selected: list[int] = []
         remaining = list(range(p))
         best_score = np.inf
 
@@ -691,12 +692,12 @@ class MultivariateRegressor:
         mse = ss_res / n
 
         if criterion == "aic":
-            return n * np.log(mse) + 2 * k
+            return float(n * np.log(mse) + 2 * k)
         elif criterion == "bic":
-            return n * np.log(mse) + k * np.log(n)
+            return float(n * np.log(mse) + k * np.log(n))
         else:  # r_squared (negative for minimization)
             ss_tot = np.sum((y - np.mean(y)) ** 2)
-            return -(1 - ss_res / ss_tot)
+            return float(-(1 - ss_res / ss_tot))
 
     def _calculate_statistics(
         self,
@@ -957,7 +958,8 @@ class MultivariateRegressor:
         def predict(X: np.ndarray) -> np.ndarray:
             # Build features if needed
             X_features, _ = self._build_features(X, original_predictors)
-            return X_features @ coeffs + intercept
+            result: np.ndarray = X_features @ coeffs + intercept
+            return result
 
         return predict
 

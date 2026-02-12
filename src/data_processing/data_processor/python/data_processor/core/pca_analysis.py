@@ -361,7 +361,7 @@ class PCAAnalyzer:
         # If n_components was a float (variance threshold), select components
         if isinstance(self.config.n_components, float):
             cumsum = np.cumsum(explained_variance_ratio)
-            n_components = np.searchsorted(cumsum, self.config.n_components) + 1
+            n_components = int(np.searchsorted(cumsum, self.config.n_components)) + 1
             n_components = min(n_components, len(explained_variance))
 
         return (
@@ -439,7 +439,7 @@ class PCAAnalyzer:
 
         # Find maximum curvature (elbow)
         if len(second_deriv) > 0:
-            elbow = np.argmax(np.abs(second_deriv)) + 2  # +2 for diff offset
+            elbow = int(np.argmax(np.abs(second_deriv))) + 2  # +2 for diff offset
             return min(elbow, len(variance_ratio))
 
         return 1

@@ -357,7 +357,7 @@ class ANOVAAnalyzer:
         """
         # Remove missing values
         data = df[[dependent_var, factor_a, factor_b]].dropna()
-        y = data[dependent_var].values
+        y: np.ndarray = np.asarray(data[dependent_var].values)
 
         # Get factor levels
         levels_a = data[factor_a].unique()

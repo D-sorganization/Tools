@@ -1660,7 +1660,7 @@ class FolderPackerPro:
 
         def remove_pattern() -> None:
             """Remove selected exclusion pattern."""
-            selection = listbox.curselection()  # type: ignore[no-untyped-call]
+            selection = listbox.curselection()
             if selection:
                 pattern = listbox.get(selection[0])
                 self.exclude_patterns.discard(pattern)

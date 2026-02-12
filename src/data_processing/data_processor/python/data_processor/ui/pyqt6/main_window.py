@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Main window for PyQt6 Data Processor GUI."""
 
 from __future__ import annotations

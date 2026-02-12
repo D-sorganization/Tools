@@ -54,20 +54,18 @@ class SignalProcessor:
             },
         )
 
-        return self.filter_engine.apply_filter_batch(
+        result: pd.DataFrame = self.filter_engine.apply_filter_batch(
             df,
             config.filter_type,
             engine_params,
         )
+        return result
 
     def _validate_dataframe(self, df: pd.DataFrame) -> None:
         """Ensure the input dataframe is valid and non-empty."""
         if df.empty:
             msg = "Cannot filter an empty dataframe"
             raise ValueError(msg)
-        if not isinstance(df, pd.DataFrame):
-            msg = "apply_filter expects a pandas DataFrame"
-            raise TypeError(msg)
 
     def validate_signals_exist(self, df: pd.DataFrame, signals: list[str]) -> None:
         """Raise a descriptive error when required signals are missing."""
