@@ -9,6 +9,7 @@ Provides calculation methods without GUI dependencies.
 from __future__ import annotations
 
 import logging
+import math
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
@@ -23,6 +24,31 @@ from .constants import (
     WATER_VAPOR_C,
     WATER_VAPOR_D,
 )
+
+# Maximum exponent for safe float64 exp() calls.  math.exp(709) is finite
+# but math.exp(710) overflows.  We use 700 as a conservative upper bound.
+_EXP_MAX_ARG: float = 700.0
+
+
+def _safe_exp(x: float) -> float:
+    """Compute exp(x) with clamping to prevent overflow.
+
+    For x > _EXP_MAX_ARG the result is clamped to exp(_EXP_MAX_ARG) which is
+    approximately 1.01e+304.  For x < -_EXP_MAX_ARG the result is clamped to
+    exp(-_EXP_MAX_ARG) which is effectively 0.
+
+    This avoids ``RuntimeWarning: overflow encountered in exp`` when extreme
+    temperature values are passed through the Buck, Magnus, or IAPWS
+    equations.
+
+    Precondition:
+        x must be a finite float (no NaN / inf).
+    Postcondition:
+        Return value is a finite, non-negative float.
+    """
+    clamped = max(-_EXP_MAX_ARG, min(x, _EXP_MAX_ARG))
+    return math.exp(clamped)
+
 
 logger = logging.getLogger(__name__)
 
@@ -261,7 +287,8 @@ class SyngasWaterCalculator:
             self.antoine_constants["C"],
         )
         log10_p_mmhg = A - B / (C + temperature_c)
-        p_mmhg = 10**log10_p_mmhg
+        # Convert log10 to natural log and use safe exp to prevent overflow.
+        p_mmhg = _safe_exp(log10_p_mmhg * math.log(10))
         return p_mmhg * 133.322  # Convert to Pa
 
     def _buck_equation(self, temperature_c: float) -> float:
@@ -273,9 +300,8 @@ class SyngasWaterCalculator:
             # Below freezing
             a, b, c, d = WATER_VAPOR_A, WATER_VAPOR_B, WATER_VAPOR_C, WATER_VAPOR_D
 
-        p_kpa = a * np.exp(
-            (b - temperature_c / d) * temperature_c / (c + temperature_c)
-        )
+        exponent = (b - temperature_c / d) * temperature_c / (c + temperature_c)
+        p_kpa = a * _safe_exp(exponent)
         return p_kpa * 1000  # Convert to Pa
 
     def _iapws_equation(self, temperature_c: float) -> float:
@@ -314,7 +340,7 @@ class SyngasWaterCalculator:
                 + a[5] * theta**7.5
             )
         )
-        return Pc * np.exp(lnP)
+        return Pc * _safe_exp(lnP)
 
     def _magnus_equation(self, temperature_c: float) -> float:
         """Magnus equation for vapor pressure (very accurate for 0-100°C)"""
@@ -326,7 +352,8 @@ class SyngasWaterCalculator:
             msg = f"Magnus equation valid for 0°C to 100°C, got {temperature_c}°C"
             raise ValueError(msg)
 
-        p_hpa = 6.1094 * np.exp(17.625 * temperature_c / (temperature_c + 243.04))
+        exponent = 17.625 * temperature_c / (temperature_c + 243.04)
+        p_hpa = 6.1094 * _safe_exp(exponent)
 
         # Convert hPa to Pa
         return p_hpa * 100
