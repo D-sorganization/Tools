@@ -1,5 +1,12 @@
 """Bootstrap module for launch scripts that run before package installation.
 
+**Legitimate sys.path exception** (issue #682): This module is the *only*
+sanctioned place for ``sys.path.insert`` in the repository.  It exists
+solely for ``launch_pyqt6.py`` entry-point scripts that may execute
+before the package has been installed via ``pip install -e .``.  Library
+and test code must NOT call :func:`ensure_paths` -- they should rely on
+the installed package instead.
+
 Usage in launch_pyqt6.py scripts::
 
     from pathlib import Path
