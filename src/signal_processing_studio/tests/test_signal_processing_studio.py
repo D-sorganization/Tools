@@ -6,19 +6,15 @@ and the unified studio launcher.
 
 from __future__ import annotations
 
+import importlib.util
+import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pytest
 
-# Bootstrap for test discovery
 _REPO_ROOT = Path(__file__).resolve().parents[3]
-import sys
-
-from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
-
-ensure_paths(_REPO_ROOT)
 
 # Force the inner signal_processing_studio package to take precedence.
 # pytest may have already resolved the outer __init__.py from src/.
@@ -319,12 +315,6 @@ class TestLauncher:
 
     def test_launcher_dependency_check(self) -> None:
         """Launcher should detect required dependencies."""
-        import importlib
-
-        launcher_dir = str(_REPO_ROOT / "src" / "signal_processing_studio")
-        if launcher_dir not in sys.path:
-            sys.path.insert(0, launcher_dir)
-
         # Import by file path to avoid polluting sys.modules["launch_pyqt6"]
         # (which would shadow the Function Generator's launch_pyqt6 in other tests)
         spec = importlib.util.spec_from_file_location(
