@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# ruff: noqa: T201
 """
 Launcher Verification Script
 This script helps identify which launcher file is being executed.
