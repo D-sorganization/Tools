@@ -1,3 +1,5 @@
+"""app.py module."""
+
 import logging
 import os
 import shutil

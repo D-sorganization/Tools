@@ -1,3 +1,5 @@
+"""test_collision_geometry.py module."""
+
 import numpy as np
 import pytest
 import trimesh

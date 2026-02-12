@@ -1,3 +1,5 @@
+"""test_logger_utils_mock.py module."""
+
 import importlib
 import sys
 from pathlib import Path

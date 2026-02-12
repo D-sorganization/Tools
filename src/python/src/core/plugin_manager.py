@@ -1,3 +1,5 @@
+"""plugin_manager.py module."""
+
 import json
 import logging
 from dataclasses import dataclass
