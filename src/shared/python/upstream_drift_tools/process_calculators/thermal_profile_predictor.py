@@ -1,6 +1,7 @@
 """thermal_profile_predictor.py module."""
 
 from collections.abc import Callable, Sequence
+from typing import Any
 
 import numpy as np
 from scipy.integrate import solve_ivp
@@ -34,7 +35,7 @@ def predict_temperature_profile(
 ) -> tuple[np.ndarray, np.ndarray]:
     """Predict temperature profile for a heated vessel."""
 
-    def rhs(t, y):
+    def rhs(t: float, y: Any) -> Any:
         return _heating_ode(
             t, y, thermal_mass, heat_loss_coeff, ambient_temp, power_func
         )
@@ -54,7 +55,7 @@ def fit_heating_parameters(
 ) -> tuple[float, float]:
     """Fit thermal_mass and heat_loss_coeff to observed data."""
 
-    def model(t, thermal_mass, heat_loss_coeff) -> np.ndarray:
+    def model(t: Any, thermal_mass: float, heat_loss_coeff: float) -> np.ndarray:
         """Model method.
 
         Returns:

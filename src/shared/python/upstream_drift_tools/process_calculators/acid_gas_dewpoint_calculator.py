@@ -452,7 +452,7 @@ class AcidGasDewpointCalculator:
                 f"Antoine inverse calculation has zero denominator for "
                 f"component={component!r}, partial_pressure_pa={partial_pressure_pa}"
             )
-        return B / denominator - C
+        return float(B / denominator - C)
 
     def calculate_dewpoint_mixture(
         self,
@@ -765,7 +765,7 @@ if GUI_AVAILABLE:
 
             calculation_completed = pyqtSignal(dict)
 
-            def __init__(self, parent=None) -> None:
+            def __init__(self, parent: QWidget | None = None) -> None:
                 """Initialize the class."""
                 super().__init__(calculator_name="AcidGasDewpoint", parent=parent)
                 self.calculator = AcidGasDewpointCalculator()
@@ -796,7 +796,7 @@ if GUI_AVAILABLE:
                 for child_text in self.findChildren(QTextEdit):
                     self.register_copyable_widget(child_text, "text")
 
-            def closeEvent(self, event) -> None:
+            def closeEvent(self, event: Any) -> None:
                 """Save state when tab is closed"""
                 self.save_state()
                 super().closeEvent(event)
@@ -915,7 +915,7 @@ if GUI_AVAILABLE:
 
             calculation_completed = pyqtSignal(dict)
 
-            def __init__(self, parent=None) -> None:
+            def __init__(self, parent: QWidget | None = None) -> None:
                 """Initialize the class."""
                 super().__init__(parent)
                 self.calculator = AcidGasDewpointCalculator()

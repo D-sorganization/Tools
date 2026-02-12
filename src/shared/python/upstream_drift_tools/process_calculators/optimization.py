@@ -48,7 +48,7 @@ def _build_override_mapping(
 
 
 def run_adam_optimization(
-    engine,
+    engine: Any,
     analysis_params: dict[str, object],
     manual_hhv: float,
     parameter_configs: Sequence[dict[str, Any]],
@@ -366,7 +366,7 @@ def find_optimal_on_surface(
         )
 
     # Evaluation wrapper
-    def objective(p):  # Maximization -> Negative for minimization
+    def objective(p: Any) -> float:  # Maximization -> Negative for minimization
         try:
             val = interpolator(p)
             # Handle potential 1-element array return
@@ -389,7 +389,7 @@ def find_optimal_on_surface(
         raise ValueError(f"Unknown optimization method: {method}")
 
 
-def _run_grid_search(interpolator, bounds, callback) -> dict:
+def _run_grid_search(interpolator: Any, bounds: Any, callback: Any) -> dict:
     x_min, x_max = bounds[0]
     y_min, y_max = bounds[1]
 
@@ -430,18 +430,18 @@ def _run_grid_search(interpolator, bounds, callback) -> dict:
     }
 
 
-def _run_lbfgsb(objective, bounds, callback) -> dict:
+def _run_lbfgsb(objective: Any, bounds: Any, callback: Any) -> dict:
     x_mean = (bounds[0][0] + bounds[0][1]) / 2
     y_mean = (bounds[1][0] + bounds[1][1]) / 2
     x0 = [x_mean, y_mean]
 
     eval_count = [0]
 
-    def tracked_obj(p):
+    def tracked_obj(p: Any) -> float:
         eval_count[0] += 1
         if callback and eval_count[0] % 5 == 0:
             callback(eval_count[0], 100)  # Unknown total
-        return objective(p)
+        return float(objective(p))
 
     res = minimize(
         tracked_obj,
@@ -461,14 +461,14 @@ def _run_lbfgsb(objective, bounds, callback) -> dict:
     }
 
 
-def _run_differential_evolution(objective, bounds, callback) -> dict:
+def _run_differential_evolution(objective: Any, bounds: Any, callback: Any) -> dict:
     eval_count = [0]
 
-    def tracked_obj(p):
+    def tracked_obj(p: Any) -> float:
         eval_count[0] += 1
         if callback and eval_count[0] % 10 == 0:
             callback(eval_count[0], 100)
-        return objective(p)
+        return float(objective(p))
 
     res = differential_evolution(
         tracked_obj, bounds, maxiter=50, popsize=10, atol=0.01, tol=0.01

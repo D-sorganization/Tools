@@ -38,6 +38,21 @@ from upstream_drift_tools.utils.unit_constants import (
 from upstream_drift_tools.utils.unit_constants import (
     CELSIUS_OFFSET as CELSIUS_TO_KELVIN_OFFSET,
 )
+from upstream_drift_tools.utils.unit_constants import (
+    DENSITY_WATER_STD as _DENSITY_WATER_STD,
+)
+from upstream_drift_tools.utils.unit_constants import (
+    HOURS_PER_DAY as _HOURS_PER_DAY,
+)
+from upstream_drift_tools.utils.unit_constants import (
+    KG_TO_LB as _KG_TO_LB,
+)
+from upstream_drift_tools.utils.unit_constants import (
+    R_UNIVERSAL_KMOL as _R_UNIVERSAL_KMOL,
+)
+from upstream_drift_tools.utils.unit_constants import (
+    STP_TEMPERATURE_K as _STP_TEMPERATURE_K,
+)
 
 # =============================================================================
 # RE-EXPORTED ALIASES (preserve backwards-compatible names)
@@ -82,6 +97,13 @@ SECONDS_PER_MINUTE: Final[float] = MINUTE_TO_SECOND
 
 # Molar volume alias
 MOLAR_VOLUME_STP_ATM: Final[float] = MOLAR_VOLUME_STP_OLD
+
+# Re-exported from unit_constants (explicit annotations for mypy visibility)
+DENSITY_WATER_STD: Final[float] = _DENSITY_WATER_STD
+KG_TO_LB: Final[float] = _KG_TO_LB
+R_UNIVERSAL_KMOL: Final[float] = _R_UNIVERSAL_KMOL
+HOURS_PER_DAY: Final[int] = _HOURS_PER_DAY
+STP_TEMPERATURE_K: Final[float] = _STP_TEMPERATURE_K
 
 # =============================================================================
 # STANDARD CONDITIONS (additional, not in unit_constants)
@@ -205,12 +227,12 @@ def get_molecular_weight(species: str) -> float:
 
 def celsius_to_kelvin(temp_c: float) -> float:
     """Convert temperature from Celsius to Kelvin."""
-    return temp_c + CELSIUS_TO_KELVIN_OFFSET
+    return float(temp_c + CELSIUS_TO_KELVIN_OFFSET)
 
 
 def kelvin_to_celsius(temp_k: float) -> float:
     """Convert temperature from Kelvin to Celsius."""
-    return temp_k - CELSIUS_TO_KELVIN_OFFSET
+    return float(temp_k - CELSIUS_TO_KELVIN_OFFSET)
 
 
 def fahrenheit_to_kelvin(temp_f: float) -> float:

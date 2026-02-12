@@ -267,7 +267,7 @@ def calculate_heat_capacity_ratio(
 
     if cp_mix <= R_GAS:
         logger.error(f"Invalid Cp = {cp_mix:.2f}, must be > R = {R_GAS:.2f}")
-        return DEFAULT_GAMMA_DIATOMIC  # Default for diatomic gases
+        return float(DEFAULT_GAMMA_DIATOMIC)  # Default for diatomic gases
 
     cv_mix = cp_mix - R_GAS
     gamma = cp_mix / cv_mix
@@ -282,7 +282,7 @@ def calculate_heat_capacity_ratio(
     logger.debug(
         f"Heat capacity ratio γ = {gamma:.4f} (Cp = {cp_mix:.1f}, Cv = {cv_mix:.1f})"
     )
-    return gamma
+    return float(gamma)
 
 
 def calculate_speed_of_sound(
@@ -373,7 +373,7 @@ def calculate_ideal_gas_density(
     """
     density = (pressure * molecular_weight) / (R_UNIVERSAL * temperature)
     logger.debug(f"Ideal gas density = {density:.4f} kg/m³")
-    return density
+    return float(density)
 
 
 def calculate_compressibility_factor(
@@ -461,7 +461,7 @@ def calculate_real_gas_density(
         compressibility * R_UNIVERSAL * temperature
     )
     logger.debug(f"Real gas density = {density:.4f} kg/m³ (Z = {compressibility:.4f})")
-    return density
+    return float(density)
 
 
 # ============================================================================
@@ -562,7 +562,7 @@ def calculate_pure_gas_viscosity_lucas(
     else:
         mu = mu_low
 
-    return mu
+    return float(mu)
 
 
 def calculate_pure_gas_viscosity_sutherland(
@@ -596,7 +596,7 @@ def calculate_pure_gas_viscosity_sutherland(
         CO2: S = 240 K
     """
     mu = mu_ref * ((temperature / T_ref) ** 1.5) * (T_ref + S) / (temperature + S)
-    return mu
+    return float(mu)
 
 
 # Sutherland constants for common gases

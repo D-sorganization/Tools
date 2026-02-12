@@ -51,8 +51,8 @@ try:
     HAS_PYQT = True
 except ImportError:
     HAS_PYQT = False
-    QWidget = object
-    QThread = object
+    QWidget = object  # type: ignore[misc, assignment]
+    QThread = object  # type: ignore[misc, assignment]
 
 # Try to import logging and validation utilities
 try:
@@ -147,7 +147,7 @@ except ImportError:
             }
             return mw.get(species)
 
-    def get_species_database():
+    def get_species_database() -> Any:
         return _MinimalSpeciesDB()
 
 
@@ -497,7 +497,14 @@ class CompressionCalculationWorker(QThread):
     finished = pyqtSignal(dict)
     error = pyqtSignal(str)
 
-    def __init__(self, engine, stages, flow_rate, composition, intercooling) -> None:
+    def __init__(
+        self,
+        engine: Any,
+        stages: Any,
+        flow_rate: float,
+        composition: Any,
+        intercooling: bool,
+    ) -> None:
         """Initialize the class."""
         super().__init__()
         self.engine = engine
@@ -529,7 +536,7 @@ if BASE_CALCULATOR_AVAILABLE:
 
         calculation_finished = pyqtSignal(dict)
 
-        def __init__(self, parent=None) -> None:
+        def __init__(self, parent: Any = None) -> None:
             """Initialize the class."""
             super().__init__(calculator_name="SyngasCompression", parent=parent)
             self.engine = SyngasCompressionEngine()
@@ -557,7 +564,7 @@ if BASE_CALCULATOR_AVAILABLE:
                 ):
                     self.register_copyable_widget(label, "label")
 
-        def closeEvent(self, event) -> None:
+        def closeEvent(self, event: Any) -> None:
             """Handle widget close event.
 
             Saves the current state before closing the widget.
@@ -568,7 +575,7 @@ if BASE_CALCULATOR_AVAILABLE:
             self.save_state()
             super().closeEvent(event)
 
-        def showEvent(self, event) -> None:
+        def showEvent(self, event: Any) -> None:
             """Handle widget show event.
 
             Ensures proper layout and visibility when the widget becomes visible,
@@ -1067,7 +1074,7 @@ if BASE_CALCULATOR_AVAILABLE:
             output = "".join(output_parts)
             self.analysis_text.setText(output)
 
-        def create_plots(self, result) -> None:
+        def create_plots(self, result: dict[str, Any]) -> None:
             """Create visualization plots"""
             # Clear previous plots
             self.figure.clear()
@@ -1120,6 +1127,6 @@ if BASE_CALCULATOR_AVAILABLE:
             self.canvas.draw()
 
 
-def create_syngas_compression_calculator(parent=None) -> QWidget:
+def create_syngas_compression_calculator(parent: Any = None) -> QWidget:
     """Factory function to create syngas compression calculator widget"""
     return SyngasCompressionCalculatorWidget(parent=parent)
