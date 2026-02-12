@@ -303,7 +303,7 @@ class PCAAnalyzer:
             return valid
 
         # Get all numeric columns
-        numeric = df.select_dtypes(include=[np.number]).columns.tolist()
+        numeric: list[str] = df.select_dtypes(include=[np.number]).columns.tolist()
         if not numeric:
             raise ValueError("No numeric columns found in DataFrame")
         return numeric
