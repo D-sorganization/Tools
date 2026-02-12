@@ -8,7 +8,7 @@ from _bootstrap import bootstrap  # noqa: E402
 _REPO_ROOT = bootstrap(__file__)
 
 # Import shared logging configuration
-from utils.logging_utils import DEFAULT_FORMAT
+from utils.logging_utils import DEFAULT_FORMAT  # noqa: E402
 
 # Configure logging
 logging.basicConfig(

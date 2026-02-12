@@ -9,6 +9,7 @@ import math
 import unittest
 
 import numpy as np
+
 from solar_system.core.celestial_body import Planet, Star, StateVector
 from solar_system.core.constants import AU, GM, J2000, PHYSICAL_PROPERTIES
 from solar_system.physics.orbital_mechanics import OrbitalMechanics

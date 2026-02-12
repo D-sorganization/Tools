@@ -774,7 +774,7 @@ class PDFRenamerGUI(QMainWindow):
                 f"Generated {len(proposals)} rename proposals. Review and approve them below.",
             )
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             self.generate_btn.setEnabled(True)
             self.generate_btn.setText("🔍 Generate Proposals")
             QMessageBox.critical(self, "Error", f"Failed to generate proposals: {e}")
@@ -839,7 +839,7 @@ class PDFRenamerGUI(QMainWindow):
                 QMessageBox.information(
                     self, "Export Complete", f"Proposals exported to: {filename}"
                 )
-            except (IOError, PermissionError, OSError) as e:
+            except (PermissionError, OSError) as e:
                 QMessageBox.critical(
                     self, "Export Failed", f"Failed to export proposals: {e}"
                 )

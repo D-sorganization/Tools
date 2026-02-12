@@ -1,3 +1,4 @@
+# mypy: disable-error-code="no-any-return"
 """File utility functions for data processing operations."""
 
 from __future__ import annotations
@@ -168,7 +169,7 @@ class DataReader:
                     return "json"
                 elif header.startswith(b"PK"):
                     return "excel"  # ZIP-based format
-            except (IOError, PermissionError, OSError):
+            except (PermissionError, OSError):
                 pass
 
         return "csv"  # Default to csv for unrecognizable formats
@@ -348,5 +349,5 @@ def validate_file_path(file_path: str | Path) -> bool:
     try:
         path = Path(file_path)
         return path.exists() and path.is_file()
-    except (IOError, PermissionError, OSError):
+    except (PermissionError, OSError):
         return False

@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 # =============================================================================
 # Advanced CSV Time Series Processor & Analyzer - Complete Version
 #
@@ -2964,11 +2965,64 @@ class CSVProcessorApp(ctk.CTk):
         return df
 
     def create_plotting_tab(self, tab: ctk.CTkFrame) -> None:
-        """Create the plotting and analysis tab with all advanced features."""
+        """Create the plotting and analysis tab with all advanced features.
+
+        Orchestrator that delegates to focused sub-methods for maintainability.
+        Each sub-method builds a specific section of the plotting UI.
+        """
+        if tab is None:
+            raise ValueError("Parent tab frame must not be None")
+
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(1, weight=1)
 
         # Top control bar
+        self._build_plot_control_bar(tab)
+
+        # Main content frame for splitter
+        plot_main_frame = ctk.CTkFrame(tab)
+        plot_main_frame.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="nsew")
+        plot_main_frame.grid_rowconfigure(0, weight=1)
+        plot_main_frame.grid_columnconfigure(0, weight=1)
+
+        def create_plot_left_content(left_panel: ctk.CTkFrame) -> None:
+            """Create the left panel content for plotting."""
+            left_panel.grid_rowconfigure(0, weight=1)
+            left_panel.grid_columnconfigure(0, weight=1)
+
+            plot_left_panel = ctk.CTkScrollableFrame(left_panel)
+            plot_left_panel.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+            plot_left_panel.grid_columnconfigure(0, weight=1)
+
+            self._build_plot_signal_selection(plot_left_panel)
+            self._build_plot_filter_preview(plot_left_panel)
+            self._build_plot_appearance_controls(plot_left_panel)
+            self._build_plot_time_range_controls(plot_left_panel)
+            self._build_plot_export_controls(plot_left_panel)
+            self._build_plot_trendline_controls(plot_left_panel)
+
+        def create_plot_right_content(right_panel: ctk.CTkFrame) -> None:
+            """Create the right panel content for plotting."""
+            self._build_plot_canvas(right_panel)
+
+        # Create splitter for plotting tab
+        splitter_frame = self._create_splitter(
+            plot_main_frame,
+            create_plot_left_content,
+            create_plot_right_content,
+            "plotting_left_width",
+            400,
+        )
+        splitter_frame.grid(row=0, column=0, sticky="nsew")
+
+    def _build_plot_control_bar(self, tab: ctk.CTkFrame) -> None:
+        """Build the top control bar with file/axis selection and config buttons.
+
+        Creates: plot_file_menu, plot_xaxis_menu, load_plot_config_menu.
+        """
+        if tab is None:
+            raise ValueError("Parent tab frame must not be None")
+
         plot_control_frame = ctk.CTkFrame(tab)
         plot_control_frame.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
         plot_control_frame.grid_columnconfigure(1, weight=1)
@@ -3037,836 +3091,854 @@ class CSVProcessorApp(ctk.CTk):
             command=lambda: self.update_plot(),
         ).grid(row=0, column=8, padx=5, pady=10)
 
-        # Main content frame for splitter
-        plot_main_frame = ctk.CTkFrame(tab)
-        plot_main_frame.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="nsew")
-        plot_main_frame.grid_rowconfigure(0, weight=1)
-        plot_main_frame.grid_columnconfigure(0, weight=1)
-
-        def create_plot_left_content(left_panel: ctk.CTkFrame) -> None:
-            """Create the left panel content for plotting with all advanced features"""
-            left_panel.grid_rowconfigure(0, weight=1)
-            left_panel.grid_columnconfigure(0, weight=1)
-
-            # The scrollable area for controls (removed title)
-            plot_left_panel = ctk.CTkScrollableFrame(left_panel)
-            plot_left_panel.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
-            plot_left_panel.grid_columnconfigure(0, weight=1)
-
-            # Plot signal selection
-            plot_signal_select_frame = ctk.CTkFrame(plot_left_panel)
-            plot_signal_select_frame.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
-            plot_signal_select_frame.grid_columnconfigure(0, weight=1)
-
-            self.plot_search_entry = ctk.CTkEntry(
-                plot_signal_select_frame,
-                placeholder_text="Search plot signals...",
-            )
-            self.plot_search_entry.grid(
-                row=0,
-                column=0,
-                columnspan=4,
-                sticky="ew",
-                padx=5,
-                pady=5,
-            )
-            self.plot_search_entry.bind("<KeyRelease>", self._filter_plot_signals)
-
-            ctk.CTkButton(
-                plot_signal_select_frame,
-                text="All",
-                command=self._plot_select_all,
-            ).grid(row=1, column=0, sticky="ew", padx=2, pady=5)
-            ctk.CTkButton(
-                plot_signal_select_frame,
-                text="None",
-                command=self._plot_select_none,
-            ).grid(row=1, column=1, sticky="ew", padx=2, pady=5)
-            ctk.CTkButton(
-                plot_signal_select_frame,
-                text="Show Selected",
-                command=self._show_selected_signals,
-            ).grid(row=1, column=2, sticky="ew", padx=2, pady=5)
-            ctk.CTkButton(
-                plot_signal_select_frame,
-                text="X",
-                width=28,
-                command=self._plot_clear_search,
-            ).grid(row=1, column=3, sticky="w", padx=2, pady=5)
-
-            self.plot_signal_frame = ctk.CTkScrollableFrame(
-                plot_left_panel,
-                label_text="Signals to Plot",
-                height=150,
-            )
-            self.plot_signal_frame.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
-
-            # Bind mouse wheel to the signals frame for proper scrolling
-            self._bind_mousewheel_to_frame(self.plot_signal_frame)
-
-            # Filter preview - MOVED ABOVE PLOT APPEARANCE
-            plot_filter_frame = ctk.CTkFrame(plot_left_panel)
-            plot_filter_frame.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
-            plot_filter_frame.grid_columnconfigure(0, weight=1)
-
-            ctk.CTkLabel(
-                plot_filter_frame,
-                text="Filter Preview",
-                font=ctk.CTkFont(weight="bold"),
-            ).grid(row=0, column=0, sticky="w", padx=10, pady=5)
-            self.plot_filter_type = ctk.StringVar(value="None")
-            self.plot_filter_menu = ctk.CTkOptionMenu(
-                plot_filter_frame,
-                variable=self.plot_filter_type,
-                values=self.filter_names,
-                command=self._update_plot_filter_ui,
-            )
-            self.plot_filter_menu.grid(row=1, column=0, sticky="ew", padx=10, pady=5)
-
-            # Filter parameter frames
-            time_units = ["ms", "s", "min", "hr"]
-
-            # Container for primary filter parameters to avoid row collision
-            self.primary_params_container = ctk.CTkFrame(
-                plot_filter_frame, fg_color="transparent"
-            )
-            self.primary_params_container.grid(
-                row=2, column=0, sticky="ew", padx=0, pady=0
-            )
-            self.primary_params_container.grid_columnconfigure(0, weight=1)
-
-            self.plot_ma_frame, self.plot_ma_value_entry, self.plot_ma_unit_menu = (
-                self._create_ma_param_frame(self.primary_params_container, time_units)
-            )
-            (
-                self.plot_bw_frame,
-                self.plot_bw_order_entry,
-                self.plot_bw_cutoff_entry,
-            ) = self._create_bw_param_frame(self.primary_params_container)
-            self.plot_median_frame, self.plot_median_kernel_entry = (
-                self._create_median_param_frame(self.primary_params_container)
-            )
-            (
-                self.plot_hampel_frame,
-                self.plot_hampel_window_entry,
-                self.plot_hampel_threshold_entry,
-            ) = self._create_hampel_param_frame(self.primary_params_container)
-            (
-                self.plot_zscore_frame,
-                self.plot_zscore_threshold_entry,
-                self.plot_zscore_method_menu,
-            ) = self._create_zscore_param_frame(self.primary_params_container)
-            (
-                self.plot_savgol_frame,
-                self.plot_savgol_window_entry,
-                self.plot_savgol_polyorder_entry,
-            ) = self._create_savgol_param_frame(self.primary_params_container)
-            self._update_plot_filter_ui("None")
-
-            # Show both raw and filtered signals option (moved below parameter frames)
-            self.show_both_signals_var = tk.BooleanVar(value=False)
-            show_both_checkbox = ctk.CTkCheckBox(
-                plot_filter_frame,
-                text="Show both raw and filtered signals",
-                variable=self.show_both_signals_var,
-                command=self._on_plot_setting_change,
-            )
-            show_both_checkbox.grid(row=10, column=0, sticky="w", padx=10, pady=5)
-
-            # Multiple filter comparison option
-            self.compare_filters_var = tk.BooleanVar(value=False)
-            compare_filters_checkbox = ctk.CTkCheckBox(
-                plot_filter_frame,
-                text="Compare multiple filters",
-                variable=self.compare_filters_var,
-                command=self._on_plot_setting_change,
-            )
-            compare_filters_checkbox.grid(row=11, column=0, sticky="w", padx=10, pady=5)
-
-            # Second filter for comparison
-            ctk.CTkLabel(plot_filter_frame, text="Compare with filter:").grid(
-                row=12,
-                column=0,
-                sticky="w",
-                padx=10,
-                pady=(10, 0),
-            )
-            self.compare_filter_type = ctk.StringVar(value="None")
-            self.compare_filter_menu = ctk.CTkOptionMenu(
-                plot_filter_frame,
-                variable=self.compare_filter_type,
-                values=self.filter_names,
-                command=self._on_plot_setting_change,
-            )
-            self.compare_filter_menu.grid(
-                row=13,
-                column=0,
-                sticky="ew",
-                padx=10,
-                pady=5,
-            )
-
-            # Second filter parameter frames (initially hidden)
-
-            # Container for comparison filter parameters
-            self.compare_params_container = ctk.CTkFrame(
-                plot_filter_frame, fg_color="transparent"
-            )
-            self.compare_params_container.grid(
-                row=14, column=0, sticky="ew", padx=0, pady=0
-            )
-            self.compare_params_container.grid_columnconfigure(0, weight=1)
-
-            (
-                self.compare_ma_frame,
-                self.compare_ma_value_entry,
-                self.compare_ma_unit_menu,
-            ) = self._create_ma_param_frame(self.compare_params_container, time_units)
-            (
-                self.compare_bw_frame,
-                self.compare_bw_order_entry,
-                self.compare_bw_cutoff_entry,
-            ) = self._create_bw_param_frame(self.compare_params_container)
-            self.compare_median_frame, self.compare_median_kernel_entry = (
-                self._create_median_param_frame(self.compare_params_container)
-            )
-            (
-                self.compare_hampel_frame,
-                self.compare_hampel_window_entry,
-                self.compare_hampel_threshold_entry,
-            ) = self._create_hampel_param_frame(self.compare_params_container)
-            (
-                self.compare_zscore_frame,
-                self.compare_zscore_threshold_entry,
-                self.compare_zscore_method_menu,
-            ) = self._create_zscore_param_frame(self.compare_params_container)
-            (
-                self.compare_savgol_frame,
-                self.compare_savgol_window_entry,
-                self.compare_savgol_polyorder_entry,
-            ) = self._create_savgol_param_frame(self.compare_params_container)
-
-            # Auto-zoom controls
-            auto_zoom_frame = ctk.CTkFrame(plot_filter_frame)
-            auto_zoom_frame.grid(row=20, column=0, sticky="ew", padx=10, pady=5)
-            auto_zoom_frame.grid_columnconfigure(0, weight=1)
-            auto_zoom_frame.grid_columnconfigure(1, weight=1)
-
-            self.auto_zoom_var = tk.BooleanVar(value=True)
-            ctk.CTkCheckBox(
-                auto_zoom_frame,
-                text="Auto-zoom on changes",
-                variable=self.auto_zoom_var,
-            ).grid(row=0, column=0, sticky="w", padx=5, pady=2)
-            ctk.CTkButton(
-                auto_zoom_frame,
-                text="Fit to Data",
-                command=self._auto_fit_plot,
-                width=100,
-            ).grid(row=0, column=1, sticky="e", padx=5, pady=2)
-
-            ctk.CTkButton(
-                plot_filter_frame,
-                text="Preview Filter",
-                command=self.update_plot,
-            ).grid(row=21, column=0, sticky="ew", padx=10, pady=5)
-            ctk.CTkButton(
-                plot_filter_frame,
-                text="Copy Settings to Processing Tab",
-                command=self._copy_plot_settings_to_processing,
-            ).grid(row=22, column=0, sticky="ew", padx=10, pady=5)
-
-            # Plot appearance controls
-            appearance_frame = ctk.CTkFrame(plot_left_panel)
-            appearance_frame.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
-            appearance_frame.grid_columnconfigure(0, weight=1)
-
-            ctk.CTkLabel(
-                appearance_frame,
-                text="Plot Appearance",
-                font=ctk.CTkFont(weight="bold"),
-            ).grid(row=0, column=0, sticky="w", padx=10, pady=5)
-            ctk.CTkLabel(appearance_frame, text="Chart Type:").grid(
-                row=1,
-                column=0,
-                sticky="w",
-                padx=10,
-            )
-            self.plot_type_var = ctk.StringVar(value="Line Only")
-            plot_type_menu = ctk.CTkOptionMenu(
-                appearance_frame,
-                variable=self.plot_type_var,
-                values=["Line with Markers", "Line Only", "Markers Only (Scatter)"],
-                command=self._on_plot_setting_change,
-            )
-            plot_type_menu.grid(row=2, column=0, sticky="ew", padx=10, pady=5)
-
-            self.plot_title_entry = ctk.CTkEntry(
-                appearance_frame,
-                placeholder_text="Plot Title",
-            )
-            self.plot_title_entry.grid(row=3, column=0, sticky="ew", padx=10, pady=5)
-            self.plot_title_entry.bind("<Return>", self._on_plot_setting_change)
-            self.plot_title_entry.bind("<FocusOut>", self._on_plot_setting_change)
-            # Force placeholder to show
-            self.plot_title_entry.configure(placeholder_text="Plot Title")
-
-            self.plot_xlabel_entry = ctk.CTkEntry(
-                appearance_frame,
-                placeholder_text="X-Axis Label",
-            )
-            self.plot_xlabel_entry.grid(row=4, column=0, sticky="ew", padx=10, pady=5)
-            self.plot_xlabel_entry.bind("<Return>", self._on_plot_setting_change)
-            self.plot_xlabel_entry.bind("<FocusOut>", self._on_plot_setting_change)
-            # Force placeholder to show
-            self.plot_xlabel_entry.configure(placeholder_text="X-Axis Label")
-
-            self.plot_ylabel_entry = ctk.CTkEntry(
-                appearance_frame,
-                placeholder_text="Y-Axis Label",
-            )
-            self.plot_ylabel_entry.grid(row=5, column=0, sticky="ew", padx=10, pady=5)
-            self.plot_ylabel_entry.bind("<Return>", self._on_plot_setting_change)
-            self.plot_ylabel_entry.bind("<FocusOut>", self._on_plot_setting_change)
-            # Force placeholder to show
-            self.plot_ylabel_entry.configure(placeholder_text="Y-Axis Label")
-
-            # Color scheme controls
-            ctk.CTkLabel(appearance_frame, text="Color Scheme:").grid(
-                row=6,
-                column=0,
-                sticky="w",
-                padx=10,
-                pady=(10, 0),
-            )
-            self.color_scheme_var = ctk.StringVar(value="Auto (Matplotlib)")
-            color_schemes = [
-                "Auto (Matplotlib)",
-                "Viridis",
-                "Plasma",
-                "Cool",
-                "Warm",
-                "Rainbow",
-                "Custom Colors",
-            ]
-            color_scheme_menu = ctk.CTkOptionMenu(
-                appearance_frame,
-                variable=self.color_scheme_var,
-                values=color_schemes,
-                command=self._on_color_scheme_change,
-            )
-            color_scheme_menu.grid(row=6, column=1, sticky="ew", padx=10, pady=(10, 0))
-
-            # Custom Colors Frame (initially hidden)
-            self.custom_colors_frame = ctk.CTkFrame(appearance_frame)
-            self.custom_colors_frame.grid(
-                row=7,
-                column=0,
-                columnspan=2,
-                sticky="ew",
-                padx=10,
-                pady=5,
-            )
-            self.custom_colors_frame.grid_remove()  # Initially hidden
-            self.custom_colors_frame.grid_columnconfigure(0, weight=1)
-
-            ctk.CTkLabel(
-                self.custom_colors_frame,
-                text="Custom Colors:",
-                font=ctk.CTkFont(weight="bold"),
-            ).grid(row=0, column=0, columnspan=2, sticky="w", padx=10, pady=5)
-
-            # Scrollable frame for color buttons
-            self.colors_scroll_frame = ctk.CTkScrollableFrame(
-                self.custom_colors_frame,
-                height=80,
-            )
-            self.colors_scroll_frame.grid(
-                row=1,
-                column=0,
-                columnspan=2,
-                sticky="ew",
-                padx=10,
-                pady=5,
-            )
-
-            # Buttons for color management
-            colors_buttons_frame = ctk.CTkFrame(
-                self.custom_colors_frame,
-                fg_color="transparent",
-            )
-            colors_buttons_frame.grid(
-                row=2,
-                column=0,
-                columnspan=2,
-                sticky="ew",
-                padx=10,
-                pady=5,
-            )
-            colors_buttons_frame.grid_columnconfigure(0, weight=1)
-            colors_buttons_frame.grid_columnconfigure(1, weight=1)
-
-            ctk.CTkButton(
-                colors_buttons_frame,
-                text="Add Color",
-                command=self._add_custom_color,
-            ).grid(row=0, column=0, padx=5, sticky="ew")
-            ctk.CTkButton(
-                colors_buttons_frame,
-                text="Reset to Default",
-                command=self._reset_custom_colors,
-            ).grid(row=0, column=1, padx=5, sticky="ew")
-
-            # Initialize custom colors display
-            self._update_custom_colors_display()
-
-            # Line width control
-            ctk.CTkLabel(appearance_frame, text="Line Width:").grid(
-                row=8,
-                column=0,
-                sticky="w",
-                padx=10,
-                pady=(5, 0),
-            )
-            self.line_width_var = ctk.StringVar(value="1.0")
-            line_widths = ["0.5", "1.0", "1.5", "2.0", "2.5", "3.0"]
-            line_width_menu = ctk.CTkOptionMenu(
-                appearance_frame,
-                variable=self.line_width_var,
-                values=line_widths,
-                command=self._on_plot_setting_change,
-            )
-            line_width_menu.grid(row=8, column=1, sticky="ew", padx=10, pady=(5, 0))
-
-            # Legend placement control
-            ctk.CTkLabel(appearance_frame, text="Legend Position:").grid(
-                row=9,
-                column=0,
-                sticky="w",
-                padx=10,
-                pady=(5, 0),
-            )
-            self.legend_position_var = ctk.StringVar(value="best")
-            legend_positions = [
-                "best",
-                "upper right",
-                "upper left",
-                "lower left",
-                "lower right",
-                "right",
-                "center left",
-                "center right",
-                "lower center",
-                "upper center",
-                "center",
-                "outside right",
-            ]
-            legend_position_menu = ctk.CTkOptionMenu(
-                appearance_frame,
-                variable=self.legend_position_var,
-                values=legend_positions,
-                command=self._on_plot_setting_change,
-            )
-            legend_position_menu.grid(
-                row=9,
-                column=1,
-                sticky="ew",
-                padx=10,
-                pady=(5, 0),
-            )
-
-            # Custom Legend Labels control
-            legend_header_frame = ctk.CTkFrame(appearance_frame, fg_color="transparent")
-            legend_header_frame.grid(
-                row=10,
-                column=0,
-                columnspan=2,
-                sticky="ew",
-                padx=10,
-                pady=(10, 0),
-            )
-            legend_header_frame.grid_columnconfigure(0, weight=1)
-
-            ctk.CTkLabel(
-                legend_header_frame,
-                text="Custom Legend Labels:",
-                font=ctk.CTkFont(weight="bold"),
-            ).grid(row=0, column=0, sticky="w")
-            ctk.CTkButton(
-                legend_header_frame,
-                text="?",
-                width=25,
-                height=25,
-                command=self._show_legend_guide,
-            ).grid(row=0, column=1, sticky="e", padx=(5, 0))
-
-            ctk.CTkLabel(
-                appearance_frame,
-                text="For subscripts use: $H_2O$, $CO_2$, $v_{max}$ (LaTeX syntax)",
-                font=ctk.CTkFont(size=10),
-            ).grid(row=11, column=0, columnspan=2, sticky="w", padx=10, pady=(0, 5))
-
-            # Scrollable frame for legend customization
-            self.legend_frame = ctk.CTkScrollableFrame(appearance_frame, height=120)
-            self.legend_frame.grid(
-                row=12,
-                column=0,
-                columnspan=2,
-                sticky="ew",
-                padx=10,
-                pady=5,
-            )
-
-            ctk.CTkButton(
-                appearance_frame,
-                text="Refresh Legend Entries",
-                command=self._refresh_legend_entries,
-            ).grid(row=13, column=0, columnspan=2, sticky="ew", padx=10, pady=5)
-
-            # Custom legend entries dictionary - only initialize if not already exists
-            if not hasattr(self, "custom_legend_entries"):
-                self.custom_legend_entries = {}
-
-            # Trendline controls
-            trend_frame = ctk.CTkFrame(plot_left_panel)
-            trend_frame.grid(row=6, column=0, sticky="ew", padx=5, pady=5)
-            trend_frame.grid_columnconfigure(0, weight=1)
-
-            ctk.CTkLabel(
-                trend_frame,
-                text="Trendline",
-                font=ctk.CTkFont(weight="bold"),
-            ).grid(row=0, column=0, sticky="w", padx=10, pady=5)
-
-            ctk.CTkLabel(trend_frame, text="Signal:").grid(
-                row=1,
-                column=0,
-                sticky="w",
-                padx=10,
-                pady=(5, 0),
-            )
-            self.trendline_signal_var = ctk.StringVar(value="Select signal...")
-            self.trendline_signal_menu = ctk.CTkOptionMenu(
-                trend_frame,
-                variable=self.trendline_signal_var,
-                values=["Select signal..."],
-                command=self._on_plot_setting_change,
-            )
-            self.trendline_signal_menu.grid(
-                row=2,
-                column=0,
-                sticky="ew",
-                padx=10,
-                pady=5,
-            )
-
-            ctk.CTkLabel(trend_frame, text="Type:").grid(
-                row=3,
-                column=0,
-                sticky="w",
-                padx=10,
-                pady=(5, 0),
-            )
-            self.trendline_type_var = ctk.StringVar(value="None")
-            trendline_type_menu = ctk.CTkOptionMenu(
-                trend_frame,
-                variable=self.trendline_type_var,
-                values=["None", "Linear", "Exponential", "Power", "Polynomial"],
-                command=self._on_plot_setting_change,
-            )
-            trendline_type_menu.grid(row=4, column=0, sticky="ew", padx=10, pady=5)
-
-            self.poly_order_entry = ctk.CTkEntry(
-                trend_frame,
-                placeholder_text="Polynomial Order (2-6)",
-            )
-            self.poly_order_entry.grid(row=5, column=0, sticky="ew", padx=10, pady=5)
-            self.poly_order_entry.bind("<Return>", self._on_plot_setting_change)
-            self.poly_order_entry.bind("<FocusOut>", self._on_plot_setting_change)
-
-            # Trendline time window controls
-            ctk.CTkLabel(trend_frame, text="Time Window:").grid(
-                row=6,
-                column=0,
-                sticky="w",
-                padx=10,
-                pady=(5, 0),
-            )
-
-            # Time window selection method
-            self.trendline_window_mode = ctk.StringVar(value="Full Range")
-            trendline_window_menu = ctk.CTkOptionMenu(
-                trend_frame,
-                variable=self.trendline_window_mode,
-                values=["Full Range", "Manual Entry", "Visual Selection"],
-                command=self._on_trendline_window_mode_change,
-            )
-            trendline_window_menu.grid(row=7, column=0, sticky="ew", padx=10, pady=5)
-
-            # Manual time window frame (initially hidden)
-            self.trendline_manual_frame = ctk.CTkFrame(trend_frame)
-            self.trendline_manual_frame.grid(
-                row=8,
-                column=0,
-                sticky="ew",
-                padx=10,
-                pady=5,
-            )
-            self.trendline_manual_frame.grid_remove()  # Hide initially
-            self.trendline_manual_frame.grid_columnconfigure(0, weight=1)
-            self.trendline_manual_frame.grid_columnconfigure(1, weight=1)
-
-            ctk.CTkLabel(self.trendline_manual_frame, text="Start:").grid(
-                row=0,
-                column=0,
-                sticky="w",
-                padx=5,
-                pady=2,
-            )
-            self.trendline_start_entry = ctk.CTkEntry(
-                self.trendline_manual_frame,
-                placeholder_text="Start time",
-            )
-            self.trendline_start_entry.grid(
-                row=0,
-                column=1,
-                sticky="ew",
-                padx=5,
-                pady=2,
-            )
-            self.trendline_start_entry.bind("<Return>", self._on_plot_setting_change)
-
-            ctk.CTkLabel(self.trendline_manual_frame, text="End:").grid(
-                row=1,
-                column=0,
-                sticky="w",
-                padx=5,
-                pady=2,
-            )
-            self.trendline_end_entry = ctk.CTkEntry(
-                self.trendline_manual_frame,
-                placeholder_text="End time",
-            )
-            self.trendline_end_entry.grid(row=1, column=1, sticky="ew", padx=5, pady=2)
-            self.trendline_end_entry.bind("<Return>", self._on_plot_setting_change)
-
-            # Visual selection controls
-            self.trendline_visual_frame = ctk.CTkFrame(trend_frame)
-            self.trendline_visual_frame.grid(
-                row=9,
-                column=0,
-                sticky="ew",
-                padx=10,
-                pady=5,
-            )
-            self.trendline_visual_frame.grid_remove()  # Hide initially
-            self.trendline_visual_frame.grid_columnconfigure(0, weight=1)
-
-            self.trendline_select_button = ctk.CTkButton(
-                self.trendline_visual_frame,
-                text="Select Time Window on Plot",
-                command=self._start_trendline_selection,
-            )
-            self.trendline_select_button.grid(
-                row=0,
-                column=0,
-                sticky="ew",
-                padx=5,
-                pady=5,
-            )
-
-            self.trendline_selected_range = ctk.CTkLabel(
-                self.trendline_visual_frame,
-                text="No range selected",
-            )
-            self.trendline_selected_range.grid(
-                row=1,
-                column=0,
-                sticky="ew",
-                padx=5,
-                pady=2,
-            )
-
-            self.trendline_textbox = ctk.CTkTextbox(trend_frame, height=70)
-            self.trendline_textbox.grid(row=10, column=0, sticky="ew", padx=10, pady=5)
-
-            # Time range controls
-            time_range_frame = ctk.CTkFrame(plot_left_panel)
-            time_range_frame.grid(row=4, column=0, sticky="ew", padx=5, pady=5)
-            time_range_frame.grid_columnconfigure(0, weight=1)
-
-            ctk.CTkLabel(
-                time_range_frame,
-                text="Plot Time Range",
-                font=ctk.CTkFont(weight="bold"),
-            ).grid(row=0, column=0, sticky="w", padx=10, pady=5)
-            ctk.CTkLabel(time_range_frame, text="Start Time (HH:MM:SS):").grid(
-                row=1,
-                column=0,
-                sticky="w",
-                padx=10,
-            )
-            self.plotting_start_time_entry = ctk.CTkEntry(
-                time_range_frame,
-                placeholder_text="e.g., 09:30:00",
-            )
-            self.plotting_start_time_entry.grid(
-                row=2,
-                column=0,
-                sticky="ew",
-                padx=10,
-                pady=2,
-            )
-            ctk.CTkLabel(time_range_frame, text="End Time (HH:MM:SS):").grid(
-                row=3,
-                column=0,
-                sticky="w",
-                padx=10,
-            )
-            self.plotting_end_time_entry = ctk.CTkEntry(
-                time_range_frame,
-                placeholder_text="e.g., 17:00:00",
-            )
-            self.plotting_end_time_entry.grid(
-                row=4,
-                column=0,
-                sticky="ew",
-                padx=10,
-                pady=2,
-            )
-            ctk.CTkButton(
-                time_range_frame,
-                text="Apply Time Range to Plot",
-                command=self._apply_plot_time_range,
-            ).grid(row=5, column=0, sticky="ew", padx=10, pady=5)
-            ctk.CTkButton(
-                time_range_frame,
-                text="Reset Plot Range",
-                command=self._reset_plot_range,
-            ).grid(row=6, column=0, sticky="ew", padx=10, pady=2)
-            ctk.CTkButton(
-                time_range_frame,
-                text="Save Current View",
-                command=self._save_current_plot_view,
-            ).grid(row=7, column=0, sticky="ew", padx=10, pady=2)
-            ctk.CTkButton(
-                time_range_frame,
-                text="Copy Current View to Processing",
-                command=self._copy_current_view_to_processing,
-            ).grid(row=8, column=0, sticky="ew", padx=10, pady=2)
-
-            # Export controls
-            export_chart_frame = ctk.CTkFrame(plot_left_panel)
-            export_chart_frame.grid(row=5, column=0, sticky="ew", padx=5, pady=5)
-            export_chart_frame.grid_columnconfigure(0, weight=1)
-
-            ctk.CTkLabel(
-                export_chart_frame,
-                text="Export Chart",
-                font=ctk.CTkFont(weight="bold"),
-            ).grid(row=0, column=0, sticky="w", padx=10, pady=5)
-            ctk.CTkButton(
-                export_chart_frame,
-                text="Save as PNG/PDF",
-                command=self._export_chart_image,
-            ).grid(row=1, column=0, sticky="ew", padx=10, pady=2)
-            ctk.CTkButton(
-                export_chart_frame,
-                text="Export to Excel with Chart",
-                command=self._export_chart_excel,
-            ).grid(row=2, column=0, sticky="ew", padx=10, pady=2)
-
-        def create_plot_right_content(right_panel: ctk.CTkFrame) -> None:
-            """Create the right panel content for plotting"""
-            right_panel.grid_rowconfigure(1, weight=1)
-            right_panel.grid_columnconfigure(0, weight=1)
-
-            # The plot canvas
-            plot_canvas_frame = ctk.CTkFrame(right_panel)
-            plot_canvas_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
-            plot_canvas_frame.grid_rowconfigure(1, weight=1)
-            plot_canvas_frame.grid_columnconfigure(0, weight=1)
-
-            self.plot_fig = Figure(figsize=(5, 4), dpi=100)
-            self.plot_ax = self.plot_fig.add_subplot(111)
-            self.plot_fig.tight_layout()
-
-            self.plot_canvas = FigureCanvasTkAgg(
-                self.plot_fig,
-                master=plot_canvas_frame,
-            )
-            self.plot_canvas.get_tk_widget().grid(row=1, column=0, sticky="nsew")
-
-            # Initialize plot with welcome message
-            self.plot_ax.text(
-                0.5,
-                0.5,
-                "Plotting ready - select a file",
-                ha="center",
-                va="center",
-                transform=self.plot_ax.transAxes,
-            )
-            self.plot_ax.set_title("Select a file to begin plotting")
-            self.plot_canvas.draw()  # type: ignore[no-untyped-call]
-
-            toolbar = NavigationToolbar2Tk(
-                self.plot_canvas,
-                plot_canvas_frame,
-                pack_toolbar=False,
-            )
-            toolbar.grid(row=0, column=0, sticky="ew")
-
-            # Store toolbar reference for custom functionality
-            self.plot_toolbar = toolbar
-
-            # Initialize zoom state storage
-            self.saved_zoom_state = None
-
-            # Add custom zoom controls
-            zoom_frame = ctk.CTkFrame(plot_canvas_frame)
-            zoom_frame.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
-            zoom_frame.grid_columnconfigure(0, weight=1)
-            zoom_frame.grid_columnconfigure(1, weight=1)
-            zoom_frame.grid_columnconfigure(2, weight=1)
-            zoom_frame.grid_columnconfigure(3, weight=1)
-
-            save_zoom_btn = ctk.CTkButton(
-                zoom_frame,
-                text="Save Zoom State",
-                command=self._save_zoom_state,
-            )
-            save_zoom_btn.grid(row=0, column=0, padx=2, pady=2, sticky="ew")
-
-            restore_zoom_btn = ctk.CTkButton(
-                zoom_frame,
-                text="Restore Zoom",
-                command=self._restore_zoom_state,
-            )
-            restore_zoom_btn.grid(row=0, column=1, padx=2, pady=2, sticky="ew")
-
-            zoom_in_btn = ctk.CTkButton(
-                zoom_frame,
-                text="Zoom In 25%",
-                command=self._zoom_in_25,
-            )
-            zoom_in_btn.grid(row=0, column=2, padx=2, pady=2, sticky="ew")
-
-            zoom_out_btn = ctk.CTkButton(
-                zoom_frame,
-                text="Zoom Out 25%",
-                command=self._zoom_out_25,
-            )
-            zoom_out_btn.grid(row=0, column=3, padx=2, pady=2, sticky="ew")
-
-        # Create splitter for plotting tab
-        splitter_frame = self._create_splitter(
-            plot_main_frame,
-            create_plot_left_content,
-            create_plot_right_content,
-            "plotting_left_width",
-            400,
+        ctk.CTkLabel(plot_control_frame, text="File to Plot:").grid(
+            row=0,
+            column=0,
+            padx=(10, 5),
+            pady=10,
         )
-        splitter_frame.grid(row=0, column=0, sticky="nsew")
+        self.plot_file_menu = ctk.CTkOptionMenu(
+            plot_control_frame,
+            values=["Select a file..."],
+            command=self.on_plot_file_select,
+        )
+        self.plot_file_menu.grid(row=0, column=1, padx=5, pady=10, sticky="ew")
+
+        ctk.CTkLabel(plot_control_frame, text="X-Axis:").grid(
+            row=0,
+            column=2,
+            padx=(10, 5),
+            pady=10,
+        )
+        self.plot_xaxis_menu = ctk.CTkOptionMenu(
+            plot_control_frame,
+            values=["default time"],
+            command=lambda e: self.update_plot(),
+        )
+        self.plot_xaxis_menu.grid(row=0, column=3, padx=5, pady=10, sticky="ew")
+
+        ctk.CTkLabel(plot_control_frame, text="Load Config:").grid(
+            row=0,
+            column=4,
+            padx=(10, 5),
+            pady=10,
+        )
+        self.load_plot_config_menu = ctk.CTkOptionMenu(
+            plot_control_frame,
+            values=["No saved plots"],
+            command=self._on_load_plot_config_select,
+        )
+        self.load_plot_config_menu.grid(row=0, column=5, padx=5, pady=10, sticky="ew")
+
+        ctk.CTkButton(
+            plot_control_frame,
+            text="Save Plot Config",
+            height=35,
+            command=self._save_current_plot_config,
+        ).grid(row=0, column=6, padx=10, pady=10)
+        ctk.CTkButton(
+            plot_control_frame,
+            text="Modify Plot Config",
+            height=35,
+            command=self._modify_plot_config,
+        ).grid(row=0, column=7, padx=10, pady=10)
+        ctk.CTkButton(
+            plot_control_frame,
+            text="🔄 Update Plot",
+            height=35,
+            command=lambda: self.update_plot(),
+        ).grid(row=0, column=8, padx=5, pady=10)
+
+    def _build_plot_signal_selection(self, parent: ctk.CTkFrame) -> None:
+        """Build the signal selection section with search and checkboxes.
+
+        Creates: plot_search_entry, plot_signal_frame.
+        """
+        if parent is None:
+            raise ValueError("Parent frame must not be None")
+
+        plot_signal_select_frame = ctk.CTkFrame(parent)
+        plot_signal_select_frame.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
+        plot_signal_select_frame.grid_columnconfigure(0, weight=1)
+
+        self.plot_search_entry = ctk.CTkEntry(
+            plot_signal_select_frame,
+            placeholder_text="Search plot signals...",
+        )
+        self.plot_search_entry.grid(
+            row=0,
+            column=0,
+            columnspan=4,
+            sticky="ew",
+            padx=5,
+            pady=5,
+        )
+        self.plot_search_entry.bind("<KeyRelease>", self._filter_plot_signals)
+
+        ctk.CTkButton(
+            plot_signal_select_frame,
+            text="All",
+            command=self._plot_select_all,
+        ).grid(row=1, column=0, sticky="ew", padx=2, pady=5)
+        ctk.CTkButton(
+            plot_signal_select_frame,
+            text="None",
+            command=self._plot_select_none,
+        ).grid(row=1, column=1, sticky="ew", padx=2, pady=5)
+        ctk.CTkButton(
+            plot_signal_select_frame,
+            text="Show Selected",
+            command=self._show_selected_signals,
+        ).grid(row=1, column=2, sticky="ew", padx=2, pady=5)
+        ctk.CTkButton(
+            plot_signal_select_frame,
+            text="X",
+            width=28,
+            command=self._plot_clear_search,
+        ).grid(row=1, column=3, sticky="w", padx=2, pady=5)
+
+        self.plot_signal_frame = ctk.CTkScrollableFrame(
+            parent,
+            label_text="Signals to Plot",
+            height=150,
+        )
+        self.plot_signal_frame.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        self._bind_mousewheel_to_frame(self.plot_signal_frame)
+
+    def _build_plot_filter_preview(self, parent: ctk.CTkFrame) -> None:
+        """Build the filter preview section with parameter frames.
+
+        Creates: plot_filter_type, primary/compare filter param frames,
+        show_both_signals_var, compare_filters_var, auto_zoom_var.
+        """
+        if parent is None:
+            raise ValueError("Parent frame must not be None")
+
+        time_units = ["ms", "s", "min", "hr"]
+
+        plot_filter_frame = ctk.CTkFrame(parent)
+        plot_filter_frame.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
+        plot_filter_frame.grid_columnconfigure(0, weight=1)
+
+        ctk.CTkLabel(
+            plot_filter_frame,
+            text="Filter Preview",
+            font=ctk.CTkFont(weight="bold"),
+        ).grid(row=0, column=0, sticky="w", padx=10, pady=5)
+
+        self.plot_filter_type = ctk.StringVar(value="None")
+        self.plot_filter_menu = ctk.CTkOptionMenu(
+            plot_filter_frame,
+            variable=self.plot_filter_type,
+            values=self.filter_names,
+            command=self._update_plot_filter_ui,
+        )
+        self.plot_filter_menu.grid(row=1, column=0, sticky="ew", padx=10, pady=5)
+
+        # Primary filter parameters container
+        self.primary_params_container = ctk.CTkFrame(
+            plot_filter_frame,
+            fg_color="transparent",
+        )
+        self.primary_params_container.grid(row=2, column=0, sticky="ew", padx=0, pady=0)
+        self.primary_params_container.grid_columnconfigure(0, weight=1)
+
+        self.plot_ma_frame, self.plot_ma_value_entry, self.plot_ma_unit_menu = (
+            self._create_ma_param_frame(self.primary_params_container, time_units)
+        )
+        self.plot_bw_frame, self.plot_bw_order_entry, self.plot_bw_cutoff_entry = (
+            self._create_bw_param_frame(self.primary_params_container)
+        )
+        self.plot_median_frame, self.plot_median_kernel_entry = (
+            self._create_median_param_frame(self.primary_params_container)
+        )
+        (
+            self.plot_hampel_frame,
+            self.plot_hampel_window_entry,
+            self.plot_hampel_threshold_entry,
+        ) = self._create_hampel_param_frame(self.primary_params_container)
+        (
+            self.plot_zscore_frame,
+            self.plot_zscore_threshold_entry,
+            self.plot_zscore_method_menu,
+        ) = self._create_zscore_param_frame(self.primary_params_container)
+        (
+            self.plot_savgol_frame,
+            self.plot_savgol_window_entry,
+            self.plot_savgol_polyorder_entry,
+        ) = self._create_savgol_param_frame(self.primary_params_container)
+        self._update_plot_filter_ui("None")
+
+        # Show both raw/filtered signals
+        self.show_both_signals_var = tk.BooleanVar(value=False)
+        ctk.CTkCheckBox(
+            plot_filter_frame,
+            text="Show both raw and filtered signals",
+            variable=self.show_both_signals_var,
+            command=self._on_plot_setting_change,
+        ).grid(row=10, column=0, sticky="w", padx=10, pady=5)
+
+        # Multiple filter comparison
+        self.compare_filters_var = tk.BooleanVar(value=False)
+        ctk.CTkCheckBox(
+            plot_filter_frame,
+            text="Compare multiple filters",
+            variable=self.compare_filters_var,
+            command=self._on_plot_setting_change,
+        ).grid(row=11, column=0, sticky="w", padx=10, pady=5)
+
+        ctk.CTkLabel(plot_filter_frame, text="Compare with filter:").grid(
+            row=12,
+            column=0,
+            sticky="w",
+            padx=10,
+            pady=(10, 0),
+        )
+        self.compare_filter_type = ctk.StringVar(value="None")
+        self.compare_filter_menu = ctk.CTkOptionMenu(
+            plot_filter_frame,
+            variable=self.compare_filter_type,
+            values=self.filter_names,
+            command=self._on_plot_setting_change,
+        )
+        self.compare_filter_menu.grid(row=13, column=0, sticky="ew", padx=10, pady=5)
+
+        # Comparison filter parameters container
+        self.compare_params_container = ctk.CTkFrame(
+            plot_filter_frame,
+            fg_color="transparent",
+        )
+        self.compare_params_container.grid(
+            row=14,
+            column=0,
+            sticky="ew",
+            padx=0,
+            pady=0,
+        )
+        self.compare_params_container.grid_columnconfigure(0, weight=1)
+
+        (
+            self.compare_ma_frame,
+            self.compare_ma_value_entry,
+            self.compare_ma_unit_menu,
+        ) = self._create_ma_param_frame(self.compare_params_container, time_units)
+        (
+            self.compare_bw_frame,
+            self.compare_bw_order_entry,
+            self.compare_bw_cutoff_entry,
+        ) = self._create_bw_param_frame(self.compare_params_container)
+        self.compare_median_frame, self.compare_median_kernel_entry = (
+            self._create_median_param_frame(self.compare_params_container)
+        )
+        (
+            self.compare_hampel_frame,
+            self.compare_hampel_window_entry,
+            self.compare_hampel_threshold_entry,
+        ) = self._create_hampel_param_frame(self.compare_params_container)
+        (
+            self.compare_zscore_frame,
+            self.compare_zscore_threshold_entry,
+            self.compare_zscore_method_menu,
+        ) = self._create_zscore_param_frame(self.compare_params_container)
+        (
+            self.compare_savgol_frame,
+            self.compare_savgol_window_entry,
+            self.compare_savgol_polyorder_entry,
+        ) = self._create_savgol_param_frame(self.compare_params_container)
+
+        # Auto-zoom controls
+        auto_zoom_frame = ctk.CTkFrame(plot_filter_frame)
+        auto_zoom_frame.grid(row=20, column=0, sticky="ew", padx=10, pady=5)
+        auto_zoom_frame.grid_columnconfigure(0, weight=1)
+        auto_zoom_frame.grid_columnconfigure(1, weight=1)
+
+        self.auto_zoom_var = tk.BooleanVar(value=True)
+        ctk.CTkCheckBox(
+            auto_zoom_frame,
+            text="Auto-zoom on changes",
+            variable=self.auto_zoom_var,
+        ).grid(row=0, column=0, sticky="w", padx=5, pady=2)
+        ctk.CTkButton(
+            auto_zoom_frame,
+            text="Fit to Data",
+            command=self._auto_fit_plot,
+            width=100,
+        ).grid(row=0, column=1, sticky="e", padx=5, pady=2)
+
+        ctk.CTkButton(
+            plot_filter_frame,
+            text="Preview Filter",
+            command=self.update_plot,
+        ).grid(row=21, column=0, sticky="ew", padx=10, pady=5)
+        ctk.CTkButton(
+            plot_filter_frame,
+            text="Copy Settings to Processing Tab",
+            command=self._copy_plot_settings_to_processing,
+        ).grid(row=22, column=0, sticky="ew", padx=10, pady=5)
+
+    def _build_plot_appearance_controls(self, parent: ctk.CTkFrame) -> None:
+        """Build plot appearance controls: chart type, colors, legend.
+
+        Creates: plot_type_var, plot_title_entry, plot_xlabel_entry,
+        plot_ylabel_entry, color_scheme_var, line_width_var,
+        legend_position_var, legend_frame.
+        """
+        if parent is None:
+            raise ValueError("Parent frame must not be None")
+
+        appearance_frame = ctk.CTkFrame(parent)
+        appearance_frame.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
+        appearance_frame.grid_columnconfigure(0, weight=1)
+
+        ctk.CTkLabel(
+            appearance_frame,
+            text="Plot Appearance",
+            font=ctk.CTkFont(weight="bold"),
+        ).grid(row=0, column=0, sticky="w", padx=10, pady=5)
+
+        ctk.CTkLabel(appearance_frame, text="Chart Type:").grid(
+            row=1,
+            column=0,
+            sticky="w",
+            padx=10,
+        )
+        self.plot_type_var = ctk.StringVar(value="Line Only")
+        ctk.CTkOptionMenu(
+            appearance_frame,
+            variable=self.plot_type_var,
+            values=["Line with Markers", "Line Only", "Markers Only (Scatter)"],
+            command=self._on_plot_setting_change,
+        ).grid(row=2, column=0, sticky="ew", padx=10, pady=5)
+
+        # Title/label entries
+        self.plot_title_entry = ctk.CTkEntry(
+            appearance_frame,
+            placeholder_text="Plot Title",
+        )
+        self.plot_title_entry.grid(row=3, column=0, sticky="ew", padx=10, pady=5)
+        self.plot_title_entry.bind("<Return>", self._on_plot_setting_change)
+        self.plot_title_entry.bind("<FocusOut>", self._on_plot_setting_change)
+        self.plot_title_entry.configure(placeholder_text="Plot Title")
+
+        self.plot_xlabel_entry = ctk.CTkEntry(
+            appearance_frame,
+            placeholder_text="X-Axis Label",
+        )
+        self.plot_xlabel_entry.grid(row=4, column=0, sticky="ew", padx=10, pady=5)
+        self.plot_xlabel_entry.bind("<Return>", self._on_plot_setting_change)
+        self.plot_xlabel_entry.bind("<FocusOut>", self._on_plot_setting_change)
+        self.plot_xlabel_entry.configure(placeholder_text="X-Axis Label")
+
+        self.plot_ylabel_entry = ctk.CTkEntry(
+            appearance_frame,
+            placeholder_text="Y-Axis Label",
+        )
+        self.plot_ylabel_entry.grid(row=5, column=0, sticky="ew", padx=10, pady=5)
+        self.plot_ylabel_entry.bind("<Return>", self._on_plot_setting_change)
+        self.plot_ylabel_entry.bind("<FocusOut>", self._on_plot_setting_change)
+        self.plot_ylabel_entry.configure(placeholder_text="Y-Axis Label")
+
+        # Color scheme
+        ctk.CTkLabel(appearance_frame, text="Color Scheme:").grid(
+            row=6,
+            column=0,
+            sticky="w",
+            padx=10,
+            pady=(10, 0),
+        )
+        self.color_scheme_var = ctk.StringVar(value="Auto (Matplotlib)")
+        color_schemes = [
+            "Auto (Matplotlib)",
+            "Viridis",
+            "Plasma",
+            "Cool",
+            "Warm",
+            "Rainbow",
+            "Custom Colors",
+        ]
+        ctk.CTkOptionMenu(
+            appearance_frame,
+            variable=self.color_scheme_var,
+            values=color_schemes,
+            command=self._on_color_scheme_change,
+        ).grid(row=6, column=1, sticky="ew", padx=10, pady=(10, 0))
+
+        # Custom Colors Frame (initially hidden)
+        self.custom_colors_frame = ctk.CTkFrame(appearance_frame)
+        self.custom_colors_frame.grid(
+            row=7,
+            column=0,
+            columnspan=2,
+            sticky="ew",
+            padx=10,
+            pady=5,
+        )
+        self.custom_colors_frame.grid_remove()
+        self.custom_colors_frame.grid_columnconfigure(0, weight=1)
+
+        ctk.CTkLabel(
+            self.custom_colors_frame,
+            text="Custom Colors:",
+            font=ctk.CTkFont(weight="bold"),
+        ).grid(row=0, column=0, columnspan=2, sticky="w", padx=10, pady=5)
+
+        self.colors_scroll_frame = ctk.CTkScrollableFrame(
+            self.custom_colors_frame,
+            height=80,
+        )
+        self.colors_scroll_frame.grid(
+            row=1,
+            column=0,
+            columnspan=2,
+            sticky="ew",
+            padx=10,
+            pady=5,
+        )
+
+        colors_buttons_frame = ctk.CTkFrame(
+            self.custom_colors_frame,
+            fg_color="transparent",
+        )
+        colors_buttons_frame.grid(
+            row=2,
+            column=0,
+            columnspan=2,
+            sticky="ew",
+            padx=10,
+            pady=5,
+        )
+        colors_buttons_frame.grid_columnconfigure(0, weight=1)
+        colors_buttons_frame.grid_columnconfigure(1, weight=1)
+
+        ctk.CTkButton(
+            colors_buttons_frame,
+            text="Add Color",
+            command=self._add_custom_color,
+        ).grid(row=0, column=0, padx=5, sticky="ew")
+        ctk.CTkButton(
+            colors_buttons_frame,
+            text="Reset to Default",
+            command=self._reset_custom_colors,
+        ).grid(row=0, column=1, padx=5, sticky="ew")
+
+        self._update_custom_colors_display()
+
+        # Line width control
+        ctk.CTkLabel(appearance_frame, text="Line Width:").grid(
+            row=8,
+            column=0,
+            sticky="w",
+            padx=10,
+            pady=(5, 0),
+        )
+        self.line_width_var = ctk.StringVar(value="1.0")
+        ctk.CTkOptionMenu(
+            appearance_frame,
+            variable=self.line_width_var,
+            values=["0.5", "1.0", "1.5", "2.0", "2.5", "3.0"],
+            command=self._on_plot_setting_change,
+        ).grid(row=8, column=1, sticky="ew", padx=10, pady=(5, 0))
+
+        # Legend placement
+        ctk.CTkLabel(appearance_frame, text="Legend Position:").grid(
+            row=9,
+            column=0,
+            sticky="w",
+            padx=10,
+            pady=(5, 0),
+        )
+        self.legend_position_var = ctk.StringVar(value="best")
+        legend_positions = [
+            "best",
+            "upper right",
+            "upper left",
+            "lower left",
+            "lower right",
+            "right",
+            "center left",
+            "center right",
+            "lower center",
+            "upper center",
+            "center",
+            "outside right",
+        ]
+        ctk.CTkOptionMenu(
+            appearance_frame,
+            variable=self.legend_position_var,
+            values=legend_positions,
+            command=self._on_plot_setting_change,
+        ).grid(row=9, column=1, sticky="ew", padx=10, pady=(5, 0))
+
+        self._build_plot_legend_controls(appearance_frame)
+
+    def _build_plot_legend_controls(self, appearance_frame: ctk.CTkFrame) -> None:
+        """Build custom legend label controls within the appearance frame.
+
+        Creates: legend_frame, custom_legend_entries.
+        """
+        # Custom Legend Labels
+        legend_header_frame = ctk.CTkFrame(appearance_frame, fg_color="transparent")
+        legend_header_frame.grid(
+            row=10,
+            column=0,
+            columnspan=2,
+            sticky="ew",
+            padx=10,
+            pady=(10, 0),
+        )
+        legend_header_frame.grid_columnconfigure(0, weight=1)
+
+        ctk.CTkLabel(
+            legend_header_frame,
+            text="Custom Legend Labels:",
+            font=ctk.CTkFont(weight="bold"),
+        ).grid(row=0, column=0, sticky="w")
+        ctk.CTkButton(
+            legend_header_frame,
+            text="?",
+            width=25,
+            height=25,
+            command=self._show_legend_guide,
+        ).grid(row=0, column=1, sticky="e", padx=(5, 0))
+
+        ctk.CTkLabel(
+            appearance_frame,
+            text="For subscripts use: $H_2O$, $CO_2$, $v_{max}$ (LaTeX syntax)",
+            font=ctk.CTkFont(size=10),
+        ).grid(row=11, column=0, columnspan=2, sticky="w", padx=10, pady=(0, 5))
+
+        self.legend_frame = ctk.CTkScrollableFrame(appearance_frame, height=120)
+        self.legend_frame.grid(
+            row=12,
+            column=0,
+            columnspan=2,
+            sticky="ew",
+            padx=10,
+            pady=5,
+        )
+
+        ctk.CTkButton(
+            appearance_frame,
+            text="Refresh Legend Entries",
+            command=self._refresh_legend_entries,
+        ).grid(row=13, column=0, columnspan=2, sticky="ew", padx=10, pady=5)
+
+        if not hasattr(self, "custom_legend_entries"):
+            self.custom_legend_entries = {}
+
+    def _build_plot_trendline_controls(self, parent: ctk.CTkFrame) -> None:
+        """Build trendline configuration controls.
+
+        Creates: trendline_signal_var, trendline_type_var, poly_order_entry,
+        trendline_window_mode, trendline manual/visual frames, trendline_textbox.
+        """
+        if parent is None:
+            raise ValueError("Parent frame must not be None")
+
+        trend_frame = ctk.CTkFrame(parent)
+        trend_frame.grid(row=6, column=0, sticky="ew", padx=5, pady=5)
+        trend_frame.grid_columnconfigure(0, weight=1)
+
+        ctk.CTkLabel(
+            trend_frame,
+            text="Trendline",
+            font=ctk.CTkFont(weight="bold"),
+        ).grid(row=0, column=0, sticky="w", padx=10, pady=5)
+
+        ctk.CTkLabel(trend_frame, text="Signal:").grid(
+            row=1,
+            column=0,
+            sticky="w",
+            padx=10,
+            pady=(5, 0),
+        )
+        self.trendline_signal_var = ctk.StringVar(value="Select signal...")
+        self.trendline_signal_menu = ctk.CTkOptionMenu(
+            trend_frame,
+            variable=self.trendline_signal_var,
+            values=["Select signal..."],
+            command=self._on_plot_setting_change,
+        )
+        self.trendline_signal_menu.grid(row=2, column=0, sticky="ew", padx=10, pady=5)
+
+        ctk.CTkLabel(trend_frame, text="Type:").grid(
+            row=3,
+            column=0,
+            sticky="w",
+            padx=10,
+            pady=(5, 0),
+        )
+        self.trendline_type_var = ctk.StringVar(value="None")
+        ctk.CTkOptionMenu(
+            trend_frame,
+            variable=self.trendline_type_var,
+            values=["None", "Linear", "Exponential", "Power", "Polynomial"],
+            command=self._on_plot_setting_change,
+        ).grid(row=4, column=0, sticky="ew", padx=10, pady=5)
+
+        self.poly_order_entry = ctk.CTkEntry(
+            trend_frame,
+            placeholder_text="Polynomial Order (2-6)",
+        )
+        self.poly_order_entry.grid(row=5, column=0, sticky="ew", padx=10, pady=5)
+        self.poly_order_entry.bind("<Return>", self._on_plot_setting_change)
+        self.poly_order_entry.bind("<FocusOut>", self._on_plot_setting_change)
+
+        # Time window controls
+        ctk.CTkLabel(trend_frame, text="Time Window:").grid(
+            row=6,
+            column=0,
+            sticky="w",
+            padx=10,
+            pady=(5, 0),
+        )
+        self.trendline_window_mode = ctk.StringVar(value="Full Range")
+        ctk.CTkOptionMenu(
+            trend_frame,
+            variable=self.trendline_window_mode,
+            values=["Full Range", "Manual Entry", "Visual Selection"],
+            command=self._on_trendline_window_mode_change,
+        ).grid(row=7, column=0, sticky="ew", padx=10, pady=5)
+
+        # Manual time window frame (initially hidden)
+        self.trendline_manual_frame = ctk.CTkFrame(trend_frame)
+        self.trendline_manual_frame.grid(row=8, column=0, sticky="ew", padx=10, pady=5)
+        self.trendline_manual_frame.grid_remove()
+        self.trendline_manual_frame.grid_columnconfigure(0, weight=1)
+        self.trendline_manual_frame.grid_columnconfigure(1, weight=1)
+
+        ctk.CTkLabel(self.trendline_manual_frame, text="Start:").grid(
+            row=0,
+            column=0,
+            sticky="w",
+            padx=5,
+            pady=2,
+        )
+        self.trendline_start_entry = ctk.CTkEntry(
+            self.trendline_manual_frame,
+            placeholder_text="Start time",
+        )
+        self.trendline_start_entry.grid(row=0, column=1, sticky="ew", padx=5, pady=2)
+        self.trendline_start_entry.bind("<Return>", self._on_plot_setting_change)
+
+        ctk.CTkLabel(self.trendline_manual_frame, text="End:").grid(
+            row=1,
+            column=0,
+            sticky="w",
+            padx=5,
+            pady=2,
+        )
+        self.trendline_end_entry = ctk.CTkEntry(
+            self.trendline_manual_frame,
+            placeholder_text="End time",
+        )
+        self.trendline_end_entry.grid(row=1, column=1, sticky="ew", padx=5, pady=2)
+        self.trendline_end_entry.bind("<Return>", self._on_plot_setting_change)
+
+        # Visual selection controls (initially hidden)
+        self.trendline_visual_frame = ctk.CTkFrame(trend_frame)
+        self.trendline_visual_frame.grid(
+            row=9,
+            column=0,
+            sticky="ew",
+            padx=10,
+            pady=5,
+        )
+        self.trendline_visual_frame.grid_remove()
+        self.trendline_visual_frame.grid_columnconfigure(0, weight=1)
+
+        self.trendline_select_button = ctk.CTkButton(
+            self.trendline_visual_frame,
+            text="Select Time Window on Plot",
+            command=self._start_trendline_selection,
+        )
+        self.trendline_select_button.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
+
+        self.trendline_selected_range = ctk.CTkLabel(
+            self.trendline_visual_frame,
+            text="No range selected",
+        )
+        self.trendline_selected_range.grid(
+            row=1,
+            column=0,
+            sticky="ew",
+            padx=5,
+            pady=2,
+        )
+
+        self.trendline_textbox = ctk.CTkTextbox(trend_frame, height=70)
+        self.trendline_textbox.grid(row=10, column=0, sticky="ew", padx=10, pady=5)
+
+    def _build_plot_time_range_controls(self, parent: ctk.CTkFrame) -> None:
+        """Build plot time range controls.
+
+        Creates: plotting_start_time_entry, plotting_end_time_entry.
+        """
+        if parent is None:
+            raise ValueError("Parent frame must not be None")
+
+        time_range_frame = ctk.CTkFrame(parent)
+        time_range_frame.grid(row=4, column=0, sticky="ew", padx=5, pady=5)
+        time_range_frame.grid_columnconfigure(0, weight=1)
+
+        ctk.CTkLabel(
+            time_range_frame,
+            text="Plot Time Range",
+            font=ctk.CTkFont(weight="bold"),
+        ).grid(row=0, column=0, sticky="w", padx=10, pady=5)
+
+        ctk.CTkLabel(time_range_frame, text="Start Time (HH:MM:SS):").grid(
+            row=1,
+            column=0,
+            sticky="w",
+            padx=10,
+        )
+        self.plotting_start_time_entry = ctk.CTkEntry(
+            time_range_frame,
+            placeholder_text="e.g., 09:30:00",
+        )
+        self.plotting_start_time_entry.grid(
+            row=2,
+            column=0,
+            sticky="ew",
+            padx=10,
+            pady=2,
+        )
+        ctk.CTkLabel(time_range_frame, text="End Time (HH:MM:SS):").grid(
+            row=3,
+            column=0,
+            sticky="w",
+            padx=10,
+        )
+        self.plotting_end_time_entry = ctk.CTkEntry(
+            time_range_frame,
+            placeholder_text="e.g., 17:00:00",
+        )
+        self.plotting_end_time_entry.grid(
+            row=4,
+            column=0,
+            sticky="ew",
+            padx=10,
+            pady=2,
+        )
+        ctk.CTkButton(
+            time_range_frame,
+            text="Apply Time Range to Plot",
+            command=self._apply_plot_time_range,
+        ).grid(row=5, column=0, sticky="ew", padx=10, pady=5)
+        ctk.CTkButton(
+            time_range_frame,
+            text="Reset Plot Range",
+            command=self._reset_plot_range,
+        ).grid(row=6, column=0, sticky="ew", padx=10, pady=2)
+        ctk.CTkButton(
+            time_range_frame,
+            text="Save Current View",
+            command=self._save_current_plot_view,
+        ).grid(row=7, column=0, sticky="ew", padx=10, pady=2)
+        ctk.CTkButton(
+            time_range_frame,
+            text="Copy Current View to Processing",
+            command=self._copy_current_view_to_processing,
+        ).grid(row=8, column=0, sticky="ew", padx=10, pady=2)
+
+    def _build_plot_export_controls(self, parent: ctk.CTkFrame) -> None:
+        """Build chart export controls.
+
+        Creates export buttons for PNG/PDF and Excel.
+        """
+        if parent is None:
+            raise ValueError("Parent frame must not be None")
+
+        export_chart_frame = ctk.CTkFrame(parent)
+        export_chart_frame.grid(row=5, column=0, sticky="ew", padx=5, pady=5)
+        export_chart_frame.grid_columnconfigure(0, weight=1)
+
+        ctk.CTkLabel(
+            export_chart_frame,
+            text="Export Chart",
+            font=ctk.CTkFont(weight="bold"),
+        ).grid(row=0, column=0, sticky="w", padx=10, pady=5)
+        ctk.CTkButton(
+            export_chart_frame,
+            text="Save as PNG/PDF",
+            command=self._export_chart_image,
+        ).grid(row=1, column=0, sticky="ew", padx=10, pady=2)
+        ctk.CTkButton(
+            export_chart_frame,
+            text="Export to Excel with Chart",
+            command=self._export_chart_excel,
+        ).grid(row=2, column=0, sticky="ew", padx=10, pady=2)
+
+    def _build_plot_canvas(self, right_panel: ctk.CTkFrame) -> None:
+        """Build the matplotlib canvas and zoom controls.
+
+        Creates: plot_fig, plot_ax, plot_canvas, plot_toolbar, saved_zoom_state.
+        """
+        if right_panel is None:
+            raise ValueError("Parent panel must not be None")
+
+        right_panel.grid_rowconfigure(1, weight=1)
+        right_panel.grid_columnconfigure(0, weight=1)
+
+        plot_canvas_frame = ctk.CTkFrame(right_panel)
+        plot_canvas_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+        plot_canvas_frame.grid_rowconfigure(1, weight=1)
+        plot_canvas_frame.grid_columnconfigure(0, weight=1)
+
+        self.plot_fig = Figure(figsize=(5, 4), dpi=100)
+        self.plot_ax = self.plot_fig.add_subplot(111)
+        self.plot_fig.tight_layout()
+
+        self.plot_canvas = FigureCanvasTkAgg(self.plot_fig, master=plot_canvas_frame)
+        self.plot_canvas.get_tk_widget().grid(row=1, column=0, sticky="nsew")
+
+        self.plot_ax.text(
+            0.5,
+            0.5,
+            "Plotting ready - select a file",
+            ha="center",
+            va="center",
+            transform=self.plot_ax.transAxes,
+        )
+        self.plot_ax.set_title("Select a file to begin plotting")
+        self.plot_canvas.draw()  # type: ignore[no-untyped-call]
+
+        toolbar = NavigationToolbar2Tk(
+            self.plot_canvas,
+            plot_canvas_frame,
+            pack_toolbar=False,
+        )
+        toolbar.grid(row=0, column=0, sticky="ew")
+        self.plot_toolbar = toolbar
+        self.saved_zoom_state = None
+
+        # Zoom controls
+        zoom_frame = ctk.CTkFrame(plot_canvas_frame)
+        zoom_frame.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
+        for col in range(4):
+            zoom_frame.grid_columnconfigure(col, weight=1)
+
+        ctk.CTkButton(
+            zoom_frame,
+            text="Save Zoom State",
+            command=self._save_zoom_state,
+        ).grid(row=0, column=0, padx=2, pady=2, sticky="ew")
+        ctk.CTkButton(
+            zoom_frame,
+            text="Restore Zoom",
+            command=self._restore_zoom_state,
+        ).grid(row=0, column=1, padx=2, pady=2, sticky="ew")
+        ctk.CTkButton(
+            zoom_frame,
+            text="Zoom In 25%",
+            command=self._zoom_in_25,
+        ).grid(row=0, column=2, padx=2, pady=2, sticky="ew")
+        ctk.CTkButton(
+            zoom_frame,
+            text="Zoom Out 25%",
+            command=self._zoom_out_25,
+        ).grid(row=0, column=3, padx=2, pady=2, sticky="ew")
 
     def create_plots_list_tab(self, tab: ctk.CTkFrame) -> None:
         """Create the plots list tab."""

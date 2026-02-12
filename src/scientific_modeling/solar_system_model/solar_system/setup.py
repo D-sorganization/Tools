@@ -15,7 +15,7 @@ except ImportError:
     ) -> str:
         try:
             return Path(path).read_text(encoding=encoding)
-        except (IOError, PermissionError, OSError):
+        except (PermissionError, OSError):
             return default
 
     def safe_write_text(
@@ -61,7 +61,7 @@ setup(
         "pygame>=2.0.0",
         "PyOpenGL>=3.1.5",
     ],
-    extras_require={
+    extras_require={  # type: ignore[arg-type,unused-ignore]
         "accelerate": ["PyOpenGL_accelerate>=3.1.5"],
         "dev": ["pytest>=6.0", "black", "flake8"],
     },
@@ -71,7 +71,7 @@ setup(
         ],
     },
     include_package_data=True,
-    package_data={
+    package_data={  # type: ignore[arg-type,unused-ignore]
         "solar_system": ["assets/textures/*", "assets/shaders/*"],
     },
 )

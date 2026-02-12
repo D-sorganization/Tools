@@ -179,7 +179,7 @@ def validate_file_path(
 
     except PathValidationError:
         raise
-    except (IOError, PermissionError, OSError) as e:
+    except (PermissionError, OSError) as e:
         msg = f"Path validation error: {e}"
         raise PathValidationError(msg) from e
 
@@ -215,7 +215,7 @@ def check_file_size(
 
     except FileSizeError:
         raise
-    except (IOError, PermissionError, OSError) as e:
+    except (PermissionError, OSError) as e:
         msg = f"File size check error: {e}"
         raise FileSizeError(msg) from e
 
@@ -284,5 +284,5 @@ def get_safe_file_info(file_path: str | Path) -> dict[str, Any]:
             "extension": path.suffix.lower(),
             "within_size_limit": size_bytes <= MAX_FILE_SIZE_BYTES,
         }
-    except (IOError, PermissionError, OSError) as e:
+    except (PermissionError, OSError) as e:
         return {"error": str(e)}

@@ -16,7 +16,7 @@ from _bootstrap import bootstrap  # noqa: E402
 _REPO_ROOT = bootstrap(__file__)
 
 
-from solar_system.main import main
+from solar_system.main import main  # noqa: E402
 
 if __name__ == "__main__":
     sys.exit(main())

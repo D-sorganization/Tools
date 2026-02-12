@@ -236,7 +236,7 @@ class ANOVAAnalyzer:
 
         # Get groups
         groups = df.groupby(group_var)[dependent_var].apply(list).to_dict()
-        group_names = list(groups.keys())
+        list(groups.keys())
         k = len(groups)
 
         if k < 2:
@@ -357,7 +357,7 @@ class ANOVAAnalyzer:
         """
         # Remove missing values
         data = df[[dependent_var, factor_a, factor_b]].dropna()
-        y = data[dependent_var].values
+        y: np.ndarray = np.asarray(data[dependent_var].values)
 
         # Get factor levels
         levels_a = data[factor_a].unique()

@@ -4,15 +4,15 @@ Cross-platform launcher for PDF Renamer GUI.
 Replaces PDF_Renamer.bat for better portability.
 """
 
+import logging
 import subprocess
 import sys
 from pathlib import Path
-import logging
 
 logger = logging.getLogger(__name__)
 
 # Use shared path utilities
-from utils.path_helpers import ensure_utils_in_path
+from utils.path_helpers import ensure_utils_in_path  # noqa: E402
 
 ensure_utils_in_path()
 
@@ -64,11 +64,9 @@ def check_dependencies(script_dir: Path) -> bool:
             success = install_from_requirements(str(requirements), upgrade_pip=True)
             if success:
                 logger.info("Dependencies installed successfully!")
-                print()
                 return True
             else:
                 logger.error("ERROR: Failed to install dependencies")
-                print()
                 logger.info("Please try manually:")
                 logger.info(f"  pip install -r {requirements}")
                 return False
@@ -115,11 +113,9 @@ def main() -> None:
     try:
         subprocess.run([sys.executable, str(launch_script)], check=True)
     except subprocess.CalledProcessError as e:
-        print()
         logger.error(f"An error occurred (exit code {e.returncode}).")
         sys.exit(1)
     except KeyboardInterrupt:
-        print()
         logger.info("Launch cancelled by user.")
         sys.exit(1)
 

@@ -143,7 +143,7 @@ def get_api_key(key_name: str = "GEMINI_API_KEY") -> str | None:
                             var_name, var_value = line.split("=", 1)
                             if var_name.strip() in key_names:
                                 return var_value.strip().strip('"').strip("'")
-            except (IOError, PermissionError, OSError):
+            except (PermissionError, OSError):
                 continue
 
     return None
@@ -171,9 +171,6 @@ def setup_api_key_interactive() -> bool:
 
     logger.info("\nTo use AI-powered title extraction, you need a Gemini API key.")
     logger.info("Get your free API key at: https://makersuite.google.com/app/apikey")
-    print(
-        "\nNote: AI features are optional. You can skip this and use local extraction only."
-    )
 
     response = (
         input("\nWould you like to set up your API key now? (y/N): ").strip().lower()
@@ -243,7 +240,7 @@ def setup_api_key_interactive() -> bool:
         logger.info("\nAI features are now enabled!")
         return True
 
-    except (IOError, PermissionError, OSError) as e:
+    except (PermissionError, OSError) as e:
         logger.error(f"\n✗ Failed to save API key: {e}")
         logger.info(f"\nYou can manually create {env_path} with your API key.")
         return False
@@ -269,7 +266,7 @@ def _find_key_location() -> str:
                             "GEMINI_API_KEY="
                         ) or line.strip().startswith("GOOGLE_API_KEY="):
                             return f"{location} ({env_path})"
-            except (IOError, PermissionError, OSError):
+            except (PermissionError, OSError):
                 continue
 
     return "Unknown"

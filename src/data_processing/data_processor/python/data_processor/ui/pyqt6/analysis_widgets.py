@@ -56,9 +56,9 @@ try:
 except ImportError:
     PYQT6_AVAILABLE = False
     # Create dummy classes for type hints
-    QWidget = object
+    QWidget = object  # type: ignore[misc,assignment]
 
-    def pyqtSignal(*args):  # noqa: N802
+    def pyqtSignal(*args: object) -> None:  # type: ignore[no-redef]  # noqa: N802
         return None
 
 
@@ -117,13 +117,14 @@ if PYQT6_AVAILABLE:
             """Filter list based on search text."""
             for i in range(self.list_widget.count()):
                 item = self.list_widget.item(i)
-                item.setHidden(text.lower() not in item.text().lower())
+                if item is not None:
+                    item.setHidden(text.lower() not in item.text().lower())
 
         def _select_all(self) -> None:
             """Select all visible items."""
             for i in range(self.list_widget.count()):
                 item = self.list_widget.item(i)
-                if not item.isHidden():
+                if item is not None and not item.isHidden():
                     item.setSelected(True)
 
         def _select_none(self) -> None:
@@ -1485,7 +1486,7 @@ if PYQT6_AVAILABLE:
                     f"background-color: {self._selected_color};"
                 )
 
-        def get_series_style(self):
+        def get_series_style(self) -> Any:
             """Build a SeriesStyle from current widget state."""
             from plot_engine.specs import SeriesStyle
 
@@ -1499,7 +1500,7 @@ if PYQT6_AVAILABLE:
                 display_mode=self._mode_combo.currentText(),
             )
 
-        def get_trendline_spec(self):
+        def get_trendline_spec(self) -> Any:
             """Build a TrendlineSpec or None."""
             from plot_engine.specs import TrendlineSpec
 
@@ -1513,7 +1514,7 @@ if PYQT6_AVAILABLE:
                 show_r_squared=self._show_r2_check.isChecked(),
             )
 
-        def get_axis_specs(self):
+        def get_axis_specs(self) -> tuple[Any, Any]:
             """Build X and Y AxisSpec from current widget state."""
             from plot_engine.specs import AxisSpec
 
@@ -1529,7 +1530,7 @@ if PYQT6_AVAILABLE:
             )
             return x_axis, y_axis
 
-        def get_legend_spec(self):
+        def get_legend_spec(self) -> Any:
             """Build a LegendSpec from current widget state."""
             from plot_engine.specs import LegendSpec
 

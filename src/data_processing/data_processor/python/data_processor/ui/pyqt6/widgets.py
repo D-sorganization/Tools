@@ -385,7 +385,9 @@ class StatisticsWidget(QWidget):
         self.table.setHorizontalHeaderLabels(
             ["Signal", "Mean", "Std", "Min", "Max", "Median"]
         )
-        self.table.horizontalHeader().setStretchLastSection(True)
+        header = self.table.horizontalHeader()
+        if header is not None:
+            header.setStretchLastSection(True)
         self.table.setAlternatingRowColors(True)
         layout.addWidget(self.table)
 

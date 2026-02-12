@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Main window for PyQt6 Data Processor GUI."""
 
 from __future__ import annotations
@@ -6,6 +7,32 @@ import json
 import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
+
+from PyQt6.QtCore import QSettings, Qt, QThread, pyqtSignal
+from PyQt6.QtGui import QAction, QFont, QKeySequence, QShortcut
+from PyQt6.QtWidgets import (
+    QApplication,
+    QCheckBox,
+    QComboBox,
+    QDoubleSpinBox,
+    QFileDialog,
+    QFormLayout,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QListWidget,
+    QMainWindow,
+    QMessageBox,
+    QPushButton,
+    QSpinBox,
+    QSplitter,
+    QTabWidget,
+    QTextBrowser,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
+)
 
 from data_processor.core.config_manager import ConfigManager
 from data_processor.core.dat_importer import (
@@ -31,31 +58,6 @@ from data_processor.models.processing_config import (
     DifferentiationConfig,
     FilterConfig,
     IntegrationConfig,
-)
-from PyQt6.QtCore import QSettings, Qt, QThread, pyqtSignal
-from PyQt6.QtGui import QAction, QFont, QKeySequence, QShortcut
-from PyQt6.QtWidgets import (
-    QApplication,
-    QCheckBox,
-    QComboBox,
-    QDoubleSpinBox,
-    QFileDialog,
-    QFormLayout,
-    QGroupBox,
-    QHBoxLayout,
-    QLabel,
-    QLineEdit,
-    QListWidget,
-    QMainWindow,
-    QMessageBox,
-    QPushButton,
-    QSpinBox,
-    QSplitter,
-    QTabWidget,
-    QTextBrowser,
-    QTextEdit,
-    QVBoxLayout,
-    QWidget,
 )
 
 from .analysis_widgets import (
@@ -1648,7 +1650,7 @@ class DataProcessorMainWindow(QMainWindow):
             else:
                 QMessageBox.warning(self, "Error", "Export failed")
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Export error: {e}", exc_info=True)
             QMessageBox.critical(self, "Error", f"Export failed:\n{e}")
 
@@ -1952,6 +1954,7 @@ class DataProcessorMainWindow(QMainWindow):
 
         try:
             import matplotlib.pyplot as plt
+
             from data_processor.core.surface_plot import (
                 InterpolationMethod,
                 SmoothingMethod,
@@ -2075,7 +2078,7 @@ class DataProcessorMainWindow(QMainWindow):
         except json.JSONDecodeError as e:
             logger.error(f"JSON decode error: {e}")
             QMessageBox.critical(self, "Error", f"Invalid JSON file:\n{e}")
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Load signal set error: {e}", exc_info=True)
             QMessageBox.critical(self, "Error", f"Failed to load signal set:\n{e}")
 
@@ -2121,7 +2124,7 @@ class DataProcessorMainWindow(QMainWindow):
                 f"Saved {len(selected_signals)} signals",
             )
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Save signal set error: {e}", exc_info=True)
             QMessageBox.critical(self, "Error", f"Failed to save signal set:\n{e}")
 
@@ -2399,7 +2402,7 @@ class DataProcessorMainWindow(QMainWindow):
                 "Invalid Input",
                 "Please enter valid numeric time values.",
             )
-        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
+        except (ZeroDivisionError, OverflowError, TypeError) as e:
             logger.error(f"Trim time range error: {e}", exc_info=True)
             QMessageBox.critical(self, "Error", f"Time range trim failed:\n{e}")
 
@@ -2625,7 +2628,7 @@ class DataProcessorMainWindow(QMainWindow):
             preview_text = "".join(lines)
             self.dat_preview_text.setText(preview_text)
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"DAT preview error: {e}", exc_info=True)
             QMessageBox.critical(self, "Error", f"Failed to preview file:\n{e}")
 

@@ -239,7 +239,7 @@ class APIRenameManager:
                     )
                     results["success"] += 1
 
-            except (IOError, PermissionError, OSError) as e:
+            except (PermissionError, OSError) as e:
                 logger.error(f"Failed to rename {proposal.current_name}: {e}")
                 results["failed"] += 1
 

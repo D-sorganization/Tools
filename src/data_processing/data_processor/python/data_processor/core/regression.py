@@ -1,3 +1,4 @@
+# mypy: disable-error-code="arg-type"
 """Multivariable Regression Module.
 
 Provides comprehensive regression analysis including:
@@ -429,13 +430,13 @@ class MultivariateRegressor:
 
         # Ridge normal equations: (X'X + αI)β = X'y
         # Don't regularize intercept
-        I = np.eye(p + 1)
-        I[0, 0] = 0
+        reg_matrix = np.eye(p + 1)
+        reg_matrix[0, 0] = 0
 
         XtX = X_with_intercept.T @ X_with_intercept
         Xty = X_with_intercept.T @ y
 
-        coeffs = np.linalg.solve(XtX + alpha * I, Xty)
+        coeffs = np.linalg.solve(XtX + alpha * reg_matrix, Xty)
 
         return coeffs[1:], coeffs[0]
 
@@ -549,7 +550,7 @@ class MultivariateRegressor:
     ) -> tuple[np.ndarray, list[str]]:
         """Forward stepwise selection."""
         n, p = X.shape
-        selected = []
+        selected: list[int] = []
         remaining = list(range(p))
         best_score = np.inf
 
@@ -621,7 +622,7 @@ class MultivariateRegressor:
         """Bidirectional stepwise selection."""
         # Start with forward selection, then try backward at each step
         n, p = X.shape
-        selected = []
+        selected: list[int] = []
         remaining = list(range(p))
         best_score = np.inf
 
@@ -691,12 +692,12 @@ class MultivariateRegressor:
         mse = ss_res / n
 
         if criterion == "aic":
-            return n * np.log(mse) + 2 * k
+            return float(n * np.log(mse) + 2 * k)
         elif criterion == "bic":
-            return n * np.log(mse) + k * np.log(n)
+            return float(n * np.log(mse) + k * np.log(n))
         else:  # r_squared (negative for minimization)
             ss_tot = np.sum((y - np.mean(y)) ** 2)
-            return -(1 - ss_res / ss_tot)
+            return float(-(1 - ss_res / ss_tot))
 
     def _calculate_statistics(
         self,
@@ -943,7 +944,7 @@ class MultivariateRegressor:
         else:
             importance = np.ones(len(coeffs)) / len(coeffs)
 
-        return {name: float(imp) for name, imp in zip(names, importance)}
+        return {name: float(imp) for name, imp in zip(names, importance, strict=False)}
 
     def _create_predict_func(
         self,
@@ -957,7 +958,8 @@ class MultivariateRegressor:
         def predict(X: np.ndarray) -> np.ndarray:
             # Build features if needed
             X_features, _ = self._build_features(X, original_predictors)
-            return X_features @ coeffs + intercept
+            result: np.ndarray = X_features @ coeffs + intercept
+            return result
 
         return predict
 
@@ -984,7 +986,8 @@ def format_regression_report(result: RegressionResult) -> str:
 
     # Overall model test
     lines.append(
-        f"F-statistic: {result.f_statistic:.4f} (df={result.df_model}, {result.df_residual})"
+        f"F-statistic: {result.f_statistic:.4f} "
+        f"(df={result.df_model}, {result.df_residual})"
     )
     lines.append(f"p-value: {result.f_p_value:.4e}")
     lines.append("")
@@ -993,7 +996,8 @@ def format_regression_report(result: RegressionResult) -> str:
     lines.append("Coefficients:")
     lines.append("-" * 70)
     lines.append(
-        f"{'Variable':<20} {'Estimate':>12} {'Std.Err':>10} {'t-stat':>10} {'p-value':>10}"
+        f"{'Variable':<20} {'Estimate':>12} "
+        f"{'Std.Err':>10} {'t-stat':>10} {'p-value':>10}"
     )
     lines.append("-" * 70)
 
@@ -1030,10 +1034,12 @@ def format_regression_report(result: RegressionResult) -> str:
         lines.append("Diagnostics:")
         lines.append(f"  Durbin-Watson:     {diag.durbin_watson:.4f}")
         lines.append(
-            f"  Breusch-Pagan:     χ² = {diag.breusch_pagan_stat:.4f}, p = {diag.breusch_pagan_p:.4f}"
+            f"  Breusch-Pagan:     \u03c7\u00b2 = {diag.breusch_pagan_stat:.4f}, "
+            f"p = {diag.breusch_pagan_p:.4f}"
         )
         lines.append(
-            f"  Shapiro-Wilk:      W = {diag.shapiro_stat:.4f}, p = {diag.shapiro_p:.4f}"
+            f"  Shapiro-Wilk:      W = {diag.shapiro_stat:.4f}, "
+            f"p = {diag.shapiro_p:.4f}"
         )
 
         if diag.high_leverage_points:

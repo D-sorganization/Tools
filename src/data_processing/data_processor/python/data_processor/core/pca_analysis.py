@@ -303,7 +303,7 @@ class PCAAnalyzer:
             return valid
 
         # Get all numeric columns
-        numeric = df.select_dtypes(include=[np.number]).columns.tolist()
+        numeric: list[str] = df.select_dtypes(include=[np.number]).columns.tolist()
         if not numeric:
             raise ValueError("No numeric columns found in DataFrame")
         return numeric
@@ -361,7 +361,7 @@ class PCAAnalyzer:
         # If n_components was a float (variance threshold), select components
         if isinstance(self.config.n_components, float):
             cumsum = np.cumsum(explained_variance_ratio)
-            n_components = np.searchsorted(cumsum, self.config.n_components) + 1
+            n_components = int(np.searchsorted(cumsum, self.config.n_components)) + 1
             n_components = min(n_components, len(explained_variance))
 
         return (
@@ -389,7 +389,10 @@ class PCAAnalyzer:
         # Normalize to sum to 1
         importance = importance / np.sum(importance)
 
-        return {name: float(imp) for name, imp in zip(feature_names, importance)}
+        return {
+            name: float(imp)
+            for name, imp in zip(feature_names, importance, strict=False)
+        }
 
     def _calculate_feature_contributions(
         self,
@@ -413,7 +416,7 @@ class PCAAnalyzer:
         contributions["Weighted_Importance"] = (
             sum(
                 contributions[col] * w
-                for col, w in zip(contributions.columns[:-1], weights)
+                for col, w in zip(contributions.columns[:-1], weights, strict=False)
             )
             / sum(weights)
             if sum(weights) > 0
@@ -436,7 +439,7 @@ class PCAAnalyzer:
 
         # Find maximum curvature (elbow)
         if len(second_deriv) > 0:
-            elbow = np.argmax(np.abs(second_deriv)) + 2  # +2 for diff offset
+            elbow = int(np.argmax(np.abs(second_deriv))) + 2  # +2 for diff offset
             return min(elbow, len(variance_ratio))
 
         return 1
@@ -459,11 +462,11 @@ def create_scree_plot(result: PCAResult, ax: Any = None) -> Any:
         fig, ax = plt.subplots(figsize=(10, 6))
 
     components = range(1, result.n_components + 1)
-    eigenvalues = result.scree_data["eigenvalues"]
+    result.scree_data["eigenvalues"]
     cumulative = result.scree_data["cumulative_variance"] * 100
 
     # Bar plot of individual variance
-    bars = ax.bar(
+    ax.bar(
         components,
         [c.explained_variance_ratio * 100 for c in result.components],
         alpha=0.7,

@@ -40,7 +40,7 @@ from utils.path_helpers import ensure_utils_in_path
 ensure_utils_in_path()
 
 # Import from centralized utilities
-from utils.file_utils import (
+from utils.file_utils import (  # noqa: E402
     safe_write_json,
     safe_write_text,
 )
@@ -1418,7 +1418,7 @@ class FolderPackerPro:
                 ),
             )
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.exception("Pack operation failed")
             self._log_message(f"Pack operation failed: {e}", "error")
             error_msg = str(e)
@@ -1547,7 +1547,7 @@ class FolderPackerPro:
                 ),
             )
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.exception("Unpack operation failed")
             self._log_message(f"Unpack operation failed: {e}", "error")
             error_msg = str(e)
@@ -1660,7 +1660,7 @@ class FolderPackerPro:
 
         def remove_pattern() -> None:
             """Remove selected exclusion pattern."""
-            selection = listbox.curselection()  # type: ignore[no-untyped-call]
+            selection = listbox.curselection()
             if selection:
                 pattern = listbox.get(selection[0])
                 self.exclude_patterns.discard(pattern)

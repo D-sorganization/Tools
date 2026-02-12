@@ -1,4 +1,5 @@
 import pytest
+
 from solar_system.ui.widgets import ImmersionChecklistPanel
 
 
