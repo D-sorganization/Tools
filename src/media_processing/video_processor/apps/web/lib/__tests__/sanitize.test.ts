@@ -110,19 +110,31 @@ describe('Sanitization Functions', () => {
   });
 
   describe('sanitizeHTML', () => {
-    it('should strip all HTML by default', () => {
-      expect(sanitizeHTML('<div>Test</div>')).toBe('Test');
-      expect(sanitizeHTML('<script>alert("xss")</script>')).toBe('');
+    it('should allow safe HTML tags (DOMPurify)', () => {
+      expect(sanitizeHTML('<div>Test</div>')).toBe('<div>Test</div>');
+      expect(sanitizeHTML('<b>bold</b>')).toBe('<b>bold</b>');
+      expect(sanitizeHTML('<p>paragraph</p>')).toBe('<p>paragraph</p>');
     });
 
-    it('should remove dangerous tags', () => {
+    it('should strip dangerous tags', () => {
+      expect(sanitizeHTML('<script>alert("xss")</script>')).toBe('');
       expect(sanitizeHTML('<iframe src="evil"></iframe>')).toBe('');
       expect(sanitizeHTML('<object data="evil"></object>')).toBe('');
     });
 
-    // Note: When DOMPurify is added, these tests should be updated
-    it('should handle nested tags', () => {
-      expect(sanitizeHTML('<div><span>Test</span></div>')).toBe('Test');
+    it('should strip event handler attributes', () => {
+      expect(sanitizeHTML('<div onclick="alert(1)">Test</div>')).toBe('<div>Test</div>');
+      expect(sanitizeHTML('<a href="#" onmouseover="alert(1)">link</a>')).toBe('<a href="#">link</a>');
+    });
+
+    it('should handle nested safe tags', () => {
+      expect(sanitizeHTML('<div><span>Test</span></div>')).toBe('<div><span>Test</span></div>');
+    });
+
+    it('should strip data attributes', () => {
+      const result = sanitizeHTML('<div data-evil="payload">Test</div>');
+      expect(result).not.toContain('data-evil');
+      expect(result).toContain('Test');
     });
   });
 

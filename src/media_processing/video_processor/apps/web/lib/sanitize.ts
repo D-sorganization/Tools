@@ -4,25 +4,27 @@
  * Sanitizes user input to prevent XSS and other injection attacks.
  * All user-provided text should be sanitized before rendering or storage.
  *
- * For now, uses simple string operations.
- * TODO: Add DOMPurify when ready for production.
+ * Uses DOMPurify for production-grade HTML sanitization.
  *
  * @see PROFESSIONAL_CODE_REVIEW.md section "Security Assessment"
  */
 
+import DOMPurify from 'dompurify';
+
 /**
  * Sanitize plain text input
- * Removes all HTML tags and dangerous characters
+ * Removes all HTML tags and dangerous characters using DOMPurify
  */
 export function sanitizeText(text: string): string {
   if (!text) {
     return '';
   }
 
+  // Use DOMPurify with no allowed tags to strip all HTML
+  const purified = DOMPurify.sanitize(text, { ALLOWED_TAGS: [] });
+
   return (
-    text
-      // Remove HTML tags
-      .replace(/<[^>]*>/g, '')
+    purified
       // Remove null bytes
       .replace(/\0/g, '')
       // Remove control characters (except newlines and tabs)
@@ -81,17 +83,23 @@ export function sanitizeUrl(url: string): string {
 }
 
 /**
- * Sanitize HTML (basic)
- * For production, use DOMPurify instead
+ * Sanitize HTML
+ * Uses DOMPurify to allow safe HTML tags while stripping dangerous content
  */
 export function sanitizeHTML(html: string): string {
   if (!html) {
     return '';
   }
 
-  // For now, just strip all HTML
-  // TODO: Use DOMPurify to allow safe HTML tags
-  return sanitizeText(html);
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: [
+      'b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'ol', 'li',
+      'span', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+      'blockquote', 'code', 'pre', 'hr', 'sub', 'sup',
+    ],
+    ALLOWED_ATTR: ['href', 'title', 'class', 'id', 'target', 'rel'],
+    ALLOW_DATA_ATTR: false,
+  });
 }
 
 /**

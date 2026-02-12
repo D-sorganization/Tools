@@ -119,8 +119,14 @@ export default function HomePage() {
 
       toast.success('Audio commentary recorded successfully');
 
-      // TODO: Save to database when backend is ready
-      // await saveAudioTrack({ url: audioUrl, startTime, duration: audioBlob.size });
+      // TODO(#663): Save to database when backend API is available.
+      // Expected endpoint: POST /api/audio-tracks
+      // Expected payload: { videoId: string, url: string, startTime: number, duration: number }
+      // await fetch('/api/audio-tracks', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ videoId: videoFile?.name, url: audioUrl, startTime, duration: audioBlob.size }),
+      // });
     } catch (error) {
       logger.error('Failed to process audio recording', { error, audioBlob, startTime });
       toast.error(getUserMessage(error));
@@ -166,7 +172,9 @@ export default function HomePage() {
         currentFrame,
       });
 
-      // TODO: Save pose data to state or database when ready
+      // TODO(#663): Save pose data to database when backend API is available.
+      // Expected endpoint: POST /api/pose-data
+      // Expected payload: { videoId: string, frame: number, timestamp: number, landmarks: unknown }
       // For now, just log for debugging
     } catch (error) {
       logger.error('Failed to process pose detection', { error, landmarks });

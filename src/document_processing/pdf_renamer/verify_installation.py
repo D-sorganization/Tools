@@ -1,11 +1,10 @@
 """Verify PDF Renamer installation and dependencies."""
 
 import importlib
+import logging
 import os
 import re
 import sys
-from pathlib import Path
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -78,9 +77,8 @@ def main() -> None:
 
     # Project modules
     logger.info(f"\n{BOLD}Project Modules:{RESET}")
-    # We need to make sure the project root is in path for these to work if run from this file
-    sys.path.append(os.path.abspath(Path(Path(__file__).parent, "../../..")))
-
+    # Relies on package being installed (pip install -e .) or being
+    # invoked from the repo root so that src/ is importable.
     all_good &= check_dependency("extractors", "from src.pdf_renamer import extractors")
     all_good &= check_dependency("core", "from src.pdf_renamer import core")
     all_good &= check_dependency("worker", "from src.pdf_renamer import worker")
