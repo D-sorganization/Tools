@@ -51,8 +51,8 @@ try:
     HAS_PYQT = True
 except ImportError:
     HAS_PYQT = False
-    QWidget = object  # type: ignore[misc, assignment]
-    QThread = object  # type: ignore[misc, assignment]
+    QWidget = object
+    QThread = object
 
 # Try to import logging and validation utilities
 try:
