@@ -49,7 +49,6 @@ def main() -> int:
     """Main entry point."""
     logger.info("PSA Package - Streamlit Web Application")
     logger.info("=" * 50)
-    print()
 
     if not check_dependencies():
         return 1
@@ -70,7 +69,6 @@ def main() -> int:
 
     logger.info(f"Launching Streamlit app from: {webapp_path}")
     logger.info("The app will open in your default browser.")
-    print()
 
     try:
         # Launch streamlit

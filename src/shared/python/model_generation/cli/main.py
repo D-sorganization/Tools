@@ -306,7 +306,7 @@ def cmd_info(args: argparse.Namespace) -> int:
                 logger.info(f"  - {link.name} (mass: {link.inertia.mass:.3f} kg)")
             logger.info("\nJoints:")
             for joint in model.joints:
-                print(
+                logger.info(
                     f"  - {joint.name}: {joint.parent} -> {joint.child} ({joint.joint_type.value})"
                 )
 

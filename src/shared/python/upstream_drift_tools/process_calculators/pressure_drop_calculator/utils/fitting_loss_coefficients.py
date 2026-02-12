@@ -448,26 +448,26 @@ if __name__ == "__main__":
 
     print_fitting_database()
 
-    print("\n" + "=" * 80)
-    print("EXAMPLE CALCULATIONS")
-    print("=" * 80)
+    logger.info("\n" + "=" * 80)
+    logger.info("EXAMPLE CALCULATIONS")
+    logger.info("=" * 80)
 
     # Example 1: Single fitting
-    print("\nExample 1: Pressure drop across 90° elbow")
-    print("-" * 80)
+    logger.info("\nExample 1: Pressure drop across 90° elbow")
+    logger.info("-" * 80)
     k = get_fitting_k_factor("90_elbow_std")
     rho = 1.2  # kg/m³ (air)
     v = 15  # m/s
     dp = calculate_fitting_pressure_drop(k, rho, v)
-    print("  Fitting: 90° standard elbow")
-    print(f"  K-factor: {k}")
-    print(f"  Density: {rho} kg/m³")
-    print(f"  Velocity: {v} m/s")
-    print(f"  Pressure drop: {dp:.1f} Pa = {dp / 100:.2f} mbar")
+    logger.info("  Fitting: 90° standard elbow")
+    logger.info(f"  K-factor: {k}")
+    logger.info(f"  Density: {rho} kg/m³")
+    logger.info(f"  Velocity: {v} m/s")
+    logger.info(f"  Pressure drop: {dp:.1f} Pa = {dp / 100:.2f} mbar")
 
     # Example 2: Multiple fittings
-    print("\nExample 2: Total K-factor for piping system")
-    print("-" * 80)
+    logger.info("\nExample 2: Total K-factor for piping system")
+    logger.info("-" * 80)
     fittings = {
         "90_elbow_std": 6,
         "45_elbow_std": 2,
@@ -475,19 +475,19 @@ if __name__ == "__main__":
         "tee_through_run": 2,
     }
     total_k = get_multiple_fittings_k(fittings)
-    print("  System components:")
+    logger.info("  System components:")
     for fitting, qty in fittings.items():
-        print(f"    - {qty} × {fitting}")
-    print(f"  Total K-factor: {total_k}")
+        logger.info(f"    - {qty} × {fitting}")
+    logger.info(f"  Total K-factor: {total_k}")
 
     # Example 3: Two-K method
-    print("\nExample 3: Two-K method for small pipe")
-    print("-" * 80)
+    logger.info("\nExample 3: Two-K method for small pipe")
+    logger.info("-" * 80)
     re = 10000
     d_inch = 1.0
     k_std = get_fitting_k_factor("90_elbow_std")
     k_2k = calculate_two_k_factor("90_elbow_std_2k", re, d_inch)
-    print(f'  90° elbow in 1" pipe at Re = {re}')
-    print(f"  Standard K-factor: {k_std}")
-    print(f"  Two-K method: {k_2k:.2f}")
-    print(f"  Difference: {((k_2k / k_std - 1) * 100):.1f}%")
+    logger.info(f'  90° elbow in 1" pipe at Re = {re}')
+    logger.info(f"  Standard K-factor: {k_std}")
+    logger.info(f"  Two-K method: {k_2k:.2f}")
+    logger.info(f"  Difference: {((k_2k / k_std - 1) * 100):.1f}%")
