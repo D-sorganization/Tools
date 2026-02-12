@@ -71,7 +71,7 @@ class ODESolver:
         t_span: Sequence[float],
         y0: Sequence[float],
         t_eval: Any = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> scipy.integrate.OdeSolution:
         """Solve the ODE system.
 
@@ -96,7 +96,7 @@ class ODESolver:
             **kwargs,
         )
 
-    def plot(self, solution) -> None:
+    def plot(self, solution: Any) -> None:
         """Plot the solution returned by :meth:`solve`."""
         for idx, name in enumerate(self.derivatives.keys()):
             plt.plot(solution.t, solution.y[idx], label=name)

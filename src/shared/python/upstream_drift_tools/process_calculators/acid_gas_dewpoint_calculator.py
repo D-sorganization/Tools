@@ -422,27 +422,37 @@ class AcidGasDewpointCalculator:
             Dewpoint temperature in Celsius
         """
         if partial_pressure_pa <= 0:
-            return np.nan
+            raise ValueError(
+                f"partial_pressure_pa must be > 0, got {partial_pressure_pa}"
+            )
 
         if component not in self.antoine_constants:
-            return np.nan
+            raise ValueError(
+                f"unknown component: {component!r}, "
+                f"expected one of {list(self.antoine_constants.keys())}"
+            )
 
         # Convert partial pressure to mmHg for the Antoine equation
         p_mmHg = partial_pressure_pa / MMHG_TO_PA_CONV
 
         if p_mmHg <= 0:
-            return np.nan
+            raise ValueError(
+                f"partial pressure in mmHg must be > 0, got {p_mmHg} "
+                f"(from {partial_pressure_pa} Pa)"
+            )
 
-        try:
-            A = self.antoine_constants[component]["A"]
-            B = self.antoine_constants[component]["B"]
-            C = self.antoine_constants[component]["C"]
+        A = self.antoine_constants[component]["A"]
+        B = self.antoine_constants[component]["B"]
+        C = self.antoine_constants[component]["C"]
 
-            # Inverse Antoine equation: T = B / (A - log10(P)) - C
-            return B / (A - np.log10(p_mmHg)) - C
-
-        except (ValueError, ZeroDivisionError, OverflowError):
-            return np.nan
+        # Inverse Antoine equation: T = B / (A - log10(P)) - C
+        denominator = A - np.log10(p_mmHg)
+        if denominator == 0:
+            raise ValueError(
+                f"Antoine inverse calculation has zero denominator for "
+                f"component={component!r}, partial_pressure_pa={partial_pressure_pa}"
+            )
+        return float(B / denominator - C)
 
     def calculate_dewpoint_mixture(
         self,
@@ -464,6 +474,14 @@ class AcidGasDewpointCalculator:
         Returns:
             Comprehensive dewpoint results
         """
+        if pressure_bar <= 0:
+            raise ValueError(f"pressure_bar must be > 0, got {pressure_bar}")
+        if temperature_c + CELSIUS_TO_KELVIN_OFFSET <= 0:
+            raise ValueError(
+                f"temperature must yield a positive Kelvin value, "
+                f"got {temperature_c} C ({temperature_c + CELSIUS_TO_KELVIN_OFFSET} K)"
+            )
+
         # Convert pressure to Pa
         pressure_pa = pressure_bar * BAR_TO_PA
         temperature_k = temperature_c + CELSIUS_TO_KELVIN_OFFSET
@@ -487,11 +505,28 @@ class AcidGasDewpointCalculator:
         hcl_vapor_pa = self.calculate_vapor_pressure(temperature_c, "HCl", method)
         h2s_vapor_pa = self.calculate_vapor_pressure(temperature_c, "H2S", method)
 
-        # Calculate individual dewpoints
-        h2o_dewpoint = self.calculate_dewpoint(h2o_partial_pa, "H2O", pressure_pa)
-        hf_dewpoint = self.calculate_dewpoint(hf_partial_pa, "HF", pressure_pa)
-        hcl_dewpoint = self.calculate_dewpoint(hcl_partial_pa, "HCl", pressure_pa)
-        h2s_dewpoint = self.calculate_dewpoint(h2s_partial_pa, "H2S", pressure_pa)
+        # Calculate individual dewpoints (only for components with non-zero
+        # partial pressure; absent components get NaN)
+        h2o_dewpoint = (
+            self.calculate_dewpoint(h2o_partial_pa, "H2O", pressure_pa)
+            if h2o_partial_pa > 0
+            else np.nan
+        )
+        hf_dewpoint = (
+            self.calculate_dewpoint(hf_partial_pa, "HF", pressure_pa)
+            if hf_partial_pa > 0
+            else np.nan
+        )
+        hcl_dewpoint = (
+            self.calculate_dewpoint(hcl_partial_pa, "HCl", pressure_pa)
+            if hcl_partial_pa > 0
+            else np.nan
+        )
+        h2s_dewpoint = (
+            self.calculate_dewpoint(h2s_partial_pa, "H2S", pressure_pa)
+            if h2s_partial_pa > 0
+            else np.nan
+        )
 
         # Find overall dewpoint (highest among all components)
         dewpoints = {
@@ -730,7 +765,7 @@ if GUI_AVAILABLE:
 
             calculation_completed = pyqtSignal(dict)
 
-            def __init__(self, parent=None) -> None:
+            def __init__(self, parent: QWidget | None = None) -> None:
                 """Initialize the class."""
                 super().__init__(calculator_name="AcidGasDewpoint", parent=parent)
                 self.calculator = AcidGasDewpointCalculator()
@@ -761,7 +796,7 @@ if GUI_AVAILABLE:
                 for child_text in self.findChildren(QTextEdit):
                     self.register_copyable_widget(child_text, "text")
 
-            def closeEvent(self, event) -> None:
+            def closeEvent(self, event: Any) -> None:
                 """Save state when tab is closed"""
                 self.save_state()
                 super().closeEvent(event)
@@ -880,7 +915,7 @@ if GUI_AVAILABLE:
 
             calculation_completed = pyqtSignal(dict)
 
-            def __init__(self, parent=None) -> None:
+            def __init__(self, parent: QWidget | None = None) -> None:
                 """Initialize the class."""
                 super().__init__(parent)
                 self.calculator = AcidGasDewpointCalculator()

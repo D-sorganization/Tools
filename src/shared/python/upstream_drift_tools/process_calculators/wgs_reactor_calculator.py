@@ -177,7 +177,7 @@ except ImportError:
 
     _minimal_db = _MinimalSpeciesDB()
 
-    def get_species_database():
+    def get_species_database() -> Any:
         return _minimal_db
 
 
@@ -259,13 +259,13 @@ class WGSReactorEngine:
             }
 
         # Gibbs free energy of formation at standard state (298.15 K) in J/mol
-        def get_g_f(species_name):
+        def get_g_f(species_name: str) -> float:
             species = self.species_db.get_species(species_name)
             if not species:
                 return 0
             # G = H - TS
             # Using actual reaction temperature for Gibbs free energy calculation
-            return (
+            return float(
                 species.formation_enthalpy * 1000
                 - temperature * species.formation_entropy
             )
@@ -276,7 +276,7 @@ class WGSReactorEngine:
         g_f_H2 = get_g_f("H2")
 
         # The objective function to minimize is the total Gibbs free energy of the mixture
-        def total_gibbs_energy(x):
+        def total_gibbs_energy(x: Any) -> float:
             # x is the extent of reaction
             # Scipy minimize passes x as a numpy array
             extent = x[0] if hasattr(x, "__len__") else x
@@ -336,7 +336,7 @@ class WGSReactorEngine:
             )
 
             # Total Gibbs energy of the mixture
-            return n_CO * g_CO + n_H2O * g_H2O + n_CO2 * g_CO2 + n_H2 * g_H2
+            return float(n_CO * g_CO + n_H2O * g_H2O + n_CO2 * g_CO2 + n_H2 * g_H2)
 
         # Initial guess for the extent of reaction
         x_initial = 0.5 * min(n_CO_0, n_H2O_0)
@@ -422,7 +422,7 @@ if BASE_CALCULATOR_AVAILABLE:
 
         calculation_finished = pyqtSignal(dict)
 
-        def __init__(self, parent=None) -> None:
+        def __init__(self, parent: Any = None) -> None:
             """Initialize calculator"""
             super().__init__(calculator_name="WGSReactor", parent=parent)
             self.engine = WGSReactorEngine()
@@ -439,7 +439,7 @@ if BASE_CALCULATOR_AVAILABLE:
             for text_edit in self.findChildren(QTextEdit):
                 self.register_copyable_widget(text_edit, "text")
 
-        def closeEvent(self, event) -> None:
+        def closeEvent(self, event: Any) -> None:
             """Handle close event"""
             self.save_state()
             super().closeEvent(event)
@@ -678,6 +678,6 @@ if BASE_CALCULATOR_AVAILABLE:
             self.canvas.draw()
 
 
-def create_wgs_reactor_calculator(parent=None) -> QWidget:
+def create_wgs_reactor_calculator(parent: Any = None) -> QWidget:
     """Factory function"""
     return WGSReactorCalculatorWidget(parent=parent)

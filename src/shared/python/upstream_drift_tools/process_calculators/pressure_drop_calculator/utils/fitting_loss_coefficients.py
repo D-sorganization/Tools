@@ -359,7 +359,7 @@ def calculate_two_k_factor(
         f"{fitting_type}: K_lam={k_laminar:.3f}, K_turb={k_turbulent:.3f}, Total={total_k:.3f}"
     )
 
-    return total_k
+    return float(total_k)
 
 
 # ============================================================================

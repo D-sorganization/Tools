@@ -224,6 +224,11 @@ class FinancialModelCalculator:
             results.margin_per_ton = 0.0
 
         # Calculate return metrics
+        if parameters.debt_ratio >= 1.0 and parameters.total_capital_investment > 0:
+            raise ValueError(
+                f"debt_ratio must be < 1.0 when capital is invested "
+                f"(equity would be zero or negative), got {parameters.debt_ratio}"
+            )
         equity = parameters.total_capital_investment * (1 - parameters.debt_ratio)
         if equity > 0:
             results.roe = results.net_income / equity

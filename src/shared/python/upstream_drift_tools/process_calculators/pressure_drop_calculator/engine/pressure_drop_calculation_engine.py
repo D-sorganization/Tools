@@ -229,7 +229,7 @@ def friction_factor_churchill(
     f = 8.0 * ((term2 + term3) ** (1.0 / 12.0))
 
     logger.debug(f"Churchill: Re={Re:.0f}, ε/D={relative_roughness:.6f}, f={f:.6f}")
-    return f
+    return float(f)
 
 
 def friction_factor_haaland(reynolds_number: float, relative_roughness: float) -> float:
@@ -505,7 +505,7 @@ def calculate_elevation_pressure_drop(density: float, elevation_change: float) -
     dp_elevation = density * GRAVITY * elevation_change
 
     logger.debug(f"Elevation: Δh={elevation_change:.1f}m, ΔP={dp_elevation:.1f} Pa")
-    return dp_elevation
+    return float(dp_elevation)
 
 
 def calculate_compressible_flow_correction(

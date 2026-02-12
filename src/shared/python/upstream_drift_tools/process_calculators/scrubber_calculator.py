@@ -315,7 +315,7 @@ def calculate_gas_viscosity(temperature_k: float, molecular_weight: float) -> fl
 
     # Adjust for molecular weight (heavier gases tend to be more viscous)
     mw_correction = (molecular_weight / MW_AIR_GMOL) ** 0.25
-    return mu * mw_correction
+    return float(mu * mw_correction)
 
 
 def calculate_flooding_velocity(
@@ -423,7 +423,7 @@ def calculate_pressure_drop(
     # Limit to reasonable range
     dp_per_m = min(dp_per_m, ECKERT_MAX_DP_PER_M)  # Max 2 kPa/m (indicates flooding)
 
-    return dp_per_m * packed_height
+    return float(dp_per_m * packed_height)
 
 
 def calculate_ntu_removal(inlet_conc: float, outlet_conc: float) -> float:
@@ -454,7 +454,7 @@ def calculate_ntu_removal(inlet_conc: float, outlet_conc: float) -> float:
 
     # For irreversible absorption (chemical scrubbing)
     # y* ≈ 0, so NTU = ln(y_in/y_out)
-    return np.log(inlet_conc / outlet_conc)
+    return float(np.log(inlet_conc / outlet_conc))
 
 
 def calculate_htu(
@@ -504,7 +504,7 @@ def calculate_htu(
     htu = packing.ch / (kla_per_s * packing.specific_surface_area * l_over_g**packing.n)
 
     # Clamp to reasonable range (0.1 to 3 m)
-    return max(HTU_MIN, min(HTU_MAX, htu))
+    return float(max(HTU_MIN, min(HTU_MAX, htu)))
 
 
 def calculate_required_packed_height(

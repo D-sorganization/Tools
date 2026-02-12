@@ -49,17 +49,8 @@ from .thermal_profile_predictor import (
 )
 
 if TYPE_CHECKING:
-    from .multi_param_analysis import (
-        MultiParameterAnalysis as MultiParameterAnalysisType,
-    )
-    from .optimization import AdamOptimizer as AdamOptimizerType
-    from .optimization import Optimizer as OptimizerType
     from .pressure_drop_calculator import (
         PressureDropCalculator as PressureDropCalculatorType,
-    )
-    from .scrubber_calculator import ScrubberCalculator as ScrubberCalculatorType
-    from .syngas_compression_calculator import (
-        SyngasCompressionCalculator as SyngasCompressionCalculatorType,
     )
     from .syngas_water_calculator import (
         SyngasWaterCalculator as SyngasWaterCalculatorType,
@@ -76,10 +67,14 @@ _import_errors: list[str] = []
 
 # Calculators with numpy/scipy dependencies
 try:
-    from .scrubber_calculator import ScrubberCalculator
+    from .scrubber_calculator import (  # noqa: F401
+        calculate_gas_density as scrubber_calculate_gas_density,
+    )
+
+    ScrubberCalculator = None  # Module has functions, no class
 except ImportError as e:
     _import_errors.append(f"ScrubberCalculator not available: {e}")
-    ScrubberCalculator: type[ScrubberCalculatorType] | None = None  # type: ignore[no-redef]
+    ScrubberCalculator = None
 
 try:
     from .syngas_water_calculator import SyngasWaterCalculator
@@ -99,24 +94,40 @@ except ImportError as e:
     WGSReactorEngine: type[WGSReactorEngineType] | None = None  # type: ignore[no-redef]
 
 try:
-    from .optimization import AdamOptimizer, Optimizer
+    from .optimization import (  # noqa: F401
+        find_optimal_on_surface,
+        run_adam_optimization,
+    )
+
+    AdamOptimizer = run_adam_optimization  # Alias for backwards compatibility
+    Optimizer = find_optimal_on_surface  # Alias for backwards compatibility
 except ImportError as e:
     _import_errors.append(f"Optimization not available: {e}")
-    Optimizer: type[OptimizerType] | None = None  # type: ignore[no-redef]
-    AdamOptimizer: type[AdamOptimizerType] | None = None  # type: ignore[no-redef]
+    Optimizer = None  # type: ignore[assignment]
+    AdamOptimizer = None  # type: ignore[assignment]
 
 try:
-    from .multi_param_analysis import MultiParameterAnalysis
+    from .multi_param_analysis import (  # noqa: F401
+        run_multi_parameter_analysis,
+    )
+
+    MultiParameterAnalysis = (
+        run_multi_parameter_analysis  # Alias for backwards compatibility
+    )
 except ImportError as e:
     _import_errors.append(f"MultiParameterAnalysis not available: {e}")
-    MultiParameterAnalysis: type[MultiParameterAnalysisType] | None = None  # type: ignore[no-redef]
+    MultiParameterAnalysis = None  # type: ignore[assignment]
 
 # UI-dependent calculators (require PyQt6)
 try:
-    from .syngas_compression_calculator import SyngasCompressionCalculator
+    from .syngas_compression_calculator import (
+        SyngasCompressionCalculatorWidget,
+    )
+
+    SyngasCompressionCalculator = SyngasCompressionCalculatorWidget  # Alias
 except ImportError as e:
     _import_errors.append(f"SyngasCompressionCalculator not available: {e}")
-    SyngasCompressionCalculator: type[SyngasCompressionCalculatorType] | None = None  # type: ignore[no-redef]
+    SyngasCompressionCalculator = None  # type: ignore[misc, assignment]
 
 # Modular packages
 try:

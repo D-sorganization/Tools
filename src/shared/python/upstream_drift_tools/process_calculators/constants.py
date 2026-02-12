@@ -9,100 +9,129 @@ needed by the standalone process calculators. Values are sourced from:
 
 from typing import Final
 
+from upstream_drift_tools.utils.unit_constants import (
+    ATM_TO_KPA,
+    ATMOSPHERE_TO_PASCAL,
+    AVOGADRO_NUMBER,
+    BAR_TO_PASCAL,
+    BOLTZMANN_CONSTANT,
+    BTU_TO_JOULE,
+    CALORIE_TO_JOULE,
+    CENTIPOISE_TO_PASCAL_SECOND,
+    HOUR_TO_SECOND,
+    INCH_H2O_TO_PASCAL,
+    KG_PER_HOUR_TO_KG_PER_SECOND,
+    KILOCALORIE_TO_JOULE,
+    KILOJOULE_TO_JOULE,
+    KILOPASCAL_TO_PASCAL,
+    MEGAPASCAL_TO_PASCAL,
+    MINUTE_TO_SECOND,
+    MMHG_TO_PASCAL,
+    MOLAR_VOLUME_STP_OLD,
+    POISE_TO_PASCAL_SECOND,
+    POUND_PER_HOUR_TO_KG_PER_SECOND,
+    PSI_TO_PASCAL,
+    R_UNIVERSAL,
+    STANDARD_GRAVITY,
+    TORR_TO_PASCAL,
+)
+from upstream_drift_tools.utils.unit_constants import (
+    CELSIUS_OFFSET as CELSIUS_TO_KELVIN_OFFSET,
+)
+from upstream_drift_tools.utils.unit_constants import (
+    DENSITY_WATER_STD as _DENSITY_WATER_STD,
+)
+from upstream_drift_tools.utils.unit_constants import (
+    HOURS_PER_DAY as _HOURS_PER_DAY,
+)
+from upstream_drift_tools.utils.unit_constants import (
+    KG_TO_LB as _KG_TO_LB,
+)
+from upstream_drift_tools.utils.unit_constants import (
+    R_UNIVERSAL_KMOL as _R_UNIVERSAL_KMOL,
+)
+from upstream_drift_tools.utils.unit_constants import (
+    STP_TEMPERATURE_K as _STP_TEMPERATURE_K,
+)
+
 # =============================================================================
-# FUNDAMENTAL PHYSICAL CONSTANTS (CODATA 2018)
+# RE-EXPORTED ALIASES (preserve backwards-compatible names)
 # =============================================================================
 
-# Universal gas constant [J/(mol·K)]
-R_UNIVERSAL: Final[float] = 8.314462618
 R_GAS_J_MOL_K: Final[float] = R_UNIVERSAL  # Alias
-
-# Universal gas constant [kJ/(kmol·K)]
-R_UNIVERSAL_KMOL: Final[float] = R_UNIVERSAL * 1000.0
-
-# Standard gravity [m/s²]
-STANDARD_GRAVITY: Final[float] = 9.80665
 G: Final[float] = STANDARD_GRAVITY  # Alias
-
-# Avogadro constant [1/mol]
-AVOGADRO_NUMBER: Final[float] = 6.02214076e23
 NA: Final[float] = AVOGADRO_NUMBER  # Alias
-
-# Boltzmann constant [J/K]
-BOLTZMANN_CONSTANT: Final[float] = 1.380649e-23
 KB: Final[float] = BOLTZMANN_CONSTANT  # Alias
 
-# Stefan-Boltzmann constant [W/(m²·K⁴)]
-STEFAN_BOLTZMANN: Final[float] = 5.670374419e-8
+# Pressure aliases (constants.py used shorter names)
+BAR_TO_PA: Final[float] = BAR_TO_PASCAL
+KPA_TO_PA: Final[float] = KILOPASCAL_TO_PASCAL
+MPA_TO_PA: Final[float] = MEGAPASCAL_TO_PASCAL
+ATM_TO_PA: Final[float] = ATMOSPHERE_TO_PASCAL
+PSI_TO_PA: Final[float] = PSI_TO_PASCAL
+TORR_TO_PA: Final[float] = TORR_TO_PASCAL
+MMHG_TO_PA: Final[float] = MMHG_TO_PASCAL
+INH2O_TO_PA: Final[float] = INCH_H2O_TO_PASCAL
+
+# Standard atmosphere aliases
+ATM_PA: Final[float] = ATMOSPHERE_TO_PASCAL
+ATM_KPA: Final[float] = ATM_TO_KPA
+
+# Energy aliases
+KJ_TO_J: Final[float] = KILOJOULE_TO_JOULE
+CAL_TO_J: Final[float] = CALORIE_TO_JOULE
+KCAL_TO_J: Final[float] = KILOCALORIE_TO_JOULE
+BTU_TO_J: Final[float] = BTU_TO_JOULE
+
+# Viscosity aliases
+CP_TO_PA_S: Final[float] = CENTIPOISE_TO_PASCAL_SECOND
+POISE_TO_PA_S: Final[float] = POISE_TO_PASCAL_SECOND
+
+# Flow aliases
+LB_HR_TO_KG_S: Final[float] = POUND_PER_HOUR_TO_KG_PER_SECOND
+KG_HR_TO_KG_S: Final[float] = KG_PER_HOUR_TO_KG_PER_SECOND
+
+# Time aliases
+SECONDS_PER_HOUR: Final[float] = HOUR_TO_SECOND
+SECONDS_PER_MINUTE: Final[float] = MINUTE_TO_SECOND
+
+# Molar volume alias
+MOLAR_VOLUME_STP_ATM: Final[float] = MOLAR_VOLUME_STP_OLD
+
+# Re-exported from unit_constants (explicit annotations for mypy visibility)
+DENSITY_WATER_STD: Final[float] = _DENSITY_WATER_STD
+KG_TO_LB: Final[float] = _KG_TO_LB
+R_UNIVERSAL_KMOL: Final[float] = _R_UNIVERSAL_KMOL
+HOURS_PER_DAY: Final[int] = _HOURS_PER_DAY
+STP_TEMPERATURE_K: Final[float] = _STP_TEMPERATURE_K
 
 # =============================================================================
-# STANDARD CONDITIONS
+# STANDARD CONDITIONS (additional, not in unit_constants)
 # =============================================================================
 
-# Standard Temperature and Pressure (IUPAC - Since 1982)
-STP_TEMPERATURE_K: Final[float] = 273.15  # 0°C
-STP_PRESSURE_PA: Final[float] = 100000.0  # 1 bar (100 kPa)
 STP_PRESSURE_KPA: Final[float] = 100.0  # 1 bar
 
-# Standard Atmosphere
-ATM_PA: Final[float] = 101325.0  # 1 atm
-ATM_KPA: Final[float] = 101.325  # 1 atm
-
-# Normal Temperature and Pressure (NTP)
-NTP_TEMPERATURE_K: Final[float] = 293.15  # 20°C
-NTP_PRESSURE_PA: Final[float] = 101325.0  # 1 atm
-
 # Standard Ambient Temperature and Pressure (SATP)
-SATP_TEMPERATURE_K: Final[float] = 298.15  # 25°C
 SATP_TEMPERATURE_C: Final[float] = 25.0
-SATP_PRESSURE_PA: Final[float] = 100000.0  # 1 bar
 
 # Reference conditions for thermodynamic calculations
 T_REF_K: Final[float] = 298.15  # Standard reference temperature (25°C)
 P_REF_PA: Final[float] = 101325.0  # Standard reference pressure (1 atm)
 P_REF_KPA: Final[float] = 101.325
 
-# SCFM Standard Conditions (US Engineering)
-SCFM_60F_TEMPERATURE_K: Final[float] = 288.706  # 60°F
-SCFM_70F_TEMPERATURE_K: Final[float] = 294.261  # 70°F
-
 # =============================================================================
-# MOLAR VOLUMES
+# STEFAN-BOLTZMANN CONSTANT
 # =============================================================================
 
-# Ideal gas molar volume at STP [m³/mol]
-MOLAR_VOLUME_STP: Final[float] = 0.02271095  # At 273.15 K, 100 kPa
-MOLAR_VOLUME_STP_ATM: Final[float] = 0.022413969545  # At 273.15 K, 1 atm
+# Stefan-Boltzmann constant [W/(m²·K⁴)]
+STEFAN_BOLTZMANN: Final[float] = 5.670374419e-8
 
 # =============================================================================
-# TEMPERATURE CONVERSIONS
+# TEMPERATURE CONVERSIONS (additional)
 # =============================================================================
 
-CELSIUS_TO_KELVIN_OFFSET: Final[float] = 273.15
 FAHRENHEIT_TO_RANKINE_OFFSET: Final[float] = 459.67
 RANKINE_PER_KELVIN: Final[float] = 1.8
-
-# =============================================================================
-# PRESSURE CONVERSIONS (to Pa)
-# =============================================================================
-
-BAR_TO_PA: Final[float] = 100000.0
-KPA_TO_PA: Final[float] = 1000.0
-MPA_TO_PA: Final[float] = 1000000.0
-ATM_TO_PA: Final[float] = 101325.0
-PSI_TO_PA: Final[float] = 6894.757293168361
-TORR_TO_PA: Final[float] = 133.32236842105263
-MMHG_TO_PA: Final[float] = 133.322387415  # At 0°C
-INH2O_TO_PA: Final[float] = 249.08890833333  # At 4°C
-
-# =============================================================================
-# ENERGY CONVERSIONS (to J)
-# =============================================================================
-
-KJ_TO_J: Final[float] = 1000.0
-CAL_TO_J: Final[float] = 4.184  # Thermochemical calorie
-KCAL_TO_J: Final[float] = 4184.0
-BTU_TO_J: Final[float] = 1055.05585262
 
 # =============================================================================
 # FLOW CONVERSIONS
@@ -111,17 +140,6 @@ BTU_TO_J: Final[float] = 1055.05585262
 # Volumetric flow
 CFM_TO_M3_S: Final[float] = 0.000471947443
 LPM_TO_M3_S: Final[float] = 0.0000166667
-
-# Mass flow
-LB_HR_TO_KG_S: Final[float] = 0.000125998
-KG_HR_TO_KG_S: Final[float] = 1 / 3600
-
-# =============================================================================
-# VISCOSITY
-# =============================================================================
-
-CP_TO_PA_S: Final[float] = 0.001  # Centipoise to Pascal-second
-POISE_TO_PA_S: Final[float] = 0.1
 
 # =============================================================================
 # NUMERICAL TOLERANCES
@@ -209,12 +227,12 @@ def get_molecular_weight(species: str) -> float:
 
 def celsius_to_kelvin(temp_c: float) -> float:
     """Convert temperature from Celsius to Kelvin."""
-    return temp_c + CELSIUS_TO_KELVIN_OFFSET
+    return float(temp_c + CELSIUS_TO_KELVIN_OFFSET)
 
 
 def kelvin_to_celsius(temp_k: float) -> float:
     """Convert temperature from Kelvin to Celsius."""
-    return temp_k - CELSIUS_TO_KELVIN_OFFSET
+    return float(temp_k - CELSIUS_TO_KELVIN_OFFSET)
 
 
 def fahrenheit_to_kelvin(temp_f: float) -> float:
@@ -254,14 +272,11 @@ def pa_to_psi(pressure_pa: float) -> float:
 # Liquid water heat capacity [J/(kg·K)] at 25°C
 CP_WATER_LIQUID: Final[float] = 4182.0
 
-# Liquid water density at standard conditions [kg/m³]
-DENSITY_WATER_STD: Final[float] = 997.0
-
 # Heat of vaporization of water [J/kg] at 100°C
 H_VAP_WATER: Final[float] = 2256400.0
 
 # Mass conversion
-KG_TO_LB: Final[float] = 2.20462262185
+# KG_TO_LB is imported from unit_constants above
 
 # =============================================================================
 # WATER VAPOR PRESSURE COEFFICIENTS (Modified Buck Equation)
@@ -273,19 +288,6 @@ WATER_VAPOR_B: Final[float] = 23.036  # [K]
 WATER_VAPOR_C: Final[float] = 279.82  # [K]
 WATER_VAPOR_D: Final[float] = 333.7  # [K]
 
-
-# =============================================================================
-# TIME CONVERSIONS
-# =============================================================================
-
-# Seconds per hour [s/hr]
-SECONDS_PER_HOUR: Final[float] = 3600.0
-
-# Seconds per minute [s/min]
-SECONDS_PER_MINUTE: Final[float] = 60.0
-
-# Hours per day [hr/day]
-HOURS_PER_DAY: Final[float] = 24.0
 
 # =============================================================================
 # UNIT CONVERSION FACTORS

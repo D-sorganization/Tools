@@ -147,7 +147,7 @@ except ImportError:
             }
             return mw.get(species)
 
-    def get_species_database():
+    def get_species_database() -> Any:
         return _MinimalSpeciesDB()
 
 
@@ -232,6 +232,9 @@ class SyngasCompressionEngine:
         water_content: float,
     ) -> dict[str, float]:
         """Calculate water dropout during compression"""
+        if pressure <= 0:
+            raise ValueError(f"pressure must be > 0, got {pressure}")
+
         # (pressure * 1e5 removed as it was no-op)
 
         # Use SyngasWaterCalculator (expects Celsius)
@@ -240,6 +243,12 @@ class SyngasCompressionEngine:
             temperature_c, method="iapws"
         )
         water_vp_bar = water_vp_pa / BAR_TO_PA
+
+        if water_vp_bar <= 0:
+            raise ValueError(
+                f"water vapor pressure must be > 0 bar, got {water_vp_bar} "
+                f"(at T={temperature} K)"
+            )
 
         # Relative humidity (assuming water content is in mol%)
         relative_humidity = (water_content / 100) * pressure / water_vp_bar
@@ -269,7 +278,21 @@ class SyngasCompressionEngine:
         mixture_props: dict[str, float],
     ) -> dict[str, Any]:
         """Calculate compression work for different compression types"""
+        if stage.inlet_pressure <= 0:
+            raise ValueError(f"inlet_pressure must be > 0, got {stage.inlet_pressure}")
+        if stage.outlet_pressure <= 0:
+            raise ValueError(
+                f"outlet_pressure must be > 0, got {stage.outlet_pressure}"
+            )
+
         gamma = mixture_props["heat_capacity_ratio"]
+        if gamma <= 0:
+            raise ValueError(f"heat_capacity_ratio (gamma) must be > 0, got {gamma}")
+        if gamma == 1.0:
+            raise ValueError(
+                "heat_capacity_ratio (gamma) must not be 1.0; "
+                "gamma/(gamma-1) would cause division by zero"
+            )
         # (mixture_props["molecular_weight"] removed as it was no-op)
 
         # Pressure ratio
@@ -349,6 +372,9 @@ class SyngasCompressionEngine:
         intercooling: bool = True,
     ) -> dict[str, Any]:
         """Calculate multistage compression with optional intercooling"""
+        if not stages:
+            raise ValueError("stages list must not be empty")
+
         mixture_props = self.calculate_mixture_properties(composition)
         results = []
         total_power = 0
@@ -471,7 +497,14 @@ class CompressionCalculationWorker(QThread):
     finished = pyqtSignal(dict)
     error = pyqtSignal(str)
 
-    def __init__(self, engine, stages, flow_rate, composition, intercooling) -> None:
+    def __init__(
+        self,
+        engine: Any,
+        stages: Any,
+        flow_rate: float,
+        composition: Any,
+        intercooling: bool,
+    ) -> None:
         """Initialize the class."""
         super().__init__()
         self.engine = engine
@@ -503,7 +536,7 @@ if BASE_CALCULATOR_AVAILABLE:
 
         calculation_finished = pyqtSignal(dict)
 
-        def __init__(self, parent=None) -> None:
+        def __init__(self, parent: Any = None) -> None:
             """Initialize the class."""
             super().__init__(calculator_name="SyngasCompression", parent=parent)
             self.engine = SyngasCompressionEngine()
@@ -531,7 +564,7 @@ if BASE_CALCULATOR_AVAILABLE:
                 ):
                     self.register_copyable_widget(label, "label")
 
-        def closeEvent(self, event) -> None:
+        def closeEvent(self, event: Any) -> None:
             """Handle widget close event.
 
             Saves the current state before closing the widget.
@@ -542,7 +575,7 @@ if BASE_CALCULATOR_AVAILABLE:
             self.save_state()
             super().closeEvent(event)
 
-        def showEvent(self, event) -> None:
+        def showEvent(self, event: Any) -> None:
             """Handle widget show event.
 
             Ensures proper layout and visibility when the widget becomes visible,
@@ -1041,7 +1074,7 @@ if BASE_CALCULATOR_AVAILABLE:
             output = "".join(output_parts)
             self.analysis_text.setText(output)
 
-        def create_plots(self, result) -> None:
+        def create_plots(self, result: dict[str, Any]) -> None:
             """Create visualization plots"""
             # Clear previous plots
             self.figure.clear()
@@ -1094,6 +1127,6 @@ if BASE_CALCULATOR_AVAILABLE:
             self.canvas.draw()
 
 
-def create_syngas_compression_calculator(parent=None) -> QWidget:
+def create_syngas_compression_calculator(parent: Any = None) -> QWidget:
     """Factory function to create syngas compression calculator widget"""
     return SyngasCompressionCalculatorWidget(parent=parent)
