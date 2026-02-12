@@ -24,22 +24,19 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-
-from upstream_drift_tools.ui.catppuccin_theme import COLORS, get_stylesheet as _base_stylesheet
+from upstream_drift_tools.ui.catppuccin_theme import COLORS
+from upstream_drift_tools.ui.catppuccin_theme import get_stylesheet as _base_stylesheet
 
 
 def get_stylesheet() -> str:
     """Get the Catppuccin Mocha stylesheet with ResultCard extension."""
-    return (
-        _base_stylesheet()
-        + f"""
+    return _base_stylesheet() + f"""
         QFrame#resultCard {{
             background-color: {COLORS["surface0"]};
             border-radius: 8px;
             padding: 10px;
         }}
     """
-    )
 
 
 class ResultCard(QFrame):
