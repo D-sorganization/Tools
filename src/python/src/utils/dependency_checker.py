@@ -58,7 +58,7 @@ def has_module(name: str, spec_finder: Callable[[str], object] = find_spec) -> b
     """
     try:
         return spec_finder(name) is not None
-    except Exception:
+    except (ModuleNotFoundError, ValueError):
         return False
 
 

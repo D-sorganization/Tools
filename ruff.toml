@@ -40,7 +40,7 @@ exclude = [
 # I = isort (Import sorting)
 # B = flake8-bugbear (Catches likely bugs/traps)
 # UP = pyupgrade (Modernizes old Python syntax)
-select = ["E", "F", "W", "I", "B", "UP"]
+select = ["E", "F", "W", "I", "B", "UP", "T201"]
 
 # Ignore:
 # D = pydocstyle (We let the 'Doc-Scribe' agent handle docstrings, so we don't lint them strictly here)

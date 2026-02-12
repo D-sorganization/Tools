@@ -38,7 +38,7 @@ class TestDeepRecursion:
                 pytest.fail(
                     "RecursionError raised during validation of deep expression"
                 )
-            except Exception as e:
+            except (ValueError, TypeError) as e:
                 pytest.fail(f"Validation failed with error: {e}")
 
             # Validation completed successfully

@@ -63,7 +63,7 @@ def safe_read_json(path: str | Path, default: Any = None, **kwargs: Any) -> Any:
     try:
         with open(path, encoding="utf-8") as f:
             return json.load(f, **kwargs)
-    except (IOError, PermissionError, OSError):
+    except (PermissionError, OSError):
         return default
 
 
@@ -1677,7 +1677,7 @@ class CSVProcessorApp(ctk.CTk):
             try:
                 safe_write_json(file_path, self.custom_vars_list, indent=2)
                 messagebox.showinfo("Success", f"Custom variables saved to {file_path}")
-            except Exception as e:
+            except (OSError, TypeError, ValueError) as e:
                 messagebox.showerror(
                     "Error",
                     f"Failed to save custom variables: {e!s}",
@@ -1740,7 +1740,7 @@ class CSVProcessorApp(ctk.CTk):
                     f"Loaded {len(loaded_vars)} custom variables from {file_path}",
                 )
 
-            except Exception as e:
+            except (OSError, ValueError, KeyError) as e:
                 messagebox.showerror(
                     "Error",
                     f"Failed to load custom variables: {e!s}",
@@ -2081,7 +2081,7 @@ class CSVProcessorApp(ctk.CTk):
                 signals = df.columns.tolist()
                 all_signals.update(signals)
 
-            except (IOError, PermissionError, OSError) as e:
+            except (PermissionError, OSError) as e:
                 logger.error(f"Error reading {file_path}: {e}")
 
         logger.debug(f" All signals collected: {len(all_signals)} unique signals")
@@ -2362,7 +2362,7 @@ class CSVProcessorApp(ctk.CTk):
                     logger.error(" File processing returned None or empty DataFrame")
                     error_count += 1
 
-            except (IOError, PermissionError, OSError) as e:
+            except (PermissionError, OSError) as e:
                 logger.error(f"EXCEPTION processing {file_path}: {e}")
                 import traceback
 
@@ -4248,7 +4248,7 @@ class CSVProcessorApp(ctk.CTk):
             if Path(self.layout_config_file).exists():
                 with open(self.layout_config_file) as f:
                     return json.load(f)
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Error loading layout config: {e}")
         return {}
 
@@ -4495,7 +4495,7 @@ class CSVProcessorApp(ctk.CTk):
         df = None
         try:
             df = self.get_data_for_plotting(selected_file)
-        except Exception as e:
+        except (OSError, ValueError, KeyError) as e:
             logger.error(f"Error loading data: {e}")
             self.plot_ax.text(
                 0.5,
@@ -4576,7 +4576,7 @@ class CSVProcessorApp(ctk.CTk):
                         signals_to_plot,
                         x_axis_col,
                     )
-                except Exception as e:
+                except (ValueError, TypeError, KeyError) as e:
                     logger.debug(f"Warning: Filter failed - {e}")
                     # Continue with unfiltered data
 
@@ -4734,7 +4734,7 @@ class CSVProcessorApp(ctk.CTk):
                     logger.debug(
                         f"Auto-zoom applied ({zoom_reason}): fitting to all data"
                     )
-                except Exception as e:
+                except (ValueError, TypeError, RuntimeError) as e:
                     logger.debug(f"Warning: Could not auto-fit plot - {e}")
             elif zoom_state:
                 # Restore previous zoom state
@@ -4743,7 +4743,7 @@ class CSVProcessorApp(ctk.CTk):
                     logger.debug(
                         f"Zoom state restored ({zoom_reason}): preserving user view"
                     )
-                except Exception as e:
+                except (ValueError, TypeError, RuntimeError) as e:
                     logger.debug(f"Warning: Could not apply zoom state - {e}")
 
             # Force canvas update
@@ -5201,7 +5201,7 @@ class CSVProcessorApp(ctk.CTk):
                         pass
 
                 return df
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Error loading data for plotting: {e}")
             return None
 
@@ -5889,7 +5889,7 @@ COMMON MISTAKES TO AVOID:
                 text=f"Found {len(config_files)} configuration file(s)",
             )
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             self.config_status_label.configure(text=f"Error refreshing list: {e!s}")
 
     def _load_selected_config(self) -> None:
@@ -5931,7 +5931,7 @@ COMMON MISTAKES TO AVOID:
                 f"Configuration loaded successfully:\n{filename}",
             )
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             messagebox.showerror("Error", f"Failed to load configuration:\n{e!s}")
 
     def _delete_selected_config(self) -> None:
@@ -5970,7 +5970,7 @@ COMMON MISTAKES TO AVOID:
                     f"Configuration deleted successfully:\n{filename}",
                 )
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             messagebox.showerror("Error", f"Failed to delete configuration:\n{e!s}")
 
     def _open_config_location(self) -> None:
@@ -6467,7 +6467,7 @@ COMMON MISTAKES TO AVOID:
                     text=f"Chart exported: {Path(final_path).name}",
                 )
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             messagebox.showerror("Error", f"Failed to export chart:\n{e}")
 
     def _export_chart_excel(self) -> None:
@@ -6561,7 +6561,7 @@ COMMON MISTAKES TO AVOID:
                 else:
                     messagebox.showerror("Error", "Could not load data for export.")
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             messagebox.showerror("Error", f"Failed to export chart data:\n{e}")
 
     def _add_plot_to_list(self) -> None:
@@ -6744,7 +6744,7 @@ COMMON MISTAKES TO AVOID:
                 ".csv_processor_plots.json",
             )
             safe_write_json(plots_file, self.plots_list, indent=2)
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Error saving plots to file: {e}")
 
     def _load_plots_from_file(self) -> None:
@@ -6759,7 +6759,7 @@ COMMON MISTAKES TO AVOID:
                     self.plots_list = json.load(f)
                 self._update_plots_listbox()
                 self._update_load_plot_config_menu()
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Error loading plots from file: {e}")
             self.plots_list = []
 
@@ -6884,7 +6884,7 @@ COMMON MISTAKES TO AVOID:
                 output_path = Path(self.output_directory) / f"{base_name}_Trimmed.csv"
                 safe_write_csv(df, output_path, index=False)
 
-            except (IOError, PermissionError, OSError) as e:
+            except (PermissionError, OSError) as e:
                 logger.error(f"Error trimming {file_path}: {e}")
 
         messagebox.showinfo(
@@ -7165,7 +7165,7 @@ COMMON MISTAKES TO AVOID:
             # Override the home button functionality
             self._override_home_button()
 
-        except Exception as e:
+        except (OSError, ValueError, RuntimeError) as e:
             messagebox.showerror("Error", f"Failed to save plot view: {e!s}")
 
     def _copy_current_view_to_processing(self) -> None:
@@ -8515,7 +8515,7 @@ For additional support or feature requests, please refer to the
 
             self.preview_canvas.draw()  # type: ignore[no-untyped-call]
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             self.preview_ax.clear()
             self.preview_ax.text(
                 0.5,
@@ -8571,7 +8571,7 @@ For additional support or feature requests, please refer to the
                 f"Exported {exported_count} plot configurations to {export_dir}",
             )
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             messagebox.showerror("Export Error", f"Error exporting plots: {e}")
 
     def _on_plot_setting_change(self, *args: Any) -> None:

@@ -50,14 +50,14 @@ def calculate_financial(request: FinancialRequest) -> FinancialResponse:
 
     try:
         results = calc.calculate_financial_model(params)
-    except Exception as exc:
+    except (ValueError, TypeError, KeyError, ArithmeticError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     projections: list[dict[str, float]] = []
     if request.projection_years > 0:
         try:
             projections = calc.generate_yearly_projections(request.projection_years)
-        except Exception as exc:
+        except (ValueError, TypeError, KeyError, ArithmeticError) as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     return FinancialResponse(

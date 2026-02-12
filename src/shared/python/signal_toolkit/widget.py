@@ -1273,7 +1273,7 @@ if HAS_MATPLOTLIB and HAS_PYQT:
 
                 self._update_plot(fitted_signal=result.fitted_signal)
 
-            except Exception as e:
+            except (ValueError, TypeError, RuntimeError) as e:
                 QMessageBox.warning(self, "Auto-fit Error", f"Failed: {e}")
 
         def _apply_saturation(self) -> None:

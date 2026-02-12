@@ -345,7 +345,7 @@ class UnifiedModelLoader:
                 success=True,
                 warnings=model.warnings,
             )
-        except Exception as exc:
+        except (OSError, ValueError, KeyError) as exc:
             return LoadResult(
                 source_path=path,
                 source_format=ModelFormat.URDF,
@@ -392,7 +392,7 @@ class UnifiedModelLoader:
         """
         try:
             return self._mjcf_converter.mjcf_to_urdf(source)
-        except Exception as exc:
+        except (OSError, ValueError, KeyError) as exc:
             logger.error("MJCF to URDF conversion failed: %s", exc)
             return None
 
@@ -408,6 +408,6 @@ class UnifiedModelLoader:
         """
         try:
             return self._mjcf_converter.urdf_to_mjcf(source)
-        except Exception as exc:
+        except (OSError, ValueError, KeyError) as exc:
             logger.error("URDF to MJCF conversion failed: %s", exc)
             return None

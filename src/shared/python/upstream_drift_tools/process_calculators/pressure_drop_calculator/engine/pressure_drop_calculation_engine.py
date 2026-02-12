@@ -19,7 +19,7 @@ import logging
 import math
 
 from ....utilities.unit_constants import R_UNIVERSAL_KMOL, STANDARD_GRAVITY
-from ...process_calculators.constants import (
+from ...constants import (
     API_14E_C_CONTINUOUS,
     API_14E_C_INTERMITTENT,
     CHURCHILL_B_COEFF,
@@ -976,9 +976,9 @@ if __name__ == "__main__":
     # Demonstration
     logging.basicConfig(level=logging.INFO)
 
-    print("\n" + "=" * 80)
-    print("PRESSURE DROP CALCULATION ENGINE - EXAMPLE")
-    print("=" * 80)
+    logger.info("\n" + "=" * 80)
+    logger.info("PRESSURE DROP CALCULATION ENGINE - EXAMPLE")
+    logger.info("=" * 80)
 
     # Example: Syngas in 6" Schedule 40 pipe
     from ..models.pressure_drop_data_models import GasComposition, PipeFitting
@@ -1021,16 +1021,16 @@ if __name__ == "__main__":
     results = engine.calculate(inputs)
 
     # Display results
-    print("\n" + "-" * 80)
-    print("CALCULATION RESULTS")
-    print("-" * 80)
+    logger.info("\n" + "-" * 80)
+    logger.info("CALCULATION RESULTS")
+    logger.info("-" * 80)
     for key, value in results.to_dict().items():
         if isinstance(value, float):
-            print(f"{key:40s}: {value:.6g}")
+            logger.info(f"{key:40s}: {value:.6g}")
         else:
-            print(f"{key:40s}: {value}")
+            logger.info(f"{key:40s}: {value}")
 
     if results.warnings:
-        print("\nWARNINGS:")
+        logger.warning("WARNINGS:")
         for warning in results.warnings:
-            print(f"  ⚠ {warning}")
+            logger.warning(f"  {warning}")

@@ -34,7 +34,7 @@ def calculate_wgs(request: WGSReactorRequest) -> WGSReactorResponse:
             pressure=request.pressure_bar,
             steam_ratio=request.steam_ratio,
         )
-    except Exception as exc:
+    except (ValueError, TypeError, KeyError, ArithmeticError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     equilibrium = WGSEquilibriumOut(

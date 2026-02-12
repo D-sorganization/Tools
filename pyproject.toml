@@ -140,7 +140,7 @@ filterwarnings = [
 
 [tool.ruff]
 target-version = "py310"
-select = ["E", "F", "B", "UP", "I"]
+select = ["E", "F", "B", "UP", "I", "T201"]
 line-length = 88
 
 [tool.black]

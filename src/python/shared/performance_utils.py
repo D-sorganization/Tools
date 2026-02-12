@@ -98,7 +98,7 @@ class OptimizedFileScanner:
                 for future in as_completed(future_to_dir):
                     try:
                         found_files.extend(future.result())
-                    except Exception:
+                    except OSError:
                         pass  # Skip failed directories
         else:
             # Sequential fallback for small directories

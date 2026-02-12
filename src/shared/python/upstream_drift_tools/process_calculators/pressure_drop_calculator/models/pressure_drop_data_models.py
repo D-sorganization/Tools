@@ -40,7 +40,7 @@ class GasComposition:
                 logger.error("Mole fractions must be between 0 and 1")
                 return False
             return True
-        except Exception as e:
+        except (ValueError, TypeError, ArithmeticError) as e:
             logger.error(f"Composition validation error: {e}")
             return False
 

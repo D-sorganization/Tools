@@ -840,13 +840,13 @@ if __name__ == "__main__":
     # Demonstration
     logging.basicConfig(level=logging.INFO)
 
-    print("\n" + "=" * 80)
-    print("GAS MIXTURE PROPERTY CALCULATOR - EXAMPLES")
-    print("=" * 80)
+    logger.info("\n" + "=" * 80)
+    logger.info("GAS MIXTURE PROPERTY CALCULATOR - EXAMPLES")
+    logger.info("=" * 80)
 
     # Example 1: Syngas composition
-    print("\nExample 1: Syngas from coal gasification")
-    print("-" * 80)
+    logger.info("\nExample 1: Syngas from coal gasification")
+    logger.info("-" * 80)
     syngas = {
         "H2": 0.30,
         "CO": 0.40,
@@ -858,24 +858,24 @@ if __name__ == "__main__":
     P = 25e5  # Pa (25 bar)
 
     props = calculate_gas_properties(syngas, T, P)
-    print(f"\nComposition: {syngas}")
-    print(f"Temperature: {T} K ({T - 273.15:.0f}°C)")
-    print(f"Pressure: {P / 1e5:.1f} bar")
-    print("\nCalculated Properties:")
-    print(f"  Molecular Weight: {props['molecular_weight']:.2f} kg/kmol")
-    print(f"  Density: {props['density']:.4f} kg/m³")
-    print(
+    logger.info(f"\nComposition: {syngas}")
+    logger.info(f"Temperature: {T} K ({T - 273.15:.0f}°C)")
+    logger.info(f"Pressure: {P / 1e5:.1f} bar")
+    logger.info("\nCalculated Properties:")
+    logger.info(f"  Molecular Weight: {props['molecular_weight']:.2f} kg/kmol")
+    logger.info(f"  Density: {props['density']:.4f} kg/m³")
+    logger.info(
         f"  Viscosity: {props['viscosity']:.6e} Pa·s ({props['viscosity'] * 1e6:.2f} µPa·s)"
     )
-    print(f"  Z-factor: {props['compressibility_factor']:.4f}")
+    logger.info(f"  Z-factor: {props['compressibility_factor']:.4f}")
 
     # Example 2: Air at different conditions
-    print("\n\nExample 2: Air at various temperatures")
-    print("-" * 80)
+    logger.info("\n\nExample 2: Air at various temperatures")
+    logger.info("-" * 80)
     air = {"Air": 1.0}
     for temp in [300, 500, 800, 1200]:
         props_air = calculate_gas_properties(air, temp, 1e5, use_compressibility=False)
-        print(
+        logger.info(
             f"T = {temp}K: ρ = {props_air['density']:.4f} kg/m³, "
             f"μ = {props_air['viscosity'] * 1e6:.2f} µPa·s"
         )

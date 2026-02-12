@@ -306,7 +306,7 @@ def cmd_info(args: argparse.Namespace) -> int:
                 logger.info(f"  - {link.name} (mass: {link.inertia.mass:.3f} kg)")
             logger.info("\nJoints:")
             for joint in model.joints:
-                print(
+                logger.info(
                     f"  - {joint.name}: {joint.parent} -> {joint.child} ({joint.joint_type.value})"
                 )
 
@@ -495,7 +495,7 @@ def cmd_edit_compose(args: argparse.Namespace) -> int:
         try:
             editor.load_model(model_id, path, read_only=True)
             logger.info(f"Loaded source: {model_id}")
-        except Exception as e:
+        except (OSError, ValueError, KeyError) as e:
             logger.error(f"Failed to load {path}: {e}")
             return 1
 

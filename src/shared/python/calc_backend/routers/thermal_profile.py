@@ -20,7 +20,7 @@ def predict_thermal_profile(
     """Predict temperature profile for a heated vessel."""
     try:
         result = _solve_thermal_profile(request)
-    except Exception as exc:
+    except (ValueError, TypeError, KeyError, ArithmeticError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     return result
 

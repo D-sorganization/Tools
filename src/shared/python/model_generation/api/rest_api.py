@@ -522,7 +522,7 @@ class ModelGenerationAPI:
 
         try:
             urdf_string = converter.mjcf_to_urdf(content)
-        except Exception as e:
+        except (ValueError, KeyError, OSError) as e:
             return APIResponse.error(f"Conversion failed: {e}", 422)
 
         robot_name = body.get("robot_name", "converted")
@@ -549,7 +549,7 @@ class ModelGenerationAPI:
 
         try:
             mjcf_string = converter.urdf_to_mjcf(content)
-        except Exception as e:
+        except (ValueError, KeyError, OSError) as e:
             return APIResponse.error(f"Conversion failed: {e}", 422)
 
         robot_name = body.get("robot_name", "converted")
@@ -629,7 +629,7 @@ class ModelGenerationAPI:
 
         try:
             model = parser.parse(content)
-        except Exception as e:
+        except (ValueError, KeyError, OSError) as e:
             return APIResponse.error(f"Parse failed: {e}", 422)
 
         root = model.get_root_link()
@@ -949,7 +949,7 @@ class ModelGenerationAPI:
         for model_id, content in sources.items():
             try:
                 editor.load_model(model_id, content, read_only=True)
-            except Exception as e:
+            except (ValueError, KeyError, OSError) as e:
                 return APIResponse.error(f"Failed to load model '{model_id}': {e}")
 
         # Create output model

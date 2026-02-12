@@ -245,7 +245,7 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
             self.results_text.delete("1.0", "end")
             self.results_text.insert("1.0", results)
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             self.results_text.delete("1.0", "end")
             self.results_text.insert("1.0", f"Error analyzing file: {str(e)}")
 
@@ -606,7 +606,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         processed_files += 1
                         self.converter_progress.set(processed_files / total_files)
 
-                    except (IOError, PermissionError, OSError) as e:
+                    except (PermissionError, OSError) as e:
                         self._log_conversion_message(
                             f"Error reading {Path(file_path).name}: {str(e)}"
                         )
@@ -628,7 +628,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                             f"{len(combined_df.columns)} columns"
                         )
 
-                    except (IOError, PermissionError, OSError) as e:
+                    except (PermissionError, OSError) as e:
                         self._log_conversion_message(
                             f"Error writing combined file: {str(e)}"
                         )
@@ -684,7 +684,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                         processed_files += 1
                         self.converter_progress.set(processed_files / total_files)
 
-                    except (IOError, PermissionError, OSError) as e:
+                    except (PermissionError, OSError) as e:
                         self._log_conversion_message(
                             f"Error converting {Path(file_path).name}: {str(e)}"
                         )
@@ -694,7 +694,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             )
             self.converter_progress.set(1.0)
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             self._log_conversion_message(f"Conversion error: {str(e)}")
             self.converter_status_label.configure(text="Conversion failed")
         finally:
@@ -749,7 +749,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 try:
                     safe_write_text(file_path, log_content)
                     messagebox.showinfo("Success", f"Log saved to {file_path}")
-                except Exception as e:
+                except OSError as e:
                     messagebox.showerror("Error", f"Failed to save log: {str(e)}")
 
     def show_parquet_analyzer(self) -> None:
@@ -1280,7 +1280,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             if folder:
                 self.folder_source_folders.append(folder)
                 self._folder_update_source_display()
-        except Exception as e:
+        except (OSError, RuntimeError) as e:
             messagebox.showerror("Error", f"Failed to select source folders: {str(e)}")
 
     def _folder_remove_selected_source(self):
@@ -1313,7 +1313,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
             folder = filedialog.askdirectory(title="Select Destination Folder")
             if folder:
                 self.folder_destination = folder
-        except Exception as e:
+        except (OSError, RuntimeError) as e:
             messagebox.showerror(
                 "Error", f"Failed to select destination folder: {str(e)}"
             )
@@ -1444,7 +1444,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                     if not self.folder_preview_mode_var.get():
                         shutil.copy2(source_path, final_dest_path)
                     copied_count += 1
-                except (IOError, PermissionError, OSError) as e:
+                except (PermissionError, OSError) as e:
                     logger.error(f"Error copying '{Path(source_path).name}': {e}")
 
                 processed_files += 1
@@ -1472,7 +1472,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
             self.after(0, lambda: self.folder_status_var.set(status))
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             error_msg = f"Error: {str(e)}"
             self.after(0, lambda: self.folder_status_var.set(error_msg))
 
@@ -1529,7 +1529,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                     if not self.folder_preview_mode_var.get():
                         shutil.copy2(source_path, final_dest_path)
                     copied_count += 1
-                except (IOError, PermissionError, OSError) as e:
+                except (PermissionError, OSError) as e:
                     logger.error(f"Error copying '{file}': {e}")
 
                 processed_files += 1
@@ -1557,7 +1557,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
             self.after(0, lambda: self.folder_status_var.set(status))
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             error_msg = f"Error: {str(e)}"
             self.after(0, lambda: self.folder_status_var.set(error_msg))
 
@@ -1624,7 +1624,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                     if not self.folder_preview_mode_var.get():
                         shutil.copy2(source_path, dest_path)
                     copied_count += 1
-                except (IOError, PermissionError, OSError) as e:
+                except (PermissionError, OSError) as e:
                     logger.error(f"Error copying '{file}': {e}")
 
                 processed_files += 1
@@ -1652,7 +1652,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
             self.after(0, lambda: self.folder_status_var.set(status))
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             error_msg = f"Error: {str(e)}"
             self.after(0, lambda: self.folder_status_var.set(error_msg))
 
@@ -1742,7 +1742,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
 
             self.after(0, lambda: self.folder_status_var.set(status))
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             error_msg = f"Error: {str(e)}"
             self.after(0, lambda: self.folder_status_var.set(error_msg))
 
@@ -1864,7 +1864,7 @@ class IntegratedCSVProcessorApp(OriginalCSVProcessorApp):
                 ),
             )
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             error_msg = f"Error: {str(e)}"
             self.after(0, lambda: self.folder_status_var.set(error_msg))
 

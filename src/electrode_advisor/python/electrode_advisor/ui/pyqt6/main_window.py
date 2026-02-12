@@ -1776,7 +1776,7 @@ class ElectrodeAdvisorWidget(QWidget):
             ax.set_zlabel(
                 "Z (in)" if self.show_axis_labels_checkbox.isChecked() else ""
             )
-        except Exception as zlabel_error:
+        except (AttributeError, ValueError) as zlabel_error:
             logger.debug("set_zlabel not available: %s", zlabel_error)
 
         # Set aspect and limits
@@ -1786,11 +1786,11 @@ class ElectrodeAdvisorWidget(QWidget):
         # set_zlim is not always present, so use hasattr
         try:
             ax.set_zlim(0, glass_depth + metal_depth)
-        except Exception as zlim_error:
+        except (AttributeError, ValueError) as zlim_error:
             logger.debug("set_zlim not available: %s", zlim_error)
         try:
             ax.view_init(elev=25, azim=45)
-        except Exception as view_error:
+        except (AttributeError, ValueError) as view_error:
             logger.debug("view_init not available: %s", view_error)
         if self.electrode_canvas is not None:
             self.electrode_canvas.draw()
@@ -3682,7 +3682,7 @@ class ElectrodeAdvisorWidget(QWidget):
                     # Fallback: use default angles if not available
                     self._last_elev = 20
                     self._last_azim = 45
-        except Exception as e:
+        except (ValueError, TypeError, ArithmeticError) as e:
             logger.exception("Error in mouse press handler: %s", e)
 
     def _on_mouse_release(self, event: Any) -> None:
@@ -3690,7 +3690,7 @@ class ElectrodeAdvisorWidget(QWidget):
         try:
             self._mouse_pressed = False
             logger.info("Mouse released")
-        except Exception as e:
+        except (ValueError, TypeError, ArithmeticError) as e:
             logger.exception("Error in mouse release handler: %s", e)
 
     def _on_mouse_motion(self, event: Any) -> None:
@@ -3877,7 +3877,7 @@ class ElectrodeAdvisorWidget(QWidget):
                 hasattr(main_window, "glass_calculator_tab")
                 and main_window.glass_calculator_tab
             )
-        except Exception as e:
+        except (ValueError, TypeError, ArithmeticError) as e:
             logger.exception("Error checking glass calculator availability: %s", e)
             return False
 
@@ -3889,7 +3889,7 @@ class ElectrodeAdvisorWidget(QWidget):
             while widget and not hasattr(widget, "glass_calculator_tab"):
                 widget = widget.parent()
             return widget
-        except Exception as e:
+        except (ValueError, TypeError, ArithmeticError) as e:
             logger.exception("Error finding main window: %s", e)
             return None
 
@@ -4022,7 +4022,7 @@ class ElectrodeAdvisorWidget(QWidget):
             self.current_color_scheme = scheme
             # Trigger visualization update with new color scheme
             self._on_input_changed()
-        except Exception as e:
+        except (ValueError, TypeError, ArithmeticError) as e:
             logger.exception("Error changing color scheme: %s", e)
 
     def _get_color_scheme_colors(self) -> list[str]:

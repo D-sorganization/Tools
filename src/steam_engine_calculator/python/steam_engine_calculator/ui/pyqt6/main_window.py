@@ -626,7 +626,7 @@ class SteamEngineCalculatorWindow(QMainWindow):
 
         except ValueError as e:
             QMessageBox.warning(self, "Input Error", f"Invalid input: {e}")
-        except Exception as e:
+        except (RuntimeError, TypeError, ArithmeticError) as e:
             QMessageBox.critical(self, "Calculation Error", f"Error: {e}")
 
     def _display_results(self, result: SteamProperties) -> None:
