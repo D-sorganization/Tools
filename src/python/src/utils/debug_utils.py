@@ -633,16 +633,16 @@ def print_call_stack(
 
     frames = get_call_stack(skip_frames + 1, max_frames, include_locals)
 
-    print("\n=== Call Stack ===", file=file)
+    print("\n=== Call Stack ===", file=file)  # noqa: T201
     for i, frame in enumerate(frames):
-        print(f"\n[{i}] {frame}", file=file)
+        print(f"\n[{i}] {frame}", file=file)  # noqa: T201
         if frame.code_context:
-            print(f"    > {frame.code_context}", file=file)
+            print(f"    > {frame.code_context}", file=file)  # noqa: T201
         if frame.local_vars:
-            print("    Locals:", file=file)
+            print("    Locals:", file=file)  # noqa: T201
             for key, value in frame.local_vars.items():
-                print(f"      {key} = {value}", file=file)
-    print("\n==================\n", file=file)
+                print(f"      {key} = {value}", file=file)  # noqa: T201
+    print("\n==================\n", file=file)  # noqa: T201
 
 
 def get_caller_info(skip_frames: int = 1) -> tuple[str, str, int]:
@@ -910,17 +910,17 @@ def print_diagnostics(file: Any = None) -> None:
 
     diag = get_system_diagnostics()
 
-    print("\n=== System Diagnostics ===", file=file)
-    print(f"Python: {diag.python_version.split()[0]}", file=file)
-    print(f"Platform: {diag.platform}", file=file)
-    print(f"PID: {diag.process_id}", file=file)
-    print(f"Threads: {diag.thread_count}", file=file)
-    print(f"Memory: {diag.memory_mb:.2f} MB", file=file)
-    print(f"CPUs: {diag.cpu_count}", file=file)
-    print("\nEnvironment:", file=file)
+    print("\n=== System Diagnostics ===", file=file)  # noqa: T201
+    print(f"Python: {diag.python_version.split()[0]}", file=file)  # noqa: T201
+    print(f"Platform: {diag.platform}", file=file)  # noqa: T201
+    print(f"PID: {diag.process_id}", file=file)  # noqa: T201
+    print(f"Threads: {diag.thread_count}", file=file)  # noqa: T201
+    print(f"Memory: {diag.memory_mb:.2f} MB", file=file)  # noqa: T201
+    print(f"CPUs: {diag.cpu_count}", file=file)  # noqa: T201
+    print("\nEnvironment:", file=file)  # noqa: T201
     for key, value in diag.environment.items():
-        print(f"  {key}={value[:50]}...", file=file)
-    print("==========================\n", file=file)
+        print(f"  {key}={value[:50]}...", file=file)  # noqa: T201
+    print("==========================\n", file=file)  # noqa: T201
 
 
 # =============================================================================
