@@ -1,39 +1,17 @@
 """Logging configuration for data_processor.
 
-Fixed in issue #530: removed fragile dependency on ``utils.logging_utils``
-which required ``src/python/src`` to already be on ``sys.path``.  Now
-provides a self-contained implementation with an optional import from
-the shared utils when available.
+Fixed in issue #530: removed fragile dependency on ``utils.logging_utils``.
+Updated in issue #682: removed ``sys.path`` hack; relies on package
+installation (``pip install -e .``) or pytest ``pythonpath`` config.
 """
 
 from __future__ import annotations
 
 import logging
-import sys
-from pathlib import Path
 
-
-# ---------------------------------------------------------------------------
-# Self-contained path bootstrap (see issue #530)
-# ---------------------------------------------------------------------------
-def _ensure_utils_on_path() -> None:
-    """Add the shared utils directory to sys.path if not already present."""
-    current = Path(__file__).resolve().parent
-    for _ in range(15):
-        if any((current / marker).exists() for marker in (".git", "pyproject.toml")):
-            utils_path = current / "src" / "python" / "src"
-            if utils_path.exists() and str(utils_path) not in sys.path:
-                sys.path.insert(0, str(utils_path))
-            return
-        parent = current.parent
-        if parent == current:
-            break
-        current = parent
-
-
-_ensure_utils_on_path()
-
-# Try to import from shared utils; fall back to local implementations
+# Try to import from shared utils; fall back to local implementations.
+# With a proper editable install the ``utils`` package is available
+# without any sys.path manipulation.
 try:
     from utils.logging_utils import (
         DEFAULT_FORMAT,

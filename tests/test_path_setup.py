@@ -143,68 +143,89 @@ class TestSetupPythonPathContract:
 
 
 class TestSetupPythonPath:
-    """Functional tests for setup_python_path."""
+    """Functional tests for setup_python_path.
 
-    def test_adds_paths_to_sys_path(self, tmp_path):
-        """Test adding paths to sys.path."""
+    Since issue #682 setup_python_path no longer mutates sys.path; it only
+    updates the PYTHONPATH environment variable for child processes and
+    emits a DeprecationWarning.
+    """
+
+    def test_sets_pythonpath_env_var(self, tmp_path):
+        """Test setting PYTHONPATH environment variable."""
+        import warnings
+
         from utils.path_setup import setup_python_path
 
         # Create a directory structure
         src_dir = tmp_path / "src" / "python" / "src"
         src_dir.mkdir(parents=True)
 
-        original_path = sys.path.copy()
-        try:
-            setup_python_path(repo_root=tmp_path)
-            assert str(src_dir) in sys.path
-        finally:
-            # Restore original path
-            sys.path[:] = original_path
-
-    def test_sets_pythonpath_env_var(self, tmp_path):
-        """Test setting PYTHONPATH environment variable."""
-        from utils.path_setup import setup_python_path
-
         original_env = os.environ.get("PYTHONPATH", "")
-        original_path = sys.path.copy()
         try:
-            setup_python_path(repo_root=tmp_path)
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", DeprecationWarning)
+                setup_python_path(repo_root=tmp_path)
             pythonpath = os.environ.get("PYTHONPATH", "")
             assert str(tmp_path) in pythonpath
         finally:
             # Restore
             os.environ["PYTHONPATH"] = original_env
+
+    def test_does_not_mutate_sys_path(self, tmp_path):
+        """setup_python_path should no longer add entries to sys.path."""
+        import warnings
+
+        from utils.path_setup import setup_python_path
+
+        src_dir = tmp_path / "src" / "python" / "src"
+        src_dir.mkdir(parents=True)
+
+        original_path = sys.path.copy()
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", DeprecationWarning)
+                setup_python_path(repo_root=tmp_path)
+            # sys.path should NOT contain the tmp_path directories
+            assert str(src_dir) not in sys.path
+        finally:
             sys.path[:] = original_path
 
-    def test_accepts_additional_paths(self, tmp_path):
-        """Test accepting additional paths."""
+    def test_accepts_additional_paths_in_pythonpath(self, tmp_path):
+        """Test accepting additional paths (in PYTHONPATH, not sys.path)."""
+        import warnings
+
         from utils.path_setup import setup_python_path
 
         custom_path = tmp_path / "custom"
         custom_path.mkdir()
 
-        original_path = sys.path.copy()
+        original_env = os.environ.get("PYTHONPATH", "")
         try:
-            setup_python_path(repo_root=tmp_path, additional_paths=[custom_path])
-            assert str(custom_path) in sys.path
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", DeprecationWarning)
+                setup_python_path(repo_root=tmp_path, additional_paths=[custom_path])
+            pythonpath = os.environ.get("PYTHONPATH", "")
+            assert str(custom_path) in pythonpath
         finally:
-            sys.path[:] = original_path
+            os.environ["PYTHONPATH"] = original_env
 
-    def test_does_not_add_duplicates(self, tmp_path):
-        """Test not adding duplicate paths."""
+    def test_emits_deprecation_warning(self, tmp_path):
+        """setup_python_path should emit a DeprecationWarning."""
+        import warnings
+
         from utils.path_setup import setup_python_path
 
-        original_path = sys.path.copy()
+        original_env = os.environ.get("PYTHONPATH", "")
         try:
-            setup_python_path(repo_root=tmp_path)
-            count_before = sys.path.count(str(tmp_path))
-
-            setup_python_path(repo_root=tmp_path)
-            count_after = sys.path.count(str(tmp_path))
-
-            assert count_before == count_after
+            with warnings.catch_warnings(record=True) as w:
+                warnings.simplefilter("always")
+                setup_python_path(repo_root=tmp_path)
+            deprecation_warnings = [
+                x for x in w if issubclass(x.category, DeprecationWarning)
+            ]
+            assert len(deprecation_warnings) >= 1
         finally:
-            sys.path[:] = original_path
+            os.environ["PYTHONPATH"] = original_env
 
 
 class TestAddUtilsToPathContract:
@@ -212,25 +233,33 @@ class TestAddUtilsToPathContract:
 
     def test_does_not_raise(self):
         """Postcondition: Does not raise exceptions."""
+        import warnings
+
         from utils.path_setup import add_utils_to_path
 
         # Should not raise even if path doesn't exist
-        add_utils_to_path()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            add_utils_to_path()
 
 
 class TestAddUtilsToPath:
     """Functional tests for add_utils_to_path."""
 
-    def test_adds_utils_path(self, tmp_path):
-        """Test adding utils path to sys.path."""
+    def test_emits_deprecation_warning(self):
+        """add_utils_to_path should emit a DeprecationWarning (issue #682)."""
+        import warnings
+
         from utils.path_setup import add_utils_to_path
 
-        # This is a simple test - the function finds repo root automatically
-        # Just verify it doesn't crash
-        original_path = sys.path.copy()
+        original_env = os.environ.get("PYTHONPATH", "")
         try:
-            add_utils_to_path()
-            # Should have at least the same number of paths
-            assert len(sys.path) >= len(original_path)
+            with warnings.catch_warnings(record=True) as w:
+                warnings.simplefilter("always")
+                add_utils_to_path()
+            deprecation_warnings = [
+                x for x in w if issubclass(x.category, DeprecationWarning)
+            ]
+            assert len(deprecation_warnings) >= 1
         finally:
-            sys.path[:] = original_path
+            os.environ["PYTHONPATH"] = original_env

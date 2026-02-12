@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Quality check script to verify AI-generated code meets standards."""
+"""Quality check script to verify AI-generated code meets standards.
+
+Requires ``pip install -e .`` so that the ``tools`` package is importable.
+"""
 
 import logging
 import sys
@@ -7,32 +10,20 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-# Try to find the tools package
+# The ``tools`` package lives under ``src/tools/`` and is discoverable via
+# the ``[tool.setuptools.packages.find]`` ``where`` list in pyproject.toml
+# (which includes ``src``).  No sys.path manipulation needed.
 try:
     from tools.quality_utils import (
         Colors,
         check_file,
     )
 except ImportError:
-    # Walk up until we find the repo root or give up
-    current = Path(__file__).resolve().parent
-    repo_root = None
-    for _ in range(5):
-        if (current / "tools" / "quality_utils.py").exists():
-            repo_root = current
-            break
-        current = current.parent
-
-    if repo_root:
-        sys.path.append(str(repo_root))
-        from tools.quality_utils import (
-            Colors,
-            check_file,
-        )
-    else:
-        # Fallback for when running from elsewhere
-        logger.error("Error: Could not locate tools package.")
-        sys.exit(1)
+    logger.error(
+        "Could not import tools.quality_utils. "
+        "Ensure the package is installed: pip install -e ."
+    )
+    sys.exit(1)
 
 
 def main() -> None:

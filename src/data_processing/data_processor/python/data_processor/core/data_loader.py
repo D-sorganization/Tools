@@ -3,15 +3,14 @@
 This module handles loading CSV files, detecting signals,
 and managing data operations.
 
-Fixed in issue #530: removed fragile dependency on ``utils.path_helpers``
-which required ``src/python/src`` to already be on ``sys.path``.  Now uses
-a self-contained path bootstrap and local fallbacks for csv/logging utils.
+Fixed in issue #530: removed fragile dependency on ``utils.path_helpers``.
+Updated in issue #682: removed ``sys.path`` hack; relies on package
+installation (``pip install -e .``) or pytest ``pythonpath`` config.
 """
 
 from __future__ import annotations
 
 import logging
-import sys
 from collections.abc import Callable, Iterable
 from pathlib import Path
 from typing import Any
@@ -19,30 +18,9 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-# ---------------------------------------------------------------------------
-# Self-contained path bootstrap (see issue #530)
-# ---------------------------------------------------------------------------
-
-
-def _ensure_utils_on_path() -> None:
-    """Add the shared utils directory to sys.path if not already present."""
-    # Walk up from this file to find the repo root
-    current = Path(__file__).resolve().parent
-    for _ in range(15):
-        if any((current / marker).exists() for marker in (".git", "pyproject.toml")):
-            utils_path = current / "src" / "python" / "src"
-            if utils_path.exists() and str(utils_path) not in sys.path:
-                sys.path.insert(0, str(utils_path))
-            return
-        parent = current.parent
-        if parent == current:
-            break
-        current = parent
-
-
-_ensure_utils_on_path()
-
-# Try to import shared csv_utils; fall back to inline implementations
+# Try to import shared csv_utils; fall back to inline implementations.
+# With a proper editable install (pip install -e .) the ``utils`` package
+# is on sys.path via setuptools.  No sys.path manipulation needed.
 try:
     from utils.csv_utils import safe_read_csv, safe_write_csv
 except ImportError:
