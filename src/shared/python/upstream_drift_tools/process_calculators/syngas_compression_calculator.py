@@ -232,6 +232,9 @@ class SyngasCompressionEngine:
         water_content: float,
     ) -> dict[str, float]:
         """Calculate water dropout during compression"""
+        if pressure <= 0:
+            raise ValueError(f"pressure must be > 0, got {pressure}")
+
         # (pressure * 1e5 removed as it was no-op)
 
         # Use SyngasWaterCalculator (expects Celsius)
@@ -240,6 +243,12 @@ class SyngasCompressionEngine:
             temperature_c, method="iapws"
         )
         water_vp_bar = water_vp_pa / BAR_TO_PA
+
+        if water_vp_bar <= 0:
+            raise ValueError(
+                f"water vapor pressure must be > 0 bar, got {water_vp_bar} "
+                f"(at T={temperature} K)"
+            )
 
         # Relative humidity (assuming water content is in mol%)
         relative_humidity = (water_content / 100) * pressure / water_vp_bar
@@ -269,7 +278,21 @@ class SyngasCompressionEngine:
         mixture_props: dict[str, float],
     ) -> dict[str, Any]:
         """Calculate compression work for different compression types"""
+        if stage.inlet_pressure <= 0:
+            raise ValueError(f"inlet_pressure must be > 0, got {stage.inlet_pressure}")
+        if stage.outlet_pressure <= 0:
+            raise ValueError(
+                f"outlet_pressure must be > 0, got {stage.outlet_pressure}"
+            )
+
         gamma = mixture_props["heat_capacity_ratio"]
+        if gamma <= 0:
+            raise ValueError(f"heat_capacity_ratio (gamma) must be > 0, got {gamma}")
+        if gamma == 1.0:
+            raise ValueError(
+                "heat_capacity_ratio (gamma) must not be 1.0; "
+                "gamma/(gamma-1) would cause division by zero"
+            )
         # (mixture_props["molecular_weight"] removed as it was no-op)
 
         # Pressure ratio
@@ -349,6 +372,9 @@ class SyngasCompressionEngine:
         intercooling: bool = True,
     ) -> dict[str, Any]:
         """Calculate multistage compression with optional intercooling"""
+        if not stages:
+            raise ValueError("stages list must not be empty")
+
         mixture_props = self.calculate_mixture_properties(composition)
         results = []
         total_power = 0
