@@ -27,6 +27,19 @@ import matplotlib as mpl
 import numpy as np
 from scipy.optimize import minimize
 
+from .constants import (
+    CELSIUS_TO_KELVIN_OFFSET,
+    KJ_HR_TO_KW,
+    R_GAS_J_MOL_K,
+    STANDARD_STATE_PRESSURE_PA,
+    WGS_CATALYST_VOLUME_FRACTION,
+    WGS_DELTA_H,
+    WGS_DELTA_S,
+    WGS_HEAT_KJ_PER_MOL,
+    WGS_REACTOR_LD_RATIO,
+    WGS_TYPICAL_GHSV,
+)
+
 
 def safe_read_json(file_path: Path | str, default: Any = None) -> Any:
     """Read JSON from a file, returning a default on failure."""
@@ -185,7 +198,7 @@ class WGSReactorEngine:
 
     def __init__(self, data_file: str | None = None) -> None:
         """Initialize the engine"""
-        self.R = 8.314  # [J/(mol·K)] Universal gas constant, NIST CODATA 2018
+        self.R = R_GAS_J_MOL_K  # [J/(mol·K)] Universal gas constant, NIST CODATA 2018
         self.catalysts: dict[str, Any] = {}
         self.species_db = get_species_database()
         if data_file:
@@ -206,8 +219,8 @@ class WGSReactorEngine:
         # CO + H2O ⇌ CO2 + H2
         # ΔH° = -41.2 kJ/mol, ΔS° = -42.1 J/(mol·K)
 
-        delta_H = -41200  # J/mol
-        delta_S = -42.1  # J/(mol·K)
+        delta_H = WGS_DELTA_H  # J/mol
+        delta_S = WGS_DELTA_S  # J/(mol·K)
 
         # Van't Hoff equation
         ln_K = -delta_H / (self.R * temperature) + delta_S / self.R
@@ -289,7 +302,7 @@ class WGSReactorEngine:
 
             # Partial pressures
             # Input pressure is in bar, convert to Pa for standard state comparison
-            pressure_pa = pressure * 100000.0
+            pressure_pa = pressure * STANDARD_STATE_PRESSURE_PA
             p_CO = y_CO * pressure_pa
             p_H2O = y_H2O * pressure_pa
             p_CO2 = y_CO2 * pressure_pa
@@ -297,7 +310,7 @@ class WGSReactorEngine:
 
             # Gibbs free energy of each component at reaction conditions
             # Standard pressure (1 bar = 100,000 Pa) used for reference state
-            P_std = 100000.0
+            P_std = STANDARD_STATE_PRESSURE_PA
 
             # Gibbs free energy of each component at reaction conditions
             # Use activity (p_i / P_std) for log term to ensure dimensionless argument
@@ -355,7 +368,7 @@ class WGSReactorEngine:
             if composition_out["CO"] > 0
             else float("inf")
         )
-        heat_released = x_eq * 41.2  # kJ/mol CO in
+        heat_released = x_eq * WGS_HEAT_KJ_PER_MOL  # kJ/mol CO in
 
         return {
             "conversion": conversion,
@@ -374,21 +387,23 @@ class WGSReactorEngine:
     ) -> dict[str, Any]:
         """Size WGS reactor based on throughput and conversion"""
         # Space velocity (GHSV)
-        ghsv = 3000  # h^-1 (typical for WGS)
+        ghsv = WGS_TYPICAL_GHSV  # h^-1 (typical for WGS)
 
         # Reactor volume
         reactor_volume = feed_rate / ghsv  # m3
 
         # Catalyst volume (80% of reactor)
-        catalyst_volume = reactor_volume * 0.8
+        catalyst_volume = reactor_volume * WGS_CATALYST_VOLUME_FRACTION
 
         # Reactor dimensions (L/D = 3)
-        ld_ratio = 3.0
+        ld_ratio = WGS_REACTOR_LD_RATIO
         diameter = (4 * reactor_volume / (math.pi * ld_ratio)) ** (1 / 3)
         length = diameter * ld_ratio
 
         # Heat duty
-        heat_duty = feed_rate * conversion / 100 * 41.2 / 3.6  # kW
+        heat_duty = (
+            feed_rate * conversion / 100 * WGS_HEAT_KJ_PER_MOL / KJ_HR_TO_KW
+        )  # kW
 
         return {
             "reactor_volume": reactor_volume,
@@ -574,7 +589,7 @@ if BASE_CALCULATOR_AVAILABLE:
                     "H2O": self.h2o_inlet.value(),
                 }
 
-                temp_k = self.temperature.value() + 273.15
+                temp_k = self.temperature.value() + CELSIUS_TO_KELVIN_OFFSET
 
                 # Calculate equilibrium
                 equilibrium = self.engine.calculate_equilibrium_composition(

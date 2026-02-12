@@ -99,7 +99,20 @@ else:
 
 # Import existing syngas water content utility
 # ruff: noqa: E402
-from .constants import ATOL_ZERO, R_GAS_J_MOL_K
+from .constants import (
+    ATOL_ZERO,
+    CELSIUS_TO_KELVIN_OFFSET,
+    COMPRESSION_HIGH_POWER_HP,
+    COMPRESSION_HIGH_PRESSURE_BAR,
+    COMPRESSION_MIN_EFFICIENCY,
+    COMPRESSION_TEMP_CRITICAL_K,
+    COMPRESSION_TEMP_WARNING_K,
+    DEFAULT_GAMMA_DIATOMIC,
+    INTERCOOLER_OUTLET_TEMP_K,
+    R_GAS_J_MOL_K,
+    SECONDS_PER_HOUR,
+    WATTS_PER_HP,
+)
 from .syngas_water_calculator import SyngasWaterCalculator  # noqa: E402
 
 # Import BaseCalculatorWidget for state management
@@ -200,7 +213,7 @@ class SyngasCompressionEngine:
             mix_pc += frac * (species.critical_pressure / 100000.0)
 
             # Gamma: Use approximate map or default strict ideal gas
-            gamma = self._APPROX_GAMMA.get(comp, 1.4)
+            gamma = self._APPROX_GAMMA.get(comp, DEFAULT_GAMMA_DIATOMIC)
             mix_gamma += frac * gamma
 
         return {
@@ -221,7 +234,7 @@ class SyngasCompressionEngine:
         # (pressure * 1e5 removed as it was no-op)
 
         # Use SyngasWaterCalculator (expects Celsius)
-        temperature_c = temperature - 273.15
+        temperature_c = temperature - CELSIUS_TO_KELVIN_OFFSET
         water_vp_pa, _ = self.water_calculator.calculate_vapor_pressure(
             temperature_c, method="iapws"
         )
@@ -308,7 +321,7 @@ class SyngasCompressionEngine:
 
         # Convert to horsepower (1 HP = 745.7 W)
         # Flow rate in kmol/h, work in J/mol
-        power_hp = (flow_rate * 1000 / 3600) * work_actual / 745.7
+        power_hp = (flow_rate * 1000 / SECONDS_PER_HOUR) * work_actual / WATTS_PER_HP
 
         # Heat rise
         heat_rise = temp_out_actual - stage.inlet_temperature
@@ -343,7 +356,7 @@ class SyngasCompressionEngine:
         for i, stage in enumerate(stages):
             # Update inlet temperature for subsequent stages
             if i > 0 and intercooling:
-                stage.inlet_temperature = 313.15  # Cool to 40°C
+                stage.inlet_temperature = INTERCOOLER_OUTLET_TEMP_K  # Cool to 40°C
             elif i > 0:
                 stage.inlet_temperature = current_temp
 
@@ -391,17 +404,17 @@ class SyngasCompressionEngine:
         total_power = compression_result["total_power_hp"]
 
         # Temperature concerns
-        if final_temp > 473.15:  # 200°C
+        if final_temp > COMPRESSION_TEMP_WARNING_K:  # 200°C
             concerns.append("High final temperature may cause material degradation")
             recommendations.append(
                 "Consider additional intercooling or heat exchangers",
             )
 
-        if final_temp > 523.15:  # 250°C
+        if final_temp > COMPRESSION_TEMP_CRITICAL_K:  # 250°C
             warnings.append("CRITICAL: Temperature exceeds safe operating limits")
 
         # Pressure concerns
-        if final_pressure > 100:  # 100 bar
+        if final_pressure > COMPRESSION_HIGH_PRESSURE_BAR:  # 100 bar
             concerns.append(
                 "High pressure requires special equipment and safety measures",
             )
@@ -410,7 +423,7 @@ class SyngasCompressionEngine:
             )
 
         # Power concerns
-        if total_power > 1000:  # 1000 HP
+        if total_power > COMPRESSION_HIGH_POWER_HP:  # 1000 HP
             concerns.append("High power requirement - consider multiple compressors")
             recommendations.append("Evaluate economic feasibility of compression train")
 
@@ -435,7 +448,7 @@ class SyngasCompressionEngine:
                 for stage in isentropic_stages
             ]
             avg_efficiency = sum(efficiencies) / len(efficiencies)
-            if avg_efficiency < 0.7:
+            if avg_efficiency < COMPRESSION_MIN_EFFICIENCY:
                 concerns.append("Low compression efficiency detected")
                 recommendations.append("Consider compressor maintenance or replacement")
         else:
@@ -809,7 +822,9 @@ if BASE_CALCULATOR_AVAILABLE:
                 }
 
                 flow_rate = self.flow_rate_input.value()
-                inlet_temp = self.inlet_temp_input.value() + 273.15  # Convert to K
+                inlet_temp = (
+                    self.inlet_temp_input.value() + CELSIUS_TO_KELVIN_OFFSET
+                )  # Convert to K
                 self.inlet_pressure_input.value()
                 compression_type = self.compression_type_combo.currentText().lower()
                 intercooling = self.intercooling_checkbox.isChecked()
@@ -825,7 +840,9 @@ if BASE_CALCULATOR_AVAILABLE:
                             outlet_pressure=cast(
                                 QDoubleSpinBox, stage_inputs[1]
                             ).value(),
-                            inlet_temperature=inlet_temp if i == 0 else 313.15,
+                            inlet_temperature=(
+                                inlet_temp if i == 0 else INTERCOOLER_OUTLET_TEMP_K
+                            ),
                             efficiency=cast(QDoubleSpinBox, stage_inputs[2]).value()
                             / 100.0,
                             compression_type=compression_type,
@@ -926,9 +943,9 @@ if BASE_CALCULATOR_AVAILABLE:
                     [
                         f"\nStage {stage_num}:\n",
                         f"  Inlet Temperature: {stage_result['inlet_temp']:.1f} K "
-                        f"({stage_result['inlet_temp'] - 273.15:.1f}°C)\n",
+                        f"({stage_result['inlet_temp'] - CELSIUS_TO_KELVIN_OFFSET:.1f}°C)\n",
                         f"  Outlet Temperature: {stage_result['outlet_temp']:.1f} K "
-                        f"({stage_result['outlet_temp'] - 273.15:.1f}°C)\n",
+                        f"({stage_result['outlet_temp'] - CELSIUS_TO_KELVIN_OFFSET:.1f}°C)\n",
                         f"  Heat Rise: {stage_result['heat_rise']:.1f} K\n",
                         f"  Pressure Ratio: {stage_result['pressure_ratio']:.2f}\n",
                         f"  Power Required: {stage_result['power_hp']:.1f} HP\n",
@@ -952,7 +969,7 @@ if BASE_CALCULATOR_AVAILABLE:
                     "-" * 20 + "\n",
                     f"Total Power Required: {result['total_power_hp']:.1f} HP\n",
                     f"Final Temperature: {result['final_temperature']:.1f} K "
-                    f"({result['final_temperature'] - 273.15:.1f}°C)\n",
+                    f"({result['final_temperature'] - CELSIUS_TO_KELVIN_OFFSET:.1f}°C)\n",
                     f"Final Pressure: {result['final_pressure']:.1f} bar\n",
                     f"Total Water Dropout: {analysis['total_water_dropout']:.3f} mol%\n",
                 ]
@@ -1029,7 +1046,9 @@ if BASE_CALCULATOR_AVAILABLE:
 
             stages = result["stages"]
             stage_nums = [s["stage_number"] for s in stages]
-            temperatures = [s["outlet_temp"] - 273.15 for s in stages]  # Convert to °C
+            temperatures = [
+                s["outlet_temp"] - CELSIUS_TO_KELVIN_OFFSET for s in stages
+            ]  # Convert to °C
             pressures = [s["pressure_ratio"] for s in stages]
             powers = [s["power_hp"] for s in stages]
             water_dropouts = [s["water_dropout"]["water_dropout"] for s in stages]

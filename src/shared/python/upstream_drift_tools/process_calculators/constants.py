@@ -272,3 +272,338 @@ WATER_VAPOR_A: Final[float] = 0.61115  # [kPa]
 WATER_VAPOR_B: Final[float] = 23.036  # [K]
 WATER_VAPOR_C: Final[float] = 279.82  # [K]
 WATER_VAPOR_D: Final[float] = 333.7  # [K]
+
+
+# =============================================================================
+# TIME CONVERSIONS
+# =============================================================================
+
+# Seconds per hour [s/hr]
+SECONDS_PER_HOUR: Final[float] = 3600.0
+
+# Seconds per minute [s/min]
+SECONDS_PER_MINUTE: Final[float] = 60.0
+
+# Hours per day [hr/day]
+HOURS_PER_DAY: Final[float] = 24.0
+
+# =============================================================================
+# UNIT CONVERSION FACTORS
+# =============================================================================
+
+# Volumetric flow: m3/s to cubic feet per minute
+M3_S_TO_CFM: Final[float] = 2118.88
+
+# Length conversions
+METERS_TO_INCHES: Final[float] = 39.3701
+METERS_TO_FEET: Final[float] = 3.28084
+HUNDRED_FEET_IN_METERS: Final[float] = 30.48  # 100 ft = 30.48 m
+
+# Velocity conversion: ft/s to m/s
+FT_S_TO_M_S: Final[float] = 0.3048
+
+# Density conversion: kg/m3 to lb/ft3
+KG_M3_TO_LB_FT3: Final[float] = 0.062428
+
+# Molecular weight conversion: g/mol to kg/mol
+G_MOL_TO_KG_MOL: Final[float] = 1000.0
+
+# Pressure conversion: mmHg to Pa
+MMHG_TO_PA_CONV: Final[float] = 133.322
+
+# Power conversion: Watts per horsepower
+WATTS_PER_HP: Final[float] = 745.7
+
+# =============================================================================
+# FLARE DESIGN CONSTANTS (API 521)
+# =============================================================================
+# Source: API Standard 521 (6th Edition, 2014)
+
+# Maximum exit velocity for smokeless flare operation [m/s]
+FLARE_MAX_EXIT_VELOCITY: Final[float] = 170.0
+
+# Safe radiation intensity at ground level for personnel access [kW/m2]
+FLARE_SAFE_RADIATION_INTENSITY: Final[float] = 1.6
+
+# Typical flame emissivity for clean hydrocarbon flames [dimensionless]
+FLARE_FLAME_EMISSIVITY: Final[float] = 0.3
+
+# Minimum flare stack height [m]
+FLARE_MIN_HEIGHT: Final[float] = 10.0
+
+# Radiation zone thresholds [kW/m2]
+RADIATION_LETHAL: Final[float] = 37.5
+RADIATION_DAMAGE: Final[float] = 12.5
+RADIATION_SAFE: Final[float] = 1.6
+RADIATION_COMFORT: Final[float] = 0.5
+
+# Combustion efficiency parameters
+FLARE_BASE_EFFICIENCY: Final[float] = 0.98
+FLARE_MIN_EFFICIENCY: Final[float] = 0.95
+FLARE_MAX_EFFICIENCY: Final[float] = 0.999
+FLARE_H2_EFFICIENCY_BOOST: Final[float] = 0.01
+FLARE_CO_EFFICIENCY_PENALTY: Final[float] = 0.02
+FLARE_H2S_EFFICIENCY_PENALTY: Final[float] = 0.01
+FLARE_COLD_TEMP_PENALTY: Final[float] = 0.02
+FLARE_HOT_TEMP_BOOST: Final[float] = 0.01
+FLARE_H2_THRESHOLD: Final[float] = 0.5
+FLARE_CO_THRESHOLD: Final[float] = 0.3
+FLARE_H2S_THRESHOLD: Final[float] = 0.1
+FLARE_COLD_TEMP_K: Final[float] = 300.0
+FLARE_HOT_TEMP_K: Final[float] = 500.0
+
+# =============================================================================
+# PRESSURE DROP CONSTANTS
+# =============================================================================
+# Source: Perry's Chemical Engineers' Handbook, 9th Ed.; Crane TP-410
+
+# Reynolds number regime boundaries
+RE_LAMINAR_UPPER: Final[float] = 2300.0
+RE_TURBULENT_LOWER: Final[float] = 4000.0
+
+# Laminar flow friction factor constant (Hagen-Poiseuille)
+LAMINAR_FRICTION_CONSTANT: Final[float] = 64.0
+
+# Default friction factor for laminar flow at Re ~ 1000
+FRICTION_FACTOR_DEFAULT_LAMINAR: Final[float] = 0.064
+
+# Colebrook-White roughness coefficient (denominator term)
+COLEBROOK_ROUGHNESS_COEFF: Final[float] = 3.7
+
+# Swamee-Jain Reynolds number coefficient
+SWAMEE_JAIN_COEFF: Final[float] = 5.74
+
+# Churchill correlation B-term coefficient
+CHURCHILL_B_COEFF: Final[float] = 37530.0
+
+# API RP 14E erosional velocity C-factors
+API_14E_C_CONTINUOUS: Final[float] = 100.0
+API_14E_C_INTERMITTENT: Final[float] = 125.0
+
+# =============================================================================
+# SCRUBBER DESIGN CONSTANTS
+# =============================================================================
+# Source: Perry's 9th Ed.; Sutherland (1893); Eckert (1961)
+
+# Syngas viscosity reference at 300 K [Pa-s]
+SYNGAS_VISCOSITY_REF: Final[float] = 1.8e-5
+
+# Sutherland's formula reference temperature [K]
+SUTHERLAND_T_REF: Final[float] = 300.0
+
+# Sutherland constant for air-like gases [K]
+SUTHERLAND_CONSTANT_AIR: Final[float] = 110.4
+
+# Air molecular weight [g/mol] (for scrubber MW correction)
+MW_AIR_GMOL: Final[float] = 29.0
+
+# Eckert correlation coefficients for pressure drop
+ECKERT_ALPHA: Final[float] = 85.0  # Pa/m base coefficient
+ECKERT_BETA: Final[float] = 1.1  # Exponent on capacity parameter
+ECKERT_GAMMA: Final[float] = 3.5  # Liquid effect coefficient
+
+# Maximum pressure drop per meter indicating flooding [Pa/m]
+ECKERT_MAX_DP_PER_M: Final[float] = 2000.0
+
+# HTU clamp range [m]
+HTU_MIN: Final[float] = 0.1
+HTU_MAX: Final[float] = 3.0
+
+# NaOH solution density correlation (rho = intercept + slope * wt%)
+NAOH_DENSITY_INTERCEPT: Final[float] = 1000.0  # kg/m3
+NAOH_DENSITY_SLOPE: Final[float] = 10.8  # kg/m3 per wt%
+
+# Syngas default heat capacity [J/(kg-K)]
+SYNGAS_CP_DEFAULT: Final[float] = 1100.0
+
+# Cooling water approach temperature [C]
+COOLING_WATER_APPROACH_TEMP: Final[float] = 5.0
+
+# Scrubber outlet gas temperature [C]
+SCRUBBER_OUTLET_GAS_TEMP: Final[float] = 38.0
+
+# =============================================================================
+# WGS REACTOR CONSTANTS
+# =============================================================================
+# Source: NIST-JANAF Tables; Van't Hoff equation
+
+# WGS reaction enthalpy [J/mol] (CO + H2O -> CO2 + H2)
+WGS_DELTA_H: Final[float] = -41200.0
+
+# WGS reaction entropy [J/(mol-K)]
+WGS_DELTA_S: Final[float] = -42.1
+
+# Standard state pressure [Pa] (1 bar)
+STANDARD_STATE_PRESSURE_PA: Final[float] = 100000.0
+
+# Typical GHSV for WGS reactors [1/hr]
+WGS_TYPICAL_GHSV: Final[float] = 3000.0
+
+# Catalyst volume fraction of reactor
+WGS_CATALYST_VOLUME_FRACTION: Final[float] = 0.8
+
+# Reactor length-to-diameter ratio
+WGS_REACTOR_LD_RATIO: Final[float] = 3.0
+
+# WGS heat of reaction [kJ/mol CO]
+WGS_HEAT_KJ_PER_MOL: Final[float] = 41.2
+
+# Conversion: kJ/hr to kW
+KJ_HR_TO_KW: Final[float] = 3.6
+
+# =============================================================================
+# SYNGAS COMPRESSION CONSTANTS
+# =============================================================================
+
+# Intercooler outlet temperature [K] (40 C)
+INTERCOOLER_OUTLET_TEMP_K: Final[float] = 313.15
+
+# Temperature warning thresholds [K]
+COMPRESSION_TEMP_WARNING_K: Final[float] = 473.15  # 200 C
+COMPRESSION_TEMP_CRITICAL_K: Final[float] = 523.15  # 250 C
+
+# High pressure threshold [bar]
+COMPRESSION_HIGH_PRESSURE_BAR: Final[float] = 100.0
+
+# High power threshold [HP]
+COMPRESSION_HIGH_POWER_HP: Final[float] = 1000.0
+
+# Minimum acceptable compression efficiency
+COMPRESSION_MIN_EFFICIENCY: Final[float] = 0.7
+
+# Default heat capacity ratio for diatomic gases
+DEFAULT_GAMMA_DIATOMIC: Final[float] = 1.4
+
+# Upper bound for heat capacity ratio (monatomic gases)
+GAMMA_UPPER_BOUND: Final[float] = 1.7
+
+# =============================================================================
+# IAPWS-IF97 CONSTANTS
+# =============================================================================
+# Source: IAPWS-IF97 (International Association for Properties of Water and Steam)
+
+# Critical temperature of water [K]
+IAPWS_CRITICAL_TEMP: Final[float] = 647.096
+
+# Critical pressure of water [Pa]
+IAPWS_CRITICAL_PRESSURE: Final[float] = 22064000.0
+
+# Triple point temperature of water [K]
+IAPWS_TRIPLE_POINT_TEMP: Final[float] = 273.16
+
+# IAPWS saturation pressure correlation coefficients
+IAPWS_COEFFICIENTS: Final[list[float]] = [
+    -7.85951783,
+    1.84408259,
+    -11.7866497,
+    22.6807411,
+    -15.9618719,
+    1.80122502,
+]
+
+# =============================================================================
+# MAGNUS EQUATION CONSTANTS
+# =============================================================================
+# Source: Alduchov & Eskridge (1996) improved Magnus formula
+
+# Magnus equation: P_hPa = A * exp(B * T / (T + C))
+MAGNUS_A: Final[float] = 6.1094  # hPa
+MAGNUS_B: Final[float] = 17.625  # dimensionless
+MAGNUS_C: Final[float] = 243.04  # C
+
+# =============================================================================
+# BUCK EQUATION CONSTANTS (Above Freezing)
+# =============================================================================
+# Source: Buck, A.L. (1981) "New Equations for Computing Vapor Pressure"
+
+BUCK_ABOVE_FREEZING_A: Final[float] = 0.61121  # kPa
+BUCK_ABOVE_FREEZING_B: Final[float] = 18.678  # dimensionless
+BUCK_ABOVE_FREEZING_C: Final[float] = 234.5  # C
+BUCK_ABOVE_FREEZING_D: Final[float] = 257.14  # C
+
+# =============================================================================
+# EXTENDED ANTOINE EQUATION CONSTANTS
+# =============================================================================
+# Source: Perry's Chemical Engineers' Handbook, 8th Ed.
+
+# Water (high temperature range, 100-374 C)
+ANTOINE_WATER_HIGH_A: Final[float] = 8.14019
+ANTOINE_WATER_HIGH_B: Final[float] = 1810.94
+ANTOINE_WATER_HIGH_C: Final[float] = 244.485
+
+# Hydrogen Fluoride
+ANTOINE_HF_A: Final[float] = 7.158
+ANTOINE_HF_B: Final[float] = 1111.0
+ANTOINE_HF_C: Final[float] = 235.0
+
+# Hydrogen Chloride
+ANTOINE_HCL_A: Final[float] = 7.960
+ANTOINE_HCL_B: Final[float] = 1118.0
+ANTOINE_HCL_C: Final[float] = 240.0
+
+# Hydrogen Sulfide
+ANTOINE_H2S_A: Final[float] = 6.987
+ANTOINE_H2S_B: Final[float] = 884.0
+ANTOINE_H2S_C: Final[float] = 240.0
+
+# =============================================================================
+# BAGHOUSE CALCULATOR CONSTANTS
+# =============================================================================
+# Source: NIST-JANAF Thermochemical Tables (Cp at ~500 K)
+
+# Molar heat capacities at ~500 K [J/(mol-K)]
+CP_H2_500K: Final[float] = 29.1
+CP_CO_500K: Final[float] = 29.2
+CP_CO2_500K: Final[float] = 41.3
+CP_H2O_500K: Final[float] = 35.5
+CP_N2_500K: Final[float] = 29.5
+CP_CH4_500K: Final[float] = 44.5
+CP_O2_500K: Final[float] = 30.1
+CP_AR_500K: Final[float] = 20.8
+
+# Default Cp fallback [J/(mol-K)]
+CP_DEFAULT_FALLBACK: Final[float] = 30.0
+
+# Molecular weights for baghouse ideal gas calcs [kg/mol]
+MW_H2_KG: Final[float] = 0.002
+MW_CO_KG: Final[float] = 0.028
+MW_CO2_KG: Final[float] = 0.044
+MW_H2O_KG: Final[float] = 0.018
+MW_N2_KG: Final[float] = 0.028
+MW_CH4_KG: Final[float] = 0.016
+MW_O2_KG: Final[float] = 0.032
+MW_AR_KG: Final[float] = 0.040
+
+# Default molecular weight fallback [kg/mol]
+MW_DEFAULT_KG: Final[float] = 0.028
+
+# Default Cp mass fallback [J/(kg-K)]
+CP_MASS_DEFAULT_FALLBACK: Final[float] = 1000.0
+
+# =============================================================================
+# SYNGAS WATER CALCULATOR CONSTANTS
+# =============================================================================
+
+# Water molecular weight [g/mol]
+MW_WATER_GMOL: Final[float] = 18.015
+
+# Typical syngas average MW [g/mol]
+MW_SYNGAS_TYPICAL_GMOL: Final[float] = 15.0
+
+# Gas constant for density calcs [J/(kmol-K)] (= R * 1000)
+R_GAS_DENSITY: Final[float] = 8314.46
+
+# Normal conditions for gas volume
+NORMAL_PRESSURE_PA: Final[float] = 101325.0
+NORMAL_TEMPERATURE_K: Final[float] = 273.15
+
+# =============================================================================
+# SIGNAL TOOLKIT CONSTANTS
+# =============================================================================
+
+# Default line frequency for periodic noise [Hz]
+DEFAULT_LINE_FREQUENCY_HZ: Final[float] = 60.0
+
+# Periodic noise harmonic amplitudes (fraction of fundamental)
+PERIODIC_NOISE_2ND_HARMONIC: Final[float] = 0.3
+PERIODIC_NOISE_3RD_HARMONIC: Final[float] = 0.1

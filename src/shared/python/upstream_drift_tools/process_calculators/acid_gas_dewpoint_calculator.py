@@ -94,6 +94,27 @@ except ImportError:
     BASE_CALCULATOR_AVAILABLE = False
 
 
+from .constants import (
+    ANTOINE_H2S_A,
+    ANTOINE_H2S_B,
+    ANTOINE_H2S_C,
+    ANTOINE_HCL_A,
+    ANTOINE_HCL_B,
+    ANTOINE_HCL_C,
+    ANTOINE_HF_A,
+    ANTOINE_HF_B,
+    ANTOINE_HF_C,
+    ANTOINE_WATER_A,
+    ANTOINE_WATER_B,
+    ANTOINE_WATER_C,
+    ANTOINE_WATER_HIGH_A,
+    ANTOINE_WATER_HIGH_B,
+    ANTOINE_WATER_HIGH_C,
+    BAR_TO_PA,
+    CELSIUS_TO_KELVIN_OFFSET,
+    MMHG_TO_PA_CONV,
+)
+
 logger = logging.getLogger(__name__)
 
 
@@ -243,10 +264,10 @@ class AcidGasDewpointCalculator:
         # Antoine equation constants for acid gases
         # Source: Perry's Chemical Engineers' Handbook, 8th Ed.
         self.antoine_constants = {
-            "H2O": {"A": 8.07131, "B": 1730.63, "C": 233.426},
-            "HF": {"A": 7.158, "B": 1111.0, "C": 235.0},
-            "HCl": {"A": 7.960, "B": 1118.0, "C": 240.0},
-            "H2S": {"A": 6.987, "B": 884.0, "C": 240.0},
+            "H2O": {"A": ANTOINE_WATER_A, "B": ANTOINE_WATER_B, "C": ANTOINE_WATER_C},
+            "HF": {"A": ANTOINE_HF_A, "B": ANTOINE_HF_B, "C": ANTOINE_HF_C},
+            "HCl": {"A": ANTOINE_HCL_A, "B": ANTOINE_HCL_B, "C": ANTOINE_HCL_C},
+            "H2S": {"A": ANTOINE_H2S_A, "B": ANTOINE_H2S_B, "C": ANTOINE_H2S_C},
         }
 
         # Literature sources for validation
@@ -309,7 +330,7 @@ class AcidGasDewpointCalculator:
             msg = f"Unknown component: {component}"
             raise ValueError(msg)
 
-        T = temperature_c + 273.15  # Convert to Kelvin
+        T = temperature_c + CELSIUS_TO_KELVIN_OFFSET  # Convert to Kelvin
 
         if method == "antoine":
             A, B, C = (
@@ -321,16 +342,20 @@ class AcidGasDewpointCalculator:
             # Antoine equation: log10(P) = A - B/(C + T)
             log_p = A - B / (C + temperature_c)
             p_mmhg = 10**log_p
-            return p_mmhg * 133.322  # Convert mmHg to Pa
+            return p_mmhg * MMHG_TO_PA_CONV  # Convert mmHg to Pa
 
         if method == "extended_antoine":
             # Extended Antoine equation for wider temperature range
             # Source: Perry's Chemical Engineers' Handbook
             if component == "H2O":
                 if temperature_c <= 100:
-                    A, B, C = 8.07131, 1730.63, 233.426
+                    A, B, C = ANTOINE_WATER_A, ANTOINE_WATER_B, ANTOINE_WATER_C
                 else:
-                    A, B, C = 8.14019, 1810.94, 244.485
+                    A, B, C = (
+                        ANTOINE_WATER_HIGH_A,
+                        ANTOINE_WATER_HIGH_B,
+                        ANTOINE_WATER_HIGH_C,
+                    )
             else:
                 A, B, C = (
                     self.antoine_constants[component]["A"],
@@ -340,7 +365,7 @@ class AcidGasDewpointCalculator:
 
             log_p = A - B / (C + temperature_c)
             p_mmhg = 10**log_p
-            return p_mmhg * 133.322
+            return p_mmhg * MMHG_TO_PA_CONV
 
         if method == "thermo":
             if not THERMO_AVAILABLE:
@@ -403,7 +428,7 @@ class AcidGasDewpointCalculator:
             return np.nan
 
         # Convert partial pressure to mmHg for the Antoine equation
-        p_mmHg = partial_pressure_pa / 133.322
+        p_mmHg = partial_pressure_pa / MMHG_TO_PA_CONV
 
         if p_mmHg <= 0:
             return np.nan
@@ -440,8 +465,8 @@ class AcidGasDewpointCalculator:
             Comprehensive dewpoint results
         """
         # Convert pressure to Pa
-        pressure_pa = pressure_bar * 1e5
-        temperature_k = temperature_c + 273.15
+        pressure_pa = pressure_bar * BAR_TO_PA
+        temperature_k = temperature_c + CELSIUS_TO_KELVIN_OFFSET
 
         # Validate inputs
         warnings = []

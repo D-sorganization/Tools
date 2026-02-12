@@ -21,6 +21,7 @@ from ....utilities.unit_constants import R_UNIVERSAL as R_UNIVERSAL_J_MOL_K
 from ....utilities.unit_constants import (
     R_UNIVERSAL_KMOL,
 )
+from ...process_calculators.constants import DEFAULT_GAMMA_DIATOMIC, GAMMA_UPPER_BOUND
 
 logger = logging.getLogger(__name__)
 
@@ -266,17 +267,17 @@ def calculate_heat_capacity_ratio(
 
     if cp_mix <= R_GAS:
         logger.error(f"Invalid Cp = {cp_mix:.2f}, must be > R = {R_GAS:.2f}")
-        return 1.4  # Default for diatomic gases
+        return DEFAULT_GAMMA_DIATOMIC  # Default for diatomic gases
 
     cv_mix = cp_mix - R_GAS
     gamma = cp_mix / cv_mix
 
     # Physical bounds check
-    if gamma < 1.0 or gamma > 1.7:
+    if gamma < 1.0 or gamma > GAMMA_UPPER_BOUND:
         logger.warning(
             f"Calculated gamma = {gamma:.3f} outside physical bounds [1.0, 1.7]"
         )
-        gamma = max(1.0, min(gamma, 1.7))
+        gamma = max(1.0, min(gamma, GAMMA_UPPER_BOUND))
 
     logger.debug(
         f"Heat capacity ratio γ = {gamma:.4f} (Cp = {cp_mix:.1f}, Cv = {cv_mix:.1f})"

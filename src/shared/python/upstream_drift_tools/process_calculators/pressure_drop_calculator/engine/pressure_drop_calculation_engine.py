@@ -19,6 +19,21 @@ import logging
 import math
 
 from ....utilities.unit_constants import R_UNIVERSAL_KMOL, STANDARD_GRAVITY
+from ...process_calculators.constants import (
+    API_14E_C_CONTINUOUS,
+    API_14E_C_INTERMITTENT,
+    CHURCHILL_B_COEFF,
+    COLEBROOK_ROUGHNESS_COEFF,
+    FRICTION_FACTOR_DEFAULT_LAMINAR,
+    FT_S_TO_M_S,
+    HUNDRED_FEET_IN_METERS,
+    KG_M3_TO_LB_FT3,
+    LAMINAR_FRICTION_CONSTANT,
+    METERS_TO_INCHES,
+    RE_LAMINAR_UPPER,
+    RE_TURBULENT_LOWER,
+    SWAMEE_JAIN_COEFF,
+)
 
 # Local imports
 from ..models.pressure_drop_data_models import (
@@ -68,9 +83,9 @@ def friction_factor_laminar(reynolds_number: float) -> float:
     """
     if reynolds_number <= 0:
         logger.error("Reynolds number must be positive")
-        return 0.064  # Default for Re ~ 1000
+        return FRICTION_FACTOR_DEFAULT_LAMINAR  # Default for Re ~ 1000
 
-    return 64.0 / reynolds_number
+    return LAMINAR_FRICTION_CONSTANT / reynolds_number
 
 
 def friction_factor_colebrook(
@@ -104,7 +119,7 @@ def friction_factor_colebrook(
         This is the most accurate correlation but requires iteration.
         The Moody diagram is a graphical representation of this equation.
     """
-    if reynolds_number < 2300:
+    if reynolds_number < RE_LAMINAR_UPPER:
         return friction_factor_laminar(reynolds_number)
 
     # Initial guess using Swamee-Jain as starting point
@@ -115,7 +130,7 @@ def friction_factor_colebrook(
         f_old = f
 
         # Colebrook-White equation rearranged
-        term1 = relative_roughness / 3.7
+        term1 = relative_roughness / COLEBROOK_ROUGHNESS_COEFF
         term2 = 2.51 / (reynolds_number * math.sqrt(f))
         f_new = 0.25 / (math.log10(term1 + term2) ** 2)
 
@@ -155,12 +170,12 @@ def friction_factor_swamee_jain(
     Note:
         Explicit formula, no iteration required. Excellent for computational efficiency.
     """
-    if reynolds_number < 2300:
+    if reynolds_number < RE_LAMINAR_UPPER:
         return friction_factor_laminar(reynolds_number)
 
     # Swamee-Jain equation
-    term1 = relative_roughness / 3.7
-    term2 = 5.74 / (reynolds_number**0.9)
+    term1 = relative_roughness / COLEBROOK_ROUGHNESS_COEFF
+    term2 = SWAMEE_JAIN_COEFF / (reynolds_number**0.9)
 
     f = 0.25 / (math.log10(term1 + term2) ** 2)
 
@@ -200,13 +215,13 @@ def friction_factor_churchill(
     Re = reynolds_number
 
     if Re < 1:
-        return 64.0  # Avoid division by zero
+        return LAMINAR_FRICTION_CONSTANT  # Avoid division by zero
 
     # Churchill correlation
     term1 = (7.0 / Re) ** 0.9 + 0.27 * relative_roughness
     A = (-2.457 * math.log(term1)) ** 16
 
-    B = (37530.0 / Re) ** 16
+    B = (CHURCHILL_B_COEFF / Re) ** 16
 
     term2 = (8.0 / Re) ** 12
     term3 = 1.0 / ((A + B) ** 1.5)
@@ -235,10 +250,10 @@ def friction_factor_haaland(reynolds_number: float, relative_roughness: float) -
         Haaland, S.E. (1983): "Simple and Explicit Formulas for Friction Factor"
         J. Fluids Engineering, 105(1), 89-90
     """
-    if reynolds_number < 2300:
+    if reynolds_number < RE_LAMINAR_UPPER:
         return friction_factor_laminar(reynolds_number)
 
-    term1 = (relative_roughness / 3.7) ** 1.11
+    term1 = (relative_roughness / COLEBROOK_ROUGHNESS_COEFF) ** 1.11
     term2 = 6.9 / reynolds_number
 
     inv_sqrt_f = -1.8 * math.log10(term1 + term2)
@@ -364,9 +379,9 @@ def classify_flow_regime(reynolds_number: float) -> str:
         - 2300 < Re < 4000: Transitional
         - Re > 4000: Turbulent
     """
-    if reynolds_number < 2300:
+    if reynolds_number < RE_LAMINAR_UPPER:
         return "laminar"
-    elif reynolds_number < 4000:
+    elif reynolds_number < RE_TURBULENT_LOWER:
         return "transitional"
     else:
         return "turbulent"
@@ -722,13 +737,13 @@ def calculate_erosional_velocity(
         - Solid-free service: C = 150-200
     """
     if service_type == "continuous":
-        C = 100
+        C = API_14E_C_CONTINUOUS
     elif service_type == "intermittent":
-        C = 125
+        C = API_14E_C_INTERMITTENT
     elif service_type == "non_corrosive":
-        C = 125
+        C = API_14E_C_INTERMITTENT
     else:
-        C = 100  # Conservative default
+        C = API_14E_C_CONTINUOUS  # Conservative default
 
     # Convert C from ft/s to m/s units
     # API formula: V (ft/s) = C / √(ρ in lb/ft³)
@@ -737,8 +752,10 @@ def calculate_erosional_velocity(
     # Conversion: C_si ≈ C × 0.0458 for density in kg/m³
     # C_si = C * 0.0458 / (3.281**0.5)  # Approximate conversion (unused)
 
-    V_erosion = C / math.sqrt(density * 0.062428)  # Convert kg/m³ to lb/ft³ first
-    V_erosion_si = V_erosion * 0.3048  # Convert ft/s to m/s
+    V_erosion = C / math.sqrt(
+        density * KG_M3_TO_LB_FT3
+    )  # Convert kg/m³ to lb/ft³ first
+    V_erosion_si = V_erosion * FT_S_TO_M_S  # Convert ft/s to m/s
 
     logger.debug(f"Erosional velocity: {V_erosion_si:.2f} m/s (C={C})")
     return V_erosion_si
@@ -810,7 +827,7 @@ class PressureDropCalculationEngine:
         )
 
         # 2. Fitting losses
-        diameter_inches = inputs.pipe_diameter * 39.3701  # m to inches
+        diameter_inches = inputs.pipe_diameter * METERS_TO_INCHES  # m to inches
         dp_fittings = calculate_fitting_pressure_drop(
             inputs.fittings,
             flow_props.density,
@@ -912,7 +929,9 @@ class PressureDropCalculationEngine:
         velocity_pressure = 0.5 * flow_props.density * (flow_props.velocity**2)
 
         # Pressure drop per 100 ft
-        dp_per_100ft = (total_dp / inputs.pipe_length) * 30.48  # Per 100 feet
+        dp_per_100ft = (
+            total_dp / inputs.pipe_length
+        ) * HUNDRED_FEET_IN_METERS  # Per 100 feet
 
         # Create results
         results = PressureDropResults(

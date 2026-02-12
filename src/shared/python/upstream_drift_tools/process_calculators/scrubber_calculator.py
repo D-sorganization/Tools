@@ -27,12 +27,30 @@ from typing import Final
 import numpy as np
 
 from .constants import (
+    COOLING_WATER_APPROACH_TEMP,
     CP_WATER_LIQUID,
     DENSITY_WATER_STD,
+    ECKERT_ALPHA,
+    ECKERT_BETA,
+    ECKERT_GAMMA,
+    ECKERT_MAX_DP_PER_M,
     H_VAP_WATER,
+    HTU_MAX,
+    HTU_MIN,
     KG_TO_LB,
+    METERS_TO_FEET,
+    MW_AIR_GMOL,
+    NAOH_DENSITY_INTERCEPT,
+    NAOH_DENSITY_SLOPE,
     R_UNIVERSAL_KMOL,
+    SCRUBBER_OUTLET_GAS_TEMP,
+    SECONDS_PER_HOUR,
+    SECONDS_PER_MINUTE,
     STANDARD_GRAVITY,
+    SUTHERLAND_CONSTANT_AIR,
+    SUTHERLAND_T_REF,
+    SYNGAS_CP_DEFAULT,
+    SYNGAS_VISCOSITY_REF,
 )
 
 # =============================================================================
@@ -64,7 +82,6 @@ LB_PER_KG: Final[float] = KG_TO_LB
 
 # Time conversion constants
 MINUTES_TO_HOURS: Final[float] = 1.0 / 60.0
-SECONDS_PER_HOUR: Final[float] = 3600.0
 
 # Gravitational acceleration
 GRAVITY: Final[float] = STANDARD_GRAVITY
@@ -289,15 +306,15 @@ def calculate_gas_viscosity(temperature_k: float, molecular_weight: float) -> fl
         Approximate correlation for light gas mixtures
     """
     # Base viscosity at 300K for syngas (approximately air-like)
-    mu_ref = 1.8e-5  # Pa·s at 300K
-    t_ref = 300.0  # K
-    s = 110.4  # Sutherland constant for air-like gases
+    mu_ref = SYNGAS_VISCOSITY_REF  # Pa·s at 300K
+    t_ref = SUTHERLAND_T_REF  # K
+    s = SUTHERLAND_CONSTANT_AIR  # Sutherland constant for air-like gases
 
     # Sutherland's formula
     mu = mu_ref * (temperature_k / t_ref) ** 1.5 * (t_ref + s) / (temperature_k + s)
 
     # Adjust for molecular weight (heavier gases tend to be more viscous)
-    mw_correction = (molecular_weight / 29.0) ** 0.25
+    mw_correction = (molecular_weight / MW_AIR_GMOL) ** 0.25
     return mu * mw_correction
 
 
@@ -397,14 +414,14 @@ def calculate_pressure_drop(
     # Pressure drop per unit height (empirical correlation)
     # ΔP/Z ≈ α * Y^β * (1 + γ*X)
     # Typical values from Eckert correlation
-    alpha = 85.0  # Pa/m base coefficient
-    beta = 1.1  # Exponent on capacity parameter
-    gamma = 3.5  # Liquid effect coefficient
+    alpha = ECKERT_ALPHA  # Pa/m base coefficient
+    beta = ECKERT_BETA  # Exponent on capacity parameter
+    gamma = ECKERT_GAMMA  # Liquid effect coefficient
 
     dp_per_m = alpha * y**beta * (1.0 + gamma * flow_param)
 
     # Limit to reasonable range
-    dp_per_m = min(dp_per_m, 2000.0)  # Max 2 kPa/m (indicates flooding)
+    dp_per_m = min(dp_per_m, ECKERT_MAX_DP_PER_M)  # Max 2 kPa/m (indicates flooding)
 
     return dp_per_m * packed_height
 
@@ -473,7 +490,7 @@ def calculate_htu(
         Strigle, R.F., "Packed Tower Design and Applications", 2nd Edition
     """
     # Convert kla from 1/hr to 1/s
-    kla_per_s = kla / 3600.0
+    kla_per_s = kla / SECONDS_PER_HOUR
 
     if kla_per_s <= 0:
         return 1.0  # Default 1 m HTU
@@ -487,7 +504,7 @@ def calculate_htu(
     htu = packing.ch / (kla_per_s * packing.specific_surface_area * l_over_g**packing.n)
 
     # Clamp to reasonable range (0.1 to 3 m)
-    return max(0.1, min(3.0, htu))
+    return max(HTU_MIN, min(HTU_MAX, htu))
 
 
 def calculate_required_packed_height(
@@ -579,7 +596,9 @@ def calculate_caustic_requirement(
         naoh_solution_kg_hr = naoh_total_kg_hr / (caustic_concentration / 100.0)
         # Solution density approximation (increases with concentration)
         # ρ ≈ 1000 + 10.8 * wt% for NaOH solutions
-        solution_density = 1000.0 + 10.8 * caustic_concentration  # kg/m³
+        solution_density = (
+            NAOH_DENSITY_INTERCEPT + NAOH_DENSITY_SLOPE * caustic_concentration
+        )  # kg/m³
         naoh_solution_L_hr = naoh_solution_kg_hr / solution_density * 1000.0
     else:
         naoh_solution_kg_hr = 0.0
@@ -598,7 +617,7 @@ def calculate_heat_transfer_duty(
     inlet_temp_c: float,
     outlet_temp_c: float,
     water_condensed_kg_hr: float,
-    gas_cp: float = 1100.0,  # J/(kg·K) typical syngas
+    gas_cp: float = SYNGAS_CP_DEFAULT,  # J/(kg·K) typical syngas
 ) -> dict[str, float]:
     """
     Calculate heat transfer duty including sensible and latent heat.
@@ -648,8 +667,8 @@ def calculate_heat_transfer_duty(
 def calculate_cooling_water_requirement(
     heat_duty_kw: float,
     water_inlet_temp_c: float,
-    approach_temp_c: float = 5.0,
-    outlet_gas_temp_c: float = 38.0,
+    approach_temp_c: float = COOLING_WATER_APPROACH_TEMP,
+    outlet_gas_temp_c: float = SCRUBBER_OUTLET_GAS_TEMP,
 ) -> dict[str, float | str]:
     """
     Calculate cooling water requirement for heat removal.
@@ -691,7 +710,9 @@ def calculate_cooling_water_requirement(
 
     # Convert to practical units
     water_flow_kg_hr = water_flow_kg_s * SECONDS_PER_HOUR
-    water_flow_L_min = water_flow_kg_s * 60.0  # Assuming water density = 1 kg/L
+    water_flow_L_min = (
+        water_flow_kg_s * SECONDS_PER_MINUTE
+    )  # Assuming water density = 1 kg/L
 
     return {
         "water_outlet_temp_c": water_outlet_temp_c,
@@ -746,7 +767,7 @@ def calculate_column_diameter(
 
     # Diameter
     diameter_m = np.sqrt(4.0 * area_m2 / np.pi)
-    diameter_ft = diameter_m * 3.28084
+    diameter_ft = diameter_m * METERS_TO_FEET
 
     return {
         "design_velocity_m_s": design_velocity,

@@ -8,10 +8,33 @@ import math
 from dataclasses import dataclass
 from typing import Final
 
-from .constants import R_UNIVERSAL
-
-# Time conversion constant
-HOUR_TO_SECOND: Final[float] = 3600.0
+from .constants import (
+    BAR_TO_PA,
+    FLARE_BASE_EFFICIENCY,
+    FLARE_CO_EFFICIENCY_PENALTY,
+    FLARE_CO_THRESHOLD,
+    FLARE_COLD_TEMP_K,
+    FLARE_COLD_TEMP_PENALTY,
+    FLARE_FLAME_EMISSIVITY,
+    FLARE_H2_EFFICIENCY_BOOST,
+    FLARE_H2_THRESHOLD,
+    FLARE_H2S_EFFICIENCY_PENALTY,
+    FLARE_H2S_THRESHOLD,
+    FLARE_HOT_TEMP_BOOST,
+    FLARE_HOT_TEMP_K,
+    FLARE_MAX_EFFICIENCY,
+    FLARE_MAX_EXIT_VELOCITY,
+    FLARE_MIN_EFFICIENCY,
+    FLARE_MIN_HEIGHT,
+    FLARE_SAFE_RADIATION_INTENSITY,
+    G_MOL_TO_KG_MOL,
+    R_UNIVERSAL,
+    RADIATION_COMFORT,
+    RADIATION_DAMAGE,
+    RADIATION_LETHAL,
+    RADIATION_SAFE,
+    SECONDS_PER_HOUR,
+)
 
 # Standard Gas Properties (Molecular Weight [g/mol], Heating Value [kJ/kg], Cp [kJ/kg-K])
 GAS_PROPERTIES: Final[dict[str, dict[str, float]]] = {
@@ -83,15 +106,15 @@ class FlareCalculator:
 
         # Calculate heat release
         # kg/hr * kJ/kg * (1 hr / 3600 s) = kJ/s = kW
-        heat_release = total_flow * mix_hv / HOUR_TO_SECOND
+        heat_release = total_flow * mix_hv / SECONDS_PER_HOUR
 
         # Calculate gas density [kg/m³] using Ideal Gas Law
         # P = density * R_specific * T
         # density = P / (R_specific * T)
         # R_specific = R_universal / MW
         # Pressure in Pa, MW in kg/mol (g/mol / 1000)
-        pressure_pa = pressure * 100000.0  # bar to Pa
-        mix_mw_kg = mix_mw / 1000.0  # g/mol to kg/mol
+        pressure_pa = pressure * BAR_TO_PA  # bar to Pa
+        mix_mw_kg = mix_mw / G_MOL_TO_KG_MOL  # g/mol to kg/mol
 
         if temperature > 0:
             gas_density = pressure_pa / ((R_UNIVERSAL / mix_mw_kg) * temperature)
@@ -101,10 +124,10 @@ class FlareCalculator:
         # Calculate flare diameter (simplified API 521 method)
         # Exit velocity target: 0.5 Mach for smokeless operation or max 170 m/s
         # Using simplified target velocity
-        target_velocity = 170.0  # m/s
+        target_velocity = FLARE_MAX_EXIT_VELOCITY  # m/s
 
         # Calculate required cross-sectional area
-        mass_flow_kg_s = total_flow / HOUR_TO_SECOND
+        mass_flow_kg_s = total_flow / SECONDS_PER_HOUR
         if gas_density > 0 and target_velocity > 0:
             area = mass_flow_kg_s / (gas_density * target_velocity)
             diameter = math.sqrt(4 * area / math.pi)
@@ -113,8 +136,8 @@ class FlareCalculator:
 
         # Calculate flare height (simplified radiation method)
         # Target radiation intensity: 1.6 kW/m² at ground level for safe access
-        target_radiation = 1.6  # kW/m²
-        emissivity = 0.3  # Typical for clean hydrocarbon flames
+        target_radiation = FLARE_SAFE_RADIATION_INTENSITY  # kW/m²
+        emissivity = FLARE_FLAME_EMISSIVITY  # Typical for clean hydrocarbon flames
 
         # Simplified height calculation from point source model
         # I = (tau * F * Q) / (4 * pi * R^2)
@@ -129,7 +152,7 @@ class FlareCalculator:
             height = 0.0
 
         # Ensure minimum height
-        height = max(height, 10.0)
+        height = max(height, FLARE_MIN_HEIGHT)
 
         return FlareDesign(
             height=height,
@@ -155,11 +178,16 @@ class FlareCalculator:
             "comfort": 0.0,  # 0.5 kW/m²
         }
 
-        emissivity = 0.3
+        emissivity = FLARE_FLAME_EMISSIVITY
         heat_release = flare_design.heat_release
 
         # Calculate distances for each radiation level
-        radiation_levels = {"lethal": 37.5, "damage": 12.5, "safe": 1.6, "comfort": 0.5}
+        radiation_levels = {
+            "lethal": RADIATION_LETHAL,
+            "damage": RADIATION_DAMAGE,
+            "safe": RADIATION_SAFE,
+            "comfort": RADIATION_COMFORT,
+        }
 
         for zone, level in radiation_levels.items():
             if level > 0:
@@ -186,7 +214,7 @@ class FlareCalculator:
             Combustion efficiency (0-1)
         """
         # Simplified efficiency calculation
-        efficiency = 0.98  # Base efficiency
+        efficiency = FLARE_BASE_EFFICIENCY  # Base efficiency
 
         # Normalize factors
         total = sum(gas_composition.values()) or 1.0
@@ -196,19 +224,19 @@ class FlareCalculator:
         co_frac = gas_composition.get("CO", 0) / total
         h2s_frac = gas_composition.get("H2S", 0) / total
 
-        if h2_frac > 0.5:
-            efficiency += 0.01
+        if h2_frac > FLARE_H2_THRESHOLD:
+            efficiency += FLARE_H2_EFFICIENCY_BOOST
 
-        if co_frac > 0.3:
-            efficiency -= 0.02
+        if co_frac > FLARE_CO_THRESHOLD:
+            efficiency -= FLARE_CO_EFFICIENCY_PENALTY
 
-        if h2s_frac > 0.1:
-            efficiency -= 0.01
+        if h2s_frac > FLARE_H2S_THRESHOLD:
+            efficiency -= FLARE_H2S_EFFICIENCY_PENALTY
 
         # Temperature effects
-        if temperature < 300:
-            efficiency -= 0.02
-        elif temperature > 500:
-            efficiency += 0.01
+        if temperature < FLARE_COLD_TEMP_K:
+            efficiency -= FLARE_COLD_TEMP_PENALTY
+        elif temperature > FLARE_HOT_TEMP_K:
+            efficiency += FLARE_HOT_TEMP_BOOST
 
-        return max(0.95, min(0.999, efficiency))
+        return max(FLARE_MIN_EFFICIENCY, min(FLARE_MAX_EFFICIENCY, efficiency))

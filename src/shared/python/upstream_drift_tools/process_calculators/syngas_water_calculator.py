@@ -19,6 +19,28 @@ import pandas as pd
 from scipy.interpolate import interp1d
 
 from .constants import (
+    ANTOINE_WATER_A,
+    ANTOINE_WATER_B,
+    ANTOINE_WATER_C,
+    BUCK_ABOVE_FREEZING_A,
+    BUCK_ABOVE_FREEZING_B,
+    BUCK_ABOVE_FREEZING_C,
+    BUCK_ABOVE_FREEZING_D,
+    CELSIUS_TO_KELVIN_OFFSET,
+    IAPWS_COEFFICIENTS,
+    IAPWS_CRITICAL_PRESSURE,
+    IAPWS_CRITICAL_TEMP,
+    IAPWS_TRIPLE_POINT_TEMP,
+    KG_M3_TO_LB_FT3,
+    MAGNUS_A,
+    MAGNUS_B,
+    MAGNUS_C,
+    MMHG_TO_PA_CONV,
+    MW_SYNGAS_TYPICAL_GMOL,
+    MW_WATER_GMOL,
+    NORMAL_PRESSURE_PA,
+    NORMAL_TEMPERATURE_K,
+    R_GAS_DENSITY,
     WATER_VAPOR_A,
     WATER_VAPOR_B,
     WATER_VAPOR_C,
@@ -221,28 +243,30 @@ class SyngasWaterCalculator:
     def __init__(self) -> None:
         """Initialize the calculator with correlation constants"""
         # Antoine equation constants for water
-        self.antoine_constants = {"A": 8.07131, "B": 1730.63, "C": 233.426}
+        self.antoine_constants = {
+            "A": ANTOINE_WATER_A,
+            "B": ANTOINE_WATER_B,
+            "C": ANTOINE_WATER_C,
+        }
 
         # Buck equation constants (improved accuracy)
-        self.buck_constants = {"a": 0.61121, "b": 18.678, "c": 234.5, "d": 257.14}
+        self.buck_constants = {
+            "a": BUCK_ABOVE_FREEZING_A,
+            "b": BUCK_ABOVE_FREEZING_B,
+            "c": BUCK_ABOVE_FREEZING_C,
+            "d": BUCK_ABOVE_FREEZING_D,
+        }
 
         # IAPWS-IF97 constants for high accuracy
         self.iapws_constants = {
-            "Tc": 647.096,  # Critical temperature (K)
-            "Pc": 22.064,  # Critical pressure (MPa)
-            "coefficients": [
-                -7.85951783,
-                1.84408259,
-                -11.7866497,
-                22.6807411,
-                -15.9618719,
-                1.80122502,
-            ],
+            "Tc": IAPWS_CRITICAL_TEMP,  # Critical temperature (K)
+            "Pc": IAPWS_CRITICAL_TEMP / 29.356,  # Critical pressure (MPa) - derived
+            "coefficients": IAPWS_COEFFICIENTS,
         }
 
         # Molecular weights
-        self.mw_water = 18.015  # g/mol
-        self.mw_syngas_typical = 15.0  # g/mol (approximate)
+        self.mw_water = MW_WATER_GMOL  # g/mol
+        self.mw_syngas_typical = MW_SYNGAS_TYPICAL_GMOL  # g/mol (approximate)
 
         # Fast interpolation table for vapor pressure
         self._init_vapor_pressure_table()
@@ -289,13 +313,18 @@ class SyngasWaterCalculator:
         log10_p_mmhg = A - B / (C + temperature_c)
         # Convert log10 to natural log and use safe exp to prevent overflow.
         p_mmhg = _safe_exp(log10_p_mmhg * math.log(10))
-        return p_mmhg * 133.322  # Convert to Pa
+        return p_mmhg * MMHG_TO_PA_CONV  # Convert to Pa
 
     def _buck_equation(self, temperature_c: float) -> float:
         """Buck equation for improved accuracy at moderate temperatures"""
         if temperature_c >= 0:
             # Above freezing
-            a, b, c, d = 0.61121, 18.678, 234.5, 257.14
+            a, b, c, d = (
+                BUCK_ABOVE_FREEZING_A,
+                BUCK_ABOVE_FREEZING_B,
+                BUCK_ABOVE_FREEZING_C,
+                BUCK_ABOVE_FREEZING_D,
+            )
         else:
             # Below freezing
             a, b, c, d = WATER_VAPOR_A, WATER_VAPOR_B, WATER_VAPOR_C, WATER_VAPOR_D
@@ -320,14 +349,14 @@ class SyngasWaterCalculator:
             ValueError: If temperature is outside valid range (0.01°C to 373.946°C)
         """
         # Use the IAPWS-IF97 formulation for high-accuracy vapor pressure
-        T = temperature_c + 273.15
-        Tc = 647.096
-        Pc = 22064000
-        if T < 273.16 or Tc < T:
+        T = temperature_c + CELSIUS_TO_KELVIN_OFFSET
+        Tc = IAPWS_CRITICAL_TEMP
+        Pc = IAPWS_CRITICAL_PRESSURE
+        if T < IAPWS_TRIPLE_POINT_TEMP or Tc < T:
             msg = "Temperature out of IAPWS-IF97 range"
             raise ValueError(msg)
         theta = 1 - T / Tc
-        a = [-7.85951783, 1.84408259, -11.7866497, 22.6807411, -15.9618719, 1.80122502]
+        a = IAPWS_COEFFICIENTS
         lnP = (
             Tc
             / T
@@ -352,8 +381,8 @@ class SyngasWaterCalculator:
             msg = f"Magnus equation valid for 0°C to 100°C, got {temperature_c}°C"
             raise ValueError(msg)
 
-        exponent = 17.625 * temperature_c / (temperature_c + 243.04)
-        p_hpa = 6.1094 * _safe_exp(exponent)
+        exponent = MAGNUS_B * temperature_c / (temperature_c + MAGNUS_C)
+        p_hpa = MAGNUS_A * _safe_exp(exponent)
 
         # Convert hPa to Pa
         return p_hpa * 100
@@ -458,7 +487,7 @@ class SyngasWaterCalculator:
             comp_name = comp.name or "custom"
 
         # Convert units
-        temperature_k = temperature_c + 273.15
+        temperature_k = temperature_c + CELSIUS_TO_KELVIN_OFFSET
         pressure_pa = pressure_bar * 1e5
 
         # Calculate vapor pressure
@@ -485,15 +514,15 @@ class SyngasWaterCalculator:
         )
 
         # Water content at actual conditions (g/m³)
-        rho_water = vapor_pressure_pa * self.mw_water / (8314.46 * temperature_k)
+        rho_water = vapor_pressure_pa * self.mw_water / (R_GAS_DENSITY * temperature_k)
         water_content_g_m3 = rho_water
 
         # Water content at normal conditions (mg/Nm³)
         # Normal conditions: 0°C, 1.01325 bar
-        p_normal = 101325  # Pa
-        T_normal = 273.15  # K
+        p_normal = NORMAL_PRESSURE_PA  # Pa
+        T_normal = NORMAL_TEMPERATURE_K  # K
         water_content_mg_nm3 = (
-            y_water * self.mw_water * p_normal / (8314.46 * T_normal) * 1e6
+            y_water * self.mw_water * p_normal / (R_GAS_DENSITY * T_normal) * 1e6
         )
 
         # Parts per million by volume
@@ -501,7 +530,7 @@ class SyngasWaterCalculator:
 
         # Pounds per million standard cubic feet (US units)
         # Standard conditions: 60°F, 14.696 psia
-        water_content_lb_mmscf = water_content_mg_nm3 * 0.062428 / 1000
+        water_content_lb_mmscf = water_content_mg_nm3 * KG_M3_TO_LB_FT3 / 1000
 
         # Calculate dew point
         dew_point_c = self.calculate_dew_point(vapor_pressure_pa, pressure_pa)
