@@ -71,7 +71,7 @@ class TransactionLog:
         try:
             with open(self.log_path, "a", encoding="utf-8") as f:
                 f.write(json.dumps(entry) + "\n")
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Failed to write transaction log: {e}")
 
     def get_session_operations(
@@ -102,7 +102,7 @@ class TransactionLog:
                             operations.append(entry)
                     except json.JSONDecodeError:
                         continue
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Failed to read transaction log: {e}")
 
         return operations

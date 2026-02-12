@@ -10,7 +10,7 @@ from utils.path_helpers import ensure_utils_in_path
 
 ensure_utils_in_path()
 
-from constants import (
+from constants import (  # noqa: E402
     BOLD_HEADER_FONT_SIZE,
     DEFAULT_LISTBOX_HEIGHT,
     DEFAULT_PADDING,
@@ -25,7 +25,7 @@ from constants import (
 )
 
 # Import UTC from compatibility module
-from utils.compatibility import UTC
+from utils.compatibility import UTC  # noqa: E402
 
 try:
     import tkinter as tk

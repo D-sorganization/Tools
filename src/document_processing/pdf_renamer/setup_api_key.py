@@ -8,7 +8,7 @@ from _bootstrap import bootstrap  # noqa: E402
 
 _REPO_ROOT = bootstrap(__file__)
 
-from pdf_renamer.config import (
+from pdf_renamer.config import (  # noqa: E402
     _find_key_location,
     get_api_key,
     setup_api_key_interactive,
@@ -37,9 +37,6 @@ def main() -> None:
     else:
         logger.info("\n⚠ No API key found.")
         logger.info("\nAI features require a Gemini API key for title extraction.")
-        print(
-            "Without it, the tool will use local extraction only (metadata + heuristics)."
-        )
 
     # Run interactive setup
     if setup_api_key_interactive():
@@ -66,9 +63,8 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\n\nSetup cancelled by user.")
-    except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
-        print(f"\n\nError: {e}")
+        pass
+    except (ValueError, ZeroDivisionError, OverflowError, TypeError):
         import traceback
 
         traceback.print_exc()

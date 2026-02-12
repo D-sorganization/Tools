@@ -429,13 +429,13 @@ class MultivariateRegressor:
 
         # Ridge normal equations: (X'X + αI)β = X'y
         # Don't regularize intercept
-        I = np.eye(p + 1)
-        I[0, 0] = 0
+        reg_matrix = np.eye(p + 1)
+        reg_matrix[0, 0] = 0
 
         XtX = X_with_intercept.T @ X_with_intercept
         Xty = X_with_intercept.T @ y
 
-        coeffs = np.linalg.solve(XtX + alpha * I, Xty)
+        coeffs = np.linalg.solve(XtX + alpha * reg_matrix, Xty)
 
         return coeffs[1:], coeffs[0]
 
@@ -943,7 +943,7 @@ class MultivariateRegressor:
         else:
             importance = np.ones(len(coeffs)) / len(coeffs)
 
-        return {name: float(imp) for name, imp in zip(names, importance)}
+        return {name: float(imp) for name, imp in zip(names, importance, strict=False)}
 
     def _create_predict_func(
         self,
@@ -984,7 +984,8 @@ def format_regression_report(result: RegressionResult) -> str:
 
     # Overall model test
     lines.append(
-        f"F-statistic: {result.f_statistic:.4f} (df={result.df_model}, {result.df_residual})"
+        f"F-statistic: {result.f_statistic:.4f} "
+        f"(df={result.df_model}, {result.df_residual})"
     )
     lines.append(f"p-value: {result.f_p_value:.4e}")
     lines.append("")
@@ -993,7 +994,8 @@ def format_regression_report(result: RegressionResult) -> str:
     lines.append("Coefficients:")
     lines.append("-" * 70)
     lines.append(
-        f"{'Variable':<20} {'Estimate':>12} {'Std.Err':>10} {'t-stat':>10} {'p-value':>10}"
+        f"{'Variable':<20} {'Estimate':>12} "
+        f"{'Std.Err':>10} {'t-stat':>10} {'p-value':>10}"
     )
     lines.append("-" * 70)
 
@@ -1030,10 +1032,12 @@ def format_regression_report(result: RegressionResult) -> str:
         lines.append("Diagnostics:")
         lines.append(f"  Durbin-Watson:     {diag.durbin_watson:.4f}")
         lines.append(
-            f"  Breusch-Pagan:     χ² = {diag.breusch_pagan_stat:.4f}, p = {diag.breusch_pagan_p:.4f}"
+            f"  Breusch-Pagan:     \u03c7\u00b2 = {diag.breusch_pagan_stat:.4f}, "
+            f"p = {diag.breusch_pagan_p:.4f}"
         )
         lines.append(
-            f"  Shapiro-Wilk:      W = {diag.shapiro_stat:.4f}, p = {diag.shapiro_p:.4f}"
+            f"  Shapiro-Wilk:      W = {diag.shapiro_stat:.4f}, "
+            f"p = {diag.shapiro_p:.4f}"
         )
 
         if diag.high_leverage_points:

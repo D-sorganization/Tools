@@ -4,6 +4,7 @@ Star Wars RRT Path Planner - Python Version
 Enhanced performance with real-time rendering and GPU acceleration
 """
 
+import json
 import logging
 import random
 from dataclasses import dataclass

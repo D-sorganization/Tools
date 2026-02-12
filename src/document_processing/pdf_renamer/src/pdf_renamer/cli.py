@@ -78,7 +78,7 @@ def process_file(
                 else:
                     logger.info(f"[DRY RUN] Would rename to: {new_name}")
 
-    except (IOError, PermissionError, OSError) as e:
+    except (PermissionError, OSError) as e:
         logger.error(f"Failed to process {file_path}: {e}")
 
 

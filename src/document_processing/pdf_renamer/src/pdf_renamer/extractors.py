@@ -120,7 +120,7 @@ def title_from_first_page(pdf_path: Path) -> TitleResult:
     except ImportError:
         logger.warning("PyMuPDF (fitz) not installed. Skipping heuristic layer.")
         return TitleResult(None, 0.0, "heuristic", "pymupdf not installed")
-    except (IOError, PermissionError, OSError) as e:
+    except (PermissionError, OSError) as e:
         logger.debug(f"Heuristic extraction failed: {e}")
         return TitleResult(None, 0.0, "heuristic", f"heuristic error: {e}")
 

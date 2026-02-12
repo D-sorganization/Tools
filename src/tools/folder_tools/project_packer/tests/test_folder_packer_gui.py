@@ -1,5 +1,6 @@
 """Tests for folder_packer_gui.py module."""
 
+from pathlib import Path
 from unittest.mock import Mock, patch
 
 import pytest

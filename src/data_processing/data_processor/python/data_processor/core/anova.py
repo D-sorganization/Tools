@@ -236,7 +236,7 @@ class ANOVAAnalyzer:
 
         # Get groups
         groups = df.groupby(group_var)[dependent_var].apply(list).to_dict()
-        group_names = list(groups.keys())
+        list(groups.keys())
         k = len(groups)
 
         if k < 2:

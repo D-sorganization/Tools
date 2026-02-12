@@ -285,7 +285,10 @@ class ColumnOperationCommand(DataFrameCommand):
     @property
     def description(self) -> str:
         if self._formula:
-            return f"{self._operation} column '{self._column_name}' using formula: {self._formula}"
+            return (
+                f"{self._operation} column '{self._column_name}'"
+                f" using formula: {self._formula}"
+            )
         return f"{self._operation} column '{self._column_name}'"
 
     def execute(self) -> pd.DataFrame:
