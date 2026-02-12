@@ -324,8 +324,7 @@ class PipelineRecorder:
                 "end_time": end_time,
             },
             description=(
-                f"Trim time range: {start_time or 'start'} "
-                f"to {end_time or 'end'}"
+                f"Trim time range: {start_time or 'start'} " f"to {end_time or 'end'}"
             ),
         )
 
