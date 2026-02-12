@@ -12,6 +12,11 @@ import numpy as np
 
 from .core import Signal
 
+# Module-level constants for periodic noise generation
+DEFAULT_LINE_FREQUENCY_HZ: float = 60.0
+PERIODIC_NOISE_2ND_HARMONIC: float = 0.3
+PERIODIC_NOISE_3RD_HARMONIC: float = 0.1
+
 
 class NoiseType(Enum):
     """Types of noise that can be generated."""
@@ -85,7 +90,9 @@ class NoiseGenerator:
             values = self._generate_quantization_noise(n, amplitude, levels)
 
         elif noise_type == NoiseType.PERIODIC:
-            frequency = kwargs.get("frequency", 60.0)  # Default 60 Hz (line noise)
+            frequency = kwargs.get(
+                "frequency", DEFAULT_LINE_FREQUENCY_HZ
+            )  # Default 60 Hz (line noise)
             fs = 1.0 / np.mean(np.diff(t)) if len(t) > 1 else 1000.0
             values = self._generate_periodic_noise(n, amplitude, frequency, fs)
 
@@ -208,10 +215,14 @@ class NoiseGenerator:
         # Add some harmonics for realism
         values = amplitude * np.sin(2 * np.pi * frequency * t)
         values += (
-            0.3 * amplitude * np.sin(2 * np.pi * 2 * frequency * t)
+            PERIODIC_NOISE_2ND_HARMONIC
+            * amplitude
+            * np.sin(2 * np.pi * 2 * frequency * t)
         )  # 2nd harmonic
         values += (
-            0.1 * amplitude * np.sin(2 * np.pi * 3 * frequency * t)
+            PERIODIC_NOISE_3RD_HARMONIC
+            * amplitude
+            * np.sin(2 * np.pi * 3 * frequency * t)
         )  # 3rd harmonic
 
         return values

@@ -108,6 +108,7 @@ from .constants import (
     COMPRESSION_MIN_EFFICIENCY,
     COMPRESSION_TEMP_CRITICAL_K,
     COMPRESSION_TEMP_WARNING_K,
+    DEFAULT_GAMMA_DIATOMIC,
     INTERCOOLER_OUTLET_TEMP_K,
     R_GAS_J_MOL_K,
     SECONDS_PER_HOUR,
@@ -213,7 +214,7 @@ class SyngasCompressionEngine:
             mix_pc += frac * (species.critical_pressure / 100000.0)
 
             # Gamma: Use approximate map or default strict ideal gas
-            gamma = self._APPROX_GAMMA.get(comp, 1.4)
+            gamma = self._APPROX_GAMMA.get(comp, DEFAULT_GAMMA_DIATOMIC)
             mix_gamma += frac * gamma
 
         return {
@@ -422,6 +423,7 @@ class SyngasCompressionEngine:
                 "Verify equipment pressure ratings and safety systems",
             )
 
+        # Power concerns
         # Power concerns
         if total_power > COMPRESSION_HIGH_POWER_HP:
             concerns.append("High power requirement - consider multiple compressors")

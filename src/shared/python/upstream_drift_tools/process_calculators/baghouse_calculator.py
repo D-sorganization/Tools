@@ -13,7 +13,29 @@ from typing import Any
 from .constants import (
     ATM_PA,
     CELSIUS_TO_KELVIN_OFFSET,
+    CP_AR_500K,
+    CP_CH4_500K,
+    CP_CO2_500K,
+    CP_CO_500K,
+    CP_DEFAULT_FALLBACK,
+    CP_H2_500K,
+    CP_H2O_500K,
+    CP_MASS_DEFAULT_FALLBACK,
+    CP_N2_500K,
+    CP_O2_500K,
+    HOURS_PER_DAY,
+    M3_S_TO_CFM,
+    MW_AR_KG,
+    MW_CH4_KG,
+    MW_CO2_KG,
+    MW_CO_KG,
+    MW_DEFAULT_KG,
+    MW_H2_KG,
+    MW_H2O_KG,
+    MW_N2_KG,
+    MW_O2_KG,
     R_UNIVERSAL,
+    SECONDS_PER_HOUR,
     STP_TEMPERATURE_K,
 )
 
@@ -103,36 +125,36 @@ class BaghouseCalculator:
         """
         # Approximate Cp values at ~500K in J/(mol·K)
         cp_data = {
-            "H2": 29.1,
-            "CO": 29.2,
-            "CO2": 41.3,
-            "H2O": 35.5,
-            "N2": 29.5,
-            "CH4": 44.5,
-            "O2": 30.1,
-            "Ar": 20.8,
+            "H2": CP_H2_500K,
+            "CO": CP_CO_500K,
+            "CO2": CP_CO2_500K,
+            "H2O": CP_H2O_500K,
+            "N2": CP_N2_500K,
+            "CH4": CP_CH4_500K,
+            "O2": CP_O2_500K,
+            "Ar": CP_AR_500K,
         }
         # Molecular weights in kg/mol
         mw_data = {
-            "H2": 0.002,
-            "CO": 0.028,
-            "CO2": 0.044,
-            "H2O": 0.018,
-            "N2": 0.028,
-            "CH4": 0.016,
-            "O2": 0.032,
-            "Ar": 0.040,
+            "H2": MW_H2_KG,
+            "CO": MW_CO_KG,
+            "CO2": MW_CO2_KG,
+            "H2O": MW_H2O_KG,
+            "N2": MW_N2_KG,
+            "CH4": MW_CH4_KG,
+            "O2": MW_O2_KG,
+            "Ar": MW_AR_KG,
         }
 
         cp_mol = 0.0
         mw_avg = 0.0
         for species, frac in composition.items():
-            cp_mol += frac * cp_data.get(species, 30.0)
-            mw_avg += frac * mw_data.get(species, 0.028)
+            cp_mol += frac * cp_data.get(species, CP_DEFAULT_FALLBACK)
+            mw_avg += frac * mw_data.get(species, MW_DEFAULT_KG)
 
         if mw_avg > 0:
             return cp_mol / mw_avg  # J/(kg·K)
-        return 1000.0  # Default fallback
+        return CP_MASS_DEFAULT_FALLBACK  # Default fallback
 
     def _estimate_volume_flow(
         self,
@@ -148,24 +170,25 @@ class BaghouseCalculator:
         """
         # Molecular weights in kg/mol
         mw_data = {
-            "H2": 0.002,
-            "CO": 0.028,
-            "CO2": 0.044,
-            "H2O": 0.018,
-            "N2": 0.028,
-            "CH4": 0.016,
-            "O2": 0.032,
-            "Ar": 0.040,
+            "H2": MW_H2_KG,
+            "CO": MW_CO_KG,
+            "CO2": MW_CO2_KG,
+            "H2O": MW_H2O_KG,
+            "N2": MW_N2_KG,
+            "CH4": MW_CH4_KG,
+            "O2": MW_O2_KG,
+            "Ar": MW_AR_KG,
         }
 
         mw_avg = sum(
-            frac * mw_data.get(species, 0.028) for species, frac in composition.items()
+            frac * mw_data.get(species, MW_DEFAULT_KG)
+            for species, frac in composition.items()
         )
 
         if mw_avg > 0:
             molar_flow = mass_flow_kg_s / mw_avg  # mol/s
         else:
-            molar_flow = mass_flow_kg_s / 0.028  # Assume N2-like
+            molar_flow = mass_flow_kg_s / MW_N2_KG  # Assume N2-like
 
         # Actual volume flow (ideal gas)
         vol_actual_m3_s = molar_flow * R_UNIVERSAL * temperature_k / pressure_pa
@@ -174,8 +197,8 @@ class BaghouseCalculator:
         vol_std_m3_s = molar_flow * R_UNIVERSAL * STP_TEMPERATURE_K / ATM_PA
 
         # Convert to cfm (1 m³/s = 2118.88 cfm)
-        acfm = vol_actual_m3_s * 2118.88
-        scfm = vol_std_m3_s * 2118.88
+        acfm = vol_actual_m3_s * M3_S_TO_CFM
+        scfm = vol_std_m3_s * M3_S_TO_CFM
 
         return acfm, scfm
 
@@ -283,7 +306,9 @@ class BaghouseCalculator:
             fill_time_hours = float("inf")
 
         fill_time_days = (
-            fill_time_hours / 24.0 if fill_time_hours != float("inf") else float("inf")
+            fill_time_hours / HOURS_PER_DAY
+            if fill_time_hours != float("inf")
+            else float("inf")
         )
 
         c_fill = (
@@ -295,7 +320,7 @@ class BaghouseCalculator:
         air_to_cloth = flow_acfm / bag_area_ft2 if bag_area_ft2 > 0 else 0.0
 
         # Mass flow in kg/hr
-        gas_flow_kg_hr = gas_flow_kg_s * 3600.0
+        gas_flow_kg_hr = gas_flow_kg_s * SECONDS_PER_HOUR
 
         ash_stream_comp = {
             "carbon_fraction": (
