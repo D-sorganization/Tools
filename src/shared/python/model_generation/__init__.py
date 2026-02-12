@@ -228,6 +228,7 @@ def __getattr__(name: str) -> Any:
     """Lazy-load attributes on first access (see issue #611)."""
     if name in _LAZY_IMPORTS:
         module_path, attr_name = _LAZY_IMPORTS[name]
+        # nosemgrep: python.lang.security.audit.non-literal-import.non-literal-import
         module = importlib.import_module(module_path)
         value = getattr(module, attr_name)
         # Cache on the module so subsequent accesses are fast
@@ -293,7 +294,7 @@ def quick_urdf(
     if not result.success:
         raise ValueError(f"Failed to generate URDF: {result.error_message}")
 
-    return result.urdf_xml
+    return str(result.urdf_xml)
 
 
 def quick_build(
