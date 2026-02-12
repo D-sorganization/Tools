@@ -49,20 +49,8 @@ from .thermal_profile_predictor import (
 )
 
 if TYPE_CHECKING:
-    from .multi_param_analysis import (
-        run_multi_parameter_analysis as _run_multi_parameter_analysis_type,
-    )
-    from .optimization import (
-        find_optimal_on_surface as _find_optimal_on_surface_type,
-    )
-    from .optimization import (
-        run_adam_optimization as _run_adam_optimization_type,
-    )
     from .pressure_drop_calculator import (
         PressureDropCalculator as PressureDropCalculatorType,
-    )
-    from .syngas_compression_calculator import (
-        SyngasCompressionCalculatorWidget as SyngasCompressionCalculatorWidgetType,
     )
     from .syngas_water_calculator import (
         SyngasWaterCalculator as SyngasWaterCalculatorType,
