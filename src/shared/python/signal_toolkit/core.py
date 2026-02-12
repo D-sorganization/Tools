@@ -10,6 +10,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 
 import numpy as np
+from contracts import require
 
 
 @dataclass
@@ -35,27 +36,30 @@ class Signal:
         self.time = np.asarray(self.time, dtype=np.float64)
         self.values = np.asarray(self.values, dtype=np.float64)
 
-        if self.time.ndim != 1:
-            msg = f"Time must be 1D array, got shape {self.time.shape}"
-            raise ValueError(msg)
+        require(
+            self.time.ndim == 1,
+            f"Time must be 1D array, got shape {self.time.shape}",
+            self.time.shape,
+        )
 
         if self.values.ndim == 1:
-            if len(self.time) != len(self.values):
-                msg = (
-                    f"Time and values must have same length: "
-                    f"{len(self.time)} vs {len(self.values)}"
-                )
-                raise ValueError(msg)
+            require(
+                len(self.time) == len(self.values),
+                f"Time and values must have same length: "
+                f"{len(self.time)} vs {len(self.values)}",
+            )
         elif self.values.ndim == 2:
-            if self.values.shape[0] != len(self.time):
-                msg = (
-                    f"First dimension of values must match time length: "
-                    f"{self.values.shape[0]} vs {len(self.time)}"
-                )
-                raise ValueError(msg)
+            require(
+                self.values.shape[0] == len(self.time),
+                f"First dimension of values must match time length: "
+                f"{self.values.shape[0]} vs {len(self.time)}",
+            )
         else:
-            msg = f"Values must be 1D or 2D array, got shape {self.values.shape}"
-            raise ValueError(msg)
+            require(
+                False,
+                f"Values must be 1D or 2D array, got shape {self.values.shape}",
+                self.values.shape,
+            )
 
     @property
     def fs(self) -> float:
@@ -121,6 +125,7 @@ class Signal:
         Returns:
             New Signal with resampled data.
         """
+        require(new_fs > 0, "new_fs must be positive", new_fs)
         new_dt = 1.0 / new_fs
         new_time = np.arange(self.time[0], self.time[-1], new_dt)
         new_values = np.interp(new_time, self.time, self.values)
