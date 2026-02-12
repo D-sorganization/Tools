@@ -1,3 +1,5 @@
+"""test_electrical_model.py module."""
+
 import numpy as np
 import pytest
 from upstream_drift_tools.calculators.electrical.config import ElectrodeConfig

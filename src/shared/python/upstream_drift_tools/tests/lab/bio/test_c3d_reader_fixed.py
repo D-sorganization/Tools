@@ -1,3 +1,5 @@
+"""test_c3d_reader_fixed.py module."""
+
 from pathlib import Path
 from unittest.mock import patch
 

@@ -1,3 +1,5 @@
+"""scientific_auditor.py module."""
+
 import ast
 import json
 import sys

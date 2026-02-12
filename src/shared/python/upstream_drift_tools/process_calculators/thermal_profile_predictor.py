@@ -1,3 +1,5 @@
+"""thermal_profile_predictor.py module."""
+
 from collections.abc import Callable, Sequence
 
 import numpy as np
