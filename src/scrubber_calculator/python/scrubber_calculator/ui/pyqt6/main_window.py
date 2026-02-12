@@ -50,97 +50,21 @@ except ImportError:
     PACKING_DATABASE = {}
 
 
-# Catppuccin Mocha color palette
-COLORS = {
-    "base": "#1e1e2e",
-    "mantle": "#181825",
-    "crust": "#11111b",
-    "text": "#cdd6f4",
-    "subtext0": "#a6adc8",
-    "surface0": "#313244",
-    "surface1": "#45475a",
-    "surface2": "#585b70",
-    "blue": "#89b4fa",
-    "green": "#a6e3a1",
-    "yellow": "#f9e2af",
-    "red": "#f38ba8",
-    "mauve": "#cba6f7",
-    "teal": "#94e2d5",
-}
+from upstream_drift_tools.ui.catppuccin_theme import COLORS, get_stylesheet as _base_stylesheet
 
 
 def get_stylesheet() -> str:
-    """Get the Catppuccin Mocha stylesheet."""
-    return f"""
-        QMainWindow, QWidget {{
-            background-color: {COLORS["base"]};
-            color: {COLORS["text"]};
-        }}
-        QGroupBox {{
-            font-weight: bold;
-            border: 1px solid {COLORS["surface1"]};
-            border-radius: 6px;
-            margin-top: 12px;
-            padding-top: 10px;
-            background-color: {COLORS["mantle"]};
-        }}
-        QGroupBox::title {{
-            subcontrol-origin: margin;
-            left: 10px;
-            padding: 0 5px;
-            color: {COLORS["blue"]};
-        }}
-        QLabel {{
-            color: {COLORS["text"]};
-        }}
-        QDoubleSpinBox, QSpinBox, QComboBox, QLineEdit {{
-            background-color: {COLORS["surface0"]};
-            border: 1px solid {COLORS["surface1"]};
-            border-radius: 4px;
-            padding: 5px;
-            color: {COLORS["text"]};
-        }}
-        QDoubleSpinBox:focus, QSpinBox:focus, QComboBox:focus {{
-            border: 1px solid {COLORS["blue"]};
-        }}
-        QPushButton {{
-            background-color: {COLORS["blue"]};
-            color: {COLORS["crust"]};
-            border: none;
-            border-radius: 4px;
-            padding: 8px 16px;
-            font-weight: bold;
-        }}
-        QPushButton:hover {{
-            background-color: {COLORS["mauve"]};
-        }}
-        QPushButton:pressed {{
-            background-color: {COLORS["surface2"]};
-        }}
-        QTableWidget {{
-            background-color: {COLORS["mantle"]};
-            border: 1px solid {COLORS["surface1"]};
-            border-radius: 4px;
-            gridline-color: {COLORS["surface1"]};
-        }}
-        QTableWidget::item {{
-            padding: 5px;
-            color: {COLORS["text"]};
-        }}
-        QHeaderView::section {{
-            background-color: {COLORS["surface0"]};
-            color: {COLORS["text"]};
-            padding: 5px;
-            border: none;
-            border-bottom: 1px solid {COLORS["surface1"]};
-            font-weight: bold;
-        }}
+    """Get the Catppuccin Mocha stylesheet with ResultCard extension."""
+    return (
+        _base_stylesheet()
+        + f"""
         QFrame#resultCard {{
             background-color: {COLORS["surface0"]};
             border-radius: 8px;
             padding: 10px;
         }}
     """
+    )
 
 
 class ResultCard(QFrame):
