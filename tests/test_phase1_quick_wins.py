@@ -54,18 +54,21 @@ class TestLegacyDirCleanup:
 class TestNotImplementedErrorFixes:
     """Verify NotImplementedError stubs are properly handled."""
 
-    def test_signal_loader_raises_value_error_for_unknown_format(self):
-        """SignalLoader.load should raise ValueError, not NotImplementedError,
-        for unsupported internal format keys."""
+    def test_signal_loader_raises_assertion_for_unhandled_format(self):
+        """SignalLoader.load should raise AssertionError (internal invariant),
+        not NotImplementedError, for unhandled internal format keys.
+        Issue #664 supersedes #627."""
         io_path = REPO_ROOT / "src" / "shared" / "python" / "signal_toolkit" / "io.py"
         content = io_path.read_text()
-        # The dead-code safeguard should raise ValueError, not NotImplementedError
-        assert "raise ValueError(msg)" in content
-        # Check the comment references issue #627
-        assert "issue #627" in content
+        # The dead-code safeguard should raise AssertionError for internal
+        # invariant violations (issue #664 supersedes #627)
+        assert "raise AssertionError(msg)" in content
+        # NotImplementedError must not appear
+        assert "NotImplementedError" not in content
 
     def test_format_utils_conversion_has_clear_error_message(self):
-        """format_utils.convert should have a clear message about supported conversions."""
+        """format_utils.convert should raise ValueError with a clear message
+        about supported conversions. Issue #664 supersedes #627."""
         utils_path = (
             REPO_ROOT
             / "src"
@@ -77,7 +80,9 @@ class TestNotImplementedErrorFixes:
         )
         content = utils_path.read_text()
         assert "URDF <-> MJCF" in content
-        assert "issue #627" in content
+        # Must use ValueError, not NotImplementedError (issue #664)
+        assert "raise ValueError(msg)" in content
+        assert "NotImplementedError" not in content
 
 
 # =========================================================================

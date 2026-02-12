@@ -124,24 +124,62 @@ def convert(
     target_format: ModelFormat | str,
     output_path: Path | None = None,
 ) -> str:
-    """
-    Convert model between formats (auto-detect source format).
+    """Convert a robot model between supported formats.
+
+    Source format is auto-detected from file extension or XML content.
+
+    Supported conversions:
+        - URDF -> MJCF (via ``MJCFConverter.urdf_to_mjcf``)
+        - MJCF -> URDF (via ``MJCFConverter.mjcf_to_urdf``)
+
+    Unsupported / not planned:
+        - SDF -> URDF, URDF -> SDF, SDF -> MJCF, MJCF -> SDF
+        - SIMSCAPE -> any (use ``convert_simscape_to_urdf`` for MDL import)
 
     Args:
-        source: Source file path or XML string
-        target_format: Target format (URDF, MJCF, SDF)
-        output_path: Optional path to save output
+        source: Source file path or XML string.
+        target_format: Desired output format.  Accepts a ``ModelFormat``
+            enum member or a lowercase string (``"urdf"``, ``"mjcf"``).
+        output_path: If provided, the converted XML is also written to
+            this path.
 
     Returns:
-        Converted XML string
+        The converted XML as a string.
 
-    Example:
+    Raises:
+        ValueError: If *source_format* equals *target_format* and the
+            source cannot be read, or if the requested conversion pair
+            is not supported.
+
+    Example::
+
         result = convert("robot.urdf", ModelFormat.MJCF)
     """
     if isinstance(target_format, str):
-        target_format = ModelFormat(target_format.lower())
+        try:
+            target_format = ModelFormat(target_format.lower())
+        except ValueError:
+            valid = [f.value for f in ModelFormat if f != ModelFormat.UNKNOWN]
+            msg = (
+                f"Unknown target format {target_format!r}. "
+                f"Valid formats: {', '.join(valid)}"
+            )
+            raise ValueError(msg) from None
+
+    # -- Preconditions (Design by Contract) --
+    if target_format == ModelFormat.UNKNOWN:
+        msg = "target_format must not be ModelFormat.UNKNOWN"
+        raise ValueError(msg)
 
     source_format = detect_format(source)
+
+    if source_format == ModelFormat.UNKNOWN:
+        msg = (
+            f"Could not detect the format of {source!r}. "
+            "Provide a file with a recognised extension (.urdf, .xml, .sdf) "
+            "or valid XML content."
+        )
+        raise ValueError(msg)
 
     if source_format == target_format:
         # No conversion needed
@@ -157,13 +195,17 @@ def convert(
     if source_format == ModelFormat.MJCF and target_format == ModelFormat.URDF:
         return convert_mjcf_to_urdf(source, output_path)
 
-    # Only URDF<->MJCF is supported; SDF and other pairs are not yet
-    # available. See issue #627 for tracking.
+    # Only URDF <-> MJCF conversion is supported.  Other pairs (SDF,
+    # SIMSCAPE, etc.) are outside the current scope.  This is a user
+    # error (unsupported input), not a missing abstract-method
+    # implementation, so ValueError is the correct exception.
+    supported_pairs = "URDF <-> MJCF"
     msg = (
-        f"Conversion from {source_format.value} to {target_format.value} "
-        "is not supported. Currently only URDF <-> MJCF is implemented."
+        f"Conversion from {source_format.value!r} to "
+        f"{target_format.value!r} is not supported. "
+        f"Currently only {supported_pairs} conversions are available."
     )
-    raise NotImplementedError(msg)
+    raise ValueError(msg)
 
 
 def validate_urdf(source: str | Path) -> list[str]:

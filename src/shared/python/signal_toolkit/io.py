@@ -494,18 +494,49 @@ class SignalLoader:
     ) -> Signal | list[Signal]:
         """Load signal(s) from a file with automatic format detection.
 
+        Supported formats:
+            - ``.csv``, ``.txt``, ``.tsv`` -- delimited text (via ``SignalImporter.from_csv``)
+            - ``.json`` -- JSON with ``time``/``values`` keys (via ``SignalImporter.from_json``)
+            - ``.npz`` -- NumPy compressed archive (via ``SignalImporter.from_npz``)
+            - ``.npy`` -- single NumPy array (1-D assumes uniform sampling,
+              2-D assumes column 0 is time)
+            - ``.mat`` -- MATLAB v5 format (via ``SignalImporter.from_mat``;
+              requires ``scipy``)
+
+        Unsupported / not planned:
+            - ``.hdf5`` / ``.h5`` -- use ``h5py`` directly and pass arrays
+              to ``SignalImporter.from_numpy``
+            - ``.parquet`` -- use ``pandas`` / ``pyarrow`` and convert
+            - Proprietary oscilloscope formats (Tektronix ``.wfm``,
+              LeCroy ``.trc``, etc.)
+
         Args:
-            file_path: Path to the file.
-            **kwargs: Format-specific arguments.
+            file_path: Path to the signal file.  Must have one of the
+                extensions listed in ``SUPPORTED_EXTENSIONS``.
+            **kwargs: Format-specific keyword arguments forwarded to the
+                underlying importer method.
 
         Returns:
-            Signal or list of Signals.
+            A single ``Signal`` when the file contains one value column,
+            or a ``list[Signal]`` when multiple value columns are present.
+
+        Raises:
+            FileNotFoundError: If *file_path* does not exist.
+            ValueError: If the file extension is not in
+                ``SUPPORTED_EXTENSIONS``.
         """
         file_path = Path(file_path)
+
+        # -- Preconditions (Design by Contract) --
+        if not file_path.exists():
+            msg = f"Signal file does not exist: {file_path}"
+            raise FileNotFoundError(msg)
+
         ext = file_path.suffix.lower()
 
         if ext not in cls.SUPPORTED_EXTENSIONS:
-            msg = f"Unsupported file format: {ext}"
+            supported = ", ".join(sorted(cls.SUPPORTED_EXTENSIONS))
+            msg = f"Unsupported file format {ext!r}. Supported extensions: {supported}"
             raise ValueError(msg)
 
         fmt = cls.SUPPORTED_EXTENSIONS[ext]
@@ -539,11 +570,16 @@ class SignalLoader:
         elif fmt == "mat":
             return SignalImporter.from_mat(file_path, **kwargs)
 
-        # All keys in SUPPORTED_EXTENSIONS are handled above; this is a
-        # safeguard in case a new key is added without a handler.
-        # See issue #627
-        msg = f"Format handler not implemented: {fmt}"
-        raise ValueError(msg)
+        # Invariant: every value in SUPPORTED_EXTENSIONS must have a
+        # handler branch above.  If we reach here a new format tag was
+        # added to the dict without a corresponding handler -- that is a
+        # programming error, not a user error.
+        msg = (
+            f"Internal error: no handler for format {fmt!r} "
+            f"(extension {ext!r}).  This is a bug -- every key in "
+            f"SUPPORTED_EXTENSIONS must have a matching handler in load()."
+        )
+        raise AssertionError(msg)
 
 
 class BatchProcessor:
