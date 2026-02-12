@@ -20,15 +20,11 @@ def check_python_version() -> None:
         SystemExit: If Python version is < 3.10
     """
     if sys.version_info < (3, 10):  # noqa: UP036
-        print(
-            "Critical Error: This application requires Python 3.10 or newer.",
-            file=sys.stderr,
+        logger.critical(
+            "Critical Error: This application requires Python 3.10 or newer."
         )
-        logger.info(f"Current version: {sys.version}")
-        print(
-            "\nPlease upgrade Python or use a Python 3.10+ environment.",
-            file=sys.stderr,
-        )
+        logger.critical(f"Current version: {sys.version}")
+        logger.critical("Please upgrade Python or use a Python 3.10+ environment.")
         sys.exit(1)
 
 

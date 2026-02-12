@@ -563,44 +563,46 @@ if __name__ == "__main__":
     # Demonstration
     logging.basicConfig(level=logging.INFO)
 
-    print("\n" + "=" * 80)
-    print("FLOW RATE CONVERSION EXAMPLES")
-    print("=" * 80)
+    logger.info("\n" + "=" * 80)
+    logger.info("FLOW RATE CONVERSION EXAMPLES")
+    logger.info("=" * 80)
 
     # Example 1: Mass flow conversions
-    print("\nExample 1: Mass flow rate conversions")
-    print("-" * 80)
+    logger.info("\nExample 1: Mass flow rate conversions")
+    logger.info("-" * 80)
     mass_kg_h: float = 1000.0  # kg/h
     mass_lb_hr = mass_to_mass(mass_kg_h, "kg/h", "lb/hr")
-    print(f"{mass_kg_h} kg/h = {mass_lb_hr:.1f} lb/hr")
+    logger.info(f"{mass_kg_h} kg/h = {mass_lb_hr:.1f} lb/hr")
 
     # Example 2: Molar to mass
-    print("\nExample 2: Molar to mass flow rate")
-    print("-" * 80)
+    logger.info("\nExample 2: Molar to mass flow rate")
+    logger.info("-" * 80)
     molar_kmol_h = 10  # kmol/h
     MW_air = 29.0  # kg/kmol
     mass_kg_h = molar_to_mass(molar_kmol_h, "kmol/h", MW_air, "kg/h")
-    print(f"{molar_kmol_h} kmol/h of air (MW={MW_air}) = {mass_kg_h:.1f} kg/h")
+    logger.info(f"{molar_kmol_h} kmol/h of air (MW={MW_air}) = {mass_kg_h:.1f} kg/h")
 
     # Example 3: SCFM to mass flow
-    print("\nExample 3: SCFM to mass flow rate")
-    print("-" * 80)
+    logger.info("\nExample 3: SCFM to mass flow rate")
+    logger.info("-" * 80)
     scfm = 1000  # SCFM
     mass_lb_hr = standard_volumetric_to_mass(scfm, "ft3/min", MW_air, "SCFM", "lb/hr")
     mass_kg_s = standard_volumetric_to_mass(scfm, "ft3/min", MW_air, "SCFM", "kg/s")
-    print(f"{scfm} SCFM of air = {mass_lb_hr:.1f} lb/hr = {mass_kg_s:.3f} kg/s")
+    logger.info(f"{scfm} SCFM of air = {mass_lb_hr:.1f} lb/hr = {mass_kg_s:.3f} kg/s")
 
     # Example 4: SCFM to ACFM
-    print("\nExample 4: SCFM to ACFM conversion")
-    print("-" * 80)
+    logger.info("\nExample 4: SCFM to ACFM conversion")
+    logger.info("-" * 80)
     T_actual = 800  # K (~527°C)
     P_actual = 5e5  # Pa (5 bar)
     acfm = scfm_to_acfm(scfm, T_actual, P_actual, "SCFM")
-    print(f"{scfm} SCFM @ {T_actual}K, {P_actual / 1e5:.0f} bar = {acfm:.0f} ACFM")
+    logger.info(
+        f"{scfm} SCFM @ {T_actual}K, {P_actual / 1e5:.0f} bar = {acfm:.0f} ACFM"
+    )
 
     # Example 5: Universal converter
-    print("\nExample 5: Universal converter")
-    print("-" * 80)
+    logger.info("\nExample 5: Universal converter")
+    logger.info("-" * 80)
     inputs = [
         (1000, "kg/h", 29.0),
         (100, "lbmol/hr", 29.0),
@@ -608,4 +610,4 @@ if __name__ == "__main__":
     ]
     for val, unit, mw in inputs:
         mass_kg_s = convert_flow_rate_to_mass(val, unit, mw)
-        print(f"{val} {unit} = {mass_kg_s:.3f} kg/s")
+        logger.info(f"{val} {unit} = {mass_kg_s:.3f} kg/s")
