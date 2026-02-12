@@ -27,6 +27,7 @@ import math
 from typing import Any
 
 import numpy as np
+from contracts import require
 
 __all__ = [
     "safe_eval",
@@ -165,6 +166,12 @@ def validate_expression(
     """
     if not expression or not expression.strip():
         raise ValueError("Expression must not be empty")
+
+    require(
+        isinstance(expression, str),
+        "expression must be a string",
+        type(expression).__name__,
+    )
 
     try:
         tree = ast.parse(expression, mode="eval")
