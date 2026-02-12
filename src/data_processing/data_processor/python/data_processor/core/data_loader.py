@@ -127,7 +127,7 @@ class DataLoader:
 
             return df
 
-        except Exception as e:
+        except (OSError, ValueError, KeyError) as e:
             logger.error(f"Error loading {file_path}: {e}", exc_info=True)
             return None
 
@@ -215,7 +215,7 @@ class DataLoader:
                         len(file_paths),
                         f"Scanned {Path(file_path).name}",
                     )
-            except (IOError, PermissionError, OSError) as e:
+            except (PermissionError, OSError) as e:
                 logger.exception(f"Error reading {file_path}: {e}")
 
         return all_signals

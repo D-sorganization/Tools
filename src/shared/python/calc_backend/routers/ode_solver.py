@@ -40,7 +40,7 @@ def solve_ode(request: ODESolverRequest) -> ODESolverResponse:
             t_end=request.t_end,
             num_points=request.num_points,
         )
-    except Exception as exc:
+    except (ValueError, TypeError, KeyError, ArithmeticError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     return result

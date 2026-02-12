@@ -562,7 +562,7 @@ class FolderProcessorApp:
                         resized = resized.convert("RGBA")
                     photo = ImageTk.PhotoImage(resized)
                     photos.append(photo)
-                except Exception as e:
+                except (OSError, ValueError) as e:
                     logger.warning(f"Could not create {size}x{size} icon: {e}")
 
             # Set all sizes at once for best scaling
@@ -1887,7 +1887,7 @@ class FolderProcessorApp:
                         "Analysis Complete",
                         "Analysis report generated successfully!",
                     )
-            except Exception as e:
+            except OSError as e:
                 messagebox.showerror("Error", f"An error occurred during analysis: {e}")
             return
 
@@ -1901,7 +1901,7 @@ class FolderProcessorApp:
                     "Operation Complete",
                     "Deduplication complete.\n\n" + "\n".join(results_log),
                 )
-            except Exception as e:
+            except OSError as e:
                 messagebox.showerror(
                     "Error",
                     f"An error occurred during deduplication: {e}",
@@ -1933,7 +1933,7 @@ class FolderProcessorApp:
                     + "\n\nDo you want to proceed?",
                 ):
                     return
-            except Exception as e:
+            except OSError as e:
                 messagebox.showerror(
                     "Error",
                     f"An error occurred during bulk unzip: {e}",
@@ -1955,7 +1955,7 @@ class FolderProcessorApp:
                 return
 
             final_summary = "Main Operation Complete!\n\n" + "\n".join(main_op_log)
-        except Exception as e:
+        except OSError as e:
             messagebox.showerror(
                 "Error",
                 f"An error occurred during the main operation: {e}",
@@ -1970,7 +1970,7 @@ class FolderProcessorApp:
                 final_summary += "\n\n--- Deduplication Results ---\n" + "\n".join(
                     dedupe_log,
                 )
-            except Exception as e:
+            except OSError as e:
                 final_summary += f"\n\n--- Deduplication FAILED: {e}"
 
         # Create output ZIP if requested
@@ -1981,7 +1981,7 @@ class FolderProcessorApp:
                 final_summary += (
                     f"\n\n--- ZIP Archive Created ---\nLocation: {zip_path}"
                 )
-            except Exception as e:
+            except OSError as e:
                 final_summary += f"\n\n--- ZIP Creation FAILED: {e}"
 
         if backup_path and not self.cancel_operation:
@@ -2158,7 +2158,7 @@ class FolderProcessorApp:
                 try:
                     zip_path.unlink()
                     logger.info(f"Cleaned up failed ZIP file: {zip_path}")
-                except Exception as cleanup_error:
+                except OSError as cleanup_error:
                     logger.warning(
                         f"Failed to cleanup failed ZIP file: {zip_path} - "
                         f"{cleanup_error}",
@@ -2307,7 +2307,7 @@ class FolderProcessorApp:
                     dialog.clipboard_clear()
                     dialog.clipboard_append(content)
                     logger.debug("Dialog content copied to clipboard")
-                except Exception as e:
+                except (RuntimeError, OSError) as e:
                     logger.warning(f"Failed to copy to clipboard: {e}")
 
             copy_button = ttk.Button(
@@ -2702,7 +2702,7 @@ class FolderProcessorApp:
                     final_dest_path = self._get_unique_path(dest_path)
                     if final_dest_path != dest_path:
                         log.append(
-                            f"Renamed: '{file}' to " f"'{Path(final_dest_path).name}'",
+                            f"Renamed: '{file}' to '{Path(final_dest_path).name}'",
                         )
                         renamed_count += 1
 
@@ -3126,7 +3126,7 @@ class FolderProcessorApp:
                     final_dest_path = self._get_unique_path(dest_path)
                     if final_dest_path != dest_path:
                         log.append(
-                            f"Renamed: '{file}' to " f"'{Path(final_dest_path).name}'",
+                            f"Renamed: '{file}' to '{Path(final_dest_path).name}'",
                         )
 
                     try:
@@ -3236,7 +3236,7 @@ class FolderProcessorApp:
                     final_dest_path = self._get_unique_path(dest_file_path)
                     if final_dest_path != dest_file_path:
                         log.append(
-                            f"Renamed: '{file}' to " f"'{Path(final_dest_path).name}'",
+                            f"Renamed: '{file}' to '{Path(final_dest_path).name}'",
                         )
 
                     try:

@@ -501,7 +501,7 @@ class TI89Calculator:
             )
             # Validate expression tree for unsafe operations (e.g. massive powers)
             TI89Calculator._validate_expression_tree(expr_tree)
-        except Exception as error:
+        except (ValueError, TypeError, SyntaxError, ArithmeticError) as error:
             # If parsing fails or validation fails, propagate the error
             if "exceeds safety limits" in str(error):
                 raise

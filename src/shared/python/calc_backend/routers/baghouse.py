@@ -31,7 +31,7 @@ def calculate_baghouse(request: BaghouseRequest) -> BaghouseResponse:
             solid_density_kg_m3=request.solid_density_kg_m3,
             bag_area_ft2=request.bag_area_ft2,
         )
-    except Exception as exc:
+    except (ValueError, TypeError, KeyError, ArithmeticError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     return BaghouseResponse(

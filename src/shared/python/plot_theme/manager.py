@@ -122,7 +122,7 @@ class PlotThemeManager:
         for callback in self._callbacks:
             try:
                 callback(theme)
-            except Exception as e:
+            except (ValueError, TypeError, RuntimeError) as e:
                 logger.warning(f"Theme change callback error: {e}")
 
         logger.debug(f"Set plot theme to: {theme.name}")

@@ -193,7 +193,7 @@ class UndoRedoManager(Generic[T]):
         for listener in self._listeners:
             try:
                 listener(event_type)
-            except Exception as e:
+            except (ValueError, TypeError, RuntimeError) as e:
                 logger.warning(f"Listener error: {e}")
 
 

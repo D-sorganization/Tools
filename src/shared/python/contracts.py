@@ -342,7 +342,7 @@ def _check_class_invariant(
             raise InvariantError(f"{message} ({context})")
     except InvariantError:
         raise
-    except Exception as exc:
+    except (ValueError, TypeError, KeyError, AttributeError, ArithmeticError) as exc:
         raise InvariantError(
             f"Error checking invariant '{message}' {context}: {exc}"
         ) from exc

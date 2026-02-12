@@ -231,7 +231,7 @@ def validate_urdf(source: str | Path) -> list[str]:
         errors.extend(model.warnings)
 
         return errors
-    except Exception as e:
+    except (ValueError, KeyError, OSError) as e:
         return [str(e)]
 
 

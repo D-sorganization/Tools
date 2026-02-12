@@ -160,7 +160,7 @@ def safe_read_text(
 
     try:
         return path.read_text(encoding=encoding)
-    except Exception as e:
+    except (OSError, ValueError) as e:
         logger.error(f"Error reading text file {path}: {e}")
         return default
 

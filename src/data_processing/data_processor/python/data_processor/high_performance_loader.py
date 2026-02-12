@@ -204,7 +204,7 @@ class HighPerformanceDataLoader:
                             f"Processed {Path(file_path).name}",
                         )
 
-                except (IOError, PermissionError, OSError) as e:
+                except (PermissionError, OSError) as e:
                     logger.error(f"Error processing {file_path}: {e}", exc_info=True)
                     completed += 1
 
@@ -296,7 +296,7 @@ class HighPerformanceDataLoader:
             stat = os.stat(file_path)
             content = f"{stat.st_size}_{stat.st_mtime}_{Path(file_path).name}"
             return hashlib.md5(content.encode()).hexdigest()
-        except (IOError, PermissionError, OSError):
+        except (PermissionError, OSError):
             return "unknown"
 
     def _get_cached_metadata(self, file_path: str) -> FileMetadata | None:
@@ -313,7 +313,7 @@ class HighPerformanceDataLoader:
                     # Sample data is not cached (too large for JSON)
                     data["sample_data"] = None
                     return FileMetadata(**data)
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Error reading cache for {file_path}: {e}", exc_info=True)
         return None
 
@@ -331,7 +331,7 @@ class HighPerformanceDataLoader:
                 # Don't cache sample_data (too large for JSON, will be regenerated)
                 data["sample_data"] = None
                 json.dump(data, f, indent=2)
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.error(
                 f"Error caching metadata for {metadata.path}: {e}",
                 exc_info=True,
@@ -345,7 +345,7 @@ class HighPerformanceDataLoader:
                 metadata.size_bytes == current_stat.st_size
                 and metadata.modified_time == current_stat.st_mtime
             )
-        except Exception:
+        except OSError:
             return False
 
     def load_file_data(
@@ -530,7 +530,7 @@ class HighPerformanceDataLoader:
             for cache_file in self.cache_dir.glob("*.pkl"):
                 cache_file.unlink()
             logger.info("Cache cleared successfully")
-        except Exception as e:
+        except OSError as e:
             logger.error(f"Error clearing cache: {e}", exc_info=True)
 
     def get_cache_stats(self) -> dict[str, Any]:

@@ -122,7 +122,7 @@ def launch_python_tool(
                         for line in stream:
                             if log_func is not None:
                                 log_func(f"{prefix} {line.strip()}")
-                    except Exception as e:
+                    except (OSError, ValueError) as e:
                         if log_func is not None:
                             log_func(f"Error reading stream: {e}")
                     finally:

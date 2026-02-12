@@ -70,7 +70,7 @@ class PhysicsValidator:
 
         try:
             inertia_mat = link.inertia.as_matrix()
-        except Exception as e:
+        except (ValueError, TypeError, AttributeError) as e:
             return ValidationResult.error(f"Failed to get inertia matrix: {e}")
 
         # Symmetric check

@@ -684,7 +684,7 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore
                 self.update_status("Failed to apply formula")
                 messagebox.showerror("Error", "Failed to apply formula")
 
-        except Exception as e:
+        except (ValueError, TypeError, KeyError, ArithmeticError) as e:
             logger.error(f"Error applying formula: {e}", exc_info=True)
             messagebox.showerror("Error", f"Failed to apply formula:\n{e}")
 
@@ -771,7 +771,7 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore
                 self.update_status("Export failed")
                 messagebox.showerror("Error", "Failed to export data")
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Error exporting data: {e}", exc_info=True)
             messagebox.showerror("Error", f"Failed to export data:\n{e}")
 

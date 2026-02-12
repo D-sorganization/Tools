@@ -162,6 +162,6 @@ if _HAS_MATPLOTLIB and plt is not None:
             plt.colormaps.register(default_cmap)
         if alt_cmap is not None:
             plt.colormaps.register(alt_cmap)
-    except Exception:
+    except (ValueError, RuntimeError):
         # Colormap registration may fail in some matplotlib versions
         pass

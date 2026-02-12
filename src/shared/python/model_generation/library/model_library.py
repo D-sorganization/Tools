@@ -408,7 +408,7 @@ class ModelLibrary:
                 return self._load_mjcf(entry.urdf_path, entry.is_read_only)
             else:
                 return self._parser.parse(entry.urdf_path, read_only=entry.is_read_only)
-        except Exception as e:
+        except (OSError, ValueError, KeyError) as e:
             logger.error(f"Failed to load model {model_id}: {e}")
             return None
 
@@ -468,7 +468,7 @@ class ModelLibrary:
             link_count = len(parsed.links)
             joint_count = len(parsed.joints)
             dof_count = sum(j.get_dof_count() for j in parsed.joints)
-        except Exception:
+        except (OSError, ValueError, KeyError):
             link_count = joint_count = dof_count = 0
 
         # Copy to library if requested

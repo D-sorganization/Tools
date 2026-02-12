@@ -171,7 +171,7 @@ class MouseWheelZoom:
         for callback in self._zoom_callbacks:
             try:
                 callback(event)
-            except Exception as e:
+            except (ValueError, TypeError, RuntimeError) as e:
                 logger.warning(f"Zoom callback error: {e}")
 
     def _zoom_2d(

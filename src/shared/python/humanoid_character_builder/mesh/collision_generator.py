@@ -230,7 +230,7 @@ class CollisionGeometryGenerator:
             else:
                 result = self._generate_decimated(mesh, max_triangles)
 
-        except Exception as e:
+        except (ValueError, TypeError, RuntimeError, OSError) as e:
             logger.error(f"Collision generation failed: {e}")
             return CollisionGeometryResult(
                 success=False,
@@ -380,7 +380,7 @@ class CollisionGeometryGenerator:
                 hausdorff_distance=0.0,
             )
 
-        except Exception as e:
+        except (ValueError, TypeError, RuntimeError, OSError) as e:
             logger.warning(f"VHACD failed, falling back to convex hull: {e}")
             return self._generate_convex_hull(mesh)
 
@@ -621,7 +621,7 @@ class CollisionGeometryGenerator:
         try:
             # Try quadric decimation
             simplified = mesh.simplify_quadric_decimation(max_triangles)
-        except Exception:
+        except (ValueError, RuntimeError, IndexError):
             # Fallback to vertex clustering
             try:
                 reduction = max_triangles / len(mesh.faces)
