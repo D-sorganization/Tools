@@ -3,11 +3,10 @@
  *
  * Structured logging with support for different log levels and metadata.
  * Works in both server and client environments.
- * Uses pino for high-performance logging in production.
- *
- * For now, uses console with structured formatting.
- * TODO: Add pino when ready for production.
+ * Uses pino for high-performance structured logging.
  */
+
+import pino from 'pino';
 
 type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
@@ -34,47 +33,35 @@ function getLogLevel(): LogLevel {
   }
 }
 
+/**
+ * Create a pino logger instance configured for the current environment
+ */
+function createPinoLogger(): pino.Logger {
+  const level = getLogLevel();
+  const isClient = typeof window !== 'undefined';
+
+  if (isClient) {
+    // Browser: use pino browser mode
+    return pino({
+      level,
+      browser: { asObject: true },
+    });
+  }
+
+  // Server: use pino with ISO timestamps
+  return pino({
+    level,
+    timestamp: pino.stdTimeFunctions.isoTime,
+  });
+}
+
+const pinoInstance = createPinoLogger();
+
 class Logger {
-  private minLevel: LogLevel;
+  private pino: pino.Logger;
 
-  constructor() {
-    this.minLevel = getLogLevel();
-  }
-
-  private shouldLog(level: LogLevel): boolean {
-    const levels: LogLevel[] = ['debug', 'info', 'warn', 'error'];
-    const currentLevelIndex = levels.indexOf(this.minLevel);
-    const messageLevelIndex = levels.indexOf(level);
-    return messageLevelIndex >= currentLevelIndex;
-  }
-
-  private formatMessage(level: LogLevel, message: string, metadata?: LogMetadata): string {
-    const timestamp = new Date().toISOString();
-    const metadataStr = metadata ? `\n${JSON.stringify(metadata, null, 2)}` : '';
-    return `[${timestamp}] ${level.toUpperCase()}: ${message}${metadataStr}`;
-  }
-
-  private log(level: LogLevel, message: string, metadata?: LogMetadata): void {
-    if (!this.shouldLog(level)) {
-      return;
-    }
-
-    const formattedMessage = this.formatMessage(level, message, metadata);
-
-    switch (level) {
-      case 'debug':
-        console.debug(formattedMessage);
-        break;
-      case 'info':
-        console.info(formattedMessage);
-        break;
-      case 'warn':
-        console.warn(formattedMessage);
-        break;
-      case 'error':
-        console.error(formattedMessage);
-        break;
-    }
+  constructor(pinoLogger?: pino.Logger) {
+    this.pino = pinoLogger ?? pinoInstance;
   }
 
   /**
@@ -85,7 +72,11 @@ class Logger {
   debug(metadata: LogMetadata, message: string): void;
   debug(messageOrMetadata: string | LogMetadata, metadataOrMessage?: LogMetadata | string): void {
     const [message, metadata] = this.parseArgs(messageOrMetadata, metadataOrMessage);
-    this.log('debug', message, metadata);
+    if (metadata) {
+      this.pino.debug(metadata, message);
+    } else {
+      this.pino.debug(message);
+    }
   }
 
   /**
@@ -96,7 +87,11 @@ class Logger {
   info(metadata: LogMetadata, message: string): void;
   info(messageOrMetadata: string | LogMetadata, metadataOrMessage?: LogMetadata | string): void {
     const [message, metadata] = this.parseArgs(messageOrMetadata, metadataOrMessage);
-    this.log('info', message, metadata);
+    if (metadata) {
+      this.pino.info(metadata, message);
+    } else {
+      this.pino.info(message);
+    }
   }
 
   /**
@@ -107,7 +102,11 @@ class Logger {
   warn(metadata: LogMetadata, message: string): void;
   warn(messageOrMetadata: string | LogMetadata, metadataOrMessage?: LogMetadata | string): void {
     const [message, metadata] = this.parseArgs(messageOrMetadata, metadataOrMessage);
-    this.log('warn', message, metadata);
+    if (metadata) {
+      this.pino.warn(metadata, message);
+    } else {
+      this.pino.warn(message);
+    }
   }
 
   /**
@@ -128,7 +127,11 @@ class Logger {
       };
     }
 
-    this.log('error', message, metadata);
+    if (metadata) {
+      this.pino.error(metadata, message);
+    } else {
+      this.pino.error(message);
+    }
 
     // Send to error tracking service if configured
     const sentryDsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
@@ -142,7 +145,7 @@ class Logger {
         }
       } catch (error) {
         // Silently fail if Sentry is not available
-        console.error('Failed to send error to Sentry:', error);
+        this.pino.error('Failed to send error to Sentry');
       }
     }
   }
@@ -168,14 +171,8 @@ class Logger {
    * Useful for adding module/component-specific metadata
    */
   child(defaultMetadata: LogMetadata): Logger {
-    const childLogger = new Logger();
-    const originalLog = childLogger.log.bind(childLogger);
-
-    childLogger.log = (level: LogLevel, message: string, metadata?: LogMetadata) => {
-      originalLog(level, message, { ...defaultMetadata, ...metadata });
-    };
-
-    return childLogger;
+    const childPino = this.pino.child(defaultMetadata as pino.Bindings);
+    return new Logger(childPino);
   }
 }
 
