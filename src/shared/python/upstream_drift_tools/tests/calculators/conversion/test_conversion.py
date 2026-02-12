@@ -1,3 +1,5 @@
+"""test_conversion.py module."""
+
 import pytest
 from upstream_drift_tools.calculators.conversion.service import (
     UnknownUnitError,

@@ -1,3 +1,5 @@
+"""test_urdf_contracts_integration.py module."""
+
 from unittest.mock import MagicMock, patch
 
 import pytest

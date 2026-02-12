@@ -1,3 +1,5 @@
+"""test_contracts.py module."""
+
 import pytest
 from humanoid_character_builder.contracts import (
     ContractViolationError,

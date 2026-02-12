@@ -29,6 +29,7 @@ Documentation coverage is exceptional.
 
 ## Auto-Fixes
 - Added missing module docstrings to `src/verification/verify_palette.py`, `src/verification/verify_palette_final.py`, and `src/verification/verify_a11y.py`.
+- **(New)** Added module-level docstrings to 20 files identified by `ruff` (D100), including `src/core/plugin_manager.py` and `src/web_applications/calculator/webapp.py`.
 """,
     ),
     "C": (

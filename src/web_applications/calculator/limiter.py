@@ -1,3 +1,5 @@
+"""limiter.py module."""
+
 import threading
 import time
 

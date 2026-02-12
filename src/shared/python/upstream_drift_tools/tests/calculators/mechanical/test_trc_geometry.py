@@ -1,3 +1,5 @@
+"""test_trc_geometry.py module."""
+
 import pytest
 from upstream_drift_tools.calculators.mechanical.trc_geometry import (
     LayerConfig,
