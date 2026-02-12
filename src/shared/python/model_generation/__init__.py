@@ -293,7 +293,7 @@ def quick_urdf(
     if not result.success:
         raise ValueError(f"Failed to generate URDF: {result.error_message}")
 
-    return result.urdf_xml
+    return str(result.urdf_xml)
 
 
 def quick_build(
