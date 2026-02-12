@@ -3245,7 +3245,7 @@ class CSVProcessorApp(ctk.CTk):
         self.plot_ma_frame, self.plot_ma_value_entry, self.plot_ma_unit_menu = (
             self._create_ma_param_frame(self.primary_params_container, time_units)
         )
-        (self.plot_bw_frame, self.plot_bw_order_entry, self.plot_bw_cutoff_entry) = (
+        self.plot_bw_frame, self.plot_bw_order_entry, self.plot_bw_cutoff_entry = (
             self._create_bw_param_frame(self.primary_params_container)
         )
         self.plot_median_frame, self.plot_median_kernel_entry = (
@@ -6653,8 +6653,7 @@ COMMON MISTAKES TO AVOID:
 
         plot_config = {
             "name": plot_name,
-            "description": plot_desc
-            or f"Plot configuration created on \
+            "description": plot_desc or f"Plot configuration created on \
                 {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}",
             "signals": selected_signals,
             "start_time": self.plots_list_start_time_entry.get(),
