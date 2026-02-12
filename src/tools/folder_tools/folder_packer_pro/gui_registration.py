@@ -15,6 +15,7 @@ GUI_INFO = {
     },
 }
 
+
 def get_gui_info() -> dict:
     """Return GUI registration information."""
     return GUI_INFO

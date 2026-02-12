@@ -1,7 +1,5 @@
 """Interactive API key setup for PDF Renamer."""
 
-import sys
-from pathlib import Path
 import logging
 
 logger = logging.getLogger(__name__)

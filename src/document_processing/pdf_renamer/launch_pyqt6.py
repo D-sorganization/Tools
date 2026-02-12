@@ -2,7 +2,6 @@
 
 import logging
 import sys
-from pathlib import Path
 
 from _bootstrap import bootstrap  # noqa: E402
 
