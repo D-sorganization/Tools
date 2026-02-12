@@ -24,8 +24,8 @@ from ...constants import (
     API_14E_C_INTERMITTENT,
     CHURCHILL_B_COEFF,
     COLEBROOK_ROUGHNESS_COEFF,
-    FT_S_TO_M_S,
     FRICTION_FACTOR_DEFAULT_LAMINAR,
+    FT_S_TO_M_S,
     HUNDRED_FEET_IN_METERS,
     KG_M3_TO_LB_FT3,
     LAMINAR_FRICTION_CONSTANT,
@@ -752,7 +752,9 @@ def calculate_erosional_velocity(
     # Conversion: C_si ≈ C × 0.0458 for density in kg/m³
     # C_si = C * 0.0458 / (3.281**0.5)  # Approximate conversion (unused)
 
-    V_erosion = C / math.sqrt(density * KG_M3_TO_LB_FT3)  # Convert kg/m³ to lb/ft³ first
+    V_erosion = C / math.sqrt(
+        density * KG_M3_TO_LB_FT3
+    )  # Convert kg/m³ to lb/ft³ first
     V_erosion_si = V_erosion * FT_S_TO_M_S  # Convert ft/s to m/s
 
     logger.debug(f"Erosional velocity: {V_erosion_si:.2f} m/s (C={C})")
@@ -927,7 +929,9 @@ class PressureDropCalculationEngine:
         velocity_pressure = 0.5 * flow_props.density * (flow_props.velocity**2)
 
         # Pressure drop per 100 ft
-        dp_per_100ft = (total_dp / inputs.pipe_length) * HUNDRED_FEET_IN_METERS  # Per 100 feet
+        dp_per_100ft = (
+            total_dp / inputs.pipe_length
+        ) * HUNDRED_FEET_IN_METERS  # Per 100 feet
 
         # Create results
         results = PressureDropResults(
