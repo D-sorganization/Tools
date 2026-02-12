@@ -557,7 +557,7 @@ class CalculatorStateMixin:
             if hasattr(widget, "toPlainText"):
                 return widget.toPlainText()
             return ""
-        except Exception:
+        except (RuntimeError, AttributeError):
             return ""
 
     def get_table_text(self, table: QTableWidget) -> str:
@@ -588,7 +588,7 @@ class CalculatorStateMixin:
 
             return "\n".join(text_lines)
 
-        except Exception:
+        except (RuntimeError, AttributeError):
             return ""
 
     def copy_to_clipboard(self, text: str) -> None:
@@ -696,7 +696,7 @@ class CalculatorStateMixin:
 
             event.accept()
 
-        except Exception:
+        except (RuntimeError, OSError):
             event.accept()
 
     def mark_changed(self) -> None:

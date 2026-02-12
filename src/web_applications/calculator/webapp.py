@@ -445,7 +445,7 @@ def _sympify_value(
         # Use safe expression parsing from calculator which handles
         # evaluate=False check and DoS validation.
         return TI89Calculator.parse_expression(value, symbols)
-    except Exception as error:
+    except (ValueError, TypeError, SyntaxError, ArithmeticError) as error:
         if "exceeds safety limits" in str(error):
             raise ValueError(str(error)) from None
         raise ValueError("Invalid numeric or symbolic value provided") from None

@@ -72,7 +72,7 @@ class MATLABQualityChecker:
 
             try:
                 return self._run_matlab_script(matlab_script)
-            except Exception as e:
+            except (OSError, RuntimeError, ValueError) as e:
                 logger.warning("Could not run MATLAB script directly: %s", e)
                 return self._static_matlab_analysis()
 

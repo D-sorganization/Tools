@@ -432,7 +432,7 @@ class CustomThemeEditor(QDialog):
         except ValueError as e:
             QMessageBox.warning(self, "Save Error", str(e))
             return False
-        except Exception as e:
+        except (OSError, KeyError, TypeError) as e:
             QMessageBox.critical(self, "Unexpected Error", f"Failed to save theme: {e}")
             logger.exception("Failed to save custom theme")
             return False

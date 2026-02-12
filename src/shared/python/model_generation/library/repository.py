@@ -205,7 +205,7 @@ class GitHubRepository(Repository):
         try:
             models = self._scan_directory(self._path)
             self._models_cache = models
-        except Exception as e:
+        except (OSError, ValueError, KeyError) as e:
             logger.error(f"Failed to list models from {self._name}: {e}")
 
         return models

@@ -105,7 +105,7 @@ class DataLoader:
 
             return df
 
-        except Exception as e:
+        except (OSError, ValueError, KeyError) as e:
             logger.error(f"Error loading {file_path}: {e}", exc_info=True)
             return None
 

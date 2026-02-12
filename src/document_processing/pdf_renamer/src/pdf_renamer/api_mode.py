@@ -83,7 +83,7 @@ class APIRenameManager:
                 else:
                     logger.warning(f"Could not generate proposal for: {pdf_file.name}")
 
-            except Exception as e:
+            except (OSError, ValueError, RuntimeError) as e:
                 logger.error(f"Error processing {pdf_file}: {e}")
 
         logger.info(f"Generated {len(self.proposals)} rename proposals")

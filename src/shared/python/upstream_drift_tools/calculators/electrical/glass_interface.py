@@ -96,7 +96,7 @@ class GlassPropertiesInterface:
                     composition,
                     power_density,
                 )
-            except Exception as e:
+            except (ValueError, TypeError, ArithmeticError) as e:
                 logger.warning(f"External calculator failed: {e}. Using default model.")
                 conductivity = self._default_conductivity_model(
                     temperature_celsius,

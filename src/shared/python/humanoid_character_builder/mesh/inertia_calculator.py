@@ -314,7 +314,7 @@ class MeshInertiaCalculator:
                 "center_mass": center_mass,
                 "inertia_unit": mesh.moment_inertia,
             }
-        except Exception as e:
+        except (ValueError, TypeError, AttributeError) as e:
             logger.warning(f"Failed to compute mesh properties: {e}. Using defaults.")
             return None
 
@@ -403,7 +403,7 @@ class MeshInertiaCalculator:
             # Merge close vertices
             mesh.merge_vertices()
 
-        except Exception as e:
+        except (ValueError, RuntimeError, AttributeError) as e:
             logger.warning(f"Mesh repair partially failed: {e}")
 
         return mesh

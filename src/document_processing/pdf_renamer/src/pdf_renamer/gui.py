@@ -155,7 +155,7 @@ class ProcessingThread(QThread):
                 try:
                     p.unlink()
                     self.log_message.emit(f"Deleted duplicate: {p.name}", "WARNING")
-                except Exception as e:
+                except OSError as e:
                     self.log_message.emit(f"Failed to delete {p.name}: {e}", "ERROR")
 
     def _scan_pdf_files(self) -> list[Path] | None:
@@ -229,7 +229,7 @@ class ProcessingThread(QThread):
                         level = "ERROR"
                         fail_count += 1
                     self.log_message.emit(result.message, level)
-                except Exception as e:
+                except (OSError, ValueError, RuntimeError) as e:
                     fail_count += 1
                     self.log_message.emit(
                         f"Executor failed for {pdf_file.name}: {e}", "ERROR"

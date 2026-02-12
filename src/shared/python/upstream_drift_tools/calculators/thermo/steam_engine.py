@@ -211,7 +211,7 @@ class SteamCalculationEngine:
             self.water = ct.Water()
             self.initialized = True
             logger.info("Steam calculation engine initialized successfully")
-        except Exception as e:
+        except (RuntimeError, ValueError, OSError) as e:
             logger.exception("Failed to initialize Cantera water: %s", e)
             self.initialized = False
 
@@ -262,7 +262,7 @@ class SteamCalculationEngine:
                 return self._calculate_cantera_properties(temperature, pressure)
             return self._calculate_simplified_properties(temperature, pressure)
 
-        except Exception as e:
+        except (RuntimeError, ValueError, TypeError) as e:
             logger.exception("Steam calculation failed: %s", e)
             return self._calculate_simplified_properties(temperature, pressure)
 
@@ -281,7 +281,7 @@ class SteamCalculationEngine:
                 return self._calculate_saturated_cantera_from_temp(temperature)
             return self._calculate_saturated_simplified_from_temp(temperature)
 
-        except Exception as e:
+        except (RuntimeError, ValueError, TypeError) as e:
             logger.exception(
                 "Saturated steam calculation from temperature failed: %s", e
             )
@@ -302,7 +302,7 @@ class SteamCalculationEngine:
                 return self._calculate_saturated_cantera_from_pressure(pressure)
             return self._calculate_saturated_simplified_from_pressure(pressure)
 
-        except Exception as e:
+        except (RuntimeError, ValueError, TypeError) as e:
             logger.exception("Saturated steam calculation from pressure failed: %s", e)
             return self._calculate_saturated_simplified_from_pressure(pressure)
 
@@ -320,7 +320,7 @@ class SteamCalculationEngine:
             if method == "iapws":
                 return self._iapws_equation(temperature)
             return self._buck_equation(temperature)  # Default to Buck
-        except Exception as e:
+        except (RuntimeError, ValueError, TypeError) as e:
             logger.exception("Water vapor pressure calculation failed: %s", e)
             return self._antoine_equation(temperature)  # Fallback
 
@@ -418,7 +418,7 @@ class SteamCalculationEngine:
             # Calculate properties at saturation
             return self._calculate_coolprop_properties(temperature, pressure)
 
-        except Exception as e:
+        except (RuntimeError, ValueError, TypeError) as e:
             logger.exception(
                 "CoolProp saturated calculation from temperature failed: %s", e
             )
@@ -435,7 +435,7 @@ class SteamCalculationEngine:
             # Calculate properties at saturation
             return self._calculate_coolprop_properties(temperature, pressure)
 
-        except Exception as e:
+        except (RuntimeError, ValueError, TypeError) as e:
             logger.exception(
                 "CoolProp saturated calculation from pressure failed: %s", e
             )
@@ -455,7 +455,7 @@ class SteamCalculationEngine:
             # Calculate properties at saturation
             return self._calculate_cantera_properties(temperature, pressure)
 
-        except Exception as e:
+        except (RuntimeError, ValueError, TypeError) as e:
             logger.exception(
                 "Cantera saturated calculation from temperature failed: %s", e
             )
@@ -475,7 +475,7 @@ class SteamCalculationEngine:
             # Calculate properties at saturation
             return self._calculate_cantera_properties(temperature, pressure)
 
-        except Exception as e:
+        except (RuntimeError, ValueError, TypeError) as e:
             logger.exception(
                 "Cantera saturated calculation from pressure failed: %s", e
             )
@@ -703,7 +703,7 @@ class SteamCalculationEngine:
             # Phase / quality determination via CoolProp
             try:
                 phase_str = PhaseSI("T", temperature, "P", pressure, "Water")
-            except Exception:
+            except (RuntimeError, ValueError):
                 phase_str = "unknown"
             try:
                 quality = PropsSI("Q", "T", temperature, "P", pressure, "Water")

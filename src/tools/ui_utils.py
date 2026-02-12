@@ -53,7 +53,7 @@ def set_tk_icon(root: Any, icon_name: str = "tools_icon.ico") -> bool:
         # iconbitmap is Windows specific mostly, but handles .ico well
         root.iconbitmap(str(icon_path))
         return True
-    except Exception as e:
+    except (OSError, RuntimeError) as e:
         logger.warning(f"Could not set Tk icon {icon_path}: {e}")
         return False
 

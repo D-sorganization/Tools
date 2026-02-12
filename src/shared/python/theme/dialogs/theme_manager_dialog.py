@@ -294,7 +294,7 @@ class ThemeManagerDialog(QDialog):
 
             logger.info(f"Applied theme: {theme_name}")
 
-        except Exception as e:
+        except (OSError, ValueError, KeyError) as e:
             QMessageBox.critical(self, "Error", f"Failed to apply theme: {e}")
             logger.exception("Failed to apply theme")
 
@@ -374,7 +374,7 @@ class ThemeManagerDialog(QDialog):
                         logger.info(f"Deleted theme: {item.theme_name}")
                     else:
                         QMessageBox.warning(self, "Error", "Failed to delete theme.")
-                except Exception as e:
+                except (OSError, ValueError, KeyError) as e:
                     QMessageBox.critical(self, "Error", f"Failed to delete theme: {e}")
                     logger.exception("Failed to delete theme")
 

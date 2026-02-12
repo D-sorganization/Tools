@@ -135,7 +135,7 @@ class TransactionLog:
                         try:
                             new.rename(original)
                             logger.info(f"Rolled back: {new} -> {original}")
-                        except Exception as e:
+                        except OSError as e:
                             logger.error(f"Failed to rollback rename: {e}")
                 else:
                     logger.warning(f"Cannot rollback: {new} doesn't exist")

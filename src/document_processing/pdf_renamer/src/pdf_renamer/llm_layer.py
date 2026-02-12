@@ -34,7 +34,7 @@ class GeminiTitleLLM:
                 # Try to create the model and handle potential model name issues
                 try:
                     self.model = genai.GenerativeModel(model_name)
-                except Exception as e:
+                except (ValueError, RuntimeError, OSError) as e:
                     logger.warning(f"Failed to create model '{model_name}': {e}")
                     # Try fallback model names
                     fallback_models = [
@@ -50,7 +50,7 @@ class GeminiTitleLLM:
                             self.model = genai.GenerativeModel(fallback)
                             logger.info(f"Successfully using model: {fallback}")
                             break
-                        except Exception as fallback_error:
+                        except (ValueError, RuntimeError, OSError) as fallback_error:
                             logger.warning(
                                 f"Fallback model '{fallback}' failed: {fallback_error}"
                             )

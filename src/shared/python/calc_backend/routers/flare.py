@@ -34,7 +34,7 @@ def calculate_flare(request: FlareRequest) -> FlareResponse:
             temperature=request.temperature_k,
             pressure=request.pressure_bar,
         )
-    except Exception as exc:
+    except (ValueError, TypeError, KeyError, ArithmeticError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     return FlareResponse(

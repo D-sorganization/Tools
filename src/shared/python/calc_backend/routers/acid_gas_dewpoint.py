@@ -47,7 +47,7 @@ def calculate_acid_gas_dewpoint(
             composition=composition,
             method=request.method,
         )
-    except Exception as exc:
+    except (ValueError, TypeError, KeyError, ArithmeticError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     components = {
