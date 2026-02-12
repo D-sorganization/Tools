@@ -33,6 +33,7 @@ from __future__ import annotations
 
 import enum
 import functools
+import inspect
 import logging
 import os
 from collections.abc import Callable
@@ -124,6 +125,13 @@ class InvariantError(ContractViolationError):
 # ─── Core Contract Primitives ─────────────────────────────────
 
 
+_VIOLATION_CLASSES: dict[str, type[ContractViolationError]] = {
+    "pre-condition": PreconditionError,
+    "post-condition": PostconditionError,
+    "invariant": InvariantError,
+}
+
+
 def _handle_violation(
     condition_type: str,
     message: str,
@@ -131,7 +139,8 @@ def _handle_violation(
 ) -> None:
     """Handle a contract violation according to the current DBC_LEVEL."""
     if DBC_LEVEL == ContractLevel.ENFORCE:
-        raise ContractViolationError(condition_type, message, value)
+        exc_cls = _VIOLATION_CLASSES.get(condition_type, ContractViolationError)
+        raise exc_cls(message, value)
     elif DBC_LEVEL == ContractLevel.WARN:
         detail = f"[DbC {condition_type}] {message}"
         if value is not None:
@@ -166,11 +175,52 @@ def invariant(condition: bool, message: str, value: Any = None) -> None:
 # ─── Decorator-Based Contracts ─────────────────────────────────
 
 
+def _evaluate_precondition(
+    condition: Callable[..., bool],
+    func: Callable[..., Any],
+    args: tuple[Any, ...],
+    kwargs: dict[str, Any],
+) -> bool:
+    """Try to evaluate a precondition, using argument-name binding as a fallback.
+
+    First attempts to call *condition* with the same ``(args, kwargs)`` that
+    the decorated function received.  If that produces a ``TypeError`` (e.g.
+    the condition only accepts a subset of arguments by name), it falls back
+    to matching parameters by name from the decorated function's signature.
+    """
+    try:
+        return bool(condition(*args, **kwargs))
+    except TypeError:
+        pass
+
+    # Fallback: bind the decorated function's args, then select only the
+    # parameters the condition function expects.
+    try:
+        func_sig = inspect.signature(func)
+        bound = func_sig.bind(*args, **kwargs)
+        bound.apply_defaults()
+        all_arguments: dict[str, Any] = dict(bound.arguments)
+
+        cond_sig = inspect.signature(condition)
+        call_args = {
+            name: all_arguments[name]
+            for name in cond_sig.parameters
+            if name in all_arguments
+        }
+        return bool(condition(**call_args))
+    except (TypeError, ValueError) as exc:
+        raise TypeError(exc) from exc
+
+
 def precondition(
     condition: Callable[..., bool],
     message: str = "Precondition failed",
 ) -> Callable[[F], F]:
-    """Decorator to enforce a precondition on a function or method."""
+    """Decorator to enforce a precondition on a function or method.
+
+    The *condition* callable may accept either the same arguments as the
+    decorated function, or a subset matched by parameter name.
+    """
 
     def decorator(func: F) -> F:
         if DBC_LEVEL == ContractLevel.OFF:
@@ -179,7 +229,7 @@ def precondition(
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             try:
-                result = condition(*args, **kwargs)
+                result = _evaluate_precondition(condition, func, args, kwargs)
             except (TypeError, ValueError) as exc:
                 _handle_violation(
                     "pre-condition",
@@ -228,6 +278,142 @@ def postcondition(
         return cast(F, wrapper)
 
     return decorator
+
+
+def contract(
+    pre: Callable[..., bool] | None = None,
+    post: Callable[[Any], bool] | None = None,
+    pre_msg: str = "Precondition violated",
+    post_msg: str = "Postcondition violated",
+) -> Callable[[F], F]:
+    """Combined precondition and postcondition decorator.
+
+    Args:
+        pre: Precondition function (receives same args as decorated function).
+        post: Postcondition function (receives return value).
+        pre_msg: Precondition error message.
+        post_msg: Postcondition error message.
+
+    Example::
+
+        @contract(
+            pre=lambda x: x >= 0,
+            post=lambda result: result >= 0,
+            pre_msg="Input must be non-negative",
+            post_msg="Output must be non-negative",
+        )
+        def sqrt(x: float) -> float:
+            return x ** 0.5
+    """
+
+    def decorator(func: F) -> F:
+        result_func = func
+        if post is not None:
+            result_func = postcondition(post, post_msg)(result_func)
+        if pre is not None:
+            result_func = precondition(pre, pre_msg)(result_func)
+        return result_func
+
+    return decorator
+
+
+# ─── Class Invariant Decorator ─────────────────────────────────
+
+
+def _check_class_invariant(
+    instance: Any,
+    condition: Callable[[Any], bool],
+    message: str,
+    context: str,
+) -> None:
+    """Evaluate a class invariant and raise on failure.
+
+    Args:
+        instance: The object whose invariant is being checked.
+        condition: Callable that takes ``self`` and returns ``bool``.
+        message: Human-readable invariant description.
+        context: Where the check happened (e.g. ``"after __init__"``).
+
+    Raises:
+        InvariantError: If the condition fails or raises.
+    """
+    try:
+        if not condition(instance):
+            raise InvariantError(f"{message} ({context})")
+    except InvariantError:
+        raise
+    except Exception as exc:
+        raise InvariantError(
+            f"Error checking invariant '{message}' {context}: {exc}"
+        ) from exc
+
+
+def _wrap_method_with_invariant(
+    orig_method: Callable[..., Any],
+    method_name: str,
+    condition: Callable[[Any], bool],
+    message: str,
+) -> Callable[..., Any]:
+    """Wrap a single method to check the class invariant after execution."""
+
+    @functools.wraps(orig_method)
+    def wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
+        result = orig_method(self, *args, **kwargs)
+        _check_class_invariant(self, condition, message, f"after {method_name}")
+        return result
+
+    return wrapper
+
+
+def class_invariant(
+    condition: Callable[[Any], bool],
+    message: str = "Invariant violated",
+) -> Callable[[type], type]:
+    """Class decorator to check invariants after ``__init__`` and public methods.
+
+    The *condition* callable receives ``self`` and must return ``True`` when
+    the invariant holds.
+
+    Args:
+        condition: Callable that takes ``self`` and returns ``bool``.
+        message: Error message when the invariant is violated.
+
+    Example::
+
+        @class_invariant(lambda self: self.count >= 0, "count must be non-negative")
+        class Counter:
+            def __init__(self) -> None:
+                self.count = 0
+            def decrement(self) -> None:
+                self.count -= 1
+    """
+
+    def class_decorator(cls: type) -> type:
+        if DBC_LEVEL == ContractLevel.OFF:
+            return cls
+
+        # Wrap __init__
+        original_init = cls.__init__  # type: ignore[misc]
+
+        @functools.wraps(original_init)
+        def new_init(self: Any, *args: Any, **kwargs: Any) -> None:
+            original_init(self, *args, **kwargs)
+            _check_class_invariant(self, condition, message, "after __init__")
+
+        cls.__init__ = new_init  # type: ignore[misc]
+
+        # Wrap all public methods
+        for name, method in inspect.getmembers(cls, inspect.isfunction):
+            if not name.startswith("_"):
+                setattr(
+                    cls,
+                    name,
+                    _wrap_method_with_invariant(method, name, condition, message),
+                )
+
+        return cls
+
+    return class_decorator
 
 
 # ─── Class Invariant Mixin ─────────────────────────────────────
@@ -316,3 +502,98 @@ def check_temperature(value: float, name: str = "temperature") -> None:
 def check_pressure(value: float, name: str = "pressure") -> None:
     """Assert that a pressure is physically reasonable (> 0)."""
     require(value > 0, f"{name} must be > 0", value)
+
+
+# ─── Backward-Compatibility Helpers ───────────────────────────
+
+
+def set_contracts_enabled(enabled: bool) -> None:
+    """Enable or disable contract checking globally.
+
+    This is a convenience wrapper around :func:`set_contract_level` that
+    maps ``True`` to ``ENFORCE`` and ``False`` to ``OFF``, preserving
+    backward compatibility with satellite modules.
+    """
+    set_contract_level(ContractLevel.ENFORCE if enabled else ContractLevel.OFF)
+
+
+# ─── Convenience Validation Functions ─────────────────────────
+
+
+def require_positive(value: float, name: str = "value") -> None:
+    """Require that *value* is strictly positive.
+
+    Raises:
+        PreconditionError: If *value* ``<= 0``.
+    """
+    if not CONTRACTS_ENABLED:
+        return
+    if value <= 0:
+        raise PreconditionError(f"{name} must be positive (got {value})")
+
+
+def require_finite(array: Any, name: str = "array") -> None:
+    """Require all elements of *array* to be finite (no NaN / Inf).
+
+    Raises:
+        PreconditionError: If any element is NaN or Inf.
+    """
+    import numpy as np
+
+    if not CONTRACTS_ENABLED:
+        return
+    if not np.all(np.isfinite(array)):
+        raise PreconditionError(f"{name} contains NaN or Inf values")
+
+
+def require_unit_vector(vector: Any, name: str = "vector", tol: float = 1e-6) -> None:
+    """Require *vector* to have unit length.
+
+    Raises:
+        PreconditionError: If the norm deviates from 1.0 by more than *tol*.
+    """
+    import numpy as np
+
+    if not CONTRACTS_ENABLED:
+        return
+    norm = np.linalg.norm(vector)
+    if abs(norm - 1.0) > tol:
+        raise PreconditionError(f"{name} must be a unit vector (norm = {norm})")
+
+
+def ensure_valid_result(result: Any) -> None:
+    """Ensure a ``ValidationResult``-like object is valid.
+
+    Raises:
+        PostconditionError: If ``result.is_valid`` is falsy.
+    """
+    if not CONTRACTS_ENABLED:
+        return
+    if not result.is_valid:
+        errors = "; ".join(result.get_error_messages())
+        raise PostconditionError(f"Validation failed: {errors}")
+
+
+# ─── Reusable Condition Predicates ────────────────────────────
+
+
+def is_positive(value: float) -> bool:
+    """Return ``True`` if *value* is strictly positive."""
+    return value > 0
+
+
+def is_non_negative(value: float) -> bool:
+    """Return ``True`` if *value* is non-negative."""
+    return value >= 0
+
+
+def is_valid_result(result: Any) -> bool:
+    """Return ``True`` if ``result.is_valid`` is truthy."""
+    return bool(result.is_valid)
+
+
+def has_finite_elements(array: Any) -> bool:
+    """Return ``True`` if all elements of *array* are finite."""
+    import numpy as np
+
+    return bool(np.all(np.isfinite(array)))
