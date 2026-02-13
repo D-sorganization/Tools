@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from PyQt6.QtCore import QObject, pyqtSignal
@@ -19,9 +19,9 @@ class SignalBus(QObject):
 
     def __init__(
         self,
-        func_gen: QObject,
-        toolkit: QObject,
-        poly_gen: QObject,
+        func_gen: Any,
+        toolkit: Any,
+        poly_gen: Any,
         status_callback: Callable[[str], None] | None = None,
     ) -> None:
         super().__init__()

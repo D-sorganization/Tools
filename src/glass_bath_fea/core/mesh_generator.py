@@ -226,13 +226,13 @@ class MeshGenerator:
             edges = []
             for j in range(4):
                 for k in range(j + 1, 4):
-                    edge_len = np.linalg.norm(elem_nodes[j] - elem_nodes[k])
+                    edge_len = float(np.linalg.norm(elem_nodes[j] - elem_nodes[k]))
                     edges.append(edge_len)
 
             if edges:
                 min_edge = min(edges)
                 max_edge = max(edges)
-                quality = min_edge / max_edge if max_edge > 0 else 0
+                quality = float(min_edge / max_edge) if max_edge > 0 else 0.0
                 qualities.append(quality)
 
         if not qualities:
@@ -240,7 +240,7 @@ class MeshGenerator:
 
         return {
             "min_quality": min(qualities),
-            "mean_quality": np.mean(qualities),
+            "mean_quality": float(np.mean(np.array(qualities))),
             "max_quality": max(qualities),
         }
 

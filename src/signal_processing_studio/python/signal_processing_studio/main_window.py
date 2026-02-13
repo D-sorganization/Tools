@@ -45,7 +45,7 @@ def _get_base_classes() -> tuple:
     return (QMainWindow,)
 
 
-class SignalProcessingStudio(*_get_base_classes()):
+class SignalProcessingStudio(*_get_base_classes()):  # type: ignore[misc]
     """Unified signal processing application."""
 
     def __init__(self) -> None:
@@ -71,6 +71,7 @@ class SignalProcessingStudio(*_get_base_classes()):
         self.tabs.addTab(self.poly_gen, "Polynomial Generator")
 
         # Wire cross-widget communication
+        self.signal_bus: SignalBus | None = None
         if self.func_gen is not None:
             self.signal_bus = SignalBus(
                 func_gen=self.func_gen,
