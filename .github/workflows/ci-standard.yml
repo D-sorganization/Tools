@@ -124,10 +124,16 @@ jobs:
           fi
           cat changed_test_files.txt
 
-      - name: Run Tests (Python ${{ matrix.python-version }})
+      - name: Run Tests with Coverage (Python ${{ matrix.python-version }})
         run: |
           if [ -s changed_test_files.txt ]; then
-            pytest $(cat changed_test_files.txt)
+            pytest $(cat changed_test_files.txt) --cov-fail-under=0
           else
-            pytest tests/shared/python/notes/test_storage.py
+            pytest tests/shared/python/notes/test_storage.py --cov-fail-under=0
           fi
+
+      - name: Coverage Summary
+        if: always()
+        run: |
+          echo "## Coverage Report (Python ${{ matrix.python-version }})" >> $GITHUB_STEP_SUMMARY
+          echo "Coverage data collected from changed tests. Full threshold enforcement (10%) applies when running the complete test suite." >> $GITHUB_STEP_SUMMARY
