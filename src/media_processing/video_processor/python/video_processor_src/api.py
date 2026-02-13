@@ -228,7 +228,7 @@ async def progress_stream(job_id: str) -> StreamingResponse:
     if job_id not in _jobs:
         raise HTTPException(status_code=404, detail=f"Job {job_id} not found")
 
-    async def event_generator():
+    async def event_generator() -> Any:
         """Generate SSE events for job progress."""
         job = _jobs[job_id]
 

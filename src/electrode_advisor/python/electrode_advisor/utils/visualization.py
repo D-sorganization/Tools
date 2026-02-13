@@ -378,7 +378,7 @@ class ElectrodeVisualization:
 
     def draw_electrode_length_extrusion(
         self,
-        ax,
+        ax: Any,
         electrode_pos: dict,
         metal_height: float,
         electrode_radius: float,

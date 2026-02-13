@@ -240,7 +240,7 @@ class MeshGenerator:
 
         return {
             "min_quality": min(qualities),
-            "mean_quality": np.mean(qualities),
+            "mean_quality": float(np.mean(np.array(qualities))),
             "max_quality": max(qualities),
         }
 
