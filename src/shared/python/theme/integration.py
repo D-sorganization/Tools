@@ -271,9 +271,9 @@ class ThemedWindowMixin:
             menubar = self.menuBar()  # type: ignore[attr-defined]
             if menubar is not None:
                 create_theme_menu(
-                    self,
+                    self,  # type: ignore[arg-type]
                     menubar,
-                    show_custom_options=show_custom_options,  # type: ignore[arg-type]
+                    show_custom_options=show_custom_options,
                 )
 
         # Connect to theme changes for custom handling
