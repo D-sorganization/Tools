@@ -79,8 +79,7 @@ class TabsMixin:
         """Style the tab widget to make text bold and adjust height"""
         try:
             # Set style for the tab widget
-            self.results_tabs.setStyleSheet(
-                """
+            self.results_tabs.setStyleSheet("""
                 QTabWidget::pane {
                     border: 1px solid #c0c0c0;
                 }
@@ -111,8 +110,7 @@ class TabsMixin:
                 QTabBar::tab:!selected {
                     margin-top: 2px;
                 }
-            """
-            )
+            """)
         except (RuntimeError, AttributeError) as e:
             logger.exception("Error styling tabs: %s", e)
 
@@ -127,8 +125,7 @@ class TabsMixin:
 
         # Create loading indicator first
         self.loading_label = QLabel("Initializing 3D Visualization...")
-        self.loading_label.setStyleSheet(
-            """
+        self.loading_label.setStyleSheet("""
             QLabel {
                 background-color: #f8f9fa;
                 border: 2px solid #dee2e6;
@@ -138,8 +135,7 @@ class TabsMixin:
                 font-weight: bold;
                 color: #495057;
             }
-        """
-        )
+        """)
         self.loading_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         viz_layout.addWidget(self.loading_label)
 

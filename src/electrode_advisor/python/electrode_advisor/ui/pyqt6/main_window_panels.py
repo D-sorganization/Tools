@@ -381,8 +381,7 @@ class PanelsMixin:
         """Create the optimization button"""
         optimize_btn = QPushButton("Calculate Electrode Advancement")
         optimize_btn.clicked.connect(self._run_optimization)
-        optimize_btn.setStyleSheet(
-            """
+        optimize_btn.setStyleSheet("""
             QPushButton {
                 background-color: #4CAF50;
                 color: white;
@@ -393,8 +392,7 @@ class PanelsMixin:
             QPushButton:hover {
                 background-color: #45a049;
             }
-        """
-        )
+        """)
         parent_layout.addWidget(optimize_btn)
 
     def _create_status_panel(self) -> None:
