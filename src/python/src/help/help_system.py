@@ -369,7 +369,7 @@ class HelpDialog(QDialog):
             splitter.setSizes([180, 700])
             layout.addWidget(splitter)
         else:
-            self.topic_list = None
+            self.topic_list: QListWidget | None = None
             self.content_browser = QTextBrowser()
             self.content_browser.setOpenExternalLinks(True)
             layout.addWidget(self.content_browser)

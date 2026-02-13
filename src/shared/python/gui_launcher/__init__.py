@@ -29,6 +29,7 @@ from .launcher import (
     launch_tool_by_name,
     launch_web_app,
     launch_web_from_gui_info,
+    make_pyqt6_launcher,
 )
 from .registry import GUIRegistry, auto_discover_guis, get_registry, register_gui
 
@@ -43,6 +44,7 @@ __all__ = [
     "launch_tool_by_name",
     "launch_web_app",
     "launch_web_from_gui_info",
+    "make_pyqt6_launcher",
     "register_gui",
     "get_registry",
 ]

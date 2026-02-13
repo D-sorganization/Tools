@@ -30,13 +30,13 @@ from upstream_drift_tools.ui.catppuccin_theme import get_stylesheet as _base_sty
 
 def get_stylesheet() -> str:
     """Get the Catppuccin Mocha stylesheet with ResultCard extension."""
-    return _base_stylesheet() + f"""
+    return str(_base_stylesheet() + f"""
         QFrame#resultCard {{
             background-color: {COLORS["surface0"]};
             border-radius: 8px;
             padding: 10px;
         }}
-    """
+    """)
 
 
 class ResultCard(QFrame):
