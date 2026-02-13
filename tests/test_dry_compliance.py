@@ -94,11 +94,10 @@ class TestWebLauncherDRY:
                 rel = str(path.relative_to(REPO_ROOT))
                 problems.append(rel)
 
-        assert (
-            problems == []
-        ), "launch_web.py files not importing GUI_INFO:\n" + "\n".join(
+        msg = "launch_web.py files not importing GUI_INFO:\n" + "\n".join(
             f"  - {p}" for p in problems
         )
+        assert problems == [], msg
 
 
 class TestGUIInfoWebConfig:
@@ -239,23 +238,40 @@ class TestLaunchWebApp:
 class TestPyQt6LauncherDRY:
     """All launch_pyqt6.py files should follow the thin-wrapper pattern."""
 
-    def test_launch_pyqt6_files_use_bootstrap(self) -> None:
-        """Every launch_pyqt6.py should import ensure_paths from bootstrap."""
+    # Launchers with custom logic that do not follow the standard pattern
+    _CUSTOM_LAUNCHERS = {
+        "folder_packer_pro",  # calls main() directly
+        "folder_tool",  # cross-platform script launcher
+        "pdf_renamer",  # custom logging setup
+        "glass_bath_fea",  # custom main() with error handling
+    }
+
+    def test_launch_pyqt6_files_use_factory_or_bootstrap(self) -> None:
+        """Standard launch_pyqt6.py files should use make_pyqt6_launcher."""
         files = _collect_launch_pyqt6_files()
         assert len(files) > 0, "No launch_pyqt6.py files found"
 
         problems = []
         for path in files:
+            # Skip known custom launchers
+            if path.parent.name in self._CUSTOM_LAUNCHERS:
+                continue
+
             content = path.read_text(encoding="utf-8")
-            if "ensure_paths" not in content:
+            if "make_pyqt6_launcher" not in content:
                 rel = str(path.relative_to(REPO_ROOT))
                 problems.append(rel)
 
-        assert (
-            problems == []
-        ), "launch_pyqt6.py files not using ensure_paths:\n" + "\n".join(
+        msg = "launch_pyqt6.py files not using make_pyqt6_launcher:\n" + "\n".join(
             f"  - {p}" for p in problems
         )
+        assert problems == [], msg
+
+    def test_make_pyqt6_launcher_importable(self) -> None:
+        """make_pyqt6_launcher should be importable from gui_launcher."""
+        from gui_launcher import make_pyqt6_launcher
+
+        assert callable(make_pyqt6_launcher)
 
 
 # ── get_repo_root consistency ────────────────────────────────────────────
