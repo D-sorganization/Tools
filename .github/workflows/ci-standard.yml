@@ -82,10 +82,19 @@ jobs:
             echo "No changed source Python files to type-check."
           fi
 
-      # CodeQL is explicitly disabled via codeql-analysis.yml to reduce costs.
-      # Security scanning is performed by pip-audit and bandit.
+      - name: Security Scan (bandit)
+        run: bandit -r src -ll -ii -x tests/,archive/,legacy/,experimental/
+
       - name: Security Scan (pip-audit)
         run: pip-audit -r requirements.txt
+
+      - name: Secrets Scan (gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Module Size Budget
+        run: python3 scripts/check_module_size_budget.py --max-lines 1500 --include src
 
   tests:
     needs: quality-gate
