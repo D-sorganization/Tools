@@ -57,11 +57,11 @@ jobs:
             if [ -z "$BASE_SHA" ]; then
               BASE_SHA="${{ github.event.pull_request.base.sha }}"
             fi
-            git diff --name-only "$BASE_SHA" HEAD -- '*.py' > changed_python_files.txt
+            git diff --diff-filter=ACMRT --name-only "$BASE_SHA" HEAD -- '*.py' > changed_python_files.txt
           elif [ -n "${{ github.event.before }}" ]; then
-            git diff --name-only "${{ github.event.before }}" HEAD -- '*.py' > changed_python_files.txt
+            git diff --diff-filter=ACMRT --name-only "${{ github.event.before }}" HEAD -- '*.py' > changed_python_files.txt
           else
-            git diff --name-only HEAD~1 HEAD -- '*.py' > changed_python_files.txt
+            git diff --diff-filter=ACMRT --name-only HEAD~1 HEAD -- '*.py' > changed_python_files.txt
           fi
           grep -v '^tests/' changed_python_files.txt > changed_mypy_files.txt || true
           cat changed_python_files.txt
@@ -69,7 +69,7 @@ jobs:
       - name: Format Check (Black)
         run: |
           if [ -s changed_python_files.txt ]; then
-            black --check $(cat changed_python_files.txt)
+            xargs -r -d '\n' black --check < changed_python_files.txt
           else
             echo "No changed Python files to format-check."
           fi
@@ -77,15 +77,43 @@ jobs:
       - name: Type Check (Mypy)
         run: |
           if [ -s changed_mypy_files.txt ]; then
-            mypy $(cat changed_mypy_files.txt) --ignore-missing-imports --install-types --non-interactive
+            xargs -r -d '\n' mypy --ignore-missing-imports --install-types --non-interactive < changed_mypy_files.txt
           else
             echo "No changed source Python files to type-check."
           fi
 
-      # CodeQL is explicitly disabled via codeql-analysis.yml to reduce costs.
-      # Security scanning is performed by pip-audit and bandit.
+      - name: Minimum Test Contract Check
+        run: python3 scripts/check_minimum_test_contract.py
+
+      - name: Security Scan (bandit)
+        run: |
+          if [ -s changed_mypy_files.txt ]; then
+            grep '^src/.*\.py$' changed_mypy_files.txt > changed_bandit_files.txt || true
+            if [ -s changed_bandit_files.txt ]; then
+              xargs -r -d '\n' bandit -ll -ii < changed_bandit_files.txt
+            else
+              echo "No changed src Python files to security-scan."
+            fi
+          else
+            echo "No changed source Python files to security-scan."
+          fi
+
       - name: Security Scan (pip-audit)
         run: pip-audit -r requirements.txt
+
+      - name: Secrets Scan (gitleaks)
+        if: ${{ secrets.GITLEAKS_LICENSE != '' }}
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+      - name: Skip Secrets Scan (missing license)
+        if: ${{ secrets.GITLEAKS_LICENSE == '' }}
+        run: echo "::warning::Skipping gitleaks because GITLEAKS_LICENSE is not configured."
+
+      - name: Module Size Budget
+        run: python3 scripts/check_module_size_budget.py --max-lines 1500 --include src
 
   tests:
     needs: quality-gate
@@ -124,10 +152,26 @@ jobs:
           fi
           cat changed_test_files.txt
 
-      - name: Run Tests (Python ${{ matrix.python-version }})
+      - name: Run Tests with Coverage (Python ${{ matrix.python-version }})
         run: |
+          SMOKE_TESTS="tests/test_path_helpers.py tests/test_error_handling.py tests/shared/python/notes/test_storage.py"
           if [ -s changed_test_files.txt ]; then
-            pytest $(cat changed_test_files.txt)
+            pytest $(cat changed_test_files.txt) $SMOKE_TESTS --cov-report=xml:coverage.xml --cov-fail-under=0
           else
-            pytest tests/shared/python/notes/test_storage.py
+            pytest $SMOKE_TESTS --cov-report=xml:coverage.xml --cov-fail-under=0
           fi
+
+      - name: Coverage Policy Gate
+        run: python3 scripts/check_coverage_policy.py --coverage-file coverage.xml --policy-file config/coverage_policy.json --baseline-file config/coverage_baseline.json --output-json coverage_trend_${{ matrix.python-version }}.json
+
+      - name: Upload Coverage Trend
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-trend-${{ matrix.python-version }}
+          path: coverage_trend_${{ matrix.python-version }}.json
+
+      - name: Coverage Summary
+        if: always()
+        run: |
+          echo "## Coverage Report (Python ${{ matrix.python-version }})" >> $GITHUB_STEP_SUMMARY
+          echo "Coverage policy gate enforced via scripts/check_coverage_policy.py (minimum + non-regression)." >> $GITHUB_STEP_SUMMARY

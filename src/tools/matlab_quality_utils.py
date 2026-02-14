@@ -6,7 +6,7 @@ import logging
 import re
 import subprocess
 import sys
-from datetime import UTC, datetime
+from datetime import datetime, timezone  # noqa: UP017
 from pathlib import Path
 from typing import Any
 
@@ -33,7 +33,7 @@ class MATLABQualityChecker:
         self.project_root = project_root
         self.matlab_dir = project_root / "matlab"
         self.results: dict[str, Any] = {
-            "timestamp": datetime.now(UTC).isoformat(),
+            "timestamp": datetime.now(tz=timezone.utc).isoformat(),  # noqa: UP017
             "total_files": 0,
             "issues": [],
             "passed": True,

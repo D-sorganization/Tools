@@ -335,7 +335,7 @@ class PlotlyConverter:
         return {k: v for k, v in layout.items() if v is not None}
 
     @staticmethod
-    def _axis_dict(axis) -> dict[str, Any]:
+    def _axis_dict(axis: Any) -> dict[str, Any]:
         """Convert AxisSpec to Plotly axis dict."""
         d: dict[str, Any] = {}
         if axis.label:
@@ -350,7 +350,7 @@ class PlotlyConverter:
         return d
 
     @staticmethod
-    def _legend_dict(legend) -> dict[str, Any]:
+    def _legend_dict(legend: Any) -> dict[str, Any]:
         """Convert LegendSpec to Plotly legend dict."""
         pos_map = {
             "right": {"x": 1.02, "y": 1, "xanchor": "left"},

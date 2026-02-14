@@ -320,10 +320,10 @@ def get_memory_usage() -> float:
         Memory usage in megabytes
     """
     try:
-        import resource  # type: ignore[import-not-found]  # Unix only
+        import resource  # Unix only
 
         # Unix-based systems
-        usage = resource.getrusage(resource.RUSAGE_SELF)  # type: ignore[attr-defined]
+        usage = resource.getrusage(resource.RUSAGE_SELF)
         # maxrss is in KB on Linux, bytes on macOS
         if sys.platform == "darwin":
             return float(usage.ru_maxrss / (1024 * 1024))

@@ -608,3 +608,45 @@ def launch_tool_by_name(tool_name: str) -> int:
         return 1
 
     return launch_pyqt6_app(config)
+
+
+def make_pyqt6_launcher(gui_info_module: str) -> int:
+    """Generic launcher factory that eliminates duplicate launch_pyqt6.py files.
+
+    Instead of every tool having its own 17-line launch_pyqt6.py that only
+    differs in the GUI_INFO import path, each tool can now use a thin wrapper::
+
+        #!/usr/bin/env python3
+        from _bootstrap import bootstrap
+        bootstrap(__file__)
+        import sys
+        from gui_launcher import make_pyqt6_launcher
+        if __name__ == "__main__":
+            sys.exit(make_pyqt6_launcher("my_tool.gui_registration"))
+
+    Args:
+        gui_info_module: Dotted module path to the gui_registration module
+            that contains a ``GUI_INFO`` dict
+            (e.g. ``"acid_gas_dewpoint.gui_registration"``).
+
+    Returns:
+        Application exit code (0 for success, 1 for error).
+    """
+    import importlib
+
+    try:
+        mod = importlib.import_module(gui_info_module)
+    except ImportError as exc:
+        logger.error(
+            "Failed to import GUI registration module %r: %s",
+            gui_info_module,
+            exc,
+        )
+        return 1
+
+    gui_info = getattr(mod, "GUI_INFO", None)
+    if gui_info is None:
+        logger.error("Module %r does not define a GUI_INFO dict", gui_info_module)
+        return 1
+
+    return launch_from_gui_info(gui_info)

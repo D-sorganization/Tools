@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 class VisualizationBuilder:
     """Builds the 3D visualization tab for the electrode advisor"""
 
-    def __init__(self, parent_widget) -> None:
+    def __init__(self, parent_widget: Any) -> None:
         """Initialize the builder
 
         Args:

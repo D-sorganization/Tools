@@ -8,7 +8,7 @@ switching via PlotThemeManager.
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolbar2QT
 from matplotlib.figure import Figure
@@ -108,7 +108,7 @@ class PlotWidget(QWidget):
         self._renderer.render(self._current_spec, fig=self._figure)
         self._canvas.draw()
 
-    def _on_theme_changed(self, _theme) -> None:
+    def _on_theme_changed(self, _theme: Any) -> None:
         """Callback when the plot theme changes."""
         self.refresh()
 

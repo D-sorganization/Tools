@@ -420,12 +420,12 @@ class GlassBathFEAMainWindow(QMainWindow):
         self.setCentralWidget(self.central_widget)
 
         # Create status bar
-        self.statusBar = QStatusBar()
-        self.setStatusBar(self.statusBar)
+        self._status_bar = QStatusBar()
+        self.setStatusBar(self._status_bar)
 
         # Connect signals
         self.central_widget.exportComplete.connect(
-            lambda path: self.statusBar.showMessage(f"Exported to: {path}", 5000)
+            lambda path: self._status_bar.showMessage(f"Exported to: {path}", 5000)
         )
 
 

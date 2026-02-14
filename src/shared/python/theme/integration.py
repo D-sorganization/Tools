@@ -256,9 +256,9 @@ class ThemedWindowMixin:
         elif self._settings_app is None:
             self._settings_app = self.__class__.__name__
 
-        # Get theme manager
+        # Get theme manager (self is expected to be a QMainWindow)
         self._theme_manager = get_theme_manager(
-            self,
+            self,  # type: ignore[arg-type]
             self._settings_org,
             self._settings_app,
         )
@@ -268,10 +268,12 @@ class ThemedWindowMixin:
 
         # Add theme menu
         if add_menu:
-            menubar = self.menuBar()
+            menubar = self.menuBar()  # type: ignore[attr-defined]
             if menubar is not None:
                 create_theme_menu(
-                    self, menubar, show_custom_options=show_custom_options
+                    self,  # type: ignore[arg-type]
+                    menubar,
+                    show_custom_options=show_custom_options,
                 )
 
         # Connect to theme changes for custom handling

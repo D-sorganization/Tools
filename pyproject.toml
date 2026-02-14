@@ -104,40 +104,6 @@ exclude = [
 # =============================================================================
 # Pytest Configuration
 # =============================================================================
-[tool.pytest.ini_options]
-# Add source directories to Python path for imports
-pythonpath = [
-    ".",
-    "src",
-    "src/python/src",
-    "src/shared/python",
-    "src/tools",
-    "src/web_applications",
-    "src/data_processing/data_processor/python",
-    "src/scientific_modeling/solar_system_model",
-]
-testpaths = ["tests"]
-python_files = ["test_*.py", "*_test.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
-addopts = [
-    "-v",
-    "--strict-markers",
-    "--tb=short",
-    "-ra",
-]
-markers = [
-    "unit: mark test as unit test",
-    "integration: mark test as integration test",
-    "e2e: mark test as end-to-end test",
-    "slow: mark test as slow running",
-    "requires_network: mark test as requiring network",
-]
-filterwarnings = [
-    "ignore::DeprecationWarning:pkg_resources",
-    "ignore::DeprecationWarning:setuptools",
-]
-
 [tool.ruff]
 target-version = "py310"
 select = ["E", "F", "B", "UP", "I", "T201"]
