@@ -243,7 +243,7 @@ repos:
       - id: pytest-unit
         name: "pytest (Python tests)"
         stages: [pre-push]
-        entry: pytest
+        entry: python3 -m pytest
         args:
           [
             "tests/unit",
@@ -268,6 +268,17 @@ repos:
         args: ["--config", "auto", "--error", "--quiet"]
         types: [python]
         exclude: ^(tests/|archive/|legacy/|experimental/|\.github/)
+
+  # Module size budget check (pre-push)
+  - repo: local
+    hooks:
+      - id: module-size-budget
+        name: "module size budget"
+        stages: [pre-push]
+        entry: python3 scripts/check_module_size_budget.py --max-lines 1500 --include src
+        language: system
+        pass_filenames: false
+        types: [python]
 
   # Radon - Cyclomatic complexity check (pre-push)
   # Note: Using local hook since rubik/radon doesn't provide pre-commit hooks
