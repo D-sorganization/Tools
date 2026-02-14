@@ -1,3 +1,11 @@
+## Canonical Assessment Governance
+
+- Canonical index: `docs/assessments/README.md`
+- Archive location for retired/legacy assessments: `docs/archive/`
+- Assessment updates must include index updates in the same PR.
+
+---
+
 # Assessment Framework v2.0
 
 ## Overview
