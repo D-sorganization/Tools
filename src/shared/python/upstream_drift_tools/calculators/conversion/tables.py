@@ -551,3 +551,22 @@ PERFORMANCE_UNITS: Mapping[str, list[str]] = MappingProxyType(
         "specific_production": ["nm³/kg", "nm3/kg", "scf/lb"],
     }
 )
+
+# Optional alias mapping for unit normalization in conversion service.
+# Keys are canonical units; values are accepted aliases for that unit.
+UNIT_ALIASES: Mapping[str, list[str]] = MappingProxyType(
+    {
+        "m": ["meter", "meters", "metre", "metres"],
+        "kg": ["kilogram", "kilograms"],
+        "s": ["sec", "second", "seconds"],
+        "Pa": ["pascal", "pascals"],
+        "kPa": ["kilopascal", "kilopascals"],
+        "SCFM": ["scf/min"],
+        "ACFM": ["acf/min"],
+        "Nm3/hr": ["nm^3/hr", "normal_m3_per_hour"],
+        "Nm³/hr": ["nm3h"],
+        "C": ["degc", "celsius"],
+        "F": ["degf", "fahrenheit"],
+        "K": ["kelvin"],
+    }
+)

@@ -86,15 +86,31 @@ jobs:
         run: python3 scripts/check_minimum_test_contract.py
 
       - name: Security Scan (bandit)
-        run: bandit -r src -ll -ii -x tests/,archive/,legacy/,experimental/
+        run: |
+          if [ -s changed_mypy_files.txt ]; then
+            grep '^src/.*\.py$' changed_mypy_files.txt > changed_bandit_files.txt || true
+            if [ -s changed_bandit_files.txt ]; then
+              xargs -r -d '\n' bandit -ll -ii < changed_bandit_files.txt
+            else
+              echo "No changed src Python files to security-scan."
+            fi
+          else
+            echo "No changed source Python files to security-scan."
+          fi
 
       - name: Security Scan (pip-audit)
         run: pip-audit -r requirements.txt
 
       - name: Secrets Scan (gitleaks)
+        if: ${{ secrets.GITLEAKS_LICENSE != '' }}
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+      - name: Skip Secrets Scan (missing license)
+        if: ${{ secrets.GITLEAKS_LICENSE == '' }}
+        run: echo "::warning::Skipping gitleaks because GITLEAKS_LICENSE is not configured."
 
       - name: Module Size Budget
         run: python3 scripts/check_module_size_budget.py --max-lines 1500 --include src

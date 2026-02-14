@@ -17,11 +17,11 @@ import logging
 import math
 from dataclasses import dataclass
 
-from ....utilities.unit_constants import R_UNIVERSAL as R_UNIVERSAL_J_MOL_K
-from ....utilities.unit_constants import (
+from ....utils.unit_constants import R_UNIVERSAL as R_UNIVERSAL_J_MOL_K
+from ....utils.unit_constants import (
     R_UNIVERSAL_KMOL,
 )
-from ...process_calculators.constants import DEFAULT_GAMMA_DIATOMIC, GAMMA_UPPER_BOUND
+from ...constants import DEFAULT_GAMMA_DIATOMIC, GAMMA_UPPER_BOUND
 
 logger = logging.getLogger(__name__)
 
