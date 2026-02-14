@@ -83,6 +83,12 @@ Assessment_*_TEMP.md
 # CI/CD generated files
 all_runs.json
 runs.json
+checks.json
+issues.json
+open_issues.json
+tools_prs.json
+ruff_verify.json
+test_output.txt
 
 # Environment files with API keys
 .env
