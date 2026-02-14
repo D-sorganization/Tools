@@ -140,13 +140,22 @@ jobs:
         run: |
           SMOKE_TESTS="tests/test_path_helpers.py tests/test_error_handling.py tests/shared/python/notes/test_storage.py"
           if [ -s changed_test_files.txt ]; then
-            pytest $(cat changed_test_files.txt) $SMOKE_TESTS --cov-fail-under=0
+            pytest $(cat changed_test_files.txt) $SMOKE_TESTS --cov-report=xml:coverage.xml --cov-fail-under=0
           else
-            pytest $SMOKE_TESTS --cov-fail-under=0
+            pytest $SMOKE_TESTS --cov-report=xml:coverage.xml --cov-fail-under=0
           fi
+
+      - name: Coverage Policy Gate
+        run: python3 scripts/check_coverage_policy.py --coverage-file coverage.xml --policy-file config/coverage_policy.json --baseline-file config/coverage_baseline.json --output-json coverage_trend_${{ matrix.python-version }}.json
+
+      - name: Upload Coverage Trend
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-trend-${{ matrix.python-version }}
+          path: coverage_trend_${{ matrix.python-version }}.json
 
       - name: Coverage Summary
         if: always()
         run: |
           echo "## Coverage Report (Python ${{ matrix.python-version }})" >> $GITHUB_STEP_SUMMARY
-          echo "Coverage data collected from changed tests. Full threshold enforcement (10%) applies when running the complete test suite." >> $GITHUB_STEP_SUMMARY
+          echo "Coverage policy gate enforced via scripts/check_coverage_policy.py (minimum + non-regression)." >> $GITHUB_STEP_SUMMARY
