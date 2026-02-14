@@ -9,6 +9,8 @@ Welcome to the **Tools Monorepo**. This repository houses a comprehensive collec
 
 ## 📂 Repository Structure
 
+Canonical topology policy: `docs/architecture/CANONICAL_TOPOLOGY.md`.
+
 The repository is organized into several key areas:
 
 ### 🔬 Scientific Computing
