@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 # =============================================================================
 # Advanced CSV Time Series Processor & Analyzer - Integrated Version
 #

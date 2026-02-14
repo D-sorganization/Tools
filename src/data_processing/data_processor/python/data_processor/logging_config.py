@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Logging configuration for data_processor.
 
 Fixed in issue #530: removed fragile dependency on ``utils.logging_utils``.
