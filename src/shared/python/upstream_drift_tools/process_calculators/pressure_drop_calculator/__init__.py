@@ -168,7 +168,7 @@ import math
 from dataclasses import dataclass
 from typing import Final
 
-from tools.unit_converter.constants import R_UNIVERSAL
+from upstream_drift_tools.utils.unit_constants import R_UNIVERSAL
 
 # Standard Pipe Dimensions (Schedule 40) - Inner Diameter in meters
 PIPE_DIMENSIONS_SCH40: Final[dict[str, float]] = {

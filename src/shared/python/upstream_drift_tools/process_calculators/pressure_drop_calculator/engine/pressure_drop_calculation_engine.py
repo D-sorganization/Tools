@@ -18,7 +18,7 @@ References:
 import logging
 import math
 
-from ....utilities.unit_constants import R_UNIVERSAL_KMOL, STANDARD_GRAVITY
+from ....utils.unit_constants import R_UNIVERSAL_KMOL, STANDARD_GRAVITY
 from ...constants import (
     API_14E_C_CONTINUOUS,
     API_14E_C_INTERMITTENT,
