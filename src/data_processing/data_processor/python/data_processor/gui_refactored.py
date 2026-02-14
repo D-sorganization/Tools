@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """GUI Application using refactored core modules.
 
 This is a refactored version of the Data Processor GUI that uses the

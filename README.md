@@ -20,19 +20,20 @@ The repository is organized into several key areas:
 
 **Directory Structure:**
 
-- **`python/`**: Core infrastructure and shared utilities
-  - **`python/src/core/`**: Plugin system and core launcher functionality
-  - **`python/src/utils/`**: Shared utilities (compatibility shims, logger utils)
-  - **`python/src/tile_launcher/`**: Tile launcher components
-  - **`python/shared/`**: Performance utilities and shared code
-  - **`src/shared/python/upstream_drift_tools/`**: **NEW** Centralized shared library for fleet-wide logic (Thermo, Conversion, Robotics)
-  - **`python/tests/`**: Test suite for core functionality
+- **`src/python/`**: Core infrastructure and shared utilities
 
-- **`tools/`**: Tool implementations and utilities
-  - **`tools/folder_tools/`**: Folder management tools (folder_tool, folder_packer_pro, project_packer)
-  - **`tools/matlab_utilities/`**: MATLAB quality checking and testing utilities
-  - **`tools/matlab_code_analyzer_gui/`**: MATLAB code analyzer GUI
-  - **`tools/scientific_auditor.py`**: Scientific code auditing tool
+  - **`src/python/src/core/`**: Plugin system and core launcher functionality
+  - **`src/python/src/utils/`**: Shared utilities (compatibility shims, logger utils)
+  - **`src/python/src/tile_launcher/`**: Tile launcher components
+  - **`src/shared/python/upstream_drift_tools/`**: **NEW** Centralized shared library for fleet-wide logic (Thermo, Conversion, Robotics)
+  - **`src/python/tests/`**: Test suite for core functionality
+
+- **`src/tools/`**: Tool implementations and utilities
+
+  - **`src/tools/folder_tools/`**: Folder management tools (folder_tool, folder_packer_pro, project_packer)
+  - **`src/tools/matlab_utilities/`**: MATLAB quality checking and testing utilities
+  - **`src/tools/matlab_code_analyzer_gui/`**: MATLAB code analyzer GUI
+  - **`src/tools/scientific_auditor.py`**: Scientific code auditing tool
 
 - **`src/`**: Major tool categories organized under standardized structure
   - **`src/data_processing/`**: Data processing tools and pipelines
@@ -42,10 +43,10 @@ The repository is organized into several key areas:
   - **`src/web_applications/`**: Web-based dashboards and interfaces
   - **`src/verification/`**: Verification and testing utilities
 
-**Note:** The distinction between `python/` and `tools/` is:
+**Note:** The distinction between `src/python/` and `src/tools/` is:
 
-- `python/` = Core infrastructure, plugin system, shared utilities
-- `tools/` = Individual tool implementations and standalone utilities
+- `src/python/` = Core infrastructure, plugin system, shared utilities
+- `src/tools/` = Individual tool implementations and standalone utilities
 - `src/` = Major tool categories following standardized `src/` layout pattern
 
 Future consolidation may merge these, but current structure supports the plugin system architecture.
@@ -59,8 +60,9 @@ The repository provides a unified launcher system for accessing all tools. The c
   ```bash
   python UnifiedToolsLauncher.py
   ```
-  
+
   **Features:**
+
   - Full plugin system support via `core/plugin_manager.py`
   - Comprehensive error handling and user feedback
   - Tool path validation and sanitization
@@ -73,12 +75,14 @@ See [Launcher Hierarchy & Guide](docs/LAUNCHERS.md) for detailed documentation.
 #### Launcher Hierarchy
 
 1. **`UnifiedToolsLauncher.py`** (Primary) - Use this for all new development and general usage
+
    - Location: Repository root
    - Type: PyQt6 GUI application
    - Status: ✅ Active and maintained
    - Entry point: `python UnifiedToolsLauncher.py`
 
 2. **`launch_tools_main.py`** (Legacy CLI) - Deprecated
+
    - Location: Repository root
    - Type: Command-line interface
    - Status: ⚠️ Deprecated - retained for backwards compatibility only
@@ -110,38 +114,38 @@ See [Launcher Hierarchy & Guide](docs/LAUNCHERS.md) for detailed documentation.
 
 1. **Clone the Repository**
 
-    ```bash
-    git clone <repository-url>
-    cd <repository-directory>
-    git lfs install
-    git lfs pull
-    ```
+   ```bash
+   git clone <repository-url>
+   cd <repository-directory>
+   git lfs install
+   git lfs pull
+   ```
 
 2. **Set Up Python Environment**
 
-    ```bash
-    # Create a virtual environment
-    python -m venv venv
-    source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```bash
+   # Create a virtual environment
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-    # Install dependencies
-    pip install -r python/requirements.txt
-    ```
+   # Install dependencies
+   pip install -r requirements.txt
+   ```
 
 3. **Install Pre-commit Hooks** (For developers)
 
-    ```bash
-    bash scripts/setup_precommit.sh
-    ```
+   ```bash
+   bash scripts/setup_precommit.sh
+   ```
 
 4. **Use the Makefile** (Optional but recommended)
 
-    ```bash
-    make help      # Show available targets
-    make install   # Install all dependencies
-    make check     # Run linters and tests
-    make format    # Format code with black and ruff
-    ```
+   ```bash
+   make help      # Show available targets
+   make install   # Install all dependencies
+   make check     # Run linters and tests
+   make format    # Format code with black and ruff
+   ```
 
 ### Running the Tools
 
@@ -205,7 +209,7 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
    brew install python@3.12
    ```
 
-2. **Note:** The repository includes compatibility shims in `python/src/utils/compatibility.py` that allow running on Python 3.10+. The application will provide a friendly error message if your Python version is incompatible.
+2. **Note:** The repository includes compatibility shims in `src/python/src/utils/compatibility.py` that allow running on Python 3.10+. The application will provide a friendly error message if your Python version is incompatible.
 
 ### Launcher Won't Start
 
@@ -214,7 +218,7 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
 **Solutions:**
 
 1. Ensure all dependencies are installed: `pip install -r requirements.txt`
-2. Check Python version: `python --version` (must be 3.11+)
+2. Check Python version: `python --version` (must be 3.10+)
 3. Try running with verbose output: `python UnifiedToolsLauncher.py --verbose`
 4. Check for missing PyQt6: `pip install PyQt6>=6.6.0`
 
@@ -235,6 +239,7 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
 **Solutions:**
 
 1. **Install MATLAB**
+
    - Download from [MathWorks](https://www.mathworks.com/products/matlab.html)
    - Ensure R2020a or later is installed
    - Install required toolboxes during setup
@@ -249,7 +254,7 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
 
    # Windows (PowerShell)
    $env:PATH += ";C:\Program Files\MATLAB\R2023a\bin"
-   
+
    # Windows (Command Prompt) - Add to System Environment Variables permanently
    ```
 
@@ -258,12 +263,13 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
    ```bash
    # Check MATLAB version
    matlab -batch "version"
-   
+
    # Test MATLAB execution
    matlab -batch "disp('MATLAB is working')"
    ```
 
 4. **Tool Availability**
+
    - **Audio Processor**: Requires MATLAB + Signal Processing Toolbox
    - **RRT Path Planner**: Requires MATLAB + Statistics Toolbox
    - **Solar System Model**: Requires MATLAB (basic installation sufficient)

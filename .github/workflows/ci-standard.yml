@@ -57,11 +57,11 @@ jobs:
             if [ -z "$BASE_SHA" ]; then
               BASE_SHA="${{ github.event.pull_request.base.sha }}"
             fi
-            git diff --name-only "$BASE_SHA" HEAD -- '*.py' > changed_python_files.txt
+            git diff --diff-filter=ACMRT --name-only "$BASE_SHA" HEAD -- '*.py' > changed_python_files.txt
           elif [ -n "${{ github.event.before }}" ]; then
-            git diff --name-only "${{ github.event.before }}" HEAD -- '*.py' > changed_python_files.txt
+            git diff --diff-filter=ACMRT --name-only "${{ github.event.before }}" HEAD -- '*.py' > changed_python_files.txt
           else
-            git diff --name-only HEAD~1 HEAD -- '*.py' > changed_python_files.txt
+            git diff --diff-filter=ACMRT --name-only HEAD~1 HEAD -- '*.py' > changed_python_files.txt
           fi
           grep -v '^tests/' changed_python_files.txt > changed_mypy_files.txt || true
           cat changed_python_files.txt
@@ -69,7 +69,7 @@ jobs:
       - name: Format Check (Black)
         run: |
           if [ -s changed_python_files.txt ]; then
-            black --check $(cat changed_python_files.txt)
+            xargs -r -d '\n' black --check < changed_python_files.txt
           else
             echo "No changed Python files to format-check."
           fi
@@ -77,15 +77,24 @@ jobs:
       - name: Type Check (Mypy)
         run: |
           if [ -s changed_mypy_files.txt ]; then
-            mypy $(cat changed_mypy_files.txt) --ignore-missing-imports --install-types --non-interactive
+            xargs -r -d '\n' mypy --ignore-missing-imports --install-types --non-interactive < changed_mypy_files.txt
           else
             echo "No changed source Python files to type-check."
           fi
 
-      # CodeQL is explicitly disabled via codeql-analysis.yml to reduce costs.
-      # Security scanning is performed by pip-audit and bandit.
+      - name: Security Scan (bandit)
+        run: bandit -r src -ll -ii -x tests/,archive/,legacy/,experimental/
+
       - name: Security Scan (pip-audit)
         run: pip-audit -r requirements.txt
+
+      - name: Secrets Scan (gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Module Size Budget
+        run: python3 scripts/check_module_size_budget.py --max-lines 1500 --include src
 
   tests:
     needs: quality-gate
