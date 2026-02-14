@@ -1,11 +1,19 @@
-"""scientific_auditor.py module."""
+"""Scientific auditor — detect potential computation risks in Python code.
+
+Scans Python source files for common scientific computing pitfalls like
+division by variables (singularity risk) and trig functions called with
+numeric constants (unit ambiguity).
+"""
 
 import ast
 import json
+import logging
 import sys
 from pathlib import Path
 
-RISKS = []
+logger = logging.getLogger(__name__)
+
+RISKS: list[dict[str, object]] = []
 
 
 class ScienceAuditor(ast.NodeVisitor):
@@ -69,10 +77,10 @@ def main() -> None:
             sys.stderr.write(f"Error analyzing {py_file}: {e}\n")
 
     if RISKS:
-        print(json.dumps(RISKS, indent=2))  # noqa: T201
+        sys.stdout.write(json.dumps(RISKS, indent=2) + "\n")
         sys.exit(1)
     else:
-        print("[]")  # noqa: T201
+        sys.stdout.write("[]\n")
 
 
 if __name__ == "__main__":
