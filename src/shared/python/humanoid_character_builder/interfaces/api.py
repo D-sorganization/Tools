@@ -35,6 +35,7 @@ from pathlib import Path
 from typing import Any, cast
 
 import yaml
+import numpy as np
 from humanoid_character_builder.core.anthropometry import (
     estimate_segment_dimensions,
     estimate_segment_masses,
@@ -220,6 +221,86 @@ class CharacterBuildResult:
             "total_mass": self.get_total_mass(),
             "error_message": self.error_message,
         }
+
+    def simulate(self, duration: float = 1.0) -> bool:
+        """
+        Run a short simulation to verify physics stability.
+
+        Args:
+            duration: Simulation duration in seconds
+
+        Returns:
+            True if stable, False otherwise.
+        """
+        if not self.urdf_xml:
+            logger.error("No URDF generated to simulate.")
+            return False
+
+        try:
+            import mujoco
+        except ImportError:
+            logger.warning("MuJoCo not installed. Simulation skipped.")
+            return False
+
+        try:
+            model = mujoco.MjModel.from_xml_string(self.urdf_xml)
+            data = mujoco.MjData(model)
+
+            steps = int(duration / model.opt.timestep)
+            for _ in range(steps):
+                mujoco.mj_step(model, data)
+                if np.isnan(data.qpos).any() or np.isnan(data.qvel).any():
+                    logger.error("Simulation instability detected (NaN values).")
+                    return False
+            return True
+
+        except Exception as e:
+            logger.error(f"Simulation failed: {e}")
+            return False
+
+    def preview(self, animate: bool = False):
+        """
+        Open visual preview of the character.
+
+        Args:
+            animate: If True, applies control signals to joints.
+        """
+        if not self.urdf_xml:
+            logger.error("No URDF generated to preview.")
+            return
+
+        try:
+            import mujoco
+            import mujoco.viewer
+        except ImportError:
+            logger.warning("MuJoCo viewer not available.")
+            return
+
+        try:
+            model = mujoco.MjModel.from_xml_string(self.urdf_xml)
+            data = mujoco.MjData(model)
+
+            with mujoco.viewer.launch_passive(model, data) as viewer:
+                import time
+
+                start = time.time()
+                while viewer.is_running():
+                    step_start = time.time()
+
+                    if animate and model.nu > 0:
+                        t = time.time() - start
+                        data.ctrl[:] = 0.5 * np.sin(t * 2.0)
+
+                    mujoco.mj_step(model, data)
+                    viewer.sync()
+
+                    dt = model.opt.timestep
+                    elapsed = time.time() - step_start
+                    if elapsed < dt:
+                        time.sleep(dt - elapsed)
+
+        except Exception as e:
+            logger.error(f"Preview failed: {e}")
 
 
 class CharacterBuilder:
