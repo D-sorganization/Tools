@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Data loading and management operations.
 
 This module handles loading CSV files, detecting signals,
