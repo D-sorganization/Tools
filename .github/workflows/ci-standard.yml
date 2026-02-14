@@ -82,6 +82,9 @@ jobs:
             echo "No changed source Python files to type-check."
           fi
 
+      - name: Minimum Test Contract Check
+        run: python3 scripts/check_minimum_test_contract.py
+
       - name: Security Scan (bandit)
         run: bandit -r src -ll -ii -x tests/,archive/,legacy/,experimental/
 
@@ -135,10 +138,11 @@ jobs:
 
       - name: Run Tests with Coverage (Python ${{ matrix.python-version }})
         run: |
+          SMOKE_TESTS="tests/test_path_helpers.py tests/test_error_handling.py tests/shared/python/notes/test_storage.py"
           if [ -s changed_test_files.txt ]; then
-            pytest $(cat changed_test_files.txt) --cov-fail-under=0
+            pytest $(cat changed_test_files.txt) $SMOKE_TESTS --cov-fail-under=0
           else
-            pytest tests/shared/python/notes/test_storage.py --cov-fail-under=0
+            pytest $SMOKE_TESTS --cov-fail-under=0
           fi
 
       - name: Coverage Summary
