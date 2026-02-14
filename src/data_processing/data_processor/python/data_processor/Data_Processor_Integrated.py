@@ -60,7 +60,15 @@ except ImportError:
         FileFormatDetector,
     )
 
-from Data_Processor_r0 import CSVProcessorApp as OriginalCSVProcessorApp  # noqa: E402
+try:
+    from Data_Processor_r0 import (
+        CSVProcessorApp as OriginalCSVProcessorApp,  # type: ignore[import-not-found]  # noqa: E402
+    )
+except ImportError:
+    # Legacy base module was removed; fall back to maintained GUI base.
+    from .gui_refactored import (
+        DataProcessorGUI as OriginalCSVProcessorApp,  # noqa: E402
+    )
 
 # Folder tool availability flag
 FOLDER_TOOL_AVAILABLE = True
