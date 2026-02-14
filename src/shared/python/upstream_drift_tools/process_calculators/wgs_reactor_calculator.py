@@ -20,6 +20,7 @@ import json
 import logging
 import math
 import os
+from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -132,6 +133,14 @@ except ImportError:
     HAS_SPECIES_DB = False
     DEFAULT_DATABASE_PATH = None
 
+    @dataclass
+    class _SpeciesData:
+        """Minimal species data container for fallback database."""
+
+        formation_enthalpy: float  # kJ/mol
+        formation_entropy: float  # J/(mol·K)
+        molecular_weight: float  # kg/mol
+
     class _MinimalSpeciesDB:
         """Minimal species database fallback for standalone use."""
 
@@ -174,6 +183,25 @@ except ImportError:
                 "O2": 0.032,
             }
             return mw.get(species)
+
+        def get_species(self, species: str) -> _SpeciesData | None:
+            """Get species data object compatible with full database API.
+
+            Handles phase notations like "H2O_g" (gas) by stripping the suffix.
+            """
+            # Strip phase suffix (_g, _l, _s) if present
+            base_species = species.split("_")[0]
+
+            h_f = self.get_formation_enthalpy(base_species)
+            s = self.get_standard_entropy(base_species)
+            mw = self.get_molecular_weight(base_species)
+
+            if h_f is None or s is None or mw is None:
+                return None
+
+            return _SpeciesData(
+                formation_enthalpy=h_f, formation_entropy=s, molecular_weight=mw
+            )
 
     _minimal_db = _MinimalSpeciesDB()
 
