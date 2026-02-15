@@ -398,8 +398,8 @@ class TestGetSafeFileInfo:
 
     def test_exception_returns_error_dict(self, tmp_path: Path) -> None:
         """Test exceptions are caught and returned as error dict."""
-        # Pass an invalid path object to trigger an exception
-        with patch("pathlib.Path.resolve", side_effect=RuntimeError("Test error")):
+        # Pass an invalid path object to trigger an OSError
+        with patch("pathlib.Path.resolve", side_effect=OSError("Test error")):
             info = get_safe_file_info(tmp_path / "test.txt")
             assert "error" in info
             assert "Test error" in info["error"]
