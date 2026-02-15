@@ -9,7 +9,7 @@ GUI_INFO = {
     "category": "Development Tools",
     "icon": "package",
     "pyqt6": {
-        "module": "folder_packer_pro",
+        "module": "folder_packer_pro.app",
         "class": "FolderPackerPro",
         "dependencies": ["tkinter", "cryptography"],
     },
