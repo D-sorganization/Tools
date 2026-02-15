@@ -1,23 +1,80 @@
-./scripts/analyze_completist_data.py:177:        if f_path and l_no and c_txt and "@abstractmethod" in c_txt:
-./scripts/analyze_completist_data.py-178-            return {"file": f_path, "line": l_no, "text": c_txt, "type": "Abstract"}
-./scripts/analyze_completist_data.py-179-        return None
-./scripts/analyze_completist_data.py-180-
-./scripts/analyze_completist_data.py-181-    return _scan_completist_file("ABSTRACT", _parser)
-./scripts/analyze_completist_data.py-182-
+./src/data_processing/data_processor/python/data_processor/core/state_space.py:177:    @abstractmethod
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-178-    def _initialize_matrices(self, y: np.ndarray) -> None:
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-179-        """Initialize model matrices based on data."""
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-180-
+./src/data_processing/data_processor/python/data_processor/core/state_space.py:181:    @abstractmethod
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-182-    def _update_matrices(self, parameters: np.ndarray) -> None:
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-183-        """Update matrices with new parameter values."""
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-184-
+./src/data_processing/data_processor/python/data_processor/core/state_space.py:185:    @abstractmethod
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-186-    def _get_initial_parameters(self) -> np.ndarray:
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-187-        """Get initial parameter values for optimization."""
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-188-
+./src/data_processing/data_processor/python/data_processor/core/state_space.py:189:    @abstractmethod
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-190-    def _parameters_to_dict(self, parameters: np.ndarray) -> dict[str, float]:
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-191-        """Convert parameter array to dictionary."""
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-192-
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-193-    def fit(self, y: np.ndarray) -> StateSpaceResult:
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-194-        """Fit the state space model to data.
 --
-./src/shared/python/model_generation/builders/base_builder.py:151:    @abstractmethod
-./src/shared/python/model_generation/builders/base_builder.py-152-    def build(self, **kwargs: Any) -> BuildResult:
-./src/shared/python/model_generation/builders/base_builder.py-153-        """
-./src/shared/python/model_generation/builders/base_builder.py-154-        Build the URDF model.
-./src/shared/python/model_generation/builders/base_builder.py-155-
-./src/shared/python/model_generation/builders/base_builder.py-156-        Returns:
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py:36:    @abstractmethod
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-37-    def name(self) -> str:
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-38-        """Human-readable name for the command."""
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-39-
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-40-    @property
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py:41:    @abstractmethod
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-42-    def description(self) -> str:
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-43-        """Detailed description of what the command does."""
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-44-
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py:45:    @abstractmethod
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-46-    def execute(self) -> Any:
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-47-        """Execute the command and return the result."""
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-48-
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py:49:    @abstractmethod
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-50-    def undo(self) -> Any:
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-51-        """Reverse the command and return the previous state."""
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-52-
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-53-    def redo(self) -> Any:
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-54-        """Re-execute the command. Default implementation calls execute()."""
 --
-./src/shared/python/model_generation/builders/base_builder.py:161:    @abstractmethod
-./src/shared/python/model_generation/builders/base_builder.py-162-    def clear(self) -> None:
-./src/shared/python/model_generation/builders/base_builder.py-163-        """Clear all links and joints."""
-./src/shared/python/model_generation/builders/base_builder.py-164-        ...
-./src/shared/python/model_generation/builders/base_builder.py-165-
-./src/shared/python/model_generation/builders/base_builder.py-166-    def validate(self) -> ValidationResult:
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py:67:    @abstractmethod
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-68-    def backend_name(self) -> str:
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-69-        """Return the backend name."""
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-70-        ...
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-71-
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-72-    @property
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py:73:    @abstractmethod
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-74-    def is_available(self) -> bool:
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-75-        """Check if the backend is available (installed, configured)."""
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-76-        ...
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-77-
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py:78:    @abstractmethod
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-79-    def generate(
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-80-        self,
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-81-        params: BodyParameters,
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-82-        output_dir: Path,
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-83-        **kwargs: Any,
+--
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py:98:    @abstractmethod
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-99-    def get_supported_segments(self) -> list[str]:
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-100-        """Return list of segment names this backend can generate."""
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-101-        ...
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-102-
+./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-103-
+--
+./src/shared/python/model_generation/builders/base_builder.py:182:    @abstractmethod
+./src/shared/python/model_generation/builders/base_builder.py-183-    def build(self, **kwargs: Any) -> BuildResult:
+./src/shared/python/model_generation/builders/base_builder.py-184-        """
+./src/shared/python/model_generation/builders/base_builder.py-185-        Build the URDF model.
+./src/shared/python/model_generation/builders/base_builder.py-186-
+./src/shared/python/model_generation/builders/base_builder.py-187-        Returns:
+--
+./src/shared/python/model_generation/builders/base_builder.py:192:    @abstractmethod
+./src/shared/python/model_generation/builders/base_builder.py-193-    def clear(self) -> None:
+./src/shared/python/model_generation/builders/base_builder.py-194-        """Clear all links and joints."""
+./src/shared/python/model_generation/builders/base_builder.py-195-        ...
+./src/shared/python/model_generation/builders/base_builder.py-196-
+./src/shared/python/model_generation/builders/base_builder.py-197-    def validate(self) -> ValidationResult:
 --
 ./src/shared/python/model_generation/library/repository.py:39:    @abstractmethod
 ./src/shared/python/model_generation/library/repository.py-40-    def name(self) -> str:
@@ -60,27 +117,9 @@
 ./src/shared/python/model_generation/plugins/__init__.py-35-
 ./src/shared/python/model_generation/plugins/__init__.py-36-    def shutdown(self) -> None:  # noqa: B027
 --
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py:67:    @abstractmethod
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-68-    def backend_name(self) -> str:
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-69-        """Return the backend name."""
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-70-        ...
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-71-
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-72-    @property
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py:73:    @abstractmethod
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-74-    def is_available(self) -> bool:
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-75-        """Check if the backend is available (installed, configured)."""
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-76-        ...
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-77-
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py:78:    @abstractmethod
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-79-    def generate(
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-80-        self,
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-81-        params: BodyParameters,
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-82-        output_dir: Path,
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-83-        **kwargs: Any,
---
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py:98:    @abstractmethod
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-99-    def get_supported_segments(self) -> list[str]:
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-100-        """Return list of segment names this backend can generate."""
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-101-        ...
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-102-
-./src/shared/python/humanoid_character_builder/generators/mesh_generator.py-103-
+./scripts/analyze_completist_data.py:177:        if f_path and l_no and c_txt and "@abstractmethod" in c_txt:
+./scripts/analyze_completist_data.py-178-            return {"file": f_path, "line": l_no, "text": c_txt, "type": "Abstract"}
+./scripts/analyze_completist_data.py-179-        return None
+./scripts/analyze_completist_data.py-180-
+./scripts/analyze_completist_data.py-181-    return _scan_completist_file("ABSTRACT", _parser)
+./scripts/analyze_completist_data.py-182-
