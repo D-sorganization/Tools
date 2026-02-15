@@ -1,0 +1,826 @@
+"""Main application for Folder Packer Pro.
+
+Slim orchestrator that composes UI tab mixins, dialog mixins,
+and delegates core operations to the pack engine.
+"""
+
+from __future__ import annotations
+
+import logging
+import os
+import subprocess
+import sys
+import threading
+import tkinter as tk
+from datetime import datetime
+from pathlib import Path
+from tkinter import filedialog, messagebox, ttk
+from typing import Any
+
+from utils.file_utils import safe_write_text
+
+from .constants import (
+    DARK_THEME,
+    DEFAULT_EXCLUDE_PATTERNS,
+    LIGHT_THEME,
+    MIN_WINDOW_HEIGHT,
+    MIN_WINDOW_WIDTH,
+    PADDING_SMALL,
+    WINDOW_HEIGHT,
+    WINDOW_WIDTH,
+)
+from .dialogs import DialogsMixin
+from .file_ops import (
+    collect_folder_stats,
+    format_size,
+    get_file_type,
+    should_exclude,
+)
+from .manifest import PackageManifest
+from .pack_engine import (
+    collect_files,
+    inspect_package,
+    pack_files,
+    unpack_files,
+)
+from .ui_tabs import LogTabMixin, PackTabMixin, PreviewTabMixin, UnpackTabMixin
+
+logger = logging.getLogger(__name__)
+
+
+class FolderPackerPro(
+    PackTabMixin,
+    UnpackTabMixin,
+    PreviewTabMixin,
+    LogTabMixin,
+    DialogsMixin,
+):
+    """Enhanced professional folder packing application.
+
+    Composes UI and dialog mixins with pack engine delegation.
+    """
+
+    def __init__(self, root: tk.Tk) -> None:
+        """Initialize the application.
+
+        Args:
+            root: The tkinter root window.
+        """
+        self.root = root
+        self.root.title("Folder Packer Pro v2.0 - Professional Project Packager")
+        self.root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
+        self.root.minsize(MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT)
+
+        # Application state
+        self.source_folder = ""
+        self.output_file = ""
+        self.current_theme = "dark"
+        self.exclude_patterns = set(DEFAULT_EXCLUDE_PATTERNS)
+        self.include_extensions: set[str] = set()
+        self.manifest = PackageManifest()
+
+        # Operation variables
+        self.compression_level = "balanced"
+        self.encrypt_enabled = False
+        self.encryption_password = ""
+        self.include_git = False
+        self.create_manifest = True
+        self.cancel_operation: bool = False
+
+        # Initialize UI
+        self._create_menu_bar()
+        self._create_main_ui()
+        self._apply_theme()
+
+        logger.info("Folder Packer Pro v2.0 initialized successfully")
+
+    # ── Menu & Layout ───────────────────────────────────────────────
+
+    def _create_menu_bar(self) -> None:
+        """Create professional menu bar."""
+        menubar = tk.Menu(self.root)
+        self.root.config(menu=menubar)
+
+        # File menu
+        file_menu = tk.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label="File", menu=file_menu)
+        file_menu.add_command(label="New Package", command=self._new_package)
+        file_menu.add_command(label="Export Manifest", command=self._export_manifest)
+        file_menu.add_separator()
+        file_menu.add_command(label="Exit", command=self.root.quit)
+
+        # View menu
+        view_menu = tk.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label="View", menu=view_menu)
+        view_menu.add_command(label="Toggle Theme", command=self._toggle_theme)
+
+        # Tools menu
+        tools_menu = tk.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label="Tools", menu=tools_menu)
+        tools_menu.add_command(
+            label="Manage Exclusions",
+            command=self._manage_exclusions,
+        )
+        tools_menu.add_command(label="Open Log File", command=self._open_log_file)
+
+        # Help menu
+        help_menu = tk.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label="Help", menu=help_menu)
+        help_menu.add_command(label="About", command=self._show_about)
+        help_menu.add_command(label="User Guide", command=self._show_user_guide)
+
+    def _create_main_ui(self) -> None:
+        """Create main user interface with modern design."""
+        self.notebook = ttk.Notebook(self.root)
+        self.notebook.pack(
+            fill="both",
+            expand=True,
+            padx=PADDING_SMALL,
+            pady=PADDING_SMALL,
+        )
+
+        # Create tabs (delegated to mixins)
+        self._create_pack_tab()
+        self._create_unpack_tab()
+        self._create_preview_tab()
+        self._create_log_tab()
+
+        # Status bar at bottom
+        self._create_status_bar()
+
+    def _create_status_bar(self) -> None:
+        """Create bottom status bar."""
+        status_frame = ttk.Frame(self.root)
+        status_frame.pack(fill="x", side="bottom")
+
+        self.status_label = ttk.Label(
+            status_frame,
+            text="Ready",
+            font=("Segoe UI", 8),
+            padding=(PADDING_SMALL, 2),
+        )
+        self.status_label.pack(side="left")
+
+        self.status_right = ttk.Label(
+            status_frame,
+            text="Folder Packer Pro v2.0",
+            font=("Segoe UI", 8),
+            padding=(PADDING_SMALL, 2),
+        )
+        self.status_right.pack(side="right")
+
+    # ── Theme ───────────────────────────────────────────────────────
+
+    def _apply_theme(self) -> None:
+        """Apply color theme to application."""
+        theme = DARK_THEME if self.current_theme == "dark" else LIGHT_THEME
+
+        style = ttk.Style()
+        style.theme_use("clam")
+        style.configure(".", background=theme["bg"], foreground=theme["fg"])
+        style.configure("TFrame", background=theme["bg"])
+        style.configure("TLabel", background=theme["bg"], foreground=theme["fg"])
+        style.configure("TLabelframe", background=theme["bg"], foreground=theme["fg"])
+        style.configure(
+            "TLabelframe.Label", background=theme["bg"], foreground=theme["fg"]
+        )
+        style.configure(
+            "Accent.TButton",
+            background=theme["accent"],
+            foreground="#ffffff",
+        )
+
+    def _toggle_theme(self) -> None:
+        """Toggle between dark and light themes."""
+        self.current_theme = "light" if self.current_theme == "dark" else "dark"
+        self._apply_theme()
+
+    # ── Browse Dialogs ──────────────────────────────────────────────
+
+    def _browse_pack_source(self) -> None:
+        """Browse for source folder to pack."""
+        folder = filedialog.askdirectory(title="Select Source Folder")
+        if folder:
+            self.pack_source_entry.delete(0, "end")
+            self.pack_source_entry.insert(0, folder)
+            self.source_folder = folder
+            self._scan_folder()
+
+    def _browse_pack_output(self) -> None:
+        """Browse for output package file."""
+        file_path = filedialog.asksaveasfilename(
+            title="Save Package As",
+            defaultextension=".fpp",
+            filetypes=[("FPP Package", "*.fpp"), ("All Files", "*.*")],
+        )
+        if file_path:
+            self.pack_output_entry.delete(0, "end")
+            self.pack_output_entry.insert(0, file_path)
+
+    def _browse_unpack_source(self) -> None:
+        """Browse for package file to unpack."""
+        file_path = filedialog.askopenfilename(
+            title="Select Package File",
+            filetypes=[("FPP Package", "*.fpp"), ("All Files", "*.*")],
+        )
+        if file_path:
+            self.unpack_source_entry.delete(0, "end")
+            self.unpack_source_entry.insert(0, file_path)
+
+    def _browse_unpack_dest(self) -> None:
+        """Browse for destination folder for unpacking."""
+        folder = filedialog.askdirectory(title="Select Destination Folder")
+        if folder:
+            self.unpack_dest_entry.delete(0, "end")
+            self.unpack_dest_entry.insert(0, folder)
+
+    # ── UI Toggles ──────────────────────────────────────────────────
+
+    def _on_encrypt_toggle(self) -> None:
+        """Handle encryption checkbox toggle."""
+        state = "normal" if self.encrypt_var.get() else "disabled"
+        self.pack_password_entry.configure(state=state)
+        self.pack_password_confirm.configure(state=state)
+        if not self.encrypt_var.get():
+            self.pack_password_entry.delete(0, "end")
+            self.pack_password_confirm.delete(0, "end")
+
+    def _on_encrypted_toggle(self) -> None:
+        """Handle encrypted package checkbox toggle."""
+        state = "normal" if self.encrypted_var.get() else "disabled"
+        self.unpack_password_entry.configure(state=state)
+
+    # ── Scan & Preview ──────────────────────────────────────────────
+
+    def _scan_folder(self) -> None:
+        """Scan source folder and display statistics."""
+        if not self.pack_source_entry.get():
+            return
+
+        source_path = Path(self.pack_source_entry.get())
+        if not source_path.exists():
+            messagebox.showerror("Error", "Source folder does not exist.")
+            return
+
+        def scan() -> None:
+            """Background task to scan folder statistics."""
+            stats = collect_folder_stats(
+                source_path,
+                self.exclude_patterns,
+                self.include_git_var.get(),
+            )
+            self.root.after(0, lambda: self._display_stats(stats))
+
+        threading.Thread(target=scan, daemon=True).start()
+
+    def _display_stats(self, stats: dict[str, Any]) -> None:
+        """Display folder statistics in the stats text widget.
+
+        Args:
+            stats: Dictionary with folder statistics.
+        """
+        self.stats_text.configure(state="normal")
+        self.stats_text.delete("1.0", "end")
+
+        output = "📊 Project Statistics\n\n"
+        output += f"Total Files: {stats['total_files']:,}\n"
+        output += f"Total Size: {format_size(stats['total_size'])}\n"
+        output += f"Excluded Files: {stats['excluded_files']:,}\n\n"
+
+        output += "File Types:\n"
+        for ext, count in sorted(
+            stats["file_types"].items(),
+            key=lambda x: x[1],
+            reverse=True,
+        )[:15]:
+            percentage = (
+                (count / stats["total_files"] * 100) if stats["total_files"] > 0 else 0
+            )
+            output += f"  {ext:20s} {count:5,} files ({percentage:5.1f}%)\n"
+
+        self.stats_text.insert("1.0", output)
+        self.stats_text.configure(state="disabled")
+
+        self._update_preview_tree()
+
+    def _update_preview_tree(self) -> None:
+        """Update preview tree with files to be packed."""
+        self.preview_tree.delete(*self.preview_tree.get_children())
+
+        if not self.pack_source_entry.get():
+            return
+
+        source_path = Path(self.pack_source_entry.get())
+        if not source_path.exists():
+            return
+
+        def scan() -> None:
+            """Background task to scan files for preview."""
+            files = []
+            for root, dirs, filenames in os.walk(source_path):
+                dirs[:] = [
+                    d
+                    for d in dirs
+                    if not should_exclude(
+                        Path(root) / d,
+                        self.exclude_patterns,
+                        self.include_git_var.get(),
+                    )
+                ]
+
+                for filename in filenames:
+                    file_path = Path(root) / filename
+                    if not should_exclude(
+                        file_path,
+                        self.exclude_patterns,
+                        self.include_git_var.get(),
+                    ):
+                        try:
+                            stat = file_path.stat()
+                            files.append((file_path, stat))
+                            if len(files) >= 500:
+                                break
+                        except (OSError, PermissionError):
+                            logger.exception("Error scanning %s", file_path)
+                if len(files) >= 500:
+                    break
+
+            self.root.after(0, lambda: self._populate_tree(files, source_path))
+
+        threading.Thread(target=scan, daemon=True).start()
+
+    def _populate_tree(
+        self, files: list[tuple[Path, os.stat_result]], base_path: Path
+    ) -> None:
+        """Populate tree with file list.
+
+        Args:
+            files: List of (path, stat_result) tuples.
+            base_path: Root path for relative path calculation.
+        """
+        for file_path, stat in files:
+            rel_path = file_path.relative_to(base_path)
+            size = format_size(stat.st_size)
+            file_type = get_file_type(file_path)
+            modified = datetime.fromtimestamp(stat.st_mtime).strftime("%Y-%m-%d %H:%M")
+
+            self.preview_tree.insert(
+                "",
+                "end",
+                text=str(rel_path),
+                values=(size, file_type, modified),
+                tags=(str(file_path),),
+            )
+
+    def _on_file_select(self, event: tk.Event) -> None:  # type: ignore[type-arg]
+        """Handle file selection in preview tree.
+
+        Args:
+            event: The tkinter event.
+        """
+        selection = self.preview_tree.selection()
+        if not selection:
+            return
+
+        item = selection[0]
+        tags = self.preview_tree.item(item, "tags")
+        if not tags:
+            return
+
+        file_path = Path(tags[0])
+        if file_path.exists() and file_path.is_file():
+            self._preview_file(file_path)
+
+    def _preview_file(self, file_path: Path) -> None:
+        """Preview file content with basic syntax highlighting.
+
+        Args:
+            file_path: Path to the file to preview.
+        """
+        self.preview_text.configure(state="normal")
+        self.preview_text.delete("1.0", "end")
+
+        try:
+            size = file_path.stat().st_size
+            if size > 1024 * 1024:  # 1MB limit
+                self.preview_text.insert(
+                    "1.0",
+                    f"File too large to preview ({format_size(size)})",
+                )
+            else:
+                with open(file_path, encoding="utf-8", errors="ignore") as f:
+                    content = f.read()
+                self._insert_with_highlighting(content, file_path.suffix)
+
+        except (OSError, UnicodeDecodeError) as e:
+            self.preview_text.insert("1.0", f"Error previewing file: {e}")
+
+        self.preview_text.configure(state="disabled")
+
+    # ── Pack/Unpack Operations ──────────────────────────────────────
+
+    def _start_pack(self) -> None:
+        """Start packing operation."""
+        if not self.pack_source_entry.get():
+            messagebox.showwarning("No Source", "Please select a source folder.")
+            return
+
+        if not self.pack_output_entry.get():
+            messagebox.showwarning("No Output", "Please select an output file.")
+            return
+
+        if self.encrypt_var.get():
+            password = self.pack_password_entry.get()
+            confirm = self.pack_password_confirm.get()
+
+            if not password:
+                messagebox.showwarning(
+                    "No Password",
+                    "Please enter an encryption password.",
+                )
+                return
+
+            if password != confirm:
+                messagebox.showwarning("Password Mismatch", "Passwords do not match.")
+                return
+
+        self.cancel_operation = False
+        self.pack_btn.configure(state="disabled")
+        self.pack_cancel_btn.configure(state="normal")
+        self.pack_progress_var.set(0)
+
+        threading.Thread(target=self._run_pack, daemon=True).start()
+
+    def _run_pack(self) -> None:
+        """Run pack operation in background."""
+        try:
+            source_path = Path(self.pack_source_entry.get())
+            output_path = Path(self.pack_output_entry.get())
+
+            self._update_pack_status("Collecting files...")
+
+            files_to_pack = collect_files(
+                source_path,
+                self.exclude_patterns,
+                self.include_git_var.get(),
+                cancel_check=lambda: self.cancel_operation,
+            )
+
+            if self.cancel_operation:
+                self._log_message("Pack operation cancelled", "warning")
+                return
+
+            total_files = len(files_to_pack)
+            self._log_message(f"Packing {total_files} files...", "info")
+
+            def progress_callback(filename: str, current: int, total: int) -> None:
+                """Report pack progress to UI.
+
+                Args:
+                    filename: Current file being packed.
+                    current: Current file index.
+                    total: Total number of files.
+                """
+                progress = (current / total) * 100
+                self.root.after(
+                    0, lambda p=progress: self.pack_progress_var.set(float(p))  # type: ignore[misc]
+                )
+                self._update_pack_status(f"Packing {filename} ({current}/{total})")
+
+            result = pack_files(
+                source_path=source_path,
+                output_path=output_path,
+                files_to_pack=files_to_pack,
+                compression=self.compression_var.get(),
+                encrypt=self.encrypt_var.get(),
+                password=(
+                    self.pack_password_entry.get() if self.encrypt_var.get() else ""
+                ),
+                create_manifest=self.create_manifest_var.get(),
+                progress_callback=progress_callback,
+                cancel_check=lambda: self.cancel_operation,
+            )
+
+            for error in result.errors:
+                self._log_message(error, "error")
+
+            if result.success:
+                self._log_message(
+                    f"Package created successfully: {output_path}", "success"
+                )
+                self._log_message(
+                    f"Package size: {format_size(result.package_size)}",
+                    "info",
+                )
+                self.root.after(
+                    0,
+                    lambda: messagebox.showinfo(
+                        "Success",
+                        f"Package created successfully!\n\n"
+                        f"Files: {result.total_files}\n"
+                        f"Size: {format_size(result.package_size)}",
+                    ),
+                )
+            else:
+                self._log_message(f"Pack operation failed: {result.error}", "error")
+                error_msg = result.error or "Unknown error"
+                self.root.after(
+                    0,
+                    lambda: messagebox.showerror(
+                        "Error", f"Pack failed:\n\n{error_msg}"
+                    ),
+                )
+
+        except (PermissionError, OSError) as e:
+            logger.exception("Pack operation failed")
+            self._log_message(f"Pack operation failed: {e}", "error")
+            error_msg = str(e)
+            self.root.after(
+                0,
+                lambda: messagebox.showerror("Error", f"Pack failed:\n\n{error_msg}"),
+            )
+
+        finally:
+            self.root.after(0, self._pack_finished)
+
+    def _start_unpack(self) -> None:
+        """Start unpacking operation."""
+        if not self.unpack_source_entry.get():
+            messagebox.showwarning("No Package", "Please select a package file.")
+            return
+
+        if not self.unpack_dest_entry.get():
+            messagebox.showwarning(
+                "No Destination",
+                "Please select a destination folder.",
+            )
+            return
+
+        if self.encrypted_var.get():
+            password = self.unpack_password_entry.get()
+            if not password:
+                messagebox.showwarning(
+                    "No Password",
+                    "Please enter the decryption password.",
+                )
+                return
+
+        self.cancel_operation = False
+        self.unpack_btn.configure(state="disabled")
+        self.unpack_cancel_btn.configure(state="normal")
+        self.unpack_progress_var.set(0)
+
+        threading.Thread(target=self._run_unpack, daemon=True).start()
+
+    def _run_unpack(self) -> None:
+        """Run unpack operation in background."""
+        try:
+            package_path = Path(self.unpack_source_entry.get())
+            dest_path = Path(self.unpack_dest_entry.get())
+
+            self._update_unpack_status("Reading package...")
+
+            def progress_callback(filename: str, current: int, total: int) -> None:
+                """Report unpack progress to UI.
+
+                Args:
+                    filename: Current file being extracted.
+                    current: Current file index.
+                    total: Total number of files.
+                """
+                progress = (current / total) * 100
+                self.root.after(
+                    0,
+                    lambda p=progress: self.unpack_progress_var.set(float(p)),  # type: ignore[misc]
+                )
+                self._update_unpack_status(f"Extracting {filename} ({current}/{total})")
+
+            result = unpack_files(
+                package_path=package_path,
+                dest_path=dest_path,
+                encrypted=self.encrypted_var.get(),
+                password=(
+                    self.unpack_password_entry.get() if self.encrypted_var.get() else ""
+                ),
+                progress_callback=progress_callback,
+                cancel_check=lambda: self.cancel_operation,
+            )
+
+            for error in result.errors:
+                self._log_message(error, "error")
+
+            if result.success:
+                self._log_message(
+                    f"Package extracted successfully to: {dest_path}",
+                    "success",
+                )
+                self.root.after(
+                    0,
+                    lambda: messagebox.showinfo(
+                        "Success",
+                        f"Package extracted successfully!\n\n"
+                        f"Files: {result.total_files}\n"
+                        f"Location: {dest_path}",
+                    ),
+                )
+            else:
+                self._log_message(f"Unpack operation failed: {result.error}", "error")
+                error_msg = result.error or "Unknown error"
+                self.root.after(
+                    0,
+                    lambda: messagebox.showerror(
+                        "Error", f"Unpack failed:\n\n{error_msg}"
+                    ),
+                )
+
+        except (PermissionError, OSError) as e:
+            logger.exception("Unpack operation failed")
+            self._log_message(f"Unpack operation failed: {e}", "error")
+            error_msg = str(e)
+            self.root.after(
+                0,
+                lambda: messagebox.showerror("Error", f"Unpack failed:\n\n{error_msg}"),
+            )
+
+        finally:
+            self.root.after(0, self._unpack_finished)
+
+    def _inspect_package(self) -> None:
+        """Inspect package file and show information."""
+        package_path = self.unpack_source_entry.get()
+        if not package_path:
+            messagebox.showwarning("No Package", "Please select a package file first.")
+            return
+
+        try:
+            info = inspect_package(Path(package_path))
+
+            self.package_info_text.configure(state="normal")
+            self.package_info_text.delete("1.0", "end")
+
+            output = "📦 Package Information\n\n"
+            output += f"File: {info['file']}\n"
+            output += f"Size: {info['size_formatted']}\n"
+            output += f"Encrypted: {'Yes' if info['encrypted'] else 'No'}\n\n"
+
+            if not info["encrypted"] and info["metadata"]:
+                metadata = info["metadata"]
+                output += f"Created: {metadata.get('created_at', 'Unknown')}\n"
+                output += f"Total Files: {metadata.get('total_files', 0)}\n"
+                output += f"Compression: {metadata.get('compression', 'Unknown')}\n"
+
+            self.package_info_text.insert("1.0", output)
+            self.package_info_text.configure(state="disabled")
+
+        except (
+            OSError,
+            ValueError,
+        ) as e:
+            messagebox.showerror("Error", f"Failed to inspect package:\n\n{e}")
+
+    # ── Status Updates ──────────────────────────────────────────────
+
+    def _update_pack_status(self, message: str) -> None:
+        """Update pack status label.
+
+        Args:
+            message: Status message to display.
+        """
+        self.root.after(0, lambda: self.pack_status_label.configure(text=message))
+
+    def _update_unpack_status(self, message: str) -> None:
+        """Update unpack status label.
+
+        Args:
+            message: Status message to display.
+        """
+        self.root.after(0, lambda: self.unpack_status_label.configure(text=message))
+
+    def _update_status_bar(self, message: str) -> None:
+        """Update bottom status bar.
+
+        Args:
+            message: Status message to display.
+        """
+        self.status_label.configure(text=message)
+        self.root.update_idletasks()
+
+    # ── Operation Lifecycle ─────────────────────────────────────────
+
+    def _cancel_operation(self) -> None:
+        """Cancel current operation."""
+        self.cancel_operation = True
+
+    def _pack_finished(self) -> None:
+        """Clean up after pack operation."""
+        self.pack_btn.configure(state="normal")
+        self.pack_cancel_btn.configure(state="disabled")
+        self._update_pack_status("Ready")
+
+    def _unpack_finished(self) -> None:
+        """Clean up after unpack operation."""
+        self.unpack_btn.configure(state="normal")
+        self.unpack_cancel_btn.configure(state="disabled")
+        self._update_unpack_status("Ready")
+
+    # ── Log Operations ──────────────────────────────────────────────
+
+    def _log_message(self, message: str, level: str = "info") -> None:
+        """Add message to log.
+
+        Args:
+            message: Log message text.
+            level: Log level ("info", "success", "warning", "error").
+        """
+        timestamp = datetime.now().strftime("%H:%M:%S")
+
+        def update_log() -> None:
+            """Update log widget from thread."""
+            self.log_text.configure(state="normal")
+            self.log_text.insert("end", f"[{timestamp}] {message}\n", level)
+            self.log_text.see("end")
+            self.log_text.configure(state="disabled")
+
+        self.root.after(0, update_log)
+
+        # Also log via standard logging
+        getattr(logger, level if level != "success" else "info")(message)
+
+    def _clear_log(self) -> None:
+        """Clear the log display."""
+        self.log_text.configure(state="normal")
+        self.log_text.delete("1.0", "end")
+        self.log_text.configure(state="disabled")
+
+    def _save_log(self) -> None:
+        """Save log to file."""
+        file_path = filedialog.asksaveasfilename(
+            title="Save Log",
+            defaultextension=".log",
+            filetypes=[("Log Files", "*.log"), ("Text Files", "*.txt")],
+        )
+        if file_path:
+            content = self.log_text.get("1.0", "end")
+            safe_write_text(Path(file_path), content)
+            self._log_message(f"Log saved to: {file_path}")
+
+    def _open_log_file(self) -> None:
+        """Open the log file in default text editor."""
+        from .constants import LOG_FILENAME
+
+        log_path = Path(LOG_FILENAME)
+        if log_path.exists():
+            try:
+                if sys.platform == "win32":
+                    os.startfile(log_path)  # type: ignore[attr-defined]  # noqa: S606
+                elif sys.platform == "darwin":
+                    subprocess.run(
+                        ["open", str(log_path)], check=False
+                    )  # noqa: S603, S607
+                else:
+                    subprocess.run(
+                        ["xdg-open", str(log_path)], check=False
+                    )  # noqa: S603, S607
+            except (OSError, subprocess.SubprocessError) as e:
+                messagebox.showerror("Error", f"Could not open log file: {e}")
+        else:
+            messagebox.showinfo("No Log", "No log file exists yet.")
+
+    # ── File Menu Actions ───────────────────────────────────────────
+
+    def _new_package(self) -> None:
+        """Reset form for new package."""
+        self.pack_source_entry.delete(0, "end")
+        self.pack_output_entry.delete(0, "end")
+        self.pack_progress_var.set(0)
+        self._update_pack_status("Ready")
+        self.stats_text.configure(state="normal")
+        self.stats_text.delete("1.0", "end")
+        self.stats_text.configure(state="disabled")
+
+    def _export_manifest(self) -> None:
+        """Export current manifest."""
+        file_path = filedialog.asksaveasfilename(
+            title="Export Manifest",
+            defaultextension=".json",
+            filetypes=[("JSON Files", "*.json")],
+        )
+        if file_path:
+            try:
+                manifest_json = self.manifest.to_json()
+                safe_write_text(Path(file_path), manifest_json)
+                self._log_message(f"Manifest exported to: {file_path}")
+            except (OSError, ValueError) as e:
+                messagebox.showerror("Error", f"Failed to export manifest: {e}")
+
+    @staticmethod
+    def _format_size(size_bytes: int) -> str:
+        """Format file size in human-readable format.
+
+        Args:
+            size_bytes: Size in bytes.
+
+        Returns:
+            Human-readable size string.
+        """
+        return format_size(size_bytes)
