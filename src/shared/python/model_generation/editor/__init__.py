@@ -6,9 +6,13 @@ This module provides editors for URDF manipulation:
 - URDFTextEditor: Text-based editing with diff support
 """
 
-from model_generation.editor.frankenstein_editor import (
+from model_generation.editor.editor_types import (
     ComponentReference,
     ComponentType,
+    EditorState,
+    PendingOperation,
+)
+from model_generation.editor.frankenstein_editor import (
     FrankensteinEditor,
 )
 from model_generation.editor.text_editor import (
