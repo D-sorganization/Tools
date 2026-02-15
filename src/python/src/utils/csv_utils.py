@@ -36,7 +36,8 @@ def safe_read_csv(
         return default if default is not None else pd.DataFrame()
 
     try:
-        return pd.read_csv(path, **kwargs)
+        result: pd.DataFrame = pd.read_csv(path, **kwargs)
+        return result
     except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
         logger.error(f"Error reading CSV file {path}: {e}")
         return default if default is not None else pd.DataFrame()

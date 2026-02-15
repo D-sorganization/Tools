@@ -259,7 +259,8 @@ class ProcessingMixin:
                 "Polynomial": SaturationMode.POLYNOMIAL,
             }
             mode = mode_map.get(
-                self.sat_mode_combo.currentText(), SaturationMode.HARD  # type: ignore[attr-defined]
+                self.sat_mode_combo.currentText(),
+                SaturationMode.HARD,  # type: ignore[attr-defined]
             )
 
             # Create preview signal
@@ -479,7 +480,9 @@ class ProcessingMixin:
 
         except ImportError as e:
             QMessageBox.warning(
-                self, "Error", f"Failed to compute frequency response: {e}"  # type: ignore[arg-type]
+                self,
+                "Error",
+                f"Failed to compute frequency response: {e}",  # type: ignore[arg-type]
             )
 
     def _add_noise(self) -> None:
