@@ -323,7 +323,7 @@ def get_memory_usage() -> float:
         import resource  # Unix only
 
         # Unix-based systems
-        usage = resource.getrusage(resource.RUSAGE_SELF)
+        usage = resource.getrusage(resource.RUSAGE_SELF)  # type: ignore[attr-defined]
         # maxrss is in KB on Linux, bytes on macOS
         if sys.platform == "darwin":
             return float(usage.ru_maxrss / (1024 * 1024))

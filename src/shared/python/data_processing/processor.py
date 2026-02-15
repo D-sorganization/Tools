@@ -77,7 +77,7 @@ class DataProcessor:
             num_rows=len(self._df),
             num_columns=len(self._df.columns),
             columns=list(self._df.columns),
-            dtypes={col: str(dt) for col, dt in self._df.dtypes.items()},
+            dtypes={str(col): str(dt) for col, dt in self._df.dtypes.items()},
             memory_mb=self._df.memory_usage(deep=True).sum() / 1e6,
         )
 
@@ -194,7 +194,7 @@ class DataProcessor:
             for col in df.columns:
                 if col == time_column:
                     continue
-                new_df[col] = np.interp(t_new, t, df[col].values)
+                new_df[col] = np.interp(t_new, np.asarray(t), np.asarray(df[col].values))
             self._df = new_df
 
         self._history.append(f"Resampled to {target_rate} Hz ({method})")
@@ -330,7 +330,10 @@ class DataProcessor:
 
     def correlate(self, method: str = "pearson") -> pd.DataFrame:
         """Return correlation matrix."""
-        return self.dataframe.select_dtypes(include="number").corr(method=method)
+        result: pd.DataFrame = self.dataframe.select_dtypes(include="number").corr(
+            method=method  # type: ignore[arg-type]
+        )
+        return result
 
     def detect_outliers(
         self,
@@ -354,7 +357,8 @@ class DataProcessor:
 
             detector = OutlierDetector(OutlierConfig(threshold=threshold))
             result = detector.detect(df[columns])
-            return result.mask
+            outlier_mask: pd.DataFrame = result.mask
+            return outlier_mask
         except ImportError:
             # Fallback: simple z-score
             from scipy import stats as sp_stats

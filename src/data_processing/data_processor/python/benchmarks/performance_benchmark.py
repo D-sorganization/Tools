@@ -70,7 +70,7 @@ class PerformanceBenchmark:
         np.random.seed(42)
 
         # Generate test data
-        data = {
+        data: dict[str, Any] = {
             "timestamp": pd.date_range("2024-01-01", periods=n_rows, freq="1s"),
         }
 

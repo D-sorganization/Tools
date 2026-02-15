@@ -155,7 +155,8 @@ def _exponential(x: np.ndarray, y: np.ndarray, x_pred: np.ndarray) -> TrendlineR
     a_init = np.exp(init_coeffs[1])
 
     def exp_func(xv: np.ndarray, a: float, b: float) -> np.ndarray:
-        return a * np.exp(b * xv)
+        result: np.ndarray = a * np.exp(b * xv)
+        return result
 
     try:
         popt, _ = curve_fit(exp_func, x_pos, y_pos, p0=[a_init, b_init], maxfev=5000)
