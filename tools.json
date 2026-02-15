@@ -1,264 +1,224 @@
 {
-    "Analysis": [
-        {
-            "name": "Multi-Parameter Analysis",
-            "path": "src/multi_param_analysis/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Run multi-parameter sensitivity analysis with grid evaluation"
-        }
-    ],
-    "Biomechanics": [
-        {
-            "name": "C3D Motion Capture Viewer",
-            "path": "src/c3d_viewer/launch_pyqt6.py",
-            "type": "python",
-            "desc": "View and analyze C3D motion capture files"
-        }
-    ],
-    "Data Processing": [
-        {
-            "name": "Data Processor (PyQt6)",
-            "path": "src/data_processing/data_processor/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Signal processing and time-series data analysis tool"
-        },
-        {
-            "name": "Data Processor (Web)",
-            "path": "src/data_processing/data_processor/launch_web.py",
-            "type": "python",
-            "desc": "Signal processing and time-series data analysis tool"
-        }
-    ],
-    "Development Tools": [
-        {
-            "name": "Folder Packer Pro",
-            "path": "src/tools/folder_tools/folder_packer_pro/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Professional Project Archiving and Distribution Tool"
-        },
-        {
-            "name": "Folder Tool (Utility)",
-            "path": "src/tools/folder_tools/folder_tool/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Directory Management Utility"
-        },
-        {
-            "name": "PDF Renamer",
-            "path": "src/document_processing/pdf_renamer/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Intelligent PDF File Renaming Tool"
-        }
-    ],
-    "Mathematics": [
-        {
-            "name": "ODE Solver",
-            "path": "src/ode_solver/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Solve systems of ordinary differential equations symbolically"
-        }
-    ],
-    "Optimization": [
-        {
-            "name": "Adam Optimizer",
-            "path": "src/optimizer_gui/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Configure and run Adam-based optimization"
-        }
-    ],
-    "Process Simulation": [
-        {
-            "name": "Acid Gas Dewpoint Calculator (PyQt6)",
-            "path": "src/acid_gas_dewpoint/launch_pyqt6.py",
-            "type": "python",
-            "desc": "HF, HCl, H2S dewpoint analysis for syngas applications"
-        },
-        {
-            "name": "Acid Gas Dewpoint Calculator (Web)",
-            "path": "src/acid_gas_dewpoint/launch_web.py",
-            "type": "python",
-            "desc": "HF, HCl, H2S dewpoint analysis for syngas applications"
-        },
-        {
-            "name": "Baghouse Calculator (PyQt6)",
-            "path": "src/baghouse_calculator/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Baghouse filter performance and drum sizing calculator"
-        },
-        {
-            "name": "Baghouse Calculator (Web)",
-            "path": "src/baghouse_calculator/launch_web.py",
-            "type": "python",
-            "desc": "Baghouse filter performance and drum sizing calculator"
-        },
-        {
-            "name": "Electrode Advisor (PyQt6)",
-            "path": "src/electrode_advisor/launch_pyqt6.py",
-            "type": "python",
-            "desc": "AC Electrode Advancement Module for electrode system analysis"
-        },
-        {
-            "name": "Electrode Advisor (Web)",
-            "path": "src/electrode_advisor/launch_web.py",
-            "type": "python",
-            "desc": "AC Electrode Advancement Module for electrode system analysis"
-        },
-        {
-            "name": "Financial Calculator (PyQt6)",
-            "path": "src/financial_calculator/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Comprehensive financial modeling for plant operations"
-        },
-        {
-            "name": "Financial Calculator (Web)",
-            "path": "src/financial_calculator/launch_web.py",
-            "type": "python",
-            "desc": "Comprehensive financial modeling for plant operations"
-        },
-        {
-            "name": "Flare Calculator (PyQt6)",
-            "path": "src/flare_calculator/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Flare sizing and safety zone calculator"
-        },
-        {
-            "name": "Flare Calculator (Web)",
-            "path": "src/flare_calculator/launch_web.py",
-            "type": "python",
-            "desc": "Flare sizing and safety zone calculator"
-        },
-        {
-            "name": "PSA System Analysis",
-            "path": "src/psa_package/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Two-stage Pressure Swing Adsorption system analysis"
-        },
-        {
-            "name": "Pressure Drop Calculator (PyQt6)",
-            "path": "src/pressure_drop_calculator/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Pipe flow pressure drop analysis with multiple friction methods"
-        },
-        {
-            "name": "Pressure Drop Calculator (Web)",
-            "path": "src/pressure_drop_calculator/launch_web.py",
-            "type": "python",
-            "desc": "Pipe flow pressure drop analysis with multiple friction methods"
-        },
-        {
-            "name": "Scrubber Calculator (PyQt6)",
-            "path": "src/scrubber_calculator/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Packed bed scrubber design with NTU/HTU mass transfer"
-        },
-        {
-            "name": "Scrubber Calculator (Web)",
-            "path": "src/scrubber_calculator/launch_web.py",
-            "type": "python",
-            "desc": "Packed bed scrubber design with NTU/HTU mass transfer"
-        },
-        {
-            "name": "Syngas Compression Calculator (PyQt6)",
-            "path": "src/syngas_compression/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Multi-stage compression analysis with water dropout calculations"
-        },
-        {
-            "name": "Syngas Compression Calculator (Web)",
-            "path": "src/syngas_compression/launch_web.py",
-            "type": "python",
-            "desc": "Multi-stage compression analysis with water dropout calculations"
-        },
-        {
-            "name": "Syngas Water Calculator",
-            "path": "src/syngas_water_calculator/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Calculate water content and dew point in syngas systems"
-        },
-        {
-            "name": "TRC Vessel Designer (PyQt6)",
-            "path": "src/trc_vessel_designer/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Thermal Reaction Chamber vessel design tool"
-        },
-        {
-            "name": "TRC Vessel Designer (Web)",
-            "path": "src/trc_vessel_designer/launch_web.py",
-            "type": "python",
-            "desc": "Thermal Reaction Chamber vessel design tool"
-        },
-        {
-            "name": "Thermal Profile Predictor",
-            "path": "src/thermal_profile_predictor/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Predict temperature profiles for heated vessels"
-        },
-        {
-            "name": "WGS Reactor Calculator (PyQt6)",
-            "path": "src/wgs_reactor/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Water-Gas Shift reactor equilibrium and sizing calculations"
-        },
-        {
-            "name": "WGS Reactor Calculator (Web)",
-            "path": "src/wgs_reactor/launch_web.py",
-            "type": "python",
-            "desc": "Water-Gas Shift reactor equilibrium and sizing calculations"
-        }
-    ],
-    "Robotics": [
-        {
-            "name": "Humanoid Character Builder",
-            "path": "src/humanoid_builder_gui/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Build parametric humanoid characters with anthropometric calculations"
-        },
-        {
-            "name": "Inertia Calculator",
-            "path": "src/inertia_calculator/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Calculate and validate inertia tensors for rigid bodies"
-        },
-        {
-            "name": "Parametric URDF Builder",
-            "path": "src/urdf_builder_gui/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Generate parametric URDF models for robotics applications"
-        }
-    ],
-    "Signal Processing": [
-        {
-            "name": "Function Generator (PyQt6)",
-            "path": "src/function_generator/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Generate and visualize various waveforms (sine, square, triangle, etc.)"
-        },
-        {
-            "name": "Function Generator (Web)",
-            "path": "src/function_generator/launch_web.py",
-            "type": "python",
-            "desc": "Generate and visualize various waveforms (sine, square, triangle, etc.)"
-        },
-        {
-            "name": "Signal Processing Studio",
-            "path": "src/signal_processing_studio/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Unified signal processing: waveform generation, analysis, filtering, curve fitting"
-        }
-    ],
-    "Thermodynamics": [
-        {
-            "name": "Steam Engine Calculator",
-            "path": "src/steam_engine_calculator/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Calculate thermodynamic properties of steam/water"
-        }
-    ],
-    "Utilities": [
-        {
-            "name": "Flow Rate Converter",
-            "path": "src/flow_rate_converter/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Convert between mass, molar, and volumetric flow rate units"
-        }
-    ]
+  "Analysis": [
+    {
+      "name": "Multi-Parameter Analysis",
+      "path": "src/multi_param_analysis/launch_pyqt6.py",
+      "type": "python"
+    }
+  ],
+  "Biomechanics": [
+    {
+      "name": "C3D Motion Capture Viewer",
+      "path": "src/c3d_viewer/launch_pyqt6.py",
+      "type": "python"
+    }
+  ],
+  "Data Processing": [
+    {
+      "name": "Data Processor (PyQt6)",
+      "path": "src/data_processing/data_processor/launch_pyqt6.py",
+      "type": "python"
+    },
+    {
+      "name": "Data Processor (Web)",
+      "path": "src/data_processing/data_processor/launch_web.py",
+      "type": "web"
+    }
+  ],
+  "Development Tools": [
+    {
+      "name": "Folder Packer Pro",
+      "path": "src/tools/folder_tools/folder_packer_pro/launch_pyqt6.py",
+      "type": "python"
+    },
+    {
+      "name": "Folder Tool (Utility)",
+      "path": "src/tools/folder_tools/folder_tool/launch_pyqt6.py",
+      "type": "python"
+    },
+    {
+      "name": "PDF Renamer",
+      "path": "src/document_processing/pdf_renamer/launch_pyqt6.py",
+      "type": "python"
+    }
+  ],
+  "Mathematics": [
+    {
+      "name": "ODE Solver",
+      "path": "src/ode_solver/launch_pyqt6.py",
+      "type": "python"
+    }
+  ],
+  "Optimization": [
+    {
+      "name": "Adam Optimizer",
+      "path": "src/optimizer_gui/launch_pyqt6.py",
+      "type": "python"
+    }
+  ],
+  "Process Simulation": [
+    {
+      "name": "Acid Gas Dewpoint Calculator (PyQt6)",
+      "path": "src/acid_gas_dewpoint/launch_pyqt6.py",
+      "type": "python"
+    },
+    {
+      "name": "Acid Gas Dewpoint Calculator (Web)",
+      "path": "src/acid_gas_dewpoint/launch_web.py",
+      "type": "web"
+    },
+    {
+      "name": "Baghouse Calculator (PyQt6)",
+      "path": "src/baghouse_calculator/launch_pyqt6.py",
+      "type": "python"
+    },
+    {
+      "name": "Baghouse Calculator (Web)",
+      "path": "src/baghouse_calculator/launch_web.py",
+      "type": "web"
+    },
+    {
+      "name": "Electrode Advisor (PyQt6)",
+      "path": "src/electrode_advisor/launch_pyqt6.py",
+      "type": "python"
+    },
+    {
+      "name": "Electrode Advisor (Web)",
+      "path": "src/electrode_advisor/launch_web.py",
+      "type": "web"
+    },
+    {
+      "name": "Financial Calculator (PyQt6)",
+      "path": "src/financial_calculator/launch_pyqt6.py",
+      "type": "python"
+    },
+    {
+      "name": "Financial Calculator (Web)",
+      "path": "src/financial_calculator/launch_web.py",
+      "type": "web"
+    },
+    {
+      "name": "Flare Calculator (PyQt6)",
+      "path": "src/flare_calculator/launch_pyqt6.py",
+      "type": "python"
+    },
+    {
+      "name": "Flare Calculator (Web)",
+      "path": "src/flare_calculator/launch_web.py",
+      "type": "web"
+    },
+    {
+      "name": "PSA System Analysis",
+      "path": "src/psa_package/launch_pyqt6.py",
+      "type": "python"
+    },
+    {
+      "name": "Pressure Drop Calculator (PyQt6)",
+      "path": "src/pressure_drop_calculator/launch_pyqt6.py",
+      "type": "python"
+    },
+    {
+      "name": "Pressure Drop Calculator (Web)",
+      "path": "src/pressure_drop_calculator/launch_web.py",
+      "type": "web"
+    },
+    {
+      "name": "Scrubber Calculator (PyQt6)",
+      "path": "src/scrubber_calculator/launch_pyqt6.py",
+      "type": "python"
+    },
+    {
+      "name": "Scrubber Calculator (Web)",
+      "path": "src/scrubber_calculator/launch_web.py",
+      "type": "web"
+    },
+    {
+      "name": "Syngas Compression Calculator (PyQt6)",
+      "path": "src/syngas_compression/launch_pyqt6.py",
+      "type": "python"
+    },
+    {
+      "name": "Syngas Compression Calculator (Web)",
+      "path": "src/syngas_compression/launch_web.py",
+      "type": "web"
+    },
+    {
+      "name": "Syngas Water Calculator",
+      "path": "src/syngas_water_calculator/launch_pyqt6.py",
+      "type": "python"
+    },
+    {
+      "name": "TRC Vessel Designer (PyQt6)",
+      "path": "src/trc_vessel_designer/launch_pyqt6.py",
+      "type": "python"
+    },
+    {
+      "name": "TRC Vessel Designer (Web)",
+      "path": "src/trc_vessel_designer/launch_web.py",
+      "type": "web"
+    },
+    {
+      "name": "Thermal Profile Predictor",
+      "path": "src/thermal_profile_predictor/launch_pyqt6.py",
+      "type": "python"
+    },
+    {
+      "name": "WGS Reactor Calculator (PyQt6)",
+      "path": "src/wgs_reactor/launch_pyqt6.py",
+      "type": "python"
+    },
+    {
+      "name": "WGS Reactor Calculator (Web)",
+      "path": "src/wgs_reactor/launch_web.py",
+      "type": "web"
+    }
+  ],
+  "Robotics": [
+    {
+      "name": "Humanoid Character Builder",
+      "path": "src/humanoid_builder_gui/launch_pyqt6.py",
+      "type": "python"
+    },
+    {
+      "name": "Inertia Calculator",
+      "path": "src/inertia_calculator/launch_pyqt6.py",
+      "type": "python"
+    },
+    {
+      "name": "Parametric URDF Builder",
+      "path": "src/urdf_builder_gui/launch_pyqt6.py",
+      "type": "python"
+    }
+  ],
+  "Signal Processing": [
+    {
+      "name": "Function Generator (PyQt6)",
+      "path": "src/function_generator/launch_pyqt6.py",
+      "type": "python"
+    },
+    {
+      "name": "Function Generator (Web)",
+      "path": "src/function_generator/launch_web.py",
+      "type": "web"
+    },
+    {
+      "name": "Signal Processing Studio",
+      "path": "src/signal_processing_studio/launch_pyqt6.py",
+      "type": "python"
+    }
+  ],
+  "Thermodynamics": [
+    {
+      "name": "Steam Engine Calculator",
+      "path": "src/steam_engine_calculator/launch_pyqt6.py",
+      "type": "python"
+    }
+  ],
+  "Utilities": [
+    {
+      "name": "Flow Rate Converter",
+      "path": "src/flow_rate_converter/launch_pyqt6.py",
+      "type": "python"
+    }
+  ]
 }

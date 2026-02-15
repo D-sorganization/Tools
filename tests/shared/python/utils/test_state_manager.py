@@ -139,7 +139,9 @@ def test_json_serializer_supports_datetime_and_path(manager: StateManager) -> No
     dt = datetime(2026, 1, 1, 12, 0, 0)
     path = Path("/tmp/demo")
     assert manager._json_serializer(dt).startswith("2026-01-01T12:00:00")
-    assert manager._json_serializer(path) == "/tmp/demo"
+    # Path string representation varies by OS; normalize for comparison
+    serialized = manager._json_serializer(path).replace("\\", "/")
+    assert serialized.endswith("/tmp/demo")
 
 
 def test_cleanup_old_backups_removes_expired_files(manager: StateManager) -> None:

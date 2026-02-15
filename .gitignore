@@ -46,6 +46,7 @@ coverage.xml
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.hypothesis/
 .dmypy.json
 dmypy.json
 
