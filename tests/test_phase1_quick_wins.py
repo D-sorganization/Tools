@@ -158,13 +158,14 @@ class TestDataIO:
         assert out_path.suffix == ".parquet"
 
     def test_unsupported_format_raises(self, tmp_path):
-        """read_data raises ValueError for unsupported extensions."""
+        """read_data raises PreconditionError for unsupported extensions."""
         bad_file = tmp_path / "data.xyz"
         bad_file.write_text("some data")
 
+        from contracts import PreconditionError
         from upstream_drift_tools.data_io import read_data
 
-        with pytest.raises(ValueError, match="Unsupported file format"):
+        with pytest.raises(PreconditionError, match="Unsupported file extension"):
             read_data(bad_file)
 
 

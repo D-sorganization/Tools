@@ -21,6 +21,8 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
+from contracts import ensure, require
+
 logger = logging.getLogger(__name__)
 
 try:
@@ -53,11 +55,23 @@ def read_data(
         ImportError: If pandas is not installed.
         FileNotFoundError: If neither the file nor its Parquet sibling exist.
     """
+    require(file_path is not None, "file_path must not be None")
+    require(
+        isinstance(file_path, (str, Path)),
+        "file_path must be a string or Path",
+        value=type(file_path).__name__,
+    )
+
     if not _HAS_PANDAS:
         msg = "pandas is required for read_data(). Install with: pip install pandas pyarrow"
         raise ImportError(msg)
 
     path = Path(file_path)
+    require(
+        path.suffix.lower() in {".csv", ".tsv", ".txt", ".parquet"},
+        f"Unsupported file extension: {path.suffix}",
+        value=path.suffix,
+    )
 
     # If asked for CSV, check if Parquet sibling exists
     if prefer_parquet and path.suffix.lower() == ".csv":
@@ -101,11 +115,23 @@ def write_data(
     Returns:
         Path to the written file.
     """
+    require(df is not None, "df must not be None")
+    require(file_path is not None, "file_path must not be None")
+    require(
+        isinstance(file_path, (str, Path)),
+        "file_path must be a string or Path",
+        value=type(file_path).__name__,
+    )
+
     if not _HAS_PANDAS:
         msg = "pandas is required for write_data()"
         raise ImportError(msg)
 
     path = Path(file_path)
+    ensure(
+        path.suffix.lower() in {".csv", ".tsv", ".txt", ".parquet"},
+        f"Output file extension must be CSV or Parquet, got: {path.suffix}",
+    )
     path.parent.mkdir(parents=True, exist_ok=True)
 
     if path.suffix.lower() == ".parquet":
