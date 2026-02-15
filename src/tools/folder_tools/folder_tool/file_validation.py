@@ -204,4 +204,4 @@ class FileValidationMixin:
             except OSError:
                 dest_path = Path(dest_path) / "Unknown_Date"
 
-        return Path(dest_path) / filename
+        return str(Path(dest_path) / filename)

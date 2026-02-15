@@ -333,7 +333,7 @@ class FolderOperationsMixin:
                 if not files and not any(
                     any(Path(root, d).iterdir())
                     for d in dirs
-                    if Path(Path(root).exists() / d)
+                    if (Path(root) / d).exists()
                 ):
                     empty_folders_skipped += 1
                     continue
