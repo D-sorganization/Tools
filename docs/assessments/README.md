@@ -86,8 +86,9 @@ This document defines the comprehensive 16-point assessment framework (A-O + Hig
 | M             | `Assessment_Prompt_M.md`         | `Assessment_M_Results_YYYY-MM-DD.md`     |
 | N             | `Assessment_Prompt_N.md`         | `Assessment_N_Results_YYYY-MM-DD.md`     |
 | O             | `Assessment_Prompt_O.md`         | `Assessment_O_Results_YYYY-MM-DD.md`     |
-| Highlight     | `Assessment_Prompt_Highlight.md` | `Assessment_Highlight_YYYY-MM-DD.md`     |
-| Comprehensive | N/A (multi-framework)            | `comprehensive_assessment_YYYY-MM-DD.md` |
+| Highlight     | `Assessment_Prompt_Highlight.md` | `Assessment_Highlight_YYYY-MM-DD.md`               |
+| Comprehensive | N/A (multi-framework)            | `comprehensive_assessment_YYYY-MM-DD.md`           |
+| Completist    | N/A (Automated Scan)             | `completist/completist_audit_report_YYYY-MM-DD.md` |
 
 ---
 
@@ -156,6 +157,7 @@ This document defines the comprehensive 16-point assessment framework (A-O + Hig
 | 1.0     | 2025-12 | Initial 15-point framework                     |
 | 2.0     | 2026-01 | Reorganized based on UX/strategic gap analysis |
 | 2.1     | 2026-02 | Added comprehensive multi-framework assessment |
+| 2.2     | 2026-02 | Added completist audit reports                 |
 
 ---
 
