@@ -46,12 +46,11 @@ except ImportError:
         return None
 
 
-from .statistical_widgets import VariableSelector
-
 logger = logging.getLogger(__name__)
 
 
 if PYQT6_AVAILABLE:
+    from .statistical_widgets import VariableSelector
 
     class SurfacePlotWidget(QWidget):
         """Widget for 3D surface plot configuration."""

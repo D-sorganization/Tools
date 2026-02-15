@@ -30,23 +30,26 @@ except ImportError:
 
 
 # Re-export all widget classes for backward compatibility
-from .chart_style_panel import ChartStylePanel  # noqa: E402
-from .plot_dialogs import (  # noqa: E402
-    ContourPlotDialog,
-    FilterComparisonDialog,
-    HeatmapDialog,
-)
-from .statistical_widgets import (  # noqa: E402
-    ANOVAWidget,
-    PCAWidget,
-    RegressionWidget,
-    VariableSelector,
-)
-from .visualization_widgets import (  # noqa: E402
-    NeuralNetworkWidget,
-    ScriptGeneratorWidget,
-    SurfacePlotWidget,
-)
+# Only import when PyQt6 is available, as submodules define classes
+# inside PYQT6_AVAILABLE guards
+if PYQT6_AVAILABLE:
+    from .chart_style_panel import ChartStylePanel  # noqa: E402
+    from .plot_dialogs import (  # noqa: E402
+        ContourPlotDialog,
+        FilterComparisonDialog,
+        HeatmapDialog,
+    )
+    from .statistical_widgets import (  # noqa: E402
+        ANOVAWidget,
+        PCAWidget,
+        RegressionWidget,
+        VariableSelector,
+    )
+    from .visualization_widgets import (  # noqa: E402
+        NeuralNetworkWidget,
+        ScriptGeneratorWidget,
+        SurfacePlotWidget,
+    )
 
 logger = logging.getLogger(__name__)
 
