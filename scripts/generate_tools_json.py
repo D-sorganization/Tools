@@ -94,7 +94,7 @@ def generate_manifest_data(repo_root: Path) -> dict[str, list[dict[str, Any]]]:
                 {
                     "name": display_name,
                     "type": "python",
-                    "path": str(launch_path.relative_to(repo_root)),
+                    "path": launch_path.relative_to(repo_root).as_posix(),
                 }
             )
 
@@ -105,7 +105,7 @@ def generate_manifest_data(repo_root: Path) -> dict[str, list[dict[str, Any]]]:
                 {
                     "name": display_name,
                     "type": "web",
-                    "path": str(launch_path.relative_to(repo_root)),
+                    "path": launch_path.relative_to(repo_root).as_posix(),
                 }
             )
 
@@ -177,14 +177,14 @@ def main() -> None:
     manifest = generate_manifest_data(repo_root)
     manifest_path = repo_root / "tools.json"
     manifest_path.write_text(
-        json.dumps(manifest, indent=2, sort_keys=True), encoding="utf-8"
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
     logger.info("Wrote %s", manifest_path)
 
     # Generate contract
     contract = generate_contract_data(repo_root)
     contract_path = repo_root / "tool_surface_contract.json"
-    contract_path.write_text(json.dumps(contract, indent=2), encoding="utf-8")
+    contract_path.write_text(json.dumps(contract, indent=2) + "\n", encoding="utf-8")
     logger.info("Wrote %s", contract_path)
 
     print(
