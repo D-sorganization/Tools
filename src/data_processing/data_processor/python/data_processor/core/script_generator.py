@@ -9,380 +9,30 @@ Provides functionality to:
 
 Supports consistent data processing workflows that can be
 called programmatically for automation.
+
+This module serves as a facade, composing the following submodules:
+- script_generator_types: Data models (types, steps, pipelines)
+- pipeline_recorder: PipelineRecorder for recording operations
+- pipeline_executor: PipelineExecutor for running pipelines
 """
 
 from __future__ import annotations
 
 import json
 import logging
-from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
 
-if TYPE_CHECKING:
-    import pandas as pd
-
-    from data_processor.vectorized_filter_engine import VectorizedFilterEngine
+# Re-export all public types for backward compatibility
+from data_processor.core.pipeline_executor import PipelineExecutor  # noqa: F401
+from data_processor.core.pipeline_recorder import PipelineRecorder  # noqa: F401
+from data_processor.core.script_generator_types import (  # noqa: F401
+    OperationType,
+    ProcessingPipeline,
+    ProcessingStep,
+)
 
 logger = logging.getLogger(__name__)
-
-
-class OperationType(Enum):
-    """Types of data processing operations."""
-
-    LOAD = "load"
-    FILTER = "filter"
-    TRANSFORM = "transform"
-    CALCULATE = "calculate"
-    RESAMPLE = "resample"
-    INTEGRATE = "integrate"
-    DIFFERENTIATE = "differentiate"
-    TRIM = "trim"
-    MERGE = "merge"
-    SELECT = "select"
-    RENAME = "rename"
-    EXPORT = "export"
-    CUSTOM = "custom"
-
-
-@dataclass
-class ProcessingStep:
-    """A single processing operation."""
-
-    operation: OperationType
-    parameters: dict[str, Any]
-    description: str = ""
-    enabled: bool = True
-
-    def to_dict(self) -> dict[str, Any]:
-        """Convert to dictionary."""
-        return {
-            "operation": self.operation.value,
-            "parameters": self.parameters,
-            "description": self.description,
-            "enabled": self.enabled,
-        }
-
-    @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> ProcessingStep:
-        """Create from dictionary."""
-        return cls(
-            operation=OperationType(data["operation"]),
-            parameters=data["parameters"],
-            description=data.get("description", ""),
-            enabled=data.get("enabled", True),
-        )
-
-
-@dataclass
-class ProcessingPipeline:
-    """A complete processing pipeline with multiple steps."""
-
-    name: str
-    description: str = ""
-    steps: list[ProcessingStep] = field(default_factory=list)
-    input_config: dict[str, Any] = field(default_factory=dict)
-    output_config: dict[str, Any] = field(default_factory=dict)
-    metadata: dict[str, Any] = field(default_factory=dict)
-
-    def add_step(
-        self,
-        operation: OperationType,
-        parameters: dict[str, Any],
-        description: str = "",
-    ) -> ProcessingStep:
-        """Add a processing step to the pipeline."""
-        step = ProcessingStep(
-            operation=operation,
-            parameters=parameters,
-            description=description,
-        )
-        self.steps.append(step)
-        return step
-
-    def remove_step(self, index: int) -> ProcessingStep | None:
-        """Remove a step by index."""
-        if 0 <= index < len(self.steps):
-            return self.steps.pop(index)
-        return None
-
-    def move_step(self, from_index: int, to_index: int) -> bool:
-        """Move a step from one position to another."""
-        if 0 <= from_index < len(self.steps) and 0 <= to_index < len(self.steps):
-            step = self.steps.pop(from_index)
-            self.steps.insert(to_index, step)
-            return True
-        return False
-
-    def to_dict(self) -> dict[str, Any]:
-        """Convert to dictionary."""
-        return {
-            "name": self.name,
-            "description": self.description,
-            "steps": [s.to_dict() for s in self.steps],
-            "input_config": self.input_config,
-            "output_config": self.output_config,
-            "metadata": self.metadata,
-        }
-
-    @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> ProcessingPipeline:
-        """Create from dictionary."""
-        steps = [ProcessingStep.from_dict(s) for s in data.get("steps", [])]
-        return cls(
-            name=data["name"],
-            description=data.get("description", ""),
-            steps=steps,
-            input_config=data.get("input_config", {}),
-            output_config=data.get("output_config", {}),
-            metadata=data.get("metadata", {}),
-        )
-
-
-class PipelineRecorder:
-    """Records data processing operations into a pipeline."""
-
-    def __init__(self, pipeline_name: str = "Untitled Pipeline") -> None:
-        """Initialize the recorder."""
-        self._pipeline = ProcessingPipeline(name=pipeline_name)
-        self._recording = True
-
-    @property
-    def pipeline(self) -> ProcessingPipeline:
-        """Get the current pipeline."""
-        return self._pipeline
-
-    @property
-    def is_recording(self) -> bool:
-        """Check if recording is active."""
-        return self._recording
-
-    def start_recording(self) -> None:
-        """Start recording operations."""
-        self._recording = True
-
-    def stop_recording(self) -> None:
-        """Stop recording operations."""
-        self._recording = False
-
-    def clear(self) -> None:
-        """Clear all recorded steps."""
-        self._pipeline.steps.clear()
-
-    def record_load(
-        self,
-        file_path: str,
-        file_format: str | None = None,
-        options: dict[str, Any] | None = None,
-    ) -> None:
-        """Record a file load operation."""
-        if not self._recording:
-            return
-
-        self._pipeline.add_step(
-            operation=OperationType.LOAD,
-            parameters={
-                "file_path": file_path,
-                "file_format": file_format,
-                "options": options or {},
-            },
-            description=f"Load data from {file_path}",
-        )
-
-    def record_filter(
-        self,
-        filter_type: str,
-        parameters: dict[str, Any],
-        signals: list[str] | None = None,
-    ) -> None:
-        """Record a filter operation."""
-        if not self._recording:
-            return
-
-        self._pipeline.add_step(
-            operation=OperationType.FILTER,
-            parameters={
-                "filter_type": filter_type,
-                "filter_params": parameters,
-                "signals": signals,
-            },
-            description=f"Apply {filter_type} filter",
-        )
-
-    def record_transform(
-        self,
-        transform_type: str,
-        parameters: dict[str, Any],
-    ) -> None:
-        """Record a transformation operation."""
-        if not self._recording:
-            return
-
-        self._pipeline.add_step(
-            operation=OperationType.TRANSFORM,
-            parameters={
-                "transform_type": transform_type,
-                **parameters,
-            },
-            description=f"Apply {transform_type} transformation",
-        )
-
-    def record_calculate(
-        self,
-        column_name: str,
-        formula: str,
-    ) -> None:
-        """Record a calculated column operation."""
-        if not self._recording:
-            return
-
-        self._pipeline.add_step(
-            operation=OperationType.CALCULATE,
-            parameters={
-                "column_name": column_name,
-                "formula": formula,
-            },
-            description=f"Calculate {column_name} = {formula}",
-        )
-
-    def record_resample(
-        self,
-        time_column: str,
-        rule: str,
-        method: str = "mean",
-    ) -> None:
-        """Record a resampling operation."""
-        if not self._recording:
-            return
-
-        self._pipeline.add_step(
-            operation=OperationType.RESAMPLE,
-            parameters={
-                "time_column": time_column,
-                "rule": rule,
-                "method": method,
-            },
-            description=f"Resample to {rule} using {method}",
-        )
-
-    def record_integrate(
-        self,
-        time_column: str,
-        signals: list[str],
-        method: str = "trapezoidal",
-    ) -> None:
-        """Record an integration operation."""
-        if not self._recording:
-            return
-
-        self._pipeline.add_step(
-            operation=OperationType.INTEGRATE,
-            parameters={
-                "time_column": time_column,
-                "signals": signals,
-                "method": method,
-            },
-            description=f"Integrate signals using {method}",
-        )
-
-    def record_differentiate(
-        self,
-        time_column: str,
-        signals: list[str],
-        method: str = "spline",
-        orders: list[int] | None = None,
-    ) -> None:
-        """Record a differentiation operation."""
-        if not self._recording:
-            return
-
-        self._pipeline.add_step(
-            operation=OperationType.DIFFERENTIATE,
-            parameters={
-                "time_column": time_column,
-                "signals": signals,
-                "method": method,
-                "orders": orders or [1],
-            },
-            description=f"Differentiate signals using {method}",
-        )
-
-    def record_trim(
-        self,
-        time_column: str,
-        start_time: str | None = None,
-        end_time: str | None = None,
-    ) -> None:
-        """Record a time range trim operation."""
-        if not self._recording:
-            return
-
-        self._pipeline.add_step(
-            operation=OperationType.TRIM,
-            parameters={
-                "time_column": time_column,
-                "start_time": start_time,
-                "end_time": end_time,
-            },
-            description=(
-                f"Trim time range: {start_time or 'start'} " f"to {end_time or 'end'}"
-            ),
-        )
-
-    def record_select(
-        self,
-        columns: list[str],
-    ) -> None:
-        """Record a column selection operation."""
-        if not self._recording:
-            return
-
-        self._pipeline.add_step(
-            operation=OperationType.SELECT,
-            parameters={"columns": columns},
-            description=f"Select {len(columns)} columns",
-        )
-
-    def record_export(
-        self,
-        file_path: str,
-        file_format: str = "csv",
-        options: dict[str, Any] | None = None,
-    ) -> None:
-        """Record an export operation."""
-        if not self._recording:
-            return
-
-        self._pipeline.add_step(
-            operation=OperationType.EXPORT,
-            parameters={
-                "file_path": file_path,
-                "file_format": file_format,
-                "options": options or {},
-            },
-            description=f"Export to {file_path}",
-        )
-
-    def record_custom(
-        self,
-        operation_name: str,
-        parameters: dict[str, Any],
-        description: str = "",
-    ) -> None:
-        """Record a custom operation."""
-        if not self._recording:
-            return
-
-        self._pipeline.add_step(
-            operation=OperationType.CUSTOM,
-            parameters={
-                "operation_name": operation_name,
-                **parameters,
-            },
-            description=description or f"Custom operation: {operation_name}",
-        )
 
 
 class ScriptGenerator:
@@ -412,7 +62,7 @@ class ScriptGenerator:
         Returns:
             Generated script as string
         """
-        lines = []
+        lines: list[str] = []
 
         # Header
         lines.extend(
@@ -539,7 +189,6 @@ class ScriptGenerator:
         Returns:
             CLI command string
         """
-        # Generate JSON config
         config = pipeline.to_dict()
         config_json = json.dumps(config)
 
@@ -721,7 +370,7 @@ class ScriptGenerator:
         use_argparse: bool,
     ) -> list[str]:
         """Generate import statements based on pipeline operations."""
-        imports = [
+        imports: list[str] = [
             "from __future__ import annotations",
             "",
             "import pandas as pd",
@@ -773,7 +422,7 @@ class ScriptGenerator:
     def _generate_step_code(self, step: ProcessingStep, indent: int = 0) -> list[str]:
         """Generate Python code for a processing step."""
         prefix = " " * indent
-        lines = []
+        lines: list[str] = []
         params = step.parameters
 
         if step.operation == OperationType.LOAD:
@@ -891,147 +540,16 @@ class ScriptGenerator:
         ]
 
 
-class PipelineExecutor:
-    """Executes processing pipelines on data."""
-
-    def __init__(self) -> None:
-        """Initialize the executor."""
-        self._filter_engine: VectorizedFilterEngine | None = None
-
-    def execute(
-        self,
-        pipeline: ProcessingPipeline,
-        input_data: str | Path | pd.DataFrame,
-        output_path: str | Path | None = None,
-    ) -> pd.DataFrame:
-        """Execute a pipeline on input data.
-
-        Args:
-            pipeline: Processing pipeline to execute
-            input_data: Input file path or DataFrame
-            output_path: Optional output file path
-
-        Returns:
-            Processed DataFrame
-        """
-        import pandas as pd
-
-        # Load data if path provided
-        if isinstance(input_data, (str, Path)):
-            df = pd.read_csv(input_data)
-        else:
-            df = input_data.copy()
-
-        # Execute each step
-        for i, step in enumerate(pipeline.steps):
-            if not step.enabled:
-                logger.debug(f"Skipping disabled step {i+1}: {step.description}")
-                continue
-
-            logger.info(f"Executing step {i+1}: {step.description}")
-            df = self._execute_step(df, step)
-
-        # Export if output path provided
-        if output_path:
-            output_path = Path(output_path)
-            suffix = output_path.suffix.lower()
-
-            if suffix == ".csv":
-                df.to_csv(output_path, index=False)
-            elif suffix in (".xlsx", ".xls"):
-                df.to_excel(output_path, index=False)
-            elif suffix == ".parquet":
-                df.to_parquet(output_path)
-            else:
-                df.to_csv(output_path, index=False)
-
-            logger.info(f"Exported results to {output_path}")
-
-        return df
-
-    def _execute_step(self, df: pd.DataFrame, step: ProcessingStep) -> pd.DataFrame:
-        """Execute a single processing step."""
-        params = step.parameters
-
-        if step.operation == OperationType.FILTER:
-            from data_processor.vectorized_filter_engine import VectorizedFilterEngine
-
-            if self._filter_engine is None:
-                self._filter_engine = VectorizedFilterEngine()
-
-            return self._filter_engine.apply_filter_batch(
-                df,
-                params.get("filter_type"),
-                params.get("filter_params", {}),
-                signal_names=params.get("signals"),
-            )
-
-        elif step.operation == OperationType.CALCULATE:
-            from data_processor.core.signal_processing import apply_custom_variable
-
-            return apply_custom_variable(
-                df,
-                params.get("column_name"),
-                params.get("formula"),
-            )
-
-        elif step.operation == OperationType.RESAMPLE:
-            from data_processor.core.signal_processing import resample_data
-
-            return resample_data(
-                df,
-                params.get("time_column"),
-                params.get("rule"),
-                method=params.get("method", "mean"),
-            )
-
-        elif step.operation == OperationType.INTEGRATE:
-            from data_processor.core.signal_processing import integrate_signals
-
-            return integrate_signals(
-                df,
-                params.get("time_column"),
-                params.get("signals"),
-                method=params.get("method", "trapezoidal"),
-            )
-
-        elif step.operation == OperationType.DIFFERENTIATE:
-            from data_processor.core.signal_processing import differentiate_signals
-
-            return differentiate_signals(
-                df,
-                params.get("time_column"),
-                params.get("signals"),
-                method=params.get("method", "spline"),
-                orders=params.get("orders", [1]),
-            )
-
-        elif step.operation == OperationType.TRIM:
-            from data_processor.core.signal_processing import trim_time_range
-
-            return trim_time_range(
-                df,
-                params.get("time_column"),
-                start_time=params.get("start_time"),
-                end_time=params.get("end_time"),
-            )
-
-        elif step.operation == OperationType.SELECT:
-            return df[params.get("columns", [])]
-
-        elif step.operation == OperationType.RENAME:
-            return df.rename(columns=params.get("mapping", {}))
-
-        else:
-            logger.warning(f"Unknown operation: {step.operation}")
-            return df
+def _get_all_exports() -> list[str]:
+    """Return the list of all public exports."""
+    return [
+        "OperationType",
+        "ProcessingStep",
+        "ProcessingPipeline",
+        "PipelineRecorder",
+        "ScriptGenerator",
+        "PipelineExecutor",
+    ]
 
 
-__all__ = [
-    "OperationType",
-    "ProcessingStep",
-    "ProcessingPipeline",
-    "PipelineRecorder",
-    "ScriptGenerator",
-    "PipelineExecutor",
-]
+__all__ = _get_all_exports()
