@@ -46,14 +46,6 @@ jobs:
           pip install httpx
           pip install ruff==0.14.10 black==26.1.0 mypy==1.13.0 bandit==1.7.7 pip-audit types-PyYAML types-requests
 
-      - name: Lint (Ruff)
-        run: ruff check . --exclude "**/*.ipynb"
-
-      - name: Normalize Line Endings
-        run: |
-          # Convert CRLF to LF for consistent Black formatting
-          find . -name "*.py" -type f -exec sed -i 's/\r$//' {} \;
-
       - name: Collect Changed Python Files
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
@@ -70,6 +62,21 @@ jobs:
           fi
           grep -v '^tests/' changed_python_files.txt > changed_mypy_files.txt || true
           cat changed_python_files.txt
+
+      - name: Lint (Ruff)
+        run: |
+          if [ -s changed_python_files.txt ]; then
+            echo "Linting changed files..."
+            xargs -r -d '\n' ruff check < changed_python_files.txt
+          else
+            echo "No changed files found or not in PR/push context, linting all..."
+            ruff check . --exclude "**/*.ipynb"
+          fi
+
+      - name: Normalize Line Endings
+        run: |
+          # Convert CRLF to LF for consistent Black formatting
+          find . -name "*.py" -type f -exec sed -i 's/\r$//' {} \;
 
       - name: Format Check (Black)
         run: |
