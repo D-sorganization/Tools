@@ -43,18 +43,14 @@ try:
         get_file_type,
         should_exclude,
     )
+    from tools.folder_tools.folder_packer_pro.manifest import PackageManifest
 
     # Also verify backward-compatible facade imports work
     from tools.folder_tools.folder_packer_pro.folder_packer_pro import (  # noqa: F811
         EncryptionManager as EncryptionManagerFacade,
-    )
-    from tools.folder_tools.folder_packer_pro.folder_packer_pro import (
         FolderPackerPro as FolderPackerProFacade,
-    )
-    from tools.folder_tools.folder_packer_pro.folder_packer_pro import (
         PackageManifest as PackageManifestFacade,
     )
-    from tools.folder_tools.folder_packer_pro.manifest import PackageManifest
 except ImportError:
     pytest.skip("folder_packer_pro module not available", allow_module_level=True)
 
@@ -283,7 +279,7 @@ class TestFolderPackerPro:
         ):
             app = FolderPackerPro(mock_root)
             app.pack_source_entry = Mock()
-            app._display_stats = Mock()
+            app._display_stats = Mock()  # type: ignore[method-assign]
 
             # Empty source
             app.pack_source_entry.get.return_value = ""
@@ -305,7 +301,7 @@ class TestFolderPackerPro:
                 if callback is not None:
                     callback()
 
-            app.root.after.side_effect = immediate_after
+            app.root.after.side_effect = immediate_after  # type: ignore[attr-defined]
 
             # Patch Thread to run synchronously
             with patch(
@@ -358,8 +354,8 @@ class TestFolderPackerPro:
             app.pack_output_entry = Mock()
             app.unpack_source_entry = Mock()
             app.unpack_dest_entry = Mock()
-            app._scan_folder = Mock()
-            app._log_message = Mock()
+            app._scan_folder = Mock()  # type: ignore[method-assign]
+            app._log_message = Mock()  # type: ignore[method-assign]
 
             # _browse_pack_source
             mock_askdir.return_value = str(tmp_path)

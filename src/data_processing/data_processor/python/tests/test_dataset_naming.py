@@ -48,7 +48,7 @@ class TestValidateDatasetName:
         assert validate_dataset_name("path\\to\\file") is False
 
     def test_invalid_chars(self) -> None:
-        for ch in ["<", ">", ":", '"', "|", "?", "*"]:
+        for ch in ['<', '>', ':', '"', '|', '?', '*']:
             assert validate_dataset_name(f"data{ch}file") is False
 
     def test_valid_with_spaces(self) -> None:
@@ -97,7 +97,9 @@ class TestGenerateDatasetName:
         assert name.startswith("experiment")
 
     def test_no_timestamp(self) -> None:
-        name = generate_dataset_name(include_timestamp=False, include_date=False)
+        name = generate_dataset_name(
+            include_timestamp=False, include_date=False
+        )
         assert name == "data"
 
     def test_with_filter(self) -> None:
