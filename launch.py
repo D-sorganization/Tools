@@ -1,130 +1,156 @@
-# ruff: noqa: T201
-"""Unified tool launcher for the Tools platform.
+#!/usr/bin/env python3
+"""Unified tool launcher for the Tools repository.
+
+This is the single entry point for launching any registered PyQt6 tool.
+It auto-discovers all tools via their gui_registration.py files and can
+launch them by name.
 
 Usage:
-    python launch.py --list          # List available tools
-    python launch.py --tool <name>   # Launch a specific tool
+    # List all available tools
+    python launch.py --list
 
-This is the single canonical entry point for launching all GUI tools
-in the repository. It replaces the legacy Launcher.py and individual
-launch_pyqt6.py scripts.
+    # Launch a specific tool by name
+    python launch.py --tool "Pressure Drop Calculator"
+
+    # Launch by tool_name identifier
+    python launch.py --tool pressure_drop_calculator
+
+    # Launch the unified tools launcher (default)
+    python launch.py
 """
 
 from __future__ import annotations
 
 import argparse
-import logging
 import sys
 from pathlib import Path
 
-logger = logging.getLogger(__name__)
+# Bootstrap imports for development mode
+_REPO_ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
+from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
 
-SRC_DIR = Path(__file__).resolve().parent / "src"
+ensure_paths(_REPO_ROOT)
 
-
-def _setup_logging() -> None:
-    """Configure logging for the launcher."""
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-    )
+from gui_launcher import launch_pyqt6_app  # noqa: E402
+from gui_launcher.registry import auto_discover_guis, get_registry  # noqa: E402
 
 
-def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
-    """Parse command-line arguments."""
+def discover_all_tools() -> int:
+    """Discover all tools from gui_registration.py files.
+
+    Returns:
+        Number of tools discovered.
+    """
+    src_dir = _REPO_ROOT / "src"
+    return int(auto_discover_guis([src_dir]))
+
+
+def list_tools() -> None:
+    """Print all available tools grouped by category."""
+    count = discover_all_tools()
+    registry = get_registry()
+
+    if count == 0:
+        print("No tools found.")
+        return
+
+    print(f"Discovered {count} tool registrations.\n")
+
+    categories = registry.list_categories()
+    for category in categories:
+        tools = registry.list_tools(category=category)
+        if tools:
+            print(f"  [{category}]")
+            for tool in tools:
+                print(f"    {tool.tool_name:40s} {tool.display_name}")
+            print()
+
+
+def launch_tool(tool_identifier: str) -> int:
+    """Launch a tool by name or tool_name.
+
+    Args:
+        tool_identifier: Either the display name or the tool_name.
+
+    Returns:
+        Exit code.
+    """
+    discover_all_tools()
+    registry = get_registry()
+
+    # Try exact tool_name match first
+    registration = registry.get(tool_identifier)
+
+    # If not found, try matching by display name (case-insensitive)
+    if registration is None:
+        for tool in registry.list_tools():
+            if tool.display_name.lower() == tool_identifier.lower():
+                registration = tool
+                break
+
+    # If still not found, try partial match
+    if registration is None:
+        matches = []
+        needle = tool_identifier.lower()
+        for tool in registry.list_tools():
+            if needle in tool.tool_name.lower() or needle in tool.display_name.lower():
+                matches.append(tool)
+        if len(matches) == 1:
+            registration = matches[0]
+        elif len(matches) > 1:
+            print(f"Ambiguous tool name '{tool_identifier}'. Matches:")
+            for m in matches:
+                print(f"  - {m.tool_name} ({m.display_name})")
+            return 1
+
+    if registration is None:
+        print(f"Tool '{tool_identifier}' not found.")
+        print("\nUse --list to see all available tools.")
+        return 1
+
+    from gui_launcher.launcher import GUIType
+
+    config = registration.gui_configs.get(GUIType.PYQT6)
+    if config is None:
+        print(f"Tool '{registration.display_name}' has no PyQt6 configuration.")
+        return 1
+
+    print(f"Launching: {registration.display_name}")
+    return int(launch_pyqt6_app(config))
+
+
+def main() -> int:
+    """Main entry point."""
     parser = argparse.ArgumentParser(
-        description="Unified tool launcher for the Tools platform.",
+        description="Unified tool launcher for the Tools repository.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""\
+Examples:
+  python launch.py --list
+  python launch.py --tool "Pressure Drop Calculator"
+  python launch.py --tool baghouse_calculator
+  python launch.py                                    # Default: list tools
+""",
     )
     parser.add_argument(
         "--list",
         action="store_true",
-        help="List all available tools.",
+        help="List all available tools",
     )
     parser.add_argument(
         "--tool",
         type=str,
-        default=None,
-        help="Name of the tool to launch.",
+        help="Tool name or identifier to launch",
     )
-    parser.add_argument(
-        "--verbose",
-        "-v",
-        action="store_true",
-        help="Enable verbose logging.",
-    )
-    return parser.parse_args(argv)
 
+    args = parser.parse_args()
 
-def main(argv: list[str] | None = None) -> int:
-    """Main entry point for the unified launcher.
-
-    Args:
-        argv: Optional command-line arguments for testing.
-
-    Returns:
-        Exit code (0 = success, 1 = error).
-    """
-    args = _parse_args(argv)
-    _setup_logging()
-
-    if args.verbose:
-        logging.getLogger().setLevel(logging.DEBUG)
-
-    try:
-        from gui_launcher.registry import GUIRegistry, auto_discover_guis
-    except ImportError:
-        logger.error("gui_launcher module not found. Install it first.")
-        return 1
-
-    # Discover available tools
-    count = auto_discover_guis([SRC_DIR])
-    registry = GUIRegistry.instance()
-    tools = registry.list_tools()
-
-    if args.list:
-        print(f"\nAvailable tools ({count} discovered):\n")
-        for tool in sorted(tools, key=lambda t: t.name):
-            desc = getattr(tool, "description", "")
-            print(f"  {tool.tool_name:<30} {desc}")
-        print()
-        GUIRegistry._instance = None
+    if args.list or (not args.tool):
+        list_tools()
         return 0
 
-    if args.tool:
-        from gui_launcher.launcher import launch_from_gui_info
-
-        # Find the tool by name
-        matching = [t for t in tools if t.tool_name == args.tool]
-        if not matching:
-            logger.error(
-                "Tool '%s' not found. Use --list to see available tools.", args.tool
-            )
-            GUIRegistry._instance = None
-            return 1
-
-        tool = matching[0]
-        gui_info = {
-            "name": tool.name,
-            "tool_name": tool.tool_name,
-            "description": getattr(tool, "description", ""),
-        }
-        # Add pyqt6 config if available
-        if hasattr(tool, "gui_configs") and tool.gui_configs:
-            from gui_launcher.launcher import GUIType
-
-            pyqt6_config = tool.gui_configs.get(GUIType.PYQT6)
-            if pyqt6_config:
-                gui_info["pyqt6"] = {
-                    "module": pyqt6_config.module,
-                    "class": pyqt6_config.class_name,
-                }
-
-        GUIRegistry._instance = None
-        return launch_from_gui_info(gui_info)
-
-    # No --list or --tool: show help
-    _parse_args(["--help"])
-    return 0
+    return launch_tool(args.tool)
 
 
 if __name__ == "__main__":
