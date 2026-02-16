@@ -22,12 +22,17 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import logging
 import re
 import subprocess
 import sys
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
+
+# Setup logging
+logging.basicConfig(level=logging.INFO, format="%(message)s")
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -135,7 +140,6 @@ COMMON_TYPE_IMPORTS = {
 }
 
 
-<<<<<<< HEAD
 def run_mypy(config_file: str | None = None, targets: list[str] | None = None) -> str:
     """Run mypy and return raw output."""
     if not targets:
@@ -150,23 +154,14 @@ def run_mypy(config_file: str | None = None, targets: list[str] | None = None) -
             targets = ["."]
 
     cmd = ["mypy"] + targets + ["--no-error-summary"]
-=======
-def run_mypy(config_file: str | None = None) -> str:
-    """Run mypy and return raw output."""
-    cmd = ["mypy", "src", "--no-error-summary"]
->>>>>>> ddcca51ca64affa7f93ad6405307f4afb257f135
     if config_file:
         cmd.extend(["--config-file", config_file])
     # Show error codes for targeted fixes
     cmd.append("--show-error-codes")
-<<<<<<< HEAD
     # Add non-interactive and ignore-missing-imports for agent use
     cmd.extend(["--ignore-missing-imports", "--non-interactive"])
-    
+
     result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
-=======
-    result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
->>>>>>> ddcca51ca64affa7f93ad6405307f4afb257f135
     return result.stdout + result.stderr
 
 
@@ -204,8 +199,21 @@ def read_file_lines(filepath: str) -> list[str]:
 
 
 def write_file_lines(filepath: str, lines: list[str]) -> None:
-    """Write lines back to file."""
-    Path(filepath).write_text("".join(lines), encoding="utf-8")
+    """Write lines back to file with safety check."""
+    # LOBOTOMY GUARD: Prevent destructive fixes that wipe more than 50% of the file
+    try:
+        if Path(filepath).exists():
+            original_line_count = len(Path(filepath).read_text().splitlines())
+            if len(lines) < original_line_count * 0.5 and original_line_count > 10:
+                logger.info(
+                    f"!!! LOBOTOMY GUARD: Aborting write to {filepath} (new length: {len(lines)}, original: {original_line_count})"
+                )
+                return
+    except Exception:
+        pass
+
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.writelines(lines)
 
 
 def has_type_ignore(line: str, code: str | None = None) -> bool:
@@ -521,31 +529,23 @@ def run_agent(
     dry_run: bool = False,
     verbose: bool = False,
     config_file: str | None = None,
-<<<<<<< HEAD
     targets: list[str] | None = None,
-=======
->>>>>>> ddcca51ca64affa7f93ad6405307f4afb257f135
 ) -> AgentReport:
     """Main agent loop: observe, classify, fix, report."""
     report = AgentReport()
 
     # Step 1: Run mypy
     if verbose:
-<<<<<<< HEAD
-        print(f">>> Running mypy on targets: {targets or 'default'}...")
+        logger.info(f">>> Running mypy on targets: {targets or 'default'}...")
     output = run_mypy(config_file, targets)
-=======
-        print(">>> Running mypy...")
-    output = run_mypy(config_file)
->>>>>>> ddcca51ca64affa7f93ad6405307f4afb257f135
     errors = parse_mypy_output(output)
     report.total_errors = len(errors)
 
     if verbose:
-        print(f">>> Found {len(errors)} mypy errors")
+        logger.info(f">>> Found {len(errors)} mypy errors")
 
     if not errors:
-        print("No mypy errors found.")
+        logger.info("No mypy errors found.")
         return report
 
     # Step 2: Group errors by file
@@ -611,7 +611,7 @@ def run_agent(
                     f"  [{fix.strategy}] {fix.file}:{fix.line} - {fix.description}"
                 )
                 if verbose:
-                    print(
+                    logger.info(
                         f"  FIX: {fix.file}:{fix.line} [{fix.strategy}] {fix.description}"
                     )
             else:
@@ -632,29 +632,29 @@ def run_agent(
 
 def print_report(report: AgentReport) -> None:
     """Print a human-readable report."""
-    print("\n" + "=" * 60)
-    print("  MYPY AUTOFIX AGENT REPORT")
-    print("=" * 60)
-    print(f"  Total mypy errors found:  {report.total_errors}")
-    print(f"  Errors fixed:             {report.errors_fixed}")
-    print(f"    Real fixes:             {report.real_fixes}")
-    print(f"    Suppressions:           {report.suppressions}")
-    print(f"  Files modified:           {len(report.files_modified)}")
+    logger.info("\n" + "=" * 60)
+    logger.info("  MYPY AUTOFIX AGENT REPORT")
+    logger.info("=" * 60)
+    logger.info(f"  Total mypy errors found:  {report.total_errors}")
+    logger.info(f"  Errors fixed:             {report.errors_fixed}")
+    logger.info(f"    Real fixes:             {report.real_fixes}")
+    logger.info(f"    Suppressions:           {report.suppressions}")
+    logger.info(f"  Files modified:           {len(report.files_modified)}")
 
     if report.fixes_applied:
-        print("\n  Fixes applied:")
+        logger.info("\n  Fixes applied:")
         for fix_desc in report.fixes_applied:
-            print(f"  {fix_desc}")
+            logger.info(f"  {fix_desc}")
 
     if report.skipped_reasons:
-        print(f"\n  Skipped ({len(report.skipped_reasons)}):")
+        logger.info(f"\n  Skipped ({len(report.skipped_reasons)}):")
         # Only show first 10 skipped reasons
         for reason in report.skipped_reasons[:10]:
-            print(f"    - {reason}")
+            logger.info(f"    - {reason}")
         if len(report.skipped_reasons) > 10:
-            print(f"    ... and {len(report.skipped_reasons) - 10} more")
+            logger.info(f"    ... and {len(report.skipped_reasons) - 10} more")
 
-    print("=" * 60)
+    logger.info("=" * 60)
 
 
 def main() -> int:
@@ -690,14 +690,11 @@ def main() -> int:
         default=None,
         help="Path to mypy config file (default: uses pyproject.toml)",
     )
-<<<<<<< HEAD
     parser.add_argument(
         "targets",
         nargs="*",
         help="Files or directories to check (default: src)",
     )
-=======
->>>>>>> ddcca51ca64affa7f93ad6405307f4afb257f135
     args = parser.parse_args()
 
     report = run_agent(
@@ -706,10 +703,7 @@ def main() -> int:
         dry_run=args.dry_run,
         verbose=args.verbose,
         config_file=args.config_file,
-<<<<<<< HEAD
         targets=args.targets,
-=======
->>>>>>> ddcca51ca64affa7f93ad6405307f4afb257f135
     )
 
     print_report(report)
@@ -724,3 +718,6 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+# Trigger CI
+# Trigger CI 2
+# Trigger CI 3

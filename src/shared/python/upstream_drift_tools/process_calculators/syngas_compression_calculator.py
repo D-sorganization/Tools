@@ -529,16 +529,21 @@ class CompressionCalculationWorker(QThread):
             self.error.emit(str(e))
 
 
-if BASE_CALCULATOR_AVAILABLE:
+if HAS_PYQT:
+    # Handle dynamic base class based on availability
+    BaseClass = BaseCalculatorWidget if BASE_CALCULATOR_AVAILABLE else QWidget
 
-    class SyngasCompressionCalculatorWidget(BaseCalculatorWidget):
+    class SyngasCompressionCalculatorWidget(BaseClass):  # type: ignore[valid-type, misc]
         """Main syngas compression calculator widget"""
 
         calculation_finished = pyqtSignal(dict)
 
         def __init__(self, parent: Any = None) -> None:
             """Initialize the class."""
-            super().__init__(calculator_name="SyngasCompression", parent=parent)
+            if BASE_CALCULATOR_AVAILABLE:
+                super().__init__(calculator_name="SyngasCompression", parent=parent)
+            else:
+                super().__init__(parent)
             self.engine = SyngasCompressionEngine()
             self.init_ui()
             # Defer default values with longer delay to ensure UI is fully initialized

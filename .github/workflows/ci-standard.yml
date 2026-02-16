@@ -36,8 +36,7 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-glx libegl1-mesa libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6
-
+          sudo apt-get install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
 
       - name: Install Dependencies
         run: |
@@ -46,14 +45,6 @@ jobs:
           pip install fastapi
           pip install httpx
           pip install ruff==0.14.10 black==26.1.0 mypy==1.13.0 bandit==1.7.7 pip-audit types-PyYAML types-requests
-
-      - name: Lint (Ruff)
-        run: ruff check . --exclude "**/*.ipynb"
-
-      - name: Normalize Line Endings
-        run: |
-          # Convert CRLF to LF for consistent Black formatting
-          find . -name "*.py" -type f -exec sed -i 's/\r$//' {} \;
 
       - name: Collect Changed Python Files
         run: |
@@ -72,6 +63,21 @@ jobs:
           grep -v '^tests/' changed_python_files.txt > changed_mypy_files.txt || true
           cat changed_python_files.txt
 
+      - name: Lint (Ruff)
+        run: |
+          if [ -s changed_python_files.txt ]; then
+            echo "Linting changed files..."
+            xargs -r -d '\n' ruff check < changed_python_files.txt
+          else
+            echo "No changed files found or not in PR/push context, linting all..."
+            ruff check . --exclude "**/*.ipynb"
+          fi
+
+      - name: Normalize Line Endings
+        run: |
+          # Convert CRLF to LF for consistent Black formatting
+          find . -name "*.py" -type f -exec sed -i 's/\r$//' {} \;
+
       - name: Format Check (Black)
         run: |
           if [ -s changed_python_files.txt ]; then
@@ -83,7 +89,9 @@ jobs:
       - name: Type Check (Mypy)
         run: |
           if [ -s changed_mypy_files.txt ]; then
-            xargs -r -d '\n' mypy --ignore-missing-imports --install-types --non-interactive < changed_mypy_files.txt
+            export MYPYPATH=src/shared/python:src:src/python/src
+            echo "Linting changed files with Mypy..."
+            xargs -r -d '\n' mypy --explicit-package-bases --ignore-missing-imports --install-types --non-interactive < changed_mypy_files.txt
           else
             echo "No changed source Python files to type-check."
           fi
@@ -162,9 +170,9 @@ jobs:
         run: |
           SMOKE_TESTS="tests/test_path_helpers.py tests/test_error_handling.py tests/shared/python/notes/test_storage.py"
           if [ -s changed_test_files.txt ]; then
-            pytest $(cat changed_test_files.txt) $SMOKE_TESTS --cov-report=xml:coverage.xml --cov-fail-under=0
+            pytest $(cat changed_test_files.txt) $SMOKE_TESTS --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0
           else
-            pytest $SMOKE_TESTS --cov-report=xml:coverage.xml --cov-fail-under=0
+            pytest $SMOKE_TESTS --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0
           fi
 
       - name: Coverage Policy Gate

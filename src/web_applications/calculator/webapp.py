@@ -185,6 +185,7 @@ def _validate_security(value: str | None) -> None:
 
 
 def _parse_payload(raw_payload: Mapping[str, object]) -> CalculationPayload:
+    """Parse and validate incoming calculation payload."""
     operation = str(raw_payload.get("operation", "")).strip()
     if not operation:
         raise ValueError("Operation is required")
@@ -199,10 +200,23 @@ def _parse_payload(raw_payload: Mapping[str, object]) -> CalculationPayload:
         )
     _validate_security(expression)
 
-    variable = _clean_optional(raw_payload.get("variable"))
-    _validate_length(variable, "Variable")
-    _validate_security(variable)
+    # Simplified extraction of optional fields
+    payload_fields = {
+        "variable": _clean_optional(raw_payload.get("variable")),
+        "lower": _clean_optional(raw_payload.get("lower")),
+        "upper": _clean_optional(raw_payload.get("upper")),
+        "value": _clean_optional(raw_payload.get("value")),
+        "direction": _clean_optional(raw_payload.get("direction")),
+        "around": _clean_optional(raw_payload.get("around")),
+        "function": _clean_optional(raw_payload.get("function")),
+    }
 
+    # Validate security for all extracted string fields
+    for name, value in payload_fields.items():
+        _validate_length(value, name.capitalize())
+        _validate_security(value)
+
+    # Handle variables mapping
     variables: Mapping[str, str] | None = None
     if isinstance(raw_payload.get("variables"), Mapping):
         variables = {}
@@ -214,42 +228,12 @@ def _parse_payload(raw_payload: Mapping[str, object]) -> CalculationPayload:
             _validate_security(v_str)
             variables[k_str] = v_str
 
-    lower = _clean_optional(raw_payload.get("lower"))
-    _validate_length(lower, "Lower bound")
-    _validate_security(lower)
-
-    upper = _clean_optional(raw_payload.get("upper"))
-    _validate_length(upper, "Upper bound")
-    _validate_security(upper)
-
-    value = _clean_optional(raw_payload.get("value"))
-    _validate_length(value, "Value")
-    _validate_security(value)
-
-    direction = _clean_optional(raw_payload.get("direction"))
-    _validate_length(direction, "Direction")
-    _validate_security(direction)
-
-    around = _clean_optional(raw_payload.get("around"))
-    _validate_length(around, "Around value")
-    _validate_security(around)
-
-    function = _clean_optional(raw_payload.get("function"))
-    _validate_length(function, "Function name")
-    _validate_security(function)
-
     return CalculationPayload(
         operation=operation,
         expression=expression,
-        variable=variable,
         variables=variables,
         order=_parse_optional_int(raw_payload.get("order")),
-        lower=lower,
-        upper=upper,
-        value=value,
-        direction=direction,
-        around=around,
-        function=function,
+        **payload_fields,
     )
 
 
@@ -260,9 +244,75 @@ def _validate_length(value: str | None, name: str) -> None:
         )
 
 
+def _handle_integral_calculation(
+    calculator: TI89Calculator, payload: CalculationPayload
+) -> CalculatorResult:
+    """Handle integral operation."""
+    if not payload.variable:
+        raise ValueError("Variable is required for integrals")
+
+    if payload.lower is not None or payload.upper is not None:
+        if payload.lower is None or payload.upper is None:
+            raise ValueError(
+                "Both lower and upper bounds are required for definite integrals"
+            )
+
+        variable_symbol = sp.Symbol(payload.variable)
+        lower = _sympify_value(
+            payload.lower,
+            calculator=calculator,
+            symbols={payload.variable: variable_symbol},
+        )
+        upper = _sympify_value(
+            payload.upper,
+            calculator=calculator,
+            symbols={payload.variable: variable_symbol},
+        )
+        return calculator.integral(
+            payload.expression, payload.variable, lower=lower, upper=upper
+        )
+    return calculator.integral(payload.expression, payload.variable)
+
+
+def _handle_limit_calculation(
+    calculator: TI89Calculator, payload: CalculationPayload
+) -> CalculatorResult:
+    """Handle limit operation."""
+    if not payload.variable:
+        raise ValueError("Variable is required for limits")
+    if payload.value is None:
+        raise ValueError("A limit value is required")
+    direction = payload.direction or "two-sided"
+    return calculator.limit(
+        payload.expression,
+        payload.variable,
+        _sympify_value(payload.value, calculator=calculator),
+        direction=direction,
+    )
+
+
+def _handle_series_calculation(
+    calculator: TI89Calculator, payload: CalculationPayload
+) -> CalculatorResult:
+    """Handle series operation."""
+    if not payload.variable:
+        raise ValueError("Variable is required for series expansion")
+    if payload.around is None:
+        raise ValueError("Expansion point is required for series expansion")
+    if payload.order is None or payload.order <= 0:
+        raise ValueError("Series order must be a positive integer")
+    return calculator.taylor_series(
+        payload.expression,
+        payload.variable,
+        _sympify_value(payload.around, calculator=calculator),
+        payload.order,
+    )
+
+
 def _dispatch_calculation(
     calculator: TI89Calculator, payload: CalculationPayload
 ) -> CalculatorResult:
+    """Dispatch the calculation to the appropriate calculator method."""
     if payload.operation == "evaluate":
         substitutions = _normalize_variables(payload.variables, calculator)
         return calculator.evaluate(payload.expression, substitutions)
@@ -280,12 +330,8 @@ def _dispatch_calculation(
             raise ValueError(
                 "Comma-separated variables are required for solving a system"
             )
-        variables = [
-            part.strip() for part in payload.variable.split(",") if part.strip()
-        ]
-        equations = [
-            part.strip() for part in payload.expression.split(";") if part.strip()
-        ]
+        variables = [v.strip() for v in payload.variable.split(",") if v.strip()]
+        equations = [e.strip() for e in payload.expression.split(";") if e.strip()]
         if not equations or not variables:
             raise ValueError("Equations and variables are required for system solving")
         return calculator.solve_system(equations, variables)
@@ -299,55 +345,13 @@ def _dispatch_calculation(
         return calculator.derivative(payload.expression, payload.variable, order=order)
 
     if payload.operation == "integral":
-        if not payload.variable:
-            raise ValueError("Variable is required for integrals")
-        if payload.lower is not None or payload.upper is not None:
-            if payload.lower is None or payload.upper is None:
-                raise ValueError(
-                    "Both lower and upper bounds are required for definite integrals"
-                )
-            variable_symbol = sp.Symbol(payload.variable)
-            lower = _sympify_value(
-                payload.lower,
-                calculator=calculator,
-                symbols={payload.variable: variable_symbol},
-            )
-            upper = _sympify_value(
-                payload.upper,
-                calculator=calculator,
-                symbols={payload.variable: variable_symbol},
-            )
-            return calculator.integral(
-                payload.expression, payload.variable, lower=lower, upper=upper
-            )
-        return calculator.integral(payload.expression, payload.variable)
+        return _handle_integral_calculation(calculator, payload)
 
     if payload.operation == "limit":
-        if not payload.variable:
-            raise ValueError("Variable is required for limits")
-        if payload.value is None:
-            raise ValueError("A limit value is required")
-        direction = payload.direction or "two-sided"
-        return calculator.limit(
-            payload.expression,
-            payload.variable,
-            _sympify_value(payload.value, calculator=calculator),
-            direction=direction,
-        )
+        return _handle_limit_calculation(calculator, payload)
 
     if payload.operation == "taylor_series":
-        if not payload.variable:
-            raise ValueError("Variable is required for series expansion")
-        if payload.around is None:
-            raise ValueError("Expansion point is required for series expansion")
-        if payload.order is None or payload.order <= 0:
-            raise ValueError("Series order must be a positive integer")
-        return calculator.taylor_series(
-            payload.expression,
-            payload.variable,
-            _sympify_value(payload.around, calculator=calculator),
-            payload.order,
-        )
+        return _handle_series_calculation(calculator, payload)
 
     if payload.operation == "solve_ode":
         if not payload.function:

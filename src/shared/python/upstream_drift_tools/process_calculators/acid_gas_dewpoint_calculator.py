@@ -454,6 +454,43 @@ class AcidGasDewpointCalculator:
             )
         return float(B / denominator - C)
 
+    def _calculate_partial_pressures(
+        self, pressure_pa: float, composition: AcidGasComposition
+    ) -> dict[str, float]:
+        """Calculate partial pressures for all components."""
+        return {
+            "H2O": composition.h2o * pressure_pa,
+            "HF": composition.hf * pressure_pa,
+            "HCl": composition.hcl * pressure_pa,
+            "H2S": composition.h2s * pressure_pa,
+        }
+
+    def _calculate_all_individual_dewpoints(
+        self, partial_pressures: dict[str, float], total_pressure_pa: float
+    ) -> dict[str, float]:
+        """Calculate dewpoints for each component in the mixture."""
+        dewpoints = {}
+        for component, partial_pa in partial_pressures.items():
+            if partial_pa > 0:
+                dewpoints[component] = self.calculate_dewpoint(
+                    partial_pa, component, total_pressure_pa
+                )
+            else:
+                dewpoints[component] = np.nan
+        return dewpoints
+
+    def _assess_condensation_risk(self, margin: float) -> str:
+        """Categorize condensation risk based on safety margin."""
+        if np.isnan(margin):
+            return "Unknown"
+        if margin < 0:
+            return "HIGH - Condensation occurring"
+        if margin < 10:
+            return "MEDIUM - Within 10°C of dewpoint"
+        if margin < 30:
+            return "LOW - Safe margin"
+        return "VERY LOW - Large safety margin"
+
     def calculate_dewpoint_mixture(
         self,
         temperature_c: float,
@@ -482,96 +519,51 @@ class AcidGasDewpointCalculator:
                 f"got {temperature_c} C ({temperature_c + CELSIUS_TO_KELVIN_OFFSET} K)"
             )
 
-        # Convert pressure to Pa
+        # Convert units
         pressure_pa = pressure_bar * BAR_TO_PA
         temperature_k = temperature_c + CELSIUS_TO_KELVIN_OFFSET
 
-        # Validate inputs
+        # Validate conditions
         warnings = []
-        if temperature_c < -100 or temperature_c > 400:
+        if not (-100 <= temperature_c <= 400):
             warnings.append("Temperature outside recommended range (-100 to 400°C)")
-        if pressure_bar < 0.1 or pressure_bar > 300:
+        if not (0.1 <= pressure_bar <= 300):
             warnings.append("Pressure outside recommended range (0.1 to 300 bar)")
 
-        # Calculate partial pressures
-        h2o_partial_pa = composition.h2o * pressure_pa
-        hf_partial_pa = composition.hf * pressure_pa
-        hcl_partial_pa = composition.hcl * pressure_pa
-        h2s_partial_pa = composition.h2s * pressure_pa
-
-        # Calculate vapor pressures at current temperature
-        h2o_vapor_pa = self.calculate_vapor_pressure(temperature_c, "H2O", method)
-        hf_vapor_pa = self.calculate_vapor_pressure(temperature_c, "HF", method)
-        hcl_vapor_pa = self.calculate_vapor_pressure(temperature_c, "HCl", method)
-        h2s_vapor_pa = self.calculate_vapor_pressure(temperature_c, "H2S", method)
-
-        # Calculate individual dewpoints (only for components with non-zero
-        # partial pressure; absent components get NaN)
-        h2o_dewpoint = (
-            self.calculate_dewpoint(h2o_partial_pa, "H2O", pressure_pa)
-            if h2o_partial_pa > 0
-            else np.nan
-        )
-        hf_dewpoint = (
-            self.calculate_dewpoint(hf_partial_pa, "HF", pressure_pa)
-            if hf_partial_pa > 0
-            else np.nan
-        )
-        hcl_dewpoint = (
-            self.calculate_dewpoint(hcl_partial_pa, "HCl", pressure_pa)
-            if hcl_partial_pa > 0
-            else np.nan
-        )
-        h2s_dewpoint = (
-            self.calculate_dewpoint(h2s_partial_pa, "H2S", pressure_pa)
-            if h2s_partial_pa > 0
-            else np.nan
-        )
-
-        # Find overall dewpoint (highest among all components)
-        dewpoints = {
-            "H2O": h2o_dewpoint,
-            "HF": hf_dewpoint,
-            "HCl": hcl_dewpoint,
-            "H2S": h2s_dewpoint,
+        # 1. Partial & Vapor pressures
+        partials = self._calculate_partial_pressures(pressure_pa, composition)
+        vapors = {
+            comp: self.calculate_vapor_pressure(temperature_c, comp, method)
+            for comp in ["H2O", "HF", "HCl", "H2S"]
         }
 
-        # Filter out NaN values
-        valid_dewpoints = {k: v for k, v in dewpoints.items() if not np.isnan(v)}
+        # 2. Individual dewpoints
+        dewpoints = self._calculate_all_individual_dewpoints(partials, pressure_pa)
 
+        # 3. Overall dewpoint determination
+        valid_dewpoints = {k: v for k, v in dewpoints.items() if not np.isnan(v)}
         if valid_dewpoints:
-            overall_dewpoint = max(valid_dewpoints.values())
-            limiting_component = max(valid_dewpoints, key=lambda k: valid_dewpoints[k])
+            limiting_component = max(valid_dewpoints, key=valid_dewpoints.get)
+            overall_dewpoint = valid_dewpoints[limiting_component]
         else:
             overall_dewpoint = np.nan
             limiting_component = "Unknown"
             warnings.append("Could not calculate dewpoint for any component")
 
-        # Calculate safety margin
-        dewpoint_margin = (
+        # 4. Risk assessment
+        margin = (
             temperature_c - overall_dewpoint
             if not np.isnan(overall_dewpoint)
             else np.nan
         )
+        condensation_risk = self._assess_condensation_risk(margin)
 
-        # Assess condensation risk
-        if np.isnan(dewpoint_margin):
-            condensation_risk = "Unknown"
-        elif dewpoint_margin < 0:
-            condensation_risk = "HIGH - Condensation occurring"
-        elif dewpoint_margin < 10:
-            condensation_risk = "MEDIUM - Within 10°C of dewpoint"
-        elif dewpoint_margin < 30:
-            condensation_risk = "LOW - Safe margin"
-        else:
-            condensation_risk = "VERY LOW - Large safety margin"
-
-        # Compile sources
-        sources = []
-        for component in ["H2O", "HF", "HCl", "H2S"]:
-            if composition.to_dict()[component] > 0:
-                sources.extend(self.literature_sources[component])
-        sources = list(set(sources))  # Remove duplicates
+        # 5. Compile sources
+        comp_dict = composition.to_dict()
+        sources = set()
+        for comp, fraction in comp_dict.items():
+            if fraction > 0 and comp in self.literature_sources:
+                sources.update(self.literature_sources[comp])
 
         return DewpointResult(
             temperature_c=temperature_c,
@@ -579,25 +571,25 @@ class AcidGasDewpointCalculator:
             pressure_bar=pressure_bar,
             pressure_pa=pressure_pa,
             composition=composition,
-            h2o_dewpoint_c=h2o_dewpoint,
-            hf_dewpoint_c=hf_dewpoint,
-            hcl_dewpoint_c=hcl_dewpoint,
-            h2s_dewpoint_c=h2s_dewpoint,
+            h2o_dewpoint_c=dewpoints["H2O"],
+            hf_dewpoint_c=dewpoints["HF"],
+            hcl_dewpoint_c=dewpoints["HCl"],
+            h2s_dewpoint_c=dewpoints["H2S"],
             overall_dewpoint_c=overall_dewpoint,
             limiting_component=limiting_component,
-            h2o_vapor_pressure_pa=h2o_vapor_pa,
-            hf_vapor_pressure_pa=hf_vapor_pa,
-            hcl_vapor_pressure_pa=hcl_vapor_pa,
-            h2s_vapor_pressure_pa=h2s_vapor_pa,
-            h2o_partial_pressure_pa=h2o_partial_pa,
-            hf_partial_pressure_pa=hf_partial_pa,
-            hcl_partial_pressure_pa=hcl_partial_pa,
-            h2s_partial_pressure_pa=h2s_partial_pa,
-            dewpoint_margin_c=dewpoint_margin,
+            h2o_vapor_pressure_pa=vapors["H2O"],
+            hf_vapor_pressure_pa=vapors["HF"],
+            hcl_vapor_pressure_pa=vapors["HCl"],
+            h2s_vapor_pressure_pa=vapors["H2S"],
+            h2o_partial_pressure_pa=partials["H2O"],
+            hf_partial_pressure_pa=partials["HF"],
+            hcl_partial_pressure_pa=partials["HCl"],
+            h2s_partial_pressure_pa=partials["H2S"],
+            dewpoint_margin_c=margin,
             condensation_risk=condensation_risk,
             calculation_method=method,
             warnings=warnings,
-            sources=sources,
+            sources=list(sources),
         )
 
     def generate_dewpoint_curves(
@@ -758,281 +750,155 @@ def estimate_condensation_risk(
 
 # --- GUI Widget for Acid Gas Dewpoint Calculator ---
 if GUI_AVAILABLE:
-    if BASE_CALCULATOR_AVAILABLE:
+    # Handle dynamic base class based on availability
+    BaseClass = BaseCalculatorWidget if BASE_CALCULATOR_AVAILABLE else QWidget
 
-        class AcidGasDewpointCalculatorWidget(BaseCalculatorWidget):
-            """Acid gas dewpoint calculator widget"""
+    class AcidGasDewpointCalculatorWidget(BaseClass):  # type: ignore[valid-type, misc]
+        """Acid gas dewpoint calculator widget"""
 
-            calculation_completed = pyqtSignal(dict)
+        calculation_completed = pyqtSignal(dict)
 
-            def __init__(self, parent: QWidget | None = None) -> None:
-                """Initialize the class."""
+        def __init__(self, parent: QWidget | None = None) -> None:
+            """Initialize the class."""
+            if BASE_CALCULATOR_AVAILABLE:
                 super().__init__(calculator_name="AcidGasDewpoint", parent=parent)
-                self.calculator = AcidGasDewpointCalculator()
-                self.current_result = None
-                self.setup_ui()
-                self.setup_connections()
-                self.set_default_values()
+            else:
+                super().__init__(parent)
+
+            self.calculator = AcidGasDewpointCalculator()
+            self.current_result = None
+            self.setup_ui()
+            self.setup_connections()
+            self.set_default_values()
+
+            if BASE_CALCULATOR_AVAILABLE:
                 QTimer.singleShot(0, self.setup_state_management)
 
-            def setup_connections(self) -> None:
-                """Setup signal connections"""
+        def setup_connections(self) -> None:
+            """Setup signal connections"""
 
-            def set_default_values(self) -> None:
-                """Set default values for input widgets"""
+        def set_default_values(self) -> None:
+            """Set default values for input widgets"""
 
-            def setup_state_management(self) -> None:
-                """Setup state management for the calculator"""
-                # Find and register splitters
-                for child_splitter in self.findChildren(QSplitter):
-                    self.register_splitter(child_splitter, "main_splitter")
+        def setup_state_management(self) -> None:
+            """Setup state management for the calculator"""
+            if not BASE_CALCULATOR_AVAILABLE:
+                return
 
-                # Register result widgets for copy/paste
-                for child_label in self.findChildren((QLabel, QTextEdit, QTableWidget)):
-                    if hasattr(child_label, "text") and child_label.text().strip():
-                        self.register_copyable_widget(child_label, "label")
-                for child_table in self.findChildren(QTableWidget):
-                    self.register_copyable_widget(child_table, "table")
-                for child_text in self.findChildren(QTextEdit):
-                    self.register_copyable_widget(child_text, "text")
+            # Find and register splitters
+            for child_splitter in self.findChildren(QSplitter):
+                self.register_splitter(child_splitter, "main_splitter")
 
-            def closeEvent(self, event: Any) -> None:
-                """Save state when tab is closed"""
+            # Register result widgets for copy/paste
+            for child_label in self.findChildren((QLabel, QTextEdit, QTableWidget)):
+                if hasattr(child_label, "text") and child_label.text().strip():
+                    self.register_copyable_widget(child_label, "label")
+            for child_table in self.findChildren(QTableWidget):
+                self.register_copyable_widget(child_table, "table")
+            for child_text in self.findChildren(QTextEdit):
+                self.register_copyable_widget(child_text, "text")
+
+        def closeEvent(self, event: Any) -> None:
+            """Save state when tab is closed"""
+            if BASE_CALCULATOR_AVAILABLE:
                 self.save_state()
-                super().closeEvent(event)
+            super().closeEvent(event)
 
-            def setup_ui(self) -> None:
-                """Setup the user interface"""
-                layout = QVBoxLayout(self)
-                title = QLabel("Acid Gas Dewpoint Calculator")
-                title.setFont(QFont("Arial", 16, QFont.Weight.Bold))
-                layout.addWidget(title)
+        def setup_ui(self) -> None:
+            """Setup the user interface"""
+            layout = QVBoxLayout(self)
+            title = QLabel("Acid Gas Dewpoint Calculator")
+            title.setFont(QFont("Arial", 16, QFont.Weight.Bold))
+            layout.addWidget(title)
 
-                # Input fields
-                input_group = QGroupBox("Input Conditions")
-                input_layout = QGridLayout(input_group)
-                self.temp_input = QDoubleSpinBox()
-                self.temp_input.setRange(-100, 400)
-                self.temp_input.setValue(150)
-                self.temp_input.setSuffix(" °C")
-                input_layout.addWidget(QLabel("Temperature:"), 0, 0)
-                input_layout.addWidget(self.temp_input, 0, 1)
+            # Input fields
+            input_group = QGroupBox("Input Conditions")
+            input_layout = QGridLayout(input_group)
+            self.temp_input = QDoubleSpinBox()
+            self.temp_input.setRange(-100, 400)
+            self.temp_input.setValue(150)
+            self.temp_input.setSuffix(" °C")
+            input_layout.addWidget(QLabel("Temperature:"), 0, 0)
+            input_layout.addWidget(self.temp_input, 0, 1)
 
-                self.pressure_input = QDoubleSpinBox()
-                self.pressure_input.setRange(0.1, 300)
-                self.pressure_input.setValue(30)
-                self.pressure_input.setSuffix(" bar")
-                input_layout.addWidget(QLabel("Pressure:"), 1, 0)
-                input_layout.addWidget(self.pressure_input, 1, 1)
+            self.pressure_input = QDoubleSpinBox()
+            self.pressure_input.setRange(0.1, 300)
+            self.pressure_input.setValue(30)
+            self.pressure_input.setSuffix(" bar")
+            input_layout.addWidget(QLabel("Pressure:"), 1, 0)
+            input_layout.addWidget(self.pressure_input, 1, 1)
 
-                # Acid gas composition
-                self.h2o_input = QDoubleSpinBox()
-                self.h2o_input.setRange(0, 1)
-                self.h2o_input.setValue(0.15)
-                self.hf_input = QDoubleSpinBox()
-                self.hf_input.setRange(0, 1)
-                self.hf_input.setValue(0.001)
-                self.hcl_input = QDoubleSpinBox()
-                self.hcl_input.setRange(0, 1)
-                self.hcl_input.setValue(0.002)
-                self.h2s_input = QDoubleSpinBox()
-                self.h2s_input.setRange(0, 1)
-                self.h2s_input.setValue(0.005)
-                input_layout.addWidget(QLabel("H2O mole fraction:"), 2, 0)
-                input_layout.addWidget(self.h2o_input, 2, 1)
-                input_layout.addWidget(QLabel("HF mole fraction:"), 3, 0)
-                input_layout.addWidget(self.hf_input, 3, 1)
-                input_layout.addWidget(QLabel("HCl mole fraction:"), 4, 0)
-                input_layout.addWidget(self.hcl_input, 4, 1)
-                input_layout.addWidget(QLabel("H2S mole fraction:"), 5, 0)
-                input_layout.addWidget(self.h2s_input, 5, 1)
+            # Acid gas composition
+            self.h2o_input = QDoubleSpinBox()
+            self.h2o_input.setRange(0, 1)
+            self.h2o_input.setValue(0.15)
+            self.hf_input = QDoubleSpinBox()
+            self.hf_input.setRange(0, 1)
+            self.hf_input.setValue(0.001)
+            self.hcl_input = QDoubleSpinBox()
+            self.hcl_input.setRange(0, 1)
+            self.hcl_input.setValue(0.002)
+            self.h2s_input = QDoubleSpinBox()
+            self.h2s_input.setRange(0, 1)
+            self.h2s_input.setValue(0.005)
 
-                layout.addWidget(input_group)
+            input_layout.addWidget(QLabel("H2O mole fraction:"), 2, 0)
+            input_layout.addWidget(self.h2o_input, 2, 1)
+            input_layout.addWidget(QLabel("HF mole fraction:"), 3, 0)
+            input_layout.addWidget(self.hf_input, 3, 1)
+            input_layout.addWidget(QLabel("HCl mole fraction:"), 4, 0)
+            input_layout.addWidget(self.hcl_input, 4, 1)
+            input_layout.addWidget(QLabel("H2S mole fraction:"), 5, 0)
+            input_layout.addWidget(self.h2s_input, 5, 1)
 
-                # Calculate button
-                self.calc_btn = QPushButton("Calculate Dewpoint")
-                self.calc_btn.clicked.connect(self.calculate)
-                layout.addWidget(self.calc_btn)
+            layout.addWidget(input_group)
 
-                # Output area
-                self.result_area = QTextEdit()
-                self.result_area.setReadOnly(True)
-                layout.addWidget(self.result_area)
+            # Calculate button
+            self.calc_btn = QPushButton("Calculate Dewpoint")
+            self.calc_btn.clicked.connect(self.calculate)
+            layout.addWidget(self.calc_btn)
 
-            def calculate(self) -> None:
-                """Calculate method.
+            # Output area
+            self.result_area = QTextEdit()
+            self.result_area.setReadOnly(True)
+            layout.addWidget(self.result_area)
 
-                Returns:
-                    None
-                """
-                temp = self.temp_input.value()
-                pressure = self.pressure_input.value()
-                h2o = self.h2o_input.value()
-                hf = self.hf_input.value()
-                hcl = self.hcl_input.value()
-                h2s = self.h2s_input.value()
-                comp = AcidGasComposition(h2o=h2o, hf=hf, hcl=hcl, h2s=h2s)
-                result = self.calculator.calculate_dewpoint_mixture(
-                    temp, pressure, comp
-                )
-                self.display_result(result)
+        def calculate(self) -> None:
+            """Collect inputs and run calculation."""
+            temp = self.temp_input.value()
+            pressure = self.pressure_input.value()
+            comp = AcidGasComposition(
+                h2o=self.h2o_input.value(),
+                hf=self.hf_input.value(),
+                hcl=self.hcl_input.value(),
+                h2s=self.h2s_input.value(),
+            )
+            result = self.calculator.calculate_dewpoint_mixture(temp, pressure, comp)
+            self.display_result(result)
 
-            def display_result(self, result: DewpointResult) -> None:
-                """Display Result method.
-
-                Returns:
-                    None
-                """
-                text = (
-                    f"<b>Input:</b> T = {result.temperature_c:.2f} °C, "
-                    f"P = {result.pressure_bar:.2f} bar<br>"
-                )
-                text += (
-                    f"<b>Composition:</b> H2O={result.composition.h2o:.4f}, "
-                    f"HF={result.composition.hf:.4f}, "
-                    f"HCl={result.composition.hcl:.4f}, "
-                    f"H2S={result.composition.h2s:.4f}<br>"
-                )
-                text += (
-                    f"<b>Dewpoints (°C):</b> H2O={result.h2o_dewpoint_c:.2f}, "
-                    f"HF={result.hf_dewpoint_c:.2f}, HCl={result.hcl_dewpoint_c:.2f}, "
-                    f"H2S={result.h2s_dewpoint_c:.2f}<br>"
-                )
-                text += (
-                    f"<b>Overall Dewpoint:</b> {result.overall_dewpoint_c:.2f} °C "
-                    f"({result.limiting_component})<br>"
-                )
-                text += f"<b>Dewpoint Margin:</b> {result.dewpoint_margin_c:.2f} °C<br>"
-                text += f"<b>Condensation Risk:</b> {result.condensation_risk}<br>"
-                if result.warnings:
-                    text += f"<b>Warnings:</b> {'; '.join(result.warnings)}<br>"
-                self.result_area.setHtml(text)
-
-    else:
-
-        class AcidGasDewpointCalculatorWidget(QWidget):  # type: ignore[no-redef]
-            """Acid gas dewpoint calculator widget"""
-
-            calculation_completed = pyqtSignal(dict)
-
-            def __init__(self, parent: QWidget | None = None) -> None:
-                """Initialize the class."""
-                super().__init__(parent)
-                self.calculator = AcidGasDewpointCalculator()
-                self.current_result = None
-                self.setup_ui()
-                self.setup_connections()
-                self.setup_connections()
-                self.set_default_values()
-
-            def set_default_values(self) -> None:
-                """Set default values"""
-
-            def setup_connections(self) -> None:
-                """Setup connections"""
-
-            def setup_ui(self) -> None:
-                """Setup the user interface"""
-                layout = QVBoxLayout(self)
-                title = QLabel("Acid Gas Dewpoint Calculator")
-                title.setFont(QFont("Arial", 16, QFont.Weight.Bold))
-                layout.addWidget(title)
-
-                # Input fields
-                input_group = QGroupBox("Input Conditions")
-                input_layout = QGridLayout(input_group)
-                self.temp_input = QDoubleSpinBox()
-                self.temp_input.setRange(-100, 400)
-                self.temp_input.setValue(150)
-                self.temp_input.setSuffix(" °C")
-                input_layout.addWidget(QLabel("Temperature:"), 0, 0)
-                input_layout.addWidget(self.temp_input, 0, 1)
-
-                self.pressure_input = QDoubleSpinBox()
-                self.pressure_input.setRange(0.1, 300)
-                self.pressure_input.setValue(30)
-                self.pressure_input.setSuffix(" bar")
-                input_layout.addWidget(QLabel("Pressure:"), 1, 0)
-                input_layout.addWidget(self.pressure_input, 1, 1)
-
-                # Acid gas composition
-                self.h2o_input = QDoubleSpinBox()
-                self.h2o_input.setRange(0, 1)
-                self.h2o_input.setValue(0.15)
-                self.hf_input = QDoubleSpinBox()
-                self.hf_input.setRange(0, 1)
-                self.hf_input.setValue(0.001)
-                self.hcl_input = QDoubleSpinBox()
-                self.hcl_input.setRange(0, 1)
-                self.hcl_input.setValue(0.002)
-                self.h2s_input = QDoubleSpinBox()
-                self.h2s_input.setRange(0, 1)
-                self.h2s_input.setValue(0.005)
-                input_layout.addWidget(QLabel("H2O mole fraction:"), 2, 0)
-                input_layout.addWidget(self.h2o_input, 2, 1)
-                input_layout.addWidget(QLabel("HF mole fraction:"), 3, 0)
-                input_layout.addWidget(self.hf_input, 3, 1)
-                input_layout.addWidget(QLabel("HCl mole fraction:"), 4, 0)
-                input_layout.addWidget(self.hcl_input, 4, 1)
-                input_layout.addWidget(QLabel("H2S mole fraction:"), 5, 0)
-                input_layout.addWidget(self.h2s_input, 5, 1)
-
-                layout.addWidget(input_group)
-
-                # Calculate button
-                self.calc_btn = QPushButton("Calculate Dewpoint")
-                self.calc_btn.clicked.connect(self.calculate)
-                layout.addWidget(self.calc_btn)
-
-                # Output area
-                self.result_area = QTextEdit()
-                self.result_area.setReadOnly(True)
-                layout.addWidget(self.result_area)
-
-            def calculate(self) -> None:
-                """Calculate method.
-
-                Returns:
-                    None
-                """
-                temp = self.temp_input.value()
-                pressure = self.pressure_input.value()
-                h2o = self.h2o_input.value()
-                hf = self.hf_input.value()
-                hcl = self.hcl_input.value()
-                h2s = self.h2s_input.value()
-                comp = AcidGasComposition(h2o=h2o, hf=hf, hcl=hcl, h2s=h2s)
-                result = self.calculator.calculate_dewpoint_mixture(
-                    temp, pressure, comp
-                )
-                self.display_result(result)
-
-            def display_result(self, result: DewpointResult) -> None:
-                """Display Result method.
-
-                Returns:
-                    None
-                """
-                text = (
-                    f"<b>Input:</b> T = {result.temperature_c:.2f} °C, "
-                    f"P = {result.pressure_bar:.2f} bar<br>"
-                )
-                text += (
-                    f"<b>Composition:</b> H2O={result.composition.h2o:.4f}, "
-                    f"HF={result.composition.hf:.4f}, HCl={result.composition.hcl:.4f}, "
-                    f"H2S={result.composition.h2s:.4f}<br>"
-                )
-                text += (
-                    f"<b>Dewpoints (°C):</b> H2O={result.h2o_dewpoint_c:.2f}, "
-                    f"HF={result.hf_dewpoint_c:.2f}, HCl={result.hcl_dewpoint_c:.2f}, "
-                    f"H2S={result.h2s_dewpoint_c:.2f}<br>"
-                )
-                text += (
-                    f"<b>Overall Dewpoint:</b> {result.overall_dewpoint_c:.2f} °C "
-                    f"({result.limiting_component})<br>"
-                )
-                text += f"<b>Dewpoint Margin:</b> {result.dewpoint_margin_c:.2f} °C<br>"
-                text += f"<b>Condensation Risk:</b> {result.condensation_risk}<br>"
-                if result.warnings:
-                    text += f"<b>Warnings:</b> {'; '.join(result.warnings)}<br>"
-                self.result_area.setHtml(text)
+        def display_result(self, result: DewpointResult) -> None:
+            """Format and display results in the UI."""
+            text = (
+                f"<b>Input:</b> T = {result.temperature_c:.2f} °C, "
+                f"P = {result.pressure_bar:.2f} bar<br>"
+            )
+            text += (
+                f"<b>Composition:</b> H2O={result.composition.h2o:.4f}, "
+                f"HF={result.composition.hf:.4f}, "
+                f"HCl={result.composition.hcl:.4f}, "
+                f"H2S={result.composition.h2s:.4f}<br>"
+            )
+            text += (
+                f"<b>Dewpoints (°C):</b> H2O={result.h2o_dewpoint_c:.2f}, "
+                f"HF={result.hf_dewpoint_c:.2f}, HCl={result.hcl_dewpoint_c:.2f}, "
+                f"H2S={result.h2s_dewpoint_c:.2f}<br>"
+            )
+            text += (
+                f"<b>Overall Dewpoint:</b> {result.overall_dewpoint_c:.2f} °C "
+                f"({result.limiting_component})<br>"
+            )
+            text += f"<b>Dewpoint Margin:</b> {result.dewpoint_margin_c:.2f} °C<br>"
+            text += f"<b>Condensation Risk:</b> {result.condensation_risk}<br>"
+            if result.warnings:
+                text += f"<b>Warnings:</b> {'; '.join(result.warnings)}<br>"
+            self.result_area.setHtml(text)
