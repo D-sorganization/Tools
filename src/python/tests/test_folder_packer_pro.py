@@ -283,7 +283,7 @@ class TestFolderPackerPro:
         ):
             app = FolderPackerPro(mock_root)
             app.pack_source_entry = Mock()
-            app._display_stats = Mock()  # type: ignore[method-assign]
+            app._display_stats = Mock()
 
             # Empty source
             app.pack_source_entry.get.return_value = ""
