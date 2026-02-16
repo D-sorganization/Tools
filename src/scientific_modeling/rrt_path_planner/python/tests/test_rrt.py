@@ -3,6 +3,7 @@ Comprehensive Tests for RRT Path Planner with DbC Principles.
 """
 
 import unittest
+
 import numpy as np
 from star_wars_rrt import Obstacle, PursuitAI, RRTPlanner, Ship
 

@@ -22,7 +22,9 @@ from OpenGL.GL import (
     GL_LIGHT0,
     GL_LIGHTING,
     GL_LINE_STRIP,
+    GL_MODELVIEW,
     GL_POINTS,
+    GL_PROJECTION,
     GL_QUADS,
     GL_TRIANGLES,
     glBegin,
@@ -33,13 +35,20 @@ from OpenGL.GL import (
     glEnd,
     glLineWidth,
     glLoadIdentity,
+    glMatrixMode,
     glPointSize,
     glPopMatrix,
     glPushMatrix,
     glTranslatef,
     glVertex3f,
 )
-from OpenGL.GLU import gluDeleteQuadric, gluLookAt, gluNewQuadric, gluSphere
+from OpenGL.GLU import (
+    gluDeleteQuadric,
+    gluLookAt,
+    gluNewQuadric,
+    gluPerspective,
+    gluSphere,
+)
 from pygame.locals import DOUBLEBUF, K_ESCAPE, K_SPACE, KEYDOWN, OPENGL, QUIT, K_c
 
 
@@ -239,8 +248,6 @@ class StarWarsRenderer:
         self.camera_up = np.array([0.0, 0.0, 1.0])
 
         # Initialize Projection (Fixed Star Wars RRT Renderer Bug)
-        from OpenGL.GL import GL_PROJECTION
-        from OpenGL.GLU import gluPerspective
 
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()

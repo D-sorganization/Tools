@@ -11,7 +11,7 @@ from __future__ import annotations
 import math
 import pathlib
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
@@ -761,11 +761,11 @@ class Renderer:
 
         # Fade alpha based on distance
         # Reference distance of 5.0 for full brightness
-        alpha_scale = max(0.3, min(1.0, 8.0 / dist))
+        alpha_scale = float(max(0.3, min(1.0, 8.0 / float(dist))))
 
         # Priority boost
         if priority > 1:
-            alpha_scale = min(1.0, alpha_scale * 1.5)
+            alpha_scale = float(min(1.0, alpha_scale * 1.5))
 
         # Apply fading to color
         faded_color = tuple(int(c * alpha_scale) for c in color)

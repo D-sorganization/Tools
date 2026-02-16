@@ -27,9 +27,9 @@ from ..core.constants import (
 from ..core.time_manager import TimeManager
 from ..data.asteroids import MAJOR_ASTEROIDS, generate_belt_particles
 from ..data.comets import COMETS
+from ..data.famous_missions import FAMOUS_MISSIONS
 from ..data.moon_systems import moons_by_parent
 from ..data.planet_info import PLANET_DESCRIPTIONS
-from ..data.famous_missions import FAMOUS_MISSIONS
 from ..physics.trajectory_planner import (
     TrajectoryPlanner,
     TransferTrajectory,

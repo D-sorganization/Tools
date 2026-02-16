@@ -7,6 +7,7 @@ historical space missions.
 """
 
 import numpy as np
+
 from ..core.celestial_body import StateVector
 from ..core.constants import AU
 
