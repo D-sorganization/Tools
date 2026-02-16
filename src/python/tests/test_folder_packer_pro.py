@@ -305,7 +305,7 @@ class TestFolderPackerPro:
                 if callback is not None:
                     callback()
 
-            app.root.after.side_effect = immediate_after  # type: ignore[attr-defined]
+            app.root.after.side_effect = immediate_after
 
             # Patch Thread to run synchronously
             with patch(
@@ -358,8 +358,8 @@ class TestFolderPackerPro:
             app.pack_output_entry = Mock()
             app.unpack_source_entry = Mock()
             app.unpack_dest_entry = Mock()
-            app._scan_folder = Mock()  # type: ignore[method-assign]
-            app._log_message = Mock()  # type: ignore[method-assign]
+            app._scan_folder = Mock()
+            app._log_message = Mock()
 
             # _browse_pack_source
             mock_askdir.return_value = str(tmp_path)
