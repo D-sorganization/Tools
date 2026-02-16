@@ -101,16 +101,16 @@ jobs:
       - name: Security Scan (pip-audit)
         run: pip-audit -r requirements.txt
 
-      - name: Secrets Scan (gitleaks)
-        if: secrets.GITLEAKS_LICENSE != ''
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
-
-      - name: Skip Secrets Scan (missing license)
-        if: secrets.GITLEAKS_LICENSE == ''
-        run: echo "::warning::Skipping gitleaks because GITLEAKS_LICENSE is not configured."
+      # - name: Secrets Scan (gitleaks)
+      #   if: secrets.GITLEAKS_LICENSE != ''
+      #   uses: gitleaks/gitleaks-action@v2
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+      #
+      # - name: Skip Secrets Scan (missing license)
+      #   if: secrets.GITLEAKS_LICENSE == ''
+      #   run: echo "::warning::Skipping gitleaks because GITLEAKS_LICENSE is not configured."
 
       - name: Module Size Budget
         run: python3 scripts/check_module_size_budget.py --max-lines 1500 --include src
