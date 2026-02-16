@@ -135,14 +135,38 @@ COMMON_TYPE_IMPORTS = {
 }
 
 
+<<<<<<< HEAD
+def run_mypy(config_file: str | None = None, targets: list[str] | None = None) -> str:
+    """Run mypy and return raw output."""
+    if not targets:
+        # Default to src and tests if no targets provided, but check if they exist
+        targets = []
+        if Path("src").exists():
+            targets.append("src")
+        # many repos have tests/ at top level
+        if Path("tests").exists():
+            targets.append("tests")
+        if not targets:
+            targets = ["."]
+
+    cmd = ["mypy"] + targets + ["--no-error-summary"]
+=======
 def run_mypy(config_file: str | None = None) -> str:
     """Run mypy and return raw output."""
     cmd = ["mypy", "src", "--no-error-summary"]
+>>>>>>> ddcca51ca64affa7f93ad6405307f4afb257f135
     if config_file:
         cmd.extend(["--config-file", config_file])
     # Show error codes for targeted fixes
     cmd.append("--show-error-codes")
+<<<<<<< HEAD
+    # Add non-interactive and ignore-missing-imports for agent use
+    cmd.extend(["--ignore-missing-imports", "--non-interactive"])
+    
+    result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+=======
     result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+>>>>>>> ddcca51ca64affa7f93ad6405307f4afb257f135
     return result.stdout + result.stderr
 
 
@@ -497,14 +521,23 @@ def run_agent(
     dry_run: bool = False,
     verbose: bool = False,
     config_file: str | None = None,
+<<<<<<< HEAD
+    targets: list[str] | None = None,
+=======
+>>>>>>> ddcca51ca64affa7f93ad6405307f4afb257f135
 ) -> AgentReport:
     """Main agent loop: observe, classify, fix, report."""
     report = AgentReport()
 
     # Step 1: Run mypy
     if verbose:
+<<<<<<< HEAD
+        print(f">>> Running mypy on targets: {targets or 'default'}...")
+    output = run_mypy(config_file, targets)
+=======
         print(">>> Running mypy...")
     output = run_mypy(config_file)
+>>>>>>> ddcca51ca64affa7f93ad6405307f4afb257f135
     errors = parse_mypy_output(output)
     report.total_errors = len(errors)
 
@@ -657,6 +690,14 @@ def main() -> int:
         default=None,
         help="Path to mypy config file (default: uses pyproject.toml)",
     )
+<<<<<<< HEAD
+    parser.add_argument(
+        "targets",
+        nargs="*",
+        help="Files or directories to check (default: src)",
+    )
+=======
+>>>>>>> ddcca51ca64affa7f93ad6405307f4afb257f135
     args = parser.parse_args()
 
     report = run_agent(
@@ -665,6 +706,10 @@ def main() -> int:
         dry_run=args.dry_run,
         verbose=args.verbose,
         config_file=args.config_file,
+<<<<<<< HEAD
+        targets=args.targets,
+=======
+>>>>>>> ddcca51ca64affa7f93ad6405307f4afb257f135
     )
 
     print_report(report)
