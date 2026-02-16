@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from data_processor.constants import (
     CHUNK_SIZE,
     DEFAULT_BW_CUTOFF,

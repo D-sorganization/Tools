@@ -12,8 +12,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import pandas as pd
-import pytest
-
 from utils.csv_utils import (
     merge_csv_files,
     read_csv_with_validation,

@@ -2,15 +2,11 @@
 
 from __future__ import annotations
 
-import pandas as pd
-import pytest
-
 from data_processor.core.undo_redo import (
     Command,
     CommandRecord,
     UndoRedoManager,
 )
-
 
 # ─── Concrete command for testing ──────────────────────────────────────
 

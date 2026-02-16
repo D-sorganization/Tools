@@ -16,7 +16,6 @@ import math
 import numpy as np
 import pytest
 from numpy.testing import assert_allclose
-
 from signal_toolkit.series import (
     SeriesExpansion,
     SeriesResult,
@@ -26,7 +25,6 @@ from signal_toolkit.series import (
     ln_series,
     sin_series,
 )
-
 
 # ── SeriesResult Dataclass ───────────────────────────────────────────────
 
@@ -87,7 +85,7 @@ class TestSeriesExpansionInit:
 
 class TestMaclaurinSeries:
     """Test Maclaurin series expansions of well-known functions.
-    
+
     Note: maclaurin_series() returns a callable, not a SeriesResult.
     """
 
@@ -170,9 +168,7 @@ class TestCoefficients:
     ) -> None:
         """e^x Maclaurin coefficients should be 1/n!."""
         coeffs = se.get_coefficients(np.exp, center=0.0, n_terms=6)
-        expected = np.array(
-            [1.0, 1.0, 1 / 2, 1 / 6, 1 / 24, 1 / 120], dtype=np.float64
-        )
+        expected = np.array([1.0, 1.0, 1 / 2, 1 / 6, 1 / 24, 1 / 120], dtype=np.float64)
         # Relaxed tolerance: numerical differentiation has inherent error
         assert_allclose(coeffs, expected, rtol=0.05)
 

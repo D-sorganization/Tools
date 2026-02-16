@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
-
 from data_processor.core.outlier_detection import (
     OutlierConfig,
     OutlierDetector,

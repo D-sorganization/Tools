@@ -8,10 +8,7 @@ Covers:
 
 from __future__ import annotations
 
-import os
-
 import pytest
-
 from utils.env_utils import get_env_bool, get_env_int, get_env_var
 
 

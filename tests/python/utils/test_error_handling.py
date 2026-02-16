@@ -10,7 +10,6 @@ Covers:
 from __future__ import annotations
 
 import pytest
-
 from utils.error_handling import (
     handle_file_errors,
     handle_import_error,

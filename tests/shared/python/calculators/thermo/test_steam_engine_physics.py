@@ -12,14 +12,12 @@ from __future__ import annotations
 
 import pytest
 from numpy.testing import assert_allclose
-
 from upstream_drift_tools.calculators.thermo.steam_engine import (
     CRITICAL_TEMPERATURE_WATER,
     KELVIN_TO_CELSIUS_OFFSET,
     SteamCalculationEngine,
     SteamProperties,
 )
-
 
 # ── SteamProperties Dataclass ────────────────────────────────────────────
 

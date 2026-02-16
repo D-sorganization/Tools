@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
-
 from data_processor.core.regression_types import (
     CoefficientInfo,
     RegressionConfig,

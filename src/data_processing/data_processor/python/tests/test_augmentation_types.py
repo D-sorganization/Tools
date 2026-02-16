@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
-
 from data_processor.core.augmentation_types import (
     AugmentationConfig,
     AugmentationMethod,

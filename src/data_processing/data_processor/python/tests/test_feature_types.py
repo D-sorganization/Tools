@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 import numpy as np
-import pytest
-
 from data_processor.core.feature_types import (
     FeatureCategory,
     FeatureConfig,

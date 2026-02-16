@@ -10,9 +10,7 @@ Covers:
 
 from __future__ import annotations
 
-import pytest
 from numpy.testing import assert_allclose
-
 from upstream_drift_tools.process_calculators.pressure_drop_calculator.utils.gas_properties import (
     calculate_heat_capacity_ratio,
     calculate_ideal_gas_cp,
@@ -21,7 +19,6 @@ from upstream_drift_tools.process_calculators.pressure_drop_calculator.utils.gas
     calculate_mixture_molecular_weight,
     calculate_speed_of_sound,
 )
-
 
 # ── Molecular Weight ─────────────────────────────────────────────────────
 

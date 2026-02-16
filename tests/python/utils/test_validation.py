@@ -13,8 +13,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from utils.validation import (
     validate_file_extension,
     validate_in_range,
