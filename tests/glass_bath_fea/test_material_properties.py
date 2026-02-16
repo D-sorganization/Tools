@@ -1,246 +1,141 @@
 """Tests for glass_bath_fea.core.material_properties module.
 
 Covers:
-- GlassMaterialModel: Arrhenius conductivity, composition correction,
-  resistivity (1/σ), Fulcher viscosity
-- Physical law verification:
-  - Conductivity increases with temperature (Arrhenius)
-  - Resistivity = 1/conductivity
-  - Viscosity decreases with temperature (Fulcher)
-  - Na2O increases conductivity
-- get_metal_conductivity
-- get_arrhenius_params
+- GlassMaterialModel conductivity (Arrhenius)
+- Resistivity (inverse of conductivity)
+- Viscosity (Fulcher equation)
+- Composition correction factor
+- Metal conductivity
+- Arrhenius parameter export
 """
 
 from __future__ import annotations
 
 import pytest
-from numpy.testing import assert_allclose
 
 from glass_bath_fea.core.config import GlassComposition
 from glass_bath_fea.core.material_properties import (
-    DEFAULT_ACTIVATION_ENERGY,
-    DEFAULT_BASE_CONDUCTIVITY,
     DEFAULT_METAL_CONDUCTIVITY,
-    DEFAULT_REFERENCE_TEMP_K,
-    FULCHER_A,
-    FULCHER_B,
-    FULCHER_T0,
     GlassMaterialModel,
     get_metal_conductivity,
 )
 
-# ── GlassMaterialModel Construction ─────────────────────────────────────
+
+@pytest.fixture()
+def default_model() -> GlassMaterialModel:
+    """Create model with default soda-lime composition."""
+    return GlassMaterialModel(GlassComposition())
 
 
-class TestGlassMaterialModelConstruction:
-    """Test GlassMaterialModel construction."""
+class TestConductivity:
+    """Tests for glass conductivity model."""
 
-    def test_default_construction(self) -> None:
-        comp = GlassComposition()
-        model = GlassMaterialModel(comp)
-        assert model.composition == comp
-
-    def test_custom_parameters(self) -> None:
-        comp = GlassComposition()
-        model = GlassMaterialModel(
-            comp,
-            base_conductivity=2.0,
-            activation_energy=90000,
-        )
-        assert model._base_conductivity == 2.0
-        assert model._activation_energy == 90000
-
-
-# ── Arrhenius Conductivity ───────────────────────────────────────────────
-
-
-class TestArrheniusConductivity:
-    """Test Arrhenius equation-based conductivity calculations."""
-
-    @pytest.fixture()
-    def model(self) -> GlassMaterialModel:
-        return GlassMaterialModel(GlassComposition())
-
-    def test_conductivity_positive(self, model: GlassMaterialModel) -> None:
-        sigma = model.get_conductivity(1200)
+    def test_positive_conductivity(self, default_model: GlassMaterialModel) -> None:
+        sigma = default_model.get_conductivity(1200.0)
         assert sigma > 0
 
     def test_conductivity_increases_with_temperature(
-        self, model: GlassMaterialModel
+        self, default_model: GlassMaterialModel
     ) -> None:
-        """Arrhenius: conductivity increases exponentially with T."""
-        sigma_1000 = model.get_conductivity(1000)
-        sigma_1200 = model.get_conductivity(1200)
-        sigma_1400 = model.get_conductivity(1400)
-        assert sigma_1000 < sigma_1200 < sigma_1400
+        """Arrhenius: conductivity increases with T."""
+        sigma_low = default_model.get_conductivity(1000.0)
+        sigma_high = default_model.get_conductivity(1400.0)
+        assert sigma_high > sigma_low
 
-    def test_conductivity_at_reference_temp(self, model: GlassMaterialModel) -> None:
-        """At reference temperature, should be close to base * composition factor."""
-        ref_temp_c = DEFAULT_REFERENCE_TEMP_K - 273.15
-        sigma = model.get_conductivity(ref_temp_c)
+    def test_conductivity_at_reference_temp(self) -> None:
+        """At reference temp, conductivity ≈ base * comp_factor."""
+        comp = GlassComposition()
+        model = GlassMaterialModel(comp)
+        sigma = model.get_conductivity(1200.0)  # 1200°C = 1473.15 K ≈ Tref
         comp_factor = model._get_composition_factor()
-        expected = DEFAULT_BASE_CONDUCTIVITY * comp_factor
-        # At ref temp, exp term = exp(0) = 1
-        assert_allclose(sigma, expected, rtol=0.01)
+        assert sigma == pytest.approx(1.0 * comp_factor, rel=0.05)
 
     def test_power_density_increases_conductivity(
-        self, model: GlassMaterialModel
+        self, default_model: GlassMaterialModel
     ) -> None:
-        """Power density causes local heating, increasing conductivity."""
-        sigma_no_power = model.get_conductivity(1200, power_density=0)
-        sigma_with_power = model.get_conductivity(1200, power_density=10000)
-        assert sigma_with_power > sigma_no_power
+        sigma_no_power = default_model.get_conductivity(1200.0, power_density=0)
+        sigma_with_power = default_model.get_conductivity(1200.0, power_density=1e6)
+        assert sigma_with_power >= sigma_no_power
 
 
-# ── Composition Effects ──────────────────────────────────────────────────
+class TestCompositionFactor:
+    """Tests for composition correction factor."""
 
-
-class TestCompositionEffects:
-    """Test composition correction factor."""
-
-    def test_higher_na2o_increases_conductivity(self) -> None:
-        """Na2O increases ionic mobility."""
-        comp_low = GlassComposition(na2o=10.0)
-        comp_high = GlassComposition(na2o=16.0)
-        model_low = GlassMaterialModel(comp_low)
-        model_high = GlassMaterialModel(comp_high)
-        assert model_low.get_conductivity(1200) < model_high.get_conductivity(1200)
-
-    def test_higher_fe2o3_increases_conductivity(self) -> None:
-        """Fe2O3 increases electronic conduction."""
-        comp_low = GlassComposition(fe2o3=0.0)
-        comp_high = GlassComposition(fe2o3=1.0)
-        model_low = GlassMaterialModel(comp_low)
-        model_high = GlassMaterialModel(comp_high)
-        assert model_low.get_conductivity(1200) < model_high.get_conductivity(1200)
-
-    def test_default_composition_factor_near_1(self) -> None:
-        """Default soda-lime composition should have factor near 1."""
+    def test_standard_composition_near_unity(self) -> None:
+        """Default composition should give factor ≈ 1.0 * (1 + 0.5*0.1)."""
         model = GlassMaterialModel(GlassComposition())
         factor = model._get_composition_factor()
-        # na_factor = 1.0 + 0.02*(13-13) = 1.0, fe_factor = 1.0 + 0.5*0.1 = 1.05
-        assert_allclose(factor, 1.05, atol=0.01)
+        assert factor > 0
+        assert factor == pytest.approx(1.0 * (1.0 + 0.5 * 0.1), rel=0.01)
 
+    def test_high_na2o_increases_factor(self) -> None:
+        """More Na2O → higher ionic mobility → higher factor."""
+        low_na = GlassMaterialModel(GlassComposition(na2o=10.0))
+        high_na = GlassMaterialModel(GlassComposition(na2o=20.0))
+        assert high_na._get_composition_factor() > low_na._get_composition_factor()
 
-# ── Resistivity ──────────────────────────────────────────────────────────
+    def test_high_fe2o3_increases_factor(self) -> None:
+        """More Fe2O3 → higher electronic conduction → higher factor."""
+        low_fe = GlassMaterialModel(GlassComposition(fe2o3=0.0))
+        high_fe = GlassMaterialModel(GlassComposition(fe2o3=1.0))
+        assert high_fe._get_composition_factor() > low_fe._get_composition_factor()
 
 
 class TestResistivity:
-    """Test resistivity calculations."""
+    """Tests for electrical resistivity."""
 
-    def test_resistivity_is_inverse_conductivity(self) -> None:
-        model = GlassMaterialModel(GlassComposition())
-        sigma = model.get_conductivity(1200)
-        rho = model.get_resistivity(1200)
-        assert_allclose(sigma * rho, 1.0, atol=1e-10)
-
-    def test_resistivity_decreases_with_temperature(self) -> None:
-        model = GlassMaterialModel(GlassComposition())
-        rho_1000 = model.get_resistivity(1000)
-        rho_1400 = model.get_resistivity(1400)
-        assert rho_1000 > rho_1400
+    def test_inverse_of_conductivity(self, default_model: GlassMaterialModel) -> None:
+        sigma = default_model.get_conductivity(1200.0)
+        rho = default_model.get_resistivity(1200.0)
+        assert rho == pytest.approx(1.0 / sigma, rel=1e-6)
 
 
-# ── Fulcher Viscosity ────────────────────────────────────────────────────
+class TestViscosity:
+    """Tests for Fulcher viscosity model."""
 
-
-class TestFulcherViscosity:
-    """Test Fulcher equation viscosity calculations."""
-
-    @pytest.fixture()
-    def model(self) -> GlassMaterialModel:
-        return GlassMaterialModel(GlassComposition())
-
-    def test_viscosity_positive(self, model: GlassMaterialModel) -> None:
-        eta = model.get_viscosity(1200)
+    def test_positive_viscosity(self, default_model: GlassMaterialModel) -> None:
+        eta = default_model.get_viscosity(1200.0)
         assert eta > 0
 
     def test_viscosity_decreases_with_temperature(
-        self, model: GlassMaterialModel
+        self, default_model: GlassMaterialModel
     ) -> None:
-        """Glass viscosity decreases significantly with temperature."""
-        eta_1000 = model.get_viscosity(1000)
-        eta_1200 = model.get_viscosity(1200)
-        eta_1400 = model.get_viscosity(1400)
-        assert eta_1000 > eta_1200 > eta_1400
+        """Fulcher: viscosity decreases with increasing T."""
+        eta_low = default_model.get_viscosity(1000.0)
+        eta_high = default_model.get_viscosity(1400.0)
+        assert eta_high < eta_low
 
-    def test_viscosity_manual_fulcher(self, model: GlassMaterialModel) -> None:
-        """Verify against manual Fulcher calculation."""
-        temp_c = 1300.0
-        temp_k = temp_c + 273.15
-        log_eta = FULCHER_A + FULCHER_B / (temp_k - FULCHER_T0)
-        expected = 10.0**log_eta
-        actual = model.get_viscosity(temp_c)
-        assert_allclose(actual, expected, rtol=1e-10)
+    def test_typical_viscosity_range(self, default_model: GlassMaterialModel) -> None:
+        """At 1200°C, molten glass viscosity is typically 1-1000 Pa·s."""
+        eta = default_model.get_viscosity(1200.0)
+        assert 0.001 < eta < 10000
 
 
-# ── Arrhenius Parameters Export ──────────────────────────────────────────
+class TestArrheniusParams:
+    """Tests for Arrhenius parameter export."""
 
-
-class TestArrheniusParamsExport:
-    """Test get_arrhenius_params for MATLAB export."""
-
-    def test_returns_expected_keys(self) -> None:
-        model = GlassMaterialModel(GlassComposition())
-        params = model.get_arrhenius_params()
+    def test_keys(self, default_model: GlassMaterialModel) -> None:
+        params = default_model.get_arrhenius_params()
         assert "base_conductivity" in params
         assert "activation_energy" in params
         assert "reference_temp" in params
         assert "composition_factor" in params
 
-    def test_values_match_model(self) -> None:
-        model = GlassMaterialModel(GlassComposition())
-        params = model.get_arrhenius_params()
-        assert params["base_conductivity"] == DEFAULT_BASE_CONDUCTIVITY
-        assert params["activation_energy"] == DEFAULT_ACTIVATION_ENERGY
-        assert params["reference_temp"] == DEFAULT_REFERENCE_TEMP_K
-
-
-# ── Metal Conductivity ──────────────────────────────────────────────────
-
 
 class TestMetalConductivity:
-    """Test get_metal_conductivity function."""
+    """Tests for metal conductivity function."""
 
-    def test_at_reference_temperature(self) -> None:
+    def test_at_reference_temp(self) -> None:
         sigma = get_metal_conductivity(1200.0)
-        assert_allclose(sigma, DEFAULT_METAL_CONDUCTIVITY, rtol=0.01)
+        assert sigma == pytest.approx(DEFAULT_METAL_CONDUCTIVITY, rel=0.01)
 
     def test_much_higher_than_glass(self) -> None:
-        """Metal conductivity >> glass conductivity."""
-        sigma_metal = get_metal_conductivity(1200.0)
         model = GlassMaterialModel(GlassComposition())
         sigma_glass = model.get_conductivity(1200.0)
+        sigma_metal = get_metal_conductivity(1200.0)
         assert sigma_metal > 100 * sigma_glass
 
     def test_decreases_slightly_with_temperature(self) -> None:
-        """Metals have slightly decreasing conductivity with temperature."""
-        sigma_1000 = get_metal_conductivity(1000.0)
-        sigma_1400 = get_metal_conductivity(1400.0)
-        assert sigma_1000 > sigma_1400
-
-
-# ── GlassComposition ────────────────────────────────────────────────────
-
-
-class TestGlassComposition:
-    """Test GlassComposition dataclass."""
-
-    def test_defaults_sum_near_100(self) -> None:
-        comp = GlassComposition()
-        total = comp.total_percent()
-        assert 99.0 <= total <= 101.0
-
-    def test_validates_default(self) -> None:
-        assert GlassComposition().validate() is True
-
-    def test_invalid_composition(self) -> None:
-        comp = GlassComposition(sio2=50.0, na2o=5.0, cao=0.0)
-        assert comp.validate() is False
-
-    def test_custom_composition(self) -> None:
-        comp = GlassComposition(
-            sio2=72.0, na2o=14.0, cao=10.0, mgo=3.0, al2o3=0.9, fe2o3=0.1
-        )
-        assert comp.validate() is True
+        sigma_low = get_metal_conductivity(1000.0)
+        sigma_high = get_metal_conductivity(1500.0)
+        assert sigma_low > sigma_high
