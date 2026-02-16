@@ -62,10 +62,7 @@ class ExecutionTracer:
 
         # Check inclusions
         if self.include_modules:
-            for include in self.include_modules:
-                if module.startswith(include):
-                    return True
-            return False
+            return any(module.startswith(include) for include in self.include_modules)
 
         return True
 

@@ -76,10 +76,7 @@ def find_nearest_file(
     Returns:
         Path to file if found, None otherwise
     """
-    if start_path is None:
-        start_path = Path.cwd()
-    else:
-        start_path = Path(start_path)
+    start_path = Path.cwd() if start_path is None else Path(start_path)
 
     current = start_path.resolve()
     max_depth = 20
@@ -105,10 +102,7 @@ def find_nearest_dir(dirname: str, start_path: Path | str | None = None) -> Path
     Returns:
         Path to directory if found, None otherwise
     """
-    if start_path is None:
-        start_path = Path.cwd()
-    else:
-        start_path = Path(start_path)
+    start_path = Path.cwd() if start_path is None else Path(start_path)
 
     current = start_path.resolve()
     max_depth = 20

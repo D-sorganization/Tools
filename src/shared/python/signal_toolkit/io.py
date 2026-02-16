@@ -292,10 +292,7 @@ class SignalExporter:
         """
         file_path = Path(file_path)
 
-        if isinstance(signal, Signal):
-            signals = [signal]
-        else:
-            signals = signal
+        signals = [signal] if isinstance(signal, Signal) else signal
 
         # Ensure all signals have the same time array
         time = signals[0].time
@@ -342,10 +339,7 @@ class SignalExporter:
         """
         file_path = Path(file_path)
 
-        if isinstance(signal, Signal):
-            signals = [signal]
-        else:
-            signals = signal
+        signals = [signal] if isinstance(signal, Signal) else signal
 
         data = {"time": signals[0].time}
         for sig in signals:
@@ -421,10 +415,7 @@ class SignalExporter:
 
         file_path = Path(file_path)
 
-        if isinstance(signal, Signal):
-            signals = [signal]
-        else:
-            signals = signal
+        signals = [signal] if isinstance(signal, Signal) else signal
 
         data = {time_var: signals[0].time}
         for sig in signals:

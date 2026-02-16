@@ -9,6 +9,7 @@ from functools import lru_cache
 
 import sympy as sp
 from sympy.parsing.sympy_parser import convert_xor, parse_expr, standard_transformations
+import contextlib
 
 
 @dataclass(frozen=True)
@@ -83,10 +84,8 @@ class TI89Calculator:
         # Check symbolic numbers
         if isinstance(n, sp.Number):
             val = None
-            try:
+            with contextlib.suppress(TypeError, ValueError):
                 val = int(n)
-            except (TypeError, ValueError):
-                pass
 
             if val is not None and val > limit:
                 raise ValueError(f"Factorial argument exceeds safety limit ({limit})")
@@ -115,10 +114,8 @@ class TI89Calculator:
                 # Limit result to approx 6000 decimal digits (20kb text)
                 if abs(b) > 1 and e > 0:
                     digits: float = 0.0
-                    try:
+                    with contextlib.suppress(ValueError, TypeError, OverflowError):
                         digits = e * math.log10(abs(b))
-                    except (ValueError, TypeError, OverflowError):
-                        pass
 
                     if digits > 6000:
                         raise ValueError("Exponentiation result exceeds safety limits")

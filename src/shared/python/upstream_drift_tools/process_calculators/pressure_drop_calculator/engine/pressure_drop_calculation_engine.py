@@ -586,10 +586,7 @@ def calculate_compressible_flow_correction(
         P2_old = P2
 
         # Acceleration term (logarithmic) for compressible flow
-        if P2 > 0 and P1 > P2:
-            ln_term = 2.0 * math.log(P1 / P2)
-        else:
-            ln_term = 0.0
+        ln_term = 2.0 * math.log(P1 / P2) if P2 > 0 and P1 > P2 else 0.0
 
         # Right-hand side of the equation
         rhs = coeff * (resistance + ln_term)
@@ -692,10 +689,7 @@ def calculate_expansion_factor(
         numerator = k * (r ** (2.0 / k)) * (1.0 - r ** ((k - 1.0) / k))
         denominator = (k - 1.0) * (1.0 - r)
 
-        if denominator <= 0:
-            Y = 1.0
-        else:
-            Y = math.sqrt(numerator / denominator)
+        Y = 1.0 if denominator <= 0 else math.sqrt(numerator / denominator)
     except (ValueError, ZeroDivisionError):
         # Fallback to simplified formula
         Y = 1.0 - pressure_drop / (3.0 * gamma * inlet_pressure)
@@ -738,9 +732,7 @@ def calculate_erosional_velocity(
     """
     if service_type == "continuous":
         C = API_14E_C_CONTINUOUS
-    elif service_type == "intermittent":
-        C = API_14E_C_INTERMITTENT
-    elif service_type == "non_corrosive":
+    elif service_type == "intermittent" or service_type == "non_corrosive":
         C = API_14E_C_INTERMITTENT
     else:
         C = API_14E_C_CONTINUOUS  # Conservative default

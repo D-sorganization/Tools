@@ -250,7 +250,7 @@ class StateManager:
             # Use iterdir for better performance than glob (no pattern matching overhead)
             if self.states_dir.exists():
                 for state_file in self.states_dir.iterdir():
-                    if not state_file.suffix == ".json":
+                    if state_file.suffix != ".json":
                         continue
                     try:
                         with open(state_file) as f:

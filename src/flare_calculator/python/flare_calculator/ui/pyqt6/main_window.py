@@ -88,7 +88,7 @@ class FlareCalculatorEngine:
         """Calculate flare size based on flow conditions."""
         total_comp = sum(gas_composition.values())
         if total_comp == 0:
-            comp_fractions = {k: 0.0 for k in gas_composition}
+            comp_fractions = dict.fromkeys(gas_composition, 0.0)
         else:
             comp_fractions = {k: v / total_comp for k, v in gas_composition.items()}
 

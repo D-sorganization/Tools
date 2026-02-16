@@ -226,7 +226,4 @@ class PhysicsValidator:
         for joint in model.children_map.get(name1, []):
             if joint.child == name2:
                 return True
-        for joint in model.children_map.get(name2, []):
-            if joint.child == name1:
-                return True
-        return False
+        return any(joint.child == name1 for joint in model.children_map.get(name2, []))

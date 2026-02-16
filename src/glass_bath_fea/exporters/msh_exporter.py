@@ -138,10 +138,7 @@ def read_msh_file(input_path: Path | str) -> dict:
         else:
             i += 1
 
-    if nodes_list:
-        nodes = np.array(nodes_list).T
-    else:
-        nodes = np.array([]).reshape(3, 0)
+    nodes = np.array(nodes_list).T if nodes_list else np.array([]).reshape(3, 0)
 
     if elements_list:
         elements = np.array(elements_list).T

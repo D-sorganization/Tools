@@ -468,10 +468,7 @@ class ThemeManager(QObject):
     ) -> dict[str, str]:
         """Validate and normalize custom theme colors."""
         items: Iterable[tuple[str, str]]
-        if isinstance(colors, dict):
-            items = colors.items()
-        else:
-            items = colors
+        items = colors.items() if isinstance(colors, dict) else colors
 
         normalised: dict[str, str] = {}
         for key, value in items:
