@@ -43,7 +43,7 @@ scripts/ @dieterolson
 *.py @dieterolson
 """
     codeowners_path.write_text(content, encoding="utf-8")
-    print(f"Added CODEOWNERS to {repo_name}")
+    print(f"Added CODEOWNERS to {repo_path.name}")
 
 def patch_mypy_agent_guard(repo_path: Path):
     agent_path = repo_path / "scripts" / "mypy_autofix_agent.py"
