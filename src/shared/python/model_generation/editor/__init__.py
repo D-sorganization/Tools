@@ -9,6 +9,8 @@ This module provides editors for URDF manipulation:
 from model_generation.editor.editor_types import (
     ComponentReference,
     ComponentType,
+    EditorState,
+    PendingOperation,
 )
 from model_generation.editor.frankenstein_editor import (
     FrankensteinEditor,

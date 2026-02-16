@@ -89,7 +89,9 @@ class TestHandleImportError:
         assert result is not None
 
     def test_missing_module_returns_default(self) -> None:
-        result = handle_import_error("nonexistent_module_xyz", default="not_found")
+        result = handle_import_error(
+            "nonexistent_module_xyz", default="not_found"
+        )
         assert result == "not_found"
 
     def test_missing_module_returns_none(self) -> None:

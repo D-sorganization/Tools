@@ -27,7 +27,6 @@ from signal_toolkit.filters import (
 
 # ── Helper ───────────────────────────────────────────────────────────────
 
-
 def _make_signal(fs: float, duration: float, values: np.ndarray) -> Signal:
     """Create a Signal from sample rate, duration, and value array."""
     t = np.arange(len(values)) / fs
@@ -172,12 +171,8 @@ class TestFilterDesigner:
 
     def test_elliptic_lowpass(self) -> None:
         spec = FilterDesigner.elliptic(
-            FilterType.LOWPASS,
-            100.0,
-            1000.0,
-            order=4,
-            ripple_db=1.0,
-            attenuation_db=40.0,
+            FilterType.LOWPASS, 100.0, 1000.0,
+            order=4, ripple_db=1.0, attenuation_db=40.0,
         )
         assert spec.design == FilterDesign.ELLIPTIC
 
