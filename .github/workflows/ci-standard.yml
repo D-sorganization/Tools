@@ -168,9 +168,9 @@ jobs:
         run: |
           SMOKE_TESTS="tests/test_path_helpers.py tests/test_error_handling.py tests/shared/python/notes/test_storage.py"
           if [ -s changed_test_files.txt ]; then
-            pytest $(cat changed_test_files.txt) $SMOKE_TESTS --cov-report=xml:coverage.xml --cov-fail-under=0
+            pytest $(cat changed_test_files.txt) $SMOKE_TESTS --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0
           else
-            pytest $SMOKE_TESTS --cov-report=xml:coverage.xml --cov-fail-under=0
+            pytest $SMOKE_TESTS --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0
           fi
 
       - name: Coverage Policy Gate
