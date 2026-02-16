@@ -1,37 +1,51 @@
-# ruff: noqa: T201
-"""Generate tools.json and tool_surface_contract.json from gui_registration.py sources.
+#!/usr/bin/env python3
+"""Generate tools.json and tool_surface_contract.json from gui_registration.py files.
 
-Usage:
-    python scripts/generate_tools_json.py [--repo-root PATH]
-
-Scans all gui_registration.py files under src/ and generates:
-1. tools.json - Manifest grouped by category with launch paths
-2. tool_surface_contract.json - Contract listing surface availability per tool
+This script scans all gui_registration.py files under src/ and produces:
+1. tools.json — Unified Launcher manifest (categorized, surface-expanded entries)
+2. tool_surface_contract.json — Cross-repo parity contract (one entry per logical tool)
 """
-
-from __future__ import annotations
 
 import importlib.util
 import json
 import logging
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
+CONTRACT_VERSION = "1.0.0"
 
-def _load_gui_info(registration_path: Path) -> dict[str, Any] | None:
-    """Load GUI_INFO dict from a gui_registration.py file.
 
-    Args:
-        registration_path: Path to a gui_registration.py file.
+@dataclass(frozen=True)
+class ToolRegistration:
+    """Internal representation of a discovered tool registration.
 
-    Returns:
-        The GUI_INFO dict or None if it can't be loaded.
+    Invariants (Design by Contract):
+    - id is always a non-empty snake_case string
+    - name is always a non-empty string
+    - category is always a non-empty string
+    - At least one surface (has_pyqt6 or has_web) is True
+    """
+
+    id: str
+    name: str
+    description: str
+    category: str
+    has_pyqt6: bool
+    has_web: bool
+
+
+def load_gui_info(path: Path) -> dict[str, Any] | None:
+    """Load GUI_INFO from a python file.
+
+    Pre-condition: path is a valid file path.
+    Post-condition: Returns the GUI_INFO dict or None if not loadable.
     """
     try:
         spec = importlib.util.spec_from_file_location(
-            f"gui_reg_{registration_path.parent.name}", registration_path
+            f"gui_reg_{path.parent.name}", path
         )
         if spec is None or spec.loader is None:
             return None
@@ -39,158 +53,198 @@ def _load_gui_info(registration_path: Path) -> dict[str, Any] | None:
         spec.loader.exec_module(module)
         return getattr(module, "GUI_INFO", None)
     except Exception as exc:
-        logger.warning("Could not load %s: %s", registration_path, exc)
+        logger.warning("Failed to load %s: %s", path, exc)
         return None
 
 
-def _find_gui_registrations(repo_root: Path) -> list[Path]:
-    """Find all gui_registration.py files under src/.
+def _discover_registrations(repo_root: Path) -> list[ToolRegistration]:
+    """Discover all gui_registration.py files and extract ToolRegistration entries.
 
-    Args:
-        repo_root: Repository root directory.
-
-    Returns:
-        Sorted list of gui_registration.py file paths.
+    Pre-condition: repo_root / 'src' exists.
+    Post-condition: Returns a sorted (by id) list of unique ToolRegistrations.
     """
     src_dir = repo_root / "src"
-    if not src_dir.exists():
-        return []
-    return sorted(src_dir.rglob("gui_registration.py"))
+    seen_ids: dict[str, ToolRegistration] = {}
+
+    for reg_file in sorted(src_dir.glob("**/gui_registration.py")):
+        info = load_gui_info(reg_file)
+        if not info:
+            continue
+
+        tool_dir = reg_file.parent
+
+        # Determine tool ID: prefer explicit 'tool_name', fall back to directory name
+        tool_id = info.get("tool_name") or tool_dir.name
+
+        # Determine surface availability
+        has_pyqt6 = "pyqt6" in info and (tool_dir / "launch_pyqt6.py").exists()
+        has_web = "web" in info and (tool_dir / "launch_web.py").exists()
+
+        # Skip tools with no available surface
+        if not has_pyqt6 and not has_web:
+            continue
+
+        registration = ToolRegistration(
+            id=tool_id,
+            name=info.get("name", "Unknown Tool"),
+            description=info.get("description", ""),
+            category=info.get("category", "Uncategorized"),
+            has_pyqt6=has_pyqt6,
+            has_web=has_web,
+        )
+
+        if tool_id in seen_ids:
+            logger.warning(
+                "Duplicate tool_name '%s' found, skipping %s", tool_id, reg_file
+            )
+        else:
+            seen_ids[tool_id] = registration
+
+    return sorted(seen_ids.values(), key=lambda r: r.id)
 
 
 def generate_manifest_data(repo_root: Path) -> dict[str, list[dict[str, Any]]]:
-    """Generate tools.json manifest data.
+    """Generate manifest data (tools.json format) from gui_registration.py files.
 
-    Scans gui_registration.py files, and for dual-surface tools
-    (pyqt6 + web), expands them into two manifest entries.
-
-    Args:
-        repo_root: Repository root directory.
-
-    Returns:
-        Dict mapping category names to lists of tool entries.
+    Pre-condition: repo_root is a valid repo root with src/ directory.
+    Post-condition: Returns a dict keyed by category with sorted tool entries.
     """
+    registrations = _discover_registrations(repo_root)
     manifest: dict[str, list[dict[str, Any]]] = {}
 
-    for reg_path in _find_gui_registrations(repo_root):
-        gui_info = _load_gui_info(reg_path)
-        if gui_info is None:
+    for reg in registrations:
+        if reg.category not in manifest:
+            manifest[reg.category] = []
+
+        if reg.has_pyqt6:
+            name = f"{reg.name} (PyQt6)" if reg.has_web else reg.name
+            src_dir = repo_root / "src"
+            # We need to find the actual registration file to get the right path
+            tool_dir = _find_tool_dir(src_dir, reg.id)
+            if tool_dir:
+                launch_script = tool_dir / "launch_pyqt6.py"
+                manifest[reg.category].append(
+                    {
+                        "name": name,
+                        "path": str(launch_script.relative_to(repo_root)).replace(
+                            "\\", "/"
+                        ),
+                        "type": "python",
+                        "desc": reg.description,
+                    }
+                )
+
+        if reg.has_web:
+            name = f"{reg.name} (Web)" if reg.has_pyqt6 else f"{reg.name} (Web)"
+            src_dir = repo_root / "src"
+            tool_dir = _find_tool_dir(src_dir, reg.id)
+            if tool_dir:
+                launch_script = tool_dir / "launch_web.py"
+                manifest[reg.category].append(
+                    {
+                        "name": name,
+                        "path": str(launch_script.relative_to(repo_root)).replace(
+                            "\\", "/"
+                        ),
+                        "type": "python",
+                        "desc": reg.description,
+                    }
+                )
+
+    # Sort categories and tools for determinism
+    sorted_manifest: dict[str, list[dict[str, Any]]] = {}
+    for cat in sorted(manifest.keys()):
+        tools = manifest[cat]
+        tools.sort(key=lambda x: x["name"])
+        sorted_manifest[cat] = tools
+
+    return sorted_manifest
+
+
+def _find_tool_dir(src_dir: Path, tool_id: str) -> Path | None:
+    """Find the directory containing a tool's gui_registration.py by its ID.
+
+    Searches gui_registration.py files for a matching tool_name or directory name.
+    """
+    for reg_file in sorted(src_dir.glob("**/gui_registration.py")):
+        info = load_gui_info(reg_file)
+        if not info:
             continue
-
-        name = gui_info.get("name", reg_path.parent.name)
-        category = gui_info.get("category", "Uncategorized")
-        tool_dir = reg_path.parent
-
-        if category not in manifest:
-            manifest[category] = []
-
-        has_pyqt6 = "pyqt6" in gui_info
-        has_web = "web" in gui_info
-
-        if has_pyqt6:
-            launch_path = tool_dir / "launch_pyqt6.py"
-            display_name = f"{name} (PyQt6)" if has_web else name
-            manifest[category].append(
-                {
-                    "name": display_name,
-                    "type": "python",
-                    "path": launch_path.relative_to(repo_root).as_posix(),
-                }
-            )
-
-        if has_web:
-            launch_path = tool_dir / "launch_web.py"
-            display_name = f"{name} (Web)" if has_pyqt6 else name
-            manifest[category].append(
-                {
-                    "name": display_name,
-                    "type": "web",
-                    "path": launch_path.relative_to(repo_root).as_posix(),
-                }
-            )
-
-    # Sort entries within each category
-    for category in manifest:
-        manifest[category].sort(key=lambda t: t["name"])
-
-    return manifest
+        candidate_id = info.get("tool_name") or reg_file.parent.name
+        if candidate_id == tool_id:
+            return reg_file.parent
+    return None
 
 
 def generate_contract_data(repo_root: Path) -> dict[str, Any]:
-    """Generate tool_surface_contract.json data.
+    """Generate tool surface contract data for cross-repo parity checking.
 
-    Each tool gets a single entry with boolean surface flags.
-
-    Args:
-        repo_root: Repository root directory.
-
-    Returns:
-        Contract dict with version and tools list.
+    Pre-condition: repo_root is a valid repo root with src/ directory.
+    Post-condition: Returns a dict conforming to tool_surface_contract.schema.json:
+      - "version": semver string
+      - "tools": list of tool entries sorted by id, each with:
+        - "id": snake_case tool identifier
+        - "name": human-readable display name
+        - "description": tool description
+        - "category": tool category
+        - "surfaces": {"pyqt6": bool, "web": bool}
     """
+    registrations = _discover_registrations(repo_root)
+
     tools: list[dict[str, Any]] = []
-
-    for reg_path in _find_gui_registrations(repo_root):
-        gui_info = _load_gui_info(reg_path)
-        if gui_info is None:
-            continue
-
-        tool_name = gui_info.get("tool_name", reg_path.parent.name)
+    for reg in registrations:
         tools.append(
             {
-                "id": tool_name,
-                "name": gui_info.get("name", tool_name),
-                "description": gui_info.get("description", ""),
-                "category": gui_info.get("category", "Uncategorized"),
+                "id": reg.id,
+                "name": reg.name,
+                "description": reg.description,
+                "category": reg.category,
                 "surfaces": {
-                    "pyqt6": "pyqt6" in gui_info,
-                    "web": "web" in gui_info,
+                    "pyqt6": reg.has_pyqt6,
+                    "web": reg.has_web,
                 },
             }
         )
 
-    # Sort by ID for deterministic output
-    tools.sort(key=lambda t: t["id"])
-
     return {
-        "version": "1.0.0",
+        "version": CONTRACT_VERSION,
         "tools": tools,
     }
 
 
-def main() -> None:
-    """CLI entry point for generating tools.json and contract."""
-    import argparse
-
-    parser = argparse.ArgumentParser(description="Generate tools.json manifest")
-    parser.add_argument(
-        "--repo-root",
-        type=str,
-        default=str(Path(__file__).resolve().parents[1]),
-        help="Repository root directory.",
-    )
-    args = parser.parse_args()
-
-    logging.basicConfig(level=logging.INFO)
-    repo_root = Path(args.repo_root).resolve()
+def main() -> int:
+    """Generate tools.json and optionally tool_surface_contract.json."""
+    repo_root = Path(__file__).resolve().parents[1]
 
     # Generate manifest
     manifest = generate_manifest_data(repo_root)
-    manifest_path = repo_root / "tools.json"
-    manifest_path.write_text(
-        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
-    logger.info("Wrote %s", manifest_path)
+    tools_json_path = repo_root / "tools.json"
+    with open(tools_json_path, "w", encoding="utf-8") as f:
+        json.dump(manifest, f, indent=4)
+        f.write("\n")  # POSIX newline
+
+    tool_count = sum(len(v) for v in manifest.values())
+    logger.info("Generated tools.json with %d tools.", tool_count)
 
     # Generate contract
     contract = generate_contract_data(repo_root)
     contract_path = repo_root / "tool_surface_contract.json"
-    contract_path.write_text(json.dumps(contract, indent=2) + "\n", encoding="utf-8")
-    logger.info("Wrote %s", contract_path)
+    with open(contract_path, "w", encoding="utf-8") as f:
+        json.dump(contract, f, indent=2)
+        f.write("\n")
 
-    print(
-        f"Generated manifest ({len(manifest)} categories) and contract ({len(contract['tools'])} tools)"
+    logger.info(
+        "Generated tool_surface_contract.json with %d tools.",
+        len(contract["tools"]),
     )
+
+    # Print summary to stdout for CI visibility
+    print(f"Generated tools.json with {tool_count} tools.")
+    print(f"Generated tool_surface_contract.json with {len(contract['tools'])} tools.")
+
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+    raise SystemExit(main())
