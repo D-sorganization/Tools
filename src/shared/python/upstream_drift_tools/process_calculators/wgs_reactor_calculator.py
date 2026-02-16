@@ -209,14 +209,21 @@ except ImportError:
         return _minimal_db
 
 
+# Import BaseCalculatorWidget for state management
 try:
-    from integrated_process_simulator.ui.mixins.base_calculator_widget import (
-        BaseCalculatorWidget,
-    )
+    from ..ui.widgets.base_calculator_widget import BaseCalculatorWidget
 
     BASE_CALCULATOR_AVAILABLE = True
 except ImportError:
     BASE_CALCULATOR_AVAILABLE = False
+    # Fallback to QWidget if BaseCalculatorWidget is not available
+    if PYQT_AVAILABLE:
+
+        class BaseCalculatorWidget(QWidget):  # type: ignore
+            def __init__(self, *args, **kwargs):
+                QWidget.__init__(self, *args, **kwargs)
+
+        BASE_CALCULATOR_AVAILABLE = True
 
 logger = logging.getLogger(__name__)
 

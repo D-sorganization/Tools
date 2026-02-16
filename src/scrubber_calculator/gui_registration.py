@@ -10,7 +10,7 @@ GUI_INFO = {
     "icon": "tower",
     "pyqt6": {
         "module": "scrubber_calculator.python.scrubber_calculator.ui.pyqt6.main_window",
-        "class": "ScrubberCalculatorMainWindow",
+        "class": "ScrubberCalculatorWindow",
         "dependencies": ["PyQt6", "matplotlib"],
         "settings_app": "ScrubberCalculator",
     },
