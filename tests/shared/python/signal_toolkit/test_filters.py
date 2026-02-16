@@ -13,8 +13,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 from numpy.testing import assert_allclose
-
-from signal_toolkit.core import Signal, SignalGenerator
+from signal_toolkit.core import Signal
 from signal_toolkit.filters import (
     FilterDesign,
     FilterDesigner,
@@ -25,7 +24,6 @@ from signal_toolkit.filters import (
     apply_savgol,
     create_butterworth_filter,
 )
-
 
 # ── Helper ───────────────────────────────────────────────────────────────
 

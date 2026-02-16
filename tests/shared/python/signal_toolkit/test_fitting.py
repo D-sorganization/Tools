@@ -10,16 +10,13 @@ Covers:
 from __future__ import annotations
 
 import numpy as np
-import pytest
 from numpy.testing import assert_allclose
-
-from signal_toolkit.core import Signal, SignalGenerator
+from signal_toolkit.core import Signal
 from signal_toolkit.fitting import (
     ExponentialFitter,
     FitResult,
     SinusoidFitter,
 )
-
 
 # ── Helper ───────────────────────────────────────────────────────────────
 
