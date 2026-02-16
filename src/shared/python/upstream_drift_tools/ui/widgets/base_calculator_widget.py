@@ -51,4 +51,3 @@ class BaseCalculatorWidget(QMainWindow, CalculatorStateMixin):
 
     def set_calculator_specific_state(self, state: dict[str, Any]) -> None:
         """Override to restore custom UI state."""
-        pass
