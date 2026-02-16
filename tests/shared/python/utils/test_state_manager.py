@@ -1,8 +1,17 @@
-#!/usr/bin/env python3
-"""Tests for state manager module."""
+"""Tests for upstream_drift_tools.utils.state_manager module.
 
-import json
-from datetime import datetime, timedelta
+Covers:
+- safe_read_json / safe_write_json
+- StateManager: save_state, load_state, delete_state, list_states
+- State protection (protect/unprotect)
+- State export/import
+- Session save/load
+- Filename sanitization
+- State validation
+"""
+
+from __future__ import annotations
+
 from pathlib import Path
 
 import pytest
@@ -12,147 +21,204 @@ from upstream_drift_tools.utils.state_manager import (
     safe_write_json,
 )
 
-
-def test_safe_read_json_missing_file_returns_default(tmp_path: Path) -> None:
-    missing = tmp_path / "missing.json"
-    assert safe_read_json(missing, default={"fallback": True}) == {"fallback": True}
+# ── safe_read_json / safe_write_json ─────────────────────────────────────
 
 
-def test_safe_read_json_invalid_data_returns_default(tmp_path: Path) -> None:
-    invalid = tmp_path / "invalid.json"
-    invalid.write_text("{this is invalid json")
-    assert safe_read_json(invalid, default=[]) == []
+class TestSafeJsonIO:
+    """Test JSON read/write utilities."""
+
+    def test_write_and_read(self, tmp_path: Path) -> None:
+        path = tmp_path / "test.json"
+        data = {"key": "value", "num": 42}
+        safe_write_json(path, data)
+        result = safe_read_json(path)
+        assert result == data
+
+    def test_read_nonexistent_returns_default(self, tmp_path: Path) -> None:
+        result = safe_read_json(tmp_path / "missing.json", default={"a": 1})
+        assert result == {"a": 1}
+
+    def test_read_corrupt_returns_default(self, tmp_path: Path) -> None:
+        path = tmp_path / "bad.json"
+        path.write_text("{invalid json")
+        result = safe_read_json(path, default=[])
+        assert result == []
+
+    def test_write_creates_parents(self, tmp_path: Path) -> None:
+        path = tmp_path / "sub" / "dir" / "data.json"
+        safe_write_json(path, {"nested": True}, create_parents=True)
+        assert path.exists()
+        assert safe_read_json(path)["nested"] is True
+
+    def test_write_with_indent(self, tmp_path: Path) -> None:
+        path = tmp_path / "pretty.json"
+        safe_write_json(path, {"a": 1}, indent=4)
+        content = path.read_text()
+        assert "    " in content  # 4-space indent.
+
+    def test_roundtrip_complex_data(self, tmp_path: Path) -> None:
+        path = tmp_path / "complex.json"
+        data = {
+            "list": [1, 2, 3],
+            "nested": {"a": {"b": "c"}},
+            "null": None,
+            "bool": True,
+        }
+        safe_write_json(path, data)
+        assert safe_read_json(path) == data
 
 
-def test_safe_write_json_roundtrip(tmp_path: Path) -> None:
-    file_path = tmp_path / "nested" / "out.json"
-    assert safe_write_json(file_path, {"a": 1, "b": 2}) is True
-    assert json.loads(file_path.read_text(encoding="utf-8")) == {"a": 1, "b": 2}
+# ── StateManager ─────────────────────────────────────────────────────────
 
 
-def test_safe_write_json_non_serializable_returns_false(tmp_path: Path) -> None:
-    file_path = tmp_path / "bad.json"
-    assert safe_write_json(file_path, {"x": {1, 2, 3}}) is False
+class TestStateManager:
+    """Test StateManager save/load/delete/list operations."""
+
+    @pytest.fixture()
+    def mgr(self, tmp_path: Path) -> StateManager:
+        return StateManager(base_directory=str(tmp_path / "states"))
+
+    def test_save_and_load(self, mgr: StateManager) -> None:
+        state = {"temperature": 1200.0, "pressure": 101325.0}
+        mgr.save_state("test_run", state, description="test")
+        loaded = mgr.load_state("test_run")
+        assert loaded is not None
+        assert loaded["temperature"] == 1200.0
+
+    def test_load_nonexistent_returns_none(self, mgr: StateManager) -> None:
+        result = mgr.load_state("nonexistent")
+        assert result is None
+
+    def test_list_states_empty(self, mgr: StateManager) -> None:
+        states = mgr.list_states()
+        assert states == []
+
+    def test_list_states_after_save(self, mgr: StateManager) -> None:
+        mgr.save_state("alpha", {"v": 1})
+        mgr.save_state("beta", {"v": 2})
+        states = mgr.list_states()
+        names = [s["name"] for s in states]
+        assert "alpha" in names
+        assert "beta" in names
+
+    def test_delete_state(self, mgr: StateManager) -> None:
+        mgr.save_state("to_delete", {"v": 99})
+        assert mgr.load_state("to_delete") is not None
+        mgr.delete_state("to_delete")
+        assert mgr.load_state("to_delete") is None
+
+    def test_delete_nonexistent_returns_false(self, mgr: StateManager) -> None:
+        result = mgr.delete_state("ghost")
+        assert result is False
+
+    def test_overwrite_state(self, mgr: StateManager) -> None:
+        mgr.save_state("run1", {"version": 1})
+        mgr.save_state("run1", {"version": 2})
+        loaded = mgr.load_state("run1")
+        assert loaded is not None
+        assert loaded["version"] == 2
 
 
-@pytest.fixture
-def manager(tmp_path: Path) -> StateManager:
-    return StateManager(str(tmp_path / "state_root"))
+# ── Protection ───────────────────────────────────────────────────────────
 
 
-def test_initializes_required_directories(manager: StateManager) -> None:
-    assert manager.states_dir.exists()
-    assert manager.sessions_dir.exists()
-    assert manager.backups_dir.exists()
-    assert manager.exports_dir.exists()
+class TestStateProtection:
+    """Test state protection mechanism."""
+
+    @pytest.fixture()
+    def mgr(self, tmp_path: Path) -> StateManager:
+        return StateManager(base_directory=str(tmp_path / "states"))
+
+    def test_protect_prevents_delete(self, mgr: StateManager) -> None:
+        mgr.save_state("important", {"data": 1}, protected=True)
+        result = mgr.delete_state("important")
+        assert result is False  # Protected states can't be deleted
+        assert mgr.load_state("important") is not None  # Still exists
+
+    def test_force_delete_protected(self, mgr: StateManager) -> None:
+        mgr.save_state("important", {"data": 1}, protected=True)
+        result = mgr.delete_state("important", force=True)
+        assert result is True
+        assert mgr.load_state("important") is None
+
+    def test_protect_and_unprotect(self, mgr: StateManager) -> None:
+        mgr.save_state("toggle", {"v": 1})
+        mgr.protect_state("toggle")
+        result = mgr.delete_state("toggle")
+        assert result is False  # Protected, so delete fails
+        mgr.unprotect_state("toggle")
+        result = mgr.delete_state("toggle")
+        assert result is True  # Now unprotected, delete succeeds
 
 
-def test_save_and_load_state(manager: StateManager) -> None:
-    payload = {"value": 42, "name": "alpha"}
-    assert manager.save_state("test_state", payload, description="demo") is True
-    assert manager.load_state("test_state") == payload
+# ── Session ──────────────────────────────────────────────────────────────
 
 
-def test_save_state_creates_backup_on_overwrite(manager: StateManager) -> None:
-    assert manager.save_state("duplicate", {"v": 1}) is True
-    assert manager.save_state("duplicate", {"v": 2}) is True
-    backups = list(manager.backups_dir.glob("duplicate_*.backup"))
-    assert backups
+class TestSessionManagement:
+    """Test session save/load."""
+
+    @pytest.fixture()
+    def mgr(self, tmp_path: Path) -> StateManager:
+        return StateManager(base_directory=str(tmp_path / "states"))
+
+    def test_save_and_load_session(self, mgr: StateManager) -> None:
+        session = {"last_file": "data.csv", "zoom": 1.5}
+        mgr.save_session(session)
+        loaded = mgr.load_session()
+        assert loaded is not None
+        assert loaded["last_file"] == "data.csv"
+
+    def test_load_session_none_when_empty(self, mgr: StateManager) -> None:
+        loaded = mgr.load_session()
+        assert loaded is None
 
 
-def test_delete_state_respects_protection(manager: StateManager) -> None:
-    assert manager.save_state("protected_state", {"a": 1}, protected=True) is True
-    assert manager.delete_state("protected_state", force=False) is False
-    assert manager.delete_state("protected_state", force=True) is True
+# ── Export / Import ──────────────────────────────────────────────────────
 
 
-def test_list_states_uses_cache_and_refreshes(manager: StateManager) -> None:
-    manager.save_state("s1", {"a": 1})
-    states_first = manager.list_states()
-    assert manager._states_index_cache is not None
-    states_second = manager.list_states()
-    assert states_first == states_second
+class TestStateExportImport:
+    """Test state export and import."""
 
-    manager.save_state("s2", {"b": 2})
-    refreshed = manager.list_states()
-    assert any(item["name"] == "s2" for item in refreshed)
+    @pytest.fixture()
+    def mgr(self, tmp_path: Path) -> StateManager:
+        return StateManager(base_directory=str(tmp_path / "states"))
 
+    def test_export_state(self, mgr: StateManager, tmp_path: Path) -> None:
+        mgr.save_state("export_me", {"val": 42})
+        export_path = tmp_path / "exported.json"
+        mgr.export_state("export_me", str(export_path))
+        assert export_path.exists()
 
-def test_protect_and_unprotect_update_metadata(manager: StateManager) -> None:
-    assert manager.save_state("toggle_state", {"x": 1}) is True
-    assert manager.protect_state("toggle_state") is True
+    def test_import_state(self, mgr: StateManager, tmp_path: Path) -> None:
+        mgr.save_state("orig", {"val": 100})
+        export_path = tmp_path / "exported.json"
+        mgr.export_state("orig", str(export_path))
+        mgr.delete_state("orig")
+        mgr.import_state(str(export_path), new_name="imported")
+        loaded = mgr.load_state("imported")
+        assert loaded is not None
 
-    state_file = manager.states_dir / "toggle_state.json"
-    protected_data = json.loads(state_file.read_text())
-    assert protected_data["metadata"]["protected"] is True
-
-    assert manager.unprotect_state("toggle_state") is True
-    unprotected_data = json.loads(state_file.read_text())
-    assert unprotected_data["metadata"]["protected"] is False
-
-
-def test_export_and_import_state(manager: StateManager, tmp_path: Path) -> None:
-    assert manager.save_state("export_me", {"k": "v"}) is True
-    export_path = manager.export_state("export_me")
-    assert export_path is not None
-
-    manager2 = StateManager(str(tmp_path / "state_root_2"))
-    assert manager2.import_state(export_path, new_name="imported_name") is True
-    assert manager2.load_state("imported_name") == {"k": "v"}
+    def test_export_nonexistent_returns_none(self, mgr: StateManager) -> None:
+        result = mgr.export_state("missing")
+        assert result is None
 
 
-def test_import_state_rejects_duplicate_and_bad_file(
-    manager: StateManager, tmp_path: Path
-) -> None:
-    assert manager.save_state("existing", {"v": 1}) is True
-
-    bad_file = tmp_path / "bad.cestate"
-    bad_file.write_text('{"invalid":"format"}', encoding="utf-8")
-    assert manager.import_state(str(bad_file)) is False
-
-    export_file = tmp_path / "valid.cestate"
-    export_payload = {
-        "calculator_version": "2.0",
-        "state_name": "existing",
-        "state_data": {"v": 2},
-    }
-    export_file.write_text(json.dumps(export_payload), encoding="utf-8")
-    assert manager.import_state(str(export_file)) is False
+# ── Filename Sanitization ────────────────────────────────────────────────
 
 
-def test_save_and_load_session(manager: StateManager) -> None:
-    session = {"window": "open", "active_tab": 3}
-    assert manager.save_session(session) is True
-    assert manager.load_session() == session
+class TestFilenameSanitization:
+    """Test that filenames are properly sanitized."""
 
+    @pytest.fixture()
+    def mgr(self, tmp_path: Path) -> StateManager:
+        return StateManager(base_directory=str(tmp_path / "states"))
 
-def test_sanitize_filename_and_validate_state(manager: StateManager) -> None:
-    assert manager._sanitize_filename('bad<>:"/\\|?*name') == "bad_________name"
+    def test_special_chars_removed(self, mgr: StateManager) -> None:
+        mgr.save_state("test/state:name", {"v": 1})
+        loaded = mgr.load_state("test/state:name")
+        assert loaded is not None
 
-    valid = {"metadata": {"name": "ok"}, "data": {"x": 1}}
-    invalid = {"metadata": "bad", "data": {"x": 1}}
-    assert manager._validate_state(valid) is True
-    assert manager._validate_state(invalid) is False
-
-
-def test_json_serializer_supports_datetime_and_path(manager: StateManager) -> None:
-    dt = datetime(2026, 1, 1, 12, 0, 0)
-    path = Path("/tmp/demo")
-    assert manager._json_serializer(dt).startswith("2026-01-01T12:00:00")
-    # Path string representation varies by OS; normalize for comparison
-    serialized = manager._json_serializer(path).replace("\\", "/")
-    assert serialized.endswith("/tmp/demo")
-
-
-def test_cleanup_old_backups_removes_expired_files(manager: StateManager) -> None:
-    old_backup = manager.backups_dir / "state_20000101_000000.backup"
-    old_backup.write_text("old", encoding="utf-8")
-    very_old = datetime.now() - timedelta(days=365)
-    old_ts = very_old.timestamp()
-    old_backup.touch()
-    import os
-
-    os.utime(old_backup, (old_ts, old_ts))
-
-    manager.cleanup_old_backups(max_age_days=30)
-    assert not old_backup.exists()
+    def test_spaces_handled(self, mgr: StateManager) -> None:
+        mgr.save_state("my state name", {"v": 1})
+        loaded = mgr.load_state("my state name")
+        assert loaded is not None

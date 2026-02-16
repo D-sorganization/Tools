@@ -194,7 +194,9 @@ class DataProcessor:
             for col in df.columns:
                 if col == time_column:
                     continue
-                new_df[col] = np.interp(t_new, np.asarray(t), np.asarray(df[col].values))
+                new_df[col] = np.interp(
+                    t_new, np.asarray(t), np.asarray(df[col].values)
+                )
             self._df = new_df
 
         self._history.append(f"Resampled to {target_rate} Hz ({method})")
@@ -357,7 +359,12 @@ class DataProcessor:
 
             detector = OutlierDetector(OutlierConfig(threshold=threshold))
             result = detector.detect(df[columns])
-            outlier_mask: pd.DataFrame = result.mask
+            # outlier_mask is 1D boolean (per row), broadcast to columns
+            mask_1d = result.outlier_mask.astype(bool)
+            outlier_mask = pd.DataFrame(
+                {col: mask_1d for col in columns},
+                index=df.index,
+            )
             return outlier_mask
         except ImportError:
             # Fallback: simple z-score
