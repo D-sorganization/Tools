@@ -23,7 +23,6 @@ import pytest
 
 from data_processing.processor import DataProcessor, DatasetInfo
 
-
 # ── Construction & Loading ───────────────────────────────────────────────
 
 
@@ -86,11 +85,13 @@ class TestDataProcessorTransformations:
     @pytest.fixture()
     def dp(self) -> DataProcessor:
         dp = DataProcessor()
-        df = pd.DataFrame({
-            "time": np.linspace(0, 10, 100),
-            "signal": np.sin(np.linspace(0, 10, 100)),
-            "noise": np.random.default_rng(42).normal(0, 0.1, 100),
-        })
+        df = pd.DataFrame(
+            {
+                "time": np.linspace(0, 10, 100),
+                "signal": np.sin(np.linspace(0, 10, 100)),
+                "noise": np.random.default_rng(42).normal(0, 0.1, 100),
+            }
+        )
         dp.load_dataframe(df, name="test")
         return dp
 
@@ -129,10 +130,12 @@ class TestDataProcessorTransformations:
 
     def test_dropna(self) -> None:
         dp = DataProcessor()
-        df = pd.DataFrame({
-            "a": [1, np.nan, 3],
-            "b": [4, 5, np.nan],
-        })
+        df = pd.DataFrame(
+            {
+                "a": [1, np.nan, 3],
+                "b": [4, 5, np.nan],
+            }
+        )
         dp.load_dataframe(df)
         dp.dropna()
         assert len(dp.dataframe) == 1  # Only first row has no NaN
@@ -148,10 +151,12 @@ class TestDataProcessorAnalysis:
     def dp(self) -> DataProcessor:
         dp = DataProcessor()
         rng = np.random.default_rng(42)
-        df = pd.DataFrame({
-            "x": rng.normal(0, 1, 100),
-            "y": rng.normal(0, 1, 100),
-        })
+        df = pd.DataFrame(
+            {
+                "x": rng.normal(0, 1, 100),
+                "y": rng.normal(0, 1, 100),
+            }
+        )
         dp.load_dataframe(df)
         return dp
 

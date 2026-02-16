@@ -48,8 +48,7 @@ class CalculationMixin:
             y_center = (ylim[0] + ylim[1]) / 2
 
             base_range = (
-                self.bath_diameter_input.value()  # type: ignore[attr-defined]
-                / 2
+                self.bath_diameter_input.value() / 2  # type: ignore[attr-defined]
                 + self.electrode_extension_slider.value()  # type: ignore[attr-defined]
             )
 

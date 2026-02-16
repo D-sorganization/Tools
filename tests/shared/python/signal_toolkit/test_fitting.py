@@ -20,6 +20,7 @@ from signal_toolkit.fitting import (
 
 # ── Helper ───────────────────────────────────────────────────────────────
 
+
 def _make_signal(t: np.ndarray, y: np.ndarray) -> Signal:
     """Create a Signal from time and value arrays."""
     return Signal(time=t, values=y)

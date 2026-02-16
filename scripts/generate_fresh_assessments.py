@@ -3,12 +3,11 @@
 Generate fresh assessments based on current codebase state.
 """
 
-import os
-import re
 import ast
 import logging
-from pathlib import Path
+import os
 from datetime import datetime
+from pathlib import Path
 
 # Configuration
 REPO_ROOT = Path(__file__).parent.parent.resolve()
@@ -41,6 +40,7 @@ CATEGORIES = {
     "O": "Maintainability",
 }
 
+
 def analyze_codebase():
     logger.info("Starting codebase analysis...")
     stats = {
@@ -68,7 +68,12 @@ def analyze_codebase():
         # Skip hidden and venv directories
         # We want to allow .github for CI checks, but skip .git repo folder
         path_parts = Path(root).parts
-        if ".git" in path_parts or "venv" in path_parts or "__pycache__" in path_parts or ".tox" in path_parts:
+        if (
+            ".git" in path_parts
+            or "venv" in path_parts
+            or "__pycache__" in path_parts
+            or ".tox" in path_parts
+        ):
             continue
 
         for file in files:
@@ -102,7 +107,9 @@ def analyze_codebase():
                     try:
                         tree = ast.parse(content)
                         for node in ast.walk(tree):
-                            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                            if isinstance(
+                                node, (ast.FunctionDef, ast.AsyncFunctionDef)
+                            ):
                                 stats["functions"] += 1
                                 if ast.get_docstring(node):
                                     stats["docstrings"] += 1
@@ -132,6 +139,7 @@ def analyze_codebase():
                 logger.warning(f"Error analyzing {file}: {e}")
 
     return stats
+
 
 def calculate_grades(stats):
     logger.info("Calculating grades...")
@@ -230,6 +238,7 @@ def calculate_grades(stats):
 
     return {k: round(v, 1) for k, v in grades.items()}
 
+
 def generate_reports(grades, stats):
     logger.info("Generating reports...")
     today = datetime.now().strftime("%Y-%m-%d")
@@ -256,7 +265,9 @@ def generate_reports(grades, stats):
         elif cat == "D":
             content += f"- **Try/Except Blocks**: {stats['try_except']}\n"
         elif cat == "F":
-            content += f"- **Eval Calls**: {stats['evals']} (Each call reduces score by 2.0)\n"
+            content += (
+                f"- **Eval Calls**: {stats['evals']} (Each call reduces score by 2.0)\n"
+            )
         elif cat == "L":
             content += f"- **Print Calls**: {stats['prints']} (Should be 0 in production code)\n"
         elif cat == "O":
@@ -264,7 +275,9 @@ def generate_reports(grades, stats):
             content += f"- **FIXMEs**: {stats['fixmes']}\n"
             content += f"- **Total Lines of Code**: {stats['lines']}\n"
 
-        filepath = DOCS_DIR / f"Assessment_{cat}_{name.replace(' ', '_').replace('/', '-')}.md"
+        filepath = (
+            DOCS_DIR / f"Assessment_{cat}_{name.replace(' ', '_').replace('/', '-')}.md"
+        )
         filepath.write_text(content, encoding="utf-8")
 
         # Create Issue for low scores (< 5.0)
@@ -300,7 +313,7 @@ The assessment found significant issues in this category.
         "Security": ["F", "D"],
         "Performance": ["E", "N"],
         "Operations": ["H", "L"],
-        "Design": ["J"]
+        "Design": ["J"],
     }
 
     group_scores = {}
@@ -308,13 +321,13 @@ The assessment found significant issues in this category.
         group_scores[group] = sum(grades[c] for c in cats) / len(cats)
 
     weighted_score = (
-        group_scores["Code"] * 0.25 +
-        group_scores["Testing"] * 0.15 +
-        group_scores["Documentation"] * 0.10 +
-        group_scores["Security"] * 0.15 +
-        group_scores["Performance"] * 0.15 +
-        group_scores["Operations"] * 0.10 +
-        group_scores["Design"] * 0.10
+        group_scores["Code"] * 0.25
+        + group_scores["Testing"] * 0.15
+        + group_scores["Documentation"] * 0.10
+        + group_scores["Security"] * 0.15
+        + group_scores["Performance"] * 0.15
+        + group_scores["Operations"] * 0.10
+        + group_scores["Design"] * 0.10
     )
 
     # Generate Comprehensive Assessment
@@ -369,13 +382,20 @@ The repository has been analyzed against 15 categories (A-O). Below is the break
 ## Methodology
 This assessment was generated automatically by `scripts/generate_fresh_assessments.py` analyzing the codebase statistics.
 """
-    (DOCS_DIR / "Comprehensive_Assessment.md").write_text(comp_content, encoding="utf-8")
-    logger.info(f"Comprehensive assessment written to {DOCS_DIR / 'Comprehensive_Assessment.md'}")
+    (DOCS_DIR / "Comprehensive_Assessment.md").write_text(
+        comp_content, encoding="utf-8"
+    )
+    logger.info(
+        f"Comprehensive assessment written to {DOCS_DIR / 'Comprehensive_Assessment.md'}"
+    )
+
 
 if __name__ == "__main__":
     try:
         stats = analyze_codebase()
-        logger.info(f"Stats collected: Files={stats['files']}, Lines={stats['lines']}, Tests={stats['test_files']}")
+        logger.info(
+            f"Stats collected: Files={stats['files']}, Lines={stats['lines']}, Tests={stats['test_files']}"
+        )
 
         grades = calculate_grades(stats)
         logger.info(f"Grades calculated: {grades}")

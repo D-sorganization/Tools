@@ -155,9 +155,7 @@ class TestDewPoint:
         dp_high = engine.calculate_dew_point(3000.0, 101325.0)
         assert dp_high > dp_low
 
-    def test_dew_point_reasonable_range(
-        self, engine: SteamCalculationEngine
-    ) -> None:
+    def test_dew_point_reasonable_range(self, engine: SteamCalculationEngine) -> None:
         """Dew point at typical indoor conditions should be reasonable."""
         # Typical indoor: P_partial ~ 1500 Pa (RH ~60% at 22°C)
         dp = engine.calculate_dew_point(1500.0, 101325.0)
@@ -188,9 +186,7 @@ class TestSimplifiedCalculations:
         props = engine.calculate_properties(473.15, 200000.0, engine="simplified")
         assert_allclose(props.temperature, 473.15, atol=1.0)
 
-    def test_properties_pressure_matches(
-        self, engine: SteamCalculationEngine
-    ) -> None:
+    def test_properties_pressure_matches(self, engine: SteamCalculationEngine) -> None:
         props = engine.calculate_properties(473.15, 500000.0, engine="simplified")
         assert_allclose(props.pressure, 500000.0, rtol=0.01)
 

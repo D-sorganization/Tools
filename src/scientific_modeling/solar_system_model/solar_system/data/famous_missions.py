@@ -6,7 +6,6 @@ Provides pre-calculated or approximate trajectories for significant
 historical space missions.
 """
 
-from datetime import datetime
 import numpy as np
 from ..core.celestial_body import StateVector
 from ..core.constants import AU
