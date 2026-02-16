@@ -1,9 +1,9 @@
-# Assessment: Dependencies (Category G)
+# Assessment G: Dependencies
 
-## Grade: 9/10
+## Grade: 9.0/10
 
 ## Analysis
-Dependency management is very strong.
-- **Manifests**: Clean `requirements.txt` with inline comments explaining usage.
-- **Locking**: `requirements-lock.txt` and `pnpm-lock.yaml` ensure reproducible builds.
-- **Isolation**: Virtual environment usage is enforced/encouraged in docs.
+- **Date**: 2026-02-16
+- **Automated Check**: Yes
+
+## Details

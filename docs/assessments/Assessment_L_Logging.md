@@ -1,8 +1,10 @@
-# Assessment: Logging (Category L)
+# Assessment L: Logging
 
-## Grade: 6/10
+## Grade: 4.0/10
 
 ## Analysis
-Logging is inconsistent.
-- **Hybrid**: The codebase is split between `print()` (debugging style) and `logging` (production style).
-- **Standardization**: Need to migrate all `print()` statements in `src/` to the shared logger.
+- **Date**: 2026-02-16
+- **Automated Check**: Yes
+
+## Details
+- **Print Calls**: 60 (Should be 0 in production code)
