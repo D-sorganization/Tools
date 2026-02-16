@@ -14,9 +14,19 @@ class TestOperationType:
 
     def test_all_values(self) -> None:
         expected = {
-            "load", "filter", "transform", "calculate", "resample",
-            "integrate", "differentiate", "trim", "merge", "select",
-            "rename", "export", "custom",
+            "load",
+            "filter",
+            "transform",
+            "calculate",
+            "resample",
+            "integrate",
+            "differentiate",
+            "trim",
+            "merge",
+            "select",
+            "rename",
+            "export",
+            "custom",
         }
         actual = {m.value for m in OperationType}
         assert actual == expected

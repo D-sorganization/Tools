@@ -53,34 +53,50 @@ class TestCoefficientInfo:
 
     def test_significant_true(self) -> None:
         ci = CoefficientInfo(
-            name="x", estimate=1.0, std_error=0.1,
-            t_statistic=10.0, p_value=0.001,
-            ci_lower=0.8, ci_upper=1.2,
+            name="x",
+            estimate=1.0,
+            std_error=0.1,
+            t_statistic=10.0,
+            p_value=0.001,
+            ci_lower=0.8,
+            ci_upper=1.2,
         )
         assert ci.significant is True
 
     def test_significant_false(self) -> None:
         ci = CoefficientInfo(
-            name="x", estimate=0.1, std_error=0.5,
-            t_statistic=0.2, p_value=0.8,
-            ci_lower=-0.9, ci_upper=1.1,
+            name="x",
+            estimate=0.1,
+            std_error=0.5,
+            t_statistic=0.2,
+            p_value=0.8,
+            ci_lower=-0.9,
+            ci_upper=1.1,
         )
         assert ci.significant is False
 
     def test_significance_boundary(self) -> None:
         """p=0.05 is NOT significant (< 0.05 required)."""
         ci = CoefficientInfo(
-            name="x", estimate=1.0, std_error=0.5,
-            t_statistic=2.0, p_value=0.05,
-            ci_lower=0.0, ci_upper=2.0,
+            name="x",
+            estimate=1.0,
+            std_error=0.5,
+            t_statistic=2.0,
+            p_value=0.05,
+            ci_lower=0.0,
+            ci_upper=2.0,
         )
         assert ci.significant is False
 
     def test_custom_vif(self) -> None:
         ci = CoefficientInfo(
-            name="x", estimate=1.0, std_error=0.1,
-            t_statistic=10.0, p_value=0.001,
-            ci_lower=0.8, ci_upper=1.2,
+            name="x",
+            estimate=1.0,
+            std_error=0.1,
+            t_statistic=10.0,
+            p_value=0.001,
+            ci_lower=0.8,
+            ci_upper=1.2,
             vif=5.5,
         )
         assert ci.vif == 5.5

@@ -10,6 +10,7 @@ from data_processor.core.undo_redo import (
 
 # ─── Concrete command for testing ──────────────────────────────────────
 
+
 class IncrementCommand(Command):
     """Test command that increments a counter."""
 
