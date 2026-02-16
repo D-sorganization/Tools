@@ -64,7 +64,7 @@ def analyze_codebase():
         "readme": False,
     }
 
-    for root, dirs, files in os.walk(REPO_ROOT):
+    for root, _dirs, files in os.walk(REPO_ROOT):
         # Skip hidden and venv directories
         # We want to allow .github for CI checks, but skip .git repo folder
         path_parts = Path(root).parts
