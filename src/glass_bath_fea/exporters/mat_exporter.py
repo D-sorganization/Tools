@@ -77,10 +77,7 @@ def validate_mesh_data(mesh_data: dict) -> bool:
     num_nodes = nodes.shape[1]
     max_index = np.max(elements)
 
-    if max_index > num_nodes:
-        return False
-
-    return True
+    return not max_index > num_nodes
 
 
 def export_fea_data_package(

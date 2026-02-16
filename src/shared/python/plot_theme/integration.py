@@ -91,10 +91,7 @@ def style_axis(
     """
     manager = get_plot_theme_manager()
 
-    if theme_name:
-        theme = get_theme(theme_name)
-    else:
-        theme = manager.current_theme
+    theme = get_theme(theme_name) if theme_name else manager.current_theme
 
     # Apply styling
     ax.set_facecolor(theme.axes_facecolor)
@@ -120,10 +117,7 @@ def get_theme_colors(theme_name: str | None = None) -> dict[str, Any]:
     """
     manager = get_plot_theme_manager()
 
-    if theme_name:
-        theme = get_theme(theme_name)
-    else:
-        theme = manager.current_theme
+    theme = get_theme(theme_name) if theme_name else manager.current_theme
 
     return {
         "primary": theme.primary_color,

@@ -323,15 +323,9 @@ def find_optimal_on_surface(
     """
     # Prepare data for interpolation
     # Ensure 1D unique sorted arrays for RegularGridInterpolator
-    if x_grid.ndim > 1:
-        x_vals = np.unique(x_grid)
-    else:
-        x_vals = x_grid
+    x_vals = np.unique(x_grid) if x_grid.ndim > 1 else x_grid
 
-    if y_grid.ndim > 1:
-        y_vals = np.unique(y_grid)
-    else:
-        y_vals = y_grid
+    y_vals = np.unique(y_grid) if y_grid.ndim > 1 else y_grid
 
     # z_grid should be (x, y) or (y, x) depending on meshgrid convention
     # Usually meshgrid(x, y) produces shape (len(y), len(x)).

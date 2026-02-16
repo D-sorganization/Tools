@@ -124,11 +124,12 @@ class GlassIntegrationMixin:
                 return False
 
             # Check for glass calculator in TabManager (preferred)
-            if hasattr(main_window, "tab_manager") and hasattr(
-                main_window.tab_manager, "glass_calculator_tab"
+            if (
+                hasattr(main_window, "tab_manager")
+                and hasattr(main_window.tab_manager, "glass_calculator_tab")
+                and main_window.tab_manager.glass_calculator_tab is not None
             ):
-                if main_window.tab_manager.glass_calculator_tab is not None:
-                    return True
+                return True
 
             # Legacy check (fallback)
             return bool(

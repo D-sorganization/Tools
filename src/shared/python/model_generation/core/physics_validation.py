@@ -493,9 +493,7 @@ class PhysicsValidator:
             c1 = np.dot(w, v)
             c2 = np.dot(v, v)
 
-            if c2 == 0:
-                dist = np.linalg.norm(point - p1)
-            elif c1 <= 0:
+            if c2 == 0 or c1 <= 0:
                 dist = np.linalg.norm(point - p1)
             elif c2 <= c1:
                 dist = np.linalg.norm(point - p2)

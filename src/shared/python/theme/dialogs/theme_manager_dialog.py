@@ -268,9 +268,8 @@ class ThemeManagerDialog(QDialog):
 
     def _on_item_double_clicked(self, item: QListWidgetItem) -> None:
         """Handle double-click on theme item."""
-        if isinstance(item, ThemeListItem):
-            if not item.is_current:
-                self._apply_theme(item.theme_name)
+        if isinstance(item, ThemeListItem) and not item.is_current:
+            self._apply_theme(item.theme_name)
 
     def _apply_selected_theme(self) -> None:
         """Apply the currently selected theme."""
