@@ -43,14 +43,18 @@ try:
         get_file_type,
         should_exclude,
     )
-    from tools.folder_tools.folder_packer_pro.manifest import PackageManifest
 
     # Also verify backward-compatible facade imports work
     from tools.folder_tools.folder_packer_pro.folder_packer_pro import (  # noqa: F811
         EncryptionManager as EncryptionManagerFacade,
+    )
+    from tools.folder_tools.folder_packer_pro.folder_packer_pro import (
         FolderPackerPro as FolderPackerProFacade,
+    )
+    from tools.folder_tools.folder_packer_pro.folder_packer_pro import (
         PackageManifest as PackageManifestFacade,
     )
+    from tools.folder_tools.folder_packer_pro.manifest import PackageManifest
 except ImportError:
     pytest.skip("folder_packer_pro module not available", allow_module_level=True)
 

@@ -11,7 +11,7 @@ from __future__ import annotations
 import math
 import pathlib
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
@@ -735,11 +735,22 @@ class Renderer:
         position_3d: np.ndarray,
         color: tuple[int, int, int] = (255, 255, 255),
         offset: tuple[int, int] = (10, -10),
+        priority: int = 1,
     ) -> None:
         """
-        Render a text label at a 3D position using UIRenderer.
+        Render a text label at a 3D position using UIRenderer with priority-based fading.
         """
         if not self.settings.show_labels:
+            return
+
+        # Calculate distance for fading (Issue #811)
+        cam_pos = np.array(self.camera.position)
+        dist = np.linalg.norm(position_3d - cam_pos)
+
+        # Distance clipping: lower priority labels disappear further away
+        if priority == 1 and dist > 20.0:
+            return
+        if priority == 2 and dist > 100.0:
             return
 
         # Project 3D to 2D screen coordinates
@@ -748,13 +759,26 @@ class Renderer:
         if screen_pos is None:
             return
 
+        # Fade alpha based on distance
+        # Reference distance of 5.0 for full brightness
+        alpha_scale = float(max(0.3, min(1.0, 8.0 / float(dist))))
+
+        # Priority boost
+        if priority > 1:
+            alpha_scale = float(min(1.0, alpha_scale * 1.5))
+
+        # Apply fading to color
+        faded_color = tuple(int(c * alpha_scale) for c in color)
+
         x, y = screen_pos
         x += offset[0]
         y += offset[1]
 
         # Render text using UI renderer
         if self.ui_renderer:
-            self.ui_renderer.render_label_2d(text, (x, y), color)
+            self.ui_renderer.render_label_2d(
+                text, (x, y), cast(tuple[int, int, int], faded_color)
+            )
 
     def _project_to_screen(self, position_3d: np.ndarray) -> tuple[int, int] | None:
         """Project 3D position to 2D screen coordinates."""

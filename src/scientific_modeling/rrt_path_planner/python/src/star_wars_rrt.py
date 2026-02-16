@@ -22,7 +22,9 @@ from OpenGL.GL import (
     GL_LIGHT0,
     GL_LIGHTING,
     GL_LINE_STRIP,
+    GL_MODELVIEW,
     GL_POINTS,
+    GL_PROJECTION,
     GL_QUADS,
     GL_TRIANGLES,
     glBegin,
@@ -33,13 +35,20 @@ from OpenGL.GL import (
     glEnd,
     glLineWidth,
     glLoadIdentity,
+    glMatrixMode,
     glPointSize,
     glPopMatrix,
     glPushMatrix,
     glTranslatef,
     glVertex3f,
 )
-from OpenGL.GLU import gluDeleteQuadric, gluLookAt, gluNewQuadric, gluSphere
+from OpenGL.GLU import (
+    gluDeleteQuadric,
+    gluLookAt,
+    gluNewQuadric,
+    gluPerspective,
+    gluSphere,
+)
 from pygame.locals import DOUBLEBUF, K_ESCAPE, K_SPACE, KEYDOWN, OPENGL, QUIT, K_c
 
 
@@ -70,7 +79,17 @@ class RRTPlanner:
     def __init__(
         self, bounds: npt.NDArray[np.float64], max_iterations: int = 5000
     ) -> None:
-        """Initialize RRT planner with search bounds and iteration limit"""
+        """Initialize RRT planner with search bounds and iteration limit."""
+        # DbC Precondition: bounds must be [xmin, xmax, ymin, ymax, zmin, zmax]
+        if len(bounds) != 6:
+            raise ValueError(
+                "Bounds must contain 6 elements: [xmin, xmax, ymin, ymax, zmin, zmax]"
+            )
+        if any(bounds[i] >= bounds[i + 1] for i in range(0, 6, 2)):
+            raise ValueError(
+                "Invalid bounds: min must be less than max for each dimension"
+            )
+
         self.bounds = bounds
         self.max_iterations = max_iterations
         self.step_size = 0.05
@@ -224,9 +243,16 @@ class StarWarsRenderer:
         glEnable(GL_COLOR_MATERIAL)
 
         # Camera setup
-        self.camera_pos = np.array([2.0, -2.0, 1.0])
+        self.camera_pos = np.array([2.5, -2.5, 1.5])
         self.camera_target = np.array([0.0, 0.0, 0.0])
         self.camera_up = np.array([0.0, 0.0, 1.0])
+
+        # Initialize Projection (Fixed Star Wars RRT Renderer Bug)
+
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        gluPerspective(45, (width / height), 0.1, 50.0)
+        glMatrixMode(GL_MODELVIEW)
 
         # Starfield
         self.stars = self._generate_starfield(1000)

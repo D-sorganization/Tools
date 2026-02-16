@@ -27,6 +27,7 @@ from ..core.constants import (
 from ..core.time_manager import TimeManager
 from ..data.asteroids import MAJOR_ASTEROIDS, generate_belt_particles
 from ..data.comets import COMETS
+from ..data.famous_missions import FAMOUS_MISSIONS
 from ..data.moon_systems import moons_by_parent
 from ..data.planet_info import PLANET_DESCRIPTIONS
 from ..physics.trajectory_planner import (
@@ -384,6 +385,15 @@ class SolarSystemScene:
                 parent=self.sun,
             )
             self.comets[comet.name] = comet_body
+
+        self._load_famous_missions()
+
+    def _load_famous_missions(self) -> None:
+        """Load historical famous missions into the scene."""
+        for name, get_traj in FAMOUS_MISSIONS.items():
+            trajectory = get_traj()
+            craft = Spacecraft(name, trajectory)
+            self.spacecraft[name] = craft
 
     def get_all_bodies(self) -> list[CelestialBody]:
         """
@@ -1003,52 +1013,85 @@ class SolarSystemScene:
                 if self.view_state.show_labels:
                     state = planet.get_state_at_time(julian_date)
                     pos = state.position * renderer.distance_scale
-                    renderer.render_label(planet.name, pos)
+                    # Planets are high priority (2)
+                    renderer.render_label(planet.name, pos, priority=2)
 
         if self.view_state.show_minor_bodies:
             renderer.render_asteroid_belt(self.asteroid_belt_points)
             for asteroid in self.asteroids.values():
-                renderer.render_body(
-                    asteroid, julian_date, self.selected_body == asteroid
-                )
-                if self.view_state.show_labels:
-                    state = asteroid.get_state_at_time(julian_date)
-                    renderer.render_label(
-                        asteroid.name, state.position * renderer.distance_scale
-                    )
+                is_selected = self.selected_body == asteroid
+                renderer.render_body(asteroid, julian_date, is_selected)
+
+                # Prioritize label only if selected or very close (Issue #811)
+                state = asteroid.get_state_at_time(julian_date)
+                pos = state.position * renderer.distance_scale
+                dist_to_cam = np.linalg.norm(pos - np.array(renderer.camera.position))
+
+                if self.view_state.show_labels and (is_selected or dist_to_cam < 1.0):
+                    renderer.render_label(asteroid.name, pos, priority=1)
 
             for comet in self.comets.values():
-                renderer.render_body(comet, julian_date, self.selected_body == comet)
+                is_selected = self.selected_body == comet
+                renderer.render_body(comet, julian_date, is_selected)
                 if self.view_state.show_orbits:
                     renderer.render_orbit(
                         comet, julian_date, color=(0.6, 0.8, 1.0, 0.7)
                     )
-                if self.view_state.show_labels:
-                    state = comet.get_state_at_time(julian_date)
-                    renderer.render_label(
-                        comet.name, state.position * renderer.distance_scale
-                    )
+
+                # Prioritize label
+                state = comet.get_state_at_time(julian_date)
+                pos = state.position * renderer.distance_scale
+                dist_to_cam = np.linalg.norm(pos - np.array(renderer.camera.position))
+
+                if self.view_state.show_labels and (is_selected or dist_to_cam < 3.0):
+                    renderer.render_label(comet.name, pos, priority=2)
 
         for moon in self.moons.values():
-            renderer.render_body(moon, julian_date, self.selected_body == moon)
+            is_selected = self.selected_body == moon
+            renderer.render_body(moon, julian_date, is_selected)
+
+            # Label Moons only if selected or camera is close (Issue #811)
             if self.view_state.show_labels:
                 state = moon.get_state_at_time(julian_date)
-                renderer.render_label(
-                    moon.name, state.position * renderer.distance_scale
-                )
+                pos = state.position * renderer.distance_scale
+                dist_to_cam = np.linalg.norm(pos - np.array(renderer.camera.position))
+
+                if is_selected or dist_to_cam < 0.5:
+                    renderer.render_label(moon.name, pos, priority=1)
 
         if self.view_state.show_trajectories:
             for trajectory in self.trajectories:
                 renderer.render_trajectory(trajectory.trajectory_points)
 
+            # Show famous mission flight paths (Issue #813)
+            for spacecraft in self.spacecraft.values():
+                if spacecraft.trajectory:
+                    renderer.render_trajectory(
+                        spacecraft.trajectory,
+                        color=(0.1, 0.8, 1.0, 0.4),  # Distinct blue-ish for historical
+                        line_width=1.5,
+                    )
+
         for spacecraft in self.spacecraft.values():
             if spacecraft.trajectory and len(spacecraft.trajectory) >= 2:
                 start_time = spacecraft.trajectory[0].time
                 end_time = spacecraft.trajectory[-1].time
+
+                # Draw marker and label if mission is 'active' in simulation time
                 if start_time <= julian_date <= end_time:
                     state = spacecraft.get_state_at_time(julian_date)
                     pos = state.position * renderer.distance_scale
-                    renderer.render_label("🚀 " + spacecraft.name, pos, (0, 255, 128))
+                    renderer.render_label(
+                        "🚀 " + spacecraft.name, pos, (0, 255, 128), priority=2
+                    )
+
+                # Or if it's already visited interstellar space, still show it at its current/last pos
+                elif julian_date > end_time:
+                    state = spacecraft.get_state_at_time(julian_date)
+                    pos = state.position * renderer.distance_scale
+                    renderer.render_label(
+                        "⭐ " + spacecraft.name, pos, (150, 150, 150), priority=1
+                    )
 
     def _render_overlays(self, julian_date: float) -> None:
         """

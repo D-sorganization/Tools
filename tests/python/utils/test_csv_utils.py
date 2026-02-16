@@ -117,7 +117,5 @@ class TestMergeCsvFiles:
 
     def test_merge_nonexistent_files(self, tmp_path: Path) -> None:
         out = tmp_path / "bad_merge.csv"
-        result = merge_csv_files(
-            [tmp_path / "a.csv", tmp_path / "b.csv"], out
-        )
+        result = merge_csv_files([tmp_path / "a.csv", tmp_path / "b.csv"], out)
         assert result is False

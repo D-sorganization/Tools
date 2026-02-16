@@ -323,7 +323,7 @@ class TestNoWildcardImports:
                     if node.names and any(alias.name == "*" for alias in node.names):
                         rel = filepath.relative_to(REPO_ROOT)
                         violations.append(
-                            f"  {rel}:{node.lineno} " f"from {node.module} import *"
+                            f"  {rel}:{node.lineno} from {node.module} import *"
                         )
 
         assert (
