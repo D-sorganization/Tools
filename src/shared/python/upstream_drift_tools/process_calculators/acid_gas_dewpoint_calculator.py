@@ -776,11 +776,9 @@ if GUI_AVAILABLE:
 
         def setup_connections(self) -> None:
             """Setup signal connections"""
-            pass
 
         def set_default_values(self) -> None:
             """Set default values for input widgets"""
-            pass
 
         def setup_state_management(self) -> None:
             """Setup state management for the calculator"""
