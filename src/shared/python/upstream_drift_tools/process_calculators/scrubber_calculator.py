@@ -499,6 +499,9 @@ def calculate_htu(
     # HTU = C_H * (G/L)^n where G and L are mass fluxes
     l_over_g = liquid_mass_flux / max(gas_mass_flux, 0.001)
 
+    if l_over_g <= 0:
+        return HTU_MAX
+
     # Empirical HTU calculation
     # HTU ≈ C_H * (G / (kla * a))
     htu = packing.ch / (kla_per_s * packing.specific_surface_area * l_over_g**packing.n)

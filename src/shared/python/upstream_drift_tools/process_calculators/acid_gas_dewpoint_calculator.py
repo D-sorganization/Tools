@@ -82,16 +82,16 @@ except ImportError:
 
 # Import BaseCalculatorWidget for state management
 try:
-    from integrated_process_simulator.ui.mixins.base_calculator_widget import (
-        BaseCalculatorWidget,
-    )
+    from ..ui.widgets.base_calculator_widget import BaseCalculatorWidget
 
     BASE_CALCULATOR_AVAILABLE = True
 except ImportError:
-    logging.getLogger(__name__).warning(
-        "Warning: BaseCalculatorWidget not available, falling back to QWidget"
-    )
     BASE_CALCULATOR_AVAILABLE = False
+
+    # Fallback to QWidget if BaseCalculatorWidget is not available
+    class BaseCalculatorWidget(QWidget):  # type: ignore
+        def __init__(self, *args, **kwargs):
+            QWidget.__init__(self, *args, **kwargs)
 
 
 from .constants import (
