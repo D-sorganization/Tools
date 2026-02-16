@@ -238,10 +238,9 @@ class TestPureCalculationEngines:
                         f"  {rel}:{imp['lineno']} imports '{imp['module']}'"
                     )
 
-        assert (
-            not violations
-        ), f"Engine files import Qt ({len(violations)} violations):\n" + "\n".join(
-            violations
+        assert not violations, (
+            f"Engine files import Qt ({len(violations)} violations):\n"
+            + "\n".join(violations)
         )
 
 
@@ -323,9 +322,9 @@ class TestNoWildcardImports:
                     if node.names and any(alias.name == "*" for alias in node.names):
                         rel = filepath.relative_to(REPO_ROOT)
                         violations.append(
-                            f"  {rel}:{node.lineno} " f"from {node.module} import *"
+                            f"  {rel}:{node.lineno} from {node.module} import *"
                         )
 
-        assert (
-            not violations
-        ), f"Wildcard imports found ({len(violations)}):\n" + "\n".join(violations)
+        assert not violations, (
+            f"Wildcard imports found ({len(violations)}):\n" + "\n".join(violations)
+        )

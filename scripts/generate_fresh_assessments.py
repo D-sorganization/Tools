@@ -8,6 +8,7 @@ import logging
 import os
 from datetime import datetime
 from pathlib import Path
+from typing import TypedDict
 
 # Configuration
 REPO_ROOT = Path(__file__).parent.parent.resolve()
@@ -41,9 +42,30 @@ CATEGORIES = {
 }
 
 
-def analyze_codebase():
+class RepoStats(TypedDict):
+    files: int
+    lines: int
+    py_files: int
+    test_files: int
+    docstrings: int
+    functions: int
+    classes: int
+    todos: int
+    fixmes: int
+    prints: int
+    evals: int
+    type_hints: int
+    args_annotated: int
+    try_except: int
+    imports: set[str]
+    requirements: bool
+    cicd: bool
+    readme: bool
+
+
+def analyze_codebase() -> RepoStats:
     logger.info("Starting codebase analysis...")
-    stats = {
+    stats: RepoStats = {
         "files": 0,
         "lines": 0,
         "py_files": 0,
@@ -128,281 +150,103 @@ def analyze_codebase():
                                         # check for suppression comments on the same line (approximate)
                                         # actually ast doesn't give comments easily, so we count all prints
                                         stats["prints"] += 1
-                                    if node.func.id == "eval":
+                                    elif node.func.id == "eval":
                                         stats["evals"] += 1
+                            elif isinstance(node, ast.Import):
+                                for alias in node.names:
+                                    stats["imports"].add(alias.name)
+                            elif isinstance(node, ast.ImportFrom):
+                                if node.module:
+                                    stats["imports"].add(node.module)
                             elif isinstance(node, ast.Try):
                                 stats["try_except"] += 1
                     except SyntaxError:
-                        pass
-
+                        logger.warning(f"Syntax error in {filepath}")
             except Exception as e:
-                logger.warning(f"Error analyzing {file}: {e}")
+                logger.error(f"Error analyzing {filepath}: {e}")
 
     return stats
 
 
-def calculate_grades(stats):
-    logger.info("Calculating grades...")
-    grades = {}
+def generate_report(stats: RepoStats) -> str:
+    """Generate markdown report from stats."""
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    # A: Code Structure
-    # Heuristic: Presence of src and tests folders
-    has_src = (REPO_ROOT / "src").exists()
-    has_tests = (REPO_ROOT / "tests").exists()
-    grades["A"] = 9.0 if has_src and has_tests else 6.0
+    report = f"""# Codebase Assessment - {timestamp}
 
-    # B: Documentation
-    total_defs = stats["functions"] + stats["classes"]
-    if total_defs > 0:
-        doc_ratio = stats["docstrings"] / total_defs
-        # Base score 4.0, add up to 6.0 based on ratio
-        grades["B"] = min(10.0, 4.0 + (doc_ratio * 6.0))
-    else:
-        grades["B"] = 5.0
+## Statistics
+- Total Files: {stats["files"]}
+- Total Lines: {stats["lines"]}
+- Python Files: {stats["py_files"]}
+- Test Files: {stats["test_files"]}
+- Functions: {stats["functions"]}
+- Classes: {stats["classes"]}
 
-    # C: Test Coverage
-    # Heuristic: Ratio of test files to python files
-    if stats["py_files"] > 0:
-        test_ratio = stats["test_files"] / stats["py_files"]
-        # If 20% of files are tests, that's decent. 50% is excellent.
-        # Score = ratio * 20, capped at 10.
-        grades["C"] = min(10.0, test_ratio * 20)
-    else:
-        grades["C"] = 0.0
+## Quality Metrics
+- Docstring Coverage: {stats["docstrings"] / stats["functions"] * 100:.1f}% (functions)
+- Type Hint Coverage: {stats["type_hints"] / stats["functions"] * 100:.1f}% (returns)
+- Argument Annotation: {stats["args_annotated"] / max(1, stats["functions"]) * 100:.1f}% (per function avg)
 
-    # D: Error Handling
-    # Heuristic: try/except usage
-    if stats["functions"] > 0:
-        error_ratio = stats["try_except"] / stats["functions"]
-        # Expect at least 10% of functions to have error handling? Maybe too strict.
-        grades["D"] = min(10.0, 5.0 + (error_ratio * 20))
-    else:
-        grades["D"] = 6.0
+## Health Indicators
+- TODOs: {stats["todos"]}
+- FIXMEs: {stats["fixmes"]}
+- Print Statements: {stats["prints"]}
+- Eval Usage: {stats["evals"]}
+- Exception Handling (try block count): {stats["try_except"]}
 
-    # E: Performance
-    # Heuristic: Default 7.0, punished if files are too large (lines > 1000?)
-    # For now, default.
-    grades["E"] = 7.0
+## Infrastructure
+- Requirements.txt: {"[X]" if stats["requirements"] else "[ ]"}
+- CI/CD Workflows: {"[X]" if stats["cicd"] else "[ ]"}
+- README.md: {"[X]" if stats["readme"] else "[ ]"}
 
-    # F: Security
-    # Penalize for eval usage
-    grades["F"] = max(0.0, 10.0 - (stats["evals"] * 2.0))
+## Key Dependencies
+{", ".join(sorted(list(stats["imports"]))[:20])}...
+"""
+    return report
 
-    # G: Dependencies
-    grades["G"] = 9.0 if stats["requirements"] else 4.0
 
-    # H: CI/CD
-    grades["H"] = 9.0 if stats["cicd"] else 2.0
+def main() -> None:
+    """Main execution."""
+    stats = analyze_codebase()
+    report = generate_report(stats)
 
-    # I: Code Style
-    # Heuristic: Assume 8.0 as base if tools are present
-    grades["I"] = 8.0
+    report_path = DOCS_DIR / "current_assessment.md"
+    report_path.write_text(report)
+    logger.info(f"Report generated: {report_path}")
 
-    # J: API Design
-    # Heuristic: Type hints usage
-    if stats["functions"] > 0:
-        type_ratio = stats["type_hints"] / stats["functions"]
-        grades["J"] = min(10.0, 4.0 + (type_ratio * 6.0))
-    else:
-        grades["J"] = 5.0
-
-    # K: Data Handling
-    grades["K"] = 6.0
-
-    # L: Logging
-    # Penalize for print usage
-    # 50 prints -> 5.0 grade. 0 prints -> 9.0 grade.
+    # Also generate individual issues for high priority items
     if stats["prints"] > 50:
-        grades["L"] = 4.0
-    elif stats["prints"] > 10:
-        grades["L"] = 6.0
-    else:
-        grades["L"] = 9.0
-
-    # M: Configuration
-    grades["M"] = 8.0
-
-    # N: Scalability
-    grades["N"] = 7.0
-
-    # O: Maintainability
-    # Penalize for TODOs/FIXMEs
-    # 50 TODOs -> 5.0 grade
-    todo_count = stats["todos"] + stats["fixmes"]
-    if todo_count > 100:
-        grades["O"] = 4.0
-    elif todo_count > 50:
-        grades["O"] = 6.0
-    else:
-        grades["O"] = 8.0
-
-    return {k: round(v, 1) for k, v in grades.items()}
-
-
-def generate_reports(grades, stats):
-    logger.info("Generating reports...")
-    today = datetime.now().strftime("%Y-%m-%d")
-
-    # Generate individual category reports
-    for cat, name in CATEGORIES.items():
-        grade = grades[cat]
-        content = f"""# Assessment {cat}: {name}
-
-## Grade: {grade}/10
-
-## Analysis
-- **Date**: {today}
-- **Automated Check**: Yes
-
-## Details
-"""
-        # Add specific details based on category
-        if cat == "B":
-            content += f"- **Docstrings**: {stats['docstrings']} found in {stats['functions']+stats['classes']} definitions ({stats['docstrings']/(stats['functions']+stats['classes']+0.001)*100:.1f}%)\n"
-        elif cat == "C":
-            content += f"- **Test Files**: {stats['test_files']} (Total Python Files: {stats['py_files']})\n"
-            content += f"- **Test Ratio**: {stats['test_files']/(stats['py_files']+0.001)*100:.1f}%\n"
-        elif cat == "D":
-            content += f"- **Try/Except Blocks**: {stats['try_except']}\n"
-        elif cat == "F":
-            content += (
-                f"- **Eval Calls**: {stats['evals']} (Each call reduces score by 2.0)\n"
-            )
-        elif cat == "L":
-            content += f"- **Print Calls**: {stats['prints']} (Should be 0 in production code)\n"
-        elif cat == "O":
-            content += f"- **TODOs**: {stats['todos']}\n"
-            content += f"- **FIXMEs**: {stats['fixmes']}\n"
-            content += f"- **Total Lines of Code**: {stats['lines']}\n"
-
-        filepath = (
-            DOCS_DIR / f"Assessment_{cat}_{name.replace(' ', '_').replace('/', '-')}.md"
+        create_issue(
+            "I001",
+            "High Print Usage",
+            f"Codebase contains {stats['prints']} print statements. Replace with proper logging.",
         )
-        filepath.write_text(content, encoding="utf-8")
 
-        # Create Issue for low scores (< 5.0)
-        if grade < 5.0:
-            issue_content = f"""# Issue: Low Score in {name} (Category {cat})
+    if stats["docstrings"] / max(1, stats["functions"]) < 0.5:
+        create_issue(
+            "B001",
+            "Low Docstring Coverage",
+            f"Docstring coverage is at {stats['docstrings'] / stats['functions'] * 100:.1f}%.",
+        )
 
-## Status: Needs Attention
-## Grade: {grade}/10
-## Date: {today}
 
-The assessment found significant issues in this category.
+def create_issue(issue_id: str, title: str, description: str) -> None:
+    """Create a new issue file."""
+    issue_path = ISSUES_DIR / f"{issue_id}_{title.lower().replace(' ', '_')}.md"
+    content = f"""# Issue {issue_id}: {title}
+Date: {datetime.now().strftime("%Y-%m-%d")}
+Status: Open
+Category: {CATEGORIES.get(issue_id[0], "General")}
 
-### Findings
-- The automated assessment calculated a grade of {grade}/10, which is below the threshold of 5.0.
-- Please review `docs/assessments/Assessment_{cat}_{name.replace(' ', '_')}.md` for more details.
+## Description
+{description}
 
-### Recommendations
-1. Review the specific metrics that contributed to this low score.
-2. Create a plan to address the deficiencies.
-3. Run the assessment script again to verify improvements.
+## Recommendations
+- Systematically address this issue in the next refactoring cycle.
 """
-            issue_filename = f"ISSUE_LOW_SCORE_{cat}_{today}.md"
-            issue_path = ISSUES_DIR / issue_filename
-            issue_path.write_text(issue_content, encoding="utf-8")
-            logger.warning(f"Created issue for Category {cat}: {issue_path}")
-
-    # Calculate Weighted Score
-    # Code (25%), Testing (15%), Docs (10%), Security (15%), Perf (15%), Ops (10%), Design (10%)
-    groups = {
-        "Code": ["A", "I", "K", "O"],
-        "Testing": ["C", "G"],
-        "Documentation": ["B", "M"],
-        "Security": ["F", "D"],
-        "Performance": ["E", "N"],
-        "Operations": ["H", "L"],
-        "Design": ["J"],
-    }
-
-    group_scores = {}
-    for group, cats in groups.items():
-        group_scores[group] = sum(grades[c] for c in cats) / len(cats)
-
-    weighted_score = (
-        group_scores["Code"] * 0.25
-        + group_scores["Testing"] * 0.15
-        + group_scores["Documentation"] * 0.10
-        + group_scores["Security"] * 0.15
-        + group_scores["Performance"] * 0.15
-        + group_scores["Operations"] * 0.10
-        + group_scores["Design"] * 0.10
-    )
-
-    # Generate Comprehensive Assessment
-    comp_content = f"""# Comprehensive Assessment
-
-## Date: {today}
-## Weighted Score: {weighted_score:.2f}/10
-
-The repository has been analyzed against 15 categories (A-O). Below is the breakdown of grades.
-
-## Weighted Scoring Breakdown
-- **Code Quality (25%)**: {group_scores['Code']:.2f}/10
-- **Testing (15%)**: {group_scores['Testing']:.2f}/10
-- **Documentation (10%)**: {group_scores['Documentation']:.2f}/10
-- **Security (15%)**: {group_scores['Security']:.2f}/10
-- **Performance (15%)**: {group_scores['Performance']:.2f}/10
-- **Operations (10%)**: {group_scores['Operations']:.2f}/10
-- **Design (10%)**: {group_scores['Design']:.2f}/10
-
-## Grade Table
-| Category | Name | Grade | Status |
-|---|---|---|---|
-"""
-    for cat, name in CATEGORIES.items():
-        grade = grades[cat]
-        status = "🟢 Good" if grade >= 8.0 else "🟡 Fair" if grade >= 5.0 else "🔴 Poor"
-        comp_content += f"| {cat} | {name} | {grades[cat]} | {status} |\n"
-
-    comp_content += """
-## Top 5 Recommendations
-
-1. **Improve Test Coverage (Category C)**
-   - Current coverage is low based on the ratio of test files to source files.
-   - Action: Add more unit tests for core modules.
-
-2. **Reduce Technical Debt (Category O)**
-   - High number of TODO/FIXME markers found.
-   - Action: Schedule a sprint to address or ticket these items.
-
-3. **Standardize Logging (Category L)**
-   - Excessive use of `print()` found.
-   - Action: Replace `print()` with `logging` module usage.
-
-4. **Enhance Security (Category F)**
-   - `eval()` calls detected.
-   - Action: Audit and replace with safer alternatives where possible.
-
-5. **Improve Documentation (Category B)**
-   - Docstring coverage can be improved.
-   - Action: Add docstrings to public API functions and classes.
-
-## Methodology
-This assessment was generated automatically by `scripts/generate_fresh_assessments.py` analyzing the codebase statistics.
-"""
-    (DOCS_DIR / "Comprehensive_Assessment.md").write_text(
-        comp_content, encoding="utf-8"
-    )
-    logger.info(
-        f"Comprehensive assessment written to {DOCS_DIR / 'Comprehensive_Assessment.md'}"
-    )
+    issue_path.write_text(content)
+    logger.info(f"Issue created: {issue_path}")
 
 
 if __name__ == "__main__":
-    try:
-        stats = analyze_codebase()
-        logger.info(
-            f"Stats collected: Files={stats['files']}, Lines={stats['lines']}, Tests={stats['test_files']}"
-        )
-
-        grades = calculate_grades(stats)
-        logger.info(f"Grades calculated: {grades}")
-
-        generate_reports(grades, stats)
-        logger.info("Assessment generation complete.")
-
-    except Exception as e:
-        logger.error(f"Failed to generate assessments: {e}", exc_info=True)
-        exit(1)
+    main()

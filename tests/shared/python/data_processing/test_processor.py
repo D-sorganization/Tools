@@ -17,10 +17,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 import pytest
-
 from data_processing.processor import DataProcessor, DatasetInfo
 
 # ── Construction & Loading ───────────────────────────────────────────────
