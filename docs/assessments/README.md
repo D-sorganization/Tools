@@ -158,6 +158,7 @@ This document defines the comprehensive 16-point assessment framework (A-O + Hig
 | 2.0     | 2026-01 | Reorganized based on UX/strategic gap analysis |
 | 2.1     | 2026-02 | Added comprehensive multi-framework assessment |
 | 2.2     | 2026-02 | Added completist audit reports                 |
+| 2.3     | 2026-02 | Added automated assessment generation script   |
 
 ---
 
