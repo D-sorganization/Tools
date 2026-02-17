@@ -236,6 +236,10 @@ class DataProcessorEngine(BaseCalculationEngine):
     def rename_column(self, old_name: str, new_name: str) -> ProcessingResult:
         if self.data is None:
             return ProcessingResult(success=False, message="No data")
+        if old_name not in self.data.columns:
+            return ProcessingResult(
+                success=False, message=f"Column '{old_name}' not found"
+            )
         self._save_undo_state()
         self.data = self.data.rename(columns={old_name: new_name})
         return ProcessingResult(
@@ -245,6 +249,11 @@ class DataProcessorEngine(BaseCalculationEngine):
     def drop_columns(self, columns: list[str]) -> ProcessingResult:
         if self.data is None:
             return ProcessingResult(success=False, message="No data")
+        missing = [c for c in columns if c not in self.data.columns]
+        if missing:
+            return ProcessingResult(
+                success=False, message=f"Columns not found: {missing}"
+            )
         self._save_undo_state()
         self.data = self.data.drop(columns=columns)
         return ProcessingResult(
@@ -479,12 +488,47 @@ class DataProcessorEngine(BaseCalculationEngine):
             return True
         return False
 
+    def undo(self) -> ProcessingResult:
+        """Undo the last operation."""
+        if self._undo():
+            return ProcessingResult(
+                success=True, message="Undo successful", data=self.data
+            )
+        return ProcessingResult(success=False, message="Nothing to undo")
+
+    def redo(self) -> ProcessingResult:
+        """Redo the last undone operation."""
+        if self._redo_stack:
+            if self.data is not None:
+                self._undo_stack.append(self.data.copy())
+            self.data = self._redo_stack.pop()
+            return ProcessingResult(
+                success=True, message="Redo successful", data=self.data
+            )
+        return ProcessingResult(success=False, message="Nothing to redo")
+
     def reset(self) -> ProcessingResult:
         if self.original_data is not None:
             self._save_undo_state()
             self.data = self.original_data.copy()
             return ProcessingResult(success=True, message="Reset", data=self.data)
         return ProcessingResult(success=False, message="No original data")
+
+    # ========== Utility Methods ==========
+
+    def get_column_names(self) -> list[str]:
+        """Get list of column names."""
+        return list(self.data.columns) if self.data is not None else []
+
+    def get_numeric_columns(self) -> list[str]:
+        """Get list of numeric column names."""
+        if self.data is None:
+            return []
+        return list(self.data.select_dtypes(include=[np.number]).columns)
+
+    def has_data(self) -> bool:
+        """Check if data is loaded."""
+        return self.data is not None and not self.data.empty
 
 
 __all__ = [
