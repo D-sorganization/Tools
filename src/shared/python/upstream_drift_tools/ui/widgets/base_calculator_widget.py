@@ -1,4 +1,4 @@
-"""Base class for all calculator widgets in the fleet."""
+"""Base class for all calculator widgets and windows in the fleet."""
 
 from __future__ import annotations
 
@@ -7,13 +7,33 @@ from typing import Any
 
 from PyQt6.QtWidgets import QMainWindow, QMessageBox, QVBoxLayout, QWidget
 
-from ..mixins.calculator_state_mixin import CalculatorStateMixin
+from ..mixins.base_calculator_mixin import BaseCalculatorMixin
 
 logger = logging.getLogger(__name__)
 
 
-class BaseCalculatorWidget(QMainWindow, CalculatorStateMixin):
-    """Base class for calculator windows providing state management and common UI patterns."""
+class BaseCalculatorWidget(QWidget, BaseCalculatorMixin):
+    """Base QWidget for calculator modules that can be embedded."""
+
+    def __init__(
+        self,
+        calculator_name: str | None = None,
+        parent: QWidget | None = None,
+    ) -> None:
+        QWidget.__init__(self, parent)
+        BaseCalculatorMixin.__init__(self, calculator_name)
+
+    def show_error(self, title: str, message: str) -> None:
+        """Display an error message box."""
+        QMessageBox.critical(self, title, message)
+
+    def show_info(self, title: str, message: str) -> None:
+        """Display an information message box."""
+        QMessageBox.information(self, title, message)
+
+
+class BaseCalculatorWindow(QMainWindow, BaseCalculatorMixin):
+    """Base QMainWindow for standalone calculator applications."""
 
     def __init__(
         self,
@@ -23,7 +43,7 @@ class BaseCalculatorWidget(QMainWindow, CalculatorStateMixin):
         parent: QWidget | None = None,
     ) -> None:
         QMainWindow.__init__(self, parent)
-        CalculatorStateMixin.__init__(self, calculator_name)
+        BaseCalculatorMixin.__init__(self, calculator_name)
 
         self.setWindowTitle(window_title or calculator_name)
         self.setMinimumSize(*min_size)
@@ -43,11 +63,5 @@ class BaseCalculatorWidget(QMainWindow, CalculatorStateMixin):
 
     def closeEvent(self, event: Any) -> None:
         """Handle window close event with state saving."""
+        # Use handle_close_event from CalculatorStateMixin
         self.handle_close_event(event)
-
-    def get_calculator_specific_state(self) -> dict[str, Any]:
-        """Override to save custom UI state."""
-        return {}
-
-    def set_calculator_specific_state(self, state: dict[str, Any]) -> None:
-        """Override to restore custom UI state."""
