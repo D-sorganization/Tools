@@ -1,4 +1,5 @@
 # Thesis Defense Report: Adversarial Review Response
+
 **Date:** 2026-02-24
 **To:** Engineering Leadership
 **From:** Jules (Thesis Defender Agent)
@@ -15,24 +16,26 @@ The most significant legitimate findings relate to **Archival Security** (Zip Bo
 The following critiques have been verified as **Valid** and represent genuine risks to the system:
 
 1.  **Zip Bomb Vulnerability (Folder Packer Pro)**: The unpacking logic writes decompressed data to disk without verifying the decompressed size or compression ratio. This allows a malicious package to exhaust disk space.
-    *   *Severity:* **High**
-    *   *Status:* Issue Created.
+
+    - _Severity:_ **High**
+    - _Status:_ Issue Created.
 
 2.  **Path Traversal (Folder Packer Pro)**: The unpacker trusts relative paths (`dest / rel_path`) without verifying that the final path remains within the destination directory. This allows overwriting arbitrary files.
-    *   *Severity:* **High**
-    *   *Status:* Issue Created.
+
+    - _Severity:_ **High**
+    - _Status:_ Issue Created.
 
 3.  **Unbounded Computation (Calculator)**: While the input tree is validated, the `sp.simplify()` function lacks a strict timeout. Pathological mathematical expressions could still cause a Denial of Service (DoS) by hanging the worker process.
-    *   *Severity:* **Medium**
-    *   *Status:* Issue Created.
+    - _Severity:_ **Medium**
+    - _Status:_ Issue Created.
 
 ## Invalid or Mitigated Critiques
 
 We successfully defended against several high-profile critiques:
 
-*   **Launcher Command Injection**: Proven false. The launcher uses `subprocess` with explicit argument lists, bypassing the shell.
-*   **Data Processor Formula Injection**: The feature is currently a stub. No code is executed.
-*   **Calculator Sanitization**: The critique missed the AST pre-validation step which runs before evaluation.
+- **Launcher Command Injection**: Proven false. The launcher uses `subprocess` with explicit argument lists, bypassing the shell.
+- **Data Processor Formula Injection**: The feature is currently a stub. No code is executed.
+- **Calculator Sanitization**: The critique missed the AST pre-validation step which runs before evaluation.
 
 ## Strategic Recommendations
 

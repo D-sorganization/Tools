@@ -32,7 +32,7 @@
 11. ✅ `csv_utils.py` - CSV operations
 12. ✅ `env_utils.py` - Environment variable handling
 13. ✅ `os_utils.py` - OS path operations
-14-16. Other utilities
+    14-16. Other utilities
 
 ### Major Consolidations
 

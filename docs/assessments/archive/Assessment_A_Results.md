@@ -45,30 +45,34 @@
 
 ## Findings Table
 
-| ID    | Severity | Category     | Location                  | Symptom                  | Root Cause          | Fix                           | Effort |
-| ----- | -------- | ------------ | ------------------------- | ------------------------ | ------------------- | ----------------------------- | ------ |
-| A-001 | Major    | Architecture | Root                      | Two Launchers            | Legacy vs Modern UI | Deprecate Tkinter launcher    | S      |
-| A-002 | Major    | Architecture | `data_processing/`        | Deep Nesting             | Auto-generation?    | Flatten structure             | M      |
-| A-003 | Medium   | Compatibility| `UnifiedToolsLauncher.py` | `os.startfile` (Windows) | Platform specific   | Add `subprocess.call` fallback| S      |
-| A-004 | Minor    | Cleanliness  | Root                      | multiple .ico files      | Asset drift         | Move to `assets/`             | S      |
+| ID    | Severity | Category      | Location                  | Symptom                  | Root Cause          | Fix                            | Effort |
+| ----- | -------- | ------------- | ------------------------- | ------------------------ | ------------------- | ------------------------------ | ------ |
+| A-001 | Major    | Architecture  | Root                      | Two Launchers            | Legacy vs Modern UI | Deprecate Tkinter launcher     | S      |
+| A-002 | Major    | Architecture  | `data_processing/`        | Deep Nesting             | Auto-generation?    | Flatten structure              | M      |
+| A-003 | Medium   | Compatibility | `UnifiedToolsLauncher.py` | `os.startfile` (Windows) | Platform specific   | Add `subprocess.call` fallback | S      |
+| A-004 | Minor    | Cleanliness   | Root                      | multiple .ico files      | Asset drift         | Move to `assets/`              | S      |
 
 ## Refactoring Plan
 
 **48 Hours**
+
 - Deprecate `tools_launcher.py` (add warning banner).
 - Move all icons to `assets/` directory.
 
 **2 Weeks**
+
 - Flatten `data_processing/data_processor/python/data_processor` to `data_processing/src`.
 - Fix Mypy errors in `UnifiedToolsLauncher.py`.
 
 **6 Weeks**
+
 - Implement `pyproject.toml` for each sub-tool.
 - Create a unified `Tool` interface/class for the launcher to consume dynamically.
 
 ## Diff Suggestions
 
 ### 1. Unified Launcher Platform Safety
+
 ```python
 <<<<<<< SEARCH
             elif type_ == "matlab":

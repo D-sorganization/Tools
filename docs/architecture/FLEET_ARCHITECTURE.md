@@ -18,11 +18,11 @@ This document describes the shared tools architecture across the repository flee
 
 ## Repository Fleet
 
-| Repository | Purpose | Relationship to Tools |
-|------------|---------|----------------------|
-| **Tools** | Shared utility library | Source of standalone calculators |
+| Repository             | Purpose                     | Relationship to Tools               |
+| ---------------------- | --------------------------- | ----------------------------------- |
+| **Tools**              | Shared utility library      | Source of standalone calculators    |
 | **Gasification_Model** | Chemical process simulation | Core thermo + consumes shared tools |
-| **UpstreamDrift** | Biomechanical golf analysis | Consumes shared physics utilities |
+| **UpstreamDrift**      | Biomechanical golf analysis | Consumes shared physics utilities   |
 
 ## Architecture Diagram
 
@@ -112,23 +112,24 @@ This document describes the shared tools architecture across the repository flee
 
 These are standalone calculators that can work independently:
 
-| Calculator | Purpose | Dependencies |
-|------------|---------|--------------|
-| `AcidGasDewpointCalculator` | HF, HCl, H2S dewpoint | numpy, pandas |
-| `BaghouseCalculator` | Filter sizing, drum fill time | numpy (optional thermo) |
-| `FlareCalculator` | Flare system design, radiation zones | math only |
-| `ScrubberCalculator` | Packed bed scrubber design | numpy |
-| `FinancialCalculator` | NPV, IRR, payback analysis | numpy |
-| `ElectrodeAdvancementCalculator` | Arc furnace electrode tracking | None |
-| `ODESolver` | Generic ODE system solver | scipy, sympy |
-| `ThermalProfilePredictor` | Thermal transient analysis | scipy |
-| `WGSReactorCalculator` | Water-gas shift equilibrium | numpy, scipy |
-| `SyngasWaterCalculator` | Water saturation in syngas | numpy, scipy |
-| `SyngasCompressionCalculator` | Multi-stage compression | PyQt6 (optional) |
-| `PressureDropCalculator` | Pipe flow pressure drop | numpy |
-| `PSAModel` | Pressure swing adsorption | numpy |
+| Calculator                       | Purpose                              | Dependencies            |
+| -------------------------------- | ------------------------------------ | ----------------------- |
+| `AcidGasDewpointCalculator`      | HF, HCl, H2S dewpoint                | numpy, pandas           |
+| `BaghouseCalculator`             | Filter sizing, drum fill time        | numpy (optional thermo) |
+| `FlareCalculator`                | Flare system design, radiation zones | math only               |
+| `ScrubberCalculator`             | Packed bed scrubber design           | numpy                   |
+| `FinancialCalculator`            | NPV, IRR, payback analysis           | numpy                   |
+| `ElectrodeAdvancementCalculator` | Arc furnace electrode tracking       | None                    |
+| `ODESolver`                      | Generic ODE system solver            | scipy, sympy            |
+| `ThermalProfilePredictor`        | Thermal transient analysis           | scipy                   |
+| `WGSReactorCalculator`           | Water-gas shift equilibrium          | numpy, scipy            |
+| `SyngasWaterCalculator`          | Water saturation in syngas           | numpy, scipy            |
+| `SyngasCompressionCalculator`    | Multi-stage compression              | PyQt6 (optional)        |
+| `PressureDropCalculator`         | Pipe flow pressure drop              | numpy                   |
+| `PSAModel`                       | Pressure swing adsorption            | numpy                   |
 
 **Usage:**
+
 ```python
 from upstream_drift_tools.process_calculators import (
     FlareCalculator,
@@ -150,19 +151,20 @@ design = flare.calculate_flare_size(
 
 A comprehensive signal processing library for control systems, simulation, and data analysis:
 
-| Module | Purpose | Dependencies |
-|--------|---------|--------------|
-| `Signal`, `SignalGenerator` | Signal creation (13 types) | numpy |
-| `FunctionFitter` | Curve fitting (sinusoid, exponential, polynomial, custom) | numpy, scipy |
-| `FilterDesigner` | Digital filters (Butterworth, Chebyshev, Bessel, adaptive) | scipy |
-| `Differentiator`, `Integrator` | Calculus operations | numpy, scipy |
-| `NoiseGenerator` | Noise generation (white, pink, brown, blue, violet) | numpy |
-| `apply_saturation`, `apply_rate_limiter` | Limits and constraints | numpy |
-| `SignalImporter`, `SignalExporter` | File I/O (CSV, JSON, MAT, NPZ) | numpy, scipy |
-| `PolynomialGeneratorWidget` | Interactive polynomial fitting | PyQt6, sympy |
-| `SignalToolkitWidget` | Interactive signal visualization | PyQt6, matplotlib |
+| Module                                   | Purpose                                                    | Dependencies      |
+| ---------------------------------------- | ---------------------------------------------------------- | ----------------- |
+| `Signal`, `SignalGenerator`              | Signal creation (13 types)                                 | numpy             |
+| `FunctionFitter`                         | Curve fitting (sinusoid, exponential, polynomial, custom)  | numpy, scipy      |
+| `FilterDesigner`                         | Digital filters (Butterworth, Chebyshev, Bessel, adaptive) | scipy             |
+| `Differentiator`, `Integrator`           | Calculus operations                                        | numpy, scipy      |
+| `NoiseGenerator`                         | Noise generation (white, pink, brown, blue, violet)        | numpy             |
+| `apply_saturation`, `apply_rate_limiter` | Limits and constraints                                     | numpy             |
+| `SignalImporter`, `SignalExporter`       | File I/O (CSV, JSON, MAT, NPZ)                             | numpy, scipy      |
+| `PolynomialGeneratorWidget`              | Interactive polynomial fitting                             | PyQt6, sympy      |
+| `SignalToolkitWidget`                    | Interactive signal visualization                           | PyQt6, matplotlib |
 
 **Usage:**
+
 ```python
 from signal_toolkit import Signal, SignalGenerator, FunctionFitter, apply_filter
 
@@ -186,13 +188,13 @@ filtered = apply_filter(signal, filter_spec)
 
 These components remain in Gasification_Model because they are core business logic:
 
-| Module | Purpose | Why It Stays |
-|--------|---------|--------------|
-| `thermodynamic_properties/` | Thermo property calculations | Core to equilibrium solver |
-| `gasification_solver.py` | Main Gibbs minimization | Primary application logic |
-| `quench_components/` | Quench system calculations | Coupled to solver |
-| `heating_value_calculator.py` | HHV/LHV calculations | Integrated with thermo |
-| `energy_balance.py` | Energy balance engine | Core calculation |
+| Module                        | Purpose                      | Why It Stays               |
+| ----------------------------- | ---------------------------- | -------------------------- |
+| `thermodynamic_properties/`   | Thermo property calculations | Core to equilibrium solver |
+| `gasification_solver.py`      | Main Gibbs minimization      | Primary application logic  |
+| `quench_components/`          | Quench system calculations   | Coupled to solver          |
+| `heating_value_calculator.py` | HHV/LHV calculations         | Integrated with thermo     |
+| `energy_balance.py`           | Energy balance engine        | Core calculation           |
 
 ## Backward Compatibility
 

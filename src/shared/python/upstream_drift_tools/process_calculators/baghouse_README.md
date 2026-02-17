@@ -78,41 +78,41 @@ print(f"Outlet Temperature: {result.outlet_temperature_c:.1f} C")
 
 ## Input Parameters
 
-| Parameter | Type | Range | Units | Description |
-|-----------|------|-------|-------|-------------|
-| gas_flow_kg_s | float | > 0 | kg/s | Gas mass flow rate |
-| inlet_temp_k | float | 273-1273 | K | Inlet gas temperature |
-| pressure_pa | float | > 0 | Pa | Operating pressure |
-| composition | dict | - | mol/mol | Gas composition (mole fractions) |
-| solid_carbon_in_kg_hr | float | >= 0 | kg/hr | Solid carbon input rate |
-| ash_in_kg_hr | float | >= 0 | kg/hr | Ash input rate |
-| carbon_removal_efficiency | float | 0-1 | - | Carbon removal efficiency (fraction) |
-| ash_removal_efficiency | float | 0-1 | - | Ash removal efficiency (fraction) |
-| heat_loss_w | float | >= 0 | W | Heat loss from baghouse |
-| drum_volume_m3 | float | > 0 | m3 | Collection drum volume |
-| solid_density_kg_m3 | float | > 0 | kg/m3 | Bulk density of collected solids |
-| bag_area_ft2 | float | > 0 | ft2 | Total bag filter surface area |
+| Parameter                 | Type  | Range    | Units   | Description                          |
+| ------------------------- | ----- | -------- | ------- | ------------------------------------ |
+| gas_flow_kg_s             | float | > 0      | kg/s    | Gas mass flow rate                   |
+| inlet_temp_k              | float | 273-1273 | K       | Inlet gas temperature                |
+| pressure_pa               | float | > 0      | Pa      | Operating pressure                   |
+| composition               | dict  | -        | mol/mol | Gas composition (mole fractions)     |
+| solid_carbon_in_kg_hr     | float | >= 0     | kg/hr   | Solid carbon input rate              |
+| ash_in_kg_hr              | float | >= 0     | kg/hr   | Ash input rate                       |
+| carbon_removal_efficiency | float | 0-1      | -       | Carbon removal efficiency (fraction) |
+| ash_removal_efficiency    | float | 0-1      | -       | Ash removal efficiency (fraction)    |
+| heat_loss_w               | float | >= 0     | W       | Heat loss from baghouse              |
+| drum_volume_m3            | float | > 0      | m3      | Collection drum volume               |
+| solid_density_kg_m3       | float | > 0      | kg/m3   | Bulk density of collected solids     |
+| bag_area_ft2              | float | > 0      | ft2     | Total bag filter surface area        |
 
 ## Output Format
 
 The `BaghouseResult` dataclass contains:
 
-| Field | Units | Description |
-|-------|-------|-------------|
-| carbon_removed_rate | kg/hr | Carbon removal rate |
-| ash_removed_rate | kg/hr | Ash removal rate |
-| total_solids_removed_rate | kg/hr | Total solids collected |
-| drum_fill_time_hours | hours | Time to fill collection drum |
-| drum_fill_time_days | days | Time to fill collection drum |
-| carbon_only_fill_time_hours | hours | Fill time if only carbon collected |
-| ash_only_fill_time_hours | hours | Fill time if only ash collected |
-| clean_gas_flow_rate | kg/hr | Clean gas mass flow rate |
-| flow_acfm | ACFM | Actual cubic feet per minute |
-| flow_scfm | SCFM | Standard cubic feet per minute |
-| air_to_cloth_ratio | ft/min | Filtration velocity |
-| outlet_temperature_c | C | Outlet gas temperature |
-| ash_stream_composition | dict | Carbon/ash fractions in solids |
-| removal_efficiency | dict | Removal efficiencies (%) |
+| Field                       | Units  | Description                        |
+| --------------------------- | ------ | ---------------------------------- |
+| carbon_removed_rate         | kg/hr  | Carbon removal rate                |
+| ash_removed_rate            | kg/hr  | Ash removal rate                   |
+| total_solids_removed_rate   | kg/hr  | Total solids collected             |
+| drum_fill_time_hours        | hours  | Time to fill collection drum       |
+| drum_fill_time_days         | days   | Time to fill collection drum       |
+| carbon_only_fill_time_hours | hours  | Fill time if only carbon collected |
+| ash_only_fill_time_hours    | hours  | Fill time if only ash collected    |
+| clean_gas_flow_rate         | kg/hr  | Clean gas mass flow rate           |
+| flow_acfm                   | ACFM   | Actual cubic feet per minute       |
+| flow_scfm                   | SCFM   | Standard cubic feet per minute     |
+| air_to_cloth_ratio          | ft/min | Filtration velocity                |
+| outlet_temperature_c        | C      | Outlet gas temperature             |
+| ash_stream_composition      | dict   | Carbon/ash fractions in solids     |
+| removal_efficiency          | dict   | Removal efficiencies (%)           |
 
 ## Mathematical Models
 
@@ -124,6 +124,7 @@ T_outlet = T_inlet - Delta_T
 ```
 
 Where:
+
 - Q_loss = heat loss rate (W)
 - m_dot = mass flow rate (kg/s)
 - Cp = specific heat capacity (J/kg-K)
@@ -133,13 +134,13 @@ Where:
 For syngas mixtures, weighted average Cp values are used:
 
 | Component | Cp at ~500K (J/mol-K) |
-|-----------|----------------------|
-| H2 | 29.1 |
-| CO | 29.2 |
-| CO2 | 41.3 |
-| H2O | 35.5 |
-| N2 | 29.5 |
-| CH4 | 44.5 |
+| --------- | --------------------- |
+| H2        | 29.1                  |
+| CO        | 29.2                  |
+| CO2       | 41.3                  |
+| H2O       | 35.5                  |
+| N2        | 29.5                  |
+| CH4       | 44.5                  |
 
 ### Solid Removal Calculations
 
@@ -156,6 +157,7 @@ t_fill = (rho_solid * V_drum) / m_total_removed
 ```
 
 Where:
+
 - rho_solid = bulk density of collected solids (kg/m3)
 - V_drum = drum volume (m3)
 
@@ -166,16 +168,17 @@ A/C = Q_acfm / A_bag
 ```
 
 Where:
+
 - Q_acfm = actual volumetric flow rate (ft3/min)
 - A_bag = total bag filter area (ft2)
 
 **Typical A/C Ratios:**
 
-| Application | A/C Ratio (ft/min) |
-|-------------|-------------------|
-| Pulse-jet cleaning | 4-6 |
-| Reverse-air cleaning | 2-3.5 |
-| Shaker cleaning | 2-3 |
+| Application          | A/C Ratio (ft/min) |
+| -------------------- | ------------------ |
+| Pulse-jet cleaning   | 4-6                |
+| Reverse-air cleaning | 2-3.5              |
+| Shaker cleaning      | 2-3                |
 
 ### Volumetric Flow Rate (Ideal Gas)
 
@@ -236,30 +239,31 @@ print(f"Drum Fill: {result.drum_fill_time_days:.1f} days")
 
 ## Troubleshooting
 
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| Infinite fill time | Zero solid input rates | Verify solid loading inputs |
-| Zero A/C ratio | Zero bag area | Check bag_area_ft2 parameter |
-| No temperature drop | Zero heat loss or zero Cp | Verify heat_loss_w and composition |
-| Thermo module warning | Optional dependency missing | Install with `pip install thermo` |
-| Unexpected flow rates | Incorrect composition | Ensure composition sums to ~1.0 |
+| Issue                 | Cause                       | Solution                           |
+| --------------------- | --------------------------- | ---------------------------------- |
+| Infinite fill time    | Zero solid input rates      | Verify solid loading inputs        |
+| Zero A/C ratio        | Zero bag area               | Check bag_area_ft2 parameter       |
+| No temperature drop   | Zero heat loss or zero Cp   | Verify heat_loss_w and composition |
+| Thermo module warning | Optional dependency missing | Install with `pip install thermo`  |
+| Unexpected flow rates | Incorrect composition       | Ensure composition sums to ~1.0    |
 
 ## Design Guidelines
 
 ### Recommended Air-to-Cloth Ratios
 
-| Dust Type | A/C (ft/min) |
-|-----------|-------------|
-| Light dust (< 1 gr/ft3) | 5-6 |
-| Medium dust (1-5 gr/ft3) | 3-5 |
-| Heavy dust (> 5 gr/ft3) | 2-3 |
-| Sticky/hygroscopic | 2-3 |
+| Dust Type                | A/C (ft/min) |
+| ------------------------ | ------------ |
+| Light dust (< 1 gr/ft3)  | 5-6          |
+| Medium dust (1-5 gr/ft3) | 3-5          |
+| Heavy dust (> 5 gr/ft3)  | 2-3          |
+| Sticky/hygroscopic       | 2-3          |
 
 ### Pressure Drop Considerations
 
 Typical pressure drop: 4-8 inches w.c. (1-2 kPa)
 
 Factors affecting pressure drop:
+
 - Dust loading
 - Cleaning frequency
 - Filter media type

@@ -78,14 +78,17 @@ uvicorn app:app --reload
 ## Dependencies
 
 ### Calculator
+
 ```bash
 pip install flask sympy
 ```
 
 ### Unit Converter
+
 No dependencies required - pure HTML/CSS/JavaScript.
 
 ### URDF Viewer
+
 ```bash
 pip install -r web_applications/urdf_viewer/requirements.txt
 ```
@@ -93,6 +96,7 @@ pip install -r web_applications/urdf_viewer/requirements.txt
 ## Integration
 
 These applications integrate with:
+
 - **Scientific Modeling** (`scientific_modeling/`) - Shared math utilities
 - **Data Processing** (`data_processing/`) - Data analysis workflows
 

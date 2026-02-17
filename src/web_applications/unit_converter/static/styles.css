@@ -28,7 +28,7 @@
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
-  --font-family: "Segoe UI", "Arial", sans-serif;
+  --font-family: 'Segoe UI', 'Arial', sans-serif;
 }
 
 /* Reset */
@@ -184,8 +184,8 @@ body {
 }
 
 /* Remove number spinners */
-.input[type="number"]::-webkit-inner-spin-button,
-.input[type="number"]::-webkit-outer-spin-button {
+.input[type='number']::-webkit-inner-spin-button,
+.input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
@@ -422,9 +422,15 @@ body {
 
 /* Animation for result updates */
 @keyframes flash-result {
-  0% { opacity: 1; }
-  50% { opacity: 0.6; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .result-flash {

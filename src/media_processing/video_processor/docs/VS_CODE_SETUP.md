@@ -7,19 +7,24 @@
 I've created `.vscode/extensions.json` which will prompt you to install these automatically when you open the project in VS Code.
 
 #### Core Development
+
 1. **ESLint** (`dbaeumer.vscode-eslint`)
+
    - JavaScript/TypeScript linting
    - Shows errors in real-time
 
 2. **Prettier** (`esbenp.prettier-vscode`)
+
    - Code formatter
    - Automatically formats on save
 
 3. **TypeScript Hero** (`ms-vscode.vscode-typescript-next`)
+
    - Enhanced TypeScript support
    - Better IntelliSense
 
 4. **Tailwind CSS IntelliSense** (`bradlc.vscode-tailwindcss`)
+
    - Autocomplete for Tailwind classes
    - Hover to see actual CSS
 
@@ -28,7 +33,9 @@ I've created `.vscode/extensions.json` which will prompt you to install these au
    - Syntax highlighting for Prisma
 
 #### React/Next.js Specific
+
 6. **ES7+ React/Redux/React-Native snippets** (`dsznajder.es7-react-js-snippets`)
+
    - Code snippets for React
    - Speeds up development
 
@@ -36,12 +43,15 @@ I've created `.vscode/extensions.json` which will prompt you to install these au
    - Automatically renames paired HTML/JSX tags
 
 #### Git
+
 8. **GitLens** (`eamodio.gitlens`)
    - Enhanced Git integration
    - See who changed what and when
 
 #### Code Quality
+
 9. **Error Lens** (`usernamehw.errorlens`)
+
    - Shows errors inline
    - No need to open Problems panel
 
@@ -50,6 +60,7 @@ I've created `.vscode/extensions.json` which will prompt you to install these au
     - Prevents embarrassing mistakes
 
 #### Productivity
+
 11. **Python** (`ms-python.python`) - If using MATLAB Runtime bridge
 12. **YAML** (`redhat.vscode-yaml`) - For CI/CD configs
 13. **JSON** (Built-in) - For JSON files
@@ -57,10 +68,12 @@ I've created `.vscode/extensions.json` which will prompt you to install these au
 ### Optional (Nice to Have)
 
 14. **MATLAB** (`mathworks.matlab`)
+
     - If you want MATLAB syntax highlighting
     - Note: MATLAB itself runs separately
 
 15. **Thunder Client** (`rangav.vscode-thunder-client`)
+
     - API testing inside VS Code
     - Alternative to Postman
 
@@ -112,6 +125,7 @@ Search and install each extension from the list above
 ### 2. Verify Installation
 
 After installing extensions, you should see:
+
 - ✅ ESLint status in bottom-right corner
 - ✅ Prettier status in bottom-right corner
 - ✅ Better autocomplete in TypeScript files
@@ -120,6 +134,7 @@ After installing extensions, you should see:
 ### 3. Test Formatting
 
 Open any TypeScript file and:
+
 1. Add some messy code
 2. Press `Ctrl+S` (or `Cmd+S` on Mac)
 3. Code should automatically format
@@ -133,11 +148,13 @@ Open any TypeScript file and:
 **What it does**: Finds errors and bad patterns in your code
 
 **Example**:
+
 ```typescript
 const myVariable; // ESLint will show error: must have initializer
 ```
 
 **Auto-fix**:
+
 - Save file → ESLint auto-fixes issues
 - Or right-click → "Fix all ESLint problems"
 
@@ -146,9 +163,10 @@ const myVariable; // ESLint will show error: must have initializer
 **What it does**: Formats code consistently
 
 **Example**:
+
 ```typescript
 // You write:
-const x={a:1,b:2}
+const x = { a: 1, b: 2 };
 
 // Prettier formats to:
 const x = { a: 1, b: 2 };
@@ -185,10 +203,12 @@ Syntax highlighting for `.prisma` files
 ### Formatting Not Working?
 
 1. **Check Default Formatter**:
+
    - Right-click in file → "Format Document With..."
    - Select Prettier
 
 2. **Check Settings**: Open `.vscode/settings.json`
+
    - Should have `"editor.formatOnSave": true`
 
 3. **Check Prettier**:
@@ -198,6 +218,7 @@ Syntax highlighting for `.prisma` files
 ### ESLint Not Working?
 
 1. **Check Output**:
+
    - `View` → `Output`
    - Select "ESLint" from dropdown
    - Look for errors
@@ -207,6 +228,7 @@ Syntax highlighting for `.prisma` files
 ### IntelliSense Not Working?
 
 1. **Check TypeScript**:
+
    - Bottom-right corner
    - Should show TypeScript version
 
@@ -218,20 +240,20 @@ Syntax highlighting for `.prisma` files
 
 These will make you faster:
 
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl+S` | Save (also auto-formats) |
-| `Shift+Alt+F` | Format Document |
-| `Ctrl+Shift+P` | Command Palette |
-| `Ctrl+P` | Quick File Open |
-| `Ctrl+` | Toggle Terminal |
-| `Ctrl+B` | Toggle Sidebar |
-| `F5` | Debug: Start |
-| `Ctrl+F` | Find |
-| `Ctrl+Shift+F` | Find in Files |
-| `Alt+Up/Down` | Move line up/down |
-| `Shift+Alt+Up/Down` | Copy line up/down |
-| `Ctrl+/` | Toggle comment |
+| Shortcut            | Action                   |
+| ------------------- | ------------------------ |
+| `Ctrl+S`            | Save (also auto-formats) |
+| `Shift+Alt+F`       | Format Document          |
+| `Ctrl+Shift+P`      | Command Palette          |
+| `Ctrl+P`            | Quick File Open          |
+| `Ctrl+`             | Toggle Terminal          |
+| `Ctrl+B`            | Toggle Sidebar           |
+| `F5`                | Debug: Start             |
+| `Ctrl+F`            | Find                     |
+| `Ctrl+Shift+F`      | Find in Files            |
+| `Alt+Up/Down`       | Move line up/down        |
+| `Shift+Alt+Up/Down` | Copy line up/down        |
+| `Ctrl+/`            | Toggle comment           |
 
 ---
 
@@ -247,6 +269,7 @@ These will make you faster:
 ## 💡 Pro Tips
 
 ### 1. Multi-cursor Editing
+
 ```
 Alt+Click: Add cursor
 Ctrl+Alt+Up/Down: Add cursor above/below
@@ -254,19 +277,24 @@ Shift+Alt+Left/Right: Select word
 ```
 
 ### 2. Quick Refactoring
+
 ```
 F2: Rename symbol (rename variable everywhere)
 Ctrl+. : Quick fixes
 ```
 
 ### 3. Code Snippets
+
 Type in `.tsx` file:
+
 ```
 rafce → React arrow function component with export
 ```
 
 ### 4. Emmet (HTML/JSX)
+
 Type and press Tab:
+
 ```
 div#container → <div id="container"></div>
 .className → <div className="className"></div>
@@ -276,4 +304,4 @@ div#container → <div id="container"></div>
 
 **Your VS Code is now optimized for React/Next.js development! 🚀**
 
-*If you have issues, check the Troubleshooting section above or check the extension documentation.*
+_If you have issues, check the Troubleshooting section above or check the extension documentation._

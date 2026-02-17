@@ -41,16 +41,21 @@ Simply open `unit-converter-app/index.html` in any modern web browser, or access
 ### Advanced Features
 
 #### Gas Flow Conversions
+
 For gas flow conversions (SCFM/ACFM), specify:
+
 - Standard condition (60°F, 70°F, STP, NTP, or SATP)
 - Gas type (Air, Nitrogen, Oxygen, etc.)
 - Operating temperature and pressure
 
 #### Heating Value Conversions
+
 For heating value volumetric conversions, specify the gas density at STP.
 
 #### Custom Units
+
 Add your own units by:
+
 1. Clicking the settings icon
 2. Selecting a category
 3. Defining the unit symbol and conversion factor relative to a reference unit
@@ -81,11 +86,13 @@ Add your own units by:
 ## Technical Details
 
 ### Conversion Accuracy
+
 - **NIST Compliant**: All conversion factors sourced from NIST Special Publication 811 (2008 Edition)
 - **Physical Constants**: CODATA 2018 values for gas calculations
 - **High Precision**: JavaScript floating-point arithmetic with proper rounding
 
 ### Architecture
+
 - **100% Client-Side**: All conversions happen in JavaScript, no server required
 - **Offline Support**: Service Worker caching for full offline functionality
 - **Local Storage**: Conversion history, custom units, and theme preferences
@@ -103,12 +110,14 @@ Add your own units by:
 ## Local Development
 
 1. Clone the repository:
+
    ```bash
    git clone <repository-url>
    cd Unit_Converter
    ```
 
 2. Open the app:
+
    ```bash
    # Simple local testing
    open unit-converter-app/index.html

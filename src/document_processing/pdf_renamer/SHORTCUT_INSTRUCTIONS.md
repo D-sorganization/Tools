@@ -27,6 +27,7 @@
    ```
    C:\Users\[USERNAME]\Repositories\Tools\document_processing\pdf_renamer\PDF_Renamer.bat
    ```
+
 4. Click "Next"
 5. Name it: `PDF Renamer`
 6. Click "Finish"
@@ -39,6 +40,7 @@
 Create a desktop entry or symbolic link:
 
 **Linux (.desktop file):**
+
 ```bash
 cat > ~/Desktop/pdf-renamer.desktop << 'EOF'
 [Desktop Entry]
@@ -56,6 +58,7 @@ chmod +x ~/Desktop/pdf-renamer.desktop
 ```
 
 **Mac (Automator Application):**
+
 1. Open Automator
 2. Create new "Application"
 3. Add "Run Shell Script" action
@@ -78,6 +81,7 @@ When you double-click the shortcut:
 ### "Python is not installed or not in PATH"
 
 **Solution:**
+
 1. Install Python 3.11+ from https://www.python.org/
 2. During installation, check "Add Python to PATH"
 3. Restart your computer
@@ -96,6 +100,7 @@ python -m pip install -r requirements.txt
 ### Shortcut icon doesn't look right
 
 **Solution:**
+
 1. Right-click shortcut → Properties
 2. Click "Change Icon"
 3. Browse to `C:\Windows\System32\shell32.dll`
@@ -105,11 +110,13 @@ python -m pip install -r requirements.txt
 ### GUI doesn't start
 
 **Check PyQt6 installation:**
+
 ```bash
 python -c "from PyQt6.QtWidgets import QApplication"
 ```
 
 If error, reinstall:
+
 ```bash
 pip uninstall PyQt6
 pip install PyQt6
@@ -120,11 +127,13 @@ pip install PyQt6
 ### Windows 10/11
 
 **Taskbar:**
+
 1. Double-click shortcut to launch the app
 2. Right-click the app icon in taskbar while running
 3. Select "Pin to taskbar"
 
 **Start Menu:**
+
 1. Right-click the desktop shortcut
 2. Select "Pin to Start"
 
@@ -147,6 +156,7 @@ Download a custom icon (.ico file) and:
 4. Click OK
 
 ### Recommended Icon Sources
+
 - https://icon-icons.com (search "PDF")
 - https://icons8.com (free for personal use)
 - Create your own with https://www.favicon-generator.org/

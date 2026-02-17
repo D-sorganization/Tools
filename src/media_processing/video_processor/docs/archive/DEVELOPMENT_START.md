@@ -7,10 +7,12 @@ Before we can start building, you need to install:
 ### Required Software
 
 1. **Node.js** (v18 or higher)
+
    - Download: https://nodejs.org/
    - Check version: `node --version` (should be 18+)
 
 2. **npm** (comes with Node.js)
+
    - Check version: `npm --version`
 
 3. **Git** (already installed ✓)
@@ -44,6 +46,7 @@ Before we can start building, you need to install:
 1. Download: https://code.visualstudio.com/
 2. Install with default options
 3. Install recommended extensions:
+
    - Open VS Code in this project folder
    - VS Code will prompt: "This workspace has extension recommendations"
    - Click **"Install All"**
@@ -63,6 +66,7 @@ npm install
 ```
 
 This will:
+
 - Install Next.js, React, TypeScript, and all dependencies
 - Set up the monorepo workspace
 - Take 2-5 minutes the first time
@@ -111,6 +115,7 @@ npx prisma --version
    ```
 
 Then run:
+
 ```bash
 cd packages/database
 npx prisma generate
@@ -138,6 +143,7 @@ Open http://localhost:3000 in your browser!
 ### "npm: command not found"
 
 **Solution**: Node.js is not installed or not in PATH
+
 1. Install Node.js from https://nodejs.org/
 2. Restart terminal
 3. Try `node --version` again
@@ -145,6 +151,7 @@ Open http://localhost:3000 in your browser!
 ### "Cannot find module"
 
 **Solution**: Dependencies not installed
+
 ```bash
 npm install
 ```
@@ -152,6 +159,7 @@ npm install
 ### "Port 3000 already in use"
 
 **Solution**: Another app is using port 3000
+
 ```bash
 # Kill the process using port 3000
 # Windows:
@@ -165,6 +173,7 @@ taskkill /PID <PID> /F
 ### "Prisma schema file not found"
 
 **Solution**: Navigate to correct directory
+
 ```bash
 cd packages/database
 npx prisma generate
@@ -173,6 +182,7 @@ npx prisma generate
 ### Database Connection Issues
 
 **Solution**: Check DATABASE_URL in .env
+
 1. Make sure Supabase/PostgreSQL is running
 2. Verify connection string is correct
 3. Check firewall isn't blocking connection
@@ -225,19 +235,23 @@ Once setup is complete, build these in order:
 ## 💡 Getting Help
 
 ### Documentation
+
 - All docs in `docs/` folder
 - Start with `docs/GOLF_VIDEO_QUICK_REFERENCE.md`
 
 ### VS Code Help
+
 - Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac)
 - Type "Help" to see options
 - Or check `VS_CODE_SETUP.md`
 
 ### Next.js Help
+
 - Official docs: https://nextjs.org/docs
 - Learn course: https://nextjs.org/learn
 
 ### TypeScript Help
+
 - Official docs: https://www.typescriptlang.org/docs/
 - Quick start: https://www.typescriptlang.org/docs/handbook/intro.html
 
@@ -255,4 +269,4 @@ Once all prerequisites are installed:
 
 ---
 
-*If you run into issues, check the troubleshooting section above or let me know!*
+_If you run into issues, check the troubleshooting section above or let me know!_

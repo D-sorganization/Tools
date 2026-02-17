@@ -10,21 +10,21 @@ repos:
     rev: 5.13.2
     hooks:
       - id: isort
-        args: ["--profile", "black"]
+        args: ['--profile', 'black']
 
   # Python linter
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.5.0
     hooks:
       - id: ruff
-        args: ["--fix", "--select", "E,F,W,I,B,UP", "--ignore", "D"]
+        args: ['--fix', '--select', 'E,F,W,I,B,UP', '--ignore', 'D']
 
   # Type checker
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.10.0
     hooks:
       - id: mypy
-        additional_dependencies: ["types-requests", "types-PyYAML"]
+        additional_dependencies: ['types-requests', 'types-PyYAML']
         args: [--config-file=mypy.ini]
         types: [python] # Only Python files - MyPy won't check JavaScript/TypeScript
         files: ^python/.* # All files under python/ and subdirectories

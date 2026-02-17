@@ -10,6 +10,7 @@
    - Works with the existing tools icon from the main project
 
 **OR** run the PowerShell script directly:
+
 1. **Right-click** on `create_pdf_renamer_shortcut.ps1` in this folder
 2. Select **"Run with PowerShell"**
 3. If prompted about execution policy, type `Y` and press Enter
@@ -42,6 +43,7 @@
 Once created, simply **double-click** the "PDF Renamer" icon on your desktop to launch the application.
 
 The shortcut will:
+
 - ✅ Check for Python installation
 - ✅ Auto-install missing dependencies if needed
 - ✅ Launch the PDF Renamer GUI
@@ -54,14 +56,17 @@ The shortcut will:
 ### PowerShell: "Execution policy" error
 
 **Fix:**
+
 ```powershell
 Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 ```
+
 Then run the script again.
 
 ### Python not found
 
 **Fix:**
+
 1. Install Python from: https://www.python.org/downloads/
 2. During installation, check **"Add Python to PATH"**
 3. Restart your computer
@@ -88,6 +93,7 @@ Now you can launch it directly from your taskbar!
 ## 🎨 Icon Features
 
 The enhanced shortcut creator automatically applies:
+
 - ✅ **Custom Tools Icon**: Uses the project's professional tools icon
 - ✅ **Taskbar Support**: Icon appears properly in taskbar when pinned
 - ✅ **High Quality**: Uses the best available icon resolution
@@ -96,6 +102,7 @@ The enhanced shortcut creator automatically applies:
 ### Manual Icon Customization (Optional)
 
 If you want to change the icon:
+
 1. **Right-click** the desktop shortcut
 2. Select **"Properties"**
 3. Click **"Change Icon..."**

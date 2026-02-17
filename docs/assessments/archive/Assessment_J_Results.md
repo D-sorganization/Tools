@@ -9,12 +9,13 @@
 
 ## Extensibility Assessment
 
-| Feature | Extensible? | Effort |
-| ------- | ----------- | ------ |
-| Add Tool| ❌ (Hardcoded)| Low (Edit file) |
-| Themes  | ❌ (Hardcoded)| Medium |
+| Feature  | Extensible?    | Effort          |
+| -------- | -------------- | --------------- |
+| Add Tool | ❌ (Hardcoded) | Low (Edit file) |
+| Themes   | ❌ (Hardcoded) | Medium          |
 
 ## Remediation Roadmap
 
 **2 Weeks**
+
 - Move `TOOLS` config to a JSON/YAML file so it can be updated without touching code.

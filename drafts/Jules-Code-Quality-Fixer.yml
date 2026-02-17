@@ -11,26 +11,26 @@ on:
   workflow_call:
     inputs:
       assessment_file:
-        description: 'Path to assessment file with issues to fix'
+        description: "Path to assessment file with issues to fix"
         required: false
         type: string
-        default: 'docs/assessments/Code_Quality_Review_Latest.md'
+        default: "docs/assessments/Code_Quality_Review_Latest.md"
   workflow_dispatch:
     inputs:
       assessment_file:
-        description: 'Path to assessment file with issues to fix'
+        description: "Path to assessment file with issues to fix"
         required: false
-        default: 'docs/assessments/Code_Quality_Review_Latest.md'
+        default: "docs/assessments/Code_Quality_Review_Latest.md"
         type: string
       dry_run:
-        description: 'Dry run - analyze only, do not make fixes'
+        description: "Dry run - analyze only, do not make fixes"
         required: false
-        default: 'false'
+        default: "false"
         type: boolean
       priority_only:
-        description: 'Fix only Critical and High priority issues'
+        description: "Fix only Critical and High priority issues"
         required: false
-        default: 'true'
+        default: "true"
         type: boolean
 
 permissions:

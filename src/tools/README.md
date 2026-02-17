@@ -41,6 +41,7 @@ python tools/code_quality_check.py file1.py file2.py
 **Pre-commit Integration:**
 
 Add to `.pre-commit-config.yaml`:
+
 ```yaml
 repos:
   - repo: local
@@ -73,6 +74,7 @@ python tools/scientific_auditor.py | jq .
 ```
 
 **Output Format:**
+
 ```json
 [
   {
@@ -88,6 +90,7 @@ python tools/scientific_auditor.py | jq .
 Interactive graphical interface for MATLAB code analysis using the built-in Code Analyzer (MLint).
 
 **Features:**
+
 - Interactive file/folder selection
 - Configurable analysis options
 - Multiple output formats (CSV, Excel, JSON, Markdown)
@@ -130,10 +133,12 @@ pre-commit install
 ## Requirements
 
 ### Python Tools
+
 - Python 3.8+ (3.11+ recommended)
 - No additional dependencies for basic quality checks
 
 ### MATLAB Tools
+
 - MATLAB R2019b+ (for full functionality)
 - Code Analyzer (included with MATLAB)
 - Python alternative available for CI/CD without MATLAB
@@ -141,6 +146,7 @@ pre-commit install
 ## Excluded Directories
 
 The quality check tools automatically exclude:
+
 - `archive/`, `legacy/`, `experimental/`
 - `.git/`, `__pycache__/`, `.mypy_cache/`
 - `matlab/`, `output/`, `replicants/`
@@ -149,6 +155,7 @@ The quality check tools automatically exclude:
 ## Contributing
 
 When adding new tools:
+
 1. Follow existing code patterns and documentation style
 2. Add self-documentation (help text, docstrings)
 3. Exclude the tool from its own quality checks

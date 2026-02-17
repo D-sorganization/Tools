@@ -30,11 +30,11 @@ Tools/
         c3d/                  <-- Migrated Core logic for C3D
         urdf/                 <-- Migrated Core logic for URDF
         polynomials/          <-- Migrated Core logic for Polynomials
-    
+
     ui/                       <-- NEW: Reusable UI Components
       python/
         widgets/              <-- PyQt/Tkinter wrappers for the Core logic
-          data_processor_qt.py   # PyQt6 Widget wrapper 
+          data_processor_qt.py   # PyQt6 Widget wrapper
           data_processor_tk.py   # Tkinter Widget wrapper (refactored app)
           polynomial_qt.py       # PyQt6 Widget (migrated)
 ```

@@ -23,32 +23,32 @@
 
 ## Scorecard
 
-| Category                | Score | Evidence & Remediation                                                                 |
-| ----------------------- | ----- | -------------------------------------------------------------------------------------- |
-| Ruff Compliance         | 10/10 | Ruff check passed (clean output).                                                      |
-| Mypy Compliance         | 1/10  | **FAIL**: Massive error file present.                                                  |
-| Black Formatting        | 9/10  | Code appears formatted (assuming CI enforces it).                                      |
-| AGENTS.md Compliance    | 3/10  | **FAIL**: Widespread use of `print()`.                                                 |
-| Security Posture        | 8/10  | No obvious hardcoded secrets found.                                                    |
-| Repository Organization | 6/10  | Cluttered root (temp files committed).                                                 |
-| Dependency Hygiene      | 7/10  | Requirements exist but lack strict pinning.                                            |
+| Category                | Score | Evidence & Remediation                            |
+| ----------------------- | ----- | ------------------------------------------------- |
+| Ruff Compliance         | 10/10 | Ruff check passed (clean output).                 |
+| Mypy Compliance         | 1/10  | **FAIL**: Massive error file present.             |
+| Black Formatting        | 9/10  | Code appears formatted (assuming CI enforces it). |
+| AGENTS.md Compliance    | 3/10  | **FAIL**: Widespread use of `print()`.            |
+| Security Posture        | 8/10  | No obvious hardcoded secrets found.               |
+| Repository Organization | 6/10  | Cluttered root (temp files committed).            |
+| Dependency Hygiene      | 7/10  | Requirements exist but lack strict pinning.       |
 
 ## Linting Violation Inventory
 
-| File                  | Ruff Violations | Mypy Errors | Black Issues |
-| --------------------- | --------------- | ----------- | ------------ |
-| `launch_tools_main.py`| 0               | Many        | 0            |
-| `setup_dev.py`        | 0               | Many        | 0            |
-| `UnifiedToolsLauncher.py`| 0            | Many        | 0            |
+| File                      | Ruff Violations | Mypy Errors | Black Issues |
+| ------------------------- | --------------- | ----------- | ------------ |
+| `launch_tools_main.py`    | 0               | Many        | 0            |
+| `setup_dev.py`            | 0               | Many        | 0            |
+| `UnifiedToolsLauncher.py` | 0               | Many        | 0            |
 
 ## Security Audit
 
-| Check                        | Status | Evidence                        |
-| ---------------------------- | ------ | ------------------------------- |
-| No hardcoded secrets         | ✅      | Grep passed.                    |
-| .env.example exists          | ✅      | File present.                   |
-| No eval()/exec() usage       | ❓      | Needs deeper scan.              |
-| No pickle without validation | ❓      | Needs deeper scan.              |
+| Check                        | Status | Evidence           |
+| ---------------------------- | ------ | ------------------ |
+| No hardcoded secrets         | ✅     | Grep passed.       |
+| .env.example exists          | ✅     | File present.      |
+| No eval()/exec() usage       | ❓     | Needs deeper scan. |
+| No pickle without validation | ❓     | Needs deeper scan. |
 
 ## AGENTS.md Compliance Report
 
@@ -59,23 +59,26 @@
 
 ## Findings Table
 
-| ID    | Severity | Category | Location | Symptom | Root Cause | Fix | Effort |
-| ----- | -------- | -------- | -------- | ------- | ---------- | --- | ------ |
-| B-001 | Critical | Quality  | `mypy_output.txt` | 200KB errors | Neglect | Fix/Ignore errors | L |
-| B-002 | Major    | Standards | `launch_tools_main.py` | `print()` calls | Dev shortcuts | Replace with logger | S |
-| B-003 | Major    | Standards | `setup_dev.py` | `print()` calls | Dev shortcuts | Replace with logger | S |
-| B-004 | Minor    | Hygiene  | Root | `black_output.txt` | Dirty commit | Remove file | XS |
+| ID    | Severity | Category  | Location               | Symptom            | Root Cause    | Fix                 | Effort |
+| ----- | -------- | --------- | ---------------------- | ------------------ | ------------- | ------------------- | ------ |
+| B-001 | Critical | Quality   | `mypy_output.txt`      | 200KB errors       | Neglect       | Fix/Ignore errors   | L      |
+| B-002 | Major    | Standards | `launch_tools_main.py` | `print()` calls    | Dev shortcuts | Replace with logger | S      |
+| B-003 | Major    | Standards | `setup_dev.py`         | `print()` calls    | Dev shortcuts | Replace with logger | S      |
+| B-004 | Minor    | Hygiene   | Root                   | `black_output.txt` | Dirty commit  | Remove file         | XS     |
 
 ## Refactoring Plan
 
 **48 Hours**
+
 - **Remove committed temp files** (`black_output.txt`, `mypy_output.txt` - strictly, output shouldn't be in repo).
 - **Replace `print()` with `logging`** in `launch_tools_main.py` and `UnifiedToolsLauncher.py`.
 
 **2 Weeks**
+
 - **Fix Mypy Errors**: Systematic pass to fix top 50% of type errors.
 
 **6 Weeks**
+
 - **Strict Mode**: Enable strict mypy in CI and block PRs on regression.
 
 ## Diff Suggestions

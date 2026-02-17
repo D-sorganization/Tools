@@ -12,6 +12,7 @@ This guide helps you implement the reorganized GUI architecture. Start here for 
 ## 📋 Prerequisites
 
 Before starting, ensure you have:
+
 - ✅ All backend classes in `core/` directory
 - ✅ `GUI_ARCHITECTURE_REVIEW.md` reviewed and approved
 - ✅ MATLAB R2020b or later with App Designer
@@ -31,11 +32,13 @@ Before starting, ensure you have:
 **Line:** ~43
 
 **CHANGE THIS:**
+
 ```matlab
 mainWindow.Mixer = MixerCore(8, 44100);
 ```
 
 **TO THIS:**
+
 ```matlab
 mainWindow.Mixer = MixerCoreEnhanced(8, 44100);
 ```
@@ -47,6 +50,7 @@ mainWindow.Mixer = MixerCoreEnhanced(8, 44100);
 **Line:** ~358-402
 
 **ADD AFTER line 397** (after Effects button):
+
 ```matlab
 % Time offset control (NEW)
 offsetPanel = uipanel(trackGrid);
@@ -65,6 +69,7 @@ mainWindow.TrackStrips{i}.OffsetSpinner = offsetSpinner;
 #### Step 1.3: Add Fade Controls
 
 **ADD AFTER the offset controls:**
+
 ```matlab
 % Fade in/out buttons (NEW)
 fadePanel = uipanel(trackGrid);
@@ -81,6 +86,7 @@ uibutton(fadeGrid, 'Text', 'FO', 'Tooltip', 'Fade Out', ...
 #### Step 1.4: Add Timeline View
 
 **ADD ABOVE the track strips** (after "Tracks panel" creation ~348):
+
 ```matlab
 % Timeline view (NEW)
 timelinePanel = uipanel(mixerGrid, 'Title', 'Timeline');
@@ -113,21 +119,25 @@ uilabel(timelineControlGrid, 'Text', '');
 **CHANGE mixerGrid row configuration** (line ~344):
 
 **FROM:**
+
 ```matlab
 mixerGrid.RowHeight = {'1x', 'fit'};
 ```
 
 **TO:**
+
 ```matlab
 mixerGrid.RowHeight = {'fit', 'fit', '1x', 'fit'};
 ```
 
 **AND UPDATE track strip row:**
+
 ```matlab
 tracksPanel.Layout.Row = 3;  % Was Row 1
 ```
 
 **AND UPDATE master panel row:**
+
 ```matlab
 masterPanel.Layout.Row = 4;  % Was Row 2
 ```
@@ -135,6 +145,7 @@ masterPanel.Layout.Row = 4;  % Was Row 2
 #### Step 1.6: Add Helper Functions
 
 **ADD AT END OF FILE:**
+
 ```matlab
 %% NEW MIXER FUNCTIONS
 
@@ -692,6 +703,7 @@ Continue with the remaining implementation...
 After each week, test:
 
 ### Week 1 Mixer Tests
+
 - [ ] Load audio into multiple tracks
 - [ ] Set different offsets for tracks
 - [ ] Apply fade in/out to tracks
@@ -701,6 +713,7 @@ After each week, test:
 - [ ] Zoom timeline in/out
 
 ### Week 2 Edit Tests
+
 - [ ] Select audio region
 - [ ] Trim audio
 - [ ] Cut/copy/paste audio
@@ -711,6 +724,7 @@ After each week, test:
 - [ ] Remove DC offset
 
 ### Week 3 Effects Tests
+
 - [ ] Add effect to chain
 - [ ] Reorder effects
 - [ ] Bypass individual effects
@@ -724,15 +738,19 @@ After each week, test:
 ## 🐛 Common Issues & Fixes
 
 ### Issue: "Undefined function or variable 'MixerCoreEnhanced'"
+
 **Fix:** Ensure `MixerCoreEnhanced.m` is in the `core/` folder and on MATLAB path.
 
 ### Issue: "Index exceeds array dimensions" in timeline
+
 **Fix:** Check that tracks are loaded before calling `updateTimelineDisplay()`.
 
 ### Issue: Undo/redo buttons not enabling
+
 **Fix:** Ensure `AudioEditor` is initialized before first edit operation.
 
 ### Issue: Effects not applying
+
 **Fix:** Verify `AudioEffects.m` and `ConvolutionReverb.m` are on path.
 
 ---
@@ -740,6 +758,7 @@ After each week, test:
 ## 📚 Next Steps
 
 After completing Phase 1:
+
 1. Test thoroughly with real audio files
 2. Gather user feedback
 3. Proceed to Phase 2 (Production and Research tabs)

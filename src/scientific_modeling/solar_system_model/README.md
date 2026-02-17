@@ -100,37 +100,37 @@ python run_solar_system.py --width 1920 --height 1080
 
 ### Keyboard Controls
 
-| Key | Action |
-|-----|--------|
-| SPACE | Pause/Resume simulation |
-| +/- | Speed up/slow down time |
-| R | Reverse time flow |
-| D | Toggle date picker |
-| N | Toggle time navigation panel |
-| E | Toggle historical events panel |
-| [ / ] | Jump backward/forward 1 day |
-| { / } | Jump backward/forward 1 month |
-| 0-9 | Select celestial body (0=Sun, 3=Earth, 4=Mars) |
-| F | Focus on selected body |
-| C | Cycle camera mode |
-| O | Toggle orbital paths |
-| L | Toggle labels |
-| I | Toggle info panel |
-| G | Toggle grid |
-| M | Toggle immersion checklist |
-| H | Toggle help overlay |
-| T | Plan trajectory to Mars |
-| . | Cycle fun facts (planet selected) |
-| HOME | Reset view |
-| ESC | Quit |
+| Key   | Action                                         |
+| ----- | ---------------------------------------------- |
+| SPACE | Pause/Resume simulation                        |
+| +/-   | Speed up/slow down time                        |
+| R     | Reverse time flow                              |
+| D     | Toggle date picker                             |
+| N     | Toggle time navigation panel                   |
+| E     | Toggle historical events panel                 |
+| [ / ] | Jump backward/forward 1 day                    |
+| { / } | Jump backward/forward 1 month                  |
+| 0-9   | Select celestial body (0=Sun, 3=Earth, 4=Mars) |
+| F     | Focus on selected body                         |
+| C     | Cycle camera mode                              |
+| O     | Toggle orbital paths                           |
+| L     | Toggle labels                                  |
+| I     | Toggle info panel                              |
+| G     | Toggle grid                                    |
+| M     | Toggle immersion checklist                     |
+| H     | Toggle help overlay                            |
+| T     | Plan trajectory to Mars                        |
+| .     | Cycle fun facts (planet selected)              |
+| HOME  | Reset view                                     |
+| ESC   | Quit                                           |
 
 ### Mouse Controls
 
-| Action | Effect |
-|--------|--------|
-| Left Drag | Orbit camera around target |
-| Right Drag | Pan camera |
-| Scroll Wheel | Zoom in/out |
+| Action       | Effect                     |
+| ------------ | -------------------------- |
+| Left Drag    | Orbit camera around target |
+| Right Drag   | Pan camera                 |
+| Scroll Wheel | Zoom in/out                |
 
 ## Output Format
 
@@ -237,10 +237,12 @@ pip install pygame PyOpenGL PyOpenGL_accelerate numpy
 ### Black Screen or No Rendering
 
 **Causes**:
+
 - Graphics driver issues
 - OpenGL not supported
 
 **Solutions**:
+
 - Update graphics drivers
 - Try `--no-shaders` flag
 - Try `--no-antialiasing` flag
@@ -248,6 +250,7 @@ pip install pygame PyOpenGL PyOpenGL_accelerate numpy
 ### Low Frame Rate
 
 **Solutions**:
+
 - Reduce window size: `--width 1280 --height 720`
 - Disable antialiasing: `--no-antialiasing`
 - Enable VSync: remove `--no-vsync` if present

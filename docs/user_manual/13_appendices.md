@@ -285,11 +285,11 @@ exp_approx = exp_series(t, terms=10)
 
 ### C.1 Environment Variables
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `HEADLESS` | `false` | Set `true` for headless (no-GUI) operation |
-| `TOOLS_DATA_DIR` | `~/.tools` | User data directory |
-| `TOOLS_LOG_LEVEL` | `WARNING` | Logging level |
+| Variable          | Default    | Description                                |
+| ----------------- | ---------- | ------------------------------------------ |
+| `HEADLESS`        | `false`    | Set `true` for headless (no-GUI) operation |
+| `TOOLS_DATA_DIR`  | `~/.tools` | User data directory                        |
+| `TOOLS_LOG_LEVEL` | `WARNING`  | Logging level                              |
 
 ### C.2 PyQt6 Requirements
 
@@ -302,77 +302,77 @@ exp_approx = exp_series(t, terms=10)
 
 ### C.3 Optional Dependencies
 
-| Package | Used By | Purpose |
-|---------|---------|---------|
-| CoolProp | Acid Gas Dewpoint, Syngas Water | IAPWS-IF97 properties |
-| thermo | Acid Gas Dewpoint | Peng-Robinson EOS |
-| Flask | Web applications | Web server |
-| Streamlit | Web dashboards | Interactive web apps |
-| Open3D | C3D Viewer, URDF Builder | 3D visualization |
-| trimesh | Humanoid Builder | Mesh generation |
+| Package   | Used By                         | Purpose               |
+| --------- | ------------------------------- | --------------------- |
+| CoolProp  | Acid Gas Dewpoint, Syngas Water | IAPWS-IF97 properties |
+| thermo    | Acid Gas Dewpoint               | Peng-Robinson EOS     |
+| Flask     | Web applications                | Web server            |
+| Streamlit | Web dashboards                  | Interactive web apps  |
+| Open3D    | C3D Viewer, URDF Builder        | 3D visualization      |
+| trimesh   | Humanoid Builder                | Mesh generation       |
 
 ---
 
 ## Appendix D: Glossary
 
-| Term | Definition |
-|------|-----------|
-| **ACFM** | Actual Cubic Feet per Minute |
-| **ACR** | Air-to-Cloth Ratio |
-| **Antoine Equation** | Empirical relation between vapor pressure and temperature |
-| **API 521** | American Petroleum Institute standard for pressure-relieving systems |
-| **ASME** | American Society of Mechanical Engineers |
-| **C3D** | Coordinate 3D — motion capture file format |
-| **EBITDA** | Earnings Before Interest, Taxes, Depreciation, and Amortization |
-| **EOS** | Equation of State |
-| **GHSV** | Gas Hourly Space Velocity |
-| **HTU** | Height of Transfer Unit |
-| **IAPWS-IF97** | International Association for Properties of Water and Steam — Industrial Formulation 1997 |
-| **LMS** | Least Mean Squares (adaptive filter algorithm) |
-| **LMTD** | Log Mean Temperature Difference |
-| **NTU** | Number of Transfer Units |
-| **ODE** | Ordinary Differential Equation |
-| **PSA** | Pressure Swing Adsorption |
-| **RLS** | Recursive Least Squares (adaptive filter algorithm) |
-| **ROA** | Return on Assets |
-| **ROE** | Return on Equity |
-| **RRT** | Rapidly-exploring Random Tree |
-| **SCFM** | Standard Cubic Feet per Minute |
-| **STP** | Standard Temperature and Pressure (0°C, 1 atm) |
-| **TCI** | Total Capital Investment |
-| **TRC** | Thermal Reactor/Converter |
-| **URDF** | Unified Robot Description Format |
-| **WCAG** | Web Content Accessibility Guidelines |
-| **WGS** | Water-Gas Shift |
+| Term                 | Definition                                                                                |
+| -------------------- | ----------------------------------------------------------------------------------------- |
+| **ACFM**             | Actual Cubic Feet per Minute                                                              |
+| **ACR**              | Air-to-Cloth Ratio                                                                        |
+| **Antoine Equation** | Empirical relation between vapor pressure and temperature                                 |
+| **API 521**          | American Petroleum Institute standard for pressure-relieving systems                      |
+| **ASME**             | American Society of Mechanical Engineers                                                  |
+| **C3D**              | Coordinate 3D — motion capture file format                                                |
+| **EBITDA**           | Earnings Before Interest, Taxes, Depreciation, and Amortization                           |
+| **EOS**              | Equation of State                                                                         |
+| **GHSV**             | Gas Hourly Space Velocity                                                                 |
+| **HTU**              | Height of Transfer Unit                                                                   |
+| **IAPWS-IF97**       | International Association for Properties of Water and Steam — Industrial Formulation 1997 |
+| **LMS**              | Least Mean Squares (adaptive filter algorithm)                                            |
+| **LMTD**             | Log Mean Temperature Difference                                                           |
+| **NTU**              | Number of Transfer Units                                                                  |
+| **ODE**              | Ordinary Differential Equation                                                            |
+| **PSA**              | Pressure Swing Adsorption                                                                 |
+| **RLS**              | Recursive Least Squares (adaptive filter algorithm)                                       |
+| **ROA**              | Return on Assets                                                                          |
+| **ROE**              | Return on Equity                                                                          |
+| **RRT**              | Rapidly-exploring Random Tree                                                             |
+| **SCFM**             | Standard Cubic Feet per Minute                                                            |
+| **STP**              | Standard Temperature and Pressure (0°C, 1 atm)                                            |
+| **TCI**              | Total Capital Investment                                                                  |
+| **TRC**              | Thermal Reactor/Converter                                                                 |
+| **URDF**             | Unified Robot Description Format                                                          |
+| **WCAG**             | Web Content Accessibility Guidelines                                                      |
+| **WGS**              | Water-Gas Shift                                                                           |
 
 ---
 
 ## Appendix E: File Count Summary
 
-| Directory | Python Files | Test Files | Total Lines (est.) |
-|-----------|-------------|-----------|-------------------|
-| `shared/python/signal_toolkit/` | 10 | 6+ | ~4,000 |
-| `shared/python/upstream_drift_tools/` | 28+ | 5+ | ~8,000 |
-| `shared/python/gui_launcher/` | 3 | — | ~500 |
-| `shared/python/theme/` | 4 | — | ~600 |
-| Process calculator GUIs (20 tools) | 60+ | 20+ | ~15,000 |
-| Scientific modeling | 10+ | 2+ | ~2,000 |
-| Web applications | 15+ | 5+ | ~3,000 |
-| Media processing | 20+ | 5+ | ~4,000 |
-| Development tools | 10+ | — | ~1,500 |
-| **Total** | **~679** | **~50+** | **~40,000** |
+| Directory                             | Python Files | Test Files | Total Lines (est.) |
+| ------------------------------------- | ------------ | ---------- | ------------------ |
+| `shared/python/signal_toolkit/`       | 10           | 6+         | ~4,000             |
+| `shared/python/upstream_drift_tools/` | 28+          | 5+         | ~8,000             |
+| `shared/python/gui_launcher/`         | 3            | —          | ~500               |
+| `shared/python/theme/`                | 4            | —          | ~600               |
+| Process calculator GUIs (20 tools)    | 60+          | 20+        | ~15,000            |
+| Scientific modeling                   | 10+          | 2+         | ~2,000             |
+| Web applications                      | 15+          | 5+         | ~3,000             |
+| Media processing                      | 20+          | 5+         | ~4,000             |
+| Development tools                     | 10+          | —          | ~1,500             |
+| **Total**                             | **~679**     | **~50+**   | **~40,000**        |
 
 ---
 
-*[← Implementation Gaps](./12_implementation_gaps.md) | [Back to Manual](./TOOLS_USER_MANUAL.md)*
+_[← Implementation Gaps](./12_implementation_gaps.md) | [Back to Manual](./TOOLS_USER_MANUAL.md)_
 
 ---
 
 **Document Version History:**
 
-| Version | Date | Description |
-|---------|------|-------------|
-| 1.0.0 | February 2026 | Initial comprehensive manual |
+| Version | Date          | Description                  |
+| ------- | ------------- | ---------------------------- |
+| 1.0.0   | February 2026 | Initial comprehensive manual |
 
 **License:** This documentation is part of the Tools repository and follows the same license terms.
 

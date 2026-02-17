@@ -48,15 +48,15 @@ source of coupling in the repository because:
 
 **Evidence** (representative samples):
 
-| File | Path(s) Inserted |
-|------|-----------------|
-| `src/pressure_drop_calculator/launch_pyqt6.py:10-11` | `TOOLS_ROOT / "src"`, `TOOLS_ROOT / "src" / "shared" / "python"` |
-| `src/syngas_compression/launch_pyqt6.py:15-16` | Same two paths |
-| `src/signal_processing_studio/launch_pyqt6.py:20-23` | Four paths |
-| `src/glass_bath_fea/ui/pyqt6/main_window.py:45` | `TOOLS_ROOT / "src"` |
-| `src/tools/config_loader.py:17-19` | `parent.parent / "python" / "src"` |
-| `src/shared/python/upstream_drift_tools/utils/state_manager.py:24-26` | `parents[4] / "python" / "src"` |
-| `src/python/src/utils/path_setup.py:66,118` | Dynamic paths via `setup_python_path()` |
+| File                                                                  | Path(s) Inserted                                                 |
+| --------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `src/pressure_drop_calculator/launch_pyqt6.py:10-11`                  | `TOOLS_ROOT / "src"`, `TOOLS_ROOT / "src" / "shared" / "python"` |
+| `src/syngas_compression/launch_pyqt6.py:15-16`                        | Same two paths                                                   |
+| `src/signal_processing_studio/launch_pyqt6.py:20-23`                  | Four paths                                                       |
+| `src/glass_bath_fea/ui/pyqt6/main_window.py:45`                       | `TOOLS_ROOT / "src"`                                             |
+| `src/tools/config_loader.py:17-19`                                    | `parent.parent / "python" / "src"`                               |
+| `src/shared/python/upstream_drift_tools/utils/state_manager.py:24-26` | `parents[4] / "python" / "src"`                                  |
+| `src/python/src/utils/path_setup.py:66,118`                           | Dynamic paths via `setup_python_path()`                          |
 
 ### Proposed Fix
 
@@ -68,10 +68,12 @@ source of coupling in the repository because:
 
 1. **Consolidate package roots** in `pyproject.toml` so that `setuptools` can find all
    source packages from a single `where` directive:
+
    ```toml
    [tool.setuptools.packages.find]
    where = ["src/shared/python", "src/python/src", "src"]
    ```
+
    This is already partially configured but not consistently used.
 
 2. **Add a `conftest.py` at the repo root** (or update the existing `pytest.ini`) to
@@ -79,6 +81,7 @@ source of coupling in the repository because:
    `pythonpath` setting but it's incomplete.
 
 3. **Remove all `sys.path.insert` / `sys.path.append` calls** from:
+
    - All `launch_pyqt6.py` scripts (replace with package-relative imports)
    - All `conftest.py` files in sub-tools
    - Library code (`config_loader.py`, `state_manager.py`)
@@ -98,11 +101,11 @@ source of coupling in the repository because:
 
 There are **three separate implementations** of "find the repository root":
 
-| Implementation | Location | Strategy |
-|---------------|----------|----------|
-| `get_repo_root()` | `src/tools/launch_utils.py:12-26` | Walk up 5 levels looking for `tools.json` or `.git` |
-| `get_repo_root()` | `src/python/src/utils/path_setup.py:16-54` | Walk up 20 levels looking for `.git`, `pyproject.toml`, `requirements.txt`, or `tools.json` |
-| Inline logic | `src/shared/python/upstream_drift_tools/utils/state_manager.py:24` | `Path(__file__).resolve().parents[4]` |
+| Implementation    | Location                                                           | Strategy                                                                                    |
+| ----------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| `get_repo_root()` | `src/tools/launch_utils.py:12-26`                                  | Walk up 5 levels looking for `tools.json` or `.git`                                         |
+| `get_repo_root()` | `src/python/src/utils/path_setup.py:16-54`                         | Walk up 20 levels looking for `.git`, `pyproject.toml`, `requirements.txt`, or `tools.json` |
+| Inline logic      | `src/shared/python/upstream_drift_tools/utils/state_manager.py:24` | `Path(__file__).resolve().parents[4]`                                                       |
 
 Each implementation has different depth limits, different marker files, and different
 fallback behavior. The one in `launch_utils.py` caps at 5 levels; `path_setup.py` caps at
@@ -132,22 +135,22 @@ fallback behavior. The one in `launch_utils.py` caps at 5 levels; `path_setup.py
 
 There are **two distinct utility packages** that serve overlapping purposes:
 
-| Package | Location | Contains |
-|---------|----------|----------|
-| `utils` | `src/python/src/utils/` | `file_utils`, `path_setup`, `path_helpers`, `logging_utils`, `error_handling`, `debug_utils`, `csv_utils`, `validation`, `subprocess_utils`, `config_loader`, `compatibility`, `env_utils`, `os_utils`, `test_utils`, `integration_test_helpers`, `dependency_checker`, `quality_checker`, `plotting` (20 modules) |
-| `upstream_drift_tools.utils` | `src/shared/python/upstream_drift_tools/utils/` | `logging`, `state_manager`, `unit_constants` (3 modules) |
+| Package                      | Location                                        | Contains                                                                                                                                                                                                                                                                                                           |
+| ---------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `utils`                      | `src/python/src/utils/`                         | `file_utils`, `path_setup`, `path_helpers`, `logging_utils`, `error_handling`, `debug_utils`, `csv_utils`, `validation`, `subprocess_utils`, `config_loader`, `compatibility`, `env_utils`, `os_utils`, `test_utils`, `integration_test_helpers`, `dependency_checker`, `quality_checker`, `plotting` (20 modules) |
+| `upstream_drift_tools.utils` | `src/shared/python/upstream_drift_tools/utils/` | `logging`, `state_manager`, `unit_constants` (3 modules)                                                                                                                                                                                                                                                           |
 
 On top of that, the `src/tools/` package has its _own_ utilities:
 
-| Module | Location | Overlaps with |
-|--------|----------|--------------|
-| `config_loader.py` | `src/tools/config_loader.py` | `utils.config_loader` |
-| `dependency_utils.py` | `src/tools/dependency_utils.py` | `utils.dependency_checker` |
-| `launch_utils.py` | `src/tools/launch_utils.py` | Nothing (unique) |
-| `quality_utils.py` | `src/tools/quality_utils.py` | `utils.quality_checker` |
-| `icon_utils.py` | `src/tools/icon_utils.py` | Nothing (unique) |
-| `ui_utils.py` | `src/tools/ui_utils.py` | Nothing (unique) |
-| `matlab_quality_utils.py` | `src/tools/matlab_quality_utils.py` | Nothing (unique) |
+| Module                    | Location                            | Overlaps with              |
+| ------------------------- | ----------------------------------- | -------------------------- |
+| `config_loader.py`        | `src/tools/config_loader.py`        | `utils.config_loader`      |
+| `dependency_utils.py`     | `src/tools/dependency_utils.py`     | `utils.dependency_checker` |
+| `launch_utils.py`         | `src/tools/launch_utils.py`         | Nothing (unique)           |
+| `quality_utils.py`        | `src/tools/quality_utils.py`        | `utils.quality_checker`    |
+| `icon_utils.py`           | `src/tools/icon_utils.py`           | Nothing (unique)           |
+| `ui_utils.py`             | `src/tools/ui_utils.py`             | Nothing (unique)           |
+| `matlab_quality_utils.py` | `src/tools/matlab_quality_utils.py` | Nothing (unique)           |
 
 The `utils` package uses a **god `__init__.py`** that eagerly imports and re-exports
 ~80 symbols from four sub-modules. Any consumer that does `from utils import get_logger`
@@ -160,6 +163,7 @@ test frameworks), and `error_handling`, even if none of those are needed.
 
 1. **Thin out `utils/__init__.py`** — remove all eager imports. Each consumer should
    import from the specific sub-module:
+
    ```python
    # Before (triggers loading everything)
    from utils import get_logger
@@ -176,11 +180,11 @@ test frameworks), and `error_handling`, even if none of those are needed.
 
 #### Phase 2: Consolidate overlapping modules
 
-| From (`src/tools/`) | Into (`utils/`) | Notes |
-|---------------------|-----------------|-------|
-| `config_loader.py` | Rename to `tools/config_loader.py` (keep — it's tool-specific) | Ensure it imports `safe_read_json` from `utils.file_utils` without fallback |
-| `dependency_utils.py` | Merge into `utils/dependency_checker.py` | Unify the two dependency-checking APIs |
-| `quality_utils.py` | Merge with `utils/quality_checker.py` | Combine the two quality-checking APIs |
+| From (`src/tools/`)   | Into (`utils/`)                                                | Notes                                                                       |
+| --------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `config_loader.py`    | Rename to `tools/config_loader.py` (keep — it's tool-specific) | Ensure it imports `safe_read_json` from `utils.file_utils` without fallback |
+| `dependency_utils.py` | Merge into `utils/dependency_checker.py`                       | Unify the two dependency-checking APIs                                      |
+| `quality_utils.py`    | Merge with `utils/quality_checker.py`                          | Combine the two quality-checking APIs                                       |
 
 #### Priority: **HIGH** — Reduces confusion, prevents accidental import of heavy modules.
 
@@ -193,14 +197,15 @@ test frameworks), and `error_handling`, even if none of those are needed.
 There are **four separate launcher mechanisms**, plus a per-tool `gui_registration.py`
 pattern that is partially adopted:
 
-| Launcher | Tech | Location | Status |
-|----------|------|----------|--------|
-| `Launcher.py` | Tkinter | Root | Legacy / fallback |
-| `UnifiedToolsLauncher.py` | PyQt6 | Root | Primary |
-| `launch_tools_main.py` | Tkinter/CTk | Root | Data Processor specific |
-| `run_tile_launcher.py` | ? | Root | Tile-based |
+| Launcher                  | Tech        | Location | Status                  |
+| ------------------------- | ----------- | -------- | ----------------------- |
+| `Launcher.py`             | Tkinter     | Root     | Legacy / fallback       |
+| `UnifiedToolsLauncher.py` | PyQt6       | Root     | Primary                 |
+| `launch_tools_main.py`    | Tkinter/CTk | Root     | Data Processor specific |
+| `run_tile_launcher.py`    | ?           | Root     | Tile-based              |
 
 Each tool _also_ has its own `launch_pyqt6.py` that duplicates:
+
 - `sys.path` setup (covered in Problem 1)
 - Dependency checking (2-5 imports tested with try/except)
 - `QApplication` creation and window setup
@@ -214,12 +219,14 @@ inconsistent.
 
 1. **Complete the `gui_registration.py` pattern** across all tools. Each tool registers
    itself with a `LaunchConfig` that specifies:
+
    - Module and class to import
    - Required dependencies
    - Window title and minimum size
    - Settings app name for theming
 
 2. **Create a single `launch.py` entry point** at the repo root that:
+
    - Auto-discovers registered tools via `gui_registration.py` modules
    - Creates the `QApplication` once
    - Handles dependency checking centrally
@@ -227,6 +234,7 @@ inconsistent.
    - Can launch any tool by name: `python launch.py --tool "Pressure Drop Calculator"`
 
 3. **Keep individual `launch_pyqt6.py` scripts** but make them thin wrappers:
+
    ```python
    from tools.launcher import launch_tool_by_name
    if __name__ == "__main__":
@@ -259,6 +267,7 @@ Similar hardcoded styles exist in other components but ToolCard is the worst off
 
 2. **Replace inline `setStyleSheet()` calls** with object names and let the theme engine
    handle colors:
+
    ```python
    # Before
    btn.setStyleSheet("background-color: #2196F3; ...")
@@ -286,6 +295,7 @@ state_manager = StateManager()  # Creates dirs on import!
 ```
 
 This means:
+
 - Importing the module creates filesystem directories (`saved_states/`, etc.)
 - Every module that imports `state_manager` shares the same global instance
 - The `StateManager` constructor has side effects (directory creation, JSON file reading)
@@ -298,6 +308,7 @@ for `safe_read_json` and `safe_write_json` that is 30 lines of import boilerplat
 ### Proposed Fix
 
 1. **Lazy initialization**: Replace the module-level singleton with a factory function:
+
    ```python
    _state_manager: StateManager | None = None
 
@@ -352,6 +363,7 @@ if the physical path changes.
 ### Proposed Fix
 
 1. **Standardize import paths** to use the installed package name:
+
    ```python
    # Before
    from shared.python.upstream_drift_tools.process_calculators.pressure_drop_calculator import ...
@@ -359,9 +371,11 @@ if the physical path changes.
    # After
    from upstream_drift_tools.process_calculators.pressure_drop_calculator import ...
    ```
+
    This works once the package is properly installed (Problem 1).
 
 2. **Standardize theme imports**:
+
    ```python
    # Before
    from shared.python.theme import setup_themed_app
@@ -371,6 +385,7 @@ if the physical path changes.
    ```
 
 3. **Each calculator tool should have exactly two importable units**:
+
    - **Core**: `upstream_drift_tools.process_calculators.<name>` — no UI dependencies
    - **GUI**: `src/<name>/python/<name>/ui/` — depends on core + PyQt6
 
@@ -378,6 +393,7 @@ if the physical path changes.
    `upstream_drift_tools` packages from importing PyQt6.
 
 #### Priority: **HIGH** — This is the main enabler for cross-repository reuse (the stated
+
 goal of the `upstream_drift_tools` library).
 
 ---
@@ -386,46 +402,46 @@ goal of the `upstream_drift_tools` library).
 
 ### Wave 1: Foundation (Prerequisite for all else)
 
-| # | Task | Effort | Depends On |
-|---|------|--------|-----------|
-| 1.1 | Fix `pyproject.toml` package discovery | S | — |
-| 1.2 | Update CI to `pip install -e ".[dev]"` | S | 1.1 |
-| 1.3 | Add repo-root `conftest.py` with proper `pythonpath` | S | 1.1 |
-| 1.4 | Remove all `sys.path.insert` from library code | M | 1.1, 1.2 |
-| 1.5 | Remove all `sys.path.insert` from launcher scripts | M | 1.1, 1.2 |
-| 1.6 | Remove all `sys.path.insert` from test files | M | 1.1, 1.3 |
-| 1.7 | Delete `ensure_utils_in_path()` and all calls | S | 1.4 |
-| 2.1 | Consolidate `get_repo_root()` to single implementation | S | 1.4 |
+| #   | Task                                                   | Effort | Depends On |
+| --- | ------------------------------------------------------ | ------ | ---------- |
+| 1.1 | Fix `pyproject.toml` package discovery                 | S      | —          |
+| 1.2 | Update CI to `pip install -e ".[dev]"`                 | S      | 1.1        |
+| 1.3 | Add repo-root `conftest.py` with proper `pythonpath`   | S      | 1.1        |
+| 1.4 | Remove all `sys.path.insert` from library code         | M      | 1.1, 1.2   |
+| 1.5 | Remove all `sys.path.insert` from launcher scripts     | M      | 1.1, 1.2   |
+| 1.6 | Remove all `sys.path.insert` from test files           | M      | 1.1, 1.3   |
+| 1.7 | Delete `ensure_utils_in_path()` and all calls          | S      | 1.4        |
+| 2.1 | Consolidate `get_repo_root()` to single implementation | S      | 1.4        |
 
 ### Wave 2: Library Cleanup
 
-| # | Task | Effort | Depends On |
-|---|------|--------|-----------|
-| 3.1 | Thin out `utils/__init__.py` (remove eager imports) | M | Wave 1 |
-| 3.2 | Migrate `upstream_drift_tools/utils/` into `utils/` | M | 3.1 |
-| 3.3 | Merge overlapping quality/dependency checkers | S | 3.1 |
-| 6.1 | Make StateManager lazily initialized | S | 3.2 |
-| 6.2 | Remove import fallback chains from StateManager | S | Wave 1 |
+| #   | Task                                                | Effort | Depends On |
+| --- | --------------------------------------------------- | ------ | ---------- |
+| 3.1 | Thin out `utils/__init__.py` (remove eager imports) | M      | Wave 1     |
+| 3.2 | Migrate `upstream_drift_tools/utils/` into `utils/` | M      | 3.1        |
+| 3.3 | Merge overlapping quality/dependency checkers       | S      | 3.1        |
+| 6.1 | Make StateManager lazily initialized                | S      | 3.2        |
+| 6.2 | Remove import fallback chains from StateManager     | S      | Wave 1     |
 
 ### Wave 3: Import Standardization
 
-| # | Task | Effort | Depends On |
-|---|------|--------|-----------|
-| 7.1 | Convert `from shared.python.upstream_drift_tools...` → `from upstream_drift_tools...` | L | Wave 1 |
-| 7.2 | Convert `from shared.python.theme...` → package-relative or installed | M | Wave 1 |
-| 7.3 | Convert `from shared.python.signal_toolkit...` → installed | M | Wave 1 |
-| 7.4 | Convert `from shared.python.plot_engine...` → installed | M | Wave 1 |
-| 7.5 | Add import-linter rule: no PyQt6 in `upstream_drift_tools` | S | 7.1 |
+| #   | Task                                                                                  | Effort | Depends On |
+| --- | ------------------------------------------------------------------------------------- | ------ | ---------- |
+| 7.1 | Convert `from shared.python.upstream_drift_tools...` → `from upstream_drift_tools...` | L      | Wave 1     |
+| 7.2 | Convert `from shared.python.theme...` → package-relative or installed                 | M      | Wave 1     |
+| 7.3 | Convert `from shared.python.signal_toolkit...` → installed                            | M      | Wave 1     |
+| 7.4 | Convert `from shared.python.plot_engine...` → installed                               | M      | Wave 1     |
+| 7.5 | Add import-linter rule: no PyQt6 in `upstream_drift_tools`                            | S      | 7.1        |
 
 ### Wave 4: Launcher Consolidation
 
-| # | Task | Effort | Depends On |
-|---|------|--------|-----------|
-| 4.1 | Complete `gui_registration.py` in all tools | M | Wave 3 |
-| 4.2 | Create unified `launch.py` entry point | M | 4.1 |
-| 4.3 | Slim down individual `launch_pyqt6.py` scripts | M | 4.2 |
-| 4.4 | Deprecate `Launcher.py` and `launch_tools_main.py` | S | 4.2 |
-| 5.1 | Move ToolCard styles into theme system | S | Wave 3 |
+| #   | Task                                               | Effort | Depends On |
+| --- | -------------------------------------------------- | ------ | ---------- |
+| 4.1 | Complete `gui_registration.py` in all tools        | M      | Wave 3     |
+| 4.2 | Create unified `launch.py` entry point             | M      | 4.1        |
+| 4.3 | Slim down individual `launch_pyqt6.py` scripts     | M      | 4.2        |
+| 4.4 | Deprecate `Launcher.py` and `launch_tools_main.py` | S      | 4.2        |
+| 5.1 | Move ToolCard styles into theme system             | S      | Wave 3     |
 
 **Effort Key**: S = Small (< 1 hour), M = Medium (1-4 hours), L = Large (4+ hours)
 
@@ -476,13 +492,13 @@ python launch.py --list-tools
 
 ## Risk Assessment
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|-----------|--------|-----------|
-| Breaking imports during Wave 1 | High | High | Git tag before starting; keep old paths in `pythonpath` temporarily |
-| CI fails after `sys.path` removal | Medium | Medium | Run full test suite locally before pushing; update CI first |
-| Consumers in other repos (`Gasification_Model`) break | Medium | High | Communicate timeline; provide migration guide for `pip install -e ../Tools` |
-| `pyproject.toml` package discovery misses a sub-package | Medium | Low | Add explicit `include` patterns for all known packages |
-| Merge conflicts if multiple PRs in flight | Low | Medium | Execute waves sequentially; one PR per wave |
+| Risk                                                    | Likelihood | Impact | Mitigation                                                                  |
+| ------------------------------------------------------- | ---------- | ------ | --------------------------------------------------------------------------- |
+| Breaking imports during Wave 1                          | High       | High   | Git tag before starting; keep old paths in `pythonpath` temporarily         |
+| CI fails after `sys.path` removal                       | Medium     | Medium | Run full test suite locally before pushing; update CI first                 |
+| Consumers in other repos (`Gasification_Model`) break   | Medium     | High   | Communicate timeline; provide migration guide for `pip install -e ../Tools` |
+| `pyproject.toml` package discovery misses a sub-package | Medium     | Low    | Add explicit `include` patterns for all known packages                      |
+| Merge conflicts if multiple PRs in flight               | Low        | Medium | Execute waves sequentially; one PR per wave                                 |
 
 ---
 
@@ -512,6 +528,7 @@ share across repositories and _where_ to put shared components. This plan focuse
 the internal wiring should work to make that sharing reliable.
 
 Specifically:
+
 - **refactoring_plan_final.md Phase 1** ("Shared Library Foundation") is partially
   complete — the `upstream_drift_tools` package exists. This plan's Wave 1 finishes
   the job by making it properly installable.

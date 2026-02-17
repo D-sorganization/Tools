@@ -275,7 +275,7 @@ describe('Unit Converter', () => {
   });
 
   describe('Debounce Utility', () => {
-    test('debounces a function', (done) => {
+    test('debounces a function', done => {
       let counter = 0;
       const increment = () => {
         counter++;
@@ -297,22 +297,22 @@ describe('Unit Converter', () => {
       }, 100);
     });
 
-    test('executes immediately if wait is 0 (or close to)', (done) => {
-        // This test depends on how debounce is implemented.
-        // Standard debounce with only wait param usually doesn't execute immediately unless trailing.
-        // It always waits 'wait' ms.
-        // If wait is small, it just runs quickly.
-        let counter = 0;
-        const increment = () => counter++;
-        const debounced = converter.debounce(increment, 10);
+    test('executes immediately if wait is 0 (or close to)', done => {
+      // This test depends on how debounce is implemented.
+      // Standard debounce with only wait param usually doesn't execute immediately unless trailing.
+      // It always waits 'wait' ms.
+      // If wait is small, it just runs quickly.
+      let counter = 0;
+      const increment = () => counter++;
+      const debounced = converter.debounce(increment, 10);
 
-        debounced();
-        expect(counter).toBe(0);
+      debounced();
+      expect(counter).toBe(0);
 
-        setTimeout(() => {
-            expect(counter).toBe(1);
-            done();
-        }, 20);
+      setTimeout(() => {
+        expect(counter).toBe(1);
+        done();
+      }, 20);
     });
   });
 });

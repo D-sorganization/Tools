@@ -9,6 +9,7 @@ Added support for "Author - Title" naming style where the title uses proper Titl
 ### 1. Author Extraction ([extractors.py](src/pdf_renamer/extractors.py))
 
 Added `author_from_metadata()` function that:
+
 - Extracts author from PDF metadata using pypdf
 - Validates author name (length, content)
 - Filters out common garbage values ("unknown", "user", "admin", etc.)
@@ -23,11 +24,13 @@ def author_from_metadata(pdf_path: Path) -> str | None:
 ### 2. Enhanced Worker Module ([worker.py](src/pdf_renamer/worker.py))
 
 Updated `process_single_file()` to:
+
 - Extract author when `include_author=True`
 - Pass author to filename generation
 - Support all three naming styles with author
 
 Updated `_generate_filename()` to support author in all styles:
+
 - **Standard**: `Smith - Machine Learning Basics.pdf`
 - **Snake Case**: `smith_machine_learning_basics.pdf`
 - **Kebab Case**: `smith-machine-learning-basics.pdf`
@@ -35,11 +38,13 @@ Updated `_generate_filename()` to support author in all styles:
 ### 3. GUI Enhancement ([gui.py](src/pdf_renamer/gui.py))
 
 Added checkbox:
+
 - **Label**: "Include Author (Author - Title.pdf)"
 - **Default**: Unchecked
 - **Location**: Settings → Options Row 2
 
 Connected to ProcessingThread:
+
 - Passes `include_author` parameter through entire pipeline
 - Works with all naming styles
 - Compatible with all other features (dry-run, LLM, duplicates, etc.)
@@ -49,27 +54,30 @@ Connected to ProcessingThread:
 The `to_title_case()` function in [utils.py](src/pdf_renamer/utils.py) implements smart capitalization:
 
 ### Minor Words (Lowercase)
+
 - Articles: a, an, the
 - Conjunctions: and, but, or, nor, for, so, yet
 - Prepositions: at, by, in, of, on, to, up, from, with, as
 
 ### Always Capitalized
+
 - First word of title
 - Last word of title
 - All other words (nouns, verbs, adjectives, adverbs, etc.)
 
 ### Examples
 
-| Input | Output |
-|-------|--------|
-| `introduction to machine learning` | `Introduction to Machine Learning` |
-| `the lord of the rings` | `The Lord of the Rings` |
-| `a tale of two cities` | `A Tale of Two Cities` |
+| Input                                      | Output                                     |
+| ------------------------------------------ | ------------------------------------------ |
+| `introduction to machine learning`         | `Introduction to Machine Learning`         |
+| `the lord of the rings`                    | `The Lord of the Rings`                    |
+| `a tale of two cities`                     | `A Tale of Two Cities`                     |
 | `machine learning basics and applications` | `Machine Learning Basics and Applications` |
 
 ## Usage Examples
 
 ### GUI Mode
+
 1. Launch GUI: `python launch_gui.py`
 2. Select directory with PDFs
 3. Check "Include Author (Author - Title.pdf)"
@@ -79,18 +87,21 @@ The `to_title_case()` function in [utils.py](src/pdf_renamer/utils.py) implement
 ### Result Examples
 
 **With Author:**
+
 ```
 Input:  research_paper_final.pdf (Author: John Smith, Title: Machine Learning Basics)
 Output: Smith - Machine Learning Basics.pdf
 ```
 
 **Without Author (checkbox unchecked):**
+
 ```
 Input:  research_paper_final.pdf (Title: Machine Learning Basics)
 Output: Machine Learning Basics.pdf
 ```
 
 **Author from Different Formats:**
+
 ```
 John Smith      → Smith - Title.pdf
 Jane M. Doe     → Doe - Title.pdf
@@ -100,26 +111,30 @@ Dr. Robert Lee  → Lee - Title.pdf
 ## Technical Details
 
 ### Author Extraction Priority
+
 1. **PDF Metadata** `/Author` field (primary source)
 2. **Fallback**: No author → uses title only
 
 ### Last Name Extraction
+
 The `get_last_name()` function in [utils.py](src/pdf_renamer/utils.py):
+
 - Splits by whitespace
 - Takes last component
 - Example: "John Jacob Smith" → "Smith"
 
 ### Naming Style Matrix
 
-| Style | No Author | With Author (John Smith) |
-|-------|-----------|--------------------------|
-| **Standard** | `Machine Learning Basics.pdf` | `Smith - Machine Learning Basics.pdf` |
-| **Snake Case** | `machine_learning_basics.pdf` | `smith_machine_learning_basics.pdf` |
-| **Kebab Case** | `machine-learning-basics.pdf` | `smith-machine-learning-basics.pdf` |
+| Style          | No Author                     | With Author (John Smith)              |
+| -------------- | ----------------------------- | ------------------------------------- |
+| **Standard**   | `Machine Learning Basics.pdf` | `Smith - Machine Learning Basics.pdf` |
+| **Snake Case** | `machine_learning_basics.pdf` | `smith_machine_learning_basics.pdf`   |
+| **Kebab Case** | `machine-learning-basics.pdf` | `smith-machine-learning-basics.pdf`   |
 
 ## Compatibility
 
 ✅ Works with all existing features:
+
 - Dry-run mode
 - AI/LLM extraction
 - Duplicate detection
@@ -129,6 +144,7 @@ The `get_last_name()` function in [utils.py](src/pdf_renamer/utils.py):
 - Caching
 
 ✅ Thread-safe:
+
 - Author extraction happens per-file
 - No global state
 - Safe for parallel processing
@@ -156,10 +172,12 @@ _generate_filename('machine learning basics', 'John Smith', 'kebab_case', True)
 ## Limitations
 
 1. **Author Detection**: Only works if PDF has author metadata
+
    - Many PDFs don't include author information
    - No heuristic/AI author extraction (could be added later)
 
 2. **Multi-Author Papers**: Takes only last name of first author
+
    - "John Smith and Jane Doe" → "Smith"
    - Could add logic to handle "et al." in future
 

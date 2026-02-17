@@ -33,6 +33,7 @@ Two palettes are provided:
 2. **Alternative Palette**: Higher contrast variant for better visibility
 
 Both palettes are tested for:
+
 - Protanopia (red-blind)
 - Deuteranopia (green-blind)
 - Tritanopia (blue-blind)
@@ -40,6 +41,7 @@ Both palettes are tested for:
 ### Export Formats
 
 All plots should support export to:
+
 - **SVG**: Vector format for web and print
 - **PDF**: Vector format for documents
 - **PNG**: Raster format for presentations (300 DPI default)

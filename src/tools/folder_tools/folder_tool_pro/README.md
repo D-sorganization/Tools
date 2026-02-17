@@ -9,24 +9,28 @@ A comprehensive, modern folder processing application designed to be the definit
 ### Major Enhancements Over v2.0
 
 #### **1. Modern Professional UI**
+
 - **Tabbed Interface**: Organized into Operation, Filters, Preview, and Log tabs
 - **Dark/Light Themes**: Toggle between professional color schemes
 - **Enhanced Aesthetics**: Modern Segoe UI font, professional spacing, and visual hierarchy
 - **Responsive Layout**: Proper window resizing and content adaptation
 
 #### **2. Advanced Deduplication**
+
 - **SHA-256 Full Hash**: Cryptographically secure file comparison
 - **Fast Hash Algorithm**: Quick duplicate detection using file size + chunk hashing
 - **Name + Size Method**: Fastest duplicate detection for large datasets
 - **Smart Algorithm Selection**: Choose the right method for your needs
 
 #### **3. Real-Time Preview System**
+
 - **Live File Preview**: See exactly what files will be processed
 - **File Metadata Display**: Size, type, modification date in sortable tree view
 - **Filter Testing**: Preview filter results before execution
 - **Up to 1000 File Preview**: Prevent UI lag with intelligent limiting
 
 #### **4. Advanced Filtering**
+
 - **File Extension Filter**: Comma-separated extension list
 - **Regular Expression Support**: Advanced pattern matching (e.g., `^report_.*\.pdf$`)
 - **Size Range Filter**: Minimum and maximum file size in MB
@@ -34,23 +38,27 @@ A comprehensive, modern folder processing application designed to be the definit
 - **Custom Exclusion Lists**: Manage your own exclusion patterns
 
 #### **5. Intelligent File Organization**
+
 - **Organize by Type**: Automatically sort files into type-based folders
 - **Organize by Date**: Group files by modification date (YYYY-MM format)
 - **Hybrid Organization**: Combine type and date organization
 
 #### **6. Professional Reporting**
+
 - **HTML Reports**: Beautiful, styled HTML reports with gradients and charts
 - **JSON Export**: Machine-readable operation reports
 - **Operation Statistics**: Detailed metrics on all operations
 - **Error Tracking**: Complete error logs with timestamps
 
 #### **7. Enhanced Safety Features**
+
 - **Preview Mode**: Test operations without making changes
 - **Automatic Backups**: Create backups before destructive operations
 - **Verification System**: Verify operations completed successfully
 - **Progress Tracking**: Real-time progress with ETA calculation
 
 #### **8. Professional Operations**
+
 - **Combine & Copy**: Merge files from multiple sources
 - **Flatten & Tidy**: Remove nested directory structures
 - **Copy & Prune Empty**: Exclude empty folders
@@ -60,6 +68,7 @@ A comprehensive, modern folder processing application designed to be the definit
 ## 🎯 Key Features
 
 ### Core Functionality
+
 ✅ **Multiple Processing Modes**: 5 distinct operation modes
 ✅ **Smart Deduplication**: 3 deduplication algorithms
 ✅ **Advanced Filtering**: Extensions, regex, size, hidden files
@@ -69,6 +78,7 @@ A comprehensive, modern folder processing application designed to be the definit
 ✅ **ZIP Output**: Create compressed archives of results
 
 ### Professional Features
+
 ✅ **Real-time Preview**: See files before processing
 ✅ **Progress Tracking**: Detailed progress with ETA
 ✅ **Operation Logs**: Comprehensive, color-coded logging
@@ -78,6 +88,7 @@ A comprehensive, modern folder processing application designed to be the definit
 ✅ **Metadata Preservation**: Maintain file timestamps and attributes
 
 ### Safety & Reliability
+
 ✅ **Preview Mode**: Test without making changes
 ✅ **Automatic Backups**: Protection for destructive operations
 ✅ **Verification**: Confirm successful completion
@@ -99,10 +110,12 @@ pip install -r requirements.txt
 ```
 
 **Core Dependencies**:
+
 - `pillow>=10.0.0` - Image processing for icons
 - `cryptography>=41.0.0` - Encryption support
 
 **Development Dependencies**:
+
 - `pytest>=7.4.0` - Testing
 - `black>=23.7.0` - Code formatting
 - `ruff>=0.0.285` - Linting
@@ -140,16 +153,19 @@ python build_exe.py
 ### Basic Workflow
 
 1. **Add Source Folders**
+
    - Click "➕ Add Folder" to add folders to process
    - Add multiple folders for batch operations
    - Remove unwanted folders with "➖ Remove"
 
 2. **Select Destination**
+
    - Click "Browse" next to destination field
    - Choose where processed files should go
    - Not needed for "Analyze Only" mode
 
 3. **Choose Operation Mode**
+
    - **Combine & Copy**: Merge files from all sources
    - **Flatten & Tidy**: Remove directory nesting
    - **Copy & Prune Empty**: Skip empty folders
@@ -157,6 +173,7 @@ python build_exe.py
    - **Analyze Only**: Scan without changes
 
 4. **Configure Options**
+
    - Enable desired processing options
    - Set deduplication method if needed
    - Configure filters in the Filters tab
@@ -171,18 +188,21 @@ python build_exe.py
 #### Deduplication Methods
 
 **Full Hash (SHA-256)** - Most Accurate
+
 - Cryptographically secure comparison
 - 100% accurate duplicate detection
 - Slower for large files
 - Best for: Critical data, important files
 
 **Fast Hash** - Balanced
+
 - Uses file size + first/last chunks
 - Very fast, highly accurate
 - Recommended for most use cases
 - Best for: General purpose, large datasets
 
 **Name + Size** - Fastest
+
 - Compares filename and file size only
 - Instant results
 - May have false positives
@@ -191,18 +211,23 @@ python build_exe.py
 #### Filtering Examples
 
 **Extension Filter**:
+
 ```
 .jpg,.png,.pdf
 ```
+
 Only includes JPEG, PNG, and PDF files.
 
 **Regex Filter**:
+
 ```
 ^report_\d{4}\.pdf$
 ```
+
 Matches files like `report_2024.pdf`.
 
 **Size Filter**:
+
 - Minimum: `10` MB
 - Maximum: `1000` MB
 - Only processes files between 10MB and 1GB.
@@ -210,6 +235,7 @@ Matches files like `report_2024.pdf`.
 #### Organization Strategies
 
 **By Type**:
+
 ```
 destination/
   ├── jpg/
@@ -219,6 +245,7 @@ destination/
 ```
 
 **By Date**:
+
 ```
 destination/
   ├── 2024-01/
@@ -231,6 +258,7 @@ destination/
 ### HTML Reports
 
 Beautiful, professional HTML reports with:
+
 - Operation summary and duration
 - Statistics by operation type
 - Detailed operation log
@@ -241,6 +269,7 @@ Beautiful, professional HTML reports with:
 ### JSON Reports
 
 Machine-readable format for:
+
 - Integration with other tools
 - Automated processing
 - Record keeping
@@ -249,6 +278,7 @@ Machine-readable format for:
 ### Operation Logs
 
 Real-time, color-coded logs:
+
 - **Blue (Info)**: General information
 - **Green (Success)**: Successful operations
 - **Yellow (Warning)**: Warnings and alerts
@@ -257,12 +287,14 @@ Real-time, color-coded logs:
 ## 🎨 Themes
 
 ### Dark Theme (Default)
+
 - Modern dark background (#2b2b2b)
 - High contrast for extended use
 - Easy on the eyes
 - Professional appearance
 
 ### Light Theme
+
 - Clean light background (#f0f0f0)
 - Traditional interface
 - High readability
@@ -273,18 +305,21 @@ Toggle themes via **View → Toggle Theme** or simply enjoy the current theme.
 ## 🔒 Safety Features
 
 ### Preview Mode
+
 - Simulates operations without changes
 - Shows exactly what would happen
 - Zero risk to your files
 - Perfect for testing filters
 
 ### Automatic Backups
+
 - Creates timestamped backups
 - Stores in safe location
 - Restores if operation fails
 - Configurable retention
 
 ### Verification
+
 - Checksums for file integrity
 - Confirms successful operations
 - Detects partial completions
@@ -292,34 +327,37 @@ Toggle themes via **View → Toggle Theme** or simply enjoy the current theme.
 
 ## 🆚 Comparison with v2.0
 
-| Feature | v2.0 | v3.0 Pro |
-|---------|------|----------|
-| User Interface | Single page | Tabbed professional UI |
-| Themes | None | Dark + Light themes |
-| Deduplication | Name-based | SHA-256, Fast Hash, Name+Size |
-| File Preview | No | Real-time tree view |
-| Filtering | Basic | Advanced (regex, size, type) |
-| Organization | Limited | By type, date, custom |
-| Reports | Text logs | HTML + JSON reports |
-| Progress | Basic bar | Detailed with ETA |
-| Error Handling | Basic | Comprehensive with recovery |
-| Documentation | Minimal | Complete user guide |
+| Feature        | v2.0        | v3.0 Pro                      |
+| -------------- | ----------- | ----------------------------- |
+| User Interface | Single page | Tabbed professional UI        |
+| Themes         | None        | Dark + Light themes           |
+| Deduplication  | Name-based  | SHA-256, Fast Hash, Name+Size |
+| File Preview   | No          | Real-time tree view           |
+| Filtering      | Basic       | Advanced (regex, size, type)  |
+| Organization   | Limited     | By type, date, custom         |
+| Reports        | Text logs   | HTML + JSON reports           |
+| Progress       | Basic bar   | Detailed with ETA             |
+| Error Handling | Basic       | Comprehensive with recovery   |
+| Documentation  | Minimal     | Complete user guide           |
 
 ## 💡 Tips & Best Practices
 
 ### Performance Tips
+
 - Use "Fast Hash" for large datasets
 - Enable "Skip Hidden Files" to reduce processing time
 - Use Preview tab to verify file count before processing
 - Process smaller batches for better responsiveness
 
 ### Safety Tips
+
 - Always use "Preview Mode" first
 - Enable "Create Backup" for important operations
 - Test filters with "Test Filters" button
 - Review logs before closing application
 
 ### Organization Tips
+
 - Use "Organize by Type" for mixed file collections
 - Use "Organize by Date" for time-based sorting
 - Combine with filtering for targeted organization
@@ -328,23 +366,27 @@ Toggle themes via **View → Toggle Theme** or simply enjoy the current theme.
 ## 🐛 Troubleshooting
 
 **Application won't start**
+
 - Check Python version (3.9+)
 - Verify all dependencies installed
 - Check log file for errors
 
 **Operation fails**
+
 - Check destination has write permissions
 - Verify sufficient disk space
 - Review error messages in Log tab
 - Check if files are locked by other programs
 
 **Preview is empty**
+
 - Verify source folders exist
 - Check filter settings aren't too restrictive
 - Use "Test Filters" to diagnose
 - Check exclusion patterns
 
 **Slow performance**
+
 - Reduce number of source folders
 - Use "Fast Hash" instead of "Full Hash"
 - Enable "Skip Hidden Files"
@@ -361,6 +403,7 @@ This is an enhanced professional edition built for the Tools repository. Contrib
 ## 📞 Support
 
 For issues, questions, or feature requests:
+
 1. Check this README and user guide
 2. Review the Log tab for error messages
 3. Check the operation reports
@@ -369,6 +412,7 @@ For issues, questions, or feature requests:
 ## 🎯 Roadmap
 
 Future enhancements under consideration:
+
 - Cloud storage integration (Google Drive, Dropbox)
 - Network folder support
 - Scheduled operations
@@ -392,4 +436,4 @@ Designed for professional folder management with enterprise-grade features
 
 ---
 
-*Making folder management professional, efficient, and beautiful.* 📁✨
+_Making folder management professional, efficient, and beautiful._ 📁✨

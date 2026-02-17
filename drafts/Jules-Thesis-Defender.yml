@@ -13,14 +13,14 @@ on:
   workflow_dispatch:
     inputs:
       critique_path:
-        description: 'Path to critique document(s) to analyze'
+        description: "Path to critique document(s) to analyze"
         required: false
-        default: 'docs/critiques/'
+        default: "docs/critiques/"
         type: string
       output_mode:
-        description: 'Output mode: full (detailed), summary (brief), table (structured)'
+        description: "Output mode: full (detailed), summary (brief), table (structured)"
         required: false
-        default: 'full'
+        default: "full"
         type: choice
         options:
           - full
@@ -28,9 +28,9 @@ on:
           - table
   push:
     paths:
-      - 'docs/critiques/**'
-      - 'docs/reviews/**'
-      - 'docs/objections/**'
+      - "docs/critiques/**"
+      - "docs/reviews/**"
+      - "docs/objections/**"
 
 permissions:
   contents: write

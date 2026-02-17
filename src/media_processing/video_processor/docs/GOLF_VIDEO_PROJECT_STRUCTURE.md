@@ -196,16 +196,13 @@ golf-swing-analyzer/
 ### Root Configuration
 
 #### `package.json`
+
 ```json
 {
   "name": "golf-swing-analyzer",
   "version": "0.1.0",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*",
-    "services/*"
-  ],
+  "workspaces": ["apps/*", "packages/*", "services/*"],
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
@@ -223,6 +220,7 @@ golf-swing-analyzer/
 ```
 
 #### `turbo.json` (Turborepo configuration)
+
 ```json
 {
   "$schema": "https://turbo.build/schema.json",
@@ -242,6 +240,7 @@ golf-swing-analyzer/
 ```
 
 #### `tsconfig.json` (Base TypeScript config)
+
 ```json
 {
   "compilerOptions": {
@@ -276,11 +275,13 @@ golf-swing-analyzer/
 **Location**: `apps/web/lib/video/`
 
 **Key Files**:
+
 - `ffmpeg.ts`: FFmpeg.wasm initialization and operations
 - `processor.ts`: High-level video processing functions
 - `formats.ts`: Format detection and conversion
 
 **Responsibilities**:
+
 - Video upload and validation
 - Format conversion
 - Trimming, cropping, rotation
@@ -289,6 +290,7 @@ golf-swing-analyzer/
 - Export to various formats
 
 **Example Interface**:
+
 ```typescript
 export interface VideoProcessor {
   loadVideo(file: File): Promise<VideoMetadata>;
@@ -305,12 +307,14 @@ export interface VideoProcessor {
 **Location**: `apps/web/lib/canvas/`
 
 **Key Files**:
+
 - `fabric-setup.ts`: Fabric.js canvas initialization
 - `annotations.ts`: Annotation management
 - `tools.ts`: Drawing tool implementations
 - `export.ts`: Canvas export utilities
 
 **Responsibilities**:
+
 - Canvas overlay management
 - Drawing tools (line, arrow, freehand, text)
 - Layer management
@@ -319,6 +323,7 @@ export interface VideoProcessor {
 - Export overlays with video
 
 **Example Interface**:
+
 ```typescript
 export interface AnnotationManager {
   addAnnotation(type: AnnotationType, data: AnnotationData): void;
@@ -335,6 +340,7 @@ export interface AnnotationManager {
 **Location**: `apps/web/lib/ai/`
 
 **Key Files**:
+
 - `mediapipe.ts`: MediaPipe initialization
 - `pose-detection.ts`: Pose estimation
 - `tracking.ts`: Feature tracking (OpenCV.js)
@@ -342,6 +348,7 @@ export interface AnnotationManager {
 - `club-detection.ts`: Custom club detection model
 
 **Responsibilities**:
+
 - Real-time pose detection
 - Multi-frame pose tracking
 - Feature point tracking
@@ -350,6 +357,7 @@ export interface AnnotationManager {
 - Swing event detection
 
 **Example Interface**:
+
 ```typescript
 export interface PoseDetector {
   initialize(): Promise<void>;
@@ -370,12 +378,14 @@ export interface PendulumFitter {
 **Location**: `apps/web/lib/three/`
 
 **Key Files**:
+
 - `scene-setup.ts`: Three.js scene initialization
 - `plane-overlay.ts`: 3D plane rendering
 - `camera.ts`: Camera controls and perspective
 - `sync.ts`: Synchronization with 2D video
 
 **Responsibilities**:
+
 - 3D scene management
 - Plane overlay rendering
 - Camera perspective adjustment
@@ -383,6 +393,7 @@ export interface PendulumFitter {
 - Real-time manipulation
 
 **Example Interface**:
+
 ```typescript
 export interface PlaneOverlay {
   create(options: PlaneOptions): Plane3D;
@@ -399,12 +410,14 @@ export interface PlaneOverlay {
 **Location**: `apps/web/lib/audio/`
 
 **Key Files**:
+
 - `recorder.ts`: Audio recording using MediaRecorder API
 - `mixer.ts`: Audio mixing with video
 - `waveform.ts`: Waveform visualization
 - `sync.ts`: Audio-video synchronization
 
 **Responsibilities**:
+
 - Microphone access and recording
 - Real-time recording during playback
 - Waveform visualization
@@ -412,6 +425,7 @@ export interface PlaneOverlay {
 - Multiple audio track management
 
 **Example Interface**:
+
 ```typescript
 export interface AudioRecorder {
   startRecording(videoTimestamp: number): Promise<void>;
@@ -428,12 +442,14 @@ export interface AudioRecorder {
 **Location**: `apps/web/lib/websocket/`
 
 **Key Files**:
+
 - `client.ts`: Socket.io client
 - `collaboration.ts`: Collaborative editing
 - `presence.ts`: User presence tracking
 - `sync.ts`: State synchronization
 
 **Responsibilities**:
+
 - WebSocket connection management
 - Real-time annotation sharing
 - Cursor/presence tracking
@@ -441,6 +457,7 @@ export interface AudioRecorder {
 - Event broadcasting
 
 **Example Interface**:
+
 ```typescript
 export interface CollaborationManager {
   connect(projectId: string): Promise<void>;
@@ -851,16 +868,19 @@ npm run db:seed         # Seed database
 ## Testing Strategy
 
 ### Unit Tests
+
 - **Location**: Colocated with source files (`*.test.ts`)
 - **Framework**: Vitest
 - **Coverage**: > 80% for business logic
 
 ### Integration Tests
+
 - **Location**: `tests/integration/`
 - **Framework**: Vitest + Supertest
 - **Focus**: API endpoints, database operations
 
 ### End-to-End Tests
+
 - **Location**: `tests/e2e/`
 - **Framework**: Playwright
 - **Focus**: Critical user flows
@@ -869,30 +889,30 @@ npm run db:seed         # Seed database
 
 ```typescript
 // apps/web/lib/video/processor.test.ts
-import { describe, it, expect, beforeEach } from 'vitest';
-import { VideoProcessor } from './processor';
+import { describe, it, expect, beforeEach } from "vitest";
+import { VideoProcessor } from "./processor";
 
-describe('VideoProcessor', () => {
+describe("VideoProcessor", () => {
   let processor: VideoProcessor;
 
   beforeEach(() => {
     processor = new VideoProcessor();
   });
 
-  describe('trim', () => {
-    it('should trim video to specified range', async () => {
+  describe("trim", () => {
+    it("should trim video to specified range", async () => {
       const mockVideo = await loadMockVideo();
       const trimmed = await processor.trim(mockVideo, 1, 5);
 
       expect(trimmed.duration).toBe(4); // 5 - 1
     });
 
-    it('should throw error for invalid range', async () => {
+    it("should throw error for invalid range", async () => {
       const mockVideo = await loadMockVideo();
 
-      await expect(
-        processor.trim(mockVideo, 5, 1)
-      ).rejects.toThrow('Start time must be before end time');
+      await expect(processor.trim(mockVideo, 5, 1)).rejects.toThrow(
+        "Start time must be before end time",
+      );
     });
   });
 });
@@ -1004,4 +1024,4 @@ jobs:
 
 ---
 
-*This structure provides a scalable, maintainable foundation for your golf swing video analysis platform.*
+_This structure provides a scalable, maintainable foundation for your golf swing video analysis platform._

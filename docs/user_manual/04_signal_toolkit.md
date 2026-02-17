@@ -13,18 +13,18 @@ The Signal Processing Toolkit is a production-ready library for generating, fitt
 
 **Modules:**
 
-| Module | File | Description |
-|--------|------|-------------|
-| Core | `core.py` | Signal class and SignalGenerator |
-| Fitting | `fitting.py` | Function fitting (sinusoid, exponential, polynomial) |
-| Filters | `filters.py` | Digital filters (Butterworth, Chebyshev, Bessel, adaptive) |
-| Calculus | `calculus.py` | Differentiation, integration, curvature |
-| Series | `series.py` | Taylor/Maclaurin series expansions |
-| Noise | `noise.py` | Noise generation (white, pink, brown, etc.) |
-| Limits | `limits.py` | Saturation, rate limiting, deadband, hysteresis |
-| I/O | `io.py` | CSV, JSON, NPZ, MAT file support |
-| Widget | `widget.py` | PyQt6 interactive analysis widget |
-| Polynomial Generator | `polynomial_generator.py` | PyQt6 polynomial visualization |
+| Module               | File                      | Description                                                |
+| -------------------- | ------------------------- | ---------------------------------------------------------- |
+| Core                 | `core.py`                 | Signal class and SignalGenerator                           |
+| Fitting              | `fitting.py`              | Function fitting (sinusoid, exponential, polynomial)       |
+| Filters              | `filters.py`              | Digital filters (Butterworth, Chebyshev, Bessel, adaptive) |
+| Calculus             | `calculus.py`             | Differentiation, integration, curvature                    |
+| Series               | `series.py`               | Taylor/Maclaurin series expansions                         |
+| Noise                | `noise.py`                | Noise generation (white, pink, brown, etc.)                |
+| Limits               | `limits.py`               | Saturation, rate limiting, deadband, hysteresis            |
+| I/O                  | `io.py`                   | CSV, JSON, NPZ, MAT file support                           |
+| Widget               | `widget.py`               | PyQt6 interactive analysis widget                          |
+| Polynomial Generator | `polynomial_generator.py` | PyQt6 polynomial visualization                             |
 
 ---
 
@@ -36,22 +36,22 @@ The fundamental data structure for time-domain signals.
 
 **Attributes:**
 
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `time` | `np.ndarray` | Time array (1D) |
-| `values` | `np.ndarray` | Signal values (1D or 2D) |
-| `name` | `str` | Signal name |
-| `units` | `str` | Units string (e.g., 'N·m', 'rad/s') |
-| `metadata` | `dict` | Additional metadata |
+| Attribute  | Type         | Description                         |
+| ---------- | ------------ | ----------------------------------- |
+| `time`     | `np.ndarray` | Time array (1D)                     |
+| `values`   | `np.ndarray` | Signal values (1D or 2D)            |
+| `name`     | `str`        | Signal name                         |
+| `units`    | `str`        | Units string (e.g., 'N·m', 'rad/s') |
+| `metadata` | `dict`       | Additional metadata                 |
 
 **Computed Properties:**
 
-| Property | Formula | Description |
-|----------|---------|-------------|
-| `fs` | $f_s = 1 / \overline{\Delta t}$ | Sampling frequency (Hz) |
-| `dt` | $\Delta t = \overline{t_{i+1} - t_i}$ | Time step (s) |
-| `duration` | $D = t_{N-1} - t_0$ | Total duration (s) |
-| `n_samples` | $N = \|t\|$ | Number of samples |
+| Property    | Formula                               | Description             |
+| ----------- | ------------------------------------- | ----------------------- |
+| `fs`        | $f_s = 1 / \overline{\Delta t}$       | Sampling frequency (Hz) |
+| `dt`        | $\Delta t = \overline{t_{i+1} - t_i}$ | Time step (s)           |
+| `duration`  | $D = t_{N-1} - t_0$                   | Total duration (s)      |
+| `n_samples` | $N = \|t\|$                           | Number of samples       |
 
 **Operations:**
 
@@ -146,16 +146,17 @@ Provides curve fitting with goodness-of-fit metrics for various function types.
 
 ### `FitResult` Dataclass
 
-| Field | Description |
-|-------|-------------|
-| `parameters` | Fitted parameter values |
-| `r_squared` | Coefficient of determination ($R^2$) |
-| `rmse` | Root mean square error |
-| `fitted_signal` | Signal with fitted values |
+| Field           | Description                          |
+| --------------- | ------------------------------------ |
+| `parameters`    | Fitted parameter values              |
+| `r_squared`     | Coefficient of determination ($R^2$) |
+| `rmse`          | Root mean square error               |
+| `fitted_signal` | Signal with fitted values            |
 
 ### 4.3.1 Sinusoid Fitting
 
 Fits $y = A \sin(2\pi f t + \phi) + C$ using:
+
 1. FFT-based frequency estimation for initial guess
 2. Nonlinear least squares (`scipy.optimize.curve_fit`)
 
@@ -193,21 +194,21 @@ $$RMSE = \sqrt{\frac{1}{N} \sum_i (y_i - \hat{y}_i)^2}$$
 
 ### 4.4.1 Filter Types
 
-| Type | Enum Value | Description |
-|------|------------|-------------|
-| Lowpass | `FilterType.LOWPASS` | Pass frequencies below cutoff |
-| Highpass | `FilterType.HIGHPASS` | Pass frequencies above cutoff |
-| Bandpass | `FilterType.BANDPASS` | Pass frequencies within band |
+| Type     | Enum Value            | Description                    |
+| -------- | --------------------- | ------------------------------ |
+| Lowpass  | `FilterType.LOWPASS`  | Pass frequencies below cutoff  |
+| Highpass | `FilterType.HIGHPASS` | Pass frequencies above cutoff  |
+| Bandpass | `FilterType.BANDPASS` | Pass frequencies within band   |
 | Bandstop | `FilterType.BANDSTOP` | Reject frequencies within band |
 
 ### 4.4.2 Filter Designs
 
-| Design | Enum Value | Transfer Function Characteristics |
-|--------|------------|-----------------------------------|
-| Butterworth | `FilterDesign.BUTTERWORTH` | Maximally flat passband |
-| Chebyshev Type I | `FilterDesign.CHEBYSHEV1` | Equiripple passband |
-| Chebyshev Type II | `FilterDesign.CHEBYSHEV2` | Equiripple stopband |
-| Bessel | `FilterDesign.BESSEL` | Linear phase response |
+| Design            | Enum Value                 | Transfer Function Characteristics |
+| ----------------- | -------------------------- | --------------------------------- |
+| Butterworth       | `FilterDesign.BUTTERWORTH` | Maximally flat passband           |
+| Chebyshev Type I  | `FilterDesign.CHEBYSHEV1`  | Equiripple passband               |
+| Chebyshev Type II | `FilterDesign.CHEBYSHEV2`  | Equiripple stopband               |
+| Bessel            | `FilterDesign.BESSEL`      | Linear phase response             |
 
 ### 4.4.3 Butterworth Filter
 
@@ -236,14 +237,14 @@ where $T_n$ is the Chebyshev polynomial of order $n$ and $\varepsilon$ controls 
 
 ### 4.4.5 Additional Smoothing Methods
 
-| Method | Function | Description |
-|--------|----------|-------------|
-| Moving Average | `apply_moving_average(signal, window)` | Simple windowed average |
-| Savitzky-Golay | `apply_savgol(signal, window, polyorder)` | Polynomial smoothing |
-| Median Filter | `apply_median_filter(signal, kernel)` | Nonlinear noise removal |
-| Exponential Smoothing | `apply_exponential_smoothing(signal, alpha)` | $y_k = \alpha x_k + (1-\alpha) y_{k-1}$ |
-| Gaussian Smoothing | `apply_gaussian_smoothing(signal, sigma)` | Gaussian kernel convolution |
-| Bilateral Filter | `apply_bilateral_filter(signal, sigma_s, sigma_r)` | Edge-preserving smoothing |
+| Method                | Function                                           | Description                             |
+| --------------------- | -------------------------------------------------- | --------------------------------------- |
+| Moving Average        | `apply_moving_average(signal, window)`             | Simple windowed average                 |
+| Savitzky-Golay        | `apply_savgol(signal, window, polyorder)`          | Polynomial smoothing                    |
+| Median Filter         | `apply_median_filter(signal, kernel)`              | Nonlinear noise removal                 |
+| Exponential Smoothing | `apply_exponential_smoothing(signal, alpha)`       | $y_k = \alpha x_k + (1-\alpha) y_{k-1}$ |
+| Gaussian Smoothing    | `apply_gaussian_smoothing(signal, sigma)`          | Gaussian kernel convolution             |
+| Bilateral Filter      | `apply_bilateral_filter(signal, sigma_s, sigma_r)` | Edge-preserving smoothing               |
 
 ### 4.4.6 Adaptive Filters
 
@@ -271,21 +272,21 @@ where $\lambda$ is the forgetting factor.
 
 ### 4.5.1 Differentiation Methods
 
-| Method | Enum | Formula |
-|--------|------|---------|
-| Forward Difference | `FORWARD` | $f'(x) \approx \frac{f(x+h) - f(x)}{h}$ |
-| Backward Difference | `BACKWARD` | $f'(x) \approx \frac{f(x) - f(x-h)}{h}$ |
-| Central Difference | `CENTRAL` | $f'(x) \approx \frac{f(x+h) - f(x-h)}{2h}$ |
-| Gradient | `GRADIENT` | `np.gradient(y, x)` |
-| Savitzky-Golay | `SAVGOL` | Polynomial derivative via SG filter |
+| Method              | Enum       | Formula                                    |
+| ------------------- | ---------- | ------------------------------------------ |
+| Forward Difference  | `FORWARD`  | $f'(x) \approx \frac{f(x+h) - f(x)}{h}$    |
+| Backward Difference | `BACKWARD` | $f'(x) \approx \frac{f(x) - f(x-h)}{h}$    |
+| Central Difference  | `CENTRAL`  | $f'(x) \approx \frac{f(x+h) - f(x-h)}{2h}$ |
+| Gradient            | `GRADIENT` | `np.gradient(y, x)`                        |
+| Savitzky-Golay      | `SAVGOL`   | Polynomial derivative via SG filter        |
 
 ### 4.5.2 Integration Methods
 
-| Method | Enum | Formula |
-|--------|------|---------|
-| Trapezoidal | `TRAPEZOID` | $\int f \, dx \approx \sum \frac{(f_i + f_{i+1}) \cdot \Delta x_i}{2}$ |
-| Simpson's Rule | `SIMPSON` | `scipy.integrate.simpson` |
-| Cumulative | `CUMULATIVE` | `scipy.integrate.cumulative_trapezoid` |
+| Method         | Enum         | Formula                                                                |
+| -------------- | ------------ | ---------------------------------------------------------------------- |
+| Trapezoidal    | `TRAPEZOID`  | $\int f \, dx \approx \sum \frac{(f_i + f_{i+1}) \cdot \Delta x_i}{2}$ |
+| Simpson's Rule | `SIMPSON`    | `scipy.integrate.simpson`                                              |
+| Cumulative     | `CUMULATIVE` | `scipy.integrate.cumulative_trapezoid`                                 |
 
 ### 4.5.3 Tangent Line
 
@@ -317,12 +318,12 @@ Finds points where curvature changes sign (zero crossings of $y''$).
 
 ### `SeriesResult` Dataclass
 
-| Field | Description |
-|-------|-------------|
-| `values` | Evaluated series values |
-| `terms` | Number of terms used |
+| Field       | Description               |
+| ----------- | ------------------------- |
+| `values`    | Evaluated series values   |
+| `terms`     | Number of terms used      |
 | `remainder` | Estimated remainder/error |
-| `converged` | Whether series converged |
+| `converged` | Whether series converged  |
 
 ### 4.6.1 Exponential Series
 
@@ -362,14 +363,14 @@ $$\cosh(x) = \sum_{n=0}^{N} \frac{x^{2n}}{(2n)!}$$
 
 ### Noise Types
 
-| Type | Enum | Spectral Density | Description |
-|------|------|-----------------|-------------|
-| White | `NoiseType.WHITE` | Flat | Equal power across frequencies |
-| Pink | `NoiseType.PINK` | $\propto 1/f$ | Equal power per octave |
-| Brown | `NoiseType.BROWN` | $\propto 1/f^2$ | Random walk / Brownian motion |
-| Blue | `NoiseType.BLUE` | $\propto f$ | Differentiated white noise |
-| Violet | `NoiseType.VIOLET` | $\propto f^2$ | Differentiated pink noise |
-| Impulse | `NoiseType.IMPULSE` | — | Random sparse impulses |
+| Type    | Enum                | Spectral Density | Description                    |
+| ------- | ------------------- | ---------------- | ------------------------------ |
+| White   | `NoiseType.WHITE`   | Flat             | Equal power across frequencies |
+| Pink    | `NoiseType.PINK`    | $\propto 1/f$    | Equal power per octave         |
+| Brown   | `NoiseType.BROWN`   | $\propto 1/f^2$  | Random walk / Brownian motion  |
+| Blue    | `NoiseType.BLUE`    | $\propto f$      | Differentiated white noise     |
+| Violet  | `NoiseType.VIOLET`  | $\propto f^2$    | Differentiated pink noise      |
+| Impulse | `NoiseType.IMPULSE` | —                | Random sparse impulses         |
 
 ### Disturbance Simulator
 
@@ -413,13 +414,13 @@ Models mechanical backlash (play) in gear trains with configurable dead zone wid
 
 ### Supported Formats
 
-| Format | Import | Export | Class |
-|--------|--------|--------|-------|
-| CSV | ✅ | ✅ | `SignalImporter` / `SignalExporter` |
-| JSON | ✅ | ✅ | `SignalImporter` / `SignalExporter` |
-| NumPy NPZ | ✅ | ✅ | `SignalLoader` |
-| MATLAB .mat | ✅ | ✅ | `SignalLoader` |
-| NumPy arrays | ✅ | ✅ | Direct conversion |
+| Format       | Import | Export | Class                               |
+| ------------ | ------ | ------ | ----------------------------------- |
+| CSV          | ✅     | ✅     | `SignalImporter` / `SignalExporter` |
+| JSON         | ✅     | ✅     | `SignalImporter` / `SignalExporter` |
+| NumPy NPZ    | ✅     | ✅     | `SignalLoader`                      |
+| MATLAB .mat  | ✅     | ✅     | `SignalLoader`                      |
+| NumPy arrays | ✅     | ✅     | Direct conversion                   |
 
 ### BatchProcessor
 
@@ -427,4 +428,4 @@ Enables batch processing of multiple signal files with configurable processing p
 
 ---
 
-*[← Process Calculators](./03_process_calculators.md) | [Back to Manual](./TOOLS_USER_MANUAL.md) | [Next: Scientific Modeling →](./05_scientific_modeling.md)*
+_[← Process Calculators](./03_process_calculators.md) | [Back to Manual](./TOOLS_USER_MANUAL.md) | [Next: Scientific Modeling →](./05_scientific_modeling.md)_

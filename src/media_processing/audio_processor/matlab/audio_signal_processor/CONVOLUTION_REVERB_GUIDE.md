@@ -34,6 +34,7 @@ reverb.listAvailableIRs();  % Shows all built-in IRs
 ```
 
 Available spaces:
+
 - `small_room` - Bedroom, small studio (0.5s)
 - `medium_room` - Living room (1.0s)
 - `concert_hall` - Large concert hall (3.0s)
@@ -57,16 +58,19 @@ processed = reverb.process(audio, fs);
 **Free IR Libraries:**
 
 1. **OpenAIR** (University of York)
+
    - URL: https://www.openair.hosted.york.ac.uk/
    - 100+ free IRs from real spaces
    - Concert halls, churches, studios, stairwells, etc.
 
 2. **EchoThief** (Audioease)
+
    - URL: http://www.echothief.com/
    - Free IRs from famous spaces
    - Very high quality
 
 3. **Voxengo Impulses**
+
    - Free IR library
    - Various spaces and vintage hardware
 
@@ -386,20 +390,22 @@ leadReverb.loadBuiltIn('concert_hall');
 
 Your audio processor likely has algorithmic reverb (`AudioEffects`). Here's when to use each:
 
-| Feature | Algorithmic | Convolution |
-|---------|------------|-------------|
-| **Sound** | Synthetic, smooth | Realistic, authentic |
-| **CPU Usage** | Low | High |
-| **Real-time Control** | Easy | Limited |
-| **Best For** | General use, live processing | Final mixes, realism |
-| **Spaces** | Generic | Specific real spaces |
+| Feature               | Algorithmic                  | Convolution          |
+| --------------------- | ---------------------------- | -------------------- |
+| **Sound**             | Synthetic, smooth            | Realistic, authentic |
+| **CPU Usage**         | Low                          | High                 |
+| **Real-time Control** | Easy                         | Limited              |
+| **Best For**          | General use, live processing | Final mixes, realism |
+| **Spaces**            | Generic                      | Specific real spaces |
 
 **Use algorithmic reverb** when:
+
 - You need low CPU usage
 - You want to tweak parameters in real-time
 - You need a generic "good" reverb
 
 **Use convolution reverb** when:
+
 - You need realism
 - You want a specific space (e.g., "Sydney Opera House")
 - You're doing final mixing
@@ -488,7 +494,7 @@ infinite = reverb.process(pad, fs);
 
 ### 4. Convolution with Non-Space IRs
 
-You can convolve with *anything*, not just room IRs:
+You can convolve with _anything_, not just room IRs:
 
 ```matlab
 % Use a musical note as an "IR"

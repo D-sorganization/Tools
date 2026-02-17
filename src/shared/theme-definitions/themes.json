@@ -2,18 +2,41 @@
   "version": "2.0",
   "colorKeys": {
     "base": [
-      "bg", "group_bg", "border", "text", "text_secondary", "label",
-      "focus", "input_bg", "accent", "title_bg", "title_border",
-      "table_header", "table_alt", "button_hover"
+      "bg",
+      "group_bg",
+      "border",
+      "text",
+      "text_secondary",
+      "label",
+      "focus",
+      "input_bg",
+      "accent",
+      "title_bg",
+      "title_border",
+      "table_header",
+      "table_alt",
+      "button_hover"
     ],
     "semantic": [
-      "success", "warning", "error", "info",
-      "link", "link_hover", "selection_bg", "selection_text"
+      "success",
+      "warning",
+      "error",
+      "info",
+      "link",
+      "link_hover",
+      "selection_bg",
+      "selection_text"
     ]
   },
   "chartColors": [
-    "#0A84FF", "#30D158", "#FF9F0A", "#FF375F",
-    "#BF5AF2", "#64D2FF", "#FFD60A", "#AC8E68"
+    "#0A84FF",
+    "#30D158",
+    "#FF9F0A",
+    "#FF375F",
+    "#BF5AF2",
+    "#64D2FF",
+    "#FFD60A",
+    "#AC8E68"
   ],
   "themes": {
     "light": {

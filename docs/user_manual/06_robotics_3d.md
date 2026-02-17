@@ -25,6 +25,7 @@ Visualizer for C3D (Coordinate 3D) motion capture data files, commonly used in b
 ### 6.1.3 C3D File Format
 
 The C3D format stores:
+
 - 3D marker positions $(x, y, z)$ per frame
 - Analog data channels
 - Parameter sections (labels, descriptions, units)
@@ -70,12 +71,12 @@ $$T_i = \text{Rot}_z(\theta_i) \cdot \text{Trans}_z(d_i) \cdot \text{Trans}_x(a_
 
 The mesh generator creates primitive shapes (cylinders, spheres, boxes) for body segments using the `trimesh` library:
 
-| Segment | Shape | Parameters |
-|---------|-------|------------|
-| Head | Sphere | radius |
-| Torso | Box | width × height × depth |
-| Limbs | Cylinder | radius × length |
-| Joints | Sphere | radius |
+| Segment | Shape    | Parameters             |
+| ------- | -------- | ---------------------- |
+| Head    | Sphere   | radius                 |
+| Torso   | Box      | width × height × depth |
+| Limbs   | Cylinder | radius × length        |
+| Joints  | Sphere   | radius                 |
 
 ---
 
@@ -132,12 +133,12 @@ $$I = \begin{bmatrix} I_{xx} & -I_{xy} & -I_{xz} \\ -I_{xy} & I_{yy} & -I_{yz} \
 
 **Standard shapes:**
 
-| Shape | $I_{xx}$ | $I_{yy}$ | $I_{zz}$ |
-|-------|----------|----------|----------|
-| Box $(w, h, d)$ | $\frac{m}{12}(h^2+d^2)$ | $\frac{m}{12}(w^2+d^2)$ | $\frac{m}{12}(w^2+h^2)$ |
-| Cylinder $(r, h)$ | $\frac{m}{12}(3r^2+h^2)$ | $\frac{m}{12}(3r^2+h^2)$ | $\frac{m}{2}r^2$ |
-| Sphere $(r)$ | $\frac{2m}{5}r^2$ | $\frac{2m}{5}r^2$ | $\frac{2m}{5}r^2$ |
+| Shape             | $I_{xx}$                 | $I_{yy}$                 | $I_{zz}$                |
+| ----------------- | ------------------------ | ------------------------ | ----------------------- |
+| Box $(w, h, d)$   | $\frac{m}{12}(h^2+d^2)$  | $\frac{m}{12}(w^2+d^2)$  | $\frac{m}{12}(w^2+h^2)$ |
+| Cylinder $(r, h)$ | $\frac{m}{12}(3r^2+h^2)$ | $\frac{m}{12}(3r^2+h^2)$ | $\frac{m}{2}r^2$        |
+| Sphere $(r)$      | $\frac{2m}{5}r^2$        | $\frac{2m}{5}r^2$        | $\frac{2m}{5}r^2$       |
 
 ---
 
-*[← Scientific Modeling](./05_scientific_modeling.md) | [Back to Manual](./TOOLS_USER_MANUAL.md) | [Next: Data & Document Processing →](./07_data_document_processing.md)*
+_[← Scientific Modeling](./05_scientific_modeling.md) | [Back to Manual](./TOOLS_USER_MANUAL.md) | [Next: Data & Document Processing →](./07_data_document_processing.md)_

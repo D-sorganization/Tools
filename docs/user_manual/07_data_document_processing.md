@@ -59,12 +59,12 @@ Automated PDF file renaming tool that extracts metadata and content from PDF doc
 
 ### 7.2.3 Components
 
-| Module | Description |
-|--------|-------------|
-| `extractor.py` | PDF text/metadata extraction |
-| `utils.py` | Filename sanitization and formatting |
-| `tests/` | Test suite with conftest.py |
+| Module         | Description                          |
+| -------------- | ------------------------------------ |
+| `extractor.py` | PDF text/metadata extraction         |
+| `utils.py`     | Filename sanitization and formatting |
+| `tests/`       | Test suite with conftest.py          |
 
 ---
 
-*[← Robotics & 3D](./06_robotics_3d.md) | [Back to Manual](./TOOLS_USER_MANUAL.md) | [Next: Web Applications →](./08_web_applications.md)*
+_[← Robotics & 3D](./06_robotics_3d.md) | [Back to Manual](./TOOLS_USER_MANUAL.md) | [Next: Web Applications →](./08_web_applications.md)_

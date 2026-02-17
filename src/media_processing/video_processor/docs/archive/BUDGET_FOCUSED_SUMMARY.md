@@ -5,6 +5,7 @@
 ### Answer: The $140-210k is ONLY if you outsource to an agency!
 
 **If you're developing yourself:**
+
 - ✅ **Development Cost = $0** (your time is free!)
 - ✅ **Monthly Cost = $1-2/month** for MVP (domain only!)
 - ✅ **Monthly Cost = $2-5/month** for first 100 users
@@ -15,22 +16,24 @@
 ## 💰 REAL Costs for Home Developers
 
 ### Development (Building Yourself)
+
 **Cost**: **$0** (your time)
 
 ### Monthly Infrastructure Costs
 
-| Users | Monthly Cost | What You Get |
-|-------|--------------|--------------|
-| **0-50 (MVP)** | **$1-2/month** | Domain only, everything else FREE! |
-| **50-200** | **$2-5/month** | Still mostly free tiers |
-| **200-1,000** | **$5-10/month** | Some paid tiers |
-| **1,000-10,000** | **$30-60/month** | Paid tiers but still very cheap |
+| Users            | Monthly Cost     | What You Get                       |
+| ---------------- | ---------------- | ---------------------------------- |
+| **0-50 (MVP)**   | **$1-2/month**   | Domain only, everything else FREE! |
+| **50-200**       | **$2-5/month**   | Still mostly free tiers            |
+| **200-1,000**    | **$5-10/month**  | Some paid tiers                    |
+| **1,000-10,000** | **$30-60/month** | Paid tiers but still very cheap    |
 
 ---
 
 ## 🆓 How It's So Cheap
 
 ### All Free Tiers:
+
 - ✅ **Vercel**: FREE forever (unlimited bandwidth for frontend)
 - ✅ **Supabase**: FREE (500MB database = thousands of users)
 - ✅ **Cloudflare R2**: FREE (10GB storage, then $0.015/GB)
@@ -39,6 +42,7 @@
 - ✅ **3D Rendering**: Three.js runs in browser (no server costs!)
 
 ### The Only Real Costs:
+
 - Domain: $1-2/month (optional - can use free subdomain)
 - Video storage: $0-3/month (first 10GB FREE, then very cheap)
 - Database: $0/month (first 500MB FREE)
@@ -52,6 +56,7 @@
 **I've created a detailed budget guide**: `docs/GOLF_VIDEO_BUDGET_GUIDE.md`
 
 **This guide includes**:
+
 - ✅ Exact cost breakdown for each phase
 - ✅ Free tier strategies
 - ✅ Self-hosting options (cheapest long-term)
@@ -92,6 +97,7 @@ TOTAL: $2-5/month
 ## 💡 Key Cost Optimizations
 
 ### 1. Process Everything in Browser
+
 - Video compression: FFmpeg.wasm (browser)
 - Pose detection: MediaPipe (browser)
 - Drawing: Fabric.js (browser)
@@ -100,16 +106,19 @@ TOTAL: $2-5/month
 **Result**: No server costs for processing!
 
 ### 2. Use Cloudflare R2 (Not S3)
+
 - **NO bandwidth fees!** (S3 charges $0.09/GB)
 - Storage: $0.015/GB/month (super cheap)
 - **For 1TB video bandwidth**: Saves $90/month!
 
 ### 3. Aggressive Video Compression
+
 - Compress videos before upload (50-70% smaller)
 - Limit quality (1080p max for free users)
 - Result: 50-70% storage savings
 
 ### 4. Automatic Cleanup
+
 - Delete old videos (30-day retention)
 - Result: 70-90% storage savings
 
@@ -118,6 +127,7 @@ TOTAL: $2-5/month
 ## 📊 Real-World Cost Examples
 
 ### Month 1 (MVP Development)
+
 ```
 Users: 0
 Videos: 0
@@ -125,6 +135,7 @@ Cost: $1/month (domain only)
 ```
 
 ### Month 3 (10 Beta Users)
+
 ```
 Users: 10
 Videos: 50
@@ -133,6 +144,7 @@ Cost: $1/month (still within free tiers!)
 ```
 
 ### Month 6 (100 Users)
+
 ```
 Users: 100
 Videos: 500
@@ -145,6 +157,7 @@ Cost: $1.60/month
 ```
 
 ### Month 12 (500 Users)
+
 ```
 Users: 500
 Videos: 2,000
@@ -163,6 +176,7 @@ Cost: $4/month
 ## ✅ Action Items
 
 ### Today
+
 1. [ ] Read `docs/GOLF_VIDEO_BUDGET_GUIDE.md` (30 min)
 2. [ ] Set up free accounts:
    - [ ] Vercel (free)
@@ -171,6 +185,7 @@ Cost: $4/month
    - [ ] (Optional) Buy domain ($10/year)
 
 ### This Week
+
 1. [ ] Deploy basic Next.js app to Vercel (free)
 2. [ ] Connect to Supabase (free)
 3. [ ] Set up Cloudflare R2 (free)
@@ -198,6 +213,7 @@ Cost: $4/month
 **Start here**: `docs/GOLF_VIDEO_BUDGET_GUIDE.md`
 
 This document has:
+
 - ✅ Complete cost breakdown
 - ✅ Free tier strategies
 - ✅ Cost optimization techniques
@@ -211,5 +227,5 @@ This document has:
 
 ---
 
-*Created specifically for home developers building free products*
-*Priority #1: Minimal costs*
+_Created specifically for home developers building free products_
+_Priority #1: Minimal costs_

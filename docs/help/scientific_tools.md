@@ -18,28 +18,29 @@ Interactive 3D visualization of the solar system with accurate orbital mechanics
 
 ### Controls
 
-| Input | Action |
-|-------|--------|
-| Left-click drag | Rotate view |
-| Right-click drag | Pan view |
-| Scroll wheel | Zoom in/out |
-| Click planet | Center and show info |
-| Space bar | Play/pause simulation |
-| +/- keys | Adjust time speed |
+| Input            | Action                |
+| ---------------- | --------------------- |
+| Left-click drag  | Rotate view           |
+| Right-click drag | Pan view              |
+| Scroll wheel     | Zoom in/out           |
+| Click planet     | Center and show info  |
+| Space bar        | Play/pause simulation |
+| +/- keys         | Adjust time speed     |
 
 ### Time Controls
 
-| Speed | Simulation Rate |
-|-------|-----------------|
-| 1x | Real-time |
-| 60x | 1 minute = 1 hour |
-| 1440x | 1 minute = 1 day |
-| 10080x | 1 minute = 1 week |
+| Speed  | Simulation Rate    |
+| ------ | ------------------ |
+| 1x     | Real-time          |
+| 60x    | 1 minute = 1 hour  |
+| 1440x  | 1 minute = 1 day   |
+| 10080x | 1 minute = 1 week  |
 | 43200x | 1 minute = 1 month |
 
 ### Planet Information
 
 Click any planet to view:
+
 - Orbital parameters (semi-major axis, eccentricity)
 - Physical properties (mass, radius)
 - Current distance from Sun
@@ -72,14 +73,14 @@ RRT (Rapidly-exploring Random Tree) is a sampling-based motion planning algorith
 
 ### Parameters
 
-| Parameter | Description | Typical Range |
-|-----------|-------------|---------------|
-| Start Position | Initial robot position | Within bounds |
-| Goal Position | Target position | Within bounds |
-| Step Size | Maximum extension distance | 0.1 - 2.0 |
-| Max Iterations | Planning limit | 1000 - 50000 |
-| Goal Bias | Probability of sampling goal | 0.05 - 0.20 |
-| Goal Tolerance | Distance to consider goal reached | 0.1 - 1.0 |
+| Parameter      | Description                       | Typical Range |
+| -------------- | --------------------------------- | ------------- |
+| Start Position | Initial robot position            | Within bounds |
+| Goal Position  | Target position                   | Within bounds |
+| Step Size      | Maximum extension distance        | 0.1 - 2.0     |
+| Max Iterations | Planning limit                    | 1000 - 50000  |
+| Goal Bias      | Probability of sampling goal      | 0.05 - 0.20   |
+| Goal Tolerance | Distance to consider goal reached | 0.1 - 1.0     |
 
 ### Obstacle Types
 
@@ -151,23 +152,25 @@ def derivatives(t, y):
 
 ### Solver Methods
 
-| Method | Type | Best For |
-|--------|------|----------|
-| RK45 | Explicit, adaptive | General problems |
-| RK23 | Explicit, adaptive | Less accuracy needed |
-| DOP853 | Explicit, high-order | High accuracy |
-| Radau | Implicit | Stiff systems |
-| BDF | Implicit, multi-step | Stiff systems |
-| LSODA | Auto-switching | Unknown stiffness |
+| Method | Type                 | Best For             |
+| ------ | -------------------- | -------------------- |
+| RK45   | Explicit, adaptive   | General problems     |
+| RK23   | Explicit, adaptive   | Less accuracy needed |
+| DOP853 | Explicit, high-order | High accuracy        |
+| Radau  | Implicit             | Stiff systems        |
+| BDF    | Implicit, multi-step | Stiff systems        |
+| LSODA  | Auto-switching       | Unknown stiffness    |
 
 ### Stiffness
 
 A system is "stiff" when:
+
 - Contains widely different time scales
 - Explicit methods require tiny time steps
 - Implicit methods are more efficient
 
 **Indicators of stiffness**:
+
 - Eigenvalues with large negative real parts
 - Ratio of largest to smallest time constant > 1000
 
@@ -193,30 +196,31 @@ m*Cp * dT/dt = Q_in - h*A*(T - T_ambient)
 ```
 
 Where:
-- m*Cp = Thermal mass (J/K)
+
+- m\*Cp = Thermal mass (J/K)
 - Q_in = Heat input (W)
-- h*A = Heat loss coefficient (W/K)
+- h\*A = Heat loss coefficient (W/K)
 - T = Temperature (K)
 - T_ambient = Ambient temperature (K)
 
 ### Inputs
 
-| Parameter | Description | Units |
-|-----------|-------------|-------|
-| Thermal Mass | Energy storage capacity | J/K |
-| Heat Loss Coeff | Convection/conduction losses | W/K |
-| Initial Temp | Starting temperature | C |
-| Ambient Temp | Environment temperature | C |
-| Power Profile | Heating power vs time | W |
+| Parameter       | Description                  | Units |
+| --------------- | ---------------------------- | ----- |
+| Thermal Mass    | Energy storage capacity      | J/K   |
+| Heat Loss Coeff | Convection/conduction losses | W/K   |
+| Initial Temp    | Starting temperature         | C     |
+| Ambient Temp    | Environment temperature      | C     |
+| Power Profile   | Heating power vs time        | W     |
 
 ### Power Profiles
 
-| Profile | Description |
-|---------|-------------|
-| Constant | Fixed power level |
+| Profile     | Description              |
+| ----------- | ------------------------ |
+| Constant    | Fixed power level        |
 | Linear Ramp | Power increases linearly |
-| Step | Sudden power changes |
-| Custom | User-defined profile |
+| Step        | Sudden power changes     |
+| Custom      | User-defined profile     |
 
 ### Outputs
 
@@ -234,11 +238,11 @@ Sensitivity analysis across multiple parameter dimensions.
 
 ### Demo Functions
 
-| Function | Description | Optimum |
-|----------|-------------|---------|
-| Rosenbrock | Curved valley | (1, 1) |
-| Rastrigin | Many local minima | (0, 0) |
-| Sphere | Simple convex | (0, 0) |
+| Function   | Description       | Optimum  |
+| ---------- | ----------------- | -------- |
+| Rosenbrock | Curved valley     | (1, 1)   |
+| Rastrigin  | Many local minima | (0, 0)   |
+| Sphere     | Simple convex     | (0, 0)   |
 | Himmelblau | Four equal minima | Multiple |
 
 ### Analysis Methods
@@ -262,6 +266,7 @@ Random sampling of parameter space.
 Variance-based global sensitivity analysis.
 
 **Outputs**:
+
 - First-order indices (main effects)
 - Total-order indices (including interactions)
 
@@ -299,12 +304,14 @@ Exhaustive search over parameter grid.
 #### L-BFGS-B
 
 Quasi-Newton method with bounds.
+
 - Good for smooth functions
 - Handles parameter constraints
 
 #### Differential Evolution
 
 Evolutionary algorithm.
+
 - Good for non-convex functions
 - Global search capability
 - No gradient required

@@ -414,7 +414,9 @@ function checkCustomUnitsWarning(fromUnit, toUnit) {
       units.push(toUnit);
     }
     showWarning(
-      `Custom unit${units.length > 1 ? 's' : ''} in use: ${units.join(', ')}. Verify conversion factors.`
+      `Custom unit${units.length > 1 ? 's' : ''} in use: ${units.join(
+        ', '
+      )}. Verify conversion factors.`
     );
   }
 }

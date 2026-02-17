@@ -18,6 +18,7 @@ Please refer to [AGENTS.md](AGENTS.md) for the authoritative guide on:
     - Install dependencies: `pip install -r requirements.txt`
     - Optional: Run `python setup_dev.py` for additional development setup
 2.  **Linting**: Ensure your code passes quality checks before committing.
+
     - Run `ruff check .` and `ruff format .` before committing
     - Run `black --check .` to verify formatting
     - Run `mypy . --config-file mypy.ini` for type checking (advisory - see note below)

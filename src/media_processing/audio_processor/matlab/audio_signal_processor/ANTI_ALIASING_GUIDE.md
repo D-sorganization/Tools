@@ -9,21 +9,27 @@ I've created `AntiAliasingTools` - a comprehensive toolkit for aliasing detectio
 ## 🎯 Quick Answer to Your Questions
 
 ### **Q: Does it have aliasing features?**
+
 ✅ **YES!** Complete aliasing detection and analysis:
+
 - Detect aliasing artifacts in audio
 - Measure aliasing severity
 - Locate where aliasing occurs
 - Analyze frequency content vs. Nyquist limit
 
 ### **Q: Does it prevent aliasing?**
+
 ✅ **YES!** Multiple prevention methods:
+
 - Anti-aliasing filters (FIR and IIR)
 - Proper downsampling with AA filtering
 - Oversampling for nonlinear processing
 - Sample rate conversion with explicit AA control
 
 ### **Q: Does it identify Nyquist frequency?**
+
 ✅ **YES!** Complete Nyquist analysis:
+
 - Calculate and display Nyquist frequency (fs/2)
 - Check if audio respects Nyquist theorem
 - Warn about content above Nyquist
@@ -34,6 +40,7 @@ I've created `AntiAliasingTools` - a comprehensive toolkit for aliasing detectio
 ## 📚 What is the Nyquist Frequency?
 
 ### **Nyquist Theorem:**
+
 ```
 fs >= 2 * f_max
 
@@ -44,6 +51,7 @@ Where:
 ```
 
 **Example:**
+
 - Sample rate: 44,100 Hz
 - **Nyquist frequency: 22,050 Hz**
 - All audio content must be below 22,050 Hz
@@ -86,6 +94,7 @@ end
 ```
 
 **Output Example:**
+
 ```
 === Nyquist Compliance Check ===
 Sample Rate: 44100 Hz
@@ -250,6 +259,7 @@ audiowrite('audio_48kHz.wav', resampled, 48000);
 Aliasing occurs when you try to represent frequencies **above the Nyquist frequency** (fs/2) in your digital audio. These high frequencies "fold back" into the audible range, creating artifacts.
 
 **Example:**
+
 ```
 Sample Rate: 44,100 Hz
 Nyquist: 22,050 Hz
@@ -265,12 +275,14 @@ If signal contains 25,000 Hz:
 ### **Common Causes of Aliasing:**
 
 #### **1. Insufficient Sample Rate**
+
 ```matlab
 % Recording 30 kHz content at 44.1 kHz
 % Nyquist is only 22.05 kHz - aliasing occurs!
 ```
 
 #### **2. Downsampling Without AA Filter**
+
 ```matlab
 % WRONG:
 downsampled = audio(1:2:end);  % Keeps high frequencies - aliases!
@@ -280,6 +292,7 @@ downsampled = tools.downsampleWithAA(audio, fs, 2);  % Removes high frequencies 
 ```
 
 #### **3. Nonlinear Processing**
+
 ```matlab
 % Distortion creates harmonics above Nyquist
 distorted = tanh(audio * 10);  // Harmonics alias!
@@ -308,18 +321,18 @@ Signal: ~~~~~~~~  Nyquist: 8 kHz   ✗ ALIASES!
 
 ## 📊 Standard Sample Rates & Their Nyquist Frequencies
 
-| Sample Rate | Nyquist Freq | Application |
-|-------------|--------------|-------------|
-| 8,000 Hz | 4,000 Hz | Telephone |
-| 11,025 Hz | 5,512 Hz | Low quality audio |
-| 16,000 Hz | 8,000 Hz | Wideband speech |
-| 22,050 Hz | 11,025 Hz | AM radio quality |
-| 32,000 Hz | 16,000 Hz | Broadcast quality |
-| **44,100 Hz** | **22,050 Hz** | **CD quality** |
+| Sample Rate   | Nyquist Freq  | Application            |
+| ------------- | ------------- | ---------------------- |
+| 8,000 Hz      | 4,000 Hz      | Telephone              |
+| 11,025 Hz     | 5,512 Hz      | Low quality audio      |
+| 16,000 Hz     | 8,000 Hz      | Wideband speech        |
+| 22,050 Hz     | 11,025 Hz     | AM radio quality       |
+| 32,000 Hz     | 16,000 Hz     | Broadcast quality      |
+| **44,100 Hz** | **22,050 Hz** | **CD quality**         |
 | **48,000 Hz** | **24,000 Hz** | **Professional audio** |
-| 88,200 Hz | 44,100 Hz | High-res audio |
-| 96,000 Hz | 48,000 Hz | Studio recording |
-| 192,000 Hz | 96,000 Hz | Mastering |
+| 88,200 Hz     | 44,100 Hz     | High-res audio         |
+| 96,000 Hz     | 48,000 Hz     | Studio recording       |
+| 192,000 Hz    | 96,000 Hz     | Mastering              |
 
 **Human hearing:** ~20 Hz to 20,000 Hz
 **CD quality (44.1 kHz)** has Nyquist at 22.05 kHz - safely above human hearing!
@@ -329,6 +342,7 @@ Signal: ~~~~~~~~  Nyquist: 8 kHz   ✗ ALIASES!
 ## 🛡️ Anti-Aliasing Best Practices
 
 ### **1. Choose Appropriate Sample Rate**
+
 ```matlab
 % For music/full spectrum (20 kHz max):
 fs = 44100;  % or 48000
@@ -341,12 +355,14 @@ fs = 96000;  // or 192000
 ```
 
 ### **2. Always Use AA Filter When Downsampling**
+
 ```matlab
 % Use toolkit's safe downsampling
 downsampled = tools.downsampleWithAA(audio, fs, factor);
 ```
 
 ### **3. Oversample for Nonlinear Processing**
+
 ```matlab
 % Distortion, saturation, waveshaping create harmonics
 oversampled = tools.oversample(audio, fs, 4);
@@ -355,6 +371,7 @@ result = tools.downsampleBack(processed, fs*4, 4);
 ```
 
 ### **4. Check Nyquist Compliance**
+
 ```matlab
 % Before critical processing
 compliance = tools.checkNyquistCompliance(audio, fs);
@@ -364,6 +381,7 @@ end
 ```
 
 ### **5. Visualize Spectrum**
+
 ```matlab
 % Verify no content near Nyquist
 tools.plotSpectrum(audio, fs);
@@ -505,27 +523,36 @@ result = tools.downsampleBack(distorted, fs*4, 4);
 ## 🔍 Troubleshooting
 
 ### **"High frequencies sound weird after processing"**
+
 → Likely aliasing from nonlinear processing. Use oversampling:
+
 ```matlab
 processed = tools.processOversampled(audio, fs, 4, @yourProcessFunction);
 ```
 
 ### **"Downsampling introduces artifacts"**
+
 → Use proper AA filtering:
+
 ```matlab
 downsampled = tools.downsampleWithAA(audio, fs, factor);
 ```
 
 ### **"Content above Nyquist warning"**
+
 → This is CRITICAL - either:
+
 1. Increase sample rate, or
 2. Apply anti-aliasing filter:
+
 ```matlab
 filtered = tools.applyAntiAliasingFilter(audio, fs);
 ```
 
 ### **"Don't understand Nyquist frequency"**
+
 → Simple rule: **All frequencies in your audio must be less than fs/2**
+
 ```matlab
 nyquist = tools.getNyquistFrequency(fs);
 % Everything must be below this!
@@ -536,6 +563,7 @@ nyquist = tools.getNyquistFrequency(fs);
 ## 📚 Related Functions
 
 ### **MATLAB Built-in:**
+
 - `resample()` - Has built-in AA (implicit)
 - `decimate()` - Has built-in AA (better control)
 - `interp()` - Upsampling with interpolation filter
@@ -543,6 +571,7 @@ nyquist = tools.getNyquistFrequency(fs);
 - `upsample()` - NO AA FILTER (needs manual filter)
 
 ### **Your New Toolkit:**
+
 - `AntiAliasingTools` - Complete explicit control
 - `WaveletProcessor` - Wavelet-based AA possible
 - `AdvancedAudioProcessor` - Octave filters respect Nyquist
@@ -554,23 +583,27 @@ nyquist = tools.getNyquistFrequency(fs);
 ### **Your Audio Processor Now Has:**
 
 ✅ **Nyquist Frequency Identification**
+
 - Calculate and display Nyquist freq (fs/2)
 - Show headroom vs. Nyquist
 - Warn about violations
 
 ✅ **Aliasing Detection**
+
 - Detect aliasing artifacts
 - Measure severity
 - Locate in time
 - Visualize spectrum
 
 ✅ **Aliasing Prevention**
+
 - Anti-aliasing filters (FIR/IIR)
 - Safe downsampling
 - Oversampling for nonlinear processing
 - Explicit AA control
 
 ✅ **Analysis Tools**
+
 - Spectrum plots with Nyquist line
 - Compliance checking
 - Sample rate calculations

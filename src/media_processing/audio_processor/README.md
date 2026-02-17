@@ -39,18 +39,21 @@ audio_processor/
 ## Features
 
 ### Audio Processing
+
 - Multi-format audio loading (WAV, MP3, FLAC, OGG, M4A)
 - Sample rate conversion
 - Stereo/mono processing
 - Large file streaming
 
 ### Advanced Filtering
+
 - FFT-based filters (low-pass, high-pass, band-pass, band-stop)
 - Multiple window functions (Gaussian, Hamming, Hann, Blackman, Kaiser)
 - Time-domain filters (Butterworth, Moving Average, Median)
 - Custom FIR/IIR design
 
 ### Audio Effects
+
 - Reverb (algorithmic and convolution-based)
 - Delay/Echo with feedback
 - Parametric EQ
@@ -61,6 +64,7 @@ audio_processor/
 - Time stretching
 
 ### Multi-Track Mixing
+
 - 8+ track support
 - Per-track volume, pan, solo, mute
 - Effect chains per track
@@ -69,6 +73,7 @@ audio_processor/
 - Real-time monitoring
 
 ### Analysis Tools
+
 - Real-time spectrogram
 - FFT spectrum analyzer
 - Waveform viewer
@@ -109,18 +114,19 @@ launch_audio_processor_pro
 
 Comprehensive documentation is available in the `matlab/audio_signal_processor/` directory:
 
-| Document | Description |
-|----------|-------------|
-| [README.md](matlab/audio_signal_processor/README.md) | Main documentation |
-| [QUICK_START.md](matlab/audio_signal_processor/QUICK_START.md) | Getting started guide |
-| [API_DOCUMENTATION.md](matlab/audio_signal_processor/API_DOCUMENTATION.md) | API reference |
-| [GUI_QUICK_START_GUIDE.md](matlab/audio_signal_processor/GUI_QUICK_START_GUIDE.md) | GUI usage guide |
-| [CONVOLUTION_REVERB_GUIDE.md](matlab/audio_signal_processor/CONVOLUTION_REVERB_GUIDE.md) | Reverb processing |
-| [ANTI_ALIASING_GUIDE.md](matlab/audio_signal_processor/ANTI_ALIASING_GUIDE.md) | Anti-aliasing techniques |
+| Document                                                                                 | Description              |
+| ---------------------------------------------------------------------------------------- | ------------------------ |
+| [README.md](matlab/audio_signal_processor/README.md)                                     | Main documentation       |
+| [QUICK_START.md](matlab/audio_signal_processor/QUICK_START.md)                           | Getting started guide    |
+| [API_DOCUMENTATION.md](matlab/audio_signal_processor/API_DOCUMENTATION.md)               | API reference            |
+| [GUI_QUICK_START_GUIDE.md](matlab/audio_signal_processor/GUI_QUICK_START_GUIDE.md)       | GUI usage guide          |
+| [CONVOLUTION_REVERB_GUIDE.md](matlab/audio_signal_processor/CONVOLUTION_REVERB_GUIDE.md) | Reverb processing        |
+| [ANTI_ALIASING_GUIDE.md](matlab/audio_signal_processor/ANTI_ALIASING_GUIDE.md)           | Anti-aliasing techniques |
 
 ## Integration
 
 This tool integrates with:
+
 - **Video Processor** (`media_processing/video_processor/`) - Audio for video
 - **Scientific Modeling** (`scientific_modeling/`) - Analysis integration
 - **MATLAB Core** (`matlab/`) - Shared MATLAB infrastructure

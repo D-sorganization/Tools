@@ -50,9 +50,9 @@ $$q_{new} = q_{near} + \delta \cdot \frac{q_{rand} - q_{near}}{\|q_{rand} - q_{n
 5. Add $q_{new}$ to tree if collision-free
 6. Repeat until goal reached
 
-### 5.2.3 RRT* Variant
+### 5.2.3 RRT\* Variant
 
-RRT* adds rewiring for asymptotic optimality:
+RRT\* adds rewiring for asymptotic optimality:
 
 $$\text{cost}(q_{new}) = \min_{q_{near} \in \mathcal{N}} \left[\text{cost}(q_{near}) + \|q_{new} - q_{near}\|\right]$$
 
@@ -92,4 +92,4 @@ All signal generation equations are documented in [Chapter 4 — Signal Processi
 
 ---
 
-*[← Signal Toolkit](./04_signal_toolkit.md) | [Back to Manual](./TOOLS_USER_MANUAL.md) | [Next: Robotics & 3D →](./06_robotics_3d.md)*
+_[← Signal Toolkit](./04_signal_toolkit.md) | [Back to Manual](./TOOLS_USER_MANUAL.md) | [Next: Robotics & 3D →](./06_robotics_3d.md)_

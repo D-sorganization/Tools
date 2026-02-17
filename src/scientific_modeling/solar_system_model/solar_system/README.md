@@ -5,12 +5,14 @@ A professional-grade, scientifically accurate 3D simulation of our solar system 
 ## Features
 
 ### Scientific Accuracy
+
 - **Keplerian Orbital Mechanics**: Accurate planetary positions calculated using orbital elements from NASA JPL
 - **Real Ephemeris Data**: Orbital elements valid for 1800-2050 AD with secular variations
 - **Physical Properties**: Accurate masses, radii, densities, and other physical characteristics
 - **Time Simulation**: Real-time or accelerated simulation with proper orbital mechanics
 
 ### Visualization
+
 - **3D OpenGL Rendering**: Smooth, hardware-accelerated graphics
 - **Star Field Background**: Accurate sky dome built from bright-star catalogs for constellation fidelity
 - **Planetary Rings**: Saturn and other gas giants rendered with ring systems
@@ -18,6 +20,7 @@ A professional-grade, scientifically accurate 3D simulation of our solar system 
 - **Color-Coded Bodies**: Each planet has accurate representative colors
 
 ### Camera System
+
 - **Free Camera**: Full control over position and orientation
 - **Heliocentric View**: Fixed at the Sun, looking outward
 - **Planet-Centric**: Follow any planet through its orbit
@@ -25,12 +28,14 @@ A professional-grade, scientifically accurate 3D simulation of our solar system 
 - **Spacecraft Following**: Track spacecraft along trajectories
 
 ### Trajectory Planning
+
 - **Hohmann Transfers**: Calculate optimal two-impulse transfers between planets
 - **Delta-V Calculations**: Accurate fuel requirements for missions
 - **Launch Windows**: Find optimal departure dates
 - **Transfer Visualization**: See spacecraft trajectories in real-time
 
 ### Educational Features
+
 - **Information Panels**: Detailed data about selected celestial bodies
 - **Real-Time Data**: Current distance, orbital speed, and position
 - **Time Control**: Speed up, slow down, or reverse time
@@ -40,6 +45,7 @@ A professional-grade, scientifically accurate 3D simulation of our solar system 
 ## Installation
 
 ### Prerequisites
+
 - Python 3.8 or higher
 - OpenGL-capable graphics hardware
 
@@ -107,32 +113,32 @@ python run_solar_system.py --width 1920 --height 1080
 
 ### Keyboard
 
-| Key | Action |
-|-----|--------|
-| `SPACE` | Pause/Resume simulation |
-| `+` / `-` | Speed up / slow down time |
-| `R` | Reverse time flow |
-| `0-9` | Select celestial body (0=Sun, 1=Mercury, ..., 9=Pluto) |
-| `F` | Focus camera on selected body |
-| `C` | Cycle through camera modes |
-| `O` | Toggle orbital path display |
-| `L` | Toggle labels |
-| `I` | Toggle information panel |
-| `G` | Toggle reference grid |
-| `H` | Toggle help overlay |
-| `M` | Toggle immersion checklist |
-| `V` | Toggle stereo/VR rendering |
-| `T` | Plan trajectory to Mars |
-| `HOME` | Reset camera view |
-| `ESC` | Quit |
+| Key       | Action                                                 |
+| --------- | ------------------------------------------------------ |
+| `SPACE`   | Pause/Resume simulation                                |
+| `+` / `-` | Speed up / slow down time                              |
+| `R`       | Reverse time flow                                      |
+| `0-9`     | Select celestial body (0=Sun, 1=Mercury, ..., 9=Pluto) |
+| `F`       | Focus camera on selected body                          |
+| `C`       | Cycle through camera modes                             |
+| `O`       | Toggle orbital path display                            |
+| `L`       | Toggle labels                                          |
+| `I`       | Toggle information panel                               |
+| `G`       | Toggle reference grid                                  |
+| `H`       | Toggle help overlay                                    |
+| `M`       | Toggle immersion checklist                             |
+| `V`       | Toggle stereo/VR rendering                             |
+| `T`       | Plan trajectory to Mars                                |
+| `HOME`    | Reset camera view                                      |
+| `ESC`     | Quit                                                   |
 
 ### Mouse
 
-| Action | Effect |
-|--------|--------|
-| Left Drag | Orbit camera around target |
-| Right Drag | Pan camera |
-| Scroll Wheel | Zoom in/out |
+| Action       | Effect                     |
+| ------------ | -------------------------- |
+| Left Drag    | Orbit camera around target |
+| Right Drag   | Pan camera                 |
+| Scroll Wheel | Zoom in/out                |
 
 ## Architecture
 
@@ -176,6 +182,7 @@ solar_system/
 ## Orbital Mechanics
 
 The simulation uses Keplerian orbital mechanics with the following elements:
+
 - Semi-major axis (a)
 - Eccentricity (e)
 - Inclination (i)
@@ -184,6 +191,7 @@ The simulation uses Keplerian orbital mechanics with the following elements:
 - Mean longitude (L)
 
 Positions are calculated by:
+
 1. Computing mean anomaly from mean longitude
 2. Solving Kepler's equation for eccentric anomaly
 3. Converting to true anomaly

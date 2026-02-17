@@ -64,17 +64,20 @@ python -m data_processor.cli --help
 ### Basic Workflow
 
 1. **File Selection Tab**:
+
    - Click "Select Files" (Ctrl+O)
    - Choose one or more CSV files
    - Click "Load Data" (Ctrl+L)
    - Click "Detect Signals" to identify columns
 
 2. **Signal Processing Tab**:
+
    - Select filter type from dropdown
    - Configure filter parameters
    - Click "Apply Filter"
 
 3. **Advanced Operations Tab**:
+
    - Integrate or differentiate signals
    - Apply custom formulas
 
@@ -88,58 +91,67 @@ python -m data_processor.cli --help
 ### Filter Types and Parameters
 
 #### Moving Average
-| Parameter | Description | Default | Range |
-|-----------|-------------|---------|-------|
-| Window Size | Averaging window | 10 | 3-1000 |
+
+| Parameter   | Description      | Default | Range  |
+| ----------- | ---------------- | ------- | ------ |
+| Window Size | Averaging window | 10      | 3-1000 |
 
 #### Butterworth (Low-pass/High-pass)
-| Parameter | Description | Default | Range |
-|-----------|-------------|---------|-------|
-| Order | Filter order | 3 | 1-10 |
-| Cutoff Frequency | Normalized frequency | 0.1 | 0.01-0.99 |
+
+| Parameter        | Description          | Default | Range     |
+| ---------------- | -------------------- | ------- | --------- |
+| Order            | Filter order         | 3       | 1-10      |
+| Cutoff Frequency | Normalized frequency | 0.1     | 0.01-0.99 |
 
 #### Median Filter
-| Parameter | Description | Default | Range |
-|-----------|-------------|---------|-------|
-| Kernel Size | Filter kernel (odd) | 5 | 3-101 |
+
+| Parameter   | Description         | Default | Range |
+| ----------- | ------------------- | ------- | ----- |
+| Kernel Size | Filter kernel (odd) | 5       | 3-101 |
 
 #### Gaussian Filter
-| Parameter | Description | Default | Range |
-|-----------|-------------|---------|-------|
-| Sigma | Standard deviation | 1.0 | 0.1-100 |
+
+| Parameter | Description        | Default | Range   |
+| --------- | ------------------ | ------- | ------- |
+| Sigma     | Standard deviation | 1.0     | 0.1-100 |
 
 #### Hampel Filter
-| Parameter | Description | Default | Range |
-|-----------|-------------|---------|-------|
-| Window Size | Detection window | 5 | 3-100 |
-| Threshold | MAD multiplier | 3.0 | 1.0-10.0 |
+
+| Parameter   | Description      | Default | Range    |
+| ----------- | ---------------- | ------- | -------- |
+| Window Size | Detection window | 5       | 3-100    |
+| Threshold   | MAD multiplier   | 3.0     | 1.0-10.0 |
 
 #### Z-Score Filter
-| Parameter | Description | Default | Range |
-|-----------|-------------|---------|-------|
-| Threshold | Outlier threshold | 3.0 | 1.0-10.0 |
-| Method | Standard/Modified | Standard | Dropdown |
+
+| Parameter | Description       | Default  | Range    |
+| --------- | ----------------- | -------- | -------- |
+| Threshold | Outlier threshold | 3.0      | 1.0-10.0 |
+| Method    | Standard/Modified | Standard | Dropdown |
 
 #### Savitzky-Golay
-| Parameter | Description | Default | Range |
-|-----------|-------------|---------|-------|
-| Window Length | Must be odd | 11 | 3-101 |
-| Polynomial Order | Fitting order | 2 | 1-6 |
+
+| Parameter        | Description   | Default | Range |
+| ---------------- | ------------- | ------- | ----- |
+| Window Length    | Must be odd   | 11      | 3-101 |
+| Polynomial Order | Fitting order | 2       | 1-6   |
 
 #### FFT Filters
-| Parameter | Description | Default | Range |
-|-----------|-------------|---------|-------|
-| Frequency Low | Low cutoff | 0.01 | 0.0-0.5 |
-| Frequency High | High cutoff | 0.1 | 0.0-0.5 |
-| Window Shape | Window function | Gaussian | Dropdown |
-| Transition BW | Rolloff width | 0.01 | 0.001-0.1 |
-| Zero Phase | Phase preservation | True | Checkbox |
+
+| Parameter      | Description        | Default  | Range     |
+| -------------- | ------------------ | -------- | --------- |
+| Frequency Low  | Low cutoff         | 0.01     | 0.0-0.5   |
+| Frequency High | High cutoff        | 0.1      | 0.0-0.5   |
+| Window Shape   | Window function    | Gaussian | Dropdown  |
+| Transition BW  | Rolloff width      | 0.01     | 0.001-0.1 |
+| Zero Phase     | Phase preservation | True     | Checkbox  |
 
 ## Output Format
 
 ### Processed Data
 
 Data maintains original structure with filtered columns:
+
 ```
 Time,Signal1,Signal2,Signal3,...
 0.0,1.234,5.678,9.012,...
@@ -168,13 +180,13 @@ Pressure:
 
 ### Export Formats
 
-| Format | Extension | Best For |
-|--------|-----------|----------|
-| CSV | .csv | Universal compatibility |
-| Excel | .xlsx | Spreadsheet analysis |
-| Parquet | .parquet | Large datasets, fast I/O |
-| HDF5 | .h5 | Hierarchical data, metadata |
-| Feather | .feather | Python/R interchange |
+| Format  | Extension | Best For                    |
+| ------- | --------- | --------------------------- |
+| CSV     | .csv      | Universal compatibility     |
+| Excel   | .xlsx     | Spreadsheet analysis        |
+| Parquet | .parquet  | Large datasets, fast I/O    |
+| HDF5    | .h5       | Hierarchical data, metadata |
+| Feather | .feather  | Python/R interchange        |
 
 ## Example Usage
 
@@ -207,6 +219,7 @@ python -m data_processor.cli run \
 ### JSON Configuration Pipeline
 
 Create `pipeline.json`:
+
 ```json
 {
   "files": ["./data/example.csv"],
@@ -224,6 +237,7 @@ Create `pipeline.json`:
 ```
 
 Run with:
+
 ```bash
 python -m data_processor.cli run --config pipeline.json
 ```
@@ -300,12 +314,12 @@ df = processor.integrate_signals(df, int_config)
 
 ## Keyboard Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| Ctrl+O | Select files |
-| Ctrl+L | Load data |
-| Ctrl+S | Export data |
-| Ctrl+Q | Quit application |
+| Shortcut | Action           |
+| -------- | ---------------- |
+| Ctrl+O   | Select files     |
+| Ctrl+L   | Load data        |
+| Ctrl+S   | Export data      |
+| Ctrl+Q   | Quit application |
 
 ## Troubleshooting
 
@@ -314,6 +328,7 @@ df = processor.integrate_signals(df, int_config)
 **Issue**: "Failed to load data" error
 
 **Solutions**:
+
 - Verify file is valid CSV format
 - Check file encoding (UTF-8 recommended)
 - Ensure no locked files (close Excel)
@@ -323,6 +338,7 @@ df = processor.integrate_signals(df, int_config)
 **Issue**: "Signal too short for filtering"
 
 **Solutions**:
+
 - Reduce filter window/kernel size
 - Ensure minimum data points (typically 10+)
 - Check for excessive NaN values
@@ -330,6 +346,7 @@ df = processor.integrate_signals(df, int_config)
 ### Memory Issues with Large Files
 
 **Solutions**:
+
 - Process files one at a time
 - Use Parquet format for efficiency
 - Increase system virtual memory
@@ -340,6 +357,7 @@ df = processor.integrate_signals(df, int_config)
 **Issue**: Oscillations or artifacts
 
 **Solutions**:
+
 - Reduce filter order
 - Adjust cutoff frequency
 - Ensure adequate data length (order x 10 minimum)
@@ -347,6 +365,7 @@ df = processor.integrate_signals(df, int_config)
 ### FFT Filter Ringing
 
 **Solutions**:
+
 - Increase transition bandwidth
 - Use Gaussian or Tukey window
 - Enable zero-phase filtering
@@ -404,6 +423,7 @@ with ThreadPoolExecutor(max_workers=n_jobs) as executor:
 ### NaN Handling
 
 Filters preserve NaN positions:
+
 ```python
 result[original_signal.isna()] = np.nan
 ```
@@ -411,6 +431,7 @@ result[original_signal.isna()] = np.nan
 ### Hampel Algorithm
 
 Robust outlier detection using Median Absolute Deviation:
+
 ```python
 MAD = median(|x_i - median(x)|)
 threshold = k * 1.4826 * MAD  # k typically 3.0
@@ -420,13 +441,13 @@ threshold = k * 1.4826 * MAD  # k typically 3.0
 
 Key processing constants (from `constants.py`):
 
-| Constant | Value | Description |
-|----------|-------|-------------|
-| `MAX_FILE_SIZE_MB` | 500 | Maximum file size in MB |
-| `CHUNK_SIZE` | 10000 | Processing chunk size |
-| `DEFAULT_SAMPLE_RATE` | 1000 | Default sample rate (Hz) |
-| `MAX_PLOT_POINTS` | 10000 | Maximum points to plot |
-| `DEFAULT_DPI` | 300 | Export image resolution |
+| Constant              | Value | Description              |
+| --------------------- | ----- | ------------------------ |
+| `MAX_FILE_SIZE_MB`    | 500   | Maximum file size in MB  |
+| `CHUNK_SIZE`          | 10000 | Processing chunk size    |
+| `DEFAULT_SAMPLE_RATE` | 1000  | Default sample rate (Hz) |
+| `MAX_PLOT_POINTS`     | 10000 | Maximum points to plot   |
+| `DEFAULT_DPI`         | 300   | Export image resolution  |
 
 ## Directory Structure
 

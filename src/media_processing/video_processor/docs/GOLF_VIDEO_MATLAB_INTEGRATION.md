@@ -13,6 +13,7 @@ Since you're familiar with Python and have MATLAB with Simscape Multibody, we ca
 ### Why MATLAB Alone Won't Work Well:
 
 #### ❌ Limitations:
+
 1. **Home License Restriction**: Can't publish apps (you mentioned this)
 2. **Web Deployment**: MATLAB Compiler Web Apps require server license
 3. **Sharing**: Users would need MATLAB installed
@@ -22,6 +23,7 @@ Since you're familiar with Python and have MATLAB with Simscape Multibody, we ca
 7. **Cloud Costs**: MATLAB Web App Server is expensive ($$$)
 
 #### ✅ What MATLAB IS Great For:
+
 1. **Physics Modeling**: Simscape Multibody for pendulum models
 2. **Data Analysis**: Advanced signal processing
 3. **Simulation**: Swing dynamics modeling
@@ -60,11 +62,13 @@ Since you're familiar with Python and have MATLAB with Simscape Multibody, we ca
 ### Option 1: MATLAB as Backend Service (Recommended)
 
 **MATLAB Component**:
+
 - Runs physics models (Simscape Multibody)
 - Processes swing data
 - Returns results via API
 
 **Web Component**:
+
 - Handles user interface
 - Manages videos
 - Calls MATLAB for physics analysis
@@ -73,11 +77,13 @@ Since you're familiar with Python and have MATLAB with Simscape Multibody, we ca
 ### Option 2: MATLAB as Standalone Tool
 
 **For You (Developer)**:
+
 - MATLAB app for creating/switching models
 - Export model parameters
 - Test physics simulations
 
 **For Users (Platform)**:
+
 - Web platform uses pre-computed models
 - Import MATLAB results
 - Real-time browser-based analysis
@@ -124,18 +130,21 @@ golf-swing-analyzer/
 ## 🔧 Implementation Strategy
 
 ### Phase 1: Build Web Platform
+
 - ✅ Web interface (Next.js/TypeScript)
 - ✅ Video upload/playback
 - ✅ Pose detection (MediaPipe - browser)
 - ✅ Basic analysis
 
 ### Phase 2: Add MATLAB Integration
+
 - ✅ Develop Simscape Multibody models
 - ✅ Create MATLAB API endpoints
 - ✅ Connect web platform to MATLAB
 - ✅ Import MATLAB model results
 
 ### Phase 3: Hybrid Analysis
+
 - ✅ Browser: Real-time pose detection
 - ✅ MATLAB: Advanced physics simulation
 - ✅ Web: Combine results
@@ -258,9 +267,9 @@ end
 // services/api/routes/matlab.ts
 // Call MATLAB REST API
 
-import axios from 'axios';
+import axios from "axios";
 
-const MATLAB_API_URL = process.env.MATLAB_API_URL || 'http://localhost:8080';
+const MATLAB_API_URL = process.env.MATLAB_API_URL || "http://localhost:8080";
 
 export async function analyzeSwingWithMATLAB(poseData: any) {
   try {
@@ -268,15 +277,15 @@ export async function analyzeSwingWithMATLAB(poseData: any) {
       `${MATLAB_API_URL}/api/matlab/pendulum`,
       poseData,
       {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
         timeout: 30000, // 30 seconds
-      }
+      },
     );
 
     return response.data;
   } catch (error) {
-    console.error('MATLAB API error:', error);
-    throw new Error('MATLAB analysis failed');
+    console.error("MATLAB API error:", error);
+    throw new Error("MATLAB analysis failed");
   }
 }
 ```
@@ -319,9 +328,9 @@ class MATLABAnalyzer:
 
 export async function analyzeSwingWithMATLAB(poseData: any) {
   // Call Python service (which uses MATLAB Runtime)
-  const response = await fetch('http://localhost:5000/api/matlab/pendulum', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  const response = await fetch("http://localhost:5000/api/matlab/pendulum", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(poseData),
   });
 
@@ -336,6 +345,7 @@ export async function analyzeSwingWithMATLAB(poseData: any) {
 ### For Development (Using Your MATLAB License)
 
 1. **Build Models in MATLAB** (Simscape Multibody)
+
    ```matlab
    % Develop pendulum model
    % Test with sample data
@@ -343,6 +353,7 @@ export async function analyzeSwingWithMATLAB(poseData: any) {
    ```
 
 2. **Export Results to Web Platform**
+
    ```matlab
    % Save results to JSON
    results = pendulum_model(test_data);
@@ -350,9 +361,10 @@ export async function analyzeSwingWithMATLAB(poseData: any) {
    ```
 
 3. **Web Platform Uses Results**
+
    ```typescript
    // Import MATLAB results
-   import modelResults from '@/matlab/model_results.json';
+   import modelResults from "@/matlab/model_results.json";
 
    // Use in web app
    displayPendulumResults(modelResults);
@@ -361,11 +373,13 @@ export async function analyzeSwingWithMATLAB(poseData: any) {
 ### For Production (No MATLAB License Needed for Users)
 
 1. **Convert MATLAB Models to JavaScript**
+
    - Rewrite pendulum physics in TypeScript
    - Use same algorithms but in JavaScript
    - No MATLAB dependency
 
 2. **Use MATLAB Runtime** (Free, No License)
+
    - Deploy MATLAB Runtime on server
    - Python bridge calls MATLAB Runtime
    - Users don't need MATLAB
@@ -379,38 +393,42 @@ export async function analyzeSwingWithMATLAB(poseData: any) {
 
 ## 📊 MATLAB vs Web Platform Comparison
 
-| Feature | MATLAB Only | Web Platform | Hybrid (Recommended) |
-|---------|-------------|--------------|----------------------|
-| **User Access** | ❌ Needs MATLAB | ✅ Any browser | ✅ Any browser |
-| **Sharing** | ❌ Hard (need MATLAB) | ✅ Easy (just links) | ✅ Easy (just links) |
-| **Cost** | ❌ $2,150/user/year | ✅ Free for users | ✅ Free for users |
-| **Physics Models** | ✅ Excellent (Simscape) | ⚠️ Must rewrite | ✅ Use MATLAB for models |
-| **Real-Time** | ❌ Slow (web apps) | ✅ Fast (browser) | ✅ Fast (browser) |
-| **Mobile** | ❌ No | ✅ Yes | ✅ Yes |
-| **Development** | ✅ Easy for you | ⚠️ New language | ✅ Use both strengths |
+| Feature            | MATLAB Only             | Web Platform         | Hybrid (Recommended)     |
+| ------------------ | ----------------------- | -------------------- | ------------------------ |
+| **User Access**    | ❌ Needs MATLAB         | ✅ Any browser       | ✅ Any browser           |
+| **Sharing**        | ❌ Hard (need MATLAB)   | ✅ Easy (just links) | ✅ Easy (just links)     |
+| **Cost**           | ❌ $2,150/user/year     | ✅ Free for users    | ✅ Free for users        |
+| **Physics Models** | ✅ Excellent (Simscape) | ⚠️ Must rewrite      | ✅ Use MATLAB for models |
+| **Real-Time**      | ❌ Slow (web apps)      | ✅ Fast (browser)    | ✅ Fast (browser)        |
+| **Mobile**         | ❌ No                   | ✅ Yes               | ✅ Yes                   |
+| **Development**    | ✅ Easy for you         | ⚠️ New language      | ✅ Use both strengths    |
 
 ---
 
 ## 🚀 Recommended Approach for You
 
 ### Phase 1: Build Web Platform (TypeScript)
+
 - ✅ User interface
 - ✅ Video upload/playback
 - ✅ Pose detection (MediaPipe)
 - ✅ Basic analysis
 
 ### Phase 2: Add MATLAB Integration
+
 - ✅ Develop Simscape Multibody models locally
 - ✅ Test models with MATLAB
 - ✅ Export model parameters/results
 - ✅ Import into web platform
 
 ### Phase 3: Convert to JavaScript (Optional)
+
 - ✅ Rewrite pendulum physics in TypeScript
 - ✅ Remove MATLAB dependency
 - ✅ Faster (no API calls)
 
 ### Alternative: Keep MATLAB for You
+
 - ✅ Develop models in MATLAB
 - ✅ Export results to JSON
 - ✅ Web platform imports JSON
@@ -467,7 +485,7 @@ export interface MATLABResults {
 }
 
 export async function loadMATLABResults(
-  jsonPath: string
+  jsonPath: string,
 ): Promise<MATLABResults> {
   const response = await fetch(jsonPath);
   return await response.json();
@@ -485,9 +503,11 @@ export function visualizePendulumResults(results: MATLABResults) {
 ## ✅ Bottom Line
 
 ### Can You Build Entirely in MATLAB?
+
 **Technically possible, but NOT recommended for web-based sharing platform**
 
 ### Recommended Approach:
+
 **Hybrid: MATLAB for Modeling, Web for Platform**
 
 - ✅ **Develop models in MATLAB** (Simscape Multibody)
@@ -497,6 +517,7 @@ export function visualizePendulumResults(results: MATLABResults) {
 - ✅ **Users access via browser (no MATLAB needed)**
 
 ### For You:
+
 - Use MATLAB for rapid physics model development
 - Use web platform for user interface and sharing
 - Best of both worlds!
@@ -515,4 +536,4 @@ export function visualizePendulumResults(results: MATLABResults) {
 
 ---
 
-*Last Updated: MATLAB Integration Guide*
+_Last Updated: MATLAB Integration Guide_

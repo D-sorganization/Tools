@@ -101,6 +101,7 @@
    ```
 
 2. **Fix pytest collection errors** (A-003)
+
    - Investigate `scientific_modeling/rrt_path_planner/python/` imports
    - Add missing `__init__.py` files
    - Update test configuration
@@ -114,11 +115,13 @@
 ### 2 Weeks - Major Implementation Completion
 
 1. **Create unified requirements.txt** (A-004)
+
    - Audit all tool dependencies
    - Create `requirements.txt` with optional extras
    - Document in README
 
 2. **Consolidate launchers** (A-005)
+
    - Designate `UnifiedToolsLauncher.py` as primary
    - Deprecate `tools_launcher.py` with message
    - Ensure feature parity
@@ -137,11 +140,13 @@
 ### 6 Weeks - Full Architectural Alignment
 
 1. **Replace print() with logging** (A-002)
+
    - Systematic migration of 767 statements
    - Configure centralized logging
    - Add log level configuration
 
 2. **Implement tool auto-discovery** (A-010)
+
    - Scan tool directories for manifest files
    - Dynamically populate launcher menus
    - Remove hardcoded tool lists

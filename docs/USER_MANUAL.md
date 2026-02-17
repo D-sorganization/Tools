@@ -66,12 +66,12 @@ Tools/
 
 ### 2.1 Prerequisites
 
-| Requirement | Version | Notes |
-|-------------|---------|-------|
-| Python | 3.10+ (3.12 recommended) | Core runtime |
-| Git | Latest | With LFS support |
-| MATLAB | R2020a+ | For MATLAB-based tools |
-| Node.js | 18+ | For web applications |
+| Requirement | Version                  | Notes                  |
+| ----------- | ------------------------ | ---------------------- |
+| Python      | 3.10+ (3.12 recommended) | Core runtime           |
+| Git         | Latest                   | With LFS support       |
+| MATLAB      | R2020a+                  | For MATLAB-based tools |
+| Node.js     | 18+                      | For web applications   |
 
 ### 2.2 Clone and Setup
 
@@ -146,16 +146,16 @@ python UnifiedToolsLauncher.py
 
 The launcher organizes tools into the following tabs:
 
-| Tab | Description |
-|-----|-------------|
-| Process Engineering | 24+ industrial calculators |
-| Scientific Modeling | Simulation and modeling tools |
-| Signal Processing | Function generators, filters |
-| Data Processing | Data analysis platforms |
-| Robotics | URDF builders, inertia calculators |
-| Media Processing | Audio/video tools |
-| Web Applications | Browser-based tools |
-| Development | Folder tools, utilities |
+| Tab                 | Description                        |
+| ------------------- | ---------------------------------- |
+| Process Engineering | 24+ industrial calculators         |
+| Scientific Modeling | Simulation and modeling tools      |
+| Signal Processing   | Function generators, filters       |
+| Data Processing     | Data analysis platforms            |
+| Robotics            | URDF builders, inertia calculators |
+| Media Processing    | Audio/video tools                  |
+| Web Applications    | Browser-based tools                |
+| Development         | Folder tools, utilities            |
 
 ### 3.4 Plugin System
 
@@ -184,6 +184,7 @@ Supported types: `python`, `matlab`, `web`, `browser`, `bat`
 **Purpose**: Professional audio signal processing and multi-track mixing application.
 
 **Features**:
+
 - Multi-format support: WAV, MP3, FLAC, OGG, M4A
 - Advanced filtering: FFT-based, Butterworth, custom FIR/IIR
 - Audio effects: Reverb, delay, EQ, compression, chorus, pitch shifting
@@ -195,6 +196,7 @@ Supported types: `python`, `matlab`, `web`, `browser`, `bat`
 **Outputs**: Processed audio files, analysis visualizations
 
 **Launch**:
+
 ```matlab
 cd media_processing/audio_processor/matlab/audio_signal_processor
 launch_audio_processor_pro
@@ -213,6 +215,7 @@ launch_audio_processor_pro
 **Purpose**: AI-powered video analysis platform with golf swing analysis focus.
 
 **Features**:
+
 - Video upload, playback, and annotation
 - AI pose detection via MediaPipe
 - Drawing and overlay tools
@@ -225,6 +228,7 @@ launch_audio_processor_pro
 **Outputs**: Annotated videos, pose analysis data
 
 **Launch**:
+
 ```bash
 cd media_processing/video_processor
 npm install && npm run dev
@@ -245,6 +249,7 @@ npm install && npm run dev
 **Purpose**: Comprehensive data analysis and processing platform with desktop GUI.
 
 **Features**:
+
 - Data import from multiple formats (CSV, Excel, JSON)
 - Statistical analysis and visualization
 - Signal processing integration
@@ -255,6 +260,7 @@ npm install && npm run dev
 **Outputs**: Processed data, statistical reports, visualizations
 
 **Launch**:
+
 ```bash
 python src/data_processing/data_processor/launch_pyqt6.py
 ```
@@ -270,11 +276,13 @@ python src/data_processing/data_processor/launch_pyqt6.py
 **Purpose**: Browser-based data processing with Tauri desktop support.
 
 **Features**:
+
 - React-based modern UI
 - Cross-platform desktop app via Tauri
 - Real-time data visualization
 
 **Launch**:
+
 ```bash
 cd src/data_processing/data_processor/web
 npm install && npm run dev
@@ -293,6 +301,7 @@ npm install && npm run dev
 **Purpose**: Generate and visualize mathematical functions and waveforms.
 
 **Features**:
+
 - Standard waveforms: sine, square, triangle, sawtooth
 - Polynomial functions
 - Custom function expressions
@@ -304,11 +313,13 @@ npm install && npm run dev
 **Outputs**: Waveform data, visualization plots
 
 **Launch (PyQt6)**:
+
 ```bash
 python src/function_generator/launch_pyqt6.py
 ```
 
 **Launch (Web)**:
+
 ```bash
 cd src/function_generator/web
 npm install && npm run dev
@@ -325,6 +336,7 @@ npm install && npm run dev
 **Purpose**: Generate and fit polynomial functions.
 
 **Features**:
+
 - Polynomial coefficient input
 - Root finding
 - Curve fitting to data points
@@ -341,6 +353,7 @@ npm install && npm run dev
 **Purpose**: Shared library providing signal processing primitives.
 
 **Features**:
+
 - Digital filtering (lowpass, highpass, bandpass)
 - Calculus operations (differentiation, integration)
 - Noise generation and analysis
@@ -348,6 +361,7 @@ npm install && npm run dev
 - Limit detection
 
 **Usage**:
+
 ```python
 from signal_toolkit.filters import apply_lowpass_filter
 from signal_toolkit.calculus import differentiate
@@ -366,6 +380,7 @@ from signal_toolkit.calculus import differentiate
 **Purpose**: Interactive 3D visualization of the solar system with accurate orbital mechanics.
 
 **Features**:
+
 - Accurate planetary positions
 - Orbital path visualization
 - Time controls for simulation
@@ -376,6 +391,7 @@ from signal_toolkit.calculus import differentiate
 **Outputs**: 3D visualization, orbital data
 
 **Launch**:
+
 ```bash
 python scientific_modeling/solar_system_model/run_solar_system.py
 ```
@@ -391,6 +407,7 @@ python scientific_modeling/solar_system_model/run_solar_system.py
 **Purpose**: Rapidly-exploring Random Trees path planning for robotics applications.
 
 **Features**:
+
 - 3D environment with obstacles
 - Dual implementation (MATLAB and Python)
 - Star Wars-themed visualization
@@ -402,12 +419,14 @@ python scientific_modeling/solar_system_model/run_solar_system.py
 **Outputs**: Optimal path, visualization
 
 **Launch (MATLAB)**:
+
 ```matlab
 cd scientific_modeling/rrt_path_planner/matlab/src
 main_improved
 ```
 
 **Launch (Python)**:
+
 ```bash
 cd scientific_modeling/rrt_path_planner/python/src
 python star_wars_rrt.py
@@ -424,6 +443,7 @@ python star_wars_rrt.py
 **Purpose**: Solve systems of ordinary differential equations with interactive GUI.
 
 **Features**:
+
 - Preset examples: Exponential decay, harmonic oscillator, Lotka-Volterra
 - Custom ODE system definition
 - Multiple solver methods
@@ -435,6 +455,7 @@ python star_wars_rrt.py
 **Outputs**: Solution curves, numerical data
 
 **Launch**:
+
 ```bash
 python src/ode_solver/launch_pyqt6.py
 ```
@@ -450,6 +471,7 @@ python src/ode_solver/launch_pyqt6.py
 **Purpose**: Predict temperature profiles in heated vessels over time.
 
 **Features**:
+
 - Thermal mass and heat loss modeling
 - Power profile options: constant, linear ramp, step
 - Temperature vs time prediction
@@ -460,6 +482,7 @@ python src/ode_solver/launch_pyqt6.py
 **Outputs**: Temperature curves, thermal analysis
 
 **Launch**:
+
 ```bash
 python src/thermal_profile_predictor/launch_pyqt6.py
 ```
@@ -475,6 +498,7 @@ python src/thermal_profile_predictor/launch_pyqt6.py
 **Purpose**: Sensitivity analysis across multiple parameter dimensions.
 
 **Features**:
+
 - 2D parameter sweep
 - Demo functions: Rosenbrock, Rastrigin, Sphere, Himmelblau
 - Variance-based sensitivity indices
@@ -486,6 +510,7 @@ python src/thermal_profile_predictor/launch_pyqt6.py
 **Outputs**: Sensitivity analysis, optimal parameters
 
 **Launch**:
+
 ```bash
 python src/multi_param_analysis/launch_pyqt6.py
 ```
@@ -501,6 +526,7 @@ python src/multi_param_analysis/launch_pyqt6.py
 **Purpose**: Adam-based optimization for multi-parameter systems.
 
 **Features**:
+
 - Adam optimizer with configurable hyperparameters
 - Alternative methods: Grid Search, L-BFGS-B, Differential Evolution
 - Parameter bounds and constraints
@@ -512,6 +538,7 @@ python src/multi_param_analysis/launch_pyqt6.py
 **Outputs**: Optimal parameters, convergence history
 
 **Launch**:
+
 ```bash
 python src/optimizer_gui/launch_pyqt6.py
 ```
@@ -523,6 +550,7 @@ python src/optimizer_gui/launch_pyqt6.py
 ## 8. Process Engineering Calculators
 
 The repository includes 24 specialized process engineering calculators for industrial applications. All calculators feature:
+
 - PyQt6 GUI with Catppuccin Mocha dark theme
 - Web interface option (React/Tauri)
 - Shared calculation engines from `upstream_drift_tools`
@@ -536,6 +564,7 @@ The repository includes 24 specialized process engineering calculators for indus
 **Purpose**: Calculate dewpoints for acid gases (HF, HCl, H2S) in syngas systems.
 
 **Features**:
+
 - Preset compositions: Typical Syngas, Coal Gasification, Biomass
 - Calculation methods: Antoine, Extended Antoine
 - Safety analysis with condensation risk assessment
@@ -546,6 +575,7 @@ The repository includes 24 specialized process engineering calculators for indus
 **Outputs**: Individual and overall dewpoints, safety margins, warnings
 
 **Launch**:
+
 ```bash
 python src/acid_gas_dewpoint/launch_pyqt6.py
 ```
@@ -561,18 +591,21 @@ python src/acid_gas_dewpoint/launch_pyqt6.py
 **Purpose**: Design and performance analysis for baghouse filter systems.
 
 **Inputs**:
+
 - Gas stream: Flow rate (kg/s), inlet temperature, pressure
 - Solids: Carbon and ash input rates
 - Removal efficiencies: Carbon, ash
 - Equipment: Heat loss, drum volume, bag filter area
 
 **Outputs**:
+
 - Solids removal rates
 - Drum fill time (hours/days)
 - Air-to-cloth ratio
 - Outlet temperature
 
 **Launch**:
+
 ```bash
 python src/baghouse_calculator/launch_pyqt6.py
 ```
@@ -588,17 +621,20 @@ python src/baghouse_calculator/launch_pyqt6.py
 **Purpose**: Size flare systems and determine safety zones.
 
 **Inputs**:
+
 - Total flow rate (kg/hr)
 - Gas composition (H2, CO, CH4, CO2, N2, H2O, H2S)
 - Temperature (K) and pressure (bar)
 
 **Outputs**:
+
 - Flare dimensions: height, diameter
 - Exit velocity, heat release
 - Radiation safety zones: lethal, damage, safe, comfort
 - Gas mixture properties
 
 **Launch**:
+
 ```bash
 python src/flare_calculator/launch_pyqt6.py
 ```
@@ -618,6 +654,7 @@ python src/flare_calculator/launch_pyqt6.py
 **Outputs**: Removal efficiency, liquid requirements, pressure drop
 
 **Launch**:
+
 ```bash
 python src/scrubber_calculator/launch_pyqt6.py
 ```
@@ -633,23 +670,27 @@ python src/scrubber_calculator/launch_pyqt6.py
 **Purpose**: Calculate pressure drops in piping systems.
 
 **Features**:
+
 - Pipe sizes: 0.5" to 24" nominal
 - Schedules: 5, 10, 20, 40, 80, STD, XS, XXS
 - Friction methods: Colebrook, Swamee-Jain, Churchill, Haaland
 - Materials: Carbon Steel, Stainless, Copper, PVC, HDPE, Concrete
 
 **Inputs**:
+
 - Pipe parameters: size, schedule, length, material, elevation
 - Flow conditions: rate, pressure, temperature
 - Gas composition (8 components)
 
 **Outputs**:
+
 - Total pressure drop (Pa)
 - Friction factor, Reynolds number
 - Flow velocity, Mach number
 - Erosional velocity warnings
 
 **Launch**:
+
 ```bash
 python src/pressure_drop_calculator/launch_pyqt6.py
 ```
@@ -665,17 +706,20 @@ python src/pressure_drop_calculator/launch_pyqt6.py
 **Purpose**: Calculate water content and dew point in syngas systems.
 
 **Inputs**:
+
 - Temperature (C) and pressure (bar)
 - Gas composition preset
 - Calculation method: Auto, Antoine, Buck, IAPWS-IF97, Magnus
 
 **Outputs**:
+
 - Water content in multiple units (mg/Nm3, ppmv, g/m3, lb/MMscf)
 - Vapor pressure, dew point
 - Condensation risk assessment
 - Recommended minimum temperature
 
 **Launch**:
+
 ```bash
 python src/syngas_water_calculator/launch_pyqt6.py
 ```
@@ -695,6 +739,7 @@ python src/syngas_water_calculator/launch_pyqt6.py
 **Outputs**: Compression ratios, power requirements, stage design
 
 **Launch**:
+
 ```bash
 python src/syngas_compression/launch_pyqt6.py
 ```
@@ -714,6 +759,7 @@ python src/syngas_compression/launch_pyqt6.py
 **Outputs**: Conversion, product composition, heat duty
 
 **Launch**:
+
 ```bash
 python src/wgs_reactor/launch_pyqt6.py
 ```
@@ -729,22 +775,26 @@ python src/wgs_reactor/launch_pyqt6.py
 **Purpose**: 3-phase electrical system analysis for electrode heating applications.
 
 **Features**:
+
 - 3-phase electrical measurements input
 - Electrode depth configuration
 - Physical parameter settings (bath diameter, tip diameter, temperature)
 - Uses shared `ThreePhaseElectricalModelEnhanced` engine
 
 **Inputs**:
+
 - Phase currents and voltages (3 phases)
 - Electrode depths (3 electrodes)
 - Bath geometry and temperature
 
 **Outputs**:
+
 - Total power (kW)
 - Phase resistances and powers
 - System status indicators
 
 **Launch**:
+
 ```bash
 python src/electrode_advisor/launch_pyqt6.py
 ```
@@ -760,18 +810,21 @@ python src/electrode_advisor/launch_pyqt6.py
 **Purpose**: Design thermal reaction chamber vessels with refractory lining.
 
 **Features**:
+
 - Vessel geometry: cylinder + cone configuration
 - Refractory presets: Standard (3-layer), High Temperature (4-layer), Economy (2-layer)
 - Operating conditions integration
 - Uses shared `TRCGeometryEngine`
 
 **Inputs**:
+
 - Cylinder dimensions (height, diameter)
 - Cone parameters (height, bottom diameter)
 - Refractory configuration
 - Operating temperature, pressure, flow rate
 
 **Outputs**:
+
 - Net internal volume
 - Total refractory mass
 - Layer-by-layer breakdown
@@ -779,6 +832,7 @@ python src/electrode_advisor/launch_pyqt6.py
 - Outside surface area
 
 **Launch**:
+
 ```bash
 python src/trc_vessel_designer/launch_pyqt6.py
 ```
@@ -798,6 +852,7 @@ python src/trc_vessel_designer/launch_pyqt6.py
 **Outputs**: Bed sizing, cycle timing, product recovery
 
 **Launch**:
+
 ```bash
 python src/psa_package/launch_pyqt6.py
 ```
@@ -813,21 +868,25 @@ python src/psa_package/launch_pyqt6.py
 **Purpose**: Calculate steam thermodynamic properties.
 
 **Features**:
+
 - Calculation modes: T&P, Saturated (from T), Saturated (from P)
 - Multiple calculation engines: CoolProp, Cantera, Simplified
 - Comprehensive property output
 
 **Inputs**:
+
 - Temperature (K or C)
 - Pressure (Pa, kPa, bar, MPa)
 
 **Outputs**:
+
 - Phase state and quality
 - Thermodynamic: density, enthalpy, entropy, internal energy, Cp, Cv
 - Transport: speed of sound, thermal conductivity, viscosity
 - Derived: compressibility factor, Prandtl number, Cp/Cv ratio
 
 **Launch**:
+
 ```bash
 python src/steam_engine_calculator/launch_pyqt6.py
 ```
@@ -843,6 +902,7 @@ python src/steam_engine_calculator/launch_pyqt6.py
 **Purpose**: Convert between mass, molar, and volumetric flow rate units.
 
 **Features**:
+
 - Mass flow: kg/s, kg/h, kg/min, g/s, g/h, lb/s, lb/h, lb/min, ton/h
 - Molar flow: mol/s, mol/h, kmol/s, kmol/h, lbmol/s, lbmol/h
 - Volumetric: m3/s, m3/h, L/s, L/min, ft3/s, CFM, GPM
@@ -852,6 +912,7 @@ python src/steam_engine_calculator/launch_pyqt6.py
 **Outputs**: Converted value
 
 **Launch**:
+
 ```bash
 python src/flow_rate_converter/launch_pyqt6.py
 ```
@@ -864,19 +925,19 @@ python src/flow_rate_converter/launch_pyqt6.py
 
 The following additional calculators follow the same pattern:
 
-| Calculator | Purpose |
-|------------|---------|
-| **Heat Exchanger Calculator** | LMTD, effectiveness-NTU calculations |
-| **Pump Sizing Calculator** | Pump head, power, NPSH calculations |
-| **Tank Volume Calculator** | Storage tank capacity calculations |
-| **Relief Valve Sizer** | Safety relief valve sizing |
-| **Cooling Tower Calculator** | Cooling tower performance |
-| **Distillation Column** | Stage calculations, reflux ratio |
-| **Reactor Sizing** | CSTR, PFR, batch reactor design |
-| **Catalyst Bed Calculator** | Catalyst volume, pressure drop |
-| **Combustion Calculator** | Air requirements, exhaust composition |
-| **Mass Balance Tool** | Process mass balance calculations |
-| **Energy Balance Tool** | Process energy balance calculations |
+| Calculator                    | Purpose                               |
+| ----------------------------- | ------------------------------------- |
+| **Heat Exchanger Calculator** | LMTD, effectiveness-NTU calculations  |
+| **Pump Sizing Calculator**    | Pump head, power, NPSH calculations   |
+| **Tank Volume Calculator**    | Storage tank capacity calculations    |
+| **Relief Valve Sizer**        | Safety relief valve sizing            |
+| **Cooling Tower Calculator**  | Cooling tower performance             |
+| **Distillation Column**       | Stage calculations, reflux ratio      |
+| **Reactor Sizing**            | CSTR, PFR, batch reactor design       |
+| **Catalyst Bed Calculator**   | Catalyst volume, pressure drop        |
+| **Combustion Calculator**     | Air requirements, exhaust composition |
+| **Mass Balance Tool**         | Process mass balance calculations     |
+| **Energy Balance Tool**       | Process energy balance calculations   |
 
 ---
 
@@ -889,6 +950,7 @@ The following additional calculators follow the same pattern:
 **Purpose**: Financial modeling for industrial plant operations.
 
 **Features**:
+
 - Plant operations: capacity, operating days, utilization
 - Revenue modeling with product pricing
 - Variable costs: feedstock, labor, utilities, maintenance
@@ -897,12 +959,14 @@ The following additional calculators follow the same pattern:
 - 10-year projections
 
 **Inputs**:
+
 - Plant capacity (TPD), operating days, utilization
 - Product price, variable costs per ton
 - Fixed annual costs
 - Capital investment, financing parameters
 
 **Outputs**:
+
 - Annual feedstock processing
 - Total revenue and costs
 - Net income, EBITDA
@@ -910,6 +974,7 @@ The following additional calculators follow the same pattern:
 - 10-year financial projections table
 
 **Launch**:
+
 ```bash
 python src/financial_calculator/launch_pyqt6.py
 ```
@@ -927,6 +992,7 @@ python src/financial_calculator/launch_pyqt6.py
 **Purpose**: Calculate and validate inertia tensors for rigid bodies.
 
 **Features**:
+
 - Primitive shapes: box, cylinder, sphere, capsule
 - Custom inertia tensor input
 - Physical validity checks
@@ -938,6 +1004,7 @@ python src/financial_calculator/launch_pyqt6.py
 **Outputs**: Inertia tensor (Ixx, Iyy, Izz, Ixy, Ixz, Iyz), principal axes
 
 **Launch**:
+
 ```bash
 python src/inertia_calculator/launch_pyqt6.py
 ```
@@ -953,6 +1020,7 @@ python src/inertia_calculator/launch_pyqt6.py
 **Purpose**: Generate parametric URDF models for robotics applications.
 
 **Features**:
+
 - Link and joint definition
 - Visual and collision geometry
 - Inertia property generation
@@ -964,6 +1032,7 @@ python src/inertia_calculator/launch_pyqt6.py
 **Outputs**: URDF XML file
 
 **Launch**:
+
 ```bash
 python src/urdf_builder_gui/launch_pyqt6.py
 ```
@@ -979,6 +1048,7 @@ python src/urdf_builder_gui/launch_pyqt6.py
 **Purpose**: Build parametric humanoid character models with anthropometric calculations.
 
 **Features**:
+
 - Anthropometric presets
 - Body segment customization
 - Inertia calculation
@@ -989,6 +1059,7 @@ python src/urdf_builder_gui/launch_pyqt6.py
 **Outputs**: Humanoid URDF model, segment properties
 
 **Launch**:
+
 ```bash
 python src/humanoid_builder_gui/launch_pyqt6.py
 ```
@@ -1004,6 +1075,7 @@ python src/humanoid_builder_gui/launch_pyqt6.py
 **Purpose**: View and analyze C3D motion capture files.
 
 **Features**:
+
 - C3D file import
 - 3D marker visualization
 - Frame-by-frame playback
@@ -1014,6 +1086,7 @@ python src/humanoid_builder_gui/launch_pyqt6.py
 **Outputs**: Visualization, marker data export
 
 **Launch**:
+
 ```bash
 python src/c3d_viewer/launch_pyqt6.py
 ```
@@ -1031,6 +1104,7 @@ python src/c3d_viewer/launch_pyqt6.py
 **Purpose**: Web-based Computer Algebra System (CAS) calculator.
 
 **Features**:
+
 - Symbolic math: factor, expand, simplify, solve
 - Calculus: derivatives, integrals, limits, Taylor series
 - Linear algebra: matrix operations, decompositions
@@ -1038,6 +1112,7 @@ python src/c3d_viewer/launch_pyqt6.py
 - Touch-friendly interface with mode-specific soft keys
 
 **Launch**:
+
 ```bash
 cd src/web_applications/calculator
 flask --app webapp run
@@ -1055,6 +1130,7 @@ flask --app webapp run
 **Purpose**: NIST-compliant unit converter with offline support.
 
 **Features**:
+
 - 16+ categories: Length, Mass, Volume, Temperature, Pressure, Energy, etc.
 - 100+ units with NIST-standard conversion factors
 - Offline support (Progressive Web App)
@@ -1062,6 +1138,7 @@ flask --app webapp run
 - Custom unit support
 
 **Launch**:
+
 ```bash
 cd src/web_applications/unit_converter/unit-converter-app
 python -m http.server 8000
@@ -1081,12 +1158,14 @@ Or open `index.html` directly in a browser.
 **Purpose**: Web-based 3D viewer for URDF robot models.
 
 **Features**:
+
 - Three.js 3D rendering
 - URDF file upload
 - Interactive model inspection
 - FastAPI backend
 
 **Launch**:
+
 ```bash
 cd src/web_applications/urdf_viewer
 uvicorn app:app --reload
@@ -1106,8 +1185,9 @@ uvicorn app:app --reload
 **Purpose**: Project archiving and distribution tool.
 
 **Features**:
+
 - Selective file/folder packaging
-- Exclusion patterns (node_modules, __pycache__, etc.)
+- Exclusion patterns (node_modules, **pycache**, etc.)
 - Multiple output formats
 - Integrity verification
 
@@ -1122,6 +1202,7 @@ uvicorn app:app --reload
 **Purpose**: Automated folder structure cleanup and organization.
 
 **Features**:
+
 - Empty folder detection and removal
 - Duplicate file detection
 - Structure validation
@@ -1138,6 +1219,7 @@ uvicorn app:app --reload
 **Purpose**: Batch rename PDF files based on content or metadata.
 
 **Features**:
+
 - Metadata extraction
 - Content-based naming
 - Pattern-based renaming
@@ -1156,6 +1238,7 @@ uvicorn app:app --reload
 **Purpose**: Shared signal processing primitives.
 
 **Modules**:
+
 - `core.py`: Base signal operations
 - `filters.py`: Digital filter implementations
 - `calculus.py`: Differentiation and integration
@@ -1165,6 +1248,7 @@ uvicorn app:app --reload
 - `io.py`: Signal I/O utilities
 
 **Usage**:
+
 ```python
 from signal_toolkit.filters import apply_lowpass_filter
 from signal_toolkit.calculus import differentiate, integrate
@@ -1179,6 +1263,7 @@ from signal_toolkit.calculus import differentiate, integrate
 **Purpose**: Centralized calculation engines for process engineering.
 
 **Packages**:
+
 - `calculators/`: Core calculation engines
   - `electrical/`: 3-phase electrical models
   - `mechanical/`: Geometry and stress calculations
@@ -1197,6 +1282,7 @@ from signal_toolkit.calculus import differentiate, integrate
 **Theme**: Catppuccin Mocha dark theme
 
 **Colors**:
+
 ```python
 COLORS = {
     "base": "#1e1e2e",      # Background
@@ -1217,6 +1303,7 @@ COLORS = {
 **Location**: Shared matplotlib configuration
 
 **Features**:
+
 - Dark background matching GUI theme
 - Colorblind-safe palettes
 - Consistent styling across all tools
@@ -1257,6 +1344,7 @@ Each tool can define a `tool_manifest.json`:
 ### 14.3 Plugin Discovery
 
 The plugin system scans these directories for manifests:
+
 - `src/` (all subdirectories)
 - `tools/` (all subdirectories)
 - `python/` (legacy tools)
@@ -1280,6 +1368,7 @@ The plugin system scans these directories for manifests:
 **Problem**: `UnifiedToolsLauncher.py` fails to launch
 
 **Solutions**:
+
 1. Install dependencies: `pip install -r requirements.txt`
 2. Check Python version: `python --version` (must be 3.11+)
 3. Install PyQt6: `pip install PyQt6>=6.6.0`
@@ -1290,6 +1379,7 @@ The plugin system scans these directories for manifests:
 **Problem**: MATLAB-based tools fail to launch
 
 **Solutions**:
+
 1. Install MATLAB R2020a or later
 2. Add MATLAB to system PATH
 3. Verify: `matlab -batch "disp('OK')"`
@@ -1299,6 +1389,7 @@ The plugin system scans these directories for manifests:
 **Problem**: `pytest` fails with collection errors
 
 **Solutions**:
+
 1. Ensure virtual environment is active
 2. Install test dependencies: `pip install pytest>=8.2.0`
 3. Run from repository root
@@ -1323,32 +1414,32 @@ Check CI status at: `https://github.com/dieterolson/Tools/actions`
 
 ## Appendix A: Tool Quick Reference
 
-| Tool | Location | Launch Command |
-|------|----------|----------------|
-| Unified Launcher | Root | `python UnifiedToolsLauncher.py` |
-| Acid Gas Dewpoint | src/acid_gas_dewpoint | `python launch_pyqt6.py` |
-| Baghouse Calculator | src/baghouse_calculator | `python launch_pyqt6.py` |
-| Flare Calculator | src/flare_calculator | `python launch_pyqt6.py` |
-| Pressure Drop | src/pressure_drop_calculator | `python launch_pyqt6.py` |
-| Steam Engine | src/steam_engine_calculator | `python launch_pyqt6.py` |
-| ODE Solver | src/ode_solver | `python launch_pyqt6.py` |
-| Thermal Predictor | src/thermal_profile_predictor | `python launch_pyqt6.py` |
-| Optimizer | src/optimizer_gui | `python launch_pyqt6.py` |
-| Inertia Calculator | src/inertia_calculator | `python launch_pyqt6.py` |
-| URDF Builder | src/urdf_builder_gui | `python launch_pyqt6.py` |
-| Financial Calculator | src/financial_calculator | `python launch_pyqt6.py` |
+| Tool                 | Location                      | Launch Command                   |
+| -------------------- | ----------------------------- | -------------------------------- |
+| Unified Launcher     | Root                          | `python UnifiedToolsLauncher.py` |
+| Acid Gas Dewpoint    | src/acid_gas_dewpoint         | `python launch_pyqt6.py`         |
+| Baghouse Calculator  | src/baghouse_calculator       | `python launch_pyqt6.py`         |
+| Flare Calculator     | src/flare_calculator          | `python launch_pyqt6.py`         |
+| Pressure Drop        | src/pressure_drop_calculator  | `python launch_pyqt6.py`         |
+| Steam Engine         | src/steam_engine_calculator   | `python launch_pyqt6.py`         |
+| ODE Solver           | src/ode_solver                | `python launch_pyqt6.py`         |
+| Thermal Predictor    | src/thermal_profile_predictor | `python launch_pyqt6.py`         |
+| Optimizer            | src/optimizer_gui             | `python launch_pyqt6.py`         |
+| Inertia Calculator   | src/inertia_calculator        | `python launch_pyqt6.py`         |
+| URDF Builder         | src/urdf_builder_gui          | `python launch_pyqt6.py`         |
+| Financial Calculator | src/financial_calculator      | `python launch_pyqt6.py`         |
 
 ---
 
 ## Appendix B: Keyboard Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| Ctrl+L | Launch selected tool |
-| Ctrl+Tab | Next category tab |
+| Shortcut       | Action                |
+| -------------- | --------------------- |
+| Ctrl+L         | Launch selected tool  |
+| Ctrl+Tab       | Next category tab     |
 | Ctrl+Shift+Tab | Previous category tab |
-| F5 | Refresh tool list |
-| Ctrl+Q | Quit launcher |
+| F5             | Refresh tool list     |
+| Ctrl+Q         | Quit launcher         |
 
 ---
 
@@ -1358,4 +1449,4 @@ This repository is licensed under the MIT License. See individual tool directori
 
 ---
 
-*Generated for Tools Monorepo v1.0*
+_Generated for Tools Monorepo v1.0_

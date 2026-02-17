@@ -49,45 +49,45 @@ python launch_pyqt6.py
 
 ### Mass
 
-| Parameter | Unit | Range | Description |
-|-----------|------|-------|-------------|
-| Mass | kg | 0.001 - 10,000 | Total mass of the rigid body |
+| Parameter | Unit | Range          | Description                  |
+| --------- | ---- | -------------- | ---------------------------- |
+| Mass      | kg   | 0.001 - 10,000 | Total mass of the rigid body |
 
 ### Solid Box Dimensions
 
-| Parameter | Unit | Range | Description |
-|-----------|------|-------|-------------|
-| Length X | m | 0.001 - 100 | Extent along X axis |
-| Length Y | m | 0.001 - 100 | Extent along Y axis |
-| Length Z | m | 0.001 - 100 | Extent along Z axis |
+| Parameter | Unit | Range       | Description         |
+| --------- | ---- | ----------- | ------------------- |
+| Length X  | m    | 0.001 - 100 | Extent along X axis |
+| Length Y  | m    | 0.001 - 100 | Extent along Y axis |
+| Length Z  | m    | 0.001 - 100 | Extent along Z axis |
 
 ### Solid Cylinder Dimensions
 
-| Parameter | Unit | Range | Description |
-|-----------|------|-------|-------------|
-| Radius | m | 0.001 - 100 | Cylinder radius |
-| Height | m | 0.001 - 100 | Cylinder height (axis along Z) |
+| Parameter | Unit | Range       | Description                    |
+| --------- | ---- | ----------- | ------------------------------ |
+| Radius    | m    | 0.001 - 100 | Cylinder radius                |
+| Height    | m    | 0.001 - 100 | Cylinder height (axis along Z) |
 
 ### Solid Sphere Dimensions
 
-| Parameter | Unit | Range | Description |
-|-----------|------|-------|-------------|
-| Radius | m | 0.001 - 100 | Sphere radius |
+| Parameter | Unit | Range       | Description   |
+| --------- | ---- | ----------- | ------------- |
+| Radius    | m    | 0.001 - 100 | Sphere radius |
 
 ### Hollow Cylinder Dimensions
 
-| Parameter | Unit | Range | Description |
-|-----------|------|-------|-------------|
-| Outer Radius | m | 0.001 - 100 | Outer cylinder radius |
-| Inner Radius | m | 0.001 - 100 | Inner cavity radius (must be < outer) |
-| Height | m | 0.001 - 100 | Cylinder height (axis along Z) |
+| Parameter    | Unit | Range       | Description                           |
+| ------------ | ---- | ----------- | ------------------------------------- |
+| Outer Radius | m    | 0.001 - 100 | Outer cylinder radius                 |
+| Inner Radius | m    | 0.001 - 100 | Inner cavity radius (must be < outer) |
+| Height       | m    | 0.001 - 100 | Cylinder height (axis along Z)        |
 
 ## Output Format
 
 The calculator outputs:
 
-1. **Principal Moments**: Ixx, Iyy, Izz in kg*m^2
-2. **Products of Inertia**: Ixy, Ixz, Iyz in kg*m^2 (zero for primitive shapes)
+1. **Principal Moments**: Ixx, Iyy, Izz in kg\*m^2
+2. **Products of Inertia**: Ixy, Ixz, Iyz in kg\*m^2 (zero for primitive shapes)
 3. **Full Inertia Tensor Matrix**: 3x3 symmetric matrix
 4. **URDF Format**: Ready-to-paste XML element
 
@@ -147,10 +147,12 @@ I_new = I_cm + m * d^2
 ### Example 1: Robot Link (Box)
 
 A robotic forearm link modeled as a box:
+
 - Dimensions: 0.05m x 0.04m x 0.20m
 - Mass: 0.5 kg
 
 Results:
+
 ```
 Ixx = 0.001750 kg*m^2
 Iyy = 0.001708 kg*m^2
@@ -160,11 +162,13 @@ Izz = 0.000171 kg*m^2
 ### Example 2: Cylindrical Motor
 
 A DC motor housing:
+
 - Radius: 0.025m
 - Height: 0.06m
 - Mass: 0.3 kg
 
 Results:
+
 ```
 Ixx = Iyy = 0.000141 kg*m^2
 Izz = 0.000094 kg*m^2
@@ -175,6 +179,7 @@ Izz = 0.000094 kg*m^2
 ### "Triangle inequality violated"
 
 The principal moments of inertia must satisfy the triangle inequality:
+
 - |Ixx - Iyy| <= Izz <= Ixx + Iyy (and cyclic permutations)
 
 This occurs when manually entered values don't correspond to a physically realizable mass distribution.
@@ -182,6 +187,7 @@ This occurs when manually entered values don't correspond to a physically realiz
 ### "Inertia tensor is not positive definite"
 
 The inertia tensor must be positive definite, meaning all eigenvalues must be positive. This validation uses Cholesky decomposition. Check that:
+
 - All diagonal elements (Ixx, Iyy, Izz) are positive
 - Products of inertia are not too large relative to diagonal elements
 

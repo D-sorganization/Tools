@@ -4,7 +4,7 @@ on:
   workflow_call:
   workflow_dispatch:
   schedule:
-    - cron: "0 8 * * 0,4"  # Daily at 4 AM UTC
+    - cron: "0 8 * * 0,4" # Daily at 4 AM UTC
 
 permissions:
   contents: write
@@ -114,7 +114,6 @@ jobs:
           sleep $POLL_INTERVAL
           ELAPSED=$((ELAPSED + POLL_INTERVAL))
           done
-
 
       - name: Commit
         uses: stefanzweifel/git-auto-commit-action@v5

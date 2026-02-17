@@ -31,12 +31,14 @@ You are a **Documentation Cleanup Agent** tasked with systematically improving t
 ### Phase 1: Critical Documentation (Immediate)
 
 1. **Root README.md Enhancement**
+
    - Ensure repository overview is comprehensive
    - Verify all tool categories are listed
    - Update installation instructions
    - Add quick-start examples
 
 2. **AGENTS.md Verification**
+
    - Verify all standards are clearly stated
    - Add examples for each standard
    - Ensure AI agents can follow guidelines
@@ -132,11 +134,13 @@ For each tool without complete documentation:
 ### Phase 3: Integration Documentation (2 Weeks)
 
 1. **Architecture Documentation**
+
    - Create `docs/architecture/overview.md`
    - Document launcher system
    - Explain category organization
 
 2. **Developer Guide**
+
    - Create `docs/development/adding_tools.md`
    - Document contribution workflow
    - Explain testing requirements

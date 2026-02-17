@@ -3,6 +3,7 @@
 ## 🎯 For Solo Developers Building a Free Product
 
 **This guide prioritizes:**
+
 - ✅ **$0 development cost** (your time is free)
 - ✅ **Minimal monthly costs** (<$20/month to start)
 - ✅ **Free tiers everywhere possible**
@@ -14,11 +15,14 @@
 ## 💰 Cost Clarification
 
 ### ❌ NOT Your Costs (if you're developing yourself)
+
 The $140-210k mentioned in other docs is **ONLY if you outsource to an agency**.
 **As a home developer building yourself: Development cost = $0 (your time)**
 
 ### ✅ Your REAL Costs
+
 **Only ongoing hosting/infrastructure costs:**
+
 - Hosting (VPS/server)
 - Database
 - Storage (video files)
@@ -31,37 +35,37 @@ The $140-210k mentioned in other docs is **ONLY if you outsource to an agency**.
 
 ### Phase 1: MVP (0-100 users) - **$0-10/month**
 
-| Service | Cost | Alternative |
-|---------|------|-------------|
-| **Frontend Hosting** | **$0** | Vercel free tier (unlimited) |
-| **Backend Hosting** | **$0-5** | Railway free tier OR self-host |
-| **Database** | **$0** | Supabase free tier (500MB) OR self-host |
-| **Storage** | **$0-5** | Cloudflare R2 free tier (10GB) |
-| **Domain** | **$1-2/month** | Namecheap (cheapest) |
-| **Email** | **$0** | SendGrid free tier (100/day) |
-| **Monitoring** | **$0** | Sentry free tier |
-| **Analytics** | **$0** | PostHog free tier |
-| **CDN** | **$0** | Cloudflare free tier |
-| **TOTAL** | **$1-12/month** | Most likely: **$1-5/month** |
+| Service              | Cost            | Alternative                             |
+| -------------------- | --------------- | --------------------------------------- |
+| **Frontend Hosting** | **$0**          | Vercel free tier (unlimited)            |
+| **Backend Hosting**  | **$0-5**        | Railway free tier OR self-host          |
+| **Database**         | **$0**          | Supabase free tier (500MB) OR self-host |
+| **Storage**          | **$0-5**        | Cloudflare R2 free tier (10GB)          |
+| **Domain**           | **$1-2/month**  | Namecheap (cheapest)                    |
+| **Email**            | **$0**          | SendGrid free tier (100/day)            |
+| **Monitoring**       | **$0**          | Sentry free tier                        |
+| **Analytics**        | **$0**          | PostHog free tier                       |
+| **CDN**              | **$0**          | Cloudflare free tier                    |
+| **TOTAL**            | **$1-12/month** | Most likely: **$1-5/month**             |
 
 ### Phase 2: Growth (100-1,000 users) - **$20-50/month**
 
-| Service | Cost | When You Need It |
-|---------|------|------------------|
-| **Database** | **$10-25** | When free tier exceeded |
-| **Storage** | **$5-15** | When free tier exceeded |
-| **Bandwidth** | **$0-10** | Cloudflare R2 has no egress fees! |
-| **Backend** | **$10-20** | When free tier exceeded |
-| **TOTAL** | **$25-60/month** | Scale only when needed |
+| Service       | Cost             | When You Need It                  |
+| ------------- | ---------------- | --------------------------------- |
+| **Database**  | **$10-25**       | When free tier exceeded           |
+| **Storage**   | **$5-15**        | When free tier exceeded           |
+| **Bandwidth** | **$0-10**        | Cloudflare R2 has no egress fees! |
+| **Backend**   | **$10-20**       | When free tier exceeded           |
+| **TOTAL**     | **$25-60/month** | Scale only when needed            |
 
 ### Phase 3: Scale (1,000-10,000 users) - **$50-150/month**
 
-| Service | Cost | Optimization |
-|---------|------|--------------|
-| **Database** | **$25-50** | Use connection pooling |
-| **Storage** | **$25-50** | Optimize video compression |
-| **Backend** | **$20-50** | Use serverless where possible |
-| **TOTAL** | **$70-150/month** | Much cheaper than commercial services |
+| Service      | Cost              | Optimization                          |
+| ------------ | ----------------- | ------------------------------------- |
+| **Database** | **$25-50**        | Use connection pooling                |
+| **Storage**  | **$25-50**        | Optimize video compression            |
+| **Backend**  | **$20-50**        | Use serverless where possible         |
+| **TOTAL**    | **$70-150/month** | Much cheaper than commercial services |
 
 ---
 
@@ -89,6 +93,7 @@ vercel deploy
 ### ✅ Backend: Multiple Free Options
 
 #### Option 1: Railway (Recommended for Ease)
+
 ```bash
 # Free tier: $5/month credit
 # Enough for small apps
@@ -99,6 +104,7 @@ vercel deploy
 **When to pay**: Only when traffic grows
 
 #### Option 2: Fly.io (Self-Hosted Feeling)
+
 ```bash
 # Free tier: 3 shared VMs
 # Docker-based
@@ -109,6 +115,7 @@ vercel deploy
 **Limits**: 3 VMs, 256MB RAM each
 
 #### Option 3: Render (Simple)
+
 ```bash
 # Free tier: Slow to start (sleeps after 15 min inactivity)
 # Good for MVP/testing
@@ -119,6 +126,7 @@ vercel deploy
 **Limits**: Sleeps when idle (not for production)
 
 #### Option 4: Self-Host on VPS (Cheapest Long-Term)
+
 ```bash
 # Hetzner: €4/month (~$4.50/month)
 # DigitalOcean: $6/month
@@ -171,6 +179,7 @@ const supabase = createClient(url, key);
 **Bandwidth**: $0 (FREE! Unlike S3 which charges $0.09/GB)
 
 **Example Costs**:
+
 - 50 GB storage: $0.60/month
 - 500 GB storage: $6/month
 - 1 TB storage: $12/month
@@ -244,6 +253,7 @@ MONTHLY COST: $4.50-16.50
 ## 💾 Video Storage Strategy (Biggest Cost Saver)
 
 ### Problem: Video files are HUGE
+
 - 1 minute video: ~50-100 MB
 - 10 users × 10 videos: 5-10 GB
 - 100 users × 10 videos: 50-100 GB
@@ -251,9 +261,10 @@ MONTHLY COST: $4.50-16.50
 ### Solution: Aggressive Optimization
 
 #### 1. Client-Side Compression (Before Upload)
+
 ```javascript
 // Compress video in browser before upload
-import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 
 async function compressVideo(file) {
   const ffmpeg = createFFmpeg();
@@ -261,13 +272,19 @@ async function compressVideo(file) {
 
   // Compress to H.264, reduce bitrate
   await ffmpeg.run(
-    '-i', 'input.mp4',
-    '-c:v', 'libx264',
-    '-preset', 'slow',        // Better compression
-    '-crf', '28',             // Higher = smaller file
-    '-c:a', 'aac',
-    '-b:a', '64k',            // Low audio bitrate
-    'output.mp4'
+    "-i",
+    "input.mp4",
+    "-c:v",
+    "libx264",
+    "-preset",
+    "slow", // Better compression
+    "-crf",
+    "28", // Higher = smaller file
+    "-c:a",
+    "aac",
+    "-b:a",
+    "64k", // Low audio bitrate
+    "output.mp4",
   );
 
   // Result: 50-70% smaller file!
@@ -277,18 +294,20 @@ async function compressVideo(file) {
 **Savings**: 50-70% smaller files = 50-70% lower storage costs
 
 #### 2. Adaptive Quality
+
 ```javascript
 // Offer quality options
 const QUALITY_OPTIONS = {
-  low: { crf: 30, resolution: '720p' },    // ~25 MB/min
-  medium: { crf: 28, resolution: '1080p' }, // ~50 MB/min
-  high: { crf: 23, resolution: '1080p' }    // ~100 MB/min
+  low: { crf: 30, resolution: "720p" }, // ~25 MB/min
+  medium: { crf: 28, resolution: "1080p" }, // ~50 MB/min
+  high: { crf: 23, resolution: "1080p" }, // ~100 MB/min
 };
 
 // Most users choose "medium" = 50% savings
 ```
 
 #### 3. Automatic Cleanup
+
 ```javascript
 // Delete old videos automatically
 const VIDEO_RETENTION_DAYS = 30; // Keep for 30 days
@@ -298,7 +317,7 @@ async function cleanupOldVideos() {
   cutoffDate.setDate(cutoffDate.getDate() - VIDEO_RETENTION_DAYS);
 
   const oldVideos = await db.video.findMany({
-    where: { createdAt: { lt: cutoffDate } }
+    where: { createdAt: { lt: cutoffDate } },
   });
 
   // Delete from R2
@@ -308,7 +327,7 @@ async function cleanupOldVideos() {
 
   // Delete from database
   await db.video.deleteMany({
-    where: { createdAt: { lt: cutoffDate } }
+    where: { createdAt: { lt: cutoffDate } },
   });
 }
 ```
@@ -316,6 +335,7 @@ async function cleanupOldVideos() {
 **Savings**: Keep only active videos = 70-90% storage reduction
 
 #### 4. Thumbnails Instead of Full Videos
+
 ```javascript
 // For shared links, store thumbnail only
 // Load full video only when user clicks "watch"
@@ -323,6 +343,7 @@ async function cleanupOldVideos() {
 ```
 
 #### 5. Video Limits (Free Users)
+
 ```javascript
 // Free tier: Keep videos for 30 days
 // After 30 days: Archive (cheaper storage) or delete
@@ -334,6 +355,7 @@ async function cleanupOldVideos() {
 ## 🔧 Technology Stack (Cost-Optimized)
 
 ### Frontend (100% Free)
+
 ```bash
 # Next.js - Free (open source)
 # React - Free (open source)
@@ -347,6 +369,7 @@ async function cleanupOldVideos() {
 ### Backend (Choose One)
 
 #### Option A: Serverless Functions (Vercel)
+
 ```javascript
 // Use Vercel API routes (serverless functions)
 // FREE tier: 100 GB-hours/month
@@ -356,6 +379,7 @@ async function cleanupOldVideos() {
 **Cost**: $0/month (for MVP)
 
 #### Option B: Railway (Easiest)
+
 ```javascript
 // Deploy Node.js backend
 // Free $5/month credit
@@ -364,6 +388,7 @@ async function cleanupOldVideos() {
 **Cost**: $0-5/month
 
 #### Option C: Self-Hosted VPS (Cheapest)
+
 ```bash
 # Hetzner VPS: €4/month (~$4.50)
 # Run everything yourself
@@ -374,6 +399,7 @@ async function cleanupOldVideos() {
 ### Database (Free Tier)
 
 **Supabase** (Recommended):
+
 - 500 MB PostgreSQL
 - Built-in auth
 - Built-in storage
@@ -386,6 +412,7 @@ async function cleanupOldVideos() {
 ### File Storage (Video)
 
 **Cloudflare R2** (Best choice):
+
 - First 10 GB FREE
 - No egress fees (huge!)
 - S3-compatible API
@@ -394,6 +421,7 @@ async function cleanupOldVideos() {
 **Cost**: $0/month (first 10GB), then $0.015/GB/month
 
 **Storage Cost Examples**:
+
 - 50 GB: $0.60/month
 - 100 GB: $1.50/month
 - 500 GB: $6/month
@@ -402,6 +430,7 @@ async function cleanupOldVideos() {
 ### Authentication (Free)
 
 **NextAuth.js** with Supabase:
+
 - Email/password: FREE
 - OAuth (Google, etc.): FREE
 - Magic links: FREE
@@ -414,43 +443,43 @@ async function cleanupOldVideos() {
 
 ### Scenario 1: MVP (0-50 users, 500 videos/month)
 
-| Service | Usage | Cost |
-|---------|-------|------|
-| Vercel | 50 users | $0 (free tier) |
-| Supabase | <500MB DB | $0 (free tier) |
+| Service       | Usage        | Cost           |
+| ------------- | ------------ | -------------- |
+| Vercel        | 50 users     | $0 (free tier) |
+| Supabase      | <500MB DB    | $0 (free tier) |
 | Cloudflare R2 | ~10GB videos | $0 (free tier) |
-| Domain | Namecheap | $1/month |
-| **TOTAL** | | **$1/month** |
+| Domain        | Namecheap    | $1/month       |
+| **TOTAL**     |              | **$1/month**   |
 
 ### Scenario 2: Growing (50-200 users, 2,000 videos/month)
 
-| Service | Usage | Cost |
-|---------|-------|------|
-| Vercel | 200 users | $0 (still free) |
-| Supabase | ~1GB DB | $0 (still free) |
-| Cloudflare R2 | ~50GB videos | $0.60/month |
-| Domain | Namecheap | $1/month |
-| **TOTAL** | | **$1.60/month** |
+| Service       | Usage        | Cost            |
+| ------------- | ------------ | --------------- |
+| Vercel        | 200 users    | $0 (still free) |
+| Supabase      | ~1GB DB      | $0 (still free) |
+| Cloudflare R2 | ~50GB videos | $0.60/month     |
+| Domain        | Namecheap    | $1/month        |
+| **TOTAL**     |              | **$1.60/month** |
 
 ### Scenario 3: Scale (200-1,000 users, 10,000 videos/month)
 
-| Service | Usage | Cost |
-|---------|-------|------|
-| Vercel | 1,000 users | $0 (still free!) |
-| Supabase | ~2GB DB | $0 (still free) |
-| Cloudflare R2 | ~200GB videos | $3/month |
-| Domain | Namecheap | $1/month |
-| **TOTAL** | | **$4/month** |
+| Service       | Usage         | Cost             |
+| ------------- | ------------- | ---------------- |
+| Vercel        | 1,000 users   | $0 (still free!) |
+| Supabase      | ~2GB DB       | $0 (still free)  |
+| Cloudflare R2 | ~200GB videos | $3/month         |
+| Domain        | Namecheap     | $1/month         |
+| **TOTAL**     |               | **$4/month**     |
 
 ### Scenario 4: Big Scale (1,000-10,000 users, 100,000 videos/month)
 
-| Service | Usage | Cost |
-|---------|-------|------|
-| Vercel Pro | 10k users | $20/month |
-| Supabase Pro | 8GB DB | $25/month |
-| Cloudflare R2 | ~1TB videos | $12/month |
-| Domain | Namecheap | $1/month |
-| **TOTAL** | | **$58/month** |
+| Service       | Usage       | Cost          |
+| ------------- | ----------- | ------------- |
+| Vercel Pro    | 10k users   | $20/month     |
+| Supabase Pro  | 8GB DB      | $25/month     |
+| Cloudflare R2 | ~1TB videos | $12/month     |
+| Domain        | Namecheap   | $1/month      |
+| **TOTAL**     |             | **$58/month** |
 
 **Still very cheap even at scale!**
 
@@ -459,12 +488,14 @@ async function cleanupOldVideos() {
 ## 🎯 Cost Optimization Strategies
 
 ### 1. Use Free Tiers Aggressively
+
 - ✅ Vercel: FREE (enough for 100k+ users)
 - ✅ Supabase: FREE (500MB DB = thousands of users)
 - ✅ Cloudflare R2: FREE (10GB = ~100-200 videos)
 - ✅ Cloudflare CDN: FREE
 
 ### 2. Client-Side Processing (Save Server Costs)
+
 ```javascript
 // Do everything in browser:
 // - Video compression (FFmpeg.wasm)
@@ -481,6 +512,7 @@ async function cleanupOldVideos() {
 ```
 
 ### 3. Lazy Loading & Caching
+
 ```javascript
 // Only load what's needed
 // Cache heavily (reduce bandwidth)
@@ -488,6 +520,7 @@ async function cleanupOldVideos() {
 ```
 
 ### 4. Compress Everything
+
 ```javascript
 // Videos: H.264, CRF 28
 // Images: WebP format
@@ -496,6 +529,7 @@ async function cleanupOldVideos() {
 ```
 
 ### 5. Smart Video Limits
+
 ```javascript
 // Free users:
 // - 5 videos max
@@ -507,6 +541,7 @@ async function cleanupOldVideos() {
 ```
 
 ### 6. Self-Host When Possible
+
 ```bash
 # Instead of managed services:
 # - Self-host PostgreSQL on VPS
@@ -517,6 +552,7 @@ async function cleanupOldVideos() {
 ```
 
 ### 7. Delete Old Data
+
 ```javascript
 // Automatic cleanup:
 // - Videos older than 30 days (free users)
@@ -597,12 +633,14 @@ TOTAL: $78/month
 ## 📈 Cost Scaling Strategy
 
 ### Months 1-3: MVP Development
+
 ```
 Cost: $1/month (domain only)
 Focus: Build features, test with friends
 ```
 
 ### Months 4-6: Beta Launch (0-50 users)
+
 ```
 Cost: $1-2/month
 - Vercel: FREE
@@ -612,6 +650,7 @@ Cost: $1-2/month
 ```
 
 ### Months 7-12: Growth (50-200 users)
+
 ```
 Cost: $2-5/month
 - Vercel: FREE (still!)
@@ -621,6 +660,7 @@ Cost: $2-5/month
 ```
 
 ### Year 2: Scale (200-1,000 users)
+
 ```
 Cost: $5-20/month
 - Vercel: FREE or $20/month Pro (if needed)
@@ -630,6 +670,7 @@ Cost: $5-20/month
 ```
 
 ### Year 3+: Big Scale (1,000-10,000 users)
+
 ```
 Cost: $30-60/month
 - Vercel Pro: $20/month
@@ -645,9 +686,11 @@ Cost: $30-60/month
 ## 🎯 Recommended Path for Solo Developer
 
 ### Phase 1: MVP (Months 1-3)
+
 **Cost**: $1/month
 
 **Setup**:
+
 ```bash
 # 1. Deploy to Vercel (free)
 vercel deploy
@@ -668,6 +711,7 @@ vercel deploy
 ---
 
 ### Phase 2: Beta (Months 4-6)
+
 **Cost**: $1-2/month
 
 **Focus**: Get 20-50 beta users
@@ -676,18 +720,22 @@ vercel deploy
 ---
 
 ### Phase 3: Growth (Months 7-12)
+
 **Cost**: $2-5/month
 
 **When to upgrade**:
+
 - Cloudflare R2: When you hit 10GB (about $1/month for 50GB)
 - Supabase: When you hit 500MB DB (unlikely for 200 users)
 
 ---
 
 ### Phase 4: Scale (Year 2+)
+
 **Cost**: $5-20/month
 
 **Upgrade only when**:
+
 - Actually hitting limits
 - Actually need the features
 - Have active users
@@ -697,11 +745,13 @@ vercel deploy
 ## ✅ Cost Checklist
 
 ### Development (Your Time)
+
 - [ ] Building yourself: $0 cost
 - [ ] Using open-source tools: $0 cost
 - [ ] Learning: $0 cost (free tutorials everywhere)
 
 ### Hosting (Monthly Costs)
+
 - [ ] Vercel: FREE
 - [ ] Database: FREE (Supabase free tier)
 - [ ] Storage: FREE (Cloudflare R2 free tier)
@@ -709,12 +759,14 @@ vercel deploy
 - [ ] **Total: $0-1/month for MVP**
 
 ### Tools (Monthly Costs)
+
 - [ ] Monitoring: FREE (Sentry free tier)
 - [ ] Analytics: FREE (PostHog free tier)
 - [ ] Email: FREE (SendGrid free tier)
 - [ ] **Total: $0/month**
 
 ### Scaling Costs (Only When Needed)
+
 - [ ] More storage: $0.60-12/month (when you hit 10GB free tier)
 - [ ] Bigger database: $0-25/month (when you hit 500MB free tier)
 - [ ] Pro hosting: $0-20/month (when you need more)
@@ -726,36 +778,43 @@ vercel deploy
 ## 💡 Money-Saving Tips
 
 ### 1. Start with Free Tiers
+
 - Most free tiers are generous
 - You won't hit limits for months/years
 - Upgrade only when actually needed
 
 ### 2. Use Client-Side Processing
+
 - FFmpeg.wasm: Process videos in browser (saves server CPU)
 - MediaPipe: Pose detection in browser (saves server costs)
 - All drawing/3D in browser (saves server)
 
 ### 3. Compress Videos Aggressively
+
 - Use CRF 28 (smaller files)
 - Limit resolution (1080p max for free users)
 - Result: 50-70% storage savings
 
 ### 4. Clean Up Old Videos
+
 - 30-day retention for free users
 - Delete unused projects
 - Result: 70-90% storage savings
 
 ### 5. Self-Host When You Can
+
 - VPS is cheaper than managed services
 - $4.50/month vs $25-50/month
 - Worth it if you're comfortable managing servers
 
 ### 6. Use Cloudflare R2 (Not S3)
+
 - **NO egress fees** (S3 charges $0.09/GB)
 - For 1TB video bandwidth: $90/month savings!
 - Storage is cheaper too
 
 ### 7. Monitor Usage
+
 - Set up alerts for free tier limits
 - Upgrade only when necessary
 - Track costs in spreadsheet
@@ -765,6 +824,7 @@ vercel deploy
 ## 🎬 Example: Real-World Costs
 
 ### My MVP (First Month)
+
 ```
 Users: 10
 Videos: 50 (1-2 minutes each)
@@ -779,6 +839,7 @@ Costs:
 ```
 
 ### My Growing App (Month 6)
+
 ```
 Users: 100
 Videos: 500 (1-2 minutes each)
@@ -793,6 +854,7 @@ Costs:
 ```
 
 ### My Scaling App (Month 12)
+
 ```
 Users: 500
 Videos: 2,000 (1-2 minutes each)
@@ -817,12 +879,14 @@ Costs:
 **Development Cost**: $0 (your time)
 
 **Monthly Costs**:
+
 - **MVP (0-50 users)**: $1/month (domain only)
 - **Growth (50-200 users)**: $2-5/month
 - **Scale (200-1,000 users)**: $5-10/month
 - **Big Scale (1,000-10,000 users)**: $30-60/month
 
 **Key Strategies**:
+
 1. ✅ Use free tiers everywhere
 2. ✅ Process in browser (save server costs)
 3. ✅ Compress videos aggressively
@@ -836,13 +900,13 @@ Costs:
 
 ## 📊 Cost Comparison: My Recommendations vs. Alternatives
 
-| Service | My Recommendation | Alternative | Savings |
-|---------|-------------------|-------------|---------|
-| Frontend | Vercel (FREE) | Netlify Pro ($19) | $19/month |
-| Database | Supabase (FREE) | AWS RDS ($25) | $25/month |
-| Storage | Cloudflare R2 ($0.015/GB) | AWS S3 ($0.09/GB bandwidth) | $90/month on bandwidth! |
-| Backend | Vercel API (FREE) | AWS Lambda ($20) | $20/month |
-| **Total Savings** | | | **$154+/month** |
+| Service           | My Recommendation         | Alternative                 | Savings                 |
+| ----------------- | ------------------------- | --------------------------- | ----------------------- |
+| Frontend          | Vercel (FREE)             | Netlify Pro ($19)           | $19/month               |
+| Database          | Supabase (FREE)           | AWS RDS ($25)               | $25/month               |
+| Storage           | Cloudflare R2 ($0.015/GB) | AWS S3 ($0.09/GB bandwidth) | $90/month on bandwidth! |
+| Backend           | Vercel API (FREE)         | AWS Lambda ($20)            | $20/month               |
+| **Total Savings** |                           |                             | **$154+/month**         |
 
 **Using my recommendations saves $150+ per month at scale!**
 
@@ -851,12 +915,14 @@ Costs:
 ## ✅ Action Items
 
 ### Today (Set Up Free Infrastructure)
+
 1. [ ] Create Vercel account (free)
 2. [ ] Create Supabase account (free)
 3. [ ] Create Cloudflare R2 account (free)
 4. [ ] (Optional) Buy domain ($10/year)
 
 ### This Week (Deploy MVP)
+
 1. [ ] Set up Next.js project
 2. [ ] Connect to Supabase
 3. [ ] Set up Cloudflare R2
@@ -864,6 +930,7 @@ Costs:
 5. [ ] Test with sample video
 
 ### This Month (Build Features)
+
 1. [ ] Add video upload
 2. [ ] Add basic analysis
 3. [ ] Add sharing
@@ -876,18 +943,21 @@ Costs:
 ## 🎯 Success Metrics (Budget-Focused)
 
 ### MVP Success
+
 - [ ] 10+ beta users
 - [ ] $1-2/month operating cost
 - [ ] Features working smoothly
 - [ ] Positive user feedback
 
 ### Product-Market Fit
+
 - [ ] 100+ active users
 - [ ] $2-5/month operating cost
 - [ ] Users sharing videos actively
 - [ ] Growing organically
 
 ### Scale Success
+
 - [ ] 1,000+ active users
 - [ ] $10-20/month operating cost
 - [ ] Platform sustainable financially
@@ -899,4 +969,4 @@ Costs:
 
 ---
 
-*Last Updated: Focused on minimal costs for solo developers building free products*
+_Last Updated: Focused on minimal costs for solo developers building free products_

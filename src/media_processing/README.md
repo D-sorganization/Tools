@@ -60,18 +60,21 @@ npm run dev
 ## Requirements
 
 ### Audio Processor
+
 - MATLAB R2020b or later
 - Signal Processing Toolbox
 - Audio Toolbox (recommended)
 - DSP System Toolbox (for advanced features)
 
 ### Video Processor
+
 - Node.js 18+ and npm 9+
 - (Optional) MATLAB with Simscape Multibody
 
 ## Integration
 
 This suite integrates with:
+
 - **Scientific Modeling** (`scientific_modeling/`) - Analysis integration
 - **MATLAB Core** (`matlab/`) - Shared MATLAB infrastructure
 - **Data Processing** (`data_processing/`) - Signal analysis pipelines

@@ -32,12 +32,12 @@ Flask-based web calculator providing engineering calculations through a browser 
 
 The calculator implements multiple layers of input validation:
 
-| Check | Description |
-|-------|-------------|
-| Input length limits | Maximum expression length |
+| Check               | Description                          |
+| ------------------- | ------------------------------------ |
+| Input length limits | Maximum expression length            |
 | Character whitelist | Only allowed mathematical characters |
-| Function whitelist | Only safe mathematical functions |
-| Expression parsing | AST-based evaluation (no `eval()`) |
+| Function whitelist  | Only safe mathematical functions     |
+| Expression parsing  | AST-based evaluation (no `eval()`)   |
 
 ---
 
@@ -52,15 +52,15 @@ Standalone web-based unit conversion tool supporting common engineering units.
 
 ### 8.2.2 Supported Categories
 
-| Category | Example Conversions |
-|----------|-------------------|
-| Length | m, ft, in, cm, mm, km, mi |
-| Mass | kg, lb, g, oz, ton |
-| Temperature | °C, °F, K, °R |
-| Pressure | Pa, bar, psi, atm, mmHg |
-| Volume | L, gal, m³, ft³ |
-| Flow Rate | m³/s, L/min, gal/min, SCFM |
-| Energy | J, kJ, BTU, cal, kWh |
+| Category    | Example Conversions        |
+| ----------- | -------------------------- |
+| Length      | m, ft, in, cm, mm, km, mi  |
+| Mass        | kg, lb, g, oz, ton         |
+| Temperature | °C, °F, K, °R              |
+| Pressure    | Pa, bar, psi, atm, mmHg    |
+| Volume      | L, gal, m³, ft³            |
+| Flow Rate   | m³/s, L/min, gal/min, SCFM |
+| Energy      | J, kJ, BTU, cal, kWh       |
 
 ### 8.2.3 Key Conversion Formulas
 
@@ -102,4 +102,4 @@ Web-based 3D viewer for URDF robot models using Three.js for WebGL rendering.
 
 ---
 
-*[← Data & Document Processing](./07_data_document_processing.md) | [Back to Manual](./TOOLS_USER_MANUAL.md) | [Next: Media Processing →](./09_media_processing.md)*
+_[← Data & Document Processing](./07_data_document_processing.md) | [Back to Manual](./TOOLS_USER_MANUAL.md) | [Next: Media Processing →](./09_media_processing.md)_

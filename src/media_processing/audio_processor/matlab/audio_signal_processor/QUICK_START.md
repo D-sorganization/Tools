@@ -25,6 +25,7 @@ That's it! The GUI will launch with all features ready to use.
 4. Waveform displays automatically
 
 **Try this:**
+
 ```matlab
 % Or load programmatically:
 [audio, fs] = load('handel');
@@ -145,12 +146,14 @@ fprintf('\n');
 ## 🎓 Key Functions Cheat Sheet
 
 ### Audio I/O
+
 ```matlab
 [audio, fs] = AudioLoader('file.wav');              % Load
 AudioExporter(audio, 'out.wav', 'SampleRate', fs);  % Export
 ```
 
 ### Filtering
+
 ```matlab
 % FFT filter
 filtered = FFTFilters(audio, 'Low Pass', 'CutoffFrequency', 2000, 'SampleRate', fs);
@@ -160,6 +163,7 @@ filtered = AudioFilterEngine(audio, 'Butterworth', 'CutoffFrequency', 1500, 'Sam
 ```
 
 ### Effects
+
 ```matlab
 % Reverb
 audio = AudioEffects(audio, 'Reverb', 'RoomSize', 0.7, 'Mix', 0.3, 'SampleRate', fs);
@@ -172,6 +176,7 @@ audio = AudioEffects(audio, 'EQ', 'LowGain', 3, 'HighGain', -2, 'SampleRate', fs
 ```
 
 ### Analysis
+
 ```matlab
 % Spectrum
 [freqs, mags] = FrequencyAnalyzer(audio, 'SampleRate', fs);
@@ -184,6 +189,7 @@ metadata = MetadataExtractor(audio, 'SampleRate', fs);
 ```
 
 ### Mixing
+
 ```matlab
 mixer = MixerCore(8, fs);                  % Create mixer
 mixer.loadTrack(1, audio1, fs);            % Load track
@@ -197,6 +203,7 @@ mixedAudio = mixer.processMix();           % Mix
 ## 💡 Pro Tips
 
 1. **Always normalize audio** before processing:
+
    ```matlab
    audio = audio / max(abs(audio(:)));
    ```
@@ -204,11 +211,13 @@ mixedAudio = mixer.processMix();           % Mix
 2. **Chain effects in order**: EQ → Compression → Reverb
 
 3. **Use high bit depth** for exports:
+
    ```matlab
    AudioExporter(audio, 'out.wav', 'BitDepth', 24, 'Normalize', true);
    ```
 
 4. **Monitor levels**:
+
    ```matlab
    peakDB = 20*log10(max(abs(audio(:))));
    fprintf('Peak level: %.2f dB\n', peakDB);
@@ -224,6 +233,7 @@ mixedAudio = mixer.processMix();           % Mix
 ## ❓ Troubleshooting
 
 ### Application won't launch
+
 ```matlab
 % Make sure you're in the right directory
 cd matlab/audio_signal_processor
@@ -231,14 +241,17 @@ launch_audio_processor
 ```
 
 ### Missing toolbox warning
+
 - Signal Processing Toolbox is **required**
 - Audio Toolbox is recommended but not required
 
 ### Audio sounds distorted
+
 - Check peak levels: `20*log10(max(abs(audio(:))))`
 - Normalize if needed: `audio = audio / max(abs(audio(:)))`
 
 ### GUI panel is empty
+
 - Make sure audio is loaded in Waveform tab first
 - Check for error messages in console
 
@@ -300,6 +313,7 @@ fprintf('Success! Check my_first_processed_audio.wav\n');
 ## 🎉 You're Ready!
 
 You now know enough to:
+
 - ✅ Load and process audio
 - ✅ Apply filters and effects
 - ✅ Mix multiple tracks

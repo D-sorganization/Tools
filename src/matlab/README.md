@@ -33,6 +33,7 @@ run_all();
 ```
 
 **Output:**
+
 - Creates `output/YYYY-MM-DD/baseline/` directory
 - Generates `metadata.json` with run information
 

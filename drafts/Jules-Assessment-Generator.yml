@@ -12,12 +12,12 @@ on:
   workflow_dispatch:
     inputs:
       full_regenerate:
-        description: 'Force full regeneration of all assessments'
+        description: "Force full regeneration of all assessments"
         required: false
-        default: 'false'
+        default: "false"
         type: boolean
   schedule:
-    - cron: "0 2 * * 0"  # Weekly on Sundays at 2 AM UTC
+    - cron: "0 2 * * 0" # Weekly on Sundays at 2 AM UTC
 
 permissions:
   contents: write

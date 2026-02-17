@@ -90,7 +90,7 @@ function populateUnits(category) {
   fromUnitSelect.innerHTML = '';
   toUnitSelect.innerHTML = '';
 
-  units.forEach(function(unit) {
+  units.forEach(function (unit) {
     fromUnitSelect.add(new Option(unit, unit));
     toUnitSelect.add(new Option(unit, unit));
   });
@@ -139,7 +139,7 @@ async function performConversion() {
   const payload = {
     value: value,
     from_unit: fromUnit,
-    to_unit: toUnit,
+    to_unit: toUnit
   };
 
   // Add optional parameters
@@ -163,7 +163,7 @@ async function performConversion() {
     const response = await fetch('/api/convert', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(payload)
     });
 
     const data = await response.json();
@@ -214,10 +214,7 @@ function loadHistory() {
 
 function saveHistory() {
   try {
-    localStorage.setItem(
-      'unitConverterHistory',
-      JSON.stringify(conversionHistory.slice(0, 20))
-    );
+    localStorage.setItem('unitConverterHistory', JSON.stringify(conversionHistory.slice(0, 20)));
   } catch (e) {
     // silent
   }
@@ -230,16 +227,12 @@ function addToHistory(fromValue, fromUnit, toValue, toUnit, category) {
     toValue: toValue,
     toUnit: toUnit,
     category: category,
-    timestamp: Date.now(),
+    timestamp: Date.now()
   };
 
   // Remove duplicates
-  conversionHistory = conversionHistory.filter(function(h) {
-    return !(
-      h.fromValue === fromValue &&
-      h.fromUnit === fromUnit &&
-      h.toUnit === toUnit
-    );
+  conversionHistory = conversionHistory.filter(function (h) {
+    return !(h.fromValue === fromValue && h.fromUnit === fromUnit && h.toUnit === toUnit);
   });
 
   conversionHistory.unshift(item);
@@ -260,7 +253,7 @@ function renderHistory() {
   }
 
   recentList.innerHTML = '';
-  conversionHistory.slice(0, 10).forEach(function(item, index) {
+  conversionHistory.slice(0, 10).forEach(function (item, index) {
     const timeAgo = formatTimeAgo(item.timestamp);
     const btn = document.createElement('button');
     btn.className = 'recent-item';
@@ -280,7 +273,7 @@ function renderHistory() {
     timeDiv.textContent = item.category + ' \u2022 ' + timeAgo;
     btn.appendChild(timeDiv);
 
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', function () {
       loadFromHistory(item);
     });
 
@@ -293,7 +286,7 @@ function loadFromHistory(item) {
   populateUnits(item.category);
   updateConditionalParams();
 
-  setTimeout(function() {
+  setTimeout(function () {
     fromValueInput.value = item.fromValue;
     fromUnitSelect.value = item.fromUnit;
     toUnitSelect.value = item.toUnit;
@@ -336,7 +329,7 @@ function formatTimeAgo(timestamp) {
 }
 
 function debounce(fn, delay) {
-  return function() {
+  return function () {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(fn, delay);
   };
@@ -347,7 +340,7 @@ function debounce(fn, delay) {
 // ============================================================================
 
 function setupEventListeners() {
-  categorySelect.addEventListener('change', function() {
+  categorySelect.addEventListener('change', function () {
     populateUnits(categorySelect.value);
     updateConditionalParams();
     performConversion();
@@ -370,13 +363,13 @@ function setupEventListeners() {
 
   // Theme switching
   if (themeSelect) {
-    themeSelect.addEventListener('change', function() {
+    themeSelect.addEventListener('change', function () {
       changeTheme(themeSelect.value);
     });
   }
 
   // Keyboard shortcut: Enter to convert
-  document.addEventListener('keydown', function(e) {
+  document.addEventListener('keydown', function (e) {
     if (e.key === 'Enter' && document.activeElement !== convertBtn) {
       performConversion();
     }

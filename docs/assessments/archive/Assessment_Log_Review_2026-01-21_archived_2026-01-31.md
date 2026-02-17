@@ -5,6 +5,7 @@
 A review of recent changes (last 2 days) was conducted. The primary focus was on the new launcher implementations and data processing updates.
 
 **Summary of Findings:**
+
 - **1 CRITICAL** issue identified in `UnifiedToolsLauncher.py` causing potential crashes on older Python environments.
 - **1 MAJOR** issue regarding configuration drift between the two launcher implementations.
 - **Security** practices in the new launcher are generally good (e.g., input sanitization for MATLAB, path traversal checks), though slightly restrictive for potential future web tool expansions.
@@ -12,6 +13,7 @@ A review of recent changes (last 2 days) was conducted. The primary focus was on
 ## Critical Issues
 
 ### 1. Missing Runtime Python Version Check
+
 - **File**: `UnifiedToolsLauncher.py`
 - **Severity**: **CRITICAL**
 - **Description**: The application relies on Python 3.11+ features (e.g., `StrEnum` via compatibility layer which might fail, or other syntax). There is no explicit check at the startup to verify the Python version.
@@ -27,6 +29,7 @@ A review of recent changes (last 2 days) was conducted. The primary focus was on
 ## Major Issues
 
 ### 2. Configuration Source of Truth Fragmentation
+
 - **File**: `Launcher.py` vs `UnifiedToolsLauncher.py`
 - **Severity**: **High**
 - **Description**: `UnifiedToolsLauncher.py` attempts to load tools dynamically from `PluginManager` or `tools.json`. However, `Launcher.py` (the fallback launcher) appears to use a hardcoded `TOOLS` dictionary.
@@ -36,12 +39,14 @@ A review of recent changes (last 2 days) was conducted. The primary focus was on
 ## Minor Issues & Observations
 
 ### 3. Redundant Logic in SignalProcessor
+
 - **File**: `data_processing/data_processor/python/data_processor/core/signal_processor.py`
 - **Severity**: Low
 - **Description**: The `apply_filter` method re-checks if `filter_engine` is `None` immediately after `__post_init__` ensures it is initialized.
 - **Recommendation**: Remove the redundant check to clean up the code.
 
 ### 4. PluginManager Error Handling
+
 - **File**: `UnifiedToolsLauncher.py`
 - **Severity**: Medium
 - **Description**: If `PluginManager` fails, the error is written to `sys.stderr`, which might not be visible to users launching the tool via a GUI shortcut.

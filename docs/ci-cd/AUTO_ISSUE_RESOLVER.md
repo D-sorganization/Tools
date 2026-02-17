@@ -17,12 +17,14 @@ Priority Score = (Severity Score) / (Effort Hours)
 ```
 
 **Severity Scoring:**
+
 - BLOCKER: 100 points
 - CRITICAL: 75 points
 - MAJOR: 50 points
 - MINOR: 25 points
 
 **Examples:**
+
 - CRITICAL issue with 2 hours effort: 75/2 = **37.5 priority** (very high)
 - MAJOR issue with 8 hours effort: 50/8 = **6.25 priority** (medium)
 - MINOR issue with 4 hours effort: 25/4 = **6.25 priority** (medium)
@@ -31,18 +33,19 @@ Priority Score = (Severity Score) / (Effort Hours)
 
 The workflow implements intelligent fix strategies for common issue types:
 
-| Issue Type | Detection | Fix Strategy |
-|------------|-----------|--------------|
-| **README Requirements** | Title contains "python requirements" or "readme" | Add Python version requirements section |
-| **Print Statement Cleanup** | Title contains "print" and "logging" | Replace print() with logging calls |
-| **Git Hygiene** | Title contains "hygiene" or body mentions `__pycache__` | Remove temp files, update .gitignore |
-| **Path Validation** | Title contains "path validation" | Add validation logic to plugin manager |
-| **Security Scanning** | Title contains "security" and body mentions "pip-audit" | Remove `\|\| true` from CI workflow |
-| **Type Checking** | Title contains "mypy" | Remove `\|\| true` from CI workflow |
+| Issue Type                  | Detection                                               | Fix Strategy                            |
+| --------------------------- | ------------------------------------------------------- | --------------------------------------- |
+| **README Requirements**     | Title contains "python requirements" or "readme"        | Add Python version requirements section |
+| **Print Statement Cleanup** | Title contains "print" and "logging"                    | Replace print() with logging calls      |
+| **Git Hygiene**             | Title contains "hygiene" or body mentions `__pycache__` | Remove temp files, update .gitignore    |
+| **Path Validation**         | Title contains "path validation"                        | Add validation logic to plugin manager  |
+| **Security Scanning**       | Title contains "security" and body mentions "pip-audit" | Remove `\|\| true` from CI workflow     |
+| **Type Checking**           | Title contains "mypy"                                   | Remove `\|\| true` from CI workflow     |
 
 ### 3. Pull Request Creation
 
 For each issue resolved:
+
 1. Creates a new branch: `auto-fix/issue-{number}-{timestamp}`
 2. Applies automated fixes
 3. Runs quality checks (Ruff, Black, pytest)
@@ -72,26 +75,31 @@ gh workflow run auto-issue-resolver.yml \
 ### Automatic Triggers
 
 **On Assessment Updates:**
+
 - Triggers when new assessment results are committed to `docs/assessments/`
 - Automatically processes top issues from latest assessment
 
 **Weekly Schedule:**
+
 - Runs every Monday at 3 AM UTC
 - Processes backlog of open issues
 
 ## Workflow Modes
 
 ### 1. Auto-Fix Mode (Default)
+
 - Automatically creates and merges fixes for low-risk issues
 - Creates standard PRs for review
 - Best for: Quick wins like documentation updates, hygiene fixes
 
 ### 2. Draft PR Mode
+
 - Creates draft PRs for all fixes
 - Requires manual review before marking ready
 - Best for: MAJOR/CRITICAL issues requiring human oversight
 
 ### 3. Analysis Only Mode
+
 - Analyzes and prioritizes issues
 - Creates summary report
 - Does NOT create PRs
@@ -170,6 +178,7 @@ graph LR
 ### Quality Gates
 
 All PRs must pass:
+
 - ✅ Ruff linting
 - ✅ Black formatting
 - ✅ Pytest collection (minimum check)
@@ -178,6 +187,7 @@ All PRs must pass:
 ### Rollback Strategy
 
 If an automated fix causes issues:
+
 1. Close the PR
 2. Revert the commit
 3. Add issue to exclusion list (see below)
@@ -186,6 +196,7 @@ If an automated fix causes issues:
 ### Excluding Issues from Auto-Resolution
 
 Add labels to issues to prevent auto-resolution:
+
 - `manual-only`: Never auto-resolve
 - `needs-design`: Requires design discussion first
 - `breaking-change`: Requires careful review
@@ -195,10 +206,12 @@ Add labels to issues to prevent auto-resolution:
 ### Summary Reports
 
 After each run, the workflow creates:
+
 1. **GitHub Step Summary** - Visible in Actions UI
 2. **Summary Issue** - Created in repository with label `report`
 
 Example summary:
+
 ```
 # Auto Issue Resolver - Run Summary
 
@@ -241,17 +254,21 @@ When creating issues that should be auto-resolvable:
 4. **Link Assessments** - Reference assessment finding IDs
 
 Example issue template:
+
 ```markdown
 ## MAJOR: Add Input Validation to Tool Launcher
 
 ### Assessment Reference
+
 - **Finding ID:** A-002
 - **Risk Rank:** #5
 
 ### Current Behavior
+
 No validation of tool paths...
 
 ### Proposed Solution
+
 Add validation in python/src/core/plugin_manager.py...
 
 ### Effort: M (4 hours)
@@ -264,11 +281,13 @@ Add validation in python/src/core/plugin_manager.py...
 **Symptom:** Workflow completes but no PR created
 
 **Possible Causes:**
+
 1. No changes committed (fix strategy didn't modify files)
 2. Branch already exists with same name
 3. Insufficient GitHub token permissions
 
 **Solution:**
+
 - Check workflow logs for "No changes to commit"
 - Verify GitHub Actions has write permissions
 - Manually trigger workflow with different timestamp
@@ -278,11 +297,13 @@ Add validation in python/src/core/plugin_manager.py...
 **Symptom:** PR created but expected changes missing
 
 **Possible Causes:**
+
 1. Issue title/body doesn't match detection pattern
 2. Target files don't exist
 3. Files already contain the fix
 
 **Solution:**
+
 - Review `generate_fix.py` detection logic
 - Update issue title to match pattern
 - Verify file paths in repository
@@ -292,11 +313,13 @@ Add validation in python/src/core/plugin_manager.py...
 **Symptom:** Workflow fails at "Run quality checks" step
 
 **Possible Causes:**
+
 1. Automated fix introduced linting errors
 2. Tests broken by changes
 3. Black formatting not applied
 
 **Solution:**
+
 - Review Ruff/Black output in logs
 - Fix strategy may need refinement
 - Consider using draft-pr mode for complex fixes

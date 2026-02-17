@@ -27,9 +27,11 @@ python/
 ## Included Tools
 
 ### Folder Tool
+
 Advanced folder processing for file combining, organization, deduplication, and archive extraction.
 
 **Features:**
+
 - Multiple processing modes (combine, flatten, deduplicate, analyze)
 - File filtering by extension and size
 - Bulk archive extraction (.zip, .rar, .7z)
@@ -39,14 +41,17 @@ Advanced folder processing for file combining, organization, deduplication, and 
 See [folder_tool/README.md](folder_tool/README.md) for details.
 
 ### Folder Tool Pro
+
 Enhanced version with professional features and modern UI.
 
 See [folder_tool_pro/README.md](folder_tool_pro/README.md) for details.
 
 ### Folder Packer Pro v2.0
+
 Professional project packaging tool with enterprise-grade security.
 
 **Features:**
+
 - AES-256 encryption
 - Flexible compression (None, Fast, Balanced, Best)
 - Git integration
@@ -56,6 +61,7 @@ Professional project packaging tool with enterprise-grade security.
 See [folder_packer_pro/README.md](folder_packer_pro/README.md) for details.
 
 ### Project Packer
+
 Secure project packaging and transport utilities.
 
 See [project_packer/README.md](project_packer/README.md) for details.
@@ -86,6 +92,7 @@ conda activate sim-env
 ## Dependencies
 
 Core dependencies (from requirements.txt):
+
 - `numpy==2.0.1` - Numerical computing
 - `pandas==2.2.2` - Data manipulation
 - `matplotlib==3.9.0` - Visualization
@@ -146,6 +153,7 @@ pre-commit run --all-files
 ## Integration
 
 These tools integrate with:
+
 - **UnifiedToolsLauncher.py** - Central launcher for all repository tools
 - **Development Tools** (`development_tools/`) - Additional tool versions
 - **File Management** (`file_management/`) - Related file utilities

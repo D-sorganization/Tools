@@ -47,6 +47,7 @@ python launch_pyqt6.py
 ### Metadata Tab
 
 Displays recording information:
+
 - Number of markers
 - Total frame count
 - Frame rate (Hz)
@@ -83,21 +84,21 @@ Displays recording information:
 
 The application reads standard C3D files containing:
 
-| Data Type | Description |
-|-----------|-------------|
-| Point Data | 3D marker coordinates (X, Y, Z) per frame |
-| Analog Data | Time-series data from analog devices |
-| Events | Labeled time points (e.g., gait events) |
-| Parameters | Recording metadata and calibration |
+| Data Type   | Description                               |
+| ----------- | ----------------------------------------- |
+| Point Data  | 3D marker coordinates (X, Y, Z) per frame |
+| Analog Data | Time-series data from analog devices      |
+| Events      | Labeled time points (e.g., gait events)   |
+| Parameters  | Recording metadata and calibration        |
 
 ### Export Options
 
-| Parameter | Values | Description |
-|-----------|--------|-------------|
-| Format | CSV, JSON, NPZ | Output file format |
+| Parameter    | Values              | Description                |
+| ------------ | ------------------- | -------------------------- |
+| Format       | CSV, JSON, NPZ      | Output file format         |
 | Target Units | Original, m, mm, cm | Coordinate unit conversion |
-| Start Frame | 0 - max | First frame to export |
-| End Frame | 0 - max | Last frame to export |
+| Start Frame  | 0 - max             | First frame to export      |
+| End Frame    | 0 - max             | Last frame to export       |
 
 ## Output Format
 
@@ -146,6 +147,7 @@ time = data['time']        # Time vector
 ### Coordinate Systems
 
 C3D files typically use a right-handed coordinate system:
+
 - **X**: Anterior-posterior (forward positive)
 - **Y**: Medial-lateral (left positive)
 - **Z**: Vertical (up positive)
@@ -167,6 +169,7 @@ time = frame_number / frame_rate
 ### Force Plate Data
 
 Ground reaction force from force plate channels:
+
 ```
 GRF = [Fx, Fy, Fz]  (Newtons)
 COP = [COPx, COPy]  (Center of Pressure, in mm)
@@ -178,6 +181,7 @@ Moments = [Mx, My, Mz]  (Newton-meters)
 ### Example 1: Gait Analysis File
 
 Loading a walking trial:
+
 - File: walk_01.c3d
 - Markers: 39 (full-body Plug-in Gait)
 - Frames: 500
@@ -185,6 +189,7 @@ Loading a walking trial:
 - Duration: 5.0 seconds
 
 Metadata shows:
+
 - 4 events (LHS, RTO, RHS, LTO)
 - 2 force plates
 - 6 analog channels per plate
@@ -215,11 +220,13 @@ heel_z = data['markers'][data['labels'] == 'RHEE', :, 2]
 ### "ezc3d library not available"
 
 The application shows demo data without ezc3d:
+
 ```bash
 pip install ezc3d
 ```
 
 On some systems, you may need to install from conda:
+
 ```bash
 conda install -c conda-forge ezc3d
 ```
@@ -227,6 +234,7 @@ conda install -c conda-forge ezc3d
 ### "No force plates detected in file"
 
 Force plate data requires:
+
 - Properly configured FORCE_PLATFORM parameter group
 - Analog channels mapped to force plate outputs
 - Calibration matrices in the C3D parameters
@@ -234,6 +242,7 @@ Force plate data requires:
 ### Markers appear at incorrect positions
 
 Check the coordinate system convention:
+
 - Some systems use Y-up instead of Z-up
 - Lab coordinate system may differ from file coordinates
 - Verify units match expected scale (mm vs m)
@@ -241,6 +250,7 @@ Check the coordinate system convention:
 ### Large files load slowly
 
 For files with many frames (>10,000):
+
 - Consider exporting a subset of frames
 - Use NPZ format for faster subsequent loading
 - Ensure sufficient system RAM
@@ -248,6 +258,7 @@ For files with many frames (>10,000):
 ### Export produces empty file
 
 Verify that:
+
 - A C3D file is loaded (green filename indicator)
 - Selected markers or channels exist in the file
 - Start frame < End frame

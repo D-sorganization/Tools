@@ -5,11 +5,13 @@ Your enhanced desktop shortcut creator is ready! This will create a professional
 ## 🚀 Quick Start (30 seconds)
 
 ### Option 1: Super Easy (Recommended)
-1. **Double-click** `CREATE_SHORTCUT.bat` 
+
+1. **Double-click** `CREATE_SHORTCUT.bat`
 2. Wait for completion message
 3. Done! ✨
 
 ### Option 2: PowerShell Direct
+
 1. **Right-click** `create_pdf_renamer_shortcut.ps1`
 2. Select **"Run with PowerShell"**
 3. Done! ✨

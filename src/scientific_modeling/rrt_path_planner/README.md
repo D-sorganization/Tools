@@ -54,18 +54,21 @@ Star_Wars_RRT_Planner/
 ## 🎯 Features
 
 ### **Core Functionality**
+
 - **RRT Path Planning**: Rapidly-exploring Random Trees algorithm
 - **3D Environment**: Dynamic obstacle avoidance in 3D space
 - **Ship Navigation**: Realistic ship movement with proper orientation
 - **Pursuit Scenarios**: Intelligent AI-driven chase sequences
 
 ### **Visual Effects**
+
 - **Cinematic Starfield**: Dynamic background with thousands of stars
 - **Ship Models**: High-quality 3D models (Millennium Falcon, etc.)
 - **Path Visualization**: Real-time path traces and RRT trees
 - **Camera System**: Multiple cinematic camera views
 
 ### **AI Behavior**
+
 - **Intelligent Pursuit**: Target ships evade when pursued
 - **Dynamic Replanning**: Real-time path updates
 - **Collision Avoidance**: Sophisticated obstacle navigation
@@ -74,6 +77,7 @@ Star_Wars_RRT_Planner/
 ## 🛠️ Quick Start
 
 ### MATLAB Version
+
 ```matlab
 % Navigate to MATLAB directory
 cd matlab/src
@@ -86,6 +90,7 @@ starWarsPathPlannerGUI
 ```
 
 ### Python Version
+
 ```bash
 # Navigate to Python directory
 cd python/src
@@ -99,28 +104,31 @@ python star_wars_rrt.py
 
 ## 📊 Performance Comparison
 
-| Feature | MATLAB | Python |
-|---------|--------|--------|
-| **Animation FPS** | 10-30 | 60+ |
-| **Path Planning** | ~1-5s | ~0.1-1s |
-| **Memory Usage** | 100-500MB | 50-200MB |
-| **GPU Support** | Limited | Full CUDA/OpenCL |
-| **Cross-platform** | Windows/Mac | All platforms |
-| **Cost** | Expensive | Free |
+| Feature            | MATLAB      | Python           |
+| ------------------ | ----------- | ---------------- |
+| **Animation FPS**  | 10-30       | 60+              |
+| **Path Planning**  | ~1-5s       | ~0.1-1s          |
+| **Memory Usage**   | 100-500MB   | 50-200MB         |
+| **GPU Support**    | Limited     | Full CUDA/OpenCL |
+| **Cross-platform** | Windows/Mac | All platforms    |
+| **Cost**           | Expensive   | Free             |
 
 ## 🎮 Usage Modes
 
 ### **Single Ship Navigation**
+
 - Plan optimal path through obstacle field
 - Cinematic camera following
 - Real-time path visualization
 
 ### **Pursuit Mode**
+
 - Two ships engage in intelligent chase
 - Dynamic evasion and pursuit behavior
 - Capture detection and victory effects
 
 ### **Camera Views**
+
 - **Cinematic**: Classic Star Wars-style angles
 - **Chase Cam**: Follow ships from behind
 - **Top Down**: Strategic overview
@@ -130,12 +138,14 @@ python star_wars_rrt.py
 ## 🔧 Technical Details
 
 ### **MATLAB Implementation**
+
 - **GUI Framework**: MATLAB App Designer
 - **3D Graphics**: MATLAB's built-in 3D plotting
 - **Path Planning**: Custom RRT implementation
 - **File Formats**: STL, CSV, MAT
 
 ### **Python Implementation**
+
 - **Rendering**: OpenGL with PyGame
 - **3D Graphics**: Hardware-accelerated rendering
 - **Path Planning**: NumPy-optimized RRT
@@ -144,12 +154,14 @@ python star_wars_rrt.py
 ## 🚀 Advanced Features
 
 ### **MATLAB Version**
+
 - **Comprehensive GUI**: Full control panel with real-time updates
 - **Scientific Visualization**: Publication-quality plots
 - **Simulink Integration**: System modeling capabilities
 - **Toolbox Support**: Robotics, Computer Vision toolboxes
 
 ### **Python Version**
+
 - **Real-time Rendering**: 60+ FPS animations
 - **GPU Acceleration**: CUDA/OpenCL support
 - **Advanced AI**: Machine learning integration
@@ -165,6 +177,7 @@ python star_wars_rrt.py
 ## 🧪 Testing
 
 ### **Unit Tests**
+
 ```bash
 # MATLAB Tests
 cd matlab/tests
@@ -176,6 +189,7 @@ pytest
 ```
 
 ### **Integration Tests**
+
 ```bash
 # Cross-platform tests
 cd tests
@@ -187,6 +201,7 @@ python run_integration_tests.py
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
 ### **Development Areas**
+
 1. **Performance**: Optimize algorithms and rendering
 2. **AI**: Enhance ship behavior and tactics
 3. **Graphics**: Add visual effects and shaders
@@ -207,6 +222,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🌟 Star Wars References
 
 This project pays homage to the iconic Star Wars universe with:
+
 - **Millennium Falcon**: Primary ship model
 - **Asteroid Field**: Dynamic obstacle environments
 - **Pursuit Scenarios**: Inspired by classic chase sequences
@@ -216,4 +232,4 @@ This project pays homage to the iconic Star Wars universe with:
 
 **May the Force be with your path planning!** 🌟
 
-*"Sir, the possibility of successfully navigating an asteroid field is approximately 3,720 to 1!"* - C-3PO 
+_"Sir, the possibility of successfully navigating an asteroid field is approximately 3,720 to 1!"_ - C-3PO

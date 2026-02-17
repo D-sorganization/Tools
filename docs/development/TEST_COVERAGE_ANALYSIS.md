@@ -12,23 +12,23 @@ The Tools monorepo has an **overall test coverage of approximately 11%** by line
 
 ### Key Metrics
 
-| Metric | Value |
-|--------|-------|
-| Total Source Files | ~141 |
-| Total Test Files | ~55 |
+| Metric                       | Value                       |
+| ---------------------------- | --------------------------- |
+| Total Source Files           | ~141                        |
+| Total Test Files             | ~55                         |
 | Overall Test-to-Source Ratio | 1:2.6 (38.7% by file count) |
-| Estimated LOC Coverage | ~11% |
+| Estimated LOC Coverage       | ~11%                        |
 
 ### Coverage by Module
 
-| Module | Source LOC | Test Coverage | Risk Level |
-|--------|------------|---------------|------------|
-| Web Calculator | ~300 | **~80%** | Low |
-| Python Core | ~500 | **~50%** | Medium |
-| Data Processing | ~15,685 | **~4%** | **Critical** |
-| Solar System Model | ~9,893 | **~11%** | **Critical** |
-| PDF Renamer | ~1,200 | **~20%** | High |
-| Tools/Utilities | ~9,700 | **~7%** | **Critical** |
+| Module             | Source LOC | Test Coverage | Risk Level   |
+| ------------------ | ---------- | ------------- | ------------ |
+| Web Calculator     | ~300       | **~80%**      | Low          |
+| Python Core        | ~500       | **~50%**      | Medium       |
+| Data Processing    | ~15,685    | **~4%**       | **Critical** |
+| Solar System Model | ~9,893     | **~11%**      | **Critical** |
+| PDF Renamer        | ~1,200     | **~20%**      | High         |
+| Tools/Utilities    | ~9,700     | **~7%**       | **Critical** |
 
 ---
 
@@ -40,16 +40,17 @@ The Tools monorepo has an **overall test coverage of approximately 11%** by line
 
 **Untested Critical Components:**
 
-| Component | Lines | Risk | Description |
-|-----------|-------|------|-------------|
-| `vectorized_filter_engine.py` | 1,043 | **CRITICAL** | 12 signal filtering algorithms (FFT, Butterworth, Hampel, Z-Score, etc.) |
-| `high_performance_loader.py` | 565 | **CRITICAL** | Parallel file loading, caching system, threading |
-| `data_loader.py` | 399 | **CRITICAL** | CSV loading, time column detection, DataFrame merging |
-| `cli.py` | 318 | HIGH | CLI commands, JSON config parsing, pipeline orchestration |
-| `Data_Processor_r0.py` | 8,958 | **CRITICAL** | Main legacy GUI - entirely untested |
-| `Data_Processor_Integrated.py` | 2,875 | **CRITICAL** | Extended GUI with encryption, format conversion |
+| Component                      | Lines | Risk         | Description                                                              |
+| ------------------------------ | ----- | ------------ | ------------------------------------------------------------------------ |
+| `vectorized_filter_engine.py`  | 1,043 | **CRITICAL** | 12 signal filtering algorithms (FFT, Butterworth, Hampel, Z-Score, etc.) |
+| `high_performance_loader.py`   | 565   | **CRITICAL** | Parallel file loading, caching system, threading                         |
+| `data_loader.py`               | 399   | **CRITICAL** | CSV loading, time column detection, DataFrame merging                    |
+| `cli.py`                       | 318   | HIGH         | CLI commands, JSON config parsing, pipeline orchestration                |
+| `Data_Processor_r0.py`         | 8,958 | **CRITICAL** | Main legacy GUI - entirely untested                                      |
+| `Data_Processor_Integrated.py` | 2,875 | **CRITICAL** | Extended GUI with encryption, format conversion                          |
 
 **Specific Untested Functionality:**
+
 - FFT filtering (200+ lines of frequency domain mathematics)
 - Parallel execution with ThreadPoolExecutor
 - NaN handling in signal processing
@@ -65,22 +66,24 @@ The Tools monorepo has an **overall test coverage of approximately 11%** by line
 
 **Untested Critical Components:**
 
-| Component | Lines | Risk | Description |
-|-----------|-------|------|-------------|
-| `time_manager.py` | 383 | **CRITICAL** | ALL time conversions (Julian, UTC, TT, TDB) - 0% tested |
-| `scene.py` | 1,319 | **CRITICAL** | Main simulation orchestration - 2% tested |
-| `renderer.py` | 855 | **CRITICAL** | OpenGL rendering engine - 0% tested |
-| `camera.py` | 531 | HIGH | Quaternion-based camera system - 0% tested |
-| `ui_renderer.py` | 684 | HIGH | 2D UI rendering - 0% tested |
-| `widgets.py` | 962 | HIGH | UI components - 3% tested |
-| `controls.py` | 319 | MEDIUM | User input handling - 0% tested |
+| Component         | Lines | Risk         | Description                                             |
+| ----------------- | ----- | ------------ | ------------------------------------------------------- |
+| `time_manager.py` | 383   | **CRITICAL** | ALL time conversions (Julian, UTC, TT, TDB) - 0% tested |
+| `scene.py`        | 1,319 | **CRITICAL** | Main simulation orchestration - 2% tested               |
+| `renderer.py`     | 855   | **CRITICAL** | OpenGL rendering engine - 0% tested                     |
+| `camera.py`       | 531   | HIGH         | Quaternion-based camera system - 0% tested              |
+| `ui_renderer.py`  | 684   | HIGH         | 2D UI rendering - 0% tested                             |
+| `widgets.py`      | 962   | HIGH         | UI components - 3% tested                               |
+| `controls.py`     | 319   | MEDIUM       | User input handling - 0% tested                         |
 
 **Well-Tested (Keep as reference):**
+
 - `orbital_mechanics.py` - 46% coverage, good mathematical validation
 - `celestial_body.py` - Core classes partially tested
 - `launcher.py` - Dependency checking tested
 
 **Specific Untested Functionality:**
+
 - datetime_to_julian / julian_to_datetime conversions
 - Time warp system and pause/resume logic
 - 50+ rendering methods in scene.py
@@ -95,13 +98,13 @@ The Tools monorepo has an **overall test coverage of approximately 11%** by line
 
 **Untested Critical Components:**
 
-| Component | Lines | Risk | Description |
-|-----------|-------|------|-------------|
-| `Folders_Tool_r0.py` | 3,273 | **CRITICAL** | Core folder operations - 0% tested |
-| `folder_packer_pro.py` | 1,892 | **CRITICAL** | Encryption, compression, threading |
-| `matlab_quality_check.py` | 600 | HIGH | MATLAB static analysis |
-| `code_quality_check.py` | 271 | HIGH | AST parsing, pattern matching |
-| `scientific_auditor.py` | 78 | MEDIUM | Division/trig safety auditing |
+| Component                 | Lines | Risk         | Description                        |
+| ------------------------- | ----- | ------------ | ---------------------------------- |
+| `Folders_Tool_r0.py`      | 3,273 | **CRITICAL** | Core folder operations - 0% tested |
+| `folder_packer_pro.py`    | 1,892 | **CRITICAL** | Encryption, compression, threading |
+| `matlab_quality_check.py` | 600   | HIGH         | MATLAB static analysis             |
+| `code_quality_check.py`   | 271   | HIGH         | AST parsing, pattern matching      |
+| `scientific_auditor.py`   | 78    | MEDIUM       | Division/trig safety auditing      |
 
 **Security Risk:** `folder_packer_pro.py` handles encryption (Fernet/PBKDF2) with zero test coverage.
 
@@ -113,16 +116,17 @@ The Tools monorepo has an **overall test coverage of approximately 11%** by line
 
 **Untested Critical Components:**
 
-| Component | Lines | Risk | Description |
-|-----------|-------|------|-------------|
-| `worker.py` | 199 | **CRITICAL** | Parallel processing, thread-safe file ops |
-| `llm_layer.py` | 133 | HIGH | Gemini API integration, model fallbacks |
-| `core.py` | 42 | MEDIUM | Orchestrates extraction layer approach |
-| `transaction_log.py` | 148 | MEDIUM | SQLite rollback operations |
-| `cache.py` | 81 | MEDIUM | Result caching with SQLite |
-| `config.py` | 277 | MEDIUM | API key management (5 sources) |
+| Component            | Lines | Risk         | Description                               |
+| -------------------- | ----- | ------------ | ----------------------------------------- |
+| `worker.py`          | 199   | **CRITICAL** | Parallel processing, thread-safe file ops |
+| `llm_layer.py`       | 133   | HIGH         | Gemini API integration, model fallbacks   |
+| `core.py`            | 42    | MEDIUM       | Orchestrates extraction layer approach    |
+| `transaction_log.py` | 148   | MEDIUM       | SQLite rollback operations                |
+| `cache.py`           | 81    | MEDIUM       | Result caching with SQLite                |
+| `config.py`          | 277   | MEDIUM       | API key management (5 sources)            |
 
 **Well-Tested:**
+
 - `renamer.py` - Filename generation and collision handling
 - `extractors.py` - PDF metadata extraction
 - `utils.py` - Title case, sanitization utilities
@@ -135,12 +139,12 @@ The Tools monorepo has an **overall test coverage of approximately 11%** by line
 
 **Untested Components:**
 
-| Component | Risk | Description |
-|-----------|------|-------------|
-| `core/plugin_manager.py` | HIGH | Plugin discovery and loading |
-| `tile_launcher/main.py` | MEDIUM | Application entry point |
-| `tile_launcher/ui.py` | MEDIUM | UI components |
-| `utils/compatibility.py` | LOW | Python 3.10+ compatibility shims |
+| Component                | Risk   | Description                      |
+| ------------------------ | ------ | -------------------------------- |
+| `core/plugin_manager.py` | HIGH   | Plugin discovery and loading     |
+| `tile_launcher/main.py`  | MEDIUM | Application entry point          |
+| `tile_launcher/ui.py`    | MEDIUM | UI components                    |
+| `utils/compatibility.py` | LOW    | Python 3.10+ compatibility shims |
 
 ---
 
@@ -149,11 +153,13 @@ The Tools monorepo has an **overall test coverage of approximately 11%** by line
 ### Phase 1: Critical Security & Data Integrity (Highest Priority)
 
 1. **Add tests for `vectorized_filter_engine.py`** (Data Processing)
+
    - Test all 12 filtering algorithms with edge cases (NaN, short signals, parameter bounds)
    - Add FFT filtering tests with known frequency responses
    - Test parallel execution with ThreadPoolExecutor
 
 2. **Add tests for `folder_packer_pro.py` encryption** (Tools)
+
    - Test encryption/decryption round-trips
    - Test key derivation (PBKDF2)
    - Test thread safety of shared state
@@ -166,16 +172,19 @@ The Tools monorepo has an **overall test coverage of approximately 11%** by line
 ### Phase 2: Core Functionality (High Priority)
 
 4. **Add tests for `high_performance_loader.py`** (Data Processing)
+
    - Test parallel file loading with mocked filesystem
    - Test cache invalidation logic
    - Test cancellation flag behavior
 
 5. **Add tests for `data_loader.py`** (Data Processing)
+
    - Test time column detection heuristics
    - Test DataFrame merging strategies (outer/inner/left/right)
    - Test edge case: start_time > end_time
 
 6. **Add tests for `worker.py`** (PDF Renamer)
+
    - Test parallel file processing
    - Test collision resolution with hash suffixes
    - Mock cache and transaction_log dependencies
@@ -188,11 +197,13 @@ The Tools monorepo has an **overall test coverage of approximately 11%** by line
 ### Phase 3: Integration & Orchestration (Medium Priority)
 
 8. **Add integration tests for `cli.py`** (Data Processing)
+
    - Test both `detect` and `run` commands
    - Test JSON config parsing and override logic
    - Test error handling paths
 
 9. **Add tests for `llm_layer.py`** (PDF Renamer)
+
    - Mock Gemini API responses
    - Test model fallback logic (5 attempts)
    - Test JSON parsing error recovery
@@ -205,6 +216,7 @@ The Tools monorepo has an **overall test coverage of approximately 11%** by line
 ### Phase 4: UI & Visualization (Lower Priority)
 
 11. **Refactor GUI business logic** (Data Processing, Tools)
+
     - Extract testable business logic from:
       - `Data_Processor_r0.py` (8,958 lines)
       - `Folders_Tool_r0.py` (3,273 lines)
@@ -241,13 +253,13 @@ markers =
 
 ### Coverage Targets
 
-| Phase | Target Coverage |
-|-------|-----------------|
-| Current | ~11% |
-| Phase 1 | 25% |
-| Phase 2 | 40% |
-| Phase 3 | 55% |
-| Phase 4 | 70% |
+| Phase   | Target Coverage |
+| ------- | --------------- |
+| Current | ~11%            |
+| Phase 1 | 25%             |
+| Phase 2 | 40%             |
+| Phase 3 | 55%             |
+| Phase 4 | 70%             |
 
 ---
 
@@ -341,29 +353,31 @@ class TestEncryptionRoundTrip:
 
 ## Summary of Key Gaps
 
-| Area | Gap | Impact | Priority |
-|------|-----|--------|----------|
-| **Signal Processing** | 12 algorithms untested | Data corruption risk | **P1** |
-| **Encryption** | 0% coverage | Security vulnerability | **P1** |
-| **Time Management** | 0% coverage | Simulation inaccuracy | **P1** |
-| **Parallel Loading** | 0% coverage | Race conditions | **P2** |
-| **Data Loading** | Edge cases untested | Data loss | **P2** |
-| **Worker Processing** | 0% coverage | Thread safety issues | **P2** |
-| **CLI Interface** | 0% coverage | User experience | **P3** |
-| **LLM Integration** | 16% coverage | API failure handling | **P3** |
-| **GUI Code** | 11,000+ lines untested | Maintainability | **P4** |
+| Area                  | Gap                    | Impact                 | Priority |
+| --------------------- | ---------------------- | ---------------------- | -------- |
+| **Signal Processing** | 12 algorithms untested | Data corruption risk   | **P1**   |
+| **Encryption**        | 0% coverage            | Security vulnerability | **P1**   |
+| **Time Management**   | 0% coverage            | Simulation inaccuracy  | **P1**   |
+| **Parallel Loading**  | 0% coverage            | Race conditions        | **P2**   |
+| **Data Loading**      | Edge cases untested    | Data loss              | **P2**   |
+| **Worker Processing** | 0% coverage            | Thread safety issues   | **P2**   |
+| **CLI Interface**     | 0% coverage            | User experience        | **P3**   |
+| **LLM Integration**   | 16% coverage           | API failure handling   | **P3**   |
+| **GUI Code**          | 11,000+ lines untested | Maintainability        | **P4**   |
 
 ---
 
 ## Conclusion
 
 This codebase has significant test coverage gaps that pose risks for:
+
 - **Data integrity** (untested signal processing algorithms)
 - **Security** (untested encryption code)
 - **Reliability** (untested time conversions in simulation)
 - **Maintainability** (11,000+ lines of untested GUI code)
 
 **Immediate Actions:**
+
 1. Add tests for signal processing filters (vectorized_filter_engine.py)
 2. Add tests for encryption/decryption (folder_packer_pro.py)
 3. Add tests for time management (time_manager.py)

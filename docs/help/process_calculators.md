@@ -18,6 +18,7 @@ Calculate dewpoints for acid gases in syngas systems.
 **Purpose**: Determine safe operating temperatures to prevent acid gas condensation and corrosion.
 
 **Inputs**:
+
 - Operating temperature (C)
 - Operating pressure (bar)
 - Gas composition:
@@ -27,16 +28,19 @@ Calculate dewpoints for acid gases in syngas systems.
   - H2S (hydrogen sulfide)
 
 **Outputs**:
+
 - Individual component dewpoints
 - Overall acid dewpoint
 - Safety margin calculation
 - Condensation warnings
 
 **Calculation Methods**:
+
 - Antoine equation
 - Extended Antoine equation
 
 **Presets**:
+
 - Typical Syngas
 - Coal Gasification
 - Biomass Gasification
@@ -50,11 +54,13 @@ Calculate water content and dewpoint in syngas systems.
 **Purpose**: Determine water vapor saturation conditions for process design.
 
 **Inputs**:
+
 - Temperature (C)
 - Pressure (bar)
 - Gas composition preset
 
 **Outputs**:
+
 - Water content in multiple units:
   - mg/Nm3
   - ppmv
@@ -80,11 +86,13 @@ Calculate water content and dewpoint in syngas systems.
 Calculate steam thermodynamic properties using multiple engines.
 
 **Modes**:
+
 - Temperature & Pressure
 - Saturated (from Temperature)
 - Saturated (from Pressure)
 
 **Outputs**:
+
 - Phase state and quality
 - Density
 - Enthalpy
@@ -97,6 +105,7 @@ Calculate steam thermodynamic properties using multiple engines.
 - Compressibility factor
 
 **Calculation Engines**:
+
 - CoolProp (recommended)
 - Cantera
 - Simplified correlations
@@ -110,6 +119,7 @@ Calculate steam thermodynamic properties using multiple engines.
 Design baghouse filter systems for particulate removal.
 
 **Inputs**:
+
 - Gas stream:
   - Flow rate (kg/s)
   - Inlet temperature (C)
@@ -126,6 +136,7 @@ Design baghouse filter systems for particulate removal.
   - Bag filter area (m2)
 
 **Outputs**:
+
 - Solids removal rates
 - Drum fill time (hours/days)
 - Air-to-cloth ratio
@@ -139,6 +150,7 @@ Design baghouse filter systems for particulate removal.
 Size flare systems and determine safety zones.
 
 **Inputs**:
+
 - Total flow rate (kg/hr)
 - Gas composition (8 components):
   - H2, CO, CH4, CO2
@@ -147,6 +159,7 @@ Size flare systems and determine safety zones.
 - Pressure (bar)
 
 **Outputs**:
+
 - Flare dimensions:
   - Stack height
   - Tip diameter
@@ -169,12 +182,14 @@ Size flare systems and determine safety zones.
 Design wet scrubber systems for gas cleaning.
 
 **Inputs**:
+
 - Gas flow rate
 - Contaminant concentrations
 - Scrubbing liquid properties
 - Column dimensions
 
 **Outputs**:
+
 - Removal efficiency
 - Liquid flow requirements
 - Pressure drop
@@ -187,11 +202,13 @@ Design wet scrubber systems for gas cleaning.
 Calculate pressure drops in piping systems.
 
 **Pipe Parameters**:
+
 - Nominal sizes: 0.5" to 24"
 - Schedules: 5, 10, 20, 40, 80, STD, XS, XXS
 - Materials: Carbon Steel, Stainless, Copper, PVC, HDPE, Concrete
 
 **Flow Conditions**:
+
 - Flow rate (various units)
 - Inlet pressure
 - Temperature
@@ -206,6 +223,7 @@ Calculate pressure drops in piping systems.
 | Haaland | Simple explicit |
 
 **Outputs**:
+
 - Total pressure drop (Pa)
 - Friction factor
 - Reynolds number
@@ -220,6 +238,7 @@ Calculate pressure drops in piping systems.
 Design thermal reaction chamber vessels with refractory lining.
 
 **Geometry Configuration**:
+
 - Cylinder section:
   - Height
   - Inner diameter
@@ -228,11 +247,13 @@ Design thermal reaction chamber vessels with refractory lining.
   - Bottom diameter
 
 **Refractory Presets**:
+
 - Standard (3-layer)
 - High Temperature (4-layer)
 - Economy (2-layer)
 
 **Outputs**:
+
 - Net internal volume
 - Total refractory mass
 - Layer-by-layer breakdown
@@ -249,12 +270,14 @@ Design thermal reaction chamber vessels with refractory lining.
 Design and analyze water-gas shift reactors.
 
 **Inputs**:
+
 - Feed composition
 - Inlet temperature
 - Pressure
 - Catalyst parameters
 
 **Outputs**:
+
 - CO conversion
 - Product composition
 - Heat duty
@@ -267,11 +290,13 @@ Design and analyze water-gas shift reactors.
 Design Pressure Swing Adsorption systems.
 
 **Inputs**:
+
 - Feed composition
 - Product purity requirements
 - Operating pressures
 
 **Outputs**:
+
 - Bed sizing
 - Cycle timing
 - Product recovery
@@ -284,11 +309,13 @@ Design Pressure Swing Adsorption systems.
 Size syngas compression systems.
 
 **Inputs**:
+
 - Inlet conditions
 - Outlet pressure requirement
 - Gas composition
 
 **Outputs**:
+
 - Number of stages
 - Compression ratios
 - Power requirements
@@ -303,6 +330,7 @@ Size syngas compression systems.
 Analyze 3-phase electrical systems for electrode heating.
 
 **Inputs**:
+
 - Phase measurements:
   - Current (A) x 3
   - Voltage (V) x 3
@@ -314,6 +342,7 @@ Analyze 3-phase electrical systems for electrode heating.
   - Bath temperature
 
 **Outputs**:
+
 - Total power (kW)
 - Phase powers
 - Phase resistances
@@ -340,19 +369,19 @@ m3/s, m3/h, L/s, L/min, ft3/s, CFM, GPM
 
 ## Additional Calculators
 
-| Calculator | Purpose |
-|------------|---------|
-| Heat Exchanger | LMTD, effectiveness-NTU calculations |
-| Pump Sizing | Head, power, NPSH calculations |
-| Tank Volume | Storage tank capacity |
-| Relief Valve Sizer | Safety valve sizing per API 520 |
-| Cooling Tower | Performance and approach |
-| Distillation Column | McCabe-Thiele, stage calculations |
-| Reactor Sizing | CSTR, PFR, batch design |
-| Catalyst Bed | Volume, pressure drop |
-| Combustion | Air requirements, adiabatic flame temperature |
-| Mass Balance | Process mass balance |
-| Energy Balance | Process energy balance |
+| Calculator          | Purpose                                       |
+| ------------------- | --------------------------------------------- |
+| Heat Exchanger      | LMTD, effectiveness-NTU calculations          |
+| Pump Sizing         | Head, power, NPSH calculations                |
+| Tank Volume         | Storage tank capacity                         |
+| Relief Valve Sizer  | Safety valve sizing per API 520               |
+| Cooling Tower       | Performance and approach                      |
+| Distillation Column | McCabe-Thiele, stage calculations             |
+| Reactor Sizing      | CSTR, PFR, batch design                       |
+| Catalyst Bed        | Volume, pressure drop                         |
+| Combustion          | Air requirements, adiabatic flame temperature |
+| Mass Balance        | Process mass balance                          |
+| Energy Balance      | Process energy balance                        |
 
 ---
 
@@ -361,6 +390,7 @@ m3/s, m3/h, L/s, L/min, ft3/s, CFM, GPM
 ### Input Validation
 
 All calculators validate inputs:
+
 - Range checking
 - Unit consistency
 - Physical constraints (e.g., positive values for flow)
@@ -368,6 +398,7 @@ All calculators validate inputs:
 ### Preset Compositions
 
 Quick-start with typical compositions:
+
 - Syngas (various sources)
 - Natural gas
 - Air
@@ -382,6 +413,7 @@ Quick-start with typical compositions:
 ### Shared Engines
 
 Calculators use shared libraries from `upstream_drift_tools`:
+
 - Consistent calculations across tools
 - Validated against literature
 - Unit tested

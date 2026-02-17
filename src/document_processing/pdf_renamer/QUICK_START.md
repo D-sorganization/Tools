@@ -7,11 +7,13 @@ All dependencies have been installed successfully, including PyMuPDF which was c
 ## 🚀 Launch the Application
 
 ### Option 1: Desktop Shortcut (Easiest)
+
 1. Run `create_shortcut.ps1` or `create_shortcut.vbs`
 2. Double-click "PDF Renamer" icon on your desktop
 3. Done!
 
 ### Option 2: Command Line
+
 ```bash
 # GUI Mode (Recommended)
 python launch_gui.py
@@ -21,6 +23,7 @@ python -m src.pdf_renamer.cli /path/to/pdfs --dry-run
 ```
 
 ### Option 3: Batch File
+
 ```bash
 # Double-click or run:
 PDF_Renamer.bat
@@ -29,6 +32,7 @@ PDF_Renamer.bat
 ## ✨ Verified Installation
 
 All core dependencies are now installed:
+
 - ✅ Python 3.13
 - ✅ PyPDF (metadata extraction)
 - ✅ **PyMuPDF (layout analysis)** - FIXED!
@@ -39,6 +43,7 @@ All core dependencies are now installed:
 ## 🎯 Using the Application
 
 ### GUI Features
+
 1. **Browse** - Select folder with PDFs
 2. **Settings** - Configure naming style:
    - ☑ Include Author (for "Author - Title.pdf" format)
@@ -52,18 +57,20 @@ All core dependencies are now installed:
 
 ### Naming Styles
 
-| Style | Without Author | With Author |
-|-------|---------------|-------------|
-| **Standard** | `Machine Learning Basics.pdf` | `Smith - Machine Learning Basics.pdf` |
-| **Snake Case** | `machine_learning_basics.pdf` | `smith_machine_learning_basics.pdf` |
-| **Kebab Case** | `machine-learning-basics.pdf` | `smith-machine-learning-basics.pdf` |
+| Style          | Without Author                | With Author                           |
+| -------------- | ----------------------------- | ------------------------------------- |
+| **Standard**   | `Machine Learning Basics.pdf` | `Smith - Machine Learning Basics.pdf` |
+| **Snake Case** | `machine_learning_basics.pdf` | `smith_machine_learning_basics.pdf`   |
+| **Kebab Case** | `machine-learning-basics.pdf` | `smith-machine-learning-basics.pdf`   |
 
 ### Title Case Rules
+
 - Major words: Capitalized (Machine, Learning, Analysis)
 - Minor words: Lowercase (of, the, and, for, to, at, by, in)
 - First/Last: Always capitalized
 
 **Examples:**
+
 ```
 introduction to machine learning → Introduction to Machine Learning
 the lord of the rings → The Lord of the Rings
@@ -90,9 +97,11 @@ This will check all dependencies and show what's working.
 ## 🐛 Troubleshooting
 
 ### PyMuPDF Errors (NOW FIXED!)
+
 Previously caused errors - now resolved by installing `pymupdf` package.
 
 ### GUI Won't Start
+
 ```bash
 # Check PyQt6
 python -c "from PyQt6.QtWidgets import QApplication"
@@ -102,6 +111,7 @@ pip install --force-reinstall PyQt6
 ```
 
 ### Missing Dependencies
+
 ```bash
 # Install all requirements
 pip install -r requirements.txt
@@ -111,6 +121,7 @@ pip install pypdf pymupdf PyQt6 google-generativeai pdfplumber
 ```
 
 ### AI Features Not Working
+
 ```bash
 # Set API key (Windows PowerShell)
 $env:GEMINI_API_KEY="your_api_key_here"

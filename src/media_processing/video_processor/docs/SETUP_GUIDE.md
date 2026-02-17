@@ -8,6 +8,7 @@
 ## 📁 What's Been Created
 
 ### Project Structure
+
 ✅ Monorepo structure (Turborepo)
 ✅ Next.js app scaffold
 ✅ TypeScript configuration
@@ -17,6 +18,7 @@
 ✅ Folder structure for all components
 
 ### Files Created
+
 - `package.json` - Root package.json with workspaces
 - `turbo.json` - Turborepo configuration
 - `apps/web/` - Next.js application
@@ -79,20 +81,24 @@ All documentation is in the `docs/` folder:
 ### Phase 1: MVP (Start Here)
 
 1. **Video Upload** (`apps/web/components/video/VideoUploader.tsx`)
+
    - Drag-and-drop upload
    - File validation
    - Upload to Cloudflare R2
 
 2. **Video Player** (`apps/web/components/video/VideoPlayer.tsx`)
+
    - Playback controls
    - Timeline scrubber
    - Frame-by-frame navigation
 
 3. **Basic Drawing** (`apps/web/components/tools/LineTool.tsx`)
+
    - Line drawing on video
    - Save annotations
 
 4. **User Authentication** (`apps/web/app/(auth)/`)
+
    - NextAuth.js setup
    - Email/password auth
 
@@ -106,6 +112,7 @@ All documentation is in the `docs/` folder:
 ### For You (Developer)
 
 1. **Develop Models in MATLAB**:
+
    ```matlab
    cd matlab/models
    % Create Simscape Multibody pendulum model
@@ -113,6 +120,7 @@ All documentation is in the `docs/` folder:
    ```
 
 2. **Export Results**:
+
    ```matlab
    results = pendulum_model(pose_data);
    export_results_to_web(results, 'results.json');
@@ -120,8 +128,8 @@ All documentation is in the `docs/` folder:
 
 3. **Import in Web Platform**:
    ```typescript
-   import { loadMATLABResults } from '@/lib/matlab/import-results';
-   const results = await loadMATLABResults('/matlab/results.json');
+   import { loadMATLABResults } from "@/lib/matlab/import-results";
+   const results = await loadMATLABResults("/matlab/results.json");
    ```
 
 See `docs/GOLF_VIDEO_MATLAB_INTEGRATION.md` for complete guide.
@@ -165,6 +173,7 @@ npx shadcn-ui@latest init
 ```
 
 Then install components as needed:
+
 ```bash
 npx shadcn-ui@latest add button
 npx shadcn-ui@latest add dialog
@@ -174,6 +183,7 @@ npx shadcn-ui@latest add dialog
 ## 📦 Key Dependencies to Install
 
 ### Core (Will install when needed)
+
 ```bash
 # Video processing
 npm install @ffmpeg/ffmpeg @ffmpeg/core
@@ -204,6 +214,7 @@ Install these as you build each feature (don't install everything at once).
 ## ✅ Checklist
 
 ### Setup
+
 - [x] Project structure created
 - [x] TypeScript configured
 - [x] Next.js scaffold ready
@@ -216,6 +227,7 @@ Install these as you build each feature (don't install everything at once).
 - [ ] Set up Supabase (for database/auth)
 
 ### Phase 1 Features
+
 - [ ] Video upload
 - [ ] Video playback
 - [ ] Basic drawing tools
@@ -224,16 +236,19 @@ Install these as you build each feature (don't install everything at once).
 - [ ] Basic sharing
 
 ### Phase 2 Features
+
 - [ ] AI pose detection
 - [ ] Feature tracking
 - [ ] Swing segmentation
 
 ### Phase 3 Features
+
 - [ ] 3D plane overlays
 - [ ] Pendulum model (MATLAB integration)
 - [ ] Camera perspective
 
 ### Phase 4 Features
+
 - [ ] Video upscaling
 - [ ] Advanced collaboration
 - [ ] Mobile optimization

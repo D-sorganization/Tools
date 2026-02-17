@@ -82,21 +82,21 @@ Thumbs.db
 
 Add custom patterns using glob syntax:
 
-| Pattern | Matches |
-|---------|---------|
-| `*.log` | All .log files |
-| `temp/*` | Everything in temp folder |
-| `**/*.bak` | All .bak files recursively |
+| Pattern       | Matches                            |
+| ------------- | ---------------------------------- |
+| `*.log`       | All .log files                     |
+| `temp/*`      | Everything in temp folder          |
+| `**/*.bak`    | All .bak files recursively         |
 | `data/[0-9]*` | Data folders starting with numbers |
 
 ### Output Formats
 
-| Format | Extension | Notes |
-|--------|-----------|-------|
-| ZIP | .zip | Universal compatibility |
-| TAR | .tar | Unix standard, no compression |
-| TAR.GZ | .tar.gz | Good compression |
-| 7z | .7z | Best compression |
+| Format | Extension | Notes                         |
+| ------ | --------- | ----------------------------- |
+| ZIP    | .zip      | Universal compatibility       |
+| TAR    | .tar      | Unix standard, no compression |
+| TAR.GZ | .tar.gz   | Good compression              |
+| 7z     | .7z       | Best compression              |
 
 ---
 
@@ -125,6 +125,7 @@ Recursively find and optionally remove empty folders:
 4. Apply removal (with confirmation)
 
 **Options**:
+
 - Keep folders matching patterns (e.g., `.gitkeep`)
 - Only remove if all children are also empty
 
@@ -138,6 +139,7 @@ Find files with identical content using hash comparison:
 4. Choose which copies to keep/delete
 
 **Hash Methods**:
+
 - MD5 (fast, less secure)
 - SHA256 (recommended)
 - SHA512 (most secure)
@@ -217,25 +219,25 @@ Batch rename PDF files based on content or metadata.
 
 Extract information from PDF metadata:
 
-| Field | Description |
-|-------|-------------|
-| Title | Document title |
-| Author | Document author |
-| Subject | Document subject |
-| Keywords | Document keywords |
-| Created | Creation date |
+| Field    | Description            |
+| -------- | ---------------------- |
+| Title    | Document title         |
+| Author   | Document author        |
+| Subject  | Document subject       |
+| Keywords | Document keywords      |
+| Created  | Creation date          |
 | Modified | Last modification date |
 
 #### From Content
 
 Extract information from PDF text:
 
-| Method | Description |
-|--------|-------------|
-| First Heading | First large text block |
-| First Line | First line of text |
+| Method        | Description              |
+| ------------- | ------------------------ |
+| First Heading | First large text block   |
+| First Line    | First line of text       |
 | Pattern Match | Regex pattern extraction |
-| Page Number | Specific page text |
+| Page Number   | Specific page text       |
 
 ### Naming Patterns
 
@@ -248,6 +250,7 @@ Build filenames from extracted data:
 ```
 
 **Pattern Variables**:
+
 - `{title}` - Document title
 - `{author}` - Document author
 - `{date}` - Creation date (YYYYMMDD)
@@ -260,12 +263,12 @@ Build filenames from extracted data:
 
 When renamed file would overwrite existing:
 
-| Option | Behavior |
-|--------|----------|
-| Skip | Keep original, don't rename |
-| Append Number | Add `_1`, `_2`, etc. |
-| Append Date | Add timestamp |
-| Overwrite | Replace existing (careful!) |
+| Option        | Behavior                    |
+| ------------- | --------------------------- |
+| Skip          | Keep original, don't rename |
+| Append Number | Add `_1`, `_2`, etc.        |
+| Append Date   | Add timestamp               |
+| Overwrite     | Replace existing (careful!) |
 
 ### Transaction Log
 

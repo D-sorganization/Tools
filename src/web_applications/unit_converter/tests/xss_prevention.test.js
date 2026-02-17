@@ -1,4 +1,3 @@
-
 describe('XSS Prevention', () => {
   // The function to be added to app.js
   function escapeHtml(unsafe) {
@@ -15,7 +14,7 @@ describe('XSS Prevention', () => {
     test('escapes basic HTML characters', () => {
       expect(escapeHtml('<script>')).toBe('&lt;script&gt;');
       expect(escapeHtml('"quoted"')).toBe('&quot;quoted&quot;');
-      expect(escapeHtml("Start & End")).toBe('Start &amp; End');
+      expect(escapeHtml('Start & End')).toBe('Start &amp; End');
     });
 
     test('escapes XSS payloads', () => {
@@ -54,53 +53,61 @@ describe('XSS Prevention', () => {
     });
 
     test('renderHistory simulation is safe with escaping', () => {
-        const item = {
-            fromValue: 1,
-            fromUnit: '<script>alert(1)</script>',
-            toValue: 100,
-            toUnit: 'cm',
-            category: '<img src=x onerror=alert(1)>' // Malicious category
-        };
+      const item = {
+        fromValue: 1,
+        fromUnit: '<script>alert(1)</script>',
+        toValue: 100,
+        toUnit: 'cm',
+        category: '<img src=x onerror=alert(1)>' // Malicious category
+      };
 
-        const getCategoryLabel = (cat) => cat; // Mock behavior
+      const getCategoryLabel = cat => cat; // Mock behavior
 
-        // Vulnerable logic simulation
-        const vulnerableHtml = `
+      // Vulnerable logic simulation
+      const vulnerableHtml = `
         <div class="recent-item">
           <div class="recent-item-text">
-            ${item.fromValue} ${escapeHtml(item.fromUnit)} = ${item.toValue} ${escapeHtml(item.toUnit)}
+            ${item.fromValue} ${escapeHtml(item.fromUnit)} = ${item.toValue} ${escapeHtml(
+              item.toUnit
+            )}
           </div>
           <div class="recent-item-time">${getCategoryLabel(item.category)} • just now</div>
         </div>
         `;
-        expect(vulnerableHtml).toContain('<img src=x onerror=alert(1)>');
+      expect(vulnerableHtml).toContain('<img src=x onerror=alert(1)>');
 
-        // Secured logic simulation
-        const securedHtml = `
+      // Secured logic simulation
+      const securedHtml = `
         <div class="recent-item">
           <div class="recent-item-text">
-            ${item.fromValue} ${escapeHtml(item.fromUnit)} = ${item.toValue} ${escapeHtml(item.toUnit)}
+            ${item.fromValue} ${escapeHtml(item.fromUnit)} = ${item.toValue} ${escapeHtml(
+              item.toUnit
+            )}
           </div>
-          <div class="recent-item-time">${escapeHtml(getCategoryLabel(item.category))} • just now</div>
+          <div class="recent-item-time">${escapeHtml(
+            getCategoryLabel(item.category)
+          )} • just now</div>
         </div>
         `;
 
-        expect(securedHtml).not.toContain('<script>');
-        expect(securedHtml).toContain('&lt;script&gt;');
-        expect(securedHtml).not.toContain('<img');
-        expect(securedHtml).toContain('&lt;img src=x onerror=alert(1)&gt;');
+      expect(securedHtml).not.toContain('<script>');
+      expect(securedHtml).toContain('&lt;script&gt;');
+      expect(securedHtml).not.toContain('<img');
+      expect(securedHtml).toContain('&lt;img src=x onerror=alert(1)&gt;');
     });
 
     test('renderCustomUnitsList category is safe with escaping', () => {
       const category = '<img src=x onerror=alert(1)>';
-      const getCategoryLabel = (cat) => cat;
+      const getCategoryLabel = cat => cat;
 
       // Vulnerable
       const vulnerableHtml = `<h4 class="custom-category-title">${getCategoryLabel(category)}</h4>`;
       expect(vulnerableHtml).toContain('<img');
 
       // Secure
-      const securedHtml = `<h4 class="custom-category-title">${escapeHtml(getCategoryLabel(category))}</h4>`;
+      const securedHtml = `<h4 class="custom-category-title">${escapeHtml(
+        getCategoryLabel(category)
+      )}</h4>`;
       expect(securedHtml).toContain('&lt;img');
     });
   });

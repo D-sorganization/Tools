@@ -73,71 +73,71 @@ npm install react react-dom vite tailwindcss
 
 ### Plant Operations
 
-| Parameter | Description | Default | Unit |
-|-----------|-------------|---------|------|
-| Plant Capacity | Daily throughput | 100 | TPD (tons/day) |
-| Operating Days | Annual operating days | 330 | days/year |
-| Capacity Utilization | Operating efficiency | 85 | % |
+| Parameter            | Description           | Default | Unit           |
+| -------------------- | --------------------- | ------- | -------------- |
+| Plant Capacity       | Daily throughput      | 100     | TPD (tons/day) |
+| Operating Days       | Annual operating days | 330     | days/year      |
+| Capacity Utilization | Operating efficiency  | 85      | %              |
 
 ### Revenue Parameters
 
-| Parameter | Description | Default | Unit |
-|-----------|-------------|---------|------|
-| Product Price | Main product selling price | 500 | $/ton |
-| Byproduct Revenue | Secondary product revenue | 50 | $/ton |
-| Byproduct Yield | Byproduct fraction | 10 | % |
+| Parameter         | Description                | Default | Unit  |
+| ----------------- | -------------------------- | ------- | ----- |
+| Product Price     | Main product selling price | 500     | $/ton |
+| Byproduct Revenue | Secondary product revenue  | 50      | $/ton |
+| Byproduct Yield   | Byproduct fraction         | 10      | %     |
 
 ### Variable Costs ($/ton)
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| Feedstock Cost | Raw material cost | 200 |
-| Labor Cost | Variable labor | 30 |
-| Utilities Cost | Power, water, etc. | 40 |
-| Maintenance Cost | Variable maintenance | 15 |
-| Consumables | Supplies, catalysts | 10 |
+| Parameter        | Description          | Default |
+| ---------------- | -------------------- | ------- |
+| Feedstock Cost   | Raw material cost    | 200     |
+| Labor Cost       | Variable labor       | 30      |
+| Utilities Cost   | Power, water, etc.   | 40      |
+| Maintenance Cost | Variable maintenance | 15      |
+| Consumables      | Supplies, catalysts  | 10      |
 
 ### Fixed Costs ($/year)
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| Fixed Labor | Salaries, benefits | 500,000 |
-| Insurance | Annual premium | 100,000 |
-| Property Tax | Annual tax | 50,000 |
-| Admin Overhead | G&A expenses | 200,000 |
+| Parameter      | Description        | Default |
+| -------------- | ------------------ | ------- |
+| Fixed Labor    | Salaries, benefits | 500,000 |
+| Insurance      | Annual premium     | 100,000 |
+| Property Tax   | Annual tax         | 50,000  |
+| Admin Overhead | G&A expenses       | 200,000 |
 
 ### Capital & Financing
 
-| Parameter | Description | Default | Range |
-|-----------|-------------|---------|-------|
-| Total Capital | Initial investment | 10,000,000 | $ |
-| Debt Ratio | Leverage percentage | 60 | % |
-| Interest Rate | Annual debt cost | 7 | % |
-| Depreciation Period | Asset useful life | 10 | years |
-| Tax Rate | Corporate tax rate | 25 | % |
+| Parameter           | Description         | Default    | Range |
+| ------------------- | ------------------- | ---------- | ----- |
+| Total Capital       | Initial investment  | 10,000,000 | $     |
+| Debt Ratio          | Leverage percentage | 60         | %     |
+| Interest Rate       | Annual debt cost    | 7          | %     |
+| Depreciation Period | Asset useful life   | 10         | years |
+| Tax Rate            | Corporate tax rate  | 25         | %     |
 
 ## Output Format
 
 ### Summary Metrics
 
-| Metric | Description | Example |
-|--------|-------------|---------|
+| Metric           | Description             | Example     |
+| ---------------- | ----------------------- | ----------- |
 | Annual Feedstock | Total annual throughput | 28,050 tons |
-| Total Revenue | Gross annual revenue | $12,543,750 |
-| Total Costs | Variable + Fixed costs | $9,876,500 |
-| Net Income | After-tax profit | $1,834,687 |
-| EBITDA | Operating cash flow | $2,667,250 |
-| Return on Equity | ROE percentage | 45.9% |
-| Payback Period | Capital recovery time | 3.8 years |
+| Total Revenue    | Gross annual revenue    | $12,543,750 |
+| Total Costs      | Variable + Fixed costs  | $9,876,500  |
+| Net Income       | After-tax profit        | $1,834,687  |
+| EBITDA           | Operating cash flow     | $2,667,250  |
+| Return on Equity | ROE percentage          | 45.9%       |
+| Payback Period   | Capital recovery time   | 3.8 years   |
 
 ### 10-Year Projections Table
 
 | Year | Revenue | Costs | EBITDA | Net Income | Cumulative CF |
-|------|---------|-------|--------|------------|---------------|
-| 1 | $12.5M | $9.9M | $2.7M | $1.8M | -$8.2M |
-| 2 | $12.5M | $9.9M | $2.7M | $1.8M | -$5.4M |
-| ... | ... | ... | ... | ... | ... |
-| 10 | $12.5M | $9.9M | $2.7M | $1.8M | $11.3M |
+| ---- | ------- | ----- | ------ | ---------- | ------------- |
+| 1    | $12.5M  | $9.9M | $2.7M  | $1.8M      | -$8.2M        |
+| 2    | $12.5M  | $9.9M | $2.7M  | $1.8M      | -$5.4M        |
+| ...  | ...     | ...   | ...    | ...        | ...           |
+| 10   | $12.5M  | $9.9M | $2.7M  | $1.8M      | $11.3M        |
 
 ## Example Usage
 
@@ -248,11 +248,13 @@ Payback = Total Capital / Annual Cash Flow
 ### Negative Net Income
 
 **Causes**:
+
 - Product price too low
 - Costs too high
 - Low utilization
 
 **Solutions**:
+
 - Increase product price
 - Reduce variable costs
 - Improve capacity utilization
@@ -260,11 +262,13 @@ Payback = Total Capital / Annual Cash Flow
 ### Very Long Payback Period
 
 **Causes**:
+
 - High capital cost
 - Low operating margin
 - Excessive debt service
 
 **Solutions**:
+
 - Review capital cost estimates
 - Optimize cost structure
 - Consider different financing terms
@@ -297,6 +301,7 @@ npm run dev
 ### Depreciation Method
 
 Straight-line depreciation is used:
+
 ```
 Annual Depreciation = Total Capital / Depreciation Years
 ```
@@ -304,6 +309,7 @@ Annual Depreciation = Total Capital / Depreciation Years
 ### Tax Calculation
 
 Taxes are only applied to positive earnings:
+
 ```python
 taxes = max(0, ebt * tax_rate)
 ```
@@ -311,6 +317,7 @@ taxes = max(0, ebt * tax_rate)
 ### Inflation Assumptions
 
 The current model assumes constant prices. For inflation modeling:
+
 ```python
 escalation_rate = 0.03  # 3% annual
 year_n_price = base_price * (1 + escalation_rate) ** n

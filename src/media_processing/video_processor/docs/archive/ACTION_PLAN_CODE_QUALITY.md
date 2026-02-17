@@ -17,6 +17,7 @@
 #### Tasks
 
 ##### 1.1 Set Up Testing Framework
+
 ```bash
 # Install dependencies
 npm install --save-dev \
@@ -96,12 +97,14 @@ npm pkg set scripts.test:watch="vitest --watch"
 ```
 
 **Acceptance Criteria**:
+
 - [ ] Vitest configured and running
 - [ ] Test setup file created
 - [ ] All test scripts working
 - [ ] Coverage reporting configured
 
 ##### 1.2 Write Component Tests
+
 ```bash
 # Create test files structure
 mkdir -p apps/web/components/{video,tools,ai,audio,annotations}/__tests__
@@ -112,6 +115,7 @@ mkdir -p apps/web/lib/__tests__
 **Tests to Write**:
 
 **VideoPlayer Component** (`apps/web/components/video/__tests__/VideoPlayer.test.tsx`):
+
 ```typescript
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
@@ -161,55 +165,56 @@ describe('VideoPlayer', () => {
 ```
 
 **useVideoFrame Hook** (`apps/web/hooks/__tests__/useVideoFrame.test.ts`):
-```typescript
-import { renderHook } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
-import { useVideoFrame } from '../useVideoFrame';
 
-describe('useVideoFrame', () => {
-  it('calculates current frame correctly', () => {
+```typescript
+import { renderHook } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
+import { useVideoFrame } from "../useVideoFrame";
+
+describe("useVideoFrame", () => {
+  it("calculates current frame correctly", () => {
     const mockVideo = {
       currentTime: 1.0,
       duration: 10.0,
     } as HTMLVideoElement;
 
     const { result } = renderHook(() =>
-      useVideoFrame({ videoElement: mockVideo, fps: 30 })
+      useVideoFrame({ videoElement: mockVideo, fps: 30 }),
     );
 
     expect(result.current.getCurrentFrame()).toBe(30);
   });
 
-  it('calculates total frames correctly', () => {
+  it("calculates total frames correctly", () => {
     const mockVideo = {
       currentTime: 0,
       duration: 10.0,
     } as HTMLVideoElement;
 
     const { result } = renderHook(() =>
-      useVideoFrame({ videoElement: mockVideo, fps: 30 })
+      useVideoFrame({ videoElement: mockVideo, fps: 30 }),
     );
 
     expect(result.current.getTotalFrames()).toBe(300);
   });
 
-  it('returns 0 when video element is null', () => {
+  it("returns 0 when video element is null", () => {
     const { result } = renderHook(() =>
-      useVideoFrame({ videoElement: null, fps: 30 })
+      useVideoFrame({ videoElement: null, fps: 30 }),
     );
 
     expect(result.current.getCurrentFrame()).toBe(0);
     expect(result.current.getTotalFrames()).toBe(0);
   });
 
-  it('navigates to next frame correctly', () => {
+  it("navigates to next frame correctly", () => {
     const mockVideo = {
       currentTime: 0,
       duration: 10.0,
     } as HTMLVideoElement;
 
     const { result } = renderHook(() =>
-      useVideoFrame({ videoElement: mockVideo, fps: 30 })
+      useVideoFrame({ videoElement: mockVideo, fps: 30 }),
     );
 
     result.current.nextFrame();
@@ -220,6 +225,7 @@ describe('useVideoFrame', () => {
 ```
 
 **EditorCanvas Component** (`apps/web/components/video/__tests__/EditorCanvas.test.tsx`):
+
 ```typescript
 import { render } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
@@ -282,6 +288,7 @@ describe('EditorCanvas', () => {
 ```
 
 **Minimum Test Coverage**:
+
 - [ ] VideoPlayer: 10 tests
 - [ ] VideoUploader: 8 tests
 - [ ] EditorCanvas: 12 tests
@@ -294,6 +301,7 @@ describe('EditorCanvas', () => {
 **Target**: 80+ tests, 80% coverage
 
 ##### 1.3 Add E2E Tests
+
 ```bash
 # Install Playwright
 npm init playwright@latest
@@ -346,6 +354,7 @@ EOF
 ```
 
 **Acceptance Criteria**:
+
 - [ ] Playwright configured
 - [ ] 5+ E2E tests written
 - [ ] Test fixtures created
@@ -361,6 +370,7 @@ EOF
 #### Tasks
 
 ##### 2.1 Create Error Infrastructure
+
 ```typescript
 // apps/web/lib/errors.ts
 export class AppError extends Error {
@@ -368,7 +378,7 @@ export class AppError extends Error {
     message: string,
     public readonly code: string,
     public readonly statusCode: number = 500,
-    public readonly metadata?: Record<string, unknown>
+    public readonly metadata?: Record<string, unknown>,
   ) {
     super(message);
     this.name = this.constructor.name;
@@ -388,36 +398,37 @@ export class AppError extends Error {
 
 export class ValidationError extends AppError {
   constructor(message: string, metadata?: Record<string, unknown>) {
-    super(message, 'VALIDATION_ERROR', 400, metadata);
+    super(message, "VALIDATION_ERROR", 400, metadata);
   }
 }
 
 export class VideoProcessingError extends AppError {
   constructor(message: string, metadata?: Record<string, unknown>) {
-    super(message, 'VIDEO_PROCESSING_ERROR', 500, metadata);
+    super(message, "VIDEO_PROCESSING_ERROR", 500, metadata);
   }
 }
 
 export class AudioRecordingError extends AppError {
   constructor(message: string, metadata?: Record<string, unknown>) {
-    super(message, 'AUDIO_RECORDING_ERROR', 500, metadata);
+    super(message, "AUDIO_RECORDING_ERROR", 500, metadata);
   }
 }
 
 export class AnnotationError extends AppError {
   constructor(message: string, metadata?: Record<string, unknown>) {
-    super(message, 'ANNOTATION_ERROR', 500, metadata);
+    super(message, "ANNOTATION_ERROR", 500, metadata);
   }
 }
 
 export class PoseDetectionError extends AppError {
   constructor(message: string, metadata?: Record<string, unknown>) {
-    super(message, 'POSE_DETECTION_ERROR', 500, metadata);
+    super(message, "POSE_DETECTION_ERROR", 500, metadata);
   }
 }
 ```
 
 ##### 2.2 Add Error Boundaries
+
 ```typescript
 // apps/web/components/ErrorBoundary.tsx
 'use client';
@@ -537,6 +548,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 ```
 
 ##### 2.3 Add Toast Notifications
+
 ```bash
 npm install sonner  # Excellent toast library for React
 ```
@@ -576,27 +588,34 @@ export default function RootLayout({ children }) {
 ```
 
 ##### 2.4 Replace console.log with Proper Error Handling
+
 **File**: `apps/web/app/page.tsx`
 
 **Before**:
+
 ```typescript
 const handleAudioRecorded = (audioBlob: Blob, startTime: number) => {
   const audioUrl = URL.createObjectURL(audioBlob);
-  console.log('Audio recorded:', { audioUrl, startTime, duration: audioBlob.size });
+  console.log("Audio recorded:", {
+    audioUrl,
+    startTime,
+    duration: audioBlob.size,
+  });
 };
 ```
 
 **After**:
+
 ```typescript
-import { toast } from 'sonner';
-import { logger } from '@/lib/logger';
-import { AudioRecordingError } from '@/lib/errors';
+import { toast } from "sonner";
+import { logger } from "@/lib/logger";
+import { AudioRecordingError } from "@/lib/errors";
 
 const handleAudioRecorded = async (audioBlob: Blob, startTime: number) => {
   try {
     // Validate input
     if (!audioBlob || audioBlob.size === 0) {
-      throw new AudioRecordingError('Empty audio blob received', {
+      throw new AudioRecordingError("Empty audio blob received", {
         startTime,
         blobSize: audioBlob?.size,
       });
@@ -611,24 +630,27 @@ const handleAudioRecorded = async (audioBlob: Blob, startTime: number) => {
         duration: audioBlob.size,
         videoId: videoFile?.name,
       },
-      'Audio recorded successfully'
+      "Audio recorded successfully",
     );
 
     // TODO: Save to database when backend is ready
     // await saveAudioTrack({ url: audioUrl, startTime, duration: audioBlob.size });
 
-    toast.success('Audio commentary recorded successfully');
+    toast.success("Audio commentary recorded successfully");
   } catch (error) {
-    logger.error({ error, audioBlob, startTime }, 'Failed to process audio recording');
+    logger.error(
+      { error, audioBlob, startTime },
+      "Failed to process audio recording",
+    );
 
     if (error instanceof AudioRecordingError) {
       toast.error(error.message);
     } else {
-      toast.error('Failed to save audio recording. Please try again.');
+      toast.error("Failed to save audio recording. Please try again.");
     }
 
     // Report to error tracking
-    if (typeof window !== 'undefined' && (window as any).Sentry) {
+    if (typeof window !== "undefined" && (window as any).Sentry) {
       (window as any).Sentry.captureException(error);
     }
   }
@@ -636,6 +658,7 @@ const handleAudioRecorded = async (audioBlob: Blob, startTime: number) => {
 ```
 
 **Acceptance Criteria**:
+
 - [ ] All console.log replaced with logger
 - [ ] All error paths have proper handling
 - [ ] User-facing error messages added
@@ -652,6 +675,7 @@ const handleAudioRecorded = async (audioBlob: Blob, startTime: number) => {
 #### Tasks
 
 ##### 3.1 Create .env.example
+
 ```bash
 cat > .env.example << 'EOF'
 # See ACTION_PLAN_CODE_QUALITY.md for detailed .env.example
@@ -660,12 +684,15 @@ EOF
 ```
 
 ##### 3.2 Create Configuration Module
+
 ```typescript
 // See Priority 0, Section 3 in main review for full config.ts implementation
 ```
 
 ##### 3.3 Remove Hardcoded Values
+
 **Find and replace**:
+
 ```bash
 # Find hardcoded FPS
 grep -r "fps.*30" apps/web/
@@ -679,16 +706,18 @@ grep -r "https://" apps/web/
 ```
 
 **Example Fix**:
+
 ```typescript
 // Before
 const fps = 30;
 
 // After
-import { config } from '@/lib/config';
+import { config } from "@/lib/config";
 const fps = config.video.defaultFPS;
 ```
 
 **Acceptance Criteria**:
+
 - [ ] .env.example created with all variables
 - [ ] config.ts module created
 - [ ] All hardcoded values replaced
@@ -705,6 +734,7 @@ const fps = config.video.defaultFPS;
 #### Tasks
 
 ##### 4.1 Add File Validation
+
 ```bash
 npm install file-type zod
 ```
@@ -714,6 +744,7 @@ npm install file-type zod
 ```
 
 ##### 4.2 Add Input Sanitization
+
 ```bash
 npm install dompurify
 npm install --save-dev @types/dompurify
@@ -721,7 +752,7 @@ npm install --save-dev @types/dompurify
 
 ```typescript
 // apps/web/lib/sanitize.ts
-import DOMPurify from 'dompurify';
+import DOMPurify from "dompurify";
 
 export function sanitizeText(text: string): string {
   return DOMPurify.sanitize(text, {
@@ -732,13 +763,13 @@ export function sanitizeText(text: string): string {
 
 export function sanitizeHTML(html: string): string {
   return DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],
-    ALLOWED_ATTR: ['href', 'target'],
+    ALLOWED_TAGS: ["b", "i", "em", "strong", "a", "p", "br"],
+    ALLOWED_ATTR: ["href", "target"],
   });
 }
 
 // Usage in EditorCanvas
-const text = new fabric.IText(sanitizeText('User input here'), {
+const text = new fabric.IText(sanitizeText("User input here"), {
   left: pointer.x,
   top: pointer.y,
   fill: currentColor,
@@ -746,14 +777,15 @@ const text = new fabric.IText(sanitizeText('User input here'), {
 ```
 
 ##### 4.3 Add Rate Limiting (API Routes)
+
 ```bash
 npm install @upstash/ratelimit @upstash/redis
 ```
 
 ```typescript
 // apps/web/lib/rate-limit.ts
-import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis';
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_URL!,
@@ -762,17 +794,17 @@ const redis = new Redis({
 
 export const ratelimit = new Ratelimit({
   redis,
-  limiter: Ratelimit.slidingWindow(10, '10 s'),
+  limiter: Ratelimit.slidingWindow(10, "10 s"),
   analytics: true,
 });
 
 // Usage in API route
 export async function POST(request: Request) {
-  const ip = request.headers.get('x-forwarded-for') ?? 'unknown';
+  const ip = request.headers.get("x-forwarded-for") ?? "unknown";
   const { success } = await ratelimit.limit(ip);
 
   if (!success) {
-    return new Response('Rate limit exceeded', { status: 429 });
+    return new Response("Rate limit exceeded", { status: 429 });
   }
 
   // Process request...
@@ -780,6 +812,7 @@ export async function POST(request: Request) {
 ```
 
 **Acceptance Criteria**:
+
 - [ ] File validation with magic bytes
 - [ ] Input sanitization for text
 - [ ] Rate limiting on API routes
@@ -798,6 +831,7 @@ export async function POST(request: Request) {
 See Priority 1, Section 5 in main review.
 
 **Acceptance Criteria**:
+
 - [ ] page.tsx < 100 lines
 - [ ] VideoAnalyzer component created
 - [ ] VideoWorkspace component created
@@ -814,6 +848,7 @@ See Priority 1, Section 5 in main review.
 See Priority 2, Section 6 in main review.
 
 **Acceptance Criteria**:
+
 - [ ] Pino logger configured
 - [ ] Structured logging throughout
 - [ ] Log levels properly set
@@ -831,6 +866,7 @@ See Priority 2, Section 6 in main review.
 See Priority 2, Section 7 in main review.
 
 **Acceptance Criteria**:
+
 - [ ] Performance measuring utility
 - [ ] Key operations measured
 - [ ] Metrics logged
@@ -846,6 +882,7 @@ See Priority 2, Section 7 in main review.
 Add JSDoc comments to all complex functions and explain WHY, not WHAT.
 
 **Example**:
+
 ```typescript
 /**
  * Calculate arrow head geometry for drawing arrows on canvas.
@@ -866,13 +903,14 @@ function createArrow(
   startPoint: Point,
   endPoint: Point,
   color: string,
-  strokeWidth: number
+  strokeWidth: number,
 ): fabric.Path {
   // ... implementation
 }
 ```
 
 **Acceptance Criteria**:
+
 - [ ] All public functions documented
 - [ ] Complex algorithms explained
 - [ ] Type definitions documented
@@ -898,6 +936,7 @@ Audit all useEffect hooks and ensure proper cleanup:
 ```
 
 **Acceptance Criteria**:
+
 - [ ] All useEffect hooks have cleanup
 - [ ] Memory leak test added
 - [ ] Resource disposal tested
@@ -907,21 +946,21 @@ Audit all useEffect hooks and ensure proper cleanup:
 
 ## Summary Timeline
 
-| Week | Priority | Task | Hours |
-|------|----------|------|-------|
-| 1 | P0 | Testing Framework Setup | 16 |
-| 1-2 | P0 | Write Component Tests | 40 |
-| 2 | P0 | Write E2E Tests | 16 |
-| 2 | P0 | Error Infrastructure | 16 |
-| 2 | P0 | Error Boundaries | 8 |
-| 2-3 | P0 | Environment Configuration | 12 |
-| 3 | P0 | Security Hardening | 24 |
-| 3-4 | P1 | Refactor Main Page | 16 |
-| 4 | P1 | Logging Infrastructure | 12 |
-| 4-5 | P2 | Performance Monitoring | 12 |
-| 5 | P2 | Add Code Comments | 12 |
-| 5 | P2 | Resource Cleanup Audit | 6 |
-| **Total** | | | **190 hours (4.75 weeks)** |
+| Week      | Priority | Task                      | Hours                      |
+| --------- | -------- | ------------------------- | -------------------------- |
+| 1         | P0       | Testing Framework Setup   | 16                         |
+| 1-2       | P0       | Write Component Tests     | 40                         |
+| 2         | P0       | Write E2E Tests           | 16                         |
+| 2         | P0       | Error Infrastructure      | 16                         |
+| 2         | P0       | Error Boundaries          | 8                          |
+| 2-3       | P0       | Environment Configuration | 12                         |
+| 3         | P0       | Security Hardening        | 24                         |
+| 3-4       | P1       | Refactor Main Page        | 16                         |
+| 4         | P1       | Logging Infrastructure    | 12                         |
+| 4-5       | P2       | Performance Monitoring    | 12                         |
+| 5         | P2       | Add Code Comments         | 12                         |
+| 5         | P2       | Resource Cleanup Audit    | 6                          |
+| **Total** |          |                           | **190 hours (4.75 weeks)** |
 
 ---
 
@@ -930,22 +969,26 @@ Audit all useEffect hooks and ensure proper cleanup:
 A task is considered complete when:
 
 1. **Code Written**
+
    - Implementation complete
    - No TypeScript errors
    - No ESLint warnings
 
 2. **Tested**
+
    - Unit tests written (80% coverage)
    - Integration tests written
    - E2E tests written (critical paths)
    - All tests passing
 
 3. **Documented**
+
    - JSDoc comments added
    - README updated (if needed)
    - Examples provided (if needed)
 
 4. **Reviewed**
+
    - Code self-reviewed
    - Checklist completed
    - No TODOs left
@@ -961,6 +1004,7 @@ A task is considered complete when:
 ## Progress Tracking
 
 Create a GitHub Project board with columns:
+
 - **Backlog** (all tasks)
 - **In Progress** (current work)
 - **In Review** (self-review)
@@ -974,12 +1018,14 @@ Update `FEATURES_IMPLEMENTED.md` weekly with progress.
 ## Success Metrics
 
 **Before** (Current):
+
 - Test Coverage: ~0%
 - Error Handling: Console.log only
 - Code Quality Score: 7.5/10
 - Production Ready: No
 
 **After** (Target):
+
 - Test Coverage: >80%
 - Error Handling: Proper error boundaries + toast + logging
 - Code Quality Score: 9.0/10
@@ -990,16 +1036,19 @@ Update `FEATURES_IMPLEMENTED.md` weekly with progress.
 ## Next Steps After Completion
 
 1. **User Testing** (1 week)
+
    - Get 10 beta users
    - Collect feedback
    - Fix critical bugs
 
 2. **Performance Optimization** (1 week)
+
    - Lighthouse audit (target: 90+ score)
    - Bundle size optimization
    - Lazy loading optimization
 
 3. **Production Deployment** (3 days)
+
    - Set up production environment
    - Configure monitoring (Sentry, PostHog)
    - Deploy to Vercel
@@ -1013,6 +1062,6 @@ Update `FEATURES_IMPLEMENTED.md` weekly with progress.
 
 ---
 
-*This action plan is based on the Professional Code Review (2025-11-16)*
-*Estimated completion: 4-5 weeks of focused work*
-*Current status: Ready to begin*
+_This action plan is based on the Professional Code Review (2025-11-16)_
+_Estimated completion: 4-5 weeks of focused work_
+_Current status: Ready to begin_

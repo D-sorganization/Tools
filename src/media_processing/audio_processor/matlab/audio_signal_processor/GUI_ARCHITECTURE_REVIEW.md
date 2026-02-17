@@ -20,29 +20,30 @@ This document provides a **comprehensive architectural review** of the Audio Sig
 
 ### Core Backend Classes (14 Major Components)
 
-| Class | Primary Function | Integrated in GUI? |
-|-------|-----------------|-------------------|
-| `AudioFilterEngine` | Time-domain filters | ✅ Yes (Filters tab) |
-| `FFTFilters` | Frequency-domain filters | ✅ Yes (Filters tab) |
-| `AudioEffects` | Effects processing | ❌ NO GUI |
-| `MixerCore` | Basic mixing (original) | ✅ Yes (Mixer tab) |
-| `MixerCoreEnhanced` | Advanced mixing with offsets | ❌ Not integrated |
-| `AudioEditor` | Trimming, cutting, fading | ❌ Not integrated |
-| `SoundLibraryManager` | Sample management | ✅ Yes (Library tab) |
-| `WaveletProcessor` | Wavelet-based processing | ❌ Not integrated |
-| `AdvancedAudioProcessor` | Pitch, onset, features | ❌ Not integrated |
-| `MusicProductionTools` | Autotune, key/tempo detection | ❌ Not integrated |
-| `AntiAliasingTools` | Nyquist analysis | ❌ Not integrated |
-| `ConvolutionReverb` | IR-based reverb | ⚠️ Now in AudioEffects |
-| `InstrumentEffectsLibrary` | Instrument presets | ❌ Not integrated |
-| `FrequencyAnalyzer` | FFT analysis | ✅ Yes (Analysis tab) |
-| `SpectrogramGenerator` | Time-frequency analysis | ✅ Yes (Analysis tab) |
+| Class                      | Primary Function              | Integrated in GUI?     |
+| -------------------------- | ----------------------------- | ---------------------- |
+| `AudioFilterEngine`        | Time-domain filters           | ✅ Yes (Filters tab)   |
+| `FFTFilters`               | Frequency-domain filters      | ✅ Yes (Filters tab)   |
+| `AudioEffects`             | Effects processing            | ❌ NO GUI              |
+| `MixerCore`                | Basic mixing (original)       | ✅ Yes (Mixer tab)     |
+| `MixerCoreEnhanced`        | Advanced mixing with offsets  | ❌ Not integrated      |
+| `AudioEditor`              | Trimming, cutting, fading     | ❌ Not integrated      |
+| `SoundLibraryManager`      | Sample management             | ✅ Yes (Library tab)   |
+| `WaveletProcessor`         | Wavelet-based processing      | ❌ Not integrated      |
+| `AdvancedAudioProcessor`   | Pitch, onset, features        | ❌ Not integrated      |
+| `MusicProductionTools`     | Autotune, key/tempo detection | ❌ Not integrated      |
+| `AntiAliasingTools`        | Nyquist analysis              | ❌ Not integrated      |
+| `ConvolutionReverb`        | IR-based reverb               | ⚠️ Now in AudioEffects |
+| `InstrumentEffectsLibrary` | Instrument presets            | ❌ Not integrated      |
+| `FrequencyAnalyzer`        | FFT analysis                  | ✅ Yes (Analysis tab)  |
+| `SpectrogramGenerator`     | Time-frequency analysis       | ✅ Yes (Analysis tab)  |
 
 ### Critical Issues Identified
 
 #### 🔴 **CRITICAL: Fragmented User Experience**
 
 **Problem:** We have **9 major feature sets** that have no GUI representation:
+
 - Audio Effects (reverb, delay, compression, EQ, etc.)
 - Enhanced Mixer features (time offsets, fades, automation)
 - Audio Editing (trimming, cutting, fading)
@@ -59,6 +60,7 @@ This document provides a **comprehensive architectural review** of the Audio Sig
 #### 🟡 **MAJOR: Mixer Tab Using Old MixerCore**
 
 **Problem:** The GUI uses `MixerCore` but `MixerCoreEnhanced` adds critical features:
+
 - Time offsets for tracks
 - Fade in/out per track
 - Automation curves
@@ -72,6 +74,7 @@ This document provides a **comprehensive architectural review** of the Audio Sig
 #### 🟡 **MAJOR: No Audio Editing Workflow**
 
 **Problem:** No way to:
+
 - Trim audio files
 - Cut/copy/paste sections
 - Apply fades
@@ -85,6 +88,7 @@ This document provides a **comprehensive architectural review** of the Audio Sig
 #### 🟠 **MODERATE: Analysis Tab Underutilizes Toolboxes**
 
 **Problem:** We have:
+
 - Wavelet Toolbox features (time-frequency, denoising)
 - Advanced audio features (MFCC, spectral features)
 - Music analysis (pitch, tempo, key detection)
@@ -140,6 +144,7 @@ But Analysis tab only shows basic spectrogram and spectrum.
 **Changes:** Add selection rectangle for editing
 
 **Layout:**
+
 ```
 ┌──────────────────────────────────────────────────────┐
 │  [Waveform Display with Zoom/Pan]                    │
@@ -163,6 +168,7 @@ But Analysis tab only shows basic spectrogram and spectrum.
 **Backend:** `AudioEditor`
 
 **Layout:**
+
 ```
 ┌─────────────────────────────────────────────────────┐
 │  Selection Tools                                    │
@@ -188,6 +194,7 @@ But Analysis tab only shows basic spectrogram and spectrum.
 ```
 
 **Features:**
+
 - Selection-based editing
 - Fade curves with preview
 - 50-level undo/redo
@@ -202,6 +209,7 @@ But Analysis tab only shows basic spectrogram and spectrum.
 **Backend:** `AudioEffects`, `ConvolutionReverb`
 
 **Layout:**
+
 ```
 ┌──────────────────────────────────────────────────────────┐
 │  Effect Chain                                            │
@@ -237,6 +245,7 @@ But Analysis tab only shows basic spectrogram and spectrum.
 ```
 
 **Features:**
+
 - Visual effect chain with reordering
 - Per-effect bypass
 - Real-time parameter preview
@@ -252,6 +261,7 @@ But Analysis tab only shows basic spectrogram and spectrum.
 **Backend:** **SWITCH TO** `MixerCoreEnhanced`
 
 **Layout:**
+
 ```
 ┌───────────────────────────────────────────────────────────┐
 │  Timeline View                                            │
@@ -288,6 +298,7 @@ But Analysis tab only shows basic spectrogram and spectrum.
 ```
 
 **New Features:**
+
 - Visual timeline with track offsets
 - Per-track fade in/out controls
 - Time offset per track
@@ -306,6 +317,7 @@ But Analysis tab only shows basic spectrogram and spectrum.
 **Backend:** `MusicProductionTools`
 
 **Layout:**
+
 ```
 ┌──────────────────────────────────────────────────────────┐
 │  Pitch Correction (Autotune)                             │
@@ -338,6 +350,7 @@ But Analysis tab only shows basic spectrogram and spectrum.
 ```
 
 **Features:**
+
 - Full autotune with natural/robotic modes
 - Key, tempo, chord detection
 - Click track generation
@@ -354,6 +367,7 @@ But Analysis tab only shows basic spectrogram and spectrum.
 **Backend:** `FrequencyAnalyzer`, `SpectrogramGenerator`
 
 **Layout:**
+
 ```
 ┌──────────────────────────────────────────────────────────┐
 │  ┌────────────────────┐  ┌────────────────────┐        │
@@ -385,6 +399,7 @@ But Analysis tab only shows basic spectrogram and spectrum.
 **Backend:** `WaveletProcessor`, `AdvancedAudioProcessor`, `AntiAliasingTools`
 
 **Layout:**
+
 ```
 ┌──────────────────────────────────────────────────────────┐
 │  Wavelet Analysis (Wavelet Toolbox)                     │
@@ -424,6 +439,7 @@ But Analysis tab only shows basic spectrogram and spectrum.
 ```
 
 **Features:**
+
 - Wavelet transforms and denoising
 - Transient/tonal separation
 - MFCC and spectral feature extraction
@@ -441,6 +457,7 @@ But Analysis tab only shows basic spectrogram and spectrum.
 **Backend:** `SoundLibraryManager`, `InstrumentEffectsLibrary`
 
 **Layout:**
+
 ```
 Keep existing layout, but add:
 
@@ -459,6 +476,7 @@ Keep existing layout, but add:
 ```
 
 **Changes:**
+
 - Add instrument effect presets browser
 - Otherwise keep existing structure
 
@@ -469,6 +487,7 @@ Keep existing layout, but add:
 **Purpose:** Application preferences and configuration
 
 **Layout:**
+
 ```
 ┌──────────────────────────────────────────────────────────┐
 │  Audio Settings                                          │
@@ -510,16 +529,17 @@ Keep existing layout, but add:
 
 ### Before (Current)
 
-| Tab | Features Accessible | % of Total |
-|-----|-------------------|------------|
-| Waveform | Viewing only | 5% |
-| Filters | FFT & time-domain filters | 20% |
-| Mixer | Basic mixing (no offsets) | 15% |
-| Analysis | Basic spectrum/spectrogram | 10% |
-| Library | Sample browsing | 10% |
-| **TOTAL** | **60% of features** | **60%** |
+| Tab       | Features Accessible        | % of Total |
+| --------- | -------------------------- | ---------- |
+| Waveform  | Viewing only               | 5%         |
+| Filters   | FFT & time-domain filters  | 20%        |
+| Mixer     | Basic mixing (no offsets)  | 15%        |
+| Analysis  | Basic spectrum/spectrogram | 10%        |
+| Library   | Sample browsing            | 10%        |
+| **TOTAL** | **60% of features**        | **60%**    |
 
 **Missing from GUI:**
+
 - Audio editing (trim, cut, fade)
 - Effects (reverb, compression, EQ, etc.)
 - Enhanced mixer (offsets, fades, automation)
@@ -533,18 +553,18 @@ Keep existing layout, but add:
 
 ### After (Proposed)
 
-| Tab | Features Accessible | % of Total |
-|-----|-------------------|------------|
-| Waveform | Enhanced viewing + selection | 10% |
-| **Edit** ⭐ | Audio editing + fades | 15% |
-| **Effects** ⭐ | All 11 effects + presets | 20% |
-| Mixer | Enhanced mixer (all features) | 15% |
-| **Production** ⭐ | Autotune, key/tempo, creative | 15% |
-| Analysis | General analysis (unchanged) | 5% |
-| **Research** ⭐ | Wavelet, features, anti-aliasing | 10% |
-| Library | Samples + instrument presets | 7% |
-| **Settings** ⭐ | Configuration | 3% |
-| **TOTAL** | **100% of features** | **100%** |
+| Tab               | Features Accessible              | % of Total |
+| ----------------- | -------------------------------- | ---------- |
+| Waveform          | Enhanced viewing + selection     | 10%        |
+| **Edit** ⭐       | Audio editing + fades            | 15%        |
+| **Effects** ⭐    | All 11 effects + presets         | 20%        |
+| Mixer             | Enhanced mixer (all features)    | 15%        |
+| **Production** ⭐ | Autotune, key/tempo, creative    | 15%        |
+| Analysis          | General analysis (unchanged)     | 5%         |
+| **Research** ⭐   | Wavelet, features, anti-aliasing | 10%        |
+| Library           | Samples + instrument presets     | 7%         |
+| **Settings** ⭐   | Configuration                    | 3%         |
+| **TOTAL**         | **100% of features**             | **100%**   |
 
 ---
 
@@ -553,6 +573,7 @@ Keep existing layout, but add:
 ### 1. **Consistent Layout Pattern**
 
 All tabs follow this structure:
+
 ```
 ┌─────────────────────────────────────┐
 │  Main Working Area (largest)        │  ← Visualization or results
@@ -570,6 +591,7 @@ All tabs follow this structure:
 - **Expert:** Right-click for context menus
 
 Example:
+
 ```
 Reverb Effect
   Room Size: [slider]
@@ -611,18 +633,21 @@ Ctrl+E / Cmd+E     : Apply effect
 ### Phase 1: Core Integration (High Priority)
 
 **Week 1: Mixer Enhancement**
+
 - [ ] Replace `MixerCore` with `MixerCoreEnhanced` in MainWindow.m
 - [ ] Add timeline view to Mixer tab
 - [ ] Add offset, fade controls to track strips
 - [ ] Test multi-track processing with offsets
 
 **Week 2: Audio Editing Tab**
+
 - [ ] Create new "Edit" tab in MainWindow.m
 - [ ] Integrate `AudioEditor` class
 - [ ] Add selection rectangle to waveform display
 - [ ] Implement undo/redo UI
 
 **Week 3: Effects Tab**
+
 - [ ] Create new "Effects" tab
 - [ ] Build effect chain UI
 - [ ] Connect to `AudioEffects` class
@@ -634,6 +659,7 @@ Ctrl+E / Cmd+E     : Apply effect
 ### Phase 2: Production Features (Medium Priority)
 
 **Week 4: Production Tab**
+
 - [ ] Create new "Production" tab
 - [ ] Integrate `MusicProductionTools`
 - [ ] Build autotune UI
@@ -641,6 +667,7 @@ Ctrl+E / Cmd+E     : Apply effect
 - [ ] Add creative tools (harmonizer, vocoder)
 
 **Week 5: Research Tab**
+
 - [ ] Create new "Research" tab
 - [ ] Integrate `WaveletProcessor`
 - [ ] Integrate `AdvancedAudioProcessor`
@@ -652,12 +679,14 @@ Ctrl+E / Cmd+E     : Apply effect
 ### Phase 3: Polish & Configuration (Low Priority)
 
 **Week 6: Settings & Library**
+
 - [ ] Create "Settings" tab
 - [ ] Add instrument presets to Library tab
 - [ ] Implement preference persistence
 - [ ] Add theme support
 
 **Week 7: Testing & Documentation**
+
 - [ ] Comprehensive GUI testing
 - [ ] User documentation
 - [ ] Tutorial videos/guides
@@ -730,12 +759,14 @@ After reorganization, the GUI should:
 **Solution:** Reorganize into 9 task-oriented tabs exposing 100% of features
 
 **Impact:**
+
 - Professional-grade audio editing workflow
 - Access to all music production tools
 - Research-grade analysis capabilities
 - Consistent, intuitive user experience
 
 **Next Steps:**
+
 1. Review and approve this plan
 2. Begin Phase 1 implementation (Mixer, Edit, Effects tabs)
 3. Iterative development with user testing

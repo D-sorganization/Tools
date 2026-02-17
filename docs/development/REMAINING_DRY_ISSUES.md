@@ -7,6 +7,7 @@ This document tracks remaining DRY (Don't Repeat Yourself) and orthogonality vio
 ## Issues Addressed ✅
 
 ### Completed Improvements
+
 1. ✅ Consolidated 4 `code_quality_check.py` files → 1 shared utility
 2. ✅ Consolidated 3 `logger_utils.py` files → 1 shared utility
 3. ✅ Created 11 shared utilities (~2,300 lines)
@@ -21,24 +22,28 @@ This document tracks remaining DRY (Don't Repeat Yourself) and orthogonality vio
 ### High Priority
 
 #### 1. Path Parent Chains
+
 - **Count**: ~25 files still use `.parent.parent.parent` patterns
 - **Impact**: Hard to maintain, error-prone
 - **Solution**: Use `get_project_root_from_file()` from `path_helpers`
 - **Files**: Test files, some launchers, config files
 
 #### 2. sys.path Manipulations
+
 - **Count**: ~40 files still manually manipulate sys.path
 - **Impact**: Inconsistent path setup
 - **Solution**: Use `ensure_utils_in_path()` from `path_helpers`
 - **Files**: Test files, some modules, launchers
 
 #### 3. OS Path Operations
+
 - **Count**: ~240 instances of direct os.path usage
 - **Impact**: Platform-specific code duplication
 - **Solution**: Use Path objects consistently, create os_utils if needed
 - **Files**: Many files across repository
 
 #### 4. CSV Operations
+
 - **Count**: ~18 instances of direct pd.read_csv/pd.to_csv
 - **Impact**: Inconsistent error handling
 - **Solution**: Use `csv_utils.safe_read_csv()` and `safe_write_csv()`
@@ -47,18 +52,21 @@ This document tracks remaining DRY (Don't Repeat Yourself) and orthogonality vio
 ### Medium Priority
 
 #### 5. Environment Variable Handling
+
 - **Count**: Multiple files handle env vars differently
 - **Impact**: Inconsistent configuration loading
 - **Solution**: Use `config_loader` or create `env_utils`
 - **Files**: Config files, launchers
 
 #### 6. Error Handling Patterns
+
 - **Count**: Many duplicate try/except blocks
 - **Impact**: Inconsistent error handling
 - **Solution**: Use decorators from `error_handling` utility
 - **Files**: Many files
 
 #### 7. File Reading Patterns
+
 - **Count**: Multiple patterns for reading files
 - **Impact**: Inconsistent error handling
 - **Solution**: Use `file_utils` functions
@@ -67,12 +75,14 @@ This document tracks remaining DRY (Don't Repeat Yourself) and orthogonality vio
 ### Low Priority
 
 #### 8. Test Setup Patterns
+
 - **Count**: Many test files have duplicate setup code
 - **Impact**: Test maintenance burden
 - **Solution**: Consolidate test utilities
 - **Files**: Test files
 
 #### 9. Import Patterns
+
 - **Count**: Some inconsistent import styles
 - **Impact**: Minor maintainability issue
 - **Solution**: Standardize imports

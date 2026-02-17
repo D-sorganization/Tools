@@ -58,41 +58,41 @@ colors = manager.get_current_colors()   # dict[str, str]
 
 ### ThemeManager (singleton)
 
-| Method | Returns | Description |
-|--------|---------|-------------|
-| `ThemeManager.instance()` | `ThemeManager` | Get/create the singleton |
-| `get_available_themes()` | `list[str]` | All built-in + custom names |
-| `get_builtin_themes()` | `list[str]` | Built-in theme names only |
-| `get_current_theme_name()` | `str` | Active theme name |
-| `get_current_colors()` | `dict[str, str]` | Active theme color map |
-| `get_theme_colors(name)` | `dict | None` | Color map for any theme |
-| `get_theme_stylesheet(name)` | `str` | QSS stylesheet for a theme |
-| `change_theme(name)` | `None` | Switch theme + emit signal |
-| `apply_theme()` | `None` | Re-apply current theme to windows |
-| `apply_theme_to_window(w)` | `None` | Apply to a specific window |
-| `save_custom_theme(name, colors)` | `str` | Persist a custom theme |
-| `delete_custom_theme(name)` | `bool` | Remove a custom theme |
+| Method                            | Returns          | Description                       |
+| --------------------------------- | ---------------- | --------------------------------- | ----------------------- |
+| `ThemeManager.instance()`         | `ThemeManager`   | Get/create the singleton          |
+| `get_available_themes()`          | `list[str]`      | All built-in + custom names       |
+| `get_builtin_themes()`            | `list[str]`      | Built-in theme names only         |
+| `get_current_theme_name()`        | `str`            | Active theme name                 |
+| `get_current_colors()`            | `dict[str, str]` | Active theme color map            |
+| `get_theme_colors(name)`          | `dict            | None`                             | Color map for any theme |
+| `get_theme_stylesheet(name)`      | `str`            | QSS stylesheet for a theme        |
+| `change_theme(name)`              | `None`           | Switch theme + emit signal        |
+| `apply_theme()`                   | `None`           | Re-apply current theme to windows |
+| `apply_theme_to_window(w)`        | `None`           | Apply to a specific window        |
+| `save_custom_theme(name, colors)` | `str`            | Persist a custom theme            |
+| `delete_custom_theme(name)`       | `bool`           | Remove a custom theme             |
 
 ### Color Constants
 
 Each theme provides these 14 color keys:
 
-| Key | Purpose |
-|-----|---------|
-| `bg` | Main background |
-| `group_bg` | Group box / card background |
-| `border` | Standard border |
-| `text` | Primary text |
-| `text_secondary` | Secondary / muted text |
-| `label` | Label text |
-| `focus` | Focus ring / highlight |
-| `input_bg` | Input field background |
-| `accent` | Primary accent |
-| `title_bg` | Title / header background |
-| `title_border` | Title / header border |
-| `table_header` | Table header background |
-| `table_alt` | Alternating table row |
-| `button_hover` | Button hover state |
+| Key              | Purpose                     |
+| ---------------- | --------------------------- |
+| `bg`             | Main background             |
+| `group_bg`       | Group box / card background |
+| `border`         | Standard border             |
+| `text`           | Primary text                |
+| `text_secondary` | Secondary / muted text      |
+| `label`          | Label text                  |
+| `focus`          | Focus ring / highlight      |
+| `input_bg`       | Input field background      |
+| `accent`         | Primary accent              |
+| `title_bg`       | Title / header background   |
+| `title_border`   | Title / header border       |
+| `table_header`   | Table header background     |
+| `table_alt`      | Alternating table row       |
+| `button_hover`   | Button hover state          |
 
 ### Integration Helpers
 
