@@ -169,6 +169,16 @@ class UnitConverterWidget(BaseCalculatorWidget):
         self._load_conversions()
         self._init_ui()
 
+    @property
+    def recent_conversions(self) -> list[ConversionRow]:
+        """Get the most recent (non-saved) conversions."""
+        return [r for r in self.rows if not r.is_saved][:3]
+
+    @property
+    def saved_conversions(self) -> list[ConversionRow]:
+        """Get the saved conversions."""
+        return [r for r in self.rows if r.is_saved][:3]
+
     def _load_all_units(self) -> None:
         """Load all available units from converter."""
         all_units_by_category = self.converter.get_supported_units()
@@ -334,25 +344,29 @@ class UnitConverterWidget(BaseCalculatorWidget):
         self.debounce_timer.start()
 
     def _on_unit_changed(self, index: int, direction: str, unit: str) -> None:
-        rows = self.rows
-        if index < len(rows):
-            if direction == "from":
-                rows[index].from_unit = unit.strip()
-                # Update target compatible units if left unit changed
-                widget = self._find_widget_by_index(index)
-                if widget:
-                    comp_units = self._get_compatible_units(unit)
-                    widget.to_unit.blockSignals(True)
+        conv = self._get_row_by_index(index)
+        if not conv:
+            return
+
+        if direction == "from":
+            conv.from_unit = unit.strip()
+            # Update target compatible units if left unit changed
+            widget = self._find_widget_by_index(index)
+            if widget:
+                comp_units = self._get_compatible_units(unit)
+                widget.to_unit.blockSignals(True)
+                try:
                     widget.to_unit.clear()
                     widget.to_unit.addItems(comp_units)
-                    widget.to_unit.setCurrentText(rows[index].to_unit)
+                    widget.to_unit.setCurrentText(conv.to_unit)
+                finally:
                     widget.to_unit.blockSignals(False)
-            else:
-                rows[index].to_unit = unit.strip()
+        else:
+            conv.to_unit = unit.strip()
 
-            rows[index].update_last_used()
-            self._convert_row(index, "from")
-            self._save_conversions()
+        conv.update_last_used()
+        self._convert_row(index, "from")
+        self._save_conversions()
 
     def _perform_debounced_conversion(self) -> None:
         if self.pending_conversion:
@@ -362,10 +376,9 @@ class UnitConverterWidget(BaseCalculatorWidget):
 
     def _convert_row(self, index: int, direction: str) -> None:
         widget = self._find_widget_by_index(index)
-        if not widget or index >= len(self.rows):
+        conv = self._get_row_by_index(index)
+        if not widget or not conv:
             return
-
-        conv = self.rows[index]
         try:
             from_u = widget.from_unit.currentText().strip()
             to_u = widget.to_unit.currentText().strip()
@@ -374,26 +387,27 @@ class UnitConverterWidget(BaseCalculatorWidget):
 
             widget.from_value.blockSignals(True)
             widget.to_value.blockSignals(True)
+            try:
+                if direction == "from":
+                    val_text = widget.from_value.text().strip()
+                    if val_text:
+                        res = self.converter.convert(float(val_text), from_u, to_u)
+                        res_str = f"{res.value:.6g}"
+                        widget.to_value.setText(res_str)
+                        conv.to_value = res_str
+                        conv.from_value = val_text
+                else:
+                    val_text = widget.to_value.text().strip()
+                    if val_text:
+                        res = self.converter.convert(float(val_text), to_u, from_u)
+                        res_str = f"{res.value:.6g}"
+                        widget.from_value.setText(res_str)
+                        conv.from_value = res_str
+                        conv.to_value = val_text
+            finally:
+                widget.from_value.blockSignals(False)
+                widget.to_value.blockSignals(False)
 
-            if direction == "from":
-                val_text = widget.from_value.text().strip()
-                if val_text:
-                    res = self.converter.convert(float(val_text), from_u, to_u)
-                    res_str = f"{res.value:.6g}"
-                    widget.to_value.setText(res_str)
-                    conv.to_value = res_str
-                    conv.from_value = val_text
-            else:
-                val_text = widget.to_value.text().strip()
-                if val_text:
-                    res = self.converter.convert(float(val_text), to_u, from_u)
-                    res_str = f"{res.value:.6g}"
-                    widget.from_value.setText(res_str)
-                    conv.from_value = res_str
-                    conv.to_value = val_text
-
-            widget.from_value.blockSignals(False)
-            widget.to_value.blockSignals(False)
             conv.update_last_used()
 
         except Exception as e:
@@ -428,6 +442,16 @@ class UnitConverterWidget(BaseCalculatorWidget):
             if w.index == index:
                 return w
         return None
+
+    def _get_row_by_index(self, index: int) -> ConversionRow | None:
+        """Get the ConversionRow object associated with a widget index (0-2: recent, 3-5: saved)."""
+        recent = self.recent_conversions
+        saved = self.saved_conversions
+        if index < 3:
+            return recent[index] if index < len(recent) else None
+        else:
+            idx = index - 3
+            return saved[idx] if idx < len(saved) else None
 
     def _save_conversion(self, index: int) -> None:
         if index >= len(self.rows):
