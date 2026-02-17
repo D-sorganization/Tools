@@ -39,7 +39,7 @@ from PyQt6.QtWidgets import (
 )
 
 from ...calculators.conversion.service import UnitConversionService, get_service
-from .base_calculator_widget import BaseCalculatorWidget
+from .base_calculator_widget import BaseCalculatorWindow
 
 logger = logging.getLogger(__name__)
 
@@ -135,7 +135,7 @@ class CaseInsensitiveCompleter(QCompleter):
         self.setModel(model)
 
 
-class UnitConverterWidget(BaseCalculatorWidget):
+class UnitConverterWidget(BaseCalculatorWindow):
     """Shared Unit Converter widget with saved configurations and recent history."""
 
     calculation_finished = pyqtSignal(dict)
@@ -385,9 +385,9 @@ class UnitConverterWidget(BaseCalculatorWidget):
             if not from_u or not to_u:
                 return
 
-            widget.from_value.blockSignals(True)
-            widget.to_value.blockSignals(True)
             try:
+                widget.from_value.blockSignals(True)
+                widget.to_value.blockSignals(True)
                 if direction == "from":
                     val_text = widget.from_value.text().strip()
                     if val_text:
@@ -496,6 +496,8 @@ class UnitConverterWidget(BaseCalculatorWidget):
         cw = self.centralWidget()
         if cw:
             cw.deleteLater()
+        if hasattr(self, "central_widget"):
+            self.central_widget.setFocus()
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
         self.main_layout = QVBoxLayout(self.central_widget)
