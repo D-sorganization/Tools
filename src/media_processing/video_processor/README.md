@@ -84,10 +84,12 @@ golf-swing-analyzer/
 ## 💰 Costs
 
 ### Development
+
 - **Home Developer**: $0 (your time)
 - **If Outsourcing**: $140-210k
 
 ### Monthly Operating Costs
+
 - **MVP (0-50 users)**: $1-2/month
 - **Growth (50-200 users)**: $2-5/month
 - **Scale (200-1,000 users)**: $5-10/month

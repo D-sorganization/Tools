@@ -104,56 +104,56 @@ print(f"Packed Height: {Z:.2f} m")
 
 ### Gas Properties
 
-| Parameter | Type | Range | Units | Description |
-|-----------|------|-------|-------|-------------|
-| temperature_k | float | 273-500 | K | Gas temperature |
-| pressure_pa | float | 50000-500000 | Pa | Operating pressure |
-| molecular_weight | float | 2-50 | kg/kmol | Gas mixture MW |
+| Parameter        | Type  | Range        | Units   | Description        |
+| ---------------- | ----- | ------------ | ------- | ------------------ |
+| temperature_k    | float | 273-500      | K       | Gas temperature    |
+| pressure_pa      | float | 50000-500000 | Pa      | Operating pressure |
+| molecular_weight | float | 2-50         | kg/kmol | Gas mixture MW     |
 
 ### Column Sizing
 
-| Parameter | Type | Range | Units | Description |
-|-----------|------|-------|-------|-------------|
-| gas_flow_kg_hr | float | > 0 | kg/hr | Gas mass flow rate |
-| liquid_mass_flux | float | 1-20 | kg/(m2-s) | Liquid flux (L/G design) |
-| percent_of_flood | float | 50-85 | % | Design fraction of flooding |
+| Parameter        | Type  | Range | Units     | Description                 |
+| ---------------- | ----- | ----- | --------- | --------------------------- |
+| gas_flow_kg_hr   | float | > 0   | kg/hr     | Gas mass flow rate          |
+| liquid_mass_flux | float | 1-20  | kg/(m2-s) | Liquid flux (L/G design)    |
+| percent_of_flood | float | 50-85 | %         | Design fraction of flooding |
 
 ### Mass Transfer
 
-| Parameter | Type | Range | Units | Description |
-|-----------|------|-------|-------|-------------|
-| inlet_conc | float | 0-1 | mol/mol | Inlet pollutant concentration |
-| outlet_conc | float | 0-1 | mol/mol | Target outlet concentration |
-| kla | float | 100-2000 | 1/hr | Overall mass transfer coefficient |
-| safety_factor | float | 1.1-1.5 | - | Design safety factor |
+| Parameter     | Type  | Range    | Units   | Description                       |
+| ------------- | ----- | -------- | ------- | --------------------------------- |
+| inlet_conc    | float | 0-1      | mol/mol | Inlet pollutant concentration     |
+| outlet_conc   | float | 0-1      | mol/mol | Target outlet concentration       |
+| kla           | float | 100-2000 | 1/hr    | Overall mass transfer coefficient |
+| safety_factor | float | 1.1-1.5  | -       | Design safety factor              |
 
 ## Output Format
 
 ### Column Diameter Results
 
-| Field | Units | Description |
-|-------|-------|-------------|
-| design_velocity_m_s | m/s | Superficial gas velocity |
-| cross_section_m2 | m2 | Column cross-sectional area |
-| diameter_m | m | Column diameter |
-| diameter_ft | ft | Column diameter (US units) |
+| Field               | Units | Description                 |
+| ------------------- | ----- | --------------------------- |
+| design_velocity_m_s | m/s   | Superficial gas velocity    |
+| cross_section_m2    | m2    | Column cross-sectional area |
+| diameter_m          | m     | Column diameter             |
+| diameter_ft         | ft    | Column diameter (US units)  |
 
 ### Heat Transfer Results
 
-| Field | Units | Description |
-|-------|-------|-------------|
-| sensible_heat_kw | kW | Sensible heat duty |
-| latent_heat_kw | kW | Latent heat from condensation |
-| total_heat_kw | kW | Total heat duty |
+| Field            | Units | Description                   |
+| ---------------- | ----- | ----------------------------- |
+| sensible_heat_kw | kW    | Sensible heat duty            |
+| latent_heat_kw   | kW    | Latent heat from condensation |
+| total_heat_kw    | kW    | Total heat duty               |
 
 ### Caustic Requirement Results
 
-| Field | Units | Description |
-|-------|-------|-------------|
-| naoh_pure_kg_hr | kg/hr | Pure NaOH requirement |
+| Field               | Units | Description               |
+| ------------------- | ----- | ------------------------- |
+| naoh_pure_kg_hr     | kg/hr | Pure NaOH requirement     |
 | naoh_solution_kg_hr | kg/hr | NaOH solution requirement |
-| naoh_solution_L_hr | L/hr | Solution volume rate |
-| salt_produced_kg_hr | kg/hr | Total salt produced |
+| naoh_solution_L_hr  | L/hr  | Solution volume rate      |
+| salt_produced_kg_hr | kg/hr | Total salt produced       |
 
 ## Mathematical Models
 
@@ -204,6 +204,7 @@ HTU = C_H / (kla * a * (L/G)^n)
 ```
 
 Where:
+
 - C_H = packing HTU constant
 - a = specific surface area (m2/m3)
 - n = packing exponent
@@ -218,13 +219,13 @@ Where SF = safety factor (typically 1.1-1.3)
 
 ### Caustic Stoichiometry
 
-| Reaction | NaOH Ratio |
-|----------|-----------|
-| HCl + NaOH -> NaCl + H2O | 1:1 |
-| SO2 + 2NaOH -> Na2SO3 + H2O | 1:2 |
-| H2S + 2NaOH -> Na2S + 2H2O | 1:2 |
-| HF + NaOH -> NaF + H2O | 1:1 |
-| CO2 + 2NaOH -> Na2CO3 + H2O | 1:2 |
+| Reaction                    | NaOH Ratio |
+| --------------------------- | ---------- |
+| HCl + NaOH -> NaCl + H2O    | 1:1        |
+| SO2 + 2NaOH -> Na2SO3 + H2O | 1:2        |
+| H2S + 2NaOH -> Na2S + 2H2O  | 1:2        |
+| HF + NaOH -> NaF + H2O      | 1:1        |
+| CO2 + 2NaOH -> Na2CO3 + H2O | 1:2        |
 
 ### Heat Transfer Duty
 
@@ -242,12 +243,12 @@ m_water = Q_total / (Cp_water * Delta_T_water)
 
 ## Packing Database
 
-| Packing Type | Material | Size (mm) | Surface (m2/m3) | Void Fraction | Packing Factor |
-|--------------|----------|-----------|-----------------|---------------|----------------|
-| Ceramic Raschig Rings | Ceramic | 50 | 95 | 0.74 | 155 |
-| Metal Pall Rings | SS | 50 | 112 | 0.95 | 66 |
-| Plastic Cascade Rings | PP | 50 | 105 | 0.92 | 72 |
-| Structured 250Y | SS | - | 250 | 0.98 | 33 |
+| Packing Type          | Material | Size (mm) | Surface (m2/m3) | Void Fraction | Packing Factor |
+| --------------------- | -------- | --------- | --------------- | ------------- | -------------- |
+| Ceramic Raschig Rings | Ceramic  | 50        | 95              | 0.74          | 155            |
+| Metal Pall Rings      | SS       | 50        | 112             | 0.95          | 66             |
+| Plastic Cascade Rings | PP       | 50        | 105             | 0.92          | 72             |
+| Structured 250Y       | SS       | -         | 250             | 0.98          | 33             |
 
 ## Example Usage
 
@@ -328,25 +329,25 @@ print(f"Cooling Water: {cw['water_flow_L_min']:.1f} L/min")
 
 ## Troubleshooting
 
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| Negative outlet concentration | NTU calculation error | Ensure inlet > outlet |
-| Zero flooding velocity | Invalid flow parameter | Check L/G ratio and densities |
-| High pressure drop (> 2 kPa/m) | Near flooding | Reduce gas velocity |
-| Infinite HTU | Zero kla | Verify mass transfer coefficient |
-| No cooling possible | Approach temp too small | Increase delta T or use more water |
+| Issue                          | Cause                   | Solution                           |
+| ------------------------------ | ----------------------- | ---------------------------------- |
+| Negative outlet concentration  | NTU calculation error   | Ensure inlet > outlet              |
+| Zero flooding velocity         | Invalid flow parameter  | Check L/G ratio and densities      |
+| High pressure drop (> 2 kPa/m) | Near flooding           | Reduce gas velocity                |
+| Infinite HTU                   | Zero kla                | Verify mass transfer coefficient   |
+| No cooling possible            | Approach temp too small | Increase delta T or use more water |
 
 ## Design Guidelines
 
 ### Typical Operating Ranges
 
-| Parameter | Range |
-|-----------|-------|
-| Percent of flooding | 60-80% |
-| L/G ratio (mass) | 2-10 kg liquid / kg gas |
-| Pressure drop | 200-800 Pa/m |
-| NaOH concentration | 10-50 wt% |
-| Approach temperature | 5-15 C |
+| Parameter            | Range                   |
+| -------------------- | ----------------------- |
+| Percent of flooding  | 60-80%                  |
+| L/G ratio (mass)     | 2-10 kg liquid / kg gas |
+| Pressure drop        | 200-800 Pa/m            |
+| NaOH concentration   | 10-50 wt%               |
+| Approach temperature | 5-15 C                  |
 
 ### Literature References
 

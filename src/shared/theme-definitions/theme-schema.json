@@ -51,7 +51,14 @@
         },
         "category": {
           "type": "string",
-          "enum": ["standard", "neutral", "nature", "editor", "office", "accessibility"],
+          "enum": [
+            "standard",
+            "neutral",
+            "nature",
+            "editor",
+            "office",
+            "accessibility"
+          ],
           "description": "Theme category for grouping in menus"
         },
         "isDark": {
@@ -62,9 +69,20 @@
           "type": "object",
           "description": "Base color definitions",
           "required": [
-            "bg", "group_bg", "border", "text", "text_secondary", "label",
-            "focus", "input_bg", "accent", "title_bg", "title_border",
-            "table_header", "table_alt", "button_hover"
+            "bg",
+            "group_bg",
+            "border",
+            "text",
+            "text_secondary",
+            "label",
+            "focus",
+            "input_bg",
+            "accent",
+            "title_bg",
+            "title_border",
+            "table_header",
+            "table_alt",
+            "button_hover"
           ],
           "additionalProperties": {
             "type": "string",
@@ -75,8 +93,14 @@
           "type": "object",
           "description": "Semantic color definitions",
           "required": [
-            "success", "warning", "error", "info",
-            "link", "link_hover", "selection_bg", "selection_text"
+            "success",
+            "warning",
+            "error",
+            "info",
+            "link",
+            "link_hover",
+            "selection_bg",
+            "selection_text"
           ],
           "additionalProperties": {
             "type": "string",

@@ -303,7 +303,7 @@ class UnitPreferencesManager(QObject):
             UNIT_CATEGORIES.get(
                 category, UnitCategory("", "", "", "")
             ).default_display_unit,
-        )  # type: ignore
+        )
 
     def set_preferred_unit(self, category: str, unit: str) -> None:
         """Set the user's preferred unit for a category."""

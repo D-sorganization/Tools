@@ -9,18 +9,21 @@ Aurora CAS is a powerful symbolic mathematics calculator that carries forward th
 ## Features
 
 ### Core Mathematics
+
 - **Constants**: pi, e, imaginary unit I
 - **Numeric Tools**: Rounding, floor/ceiling, factorials, nPr, nCr
 - **Trigonometry**: Full circular, inverse, and hyperbolic functions
 - **Complex Arithmetic**: Magnitude, argument, conjugation, polar/rectangular
 
 ### Computer Algebra System
+
 - **Algebra**: Factor, expand, cancel, simplify
 - **Partial Fractions**: Decomposition and rational simplification
 - **Equation Solving**: Single equations and simultaneous systems
 - **Substitution**: Symbolic variable substitution
 
 ### Calculus
+
 - Symbolic derivatives
 - Definite and indefinite integrals
 - Directional limits
@@ -28,6 +31,7 @@ Aurora CAS is a powerful symbolic mathematics calculator that carries forward th
 - Ordinary differential equations
 
 ### Linear Algebra
+
 - Matrix constructors (Matrix, eye, ones, zeros)
 - Decompositions (QR, LU, SVD)
 - Eigentools (eigenvals, eigenvects, charpoly)
@@ -35,6 +39,7 @@ Aurora CAS is a powerful symbolic mathematics calculator that carries forward th
 - Matrix exponentials and powers
 
 ### Robotics and Screw Theory
+
 - Skew/vee utilities
 - SE(3) hat/vee operations
 - Screw axis builder
@@ -84,6 +89,7 @@ The application will be available at `http://localhost:5000`
 ### Endpoint: POST `/api/calculate`
 
 **Request Body:**
+
 ```json
 {
   "operation": "simplify",
@@ -92,6 +98,7 @@ The application will be available at `http://localhost:5000`
 ```
 
 **Supported Operations:**
+
 - `simplify` - Simplify expression
 - `factor` - Factor expression
 - `expand` - Expand expression
@@ -103,6 +110,7 @@ The application will be available at `http://localhost:5000`
 - `matrix` - Matrix operations
 
 **Response:**
+
 ```json
 {
   "result": "(x + 1)**2",
@@ -146,6 +154,7 @@ pytest tests/
 ## Integration
 
 This calculator integrates with:
+
 - **Unit Converter** (`web_applications/unit_converter/`) - Related web tool
 - **Scientific Modeling** (`scientific_modeling/`) - Shared math utilities
 

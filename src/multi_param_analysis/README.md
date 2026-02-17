@@ -59,18 +59,22 @@ python launch_pyqt6.py
 ### Running an Analysis
 
 1. **Configure Parameter 1 (X-Axis)**:
+
    - Select variable from dropdown (Temperature, O2/Feed Ratio, etc.)
    - Set minimum and maximum values
    - Choose number of steps (2-100)
 
 2. **Configure Parameter 2 (Y-Axis)**:
+
    - Select a different variable
    - Define range and step count
 
 3. **Select Output Variable**:
+
    - Choose the response variable to analyze (Efficiency, H2 Yield, etc.)
 
 4. **Set Analysis Options** (Options tab):
+
    - Enable/disable parallel processing
    - Configure max workers
    - Toggle sensitivity calculations
@@ -83,17 +87,17 @@ python launch_pyqt6.py
 
 ## Input Parameters
 
-| Parameter | Description | Default | Range |
-|-----------|-------------|---------|-------|
-| Parameter 1 Variable | X-axis input variable | Temperature | Dropdown selection |
-| Parameter 1 Min | Lower bound for parameter 1 | 600 | -1e6 to 1e6 |
-| Parameter 1 Max | Upper bound for parameter 1 | 1200 | -1e6 to 1e6 |
-| Parameter 1 Steps | Number of points along X | 10 | 2-100 |
-| Parameter 2 Variable | Y-axis input variable | O2/Feed Ratio | Dropdown selection |
-| Parameter 2 Min | Lower bound for parameter 2 | 0.1 | -1e6 to 1e6 |
-| Parameter 2 Max | Upper bound for parameter 2 | 0.5 | -1e6 to 1e6 |
-| Parameter 2 Steps | Number of points along Y | 10 | 2-100 |
-| Max Workers | Parallel processing threads | 4 | 1-32 |
+| Parameter            | Description                 | Default       | Range              |
+| -------------------- | --------------------------- | ------------- | ------------------ |
+| Parameter 1 Variable | X-axis input variable       | Temperature   | Dropdown selection |
+| Parameter 1 Min      | Lower bound for parameter 1 | 600           | -1e6 to 1e6        |
+| Parameter 1 Max      | Upper bound for parameter 1 | 1200          | -1e6 to 1e6        |
+| Parameter 1 Steps    | Number of points along X    | 10            | 2-100              |
+| Parameter 2 Variable | Y-axis input variable       | O2/Feed Ratio | Dropdown selection |
+| Parameter 2 Min      | Lower bound for parameter 2 | 0.1           | -1e6 to 1e6        |
+| Parameter 2 Max      | Upper bound for parameter 2 | 0.5           | -1e6 to 1e6        |
+| Parameter 2 Steps    | Number of points along Y    | 10            | 2-100              |
+| Max Workers          | Parallel processing threads | 4             | 1-32               |
 
 ## Output Format
 
@@ -169,11 +173,13 @@ s2 = Z.mean(axis=1).var() / total_var  # Parameter 2 effect
 ```
 ModuleNotFoundError: No module named 'PyQt6'
 ```
+
 **Solution**: Install PyQt6: `pip install PyQt6`
 
 ### Display Issues on High-DPI Screens
 
 **Solution**: Set environment variable before launching:
+
 ```bash
 export QT_AUTO_SCREEN_SCALE_FACTOR=1
 python launch_pyqt6.py
@@ -182,6 +188,7 @@ python launch_pyqt6.py
 ### Slow Performance with Large Grids
 
 **Solution**:
+
 - Reduce step count for initial exploration
 - Enable parallel processing in Options tab
 - Increase max workers based on CPU cores
@@ -207,13 +214,13 @@ python launch_pyqt6.py
 
 ### Demo Functions
 
-| Function | Formula | Minimum Location |
-|----------|---------|------------------|
-| Rosenbrock | (1-x)^2 + 100(y-x^2)^2 | (1, 1) |
-| Rastrigin | 20 + x^2 + y^2 - 10(cos(2pi*x) + cos(2pi*y)) | (0, 0) |
-| Sphere | x^2 + y^2 | (0, 0) |
-| Himmelblau | (x^2+y-11)^2 + (x+y^2-7)^2 | Multiple |
-| Beale | Sum of three quadratic terms | (3, 0.5) |
+| Function   | Formula                                      | Minimum Location |
+| ---------- | -------------------------------------------- | ---------------- |
+| Rosenbrock | (1-x)^2 + 100(y-x^2)^2                       | (1, 1)           |
+| Rastrigin  | 20 + x^2 + y^2 - 10(cos(2pi*x) + cos(2pi*y)) | (0, 0)           |
+| Sphere     | x^2 + y^2                                    | (0, 0)           |
+| Himmelblau | (x^2+y-11)^2 + (x+y^2-7)^2                   | Multiple         |
+| Beale      | Sum of three quadratic terms                 | (3, 0.5)         |
 
 ## Version History
 

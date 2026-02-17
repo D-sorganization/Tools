@@ -277,6 +277,7 @@ main "$@"
 ## Boundaries
 
 - ✅ **Always do:**
+
   - Write both `.sh` and `.bat` versions for all new scripts
   - Include comprehensive error handling
   - Use `set -euo pipefail` in Bash scripts
@@ -289,6 +290,7 @@ main "$@"
   - Reference CI workflow integration when scripts are used in CI
 
 - ⚠️ **Ask first:**
+
   - Before adding dependencies (e.g., jq, yq, gh CLI)
   - Before modifying git configuration
   - Before implementing force-push operations

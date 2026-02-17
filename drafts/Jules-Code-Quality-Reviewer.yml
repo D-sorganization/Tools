@@ -12,12 +12,12 @@ on:
   workflow_dispatch:
     inputs:
       days_to_review:
-        description: 'Number of days of git history to review'
+        description: "Number of days of git history to review"
         required: false
-        default: '2'
+        default: "2"
         type: string
   schedule:
-    - cron: "0 3 * * *"  # Daily at 3 AM UTC
+    - cron: "0 3 * * *" # Daily at 3 AM UTC
 
 permissions:
   contents: write
@@ -30,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Full history for git log analysis
+          fetch-depth: 0 # Full history for git log analysis
 
       - uses: actions/setup-python@v5
         with:

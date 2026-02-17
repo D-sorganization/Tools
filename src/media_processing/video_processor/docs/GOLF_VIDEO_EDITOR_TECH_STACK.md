@@ -9,6 +9,7 @@ Based on your requirements for an advanced AI-based golf swing video editor, I r
 ## 🎯 Primary Recommendation: Web-Based Platform
 
 ### Why Web-Based?
+
 - **Universal Access**: Works on any device (desktop, tablet, mobile)
 - **Easy Sharing**: Direct links, no installation required
 - **Automatic Updates**: Deploy once, all users get latest features
@@ -21,14 +22,17 @@ Based on your requirements for an advanced AI-based golf swing video editor, I r
 ## 🏗️ Technology Stack Overview
 
 ### Frontend Framework
+
 **Primary: React + TypeScript + Next.js**
 
 **Rationale:**
+
 - **React**: Industry standard, massive ecosystem, excellent for complex UIs
 - **TypeScript**: Type safety crucial for video processing logic
 - **Next.js**: Server-side rendering, optimized performance, easy deployment
 
 **Alternatives Considered:**
+
 - **Vue.js**: Simpler but smaller ecosystem
 - **Svelte**: Fast but less mature for complex apps
 - **Angular**: Overly complex for this use case
@@ -40,12 +44,14 @@ Based on your requirements for an advanced AI-based golf swing video editor, I r
 ### 1. Video Playback & Manipulation
 
 #### **Primary: FFmpeg.js / FFmpeg.wasm**
+
 - **Purpose**: Video processing in browser
 - **Capabilities**: Transcode, trim, crop, rotate, merge
 - **Format Support**: All common formats (MP4, MOV, AVI, MKV, WebM)
 - **Performance**: WASM-based, runs at native speeds
 
 #### **Video Player: Video.js or Plyr**
+
 - **Features**: Custom controls, frame-by-frame seeking
 - **Timeline Control**: Precise playback control
 - **Multiple Speed**: 0.25x to 2x playback
@@ -54,6 +60,7 @@ Based on your requirements for an advanced AI-based golf swing video editor, I r
 ### 2. Canvas-Based Drawing & Annotations
 
 #### **Primary: Fabric.js or Konva.js**
+
 - **Purpose**: 2D drawing, line overlays, annotations
 - **Features:**
   - Freehand drawing
@@ -64,12 +71,14 @@ Based on your requirements for an advanced AI-based golf swing video editor, I r
   - Export annotations with video
 
 #### **Alternative: Paper.js**
+
 - More vector-focused
 - Better for precise geometric overlays
 
 ### 3. 3D Plane Visualization & Camera Perspective
 
 #### **Primary: Three.js**
+
 - **Purpose**: 3D plane overlay, perspective manipulation
 - **Capabilities:**
   - Render 3D planes over 2D video
@@ -78,11 +87,13 @@ Based on your requirements for an advanced AI-based golf swing video editor, I r
   - Shadow/lighting for depth perception
 
 #### **Integration with 2D:**
+
 - Use Three.js WebGL canvas overlay on video
 - Sync 3D plane with video frames
 - Real-time manipulation with UI controls
 
 #### **Camera Calibration:**
+
 - **OpenCV.js**: Camera pose estimation
 - **Homography transformation**: 2D to 3D mapping
 - Manual adjustment controls for fine-tuning
@@ -94,7 +105,9 @@ Based on your requirements for an advanced AI-based golf swing video editor, I r
 ### 1. Markerless Motion Capture
 
 #### **Primary: MediaPipe (Google)**
+
 - **Pros:**
+
   - Pre-trained pose estimation models
   - Real-time tracking (30+ FPS)
   - 33 body landmarks
@@ -108,11 +121,13 @@ Based on your requirements for an advanced AI-based golf swing video editor, I r
   - Custom landmark tracking
 
 #### **Alternative: TensorFlow.js + PoseNet/MoveNet**
+
 - **MoveNet**: Google's newer, faster pose estimation
 - **PoseNet**: Older but reliable
 - **Custom Training**: Can fine-tune for golf-specific poses
 
 #### **For Golf-Specific Tracking:**
+
 ```javascript
 // Track key golf swing points
 const golfKeyPoints = {
@@ -121,19 +136,21 @@ const golfKeyPoints = {
   leftWrist: landmarks[15],
   leftHand: landmarks[19],
   neck: landmarks[0], // Base approximation
-  club: trackClubWithCustomModel() // See below
+  club: trackClubWithCustomModel(), // See below
 };
 ```
 
 ### 2. Club Tracking
 
 #### **Primary: Custom TensorFlow.js Model**
+
 - **Approach**: Train object detection model
 - **Dataset**: Golf club images in various positions
 - **Architecture**: YOLO-tiny or MobileNet SSD
 - **Real-time**: 20-30 FPS in browser
 
 #### **Alternative: OpenCV.js + Traditional CV**
+
 - Edge detection + Hough line transform
 - Color-based tracking (club head)
 - Motion tracking between frames
@@ -141,7 +158,9 @@ const golfKeyPoints = {
 ### 3. Double/Triple Pendulum Model
 
 #### **Physics Simulation Library: Matter.js or Cannon.js**
+
 - **Matter.js**: 2D physics engine
+
   - Constraint-based pendulum
   - Joint constraints for arm/club
   - Real-time fitting to tracked points
@@ -150,24 +169,23 @@ const golfKeyPoints = {
   - More complex but true 3D simulation
 
 #### **Pendulum Model Implementation:**
+
 ```typescript
 interface PendulumModel {
   // Segments: neck base → left shoulder → left elbow → left wrist → club end
   segments: [
-    { name: 'upperArm', length: number, mass: number },
-    { name: 'forearm', length: number, mass: number },
-    { name: 'club', length: number, mass: number }
+    { name: "upperArm"; length: number; mass: number },
+    { name: "forearm"; length: number; mass: number },
+    { name: "club"; length: number; mass: number },
   ];
-  joints: [
-    { type: 'revolute', position: Vector2D, limits: [min, max] }
-  ];
+  joints: [{ type: "revolute"; position: Vector2D; limits: [min, max] }];
   constraints: PhysicsConstraints;
 }
 
 // Fit model to detected landmarks
 function fitPendulumToLandmarks(
   landmarks: MediaPipeLandmarks,
-  initialModel: PendulumModel
+  initialModel: PendulumModel,
 ): FittedModel {
   // Optimization algorithm to minimize error between
   // model predictions and actual detected positions
@@ -178,12 +196,14 @@ function fitPendulumToLandmarks(
 ### 4. Feature Tracking
 
 #### **Primary: OpenCV.js**
+
 - **Optical Flow**: Track features between frames
 - **Lucas-Kanade**: Sparse tracking
 - **Farneback**: Dense optical flow
 - **KLT Tracker**: Point tracking
 
 #### **Use Cases:**
+
 - Track club head through swing
 - Track ball flight
 - Track body segment movements
@@ -194,10 +214,12 @@ function fitPendulumToLandmarks(
 #### **AI-Based Upscaling Options:**
 
 **Option 1: Real-ESRGAN (Server-Side)**
+
 - **Quality**: Excellent (2x-4x upscaling)
 - **Processing**: Server-side Python API
 - **Speed**: ~5-10 seconds per frame on GPU
 - **Implementation**:
+
   ```python
   # Backend service using FastAPI + Real-ESRGAN
   from realesrgan import RealESRGAN
@@ -207,17 +229,20 @@ function fitPendulumToLandmarks(
   ```
 
 **Option 2: TensorFlow.js ESPCN (Browser-Side)**
+
 - **Quality**: Good (2x upscaling)
 - **Processing**: Client-side
 - **Speed**: Real-time on modern GPUs
 - **Limitation**: Lower quality than server-side
 
 **Option 3: Topaz Video AI (Commercial API)**
+
 - **Quality**: Industry-leading
 - **Cost**: API pricing required
 - **Features**: Denoising, stabilization, slow-motion interpolation
 
 **Recommendation**: Hybrid approach
+
 - Offer fast browser-based upscaling (ESPCN)
 - Premium feature: Server-side Real-ESRGAN for high-quality
 
@@ -242,7 +267,7 @@ class VideoCommentaryRecorder implements AudioRecorder {
   async startRecording(): Promise<void> {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     this.mediaRecorder = new MediaRecorder(stream, {
-      mimeType: 'audio/webm;codecs=opus'
+      mimeType: "audio/webm;codecs=opus",
     });
 
     this.mediaRecorder.ondataavailable = (e) => this.chunks.push(e.data);
@@ -252,7 +277,7 @@ class VideoCommentaryRecorder implements AudioRecorder {
   stopRecording(): Promise<Blob> {
     return new Promise((resolve) => {
       this.mediaRecorder.onstop = () => {
-        const blob = new Blob(this.chunks, { type: 'audio/webm' });
+        const blob = new Blob(this.chunks, { type: "audio/webm" });
         resolve(blob);
       };
       this.mediaRecorder.stop();
@@ -262,6 +287,7 @@ class VideoCommentaryRecorder implements AudioRecorder {
 ```
 
 ### Audio Processing: Tone.js or Howler.js
+
 - Waveform visualization
 - Volume normalization
 - Noise reduction (via TensorFlow.js models)
@@ -274,6 +300,7 @@ class VideoCommentaryRecorder implements AudioRecorder {
 ### UI Component Library
 
 #### **Primary: shadcn/ui + Radix UI + Tailwind CSS**
+
 - **shadcn/ui**: Modern, customizable components
 - **Radix UI**: Accessible primitives
 - **Tailwind CSS**: Utility-first styling
@@ -284,6 +311,7 @@ class VideoCommentaryRecorder implements AudioRecorder {
   - Fast development
 
 #### **Alternative: Material-UI (MUI)**
+
 - More opinionated design
 - Larger component library
 - Heavier bundle size
@@ -310,6 +338,7 @@ class VideoCommentaryRecorder implements AudioRecorder {
 ```
 
 ### Key UX Features
+
 - **Drag-and-drop**: Video upload
 - **Keyboard shortcuts**: Frame navigation (←/→), play/pause (space)
 - **Context menus**: Right-click actions
@@ -325,11 +354,13 @@ class VideoCommentaryRecorder implements AudioRecorder {
 ### Backend Framework
 
 #### **Primary: Node.js + Express + TypeScript**
+
 - **Consistency**: Same language as frontend (TypeScript)
 - **Performance**: Excellent for I/O operations
 - **Ecosystem**: Massive package availability
 
 #### **Alternative: Python + FastAPI**
+
 - **Pros**: Better for AI/ML processing
 - **Use**: For compute-intensive operations
 - **Microservice**: Separate service for AI features
@@ -337,9 +368,11 @@ class VideoCommentaryRecorder implements AudioRecorder {
 ### Database
 
 #### **Primary: PostgreSQL + Prisma ORM**
+
 - **PostgreSQL**: Robust, scalable, JSONB support
 - **Prisma**: Type-safe database access, migrations
 - **Schema:**
+
   ```prisma
   model User {
     id        String   @id @default(cuid())
@@ -412,6 +445,7 @@ class VideoCommentaryRecorder implements AudioRecorder {
 ### File Storage
 
 #### **Primary: AWS S3 or Cloudflare R2**
+
 - **S3**: Industry standard, excellent performance
 - **R2**: Cloudflare alternative, no egress fees
 - **Structure:**
@@ -427,6 +461,7 @@ class VideoCommentaryRecorder implements AudioRecorder {
   ```
 
 #### **Alternative: Cloudinary or Mux**
+
 - **Cloudinary**: Video transformation API
 - **Mux**: Video streaming + analytics
 - **Pros**: Built-in video processing, CDN
@@ -462,6 +497,7 @@ callbacks: {
 ```
 
 ### Alternative: Clerk or Supabase Auth
+
 - More features out-of-box
 - User management UI
 - Higher cost for scale
@@ -473,6 +509,7 @@ callbacks: {
 ### Primary: Vercel (Frontend + API) + Railway (AI Services)
 
 #### **Frontend & API: Vercel**
+
 - **Next.js optimized**
 - **Edge functions**: Low latency worldwide
 - **Automatic scaling**
@@ -480,7 +517,9 @@ callbacks: {
 - **Custom domains**
 
 #### **AI Processing: Railway or Modal**
+
 - **Railway**:
+
   - Docker containers
   - Python AI services
   - GPU support
@@ -493,6 +532,7 @@ callbacks: {
   - Cost-effective
 
 #### **Alternative: AWS (Full Control)**
+
 - **EC2**: Application servers
 - **Lambda**: Serverless functions
 - **SageMaker**: AI model hosting
@@ -508,22 +548,23 @@ callbacks: {
 
 ```typescript
 // Real-time annotation sharing
-io.on('connection', (socket) => {
-  socket.on('join-project', (projectId) => {
+io.on("connection", (socket) => {
+  socket.on("join-project", (projectId) => {
     socket.join(projectId);
   });
 
-  socket.on('annotation-added', (data) => {
-    socket.to(data.projectId).emit('annotation-updated', data);
+  socket.on("annotation-added", (data) => {
+    socket.to(data.projectId).emit("annotation-updated", data);
   });
 
-  socket.on('video-commentary', (audioChunk) => {
-    socket.to(data.projectId).emit('commentary-stream', audioChunk);
+  socket.on("video-commentary", (audioChunk) => {
+    socket.to(data.projectId).emit("commentary-stream", audioChunk);
   });
 });
 ```
 
 ### Sharing Features
+
 - **Direct Links**: Share projects via URL
 - **Permission Levels**:
   - View-only (students)
@@ -555,8 +596,8 @@ interface PlaneOverlay {
   // 3D plane definition
   normal: Vector3;
   point: Vector3;
-  tilt: number;    // degrees
-  roll: number;    // degrees
+  tilt: number; // degrees
+  roll: number; // degrees
 
   // Appearance
   color: string;
@@ -572,8 +613,8 @@ interface PlaneOverlay {
 // Usage: Swing plane visualization
 const swingPlane = new PlaneOverlay({
   normal: calculateSwingPlaneNormal(poses),
-  color: 'rgba(255, 0, 0, 0.3)',
-  gridLines: true
+  color: "rgba(255, 0, 0, 0.3)",
+  gridLines: true,
 });
 ```
 
@@ -589,17 +630,17 @@ interface PendulumFitter {
   fit(poses: MediaPipePose[], frames: number[]): FittedModel;
 
   // Optimization
-  optimizationMethod: 'gradient-descent' | 'particle-swarm' | 'genetic';
+  optimizationMethod: "gradient-descent" | "particle-swarm" | "genetic";
   errorMetric: (predicted: Point[], actual: Point[]) => number;
 }
 
 // Implementation
 class GolfSwingPendulum implements PendulumFitter {
   segments = [
-    { name: 'neck-shoulder', length: null, mass: null }, // fit from data
-    { name: 'upper-arm', length: null, mass: null },
-    { name: 'forearm', length: null, mass: null },
-    { name: 'club', length: null, mass: null }
+    { name: "neck-shoulder", length: null, mass: null }, // fit from data
+    { name: "upper-arm", length: null, mass: null },
+    { name: "forearm", length: null, mass: null },
+    { name: "club", length: null, mass: null },
   ];
 
   fit(poses: MediaPipePose[], frames: number[]): FittedModel {
@@ -618,7 +659,7 @@ class GolfSwingPendulum implements PendulumFitter {
 
   private optimizeParameters(
     trajectories: Trajectory[],
-    initial: Parameters
+    initial: Parameters,
   ): OptimizedParameters {
     // Use TensorFlow.js optimizer or custom gradient descent
     const optimizer = tf.train.adam(0.01);
@@ -647,32 +688,47 @@ interface VideoSegment {
   id: string;
   startTime: number;
   endTime: number;
-  type: 'backswing' | 'downswing' | 'impact' | 'follow-through' | 'custom';
+  type: "backswing" | "downswing" | "impact" | "follow-through" | "custom";
   annotations: Annotation[];
   commentary: AudioTrack[];
 }
 
 // AI-powered automatic segmentation
 class SwingSegmenter {
-  async segmentSwing(video: Video, poses: MediaPipePose[]): Promise<VideoSegment[]> {
+  async segmentSwing(
+    video: Video,
+    poses: MediaPipePose[],
+  ): Promise<VideoSegment[]> {
     // Detect key events in swing
     const events = this.detectSwingEvents(poses);
 
     // Create segments based on events
     return [
-      { type: 'backswing', startTime: 0, endTime: events.topOfBackswing },
-      { type: 'downswing', startTime: events.topOfBackswing, endTime: events.impact },
-      { type: 'impact', startTime: events.impact - 0.1, endTime: events.impact + 0.1 },
-      { type: 'follow-through', startTime: events.impact, endTime: events.finish }
+      { type: "backswing", startTime: 0, endTime: events.topOfBackswing },
+      {
+        type: "downswing",
+        startTime: events.topOfBackswing,
+        endTime: events.impact,
+      },
+      {
+        type: "impact",
+        startTime: events.impact - 0.1,
+        endTime: events.impact + 0.1,
+      },
+      {
+        type: "follow-through",
+        startTime: events.impact,
+        endTime: events.finish,
+      },
     ];
   }
 
   private detectSwingEvents(poses: MediaPipePose[]): SwingEvents {
     // Analyze wrist position to detect key events
-    const wristTrajectory = poses.map(p => p.landmarks[15]); // left wrist
+    const wristTrajectory = poses.map((p) => p.landmarks[15]); // left wrist
 
     // Top of backswing: highest Y position before downswing
-    const topOfBackswing = this.findLocalMaximum(wristTrajectory, 'y');
+    const topOfBackswing = this.findLocalMaximum(wristTrajectory, "y");
 
     // Impact: lowest point + maximum velocity
     const impact = this.findImpactFrame(wristTrajectory);
@@ -692,23 +748,27 @@ class SwingSegmenter {
 ### Workflow 1: Coach Creates Video Analysis
 
 1. **Upload Video**
+
    - Drag-and-drop MP4 file
    - Automatic thumbnail generation
    - Video processing queue
 
 2. **AI Processing (Automatic)**
+
    - Pose detection with MediaPipe
    - Swing segmentation
    - Pendulum model fitting
    - Club tracking
 
 3. **Manual Annotation**
+
    - Draw swing plane overlay
    - Add lines on body segments
    - Annotate key positions
    - Add text callouts
 
 4. **Record Commentary**
+
    - Play video
    - Click record button
    - Speak while video plays
@@ -723,11 +783,13 @@ class SwingSegmenter {
 ### Workflow 2: Student Views Analysis
 
 1. **Receive Link**
+
    - Email with link
    - Click to open in browser
    - No login required (for view-only)
 
 2. **Interactive Playback**
+
    - Play video with overlays
    - Hear coach commentary
    - Scrub timeline
@@ -743,6 +805,7 @@ class SwingSegmenter {
 ## 📦 Technology Stack Summary
 
 ### Frontend
+
 - **Framework**: React + TypeScript + Next.js
 - **UI**: shadcn/ui + Tailwind CSS
 - **Video**: Video.js + FFmpeg.wasm
@@ -751,6 +814,7 @@ class SwingSegmenter {
 - **State**: Zustand or Redux Toolkit
 
 ### Backend
+
 - **API**: Node.js + Express + TypeScript
 - **Database**: PostgreSQL + Prisma
 - **Auth**: NextAuth.js
@@ -758,6 +822,7 @@ class SwingSegmenter {
 - **Real-time**: Socket.io
 
 ### AI/ML
+
 - **Pose Detection**: MediaPipe + TensorFlow.js
 - **Video Upscaling**: Real-ESRGAN (Python backend)
 - **Feature Tracking**: OpenCV.js
@@ -765,6 +830,7 @@ class SwingSegmenter {
 - **Custom Models**: TensorFlow.js (club detection)
 
 ### Deployment
+
 - **Frontend**: Vercel
 - **AI Services**: Railway or Modal
 - **CDN**: Cloudflare or AWS CloudFront
@@ -775,6 +841,7 @@ class SwingSegmenter {
 ## 💰 Cost Estimate (Monthly)
 
 ### MVP (100 users, 1000 videos)
+
 - **Vercel Pro**: $20/month
 - **Railway Starter**: $5/month
 - **PostgreSQL (Railway)**: $5/month
@@ -784,6 +851,7 @@ class SwingSegmenter {
 - **Total**: ~$80/month
 
 ### Scale (10,000 users, 100,000 videos)
+
 - **Vercel Pro**: $20/month
 - **Railway Pro**: $50/month
 - **Database (dedicated)**: $50/month
@@ -793,6 +861,7 @@ class SwingSegmenter {
 - **Total**: ~$5,050/month
 
 **Cost Optimization Strategies:**
+
 - Use Cloudflare R2 (no egress fees) → Save 90% on transfer
 - Implement aggressive caching
 - Use edge computing (Cloudflare Workers)
@@ -804,6 +873,7 @@ class SwingSegmenter {
 ## 🚦 Development Roadmap
 
 ### Phase 1: MVP (8-12 weeks)
+
 - [ ] Video upload & playback
 - [ ] Basic drawing tools (lines, arrows, text)
 - [ ] Audio commentary recording
@@ -812,12 +882,14 @@ class SwingSegmenter {
 - [ ] Basic trimming/cropping
 
 ### Phase 2: AI Features (8-12 weeks)
+
 - [ ] MediaPipe pose detection
 - [ ] Automatic swing segmentation
 - [ ] Feature tracking
 - [ ] Basic pendulum model visualization
 
 ### Phase 3: Advanced Features (12-16 weeks)
+
 - [ ] 3D plane overlays
 - [ ] Camera perspective adjustment
 - [ ] Advanced pendulum fitting
@@ -825,6 +897,7 @@ class SwingSegmenter {
 - [ ] Side-by-side comparison
 
 ### Phase 4: Polish & Scale (8 weeks)
+
 - [ ] Performance optimization
 - [ ] Mobile responsiveness
 - [ ] Advanced collaboration features
@@ -838,13 +911,16 @@ class SwingSegmenter {
 ## 🔧 Alternative Approaches
 
 ### Alternative 1: Desktop Application (Electron)
+
 **Pros:**
+
 - Better performance for video processing
 - Offline capability
 - Native file system access
 - More control over resources
 
 **Cons:**
+
 - Separate builds for Mac/Windows/Linux
 - Harder to share (must install app)
 - Update distribution complexity
@@ -853,12 +929,15 @@ class SwingSegmenter {
 **Verdict**: Only if you need offline processing or extreme performance
 
 ### Alternative 2: Mobile-First (React Native)
+
 **Pros:**
+
 - Native mobile experience
 - Access to device camera
 - Better touch controls
 
 **Cons:**
+
 - Two codebases (iOS + Android)
 - Video processing limited on mobile
 - Harder to build complex UIs
@@ -867,12 +946,15 @@ class SwingSegmenter {
 **Verdict**: Build web-first, create mobile apps later if demand exists
 
 ### Alternative 3: Hybrid (Web + Desktop)
+
 **Pros:**
+
 - Best of both worlds
 - Share core code
 - Deploy web for coaches, desktop for intensive processing
 
 **Cons:**
+
 - Maintain two deployment pipelines
 - More complex architecture
 
@@ -883,6 +965,7 @@ class SwingSegmenter {
 ## 🎯 Final Recommendation
 
 **Start with Web Application using:**
+
 ```
 Frontend: Next.js + TypeScript + React
 UI: shadcn/ui + Tailwind CSS
@@ -896,6 +979,7 @@ Deployment: Vercel + Railway
 ```
 
 **Why This Stack:**
+
 1. ✅ **Single codebase**: Faster development
 2. ✅ **Universal access**: Any device, no installation
 3. ✅ **Easy sharing**: Send links, no friction
@@ -909,19 +993,23 @@ Deployment: Vercel + Railway
 ## 📚 Learning Resources
 
 ### Video Processing
+
 - [FFmpeg.wasm Documentation](https://ffmpegwasm.netlify.app/)
 - [Video.js Guide](https://videojs.com/getting-started/)
 
 ### AI/ML
+
 - [MediaPipe Web](https://google.github.io/mediapipe/solutions/pose.html)
 - [TensorFlow.js](https://www.tensorflow.org/js)
 - [OpenCV.js Tutorials](https://docs.opencv.org/4.x/d5/d10/tutorial_js_root.html)
 
 ### 3D Graphics
+
 - [Three.js Journey](https://threejs-journey.com/)
 - [Three.js Fundamentals](https://threejs.org/manual/)
 
 ### Full Stack
+
 - [Next.js Learn](https://nextjs.org/learn)
 - [Prisma Getting Started](https://www.prisma.io/docs/getting-started)
 
@@ -951,4 +1039,4 @@ Deployment: Vercel + Railway
 
 ---
 
-*This document provides a comprehensive, production-ready technology stack for your golf swing video analysis platform. All recommended technologies are battle-tested, well-documented, and capable of delivering the sophisticated features you've outlined.*
+_This document provides a comprehensive, production-ready technology stack for your golf swing video analysis platform. All recommended technologies are battle-tested, well-documented, and capable of delivering the sophisticated features you've outlined._

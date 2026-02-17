@@ -9,15 +9,17 @@
 
 ## Error Quality Audit
 
-| Component | Quality | Notes |
-| --------- | ------- | ----- |
+| Component | Quality | Notes                                        |
+| --------- | ------- | -------------------------------------------- |
 | Launcher  | Good    | Captures exceptions, shows error dialog/log. |
-| CLI Tools | Mixed   | Some use print, others logging. |
+| CLI Tools | Mixed   | Some use print, others logging.              |
 
 ## Remediation Roadmap
 
 **48 Hours**
+
 - None.
 
 **2 Weeks**
+
 - Audit all `__main__` blocks to ensure they have top-level exception handling.

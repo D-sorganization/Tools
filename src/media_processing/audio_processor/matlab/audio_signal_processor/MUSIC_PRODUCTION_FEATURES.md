@@ -28,6 +28,7 @@ audiowrite('vocal_autotuned.wav', autotuned, fs);
 ```
 
 **Parameters:**
+
 - **Key**: Any note ('C', 'C#', 'D', 'Eb', 'E', 'F', etc.)
 - **Scale**: 'major', 'minor', 'pentatonic', 'blues', 'chromatic'
 - **Strength**: 0-1 (0=no correction, 1=full snap to scale)
@@ -470,6 +471,7 @@ audiowrite('handel_vocoder.wav', vocoded, fs);
 I've included these essential production tools:
 
 ### ✅ **Implemented**
+
 - ✅ **Autotune** (pitch correction to scale)
 - ✅ **Pitch detection** (neural network)
 - ✅ **Key detection** (Krumhansl-Schmuckler algorithm)
@@ -491,40 +493,47 @@ I've included these essential production tools:
 ### 🔮 **Future Enhancements** (Would Require More Development)
 
 #### **Advanced Composition**
+
 - Intelligent harmony generator
 - Bass line generator from chords
 - Drum pattern generator (various styles)
 - Auto-accompaniment
 
 #### **MIDI Integration**
+
 - Full MIDI file export
 - MIDI playback with virtual instruments
 - MIDI CC automation
 
 #### **Sampling & Synthesis**
+
 - Sampler with pitch/time mapping
 - Granular synthesis
 - Wavetable synthesis
 - FM synthesis
 
 #### **Advanced Looping**
+
 - Loop slicing and triggering
 - Rex file support
 - Auto-loop detection and extraction
 
 #### **Mastering Tools**
+
 - Reference track matching
 - Automatic EQ matching
 - Multi-band dynamics
 - Stereo width analyzer and enhancer
 
 #### **DJ Tools**
+
 - Beat matching and sync
 - Key-compatible track suggestions
 - Crossfader with EQ
 - Cue point management
 
 #### **Score Tools**
+
 - Musical notation export
 - Lead sheet generation
 - Chord chart creation
@@ -534,6 +543,7 @@ I've included these essential production tools:
 ## 💡 Quick Tips
 
 ### **For Natural-Sounding Autotune:**
+
 ```matlab
 autotuned = tools.autotune(vocal, fs, ...
     'Strength', 0.6, ...    % 60% correction
@@ -541,6 +551,7 @@ autotuned = tools.autotune(vocal, fs, ...
 ```
 
 ### **For Robotic "T-Pain" Effect:**
+
 ```matlab
 autotuned = tools.autotune(vocal, fs, ...
     'Strength', 1.0, ...    % Full correction
@@ -548,6 +559,7 @@ autotuned = tools.autotune(vocal, fs, ...
 ```
 
 ### **For Subtle Pitch Correction:**
+
 ```matlab
 autotuned = tools.autotune(vocal, fs, ...
     'Strength', 0.3, ...    % 30% correction
@@ -559,6 +571,7 @@ autotuned = tools.autotune(vocal, fs, ...
 ## 🎓 Music Theory Reference
 
 ### **Common Scales:**
+
 - **Major**: Happy, bright (Do-Re-Mi-Fa-Sol-La-Ti-Do)
 - **Minor**: Sad, dark
 - **Pentatonic**: 5 notes, used in rock, blues
@@ -566,6 +579,7 @@ autotuned = tools.autotune(vocal, fs, ...
 - **Chromatic**: All 12 notes
 
 ### **Common Chords:**
+
 - **major**: Bright, happy (C-E-G)
 - **minor**: Dark, sad (A-C-E)
 - **7**: Bluesy, tense (G-B-D-F)
@@ -575,6 +589,7 @@ autotuned = tools.autotune(vocal, fs, ...
 - **aug**: Mysterious, floating
 
 ### **Common Progressions:**
+
 - **I-V-vi-IV**: "Pop" progression (C-G-Am-F)
 - **I-IV-V**: Blues/rock (C-F-G)
 - **ii-V-I**: Jazz standard

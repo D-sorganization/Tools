@@ -113,6 +113,7 @@ open coverage/index.html
 ```
 
 **Coverage Thresholds:**
+
 - Lines: 80%
 - Functions: 80%
 - Branches: 70%
@@ -128,20 +129,20 @@ open coverage/index.html
 
 ```typescript
 // hooks/__tests__/useVideoFrame.test.ts
-import { describe, it, expect } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
-import { useVideoFrame } from '../useVideoFrame';
-import { createMockVideoElement } from '@/test/utils';
+import { describe, it, expect } from "vitest";
+import { renderHook, act } from "@testing-library/react";
+import { useVideoFrame } from "../useVideoFrame";
+import { createMockVideoElement } from "@/test/utils";
 
-describe('useVideoFrame', () => {
-  it('should calculate current frame correctly', () => {
+describe("useVideoFrame", () => {
+  it("should calculate current frame correctly", () => {
     const mockVideo = createMockVideoElement({
       currentTime: 1.0,
       duration: 10.0,
     }) as HTMLVideoElement;
 
     const { result } = renderHook(() =>
-      useVideoFrame({ videoElement: mockVideo, fps: 30 })
+      useVideoFrame({ videoElement: mockVideo, fps: 30 }),
     );
 
     expect(result.current.getCurrentFrame()).toBe(30);
@@ -170,15 +171,15 @@ describe('VideoPlayer', () => {
 
 ```typescript
 // lib/__tests__/errors.test.ts
-import { describe, it, expect } from 'vitest';
-import { ValidationError } from '../errors';
+import { describe, it, expect } from "vitest";
+import { ValidationError } from "../errors";
 
-describe('ValidationError', () => {
-  it('should create error with 400 status', () => {
-    const error = new ValidationError('Invalid input');
+describe("ValidationError", () => {
+  it("should create error with 400 status", () => {
+    const error = new ValidationError("Invalid input");
 
     expect(error.statusCode).toBe(400);
-    expect(error.message).toBe('Invalid input');
+    expect(error.message).toBe("Invalid input");
   });
 });
 ```
@@ -189,23 +190,23 @@ describe('ValidationError', () => {
 
 ```typescript
 // tests/e2e/video-upload.spec.ts
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test('should upload and play video', async ({ page }) => {
-  await page.goto('/');
+test("should upload and play video", async ({ page }) => {
+  await page.goto("/");
 
   // Upload video
   const fileInput = page.locator('input[type="file"]');
-  await fileInput.setInputFiles('tests/fixtures/test-video.mp4');
+  await fileInput.setInputFiles("tests/fixtures/test-video.mp4");
 
   // Wait for video to load
-  await expect(page.locator('video')).toBeVisible();
+  await expect(page.locator("video")).toBeVisible();
 
   // Play video
-  await page.getByRole('button', { name: /play/i }).click();
+  await page.getByRole("button", { name: /play/i }).click();
 
   // Verify video is playing
-  await expect(page.locator('video')).toHaveJSProperty('paused', false);
+  await expect(page.locator("video")).toHaveJSProperty("paused", false);
 });
 ```
 
@@ -218,13 +219,15 @@ test('should upload and play video', async ({ page }) => {
 Located in `apps/web/test/utils.tsx`:
 
 #### `createMockFile(name, size, type)`
+
 Create a mock File object for testing uploads.
 
 ```typescript
-const file = createMockFile('test.mp4', 1024 * 1024, 'video/mp4');
+const file = createMockFile("test.mp4", 1024 * 1024, "video/mp4");
 ```
 
 #### `createMockVideoElement(overrides)`
+
 Create a mock HTMLVideoElement.
 
 ```typescript
@@ -235,13 +238,15 @@ const video = createMockVideoElement({
 ```
 
 #### `createMockBlob(content, type)`
+
 Create a mock Blob.
 
 ```typescript
-const blob = createMockBlob('content', 'video/mp4');
+const blob = createMockBlob("content", "video/mp4");
 ```
 
 #### `createMockFabricCanvas()`
+
 Create a mock Fabric.js canvas.
 
 ```typescript
@@ -249,6 +254,7 @@ const canvas = createMockFabricCanvas();
 ```
 
 #### `waitForCondition(condition, timeout)`
+
 Wait for a condition to be true.
 
 ```typescript
@@ -265,22 +271,24 @@ Run `npm run test:coverage` to see current coverage.
 
 ### Coverage Goals
 
-| Metric | Target | Current |
-|--------|--------|---------|
-| Lines | 80% | TBD |
-| Functions | 80% | TBD |
-| Branches | 70% | TBD |
-| Statements | 80% | TBD |
+| Metric     | Target | Current |
+| ---------- | ------ | ------- |
+| Lines      | 80%    | TBD     |
+| Functions  | 80%    | TBD     |
+| Branches   | 70%    | TBD     |
+| Statements | 80%    | TBD     |
 
 ### Improving Coverage
 
 1. **Identify gaps:**
+
    ```bash
    npm run test:coverage
    open coverage/index.html
    ```
 
 2. **Focus on critical paths:**
+
    - Video upload and validation
    - Error handling
    - User interactions
@@ -298,10 +306,10 @@ Run `npm run test:coverage` to see current coverage.
 ### 1. Test Structure (AAA Pattern)
 
 ```typescript
-it('should do something', () => {
+it("should do something", () => {
   // Arrange
-  const input = 'test';
-  const expected = 'TEST';
+  const input = "test";
+  const expected = "TEST";
 
   // Act
   const result = transform(input);
@@ -314,38 +322,42 @@ it('should do something', () => {
 ### 2. Test Names
 
 ✅ **Good:**
+
 ```typescript
-it('should return 0 when video element is null')
-it('should throw ValidationError for oversized files')
-it('should display error message on upload failure')
+it("should return 0 when video element is null");
+it("should throw ValidationError for oversized files");
+it("should display error message on upload failure");
 ```
 
 ❌ **Bad:**
+
 ```typescript
-it('test 1')
-it('should work')
-it('returns something')
+it("test 1");
+it("should work");
+it("returns something");
 ```
 
 ### 3. One Assertion Per Test (Generally)
 
 ✅ **Good:**
+
 ```typescript
-it('should have correct status code', () => {
+it("should have correct status code", () => {
   expect(error.statusCode).toBe(400);
 });
 
-it('should have correct message', () => {
-  expect(error.message).toBe('Invalid input');
+it("should have correct message", () => {
+  expect(error.message).toBe("Invalid input");
 });
 ```
 
 ❌ **Avoid:**
+
 ```typescript
-it('should have correct properties', () => {
+it("should have correct properties", () => {
   expect(error.statusCode).toBe(400);
-  expect(error.message).toBe('Invalid input');
-  expect(error.code).toBe('VALIDATION_ERROR');
+  expect(error.message).toBe("Invalid input");
+  expect(error.code).toBe("VALIDATION_ERROR");
   // Too many unrelated assertions
 });
 ```
@@ -354,14 +366,14 @@ it('should have correct properties', () => {
 
 ```typescript
 // Mock Next.js router
-vi.mock('next/navigation', () => ({
+vi.mock("next/navigation", () => ({
   useRouter: () => ({
     push: vi.fn(),
   }),
 }));
 
 // Mock file operations
-vi.mock('fs', () => ({
+vi.mock("fs", () => ({
   readFile: vi.fn(),
 }));
 ```
@@ -378,6 +390,7 @@ afterEach(() => {
 ### 6. Test Edge Cases
 
 Always test:
+
 - Empty inputs
 - Null/undefined values
 - Boundary values (0, max, max+1)
@@ -387,6 +400,7 @@ Always test:
 ### 7. Don't Test Implementation Details
 
 ✅ **Good:** Test behavior
+
 ```typescript
 it('should display error message to user', () => {
   const { getByText } = render(<Component />);
@@ -395,8 +409,9 @@ it('should display error message to user', () => {
 ```
 
 ❌ **Bad:** Test implementation
+
 ```typescript
-it('should call setState with error', () => {
+it("should call setState with error", () => {
   // Testing internal implementation
 });
 ```
@@ -422,7 +437,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Install dependencies
         run: npm ci
@@ -490,15 +505,21 @@ PWDEBUG=1 npm run test:e2e
 ### Issue: Tests timeout
 
 **Solution:** Increase timeout for async operations
+
 ```typescript
-it('should load video', async () => {
-  await expect(page.locator('video')).toBeVisible({ timeout: 10000 });
-}, { timeout: 15000 });
+it(
+  "should load video",
+  async () => {
+    await expect(page.locator("video")).toBeVisible({ timeout: 10000 });
+  },
+  { timeout: 15000 },
+);
 ```
 
 ### Issue: Mock not working
 
 **Solution:** Ensure mock is hoisted
+
 ```typescript
 vi.mock('module', () => ({ ... })); // Must be at top level
 ```
@@ -533,6 +554,7 @@ When adding new features:
 5. ✅ Update this documentation if needed
 
 **Minimum requirements before PR:**
+
 - All tests pass
 - Coverage thresholds met (80% lines, 80% functions)
 - No failing E2E tests
@@ -540,6 +562,6 @@ When adding new features:
 
 ---
 
-*Last updated: 2025-11-16*
-*Testing framework: Vitest + Playwright*
-*Coverage target: 80%*
+_Last updated: 2025-11-16_
+_Testing framework: Vitest + Playwright_
+_Coverage target: 80%_

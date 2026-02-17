@@ -26,12 +26,14 @@ Complete guide to using the Audio Signal Processor programmatically (without GUI
 Load audio files with advanced options and metadata extraction.
 
 **Syntax:**
+
 ```matlab
 [audioData, sampleRate, info] = AudioLoader(filepath)
 [audioData, sampleRate, info] = AudioLoader(filepath, Name, Value)
 ```
 
 **Parameters:**
+
 - `filepath` - Path to audio file or MATLAB sound name
 - `'Metadata'` - Extract metadata (default: false)
 - `'Normalize'` - Normalize audio (default: false)
@@ -39,6 +41,7 @@ Load audio files with advanced options and metadata extraction.
 - `'Channels'` - Convert to mono/stereo (default: original)
 
 **Examples:**
+
 ```matlab
 % Basic loading
 [audioData, fs] = AudioLoader('song.wav');
@@ -67,17 +70,20 @@ fprintf('Bit depth: %d bits\n', info.BitDepth);
 Frequency-domain filtering with various window functions.
 
 **Syntax:**
+
 ```matlab
 filtered = FFTFilters(audioData, filterType, Name, Value)
 ```
 
 **Filter Types:**
+
 - `'Low Pass'` - Low-pass filter
 - `'High Pass'` - High-pass filter
 - `'Band Pass'` - Band-pass filter
 - `'Band Stop'` - Band-stop (notch) filter
 
 **Parameters:**
+
 - `'CutoffFrequency'` - Cutoff frequency in Hz (default: 1000)
 - `'LowCutoff'` - Low cutoff for band-pass/stop (default: 300)
 - `'HighCutoff'` - High cutoff for band-pass/stop (default: 3000)
@@ -88,6 +94,7 @@ filtered = FFTFilters(audioData, filterType, Name, Value)
 - `'SampleRate'` - Sample rate in Hz (default: 44100)
 
 **Examples:**
+
 ```matlab
 % Low-pass filter
 filtered = FFTFilters(audioData, 'Low Pass', ...
@@ -127,11 +134,13 @@ filtered = FFTFilters(audioData, 'Band Stop', ...
 Time-domain filtering with various filter types.
 
 **Syntax:**
+
 ```matlab
 filtered = AudioFilterEngine(audioData, filterType, Name, Value)
 ```
 
 **Filter Types:**
+
 - `'Butterworth'` - Butterworth IIR filter
 - `'MovingAverage'` - Moving average filter
 - `'Median'` - Median filter
@@ -139,15 +148,18 @@ filtered = AudioFilterEngine(audioData, filterType, Name, Value)
 **Parameters:**
 
 **Butterworth:**
+
 - `'CutoffFrequency'` - Cutoff frequency in Hz (default: 1000)
 - `'FilterOrder'` - Filter order (default: 4)
 - `'FilterMode'` - 'lowpass', 'highpass', 'bandpass' (default: 'lowpass')
 - `'SampleRate'` - Sample rate in Hz (default: 44100)
 
 **Moving Average / Median:**
+
 - `'WindowSize'` - Window size in samples (default: 5, must be odd)
 
 **Examples:**
+
 ```matlab
 % Butterworth low-pass filter
 filtered = AudioFilterEngine(audioData, 'Butterworth', ...
@@ -174,11 +186,13 @@ filtered = AudioFilterEngine(audioData, 'Median', ...
 Comprehensive audio effects processing.
 
 **Syntax:**
+
 ```matlab
 processed = AudioEffects(audioData, effectType, Name, Value)
 ```
 
 **Effect Types:**
+
 - `'Reverb'` - Algorithmic reverb
 - `'Delay'` - Delay/echo effect
 - `'EQ'` - Parametric equalizer
@@ -191,23 +205,27 @@ processed = AudioEffects(audioData, effectType, Name, Value)
 - `'TimeStretch'` - Time stretching
 
 ### Common Parameters (All Effects)
+
 - `'SampleRate'` - Sample rate in Hz (default: 44100)
 - `'Mix'` - Dry/wet mix ratio 0-1 (default: 0.5)
 - `'Bypass'` - Bypass effect (default: false)
 
 ### Reverb Parameters
+
 - `'RoomSize'` - Room size 0-1 (default: 0.5)
 - `'DecayTime'` - Decay time in seconds (default: 2.0)
 - `'Damping'` - High-frequency damping 0-1 (default: 0.5)
 - `'PreDelay'` - Pre-delay in seconds (default: 0.02)
 
 ### Delay Parameters
+
 - `'DelayTime'` - Delay time in seconds (default: 0.25)
 - `'Feedback'` - Feedback amount 0-0.95 (default: 0.3)
 - `'TempoSync'` - Sync to tempo (default: false)
 - `'Tempo'` - Tempo in BPM (default: 120)
 
 ### EQ Parameters
+
 - `'LowGain'` - Low frequency gain in dB (default: 0)
 - `'MidGain'` - Mid frequency gain in dB (default: 0)
 - `'HighGain'` - High frequency gain in dB (default: 0)
@@ -215,6 +233,7 @@ processed = AudioEffects(audioData, effectType, Name, Value)
 - `'HighFreq'` - High frequency crossover in Hz (default: 4000)
 
 ### Compression Parameters
+
 - `'Threshold'` - Compression threshold in dB (default: -12)
 - `'Ratio'` - Compression ratio (default: 4)
 - `'Attack'` - Attack time in ms (default: 10)
@@ -222,15 +241,18 @@ processed = AudioEffects(audioData, effectType, Name, Value)
 - `'Knee'` - Soft knee width in dB (default: 2)
 
 ### Distortion Parameters
+
 - `'Drive'` - Distortion amount 0-1 (default: 0.5)
 - `'Tone'` - Tone control 0-1 (default: 0.5)
 - `'Level'` - Output level 0-1 (default: 0.7)
 
 ### Modulation Parameters (Chorus/Flanger)
+
 - `'Rate'` - LFO rate in Hz (default: 0.5)
 - `'Depth'` - Modulation depth 0-1 (default: 0.3)
 
 **Examples:**
+
 ```matlab
 % Reverb
 reverb = AudioEffects(audioData, 'Reverb', ...
@@ -296,11 +318,13 @@ processed = AudioEffects(processed, 'Reverb', 'RoomSize', 0.6, 'Mix', 0.2, 'Samp
 Professional multi-track mixer with per-track controls.
 
 **Syntax:**
+
 ```matlab
 mixer = MixerCore(numTracks, sampleRate)
 ```
 
 **Key Methods:**
+
 - `loadTrack(trackIndex, audioData, trackSampleRate)` - Load audio to track
 - `setTrackVolume(trackIndex, volume)` - Set volume (0-1)
 - `setTrackPan(trackIndex, pan)` - Set pan (-1 to 1)
@@ -311,6 +335,7 @@ mixer = MixerCore(numTracks, sampleRate)
 - `processMix()` - Mix all tracks and return result
 
 **Examples:**
+
 ```matlab
 % Create 8-track mixer at 44.1 kHz
 mixer = MixerCore(8, 44100);
@@ -360,18 +385,21 @@ mixer.MasterBus.Pan = 0;
 FFT-based frequency analysis.
 
 **Syntax:**
+
 ```matlab
 [freqs, magnitudes] = FrequencyAnalyzer(audioData, Name, Value)
 [freqs, magnitudes, phases] = FrequencyAnalyzer(audioData, Name, Value)
 ```
 
 **Parameters:**
+
 - `'SampleRate'` - Sample rate in Hz (default: 44100)
 - `'FFTSize'` - FFT size (default: 2048)
 - `'Window'` - Window function (default: 'Hann')
 - `'AveragingMode'` - 'none', 'time', 'frequency' (default: 'none')
 
 **Examples:**
+
 ```matlab
 % Basic spectrum analysis
 [freqs, mags] = FrequencyAnalyzer(audioData, ...
@@ -408,11 +436,13 @@ fprintf('\n');
 Generate time-frequency spectrograms.
 
 **Syntax:**
+
 ```matlab
 [S, F, T] = SpectrogramGenerator(audioData, Name, Value)
 ```
 
 **Parameters:**
+
 - `'SampleRate'` - Sample rate in Hz (default: 44100)
 - `'FFTSize'` - FFT size (default: 2048)
 - `'Overlap'` - Overlap ratio 0-1 (default: 0.75)
@@ -420,6 +450,7 @@ Generate time-frequency spectrograms.
 - `'FrequencyLimits'` - [fMin, fMax] in Hz (default: [0, fs/2])
 
 **Examples:**
+
 ```matlab
 % Generate spectrogram
 [S, F, T] = SpectrogramGenerator(audioData, ...
@@ -461,12 +492,14 @@ caxis([-80, 0]); % dB range
 Manage audio sample libraries with metadata and search.
 
 **Syntax:**
+
 ```matlab
 libraryManager = SoundLibraryManager()
 libraryManager = SoundLibraryManager(libraryPath)
 ```
 
 **Key Methods:**
+
 - `loadSample(category, filename)` - Load sample from library
 - `loadMATLABSound(soundName)` - Load MATLAB built-in sound
 - `searchSamples(query)` - Search samples by metadata
@@ -476,6 +509,7 @@ libraryManager = SoundLibraryManager(libraryPath)
 - `updateCatalog()` - Refresh library catalog
 
 **Examples:**
+
 ```matlab
 % Create library manager
 libMgr = SoundLibraryManager();
@@ -524,22 +558,26 @@ libMgr.updateCatalog();
 Extract comprehensive metadata from audio files.
 
 **Syntax:**
+
 ```matlab
 metadata = MetadataExtractor(audioData, Name, Value)
 ```
 
 **Parameters:**
+
 - `'SampleRate'` - Sample rate in Hz (default: 44100)
 - `'Format'` - File format (default: 'WAV')
 - `'IncludeSpectral'` - Include spectral features (default: false)
 
 **Extracted Metadata:**
+
 - Duration, SampleRate, Channels, BitDepth
 - PeakLevel, RMSLevel, DynamicRange
 - ZeroCrossings, SpectralCentroid, SpectralRolloff
 - And more...
 
 **Examples:**
+
 ```matlab
 % Basic metadata extraction
 metadata = MetadataExtractor(audioData, ...
@@ -570,11 +608,13 @@ fprintf('Spectral rolloff: %.2f Hz\n', metadata.SpectralRolloff);
 Export audio with various formats and options.
 
 **Syntax:**
+
 ```matlab
 AudioExporter(audioData, outputPath, Name, Value)
 ```
 
 **Parameters:**
+
 - `'SampleRate'` - Sample rate in Hz (default: 44100)
 - `'BitDepth'` - Bit depth: 16, 24, 32 (default: 16)
 - `'Format'` - Output format (default: auto-detect from extension)
@@ -583,6 +623,7 @@ AudioExporter(audioData, outputPath, Name, Value)
 - `'Metadata'` - Metadata struct (default: empty)
 
 **Examples:**
+
 ```matlab
 % Basic export
 AudioExporter(audioData, 'output.wav', 'SampleRate', fs);
@@ -672,20 +713,24 @@ fprintf('RMS level: %.2f dB\n', metadata.RMSLevel);
 ## Tips and Best Practices
 
 1. **Always normalize audio** before processing to avoid clipping:
+
    ```matlab
    audio = audio / max(abs(audio(:)));
    ```
 
 2. **Chain effects carefully** - order matters:
+
    - EQ → Compression → Reverb is typically best
    - Distortion → EQ → Delay for creative effects
 
 3. **Use appropriate FFT sizes**:
+
    - 1024-2048 for real-time applications
    - 4096-8192 for offline analysis
    - Larger = better frequency resolution, slower
 
 4. **Monitor levels** throughout the signal chain:
+
    ```matlab
    peakLevel = 20*log10(max(abs(audio(:))));
    rmsLevel = 20*log10(rms(audio(:)));

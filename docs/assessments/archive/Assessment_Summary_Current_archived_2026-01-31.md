@@ -12,38 +12,38 @@ Repository assessment completed across all 15 categories.
 
 ### Category Scores
 
-| Category | Name | Score | Weight |
-|----------|------|-------|--------|
-| **A** | Architecture & Implementation | 7.0 | 2.0x |
-| **B** | Hygiene, Security & Quality | 7.0 | 2.0x |
-| **C** | Documentation & Integration | 7.0 | 1.5x |
-| **D** | User Experience | 2.8 | 1.5x |
-| **E** | Performance & Scalability | 7.0 | 1.5x |
-| **F** | Installation & Deployment | 7.0 | 1.0x |
-| **G** | Testing & Validation | 7.0 | 2.0x |
-| **H** | Error Handling | 7.0 | 1.0x |
-| **I** | Security & Input Validation | 7.0 | 2.0x |
-| **J** | Extensibility & Plugins | 7.0 | 1.0x |
-| **K** | Reproducibility & Provenance | 7.0 | 1.0x |
-| **L** | Long-Term Maintainability | 7.0 | 1.5x |
-| **M** | Educational Resources | 7.0 | 1.0x |
-| **N** | Visualization & Export | 7.0 | 1.0x |
-| **O** | CI/CD & DevOps | 7.0 | 2.0x |
+| Category | Name                          | Score | Weight |
+| -------- | ----------------------------- | ----- | ------ |
+| **A**    | Architecture & Implementation | 7.0   | 2.0x   |
+| **B**    | Hygiene, Security & Quality   | 7.0   | 2.0x   |
+| **C**    | Documentation & Integration   | 7.0   | 1.5x   |
+| **D**    | User Experience               | 2.8   | 1.5x   |
+| **E**    | Performance & Scalability     | 7.0   | 1.5x   |
+| **F**    | Installation & Deployment     | 7.0   | 1.0x   |
+| **G**    | Testing & Validation          | 7.0   | 2.0x   |
+| **H**    | Error Handling                | 7.0   | 1.0x   |
+| **I**    | Security & Input Validation   | 7.0   | 2.0x   |
+| **J**    | Extensibility & Plugins       | 7.0   | 1.0x   |
+| **K**    | Reproducibility & Provenance  | 7.0   | 1.0x   |
+| **L**    | Long-Term Maintainability     | 7.0   | 1.5x   |
+| **M**    | Educational Resources         | 7.0   | 1.0x   |
+| **N**    | Visualization & Export        | 7.0   | 1.0x   |
+| **O**    | CI/CD & DevOps                | 7.0   | 2.0x   |
 
 ## Critical Issues
 
 Found 17 critical issues requiring immediate attention:
 
-1. **[BLOCKER]** **. `pytest` fails to collect tests due to `ImportError` in source files. Zero tests are running. (Source: Assessment_G_Results_2026-01-17)
-2. **[BLOCKER]** | Fix Code  | (Source: Assessment_G_Results_2026-01-17)
-3. **[BLOCKER]** **. The repository is currently **NOT REPRODUCIBLE** across standard environments. The current `requirements.txt` allows version drift that breaks the application (e.g. `numpy>=2.0.1` might work, but Python 3.10 vs 3.11 is the killer). (Source: Assessment_K_Results_2026-01-17)
-4. **[CRITICAL]** **: Default Python 3.10 fails w/ ImportError | (Source: Assessment_F_Results_2026-01-17)
-5. **[BLOCKER]** )**: Tests do not run. Any "passing" CI badge is a lie if tests don't collect. (Source: Assessment_B_Results_2026-01-17)
-6. **[BLOCKER]** | S (Code)   | (Source: Assessment_D_Results_2026-01-17)
-7. **[CRITICAL]** | XS (Docs)  | (Source: Assessment_D_Results_2026-01-17)
-8. **[CRITICAL]** FAIL**: Application does not run. | Backport 3.11 features or enforce ver. | (Source: Assessment_D_Results_2026-01-17)
-9. **[BLOCKER]** **. The CI pipeline is reporting failures (as seen in weekly digests). The local verification confirms that tests cannot even be collected. (Source: Assessment_O_Results_2026-01-17)
-10. **[BLOCKER]** )**: Codebase crashes on Python 3.10 due to unreserved use of Python 3.11 features (`StrEnum`, `datetime.UTC`). (Source: Assessment_A_Results_2026-01-17)
+1. **[BLOCKER]** \*\*. `pytest` fails to collect tests due to `ImportError` in source files. Zero tests are running. (Source: Assessment_G_Results_2026-01-17)
+2. **[BLOCKER]** | Fix Code | (Source: Assessment_G_Results_2026-01-17)
+3. **[BLOCKER]** **. The repository is currently **NOT REPRODUCIBLE\*\* across standard environments. The current `requirements.txt` allows version drift that breaks the application (e.g. `numpy>=2.0.1` might work, but Python 3.10 vs 3.11 is the killer). (Source: Assessment_K_Results_2026-01-17)
+4. **[CRITICAL]** \*\*: Default Python 3.10 fails w/ ImportError | (Source: Assessment_F_Results_2026-01-17)
+5. **[BLOCKER]** )\*\*: Tests do not run. Any "passing" CI badge is a lie if tests don't collect. (Source: Assessment_B_Results_2026-01-17)
+6. **[BLOCKER]** | S (Code) | (Source: Assessment_D_Results_2026-01-17)
+7. **[CRITICAL]** | XS (Docs) | (Source: Assessment_D_Results_2026-01-17)
+8. **[CRITICAL]** FAIL\*\*: Application does not run. | Backport 3.11 features or enforce ver. | (Source: Assessment_D_Results_2026-01-17)
+9. **[BLOCKER]** \*\*. The CI pipeline is reporting failures (as seen in weekly digests). The local verification confirms that tests cannot even be collected. (Source: Assessment_O_Results_2026-01-17)
+10. **[BLOCKER]** )\*\*: Codebase crashes on Python 3.10 due to unreserved use of Python 3.11 features (`StrEnum`, `datetime.UTC`). (Source: Assessment_A_Results_2026-01-17)
 
 ## Recommendations
 
@@ -58,4 +58,4 @@ Recommended: 30 days from today
 
 ---
 
-*Generated by Jules Assessment Auto-Fix*
+_Generated by Jules Assessment Auto-Fix_

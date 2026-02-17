@@ -5,6 +5,7 @@ A thermal profile prediction tool for process units including heated vessels, re
 ## Purpose
 
 The Thermal Profile Predictor enables process engineers to:
+
 - Predict temperature trajectories in heated vessels
 - Model batch heating and cooling processes
 - Evaluate different power input strategies (constant, ramp, step)
@@ -24,27 +25,32 @@ The Thermal Profile Predictor enables process engineers to:
 ## Installation / Prerequisites
 
 ### Required Dependencies
+
 ```bash
 pip install PyQt6 numpy scipy
 ```
 
 ### Optional Dependencies
+
 ```bash
 # For enhanced plotting
 pip install matplotlib
 ```
 
 ### Python Version
+
 - Python 3.10 or higher recommended
 
 ## Usage Instructions
 
 ### Launch Desktop Application
+
 ```bash
 python launch_pyqt6.py
 ```
 
 ### Programmatic Usage
+
 ```python
 from upstream_drift_tools.process_calculators.thermal_profile_predictor import (
     predict_temperature_profile
@@ -73,36 +79,36 @@ print(f"Temperature rise: {temps[-1] - temps[0]:.1f} C")
 
 ### Thermal Parameters
 
-| Parameter | Description | Range | Units | Default |
-|-----------|-------------|-------|-------|---------|
-| Initial Temperature | Starting temperature of the system | -273.15 to 2000 | C | 25.0 |
-| Ambient Temperature | Surrounding environment temperature | -273.15 to 500 | C | 25.0 |
-| Thermal Mass | Heat capacity of the system (m * Cp) | 1 to 10^9 | J/K | 50,000 |
-| Heat Loss Coefficient | Overall heat transfer coefficient * area | 0 to 10,000 | W/K | 50.0 |
+| Parameter             | Description                               | Range           | Units | Default |
+| --------------------- | ----------------------------------------- | --------------- | ----- | ------- |
+| Initial Temperature   | Starting temperature of the system        | -273.15 to 2000 | C     | 25.0    |
+| Ambient Temperature   | Surrounding environment temperature       | -273.15 to 500  | C     | 25.0    |
+| Thermal Mass          | Heat capacity of the system (m \* Cp)     | 1 to 10^9       | J/K   | 50,000  |
+| Heat Loss Coefficient | Overall heat transfer coefficient \* area | 0 to 10,000     | W/K   | 50.0    |
 
 ### Time Parameters
 
-| Parameter | Description | Range | Units | Default |
-|-----------|-------------|-------|-------|---------|
-| Start Time | Simulation start time | 0 to 10^6 | s | 0 |
-| End Time | Simulation end time | 1 to 10^6 | s | 3600 |
-| Data Points | Number of output points | 10 to 10,000 | - | 100 |
+| Parameter   | Description             | Range        | Units | Default |
+| ----------- | ----------------------- | ------------ | ----- | ------- |
+| Start Time  | Simulation start time   | 0 to 10^6    | s     | 0       |
+| End Time    | Simulation end time     | 1 to 10^6    | s     | 3600    |
+| Data Points | Number of output points | 10 to 10,000 | -     | 100     |
 
 ### Power Input Parameters
 
-| Parameter | Description | Range | Units | Default |
-|-----------|-------------|-------|-------|---------|
-| Power Profile | Type of heating profile | - | - | Constant |
-| Power | Base power level | 0 to 10^6 | W | 5000 |
-| Ramp Rate | Power increase rate (linear ramp only) | 0 to 10,000 | W/s | 1.0 |
-| Step Time | Time when power turns off (step only) | 0 to 10^6 | s | 1800 |
+| Parameter     | Description                            | Range       | Units | Default  |
+| ------------- | -------------------------------------- | ----------- | ----- | -------- |
+| Power Profile | Type of heating profile                | -           | -     | Constant |
+| Power         | Base power level                       | 0 to 10^6   | W     | 5000     |
+| Ramp Rate     | Power increase rate (linear ramp only) | 0 to 10,000 | W/s   | 1.0      |
+| Step Time     | Time when power turns off (step only)  | 0 to 10^6   | s     | 1800     |
 
 ### Power Profile Types
 
-| Profile | Description | Equation |
-|---------|-------------|----------|
-| Constant | Fixed power throughout | P(t) = P_0 |
-| Linear Ramp | Power increases linearly | P(t) = P_0 + r * t |
+| Profile       | Description              | Equation                        |
+| ------------- | ------------------------ | ------------------------------- |
+| Constant      | Fixed power throughout   | P(t) = P_0                      |
+| Linear Ramp   | Power increases linearly | P(t) = P_0 + r \* t             |
 | Step Function | Power on until step time | P(t) = P_0 if t < t_step else 0 |
 
 ## Output Format
@@ -113,14 +119,15 @@ print(f"Temperature rise: {temps[-1] - temps[0]:.1f} C")
 times, temps = predict_temperature_profile(...)
 ```
 
-| Return | Type | Description |
-|--------|------|-------------|
-| `times` | np.ndarray | Array of time points (s) |
+| Return  | Type       | Description               |
+| ------- | ---------- | ------------------------- |
+| `times` | np.ndarray | Array of time points (s)  |
 | `temps` | np.ndarray | Array of temperatures (C) |
 
 ### GUI Results Display
 
 The results panel shows:
+
 - Input parameters summary
 - Final temperature
 - Maximum temperature reached
@@ -139,6 +146,7 @@ m * Cp * dT/dt = Q_in - Q_loss
 ```
 
 Where:
+
 - `m * Cp` = Thermal mass (J/K)
 - `dT/dt` = Rate of temperature change (K/s)
 - `Q_in` = Heat input power (W)
@@ -153,6 +161,7 @@ Q_loss = UA * (T - T_ambient)
 ```
 
 Where:
+
 - `UA` = Heat loss coefficient (W/K)
 - `T` = System temperature (C or K)
 - `T_ambient` = Ambient temperature (C or K)
@@ -164,6 +173,7 @@ dT/dt = [P(t) - UA * (T - T_ambient)] / (m * Cp)
 ```
 
 Rearranged form:
+
 ```
 dT/dt = P(t)/(m*Cp) - (UA/(m*Cp)) * (T - T_ambient)
 ```
@@ -195,6 +205,7 @@ T(t) = T_steady - (T_steady - T_0) * exp(-t/tau)
 ```
 
 Where:
+
 - `T_steady` = Equilibrium temperature
 - `T_0` = Initial temperature
 - `tau` = Time constant
@@ -299,18 +310,19 @@ print(f"Peak temperature: {max_temp:.1f} C")
 
 ## Troubleshooting
 
-| Issue | Cause | Solution |
-|-------|-------|----------|
+| Issue                               | Cause                               | Solution                                       |
+| ----------------------------------- | ----------------------------------- | ---------------------------------------------- |
 | Temperature exceeds physical limits | Power too high or heat loss too low | Increase heat loss coefficient or reduce power |
-| Temperature never stabilizes | Heat loss coefficient is zero | Add realistic heat loss (UA > 0) |
-| Negative temperatures (unphysical) | Large negative power or heat loss | Check input parameters for sign errors |
-| Solution diverges | Time step too large | Increase number of data points |
-| Very slow temperature rise | Thermal mass too large | Verify thermal mass calculation |
-| Immediate temperature jump | Thermal mass too small | Check m*Cp value (should include vessel) |
+| Temperature never stabilizes        | Heat loss coefficient is zero       | Add realistic heat loss (UA > 0)               |
+| Negative temperatures (unphysical)  | Large negative power or heat loss   | Check input parameters for sign errors         |
+| Solution diverges                   | Time step too large                 | Increase number of data points                 |
+| Very slow temperature rise          | Thermal mass too large              | Verify thermal mass calculation                |
+| Immediate temperature jump          | Thermal mass too small              | Check m\*Cp value (should include vessel)      |
 
 ### Parameter Estimation
 
-**Thermal Mass (m * Cp):**
+**Thermal Mass (m \* Cp):**
+
 ```
 Thermal Mass = mass (kg) * specific heat (J/kg-K)
 Water: Cp = 4186 J/kg-K
@@ -319,6 +331,7 @@ Aluminum: Cp = 900 J/kg-K
 ```
 
 **Heat Loss Coefficient (UA):**
+
 ```
 UA = U * A
 U: overall heat transfer coefficient (W/m2-K)
@@ -342,32 +355,34 @@ Typical U values:
 
 ### Heat Transfer Equations
 
-| Parameter | Symbol | SI Units |
-|-----------|--------|----------|
-| Thermal mass | m*Cp or C | J/K |
-| Heat loss coefficient | UA | W/K |
-| Power | P or Q | W |
-| Temperature | T | C or K |
-| Time constant | tau | s |
+| Parameter             | Symbol     | SI Units |
+| --------------------- | ---------- | -------- |
+| Thermal mass          | m\*Cp or C | J/K      |
+| Heat loss coefficient | UA         | W/K      |
+| Power                 | P or Q     | W        |
+| Temperature           | T          | C or K   |
+| Time constant         | tau        | s        |
 
 ### Typical Time Constants
 
-| System | Time Constant (tau) |
-|--------|-------------------|
-| Small electronics | 1-10 s |
-| Laboratory beaker (1 L) | 100-500 s |
-| Industrial vessel (1000 L) | 2000-10000 s |
-| Building (thermal mass) | 10-50 hours |
+| System                     | Time Constant (tau) |
+| -------------------------- | ------------------- |
+| Small electronics          | 1-10 s              |
+| Laboratory beaker (1 L)    | 100-500 s           |
+| Industrial vessel (1000 L) | 2000-10000 s        |
+| Building (thermal mass)    | 10-50 hours         |
 
 ### Energy Balance Verification
 
 At steady state:
+
 ```
 Q_in = Q_loss
 P = UA * (T_steady - T_ambient)
 ```
 
 Total energy input over time:
+
 ```
 E_total = integral(P(t) dt)
 E_stored = m * Cp * (T_final - T_initial)

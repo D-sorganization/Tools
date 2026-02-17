@@ -10,11 +10,11 @@
 
 ## Performance Profile
 
-| Operation      | Time     | Status | Notes |
-| -------------- | -------- | ------ | ----- |
-| Startup        | < 1s     | ✅     | Very fast. |
-| Tab Switching  | Instant  | ✅     | PyQt widgets are efficient. |
-| Tool Launch    | < 50ms   | ✅     | Spawns process asynchronously (mostly). |
+| Operation     | Time    | Status | Notes                                   |
+| ------------- | ------- | ------ | --------------------------------------- |
+| Startup       | < 1s    | ✅     | Very fast.                              |
+| Tab Switching | Instant | ✅     | PyQt widgets are efficient.             |
+| Tool Launch   | < 50ms  | ✅     | Spawns process asynchronously (mostly). |
 
 ## Hotspot Analysis
 
@@ -24,10 +24,13 @@
 ## Remediation Roadmap
 
 **48 Hours**
+
 - None needed.
 
 **2 Weeks**
+
 - Add "Loading..." indicators for tools that take time to appear (like MATLAB).
 
 **6 Weeks**
+
 - If Python tools grow, consider lazy importing within the tools themselves.

@@ -5,6 +5,7 @@ A comprehensive PyQt6 GUI application for multi-stage syngas compression analysi
 ## Purpose
 
 The Syngas Compression Calculator provides detailed analysis for compressing synthesis gas from atmospheric or low pressure to process conditions. Key applications include:
+
 - Designing compression trains for gasification plants
 - Evaluating intercooling requirements
 - Predicting water condensation during compression
@@ -24,10 +25,12 @@ The Syngas Compression Calculator provides detailed analysis for compressing syn
 ## Installation / Prerequisites
 
 ### System Requirements
+
 - Python 3.10 or higher
 - Windows, macOS, or Linux
 
 ### Dependencies
+
 ```bash
 pip install PyQt6
 pip install matplotlib
@@ -36,6 +39,7 @@ pip install upstream-drift-tools  # Core calculation engine
 ```
 
 ### Running the Application
+
 ```bash
 # From the Tools repository root
 python -m src.syngas_compression.launch_pyqt6
@@ -56,34 +60,38 @@ python src/syngas_compression/launch_web.py
 ## Input Parameters
 
 ### Gas Composition
-| Component | Range | Default | Description |
-|-----------|-------|---------|-------------|
-| H2 | 0-100% | 20.0% | Hydrogen content |
-| CO | 0-100% | 25.0% | Carbon monoxide |
-| CO2 | 0-100% | 15.0% | Carbon dioxide |
-| CH4 | 0-100% | 5.0% | Methane |
-| N2 | 0-100% | 30.0% | Nitrogen |
-| H2O | 0-100% | 5.0% | Water vapor |
-| Ar | 0-100% | 0.0% | Argon |
+
+| Component | Range  | Default | Description      |
+| --------- | ------ | ------- | ---------------- |
+| H2        | 0-100% | 20.0%   | Hydrogen content |
+| CO        | 0-100% | 25.0%   | Carbon monoxide  |
+| CO2       | 0-100% | 15.0%   | Carbon dioxide   |
+| CH4       | 0-100% | 5.0%    | Methane          |
+| N2        | 0-100% | 30.0%   | Nitrogen         |
+| H2O       | 0-100% | 5.0%    | Water vapor      |
+| Ar        | 0-100% | 0.0%    | Argon            |
 
 ### Process Conditions
-| Parameter | Range | Units | Default |
-|-----------|-------|-------|---------|
-| Flow Rate | 0-10,000 | kmol/h | 100 |
-| Inlet Temperature | -50 to 500 | C | 40 |
-| Inlet Pressure | 0.1-1000 | bar | 1.0 |
+
+| Parameter         | Range      | Units  | Default |
+| ----------------- | ---------- | ------ | ------- |
+| Flow Rate         | 0-10,000   | kmol/h | 100     |
+| Inlet Temperature | -50 to 500 | C      | 40      |
+| Inlet Pressure    | 0.1-1000   | bar    | 1.0     |
 
 ### Compression Stages
-| Parameter | Range | Units | Description |
-|-----------|-------|-------|-------------|
-| Inlet Pressure | 0.1-1000 | bar | Stage inlet pressure |
-| Outlet Pressure | 0.1-1000 | bar | Stage outlet pressure |
-| Efficiency | 50-100 | % | Isentropic efficiency |
-| Active | Checkbox | - | Include stage in calculation |
+
+| Parameter       | Range    | Units | Description                  |
+| --------------- | -------- | ----- | ---------------------------- |
+| Inlet Pressure  | 0.1-1000 | bar   | Stage inlet pressure         |
+| Outlet Pressure | 0.1-1000 | bar   | Stage outlet pressure        |
+| Efficiency      | 50-100   | %     | Isentropic efficiency        |
+| Active          | Checkbox | -     | Include stage in calculation |
 
 ## Output Format
 
 ### Stage-by-Stage Results
+
 - **Inlet/Outlet Temperature**: K and C
 - **Heat Rise**: Temperature increase (K)
 - **Pressure Ratio**: Outlet/inlet pressure
@@ -91,6 +99,7 @@ python src/syngas_compression/launch_web.py
 - **Water Dropout**: Condensed water (mol%)
 
 ### Summary Results
+
 - **Total Power Required**: Sum of all stages (HP)
 - **Final Temperature**: Discharge temperature (K, C)
 - **Final Pressure**: Discharge pressure (bar)
@@ -98,6 +107,7 @@ python src/syngas_compression/launch_web.py
 - **Average Efficiency**: Overall compression efficiency (%)
 
 ### Process Analysis
+
 - **Critical Warnings**: Temperature or pressure limit violations
 - **Concerns**: Equipment or process issues
 - **Recommendations**: Suggested improvements
@@ -105,6 +115,7 @@ python src/syngas_compression/launch_web.py
 ## Mathematical Models
 
 ### Isentropic Compression
+
 ```
 T2_isen = T1 * (P2/P1)^((gamma-1)/gamma)
 
@@ -112,7 +123,9 @@ W_isen = (gamma/(gamma-1)) * R * T1 * ((P2/P1)^((gamma-1)/gamma) - 1)
 
 W_actual = W_isen / eta_isen
 ```
+
 Where:
+
 - T1, T2 = Inlet, outlet temperatures (K)
 - P1, P2 = Inlet, outlet pressures (bar)
 - gamma = Heat capacity ratio (Cp/Cv)
@@ -120,27 +133,34 @@ Where:
 - eta_isen = Isentropic efficiency
 
 ### Polytropic Compression
+
 ```
 T2 = T1 * (P2/P1)^((n-1)/n)
 
 W_poly = (n/(n-1)) * R * T1 * ((P2/P1)^((n-1)/n) - 1) / eta_poly
 ```
+
 Where n = polytropic exponent (typically equals gamma for ideal gases)
 
 ### Isothermal Compression
+
 ```
 W_iso = R * T * ln(P2/P1) / eta_iso
 T2 = T1  (constant temperature)
 ```
 
 ### Power Calculation
+
 ```
 Power (HP) = (Flow_rate * 1000 / 3600) * W_actual / 745.7
 ```
+
 Where flow rate is in kmol/h, work in J/mol, and 745.7 W = 1 HP
 
 ### Water Dropout
+
 Water condenses when partial pressure exceeds saturation:
+
 ```
 If (y_H2O * P_total) > P_sat(T):
     Water_dropout = y_H2O - P_sat(T)/P_total
@@ -151,12 +171,14 @@ If (y_H2O * P_total) > P_sat(T):
 **Scenario**: Compress 100 kmol/h syngas from 1 bar to 81 bar in 4 stages
 
 **Input**:
+
 - Composition: H2=20%, CO=25%, CO2=15%, CH4=5%, N2=30%, H2O=5%
 - Inlet: 40C, 1 bar, 100 kmol/h
 - Stages: 1->3, 3->9, 9->27, 27->81 bar (85% efficiency each)
 - Intercooling: Enabled
 
 **Expected Results**:
+
 - Total Power: ~180-220 HP
 - Final Temperature: ~150-180C (with intercooling)
 - Water Dropout: Significant in stages 2-4
@@ -165,14 +187,15 @@ If (y_H2O * P_total) > P_sat(T):
 
 ### Common Issues
 
-| Issue | Cause | Solution |
-|-------|-------|----------|
+| Issue                    | Cause                     | Solution                          |
+| ------------------------ | ------------------------- | --------------------------------- |
 | High temperature warning | Insufficient intercooling | Enable intercooling or add stages |
-| Negative pressure ratio | Outlet < Inlet pressure | Verify stage pressures |
-| Low efficiency warning | Efficiency < 70% | Check compressor maintenance |
-| No active stages | All checkboxes unchecked | Enable at least one stage |
+| Negative pressure ratio  | Outlet < Inlet pressure   | Verify stage pressures            |
+| Low efficiency warning   | Efficiency < 70%          | Check compressor maintenance      |
+| No active stages         | All checkboxes unchecked  | Enable at least one stage         |
 
 ### Warning Thresholds
+
 - **Temperature**: Warning at 200C, Critical at 250C
 - **Pressure**: Warning at 100 bar
 - **Power**: Warning at 1000 HP total

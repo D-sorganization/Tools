@@ -17,10 +17,11 @@ The `launch_tools_main.py` launcher has been **deprecated** in favor of `Unified
 ### How to Migrate
 
 1. **Update your scripts/aliases**:
+
    ```bash
    # Old (deprecated)
    python launch_tools_main.py
-   
+
    # New (recommended)
    python UnifiedToolsLauncher.py
    ```
@@ -37,6 +38,7 @@ The `launch_tools_main.py` launcher has been **deprecated** in favor of `Unified
 ### Backward Compatibility
 
 The deprecated launcher will continue to work for backward compatibility, but:
+
 - It shows a deprecation warning when used
 - It uses shared utilities where possible to reduce duplication
 - No new features will be added to it

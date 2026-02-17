@@ -15,14 +15,14 @@ const nextConfig = {
     // Optimize bundle size
     config.optimization = {
       ...config.optimization,
-      moduleIds: 'deterministic',
+      moduleIds: "deterministic",
     };
 
     return config;
   },
   // Optimize images
   images: {
-    formats: ['image/avif', 'image/webp'],
+    formats: ["image/avif", "image/webp"],
     domains: [],
   },
 };

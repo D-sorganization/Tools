@@ -41,6 +41,7 @@ pip install customtkinter pandas numpy scipy matplotlib openpyxl \
 ## Integration
 
 This suite integrates with:
+
 - **Scientific Modeling** (`scientific_modeling/`) - Advanced analysis
 - **MATLAB** (`matlab/`) - Cross-platform compatibility
 - **Tools** (`tools/`) - Quality checking and auditing

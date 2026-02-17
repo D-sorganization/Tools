@@ -5,6 +5,7 @@ A comprehensive PyQt6 GUI application for calculating water content, dew point, 
 ## Purpose
 
 The Syngas Water Calculator determines the moisture content in syngas streams and assesses condensation risks. Understanding water content is critical for:
+
 - Preventing corrosion in downstream equipment
 - Avoiding hydrate formation in pipelines
 - Optimizing gas treatment processes
@@ -22,16 +23,19 @@ The Syngas Water Calculator determines the moisture content in syngas streams an
 ## Installation / Prerequisites
 
 ### System Requirements
+
 - Python 3.10 or higher
 - Windows, macOS, or Linux
 
 ### Dependencies
+
 ```bash
 pip install PyQt6
 pip install upstream-drift-tools  # Core calculation engine
 ```
 
 ### Running the Application
+
 ```bash
 # From the Tools repository root
 python -m src.syngas_water_calculator.launch_pyqt6
@@ -50,25 +54,26 @@ python src/syngas_water_calculator/launch_pyqt6.py
 
 ## Input Parameters
 
-| Parameter | Range | Units | Description |
-|-----------|-------|-------|-------------|
-| Temperature | -50 to 400 | C | Operating gas temperature |
-| Pressure | 0.1 to 500 | bar | System absolute pressure |
-| Gas Composition | Preset | - | Syngas composition profile |
-| Calculation Method | Selection | - | Vapor pressure correlation |
+| Parameter          | Range      | Units | Description                |
+| ------------------ | ---------- | ----- | -------------------------- |
+| Temperature        | -50 to 400 | C     | Operating gas temperature  |
+| Pressure           | 0.1 to 500 | bar   | System absolute pressure   |
+| Gas Composition    | Preset     | -     | Syngas composition profile |
+| Calculation Method | Selection  | -     | Vapor pressure correlation |
 
 ### Gas Composition Presets
 
-| Preset | CO | H2 | CO2 | CH4 | N2 | Description |
-|--------|----|----|-----|-----|----|-------------|
-| Typical Syngas | 25% | 20% | 15% | 5% | 35% | General purpose |
-| Biomass Gasification | 18% | 15% | 12% | 4% | 51% | Wood/biomass derived |
-| Coal Gasification | 30% | 25% | 8% | 3% | 34% | Coal-derived syngas |
-| Natural Gas Reforming | 12% | 50% | 18% | 2% | 18% | SMR product gas |
+| Preset                | CO  | H2  | CO2 | CH4 | N2  | Description          |
+| --------------------- | --- | --- | --- | --- | --- | -------------------- |
+| Typical Syngas        | 25% | 20% | 15% | 5%  | 35% | General purpose      |
+| Biomass Gasification  | 18% | 15% | 12% | 4%  | 51% | Wood/biomass derived |
+| Coal Gasification     | 30% | 25% | 8%  | 3%  | 34% | Coal-derived syngas  |
+| Natural Gas Reforming | 12% | 50% | 18% | 2%  | 18% | SMR product gas      |
 
 ## Output Format
 
 ### Water Content Results
+
 - **Mole Fraction**: Dimensionless water mole fraction (6 decimal places)
 - **mg/Nm3**: Milligrams water per normal cubic meter
 - **ppmv**: Parts per million by volume
@@ -76,6 +81,7 @@ python src/syngas_water_calculator/launch_pyqt6.py
 - **lb/MMscf**: Pounds per million standard cubic feet
 
 ### Risk Assessment
+
 - **Temperature Margin**: Degrees above dew point (C)
 - **Risk Level**: Low / Medium / High / Critical (color-coded)
 - **Recommended Min Temp**: Suggested operating temperature
@@ -85,34 +91,44 @@ python src/syngas_water_calculator/launch_pyqt6.py
 ### Vapor Pressure Correlations
 
 **Antoine Equation** (default for 0-100C):
+
 ```
 log10(P) = A - B / (C + T)
 ```
+
 Where P is in mmHg, T in Celsius. For water: A=8.07131, B=1730.63, C=233.426
 
 **Buck Equation** (high accuracy):
+
 ```
 P = 0.61121 * exp((18.678 - T/234.5) * (T/(257.14 + T)))
 ```
+
 Where P is in kPa, T in Celsius.
 
 **IAPWS-IF97** (industrial standard):
 Uses the International Association for the Properties of Water and Steam formulation for high-precision calculations across wide temperature ranges.
 
 **Magnus Equation**:
+
 ```
 P = 6.1094 * exp(17.625 * T / (T + 243.04))
 ```
+
 Where P is in hPa, T in Celsius.
 
 ### Water Content Calculation
+
 ```
 y_water = P_sat / P_total
 ```
+
 Where y_water is the mole fraction, P_sat is saturation pressure, P_total is system pressure.
 
 ### Dew Point Estimation
+
 Iteratively solves for temperature where:
+
 ```
 P_sat(T_dew) = y_water * P_total
 ```
@@ -127,6 +143,7 @@ P_sat(T_dew) = y_water * P_total
 4. Click Calculate
 
 **Expected Results**:
+
 - Water Content: ~2,450 mg/Nm3
 - Dew Point: ~25C
 - Temperature Margin: +15C
@@ -136,14 +153,15 @@ P_sat(T_dew) = y_water * P_total
 
 ### Common Issues
 
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| Import Error | Missing upstream_drift_tools | Install: `pip install upstream-drift-tools` |
-| Negative dew point | Very dry gas at high pressure | Normal for low water content scenarios |
-| High risk warning | Operating near dew point | Increase operating temperature or reduce pressure |
-| Results show "--" | Calculation exception | Check input ranges are valid |
+| Issue              | Cause                         | Solution                                          |
+| ------------------ | ----------------------------- | ------------------------------------------------- |
+| Import Error       | Missing upstream_drift_tools  | Install: `pip install upstream-drift-tools`       |
+| Negative dew point | Very dry gas at high pressure | Normal for low water content scenarios            |
+| High risk warning  | Operating near dew point      | Increase operating temperature or reduce pressure |
+| Results show "--"  | Calculation exception         | Check input ranges are valid                      |
 
 ### Error Messages
+
 - **"Error: ..."**: Check that temperature and pressure are within valid ranges
 - **Critical Risk**: Condensation is imminent or occurring; increase temperature margin
 

@@ -1,7 +1,6 @@
 # Tools — Implementation Plan (2026-02-14)
 
-> **Reference Assessment**: `docs/assessments/comprehensive_assessment_2026-02-14.md`
-> **Principles**: TDD, DbC, DRY, Orthogonality, Reversibility, Decoupled Code
+> **Reference Assessment**: `docs/assessments/comprehensive_assessment_2026-02-14.md` > **Principles**: TDD, DbC, DRY, Orthogonality, Reversibility, Decoupled Code
 
 ---
 

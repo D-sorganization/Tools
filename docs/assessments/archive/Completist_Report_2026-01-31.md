@@ -9,17 +9,19 @@ This report aggregates all incomplete work markers found in the codebase.
 
 ## Summary Stats
 
-| Category | Count | Description |
-| :--- | :--- | :--- |
-| **TODO Markers** | 82 | `TODO`, `FIXME`, `HACK` comments |
-| **Not Implemented** | 13 | `NotImplementedError` or `pass` in methods |
-| **Incomplete Docs** | 0 | Missing docstrings in public methods |
-| **Abstract Methods** | 86 | Abstract methods not overridden |
+| Category             | Count | Description                                |
+| :------------------- | :---- | :----------------------------------------- |
+| **TODO Markers**     | 82    | `TODO`, `FIXME`, `HACK` comments           |
+| **Not Implemented**  | 13    | `NotImplementedError` or `pass` in methods |
+| **Incomplete Docs**  | 0     | Missing docstrings in public methods       |
+| **Abstract Methods** | 86    | Abstract methods not overridden            |
 
 ## Detailed Findings
 
 ### 1. TODO Markers (82)
+
 These represent technical debt explicitly acknowledged by developers.
+
 - `./scripts/analyze_completist_data.py:103:    fixme_markers = ["FIX" + "ME", "XXX", "HACK", "TEMP"]`
 - `./scripts/analyze_completist_data.py:111:            return {"file": filepath, "line": lineno, "text": content, "type": "TODO"}`
 - `./scripts/analyze_completist_data.py:125:        if marker_item["type"] == "TODO":`
@@ -43,7 +45,9 @@ These represent technical debt explicitly acknowledged by developers.
 - ... and 62 more.
 
 ### 2. Not Implemented (13)
+
 Functionality that is stubbed out but not working.
+
 - `./scripts/analyze_completist_data.py:199:        "NotImplementedError": 4,`
 - `./src/scientific_modeling/solar_system_model/solar_system/ui/widgets.py:393:            pass  # Invalid input, ignore`
 - `./src/scientific_modeling/solar_system_model/solar_system/visualization/renderer.py:788:        pass  # UI Renderer handles panels now via render_sidebar or similar`
@@ -59,10 +63,13 @@ Functionality that is stubbed out but not working.
 - `./src/data_processing/data_processor/python/benchmarks/performance_benchmark.py:552:                    pass  # Throughput data found, no action needed`
 
 ### 3. Incomplete Documentation (0)
+
 Public API surface lacking documentation.
 
 ### 4. Abstract Methods (86)
+
 Potential structural issues where interfaces are not fully respected.
+
 - `./scripts/analyze_completist_data.py:177:        if f_path and l_no and c_txt and "@abstractmethod" in c_txt:`
 - `./scripts/analyze_completist_data.py-178-            return {"file": f_path, "line": l_no, "text": c_txt, "type": "Abstract"}`
 - `./scripts/analyze_completist_data.py-179-        return None`

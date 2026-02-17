@@ -53,6 +53,7 @@ npm run tauri build
 ### Waveform Type Selection
 
 Select from 12 available waveform types:
+
 - **Sinusoid/Cosine**: Standard trigonometric functions
 - **Square**: Rectangular wave with adjustable duty cycle
 - **Triangle/Sawtooth**: Linear ramp waveforms
@@ -77,10 +78,12 @@ Select from 12 available waveform types:
 ### Quick Presets
 
 Single signals:
+
 - 1 Hz Sine, 10 Hz Sine, 50 Hz Square
 - Chirp 1-50 Hz, Decay, Parabola
 
 Stacked signals:
+
 - Sine + Harmonic, AM Modulation
 - Square - Sine, 3-Tone Chord
 
@@ -88,76 +91,78 @@ Stacked signals:
 
 ### Time Parameters
 
-| Parameter | Unit | Range | Default | Description |
-|-----------|------|-------|---------|-------------|
-| Duration | s | 0.01 - 100 | 1 | Signal length |
-| Sample Rate | Hz | 10 - 100,000 | 1000 | Sampling frequency |
+| Parameter   | Unit | Range        | Default | Description        |
+| ----------- | ---- | ------------ | ------- | ------------------ |
+| Duration    | s    | 0.01 - 100   | 1       | Signal length      |
+| Sample Rate | Hz   | 10 - 100,000 | 1000    | Sampling frequency |
 
 ### Sinusoid/Cosine Parameters
 
-| Parameter | Unit | Range | Description |
-|-----------|------|-------|-------------|
-| Amplitude | - | any | Peak amplitude |
-| Frequency | Hz | 0.01+ | Oscillation frequency |
-| Phase | rad | any | Phase offset |
-| DC Offset | - | any | Vertical shift |
+| Parameter | Unit | Range | Description           |
+| --------- | ---- | ----- | --------------------- |
+| Amplitude | -    | any   | Peak amplitude        |
+| Frequency | Hz   | 0.01+ | Oscillation frequency |
+| Phase     | rad  | any   | Phase offset          |
+| DC Offset | -    | any   | Vertical shift        |
 
 ### Square Wave Parameters
 
-| Parameter | Unit | Range | Description |
-|-----------|------|-------|-------------|
-| Amplitude | - | any | High/low level (symmetric) |
-| Frequency | Hz | 0.01+ | Repetition rate |
-| Duty Cycle | - | 0.01 - 0.99 | High fraction per period |
-| DC Offset | - | any | Baseline shift |
+| Parameter  | Unit | Range       | Description                |
+| ---------- | ---- | ----------- | -------------------------- |
+| Amplitude  | -    | any         | High/low level (symmetric) |
+| Frequency  | Hz   | 0.01+       | Repetition rate            |
+| Duty Cycle | -    | 0.01 - 0.99 | High fraction per period   |
+| DC Offset  | -    | any         | Baseline shift             |
 
 ### Pulse Parameters
 
-| Parameter | Unit | Range | Description |
-|-----------|------|-------|-------------|
-| Amplitude | - | any | Pulse height |
-| Start Time | s | 0+ | Pulse onset |
-| Duration | s | 0.001+ | Pulse width |
-| Baseline | - | any | Off-pulse value |
+| Parameter  | Unit | Range  | Description     |
+| ---------- | ---- | ------ | --------------- |
+| Amplitude  | -    | any    | Pulse height    |
+| Start Time | s    | 0+     | Pulse onset     |
+| Duration   | s    | 0.001+ | Pulse width     |
+| Baseline   | -    | any    | Off-pulse value |
 
 ### Chirp Parameters
 
-| Parameter | Unit | Range | Description |
-|-----------|------|-------|-------------|
-| Amplitude | - | any | Peak amplitude |
-| Start Freq | Hz | 0.01+ | Initial frequency |
-| End Freq | Hz | 0.01+ | Final frequency |
-| Sweep Method | - | linear/exponential | Frequency progression |
+| Parameter    | Unit | Range              | Description           |
+| ------------ | ---- | ------------------ | --------------------- |
+| Amplitude    | -    | any                | Peak amplitude        |
+| Start Freq   | Hz   | 0.01+              | Initial frequency     |
+| End Freq     | Hz   | 0.01+              | Final frequency       |
+| Sweep Method | -    | linear/exponential | Frequency progression |
 
 ### Polynomial Parameters
 
-| Parameter | Description |
-|-----------|-------------|
+| Parameter    | Description                      |
+| ------------ | -------------------------------- |
 | Coefficients | Comma-separated: c0, c1, c2, ... |
 
-Formula: y = c0 + c1*t + c2*t^2 + c3*t^3 + ...
+Formula: y = c0 + c1*t + c2*t^2 + c3\*t^3 + ...
 
 ## Output Format
 
 ### Signal Data
 
 The generated signal consists of:
+
 - **Time array**: [0, dt, 2dt, ..., T] where dt = 1/sampleRate
 - **Values array**: Computed amplitude at each time point
 
 ### Statistics
 
-| Statistic | Description |
-|-----------|-------------|
-| Samples | Total number of data points |
-| Min | Minimum amplitude value |
-| Max | Maximum amplitude value |
-| Mean | Average (DC component) |
-| RMS | Root mean square amplitude |
+| Statistic | Description                 |
+| --------- | --------------------------- |
+| Samples   | Total number of data points |
+| Min       | Minimum amplitude value     |
+| Max       | Maximum amplitude value     |
+| Mean      | Average (DC component)      |
+| RMS       | Root mean square amplitude  |
 
 ### Frequency Spectrum
 
 FFT output with Hanning window correction:
+
 - Frequency bins: 0 to Nyquist (sampleRate/2)
 - Magnitude: Normalized amplitude per frequency
 
@@ -213,12 +218,14 @@ y(t) = sum(c[i] * t^i) for i = 0 to n
 ### Chirp (Frequency Sweep)
 
 Linear sweep:
+
 ```
 f(t) = f0 + (f1 - f0) * t / T
 y(t) = A * sin(2*pi*f(t)*t)
 ```
 
 Exponential sweep:
+
 ```
 f(t) = f0 * (f1/f0)^(t/T)
 y(t) = A * sin(2*pi*f(t)*t)
@@ -227,11 +234,13 @@ y(t) = A * sin(2*pi*f(t)*t)
 ### FFT with Hanning Window
 
 Window function:
+
 ```
 w[n] = 0.5 * (1 - cos(2*pi*n / (N-1)))
 ```
 
 Corrected magnitude:
+
 ```
 X[k] = (2/N) * |sum(x[n]*w[n]*exp(-2*pi*i*k*n/N))| * (N/sum(w))
 ```
@@ -241,6 +250,7 @@ X[k] = (2/N) * |sum(x[n]*w[n]*exp(-2*pi*i*k*n/N))| * (N/sum(w))
 ### Example 1: Test Tone Generation
 
 Generate a 440 Hz A4 note:
+
 1. Select Sinusoid
 2. Set Amplitude: 1.0
 3. Set Frequency: 440 Hz
@@ -250,6 +260,7 @@ Generate a 440 Hz A4 note:
 ### Example 2: PWM-like Square Wave
 
 Generate pulse-width modulated signal:
+
 1. Select Square Wave
 2. Frequency: 1000 Hz
 3. Duty Cycle: 0.25 (25%)
@@ -258,6 +269,7 @@ Generate pulse-width modulated signal:
 ### Example 3: Frequency Sweep for System Testing
 
 Create a chirp for frequency response analysis:
+
 1. Select Chirp (Sweep)
 2. Start Freq: 20 Hz
 3. End Freq: 20000 Hz
@@ -267,6 +279,7 @@ Create a chirp for frequency response analysis:
 ### Example 4: AM Modulated Signal
 
 Using signal stacking:
+
 1. Layer 1: Sinusoid at 1000 Hz (carrier)
 2. Layer 2: Sinusoid at 10 Hz, offset 0.5 (modulator)
 3. Both layers set to Add
@@ -274,6 +287,7 @@ Using signal stacking:
 ### Example 5: Harmonic Analysis
 
 View square wave harmonics:
+
 1. Generate 10 Hz square wave
 2. Switch to Frequency Domain tab
 3. Observe peaks at 10, 30, 50 Hz (odd harmonics)

@@ -20,6 +20,7 @@ git push -u origin claude/standalone-unit-converter-app-01BeDFaJRMujwcENzVBSPZQ5
 5. Click **Save**
 
 Your app will be available at:
+
 ```
 https://D-sorganization.github.io/Gasification_Model/unit-converter-app/
 ```
@@ -40,7 +41,7 @@ And update `service-worker.js` cache URLs:
 ```javascript
 const urlsToCache = [
   '/Gasification_Model/unit-converter-app/',
-  '/Gasification_Model/unit-converter-app/index.html',
+  '/Gasification_Model/unit-converter-app/index.html'
   // ... etc
 ];
 ```
@@ -78,16 +79,19 @@ vercel
 ### Option 3: Your Own Server
 
 Requirements:
+
 - HTTPS (required for PWA)
 - Static file server
 
 Example with Python:
+
 ```bash
 cd unit-converter-app
 python -m http.server 8000
 ```
 
 With nginx:
+
 ```nginx
 server {
     listen 443 ssl;
@@ -112,6 +116,7 @@ server {
 The app includes `icon.svg`. To generate PNG icons:
 
 ### Using ImageMagick:
+
 ```bash
 # Install ImageMagick
 brew install imagemagick  # macOS
@@ -124,12 +129,14 @@ convert icon.svg -resize 512x512 icon-512.png
 ```
 
 ### Using Online Tool:
+
 1. Go to [https://realfavicongenerator.net/](https://realfavicongenerator.net/)
 2. Upload `icon.svg`
 3. Download all sizes
 4. Place in `unit-converter-app/` folder
 
 ### Using Figma/Sketch:
+
 1. Import `icon.svg`
 2. Export as PNG at 192x192 and 512x512
 3. Save as `icon-192.png` and `icon-512.png`
@@ -141,12 +148,14 @@ convert icon.svg -resize 512x512 icon-512.png
 ### Local Testing
 
 1. Start local server:
+
    ```bash
    cd /home/user/Gasification_Model
    python -m http.server 8000
    ```
 
 2. Open browser:
+
    ```
    http://localhost:8000/unit-converter-app/
    ```
@@ -228,7 +237,7 @@ Use Safari on iPhone:
 1. Make changes to files
 2. Update cache version in `service-worker.js`:
    ```javascript
-   const CACHE_NAME = 'unit-converter-v1.0.1';  // Increment
+   const CACHE_NAME = 'unit-converter-v1.0.1'; // Increment
    ```
 3. Commit and push changes
 4. Users will get update next time they open app
@@ -239,6 +248,7 @@ Use Safari on iPhone:
 ## Performance Optimization
 
 ### Already Implemented:
+
 - ✓ Minimal dependencies (no frameworks)
 - ✓ Service Worker caching
 - ✓ Local storage for history
@@ -246,6 +256,7 @@ Use Safari on iPhone:
 - ✓ CSS minification ready
 
 ### Optional Enhancements:
+
 - Minify JavaScript: `terser app.js -o app.min.js`
 - Minify CSS: `cssnano styles.css styles.min.css`
 - Compress images: Use WebP for icons
@@ -265,20 +276,21 @@ Use Safari on iPhone:
 
 ## Browser Compatibility
 
-| Browser | Support |
-|---------|---------|
-| Safari iOS 11.3+ | ✓ Full (PWA install) |
-| Chrome Android | ✓ Full (PWA install) |
-| Safari macOS | ✓ Works (no install) |
-| Chrome Desktop | ✓ Full (PWA install) |
-| Firefox | ✓ Works (limited PWA) |
-| Edge | ✓ Full (PWA install) |
+| Browser          | Support               |
+| ---------------- | --------------------- |
+| Safari iOS 11.3+ | ✓ Full (PWA install)  |
+| Chrome Android   | ✓ Full (PWA install)  |
+| Safari macOS     | ✓ Works (no install)  |
+| Chrome Desktop   | ✓ Full (PWA install)  |
+| Firefox          | ✓ Works (limited PWA) |
+| Edge             | ✓ Full (PWA install)  |
 
 ---
 
 ## Support
 
 For issues or questions:
+
 1. Check console for errors
 2. Verify all files are present
 3. Test in different browser

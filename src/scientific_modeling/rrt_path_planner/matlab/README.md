@@ -44,6 +44,7 @@ matlab/
 ## 🚀 Quick Start
 
 ### **Option 1: GUI Mode (Recommended)**
+
 ```matlab
 % Navigate to MATLAB source directory
 cd matlab/src
@@ -53,6 +54,7 @@ starWarsPathPlannerGUI
 ```
 
 ### **Option 2: Command Line Mode**
+
 ```matlab
 % Navigate to MATLAB source directory
 cd matlab/src
@@ -66,6 +68,7 @@ main_static       % Static visualization
 ```
 
 ### **Option 3: Direct Function Calls**
+
 ```matlab
 % Load obstacles
 obstacles = readmatrix('data/obstacles3D.csv');
@@ -85,24 +88,28 @@ plotRRT_Moving_Improved(obstacles, path, nodes, start, goal, bounds);
 ## 🎮 Features
 
 ### **Core Functionality**
+
 - **RRT Path Planning**: Rapidly-exploring Random Trees algorithm
 - **3D Collision Detection**: Sphere and cube obstacle avoidance
 - **STL Model Loading**: High-quality 3D ship models
 - **Ship Orientation**: Proper nose-forward movement
 
 ### **Visualization**
+
 - **Cinematic Animation**: Star Wars-style camera work
 - **Dynamic Starfield**: Thousands of animated stars
 - **Path Traces**: Real-time path visualization
 - **Multiple Views**: Cinematic, chase cam, top-down, side view
 
 ### **AI System**
+
 - **Intelligent Pursuit**: Target ships evade when pursued
 - **Dynamic Replanning**: Real-time path updates
 - **Behavioral States**: Different AI personalities
 - **Capture Detection**: Victory conditions and effects
 
 ### **GUI Interface**
+
 - **Comprehensive Controls**: Full parameter adjustment
 - **Real-time Updates**: Live visualization changes
 - **Mode Switching**: Single ship vs pursuit modes
@@ -111,18 +118,21 @@ plotRRT_Moving_Improved(obstacles, path, nodes, start, goal, bounds);
 ## 🔧 Technical Details
 
 ### **Core Algorithms**
+
 - **RRT.m**: Main path planning algorithm with goal biasing
 - **collisionCheck.m**: Efficient collision detection for spheres and cubes
 - **stlread.m**: Robust STL file loader (ASCII and binary)
 - **shipOrientation.m**: Proper ship orientation calculation
 
 ### **Visualization Engine**
+
 - **plotRRT_Moving_Improved.m**: Enhanced cinematic visualization
 - **plotPursuit_Improved.m**: Pursuit scenario visualization
 - **Dynamic Camera**: Multiple preset and free camera modes
 - **Real-time Effects**: Starfield, laser shots, explosions
 
 ### **AI System**
+
 - **pursuitSystem.m**: Intelligent pursuit and evasion AI
 - **Behavioral Logic**: Evasion when pursued, goal-seeking when safe
 - **Dynamic Goals**: Random goal generation and switching
@@ -131,18 +141,21 @@ plotRRT_Moving_Improved(obstacles, path, nodes, start, goal, bounds);
 ## 🎯 Usage Modes
 
 ### **Single Ship Navigation**
+
 1. Set start and goal positions
 2. Choose ship type and camera view
 3. Plan path using RRT algorithm
 4. Watch cinematic animation
 
 ### **Pursuit Mode**
+
 1. Configure pursuer and target ships
 2. Set AI behavior parameters
 3. Start pursuit scenario
 4. Watch intelligent chase sequence
 
 ### **Camera Views**
+
 - **Cinematic**: Classic Star Wars angles
 - **Chase Cam**: Follow ships from behind
 - **Top Down**: Strategic overview
@@ -152,6 +165,7 @@ plotRRT_Moving_Improved(obstacles, path, nodes, start, goal, bounds);
 ## 🛠️ Configuration
 
 ### **Path Planning Parameters**
+
 ```matlab
 % RRT parameters
 max_iterations = 5000;    % Maximum RRT iterations
@@ -161,6 +175,7 @@ goal_bias = 0.2;          % Probability of sampling goal
 ```
 
 ### **Animation Settings**
+
 ```matlab
 % Animation parameters
 animation_speed = 0.02;   % Animation speed
@@ -170,6 +185,7 @@ show_starfield = true;    % Display starfield
 ```
 
 ### **AI Behavior**
+
 ```matlab
 % Pursuit AI parameters
 pursuer_speed = 0.02;     % Pursuer movement speed
@@ -181,16 +197,19 @@ capture_radius = 0.05;    % Distance for capture
 ## 📊 Performance
 
 ### **Path Planning**
+
 - **Simple Environment**: ~1-2 seconds
 - **Complex Environment**: ~3-5 seconds
 - **Real-time Replanning**: ~0.5-1 seconds
 
 ### **Animation**
+
 - **Static Scenes**: 30+ FPS
 - **Dynamic Animation**: 10-30 FPS
 - **Complex Scenes**: 5-15 FPS
 
 ### **Memory Usage**
+
 - **Base Application**: ~100MB
 - **With Models**: ~200MB
 - **Large Scenes**: ~500MB
@@ -198,6 +217,7 @@ capture_radius = 0.05;    % Distance for capture
 ## 🧪 Testing
 
 ### **System Verification**
+
 ```matlab
 % Run comprehensive system test
 cd matlab/tests
@@ -205,6 +225,7 @@ test_system
 ```
 
 ### **Component Testing**
+
 ```matlab
 % Test individual components
 test_rrt_algorithm
@@ -218,6 +239,7 @@ test_ai_system
 ### **Common Issues**
 
 **STL Loading Error:**
+
 ```matlab
 % Ensure STL file is in models directory
 % Check file path in stlread.m
@@ -225,6 +247,7 @@ test_ai_system
 ```
 
 **GUI Not Launching:**
+
 ```matlab
 % Check MATLAB version compatibility
 % Ensure all dependencies are available
@@ -232,6 +255,7 @@ test_ai_system
 ```
 
 **Performance Issues:**
+
 ```matlab
 % Reduce animation speed
 % Decrease number of obstacles
@@ -242,6 +266,7 @@ test_ai_system
 ## 🚀 Advanced Usage
 
 ### **Custom Obstacles**
+
 ```matlab
 % Generate custom obstacle field
 obstacles = generateRandomObstacles(bounds, num_obstacles);
@@ -251,6 +276,7 @@ obstacles = readmatrix('my_obstacles.csv');
 ```
 
 ### **Custom Ship Models**
+
 ```matlab
 % Load custom STL model
 [V, F] = stlread('my_ship.stl');
@@ -260,6 +286,7 @@ R = shipOrientation(current_pos, next_pos, forward, up);
 ```
 
 ### **Custom AI Behavior**
+
 ```matlab
 % Modify pursuit parameters
 ai.evasion_radius = 0.2;
@@ -276,4 +303,4 @@ ai.pursuer_speed = 0.03;
 
 ---
 
-**May the Force be with your MATLAB path planning!** 🌟🔬 
+**May the Force be with your MATLAB path planning!** 🌟🔬

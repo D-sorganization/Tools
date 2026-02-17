@@ -5,9 +5,9 @@ on:
   workflow_dispatch:
     inputs:
       days_to_review:
-        description: 'Days to review'
+        description: "Days to review"
         required: false
-        default: '2'
+        default: "2"
         type: string
   # Schedule disabled - orchestrated by Jules-Control-Tower.yml
   # schedule:
@@ -132,7 +132,6 @@ jobs:
           sleep $POLL_INTERVAL
           ELAPSED=$((ELAPSED + POLL_INTERVAL))
           done
-
 
       - name: Commit
         uses: stefanzweifel/git-auto-commit-action@v5

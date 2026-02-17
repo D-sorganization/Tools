@@ -9,10 +9,10 @@
 
 ## CI/CD Assessment
 
-| Stage | Automated? | Status |
-| ----- | ---------- | ------ |
-| Lint  | ✅         | Enforced. |
-| Test  | ✅         | Enforced. |
+| Stage | Automated? | Status               |
+| ----- | ---------- | -------------------- |
+| Lint  | ✅         | Enforced.            |
+| Test  | ✅         | Enforced.            |
 | Fix   | ✅         | Auto-repair enabled. |
 
 ## Remediation Roadmap

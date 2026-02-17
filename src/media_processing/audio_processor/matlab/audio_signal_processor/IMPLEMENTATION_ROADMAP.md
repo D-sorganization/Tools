@@ -16,9 +16,11 @@ This document provides a roadmap for integrating the new enhancement files into 
 ### **1. Enhanced Core Classes**
 
 #### **MixerCoreEnhanced.m** ⭐ CRITICAL
+
 **Location:** `core/MixerCoreEnhanced.m`
 
 **New Features:**
+
 - ✅ **Time offset support** - Each track can start at any time position
 - ✅ **Fade in/out** - Per-track fades with multiple curve options
 - ✅ **Automation** - Volume and pan automation over time
@@ -28,6 +30,7 @@ This document provides a roadmap for integrating the new enhancement files into 
 - ✅ **Track naming and colors** - Better organization
 
 **API Highlights:**
+
 ```matlab
 mixer = MixerCoreEnhanced(8, 44100);
 mixer.setTrackOffset(trackIndex, offsetSeconds);
@@ -41,9 +44,11 @@ mixedAudio = mixer.processMix();  % Respects all offsets
 ---
 
 #### **AudioEditor.m** ⭐ CRITICAL
+
 **Location:** `core/AudioEditor.m`
 
 **New Features:**
+
 - ✅ **Selection-based editing** - Set time selection for operations
 - ✅ **Trim, cut, copy, paste** - Standard editing operations
 - ✅ **Fade in/out with curves** - Linear, exponential, logarithmic, s-curve
@@ -54,6 +59,7 @@ mixedAudio = mixer.processMix();  % Respects all offsets
 - ✅ **Envelope application** - Custom amplitude envelopes
 
 **API Highlights:**
+
 ```matlab
 editor = AudioEditor(audioData, sampleRate);
 editor.setSelection(startTime, endTime);
@@ -67,11 +73,13 @@ processedAudio = editor.getAudio();
 ---
 
 #### **WaveletProcessor.m** ⭐ UNIQUE CAPABILITY
+
 **Location:** `core/WaveletProcessor.m`
 
 **Leverages:** MATLAB Wavelet Toolbox
 
 **New Features:**
+
 - ✅ **Wavelet denoising** - Superior to traditional noise gates (wdenoise)
 - ✅ **CWT analysis** - Continuous wavelet transform for time-frequency
 - ✅ **Synchrosqueezing** - Improved time-frequency resolution (wsst)
@@ -81,6 +89,7 @@ processedAudio = editor.getAudio();
 - ✅ **Coherence analysis** - Wavelet coherence between signals (wcoherence)
 
 **API Highlights:**
+
 ```matlab
 wp = WaveletProcessor();
 
@@ -98,11 +107,13 @@ wp.plotScalogram(cfs, frequencies, time);
 ---
 
 #### **AdvancedAudioProcessor.m** ⭐ RESEARCH POWERHOUSE
+
 **Location:** `core/AdvancedAudioProcessor.m`
 
 **Leverages:** MATLAB Audio Toolbox
 
 **New Features:**
+
 - ✅ **Neural network pitch detection** - pitchnn for accurate pitch tracking
 - ✅ **Onset/beat detection** - Spectral flux-based onset detection
 - ✅ **Psychoacoustic analysis** - Acoustic loudness, SPL metering
@@ -113,6 +124,7 @@ wp.plotScalogram(cfs, frequencies, time);
 - ✅ **Bark/ERB analysis** - Psychoacoustic frequency scales
 
 **API Highlights:**
+
 ```matlab
 ap = AdvancedAudioProcessor();
 
@@ -172,6 +184,7 @@ run examples in section "Example 7-12: Advanced Features"
 **Option A: Replace MixerCore with MixerCoreEnhanced**
 
 In `createTabGroup` function (around line 43):
+
 ```matlab
 % OLD:
 mainWindow.Mixer = MixerCore(8, 44100);
@@ -181,12 +194,14 @@ mainWindow.Mixer = MixerCoreEnhanced(8, 44100);
 ```
 
 **Option B: Keep both, add selector**
+
 ```matlab
 mainWindow.Mixer = MixerCoreEnhanced(8, 44100);
 mainWindow.MixerBasic = MixerCore(8, 44100);  % Keep for compatibility
 ```
 
 **Add GUI controls in `createMixerPanel` function:**
+
 ```matlab
 % Add offset controls for each track
 for i = 1:8
@@ -465,24 +480,28 @@ end
 ## 🎯 Priority Implementation Order
 
 ### **Critical (Do First)**
+
 1. ✅ Replace `MixerCore` with `MixerCoreEnhanced` in MainWindow
 2. ✅ Add offset controls to Mixer panel GUI
 3. ✅ Test time offset mixing
 4. ✅ Add Editor tab with trimming functionality
 
 ### **High Priority (Do Soon)**
+
 5. ✅ Add Wavelet Processing tab with denoising
 6. ✅ Add Advanced Processing tab with pitch detection
 7. ✅ Integrate fade controls into Editor tab
 8. ✅ Add normalization to Editor tab
 
 ### **Medium Priority (Nice to Have)**
+
 9. ⬜ Add visual timeline display with waveforms
 10. ⬜ Add automation display and editing
 11. ⬜ Add marker/region management UI
 12. ⬜ Implement waveform selection with mouse dragging
 
 ### **Low Priority (Future Enhancements)**
+
 13. ⬜ Spectral editor with frequency selection
 14. ⬜ Batch processing GUI
 15. ⬜ Project save/load system
@@ -493,6 +512,7 @@ end
 ## 💡 Usage Tips
 
 ### **For Mixing**
+
 ```matlab
 % Use enhanced mixer for any project with multiple tracks that need timing adjustment
 mixer = MixerCoreEnhanced(8, 44100);
@@ -501,6 +521,7 @@ mixer.alignTracks('peak');     % Auto-align all tracks by peak
 ```
 
 ### **For Editing**
+
 ```matlab
 % Use editor for any destructive edits
 editor = AudioEditor(audio, fs);
@@ -510,6 +531,7 @@ editor.normalize('lufs', -16); % Broadcast standard
 ```
 
 ### **For Research**
+
 ```matlab
 % Wavelet denoising superior to traditional methods
 wp = WaveletProcessor();
@@ -528,15 +550,19 @@ features = ap.extractAllFeatures(audio, fs);
 ## 🐛 Troubleshooting
 
 ### **Issue: "Wavelet Toolbox not available"**
+
 **Solution:** The `WaveletProcessor` includes fallback methods. Basic functionality will work, but advanced features (CWT, WSST, wcoherence) require the Wavelet Toolbox.
 
 ### **Issue: "Audio Toolbox not available"**
+
 **Solution:** The `AdvancedAudioProcessor` includes fallback methods. Pitch detection, onset detection, and feature extraction will use simplified algorithms.
 
 ### **Issue: "Time offsets not working"**
+
 **Solution:** Make sure you're using `MixerCoreEnhanced`, not the original `MixerCore`. Check that offsets are set before calling `processMix()`.
 
 ### **Issue: "Undo not working in editor"**
+
 **Solution:** Undo only works after operations that modify audio. Make sure operation completed successfully before calling `editor.undo()`.
 
 ---
@@ -544,16 +570,19 @@ features = ap.extractAllFeatures(audio, fs);
 ## 📊 Performance Considerations
 
 ### **Large Files**
+
 - Use `AudioLoader` with `ChunkSize` parameter for files > 100 MB
 - Wavelet denoising can be slow on long files - consider processing in segments
 - CWT for long audio files may require significant memory
 
 ### **Real-time Processing**
+
 - MixerCore processes offline (not real-time)
 - For real-time, consider reducing number of tracks and effects
 - Automation interpolation adds overhead - use sparingly
 
 ### **Memory Usage**
+
 - Each undo state in AudioEditor stores full audio copy
 - Limit history size if working with large files: `editor.MaxHistorySize = 10;`
 - Clear history after major operations: `editor.clearHistory();`
@@ -574,6 +603,7 @@ features = ap.extractAllFeatures(audio, fs);
 ## 📞 Support
 
 For questions or issues:
+
 1. Check `AUDIO_PROCESSOR_CRITICAL_REVIEW.md` for detailed analysis
 2. Review `ENHANCEMENT_EXAMPLES.m` for working code examples
 3. Consult MATLAB documentation for toolbox-specific functions

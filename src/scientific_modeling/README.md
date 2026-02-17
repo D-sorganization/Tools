@@ -31,12 +31,14 @@ Interactive 3D visualization of the solar system:
 ### RRT Path Planner
 
 **MATLAB:**
+
 ```matlab
 cd scientific_modeling/rrt_path_planner/matlab/src
 main_improved
 ```
 
 **Python:**
+
 ```bash
 cd scientific_modeling/rrt_path_planner/python/src
 pip install -r requirements.txt
@@ -59,6 +61,7 @@ python run_solar_system.py
 ## Integration
 
 This suite integrates with:
+
 - **Data Processing** (`data_processing/`) - Data analysis pipelines
 - **MATLAB Core** (`matlab/`) - Shared MATLAB infrastructure
 - **Web Applications** (`web_applications/`) - Shared math utilities

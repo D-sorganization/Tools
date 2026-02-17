@@ -6,14 +6,14 @@
 
 ## 📊 Executive Dashboard
 
-| Category | Grade | Status | Key Insight |
-| :--- | :--- | :--- | :--- |
-| **Architecture** | **B-** | ⚠️ Mixed | Dual launchers and deep nesting create confusion. Good individual components. |
-| **Hygiene** | **A-** | 🟢 Good | Ruff/Black perfect. Mypy is the only major failure (1300+ errors). |
-| **Documentation** | **A** | 🟢 Excellent | High-quality `README.md` and `AGENTS.md`. Sub-projects need polish. |
-| **UX** | **A-** | 🟢 Good | `UnifiedToolsLauncher` is a huge win for usability. |
-| **Security** | **A+** | 🟢 Excellent | No secrets, safe launcher logic. |
-| **CI/CD** | **A+** | 🟢 Excellent | Robust, automated, and self-healing. |
+| Category          | Grade  | Status       | Key Insight                                                                   |
+| :---------------- | :----- | :----------- | :---------------------------------------------------------------------------- |
+| **Architecture**  | **B-** | ⚠️ Mixed     | Dual launchers and deep nesting create confusion. Good individual components. |
+| **Hygiene**       | **A-** | 🟢 Good      | Ruff/Black perfect. Mypy is the only major failure (1300+ errors).            |
+| **Documentation** | **A**  | 🟢 Excellent | High-quality `README.md` and `AGENTS.md`. Sub-projects need polish.           |
+| **UX**            | **A-** | 🟢 Good      | `UnifiedToolsLauncher` is a huge win for usability.                           |
+| **Security**      | **A+** | 🟢 Excellent | No secrets, safe launcher logic.                                              |
+| **CI/CD**         | **A+** | 🟢 Excellent | Robust, automated, and self-healing.                                          |
 
 ---
 
@@ -36,16 +36,19 @@
 ## 📅 Consolidated Remediation Roadmap
 
 ### Phase 1: Quick Wins (48 Hours)
+
 - [ ] **Deprecate Legacy Launcher**: Add a warning banner to `tools_launcher.py` or remove it.
 - [ ] **Fix Mypy Noise**: Resolve "Unused type: ignore" errors to stop the bleeding.
 - [ ] **Scripts Hygiene**: Add `-> None` return types to root scripts (`verify_installation.py`).
 
 ### Phase 2: Stabilization (2 Weeks)
+
 - [ ] **Mypy Baseline**: Fix the top 100 most common Mypy errors (mostly return types).
 - [ ] **Config Externalization**: Move the `TOOLS` dictionary from `UnifiedToolsLauncher.py` to a `tools.json` file.
 - [ ] **Documentation**: Standardize READMEs for all sub-tools.
 
 ### Phase 3: Modernization (6 Weeks)
+
 - [ ] **Packaging**: Introduce `pyproject.toml` for proper dependency management.
 - [ ] **Flattening**: Refactor the `data_processing` directory structure.
 - [ ] **Strict Typing**: Achieve 0 Mypy errors.

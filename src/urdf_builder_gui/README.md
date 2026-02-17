@@ -70,31 +70,31 @@ python launch_pyqt6.py
 
 ### Basic Parameters
 
-| Parameter | Unit | Range | Description |
-|-----------|------|-------|-------------|
-| Robot Name | - | text | Identifier for the robot model |
-| Height | m | 0.5 - 3.0 | Total standing height |
-| Mass | kg | 20 - 200 | Total body mass |
-| Gender Factor | % | 0 - 100 | Female (0) to Male (100) scaling |
+| Parameter     | Unit | Range     | Description                      |
+| ------------- | ---- | --------- | -------------------------------- |
+| Robot Name    | -    | text      | Identifier for the robot model   |
+| Height        | m    | 0.5 - 3.0 | Total standing height            |
+| Mass          | kg   | 20 - 200  | Total body mass                  |
+| Gender Factor | %    | 0 - 100   | Female (0) to Male (100) scaling |
 
 ### Body Proportions
 
-| Parameter | Range | Description |
-|-----------|-------|-------------|
+| Parameter      | Range      | Description                |
+| -------------- | ---------- | -------------------------- |
 | Shoulder Width | 50% - 150% | Biacromial breadth scaling |
-| Hip Width | 50% - 150% | Bi-iliac breadth scaling |
-| Arm Length | 50% - 150% | Upper + lower arm scaling |
-| Leg Length | 50% - 150% | Thigh + shin scaling |
-| Torso Length | 50% - 150% | Lumbar + thorax scaling |
-| Head Size | 50% - 150% | Head diameter scaling |
+| Hip Width      | 50% - 150% | Bi-iliac breadth scaling   |
+| Arm Length     | 50% - 150% | Upper + lower arm scaling  |
+| Leg Length     | 50% - 150% | Thigh + shin scaling       |
+| Torso Length   | 50% - 150% | Lumbar + thorax scaling    |
+| Head Size      | 50% - 150% | Head diameter scaling      |
 
 ### Joint Configuration
 
-| Parameter | Unit | Range | Description |
-|-----------|------|-------|-------------|
-| Default Damping | N*m*s/rad | 0 - 100 | Viscous damping coefficient |
-| Default Friction | N*m | 0 - 100 | Coulomb friction coefficient |
-| Density | kg/m^3 | 500 - 2000 | Default material density |
+| Parameter        | Unit      | Range      | Description                  |
+| ---------------- | --------- | ---------- | ---------------------------- |
+| Default Damping  | N*m*s/rad | 0 - 100    | Viscous damping coefficient  |
+| Default Friction | N\*m      | 0 - 100    | Coulomb friction coefficient |
+| Density          | kg/m^3    | 500 - 2000 | Default material density     |
 
 ## Output Format
 
@@ -130,13 +130,13 @@ The generated URDF follows the standard format:
 
 ### Model Templates
 
-| Template | Links Included |
-|----------|----------------|
-| Full Humanoid | Pelvis, torso, head, both arms, both legs |
-| Upper Body Only | Pelvis, torso, head, both arms |
-| Lower Body Only | Pelvis, both legs |
-| Torso + Arms | Pelvis, torso, both arms |
-| Torso + Legs | Pelvis, torso, both legs |
+| Template        | Links Included                            |
+| --------------- | ----------------------------------------- |
+| Full Humanoid   | Pelvis, torso, head, both arms, both legs |
+| Upper Body Only | Pelvis, torso, head, both arms            |
+| Lower Body Only | Pelvis, both legs                         |
+| Torso + Arms    | Pelvis, torso, both arms                  |
+| Torso + Legs    | Pelvis, torso, both legs                  |
 
 ## Mathematical Models
 
@@ -181,6 +181,7 @@ I_cylinder = (1/12) * m * (3r^2 + h^2)  [transverse]
 ### Example 1: Standard Adult Male
 
 Parameters:
+
 - Height: 1.75 m
 - Mass: 75 kg
 - Gender Factor: 80%
@@ -191,6 +192,7 @@ Generated structure includes 17 links (pelvis, torso, head, 2x arms, 2x legs wit
 ### Example 2: Child Robot Model
 
 Parameters:
+
 - Height: 1.20 m
 - Mass: 25 kg
 - Gender Factor: 50%
@@ -199,6 +201,7 @@ Parameters:
 ### Example 3: Heavy-Duty Industrial Arm
 
 Parameters:
+
 - Template: Torso + Arms
 - Mass: 150 kg
 - Damping: 10.0

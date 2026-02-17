@@ -533,6 +533,8 @@ class StateManager:
 
 
 _state_manager: StateManager | None = None
+# Global instance for shared use
+state_manager = StateManager()
 
 
 def get_state_manager(base_directory: str = "saved_states") -> StateManager:
@@ -548,3 +550,6 @@ def get_state_manager(base_directory: str = "saved_states") -> StateManager:
     if _state_manager is None:
         _state_manager = StateManager(base_directory)
     return _state_manager
+
+
+__all__ = ["StateManager", "get_state_manager", "state_manager"]

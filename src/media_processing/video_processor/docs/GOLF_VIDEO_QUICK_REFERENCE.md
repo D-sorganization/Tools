@@ -1,6 +1,7 @@
 # Golf Swing Video Analysis Platform - Quick Reference
 
 ## 🎯 One-Sentence Summary
+
 **Build a web-based golf swing video analysis platform using Next.js + MediaPipe + Three.js to enable coaches to analyze swings with AI-powered pose detection, 3D overlays, and audio commentary, then share with students.**
 
 ---
@@ -8,6 +9,7 @@
 ## 💡 Core Recommendation
 
 ### Technology Stack
+
 ```
 Frontend:  Next.js + React + TypeScript + Tailwind CSS
 Video:     FFmpeg.wasm + Video.js
@@ -20,6 +22,7 @@ Deploy:    Vercel (frontend) + Railway (backend)
 ```
 
 ### Why Web-Based?
+
 ✅ Universal access (any device)
 ✅ No installation required
 ✅ Easy sharing via links
@@ -30,28 +33,30 @@ Deploy:    Vercel (frontend) + Railway (backend)
 
 ## 📋 Feature Checklist with Solutions
 
-| Your Requirement | Technology Solution | Complexity |
-|-----------------|---------------------|------------|
-| Edit & share video | Next.js + FFmpeg.wasm | ⭐ Easy |
-| Audio commentary | Web Audio API + MediaRecorder | ⭐ Easy |
-| Draw lines/planes | Fabric.js | ⭐ Easy |
-| 3D plane overlays | Three.js | ⭐⭐ Medium |
-| Camera perspective | Three.js + OpenCV.js | ⭐⭐ Medium |
-| Motion capture | MediaPipe (Google) | ⭐⭐ Medium |
-| Pendulum model | Custom + Matter.js | ⭐⭐⭐ Hard |
-| Feature tracking | OpenCV.js | ⭐⭐ Medium |
-| Video upscaling | Real-ESRGAN (backend) | ⭐⭐⭐ Hard |
-| Crop/rotate/trim | FFmpeg.wasm | ⭐ Easy |
-| All video formats | FFmpeg.wasm | ⭐ Easy |
+| Your Requirement   | Technology Solution           | Complexity  |
+| ------------------ | ----------------------------- | ----------- |
+| Edit & share video | Next.js + FFmpeg.wasm         | ⭐ Easy     |
+| Audio commentary   | Web Audio API + MediaRecorder | ⭐ Easy     |
+| Draw lines/planes  | Fabric.js                     | ⭐ Easy     |
+| 3D plane overlays  | Three.js                      | ⭐⭐ Medium |
+| Camera perspective | Three.js + OpenCV.js          | ⭐⭐ Medium |
+| Motion capture     | MediaPipe (Google)            | ⭐⭐ Medium |
+| Pendulum model     | Custom + Matter.js            | ⭐⭐⭐ Hard |
+| Feature tracking   | OpenCV.js                     | ⭐⭐ Medium |
+| Video upscaling    | Real-ESRGAN (backend)         | ⭐⭐⭐ Hard |
+| Crop/rotate/trim   | FFmpeg.wasm                   | ⭐ Easy     |
+| All video formats  | FFmpeg.wasm                   | ⭐ Easy     |
 
 ---
 
 ## 🚀 4-Phase Development Plan
 
 ### Phase 1: MVP (10 weeks)
+
 **Goal**: Upload, playback, drawing, audio, sharing
 
 **Features**:
+
 - Video upload (all formats)
 - Playback with timeline
 - Drawing tools (line, arrow, text, freehand)
@@ -65,9 +70,11 @@ Deploy:    Vercel (frontend) + Railway (backend)
 **Monthly Cost**: **$1-2/month**
 
 ### Phase 2: AI (8 weeks)
+
 **Goal**: Intelligent motion tracking and analysis
 
 **Features**:
+
 - Pose detection (33 landmarks)
 - Feature tracking
 - Club detection & tracking
@@ -78,9 +85,11 @@ Deploy:    Vercel (frontend) + Railway (backend)
 **Monthly Cost**: **$2-5/month**
 
 ### Phase 3: 3D & Physics (8 weeks)
+
 **Goal**: 3D visualization and physics modeling
 
 **Features**:
+
 - 3D plane overlays (adjustable)
 - Camera perspective estimation
 - Triple pendulum model
@@ -91,9 +100,11 @@ Deploy:    Vercel (frontend) + Railway (backend)
 **Monthly Cost**: **$5-10/month**
 
 ### Phase 4: Premium & Polish (6 weeks)
+
 **Goal**: Advanced features and production readiness
 
 **Features**:
+
 - AI video upscaling
 - Mobile optimization
 - Real-time collaboration
@@ -112,27 +123,30 @@ Deploy:    Vercel (frontend) + Railway (backend)
 ## 💰 Cost Summary
 
 ### Development Costs
+
 **⚠️ IMPORTANT**: If you're developing yourself, development cost = **$0** (your time)!
 
-| Approach | Cost | Timeline |
-|----------|------|----------|
-| **Home Developer (You)** | **$0** (your time) | 8-9 months |
-| **Hiring Agency** | $140-210k fixed | 6-8 months |
-| **Hiring Developers** | Salaries (~$200k/year loaded) | 9-12 months |
+| Approach                 | Cost                          | Timeline    |
+| ------------------------ | ----------------------------- | ----------- |
+| **Home Developer (You)** | **$0** (your time)            | 8-9 months  |
+| **Hiring Agency**        | $140-210k fixed               | 6-8 months  |
+| **Hiring Developers**    | Salaries (~$200k/year loaded) | 9-12 months |
 
 ### Monthly Operating Costs (Infrastructure)
+
 **These are the REAL costs - much cheaper than listed elsewhere!**
 
-| Users | Monthly Cost | Services Used |
-|-------|--------------|---------------|
-| **0-50 (MVP)** | **$1-2/month** | Domain only, everything else FREE! |
-| **50-200 (Beta)** | **$2-5/month** | Mostly free tiers |
-| **200-1,000 (Growth)** | **$5-10/month** | Some paid tiers |
-| **1,000-10,000 (Scale)** | **$30-60/month** | Paid tiers but still cheap |
+| Users                    | Monthly Cost     | Services Used                      |
+| ------------------------ | ---------------- | ---------------------------------- |
+| **0-50 (MVP)**           | **$1-2/month**   | Domain only, everything else FREE! |
+| **50-200 (Beta)**        | **$2-5/month**   | Mostly free tiers                  |
+| **200-1,000 (Growth)**   | **$5-10/month**  | Some paid tiers                    |
+| **1,000-10,000 (Scale)** | **$30-60/month** | Paid tiers but still cheap         |
 
 **📖 For detailed budget breakdown: `docs/GOLF_VIDEO_BUDGET_GUIDE.md`**
 
 ### Why So Cheap?
+
 - ✅ **Vercel**: FREE (enough for 100k+ users!)
 - ✅ **Supabase**: FREE (500MB database = thousands of users)
 - ✅ **Cloudflare R2**: FREE (10GB storage, then $0.015/GB)
@@ -143,26 +157,36 @@ Deploy:    Vercel (frontend) + Railway (backend)
 ## 🎨 Key Technical Components
 
 ### 1. Video Processing
+
 ```typescript
 // Using FFmpeg.wasm for browser-side video processing
-import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 
 const ffmpeg = createFFmpeg({ log: true });
 await ffmpeg.load();
 
 // Trim video
-ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(videoFile));
-await ffmpeg.run('-i', 'input.mp4', '-ss', '00:00:01', '-to', '00:00:05', 'output.mp4');
-const data = ffmpeg.FS('readFile', 'output.mp4');
+ffmpeg.FS("writeFile", "input.mp4", await fetchFile(videoFile));
+await ffmpeg.run(
+  "-i",
+  "input.mp4",
+  "-ss",
+  "00:00:01",
+  "-to",
+  "00:00:05",
+  "output.mp4",
+);
+const data = ffmpeg.FS("readFile", "output.mp4");
 ```
 
 ### 2. Pose Detection
+
 ```typescript
 // Using MediaPipe for body tracking
-import { Pose } from '@mediapipe/pose';
+import { Pose } from "@mediapipe/pose";
 
 const pose = new Pose({
-  locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
+  locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
 });
 
 pose.onResults((results) => {
@@ -174,16 +198,17 @@ pose.onResults((results) => {
 ```
 
 ### 3. Drawing Annotations
+
 ```typescript
 // Using Fabric.js for canvas overlays
-import { fabric } from 'fabric';
+import { fabric } from "fabric";
 
-const canvas = new fabric.Canvas('canvas');
+const canvas = new fabric.Canvas("canvas");
 
 // Draw line
 const line = new fabric.Line([x1, y1, x2, y2], {
-  stroke: 'red',
-  strokeWidth: 2
+  stroke: "red",
+  strokeWidth: 2,
 });
 canvas.add(line);
 
@@ -192,36 +217,38 @@ const annotations = canvas.toJSON();
 ```
 
 ### 4. 3D Plane Overlay
+
 ```typescript
 // Using Three.js for 3D visualization
-import * as THREE from 'three';
+import * as THREE from "three";
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, width/height, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
 
 // Create plane
 const geometry = new THREE.PlaneGeometry(10, 10);
 const material = new THREE.MeshBasicMaterial({
   color: 0xff0000,
   transparent: true,
-  opacity: 0.3
+  opacity: 0.3,
 });
 const plane = new THREE.Mesh(geometry, material);
 scene.add(plane);
 ```
 
 ### 5. Audio Recording
+
 ```typescript
 // Using Web Audio API for commentary
 const mediaRecorder = new MediaRecorder(stream, {
-  mimeType: 'audio/webm;codecs=opus'
+  mimeType: "audio/webm;codecs=opus",
 });
 
 const chunks: Blob[] = [];
 mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
 
 mediaRecorder.onstop = () => {
-  const audioBlob = new Blob(chunks, { type: 'audio/webm' });
+  const audioBlob = new Blob(chunks, { type: "audio/webm" });
   // Save or mix with video
 };
 
@@ -233,6 +260,7 @@ mediaRecorder.start();
 ## 📊 Success Criteria
 
 ### MVP Success (Phase 1)
+
 - [ ] 50 beta users (coaches)
 - [ ] 500 videos processed
 - [ ] < 2 second video load time
@@ -240,6 +268,7 @@ mediaRecorder.start();
 - [ ] Net Promoter Score > 40
 
 ### Full Platform Success (Phase 4)
+
 - [ ] 1,000+ active users
 - [ ] 10,000+ videos analyzed
 - [ ] 99% uptime
@@ -251,6 +280,7 @@ mediaRecorder.start();
 ## 🛠️ Starter Commands
 
 ### Create New Project
+
 ```bash
 # Create Next.js app with TypeScript
 npx create-next-app@latest golf-swing-analyzer --typescript --tailwind --app
@@ -277,6 +307,7 @@ npx shadcn-ui@latest init
 ```
 
 ### Development Workflow
+
 ```bash
 # Start development server
 npm run dev
@@ -324,22 +355,27 @@ golf-swing-analyzer/
 ## 🎯 Critical Design Decisions
 
 ### 1. Web vs. Desktop vs. Mobile?
+
 **Decision**: **Web-first**
 **Reason**: Maximum reach, easy sharing, single codebase
 
 ### 2. Real-time vs. Batch Processing?
+
 **Decision**: **Hybrid**
 **Reason**: Lightweight processing (pose detection) in browser, heavy processing (upscaling) on server
 
 ### 3. Subscription vs. One-time Purchase?
+
 **Decision**: **Freemium subscription**
 **Reason**: Better LTV, aligns with ongoing value (cloud storage, AI features)
 
 ### 4. Build vs. Buy AI Models?
+
 **Decision**: **Use existing (MediaPipe)**
 **Reason**: Faster time-to-market, proven accuracy, free
 
 ### 5. Monorepo vs. Separate Repos?
+
 **Decision**: **Monorepo (Turborepo)**
 **Reason**: Shared code, easier refactoring, better DX
 
@@ -347,31 +383,34 @@ golf-swing-analyzer/
 
 ## ⚠️ Key Risks & Mitigations
 
-| Risk | Mitigation |
-|------|------------|
-| **AI performance in browser** | Use Web Workers, lazy loading, progressive enhancement |
-| **Pose detection accuracy** | Multiple models, confidence thresholds, manual correction UI |
-| **Video storage costs** | Compression, CDN, tiered storage, user limits |
-| **Pendulum model complexity** | Start with double pendulum, allow manual adjustment |
-| **Real-time collaboration lag** | Optimistic UI updates, websocket with fallback |
+| Risk                            | Mitigation                                                   |
+| ------------------------------- | ------------------------------------------------------------ |
+| **AI performance in browser**   | Use Web Workers, lazy loading, progressive enhancement       |
+| **Pose detection accuracy**     | Multiple models, confidence thresholds, manual correction UI |
+| **Video storage costs**         | Compression, CDN, tiered storage, user limits                |
+| **Pendulum model complexity**   | Start with double pendulum, allow manual adjustment          |
+| **Real-time collaboration lag** | Optimistic UI updates, websocket with fallback               |
 
 ---
 
 ## 📚 Essential Resources
 
 ### Documentation
+
 - [Next.js Docs](https://nextjs.org/docs)
 - [MediaPipe Pose](https://google.github.io/mediapipe/solutions/pose.html)
 - [Three.js Manual](https://threejs.org/manual/)
 - [FFmpeg.wasm](https://ffmpegwasm.netlify.app/)
 
 ### Tools
+
 - [Vercel](https://vercel.com) - Deployment
 - [Railway](https://railway.app) - Backend hosting
 - [Prisma Studio](https://www.prisma.io/studio) - Database GUI
 - [Postman](https://www.postman.com) - API testing
 
 ### Communities
+
 - [Next.js Discord](https://nextjs.org/discord)
 - [Three.js Discourse](https://discourse.threejs.org/)
 - [r/webdev](https://reddit.com/r/webdev)
@@ -381,20 +420,25 @@ golf-swing-analyzer/
 ## 🚦 Decision Framework
 
 ### Should I Start with MVP or Build Everything?
+
 **Start with MVP.** Get feedback, validate market fit, iterate.
 
 ### Should I Hire Agency or Build In-House?
+
 - **Agency**: If you have $150k+ and want fast (6 months)
 - **In-House**: If you have technical co-founder or are technical
 - **Hybrid**: MVP with agency ($40-60k), then hire developers
 
 ### Should I Use MediaPipe or Train Custom Models?
+
 **MediaPipe first.** 90% accuracy out-of-box. Train custom only if needed.
 
 ### Should I Build 3D Features in MVP?
+
 **No.** Validate core video analysis first. 3D is Phase 3.
 
 ### Should I Support Mobile from Day 1?
+
 **Make it responsive, but optimize for desktop first.** Coaches likely use desktops/laptops for analysis.
 
 ---
@@ -402,11 +446,13 @@ golf-swing-analyzer/
 ## 🎬 Next 3 Steps
 
 1. **Validate** (1 week)
+
    - Interview 5-10 golf coaches
    - Confirm feature priorities
    - Test willingness to pay ($29-99/month)
 
 2. **Build POC** (2 weeks)
+
    - Set up Next.js project
    - Implement video upload + playback
    - Integrate MediaPipe (pose detection)
@@ -422,12 +468,14 @@ golf-swing-analyzer/
 ## 💬 Sample Pricing (for reference)
 
 ### Freemium Model
+
 - **Free**: 3 videos/month, basic features, watermark
 - **Coach ($29/month)**: 25 videos/month, AI features, no watermark, 5GB storage
 - **Pro Coach ($79/month)**: Unlimited videos, 3D analysis, 50GB storage, priority support
 - **Academy ($249/month)**: Unlimited coaches, unlimited videos, team features, 500GB storage
 
 ### Add-Ons
+
 - **Video Upscaling**: $5 per video
 - **Extra Storage**: $10/month per 10GB
 - **White Label**: $500/month (remove branding)
@@ -437,6 +485,7 @@ golf-swing-analyzer/
 ## ✅ Pre-Launch Checklist
 
 ### Technical
+
 - [ ] All core features working
 - [ ] 99%+ uptime (tested)
 - [ ] < 2s page load time
@@ -447,6 +496,7 @@ golf-swing-analyzer/
 - [ ] Backups configured
 
 ### Business
+
 - [ ] Pricing determined
 - [ ] Payment processing (Stripe)
 - [ ] Terms of Service
@@ -457,6 +507,7 @@ golf-swing-analyzer/
 - [ ] Onboarding flow
 
 ### Launch
+
 - [ ] 20+ beta users committed
 - [ ] Analytics configured (PostHog/Mixpanel)
 - [ ] Error tracking (Sentry)
@@ -484,4 +535,4 @@ This platform is 100% technically feasible with the recommended stack. All featu
 
 ---
 
-*Last Updated: November 1, 2025*
+_Last Updated: November 1, 2025_

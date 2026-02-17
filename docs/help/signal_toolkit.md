@@ -10,25 +10,26 @@ Generate and visualize mathematical functions and waveforms.
 
 #### Standard Waveforms
 
-| Waveform | Description | Parameters |
-|----------|-------------|------------|
-| Sine | Sinusoidal oscillation | Frequency, amplitude, phase |
-| Square | Digital-like on/off | Frequency, amplitude, duty cycle |
-| Triangle | Linear ramps | Frequency, amplitude |
-| Sawtooth | Rising or falling ramp | Frequency, amplitude, direction |
+| Waveform | Description            | Parameters                       |
+| -------- | ---------------------- | -------------------------------- |
+| Sine     | Sinusoidal oscillation | Frequency, amplitude, phase      |
+| Square   | Digital-like on/off    | Frequency, amplitude, duty cycle |
+| Triangle | Linear ramps           | Frequency, amplitude             |
+| Sawtooth | Rising or falling ramp | Frequency, amplitude, direction  |
 
 #### Mathematical Functions
 
-| Function | Description |
-|----------|-------------|
-| Polynomial | User-defined coefficients |
-| Exponential | Growth or decay |
-| Logarithmic | Log base e or 10 |
-| Gaussian | Normal distribution curve |
+| Function    | Description               |
+| ----------- | ------------------------- |
+| Polynomial  | User-defined coefficients |
+| Exponential | Growth or decay           |
+| Logarithmic | Log base e or 10          |
+| Gaussian    | Normal distribution curve |
 
 #### Custom Expressions
 
 Enter custom mathematical expressions using:
+
 - Variables: `t` (time), `x` (position)
 - Functions: `sin`, `cos`, `tan`, `exp`, `log`, `sqrt`, `abs`
 - Constants: `pi`, `e`
@@ -38,15 +39,15 @@ Example: `sin(2*pi*10*t) + 0.5*sin(2*pi*30*t)`
 
 ### Parameters
 
-| Parameter | Description | Typical Range |
-|-----------|-------------|---------------|
-| Frequency | Oscillation rate (Hz) | 0.001 - 100000 |
-| Amplitude | Peak value | 0.001 - 1000 |
-| Phase | Phase offset (degrees) | 0 - 360 |
-| DC Offset | Vertical shift | -1000 to 1000 |
-| Duty Cycle | Square wave on-time | 0 - 100% |
-| Duration | Signal length (seconds) | 0.001 - 1000 |
-| Sample Rate | Points per second | 100 - 1000000 |
+| Parameter   | Description             | Typical Range  |
+| ----------- | ----------------------- | -------------- |
+| Frequency   | Oscillation rate (Hz)   | 0.001 - 100000 |
+| Amplitude   | Peak value              | 0.001 - 1000   |
+| Phase       | Phase offset (degrees)  | 0 - 360        |
+| DC Offset   | Vertical shift          | -1000 to 1000  |
+| Duty Cycle  | Square wave on-time     | 0 - 100%       |
+| Duration    | Signal length (seconds) | 0.001 - 1000   |
+| Sample Rate | Points per second       | 100 - 1000000  |
 
 ### Output Formats
 
@@ -66,12 +67,14 @@ Generate, analyze, and fit polynomial functions.
 #### Coefficient Input
 
 Enter polynomial as coefficients (highest power first):
+
 - `[1, 0, -4]` represents x^2 - 4
 - `[1, -6, 11, -6]` represents x^3 - 6x^2 + 11x - 6
 
 #### Root Finding
 
 Find real and complex roots of polynomials:
+
 - Real roots (crossing points)
 - Complex conjugate pairs
 - Multiplicity detection
@@ -79,22 +82,24 @@ Find real and complex roots of polynomials:
 #### Curve Fitting
 
 Fit a polynomial to data points:
+
 1. Import data (x, y pairs)
 2. Select polynomial degree
 3. View fit quality metrics (R^2, RMSE)
 
 ### Calculus Operations
 
-| Operation | Description |
-|-----------|-------------|
+| Operation  | Description                   |
+| ---------- | ----------------------------- |
 | Derivative | Compute polynomial derivative |
-| Integral | Compute antiderivative |
-| Evaluate | Calculate y for given x |
-| Roots | Find zeros of polynomial |
+| Integral   | Compute antiderivative        |
+| Evaluate   | Calculate y for given x       |
+| Roots      | Find zeros of polynomial      |
 
 ### Taylor Series
 
 Expand functions as Taylor series around a point:
+
 - Enter function expression
 - Specify expansion point
 - Choose number of terms
@@ -112,23 +117,23 @@ Digital filter implementations.
 
 #### Available Filters
 
-| Filter Type | Description | Parameters |
-|-------------|-------------|------------|
-| Lowpass | Pass frequencies below cutoff | fc, order |
-| Highpass | Pass frequencies above cutoff | fc, order |
-| Bandpass | Pass frequencies in range | f_low, f_high, order |
-| Bandstop | Block frequencies in range | f_low, f_high, order |
-| Notch | Remove specific frequency | f_notch, Q |
+| Filter Type | Description                   | Parameters           |
+| ----------- | ----------------------------- | -------------------- |
+| Lowpass     | Pass frequencies below cutoff | fc, order            |
+| Highpass    | Pass frequencies above cutoff | fc, order            |
+| Bandpass    | Pass frequencies in range     | f_low, f_high, order |
+| Bandstop    | Block frequencies in range    | f_low, f_high, order |
+| Notch       | Remove specific frequency     | f_notch, Q           |
 
 #### Filter Designs
 
-| Design | Characteristics |
-|--------|----------------|
-| Butterworth | Maximally flat passband |
-| Chebyshev Type I | Sharp cutoff, passband ripple |
+| Design            | Characteristics               |
+| ----------------- | ----------------------------- |
+| Butterworth       | Maximally flat passband       |
+| Chebyshev Type I  | Sharp cutoff, passband ripple |
 | Chebyshev Type II | Sharp cutoff, stopband ripple |
-| Bessel | Linear phase (no distortion) |
-| FIR | Custom frequency response |
+| Bessel            | Linear phase (no distortion)  |
+| FIR               | Custom frequency response     |
 
 #### Usage Example
 
@@ -159,6 +164,7 @@ derivative = differentiate(signal, dt=0.001, method='central')
 ```
 
 Methods:
+
 - `forward`: Forward difference (noisy)
 - `backward`: Backward difference (noisy)
 - `central`: Central difference (recommended)
@@ -174,6 +180,7 @@ integral = integrate(signal, dt=0.001, method='trapezoid')
 ```
 
 Methods:
+
 - `rectangle`: Simple summation
 - `trapezoid`: Trapezoidal rule
 - `simpson`: Simpson's rule (recommended)
@@ -185,12 +192,12 @@ Noise generation and analysis.
 
 #### Noise Types
 
-| Type | Spectrum | Use Case |
-|------|----------|----------|
-| White | Flat | General testing |
-| Pink | 1/f | Audio, natural |
-| Brown | 1/f^2 | Low-frequency |
-| Blue | f | Testing |
+| Type  | Spectrum | Use Case        |
+| ----- | -------- | --------------- |
+| White | Flat     | General testing |
+| Pink  | 1/f      | Audio, natural  |
+| Brown | 1/f^2    | Low-frequency   |
+| Blue  | f        | Testing         |
 
 #### Usage Example
 
@@ -210,14 +217,14 @@ Curve fitting algorithms.
 
 #### Fit Types
 
-| Type | Description |
-|------|-------------|
-| Linear | y = mx + b |
-| Polynomial | y = sum(a_i * x^i) |
-| Exponential | y = a * exp(b*x) |
-| Power | y = a * x^b |
-| Gaussian | y = a * exp(-(x-mu)^2 / (2*sigma^2)) |
-| Sinusoidal | y = a * sin(2*pi*f*x + phi) |
+| Type        | Description                          |
+| ----------- | ------------------------------------ |
+| Linear      | y = mx + b                           |
+| Polynomial  | y = sum(a_i \* x^i)                  |
+| Exponential | y = a * exp(b*x)                     |
+| Power       | y = a \* x^b                         |
+| Gaussian    | y = a * exp(-(x-mu)^2 / (2*sigma^2)) |
+| Sinusoidal  | y = a * sin(2*pi*f*x + phi)          |
 
 #### Usage Example
 
@@ -260,13 +267,13 @@ Signal I/O utilities.
 
 #### Supported Formats
 
-| Format | Read | Write | Notes |
-|--------|------|-------|-------|
-| CSV | Yes | Yes | Time, value columns |
-| NumPy | Yes | Yes | .npy binary |
-| WAV | Yes | Yes | Audio format |
-| MATLAB | Yes | Yes | .mat files |
-| HDF5 | Yes | Yes | Large datasets |
+| Format | Read | Write | Notes               |
+| ------ | ---- | ----- | ------------------- |
+| CSV    | Yes  | Yes   | Time, value columns |
+| NumPy  | Yes  | Yes   | .npy binary         |
+| WAV    | Yes  | Yes   | Audio format        |
+| MATLAB | Yes  | Yes   | .mat files          |
+| HDF5   | Yes  | Yes   | Large datasets      |
 
 ---
 
@@ -307,14 +314,14 @@ For practical applications, use 5-10x oversampling.
 
 ### Common Operations
 
-| Task | Function |
-|------|----------|
-| Generate sine wave | `Function Generator > Sine` |
-| Filter signal | `signal_toolkit.filters.apply_lowpass_filter()` |
-| Compute derivative | `signal_toolkit.calculus.differentiate()` |
-| Fit polynomial | `Polynomial Generator > Curve Fit` |
-| Add noise | `signal_toolkit.noise.add_noise()` |
-| Find peaks | `signal_toolkit.limits.detect_peaks()` |
+| Task               | Function                                        |
+| ------------------ | ----------------------------------------------- |
+| Generate sine wave | `Function Generator > Sine`                     |
+| Filter signal      | `signal_toolkit.filters.apply_lowpass_filter()` |
+| Compute derivative | `signal_toolkit.calculus.differentiate()`       |
+| Fit polynomial     | `Polynomial Generator > Curve Fit`              |
+| Add noise          | `signal_toolkit.noise.add_noise()`              |
+| Find peaks         | `signal_toolkit.limits.detect_peaks()`          |
 
 ### Import Statement
 

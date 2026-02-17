@@ -1,220 +1,881 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    />
     <title>Aurora CAS Calculator</title>
-    <link rel="manifest" href="/manifest.webmanifest">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
     <div class="calculator-shell">
-        <header class="status-bar">
-            <span class="brand">Aurora CAS</span>
-            <span class="mode" id="active-mode">CAS</span>
-            <span class="battery" aria-label="battery level">▮▮▮▮</span>
-        </header>
-        <main class="screen">
-            <div class="history" id="history" aria-live="polite"></div>
-            <div class="io-grid">
-                <label for="expression">Expression <span class="required-mark" aria-hidden="true">*</span></label>
-                <input id="expression" name="expression" autocomplete="off" placeholder="sin(x)^2 + cos(x)^2" required aria-required="true" />
+      <header class="status-bar">
+        <span class="brand">Aurora CAS</span>
+        <span class="mode" id="active-mode">CAS</span>
+        <span class="battery" aria-label="battery level">▮▮▮▮</span>
+      </header>
+      <main class="screen">
+        <div class="history" id="history" aria-live="polite"></div>
+        <div class="io-grid">
+          <label for="expression"
+            >Expression
+            <span class="required-mark" aria-hidden="true">*</span></label
+          >
+          <input
+            id="expression"
+            name="expression"
+            autocomplete="off"
+            placeholder="sin(x)^2 + cos(x)^2"
+            required
+            aria-required="true"
+          />
 
-                <label for="variable">Variable / Unknown</label>
-                <input id="variable" name="variable" autocomplete="off" placeholder="x or x,y" />
+          <label for="variable">Variable / Unknown</label>
+          <input
+            id="variable"
+            name="variable"
+            autocomplete="off"
+            placeholder="x or x,y"
+          />
 
-                <label for="order">Order (derivatives/series)</label>
-                <input id="order" name="order" type="number" inputmode="numeric" min="1" placeholder="1" />
+          <label for="order">Order (derivatives/series)</label>
+          <input
+            id="order"
+            name="order"
+            type="number"
+            inputmode="numeric"
+            min="1"
+            placeholder="1"
+          />
 
-                <label for="bounds">Bounds / Values</label>
-                <div class="bounds-row">
-                    <input id="lower" name="lower" autocomplete="off" placeholder="lower" />
-                    <input id="upper" name="upper" autocomplete="off" placeholder="upper" />
-                    <input id="value" name="value" autocomplete="off" placeholder="limit or around" />
-                </div>
+          <label for="bounds">Bounds / Values</label>
+          <div class="bounds-row">
+            <input
+              id="lower"
+              name="lower"
+              autocomplete="off"
+              placeholder="lower"
+            />
+            <input
+              id="upper"
+              name="upper"
+              autocomplete="off"
+              placeholder="upper"
+            />
+            <input
+              id="value"
+              name="value"
+              autocomplete="off"
+              placeholder="limit or around"
+            />
+          </div>
 
-                <label for="variables">Substitutions</label>
-                <input id="variables" name="variables" autocomplete="off" placeholder="x=pi/4, y=2" />
-            </div>
-            <div class="result-display" id="result-display">
-                <div class="result-header">Result</div>
-                <pre id="result-text" aria-live="polite" aria-atomic="true">Ready.</pre>
-                <div class="approx-line" id="approx-line" hidden>
-                    ≈ <span id="approx-value"></span>
-                </div>
-                <div class="copy-row">
-                    <button type="button" class="copy-button" id="copy-result">Copy result</button>
-                    <button type="button" class="copy-button" id="copy-expression">Copy input</button>
-                </div>
-            </div>
+          <label for="variables">Substitutions</label>
+          <input
+            id="variables"
+            name="variables"
+            autocomplete="off"
+            placeholder="x=pi/4, y=2"
+          />
+        </div>
+        <div class="result-display" id="result-display">
+          <div class="result-header">Result</div>
+          <pre id="result-text" aria-live="polite" aria-atomic="true">
+Ready.</pre
+          >
+          <div class="approx-line" id="approx-line" hidden>
+            ≈ <span id="approx-value"></span>
+          </div>
+          <div class="copy-row">
+            <button type="button" class="copy-button" id="copy-result">
+              Copy result
+            </button>
+            <button type="button" class="copy-button" id="copy-expression">
+              Copy input
+            </button>
+          </div>
+        </div>
 
-            <section class="touch-panel" aria-label="touch editing layer">
-                <div class="touch-display" aria-live="polite">
-                    <div class="touch-title">Touch Edit</div>
-                    <div id="touch-expression" class="touch-expression" role="button" tabindex="0" aria-label="touch expression editor"></div>
-                </div>
-                <div class="touch-actions" aria-label="touch controls">
-                    <button type="button" class="touch-key" data-touch-action="cursor-left" aria-label="Move cursor left">◀</button>
-                    <button type="button" class="touch-key" data-touch-action="cursor-right" aria-label="Move cursor right">▶</button>
-                    <button type="button" class="touch-key" data-touch-action="cursor-start" aria-label="Move cursor to start">↞</button>
-                    <button type="button" class="touch-key" data-touch-action="cursor-end" aria-label="Move cursor to end">↠</button>
-                    <button type="button" class="touch-key" data-touch-action="backspace" aria-label="Backspace">⌫</button>
-                    <button type="button" class="touch-key" data-touch-action="insert-ans" aria-label="Insert answer">ANS→</button>
-                </div>
-            </section>
-        </main>
-
-        <section class="function-strip" aria-label="primary actions">
-            <button type="button" class="soft-key" data-mode="evaluate">Evaluate</button>
-            <button type="button" class="soft-key" data-mode="simplify">Simplify</button>
-            <button type="button" class="soft-key" data-mode="solve_equation">Solve</button>
-            <button type="button" class="soft-key" data-mode="derivative">Differentiate</button>
-            <button type="button" class="soft-key" data-mode="integral">Integrate</button>
+        <section class="touch-panel" aria-label="touch editing layer">
+          <div class="touch-display" aria-live="polite">
+            <div class="touch-title">Touch Edit</div>
+            <div
+              id="touch-expression"
+              class="touch-expression"
+              role="button"
+              tabindex="0"
+              aria-label="touch expression editor"
+            ></div>
+          </div>
+          <div class="touch-actions" aria-label="touch controls">
+            <button
+              type="button"
+              class="touch-key"
+              data-touch-action="cursor-left"
+              aria-label="Move cursor left"
+            >
+              ◀
+            </button>
+            <button
+              type="button"
+              class="touch-key"
+              data-touch-action="cursor-right"
+              aria-label="Move cursor right"
+            >
+              ▶
+            </button>
+            <button
+              type="button"
+              class="touch-key"
+              data-touch-action="cursor-start"
+              aria-label="Move cursor to start"
+            >
+              ↞
+            </button>
+            <button
+              type="button"
+              class="touch-key"
+              data-touch-action="cursor-end"
+              aria-label="Move cursor to end"
+            >
+              ↠
+            </button>
+            <button
+              type="button"
+              class="touch-key"
+              data-touch-action="backspace"
+              aria-label="Backspace"
+            >
+              ⌫
+            </button>
+            <button
+              type="button"
+              class="touch-key"
+              data-touch-action="insert-ans"
+              aria-label="Insert answer"
+            >
+              ANS→
+            </button>
+          </div>
         </section>
+      </main>
 
-        <section class="mode-strip" aria-label="calculation modes">
-            <button type="button" class="mode-button active" data-mode="evaluate">CAS</button>
-            <button type="button" class="mode-button" data-mode="simplify">Algebra</button>
-            <button type="button" class="mode-button" data-mode="solve_system">Systems</button>
-            <button type="button" class="mode-button" data-mode="limit">Limits</button>
-            <button type="button" class="mode-button" data-mode="taylor_series">Series</button>
-            <button type="button" class="mode-button" data-mode="solve_ode">Differential</button>
-        </section>
+      <section class="function-strip" aria-label="primary actions">
+        <button type="button" class="soft-key" data-mode="evaluate">
+          Evaluate
+        </button>
+        <button type="button" class="soft-key" data-mode="simplify">
+          Simplify
+        </button>
+        <button type="button" class="soft-key" data-mode="solve_equation">
+          Solve
+        </button>
+        <button type="button" class="soft-key" data-mode="derivative">
+          Differentiate
+        </button>
+        <button type="button" class="soft-key" data-mode="integral">
+          Integrate
+        </button>
+      </section>
 
-        <section class="keypad" aria-label="calculator keypad">
-            <div class="nav-row">
-                <button type="button" class="key" data-action="cursor-start">Home</button>
-                <button type="button" class="key" data-action="cursor-left" aria-label="Move cursor left">◀</button>
-                <button type="button" class="key" data-action="cursor-right" aria-label="Move cursor right">▶</button>
-                <button type="button" class="key" data-action="cursor-end">End</button>
-            </div>
-            <div class="key-row">
-                <button type="button" data-token="[" class="key" aria-label="Left bracket">[</button>
-                <button type="button" data-token="]" class="key" aria-label="Right bracket">]</button>
-                <button type="button" data-token=";" class="key" aria-label="Semicolon">;</button>
-                <button type="button" data-token="Matrix(" class="key soft" aria-label="Matrix constructor">Matrix</button>
-                <button type="button" data-token="det(" class="key soft" aria-label="Determinant">det</button>
-                <button type="button" data-token="transpose(" class="key soft" aria-label="Transpose">T</button>
-            </div>
-            <div class="key-row">
-                <button type="button" data-token="dot(" class="key soft" aria-label="Dot product">dot</button>
-                <button type="button" data-token="cross(" class="key soft" aria-label="Cross product">cross</button>
-                <button type="button" data-token="norm(" class="key soft" aria-label="Norm">norm</button>
-                <button type="button" data-token="trace(" class="key soft" aria-label="Trace">tr</button>
-                <button type="button" data-token="rref(" class="key soft" aria-label="Reduced Row Echelon Form">rref</button>
-                <button type="button" data-token="diag(" class="key soft" aria-label="Diagonal matrix">diag</button>
-            </div>
-            <div class="key-row">
-                <button type="button" data-token="matrix_exp(" class="key soft" aria-label="Matrix exponential">expₘ</button>
-                <button type="button" data-token="matrix_log(" class="key soft" aria-label="Matrix logarithm">logₘ</button>
-                <button type="button" data-token="matrix_power(" class="key soft" aria-label="Matrix power">A^n</button>
-                <button type="button" data-token="block_diag(" class="key soft" aria-label="Block diagonal">blkdiag</button>
-                <button type="button" data-token="expm(" class="key soft" aria-label="Matrix exponential">expm</button>
-                <button type="button" data-token="logm(" class="key soft" aria-label="Matrix logarithm">logm</button>
-            </div>
-            <div class="key-row">
-                <button type="button" data-token="eigenvals(" class="key soft" aria-label="Eigenvalues">eig</button>
-                <button type="button" data-token="eigenvects(" class="key soft" aria-label="Eigenvectors">evec</button>
-                <button type="button" data-token="nullspace(" class="key soft" aria-label="Nullspace">null</button>
-                <button type="button" data-token="charpoly(" class="key soft" aria-label="Characteristic polynomial">char</button>
-                <button type="button" data-token="qr(" class="key soft" aria-label="QR decomposition">QR</button>
-                <button type="button" data-token="svd(" class="key soft" aria-label="Singular Value Decomposition">SVD</button>
-            </div>
-            <div class="key-row">
-                <button type="button" data-token="hat(" class="key soft" aria-label="Hat operator">hat</button>
-                <button type="button" data-token="vee(" class="key soft" aria-label="Vee operator">vee</button>
-                <button type="button" data-token="screw_axis(" class="key soft" aria-label="Screw axis">screw</button>
-                <button type="button" data-token="se3_hat(" class="key soft" aria-label="SE3 Hat operator">SE₃^</button>
-                <button type="button" data-token="se3_vee(" class="key soft" aria-label="SE3 Vee operator">SE₃∨</button>
-                <button type="button" data-token="adjoint(" class="key soft" aria-label="Adjoint">Ad</button>
-            </div>
-            <div class="key-row">
-                <button type="button" data-token="twist_exp(" class="key soft" aria-label="Twist exponential">expₛ</button>
-                <button type="button" data-token="skew(" class="key soft" aria-label="Skew symmetric matrix">skew</button>
-                <button type="button" data-token="unskew(" class="key soft" aria-label="Unskew matrix">unskew</button>
-                <button type="button" data-token="block_diag(" class="key soft" aria-label="Stack (block diagonal)">stack</button>
-                <button type="button" data-token="Matrix([[" class="key" aria-label="Double left bracket">[[</button>
-                <button type="button" data-token="]]" class="key" aria-label="Double right bracket">]]</button>
-            </div>
-            <div class="key-row">
-                <button type="button" data-token="sin(" class="key soft" aria-label="Sine">sin</button>
-                <button type="button" data-token="cos(" class="key soft" aria-label="Cosine">cos</button>
-                <button type="button" data-token="tan(" class="key soft" aria-label="Tangent">tan</button>
-                <button type="button" data-token="^" class="key operator" aria-label="Power">^</button>
-                <button type="button" data-token="(" class="key" aria-label="Left parenthesis">(</button>
-                <button type="button" data-token=")" class="key" aria-label="Right parenthesis">)</button>
-            </div>
-            <div class="key-row">
-                <button type="button" data-token="ln(" class="key soft" aria-label="Natural logarithm">ln</button>
-                <button type="button" data-token="log(" class="key soft" aria-label="Logarithm">log</button>
-                <button type="button" data-token="sqrt(" class="key soft" aria-label="Square root">√</button>
-                <button type="button" data-token="exp(" class="key soft" aria-label="Exponential">exp</button>
-                <button type="button" data-token="," class="key" aria-label="Comma">,</button>
-                <button type="button" data-token="=" class="key" aria-label="Equals">=</button>
-            </div>
-            <div class="key-row">
-                <button type="button" data-token="re(" class="key soft" aria-label="Real part">Re</button>
-                <button type="button" data-token="im(" class="key soft" aria-label="Imaginary part">Im</button>
-                <button type="button" data-token="arg(" class="key soft" aria-label="Argument">arg</button>
-                <button type="button" data-token="conj(" class="key soft" aria-label="Conjugate">conj</button>
-                <button type="button" data-token="abs(" class="key soft" aria-label="Absolute value">|z|</button>
-                <button type="button" data-token="i" class="key" aria-label="Imaginary unit">i</button>
-            </div>
-            <div class="key-row">
-                <button type="button" data-token="cis(" class="key soft" aria-label="Cosine plus i Sine">cis</button>
-                <button type="button" data-token="polar(" class="key soft" aria-label="Polar form">polar</button>
-                <button type="button" data-token="rect(" class="key soft" aria-label="Rectangular form">rect</button>
-                <button type="button" data-token="sum(" class="key soft" aria-label="Summation">Σ</button>
-                <button type="button" data-token="product(" class="key soft" aria-label="Product">Π</button>
-                <button type="button" data-token="cbrt(" class="key soft" aria-label="Cube root">∛</button>
-            </div>
-            <div class="key-row">
-                <button type="button" data-token="7" class="key">7</button>
-                <button type="button" data-token="8" class="key">8</button>
-                <button type="button" data-token="9" class="key">9</button>
-                <button type="button" data-token="/" class="key operator" aria-label="Divide">÷</button>
-                <button type="button" data-token="pi" class="key" aria-label="Pi">π</button>
-                <button type="button" data-token="e" class="key" aria-label="Euler's number">e</button>
-            </div>
-            <div class="key-row">
-                <button type="button" data-token="4" class="key">4</button>
-                <button type="button" data-token="5" class="key">5</button>
-                <button type="button" data-token="6" class="key">6</button>
-                <button type="button" data-token="*" class="key operator" aria-label="Multiply">×</button>
-                <button type="button" data-token="-" class="key operator" aria-label="Subtract">−</button>
-                <button type="button" data-token="+" class="key operator" aria-label="Add">+</button>
-            </div>
-            <div class="key-row">
-                <button type="button" data-token="1" class="key">1</button>
-                <button type="button" data-token="2" class="key">2</button>
-                <button type="button" data-token="3" class="key">3</button>
-                <button type="button" data-token="0" class="key wide">0</button>
-                <button type="button" data-token="." class="key" aria-label="Decimal point">.</button>
-                <button type="button" data-token="ans" class="key soft" aria-label="Previous answer">ANS</button>
-            </div>
-            <div class="key-row">
-                <button type="button" data-token="simplify(" class="key soft" aria-label="Simplify">simp</button>
-                <button type="button" data-token="factor(" class="key soft" aria-label="Factorize">factor</button>
-                <button type="button" data-token="factor_terms(" class="key soft" aria-label="Factor terms">terms</button>
-                <button type="button" data-token="solve(" class="key soft" aria-label="Solve equation">solve</button>
-                <button type="button" data-token="linsolve(" class="key soft" aria-label="Linear solve">linsolve</button>
-                <button type="button" data-token="solve_linear(" class="key soft" aria-label="Solve linear system">A⁻¹b</button>
-            </div>
-            <div class="key-row">
-                <button type="button" data-token="E" class="key" aria-label="Scientific notation">EE</button>
-                <button type="button" data-token="x" class="key">x</button>
-                <button type="button" data-token="y" class="key">y</button>
-                <button type="button" data-token="z" class="key">z</button>
-                <button type="button" data-token="!" class="key" aria-label="Factorial">n!</button>
-                <button type="button" id="delete" class="key" aria-label="Delete">DEL</button>
-            </div>
-        </section>
+      <section class="mode-strip" aria-label="calculation modes">
+        <button type="button" class="mode-button active" data-mode="evaluate">
+          CAS
+        </button>
+        <button type="button" class="mode-button" data-mode="simplify">
+          Algebra
+        </button>
+        <button type="button" class="mode-button" data-mode="solve_system">
+          Systems
+        </button>
+        <button type="button" class="mode-button" data-mode="limit">
+          Limits
+        </button>
+        <button type="button" class="mode-button" data-mode="taylor_series">
+          Series
+        </button>
+        <button type="button" class="mode-button" data-mode="solve_ode">
+          Differential
+        </button>
+      </section>
 
-        <section class="action-row">
-            <button type="button" id="clear" class="action secondary">CLEAR</button>
-            <button type="button" id="execute" class="action primary">ENTER</button>
-        </section>
+      <section class="keypad" aria-label="calculator keypad">
+        <div class="nav-row">
+          <button type="button" class="key" data-action="cursor-start">
+            Home
+          </button>
+          <button
+            type="button"
+            class="key"
+            data-action="cursor-left"
+            aria-label="Move cursor left"
+          >
+            ◀
+          </button>
+          <button
+            type="button"
+            class="key"
+            data-action="cursor-right"
+            aria-label="Move cursor right"
+          >
+            ▶
+          </button>
+          <button type="button" class="key" data-action="cursor-end">
+            End
+          </button>
+        </div>
+        <div class="key-row">
+          <button
+            type="button"
+            data-token="["
+            class="key"
+            aria-label="Left bracket"
+          >
+            [
+          </button>
+          <button
+            type="button"
+            data-token="]"
+            class="key"
+            aria-label="Right bracket"
+          >
+            ]
+          </button>
+          <button
+            type="button"
+            data-token=";"
+            class="key"
+            aria-label="Semicolon"
+          >
+            ;
+          </button>
+          <button
+            type="button"
+            data-token="Matrix("
+            class="key soft"
+            aria-label="Matrix constructor"
+          >
+            Matrix
+          </button>
+          <button
+            type="button"
+            data-token="det("
+            class="key soft"
+            aria-label="Determinant"
+          >
+            det
+          </button>
+          <button
+            type="button"
+            data-token="transpose("
+            class="key soft"
+            aria-label="Transpose"
+          >
+            T
+          </button>
+        </div>
+        <div class="key-row">
+          <button
+            type="button"
+            data-token="dot("
+            class="key soft"
+            aria-label="Dot product"
+          >
+            dot
+          </button>
+          <button
+            type="button"
+            data-token="cross("
+            class="key soft"
+            aria-label="Cross product"
+          >
+            cross
+          </button>
+          <button
+            type="button"
+            data-token="norm("
+            class="key soft"
+            aria-label="Norm"
+          >
+            norm
+          </button>
+          <button
+            type="button"
+            data-token="trace("
+            class="key soft"
+            aria-label="Trace"
+          >
+            tr
+          </button>
+          <button
+            type="button"
+            data-token="rref("
+            class="key soft"
+            aria-label="Reduced Row Echelon Form"
+          >
+            rref
+          </button>
+          <button
+            type="button"
+            data-token="diag("
+            class="key soft"
+            aria-label="Diagonal matrix"
+          >
+            diag
+          </button>
+        </div>
+        <div class="key-row">
+          <button
+            type="button"
+            data-token="matrix_exp("
+            class="key soft"
+            aria-label="Matrix exponential"
+          >
+            expₘ
+          </button>
+          <button
+            type="button"
+            data-token="matrix_log("
+            class="key soft"
+            aria-label="Matrix logarithm"
+          >
+            logₘ
+          </button>
+          <button
+            type="button"
+            data-token="matrix_power("
+            class="key soft"
+            aria-label="Matrix power"
+          >
+            A^n
+          </button>
+          <button
+            type="button"
+            data-token="block_diag("
+            class="key soft"
+            aria-label="Block diagonal"
+          >
+            blkdiag
+          </button>
+          <button
+            type="button"
+            data-token="expm("
+            class="key soft"
+            aria-label="Matrix exponential"
+          >
+            expm
+          </button>
+          <button
+            type="button"
+            data-token="logm("
+            class="key soft"
+            aria-label="Matrix logarithm"
+          >
+            logm
+          </button>
+        </div>
+        <div class="key-row">
+          <button
+            type="button"
+            data-token="eigenvals("
+            class="key soft"
+            aria-label="Eigenvalues"
+          >
+            eig
+          </button>
+          <button
+            type="button"
+            data-token="eigenvects("
+            class="key soft"
+            aria-label="Eigenvectors"
+          >
+            evec
+          </button>
+          <button
+            type="button"
+            data-token="nullspace("
+            class="key soft"
+            aria-label="Nullspace"
+          >
+            null
+          </button>
+          <button
+            type="button"
+            data-token="charpoly("
+            class="key soft"
+            aria-label="Characteristic polynomial"
+          >
+            char
+          </button>
+          <button
+            type="button"
+            data-token="qr("
+            class="key soft"
+            aria-label="QR decomposition"
+          >
+            QR
+          </button>
+          <button
+            type="button"
+            data-token="svd("
+            class="key soft"
+            aria-label="Singular Value Decomposition"
+          >
+            SVD
+          </button>
+        </div>
+        <div class="key-row">
+          <button
+            type="button"
+            data-token="hat("
+            class="key soft"
+            aria-label="Hat operator"
+          >
+            hat
+          </button>
+          <button
+            type="button"
+            data-token="vee("
+            class="key soft"
+            aria-label="Vee operator"
+          >
+            vee
+          </button>
+          <button
+            type="button"
+            data-token="screw_axis("
+            class="key soft"
+            aria-label="Screw axis"
+          >
+            screw
+          </button>
+          <button
+            type="button"
+            data-token="se3_hat("
+            class="key soft"
+            aria-label="SE3 Hat operator"
+          >
+            SE₃^
+          </button>
+          <button
+            type="button"
+            data-token="se3_vee("
+            class="key soft"
+            aria-label="SE3 Vee operator"
+          >
+            SE₃∨
+          </button>
+          <button
+            type="button"
+            data-token="adjoint("
+            class="key soft"
+            aria-label="Adjoint"
+          >
+            Ad
+          </button>
+        </div>
+        <div class="key-row">
+          <button
+            type="button"
+            data-token="twist_exp("
+            class="key soft"
+            aria-label="Twist exponential"
+          >
+            expₛ
+          </button>
+          <button
+            type="button"
+            data-token="skew("
+            class="key soft"
+            aria-label="Skew symmetric matrix"
+          >
+            skew
+          </button>
+          <button
+            type="button"
+            data-token="unskew("
+            class="key soft"
+            aria-label="Unskew matrix"
+          >
+            unskew
+          </button>
+          <button
+            type="button"
+            data-token="block_diag("
+            class="key soft"
+            aria-label="Stack (block diagonal)"
+          >
+            stack
+          </button>
+          <button
+            type="button"
+            data-token="Matrix([["
+            class="key"
+            aria-label="Double left bracket"
+          >
+            [[
+          </button>
+          <button
+            type="button"
+            data-token="]]"
+            class="key"
+            aria-label="Double right bracket"
+          >
+            ]]
+          </button>
+        </div>
+        <div class="key-row">
+          <button
+            type="button"
+            data-token="sin("
+            class="key soft"
+            aria-label="Sine"
+          >
+            sin
+          </button>
+          <button
+            type="button"
+            data-token="cos("
+            class="key soft"
+            aria-label="Cosine"
+          >
+            cos
+          </button>
+          <button
+            type="button"
+            data-token="tan("
+            class="key soft"
+            aria-label="Tangent"
+          >
+            tan
+          </button>
+          <button
+            type="button"
+            data-token="^"
+            class="key operator"
+            aria-label="Power"
+          >
+            ^
+          </button>
+          <button
+            type="button"
+            data-token="("
+            class="key"
+            aria-label="Left parenthesis"
+          >
+            (
+          </button>
+          <button
+            type="button"
+            data-token=")"
+            class="key"
+            aria-label="Right parenthesis"
+          >
+            )
+          </button>
+        </div>
+        <div class="key-row">
+          <button
+            type="button"
+            data-token="ln("
+            class="key soft"
+            aria-label="Natural logarithm"
+          >
+            ln
+          </button>
+          <button
+            type="button"
+            data-token="log("
+            class="key soft"
+            aria-label="Logarithm"
+          >
+            log
+          </button>
+          <button
+            type="button"
+            data-token="sqrt("
+            class="key soft"
+            aria-label="Square root"
+          >
+            √
+          </button>
+          <button
+            type="button"
+            data-token="exp("
+            class="key soft"
+            aria-label="Exponential"
+          >
+            exp
+          </button>
+          <button type="button" data-token="," class="key" aria-label="Comma">
+            ,
+          </button>
+          <button type="button" data-token="=" class="key" aria-label="Equals">
+            =
+          </button>
+        </div>
+        <div class="key-row">
+          <button
+            type="button"
+            data-token="re("
+            class="key soft"
+            aria-label="Real part"
+          >
+            Re
+          </button>
+          <button
+            type="button"
+            data-token="im("
+            class="key soft"
+            aria-label="Imaginary part"
+          >
+            Im
+          </button>
+          <button
+            type="button"
+            data-token="arg("
+            class="key soft"
+            aria-label="Argument"
+          >
+            arg
+          </button>
+          <button
+            type="button"
+            data-token="conj("
+            class="key soft"
+            aria-label="Conjugate"
+          >
+            conj
+          </button>
+          <button
+            type="button"
+            data-token="abs("
+            class="key soft"
+            aria-label="Absolute value"
+          >
+            |z|
+          </button>
+          <button
+            type="button"
+            data-token="i"
+            class="key"
+            aria-label="Imaginary unit"
+          >
+            i
+          </button>
+        </div>
+        <div class="key-row">
+          <button
+            type="button"
+            data-token="cis("
+            class="key soft"
+            aria-label="Cosine plus i Sine"
+          >
+            cis
+          </button>
+          <button
+            type="button"
+            data-token="polar("
+            class="key soft"
+            aria-label="Polar form"
+          >
+            polar
+          </button>
+          <button
+            type="button"
+            data-token="rect("
+            class="key soft"
+            aria-label="Rectangular form"
+          >
+            rect
+          </button>
+          <button
+            type="button"
+            data-token="sum("
+            class="key soft"
+            aria-label="Summation"
+          >
+            Σ
+          </button>
+          <button
+            type="button"
+            data-token="product("
+            class="key soft"
+            aria-label="Product"
+          >
+            Π
+          </button>
+          <button
+            type="button"
+            data-token="cbrt("
+            class="key soft"
+            aria-label="Cube root"
+          >
+            ∛
+          </button>
+        </div>
+        <div class="key-row">
+          <button type="button" data-token="7" class="key">7</button>
+          <button type="button" data-token="8" class="key">8</button>
+          <button type="button" data-token="9" class="key">9</button>
+          <button
+            type="button"
+            data-token="/"
+            class="key operator"
+            aria-label="Divide"
+          >
+            ÷
+          </button>
+          <button type="button" data-token="pi" class="key" aria-label="Pi">
+            π
+          </button>
+          <button
+            type="button"
+            data-token="e"
+            class="key"
+            aria-label="Euler's number"
+          >
+            e
+          </button>
+        </div>
+        <div class="key-row">
+          <button type="button" data-token="4" class="key">4</button>
+          <button type="button" data-token="5" class="key">5</button>
+          <button type="button" data-token="6" class="key">6</button>
+          <button
+            type="button"
+            data-token="*"
+            class="key operator"
+            aria-label="Multiply"
+          >
+            ×
+          </button>
+          <button
+            type="button"
+            data-token="-"
+            class="key operator"
+            aria-label="Subtract"
+          >
+            −
+          </button>
+          <button
+            type="button"
+            data-token="+"
+            class="key operator"
+            aria-label="Add"
+          >
+            +
+          </button>
+        </div>
+        <div class="key-row">
+          <button type="button" data-token="1" class="key">1</button>
+          <button type="button" data-token="2" class="key">2</button>
+          <button type="button" data-token="3" class="key">3</button>
+          <button type="button" data-token="0" class="key wide">0</button>
+          <button
+            type="button"
+            data-token="."
+            class="key"
+            aria-label="Decimal point"
+          >
+            .
+          </button>
+          <button
+            type="button"
+            data-token="ans"
+            class="key soft"
+            aria-label="Previous answer"
+          >
+            ANS
+          </button>
+        </div>
+        <div class="key-row">
+          <button
+            type="button"
+            data-token="simplify("
+            class="key soft"
+            aria-label="Simplify"
+          >
+            simp
+          </button>
+          <button
+            type="button"
+            data-token="factor("
+            class="key soft"
+            aria-label="Factorize"
+          >
+            factor
+          </button>
+          <button
+            type="button"
+            data-token="factor_terms("
+            class="key soft"
+            aria-label="Factor terms"
+          >
+            terms
+          </button>
+          <button
+            type="button"
+            data-token="solve("
+            class="key soft"
+            aria-label="Solve equation"
+          >
+            solve
+          </button>
+          <button
+            type="button"
+            data-token="linsolve("
+            class="key soft"
+            aria-label="Linear solve"
+          >
+            linsolve
+          </button>
+          <button
+            type="button"
+            data-token="solve_linear("
+            class="key soft"
+            aria-label="Solve linear system"
+          >
+            A⁻¹b
+          </button>
+        </div>
+        <div class="key-row">
+          <button
+            type="button"
+            data-token="E"
+            class="key"
+            aria-label="Scientific notation"
+          >
+            EE
+          </button>
+          <button type="button" data-token="x" class="key">x</button>
+          <button type="button" data-token="y" class="key">y</button>
+          <button type="button" data-token="z" class="key">z</button>
+          <button
+            type="button"
+            data-token="!"
+            class="key"
+            aria-label="Factorial"
+          >
+            n!
+          </button>
+          <button type="button" id="delete" class="key" aria-label="Delete">
+            DEL
+          </button>
+        </div>
+      </section>
+
+      <section class="action-row">
+        <button type="button" id="clear" class="action secondary">CLEAR</button>
+        <button type="button" id="execute" class="action primary">ENTER</button>
+      </section>
     </div>
     <script src="{{ url_for('static', filename='app.js') }}" defer></script>
-</body>
+  </body>
 </html>

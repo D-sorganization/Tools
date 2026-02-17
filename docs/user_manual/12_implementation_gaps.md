@@ -8,25 +8,25 @@
 
 The following tools have complete calculation engines, GUI interfaces, and test coverage:
 
-| Tool | Engine | PyQt6 GUI | Web GUI | Tests | Notes |
-|------|--------|-----------|---------|-------|-------|
-| Acid Gas Dewpoint Calculator | ✅ | ✅ | ✅ | ✅ | 4 vapor pressure methods |
-| Baghouse Calculator | ✅ | ✅ | ✅ | ✅ | Full solids/thermal analysis |
-| Flare Calculator | ✅ | ✅ | ✅ | ✅ | API 521 compliant |
-| Scrubber Calculator | ✅ | ✅ | ✅ | ✅ | Perry's/Eckert methods |
-| Pressure Drop Calculator | ✅ | ✅ | ✅ | ✅ | Modular sub-package |
-| Flow Rate Converter | ✅ | ✅ | ✅ | ✅ | — |
-| Syngas Water Calculator | ✅ | ✅ | ✅ | ✅ | Multiple VP methods |
-| Syngas Compression Calculator | ✅ | ✅ | — | ✅ | Multistage, 3 compression types |
-| WGS Reactor Calculator | ✅ | ✅ | — | ✅ | Gibbs minimization |
-| Financial Calculator | ✅ | ✅ | — | ✅ | Multi-year projections |
-| PSA Package | ✅ | ✅ | ✅ | ✅ | Full cycle simulation |
-| Optimizer GUI | ✅ | ✅ | — | ✅ | Adam + surface methods |
-| Signal Toolkit | ✅ | ✅ | — | ✅ | v2.1.0, comprehensive |
-| ODE Solver | ✅ | ✅ | — | ✅ | SymPy + SciPy integration |
-| Thermal Profile Predictor | ✅ | ✅ | — | ✅ | ODE + parameter fitting |
-| Calculator Web App | ✅ | — | ✅ | ✅ | Security validated |
-| Quality Utilities | ✅ | — | — | ✅ | CI/CD integrated |
+| Tool                          | Engine | PyQt6 GUI | Web GUI | Tests | Notes                           |
+| ----------------------------- | ------ | --------- | ------- | ----- | ------------------------------- |
+| Acid Gas Dewpoint Calculator  | ✅     | ✅        | ✅      | ✅    | 4 vapor pressure methods        |
+| Baghouse Calculator           | ✅     | ✅        | ✅      | ✅    | Full solids/thermal analysis    |
+| Flare Calculator              | ✅     | ✅        | ✅      | ✅    | API 521 compliant               |
+| Scrubber Calculator           | ✅     | ✅        | ✅      | ✅    | Perry's/Eckert methods          |
+| Pressure Drop Calculator      | ✅     | ✅        | ✅      | ✅    | Modular sub-package             |
+| Flow Rate Converter           | ✅     | ✅        | ✅      | ✅    | —                               |
+| Syngas Water Calculator       | ✅     | ✅        | ✅      | ✅    | Multiple VP methods             |
+| Syngas Compression Calculator | ✅     | ✅        | —       | ✅    | Multistage, 3 compression types |
+| WGS Reactor Calculator        | ✅     | ✅        | —       | ✅    | Gibbs minimization              |
+| Financial Calculator          | ✅     | ✅        | —       | ✅    | Multi-year projections          |
+| PSA Package                   | ✅     | ✅        | ✅      | ✅    | Full cycle simulation           |
+| Optimizer GUI                 | ✅     | ✅        | —       | ✅    | Adam + surface methods          |
+| Signal Toolkit                | ✅     | ✅        | —       | ✅    | v2.1.0, comprehensive           |
+| ODE Solver                    | ✅     | ✅        | —       | ✅    | SymPy + SciPy integration       |
+| Thermal Profile Predictor     | ✅     | ✅        | —       | ✅    | ODE + parameter fitting         |
+| Calculator Web App            | ✅     | —         | ✅      | ✅    | Security validated              |
+| Quality Utilities             | ✅     | —         | —       | ✅    | CI/CD integrated                |
 
 ---
 
@@ -34,19 +34,19 @@ The following tools have complete calculation engines, GUI interfaces, and test 
 
 These tools have core functionality but lack some features or interfaces:
 
-| Tool | Engine | PyQt6 GUI | Web GUI | Tests | Missing Features |
-|------|--------|-----------|---------|-------|-----------------|
-| Steam Engine Calculator | ✅ | ✅ | — | ⚠️ | Web interface, expanded thermodynamic models |
-| TRC Vessel Designer | ✅ | ✅ | — | ⚠️ | Web interface, ASME code calculations |
-| Multi-Parameter Analysis | ✅ | ✅ | — | ⚠️ | Web interface, additional analysis methods |
-| Inertia Calculator | ✅ | ✅ | — | ⚠️ | Complex shape support, composite bodies |
-| Function Generator | ✅ | ✅ | — | ⚠️ | Web interface |
-| C3D Viewer | ✅ | ✅ | — | ⚠️ | Export formats, animation playback controls |
-| Humanoid Builder GUI | ✅ | ✅ | — | ⚠️ | Advanced mesh generation, physics simulation |
-| URDF Builder GUI | ✅ | ✅ | — | ⚠️ | Joint dynamics, simulation integration |
-| Data Processor | ✅ | ✅ | ✅ | ⚠️ | Advanced statistical methods |
-| PDF Renamer | ✅ | — | — | ✅ | GUI interface |
-| Video Processor | ✅ | — | ✅ | ⚠️ | Some E2E tests incomplete |
+| Tool                     | Engine | PyQt6 GUI | Web GUI | Tests | Missing Features                             |
+| ------------------------ | ------ | --------- | ------- | ----- | -------------------------------------------- |
+| Steam Engine Calculator  | ✅     | ✅        | —       | ⚠️    | Web interface, expanded thermodynamic models |
+| TRC Vessel Designer      | ✅     | ✅        | —       | ⚠️    | Web interface, ASME code calculations        |
+| Multi-Parameter Analysis | ✅     | ✅        | —       | ⚠️    | Web interface, additional analysis methods   |
+| Inertia Calculator       | ✅     | ✅        | —       | ⚠️    | Complex shape support, composite bodies      |
+| Function Generator       | ✅     | ✅        | —       | ⚠️    | Web interface                                |
+| C3D Viewer               | ✅     | ✅        | —       | ⚠️    | Export formats, animation playback controls  |
+| Humanoid Builder GUI     | ✅     | ✅        | —       | ⚠️    | Advanced mesh generation, physics simulation |
+| URDF Builder GUI         | ✅     | ✅        | —       | ⚠️    | Joint dynamics, simulation integration       |
+| Data Processor           | ✅     | ✅        | ✅      | ⚠️    | Advanced statistical methods                 |
+| PDF Renamer              | ✅     | —         | —       | ✅    | GUI interface                                |
+| Video Processor          | ✅     | —         | ✅      | ⚠️    | Some E2E tests incomplete                    |
 
 ---
 
@@ -61,14 +61,14 @@ The following components have minimal or placeholder implementations:
 
 **Required Improvements:**
 
-| Feature | Priority | Description |
-|---------|----------|-------------|
-| Material-specific consumption rates | HIGH | Support for graphite, Söderberg, etc. |
-| Temperature-dependent models | HIGH | Consumption varies with arc temperature |
-| Slip rate calculation | MEDIUM | Track electrode slip rate |
-| Wear profile modeling | MEDIUM | Non-uniform wear patterns |
-| Multi-electrode support | LOW | Multiple electrode configurations |
-| Integration with thermal model | LOW | Couple with thermal profile predictor |
+| Feature                             | Priority | Description                             |
+| ----------------------------------- | -------- | --------------------------------------- |
+| Material-specific consumption rates | HIGH     | Support for graphite, Söderberg, etc.   |
+| Temperature-dependent models        | HIGH     | Consumption varies with arc temperature |
+| Slip rate calculation               | MEDIUM   | Track electrode slip rate               |
+| Wear profile modeling               | MEDIUM   | Non-uniform wear patterns               |
+| Multi-electrode support             | LOW      | Multiple electrode configurations       |
+| Integration with thermal model      | LOW      | Couple with thermal profile predictor   |
 
 ### 12.3.2 Unit Converter Web App
 
@@ -77,11 +77,11 @@ The following components have minimal or placeholder implementations:
 
 **Required Improvements:**
 
-| Feature | Priority | Description |
-|---------|----------|-------------|
-| Complete conversion logic | HIGH | All unit categories need implementation |
-| Backend API | MEDIUM | Server-side validation |
-| Custom unit definitions | LOW | User-defined conversion factors |
+| Feature                   | Priority | Description                             |
+| ------------------------- | -------- | --------------------------------------- |
+| Complete conversion logic | HIGH     | All unit categories need implementation |
+| Backend API               | MEDIUM   | Server-side validation                  |
+| Custom unit definitions   | LOW      | User-defined conversion factors         |
 
 ### 12.3.3 URDF Web Viewer
 
@@ -90,11 +90,11 @@ The following components have minimal or placeholder implementations:
 
 **Required Improvements:**
 
-| Feature | Priority | Description |
-|---------|----------|-------------|
-| Joint manipulation UI | HIGH | Interactive joint angle sliders |
-| Multi-robot support | MEDIUM | Load multiple robots |
-| Animation playback | LOW | Joint trajectory playback |
+| Feature               | Priority | Description                     |
+| --------------------- | -------- | ------------------------------- |
+| Joint manipulation UI | HIGH     | Interactive joint angle sliders |
+| Multi-robot support   | MEDIUM   | Load multiple robots            |
+| Animation playback    | LOW      | Joint trajectory playback       |
 
 ---
 
@@ -142,18 +142,18 @@ The codebase contains 85 TODO/FIXME/NotImplementedError markers across 30 files.
 
 **Distribution by Category:**
 
-| Category | Count | Key Files |
-|----------|-------|-----------|
-| Web Application Templates | ~20 | `unit-converter/index.html`, `calculator/templates/` |
-| Media Processing Docs | ~15 | `video_processor/docs/archive/` |
-| Media Processing Code | ~10 | `video_processor/apps/web/lib/` |
-| Quality Utils (Patterns) | 15 | `quality_utils.py` (these are the scan patterns themselves) |
-| Signal Toolkit I/O | 1 | `io.py` - one unsupported format error |
-| Shared Libraries | ~5 | `model_generation/`, `humanoid_character_builder/` |
-| Process Calculators | 2 | `electrode_advancement_calculator.py`, `psa_package/` |
-| MATLAB Code | ~2 | `ShipLibrary.m`, `pendulum_model.m` |
-| Other | ~15 | Documentation files, config files |
+| Category                  | Count | Key Files                                                   |
+| ------------------------- | ----- | ----------------------------------------------------------- |
+| Web Application Templates | ~20   | `unit-converter/index.html`, `calculator/templates/`        |
+| Media Processing Docs     | ~15   | `video_processor/docs/archive/`                             |
+| Media Processing Code     | ~10   | `video_processor/apps/web/lib/`                             |
+| Quality Utils (Patterns)  | 15    | `quality_utils.py` (these are the scan patterns themselves) |
+| Signal Toolkit I/O        | 1     | `io.py` - one unsupported format error                      |
+| Shared Libraries          | ~5    | `model_generation/`, `humanoid_character_builder/`          |
+| Process Calculators       | 2     | `electrode_advancement_calculator.py`, `psa_package/`       |
+| MATLAB Code               | ~2    | `ShipLibrary.m`, `pendulum_model.m`                         |
+| Other                     | ~15   | Documentation files, config files                           |
 
 ---
 
-*[← Constants & Conversions](./11_constants_conversions.md) | [Back to Manual](./TOOLS_USER_MANUAL.md) | [Next: Appendices →](./13_appendices.md)*
+_[← Constants & Conversions](./11_constants_conversions.md) | [Back to Manual](./TOOLS_USER_MANUAL.md) | [Next: Appendices →](./13_appendices.md)_

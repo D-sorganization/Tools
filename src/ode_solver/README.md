@@ -5,6 +5,7 @@ A numerical ordinary differential equation (ODE) solver supporting multiple inte
 ## Purpose
 
 The ODE Solver enables engineers and scientists to:
+
 - Solve first-order ODE systems with symbolic equation input
 - Handle stiff differential equations using implicit methods
 - Visualize solution trajectories over time
@@ -24,27 +25,32 @@ The ODE Solver enables engineers and scientists to:
 ## Installation / Prerequisites
 
 ### Required Dependencies
+
 ```bash
 pip install PyQt6 numpy scipy
 ```
 
 ### Optional Dependencies
+
 ```bash
 # For symbolic parsing (enhanced equation support)
 pip install sympy
 ```
 
 ### Python Version
+
 - Python 3.10 or higher recommended
 
 ## Usage Instructions
 
 ### Launch Desktop Application
+
 ```bash
 python launch_pyqt6.py
 ```
 
 ### Programmatic Usage
+
 ```python
 from upstream_drift_tools.process_calculators.ode_solver import ODESolver
 import numpy as np
@@ -100,21 +106,21 @@ v: 0
 
 ### Time Parameters
 
-| Parameter | Description | Range | Default |
-|-----------|-------------|-------|---------|
-| Start Time | Integration start time | 0 - 10^6 | 0 |
-| End Time | Integration end time | 0.1 - 10^6 | 20 |
-| Output Points | Number of output points | 10 - 10,000 | 100 |
+| Parameter     | Description             | Range       | Default |
+| ------------- | ----------------------- | ----------- | ------- |
+| Start Time    | Integration start time  | 0 - 10^6    | 0       |
+| End Time      | Integration end time    | 0.1 - 10^6  | 20      |
+| Output Points | Number of output points | 10 - 10,000 | 100     |
 
 ### Preset Examples
 
-| Preset | Equations | Description |
-|--------|-----------|-------------|
-| Exponential Decay | dy/dt = -k*y | First-order decay |
-| Heating/Cooling | dT/dt = k*(T_env - T) | Newton's law of cooling |
-| Harmonic Oscillator | dx/dt = v, dv/dt = -omega^2*x | Simple harmonic motion |
-| Damped Oscillator | dx/dt = v, dv/dt = -2*zeta*omega*v - omega^2*x | Damped oscillation |
-| Lotka-Volterra | dx/dt = a*x - b*x*y, dy/dt = -c*y + d*x*y | Predator-prey model |
+| Preset              | Equations                                      | Description             |
+| ------------------- | ---------------------------------------------- | ----------------------- |
+| Exponential Decay   | dy/dt = -k\*y                                  | First-order decay       |
+| Heating/Cooling     | dT/dt = k\*(T_env - T)                         | Newton's law of cooling |
+| Harmonic Oscillator | dx/dt = v, dv/dt = -omega^2\*x                 | Simple harmonic motion  |
+| Damped Oscillator   | dx/dt = v, dv/dt = -2*zeta*omega*v - omega^2*x | Damped oscillation      |
+| Lotka-Volterra      | dx/dt = a*x - b*x*y, dy/dt = -c*y + d*x*y      | Predator-prey model     |
 
 ## Output Format
 
@@ -122,16 +128,17 @@ v: 0
 
 The solver returns a `scipy.integrate.OdeSolution` object with:
 
-| Attribute | Description |
-|-----------|-------------|
-| `t` | Array of time points |
-| `y` | 2D array of solution values (variables x time) |
-| `t_events` | Event times (if events defined) |
-| `y_events` | Solution at event times |
+| Attribute  | Description                                    |
+| ---------- | ---------------------------------------------- |
+| `t`        | Array of time points                           |
+| `y`        | 2D array of solution values (variables x time) |
+| `t_events` | Event times (if events defined)                |
+| `y_events` | Solution at event times                        |
 
 ### Results Display
 
 The GUI displays:
+
 - System definition with equations
 - Parameter values
 - Initial conditions
@@ -171,6 +178,7 @@ error = |y_{n+1} - y*_{n+1}|
 ```
 
 Step size adjustment:
+
 ```
 h_new = h * (tol / error)^(1/5)
 ```
@@ -188,6 +196,7 @@ sum(alpha_k * y_{n-k}) = h * beta * f(t_{n+1}, y_{n+1})
 ```
 
 For BDF-2:
+
 ```
 3*y_{n+1} - 4*y_n + y_{n-1} = 2*h*f(t_{n+1}, y_{n+1})
 ```
@@ -199,11 +208,13 @@ For BDF-2:
 ### Stiffness Detection
 
 A system is stiff when:
+
 ```
 |lambda_max / lambda_min| >> 1
 ```
 
 Where lambda are eigenvalues of the Jacobian. Symptoms include:
+
 - Explicit methods require very small time steps
 - Solution appears stable but computation is slow
 
@@ -283,23 +294,23 @@ solution = solver.solve((0, 10), [0.5, 0])  # 0.5 rad initial angle
 
 ## Troubleshooting
 
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| "No derivatives defined" | Empty derivatives field | Enter at least one derivative equation |
-| "Missing initial condition" | Variable without initial value | Add initial condition for all variables |
-| "Integration step failed" | Stiff system with explicit method | Switch to BDF method |
-| Solution oscillates wildly | Time step too large | Increase output points |
-| Very slow computation | Stiff system detection | Use BDF for chemical kinetics |
-| "Invalid expression" | Syntax error in equation | Check operator syntax (use ** for power) |
+| Issue                       | Cause                             | Solution                                   |
+| --------------------------- | --------------------------------- | ------------------------------------------ |
+| "No derivatives defined"    | Empty derivatives field           | Enter at least one derivative equation     |
+| "Missing initial condition" | Variable without initial value    | Add initial condition for all variables    |
+| "Integration step failed"   | Stiff system with explicit method | Switch to BDF method                       |
+| Solution oscillates wildly  | Time step too large               | Increase output points                     |
+| Very slow computation       | Stiff system detection            | Use BDF for chemical kinetics              |
+| "Invalid expression"        | Syntax error in equation          | Check operator syntax (use \*\* for power) |
 
 ### Common Expression Errors
 
-| Error | Correction |
-|-------|------------|
-| `x^2` | Use `x**2` for exponentiation |
-| `sin x` | Use `sin(x)` with parentheses |
-| `2x` | Use `2*x` with explicit multiplication |
-| `e^x` | Use `exp(x)` for exponential |
+| Error   | Correction                             |
+| ------- | -------------------------------------- |
+| `x^2`   | Use `x**2` for exponentiation          |
+| `sin x` | Use `sin(x)` with parentheses          |
+| `2x`    | Use `2*x` with explicit multiplication |
+| `e^x`   | Use `exp(x)` for exponential           |
 
 ### Stiff System Indicators
 
@@ -319,27 +330,27 @@ solution = solver.solve((0, 10), [0.5, 0])  # 0.5 rad initial angle
 
 ### Numerical Methods
 
-| Method | Reference |
-|--------|-----------|
-| RK4 | Classical 4th-order Runge-Kutta |
-| RK45 | Dormand-Prince 4(5) pair (scipy default) |
-| BDF | Backward Differentiation Formula (LSODA) |
-| Radau | Implicit Runge-Kutta for stiff problems |
+| Method | Reference                                |
+| ------ | ---------------------------------------- |
+| RK4    | Classical 4th-order Runge-Kutta          |
+| RK45   | Dormand-Prince 4(5) pair (scipy default) |
+| BDF    | Backward Differentiation Formula (LSODA) |
+| Radau  | Implicit Runge-Kutta for stiff problems  |
 
 ### Stability Regions
 
-| Method | Stability | Best For |
-|--------|-----------|----------|
-| RK4 | Conditional | Smooth, non-stiff problems |
-| RK45 | Conditional | General purpose |
-| BDF | A-stable | Stiff systems |
-| Radau | L-stable | Very stiff systems |
+| Method | Stability   | Best For                   |
+| ------ | ----------- | -------------------------- |
+| RK4    | Conditional | Smooth, non-stiff problems |
+| RK45   | Conditional | General purpose            |
+| BDF    | A-stable    | Stiff systems              |
+| Radau  | L-stable    | Very stiff systems         |
 
 ### Accuracy Guidelines
 
-| Tolerance | Typical Use |
-|-----------|-------------|
-| 1e-3 | Quick estimates |
-| 1e-6 | Engineering calculations |
-| 1e-9 | Scientific accuracy |
-| 1e-12 | High-precision work |
+| Tolerance | Typical Use              |
+| --------- | ------------------------ |
+| 1e-3      | Quick estimates          |
+| 1e-6      | Engineering calculations |
+| 1e-9      | Scientific accuracy      |
+| 1e-12     | High-precision work      |

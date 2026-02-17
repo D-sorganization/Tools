@@ -21,18 +21,19 @@ Open `tools.json` in the repository root and add an entry under the appropriate 
 
 ```json
 {
-    "My Category": [
-        {
-            "name": "My New Tool",
-            "path": "python/src/my_new_tool/app.py",
-            "type": "python",
-            "desc": "A brief description of what this tool does"
-        }
-    ]
+  "My Category": [
+    {
+      "name": "My New Tool",
+      "path": "python/src/my_new_tool/app.py",
+      "type": "python",
+      "desc": "A brief description of what this tool does"
+    }
+  ]
 }
 ```
 
 ### Supported Types
+
 - `"python"`: Launches a Python script.
 - `"matlab"`: Launches a MATLAB script.
 - `"bat"` / `"sh"`: Launches a shell script.

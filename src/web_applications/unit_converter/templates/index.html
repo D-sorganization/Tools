@@ -18,9 +18,18 @@
           <label for="themeSelect" class="label">Theme</label>
           <select id="themeSelect" class="select">
             {% for theme in themes %}
-            <option value="{{ theme.name }}"
-              {% if theme.name == default_theme %}selected{% endif %}
-            >{{ theme.name }}</option>
+            <option
+              value="{{ theme.name }}"
+              {%
+              if
+              theme.name=""
+              ="default_theme"
+              %}selected{%
+              endif
+              %}
+            >
+              {{ theme.name }}
+            </option>
             {% endfor %}
           </select>
         </div>
@@ -133,9 +142,7 @@
               placeholder="0.717 (methane)"
               step="any"
             />
-            <div class="form-hint">
-              Air: 1.29, Methane: 0.72, H2: 0.09, Syngas: ~0.89
-            </div>
+            <div class="form-hint">Air: 1.29, Methane: 0.72, H2: 0.09, Syngas: ~0.89</div>
           </div>
         </div>
 
@@ -144,9 +151,7 @@
 
         <!-- Swap Button -->
         <div class="swap-row">
-          <button id="swapBtn" class="btn btn-swap" title="Swap units">
-            &#x21C5;
-          </button>
+          <button id="swapBtn" class="btn btn-swap" title="Swap units">&#x21C5;</button>
         </div>
 
         <!-- Result Section -->

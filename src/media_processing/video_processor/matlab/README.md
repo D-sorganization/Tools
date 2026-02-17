@@ -25,6 +25,7 @@ matlab/
 
 1. Open MATLAB and navigate to this directory
 2. Run models locally:
+
    ```matlab
    cd matlab/models
    results = pendulum_model(pose_data);
@@ -38,6 +39,7 @@ matlab/
 ### Integration with Web Platform
 
 The web platform can:
+
 - Import MATLAB results via JSON
 - Call MATLAB API endpoints (if configured)
 - Use MATLAB-computed model parameters
@@ -45,6 +47,7 @@ The web platform can:
 ## MATLAB Runtime (No License Needed)
 
 For production, you can use MATLAB Runtime (free, no license):
+
 - Python bridge calls MATLAB Runtime
 - No MATLAB license needed for deployment
 - Users don't need MATLAB installed

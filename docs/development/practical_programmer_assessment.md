@@ -9,16 +9,16 @@
 
 ## Weighted Scorecard
 
-| # | Principle | Score | Weight | Weighted | Verdict |
-|:-:|:----------|:-----:|:------:|:--------:|:--------|
-| 1 | DRY (Don't Repeat Yourself) | 8 | 20% | 1.60 | Strong post-decoupling; legacy outliers remain |
-| 2 | Orthogonality & Decoupling | 7 | 15% | 1.05 | Bootstrap/gui_registration is clean; god-classes break it |
-| 3 | Reversibility & Flexibility | 7 | 10% | 0.70 | Dual PyQt6/React; optional deps; but no feature flags |
-| 4 | Automation & Tooling | 8 | 15% | 1.20 | Pre-commit, CI, 48 workflows -- bordering over-automation |
-| 5 | Testing & Validation | 5 | 15% | 0.75 | 796 pass but 9% coverage; no frontend tests |
-| 6 | Documentation & Communication | 7 | 10% | 0.70 | Thorough AGENTS.md; thin tutorials |
-| 7 | Robustness & Error Handling | 5 | 10% | 0.50 | Custom exceptions exist; 155 broad-catch files undermine them |
-| 8 | Craftsmanship & Code Hygiene | 7 | 5% | 0.35 | 96.9% type hints; ruff clean; print() violations remain |
+|  #  | Principle                     | Score | Weight | Weighted | Verdict                                                       |
+| :-: | :---------------------------- | :---: | :----: | :------: | :------------------------------------------------------------ |
+|  1  | DRY (Don't Repeat Yourself)   |   8   |  20%   |   1.60   | Strong post-decoupling; legacy outliers remain                |
+|  2  | Orthogonality & Decoupling    |   7   |  15%   |   1.05   | Bootstrap/gui_registration is clean; god-classes break it     |
+|  3  | Reversibility & Flexibility   |   7   |  10%   |   0.70   | Dual PyQt6/React; optional deps; but no feature flags         |
+|  4  | Automation & Tooling          |   8   |  15%   |   1.20   | Pre-commit, CI, 48 workflows -- bordering over-automation     |
+|  5  | Testing & Validation          |   5   |  15%   |   0.75   | 796 pass but 9% coverage; no frontend tests                   |
+|  6  | Documentation & Communication |   7   |  10%   |   0.70   | Thorough AGENTS.md; thin tutorials                            |
+|  7  | Robustness & Error Handling   |   5   |  10%   |   0.50   | Custom exceptions exist; 155 broad-catch files undermine them |
+|  8  | Craftsmanship & Code Hygiene  |   7   |   5%   |   0.35   | 96.9% type hints; ruff clean; print() violations remain       |
 
 **Weighted Total: 6.85/10 = 68.5/100**
 
@@ -196,13 +196,13 @@
 
 ## Top 5 Risks (Pragmatic Programmer Perspective)
 
-| Rank | Risk | Principle | Severity | Evidence |
-|:----:|:-----|:----------|:---------|:---------|
-| 1 | Low test coverage (9%) means "green tests" provide false confidence | Testing & Validation | CRITICAL | `pytest --cov` reports 9% on shared modules |
-| 2 | `eval()` in production code violates "don't trust your users" | Robustness | CRITICAL | `signal_processing.py:401`, `Data_Processor_r0.py:2752` |
-| 3 | Broad exception handling masks real bugs | Robustness | MAJOR | 155 files with `except Exception` |
-| 4 | Over-automation creates maintenance liability | Automation | MAJOR | 48 workflow files, 33 Jules-agent workflows |
-| 5 | Legacy monoliths resist change | DRY/Orthogonality | MAJOR | `Data_Processor_r0.py` (9K lines), `electrode_advisor/main_window.py` (4.4K lines) |
+| Rank | Risk                                                                | Principle            | Severity | Evidence                                                                           |
+| :--: | :------------------------------------------------------------------ | :------------------- | :------- | :--------------------------------------------------------------------------------- |
+|  1   | Low test coverage (9%) means "green tests" provide false confidence | Testing & Validation | CRITICAL | `pytest --cov` reports 9% on shared modules                                        |
+|  2   | `eval()` in production code violates "don't trust your users"       | Robustness           | CRITICAL | `signal_processing.py:401`, `Data_Processor_r0.py:2752`                            |
+|  3   | Broad exception handling masks real bugs                            | Robustness           | MAJOR    | 155 files with `except Exception`                                                  |
+|  4   | Over-automation creates maintenance liability                       | Automation           | MAJOR    | 48 workflow files, 33 Jules-agent workflows                                        |
+|  5   | Legacy monoliths resist change                                      | DRY/Orthogonality    | MAJOR    | `Data_Processor_r0.py` (9K lines), `electrode_advisor/main_window.py` (4.4K lines) |
 
 ---
 
@@ -211,12 +211,14 @@
 ### Immediate (This Week)
 
 1. **Increase calculator test coverage to 50%+**
+
    - Write parametric tests for each of the 15 process calculators
    - Use `pytest.mark.parametrize` with physical test cases (known good inputs/outputs)
    - Estimated effort: 3 days
    - Files: Add `tests/calculators/test_flare.py`, `test_baghouse.py`, etc.
 
 2. **Replace `eval()` with safe alternatives**
+
    - Install `simpleeval` (or use `numexpr`)
    - Replace `eval(parsed_formula, {"__builtins__": {}}, eval_context)` with safe evaluation
    - Estimated effort: 2 hours
@@ -231,11 +233,13 @@
 ### Short-Term (2 Weeks)
 
 4. **Narrow exception handling in routers**
+
    - Differentiate `ValueError`/`TypeError` (422) from `KeyError`/`AttributeError` (500)
    - Add structured error response model
    - Files: All 11 router files in `src/shared/python/calc_backend/routers/`
 
 5. **Add React test infrastructure**
+
    - Add Vitest + React Testing Library to 3 highest-priority web apps
    - Add `npm test` step to CI
    - Files: `src/flare_calculator/web/`, `src/electrode_advisor/web/`, `src/data_processing/data_processor/web/`
@@ -248,11 +252,13 @@
 ### Medium-Term (6 Weeks)
 
 7. **Decompose legacy monoliths**
+
    - `Data_Processor_r0.py`: Extract into `parsing.py`, `filtering.py`, `plotting.py`, `export.py`
    - `electrode_advisor/main_window.py`: Extract each tab into a separate widget class
    - `Folders_Tool_r0.py`: Refactor into modules
 
 8. **Properly pin dependencies**
+
    - Use `pip-tools` to generate `requirements-lock.txt` from `requirements.txt`
    - Add Dependabot or Renovate for automated updates
 
@@ -272,7 +278,7 @@ However, the Pragmatic Programmer would flag three critical gaps:
 
 1. **The testing pyramid is inverted.** There are structural/meta-tests and a few integration tests, but almost no unit tests for the core calculation engines that represent the repository's primary value. A 9% coverage rate on the shared module means the test suite catches launch-path issues but not physics bugs.
 
-2. **The automation is unbalanced.** 48 GitHub Actions workflows including 33 nightly agent bots represent extraordinary investment in CI automation, yet there are zero frontend tests and no automated security scanning catches the `eval()` calls. The automation optimizes for *formatting* (which matters least) while leaving *correctness* and *security* (which matter most) to manual review.
+2. **The automation is unbalanced.** 48 GitHub Actions workflows including 33 nightly agent bots represent extraordinary investment in CI automation, yet there are zero frontend tests and no automated security scanning catches the `eval()` calls. The automation optimizes for _formatting_ (which matters least) while leaving _correctness_ and _security_ (which matter most) to manual review.
 
 3. **Legacy code is the elephant in the room.** The decoupling wave cleaned up the launch infrastructure but did not touch the actual large files. `Data_Processor_r0.py` at 9,000 lines, `electrode_advisor/main_window.py` at 4,400 lines, and `Folders_Tool_r0.py` at 3,300 lines collectively represent 17,000+ lines of unreformed code that will resist every future improvement.
 

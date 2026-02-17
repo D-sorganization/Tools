@@ -16,6 +16,7 @@ A web-based viewer for URDF (Unified Robot Description Format) models, built wit
 ## Installation
 
 1. Navigate to the tool directory:
+
    ```bash
    cd src/web_applications/urdf_viewer
    ```
@@ -28,10 +29,13 @@ A web-based viewer for URDF (Unified Robot Description Format) models, built wit
 ## Usage
 
 1. Start the server:
+
    ```bash
    python app.py
    ```
+
    Or using uvicorn directly:
+
    ```bash
    uvicorn app:app --reload
    ```

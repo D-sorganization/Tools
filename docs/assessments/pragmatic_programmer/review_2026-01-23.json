@@ -195,9 +195,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 3 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\convert_tools_icon.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\convert_tools_icon.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -205,9 +203,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\convert_tools_icon.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\convert_tools_icon.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -215,9 +211,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\convert_tools_icon.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\convert_tools_icon.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -225,9 +219,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\convert_tools_icon.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\convert_tools_icon.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -235,9 +227,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\convert_tools_icon.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\convert_tools_icon.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -245,9 +235,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\convert_tools_icon.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\convert_tools_icon.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -255,9 +243,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\convert_tools_icon.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\convert_tools_icon.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -265,9 +251,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\convert_tools_icon.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\convert_tools_icon.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -275,9 +259,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 3 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -297,9 +279,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -307,9 +287,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -317,9 +295,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -327,9 +303,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -337,9 +311,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -347,9 +319,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -357,9 +327,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -367,9 +335,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 3 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -377,9 +343,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -387,9 +351,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -397,9 +359,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -418,9 +378,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -440,9 +398,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 3 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -450,9 +406,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -460,9 +414,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -470,9 +422,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -480,9 +430,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -490,9 +438,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -500,9 +446,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -510,9 +454,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -531,9 +473,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 3 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -541,9 +481,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 3 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -562,9 +500,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -572,9 +508,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -582,9 +516,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -592,9 +524,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -602,9 +532,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -612,9 +540,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -622,9 +548,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -632,9 +556,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -642,9 +564,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -652,9 +572,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -662,9 +580,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -672,9 +588,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -682,9 +596,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -692,9 +604,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 3 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -702,9 +612,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -712,9 +620,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -4045,9 +3951,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\setup_dev.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\setup_dev.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -4055,9 +3959,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 3 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\setup_dev.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\setup_dev.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -4065,9 +3967,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\setup_dev.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\setup_dev.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -4544,9 +4444,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\verify_launcher.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\verify_launcher.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -4566,9 +4464,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\verify_launcher.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\verify_launcher.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -4576,9 +4472,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\verify_launcher.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\verify_launcher.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -4586,9 +4480,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\verify_launcher.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\verify_launcher.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -4596,9 +4488,7 @@
       "severity": "MAJOR",
       "title": "Duplicate code block detected",
       "description": "Similar code found in 2 locations",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\verify_launcher.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\verify_launcher.py"],
       "recommendation": "Extract common code into a shared function"
     },
     {
@@ -44759,9 +44649,7 @@
       "severity": "MINOR",
       "title": "Magic number '20' repeated 90 times",
       "description": "Repeated numeric literals should be constants",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"],
       "recommendation": "Define as named constant"
     },
     {
@@ -44896,9 +44784,7 @@
       "severity": "MINOR",
       "title": "Magic number '033' repeated 42 times",
       "description": "Repeated numeric literals should be constants",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\setup_dev.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\setup_dev.py"],
       "recommendation": "Define as named constant"
     },
     {
@@ -46088,9 +45974,7 @@
       "severity": "MAJOR",
       "title": "God function: convert_png_to_ico (59 lines)",
       "description": "Functions over 50 lines violate single responsibility",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\convert_tools_icon.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\convert_tools_icon.py"],
       "recommendation": "Break into smaller, focused functions"
     },
     {
@@ -46098,9 +45982,7 @@
       "severity": "MAJOR",
       "title": "God function: create_tabs (92 lines)",
       "description": "Functions over 50 lines violate single responsibility",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\Launcher.py"],
       "recommendation": "Break into smaller, focused functions"
     },
     {
@@ -46108,9 +45990,7 @@
       "severity": "MAJOR",
       "title": "God function: launch_integrated_app (51 lines)",
       "description": "Functions over 50 lines violate single responsibility",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Break into smaller, focused functions"
     },
     {
@@ -46118,9 +45998,7 @@
       "severity": "MAJOR",
       "title": "God function: main (75 lines)",
       "description": "Functions over 50 lines violate single responsibility",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\launch_tools_main.py"],
       "recommendation": "Break into smaller, focused functions"
     },
     {
@@ -46178,9 +46056,7 @@
       "severity": "MAJOR",
       "title": "God function: main (83 lines)",
       "description": "Functions over 50 lines violate single responsibility",
-      "files": [
-        "C:\\Users\\diete\\Repositories\\Tools\\verify_launcher.py"
-      ],
+      "files": ["C:\\Users\\diete\\Repositories\\Tools\\verify_launcher.py"],
       "recommendation": "Break into smaller, focused functions"
     },
     {

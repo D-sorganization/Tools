@@ -23,15 +23,15 @@
 
 ## Scorecard
 
-| Category              | Score | Evidence & Remediation                                              |
-| --------------------- | ----- | ------------------------------------------------------------------- |
-| README Quality        | 9/10  | Root README is professional and complete.                           |
-| Docstring Coverage    | 6/10  | Not enforced by linter. **Fix**: Enable `D` rule in Ruff.           |
-| Example Completeness  | 7/10  | Some tools have examples, others don't.                             |
-| Tool READMEs          | 7/10  | Mixed quality.                                                      |
-| Integration Docs      | 8/10  | Launcher is well documented.                                        |
-| API Documentation     | 3/10  | Non-existent. **Fix**: Setup MkDocs.                                |
-| Onboarding Experience | 8/10  | "Run launcher" is a simple entry point.                             |
+| Category              | Score | Evidence & Remediation                                    |
+| --------------------- | ----- | --------------------------------------------------------- |
+| README Quality        | 9/10  | Root README is professional and complete.                 |
+| Docstring Coverage    | 6/10  | Not enforced by linter. **Fix**: Enable `D` rule in Ruff. |
+| Example Completeness  | 7/10  | Some tools have examples, others don't.                   |
+| Tool READMEs          | 7/10  | Mixed quality.                                            |
+| Integration Docs      | 8/10  | Launcher is well documented.                              |
+| API Documentation     | 3/10  | Non-existent. **Fix**: Setup MkDocs.                      |
+| Onboarding Experience | 8/10  | "Run launcher" is a simple entry point.                   |
 
 ## Documentation Inventory
 
@@ -51,11 +51,14 @@
 ## Refactoring Plan
 
 **48 Hours**
+
 - Add specific "How to add a tool" section to `README.md`.
 
 **2 Weeks**
+
 - Enable `pydocstyle` (Ruff `D`) for core modules.
 - Create standard `README.md` template for all sub-tools.
 
 **6 Weeks**
+
 - Deploy MkDocs site to GitHub Pages.

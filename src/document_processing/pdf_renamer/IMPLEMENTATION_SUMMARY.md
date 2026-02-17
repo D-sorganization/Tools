@@ -9,6 +9,7 @@ Successfully created a hybrid PDF renamer that combines the best features from b
 ### New/Enhanced Components
 
 #### 1. Enhanced Duplicate Detection ([deduper.py](src/pdf_renamer/deduper.py))
+
 - **Upgraded from MD5 to SHA256** - Cryptographically secure hashing
 - Added recursive subfolder support
 - Symlink protection
@@ -16,6 +17,7 @@ Successfully created a hybrid PDF renamer that combines the best features from b
 - Performance optimized with size-based pre-filtering
 
 #### 2. Transaction Logging System ([transaction_log.py](src/pdf_renamer/transaction_log.py))
+
 - Complete audit trail of all file operations
 - JSON Lines format for easy parsing
 - Session-based grouping
@@ -23,6 +25,7 @@ Successfully created a hybrid PDF renamer that combines the best features from b
 - Dry-run simulation support
 
 #### 3. Enhanced Utilities ([utils.py](src/pdf_renamer/utils.py))
+
 - **Windows reserved filename protection** (CON, PRN, AUX, etc.)
 - Unicode normalization (NFC)
 - Path length validation (200 chars max)
@@ -31,6 +34,7 @@ Successfully created a hybrid PDF renamer that combines the best features from b
 - Better snake_case and kebab-case conversion
 
 #### 4. Thread-Safe Worker Module ([worker.py](src/pdf_renamer/worker.py))
+
 - Global file operation lock (prevents TOCTOU race conditions)
 - Structured ProcessingResult class
 - Collision handling with hash suffixes
@@ -38,6 +42,7 @@ Successfully created a hybrid PDF renamer that combines the best features from b
 - Optional author inclusion in filenames
 
 #### 5. Modern PyQt6 GUI ([gui.py](src/pdf_renamer/gui.py))
+
 - Real-time progress tracking
 - Color-coded log output (INFO, SUCCESS, WARNING, ERROR)
 - Cancellable operations
@@ -53,6 +58,7 @@ Successfully created a hybrid PDF renamer that combines the best features from b
 ### Retained Features
 
 #### From Playground Version
+
 - 3-layer extraction architecture (metadata → heuristic → LLM)
 - Confidence scoring for extracted titles
 - SQLite result caching by SHA256
@@ -61,6 +67,7 @@ Successfully created a hybrid PDF renamer that combines the best features from b
 - Comprehensive logging
 
 #### From Tools Version
+
 - Duplicate detection concept
 - GUI concept (reimplemented with PyQt6)
 - Parallel processing concept (reimplemented thread-safe)
@@ -69,6 +76,7 @@ Successfully created a hybrid PDF renamer that combines the best features from b
 ## Key Improvements Over Both Versions
 
 ### Security & Reliability
+
 1. **SHA256 vs MD5** - Prevents hash collision attacks
 2. **Thread-safe file operations** - Eliminates race conditions
 3. **Transaction logging** - Audit trail and rollback capability
@@ -76,12 +84,14 @@ Successfully created a hybrid PDF renamer that combines the best features from b
 5. **Symlink protection** - Prevents infinite loops
 
 ### User Experience
+
 1. **Modern PyQt6 GUI** - Better than original Tkinter version
 2. **Real-time feedback** - Color-coded logs, progress tracking
 3. **Cancellable operations** - Can stop mid-processing
 4. **Comprehensive documentation** - Installation, usage, troubleshooting
 
 ### Code Quality
+
 1. **Comprehensive docstrings** - All functions documented
 2. **Type hints** - Better IDE support and error prevention
 3. **Modular architecture** - Clear separation of concerns
@@ -90,6 +100,7 @@ Successfully created a hybrid PDF renamer that combines the best features from b
 ## Architecture Comparison
 
 ### Tools Version (Original)
+
 ```
 main.py → extractor.py → renamer.py
                 ↓
@@ -97,6 +108,7 @@ main.py → extractor.py → renamer.py
 ```
 
 ### Playground Version (Original)
+
 ```
 cli.py → core.py → extractors.py → llm_layer.py
                          ↓
@@ -104,6 +116,7 @@ cli.py → core.py → extractors.py → llm_layer.py
 ```
 
 ### Hybrid Version v2.0 (New)
+
 ```
 gui.py / cli.py
       ↓
@@ -121,6 +134,7 @@ utils.py (enhanced)
 ## Files Modified/Created
 
 ### Created (New)
+
 - `src/pdf_renamer/transaction_log.py` - Transaction logging system
 - `src/pdf_renamer/worker.py` - Thread-safe processing
 - `src/pdf_renamer/gui.py` - PyQt6 GUI
@@ -128,12 +142,14 @@ utils.py (enhanced)
 - `IMPLEMENTATION_SUMMARY.md` - This file
 
 ### Enhanced (Significantly Modified)
+
 - `src/pdf_renamer/deduper.py` - MD5→SHA256, recursive, symlink protection
 - `src/pdf_renamer/utils.py` - Enhanced sanitization, reserved names
 - `requirements.txt` - Added PyQt6, pytest-qt, version pinning
 - `README.md` - Comprehensive documentation
 
 ### Retained (Minor/No Changes)
+
 - `src/pdf_renamer/core.py` - Layered extraction logic
 - `src/pdf_renamer/extractors.py` - Metadata and heuristic extraction
 - `src/pdf_renamer/llm_layer.py` - Gemini integration
@@ -155,6 +171,7 @@ utils.py (enhanced)
 8. ✅ **Symlink vulnerability** - Added is_symlink() checks
 
 ### Not Yet Addressed (Low Priority)
+
 - Integration tests (need test PDFs)
 - GUI unit tests (need pytest-qt setup)
 - Author extraction improvements (complex, low impact)
@@ -162,6 +179,7 @@ utils.py (enhanced)
 ## Installation & Usage
 
 ### Quick Start
+
 ```bash
 # Install dependencies
 pip install -r requirements.txt
@@ -174,6 +192,7 @@ python -m src.pdf_renamer.cli /path/to/pdfs --dry-run
 ```
 
 ### Key Features Available
+
 - ✅ Recursive subfolder processing
 - ✅ Duplicate detection and deletion
 - ✅ AI-powered title extraction (with Gemini API key)
@@ -186,6 +205,7 @@ python -m src.pdf_renamer.cli /path/to/pdfs --dry-run
 ## Testing Status
 
 ### Verified
+
 ✅ Module imports work
 ✅ Utility functions (sanitization, case conversion)
 ✅ Transaction log initialization
@@ -193,6 +213,7 @@ python -m src.pdf_renamer.cli /path/to/pdfs --dry-run
 ✅ Windows reserved name protection
 
 ### Requires Testing
+
 ⚠️ Full GUI workflow (needs PyQt6 installation)
 ⚠️ Actual PDF processing (needs test PDFs)
 ⚠️ Parallel processing under load
@@ -202,16 +223,19 @@ python -m src.pdf_renamer.cli /path/to/pdfs --dry-run
 ## Performance Characteristics
 
 ### Expected Performance
+
 - **Small batches (<100 PDFs)**: 2-5 seconds
 - **Medium batches (100-1000 PDFs)**: 30-120 seconds
 - **Large batches (1000+ PDFs)**: Minutes to hours (depends on LLM usage)
 
 ### Bottlenecks
+
 1. LLM API calls (if enabled) - 1-3 seconds per PDF
 2. PDF parsing for heuristics - 0.1-0.5 seconds per PDF
 3. SHA256 hashing - 0.01-0.1 seconds per PDF (depends on size)
 
 ### Optimization Tips
+
 - Use local-only mode (no LLM) for speed
 - Increase workers for I/O-bound tasks
 - Use SSD for cache database
@@ -228,18 +252,21 @@ python -m src.pdf_renamer.cli /path/to/pdfs --dry-run
 ## Future Enhancements (Ideas)
 
 ### High Priority
+
 - [ ] Add comprehensive integration tests
 - [ ] GUI automated tests with pytest-qt
 - [ ] Progress persistence (resume after crash)
 - [ ] Better author extraction heuristics
 
 ### Medium Priority
+
 - [ ] Export duplicate report to CSV
 - [ ] Batch size limits (prevent memory issues)
 - [ ] Configuration file support (.toml)
 - [ ] Multiple LLM provider support (Claude, GPT-4)
 
 ### Low Priority
+
 - [ ] OCR support for scanned PDFs
 - [ ] Custom extraction rules (regex patterns)
 - [ ] Internationalization (i18n)
@@ -248,6 +275,7 @@ python -m src.pdf_renamer.cli /path/to/pdfs --dry-run
 ## Conclusion
 
 The hybrid PDF Renamer v2.0 successfully combines:
+
 - **Playground's** superior extraction architecture
 - **Tools'** GUI and duplicate detection concepts
 - **New** security, reliability, and production-readiness features

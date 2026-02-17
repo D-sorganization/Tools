@@ -80,17 +80,20 @@ Star_Wars_RRT_Planner/
 ## 🎯 Organization Principles
 
 ### **1. Parallel Implementations**
+
 - **MATLAB Version**: Research-focused with comprehensive GUI
 - **Python Version**: Performance-optimized with real-time rendering
 - **Shared Assets**: Common models, data, and documentation
 
 ### **2. Clear Separation of Concerns**
+
 - **Core Algorithms**: RRT, collision detection, path planning
 - **Visualization**: Plotting, animation, rendering
 - **AI System**: Pursuit behavior, evasion strategies
 - **User Interface**: GUIs and control systems
 
 ### **3. Professional Structure**
+
 - **Documentation**: Comprehensive guides for each version
 - **Testing**: Unit tests and integration tests
 - **Examples**: Ready-to-run demonstration scripts
@@ -99,18 +102,21 @@ Star_Wars_RRT_Planner/
 ## 🚀 Key Benefits of This Structure
 
 ### **For Developers**
+
 - **Easy Navigation**: Clear folder structure
 - **Modular Design**: Independent components
 - **Version Control**: Separate tracking of MATLAB and Python
 - **Testing**: Dedicated test directories
 
 ### **For Users**
+
 - **Quick Start**: Clear entry points for each version
 - **Documentation**: Comprehensive guides
 - **Examples**: Ready-to-run demonstrations
 - **Flexibility**: Choose MATLAB or Python based on needs
 
 ### **For Contributors**
+
 - **Clear Guidelines**: Contributing documentation
 - **Code Standards**: Style guides for both languages
 - **Testing Framework**: Proper test organization
@@ -119,6 +125,7 @@ Star_Wars_RRT_Planner/
 ## 📊 File Organization Details
 
 ### **MATLAB Structure**
+
 ```
 matlab/src/
 ├── core/           # Core algorithms (RRT, collision detection)
@@ -129,6 +136,7 @@ matlab/src/
 ```
 
 ### **Python Structure**
+
 ```
 python/src/
 ├── core/          # Core algorithms (RRT, collision detection)
@@ -139,6 +147,7 @@ python/src/
 ```
 
 ### **Shared Resources**
+
 ```
 assets/
 ├── images/        # Screenshots, diagrams, examples
@@ -155,18 +164,21 @@ docs/
 ## 🎮 Usage Patterns
 
 ### **MATLAB Users**
+
 1. Navigate to `matlab/src/`
 2. Run `starWarsPathPlannerGUI` for GUI mode
 3. Run `main_improved` for command-line mode
 4. Check `matlab/README.md` for detailed instructions
 
 ### **Python Users**
+
 1. Navigate to `python/`
 2. Install dependencies: `pip install -r requirements.txt`
 3. Run: `python src/star_wars_rrt.py`
 4. Check `docs/python/README.md` for detailed instructions
 
 ### **Researchers**
+
 1. Use MATLAB version for prototyping and analysis
 2. Use Python version for performance-critical applications
 3. Compare results using `docs/comparison/` benchmarks
@@ -175,16 +187,19 @@ docs/
 ## 🔧 Maintenance Benefits
 
 ### **Version Control**
+
 - **Separate Tracking**: MATLAB and Python changes tracked independently
 - **Clear History**: Easy to see which version introduced features
 - **Branch Strategy**: Can develop features in parallel
 
 ### **Testing**
+
 - **Unit Tests**: Each component has dedicated tests
 - **Integration Tests**: Cross-platform functionality testing
 - **Performance Tests**: Benchmarking between versions
 
 ### **Documentation**
+
 - **Version-Specific**: Each implementation has its own docs
 - **Cross-Reference**: Easy to compare features between versions
 - **API Reference**: Complete function documentation
@@ -192,20 +207,23 @@ docs/
 ## 🌟 Future Extensibility
 
 ### **New Features**
+
 - **MATLAB**: Add to appropriate subdirectory in `matlab/src/`
 - **Python**: Add to appropriate subdirectory in `python/src/`
 - **Shared**: Add to `assets/` or `docs/` as appropriate
 
 ### **New Ship Models**
+
 - **3D Models**: Add to respective `models/` directories
 - **Behaviors**: Add to respective `ai/` directories
 - **Visualization**: Add to respective `visualization/` or `rendering/` directories
 
 ### **New Environments**
+
 - **Obstacle Data**: Add to respective `data/` directories
 - **Visual Effects**: Add to respective visualization systems
 - **AI Behaviors**: Add to respective AI systems
 
 ---
 
-**This structure provides a professional, maintainable, and extensible foundation for the Star Wars RRT Path Planner project!** 🌟 
+**This structure provides a professional, maintainable, and extensible foundation for the Star Wars RRT Path Planner project!** 🌟

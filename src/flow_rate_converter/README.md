@@ -5,6 +5,7 @@ A comprehensive flow rate unit conversion tool for process engineering applicati
 ## Purpose
 
 The Flow Rate Converter enables process engineers to:
+
 - Convert between mass flow rate units (kg/s, lb/h, etc.)
 - Convert between molar flow rate units (mol/s, kmol/h, lbmol/h, etc.)
 - Convert between volumetric flow rate units (m3/h, CFM, GPM, etc.)
@@ -23,27 +24,32 @@ The Flow Rate Converter enables process engineers to:
 ## Installation / Prerequisites
 
 ### Required Dependencies
+
 ```bash
 pip install PyQt6
 ```
 
 ### Optional Dependencies
+
 ```bash
 # For backend calculation library
 pip install upstream_drift_tools
 ```
 
 ### Python Version
+
 - Python 3.10 or higher recommended
 
 ## Usage Instructions
 
 ### Launch Desktop Application
+
 ```bash
 python launch_pyqt6.py
 ```
 
 ### Programmatic Usage
+
 ```python
 from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
     mass_to_mass,
@@ -69,56 +75,58 @@ print(f"1000 m3/h = {result_cfm:.2f} CFM")
 
 ### Mass Flow Rate Units
 
-| Unit | Description | Conversion to kg/s |
-|------|-------------|-------------------|
-| `kg/s` | Kilograms per second | 1.0 |
-| `kg/h` | Kilograms per hour | 1/3600 |
-| `kg/min` | Kilograms per minute | 1/60 |
-| `g/s` | Grams per second | 0.001 |
-| `g/h` | Grams per hour | 0.001/3600 |
-| `lb/s` | Pounds per second | 0.453592 |
-| `lb/h` | Pounds per hour | 0.453592/3600 |
-| `lb/min` | Pounds per minute | 0.453592/60 |
-| `ton/h` | Metric tons per hour | 1000/3600 |
+| Unit     | Description          | Conversion to kg/s |
+| -------- | -------------------- | ------------------ |
+| `kg/s`   | Kilograms per second | 1.0                |
+| `kg/h`   | Kilograms per hour   | 1/3600             |
+| `kg/min` | Kilograms per minute | 1/60               |
+| `g/s`    | Grams per second     | 0.001              |
+| `g/h`    | Grams per hour       | 0.001/3600         |
+| `lb/s`   | Pounds per second    | 0.453592           |
+| `lb/h`   | Pounds per hour      | 0.453592/3600      |
+| `lb/min` | Pounds per minute    | 0.453592/60        |
+| `ton/h`  | Metric tons per hour | 1000/3600          |
 
 ### Molar Flow Rate Units
 
-| Unit | Description | Conversion to mol/s |
-|------|-------------|-------------------|
-| `mol/s` | Moles per second | 1.0 |
-| `mol/h` | Moles per hour | 1/3600 |
-| `mol/min` | Moles per minute | 1/60 |
-| `kmol/s` | Kilomoles per second | 1000 |
-| `kmol/h` | Kilomoles per hour | 1000/3600 |
-| `kmol/min` | Kilomoles per minute | 1000/60 |
-| `lbmol/s` | Pound-moles per second | 453.592 |
-| `lbmol/h` | Pound-moles per hour | 453.592/3600 |
-| `lbmol/min` | Pound-moles per minute | 453.592/60 |
+| Unit        | Description            | Conversion to mol/s |
+| ----------- | ---------------------- | ------------------- |
+| `mol/s`     | Moles per second       | 1.0                 |
+| `mol/h`     | Moles per hour         | 1/3600              |
+| `mol/min`   | Moles per minute       | 1/60                |
+| `kmol/s`    | Kilomoles per second   | 1000                |
+| `kmol/h`    | Kilomoles per hour     | 1000/3600           |
+| `kmol/min`  | Kilomoles per minute   | 1000/60             |
+| `lbmol/s`   | Pound-moles per second | 453.592             |
+| `lbmol/h`   | Pound-moles per hour   | 453.592/3600        |
+| `lbmol/min` | Pound-moles per minute | 453.592/60          |
 
 ### Volumetric Flow Rate Units
 
-| Unit | Description | Conversion to m3/s |
-|------|-------------|-------------------|
-| `m3/s` | Cubic meters per second | 1.0 |
-| `m3/h` | Cubic meters per hour | 1/3600 |
-| `m3/min` | Cubic meters per minute | 1/60 |
-| `L/s` | Liters per second | 0.001 |
-| `L/min` | Liters per minute | 0.001/60 |
-| `L/h` | Liters per hour | 0.001/3600 |
-| `ft3/s` | Cubic feet per second | 0.0283168 |
-| `ft3/min` | Cubic feet per minute | 0.0283168/60 |
-| `ft3/h` | Cubic feet per hour | 0.0283168/3600 |
-| `CFM` | Cubic feet per minute | 0.0283168/60 |
-| `GPM` | US gallons per minute | 0.0000630902 |
+| Unit      | Description             | Conversion to m3/s |
+| --------- | ----------------------- | ------------------ |
+| `m3/s`    | Cubic meters per second | 1.0                |
+| `m3/h`    | Cubic meters per hour   | 1/3600             |
+| `m3/min`  | Cubic meters per minute | 1/60               |
+| `L/s`     | Liters per second       | 0.001              |
+| `L/min`   | Liters per minute       | 0.001/60           |
+| `L/h`     | Liters per hour         | 0.001/3600         |
+| `ft3/s`   | Cubic feet per second   | 0.0283168          |
+| `ft3/min` | Cubic feet per minute   | 0.0283168/60       |
+| `ft3/h`   | Cubic feet per hour     | 0.0283168/3600     |
+| `CFM`     | Cubic feet per minute   | 0.0283168/60       |
+| `GPM`     | US gallons per minute   | 0.0000630902       |
 
 ## Output Format
 
 Results are displayed with:
+
 - 6 significant figures for precision
 - Target unit label appended
 - Color-coded status (green for success, red for errors)
 
 Example output:
+
 ```
 2,204.62 lb/h
 ```
@@ -132,6 +140,7 @@ m_target = m_source * (CF_source / CF_target)
 ```
 
 Where:
+
 - `m_source` = Source mass flow rate value
 - `CF_source` = Conversion factor from source unit to kg/s
 - `CF_target` = Conversion factor from target unit to kg/s
@@ -143,6 +152,7 @@ n_target = n_source * (CF_source / CF_target)
 ```
 
 Where:
+
 - `n_source` = Source molar flow rate value
 - `CF_source` = Conversion factor from source unit to mol/s
 - `CF_target` = Conversion factor from target unit to mol/s
@@ -156,6 +166,7 @@ Q_actual = Q_standard * (T_actual / T_standard) * (P_standard / P_actual)
 ```
 
 Where:
+
 - `Q_standard` = Standard volumetric flow (at 15C, 101.325 kPa for Nm3)
 - `T_standard` = 288.15 K (15C) for normal conditions
 - `T_actual` = Actual temperature in Kelvin
@@ -171,6 +182,7 @@ ACFM = SCFM * (T_actual / 520) * (14.696 / P_actual)
 ```
 
 Where:
+
 - `T_actual` = Actual temperature in Rankine (F + 459.67)
 - `P_actual` = Actual pressure in psia
 
@@ -181,6 +193,7 @@ SCFM = Nm3/hr * 0.5886
 ```
 
 Based on:
+
 - Normal conditions: 0C (273.15 K), 101.325 kPa
 - Standard conditions: 60F (288.71 K), 14.696 psia
 
@@ -222,13 +235,13 @@ print(f"Flow rate: {m3_h:.1f} m3/h")
 
 ## Troubleshooting
 
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| "Error: Invalid unit" | Unsupported unit string | Check unit spelling matches supported list |
-| Zero result | Input value is zero | Verify input value > 0 |
-| Very large/small result | Unit scale mismatch | Verify correct source and target units |
-| Import error | Missing package | Install `upstream_drift_tools` package |
-| GUI not responding | Large value calculation | Wait for computation to complete |
+| Issue                   | Cause                   | Solution                                   |
+| ----------------------- | ----------------------- | ------------------------------------------ |
+| "Error: Invalid unit"   | Unsupported unit string | Check unit spelling matches supported list |
+| Zero result             | Input value is zero     | Verify input value > 0                     |
+| Very large/small result | Unit scale mismatch     | Verify correct source and target units     |
+| Import error            | Missing package         | Install `upstream_drift_tools` package     |
+| GUI not responding      | Large value calculation | Wait for computation to complete           |
 
 ### Common Conversion Pitfalls
 
@@ -248,18 +261,18 @@ print(f"Flow rate: {m3_h:.1f} m3/h")
 
 ### Standard Reference Conditions
 
-| Standard | Temperature | Pressure |
-|----------|-------------|----------|
-| Normal (Nm3) | 0C (273.15 K) | 101.325 kPa |
+| Standard        | Temperature    | Pressure    |
+| --------------- | -------------- | ----------- |
+| Normal (Nm3)    | 0C (273.15 K)  | 101.325 kPa |
 | Standard (SCFM) | 60F (288.71 K) | 14.696 psia |
-| API Standard | 60F | 14.73 psia |
-| ISO Standard | 15C | 101.325 kPa |
+| API Standard    | 60F            | 14.73 psia  |
+| ISO Standard    | 15C            | 101.325 kPa |
 
 ### Conversion Constants
 
-| Constant | Value | Description |
-|----------|-------|-------------|
-| lb to kg | 0.453592 | Pound to kilogram |
-| ft3 to m3 | 0.0283168 | Cubic foot to cubic meter |
-| gal (US) to L | 3.78541 | US gallon to liter |
-| lbmol to mol | 453.59237 | Pound-mole to mole |
+| Constant      | Value     | Description               |
+| ------------- | --------- | ------------------------- |
+| lb to kg      | 0.453592  | Pound to kilogram         |
+| ft3 to m3     | 0.0283168 | Cubic foot to cubic meter |
+| gal (US) to L | 3.78541   | US gallon to liter        |
+| lbmol to mol  | 453.59237 | Pound-mole to mole        |

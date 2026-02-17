@@ -207,11 +207,13 @@ Line 210: # Decrypt data with password
 ### 2 Weeks - AGENTS.md Compliance
 
 1. **Replace print() with logging** (B-001)
+
    - Priority order: core launchers → tools → tests
    - Configure logging.basicConfig in each entry point
    - Use logger = logging.getLogger(**name**)
 
 2. **Security audit of folder_packer_pro** (B-002)
+
    - Review encryption library usage
    - Verify password handling security
    - Document security considerations
@@ -224,11 +226,13 @@ Line 210: # Decrypt data with password
 ### 6 Weeks - Full Hygiene Graduation
 
 1. **Re-enable line length check** (B-004)
+
    - Remove global E501 ignore
    - Add per-file ignores where justified
    - Fix legitimate violations
 
 2. **Enable pydocstyle for public modules** (B-009)
+
    - Enable D100, D103 for public functions
    - Add docstrings to undocumented functions
 

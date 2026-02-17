@@ -181,6 +181,7 @@
    ```
 
 2. **Create CONTRIBUTING.md** (C-006)
+
    - Link to AGENTS.md for coding standards
    - Explain tool creation process
    - Document PR workflow
@@ -222,6 +223,7 @@
    ````
 
    ## Features
+
    - Feature 1
    - Feature 2
 
@@ -238,6 +240,7 @@
    ```
 
 2. **Apply template to all tools** (C-003)
+
    - Solar System Model
    - RRT Path Planner
    - Calculator
@@ -260,11 +263,13 @@
 ### 6 Weeks - Full Documentation Excellence
 
 1. **Generate API documentation** (C-007)
+
    - Add comprehensive docstrings
    - Generate docs with Sphinx or pdoc
    - Host in docs/api/
 
 2. **Create comprehensive user guide** (C-002)
+
    - Tool-by-tool walkthroughs
    - Screenshots
    - Common workflows
@@ -311,6 +316,7 @@
 - ```bash
 
   ```
+
 - python tools_launcher.py
 - ```
 

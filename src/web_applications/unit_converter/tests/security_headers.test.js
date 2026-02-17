@@ -1,4 +1,3 @@
-
 const fs = require('fs');
 const path = require('path');
 
@@ -18,7 +17,8 @@ describe('Security Headers', () => {
   test('CSP contains correct directives', () => {
     // Extract the content attribute of the CSP meta tag
     // Match content attribute with matching quotes
-    const regex = /<meta\s+http-equiv=["']Content-Security-Policy["']\s+content=(["'])([\s\S]*?)\1/i;
+    const regex =
+      /<meta\s+http-equiv=["']Content-Security-Policy["']\s+content=(["'])([\s\S]*?)\1/i;
     const cspMatch = htmlContent.match(regex);
 
     expect(cspMatch).not.toBeNull();

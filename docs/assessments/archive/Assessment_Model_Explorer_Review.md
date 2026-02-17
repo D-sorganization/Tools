@@ -19,6 +19,7 @@ The "model explorer" ecosystem spans four interconnected components: a comprehen
 ### What Exists
 
 **Backend (`humanoid_character_builder/interfaces/api.py`)**:
+
 - `CharacterBuilder` class with parametric body generation from height, mass, build type
 - `BodyParameters` dataclass with muscularity, body fat, gender factor, and per-segment overrides
 - Presets system (athletic, average, heavy, lean) via `create_from_preset()`
@@ -28,6 +29,7 @@ The "model explorer" ecosystem spans four interconnected components: a comprehen
 - Inertia calculation via primitives or mesh-based (trimesh) methods
 
 **GUI (`humanoid_builder_gui/.../main_window.py`)**:
+
 - PyQt6 interface with Catppuccin Mocha theme
 - 4 tabs: Body Parameters, Proportions, Results, Export
 - Sliders for: height, mass, build type, gender model, muscularity, body fat
@@ -37,13 +39,13 @@ The "model explorer" ecosystem spans four interconnected components: a comprehen
 
 ### Functionality Status
 
-| Component | Status | Detail |
-|-----------|--------|--------|
-| Backend `CharacterBuilder` API | **Broken** | Cannot import due to shared dependency on `model_generation.core` circular import |
-| GUI parameter adjustment | **Works** | Segment calculations and table population function correctly in isolation |
-| GUI export | **Stub** | Displays placeholder text: `"(File dialog would appear in full implementation)"` |
-| Preset loading | **Broken** | Depends on `model_generation` import chain |
-| Mesh generation | **Untested** | Code exists but cannot be reached due to import failure |
+| Component                      | Status       | Detail                                                                            |
+| ------------------------------ | ------------ | --------------------------------------------------------------------------------- |
+| Backend `CharacterBuilder` API | **Broken**   | Cannot import due to shared dependency on `model_generation.core` circular import |
+| GUI parameter adjustment       | **Works**    | Segment calculations and table population function correctly in isolation         |
+| GUI export                     | **Stub**     | Displays placeholder text: `"(File dialog would appear in full implementation)"`  |
+| Preset loading                 | **Broken**   | Depends on `model_generation` import chain                                        |
+| Mesh generation                | **Untested** | Code exists but cannot be reached due to import failure                           |
 
 ### Assessment
 
@@ -66,13 +68,13 @@ The character builder concept is well-executed at the design level. The anthropo
 
 ### Searched Locations
 
-| Search Term | Files Found | Relevant? |
-|-------------|-------------|-----------|
-| `pose estimat` | 3 files | No -- all in unrelated golf video processing docs |
-| `pose import` | 0 files | -- |
-| `joint configuration` / `joint state` | 0 files (in model_generation) | -- |
-| `keypoint` / `skeleton detection` | 0 files | -- |
-| `mediapipe` / `openpose` | 0 files | -- |
+| Search Term                           | Files Found                   | Relevant?                                         |
+| ------------------------------------- | ----------------------------- | ------------------------------------------------- |
+| `pose estimat`                        | 3 files                       | No -- all in unrelated golf video processing docs |
+| `pose import`                         | 0 files                       | --                                                |
+| `joint configuration` / `joint state` | 0 files (in model_generation) | --                                                |
+| `keypoint` / `skeleton detection`     | 0 files                       | --                                                |
+| `mediapipe` / `openpose`              | 0 files                       | --                                                |
 
 ### What Would Be Needed
 
@@ -104,6 +106,7 @@ model_generation/__init__.py
 **Error**: `ImportError: cannot import name 'postcondition' from partially initialized module 'model_generation.core.contracts'`
 
 This blocks **all** of the following from loading:
+
 - `FrankensteinEditor`
 - `URDFTextEditor`
 - `ParametricBuilder` / `ManualBuilder`
@@ -114,13 +117,13 @@ This blocks **all** of the following from loading:
 
 ### Component-by-Component Status
 
-| Component | Can Import? | Can Execute? | Tests Pass? |
-|-----------|-------------|--------------|-------------|
-| `model_generation` package | No (circular import) | No | No |
-| `humanoid_character_builder` | Not tested (likely broken, shares core types) | No | No |
-| `humanoid_builder_gui` PyQt6 | Partial (UI works, backend broken) | UI only | No tests |
-| `urdf_viewer` web app (FastAPI) | Yes (independent) | Yes (standalone) | No tests |
-| `urdf_viewer` frontend (React/Three.js) | Yes (CDN-loaded) | Fragile (runtime Babel) | No tests |
+| Component                               | Can Import?                                   | Can Execute?            | Tests Pass? |
+| --------------------------------------- | --------------------------------------------- | ----------------------- | ----------- |
+| `model_generation` package              | No (circular import)                          | No                      | No          |
+| `humanoid_character_builder`            | Not tested (likely broken, shares core types) | No                      | No          |
+| `humanoid_builder_gui` PyQt6            | Partial (UI works, backend broken)            | UI only                 | No tests    |
+| `urdf_viewer` web app (FastAPI)         | Yes (independent)                             | Yes (standalone)        | No tests    |
+| `urdf_viewer` frontend (React/Three.js) | Yes (CDN-loaded)                              | Fragile (runtime Babel) | No tests    |
 
 ### REST API Gaps
 
@@ -134,6 +137,7 @@ return APIResponse.error("Remove not implemented", 501)
 ### Documentation Self-Assessment
 
 The project's own `docs/user_manual/12_implementation_gaps.md` acknowledges:
+
 - URDF Web Viewer: "Basic viewer with TODO markers"
 - Humanoid Builder GUI: "Advanced mesh generation, physics simulation" missing
 - 85 TODO/FIXME/NotImplementedError markers across 30 files
@@ -149,6 +153,7 @@ The project's own `docs/user_manual/12_implementation_gaps.md` acknowledges:
 `FrankensteinEditor` (`model_generation/editor/frankenstein_editor.py`) is a 1400-line class with:
 
 **Core Operations**:
+
 - `load_model()` / `create_model()` / `duplicate_model()` / `unload_model()` -- Multi-model workspace
 - `copy_link()` / `copy_subtree()` / `copy_material()` -- Clipboard-based component selection
 - `paste()` / `paste_subtree()` -- Paste with automatic name conflict resolution (prefix/suffix/counter)
@@ -162,6 +167,7 @@ The project's own `docs/user_manual/12_implementation_gaps.md` acknowledges:
 - `export_model()` -- Write composed model to URDF
 
 **Infrastructure**:
+
 - Full undo/redo with deep-copy state snapshots (50-level history)
 - Read-only model protection
 - Rename event callbacks
@@ -170,21 +176,22 @@ The project's own `docs/user_manual/12_implementation_gaps.md` acknowledges:
 - REST API endpoint (partially implemented)
 
 **Tests** (`tests/test_editor.py`):
+
 - 16 test methods covering: creation, load from string, duplication, copy link, copy subtree, paste, delete, rename (link + joint references), undo/redo, export, compare, statistics
 - Two URDF test fixtures (simple 2-link robot, two-arm robot)
 
 ### Functionality Status
 
-| Operation | Code Quality | Can Execute? |
-|-----------|-------------|--------------|
-| Load model from URDF string | Good | No (circular import) |
-| Copy/paste subtrees between models | Good, handles name conflicts | No |
-| Delete subtree with reparenting | Good | No |
-| Mirror limbs (left->right) | Good, auto name substitution | No |
-| Undo/redo | Good, deep-copy state snapshots | No |
-| Export to URDF | Good | No |
-| CLI compose workflow | Good | No |
-| REST API compose | Partial (delete returns 501) | No |
+| Operation                          | Code Quality                    | Can Execute?         |
+| ---------------------------------- | ------------------------------- | -------------------- |
+| Load model from URDF string        | Good                            | No (circular import) |
+| Copy/paste subtrees between models | Good, handles name conflicts    | No                   |
+| Delete subtree with reparenting    | Good                            | No                   |
+| Mirror limbs (left->right)         | Good, auto name substitution    | No                   |
+| Undo/redo                          | Good, deep-copy state snapshots | No                   |
+| Export to URDF                     | Good                            | No                   |
+| CLI compose workflow               | Good                            | No                   |
+| REST API compose                   | Partial (delete returns 501)    | No                   |
 
 ### Assessment
 
@@ -203,12 +210,14 @@ The Frankenstein editor is the most complete and well-designed component in the 
 **Web-based URDF Viewer** (`src/web_applications/urdf_viewer/`):
 
 **Backend** (`app.py`):
+
 - FastAPI server with CORS support
 - File upload endpoint (`POST /api/upload`) with path traversal protection
 - Model listing (`GET /api/models`) and serving (`GET /api/models/{filename}`)
 - Static file serving for the frontend
 
 **Frontend** (`static/viewer.js`, `static/index.html`):
+
 - React application using Three.js and `urdf-loader`
 - 3D viewport with grid, axes, ambient + directional lighting
 - OrbitControls for camera manipulation
@@ -220,17 +229,17 @@ The Frankenstein editor is the most complete and well-designed component in the 
 
 ### Functionality Status
 
-| Feature | Status | Detail |
-|---------|--------|--------|
-| URDF file upload | **Works** | FastAPI backend with proper path sanitization |
-| 3D rendering | **Works** | Three.js + urdf-loader, with grid/axes/lighting |
-| Joint manipulation | **Works** | Sliders for revolute/continuous joints with min/max limits |
-| Collision toggle | **Works** | Toggles `isURDFCollision` mesh visibility |
-| Camera controls | **Works** | OrbitControls with auto-framing |
-| Multi-robot support | **Missing** | Only one robot visible at a time |
-| Animation playback | **Missing** | No trajectory/sequence playback |
-| Mesh file loading | **Fragile** | URDF meshes must be co-located or URL-accessible |
-| Frontend build | **Fragile** | Runtime Babel transpilation from CDN, no build step |
+| Feature             | Status      | Detail                                                     |
+| ------------------- | ----------- | ---------------------------------------------------------- |
+| URDF file upload    | **Works**   | FastAPI backend with proper path sanitization              |
+| 3D rendering        | **Works**   | Three.js + urdf-loader, with grid/axes/lighting            |
+| Joint manipulation  | **Works**   | Sliders for revolute/continuous joints with min/max limits |
+| Collision toggle    | **Works**   | Toggles `isURDFCollision` mesh visibility                  |
+| Camera controls     | **Works**   | OrbitControls with auto-framing                            |
+| Multi-robot support | **Missing** | Only one robot visible at a time                           |
+| Animation playback  | **Missing** | No trajectory/sequence playback                            |
+| Mesh file loading   | **Fragile** | URDF meshes must be co-located or URL-accessible           |
+| Frontend build      | **Fragile** | Runtime Babel transpilation from CDN, no build step        |
 
 ### Architecture Concerns
 
@@ -249,14 +258,14 @@ The URDF viewer is the **only functional component** in the model explorer ecosy
 
 ## Summary Scorecard
 
-| Feature | Score | Status |
-|---------|-------|--------|
-| Video game-like character builder | 3/10 | Code exists, GUI partially works, export is stub, backend broken |
-| Pose estimation / import | 0/10 | Does not exist |
-| Overall implementation functionality | 2/10 | Circular import prevents core package from loading |
-| Frankenstein component switching | 2/10 | Excellent code, completely non-functional |
-| URDF visualization | 5/10 | Only working component, basic but functional |
-| **Overall** | **2.4/10** | |
+| Feature                              | Score      | Status                                                           |
+| ------------------------------------ | ---------- | ---------------------------------------------------------------- |
+| Video game-like character builder    | 3/10       | Code exists, GUI partially works, export is stub, backend broken |
+| Pose estimation / import             | 0/10       | Does not exist                                                   |
+| Overall implementation functionality | 2/10       | Circular import prevents core package from loading               |
+| Frankenstein component switching     | 2/10       | Excellent code, completely non-functional                        |
+| URDF visualization                   | 5/10       | Only working component, basic but functional                     |
+| **Overall**                          | **2.4/10** |                                                                  |
 
 ---
 
@@ -271,6 +280,7 @@ model_generation.core.contracts <-> model_generation.core.validation
 **Root cause**: `contracts.py` imports `ValidationResult` from `validation.py`, while `validation.py` imports `precondition` and `postcondition` from `contracts.py`.
 
 **Suggested fix**: Break the cycle by either:
+
 1. Moving `ValidationResult` into `contracts.py` (or a shared `_base.py` module)
 2. Using lazy imports (import inside function bodies) for one direction
 3. Merging the two modules since they are tightly coupled

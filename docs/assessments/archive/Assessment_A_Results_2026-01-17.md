@@ -22,15 +22,15 @@
 
 ## Scorecard
 
-| Category                    | Score | Evidence & Remediation                                                                 |
-| --------------------------- | ----- | -------------------------------------------------------------------------------------- |
-| Implementation Completeness | 4/10  | **CRITICAL FAIL**: Application crashes on start (Py3.10). Legacy launcher missing.     |
-| Architecture Consistency    | 6/10  | Category structure is sound, but Python version compliance is broken.                  |
-| Performance Optimization    | ?/10  | Cannot assess (App crashes).                                                           |
-| Error Handling              | 2/10  | No graceful degradation for wrong Python version. Crash dumps to traceback.            |
-| Type Safety                 | 1/10  | **FAIL**: 200KB of mypy errors. Type hints exist but are not enforced/correct.         |
-| Testing Coverage            | 0/10  | **FAIL**: Tests do not even collect. 0% pass rate.                                     |
-| Launcher Integration        | 5/10  | JSON config is good, but executable paths are fragile (missing files, OS specific).    |
+| Category                    | Score | Evidence & Remediation                                                              |
+| --------------------------- | ----- | ----------------------------------------------------------------------------------- |
+| Implementation Completeness | 4/10  | **CRITICAL FAIL**: Application crashes on start (Py3.10). Legacy launcher missing.  |
+| Architecture Consistency    | 6/10  | Category structure is sound, but Python version compliance is broken.               |
+| Performance Optimization    | ?/10  | Cannot assess (App crashes).                                                        |
+| Error Handling              | 2/10  | No graceful degradation for wrong Python version. Crash dumps to traceback.         |
+| Type Safety                 | 1/10  | **FAIL**: 200KB of mypy errors. Type hints exist but are not enforced/correct.      |
+| Testing Coverage            | 0/10  | **FAIL**: Tests do not even collect. 0% pass rate.                                  |
+| Launcher Integration        | 5/10  | JSON config is good, but executable paths are fragile (missing files, OS specific). |
 
 ## Implementation Completeness Audit
 
@@ -44,25 +44,28 @@
 
 ## Findings Table
 
-| ID    | Severity | Category       | Location                  | Symptom                  | Root Cause          | Fix                                   | Effort |
-| ----- | -------- | -------------- | ------------------------- | ------------------------ | ------------------- | ------------------------------------- | ------ |
-| A-001 | BLOCKER  | Architecture   | `requirements.txt`        | App crashes on Py3.10    | Missing Python constraint | Require Python >= 3.11 OR Shim imports | S      |
-| A-002 | BLOCKER  | Testing        | `tests/`                  | `pytest` fails collection| Py3.11 syntax in code | Fix imports or upgrade CI env         | S      |
-| A-003 | Major    | Implementation | `tools_launcher.py`       | File Missing             | File deletion       | Restore or update docs to remove ref  | S      |
-| A-004 | Major    | Type Safety    | `mypy_output.txt`         | Massive error log        | Unchecked typing    | Fix mypy errors incrementally         | L      |
-| A-005 | Minor    | Architecture   | `tools/` vs `python/`     | Split utility locations  | Legacy structure    | Consolidate all utils into `tools/`   | M      |
+| ID    | Severity | Category       | Location              | Symptom                   | Root Cause                | Fix                                    | Effort |
+| ----- | -------- | -------------- | --------------------- | ------------------------- | ------------------------- | -------------------------------------- | ------ |
+| A-001 | BLOCKER  | Architecture   | `requirements.txt`    | App crashes on Py3.10     | Missing Python constraint | Require Python >= 3.11 OR Shim imports | S      |
+| A-002 | BLOCKER  | Testing        | `tests/`              | `pytest` fails collection | Py3.11 syntax in code     | Fix imports or upgrade CI env          | S      |
+| A-003 | Major    | Implementation | `tools_launcher.py`   | File Missing              | File deletion             | Restore or update docs to remove ref   | S      |
+| A-004 | Major    | Type Safety    | `mypy_output.txt`     | Massive error log         | Unchecked typing          | Fix mypy errors incrementally          | L      |
+| A-005 | Minor    | Architecture   | `tools/` vs `python/` | Split utility locations   | Legacy structure          | Consolidate all utils into `tools/`    | M      |
 
 ## Refactoring Plan
 
 **48 Hours** (Emergency Fixes)
+
 - **Fix Python Compatibility**: Either add `StrEnum`/`UTC` backports or strictly enforce Python 3.11 in `setup_dev.py` and `README`.
 - **Fix Test Collection**: Ensure `pytest` can at least collect tests.
 
 **2 Weeks**
+
 - **Mypy Cleanup**: Address the 200KB of type errors.
 - **Launcher Restoration**: Restore or formally deprecate `tools_launcher.py`.
 
 **6 Weeks**
+
 - **Plugin Architecture**: Move from `tools.json` to a proper plugin registration system.
 
 ## Diff Suggestions

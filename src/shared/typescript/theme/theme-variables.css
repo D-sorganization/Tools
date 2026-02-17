@@ -66,5 +66,7 @@
 .themed-app {
   background-color: var(--theme-bg);
   color: var(--theme-text);
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }

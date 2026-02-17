@@ -11,14 +11,14 @@ This codebase demonstrates **excellent infrastructure for Design by Contract (Db
 
 ### Key Findings
 
-| Metric | Value | Assessment |
-|--------|-------|------------|
-| Contract decorator implementations | 2 complete libraries | Excellent |
-| Production files using decorators | 1 (documentation only) | Poor |
-| Total raise statements | 439 | Good coverage |
-| ValueError usage | 272 (62%) | Dominant pattern |
-| Assertion statements (non-test) | 46 | Appropriately sparse |
-| Custom contract exceptions | 28 | Well-designed |
+| Metric                             | Value                  | Assessment           |
+| ---------------------------------- | ---------------------- | -------------------- |
+| Contract decorator implementations | 2 complete libraries   | Excellent            |
+| Production files using decorators  | 1 (documentation only) | Poor                 |
+| Total raise statements             | 439                    | Good coverage        |
+| ValueError usage                   | 272 (62%)              | Dominant pattern     |
+| Assertion statements (non-test)    | 46                     | Appropriately sparse |
+| Custom contract exceptions         | 28                     | Well-designed        |
 
 ---
 
@@ -30,25 +30,25 @@ Two comprehensive contract decorator implementations exist:
 
 #### `model_generation/core/contracts.py` (424 lines)
 
-| Feature | Status | Description |
-|---------|--------|-------------|
-| `@precondition` | Implemented | Validates inputs before method execution |
-| `@postcondition` | Implemented | Validates outputs after method execution |
-| `@contract` | Implemented | Combined pre/post decorator |
-| `@invariant` | Implemented | Class decorator for state validation |
-| `set_contracts_enabled()` | Implemented | Global toggle for performance |
-| Convenience functions | Implemented | `require_positive`, `require_finite`, `require_unit_vector` |
+| Feature                   | Status      | Description                                                 |
+| ------------------------- | ----------- | ----------------------------------------------------------- |
+| `@precondition`           | Implemented | Validates inputs before method execution                    |
+| `@postcondition`          | Implemented | Validates outputs after method execution                    |
+| `@contract`               | Implemented | Combined pre/post decorator                                 |
+| `@invariant`              | Implemented | Class decorator for state validation                        |
+| `set_contracts_enabled()` | Implemented | Global toggle for performance                               |
+| Convenience functions     | Implemented | `require_positive`, `require_finite`, `require_unit_vector` |
 
 **Location:** `src/shared/python/model_generation/core/contracts.py:1-424`
 
 #### `humanoid_character_builder/contracts.py` (191 lines)
 
-| Feature | Status | Description |
-|---------|--------|-------------|
-| `@precondition` | Implemented | With argument binding support |
-| `@postcondition` | Implemented | Result validation |
-| `@invariant` | Implemented | Checks after `__init__` and all public methods |
-| `ContractViolationError` | Implemented | Extends `AssertionError` |
+| Feature                  | Status      | Description                                    |
+| ------------------------ | ----------- | ---------------------------------------------- |
+| `@precondition`          | Implemented | With argument binding support                  |
+| `@postcondition`         | Implemented | Result validation                              |
+| `@invariant`             | Implemented | Checks after `__init__` and all public methods |
+| `ContractViolationError` | Implemented | Extends `AssertionError`                       |
 
 **Location:** `src/shared/python/humanoid_character_builder/contracts.py:1-191`
 
@@ -66,6 +66,7 @@ Exception
 ```
 
 **Strengths:**
+
 - Semantic exception types distinguish contract types
 - Detailed error messages include function names and arguments
 - Dataclass-based exceptions provide structured error details
@@ -77,6 +78,7 @@ Exception
 ### 2.1 Current Implementation Patterns
 
 **Pattern A: Tuple Return Validation** (Preferred in validation.py)
+
 ```python
 # src/python/src/utils/validation.py:15-55
 def validate_path(
@@ -88,6 +90,7 @@ def validate_path(
 ```
 
 **Pattern B: Exception-Based Validation** (Used in security)
+
 ```python
 # src/data_processing/data_processor/python/data_processor/security_utils.py
 def validate_python_expression(expr: str, allowed_names: set[str] | None = None) -> None:
@@ -95,6 +98,7 @@ def validate_python_expression(expr: str, allowed_names: set[str] | None = None)
 ```
 
 **Pattern C: Contract Decorators** (Available but unused)
+
 ```python
 # Available in contracts.py but not deployed
 @precondition(lambda x: x > 0, "x must be positive")
@@ -104,17 +108,18 @@ def sqrt(x: float) -> float:
 
 ### 2.2 Precondition Coverage by Module
 
-| Module | Preconditions | Pattern | Quality |
-|--------|---------------|---------|---------|
-| `security_utils.py` | Strong | Exceptions | 9/10 |
-| `validation.py` | Strong | Tuple returns | 9/10 |
-| `file_utils.py` | Moderate | Mixed | 7/10 |
-| `base_builder.py` | Weak | None | 4/10 |
-| `types.py` | Weak | None | 4/10 |
+| Module              | Preconditions | Pattern       | Quality |
+| ------------------- | ------------- | ------------- | ------- |
+| `security_utils.py` | Strong        | Exceptions    | 9/10    |
+| `validation.py`     | Strong        | Tuple returns | 9/10    |
+| `file_utils.py`     | Moderate      | Mixed         | 7/10    |
+| `base_builder.py`   | Weak          | None          | 4/10    |
+| `types.py`          | Weak          | None          | 4/10    |
 
 ### 2.3 Missing Preconditions
 
 **`base_builder.py:101-121`** - No input validation:
+
 ```python
 def __init__(self, robot_name: str = "robot"):
     # Missing: validate robot_name is non-empty, valid XML name
@@ -146,6 +151,7 @@ class ValidationResult:
 ```
 
 **Issue:** Postcondition checking is **optional** - callers can ignore `ValidationResult.is_valid`:
+
 ```python
 result = builder.build()
 # Caller may proceed without checking result.validation.is_valid
@@ -171,20 +177,22 @@ No production code uses `@postcondition`.
 ### 4.1 Infrastructure
 
 Both contract libraries implement the `@invariant` class decorator that:
+
 - Checks condition after `__init__`
 - Checks condition after every public method call
 - Provides detailed error messages
 
 ### 4.2 Adoption Status
 
-| Class | Should Have Invariant | Has Invariant |
-|-------|----------------------|---------------|
-| `URDFModel` | Yes (links > 0) | No |
-| `BaseURDFBuilder` | Yes (valid state) | No |
-| `BuildResult` | Yes (success ⟺ urdf_xml) | No |
-| `ValidationResult` | Yes (is_valid ⟺ no errors) | No |
+| Class              | Should Have Invariant      | Has Invariant |
+| ------------------ | -------------------------- | ------------- |
+| `URDFModel`        | Yes (links > 0)            | No            |
+| `BaseURDFBuilder`  | Yes (valid state)          | No            |
+| `BuildResult`      | Yes (success ⟺ urdf_xml)   | No            |
+| `ValidationResult` | Yes (is_valid ⟺ no errors) | No            |
 
 **Example Missing Invariant:**
+
 ```python
 # base_builder.py should use:
 @invariant(
@@ -201,15 +209,16 @@ class BaseURDFBuilder(ABC):
 
 ### 5.1 Centralized Validators
 
-| File | Functions | Purpose |
-|------|-----------|---------|
-| `src/python/src/utils/validation.py` | 6 | Path, extension, version, null, empty, range |
-| `model_generation/core/validation.py` | Validator class | Model structure validation |
-| `security_utils.py` | 3 | Security-focused validation |
+| File                                  | Functions       | Purpose                                      |
+| ------------------------------------- | --------------- | -------------------------------------------- |
+| `src/python/src/utils/validation.py`  | 6               | Path, extension, version, null, empty, range |
+| `model_generation/core/validation.py` | Validator class | Model structure validation                   |
+| `security_utils.py`                   | 3               | Security-focused validation                  |
 
 ### 5.2 Scattered Validation
 
 Validation logic is also scattered across:
+
 - `file_utils.py` - Format-specific checks
 - `conversion/service.py` - Unit validation
 - Various `__init__.py` files - Import checks
@@ -223,6 +232,7 @@ Validation logic is also scattered across:
 ### 6.1 Strengths
 
 **Error Handling Decorators** (`error_handling.py`):
+
 ```python
 @handle_file_errors(default=None, log_error=True, reraise=False)
 def read_config() -> Config | None:
@@ -230,6 +240,7 @@ def read_config() -> Config | None:
 ```
 
 **Import Guards** (throughout codebase):
+
 ```python
 try:
     import scipy.io
@@ -239,6 +250,7 @@ except ImportError:
 ```
 
 **Security Validation** (AST-based expression checking):
+
 ```python
 def validate_python_expression(expr: str, allowed_names: set[str] | None = None):
     tree = ast.parse(expr, mode="eval")
@@ -259,14 +271,15 @@ def validate_python_expression(expr: str, allowed_names: set[str] | None = None)
 
 Contract decorators have **excellent test coverage**:
 
-| Test File | Lines | Coverage |
-|-----------|-------|----------|
-| `model_generation/tests/test_contracts.py` | 227 | 100% of decorators |
-| `humanoid_character_builder/tests/test_contracts.py` | 99 | 100% of decorators |
+| Test File                                            | Lines | Coverage           |
+| ---------------------------------------------------- | ----- | ------------------ |
+| `model_generation/tests/test_contracts.py`           | 227   | 100% of decorators |
+| `humanoid_character_builder/tests/test_contracts.py` | 99    | 100% of decorators |
 
 ### 7.2 Test Patterns
 
 Tests verify:
+
 - Precondition violations raise `PreconditionError`
 - Postcondition violations raise `PostconditionError`
 - Invariant violations raise `InvariantError`
@@ -282,11 +295,13 @@ Tests verify:
 #### 8.1 Deploy Contract Decorators on Critical APIs
 
 **Target files:**
+
 - `src/shared/python/model_generation/builders/base_builder.py`
 - `src/shared/python/humanoid_character_builder/interfaces/api.py`
 - `src/shared/python/model_generation/core/types.py`
 
 **Example implementation:**
+
 ```python
 from model_generation.core.contracts import precondition, require_positive
 
@@ -302,6 +317,7 @@ class BaseURDFBuilder(ABC):
 #### 8.2 Create DbC Style Guide
 
 Create `docs/development/DESIGN_BY_CONTRACT.md` covering:
+
 - When to use assertions vs. exceptions
 - Precondition vs. postcondition patterns
 - Invariant-checking class design
@@ -312,28 +328,31 @@ Create `docs/development/DESIGN_BY_CONTRACT.md` covering:
 #### 8.3 Standardize Validation Pattern
 
 **Current inconsistency:**
+
 - Some validators return `tuple[bool, str | None]`
 - Others raise exceptions immediately
 - Others return `ValidationResult`
 
 **Recommendation:**
+
 - Preconditions: Raise exceptions (fail-fast)
 - Postconditions: Return `ValidationResult` (caller decides severity)
 - Invariants: Use decorator infrastructure
 
 #### 8.4 Add Invariants to Core Classes
 
-| Class | Proposed Invariant |
-|-------|-------------------|
-| `BaseURDFBuilder` | `len(self._links) >= 0 and all links have unique names` |
-| `BuildResult` | `self.success == (self.urdf_xml is not None)` |
-| `ValidationResult` | `self.is_valid == (len(self.errors) == 0)` |
+| Class              | Proposed Invariant                                      |
+| ------------------ | ------------------------------------------------------- |
+| `BaseURDFBuilder`  | `len(self._links) >= 0 and all links have unique names` |
+| `BuildResult`      | `self.success == (self.urdf_xml is not None)`           |
+| `ValidationResult` | `self.is_valid == (len(self.errors) == 0)`              |
 
 ### Phase 3: Long-term (Ecosystem Improvement)
 
 #### 8.5 Unified Validation Package
 
 Create `src/shared/python/contracts/`:
+
 ```
 contracts/
 ├── __init__.py
@@ -355,24 +374,24 @@ contracts/
 
 ### 9.1 DbC Maturity Model
 
-| Level | Description | Current Status |
-|-------|-------------|----------------|
-| 1 | Ad-hoc validation | Surpassed |
-| 2 | Validation utilities | Achieved |
-| 3 | Contract infrastructure | Achieved |
-| **4** | **Systematic adoption** | **Gap** |
-| 5 | Formal verification | Future goal |
+| Level | Description             | Current Status |
+| ----- | ----------------------- | -------------- |
+| 1     | Ad-hoc validation       | Surpassed      |
+| 2     | Validation utilities    | Achieved       |
+| 3     | Contract infrastructure | Achieved       |
+| **4** | **Systematic adoption** | **Gap**        |
+| 5     | Formal verification     | Future goal    |
 
 ### 9.2 Component Scores
 
-| Component | Score | Notes |
-|-----------|-------|-------|
-| Infrastructure | 9/10 | Two complete decorator libraries |
-| Documentation | 5/10 | Mentions DbC but no guide |
-| Adoption | 3/10 | Only tests use decorators |
-| Consistency | 5/10 | Multiple validation patterns |
-| Test Coverage | 9/10 | Thorough contract tests |
-| **Overall** | **6.5/10** | Good foundation, poor adoption |
+| Component      | Score      | Notes                            |
+| -------------- | ---------- | -------------------------------- |
+| Infrastructure | 9/10       | Two complete decorator libraries |
+| Documentation  | 5/10       | Mentions DbC but no guide        |
+| Adoption       | 3/10       | Only tests use decorators        |
+| Consistency    | 5/10       | Multiple validation patterns     |
+| Test Coverage  | 9/10       | Thorough contract tests          |
+| **Overall**    | **6.5/10** | Good foundation, poor adoption   |
 
 ---
 
@@ -380,27 +399,27 @@ contracts/
 
 ### Priority 1 (High-Risk, No Contracts)
 
-| File | Risk | Action |
-|------|------|--------|
-| `builders/base_builder.py` | Public API | Add preconditions to setters |
-| `core/types.py` | Data integrity | Validate from_dict methods |
-| `interfaces/api.py` | External input | Validate BodyParameters |
+| File                       | Risk           | Action                       |
+| -------------------------- | -------------- | ---------------------------- |
+| `builders/base_builder.py` | Public API     | Add preconditions to setters |
+| `core/types.py`            | Data integrity | Validate from_dict methods   |
+| `interfaces/api.py`        | External input | Validate BodyParameters      |
 
 ### Priority 2 (Important, Inconsistent)
 
-| File | Issue | Action |
-|------|-------|--------|
-| `validation.py` | Tuple returns | Consider exception-based |
-| `file_utils.py` | Silent failures | Add explicit error handling |
-| `conversion/service.py` | Warnings only | Add strict mode |
+| File                    | Issue           | Action                      |
+| ----------------------- | --------------- | --------------------------- |
+| `validation.py`         | Tuple returns   | Consider exception-based    |
+| `file_utils.py`         | Silent failures | Add explicit error handling |
+| `conversion/service.py` | Warnings only   | Add strict mode             |
 
 ### Priority 3 (Enhancement)
 
-| File | Opportunity |
-|------|-------------|
+| File                    | Opportunity                      |
+| ----------------------- | -------------------------------- |
 | `physics_validation.py` | Add @postcondition to validators |
-| `Validator` class | Add @invariant for state |
-| All builders | Use @invariant for valid state |
+| `Validator` class       | Add @invariant for state         |
+| All builders            | Use @invariant for valid state   |
 
 ---
 
@@ -411,6 +430,7 @@ The Tools repository has **invested significantly in DbC infrastructure** with t
 **Key Takeaway:** The patterns are defined; they need to be deployed. Adopting the existing contract decorators on public APIs would significantly improve code reliability with minimal refactoring required.
 
 **Recommended Next Steps:**
+
 1. Add `@precondition` to 3 high-risk public APIs (2 hours)
 2. Create DbC style guide document (1 hour)
 3. Add `@invariant` to 2 core classes (2 hours)
@@ -418,4 +438,4 @@ The Tools repository has **invested significantly in DbC infrastructure** with t
 
 ---
 
-*Assessment conducted following Pragmatic Programmer principles for Design by Contract evaluation.*
+_Assessment conducted following Pragmatic Programmer principles for Design by Contract evaluation._

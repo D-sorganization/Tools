@@ -70,7 +70,7 @@ Tools/
           robotics/           # Robotics Tools
             urdf/
             c3d/
-    
+
     ui/                       # UI WRAPPERS (PyQt/Tkinter)
       python/
         widgets/
@@ -98,25 +98,19 @@ These components have been analyzed and confirm to be generic enough for sharing
 **From Gasification Model:**
 
 1. **Steam Calculator** (`steam_engine.py`):
-    - *Why*: Generic IAPWS-97 steam table implementation. Useful for any thermal modeling.
-    - *Destination*: `upstream_drift_tools.calculators.thermo.steam`
+   - _Why_: Generic IAPWS-97 steam table implementation. Useful for any thermal modeling.
+   - _Destination_: `upstream_drift_tools.calculators.thermo.steam`
 2. **Unit Converter Components** (`flow_rate_converter.py`, `scfm_acfm_converter.py`):
-    - *Why*: Pure physics constants and conversion math.
-    - *Destination*: `upstream_drift_tools.calculators.conversion`
+   - _Why_: Pure physics constants and conversion math.
+   - _Destination_: `upstream_drift_tools.calculators.conversion`
 3. **Thermodynamic Properties** (`thermodynamic_properties_calculator.py`):
-    - *Why*: Generic Ideal Gas / NIST / JANAF property lookups.
-    - *Destination*: `upstream_drift_tools.calculators.thermo.properties`
+   - _Why_: Generic Ideal Gas / NIST / JANAF property lookups.
+   - _Destination_: `upstream_drift_tools.calculators.thermo.properties`
 
-**From UpstreamDrift (Golf Suite):**
-4.  **C3D Reader** (`c3d_reader.py`):
-    **Why*: Standard biomechanics file format reader.
-    *   *Destination*: `upstream_drift_tools.robotics.c3d`
-5.  **Polynomial Generator** (`polynomial_generator.py`):
-    **Why*: Generic math/fitting logic. (UI stays in widgets, logic moves to core).
-    *   *Destination*: `upstream_drift_tools.math.polynomials`
-6.  **URDF Generator**:
-    **Why*: Robot description format generation.
-    *   *Destination*: `upstream_drift_tools.robotics.urdf`
+**From UpstreamDrift (Golf Suite):** 4. **C3D Reader** (`c3d_reader.py`): \*_Why_: Standard biomechanics file format reader.
+
+- _Destination_: `upstream_drift_tools.robotics.c3d` 5. **Polynomial Generator** (`polynomial_generator.py`): \*_Why_: Generic math/fitting logic. (UI stays in widgets, logic moves to core).
+- _Destination_: `upstream_drift_tools.math.polynomials` 6. **URDF Generator**: \*_Why_: Robot description format generation. \* _Destination_: `upstream_drift_tools.robotics.urdf`
 
 ---
 

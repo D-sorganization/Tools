@@ -13,12 +13,14 @@ The entire platform is built in **TypeScript** (typed JavaScript) for both front
 ### Primary: TypeScript (95% of code)
 
 **What is TypeScript?**
+
 - TypeScript is JavaScript with type safety
 - Compiles to JavaScript (runs everywhere)
 - Better for large projects (catches errors early)
 - Same syntax as JavaScript (easy to learn)
 
 **Used For**:
+
 - ✅ Frontend (React/Next.js)
 - ✅ Backend API (Node.js/Express)
 - ✅ Video processing (FFmpeg.wasm)
@@ -28,6 +30,7 @@ The entire platform is built in **TypeScript** (typed JavaScript) for both front
 - ✅ Database queries (Prisma ORM)
 
 **Why TypeScript?**
+
 - Type safety catches bugs early
 - Better IDE autocomplete
 - Easier refactoring
@@ -57,6 +60,7 @@ export const VideoEditor: React.FC<VideoPlayerProps> = ({ videoUrl }) => {
 ```
 
 **Technologies**:
+
 - **Next.js**: React framework (TypeScript)
 - **React**: UI library (TypeScript)
 - **Tailwind CSS**: Styling (CSS, but configured via TypeScript)
@@ -70,16 +74,16 @@ export const VideoEditor: React.FC<VideoPlayerProps> = ({ videoUrl }) => {
 ```typescript
 // Node.js/Express API routes (TypeScript)
 // Example: Video upload endpoint
-import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import { NextApiRequest, NextApiResponse } from "next";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
-  if (req.method === 'POST') {
+  if (req.method === "POST") {
     const video = await prisma.video.create({
       data: {
         url: req.body.url,
@@ -92,6 +96,7 @@ export default async function handler(
 ```
 
 **Technologies**:
+
 - **Node.js**: JavaScript runtime
 - **Express/Next.js API**: API framework
 - **Prisma**: Database ORM (TypeScript)
@@ -102,31 +107,35 @@ export default async function handler(
 
 ```typescript
 // FFmpeg.wasm for browser-side video processing
-import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 
 const ffmpeg = createFFmpeg({ log: true });
 
 async function trimVideo(
   videoFile: File,
   startTime: number,
-  endTime: number
+  endTime: number,
 ): Promise<Blob> {
   await ffmpeg.load();
-  ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(videoFile));
+  ffmpeg.FS("writeFile", "input.mp4", await fetchFile(videoFile));
 
   await ffmpeg.run(
-    '-i', 'input.mp4',
-    '-ss', startTime.toString(),
-    '-to', endTime.toString(),
-    'output.mp4'
+    "-i",
+    "input.mp4",
+    "-ss",
+    startTime.toString(),
+    "-to",
+    endTime.toString(),
+    "output.mp4",
   );
 
-  const data = ffmpeg.FS('readFile', 'output.mp4');
-  return new Blob([data.buffer], { type: 'video/mp4' });
+  const data = ffmpeg.FS("readFile", "output.mp4");
+  return new Blob([data.buffer], { type: "video/mp4" });
 }
 ```
 
 **Technologies**:
+
 - **FFmpeg.wasm**: WebAssembly version of FFmpeg (runs in browser)
 - All processing done in JavaScript/TypeScript
 
@@ -136,34 +145,33 @@ async function trimVideo(
 
 ```typescript
 // MediaPipe pose detection (runs in browser!)
-import { Pose } from '@mediapipe/pose';
-import { drawConnections, drawLandmarks } from '@mediapipe/drawing_utils';
+import { Pose } from "@mediapipe/pose";
+import { drawConnections, drawLandmarks } from "@mediapipe/drawing_utils";
 
 const pose = new Pose({
-  locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
+  locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
 });
 
 pose.setOptions({
   modelComplexity: 1,
   smoothLandmarks: true,
   minDetectionConfidence: 0.5,
-  minTrackingConfidence: 0.5
+  minTrackingConfidence: 0.5,
 });
 
 pose.onResults((results) => {
   if (results.poseLandmarks) {
     // Draw pose on canvas
-    drawConnections(
-      canvasCtx,
-      results.poseLandmarks,
-      POSE_CONNECTIONS,
-      { color: '#00FF00', lineWidth: 2 }
-    );
+    drawConnections(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, {
+      color: "#00FF00",
+      lineWidth: 2,
+    });
   }
 });
 ```
 
 **Technologies**:
+
 - **MediaPipe**: Google's AI library (JavaScript/TypeScript)
 - **TensorFlow.js**: Machine learning (JavaScript/TypeScript)
 - **OpenCV.js**: Computer vision (JavaScript/TypeScript)
@@ -195,6 +203,7 @@ const videos = await prisma.video.findMany({
 ```
 
 **Technologies**:
+
 - **PostgreSQL**: Database (SQL)
 - **Prisma**: ORM (TypeScript) - you write TypeScript, Prisma handles SQL
 
@@ -205,6 +214,7 @@ const videos = await prisma.video.findMany({
 ### Optional: Python (Only for Advanced Features)
 
 **When is Python used?**
+
 - ❌ **NOT needed** for MVP or most features
 - ✅ **Only** for advanced video upscaling (Real-ESRGAN)
 - ✅ **Optional** server-side AI processing
@@ -232,6 +242,7 @@ async def upscale_video(file: UploadFile):
 ```
 
 **Technologies**:
+
 - **FastAPI**: Python web framework (only for upscaling service)
 - **Real-ESRGAN**: Python AI model (only for upscaling)
 
@@ -242,6 +253,7 @@ async def upscale_video(file: UploadFile):
 ## 📦 Complete Stack Breakdown
 
 ### Frontend (100% TypeScript)
+
 ```
 ✅ Next.js        - TypeScript
 ✅ React          - TypeScript
@@ -255,6 +267,7 @@ async def upscale_video(file: UploadFile):
 ```
 
 ### Backend (100% TypeScript)
+
 ```
 ✅ Node.js        - JavaScript runtime
 ✅ Next.js API    - TypeScript
@@ -264,6 +277,7 @@ async def upscale_video(file: UploadFile):
 ```
 
 ### Optional Services (Python - Can Skip!)
+
 ```
 ❌ FastAPI        - Python (only for upscaling)
 ❌ Real-ESRGAN    - Python (only for upscaling)
@@ -274,6 +288,7 @@ async def upscale_video(file: UploadFile):
 ## 🎯 What You Need to Know
 
 ### For MVP (Phase 1)
+
 **Only JavaScript/TypeScript!**
 
 ```typescript
@@ -288,6 +303,7 @@ async def upscale_video(file: UploadFile):
 ```
 
 ### For Full Platform (Phase 4)
+
 **Still mostly TypeScript, Python only for optional features**
 
 ```typescript
@@ -302,9 +318,11 @@ async def upscale_video(file: UploadFile):
 ## 💻 Learning Path
 
 ### If You Know JavaScript
+
 **You're 90% there!**
 
 TypeScript is just JavaScript with types:
+
 ```typescript
 // JavaScript
 function greet(name) {
@@ -318,18 +336,22 @@ function greet(name: string): string {
 ```
 
 ### If You Know Another Language
+
 **TypeScript is easy to learn**
 
 **If you know:**
+
 - Python → TypeScript syntax similar
 - Java/C# → TypeScript has types like you're used to
 - C++ → TypeScript is simpler
 - Ruby → TypeScript is similar but typed
 
 ### If You're New to Programming
+
 **Start with JavaScript, then add TypeScript**
 
 **Learning path**:
+
 1. Learn JavaScript basics (1-2 weeks)
 2. Learn React (2-3 weeks)
 3. Learn TypeScript (1 week - just add types!)
@@ -340,17 +362,20 @@ function greet(name: string): string {
 ## 📚 Required Skills
 
 ### Must Know
+
 - ✅ **JavaScript** (or TypeScript) - Core language
 - ✅ **React** - UI framework
 - ✅ **HTML/CSS** - Styling
 
 ### Should Know
+
 - ✅ **TypeScript** - Adds type safety
 - ✅ **Node.js** - Backend runtime
 - ✅ **SQL** - Database (basic queries)
 - ✅ **Git** - Version control
 
 ### Nice to Have (Not Required)
+
 - ⚠️ **Python** - Only if you want server-side upscaling
 - ⚠️ **WebAssembly** - FFmpeg.wasm uses it, but you don't need to learn it
 - ⚠️ **Docker** - Only if self-hosting
@@ -375,7 +400,9 @@ npm install
 ```
 
 ### Code Editor
+
 **VS Code** (free) with TypeScript support built-in
+
 - Automatic type checking
 - Autocomplete
 - Error detection
@@ -390,10 +417,10 @@ npm install
 // 1. Upload video (TypeScript)
 async function uploadVideo(file: File): Promise<string> {
   const formData = new FormData();
-  formData.append('video', file);
+  formData.append("video", file);
 
-  const response = await fetch('/api/videos/upload', {
-    method: 'POST',
+  const response = await fetch("/api/videos/upload", {
+    method: "POST",
     body: formData,
   });
 
@@ -402,13 +429,13 @@ async function uploadVideo(file: File): Promise<string> {
 }
 
 // 2. Process video in browser (TypeScript)
-import { createFFmpeg } from '@ffmpeg/ffmpeg';
+import { createFFmpeg } from "@ffmpeg/ffmpeg";
 
 const ffmpeg = createFFmpeg();
 await ffmpeg.load();
 
 // 3. Detect poses in browser (TypeScript)
-import { Pose } from '@mediapipe/pose';
+import { Pose } from "@mediapipe/pose";
 
 const pose = new Pose();
 pose.onResults((results) => {
@@ -418,17 +445,19 @@ pose.onResults((results) => {
 });
 
 // 4. Draw on canvas (TypeScript)
-import { fabric } from 'fabric';
+import { fabric } from "fabric";
 
-const canvas = new fabric.Canvas('canvas');
-canvas.add(new fabric.Line([x1, y1, x2, y2], {
-  stroke: 'red',
-  strokeWidth: 2
-}));
+const canvas = new fabric.Canvas("canvas");
+canvas.add(
+  new fabric.Line([x1, y1, x2, y2], {
+    stroke: "red",
+    strokeWidth: 2,
+  }),
+);
 
 // 5. Save to database (TypeScript)
-const response = await fetch('/api/annotations', {
-  method: 'POST',
+const response = await fetch("/api/annotations", {
+  method: "POST",
   body: JSON.stringify({ videoId, annotations: canvas.toJSON() }),
 });
 ```
@@ -440,24 +469,31 @@ const response = await fetch('/api/annotations', {
 ## ❓ Frequently Asked Questions
 
 ### Q: Do I need to know Python?
+
 **A: No!** Python is only needed for optional video upscaling. You can skip it entirely.
 
 ### Q: Can I use plain JavaScript instead of TypeScript?
+
 **A: Yes!** TypeScript is just JavaScript with types. You can use plain JavaScript, but TypeScript is recommended for:
+
 - Better error detection
 - Better IDE autocomplete
 - Easier refactoring
 
 ### Q: Do I need to know SQL?
+
 **A: Basic knowledge helps**, but Prisma ORM handles most SQL for you. You write TypeScript, Prisma generates SQL.
 
 ### Q: Is everything really JavaScript/TypeScript?
+
 **A: Yes!** 95% of the code is TypeScript/JavaScript. Only optional Python service for upscaling, and SQL database (but managed via TypeScript).
 
 ### Q: How hard is it to learn TypeScript if I know JavaScript?
+
 **A: Very easy!** TypeScript is JavaScript with types. If you know JavaScript, learning TypeScript takes about 1 week.
 
 ### Q: What about WebAssembly?
+
 **A: You don't need to learn it!** FFmpeg.wasm is already compiled to WebAssembly. You use it from JavaScript like any other library.
 
 ---
@@ -465,18 +501,22 @@ const response = await fetch('/api/annotations', {
 ## 📖 Learning Resources
 
 ### JavaScript Basics
+
 - **MDN JavaScript Guide**: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide
 - **JavaScript.info**: https://javascript.info/
 
 ### TypeScript
+
 - **TypeScript Handbook**: https://www.typescriptlang.org/docs/handbook/intro.html
 - **TypeScript in 5 minutes**: https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html
 
 ### React/Next.js
+
 - **Next.js Learn**: https://nextjs.org/learn
 - **React Docs**: https://react.dev/
 
 ### MediaPipe (AI)
+
 - **MediaPipe Web**: https://google.github.io/mediapipe/solutions/pose.html
 - **TensorFlow.js**: https://www.tensorflow.org/js
 
@@ -485,12 +525,14 @@ const response = await fetch('/api/annotations', {
 ## ✅ Bottom Line
 
 ### Languages You'll Use:
+
 1. **TypeScript/JavaScript** - 95% of code
 2. **SQL** - Basic knowledge (database, managed via Prisma)
 3. **CSS** - Styling
 4. **Python** - Only if you want optional video upscaling (can skip!)
 
 ### Recommended Path:
+
 1. Learn JavaScript (1-2 weeks)
 2. Learn TypeScript basics (1 week - just add types!)
 3. Learn React/Next.js (2-3 weeks)
@@ -500,4 +542,4 @@ const response = await fetch('/api/annotations', {
 
 ---
 
-*Last Updated: Focused on JavaScript/TypeScript as primary language*
+_Last Updated: Focused on JavaScript/TypeScript as primary language_

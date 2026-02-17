@@ -12,13 +12,14 @@
 
 The repository has successfully established three cross-platform shared systems:
 
-| Layer | Python (PyQt6) | TypeScript (React) | Source of Truth |
-|-------|----------------|-------------------|-----------------|
-| **Theme System** | `src/shared/python/theme/` | `src/shared/typescript/theme/` | `src/shared/theme-definitions/themes.json` |
-| **Plot Engine** | `src/shared/python/plot_engine/` | (via PlotlyConverter JSON) | `plot_engine/specs.py` (Pydantic) |
-| **Core Libraries** | `src/shared/python/upstream_drift_tools/` | N/A | Python package |
+| Layer              | Python (PyQt6)                            | TypeScript (React)             | Source of Truth                            |
+| ------------------ | ----------------------------------------- | ------------------------------ | ------------------------------------------ |
+| **Theme System**   | `src/shared/python/theme/`                | `src/shared/typescript/theme/` | `src/shared/theme-definitions/themes.json` |
+| **Plot Engine**    | `src/shared/python/plot_engine/`          | (via PlotlyConverter JSON)     | `plot_engine/specs.py` (Pydantic)          |
+| **Core Libraries** | `src/shared/python/upstream_drift_tools/` | N/A                            | Python package                             |
 
 **Architecture pattern** (already proven):
+
 ```
 themes.json (canonical)
     ├── Python: ThemeManager → QSS stylesheets → PyQt6 windows
@@ -75,6 +76,7 @@ This is a solid "write specs once, render anywhere" pattern. The `PlotSpec` Pyda
 Two directory layout patterns exist in the codebase:
 
 **Pattern A: Canonical dual-platform** (used by newer tools)
+
 ```
 src/tool_name/
   gui_registration.py      # Metadata for launcher
@@ -94,6 +96,7 @@ src/tool_name/
 ```
 
 **Pattern B: Core-separated** (used by glass_bath_fea, some shared modules)
+
 ```
 src/tool_name/
   core/                    # UI-agnostic logic
@@ -124,22 +127,28 @@ src/tool_name/
 ## 3. Gaps and Issues
 
 ### 3.1 No Shared React Component Library
+
 The Python side has `PlotWidget`, `ThemeManager`, `ThemedWindowMixin` as reusable components. The React side has no equivalent component library — each web tool rebuilds its own `<App>`, layout scaffolding, and theme wiring. There should be a `src/shared/typescript/components/` with:
+
 - `<ThemedApp>` wrapper (applies theme, provides context)
 - `<PlotlyPlot>` wrapper (consumes PlotSpec JSON, auto-themes)
 - `<CalculatorLayout>` (common input panel + results panel pattern)
 - Form primitives styled with theme CSS variables
 
 ### 3.2 No Shared Python Calculation Extraction for Dual-Platform Tools
+
 Most of the 14 dual-platform tools have their calculation logic embedded in `main_window.py` (PyQt6) and **duplicated** in the React `.tsx` component or not implemented at all. The `upstream_drift_tools` package was started (calculators, thermo) but most tools haven't extracted their core logic there.
 
 ### 3.3 Inconsistent Directory Structure
+
 Some tools use `python/tool_name/ui/pyqt6/main_window.py` (Pattern A), while others use `core/` + `ui/pyqt6/` (Pattern B), and some have logic directly at the top level. This makes automation harder.
 
 ### 3.4 No API Layer for Web Tools
+
 The web tools are pure client-side React (Vite). For tools with complex calculations (FEA, signal processing), there's no shared FastAPI/backend pattern to leverage Python computation from the React frontend. The architecture plan mentions this (`Phase 3.3: The Headless API Wrapper`) but it hasn't been built.
 
 ### 3.5 PlotlyConverter Not Used by Web Tools
+
 The `PlotlyConverter` exists in `shared/python/plot_engine/` but the web tools don't consume it. The React components build Plotly traces directly in TypeScript. The converter should be used via API or code generation to maintain DRY.
 
 ---
@@ -178,25 +187,16 @@ src/tool_name/
 #### Priority order for core extraction:
 
 **Tier 1 — Low effort, high value** (already partially separated or simple calculators):
+
 1. `flow_rate_converter` — pure math, trivial extraction
 2. `syngas_water_calculator` — pure calculation
 3. `inertia_calculator` — pure math
 4. `ode_solver` — solver logic extractable
 5. `glass_bath_fea` — already has `core/` directory
 
-**Tier 2 — Medium effort** (logic mixed with UI but identifiable):
-6. `multi_param_analysis` — plotting + analysis logic
-7. `psa_package` — calculation engine
-8. `thermal_profile_predictor` — prediction models
-9. `signal_processing_studio` — signal toolkit already in shared
+**Tier 2 — Medium effort** (logic mixed with UI but identifiable): 6. `multi_param_analysis` — plotting + analysis logic 7. `psa_package` — calculation engine 8. `thermal_profile_predictor` — prediction models 9. `signal_processing_studio` — signal toolkit already in shared
 
-**Tier 3 — High effort** (deeply coupled or 3D):
-10. `c3d_viewer` — 3D rendering intertwined
-11. `document_processing` — file I/O heavy
-12. `humanoid_builder_gui` — mesh generation (partially in shared already)
-13. `optimizer_gui` — optimization loops
-14. `scientific_modeling` — multiple sub-projects, 3D
-15. `urdf_builder_gui` — 3D/URDF generation (partially in shared)
+**Tier 3 — High effort** (deeply coupled or 3D): 10. `c3d_viewer` — 3D rendering intertwined 11. `document_processing` — file I/O heavy 12. `humanoid_builder_gui` — mesh generation (partially in shared already) 13. `optimizer_gui` — optimization loops 14. `scientific_modeling` — multiple sub-projects, 3D 15. `urdf_builder_gui` — 3D/URDF generation (partially in shared)
 
 ### Phase 2: Shared React Component Library
 
@@ -218,11 +218,12 @@ src/shared/typescript/
 ```
 
 Each new web tool becomes ~50 lines of glue code:
+
 ```tsx
-import { ThemedApp, CalculatorLayout, PlotlyPlot } from '@shared/components';
+import { ThemedApp, CalculatorLayout, PlotlyPlot } from "@shared/components";
 
 function FlareCalculator() {
-  const [results, calculate] = useCalculation('/api/flare/calculate');
+  const [results, calculate] = useCalculation("/api/flare/calculate");
   return (
     <CalculatorLayout
       inputs={<FlareInputs onSubmit={calculate} />}
@@ -246,6 +247,7 @@ src/tool_name/
 ```
 
 The web tool calls the Python API instead of reimplementing calculations in TypeScript. This is essential for:
+
 - `glass_bath_fea` (FEA solver)
 - `signal_processing_studio` (scipy signal processing)
 - `optimizer_gui` (scipy.optimize)
@@ -257,6 +259,7 @@ Simple calculators (flow rate, inertia, syngas) can stay client-side in TypeScri
 ### Phase 4: Tauri Desktop Wrappers
 
 Once a tool has a web frontend, adding Tauri is mechanical:
+
 1. Add `web/src-tauri/` with `tauri.conf.json` and `main.rs`
 2. Register in `tauri-build.yml` matrix
 3. Optional: Tauri commands for file system access
@@ -285,15 +288,15 @@ Phase 4: Tauri wrappers for selected tools
 
 ### Estimated Scope
 
-| Phase | Tools Affected | New Files | Key Deliverable |
-|-------|---------------|-----------|-----------------|
-| 1A | 5 | ~15 core modules | `core/` packages for simple tools |
-| 1B | 4 | ~12 core modules | `core/` packages for medium tools |
-| 2 | All web tools | ~8 shared components | `shared/typescript/components/` |
-| 1C | 5 | ~25 (web scaffolding) | React UIs for Tier 1 tools |
-| 3 | 5 | ~10 API routers | FastAPI wrappers for heavy computation |
-| 1D | 5 | ~20 core + web | Full dual-platform for remaining tools |
-| 4 | Select 3-5 | ~15 (Tauri configs) | Desktop builds |
+| Phase | Tools Affected | New Files             | Key Deliverable                        |
+| ----- | -------------- | --------------------- | -------------------------------------- |
+| 1A    | 5              | ~15 core modules      | `core/` packages for simple tools      |
+| 1B    | 4              | ~12 core modules      | `core/` packages for medium tools      |
+| 2     | All web tools  | ~8 shared components  | `shared/typescript/components/`        |
+| 1C    | 5              | ~25 (web scaffolding) | React UIs for Tier 1 tools             |
+| 3     | 5              | ~10 API routers       | FastAPI wrappers for heavy computation |
+| 1D    | 5              | ~20 core + web        | Full dual-platform for remaining tools |
+| 4     | Select 3-5     | ~15 (Tauri configs)   | Desktop builds                         |
 
 ---
 
@@ -318,10 +321,10 @@ Phase 4: Tauri wrappers for selected tools
 
 ## 8. Risks and Mitigations
 
-| Risk | Mitigation |
-|------|-----------|
-| Core extraction breaks existing PyQt6 GUIs | Extract then re-import; run existing tests after each extraction |
-| React component library becomes too opinionated | Keep primitives generic, allow per-tool customization |
-| API layer adds deployment complexity | Make it optional; simple calculators stay client-side |
-| 3D tools (URDF, C3D, solar system) don't translate to web | Use Three.js/WebGL for web 3D; accept some divergence |
-| Shared TypeScript package import paths | Use TypeScript path aliases (`@shared/*`) in each web tool's tsconfig |
+| Risk                                                      | Mitigation                                                            |
+| --------------------------------------------------------- | --------------------------------------------------------------------- |
+| Core extraction breaks existing PyQt6 GUIs                | Extract then re-import; run existing tests after each extraction      |
+| React component library becomes too opinionated           | Keep primitives generic, allow per-tool customization                 |
+| API layer adds deployment complexity                      | Make it optional; simple calculators stay client-side                 |
+| 3D tools (URDF, C3D, solar system) don't translate to web | Use Three.js/WebGL for web 3D; accept some divergence                 |
+| Shared TypeScript package import paths                    | Use TypeScript path aliases (`@shared/*`) in each web tool's tsconfig |

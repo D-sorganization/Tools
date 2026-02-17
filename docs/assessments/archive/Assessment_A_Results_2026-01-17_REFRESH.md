@@ -1,4 +1,5 @@
 # Assessment A Results: Architecture & Implementation
+
 **Assessment Date:** 2026-01-17
 **Assessor:** Claude Sonnet 4.5 (Automated Review)
 **Repository:** Tools Monorepo v1.x
@@ -35,15 +36,15 @@
 
 ## Scorecard
 
-| Category                    | Score | Evidence & Remediation                                                                                                                                                                                      |
-| --------------------------- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Category                    | Score | Evidence & Remediation                                                                                                                                                                                          |
+| --------------------------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Implementation Completeness | 7/10  | **Evidence**: 10/10 tools listed in `tools.json` have valid entry points. **Issue**: Path validation missing, MATLAB tools untestable without system install. **Fix**: Add path validation on launcher startup. |
-| Architecture Consistency    | 8/10  | **Evidence**: Clean category-based structure, consistent use of `tools.json` for discovery. **Issue**: Multiple launcher patterns create inconsistency. **Fix**: Deprecate redundant launchers formally.          |
-| Performance Optimization    | 7/10  | **Evidence**: PyQt6 launcher responsive on launch. **Issue**: No lazy loading of tool metadata, all tools parsed upfront. **Fix**: Implement deferred loading for large tool lists.                                |
-| Error Handling              | 6/10  | **Evidence**: Launcher has try/except around plugin loading. **Issue**: Subprocess launches provide minimal error feedback. **Fix**: Capture stderr/stdout from launched tools and display in launcher UI.         |
+| Architecture Consistency    | 8/10  | **Evidence**: Clean category-based structure, consistent use of `tools.json` for discovery. **Issue**: Multiple launcher patterns create inconsistency. **Fix**: Deprecate redundant launchers formally.        |
+| Performance Optimization    | 7/10  | **Evidence**: PyQt6 launcher responsive on launch. **Issue**: No lazy loading of tool metadata, all tools parsed upfront. **Fix**: Implement deferred loading for large tool lists.                             |
+| Error Handling              | 6/10  | **Evidence**: Launcher has try/except around plugin loading. **Issue**: Subprocess launches provide minimal error feedback. **Fix**: Capture stderr/stdout from launched tools and display in launcher UI.      |
 | Type Safety                 | 8/10  | **Evidence**: Comprehensive type hints in `UnifiedToolsLauncher.py` (e.g., `Callable`, `Any`, `Path`). **Issue**: Mypy runs with `--ignore-missing-imports` in CI. **Fix**: Add stub files for missing types.   |
-| Testing Coverage            | 5/10  | **Evidence**: 55 test files exist across repository. **Issue**: No integration tests for launcher tool discovery. **Fix**: Add `test_unified_launcher.py` with mock tool definitions.                              |
-| Launcher Integration        | 8/10  | **Evidence**: All 10 tools from `tools.json` display correctly in launcher tabs. **Issue**: No runtime validation of tool paths. **Fix**: Add "Test Launch" feature in UI before actual launch.                     |
+| Testing Coverage            | 5/10  | **Evidence**: 55 test files exist across repository. **Issue**: No integration tests for launcher tool discovery. **Fix**: Add `test_unified_launcher.py` with mock tool definitions.                           |
+| Launcher Integration        | 8/10  | **Evidence**: All 10 tools from `tools.json` display correctly in launcher tabs. **Issue**: No runtime validation of tool paths. **Fix**: Add "Test Launch" feature in UI before actual launch.                 |
 
 **Weighted Score**: (7×2 + 8×2 + 7×1.5 + 6×1 + 8×1 + 5×1 + 8×1) / 10.5 = **7.2/10**
 
@@ -60,24 +61,25 @@
 
 ## Findings Table
 
-| ID    | Severity | Category        | Location                         | Symptom                              | Root Cause                  | Fix                                          | Effort |
-| ----- | -------- | --------------- | -------------------------------- | ------------------------------------ | --------------------------- | -------------------------------------------- | ------ |
-| A-001 | MAJOR    | Architecture    | Root directory                   | 3 launcher files exist               | Incremental dev without deprecation | Document deprecation policy in README        | S      |
-| A-002 | MAJOR    | Implementation  | `tools.json`                     | No path validation                   | Trust in manual JSON editing | Add schema validation + path check on load  | M      |
-| A-003 | MAJOR    | Path Management | `launch_tools_main.py:28-39`     | Manual sys.path appending            | No centralized path config  | Create `config/python_paths.json`           | M      |
-| A-004 | MAJOR    | Dependencies    | `tools.json` MATLAB entries      | Hard MATLAB dependency               | No alternative impl         | Add "requires" field to tool schema          | S      |
-| A-005 | MINOR    | Launcher        | `UnifiedToolsLauncher.py:268`    | Browser launch may fail silently     | No error handling           | Wrap `webbrowser.open()` in try/except      | S      |
-| A-006 | MINOR    | Path Cleanup    | `launch_tools_main.py:36`        | Reference to `/replicants/` missing  | Incomplete refactor         | Remove dead path reference                   | S      |
-| A-007 | MINOR    | Assets          | Multiple tool directories        | Scattered icon files                 | No asset management         | Create `assets/icons/` central directory     | M      |
-| A-008 | MINOR    | Error UX        | `UnifiedToolsLauncher.py:260`    | Subprocess errors not captured       | Fire-and-forget launch      | Capture output, show in debug panel          | M      |
-| A-009 | MINOR    | Security        | `UnifiedToolsLauncher.py:253`    | No path sanitization before exec     | Trusting tools.json         | Validate paths are within REPO_ROOT          | S      |
-| A-010 | MINOR    | Cross-Platform  | `tools/folder_tools/folder_tool` | `.bat` files on Linux repo           | Windows dev contributions   | Create shell script equivalents              | S      |
+| ID    | Severity | Category        | Location                         | Symptom                             | Root Cause                          | Fix                                        | Effort |
+| ----- | -------- | --------------- | -------------------------------- | ----------------------------------- | ----------------------------------- | ------------------------------------------ | ------ |
+| A-001 | MAJOR    | Architecture    | Root directory                   | 3 launcher files exist              | Incremental dev without deprecation | Document deprecation policy in README      | S      |
+| A-002 | MAJOR    | Implementation  | `tools.json`                     | No path validation                  | Trust in manual JSON editing        | Add schema validation + path check on load | M      |
+| A-003 | MAJOR    | Path Management | `launch_tools_main.py:28-39`     | Manual sys.path appending           | No centralized path config          | Create `config/python_paths.json`          | M      |
+| A-004 | MAJOR    | Dependencies    | `tools.json` MATLAB entries      | Hard MATLAB dependency              | No alternative impl                 | Add "requires" field to tool schema        | S      |
+| A-005 | MINOR    | Launcher        | `UnifiedToolsLauncher.py:268`    | Browser launch may fail silently    | No error handling                   | Wrap `webbrowser.open()` in try/except     | S      |
+| A-006 | MINOR    | Path Cleanup    | `launch_tools_main.py:36`        | Reference to `/replicants/` missing | Incomplete refactor                 | Remove dead path reference                 | S      |
+| A-007 | MINOR    | Assets          | Multiple tool directories        | Scattered icon files                | No asset management                 | Create `assets/icons/` central directory   | M      |
+| A-008 | MINOR    | Error UX        | `UnifiedToolsLauncher.py:260`    | Subprocess errors not captured      | Fire-and-forget launch              | Capture output, show in debug panel        | M      |
+| A-009 | MINOR    | Security        | `UnifiedToolsLauncher.py:253`    | No path sanitization before exec    | Trusting tools.json                 | Validate paths are within REPO_ROOT        | S      |
+| A-010 | MINOR    | Cross-Platform  | `tools/folder_tools/folder_tool` | `.bat` files on Linux repo          | Windows dev contributions           | Create shell script equivalents            | S      |
 
 ## Critical Path Analysis
 
 ### Path 1: Launch Tool via UnifiedToolsLauncher
 
 **Expected Flow:**
+
 ```python
 UnifiedToolsLauncher.main()
   → PluginManager.load_tools() from tools.json
@@ -96,6 +98,7 @@ UnifiedToolsLauncher.main()
 ❌ **FAIL**: No error feedback if tool path invalid (silently does nothing)
 
 **Failure Points:**
+
 1. Line 253: `subprocess.Popen([interpreter, tool_path])` - no stderr capture
 2. Line 268: `webbrowser.open(file_url)` - no exception handling
 3. No pre-launch validation that `tool_path` exists
@@ -103,6 +106,7 @@ UnifiedToolsLauncher.main()
 ### Path 2: Launch Tool via launch_tools_main.py
 
 **Expected Flow:**
+
 ```python
 launch_tools_main.py
   → setup_python_path() adds 7 paths to sys.path
@@ -118,6 +122,7 @@ launch_tools_main.py
 **UNTESTED**: Cannot verify tile launcher without running (requires display)
 
 **Error Handling Gaps:**
+
 - Line 37: Adds path to `replicants/` which doesn't exist (no exception raised)
 - Line 82: `install_missing_packages()` uses subprocess.run but may fail silently
 - Line 124: Creates `constants.py` file in archive directory - should use proper config management
@@ -131,8 +136,10 @@ launch_tools_main.py
 ### Phase 1: Critical Fixes (48 Hours)
 
 **A-001**: Document Launcher Hierarchy
+
 ```markdown
 # In README.md, add section:
+
 ## Launching Tools
 
 **Primary Launcher (Recommended)**: `python UnifiedToolsLauncher.py`
@@ -141,6 +148,7 @@ launch_tools_main.py
 ```
 
 **A-002**: Add Path Validation
+
 ```python
 # In PluginManager.load_tools()
 for category, tools in raw_tools.items():
@@ -152,22 +160,25 @@ for category, tools in raw_tools.items():
 ```
 
 **A-004**: Document MATLAB Requirement
+
 ```markdown
 # In tools.json schema, add:
+
 {
-    "name": "Audio Processor",
-    "path": "...",
-    "type": "matlab",
-    "requires": {
-        "system": ["matlab >= R2020a"],
-        "env": ["MATLAB_PATH"]
-    }
+"name": "Audio Processor",
+"path": "...",
+"type": "matlab",
+"requires": {
+"system": ["matlab >= R2020a"],
+"env": ["MATLAB_PATH"]
+}
 }
 ```
 
 ### Phase 2: Major Improvements (2 Weeks)
 
 **A-003**: Centralize Path Management
+
 ```python
 # Create config/python_paths.json
 {
@@ -190,6 +201,7 @@ for rel_path in paths_config["core_paths"]:
 ```
 
 **A-007**: Centralize Asset Management
+
 ```bash
 # Create assets/icons/ and move all tool icons
 mkdir -p assets/icons
@@ -201,6 +213,7 @@ mv tools/*//*.png assets/icons/
 ```
 
 **A-008**: Capture Tool Output
+
 ```python
 # In UnifiedToolsLauncher._launch_python_tool()
 def _launch_python_tool(self, tool_path: str) -> None:
@@ -225,36 +238,38 @@ def _launch_python_tool(self, tool_path: str) -> None:
 ### Phase 3: Full Architectural Alignment (6 Weeks)
 
 **Plugin Versioning System:**
+
 ```json
 // tools.json v2.0 schema
 {
-    "$schema": "config/tool_schema_v2.json",
-    "version": "2.0",
-    "tools": [
-        {
-            "id": "data-processor-integrated",
-            "name": "Data Processor Integrated",
-            "category": "Data Processing",
-            "entry_point": "data_processing/data_processor/python/data_processor/launch_integrated.py",
-            "type": "python",
-            "version": "1.2.0",
-            "requires": {
-                "python": ">=3.11",
-                "packages": ["pandas", "numpy", "matplotlib"]
-            },
-            "metadata": {
-                "description": "Time Series CSV/Parquet Analyzer",
-                "author": "Tools Team",
-                "icon": "assets/icons/data_processor.png",
-                "tags": ["data", "analysis", "csv", "parquet"]
-            }
-        }
-    ]
+  "$schema": "config/tool_schema_v2.json",
+  "version": "2.0",
+  "tools": [
+    {
+      "id": "data-processor-integrated",
+      "name": "Data Processor Integrated",
+      "category": "Data Processing",
+      "entry_point": "data_processing/data_processor/python/data_processor/launch_integrated.py",
+      "type": "python",
+      "version": "1.2.0",
+      "requires": {
+        "python": ">=3.11",
+        "packages": ["pandas", "numpy", "matplotlib"]
+      },
+      "metadata": {
+        "description": "Time Series CSV/Parquet Analyzer",
+        "author": "Tools Team",
+        "icon": "assets/icons/data_processor.png",
+        "tags": ["data", "analysis", "csv", "parquet"]
+      }
+    }
+  ]
 }
 ```
 
 **Automated Tool Discovery:**
 Replace manual `tools.json` editing with auto-discovery via tool manifest files:
+
 ```python
 # Each tool directory gets a tool.toml:
 [tool]
@@ -471,19 +486,20 @@ if not self.validate_path_security(t["path"]):
 
 ### Complete Tool List (from tools.json)
 
-| Category            | Tool Name                   | Entry Point                                                                         | Type    | Status        |
-| ------------------- | --------------------------- | ----------------------------------------------------------------------------------- | ------- | ------------- |
-| Media Processing    | Audio Processor (Main)      | `media_processing/audio_processor/matlab/audio_signal_processor/launch_audio_processor_pro.m` | MATLAB  | Requires MATLAB |
-| Media Processing    | Video Processor Platform    | `media_processing/video_processor/apps/web/launch_platform.py`                     | Python  | ✅ Functional |
-| Data Processing     | Data Processor Integrated   | `data_processing/data_processor/python/data_processor/launch_integrated.py`        | Python  | ✅ Functional |
-| Scientific Modeling | Solar System Model          | `scientific_modeling/solar_system_model/launch_solar_system.py`                    | Python  | ✅ Functional |
-| Scientific Modeling | RRT Path Planner            | `scientific_modeling/rrt_path_planner/matlab/src/gui/starWarsPathPlannerGUI.m`     | MATLAB  | Requires MATLAB |
-| Web Applications    | Calculator App              | `web_applications/calculator/webapp.py`                                             | Python  | ✅ Functional |
-| Web Applications    | Unit Converter              | `web_applications/unit_converter/unit-converter-app/index.html`                    | Browser | ✅ Functional |
-| Development Tools   | Folder Packer Pro           | `tools/folder_tools/folder_packer_pro/folder_packer_pro.py`                         | Python  | ✅ Functional |
-| Development Tools   | Folder Tool (Utility)       | `tools/folder_tools/folder_tool/Folders_Tool_r0.py`                                 | Python  | ✅ Functional |
+| Category            | Tool Name                 | Entry Point                                                                                   | Type    | Status          |
+| ------------------- | ------------------------- | --------------------------------------------------------------------------------------------- | ------- | --------------- |
+| Media Processing    | Audio Processor (Main)    | `media_processing/audio_processor/matlab/audio_signal_processor/launch_audio_processor_pro.m` | MATLAB  | Requires MATLAB |
+| Media Processing    | Video Processor Platform  | `media_processing/video_processor/apps/web/launch_platform.py`                                | Python  | ✅ Functional   |
+| Data Processing     | Data Processor Integrated | `data_processing/data_processor/python/data_processor/launch_integrated.py`                   | Python  | ✅ Functional   |
+| Scientific Modeling | Solar System Model        | `scientific_modeling/solar_system_model/launch_solar_system.py`                               | Python  | ✅ Functional   |
+| Scientific Modeling | RRT Path Planner          | `scientific_modeling/rrt_path_planner/matlab/src/gui/starWarsPathPlannerGUI.m`                | MATLAB  | Requires MATLAB |
+| Web Applications    | Calculator App            | `web_applications/calculator/webapp.py`                                                       | Python  | ✅ Functional   |
+| Web Applications    | Unit Converter            | `web_applications/unit_converter/unit-converter-app/index.html`                               | Browser | ✅ Functional   |
+| Development Tools   | Folder Packer Pro         | `tools/folder_tools/folder_packer_pro/folder_packer_pro.py`                                   | Python  | ✅ Functional   |
+| Development Tools   | Folder Tool (Utility)     | `tools/folder_tools/folder_tool/Folders_Tool_r0.py`                                           | Python  | ✅ Functional   |
 
 **Summary:**
+
 - **Total Tools:** 10 (9 unique entry points)
 - **Functional:** 7/10 (70%)
 - **Requires MATLAB:** 2/10 (20%)
@@ -492,6 +508,7 @@ if not self.validate_path_security(t["path"]):
 ### Tool Organization Pattern
 
 **Consistent Structure Observed:**
+
 ```
 <category>/<tool_name>/
 ├── README.md (8/10 tools have this)
@@ -502,6 +519,7 @@ if not self.validate_path_security(t["path"]):
 ```
 
 **Outliers:**
+
 - Unit Converter uses nested `unit-converter-app/index.html` structure (web convention)
 - Data Processor has complex nesting: `python/data_processor/<modules>`
 

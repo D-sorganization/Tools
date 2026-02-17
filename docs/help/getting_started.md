@@ -6,13 +6,13 @@ Welcome to the Unified Tools Launcher! This guide will help you get started with
 
 Before using the launcher, ensure you have:
 
-| Requirement | Version | Purpose |
-|-------------|---------|---------|
-| Python | 3.11+ | Core runtime |
-| PyQt6 | 6.6.0+ | GUI framework |
-| Git | Latest | Version control |
-| MATLAB | R2020a+ | MATLAB-based tools (optional) |
-| Node.js | 18+ | Web applications (optional) |
+| Requirement | Version | Purpose                       |
+| ----------- | ------- | ----------------------------- |
+| Python      | 3.11+   | Core runtime                  |
+| PyQt6       | 6.6.0+  | GUI framework                 |
+| Git         | Latest  | Version control               |
+| MATLAB      | R2020a+ | MATLAB-based tools (optional) |
+| Node.js     | 18+     | Web applications (optional)   |
 
 ## Quick Start
 
@@ -52,6 +52,7 @@ The launcher presents a tabbed interface organized by tool category:
 ### Tool Cards
 
 Each tool is displayed as a card showing:
+
 - Tool name
 - Type badge (Python, MATLAB, Web, Browser)
 - Description
@@ -61,6 +62,7 @@ Each tool is displayed as a card showing:
 ### Activity Log
 
 The bottom panel shows:
+
 - Tool launch status
 - Error messages
 - Debug output (when enabled)
@@ -71,17 +73,18 @@ Shows the repository root path for reference.
 
 ## Keyboard Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| F1 | Open User Manual |
-| Ctrl+L | Launch selected tool |
-| Ctrl+Tab | Next category tab |
+| Shortcut       | Action                |
+| -------------- | --------------------- |
+| F1             | Open User Manual      |
+| Ctrl+L         | Launch selected tool  |
+| Ctrl+Tab       | Next category tab     |
 | Ctrl+Shift+Tab | Previous category tab |
-| Ctrl+Q | Quit launcher |
+| Ctrl+Q         | Quit launcher         |
 
 ## Theme Support
 
 The launcher supports multiple color themes. Access the Theme menu to switch between:
+
 - Light and Dark themes
 - Editor themes (Monokai, Dracula, One Dark)
 - Office themes (MS Word, MS Excel)
@@ -104,6 +107,7 @@ Each tool card includes a brief description. Hover over elements for additional 
 ## Debug Mode
 
 Enable Debug Mode by checking the box in the header. This provides:
+
 - Detailed launch logging
 - Command-line arguments shown
 - Error stack traces
@@ -121,6 +125,7 @@ Enable Debug Mode by checking the box in the header. This provides:
 ### Missing Tools
 
 If tools are missing from the launcher:
+
 1. Verify `tools.json` exists in the repository root
 2. Check that tool paths are correct
 3. Ensure the plugin system found the tool manifest

@@ -144,10 +144,30 @@ class UnitAwareInput(QWidget):
         finally:
             self._updating = False
 
+    def set_range(self, min_value: float, max_value: float) -> None:
+        """Set the allowed range for input."""
+        self._value_input.setRange(min_value, max_value)
+
+    def set_decimals(self, decimals: int) -> None:
+        """Set number of displayed decimals."""
+        self._decimals = decimals
+        self._value_input.setDecimals(decimals)
+
+    def set_readonly(self, readonly: bool) -> None:
+        """Set widget to read-only mode."""
+        self._value_input.setReadOnly(readonly)
+        self._unit_combo.setEnabled(not readonly)
+
+    def value(self) -> float:
+        """Get current value in display units."""
+        return self._value_input.value()
+
     def value_si(self) -> float:
+        """Get current value in SI units."""
         return self._si_value
 
     def set_unit(self, unit: str) -> None:
+        """Set current unit."""
         if unit != self._current_unit:
             self._unit_combo.setCurrentText(unit)
 

@@ -54,6 +54,7 @@ python UnifiedToolsLauncher.py
 ```
 
 This opens a GUI with all available tools organized by category:
+
 - **Media Processing**: Audio/Video tools
 - **Data Processing**: CSV/Parquet analyzers
 - **Scientific Modeling**: Solar system simulations, path planners
@@ -106,6 +107,7 @@ mypy . --config-file mypy.ini
 ### Python Version Issues
 
 If you see `ImportError: cannot import name 'StrEnum'`:
+
 - Upgrade to Python 3.10+ (compatibility shims included for 3.10)
 - Or use Python 3.12 for best compatibility
 

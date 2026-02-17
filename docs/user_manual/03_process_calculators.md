@@ -23,18 +23,19 @@ Predicts dewpoint temperatures of acid gases (HF, HCl, H₂S) in syngas/water va
 $$\log_{10}(P) = A - \frac{B}{C + T}$$
 
 where:
+
 - $P$ = vapor pressure (mmHg)
 - $T$ = temperature (°C)
 - $A$, $B$, $C$ = component-specific Antoine constants
 
 **Antoine Constants (Perry's Chemical Engineers' Handbook, 8th Ed.):**
 
-| Component | $A$ | $B$ | $C$ |
-|-----------|-----|-----|-----|
-| H₂O | 8.07131 | 1730.63 | 233.426 |
-| HF | 7.158 | 1111.0 | 235.0 |
-| HCl | 7.960 | 1118.0 | 240.0 |
-| H₂S | 6.987 | 884.0 | 240.0 |
+| Component | $A$     | $B$     | $C$     |
+| --------- | ------- | ------- | ------- |
+| H₂O       | 8.07131 | 1730.63 | 233.426 |
+| HF        | 7.158   | 1111.0  | 235.0   |
+| HCl       | 7.960   | 1118.0  | 240.0   |
+| H₂S       | 6.987   | 884.0   | 240.0   |
 
 **Inverse Antoine Equation** for dewpoint calculation:
 
@@ -58,12 +59,12 @@ $$\Delta T_{margin} = T_{operating} - T_{dew,overall}$$
 
 **Condensation Risk Assessment:**
 
-| Margin ($\Delta T$) | Risk Level |
-|---------------------|------------|
-| $\Delta T < 0$ | HIGH — condensation occurring |
-| $0 \leq \Delta T < 10°\text{C}$ | MEDIUM — within 10°C of dewpoint |
-| $10 \leq \Delta T < 30°\text{C}$ | LOW — safe margin |
-| $\Delta T \geq 30°\text{C}$ | VERY LOW — large safety margin |
+| Margin ($\Delta T$)              | Risk Level                       |
+| -------------------------------- | -------------------------------- |
+| $\Delta T < 0$                   | HIGH — condensation occurring    |
+| $0 \leq \Delta T < 10°\text{C}$  | MEDIUM — within 10°C of dewpoint |
+| $10 \leq \Delta T < 30°\text{C}$ | LOW — safe margin                |
+| $\Delta T \geq 30°\text{C}$      | VERY LOW — large safety margin   |
 
 ### 3.1.3 Vapor Pressure Methods
 
@@ -78,36 +79,36 @@ The calculator supports four vapor pressure calculation methods:
 
 **Inputs:**
 
-| Parameter | Type | Units | Range |
-|-----------|------|-------|-------|
-| Temperature | float | °C | -100 to 400 |
-| Pressure | float | bar | 0.1 to 300 |
-| H₂O mole fraction | float | — | 0 to 1 |
-| HF mole fraction | float | — | 0 to 1 |
-| HCl mole fraction | float | — | 0 to 1 |
-| H₂S mole fraction | float | — | 0 to 1 |
-| Method | string | — | 'antoine', 'extended_antoine', 'thermo', 'coolprop' |
+| Parameter         | Type   | Units | Range                                               |
+| ----------------- | ------ | ----- | --------------------------------------------------- |
+| Temperature       | float  | °C    | -100 to 400                                         |
+| Pressure          | float  | bar   | 0.1 to 300                                          |
+| H₂O mole fraction | float  | —     | 0 to 1                                              |
+| HF mole fraction  | float  | —     | 0 to 1                                              |
+| HCl mole fraction | float  | —     | 0 to 1                                              |
+| H₂S mole fraction | float  | —     | 0 to 1                                              |
+| Method            | string | —     | 'antoine', 'extended_antoine', 'thermo', 'coolprop' |
 
 **Outputs (`DewpointResult`):**
 
-| Field | Type | Description |
-|-------|------|-------------|
+| Field                | Type  | Description                       |
+| -------------------- | ----- | --------------------------------- |
 | `overall_dewpoint_c` | float | Overall dewpoint temperature (°C) |
-| `limiting_component` | str | Component with highest dewpoint |
-| `dewpoint_margin_c` | float | Safety margin (°C) |
-| `condensation_risk` | str | Risk assessment string |
-| `h2o_dewpoint_c` | float | Water dewpoint (°C) |
-| `hf_dewpoint_c` | float | HF dewpoint (°C) |
-| `hcl_dewpoint_c` | float | HCl dewpoint (°C) |
-| `h2s_dewpoint_c` | float | H₂S dewpoint (°C) |
+| `limiting_component` | str   | Component with highest dewpoint   |
+| `dewpoint_margin_c`  | float | Safety margin (°C)                |
+| `condensation_risk`  | str   | Risk assessment string            |
+| `h2o_dewpoint_c`     | float | Water dewpoint (°C)               |
+| `hf_dewpoint_c`      | float | HF dewpoint (°C)                  |
+| `hcl_dewpoint_c`     | float | HCl dewpoint (°C)                 |
+| `h2s_dewpoint_c`     | float | H₂S dewpoint (°C)                 |
 
 ### 3.1.5 Predefined Compositions
 
-| Preset | H₂O | HF | HCl | H₂S |
-|--------|-----|----|-----|-----|
-| Typical Syngas | 0.15 | 0.0001 | 0.0002 | 0.001 |
-| High Acid Content | 0.20 | 0.001 | 0.002 | 0.005 |
-| Coal Gasification | 0.12 | 0.0005 | 0.001 | 0.003 |
+| Preset               | H₂O  | HF     | HCl    | H₂S   |
+| -------------------- | ---- | ------ | ------ | ----- |
+| Typical Syngas       | 0.15 | 0.0001 | 0.0002 | 0.001 |
+| High Acid Content    | 0.20 | 0.001  | 0.002  | 0.005 |
+| Coal Gasification    | 0.12 | 0.0005 | 0.001  | 0.003 |
 | Biomass Gasification | 0.18 | 0.0002 | 0.0005 | 0.002 |
 
 ### 3.1.6 Literature Sources
@@ -137,6 +138,7 @@ Calculates baghouse filter performance including solid (carbon + ash) removal ra
 $$\Delta T = \frac{Q_{loss}}{\dot{m}_{gas} \cdot C_p}$$
 
 where:
+
 - $Q_{loss}$ = heat loss rate (W)
 - $\dot{m}_{gas}$ = gas mass flow rate (kg/s)
 - $C_p$ = specific heat capacity of gas mixture (J/(kg·K))
@@ -150,13 +152,13 @@ where $C_{p,i}^{mol}$ is the molar heat capacity (J/(mol·K)) and $M_i$ is the m
 **Approximate $C_p^{mol}$ values at ~500K:**
 
 | Species | $C_p^{mol}$ (J/(mol·K)) | $M$ (kg/mol) |
-|---------|-------------------------|---------------|
-| H₂ | 29.1 | 0.002 |
-| CO | 29.2 | 0.028 |
-| CO₂ | 41.3 | 0.044 |
-| H₂O | 35.5 | 0.018 |
-| N₂ | 29.5 | 0.028 |
-| CH₄ | 44.5 | 0.016 |
+| ------- | ----------------------- | ------------ |
+| H₂      | 29.1                    | 0.002        |
+| CO      | 29.2                    | 0.028        |
+| CO₂     | 41.3                    | 0.044        |
+| H₂O     | 35.5                    | 0.018        |
+| N₂      | 29.5                    | 0.028        |
+| CH₄     | 44.5                    | 0.016        |
 
 **Volumetric Flow Rate (Ideal Gas Law):**
 
@@ -188,34 +190,34 @@ where $A_{bag}$ is the total bag filter area (ft²) and the result is in ft/min.
 
 **Inputs:**
 
-| Parameter | Units | Description |
-|-----------|-------|-------------|
-| `gas_flow_kg_s` | kg/s | Gas mass flow rate |
-| `inlet_temp_k` | K | Inlet temperature |
-| `pressure_pa` | Pa | System pressure |
-| `composition` | dict | Gas composition (mole fractions) |
-| `solid_carbon_in_kg_hr` | kg/hr | Carbon input rate |
-| `ash_in_kg_hr` | kg/hr | Ash input rate |
-| `carbon_removal_efficiency` | 0–1 | Carbon removal efficiency |
-| `ash_removal_efficiency` | 0–1 | Ash removal efficiency |
-| `heat_loss_w` | W | Heat loss rate |
-| `drum_volume_m3` | m³ | Collection drum volume |
-| `solid_density_kg_m3` | kg/m³ | Density of collected solids |
-| `bag_area_ft2` | ft² | Total bag filter area |
+| Parameter                   | Units | Description                      |
+| --------------------------- | ----- | -------------------------------- |
+| `gas_flow_kg_s`             | kg/s  | Gas mass flow rate               |
+| `inlet_temp_k`              | K     | Inlet temperature                |
+| `pressure_pa`               | Pa    | System pressure                  |
+| `composition`               | dict  | Gas composition (mole fractions) |
+| `solid_carbon_in_kg_hr`     | kg/hr | Carbon input rate                |
+| `ash_in_kg_hr`              | kg/hr | Ash input rate                   |
+| `carbon_removal_efficiency` | 0–1   | Carbon removal efficiency        |
+| `ash_removal_efficiency`    | 0–1   | Ash removal efficiency           |
+| `heat_loss_w`               | W     | Heat loss rate                   |
+| `drum_volume_m3`            | m³    | Collection drum volume           |
+| `solid_density_kg_m3`       | kg/m³ | Density of collected solids      |
+| `bag_area_ft2`              | ft²   | Total bag filter area            |
 
 **Outputs (`BaghouseResult`):**
 
-| Field | Units | Description |
-|-------|-------|-------------|
-| `carbon_removed_rate` | kg/hr | Carbon removal rate |
-| `ash_removed_rate` | kg/hr | Ash removal rate |
-| `total_solids_removed_rate` | kg/hr | Total solids removal rate |
-| `drum_fill_time_hours` | hr | Time to fill drum |
-| `drum_fill_time_days` | days | Time to fill drum |
-| `flow_acfm` | cfm | Actual cubic feet per minute |
-| `flow_scfm` | cfm | Standard cubic feet per minute |
-| `air_to_cloth_ratio` | ft/min | Air-to-cloth ratio |
-| `outlet_temperature_c` | °C | Outlet temperature |
+| Field                       | Units  | Description                    |
+| --------------------------- | ------ | ------------------------------ |
+| `carbon_removed_rate`       | kg/hr  | Carbon removal rate            |
+| `ash_removed_rate`          | kg/hr  | Ash removal rate               |
+| `total_solids_removed_rate` | kg/hr  | Total solids removal rate      |
+| `drum_fill_time_hours`      | hr     | Time to fill drum              |
+| `drum_fill_time_days`       | days   | Time to fill drum              |
+| `flow_acfm`                 | cfm    | Actual cubic feet per minute   |
+| `flow_scfm`                 | cfm    | Standard cubic feet per minute |
+| `air_to_cloth_ratio`        | ft/min | Air-to-cloth ratio             |
+| `outlet_temperature_c`      | °C     | Outlet temperature             |
 
 ---
 
@@ -262,6 +264,7 @@ where $u_{target} = 170\ \text{m/s}$ (smokeless operation).
 $$H = \sqrt{\frac{\varepsilon \cdot \dot{Q}}{4\pi \cdot I_{target}}}$$
 
 where:
+
 - $\varepsilon = 0.3$ (flame emissivity)
 - $I_{target} = 1.6\ \text{kW/m}^2$ (safe ground-level radiation)
 - Minimum height: $H_{min} = 10\ \text{m}$
@@ -270,24 +273,24 @@ where:
 
 $$D_{zone} = \sqrt{\frac{\varepsilon \cdot \dot{Q}}{4\pi \cdot I_{zone}}}$$
 
-| Zone | Radiation Level ($I_{zone}$) | Description |
-|------|------------------------------|-------------|
-| Lethal | 37.5 kW/m² | Immediate fatality risk |
-| Damage | 12.5 kW/m² | Equipment/structure damage |
-| Safe | 1.6 kW/m² | Safe for continuous access |
-| Comfort | 0.5 kW/m² | Comfortable for extended periods |
+| Zone    | Radiation Level ($I_{zone}$) | Description                      |
+| ------- | ---------------------------- | -------------------------------- |
+| Lethal  | 37.5 kW/m²                   | Immediate fatality risk          |
+| Damage  | 12.5 kW/m²                   | Equipment/structure damage       |
+| Safe    | 1.6 kW/m²                    | Safe for continuous access       |
+| Comfort | 0.5 kW/m²                    | Comfortable for extended periods |
 
 ### 3.3.3 Gas Properties Database
 
-| Gas | $M$ (g/mol) | $HV$ (kJ/kg) | $C_p$ (kJ/(kg·K)) |
-|-----|-------------|---------------|---------------------|
-| H₂ | 2.016 | 119,930 | 14.3 |
-| CO | 28.01 | 10,100 | 1.04 |
-| CH₄ | 16.04 | 50,010 | 2.22 |
-| C₂H₆ | 30.07 | 47,520 | 1.75 |
-| C₃H₈ | 44.10 | 46,360 | 1.67 |
-| C₄H₁₀ | 58.12 | 45,720 | 1.66 |
-| H₂S | 34.08 | 16,500 | 1.05 |
+| Gas   | $M$ (g/mol) | $HV$ (kJ/kg) | $C_p$ (kJ/(kg·K)) |
+| ----- | ----------- | ------------ | ----------------- |
+| H₂    | 2.016       | 119,930      | 14.3              |
+| CO    | 28.01       | 10,100       | 1.04              |
+| CH₄   | 16.04       | 50,010       | 2.22              |
+| C₂H₆  | 30.07       | 47,520       | 1.75              |
+| C₃H₈  | 44.10       | 46,360       | 1.67              |
+| C₄H₁₀ | 58.12       | 45,720       | 1.66              |
+| H₂S   | 34.08       | 16,500       | 1.05              |
 
 ---
 
@@ -369,13 +372,13 @@ where $u_{design} = u_{flood} \times (\% flood / 100)$.
 
 **Caustic (NaOH) Requirement:**
 
-| Reaction | Stoichiometry | NaOH/mol |
-|----------|---------------|----------|
-| HCl + NaOH → NaCl + H₂O | 1:1 | 1.0 |
-| SO₂ + 2NaOH → Na₂SO₃ + H₂O | 1:2 | 2.0 |
-| H₂S + 2NaOH → Na₂S + 2H₂O | 1:2 | 2.0 |
-| HF + NaOH → NaF + H₂O | 1:1 | 1.0 |
-| CO₂ + 2NaOH → Na₂CO₃ + H₂O | 1:2 | 2.0 |
+| Reaction                   | Stoichiometry | NaOH/mol |
+| -------------------------- | ------------- | -------- |
+| HCl + NaOH → NaCl + H₂O    | 1:1           | 1.0      |
+| SO₂ + 2NaOH → Na₂SO₃ + H₂O | 1:2           | 2.0      |
+| H₂S + 2NaOH → Na₂S + 2H₂O  | 1:2           | 2.0      |
+| HF + NaOH → NaF + H₂O      | 1:1           | 1.0      |
+| CO₂ + 2NaOH → Na₂CO₃ + H₂O | 1:2           | 2.0      |
 
 With 15% excess factor applied.
 
@@ -391,22 +394,22 @@ $$Q_{latent} = \dot{m}_{condensed} \cdot h_{fg}$$
 
 $$H(T) = H_{ref} \cdot \exp\left(-\frac{\Delta H_{soln}}{R} \cdot \left(\frac{1}{T} - \frac{1}{T_{ref}}\right)\right)$$
 
-| Gas | $H_{ref}$ (Pa) | $\Delta H_{soln}$ (J/mol) |
-|-----|-----------------|---------------------------|
-| HCl | $2.04 \times 10^6$ | -17,600 |
-| SO₂ | $4.39 \times 10^4$ | -26,700 |
-| H₂S | $5.68 \times 10^5$ | -19,300 |
-| HF | $1.27 \times 10^7$ | -15,200 |
-| CO₂ | $1.64 \times 10^8$ | -20,100 |
+| Gas | $H_{ref}$ (Pa)     | $\Delta H_{soln}$ (J/mol) |
+| --- | ------------------ | ------------------------- |
+| HCl | $2.04 \times 10^6$ | -17,600                   |
+| SO₂ | $4.39 \times 10^4$ | -26,700                   |
+| H₂S | $5.68 \times 10^5$ | -19,300                   |
+| HF  | $1.27 \times 10^7$ | -15,200                   |
+| CO₂ | $1.64 \times 10^8$ | -20,100                   |
 
 ### 3.4.3 Packing Database
 
-| Packing Type | Material | Size (mm) | $a_s$ (m²/m³) | $\varepsilon$ | $F_p$ (1/m) | $C_{flood}$ |
-|-------------|----------|-----------|----------------|---------------|-------------|-------------|
-| Ceramic Raschig Rings | Ceramic | 50 | 95 | 0.74 | 155 | 0.082 |
-| Metal Pall Rings | SS | 50 | 112 | 0.95 | 66 | 0.11 |
-| Plastic Cascade Rings | PP | 50 | 105 | 0.92 | 72 | 0.10 |
-| Structured 250Y | SS | — | 250 | 0.98 | 33 | 0.15 |
+| Packing Type          | Material | Size (mm) | $a_s$ (m²/m³) | $\varepsilon$ | $F_p$ (1/m) | $C_{flood}$ |
+| --------------------- | -------- | --------- | ------------- | ------------- | ----------- | ----------- |
+| Ceramic Raschig Rings | Ceramic  | 50        | 95            | 0.74          | 155         | 0.082       |
+| Metal Pall Rings      | SS       | 50        | 112           | 0.95          | 66          | 0.11        |
+| Plastic Cascade Rings | PP       | 50        | 105           | 0.92          | 72          | 0.10        |
+| Structured 250Y       | SS       | —         | 250           | 0.98          | 33          | 0.15        |
 
 ---
 
@@ -427,6 +430,7 @@ Calculates pressure drop in piping systems including straight pipe, fittings, an
 $$\Delta P = f \cdot \frac{L}{D} \cdot \frac{\rho \cdot v^2}{2}$$
 
 where:
+
 - $f$ = Darcy friction factor
 - $L$ = pipe length (m)
 - $D$ = pipe inner diameter (m)
@@ -453,14 +457,14 @@ where $K$ is the loss coefficient from the fitting database.
 
 ### 3.5.3 Sub-modules
 
-| Module | Description |
-|--------|-------------|
-| `engine/pressure_drop_calculation_engine.py` | Core calculation engine |
-| `models/pressure_drop_data_models.py` | Data models and result types |
-| `utils/fitting_loss_coefficients.py` | Fitting K-value database |
-| `utils/flow_rate_converter.py` | Flow unit conversions |
-| `utils/gas_properties.py` | Gas property calculations |
-| `utils/pipe_database.py` | Standard pipe size database |
+| Module                                       | Description                  |
+| -------------------------------------------- | ---------------------------- |
+| `engine/pressure_drop_calculation_engine.py` | Core calculation engine      |
+| `models/pressure_drop_data_models.py`        | Data models and result types |
+| `utils/fitting_loss_coefficients.py`         | Fitting K-value database     |
+| `utils/flow_rate_converter.py`               | Flow unit conversions        |
+| `utils/gas_properties.py`                    | Gas property calculations    |
+| `utils/pipe_database.py`                     | Standard pipe size database  |
 
 ---
 
@@ -563,13 +567,13 @@ where $\dot{n}$ is in kmol/h.
 $$\gamma_{mix} = \sum_i y_i \cdot \gamma_i$$
 
 | Species | $\gamma$ |
-|---------|----------|
-| H₂ | 1.41 |
-| CO | 1.40 |
-| CO₂ | 1.30 |
-| CH₄ | 1.32 |
-| N₂ | 1.40 |
-| H₂O | 1.33 |
+| ------- | -------- |
+| H₂      | 1.41     |
+| CO      | 1.40     |
+| CO₂     | 1.30     |
+| CH₄     | 1.32     |
+| N₂      | 1.40     |
+| H₂O     | 1.33     |
 
 **Water Dropout Calculation:**
 
@@ -636,11 +640,11 @@ $$\dot{Q} = \dot{F} \cdot X_{CO}/100 \cdot 41.2 / 3.6 \quad [\text{kW}]$$
 ### 3.9.4 Thermodynamic Data
 
 | Species | $\Delta H_f°$ (kJ/mol) | $S°$ (J/(mol·K)) |
-|---------|------------------------|-------------------|
-| CO | -110.525 | 197.66 |
-| CO₂ | -393.509 | 213.74 |
-| H₂ | 0.0 | 130.68 |
-| H₂O (g) | -241.826 | 188.83 |
+| ------- | ---------------------- | ---------------- |
+| CO      | -110.525               | 197.66           |
+| CO₂     | -393.509               | 213.74           |
+| H₂      | 0.0                    | 130.68           |
+| H₂O (g) | -241.826               | 188.83           |
 
 ---
 
@@ -660,6 +664,7 @@ Predicts temperature profiles for heated vessels using ODE integration and can f
 $$\frac{dT}{dt} = \frac{Q_{in}(t) - h \cdot (T - T_{amb})}{C_{th}}$$
 
 where:
+
 - $C_{th}$ = thermal mass (J/K)
 - $h$ = heat loss coefficient (W/K)
 - $T_{amb}$ = ambient temperature (K)
@@ -715,6 +720,7 @@ Calculates electrode consumption and slip rates for arc furnaces.
 $$C = r \cdot I \cdot t$$
 
 where:
+
 - $C$ = consumption (inches)
 - $r$ = consumption rate (inches per kAh) — currently hardcoded at 0.5
 - $I$ = current (kA)
@@ -778,6 +784,7 @@ $$ROA = \frac{\text{Net Income}}{\text{TCI}}$$
 $$\text{Payback} = \frac{\text{TCI}}{\text{Net Income} + D}$$
 
 **Multi-Year Projections:**
+
 - Revenue escalation: 2% annually
 - Cost inflation: 3% annually (2.5% for utilities)
 
@@ -795,11 +802,11 @@ Pressure Swing Adsorption (PSA) modeling for gas separation, particularly H₂ p
 
 ### 3.14.2 Sub-modules
 
-| Module | Description |
-|--------|-------------|
-| `psa_model.py` | Core PSA cycle simulation |
-| `psa_gui.py` | PyQt6 GUI interface |
-| `psa_webapp.py` | Web interface |
+| Module          | Description               |
+| --------------- | ------------------------- |
+| `psa_model.py`  | Core PSA cycle simulation |
+| `psa_gui.py`    | PyQt6 GUI interface       |
+| `psa_webapp.py` | Web interface             |
 
 ---
 
@@ -867,11 +874,11 @@ $$x_{t+1} = x_t + \alpha \cdot \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}$$
 
 **Surface Optimization Methods:**
 
-| Method | Algorithm | Description |
-|--------|-----------|-------------|
-| Grid Search | Exhaustive 15×15 grid | Brute-force evaluation |
-| L-BFGS-B | Quasi-Newton | Bounded gradient descent |
-| Differential Evolution | Stochastic | Global optimization |
+| Method                 | Algorithm             | Description              |
+| ---------------------- | --------------------- | ------------------------ |
+| Grid Search            | Exhaustive 15×15 grid | Brute-force evaluation   |
+| L-BFGS-B               | Quasi-Newton          | Bounded gradient descent |
+| Differential Evolution | Stochastic            | Global optimization      |
 
 All surface methods use `scipy.interpolate.RegularGridInterpolator` for evaluation.
 
@@ -919,4 +926,4 @@ $$I = I_{cm} + m \cdot d^2$$
 
 ---
 
-*[← Back to Main Manual](./TOOLS_USER_MANUAL.md) | [Next: Signal Processing Toolkit →](./04_signal_toolkit.md)*
+_[← Back to Main Manual](./TOOLS_USER_MANUAL.md) | [Next: Signal Processing Toolkit →](./04_signal_toolkit.md)_

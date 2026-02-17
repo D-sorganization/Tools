@@ -24,52 +24,56 @@
 
 ## Scorecard
 
-| Category                | Score | Evidence & Remediation                                                |
-| ----------------------- | ----- | --------------------------------------------------------------------- |
-| Ruff Compliance         | 10/10 | 0 violations.                                                         |
-| Mypy Compliance         | 1/10  | 1393 errors. **Fix**: Baseline or massive fix campaign.               |
-| Black Formatting        | 10/10 | Consistent.                                                           |
-| AGENTS.md Compliance    | 8/10  | Mostly followed, but `print()` exists in scripts.                     |
-| Security Posture        | 10/10 | No secrets found.                                                     |
-| Repository Organization | 7/10  | Messy root (icons, loose scripts).                                    |
-| Dependency Hygiene      | 8/10  | `requirements.txt` exists, but versions could be stricter (e.g. hash).|
+| Category                | Score | Evidence & Remediation                                                 |
+| ----------------------- | ----- | ---------------------------------------------------------------------- |
+| Ruff Compliance         | 10/10 | 0 violations.                                                          |
+| Mypy Compliance         | 1/10  | 1393 errors. **Fix**: Baseline or massive fix campaign.                |
+| Black Formatting        | 10/10 | Consistent.                                                            |
+| AGENTS.md Compliance    | 8/10  | Mostly followed, but `print()` exists in scripts.                      |
+| Security Posture        | 10/10 | No secrets found.                                                      |
+| Repository Organization | 7/10  | Messy root (icons, loose scripts).                                     |
+| Dependency Hygiene      | 8/10  | `requirements.txt` exists, but versions could be stricter (e.g. hash). |
 
 ## Linting Violation Inventory
 
 - **Ruff**: 0 violations.
 - **Black**: 0 violations.
 - **Mypy**:
-    - `Missing return type`
-    - `Call to untyped function`
-    - `Untyped decorator`
-    - `Unused "type: ignore"`
+  - `Missing return type`
+  - `Call to untyped function`
+  - `Untyped decorator`
+  - `Unused "type: ignore"`
 
 ## Security Audit
 
-| Check                        | Status | Evidence |
-| ---------------------------- | ------ | -------- |
-| No hardcoded secrets         | ✅     | Grep scan negative. |
-| .env.example exists          | ❌     | Not found in root. |
+| Check                        | Status | Evidence                          |
+| ---------------------------- | ------ | --------------------------------- |
+| No hardcoded secrets         | ✅     | Grep scan negative.               |
+| .env.example exists          | ❌     | Not found in root.                |
 | No eval()/exec() usage       | ✅     | No dangerous usage found in core. |
-| No pickle without validation | ✅     | Standard usage. |
+| No pickle without validation | ✅     | Standard usage.                   |
 
 ## Refactoring Plan
 
 **48 Hours**
+
 - Fix "Unused type: ignore" errors to clean up Mypy noise.
 - Add `-> None` to `verify_installation.py` and other scripts.
 
 **2 Weeks**
+
 - Enable `D` (docstrings) in `ruff.toml` for `src/` only.
 - Fix top 100 Mypy errors (mostly return types).
 
 **6 Weeks**
+
 - Achieve strict Mypy compliance (0 errors).
 - Implement `.env` pattern for all tools.
 
 ## Diff Suggestions
 
 ### 1. Fix Missing Return Type
+
 ```python
 <<<<<<< SEARCH
 def verify_installation():
@@ -81,6 +85,7 @@ def verify_installation() -> None:
 ```
 
 ### 2. Remove Unused Ignore
+
 ```python
 <<<<<<< SEARCH
     result = calculate(x)  # type: ignore

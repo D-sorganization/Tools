@@ -52,11 +52,11 @@ Packages entire project directories into distributable formats, handling depende
 
 ### 10.3.2 Components
 
-| Module | Description |
-|--------|-------------|
-| `constants.py` | Packing configuration constants |
-| `build_exe.py` | Executable build script |
-| `project_packer.py` | Core packing logic |
+| Module              | Description                     |
+| ------------------- | ------------------------------- |
+| `constants.py`      | Packing configuration constants |
+| `build_exe.py`      | Executable build script         |
+| `project_packer.py` | Core packing logic              |
 
 ---
 
@@ -71,22 +71,23 @@ Code quality scanning utilities used by CI/CD pipelines and pre-commit hooks to 
 
 ### 10.4.2 Scan Patterns
 
-| Category | Pattern | Description |
-|----------|---------|-------------|
-| Placeholder | `TODO` | TODO comment found |
-| Placeholder | `FIXME` | FIXME comment found |
-| Placeholder | `^\s*\.\.\.\s*$` | Ellipsis placeholder |
-| Placeholder | `NotImplementedError` | Unimplemented function |
+| Category    | Pattern                     | Description              |
+| ----------- | --------------------------- | ------------------------ |
+| Placeholder | `TODO`                      | TODO comment found       |
+| Placeholder | `FIXME`                     | FIXME comment found      |
+| Placeholder | `^\s*\.\.\.\s*$`            | Ellipsis placeholder     |
+| Placeholder | `NotImplementedError`       | Unimplemented function   |
 | Placeholder | `raise NotImplementedError` | Explicitly unimplemented |
-| Placeholder | `pass` (in function) | Empty function body |
-| Security | `eval(` | Unsafe eval usage |
-| Security | `exec(` | Unsafe exec usage |
-| Security | `__import__` | Dynamic import |
-| Quality | `print(` (in library code) | Debug print left in code |
+| Placeholder | `pass` (in function)        | Empty function body      |
+| Security    | `eval(`                     | Unsafe eval usage        |
+| Security    | `exec(`                     | Unsafe exec usage        |
+| Security    | `__import__`                | Dynamic import           |
+| Quality     | `print(` (in library code)  | Debug print left in code |
 
 ### 10.4.3 CI Integration
 
 The quality scanner is integrated into GitHub Actions workflows to automatically flag:
+
 - Placeholder code that should be implemented
 - Security vulnerabilities
 - Code patterns that need review
@@ -126,21 +127,21 @@ Verification scripts for validating theme compliance, color palette correctness,
 
 ### 10.7.2 Components
 
-| Script | Description |
-|--------|-------------|
-| `verify_palette.py` | Validates color palette definitions |
-| `verify_palette_final.py` | Final palette verification |
-| `verify_a11y.py` | Accessibility (WCAG 2.1) verification |
+| Script                    | Description                           |
+| ------------------------- | ------------------------------------- |
+| `verify_palette.py`       | Validates color palette definitions   |
+| `verify_palette_final.py` | Final palette verification            |
+| `verify_a11y.py`          | Accessibility (WCAG 2.1) verification |
 
 ### 10.7.3 Accessibility Standards
 
 The verification tools check compliance with WCAG 2.1 Level AA:
 
-| Criterion | Requirement | Check |
-|-----------|-------------|-------|
-| Contrast Ratio (Normal Text) | $\geq 4.5:1$ | ✅ |
-| Contrast Ratio (Large Text) | $\geq 3.0:1$ | ✅ |
-| Color Independence | Not sole differentiator | ✅ |
+| Criterion                    | Requirement             | Check |
+| ---------------------------- | ----------------------- | ----- |
+| Contrast Ratio (Normal Text) | $\geq 4.5:1$            | ✅    |
+| Contrast Ratio (Large Text)  | $\geq 3.0:1$            | ✅    |
+| Color Independence           | Not sole differentiator | ✅    |
 
 **Contrast Ratio Formula:**
 
@@ -158,4 +159,4 @@ $$C_{lin} = \begin{cases} C_{sRGB} / 12.92 & C_{sRGB} \leq 0.04045 \\ \left(\fra
 
 ---
 
-*[← Media Processing](./09_media_processing.md) | [Back to Manual](./TOOLS_USER_MANUAL.md) | [Next: Constants & Conversions →](./11_constants_conversions.md)*
+_[← Media Processing](./09_media_processing.md) | [Back to Manual](./TOOLS_USER_MANUAL.md) | [Next: Constants & Conversions →](./11_constants_conversions.md)_

@@ -10,11 +10,11 @@
 
 ## Installation Matrix
 
-| Platform   | Success | Issues |
-| ---------- | ------- | ------ |
-| Linux      | ✅      | None (assuming no MATLAB). |
-| Windows    | ✅      | Works best (PowerShell scripts included). |
-| macOS      | ✅      | Works (assuming no MATLAB). |
+| Platform | Success | Issues                                    |
+| -------- | ------- | ----------------------------------------- |
+| Linux    | ✅      | None (assuming no MATLAB).                |
+| Windows  | ✅      | Works best (PowerShell scripts included). |
+| macOS    | ✅      | Works (assuming no MATLAB).               |
 
 ## Dependency Audit
 
@@ -25,7 +25,9 @@
 ## Remediation Roadmap
 
 **48 Hours**
+
 - Create `setup.sh` and `setup.bat` for one-click installation.
 
 **2 Weeks**
+
 - Create `pyproject.toml` to replace `requirements.txt` and modernize packaging.

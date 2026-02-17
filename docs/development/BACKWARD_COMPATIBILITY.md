@@ -9,6 +9,7 @@ When GUIs are consolidated into Tools, the original import paths in Gasification
 ## Electrode Advisor
 
 ### New Canonical Location (Tools)
+
 ```python
 # Import from Tools (preferred)
 from electrode_advisor import ElectrodeAdvisorWidget
@@ -68,6 +69,7 @@ __all__ = [
 ## TRC Vessel Designer
 
 ### New Canonical Location (Tools)
+
 ```python
 # Import from Tools (preferred)
 from trc_vessel_designer import TRCVesselDesignerWidget
@@ -75,6 +77,7 @@ from trc_vessel_designer import TRCGeometryEngine, VesselDimensions
 ```
 
 ### Note on TRC Vessel Designer
+
 The TRC Vessel Designer PyQt6 GUI is a new creation in Tools. No backward compatibility shim is needed as there was no previous PyQt6 GUI in Gasification_Model.
 
 For the React component, update imports in Gasification_Model to point to the shared component.
@@ -90,6 +93,7 @@ sys.path.insert(0, "/path/to/Tools/src/shared/python")
 ```
 
 Or set `PYTHONPATH`:
+
 ```bash
 export PYTHONPATH=/path/to/Tools/src:/path/to/Tools/src/shared/python:$PYTHONPATH
 ```

@@ -5,6 +5,7 @@ A comprehensive steam thermodynamic property calculator implementing the IAPWS-I
 ## Purpose
 
 The Steam Engine Calculator enables engineers and scientists to:
+
 - Calculate steam thermodynamic properties from temperature and pressure inputs
 - Determine saturated steam properties from temperature or pressure alone
 - Identify phase states (liquid, vapor, two-phase, supercritical)
@@ -24,11 +25,13 @@ The Steam Engine Calculator enables engineers and scientists to:
 ## Installation / Prerequisites
 
 ### Required Dependencies
+
 ```bash
 pip install PyQt6 numpy
 ```
 
 ### Optional High-Accuracy Backends
+
 ```bash
 # CoolProp backend (recommended for accuracy)
 pip install CoolProp
@@ -38,16 +41,19 @@ pip install cantera
 ```
 
 ### Python Version
+
 - Python 3.10 or higher recommended
 
 ## Usage Instructions
 
 ### Launch Desktop Application
+
 ```bash
 python launch_pyqt6.py
 ```
 
 ### Programmatic Usage
+
 ```python
 from upstream_drift_tools.calculators.thermo.steam_engine import SteamCalculationEngine
 
@@ -69,36 +75,36 @@ print(f"Phase: {result.phase}")
 
 ### Temperature Input
 
-| Parameter | Description | Range | Units |
-|-----------|-------------|-------|-------|
-| Temperature | Steam temperature | 273.16 - 647.15 | K |
-| Temperature | Steam temperature | 0.01 - 374.0 | C |
+| Parameter   | Description       | Range           | Units |
+| ----------- | ----------------- | --------------- | ----- |
+| Temperature | Steam temperature | 273.16 - 647.15 | K     |
+| Temperature | Steam temperature | 0.01 - 374.0    | C     |
 
 ### Pressure Input
 
-| Parameter | Description | Range | Units |
-|-----------|-------------|-------|-------|
-| Pressure | Steam pressure | > 0 - 100,000,000 | Pa |
-| Pressure | Steam pressure | > 0 - 100,000 | kPa |
-| Pressure | Steam pressure | > 0 - 1,000 | bar |
-| Pressure | Steam pressure | > 0 - 100 | MPa |
+| Parameter | Description    | Range             | Units |
+| --------- | -------------- | ----------------- | ----- |
+| Pressure  | Steam pressure | > 0 - 100,000,000 | Pa    |
+| Pressure  | Steam pressure | > 0 - 100,000     | kPa   |
+| Pressure  | Steam pressure | > 0 - 1,000       | bar   |
+| Pressure  | Steam pressure | > 0 - 100         | MPa   |
 
 ### Calculation Modes
 
-| Mode | Required Inputs | Description |
-|------|-----------------|-------------|
-| Temperature & Pressure | T, P | Calculate properties at specified state |
-| Saturated (from Temperature) | T | Calculate saturated liquid/vapor properties |
-| Saturated (from Pressure) | P | Calculate saturated liquid/vapor properties |
+| Mode                         | Required Inputs | Description                                 |
+| ---------------------------- | --------------- | ------------------------------------------- |
+| Temperature & Pressure       | T, P            | Calculate properties at specified state     |
+| Saturated (from Temperature) | T               | Calculate saturated liquid/vapor properties |
+| Saturated (from Pressure)    | P               | Calculate saturated liquid/vapor properties |
 
 ### Calculation Engines
 
-| Engine | Description | Accuracy |
-|--------|-------------|----------|
-| Auto | Automatic selection of best available engine | Highest available |
-| CoolProp | NIST reference implementation | Industrial grade |
-| Cantera | Thermodynamic calculation library | Industrial grade |
-| Simplified | Built-in correlations | Engineering estimates |
+| Engine     | Description                                  | Accuracy              |
+| ---------- | -------------------------------------------- | --------------------- |
+| Auto       | Automatic selection of best available engine | Highest available     |
+| CoolProp   | NIST reference implementation                | Industrial grade      |
+| Cantera    | Thermodynamic calculation library            | Industrial grade      |
+| Simplified | Built-in correlations                        | Engineering estimates |
 
 ## Output Format
 
@@ -106,36 +112,36 @@ The `SteamProperties` result contains:
 
 ### Thermodynamic Properties
 
-| Property | Description | Units |
-|----------|-------------|-------|
-| `temperature` | Steam temperature | K |
-| `pressure` | Steam pressure | Pa |
-| `density` | Steam density | kg/m3 |
-| `specific_volume` | Specific volume | m3/kg |
-| `enthalpy` | Specific enthalpy | J/kg |
-| `entropy` | Specific entropy | J/kg-K |
-| `internal_energy` | Specific internal energy | J/kg |
-| `cp` | Isobaric specific heat | J/kg-K |
-| `cv` | Isochoric specific heat | J/kg-K |
+| Property          | Description              | Units  |
+| ----------------- | ------------------------ | ------ |
+| `temperature`     | Steam temperature        | K      |
+| `pressure`        | Steam pressure           | Pa     |
+| `density`         | Steam density            | kg/m3  |
+| `specific_volume` | Specific volume          | m3/kg  |
+| `enthalpy`        | Specific enthalpy        | J/kg   |
+| `entropy`         | Specific entropy         | J/kg-K |
+| `internal_energy` | Specific internal energy | J/kg   |
+| `cp`              | Isobaric specific heat   | J/kg-K |
+| `cv`              | Isochoric specific heat  | J/kg-K |
 
 ### Transport Properties
 
-| Property | Description | Units |
-|----------|-------------|-------|
-| `speed_of_sound` | Sonic velocity | m/s |
+| Property               | Description          | Units |
+| ---------------------- | -------------------- | ----- |
+| `speed_of_sound`       | Sonic velocity       | m/s   |
 | `thermal_conductivity` | Thermal conductivity | W/m-K |
-| `dynamic_viscosity` | Dynamic viscosity | Pa-s |
-| `kinematic_viscosity` | Kinematic viscosity | m2/s |
+| `dynamic_viscosity`    | Dynamic viscosity    | Pa-s  |
+| `kinematic_viscosity`  | Kinematic viscosity  | m2/s  |
 
 ### Derived Properties
 
-| Property | Description | Units |
-|----------|-------------|-------|
-| `phase` | Phase state | - |
-| `quality` | Steam quality (two-phase only) | 0-1 |
-| `compressibility_factor` | Compressibility factor Z | - |
-| `prandtl_number` | Prandtl number | - |
-| `specific_heat_ratio` | Cp/Cv ratio (k or gamma) | - |
+| Property                 | Description                    | Units |
+| ------------------------ | ------------------------------ | ----- |
+| `phase`                  | Phase state                    | -     |
+| `quality`                | Steam quality (two-phase only) | 0-1   |
+| `compressibility_factor` | Compressibility factor Z       | -     |
+| `prandtl_number`         | Prandtl number                 | -     |
+| `specific_heat_ratio`    | Cp/Cv ratio (k or gamma)       | -     |
 
 ## Mathematical Models
 
@@ -158,6 +164,7 @@ ln(P_sat/P_c) = (T_c/T) * sum(n_i * theta^a_i)
 ```
 
 Where:
+
 - `P_c` = Critical pressure (22.064 MPa)
 - `T_c` = Critical temperature (647.096 K)
 - `theta` = 1 - T/T_c
@@ -173,6 +180,7 @@ gamma_tau = (d gamma / d tau) at constant pi
 ```
 
 Where:
+
 - `R` = Specific gas constant (461.526 J/kg-K)
 - `tau` = T_star / T (dimensionless temperature)
 - `pi` = P / P_star (dimensionless pressure)
@@ -180,11 +188,13 @@ Where:
 ### Transport Property Correlations
 
 **Dynamic Viscosity:**
+
 ```
 mu = mu_0(T) * mu_1(T, rho) * mu_2(T, rho)
 ```
 
 **Thermal Conductivity:**
+
 ```
 k = k_0(T) + k_1(T, rho) + k_2(T, rho)
 ```
@@ -237,14 +247,14 @@ result_exit_ideal = engine.calculate_properties_from_entropy(
 
 ## Troubleshooting
 
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| "Temperature below triple point" | T < 273.16 K | Ensure temperature >= 0.01 C |
-| "Temperature above critical point" | T > 647.15 K | Use Region 5 for high-T steam |
-| "Pressure exceeds maximum" | P > 100 MPa | Reduce pressure input |
-| "CoolProp: Not installed" | Missing backend | Install with `pip install CoolProp` |
-| "Engine not available" | Missing dependencies | Check `upstream_drift_tools` installation |
-| Phase shows "--" | Calculation error | Verify inputs are within valid ranges |
+| Issue                              | Cause                | Solution                                  |
+| ---------------------------------- | -------------------- | ----------------------------------------- |
+| "Temperature below triple point"   | T < 273.16 K         | Ensure temperature >= 0.01 C              |
+| "Temperature above critical point" | T > 647.15 K         | Use Region 5 for high-T steam             |
+| "Pressure exceeds maximum"         | P > 100 MPa          | Reduce pressure input                     |
+| "CoolProp: Not installed"          | Missing backend      | Install with `pip install CoolProp`       |
+| "Engine not available"             | Missing dependencies | Check `upstream_drift_tools` installation |
+| Phase shows "--"                   | Calculation error    | Verify inputs are within valid ranges     |
 
 ## Related Tools
 

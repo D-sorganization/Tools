@@ -5,6 +5,7 @@ A comprehensive two-stage Pressure Swing Adsorption (PSA) system modeling tool f
 ## Purpose
 
 The PSA Package enables process engineers to:
+
 - Model two-stage PSA systems with recycle streams
 - Calculate hydrogen recovery and purity for various operating conditions
 - Perform sensitivity analysis on recycle fractions
@@ -23,11 +24,13 @@ The PSA Package enables process engineers to:
 ## Installation / Prerequisites
 
 ### Required Dependencies
+
 ```bash
 pip install numpy matplotlib PyQt6
 ```
 
 ### Optional Dependencies
+
 ```bash
 # For web application
 pip install streamlit plotly pandas
@@ -37,22 +40,26 @@ pip install jupyter
 ```
 
 ### Python Version
+
 - Python 3.10 or higher recommended
 
 ## Usage Instructions
 
 ### Desktop GUI Application
+
 ```bash
 python launch_pyqt6.py
 ```
 
 ### Web Application
+
 ```bash
 python launch_web.py
 # Opens Streamlit app in default browser
 ```
 
 ### Programmatic Usage
+
 ```python
 from upstream_drift_tools.process_calculators.psa_package import PSAModel
 
@@ -70,26 +77,26 @@ print(f"Net Product: {results.total_net_product_scfm:.1f} SCFM")
 
 ## Input Parameters
 
-| Parameter | Description | Range | Units | Default |
-|-----------|-------------|-------|-------|---------|
-| `total_feed_scfm` | Total fresh feed flow rate | 0 - 10,000 | SCFM | 1100.0 |
-| `s2_tail_recycle_frac` | Stage 2 tail recycle fraction | 0.0 - 1.0 | fraction | 1.0 |
-| `product_recycle_frac` | Product recycle fraction | 0.0 - 1.0 | fraction | 0.0 |
-| `feed_pct` | Component feed composition | 0 - 100 | % | varies |
-| `stage1_removal_pct` | Stage 1 removal efficiency | 0 - 100 | % | varies |
-| `stage2_removal_pct` | Stage 2 removal efficiency | 0 - 100 | % | varies |
+| Parameter              | Description                   | Range      | Units    | Default |
+| ---------------------- | ----------------------------- | ---------- | -------- | ------- |
+| `total_feed_scfm`      | Total fresh feed flow rate    | 0 - 10,000 | SCFM     | 1100.0  |
+| `s2_tail_recycle_frac` | Stage 2 tail recycle fraction | 0.0 - 1.0  | fraction | 1.0     |
+| `product_recycle_frac` | Product recycle fraction      | 0.0 - 1.0  | fraction | 0.0     |
+| `feed_pct`             | Component feed composition    | 0 - 100    | %        | varies  |
+| `stage1_removal_pct`   | Stage 1 removal efficiency    | 0 - 100    | %        | varies  |
+| `stage2_removal_pct`   | Stage 2 removal efficiency    | 0 - 100    | %        | varies  |
 
 ### Default Component Data
 
 | Component | Feed % | Stage 1 Removal % | Stage 2 Removal % |
-|-----------|--------|-------------------|-------------------|
-| H2 | 32.08 | 18.0 | 15.0 |
-| CO | 38.22 | 98.0 | 99.99 |
-| CO2 | 21.98 | 98.0 | 99.99 |
-| H2O | 4.85 | 99.0 | 99.99 |
-| N2 | 0.50 | 95.0 | 99.99 |
-| O2 | 0.50 | 81.0 | 99.99 |
-| CH4 | 1.88 | 99.0 | 99.99 |
+| --------- | ------ | ----------------- | ----------------- |
+| H2        | 32.08  | 18.0              | 15.0              |
+| CO        | 38.22  | 98.0              | 99.99             |
+| CO2       | 21.98  | 98.0              | 99.99             |
+| H2O       | 4.85   | 99.0              | 99.99             |
+| N2        | 0.50   | 95.0              | 99.99             |
+| O2        | 0.50   | 81.0              | 99.99             |
+| CH4       | 1.88   | 99.0              | 99.99             |
 
 ## Output Format
 
@@ -123,6 +130,7 @@ M_i = F_i / [1 - (1 - R1_i) * (R2_i * r_tail + (1 - R2_i) * r_prod)]
 ```
 
 Where:
+
 - `M_i` = Mixed feed flow for component i (SCFM)
 - `F_i` = Fresh feed flow for component i (SCFM)
 - `R1_i` = Stage 1 removal fraction for component i
@@ -142,13 +150,13 @@ Net_Product = Gross_Product * (1 - r_prod)
 
 ### Flammability Assessment
 
-| Condition | Status |
-|-----------|--------|
-| O2 < 0.1% | Safe - Low O2 |
-| H2 < 4% | Safe - Below LFL |
-| H2 > 4% AND O2 > 2% | CRITICAL |
-| H2 > 75% | Caution - Rich |
-| 4% < H2 < 75% AND O2 > 0.1% | FLAMMABLE |
+| Condition                   | Status           |
+| --------------------------- | ---------------- |
+| O2 < 0.1%                   | Safe - Low O2    |
+| H2 < 4%                     | Safe - Below LFL |
+| H2 > 4% AND O2 > 2%         | CRITICAL         |
+| H2 > 75%                    | Caution - Rich   |
+| 4% < H2 < 75% AND O2 > 0.1% | FLAMMABLE        |
 
 ## Example Usage
 
@@ -180,13 +188,13 @@ safety = calculate_o2_safety_analysis(
 
 ## Troubleshooting
 
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| "Missing required dependencies" | PyQt6/numpy not installed | Run `pip install PyQt6 numpy matplotlib` |
-| "Engine not available" | Package not in PYTHONPATH | Ensure `upstream_drift_tools` is installed |
-| Mass balance error > 1e-6 | Numerical precision issue | Check for extreme removal fractions |
-| Zero net product flow | High product recycle fraction | Reduce `product_recycle_frac` |
-| Web app password prompt | Security feature | Default password: "password" |
+| Issue                           | Cause                         | Solution                                   |
+| ------------------------------- | ----------------------------- | ------------------------------------------ |
+| "Missing required dependencies" | PyQt6/numpy not installed     | Run `pip install PyQt6 numpy matplotlib`   |
+| "Engine not available"          | Package not in PYTHONPATH     | Ensure `upstream_drift_tools` is installed |
+| Mass balance error > 1e-6       | Numerical precision issue     | Check for extreme removal fractions        |
+| Zero net product flow           | High product recycle fraction | Reduce `product_recycle_frac`              |
+| Web app password prompt         | Security feature              | Default password: "password"               |
 
 ## Related Tools
 

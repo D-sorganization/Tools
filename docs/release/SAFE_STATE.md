@@ -26,11 +26,13 @@ pytest                    # Tests pass
 ## Previous Safe States
 
 ### 2025-12-25 (v1.0.0)
+
 - **Notes**: Initial stable release
 - **CI Status**: Passing
 - **Key Features**: UnifiedToolsLauncher, all core tools operational
 
 ### 2025-08-09 (v0.1.0)
+
 - **Notes**: Initial project setup
 - **CI Status**: Passing (stubs only)
 - **Key Features**: Added rule banning hard resets/clean on tracked dirs

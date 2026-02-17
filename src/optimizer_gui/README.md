@@ -60,27 +60,32 @@ python launch_pyqt6.py
 ### Setting Up an Optimization
 
 1. **Define Parameters** (Parameters tab):
+
    - View/edit default parameters in the table
    - Click "Add Parameter" to add new variables
    - Set Name, Initial value, Min, and Max for each
    - Remove unwanted parameters with "Remove Selected"
 
 2. **Configure Optimization Goal**:
+
    - Check "Maximize" for maximization problems
    - Uncheck for minimization (default)
 
 3. **Set Algorithm Settings** (Adam Settings tab):
+
    - Learning Rate: Step size (default: 0.01)
    - Beta1: Momentum coefficient (default: 0.9)
    - Beta2: RMSprop coefficient (default: 0.999)
    - Epsilon: Numerical stability (default: 1e-8)
 
 4. **Configure Convergence**:
+
    - Max Iterations: Upper limit on iterations
    - Tolerance: Convergence threshold
    - Gradient Step: Finite difference step size
 
 5. **Select Method**:
+
    - Adam: Gradient-based with momentum
    - Grid Search: Exhaustive search
    - L-BFGS-B: Quasi-Newton method
@@ -94,29 +99,29 @@ python launch_pyqt6.py
 
 ### Optimization Parameters Table
 
-| Column | Description | Example |
-|--------|-------------|---------|
-| Name | Variable identifier | Temperature |
-| Initial | Starting value | 800 |
-| Min | Lower bound | 600 |
-| Max | Upper bound | 1200 |
+| Column  | Description         | Example     |
+| ------- | ------------------- | ----------- |
+| Name    | Variable identifier | Temperature |
+| Initial | Starting value      | 800         |
+| Min     | Lower bound         | 600         |
+| Max     | Upper bound         | 1200        |
 
 ### Adam Hyperparameters
 
-| Parameter | Description | Default | Range |
-|-----------|-------------|---------|-------|
-| Learning Rate | Step size per iteration | 0.01 | 0.0001-1.0 |
-| Beta1 | First moment decay rate | 0.9 | 0.0-0.999 |
-| Beta2 | Second moment decay rate | 0.999 | 0.0-0.9999 |
-| Epsilon | Division stability constant | 1e-8 | 1e-10-1e-4 |
+| Parameter     | Description                 | Default | Range      |
+| ------------- | --------------------------- | ------- | ---------- |
+| Learning Rate | Step size per iteration     | 0.01    | 0.0001-1.0 |
+| Beta1         | First moment decay rate     | 0.9     | 0.0-0.999  |
+| Beta2         | Second moment decay rate    | 0.999   | 0.0-0.9999 |
+| Epsilon       | Division stability constant | 1e-8    | 1e-10-1e-4 |
 
 ### Convergence Settings
 
-| Parameter | Description | Default | Range |
-|-----------|-------------|---------|-------|
-| Max Iterations | Maximum optimization steps | 100 | 1-10000 |
-| Tolerance | Convergence threshold | 1e-6 | 1e-10-1.0 |
-| Gradient Step | Numerical gradient delta | 0.001 | 1e-8-1.0 |
+| Parameter      | Description                | Default | Range     |
+| -------------- | -------------------------- | ------- | --------- |
+| Max Iterations | Maximum optimization steps | 100     | 1-10000   |
+| Tolerance      | Convergence threshold      | 1e-6    | 1e-10-1.0 |
+| Gradient Step  | Numerical gradient delta   | 0.001   | 1e-8-1.0  |
 
 ## Output Format
 
@@ -195,12 +200,12 @@ The demo uses the Rosenbrock function:
 
 ## Algorithm Selection Guide
 
-| Algorithm | Best For | Pros | Cons |
-|-----------|----------|------|------|
-| Adam | Smooth objectives | Fast, momentum | Requires gradient |
-| L-BFGS-B | Bounded problems | Memory efficient | Local optima |
-| Grid Search | Small spaces | Finds global | Slow for many params |
-| Differential Evolution | Noisy objectives | Global search | Many evaluations |
+| Algorithm              | Best For          | Pros             | Cons                 |
+| ---------------------- | ----------------- | ---------------- | -------------------- |
+| Adam                   | Smooth objectives | Fast, momentum   | Requires gradient    |
+| L-BFGS-B               | Bounded problems  | Memory efficient | Local optima         |
+| Grid Search            | Small spaces      | Finds global     | Slow for many params |
+| Differential Evolution | Noisy objectives  | Global search    | Many evaluations     |
 
 ## Troubleshooting
 
@@ -209,6 +214,7 @@ The demo uses the Rosenbrock function:
 **Symptoms**: Iterations reach max without improvement
 
 **Solutions**:
+
 - Increase max iterations
 - Reduce learning rate
 - Widen parameter bounds
@@ -217,6 +223,7 @@ The demo uses the Rosenbrock function:
 ### Slow Convergence
 
 **Solutions**:
+
 - Increase learning rate (carefully)
 - Reduce tolerance for faster termination
 - Use Grid Search for initial estimate, then refine
@@ -224,6 +231,7 @@ The demo uses the Rosenbrock function:
 ### Parameters Stuck at Bounds
 
 **Solutions**:
+
 - Widen bounds if physically reasonable
 - Check if minimum is outside search space
 - Verify objective function behavior at bounds
@@ -233,6 +241,7 @@ The demo uses the Rosenbrock function:
 **Symptoms**: NaN or Inf in results
 
 **Solutions**:
+
 - Reduce learning rate
 - Increase epsilon value
 - Check objective function for singularities
@@ -241,6 +250,7 @@ The demo uses the Rosenbrock function:
 ### Memory Issues with Grid Search
 
 **Solutions**:
+
 - Reduce grid resolution
 - Use smaller parameter ranges
 - Switch to Adam or L-BFGS-B
@@ -276,6 +286,7 @@ df/dx ≈ (f(x+h) - f(x-h)) / (2h)
 ### Constraint Handling
 
 Bounds are enforced via projection:
+
 ```python
 values = np.clip(values, lower_bounds, upper_bounds)
 ```

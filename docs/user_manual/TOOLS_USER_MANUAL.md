@@ -167,18 +167,18 @@ Tools/
 
 ### 1.3 Technology Stack
 
-| Component | Technology |
-|-----------|-----------|
-| Desktop GUI | PyQt6 >= 6.6.0 |
-| Web Interfaces | Flask, Streamlit |
-| Scientific Computing | NumPy, SciPy, SymPy |
-| Plotting | Matplotlib (with custom themes) |
-| Thermodynamics | CoolProp (optional), thermo (optional) |
-| 3D/Robotics | Open3D, trimesh, URDF |
-| Testing | pytest >= 8.2.0 |
-| Linting | Ruff, Black, MyPy |
-| CI/CD | GitHub Actions |
-| Language | Python 3.10+ (3.12 recommended) |
+| Component            | Technology                             |
+| -------------------- | -------------------------------------- |
+| Desktop GUI          | PyQt6 >= 6.6.0                         |
+| Web Interfaces       | Flask, Streamlit                       |
+| Scientific Computing | NumPy, SciPy, SymPy                    |
+| Plotting             | Matplotlib (with custom themes)        |
+| Thermodynamics       | CoolProp (optional), thermo (optional) |
+| 3D/Robotics          | Open3D, trimesh, URDF                  |
+| Testing              | pytest >= 8.2.0                        |
+| Linting              | Ruff, Black, MyPy                      |
+| CI/CD                | GitHub Actions                         |
+| Language             | Python 3.10+ (3.12 recommended)        |
 
 ### 1.4 Getting Started
 
@@ -205,6 +205,7 @@ python src/flare_calculator/launch_web.py
 The `UnifiedToolsLauncher.py` is the primary entry point — a PyQt6-based tile launcher that discovers and presents all registered tools.
 
 **Features:**
+
 - Automatic tool discovery via plugin system
 - Tool path validation and sanitization
 - Output/error capture for launched tools
@@ -216,6 +217,7 @@ The `UnifiedToolsLauncher.py` is the primary entry point — a PyQt6-based tile 
 Tools are registered through `gui_registration.py` manifest files located in each tool directory. The plugin manager scans these files to build the launcher's tool catalog.
 
 **Registration Pattern:**
+
 ```python
 # src/<tool_name>/gui_registration.py
 TOOL_INFO = {
@@ -249,16 +251,16 @@ Located in `src/shared/python/theme/`:
 
 **`upstream_drift_tools/process_calculators/constants.py`** provides NIST-standard physical constants:
 
-| Constant | Symbol | Value | Unit |
-|----------|--------|-------|------|
-| Universal Gas Constant | $R$ | $8.314462618$ | $\text{J/(mol·K)}$ |
-| Standard Gravity | $g$ | $9.80665$ | $\text{m/s}^2$ |
-| Avogadro Number | $N_A$ | $6.02214076 \times 10^{23}$ | $\text{mol}^{-1}$ |
-| Boltzmann Constant | $k_B$ | $1.380649 \times 10^{-23}$ | $\text{J/K}$ |
-| Stefan-Boltzmann | $\sigma$ | $5.670374419 \times 10^{-8}$ | $\text{W/(m}^2\text{·K}^4\text{)}$ |
+| Constant               | Symbol   | Value                        | Unit                               |
+| ---------------------- | -------- | ---------------------------- | ---------------------------------- |
+| Universal Gas Constant | $R$      | $8.314462618$                | $\text{J/(mol·K)}$                 |
+| Standard Gravity       | $g$      | $9.80665$                    | $\text{m/s}^2$                     |
+| Avogadro Number        | $N_A$    | $6.02214076 \times 10^{23}$  | $\text{mol}^{-1}$                  |
+| Boltzmann Constant     | $k_B$    | $1.380649 \times 10^{-23}$   | $\text{J/K}$                       |
+| Stefan-Boltzmann       | $\sigma$ | $5.670374419 \times 10^{-8}$ | $\text{W/(m}^2\text{·K}^4\text{)}$ |
 
 ---
 
-*Detailed tool documentation continues in the following chapters. Each chapter can be accessed as a standalone document for integration with external projects.*
+_Detailed tool documentation continues in the following chapters. Each chapter can be accessed as a standalone document for integration with external projects._
 
 **Next:** [Chapter 3 — Process Engineering Calculators →](./03_process_calculators.md)
