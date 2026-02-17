@@ -10,13 +10,10 @@ import logging
 import numpy as np
 import pandas as pd
 import pytest
-
 from upstream_drift_tools.data_processing.core import (
-    AggregationType,
     ColumnStats,
     DataProcessorEngine,
     FitType,
-    ProcessingResult,
 )
 
 logger = logging.getLogger(__name__)
@@ -103,7 +100,9 @@ class TestColumnOperations:
     def test_transform_column_log(self, loaded_engine: DataProcessorEngine) -> None:
         result = loaded_engine.transform_column("salary", "log")
         assert result.success
-        assert loaded_engine.data["salary"].iloc[0] == pytest.approx(np.log(70000), abs=0.01)
+        assert loaded_engine.data["salary"].iloc[0] == pytest.approx(
+            np.log(70000), abs=0.01
+        )
 
 
 class TestFiltering:

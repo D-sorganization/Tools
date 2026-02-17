@@ -23,7 +23,6 @@ class BaseCalculationEngine(ABC):
         This method must be implemented by subclasses to define specific
         calculation logic.
         """
-        pass
 
 
 __all__ = ["BaseCalculationEngine"]

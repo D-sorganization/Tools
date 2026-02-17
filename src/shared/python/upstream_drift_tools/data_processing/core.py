@@ -256,9 +256,7 @@ class DataProcessorEngine(BaseCalculationEngine):
             )
         self._save_undo_state()
         self.data = self.data.drop(columns=columns)
-        return ProcessingResult(
-            success=True, message=f"Dropped columns", data=self.data
-        )
+        return ProcessingResult(success=True, message="Dropped columns", data=self.data)
 
     def transform_column(
         self, column: str, transformation: str, **kwargs: Any

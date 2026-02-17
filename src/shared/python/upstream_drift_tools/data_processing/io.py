@@ -6,7 +6,6 @@ Matlab, Arrow, SQLite, NumPy, and Pickles.
 
 from __future__ import annotations
 
-import logging
 from pathlib import Path
 from typing import Any
 
@@ -22,8 +21,7 @@ except ImportError:
     SCIPY_AVAILABLE = False
 
 try:
-    import pyarrow as pa
-    import pyarrow.parquet as pq
+    pass
 
     PYARROW_AVAILABLE = True
 except ImportError:
