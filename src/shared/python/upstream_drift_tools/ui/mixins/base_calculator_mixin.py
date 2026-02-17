@@ -9,8 +9,6 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from PyQt6.QtWidgets import QWidget
-
 from .calculator_state_mixin import CalculatorStateMixin
 
 logger = logging.getLogger(__name__)
