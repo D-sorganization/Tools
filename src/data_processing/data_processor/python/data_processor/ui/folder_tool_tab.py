@@ -431,7 +431,7 @@ class FolderToolMixin:
             self.after(0, lambda: self.folder_progress_bar.set(1.0))  # type: ignore
             self.after(0, lambda: self.folder_run_button.configure(state="normal"))  # type: ignore
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))  # type: ignore
-        except Exception as e:
+        except Exception:
             self.after(0, lambda: self.folder_status_var.set(f"Error: {e}"))  # type: ignore
             self.after(0, lambda: self.folder_run_button.configure(state="normal"))  # type: ignore
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))  # type: ignore
