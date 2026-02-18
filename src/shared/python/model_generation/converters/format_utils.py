@@ -116,7 +116,7 @@ def convert_mjcf_to_urdf(
     from model_generation.converters.mjcf_converter import MJCFConverter
 
     converter = MJCFConverter()
-    return converter.mjcf_to_urdf(source, output_path)
+    return str(converter.mjcf_to_urdf(source, output_path))
 
 
 def convert(
@@ -230,7 +230,7 @@ def validate_urdf(source: str | Path) -> list[str]:
         errors = result.get_error_messages()
         errors.extend(model.warnings)
 
-        return errors
+        return list(errors)
     except (ValueError, KeyError, OSError) as e:
         return [str(e)]
 

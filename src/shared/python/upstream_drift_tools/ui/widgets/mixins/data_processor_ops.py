@@ -6,9 +6,9 @@ Standardized data operations for DataProcessorWidget across the fleet.
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
-from PyQt6.QtWidgets import QMessageBox
+from PyQt6.QtWidgets import QMessageBox, QWidget
 
 if TYPE_CHECKING:
     from PyQt6.QtWidgets import (
@@ -63,7 +63,7 @@ class DataProcessorOpsMixin:
 
         if not column or not value_str:
             QMessageBox.warning(
-                self, "Filter Error", "Please specify column and value."
+                cast(QWidget, self), "Filter Error", "Please specify column and value."
             )
             return
 
@@ -79,13 +79,15 @@ class DataProcessorOpsMixin:
             self.data_modified.emit()
             self._set_status(result.message, success=True)
         else:
-            QMessageBox.warning(self, "Filter Error", result.message)
+            QMessageBox.warning(cast(QWidget, self), "Filter Error", result.message)
 
     def _execute_query(self) -> None:
         """Execute a query expression."""
         expression = self.query_input.text()
         if not expression:
-            QMessageBox.warning(self, "Query Error", "Please enter a query expression.")
+            QMessageBox.warning(
+                cast(QWidget, self), "Query Error", "Please enter a query expression."
+            )
             return
 
         result = self.engine.query(expression)
@@ -95,7 +97,7 @@ class DataProcessorOpsMixin:
             self.data_modified.emit()
             self._set_status(result.message, success=True)
         else:
-            QMessageBox.warning(self, "Query Error", result.message)
+            QMessageBox.warning(cast(QWidget, self), "Query Error", result.message)
 
     def _aggregate_data(self) -> None:
         """Perform data aggregation."""
@@ -167,7 +169,9 @@ class DataProcessorOpsMixin:
         new_name = self.rename_to.text()
 
         if not new_name:
-            QMessageBox.warning(self, "Error", "Please provide a new name.")
+            QMessageBox.warning(
+                cast(QWidget, self), "Error", "Please provide a new name."
+            )
             return
 
         result = self.engine.rename_column(old_name, new_name)

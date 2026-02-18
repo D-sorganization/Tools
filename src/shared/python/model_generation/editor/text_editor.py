@@ -255,8 +255,8 @@ class URDFTextEditor:
         messages = []
         if validate:
             messages = self.validate()
-            for callback in self._validation_callbacks:
-                callback(messages)
+            for validation_cb in self._validation_callbacks:
+                validation_cb(messages)
 
         return messages
 
@@ -663,9 +663,8 @@ class URDFTextEditor:
         for link_name in links:
             if link_name not in child_links:
                 is_parent = any(
-                    j.find("parent").get("link") == link_name
+                    (pe := j.find("parent")) is not None and pe.get("link") == link_name
                     for j in root.findall("joint")
-                    if j.find("parent") is not None
                 )
                 if not is_parent and len(links) > 1:
                     messages.append(
@@ -766,7 +765,7 @@ class URDFTextEditor:
 
         # Parse hunks
         hunks = []
-        current_hunk_lines = []
+        current_hunk_lines: list[str] = []
         old_start, old_count, new_start, new_count = 0, 0, 0, 0
         additions = 0
         deletions = 0
@@ -854,7 +853,7 @@ class URDFTextEditor:
 
         differ = difflib.SequenceMatcher(None, original_lines, modified_lines)
 
-        result = []
+        result: list[tuple[str | None, str | None, str]] = []
         for opcode, i1, i2, j1, j2 in differ.get_opcodes():
             if opcode == "equal":
                 for i, j in zip(range(i1, i2), range(j1, j2), strict=False):

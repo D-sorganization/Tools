@@ -71,6 +71,8 @@ class ManualBuilder(BaseURDFBuilder):
             validate_on_add: If True, validate each addition immediately
         """
         super().__init__(robot_name)
+        self._links: list[Link] = self._links
+        self._joints: list[Joint] = self._joints
         self._handedness = handedness
         self._validate_on_add = validate_on_add
 
