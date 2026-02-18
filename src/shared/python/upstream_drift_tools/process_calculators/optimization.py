@@ -47,6 +47,86 @@ def _build_override_mapping(
     return override
 
 
+def _compute_gradient_component(
+    index: int,
+    cfg: dict[str, Any],
+    values: np.ndarray,
+    objective: float,
+    gradient_step: float,
+    parameter_names: Sequence[str],
+    engine: Any,
+    base_params: dict[str, float],
+    manual_hhv: float,
+    output_name: str,
+) -> float:
+    """Compute a single component of the finite-difference gradient.
+
+    Selects forward, backward, or central differencing depending on
+    whether the current value lies at a parameter bound.
+    """
+    lower = float(cfg["min"])
+    upper = float(cfg["max"])
+    if np.isclose(lower, upper):
+        return 0.0
+
+    step = max(gradient_step, (upper - lower) * 1e-3)
+    if step <= 0:
+        return 0.0
+
+    current = values[index]
+    at_lower = np.isclose(current, lower)
+    at_upper = np.isclose(current, upper)
+
+    if at_lower and at_upper:
+        return 0.0
+
+    def _eval_at(offset: float) -> float:
+        perturbed = values.copy()
+        perturbed[index] = np.clip(current + offset, lower, upper)
+        if np.isclose(perturbed[index], current):
+            return float("nan")
+        overrides = _build_override_mapping(
+            parameter_names,
+            perturbed.tolist(),
+        )
+        val, _, _ = evaluate_output(
+            engine,
+            base_params,
+            manual_hhv,
+            output_name,
+            overrides,
+        )
+        return val
+
+    # Forward-only at lower bound
+    if at_lower:
+        fwd = _eval_at(step)
+        if not np.isfinite(fwd):
+            return 0.0
+        fwd_val = np.clip(current + step, lower, upper)
+        return (fwd - objective) / (fwd_val - current)
+
+    # Backward-only at upper bound
+    if at_upper:
+        bwd = _eval_at(-step)
+        if not np.isfinite(bwd):
+            return 0.0
+        bwd_val = np.clip(current - step, lower, upper)
+        return (objective - bwd) / (current - bwd_val)
+
+    # Central difference in interior
+    plus_val = np.clip(current + step, lower, upper)
+    minus_val = np.clip(current - step, lower, upper)
+    if np.isclose(plus_val, minus_val):
+        return 0.0
+
+    fwd = _eval_at(step)
+    bwd = _eval_at(-step)
+    if not (np.isfinite(fwd) and np.isfinite(bwd)):
+        return 0.0
+    return (fwd - bwd) / (plus_val - minus_val)
+
+
 def run_adam_optimization(
     engine: Any,
     analysis_params: dict[str, object],
@@ -68,47 +148,52 @@ def run_adam_optimization(
     Parameters
     ----------
     engine:
-        Calculation engine capable of evaluating the thermodynamic outputs.
+        Calculation engine.
     analysis_params:
-        Dictionary containing ``"base_params"`` with the baseline operating
-        point and ``"output_variable"`` describing the objective to optimize.
+        Dict with ``"base_params"`` and ``"output_variable"``.
     manual_hhv:
-        Manually specified higher heating value supplied by the user [Btu/lb].
+        User-specified HHV [Btu/lb].
     parameter_configs:
-        Sequence of dictionaries describing each parameter to optimize. Every
-        entry must provide ``"name"`` (parameter label), ``"min"``/
-        ``"max"`` bounds, and an ``"initial"`` starting guess.
+        Sequence of dicts with ``"name"``, ``"min"``, ``"max"``,
+        ``"initial"``.
     maximize:
-        ``True`` to maximize the output, ``False`` to minimize.
+        ``True`` to maximize, ``False`` to minimize.
     learning_rate, beta1, beta2, epsilon:
-        Adam optimizer hyperparameters as defined by Kingma & Ba (2014).
+        Adam hyperparameters (Kingma & Ba, 2014).
     gradient_step:
-        Finite difference step size used to approximate gradients within the
-        bounded search domain.
+        Finite-difference step size.
     max_iterations:
-        Maximum number of Adam iterations to perform.
+        Maximum iterations.
     tolerance:
-        Convergence tolerance applied to the L2 norm of successive parameter
-        updates.
+        Convergence tolerance on parameter updates.
     gradient_tolerance:
-        Optional convergence tolerance for the gradient norm. Defaults to the
-        same value as ``tolerance`` when omitted.
+        Convergence tolerance on gradient norm (defaults to
+        *tolerance*).
 
     Returns
     -------
-    Dict[str, object]
-        Dictionary containing the best objective value, parameter set, resolved
-        state, composition, the per-iteration history, the final parameter
-        values, and the number of executed iterations.
+    OptimizationResults
+        Best objective, parameters, state, composition, history,
+        final parameters, and iteration count.
     """
-
     if not parameter_configs:
-        raise ValueError("At least one parameter must be provided for optimization")
+        raise ValueError(
+            "At least one parameter must be provided",
+        )
 
     parameter_names = [cfg["name"] for cfg in parameter_configs]
-    lower_bounds = np.array([cfg["min"] for cfg in parameter_configs], dtype=float)
-    upper_bounds = np.array([cfg["max"] for cfg in parameter_configs], dtype=float)
-    values = np.array([cfg["initial"] for cfg in parameter_configs], dtype=float)
+    lower_bounds = np.array(
+        [cfg["min"] for cfg in parameter_configs],
+        dtype=float,
+    )
+    upper_bounds = np.array(
+        [cfg["max"] for cfg in parameter_configs],
+        dtype=float,
+    )
+    values = np.array(
+        [cfg["initial"] for cfg in parameter_configs],
+        dtype=float,
+    )
 
     m = np.zeros_like(values)
     v = np.zeros_like(values)
@@ -120,15 +205,20 @@ def run_adam_optimization(
     history: list[OptimizationHistoryEntry] = []
 
     previous_values = values.copy()
-
-    base_params = cast(dict[str, float], analysis_params["base_params"])
+    base_params = cast(
+        dict[str, float],
+        analysis_params["base_params"],
+    )
     output_name = cast(str, analysis_params["output_variable"])
 
     if gradient_tolerance is None:
         gradient_tolerance = tolerance
 
     for iteration in range(1, max_iterations + 1):
-        overrides = _build_override_mapping(parameter_names, values.tolist())
+        overrides = _build_override_mapping(
+            parameter_names,
+            values.tolist(),
+        )
         objective, composition, state = evaluate_output(
             engine,
             base_params,
@@ -138,10 +228,8 @@ def run_adam_optimization(
         )
 
         if not np.isfinite(objective):
-            # Treat invalid evaluations as non-improving points.
             objective = -np.inf if maximize else np.inf
-            composition = {}
-            state = {}
+            composition, state = {}, {}
 
         if np.isfinite(objective) and (
             (maximize and objective > best_output)
@@ -157,128 +245,45 @@ def run_adam_optimization(
                 iteration=iteration,
                 objective=objective,
                 parameters=overrides.copy(),
-            )
+            ),
         )
 
+        # Finite-difference gradient
         gradient = np.zeros_like(values)
         if np.isfinite(objective):
-            for index, cfg in enumerate(parameter_configs):
-                lower = float(cfg["min"])
-                upper = float(cfg["max"])
-                if np.isclose(lower, upper):
-                    continue
-
-                step = max(gradient_step, (upper - lower) * 1e-3)
-                if step <= 0:
-                    continue
-
-                current_value = values[index]
-                at_lower = np.isclose(current_value, lower)
-                at_upper = np.isclose(current_value, upper)
-
-                if at_lower and at_upper:
-                    continue
-
-                if at_lower and not at_upper:
-                    forward_value = np.clip(current_value + step, lower, upper)
-                    if np.isclose(forward_value, current_value):
-                        continue
-                    forward = values.copy()
-                    forward[index] = forward_value
-                    overrides_forward = _build_override_mapping(
-                        parameter_names, forward.tolist()
-                    )
-                    forward_objective, _, _ = evaluate_output(
-                        engine,
-                        base_params,
-                        manual_hhv,
-                        output_name,
-                        overrides_forward,
-                    )
-                    if not np.isfinite(forward_objective):
-                        continue
-                    gradient[index] = (forward_objective - objective) / (
-                        forward_value - current_value
-                    )
-                    continue
-
-                if at_upper and not at_lower:
-                    backward_value = np.clip(current_value - step, lower, upper)
-                    if np.isclose(backward_value, current_value):
-                        continue
-                    backward = values.copy()
-                    backward[index] = backward_value
-                    overrides_backward = _build_override_mapping(
-                        parameter_names, backward.tolist()
-                    )
-                    backward_objective, _, _ = evaluate_output(
-                        engine,
-                        base_params,
-                        manual_hhv,
-                        output_name,
-                        overrides_backward,
-                    )
-                    if not np.isfinite(backward_objective):
-                        continue
-                    gradient[index] = (objective - backward_objective) / (
-                        current_value - backward_value
-                    )
-                    continue
-
-                plus = values.copy()
-                minus = values.copy()
-                plus[index] = np.clip(current_value + step, lower, upper)
-                minus[index] = np.clip(current_value - step, lower, upper)
-
-                if np.isclose(plus[index], minus[index]):
-                    continue
-
-                overrides_plus = _build_override_mapping(parameter_names, plus.tolist())
-                overrides_minus = _build_override_mapping(
-                    parameter_names, minus.tolist()
-                )
-
-                value_plus, _, _ = evaluate_output(
+            for idx, cfg in enumerate(parameter_configs):
+                gradient[idx] = _compute_gradient_component(
+                    idx,
+                    cfg,
+                    values,
+                    objective,
+                    gradient_step,
+                    parameter_names,
                     engine,
                     base_params,
                     manual_hhv,
                     output_name,
-                    overrides_plus,
-                )
-                value_minus, _, _ = evaluate_output(
-                    engine,
-                    base_params,
-                    manual_hhv,
-                    output_name,
-                    overrides_minus,
                 )
 
-                if not (np.isfinite(value_plus) and np.isfinite(value_minus)):
-                    continue
-
-                gradient[index] = (value_plus - value_minus) / (
-                    plus[index] - minus[index]
-                )
-
-        gradient_norm = np.linalg.norm(gradient)
-        if gradient_norm < gradient_tolerance:
+        if np.linalg.norm(gradient) < gradient_tolerance:
             break
 
+        # Adam update
         m = beta1 * m + (1 - beta1) * gradient
         v = beta2 * v + (1 - beta2) * (gradient**2)
-
         m_hat = m / (1 - beta1**iteration)
         v_hat = v / (1 - beta2**iteration)
 
-        direction = 1.0 if maximize else -1.0
-        update = direction * learning_rate * m_hat / (np.sqrt(v_hat) + epsilon)
-
-        values = values + update
-        values = np.clip(values, lower_bounds, upper_bounds)
+        sign = 1.0 if maximize else -1.0
+        update = sign * learning_rate * m_hat / (np.sqrt(v_hat) + epsilon)
+        values = np.clip(
+            values + update,
+            lower_bounds,
+            upper_bounds,
+        )
 
         if np.linalg.norm(values - previous_values) < tolerance:
             break
-
         previous_values = values.copy()
 
     return {
@@ -287,7 +292,10 @@ def run_adam_optimization(
         "best_state": best_state,
         "best_composition": best_composition,
         "history": history,
-        "final_parameters": _build_override_mapping(parameter_names, values.tolist()),
+        "final_parameters": _build_override_mapping(
+            parameter_names,
+            values.tolist(),
+        ),
         "iterations": len(history),
     }
 

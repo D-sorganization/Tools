@@ -159,7 +159,7 @@ class MATLABQualityChecker:
 
     def _analyze_matlab_file(self, file_path: Path) -> list[str]:
         """Analyze a single MATLAB file for quality issues."""
-        issues = []
+        issues: list[str] = []
 
         try:
             with file_path.open(encoding="utf-8", errors="ignore") as f:
@@ -170,213 +170,306 @@ class MATLABQualityChecker:
 
             for i, line in enumerate(lines, 1):
                 line_stripped = line.strip()
-                line_original = line
-
                 if not line_stripped:
                     continue
 
                 is_comment = line_stripped.startswith("%")
 
                 if not is_comment:
-                    if re.match(
-                        r"\b(function|if|for|while|switch|try|parfor|classdef|arguments|properties|methods|events)\b",
+                    in_function, nesting_level = self._track_nesting(
                         line_stripped,
-                    ):
-                        if line_stripped.startswith("function"):
-                            in_function = True
-                        nesting_level += 1
-
-                    if re.match(r"\bend\b", line_stripped):
-                        nesting_level -= 1
-                        if nesting_level <= 0:
-                            in_function = False
-                            nesting_level = 0
+                        in_function,
+                        nesting_level,
+                    )
 
                 if line_stripped.startswith("function") and not is_comment:
-                    has_docstring = False
-                    min_docstring_length = 3
-                    for j in range(i, min(i + 5, len(lines))):
-                        next_line = lines[j].strip()
-                        if next_line and not next_line.startswith("%"):
-                            break
-                        if (
-                            next_line.startswith("%")
-                            and len(next_line) > min_docstring_length
-                        ):
-                            has_docstring = True
-                            break
+                    self._check_function_definition(
+                        file_path,
+                        lines,
+                        i,
+                        issues,
+                    )
 
-                    if not has_docstring:
-                        issues.append(
-                            f"{file_path.name} (line {i}): Missing function docstring",
-                        )
-
-                    has_arguments = False
-                    for j in range(i, min(i + 25, len(lines))):
-                        line_check = lines[j].strip()
-                        if line_check.startswith("%"):
-                            continue
-                        if re.search(r"\barguments\b", line_check):
-                            has_arguments = True
-                            break
-
-                    if not has_arguments:
-                        issues.append(
-                            f"{file_path.name} (line {i}): "
-                            "Missing arguments validation block",
-                        )
-
-                banned_patterns = [
-                    (r"\bTODO\b", "TODO placeholder found"),
-                    (r"\bFIXME\b", "FIXME placeholder found"),
-                    (r"\bHACK\b", "HACK comment found"),
-                    (r"\bXXX\b", "XXX comment found"),
-                    (r"<[A-Z_][A-Z0-9_]*>", "Angle bracket placeholder found"),
-                    (r"\{\{.*?\}\}", "Template placeholder found"),
-                ]
-
-                for pattern, message in banned_patterns:
-                    if re.search(pattern, line_stripped):
-                        issues.append(f"{file_path.name} (line {i}): {message}")
+                self._check_banned_patterns(
+                    file_path,
+                    line_stripped,
+                    i,
+                    issues,
+                )
 
                 if is_comment:
                     continue
 
-                if re.search(r"\beval\s*\(", line_stripped):
-                    issues.append(
-                        f"{file_path.name} (line {i}): "
-                        "Avoid using eval() - potential security risk and "
-                        "performance issue",
-                    )
-
-                if re.search(r"\bassignin\s*\(", line_stripped):
-                    issues.append(
-                        f"{file_path.name} (line {i}): "
-                        "Avoid using assignin() - violates encapsulation",
-                    )
-
-                if re.search(r"\bevalin\s*\(", line_stripped):
-                    issues.append(
-                        f"{file_path.name} (line {i}): "
-                        "Avoid using evalin() - violates encapsulation",
-                    )
-
-                if re.search(r"\bglobal\s+\w+", line_stripped):
-                    issues.append(
-                        f"{file_path.name} (line {i}): "
-                        "Global variable usage - consider passing as argument",
-                    )
-
-                if self.LOAD_PATTERN.search(
+                self._check_anti_patterns(
+                    file_path,
                     line_stripped,
-                ) and not self.ASSIGNMENT_PATTERN.search(line_stripped):
-                    issues.append(
-                        f"{file_path.name} (line {i}): "
-                        "load without output variable - use 'data = load(...)' instead",
-                    )
-
-                magic_number_pattern = r"(?<![.\w])(?:\d+\.\d+|\d+)(?![.\w])"
-                magic_numbers = re.findall(magic_number_pattern, line_stripped)
-
-                acceptable_numbers = {
-                    "0",
-                    "0.0",
-                    "1",
-                    "1.0",
-                    "2",
-                    "2.0",
-                    "3",
-                    "3.0",
-                    "4",
-                    "4.0",
-                    "5",
-                    "5.0",
-                    "10",
-                    "10.0",
-                    "42",
-                    "42.0",
-                    "100",
-                    "100.0",
-                    "1000",
-                    "1000.0",
-                    "0.5",
-                    "0.1",
-                    "0.01",
-                    "0.001",
-                    "0.0001",
-                }
-
-                known_constants = {
-                    "3.14159": "pi constant [dimensionless] - mathematical constant",
-                    "3.1416": "pi constant [dimensionless] - mathematical constant",
-                    "3.14": "pi constant [dimensionless] - mathematical constant",
-                    "1.5708": "pi/2 constant [dimensionless] - mathematical constant",
-                    "1.57": "pi/2 constant [dimensionless] - mathematical constant",
-                    "0.7854": "pi/4 constant [dimensionless] - mathematical constant",
-                    "0.785": "pi/4 constant [dimensionless] - mathematical constant",
-                    "9.81": "gravitational acceleration [m/s²] - approximate standard gravity",
-                    "9.8": "gravitational acceleration [m/s²] - approximate standard gravity",
-                    "9.807": "gravitational acceleration [m/s²] - approximate standard gravity",
-                }
-
-                for num in magic_numbers:
-                    if num in known_constants:
-                        issues.append(
-                            f"{file_path.name} (line {i}): Magic number {num} "
-                            f"({known_constants[num]}) - define as named constant",
-                        )
-                    elif num not in acceptable_numbers:
-                        comment_idx = line_original.find("%")
-                        num_idx = line_original.find(num)
-                        if comment_idx == -1 or (
-                            num_idx != -1 and num_idx < comment_idx
-                        ):
-                            issues.append(
-                                f"{file_path.name} (line {i}): Magic number {num} "
-                                "should be defined as constant with units and source",
-                            )
-
-                if in_function:
-                    if re.search(
-                        r"\bclear\s+(all|global)\b", line_stripped, re.IGNORECASE
-                    ):
-                        issues.append(
-                            f"{file_path.name} (line {i}): Avoid 'clear all' or "
-                            "'clear global' in functions - clears all variables, "
-                            "functions, and MEX links",
-                        )
-                    elif re.search(r"\bclear\b(?!\s+\w+)", line_stripped):
-                        issues.append(
-                            f"{file_path.name} (line {i}): Avoid 'clear' in functions "
-                            "- can clear function variables",
-                        )
-                    if re.search(r"\bclc\b", line_stripped):
-                        issues.append(
-                            f"{file_path.name} (line {i}): Avoid 'clc' in functions "
-                            "- affects user's workspace",
-                        )
-                    if re.search(r"\bclose\s+all\b", line_stripped):
-                        issues.append(
-                            f"{file_path.name} (line {i}): Avoid 'close all' in "
-                            "functions - closes user's figures",
-                        )
-
-                if re.search(r"\bexist\s*\(", line_stripped):
-                    issues.append(
-                        f"{file_path.name} (line {i}): Consider using validation or "
-                        "try/catch instead of exist()",
-                    )
-
-                if in_function and re.search(r"\baddpath\s*\(", line_stripped):
-                    issues.append(
-                        f"{file_path.name} (line {i}): Avoid addpath in functions "
-                        "- manage paths externally",
-                    )
+                    i,
+                    issues,
+                )
+                self._check_magic_numbers(
+                    file_path,
+                    line,
+                    line_stripped,
+                    i,
+                    issues,
+                )
+                self._check_workspace_pollution(
+                    file_path,
+                    line_stripped,
+                    i,
+                    in_function,
+                    issues,
+                )
 
         except (PermissionError, OSError) as e:
-            issues.append(f"{file_path.name}: Could not analyze file - {e!s}")
+            issues.append(
+                f"{file_path.name}: Could not analyze file - {e!s}",
+            )
 
         return issues
+
+    @staticmethod
+    def _track_nesting(
+        line_stripped: str,
+        in_function: bool,
+        nesting_level: int,
+    ) -> tuple[bool, int]:
+        """Update nesting state based on current line."""
+        if re.match(
+            r"\b(function|if|for|while|switch|try|parfor|"
+            r"classdef|arguments|properties|methods|events)\b",
+            line_stripped,
+        ):
+            if line_stripped.startswith("function"):
+                in_function = True
+            nesting_level += 1
+
+        if re.match(r"\bend\b", line_stripped):
+            nesting_level -= 1
+            if nesting_level <= 0:
+                in_function = False
+                nesting_level = 0
+
+        return in_function, nesting_level
+
+    @staticmethod
+    def _check_function_definition(
+        file_path: Path,
+        lines: list[str],
+        line_num: int,
+        issues: list[str],
+    ) -> None:
+        """Check for function docstring and arguments block."""
+        has_docstring = False
+        min_docstring_length = 3
+        for j in range(line_num, min(line_num + 5, len(lines))):
+            next_line = lines[j].strip()
+            if next_line and not next_line.startswith("%"):
+                break
+            if next_line.startswith("%") and len(next_line) > min_docstring_length:
+                has_docstring = True
+                break
+
+        if not has_docstring:
+            issues.append(
+                f"{file_path.name} (line {line_num}): Missing function docstring",
+            )
+
+        has_arguments = False
+        for j in range(line_num, min(line_num + 25, len(lines))):
+            line_check = lines[j].strip()
+            if line_check.startswith("%"):
+                continue
+            if re.search(r"\barguments\b", line_check):
+                has_arguments = True
+                break
+
+        if not has_arguments:
+            issues.append(
+                f"{file_path.name} (line {line_num}): "
+                "Missing arguments validation block",
+            )
+
+    @staticmethod
+    def _check_banned_patterns(
+        file_path: Path,
+        line_stripped: str,
+        line_num: int,
+        issues: list[str],
+    ) -> None:
+        """Check for TODO, FIXME, HACK, XXX, and placeholders."""
+        banned = [
+            (r"\bTODO\b", "TODO placeholder found"),
+            (r"\bFIXME\b", "FIXME placeholder found"),
+            (r"\bHACK\b", "HACK comment found"),
+            (r"\bXXX\b", "XXX comment found"),
+            (
+                r"<[A-Z_][A-Z0-9_]*>",
+                "Angle bracket placeholder found",
+            ),
+            (r"\{\{.*?\}\}", "Template placeholder found"),
+        ]
+        for pattern, message in banned:
+            if re.search(pattern, line_stripped):
+                issues.append(
+                    f"{file_path.name} (line {line_num}): {message}",
+                )
+
+    def _check_anti_patterns(
+        self,
+        file_path: Path,
+        line_stripped: str,
+        line_num: int,
+        issues: list[str],
+    ) -> None:
+        """Check for eval, assignin, evalin, global, load."""
+        anti_patterns = [
+            (
+                r"\beval\s*\(",
+                "Avoid eval() - security risk and perf issue",
+            ),
+            (
+                r"\bassignin\s*\(",
+                "Avoid assignin() - violates encapsulation",
+            ),
+            (
+                r"\bevalin\s*\(",
+                "Avoid evalin() - violates encapsulation",
+            ),
+            (
+                r"\bglobal\s+\w+",
+                "Global variable - consider passing as arg",
+            ),
+            (
+                r"\bexist\s*\(",
+                "Consider try/catch instead of exist()",
+            ),
+        ]
+        for pattern, message in anti_patterns:
+            if re.search(pattern, line_stripped):
+                issues.append(
+                    f"{file_path.name} (line {line_num}): {message}",
+                )
+
+        if self.LOAD_PATTERN.search(
+            line_stripped,
+        ) and not self.ASSIGNMENT_PATTERN.search(line_stripped):
+            issues.append(
+                f"{file_path.name} (line {line_num}): "
+                "load without output variable - "
+                "use 'data = load(...)' instead",
+            )
+
+    _ACCEPTABLE_NUMBERS = frozenset(
+        {
+            "0",
+            "0.0",
+            "1",
+            "1.0",
+            "2",
+            "2.0",
+            "3",
+            "3.0",
+            "4",
+            "4.0",
+            "5",
+            "5.0",
+            "10",
+            "10.0",
+            "42",
+            "42.0",
+            "100",
+            "100.0",
+            "1000",
+            "1000.0",
+            "0.5",
+            "0.1",
+            "0.01",
+            "0.001",
+            "0.0001",
+        }
+    )
+
+    _KNOWN_CONSTANTS: dict[str, str] = {
+        "3.14159": "pi [dimensionless]",
+        "3.1416": "pi [dimensionless]",
+        "3.14": "pi [dimensionless]",
+        "1.5708": "pi/2 [dimensionless]",
+        "1.57": "pi/2 [dimensionless]",
+        "0.7854": "pi/4 [dimensionless]",
+        "0.785": "pi/4 [dimensionless]",
+        "9.81": "gravity [m/s²]",
+        "9.8": "gravity [m/s²]",
+        "9.807": "gravity [m/s²]",
+    }
+
+    def _check_magic_numbers(
+        self,
+        file_path: Path,
+        line_original: str,
+        line_stripped: str,
+        line_num: int,
+        issues: list[str],
+    ) -> None:
+        """Detect magic numbers that should be named constants."""
+        pattern = r"(?<![.\w])(?:\d+\.\d+|\d+)(?![.\w])"
+        magic_numbers = re.findall(pattern, line_stripped)
+
+        for num in magic_numbers:
+            if num in self._KNOWN_CONSTANTS:
+                issues.append(
+                    f"{file_path.name} (line {line_num}): "
+                    f"Magic number {num} "
+                    f"({self._KNOWN_CONSTANTS[num]}) "
+                    "- define as named constant",
+                )
+            elif num not in self._ACCEPTABLE_NUMBERS:
+                comment_idx = line_original.find("%")
+                num_idx = line_original.find(num)
+                if comment_idx == -1 or (num_idx != -1 and num_idx < comment_idx):
+                    issues.append(
+                        f"{file_path.name} (line {line_num}): "
+                        f"Magic number {num} should be "
+                        "defined as constant with units",
+                    )
+
+    @staticmethod
+    def _check_workspace_pollution(
+        file_path: Path,
+        line_stripped: str,
+        line_num: int,
+        in_function: bool,
+        issues: list[str],
+    ) -> None:
+        """Check for clear all, clc, close all, addpath in functions."""
+        if not in_function:
+            return
+
+        if re.search(
+            r"\bclear\s+(all|global)\b",
+            line_stripped,
+            re.IGNORECASE,
+        ):
+            issues.append(
+                f"{file_path.name} (line {line_num}): "
+                "Avoid 'clear all/global' in functions",
+            )
+        elif re.search(r"\bclear\b(?!\s+\w+)", line_stripped):
+            issues.append(
+                f"{file_path.name} (line {line_num}): Avoid 'clear' in functions",
+            )
+        if re.search(r"\bclc\b", line_stripped):
+            issues.append(
+                f"{file_path.name} (line {line_num}): Avoid 'clc' in functions",
+            )
+        if re.search(r"\bclose\s+all\b", line_stripped):
+            issues.append(
+                f"{file_path.name} (line {line_num}): Avoid 'close all' in functions",
+            )
+        if re.search(r"\baddpath\s*\(", line_stripped):
+            issues.append(
+                f"{file_path.name} (line {line_num}): Avoid addpath in functions",
+            )
 
     def run_all_checks(self) -> dict[str, Any]:
         """Run all MATLAB quality checks."""
