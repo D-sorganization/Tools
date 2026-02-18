@@ -50,7 +50,7 @@ def main() -> None:
             sys.exit(1)
 
     except KeyboardInterrupt:
-        print()
+        sys.stderr.write("\n")  # clean newline after ^C
         logger.info("Build cancelled by user.")
         sys.exit(1)
 

@@ -110,11 +110,11 @@ def main() -> None:
         logger.info("  - GUI: python launch_gui.py")
         logger.info("  - CLI: python -m src.pdf_renamer.cli /path/to/pdfs --dry-run")
         if not llm_ok:
-            print(
+            logger.info(
                 f"\n{YELLOW}Note:{RESET} AI features require google-generativeai (optional)"
             )
         if not gemini_key and llm_ok:
-            print(
+            logger.info(
                 f"{YELLOW}Note:{RESET} Set GEMINI_API_KEY environment variable to enable AI"
             )
     else:
@@ -122,7 +122,7 @@ def main() -> None:
         logger.info(f"\n{BOLD}To fix:{RESET}")
         logger.info("  pip install -r requirements.txt")
 
-    print()
+    logger.info("")
 
 
 if __name__ == "__main__":

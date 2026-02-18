@@ -118,7 +118,7 @@ def launch_quickstart(
             guidance = status.guidance.get(name)
             hint = f" ({guidance})" if guidance else ""
             logger.info(f"  - {name}{hint}")
-        print(
+        logger.info(
             "\nInstall the missing packages and try again. "
             "Recommended: pip install -r solar_system/requirements.txt"
         )
