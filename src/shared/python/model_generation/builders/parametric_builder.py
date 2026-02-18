@@ -200,23 +200,12 @@ class ParametricBuilder(BaseURDFBuilder):
         width = length * width_ratio
         mass = self._mass_kg * mass_ratio
 
-        # Create geometry
-        if geometry_type == GeometryType.CAPSULE:
-            radius = width / 2
-            cyl_length = max(0.01, length - 2 * radius)
-            geometry = Geometry.capsule(radius, cyl_length)
-            inertia = Inertia.from_capsule(mass, radius, cyl_length)
-        elif geometry_type == GeometryType.CYLINDER:
-            radius = width / 2
-            geometry = Geometry.cylinder(radius, length)
-            inertia = Inertia.from_cylinder(mass, radius, length)
-        elif geometry_type == GeometryType.SPHERE:
-            radius = length / 2
-            geometry = Geometry.sphere(radius)
-            inertia = Inertia.from_sphere(mass, radius)
-        else:  # BOX
-            geometry = Geometry.box(width, width, length)
-            inertia = Inertia.from_box(mass, width, width, length)
+        geometry, inertia = self._create_segment_geometry(
+            geometry_type,
+            mass,
+            length,
+            width,
+        )
 
         # Create link
         link = Link(
@@ -230,30 +219,83 @@ class ParametricBuilder(BaseURDFBuilder):
 
         # Create joint if has parent
         if parent is not None:
-            joint_name = f"{parent}_to_{name}"
-            limits = None
-            if joint_limits and joint_type == JointType.REVOLUTE:
-                limits = JointLimits(
-                    lower=joint_limits[0],
-                    upper=joint_limits[1],
-                )
-
-            joint = Joint(
-                name=joint_name,
-                joint_type=joint_type,
-                parent=parent,
-                child=name,
-                origin=Origin(xyz=origin_offset),
-                axis=joint_axis,
-                limits=limits,
-                dynamics=JointDynamics(
-                    damping=self._config.default_joint_damping,
-                    friction=self._config.default_joint_friction,
-                ),
+            self._create_segment_joint(
+                name,
+                parent,
+                joint_type,
+                joint_axis,
+                joint_limits,
+                origin_offset,
             )
-            self._joints.append(joint)
 
         return self
+
+    @staticmethod
+    def _create_segment_geometry(
+        geometry_type: GeometryType,
+        mass: float,
+        length: float,
+        width: float,
+    ) -> tuple[Geometry, Inertia]:
+        """Create geometry and inertia for a segment based on shape type."""
+        if geometry_type == GeometryType.CAPSULE:
+            radius = width / 2
+            cyl_length = max(0.01, length - 2 * radius)
+            return Geometry.capsule(radius, cyl_length), Inertia.from_capsule(
+                mass,
+                radius,
+                cyl_length,
+            )
+        if geometry_type == GeometryType.CYLINDER:
+            radius = width / 2
+            return Geometry.cylinder(radius, length), Inertia.from_cylinder(
+                mass,
+                radius,
+                length,
+            )
+        if geometry_type == GeometryType.SPHERE:
+            radius = length / 2
+            return Geometry.sphere(radius), Inertia.from_sphere(mass, radius)
+        # BOX
+        return Geometry.box(width, width, length), Inertia.from_box(
+            mass,
+            width,
+            width,
+            length,
+        )
+
+    def _create_segment_joint(
+        self,
+        name: str,
+        parent: str,
+        joint_type: JointType,
+        joint_axis: tuple[float, float, float],
+        joint_limits: tuple[float, float] | None,
+        origin_offset: tuple[float, float, float],
+    ) -> None:
+        """Create a joint connecting a segment to its parent."""
+        joint_name = f"{parent}_to_{name}"
+        limits = None
+        if joint_limits and joint_type == JointType.REVOLUTE:
+            limits = JointLimits(
+                lower=joint_limits[0],
+                upper=joint_limits[1],
+            )
+
+        joint = Joint(
+            name=joint_name,
+            joint_type=joint_type,
+            parent=parent,
+            child=name,
+            origin=Origin(xyz=origin_offset),
+            axis=joint_axis,
+            limits=limits,
+            dynamics=JointDynamics(
+                damping=self._config.default_joint_damping,
+                friction=self._config.default_joint_friction,
+            ),
+        )
+        self._joints.append(joint)
 
     def add_humanoid_segments(self) -> ParametricBuilder:
         """

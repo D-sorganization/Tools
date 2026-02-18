@@ -71,60 +71,19 @@ class ThreePhaseElectricalModelEnhanced:
             j = (i + 1) % 3
             phase_key = f"{i + 1}-{j + 1}"
 
-            # 1. Direct glass conduction path (trapezoidal prism)
-            direct_resistance = self._calculate_trapezoidal_path_resistance(
+            total_resistance, path_info = self._calculate_phase_resistance(
                 electrode_positions[i],
                 electrode_positions[j],
                 tip_radius,
                 conductive_height,
                 bath_temperature,
                 r_bath,
+                metal_depth,
+                metal_conductive,
             )
 
-            # 2. Via-metal path (3-segment composite)
-            # Only calculate if metal conductivity is enabled
-            if metal_conductive:
-                via_metal_resistance = self._calculate_via_metal_path_resistance(
-                    electrode_positions[i],
-                    electrode_positions[j],
-                    metal_depth,
-                    tip_radius,
-                    bath_temperature,
-                    r_bath,
-                )
-                # Total resistance is parallel combination
-                total_resistance = self._parallel_resistance(
-                    direct_resistance,
-                    via_metal_resistance,
-                )
-
-                # Calculate current fractions properly
-                if (direct_resistance + via_metal_resistance) > 0:
-                    direct_fraction = via_metal_resistance / (
-                        direct_resistance + via_metal_resistance
-                    )
-                    metal_fraction = direct_resistance / (
-                        direct_resistance + via_metal_resistance
-                    )
-                else:
-                    direct_fraction = 0.5
-                    metal_fraction = 0.5
-            else:
-                # Metal layer not conductive - only direct glass path
-                via_metal_resistance = np.inf  # Infinite resistance (no conduction)
-                total_resistance = direct_resistance  # Only glass path conducts
-                direct_fraction = 1.0  # All current through glass
-                metal_fraction = 0.0  # No current through metal
-
             resistances[phase_key] = total_resistance
-
-            current_paths[phase_key] = {
-                "direct_glass": direct_resistance,
-                "via_metal": via_metal_resistance,
-                "total": total_resistance,
-                "direct_fraction": direct_fraction,
-                "metal_fraction": metal_fraction,
-            }
+            current_paths[phase_key] = path_info
 
         # Current distribution analysis
         current_distribution = self._analyze_current_distribution_new(current_paths)
@@ -147,6 +106,67 @@ class ThreePhaseElectricalModelEnhanced:
                 "metal_depth": metal_depth,
             },
         }
+
+    def _calculate_phase_resistance(
+        self,
+        electrode1_pos: dict,
+        electrode2_pos: dict,
+        tip_radius: float,
+        conductive_height: float,
+        temperature: float,
+        bath_radius: float,
+        metal_depth: float,
+        metal_conductive: bool,
+    ) -> tuple[float, dict]:
+        """Calculate total resistance and path info for a single electrode pair."""
+        direct_resistance = self._calculate_trapezoidal_path_resistance(
+            electrode1_pos,
+            electrode2_pos,
+            tip_radius,
+            conductive_height,
+            temperature,
+            bath_radius,
+        )
+
+        if metal_conductive:
+            via_metal_resistance = self._calculate_via_metal_path_resistance(
+                electrode1_pos,
+                electrode2_pos,
+                metal_depth,
+                tip_radius,
+                temperature,
+                bath_radius,
+            )
+            total_resistance = self._parallel_resistance(
+                direct_resistance,
+                via_metal_resistance,
+            )
+
+            if (direct_resistance + via_metal_resistance) > 0:
+                direct_fraction = via_metal_resistance / (
+                    direct_resistance + via_metal_resistance
+                )
+                metal_fraction = direct_resistance / (
+                    direct_resistance + via_metal_resistance
+                )
+            else:
+                direct_fraction = 0.5
+                metal_fraction = 0.5
+        else:
+            via_metal_resistance = np.inf
+            total_resistance = direct_resistance
+            direct_fraction = 1.0
+            metal_fraction = 0.0
+
+        path_info = {
+            "direct_glass": direct_resistance,
+            "via_metal": via_metal_resistance,
+            "total": total_resistance,
+            "direct_fraction": direct_fraction,
+            "metal_fraction": metal_fraction,
+        }
+
+        return total_resistance, path_info
 
     def _calculate_electrode_positions_3d(
         self,
@@ -323,74 +343,93 @@ class ThreePhaseElectricalModelEnhanced:
         )
 
         # Get electrode dimensions within glass bath
-        e1_length = np.linalg.norm(electrode1_pos["tip"] - e1_wall)
-        e2_length = np.linalg.norm(electrode2_pos["tip"] - e2_wall)
+        e1_length = float(np.linalg.norm(electrode1_pos["tip"] - e1_wall))
+        e2_length = float(np.linalg.norm(electrode2_pos["tip"] - e2_wall))
 
         # Apply horizontal spreading factor for vertical segments
         effective_width = 2 * electrode_radius * self.config.horizontal_spreading_factor
 
-        # Segment 1: Down from E1 glass portion
-        # Cross-sectional area = electrode length × effective width
-        area_down = e1_length * effective_width  # inches²
-        area_down_m2 = area_down * 0.00064516  # Convert to m²
-
-        # Vertical distance from electrode center to metal top
-        electrode_z = electrode1_pos["tip"][2]
-        vertical_distance_1 = abs(electrode_z - metal_depth)
-        distance_1_m = vertical_distance_1 * 0.0254  # Convert to m
-
         conductivity_glass = self.glass_interface.get_conductivity(temperature)
 
-        if area_down_m2 > 0 and distance_1_m > 0:
-            resistance_1: float = float(
-                distance_1_m / (conductivity_glass * area_down_m2)
-            )
-        else:
-            resistance_1 = 0.001
+        # Segment 1: Down from E1 glass portion
+        resistance_1 = self._vertical_glass_segment_resistance(
+            e1_length,
+            effective_width,
+            electrode1_pos["tip"][2],
+            metal_depth,
+            conductivity_glass,
+        )
 
         # Segment 2: Through metal layer
-        # Use center-to-center distance between electrodes within glass
+        resistance_2 = self._metal_segment_resistance(
+            electrode1_pos,
+            electrode2_pos,
+            e1_wall,
+            e2_wall,
+            e1_length,
+            e2_length,
+            effective_width,
+            temperature,
+        )
+
+        # Segment 3: Up to E2 glass portion
+        resistance_3 = self._vertical_glass_segment_resistance(
+            e2_length,
+            effective_width,
+            electrode2_pos["tip"][2],
+            metal_depth,
+            conductivity_glass,
+        )
+
+        return resistance_1 + resistance_2 + resistance_3
+
+    @staticmethod
+    def _vertical_glass_segment_resistance(
+        electrode_length: float,
+        effective_width: float,
+        electrode_z: float,
+        metal_depth: float,
+        conductivity: float,
+        default_resistance: float = 0.001,
+    ) -> float:
+        """Calculate resistance of a vertical glass segment (electrode to metal)."""
+        area_m2 = electrode_length * effective_width * 0.00064516  # in² → m²
+        distance_m = abs(electrode_z - metal_depth) * 0.0254  # in → m
+
+        if area_m2 > 0 and distance_m > 0:
+            return float(distance_m / (conductivity * area_m2))
+        return default_resistance
+
+    def _metal_segment_resistance(
+        self,
+        electrode1_pos: dict,
+        electrode2_pos: dict,
+        e1_wall: np.ndarray,
+        e2_wall: np.ndarray,
+        e1_length: float,
+        e2_length: float,
+        effective_width: float,
+        temperature: float,
+    ) -> float:
+        """Calculate resistance through the metal layer between two electrodes."""
         center1 = (electrode1_pos["tip"] + e1_wall) / 2
         center2 = (electrode2_pos["tip"] + e2_wall) / 2
         horizontal_distance = np.linalg.norm(center2[:2] - center1[:2])
-        distance_2_m = horizontal_distance * 0.0254  # Convert to m
+        distance_m = horizontal_distance * 0.0254
 
-        # Metal path is wide - use average of electrode lengths
         avg_electrode_length = (e1_length + e2_length) / 2
-        metal_path_width = avg_electrode_length + effective_width  # Wider in metal
+        metal_path_width = avg_electrode_length + effective_width
         metal_path_height = 2.0  # inches (typical metal layer thickness)
-        area_metal = metal_path_width * metal_path_height  # inches²
-        area_metal_m2 = area_metal * 0.00064516  # Convert to m²
+        area_m2 = metal_path_width * metal_path_height * 0.00064516
 
         conductivity_metal = self.glass_interface.get_conductivity(
             temperature,
             is_metal=True,
         )
 
-        if area_metal_m2 > 0 and distance_2_m > 0:
-            resistance_2: float = float(
-                distance_2_m / (conductivity_metal * area_metal_m2)
-            )
-        else:
-            resistance_2 = 0.0001
-
-        # Segment 3: Up to E2 glass portion
-        area_up = e2_length * effective_width  # inches²
-        area_up_m2 = area_up * 0.00064516  # Convert to m²
-
-        electrode2_z = electrode2_pos["tip"][2]
-        vertical_distance_3 = abs(electrode2_z - metal_depth)
-        distance_3_m = vertical_distance_3 * 0.0254  # Convert to m
-
-        if area_up_m2 > 0 and distance_3_m > 0:
-            resistance_3: float = float(
-                distance_3_m / (conductivity_glass * area_up_m2)
-            )
-        else:
-            resistance_3 = 0.001
-
-        # Total resistance is sum of three segments
-        return resistance_1 + resistance_2 + resistance_3
+        if area_m2 > 0 and distance_m > 0:
+            return float(distance_m / (conductivity_metal * area_m2))
+        return 0.0001
 
     def _analyze_current_distribution_new(self, current_paths: dict) -> dict:
         """Analyze current distribution with new path model"""
