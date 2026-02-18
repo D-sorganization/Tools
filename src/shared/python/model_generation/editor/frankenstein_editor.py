@@ -307,14 +307,37 @@ class FrankensteinEditor(ClipboardMixin, ModificationMixin):
         self._save_state()
 
         comp_type, links, joints, materials = self._clipboard[0]
-        created_links: list[str] = []
 
-        # Build name mapping for renames
+        name_map = self._build_paste_name_map(model, links, joints, prefix, suffix)
+        self._paste_materials(model, materials, prefix, suffix)
+        created_links = self._paste_links_and_joints(
+            model,
+            links,
+            joints,
+            name_map,
+            prefix,
+            suffix,
+            attach_to,
+            attachment_origin,
+            joint_type,
+        )
+
+        logger.info(f"Pasted {len(created_links)} links to '{target_model_id}'")
+        return created_links
+
+    def _build_paste_name_map(
+        self,
+        model: ParsedModel,
+        links: list[Link],
+        joints: list[Joint],
+        prefix: str,
+        suffix: str,
+    ) -> dict[str, str]:
+        """Build a name mapping for pasted elements to avoid conflicts."""
         name_map: dict[str, str] = {}
         existing_links = {link.name for link in model.links}
         existing_joints = {j.name for j in model.joints}
 
-        # Generate unique names
         for link in links:
             new_name = self._generate_unique_name(
                 prefix + link.name + suffix,
@@ -331,7 +354,16 @@ class FrankensteinEditor(ClipboardMixin, ModificationMixin):
             name_map[joint.name] = new_name
             existing_joints.add(new_name)
 
-        # Copy materials (with conflict handling)
+        return name_map
+
+    def _paste_materials(
+        self,
+        model: ParsedModel,
+        materials: dict[str, Material],
+        prefix: str,
+        suffix: str,
+    ) -> None:
+        """Copy materials into the target model, handling name conflicts."""
         for mat_name, mat in materials.items():
             new_mat_name = prefix + mat_name + suffix
             if new_mat_name not in model.materials:
@@ -339,21 +371,31 @@ class FrankensteinEditor(ClipboardMixin, ModificationMixin):
                 new_mat.name = new_mat_name
                 model.materials[new_mat_name] = new_mat
 
-        # Create renamed copies of links
+    def _paste_links_and_joints(
+        self,
+        model: ParsedModel,
+        links: list[Link],
+        joints: list[Joint],
+        name_map: dict[str, str],
+        prefix: str,
+        suffix: str,
+        attach_to: str | None,
+        attachment_origin: Origin | None,
+        joint_type: JointType,
+    ) -> list[str]:
+        """Create renamed copies of links and joints in the target model."""
+        created_links: list[str] = []
+
         for link in links:
             new_link = Link.from_dict(link.to_dict())
             new_link.name = name_map[link.name]
-
-            # Update material reference
             if new_link.visual_material:
                 new_link.visual_material.name = (
                     prefix + new_link.visual_material.name + suffix
                 )
-
             model.links.append(new_link)
             created_links.append(new_link.name)
 
-        # Create renamed copies of joints
         first_link = name_map.get(links[0].name) if links else None
         attachment_created = False
 
@@ -361,11 +403,9 @@ class FrankensteinEditor(ClipboardMixin, ModificationMixin):
             new_joint = Joint.from_dict(joint.to_dict())
             new_joint.name = name_map.get(joint.name, joint.name)
 
-            # Update parent/child references
             if joint.parent in name_map:
                 new_joint.parent = name_map[joint.parent]
             elif joint.child == links[0].name if links else None:
-                # This is the root attachment joint
                 if attach_to:
                     new_joint.parent = attach_to
                     new_joint.joint_type = joint_type
@@ -373,14 +413,13 @@ class FrankensteinEditor(ClipboardMixin, ModificationMixin):
                         new_joint.origin = attachment_origin
                     attachment_created = True
                 else:
-                    continue  # Skip root joint if no attachment point
+                    continue
 
             if joint.child in name_map:
                 new_joint.child = name_map[joint.child]
 
             model.joints.append(new_joint)
 
-        # Create attachment joint if needed
         if attach_to and first_link and not attachment_created:
             attach_joint = Joint(
                 name=self._generate_unique_name(
@@ -394,7 +433,6 @@ class FrankensteinEditor(ClipboardMixin, ModificationMixin):
             )
             model.joints.append(attach_joint)
 
-        logger.info(f"Pasted {len(created_links)} links to '{target_model_id}'")
         return created_links
 
     def paste_subtree(

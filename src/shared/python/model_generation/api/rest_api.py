@@ -735,7 +735,7 @@ class ModelGenerationAPI:
                 f.write(mesh_content)
                 temp_path = f.name
 
-            mesh = trimesh.load(temp_path)
+            mesh: Any = trimesh.load(temp_path)
 
             if density:
                 mesh.density = density

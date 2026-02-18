@@ -369,7 +369,7 @@ def generate_human():
         try:
             h.setDetail(key, value)
         except Exception as exc:
-            print(f"Warning: Failed to set modifier {{key}}={{value}}: {{exc}}")
+            logger.warning(f"Failed to set modifier {{key}}={{value}}: {{exc}}")
 
     # Export as OBJ with vertex groups
     export_path = "{output_dir}/humanoid.obj"
@@ -460,9 +460,6 @@ generate_human()
             HUMANOID_SEGMENTS,
         )
 
-        mesh_paths = {}
-        collision_paths = {}
-
         # Map MakeHuman vertex groups to our segment names
         group_mapping = {
             "head": "head",
@@ -486,75 +483,21 @@ generate_human()
         }
 
         if vertex_groups:
-            # Use vertex groups for segmentation
-            for group_name, vertex_indices in vertex_groups.items():
-                segment_name = group_mapping.get(group_name.lower())
-                if segment_name and segment_name in HUMANOID_SEGMENTS:
-                    try:
-                        # Extract submesh for this group
-                        face_mask = mesh.faces_sparse.rows[vertex_indices].indices
-                        submesh = mesh.submesh([face_mask], append=True)
-
-                        visual_path = visual_dir / f"{segment_name}.stl"
-                        submesh.export(str(visual_path))
-                        mesh_paths[segment_name] = visual_path
-
-                        collision_mesh = submesh.convex_hull
-                        collision_path = collision_dir / f"{segment_name}.stl"
-                        collision_mesh.export(str(collision_path))
-                        collision_paths[segment_name] = collision_path
-                    except (
-                        ValueError,
-                        ZeroDivisionError,
-                        OverflowError,
-                        TypeError,
-                    ) as e:
-                        logger.warning(f"Failed to extract {segment_name}: {e}")
+            mesh_paths, collision_paths = self._segment_by_vertex_groups(
+                mesh,
+                visual_dir,
+                collision_dir,
+                vertex_groups,
+                group_mapping,
+                HUMANOID_SEGMENTS,
+            )
         else:
-            # Fallback: Use bounding box geometry to segment
-            bounds = mesh.bounds
-            height = bounds[1][2] - bounds[0][2]
-
-            # Define approximate z-ranges for segments (normalized 0-1)
-            segment_z_ranges = {
-                "head": (0.90, 1.0),
-                "neck": (0.85, 0.90),
-                "torso": (0.55, 0.85),
-                "pelvis": (0.45, 0.55),
-                "left_thigh": (0.25, 0.45),
-                "right_thigh": (0.25, 0.45),
-                "left_shin": (0.08, 0.25),
-                "right_shin": (0.08, 0.25),
-                "left_foot": (0.0, 0.08),
-                "right_foot": (0.0, 0.08),
-            }
-
-            for segment_name, (z_low, _z_high) in segment_z_ranges.items():
-                if segment_name in HUMANOID_SEGMENTS:
-                    z_min = bounds[0][2] + z_low * height
-                    # z_max was unused
-
-                    try:
-                        # Slice mesh at z-bounds
-                        plane_origin = [0, 0, z_min]
-                        plane_normal = [0, 0, 1]
-                        submesh = mesh.slice_plane(plane_origin, plane_normal)
-
-                        if submesh and len(submesh.vertices) > 0:
-                            visual_path = visual_dir / f"{segment_name}.stl"
-                            submesh.export(str(visual_path))
-                            mesh_paths[segment_name] = visual_path
-
-                            collision_path = collision_dir / f"{segment_name}.stl"
-                            submesh.convex_hull.export(str(collision_path))
-                            collision_paths[segment_name] = collision_path
-                    except (
-                        ValueError,
-                        ZeroDivisionError,
-                        OverflowError,
-                        TypeError,
-                    ) as e:
-                        logger.warning(f"Failed to slice {segment_name}: {e}")
+            mesh_paths, collision_paths = self._segment_by_geometry(
+                mesh,
+                visual_dir,
+                collision_dir,
+                HUMANOID_SEGMENTS,
+            )
 
         return GeneratedMeshResult(
             success=len(mesh_paths) > 0,
@@ -563,6 +506,98 @@ generate_human()
             vertex_groups=vertex_groups or {},
             metadata={"backend": "makehuman"},
         )
+
+    @staticmethod
+    def _segment_by_vertex_groups(
+        mesh: Any,
+        visual_dir: Path,
+        collision_dir: Path,
+        vertex_groups: dict[str, list[int]],
+        group_mapping: dict[str, str],
+        valid_segments: Any,
+    ) -> tuple[dict[str, Path], dict[str, Path]]:
+        """Segment mesh using vertex group indices."""
+        mesh_paths: dict[str, Path] = {}
+        collision_paths: dict[str, Path] = {}
+
+        for group_name, vertex_indices in vertex_groups.items():
+            segment_name = group_mapping.get(group_name.lower())
+            if segment_name and segment_name in valid_segments:
+                try:
+                    face_mask = mesh.faces_sparse.rows[vertex_indices].indices
+                    submesh = mesh.submesh([face_mask], append=True)
+
+                    visual_path = visual_dir / f"{segment_name}.stl"
+                    submesh.export(str(visual_path))
+                    mesh_paths[segment_name] = visual_path
+
+                    collision_mesh = submesh.convex_hull
+                    collision_path = collision_dir / f"{segment_name}.stl"
+                    collision_mesh.export(str(collision_path))
+                    collision_paths[segment_name] = collision_path
+                except (
+                    ValueError,
+                    ZeroDivisionError,
+                    OverflowError,
+                    TypeError,
+                ) as e:
+                    logger.warning(f"Failed to extract {segment_name}: {e}")
+
+        return mesh_paths, collision_paths
+
+    @staticmethod
+    def _segment_by_geometry(
+        mesh: Any,
+        visual_dir: Path,
+        collision_dir: Path,
+        valid_segments: Any,
+    ) -> tuple[dict[str, Path], dict[str, Path]]:
+        """Segment mesh using bounding-box z-range slicing."""
+        mesh_paths: dict[str, Path] = {}
+        collision_paths: dict[str, Path] = {}
+
+        bounds = mesh.bounds
+        height = bounds[1][2] - bounds[0][2]
+
+        segment_z_ranges = {
+            "head": (0.90, 1.0),
+            "neck": (0.85, 0.90),
+            "torso": (0.55, 0.85),
+            "pelvis": (0.45, 0.55),
+            "left_thigh": (0.25, 0.45),
+            "right_thigh": (0.25, 0.45),
+            "left_shin": (0.08, 0.25),
+            "right_shin": (0.08, 0.25),
+            "left_foot": (0.0, 0.08),
+            "right_foot": (0.0, 0.08),
+        }
+
+        for segment_name, (z_low, _z_high) in segment_z_ranges.items():
+            if segment_name in valid_segments:
+                z_min = bounds[0][2] + z_low * height
+
+                try:
+                    plane_origin = [0, 0, z_min]
+                    plane_normal = [0, 0, 1]
+                    submesh = mesh.slice_plane(plane_origin, plane_normal)
+
+                    if submesh and len(submesh.vertices) > 0:
+                        visual_path = visual_dir / f"{segment_name}.stl"
+                        submesh.export(str(visual_path))
+                        mesh_paths[segment_name] = visual_path
+
+                        collision_path = collision_dir / f"{segment_name}.stl"
+                        submesh.convex_hull.export(str(collision_path))
+                        collision_paths[segment_name] = collision_path
+                except (
+                    ValueError,
+                    ZeroDivisionError,
+                    OverflowError,
+                    TypeError,
+                ) as e:
+                    logger.warning(f"Failed to slice {segment_name}: {e}")
+
+        return mesh_paths, collision_paths
 
     def _parse_obj_vertex_groups(self, obj_file: Path) -> dict[str, list[int]]:
         """Parse vertex groups from OBJ file."""
@@ -805,6 +840,32 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
 
         return list(betas.tolist())
 
+    # SMPL-X joint indices to segment name mapping
+    _SMPLX_JOINT_TO_SEGMENT: dict[int, str] = {
+        0: "pelvis",
+        1: "left_thigh",
+        2: "right_thigh",
+        3: "torso",
+        4: "left_shin",
+        5: "right_shin",
+        6: "torso",
+        7: "left_foot",
+        8: "right_foot",
+        9: "torso",
+        10: "left_foot",
+        11: "right_foot",
+        12: "neck",
+        13: "left_upper_arm",
+        14: "right_upper_arm",
+        15: "head",
+        16: "left_upper_arm",
+        17: "right_upper_arm",
+        18: "left_forearm",
+        19: "right_forearm",
+        20: "left_hand",
+        21: "right_hand",
+    }
+
     def _segment_smplx_mesh(
         self,
         mesh: Any,
@@ -813,99 +874,35 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
         collision_dir: Path,
         params: BodyParameters,
     ) -> GeneratedMeshResult:
-        """Segment SMPL-X mesh into body parts using joint positions.
-
-        SMPL-X provides joint positions that we use to segment the mesh.
-        """
+        """Segment SMPL-X mesh into body parts using joint positions."""
         import numpy as np
         from humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
         )
 
-        mesh_paths = {}
-        collision_paths = {}
         vertex_groups: dict[str, list[int]] = {}
 
-        # SMPL-X joint names to our segment mapping
-        # SMPL-X has 55 joints, we map to our segments
-        joint_to_segment = {
-            0: "pelvis",  # pelvis
-            1: "left_thigh",  # left_hip
-            2: "right_thigh",  # right_hip
-            3: "torso",  # spine1
-            4: "left_shin",  # left_knee
-            5: "right_shin",  # right_knee
-            6: "torso",  # spine2
-            7: "left_foot",  # left_ankle
-            8: "right_foot",  # right_ankle
-            9: "torso",  # spine3
-            10: "left_foot",  # left_foot
-            11: "right_foot",  # right_foot
-            12: "neck",  # neck
-            13: "left_upper_arm",  # left_collar
-            14: "right_upper_arm",  # right_collar
-            15: "head",  # head
-            16: "left_upper_arm",  # left_shoulder
-            17: "right_upper_arm",  # right_shoulder
-            18: "left_forearm",  # left_elbow
-            19: "right_forearm",  # right_elbow
-            20: "left_hand",  # left_wrist
-            21: "right_hand",  # right_wrist
-        }
-
-        # Get vertex weights from model if available
         try:
-            # SMPL-X provides blend weights (lbs_weights)
             weights = model.lbs_weights.cpu().numpy()
-
-            # Assign each vertex to the joint with highest weight
             vertex_assignments = np.argmax(weights, axis=1)
 
-            # Group vertices by segment
             for vertex_idx, joint_idx in enumerate(vertex_assignments):
-                segment_name = joint_to_segment.get(joint_idx)
+                segment_name = self._SMPLX_JOINT_TO_SEGMENT.get(joint_idx)
                 if segment_name:
                     if segment_name not in vertex_groups:
                         vertex_groups[segment_name] = []
                     vertex_groups[segment_name].append(vertex_idx)
 
-            # Extract meshes for each segment
-            for segment_name, vertices in vertex_groups.items():
-                if segment_name not in HUMANOID_SEGMENTS or len(vertices) < 10:
-                    continue
-
-                try:
-                    # Find faces that use these vertices
-                    vertex_set = set(vertices)
-                    face_mask = [
-                        i
-                        for i, face in enumerate(mesh.faces)
-                        if any(v in vertex_set for v in face)
-                    ]
-
-                    if not face_mask:
-                        continue
-
-                    # Create submesh
-                    submesh = mesh.submesh([face_mask], append=True)
-
-                    # Export visual mesh
-                    visual_path = visual_dir / f"{segment_name}.stl"
-                    submesh.export(str(visual_path))
-                    mesh_paths[segment_name] = visual_path
-
-                    # Create collision mesh (convex hull)
-                    collision_mesh = submesh.convex_hull
-                    collision_path = collision_dir / f"{segment_name}.stl"
-                    collision_mesh.export(str(collision_path))
-                    collision_paths[segment_name] = collision_path
-
-                except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
-                    logger.warning(f"Failed to extract segment {segment_name}: {e}")
+            mesh_paths, collision_paths = self._extract_smplx_segments(
+                mesh,
+                visual_dir,
+                collision_dir,
+                vertex_groups,
+                HUMANOID_SEGMENTS,
+            )
 
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.warning(f"Vertex group extraction failed: {e}")
-            # Fallback to z-slice segmentation
             return self._fallback_z_segmentation(
                 mesh, visual_dir, collision_dir, params
             )
@@ -920,6 +917,49 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
                 "num_segments": len(mesh_paths),
             },
         )
+
+    @staticmethod
+    def _extract_smplx_segments(
+        mesh: Any,
+        visual_dir: Path,
+        collision_dir: Path,
+        vertex_groups: dict[str, list[int]],
+        valid_segments: Any,
+    ) -> tuple[dict[str, Path], dict[str, Path]]:
+        """Extract and export individual segment meshes from SMPL-X vertex groups."""
+        mesh_paths: dict[str, Path] = {}
+        collision_paths: dict[str, Path] = {}
+
+        for segment_name, vertices in vertex_groups.items():
+            if segment_name not in valid_segments or len(vertices) < 10:
+                continue
+
+            try:
+                vertex_set = set(vertices)
+                face_mask = [
+                    i
+                    for i, face in enumerate(mesh.faces)
+                    if any(v in vertex_set for v in face)
+                ]
+
+                if not face_mask:
+                    continue
+
+                submesh = mesh.submesh([face_mask], append=True)
+
+                visual_path = visual_dir / f"{segment_name}.stl"
+                submesh.export(str(visual_path))
+                mesh_paths[segment_name] = visual_path
+
+                collision_mesh = submesh.convex_hull
+                collision_path = collision_dir / f"{segment_name}.stl"
+                collision_mesh.export(str(collision_path))
+                collision_paths[segment_name] = collision_path
+
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
+                logger.warning(f"Failed to extract segment {segment_name}: {e}")
+
+        return mesh_paths, collision_paths
 
     def _fallback_z_segmentation(
         self,

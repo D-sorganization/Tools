@@ -7,11 +7,14 @@ plus clipboard inspection and clearing.
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from model_generation.core.types import Joint, Link, Material
 
 from .editor_types import ComponentType
+
+if TYPE_CHECKING:
+    from model_generation.converters.urdf_parser import ParsedModel
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +27,12 @@ class ClipboardMixin:
     - self._clipboard: list[tuple[ComponentType, list[Link], list[Joint], dict[str, Material]]]
     - self.get_connecting_joint(model_id, link_name) -> Joint | None
     """
+
+    # Declare expected attributes from the host class (for mypy)
+    _models: dict[str, ParsedModel]
+    _clipboard: list[tuple[ComponentType, list[Link], list[Joint], dict[str, Material]]]
+
+    def get_connecting_joint(self, model_id: str, link_name: str) -> Joint | None: ...
 
     def copy_link(
         self,

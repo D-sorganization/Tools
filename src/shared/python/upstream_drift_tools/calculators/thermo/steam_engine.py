@@ -637,37 +637,7 @@ class SteamCalculationEngine:
     ) -> SteamProperties:
         """High-accuracy calculation using CoolProp"""
         try:
-            # Validate inputs before calling CoolProp
-            # Water critical point: 647.15 K, 22.064 MPa
-            if temperature < TRIPLE_POINT_TEMPERATURE or temperature > 1000:
-                logger.error(
-                    "Temperature %s K is outside valid range [%s, 1000] K for CoolProp",
-                    temperature,
-                    TRIPLE_POINT_TEMPERATURE,
-                )
-                msg = (
-                    f"Temperature {temperature} K is outside valid range "
-                    f"[{TRIPLE_POINT_TEMPERATURE}, 1000] K for CoolProp"
-                )
-                raise ValueError(msg)
-
-            # Pressure validation: reasonable range for steam calculations
-            # Max reasonable pressure: 100 MPa (100,000,000 Pa)
-            MAX_REASONABLE_PRESSURE: float = 100e6  # [Pa] 100 MPa
-
-            if pressure < TRIPLE_POINT_PRESSURE or pressure > MAX_REASONABLE_PRESSURE:
-                logger.error(
-                    "Pressure %s Pa is outside valid range [%s, %s] Pa for CoolProp",
-                    pressure,
-                    TRIPLE_POINT_PRESSURE,
-                    MAX_REASONABLE_PRESSURE,
-                )
-                msg = (
-                    f"Pressure {pressure} Pa is outside valid range "
-                    f"[{TRIPLE_POINT_PRESSURE}, {MAX_REASONABLE_PRESSURE}] Pa for CoolProp. "
-                    f"Check unit conversion - this value seems too high."
-                )
-                raise ValueError(msg)
+            self._validate_coolprop_inputs(temperature, pressure)
 
             density = PropsSI("D", "T", temperature, "P", pressure, "Water")
             specific_volume = 1.0 / density
@@ -685,18 +655,14 @@ class SteamCalculationEngine:
             )
             kinematic_viscosity = dynamic_viscosity / density
 
-            # Derived properties
-            specific_heat_ratio = cp / cv if cv else None
-            prandtl_number = (
-                (cp * dynamic_viscosity / thermal_conductivity)
-                if thermal_conductivity
-                else None
-            )
-            R_specific = (
-                461.5  # J/kg-K for water vapour – approximation within CoolProp range
-            )
-            compressibility_factor = (
-                pressure * specific_volume / (R_specific * temperature)
+            derived = self._compute_derived_properties(
+                cp,
+                cv,
+                dynamic_viscosity,
+                thermal_conductivity,
+                pressure,
+                specific_volume,
+                temperature,
             )
 
             # Phase / quality determination via CoolProp
@@ -727,13 +693,59 @@ class SteamCalculationEngine:
                 kinematic_viscosity=kinematic_viscosity,
                 quality=quality,
                 phase=phase_str,
-                compressibility_factor=compressibility_factor,
-                prandtl_number=prandtl_number,
-                specific_heat_ratio=specific_heat_ratio,
+                **derived,
             )
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("CoolProp steam calculation failed: %s", e)
             return self._calculate_simplified_properties(temperature, pressure)
+
+    @staticmethod
+    def _validate_coolprop_inputs(
+        temperature: float,
+        pressure: float,
+    ) -> None:
+        """Validate temperature and pressure for CoolProp calculations."""
+        if temperature < TRIPLE_POINT_TEMPERATURE or temperature > 1000:
+            msg = (
+                f"Temperature {temperature} K is outside valid range "
+                f"[{TRIPLE_POINT_TEMPERATURE}, 1000] K for CoolProp"
+            )
+            logger.error(msg)
+            raise ValueError(msg)
+
+        max_reasonable_pressure: float = 100e6
+        if pressure < TRIPLE_POINT_PRESSURE or pressure > max_reasonable_pressure:
+            msg = (
+                f"Pressure {pressure} Pa is outside valid range "
+                f"[{TRIPLE_POINT_PRESSURE}, {max_reasonable_pressure}] Pa for CoolProp. "
+                f"Check unit conversion - this value seems too high."
+            )
+            logger.error(msg)
+            raise ValueError(msg)
+
+    @staticmethod
+    def _compute_derived_properties(
+        cp: float,
+        cv: float,
+        dynamic_viscosity: float,
+        thermal_conductivity: float,
+        pressure: float,
+        specific_volume: float,
+        temperature: float,
+    ) -> dict[str, float | None]:
+        """Compute derived thermo properties (Z, Pr, k)."""
+        r_specific = 461.5  # J/kg-K for water
+        return {
+            "compressibility_factor": (
+                pressure * specific_volume / (r_specific * temperature)
+            ),
+            "prandtl_number": (
+                (cp * dynamic_viscosity / thermal_conductivity)
+                if thermal_conductivity
+                else None
+            ),
+            "specific_heat_ratio": cp / cv if cv else None,
+        }
 
     def _determine_phase_and_quality(
         self, temperature: float, pressure: float

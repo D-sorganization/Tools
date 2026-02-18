@@ -641,15 +641,36 @@ if HAS_PYQT:
             self.setLayout(layout)
 
         def create_input_tab(self) -> None:
-            """Create the input parameters tab"""
+            """Create the input parameters tab."""
             input_widget = QWidget()
 
-            # Create scroll area
             scroll = QScrollArea()
             scroll_widget = QWidget()
             scroll_layout = QVBoxLayout()
 
-            # Gas composition section
+            scroll_layout.addWidget(self._create_composition_group())
+            scroll_layout.addWidget(self._create_process_conditions_group())
+            scroll_layout.addWidget(self._create_stages_group())
+            scroll_layout.addWidget(self._create_config_group())
+
+            # Calculate button
+            self.calculate_button = QPushButton("Calculate Compression")
+            self.calculate_button.clicked.connect(self.calculate_compression)
+            scroll_layout.addWidget(self.calculate_button)
+
+            scroll_widget.setLayout(scroll_layout)
+            scroll.setWidget(scroll_widget)
+            scroll.setWidgetResizable(True)
+
+            input_widget.setLayout(QVBoxLayout())
+            layout = input_widget.layout()
+            if layout:
+                layout.addWidget(scroll)
+
+            self.tab_widget.addTab(input_widget, "Input Parameters")
+
+        def _create_composition_group(self) -> QGroupBox:
+            """Create the gas composition input group."""
             comp_group = QGroupBox("Syngas Composition (mol%)")
             comp_layout = QGridLayout()
 
@@ -667,9 +688,10 @@ if HAS_PYQT:
                 comp_layout.addWidget(spinbox, row, col * 2 + 1)
 
             comp_group.setLayout(comp_layout)
-            scroll_layout.addWidget(comp_group)
+            return comp_group
 
-            # Process conditions section
+        def _create_process_conditions_group(self) -> QGroupBox:
+            """Create the process conditions input group."""
             process_group = QGroupBox("Process Conditions")
             process_layout = QFormLayout()
 
@@ -693,13 +715,13 @@ if HAS_PYQT:
             process_layout.addRow("Inlet Pressure:", self.inlet_pressure_input)
 
             process_group.setLayout(process_layout)
-            scroll_layout.addWidget(process_group)
+            return process_group
 
-            # Compression stages section
+        def _create_stages_group(self) -> QGroupBox:
+            """Create the compression stages input group."""
             stages_group = QGroupBox("Compression Stages")
             stages_layout = QVBoxLayout()
 
-            # Stage table
             self.stage_table = QTableWidget()
             self.stage_table.setColumnCount(4)
             self.stage_table.setRowCount(4)
@@ -707,12 +729,10 @@ if HAS_PYQT:
                 ["Inlet P (bar)", "Outlet P (bar)", "Efficiency (%)", "Active"],
             )
 
-            # Set up table
             header = self.stage_table.horizontalHeader()
             if header is not None:
                 header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 
-            # Create stage inputs
             self.stage_inputs = []
             for row in range(4):
                 row_inputs: list[QWidget] = []
@@ -731,7 +751,6 @@ if HAS_PYQT:
                     self.stage_table.setCellWidget(row, col, spinbox)
                     row_inputs.append(spinbox)
 
-                # Add checkbox for active stage
                 checkbox = QCheckBox()
                 checkbox.setChecked(True)
                 self.stage_table.setCellWidget(row, 3, checkbox)
@@ -741,9 +760,10 @@ if HAS_PYQT:
 
             stages_layout.addWidget(self.stage_table)
             stages_group.setLayout(stages_layout)
-            scroll_layout.addWidget(stages_group)
+            return stages_group
 
-            # Compression configuration section
+        def _create_config_group(self) -> QGroupBox:
+            """Create the compression configuration input group."""
             config_group = QGroupBox("Compression Configuration")
             config_layout = QFormLayout()
 
@@ -759,25 +779,7 @@ if HAS_PYQT:
             config_layout.addRow("", self.intercooling_checkbox)
 
             config_group.setLayout(config_layout)
-            scroll_layout.addWidget(config_group)
-
-            # Calculate button
-            self.calculate_button = QPushButton("Calculate Compression")
-            self.calculate_button.clicked.connect(self.calculate_compression)
-            scroll_layout.addWidget(self.calculate_button)
-
-            scroll_widget.setLayout(scroll_layout)
-            scroll.setWidget(scroll_widget)
-            scroll.setWidgetResizable(True)
-
-            input_widget.setLayout(QVBoxLayout())
-
-            # Use intermediate variable to satisfy type checker
-            layout = input_widget.layout()
-            if layout:
-                layout.addWidget(scroll)
-
-            self.tab_widget.addTab(input_widget, "Input Parameters")
+            return config_group
 
         def create_results_tab(self) -> None:
             """Create the results display tab"""

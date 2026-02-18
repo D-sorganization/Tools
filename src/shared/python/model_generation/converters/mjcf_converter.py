@@ -151,7 +151,7 @@ class MJCFConverter:
         if output_path:
             Path(output_path).write_text(urdf_xml)
 
-        return urdf_xml
+        return str(urdf_xml)
 
     def _build_mjcf(self, model: ParsedModel) -> str:
         """Build MJCF XML from parsed model."""
@@ -237,7 +237,7 @@ class MJCFConverter:
         indent_level: int,
     ) -> list[str]:
         """Recursively build body element."""
-        lines = []
+        lines: list[str] = []
         indent = "  " * indent_level
 
         link = model.get_link(link_name)
@@ -375,8 +375,8 @@ class MJCFConverter:
         """Parse MJCF into ParsedModel."""
         model_name = root.get("model", "mjcf_model")
 
-        links = []
-        joints = []
+        links: list[Link] = []
+        joints: list[Joint] = []
         materials = {}
 
         # Parse assets

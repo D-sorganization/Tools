@@ -12,6 +12,7 @@ import os
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
+from typing import Any
 
 from model_generation.library.model_library import ModelLibrary
 
@@ -106,78 +107,67 @@ class GitHubImporter:
             logger.info(f"Found {len(items)} repositories")
 
             for item in items[:max_results]:
-                owner = item["owner"]["login"]
-                repo_name = item["name"]
-                html_url = item["html_url"]
-                description = item["description"]
-                stars = item["stargazers_count"]
-                default_branch = item.get("default_branch", "main")
-
-                if dry_run:
-                    results.append(
-                        ImportResult(
-                            source_url=html_url,
-                            status="found",
-                            name=f"{owner}/{repo_name}",
-                            description=description,
-                            stars=stars,
-                        )
-                    )
-                    continue
-
-                # Import logic
-                try:
-                    # Add as repository source
-                    repo_id = f"github_{owner}_{repo_name}"
-
-                    self.library.add_repository(
-                        name=repo_id,
-                        repo_type="github",
-                        owner=owner,
-                        repo=repo_name,
-                        branch=default_branch,
-                        description=description or "",
-                    )
-
-                    # Trigger a refresh to find models
-                    models = self.library.refresh_repository(repo_id)
-
-                    if models:
-                        results.append(
-                            ImportResult(
-                                source_url=html_url,
-                                status="success",
-                                model_id=repo_id,
-                                name=f"{owner}/{repo_name}",
-                                description=f"Imported {len(models)} models",
-                                stars=stars,
-                            )
-                        )
-                    else:
-                        results.append(
-                            ImportResult(
-                                source_url=html_url,
-                                status="skipped",  # No models found
-                                name=f"{owner}/{repo_name}",
-                                error="No URDF models found in repository",
-                            )
-                        )
-
-                except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
-                    results.append(
-                        ImportResult(
-                            source_url=html_url,
-                            status="failed",
-                            name=f"{owner}/{repo_name}",
-                            error=str(e),
-                        )
-                    )
+                results.append(self._process_search_item(item, dry_run))
 
         except (PermissionError, OSError) as e:
             logger.error(f"Search failed: {e}")
             return [ImportResult(source_url=url, status="failed", error=str(e))]
 
         return results
+
+    def _process_search_item(self, item: dict[str, Any], dry_run: bool) -> ImportResult:
+        """Process a single search result item."""
+        owner = item["owner"]["login"]
+        repo_name = item["name"]
+        html_url = item["html_url"]
+        description = item["description"]
+        stars = item["stargazers_count"]
+        default_branch = item.get("default_branch", "main")
+
+        if dry_run:
+            return ImportResult(
+                source_url=html_url,
+                status="found",
+                name=f"{owner}/{repo_name}",
+                description=description,
+                stars=stars,
+            )
+
+        try:
+            repo_id = f"github_{owner}_{repo_name}"
+            self.library.add_repository(
+                name=repo_id,
+                repo_type="github",
+                owner=owner,
+                repo=repo_name,
+                branch=default_branch,
+                description=description or "",
+            )
+            models = self.library.refresh_repository(repo_id)
+
+            if models:
+                return ImportResult(
+                    source_url=html_url,
+                    status="success",
+                    model_id=repo_id,
+                    name=f"{owner}/{repo_name}",
+                    description=f"Imported {len(models)} models",
+                    stars=stars,
+                )
+            return ImportResult(
+                source_url=html_url,
+                status="skipped",
+                name=f"{owner}/{repo_name}",
+                error="No URDF models found in repository",
+            )
+
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
+            return ImportResult(
+                source_url=html_url,
+                status="failed",
+                name=f"{owner}/{repo_name}",
+                error=str(e),
+            )
 
     def import_from_urls(
         self,
@@ -199,89 +189,95 @@ class GitHubImporter:
         results = []
 
         for url in urls:
-            try:
-                # Parse URL
-                # Expected: https://github.com/owner/repo
-                parsed = urllib.parse.urlparse(url)
-                path_parts = parsed.path.strip("/").split("/")
-
-                if len(path_parts) < 2:
-                    results.append(
-                        ImportResult(
-                            source_url=url,
-                            status="failed",
-                            error="Invalid GitHub URL",
-                        )
-                    )
-                    continue
-
-                owner = path_parts[0]
-                repo_name = path_parts[1]
-
-                repo_id = f"github_{owner}_{repo_name}"
-
-                if skip_existing and hasattr(self.library, "_repositories"):
-                    if repo_id in self.library._repositories:
-                        results.append(
-                            ImportResult(
-                                source_url=url,
-                                status="exists",
-                                model_id=repo_id,
-                                name=f"{owner}/{repo_name}",
-                                description="Repository already exists in library",
-                            )
-                        )
-                        continue
-
-                # Try to determine branch? Assuming main/master if not specified is risky but standard.
-                # Ideally we'd query the repo metadata first.
-                # For now, let's try to fetch repo info first.
-                api_url = f"{self.API_BASE}/repos/{owner}/{repo_name}"
-                branch = "main"
-
-                try:
-                    req = urllib.request.Request(api_url)
-                    req.add_header("Accept", "application/vnd.github.v3+json")
-                    req.add_header("User-Agent", "ModelGeneration-GitHubImporter")
-                    token = os.environ.get("GITHUB_TOKEN")
-                    if token:
-                        req.add_header("Authorization", f"token {token}")
-                    with urllib.request.urlopen(req) as response:
-                        repo_data = json.loads(response.read().decode())
-                        branch = repo_data.get("default_branch", "main")
-                        description = repo_data.get("description", "")
-                except (PermissionError, OSError):
-                    logger.warning(
-                        f"Could not fetch repo metadata for {url}, assuming branch '{branch}'"
-                    )
-                    description = f"Imported from {url}"
-
-                self.library.add_repository(
-                    name=repo_id,
-                    repo_type="github",
-                    owner=owner,
-                    repo=repo_name,
-                    branch=branch,
-                    description=description,
-                )
-
-                models = self.library.refresh_repository(repo_id)
-
-                results.append(
-                    ImportResult(
-                        source_url=url,
-                        status="success",
-                        model_id=repo_id,
-                        name=f"{owner}/{repo_name}",
-                        description=f"Imported {len(models)} models",
-                    )
-                )
-
-            except (PermissionError, OSError) as e:
-                results.append(
-                    ImportResult(
-                        source_url=url, status="failed", error=str(e), name=url
-                    )
-                )
+            results.append(
+                self._import_single_url(url, flatten_structure, skip_existing)
+            )
 
         return results
+
+    def _import_single_url(
+        self,
+        url: str,
+        flatten_structure: bool,
+        skip_existing: bool,
+    ) -> ImportResult:
+        """Import a single GitHub repository URL."""
+        try:
+            parsed = urllib.parse.urlparse(url)
+            path_parts = parsed.path.strip("/").split("/")
+
+            if len(path_parts) < 2:
+                return ImportResult(
+                    source_url=url,
+                    status="failed",
+                    error="Invalid GitHub URL",
+                )
+
+            owner = path_parts[0]
+            repo_name = path_parts[1]
+            repo_id = f"github_{owner}_{repo_name}"
+
+            if skip_existing and hasattr(self.library, "_repositories"):
+                if repo_id in self.library._repositories:
+                    return ImportResult(
+                        source_url=url,
+                        status="exists",
+                        model_id=repo_id,
+                        name=f"{owner}/{repo_name}",
+                        description="Repository already exists in library",
+                    )
+
+            branch, description = self._fetch_repo_metadata(url, owner, repo_name)
+
+            self.library.add_repository(
+                name=repo_id,
+                repo_type="github",
+                owner=owner,
+                repo=repo_name,
+                branch=branch,
+                description=description,
+            )
+
+            models = self.library.refresh_repository(repo_id)
+
+            return ImportResult(
+                source_url=url,
+                status="success",
+                model_id=repo_id,
+                name=f"{owner}/{repo_name}",
+                description=f"Imported {len(models)} models",
+            )
+
+        except (PermissionError, OSError) as e:
+            return ImportResult(
+                source_url=url,
+                status="failed",
+                error=str(e),
+                name=url,
+            )
+
+    def _fetch_repo_metadata(
+        self, url: str, owner: str, repo_name: str
+    ) -> tuple[str, str]:
+        """Fetch repository metadata (branch and description) from GitHub API."""
+        api_url = f"{self.API_BASE}/repos/{owner}/{repo_name}"
+        branch = "main"
+
+        try:
+            req = urllib.request.Request(api_url)
+            req.add_header("Accept", "application/vnd.github.v3+json")
+            req.add_header("User-Agent", "ModelGeneration-GitHubImporter")
+            token = os.environ.get("GITHUB_TOKEN")
+            if token:
+                req.add_header("Authorization", f"token {token}")
+            with urllib.request.urlopen(req) as response:
+                repo_data = json.loads(response.read().decode())
+                branch = repo_data.get("default_branch", "main")
+                description = repo_data.get("description", "")
+        except (PermissionError, OSError):
+            logger.warning(
+                f"Could not fetch repo metadata for {url}, assuming branch '{branch}'"
+            )
+            description = f"Imported from {url}"
+
+        return branch, description

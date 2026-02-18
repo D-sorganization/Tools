@@ -54,7 +54,7 @@ class LoadResult:
     def name(self) -> str:
         """Model name from parsed model or filename."""
         if self.model:
-            return self.model.name
+            return str(self.model.name)
         if self.source_path:
             return self.source_path.stem
         return "unknown"
@@ -308,7 +308,14 @@ class UnifiedModelLoader:
             self._preferences.add_recent(model_id)
             self.save_preferences()
 
-        return result
+        return LoadResult(
+            model=result.model,
+            source_path=result.source_path,
+            source_format=result.source_format,
+            success=result.success,
+            error=result.error,
+            warnings=result.warnings,
+        )
 
     def load_default(self) -> LoadResult:
         """
@@ -330,7 +337,14 @@ class UnifiedModelLoader:
             )
             result = self.load_bundled("mujoco_humanoid")
 
-        return result
+        return LoadResult(
+            model=result.model,
+            source_path=result.source_path,
+            source_format=result.source_format,
+            success=result.success,
+            error=result.error,
+            warnings=result.warnings,
+        )
 
     # -- Internal loaders --
 
@@ -391,7 +405,7 @@ class UnifiedModelLoader:
             URDF XML string or None on failure.
         """
         try:
-            return self._mjcf_converter.mjcf_to_urdf(source)
+            return str(self._mjcf_converter.mjcf_to_urdf(source))
         except (OSError, ValueError, KeyError) as exc:
             logger.error("MJCF to URDF conversion failed: %s", exc)
             return None
@@ -407,7 +421,7 @@ class UnifiedModelLoader:
             MJCF XML string or None on failure.
         """
         try:
-            return self._mjcf_converter.urdf_to_mjcf(source)
+            return str(self._mjcf_converter.urdf_to_mjcf(source))
         except (OSError, ValueError, KeyError) as exc:
             logger.error("URDF to MJCF conversion failed: %s", exc)
             return None

@@ -7,9 +7,15 @@ batch prefix application, and subtree mirroring.
 from __future__ import annotations
 
 import logging
-from typing import Any
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Any
 
 from model_generation.core.types import Joint, JointType, Link, Origin
+
+if TYPE_CHECKING:
+    from model_generation.converters.urdf_parser import ParsedModel
+    from model_generation.core.types import Material
+    from model_generation.editor.editor_types import ComponentType
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +32,21 @@ class ModificationMixin:
     - self.copy_subtree(model_id, root_link) -> bool
     - self._generate_unique_name(base_name, existing_names) -> str
     """
+
+    # Declare expected attributes from the host class (for mypy)
+    _models: dict[str, ParsedModel]
+    _rename_callbacks: list[Callable[[str, str, str], None]]
+    _clipboard: list[tuple[ComponentType, list[Link], list[Joint], dict[str, Material]]]
+
+    def _save_state(self) -> None: ...
+
+    def get_connecting_joint(self, model_id: str, link_name: str) -> Joint | None: ...
+
+    def copy_subtree(self, model_id: str, root_link: str) -> bool: ...  # type: ignore[empty-body]
+
+    def _generate_unique_name(
+        self, base_name: str, existing_names: set[str]
+    ) -> str: ...  # type: ignore[empty-body]
 
     # ============================================================
     # Direct Modifications

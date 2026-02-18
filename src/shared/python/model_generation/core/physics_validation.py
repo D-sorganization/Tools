@@ -345,7 +345,7 @@ class PhysicsValidator:
 
         return StabilityResult(
             is_stable=is_stable,
-            center_of_mass=tuple(com.tolist()),  # type: ignore
+            center_of_mass=tuple(com.tolist()),
             support_polygon=support_polygon if support_points else None,
             margin_to_edge=margin,
             tipping_angle_deg=tipping_angle,
@@ -400,7 +400,7 @@ class PhysicsValidator:
                     result.penetration_pairs.append((name1, name2))
                     # Approximate contact point
                     contact = (center1 + center2) / 2
-                    result.contact_points.append(tuple(contact.tolist()))  # type: ignore
+                    result.contact_points.append(tuple(contact.tolist()))
 
         return result
 
@@ -458,7 +458,7 @@ class PhysicsValidator:
         result.total_mass = total_mass
         if total_mass > 0:
             com = weighted_position / total_mass
-            result.center_of_mass = tuple(com.tolist())  # type: ignore
+            result.center_of_mass = tuple(com.tolist())
 
         # Stability analysis
         if check_stability:
@@ -536,7 +536,7 @@ class PhysicsValidator:
                 pb = p1 + b * v
                 dist = np.linalg.norm(point - pb)
 
-            min_dist = min(min_dist, dist)
+            min_dist = float(min(min_dist, dist))
 
         return min_dist
 
