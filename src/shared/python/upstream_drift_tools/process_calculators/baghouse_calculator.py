@@ -202,6 +202,110 @@ class BaghouseCalculator:
 
         return acfm, scfm
 
+    def _calculate_outlet_thermal(
+        self,
+        gas_flow_kg_s: float,
+        inlet_temp_k: float,
+        pressure_pa: float,
+        composition: dict[str, float],
+        heat_loss_w: float,
+    ) -> tuple[float, float, float]:
+        """Compute outlet temperature and volume flows.
+
+        Tries full thermodynamic calculation first, falls back to simplified
+        ideal-gas approach if the thermo module is unavailable or errors.
+
+        Returns:
+            (outlet_temp_c, flow_acfm, flow_scfm)
+        """
+        if self.thermo_calc is not None and HAS_THERMO:
+            try:
+                stream = GasStream(
+                    flow_rate=gas_flow_kg_s,
+                    flow_unit=FlowUnit.MASS,
+                    temperature=inlet_temp_k,
+                    pressure=pressure_pa,
+                    composition=composition,
+                )
+                props = self.thermo_calc.calculate_stream_properties(stream)
+                cp_mass = props.cp
+
+                temp_drop = (
+                    heat_loss_w / (gas_flow_kg_s * cp_mass)
+                    if gas_flow_kg_s > 0 and cp_mass > 0
+                    else 0.0
+                )
+                outlet_temp_k = max(inlet_temp_k - temp_drop, 0.0)
+
+                outlet_stream = GasStream(
+                    flow_rate=gas_flow_kg_s,
+                    flow_unit=FlowUnit.MASS,
+                    temperature=outlet_temp_k,
+                    pressure=pressure_pa,
+                    composition=composition,
+                )
+                outlet_props = self.thermo_calc.calculate_stream_properties(
+                    outlet_stream
+                )
+                return (
+                    convert(outlet_temp_k, "K", "C"),
+                    outlet_props.acfm_flow,
+                    outlet_props.scfm_flow,
+                )
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError):
+                self.thermo_calc = None
+
+        # Simplified path
+        cp_mass = self._estimate_cp_ideal(composition)
+        temp_drop = (
+            heat_loss_w / (gas_flow_kg_s * cp_mass)
+            if gas_flow_kg_s > 0 and cp_mass > 0
+            else 0.0
+        )
+        outlet_temp_k = max(inlet_temp_k - temp_drop, 0.0)
+        flow_acfm, flow_scfm = self._estimate_volume_flow(
+            gas_flow_kg_s, outlet_temp_k, pressure_pa, composition
+        )
+        return outlet_temp_k - CELSIUS_TO_KELVIN_OFFSET, flow_acfm, flow_scfm
+
+    @staticmethod
+    def _calculate_drum_sizing(
+        solid_carbon_in_kg_hr: float,
+        ash_in_kg_hr: float,
+        carbon_removal_efficiency: float,
+        ash_removal_efficiency: float,
+        drum_volume_m3: float,
+        solid_density_kg_m3: float,
+    ) -> tuple[float, float, float, float, float, float, float]:
+        """Compute solids removal rates and drum fill times.
+
+        Returns:
+            (carbon_removed, ash_removed, total_solids,
+             fill_time_hours, fill_time_days,
+             carbon_only_fill_hours, ash_only_fill_hours)
+        """
+        carbon_removed = solid_carbon_in_kg_hr * carbon_removal_efficiency
+        ash_removed = ash_in_kg_hr * ash_removal_efficiency
+        total_solids = carbon_removed + ash_removed
+        drum_cap = solid_density_kg_m3 * drum_volume_m3
+
+        fill_hrs = drum_cap / total_solids if total_solids > 0 else float("inf")
+        fill_days = (
+            fill_hrs / HOURS_PER_DAY if fill_hrs != float("inf") else float("inf")
+        )
+        c_fill = drum_cap / carbon_removed if carbon_removed > 0 else float("inf")
+        a_fill = drum_cap / ash_removed if ash_removed > 0 else float("inf")
+
+        return (
+            carbon_removed,
+            ash_removed,
+            total_solids,
+            fill_hrs,
+            fill_days,
+            c_fill,
+            a_fill,
+        )
+
     def calculate(
         self,
         gas_flow_kg_s: float,
@@ -236,112 +340,49 @@ class BaghouseCalculator:
         Returns:
             BaghouseResult object
         """
-        # Calculate temperature drop from heat loss
-        if self.thermo_calc is not None and HAS_THERMO:
-            # Use full thermodynamic calculation
-            try:
-                stream = GasStream(
-                    flow_rate=gas_flow_kg_s,
-                    flow_unit=FlowUnit.MASS,
-                    temperature=inlet_temp_k,
-                    pressure=pressure_pa,
-                    composition=composition,
-                )
-                props = self.thermo_calc.calculate_stream_properties(stream)
-                cp_mass = props.cp  # J/kg-K
-
-                if gas_flow_kg_s > 0 and cp_mass > 0:
-                    temp_drop_k = heat_loss_w / (gas_flow_kg_s * cp_mass)
-                else:
-                    temp_drop_k = 0.0
-
-                outlet_temp_k = max(inlet_temp_k - temp_drop_k, 0.0)
-                outlet_temp_c = convert(outlet_temp_k, "K", "C")
-
-                # Re-calculate at outlet for volume flow
-                outlet_stream = GasStream(
-                    flow_rate=gas_flow_kg_s,
-                    flow_unit=FlowUnit.MASS,
-                    temperature=outlet_temp_k,
-                    pressure=pressure_pa,
-                    composition=composition,
-                )
-                outlet_props = self.thermo_calc.calculate_stream_properties(
-                    outlet_stream
-                )
-                flow_acfm = outlet_props.acfm_flow
-                flow_scfm = outlet_props.scfm_flow
-
-            except (ValueError, ZeroDivisionError, OverflowError, TypeError):
-                # Fall through to simplified calculation
-                self.thermo_calc = None
-
-        if self.thermo_calc is None:
-            # Simplified calculation without thermo module
-            cp_mass = self._estimate_cp_ideal(composition)
-
-            if gas_flow_kg_s > 0 and cp_mass > 0:
-                temp_drop_k = heat_loss_w / (gas_flow_kg_s * cp_mass)
-            else:
-                temp_drop_k = 0.0
-
-            outlet_temp_k = max(inlet_temp_k - temp_drop_k, 0.0)
-            outlet_temp_c = outlet_temp_k - CELSIUS_TO_KELVIN_OFFSET
-
-            flow_acfm, flow_scfm = self._estimate_volume_flow(
-                gas_flow_kg_s, outlet_temp_k, pressure_pa, composition
-            )
-
-        # Solids Removal
-        carbon_removed = solid_carbon_in_kg_hr * carbon_removal_efficiency
-        ash_removed = ash_in_kg_hr * ash_removal_efficiency
-        total_solids_removed = carbon_removed + ash_removed
-
-        # Drum Sizing
-        drum_mass_capacity = solid_density_kg_m3 * drum_volume_m3
-
-        if total_solids_removed > 0:
-            fill_time_hours = drum_mass_capacity / total_solids_removed
-        else:
-            fill_time_hours = float("inf")
-
-        fill_time_days = (
-            fill_time_hours / HOURS_PER_DAY
-            if fill_time_hours != float("inf")
-            else float("inf")
+        outlet_temp_c, flow_acfm, flow_scfm = self._calculate_outlet_thermal(
+            gas_flow_kg_s,
+            inlet_temp_k,
+            pressure_pa,
+            composition,
+            heat_loss_w,
         )
 
-        c_fill = (
-            drum_mass_capacity / carbon_removed if carbon_removed > 0 else float("inf")
+        (
+            carbon_removed,
+            ash_removed,
+            total_solids,
+            fill_hrs,
+            fill_days,
+            c_fill,
+            a_fill,
+        ) = self._calculate_drum_sizing(
+            solid_carbon_in_kg_hr,
+            ash_in_kg_hr,
+            carbon_removal_efficiency,
+            ash_removal_efficiency,
+            drum_volume_m3,
+            solid_density_kg_m3,
         )
-        a_fill = drum_mass_capacity / ash_removed if ash_removed > 0 else float("inf")
 
-        # Air to Cloth Ratio
         air_to_cloth = flow_acfm / bag_area_ft2 if bag_area_ft2 > 0 else 0.0
-
-        # Mass flow in kg/hr
-        gas_flow_kg_hr = gas_flow_kg_s * SECONDS_PER_HOUR
 
         ash_stream_comp = {
             "carbon_fraction": (
-                carbon_removed / total_solids_removed
-                if total_solids_removed > 0
-                else 0.0
+                carbon_removed / total_solids if total_solids > 0 else 0.0
             ),
-            "ash_fraction": (
-                ash_removed / total_solids_removed if total_solids_removed > 0 else 0.0
-            ),
+            "ash_fraction": (ash_removed / total_solids if total_solids > 0 else 0.0),
         }
 
         return BaghouseResult(
             carbon_removed_rate=carbon_removed,
             ash_removed_rate=ash_removed,
-            total_solids_removed_rate=total_solids_removed,
-            drum_fill_time_hours=fill_time_hours,
-            drum_fill_time_days=fill_time_days,
+            total_solids_removed_rate=total_solids,
+            drum_fill_time_hours=fill_hrs,
+            drum_fill_time_days=fill_days,
             carbon_only_fill_time_hours=c_fill,
             ash_only_fill_time_hours=a_fill,
-            clean_gas_flow_rate=gas_flow_kg_hr,
+            clean_gas_flow_rate=gas_flow_kg_s * SECONDS_PER_HOUR,
             flow_acfm=flow_acfm,
             flow_scfm=flow_scfm,
             air_to_cloth_ratio=air_to_cloth,
