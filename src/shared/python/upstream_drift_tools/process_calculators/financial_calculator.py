@@ -114,27 +114,22 @@ class FinancialModelCalculator:
         self.results = FinancialResults()
         self.yearly_projections: list[dict[str, Any]] = []
 
-    def calculate_financial_model(
+    def _calculate_volumes_and_revenues(
         self,
         parameters: FinancialParameters,
-    ) -> FinancialResults:
-        """Calculate comprehensive financial model"""
-        self.parameters = parameters
-        results = FinancialResults()
-
-        # Calculate annual volumes
+        results: FinancialResults,
+    ) -> None:
+        """Compute annual volumes and revenue line items."""
         results.annual_feedstock_tons = (
             parameters.plant_capacity_tpd
             * parameters.operating_days_per_year
             * parameters.capacity_utilization
         )
-
-        results.annual_product_tons = results.annual_feedstock_tons * 0.85  # 85% yield
+        results.annual_product_tons = results.annual_feedstock_tons * 0.85
         results.annual_byproduct_tons = (
             results.annual_feedstock_tons * parameters.byproduct_yield_factor
         )
 
-        # Calculate revenues
         results.product_revenue = (
             results.annual_product_tons * parameters.product_price_per_ton
         )
@@ -143,28 +138,24 @@ class FinancialModelCalculator:
         )
         results.total_revenue = results.product_revenue + results.byproduct_revenue
 
-        # Calculate variable operating costs
-        results.feedstock_costs = (
-            results.annual_feedstock_tons * parameters.feedstock_cost_per_ton
-        )
-        results.variable_labor_costs = (
-            results.annual_feedstock_tons * parameters.labor_cost_per_ton
-        )
-        results.utilities_costs = (
-            results.annual_feedstock_tons * parameters.utilities_cost_per_ton
-        )
-        results.maintenance_costs = (
-            results.annual_feedstock_tons * parameters.maintenance_cost_per_ton
-        )
-        results.consumables_costs = (
-            results.annual_feedstock_tons * parameters.consumables_cost_per_ton
-        )
+    def _calculate_operating_costs(
+        self,
+        parameters: FinancialParameters,
+        results: FinancialResults,
+    ) -> None:
+        """Compute variable and fixed operating costs."""
+        tons = results.annual_feedstock_tons
 
-        # Add equipment-specific costs
-        equipment_costs = (
-            results.annual_feedstock_tons * parameters.baghouse_operating_cost_per_ton
-            + results.annual_feedstock_tons * parameters.scrubber_operating_cost_per_ton
-            + results.annual_feedstock_tons * parameters.glass_raw_material_cost_per_ton
+        results.feedstock_costs = tons * parameters.feedstock_cost_per_ton
+        results.variable_labor_costs = tons * parameters.labor_cost_per_ton
+        results.utilities_costs = tons * parameters.utilities_cost_per_ton
+        results.maintenance_costs = tons * parameters.maintenance_cost_per_ton
+        results.consumables_costs = tons * parameters.consumables_cost_per_ton
+
+        equipment_costs = tons * (
+            parameters.baghouse_operating_cost_per_ton
+            + parameters.scrubber_operating_cost_per_ton
+            + parameters.glass_raw_material_cost_per_ton
         )
 
         results.total_variable_costs = (
@@ -176,7 +167,6 @@ class FinancialModelCalculator:
             + equipment_costs
         )
 
-        # Calculate fixed costs
         results.fixed_labor_costs = parameters.fixed_labor_cost_annual
         results.insurance_costs = parameters.insurance_annual
         results.property_tax_costs = parameters.property_tax_annual
@@ -188,7 +178,12 @@ class FinancialModelCalculator:
             + results.admin_overhead_costs
         )
 
-        # Calculate financial metrics
+    def _calculate_income_statement(
+        self,
+        parameters: FinancialParameters,
+        results: FinancialResults,
+    ) -> None:
+        """Compute financial metrics from gross margin through net income."""
         results.gross_margin = results.total_revenue - results.total_variable_costs
         results.ebitda = results.gross_margin - results.total_fixed_costs
         results.depreciation = parameters.total_capital_investment / max(
@@ -203,7 +198,12 @@ class FinancialModelCalculator:
         results.taxes = max(0, results.ebt * parameters.tax_rate)
         results.net_income = results.ebt - results.taxes
 
-        # Calculate per-ton metrics
+    def _calculate_unit_and_return_metrics(
+        self,
+        parameters: FinancialParameters,
+        results: FinancialResults,
+    ) -> None:
+        """Compute per-ton unit economics and return metrics."""
         if results.annual_feedstock_tons > 0:
             results.revenue_per_ton = (
                 results.total_revenue / results.annual_feedstock_tons
@@ -223,7 +223,6 @@ class FinancialModelCalculator:
             results.total_cost_per_ton = 0.0
             results.margin_per_ton = 0.0
 
-        # Calculate return metrics
         if parameters.debt_ratio >= 1.0 and parameters.total_capital_investment > 0:
             raise ValueError(
                 f"debt_ratio must be < 1.0 when capital is invested "
@@ -244,6 +243,19 @@ class FinancialModelCalculator:
             )
         else:
             results.payback_period_years = 0.0
+
+    def calculate_financial_model(
+        self,
+        parameters: FinancialParameters,
+    ) -> FinancialResults:
+        """Calculate comprehensive financial model"""
+        self.parameters = parameters
+        results = FinancialResults()
+
+        self._calculate_volumes_and_revenues(parameters, results)
+        self._calculate_operating_costs(parameters, results)
+        self._calculate_income_statement(parameters, results)
+        self._calculate_unit_and_return_metrics(parameters, results)
 
         self.results = results
         return results

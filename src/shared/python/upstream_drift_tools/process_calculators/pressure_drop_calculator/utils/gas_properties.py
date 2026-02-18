@@ -611,6 +611,110 @@ SUTHERLAND_CONSTANTS: dict[str, dict[str, float]] = {
 }
 
 
+def _compute_pure_viscosities(
+    composition: dict[str, float], temperature: float, pressure: float
+) -> dict[str, float]:
+    """Compute pure-component viscosities for each species in the mixture.
+
+    Uses Sutherland's law when constants are available, otherwise the Lucas method.
+
+    Args:
+        composition: Dictionary of {component: mole_fraction}
+        temperature: Temperature (K)
+        pressure: Pressure (Pa)
+
+    Returns:
+        Dictionary of {component: viscosity_Pa_s}
+    """
+    pure_viscosities: dict[str, float] = {}
+    for component in composition.keys():
+        if component not in GAS_DATABASE:
+            logger.warning(f"Component '{component}' not found, using air properties")
+            pure_viscosities[component] = float(
+                calculate_pure_gas_viscosity_sutherland(temperature)
+            )
+            continue
+
+        props = GAS_DATABASE[component]
+
+        if component in SUTHERLAND_CONSTANTS:
+            params = SUTHERLAND_CONSTANTS[component]
+            mu_i = calculate_pure_gas_viscosity_sutherland(
+                temperature, params["T_ref"], params["mu_ref"], params["S"]
+            )
+        else:
+            mu_i = calculate_pure_gas_viscosity_lucas(temperature, pressure, props)
+
+        pure_viscosities[component] = float(mu_i)
+
+    return pure_viscosities
+
+
+def _wilke_mixing_rule(
+    composition: dict[str, float],
+    pure_viscosities: dict[str, float],
+) -> float:
+    """Apply Wilke's mixing rule to calculate mixture viscosity.
+
+    Builds the Φ interaction matrix and computes the weighted mixture viscosity.
+
+    Args:
+        composition: Dictionary of {component: mole_fraction}
+        pure_viscosities: Dictionary of {component: viscosity_Pa_s}
+
+    Returns:
+        Mixture dynamic viscosity (Pa·s)
+    """
+    components = list(composition.keys())
+    component_data: dict[str, dict[str, float]] = {}
+    for comp in components:
+        if comp in GAS_DATABASE:
+            component_data[comp] = {
+                "M": GAS_DATABASE[comp].molecular_weight,
+                "mu": pure_viscosities[comp],
+            }
+
+    phi: dict[tuple[str, str], float] = {}
+    for i, comp_i in enumerate(components):
+        if comp_i not in component_data:
+            continue
+        M_i = component_data[comp_i]["M"]
+        mu_i = component_data[comp_i]["mu"]
+
+        for j, comp_j in enumerate(components):
+            if comp_j not in component_data:
+                continue
+            M_j = component_data[comp_j]["M"]
+            mu_j = component_data[comp_j]["mu"]
+
+            if i == j:
+                phi[(comp_i, comp_j)] = 1.0
+            else:
+                numerator = (1.0 + (mu_i / mu_j) ** 0.5 * (M_j / M_i) ** 0.25) ** 2
+                denominator = (8.0 * (1.0 + M_i / M_j)) ** 0.5
+                phi[(comp_i, comp_j)] = numerator / denominator
+
+    mu_mix = 0.0
+    for _, comp_i in enumerate(components):
+        if comp_i not in component_data:
+            continue
+
+        y_i = composition[comp_i]
+        mu_i = component_data[comp_i]["mu"]
+
+        denominator_sum = 0.0
+        for _, comp_j in enumerate(components):
+            if comp_j not in component_data:
+                continue
+            y_j = composition[comp_j]
+            denominator_sum += y_j * phi.get((comp_i, comp_j), 1.0)
+
+        if denominator_sum > 0:
+            mu_mix += y_i * mu_i / denominator_sum
+
+    return float(mu_mix)
+
+
 def calculate_mixture_viscosity_wilke(
     composition: dict[str, float], temperature: float, pressure: float
 ) -> float:
@@ -651,82 +755,10 @@ def calculate_mixture_viscosity_wilke(
         >>> mu = calculate_mixture_viscosity_wilke(comp, 800, 1e5)
         >>> print(f"Viscosity = {mu:.6f} Pa·s = {mu*1e6:.2f} µPa·s")
     """
-    # Calculate pure component viscosities
-    pure_viscosities = {}
-    for component in composition.keys():
-        if component not in GAS_DATABASE:
-            logger.warning(f"Component '{component}' not found, using air properties")
-            pure_viscosities[component] = float(
-                calculate_pure_gas_viscosity_sutherland(temperature)
-            )
-            continue
-
-        props = GAS_DATABASE[component]
-
-        # Use Sutherland if available, otherwise Lucas
-        if component in SUTHERLAND_CONSTANTS:
-            params = SUTHERLAND_CONSTANTS[component]
-            mu_i = calculate_pure_gas_viscosity_sutherland(
-                temperature, params["T_ref"], params["mu_ref"], params["S"]
-            )
-        else:
-            mu_i = calculate_pure_gas_viscosity_lucas(temperature, pressure, props)
-
-        pure_viscosities[component] = float(mu_i)
-
-    # Pre-fetch all required data before nested loops (O(n) instead of O(n²))
-    components = list(composition.keys())
-    component_data = {}
-    for comp in components:
-        if comp in GAS_DATABASE:
-            component_data[comp] = {
-                "M": GAS_DATABASE[comp].molecular_weight,
-                "mu": pure_viscosities[comp],
-            }
-
-    # Wilke's mixing rule - Calculate Φ matrix
-    phi = {}
-    for i, comp_i in enumerate(components):
-        if comp_i not in component_data:
-            continue
-        M_i = component_data[comp_i]["M"]
-        mu_i = component_data[comp_i]["mu"]
-
-        for j, comp_j in enumerate(components):
-            if comp_j not in component_data:
-                continue
-            M_j = component_data[comp_j]["M"]
-            mu_j = component_data[comp_j]["mu"]
-
-            if i == j:
-                phi[(comp_i, comp_j)] = 1.0
-            else:
-                numerator = (1.0 + (mu_i / mu_j) ** 0.5 * (M_j / M_i) ** 0.25) ** 2
-                denominator = (8.0 * (1.0 + M_i / M_j)) ** 0.5
-                phi[(comp_i, comp_j)] = numerator / denominator
-
-    # Calculate mixture viscosity
-    mu_mix = 0.0
-
-    for _, comp_i in enumerate(components):
-        if comp_i not in component_data:
-            continue
-
-        y_i = composition[comp_i]
-        mu_i = component_data[comp_i]["mu"]
-
-        denominator_sum = 0.0
-        for _, comp_j in enumerate(components):
-            if comp_j not in component_data:
-                continue
-            y_j = composition[comp_j]
-            denominator_sum += y_j * phi.get((comp_i, comp_j), 1.0)
-
-        if denominator_sum > 0:
-            mu_mix += y_i * mu_i / denominator_sum
-
+    pure_viscosities = _compute_pure_viscosities(composition, temperature, pressure)
+    mu_mix = _wilke_mixing_rule(composition, pure_viscosities)
     logger.debug(f"Mixture viscosity = {mu_mix:.6e} Pa·s = {mu_mix * 1e6:.3f} µPa·s")
-    return float(mu_mix)
+    return mu_mix
 
 
 def calculate_mixture_viscosity_simple(

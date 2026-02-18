@@ -263,6 +263,62 @@ class WGSReactorEngine:
 
         return K_eq
 
+    @staticmethod
+    def _prepare_initial_moles(
+        inlet_composition: dict[str, float],
+        steam_ratio: float,
+    ) -> tuple[float, float, float, float, float]:
+        """Compute initial mole counts for each WGS species.
+
+        Returns:
+            (n_CO_0, n_H2O_0, n_CO2_0, n_H2_0, n_total_0)
+        """
+        n_CO_0 = inlet_composition.get("CO", 0)
+        n_H2O_0 = inlet_composition.get("H2O", 0) + n_CO_0 * steam_ratio
+        n_CO2_0 = inlet_composition.get("CO2", 0)
+        n_H2_0 = inlet_composition.get("H2", 0)
+        n_total_0 = n_CO_0 + n_H2O_0 + n_CO2_0 + n_H2_0
+        return n_CO_0, n_H2O_0, n_CO2_0, n_H2_0, n_total_0
+
+    @staticmethod
+    def _assemble_equilibrium_results(
+        x_eq: float,
+        n_CO_0: float,
+        n_H2O_0: float,
+        n_CO2_0: float,
+        n_H2_0: float,
+        K_eq: float,
+    ) -> dict[str, Any]:
+        """Assemble the equilibrium result dictionary from the solved extent."""
+        n_CO_eq = n_CO_0 - x_eq
+        n_H2O_eq = n_H2O_0 - x_eq
+        n_CO2_eq = n_CO2_0 + x_eq
+        n_H2_eq = n_H2_0 + x_eq
+        n_total_eq = n_CO_eq + n_H2O_eq + n_CO2_eq + n_H2_eq
+
+        composition_out = {
+            "CO": (n_CO_eq / n_total_eq) * 100,
+            "H2O": (n_H2O_eq / n_total_eq) * 100,
+            "CO2": (n_CO2_eq / n_total_eq) * 100,
+            "H2": (n_H2_eq / n_total_eq) * 100,
+        }
+
+        conversion = (x_eq / n_CO_0) * 100 if n_CO_0 > 0 else 0
+        h2_co_ratio = (
+            composition_out["H2"] / composition_out["CO"]
+            if composition_out["CO"] > 0
+            else float("inf")
+        )
+        heat_released = x_eq * WGS_HEAT_KJ_PER_MOL
+
+        return {
+            "conversion": conversion,
+            "composition": composition_out,
+            "h2_co_ratio": h2_co_ratio,
+            "equilibrium_constant": K_eq,
+            "heat_released": heat_released,
+        }
+
     def calculate_equilibrium_composition(
         self,
         inlet_composition: dict[str, float],
@@ -273,33 +329,26 @@ class WGSReactorEngine:
         """Calculate equilibrium composition for WGS reaction
         using Gibbs free energy minimization."""
 
-        # Initial moles
-        n_CO_0 = inlet_composition.get("CO", 0)
-        n_H2O_0 = inlet_composition.get("H2O", 0) + n_CO_0 * steam_ratio
-        n_CO2_0 = inlet_composition.get("CO2", 0)
-        n_H2_0 = inlet_composition.get("H2", 0)
+        n_CO_0, n_H2O_0, n_CO2_0, n_H2_0, n_total_0 = self._prepare_initial_moles(
+            inlet_composition, steam_ratio
+        )
 
-        # Total initial moles
-        n_total_0 = n_CO_0 + n_H2O_0 + n_CO2_0 + n_H2_0
+        K_eq = self.calculate_equilibrium_constant(temperature)
 
         if n_total_0 == 0:
             return {
                 "conversion": 0.0,
                 "composition": {"CO": 0.0, "H2O": 0.0, "CO2": 0.0, "H2": 0.0},
                 "h2_co_ratio": 0.0,
-                "equilibrium_constant": self.calculate_equilibrium_constant(
-                    temperature
-                ),
+                "equilibrium_constant": K_eq,
                 "heat_released": 0.0,
             }
 
-        # Gibbs free energy of formation at standard state (298.15 K) in J/mol
+        # Gibbs free energy of formation at reaction temperature
         def get_g_f(species_name: str) -> float:
             species = self.species_db.get_species(species_name)
             if not species:
                 return 0
-            # G = H - TS
-            # Using actual reaction temperature for Gibbs free energy calculation
             return float(
                 species.formation_enthalpy * 1000
                 - temperature * species.formation_entropy
@@ -310,10 +359,8 @@ class WGSReactorEngine:
         g_f_CO2 = get_g_f("CO2")
         g_f_H2 = get_g_f("H2")
 
-        # The objective function to minimize is the total Gibbs free energy of the mixture
+        # Objective function — closure over local state
         def total_gibbs_energy(x: Any) -> float:
-            # x is the extent of reaction
-            # Scipy minimize passes x as a numpy array
             extent = x[0] if hasattr(x, "__len__") else x
 
             n_CO = n_CO_0 - extent
@@ -322,33 +369,22 @@ class WGSReactorEngine:
             n_H2 = n_H2_0 + extent
             n_total = n_total_0
 
-            # Mole fractions
-            # Mole fractions - Handle potential division by zero if n_total is near zero
             if n_total > 1e-10:
                 y_CO = n_CO / n_total
                 y_H2O = n_H2O / n_total
                 y_CO2 = n_CO2 / n_total
                 y_H2 = n_H2 / n_total
             else:
-                y_CO = 0.0
-                y_H2O = 0.0
-                y_CO2 = 0.0
-                y_H2 = 0.0
+                y_CO = y_H2O = y_CO2 = y_H2 = 0.0
 
-            # Partial pressures
-            # Input pressure is in bar, convert to Pa for standard state comparison
             pressure_pa = pressure * STANDARD_STATE_PRESSURE_PA
             p_CO = y_CO * pressure_pa
             p_H2O = y_H2O * pressure_pa
             p_CO2 = y_CO2 * pressure_pa
             p_H2 = y_H2 * pressure_pa
 
-            # Gibbs free energy of each component at reaction conditions
-            # Standard pressure (1 bar = 100,000 Pa) used for reference state
             P_std = STANDARD_STATE_PRESSURE_PA
 
-            # Gibbs free energy of each component at reaction conditions
-            # Use activity (p_i / P_std) for log term to ensure dimensionless argument
             g_CO = (
                 g_f_CO + self.R * temperature * math.log(p_CO / P_std)
                 if p_CO > 0
@@ -370,48 +406,16 @@ class WGSReactorEngine:
                 else 0
             )
 
-            # Total Gibbs energy of the mixture
             return float(n_CO * g_CO + n_H2O * g_H2O + n_CO2 * g_CO2 + n_H2 * g_H2)
 
-        # Initial guess for the extent of reaction
         x_initial = 0.5 * min(n_CO_0, n_H2O_0)
-
-        # Bounds for the extent of reaction
         bounds = [(0, min(n_CO_0, n_H2O_0))]
-
-        # Minimize the total Gibbs free energy
         result = minimize(total_gibbs_energy, x_initial, bounds=bounds)
         x_eq = result.x[0]
 
-        # Equilibrium composition
-        n_CO_eq = n_CO_0 - x_eq
-        n_H2O_eq = n_H2O_0 - x_eq
-        n_CO2_eq = n_CO2_0 + x_eq
-        n_H2_eq = n_H2_0 + x_eq
-        n_total_eq = n_CO_eq + n_H2O_eq + n_CO2_eq + n_H2_eq
-
-        composition_out = {
-            "CO": (n_CO_eq / n_total_eq) * 100,
-            "H2O": (n_H2O_eq / n_total_eq) * 100,
-            "CO2": (n_CO2_eq / n_total_eq) * 100,
-            "H2": (n_H2_eq / n_total_eq) * 100,
-        }
-
-        conversion = (x_eq / n_CO_0) * 100 if n_CO_0 > 0 else 0
-        h2_co_ratio = (
-            composition_out["H2"] / composition_out["CO"]
-            if composition_out["CO"] > 0
-            else float("inf")
+        return self._assemble_equilibrium_results(
+            x_eq, n_CO_0, n_H2O_0, n_CO2_0, n_H2_0, K_eq
         )
-        heat_released = x_eq * WGS_HEAT_KJ_PER_MOL  # kJ/mol CO in
-
-        return {
-            "conversion": conversion,
-            "composition": composition_out,
-            "h2_co_ratio": h2_co_ratio,
-            "equilibrium_constant": self.calculate_equilibrium_constant(temperature),
-            "heat_released": heat_released,
-        }
 
     def size_wgs_reactor(
         self,
