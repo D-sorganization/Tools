@@ -411,6 +411,125 @@ class MJCFConverter:
             materials=proper_materials,
         )
 
+    @staticmethod
+    def _parse_body_inertial(body_elem: ET.Element) -> Inertia:
+        """Parse inertial properties from an MJCF body element."""
+        inertia = Inertia(ixx=0.1, iyy=0.1, izz=0.1, mass=1.0)
+        inertial_elem = body_elem.find("inertial")
+        if inertial_elem is None:
+            return inertia
+
+        mass = float(inertial_elem.get("mass", 1.0))
+        com_str = inertial_elem.get("pos", "0 0 0")
+        com = tuple(float(v) for v in com_str.split())
+
+        diag_str = inertial_elem.get("diaginertia")
+        full_str = inertial_elem.get("fullinertia")
+
+        if diag_str:
+            diag = [float(v) for v in diag_str.split()]
+            return Inertia(
+                ixx=diag[0],
+                iyy=diag[1],
+                izz=diag[2],
+                mass=mass,
+                center_of_mass=com,
+            )
+        elif full_str:
+            full = [float(v) for v in full_str.split()]
+            return Inertia(
+                ixx=full[0],
+                iyy=full[1],
+                izz=full[2],
+                ixy=full[3] if len(full) > 3 else 0,
+                ixz=full[4] if len(full) > 4 else 0,
+                iyz=full[5] if len(full) > 5 else 0,
+                mass=mass,
+                center_of_mass=com,
+            )
+        else:
+            return Inertia(ixx=0.1, iyy=0.1, izz=0.1, mass=mass, center_of_mass=com)
+
+    def _parse_body_visual(
+        self,
+        body_elem: ET.Element,
+        body_name: str,
+    ) -> tuple[Geometry | None, Origin, Any]:
+        """Parse visual geometry and material from an MJCF body element."""
+        from model_generation.core.types import Material
+
+        geom_elems = body_elem.findall("geom")
+        if not geom_elems:
+            return None, Origin(), None
+
+        geom_elem = geom_elems[0]
+        visual_geom, visual_origin = self._parse_mjcf_geom(geom_elem)
+
+        visual_material = None
+        rgba_str = geom_elem.get("rgba")
+        mat_name = geom_elem.get("material")
+        if rgba_str:
+            rgba = tuple(float(v) for v in rgba_str.split())
+            visual_material = Material(name=f"{body_name}_material", color=rgba)
+        elif mat_name:
+            visual_material = Material(name=mat_name)
+
+        return visual_geom, visual_origin, visual_material
+
+    @staticmethod
+    def _parse_body_joint(
+        body_elem: ET.Element,
+        parent_name: str,
+        body_name: str,
+        pos: tuple[float, ...],
+    ) -> Joint:
+        """Parse joint elements and create a URDF joint connecting to parent."""
+        from model_generation.core.types import JointDynamics, JointLimits
+
+        joint_elems = body_elem.findall("joint")
+        if not joint_elems:
+            return Joint(
+                name=f"{parent_name}_to_{body_name}",
+                joint_type=JointType.FIXED,
+                parent=parent_name,
+                child=body_name,
+                origin=Origin(xyz=pos),
+            )
+
+        # Use the first non-free joint, or the first joint
+        primary_joint = joint_elems[0]
+        for je in joint_elems:
+            if je.get("type", "hinge") != "free":
+                primary_joint = je
+                break
+
+        joint_name = primary_joint.get("name", f"{parent_name}_to_{body_name}")
+        mjcf_type = primary_joint.get("type", "hinge")
+        joint_type = MJCF_TO_URDF_JOINT.get(mjcf_type, JointType.REVOLUTE)
+
+        axis_str = primary_joint.get("axis", "0 0 1")
+        axis = tuple(float(v) for v in axis_str.split())
+
+        limits = None
+        range_str = primary_joint.get("range")
+        if range_str:
+            range_vals = [float(v) for v in range_str.split()]
+            limits = JointLimits(lower=range_vals[0], upper=range_vals[1])
+
+        damping = float(primary_joint.get("damping", 0.5))
+        dynamics = JointDynamics(damping=damping)
+
+        return Joint(
+            name=joint_name,
+            joint_type=joint_type,
+            parent=parent_name,
+            child=body_name,
+            origin=Origin(xyz=pos),
+            axis=axis,
+            limits=limits,
+            dynamics=dynamics,
+        )
+
     def _parse_mjcf_body(
         self,
         elem: ET.Element,
@@ -419,70 +538,16 @@ class MJCFConverter:
         joints: list[Joint],
     ) -> None:
         """Recursively parse body elements."""
-        from model_generation.core.types import Material
-
         for body_elem in elem.findall("body"):
             body_name = body_elem.get("name", f"body_{len(links)}")
-
-            # Parse position
             pos_str = body_elem.get("pos", "0 0 0")
             pos = tuple(float(v) for v in pos_str.split())
 
-            # Parse inertial
-            inertia = Inertia(ixx=0.1, iyy=0.1, izz=0.1, mass=1.0)
-            inertial_elem = body_elem.find("inertial")
-            if inertial_elem is not None:
-                mass = float(inertial_elem.get("mass", 1.0))
+            inertia = self._parse_body_inertial(body_elem)
+            visual_geom, visual_origin, visual_material = self._parse_body_visual(
+                body_elem, body_name
+            )
 
-                com_str = inertial_elem.get("pos", "0 0 0")
-                com = tuple(float(v) for v in com_str.split())
-
-                diag_str = inertial_elem.get("diaginertia")
-                full_str = inertial_elem.get("fullinertia")
-
-                if diag_str:
-                    diag = [float(v) for v in diag_str.split()]
-                    inertia = Inertia(
-                        ixx=diag[0],
-                        iyy=diag[1],
-                        izz=diag[2],
-                        mass=mass,
-                        center_of_mass=com,
-                    )
-                elif full_str:
-                    full = [float(v) for v in full_str.split()]
-                    inertia = Inertia(
-                        ixx=full[0],
-                        iyy=full[1],
-                        izz=full[2],
-                        ixy=full[3] if len(full) > 3 else 0,
-                        ixz=full[4] if len(full) > 4 else 0,
-                        iyz=full[5] if len(full) > 5 else 0,
-                        mass=mass,
-                        center_of_mass=com,
-                    )
-                else:
-                    inertia = Inertia(
-                        ixx=0.1, iyy=0.1, izz=0.1, mass=mass, center_of_mass=com
-                    )
-
-            # Parse first geom for visual/collision geometry
-            visual_geom = None
-            visual_origin = Origin()
-            visual_material = None
-            geom_elems = body_elem.findall("geom")
-            if geom_elems:
-                geom_elem = geom_elems[0]
-                visual_geom, visual_origin = self._parse_mjcf_geom(geom_elem)
-                rgba_str = geom_elem.get("rgba")
-                mat_name = geom_elem.get("material")
-                if rgba_str:
-                    rgba = tuple(float(v) for v in rgba_str.split())
-                    visual_material = Material(name=f"{body_name}_material", color=rgba)
-                elif mat_name:
-                    visual_material = Material(name=mat_name)
-
-            # Create link with geometry
             link = Link(
                 name=body_name,
                 inertia=inertia,
@@ -494,64 +559,11 @@ class MJCFConverter:
             )
             links.append(link)
 
-            # Parse joints and create URDF joints to parent
             if parent_name:
-                joint_elems = body_elem.findall("joint")
-                if joint_elems:
-                    # Use the first non-free joint, or the first joint
-                    primary_joint = joint_elems[0]
-                    for je in joint_elems:
-                        jtype = je.get("type", "hinge")
-                        if jtype != "free":
-                            primary_joint = je
-                            break
+                joints.append(
+                    self._parse_body_joint(body_elem, parent_name, body_name, pos)
+                )
 
-                    joint_name = primary_joint.get(
-                        "name", f"{parent_name}_to_{body_name}"
-                    )
-                    mjcf_type = primary_joint.get("type", "hinge")
-                    joint_type = MJCF_TO_URDF_JOINT.get(mjcf_type, JointType.REVOLUTE)
-
-                    axis_str = primary_joint.get("axis", "0 0 1")
-                    axis = tuple(float(v) for v in axis_str.split())
-
-                    from model_generation.core.types import (
-                        JointDynamics,
-                        JointLimits,
-                    )
-
-                    limits = None
-                    range_str = primary_joint.get("range")
-                    if range_str:
-                        range_vals = [float(v) for v in range_str.split()]
-                        limits = JointLimits(lower=range_vals[0], upper=range_vals[1])
-
-                    damping = float(primary_joint.get("damping", 0.5))
-                    dynamics = JointDynamics(damping=damping)
-
-                    joint = Joint(
-                        name=joint_name,
-                        joint_type=joint_type,
-                        parent=parent_name,
-                        child=body_name,
-                        origin=Origin(xyz=pos),
-                        axis=axis,
-                        limits=limits,
-                        dynamics=dynamics,
-                    )
-                    joints.append(joint)
-                else:
-                    # Fixed joint
-                    joint = Joint(
-                        name=f"{parent_name}_to_{body_name}",
-                        joint_type=JointType.FIXED,
-                        parent=parent_name,
-                        child=body_name,
-                        origin=Origin(xyz=pos),
-                    )
-                    joints.append(joint)
-
-            # Recurse into children
             self._parse_mjcf_body(body_elem, body_name, links, joints)
 
     def _parse_mjcf_geom(self, geom_elem: ET.Element) -> tuple[Geometry | None, Origin]:

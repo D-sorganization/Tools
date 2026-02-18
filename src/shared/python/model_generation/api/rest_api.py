@@ -132,13 +132,11 @@ class ModelGenerationAPI:
         self._routes: list[Route] = []
         self._register_routes()
 
-    def _register_routes(self) -> None:
-        """Register all API routes."""
-        # Health/info
+    def _register_core_routes(self) -> None:
+        """Register health, generation, conversion, validation, and parsing routes."""
         self.add_route(HTTPMethod.GET, "/health", self.health_check, "Health check")
         self.add_route(HTTPMethod.GET, "/info", self.get_api_info, "API information")
 
-        # Generation endpoints
         self.add_route(
             HTTPMethod.POST,
             "/generate/humanoid",
@@ -154,7 +152,6 @@ class ModelGenerationAPI:
             ["generation"],
         )
 
-        # Conversion endpoints
         self.add_route(
             HTTPMethod.POST,
             "/convert/simscape-to-urdf",
@@ -177,7 +174,6 @@ class ModelGenerationAPI:
             ["conversion"],
         )
 
-        # Validation endpoint
         self.add_route(
             HTTPMethod.POST,
             "/validate",
@@ -185,8 +181,6 @@ class ModelGenerationAPI:
             "Validate URDF content",
             ["validation"],
         )
-
-        # Parse endpoint
         self.add_route(
             HTTPMethod.POST,
             "/parse",
@@ -195,7 +189,8 @@ class ModelGenerationAPI:
             ["parsing"],
         )
 
-        # Inertia calculation
+    def _register_inertia_and_library_routes(self) -> None:
+        """Register inertia calculation and library management routes."""
         self.add_route(
             HTTPMethod.POST,
             "/inertia/calculate",
@@ -211,7 +206,6 @@ class ModelGenerationAPI:
             ["inertia"],
         )
 
-        # Library endpoints
         self.add_route(
             HTTPMethod.GET,
             "/library/models",
@@ -248,7 +242,8 @@ class ModelGenerationAPI:
             ["library"],
         )
 
-        # Editor endpoints
+    def _register_editor_routes(self) -> None:
+        """Register editor-related routes."""
         self.add_route(
             HTTPMethod.POST,
             "/editor/compose",
@@ -263,6 +258,12 @@ class ModelGenerationAPI:
             "Compare two URDF files",
             ["editor"],
         )
+
+    def _register_routes(self) -> None:
+        """Register all API routes."""
+        self._register_core_routes()
+        self._register_inertia_and_library_routes()
+        self._register_editor_routes()
 
     def add_route(
         self,

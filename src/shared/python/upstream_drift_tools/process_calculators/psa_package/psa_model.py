@@ -157,17 +157,14 @@ class PSAModel:
         default_factory=lambda: list(DEFAULT_COMPONENTS)
     )
 
-    def calculate(self) -> PSAResults:
-        """
-        Perform the PSA mass balance calculation.
+    def _compute_stream_flows(
+        self,
+    ) -> StreamFlows:
+        """Solve the algebraic mass balance for all PSA streams.
 
         Returns:
-            PSAResults containing all stream flows, compositions, and metrics.
+            StreamFlows with computed flow arrays for each stream.
         """
-        n_components = len(self.components)
-        component_names = [c["name"] for c in self.components]
-
-        # Extract component data as arrays
         feed_pct = np.array([c["feed_pct"] for c in self.components], dtype=np.float64)
         r1 = np.array(
             [c["stage1_removal_pct"] / 100.0 for c in self.components], dtype=np.float64
@@ -179,49 +176,20 @@ class PSAModel:
         r_tail = self.s2_tail_recycle_frac
         r_prod = self.product_recycle_frac
 
-        # Calculate fresh feed flows (Stream 1)
-        # F_i = Total_Feed * feed_pct_i / sum(feed_pct)
         fresh_feed = self.total_feed_scfm * feed_pct / np.sum(feed_pct)
-
-        # Calculate mixed feed using algebraic solution (Stream 5A)
-        # M_i = F_i / [1 - (1-R1_i) * (R2_i * r_tail + (1-R2_i) * r_prod)]
         denominator = 1.0 - (1.0 - r1) * (r2 * r_tail + (1.0 - r2) * r_prod)
         mixed_feed = fresh_feed / denominator
 
-        # Calculate exhaust (PSA 1 tail) - Stream 2
-        # Exhaust = Mixed_Feed * R1 (removal fraction)
         exhaust = mixed_feed * r1
-
-        # Calculate interstage (PSA 1 product to PSA 2) - Stream 6
-        # Interstage = Mixed_Feed - Exhaust
         interstage = mixed_feed - exhaust
-
-        # Calculate Stage 2 tail - Stream J
-        # S2_Tail = Interstage * R2 (removal fraction)
         s2_tail = interstage * r2
-
-        # Calculate S2 Tail Recycle (back to feed) - Stream 4/C
-        # S2_Tail_Recycle = S2_Tail * r_tail
         s2_tail_recycle = s2_tail * r_tail
-
-        # Calculate S2 Tail Vent (if not fully recycled) - Stream G
-        # S2_Tail_Vent = S2_Tail * (1 - r_tail)
         s2_tail_vent = s2_tail * (1.0 - r_tail)
-
-        # Calculate Gross Product (before product recycle split) - Stream 3G
-        # Gross_Product = Interstage - S2_Tail
         gross_product = interstage - s2_tail
-
-        # Calculate Product Recycle (back to feed) - Stream 3R
-        # Product_Recycle = Gross_Product * r_prod
         product_recycle = gross_product * r_prod
-
-        # Calculate Net Product (final output) - Stream 3N
-        # Net_Product = Gross_Product * (1 - r_prod)
         net_product = gross_product * (1.0 - r_prod)
 
-        # Create flows dataclass
-        flows = StreamFlows(
+        return StreamFlows(
             fresh_feed=fresh_feed,
             s2_tail_recycle=s2_tail_recycle,
             product_recycle=product_recycle,
@@ -234,7 +202,22 @@ class PSAModel:
             net_product=net_product,
         )
 
-        # Calculate compositions (%)
+    @staticmethod
+    def _compute_performance_metrics(
+        component_names: list[str],
+        flows: StreamFlows,
+        n_components: int,
+    ) -> tuple[
+        StreamCompositions, float, float, float, float, float, float, float, float
+    ]:
+        """Compute compositions and key performance metrics from stream flows.
+
+        Returns:
+            Tuple of (compositions, h2_recovery_pct, h2_purity_pct,
+            total_net_product, total_exhaust, total_s2_tail_vent,
+            mass_balance_error, s2_tail_h2_pct, s2_tail_o2_pct)
+        """
+
         def calc_composition(flow_array: NDArray[np.float64]) -> NDArray[np.float64]:
             total = np.sum(flow_array)
             if total == 0:
@@ -242,42 +225,73 @@ class PSAModel:
             return flow_array / total * 100.0
 
         compositions = StreamCompositions(
-            fresh_feed=calc_composition(fresh_feed),
-            s2_tail_recycle=calc_composition(s2_tail_recycle),
-            product_recycle=calc_composition(product_recycle),
-            mixed_feed=calc_composition(mixed_feed),
-            exhaust=calc_composition(exhaust),
-            s2_tail_vent=calc_composition(s2_tail_vent),
-            interstage=calc_composition(interstage),
-            gross_product=calc_composition(gross_product),
-            s2_tail=calc_composition(s2_tail),
-            net_product=calc_composition(net_product),
+            fresh_feed=calc_composition(flows.fresh_feed),
+            s2_tail_recycle=calc_composition(flows.s2_tail_recycle),
+            product_recycle=calc_composition(flows.product_recycle),
+            mixed_feed=calc_composition(flows.mixed_feed),
+            exhaust=calc_composition(flows.exhaust),
+            s2_tail_vent=calc_composition(flows.s2_tail_vent),
+            interstage=calc_composition(flows.interstage),
+            gross_product=calc_composition(flows.gross_product),
+            s2_tail=calc_composition(flows.s2_tail),
+            net_product=calc_composition(flows.net_product),
         )
 
-        # Calculate totals
-        total_net_product = float(np.sum(net_product))
-        total_exhaust = float(np.sum(exhaust))
-        total_s2_tail_vent = float(np.sum(s2_tail_vent))
+        total_net_product = float(np.sum(flows.net_product))
+        total_exhaust = float(np.sum(flows.exhaust))
+        total_s2_tail_vent = float(np.sum(flows.s2_tail_vent))
 
-        # Mass balance check: Fresh_Feed = Exhaust + S2_Tail_Vent + Net_Product
         mass_balance_error = float(
-            np.sum(fresh_feed)
-            - np.sum(exhaust)
-            - np.sum(s2_tail_vent)
-            - np.sum(net_product)
+            np.sum(flows.fresh_feed)
+            - np.sum(flows.exhaust)
+            - np.sum(flows.s2_tail_vent)
+            - np.sum(flows.net_product)
         )
 
-        # H2 recovery: Net Product H2 / Fresh Feed H2 * 100
         h2_idx = component_names.index("H2")
-        h2_recovery_pct = float(net_product[h2_idx] / fresh_feed[h2_idx] * 100.0)
-
-        # H2 purity in net product
+        h2_recovery_pct = float(
+            flows.net_product[h2_idx] / flows.fresh_feed[h2_idx] * 100.0
+        )
         h2_purity_pct = float(compositions.net_product[h2_idx])
 
-        # S2 Tail composition (for safety analysis)
         s2_tail_h2_pct = float(compositions.s2_tail[h2_idx])
         o2_idx = component_names.index("O2")
         s2_tail_o2_pct = float(compositions.s2_tail[o2_idx])
+
+        return (
+            compositions,
+            h2_recovery_pct,
+            h2_purity_pct,
+            total_net_product,
+            total_exhaust,
+            total_s2_tail_vent,
+            mass_balance_error,
+            s2_tail_h2_pct,
+            s2_tail_o2_pct,
+        )
+
+    def calculate(self) -> PSAResults:
+        """
+        Perform the PSA mass balance calculation.
+
+        Returns:
+            PSAResults containing all stream flows, compositions, and metrics.
+        """
+        component_names = [c["name"] for c in self.components]
+        n_components = len(self.components)
+
+        flows = self._compute_stream_flows()
+        (
+            compositions,
+            h2_recovery_pct,
+            h2_purity_pct,
+            total_net_product,
+            total_exhaust,
+            total_s2_tail_vent,
+            mass_balance_error,
+            s2_tail_h2_pct,
+            s2_tail_o2_pct,
+        ) = self._compute_performance_metrics(component_names, flows, n_components)
 
         return PSAResults(
             component_names=component_names,

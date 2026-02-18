@@ -190,6 +190,101 @@ class TRCGeometryEngine:
     - Reduced redundant radius calculations
     """
 
+    @staticmethod
+    def _calculate_layer_contributions(
+        layer: LayerConfig,
+        current_radius: float,
+        hole_r: float,
+        cone_bot_r: float,
+        radius_offset: float,
+        interior_h: float,
+        ch_factor: float,
+        dimensions: VesselDimensions,
+    ) -> tuple[LayerResult, float, float]:
+        """Calculate volume, mass, and surface area for a single layer.
+
+        Returns:
+            Tuple of (LayerResult, new_radius_offset_delta, inner_radius).
+        """
+        t = layer.thickness
+        inner_r = max(current_radius - t, hole_r)
+        r_sq = current_radius * current_radius
+        ir_sq = inner_r * inner_r
+
+        cyl_vol = (
+            _calculate_layer_cylinder_volume(r_sq, ir_sq, interior_h)
+            if dimensions.display_cylinder
+            else 0.0
+        )
+        cone_vol = (
+            _calculate_layer_cone_volume(
+                current_radius,
+                r_sq,
+                inner_r,
+                ir_sq,
+                cone_bot_r,
+                radius_offset,
+                t,
+                hole_r,
+                ch_factor,
+            )
+            if dimensions.display_cone
+            else 0.0
+        )
+        top_disk = _PI * ir_sq * t if dimensions.display_lid else 0.0
+
+        vol_ft3 = (cyl_vol + cone_vol + top_disk) * _CUBIC_INCHES_TO_CUBIC_FEET
+        mass_lb = vol_ft3 * layer.density
+
+        layer_sa = 0.0
+        if layer.name == "Metal Shell":
+            layer_sa = _calculate_layer_surface_area(
+                current_radius,
+                dimensions.cylinder_height,
+                cone_bot_r,
+                radius_offset,
+                hole_r,
+                dimensions.cone_height,
+                display_cylinder=dimensions.display_cylinder,
+                display_cone=dimensions.display_cone,
+            )
+
+        result = LayerResult(
+            name=layer.name,
+            volume_ft3=vol_ft3,
+            mass_lb=mass_lb,
+            density=layer.density,
+            outer_surface_area_ft2=layer_sa,
+        )
+        return result, current_radius - inner_r, inner_r
+
+    @staticmethod
+    def _finalize_geometry_results(
+        results: VesselGeometryResult,
+        current_radius: float,
+        half_cyl_d: float,
+        cone_bot_r: float,
+        hole_r: float,
+        interior_h: float,
+        ch_factor: float,
+        dimensions: VesselDimensions,
+    ) -> None:
+        """Compute interior void and final geometry dimensions."""
+        void_in3 = _calculate_interior_void(
+            current_radius,
+            half_cyl_d,
+            cone_bot_r,
+            hole_r,
+            interior_h,
+            ch_factor,
+            display_cylinder=dimensions.display_cylinder,
+            display_cone=dimensions.display_cone,
+        )
+        results.interior_volume_ft3 = void_in3 * _CUBIC_INCHES_TO_CUBIC_FEET
+        results.void_radius_inches = current_radius
+        results.void_diameter_inches = current_radius * 2.0
+        results.interior_height_inches = interior_h
+
     def calculate_geometry(
         self, dimensions: VesselDimensions, layers: list[LayerConfig]
     ) -> VesselGeometryResult:
@@ -224,83 +319,38 @@ class TRCGeometryEngine:
             if not layer.visible or layer.thickness <= 0:
                 continue
 
-            t = layer.thickness
-            inner_r = max(current_radius - t, hole_r)
-            r_sq = current_radius * current_radius
-            ir_sq = inner_r * inner_r
-
-            cyl_vol = (
-                _calculate_layer_cylinder_volume(r_sq, ir_sq, interior_h)
-                if dimensions.display_cylinder
-                else 0.0
+            layer_result, offset_delta, inner_r = self._calculate_layer_contributions(
+                layer,
+                current_radius,
+                hole_r,
+                cone_bot_r,
+                radius_offset,
+                interior_h,
+                ch_factor,
+                dimensions,
             )
-            cone_vol = (
-                _calculate_layer_cone_volume(
-                    current_radius,
-                    r_sq,
-                    inner_r,
-                    ir_sq,
-                    cone_bot_r,
-                    radius_offset,
-                    t,
-                    hole_r,
-                    ch_factor,
-                )
-                if dimensions.display_cone
-                else 0.0
-            )
-            top_disk = _PI * ir_sq * t if dimensions.display_lid else 0.0
+            total_mass += layer_result.mass_lb
+            total_volume += layer_result.volume_ft3
+            outside_sa += layer_result.outer_surface_area_ft2
+            results.layers.append(layer_result)
 
-            vol_ft3 = (cyl_vol + cone_vol + top_disk) * _CUBIC_INCHES_TO_CUBIC_FEET
-            mass_lb = vol_ft3 * layer.density
-            total_mass += mass_lb
-            total_volume += vol_ft3
-
-            layer_sa = 0.0
-            if layer.name == "Metal Shell":
-                layer_sa = _calculate_layer_surface_area(
-                    current_radius,
-                    dimensions.cylinder_height,
-                    cone_bot_r,
-                    radius_offset,
-                    hole_r,
-                    dimensions.cone_height,
-                    display_cylinder=dimensions.display_cylinder,
-                    display_cone=dimensions.display_cone,
-                )
-                outside_sa += layer_sa
-
-            results.layers.append(
-                LayerResult(
-                    name=layer.name,
-                    volume_ft3=vol_ft3,
-                    mass_lb=mass_lb,
-                    density=layer.density,
-                    outer_surface_area_ft2=layer_sa,
-                )
-            )
-
-            radius_offset += current_radius - inner_r
+            radius_offset += offset_delta
             current_radius = inner_r
 
         results.total_volume_ft3 = total_volume
         results.total_mass_lb = total_mass
         results.outside_surface_area_ft2 = outside_sa
 
-        void_in3 = _calculate_interior_void(
+        self._finalize_geometry_results(
+            results,
             current_radius,
             half_cyl_d,
             cone_bot_r,
             hole_r,
             interior_h,
             ch_factor,
-            display_cylinder=dimensions.display_cylinder,
-            display_cone=dimensions.display_cone,
+            dimensions,
         )
-        results.interior_volume_ft3 = void_in3 * _CUBIC_INCHES_TO_CUBIC_FEET
-        results.void_radius_inches = current_radius
-        results.void_diameter_inches = current_radius * 2.0
-        results.interior_height_inches = interior_h
 
         return results
 

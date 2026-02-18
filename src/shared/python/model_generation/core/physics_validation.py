@@ -204,6 +204,104 @@ class PhysicsValidator:
 
         return result
 
+    @staticmethod
+    def _compute_center_of_mass(
+        links: list[Link],
+    ) -> tuple[np.ndarray, float] | None:
+        """Compute overall center of mass from links with inertial data.
+
+        Returns:
+            Tuple of (com_array, total_mass) or None if no mass found.
+        """
+        total_mass = 0.0
+        weighted_position = np.zeros(3)
+
+        for link in links:
+            if hasattr(link, "inertial") and link.inertial:
+                mass = link.inertial.mass
+                origin = link.inertial.origin
+                pos = np.array([origin.x, origin.y, origin.z])
+                weighted_position += mass * pos
+                total_mass += mass
+
+        if total_mass <= 0:
+            return None
+        return weighted_position / total_mass, total_mass
+
+    @staticmethod
+    def _find_support_polygon(
+        links: list[Link],
+        support_link_names: list[str] | None,
+    ) -> tuple[list[tuple[float, float]], list[str] | None]:
+        """Identify support links and extract their 2D positions.
+
+        Returns:
+            Tuple of (support_points, resolved_support_link_names).
+        """
+        if support_link_names is None:
+            link_z_positions = []
+            for link in links:
+                if hasattr(link, "inertial") and link.inertial:
+                    z = link.inertial.origin.z
+                    link_z_positions.append((link.name, z))
+
+            if link_z_positions:
+                min_z = min(z for _, z in link_z_positions)
+                support_link_names = [
+                    name for name, z in link_z_positions if abs(z - min_z) < 0.1
+                ]
+
+        support_points: list[tuple[float, float]] = []
+        for link in links:
+            if link.name in (support_link_names or []):
+                if hasattr(link, "inertial") and link.inertial:
+                    origin = link.inertial.origin
+                    support_points.append((origin.x, origin.y))
+
+        return support_points, support_link_names
+
+    def _evaluate_stability(
+        self,
+        com: np.ndarray,
+        total_mass: float,
+        support_points: list[tuple[float, float]],
+    ) -> tuple[bool, float, list[tuple[float, float]] | None, float]:
+        """Evaluate stability metrics from COM and support polygon.
+
+        Returns:
+            Tuple of (is_stable, margin, support_polygon, tipping_angle_deg).
+        """
+        support_polygon: list[tuple[float, float]] | None = None
+
+        if len(support_points) < 3:
+            is_stable = len(support_points) > 0
+            margin = 0.0 if is_stable else float("inf")
+            support_polygon = list(support_points) if support_points else None
+        else:
+            try:
+                from scipy.spatial import ConvexHull
+
+                points = np.array(support_points)
+                hull = ConvexHull(points)
+                support_polygon = [tuple(points[i].tolist()) for i in hull.vertices]
+
+                com_2d = com[:2]
+                is_stable = self._point_in_polygon(com_2d, support_polygon)
+                margin = self._distance_to_polygon_edge(com_2d, support_polygon)
+
+            except ImportError:
+                is_stable = True
+                support_polygon = list(support_points)
+                margin = 0.0
+
+        if margin > 0 and total_mass > 0:
+            height = com[2] if com[2] > 0 else 1.0
+            tipping_angle = float(np.degrees(np.arctan(margin / height)))
+        else:
+            tipping_angle = 0.0
+
+        return is_stable, margin, support_polygon, tipping_angle
+
     def check_static_stability(
         self,
         links: list[Link],
@@ -230,88 +328,24 @@ class PhysicsValidator:
                 center_of_mass=(0.0, 0.0, 0.0),
             )
 
-        # Compute center of mass
-        total_mass = 0.0
-        weighted_position = np.zeros(3)
-
-        for link in links:
-            if hasattr(link, "inertial") and link.inertial:
-                mass = link.inertial.mass
-                origin = link.inertial.origin
-                pos = np.array([origin.x, origin.y, origin.z])
-                weighted_position += mass * pos
-                total_mass += mass
-
-        if total_mass <= 0:
+        com_result = self._compute_center_of_mass(links)
+        if com_result is None:
             return StabilityResult(
                 is_stable=False,
                 center_of_mass=(0.0, 0.0, 0.0),
             )
 
-        com = weighted_position / total_mass
-        com_tuple = tuple(com.tolist())
-
-        # Find support links (lowest z-position links)
-        if support_link_names is None:
-            link_z_positions = []
-            for link in links:
-                if hasattr(link, "inertial") and link.inertial:
-                    z = link.inertial.origin.z
-                    link_z_positions.append((link.name, z))
-
-            if link_z_positions:
-                min_z = min(z for _, z in link_z_positions)
-                support_link_names = [
-                    name for name, z in link_z_positions if abs(z - min_z) < 0.1
-                ]
-
-        # Compute support polygon (simplified: just bounding box of support links)
-        support_points = []
-        for link in links:
-            if link.name in (support_link_names or []):
-                if hasattr(link, "inertial") and link.inertial:
-                    origin = link.inertial.origin
-                    support_points.append((origin.x, origin.y))
-
-        support_polygon: list[tuple[float, float]] | None = None
-
-        if len(support_points) < 3:
-            # Not enough points for a polygon, check if COM is close to support
-            is_stable = len(support_points) > 0
-            margin = 0.0 if is_stable else float("inf")
-            support_polygon = list(support_points) if support_points else None
-        else:
-            # Compute convex hull of support points
-            try:
-                from scipy.spatial import ConvexHull
-
-                points = np.array(support_points)
-                hull = ConvexHull(points)
-                support_polygon = [tuple(points[i].tolist()) for i in hull.vertices]
-
-                # Check if COM projection is inside polygon
-                com_2d = com[:2]
-                is_stable = self._point_in_polygon(com_2d, support_polygon)
-
-                # Compute margin to edge
-                margin = self._distance_to_polygon_edge(com_2d, support_polygon)
-
-            except ImportError:
-                is_stable = True
-                support_polygon = list(support_points)
-                margin = 0.0
-
-        # Compute tipping angle
-        if margin > 0 and total_mass > 0:
-            # Simplified: tan(angle) = margin / height
-            height = com[2] if com[2] > 0 else 1.0
-            tipping_angle = np.degrees(np.arctan(margin / height))
-        else:
-            tipping_angle = 0.0
+        com, total_mass = com_result
+        support_points, support_link_names = self._find_support_polygon(
+            links, support_link_names
+        )
+        is_stable, margin, support_polygon, tipping_angle = self._evaluate_stability(
+            com, total_mass, support_points
+        )
 
         return StabilityResult(
             is_stable=is_stable,
-            center_of_mass=com_tuple,  # type: ignore
+            center_of_mass=tuple(com.tolist()),  # type: ignore
             support_polygon=support_polygon if support_points else None,
             margin_to_edge=margin,
             tipping_angle_deg=tipping_angle,
