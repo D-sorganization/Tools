@@ -457,37 +457,14 @@ def compare_friction_methods(
     return results
 
 
-def validate_inputs(
-    pipe_size: str | None = None,
-    pipe_schedule: str | None = None,
-    pipe_diameter: float | None = None,
-    flow_rate: float | None = None,
-    flow_unit: str | None = None,
-    pressure: float | None = None,
-    temperature: float | None = None,
-    gas_composition: dict[str, float] | None = None,
-    fittings: list[dict[str, Any]] | None = None,
-) -> tuple[bool, list[str], list[str]]:
-    """Validate inputs before calculation and provide helpful suggestions.
-
-    Args:
-        pipe_size: Nominal pipe size
-        pipe_schedule: Pipe schedule
-        pipe_diameter: Pipe diameter in meters
-        flow_rate: Flow rate value
-        flow_unit: Flow rate unit
-        pressure: Inlet pressure
-        temperature: Inlet temperature
-        gas_composition: Gas composition dictionary
-        fittings: List of fittings
-
-    Returns:
-        Tuple of (is_valid, errors, warnings)
-    """
-    errors = []
-    warnings = []
-
-    # Pipe validation
+def _validate_pipe_params(
+    pipe_size: str | None,
+    pipe_schedule: str | None,
+    pipe_diameter: float | None,
+    errors: list[str],
+    warnings: list[str],
+) -> None:
+    """Validate pipe geometry parameters."""
     if pipe_diameter is None:
         if pipe_size is None or pipe_schedule is None:
             errors.append(
@@ -506,7 +483,13 @@ def validate_inputs(
             f"Large diameter ({pipe_diameter}m). Did you mean mm? Use meters."
         )
 
-    # Flow rate validation
+
+def _validate_flow_params(
+    flow_rate: float | None,
+    flow_unit: str | None,
+    errors: list[str],
+) -> None:
+    """Validate flow rate value and unit."""
     if flow_rate is not None:
         if flow_rate <= 0:
             errors.append(f"flow_rate must be positive, got {flow_rate}")
@@ -527,7 +510,14 @@ def validate_inputs(
                 f"Did you mean: {', '.join(similar[:5]) if similar else 'see list_flow_units()'}"
             )
 
-    # Pressure validation
+
+def _validate_conditions(
+    pressure: float | None,
+    temperature: float | None,
+    errors: list[str],
+    warnings: list[str],
+) -> None:
+    """Validate pressure and temperature values."""
     if pressure is not None:
         if pressure <= 0:
             errors.append(f"pressure must be positive, got {pressure}")
@@ -536,7 +526,6 @@ def validate_inputs(
                 f"High pressure ({pressure}). Ensure units are correct (bar/psi/Pa)."
             )
 
-    # Temperature validation
     if temperature is not None:
         if temperature <= 0:
             errors.append(f"temperature must be positive (Kelvin), got {temperature}")
@@ -549,7 +538,14 @@ def validate_inputs(
                 f"Very high temperature ({temperature}K). Verify this is correct."
             )
 
-    # Gas composition validation
+
+def _validate_composition_and_fittings(
+    gas_composition: dict[str, float] | None,
+    fittings: list[dict[str, Any]] | None,
+    errors: list[str],
+    warnings: list[str],
+) -> None:
+    """Validate gas composition and fitting specifications."""
     if gas_composition:
         total = sum(gas_composition.values())
         if not (0.99 <= total <= 1.01):
@@ -564,7 +560,6 @@ def validate_inputs(
                 f"Available: {', '.join(GAS_DATABASE.keys())}"
             )
 
-    # Fittings validation
     if fittings:
         for i, fitting in enumerate(fittings):
             fitting_type = fitting.get("type", "")
@@ -575,9 +570,11 @@ def validate_inputs(
                     f"Similar: {', '.join(similar[:3]) if similar else 'see list_fittings()'}"
                 )
 
-    is_valid = len(errors) == 0
 
-    # Print results
+def _log_validation_report(
+    is_valid: bool, errors: list[str], warnings: list[str]
+) -> None:
+    """Log a formatted validation report."""
     logger.info(
         "\n╔═══════════════════════════════════════════════════════════════════╗"
     )
@@ -609,6 +606,45 @@ def validate_inputs(
 
     logger.info("╚═══════════════════════════════════════════════════════════════════╝")
 
+
+def validate_inputs(
+    pipe_size: str | None = None,
+    pipe_schedule: str | None = None,
+    pipe_diameter: float | None = None,
+    flow_rate: float | None = None,
+    flow_unit: str | None = None,
+    pressure: float | None = None,
+    temperature: float | None = None,
+    gas_composition: dict[str, float] | None = None,
+    fittings: list[dict[str, Any]] | None = None,
+) -> tuple[bool, list[str], list[str]]:
+    """Validate inputs before calculation and provide helpful suggestions.
+
+    Args:
+        pipe_size: Nominal pipe size
+        pipe_schedule: Pipe schedule
+        pipe_diameter: Pipe diameter in meters
+        flow_rate: Flow rate value
+        flow_unit: Flow rate unit
+        pressure: Inlet pressure
+        temperature: Inlet temperature
+        gas_composition: Gas composition dictionary
+        fittings: List of fittings
+
+    Returns:
+        Tuple of (is_valid, errors, warnings)
+    """
+    errors: list[str] = []
+    warnings: list[str] = []
+
+    _validate_pipe_params(pipe_size, pipe_schedule, pipe_diameter, errors, warnings)
+    _validate_flow_params(flow_rate, flow_unit, errors)
+    _validate_conditions(pressure, temperature, errors, warnings)
+    _validate_composition_and_fittings(gas_composition, fittings, errors, warnings)
+
+    is_valid = len(errors) == 0
+    _log_validation_report(is_valid, errors, warnings)
+
     return is_valid, errors, warnings
 
 
@@ -635,6 +671,105 @@ def _wrap_text(text: str, width: int) -> list[str]:
 # ============================================================================
 # HIGH-LEVEL API FUNCTIONS
 # ============================================================================
+
+
+def _resolve_pipe_geometry(
+    pipe_size: str | None,
+    pipe_schedule: str | None,
+    pipe_diameter: float | None,
+    pipe_material: str,
+    pipe_roughness: float | None,
+) -> tuple[float, float]:
+    """Resolve pipe diameter and roughness from user-supplied parameters.
+
+    Returns:
+        Tuple of (diameter_m, roughness_m).
+    """
+    if pipe_diameter is None:
+        if pipe_size is None or pipe_schedule is None:
+            raise ValueError(
+                "Either provide pipe_diameter or both pipe_size and pipe_schedule"
+            )
+        pipe_spec = get_pipe_spec(pipe_size, pipe_schedule, pipe_material)
+        pipe_diameter = pipe_spec.get_id_meters()
+        logger.info(
+            f'Using {pipe_size}" Schedule {pipe_schedule}: ID = {pipe_diameter * 1000:.2f} mm'
+        )
+
+    roughness = (
+        pipe_roughness
+        if pipe_roughness is not None
+        else get_roughness(pipe_material, "m")
+    )
+    return pipe_diameter, roughness
+
+
+def _resolve_gas_and_flow(
+    flow_rate: float,
+    flow_unit: str,
+    gas_composition: dict[str, float] | None,
+    temp_k: float,
+    pressure_pa: float,
+    compressibility_correction: bool,
+    standard_condition: str,
+) -> tuple[GasComposition, float]:
+    """Normalize gas composition and convert flow rate to kg/s.
+
+    Returns:
+        Tuple of (composition, mass_flow_kg_s).
+    """
+    if gas_composition is None:
+        gas_composition = {"Air": 1.0}
+        logger.info("Using default gas composition: Air")
+
+    composition = GasComposition(components=gas_composition)
+    composition.normalize()
+    molecular_weight = calculate_mixture_molecular_weight(composition.components)
+
+    if flow_unit.upper() in ["ACFM", "CFM"]:
+        from .utils.gas_properties import calculate_gas_properties
+
+        props = calculate_gas_properties(
+            composition.components, temp_k, pressure_pa, compressibility_correction
+        )
+        density = props["density"]
+        from .utils.flow_rate_converter import volumetric_actual_to_mass
+
+        mass_flow_kg_s = volumetric_actual_to_mass(
+            flow_rate, flow_unit, density, "kg/s"
+        )
+    else:
+        mass_flow_kg_s = convert_flow_rate_to_mass(
+            flow_rate,
+            flow_unit,
+            molecular_weight,
+            temperature=temp_k,
+            pressure=pressure_pa,
+            standard=standard_condition,
+        )
+
+    logger.info(f"Mass flow rate: {mass_flow_kg_s:.4f} kg/s ({flow_rate} {flow_unit})")
+    return composition, mass_flow_kg_s
+
+
+def _build_fitting_list(
+    fittings: list[dict[str, str | int | float]] | None,
+) -> list[PipeFitting]:
+    """Convert raw fitting dicts into PipeFitting objects."""
+    fitting_list: list[PipeFitting] = []
+    if fittings:
+        for fitting_dict in fittings:
+            fitting_type = str(fitting_dict.get("type", ""))
+            quantity = int(fitting_dict.get("quantity", 1))
+            k_factor = float(
+                fitting_dict.get("k_factor", FITTING_K_FACTORS.get(fitting_type, 0.0))
+            )
+            fitting_list.append(
+                PipeFitting(
+                    fitting_type=fitting_type, quantity=quantity, k_factor=k_factor
+                )
+            )
+    return fitting_list
 
 
 def calculate_pressure_drop(
@@ -702,86 +837,23 @@ def calculate_pressure_drop(
         ... )
         >>> print(f"ΔP = {result['pressure_drop_bar']:.4f} bar")
     """
-    # Convert temperature to Kelvin
     temp_k = _convert_temperature(temperature, temperature_unit, "K")
-
-    # Convert pressure to Pa
     pressure_pa = _convert_pressure(pressure, pressure_unit, "Pa")
 
-    # Determine pipe diameter
-    if pipe_diameter is None:
-        if pipe_size is None or pipe_schedule is None:
-            raise ValueError(
-                "Either provide pipe_diameter or both pipe_size and pipe_schedule"
-            )
-        pipe_spec = get_pipe_spec(pipe_size, pipe_schedule, pipe_material)
-        pipe_diameter = pipe_spec.get_id_meters()
-        logger.info(
-            f'Using {pipe_size}" Schedule {pipe_schedule}: ID = {pipe_diameter * 1000:.2f} mm'
-        )
+    pipe_diameter, roughness = _resolve_pipe_geometry(
+        pipe_size, pipe_schedule, pipe_diameter, pipe_material, pipe_roughness
+    )
+    composition, mass_flow_kg_s = _resolve_gas_and_flow(
+        flow_rate,
+        flow_unit,
+        gas_composition,
+        temp_k,
+        pressure_pa,
+        compressibility_correction,
+        standard_condition,
+    )
+    fitting_list = _build_fitting_list(fittings)
 
-    # Get pipe roughness
-    if pipe_roughness is None:
-        roughness = get_roughness(pipe_material, "m")
-    else:
-        roughness = pipe_roughness
-
-    # Set default gas composition (air) if not provided
-    if gas_composition is None:
-        gas_composition = {"Air": 1.0}
-        logger.info("Using default gas composition: Air")
-
-    # Create and normalize gas composition
-    composition = GasComposition(components=gas_composition)
-    composition.normalize()
-
-    # Calculate molecular weight for flow rate conversion
-    molecular_weight = calculate_mixture_molecular_weight(composition.components)
-
-    # Convert flow rate to kg/s
-    # For volumetric units, may need density
-    if flow_unit.upper() in ["ACFM", "CFM"]:
-        # Need to calculate density first
-        from .utils.gas_properties import calculate_gas_properties
-
-        props = calculate_gas_properties(
-            composition.components, temp_k, pressure_pa, compressibility_correction
-        )
-        density = props["density"]
-        from .utils.flow_rate_converter import volumetric_actual_to_mass
-
-        mass_flow_kg_s = volumetric_actual_to_mass(
-            flow_rate, flow_unit, density, "kg/s"
-        )
-    else:
-        mass_flow_kg_s = convert_flow_rate_to_mass(
-            flow_rate,
-            flow_unit,
-            molecular_weight,
-            temperature=temp_k,
-            pressure=pressure_pa,
-            standard=standard_condition,
-        )
-
-    logger.info(f"Mass flow rate: {mass_flow_kg_s:.4f} kg/s ({flow_rate} {flow_unit})")
-
-    # Process fittings
-    fitting_list = []
-    if fittings:
-        for fitting_dict in fittings:
-            fitting_type = str(fitting_dict.get("type", ""))
-            quantity = int(fitting_dict.get("quantity", 1))
-            k_factor = float(
-                fitting_dict.get("k_factor", FITTING_K_FACTORS.get(fitting_type, 0.0))
-            )
-
-            fitting_list.append(
-                PipeFitting(
-                    fitting_type=fitting_type, quantity=quantity, k_factor=k_factor
-                )
-            )
-
-    # Create inputs
     inputs = PressureDropInputs(
         pipe_diameter=pipe_diameter,
         pipe_length=pipe_length,
@@ -796,11 +868,8 @@ def calculate_pressure_drop(
         friction_method=friction_method,
     )
 
-    # Calculate
     engine = PressureDropCalculationEngine()
     results = engine.calculate(inputs)
-
-    # Return comprehensive results dictionary
     return _format_results(results)
 
 
@@ -1033,28 +1102,8 @@ def _format_results(results: Any) -> dict[str, Any]:
     }
 
 
-def print_results(
-    results: dict[str, Any],
-    title: str = "PRESSURE DROP CALCULATION RESULTS",
-    show_recommendations: bool = True,
-) -> None:
-    """Print results in a beautifully formatted table with recommendations.
-
-    Args:
-        results: Results dictionary from calculate_pressure_drop
-        title: Title for the output
-        show_recommendations: Whether to show engineering recommendations
-    """
-
-    # Safe division helper
-    def safe_percent(num: float, denom: float) -> float:
-        return (num / denom * 100) if denom != 0 else 0.0
-
-    logger.info("\n" + "═" * 80)
-    logger.info(f"  {title}  ".center(80, "═"))
-    logger.info("═" * 80)
-
-    # Summary section
+def _print_summary_section(results: dict[str, Any]) -> None:
+    """Log the pressure-drop summary section."""
     logger.info("\n┌" + "─" * 78 + "┐")
     logger.info("│" + " SUMMARY ".center(78) + "│")
     logger.info("├" + "─" * 78 + "┤")
@@ -1068,7 +1117,13 @@ def print_results(
     )
     logger.info("└" + "─" * 78 + "┘")
 
-    # Pressure drop breakdown
+
+def _print_breakdown_section(results: dict[str, Any]) -> None:
+    """Log the pressure-drop breakdown by component."""
+
+    def safe_percent(num: float, denom: float) -> float:
+        return (num / denom * 100) if denom != 0 else 0.0
+
     logger.info("\n┌" + "─" * 78 + "┐")
     logger.info("│" + " PRESSURE DROP BREAKDOWN ".center(78) + "│")
     logger.info("├" + "─" * 38 + "┬" + "─" * 19 + "┬" + "─" * 19 + "┤")
@@ -1094,7 +1149,9 @@ def print_results(
         )
     logger.info("└" + "─" * 38 + "┴" + "─" * 19 + "┴" + "─" * 19 + "┘")
 
-    # Flow characteristics
+
+def _print_flow_and_gas_sections(results: dict[str, Any]) -> None:
+    """Log flow characteristics and gas property sections."""
     logger.info("\n┌" + "─" * 78 + "┐")
     logger.info("│" + " FLOW CHARACTERISTICS ".center(78) + "│")
     logger.info("├" + "─" * 38 + "┬" + "─" * 39 + "┤")
@@ -1109,7 +1166,6 @@ def print_results(
     )
     logger.info("└" + "─" * 38 + "┴" + "─" * 39 + "┘")
 
-    # Gas properties
     logger.info("\n┌" + "─" * 78 + "┐")
     logger.info("│" + " GAS PROPERTIES ".center(78) + "│")
     logger.info("├" + "─" * 38 + "┬" + "─" * 39 + "┤")
@@ -1121,7 +1177,9 @@ def print_results(
     )
     logger.info("└" + "─" * 38 + "┴" + "─" * 39 + "┘")
 
-    # Safety metrics
+
+def _print_safety_section(results: dict[str, Any]) -> None:
+    """Log the safety metrics section."""
     logger.info("\n┌" + "─" * 78 + "┐")
     logger.info("│" + " SAFETY METRICS ".center(78) + "│")
     logger.info("├" + "─" * 38 + "┬" + "─" * 39 + "┤")
@@ -1142,7 +1200,11 @@ def print_results(
     )
     logger.info("└" + "─" * 38 + "┴" + "─" * 39 + "┘")
 
-    # Warnings
+
+def _print_warnings_and_recommendations(
+    results: dict[str, Any], show_recommendations: bool
+) -> None:
+    """Log warnings and engineering recommendations."""
     if results.get("warnings"):
         warnings = results["warnings"]
         if isinstance(warnings, list) and len(warnings) > 0:
@@ -1150,13 +1212,11 @@ def print_results(
             logger.warning("│" + " ⚠️  WARNINGS ".center(78) + "│")
             logger.info("├" + "─" * 78 + "┤")
             for warning in warnings:
-                # Wrap long warnings
                 wrapped = _wrap_text(warning, 74)
                 for line in wrapped:
                     logger.info(f"│  {line:74s}  │")
             logger.info("└" + "─" * 78 + "┘")
 
-    # Engineering recommendations
     if show_recommendations:
         recommendations = _generate_recommendations(results)
         if recommendations:
@@ -1168,6 +1228,29 @@ def print_results(
                 for line in wrapped:
                     logger.info(f"│  {line:74s}  │")
             logger.info("└" + "─" * 78 + "┘")
+
+
+def print_results(
+    results: dict[str, Any],
+    title: str = "PRESSURE DROP CALCULATION RESULTS",
+    show_recommendations: bool = True,
+) -> None:
+    """Print results in a beautifully formatted table with recommendations.
+
+    Args:
+        results: Results dictionary from calculate_pressure_drop
+        title: Title for the output
+        show_recommendations: Whether to show engineering recommendations
+    """
+    logger.info("\n" + "═" * 80)
+    logger.info(f"  {title}  ".center(80, "═"))
+    logger.info("═" * 80)
+
+    _print_summary_section(results)
+    _print_breakdown_section(results)
+    _print_flow_and_gas_sections(results)
+    _print_safety_section(results)
+    _print_warnings_and_recommendations(results, show_recommendations)
 
     logger.info("═" * 80 + "\n")
 

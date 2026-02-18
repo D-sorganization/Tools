@@ -96,21 +96,8 @@ class ThemeOperationResponse(BaseModel):
 # ---------------------------------------------------------------------------
 
 
-def create_theme_router(theme_manager: Any) -> APIRouter:
-    """Create a FastAPI router for theme CRUD operations.
-
-    The router exposes endpoints for listing, creating, updating, and
-    deleting themes. It wraps an existing ThemeManager instance.
-
-    Args:
-        theme_manager: A ThemeManager instance (from shared.python.theme)
-
-    Returns:
-        FastAPI APIRouter ready to be mounted
-    """
-    router = APIRouter()
-
-    # ----- Builtin themes -----
+def _register_builtin_endpoints(router: APIRouter, theme_manager: Any) -> None:
+    """Register built-in theme listing endpoint."""
 
     @router.get(
         "/builtin",
@@ -128,7 +115,9 @@ def create_theme_router(theme_manager: Any) -> APIRouter:
                 )
         return ThemeListResponse(themes=themes)
 
-    # ----- Custom themes -----
+
+def _register_custom_endpoints(router: APIRouter, theme_manager: Any) -> None:
+    """Register custom theme CRUD endpoints."""
 
     @router.get(
         "/custom",
@@ -185,7 +174,9 @@ def create_theme_router(theme_manager: Any) -> APIRouter:
             theme_name=theme_id,
         )
 
-    # ----- Active theme -----
+
+def _register_active_and_list_endpoints(router: APIRouter, theme_manager: Any) -> None:
+    """Register active theme and full listing endpoints."""
 
     @router.get(
         "/active",
@@ -222,8 +213,6 @@ def create_theme_router(theme_manager: Any) -> APIRouter:
             theme_name=request.name,
         )
 
-    # ----- All themes -----
-
     @router.get(
         "/",
         response_model=ThemeListResponse,
@@ -249,4 +238,21 @@ def create_theme_router(theme_manager: Any) -> APIRouter:
 
         return ThemeListResponse(themes=themes)
 
+
+def create_theme_router(theme_manager: Any) -> APIRouter:
+    """Create a FastAPI router for theme CRUD operations.
+
+    The router exposes endpoints for listing, creating, updating, and
+    deleting themes. It wraps an existing ThemeManager instance.
+
+    Args:
+        theme_manager: A ThemeManager instance (from shared.python.theme)
+
+    Returns:
+        FastAPI APIRouter ready to be mounted
+    """
+    router = APIRouter()
+    _register_builtin_endpoints(router, theme_manager)
+    _register_custom_endpoints(router, theme_manager)
+    _register_active_and_list_endpoints(router, theme_manager)
     return router
