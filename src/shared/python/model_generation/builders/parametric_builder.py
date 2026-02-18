@@ -131,8 +131,12 @@ class ParametricBuilder(BaseURDFBuilder):
             Self for method chaining
         """
         if height_m is not None:
+            if height_m <= 0:
+                raise ValueError(f"height_m must be positive, got {height_m}")
             self._height_m = height_m
         if mass_kg is not None:
+            if mass_kg <= 0:
+                raise ValueError(f"mass_kg must be positive, got {mass_kg}")
             self._mass_kg = mass_kg
         if gender_factor is not None:
             self._gender_factor = max(0.0, min(1.0, gender_factor))
@@ -172,7 +176,25 @@ class ParametricBuilder(BaseURDFBuilder):
 
         Returns:
             Self for method chaining
+
+        Raises:
+            ValueError: If name is empty, segment name already exists,
+                or ratios are non-positive.
         """
+        if not name or not name.strip():
+            raise ValueError("Segment name must be a non-empty string")
+        if mass_ratio <= 0:
+            raise ValueError(f"mass_ratio must be positive, got {mass_ratio}")
+        if length_ratio <= 0:
+            raise ValueError(f"length_ratio must be positive, got {length_ratio}")
+        if width_ratio <= 0:
+            raise ValueError(f"width_ratio must be positive, got {width_ratio}")
+
+        # Check for duplicate segment names
+        existing_names = {link.name for link in self._links}
+        if name in existing_names:
+            raise ValueError(f"Segment '{name}' already exists")
+
         # Compute dimensions
         length = self._height_m * length_ratio
         width = length * width_ratio
