@@ -511,6 +511,76 @@ class ModificationMixin:
         logger.info(f"Applied prefix '{prefix}' to model '{model_id}'")
         return True
 
+    @staticmethod
+    def _mirror_links(
+        links: list[Any],
+        name_map: dict[str, str],
+        axis_idx: int,
+        model: Any,
+    ) -> list[str]:
+        """Create mirrored copies of links and add them to the model.
+
+        Returns:
+            List of created link names.
+        """
+        created_links: list[str] = []
+        for link in links:
+            new_link = Link.from_dict(link.to_dict())
+            new_link.name = name_map[link.name]
+
+            if new_link.visual_origin:
+                xyz = list(new_link.visual_origin.xyz)
+                xyz[axis_idx] = -xyz[axis_idx]
+                new_link.visual_origin = Origin(
+                    xyz=tuple(xyz), rpy=new_link.visual_origin.rpy
+                )
+
+            if new_link.collision_origin:
+                xyz = list(new_link.collision_origin.xyz)
+                xyz[axis_idx] = -xyz[axis_idx]
+                new_link.collision_origin = Origin(
+                    xyz=tuple(xyz), rpy=new_link.collision_origin.rpy
+                )
+
+            model.links.append(new_link)
+            created_links.append(new_link.name)
+
+        return created_links
+
+    @staticmethod
+    def _mirror_joints(
+        joints: list[Any],
+        links: list[Any],
+        name_map: dict[str, str],
+        axis_idx: int,
+        parent: str,
+        mirror_name_fn: Any,
+        model: Any,
+    ) -> None:
+        """Create mirrored copies of joints and add them to the model."""
+        for joint in joints:
+            new_joint = Joint.from_dict(joint.to_dict())
+            new_joint.name = mirror_name_fn(joint.name)
+
+            if joint.parent in name_map:
+                new_joint.parent = name_map[joint.parent]
+            elif joint.child == links[0].name:
+                new_joint.parent = parent
+
+            if joint.child in name_map:
+                new_joint.child = name_map[joint.child]
+
+            xyz = list(new_joint.origin.xyz)
+            xyz[axis_idx] = -xyz[axis_idx]
+            new_joint.origin = Origin(xyz=tuple(xyz), rpy=new_joint.origin.rpy)
+
+            if new_joint.joint_type in (JointType.REVOLUTE, JointType.CONTINUOUS):
+                axis = list(new_joint.axis)
+                axis[axis_idx] = -axis[axis_idx]
+                new_joint.axis = tuple(axis)
+
+            model.joints.append(new_joint)
+
     def mirror_subtree(
         self,
         model_id: str,
@@ -538,11 +608,9 @@ class ModificationMixin:
                 f"mirror_axis must be one of {_VALID_AXES}, got '{mirror_axis}'"
             )
 
-        # Copy subtree to clipboard
         if not self.copy_subtree(model_id, root_link):
             return []
 
-        # Get parent for attachment
         model = self._models.get(model_id)
         if not model:
             return []
@@ -552,7 +620,6 @@ class ModificationMixin:
             logger.error("Cannot mirror root link")
             return []
 
-        # Default replacements for left/right
         if name_replacements is None:
             name_replacements = {
                 "left": "right",
@@ -565,84 +632,32 @@ class ModificationMixin:
                 "_R_": "_L_",
             }
 
-        # Paste with mirrored positions
         self._save_state()
 
         comp_type, links, joints, materials = self._clipboard[0]
 
-        # Generate mirrored names
         def mirror_name(name: str) -> str:
             result = name
             for old, new in name_replacements.items():
                 result = result.replace(old, new)
             if result == name:
-                # No replacement found, add suffix
                 result = name + "_mirrored"
             return result
 
-        # Build name map
         name_map: dict[str, str] = {}
         existing_links = {link.name for link in model.links}
-
         for link in links:
             new_name = mirror_name(link.name)
             new_name = self._generate_unique_name(new_name, existing_links)
             name_map[link.name] = new_name
             existing_links.add(new_name)
 
-        # Mirror positions
         axis_idx = {"x": 0, "y": 1, "z": 2}[mirror_axis]
 
-        created_links: list[str] = []
-
-        for link in links:
-            new_link = Link.from_dict(link.to_dict())
-            new_link.name = name_map[link.name]
-
-            # Mirror visual/collision origins
-            if new_link.visual_origin:
-                xyz = list(new_link.visual_origin.xyz)
-                xyz[axis_idx] = -xyz[axis_idx]
-                new_link.visual_origin = Origin(
-                    xyz=tuple(xyz), rpy=new_link.visual_origin.rpy
-                )
-
-            if new_link.collision_origin:
-                xyz = list(new_link.collision_origin.xyz)
-                xyz[axis_idx] = -xyz[axis_idx]
-                new_link.collision_origin = Origin(
-                    xyz=tuple(xyz), rpy=new_link.collision_origin.rpy
-                )
-
-            model.links.append(new_link)
-            created_links.append(new_link.name)
-
-        # Copy and mirror joints
-        for joint in joints:
-            new_joint = Joint.from_dict(joint.to_dict())
-            new_joint.name = mirror_name(joint.name)
-
-            # Update references
-            if joint.parent in name_map:
-                new_joint.parent = name_map[joint.parent]
-            elif joint.child == links[0].name:
-                new_joint.parent = parent  # Attach to same parent
-
-            if joint.child in name_map:
-                new_joint.child = name_map[joint.child]
-
-            # Mirror origin
-            xyz = list(new_joint.origin.xyz)
-            xyz[axis_idx] = -xyz[axis_idx]
-            new_joint.origin = Origin(xyz=tuple(xyz), rpy=new_joint.origin.rpy)
-
-            # Mirror axis for revolute joints
-            if new_joint.joint_type in (JointType.REVOLUTE, JointType.CONTINUOUS):
-                axis = list(new_joint.axis)
-                axis[axis_idx] = -axis[axis_idx]
-                new_joint.axis = tuple(axis)
-
-            model.joints.append(new_joint)
+        created_links = self._mirror_links(links, name_map, axis_idx, model)
+        self._mirror_joints(
+            joints, links, name_map, axis_idx, parent, mirror_name, model
+        )
 
         logger.info(f"Created mirrored subtree with {len(created_links)} links")
         return created_links
