@@ -231,25 +231,30 @@ def get_flammability_status(h2_pct: float, o2_pct: float) -> tuple[str, str]:
     return "FLAMMABLE", "red"
 
 
-# ============== Streamlit App ==============
+# ============== Streamlit App Sections ==============
 
 
-def main() -> None:
-    """Main Streamlit application."""
-    st.set_page_config(
-        page_title="PSA System Analysis",
-        page_icon="🔬",
-        layout="wide",
-        initial_sidebar_state="expanded",
-    )
+def _resolve_plot_mode(show_lines: bool, show_markers: bool) -> str:
+    """Resolve Plotly trace mode from boolean flags."""
+    if show_lines and show_markers:
+        return "lines+markers"
+    if show_markers:
+        return "markers"
+    return "lines"
 
-    # Sidebar - Input Parameters
+
+def _render_sidebar(
+    components_template: list[ComponentData],
+) -> tuple[float, int, int, list[ComponentData]]:
+    """Render sidebar inputs and return operating parameters.
+
+    Returns:
+        Tuple of (total_feed, s2_recycle, prod_recycle, components).
+    """
     st.sidebar.title("🔧 Operating Parameters")
 
     total_feed = st.sidebar.slider("Total Feed (SCFM)", 500, 2000, 1100, 50)
-
     s2_recycle = st.sidebar.slider("S2 Tail Recycle (%)", 0, 100, 100, 5)
-
     prod_recycle = st.sidebar.slider("Product Recycle (%)", 0, 50, 0, 5)
 
     st.sidebar.markdown("---")
@@ -264,7 +269,7 @@ def main() -> None:
     s1_h2_removal = st.sidebar.slider("H2 Removal (%)", 0, 50, 18)
     s1_o2_removal = st.sidebar.slider("O2 Removal (%)", 50, 99, 81)
 
-    # Build component list
+    # Build component list with user overrides
     components: list[ComponentData] = [
         {
             "name": "H2",
@@ -310,19 +315,11 @@ def main() -> None:
         },
     ]
 
-    # Calculate
-    model = PSAModel(
-        total_feed_scfm=float(total_feed),
-        s2_tail_recycle_frac=s2_recycle / 100.0,
-        product_recycle_frac=prod_recycle / 100.0,
-        components=components,
-    )
-    results = model.calculate()
+    return float(total_feed), s2_recycle, prod_recycle, components
 
-    # Main content
-    st.title("🔬 Two-Stage PSA System Analysis")
 
-    # Key metrics
+def _render_key_metrics(results: PSAResults) -> None:
+    """Render the top-level KPI metric tiles."""
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
@@ -342,297 +339,335 @@ def main() -> None:
         else:
             st.success(f"✅ {status}")
 
+
+def _render_results_tab(results: PSAResults) -> None:
+    """Render Tab 1 — mass balance summary and Sankey flow diagram."""
+    st.subheader("Mass Balance Summary")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("**Flow Summary (SCFM)**")
+        flow_summary = {
+            "Stream": ["Feed", "Exhaust", "Net Product", "S2 Tail Vent"],
+            "Flow (SCFM)": [
+                results.total_feed_scfm,
+                results.total_exhaust_scfm,
+                results.total_net_product_scfm,
+                results.total_s2_tail_vent_scfm,
+            ],
+        }
+        st.dataframe(pd.DataFrame(flow_summary), hide_index=True)
+
+    with col2:
+        st.markdown("**Safety Metrics**")
+        st.write(f"S2 Tail H2: {results.s2_tail_h2_pct:.2f}%")
+        st.write(f"S2 Tail O2: {results.s2_tail_o2_pct:.2f}%")
+        st.write(f"Mass Balance Error: {results.mass_balance_error:.2e}")
+
+    # Sankey diagram
+    st.subheader("Flow Diagram")
+
+    fig = go.Figure(
+        data=[
+            go.Sankey(
+                node={
+                    "pad": 15,
+                    "thickness": 20,
+                    "line": {"color": "black", "width": 0.5},
+                    "label": [
+                        "Feed",
+                        "PSA 1",
+                        "PSA 2",
+                        "Exhaust",
+                        "Net Product",
+                        "S2 Recycle",
+                    ],
+                    "color": ["blue", "gray", "gray", "red", "green", "orange"],
+                },
+                link={
+                    "source": [0, 1, 1, 2, 2],
+                    "target": [1, 3, 2, 4, 5],
+                    "value": [
+                        results.total_feed_scfm,
+                        results.total_exhaust_scfm,
+                        float(np.sum(results.flows.interstage)),
+                        results.total_net_product_scfm,
+                        float(np.sum(results.flows.s2_tail_recycle)),
+                    ],
+                },
+            )
+        ]
+    )
+    fig.update_layout(title_text="PSA System Flow", font_size=12)
+    st.plotly_chart(fig, use_container_width=True)
+
+
+def _render_sensitivity_tab(
+    total_feed: float,
+    s2_recycle: int,
+    prod_recycle: int,
+    components: list[ComponentData],
+) -> None:
+    """Render Tab 2 — S2 tail recycle sensitivity analysis."""
+    st.subheader("Sensitivity Analysis")
+
+    # Plot options
+    opt_col1, opt_col2, opt_col3 = st.columns(3)
+    with opt_col1:
+        show_lines = st.checkbox("Show Lines", value=True, key="sens_lines")
+    with opt_col2:
+        show_markers = st.checkbox("Show Markers", value=False, key="sens_markers")
+    with opt_col3:
+        num_points = st.slider("Number of Points", 11, 101, 51, 10, key="sens_points")
+
+    plot_mode = _resolve_plot_mode(show_lines, show_markers)
+
+    # Calculate sensitivity
+    s2_range = np.linspace(0, 1, num_points)
+    h2_recovery_data = []
+    net_product_data = []
+
+    for r in s2_range:
+        m = PSAModel(
+            total_feed_scfm=total_feed,
+            s2_tail_recycle_frac=float(r),
+            product_recycle_frac=prod_recycle / 100.0,
+            components=components,
+        )
+        res = m.calculate()
+        h2_recovery_data.append(res.h2_recovery_pct)
+        net_product_data.append(res.total_net_product_scfm)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        fig1 = go.Figure()
+        fig1.add_trace(
+            go.Scatter(
+                x=s2_range * 100,
+                y=h2_recovery_data,
+                mode=plot_mode,
+                name="H2 Recovery",
+                line={"width": 2},
+                marker={"size": 6},
+            )
+        )
+        fig1.add_vline(x=s2_recycle, line_dash="dash", line_color="red")
+        fig1.update_layout(
+            title="H2 Recovery vs S2 Tail Recycle",
+            xaxis_title="S2 Tail Recycle (%)",
+            yaxis_title="H2 Recovery (%)",
+        )
+        st.plotly_chart(fig1, use_container_width=True)
+
+    with col2:
+        fig2 = go.Figure()
+        fig2.add_trace(
+            go.Scatter(
+                x=s2_range * 100,
+                y=net_product_data,
+                mode=plot_mode,
+                name="Net Product",
+                line={"width": 2},
+                marker={"size": 6},
+            )
+        )
+        fig2.add_vline(x=s2_recycle, line_dash="dash", line_color="red")
+        fig2.update_layout(
+            title="Net Product vs S2 Tail Recycle",
+            xaxis_title="S2 Tail Recycle (%)",
+            yaxis_title="Net Product (SCFM)",
+        )
+        st.plotly_chart(fig2, use_container_width=True)
+
+
+def _render_o2_safety_tab(
+    total_feed: float,
+    components: list[ComponentData],
+) -> None:
+    """Render Tab 3 — O2 flammability / safety analysis."""
+    st.subheader("O2 Safety Analysis")
+    st.markdown("""
+    **Critical Thresholds:**
+    - H2 LFL: 4%, UFL: 75%
+    - O2 Danger Level: >2% with H2 >4%
+    """)
+
+    # Plot options for O2 safety
+    o2_col1, o2_col2, o2_col3 = st.columns(3)
+    with o2_col1:
+        o2_show_lines = st.checkbox("Show Lines", value=True, key="o2_lines")
+    with o2_col2:
+        o2_show_markers = st.checkbox("Show Markers", value=False, key="o2_markers")
+    with o2_col3:
+        o2_num_points = st.slider("Number of Points", 11, 51, 21, 5, key="o2_points")
+
+    o2_plot_mode = _resolve_plot_mode(o2_show_lines, o2_show_markers)
+
+    # O2 analysis
+    inlet_o2_values = [0.5, 1.0, 2.0, 5.0]
+    s1_removal_range = np.linspace(50, 95, o2_num_points)
+
+    o2_data = []
+    for s1_rem in s1_removal_range:
+        row: dict[str, float] = {"S1 O2 Removal (%)": float(s1_rem)}
+        for inlet_o2 in inlet_o2_values:
+            mod_components: list[ComponentData] = [
+                ComponentData(
+                    name=c["name"],
+                    feed_pct=c["feed_pct"],
+                    stage1_removal_pct=c["stage1_removal_pct"],
+                    stage2_removal_pct=c["stage2_removal_pct"],
+                )
+                for c in components
+            ]
+            for c in mod_components:
+                if c["name"] == "O2":
+                    c["feed_pct"] = inlet_o2
+                    c["stage1_removal_pct"] = float(s1_rem)
+            m = PSAModel(
+                total_feed_scfm=total_feed,
+                s2_tail_recycle_frac=1.0,
+                product_recycle_frac=0.0,
+                components=mod_components,
+            )
+            row[f"{inlet_o2}% Inlet"] = m.calculate().s2_tail_o2_pct
+        o2_data.append(row)
+
+    df_o2 = pd.DataFrame(o2_data)
+
+    # Line plot with options
+    fig_line = go.Figure()
+    for inlet_o2 in inlet_o2_values:
+        fig_line.add_trace(
+            go.Scatter(
+                x=s1_removal_range,
+                y=df_o2[f"{inlet_o2}% Inlet"],
+                mode=o2_plot_mode,
+                name=f"{inlet_o2}% Inlet O2",
+                line={"width": 2},
+                marker={"size": 6},
+            )
+        )
+    fig_line.add_hline(
+        y=2.0, line_dash="dash", line_color="red", annotation_text="Danger (2%)"
+    )
+    fig_line.update_layout(
+        title="S2 Tail O2% vs Stage 1 O2 Removal",
+        xaxis_title="Stage 1 O2 Removal (%)",
+        yaxis_title="S2 Tail O2 (%)",
+    )
+    st.plotly_chart(fig_line, use_container_width=True)
+
+    # Heatmap
+    fig = px.imshow(
+        df_o2.set_index("S1 O2 Removal (%)").T,
+        labels={
+            "x": "S1 O2 Removal (%)",
+            "y": "Inlet O2 (%)",
+            "color": "S2 Tail O2 %",
+        },
+        title="S2 Tail O2% Heatmap",
+        color_continuous_scale="RdYlGn_r",
+    )
+    st.plotly_chart(fig, use_container_width=True)
+
+    # Table with highlighting
+    st.markdown("**Detailed Values (Red = Dangerous >2%)**")
+
+    def highlight_danger(val: float) -> str:
+        if isinstance(val, int | float) and val > 2.0:
+            return "background-color: #ffcccc"
+        elif isinstance(val, int | float) and val > 1.5:
+            return "background-color: #ffffcc"
+        return ""
+
+    st.dataframe(
+        df_o2.style.map(highlight_danger, subset=df_o2.columns[1:]).format(precision=2)
+    )
+
+
+def _render_data_tables_tab(results: PSAResults) -> None:
+    """Render Tab 4 — detailed mass balance and composition tables."""
+    st.subheader("Detailed Data Tables")
+
+    # Mass balance table
+    st.markdown("**Mass Balance (SCFM)**")
+    mass_df = pd.DataFrame(
+        {
+            "Component": results.component_names,
+            "Fresh Feed": results.flows.fresh_feed,
+            "Mixed Feed": results.flows.mixed_feed,
+            "Exhaust": results.flows.exhaust,
+            "Interstage": results.flows.interstage,
+            "Net Product": results.flows.net_product,
+        }
+    )
+    st.dataframe(mass_df.style.format(precision=4))
+
+    # Composition table
+    st.markdown("**Compositions (%)**")
+    comp_df = pd.DataFrame(
+        {
+            "Component": results.component_names,
+            "Fresh Feed": results.compositions.fresh_feed,
+            "Mixed Feed": results.compositions.mixed_feed,
+            "Exhaust": results.compositions.exhaust,
+            "Interstage": results.compositions.interstage,
+            "Net Product": results.compositions.net_product,
+        }
+    )
+    st.dataframe(comp_df.style.format(precision=4))
+
+
+# ============== Streamlit App ==============
+
+
+def main() -> None:
+    """Main Streamlit application."""
+    st.set_page_config(
+        page_title="PSA System Analysis",
+        page_icon="🔬",
+        layout="wide",
+        initial_sidebar_state="expanded",
+    )
+
+    # Sidebar — collect operating parameters
+    total_feed, s2_recycle, prod_recycle, components = _render_sidebar(
+        DEFAULT_COMPONENTS
+    )
+
+    # Calculate
+    model = PSAModel(
+        total_feed_scfm=total_feed,
+        s2_tail_recycle_frac=s2_recycle / 100.0,
+        product_recycle_frac=prod_recycle / 100.0,
+        components=components,
+    )
+    results = model.calculate()
+
+    # Main content
+    st.title("🔬 Two-Stage PSA System Analysis")
+
+    _render_key_metrics(results)
+
     # Tabs for different views
     tab1, tab2, tab3, tab4 = st.tabs(
         ["📊 Results", "📈 Sensitivity", "⚠️ O2 Safety", "📋 Data Tables"]
     )
 
     with tab1:
-        st.subheader("Mass Balance Summary")
-
-        col1, col2 = st.columns(2)
-
-        with col1:
-            st.markdown("**Flow Summary (SCFM)**")
-            flow_summary = {
-                "Stream": ["Feed", "Exhaust", "Net Product", "S2 Tail Vent"],
-                "Flow (SCFM)": [
-                    results.total_feed_scfm,
-                    results.total_exhaust_scfm,
-                    results.total_net_product_scfm,
-                    results.total_s2_tail_vent_scfm,
-                ],
-            }
-            st.dataframe(pd.DataFrame(flow_summary), hide_index=True)
-
-        with col2:
-            st.markdown("**Safety Metrics**")
-            st.write(f"S2 Tail H2: {results.s2_tail_h2_pct:.2f}%")
-            st.write(f"S2 Tail O2: {results.s2_tail_o2_pct:.2f}%")
-            st.write(f"Mass Balance Error: {results.mass_balance_error:.2e}")
-
-        # Sankey diagram
-        st.subheader("Flow Diagram")
-
-        fig = go.Figure(
-            data=[
-                go.Sankey(
-                    node={
-                        "pad": 15,
-                        "thickness": 20,
-                        "line": {"color": "black", "width": 0.5},
-                        "label": [
-                            "Feed",
-                            "PSA 1",
-                            "PSA 2",
-                            "Exhaust",
-                            "Net Product",
-                            "S2 Recycle",
-                        ],
-                        "color": ["blue", "gray", "gray", "red", "green", "orange"],
-                    },
-                    link={
-                        "source": [0, 1, 1, 2, 2],
-                        "target": [1, 3, 2, 4, 5],
-                        "value": [
-                            results.total_feed_scfm,
-                            results.total_exhaust_scfm,
-                            float(np.sum(results.flows.interstage)),
-                            results.total_net_product_scfm,
-                            float(np.sum(results.flows.s2_tail_recycle)),
-                        ],
-                    },
-                )
-            ]
-        )
-        fig.update_layout(title_text="PSA System Flow", font_size=12)
-        st.plotly_chart(fig, use_container_width=True)
+        _render_results_tab(results)
 
     with tab2:
-        st.subheader("Sensitivity Analysis")
-
-        # Plot options
-        opt_col1, opt_col2, opt_col3 = st.columns(3)
-        with opt_col1:
-            show_lines = st.checkbox("Show Lines", value=True, key="sens_lines")
-        with opt_col2:
-            show_markers = st.checkbox("Show Markers", value=False, key="sens_markers")
-        with opt_col3:
-            num_points = st.slider(
-                "Number of Points", 11, 101, 51, 10, key="sens_points"
-            )
-
-        # Determine plot mode
-        if show_lines and show_markers:
-            plot_mode = "lines+markers"
-        elif show_lines:
-            plot_mode = "lines"
-        elif show_markers:
-            plot_mode = "markers"
-        else:
-            plot_mode = "lines"
-
-        # Calculate sensitivity
-        s2_range = np.linspace(0, 1, num_points)
-        h2_recovery_data = []
-        net_product_data = []
-
-        for r in s2_range:
-            m = PSAModel(
-                total_feed_scfm=float(total_feed),
-                s2_tail_recycle_frac=float(r),
-                product_recycle_frac=prod_recycle / 100.0,
-                components=components,
-            )
-            res = m.calculate()
-            h2_recovery_data.append(res.h2_recovery_pct)
-            net_product_data.append(res.total_net_product_scfm)
-
-        col1, col2 = st.columns(2)
-
-        with col1:
-            fig1 = go.Figure()
-            fig1.add_trace(
-                go.Scatter(
-                    x=s2_range * 100,
-                    y=h2_recovery_data,
-                    mode=plot_mode,
-                    name="H2 Recovery",
-                    line={"width": 2},
-                    marker={"size": 6},
-                )
-            )
-            fig1.add_vline(x=s2_recycle, line_dash="dash", line_color="red")
-            fig1.update_layout(
-                title="H2 Recovery vs S2 Tail Recycle",
-                xaxis_title="S2 Tail Recycle (%)",
-                yaxis_title="H2 Recovery (%)",
-            )
-            st.plotly_chart(fig1, use_container_width=True)
-
-        with col2:
-            fig2 = go.Figure()
-            fig2.add_trace(
-                go.Scatter(
-                    x=s2_range * 100,
-                    y=net_product_data,
-                    mode=plot_mode,
-                    name="Net Product",
-                    line={"width": 2},
-                    marker={"size": 6},
-                )
-            )
-            fig2.add_vline(x=s2_recycle, line_dash="dash", line_color="red")
-            fig2.update_layout(
-                title="Net Product vs S2 Tail Recycle",
-                xaxis_title="S2 Tail Recycle (%)",
-                yaxis_title="Net Product (SCFM)",
-            )
-            st.plotly_chart(fig2, use_container_width=True)
+        _render_sensitivity_tab(total_feed, s2_recycle, prod_recycle, components)
 
     with tab3:
-        st.subheader("O2 Safety Analysis")
-        st.markdown("""
-        **Critical Thresholds:**
-        - H2 LFL: 4%, UFL: 75%
-        - O2 Danger Level: >2% with H2 >4%
-        """)
-
-        # Plot options for O2 safety
-        o2_col1, o2_col2, o2_col3 = st.columns(3)
-        with o2_col1:
-            o2_show_lines = st.checkbox("Show Lines", value=True, key="o2_lines")
-        with o2_col2:
-            o2_show_markers = st.checkbox("Show Markers", value=False, key="o2_markers")
-        with o2_col3:
-            o2_num_points = st.slider(
-                "Number of Points", 11, 51, 21, 5, key="o2_points"
-            )
-
-        # Determine plot mode
-        if o2_show_lines and o2_show_markers:
-            o2_plot_mode = "lines+markers"
-        elif o2_show_lines:
-            o2_plot_mode = "lines"
-        elif o2_show_markers:
-            o2_plot_mode = "markers"
-        else:
-            o2_plot_mode = "lines"
-
-        # O2 analysis
-        inlet_o2_values = [0.5, 1.0, 2.0, 5.0]
-        s1_removal_range = np.linspace(50, 95, o2_num_points)
-
-        o2_data = []
-        for s1_rem in s1_removal_range:
-            row = {"S1 O2 Removal (%)": float(s1_rem)}
-            for inlet_o2 in inlet_o2_values:
-                mod_components: list[ComponentData] = [
-                    ComponentData(
-                        name=c["name"],
-                        feed_pct=c["feed_pct"],
-                        stage1_removal_pct=c["stage1_removal_pct"],
-                        stage2_removal_pct=c["stage2_removal_pct"],
-                    )
-                    for c in components
-                ]
-                for c in mod_components:
-                    if c["name"] == "O2":
-                        c["feed_pct"] = inlet_o2
-                        c["stage1_removal_pct"] = float(s1_rem)
-                m = PSAModel(
-                    total_feed_scfm=float(total_feed),
-                    s2_tail_recycle_frac=1.0,
-                    product_recycle_frac=0.0,
-                    components=mod_components,
-                )
-                row[f"{inlet_o2}% Inlet"] = m.calculate().s2_tail_o2_pct
-            o2_data.append(row)
-
-        df_o2 = pd.DataFrame(o2_data)
-
-        # Line plot with options
-        fig_line = go.Figure()
-        for inlet_o2 in inlet_o2_values:
-            fig_line.add_trace(
-                go.Scatter(
-                    x=s1_removal_range,
-                    y=df_o2[f"{inlet_o2}% Inlet"],
-                    mode=o2_plot_mode,
-                    name=f"{inlet_o2}% Inlet O2",
-                    line={"width": 2},
-                    marker={"size": 6},
-                )
-            )
-        fig_line.add_hline(
-            y=2.0, line_dash="dash", line_color="red", annotation_text="Danger (2%)"
-        )
-        fig_line.update_layout(
-            title="S2 Tail O2% vs Stage 1 O2 Removal",
-            xaxis_title="Stage 1 O2 Removal (%)",
-            yaxis_title="S2 Tail O2 (%)",
-        )
-        st.plotly_chart(fig_line, use_container_width=True)
-
-        # Heatmap
-        fig = px.imshow(
-            df_o2.set_index("S1 O2 Removal (%)").T,
-            labels={
-                "x": "S1 O2 Removal (%)",
-                "y": "Inlet O2 (%)",
-                "color": "S2 Tail O2 %",
-            },
-            title="S2 Tail O2% Heatmap",
-            color_continuous_scale="RdYlGn_r",
-        )
-        st.plotly_chart(fig, use_container_width=True)
-
-        # Table with highlighting
-        st.markdown("**Detailed Values (Red = Dangerous >2%)**")
-
-        def highlight_danger(val: float) -> str:
-            if isinstance(val, int | float) and val > 2.0:
-                return "background-color: #ffcccc"
-            elif isinstance(val, int | float) and val > 1.5:
-                return "background-color: #ffffcc"
-            return ""
-
-        st.dataframe(
-            df_o2.style.map(highlight_danger, subset=df_o2.columns[1:]).format(
-                precision=2
-            )
-        )
+        _render_o2_safety_tab(total_feed, components)
 
     with tab4:
-        st.subheader("Detailed Data Tables")
-
-        # Mass balance table
-        st.markdown("**Mass Balance (SCFM)**")
-        mass_df = pd.DataFrame(
-            {
-                "Component": results.component_names,
-                "Fresh Feed": results.flows.fresh_feed,
-                "Mixed Feed": results.flows.mixed_feed,
-                "Exhaust": results.flows.exhaust,
-                "Interstage": results.flows.interstage,
-                "Net Product": results.flows.net_product,
-            }
-        )
-        st.dataframe(mass_df.style.format(precision=4))
-
-        # Composition table
-        st.markdown("**Compositions (%)**")
-        comp_df = pd.DataFrame(
-            {
-                "Component": results.component_names,
-                "Fresh Feed": results.compositions.fresh_feed,
-                "Mixed Feed": results.compositions.mixed_feed,
-                "Exhaust": results.compositions.exhaust,
-                "Interstage": results.compositions.interstage,
-                "Net Product": results.compositions.net_product,
-            }
-        )
-        st.dataframe(comp_df.style.format(precision=4))
+        _render_data_tables_tab(results)
 
     # Footer
     st.markdown("---")
