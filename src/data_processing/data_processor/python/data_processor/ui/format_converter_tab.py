@@ -90,216 +90,215 @@ class FormatConverterMixin:
         parent_tab.grid_columnconfigure(0, weight=1)
         parent_tab.grid_rowconfigure(0, weight=1)
 
-        def create_converter_left_content(left_panel):
-            """Create the left panel content for converter"""
-            left_panel.grid_columnconfigure(0, weight=1)
-            left_panel.grid_rowconfigure(0, weight=1)
-
-            converter_scrollable_frame = ctk.CTkScrollableFrame(left_panel)
-            converter_scrollable_frame.grid(
-                row=0, column=0, sticky="nsew", padx=5, pady=5
-            )
-            converter_scrollable_frame.grid_columnconfigure(0, weight=1)
-
-            # Input section
-            input_frame = ctk.CTkFrame(converter_scrollable_frame)
-            input_frame.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
-            input_frame.grid_columnconfigure(0, weight=1)
-
-            ctk.CTkLabel(input_frame, text="Select Input Files/Folder:").grid(
-                row=0, column=0, columnspan=2, padx=5, pady=5, sticky="w"
-            )
-            self.converter_input_label = ctk.CTkLabel(
-                input_frame, text="No files selected"
-            )
-            self.converter_input_label.grid(row=0, column=1, padx=5, pady=5, sticky="w")
-
-            input_buttons_frame = ctk.CTkFrame(input_frame)
-            input_buttons_frame.grid(
-                row=1, column=0, columnspan=2, padx=5, pady=5, sticky="ew"
-            )
-
-            ctk.CTkButton(
-                input_buttons_frame,
-                text="Browse Files",
-                command=self.converter_browse_files,
-            ).pack(side="left", padx=5)
-            ctk.CTkButton(
-                input_buttons_frame,
-                text="Browse Folder",
-                command=self.converter_browse_folder,
-            ).pack(side="left", padx=5)
-            ctk.CTkButton(
-                input_buttons_frame,
-                text="Clear Files",
-                command=self.converter_clear_files,
-            ).pack(side="left", padx=5)
-
-            # Output section
-            output_frame = ctk.CTkFrame(converter_scrollable_frame)
-            output_frame.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
-            output_frame.grid_columnconfigure(1, weight=1)
-
-            ctk.CTkLabel(output_frame, text="Output Format:").grid(
-                row=0, column=0, padx=5, pady=5, sticky="w"
-            )
-            self.converter_format_var = ctk.StringVar(value="parquet")
-            format_combo = ctk.CTkComboBox(
-                output_frame,
-                values=[
-                    "parquet",
-                    "csv",
-                    "tsv",
-                    "excel",
-                    "json",
-                    "hdf5",
-                    "pickle",
-                    "numpy",
-                    "matlab",
-                    "feather",
-                    "arrow",
-                    "sqlite",
-                ],
-                variable=self.converter_format_var,
-            )
-            format_combo.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
-
-            ctk.CTkLabel(output_frame, text="Output Path:").grid(
-                row=1, column=0, padx=5, pady=5, sticky="w"
-            )
-            self.converter_output_label = ctk.CTkLabel(
-                output_frame, text="No output path selected"
-            )
-            self.converter_output_label.grid(
-                row=1, column=1, padx=5, pady=5, sticky="w"
-            )
-
-            ctk.CTkButton(
-                output_frame, text="Browse Output", command=self.converter_browse_output
-            ).grid(row=2, column=0, columnspan=2, padx=5, pady=5)
-
-            # Options section
-            options_frame = ctk.CTkFrame(converter_scrollable_frame)
-            options_frame.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
-
-            self.converter_combine_var = ctk.BooleanVar(value=True)
-            ctk.CTkCheckBox(
-                options_frame,
-                text="Combine all files into one",
-                variable=self.converter_combine_var,
-            ).pack(anchor="w", padx=5, pady=2)
-
-            self.converter_use_all_columns_var = ctk.BooleanVar(value=True)
-            ctk.CTkCheckBox(
-                options_frame,
-                text="Use all columns",
-                variable=self.converter_use_all_columns_var,
-            ).pack(anchor="w", padx=5, pady=2)
-
-            self.converter_batch_var = ctk.BooleanVar(value=False)
-            ctk.CTkCheckBox(
-                options_frame,
-                text="Batch processing",
-                variable=self.converter_batch_var,
-            ).pack(anchor="w", padx=5, pady=2)
-
-            self.converter_split_var = ctk.BooleanVar(value=False)
-            ctk.CTkCheckBox(
-                options_frame,
-                text="Split large files",
-                variable=self.converter_split_var,
-            ).pack(anchor="w", padx=5, pady=2)
-
-            # Column selection
-            column_frame = ctk.CTkFrame(converter_scrollable_frame)
-            column_frame.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
-
-            ctk.CTkLabel(column_frame, text="Column Selection:").pack(
-                anchor="w", padx=5, pady=2
-            )
-            self.converter_columns_label = ctk.CTkLabel(
-                column_frame, text="All columns selected"
-            )
-            self.converter_columns_label.pack(anchor="w", padx=5, pady=2)
-
-            ctk.CTkButton(
-                column_frame,
-                text="Select Columns",
-                command=self.converter_select_columns,
-            ).pack(anchor="w", padx=5, pady=5)
-
-            # Convert button
-            self.converter_convert_button = ctk.CTkButton(
-                converter_scrollable_frame,
-                text="Convert Files",
-                command=lambda: self.converter_start_conversion(),
-                height=40,
-            )
-            self.converter_convert_button.grid(
-                row=4, column=0, sticky="ew", padx=5, pady=10
-            )
-
-            # Progress
-            self.converter_progress = ctk.CTkProgressBar(converter_scrollable_frame)
-            self.converter_progress.grid(row=5, column=0, sticky="ew", padx=5, pady=5)
-            self.converter_progress.set(0)
-
-            # Status
-            self.converter_status_label = ctk.CTkLabel(
-                converter_scrollable_frame, text="Ready"
-            )
-            self.converter_status_label.grid(
-                row=6, column=0, sticky="w", padx=5, pady=5
-            )
-
-        def create_converter_right_content(right_panel):
-            """Create the right panel content for converter"""
-            right_panel.grid_rowconfigure(1, weight=1)
-            right_panel.grid_columnconfigure(0, weight=1)
-
-            # File list
-            self.converter_file_list_frame = ctk.CTkScrollableFrame(
-                right_panel, label_text="Selected Files", height=200
-            )
-            self.converter_file_list_frame.grid(
-                row=0, column=0, padx=10, pady=(0, 10), sticky="ew"
-            )
-
-            # Log area
-            log_frame = ctk.CTkFrame(right_panel)
-            log_frame.grid(row=1, column=0, padx=10, pady=0, sticky="nsew")
-            log_frame.grid_columnconfigure(0, weight=1)
-            log_frame.grid_rowconfigure(0, weight=1)
-
-            ctk.CTkLabel(log_frame, text="Conversion Log:").pack(
-                anchor="w", padx=5, pady=2
-            )
-            self.converter_log_text = ctk.CTkTextbox(log_frame, height=300)
-            self.converter_log_text.pack(fill="both", expand=True, padx=5, pady=5)
-
-            # Buttons
-            button_frame = ctk.CTkFrame(right_panel)
-            button_frame.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
-
-            ctk.CTkButton(
-                button_frame, text="Analyze Parquet", command=self.show_parquet_analyzer
-            ).pack(side="left", padx=5)
-            ctk.CTkButton(
-                button_frame, text="Clear Log", command=self.converter_clear_log
-            ).pack(side="left", padx=5)
-            ctk.CTkButton(
-                button_frame, text="Save Log", command=self.converter_save_log
-            ).pack(side="left", padx=5)
-
         # Create the splitter (assumes self._create_splitter exists on the mixing class)
         splitter_frame = self._create_splitter(  # type: ignore
             parent_tab,
-            create_converter_left_content,
-            create_converter_right_content,
+            self._create_converter_left_panel,
+            self._create_converter_right_panel,
             "converter_left_width",
             400,
         )
         splitter_frame.grid(row=0, column=0, sticky="nsew")
+
+    def _create_converter_left_panel(self, left_panel: ctk.CTkFrame) -> None:
+        """Create the left panel content for the format converter tab."""
+        left_panel.grid_columnconfigure(0, weight=1)
+        left_panel.grid_rowconfigure(0, weight=1)
+
+        converter_scrollable_frame = ctk.CTkScrollableFrame(left_panel)
+        converter_scrollable_frame.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+        converter_scrollable_frame.grid_columnconfigure(0, weight=1)
+
+        self._create_input_section(converter_scrollable_frame)
+        self._create_output_section(converter_scrollable_frame)
+        self._create_options_section(converter_scrollable_frame)
+        self._create_column_section(converter_scrollable_frame)
+
+        # Convert button
+        self.converter_convert_button = ctk.CTkButton(
+            converter_scrollable_frame,
+            text="Convert Files",
+            command=lambda: self.converter_start_conversion(),
+            height=40,
+        )
+        self.converter_convert_button.grid(
+            row=4, column=0, sticky="ew", padx=5, pady=10
+        )
+
+        # Progress
+        self.converter_progress = ctk.CTkProgressBar(converter_scrollable_frame)
+        self.converter_progress.grid(row=5, column=0, sticky="ew", padx=5, pady=5)
+        self.converter_progress.set(0)
+
+        # Status
+        self.converter_status_label = ctk.CTkLabel(
+            converter_scrollable_frame, text="Ready"
+        )
+        self.converter_status_label.grid(row=6, column=0, sticky="w", padx=5, pady=5)
+
+    def _create_input_section(self, parent: ctk.CTkFrame) -> None:
+        """Create the input files section of the converter tab."""
+        input_frame = ctk.CTkFrame(parent)
+        input_frame.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
+        input_frame.grid_columnconfigure(0, weight=1)
+
+        ctk.CTkLabel(input_frame, text="Select Input Files/Folder:").grid(
+            row=0, column=0, columnspan=2, padx=5, pady=5, sticky="w"
+        )
+        self.converter_input_label = ctk.CTkLabel(input_frame, text="No files selected")
+        self.converter_input_label.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+
+        input_buttons_frame = ctk.CTkFrame(input_frame)
+        input_buttons_frame.grid(
+            row=1, column=0, columnspan=2, padx=5, pady=5, sticky="ew"
+        )
+
+        ctk.CTkButton(
+            input_buttons_frame,
+            text="Browse Files",
+            command=self.converter_browse_files,
+        ).pack(side="left", padx=5)
+        ctk.CTkButton(
+            input_buttons_frame,
+            text="Browse Folder",
+            command=self.converter_browse_folder,
+        ).pack(side="left", padx=5)
+        ctk.CTkButton(
+            input_buttons_frame,
+            text="Clear Files",
+            command=self.converter_clear_files,
+        ).pack(side="left", padx=5)
+
+    def _create_output_section(self, parent: ctk.CTkFrame) -> None:
+        """Create the output format/path section of the converter tab."""
+        output_frame = ctk.CTkFrame(parent)
+        output_frame.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        output_frame.grid_columnconfigure(1, weight=1)
+
+        ctk.CTkLabel(output_frame, text="Output Format:").grid(
+            row=0, column=0, padx=5, pady=5, sticky="w"
+        )
+        self.converter_format_var = ctk.StringVar(value="parquet")
+        format_combo = ctk.CTkComboBox(
+            output_frame,
+            values=[
+                "parquet",
+                "csv",
+                "tsv",
+                "excel",
+                "json",
+                "hdf5",
+                "pickle",
+                "numpy",
+                "matlab",
+                "feather",
+                "arrow",
+                "sqlite",
+            ],
+            variable=self.converter_format_var,
+        )
+        format_combo.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
+
+        ctk.CTkLabel(output_frame, text="Output Path:").grid(
+            row=1, column=0, padx=5, pady=5, sticky="w"
+        )
+        self.converter_output_label = ctk.CTkLabel(
+            output_frame, text="No output path selected"
+        )
+        self.converter_output_label.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+
+        ctk.CTkButton(
+            output_frame, text="Browse Output", command=self.converter_browse_output
+        ).grid(row=2, column=0, columnspan=2, padx=5, pady=5)
+
+    def _create_options_section(self, parent: ctk.CTkFrame) -> None:
+        """Create the options checkboxes section of the converter tab."""
+        options_frame = ctk.CTkFrame(parent)
+        options_frame.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
+
+        self.converter_combine_var = ctk.BooleanVar(value=True)
+        ctk.CTkCheckBox(
+            options_frame,
+            text="Combine all files into one",
+            variable=self.converter_combine_var,
+        ).pack(anchor="w", padx=5, pady=2)
+
+        self.converter_use_all_columns_var = ctk.BooleanVar(value=True)
+        ctk.CTkCheckBox(
+            options_frame,
+            text="Use all columns",
+            variable=self.converter_use_all_columns_var,
+        ).pack(anchor="w", padx=5, pady=2)
+
+        self.converter_batch_var = ctk.BooleanVar(value=False)
+        ctk.CTkCheckBox(
+            options_frame,
+            text="Batch processing",
+            variable=self.converter_batch_var,
+        ).pack(anchor="w", padx=5, pady=2)
+
+        self.converter_split_var = ctk.BooleanVar(value=False)
+        ctk.CTkCheckBox(
+            options_frame,
+            text="Split large files",
+            variable=self.converter_split_var,
+        ).pack(anchor="w", padx=5, pady=2)
+
+    def _create_column_section(self, parent: ctk.CTkFrame) -> None:
+        """Create the column selection section of the converter tab."""
+        column_frame = ctk.CTkFrame(parent)
+        column_frame.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
+
+        ctk.CTkLabel(column_frame, text="Column Selection:").pack(
+            anchor="w", padx=5, pady=2
+        )
+        self.converter_columns_label = ctk.CTkLabel(
+            column_frame, text="All columns selected"
+        )
+        self.converter_columns_label.pack(anchor="w", padx=5, pady=2)
+
+        ctk.CTkButton(
+            column_frame,
+            text="Select Columns",
+            command=self.converter_select_columns,
+        ).pack(anchor="w", padx=5, pady=5)
+
+    def _create_converter_right_panel(self, right_panel: ctk.CTkFrame) -> None:
+        """Create the right panel content for the format converter tab."""
+        right_panel.grid_rowconfigure(1, weight=1)
+        right_panel.grid_columnconfigure(0, weight=1)
+
+        # File list
+        self.converter_file_list_frame = ctk.CTkScrollableFrame(
+            right_panel, label_text="Selected Files", height=200
+        )
+        self.converter_file_list_frame.grid(
+            row=0, column=0, padx=10, pady=(0, 10), sticky="ew"
+        )
+
+        # Log area
+        log_frame = ctk.CTkFrame(right_panel)
+        log_frame.grid(row=1, column=0, padx=10, pady=0, sticky="nsew")
+        log_frame.grid_columnconfigure(0, weight=1)
+        log_frame.grid_rowconfigure(0, weight=1)
+
+        ctk.CTkLabel(log_frame, text="Conversion Log:").pack(anchor="w", padx=5, pady=2)
+        self.converter_log_text = ctk.CTkTextbox(log_frame, height=300)
+        self.converter_log_text.pack(fill="both", expand=True, padx=5, pady=5)
+
+        # Buttons
+        button_frame = ctk.CTkFrame(right_panel)
+        button_frame.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
+
+        ctk.CTkButton(
+            button_frame, text="Analyze Parquet", command=self.show_parquet_analyzer
+        ).pack(side="left", padx=5)
+        ctk.CTkButton(
+            button_frame, text="Clear Log", command=self.converter_clear_log
+        ).pack(side="left", padx=5)
+        ctk.CTkButton(
+            button_frame, text="Save Log", command=self.converter_save_log
+        ).pack(side="left", padx=5)
 
     def converter_browse_files(self) -> None:
         """Browse for input files."""
@@ -510,8 +509,9 @@ class FormatConverterMixin:
                     try:
                         format_type = FileFormatDetector.detect_format(file_path)
                         if not format_type:
+                            fname = Path(file_path).name
                             self._log_conversion_message(
-                                f"Warning: Could not detect format for {Path(file_path).name}"
+                                f"Warning: Could not detect " f"format for {fname}"
                             )
                             continue
 
@@ -526,14 +526,17 @@ class FormatConverterMixin:
                             if available_columns:
                                 df = df[available_columns]
                             else:
+                                fname = Path(file_path).name
                                 self._log_conversion_message(
-                                    f"Warning: No selected columns found in {Path(file_path).name}"
+                                    "Warning: No selected " f"columns found in {fname}"
                                 )
                                 continue
 
                         combined_data.append(df)
+                        fname = Path(file_path).name
+                        ncols = len(df.columns)
                         self._log_conversion_message(
-                            f"Loaded {Path(file_path).name}: {len(df)} rows, {len(df.columns)} columns"
+                            f"Loaded {fname}: " f"{len(df)} rows, {ncols} columns"
                         )
 
                         processed_files += 1
@@ -556,8 +559,11 @@ class FormatConverterMixin:
                         self._log_conversion_message(
                             f"Successfully created: {output_filename}"
                         )
+                        ncols = len(combined_df.columns)
                         self._log_conversion_message(
-                            f"Combined data: {len(combined_df)} rows, {len(combined_df.columns)} columns"
+                            f"Combined data: "
+                            f"{len(combined_df)} rows, "
+                            f"{ncols} columns"
                         )
 
                     except (PermissionError, OSError) as e:
@@ -577,8 +583,9 @@ class FormatConverterMixin:
                     try:
                         format_type = FileFormatDetector.detect_format(file_path)
                         if not format_type:
+                            fname = Path(file_path).name
                             self._log_conversion_message(
-                                f"Warning: Could not detect format for {Path(file_path).name}"
+                                f"Warning: Could not detect " f"format for {fname}"
                             )
                             continue
 
@@ -593,8 +600,9 @@ class FormatConverterMixin:
                             if available_columns:
                                 df = df[available_columns]
                             else:
+                                fname = Path(file_path).name
                                 self._log_conversion_message(
-                                    f"Warning: No selected columns found in {Path(file_path).name}"
+                                    "Warning: No selected " f"columns found in {fname}"
                                 )
                                 continue
 

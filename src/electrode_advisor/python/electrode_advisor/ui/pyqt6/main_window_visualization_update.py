@@ -509,83 +509,30 @@ class VisualizationUpdateMixin:
         ax = self.electrode_ax
 
         try:
-            # Get electrode tips (inside glass bath)
             e1_tip = electrode1_pos["tip"]
             e2_tip = electrode2_pos["tip"]
 
-            # Calculate glass bath wall intersections for both electrodes
-            # These are the actual starting points for conductive paths
-            # For electrode 1: intersection at glass bath wall
-            e1_angle = electrode1_pos["angle"]
-            e1_wall_glass = np.array(
-                [
-                    bath_radius * np.cos(e1_angle),
-                    bath_radius * np.sin(e1_angle),
-                    e1_tip[2],
-                ]
+            e1_wall = self._compute_wall_position(
+                electrode1_pos,
+                bath_radius,
+            )
+            e2_wall = self._compute_wall_position(
+                electrode2_pos,
+                bath_radius,
             )
 
-            # For electrode 2: intersection at glass bath wall
-            e2_angle = electrode2_pos["angle"]
-            e2_wall_glass = np.array(
-                [
-                    bath_radius * np.cos(e2_angle),
-                    bath_radius * np.sin(e2_angle),
-                    e2_tip[2],
-                ]
-            )
-
-            # Apply vertical spreading factor
             effective_height = conductive_height * self.config.vertical_spreading_factor
-
-            # Calculate vertical extrusion bounds
             electrode_z = (e1_tip[2] + e2_tip[2]) / 2
-            z_top = electrode_z + effective_height / 2
-            z_bottom = electrode_z - effective_height / 2
 
-            # Create 8 vertices of the 3D trapezoidal prism (ONLY in glass bath area)
-            vertices = []
+            faces = self._build_trapezoidal_prism(
+                e1_wall,
+                e1_tip,
+                e2_tip,
+                e2_wall,
+                electrode_z,
+                effective_height,
+            )
 
-            # Bottom face vertices (trapezoid within glass bath only)
-            vertices.append(
-                [e1_wall_glass[0], e1_wall_glass[1], z_bottom]
-            )  # 0: E1 glass wall bottom
-            vertices.append([e1_tip[0], e1_tip[1], z_bottom])  # 1: E1 tip bottom
-            vertices.append([e2_tip[0], e2_tip[1], z_bottom])  # 2: E2 tip bottom
-            vertices.append(
-                [e2_wall_glass[0], e2_wall_glass[1], z_bottom]
-            )  # 3: E2 glass wall bottom
-
-            # Top face vertices (same trapezoid, higher z)
-            vertices.append(
-                [e1_wall_glass[0], e1_wall_glass[1], z_top]
-            )  # 4: E1 glass wall top
-            vertices.append([e1_tip[0], e1_tip[1], z_top])  # 5: E1 tip top
-            vertices.append([e2_tip[0], e2_tip[1], z_top])  # 6: E2 tip top
-            vertices.append(
-                [e2_wall_glass[0], e2_wall_glass[1], z_top]
-            )  # 7: E2 glass wall top
-
-            # Create faces for the trapezoidal prism (limited to glass bath area)
-            faces = []
-
-            # Bottom face (0-1-2-3)
-            faces.append([vertices[0], vertices[1], vertices[2], vertices[3]])
-
-            # Top face (4-5-6-7)
-            faces.append([vertices[4], vertices[5], vertices[6], vertices[7]])
-
-            # Side faces
-            # Face along E1 (0-1-5-4) - from glass wall to tip
-            faces.append([vertices[0], vertices[1], vertices[5], vertices[4]])
-            # Face from tip to tip (1-2-6-5)
-            faces.append([vertices[1], vertices[2], vertices[6], vertices[5]])
-            # Face along E2 (2-3-7-6) - from tip to glass wall
-            faces.append([vertices[2], vertices[3], vertices[7], vertices[6]])
-            # Face from glass wall to glass wall (3-0-4-7)
-            faces.append([vertices[3], vertices[0], vertices[4], vertices[7]])
-
-            # Draw using Poly3DCollection
             face_collection = Poly3DCollection(
                 faces,
                 alpha=alpha,
@@ -595,104 +542,189 @@ class VisualizationUpdateMixin:
             )
             ax.add_collection3d(face_collection)
 
-            # Draw conductive path boundaries within glass bath only
+            # Draw conductive path boundary lines
             if alpha > 0.3:
-                # Draw E1 conductive length (from glass wall to tip)
-                ax.plot(
-                    [e1_wall_glass[0], e1_tip[0]],
-                    [e1_wall_glass[1], e1_tip[1]],
-                    [electrode_z, electrode_z],
-                    "k-",
-                    linewidth=2,
-                    alpha=0.8,
-                )
-                # Draw E2 conductive length (from glass wall to tip)
-                ax.plot(
-                    [e2_wall_glass[0], e2_tip[0]],
-                    [e2_wall_glass[1], e2_tip[1]],
-                    [electrode_z, electrode_z],
-                    "k-",
-                    linewidth=2,
-                    alpha=0.8,
-                )
+                for wall, tip in [(e1_wall, e1_tip), (e2_wall, e2_tip)]:
+                    ax.plot(
+                        [wall[0], tip[0]],
+                        [wall[1], tip[1]],
+                        [electrode_z, electrode_z],
+                        "k-",
+                        linewidth=2,
+                        alpha=0.8,
+                    )
 
-            # Display current value if checkbox is enabled
+            # Annotate current and resistance values
+            mid_x = (e1_wall[0] + e2_wall[0]) / 2
+            mid_y = (e1_wall[1] + e2_wall[1]) / 2
+
+            self._annotate_path_value(
+                ax,
+                mid_x,
+                mid_y,
+                electrode_z + 1.5,
+                current_value,
+                "show_current_values_checkbox",
+                "{:.0f}A",
+                "lightyellow",
+                "darkblue",
+            )
+            self._annotate_resistance_value(
+                ax,
+                mid_x,
+                mid_y,
+                electrode_z,
+                resistance_value,
+                current_value,
+                "lightgreen",
+                "darkgreen",
+            )
+
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
+            logger.exception(
+                "Error drawing correct trapezoidal path: %s",
+                e,
+            )
+
+    @staticmethod
+    def _compute_wall_position(
+        electrode_pos: dict[str, Any],
+        bath_radius: float,
+    ) -> np.ndarray:
+        """Compute glass bath wall intersection for an electrode."""
+        angle = electrode_pos["angle"]
+        tip_z = electrode_pos["tip"][2]
+        return np.array(
+            [
+                bath_radius * np.cos(angle),
+                bath_radius * np.sin(angle),
+                tip_z,
+            ]
+        )
+
+    @staticmethod
+    def _build_trapezoidal_prism(
+        wall1: np.ndarray,
+        tip1: np.ndarray,
+        tip2: np.ndarray,
+        wall2: np.ndarray,
+        electrode_z: float,
+        effective_height: float,
+    ) -> list[list[list[float]]]:
+        """Build 6-face trapezoidal prism vertices from wall/tip positions."""
+        z_top = electrode_z + effective_height / 2
+        z_bottom = electrode_z - effective_height / 2
+
+        # 8 vertices: bottom face (0-3), top face (4-7)
+        v = [
+            [wall1[0], wall1[1], z_bottom],
+            [tip1[0], tip1[1], z_bottom],
+            [tip2[0], tip2[1], z_bottom],
+            [wall2[0], wall2[1], z_bottom],
+            [wall1[0], wall1[1], z_top],
+            [tip1[0], tip1[1], z_top],
+            [tip2[0], tip2[1], z_top],
+            [wall2[0], wall2[1], z_top],
+        ]
+
+        return [
+            [v[0], v[1], v[2], v[3]],  # bottom
+            [v[4], v[5], v[6], v[7]],  # top
+            [v[0], v[1], v[5], v[4]],  # E1 side
+            [v[1], v[2], v[6], v[5]],  # tip-to-tip
+            [v[2], v[3], v[7], v[6]],  # E2 side
+            [v[3], v[0], v[4], v[7]],  # wall-to-wall
+        ]
+
+    def _annotate_path_value(
+        self,
+        ax: Any,
+        mid_x: float,
+        mid_y: float,
+        mid_z: float,
+        value: float,
+        checkbox_name: str,
+        fmt: str,
+        bg_color: str,
+        text_color: str,
+    ) -> None:
+        """Annotate a path with a formatted value label."""
+        if not (
+            hasattr(self, checkbox_name)
+            and getattr(self, checkbox_name).isChecked()
+            and value > 0
+        ):
+            return
+
+        ax.text(
+            mid_x,
+            mid_y,
+            mid_z,
+            fmt.format(value),
+            bbox={
+                "boxstyle": "round,pad=0.2",
+                "facecolor": bg_color,
+                "alpha": 0.8,
+            },
+            fontsize=8,
+            ha="center",
+            va="center",
+            color=text_color,
+        )
+
+    def _annotate_resistance_value(
+        self,
+        ax: Any,
+        mid_x: float,
+        mid_y: float,
+        electrode_z: float,
+        resistance_value: float,
+        current_value: float,
+        bg_color: str,
+        text_color: str,
+    ) -> None:
+        """Annotate a path with resistance value."""
+        if not (
+            hasattr(self, "show_resistance_values_checkbox")
+            and self.show_resistance_values_checkbox.isChecked()
+            and resistance_value > 0
+        ):
+            return
+
+        # Offset below current annotation when both visible
+        offset = (
+            -2.0
             if (
                 hasattr(self, "show_current_values_checkbox")
                 and self.show_current_values_checkbox.isChecked()
                 and current_value > 0
-            ):
-                # Calculate midpoint for text placement
-                mid_x = (e1_wall_glass[0] + e2_wall_glass[0]) / 2
-                mid_y = (e1_wall_glass[1] + e2_wall_glass[1]) / 2
-                mid_z = electrode_z + 1.5  # Slightly above the path
+            )
+            else 1.5
+        )
+        mid_z = electrode_z + offset
 
-                # Display current value without decimal points
-                current_text = f"{current_value:.0f}A"
-                ax.text(
-                    mid_x,
-                    mid_y,
-                    mid_z,
-                    current_text,
-                    bbox={
-                        "boxstyle": "round,pad=0.2",
-                        "facecolor": "lightyellow",
-                        "alpha": 0.8,
-                    },
-                    fontsize=8,
-                    ha="center",
-                    va="center",
-                    color="darkblue",
-                )
+        if resistance_value == float("inf"):
+            text = "∞Ω"
+        elif resistance_value >= 1.0:
+            text = f"{resistance_value:.2f}Ω"
+        else:
+            text = f"{resistance_value:.3f}Ω"
 
-            # Display resistance value if checkbox is enabled
-            if (
-                hasattr(self, "show_resistance_values_checkbox")
-                and self.show_resistance_values_checkbox.isChecked()
-                and resistance_value > 0
-            ):
-                # Calculate position slightly offset from current display
-                mid_x = (e1_wall_glass[0] + e2_wall_glass[0]) / 2
-                mid_y = (e1_wall_glass[1] + e2_wall_glass[1]) / 2
-
-                # Offset resistance display below current display if both are shown
-                offset = (
-                    -2.0
-                    if (
-                        hasattr(self, "show_current_values_checkbox")
-                        and self.show_current_values_checkbox.isChecked()
-                        and current_value > 0
-                    )
-                    else 1.5
-                )
-                mid_z = electrode_z + offset
-
-                # Display resistance value with appropriate precision
-                if resistance_value == float("inf"):
-                    resistance_text = "∞Ω"
-                elif resistance_value >= 1.0:
-                    resistance_text = f"{resistance_value:.2f}Ω"
-                else:
-                    resistance_text = f"{resistance_value:.3f}Ω"
-
-                ax.text(
-                    mid_x,
-                    mid_y,
-                    mid_z,
-                    resistance_text,
-                    bbox={
-                        "boxstyle": "round,pad=0.2",
-                        "facecolor": "lightgreen",
-                        "alpha": 0.8,
-                    },
-                    fontsize=8,
-                    ha="center",
-                    va="center",
-                    color="darkgreen",
-                )
-
-        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
-            logger.exception("Error drawing correct trapezoidal path: %s", e)
+        ax.text(
+            mid_x,
+            mid_y,
+            mid_z,
+            text,
+            bbox={
+                "boxstyle": "round,pad=0.2",
+                "facecolor": bg_color,
+                "alpha": 0.8,
+            },
+            fontsize=8,
+            ha="center",
+            va="center",
+            color=text_color,
+        )
 
     def _draw_correct_via_metal_path(
         self,

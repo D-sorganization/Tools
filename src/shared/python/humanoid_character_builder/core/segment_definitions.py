@@ -218,430 +218,503 @@ SEGMENT_HIERARCHY = {
 }
 
 
+def _torso_segments() -> dict[str, SegmentDefinition]:
+    """Create torso segment definitions (pelvis through head)."""
+    return {
+        "pelvis": SegmentDefinition(
+            name="pelvis",
+            parent=None,
+            mass_ratio=0.117,
+            length_ratio=0.10,
+            visual_geometry=GeometrySpec(
+                GeometryType.CAPSULE,
+                (0.10, 0.15),
+            ),
+            vertex_group="pelvis",
+        ),
+        "lumbar": SegmentDefinition(
+            name="lumbar",
+            parent="pelvis",
+            mass_ratio=0.139,
+            length_ratio=0.10,
+            visual_geometry=GeometrySpec(
+                GeometryType.CAPSULE,
+                (0.09, 0.12),
+            ),
+            vertex_group="spine-lower",
+        ),
+        "thorax": SegmentDefinition(
+            name="thorax",
+            parent="lumbar",
+            mass_ratio=0.179,
+            length_ratio=0.12,
+            visual_geometry=GeometrySpec(
+                GeometryType.CAPSULE,
+                (0.12, 0.18),
+            ),
+            vertex_group="spine-upper",
+        ),
+        "neck": SegmentDefinition(
+            name="neck",
+            parent="thorax",
+            mass_ratio=0.024,
+            length_ratio=0.052,
+            visual_geometry=GeometrySpec(
+                GeometryType.CYLINDER,
+                (0.04, 0.08),
+            ),
+            vertex_group="neck",
+        ),
+        "head": SegmentDefinition(
+            name="head",
+            parent="neck",
+            mass_ratio=0.069,
+            length_ratio=0.14,
+            visual_geometry=GeometrySpec(
+                GeometryType.SPHERE,
+                (0.10,),
+            ),
+            vertex_group="head",
+            is_end_effector=True,
+        ),
+    }
+
+
+def _shoulder_segments() -> dict[str, SegmentDefinition]:
+    """Create shoulder segment definitions."""
+    return {
+        "left_shoulder": SegmentDefinition(
+            name="left_shoulder",
+            parent="thorax",
+            mass_ratio=0.015,
+            length_ratio=0.06,
+            visual_geometry=GeometrySpec(
+                GeometryType.CAPSULE,
+                (0.04, 0.08),
+            ),
+            vertex_group="shoulder.L",
+        ),
+        "right_shoulder": SegmentDefinition(
+            name="right_shoulder",
+            parent="thorax",
+            mass_ratio=0.015,
+            length_ratio=0.06,
+            visual_geometry=GeometrySpec(
+                GeometryType.CAPSULE,
+                (0.04, 0.08),
+            ),
+            vertex_group="shoulder.R",
+        ),
+    }
+
+
+def _arm_segments() -> dict[str, SegmentDefinition]:
+    """Create arm segment definitions (upper arm, forearm, hand)."""
+    return {
+        "left_upper_arm": SegmentDefinition(
+            name="left_upper_arm",
+            parent="left_shoulder",
+            mass_ratio=0.027,
+            length_ratio=0.186,
+            visual_geometry=GeometrySpec(
+                GeometryType.CAPSULE,
+                (0.035, 0.28),
+            ),
+            vertex_group="upperarm.L",
+        ),
+        "right_upper_arm": SegmentDefinition(
+            name="right_upper_arm",
+            parent="right_shoulder",
+            mass_ratio=0.027,
+            length_ratio=0.186,
+            visual_geometry=GeometrySpec(
+                GeometryType.CAPSULE,
+                (0.035, 0.28),
+            ),
+            vertex_group="upperarm.R",
+        ),
+        "left_forearm": SegmentDefinition(
+            name="left_forearm",
+            parent="left_upper_arm",
+            mass_ratio=0.016,
+            length_ratio=0.146,
+            visual_geometry=GeometrySpec(
+                GeometryType.CAPSULE,
+                (0.03, 0.22),
+            ),
+            vertex_group="forearm.L",
+        ),
+        "right_forearm": SegmentDefinition(
+            name="right_forearm",
+            parent="right_upper_arm",
+            mass_ratio=0.016,
+            length_ratio=0.146,
+            visual_geometry=GeometrySpec(
+                GeometryType.CAPSULE,
+                (0.03, 0.22),
+            ),
+            vertex_group="forearm.R",
+        ),
+        "left_hand": SegmentDefinition(
+            name="left_hand",
+            parent="left_forearm",
+            mass_ratio=0.006,
+            length_ratio=0.108,
+            visual_geometry=GeometrySpec(
+                GeometryType.BOX,
+                (0.08, 0.04, 0.15),
+            ),
+            vertex_group="hand.L",
+            is_end_effector=True,
+        ),
+        "right_hand": SegmentDefinition(
+            name="right_hand",
+            parent="right_forearm",
+            mass_ratio=0.006,
+            length_ratio=0.108,
+            visual_geometry=GeometrySpec(
+                GeometryType.BOX,
+                (0.08, 0.04, 0.15),
+            ),
+            vertex_group="hand.R",
+            is_end_effector=True,
+        ),
+    }
+
+
+def _hip_segments() -> dict[str, SegmentDefinition]:
+    """Create virtual hip segments for joint placement."""
+    return {
+        "left_hip": SegmentDefinition(
+            name="left_hip",
+            parent="pelvis",
+            mass_ratio=0.001,
+            length_ratio=0.0,
+            visual_geometry=GeometrySpec(
+                GeometryType.SPHERE,
+                (0.02,),
+            ),
+            vertex_group=None,
+        ),
+        "right_hip": SegmentDefinition(
+            name="right_hip",
+            parent="pelvis",
+            mass_ratio=0.001,
+            length_ratio=0.0,
+            visual_geometry=GeometrySpec(
+                GeometryType.SPHERE,
+                (0.02,),
+            ),
+            vertex_group=None,
+        ),
+    }
+
+
+def _leg_segments() -> dict[str, SegmentDefinition]:
+    """Create leg segment definitions (thigh, shin, foot)."""
+    return {
+        "left_thigh": SegmentDefinition(
+            name="left_thigh",
+            parent="left_hip",
+            mass_ratio=0.142,
+            length_ratio=0.245,
+            visual_geometry=GeometrySpec(
+                GeometryType.CAPSULE,
+                (0.06, 0.40),
+            ),
+            vertex_group="thigh.L",
+        ),
+        "right_thigh": SegmentDefinition(
+            name="right_thigh",
+            parent="right_hip",
+            mass_ratio=0.142,
+            length_ratio=0.245,
+            visual_geometry=GeometrySpec(
+                GeometryType.CAPSULE,
+                (0.06, 0.40),
+            ),
+            vertex_group="thigh.R",
+        ),
+        "left_shin": SegmentDefinition(
+            name="left_shin",
+            parent="left_thigh",
+            mass_ratio=0.043,
+            length_ratio=0.246,
+            visual_geometry=GeometrySpec(
+                GeometryType.CAPSULE,
+                (0.04, 0.38),
+            ),
+            vertex_group="shin.L",
+        ),
+        "right_shin": SegmentDefinition(
+            name="right_shin",
+            parent="right_thigh",
+            mass_ratio=0.043,
+            length_ratio=0.246,
+            visual_geometry=GeometrySpec(
+                GeometryType.CAPSULE,
+                (0.04, 0.38),
+            ),
+            vertex_group="shin.R",
+        ),
+        "left_foot": SegmentDefinition(
+            name="left_foot",
+            parent="left_shin",
+            mass_ratio=0.014,
+            length_ratio=0.152,
+            visual_geometry=GeometrySpec(
+                GeometryType.BOX,
+                (0.08, 0.22, 0.05),
+            ),
+            vertex_group="foot.L",
+            is_end_effector=True,
+        ),
+        "right_foot": SegmentDefinition(
+            name="right_foot",
+            parent="right_shin",
+            mass_ratio=0.014,
+            length_ratio=0.152,
+            visual_geometry=GeometrySpec(
+                GeometryType.BOX,
+                (0.08, 0.22, 0.05),
+            ),
+            vertex_group="foot.R",
+            is_end_effector=True,
+        ),
+    }
+
+
 def _create_segment_definitions() -> dict[str, SegmentDefinition]:
     """Create the standard humanoid segment definitions."""
-    segments = {}
-
-    # === Torso ===
-    segments["pelvis"] = SegmentDefinition(
-        name="pelvis",
-        parent=None,
-        mass_ratio=0.117,  # de Leva
-        length_ratio=0.10,
-        visual_geometry=GeometrySpec(GeometryType.CAPSULE, (0.10, 0.15)),
-        vertex_group="pelvis",
-    )
-
-    segments["lumbar"] = SegmentDefinition(
-        name="lumbar",
-        parent="pelvis",
-        mass_ratio=0.139,
-        length_ratio=0.10,
-        visual_geometry=GeometrySpec(GeometryType.CAPSULE, (0.09, 0.12)),
-        vertex_group="spine-lower",
-    )
-
-    segments["thorax"] = SegmentDefinition(
-        name="thorax",
-        parent="lumbar",
-        mass_ratio=0.179,
-        length_ratio=0.12,
-        visual_geometry=GeometrySpec(GeometryType.CAPSULE, (0.12, 0.18)),
-        vertex_group="spine-upper",
-    )
-
-    segments["neck"] = SegmentDefinition(
-        name="neck",
-        parent="thorax",
-        mass_ratio=0.024,
-        length_ratio=0.052,
-        visual_geometry=GeometrySpec(GeometryType.CYLINDER, (0.04, 0.08)),
-        vertex_group="neck",
-    )
-
-    segments["head"] = SegmentDefinition(
-        name="head",
-        parent="neck",
-        mass_ratio=0.069,
-        length_ratio=0.14,
-        visual_geometry=GeometrySpec(GeometryType.SPHERE, (0.10,)),
-        vertex_group="head",
-        is_end_effector=True,
-    )
-
-    # === Shoulders ===
-    segments["left_shoulder"] = SegmentDefinition(
-        name="left_shoulder",
-        parent="thorax",
-        mass_ratio=0.015,
-        length_ratio=0.06,
-        visual_geometry=GeometrySpec(GeometryType.CAPSULE, (0.04, 0.08)),
-        vertex_group="shoulder.L",
-    )
-
-    segments["right_shoulder"] = SegmentDefinition(
-        name="right_shoulder",
-        parent="thorax",
-        mass_ratio=0.015,
-        length_ratio=0.06,
-        visual_geometry=GeometrySpec(GeometryType.CAPSULE, (0.04, 0.08)),
-        vertex_group="shoulder.R",
-    )
-
-    # === Arms ===
-    segments["left_upper_arm"] = SegmentDefinition(
-        name="left_upper_arm",
-        parent="left_shoulder",
-        mass_ratio=0.027,
-        length_ratio=0.186,
-        visual_geometry=GeometrySpec(GeometryType.CAPSULE, (0.035, 0.28)),
-        vertex_group="upperarm.L",
-    )
-
-    segments["right_upper_arm"] = SegmentDefinition(
-        name="right_upper_arm",
-        parent="right_shoulder",
-        mass_ratio=0.027,
-        length_ratio=0.186,
-        visual_geometry=GeometrySpec(GeometryType.CAPSULE, (0.035, 0.28)),
-        vertex_group="upperarm.R",
-    )
-
-    segments["left_forearm"] = SegmentDefinition(
-        name="left_forearm",
-        parent="left_upper_arm",
-        mass_ratio=0.016,
-        length_ratio=0.146,
-        visual_geometry=GeometrySpec(GeometryType.CAPSULE, (0.03, 0.22)),
-        vertex_group="forearm.L",
-    )
-
-    segments["right_forearm"] = SegmentDefinition(
-        name="right_forearm",
-        parent="right_upper_arm",
-        mass_ratio=0.016,
-        length_ratio=0.146,
-        visual_geometry=GeometrySpec(GeometryType.CAPSULE, (0.03, 0.22)),
-        vertex_group="forearm.R",
-    )
-
-    segments["left_hand"] = SegmentDefinition(
-        name="left_hand",
-        parent="left_forearm",
-        mass_ratio=0.006,
-        length_ratio=0.108,
-        visual_geometry=GeometrySpec(GeometryType.BOX, (0.08, 0.04, 0.15)),
-        vertex_group="hand.L",
-        is_end_effector=True,
-    )
-
-    segments["right_hand"] = SegmentDefinition(
-        name="right_hand",
-        parent="right_forearm",
-        mass_ratio=0.006,
-        length_ratio=0.108,
-        visual_geometry=GeometrySpec(GeometryType.BOX, (0.08, 0.04, 0.15)),
-        vertex_group="hand.R",
-        is_end_effector=True,
-    )
-
-    # === Hips (virtual segments for joint placement) ===
-    segments["left_hip"] = SegmentDefinition(
-        name="left_hip",
-        parent="pelvis",
-        mass_ratio=0.001,  # Minimal mass (virtual)
-        length_ratio=0.0,
-        visual_geometry=GeometrySpec(GeometryType.SPHERE, (0.02,)),
-        vertex_group=None,
-    )
-
-    segments["right_hip"] = SegmentDefinition(
-        name="right_hip",
-        parent="pelvis",
-        mass_ratio=0.001,
-        length_ratio=0.0,
-        visual_geometry=GeometrySpec(GeometryType.SPHERE, (0.02,)),
-        vertex_group=None,
-    )
-
-    # === Legs ===
-    segments["left_thigh"] = SegmentDefinition(
-        name="left_thigh",
-        parent="left_hip",
-        mass_ratio=0.142,
-        length_ratio=0.245,
-        visual_geometry=GeometrySpec(GeometryType.CAPSULE, (0.06, 0.40)),
-        vertex_group="thigh.L",
-    )
-
-    segments["right_thigh"] = SegmentDefinition(
-        name="right_thigh",
-        parent="right_hip",
-        mass_ratio=0.142,
-        length_ratio=0.245,
-        visual_geometry=GeometrySpec(GeometryType.CAPSULE, (0.06, 0.40)),
-        vertex_group="thigh.R",
-    )
-
-    segments["left_shin"] = SegmentDefinition(
-        name="left_shin",
-        parent="left_thigh",
-        mass_ratio=0.043,
-        length_ratio=0.246,
-        visual_geometry=GeometrySpec(GeometryType.CAPSULE, (0.04, 0.38)),
-        vertex_group="shin.L",
-    )
-
-    segments["right_shin"] = SegmentDefinition(
-        name="right_shin",
-        parent="right_thigh",
-        mass_ratio=0.043,
-        length_ratio=0.246,
-        visual_geometry=GeometrySpec(GeometryType.CAPSULE, (0.04, 0.38)),
-        vertex_group="shin.R",
-    )
-
-    segments["left_foot"] = SegmentDefinition(
-        name="left_foot",
-        parent="left_shin",
-        mass_ratio=0.014,
-        length_ratio=0.152,
-        visual_geometry=GeometrySpec(GeometryType.BOX, (0.08, 0.22, 0.05)),
-        vertex_group="foot.L",
-        is_end_effector=True,
-    )
-
-    segments["right_foot"] = SegmentDefinition(
-        name="right_foot",
-        parent="right_shin",
-        mass_ratio=0.014,
-        length_ratio=0.152,
-        visual_geometry=GeometrySpec(GeometryType.BOX, (0.08, 0.22, 0.05)),
-        vertex_group="foot.R",
-        is_end_effector=True,
-    )
-
+    segments: dict[str, SegmentDefinition] = {}
+    segments.update(_torso_segments())
+    segments.update(_shoulder_segments())
+    segments.update(_arm_segments())
+    segments.update(_hip_segments())
+    segments.update(_leg_segments())
     return segments
+
+
+def _spine_joints() -> dict[str, JointDefinition]:
+    """Create spine joint definitions."""
+    return {
+        "pelvis_to_lumbar": JointDefinition(
+            name="pelvis_to_lumbar",
+            joint_type=JointType.UNIVERSAL,
+            parent_segment="pelvis",
+            child_segment="lumbar",
+            axis=(1.0, 0.0, 0.0),
+            secondary_axis=(0.0, 1.0, 0.0),
+            origin_xyz=(0.0, 0.0, 0.08),
+            limits=JointLimits(lower=-0.5, upper=0.5),
+        ),
+        "lumbar_to_thorax": JointDefinition(
+            name="lumbar_to_thorax",
+            joint_type=JointType.UNIVERSAL,
+            parent_segment="lumbar",
+            child_segment="thorax",
+            axis=(1.0, 0.0, 0.0),
+            secondary_axis=(0.0, 1.0, 0.0),
+            origin_xyz=(0.0, 0.0, 0.10),
+            limits=JointLimits(lower=-0.4, upper=0.4),
+        ),
+        "thorax_to_neck": JointDefinition(
+            name="thorax_to_neck",
+            joint_type=JointType.UNIVERSAL,
+            parent_segment="thorax",
+            child_segment="neck",
+            axis=(1.0, 0.0, 0.0),
+            secondary_axis=(0.0, 1.0, 0.0),
+            origin_xyz=(0.0, 0.0, 0.15),
+            limits=JointLimits(lower=-0.5, upper=0.5),
+        ),
+        "neck_to_head": JointDefinition(
+            name="neck_to_head",
+            joint_type=JointType.GIMBAL,
+            parent_segment="neck",
+            child_segment="head",
+            axis=(0.0, 0.0, 1.0),
+            secondary_axis=(0.0, 1.0, 0.0),
+            tertiary_axis=(1.0, 0.0, 0.0),
+            origin_xyz=(0.0, 0.0, 0.06),
+            limits=JointLimits(lower=-1.0, upper=1.0),
+        ),
+    }
+
+
+def _arm_joints() -> dict[str, JointDefinition]:
+    """Create shoulder and arm joint definitions."""
+    return {
+        "thorax_to_left_shoulder": JointDefinition(
+            name="thorax_to_left_shoulder",
+            joint_type=JointType.FIXED,
+            parent_segment="thorax",
+            child_segment="left_shoulder",
+            origin_xyz=(0.15, 0.0, 0.12),
+        ),
+        "thorax_to_right_shoulder": JointDefinition(
+            name="thorax_to_right_shoulder",
+            joint_type=JointType.FIXED,
+            parent_segment="thorax",
+            child_segment="right_shoulder",
+            origin_xyz=(-0.15, 0.0, 0.12),
+        ),
+        "left_shoulder_to_upper_arm": JointDefinition(
+            name="left_shoulder_to_upper_arm",
+            joint_type=JointType.GIMBAL,
+            parent_segment="left_shoulder",
+            child_segment="left_upper_arm",
+            axis=(0.0, 0.0, 1.0),
+            secondary_axis=(0.0, 1.0, 0.0),
+            tertiary_axis=(1.0, 0.0, 0.0),
+            origin_xyz=(0.06, 0.0, 0.0),
+            limits=JointLimits(lower=-2.5, upper=2.5),
+        ),
+        "right_shoulder_to_upper_arm": JointDefinition(
+            name="right_shoulder_to_upper_arm",
+            joint_type=JointType.GIMBAL,
+            parent_segment="right_shoulder",
+            child_segment="right_upper_arm",
+            axis=(0.0, 0.0, 1.0),
+            secondary_axis=(0.0, 1.0, 0.0),
+            tertiary_axis=(1.0, 0.0, 0.0),
+            origin_xyz=(-0.06, 0.0, 0.0),
+            limits=JointLimits(lower=-2.5, upper=2.5),
+        ),
+        "left_elbow": JointDefinition(
+            name="left_elbow",
+            joint_type=JointType.REVOLUTE,
+            parent_segment="left_upper_arm",
+            child_segment="left_forearm",
+            axis=(0.0, 1.0, 0.0),
+            origin_xyz=(0.0, 0.0, -0.28),
+            limits=JointLimits(lower=0.0, upper=2.5),
+        ),
+        "right_elbow": JointDefinition(
+            name="right_elbow",
+            joint_type=JointType.REVOLUTE,
+            parent_segment="right_upper_arm",
+            child_segment="right_forearm",
+            axis=(0.0, 1.0, 0.0),
+            origin_xyz=(0.0, 0.0, -0.28),
+            limits=JointLimits(lower=0.0, upper=2.5),
+        ),
+        "left_wrist": JointDefinition(
+            name="left_wrist",
+            joint_type=JointType.UNIVERSAL,
+            parent_segment="left_forearm",
+            child_segment="left_hand",
+            axis=(1.0, 0.0, 0.0),
+            secondary_axis=(0.0, 1.0, 0.0),
+            origin_xyz=(0.0, 0.0, -0.22),
+            limits=JointLimits(lower=-1.2, upper=1.2),
+        ),
+        "right_wrist": JointDefinition(
+            name="right_wrist",
+            joint_type=JointType.UNIVERSAL,
+            parent_segment="right_forearm",
+            child_segment="right_hand",
+            axis=(1.0, 0.0, 0.0),
+            secondary_axis=(0.0, 1.0, 0.0),
+            origin_xyz=(0.0, 0.0, -0.22),
+            limits=JointLimits(lower=-1.2, upper=1.2),
+        ),
+    }
+
+
+def _hip_joints() -> dict[str, JointDefinition]:
+    """Create hip joint definitions."""
+    return {
+        "pelvis_to_left_hip": JointDefinition(
+            name="pelvis_to_left_hip",
+            joint_type=JointType.FIXED,
+            parent_segment="pelvis",
+            child_segment="left_hip",
+            origin_xyz=(0.09, 0.0, -0.05),
+        ),
+        "pelvis_to_right_hip": JointDefinition(
+            name="pelvis_to_right_hip",
+            joint_type=JointType.FIXED,
+            parent_segment="pelvis",
+            child_segment="right_hip",
+            origin_xyz=(-0.09, 0.0, -0.05),
+        ),
+    }
+
+
+def _leg_joints() -> dict[str, JointDefinition]:
+    """Create leg joint definitions (hip, knee, ankle)."""
+    return {
+        "left_hip_joint": JointDefinition(
+            name="left_hip_joint",
+            joint_type=JointType.GIMBAL,
+            parent_segment="left_hip",
+            child_segment="left_thigh",
+            axis=(0.0, 0.0, 1.0),
+            secondary_axis=(1.0, 0.0, 0.0),
+            tertiary_axis=(0.0, 1.0, 0.0),
+            origin_xyz=(0.0, 0.0, 0.0),
+            limits=JointLimits(lower=-2.0, upper=2.0),
+        ),
+        "right_hip_joint": JointDefinition(
+            name="right_hip_joint",
+            joint_type=JointType.GIMBAL,
+            parent_segment="right_hip",
+            child_segment="right_thigh",
+            axis=(0.0, 0.0, 1.0),
+            secondary_axis=(1.0, 0.0, 0.0),
+            tertiary_axis=(0.0, 1.0, 0.0),
+            origin_xyz=(0.0, 0.0, 0.0),
+            limits=JointLimits(lower=-2.0, upper=2.0),
+        ),
+        "left_knee": JointDefinition(
+            name="left_knee",
+            joint_type=JointType.REVOLUTE,
+            parent_segment="left_thigh",
+            child_segment="left_shin",
+            axis=(1.0, 0.0, 0.0),
+            origin_xyz=(0.0, 0.0, -0.40),
+            limits=JointLimits(lower=-2.5, upper=0.0),
+        ),
+        "right_knee": JointDefinition(
+            name="right_knee",
+            joint_type=JointType.REVOLUTE,
+            parent_segment="right_thigh",
+            child_segment="right_shin",
+            axis=(1.0, 0.0, 0.0),
+            origin_xyz=(0.0, 0.0, -0.40),
+            limits=JointLimits(lower=-2.5, upper=0.0),
+        ),
+        "left_ankle": JointDefinition(
+            name="left_ankle",
+            joint_type=JointType.UNIVERSAL,
+            parent_segment="left_shin",
+            child_segment="left_foot",
+            axis=(1.0, 0.0, 0.0),
+            secondary_axis=(0.0, 0.0, 1.0),
+            origin_xyz=(0.0, 0.0, -0.38),
+            limits=JointLimits(lower=-0.8, upper=0.8),
+        ),
+        "right_ankle": JointDefinition(
+            name="right_ankle",
+            joint_type=JointType.UNIVERSAL,
+            parent_segment="right_shin",
+            child_segment="right_foot",
+            axis=(1.0, 0.0, 0.0),
+            secondary_axis=(0.0, 0.0, 1.0),
+            origin_xyz=(0.0, 0.0, -0.38),
+            limits=JointLimits(lower=-0.8, upper=0.8),
+        ),
+    }
 
 
 def _create_joint_definitions() -> dict[str, JointDefinition]:
     """Create the standard humanoid joint definitions."""
-    joints = {}
-
-    # === Spine Joints ===
-    joints["pelvis_to_lumbar"] = JointDefinition(
-        name="pelvis_to_lumbar",
-        joint_type=JointType.UNIVERSAL,
-        parent_segment="pelvis",
-        child_segment="lumbar",
-        axis=(1.0, 0.0, 0.0),
-        secondary_axis=(0.0, 1.0, 0.0),
-        origin_xyz=(0.0, 0.0, 0.08),
-        limits=JointLimits(lower=-0.5, upper=0.5),
-    )
-
-    joints["lumbar_to_thorax"] = JointDefinition(
-        name="lumbar_to_thorax",
-        joint_type=JointType.UNIVERSAL,
-        parent_segment="lumbar",
-        child_segment="thorax",
-        axis=(1.0, 0.0, 0.0),
-        secondary_axis=(0.0, 1.0, 0.0),
-        origin_xyz=(0.0, 0.0, 0.10),
-        limits=JointLimits(lower=-0.4, upper=0.4),
-    )
-
-    joints["thorax_to_neck"] = JointDefinition(
-        name="thorax_to_neck",
-        joint_type=JointType.UNIVERSAL,
-        parent_segment="thorax",
-        child_segment="neck",
-        axis=(1.0, 0.0, 0.0),
-        secondary_axis=(0.0, 1.0, 0.0),
-        origin_xyz=(0.0, 0.0, 0.15),
-        limits=JointLimits(lower=-0.5, upper=0.5),
-    )
-
-    joints["neck_to_head"] = JointDefinition(
-        name="neck_to_head",
-        joint_type=JointType.GIMBAL,
-        parent_segment="neck",
-        child_segment="head",
-        axis=(0.0, 0.0, 1.0),
-        secondary_axis=(0.0, 1.0, 0.0),
-        tertiary_axis=(1.0, 0.0, 0.0),
-        origin_xyz=(0.0, 0.0, 0.06),
-        limits=JointLimits(lower=-1.0, upper=1.0),
-    )
-
-    # === Shoulder Joints ===
-    joints["thorax_to_left_shoulder"] = JointDefinition(
-        name="thorax_to_left_shoulder",
-        joint_type=JointType.FIXED,
-        parent_segment="thorax",
-        child_segment="left_shoulder",
-        origin_xyz=(0.15, 0.0, 0.12),
-    )
-
-    joints["thorax_to_right_shoulder"] = JointDefinition(
-        name="thorax_to_right_shoulder",
-        joint_type=JointType.FIXED,
-        parent_segment="thorax",
-        child_segment="right_shoulder",
-        origin_xyz=(-0.15, 0.0, 0.12),
-    )
-
-    # === Arm Joints ===
-    joints["left_shoulder_to_upper_arm"] = JointDefinition(
-        name="left_shoulder_to_upper_arm",
-        joint_type=JointType.GIMBAL,
-        parent_segment="left_shoulder",
-        child_segment="left_upper_arm",
-        axis=(0.0, 0.0, 1.0),
-        secondary_axis=(0.0, 1.0, 0.0),
-        tertiary_axis=(1.0, 0.0, 0.0),
-        origin_xyz=(0.06, 0.0, 0.0),
-        limits=JointLimits(lower=-2.5, upper=2.5),
-    )
-
-    joints["right_shoulder_to_upper_arm"] = JointDefinition(
-        name="right_shoulder_to_upper_arm",
-        joint_type=JointType.GIMBAL,
-        parent_segment="right_shoulder",
-        child_segment="right_upper_arm",
-        axis=(0.0, 0.0, 1.0),
-        secondary_axis=(0.0, 1.0, 0.0),
-        tertiary_axis=(1.0, 0.0, 0.0),
-        origin_xyz=(-0.06, 0.0, 0.0),
-        limits=JointLimits(lower=-2.5, upper=2.5),
-    )
-
-    joints["left_elbow"] = JointDefinition(
-        name="left_elbow",
-        joint_type=JointType.REVOLUTE,
-        parent_segment="left_upper_arm",
-        child_segment="left_forearm",
-        axis=(0.0, 1.0, 0.0),
-        origin_xyz=(0.0, 0.0, -0.28),
-        limits=JointLimits(lower=0.0, upper=2.5),
-    )
-
-    joints["right_elbow"] = JointDefinition(
-        name="right_elbow",
-        joint_type=JointType.REVOLUTE,
-        parent_segment="right_upper_arm",
-        child_segment="right_forearm",
-        axis=(0.0, 1.0, 0.0),
-        origin_xyz=(0.0, 0.0, -0.28),
-        limits=JointLimits(lower=0.0, upper=2.5),
-    )
-
-    joints["left_wrist"] = JointDefinition(
-        name="left_wrist",
-        joint_type=JointType.UNIVERSAL,
-        parent_segment="left_forearm",
-        child_segment="left_hand",
-        axis=(1.0, 0.0, 0.0),
-        secondary_axis=(0.0, 1.0, 0.0),
-        origin_xyz=(0.0, 0.0, -0.22),
-        limits=JointLimits(lower=-1.2, upper=1.2),
-    )
-
-    joints["right_wrist"] = JointDefinition(
-        name="right_wrist",
-        joint_type=JointType.UNIVERSAL,
-        parent_segment="right_forearm",
-        child_segment="right_hand",
-        axis=(1.0, 0.0, 0.0),
-        secondary_axis=(0.0, 1.0, 0.0),
-        origin_xyz=(0.0, 0.0, -0.22),
-        limits=JointLimits(lower=-1.2, upper=1.2),
-    )
-
-    # === Hip Joints ===
-    joints["pelvis_to_left_hip"] = JointDefinition(
-        name="pelvis_to_left_hip",
-        joint_type=JointType.FIXED,
-        parent_segment="pelvis",
-        child_segment="left_hip",
-        origin_xyz=(0.09, 0.0, -0.05),
-    )
-
-    joints["pelvis_to_right_hip"] = JointDefinition(
-        name="pelvis_to_right_hip",
-        joint_type=JointType.FIXED,
-        parent_segment="pelvis",
-        child_segment="right_hip",
-        origin_xyz=(-0.09, 0.0, -0.05),
-    )
-
-    # === Leg Joints ===
-    joints["left_hip_joint"] = JointDefinition(
-        name="left_hip_joint",
-        joint_type=JointType.GIMBAL,
-        parent_segment="left_hip",
-        child_segment="left_thigh",
-        axis=(0.0, 0.0, 1.0),
-        secondary_axis=(1.0, 0.0, 0.0),
-        tertiary_axis=(0.0, 1.0, 0.0),
-        origin_xyz=(0.0, 0.0, 0.0),
-        limits=JointLimits(lower=-2.0, upper=2.0),
-    )
-
-    joints["right_hip_joint"] = JointDefinition(
-        name="right_hip_joint",
-        joint_type=JointType.GIMBAL,
-        parent_segment="right_hip",
-        child_segment="right_thigh",
-        axis=(0.0, 0.0, 1.0),
-        secondary_axis=(1.0, 0.0, 0.0),
-        tertiary_axis=(0.0, 1.0, 0.0),
-        origin_xyz=(0.0, 0.0, 0.0),
-        limits=JointLimits(lower=-2.0, upper=2.0),
-    )
-
-    joints["left_knee"] = JointDefinition(
-        name="left_knee",
-        joint_type=JointType.REVOLUTE,
-        parent_segment="left_thigh",
-        child_segment="left_shin",
-        axis=(1.0, 0.0, 0.0),
-        origin_xyz=(0.0, 0.0, -0.40),
-        limits=JointLimits(lower=-2.5, upper=0.0),
-    )
-
-    joints["right_knee"] = JointDefinition(
-        name="right_knee",
-        joint_type=JointType.REVOLUTE,
-        parent_segment="right_thigh",
-        child_segment="right_shin",
-        axis=(1.0, 0.0, 0.0),
-        origin_xyz=(0.0, 0.0, -0.40),
-        limits=JointLimits(lower=-2.5, upper=0.0),
-    )
-
-    joints["left_ankle"] = JointDefinition(
-        name="left_ankle",
-        joint_type=JointType.UNIVERSAL,
-        parent_segment="left_shin",
-        child_segment="left_foot",
-        axis=(1.0, 0.0, 0.0),
-        secondary_axis=(0.0, 0.0, 1.0),
-        origin_xyz=(0.0, 0.0, -0.38),
-        limits=JointLimits(lower=-0.8, upper=0.8),
-    )
-
-    joints["right_ankle"] = JointDefinition(
-        name="right_ankle",
-        joint_type=JointType.UNIVERSAL,
-        parent_segment="right_shin",
-        child_segment="right_foot",
-        axis=(1.0, 0.0, 0.0),
-        secondary_axis=(0.0, 0.0, 1.0),
-        origin_xyz=(0.0, 0.0, -0.38),
-        limits=JointLimits(lower=-0.8, upper=0.8),
-    )
-
+    joints: dict[str, JointDefinition] = {}
+    joints.update(_spine_joints())
+    joints.update(_arm_joints())
+    joints.update(_hip_joints())
+    joints.update(_leg_joints())
     return joints
 
 
