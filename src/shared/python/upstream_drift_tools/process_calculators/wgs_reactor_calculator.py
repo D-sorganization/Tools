@@ -16,17 +16,16 @@ Version: 1.0
 
 from __future__ import annotations
 
-import json
 import logging
 import math
 import os
 from dataclasses import dataclass
-from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import matplotlib as mpl
 import numpy as np
 from scipy.optimize import minimize
+from upstream_drift_tools.utils.state_manager import safe_read_json
 
 from .constants import (
     CELSIUS_TO_KELVIN_OFFSET,
@@ -40,19 +39,6 @@ from .constants import (
     WGS_REACTOR_LD_RATIO,
     WGS_TYPICAL_GHSV,
 )
-
-
-def safe_read_json(file_path: Path | str, default: Any = None) -> Any:
-    """Read JSON from a file, returning a default on failure."""
-    path = Path(file_path)
-    if not path.exists():
-        return default
-    try:
-        with open(path, encoding="utf-8") as f:
-            return json.load(f)
-    except (json.JSONDecodeError, OSError):
-        return default
-
 
 if TYPE_CHECKING:
     from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
