@@ -127,6 +127,115 @@ def _compute_gradient_component(
     return (fwd - bwd) / (plus_val - minus_val)
 
 
+@dataclass
+class _AdamState:
+    """Mutable state for the Adam optimizer loop."""
+
+    parameter_names: list[str]
+    lower_bounds: np.ndarray
+    upper_bounds: np.ndarray
+    values: np.ndarray
+    m: np.ndarray  # 1st moment estimate
+    v: np.ndarray  # 2nd moment estimate
+    best_output: float
+    best_parameters: dict[str, float]
+    best_state: dict[str, float]
+    best_composition: dict[str, float]
+    history: list[OptimizationHistoryEntry]
+    previous_values: np.ndarray
+    base_params: dict[str, float]
+    output_name: str
+
+
+def _init_adam_state(
+    analysis_params: dict[str, object],
+    parameter_configs: Sequence[dict[str, Any]],
+    maximize: bool,
+) -> _AdamState:
+    """Extract parameters, build bounds, and initialise Adam moment vectors."""
+    parameter_names = [cfg["name"] for cfg in parameter_configs]
+    lower_bounds = np.array([cfg["min"] for cfg in parameter_configs], dtype=float)
+    upper_bounds = np.array([cfg["max"] for cfg in parameter_configs], dtype=float)
+    values = np.array([cfg["initial"] for cfg in parameter_configs], dtype=float)
+    return _AdamState(
+        parameter_names=parameter_names,
+        lower_bounds=lower_bounds,
+        upper_bounds=upper_bounds,
+        values=values,
+        m=np.zeros_like(values),
+        v=np.zeros_like(values),
+        best_output=-np.inf if maximize else np.inf,
+        best_parameters={},
+        best_state={},
+        best_composition={},
+        history=[],
+        previous_values=values.copy(),
+        base_params=cast(dict[str, float], analysis_params["base_params"]),
+        output_name=cast(str, analysis_params["output_variable"]),
+    )
+
+
+def _evaluate_and_record(
+    st: _AdamState,
+    iteration: int,
+    engine: Any,
+    manual_hhv: float,
+    maximize: bool,
+) -> float:
+    """Evaluate the objective, update best tracking, and record history.
+
+    Returns the (possibly clamped) objective value.
+    """
+    overrides = _build_override_mapping(st.parameter_names, st.values.tolist())
+    objective, composition, state = evaluate_output(
+        engine, st.base_params, manual_hhv, st.output_name, overrides
+    )
+
+    if not np.isfinite(objective):
+        objective = -np.inf if maximize else np.inf
+        composition, state = {}, {}
+
+    if np.isfinite(objective) and (
+        (maximize and objective > st.best_output)
+        or (not maximize and objective < st.best_output)
+    ):
+        st.best_output = objective
+        st.best_parameters = overrides.copy()
+        st.best_state = state
+        st.best_composition = composition
+
+    st.history.append(
+        OptimizationHistoryEntry(
+            iteration=iteration,
+            objective=objective,
+            parameters=overrides.copy(),
+        ),
+    )
+    return objective
+
+
+def _adam_update(
+    st: _AdamState,
+    gradient: np.ndarray,
+    iteration: int,
+    *,
+    maximize: bool,
+    learning_rate: float,
+    beta1: float,
+    beta2: float,
+    epsilon: float,
+) -> None:
+    """Apply one Adam parameter update in-place."""
+    st.m = beta1 * st.m + (1 - beta1) * gradient
+    st.v = beta2 * st.v + (1 - beta2) * (gradient**2)
+    m_hat = st.m / (1 - beta1**iteration)
+    v_hat = st.v / (1 - beta2**iteration)
+
+    sign = 1.0 if maximize else -1.0
+    update = sign * learning_rate * m_hat / (np.sqrt(v_hat) + epsilon)
+    st.values = np.clip(st.values + update, st.lower_bounds, st.upper_bounds)
+
+
 def run_adam_optimization(
     engine: Any,
     analysis_params: dict[str, object],
@@ -177,126 +286,62 @@ def run_adam_optimization(
         final parameters, and iteration count.
     """
     if not parameter_configs:
-        raise ValueError(
-            "At least one parameter must be provided",
-        )
+        raise ValueError("At least one parameter must be provided")
 
-    parameter_names = [cfg["name"] for cfg in parameter_configs]
-    lower_bounds = np.array(
-        [cfg["min"] for cfg in parameter_configs],
-        dtype=float,
-    )
-    upper_bounds = np.array(
-        [cfg["max"] for cfg in parameter_configs],
-        dtype=float,
-    )
-    values = np.array(
-        [cfg["initial"] for cfg in parameter_configs],
-        dtype=float,
-    )
-
-    m = np.zeros_like(values)
-    v = np.zeros_like(values)
-
-    best_output = -np.inf if maximize else np.inf
-    best_parameters: dict[str, float] = {}
-    best_state: dict[str, float] = {}
-    best_composition: dict[str, float] = {}
-    history: list[OptimizationHistoryEntry] = []
-
-    previous_values = values.copy()
-    base_params = cast(
-        dict[str, float],
-        analysis_params["base_params"],
-    )
-    output_name = cast(str, analysis_params["output_variable"])
+    st = _init_adam_state(analysis_params, parameter_configs, maximize)
 
     if gradient_tolerance is None:
         gradient_tolerance = tolerance
 
     for iteration in range(1, max_iterations + 1):
-        overrides = _build_override_mapping(
-            parameter_names,
-            values.tolist(),
-        )
-        objective, composition, state = evaluate_output(
-            engine,
-            base_params,
-            manual_hhv,
-            output_name,
-            overrides,
-        )
-
-        if not np.isfinite(objective):
-            objective = -np.inf if maximize else np.inf
-            composition, state = {}, {}
-
-        if np.isfinite(objective) and (
-            (maximize and objective > best_output)
-            or (not maximize and objective < best_output)
-        ):
-            best_output = objective
-            best_parameters = overrides.copy()
-            best_state = state
-            best_composition = composition
-
-        history.append(
-            OptimizationHistoryEntry(
-                iteration=iteration,
-                objective=objective,
-                parameters=overrides.copy(),
-            ),
-        )
+        objective = _evaluate_and_record(st, iteration, engine, manual_hhv, maximize)
 
         # Finite-difference gradient
-        gradient = np.zeros_like(values)
+        gradient = np.zeros_like(st.values)
         if np.isfinite(objective):
             for idx, cfg in enumerate(parameter_configs):
                 gradient[idx] = _compute_gradient_component(
                     idx,
                     cfg,
-                    values,
+                    st.values,
                     objective,
                     gradient_step,
-                    parameter_names,
+                    st.parameter_names,
                     engine,
-                    base_params,
+                    st.base_params,
                     manual_hhv,
-                    output_name,
+                    st.output_name,
                 )
 
         if np.linalg.norm(gradient) < gradient_tolerance:
             break
 
-        # Adam update
-        m = beta1 * m + (1 - beta1) * gradient
-        v = beta2 * v + (1 - beta2) * (gradient**2)
-        m_hat = m / (1 - beta1**iteration)
-        v_hat = v / (1 - beta2**iteration)
-
-        sign = 1.0 if maximize else -1.0
-        update = sign * learning_rate * m_hat / (np.sqrt(v_hat) + epsilon)
-        values = np.clip(
-            values + update,
-            lower_bounds,
-            upper_bounds,
+        _adam_update(
+            st,
+            gradient,
+            iteration,
+            maximize=maximize,
+            learning_rate=learning_rate,
+            beta1=beta1,
+            beta2=beta2,
+            epsilon=epsilon,
         )
 
-        if np.linalg.norm(values - previous_values) < tolerance:
+        if np.linalg.norm(st.values - st.previous_values) < tolerance:
             break
-        previous_values = values.copy()
+        st.previous_values = st.values.copy()
 
     return {
-        "best_output": best_output,
-        "best_parameters": best_parameters,
-        "best_state": best_state,
-        "best_composition": best_composition,
-        "history": history,
+        "best_output": st.best_output,
+        "best_parameters": st.best_parameters,
+        "best_state": st.best_state,
+        "best_composition": st.best_composition,
+        "history": st.history,
         "final_parameters": _build_override_mapping(
-            parameter_names,
-            values.tolist(),
+            st.parameter_names,
+            st.values.tolist(),
         ),
-        "iterations": len(history),
+        "iterations": len(st.history),
     }
 
 
