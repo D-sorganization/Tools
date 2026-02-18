@@ -26,8 +26,6 @@ class _ConcreteEngine(BaseCalculationEngine):
 class _IncompleteEngine(BaseCalculationEngine):
     """Subclass that does NOT implement calculate()."""
 
-    pass
-
 
 # ── Tests ───────────────────────────────────────────────────────────────
 
