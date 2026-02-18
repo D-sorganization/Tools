@@ -47,7 +47,7 @@ class GitHubImporter:
         "bulletphysics/bullet3",
     ]
 
-    def __init__(self, library: ModelLibrary | None = None):
+    def __init__(self, library: ModelLibrary | None = None) -> None:
         """Initialize importer."""
         self.library = library or ModelLibrary()
 
