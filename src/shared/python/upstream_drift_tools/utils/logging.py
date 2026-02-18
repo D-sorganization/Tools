@@ -3,6 +3,8 @@
 Uses shared logging configuration from utils.logging_utils.
 """
 
+from __future__ import annotations
+
 import logging
 import sys
 
@@ -48,19 +50,19 @@ def get_logger(
 class LogExecutionTime:
     """Context manager to log execution time of a block."""
 
-    def __init__(self, name: str, logger: logging.Logger | None = None):
+    def __init__(self, name: str, logger: logging.Logger | None = None) -> None:
         self.name = name
         self.logger = logger or get_logger(name)
 
-    def __enter__(self):
+    def __enter__(self) -> LogExecutionTime:
         self.start_time = __import__("time").time()
         self.logger.debug(f"Starting {self.name}...")
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         duration = __import__("time").time() - self.start_time
         self.logger.info(f"{self.name} completed in {duration:.4f}s")
 
 
-def log_execution_time(name: str):
+def log_execution_time(name: str) -> LogExecutionTime:
     return LogExecutionTime(name)

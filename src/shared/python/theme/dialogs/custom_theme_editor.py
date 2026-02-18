@@ -39,7 +39,9 @@ class ColorPickerButton(QPushButton):
 
     color_changed = pyqtSignal(str)  # Emits hex color string
 
-    def __init__(self, initial_color: str = "#ffffff", parent: QWidget | None = None):
+    def __init__(
+        self, initial_color: str = "#ffffff", parent: QWidget | None = None
+    ) -> None:
         super().__init__(parent)
         self._color = initial_color
         self.setFixedSize(60, 30)
@@ -90,7 +92,7 @@ class ColorPickerButton(QPushButton):
 class ThemePreviewWidget(QWidget):
     """Widget that shows a preview of how the theme will look."""
 
-    def __init__(self, parent: QWidget | None = None):
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._setup_ui()
 
@@ -173,7 +175,7 @@ class CustomThemeEditor(QDialog):
         theme_manager: ThemeManager,
         parent: QWidget | None = None,
         edit_theme: str | None = None,
-    ):
+    ) -> None:
         super().__init__(parent)
         self.theme_manager = theme_manager
         self.edit_theme = edit_theme
