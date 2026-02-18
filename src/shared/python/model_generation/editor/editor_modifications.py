@@ -162,6 +162,13 @@ class ModificationMixin:
         Returns:
             True if renamed
         """
+        if not new_name or not new_name.strip():
+            logger.error("new_name must be a non-empty string")
+            return False
+
+        if old_name == new_name:
+            return True  # No-op
+
         model = self._models.get(model_id)
         if not model:
             logger.error(f"Model '{model_id}' not found")
@@ -217,6 +224,13 @@ class ModificationMixin:
         Returns:
             True if renamed
         """
+        if not new_name or not new_name.strip():
+            logger.error("new_name must be a non-empty string")
+            return False
+
+        if old_name == new_name:
+            return True  # No-op
+
         model = self._models.get(model_id)
         if not model:
             logger.error(f"Model '{model_id}' not found")
@@ -275,16 +289,41 @@ class ModificationMixin:
 
         self._save_state()
 
-        # Update properties
+        # Type-checked property updates
+        _ALLOWED_KEYS = {"origin", "axis", "limits", "dynamics", "joint_type"}
+        unknown_keys = set(kwargs) - _ALLOWED_KEYS
+        if unknown_keys:
+            logger.warning("Ignoring unknown joint properties: %s", unknown_keys)
+
         if "origin" in kwargs:
+            if not isinstance(kwargs["origin"], Origin):
+                logger.error("'origin' must be an Origin instance")
+                return False
             joint.origin = kwargs["origin"]
         if "axis" in kwargs:
-            joint.axis = kwargs["axis"]
+            axis = kwargs["axis"]
+            if not isinstance(axis, tuple) or len(axis) != 3:
+                logger.error("'axis' must be a 3-tuple of floats")
+                return False
+            joint.axis = axis
         if "limits" in kwargs:
+            from model_generation.core.types import JointLimits
+
+            if not isinstance(kwargs["limits"], JointLimits):
+                logger.error("'limits' must be a JointLimits instance")
+                return False
             joint.limits = kwargs["limits"]
         if "dynamics" in kwargs:
+            from model_generation.core.types import JointDynamics
+
+            if not isinstance(kwargs["dynamics"], JointDynamics):
+                logger.error("'dynamics' must be a JointDynamics instance")
+                return False
             joint.dynamics = kwargs["dynamics"]
         if "joint_type" in kwargs:
+            if not isinstance(kwargs["joint_type"], JointType):
+                logger.error("'joint_type' must be a JointType enum value")
+                return False
             joint.joint_type = kwargs["joint_type"]
 
         logger.info(f"Modified joint '{joint_name}'")
@@ -493,6 +532,12 @@ class ModificationMixin:
         Returns:
             List of created link names
         """
+        _VALID_AXES = {"x", "y", "z"}
+        if mirror_axis not in _VALID_AXES:
+            raise ValueError(
+                f"mirror_axis must be one of {_VALID_AXES}, got '{mirror_axis}'"
+            )
+
         # Copy subtree to clipboard
         if not self.copy_subtree(model_id, root_link):
             return []

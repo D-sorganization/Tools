@@ -7,6 +7,7 @@ including proper formatting, material definitions, and composite joint expansion
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import Any
 
@@ -25,6 +26,8 @@ from model_generation.core.types import (
     Material,
     Origin,
 )
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -63,6 +66,17 @@ class URDFWriter:
         Returns:
             URDF XML string
         """
+        if not robot_name or not robot_name.strip():
+            raise ValueError("robot_name must be a non-empty string")
+        if not links:
+            raise ValueError("At least one link is required")
+
+        logger.debug(
+            "Writing URDF '%s' with %d links and %d joints",
+            robot_name,
+            len(links),
+            len(joints),
+        )
         lines: list[str] = []
 
         # XML declaration
