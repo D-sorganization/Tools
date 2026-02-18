@@ -765,51 +765,21 @@ class PressureDropCalculationEngine:
         """Initialize the calculation engine."""
         logger.info("PressureDropCalculationEngine initialized")
 
-    def calculate(self, inputs: PressureDropInputs) -> PressureDropResults:
-        """Calculate comprehensive pressure drop analysis.
+    # ------------------------------------------------------------------
+    # Private helpers
+    # ------------------------------------------------------------------
 
-        Args:
-            inputs: PressureDropInputs object with all parameters
+    @staticmethod
+    def _compute_incompressible_components(
+        inputs: PressureDropInputs,
+        flow_props: FlowProperties,
+        friction_factor: float,
+    ) -> tuple[float, float, float, float]:
+        """Compute the three incompressible ΔP terms.
 
         Returns:
-            PressureDropResults object with complete analysis
-
-        Raises:
-            ValueError: If inputs are invalid
+            (dp_friction, dp_fittings, dp_elevation, total_k_factor)
         """
-        # Validate inputs
-        is_valid, error_msg = inputs.validate()
-        if not is_valid:
-            logger.error(f"Input validation failed: {error_msg}")
-            raise ValueError(f"Invalid inputs: {error_msg}")
-
-        logger.info("=" * 80)
-        logger.info("PRESSURE DROP CALCULATION")
-        logger.info("=" * 80)
-
-        # Calculate flow properties
-        flow_props = calculate_flow_properties(inputs)
-
-        # Classify flow regime
-        flow_regime = classify_flow_regime(flow_props.reynolds_number)
-        logger.info(
-            f"Flow regime: {flow_regime} (Re = {flow_props.reynolds_number:.0f})"
-        )
-
-        # Calculate relative roughness
-        relative_roughness = inputs.pipe_roughness / inputs.pipe_diameter
-
-        # Calculate friction factor
-        friction_factor = select_friction_factor_method(
-            inputs.friction_method, flow_props.reynolds_number, relative_roughness
-        )
-        logger.info(
-            f"Friction factor ({inputs.friction_method}): f = {friction_factor:.6f}"
-        )
-
-        # Calculate pressure drop components
-
-        # 1. Frictional loss (Darcy-Weisbach)
         dp_friction = calculate_frictional_pressure_drop(
             friction_factor,
             inputs.pipe_length,
@@ -818,8 +788,7 @@ class PressureDropCalculationEngine:
             flow_props.velocity,
         )
 
-        # 2. Fitting losses
-        diameter_inches = inputs.pipe_diameter * METERS_TO_INCHES  # m to inches
+        diameter_inches = inputs.pipe_diameter * METERS_TO_INCHES
         dp_fittings = calculate_fitting_pressure_drop(
             inputs.fittings,
             flow_props.density,
@@ -828,30 +797,37 @@ class PressureDropCalculationEngine:
             diameter_inches,
         )
 
-        # 3. Elevation change
         dp_elevation = calculate_elevation_pressure_drop(
             flow_props.density, inputs.elevation_change
         )
 
-        # Calculate total K-factor for fittings
         total_k_factor = sum(
             f.k_factor * f.quantity if f.k_factor > 0 else 0.0 for f in inputs.fittings
         )
 
-        # Incompressible pressure drop (initial estimate)
-        dp_incompressible = dp_friction + dp_fittings + dp_elevation
+        return dp_friction, dp_fittings, dp_elevation, total_k_factor
 
-        # 4. Apply compressible flow correction if enabled and pressure drop is significant
-        warnings_list = []
+    @staticmethod
+    def _apply_compressibility(
+        inputs: PressureDropInputs,
+        flow_props: FlowProperties,
+        friction_factor: float,
+        dp_incompressible: float,
+        total_k_factor: float,
+    ) -> tuple[float, float, float, list[str]]:
+        """Decide whether to apply compressible-flow corrections.
+
+        Returns:
+            (total_dp, outlet_pressure, dp_acceleration, warnings)
+        """
+        warnings_list: list[str] = []
         pressure_ratio_initial = dp_incompressible / inputs.inlet_pressure
 
         if inputs.compressibility_correction and pressure_ratio_initial > 0.05:
-            # High pressure drop - use compressible flow correction
             logger.info(
-                f"Applying compressible flow correction (ΔP/P = {pressure_ratio_initial * 100:.1f}%)"
+                f"Applying compressible flow correction "
+                f"(ΔP/P = {pressure_ratio_initial * 100:.1f}%)"
             )
-
-            # Get compressibility-corrected pressure drop
             total_dp, outlet_pressure = calculate_compressible_flow_correction(
                 inlet_pressure=inputs.inlet_pressure,
                 outlet_pressure=inputs.inlet_pressure - dp_incompressible,
@@ -864,25 +840,20 @@ class PressureDropCalculationEngine:
                 friction_factor=friction_factor,
                 total_k_factor=total_k_factor,
             )
+            dp_acceleration = max(total_dp - dp_incompressible, 0.0)
 
-            # Acceleration pressure drop for compressible flow
-            dp_acceleration = total_dp - dp_incompressible
-            if dp_acceleration < 0:
-                dp_acceleration = 0.0
-
-            # Log compressibility effect
-            if abs(total_dp - dp_incompressible) > 100:  # More than 100 Pa difference
+            if abs(total_dp - dp_incompressible) > 100:
                 logger.info(
                     f"Compressibility effect: ΔP_incomp={dp_incompressible:.0f} Pa, "
-                    f"ΔP_comp={total_dp:.0f} Pa (+{(total_dp / dp_incompressible - 1) * 100:.1f}%)"
+                    f"ΔP_comp={total_dp:.0f} Pa "
+                    f"(+{(total_dp / dp_incompressible - 1) * 100:.1f}%)"
                 )
         else:
-            # Use incompressible flow calculation
             dp_acceleration = 0.0
             total_dp = dp_incompressible
             outlet_pressure = inputs.inlet_pressure - total_dp
 
-        # Check for negative outlet pressure
+        # Negative outlet pressure → choked flow
         if outlet_pressure < 0:
             logger.error(
                 f"Calculated negative outlet pressure: {outlet_pressure:.1f} Pa"
@@ -890,11 +861,10 @@ class PressureDropCalculationEngine:
             warnings_list.append(
                 "Negative outlet pressure calculated - flow may be choked"
             )
-            # Estimate choked flow pressure drop
             outlet_pressure = 0.0
             total_dp = inputs.inlet_pressure
 
-        # Compressibility check (warn if correction disabled but needed)
+        # Warn if correction disabled but needed
         pressure_ratio = total_dp / inputs.inlet_pressure
         if pressure_ratio > 0.1 and not inputs.compressibility_correction:
             warnings_list.append(
@@ -902,7 +872,24 @@ class PressureDropCalculationEngine:
                 "consider enabling compressibility_correction=True for better accuracy"
             )
 
-        # Erosional velocity check
+        return total_dp, outlet_pressure, dp_acceleration, warnings_list
+
+    @staticmethod
+    def _build_results(
+        *,
+        inputs: PressureDropInputs,
+        flow_props: FlowProperties,
+        flow_regime: str,
+        friction_factor: float,
+        dp_friction: float,
+        dp_fittings: float,
+        dp_elevation: float,
+        dp_acceleration: float,
+        total_dp: float,
+        outlet_pressure: float,
+        warnings_list: list[str],
+    ) -> PressureDropResults:
+        """Construct the results object and perform final safety checks."""
         erosional_velocity = calculate_erosional_velocity(
             flow_props.density, "continuous"
         )
@@ -917,15 +904,9 @@ class PressureDropCalculationEngine:
                 "WARNING: Velocity exceeds erosional limit - risk of pipe erosion!"
             )
 
-        # Velocity pressure (dynamic pressure)
         velocity_pressure = 0.5 * flow_props.density * (flow_props.velocity**2)
+        dp_per_100ft = (total_dp / inputs.pipe_length) * HUNDRED_FEET_IN_METERS
 
-        # Pressure drop per 100 ft
-        dp_per_100ft = (
-            total_dp / inputs.pipe_length
-        ) * HUNDRED_FEET_IN_METERS  # Per 100 feet
-
-        # Create results
         results = PressureDropResults(
             total_pressure_drop=total_dp,
             outlet_pressure=outlet_pressure,
@@ -962,6 +943,79 @@ class PressureDropCalculationEngine:
         logger.info("=" * 80)
 
         return results
+
+    # ------------------------------------------------------------------
+    # Public API
+    # ------------------------------------------------------------------
+
+    def calculate(self, inputs: PressureDropInputs) -> PressureDropResults:
+        """Calculate comprehensive pressure drop analysis.
+
+        Args:
+            inputs: PressureDropInputs object with all parameters
+
+        Returns:
+            PressureDropResults object with complete analysis
+
+        Raises:
+            ValueError: If inputs are invalid
+        """
+        is_valid, error_msg = inputs.validate()
+        if not is_valid:
+            logger.error(f"Input validation failed: {error_msg}")
+            raise ValueError(f"Invalid inputs: {error_msg}")
+
+        logger.info("=" * 80)
+        logger.info("PRESSURE DROP CALCULATION")
+        logger.info("=" * 80)
+
+        # Step 1: Flow properties & regime
+        flow_props = calculate_flow_properties(inputs)
+        flow_regime = classify_flow_regime(flow_props.reynolds_number)
+        logger.info(
+            f"Flow regime: {flow_regime} (Re = {flow_props.reynolds_number:.0f})"
+        )
+
+        # Step 2: Friction factor
+        relative_roughness = inputs.pipe_roughness / inputs.pipe_diameter
+        friction_factor = select_friction_factor_method(
+            inputs.friction_method, flow_props.reynolds_number, relative_roughness
+        )
+        logger.info(
+            f"Friction factor ({inputs.friction_method}): f = {friction_factor:.6f}"
+        )
+
+        # Step 3: Incompressible ΔP components
+        dp_friction, dp_fittings, dp_elevation, total_k_factor = (
+            self._compute_incompressible_components(inputs, flow_props, friction_factor)
+        )
+        dp_incompressible = dp_friction + dp_fittings + dp_elevation
+
+        # Step 4: Compressibility correction (if applicable)
+        total_dp, outlet_pressure, dp_acceleration, warnings_list = (
+            self._apply_compressibility(
+                inputs,
+                flow_props,
+                friction_factor,
+                dp_incompressible,
+                total_k_factor,
+            )
+        )
+
+        # Step 5: Build result object
+        return self._build_results(
+            inputs=inputs,
+            flow_props=flow_props,
+            flow_regime=flow_regime,
+            friction_factor=friction_factor,
+            dp_friction=dp_friction,
+            dp_fittings=dp_fittings,
+            dp_elevation=dp_elevation,
+            dp_acceleration=dp_acceleration,
+            total_dp=total_dp,
+            outlet_pressure=outlet_pressure,
+            warnings_list=warnings_list,
+        )
 
 
 if __name__ == "__main__":
