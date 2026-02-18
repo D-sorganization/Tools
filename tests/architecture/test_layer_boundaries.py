@@ -99,6 +99,7 @@ def _extract_imports(filepath: Path) -> list[dict[str, Any]]:
                         "module": node.module,
                         "lineno": node.lineno,
                         "type": "from",
+                        "level": node.level,  # 0=absolute, >0=relative
                     }
                 )
     return imports
@@ -128,6 +129,10 @@ class TestSharedLibraryBoundaries:
         for filepath in shared_files:
             imports = _extract_imports(filepath)
             for imp in imports:
+                # Skip relative imports — they stay within the package
+                # and cannot cross the shared→tool boundary
+                if imp.get("level", 0) > 0:
+                    continue
                 module_root = imp["module"].split(".")[0]
                 if module_root in TOOL_PACKAGES:
                     rel = filepath.relative_to(REPO_ROOT)
@@ -238,11 +243,10 @@ class TestPureCalculationEngines:
                         f"  {rel}:{imp['lineno']} imports '{imp['module']}'"
                     )
 
-        assert (
-            not violations
-        ), f"Engine files import Qt ({len(violations)} violations):\n" + "\n".join(
+        msg = f"Engine files import Qt ({len(violations)} violations):\n" + "\n".join(
             violations
         )
+        assert not violations, msg
 
 
 # ─── Test: Contract module consistency ───────────────────────────
@@ -326,6 +330,5 @@ class TestNoWildcardImports:
                             f"  {rel}:{node.lineno} from {node.module} import *"
                         )
 
-        assert (
-            not violations
-        ), f"Wildcard imports found ({len(violations)}):\n" + "\n".join(violations)
+        msg = f"Wildcard imports found ({len(violations)}):\n" + "\n".join(violations)
+        assert not violations, msg
