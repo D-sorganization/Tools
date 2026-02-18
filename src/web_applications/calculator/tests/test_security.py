@@ -18,7 +18,7 @@ class TestSecurity(unittest.TestCase):
         response = self.client.post("/api/calculate", json=payload)
 
         if response.status_code == 200:
-            print("VULNERABILITY CONFIRMED: Large input accepted")
+            self.fail("VULNERABILITY CONFIRMED: Large input accepted")
 
         self.assertEqual(
             response.status_code, 400, "Should reject excessively large input"

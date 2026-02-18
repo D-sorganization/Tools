@@ -4,10 +4,10 @@ Cross-platform launcher for building Folder Packer executable.
 Replaces build.bat for better portability.
 """
 
+import logging
 import os
 import sys
 from pathlib import Path
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +50,7 @@ def main() -> None:
             sys.exit(1)
 
     except KeyboardInterrupt:
-        print()
+        sys.stderr.write("\n")  # clean newline after ^C
         logger.info("Build cancelled by user.")
         sys.exit(1)
 
