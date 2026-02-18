@@ -4,10 +4,10 @@ Cross-platform launcher for building Folder Packer executable.
 Replaces build.bat for better portability.
 """
 
+import logging
 import os
 import sys
 from pathlib import Path
-import logging
 
 logger = logging.getLogger(__name__)
 
