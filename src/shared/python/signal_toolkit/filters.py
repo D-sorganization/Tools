@@ -13,7 +13,7 @@ from enum import Enum
 import numpy as np
 from scipy import signal as scipy_signal
 from scipy.signal import (
-    bessel,
+    bessel as _scipy_bessel,
     butter,
     cheby1,
     cheby2,
@@ -107,6 +107,43 @@ class FilterSpec:
         return t, response
 
 
+def _normalize_cutoff(
+    filter_type: FilterType,
+    cutoff: float | tuple[float, float],
+    fs: float,
+) -> tuple[float | tuple[float, float], str]:
+    """Normalize cutoff to Nyquist-relative value and resolve btype.
+
+    Preconditions:
+        - *fs* must be > 0.
+        - Band filters require a (low, high) *cutoff* tuple.
+
+    Returns:
+        (wn, btype) ready for scipy filter design functions.
+    """
+    nyquist = fs / 2
+    btype = filter_type.value
+
+    if filter_type in (FilterType.BANDPASS, FilterType.BANDSTOP, FilterType.NOTCH):
+        if not isinstance(cutoff, tuple):
+            msg = "Bandpass/bandstop/notch filters require (low, high) cutoff tuple"
+            raise ValueError(msg)
+        wn: float | tuple[float, float] = (
+            cutoff[0] / nyquist,
+            cutoff[1] / nyquist,
+        )
+        if filter_type == FilterType.NOTCH:
+            btype = "bandstop"
+    else:
+        wn = (
+            cutoff / nyquist
+            if isinstance(cutoff, (int, float))
+            else cutoff[0] / nyquist
+        )
+
+    return wn, btype
+
+
 class FilterDesigner:
     """Factory class for creating various digital filters."""
 
@@ -128,38 +165,11 @@ class FilterDesigner:
         Returns:
             FilterSpec with filter coefficients.
         """
-        nyquist = fs / 2
-        btype = filter_type.value
-
-        if filter_type in (FilterType.BANDPASS, FilterType.BANDSTOP):
-            if not isinstance(cutoff, tuple):
-                msg = "Bandpass/bandstop filters require (low, high) cutoff tuple"
-                raise ValueError(msg)
-            wn = (cutoff[0] / nyquist, cutoff[1] / nyquist)
-        elif filter_type == FilterType.NOTCH:
-            if not isinstance(cutoff, tuple):
-                msg = "Notch filter requires (low, high) cutoff tuple"
-                raise ValueError(msg)
-            wn = (cutoff[0] / nyquist, cutoff[1] / nyquist)
-            btype = "bandstop"
-        else:
-            wn = (
-                cutoff / nyquist
-                if isinstance(cutoff, (int, float))
-                else cutoff[0] / nyquist
-            )
-
+        wn, btype = _normalize_cutoff(filter_type, cutoff, fs)
         b, a = butter(order, wn, btype=btype)
-
-        return FilterSpec(
-            b=b,
-            a=a,
-            filter_type=filter_type,
-            design=FilterDesign.BUTTERWORTH,
-            order=order,
-            cutoff=cutoff,
-            fs=fs,
-        )
+        return FilterSpec(b=b, a=a, filter_type=filter_type,
+                          design=FilterDesign.BUTTERWORTH, order=order,
+                          cutoff=cutoff, fs=fs)
 
     @staticmethod
     def chebyshev1(
@@ -181,34 +191,11 @@ class FilterDesigner:
         Returns:
             FilterSpec with filter coefficients.
         """
-        nyquist = fs / 2
-        btype = filter_type.value
-
-        if filter_type in (FilterType.BANDPASS, FilterType.BANDSTOP, FilterType.NOTCH):
-            if not isinstance(cutoff, tuple):
-                msg = "Bandpass/bandstop/notch filters require (low, high) cutoff tuple"
-                raise ValueError(msg)
-            wn = (cutoff[0] / nyquist, cutoff[1] / nyquist)
-            if filter_type == FilterType.NOTCH:
-                btype = "bandstop"
-        else:
-            wn = (
-                cutoff / nyquist
-                if isinstance(cutoff, (int, float))
-                else cutoff[0] / nyquist
-            )
-
+        wn, btype = _normalize_cutoff(filter_type, cutoff, fs)
         b, a = cheby1(order, ripple_db, wn, btype=btype)
-
-        return FilterSpec(
-            b=b,
-            a=a,
-            filter_type=filter_type,
-            design=FilterDesign.CHEBYSHEV1,
-            order=order,
-            cutoff=cutoff,
-            fs=fs,
-        )
+        return FilterSpec(b=b, a=a, filter_type=filter_type,
+                          design=FilterDesign.CHEBYSHEV1, order=order,
+                          cutoff=cutoff, fs=fs)
 
     @staticmethod
     def chebyshev2(
@@ -230,34 +217,11 @@ class FilterDesigner:
         Returns:
             FilterSpec with filter coefficients.
         """
-        nyquist = fs / 2
-        btype = filter_type.value
-
-        if filter_type in (FilterType.BANDPASS, FilterType.BANDSTOP, FilterType.NOTCH):
-            if not isinstance(cutoff, tuple):
-                msg = "Bandpass/bandstop/notch filters require (low, high) cutoff tuple"
-                raise ValueError(msg)
-            wn = (cutoff[0] / nyquist, cutoff[1] / nyquist)
-            if filter_type == FilterType.NOTCH:
-                btype = "bandstop"
-        else:
-            wn = (
-                cutoff / nyquist
-                if isinstance(cutoff, (int, float))
-                else cutoff[0] / nyquist
-            )
-
+        wn, btype = _normalize_cutoff(filter_type, cutoff, fs)
         b, a = cheby2(order, attenuation_db, wn, btype=btype)
-
-        return FilterSpec(
-            b=b,
-            a=a,
-            filter_type=filter_type,
-            design=FilterDesign.CHEBYSHEV2,
-            order=order,
-            cutoff=cutoff,
-            fs=fs,
-        )
+        return FilterSpec(b=b, a=a, filter_type=filter_type,
+                          design=FilterDesign.CHEBYSHEV2, order=order,
+                          cutoff=cutoff, fs=fs)
 
     @staticmethod
     def elliptic(
@@ -281,34 +245,11 @@ class FilterDesigner:
         Returns:
             FilterSpec with filter coefficients.
         """
-        nyquist = fs / 2
-        btype = filter_type.value
-
-        if filter_type in (FilterType.BANDPASS, FilterType.BANDSTOP, FilterType.NOTCH):
-            if not isinstance(cutoff, tuple):
-                msg = "Bandpass/bandstop/notch filters require (low, high) cutoff tuple"
-                raise ValueError(msg)
-            wn = (cutoff[0] / nyquist, cutoff[1] / nyquist)
-            if filter_type == FilterType.NOTCH:
-                btype = "bandstop"
-        else:
-            wn = (
-                cutoff / nyquist
-                if isinstance(cutoff, (int, float))
-                else cutoff[0] / nyquist
-            )
-
+        wn, btype = _normalize_cutoff(filter_type, cutoff, fs)
         b, a = ellip(order, ripple_db, attenuation_db, wn, btype=btype)
-
-        return FilterSpec(
-            b=b,
-            a=a,
-            filter_type=filter_type,
-            design=FilterDesign.ELLIPTIC,
-            order=order,
-            cutoff=cutoff,
-            fs=fs,
-        )
+        return FilterSpec(b=b, a=a, filter_type=filter_type,
+                          design=FilterDesign.ELLIPTIC, order=order,
+                          cutoff=cutoff, fs=fs)
 
     @staticmethod
     def bessel(
@@ -328,34 +269,11 @@ class FilterDesigner:
         Returns:
             FilterSpec with filter coefficients.
         """
-        nyquist = fs / 2
-        btype = filter_type.value
-
-        if filter_type in (FilterType.BANDPASS, FilterType.BANDSTOP, FilterType.NOTCH):
-            if not isinstance(cutoff, tuple):
-                msg = "Bandpass/bandstop/notch filters require (low, high) cutoff tuple"
-                raise ValueError(msg)
-            wn = (cutoff[0] / nyquist, cutoff[1] / nyquist)
-            if filter_type == FilterType.NOTCH:
-                btype = "bandstop"
-        else:
-            wn = (
-                cutoff / nyquist
-                if isinstance(cutoff, (int, float))
-                else cutoff[0] / nyquist
-            )
-
-        b, a = bessel(order, wn, btype=btype, norm="phase")
-
-        return FilterSpec(
-            b=b,
-            a=a,
-            filter_type=filter_type,
-            design=FilterDesign.BESSEL,
-            order=order,
-            cutoff=cutoff,
-            fs=fs,
-        )
+        wn, btype = _normalize_cutoff(filter_type, cutoff, fs)
+        b, a = _scipy_bessel(order, wn, btype=btype, norm="phase")
+        return FilterSpec(b=b, a=a, filter_type=filter_type,
+                          design=FilterDesign.BESSEL, order=order,
+                          cutoff=cutoff, fs=fs)
 
 
 def apply_filter(

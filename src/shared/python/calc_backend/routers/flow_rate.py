@@ -1,59 +1,28 @@
-"""Flow rate converter router.  See issue #608."""
+"""Flow rate converter router.  See issue #608.
+
+DRY: reuses the canonical conversion tables from
+upstream_drift_tools.calculators.conversion.flow_rate_converter
+instead of duplicating conversion factors.
+"""
 
 from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException
+from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
+    MASS_FLOW_CONVERSIONS,
+    MOLAR_FLOW_CONVERSIONS,
+    VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S,
+)
 
 from ..contracts.flow_rate import FlowRateConvertRequest, FlowRateConvertResponse
 
 router = APIRouter(prefix="/api/calc/flow-rate", tags=["flow-rate"])
 
-# ---------------------------------------------------------------------------
-# Conversion factors -- all relative to SI base (kg/s, mol/s, m3/s)
-# ---------------------------------------------------------------------------
-
-MASS_TO_KG_S: dict[str, float] = {
-    "kg/s": 1.0,
-    "kg/h": 1.0 / 3600.0,
-    "kg/min": 1.0 / 60.0,
-    "g/s": 1e-3,
-    "g/h": 1e-3 / 3600.0,
-    "lb/s": 0.45359237,
-    "lb/h": 0.45359237 / 3600.0,
-    "lb/min": 0.45359237 / 60.0,
-    "ton/h": 1000.0 / 3600.0,
-}
-
-MOLAR_TO_MOL_S: dict[str, float] = {
-    "mol/s": 1.0,
-    "mol/h": 1.0 / 3600.0,
-    "mol/min": 1.0 / 60.0,
-    "kmol/s": 1e3,
-    "kmol/h": 1e3 / 3600.0,
-    "kmol/min": 1e3 / 60.0,
-    "lbmol/s": 453.59237,
-    "lbmol/h": 453.59237 / 3600.0,
-    "lbmol/min": 453.59237 / 60.0,
-}
-
-VOLUMETRIC_TO_M3_S: dict[str, float] = {
-    "m3/s": 1.0,
-    "m3/h": 1.0 / 3600.0,
-    "m3/min": 1.0 / 60.0,
-    "L/s": 1e-3,
-    "L/min": 1e-3 / 60.0,
-    "L/h": 1e-3 / 3600.0,
-    "ft3/s": 0.028316846592,
-    "ft3/min": 0.028316846592 / 60.0,
-    "ft3/h": 0.028316846592 / 3600.0,
-    "CFM": 0.028316846592 / 60.0,
-    "GPM": 6.30902e-5,
-}
-
-_TABLES = {
-    "mass": MASS_TO_KG_S,
-    "molar": MOLAR_TO_MOL_S,
-    "volumetric": VOLUMETRIC_TO_M3_S,
+# Re-use canonical tables from flow_rate_converter (single source of truth)
+_TABLES: dict[str, dict[str, float]] = {
+    "mass": MASS_FLOW_CONVERSIONS,
+    "molar": MOLAR_FLOW_CONVERSIONS,
+    "volumetric": VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S,
 }
 
 
