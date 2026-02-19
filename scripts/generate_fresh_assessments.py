@@ -337,7 +337,10 @@ def calculate_grades(stats: RepoStats) -> dict[str, tuple[float, str]]:
         score_o -= 2.0
     if stats["fixmes"] > 20:
         score_o -= 2.0
-    grades["O"] = (max(0.0, score_o), f"TODOs: {stats['todos']}, FIXMEs: {stats['fixmes']}")
+    grades["O"] = (
+        max(0.0, score_o),
+        f"TODOs: {stats['todos']}, FIXMEs: {stats['fixmes']}",
+    )
 
     return grades
 
