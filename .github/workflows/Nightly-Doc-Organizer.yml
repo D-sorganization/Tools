@@ -1,0 +1,31 @@
+name: Nightly Documentation Organizer
+
+on:
+  schedule:
+    - cron: "0 8 * * 0,4" # Daily at 3 AM PST (11 UTC)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  organize-docs:
+    runs-on: ubuntu-latest
+    if: hashFiles('.github/WORKFLOWS_PAUSED') == ''
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Organize Docs
+        run: |
+          mkdir -p docs/maintenance
+          echo "# Tools Repo Workflow Status" > docs/maintenance/WORKFLOWS.md
+          echo "Automated cleanup and organization." >> docs/maintenance/WORKFLOWS.md
+
+      - name: Commit Changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: nightly documentation organization"
+          file_pattern: "docs/maintenance/*"
