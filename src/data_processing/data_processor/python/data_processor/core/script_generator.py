@@ -64,106 +64,22 @@ class ScriptGenerator:
         """
         lines: list[str] = []
 
-        # Header
-        lines.extend(
-            [
-                '"""',
-                f"Data Processing Script: {pipeline.name}",
-                f"Generated: {datetime.now().isoformat()}",
-                "",
-                f"Description: {pipeline.description}",
-                '"""',
-                "",
-            ]
-        )
+        lines.extend(self._generate_script_header(pipeline))
 
-        # Imports
         if include_imports:
             lines.extend(
                 self._generate_imports(pipeline, include_logging, use_argparse)
             )
 
-        # Logging setup
         if include_logging:
-            lines.extend(
-                [
-                    "",
-                    "# Logging setup",
-                    "logging.basicConfig(",
-                    "    level=logging.INFO,",
-                    "    format='%(asctime)s - %(levelname)s - %(message)s'",
-                    ")",
-                    "logger = logging.getLogger(__name__)",
-                    "",
-                ]
-            )
+            lines.extend(self._generate_logging_setup())
 
-        # Main processing function
-        lines.extend(
-            [
-                "",
-                "def process_data(",
-                "    input_path: str,",
-                "    output_path: str,",
-                "    **kwargs",
-                ") -> pd.DataFrame:",
-                '    """Process data according to the defined pipeline."""',
-                "",
-            ]
-        )
+        lines.extend(self._generate_process_function(pipeline))
 
-        # Generate step code
-        for i, step in enumerate(pipeline.steps):
-            if not step.enabled:
-                lines.append(f"    # Step {i+1} (disabled): {step.description}")
-                continue
-
-            lines.append(f"    # Step {i+1}: {step.description}")
-            step_code = self._generate_step_code(step, indent=4)
-            lines.extend(step_code)
-            lines.append("")
-
-        lines.extend(
-            [
-                "    return df",
-                "",
-            ]
-        )
-
-        # Argparse
         if use_argparse:
             lines.extend(self._generate_argparse(pipeline))
 
-        # Main block
-        lines.extend(
-            [
-                "",
-                "if __name__ == '__main__':",
-            ]
-        )
-
-        if use_argparse:
-            lines.extend(
-                [
-                    "    args = parse_args()",
-                    "    result = process_data(",
-                    "        input_path=args.input,",
-                    "        output_path=args.output,",
-                    "    )",
-                    "    logger.info(f'Processing complete. Output shape: {result.shape}')",  # noqa: E501
-                ]
-            )
-        else:
-            lines.extend(
-                [
-                    "    # Configure paths",
-                    "    INPUT_PATH = 'input.csv'",
-                    "    OUTPUT_PATH = 'output.csv'",
-                    "",
-                    "    result = process_data(INPUT_PATH, OUTPUT_PATH)",
-                    "    print(f'Processing complete. Output shape: {result.shape}')",
-                ]
-            )
+        lines.extend(self._generate_main_block(use_argparse))
 
         script = "\n".join(lines)
 
@@ -172,6 +88,82 @@ class ScriptGenerator:
             logger.info(f"Generated script: {output_path}")
 
         return script
+
+    @staticmethod
+    def _generate_script_header(pipeline: ProcessingPipeline) -> list[str]:
+        """Generate the module docstring header."""
+        return [
+            '"""',
+            f"Data Processing Script: {pipeline.name}",
+            f"Generated: {datetime.now().isoformat()}",
+            "",
+            f"Description: {pipeline.description}",
+            '"""',
+            "",
+        ]
+
+    @staticmethod
+    def _generate_logging_setup() -> list[str]:
+        """Generate logging configuration lines."""
+        return [
+            "",
+            "# Logging setup",
+            "logging.basicConfig(",
+            "    level=logging.INFO,",
+            "    format='%(asctime)s - %(levelname)s - %(message)s'",
+            ")",
+            "logger = logging.getLogger(__name__)",
+            "",
+        ]
+
+    def _generate_process_function(self, pipeline: ProcessingPipeline) -> list[str]:
+        """Generate the main process_data function."""
+        lines = [
+            "",
+            "def process_data(",
+            "    input_path: str,",
+            "    output_path: str,",
+            "    **kwargs",
+            ") -> pd.DataFrame:",
+            '    """Process data according to the defined pipeline."""',
+            "",
+        ]
+
+        for i, step in enumerate(pipeline.steps):
+            if not step.enabled:
+                lines.append(f"    # Step {i+1} (disabled): {step.description}")
+                continue
+
+            lines.append(f"    # Step {i+1}: {step.description}")
+            lines.extend(self._generate_step_code(step, indent=4))
+            lines.append("")
+
+        lines.extend(["    return df", ""])
+        return lines
+
+    @staticmethod
+    def _generate_main_block(use_argparse: bool) -> list[str]:
+        """Generate the if __name__ == '__main__' block."""
+        lines = ["", "if __name__ == '__main__':"]
+        if use_argparse:
+            lines.extend([
+                "    args = parse_args()",
+                "    result = process_data(",
+                "        input_path=args.input,",
+                "        output_path=args.output,",
+                "    )",
+                "    logger.info(f'Processing complete. Output shape: {result.shape}')",  # noqa: E501
+            ])
+        else:
+            lines.extend([
+                "    # Configure paths",
+                "    INPUT_PATH = 'input.csv'",
+                "    OUTPUT_PATH = 'output.csv'",
+                "",
+                "    result = process_data(INPUT_PATH, OUTPUT_PATH)",
+                "    print(f'Processing complete. Output shape: {result.shape}')",
+            ])
+        return lines
 
     def generate_cli_command(
         self,
@@ -217,7 +209,18 @@ class ScriptGenerator:
         Returns:
             Batch processing script
         """
-        lines = [
+        lines: list[str] = []
+        lines.extend(self._generate_batch_header(pipeline))
+        lines.extend(self._generate_batch_process_func(pipeline))
+        lines.extend(
+            self._generate_batch_main(input_patterns, output_dir, parallel)
+        )
+        return "\n".join(lines)
+
+    @staticmethod
+    def _generate_batch_header(pipeline: ProcessingPipeline) -> list[str]:
+        """Generate header and imports for batch script."""
+        return [
             '"""',
             f"Batch Processing Script: {pipeline.name}",
             f"Generated: {datetime.now().isoformat()}",
@@ -235,96 +238,84 @@ class ScriptGenerator:
             "",
         ]
 
-        # Add the process_single_file function
-        lines.extend(
-            [
-                "def process_single_file(input_path: str, output_dir: str) -> str:",
-                '    """Process a single file."""',
-                "    try:",
-                "        df = pd.read_csv(input_path)",
-                "",
-            ]
-        )
+    def _generate_batch_process_func(
+        self, pipeline: ProcessingPipeline
+    ) -> list[str]:
+        """Generate the process_single_file function for batch script."""
+        lines = [
+            "def process_single_file(input_path: str, output_dir: str) -> str:",
+            '    """Process a single file."""',
+            "    try:",
+            "        df = pd.read_csv(input_path)",
+            "",
+        ]
 
-        # Add processing steps
         for step in pipeline.steps:
-            if not step.enabled:
-                continue
-            step_code = self._generate_step_code(step, indent=8)
-            lines.extend(step_code)
+            if step.enabled:
+                lines.extend(self._generate_step_code(step, indent=8))
 
-        lines.extend(
-            [
-                "",
-                "        # Save output",
-                "        output_name = Path(input_path).stem + '_processed.csv'",
-                "        output_path = os.path.join(output_dir, output_name)",
-                "        df.to_csv(output_path, index=False)",
-                "        return output_path",
-                "    except Exception as e:",
-                "        print(f'Error processing {input_path}: {e}')",
-                "        return None",
-                "",
-            ]
-        )
+        lines.extend([
+            "",
+            "        # Save output",
+            "        output_name = Path(input_path).stem + '_processed.csv'",
+            "        output_path = os.path.join(output_dir, output_name)",
+            "        df.to_csv(output_path, index=False)",
+            "        return output_path",
+            "    except Exception as e:",
+            "        print(f'Error processing {input_path}: {e}')",
+            "        return None",
+            "",
+        ])
+        return lines
 
-        # Main function
-        lines.extend(
-            [
-                "def main():",
-                f"    input_patterns = {input_patterns}",
-                f"    output_dir = '{output_dir}'",
-                "",
-                "    # Ensure output directory exists",
-                "    os.makedirs(output_dir, exist_ok=True)",
-                "",
-                "    # Collect input files",
-                "    input_files = []",
-                "    for pattern in input_patterns:",
-                "        input_files.extend(glob.glob(pattern))",
-                "",
-                "    print(f'Found {len(input_files)} files to process')",
-                "",
-            ]
-        )
+    @staticmethod
+    def _generate_batch_main(
+        input_patterns: list[str], output_dir: str, parallel: bool
+    ) -> list[str]:
+        """Generate the main function and entry point for batch script."""
+        lines = [
+            "def main():",
+            f"    input_patterns = {input_patterns}",
+            f"    output_dir = '{output_dir}'",
+            "",
+            "    # Ensure output directory exists",
+            "    os.makedirs(output_dir, exist_ok=True)",
+            "",
+            "    # Collect input files",
+            "    input_files = []",
+            "    for pattern in input_patterns:",
+            "        input_files.extend(glob.glob(pattern))",
+            "",
+            "    print(f'Found {len(input_files)} files to process')",
+            "",
+        ]
 
         if parallel:
-            lines.extend(
-                [
-                    "    # Process files in parallel",
-                    "    with ProcessPoolExecutor() as executor:",
-                    "        futures = {",
-                    "            executor.submit(process_single_file, f, output_dir): f",  # noqa: E501
-                    "            for f in input_files",
-                    "        }",
-                    "",
-                    "        for future in as_completed(futures):",
-                    "            input_file = futures[future]",
-                    "            result = future.result()",
-                    "            if result:",
-                    "                print(f'Processed: {input_file} -> {result}')",
-                ]
-            )
-        else:
-            lines.extend(
-                [
-                    "    # Process files sequentially",
-                    "    for input_file in input_files:",
-                    "        result = process_single_file(input_file, output_dir)",
-                    "        if result:",
-                    "            print(f'Processed: {input_file} -> {result}')",
-                ]
-            )
-
-        lines.extend(
-            [
+            lines.extend([
+                "    # Process files in parallel",
+                "    with ProcessPoolExecutor() as executor:",
+                "        futures = {",
+                "            executor.submit(process_single_file, f, output_dir): f",  # noqa: E501
+                "            for f in input_files",
+                "        }",
                 "",
-                "if __name__ == '__main__':",
-                "    main()",
-            ]
-        )
+                "        for future in as_completed(futures):",
+                "            input_file = futures[future]",
+                "            result = future.result()",
+                "            if result:",
+                "                print(f'Processed: {input_file} -> {result}')",
+            ])
+        else:
+            lines.extend([
+                "    # Process files sequentially",
+                "    for input_file in input_files:",
+                "        result = process_single_file(input_file, output_dir)",
+                "        if result:",
+                "            print(f'Processed: {input_file} -> {result}')",
+            ])
 
-        return "\n".join(lines)
+        lines.extend(["", "if __name__ == '__main__':", "    main()"])
+        return lines
 
     def export_pipeline_config(
         self,

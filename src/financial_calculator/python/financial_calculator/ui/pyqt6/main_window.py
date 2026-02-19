@@ -268,146 +268,154 @@ class FinancialCalculatorMainWindow(QMainWindow):
         layout = QVBoxLayout(container)
         layout.setSpacing(15)
 
-        # Title
         title = QLabel("Financial Model Calculator")
         title.setFont(QFont("", 18, QFont.Weight.Bold))
         title.setStyleSheet(f"color: {COLORS['blue']};")
         layout.addWidget(title)
 
-        # Plant Operations Group
-        ops_group = QGroupBox("Plant Operations")
-        ops_layout = QFormLayout(ops_group)
+        layout.addWidget(self._create_operations_group())
+        layout.addWidget(self._create_revenue_group())
+        layout.addWidget(self._create_variable_costs_group())
+        layout.addWidget(self._create_fixed_costs_group())
+        layout.addWidget(self._create_capital_group())
 
-        self.plant_capacity_input = QDoubleSpinBox()
-        self.plant_capacity_input.setRange(0, 10000)
-        self.plant_capacity_input.setValue(100)
-        self.plant_capacity_input.setSuffix(" TPD")
-        ops_layout.addRow("Plant Capacity:", self.plant_capacity_input)
-
-        self.operating_days_input = QSpinBox()
-        self.operating_days_input.setRange(0, 365)
-        self.operating_days_input.setValue(330)
-        self.operating_days_input.setSuffix(" days/yr")
-        ops_layout.addRow("Operating Days:", self.operating_days_input)
-
-        self.utilization_input = QDoubleSpinBox()
-        self.utilization_input.setRange(0, 100)
-        self.utilization_input.setValue(85)
-        self.utilization_input.setSuffix(" %")
-        ops_layout.addRow("Capacity Utilization:", self.utilization_input)
-
-        layout.addWidget(ops_group)
-
-        # Revenue Group
-        rev_group = QGroupBox("Revenue Parameters")
-        rev_layout = QFormLayout(rev_group)
-
-        self.product_price_input = QDoubleSpinBox()
-        self.product_price_input.setRange(0, 10000)
-        self.product_price_input.setValue(500)
-        self.product_price_input.setPrefix("$")
-        self.product_price_input.setSuffix("/ton")
-        rev_layout.addRow("Product Price:", self.product_price_input)
-
-        layout.addWidget(rev_group)
-
-        # Variable Costs Group
-        var_group = QGroupBox("Variable Costs ($/ton)")
-        var_layout = QFormLayout(var_group)
-
-        self.feedstock_cost_input = QDoubleSpinBox()
-        self.feedstock_cost_input.setRange(0, 5000)
-        self.feedstock_cost_input.setValue(200)
-        self.feedstock_cost_input.setPrefix("$")
-        var_layout.addRow("Feedstock Cost:", self.feedstock_cost_input)
-
-        self.labor_cost_input = QDoubleSpinBox()
-        self.labor_cost_input.setRange(0, 1000)
-        self.labor_cost_input.setValue(30)
-        self.labor_cost_input.setPrefix("$")
-        var_layout.addRow("Variable Labor:", self.labor_cost_input)
-
-        self.utilities_cost_input = QDoubleSpinBox()
-        self.utilities_cost_input.setRange(0, 1000)
-        self.utilities_cost_input.setValue(40)
-        self.utilities_cost_input.setPrefix("$")
-        var_layout.addRow("Utilities:", self.utilities_cost_input)
-
-        self.maintenance_cost_input = QDoubleSpinBox()
-        self.maintenance_cost_input.setRange(0, 500)
-        self.maintenance_cost_input.setValue(15)
-        self.maintenance_cost_input.setPrefix("$")
-        var_layout.addRow("Maintenance:", self.maintenance_cost_input)
-
-        layout.addWidget(var_group)
-
-        # Fixed Costs Group
-        fixed_group = QGroupBox("Fixed Costs ($/year)")
-        fixed_layout = QFormLayout(fixed_group)
-
-        self.fixed_labor_input = QDoubleSpinBox()
-        self.fixed_labor_input.setRange(0, 10000000)
-        self.fixed_labor_input.setValue(500000)
-        self.fixed_labor_input.setPrefix("$")
-        self.fixed_labor_input.setDecimals(0)
-        fixed_layout.addRow("Fixed Labor:", self.fixed_labor_input)
-
-        self.insurance_input = QDoubleSpinBox()
-        self.insurance_input.setRange(0, 1000000)
-        self.insurance_input.setValue(100000)
-        self.insurance_input.setPrefix("$")
-        self.insurance_input.setDecimals(0)
-        fixed_layout.addRow("Insurance:", self.insurance_input)
-
-        layout.addWidget(fixed_group)
-
-        # Capital & Financing Group
-        cap_group = QGroupBox("Capital & Financing")
-        cap_layout = QFormLayout(cap_group)
-
-        self.capital_input = QDoubleSpinBox()
-        self.capital_input.setRange(0, 1000000000)
-        self.capital_input.setValue(10000000)
-        self.capital_input.setPrefix("$")
-        self.capital_input.setDecimals(0)
-        cap_layout.addRow("Total Capital:", self.capital_input)
-
-        self.debt_ratio_input = QDoubleSpinBox()
-        self.debt_ratio_input.setRange(0, 100)
-        self.debt_ratio_input.setValue(60)
-        self.debt_ratio_input.setSuffix(" %")
-        cap_layout.addRow("Debt Ratio:", self.debt_ratio_input)
-
-        self.interest_rate_input = QDoubleSpinBox()
-        self.interest_rate_input.setRange(0, 30)
-        self.interest_rate_input.setValue(7)
-        self.interest_rate_input.setSuffix(" %")
-        cap_layout.addRow("Interest Rate:", self.interest_rate_input)
-
-        self.depreciation_input = QSpinBox()
-        self.depreciation_input.setRange(1, 40)
-        self.depreciation_input.setValue(10)
-        self.depreciation_input.setSuffix(" years")
-        cap_layout.addRow("Depreciation Period:", self.depreciation_input)
-
-        self.tax_rate_input = QDoubleSpinBox()
-        self.tax_rate_input.setRange(0, 50)
-        self.tax_rate_input.setValue(25)
-        self.tax_rate_input.setSuffix(" %")
-        cap_layout.addRow("Tax Rate:", self.tax_rate_input)
-
-        layout.addWidget(cap_group)
-
-        # Calculate Button
         self.calculate_btn = QPushButton("Calculate Financial Model")
         self.calculate_btn.setMinimumHeight(50)
         self.calculate_btn.clicked.connect(self._on_calculate)
         layout.addWidget(self.calculate_btn)
 
         layout.addStretch()
-
         scroll.setWidget(container)
         return scroll
+
+    def _create_operations_group(self) -> QGroupBox:
+        """Create the plant operations input group."""
+        group = QGroupBox("Plant Operations")
+        form = QFormLayout(group)
+
+        self.plant_capacity_input = QDoubleSpinBox()
+        self.plant_capacity_input.setRange(0, 10000)
+        self.plant_capacity_input.setValue(100)
+        self.plant_capacity_input.setSuffix(" TPD")
+        form.addRow("Plant Capacity:", self.plant_capacity_input)
+
+        self.operating_days_input = QSpinBox()
+        self.operating_days_input.setRange(0, 365)
+        self.operating_days_input.setValue(330)
+        self.operating_days_input.setSuffix(" days/yr")
+        form.addRow("Operating Days:", self.operating_days_input)
+
+        self.utilization_input = QDoubleSpinBox()
+        self.utilization_input.setRange(0, 100)
+        self.utilization_input.setValue(85)
+        self.utilization_input.setSuffix(" %")
+        form.addRow("Capacity Utilization:", self.utilization_input)
+
+        return group
+
+    def _create_revenue_group(self) -> QGroupBox:
+        """Create the revenue parameters input group."""
+        group = QGroupBox("Revenue Parameters")
+        form = QFormLayout(group)
+
+        self.product_price_input = QDoubleSpinBox()
+        self.product_price_input.setRange(0, 10000)
+        self.product_price_input.setValue(500)
+        self.product_price_input.setPrefix("$")
+        self.product_price_input.setSuffix("/ton")
+        form.addRow("Product Price:", self.product_price_input)
+
+        return group
+
+    def _create_variable_costs_group(self) -> QGroupBox:
+        """Create the variable costs input group."""
+        group = QGroupBox("Variable Costs ($/ton)")
+        form = QFormLayout(group)
+
+        self.feedstock_cost_input = QDoubleSpinBox()
+        self.feedstock_cost_input.setRange(0, 5000)
+        self.feedstock_cost_input.setValue(200)
+        self.feedstock_cost_input.setPrefix("$")
+        form.addRow("Feedstock Cost:", self.feedstock_cost_input)
+
+        self.labor_cost_input = QDoubleSpinBox()
+        self.labor_cost_input.setRange(0, 1000)
+        self.labor_cost_input.setValue(30)
+        self.labor_cost_input.setPrefix("$")
+        form.addRow("Variable Labor:", self.labor_cost_input)
+
+        self.utilities_cost_input = QDoubleSpinBox()
+        self.utilities_cost_input.setRange(0, 1000)
+        self.utilities_cost_input.setValue(40)
+        self.utilities_cost_input.setPrefix("$")
+        form.addRow("Utilities:", self.utilities_cost_input)
+
+        self.maintenance_cost_input = QDoubleSpinBox()
+        self.maintenance_cost_input.setRange(0, 500)
+        self.maintenance_cost_input.setValue(15)
+        self.maintenance_cost_input.setPrefix("$")
+        form.addRow("Maintenance:", self.maintenance_cost_input)
+
+        return group
+
+    def _create_fixed_costs_group(self) -> QGroupBox:
+        """Create the fixed costs input group."""
+        group = QGroupBox("Fixed Costs ($/year)")
+        form = QFormLayout(group)
+
+        self.fixed_labor_input = QDoubleSpinBox()
+        self.fixed_labor_input.setRange(0, 10000000)
+        self.fixed_labor_input.setValue(500000)
+        self.fixed_labor_input.setPrefix("$")
+        self.fixed_labor_input.setDecimals(0)
+        form.addRow("Fixed Labor:", self.fixed_labor_input)
+
+        self.insurance_input = QDoubleSpinBox()
+        self.insurance_input.setRange(0, 1000000)
+        self.insurance_input.setValue(100000)
+        self.insurance_input.setPrefix("$")
+        self.insurance_input.setDecimals(0)
+        form.addRow("Insurance:", self.insurance_input)
+
+        return group
+
+    def _create_capital_group(self) -> QGroupBox:
+        """Create the capital and financing input group."""
+        group = QGroupBox("Capital & Financing")
+        form = QFormLayout(group)
+
+        self.capital_input = QDoubleSpinBox()
+        self.capital_input.setRange(0, 1000000000)
+        self.capital_input.setValue(10000000)
+        self.capital_input.setPrefix("$")
+        self.capital_input.setDecimals(0)
+        form.addRow("Total Capital:", self.capital_input)
+
+        self.debt_ratio_input = QDoubleSpinBox()
+        self.debt_ratio_input.setRange(0, 100)
+        self.debt_ratio_input.setValue(60)
+        self.debt_ratio_input.setSuffix(" %")
+        form.addRow("Debt Ratio:", self.debt_ratio_input)
+
+        self.interest_rate_input = QDoubleSpinBox()
+        self.interest_rate_input.setRange(0, 30)
+        self.interest_rate_input.setValue(7)
+        self.interest_rate_input.setSuffix(" %")
+        form.addRow("Interest Rate:", self.interest_rate_input)
+
+        self.depreciation_input = QSpinBox()
+        self.depreciation_input.setRange(1, 40)
+        self.depreciation_input.setValue(10)
+        self.depreciation_input.setSuffix(" years")
+        form.addRow("Depreciation Period:", self.depreciation_input)
+
+        self.tax_rate_input = QDoubleSpinBox()
+        self.tax_rate_input.setRange(0, 50)
+        self.tax_rate_input.setValue(25)
+        self.tax_rate_input.setSuffix(" %")
+        form.addRow("Tax Rate:", self.tax_rate_input)
+
+        return group
 
     def _create_results_panel(self) -> QWidget:
         """Create the results panel."""

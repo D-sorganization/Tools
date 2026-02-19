@@ -32,76 +32,99 @@ class ProcessingMixin(AnalysisMixin, ArchiveMixin, UIProcessingMixin):
         """Main function to start the selected processing workflow."""
         mode = self.operation_mode.get()
 
-        # Analysis mode
         if mode == "analyze":
-            if not self.validate_inputs(check_destination=False):
-                return
-            try:
-                self.update_status("Generating analysis report...")
-                report = self.generate_analysis_report()
-                if report:
-                    self.show_text_dialog("Analysis Report", report)
-                    messagebox.showinfo(
-                        "Analysis Complete",
-                        "Analysis report generated successfully!",
-                    )
-            except OSError as e:
-                messagebox.showerror("Error", f"An error occurred during analysis: {e}")
+            self._run_analyze_mode()
             return
-
-        # Handle deduplication mode
         if mode == "deduplicate":
-            if not self.validate_inputs(check_destination=False):
-                return
-            try:
-                results_log = self._run_deduplicate_main_op()
-                messagebox.showinfo(
-                    "Operation Complete",
-                    "Deduplication complete.\n\n" + "\n".join(results_log),
-                )
-            except OSError as e:
-                messagebox.showerror(
-                    "Error",
-                    f"An error occurred during deduplication: {e}",
-                )
+            self._run_deduplicate_mode()
             return
 
-        # Handle Source -> Destination workflows
+        self._run_destination_workflow(mode)
+
+    def _run_analyze_mode(self) -> None:
+        """Run analysis-only mode."""
+        if not self.validate_inputs(check_destination=False):
+            return
+        try:
+            self.update_status("Generating analysis report...")
+            report = self.generate_analysis_report()
+            if report:
+                self.show_text_dialog("Analysis Report", report)
+                messagebox.showinfo(
+                    "Analysis Complete",
+                    "Analysis report generated successfully!",
+                )
+        except OSError as e:
+            messagebox.showerror("Error", f"An error occurred during analysis: {e}")
+
+    def _run_deduplicate_mode(self) -> None:
+        """Run deduplication-only mode."""
+        if not self.validate_inputs(check_destination=False):
+            return
+        try:
+            results_log = self._run_deduplicate_main_op()
+            messagebox.showinfo(
+                "Operation Complete",
+                "Deduplication complete.\n\n" + "\n".join(results_log),
+            )
+        except OSError as e:
+            messagebox.showerror(
+                "Error",
+                f"An error occurred during deduplication: {e}",
+            )
+
+    def _run_destination_workflow(self, mode: str) -> None:
+        """Run source-to-destination workflow (combine, flatten, prune)."""
         if not self.validate_inputs(check_destination=True):
             return
 
-        # Create backup if requested
         backup_path = None
         if self.backup_before_var.get():
             backup_path = self.create_backup()
             if backup_path is None and self.cancel_operation:
                 return
 
-        # Pre-processing
-        if self.unzip_var.get():
-            try:
-                self.update_status("Extracting archives...")
-                unzip_log = self._bulk_unzip_enhanced()
-                if self.cancel_operation:
-                    return
-                if not messagebox.askyesno(
-                    "Pre-processing Complete",
-                    "Bulk Extraction Complete!\n\n"
-                    + "\n".join(unzip_log)
-                    + "\n\nDo you want to proceed?",
-                ):
-                    return
-            except OSError as e:
-                messagebox.showerror(
-                    "Error",
-                    f"An error occurred during bulk unzip: {e}",
-                )
-                return
+        if not self._run_pre_processing():
+            return
 
-        # Main Operation
+        final_summary = self._run_main_operation(mode)
+        if final_summary is None:
+            return
+
+        final_summary = self._run_post_processing(final_summary, backup_path)
+
+        self.update_progress(100, "Complete!")
+        if not self.cancel_operation:
+            messagebox.showinfo("All Operations Complete", final_summary)
+
+    def _run_pre_processing(self) -> bool:
+        """Run pre-processing steps (archive extraction). Returns False to abort."""
+        if not self.unzip_var.get():
+            return True
+        try:
+            self.update_status("Extracting archives...")
+            unzip_log = self._bulk_unzip_enhanced()
+            if self.cancel_operation:
+                return False
+            if not messagebox.askyesno(
+                "Pre-processing Complete",
+                "Bulk Extraction Complete!\n\n"
+                + "\n".join(unzip_log)
+                + "\n\nDo you want to proceed?",
+            ):
+                return False
+        except OSError as e:
+            messagebox.showerror(
+                "Error", f"An error occurred during bulk unzip: {e}",
+            )
+            return False
+        return True
+
+    def _run_main_operation(self, mode: str) -> str | None:
+        """Run the main folder operation. Returns summary or None on failure."""
         try:
             self.update_progress(30, "Running main operation...")
-            main_op_log = []
+            main_op_log: list[str] = []
             if mode == "combine":
                 main_op_log = self._combine_folders_enhanced()
             elif mode == "flatten":
@@ -110,17 +133,18 @@ class ProcessingMixin(AnalysisMixin, ArchiveMixin, UIProcessingMixin):
                 main_op_log = self._prune_empty_folders()
 
             if self.cancel_operation:
-                return
-
-            final_summary = "Main Operation Complete!\n\n" + "\n".join(main_op_log)
+                return None
+            return "Main Operation Complete!\n\n" + "\n".join(main_op_log)
         except OSError as e:
             messagebox.showerror(
-                "Error",
-                f"An error occurred during the main operation: {e}",
+                "Error", f"An error occurred during the main operation: {e}",
             )
-            return
+            return None
 
-        # Post-processing
+    def _run_post_processing(
+        self, final_summary: str, backup_path: str | None
+    ) -> str:
+        """Run post-processing steps (dedup, zip, backup note)."""
         if self.deduplicate_var.get():
             try:
                 self.update_progress(70, "Deduplicating files...")
@@ -131,7 +155,6 @@ class ProcessingMixin(AnalysisMixin, ArchiveMixin, UIProcessingMixin):
             except OSError as e:
                 final_summary += f"\n\n--- Deduplication FAILED: {e}"
 
-        # Create output ZIP if requested
         if self.zip_output_var.get() and not self.cancel_operation:
             try:
                 self.update_progress(85, "Creating ZIP archive...")
@@ -145,7 +168,4 @@ class ProcessingMixin(AnalysisMixin, ArchiveMixin, UIProcessingMixin):
         if backup_path and not self.cancel_operation:
             final_summary += f"\n\n--- Backup Created ---\nLocation: {backup_path}"
 
-        self.update_progress(100, "Complete!")
-
-        if not self.cancel_operation:
-            messagebox.showinfo("All Operations Complete", final_summary)
+        return final_summary

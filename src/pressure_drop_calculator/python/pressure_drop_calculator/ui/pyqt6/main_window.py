@@ -102,12 +102,29 @@ class PressureDropCalculatorWidget(QWidget):
         layout.setContentsMargins(10, 10, 10, 10)
 
         splitter = QSplitter(Qt.Orientation.Horizontal)
+        splitter.addWidget(self._create_input_panel())
+        splitter.addWidget(self._create_results_panel())
+        splitter.setSizes([350, 650])
+        layout.addWidget(splitter)
 
-        # Left panel - Inputs
+    def _create_input_panel(self) -> QWidget:
+        """Create the left input panel with pipe, flow, and gas composition controls."""
         input_widget = QWidget()
         input_layout = QVBoxLayout(input_widget)
 
-        # Pipe parameters
+        input_layout.addWidget(self._create_pipe_group())
+        input_layout.addWidget(self._create_flow_group())
+        input_layout.addWidget(self._create_gas_composition_group())
+
+        self.calculate_btn = QPushButton("Calculate Pressure Drop")
+        self.calculate_btn.setMinimumHeight(40)
+        input_layout.addWidget(self.calculate_btn)
+
+        input_layout.addStretch()
+        return input_widget
+
+    def _create_pipe_group(self) -> QGroupBox:
+        """Create the pipe parameters input group."""
         pipe_group = QGroupBox("Pipe Parameters")
         pipe_layout = QFormLayout(pipe_group)
 
@@ -137,9 +154,10 @@ class PressureDropCalculatorWidget(QWidget):
         self.elevation_spin.setSuffix(" m")
         pipe_layout.addRow("Elevation Change:", self.elevation_spin)
 
-        input_layout.addWidget(pipe_group)
+        return pipe_group
 
-        # Flow conditions
+    def _create_flow_group(self) -> QGroupBox:
+        """Create the flow conditions input group."""
         flow_group = QGroupBox("Flow Conditions")
         flow_layout = QFormLayout(flow_group)
 
@@ -170,9 +188,10 @@ class PressureDropCalculatorWidget(QWidget):
         self.friction_method_combo.addItems(self.FRICTION_METHODS)
         flow_layout.addRow("Friction Method:", self.friction_method_combo)
 
-        input_layout.addWidget(flow_group)
+        return flow_group
 
-        # Gas composition
+    def _create_gas_composition_group(self) -> QGroupBox:
+        """Create the gas composition input group."""
         gas_group = QGroupBox("Gas Composition (mol %)")
         gas_layout = QGridLayout(gas_group)
 
@@ -190,75 +209,74 @@ class PressureDropCalculatorWidget(QWidget):
             gas_layout.addWidget(label, i // 2, (i % 2) * 2)
             gas_layout.addWidget(spin, i // 2, (i % 2) * 2 + 1)
 
-        input_layout.addWidget(gas_group)
+        return gas_group
 
-        # Calculate button
-        self.calculate_btn = QPushButton("Calculate Pressure Drop")
-        self.calculate_btn.setMinimumHeight(40)
-        input_layout.addWidget(self.calculate_btn)
-
-        input_layout.addStretch()
-        splitter.addWidget(input_widget)
-
-        # Right panel - Results
+    def _create_results_panel(self) -> QWidget:
+        """Create the right results panel with tabs for results, flow, warnings, chart."""
         results_widget = QWidget()
         results_layout = QVBoxLayout(results_widget)
 
         self.tabs = QTabWidget()
 
-        # Results tab
-        results_tab = QWidget()
-        results_tab_layout = QVBoxLayout(results_tab)
+        self.tabs.addTab(self._create_results_tab(), "Results")
+        self.tabs.addTab(self._create_flow_tab(), "Flow Properties")
+        self.tabs.addTab(self._create_warnings_tab(), "Warnings")
+        self.tabs.addTab(self._create_chart_tab(), "Pressure Profile")
+
+        results_layout.addWidget(self.tabs)
+        return results_widget
+
+    def _create_results_tab(self) -> QWidget:
+        """Create the main results table tab."""
+        tab = QWidget()
+        layout = QVBoxLayout(tab)
 
         self.results_table = QTableWidget()
         self.results_table.setColumnCount(2)
         self.results_table.setHorizontalHeaderLabels(["Parameter", "Value"])
-        results_header = self.results_table.horizontalHeader()
-        if results_header is not None:
-            results_header.setStretchLastSection(True)
-        results_tab_layout.addWidget(self.results_table)
+        header = self.results_table.horizontalHeader()
+        if header is not None:
+            header.setStretchLastSection(True)
+        layout.addWidget(self.results_table)
 
-        self.tabs.addTab(results_tab, "Results")
+        return tab
 
-        # Flow Properties tab
-        flow_tab = QWidget()
-        flow_tab_layout = QVBoxLayout(flow_tab)
+    def _create_flow_tab(self) -> QWidget:
+        """Create the flow properties table tab."""
+        tab = QWidget()
+        layout = QVBoxLayout(tab)
 
         self.flow_table = QTableWidget()
         self.flow_table.setColumnCount(2)
         self.flow_table.setHorizontalHeaderLabels(["Property", "Value"])
-        flow_header = self.flow_table.horizontalHeader()
-        if flow_header is not None:
-            flow_header.setStretchLastSection(True)
-        flow_tab_layout.addWidget(self.flow_table)
+        header = self.flow_table.horizontalHeader()
+        if header is not None:
+            header.setStretchLastSection(True)
+        layout.addWidget(self.flow_table)
 
-        self.tabs.addTab(flow_tab, "Flow Properties")
+        return tab
 
-        # Warnings tab
-        warnings_tab = QWidget()
-        warnings_tab_layout = QVBoxLayout(warnings_tab)
+    def _create_warnings_tab(self) -> QWidget:
+        """Create the warnings text tab."""
+        tab = QWidget()
+        layout = QVBoxLayout(tab)
 
         self.warnings_text = QTextEdit()
         self.warnings_text.setReadOnly(True)
-        warnings_tab_layout.addWidget(self.warnings_text)
+        layout.addWidget(self.warnings_text)
 
-        self.tabs.addTab(warnings_tab, "Warnings")
+        return tab
 
-        # Chart tab
-        chart_tab = QWidget()
-        chart_layout = QVBoxLayout(chart_tab)
+    def _create_chart_tab(self) -> QWidget:
+        """Create the pressure profile chart tab."""
+        tab = QWidget()
+        layout = QVBoxLayout(tab)
 
         self.figure = Figure(figsize=(8, 5), facecolor="#1e1e2e")
         self.canvas = FigureCanvas(self.figure)
-        chart_layout.addWidget(self.canvas)
+        layout.addWidget(self.canvas)
 
-        self.tabs.addTab(chart_tab, "Pressure Profile")
-
-        results_layout.addWidget(self.tabs)
-        splitter.addWidget(results_widget)
-
-        splitter.setSizes([350, 650])
-        layout.addWidget(splitter)
+        return tab
 
     def _connect_signals(self) -> None:
         """Connect widget signals to slots."""
