@@ -9,7 +9,7 @@ import os
 import re
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Set, TypedDict, Optional
+from typing import TypedDict
 
 # Configuration
 REPO_ROOT = Path(__file__).parent.parent.resolve()
@@ -59,12 +59,12 @@ class RepoStats(TypedDict):
     type_hints: int
     args_annotated: int
     try_except: int
-    imports: Set[str]
+    imports: set[str]
     requirements: bool
     cicd: bool
     readme: bool
-    god_functions: List[str]
-    dry_violations: List[str]
+    god_functions: list[str]
+    dry_violations: list[str]
     not_implemented: int
     abstract_methods: int
     incomplete_docs: int
@@ -109,9 +109,9 @@ class AssessmentGenerator:
             "has_setup_py": False,
             "has_pyproject": False,
             "has_examples": False,
-            "has_docs_folder": False
+            "has_docs_folder": False,
         }
-        self.scores: Dict[str, Optional[float]] = {}
+        self.scores: dict[str, float | None] = {}
 
     def analyze_codebase(self):
         logger.info("Starting codebase analysis...")
@@ -126,7 +126,11 @@ class AssessmentGenerator:
         for root, dirs, files in os.walk(REPO_ROOT):
             # Skip hidden and venv directories
             path_parts = Path(root).parts
-            if any(p.startswith(".") and p != ".github" for p in path_parts) or "venv" in path_parts or "__pycache__" in path_parts:
+            if (
+                any(p.startswith(".") and p != ".github" for p in path_parts)
+                or "venv" in path_parts
+                or "__pycache__" in path_parts
+            ):
                 continue
 
             for file in files:
@@ -195,7 +199,7 @@ class AssessmentGenerator:
                         self._check_special_imports(alias.name)
                 elif isinstance(node, ast.ImportFrom):
                     if node.module:
-                        mod_name = node.module.split('.')[0]
+                        mod_name = node.module.split(".")[0]
                         self.stats["imports"].add(mod_name)
                         self._check_special_imports(mod_name)
                 elif isinstance(node, ast.Try):
@@ -209,18 +213,18 @@ class AssessmentGenerator:
         if name in ["matplotlib", "seaborn", "plotly", "altair", "bokeh"]:
             self.stats["visualization_imports"] += 1
         if name == "PyQt6" or name == "tkinter":
-            self.stats["ui_files"] += 1 # Count as UI related
+            self.stats["ui_files"] += 1  # Count as UI related
 
     def load_completist_data(self):
         logger.info("Loading completist data...")
         try:
-            with open(COMPLETIST_DIR / "todo_markers.txt", "r") as f:
+            with open(COMPLETIST_DIR / "todo_markers.txt") as f:
                 self.stats["todos"] = len(f.readlines())  # Override with exact count
-            with open(COMPLETIST_DIR / "not_implemented.txt", "r") as f:
+            with open(COMPLETIST_DIR / "not_implemented.txt") as f:
                 self.stats["not_implemented"] = len(f.readlines())
-            with open(COMPLETIST_DIR / "abstract_methods.txt", "r") as f:
+            with open(COMPLETIST_DIR / "abstract_methods.txt") as f:
                 self.stats["abstract_methods"] = len(f.readlines())
-            with open(COMPLETIST_DIR / "incomplete_docs.txt", "r") as f:
+            with open(COMPLETIST_DIR / "incomplete_docs.txt") as f:
                 self.stats["incomplete_docs"] = len(f.readlines())
         except FileNotFoundError:
             logger.warning("Completist data not found. Run completist scan first.")
@@ -235,11 +239,15 @@ class AssessmentGenerator:
         content = review_file.read_text(encoding="utf-8")
 
         # Extract DRY violations
-        dry_matches = re.findall(r"\*\*DRY\*\* \[MAJOR\]: Duplicate code block", content)
+        dry_matches = re.findall(
+            r"\*\*DRY\*\* \[MAJOR\]: Duplicate code block", content
+        )
         self.stats["dry_violations"] = dry_matches
 
         # Extract God Functions
-        god_matches = re.findall(r"\*\*ORTHOGONALITY\*\* \[MAJOR\]: God function: (.*)", content)
+        god_matches = re.findall(
+            r"\*\*ORTHOGONALITY\*\* \[MAJOR\]: God function: (.*)", content
+        )
         self.stats["god_functions"] = god_matches
 
     def calculate_scores(self):
@@ -264,18 +272,22 @@ class AssessmentGenerator:
         # D: UX
         # Score based on UI file presence
         if self.stats["ui_files"] > 0:
-             self.scores["D"] = None # Manual Review Required
+            self.scores["D"] = None  # Manual Review Required
         else:
-             self.scores["D"] = None # N/A
+            self.scores["D"] = None  # N/A
 
         # E: Performance
         if self.stats["performance_imports"] > 0:
-            self.scores["E"] = 7.0 # Optimistically score presence of tooling
+            self.scores["E"] = 7.0  # Optimistically score presence of tooling
         else:
-            self.scores["E"] = 5.0 # Average default if no tools found
+            self.scores["E"] = 5.0  # Average default if no tools found
 
         # F: Installation
-        has_install_files = self.stats["requirements"] or self.stats["has_setup_py"] or self.stats["has_pyproject"]
+        has_install_files = (
+            self.stats["requirements"]
+            or self.stats["has_setup_py"]
+            or self.stats["has_pyproject"]
+        )
         self.scores["F"] = 9.0 if has_install_files else 2.0
 
         # G: Testing
@@ -294,7 +306,7 @@ class AssessmentGenerator:
         self.scores["I"] = round(score_i, 1)
 
         # J: Extensibility
-        self.scores["J"] = None # Manual Review
+        self.scores["J"] = None  # Manual Review
 
         # K: Reproducibility
         self.scores["K"] = 8.0 if self.stats["requirements"] else 4.0
@@ -306,15 +318,15 @@ class AssessmentGenerator:
 
         # M: Education
         if self.stats["has_docs_folder"] or self.stats["has_examples"]:
-             self.scores["M"] = 7.0
+            self.scores["M"] = 7.0
         else:
-             self.scores["M"] = 3.0
+            self.scores["M"] = 3.0
 
         # N: Visualization
         if self.stats["visualization_imports"] > 0:
-             self.scores["N"] = 8.0
+            self.scores["N"] = 8.0
         else:
-             self.scores["N"] = None # Manual Review
+            self.scores["N"] = None  # Manual Review
 
         # O: CI/CD
         self.scores["O"] = 9.0 if self.stats["cicd"] else 2.0
@@ -328,7 +340,9 @@ class AssessmentGenerator:
             filepath = DOCS_DIR / filename
 
             raw_score = self.scores.get(cat_id)
-            score_display = f"{raw_score}/10" if raw_score is not None else "Manual Review Required"
+            score_display = (
+                f"{raw_score}/10" if raw_score is not None else "Manual Review Required"
+            )
 
             content = f"""# Assessment {cat_id}: {info['name']}
 
@@ -347,11 +361,13 @@ The calculated score is **{score_display}**.
 """
             # Dynamic Strengths
             if cat_id == "F" and self.stats["requirements"]:
-                 content += "- [Automated] `requirements.txt` is present.\n"
+                content += "- [Automated] `requirements.txt` is present.\n"
             if cat_id == "O" and self.stats["cicd"]:
-                 content += "- [Automated] CI/CD workflows detected.\n"
+                content += "- [Automated] CI/CD workflows detected.\n"
             if cat_id == "G" and self.stats["test_files"] > 10:
-                 content += f"- [Automated] Found {self.stats['test_files']} test files.\n"
+                content += (
+                    f"- [Automated] Found {self.stats['test_files']} test files.\n"
+                )
 
             content += """
 ### Weaknesses
@@ -377,7 +393,9 @@ The calculated score is **{score_display}**.
                 content += f"- **Performance Tool Imports**: {self.stats['performance_imports']} (e.g. cProfile, timeit)\n"
             elif cat_id == "F":
                 content += f"- **Requirements File**: {'Yes' if self.stats['requirements'] else 'No'}\n"
-                content += f"- **Setup.py**: {'Yes' if self.stats['has_setup_py'] else 'No'}\n"
+                content += (
+                    f"- **Setup.py**: {'Yes' if self.stats['has_setup_py'] else 'No'}\n"
+                )
                 content += f"- **pyproject.toml**: {'Yes' if self.stats['has_pyproject'] else 'No'}\n"
             elif cat_id == "G":
                 content += f"- **Test Files**: {self.stats['test_files']}\n"
@@ -472,7 +490,9 @@ Note: Some categories require manual review and are not included in the automate
         for cat_id, info in CATEGORIES.items():
             s = self.scores.get(cat_id)
             s_str = f"{s}/10" if s is not None else "Manual Review"
-            content += f"| **{cat_id}** | {info['name']} | {info['weight']}x | {s_str} |\n"
+            content += (
+                f"| **{cat_id}** | {info['name']} | {info['weight']}x | {s_str} |\n"
+            )
 
         content += f"""
 ## Top 10 Recommendations
@@ -492,6 +512,7 @@ The codebase shows promise but requires significant refactoring to improve maint
 """
         filepath.write_text(content)
 
+
 def main():
     generator = AssessmentGenerator()
     generator.analyze_codebase()
@@ -504,6 +525,7 @@ def main():
     generator.generate_comprehensive_report()
 
     logger.info("Assessment generation complete.")
+
 
 if __name__ == "__main__":
     main()
