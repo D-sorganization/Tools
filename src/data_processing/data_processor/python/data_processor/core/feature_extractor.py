@@ -31,6 +31,84 @@ class FeatureExtractor:
         """
         self.config = config or FeatureConfig()
 
+    def _extract_time_series_features(
+        self,
+        data: np.ndarray,
+        column_names: list[str],
+        n_samples: int,
+    ) -> tuple[np.ndarray, list[str]]:
+        """Extract features from 3D time series data.
+
+        Args:
+            data: 3D array (n_samples, seq_len, n_features)
+            column_names: Column names
+            n_samples: Number of samples
+
+        Returns:
+            Tuple of (features_array, feature_names)
+        """
+        all_features = []
+        all_names: list[str] = []
+
+        for sample_idx in range(n_samples):
+            sample_features: list[float] = []
+            sample_names: list[str] = []
+
+            for col_idx, col_name in enumerate(column_names):
+                series = data[sample_idx, :, col_idx]
+
+                stat_feats, stat_names = self._extract_statistical(series, col_name)
+                sample_features.extend(stat_feats)
+                sample_names.extend(stat_names)
+
+                if self.config.compute_trend or self.config.compute_peaks:
+                    time_feats, time_names = self._extract_time_domain(
+                        series, col_name
+                    )
+                    sample_features.extend(time_feats)
+                    sample_names.extend(time_names)
+
+                if self.config.compute_spectral:
+                    freq_feats, freq_names = self._extract_frequency_domain(
+                        series, col_name
+                    )
+                    sample_features.extend(freq_feats)
+                    sample_names.extend(freq_names)
+
+            all_features.append(sample_features)
+            if sample_idx == 0:
+                all_names = sample_names
+
+        return np.array(all_features), all_names
+
+    def _extract_tabular_features(
+        self,
+        data: np.ndarray,
+        column_names: list[str],
+    ) -> tuple[np.ndarray, list[str]]:
+        """Extract features from 2D tabular data.
+
+        Args:
+            data: 2D array (n_samples, n_features)
+            column_names: Column names
+
+        Returns:
+            Tuple of (features_array, feature_names)
+        """
+        features_list = []
+        all_names: list[str] = []
+
+        for col_idx, col_name in enumerate(column_names):
+            column = data[:, col_idx]
+            stat_feats, stat_names = self._extract_column_features(column, col_name)
+            features_list.append(stat_feats)
+            all_names.extend(stat_names)
+
+        features_array = (
+            np.column_stack(features_list) if features_list else np.array([])
+        )
+        return features_array, all_names
+
     def extract_all(
         self,
         data: np.ndarray,
@@ -46,89 +124,30 @@ class FeatureExtractor:
             FeatureResult with extracted features
         """
         data = np.asarray(data, dtype=np.float64)
-
-        # Ensure 2D or 3D
         if data.ndim == 1:
             data = data.reshape(1, -1)
 
         n_samples = data.shape[0]
 
-        # Generate column names if not provided
         if column_names is None:
-            if data.ndim == 2:
-                column_names = [f"col_{i}" for i in range(data.shape[1])]
-            else:
-                column_names = [f"col_{i}" for i in range(data.shape[2])]
+            dim = data.shape[2] if data.ndim == 3 else data.shape[1]
+            column_names = [f"col_{i}" for i in range(dim)]
 
-        all_features = []
-        all_names: list[str] = []
-        categories: dict[str, list[str]] = {}
-
-        # Check if data is time series (3D) or tabular (2D)
-        is_time_series = data.ndim == 3
-
-        if is_time_series:
-            # Extract time series features for each sample
-            for sample_idx in range(n_samples):
-                sample_features: list[float] = []
-                sample_names: list[str] = []
-
-                for col_idx, col_name in enumerate(column_names):
-                    series = data[sample_idx, :, col_idx]
-
-                    # Statistical features
-                    stat_feats, stat_names = self._extract_statistical(series, col_name)
-                    sample_features.extend(stat_feats)
-                    sample_names.extend(stat_names)
-
-                    # Time domain features
-                    if self.config.compute_trend or self.config.compute_peaks:
-                        time_feats, time_names = self._extract_time_domain(
-                            series, col_name
-                        )
-                        sample_features.extend(time_feats)
-                        sample_names.extend(time_names)
-
-                    # Frequency domain features
-                    if self.config.compute_spectral:
-                        freq_feats, freq_names = self._extract_frequency_domain(
-                            series, col_name
-                        )
-                        sample_features.extend(freq_feats)
-                        sample_names.extend(freq_names)
-
-                all_features.append(sample_features)
-
-                if sample_idx == 0:
-                    all_names = sample_names
-
-            features_array = np.array(all_features)
-
+        if data.ndim == 3:
+            features_array, all_names = self._extract_time_series_features(
+                data, column_names, n_samples,
+            )
         else:
-            # Tabular data - extract features per column
-            features_list = []
-
-            for col_idx, col_name in enumerate(column_names):
-                column = data[:, col_idx]
-
-                # Basic statistical features for tabular
-                stat_feats, stat_names = self._extract_column_features(column, col_name)
-                features_list.append(stat_feats)
-                all_names.extend(stat_names)
-
-            features_array = (
-                np.column_stack(features_list) if features_list else np.array([])
+            features_array, all_names = self._extract_tabular_features(
+                data, column_names,
             )
 
-        # Categorize features
+        categories: dict[str, list[str]] = {}
         for name in all_names:
             category = self._categorize_feature(name)
             if category not in categories:
                 categories[category] = []
             categories[category].append(name)
-
-        # Compute feature statistics
-        feature_stats = self._compute_feature_stats(features_array, all_names)
 
         return FeatureResult(
             features=features_array,
@@ -136,7 +155,7 @@ class FeatureExtractor:
             n_samples=n_samples,
             n_features=len(all_names),
             categories=categories,
-            feature_stats=feature_stats,
+            feature_stats=self._compute_feature_stats(features_array, all_names),
         )
 
     def extract_statistical(

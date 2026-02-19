@@ -295,6 +295,53 @@ class FolderOperationsMixin:
 
         return summary + log[:MAX_LOG_ENTRIES]
 
+    def _count_total_files(self) -> int:
+        """Count total files across all source folders for progress tracking."""
+        total = 0
+        for src in self.source_folders:
+            for _root, _dirs, files in os.walk(src):
+                total += len(files)
+        return total
+
+    def _copy_single_file_in_prune(
+        self,
+        source_file_path: Path,
+        dest_path: Path,
+        file: str,
+        log: list[str],
+    ) -> tuple[int, int]:
+        """Copy a single file during prune operation, handling conflicts.
+
+        Args:
+            source_file_path: Source file path
+            dest_path: Destination directory
+            file: Filename
+            log: Log list to append messages to
+
+        Returns:
+            Tuple of (files_copied, files_failed)
+        """
+        if not self.validate_file_filters(source_file_path):
+            return 0, 0
+
+        dest_file_path = Path(dest_path) / file
+        final_dest_path = self._get_unique_path(dest_file_path)
+        if final_dest_path != dest_file_path:
+            log.append(f"Renamed: '{file}' to '{Path(final_dest_path).name}'")
+
+        try:
+            if not self.preview_mode_var.get():
+                if self._safe_copy_file(source_file_path, final_dest_path):
+                    return 1, 0
+                else:
+                    log.append(f"FAILED to copy '{file}' after retries")
+                    return 0, 1
+            else:
+                return 1, 0  # Count in preview mode
+        except (KeyError, ValueError, TypeError) as e:
+            log.append(f"ERROR copying '{file}': {e}")
+            return 0, 1
+
     def _prune_empty_folders(self) -> list[str]:
         """Copy source folders to destination while preserving structure but
         skipping empty sub-folders.
@@ -302,20 +349,14 @@ class FolderOperationsMixin:
         Returns:
             List of log messages describing the operation results
         """
-        log = []
+        log: list[str] = []
         file_count = 0
         processed_folders = 0
         empty_folders_skipped = 0
         failed_count = 0
 
         os.makedirs(self.dest_folder, exist_ok=True)
-
-        # Count total files for progress tracking
-        total_files = 0
-        for src in self.source_folders:
-            for _root, _dirs, files in os.walk(src):
-                total_files += len(files)
-
+        total_files = self._count_total_files()
         processed_files = 0
 
         for src in self.source_folders:
@@ -329,7 +370,6 @@ class FolderOperationsMixin:
                 if self.cancel_operation:
                     break  # type: ignore[unreachable]
 
-                # Skip empty folders
                 if not files and not any(
                     any(Path(root, d).iterdir())
                     for d in dirs
@@ -338,51 +378,22 @@ class FolderOperationsMixin:
                     empty_folders_skipped += 1
                     continue
 
-                # Calculate relative path from source root
                 rel_path = os.path.relpath(root, src)
                 dest_path = Path(dest_src_path) / rel_path
-
-                # Create destination directory
                 os.makedirs(dest_path, exist_ok=True)
 
-                # Copy files in this directory
                 for file in files:
                     if self.cancel_operation:
                         break  # type: ignore[unreachable]
 
-                    source_file_path = Path(root) / file
-
-                    # Apply filters
-                    if not self.validate_file_filters(source_file_path):
-                        processed_files += 1
-                        continue
-
-                    dest_file_path = Path(dest_path) / file
-
-                    # Handle naming conflicts
-                    final_dest_path = self._get_unique_path(dest_file_path)
-                    if final_dest_path != dest_file_path:
-                        log.append(
-                            f"Renamed: '{file}' to '{Path(final_dest_path).name}'",
-                        )
-
-                    try:
-                        if not self.preview_mode_var.get():
-                            if self._safe_copy_file(source_file_path, final_dest_path):
-                                file_count += 1
-                            else:
-                                failed_count += 1
-                                log.append(f"FAILED to copy '{file}' after retries")
-                        else:
-                            file_count += 1  # Count in preview mode
-                    except (KeyError, ValueError, TypeError) as e:
-                        failed_count += 1
-                        log.append(f"ERROR copying '{file}': {e}")
+                    copied, failed = self._copy_single_file_in_prune(
+                        Path(root) / file, dest_path, file, log,
+                    )
+                    file_count += copied
+                    failed_count += failed
 
                     processed_files += 1
-                    if (
-                        processed_files % MAX_UI_UPDATE_FREQUENCY == 0
-                    ):  # Update progress every N files
+                    if processed_files % MAX_UI_UPDATE_FREQUENCY == 0:
                         progress = (
                             PROGRESS_START_MAIN
                             + (processed_files / total_files) * PROGRESS_MAIN_OP_PERCENT

@@ -206,6 +206,76 @@ class CelestialBody:
             mean_longitude=elem.mean_longitude + elem.mean_longitude_rate * t_centuries,
         )
 
+    def _compute_anomalies(
+        self, elem: OrbitalElements
+    ) -> tuple[float, float, float, float]:
+        """Compute orbital anomalies from orbital elements.
+
+        Args:
+            elem: Orbital elements at the desired epoch
+
+        Returns:
+            Tuple of (omega, true_anomaly, eccentric_anomaly, semi_major_axis_m)
+        """
+        omega_bar = math.radians(elem.longitude_perihelion)
+        ascending_longitude = math.radians(elem.longitude_ascending)
+        mean_longitude = math.radians(elem.mean_longitude)
+
+        omega = omega_bar - ascending_longitude
+        mean_anomaly = (mean_longitude - omega_bar) % (2 * math.pi)
+        eccentric_anomaly = self._solve_kepler(mean_anomaly, elem.eccentricity)
+
+        e = elem.eccentricity
+        nu = 2 * math.atan2(
+            math.sqrt(1 + e) * math.sin(eccentric_anomaly / 2),
+            math.sqrt(1 - e) * math.cos(eccentric_anomaly / 2),
+        )
+        return omega, nu, eccentric_anomaly, elem.semi_major_axis * AU
+
+    @staticmethod
+    def _orbital_to_ecliptic(
+        x_orb: float,
+        y_orb: float,
+        omega: float,
+        ascending_longitude: float,
+        i: float,
+    ) -> tuple[float, float, float]:
+        """Transform orbital plane coordinates to heliocentric ecliptic.
+
+        Args:
+            x_orb: X coordinate in orbital plane
+            y_orb: Y coordinate in orbital plane
+            omega: Argument of perihelion (radians)
+            ascending_longitude: Longitude of ascending node (radians)
+            i: Inclination (radians)
+
+        Returns:
+            Tuple of (x, y, z) in heliocentric ecliptic frame
+        """
+        cos_omega = math.cos(omega)
+        sin_omega = math.sin(omega)
+        cos_asc = math.cos(ascending_longitude)
+        sin_asc = math.sin(ascending_longitude)
+        cos_i = math.cos(i)
+        sin_i = math.sin(i)
+
+        x = (cos_omega * cos_asc - sin_omega * sin_asc * cos_i) * x_orb + (
+            -sin_omega * cos_asc - cos_omega * sin_asc * cos_i
+        ) * y_orb
+        y = (cos_omega * sin_asc + sin_omega * cos_asc * cos_i) * x_orb + (
+            -sin_omega * sin_asc + cos_omega * cos_asc * cos_i
+        ) * y_orb
+        z = (sin_omega * sin_i) * x_orb + (cos_omega * sin_i) * y_orb
+        return x, y, z
+
+    def _cache_state(self, julian_date: float, state: StateVector) -> None:
+        """Store a state vector in the cache, evicting old entries if needed."""
+        self._state_cache[julian_date] = state
+        if len(self._state_cache) > 1000:
+            oldest_keys = sorted(self._state_cache.keys())[:500]
+            for k in oldest_keys:
+                del self._state_cache[k]
+
     def get_state_at_time(self, julian_date: float) -> StateVector:
         """
         Calculate the state vector (position and velocity) at a given time.
@@ -219,112 +289,44 @@ class CelestialBody:
         Returns:
             State vector with position and velocity in heliocentric frame
         """
-        # Check cache first
         if julian_date in self._state_cache:
             return self._state_cache[julian_date]
 
-        # Sun is at origin
         if self.orbital_elements is None:
-            state = StateVector(
+            return StateVector(
                 position=np.array([0.0, 0.0, 0.0]),
                 velocity=np.array([0.0, 0.0, 0.0]),
                 time=julian_date,
             )
-            return state
 
-        # Get elements at this time
         elem = self.get_elements_at_time(julian_date)
-
-        # Convert to radians
-        i = math.radians(elem.inclination)
-        omega_bar = math.radians(elem.longitude_perihelion)
-        ascending_longitude = math.radians(elem.longitude_ascending)
-        mean_longitude = math.radians(elem.mean_longitude)
-
-        # Argument of perihelion
-        omega = omega_bar - ascending_longitude
-
-        # Mean anomaly
-        mean_anomaly = mean_longitude - omega_bar
-        mean_anomaly = mean_anomaly % (2 * math.pi)
-
-        # Solve Kepler's equation for eccentric anomaly E
-        # M = E - e*sin(E)
-        eccentric_anomaly = self._solve_kepler(mean_anomaly, elem.eccentricity)
-
-        # True anomaly
         e = elem.eccentricity
-        nu = 2 * math.atan2(
-            math.sqrt(1 + e) * math.sin(eccentric_anomaly / 2),
-            math.sqrt(1 - e) * math.cos(eccentric_anomaly / 2),
-        )
+        i = math.radians(elem.inclination)
+        ascending_longitude = math.radians(elem.longitude_ascending)
 
-        # Distance from focus
-        a = elem.semi_major_axis * AU  # Convert to meters
+        omega, nu, eccentric_anomaly, a = self._compute_anomalies(elem)
+
         r = a * (1 - e * math.cos(eccentric_anomaly))
-
-        # Position in orbital plane
         x_orb = r * math.cos(nu)
         y_orb = r * math.sin(nu)
 
-        # Rotation matrices
-        # R_z(-ascending_longitude) * R_x(-i) * R_z(-omega)
-        cos_omega = math.cos(omega)
-        sin_omega = math.sin(omega)
-        cos_ascending = math.cos(ascending_longitude)
-        sin_ascending = math.sin(ascending_longitude)
-        cos_i = math.cos(i)
-        sin_i = math.sin(i)
+        x, y, z = self._orbital_to_ecliptic(x_orb, y_orb, omega, ascending_longitude, i)
 
-        # Transform to heliocentric ecliptic coordinates
-        x = (cos_omega * cos_ascending - sin_omega * sin_ascending * cos_i) * x_orb + (
-            -sin_omega * cos_ascending - cos_omega * sin_ascending * cos_i
-        ) * y_orb
-        y = (cos_omega * sin_ascending + sin_omega * cos_ascending * cos_i) * x_orb + (
-            -sin_omega * sin_ascending + cos_omega * cos_ascending * cos_i
-        ) * y_orb
-        z = (sin_omega * sin_i) * x_orb + (cos_omega * sin_i) * y_orb
-
-        # Velocity calculation
-        # Vis-viva: v² = GM(2/r - 1/a)
         parent_gm = self.parent.gm if self.parent else GM["Sun"]
-
-        # Specific angular momentum
         h = math.sqrt(parent_gm * a * (1 - e**2))
-
-        # Velocity in orbital plane
         vx_orb = -parent_gm / h * math.sin(nu)
         vy_orb = parent_gm / h * (e + math.cos(nu))
 
-        # Transform velocity to heliocentric ecliptic coordinates
-        vx = (
-            cos_omega * cos_ascending - sin_omega * sin_ascending * cos_i
-        ) * vx_orb + (
-            -sin_omega * cos_ascending - cos_omega * sin_ascending * cos_i
-        ) * vy_orb
-        vy = (
-            cos_omega * sin_ascending + sin_omega * cos_ascending * cos_i
-        ) * vx_orb + (
-            -sin_omega * sin_ascending + cos_omega * cos_ascending * cos_i
-        ) * vy_orb
-        vz = (sin_omega * sin_i) * vx_orb + (cos_omega * sin_i) * vy_orb
+        vx, vy, vz = self._orbital_to_ecliptic(
+            vx_orb, vy_orb, omega, ascending_longitude, i
+        )
 
         state = StateVector(
             position=np.array([x, y, z]),
             velocity=np.array([vx, vy, vz]),
             time=julian_date,
         )
-
-        # Cache the result
-        self._state_cache[julian_date] = state
-
-        # Limit cache size
-        if len(self._state_cache) > 1000:
-            # Remove oldest entries
-            oldest_keys = sorted(self._state_cache.keys())[:500]
-            for k in oldest_keys:
-                del self._state_cache[k]
-
+        self._cache_state(julian_date, state)
         return state
 
     def _solve_kepler(

@@ -100,6 +100,9 @@ class WGSReactorEngine:
         CO + H2O <-> CO2 + H2
         dH = -41.2 kJ/mol, dS = -42.1 J/(mol·K)
         """
+        # DbC precondition
+        assert temperature > 0, f"Temperature must be positive (K), got {temperature}"
+
         delta_H = -41200  # J/mol
         delta_S = -42.1  # J/(mol·K)
 
@@ -114,6 +117,11 @@ class WGSReactorEngine:
         steam_ratio: float = 2.0,
     ) -> dict[str, Any]:
         """Calculate equilibrium composition for WGS reaction."""
+        # DbC preconditions
+        assert temperature > 0, f"Temperature must be positive (K), got {temperature}"
+        assert pressure > 0, f"Pressure must be positive (bar), got {pressure}"
+        assert steam_ratio >= 0, f"Steam ratio must be non-negative, got {steam_ratio}"
+
         # Initial moles (normalize to 100 basis)
         n_CO_0 = inlet_composition.get("CO", 0)
         n_H2O_0 = inlet_composition.get("H2O", 0) + n_CO_0 * steam_ratio
