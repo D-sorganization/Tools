@@ -581,27 +581,7 @@ class OptimizerWindow(QMainWindow):
         max_iterations = self.max_iter_input.value()
         tolerance = self.tolerance_input.value()
 
-        # Demo optimization using Rosenbrock function
-        # f(x, y) = (1-x)^2 + 100*(y-x^2)^2
-        # Minimum at (1, 1) with f(1, 1) = 0
-
-        # Initialize
-        values = np.array(
-            [p.initial for p in params[:2]]
-            if len(params) >= 2
-            else [p.initial for p in params]
-        )
-        lower = np.array(
-            [p.min_val for p in params[:2]]
-            if len(params) >= 2
-            else [p.min_val for p in params]
-        )
-        upper = np.array(
-            [p.max_val for p in params[:2]]
-            if len(params) >= 2
-            else [p.max_val for p in params]
-        )
-
+        values, lower, upper = self._init_adam_arrays(params)
         m = np.zeros_like(values)
         v = np.zeros_like(values)
 
@@ -610,18 +590,8 @@ class OptimizerWindow(QMainWindow):
         best_params: dict[str, float] = {}
 
         for iteration in range(1, max_iterations + 1):
-            # Evaluate (demo Rosenbrock)
-            if len(values) >= 2:
-                x, y = values[0], values[1]
-                obj = (1 - x) ** 2 + 100 * (y - x**2) ** 2
-            else:
-                x = values[0]
-                obj = (x - 1) ** 2
+            obj = self._eval_rosenbrock(values, maximize)
 
-            if maximize:
-                obj = -obj
-
-            # Track best
             if (maximize and obj > best_obj) or (not maximize and obj < best_obj):
                 best_obj = obj
                 best_params = {
@@ -640,32 +610,8 @@ class OptimizerWindow(QMainWindow):
                 }
             )
 
-            # Compute gradient (numerical)
-            gradient = np.zeros_like(values)
-            step = self.grad_step_input.value()
-            for i in range(len(values)):
-                plus = values.copy()
-                minus = values.copy()
-                plus[i] = np.clip(values[i] + step, lower[i], upper[i])
-                minus[i] = np.clip(values[i] - step, lower[i], upper[i])
+            gradient = self._compute_numerical_gradient(values, lower, upper, maximize)
 
-                if len(values) >= 2:
-                    obj_plus = (1 - plus[0]) ** 2 + 100 * (plus[1] - plus[0] ** 2) ** 2
-                    obj_minus = (1 - minus[0]) ** 2 + 100 * (
-                        minus[1] - minus[0] ** 2
-                    ) ** 2
-                else:
-                    obj_plus = (plus[0] - 1) ** 2
-                    obj_minus = (minus[0] - 1) ** 2
-
-                if maximize:
-                    obj_plus = -obj_plus
-                    obj_minus = -obj_minus
-
-                if plus[i] != minus[i]:
-                    gradient[i] = (obj_plus - obj_minus) / (plus[i] - minus[i])
-
-            # Adam update
             m = beta1 * m + (1 - beta1) * gradient
             v = beta2 * v + (1 - beta2) * (gradient**2)
 
@@ -676,14 +622,64 @@ class OptimizerWindow(QMainWindow):
             update = direction * learning_rate * m_hat / (np.sqrt(v_hat) + epsilon)
 
             prev_values = values.copy()
-            values = values + update
-            values = np.clip(values, lower, upper)
+            values = np.clip(values + update, lower, upper)
 
-            # Check convergence
             if np.linalg.norm(values - prev_values) < tolerance:
                 break
 
-        # Update UI
+        self._display_adam_results(best_obj, best_params, max_iterations)
+
+    @staticmethod
+    def _init_adam_arrays(
+        params: list[ParameterConfig],
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+        """Initialize value, lower-bound, and upper-bound arrays from parameters."""
+        subset = params[:2] if len(params) >= 2 else params
+        values = np.array([p.initial for p in subset])
+        lower = np.array([p.min_val for p in subset])
+        upper = np.array([p.max_val for p in subset])
+        return values, lower, upper
+
+    @staticmethod
+    def _eval_rosenbrock(values: np.ndarray, maximize: bool) -> float:
+        """Evaluate the Rosenbrock demo objective function."""
+        if len(values) >= 2:
+            x, y = values[0], values[1]
+            obj = (1 - x) ** 2 + 100 * (y - x**2) ** 2
+        else:
+            obj = (values[0] - 1) ** 2
+        return -obj if maximize else obj
+
+    def _compute_numerical_gradient(
+        self,
+        values: np.ndarray,
+        lower: np.ndarray,
+        upper: np.ndarray,
+        maximize: bool,
+    ) -> np.ndarray:
+        """Compute numerical gradient via central differences."""
+        gradient = np.zeros_like(values)
+        step = self.grad_step_input.value()
+        for i in range(len(values)):
+            plus = values.copy()
+            minus = values.copy()
+            plus[i] = np.clip(values[i] + step, lower[i], upper[i])
+            minus[i] = np.clip(values[i] - step, lower[i], upper[i])
+
+            obj_plus = self._eval_rosenbrock(plus, maximize)
+            obj_minus = self._eval_rosenbrock(minus, maximize)
+
+            if plus[i] != minus[i]:
+                gradient[i] = (obj_plus - obj_minus) / (plus[i] - minus[i])
+        return gradient
+
+    def _display_adam_results(
+        self,
+        best_obj: float,
+        best_params: dict[str, float],
+        max_iterations: int,
+    ) -> None:
+        """Update UI with Adam optimization results."""
         self.best_objective_label.setText(f"{best_obj:.6f}")
         self.iterations_label.setText(str(len(self._history)))
         self.converged_label.setText(
@@ -695,7 +691,7 @@ class OptimizerWindow(QMainWindow):
 
         history_lines = ["Iteration | Objective | Parameters"]
         history_lines.append("-" * 60)
-        for entry in self._history[-20:]:  # Show last 20
+        for entry in self._history[-20:]:
             param_str = ", ".join(
                 [f"{k}={v:.4f}" for k, v in entry["parameters"].items()]
             )
@@ -708,7 +704,7 @@ class OptimizerWindow(QMainWindow):
 
         self.history_text.setPlainText("\n".join(history_lines))
         self.history_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['text']};")
-        self.tab_widget.setCurrentIndex(2)  # Switch to results tab
+        self.tab_widget.setCurrentIndex(2)
 
     def _run_surface_demo(self, params: list[ParameterConfig], method: str) -> None:
         """Run surface optimization demo."""
