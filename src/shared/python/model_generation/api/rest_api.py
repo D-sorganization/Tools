@@ -328,7 +328,7 @@ class ModelGenerationAPI:
                     response = route.handler(request)
                     self._add_security_headers(response)
                     return response
-                except Exception as e:
+                except (ValueError, TypeError, KeyError, RuntimeError, OSError) as e:
                     logger.exception("Error handling request")
                     response = APIResponse.error(str(e), 500)
                     self._add_security_headers(response)

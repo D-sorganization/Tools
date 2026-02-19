@@ -210,5 +210,5 @@ if __name__ == "__main__":
     for repo in TARGET_REPOS:
         try:
             process_repo(repo)
-        except Exception as e:
+        except (OSError, ValueError, RuntimeError) as e:
             logger.info(f"Failed to process {repo}: {e}")

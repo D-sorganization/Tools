@@ -179,7 +179,14 @@ def debug_on_error() -> Generator[None, None, None]:
     """
     try:
         yield
-    except Exception as e:
+    except (
+        ValueError,
+        TypeError,
+        KeyError,
+        RuntimeError,
+        OSError,
+        ArithmeticError,
+    ) as e:
         debug_exception(e)
         raise
 

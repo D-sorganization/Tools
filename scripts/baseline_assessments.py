@@ -11,7 +11,7 @@ except ImportError:
     ) -> str:
         try:
             return Path(path).read_text(encoding=encoding)
-        except Exception:
+        except OSError:
             return default
 
     def safe_write_text(

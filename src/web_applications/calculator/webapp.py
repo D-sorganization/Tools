@@ -103,7 +103,7 @@ def create_app() -> Flask:
             return jsonify(response), 200
         except ValueError as error:
             return jsonify({"error": str(error)}), 400
-        except Exception:  # pragma: no cover - fallback safety
+        except (TypeError, KeyError, ArithmeticError, RuntimeError):  # pragma: no cover
             logger.exception("Calculation failed")
             return jsonify({"error": "An internal error occurred."}), 500
 

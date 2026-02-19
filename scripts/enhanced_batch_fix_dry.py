@@ -379,7 +379,7 @@ def process_file(file_path: Path) -> int:
             return total_fixes
 
         return 0
-    except Exception as e:
+    except (OSError, ValueError, UnicodeDecodeError) as e:
         print(f"Error processing {file_path}: {e}", file=sys.stderr)
         return 0
 

@@ -20,6 +20,16 @@ from Folders_Tool_r0 import (
 logger = logging.getLogger(__name__)
 
 
+def _safe_rmtree(path: Path) -> None:
+    """Remove a directory tree, logging any cleanup failures."""
+    if path.exists():
+        try:
+            shutil.rmtree(path, ignore_errors=True)
+            logger.info(f"Cleaned up directory: {path}")
+        except (IOError, PermissionError, OSError) as e:
+            logger.warning(f"Failed to cleanup directory: {path} - {e}")
+
+
 class BackupCopyMixin:
     """Backup creation, safe file copy, and unique path generation methods."""
 
@@ -33,165 +43,118 @@ class BackupCopyMixin:
             ValueError: If source_folders list is empty or invalid
             OSError: If file system operations fail during backup creation
             PermissionError: If insufficient permissions to create backup
-            Exception: If backup process fails for other reasons
         """
-        # Input validation
-        if not self.source_folders:
-            raise ValueError("No source folders to backup")
-        if not isinstance(self.source_folders, list):
-            raise ValueError(
-                f"Source folders must be a list, got {type(self.source_folders)}",
-            )
-
-        # Validate each source folder
-        valid_source_folders = []
-        for folder in self.source_folders:
-            if not folder or not isinstance(folder, str):
-                logger.warning(f"Invalid source folder: {folder}")
-                continue
-            if not Path(folder).exists():
-                logger.warning(f"Source folder no longer exists: {folder}")
-                continue
-            if not os.access(folder, os.R_OK):
-                logger.warning(f"Cannot access source folder: {folder}")
-                continue
-            valid_source_folders.append(folder)
-
-        if not valid_source_folders:
-            raise ValueError("No valid source folders to backup")
-
-        # Generate backup directory name with timestamp
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        backup_base_name = f"backup_{timestamp}"
-
-        # Create backup in parent directory of first source folder
-        try:
-            first_source_parent = Path(valid_source_folders[0]).parent
-            backup_base = first_source_parent / backup_base_name
-        except (IOError, PermissionError, OSError) as e:
-            raise ValueError(f"Cannot determine backup location: {e}") from e
+        valid_source_folders = self._validated_source_folders()
+        backup_base = self._prepare_backup_directory(valid_source_folders)
 
         self.update_status("Creating backup...")
         logger.info(f"Creating backup at: {backup_base}")
 
         try:
-            # Create backup base directory
             backup_base.mkdir(parents=True, exist_ok=True)
-
-            # Verify directory was created and is writable
             if not backup_base.exists():
-                raise Exception("Failed to create backup base directory")
+                raise RuntimeError("Failed to create backup base directory")
             if not os.access(backup_base, os.W_OK):
                 raise PermissionError(
                     f"Cannot write to backup directory: {backup_base}",
                 )
 
-            total_folders = len(valid_source_folders)
-            successful_backups = 0
-            failed_backups = 0
-
-            for i, folder in enumerate(valid_source_folders):
-                if self.cancel_operation:
-                    logger.info("Backup operation cancelled by user")
-                    return None
-
-                if not Path(folder).exists():
-                    logger.warning(f"Source folder no longer exists: {folder}")
-                    continue
-
-                # Create backup path
-                try:
-                    folder_name = Path(folder).name
-                    backup_path = backup_base / folder_name
-
-                    # Ensure backup path is unique
-                    if backup_path.exists():
-                        unique_path = self._get_unique_path(str(backup_path))
-                        backup_path = Path(unique_path)
-                except (IOError, PermissionError, OSError) as e:
-                    logger.error(f"Failed to create backup path for {folder}: {e}")
-                    failed_backups += 1
-                    continue
-
-                try:
-                    # Create backup
-                    shutil.copytree(folder, backup_path)
-                    successful_backups += 1
-                    logger.info(f"Backed up folder: {folder} -> {backup_path}")
-
-                    # Verify backup was created successfully
-                    if not backup_path.exists():
-                        raise Exception("Backup directory was not created")
-                    if not any(backup_path.iterdir()):
-                        raise Exception("Backup directory is empty")
-
-                except (IOError, PermissionError, OSError) as e:
-                    failed_backups += 1
-                    logger.error(f"Failed to backup folder {folder}: {e}")
-
-                    # Clean up failed backup
-                    if backup_path.exists():
-                        try:
-                            shutil.rmtree(backup_path, ignore_errors=True)
-                            logger.info(f"Cleaned up failed backup: {backup_path}")
-                        except (IOError, PermissionError, OSError) as cleanup_error:
-                            logger.warning(
-                                f"Failed to cleanup failed backup: {backup_path} - "
-                                f"{cleanup_error}",
-                            )
-
-                    # Continue with other folders
-                    continue
-
-                # Update progress
-                progress = (
-                    (i + 1) / total_folders * PROGRESS_BACKUP_PERCENT
-                )  # PROGRESS_BACKUP_PERCENT% for backup
-                self.update_progress(
-                    progress,
-                    f"Backing up folder {i + 1}/{total_folders}",
-                )
-
-            # Verify overall backup success
-            if successful_backups == 0:
-                logger.error("No folders were successfully backed up")
-                # Clean up empty backup directory
-                if backup_base.exists():
-                    try:
-                        shutil.rmtree(backup_base, ignore_errors=True)
-                        logger.info(f"Cleaned up empty backup directory: {backup_base}")
-                    except (IOError, PermissionError, OSError) as cleanup_error:
-                        logger.warning(
-                            f"Failed to cleanup empty backup directory: "
-                            f"{backup_base} - {cleanup_error}",
-                        )
-                return None
-
-            # Final verification
-            if backup_base.exists() and any(backup_base.iterdir()):
-                logger.info(f"Backup completed successfully: {backup_base}")
-                logger.info(
-                    f"Backup summary: {successful_backups} successful, "
-                    f"{failed_backups} failed",
-                )
-                return str(backup_base)
-            else:
-                logger.error("Backup directory is empty or was not created")
-                return None
+            successful, failed = self._copy_folders_to_backup(
+                valid_source_folders, backup_base
+            )
+            return self._finalize_backup(backup_base, successful, failed)
 
         except (IOError, PermissionError, OSError) as e:
             logger.error(f"Backup creation failed: {e}")
-            # Cleanup failed backup
-            if backup_base.exists():
-                try:
-                    shutil.rmtree(backup_base, ignore_errors=True)
-                    logger.info(f"Cleaned up failed backup: {backup_base}")
-                except (IOError, PermissionError, OSError) as cleanup_error:
-                    logger.warning(
-                        f"Failed to cleanup failed backup: {backup_base} - "
-                        f"{cleanup_error}",
-                    )
+            _safe_rmtree(backup_base)
             raise
+
+    def _validated_source_folders(self) -> list[str]:
+        """Return validated, accessible source folders or raise ValueError."""
+        if not self.source_folders or not isinstance(self.source_folders, list):
+            raise ValueError("No source folders to backup")
+
+        valid = []
+        for folder in self.source_folders:
+            if not folder or not isinstance(folder, str):
+                logger.warning(f"Invalid source folder: {folder}")
+            elif not Path(folder).exists():
+                logger.warning(f"Source folder no longer exists: {folder}")
+            elif not os.access(folder, os.R_OK):
+                logger.warning(f"Cannot access source folder: {folder}")
+            else:
+                valid.append(folder)
+
+        if not valid:
+            raise ValueError("No valid source folders to backup")
+        return valid
+
+    def _prepare_backup_directory(self, valid_folders: list[str]) -> Path:
+        """Determine and return the backup base directory path."""
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        try:
+            return Path(valid_folders[0]).parent / f"backup_{timestamp}"
+        except (IOError, PermissionError, OSError) as e:
+            raise ValueError(f"Cannot determine backup location: {e}") from e
+
+    def _copy_folders_to_backup(
+        self, valid_folders: list[str], backup_base: Path
+    ) -> tuple[int, int]:
+        """Copy each valid folder into backup_base. Returns (success, fail) counts."""
+        total = len(valid_folders)
+        successful = 0
+        failed = 0
+
+        for i, folder in enumerate(valid_folders):
+            if self.cancel_operation:
+                logger.info("Backup operation cancelled by user")
+                return successful, failed
+
+            if not Path(folder).exists():
+                continue
+
+            try:
+                backup_path = backup_base / Path(folder).name
+                if backup_path.exists():
+                    backup_path = Path(self._get_unique_path(str(backup_path)))
+            except (IOError, PermissionError, OSError) as e:
+                logger.error(f"Failed to create backup path for {folder}: {e}")
+                failed += 1
+                continue
+
+            try:
+                shutil.copytree(folder, backup_path)
+                successful += 1
+                logger.info(f"Backed up folder: {folder} -> {backup_path}")
+                if not backup_path.exists() or not any(backup_path.iterdir()):
+                    raise RuntimeError("Backup directory was not created or is empty")
+            except (IOError, PermissionError, OSError) as e:
+                failed += 1
+                logger.error(f"Failed to backup folder {folder}: {e}")
+                _safe_rmtree(backup_path)
+                continue
+
+            progress = (i + 1) / total * PROGRESS_BACKUP_PERCENT
+            self.update_progress(progress, f"Backing up folder {i + 1}/{total}")
+
+        return successful, failed
+
+    def _finalize_backup(
+        self, backup_base: Path, successful: int, failed: int
+    ) -> str | None:
+        """Verify backup results and return path or None."""
+        if successful == 0:
+            logger.error("No folders were successfully backed up")
+            _safe_rmtree(backup_base)
+            return None
+
+        if backup_base.exists() and any(backup_base.iterdir()):
+            logger.info(f"Backup completed successfully: {backup_base}")
+            logger.info(f"Backup summary: {successful} successful, {failed} failed")
+            return str(backup_base)
+
+        logger.error("Backup directory is empty or was not created")
+        return None
 
     def _safe_copy_file(self, source_path: str, dest_path: str) -> bool:
         """Safely copy a file with retry logic and error handling.

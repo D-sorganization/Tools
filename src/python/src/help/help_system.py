@@ -64,18 +64,35 @@ def load_help_from_file(file_path: str | Path) -> str:
     return f"Help file not found: {path}"
 
 
+class _MarkdownState:
+    """Mutable state tracked while converting markdown to HTML."""
+
+    __slots__ = (
+        "html_lines",
+        "in_code_block",
+        "in_list",
+        "in_table",
+        "table_has_header",
+    )
+
+    def __init__(self) -> None:
+        self.html_lines: list[str] = []
+        self.in_code_block: bool = False
+        self.in_list: bool = False
+        self.in_table: bool = False
+        self.table_has_header: bool = False
+
+    def close_list(self) -> None:
+        if self.in_list:
+            self.html_lines.append("</ul>")
+            self.in_list = False
+
+
 def _markdown_to_html(markdown_text: str) -> str:
     """Convert basic markdown to HTML for display in QTextBrowser.
 
-    Supports:
-    - Headers (# ## ### ####)
-    - Bold (**text**)
-    - Italic (*text*)
-    - Code blocks (``` and inline `)
-    - Lists (- and numbered)
-    - Links [text](url)
-    - Horizontal rules (---)
-    - Tables (basic support)
+    Supports headers, bold, italic, code blocks, lists, links,
+    horizontal rules, and basic tables.
 
     Args:
         markdown_text: Markdown formatted text
@@ -83,155 +100,150 @@ def _markdown_to_html(markdown_text: str) -> str:
     Returns:
         HTML formatted text
     """
-    lines = markdown_text.split("\n")
-    html_lines: list[str] = []
-    in_code_block = False
-    in_list = False
-    in_table = False
-    table_has_header = False
+    state = _MarkdownState()
 
-    for line in lines:
-        # Code blocks
-        if line.strip().startswith("```"):
-            if in_code_block:
-                html_lines.append("</pre>")
-                in_code_block = False
-            else:
-                html_lines.append(
-                    '<pre style="background-color: #2d2d2d; color: #f0f0f0; '
-                    'padding: 10px; border-radius: 4px; font-family: Consolas, monospace;">'
-                )
-                in_code_block = True
+    for line in markdown_text.split("\n"):
+        if _handle_code_block(line, state):
             continue
-
-        if in_code_block:
-            # Escape HTML in code blocks
-            escaped = (
-                line.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-            )
-            html_lines.append(escaped)
+        if _handle_horizontal_rule(line, state):
             continue
-
-        # Horizontal rule
-        if line.strip() == "---" or line.strip() == "***":
-            if in_list:
-                html_lines.append("</ul>")
-                in_list = False
-            html_lines.append("<hr>")
+        if _handle_table_line(line, state):
             continue
-
-        # Table handling
-        if "|" in line and not line.strip().startswith("|--"):
-            if "|--" in line or "| --" in line or "|:--" in line:
-                # This is a separator row, skip it but mark header
-                table_has_header = True
-                continue
-
-            if not in_table:
-                html_lines.append(
-                    '<table style="border-collapse: collapse; width: 100%; '
-                    'margin: 10px 0;">'
-                )
-                in_table = True
-                table_has_header = False
-
-            cells = [c.strip() for c in line.split("|") if c.strip()]
-            if cells:
-                tag = "th" if not table_has_header else "td"
-                style = (
-                    'style="border: 1px solid #555; padding: 8px; text-align: left;"'
-                )
-                row = (
-                    "<tr>"
-                    + "".join(f"<{tag} {style}>{c}</{tag}>" for c in cells)
-                    + "</tr>"
-                )
-                html_lines.append(row)
-                if tag == "th":
-                    table_has_header = True
+        if _handle_header(line, state):
             continue
-        elif in_table:
-            html_lines.append("</table>")
-            in_table = False
-
-        # Headers
-        if line.startswith("####"):
-            if in_list:
-                html_lines.append("</ul>")
-                in_list = False
-            content = line[4:].strip()
-            html_lines.append(
-                f'<h4 style="color: #89b4fa; margin: 15px 0 8px 0;">{content}</h4>'
-            )
+        if _handle_list_item(line, state):
             continue
-        if line.startswith("###"):
-            if in_list:
-                html_lines.append("</ul>")
-                in_list = False
-            content = line[3:].strip()
-            html_lines.append(
-                f'<h3 style="color: #89b4fa; margin: 18px 0 10px 0;">{content}</h3>'
-            )
-            continue
-        if line.startswith("##"):
-            if in_list:
-                html_lines.append("</ul>")
-                in_list = False
-            content = line[2:].strip()
-            html_lines.append(
-                f'<h2 style="color: #cba6f7; margin: 20px 0 12px 0;">{content}</h2>'
-            )
-            continue
-        if line.startswith("#"):
-            if in_list:
-                html_lines.append("</ul>")
-                in_list = False
-            content = line[1:].strip()
-            html_lines.append(
-                f'<h1 style="color: #f5c2e7; margin: 25px 0 15px 0;">{content}</h1>'
-            )
-            continue
-
-        # Lists
-        stripped = line.strip()
-        if stripped.startswith("- ") or stripped.startswith("* "):
-            if not in_list:
-                html_lines.append('<ul style="margin: 5px 0; padding-left: 25px;">')
-                in_list = True
-            content = stripped[2:]
-            content = _process_inline_formatting(content)
-            html_lines.append(f"<li>{content}</li>")
-            continue
-        elif re.match(r"^\d+\.\s", stripped):
-            if not in_list:
-                html_lines.append('<ol style="margin: 5px 0; padding-left: 25px;">')
-                in_list = True
-            content = re.sub(r"^\d+\.\s", "", stripped)
-            content = _process_inline_formatting(content)
-            html_lines.append(f"<li>{content}</li>")
-            continue
-        elif in_list and not stripped:
-            html_lines.append("</ul>")
-            in_list = False
-
-        # Regular paragraph
-        if stripped:
-            content = _process_inline_formatting(stripped)
-            html_lines.append(
-                f'<p style="margin: 8px 0; line-height: 1.5;">{content}</p>'
-            )
-        elif not in_list:
-            html_lines.append("<br>")
+        _handle_paragraph(line, state)
 
     # Close any open tags
-    if in_list:
-        html_lines.append("</ul>")
-    if in_table:
-        html_lines.append("</table>")
-    if in_code_block:
-        html_lines.append("</pre>")
+    if state.in_list:
+        state.html_lines.append("</ul>")
+    if state.in_table:
+        state.html_lines.append("</table>")
+    if state.in_code_block:
+        state.html_lines.append("</pre>")
 
-    return "\n".join(html_lines)
+    return "\n".join(state.html_lines)
+
+
+def _handle_code_block(line: str, s: _MarkdownState) -> bool:
+    """Handle fenced code block start/end and code block content."""
+    if line.strip().startswith("```"):
+        if s.in_code_block:
+            s.html_lines.append("</pre>")
+            s.in_code_block = False
+        else:
+            s.html_lines.append(
+                '<pre style="background-color: #2d2d2d; color: #f0f0f0; '
+                'padding: 10px; border-radius: 4px; font-family: Consolas, monospace;">'
+            )
+            s.in_code_block = True
+        return True
+    if s.in_code_block:
+        escaped = line.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        s.html_lines.append(escaped)
+        return True
+    return False
+
+
+def _handle_horizontal_rule(line: str, s: _MarkdownState) -> bool:
+    """Handle --- and *** horizontal rules."""
+    if line.strip() in ("---", "***"):
+        s.close_list()
+        s.html_lines.append("<hr>")
+        return True
+    return False
+
+
+def _handle_table_line(line: str, s: _MarkdownState) -> bool:
+    """Handle markdown table rows and separators."""
+    if "|" in line and not line.strip().startswith("|--"):
+        if "|--" in line or "| --" in line or "|:--" in line:
+            s.table_has_header = True
+            return True
+
+        if not s.in_table:
+            s.html_lines.append(
+                '<table style="border-collapse: collapse; width: 100%; '
+                'margin: 10px 0;">'
+            )
+            s.in_table = True
+            s.table_has_header = False
+
+        cells = [c.strip() for c in line.split("|") if c.strip()]
+        if cells:
+            tag = "th" if not s.table_has_header else "td"
+            style = 'style="border: 1px solid #555; padding: 8px; text-align: left;"'
+            row = (
+                "<tr>" + "".join(f"<{tag} {style}>{c}</{tag}>" for c in cells) + "</tr>"
+            )
+            s.html_lines.append(row)
+            if tag == "th":
+                s.table_has_header = True
+        return True
+
+    if s.in_table:
+        s.html_lines.append("</table>")
+        s.in_table = False
+    return False
+
+
+_HEADER_MAP: list[tuple[str, str, str, str]] = [
+    ("####", "h4", "#89b4fa", "15px 0 8px 0"),
+    ("###", "h3", "#89b4fa", "18px 0 10px 0"),
+    ("##", "h2", "#cba6f7", "20px 0 12px 0"),
+    ("#", "h1", "#f5c2e7", "25px 0 15px 0"),
+]
+
+
+def _handle_header(line: str, s: _MarkdownState) -> bool:
+    """Handle # through #### headers."""
+    for prefix, tag, color, margin in _HEADER_MAP:
+        if line.startswith(prefix):
+            s.close_list()
+            content = line[len(prefix) :].strip()
+            s.html_lines.append(
+                f'<{tag} style="color: {color}; margin: {margin};">{content}</{tag}>'
+            )
+            return True
+    return False
+
+
+def _handle_list_item(line: str, s: _MarkdownState) -> bool:
+    """Handle unordered and ordered list items."""
+    stripped = line.strip()
+    if stripped.startswith("- ") or stripped.startswith("* "):
+        if not s.in_list:
+            s.html_lines.append('<ul style="margin: 5px 0; padding-left: 25px;">')
+            s.in_list = True
+        content = _process_inline_formatting(stripped[2:])
+        s.html_lines.append(f"<li>{content}</li>")
+        return True
+
+    if re.match(r"^\d+\.\s", stripped):
+        if not s.in_list:
+            s.html_lines.append('<ol style="margin: 5px 0; padding-left: 25px;">')
+            s.in_list = True
+        content = _process_inline_formatting(re.sub(r"^\d+\.\s", "", stripped))
+        s.html_lines.append(f"<li>{content}</li>")
+        return True
+
+    if s.in_list and not stripped:
+        s.html_lines.append("</ul>")
+        s.in_list = False
+    return False
+
+
+def _handle_paragraph(line: str, s: _MarkdownState) -> None:
+    """Handle regular paragraphs and blank lines."""
+    stripped = line.strip()
+    if stripped:
+        content = _process_inline_formatting(stripped)
+        s.html_lines.append(
+            f'<p style="margin: 8px 0; line-height: 1.5;">{content}</p>'
+        )
+    elif not s.in_list:
+        s.html_lines.append("<br>")
 
 
 def _process_inline_formatting(text: str) -> str:

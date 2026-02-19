@@ -96,7 +96,7 @@ def migrate_csv_to_parquet(
 
         return parquet_path
 
-    except Exception as exc:
+    except (OSError, ValueError, KeyError) as exc:
         print(f"  FAILED: {csv_path.name}: {exc}")
         return None
 
