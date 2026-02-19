@@ -188,13 +188,13 @@ def launch_app(
                 from PyQt6.QtGui import QIcon
 
                 window.setWindowIcon(QIcon(config.icon_path))
-            except (ImportError, Exception) as icon_err:
+            except (ImportError, OSError, ValueError) as icon_err:
                 logger.warning("Could not set window icon: %s", icon_err)
 
         window.show()
-        return app.exec()
+        return int(app.exec())
 
-    except Exception as exc:
+    except (RuntimeError, OSError, ValueError, TypeError) as exc:
         logger.error(
             "Failed to launch '%s': %s",
             config.window_title,

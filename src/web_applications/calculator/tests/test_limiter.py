@@ -1,3 +1,5 @@
+"""Tests for rate limiting in the calculator API."""
+
 import unittest
 
 from flask import Flask

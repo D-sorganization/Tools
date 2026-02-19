@@ -1,3 +1,5 @@
+"""Tests for the web-based calculator application."""
+
 import unittest
 
 from web_applications.calculator.calculator import TI89Calculator
@@ -29,8 +31,8 @@ class TestCalculator(unittest.TestCase):
         """Test solving equations."""
         solutions = self.calculator.solve_equation("x^2 - 1", "x").result
         # Suppress operator errors for containment checks involving Sympy objects
-        self.assertTrue(-1 in solutions)  # type: ignore[operator]
-        self.assertTrue(1 in solutions)  # type: ignore[operator]
+        self.assertTrue(-1 in solutions)
+        self.assertTrue(1 in solutions)
 
     def test_derivative(self) -> None:
         """Test symbolic differentiation."""

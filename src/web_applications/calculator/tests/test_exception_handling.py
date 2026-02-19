@@ -1,3 +1,5 @@
+"""Tests for calculator exception handling and error recovery."""
+
 from collections.abc import Generator
 from unittest.mock import patch
 
