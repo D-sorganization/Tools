@@ -5,8 +5,8 @@ import os
 import shutil
 from pathlib import Path
 
+from cors import add_cors_middleware
 from fastapi import FastAPI, HTTPException, UploadFile
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -15,24 +15,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="URDF Viewer")
-
-# Restrict CORS to known local development origins.
-# Override with CORS_ORIGINS env var (comma-separated) if needed.
-_DEFAULT_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:5173",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:5173",
-]
-_env_origins = os.environ.get("CORS_ORIGINS")
-_cors_origins = _env_origins.split(",") if _env_origins else _DEFAULT_ORIGINS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=_cors_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+add_cors_middleware(app)
 
 BASE_DIR = Path(__file__).resolve().parent
 MODELS_DIR = BASE_DIR / "models"
