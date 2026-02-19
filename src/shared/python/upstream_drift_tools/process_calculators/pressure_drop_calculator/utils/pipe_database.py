@@ -335,9 +335,7 @@ def list_available_sizes() -> list[str]:
 
 def list_schedules_for_size(nominal_size: str) -> list[str]:
     """List all available schedules for a given nominal size."""
-    schedules = [
-        sch for nps, sch in STEEL_PIPE_DIMENSIONS if nps == nominal_size
-    ]
+    schedules = [sch for nps, sch in STEEL_PIPE_DIMENSIONS if nps == nominal_size]
     return sorted(schedules, key=lambda x: "000" if x in ["STD", "XS", "XXS"] else x)
 
 

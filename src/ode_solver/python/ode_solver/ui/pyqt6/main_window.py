@@ -473,9 +473,7 @@ class ODESolverWindow(QMainWindow):
             results.append("-" * 50)
 
             # Header
-            header = "    t    |" + "|".join(
-                f"  {var:^10}  " for var in derivatives
-            )
+            header = "    t    |" + "|".join(f"  {var:^10}  " for var in derivatives)
             results.append(header)
             results.append("-" * len(header))
 
