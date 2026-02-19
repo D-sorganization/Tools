@@ -1,3 +1,8 @@
+"""Plotting script for Half Ton Data analysis.
+
+Generates plots for gas concentrations over time and exports results to Excel.
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd

@@ -1,14 +1,13 @@
-# Assessment O: Maintainability
+# Assessment: Maintainability (Category O)
 
 ## Grade: 4.0/10
 
+## Status: 🔴 Poor
+
 ## Analysis
+TODOs: 571, FIXMEs: 208
 
-- **Date**: 2026-02-16
-- **Automated Check**: Yes
-
-## Details
-
-- **TODOs**: 556
-- **FIXMEs**: 199
-- **Total Lines of Code**: 2067864
+## Statistics
+- Functions: 9206
+- Classes: 1896
+- Files: 2216
