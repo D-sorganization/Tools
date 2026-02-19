@@ -333,7 +333,7 @@ class DataProcessor:
     def correlate(self, method: str = "pearson") -> pd.DataFrame:
         """Return correlation matrix."""
         result: pd.DataFrame = self.dataframe.select_dtypes(include="number").corr(
-            method=method
+            method=method  # type: ignore[arg-type]
         )
         return result
 

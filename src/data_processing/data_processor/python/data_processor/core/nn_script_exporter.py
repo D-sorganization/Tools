@@ -147,23 +147,7 @@ class NeuralNetworkScriptExporter:
         include_evaluation: bool,
     ) -> str:
         """Generate PyTorch training script."""
-        lines = self._pytorch_header(config)
-        lines.extend(self._pytorch_model_definition(config))
-
-        if include_data_loading:
-            lines.extend(self._pytorch_data_loading(config, data_path))
-
-        if include_training:
-            lines.extend(self._pytorch_training_loop(config))
-
-        if include_evaluation:
-            lines.extend(self._pytorch_evaluation())
-
-        return "\n".join(lines)
-
-    def _pytorch_header(self, config: NetworkConfig) -> list[str]:
-        """Generate PyTorch script header with imports and docstring."""
-        return [
+        lines = [
             '"""',
             "Neural Network Training Script (PyTorch)",
             f"Generated: {datetime.now().isoformat()}",
@@ -184,16 +168,17 @@ class NeuralNetworkScriptExporter:
             "",
         ]
 
-    def _pytorch_model_definition(self, config: NetworkConfig) -> list[str]:
-        """Generate PyTorch nn.Module class definition."""
-        lines = [
-            "# Model Definition",
-            "class NeuralNetwork(nn.Module):",
-            "    def __init__(self, input_size, output_size):",
-            "        super(NeuralNetwork, self).__init__()",
-            "        layers = []",
-            "        prev_size = input_size",
-        ]
+        # Model definition
+        lines.extend(
+            [
+                "# Model Definition",
+                "class NeuralNetwork(nn.Module):",
+                "    def __init__(self, input_size, output_size):",
+                "        super(NeuralNetwork, self).__init__()",
+                "        layers = []",
+                "        prev_size = input_size",
+            ]
+        )
 
         for layer in config.layers:
             if layer.layer_type == "dense":
@@ -216,130 +201,134 @@ class NeuralNetworkScriptExporter:
                 "",
             ]
         )
-        return lines
 
-    def _pytorch_data_loading(
-        self, config: NetworkConfig, data_path: str | None
-    ) -> list[str]:
-        """Generate PyTorch data loading and splitting code."""
-        data_path_str = data_path or "data.csv"
-        lines = [
-            "# Data Loading",
-            f'data = pd.read_csv("{data_path_str}")',
-            "# Specify your feature and target columns",
-            "feature_cols = []  # Fill in feature column names",
-            "target_cols = []   # Fill in target column names",
-            "",
-            "X = data[feature_cols].values.astype(np.float32)",
-            "y = data[target_cols].values.astype(np.float32)",
-            "",
-            "# Train/val/test split",
-            f"train_size = int(len(X) * {1 - config.validation_split - 0.15})",
-            f"val_size = int(len(X) * {config.validation_split})",
-            "",
-            "X_train, y_train = X[:train_size], y[:train_size]",
-            "X_val, y_val = X[train_size:train_size+val_size], y[train_size:train_size+val_size]",  # noqa: E501
-            "X_test, y_test = X[train_size+val_size:], y[train_size+val_size:]",
-            "",
-        ]
-
-        if config.normalize_inputs:
+        # Data loading
+        if include_data_loading:
+            data_path_str = data_path or "data.csv"
             lines.extend(
                 [
-                    "# Normalization",
-                    "X_mean, X_std = X_train.mean(axis=0), X_train.std(axis=0)",
-                    "X_std[X_std == 0] = 1",
-                    "X_train = (X_train - X_mean) / X_std",
-                    "X_val = (X_val - X_mean) / X_std",
-                    "X_test = (X_test - X_mean) / X_std",
+                    "# Data Loading",
+                    f'data = pd.read_csv("{data_path_str}")',
+                    "# Specify your feature and target columns",
+                    "feature_cols = []  # Fill in feature column names",
+                    "target_cols = []   # Fill in target column names",
+                    "",
+                    "X = data[feature_cols].values.astype(np.float32)",
+                    "y = data[target_cols].values.astype(np.float32)",
+                    "",
+                    "# Train/val/test split",
+                    f"train_size = int(len(X) * {1 - config.validation_split - 0.15})",
+                    f"val_size = int(len(X) * {config.validation_split})",
+                    "",
+                    "X_train, y_train = X[:train_size], y[:train_size]",
+                    "X_val, y_val = X[train_size:train_size+val_size], y[train_size:train_size+val_size]",  # noqa: E501
+                    "X_test, y_test = X[train_size+val_size:], y[train_size+val_size:]",
                     "",
                 ]
             )
 
-        lines.extend(
-            [
-                "# Create DataLoaders",
-                "train_dataset = TensorDataset(torch.FloatTensor(X_train), torch.FloatTensor(y_train))",  # noqa: E501
-                "val_dataset = TensorDataset(torch.FloatTensor(X_val), torch.FloatTensor(y_val))",  # noqa: E501
-                f"train_loader = DataLoader(train_dataset, batch_size={config.batch_size}, shuffle=True)",  # noqa: E501
-                f"val_loader = DataLoader(val_dataset, batch_size={config.batch_size})",  # noqa: E501
-                "",
-            ]
-        )
-        return lines
+            if config.normalize_inputs:
+                lines.extend(
+                    [
+                        "# Normalization",
+                        "X_mean, X_std = X_train.mean(axis=0), X_train.std(axis=0)",
+                        "X_std[X_std == 0] = 1",
+                        "X_train = (X_train - X_mean) / X_std",
+                        "X_val = (X_val - X_mean) / X_std",
+                        "X_test = (X_test - X_mean) / X_std",
+                        "",
+                    ]
+                )
 
-    def _pytorch_training_loop(self, config: NetworkConfig) -> list[str]:
-        """Generate PyTorch training loop with early stopping."""
-        opt = self._pytorch_optimizer(config.optimizer)
-        loss = self._pytorch_loss(config.loss_function)
+            lines.extend(
+                [
+                    "# Create DataLoaders",
+                    "train_dataset = TensorDataset(torch.FloatTensor(X_train), torch.FloatTensor(y_train))",  # noqa: E501
+                    "val_dataset = TensorDataset(torch.FloatTensor(X_val), torch.FloatTensor(y_val))",  # noqa: E501
+                    f"train_loader = DataLoader(train_dataset, batch_size={config.batch_size}, shuffle=True)",  # noqa: E501
+                    f"val_loader = DataLoader(val_dataset, batch_size={config.batch_size})",  # noqa: E501
+                    "",
+                ]
+            )
 
-        return [
-            "# Training Setup",
-            "device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')",  # noqa: E501
-            f"model = NeuralNetwork(input_size={config.input_features}, output_size={config.output_features}).to(device)",  # noqa: E501
-            f"optimizer = {opt}(model.parameters(), lr={config.learning_rate})",
-            f"criterion = {loss}()",
-            "",
-            "# Early stopping",
-            "best_val_loss = float('inf')",
-            "patience_counter = 0",
-            f"patience = {config.early_stopping_patience}",
-            "",
-            "# Training Loop",
-            f"for epoch in range({config.epochs}):",
-            "    model.train()",
-            "    train_loss = 0",
-            "    for X_batch, y_batch in train_loader:",
-            "        X_batch, y_batch = X_batch.to(device), y_batch.to(device)",
-            "        optimizer.zero_grad()",
-            "        outputs = model(X_batch)",
-            "        loss = criterion(outputs, y_batch)",
-            "        loss.backward()",
-            "        optimizer.step()",
-            "        train_loss += loss.item()",
-            "",
-            "    # Validation",
-            "    model.eval()",
-            "    val_loss = 0",
-            "    with torch.no_grad():",
-            "        for X_batch, y_batch in val_loader:",
-            "            X_batch, y_batch = X_batch.to(device), y_batch.to(device)",  # noqa: E501
-            "            outputs = model(X_batch)",
-            "            val_loss += criterion(outputs, y_batch).item()",
-            "",
-            "    val_loss /= len(val_loader)",
-            "    print(f'Epoch {epoch+1}: Train Loss = {train_loss/len(train_loader):.4f}, Val Loss = {val_loss:.4f}')",  # noqa: E501
-            "",
-            "    # Early stopping check",
-            "    if val_loss < best_val_loss:",
-            "        best_val_loss = val_loss",
-            "        patience_counter = 0",
-            "        torch.save(model.state_dict(), 'best_model.pth')",
-            "    else:",
-            "        patience_counter += 1",
-            "        if patience_counter >= patience:",
-            "            print(f'Early stopping at epoch {epoch+1}')",
-            "            break",
-            "",
-        ]
+        # Training
+        if include_training:
+            opt = self._pytorch_optimizer(config.optimizer)
+            loss = self._pytorch_loss(config.loss_function)
 
-    def _pytorch_evaluation(self) -> list[str]:
-        """Generate PyTorch evaluation code."""
-        return [
-            "# Evaluation",
-            "model.load_state_dict(torch.load('best_model.pth'))",
-            "model.eval()",
-            "with torch.no_grad():",
-            "    X_test_tensor = torch.FloatTensor(X_test).to(device)",
-            "    predictions = model(X_test_tensor).cpu().numpy()",
-            "",
-            "# Metrics",
-            "from sklearn.metrics import mean_squared_error, r2_score",
-            "mse = mean_squared_error(y_test, predictions)",
-            "r2 = r2_score(y_test, predictions)",
-            "print(f'Test MSE: {mse:.4f}')",
-            "print(f'Test R2: {r2:.4f}')",
-        ]
+            lines.extend(
+                [
+                    "# Training Setup",
+                    "device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')",  # noqa: E501
+                    f"model = NeuralNetwork(input_size={config.input_features}, output_size={config.output_features}).to(device)",  # noqa: E501
+                    f"optimizer = {opt}(model.parameters(), lr={config.learning_rate})",
+                    f"criterion = {loss}()",
+                    "",
+                    "# Early stopping",
+                    "best_val_loss = float('inf')",
+                    "patience_counter = 0",
+                    f"patience = {config.early_stopping_patience}",
+                    "",
+                    "# Training Loop",
+                    f"for epoch in range({config.epochs}):",
+                    "    model.train()",
+                    "    train_loss = 0",
+                    "    for X_batch, y_batch in train_loader:",
+                    "        X_batch, y_batch = X_batch.to(device), y_batch.to(device)",
+                    "        optimizer.zero_grad()",
+                    "        outputs = model(X_batch)",
+                    "        loss = criterion(outputs, y_batch)",
+                    "        loss.backward()",
+                    "        optimizer.step()",
+                    "        train_loss += loss.item()",
+                    "",
+                    "    # Validation",
+                    "    model.eval()",
+                    "    val_loss = 0",
+                    "    with torch.no_grad():",
+                    "        for X_batch, y_batch in val_loader:",
+                    "            X_batch, y_batch = X_batch.to(device), y_batch.to(device)",  # noqa: E501
+                    "            outputs = model(X_batch)",
+                    "            val_loss += criterion(outputs, y_batch).item()",
+                    "",
+                    "    val_loss /= len(val_loader)",
+                    "    print(f'Epoch {epoch+1}: Train Loss = {train_loss/len(train_loader):.4f}, Val Loss = {val_loss:.4f}')",  # noqa: E501
+                    "",
+                    "    # Early stopping check",
+                    "    if val_loss < best_val_loss:",
+                    "        best_val_loss = val_loss",
+                    "        patience_counter = 0",
+                    "        torch.save(model.state_dict(), 'best_model.pth')",
+                    "    else:",
+                    "        patience_counter += 1",
+                    "        if patience_counter >= patience:",
+                    "            print(f'Early stopping at epoch {epoch+1}')",
+                    "            break",
+                    "",
+                ]
+            )
+
+        # Evaluation
+        if include_evaluation:
+            lines.extend(
+                [
+                    "# Evaluation",
+                    "model.load_state_dict(torch.load('best_model.pth'))",
+                    "model.eval()",
+                    "with torch.no_grad():",
+                    "    X_test_tensor = torch.FloatTensor(X_test).to(device)",
+                    "    predictions = model(X_test_tensor).cpu().numpy()",
+                    "",
+                    "# Metrics",
+                    "from sklearn.metrics import mean_squared_error, r2_score",
+                    "mse = mean_squared_error(y_test, predictions)",
+                    "r2 = r2_score(y_test, predictions)",
+                    "print(f'Test MSE: {mse:.4f}')",
+                    "print(f'Test R2: {r2:.4f}')",
+                ]
+            )
+
+        return "\n".join(lines)
 
     # ------------------------------------------------------------------ #
     #  TensorFlow script generation
