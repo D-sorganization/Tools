@@ -199,27 +199,47 @@ class CustomThemeEditor(QDialog):
         """Set up the dialog UI."""
         layout = QHBoxLayout(self)
 
-        # Left side - Color editor
+        left_widget = self._build_left_panel()
+        layout.addWidget(left_widget, 1)
+
+        right_widget = self._build_right_panel()
+        layout.addWidget(right_widget, 1)
+
+        button_box = self._build_dialog_buttons()
+        main_layout = QVBoxLayout()
+        main_layout.addLayout(layout)
+        main_layout.addWidget(button_box)
+
+        container = QWidget()
+        container.setLayout(main_layout)
+        dialog_layout = QVBoxLayout(self)
+        dialog_layout.addWidget(container)
+
+    def _build_left_panel(self) -> QWidget:
+        """Build the left panel with name input, color editor, and presets."""
         left_widget = QWidget()
         left_layout = QVBoxLayout(left_widget)
 
         # Theme name input
         name_group = QGroupBox("Theme Name")
         name_layout = QFormLayout(name_group)
-
         self.name_edit = QLineEdit()
         if self.edit_theme:
             self.name_edit.setText(self.edit_theme)
             self.name_edit.setEnabled(False)
         else:
             self.name_edit.setPlaceholderText("Enter theme name...")
-
         name_layout.addRow("Name:", self.name_edit)
         left_layout.addWidget(name_group)
 
-        # Color editor section
+        left_layout.addWidget(self._build_color_editor())
+        left_layout.addWidget(self._build_preset_buttons())
+        left_layout.addStretch()
+        return left_widget
+
+    def _build_color_editor(self) -> QGroupBox:
+        """Build the scrollable color picker section."""
         colors_group = QGroupBox("Theme Colors")
-        colors_scroll = QScrollArea()
         colors_widget = QWidget()
         colors_layout = QFormLayout(colors_widget)
 
@@ -244,19 +264,20 @@ class CustomThemeEditor(QDialog):
             color_button = ColorPickerButton()
             color_button.setToolTip(tooltip)
             color_button.color_changed.connect(partial(self._on_color_changed, key))
-
             self.color_buttons[key] = color_button
             colors_layout.addRow(f"{name}:", color_button)
 
+        colors_scroll = QScrollArea()
         colors_scroll.setWidget(colors_widget)
         colors_scroll.setWidgetResizable(True)
         colors_scroll.setMaximumHeight(400)
 
         colors_group_layout = QVBoxLayout(colors_group)
         colors_group_layout.addWidget(colors_scroll)
-        left_layout.addWidget(colors_group)
+        return colors_group
 
-        # Preset buttons
+    def _build_preset_buttons(self) -> QGroupBox:
+        """Build the quick-start preset theme buttons."""
         preset_group = QGroupBox("Quick Start")
         preset_layout = QVBoxLayout(preset_group)
 
@@ -273,12 +294,10 @@ class CustomThemeEditor(QDialog):
             preset_buttons_layout.addWidget(btn)
 
         preset_layout.addLayout(preset_buttons_layout)
-        left_layout.addWidget(preset_group)
+        return preset_group
 
-        left_layout.addStretch()
-        layout.addWidget(left_widget, 1)
-
-        # Right side - Preview
+    def _build_right_panel(self) -> QWidget:
+        """Build the right panel with live preview."""
         right_widget = QWidget()
         right_layout = QVBoxLayout(right_widget)
 
@@ -288,35 +307,24 @@ class CustomThemeEditor(QDialog):
 
         self.preview_widget = ThemePreviewWidget()
         right_layout.addWidget(self.preview_widget, 1)
+        return right_widget
 
-        layout.addWidget(right_widget, 1)
-
-        # Dialog buttons
+    def _build_dialog_buttons(self) -> QDialogButtonBox:
+        """Build Save/Cancel/Save&Apply button box and connect signals."""
         button_box = QDialogButtonBox(
             QDialogButtonBox.StandardButton.Save
             | QDialogButtonBox.StandardButton.Cancel
         )
-
         self.save_btn = button_box.button(QDialogButtonBox.StandardButton.Save)
-
         self.save_apply_btn = button_box.addButton(
             "Save && Apply", QDialogButtonBox.ButtonRole.AcceptRole
         )
-
-        main_layout = QVBoxLayout()
-        main_layout.addLayout(layout)
-        main_layout.addWidget(button_box)
-
-        container = QWidget()
-        container.setLayout(main_layout)
-
-        dialog_layout = QVBoxLayout(self)
-        dialog_layout.addWidget(container)
 
         button_box.accepted.connect(self._save_theme)
         button_box.rejected.connect(self.reject)
         if self.save_apply_btn is not None:
             self.save_apply_btn.clicked.connect(self._save_and_apply_theme)
+        return button_box
 
     def _load_initial_colors(self) -> None:
         """Load initial colors from existing theme or defaults."""

@@ -27,21 +27,26 @@ class ValidationResult:
 
     @classmethod
     def ok(cls) -> ValidationResult:
+        """Create a passing validation result with no messages."""
         return cls(True, [])
 
     @classmethod
     def error(cls, msg: str) -> ValidationResult:
+        """Create a failing validation result with a single error *msg*."""
         return cls(False, [f"ERROR: {msg}"])
 
     @classmethod
     def warning(cls, msg: str) -> ValidationResult:
+        """Create a passing validation result carrying a single warning *msg*."""
         return cls(True, [f"WARNING: {msg}"])
 
     def add_error(self, msg: str) -> None:
+        """Append an error message and mark the result as invalid."""
         self.is_valid = False
         self.messages.append(f"ERROR: {msg}")
 
     def add_warning(self, msg: str) -> None:
+        """Append a warning message without changing validity status."""
         self.messages.append(f"WARNING: {msg}")
 
 

@@ -1,3 +1,5 @@
+"""Command-line interface for the PDF renamer tool."""
+
 import argparse
 import logging
 import sys
@@ -15,6 +17,7 @@ logger = logging.getLogger("pdf_renamer")
 
 
 def apply_style(title: str, style: str) -> str:
+    """Sanitize *title* and convert it to the requested naming *style*."""
     safe_title = sanitize_filename(title)
     if style == "snake_case":
         return safe_title.lower().replace(" ", "_")
@@ -30,6 +33,7 @@ def process_file(
     dry_run: bool,
     style: str,
 ) -> None:
+    """Extract the title from *file_path* and rename it, using cache and optional LLM."""
     try:
         # 1. Hash
         file_hash = sha256_file(file_path)
@@ -83,6 +87,7 @@ def process_file(
 
 
 def main() -> None:
+    """CLI entry point: parse arguments and batch-rename PDFs in a directory."""
     parser = argparse.ArgumentParser(
         description="Advanced PDF Renamer with AI Fallback"
     )

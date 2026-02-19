@@ -78,25 +78,27 @@ class TestGetEnvBoolContract:
 class TestGetEnvBool:
     """Functional tests for get_env_bool."""
 
-    def test_true_values(self):
+    @pytest.mark.parametrize(
+        "env_val",
+        ["true", "TRUE", "True", "1", "yes", "YES", "on", "ON"],
+    )
+    def test_true_values(self, env_val):
         """Test recognizing true values."""
         from utils.env_utils import get_env_bool
 
-        true_values = ["true", "TRUE", "True", "1", "yes", "YES", "on", "ON"]
+        with patch.dict(os.environ, {"BOOL_VAR": env_val}):
+            assert get_env_bool("BOOL_VAR") is True
 
-        for val in true_values:
-            with patch.dict(os.environ, {"BOOL_VAR": val}):
-                assert get_env_bool("BOOL_VAR") is True, f"Failed for: {val}"
-
-    def test_false_values(self):
+    @pytest.mark.parametrize(
+        "env_val",
+        ["false", "FALSE", "0", "no", "off", "", "anything_else"],
+    )
+    def test_false_values(self, env_val):
         """Test recognizing false values."""
         from utils.env_utils import get_env_bool
 
-        false_values = ["false", "FALSE", "0", "no", "off", "", "anything_else"]
-
-        for val in false_values:
-            with patch.dict(os.environ, {"BOOL_VAR": val}):
-                assert get_env_bool("BOOL_VAR") is False, f"Failed for: {val}"
+        with patch.dict(os.environ, {"BOOL_VAR": env_val}):
+            assert get_env_bool("BOOL_VAR") is False
 
     def test_default_is_false(self):
         """Test default is False."""
@@ -135,21 +137,18 @@ class TestGetEnvIntContract:
 class TestGetEnvInt:
     """Functional tests for get_env_int."""
 
-    def test_parses_integer(self):
-        """Test parsing integer value."""
+    @pytest.mark.parametrize(
+        "env_val, expected",
+        [("8080", 8080), ("-5", -5), ("0", 0), ("999999", 999999)],
+        ids=["positive", "negative", "zero", "large"],
+    )
+    def test_parses_integer(self, env_val, expected):
+        """Test parsing integer values from environment."""
         from utils.env_utils import get_env_int
 
-        with patch.dict(os.environ, {"PORT": "8080"}):
-            result = get_env_int("PORT")
-            assert result == 8080
-
-    def test_parses_negative_integer(self):
-        """Test parsing negative integer."""
-        from utils.env_utils import get_env_int
-
-        with patch.dict(os.environ, {"OFFSET": "-5"}):
-            result = get_env_int("OFFSET")
-            assert result == -5
+        with patch.dict(os.environ, {"INT_VAR": env_val}):
+            result = get_env_int("INT_VAR")
+            assert result == expected
 
     def test_default_is_zero(self):
         """Test default is zero."""
