@@ -286,12 +286,8 @@ class PDFRenamerGUI(QMainWindow):
         self.create_api_tab()
         self.create_settings_tab()
 
-    def create_batch_tab(self) -> None:
-        """Create the batch processing tab."""
-        batch_widget = QWidget()
-        layout = QVBoxLayout(batch_widget)
-
-        # Directory selection
+    def _create_directory_selection_group(self) -> QGroupBox:
+        """Create the directory selection group box."""
         dir_group = QGroupBox("📁 Directory Selection")
         dir_layout = QHBoxLayout()
         self.dir_input = QLineEdit()
@@ -301,16 +297,16 @@ class PDFRenamerGUI(QMainWindow):
         self.browse_btn.clicked.connect(self.browse_directory)
         dir_layout.addWidget(self.browse_btn)
         dir_group.setLayout(dir_layout)
-        layout.addWidget(dir_group)
+        return dir_group
 
-        # Processing settings
+    def _create_processing_settings_group(self) -> QGroupBox:
+        """Create the processing settings group box."""
         settings_group = QGroupBox("⚙️ Processing Settings")
         settings_layout = QVBoxLayout()
 
-        # Naming style
+        # Naming style row
         style_layout = QHBoxLayout()
-        style_label = QLabel("Naming Style:")
-        style_layout.addWidget(style_label)
+        style_layout.addWidget(QLabel("Naming Style:"))
         self.style_standard = QRadioButton("Standard (Title.pdf)")
         self.style_standard.setChecked(True)
         style_layout.addWidget(self.style_standard)
@@ -346,16 +342,14 @@ class PDFRenamerGUI(QMainWindow):
         options_layout2.addStretch()
         settings_layout.addLayout(options_layout2)
 
-        # Workers and failed folder
+        # Workers row
         workers_layout = QHBoxLayout()
-        workers_label = QLabel("Parallel Workers:")
-        workers_layout.addWidget(workers_label)
+        workers_layout.addWidget(QLabel("Parallel Workers:"))
         self.workers_spin = QSpinBox()
         self.workers_spin.setMinimum(1)
         self.workers_spin.setMaximum(16)
         self.workers_spin.setValue(4)
         workers_layout.addWidget(self.workers_spin)
-
         workers_layout.addWidget(QLabel("Failed Folder:"))
         self.failed_folder_input = QLineEdit("failed_renames")
         workers_layout.addWidget(self.failed_folder_input)
@@ -363,19 +357,10 @@ class PDFRenamerGUI(QMainWindow):
         settings_layout.addLayout(workers_layout)
 
         settings_group.setLayout(settings_layout)
-        layout.addWidget(settings_group)
+        return settings_group
 
-        # Progress
-        progress_group = QGroupBox("📊 Progress")
-        progress_layout = QVBoxLayout()
-        self.progress_bar = QProgressBar()
-        progress_layout.addWidget(self.progress_bar)
-        self.status_label = QLabel("Ready")
-        progress_layout.addWidget(self.status_label)
-        progress_group.setLayout(progress_layout)
-        layout.addWidget(progress_group)
-
-        # Control buttons
+    def _create_batch_control_buttons(self) -> QHBoxLayout:
+        """Create the start/cancel button row."""
         button_layout = QHBoxLayout()
         self.start_btn = QPushButton("🚀 Start Processing")
         self.start_btn.setStyleSheet(
@@ -393,7 +378,27 @@ class PDFRenamerGUI(QMainWindow):
         button_layout.addWidget(self.cancel_btn)
 
         button_layout.addStretch()
-        layout.addLayout(button_layout)
+        return button_layout
+
+    def create_batch_tab(self) -> None:
+        """Create the batch processing tab."""
+        batch_widget = QWidget()
+        layout = QVBoxLayout(batch_widget)
+
+        layout.addWidget(self._create_directory_selection_group())
+        layout.addWidget(self._create_processing_settings_group())
+
+        # Progress
+        progress_group = QGroupBox("📊 Progress")
+        progress_layout = QVBoxLayout()
+        self.progress_bar = QProgressBar()
+        progress_layout.addWidget(self.progress_bar)
+        self.status_label = QLabel("Ready")
+        progress_layout.addWidget(self.status_label)
+        progress_group.setLayout(progress_layout)
+        layout.addWidget(progress_group)
+
+        layout.addLayout(self._create_batch_control_buttons())
 
         # Log output
         log_group = QGroupBox("📋 Execution Log")

@@ -104,58 +104,26 @@ class PCAAnalyzer:
         """
         self.config = config or PCAConfig()
 
-    def analyze(
+    def _build_component_list(
         self,
-        df: pd.DataFrame,
-        columns: list[str] | None = None,
-    ) -> PCAResult:
-        """Perform complete PCA analysis.
+        components: np.ndarray,
+        explained_var: np.ndarray,
+        explained_var_ratio: np.ndarray,
+        singular_values: np.ndarray,
+        feature_names: list[str],
+    ) -> tuple[list[PCAComponent], np.ndarray]:
+        """Build the list of PCAComponent objects and cumulative variance.
 
         Args:
-            df: DataFrame with numeric data
-            columns: Columns to include (None = all numeric)
+            components: Principal components matrix
+            explained_var: Explained variance per component
+            explained_var_ratio: Explained variance ratio per component
+            singular_values: Singular values
+            feature_names: Names of input features
 
         Returns:
-            Complete PCA analysis results
+            Tuple of (component_list, cumulative_variance_ratio)
         """
-        # Select columns
-        feature_names = self._select_columns(df, columns)
-        data = df[feature_names].copy()
-
-        # Handle missing values
-        data = data.dropna()
-
-        if len(data) < 2:
-            raise ValueError("Not enough data points for PCA (need at least 2)")
-
-        # Extract values
-        X = data.values.astype(float)
-        n_samples, n_features = X.shape
-
-        # Preprocess data
-        X_processed, mean, std = self._preprocess(X)
-
-        # Perform PCA
-        components, explained_var, explained_var_ratio, singular_values = self._fit_pca(
-            X_processed
-        )
-
-        # Transform data
-        X_transformed = X_processed @ components.T
-        transformed_df = pd.DataFrame(
-            X_transformed,
-            columns=[f"PC{i+1}" for i in range(components.shape[0])],
-            index=data.index,
-        )
-
-        # Create loading matrix
-        loading_matrix = pd.DataFrame(
-            components.T,
-            index=feature_names,
-            columns=[f"PC{i+1}" for i in range(components.shape[0])],
-        )
-
-        # Build component information
         cumulative_var = np.cumsum(explained_var_ratio)
         component_list = []
         for i in range(len(explained_var)):
@@ -170,30 +138,48 @@ class PCAAnalyzer:
                     singular_value=float(singular_values[i]),
                 )
             )
+        return component_list, cumulative_var
 
-        # Calculate feature importance
-        feature_importance = self._calculate_feature_importance(
-            components, explained_var_ratio, feature_names
+    def analyze(
+        self,
+        df: pd.DataFrame,
+        columns: list[str] | None = None,
+    ) -> PCAResult:
+        """Perform complete PCA analysis.
+
+        Args:
+            df: DataFrame with numeric data
+            columns: Columns to include (None = all numeric)
+
+        Returns:
+            Complete PCA analysis results
+        """
+        feature_names = self._select_columns(df, columns)
+        data = df[feature_names].copy().dropna()
+
+        if len(data) < 2:
+            raise ValueError("Not enough data points for PCA (need at least 2)")
+
+        X = data.values.astype(float)
+        n_samples, n_features = X.shape
+
+        X_processed, mean, std = self._preprocess(X)
+        components, explained_var, explained_var_ratio, singular_values = self._fit_pca(
+            X_processed
         )
 
-        # Calculate feature contributions per component
-        feature_contributions = self._calculate_feature_contributions(
-            loading_matrix, explained_var_ratio
+        pc_labels = [f"PC{i+1}" for i in range(components.shape[0])]
+        transformed_df = pd.DataFrame(
+            X_processed @ components.T, columns=pc_labels, index=data.index,
+        )
+        loading_matrix = pd.DataFrame(
+            components.T, index=feature_names, columns=pc_labels,
         )
 
-        # Calculate correlation matrix
-        correlation_matrix = pd.DataFrame(data).corr()
-
-        # Determine optimal number of components
-        kaiser_components = self._kaiser_criterion(explained_var)
-        elbow_components = self._find_elbow(explained_var_ratio)
-
-        # Scree data for plotting
-        scree_data = {
-            "eigenvalues": explained_var,
-            "variance_ratio": explained_var_ratio,
-            "cumulative_variance": cumulative_var,
-        }
+        component_list, cumulative_var = self._build_component_list(
+            components, explained_var, explained_var_ratio,
+            singular_values, feature_names,
+        )
 
         return PCAResult(
             components=component_list,
@@ -201,17 +187,25 @@ class PCAAnalyzer:
             n_features=n_features,
             n_samples=n_samples,
             transformed_data=transformed_df,
-            feature_importance=feature_importance,
-            feature_contributions=feature_contributions,
+            feature_importance=self._calculate_feature_importance(
+                components, explained_var_ratio, feature_names
+            ),
+            feature_contributions=self._calculate_feature_contributions(
+                loading_matrix, explained_var_ratio
+            ),
             loading_matrix=loading_matrix,
-            correlation_matrix=correlation_matrix,
+            correlation_matrix=pd.DataFrame(data).corr(),
             total_variance_explained=(
                 float(cumulative_var[-1]) if len(cumulative_var) > 0 else 0.0
             ),
-            kaiser_criterion_components=kaiser_components,
-            elbow_point_components=elbow_components,
+            kaiser_criterion_components=self._kaiser_criterion(explained_var),
+            elbow_point_components=self._find_elbow(explained_var_ratio),
             feature_names=feature_names,
-            scree_data=scree_data,
+            scree_data={
+                "eigenvalues": explained_var,
+                "variance_ratio": explained_var_ratio,
+                "cumulative_variance": cumulative_var,
+            },
         )
 
     def select_components_by_variance(

@@ -286,6 +286,112 @@ class NeuralNetworkTrainer:
 
         return y_train, y_val, y_test
 
+    def _run_training_loop(
+        self,
+        X_train: np.ndarray,
+        y_train: np.ndarray,
+        X_val: np.ndarray,
+        y_val: np.ndarray,
+        weights: list[np.ndarray | None],
+        biases: list[np.ndarray | None],
+        config: NetworkConfig,
+    ) -> tuple[list[float], list[float], float, int, int, list, list]:
+        """Execute the mini-batch training loop with early stopping.
+
+        Args:
+            X_train: Training features
+            y_train: Training targets
+            X_val: Validation features
+            y_val: Validation targets
+            weights: Initial network weights
+            biases: Initial network biases
+            config: Network configuration
+
+        Returns:
+            Tuple of (train_losses, val_losses, best_val_loss, best_epoch,
+                       patience_counter, weights, biases)
+        """
+        train_losses: list[float] = []
+        val_losses: list[float] = []
+        best_val_loss = float("inf")
+        best_epoch = 0
+        patience_counter = 0
+
+        for epoch in range(config.epochs):
+            indices = np.random.permutation(len(X_train))
+            batch_losses: list[float] = []
+
+            for i in range(0, len(X_train), config.batch_size):
+                batch_idx = indices[i : i + config.batch_size]
+                X_batch = X_train[batch_idx]
+                y_batch = y_train[batch_idx]
+
+                activations = self._forward_pass(X_batch, weights, biases, config)
+                gradients = self._backward_pass(activations, y_batch, weights, config)
+                weights, biases = self._update_weights(
+                    weights, biases, gradients, config
+                )
+
+                y_pred = activations[-1]
+                batch_loss = float(
+                    np.mean((y_pred - y_batch.reshape(y_pred.shape)) ** 2)
+                )
+                batch_losses.append(batch_loss)
+
+            train_losses.append(float(np.mean(batch_losses)))
+
+            val_activations = self._forward_pass(X_val, weights, biases, config)
+            val_pred = val_activations[-1]
+            val_loss = float(np.mean((val_pred - y_val.reshape(val_pred.shape)) ** 2))
+            val_losses.append(val_loss)
+
+            if val_loss < best_val_loss:
+                best_val_loss = val_loss
+                best_epoch = epoch
+                patience_counter = 0
+            else:
+                patience_counter += 1
+
+            if patience_counter >= config.early_stopping_patience:
+                logger.info("Early stopping at epoch %d", epoch)
+                break
+
+        return (
+            train_losses, val_losses, best_val_loss,
+            best_epoch, patience_counter, weights, biases,
+        )
+
+    def _evaluate_test_set(
+        self,
+        data: dict[str, np.ndarray],
+        weights: list[np.ndarray | None],
+        biases: list[np.ndarray | None],
+        config: NetworkConfig,
+    ) -> tuple[float | None, np.ndarray | None, np.ndarray | None]:
+        """Evaluate the trained network on the test set.
+
+        Args:
+            data: Data dictionary containing X_test and y_test
+            weights: Trained weights
+            biases: Trained biases
+            config: Network configuration
+
+        Returns:
+            Tuple of (test_loss, predictions, actual_values)
+        """
+        if "X_test" not in data or len(data["X_test"]) == 0:
+            return None, None, None
+
+        test_activations = self._forward_pass(
+            data["X_test"], weights, biases, config
+        )
+        predictions = test_activations[-1]
+        actual_values = data["y_test"]
+        test_loss = float(
+            np.mean((predictions - actual_values.reshape(predictions.shape)) ** 2)
+        )
+        return test_loss, predictions, actual_values
+
     def train_simple(
         self,
         data: dict[str, np.ndarray],
@@ -304,89 +410,22 @@ class NeuralNetworkTrainer:
         if not config:
             raise ValueError("No network configuration provided")
 
-        X_train = data["X_train"]
-        y_train = data["y_train"]
-        X_val = data["X_val"]
-        y_val = data["y_val"]
-
-        # Initialize weights
-        weights, biases = self._initialize_weights(config, X_train.shape[1])
-
-        # Training loop
-        train_losses: list[float] = []
-        val_losses: list[float] = []
-        best_val_loss = float("inf")
-        best_epoch = 0
-        patience_counter = 0
+        weights, biases = self._initialize_weights(config, data["X_train"].shape[1])
 
         start_time = time.time()
-
-        for epoch in range(config.epochs):
-            # Mini-batch training
-            indices = np.random.permutation(len(X_train))
-            batch_losses: list[float] = []
-
-            for i in range(0, len(X_train), config.batch_size):
-                batch_idx = indices[i : i + config.batch_size]
-                X_batch = X_train[batch_idx]
-                y_batch = y_train[batch_idx]
-
-                # Forward pass
-                activations = self._forward_pass(X_batch, weights, biases, config)
-
-                # Backward pass
-                gradients = self._backward_pass(activations, y_batch, weights, config)
-
-                # Update weights
-                weights, biases = self._update_weights(
-                    weights, biases, gradients, config
-                )
-
-                # Compute batch loss
-                y_pred = activations[-1]
-                batch_loss = float(
-                    np.mean((y_pred - y_batch.reshape(y_pred.shape)) ** 2)
-                )
-                batch_losses.append(batch_loss)
-
-            # Epoch metrics
-            train_loss = float(np.mean(batch_losses))
-            train_losses.append(train_loss)
-
-            # Validation loss
-            val_activations = self._forward_pass(X_val, weights, biases, config)
-            val_pred = val_activations[-1]
-            val_loss = float(np.mean((val_pred - y_val.reshape(val_pred.shape)) ** 2))
-            val_losses.append(val_loss)
-
-            # Early stopping
-            if val_loss < best_val_loss:
-                best_val_loss = val_loss
-                best_epoch = epoch
-                patience_counter = 0
-            else:
-                patience_counter += 1
-
-            if patience_counter >= config.early_stopping_patience:
-                logger.info("Early stopping at epoch %d", epoch)
-                break
-
+        (
+            train_losses, val_losses, best_val_loss,
+            best_epoch, patience_counter, weights, biases,
+        ) = self._run_training_loop(
+            data["X_train"], data["y_train"],
+            data["X_val"], data["y_val"],
+            weights, biases, config,
+        )
         training_time = time.time() - start_time
 
-        # Test evaluation
-        test_loss = None
-        predictions = None
-        actual_values = None
-
-        if "X_test" in data and len(data["X_test"]) > 0:
-            test_activations = self._forward_pass(
-                data["X_test"], weights, biases, config
-            )
-            predictions = test_activations[-1]
-            actual_values = data["y_test"]
-            test_loss = float(
-                np.mean((predictions - actual_values.reshape(predictions.shape)) ** 2)
-            )
+        test_loss, predictions, actual_values = self._evaluate_test_set(
+            data, weights, biases, config
+        )
 
         return TrainingResult(
             train_loss_history=train_losses,

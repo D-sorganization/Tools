@@ -181,7 +181,20 @@ class FilterConfigWidget(QWidget):
 
     def _create_param_widgets(self) -> None:
         """Create parameter widgets for each filter type."""
-        # Moving Average
+        self._create_moving_average_params()
+        self._create_butterworth_lowpass_params()
+        self._create_butterworth_highpass_params()
+        self._create_butterworth_bandpass_params()
+        self._create_median_params()
+        self._create_gaussian_params()
+        self._create_hampel_params()
+        self._create_zscore_params()
+        self._create_savgol_params()
+        self._create_fft_lowpass_params()
+        self._create_fft_highpass_params()
+
+    def _create_moving_average_params(self) -> None:
+        """Create Moving Average filter parameter widgets."""
         ma_widget = QWidget()
         ma_layout = QFormLayout(ma_widget)
         self.ma_window = QSpinBox()
@@ -190,7 +203,8 @@ class FilterConfigWidget(QWidget):
         ma_layout.addRow("Window Size:", self.ma_window)
         self.param_stack.addWidget(ma_widget)
 
-        # Butterworth Low-pass
+    def _create_butterworth_lowpass_params(self) -> None:
+        """Create Butterworth Low-pass filter parameter widgets."""
         bw_low_widget = QWidget()
         bw_low_layout = QFormLayout(bw_low_widget)
         self.bw_low_order = QSpinBox()
@@ -204,7 +218,8 @@ class FilterConfigWidget(QWidget):
         bw_low_layout.addRow("Cutoff (normalized):", self.bw_low_cutoff)
         self.param_stack.addWidget(bw_low_widget)
 
-        # Butterworth High-pass
+    def _create_butterworth_highpass_params(self) -> None:
+        """Create Butterworth High-pass filter parameter widgets."""
         bw_high_widget = QWidget()
         bw_high_layout = QFormLayout(bw_high_widget)
         self.bw_high_order = QSpinBox()
@@ -218,7 +233,8 @@ class FilterConfigWidget(QWidget):
         bw_high_layout.addRow("Cutoff (normalized):", self.bw_high_cutoff)
         self.param_stack.addWidget(bw_high_widget)
 
-        # Butterworth Band-pass
+    def _create_butterworth_bandpass_params(self) -> None:
+        """Create Butterworth Band-pass filter parameter widgets."""
         bw_band_widget = QWidget()
         bw_band_layout = QFormLayout(bw_band_widget)
         self.bw_band_order = QSpinBox()
@@ -237,7 +253,8 @@ class FilterConfigWidget(QWidget):
         bw_band_layout.addRow("High Cutoff:", self.bw_band_high)
         self.param_stack.addWidget(bw_band_widget)
 
-        # Median Filter
+    def _create_median_params(self) -> None:
+        """Create Median filter parameter widgets."""
         median_widget = QWidget()
         median_layout = QFormLayout(median_widget)
         self.median_kernel = QSpinBox()
@@ -247,7 +264,8 @@ class FilterConfigWidget(QWidget):
         median_layout.addRow("Kernel Size (odd):", self.median_kernel)
         self.param_stack.addWidget(median_widget)
 
-        # Gaussian Filter
+    def _create_gaussian_params(self) -> None:
+        """Create Gaussian filter parameter widgets."""
         gaussian_widget = QWidget()
         gaussian_layout = QFormLayout(gaussian_widget)
         self.gaussian_sigma = QDoubleSpinBox()
@@ -257,7 +275,8 @@ class FilterConfigWidget(QWidget):
         gaussian_layout.addRow("Sigma:", self.gaussian_sigma)
         self.param_stack.addWidget(gaussian_widget)
 
-        # Hampel Filter
+    def _create_hampel_params(self) -> None:
+        """Create Hampel filter parameter widgets."""
         hampel_widget = QWidget()
         hampel_layout = QFormLayout(hampel_widget)
         self.hampel_window = QSpinBox()
@@ -270,7 +289,8 @@ class FilterConfigWidget(QWidget):
         hampel_layout.addRow("Threshold:", self.hampel_threshold)
         self.param_stack.addWidget(hampel_widget)
 
-        # Z-Score Filter
+    def _create_zscore_params(self) -> None:
+        """Create Z-Score filter parameter widgets."""
         zscore_widget = QWidget()
         zscore_layout = QFormLayout(zscore_widget)
         self.zscore_threshold = QDoubleSpinBox()
@@ -280,7 +300,8 @@ class FilterConfigWidget(QWidget):
         zscore_layout.addRow("Z-Score Threshold:", self.zscore_threshold)
         self.param_stack.addWidget(zscore_widget)
 
-        # Savitzky-Golay
+    def _create_savgol_params(self) -> None:
+        """Create Savitzky-Golay filter parameter widgets."""
         savgol_widget = QWidget()
         savgol_layout = QFormLayout(savgol_widget)
         self.savgol_window = QSpinBox()
@@ -294,7 +315,8 @@ class FilterConfigWidget(QWidget):
         savgol_layout.addRow("Polynomial Order:", self.savgol_order)
         self.param_stack.addWidget(savgol_widget)
 
-        # FFT Low-pass
+    def _create_fft_lowpass_params(self) -> None:
+        """Create FFT Low-pass filter parameter widgets."""
         fft_low_widget = QWidget()
         fft_low_layout = QFormLayout(fft_low_widget)
         self.fft_low_cutoff = QDoubleSpinBox()
@@ -304,7 +326,8 @@ class FilterConfigWidget(QWidget):
         fft_low_layout.addRow("Cutoff Frequency:", self.fft_low_cutoff)
         self.param_stack.addWidget(fft_low_widget)
 
-        # FFT High-pass
+    def _create_fft_highpass_params(self) -> None:
+        """Create FFT High-pass filter parameter widgets."""
         fft_high_widget = QWidget()
         fft_high_layout = QFormLayout(fft_high_widget)
         self.fft_high_cutoff = QDoubleSpinBox()

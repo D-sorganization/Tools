@@ -349,6 +349,77 @@ class FunctionGeneratorWidget(QWidget):
         self.chirp_method_combo.currentTextChanged.connect(self._generate_signal)
         self.constant_value_spin.valueChanged.connect(self._generate_signal)
 
+    def _build_waveform(self, waveform: str, t: np.ndarray) -> np.ndarray | None:
+        """Build the signal array for the given waveform type.
+
+        Args:
+            waveform: Waveform type name from the combo box
+            t: Time array
+
+        Returns:
+            Generated signal array, or None if waveform is unknown
+        """
+        amp = self.amplitude_spin.value()
+        freq = self.frequency_spin.value()
+        phase = np.radians(self.phase_spin.value())
+        offset = self.offset_spin.value()
+
+        if waveform == "Sinusoid":
+            return SignalGenerator.sinusoid(
+                t, amplitude=amp, frequency=freq, phase=phase, offset=offset,
+            )
+        elif waveform == "Cosine":
+            return SignalGenerator.cosine(
+                t, amplitude=amp, frequency=freq, phase=phase, offset=offset,
+            )
+        elif waveform == "Square Wave":
+            return SignalGenerator.square(
+                t, frequency=freq, amplitude=amp,
+                duty_cycle=self.duty_cycle_spin.value(), offset=offset,
+            )
+        elif waveform == "Triangle Wave":
+            return SignalGenerator.triangle(
+                t, frequency=freq, amplitude=amp, offset=offset,
+            )
+        elif waveform == "Sawtooth":
+            return SignalGenerator.sawtooth(
+                t, frequency=freq, amplitude=amp, offset=offset,
+            )
+        elif waveform == "Pulse":
+            return SignalGenerator.pulse(
+                t, start_time=self.pulse_start_spin.value(),
+                duration=self.pulse_duration_spin.value(),
+                amplitude=amp, baseline=offset,
+            )
+        elif waveform == "Step":
+            return SignalGenerator.step(
+                t, step_time=self.step_time_spin.value(),
+                step_value=amp, initial_value=offset,
+            )
+        elif waveform == "Exponential":
+            return SignalGenerator.exponential(
+                t, amplitude=amp, decay_rate=self.decay_rate_spin.value(),
+                offset=offset,
+            )
+        elif waveform == "Linear":
+            return SignalGenerator.linear(
+                t, slope=self.slope_spin.value(), intercept=self.intercept_spin.value(),
+            )
+        elif waveform == "Polynomial":
+            coeffs_text = self.poly_coeffs_edit.toPlainText()
+            coeffs = [float(c.strip()) for c in coeffs_text.split(",") if c.strip()]
+            if not coeffs:
+                coeffs = [0, 1]
+            return SignalGenerator.polynomial(t, coeffs)
+        elif waveform == "Chirp":
+            return SignalGenerator.chirp(
+                t, f0=self.chirp_f0_spin.value(), f1=self.chirp_f1_spin.value(),
+                amplitude=amp, method=self.chirp_method_combo.currentText(),
+            )
+        elif waveform == "Constant":
+            return SignalGenerator.constant(t, value=self.constant_value_spin.value())
+        return None
+
     def _generate_signal(self) -> None:
         """Generate the signal based on current parameters."""
         duration = self.duration_spin.value()
@@ -356,95 +427,9 @@ class FunctionGeneratorWidget(QWidget):
         n_samples = int(duration * sample_rate)
         t = np.linspace(0, duration, n_samples)
 
-        waveform = self.waveform_combo.currentText()
-
         try:
-            if waveform == "Sinusoid":
-                signal = SignalGenerator.sinusoid(
-                    t,
-                    amplitude=self.amplitude_spin.value(),
-                    frequency=self.frequency_spin.value(),
-                    phase=np.radians(self.phase_spin.value()),
-                    offset=self.offset_spin.value(),
-                )
-            elif waveform == "Cosine":
-                signal = SignalGenerator.cosine(
-                    t,
-                    amplitude=self.amplitude_spin.value(),
-                    frequency=self.frequency_spin.value(),
-                    phase=np.radians(self.phase_spin.value()),
-                    offset=self.offset_spin.value(),
-                )
-            elif waveform == "Square Wave":
-                signal = SignalGenerator.square(
-                    t,
-                    frequency=self.frequency_spin.value(),
-                    amplitude=self.amplitude_spin.value(),
-                    duty_cycle=self.duty_cycle_spin.value(),
-                    offset=self.offset_spin.value(),
-                )
-            elif waveform == "Triangle Wave":
-                signal = SignalGenerator.triangle(
-                    t,
-                    frequency=self.frequency_spin.value(),
-                    amplitude=self.amplitude_spin.value(),
-                    offset=self.offset_spin.value(),
-                )
-            elif waveform == "Sawtooth":
-                signal = SignalGenerator.sawtooth(
-                    t,
-                    frequency=self.frequency_spin.value(),
-                    amplitude=self.amplitude_spin.value(),
-                    offset=self.offset_spin.value(),
-                )
-            elif waveform == "Pulse":
-                signal = SignalGenerator.pulse(
-                    t,
-                    start_time=self.pulse_start_spin.value(),
-                    duration=self.pulse_duration_spin.value(),
-                    amplitude=self.amplitude_spin.value(),
-                    baseline=self.offset_spin.value(),
-                )
-            elif waveform == "Step":
-                signal = SignalGenerator.step(
-                    t,
-                    step_time=self.step_time_spin.value(),
-                    step_value=self.amplitude_spin.value(),
-                    initial_value=self.offset_spin.value(),
-                )
-            elif waveform == "Exponential":
-                signal = SignalGenerator.exponential(
-                    t,
-                    amplitude=self.amplitude_spin.value(),
-                    decay_rate=self.decay_rate_spin.value(),
-                    offset=self.offset_spin.value(),
-                )
-            elif waveform == "Linear":
-                signal = SignalGenerator.linear(
-                    t,
-                    slope=self.slope_spin.value(),
-                    intercept=self.intercept_spin.value(),
-                )
-            elif waveform == "Polynomial":
-                coeffs_text = self.poly_coeffs_edit.toPlainText()
-                coeffs = [float(c.strip()) for c in coeffs_text.split(",") if c.strip()]
-                if not coeffs:
-                    coeffs = [0, 1]
-                signal = SignalGenerator.polynomial(t, coeffs)
-            elif waveform == "Chirp":
-                signal = SignalGenerator.chirp(
-                    t,
-                    f0=self.chirp_f0_spin.value(),
-                    f1=self.chirp_f1_spin.value(),
-                    amplitude=self.amplitude_spin.value(),
-                    method=self.chirp_method_combo.currentText(),
-                )
-            elif waveform == "Constant":
-                signal = SignalGenerator.constant(
-                    t,
-                    value=self.constant_value_spin.value(),
-                )
-            else:
+            signal = self._build_waveform(self.waveform_combo.currentText(), t)
+            if signal is None:
                 return
 
             self.current_signal = signal

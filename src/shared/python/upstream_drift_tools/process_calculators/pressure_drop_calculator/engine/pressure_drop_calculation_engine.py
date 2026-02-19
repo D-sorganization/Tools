@@ -552,6 +552,54 @@ def calculate_elevation_pressure_drop(density: float, elevation_change: float) -
     return float(dp_elevation)
 
 
+def _iterate_compressible_pressure(
+    P1: float,
+    P2_initial: float,
+    coeff: float,
+    resistance: float,
+    max_iterations: int = 50,
+    tolerance: float = 1.0,
+) -> tuple[float, bool]:
+    """Iteratively solve the isothermal compressible flow equation for P2.
+
+    Uses fixed-point iteration on:
+    P₂² = P₁² - coeff × (resistance + 2 × ln(P₁/P₂))
+
+    Args:
+        P1: Inlet pressure (Pa)
+        P2_initial: Initial guess for outlet pressure (Pa)
+        coeff: G² × Z × R × T / M coefficient
+        resistance: f × L/D + sum(K) resistance term
+        max_iterations: Maximum iteration count
+        tolerance: Convergence tolerance (Pa)
+
+    Returns:
+        Tuple of (converged_P2, is_choked). If choked, P2 is meaningless.
+    """
+    P2 = P2_initial
+
+    for iteration in range(max_iterations):
+        P2_old = P2
+
+        ln_term = 2.0 * math.log(P1 / P2) if P2 > 0 and P1 > P2 else 0.0
+        rhs = coeff * (resistance + ln_term)
+        P2_squared = P1**2 - rhs
+
+        if P2_squared <= 0:
+            logger.warning(
+                "Compressible flow calculation indicates choked flow condition"
+            )
+            return P2, True
+
+        P2 = math.sqrt(P2_squared)
+
+        if abs(P2 - P2_old) < tolerance:
+            logger.debug(f"Compressible flow converged in {iteration + 1} iterations")
+            break
+
+    return P2, False
+
+
 def calculate_compressible_flow_correction(
     inlet_pressure: float,
     outlet_pressure: float,
@@ -572,16 +620,6 @@ def calculate_compressible_flow_correction(
     Uses isothermal compressible flow equation (derived from continuity and momentum):
     P₁² - P₂² = G² × (Z × R × T / M) × [f × L/D + ΣK + 2 × ln(P₁/P₂)]
 
-    where:
-        G = mass flux = ṁ/A (kg/(m²·s))
-        Z = compressibility factor
-        R = universal gas constant
-        T = temperature (K)
-        M = molecular weight (kg/kmol)
-        f = friction factor
-        L/D = length/diameter ratio
-        ΣK = total fitting K-factors
-
     Args:
         inlet_pressure: Inlet pressure (Pa)
         outlet_pressure: Initial estimate of outlet pressure (Pa)
@@ -600,65 +638,30 @@ def calculate_compressible_flow_correction(
     Reference:
         Perry's Chemical Engineers' Handbook, 9th Ed, Section 6
         Crane TP-410: Flow of Compressible Fluids in Pipelines
-        Crowl & Louvar: Chemical Process Safety, 4th Ed
     """
-    # Pipe cross-sectional area
+    # DbC preconditions
+    assert diameter > 0, f"diameter must be positive, got {diameter}"
+    assert temperature > 0, f"temperature must be positive (K), got {temperature}"
+    assert molecular_weight > 0, f"molecular_weight must be positive, got {molecular_weight}"
+
     area = PI * (diameter**2) / 4.0
-
-    # Mass flux (kg/(m²·s))
     G = mass_flow_rate / area
-
-    # Resistance term: f × L/D + ΣK
     resistance = friction_factor * (length / diameter) + total_k_factor
 
-    # Calculate P₂ iteratively using isothermal compressible flow equation
-    # P₁² - P₂² = G² × (Z × R × T / M) × [f × L/D + ΣK + 2 × ln(P₁/P₂)]
-
-    P1 = inlet_pressure
-    P2 = outlet_pressure  # Initial guess
-
-    # Coefficient: G² × (Z × R × T / M)
     coeff = (
         (G**2) * (compressibility_factor * R_UNIVERSAL * temperature) / molecular_weight
     )
 
-    # Iterative solution (Newton-Raphson)
-    max_iterations = 50
-    tolerance = 1.0  # Pa
+    P2, is_choked = _iterate_compressible_pressure(
+        inlet_pressure, outlet_pressure, coeff, resistance,
+    )
 
-    for iteration in range(max_iterations):
-        P2_old = P2
+    if is_choked:
+        return inlet_pressure - outlet_pressure, outlet_pressure
 
-        # Acceleration term (logarithmic) for compressible flow
-        ln_term = 2.0 * math.log(P1 / P2) if P2 > 0 and P1 > P2 else 0.0
+    corrected_dp = inlet_pressure - P2
 
-        # Right-hand side of the equation
-        rhs = coeff * (resistance + ln_term)
-
-        # Solve for P2: P₂² = P₁² - rhs
-        P2_squared = P1**2 - rhs
-
-        if P2_squared <= 0:
-            # Flow is choked or calculation invalid
-            logger.warning(
-                "Compressible flow calculation indicates choked flow condition"
-            )
-            # Return incompressible estimate
-            return inlet_pressure - outlet_pressure, outlet_pressure
-
-        P2 = math.sqrt(P2_squared)
-
-        # Check convergence
-        if abs(P2 - P2_old) < tolerance:
-            logger.debug(f"Compressible flow converged in {iteration + 1} iterations")
-            break
-
-    # Calculate corrected pressure drop
-    corrected_dp = P1 - P2
-
-    # Calculate expansion factor Y for reporting
-    # Y = 1 - (corrected_dp / inlet_pressure) / 3  # Simplified for subsonic flow
-    pressure_ratio = P2 / P1
+    pressure_ratio = P2 / inlet_pressure
     if pressure_ratio > 0:
         expansion_factor = math.sqrt(
             pressure_ratio * (1 - pressure_ratio**2) / (1 - pressure_ratio)

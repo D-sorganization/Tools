@@ -46,38 +46,24 @@ class DiagnosticsMixin:
         names: list[str],
     ) -> tuple[np.ndarray, list[str]]: ...
 
-    def _calculate_statistics(
+    def _compute_standard_errors(
         self,
         X: np.ndarray,
-        y: np.ndarray,
-        y_pred: np.ndarray,
-        residuals: np.ndarray,
-        coeffs: np.ndarray,
-        intercept: float,
-        feature_names: list[str],
-    ) -> RegressionResult:
-        """Calculate comprehensive regression statistics."""
-        n, p = X.shape
+        n: int,
+        p: int,
+        mse: float,
+    ) -> tuple[float, np.ndarray]:
+        """Compute standard errors of intercept and coefficients.
 
-        # Sum of squares
-        ss_res = np.sum(residuals**2)
-        ss_tot = np.sum((y - np.mean(y)) ** 2)
-        ss_reg = ss_tot - ss_res
+        Args:
+            X: Feature matrix (n x p)
+            n: Number of observations
+            p: Number of predictors
+            mse: Mean squared error
 
-        # R-squared and adjusted R-squared
-        r_squared = 1 - ss_res / ss_tot if ss_tot > 0 else 0
-        adj_r_squared = (
-            1 - (1 - r_squared) * (n - 1) / (n - p - 1) if n > p + 1 else r_squared
-        )
-
-        # RMSE and MAE
-        rmse = np.sqrt(ss_res / n)
-        mae = np.mean(np.abs(residuals))
-
-        # MSE for standard errors
-        mse = ss_res / (n - p - 1) if n > p + 1 else ss_res / n
-
-        # Standard errors of coefficients
+        Returns:
+            Tuple of (intercept_se, coefficient_se_array)
+        """
         X_with_intercept = np.column_stack([np.ones(n), X])
         try:
             var_covar = mse * np.linalg.inv(X_with_intercept.T @ X_with_intercept)
@@ -87,15 +73,32 @@ class DiagnosticsMixin:
 
         intercept_se = se[0] if len(se) > 0 else 0
         coef_se = se[1:] if len(se) > 1 else np.zeros(p)
+        return intercept_se, coef_se
 
-        # Confidence intervals
-        alpha = 1 - self.config.confidence_level
-        t_crit = stats.t.ppf(1 - alpha / 2, n - p - 1) if n > p + 1 else 1.96
+    def _build_coefficient_info(
+        self,
+        coeffs: np.ndarray,
+        coef_se: np.ndarray,
+        feature_names: list[str],
+        vifs: np.ndarray,
+        t_crit: float,
+        n: int,
+        p: int,
+    ) -> list[CoefficientInfo]:
+        """Build CoefficientInfo list with t-tests and confidence intervals.
 
-        # Calculate VIF
-        vifs = self._calculate_vif(X)
+        Args:
+            coeffs: Coefficient estimates
+            coef_se: Standard errors
+            feature_names: Feature names
+            vifs: Variance Inflation Factors
+            t_crit: Critical t-value
+            n: Number of observations
+            p: Number of predictors
 
-        # Build coefficient info
+        Returns:
+            List of CoefficientInfo objects
+        """
         coef_info = []
         for i, name in enumerate(feature_names):
             t_stat = coeffs[i] / coef_se[i] if coef_se[i] > 0 else 0
@@ -113,8 +116,43 @@ class DiagnosticsMixin:
                     vif=float(vifs[i]) if i < len(vifs) else 1.0,
                 )
             )
+        return coef_info
 
-        # F-statistic
+    def _calculate_statistics(
+        self,
+        X: np.ndarray,
+        y: np.ndarray,
+        y_pred: np.ndarray,
+        residuals: np.ndarray,
+        coeffs: np.ndarray,
+        intercept: float,
+        feature_names: list[str],
+    ) -> RegressionResult:
+        """Calculate comprehensive regression statistics."""
+        n, p = X.shape
+
+        ss_res = np.sum(residuals**2)
+        ss_tot = np.sum((y - np.mean(y)) ** 2)
+        ss_reg = ss_tot - ss_res
+
+        r_squared = 1 - ss_res / ss_tot if ss_tot > 0 else 0
+        adj_r_squared = (
+            1 - (1 - r_squared) * (n - 1) / (n - p - 1) if n > p + 1 else r_squared
+        )
+        rmse = np.sqrt(ss_res / n)
+        mae = np.mean(np.abs(residuals))
+        mse = ss_res / (n - p - 1) if n > p + 1 else ss_res / n
+
+        intercept_se, coef_se = self._compute_standard_errors(X, n, p, mse)
+
+        alpha = 1 - self.config.confidence_level
+        t_crit = stats.t.ppf(1 - alpha / 2, n - p - 1) if n > p + 1 else 1.96
+        vifs = self._calculate_vif(X)
+
+        coef_info = self._build_coefficient_info(
+            coeffs, coef_se, feature_names, vifs, t_crit, n, p
+        )
+
         df_model = p
         df_residual = n - p - 1
         if df_residual > 0 and ss_res > 0:
@@ -124,8 +162,7 @@ class DiagnosticsMixin:
             f_stat = 0
             f_p_value = 1
 
-        # AIC and BIC
-        k = p + 2  # coefficients + intercept + variance
+        k = p + 2
         aic = n * np.log(ss_res / n) + 2 * k
         bic = n * np.log(ss_res / n) + k * np.log(n)
 
