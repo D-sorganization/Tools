@@ -51,190 +51,165 @@ class VisualizationMixin:
     _draw_3d_refractory_layer: Any
 
     def _update_3d_visualization(self) -> None:
-        """Update the 3D electrode visualization with new path geometry"""
+        """Update the 3D electrode visualization with new path geometry."""
         try:
-            logger.debug("[DEBUG] _update_3d_visualization called")
-
-            # Check if matplotlib is initialized
-            if not getattr(self, "matplotlib_initialized", False):
-                logger.debug(
-                    "[DEBUG] Matplotlib not initialized, skipping visualization update"
-                )
+            if not self._is_visualization_ready():
                 return
 
-            # Check if initialization is complete and widgets are available
-            if not getattr(self, "_initialization_complete", False):
-                logger.debug(
-                    "[DEBUG] Initialization not complete, skipping visualization update"
-                )
-                return
-
-            # Check if widgets are still valid before accessing them
-            try:
-                if (
-                    not hasattr(self, "show_refractory_checkbox")
-                    or not self.show_refractory_checkbox
-                ):
-                    logger.debug(
-                        "[DEBUG] Widgets not available, skipping visualization update"
-                    )
-                    return
-
-                # Test if we can access the checkbox state without error
-                _ = self.show_refractory_checkbox.isChecked()
-            except RuntimeError as e:
-                logger.exception(
-                    "[DEBUG] Widget access error: %s, skipping visualization update", e
-                )
-                return
-
-            # Clear the plot
             if self.electrode_ax is not None:
                 self.electrode_ax.clear()
 
-            # Get current parameters
-            bath_diameter = self.bath_diameter_input.value()
-            bath_radius = bath_diameter / 2.0
-            electrode_diameter = float(self.electrode_diameter_combo.currentText())
-            electrode_radius = electrode_diameter / 2.0
-            metal_height = self.metal_layer_height_input.value()
-            glass_height = self.glass_layer_height_input.value()
-            refractory_thickness = self.refractory_thickness_input.value()
+            params = self._read_geometry_params()
+            self._draw_visible_components(params)
+            self._configure_axis_labels()
+            self._configure_axis_limits(params)
 
-            # Electrode depths
-            depths = [
-                self.depth_inputs[0].value(),
-                self.depth_inputs[1].value(),
-                self.depth_inputs[2].value(),
-            ]
-
-            # Draw components based on visibility settings with safe widget access
-            def safe_checkbox_check(checkbox_name: str) -> bool:
-                """Safe Checkbox Check method.
-
-                Returns:
-                    Checkbox state
-                """
-                try:
-                    checkbox = getattr(self, checkbox_name, None)
-                    if isinstance(checkbox, QCheckBox):
-                        return checkbox.isChecked()
-                    return False
-                except (RuntimeError, AttributeError):
-                    return False
-
-            # Draw all components based on checkbox states
-            if safe_checkbox_check("show_refractory_checkbox"):
-                logger.debug("[DEBUG] Drawing refractory layer")
-                self._draw_3d_refractory_layer(
-                    bath_radius, glass_height + metal_height, refractory_thickness
-                )
-
-            if safe_checkbox_check("show_metal_shell_checkbox"):
-                logger.debug("[DEBUG] Drawing metal shell")
-                self._draw_3d_metal_shell(
-                    bath_radius, glass_height + metal_height, refractory_thickness
-                )
-
-            # Check if metal conductivity is enabled before drawing metal layer
-            metal_conductive = getattr(self, "metal_conductive_checkbox", None)
-            metal_conductive_enabled = (
-                metal_conductive.isChecked() if metal_conductive else True
-            )
-
-            if safe_checkbox_check("show_metal_checkbox") and metal_conductive_enabled:
-                logger.debug("[DEBUG] Drawing metal layer")
-                self._draw_3d_metal_layer(bath_radius, metal_height)
-
-            if safe_checkbox_check("show_glass_checkbox"):
-                logger.debug("[DEBUG] Drawing glass layer")
-                self._draw_3d_glass_layer(bath_radius, metal_height, glass_height)
-
-            if safe_checkbox_check("show_electrodes_checkbox"):
-                logger.debug("[DEBUG] Drawing electrodes")
-                self._draw_3d_electrodes(
-                    depths, electrode_radius, bath_radius, metal_height, glass_height
-                )
-
-            if safe_checkbox_check("show_paths_checkbox"):
-                logger.debug("[DEBUG] Drawing conductive paths")
-                self._draw_3d_conductive_paths_new(
-                    depths, electrode_radius, bath_radius, metal_height, glass_height
-                )
-
-            # Set labels and title based on user preference with safety check
-            if safe_checkbox_check("show_axis_labels_checkbox"):
-                if self.electrode_ax:
-                    self.electrode_ax.set_xlabel("X (inches)")
-                    self.electrode_ax.set_ylabel("Y (inches)")
-                    if hasattr(self.electrode_ax, "set_zlabel"):
-                        self.electrode_ax.set_zlabel("Height (inches)")
-                    # Show tick marks and labels
-                    self.electrode_ax.tick_params(
-                        axis="x", which="both", bottom=True, top=False, labelbottom=True
-                    )
-                    self.electrode_ax.tick_params(
-                        axis="y", which="both", left=True, right=False, labelleft=True
-                    )
-                    # For 3D z-axis ticks (if available)
-                    if hasattr(self.electrode_ax, "zaxis"):
-                        self.electrode_ax.zaxis.set_tick_params(labelleft=True)
-            else:
-                if self.electrode_ax:
-                    self.electrode_ax.set_xlabel("")
-                    self.electrode_ax.set_ylabel("")
-                    if hasattr(self.electrode_ax, "set_zlabel"):
-                        self.electrode_ax.set_zlabel("")
-                # Hide tick marks and labels
-            if hasattr(self, "electrode_ax") and self.electrode_ax:
-                self.electrode_ax.tick_params(
-                    axis="x", which="both", bottom=False, top=False, labelbottom=False
-                )
-                self.electrode_ax.tick_params(
-                    axis="y", which="both", left=False, right=False, labelleft=False
-                )
-                # For 3D z-axis ticks (if available)
-                if hasattr(self.electrode_ax, "zaxis"):
-                    self.electrode_ax.zaxis.set_tick_params(labelleft=False)
-
-            # No title on main chart (per user request)
-            if self.electrode_ax is not None:
-                self.electrode_ax.set_title("")
-
-            # Set equal aspect ratio for true scale
-            extension_length = float(self.electrode_extension_slider.value())
-            max_range = max(bath_radius + extension_length, glass_height + metal_height)
-
-            # Apply current zoom level
-            zoom_factor = self.zoom_slider.value() / 100.0
-            scaled_range = max_range / zoom_factor * 1.1
-
-            if self.electrode_ax:
-                self.electrode_ax.set_xlim(-scaled_range, scaled_range)
-                self.electrode_ax.set_ylim(-scaled_range, scaled_range)
-                if hasattr(self.electrode_ax, "set_zlim"):
-                    self.electrode_ax.set_zlim(
-                        0, (glass_height + metal_height) / zoom_factor * 1.2
-                    )
-
-                # Set aspect ratio to 'equal' for true scale
-                if hasattr(self.electrode_ax, "set_box_aspect"):
-                    # For newer matplotlib versions
-                    self.electrode_ax.set_box_aspect(
-                        [1, 1, (glass_height + metal_height) / (2 * max_range)]
-                    )
-
-                # Set viewing angle for better perspective
-                if hasattr(self.electrode_ax, "view_init"):
-                    self.electrode_ax.view_init(elev=20, azim=45)
-
-            # Refresh canvas
             logger.debug("[DEBUG] Drawing canvas...")
             if self.electrode_canvas is not None:
                 self.electrode_canvas.draw()
 
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error updating 3D visualization: %s", e)
+
+    def _is_visualization_ready(self) -> bool:
+        """Check whether the visualization subsystem is initialised and ready."""
+        if not getattr(self, "matplotlib_initialized", False):
+            logger.debug("[DEBUG] Matplotlib not initialized, skipping")
+            return False
+        if not getattr(self, "_initialization_complete", False):
+            logger.debug("[DEBUG] Initialization not complete, skipping")
+            return False
+        try:
+            if (
+                not hasattr(self, "show_refractory_checkbox")
+                or not self.show_refractory_checkbox
+            ):
+                logger.debug("[DEBUG] Widgets not available, skipping")
+                return False
+            _ = self.show_refractory_checkbox.isChecked()
+        except RuntimeError as e:
+            logger.exception("[DEBUG] Widget access error: %s, skipping", e)
+            return False
+        return True
+
+    def _read_geometry_params(self) -> dict:
+        """Read current geometry parameters from the UI widgets."""
+        bath_diameter = self.bath_diameter_input.value()
+        electrode_diameter = float(self.electrode_diameter_combo.currentText())
+        return {
+            "bath_radius": bath_diameter / 2.0,
+            "electrode_radius": electrode_diameter / 2.0,
+            "metal_height": self.metal_layer_height_input.value(),
+            "glass_height": self.glass_layer_height_input.value(),
+            "refractory_thickness": self.refractory_thickness_input.value(),
+            "depths": [inp.value() for inp in self.depth_inputs[:3]],
+        }
+
+    @staticmethod
+    def _safe_checkbox_check(owner: object, checkbox_name: str) -> bool:
+        """Return checkbox state, or False if the widget is unavailable."""
+        try:
+            checkbox = getattr(owner, checkbox_name, None)
+            if isinstance(checkbox, QCheckBox):
+                return checkbox.isChecked()
+            return False
+        except (RuntimeError, AttributeError):
+            return False
+
+    def _draw_visible_components(self, p: dict) -> None:
+        """Draw 3-D components whose visibility checkbox is ticked."""
+        total_height = p["glass_height"] + p["metal_height"]
+
+        if self._safe_checkbox_check(self, "show_refractory_checkbox"):
+            self._draw_3d_refractory_layer(
+                p["bath_radius"], total_height, p["refractory_thickness"]
+            )
+        if self._safe_checkbox_check(self, "show_metal_shell_checkbox"):
+            self._draw_3d_metal_shell(
+                p["bath_radius"], total_height, p["refractory_thickness"]
+            )
+
+        metal_cb = getattr(self, "metal_conductive_checkbox", None)
+        metal_on = metal_cb.isChecked() if metal_cb else True
+        if self._safe_checkbox_check(self, "show_metal_checkbox") and metal_on:
+            self._draw_3d_metal_layer(p["bath_radius"], p["metal_height"])
+
+        if self._safe_checkbox_check(self, "show_glass_checkbox"):
+            self._draw_3d_glass_layer(
+                p["bath_radius"], p["metal_height"], p["glass_height"]
+            )
+        if self._safe_checkbox_check(self, "show_electrodes_checkbox"):
+            self._draw_3d_electrodes(
+                p["depths"],
+                p["electrode_radius"],
+                p["bath_radius"],
+                p["metal_height"],
+                p["glass_height"],
+            )
+        if self._safe_checkbox_check(self, "show_paths_checkbox"):
+            self._draw_3d_conductive_paths_new(
+                p["depths"],
+                p["electrode_radius"],
+                p["bath_radius"],
+                p["metal_height"],
+                p["glass_height"],
+            )
+
+    def _configure_axis_labels(self) -> None:
+        """Show or hide axis labels and ticks based on the checkbox."""
+        if self._safe_checkbox_check(self, "show_axis_labels_checkbox"):
+            if self.electrode_ax:
+                self.electrode_ax.set_xlabel("X (inches)")
+                self.electrode_ax.set_ylabel("Y (inches)")
+                if hasattr(self.electrode_ax, "set_zlabel"):
+                    self.electrode_ax.set_zlabel("Height (inches)")
+                self.electrode_ax.tick_params(
+                    axis="x", which="both", bottom=True, top=False, labelbottom=True
+                )
+                self.electrode_ax.tick_params(
+                    axis="y", which="both", left=True, right=False, labelleft=True
+                )
+                if hasattr(self.electrode_ax, "zaxis"):
+                    self.electrode_ax.zaxis.set_tick_params(labelleft=True)
+        else:
+            if self.electrode_ax:
+                self.electrode_ax.set_xlabel("")
+                self.electrode_ax.set_ylabel("")
+                if hasattr(self.electrode_ax, "set_zlabel"):
+                    self.electrode_ax.set_zlabel("")
+        if hasattr(self, "electrode_ax") and self.electrode_ax:
+            self.electrode_ax.tick_params(
+                axis="x", which="both", bottom=False, top=False, labelbottom=False
+            )
+            self.electrode_ax.tick_params(
+                axis="y", which="both", left=False, right=False, labelleft=False
+            )
+            if hasattr(self.electrode_ax, "zaxis"):
+                self.electrode_ax.zaxis.set_tick_params(labelleft=False)
+
+        if self.electrode_ax is not None:
+            self.electrode_ax.set_title("")
+
+    def _configure_axis_limits(self, p: dict) -> None:
+        """Set axis limits, aspect ratio, and camera angle."""
+        total_height = p["glass_height"] + p["metal_height"]
+        extension_length = float(self.electrode_extension_slider.value())
+        max_range = max(p["bath_radius"] + extension_length, total_height)
+
+        zoom_factor = self.zoom_slider.value() / 100.0
+        scaled_range = max_range / zoom_factor * 1.1
+
+        if self.electrode_ax:
+            self.electrode_ax.set_xlim(-scaled_range, scaled_range)
+            self.electrode_ax.set_ylim(-scaled_range, scaled_range)
+            if hasattr(self.electrode_ax, "set_zlim"):
+                self.electrode_ax.set_zlim(0, total_height / zoom_factor * 1.2)
+            if hasattr(self.electrode_ax, "set_box_aspect"):
+                self.electrode_ax.set_box_aspect(
+                    [1, 1, total_height / (2 * max_range)]
+                )
+            if hasattr(self.electrode_ax, "view_init"):
+                self.electrode_ax.view_init(elev=20, azim=45)
 
     def _get_current_based_color(self, path_type: str, phase_index: int = 0) -> str:
         """Get color based on selected coloring mode with proper scaling"""

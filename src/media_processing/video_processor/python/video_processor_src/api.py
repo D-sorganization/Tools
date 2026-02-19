@@ -15,15 +15,14 @@ from __future__ import annotations
 
 import asyncio
 import logging
-import os
 import time
 import uuid
 from enum import Enum
 from pathlib import Path
 from typing import Any
 
+from cors import add_cors_middleware
 from fastapi import FastAPI, HTTPException, UploadFile
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
@@ -96,24 +95,7 @@ app = FastAPI(
     description="Upload and process video files with progress tracking.",
     version="0.1.0",
 )
-
-# Restrict CORS to known local development origins.
-# Override with CORS_ORIGINS env var (comma-separated) if needed.
-_DEFAULT_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:5173",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:5173",
-]
-_env_origins = os.environ.get("CORS_ORIGINS")
-_cors_origins = _env_origins.split(",") if _env_origins else _DEFAULT_ORIGINS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=_cors_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+add_cors_middleware(app)
 
 
 # ---------------------------------------------------------------------------
