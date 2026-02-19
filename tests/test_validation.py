@@ -4,6 +4,8 @@ These tests verify the validation functions using
 Design by Contract principles.
 """
 
+import pytest
+
 
 class TestValidatePathContract:
     """Design by Contract tests for validate_path function."""
@@ -162,14 +164,23 @@ class TestValidateFileExtensionContract:
 class TestValidateFileExtension:
     """Functional tests for validate_file_extension."""
 
-    def test_valid_extension_passes(self):
-        """Test that valid extension passes."""
+    @pytest.mark.parametrize(
+        "filename, allowed, expected_valid",
+        [
+            ("document.pdf", [".pdf", ".txt"], True),
+            ("FILE.PDF", [".pdf"], True),
+            ("file.txt", ["txt", "pdf"], True),
+            ("file.csv", [".txt", "csv"], True),
+        ],
+        ids=["exact-match", "case-insensitive", "no-dot", "mixed-dot"],
+    )
+    def test_valid_extensions_pass(self, filename, allowed, expected_valid):
+        """Test that various valid extension formats pass validation."""
         from utils.validation import validate_file_extension
 
-        is_valid, error = validate_file_extension("document.pdf", [".pdf", ".txt"])
+        is_valid, error = validate_file_extension(filename, allowed)
 
-        assert is_valid is True
-        assert error is None
+        assert is_valid is expected_valid
 
     def test_invalid_extension_fails(self):
         """Test that invalid extension fails."""
@@ -181,14 +192,6 @@ class TestValidateFileExtension:
         assert ".exe" in error
         assert "not allowed" in error.lower()
 
-    def test_case_insensitive_by_default(self):
-        """Test case-insensitive matching by default."""
-        from utils.validation import validate_file_extension
-
-        is_valid, error = validate_file_extension("FILE.PDF", [".pdf"])
-
-        assert is_valid is True
-
     def test_case_sensitive_option(self):
         """Test case-sensitive matching when specified."""
         from utils.validation import validate_file_extension
@@ -198,22 +201,6 @@ class TestValidateFileExtension:
         )
 
         assert is_valid is False
-
-    def test_extension_without_dot_handled(self):
-        """Test that extensions without leading dot are handled."""
-        from utils.validation import validate_file_extension
-
-        is_valid, error = validate_file_extension("file.txt", ["txt", "pdf"])
-
-        assert is_valid is True
-
-    def test_mixed_dot_and_no_dot_extensions(self):
-        """Test mix of dotted and non-dotted extensions."""
-        from utils.validation import validate_file_extension
-
-        is_valid, error = validate_file_extension("file.csv", [".txt", "csv"])
-
-        assert is_valid is True
 
 
 class TestValidatePythonVersionContract:
@@ -284,14 +271,18 @@ class TestValidateNotNoneContract:
 class TestValidateNotNone:
     """Functional tests for validate_not_none."""
 
-    def test_non_none_value_passes(self):
-        """Test that non-None values pass."""
+    @pytest.mark.parametrize(
+        "value",
+        ["value", "", 0, False, [], {}],
+        ids=["string", "empty-string", "zero", "false", "empty-list", "empty-dict"],
+    )
+    def test_non_none_values_pass(self, value):
+        """Test that non-None values pass validation."""
         from utils.validation import validate_not_none
 
-        is_valid, error = validate_not_none("value")
+        is_valid, error = validate_not_none(value)
 
         assert is_valid is True
-        assert error is None
 
     def test_none_value_fails(self):
         """Test that None fails."""
@@ -302,30 +293,6 @@ class TestValidateNotNone:
         assert is_valid is False
         assert "config" in error
         assert "None" in error
-
-    def test_empty_string_passes(self):
-        """Test that empty string (not None) passes."""
-        from utils.validation import validate_not_none
-
-        is_valid, error = validate_not_none("")
-
-        assert is_valid is True
-
-    def test_zero_passes(self):
-        """Test that zero (not None) passes."""
-        from utils.validation import validate_not_none
-
-        is_valid, error = validate_not_none(0)
-
-        assert is_valid is True
-
-    def test_false_passes(self):
-        """Test that False (not None) passes."""
-        from utils.validation import validate_not_none
-
-        is_valid, error = validate_not_none(False)
-
-        assert is_valid is True
 
 
 class TestValidateNotEmptyContract:
@@ -342,54 +309,30 @@ class TestValidateNotEmptyContract:
 class TestValidateNotEmpty:
     """Functional tests for validate_not_empty."""
 
-    def test_non_empty_string_passes(self):
-        """Test that non-empty string passes."""
+    @pytest.mark.parametrize(
+        "value",
+        ["content", [1, 2, 3], {"key": "value"}],
+        ids=["non-empty-string", "non-empty-list", "non-empty-dict"],
+    )
+    def test_non_empty_values_pass(self, value):
+        """Test that non-empty values pass validation."""
         from utils.validation import validate_not_empty
 
-        is_valid, error = validate_not_empty("content")
+        is_valid, error = validate_not_empty(value)
 
         assert is_valid is True
         assert error is None
 
-    def test_empty_string_fails(self):
-        """Test that empty string fails."""
+    @pytest.mark.parametrize(
+        "value, name",
+        [("", "username"), ([], "items"), ({}, "config")],
+        ids=["empty-string", "empty-list", "empty-dict"],
+    )
+    def test_empty_values_fail(self, value, name):
+        """Test that empty values fail validation."""
         from utils.validation import validate_not_empty
 
-        is_valid, error = validate_not_empty("", name="username")
-
-        assert is_valid is False
-        assert "username" in error
-        assert "empty" in error.lower()
-
-    def test_non_empty_list_passes(self):
-        """Test that non-empty list passes."""
-        from utils.validation import validate_not_empty
-
-        is_valid, error = validate_not_empty([1, 2, 3])
-
-        assert is_valid is True
-
-    def test_empty_list_fails(self):
-        """Test that empty list fails."""
-        from utils.validation import validate_not_empty
-
-        is_valid, error = validate_not_empty([], name="items")
-
-        assert is_valid is False
-
-    def test_non_empty_dict_passes(self):
-        """Test that non-empty dict passes."""
-        from utils.validation import validate_not_empty
-
-        is_valid, error = validate_not_empty({"key": "value"})
-
-        assert is_valid is True
-
-    def test_empty_dict_fails(self):
-        """Test that empty dict fails."""
-        from utils.validation import validate_not_empty
-
-        is_valid, error = validate_not_empty({}, name="config")
+        is_valid, error = validate_not_empty(value, name=name)
 
         assert is_valid is False
 
@@ -408,28 +351,32 @@ class TestValidateInRangeContract:
 class TestValidateInRange:
     """Functional tests for validate_in_range."""
 
-    def test_value_in_range_passes(self):
-        """Test that value within range passes."""
+    @pytest.mark.parametrize(
+        "value, kwargs",
+        [
+            (5, {"min_val": 0, "max_val": 10}),
+            (0, {"min_val": 0, "max_val": 10}),
+            (10, {"min_val": 0, "max_val": 10}),
+            (100, {"min_val": 0}),
+            (-100, {"max_val": 0}),
+            (0.5, {"min_val": 0.0, "max_val": 1.0}),
+            (float("inf"), {}),
+        ],
+        ids=[
+            "mid-range",
+            "at-minimum",
+            "at-maximum",
+            "only-min",
+            "only-max",
+            "float-values",
+            "no-bounds",
+        ],
+    )
+    def test_valid_values_pass(self, value, kwargs):
+        """Test that values within range pass validation."""
         from utils.validation import validate_in_range
 
-        is_valid, error = validate_in_range(5, min_val=0, max_val=10)
-
-        assert is_valid is True
-        assert error is None
-
-    def test_value_at_minimum_passes(self):
-        """Test that value at minimum (inclusive) passes."""
-        from utils.validation import validate_in_range
-
-        is_valid, error = validate_in_range(0, min_val=0, max_val=10)
-
-        assert is_valid is True
-
-    def test_value_at_maximum_passes(self):
-        """Test that value at maximum (inclusive) passes."""
-        from utils.validation import validate_in_range
-
-        is_valid, error = validate_in_range(10, min_val=0, max_val=10)
+        is_valid, error = validate_in_range(value, **kwargs)
 
         assert is_valid is True
 
@@ -452,35 +399,3 @@ class TestValidateInRange:
         assert is_valid is False
         assert "count" in error
         assert "greater than maximum" in error.lower()
-
-    def test_only_min_specified(self):
-        """Test with only minimum specified."""
-        from utils.validation import validate_in_range
-
-        is_valid, error = validate_in_range(100, min_val=0)
-
-        assert is_valid is True
-
-    def test_only_max_specified(self):
-        """Test with only maximum specified."""
-        from utils.validation import validate_in_range
-
-        is_valid, error = validate_in_range(-100, max_val=0)
-
-        assert is_valid is True
-
-    def test_float_values(self):
-        """Test with float values."""
-        from utils.validation import validate_in_range
-
-        is_valid, error = validate_in_range(0.5, min_val=0.0, max_val=1.0)
-
-        assert is_valid is True
-
-    def test_no_bounds_always_passes(self):
-        """Test that no bounds always passes."""
-        from utils.validation import validate_in_range
-
-        is_valid, error = validate_in_range(float("inf"))
-
-        assert is_valid is True

@@ -485,7 +485,6 @@ class FormatConverterMixin:
         - Precondition: converter_input_files must not be empty.
         - Precondition: converter_output_path must be a valid directory string.
         """
-        # DbC Assertions
         assert output_format, "output_format cannot be empty"
         assert self.converter_input_files, "No input files selected"
         assert self.converter_output_path, "No output path selected"
@@ -496,134 +495,15 @@ class FormatConverterMixin:
             self.converter_convert_button.configure(state="disabled")
 
             total_files = len(self.converter_input_files)
-            processed_files = 0
 
             if combine_files:
-                self._log_conversion_message(
-                    f"Starting conversion: combining {total_files} files into "
-                    f"{output_format.upper()}"
+                processed_files = self._convert_combined(
+                    output_format, use_all_columns, total_files
                 )
-
-                combined_data = []
-                for file_path in self.converter_input_files:
-                    try:
-                        format_type = FileFormatDetector.detect_format(file_path)
-                        if not format_type:
-                            fname = Path(file_path).name
-                            self._log_conversion_message(
-                                f"Warning: Could not detect " f"format for {fname}"
-                            )
-                            continue
-
-                        df = DataReader.read_file(file_path, format_type)
-
-                        if not use_all_columns and self.converter_selected_columns:
-                            available_columns = [
-                                col
-                                for col in self.converter_selected_columns
-                                if col in df.columns
-                            ]
-                            if available_columns:
-                                df = df[available_columns]
-                            else:
-                                fname = Path(file_path).name
-                                self._log_conversion_message(
-                                    "Warning: No selected " f"columns found in {fname}"
-                                )
-                                continue
-
-                        combined_data.append(df)
-                        fname = Path(file_path).name
-                        ncols = len(df.columns)
-                        self._log_conversion_message(
-                            f"Loaded {fname}: " f"{len(df)} rows, {ncols} columns"
-                        )
-
-                        processed_files += 1
-                        self.converter_progress.set(processed_files / total_files)
-
-                    except (PermissionError, OSError) as e:
-                        self._log_conversion_message(
-                            f"Error reading {Path(file_path).name}: {str(e)}"
-                        )
-
-                if combined_data:
-                    try:
-                        combined_df = pd.concat(combined_data, ignore_index=True)
-                        output_filename = self._generate_output_filename(
-                            output_format, "combined_data"
-                        )
-                        output_path = Path(self.converter_output_path) / output_filename
-
-                        DataWriter.write_file(combined_df, output_path, output_format)
-                        self._log_conversion_message(
-                            f"Successfully created: {output_filename}"
-                        )
-                        ncols = len(combined_df.columns)
-                        self._log_conversion_message(
-                            f"Combined data: "
-                            f"{len(combined_df)} rows, "
-                            f"{ncols} columns"
-                        )
-
-                    except (PermissionError, OSError) as e:
-                        self._log_conversion_message(
-                            f"Error writing combined file: {str(e)}"
-                        )
-                else:
-                    self._log_conversion_message("No valid data to combine")
-
             else:
-                # Process files individually
-                self._log_conversion_message(
-                    f"Starting conversion: processing {total_files} files individually"
+                processed_files = self._convert_individually(
+                    output_format, use_all_columns, total_files
                 )
-
-                for file_path in self.converter_input_files:
-                    try:
-                        format_type = FileFormatDetector.detect_format(file_path)
-                        if not format_type:
-                            fname = Path(file_path).name
-                            self._log_conversion_message(
-                                f"Warning: Could not detect " f"format for {fname}"
-                            )
-                            continue
-
-                        df = DataReader.read_file(file_path, format_type)
-
-                        if not use_all_columns and self.converter_selected_columns:
-                            available_columns = [
-                                col
-                                for col in self.converter_selected_columns
-                                if col in df.columns
-                            ]
-                            if available_columns:
-                                df = df[available_columns]
-                            else:
-                                fname = Path(file_path).name
-                                self._log_conversion_message(
-                                    "Warning: No selected " f"columns found in {fname}"
-                                )
-                                continue
-
-                        base_name = Path(file_path).stem
-                        output_filename = self._generate_output_filename(
-                            output_format, base_name
-                        )
-                        output_path = Path(self.converter_output_path) / output_filename
-
-                        DataWriter.write_file(df, output_path, output_format)
-                        self._log_conversion_message(
-                            f"Converted {Path(file_path).name} -> {output_filename}"
-                        )
-
-                        processed_files += 1
-                        self.converter_progress.set(processed_files / total_files)
-
-                    except (PermissionError, OSError) as e:
-                        self._log_conversion_message(
-                            f"Error converting {Path(file_path).name}: {str(e)}"
-                        )
 
             self.converter_status_label.configure(
                 text=f"Conversion complete. {processed_files} files processed."
@@ -635,6 +515,126 @@ class FormatConverterMixin:
             self.converter_status_label.configure(text="Conversion failed")
         finally:
             self.converter_convert_button.configure(state="normal")
+
+    def _read_and_filter_file(
+        self, file_path: str, use_all_columns: bool
+    ) -> pd.DataFrame | None:
+        """Read a file and optionally filter to selected columns.
+
+        Returns None if the file cannot be read or has no matching columns.
+        """
+        format_type = FileFormatDetector.detect_format(file_path)
+        if not format_type:
+            fname = Path(file_path).name
+            self._log_conversion_message(
+                f"Warning: Could not detect format for {fname}"
+            )
+            return None
+
+        df = DataReader.read_file(file_path, format_type)
+
+        if not use_all_columns and self.converter_selected_columns:
+            available_columns = [
+                col for col in self.converter_selected_columns if col in df.columns
+            ]
+            if available_columns:
+                df = df[available_columns]
+            else:
+                fname = Path(file_path).name
+                self._log_conversion_message(
+                    f"Warning: No selected columns found in {fname}"
+                )
+                return None
+
+        return df
+
+    def _convert_combined(
+        self, output_format: str, use_all_columns: bool, total_files: int
+    ) -> int:
+        """Combine all input files into a single output file."""
+        self._log_conversion_message(
+            f"Starting conversion: combining {total_files} files into "
+            f"{output_format.upper()}"
+        )
+
+        combined_data: list[pd.DataFrame] = []
+        processed_files = 0
+
+        for file_path in self.converter_input_files:
+            try:
+                df = self._read_and_filter_file(file_path, use_all_columns)
+                if df is None:
+                    continue
+
+                combined_data.append(df)
+                fname = Path(file_path).name
+                self._log_conversion_message(
+                    f"Loaded {fname}: {len(df)} rows, {len(df.columns)} columns"
+                )
+                processed_files += 1
+                self.converter_progress.set(processed_files / total_files)
+            except (PermissionError, OSError) as e:
+                self._log_conversion_message(
+                    f"Error reading {Path(file_path).name}: {str(e)}"
+                )
+
+        if combined_data:
+            try:
+                combined_df = pd.concat(combined_data, ignore_index=True)
+                output_filename = self._generate_output_filename(
+                    output_format, "combined_data"
+                )
+                output_path = Path(self.converter_output_path) / output_filename
+                DataWriter.write_file(combined_df, output_path, output_format)
+                self._log_conversion_message(
+                    f"Successfully created: {output_filename}"
+                )
+                self._log_conversion_message(
+                    f"Combined data: {len(combined_df)} rows, "
+                    f"{len(combined_df.columns)} columns"
+                )
+            except (PermissionError, OSError) as e:
+                self._log_conversion_message(
+                    f"Error writing combined file: {str(e)}"
+                )
+        else:
+            self._log_conversion_message("No valid data to combine")
+
+        return processed_files
+
+    def _convert_individually(
+        self, output_format: str, use_all_columns: bool, total_files: int
+    ) -> int:
+        """Convert each input file to the output format separately."""
+        self._log_conversion_message(
+            f"Starting conversion: processing {total_files} files individually"
+        )
+
+        processed_files = 0
+        for file_path in self.converter_input_files:
+            try:
+                df = self._read_and_filter_file(file_path, use_all_columns)
+                if df is None:
+                    continue
+
+                base_name = Path(file_path).stem
+                output_filename = self._generate_output_filename(
+                    output_format, base_name
+                )
+                output_path = Path(self.converter_output_path) / output_filename
+
+                DataWriter.write_file(df, output_path, output_format)
+                self._log_conversion_message(
+                    f"Converted {Path(file_path).name} -> {output_filename}"
+                )
+                processed_files += 1
+                self.converter_progress.set(processed_files / total_files)
+            except (PermissionError, OSError) as e:
+                self._log_conversion_message(
+                    f"Error converting {Path(file_path).name}: {str(e)}"
+                )
+
+        return processed_files
 
     def _generate_output_filename(
         self, output_format: str, base_name: str | None = None

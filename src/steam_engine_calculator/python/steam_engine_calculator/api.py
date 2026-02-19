@@ -13,11 +13,10 @@ Usage:
 from __future__ import annotations
 
 import logging
-import os
 from enum import Enum
 
+from cors import add_cors_middleware
 from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from upstream_drift_tools.calculators.thermo.steam_engine import (
     SteamCalculationEngine,
@@ -35,24 +34,7 @@ app = FastAPI(
     description="Thermodynamic property calculations for water/steam",
     version="1.0.0",
 )
-
-# Restrict CORS to known local development origins.
-# Override with CORS_ORIGINS env var (comma-separated) if needed.
-_DEFAULT_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:5173",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:5173",
-]
-_env_origins = os.environ.get("CORS_ORIGINS")
-_cors_origins = _env_origins.split(",") if _env_origins else _DEFAULT_ORIGINS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=_cors_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+add_cors_middleware(app)
 
 # Singleton engine (initialised once, reused across requests)
 _engine = SteamCalculationEngine()

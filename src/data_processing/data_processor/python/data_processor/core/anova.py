@@ -355,141 +355,195 @@ class ANOVAAnalyzer:
         Returns:
             Complete two-way ANOVA results
         """
-        # Remove missing values
         data = df[[dependent_var, factor_a, factor_b]].dropna()
         y: np.ndarray = np.asarray(data[dependent_var].values)
 
-        # Get factor levels
         levels_a = data[factor_a].unique()
         levels_b = data[factor_b].unique()
-        a = len(levels_a)
-        b = len(levels_b)
         n_total = len(data)
-
-        # Calculate grand mean
         grand_mean = np.mean(y)
-
-        # Calculate cell means
         cell_means = data.groupby([factor_a, factor_b])[dependent_var].mean().unstack()
-
-        # Marginal means
         marginal_a = data.groupby(factor_a)[dependent_var].mean().to_dict()
         marginal_b = data.groupby(factor_b)[dependent_var].mean().to_dict()
 
-        # Sum of squares calculations
-        ss_total = np.sum((y - grand_mean) ** 2)
-
-        # SS for factor A
-        ss_a = sum(
-            len(data[data[factor_a] == level]) * (marginal_a[level] - grand_mean) ** 2
-            for level in levels_a
+        ss = self._two_way_sum_of_squares(
+            data, y, dependent_var, factor_a, factor_b,
+            levels_a, levels_b, marginal_a, marginal_b,
+            grand_mean, test_interaction,
         )
-
-        # SS for factor B
-        ss_b = sum(
-            len(data[data[factor_b] == level]) * (marginal_b[level] - grand_mean) ** 2
-            for level in levels_b
+        ftest = self._two_way_f_tests(
+            ss, len(levels_a), len(levels_b), n_total
         )
+        effect = self._two_way_effect_sizes(ss)
 
-        # Sum of squares for interaction
-        ss_ab = 0
-        if test_interaction:
-            for level_a in levels_a:
-                for level_b in levels_b:
-                    cell_data = data[
-                        (data[factor_a] == level_a) & (data[factor_b] == level_b)
-                    ]
-                    if len(cell_data) > 0:
-                        cell_mean = cell_data[dependent_var].mean()
-                        expected = (
-                            marginal_a[level_a] + marginal_b[level_b] - grand_mean
-                        )
-                        ss_ab += len(cell_data) * (cell_mean - expected) ** 2
-
-        # SS error
-        ss_error = ss_total - ss_a - ss_b - ss_ab
-
-        # Degrees of freedom
-        df_a = a - 1
-        df_b = b - 1
-        df_ab = df_a * df_b
-        df_error = n_total - a * b
-        df_total = n_total - 1
-
-        # Mean squares
-        ms_a = ss_a / df_a
-        ms_b = ss_b / df_b
-        ms_ab = ss_ab / df_ab if df_ab > 0 else 0
-        ms_error = ss_error / df_error
-
-        # F statistics
-        f_a = ms_a / ms_error
-        f_b = ms_b / ms_error
-        f_ab = ms_ab / ms_error if ms_ab > 0 else 0
-
-        # P values
-        p_a = 1 - stats.f.cdf(f_a, df_a, df_error)
-        p_b = 1 - stats.f.cdf(f_b, df_b, df_error)
-        p_ab = 1 - stats.f.cdf(f_ab, df_ab, df_error) if f_ab > 0 else 1.0
-
-        # Effect sizes
-        eta_sq_a = ss_a / ss_total
-        eta_sq_b = ss_b / ss_total
-        eta_sq_ab = ss_ab / ss_total
-
-        partial_eta_sq_a = ss_a / (ss_a + ss_error)
-        partial_eta_sq_b = ss_b / (ss_b + ss_error)
-        partial_eta_sq_ab = ss_ab / (ss_ab + ss_error) if (ss_ab + ss_error) > 0 else 0
-
-        # ANOVA table
+        interaction_label = f"{factor_a}\u00d7{factor_b}"
         anova_table = ANOVATable(
-            source=[factor_a, factor_b, f"{factor_a}×{factor_b}", "Error", "Total"],
-            sum_of_squares=[ss_a, ss_b, ss_ab, ss_error, ss_total],
-            df=[df_a, df_b, df_ab, df_error, df_total],
-            mean_square=[ms_a, ms_b, ms_ab, ms_error, np.nan],
-            f_statistic=[f_a, f_b, f_ab, None, None],
-            p_value=[p_a, p_b, p_ab, None, None],
+            source=[factor_a, factor_b, interaction_label, "Error", "Total"],
+            sum_of_squares=[
+                ss["a"], ss["b"], ss["ab"], ss["error"], ss["total"],
+            ],
+            df=[
+                ftest["df_a"], ftest["df_b"], ftest["df_ab"],
+                ftest["df_error"], n_total - 1,
+            ],
+            mean_square=[
+                ftest["ms_a"], ftest["ms_b"], ftest["ms_ab"],
+                ftest["ms_error"], np.nan,
+            ],
+            f_statistic=[
+                ftest["f_a"], ftest["f_b"], ftest["f_ab"], None, None,
+            ],
+            p_value=[
+                ftest["p_a"], ftest["p_b"], ftest["p_ab"], None, None,
+            ],
         )
 
-        # Assumption tests
-        assumption_tests = []
-        if test_assumptions:
-            # Test within each cell
-            cell_data = {}
-            for level_a in levels_a:
-                for level_b in levels_b:
-                    cell = data[
-                        (data[factor_a] == level_a) & (data[factor_b] == level_b)
-                    ]
-                    if len(cell) > 2:
-                        cell_data[f"{level_a}_{level_b}"] = cell[dependent_var].values
-            if cell_data:
-                assumption_tests = self._test_anova_assumptions(cell_data)
+        assumption_tests = self._two_way_assumption_tests(
+            data, dependent_var, factor_a, factor_b,
+            levels_a, levels_b, test_assumptions,
+        )
 
         return TwoWayANOVAResult(
-            factor_a_f=f_a,
-            factor_a_p=p_a,
-            factor_a_df=df_a,
-            factor_b_f=f_b,
-            factor_b_p=p_b,
-            factor_b_df=df_b,
-            interaction_f=f_ab,
-            interaction_p=p_ab,
-            interaction_df=df_ab,
-            df_error=df_error,
-            ms_error=ms_error,
+            factor_a_f=ftest["f_a"],
+            factor_a_p=ftest["p_a"],
+            factor_a_df=ftest["df_a"],
+            factor_b_f=ftest["f_b"],
+            factor_b_p=ftest["p_b"],
+            factor_b_df=ftest["df_b"],
+            interaction_f=ftest["f_ab"],
+            interaction_p=ftest["p_ab"],
+            interaction_df=ftest["df_ab"],
+            df_error=ftest["df_error"],
+            ms_error=ftest["ms_error"],
             anova_table=anova_table,
-            eta_squared_a=eta_sq_a,
-            eta_squared_b=eta_sq_b,
-            eta_squared_ab=eta_sq_ab,
-            partial_eta_squared_a=partial_eta_sq_a,
-            partial_eta_squared_b=partial_eta_sq_b,
-            partial_eta_squared_ab=partial_eta_sq_ab,
+            eta_squared_a=effect["eta_a"],
+            eta_squared_b=effect["eta_b"],
+            eta_squared_ab=effect["eta_ab"],
+            partial_eta_squared_a=effect["partial_eta_a"],
+            partial_eta_squared_b=effect["partial_eta_b"],
+            partial_eta_squared_ab=effect["partial_eta_ab"],
             cell_means=cell_means,
             marginal_means_a=marginal_a,
             marginal_means_b=marginal_b,
             assumption_tests=assumption_tests,
         )
+
+    # -- two-way ANOVA helper methods --
+
+    @staticmethod
+    def _two_way_sum_of_squares(
+        data: pd.DataFrame,
+        y: np.ndarray,
+        dependent_var: str,
+        factor_a: str,
+        factor_b: str,
+        levels_a: np.ndarray,
+        levels_b: np.ndarray,
+        marginal_a: dict,
+        marginal_b: dict,
+        grand_mean: float,
+        test_interaction: bool,
+    ) -> dict[str, float]:
+        """Compute SS_total, SS_A, SS_B, SS_AB, SS_error."""
+        ss_total = float(np.sum((y - grand_mean) ** 2))
+
+        ss_a = sum(
+            len(data[data[factor_a] == lv]) * (marginal_a[lv] - grand_mean) ** 2
+            for lv in levels_a
+        )
+        ss_b = sum(
+            len(data[data[factor_b] == lv]) * (marginal_b[lv] - grand_mean) ** 2
+            for lv in levels_b
+        )
+
+        ss_ab = 0.0
+        if test_interaction:
+            for lv_a in levels_a:
+                for lv_b in levels_b:
+                    cell = data[(data[factor_a] == lv_a) & (data[factor_b] == lv_b)]
+                    if len(cell) > 0:
+                        expected = marginal_a[lv_a] + marginal_b[lv_b] - grand_mean
+                        cell_mean = cell[dependent_var].mean()
+                        ss_ab += len(cell) * (cell_mean - expected) ** 2
+
+        return {
+            "total": ss_total,
+            "a": float(ss_a),
+            "b": float(ss_b),
+            "ab": ss_ab,
+            "error": ss_total - float(ss_a) - float(ss_b) - ss_ab,
+        }
+
+    @staticmethod
+    def _two_way_f_tests(
+        ss: dict[str, float], a: int, b: int, n_total: int
+    ) -> dict[str, float]:
+        """Compute degrees of freedom, mean squares, F-statistics, and p-values."""
+        df_a = a - 1
+        df_b = b - 1
+        df_ab = df_a * df_b
+        df_error = n_total - a * b
+
+        ms_a = ss["a"] / df_a
+        ms_b = ss["b"] / df_b
+        ms_ab = ss["ab"] / df_ab if df_ab > 0 else 0
+        ms_error = ss["error"] / df_error
+
+        f_a = ms_a / ms_error
+        f_b = ms_b / ms_error
+        f_ab = ms_ab / ms_error if ms_ab > 0 else 0
+
+        p_a = 1 - stats.f.cdf(f_a, df_a, df_error)
+        p_b = 1 - stats.f.cdf(f_b, df_b, df_error)
+        p_ab = 1 - stats.f.cdf(f_ab, df_ab, df_error) if f_ab > 0 else 1.0
+
+        return {
+            "df_a": df_a, "df_b": df_b, "df_ab": df_ab, "df_error": df_error,
+            "ms_a": ms_a, "ms_b": ms_b, "ms_ab": ms_ab, "ms_error": ms_error,
+            "f_a": f_a, "f_b": f_b, "f_ab": f_ab,
+            "p_a": float(p_a), "p_b": float(p_b), "p_ab": float(p_ab),
+        }
+
+    @staticmethod
+    def _two_way_effect_sizes(ss: dict[str, float]) -> dict[str, float]:
+        """Compute eta-squared and partial eta-squared effect sizes."""
+        ss_t = ss["total"]
+        ss_e = ss["error"]
+        return {
+            "eta_a": ss["a"] / ss_t,
+            "eta_b": ss["b"] / ss_t,
+            "eta_ab": ss["ab"] / ss_t,
+            "partial_eta_a": ss["a"] / (ss["a"] + ss_e),
+            "partial_eta_b": ss["b"] / (ss["b"] + ss_e),
+            "partial_eta_ab": (
+                ss["ab"] / (ss["ab"] + ss_e)
+                if (ss["ab"] + ss_e) > 0
+                else 0
+            ),
+        }
+
+    def _two_way_assumption_tests(
+        self,
+        data: pd.DataFrame,
+        dependent_var: str,
+        factor_a: str,
+        factor_b: str,
+        levels_a: np.ndarray,
+        levels_b: np.ndarray,
+        test_assumptions: bool,
+    ) -> list:
+        """Run assumption tests for two-way ANOVA if requested."""
+        if not test_assumptions:
+            return []
+        cell_data = {}
+        for lv_a in levels_a:
+            for lv_b in levels_b:
+                cell = data[(data[factor_a] == lv_a) & (data[factor_b] == lv_b)]
+                if len(cell) > 2:
+                    cell_data[f"{lv_a}_{lv_b}"] = cell[dependent_var].values
+        if cell_data:
+            return self._test_anova_assumptions(cell_data)
+        return []
 
     def repeated_measures_anova(
         self,

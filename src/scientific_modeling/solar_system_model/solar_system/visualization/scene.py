@@ -547,11 +547,10 @@ class SolarSystemScene:
         return True
 
     def _handle_key(self, key: int) -> bool:
-        """
-        Handle keyboard input.
+        """Handle keyboard input.
 
         Returns:
-            False if should quit, True otherwise
+            False if should quit, True otherwise.
         """
         if key == K_ESCAPE:
             return False
@@ -559,103 +558,88 @@ class SolarSystemScene:
         if not self.renderer:
             return True
 
-        elif key == K_SPACE:
+        if key == K_SPACE:
             self.time_manager.toggle_pause()
-
         elif key in (K_EQUALS, K_PLUS, K_KP_PLUS):
             self.time_manager.increase_time_warp()
-
         elif key in (K_MINUS, K_KP_MINUS):
             self.time_manager.decrease_time_warp()
-
         elif key == K_r:
             self.time_manager.reverse_time()
-
-        elif key == K_d:
-            # Toggle date picker
-            if self.date_picker:
-                self.date_picker.toggle()
-                if self.date_picker.visible:
-                    self.date_picker.set_date(
-                        self.time_manager.current_time.datetime_utc
-                    )
-                    self._mark_immersion_task("navigate_time")
-
-        elif key == K_n:
-            # Toggle time navigation panel
-            if self.time_nav_panel:
-                self.time_nav_panel.toggle()
-                self._mark_immersion_task("navigate_time")
-
-        elif key == K_e:
-            # Toggle historical events panel
-            if self.historical_events:
-                self.historical_events.toggle()
-                if self.historical_events.visible:
-                    self._mark_immersion_task("historical_events")
-
-        elif key == K_LEFTBRACKET:
-            # Jump backward 1 day
-            self._jump_time(-1)
-
-        elif key == K_RIGHTBRACKET:
-            # Jump forward 1 day
-            self._jump_time(1)
-
-        elif key == K_PAGEUP:
-            # Jump backward 1 month, preserving day of month when possible
-            self._jump_month(-1)
-
-        elif key == K_PAGEDOWN:
-            # Jump forward 1 month, preserving day of month when possible
-            self._jump_month(1)
-
+        elif key in (K_d, K_n, K_e):
+            self._handle_panel_toggle(key)
+        elif key in (K_LEFTBRACKET, K_RIGHTBRACKET, K_PAGEUP, K_PAGEDOWN):
+            self._handle_time_jump(key)
         elif key == K_HOME:
             self.renderer.camera.reset()
             self.renderer.camera.mode = CameraMode.FREE
+        elif key in (K_o, K_l, K_i, K_g, K_h, K_v, K_c, K_f, K_m):
+            self._handle_view_toggle(key)
+        elif key == K_t:
+            self._handle_trajectory_plan()
+        elif key == K_PERIOD:
+            if self.educational_panel and self.educational_panel.visible:
+                self.educational_panel.cycle_fact()
+        elif key == K_0:
+            if self.sun:
+                self.select_body(self.sun)
+                self._update_educational_panel()
+        elif K_1 <= key <= K_9:
+            self._select_planet_by_number(key)
 
-        elif key == K_o:
+        return True
+
+    def _handle_panel_toggle(self, key: int) -> None:
+        """Toggle date-picker, time-nav, or historical-events panels."""
+        if key == K_d and self.date_picker:
+            self.date_picker.toggle()
+            if self.date_picker.visible:
+                self.date_picker.set_date(
+                    self.time_manager.current_time.datetime_utc
+                )
+                self._mark_immersion_task("navigate_time")
+        elif key == K_n and self.time_nav_panel:
+            self.time_nav_panel.toggle()
+            self._mark_immersion_task("navigate_time")
+        elif key == K_e and self.historical_events:
+            self.historical_events.toggle()
+            if self.historical_events.visible:
+                self._mark_immersion_task("historical_events")
+
+    def _handle_time_jump(self, key: int) -> None:
+        """Jump forward/backward by 1 day or 1 month."""
+        if key == K_LEFTBRACKET:
+            self._jump_time(-1)
+        elif key == K_RIGHTBRACKET:
+            self._jump_time(1)
+        elif key == K_PAGEUP:
+            self._jump_month(-1)
+        elif key == K_PAGEDOWN:
+            self._jump_month(1)
+
+    def _handle_view_toggle(self, key: int) -> None:
+        """Toggle visibility / overlay options."""
+        if key == K_o:
             self.view_state.show_orbits = not self.view_state.show_orbits
             self.renderer.settings.show_orbits = self.view_state.show_orbits
             self._mark_immersion_task("toggle_overlays")
-
         elif key == K_l:
             self.view_state.show_labels = not self.view_state.show_labels
             self.renderer.settings.show_labels = self.view_state.show_labels
             self._mark_immersion_task("toggle_overlays")
-
         elif key == K_i:
             self.view_state.show_info_panel = not self.view_state.show_info_panel
-
         elif key == K_g:
             self.renderer.settings.show_grid = not self.renderer.settings.show_grid
             self._mark_immersion_task("toggle_overlays")
-
         elif key == K_h:
             self.view_state.show_help = not self.view_state.show_help
-
         elif key == K_v:
             self.settings.stereo_view = not self.settings.stereo_view
-
         elif key == K_c:
             self._cycle_camera_mode()
-
         elif key == K_f:
             self._focus_on_selected()
-
-        elif key == K_t:
-            # Plan trajectory to Mars from Earth
-            trajectory = self.plan_trajectory("Earth", "Mars")
-            if trajectory:
-                self._mark_immersion_task("plan_transfer")
-                self._action_message = (
-                    "Earth→Mars transfer: ΔV "
-                    f"{trajectory.total_delta_v / 1000:.2f} km/s, "
-                    f"flight {trajectory.time_of_flight:.1f} days"
-                )
-            else:
-                self._action_message = "Earth→Mars transfer could not be created"
-
         elif key == K_m:
             if self.immersion_checklist:
                 self.immersion_checklist.toggle()
@@ -663,25 +647,26 @@ class SolarSystemScene:
                 not self.view_state.show_immersion_checklist
             )
 
-        # Period/comma for cycling fun facts
-        elif key == K_PERIOD:
-            if self.educational_panel and self.educational_panel.visible:
-                self.educational_panel.cycle_fact()
+    def _handle_trajectory_plan(self) -> None:
+        """Plan an Earth-to-Mars trajectory and display the result."""
+        trajectory = self.plan_trajectory("Earth", "Mars")
+        if trajectory:
+            self._mark_immersion_task("plan_transfer")
+            self._action_message = (
+                "Earth\u2192Mars transfer: \u0394V "
+                f"{trajectory.total_delta_v / 1000:.2f} km/s, "
+                f"flight {trajectory.time_of_flight:.1f} days"
+            )
+        else:
+            self._action_message = "Earth\u2192Mars transfer could not be created"
 
-        # Number keys for planet selection
-        elif key == K_0:
-            if self.sun:
-                self.select_body(self.sun)
-                self._update_educational_panel()
-
-        elif K_1 <= key <= K_9:
-            planet_index = key - K_1
-            if planet_index < len(PLANET_ORDER):
-                planet_name = PLANET_ORDER[planet_index]
-                self.select_body(self.planets[planet_name])
-                self._update_educational_panel()
-
-        return True
+    def _select_planet_by_number(self, key: int) -> None:
+        """Select a planet using the number key (1-9)."""
+        planet_index = key - K_1
+        if planet_index < len(PLANET_ORDER):
+            planet_name = PLANET_ORDER[planet_index]
+            self.select_body(self.planets[planet_name])
+            self._update_educational_panel()
 
     def _update_ui_date(self) -> None:
         """Update all UI widgets with current date."""
