@@ -1,0 +1,907 @@
+{
+  "timestamp": "2026-02-19T08:11:17.898461",
+  "repository": "Tools",
+  "files_analyzed": 1050,
+  "issues": [
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 337 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/_bootstrap.py",
+        "/home/runner/work/Tools/Tools/archive/Data_Processor_Integrated.py",
+        "/home/runner/work/Tools/Tools/scripts/tools/code_quality_check.py",
+        "/home/runner/work/Tools/Tools/src/data_processing/data_processor/python/data_processor/core/__init__.py",
+        "/home/runner/work/Tools/Tools/src/data_processing/data_processor/python/data_processor/core/signal_processing.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 7 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/_bootstrap.py",
+        "/home/runner/work/Tools/Tools/src/c3d_viewer/python/c3d_viewer/ui/pyqt6/main_window.py",
+        "/home/runner/work/Tools/Tools/src/glass_bath_fea/ui/pyqt6/main_window.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/upstream_drift_tools/bootstrap.py",
+        "/home/runner/work/Tools/Tools/tests/shared/python/utils/test_bootstrap.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 7 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/_bootstrap.py",
+        "/home/runner/work/Tools/Tools/scripts/check_repo_topology.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/upstream_drift_tools/bootstrap.py",
+        "/home/runner/work/Tools/Tools/tests/shared/python/utils/test_bootstrap.py",
+        "/home/runner/work/Tools/Tools/tests/test_phase2_critical_bugs.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 3 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/Launcher.py",
+        "/home/runner/work/Tools/Tools/UnifiedToolsLauncher.py",
+        "/home/runner/work/Tools/Tools/launch_tools_main.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/Launcher.py",
+        "/home/runner/work/Tools/Tools/UnifiedToolsLauncher.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/Launcher.py",
+        "/home/runner/work/Tools/Tools/src/tools/gui/windows/unified_launcher_window.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/Launcher.py",
+        "/home/runner/work/Tools/Tools/src/tools/gui/windows/unified_launcher_window.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/Launcher.py",
+        "/home/runner/work/Tools/Tools/src/tools/gui/windows/unified_launcher_window.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/Launcher.py",
+        "/home/runner/work/Tools/Tools/src/tools/gui/windows/unified_launcher_window.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 7 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/convert_tools_icon.py",
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/create_issues_from_assessment.py",
+        "/home/runner/work/Tools/Tools/scripts/generate_assessment_summary.py",
+        "/home/runner/work/Tools/Tools/src/tools/folder_tools/project_packer/build_exe.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/baseline_assessments.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 3 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/baseline_assessments.py",
+        "/home/runner/work/Tools/Tools/src/scientific_modeling/solar_system_model/solar_system/setup.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 3 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/baseline_assessments.py",
+        "/home/runner/work/Tools/Tools/src/scientific_modeling/solar_system_model/solar_system/setup.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 3 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/baseline_assessments.py",
+        "/home/runner/work/Tools/Tools/src/scientific_modeling/solar_system_model/solar_system/setup.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 3 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/baseline_assessments.py",
+        "/home/runner/work/Tools/Tools/src/scientific_modeling/solar_system_model/solar_system/setup.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 3 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/baseline_assessments.py",
+        "/home/runner/work/Tools/Tools/src/scientific_modeling/solar_system_model/solar_system/setup.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 3 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/baseline_assessments.py",
+        "/home/runner/work/Tools/Tools/src/scientific_modeling/solar_system_model/solar_system/setup.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/baseline_assessments.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/baseline_assessments.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/baseline_assessments.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/baseline_assessments.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/baseline_assessments.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/baseline_assessments.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 3 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/baseline_assessments.py",
+        "/home/runner/work/Tools/Tools/src/scientific_modeling/solar_system_model/solar_system/setup.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 3 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/baseline_assessments.py",
+        "/home/runner/work/Tools/Tools/src/scientific_modeling/solar_system_model/solar_system/setup.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 3 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/baseline_assessments.py",
+        "/home/runner/work/Tools/Tools/src/scientific_modeling/solar_system_model/solar_system/setup.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 3 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/baseline_assessments.py",
+        "/home/runner/work/Tools/Tools/src/scientific_modeling/solar_system_model/solar_system/setup.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 4 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/baseline_assessments.py",
+        "/home/runner/work/Tools/Tools/src/scientific_modeling/solar_system_model/solar_system/setup.py",
+        "/home/runner/work/Tools/Tools/src/tools/folder_tools/folder_tool/Folders_Tool_r0.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 4 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/baseline_assessments.py",
+        "/home/runner/work/Tools/Tools/src/scientific_modeling/solar_system_model/solar_system/setup.py",
+        "/home/runner/work/Tools/Tools/src/tools/folder_tools/folder_tool/Folders_Tool_r0.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 4 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/baseline_assessments.py",
+        "/home/runner/work/Tools/Tools/src/scientific_modeling/solar_system_model/solar_system/setup.py",
+        "/home/runner/work/Tools/Tools/src/tools/folder_tools/folder_tool/Folders_Tool_r0.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 4 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/baseline_assessments.py",
+        "/home/runner/work/Tools/Tools/src/scientific_modeling/solar_system_model/solar_system/setup.py",
+        "/home/runner/work/Tools/Tools/src/tools/folder_tools/folder_tool/Folders_Tool_r0.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 4 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/scripts/baseline_assessments.py",
+        "/home/runner/work/Tools/Tools/src/scientific_modeling/solar_system_model/solar_system/setup.py",
+        "/home/runner/work/Tools/Tools/src/tools/folder_tools/folder_tool/Folders_Tool_r0.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/remove_broken_scripts.py",
+        "/home/runner/work/Tools/Tools/src/tools/folder_tools/folder_tool/Folders_Tool_r0.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/UnifiedToolsLauncher.py",
+        "/home/runner/work/Tools/Tools/scripts/pragmatic_programmer_review.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 7 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/UnifiedToolsLauncher.py",
+        "/home/runner/work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window.py",
+        "/home/runner/work/Tools/Tools/src/document_processing/pdf_renamer/src/pdf_renamer/gui.py",
+        "/home/runner/work/Tools/Tools/src/glass_bath_fea/ui/pyqt6/main_window.py",
+        "/home/runner/work/Tools/Tools/src/scrubber_calculator/python/scrubber_calculator/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 6 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/UnifiedToolsLauncher.py",
+        "/home/runner/work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window.py",
+        "/home/runner/work/Tools/Tools/src/glass_bath_fea/ui/pyqt6/main_window.py",
+        "/home/runner/work/Tools/Tools/src/scrubber_calculator/python/scrubber_calculator/ui/pyqt6/main_window.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/upstream_drift_tools/process_calculators/psa_package/psa_gui.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch.py",
+        "/home/runner/work/Tools/Tools/scripts/migrate_csv_to_parquet.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch.py",
+        "/home/runner/work/Tools/Tools/scripts/migrate_csv_to_parquet.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/setup_dev.py",
+        "/home/runner/work/Tools/Tools/src/tools/folder_tools/project_packer/build_exe.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/setup_dev.py",
+        "/home/runner/work/Tools/Tools/src/tools/folder_tools/project_packer/build_exe.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 3 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/setup_dev.py",
+        "/home/runner/work/Tools/Tools/src/tools/folder_tools/folder_packer_pro/build_exe.py",
+        "/home/runner/work/Tools/Tools/src/tools/folder_tools/folder_tool_pro/build_exe.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 3 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/setup_dev.py",
+        "/home/runner/work/Tools/Tools/src/tools/folder_tools/folder_packer_pro/build_exe.py",
+        "/home/runner/work/Tools/Tools/src/tools/folder_tools/folder_tool_pro/build_exe.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 6 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/scripts/fleet_autofix_patcher.py",
+        "/home/runner/work/Tools/Tools/scripts/fleet_safety_patcher.py",
+        "/home/runner/work/Tools/Tools/scripts/mypy_autofix_agent.py",
+        "/home/runner/work/Tools/Tools/setup_dev.py",
+        "/home/runner/work/Tools/Tools/src/tools/folder_tools/folder_packer_pro/build_exe.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 4 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/scripts/mypy_autofix_agent.py",
+        "/home/runner/work/Tools/Tools/setup_dev.py",
+        "/home/runner/work/Tools/Tools/src/tools/folder_tools/folder_packer_pro/build_exe.py",
+        "/home/runner/work/Tools/Tools/src/tools/folder_tools/folder_tool_pro/build_exe.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/tests/test_logging_utils.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/tests/test_logging_utils.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/tests/test_logging_utils.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/tests/test_logging_utils.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/tests/test_logging_utils.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/tests/test_logging_utils.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: create_converter_left_content",
+      "description": "Length 51 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/archive/Data_Processor_Integrated.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _init_ui",
+      "description": "Length 65 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/function_generator/python/function_generator/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_parameter_widgets",
+      "description": "Length 74 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/function_generator/python/function_generator/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _setup_ui",
+      "description": "Length 81 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/acid_gas_dewpoint/python/acid_gas_dewpoint/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_manual_tab",
+      "description": "Length 59 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/inertia_calculator/python/inertia_calculator/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_body_params_tab",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/urdf_builder_gui/python/urdf_builder_gui/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_acid_gas_group",
+      "description": "Length 65 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/scrubber_calculator/python/scrubber_calculator/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_adam_settings_tab",
+      "description": "Length 65 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/optimizer_gui/python/optimizer_gui/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_advanced_tab",
+      "description": "Length 67 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window_tabs.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_plot_config_tab",
+      "description": "Length 64 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window_tabs.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _setup_ui",
+      "description": "Length 74 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/chart_style_panel.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_menu_bar",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_param_widgets",
+      "description": "Length 112 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/widgets.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _setup_ui",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/statistical_widgets.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _setup_ui",
+      "description": "Length 63 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/visualization_widgets.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _setup_ui",
+      "description": "Length 82 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/visualization_widgets.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_input_panel",
+      "description": "Length 112 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/financial_calculator/python/financial_calculator/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_input_panel",
+      "description": "Length 51 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/steam_engine_calculator/python/steam_engine_calculator/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_body_params_tab",
+      "description": "Length 72 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/humanoid_builder_gui/python/humanoid_builder_gui/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _init_ui",
+      "description": "Length 104 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/pressure_drop_calculator/python/pressure_drop_calculator/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_input_panel",
+      "description": "Length 85 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/baghouse_calculator/python/baghouse_calculator/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_parameters_tab",
+      "description": "Length 66 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/multi_param_analysis/python/multi_param_analysis/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: create_batch_tab",
+      "description": "Length 92 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/document_processing/pdf_renamer/src/pdf_renamer/gui.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: create_api_tab",
+      "description": "Length 56 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/document_processing/pdf_renamer/src/pdf_renamer/gui.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_input_panel",
+      "description": "Length 70 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/trc_vessel_designer/python/trc_vessel_designer/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _setup_ui",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/shared/python/theme/dialogs/custom_theme_editor.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _setup_ui",
+      "description": "Length 55 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/shared/python/theme/dialogs/theme_manager_dialog.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: create_input_tab",
+      "description": "Length 58 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/shared/python/upstream_drift_tools/process_calculators/wgs_reactor_calculator.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _setup_ui",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/shared/python/upstream_drift_tools/process_calculators/psa_package/psa_gui.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_generation_tab",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget_ui.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_calculus_tab",
+      "description": "Length 57 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget_ui.py"
+      ],
+      "recommendation": "Split function"
+    }
+  ]
+}
