@@ -162,4 +162,26 @@ This document defines the comprehensive 16-point assessment framework (A-O + Hig
 
 ---
 
+## Automated Assessment Generation
+
+As of February 2026, assessments are generated automatically by `scripts/generate_fresh_assessments.py`. This script analyzes the codebase and produces grading reports for the following categories:
+
+| Category | Name            |
+| :------- | :-------------- |
+| A        | Code Structure  |
+| B        | Documentation   |
+| C        | Test Coverage   |
+| D        | Error Handling  |
+| E        | Performance     |
+| F        | Security        |
+| G        | Dependencies    |
+| H        | CI/CD           |
+| I        | Code Style      |
+| J        | API Design      |
+| K        | Data Handling   |
+| L        | Logging         |
+| M        | Configuration   |
+| N        | Scalability     |
+| O        | Maintainability |
+
 _See individual Assessment_Prompt_X.md files for detailed prompts._

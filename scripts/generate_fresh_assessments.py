@@ -506,15 +506,6 @@ def main() -> None:
     generate_comprehensive_assessment(grades, stats)
     create_issues_for_low_grades(grades)
 
-    # Also generate the summary json for other tools
-    summary = {
-        "timestamp": datetime.now().isoformat(),
-        "stats": stats,
-        "grades": grades,
-        "weighted_score": 0.0 # Placeholder, calculated in markdown
-    }
-    # (Optional: save summary.json if needed)
-
 
 if __name__ == "__main__":
     main()
