@@ -129,7 +129,9 @@ class DataProcessorOpsMixin:
 
         if not name or not expression:
             QMessageBox.warning(
-                cast(QWidget, self), "Error", "Please provide column name and expression."
+                cast(QWidget, self),
+                "Error",
+                "Please provide column name and expression.",
             )
             return
 
