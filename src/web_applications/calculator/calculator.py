@@ -166,11 +166,13 @@ class TI89Calculator:
 
     @property
     def allowed_functions(self) -> Mapping[str, object]:
+        """Return the dictionary of allowed symbolic functions."""
         assert self._allowed_functions is not None
         return self._allowed_functions
 
     @property
     def safe_globals(self) -> Mapping[str, object]:
+        """Return the sandboxed global dict used during expression parsing."""
         assert self._SAFE_GLOBALS_CACHE is not None
         return self._SAFE_GLOBALS_CACHE
 
@@ -461,6 +463,7 @@ class TI89Calculator:
     def parse_expression(
         expression: str, symbols: Mapping[str, sp.Symbol | sp.Expr]
     ) -> sp.Expr:
+        """Parse a mathematical expression string into a validated SymPy tree."""
         # Optimization: fast-path for simple numbers to avoid expensive parse_expr
         if expression:
             # Strip whitespace for accurate numeric checks
@@ -519,6 +522,7 @@ class TI89Calculator:
     def parse_equation(
         equation: str, symbols: Mapping[str, sp.Symbol | sp.Expr]
     ) -> sp.Eq:
+        """Parse an equation string (``lhs = rhs``) into a SymPy ``Eq`` object."""
         if "=" in equation:
             lhs, rhs = equation.split("=", maxsplit=1)
         else:
@@ -635,70 +639,72 @@ class TI89Calculator:
         return sp.diag(*matrices)
 
     def _build_allowed_functions(self) -> Mapping[str, object]:
+        """Build the complete mapping of allowed functions/constants for the calculator."""
+        result: dict[str, object] = {}
+        result.update(self._trig_functions())
+        result.update(self._complex_and_elementary_functions())
+        result.update(self._algebra_functions())
+        result.update(self._linear_algebra_functions())
+        result.update(self._robotics_functions())
+        result.update(self._constants())
+        return result
+
+    @staticmethod
+    def _trig_functions() -> dict[str, object]:
+        """Return trigonometric and hyperbolic function mappings."""
         return {
-            "I": sp.I,
-            "i": sp.I,
-            "sin": sp.sin,
-            "cos": sp.cos,
-            "tan": sp.tan,
-            "csc": sp.csc,
-            "sec": sp.sec,
-            "cot": sp.cot,
-            "asin": sp.asin,
-            "acos": sp.acos,
-            "atan": sp.atan,
-            "acsc": sp.acsc,
-            "asec": sp.asec,
-            "acot": sp.acot,
-            "sinh": sp.sinh,
-            "cosh": sp.cosh,
-            "tanh": sp.tanh,
-            "asinh": sp.asinh,
-            "acosh": sp.acosh,
-            "atanh": sp.atanh,
-            "csch": sp.csch,
-            "sech": sp.sech,
-            "coth": sp.coth,
-            "re": sp.re,
-            "im": sp.im,
-            "real": sp.re,
-            "imag": sp.im,
+            "I": sp.I, "i": sp.I,
+            "sin": sp.sin, "cos": sp.cos, "tan": sp.tan,
+            "csc": sp.csc, "sec": sp.sec, "cot": sp.cot,
+            "asin": sp.asin, "acos": sp.acos, "atan": sp.atan,
+            "acsc": sp.acsc, "asec": sp.asec, "acot": sp.acot,
+            "sinh": sp.sinh, "cosh": sp.cosh, "tanh": sp.tanh,
+            "asinh": sp.asinh, "acosh": sp.acosh, "atanh": sp.atanh,
+            "csch": sp.csch, "sech": sp.sech, "coth": sp.coth,
+        }
+
+    @staticmethod
+    def _complex_and_elementary_functions() -> dict[str, object]:
+        """Return complex number, elementary, and rounding function mappings."""
+        return {
+            "re": sp.re, "im": sp.im,
+            "real": sp.re, "imag": sp.im,
             "arg": sp.arg,
-            "conj": sp.conjugate,
-            "conjugate": sp.conjugate,
+            "conj": sp.conjugate, "conjugate": sp.conjugate,
             "abs": sp.Abs,
             "norm": lambda vector, **k: sp.Matrix(vector).norm(),
-            "exp": sp.exp,
-            "log": sp.log,
-            "ln": sp.log,
+            "exp": sp.exp, "log": sp.log, "ln": sp.log,
             "sqrt": sp.sqrt,
             "cbrt": lambda value, **k: sp.root(value, 3),
-            "floor": sp.floor,
-            "ceiling": sp.ceiling,
+            "floor": sp.floor, "ceiling": sp.ceiling,
             "round": lambda value, ndigits=0, **k: round(value, ndigits),
             "cis": lambda theta, **k: sp.exp(sp.I * theta),
             "rect": lambda radius, theta, **k: radius * sp.exp(sp.I * theta),
             "polar": lambda complex_value, **k: sp.Tuple(
                 sp.Abs(complex_value), sp.arg(complex_value)
             ),
-            "gcd": sp.gcd,
-            "lcm": sp.lcm,
-            "factor": sp.factor,
-            "factor_terms": sp.factor_terms,
-            "expand": sp.expand,
-            "cancel": sp.cancel,
-            "collect": sp.collect,
-            "together": sp.together,
-            "ratsimp": sp.ratsimp,
-            "trigsimp": sp.trigsimp,
-            "apart": sp.apart,
-            "simplify": sp.simplify,
+        }
+
+    @staticmethod
+    def _algebra_functions() -> dict[str, object]:
+        """Return algebraic manipulation and combinatorics function mappings."""
+        return {
+            "gcd": sp.gcd, "lcm": sp.lcm,
+            "factor": sp.factor, "factor_terms": sp.factor_terms,
+            "expand": sp.expand, "cancel": sp.cancel,
+            "collect": sp.collect, "together": sp.together,
+            "ratsimp": sp.ratsimp, "trigsimp": sp.trigsimp,
+            "apart": sp.apart, "simplify": sp.simplify,
             "factorial": TI89Calculator._safe_factorial,
             "nCr": sp.binomial,
             "nPr": lambda n, r, **k: TI89Calculator._safe_factorial(n)
             / TI89Calculator._safe_factorial(n - r),
-            "sum": sp.summation,
-            "product": sp.product,
+            "sum": sp.summation, "product": sp.product,
+        }
+
+    def _linear_algebra_functions(self) -> dict[str, object]:
+        """Return matrix and linear algebra function mappings."""
+        return {
             "Matrix": sp.Matrix,
             "dot": lambda vector_a, vector_b, **k: sp.Matrix(vector_a).dot(
                 sp.Matrix(vector_b)
@@ -716,17 +722,13 @@ class TI89Calculator:
             "rank": lambda matrix, **k: sp.Matrix(matrix).rank(),
             "diag": sp.diag,
             "block_diag": self._block_diag,
-            "eye": sp.eye,
-            "ones": sp.ones,
-            "zeros": sp.zeros,
-            "matrix_exp": self._matrix_exp,
-            "expm": self._matrix_exp,
-            "matrix_log": self._matrix_log,
-            "logm": self._matrix_log,
+            "eye": sp.eye, "ones": sp.ones, "zeros": sp.zeros,
+            "matrix_exp": self._matrix_exp, "expm": self._matrix_exp,
+            "matrix_log": self._matrix_log, "logm": self._matrix_log,
             "matrix_power": self._matrix_power,
             "eigenvals": lambda matrix, **k: sp.Matrix(matrix).eigenvals(),
             "eigenvects": lambda matrix, **k: sp.Matrix(matrix).eigenvects(),
-            "charpoly": lambda matrix, symbol="λ", **k: sp.Matrix(matrix)
+            "charpoly": lambda matrix, symbol="\u03bb", **k: sp.Matrix(matrix)
             .charpoly(sp.Symbol(symbol))
             .as_expr(),
             "nullspace": lambda matrix, **k: sp.Matrix(matrix).nullspace(),
@@ -739,20 +741,24 @@ class TI89Calculator:
                 sp.Matrix(rhs)
             ),
             "linsolve": sp.linsolve,
-            "hat": self._hat,
-            "vee": self._vee,
-            "skew": self._hat,
-            "unskew": self._vee,
-            "se3_hat": self._se3_hat,
-            "se3_vee": self._se3_vee,
+        }
+
+    def _robotics_functions(self) -> dict[str, object]:
+        """Return robotics/Lie algebra function mappings."""
+        return {
+            "hat": self._hat, "vee": self._vee,
+            "skew": self._hat, "unskew": self._vee,
+            "se3_hat": self._se3_hat, "se3_vee": self._se3_vee,
             "screw_axis": self._screw_axis,
             "twist_exp": self._twist_exponential,
             "adjoint": self._adjoint_transform,
-            "pi": sp.pi,
-            "E": sp.E,
-            "e": sp.E,
-            "oo": sp.oo,
-            "Infinity": sp.oo,
-            "inf": sp.oo,
+        }
+
+    @staticmethod
+    def _constants() -> dict[str, object]:
+        """Return mathematical constant mappings."""
+        return {
+            "pi": sp.pi, "E": sp.E, "e": sp.E,
+            "oo": sp.oo, "Infinity": sp.oo, "inf": sp.oo,
             "nan": sp.nan,
         }

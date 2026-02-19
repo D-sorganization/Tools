@@ -494,6 +494,7 @@ def exp_series(
     """
 
     def exp_func(x: ArrayLike) -> float | NDArray[np.floating]:
+        """Compute the exponential series approximation for *x*."""
         x_arr = np.asarray(x, dtype=np.float64)
         result = np.zeros_like(x_arr)
         term = np.ones_like(x_arr)
@@ -522,6 +523,7 @@ def sin_series(
     """
 
     def sin_func(x: ArrayLike) -> float | NDArray[np.floating]:
+        """Compute the sine series approximation for *x*."""
         x_arr = np.asarray(x, dtype=np.float64)
         result = np.zeros_like(x_arr)
         term = x_arr.copy()  # First term is x
@@ -551,6 +553,7 @@ def cos_series(
     """
 
     def cos_func(x: ArrayLike) -> float | NDArray[np.floating]:
+        """Compute the cosine series approximation for *x*."""
         x_arr = np.asarray(x, dtype=np.float64)
         result = np.zeros_like(x_arr)
         term = np.ones_like(x_arr)  # First term is 1
@@ -582,6 +585,7 @@ def ln_series(
     """
 
     def ln_func(x: ArrayLike) -> float | NDArray[np.floating]:
+        """Compute the natural logarithm series ln(1+x) for *x*."""
         x_arr = np.asarray(x, dtype=np.float64)
         result = np.zeros_like(x_arr)
         term = x_arr.copy()  # First term is x
@@ -613,6 +617,7 @@ def geometric_series(
     """
 
     def geo_func(x: ArrayLike) -> float | NDArray[np.floating]:
+        """Compute the geometric series 1/(1-x) for *x*."""
         x_arr = np.asarray(x, dtype=np.float64)
         result = np.zeros_like(x_arr)
         term = np.ones_like(x_arr)
@@ -643,6 +648,7 @@ def arctan_series(
     """
 
     def arctan_func(x: ArrayLike) -> float | NDArray[np.floating]:
+        """Compute the arctangent series approximation for *x*."""
         x_arr = np.asarray(x, dtype=np.float64)
         result = np.zeros_like(x_arr)
         term = x_arr.copy()  # First term is x
@@ -673,6 +679,7 @@ def sinh_series(
     """
 
     def sinh_func(x: ArrayLike) -> float | NDArray[np.floating]:
+        """Compute the hyperbolic sine series approximation for *x*."""
         x_arr = np.asarray(x, dtype=np.float64)
         result = np.zeros_like(x_arr)
         term = x_arr.copy()  # First term is x
@@ -702,6 +709,7 @@ def cosh_series(
     """
 
     def cosh_func(x: ArrayLike) -> float | NDArray[np.floating]:
+        """Compute the hyperbolic cosine series approximation for *x*."""
         x_arr = np.asarray(x, dtype=np.float64)
         result = np.zeros_like(x_arr)
         term = np.ones_like(x_arr)  # First term is 1

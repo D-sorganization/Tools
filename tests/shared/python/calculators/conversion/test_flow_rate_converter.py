@@ -27,27 +27,21 @@ from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
 class TestMolarToMolar:
     """Test molar flow rate conversions."""
 
-    def test_same_unit_returns_value(self):
-        """Test that converting to the same unit returns the original value."""
-        assert molar_to_molar(100.0, "kmol/s", "kmol/s") == pytest.approx(100.0)
-        assert molar_to_molar(50.0, "mol/h", "mol/h") == pytest.approx(50.0)
-
-    def test_mol_per_s_to_mol_per_h(self):
-        """Test conversion from mol/s to mol/h."""
-        result = molar_to_molar(1.0, "mol/s", "mol/h")
-        assert result == pytest.approx(3600.0)
-
-    def test_kmol_per_h_to_mol_per_s(self):
-        """Test conversion from kmol/h to mol/s."""
-        result = molar_to_molar(1.0, "kmol/h", "mol/s")
-        expected = 1000.0 / 3600.0
-        assert result == pytest.approx(expected, rel=1e-5)
-
-    def test_lbmol_per_h_to_mol_per_s(self):
-        """Test conversion from lbmol/h to mol/s."""
-        result = molar_to_molar(1.0, "lbmol/h", "mol/s")
-        # lbmol = 453.59237 mol
-        expected = 453.59237 / 3600.0
+    @pytest.mark.parametrize(
+        "value, from_unit, to_unit, expected",
+        [
+            (100.0, "kmol/s", "kmol/s", 100.0),
+            (50.0, "mol/h", "mol/h", 50.0),
+            (1.0, "mol/s", "mol/h", 3600.0),
+            (1.0, "kmol/h", "mol/s", 1000.0 / 3600.0),
+            (1.0, "lbmol/h", "mol/s", 453.59237 / 3600.0),
+        ],
+        ids=["same-kmol/s", "same-mol/h", "mol/s-to-mol/h",
+             "kmol/h-to-mol/s", "lbmol/h-to-mol/s"],
+    )
+    def test_molar_conversions(self, value, from_unit, to_unit, expected):
+        """Test molar flow rate unit conversions."""
+        result = molar_to_molar(value, from_unit, to_unit)
         assert result == pytest.approx(expected, rel=1e-5)
 
 

@@ -310,14 +310,21 @@ class ResultsPanel(QWidget):
 
     def update_results(self, results: PSAResults) -> None:
         """Update display with calculation results."""
-        # Key metrics
+        self._update_key_metrics(results)
+        self._update_safety_metrics(results)
+        self._update_flows_table(results)
+        self._update_compositions_table(results)
+
+    def _update_key_metrics(self, results: PSAResults) -> None:
+        """Update key performance metric labels."""
         self.h2_recovery_label.setText(f"{results.h2_recovery_pct:.2f}%")
         self.h2_purity_label.setText(f"{results.h2_purity_pct:.5f}%")
         self.net_product_label.setText(f"{results.total_net_product_scfm:.2f} SCFM")
         self.exhaust_label.setText(f"{results.total_exhaust_scfm:.2f} SCFM")
         self.mass_balance_label.setText(f"{results.mass_balance_error:.2e}")
 
-        # Safety metrics
+    def _update_safety_metrics(self, results: PSAResults) -> None:
+        """Update safety/flammability metric labels and styling."""
         self.s2_tail_h2_label.setText(f"{results.s2_tail_h2_pct:.2f}%")
         self.s2_tail_o2_label.setText(f"{results.s2_tail_o2_pct:.2f}%")
 
@@ -337,89 +344,57 @@ class ResultsPanel(QWidget):
                 "font-weight: bold; color: green; background-color: #ccffcc;"
             )
 
-        # Flows table
+    def _update_flows_table(self, results: PSAResults) -> None:
+        """Populate the flows table with component flow data and totals."""
         n_comp = len(results.component_names)
         self.flows_table.setRowCount(n_comp + 1)
 
+        flow_columns = [
+            results.flows.fresh_feed, results.flows.mixed_feed,
+            results.flows.exhaust, results.flows.interstage,
+            results.flows.s2_tail, results.flows.s2_tail_recycle,
+            results.flows.gross_product, results.flows.net_product,
+        ]
+
         for i, name in enumerate(results.component_names):
             self.flows_table.setItem(i, 0, QTableWidgetItem(name))
-            self.flows_table.setItem(
-                i, 1, QTableWidgetItem(f"{results.flows.fresh_feed[i]:.4f}")
-            )
-            self.flows_table.setItem(
-                i, 2, QTableWidgetItem(f"{results.flows.mixed_feed[i]:.4f}")
-            )
-            self.flows_table.setItem(
-                i, 3, QTableWidgetItem(f"{results.flows.exhaust[i]:.4f}")
-            )
-            self.flows_table.setItem(
-                i, 4, QTableWidgetItem(f"{results.flows.interstage[i]:.4f}")
-            )
-            self.flows_table.setItem(
-                i, 5, QTableWidgetItem(f"{results.flows.s2_tail[i]:.4f}")
-            )
-            self.flows_table.setItem(
-                i, 6, QTableWidgetItem(f"{results.flows.s2_tail_recycle[i]:.4f}")
-            )
-            self.flows_table.setItem(
-                i, 7, QTableWidgetItem(f"{results.flows.gross_product[i]:.4f}")
-            )
-            self.flows_table.setItem(
-                i, 8, QTableWidgetItem(f"{results.flows.net_product[i]:.4f}")
-            )
+            for col_idx, col_data in enumerate(flow_columns):
+                self.flows_table.setItem(
+                    i, col_idx + 1, QTableWidgetItem(f"{col_data[i]:.4f}")
+                )
 
         # Totals row
         self.flows_table.setItem(n_comp, 0, QTableWidgetItem("TOTAL"))
-        self.flows_table.setItem(
-            n_comp, 1, QTableWidgetItem(f"{results.total_feed_scfm:.2f}")
-        )
-        self.flows_table.setItem(
-            n_comp, 2, QTableWidgetItem(f"{np.sum(results.flows.mixed_feed):.2f}")
-        )
-        self.flows_table.setItem(
-            n_comp, 3, QTableWidgetItem(f"{results.total_exhaust_scfm:.2f}")
-        )
-        self.flows_table.setItem(
-            n_comp, 4, QTableWidgetItem(f"{np.sum(results.flows.interstage):.2f}")
-        )
-        self.flows_table.setItem(
-            n_comp, 5, QTableWidgetItem(f"{np.sum(results.flows.s2_tail):.2f}")
-        )
-        self.flows_table.setItem(
-            n_comp, 6, QTableWidgetItem(f"{np.sum(results.flows.s2_tail_recycle):.2f}")
-        )
-        self.flows_table.setItem(
-            n_comp, 7, QTableWidgetItem(f"{np.sum(results.flows.gross_product):.2f}")
-        )
-        self.flows_table.setItem(
-            n_comp, 8, QTableWidgetItem(f"{results.total_net_product_scfm:.2f}")
-        )
+        totals = [
+            results.total_feed_scfm, np.sum(results.flows.mixed_feed),
+            results.total_exhaust_scfm, np.sum(results.flows.interstage),
+            np.sum(results.flows.s2_tail), np.sum(results.flows.s2_tail_recycle),
+            np.sum(results.flows.gross_product), results.total_net_product_scfm,
+        ]
+        for col_idx, total in enumerate(totals):
+            self.flows_table.setItem(
+                n_comp, col_idx + 1, QTableWidgetItem(f"{total:.2f}")
+            )
 
         self.flows_table.resizeColumnsToContents()
 
-        # Compositions table
+    def _update_compositions_table(self, results: PSAResults) -> None:
+        """Populate the compositions table with component percentage data."""
+        n_comp = len(results.component_names)
         self.comp_table.setRowCount(n_comp + 1)
+
+        comp_columns = [
+            results.compositions.fresh_feed, results.compositions.mixed_feed,
+            results.compositions.exhaust, results.compositions.interstage,
+            results.compositions.s2_tail, results.compositions.net_product,
+        ]
 
         for i, name in enumerate(results.component_names):
             self.comp_table.setItem(i, 0, QTableWidgetItem(name))
-            self.comp_table.setItem(
-                i, 1, QTableWidgetItem(f"{results.compositions.fresh_feed[i]:.4f}")
-            )
-            self.comp_table.setItem(
-                i, 2, QTableWidgetItem(f"{results.compositions.mixed_feed[i]:.4f}")
-            )
-            self.comp_table.setItem(
-                i, 3, QTableWidgetItem(f"{results.compositions.exhaust[i]:.4f}")
-            )
-            self.comp_table.setItem(
-                i, 4, QTableWidgetItem(f"{results.compositions.interstage[i]:.4f}")
-            )
-            self.comp_table.setItem(
-                i, 5, QTableWidgetItem(f"{results.compositions.s2_tail[i]:.4f}")
-            )
-            self.comp_table.setItem(
-                i, 6, QTableWidgetItem(f"{results.compositions.net_product[i]:.4f}")
-            )
+            for col_idx, col_data in enumerate(comp_columns):
+                self.comp_table.setItem(
+                    i, col_idx + 1, QTableWidgetItem(f"{col_data[i]:.4f}")
+                )
 
         # Totals row
         self.comp_table.setItem(n_comp, 0, QTableWidgetItem("TOTAL"))

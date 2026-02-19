@@ -53,45 +53,25 @@ class TestHandleFileErrors:
 
         assert successful_func() == "success"
 
-    def test_returns_default_on_file_not_found(self):
-        """Test that FileNotFoundError returns default."""
+    @pytest.mark.parametrize(
+        "exc_cls, exc_msg, default_val",
+        [
+            (FileNotFoundError, "test file not found", "default_value"),
+            (PermissionError, "access denied", None),
+            (OSError, "disk error", -1),
+            (ValueError, "unexpected", "fallback"),
+        ],
+        ids=["FileNotFoundError", "PermissionError", "OSError", "ValueError"],
+    )
+    def test_returns_default_on_error(self, exc_cls, exc_msg, default_val):
+        """Test that handled errors return the configured default."""
         from utils.error_handling import handle_file_errors
 
-        @handle_file_errors(default="default_value", log_error=False)
-        def file_error_func():
-            raise FileNotFoundError("test file not found")
+        @handle_file_errors(default=default_val, log_error=False)
+        def error_func():
+            raise exc_cls(exc_msg)
 
-        assert file_error_func() == "default_value"
-
-    def test_returns_default_on_permission_error(self):
-        """Test that PermissionError returns default."""
-        from utils.error_handling import handle_file_errors
-
-        @handle_file_errors(default=None, log_error=False)
-        def permission_func():
-            raise PermissionError("access denied")
-
-        assert permission_func() is None
-
-    def test_returns_default_on_os_error(self):
-        """Test that OSError returns default."""
-        from utils.error_handling import handle_file_errors
-
-        @handle_file_errors(default=-1, log_error=False)
-        def os_error_func():
-            raise OSError("disk error")
-
-        assert os_error_func() == -1
-
-    def test_returns_default_on_unexpected_error(self):
-        """Test that unexpected errors return default."""
-        from utils.error_handling import handle_file_errors
-
-        @handle_file_errors(default="fallback", log_error=False)
-        def unexpected_error_func():
-            raise ValueError("unexpected")
-
-        assert unexpected_error_func() == "fallback"
+        assert error_func() == default_val
 
     def test_reraise_option_works(self):
         """Test that reraise=True re-raises exceptions."""

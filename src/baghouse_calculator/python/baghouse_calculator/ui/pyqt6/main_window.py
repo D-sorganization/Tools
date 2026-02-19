@@ -197,13 +197,27 @@ class BaghouseCalculatorMainWindow(BaseCalculatorWindow):
         layout = QVBoxLayout(container)
         layout.setSpacing(15)
 
-        # Title
         title = QLabel("Baghouse Filter Calculator")
         title.setFont(QFont("", 18, QFont.Weight.Bold))
         title.setStyleSheet(f"color: {COLORS['blue']};")
         layout.addWidget(title)
 
-        # Gas Flow Group
+        layout.addWidget(self._create_gas_stream_group())
+        layout.addWidget(self._create_solids_input_group())
+        layout.addWidget(self._create_efficiency_group())
+        layout.addWidget(self._create_equipment_group())
+
+        self.calculate_btn = QPushButton("Calculate Baghouse Performance")
+        self.calculate_btn.setMinimumHeight(50)
+        self.calculate_btn.clicked.connect(self._on_calculate)
+        layout.addWidget(self.calculate_btn)
+
+        layout.addStretch()
+        scroll.setWidget(container)
+        return scroll
+
+    def _create_gas_stream_group(self) -> QGroupBox:
+        """Create the gas stream input group."""
         gas_group = QGroupBox("Gas Stream")
         gas_layout = QFormLayout(gas_group)
 
@@ -216,7 +230,7 @@ class BaghouseCalculatorMainWindow(BaseCalculatorWindow):
         self.inlet_temp_input = QDoubleSpinBox()
         self.inlet_temp_input.setRange(0, 1000)
         self.inlet_temp_input.setValue(200)
-        self.inlet_temp_input.setSuffix(" °C")
+        self.inlet_temp_input.setSuffix(" \u00b0C")
         gas_layout.addRow("Inlet Temperature:", self.inlet_temp_input)
 
         self.pressure_input = QDoubleSpinBox()
@@ -224,10 +238,10 @@ class BaghouseCalculatorMainWindow(BaseCalculatorWindow):
         self.pressure_input.setValue(101.325)
         self.pressure_input.setSuffix(" kPa")
         gas_layout.addRow("Pressure:", self.pressure_input)
+        return gas_group
 
-        layout.addWidget(gas_group)
-
-        # Solids Input Group
+    def _create_solids_input_group(self) -> QGroupBox:
+        """Create the solids input group."""
         solids_group = QGroupBox("Solids Input")
         solids_layout = QFormLayout(solids_group)
 
@@ -242,10 +256,10 @@ class BaghouseCalculatorMainWindow(BaseCalculatorWindow):
         self.ash_input.setValue(20)
         self.ash_input.setSuffix(" kg/hr")
         solids_layout.addRow("Ash Rate:", self.ash_input)
+        return solids_group
 
-        layout.addWidget(solids_group)
-
-        # Efficiency Group
+    def _create_efficiency_group(self) -> QGroupBox:
+        """Create the removal efficiency input group."""
         eff_group = QGroupBox("Removal Efficiency")
         eff_layout = QFormLayout(eff_group)
 
@@ -260,10 +274,10 @@ class BaghouseCalculatorMainWindow(BaseCalculatorWindow):
         self.ash_eff_input.setValue(99)
         self.ash_eff_input.setSuffix(" %")
         eff_layout.addRow("Ash Removal:", self.ash_eff_input)
+        return eff_group
 
-        layout.addWidget(eff_group)
-
-        # Equipment Group
+    def _create_equipment_group(self) -> QGroupBox:
+        """Create the equipment parameters input group."""
         equip_group = QGroupBox("Equipment Parameters")
         equip_layout = QFormLayout(equip_group)
 
@@ -276,33 +290,21 @@ class BaghouseCalculatorMainWindow(BaseCalculatorWindow):
         self.drum_volume_input = QDoubleSpinBox()
         self.drum_volume_input.setRange(0.1, 10)
         self.drum_volume_input.setValue(0.5)
-        self.drum_volume_input.setSuffix(" m³")
+        self.drum_volume_input.setSuffix(" m\u00b3")
         equip_layout.addRow("Drum Volume:", self.drum_volume_input)
 
         self.solid_density_input = QDoubleSpinBox()
         self.solid_density_input.setRange(100, 2000)
         self.solid_density_input.setValue(500)
-        self.solid_density_input.setSuffix(" kg/m³")
+        self.solid_density_input.setSuffix(" kg/m\u00b3")
         equip_layout.addRow("Solid Density:", self.solid_density_input)
 
         self.bag_area_input = QDoubleSpinBox()
         self.bag_area_input.setRange(100, 10000)
         self.bag_area_input.setValue(1000)
-        self.bag_area_input.setSuffix(" ft²")
+        self.bag_area_input.setSuffix(" ft\u00b2")
         equip_layout.addRow("Bag Filter Area:", self.bag_area_input)
-
-        layout.addWidget(equip_group)
-
-        # Calculate Button
-        self.calculate_btn = QPushButton("Calculate Baghouse Performance")
-        self.calculate_btn.setMinimumHeight(50)
-        self.calculate_btn.clicked.connect(self._on_calculate)
-        layout.addWidget(self.calculate_btn)
-
-        layout.addStretch()
-
-        scroll.setWidget(container)
-        return scroll
+        return equip_group
 
     def _create_results_panel(self) -> QWidget:
         """Create the results panel."""
