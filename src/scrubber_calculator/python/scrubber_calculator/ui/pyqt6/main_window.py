@@ -483,7 +483,7 @@ class ScrubberCalculatorWindow(BaseCalculatorWidget):
             self._update_results_display()
             self.mark_changed()
 
-        except Exception as e:
+        except (ValueError, TypeError, ArithmeticError, KeyError) as e:
             logger.exception("Calculation failed")
             self.show_error("Calculation Error", str(e))
 

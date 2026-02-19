@@ -8,4 +8,12 @@ Usage:
     uvicorn calc_backend.app:app --reload --port 8010
 """
 
+from .protocols import CalculationEngine, ExpressionEvaluator, ValidationMixin
+
 __version__ = "1.0.0"
+
+__all__ = [
+    "CalculationEngine",
+    "ExpressionEvaluator",
+    "ValidationMixin",
+]

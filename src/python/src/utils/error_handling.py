@@ -55,7 +55,7 @@ def handle_file_errors(
                 if reraise:
                     raise
                 return default
-            except Exception as e:
+            except (ValueError, TypeError, RuntimeError, KeyError) as e:
                 if log_error:
                     logger.error(f"Unexpected error in {func.__name__}: {e}")
                 if reraise:
@@ -88,7 +88,14 @@ def safe_execute(
     """
     try:
         return func(*args, **kwargs)
-    except Exception as e:
+    except (
+        OSError,
+        ValueError,
+        TypeError,
+        RuntimeError,
+        KeyError,
+        ArithmeticError,
+    ) as e:
         if log_error:
             logger.error(f"Error executing {func.__name__}: {e}")
         return default
@@ -141,7 +148,7 @@ def log_and_continue(
         def wrapper(*args: Any, **kwargs: Any) -> T | None:
             try:
                 return func(*args, **kwargs)
-            except Exception as e:
+            except (OSError, ValueError, TypeError, RuntimeError, KeyError) as e:
                 logger.log(log_level, f"{error_message}: {e}")
                 return default
 
@@ -171,7 +178,7 @@ def exit_on_error(
         def wrapper(*args: Any, **kwargs: Any) -> T:
             try:
                 return func(*args, **kwargs)
-            except Exception as e:
+            except (OSError, ValueError, TypeError, RuntimeError, KeyError) as e:
                 if log_error:
                     logger.error(f"{error_message}: {e}")
                 logger.error(f"ERROR: {error_message}: {e}")

@@ -66,7 +66,7 @@ def main() -> None:
         # Start main loop
         root.mainloop()
 
-    except Exception as e:
+    except (OSError, RuntimeError, ValueError, ImportError) as e:
         logger.exception("Fatal error in main application")
         messagebox.showerror("Fatal Error", f"Application failed to start:\n\n{e}")
         sys.exit(1)
