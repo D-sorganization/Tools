@@ -141,7 +141,7 @@ def main() -> None:
         print(f"  stdout: {e.stdout}")
         print(f"  stderr: {e.stderr}")
         sys.exit(1)
-    except (OSError, PermissionError, RuntimeError) as e:
+    except Exception as e:
         print(f"\n[ERROR] Unexpected error: {e}")
         sys.exit(1)
 

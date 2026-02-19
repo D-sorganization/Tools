@@ -131,5 +131,5 @@ if __name__ == "__main__":
         try:
             repo_name = repo  # for logs
             process_repo(repo)
-        except (OSError, ValueError, RuntimeError) as e:
+        except Exception as e:
             logger.info(f"Failed to process {repo}: {e}")
