@@ -73,10 +73,10 @@ def friction_factor_laminar(reynolds_number: float) -> float:
     f = 64 / Re  (Hagen-Poiseuille equation)
 
     Args:
-        reynolds_number: Reynolds number
+        reynolds_number: Reynolds number (must be positive)
 
     Returns:
-        Darcy friction factor
+        Darcy friction factor (always positive)
 
     Reference:
         Hagen, G. (1839), Poiseuille, J. (1840): Laminar flow in pipes
@@ -85,7 +85,9 @@ def friction_factor_laminar(reynolds_number: float) -> float:
         logger.error("Reynolds number must be positive")
         return FRICTION_FACTOR_DEFAULT_LAMINAR  # Default for Re ~ 1000
 
-    return LAMINAR_FRICTION_CONSTANT / reynolds_number
+    result = LAMINAR_FRICTION_CONSTANT / reynolds_number
+    assert result > 0, f"Friction factor must be positive, got {result}"
+    return result
 
 
 def friction_factor_colebrook(
@@ -312,6 +314,20 @@ def calculate_flow_properties(inputs: PressureDropInputs) -> FlowProperties:
     Raises:
         ValueError: If calculations fail
     """
+    # DbC preconditions
+    assert inputs.pipe_diameter > 0, (
+        f"Pipe diameter must be positive, got {inputs.pipe_diameter}"
+    )
+    assert inputs.mass_flow_rate > 0, (
+        f"Mass flow rate must be positive, got {inputs.mass_flow_rate}"
+    )
+    assert inputs.inlet_temperature > 0, (
+        f"Inlet temperature must be positive (K), got {inputs.inlet_temperature}"
+    )
+    assert inputs.inlet_pressure > 0, (
+        f"Inlet pressure must be positive, got {inputs.inlet_pressure}"
+    )
+
     # Calculate gas mixture properties (now includes gamma and speed of sound)
     gas_props = calculate_gas_properties(
         inputs.gas_composition.components,
@@ -327,6 +343,13 @@ def calculate_flow_properties(inputs: PressureDropInputs) -> FlowProperties:
     compressibility_factor = gas_props["compressibility_factor"]
     speed_of_sound = gas_props["speed_of_sound"]  # Now calculated dynamically
     heat_capacity_ratio = gas_props["heat_capacity_ratio"]  # γ = Cp/Cv
+
+    # DbC: intermediate invariants on physical properties
+    assert density > 0, f"Gas density must be positive, got {density}"
+    assert viscosity > 0, f"Gas viscosity must be positive, got {viscosity}"
+    assert speed_of_sound > 0, (
+        f"Speed of sound must be positive, got {speed_of_sound}"
+    )
 
     # Calculate flow velocity
     pipe_area = PI * (inputs.pipe_diameter**2) / 4.0
@@ -352,6 +375,17 @@ def calculate_flow_properties(inputs: PressureDropInputs) -> FlowProperties:
         molecular_weight=molecular_weight,
         mass_flux=mass_flux,
         volumetric_flow_rate=volumetric_flow_rate,
+    )
+
+    # DbC postconditions
+    assert flow_props.velocity > 0, (
+        f"Flow velocity must be positive, got {flow_props.velocity}"
+    )
+    assert flow_props.reynolds_number > 0, (
+        f"Reynolds number must be positive, got {flow_props.reynolds_number}"
+    )
+    assert 0 <= flow_props.mach_number < 50, (
+        f"Mach number out of physical range, got {flow_props.mach_number}"
     )
 
     logger.info("Flow properties calculated:")
@@ -404,20 +438,30 @@ def calculate_frictional_pressure_drop(
     ΔP_friction = f × (L/D) × (ρV²/2)
 
     Args:
-        friction_factor: Darcy friction factor
-        length: Pipe length (m)
-        diameter: Pipe diameter (m)
-        density: Fluid density (kg/m³)
-        velocity: Flow velocity (m/s)
+        friction_factor: Darcy friction factor (must be positive)
+        length: Pipe length in m (must be positive)
+        diameter: Pipe diameter in m (must be positive)
+        density: Fluid density in kg/m³ (must be positive)
+        velocity: Flow velocity in m/s (must be positive)
 
     Returns:
-        Frictional pressure drop (Pa)
+        Frictional pressure drop in Pa (non-negative)
 
     Reference:
         Darcy, H. (1857), Weisbach, J. (1845): Pipe flow friction equation
     """
+    # DbC preconditions
+    assert friction_factor > 0, f"friction_factor must be positive, got {friction_factor}"
+    assert length > 0, f"length must be positive, got {length}"
+    assert diameter > 0, f"diameter must be positive, got {diameter}"
+    assert density > 0, f"density must be positive, got {density}"
+    assert velocity > 0, f"velocity must be positive, got {velocity}"
+
     velocity_head = 0.5 * density * (velocity**2)
     dp_friction = friction_factor * (length / diameter) * velocity_head
+
+    # DbC postcondition
+    assert dp_friction >= 0, f"Pressure drop must be non-negative, got {dp_friction}"
 
     logger.debug(
         f"Darcy-Weisbach: f={friction_factor:.6f}, L/D={length / diameter:.1f}, ΔP={dp_friction:.1f} Pa"

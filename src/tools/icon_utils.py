@@ -1,16 +1,51 @@
 """Shared utilities for icon conversion and manipulation."""
 
+from __future__ import annotations
+
 import logging
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-try:
+if TYPE_CHECKING:
     from PIL import Image
 
-    HAS_PIL = True
-except ImportError:
-    HAS_PIL = False
-
 logger = logging.getLogger(__name__)
+
+
+# PIL availability holder (avoids mutable globals + global keyword)
+class _PILState:
+    """Tracks PIL availability and provides lazy installation."""
+
+    available: bool = False
+    Image: object | None = None
+
+    @classmethod
+    def _try_import(cls) -> None:
+        try:
+            from PIL import Image
+
+            cls.Image = Image
+            cls.available = True
+        except ImportError:
+            cls.available = False
+
+    @classmethod
+    def ensure_installed(cls) -> None:
+        """Ensure PIL is installed, installing it if necessary."""
+        if cls.available:
+            return
+
+        from tools.dependency_utils import install_packages
+
+        logger.info("PIL (Pillow) not found. Attempting to install...")
+        if install_packages(["PIL"]):
+            cls._try_import()
+        else:
+            logger.error("Failed to install Pillow. Icon conversion may fail.")
+
+
+# Attempt import on module load
+_PILState._try_import()
 
 # Windows standard ICO sizes
 ICO_SIZES = [(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)]
@@ -18,28 +53,15 @@ ICO_SIZES = [(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)]
 
 def check_pil_installed() -> bool:
     """Check if PIL/Pillow is installed."""
-    return HAS_PIL
+    return _PILState.available
 
 
 def ensure_pil_installed() -> None:
     """Ensure PIL is installed, installing it if necessary."""
-    global Image, HAS_PIL
-
-    if HAS_PIL:
-        return
-
-    from tools.dependency_utils import install_packages
-
-    logger.info("PIL (Pillow) not found. Attempting to install...")
-    if install_packages(["PIL"]):
-        from PIL import Image
-
-        HAS_PIL = True
-    else:
-        logger.error("Failed to install Pillow. Icon conversion may fail.")
+    _PILState.ensure_installed()
 
 
-def convert_image_mode(img: "Image.Image") -> "Image.Image":
+def convert_image_mode(img: Image.Image) -> Image.Image:
     """Convert image to appropriate mode for ICO format.
 
     Args:
@@ -62,8 +84,8 @@ def convert_image_mode(img: "Image.Image") -> "Image.Image":
 
 
 def create_resized_images(
-    img: "Image.Image", sizes: list[tuple[int, int]]
-) -> list["Image.Image"]:
+    img: Image.Image, sizes: list[tuple[int, int]]
+) -> list[Image.Image]:
     """Create resized versions of an image for ICO format.
 
     Args:
@@ -73,6 +95,8 @@ def create_resized_images(
     Returns:
         List of resized images.
     """
+    from PIL import Image
+
     return [img.resize(size, Image.Resampling.LANCZOS) for size in sizes]
 
 

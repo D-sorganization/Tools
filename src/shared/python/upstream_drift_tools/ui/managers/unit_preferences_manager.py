@@ -349,15 +349,17 @@ class UnitPreferencesManager(QObject):
             return value
 
 
-_global_manager: UnitPreferencesManager | None = None
+class _PreferencesHolder:
+    """Singleton holder for UnitPreferencesManager (avoids global keyword)."""
+
+    instance: UnitPreferencesManager | None = None
 
 
 def get_unit_preferences_manager() -> UnitPreferencesManager:
     """Get the global UnitPreferencesManager instance."""
-    global _global_manager
-    if _global_manager is None:
-        _global_manager = UnitPreferencesManager()
-    return _global_manager
+    if _PreferencesHolder.instance is None:
+        _PreferencesHolder.instance = UnitPreferencesManager()
+    return _PreferencesHolder.instance
 
 
 __all__ = [

@@ -17,13 +17,13 @@ from PyQt6.QtWidgets import (
     QGridLayout,
     QGroupBox,
     QLabel,
-    QMainWindow,
     QPushButton,
     QScrollArea,
     QSizePolicy,
     QVBoxLayout,
     QWidget,
 )
+from upstream_drift_tools.ui.widgets.base_calculator_widget import BaseCalculatorWindow
 
 # Catppuccin Mocha color palette
 CATPPUCCIN_MOCHA = {
@@ -162,31 +162,33 @@ QPushButton:disabled {{
 """
 
 
-class SyngasWaterCalculatorWindow(QMainWindow):
+class SyngasWaterCalculatorWindow(BaseCalculatorWindow):
     """Main window for Syngas Water Calculator application."""
 
     def __init__(self) -> None:
         """Initialize the main window."""
-        super().__init__()
+        super().__init__(
+            calculator_name="SyngasWaterCalculator",
+            window_title="Syngas Water Calculator",
+            min_size=(650, 700),
+        )
         self.result_labels: dict[str, QLabel] = {}
         self._setup_ui()
 
     def _setup_ui(self) -> None:
         """Set up the user interface."""
-        self.setWindowTitle("Syngas Water Calculator")
-        self.setMinimumSize(650, 700)
         self.setStyleSheet(STYLESHEET)
 
-        # Central widget with scroll area
+        # Scroll area wrapping the content
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
         scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self.setCentralWidget(scroll_area)
 
-        central_widget = QWidget()
-        scroll_area.setWidget(central_widget)
+        scroll_content = QWidget()
+        scroll_area.setWidget(scroll_content)
+        self.main_layout.addWidget(scroll_area)
 
-        main_layout = QVBoxLayout(central_widget)
+        main_layout = QVBoxLayout(scroll_content)
         main_layout.setContentsMargins(16, 16, 16, 16)
         main_layout.setSpacing(12)
 

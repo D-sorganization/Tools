@@ -47,9 +47,9 @@ def debug_log(
         include_caller: Include caller info in message
         **kwargs: Additional context to log
     """
-    from utils.debug_utils import _DEBUG_MODE
+    from utils.debug_utils import is_debug_mode
 
-    if not _DEBUG_MODE:
+    if not is_debug_mode():
         return
 
     if include_caller:
@@ -74,9 +74,9 @@ def debug_vars(**variables: Any) -> None:
     Args:
         **variables: Variables to log (name=value pairs)
     """
-    from utils.debug_utils import _DEBUG_MODE
+    from utils.debug_utils import is_debug_mode
 
-    if not _DEBUG_MODE:
+    if not is_debug_mode():
         return
 
     filename, func, lineno = get_caller_info(skip_frames=1)
@@ -157,7 +157,7 @@ def debug_exception(
         exc: Exception to debug (or None to use current exception)
         log_level: Level to log at
     """
-    from utils.debug_utils import _DEBUG_MODE
+    from utils.debug_utils import is_debug_mode
 
     if exc is None:
         exc_info = sys.exc_info()
@@ -166,7 +166,7 @@ def debug_exception(
         else:
             return
 
-    formatted = format_exception_with_locals(exc, include_locals=_DEBUG_MODE)
+    formatted = format_exception_with_locals(exc, include_locals=is_debug_mode())
     logger.log(log_level, "Exception details:\n%s", formatted)
 
 
@@ -324,9 +324,9 @@ def conditional_breakpoint(
 
 def debug_breakpoint() -> None:
     """Set a breakpoint only in debug mode."""
-    from utils.debug_utils import _DEBUG_MODE
+    from utils.debug_utils import is_debug_mode
 
-    if _DEBUG_MODE:
+    if is_debug_mode():
         breakpoint()
 
 
