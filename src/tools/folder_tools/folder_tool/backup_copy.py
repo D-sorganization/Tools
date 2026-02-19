@@ -176,7 +176,50 @@ class BackupCopyMixin:
             PermissionError: If insufficient permissions to read source or write
                 destination
         """
-        # Input validation
+        source_path_obj, dest_path_obj = self._validate_copy_inputs(
+            source_path, dest_path
+        )
+
+        for attempt in range(MAX_RETRY_ATTEMPTS):
+            try:
+                self._prepare_dest_directory(dest_path_obj)
+                shutil.copy2(source_path, dest_path)
+
+                if self._verify_copy(source_path_obj, dest_path_obj, source_path, dest_path):
+                    return True
+
+                # Verification failed; clean up and potentially retry
+                if dest_path_obj.exists():
+                    dest_path_obj.unlink()
+                if attempt < MAX_RETRY_ATTEMPTS - 1:
+                    logger.info(
+                        "Retrying copy due to verification failure "
+                        f"(attempt {attempt + 1}/{MAX_RETRY_ATTEMPTS})",
+                    )
+                    continue
+
+            except (OSError, PermissionError) as e:
+                logger.warning(f"Copy attempt {attempt + 1} failed: {e}")
+                if attempt < MAX_RETRY_ATTEMPTS - 1:
+                    time.sleep(0.1 * (2**attempt))
+                    continue
+                else:
+                    logger.error(
+                        f"Failed to copy {source_path} after "
+                        f"{MAX_RETRY_ATTEMPTS} attempts: {e}",
+                    )
+                    raise
+
+        return False
+
+    def _validate_copy_inputs(
+        self, source_path: str, dest_path: str
+    ) -> tuple[Path, Path]:
+        """Validate source and destination paths for a copy operation.
+
+        Returns:
+            Tuple of (source_path_obj, dest_path_obj).
+        """
         if not source_path or not isinstance(source_path, str):
             raise ValueError(
                 f"Source path must be non-empty string, got {type(source_path)}",
@@ -189,7 +232,6 @@ class BackupCopyMixin:
         source_path_obj = Path(source_path)
         dest_path_obj = Path(dest_path)
 
-        # Validate source file exists and is accessible
         if not source_path_obj.exists():
             raise FileNotFoundError(f"Source file does not exist: {source_path}")
         if not source_path_obj.is_file():
@@ -197,7 +239,6 @@ class BackupCopyMixin:
         if not os.access(source_path, os.R_OK):
             raise PermissionError(f"Cannot read source file: {source_path}")
 
-        # Validate source file size
         try:
             source_size = source_path_obj.stat().st_size
             if source_size == 0:
@@ -210,68 +251,47 @@ class BackupCopyMixin:
         except OSError as e:
             logger.warning(f"Cannot access source file size: {source_path} - {e}")
 
-        for attempt in range(MAX_RETRY_ATTEMPTS):
-            try:
-                # Ensure destination directory exists
-                dest_dir = dest_path_obj.parent
-                dest_dir.mkdir(parents=True, exist_ok=True)
+        return source_path_obj, dest_path_obj
 
-                # Check if destination directory is writable
-                if not os.access(dest_dir, os.W_OK):
-                    raise PermissionError(
-                        f"Cannot write to destination directory: {dest_dir}",
-                    )
+    @staticmethod
+    def _prepare_dest_directory(dest_path_obj: Path) -> None:
+        """Ensure the destination directory exists and is writable."""
+        dest_dir = dest_path_obj.parent
+        dest_dir.mkdir(parents=True, exist_ok=True)
+        if not os.access(dest_dir, os.W_OK):
+            raise PermissionError(
+                f"Cannot write to destination directory: {dest_dir}",
+            )
 
-                # Copy file with metadata preservation
-                shutil.copy2(source_path, dest_path)
+    @staticmethod
+    def _verify_copy(
+        source_path_obj: Path,
+        dest_path_obj: Path,
+        source_path: str,
+        dest_path: str,
+    ) -> bool:
+        """Verify that the copied file matches the source in size.
 
-                # Verify copy was successful
-                if dest_path_obj.exists():
-                    try:
-                        source_size = source_path_obj.stat().st_size
-                        dest_size = dest_path_obj.stat().st_size
-                        if source_size == dest_size:
-                            logger.debug(
-                                f"Successfully copied {source_path} -> {dest_path} "
-                                f"({source_size} bytes)",
-                            )
-                            return True
-                        else:
-                            logger.warning(
-                                f"Size mismatch after copy: source={source_size}, "
-                                f"dest={dest_size}",
-                            )
-                            # Size mismatch, remove failed copy and retry
-                            if dest_path_obj.exists():
-                                dest_path_obj.unlink()
-                            if attempt < MAX_RETRY_ATTEMPTS - 1:
-                                logger.info(
-                                    "Retrying copy due to size mismatch "
-                                    f"(attempt {attempt + 1}/{MAX_RETRY_ATTEMPTS})",
-                                )
-                                continue
-                    except OSError as e:
-                        logger.warning(f"Failed to verify copy sizes: {e}")
-                        if attempt < MAX_RETRY_ATTEMPTS - 1:
-                            continue
-                else:
-                    logger.error(f"Destination file was not created: {dest_path}")
-                    if attempt < MAX_RETRY_ATTEMPTS - 1:
-                        continue
-
-            except (OSError, PermissionError) as e:
-                logger.warning(f"Copy attempt {attempt + 1} failed: {e}")
-                if attempt < MAX_RETRY_ATTEMPTS - 1:
-                    # Wait before retry (exponential backoff)
-                    time.sleep(0.1 * (2**attempt))
-                    continue
-                else:
-                    logger.error(
-                        f"Failed to copy {source_path} after "
-                        f"{MAX_RETRY_ATTEMPTS} attempts: {e}",
-                    )
-                    raise
-
+        Returns:
+            True if sizes match, False otherwise.
+        """
+        if not dest_path_obj.exists():
+            logger.error(f"Destination file was not created: {dest_path}")
+            return False
+        try:
+            source_size = source_path_obj.stat().st_size
+            dest_size = dest_path_obj.stat().st_size
+            if source_size == dest_size:
+                logger.debug(
+                    f"Successfully copied {source_path} -> {dest_path} "
+                    f"({source_size} bytes)",
+                )
+                return True
+            logger.warning(
+                f"Size mismatch after copy: source={source_size}, dest={dest_size}",
+            )
+        except OSError as e:
+            logger.warning(f"Failed to verify copy sizes: {e}")
         return False
 
     def _get_unique_path(self, path: str) -> str:
