@@ -7,6 +7,7 @@ to replace slower patterns found throughout the codebase.
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import os
 import threading
@@ -96,10 +97,8 @@ class OptimizedFileScanner:
                 }
 
                 for future in as_completed(future_to_dir):
-                    try:
+                    with contextlib.suppress(OSError):
                         found_files.extend(future.result())
-                    except OSError:
-                        pass  # Skip failed directories
         else:
             # Sequential fallback for small directories
             for subdir in subdirs:

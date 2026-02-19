@@ -109,16 +109,15 @@ class TI89Calculator:
             except (ValueError, TypeError, OverflowError):
                 pass
 
-            if b is not None and e is not None:
+            if b is not None and e is not None and abs(b) > 1 and e > 0:
                 # Check for potentially massive numbers
                 # Limit result to approx 6000 decimal digits (20kb text)
-                if abs(b) > 1 and e > 0:
-                    digits: float = 0.0
-                    with contextlib.suppress(ValueError, TypeError, OverflowError):
-                        digits = e * math.log10(abs(b))
+                digits: float = 0.0
+                with contextlib.suppress(ValueError, TypeError, OverflowError):
+                    digits = e * math.log10(abs(b))
 
-                    if digits > 6000:
-                        raise ValueError("Exponentiation result exceeds safety limits")
+                if digits > 6000:
+                    raise ValueError("Exponentiation result exceeds safety limits")
 
         return sp.Pow(base, exp, **kwargs)
 
@@ -143,13 +142,12 @@ class TI89Calculator:
                     except (ValueError, TypeError, OverflowError):
                         pass
 
-                    if bf is not None and ef is not None:
-                        if abs(bf) > 1 and ef > 0:
-                            digits = ef * math.log10(abs(bf))
-                            if digits > 6000:
-                                raise ValueError(
-                                    "Exponentiation result exceeds safety limits"
-                                )
+                    if bf is not None and ef is not None and abs(bf) > 1 and ef > 0:
+                        digits = ef * math.log10(abs(bf))
+                        if digits > 6000:
+                            raise ValueError(
+                                "Exponentiation result exceeds safety limits"
+                            )
 
             # Handle containers (lists, tuples, dicts) returned by some functions
             if isinstance(current, dict):

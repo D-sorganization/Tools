@@ -257,11 +257,10 @@ def check_ast_issues(content: str, filepath: Path) -> list[tuple[int, str, str]]
     try:
         tree = ast.parse(content)
         for node in ast.walk(tree):
-            if isinstance(node, ast.FunctionDef):
-                if not ast.get_docstring(node):
-                    issues.append(
-                        (node.lineno, f"Function '{node.name}' missing docstring", ""),
-                    )
+            if isinstance(node, ast.FunctionDef) and not ast.get_docstring(node):
+                issues.append(
+                    (node.lineno, f"Function '{node.name}' missing docstring", ""),
+                )
     except SyntaxError as e:
         issues.append((0, f"Syntax error: {e}", ""))
     return issues

@@ -7,6 +7,7 @@ consistent styling across the fleet.
 
 from __future__ import annotations
 
+import contextlib
 import io
 import logging
 from typing import TYPE_CHECKING
@@ -344,10 +345,8 @@ class MatplotlibRenderer:
             ax_diff.legend(fontsize=8)
             ax_diff.grid(True, alpha=0.3)
 
-        try:
+        with contextlib.suppress(ValueError):
             fig.tight_layout()
-        except ValueError:
-            pass  # GridSpec-based layouts may not support tight_layout
         return fig
 
     def to_image(

@@ -253,10 +253,13 @@ class PhysicsValidator:
 
         support_points: list[tuple[float, float]] = []
         for link in links:
-            if link.name in (support_link_names or []):
-                if hasattr(link, "inertial") and link.inertial:
-                    origin = link.inertial.origin
-                    support_points.append((origin.x, origin.y))
+            if (
+                link.name in (support_link_names or [])
+                and hasattr(link, "inertial")
+                and link.inertial
+            ):
+                origin = link.inertial.origin
+                support_points.append((origin.x, origin.y))
 
         return support_points, support_link_names
 

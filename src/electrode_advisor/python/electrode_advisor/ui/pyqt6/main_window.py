@@ -13,6 +13,7 @@ Updated with corrected conductive path model:
 
 from __future__ import annotations
 
+import contextlib
 import logging
 import os
 from typing import TYPE_CHECKING, Any
@@ -24,10 +25,8 @@ os.environ["QT_API"] = "pyqt6"
 
 # Set matplotlib backend to PyQt6 BEFORE any other imports
 if os.environ.get("HEADLESS", "false").lower() == "true":
-    try:
+    with contextlib.suppress(ImportError, ValueError):
         mpl.use("Agg")
-    except (ImportError, ValueError):
-        pass  # Already using correct backend or unavailable
 else:
     try:
         mpl.use("QtAgg")

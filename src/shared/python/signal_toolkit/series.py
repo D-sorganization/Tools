@@ -263,14 +263,15 @@ class SeriesExpansion:
                 terms_for_convergence = n
 
             # Check for divergence (error growing)
-            if prev_approx is not None:
-                if abs(approx) > 1e15 or np.isnan(approx) or np.isinf(approx):
-                    return {
-                        "convergent": False,
-                        "terms_for_convergence": None,
-                        "final_error": float("inf"),
-                        "errors_by_term": errors_by_term,
-                    }
+            if prev_approx is not None and (
+                abs(approx) > 1e15 or np.isnan(approx) or np.isinf(approx)
+            ):
+                return {
+                    "convergent": False,
+                    "terms_for_convergence": None,
+                    "final_error": float("inf"),
+                    "errors_by_term": errors_by_term,
+                }
             prev_approx = approx
 
         return {

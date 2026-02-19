@@ -314,14 +314,17 @@ class Validator:
                     )
 
         # Check limits for limited joints
-        if joint.joint_type == JointType.REVOLUTE:
-            if joint.limits and joint.limits.lower >= joint.limits.upper:
-                result.add_error(
-                    cls.JOINT_INVALID_LIMITS,
-                    f"Lower limit ({joint.limits.lower}) must be less than "
-                    f"upper limit ({joint.limits.upper})",
-                    joint.name,
-                )
+        if (
+            joint.joint_type == JointType.REVOLUTE
+            and joint.limits
+            and joint.limits.lower >= joint.limits.upper
+        ):
+            result.add_error(
+                cls.JOINT_INVALID_LIMITS,
+                f"Lower limit ({joint.limits.lower}) must be less than "
+                f"upper limit ({joint.limits.upper})",
+                joint.name,
+            )
 
         return result
 
@@ -430,9 +433,10 @@ class Validator:
         path.add(start)
 
         for joint in joints:
-            if joint.parent == start:
-                if cls._has_cycle(joint.child, visited, path, joints):
-                    return True
+            if joint.parent == start and cls._has_cycle(
+                joint.child, visited, path, joints
+            ):
+                return True
 
         path.remove(start)
         return False

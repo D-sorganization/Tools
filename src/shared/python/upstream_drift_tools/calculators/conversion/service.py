@@ -141,10 +141,11 @@ class UnitConversionService:
             msg = f"Unknown unit: {to_unit}"
             raise UnknownUnitError(msg)
 
-        if from_category != to_category:
-            if {from_category, to_category} != {"temperature"}:
-                msg = f"Cannot convert from {from_unit} to {to_unit}"
-                raise IncompatibleUnitsError(msg)
+        if from_category != to_category and {from_category, to_category} != {
+            "temperature"
+        }:
+            msg = f"Cannot convert from {from_unit} to {to_unit}"
+            raise IncompatibleUnitsError(msg)
 
         warnings: list[str] = []
         if self.enable_validation and from_category:
@@ -242,17 +243,16 @@ class UnitConversionService:
         self, value: float, category: str, unit: str | None = None
     ) -> list[str]:
         """Validate input value against physical constraints."""
-        if category == "temperature":
+        if category == "temperature" and unit:
             # Convert to Kelvin to check if below absolute zero
             # Negative values in C/F are valid, so we need to convert first
-            if unit:
-                try:
-                    kelvin = self._convert_temperature(value, unit, "K")
-                    if kelvin < 0:
-                        return ["Temperature below absolute zero"]
-                except (KeyError, ValueError, TypeError):
-                    # If conversion fails, skip validation
-                    pass
+            try:
+                kelvin = self._convert_temperature(value, unit, "K")
+                if kelvin < 0:
+                    return ["Temperature below absolute zero"]
+            except (KeyError, ValueError, TypeError):
+                # If conversion fails, skip validation
+                pass
         if category == "pressure" and value < 0:
             return ["Negative pressure is invalid"]
         return []
@@ -326,10 +326,11 @@ class UnitConversionService:
         gas_props = GAS_DATABASE.get(gas_type.lower(), GAS_DATABASE["air"])
         _std_temp, _std_pressure_pa, _ = standard_condition.value
 
-        if from_unit == "ACFM" or to_unit == "ACFM":
-            if temperature is None or pressure is None:
-                msg = "Temperature and pressure are required for ACFM conversions"
-                raise ValueError(msg)
+        if (from_unit == "ACFM" or to_unit == "ACFM") and (
+            temperature is None or pressure is None
+        ):
+            msg = "Temperature and pressure are required for ACFM conversions"
+            raise ValueError(msg)
 
         if from_unit == "SCFM":
             m3_hr_std = scfm_to_standard_m3_per_hour(
