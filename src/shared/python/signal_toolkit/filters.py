@@ -120,7 +120,12 @@ def _normalize_cutoff(
 
     Returns:
         (wn, btype) ready for scipy filter design functions.
+
+    Raises:
+        ValueError: If *fs* is not positive or *cutoff* is out of range.
     """
+    if fs <= 0:
+        raise ValueError(f"Sampling frequency fs must be positive, got {fs}")
     nyquist = fs / 2
     btype = filter_type.value
 

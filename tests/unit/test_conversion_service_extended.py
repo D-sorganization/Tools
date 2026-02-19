@@ -240,3 +240,62 @@ class TestConversionTableConsistency:
         assert MASS_FLOW_CONVERSIONS["kg/s"] == 1.0
         assert MOLAR_FLOW_CONVERSIONS["mol/s"] == 1.0
         assert VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S["m3/s"] == 1.0
+
+
+# ── DbC precondition tests ─────────────────────────────────────
+
+
+class TestFlowRatePreconditions:
+    """DbC: verify that invalid inputs are rejected at function entry."""
+
+    def test_mass_to_mass_nan_raises(self) -> None:
+        with pytest.raises(ValueError, match="finite"):
+            mass_to_mass(float("nan"), "kg/s", "lb/hr")
+
+    def test_mass_to_mass_inf_raises(self) -> None:
+        with pytest.raises(ValueError, match="finite"):
+            mass_to_mass(float("inf"), "kg/s", "lb/hr")
+
+    def test_molar_to_molar_nan_raises(self) -> None:
+        with pytest.raises(ValueError, match="finite"):
+            molar_to_molar(float("nan"), "mol/s", "kmol/h")
+
+    def test_mass_to_molar_zero_mw_raises(self) -> None:
+        with pytest.raises(ValueError, match="positive"):
+            mass_to_molar(100.0, "kg/h", 0.0, "kmol/h")
+
+    def test_mass_to_molar_negative_mw_raises(self) -> None:
+        with pytest.raises(ValueError, match="positive"):
+            mass_to_molar(100.0, "kg/h", -29.0, "kmol/h")
+
+    def test_mass_to_molar_nan_mw_raises(self) -> None:
+        with pytest.raises(ValueError, match="positive"):
+            mass_to_molar(100.0, "kg/h", float("nan"), "kmol/h")
+
+    def test_molar_to_mass_zero_mw_raises(self) -> None:
+        with pytest.raises(ValueError, match="positive"):
+            molar_to_mass(10.0, "kmol/h", 0.0, "kg/h")
+
+    def test_volumetric_to_mass_zero_density_raises(self) -> None:
+        with pytest.raises(ValueError, match="positive"):
+            volumetric_actual_to_mass(1000.0, "m3/h", 0.0, "kg/h")
+
+    def test_volumetric_to_mass_negative_density_raises(self) -> None:
+        with pytest.raises(ValueError, match="positive"):
+            volumetric_actual_to_mass(1000.0, "m3/h", -1.2, "kg/h")
+
+    def test_scfm_to_acfm_zero_temperature_raises(self) -> None:
+        with pytest.raises(ValueError, match="positive"):
+            scfm_to_acfm(1000.0, 0.0, 101325.0, "SCFM")
+
+    def test_scfm_to_acfm_zero_pressure_raises(self) -> None:
+        with pytest.raises(ValueError, match="positive"):
+            scfm_to_acfm(1000.0, 300.0, 0.0, "SCFM")
+
+    def test_acfm_to_scfm_negative_temperature_raises(self) -> None:
+        with pytest.raises(ValueError, match="positive"):
+            acfm_to_scfm(1000.0, -100.0, 101325.0, "SCFM")
+
+    def test_acfm_to_scfm_inf_pressure_raises(self) -> None:
+        with pytest.raises(ValueError, match="finite"):
+            acfm_to_scfm(1000.0, 300.0, float("inf"), "SCFM")
