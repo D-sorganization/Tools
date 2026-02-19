@@ -30,19 +30,12 @@ class AnalysisMixin:
     - self.validate_size_inputs() -> bool
     """
 
-    def generate_analysis_report(self) -> str | None:
-        """Generates a comprehensive analysis report.
-
-        Returns:
-            Formatted analysis report [str] if successful, None if cancelled or failed
+    def _validate_source_folders(self) -> list[str]:
+        """Validate source_folders and return the accessible subset.
 
         Raises:
-            ValueError: If source_folders list is empty or invalid
-            OSError: If file system operations fail during analysis
-            PermissionError: If insufficient permissions to access source folders
-            Exception: If report generation fails for other reasons
+            ValueError: If no valid source folders are found.
         """
-        # Input validation
         if not self.source_folders:
             raise ValueError("No source folders to analyze")
         if not isinstance(self.source_folders, list):
@@ -50,8 +43,7 @@ class AnalysisMixin:
                 f"Source folders must be a list, got {type(self.source_folders)}",
             )
 
-        # Validate each source folder
-        valid_source_folders = []
+        valid = []
         for folder in self.source_folders:
             if not folder or not isinstance(folder, str):
                 logger.warning(f"Invalid source folder: {folder}")
@@ -62,11 +54,128 @@ class AnalysisMixin:
             if not os.access(folder, os.R_OK):
                 logger.warning(f"Cannot access source folder: {folder}")
                 continue
-            valid_source_folders.append(folder)
+            valid.append(folder)
 
-        if not valid_source_folders:
+        if not valid:
             raise ValueError("No valid source folders to analyze")
+        return valid
 
+    def _analyze_single_folder(
+        self,
+        folder: str,
+        file_types: dict[str, int],
+        size_by_type: dict[str, int],
+        largest_files: list[tuple[Path, int]],
+    ) -> tuple[int, int, int]:
+        """Analyze one folder, updating shared accumulators.
+
+        Returns:
+            (folder_files, folder_size, folder_errors)
+        """
+        folder_files = 0
+        folder_size = 0
+        folder_errors = 0
+
+        for root, _dirs, files in os.walk(folder):
+            if self.cancel_operation:
+                break  # type: ignore[unreachable]
+
+            for file in files:
+                if self.cancel_operation:
+                    break  # type: ignore[unreachable]
+
+                file_path = Path(root) / file
+                try:
+                    if not Path(file_path).exists() or not os.access(
+                        file_path, os.R_OK
+                    ):
+                        folder_errors += 1
+                        continue
+
+                    file_size = os.path.getsize(file_path)
+                    file_ext = Path(file).suffix.lower() or "no_extension"
+
+                    if file_size < MIN_FILE_SIZE_BYTES:
+                        continue
+                    if file_size > MAX_FILE_SIZE_MB * 1024 * 1024:
+                        logger.warning(
+                            f"File exceeds maximum size: {file_path} "
+                            f"({file_size / (1024 * 1024):.1f} MB)",
+                        )
+
+                    folder_files += 1
+                    folder_size += file_size
+                    file_types[file_ext] += 1
+                    size_by_type[file_ext] += file_size
+                    largest_files.append((file_path, file_size))
+                    if len(largest_files) > 10:
+                        largest_files.sort(key=lambda x: x[1], reverse=True)
+                        del largest_files[10:]
+
+                except (OSError, PermissionError) as e:
+                    folder_errors += 1
+                    logger.debug(f"Cannot access file {file_path}: {e}")
+
+        return folder_files, folder_size, folder_errors
+
+    @staticmethod
+    def _format_report_summary(
+        total_files: int,
+        total_size: int,
+        file_types: dict[str, int],
+        size_by_type: dict[str, int],
+        largest_files: list[tuple[Path, int]],
+        analysis_errors: list[str],
+        num_folders: int,
+    ) -> list[str]:
+        """Build the summary section of the analysis report."""
+        report: list[str] = [
+            "",
+            f"TOTAL FILES: {total_files}",
+            f"TOTAL SIZE: {total_size / (1024 * 1024):.1f} MB",
+            "",
+            "FILE TYPES:",
+        ]
+        for ext, count in sorted(
+            file_types.items(), key=lambda x: x[1], reverse=True
+        ):
+            size_mb = size_by_type[ext] / (1024 * 1024)
+            report.append(f"  {ext}: {count} files, {size_mb:.1f} MB")
+
+        report.extend(["", "LARGEST FILES:"])
+        for file_path, size in sorted(
+            largest_files, key=lambda x: x[1], reverse=True
+        ):
+            report.append(f"  {Path(file_path).name}: {size / (1024 * 1024):.1f} MB")
+
+        if analysis_errors:
+            report.extend(["", "ANALYSIS ERRORS:", *analysis_errors])
+
+        report.extend(
+            [
+                "",
+                "ANALYSIS METADATA:",
+                f"  Source folders processed: {num_folders}",
+                f"  Total folders analyzed: {num_folders}",
+                f"  Analysis timestamp: {datetime.now()}",
+                f"  File size limits: {MIN_FILE_SIZE_BYTES} bytes - "
+                f"{MAX_FILE_SIZE_MB} MB",
+            ],
+        )
+        return report
+
+    def generate_analysis_report(self) -> str | None:
+        """Generates a comprehensive analysis report.
+
+        Returns:
+            Formatted analysis report [str] if successful, None if cancelled or failed
+
+        Raises:
+            ValueError: If source_folders list is empty or invalid
+            OSError: If file system operations fail during analysis
+            PermissionError: If insufficient permissions to access source folders
+        """
+        valid_source_folders = self._validate_source_folders()
         report = ["=== FOLDER ANALYSIS REPORT ===", f"Generated: {datetime.now()}", ""]
         logger.info(f"Starting analysis of {len(valid_source_folders)} source folders")
 
@@ -74,8 +183,8 @@ class AnalysisMixin:
         total_size = 0
         file_types: dict[str, int] = defaultdict(int)
         size_by_type: dict[str, int] = defaultdict(int)
-        largest_files = []
-        analysis_errors = []
+        largest_files: list[tuple[Path, int]] = []
+        analysis_errors: list[str] = []
 
         for folder in valid_source_folders:
             if self.cancel_operation:
@@ -83,64 +192,15 @@ class AnalysisMixin:
                 return None
 
             report.append(f"Analyzing: {folder}")
-            folder_files = 0
-            folder_size = 0
-            folder_errors = 0
-
             try:
-                for root, _dirs, files in os.walk(folder):
-                    if self.cancel_operation:
-                        break  # type: ignore[unreachable]
+                folder_files, folder_size, folder_errors = (
+                    self._analyze_single_folder(
+                        folder, file_types, size_by_type, largest_files
+                    )
+                )
+                total_files += folder_files
+                total_size += folder_size
 
-                    for file in files:
-                        if self.cancel_operation:
-                            break  # type: ignore[unreachable]
-
-                        file_path = Path(root) / file
-                        try:
-                            # Validate file exists and is accessible
-                            if not Path(file_path).exists():
-                                folder_errors += 1
-                                continue
-                            if not os.access(file_path, os.R_OK):
-                                folder_errors += 1
-                                continue
-
-                            file_size = os.path.getsize(file_path)
-                            file_ext = Path(file).suffix.lower() or "no_extension"
-
-                            # Validate file size
-                            if file_size < MIN_FILE_SIZE_BYTES:
-                                logger.debug(
-                                    f"File below minimum size: {file_path} "
-                                    f"({file_size} bytes)",
-                                )
-                                continue
-                            if file_size > MAX_FILE_SIZE_MB * 1024 * 1024:
-                                logger.warning(
-                                    f"File exceeds maximum size: {file_path} "
-                                    f"({file_size / (1024 * 1024):.1f} MB)",
-                                )
-
-                            total_files += 1
-                            folder_files += 1
-                            total_size += file_size
-                            folder_size += file_size
-                            file_types[file_ext] += 1
-                            size_by_type[file_ext] += file_size
-
-                            # Track largest files
-                            largest_files.append((file_path, file_size))
-                            if len(largest_files) > 10:
-                                largest_files.sort(key=lambda x: x[1], reverse=True)
-                                largest_files = largest_files[:10]
-
-                        except (OSError, PermissionError) as e:
-                            folder_errors += 1
-                            logger.debug(f"Cannot access file {file_path}: {e}")
-                            continue
-
-                # Report folder analysis results
                 if folder_errors > 0:
                     report.append(
                         f"  Files: {folder_files}, "
@@ -155,51 +215,22 @@ class AnalysisMixin:
                         f"  Files: {folder_files}, "
                         f"Size: {folder_size / (1024 * 1024):.1f} MB",
                     )
-
             except (OSError, PermissionError) as e:
                 error_msg = f"Error accessing folder {folder}: {e}"
                 report.append(f"  ERROR: {error_msg}")
                 analysis_errors.append(error_msg)
                 logger.error(error_msg)
-                continue
 
-        # Add summary statistics
         report.extend(
-            [
-                "",
-                f"TOTAL FILES: {total_files}",
-                f"TOTAL SIZE: {total_size / (1024 * 1024):.1f} MB",
-                "",
-                "FILE TYPES:",
-            ],
-        )
-
-        # Sort file types by count
-        for ext, count in sorted(file_types.items(), key=lambda x: x[1], reverse=True):
-            size_mb = size_by_type[ext] / (1024 * 1024)
-            report.append(f"  {ext}: {count} files, {size_mb:.1f} MB")
-
-        # Add largest files section
-        report.extend(["", "LARGEST FILES:"])
-        for file_path, size in sorted(largest_files, key=lambda x: x[1], reverse=True):
-            size_mb = size / (1024 * 1024)
-            report.append(f"  {Path(file_path).name}: {size_mb:.1f} MB")
-
-        # Add error summary if any occurred
-        if analysis_errors:
-            report.extend(["", "ANALYSIS ERRORS:", *analysis_errors])
-
-        # Add analysis metadata
-        report.extend(
-            [
-                "",
-                "ANALYSIS METADATA:",
-                f"  Source folders processed: {len(valid_source_folders)}",
-                f"  Total folders analyzed: {len(valid_source_folders)}",
-                f"  Analysis timestamp: {datetime.now()}",
-                f"  File size limits: {MIN_FILE_SIZE_BYTES} bytes - "
-                f"{MAX_FILE_SIZE_MB} MB",
-            ],
+            self._format_report_summary(
+                total_files,
+                total_size,
+                file_types,
+                size_by_type,
+                largest_files,
+                analysis_errors,
+                len(valid_source_folders),
+            )
         )
 
         logger.info(
