@@ -64,49 +64,68 @@ class AcidGasDewpointCalculatorWidget(QWidget):
         layout.setContentsMargins(10, 10, 10, 10)
 
         splitter = QSplitter(Qt.Orientation.Horizontal)
+        splitter.addWidget(self._create_input_panel())
+        splitter.addWidget(self._create_results_panel())
+        splitter.setSizes([350, 650])
+        layout.addWidget(splitter)
 
-        # Left panel - Inputs
+    def _create_input_panel(self) -> QWidget:
+        """Create the left input panel with conditions, presets, and composition."""
         input_widget = QWidget()
         input_layout = QVBoxLayout(input_widget)
         input_layout.setContentsMargins(0, 0, 0, 0)
 
-        # Operating Conditions
-        conditions_group = QGroupBox("Operating Conditions")
-        conditions_layout = QFormLayout(conditions_group)
+        input_layout.addWidget(self._create_conditions_group())
+        input_layout.addWidget(self._create_preset_group())
+        input_layout.addWidget(self._create_composition_group())
+
+        self.calculate_btn = QPushButton("Calculate Dewpoints")
+        self.calculate_btn.setMinimumHeight(40)
+        input_layout.addWidget(self.calculate_btn)
+
+        input_layout.addStretch()
+        return input_widget
+
+    def _create_conditions_group(self) -> QGroupBox:
+        """Create the operating conditions input group."""
+        group = QGroupBox("Operating Conditions")
+        form = QFormLayout(group)
 
         self.temp_spin = QDoubleSpinBox()
         self.temp_spin.setRange(-100, 400)
         self.temp_spin.setValue(150)
-        self.temp_spin.setSuffix(" °C")
+        self.temp_spin.setSuffix(" \u00b0C")
         self.temp_spin.setDecimals(1)
-        conditions_layout.addRow("Temperature:", self.temp_spin)
+        form.addRow("Temperature:", self.temp_spin)
 
         self.pressure_spin = QDoubleSpinBox()
         self.pressure_spin.setRange(0.1, 300)
         self.pressure_spin.setValue(30)
         self.pressure_spin.setSuffix(" bar")
         self.pressure_spin.setDecimals(2)
-        conditions_layout.addRow("Pressure:", self.pressure_spin)
+        form.addRow("Pressure:", self.pressure_spin)
 
         self.method_combo = QComboBox()
         self.method_combo.addItems(self.METHODS)
-        conditions_layout.addRow("Calculation Method:", self.method_combo)
+        form.addRow("Calculation Method:", self.method_combo)
 
-        input_layout.addWidget(conditions_group)
+        return group
 
-        # Preset Selection
-        preset_group = QGroupBox("Composition Preset")
-        preset_layout = QFormLayout(preset_group)
+    def _create_preset_group(self) -> QGroupBox:
+        """Create the composition preset selection group."""
+        group = QGroupBox("Composition Preset")
+        form = QFormLayout(group)
 
         self.preset_combo = QComboBox()
         self.preset_combo.addItems(list(self.PRESET_COMPOSITIONS.keys()))
-        preset_layout.addRow("Preset:", self.preset_combo)
+        form.addRow("Preset:", self.preset_combo)
 
-        input_layout.addWidget(preset_group)
+        return group
 
-        # Gas Composition
-        composition_group = QGroupBox("Gas Composition (mol%)")
-        composition_layout = QGridLayout(composition_group)
+    def _create_composition_group(self) -> QGroupBox:
+        """Create the gas composition input group."""
+        group = QGroupBox("Gas Composition (mol%)")
+        grid = QGridLayout(group)
 
         self.composition_spins: dict[str, QDoubleSpinBox] = {}
         components = [
@@ -123,84 +142,72 @@ class AcidGasDewpointCalculatorWidget(QWidget):
             spin.setDecimals(4)
             spin.setSuffix(" %")
             self.composition_spins[abbr] = spin
-            composition_layout.addWidget(label, i, 0)
-            composition_layout.addWidget(spin, i, 1)
+            grid.addWidget(label, i, 0)
+            grid.addWidget(spin, i, 1)
 
-        # Set initial values
         self._load_preset("Typical Syngas")
+        return group
 
-        input_layout.addWidget(composition_group)
-
-        # Calculate button
-        self.calculate_btn = QPushButton("Calculate Dewpoints")
-        self.calculate_btn.setMinimumHeight(40)
-        input_layout.addWidget(self.calculate_btn)
-
-        input_layout.addStretch()
-        splitter.addWidget(input_widget)
-
-        # Right panel - Results
+    def _create_results_panel(self) -> QWidget:
+        """Create the right results panel with tabs."""
         results_widget = QWidget()
         results_layout = QVBoxLayout(results_widget)
         results_layout.setContentsMargins(0, 0, 0, 0)
 
         self.tabs = QTabWidget()
+        self.tabs.addTab(self._create_dewpoint_tab(), "Dewpoint Results")
+        self.tabs.addTab(self._create_safety_tab(), "Safety Analysis")
+        self.tabs.addTab(self._create_warnings_tab(), "Warnings & Sources")
+        self.tabs.addTab(self._create_chart_tab(), "Dewpoint Chart")
 
-        # Dewpoint Results tab
-        dewpoint_tab = QWidget()
-        dewpoint_tab_layout = QVBoxLayout(dewpoint_tab)
+        results_layout.addWidget(self.tabs)
+        return results_widget
 
+    def _create_dewpoint_tab(self) -> QWidget:
+        """Create the dewpoint results table tab."""
+        tab = QWidget()
+        layout = QVBoxLayout(tab)
         self.dewpoint_table = QTableWidget()
         self.dewpoint_table.setColumnCount(3)
         self.dewpoint_table.setHorizontalHeaderLabels(
-            ["Component", "Dewpoint (°C)", "Partial Pressure (Pa)"]
+            ["Component", "Dewpoint (\u00b0C)", "Partial Pressure (Pa)"]
         )
-        dewpoint_header = self.dewpoint_table.horizontalHeader()
-        if dewpoint_header is not None:
-            dewpoint_header.setStretchLastSection(True)
-        dewpoint_tab_layout.addWidget(self.dewpoint_table)
+        header = self.dewpoint_table.horizontalHeader()
+        if header is not None:
+            header.setStretchLastSection(True)
+        layout.addWidget(self.dewpoint_table)
+        return tab
 
-        self.tabs.addTab(dewpoint_tab, "Dewpoint Results")
-
-        # Safety Analysis tab
-        safety_tab = QWidget()
-        safety_tab_layout = QVBoxLayout(safety_tab)
-
+    def _create_safety_tab(self) -> QWidget:
+        """Create the safety analysis table tab."""
+        tab = QWidget()
+        layout = QVBoxLayout(tab)
         self.safety_table = QTableWidget()
         self.safety_table.setColumnCount(2)
         self.safety_table.setHorizontalHeaderLabels(["Parameter", "Value"])
-        safety_header = self.safety_table.horizontalHeader()
-        if safety_header is not None:
-            safety_header.setStretchLastSection(True)
-        safety_tab_layout.addWidget(self.safety_table)
+        header = self.safety_table.horizontalHeader()
+        if header is not None:
+            header.setStretchLastSection(True)
+        layout.addWidget(self.safety_table)
+        return tab
 
-        self.tabs.addTab(safety_tab, "Safety Analysis")
-
-        # Warnings tab
-        warnings_tab = QWidget()
-        warnings_tab_layout = QVBoxLayout(warnings_tab)
-
+    def _create_warnings_tab(self) -> QWidget:
+        """Create the warnings text tab."""
+        tab = QWidget()
+        layout = QVBoxLayout(tab)
         self.warnings_text = QTextEdit()
         self.warnings_text.setReadOnly(True)
-        warnings_tab_layout.addWidget(self.warnings_text)
+        layout.addWidget(self.warnings_text)
+        return tab
 
-        self.tabs.addTab(warnings_tab, "Warnings & Sources")
-
-        # Chart tab
-        chart_tab = QWidget()
-        chart_layout = QVBoxLayout(chart_tab)
-
+    def _create_chart_tab(self) -> QWidget:
+        """Create the dewpoint chart tab."""
+        tab = QWidget()
+        layout = QVBoxLayout(tab)
         self.figure = Figure(figsize=(8, 5), facecolor="#1e1e2e")
         self.canvas = FigureCanvas(self.figure)
-        chart_layout.addWidget(self.canvas)
-
-        self.tabs.addTab(chart_tab, "Dewpoint Chart")
-
-        results_layout.addWidget(self.tabs)
-        splitter.addWidget(results_widget)
-
-        splitter.setSizes([350, 650])
-        layout.addWidget(splitter)
+        layout.addWidget(self.canvas)
+        return tab
 
     def _connect_signals(self) -> None:
         """Connect widget signals to slots."""

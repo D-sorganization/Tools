@@ -28,6 +28,64 @@ from .web_theme import (
 logger = logging.getLogger(__name__)
 
 
+def _add_security_headers(response: Response) -> Response:
+    """Add security headers to every response."""
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; "
+        "style-src 'self' 'unsafe-inline'; "
+        "script-src 'self'; "
+        "img-src 'self' data:; "
+        "object-src 'none'; "
+        "frame-ancestors 'none'; "
+        "base-uri 'self'; "
+        "form-action 'self';"
+    )
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Strict-Transport-Security"] = (
+        "max-age=31536000; includeSubDomains"
+    )
+    response.headers["Permissions-Policy"] = (
+        "geolocation=(), camera=(), microphone=(), payment=(), usb=()"
+    )
+    return response
+
+
+def _parse_convert_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    """Parse and validate the conversion API payload.
+
+    Returns:
+        Dict with parsed value, from_unit, to_unit, and optional gas params.
+
+    Raises:
+        ValueError: If required fields are missing.
+    """
+    value = float(payload.get("value", 0))
+    from_unit = str(payload.get("from_unit", "")).strip()
+    to_unit = str(payload.get("to_unit", "")).strip()
+
+    if not from_unit or not to_unit:
+        raise ValueError("Both from_unit and to_unit are required")
+
+    temperature = payload.get("temperature")
+    pressure = payload.get("pressure")
+    gas_density_stp = payload.get("gas_density_stp")
+
+    return {
+        "value": value,
+        "from_unit": from_unit,
+        "to_unit": to_unit,
+        "temperature": float(temperature) if temperature is not None else None,
+        "pressure": float(pressure) if pressure is not None else None,
+        "gas_type": str(payload.get("gas_type", "air")),
+        "standard_condition": str(payload.get("standard_condition", "SCFM_60F")),
+        "gas_density_stp": (
+            float(gas_density_stp) if gas_density_stp is not None else None
+        ),
+    }
+
+
 def create_app() -> Flask:
     """Create and configure the Flask application."""
     app = Flask(
@@ -37,44 +95,21 @@ def create_app() -> Flask:
     )
 
     converter = UnitConverter()
-
-    # Pre-generate theme CSS from the shared themes.json
     _theme_css = all_themes_as_css()
 
-    @app.after_request
-    def add_security_headers(response: Response) -> Response:
-        """Add security headers to every response."""
-        response.headers["Content-Security-Policy"] = (
-            "default-src 'self'; "
-            "style-src 'self' 'unsafe-inline'; "
-            "script-src 'self'; "
-            "img-src 'self' data:; "
-            "object-src 'none'; "
-            "frame-ancestors 'none'; "
-            "base-uri 'self'; "
-            "form-action 'self';"
-        )
-        response.headers["X-Content-Type-Options"] = "nosniff"
-        response.headers["X-Frame-Options"] = "DENY"
-        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-        response.headers["Strict-Transport-Security"] = (
-            "max-age=31536000; includeSubDomains"
-        )
-        response.headers["Permissions-Policy"] = (
-            "geolocation=(), camera=(), microphone=(), payment=(), usb=()"
-        )
-        return response
+    app.after_request(_add_security_headers)
 
     @app.get("/")
     def index() -> str:
         """Render the unit converter page."""
         categories = converter.get_categories()
-        category_data = {}
-        for cat in categories:
-            category_data[cat] = {
+        category_data = {
+            cat: {
                 "label": converter.get_category_label(cat),
                 "units": converter.get_units_for_category(cat),
             }
+            for cat in categories
+        }
         return str(
             render_template(
                 "index.html",
@@ -101,40 +136,18 @@ def create_app() -> Flask:
     def api_convert() -> tuple[Any, int]:
         """Perform a unit conversion via the API."""
         payload = request.get_json(silent=True) or {}
-
         try:
-            value = float(payload.get("value", 0))
-            from_unit = str(payload.get("from_unit", "")).strip()
-            to_unit = str(payload.get("to_unit", "")).strip()
-
-            if not from_unit or not to_unit:
-                raise ValueError("Both from_unit and to_unit are required")
-
-            # Optional parameters for gas flow / heating value
-            temperature = payload.get("temperature")
-            pressure = payload.get("pressure")
-            gas_type = str(payload.get("gas_type", "air"))
-            standard_condition = str(payload.get("standard_condition", "SCFM_60F"))
-            gas_density_stp = payload.get("gas_density_stp")
-
-            if temperature is not None:
-                temperature = float(temperature)
-            if pressure is not None:
-                pressure = float(pressure)
-            if gas_density_stp is not None:
-                gas_density_stp = float(gas_density_stp)
-
+            params = _parse_convert_payload(payload)
             result = converter.convert(
-                value,
-                from_unit,
-                to_unit,
-                temperature=temperature,
-                pressure=pressure,
-                gas_type=gas_type,
-                standard_condition=standard_condition,
-                gas_density_stp=gas_density_stp,
+                params["value"],
+                params["from_unit"],
+                params["to_unit"],
+                temperature=params["temperature"],
+                pressure=params["pressure"],
+                gas_type=params["gas_type"],
+                standard_condition=params["standard_condition"],
+                gas_density_stp=params["gas_density_stp"],
             )
-
             return (
                 jsonify(
                     {
@@ -158,12 +171,13 @@ def create_app() -> Flask:
     def api_categories() -> tuple[Any, int]:
         """Return available categories and their units."""
         categories = converter.get_categories()
-        data = {}
-        for cat in categories:
-            data[cat] = {
+        data = {
+            cat: {
                 "label": converter.get_category_label(cat),
                 "units": converter.get_units_for_category(cat),
             }
+            for cat in categories
+        }
         return jsonify(data), 200
 
     @app.get("/api/units/<category>")

@@ -37,58 +37,14 @@ class ArchiveOperationsMixin:
             OSError: If file system operations fail
             Exception: If extraction process fails
         """
-        # Input validation
-        if not archive_path or not isinstance(archive_path, str):
-            raise ValueError(
-                f"Archive path must be non-empty string, got {type(archive_path)}",
-            )
-
-        archive_path_obj = Path(archive_path)
-
-        # Validate archive file exists and is accessible
-        if not archive_path_obj.exists():
-            raise FileNotFoundError(f"Archive file not found: {archive_path}")
-        if not archive_path_obj.is_file():
-            raise ValueError(f"Archive path is not a file: {archive_path}")
-        if not os.access(archive_path, os.R_OK):
-            raise PermissionError(f"Cannot read archive file: {archive_path}")
-
-        # Validate archive file size
-        try:
-            archive_size = archive_path_obj.stat().st_size
-            if archive_size == 0:
-                return False, f"Archive file is empty: {archive_path}"
-            if archive_size > MAX_FILE_SIZE_MB * 1024 * 1024:
-                logger.warning(
-                    f"Archive file exceeds maximum size limit: {archive_path} "
-                    f"({archive_size / (1024 * 1024):.1f} MB)",
-                )
-        except OSError as e:
-            return False, f"Cannot access archive file: {e}"
-
-        # Validate archive file extension
-        archive_ext = archive_path_obj.suffix.lower()
-        supported_formats = {".zip", ".tar", ".gz", ".bz2", ".xz", ".7z", ".rar"}
-        if archive_ext not in supported_formats:
-            logger.warning(
-                f"Unsupported archive format: {archive_ext} for {archive_path}",
-            )
+        archive_path_obj, archive_size = self._validate_archive_input(archive_path)
 
         # Generate unique extraction directory
         extract_dir = self._get_unique_path(os.path.splitext(archive_path)[0])
         extract_dir_obj = Path(extract_dir)
 
         try:
-            # Create extraction directory
-            extract_dir_obj.mkdir(parents=True, exist_ok=True)
-
-            # Verify directory was created and is writable
-            if not extract_dir_obj.exists():
-                raise Exception("Failed to create extraction directory")
-            if not os.access(extract_dir, os.W_OK):
-                raise PermissionError(
-                    f"Cannot write to extraction directory: {extract_dir}",
-                )
+            self._prepare_extraction_directory(extract_dir, extract_dir_obj)
 
             # Extract archive
             logger.info(f"Extracting archive: {archive_path} -> {extract_dir}")
@@ -96,80 +52,142 @@ class ArchiveOperationsMixin:
 
             # Validate extraction if safe mode is enabled
             if self.safe_extract_var.get():
-                if not extract_dir_obj.exists():
-                    raise Exception(
-                        "Extraction failed - destination folder was not created",
-                    )
-
-                if not any(extract_dir_obj.iterdir()):
-                    raise Exception("Extraction failed - destination folder is empty")
-
-                # Check if any files were actually extracted
-                extracted_files = []
-                total_extracted_size = 0
-
-                for root, _dirs, files in os.walk(extract_dir):
-                    for file in files:
-                        file_path = Path(root) / file
-                        try:
-                            file_size = os.path.getsize(file_path)
-                            extracted_files.append(file_path)
-                            total_extracted_size += file_size
-                        except OSError as e:
-                            logger.warning(
-                                f"Cannot access extracted file size: {file_path} - {e}",
-                            )
-
-                if not extracted_files:
-                    raise Exception(
-                        "Extraction failed - no files found in extracted folder",
-                    )
-
-                # Verify total extracted size is reasonable
-                if total_extracted_size < archive_size * MAX_ARCHIVE_SIZE_RATIO:
-                    logger.warning(
-                        f"Extracted size ({total_extracted_size}) seems small "
-                        f"compared to archive size ({archive_size})",
-                    )
-
-                logger.info(
-                    f"Extraction validation passed: {len(extracted_files)} files, "
-                    f"{total_extracted_size} bytes",
+                self._validate_extraction_result(
+                    extract_dir, extract_dir_obj, archive_size
                 )
 
             # Only delete original if extraction was successful
-            try:
-                archive_path_obj.unlink()
-                logger.info(f"Deleted original archive: {archive_path}")
-            except OSError as e:
-                logger.warning(
-                    f"Failed to delete original archive: {archive_path} - {e}",
-                )
-                # Don't fail the operation if cleanup fails
+            self._cleanup_original_archive(archive_path_obj)
 
             return (
                 True,
                 f"Successfully extracted and deleted "
-                f"'{Path(archive_path).name}' "
-                f"({'known' if 'extracted_files' in locals() else 'unknown'} "
-                "files)",
+                f"'{Path(archive_path).name}'",
             )
 
         except (IOError, PermissionError, OSError) as e:
-            # Clean up failed extraction directory
-            if extract_dir_obj.exists():
+            self._cleanup_failed_extraction(extract_dir_obj, extract_dir)
+            return False, f"Failed to extract '{Path(archive_path).name}': {e}"
+
+    def _validate_archive_input(self, archive_path: str) -> tuple[Path, int]:
+        """Validate archive path, accessibility, size, and format.
+
+        Returns:
+            Tuple of (archive_path_obj, archive_size).
+
+        Raises:
+            ValueError: If path is empty or not a file.
+            FileNotFoundError: If file does not exist.
+            PermissionError: If file is not readable.
+        """
+        if not archive_path or not isinstance(archive_path, str):
+            raise ValueError(
+                f"Archive path must be non-empty string, got {type(archive_path)}",
+            )
+
+        archive_path_obj = Path(archive_path)
+
+        if not archive_path_obj.exists():
+            raise FileNotFoundError(f"Archive file not found: {archive_path}")
+        if not archive_path_obj.is_file():
+            raise ValueError(f"Archive path is not a file: {archive_path}")
+        if not os.access(archive_path, os.R_OK):
+            raise PermissionError(f"Cannot read archive file: {archive_path}")
+
+        archive_size = archive_path_obj.stat().st_size
+        if archive_size > MAX_FILE_SIZE_MB * 1024 * 1024:
+            logger.warning(
+                f"Archive file exceeds maximum size limit: {archive_path} "
+                f"({archive_size / (1024 * 1024):.1f} MB)",
+            )
+
+        supported_formats = {".zip", ".tar", ".gz", ".bz2", ".xz", ".7z", ".rar"}
+        archive_ext = archive_path_obj.suffix.lower()
+        if archive_ext not in supported_formats:
+            logger.warning(
+                f"Unsupported archive format: {archive_ext} for {archive_path}",
+            )
+
+        return archive_path_obj, archive_size
+
+    def _prepare_extraction_directory(
+        self, extract_dir: str, extract_dir_obj: Path
+    ) -> None:
+        """Create extraction directory and verify it is writable."""
+        extract_dir_obj.mkdir(parents=True, exist_ok=True)
+
+        if not extract_dir_obj.exists():
+            raise Exception("Failed to create extraction directory")
+        if not os.access(extract_dir, os.W_OK):
+            raise PermissionError(
+                f"Cannot write to extraction directory: {extract_dir}",
+            )
+
+    def _validate_extraction_result(
+        self, extract_dir: str, extract_dir_obj: Path, archive_size: int
+    ) -> None:
+        """Validate that extraction produced expected files and sizes."""
+        if not extract_dir_obj.exists():
+            raise Exception(
+                "Extraction failed - destination folder was not created",
+            )
+        if not any(extract_dir_obj.iterdir()):
+            raise Exception("Extraction failed - destination folder is empty")
+
+        extracted_files = []
+        total_extracted_size = 0
+        for root, _dirs, files in os.walk(extract_dir):
+            for file in files:
+                file_path = Path(root) / file
                 try:
-                    shutil.rmtree(extract_dir, ignore_errors=True)
-                    logger.info(
-                        f"Cleaned up failed extraction directory: {extract_dir}",
-                    )
-                except (IOError, PermissionError, OSError) as cleanup_error:
+                    total_extracted_size += os.path.getsize(file_path)
+                    extracted_files.append(file_path)
+                except OSError as e:
                     logger.warning(
-                        f"Failed to cleanup extraction directory: {extract_dir} - "
-                        f"{cleanup_error}",
+                        f"Cannot access extracted file size: {file_path} - {e}",
                     )
 
-            return False, f"Failed to extract '{Path(archive_path).name}': {e}"
+        if not extracted_files:
+            raise Exception(
+                "Extraction failed - no files found in extracted folder",
+            )
+
+        if total_extracted_size < archive_size * MAX_ARCHIVE_SIZE_RATIO:
+            logger.warning(
+                f"Extracted size ({total_extracted_size}) seems small "
+                f"compared to archive size ({archive_size})",
+            )
+
+        logger.info(
+            f"Extraction validation passed: {len(extracted_files)} files, "
+            f"{total_extracted_size} bytes",
+        )
+
+    def _cleanup_original_archive(self, archive_path_obj: Path) -> None:
+        """Delete the original archive after successful extraction."""
+        try:
+            archive_path_obj.unlink()
+            logger.info(f"Deleted original archive: {archive_path_obj}")
+        except OSError as e:
+            logger.warning(
+                f"Failed to delete original archive: {archive_path_obj} - {e}",
+            )
+
+    def _cleanup_failed_extraction(
+        self, extract_dir_obj: Path, extract_dir: str
+    ) -> None:
+        """Remove partially extracted directory on failure."""
+        if extract_dir_obj.exists():
+            try:
+                shutil.rmtree(extract_dir, ignore_errors=True)
+                logger.info(
+                    f"Cleaned up failed extraction directory: {extract_dir}",
+                )
+            except (IOError, PermissionError, OSError) as cleanup_error:
+                logger.warning(
+                    f"Failed to cleanup extraction directory: {extract_dir} - "
+                    f"{cleanup_error}",
+                )
 
     def _bulk_unzip_enhanced(self) -> list[str]:
         """Enhanced bulk extraction with better validation."""
