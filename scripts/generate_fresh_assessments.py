@@ -4,13 +4,11 @@ Generate fresh assessments based on current codebase state.
 """
 
 import ast
-import json
 import logging
 import os
-import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any, TypedDict
+from typing import TypedDict
 
 # Configuration
 REPO_ROOT = Path(__file__).parent.parent.resolve()
