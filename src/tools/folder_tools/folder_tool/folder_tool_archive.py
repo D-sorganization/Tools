@@ -39,33 +39,19 @@ class ArchiveMixin:
             PermissionError: If insufficient permissions to read destination or
                 write ZIP
             OSError: If file system operations fail during ZIP creation
+            Exception: If ZIP creation fails for other reasons
         """
-        dest_path_obj = self._validate_zip_destination()
-        zip_path = self._resolve_zip_path(dest_path_obj)
-
-        logger.info(f"Creating ZIP archive: {zip_path}")
-
-        try:
-            total_files, total_size = self._count_zip_contents()
-            logger.info(
-                f"ZIP will contain {total_files} files, "
-                f"{total_size / (1024 * 1024):.1f} MB",
+        # Input validation
+        if not self.dest_folder:
+            raise ValueError("Destination folder not set")
+        if not isinstance(self.dest_folder, str):
+            raise ValueError(
+                f"Destination folder must be a string, got {type(self.dest_folder)}",
             )
-            self._write_zip_archive(zip_path, total_files)
-        except (IOError, PermissionError, OSError) as e:
-            self._cleanup_failed_zip(zip_path)
-            logger.error(f"Failed to create ZIP archive: {e}")
-            raise RuntimeError(f"Failed to create ZIP archive: {e}") from e
-
-        return str(zip_path)
-
-    def _validate_zip_destination(self) -> Path:
-        """Validate destination folder exists, is a directory, and is non-empty."""
-        if not self.dest_folder or not isinstance(self.dest_folder, str):
-            raise ValueError("Destination folder not set or invalid")
 
         dest_path_obj = Path(self.dest_folder)
 
+        # Validate destination folder exists and is accessible
         if not dest_path_obj.exists():
             raise FileNotFoundError(
                 f"Destination folder does not exist: {self.dest_folder}",
@@ -75,118 +61,145 @@ class ArchiveMixin:
         if not os.access(self.dest_folder, os.R_OK):
             raise PermissionError(f"Cannot read destination folder: {self.dest_folder}")
 
+        # Check if destination folder is empty
         try:
-            if not list(dest_path_obj.iterdir()):
+            folder_contents = list(dest_path_obj.iterdir())
+            if not folder_contents:
                 raise ValueError("Destination folder is empty - nothing to archive")
         except (OSError, PermissionError) as e:
             raise PermissionError(
                 f"Cannot access destination folder contents: {self.dest_folder} - {e}",
             ) from e
 
-        return dest_path_obj
-
-    def _resolve_zip_path(self, dest_path_obj: Path) -> Path:
-        """Generate a unique ZIP file path in the parent of the destination."""
+        # Generate ZIP filename with timestamp
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         zip_filename = f"processed_files_{timestamp}.zip"
 
+        # Create ZIP in parent directory of destination
         try:
             zip_path = dest_path_obj.parent / zip_filename
-        except (ValueError, TypeError) as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             raise ValueError(f"Cannot determine ZIP location: {e}") from e
 
+        # Check if ZIP file already exists and generate unique name
         if zip_path.exists():
             zip_path = Path(self._get_unique_path(str(zip_path)))
 
-        return zip_path
+        logger.info(f"Creating ZIP archive: {zip_path}")
 
-    def _count_zip_contents(self) -> tuple[int, int]:
-        """Count accessible files and total size in the destination folder."""
-        total_files = 0
-        total_size = 0
-        for root, _dirs, files in os.walk(self.dest_folder):
-            for file in files:
-                file_path = Path(root) / file
-                try:
-                    if file_path.exists() and os.access(file_path, os.R_OK):
-                        total_files += 1
-                        total_size += os.path.getsize(file_path)
-                except (OSError, PermissionError):
-                    continue
-
-        if total_files == 0:
-            raise ValueError("No accessible files found in destination folder")
-        return total_files, total_size
-
-    def _write_zip_archive(self, zip_path: Path, total_files: int) -> None:
-        """Write all destination files into a ZIP archive with progress updates."""
-        with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
-            processed_files = 0
-            processed_size = 0
-            failed_files = 0
+        try:
+            # Count total files and size for progress tracking
+            total_files = 0
+            total_size = 0
 
             for root, _dirs, files in os.walk(self.dest_folder):
                 for file in files:
-                    if self.cancel_operation:
-                        raise RuntimeError("ZIP creation cancelled by user")
-
                     file_path = Path(root) / file
                     try:
-                        if not file_path.exists() or not os.access(file_path, os.R_OK):
+                        if Path(file_path).exists() and os.access(file_path, os.R_OK):
+                            total_files += 1
+                            total_size += os.path.getsize(file_path)
+                    except (OSError, PermissionError):
+                        continue
+
+            if total_files == 0:
+                raise ValueError("No accessible files found in destination folder")
+
+            logger.info(
+                f"ZIP will contain {total_files} files, "
+                f"{total_size / (1024 * 1024):.1f} MB",
+            )
+
+            # Create ZIP archive
+            with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
+                processed_files = 0
+                processed_size = 0
+                failed_files = 0
+
+                for root, _dirs, files in os.walk(self.dest_folder):
+                    for file in files:
+                        if self.cancel_operation:
+                            raise Exception("ZIP creation cancelled by user")
+
+                        file_path = Path(root) / file
+
+                        # Validate file before adding to ZIP
+                        try:
+                            if not Path(file_path).exists():
+                                failed_files += 1
+                                logger.warning(f"File no longer exists: {file_path}")
+                                continue
+                            if not os.access(file_path, os.R_OK):
+                                failed_files += 1
+                                logger.warning(f"Cannot read file: {file_path}")
+                                continue
+
+                            # Calculate relative path for archive
+                            arcname = os.path.relpath(file_path, self.dest_folder)
+
+                            # Add file to ZIP
+                            zipf.write(file_path, arcname)
+                            processed_files += 1
+                            processed_size += os.path.getsize(file_path)
+
+                            # Update progress every N files
+                            if processed_files % MAX_UI_UPDATE_FREQUENCY == 0:
+                                progress = (
+                                    PROGRESS_START_ZIP
+                                    + (processed_files / total_files)
+                                    * PROGRESS_ZIP_PERCENT
+                                )
+                                self.update_progress(
+                                    progress,
+                                    f"Added {processed_files}/{total_files} files "
+                                    "to ZIP",
+                                )
+
+                        except (IOError, PermissionError, OSError) as e:
                             failed_files += 1
+                            logger.warning(
+                                f"Failed to add file to ZIP: {file_path} - {e}",
+                            )
                             continue
 
-                        arcname = os.path.relpath(file_path, self.dest_folder)
-                        zipf.write(file_path, arcname)
-                        processed_files += 1
-                        processed_size += os.path.getsize(file_path)
+                # Verify ZIP was created successfully
+                if not zip_path.exists():
+                    raise Exception("ZIP file was not created")
 
-                        if processed_files % MAX_UI_UPDATE_FREQUENCY == 0:
-                            progress = (
-                                PROGRESS_START_ZIP
-                                + (processed_files / total_files) * PROGRESS_ZIP_PERCENT
-                            )
-                            self.update_progress(
-                                progress,
-                                f"Added {processed_files}/{total_files} files to ZIP",
-                            )
+                # Verify ZIP size is reasonable
+                try:
+                    zip_size = zip_path.stat().st_size
+                    if zip_size == 0:
+                        raise Exception("ZIP file is empty")
+                    logger.info(
+                        f"ZIP archive created: {zip_path} ({processed_files} files, "
+                        f"{processed_size / (1024 * 1024):.1f} MB, "
+                        f"ZIP size: {zip_size / (1024 * 1024):.1f} MB)",
+                    )
+                except OSError as e:
+                    logger.warning(f"Cannot verify ZIP file size: {e}")
 
-                    except (IOError, PermissionError, OSError) as e:
-                        failed_files += 1
-                        logger.warning(f"Failed to add file to ZIP: {file_path} - {e}")
+                # Final summary
+                if failed_files > 0:
+                    logger.warning(
+                        f"ZIP creation completed with {failed_files} failed files",
+                    )
+                else:
+                    logger.info("ZIP creation completed successfully")
 
-            self._verify_zip(zip_path, processed_files, processed_size, failed_files)
+        except (IOError, PermissionError, OSError) as e:
+            # Cleanup failed ZIP file
+            if zip_path.exists():
+                try:
+                    zip_path.unlink()
+                    logger.info(f"Cleaned up failed ZIP file: {zip_path}")
+                except OSError as cleanup_error:
+                    logger.warning(
+                        f"Failed to cleanup failed ZIP file: {zip_path} - "
+                        f"{cleanup_error}",
+                    )
 
-    def _verify_zip(
-        self, zip_path: Path, processed: int, size: int, failed: int
-    ) -> None:
-        """Verify the created ZIP file is valid and log summary."""
-        if not zip_path.exists():
-            raise RuntimeError("ZIP file was not created")
-        try:
-            zip_size = zip_path.stat().st_size
-            if zip_size == 0:
-                raise RuntimeError("ZIP file is empty")
-            logger.info(
-                f"ZIP archive created: {zip_path} ({processed} files, "
-                f"{size / (1024 * 1024):.1f} MB, "
-                f"ZIP size: {zip_size / (1024 * 1024):.1f} MB)",
-            )
-        except OSError as e:
-            logger.warning(f"Cannot verify ZIP file size: {e}")
+            logger.error(f"Failed to create ZIP archive: {e}")
+            raise Exception(f"Failed to create ZIP archive: {e}") from e
 
-        if failed > 0:
-            logger.warning(f"ZIP creation completed with {failed} failed files")
-        else:
-            logger.info("ZIP creation completed successfully")
-
-    def _cleanup_failed_zip(self, zip_path: Path) -> None:
-        """Remove a partially-created ZIP file on failure."""
-        if zip_path.exists():
-            try:
-                zip_path.unlink()
-                logger.info(f"Cleaned up failed ZIP file: {zip_path}")
-            except OSError as cleanup_error:
-                logger.warning(
-                    f"Failed to cleanup failed ZIP file: {zip_path} - {cleanup_error}",
-                )
+        return str(zip_path)

@@ -53,160 +53,188 @@ class UIProcessingMixin:
         Raises:
             ValueError: If title or content is empty or invalid
             tkinter.TclError: If Tkinter widget creation fails
+            Exception: If dialog creation fails for other reasons
         """
-        content = self._validate_dialog_inputs(title, content)
-
-        logger.info(f"Creating text dialog: '{title}' with {len(content)} characters")
-
-        try:
-            dialog = tk.Toplevel(self.root)
-            dialog.title(title)
-
-            dialog_width, dialog_height = self._calculate_dialog_geometry(content)
-            dialog.geometry(f"{dialog_width}x{dialog_height}")
-            dialog.minsize(MIN_DIALOG_WIDTH, MIN_DIALOG_HEIGHT)
-            dialog.transient(self.root)
-            dialog.grab_set()
-
-            self._create_scrollable_text(dialog, content)
-            self._create_dialog_buttons(dialog, content)
-
-            dialog.focus_set()
-            dialog.bind("<Escape>", lambda event: dialog.destroy())
-
-            logger.info(
-                f"Text dialog created successfully: {dialog_width}x{dialog_height}",
-            )
-            dialog.wait_window()
-
-        except tk.TclError as e:
-            logger.error(f"Tkinter error creating text dialog: {e}")
-            self._show_fallback_dialog(title, content)
-            raise
-
-        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
-            logger.error(f"Failed to show text dialog: {e}")
-            self._show_fallback_dialog(title, content)
-            raise
-
-    def _validate_dialog_inputs(self, title: str, content: str) -> str:
-        """Validate and sanitize dialog title and content.
-
-        Returns:
-            Possibly-truncated content string.
-        """
+        # Input validation
         if not title or not isinstance(title, str):
             raise ValueError(f"Title must be non-empty string, got {type(title)}")
         if not content or not isinstance(content, str):
             raise ValueError(f"Content must be non-empty string, got {type(content)}")
 
+        # Validate title and content length
         if len(title.strip()) == 0:
             raise ValueError("Title cannot be empty or whitespace only")
         if len(content.strip()) == 0:
             raise ValueError("Content cannot be empty or whitespace only")
 
+        # Validate title length for window title bar
         if len(title) > MAX_TITLE_LENGTH:
             logger.warning(
                 f"Title is very long ({len(title)} chars), may be truncated: "
                 f"{title[:MAX_TITLE_PREVIEW_LENGTH]}...",
             )
 
-        if len(content) > MAX_TEXT_CONTENT_SIZE:
+        # Validate content length for performance
+        if (
+            len(content) > MAX_TEXT_CONTENT_SIZE
+        ):  # MAX_TEXT_CONTENT_SIZE limit for text content
             logger.warning(
                 f"Content is very large ({len(content)} chars), may cause "
                 "performance issues",
             )
+            # Truncate content for display
             content = (
                 content[:MAX_TEXT_CONTENT_SIZE]
                 + "\n\n... [Content truncated due to size]"
             )
 
-        return content
-
-    def _calculate_dialog_geometry(self, content: str) -> tuple[int, int]:
-        """Calculate dialog width and height from content size."""
-        dialog_width = min(
-            MAX_DIALOG_WIDTH,
-            max(
-                MIN_DIALOG_WIDTH,
-                len(content) // CHARS_PER_DIALOG_LINE + DIALOG_WIDTH_OFFSET,
-            ),
-        )
-        dialog_height = min(
-            MAX_DIALOG_HEIGHT,
-            max(
-                MIN_DIALOG_HEIGHT,
-                len(content.split("\n")) * LINE_HEIGHT_PIXELS + DIALOG_HEIGHT_OFFSET,
-            ),
-        )
-        return dialog_width, dialog_height
-
-    def _create_scrollable_text(self, dialog: tk.Toplevel, content: str) -> None:
-        """Create the scrollable text widget and insert content."""
-        text_frame = ttk.Frame(dialog)
-        text_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-
-        text_widget = tk.Text(
-            text_frame,
-            wrap=tk.WORD,
-            font=("Consolas", 10),
-            undo=False,
-            maxundo=0,
-            selectbackground="lightblue",
-            selectforeground="black",
-        )
-
-        scrollbar = ttk.Scrollbar(
-            text_frame, orient="vertical", command=text_widget.yview
-        )
-        text_widget.configure(yscrollcommand=scrollbar.set)
-        text_widget.pack(side="left", fill="both", expand=True)
-        scrollbar.pack(side="right", fill="y")
+        logger.info(f"Creating text dialog: '{title}' with {len(content)} characters")
 
         try:
-            text_widget.insert("1.0", content)
-            text_widget.config(state="disabled")
-            text_widget.mark_set("insert", "1.0")
-            text_widget.see("1.0")
-        except (KeyError, ValueError, TypeError) as e:
-            logger.error(f"Failed to insert content into text widget: {e}")
-            safe_content = (
-                content[:MAX_FALLBACK_CONTENT_SIZE]
-                + "\n\n... [Content truncated due to error]"
+            # Create dialog window
+            dialog = tk.Toplevel(self.root)
+            dialog.title(title)
+
+            # Set dialog geometry with validation
+            dialog_width = min(
+                MAX_DIALOG_WIDTH,
+                max(
+                    MIN_DIALOG_WIDTH,
+                    len(content) // CHARS_PER_DIALOG_LINE + DIALOG_WIDTH_OFFSET,
+                ),
             )
-            text_widget.insert("1.0", safe_content)
-            text_widget.config(state="disabled")
+            dialog_height = min(
+                MAX_DIALOG_HEIGHT,
+                max(
+                    MIN_DIALOG_HEIGHT,
+                    len(content.split("\n")) * LINE_HEIGHT_PIXELS
+                    + DIALOG_HEIGHT_OFFSET,
+                ),
+            )
 
-    def _create_dialog_buttons(self, dialog: tk.Toplevel, content: str) -> None:
-        """Create close and copy buttons for the dialog."""
-        button_frame = ttk.Frame(dialog)
-        button_frame.pack(fill=tk.X, padx=10, pady=(0, 10))
+            dialog.geometry(f"{dialog_width}x{dialog_height}")
+            dialog.minsize(MIN_DIALOG_WIDTH, MIN_DIALOG_HEIGHT)
 
-        close_button = ttk.Button(button_frame, text="Close", command=dialog.destroy)
-        close_button.pack(side="right")
+            # Center dialog on screen
+            dialog.transient(self.root)
+            dialog.grab_set()
 
-        def copy_to_clipboard() -> None:
+            # Create text widget with scrollbar
+            text_frame = ttk.Frame(dialog)
+            text_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+            # Create text widget with appropriate font and settings
+            text_widget = tk.Text(
+                text_frame,
+                wrap=tk.WORD,
+                font=("Consolas", 10),
+                undo=False,  # Disable undo for performance
+                maxundo=0,  # No undo history
+                selectbackground="lightblue",
+                selectforeground="black",
+            )
+
+            scrollbar = ttk.Scrollbar(
+                text_frame,
+                orient="vertical",
+                command=text_widget.yview,
+            )
+            text_widget.configure(yscrollcommand=scrollbar.set)
+
+            text_widget.pack(side="left", fill="both", expand=True)
+            scrollbar.pack(side="right", fill="y")
+
+            # Insert content with error handling
             try:
-                dialog.clipboard_clear()
-                dialog.clipboard_append(content)
-                logger.debug("Dialog content copied to clipboard")
-            except (RuntimeError, OSError) as e:
-                logger.warning(f"Failed to copy to clipboard: {e}")
+                text_widget.insert("1.0", content)
+                text_widget.config(state="disabled")  # Make read-only
 
-        copy_button = ttk.Button(
-            button_frame, text="Copy All", command=copy_to_clipboard
-        )
-        copy_button.pack(side="right", padx=(0, 5))
-        close_button.focus_set()
+                # Set cursor to beginning
+                text_widget.mark_set("insert", "1.0")
+                text_widget.see("1.0")
 
-    def _show_fallback_dialog(self, title: str, content: str) -> None:
-        """Show a simple message box as fallback when dialog creation fails."""
-        fallback_content = (
-            content[:MAX_FALLBACK_CONTENT_SIZE] + "..."
-            if len(content) > MAX_FALLBACK_CONTENT_SIZE
-            else content
-        )
-        messagebox.showinfo(title, fallback_content)
+            except (KeyError, ValueError, TypeError) as e:
+                logger.error(f"Failed to insert content into text widget: {e}")
+                # Fallback: show truncated content
+                safe_content = (
+                    content[:MAX_FALLBACK_CONTENT_SIZE]
+                    + "\n\n... [Content truncated due to error]"
+                )
+                text_widget.insert("1.0", safe_content)
+                text_widget.config(state="disabled")
+
+            # Add close button
+            button_frame = ttk.Frame(dialog)
+            button_frame.pack(fill=tk.X, padx=10, pady=(0, 10))
+
+            close_button = ttk.Button(
+                button_frame,
+                text="Close",
+                command=dialog.destroy,
+            )
+            close_button.pack(side="right")
+
+            # Add copy button for convenience
+            def copy_to_clipboard() -> None:
+                """Copy dialog content to clipboard."""
+                try:
+                    dialog.clipboard_clear()
+                    dialog.clipboard_append(content)
+                    logger.debug("Dialog content copied to clipboard")
+                except (RuntimeError, OSError) as e:
+                    logger.warning(f"Failed to copy to clipboard: {e}")
+
+            copy_button = ttk.Button(
+                button_frame,
+                text="Copy All",
+                command=copy_to_clipboard,
+            )
+            copy_button.pack(side="right", padx=(0, 5))
+
+            # Set focus and make dialog modal
+            dialog.focus_set()
+            close_button.focus_set()  # Focus on close button for better UX
+
+            # Bind escape key to close dialog
+            def on_escape(event: tk.Event) -> None:
+                """Close dialog when escape key is pressed.
+
+                Args:
+                    event: The key event that triggered this function
+                """
+                dialog.destroy()
+
+            dialog.bind("<Escape>", on_escape)
+
+            # Log successful dialog creation
+            logger.info(
+                f"Text dialog created successfully: {dialog_width}x{dialog_height}",
+            )
+
+            # Wait for dialog to close
+            dialog.wait_window()
+
+        except tk.TclError as e:
+            logger.error(f"Tkinter error creating text dialog: {e}")
+            # Fallback to simple message box
+            fallback_content = (
+                content[:MAX_FALLBACK_CONTENT_SIZE] + "..."
+                if len(content) > MAX_FALLBACK_CONTENT_SIZE
+                else content
+            )
+            messagebox.showinfo(title, fallback_content)
+            raise
+
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
+            logger.error(f"Failed to show text dialog: {e}")
+            # Fallback to simple message box
+            fallback_content = (
+                content[:MAX_FALLBACK_CONTENT_SIZE] + "..."
+                if len(content) > MAX_FALLBACK_CONTENT_SIZE
+                else content
+            )
+            messagebox.showinfo(title, fallback_content)
+            raise
 
     def update_source_info(self) -> None:
         """Updates the source folder information display."""

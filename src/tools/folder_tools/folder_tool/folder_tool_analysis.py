@@ -40,8 +40,32 @@ class AnalysisMixin:
             ValueError: If source_folders list is empty or invalid
             OSError: If file system operations fail during analysis
             PermissionError: If insufficient permissions to access source folders
+            Exception: If report generation fails for other reasons
         """
-        valid_source_folders = self._validate_source_folders()
+        # Input validation
+        if not self.source_folders:
+            raise ValueError("No source folders to analyze")
+        if not isinstance(self.source_folders, list):
+            raise ValueError(
+                f"Source folders must be a list, got {type(self.source_folders)}",
+            )
+
+        # Validate each source folder
+        valid_source_folders = []
+        for folder in self.source_folders:
+            if not folder or not isinstance(folder, str):
+                logger.warning(f"Invalid source folder: {folder}")
+                continue
+            if not Path(folder).exists():
+                logger.warning(f"Source folder no longer exists: {folder}")
+                continue
+            if not os.access(folder, os.R_OK):
+                logger.warning(f"Cannot access source folder: {folder}")
+                continue
+            valid_source_folders.append(folder)
+
+        if not valid_source_folders:
+            raise ValueError("No valid source folders to analyze")
 
         report = ["=== FOLDER ANALYSIS REPORT ===", f"Generated: {datetime.now()}", ""]
         logger.info(f"Starting analysis of {len(valid_source_folders)} source folders")
@@ -50,155 +74,96 @@ class AnalysisMixin:
         total_size = 0
         file_types: dict[str, int] = defaultdict(int)
         size_by_type: dict[str, int] = defaultdict(int)
-        largest_files: list[tuple[Path, int]] = []
-        analysis_errors: list[str] = []
+        largest_files = []
+        analysis_errors = []
 
         for folder in valid_source_folders:
             if self.cancel_operation:
                 logger.info("Analysis cancelled by user")
                 return None
 
-            result = self._analyze_single_folder(folder, report)
-            if result is None:
-                continue
-            folder_files, folder_size, folder_largest, folder_errors_list = result
+            report.append(f"Analyzing: {folder}")
+            folder_files = 0
+            folder_size = 0
+            folder_errors = 0
 
-            total_files += folder_files
-            total_size += folder_size
-            for fp, fs in folder_largest:
-                file_ext = Path(fp).suffix.lower() or "no_extension"
-                file_types[file_ext] += 1
-                size_by_type[file_ext] += fs
-            largest_files.extend(folder_largest)
-            largest_files.sort(key=lambda x: x[1], reverse=True)
-            largest_files = largest_files[:10]
-            analysis_errors.extend(folder_errors_list)
-
-        self._append_report_summary(
-            report,
-            total_files,
-            total_size,
-            file_types,
-            size_by_type,
-            largest_files,
-            analysis_errors,
-            valid_source_folders,
-        )
-
-        logger.info(
-            f"Analysis completed: {total_files} files, "
-            f"{total_size / (1024 * 1024):.1f} MB",
-        )
-        if analysis_errors:
-            logger.warning(f"Analysis completed with {len(analysis_errors)} errors")
-
-        return "\n".join(report)
-
-    def _validate_source_folders(self) -> list[str]:
-        """Validate and filter source folders, raising on empty input."""
-        if not self.source_folders:
-            raise ValueError("No source folders to analyze")
-        if not isinstance(self.source_folders, list):
-            raise ValueError(
-                f"Source folders must be a list, got {type(self.source_folders)}",
-            )
-
-        valid = []
-        for folder in self.source_folders:
-            if not folder or not isinstance(folder, str):
-                logger.warning(f"Invalid source folder: {folder}")
-            elif not Path(folder).exists():
-                logger.warning(f"Source folder no longer exists: {folder}")
-            elif not os.access(folder, os.R_OK):
-                logger.warning(f"Cannot access source folder: {folder}")
-            else:
-                valid.append(folder)
-
-        if not valid:
-            raise ValueError("No valid source folders to analyze")
-        return valid
-
-    def _analyze_single_folder(
-        self, folder: str, report: list[str]
-    ) -> tuple[int, int, list[tuple[Path, int]], list[str]] | None:
-        """Analyze one folder, appending per-folder lines to *report*.
-
-        Returns (files, size, largest_files, errors) or None on OS error.
-        """
-        report.append(f"Analyzing: {folder}")
-        folder_files = 0
-        folder_size = 0
-        folder_errors = 0
-        largest: list[tuple[Path, int]] = []
-
-        try:
-            for root, _dirs, files in os.walk(folder):
-                if self.cancel_operation:
-                    break  # type: ignore[unreachable]
-
-                for file in files:
+            try:
+                for root, _dirs, files in os.walk(folder):
                     if self.cancel_operation:
                         break  # type: ignore[unreachable]
 
-                    file_path = Path(root) / file
-                    try:
-                        if not file_path.exists() or not os.access(file_path, os.R_OK):
+                    for file in files:
+                        if self.cancel_operation:
+                            break  # type: ignore[unreachable]
+
+                        file_path = Path(root) / file
+                        try:
+                            # Validate file exists and is accessible
+                            if not Path(file_path).exists():
+                                folder_errors += 1
+                                continue
+                            if not os.access(file_path, os.R_OK):
+                                folder_errors += 1
+                                continue
+
+                            file_size = os.path.getsize(file_path)
+                            file_ext = Path(file).suffix.lower() or "no_extension"
+
+                            # Validate file size
+                            if file_size < MIN_FILE_SIZE_BYTES:
+                                logger.debug(
+                                    f"File below minimum size: {file_path} "
+                                    f"({file_size} bytes)",
+                                )
+                                continue
+                            if file_size > MAX_FILE_SIZE_MB * 1024 * 1024:
+                                logger.warning(
+                                    f"File exceeds maximum size: {file_path} "
+                                    f"({file_size / (1024 * 1024):.1f} MB)",
+                                )
+
+                            total_files += 1
+                            folder_files += 1
+                            total_size += file_size
+                            folder_size += file_size
+                            file_types[file_ext] += 1
+                            size_by_type[file_ext] += file_size
+
+                            # Track largest files
+                            largest_files.append((file_path, file_size))
+                            if len(largest_files) > 10:
+                                largest_files.sort(key=lambda x: x[1], reverse=True)
+                                largest_files = largest_files[:10]
+
+                        except (OSError, PermissionError) as e:
                             folder_errors += 1
+                            logger.debug(f"Cannot access file {file_path}: {e}")
                             continue
 
-                        file_size = os.path.getsize(file_path)
-                        if file_size < MIN_FILE_SIZE_BYTES:
-                            continue
-                        if file_size > MAX_FILE_SIZE_MB * 1024 * 1024:
-                            logger.warning(
-                                f"File exceeds maximum size: {file_path} "
-                                f"({file_size / (1024 * 1024):.1f} MB)",
-                            )
+                # Report folder analysis results
+                if folder_errors > 0:
+                    report.append(
+                        f"  Files: {folder_files}, "
+                        f"Size: {folder_size / (1024 * 1024):.1f} MB, "
+                        f"Errors: {folder_errors}",
+                    )
+                    analysis_errors.append(
+                        f"Folder {folder}: {folder_errors} access errors",
+                    )
+                else:
+                    report.append(
+                        f"  Files: {folder_files}, "
+                        f"Size: {folder_size / (1024 * 1024):.1f} MB",
+                    )
 
-                        folder_files += 1
-                        folder_size += file_size
-                        largest.append((file_path, file_size))
-                        if len(largest) > 10:
-                            largest.sort(key=lambda x: x[1], reverse=True)
-                            largest = largest[:10]
+            except (OSError, PermissionError) as e:
+                error_msg = f"Error accessing folder {folder}: {e}"
+                report.append(f"  ERROR: {error_msg}")
+                analysis_errors.append(error_msg)
+                logger.error(error_msg)
+                continue
 
-                    except (OSError, PermissionError) as e:
-                        folder_errors += 1
-                        logger.debug(f"Cannot access file {file_path}: {e}")
-
-            errors_list: list[str] = []
-            if folder_errors > 0:
-                report.append(
-                    f"  Files: {folder_files}, "
-                    f"Size: {folder_size / (1024 * 1024):.1f} MB, "
-                    f"Errors: {folder_errors}",
-                )
-                errors_list.append(f"Folder {folder}: {folder_errors} access errors")
-            else:
-                report.append(
-                    f"  Files: {folder_files}, "
-                    f"Size: {folder_size / (1024 * 1024):.1f} MB",
-                )
-            return folder_files, folder_size, largest, errors_list
-
-        except (OSError, PermissionError) as e:
-            error_msg = f"Error accessing folder {folder}: {e}"
-            report.append(f"  ERROR: {error_msg}")
-            logger.error(error_msg)
-            return None
-
-    def _append_report_summary(
-        self,
-        report: list[str],
-        total_files: int,
-        total_size: int,
-        file_types: dict[str, int],
-        size_by_type: dict[str, int],
-        largest_files: list[tuple[Path, int]],
-        analysis_errors: list[str],
-        valid_source_folders: list[str],
-    ) -> None:
-        """Append summary statistics, largest files, and metadata to report."""
+        # Add summary statistics
         report.extend(
             [
                 "",
@@ -209,18 +174,22 @@ class AnalysisMixin:
             ],
         )
 
+        # Sort file types by count
         for ext, count in sorted(file_types.items(), key=lambda x: x[1], reverse=True):
             size_mb = size_by_type[ext] / (1024 * 1024)
             report.append(f"  {ext}: {count} files, {size_mb:.1f} MB")
 
+        # Add largest files section
         report.extend(["", "LARGEST FILES:"])
         for file_path, size in sorted(largest_files, key=lambda x: x[1], reverse=True):
             size_mb = size / (1024 * 1024)
             report.append(f"  {Path(file_path).name}: {size_mb:.1f} MB")
 
+        # Add error summary if any occurred
         if analysis_errors:
             report.extend(["", "ANALYSIS ERRORS:", *analysis_errors])
 
+        # Add analysis metadata
         report.extend(
             [
                 "",
@@ -232,6 +201,15 @@ class AnalysisMixin:
                 f"{MAX_FILE_SIZE_MB} MB",
             ],
         )
+
+        logger.info(
+            f"Analysis completed: {total_files} files, "
+            f"{total_size / (1024 * 1024):.1f} MB",
+        )
+        if analysis_errors:
+            logger.warning(f"Analysis completed with {len(analysis_errors)} errors")
+
+        return "\n".join(report)
 
     def validate_inputs(self, check_destination: bool = True) -> bool:
         """Validate user inputs before processing.
