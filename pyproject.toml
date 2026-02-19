@@ -117,8 +117,39 @@ line-length = 88
 line-length = 88
 target-version = ['py310']
 
+[tool.pytest.ini_options]
+testpaths = ["tests", "src"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "--strict-markers"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks integration tests",
+]
+
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*/__pycache__/*",
+    "*/node_modules/*",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "pass",
+]
+
 [tool.mypy]
 files = "src/shared/python"
 ignore_missing_imports = true
 check_untyped_defs = true
-disallow_untyped_defs = false 
+disallow_untyped_defs = false
