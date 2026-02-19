@@ -4,6 +4,7 @@ Cross-platform launcher for Folder Tool.
 Replaces Launch_FolderFix.bat for better portability.
 """
 
+import subprocess
 import sys
 from pathlib import Path
 
@@ -67,7 +68,7 @@ def main() -> None:
     except KeyboardInterrupt:
         logger.info("Tool stopped by user.")
         sys.exit(0)
-    except Exception as e:
+    except (subprocess.SubprocessError, OSError) as e:
         logger.error(f"Failed to launch tool: {e}")
         sys.exit(1)
 

@@ -45,6 +45,7 @@ from .colors import (
     is_valid_hex_color,
     normalise_hex_color,
 )
+from .protocols import StylesheetGenerator, ThemeProvider, ThemeSwitcher
 from .stylesheets import generate_minimal_stylesheet, generate_stylesheet
 
 # PyQt6-dependent imports - only available when PyQt6 is installed
@@ -86,6 +87,10 @@ except ImportError:
     ThemePreviewWidget = None  # type: ignore[assignment, misc]
 
 __all__ = [
+    # Protocols (no PyQt6 dependency)
+    "StylesheetGenerator",
+    "ThemeProvider",
+    "ThemeSwitcher",
     # Theme manager (requires PyQt6)
     "ThemeManager",
     "get_theme_manager",

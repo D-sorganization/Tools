@@ -15,6 +15,7 @@ from typing import TYPE_CHECKING
 import matplotlib.pyplot as plt
 import numpy as np
 
+from .protocols import ThemeColorProvider
 from .specs import (
     ContourPlotSpec,
     FilterComparisonSpec,
@@ -29,7 +30,6 @@ from .trendline import compute_trendline
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
-    from plot_theme.manager import PlotThemeManager
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +57,7 @@ _LINESTYLE_MAP = {
 class MatplotlibRenderer:
     """Renders PlotSpec contracts into matplotlib Figures."""
 
-    def __init__(self, theme_manager: PlotThemeManager | None = None) -> None:
+    def __init__(self, theme_manager: ThemeColorProvider | None = None) -> None:
         self._theme_manager = theme_manager
 
     def render(

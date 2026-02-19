@@ -279,7 +279,7 @@ class EnvironmentManager:
         for callback in reversed(self._cleanup_callbacks):
             try:
                 callback()
-            except Exception as e:
+            except (OSError, RuntimeError, ValueError, TypeError, KeyError) as e:
                 logger.warning("Cleanup callback failed: %s", e)
 
         # Restore environment variables
@@ -578,14 +578,14 @@ class ResourceManager:
         for context in reversed(self._contexts):
             try:
                 context.__exit__(None, None, None)
-            except Exception as e:
+            except (OSError, RuntimeError, ValueError, TypeError) as e:
                 logger.warning("Context cleanup failed: %s", e)
 
         # Clean up resources (in reverse order)
         for resource, cleanup_func in reversed(self._resources):
             try:
                 cleanup_func(resource)
-            except Exception as e:
+            except (OSError, RuntimeError, ValueError, TypeError) as e:
                 logger.warning("Resource cleanup failed: %s", e)
 
         self._resources.clear()

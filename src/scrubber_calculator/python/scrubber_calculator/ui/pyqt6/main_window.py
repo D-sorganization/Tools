@@ -40,13 +40,16 @@ logger = logging.getLogger(__name__)
 
 def get_stylesheet() -> str:
     """Get the Catppuccin Mocha stylesheet with ResultCard extension."""
-    return str(_base_stylesheet() + f"""
+    return str(
+        _base_stylesheet()
+        + f"""
         QFrame#resultCard {{
             background-color: {COLORS["surface0"]};
             border-radius: 8px;
             padding: 10px;
         }}
-    """)
+    """
+    )
 
 
 class ResultCard(QFrame):
@@ -483,7 +486,7 @@ class ScrubberCalculatorWindow(BaseCalculatorWidget):
             self._update_results_display()
             self.mark_changed()
 
-        except Exception as e:
+        except (ValueError, TypeError, ArithmeticError, KeyError) as e:
             logger.exception("Calculation failed")
             self.show_error("Calculation Error", str(e))
 

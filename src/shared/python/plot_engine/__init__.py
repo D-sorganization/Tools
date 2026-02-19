@@ -17,6 +17,7 @@ Usage:
     plotly_json = PlotlyConverter().convert(spec)
 """
 
+from .protocols import PlotConverter, PlotRenderer, ThemeColorProvider
 from .specs import (
     AxisSpec,
     ContourPlotSpec,
@@ -32,6 +33,11 @@ from .specs import (
 )
 
 __all__ = [
+    # Protocols
+    "PlotConverter",
+    "PlotRenderer",
+    "ThemeColorProvider",
+    # Specs
     "AxisSpec",
     "ContourPlotSpec",
     "FilterComparisonSpec",

@@ -431,8 +431,9 @@ class FolderToolMixin:
             self.after(0, lambda: self.folder_progress_bar.set(1.0))  # type: ignore
             self.after(0, lambda: self.folder_run_button.configure(state="normal"))  # type: ignore
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))  # type: ignore
-        except Exception:
-            self.after(0, lambda: self.folder_status_var.set(f"Error: {e}"))  # type: ignore
+        except (OSError, PermissionError, ValueError) as exc:
+            msg = f"Error: {exc}"
+            self.after(0, lambda m=msg: self.folder_status_var.set(m))  # type: ignore
             self.after(0, lambda: self.folder_run_button.configure(state="normal"))  # type: ignore
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))  # type: ignore
 
@@ -466,9 +467,17 @@ class FolderToolMixin:
 
                 processed_files += 1
                 if processed_files % 10 == 0:
-                    self.after(0, lambda p=processed_files / total_files: self.folder_progress_bar.set(p))  # type: ignore
-                    self.after(0, lambda p=processed_files, t=total_files: self.folder_status_var.set(f"Processed {p}/{t}"))  # type: ignore
-        except Exception as e:
+                    self.after(
+                        0,
+                        lambda p=processed_files
+                        / total_files: self.folder_progress_bar.set(p),
+                    )  # type: ignore
+                    self.after(
+                        0,
+                        lambda p=processed_files,
+                        t=total_files: self.folder_status_var.set(f"Processed {p}/{t}"),
+                    )  # type: ignore
+        except (OSError, PermissionError) as e:
             logger.error(f"Combine failed: {e}")
 
     def _folder_flatten_operation(self) -> None:
@@ -495,8 +504,10 @@ class FolderToolMixin:
                         shutil.copy2(src_path, final_dest)
 
                 if (i + 1) % 10 == 0:
-                    self.after(0, lambda p=(i + 1) / total: self.folder_progress_bar.set(p))  # type: ignore
-        except Exception as e:
+                    self.after(
+                        0, lambda p=(i + 1) / total: self.folder_progress_bar.set(p)
+                    )  # type: ignore
+        except (OSError, PermissionError) as e:
             logger.error(f"Flatten failed: {e}")
 
     def _folder_prune_operation(self) -> None:
@@ -516,7 +527,7 @@ class FolderToolMixin:
                         if self._folder_validate_file_filters(src_path):
                             if not self.folder_preview_mode_var.get():
                                 shutil.copy2(src_path, dest_dir / f)
-        except Exception as e:
+        except (OSError, PermissionError) as e:
             logger.error(f"Prune failed: {e}")
 
     def _folder_deduplicate_operation(self) -> None:
@@ -555,11 +566,11 @@ class FolderToolMixin:
                     total_size += sz
                     info.append((p, sz))
 
-        report = f"Analysis Report\nTotal Files: {len(info)}\nTotal Size: {total_size/1e6:.2f} MB\n"
+        report = f"Analysis Report\nTotal Files: {len(info)}\nTotal Size: {total_size / 1e6:.2f} MB\n"
         largest = heapq.nlargest(10, info, key=lambda x: x[1])
         report += "\nLargest Files:\n"
         for p, sz in largest:
-            report += f"{p.name}: {sz/1e6:.2f} MB\n"
+            report += f"{p.name}: {sz / 1e6:.2f} MB\n"
 
         self.after(0, lambda: self._show_folder_analysis_report(report))  # type: ignore
 
