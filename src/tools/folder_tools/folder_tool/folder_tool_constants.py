@@ -232,128 +232,50 @@ def validate_constants() -> None:
     logger.info("All constants validated successfully")
 
 
+# Module-level metadata about each constant (name -> units, source).
+# Values are resolved lazily by get_constants_info() so the table
+# stays in sync with actual constant values.
+_CONSTANTS_METADATA: dict[str, tuple[str, str]] = {
+    "MAX_LOG_ENTRIES": ("entries", "UI performance limit"),
+    "PROGRESS_INCREMENT": ("%", "Standard UI update frequency"),
+    "MAX_FILE_SIZE_MB": ("MB", "Windows FAT32 limit per Microsoft docs"),
+    "MIN_FILE_SIZE_BYTES": ("bytes", "1 byte minimum per filesystem standards"),
+    "DEFAULT_CHUNK_SIZE": ("bytes", "Optimal for most systems per Python shutil docs"),
+    "MAX_RETRY_ATTEMPTS": ("attempts", "Industry standard retry limit"),
+    "ICON_SIZES": ("pixels", "Windows Shell API guidelines"),
+    "MAX_STATUS_LENGTH": ("characters", "Prevents UI overflow"),
+    "MAX_UI_UPDATE_FREQUENCY": ("files", "Balances responsiveness with performance"),
+    "MAX_ARCHIVE_SIZE_RATIO": ("ratio", "Archive size * 0.1 for validation"),
+    "MAX_DIALOG_WIDTH": ("pixels", "Prevents dialog overflow"),
+    "MAX_DIALOG_HEIGHT": ("pixels", "Prevents dialog overflow"),
+    "MIN_DIALOG_WIDTH": ("pixels", "Ensures usability"),
+    "MIN_DIALOG_HEIGHT": ("pixels", "Ensures usability"),
+    "MAX_TEXT_CONTENT_SIZE": ("characters", "Prevents performance issues in text dialogs"),
+    "MAX_TITLE_LENGTH": ("characters", "Prevents window title truncation"),
+    "MAX_COUNTER_ATTEMPTS": ("attempts", "Prevents infinite loops in filename generation"),
+    "MAX_FALLBACK_CONTENT_SIZE": ("characters", "Prevents UI overflow in fallback dialogs"),
+    "PROGRESS_BACKUP_PERCENT": ("%", "UI progress tracking for backup operations"),
+    "PROGRESS_MAIN_OP_PERCENT": ("%", "UI progress tracking for main operations"),
+    "PROGRESS_ZIP_PERCENT": ("%", "UI progress tracking for ZIP creation"),
+    "PROGRESS_START_MAIN": ("%", "Starting progress for main operations"),
+    "PROGRESS_START_ZIP": ("%", "Starting progress for ZIP creation"),
+}
+
+
 def get_constants_info() -> dict[str, dict[str, str]]:
     """Return information about all constants for debugging and documentation.
 
     Returns:
         Dictionary mapping constant names to their metadata (value, units, source).
     """
+    module_globals = globals()
     return {
-        "MAX_LOG_ENTRIES": {
-            "value": str(MAX_LOG_ENTRIES),
-            "units": "entries",
-            "source": "UI performance limit",
-        },
-        "PROGRESS_INCREMENT": {
-            "value": str(PROGRESS_INCREMENT),
-            "units": "%",
-            "source": "Standard UI update frequency",
-        },
-        "MAX_FILE_SIZE_MB": {
-            "value": str(MAX_FILE_SIZE_MB),
-            "units": "MB",
-            "source": "Windows FAT32 limit per Microsoft docs",
-        },
-        "MIN_FILE_SIZE_BYTES": {
-            "value": str(MIN_FILE_SIZE_BYTES),
-            "units": "bytes",
-            "source": "1 byte minimum per filesystem standards",
-        },
-        "DEFAULT_CHUNK_SIZE": {
-            "value": str(DEFAULT_CHUNK_SIZE),
-            "units": "bytes",
-            "source": "Optimal for most systems per Python shutil docs",
-        },
-        "MAX_RETRY_ATTEMPTS": {
-            "value": str(MAX_RETRY_ATTEMPTS),
-            "units": "attempts",
-            "source": "Industry standard retry limit",
-        },
-        "ICON_SIZES": {
-            "value": str(ICON_SIZES),
-            "units": "pixels",
-            "source": "Windows Shell API guidelines",
-        },
-        "MAX_STATUS_LENGTH": {
-            "value": str(MAX_STATUS_LENGTH),
-            "units": "characters",
-            "source": "Prevents UI overflow",
-        },
-        "MAX_UI_UPDATE_FREQUENCY": {
-            "value": str(MAX_UI_UPDATE_FREQUENCY),
-            "units": "files",
-            "source": "Balances responsiveness with performance",
-        },
-        "MAX_ARCHIVE_SIZE_RATIO": {
-            "value": str(MAX_ARCHIVE_SIZE_RATIO),
-            "units": "ratio",
-            "source": "Archive size * 0.1 for validation",
-        },
-        "MAX_DIALOG_WIDTH": {
-            "value": str(MAX_DIALOG_WIDTH),
-            "units": "pixels",
-            "source": "Prevents dialog overflow",
-        },
-        "MAX_DIALOG_HEIGHT": {
-            "value": str(MAX_DIALOG_HEIGHT),
-            "units": "pixels",
-            "source": "Prevents dialog overflow",
-        },
-        "MIN_DIALOG_WIDTH": {
-            "value": str(MIN_DIALOG_WIDTH),
-            "units": "pixels",
-            "source": "Ensures usability",
-        },
-        "MIN_DIALOG_HEIGHT": {
-            "value": str(MIN_DIALOG_HEIGHT),
-            "units": "pixels",
-            "source": "Ensures usability",
-        },
-        "MAX_TEXT_CONTENT_SIZE": {
-            "value": str(MAX_TEXT_CONTENT_SIZE),
-            "units": "characters",
-            "source": "Prevents performance issues in text dialogs",
-        },
-        "MAX_TITLE_LENGTH": {
-            "value": str(MAX_TITLE_LENGTH),
-            "units": "characters",
-            "source": "Prevents window title truncation",
-        },
-        "MAX_COUNTER_ATTEMPTS": {
-            "value": str(MAX_COUNTER_ATTEMPTS),
-            "units": "attempts",
-            "source": "Prevents infinite loops in filename generation",
-        },
-        "MAX_FALLBACK_CONTENT_SIZE": {
-            "value": str(MAX_FALLBACK_CONTENT_SIZE),
-            "units": "characters",
-            "source": "Prevents UI overflow in fallback dialogs",
-        },
-        "PROGRESS_BACKUP_PERCENT": {
-            "value": str(PROGRESS_BACKUP_PERCENT),
-            "units": "%",
-            "source": "UI progress tracking for backup operations",
-        },
-        "PROGRESS_MAIN_OP_PERCENT": {
-            "value": str(PROGRESS_MAIN_OP_PERCENT),
-            "units": "%",
-            "source": "UI progress tracking for main operations",
-        },
-        "PROGRESS_ZIP_PERCENT": {
-            "value": str(PROGRESS_ZIP_PERCENT),
-            "units": "%",
-            "source": "UI progress tracking for ZIP creation",
-        },
-        "PROGRESS_START_MAIN": {
-            "value": str(PROGRESS_START_MAIN),
-            "units": "%",
-            "source": "Starting progress for main operations",
-        },
-        "PROGRESS_START_ZIP": {
-            "value": str(PROGRESS_START_ZIP),
-            "units": "%",
-            "source": "Starting progress for ZIP creation",
-        },
+        name: {
+            "value": str(module_globals[name]),
+            "units": units,
+            "source": source,
+        }
+        for name, (units, source) in _CONSTANTS_METADATA.items()
     }
 
 

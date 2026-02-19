@@ -72,8 +72,8 @@ class TestMassToMolar:
         assert result > 0
 
     def test_zero_molecular_weight_raises_error(self):
-        """Test that zero molecular weight raises ZeroDivisionError."""
-        with pytest.raises(ZeroDivisionError):
+        """Test that zero molecular weight raises ValueError (DbC precondition)."""
+        with pytest.raises(ValueError, match="molecular_weight must be positive"):
             mass_to_molar(100.0, "kg/s", 0.0, "mol/s")
 
 
