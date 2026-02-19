@@ -1,1 +1,1 @@
-"""Python package for Function Generator."""
+# Python package marker

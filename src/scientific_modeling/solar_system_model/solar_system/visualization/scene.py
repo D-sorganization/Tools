@@ -1,5 +1,3 @@
-"""3D scene management for solar system visualization."""
-
 from __future__ import annotations
 
 import math

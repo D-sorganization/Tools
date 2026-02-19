@@ -1,5 +1,3 @@
-"""Tests for immersive visualization checklist requirements."""
-
 import pytest
 
 from solar_system.ui.widgets import ImmersionChecklistPanel

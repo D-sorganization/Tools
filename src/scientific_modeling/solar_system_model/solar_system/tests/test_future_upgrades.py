@@ -1,5 +1,3 @@
-"""Tests for planned future upgrades to the solar system model."""
-
 import numpy as np
 
 from solar_system.data.asteroids import generate_belt_particles

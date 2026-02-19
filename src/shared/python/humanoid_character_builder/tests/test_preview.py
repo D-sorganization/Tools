@@ -1,5 +1,3 @@
-"""Tests for humanoid character preview rendering."""
-
 import sys
 from unittest.mock import patch
 

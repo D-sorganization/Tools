@@ -1,1 +1,1 @@
-"""User interface components for Inertia Calculator."""
+# Inertia Calculator UI

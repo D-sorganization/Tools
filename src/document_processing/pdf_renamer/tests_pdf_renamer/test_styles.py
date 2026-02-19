@@ -1,5 +1,3 @@
-"""Tests for PDF style detection and classification."""
-
 from pdf_renamer.renamer import Renamer
 
 

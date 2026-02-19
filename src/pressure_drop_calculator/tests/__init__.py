@@ -1,1 +1,1 @@
-"""Test suite for Pressure Drop Calculator."""
+# Tests package marker

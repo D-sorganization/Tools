@@ -1,1 +1,1 @@
-"""User interface components for Optimizer GUI."""
+# Optimizer GUI UI Package

@@ -1,5 +1,4 @@
-"""PyQt6 user interface for URDF Builder GUI."""
-
+# URDF Builder GUI PyQt6 UI
 from .main_window import URDFBuilderWindow
 
 __all__ = ["URDFBuilderWindow"]

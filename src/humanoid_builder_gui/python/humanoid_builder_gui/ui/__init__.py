@@ -1,1 +1,1 @@
-"""User interface components for Humanoid Builder GUI."""
+# Humanoid Character Builder GUI UI Package

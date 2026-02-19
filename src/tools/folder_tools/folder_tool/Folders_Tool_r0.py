@@ -1,9 +1,4 @@
-"""Folder organization and management tool with tkinter GUI.
-
-Provides directory tree visualization, batch file operations, and folder
-structure analysis for organizing project files.
-"""
-
+# Standard library imports
 import logging
 import tkinter as tk
 

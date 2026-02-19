@@ -552,10 +552,12 @@ class CalculatorStateMixin:
                 return self.get_table_text(widget)
             if isinstance(widget, QTextEdit):
                 return widget.toPlainText()
-            if isinstance(widget, QLabel) or hasattr(widget, "text"):
+            if isinstance(widget, QLabel):
                 return widget.text()
+            if hasattr(widget, "text"):
+                return str(widget.text())
             if hasattr(widget, "toPlainText"):
-                return widget.toPlainText()
+                return str(widget.toPlainText())
             return ""
         except (RuntimeError, AttributeError):
             return ""

@@ -18,7 +18,7 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from PyQt6.QtCore import Qt, QTimer, pyqtSignal
+from PyQt6.QtCore import QPoint, Qt, QTimer, pyqtSignal
 from PyQt6.QtGui import QAction, QFont, QKeySequence
 from PyQt6.QtWidgets import (
     QApplication,
@@ -542,9 +542,11 @@ class DataProcessorWidget(DataProcessorOpsMixin, BaseCalculatorWidget):
             h += f"<br><br>Mean: {cs.mean:.4f}<br>Std: {cs.std:.4f}<br>Min: {cs.min_val}<br>Max: {cs.max_val}"
         self.stats_text.setHtml(h)
 
-    def _show_table_context_menu(self, pos) -> None:
+    def _show_table_context_menu(self, pos: QPoint) -> None:
         menu = QMenu()
-        menu.addAction("Copy Selected").triggered.connect(self._copy_selected)
+        action = menu.addAction("Copy Selected")
+        if action is not None:
+            action.triggered.connect(self._copy_selected)
         menu.exec(self.data_table.mapToGlobal(pos))
 
     def _copy_selected(self) -> None:
@@ -558,8 +560,8 @@ class DataProcessorWidget(DataProcessorOpsMixin, BaseCalculatorWidget):
                 "\t".join(
                     [
                         (
-                            self.data_table.item(r, c).text()
-                            if self.data_table.item(r, c)
+                            item.text()
+                            if (item := self.data_table.item(r, c)) is not None
                             else ""
                         )
                         for c in cs
@@ -568,7 +570,9 @@ class DataProcessorWidget(DataProcessorOpsMixin, BaseCalculatorWidget):
                 for r in rs
             ]
         )
-        QApplication.clipboard().setText(txt)
+        clipboard = QApplication.clipboard()
+        if clipboard is not None:
+            clipboard.setText(txt)
 
     def _on_data_loaded(self, path: str) -> None:
         self.current_page = 0
@@ -577,8 +581,8 @@ class DataProcessorWidget(DataProcessorOpsMixin, BaseCalculatorWidget):
     def _on_data_modified(self) -> None:
         pass
 
-    def _set_status(self, msg: str) -> None:
-        self.status_label.setText(msg)
+    def _set_status(self, message: str, success: bool = False) -> None:
+        self.status_label.setText(message)
         QTimer.singleShot(5000, lambda: self.status_label.setText("Ready"))
 
 

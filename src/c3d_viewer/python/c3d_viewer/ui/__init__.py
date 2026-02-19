@@ -1,1 +1,1 @@
-"""User interface components for C3D Viewer."""
+# C3D Viewer GUI UI Package

@@ -1,1 +1,1 @@
-"""Test suite for Function Generator."""
+# Tests package marker

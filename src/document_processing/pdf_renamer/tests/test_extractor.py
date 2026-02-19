@@ -1,5 +1,3 @@
-"""Tests for PDF metadata and content extractors."""
-
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 

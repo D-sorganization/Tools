@@ -1,1 +1,1 @@
-"""User interface components for Pressure Drop Calculator."""
+# UI package marker

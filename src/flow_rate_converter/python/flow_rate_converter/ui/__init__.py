@@ -1,1 +1,1 @@
-"""User interface components for Flow Rate Converter."""
+# Flow Rate Converter UI

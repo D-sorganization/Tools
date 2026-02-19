@@ -1,1 +1,1 @@
-"""Python package for Syngas Compression."""
+# Python package marker

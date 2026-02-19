@@ -627,7 +627,7 @@ def _compute_pure_viscosities(
         Dictionary of {component: viscosity_Pa_s}
     """
     pure_viscosities: dict[str, float] = {}
-    for component in composition:
+    for component in composition.keys():
         if component not in GAS_DATABASE:
             logger.warning(f"Component '{component}' not found, using air properties")
             pure_viscosities[component] = float(

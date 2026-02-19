@@ -1,5 +1,4 @@
-"""PyQt6 user interface for Syngas Water Calculator."""
-
+# Syngas Water Calculator PyQt6 UI
 from .main_window import SyngasWaterCalculatorWindow
 
 __all__ = ["SyngasWaterCalculatorWindow"]

@@ -1,5 +1,3 @@
-"""PDF metadata and content extractors for title identification."""
-
 from __future__ import annotations
 
 import logging

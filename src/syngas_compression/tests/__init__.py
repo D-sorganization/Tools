@@ -1,1 +1,1 @@
-"""Test suite for Syngas Compression."""
+# Tests package marker

@@ -1,5 +1,3 @@
-"""LLM integration layer for intelligent PDF title extraction."""
-
 import json
 import logging
 import time

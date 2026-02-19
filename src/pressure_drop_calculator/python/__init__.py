@@ -1,1 +1,1 @@
-"""Python package for Pressure Drop Calculator."""
+# Python package marker

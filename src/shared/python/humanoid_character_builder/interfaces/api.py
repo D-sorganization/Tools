@@ -254,7 +254,7 @@ class CharacterBuildResult:
                     return False
             return True
 
-        except (ValueError, RuntimeError, OSError) as e:
+        except Exception as e:
             logger.error(f"Simulation failed: {e}")
             return False
 
@@ -299,7 +299,7 @@ class CharacterBuildResult:
                     if elapsed < dt:
                         time.sleep(dt - elapsed)
 
-        except (ValueError, RuntimeError, OSError) as e:
+        except Exception as e:
             logger.error(f"Preview failed: {e}")
 
 

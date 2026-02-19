@@ -1,5 +1,3 @@
-"""File renaming engine that applies extracted titles to PDF filenames."""
-
 import logging
 from pathlib import Path
 

@@ -1,5 +1,3 @@
-"""Tests for the file renaming engine."""
-
 from pdf_renamer.renamer import Renamer
 
 

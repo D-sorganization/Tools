@@ -1,5 +1,3 @@
-"""Tests for PDF metadata and content extractors."""
-
 from unittest.mock import MagicMock, patch
 
 from pdf_renamer.extractor import extract_metadata

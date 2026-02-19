@@ -1,1 +1,1 @@
-"""Test suite for URDF Builder GUI."""
+# Parametric URDF Builder Tests

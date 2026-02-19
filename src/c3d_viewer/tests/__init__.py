@@ -1,1 +1,1 @@
-"""Test suite for C3D Viewer."""
+# C3D Motion Capture Viewer Tests

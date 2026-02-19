@@ -1,1 +1,1 @@
-"""Test suite for Syngas Water Calculator."""
+# Syngas Water Calculator Tests

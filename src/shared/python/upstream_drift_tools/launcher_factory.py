@@ -192,7 +192,7 @@ def launch_app(
                 logger.warning("Could not set window icon: %s", icon_err)
 
         window.show()
-        return app.exec()
+        return int(app.exec())
 
     except (RuntimeError, OSError, ValueError, TypeError) as exc:
         logger.error(

@@ -1,5 +1,3 @@
-"""Type definitions and data classes for the PDF Renamer."""
-
 from dataclasses import dataclass
 
 

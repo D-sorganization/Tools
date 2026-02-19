@@ -1,5 +1,3 @@
-"""Command-line interface for the PDF Renamer tool."""
-
 import argparse
 import logging
 import sys

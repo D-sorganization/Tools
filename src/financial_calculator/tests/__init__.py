@@ -1,1 +1,1 @@
-"""Test suite for Financial Calculator."""
+# Financial Calculator Tests
