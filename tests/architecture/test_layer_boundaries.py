@@ -4,11 +4,14 @@ Verifies that:
 - src/shared/ does not import from tool-specific code
 - Tool core/ modules do not import from ui/ modules
 - Calculation engines are pure (no Qt imports)
+- No circular dependencies between shared sub-packages
+- Source libraries use logging, not print()
+- Typed exception modules define proper hierarchies
 
 These tests enforce architectural invariants to prevent coupling
 regressions as the codebase evolves.
 
-Addresses #765 (Phase 4: DbC standardization, architecture tests).
+Addresses #765 (Phase 4), #832 (orthogonality/boundary checks).
 """
 
 from __future__ import annotations
@@ -332,3 +335,169 @@ class TestNoWildcardImports:
 
         msg = f"Wildcard imports found ({len(violations)}):\n" + "\n".join(violations)
         assert not violations, msg
+
+
+# ─── Test: No bare print() in library code ────────────────────────
+
+
+class TestNoPrintInLibraryCode:
+    """Verify that src/shared/ library code uses logging, not print()."""
+
+    # Directories whose code legitimately uses print (CLI entry-points, debug
+    # utilities that explicitly support file=... output, etc.)
+    _ALLOWED_DIRS = {"tests", "scripts", "cli"}
+    _ALLOWED_FILES = {"__main__.py"}
+
+    def test_shared_library_has_no_bare_print_calls(self) -> None:
+        """Library code under src/shared/ must use logging, not print().
+
+        Debug utilities may write to a file argument, but raw print()
+        calls to stdout indicate missing logging discipline.
+        """
+        violations: list[str] = []
+        shared_dir = SRC_DIR / "shared"
+        for filepath in _collect_python_files(shared_dir):
+            # Skip test helpers and CLI entry-points
+            parts = set(filepath.parts)
+            if parts & self._ALLOWED_DIRS:
+                continue
+            if filepath.name in self._ALLOWED_FILES:
+                continue
+
+            try:
+                source = filepath.read_text(encoding="utf-8", errors="replace")
+                tree = ast.parse(source, filename=str(filepath))
+            except (SyntaxError, ValueError):
+                continue
+
+            for node in ast.walk(tree):
+                if (
+                    isinstance(node, ast.Call)
+                    and isinstance(node.func, ast.Name)
+                    and node.func.id == "print"
+                ):
+                    rel = filepath.relative_to(REPO_ROOT)
+                    violations.append(f"  {rel}:{node.lineno} print()")
+
+        assert (
+            not violations
+        ), f"Shared library uses print() ({len(violations)} calls):\n" + "\n".join(
+            violations
+        )
+
+
+# ─── Test: No circular imports between shared sub-packages ────────
+
+
+class TestNoCrossCouplingInShared:
+    """Verify shared sub-packages only use allowed dependency directions.
+
+    The shared layer has sub-packages with an explicit dependency DAG.
+    Imports that violate this DAG are architectural regressions.
+    """
+
+    # Top-level sub-packages under src/shared/python/
+    SHARED_PACKAGES = {
+        "model_generation",
+        "signal_toolkit",
+        "upstream_drift_tools",
+        "humanoid_character_builder",
+        "plot_theme",
+        "plot_engine",
+        "chat",
+        "theme",
+        "calc_backend",
+    }
+
+    # Allowed directed dependencies: source -> {allowed targets}
+    # calc_backend routers depend on upstream_drift_tools calculators
+    # plot_engine depends on plot_theme for colour palettes
+    # model_generation.humanoid bridges to humanoid_character_builder
+    ALLOWED_DEPS: dict[str, set[str]] = {
+        "calc_backend": {"upstream_drift_tools"},
+        "plot_engine": {"plot_theme"},
+        "model_generation": {"humanoid_character_builder"},
+    }
+
+    def test_no_unauthorized_cross_package_imports(self) -> None:
+        """Sub-packages must not import siblings outside the allowed DAG.
+
+        Allowed dependencies are listed in ALLOWED_DEPS. Any import
+        outside that map is flagged as a violation.
+        """
+        shared_python = SRC_DIR / "shared" / "python"
+        violations: list[str] = []
+
+        for pkg in self.SHARED_PACKAGES:
+            pkg_dir = shared_python / pkg
+            if not pkg_dir.exists():
+                continue
+            allowed = self.ALLOWED_DEPS.get(pkg, set())
+            for filepath in _collect_python_files(pkg_dir):
+                imports = _extract_imports(filepath)
+                for imp in imports:
+                    if imp.get("level", 0) > 0:
+                        continue  # skip relative
+                    module_root = imp["module"].split(".")[0]
+                    if (
+                        module_root in self.SHARED_PACKAGES
+                        and module_root != pkg
+                        and module_root not in allowed
+                    ):
+                        rel = filepath.relative_to(REPO_ROOT)
+                        violations.append(
+                            f"  {rel}:{imp['lineno']} "
+                            f"'{pkg}' imports unauthorized sibling "
+                            f"'{module_root}'"
+                        )
+
+        assert not violations, (
+            f"Unauthorized cross-package imports in shared/ "
+            f"({len(violations)} violations):\n" + "\n".join(violations)
+        )
+
+
+# ─── Test: Exception hierarchy consistency ────────────────────────
+
+
+class TestExceptionHierarchyConsistency:
+    """Verify that custom exception modules define proper hierarchies."""
+
+    def test_data_processing_exceptions_importable(self) -> None:
+        """All data-processing exceptions must be importable."""
+        from upstream_drift_tools.data_processing.exceptions import (  # noqa: F401
+            ColumnNotFoundError,
+            DataNotLoadedError,
+            DataProcessingError,
+            FileIOError,
+            FilterError,
+            FitError,
+            TransformationError,
+            UnsupportedOperationError,
+        )
+
+    def test_all_data_processing_exceptions_share_base(self) -> None:
+        """Every exception must inherit from DataProcessingError."""
+        from upstream_drift_tools.data_processing.exceptions import (
+            ColumnNotFoundError,
+            DataNotLoadedError,
+            DataProcessingError,
+            FileIOError,
+            FilterError,
+            FitError,
+            TransformationError,
+            UnsupportedOperationError,
+        )
+
+        for exc_class in (
+            DataNotLoadedError,
+            ColumnNotFoundError,
+            FileIOError,
+            FilterError,
+            FitError,
+            TransformationError,
+            UnsupportedOperationError,
+        ):
+            assert issubclass(
+                exc_class, DataProcessingError
+            ), f"{exc_class.__name__} does not inherit DataProcessingError"
