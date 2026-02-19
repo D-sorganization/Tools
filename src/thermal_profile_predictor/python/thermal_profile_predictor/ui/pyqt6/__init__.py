@@ -1,4 +1,5 @@
-# Thermal Profile Predictor PyQt6 UI
+"""PyQt6 user interface for Thermal Profile Predictor."""
+
 from .main_window import ThermalProfilePredictorWindow
 
 __all__ = ["ThermalProfilePredictorWindow"]

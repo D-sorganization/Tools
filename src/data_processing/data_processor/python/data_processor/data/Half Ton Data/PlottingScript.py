@@ -1,3 +1,5 @@
+"""Plotting script for Half Ton vehicle data visualization."""
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd

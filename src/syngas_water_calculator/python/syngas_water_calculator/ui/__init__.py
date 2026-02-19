@@ -1,1 +1,1 @@
-# Syngas Water Calculator UI
+"""User interface components for Syngas Water Calculator."""

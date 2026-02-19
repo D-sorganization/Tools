@@ -410,7 +410,7 @@ class UnitConverterWidget(BaseCalculatorWindow):
 
             conv.update_last_used()
 
-        except Exception as e:
+        except (ValueError, KeyError, ZeroDivisionError, ArithmeticError) as e:
             logger.debug("Conversion error: %s", e)
 
     def _swap_values(self, index: int) -> None:
@@ -511,7 +511,7 @@ class UnitConverterWidget(BaseCalculatorWindow):
             saved = [ConversionRow.from_dict(d) for d in json.loads(str(saved_json))]
             recent = [ConversionRow.from_dict(d) for d in json.loads(str(recent_json))]
             self.rows = recent[:3] + saved[:3]
-        except Exception:
+        except (json.JSONDecodeError, ValueError, KeyError, TypeError):
             self.rows = []
 
         while len(self.rows) < 6:

@@ -529,7 +529,7 @@ class PolynomialFitter:
         Returns:
             Array of coefficients [c0, c1, c2, ...].
         """
-        max_order = max(int(k[1:]) for k in params.keys())
+        max_order = max(int(k[1:]) for k in params)
         coeffs = np.zeros(max_order + 1)
         for k, v in params.items():
             idx = int(k[1:])

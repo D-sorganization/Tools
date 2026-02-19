@@ -1,1 +1,1 @@
-# Flow Rate Converter Tests
+"""Test suite for Flow Rate Converter."""

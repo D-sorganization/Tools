@@ -1,1 +1,1 @@
-# Adam Optimizer Tests
+"""Test suite for Optimizer GUI."""

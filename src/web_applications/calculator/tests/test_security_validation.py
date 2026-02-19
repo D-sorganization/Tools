@@ -1,3 +1,5 @@
+"""Tests for input validation and security measures."""
+
 import pytest
 
 from web_applications.calculator.webapp import _parse_payload, _validate_security

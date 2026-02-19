@@ -1,4 +1,9 @@
-# Standard library imports
+"""Folder organization and management tool with tkinter GUI.
+
+Provides directory tree visualization, batch file operations, and folder
+structure analysis for organizing project files.
+"""
+
 import logging
 import tkinter as tk
 

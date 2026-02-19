@@ -474,7 +474,7 @@ class ODESolverWindow(QMainWindow):
 
             # Header
             header = "    t    |" + "|".join(
-                f"  {var:^10}  " for var in derivatives.keys()
+                f"  {var:^10}  " for var in derivatives
             )
             results.append(header)
             results.append("-" * len(header))

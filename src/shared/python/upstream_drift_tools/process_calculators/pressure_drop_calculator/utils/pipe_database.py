@@ -327,7 +327,7 @@ def get_pipe_spec(
 def list_available_sizes() -> list[str]:
     """List all available nominal pipe sizes."""
     sizes = sorted(
-        set(nps for nps, _ in STEEL_PIPE_DIMENSIONS.keys()),
+        set(nps for nps, _ in STEEL_PIPE_DIMENSIONS),
         key=lambda x: float(x.replace("/", ".")) if "/" in x else float(x),
     )
     return sizes
@@ -336,7 +336,7 @@ def list_available_sizes() -> list[str]:
 def list_schedules_for_size(nominal_size: str) -> list[str]:
     """List all available schedules for a given nominal size."""
     schedules = [
-        sch for nps, sch in STEEL_PIPE_DIMENSIONS.keys() if nps == nominal_size
+        sch for nps, sch in STEEL_PIPE_DIMENSIONS if nps == nominal_size
     ]
     return sorted(schedules, key=lambda x: "000" if x in ["STD", "XS", "XXS"] else x)
 

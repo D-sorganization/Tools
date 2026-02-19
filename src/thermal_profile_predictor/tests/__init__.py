@@ -1,1 +1,1 @@
-# Thermal Profile Predictor Tests
+"""Test suite for Thermal Profile Predictor."""

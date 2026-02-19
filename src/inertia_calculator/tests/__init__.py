@@ -1,1 +1,1 @@
-# Inertia Calculator Tests
+"""Test suite for Inertia Calculator."""

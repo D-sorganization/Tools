@@ -1,3 +1,5 @@
+"""Core title extraction logic for PDF documents."""
+
 from __future__ import annotations
 
 import logging

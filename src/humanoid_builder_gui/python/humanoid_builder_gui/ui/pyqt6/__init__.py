@@ -1,1 +1,1 @@
-# Humanoid Character Builder PyQt6 UI
+"""PyQt6 user interface for Humanoid Builder GUI."""

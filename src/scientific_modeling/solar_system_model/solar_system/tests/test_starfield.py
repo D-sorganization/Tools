@@ -1,3 +1,5 @@
+"""Tests for starfield background rendering."""
+
 import numpy as np
 
 from solar_system.data.star_catalog import (

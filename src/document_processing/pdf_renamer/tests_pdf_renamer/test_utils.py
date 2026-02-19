@@ -1,3 +1,5 @@
+"""Tests for PDF Renamer utility functions."""
+
 from pdf_renamer.utils import get_last_name, sanitize_filename, to_title_case
 
 

@@ -1,1 +1,1 @@
-# Humanoid Character Builder GUI Tests
+"""Test suite for Humanoid Builder GUI."""

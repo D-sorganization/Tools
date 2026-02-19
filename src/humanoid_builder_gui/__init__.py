@@ -1,1 +1,1 @@
-# Humanoid Character Builder GUI Package
+"""Humanoid character builder GUI application."""

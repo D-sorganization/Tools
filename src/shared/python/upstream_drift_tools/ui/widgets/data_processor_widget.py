@@ -473,7 +473,7 @@ class DataProcessorWidget(DataProcessorOpsMixin, BaseCalculatorWidget):
         self.data_table.setHorizontalHeaderLabels(list(page.columns))
         for r, (_, row) in enumerate(page.iterrows()):
             for c, v in enumerate(row):
-                item = QTableWidgetItem(str(v) if pd.notna(v) else "")
+                item = QTableWidgetItem(str(v) if v is not None and v == v else "")
                 item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                 self.data_table.setItem(r, c, item)
         self.page_label.setText(

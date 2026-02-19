@@ -1,3 +1,5 @@
+"""Tests for the web-based calculator application."""
+
 import unittest
 
 from web_applications.calculator.calculator import TI89Calculator

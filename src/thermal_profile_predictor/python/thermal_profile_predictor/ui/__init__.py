@@ -1,1 +1,1 @@
-# Thermal Profile Predictor UI
+"""User interface components for Thermal Profile Predictor."""

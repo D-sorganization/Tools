@@ -1,1 +1,1 @@
-# Steam Engine Calculator UI
+"""User interface components for Steam Engine Calculator."""

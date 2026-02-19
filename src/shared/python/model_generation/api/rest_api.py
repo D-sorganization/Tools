@@ -328,8 +328,13 @@ class ModelGenerationAPI:
                     response = route.handler(request)
                     self._add_security_headers(response)
                     return response
-                except Exception as e:
-                    logger.exception("Error handling request")
+                except (ValueError, TypeError, KeyError) as e:
+                    logger.warning("Client error handling request: %s", e)
+                    response = APIResponse.error(str(e), 422)
+                    self._add_security_headers(response)
+                    return response
+                except (OSError, RuntimeError) as e:
+                    logger.exception("Server error handling request")
                     response = APIResponse.error(str(e), 500)
                     self._add_security_headers(response)
                     return response

@@ -1,3 +1,5 @@
+"""Caching layer for PDF title extraction results."""
+
 import logging
 import sqlite3
 from datetime import datetime

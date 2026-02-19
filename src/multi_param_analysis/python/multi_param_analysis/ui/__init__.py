@@ -1,1 +1,1 @@
-# Multi-Parameter Analysis GUI UI Package
+"""User interface components for Multi-Parameter Analysis."""

@@ -1,1 +1,1 @@
-# Baghouse Calculator Tests
+"""Test suite for Baghouse Calculator."""

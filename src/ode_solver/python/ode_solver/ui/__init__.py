@@ -1,1 +1,1 @@
-# ODE Solver UI
+"""User interface components for ODE Solver."""

@@ -332,7 +332,7 @@ class UnitPreferencesManager(QObject):
             return value
         try:
             return self.converter.convert(value, from_unit, si_unit).value
-        except Exception:
+        except (ValueError, KeyError, ZeroDivisionError):
             return value
 
     def convert_from_si(
@@ -345,7 +345,7 @@ class UnitPreferencesManager(QObject):
             return value
         try:
             return self.converter.convert(value, si_unit, to_unit).value
-        except Exception:
+        except (ValueError, KeyError, ZeroDivisionError):
             return value
 
 

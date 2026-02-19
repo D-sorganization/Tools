@@ -1,1 +1,1 @@
-# Steam Engine Calculator Tests
+"""Test suite for Steam Engine Calculator."""

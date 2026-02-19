@@ -1,3 +1,5 @@
+"""Tests for deep recursion handling in calculator expressions."""
+
 import sys
 
 import pytest

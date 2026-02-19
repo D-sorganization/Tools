@@ -1,1 +1,1 @@
-# UI package marker
+"""User interface components for Syngas Compression."""
