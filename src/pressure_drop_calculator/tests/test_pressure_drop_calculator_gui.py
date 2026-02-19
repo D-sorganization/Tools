@@ -98,21 +98,23 @@ class TestPressureDropGUI:
                 PressureDropCalculatorWidget,
             )
 
-            with patch.object(
-                PressureDropCalculatorWidget, "_init_ui", return_value=None
-            ):
-                with patch.object(
+            with (
+                patch.object(
+                    PressureDropCalculatorWidget, "_init_ui", return_value=None
+                ),
+                patch.object(
                     PressureDropCalculatorWidget, "_apply_styling", return_value=None
-                ):
-                    with patch.object(
-                        PressureDropCalculatorWidget,
-                        "_connect_signals",
-                        return_value=None,
-                    ):
-                        widget = PressureDropCalculatorWidget.__new__(
-                            PressureDropCalculatorWidget
-                        )
-                        assert widget is not None
+                ),
+                patch.object(
+                    PressureDropCalculatorWidget,
+                    "_connect_signals",
+                    return_value=None,
+                ),
+            ):
+                widget = PressureDropCalculatorWidget.__new__(
+                    PressureDropCalculatorWidget
+                )
+                assert widget is not None
         except ImportError as e:
             pytest.skip(f"Qt not available: {e}")
 

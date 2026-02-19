@@ -137,17 +137,17 @@ class TestTRCVesselDesignerGUI:
                 TRCVesselDesignerWidget,
             )
 
-            with patch.object(TRCVesselDesignerWidget, "_init_ui", return_value=None):
-                with patch.object(
+            with (
+                patch.object(TRCVesselDesignerWidget, "_init_ui", return_value=None),
+                patch.object(
                     TRCVesselDesignerWidget, "_apply_styling", return_value=None
-                ):
-                    with patch.object(
-                        TRCVesselDesignerWidget, "calculate_geometry", return_value=None
-                    ):
-                        widget = TRCVesselDesignerWidget.__new__(
-                            TRCVesselDesignerWidget
-                        )
-                        assert widget is not None
+                ),
+                patch.object(
+                    TRCVesselDesignerWidget, "calculate_geometry", return_value=None
+                ),
+            ):
+                widget = TRCVesselDesignerWidget.__new__(TRCVesselDesignerWidget)
+                assert widget is not None
         except ImportError as e:
             pytest.skip(f"Qt not available: {e}")
 

@@ -371,9 +371,12 @@ class CustomThemeEditor(QDialog):
 
         valid = bool(name)
 
-        if valid and not self.edit_theme:
-            if name in self.theme_manager.get_builtin_themes():
-                valid = False
+        if (
+            valid
+            and not self.edit_theme
+            and name in self.theme_manager.get_builtin_themes()
+        ):
+            valid = False
 
         if self.save_btn:
             self.save_btn.setEnabled(valid)

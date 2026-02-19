@@ -176,12 +176,10 @@ def _validate_security(value: str | None) -> None:
         raise ValueError("Security violation: Restricted input pattern detected.")
 
     for keyword in FORBIDDEN_KEYWORDS:
-        if keyword in value:
-            # Check if it appears as a distinct word boundary using pre-compiled regex
-            if KEYWORD_REGEXES[keyword].search(value):
-                raise ValueError(
-                    f"Security violation: Restricted keyword '{keyword}' detected."
-                )
+        if keyword in value and KEYWORD_REGEXES[keyword].search(value):
+            raise ValueError(
+                f"Security violation: Restricted keyword '{keyword}' detected."
+            )
 
 
 def _parse_payload(raw_payload: Mapping[str, object]) -> CalculationPayload:

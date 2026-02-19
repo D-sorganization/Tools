@@ -35,27 +35,25 @@ class ScienceAuditor(ast.NodeVisitor):
 
     def visit_Call(self, node: ast.Call) -> None:  # noqa: N802
         # 2. Trig Safety
-        if isinstance(node.func, ast.Attribute) and node.func.attr in [
-            "sin",
-            "cos",
-            "tan",
-        ]:
-            # Flag if the argument is a numeric constant (likely ambiguous units)
-            if any(
+        if (
+            isinstance(node.func, ast.Attribute)
+            and node.func.attr in ["sin", "cos", "tan"]
+            and any(
                 isinstance(arg, ast.Constant) and isinstance(arg.value, int | float)
                 for arg in node.args
-            ):
-                RISKS.append(
-                    {
-                        "line": node.lineno,
-                        "type": "Unit Ambiguity",
-                        "msg": (
-                            "Trig function called with a numeric constant. "
-                            "Check if argument is in radians "
-                            "(Python math module expects radians)."
-                        ),
-                    },
-                )
+            )
+        ):
+            RISKS.append(
+                {
+                    "line": node.lineno,
+                    "type": "Unit Ambiguity",
+                    "msg": (
+                        "Trig function called with a numeric constant. "
+                        "Check if argument is in radians "
+                        "(Python math module expects radians)."
+                    ),
+                },
+            )
         self.generic_visit(node)
 
 

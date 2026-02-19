@@ -108,15 +108,17 @@ class TestElectrodeAdvisorGUI:
             )
 
             # Mock the Qt widgets to avoid display issues
-            with patch.object(ElectrodeAdvisorWidget, "_init_ui", return_value=None):
-                with patch.object(
+            with (
+                patch.object(ElectrodeAdvisorWidget, "_init_ui", return_value=None),
+                patch.object(
                     ElectrodeAdvisorWidget, "_apply_styling", return_value=None
-                ):
-                    with patch.object(
-                        ElectrodeAdvisorWidget, "calculate_system", return_value=None
-                    ):
-                        widget = ElectrodeAdvisorWidget.__new__(ElectrodeAdvisorWidget)
-                        assert widget is not None
+                ),
+                patch.object(
+                    ElectrodeAdvisorWidget, "calculate_system", return_value=None
+                ),
+            ):
+                widget = ElectrodeAdvisorWidget.__new__(ElectrodeAdvisorWidget)
+                assert widget is not None
         except ImportError as e:
             pytest.skip(f"Qt not available: {e}")
 

@@ -528,11 +528,9 @@ class SteamCalculationEngine:
     def get_saturation_pressure(self, temperature: float) -> float:
         """Get saturation pressure for given temperature"""
         try:
-            if CANTERA_AVAILABLE and self.water is not None:
-                # Check for None explicitly for mypy, though self.water is Any now
-                if self.water:
-                    self.water.TQ = temperature, 1.0
-                    return float(self.water.P)
+            if CANTERA_AVAILABLE and self.water is not None and self.water:
+                self.water.TQ = temperature, 1.0
+                return float(self.water.P)
             # Use Antoine equation
             log_p_mmhg = ANTOINE_A - ANTOINE_B / (temperature - ANTOINE_C_KELVIN)
             pressure_mmhg = 10**log_p_mmhg

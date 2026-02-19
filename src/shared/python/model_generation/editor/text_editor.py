@@ -602,17 +602,19 @@ class URDFTextEditor:
                 messages,
             )
 
-            if joint_type in {"revolute", "prismatic"}:
-                if joint_elem.find("limit") is None:
-                    messages.append(
-                        ValidationMessage(
-                            severity=ValidationSeverity.WARNING,
-                            line=self._find_element_line(joint_elem),
-                            column=0,
-                            message=(f"{joint_type} joint missing limit element"),
-                            element=name,
-                        )
+            if (
+                joint_type in {"revolute", "prismatic"}
+                and joint_elem.find("limit") is None
+            ):
+                messages.append(
+                    ValidationMessage(
+                        severity=ValidationSeverity.WARNING,
+                        line=self._find_element_line(joint_elem),
+                        column=0,
+                        message=(f"{joint_type} joint missing limit element"),
+                        element=name,
                     )
+                )
 
     def _validate_joint_refs(
         self,

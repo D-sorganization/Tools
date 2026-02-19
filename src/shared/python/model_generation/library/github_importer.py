@@ -217,15 +217,18 @@ class GitHubImporter:
             repo_name = path_parts[1]
             repo_id = f"github_{owner}_{repo_name}"
 
-            if skip_existing and hasattr(self.library, "_repositories"):
-                if repo_id in self.library._repositories:
-                    return ImportResult(
-                        source_url=url,
-                        status="exists",
-                        model_id=repo_id,
-                        name=f"{owner}/{repo_name}",
-                        description="Repository already exists in library",
-                    )
+            if (
+                skip_existing
+                and hasattr(self.library, "_repositories")
+                and repo_id in self.library._repositories
+            ):
+                return ImportResult(
+                    source_url=url,
+                    status="exists",
+                    model_id=repo_id,
+                    name=f"{owner}/{repo_name}",
+                    description="Repository already exists in library",
+                )
 
             branch, description = self._fetch_repo_metadata(url, owner, repo_name)
 
