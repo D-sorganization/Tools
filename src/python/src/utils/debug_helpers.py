@@ -264,28 +264,41 @@ def get_system_diagnostics(
     )
 
 
+def format_diagnostics() -> str:
+    """Format system diagnostics as a string.
+
+    Returns:
+        Formatted diagnostics string.
+    """
+    diag = get_system_diagnostics()
+    lines = [
+        "\n=== System Diagnostics ===",
+        f"Python: {diag.python_version.split()[0]}",
+        f"Platform: {diag.platform}",
+        f"PID: {diag.process_id}",
+        f"Threads: {diag.thread_count}",
+        f"Memory: {diag.memory_mb:.2f} MB",
+        f"CPUs: {diag.cpu_count}",
+        "\nEnvironment:",
+    ]
+    for key, value in diag.environment.items():
+        lines.append(f"  {key}={value[:50]}...")
+    lines.append("==========================\n")
+    return "\n".join(lines)
+
+
 def print_diagnostics(file: Any = None) -> None:
-    """Print system diagnostics.
+    """Log system diagnostics (or write to *file* for backward compat).
 
     Args:
-        file: File to print to (default: stdout)
+        file: File to write to. When *None*, diagnostics are emitted
+              via the module logger at INFO level instead of stdout.
     """
-    if file is None:
-        file = sys.stdout
-
-    diag = get_system_diagnostics()
-
-    print("\n=== System Diagnostics ===", file=file)  # noqa: T201
-    print(f"Python: {diag.python_version.split()[0]}", file=file)  # noqa: T201
-    print(f"Platform: {diag.platform}", file=file)  # noqa: T201
-    print(f"PID: {diag.process_id}", file=file)  # noqa: T201
-    print(f"Threads: {diag.thread_count}", file=file)  # noqa: T201
-    print(f"Memory: {diag.memory_mb:.2f} MB", file=file)  # noqa: T201
-    print(f"CPUs: {diag.cpu_count}", file=file)  # noqa: T201
-    print("\nEnvironment:", file=file)  # noqa: T201
-    for key, value in diag.environment.items():
-        print(f"  {key}={value[:50]}...", file=file)  # noqa: T201
-    print("==========================\n", file=file)  # noqa: T201
+    text = format_diagnostics()
+    if file is not None:
+        file.write(text + "\n")
+    else:
+        logger.info(text)
 
 
 # =============================================================================

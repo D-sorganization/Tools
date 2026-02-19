@@ -228,35 +228,56 @@ def get_call_stack(
     return frames
 
 
+def format_call_stack(
+    skip_frames: int = 1,
+    max_frames: int = 10,
+    include_locals: bool = False,
+) -> str:
+    """Format the current call stack as a string.
+
+    Args:
+        skip_frames: Number of frames to skip
+        max_frames: Maximum frames to format
+        include_locals: Include local variables
+
+    Returns:
+        Formatted call stack string.
+    """
+    frames = get_call_stack(skip_frames + 1, max_frames, include_locals)
+
+    lines = ["\n=== Call Stack ==="]
+    for i, frame in enumerate(frames):
+        lines.append(f"\n[{i}] {frame}")
+        if frame.code_context:
+            lines.append(f"    > {frame.code_context}")
+        if frame.local_vars:
+            lines.append("    Locals:")
+            for key, value in frame.local_vars.items():
+                lines.append(f"      {key} = {value}")
+    lines.append("\n==================\n")
+    return "\n".join(lines)
+
+
 def print_call_stack(
     skip_frames: int = 1,
     max_frames: int = 10,
     include_locals: bool = False,
     file: Any = None,
 ) -> None:
-    """Print the current call stack.
+    """Log the current call stack (or write to *file* for backward compat).
 
     Args:
         skip_frames: Number of frames to skip
-        max_frames: Maximum frames to print
+        max_frames: Maximum frames to log
         include_locals: Include local variables
-        file: File to print to (default: stderr)
+        file: File to write to. When *None*, the stack is emitted
+              via the module logger at DEBUG level instead of stderr.
     """
-    if file is None:
-        file = sys.stderr
-
-    frames = get_call_stack(skip_frames + 1, max_frames, include_locals)
-
-    print("\n=== Call Stack ===", file=file)  # noqa: T201
-    for i, frame in enumerate(frames):
-        print(f"\n[{i}] {frame}", file=file)  # noqa: T201
-        if frame.code_context:
-            print(f"    > {frame.code_context}", file=file)  # noqa: T201
-        if frame.local_vars:
-            print("    Locals:", file=file)  # noqa: T201
-            for key, value in frame.local_vars.items():
-                print(f"      {key} = {value}", file=file)  # noqa: T201
-    print("\n==================\n", file=file)  # noqa: T201
+    text = format_call_stack(skip_frames + 1, max_frames, include_locals)
+    if file is not None:
+        file.write(text + "\n")
+    else:
+        logger.debug(text)
 
 
 def get_caller_info(skip_frames: int = 1) -> tuple[str, str, int]:
