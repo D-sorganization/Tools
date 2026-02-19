@@ -22,13 +22,13 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QLineEdit,
-    QMainWindow,
     QMessageBox,
     QPushButton,
     QScrollArea,
     QVBoxLayout,
     QWidget,
 )
+from upstream_drift_tools.ui.widgets.base_calculator_widget import BaseCalculatorWindow
 
 if TYPE_CHECKING:
     from upstream_drift_tools.calculators.thermo.steam_engine import SteamProperties
@@ -103,7 +103,7 @@ def format_entropy(value: float) -> str:
     return f"{value / 1000:.4f} kJ/kg-K"
 
 
-class SteamEngineCalculatorWindow(QMainWindow):
+class SteamEngineCalculatorWindow(BaseCalculatorWindow):
     """Main window for the Steam Engine Calculator."""
 
     # Calculation mode constants
@@ -137,7 +137,11 @@ class SteamEngineCalculatorWindow(QMainWindow):
     ]
 
     def __init__(self) -> None:
-        super().__init__()
+        super().__init__(
+            calculator_name="SteamEngineCalculator",
+            window_title="Steam Engine Calculator",
+            min_size=(900, 700),
+        )
         self.engine: Any = None
         self.result_labels: dict[str, QLabel] = {}
         self._init_engine()
@@ -157,10 +161,7 @@ class SteamEngineCalculatorWindow(QMainWindow):
 
     def _init_ui(self) -> None:
         """Initialize the user interface."""
-        self.setWindowTitle("Steam Engine Calculator")
-        self.setMinimumSize(900, 700)
-
-        # Central widget with scroll area
+        # Scroll area wrapping the content
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
@@ -190,7 +191,7 @@ class SteamEngineCalculatorWindow(QMainWindow):
 
         main_layout.addLayout(content_layout)
         scroll.setWidget(central)
-        self.setCentralWidget(scroll)
+        self.main_layout.addWidget(scroll)
 
     def _create_input_panel(self) -> QWidget:
         """Create the input panel."""

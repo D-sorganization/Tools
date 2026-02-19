@@ -65,7 +65,7 @@ def profile(
         Decorator function
     """
     # Import here to avoid circular dependency at module level
-    from utils.debug_utils import _DEBUG_MODE
+    from utils.debug_utils import is_debug_mode
 
     def decorator(func: F) -> F:
         @functools.wraps(func)
@@ -82,7 +82,7 @@ def profile(
 
                 # Log or save results
                 stats_text = stream.getvalue()
-                if _DEBUG_MODE:
+                if is_debug_mode():
                     logger.debug("Profile for %s:\n%s", func.__name__, stats_text)
 
                 if output_file:
@@ -109,7 +109,7 @@ def profile_block(
         ProfileResult object (populated after block completes)
     """
     # Import here to avoid circular dependency at module level
-    from utils.debug_utils import _DEBUG_MODE
+    from utils.debug_utils import is_debug_mode
 
     profiler = cProfile.Profile()
     result = ProfileResult(
@@ -138,7 +138,7 @@ def profile_block(
         result.cumulative_time = elapsed
         result.stats_text = stream.getvalue()
 
-        if log_result and _DEBUG_MODE:
+        if log_result and is_debug_mode():
             logger.debug("Profile for '%s':\n%s", name, result.stats_text)
 
 

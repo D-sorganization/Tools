@@ -34,16 +34,16 @@ from PyQt6.QtWidgets import (
 if TYPE_CHECKING:
     pass
 
-# Module-level singleton
-_help_manager: HelpManager | None = None
+# Module-level singleton holder (avoids mutable global + global keyword)
+class _HelpManagerHolder:
+    instance: HelpManager | None = None
 
 
 def get_help_manager() -> HelpManager:
     """Get the singleton HelpManager instance."""
-    global _help_manager
-    if _help_manager is None:
-        _help_manager = HelpManager()
-    return _help_manager
+    if _HelpManagerHolder.instance is None:
+        _HelpManagerHolder.instance = HelpManager()
+    return _HelpManagerHolder.instance
 
 
 def load_help_from_file(file_path: str | Path) -> str:

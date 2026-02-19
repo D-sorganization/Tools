@@ -69,8 +69,9 @@ F = TypeVar("F", bound=Callable[..., Any])
 # Module-level logger
 logger = logging.getLogger(__name__)
 
-# Debug mode flag - can be set globally
-_DEBUG_MODE: bool = os.environ.get("DEBUG", "").lower() in ("1", "true", "yes")
+# Debug mode holder (avoids mutable global + global keyword)
+class _DebugState:
+    enabled: bool = os.environ.get("DEBUG", "").lower() in ("1", "true", "yes")
 
 
 # =============================================================================
@@ -84,7 +85,7 @@ def is_debug_mode() -> bool:
     Returns:
         True if debug mode is enabled
     """
-    return _DEBUG_MODE
+    return _DebugState.enabled
 
 
 def set_debug_mode(enabled: bool) -> None:
@@ -93,8 +94,7 @@ def set_debug_mode(enabled: bool) -> None:
     Args:
         enabled: Whether to enable debug mode
     """
-    global _DEBUG_MODE
-    _DEBUG_MODE = enabled
+    _DebugState.enabled = enabled
     if enabled:
         # Enable more verbose logging
         logging.getLogger().setLevel(logging.DEBUG)
@@ -113,7 +113,7 @@ def debug_only(func: F) -> F:
 
     @functools.wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Any:
-        if _DEBUG_MODE:
+        if _DebugState.enabled:
             return func(*args, **kwargs)
         return None
 
@@ -143,7 +143,7 @@ def get_watchdog() -> PerformanceWatchdog:
 
 def _cleanup() -> None:
     """Cleanup function called on exit."""
-    if _DEBUG_MODE:
+    if _DebugState.enabled:
         report = _watchdog.report()
         if _watchdog._timings:
             logger.debug("Final performance report:\n%s", report)

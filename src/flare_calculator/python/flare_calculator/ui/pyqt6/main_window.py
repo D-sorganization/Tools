@@ -15,7 +15,6 @@ from PyQt6.QtWidgets import (
     QFormLayout,
     QGroupBox,
     QHBoxLayout,
-    QMainWindow,
     QPushButton,
     QSplitter,
     QTableWidget,
@@ -23,6 +22,7 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from upstream_drift_tools.ui.widgets.base_calculator_widget import BaseCalculatorWindow
 
 # Catppuccin Mocha theme colors
 CATPPUCCIN_MOCHA: Final[dict[str, str]] = {
@@ -157,23 +157,24 @@ class FlareCalculatorEngine:
         return zones
 
 
-class FlareCalculatorMainWindow(QMainWindow):
+class FlareCalculatorMainWindow(BaseCalculatorWindow):
     """Main window for the Flare Calculator application."""
 
     def __init__(self) -> None:
         """Initialize the main window."""
-        super().__init__()
-        self.setWindowTitle("Flare Calculator")
-        self.setMinimumSize(1200, 800)
+        super().__init__(
+            calculator_name="FlareCalculator",
+            window_title="Flare Calculator",
+            min_size=(1200, 800),
+        )
         self.engine = FlareCalculatorEngine()
         self._setup_ui()
         self._apply_theme()
 
     def _setup_ui(self) -> None:
         """Set up the user interface."""
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
-        main_layout = QHBoxLayout(central_widget)
+        main_layout = QHBoxLayout()
+        self.main_layout.addLayout(main_layout)
 
         splitter = QSplitter(Qt.Orientation.Horizontal)
         main_layout.addWidget(splitter)

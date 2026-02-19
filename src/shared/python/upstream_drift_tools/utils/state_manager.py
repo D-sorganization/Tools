@@ -532,7 +532,12 @@ class StateManager:
             logger.exception("Error cleaning up backups: %s", e)
 
 
-_state_manager: StateManager | None = None
+class _StateManagerHolder:
+    """Singleton holder for StateManager (avoids global keyword)."""
+
+    instance: StateManager | None = None
+
+
 # Global instance for shared use
 state_manager = StateManager()
 
@@ -546,10 +551,9 @@ def get_state_manager(base_directory: str = "saved_states") -> StateManager:
     Returns:
         The singleton StateManager instance.
     """
-    global _state_manager
-    if _state_manager is None:
-        _state_manager = StateManager(base_directory)
-    return _state_manager
+    if _StateManagerHolder.instance is None:
+        _StateManagerHolder.instance = StateManager(base_directory)
+    return _StateManagerHolder.instance
 
 
 __all__ = ["StateManager", "get_state_manager", "state_manager"]
