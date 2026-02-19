@@ -234,6 +234,7 @@ class DataProcessorWidget(DataProcessorOpsMixin, BaseCalculatorWidget):
         return tabs
 
     def _create_statistics_tab(self) -> QWidget:
+        """Build the statistics tab with data summary and per-column stats."""
         tab = QWidget()
         layout = QVBoxLayout(tab)
         group = QGroupBox("Data Summary")
@@ -263,6 +264,7 @@ class DataProcessorWidget(DataProcessorOpsMixin, BaseCalculatorWidget):
         return tab
 
     def _create_filter_tab(self) -> QWidget:
+        """Build the filter tab with quick-filter, query, and aggregation tools."""
         tab = QWidget()
         layout = QVBoxLayout(tab)
         group = QGroupBox("Quick Filter")
@@ -309,6 +311,7 @@ class DataProcessorWidget(DataProcessorOpsMixin, BaseCalculatorWidget):
         return tab
 
     def _create_column_tab(self) -> QWidget:
+        """Build the column management tab with add, transform, and rename tools."""
         tab = QWidget()
         layout = QVBoxLayout(tab)
         add = QGroupBox("Add")
@@ -368,6 +371,7 @@ class DataProcessorWidget(DataProcessorOpsMixin, BaseCalculatorWidget):
         return tab
 
     def _create_fit_tab(self) -> QWidget:
+        """Build the curve fitting tab with fit type selector and results display."""
         tab = QWidget()
         layout = QVBoxLayout(tab)
         fit = QGroupBox("Fit")
@@ -393,10 +397,12 @@ class DataProcessorWidget(DataProcessorOpsMixin, BaseCalculatorWidget):
         return tab
 
     def setup_connections(self) -> None:
+        """Wire internal signals to their handler slots."""
         self.data_loaded.connect(self._on_data_loaded)
         self.data_modified.connect(self._on_data_modified)
 
     def setup_shortcuts(self) -> None:
+        """Register keyboard shortcuts for file, undo, and redo operations."""
         from PyQt6.QtGui import QShortcut
 
         QShortcut(QKeySequence.StandardKey.Open, self, self.open_file)
@@ -405,6 +411,7 @@ class DataProcessorWidget(DataProcessorOpsMixin, BaseCalculatorWidget):
         QShortcut(QKeySequence.StandardKey.Redo, self, self.redo)
 
     def open_file(self) -> None:
+        """Prompt the user to select a data file and load it into the engine."""
         path, _ = QFileDialog.getOpenFileName(self, "Open", "", "All (*.*)")
         if path:
             res = self.engine.load_file(path)
@@ -419,6 +426,7 @@ class DataProcessorWidget(DataProcessorOpsMixin, BaseCalculatorWidget):
                 QMessageBox.warning(self, "Error", res.message)
 
     def save_file(self) -> None:
+        """Save data to the current file, or prompt for export if no file loaded."""
         if not self.engine.has_data():
             return
         if self.current_file:
@@ -431,6 +439,7 @@ class DataProcessorWidget(DataProcessorOpsMixin, BaseCalculatorWidget):
             self.export_file()
 
     def export_file(self) -> None:
+        """Prompt for a destination path and export the current data as CSV."""
         path, _ = QFileDialog.getSaveFileName(self, "Export", "", "CSV (*.csv)")
         if path:
             res = self.engine.export_data(path)
@@ -439,6 +448,7 @@ class DataProcessorWidget(DataProcessorOpsMixin, BaseCalculatorWidget):
                 self._set_status("Exported")
 
     def undo(self) -> None:
+        """Undo the last data operation and refresh the view."""
         res = self.engine.undo()
         if res.success:
             self._update_table()
@@ -446,6 +456,7 @@ class DataProcessorWidget(DataProcessorOpsMixin, BaseCalculatorWidget):
             self._set_status("Undo")
 
     def redo(self) -> None:
+        """Re-apply the previously undone data operation and refresh the view."""
         res = self.engine.redo()
         if res.success:
             self._update_table()
@@ -453,6 +464,7 @@ class DataProcessorWidget(DataProcessorOpsMixin, BaseCalculatorWidget):
             self._set_status("Redo")
 
     def reset_data(self) -> None:
+        """Reset all data transformations back to the originally loaded state."""
         if self.engine.reset().success:
             self._update_table()
             self.refresh_statistics()
@@ -516,6 +528,7 @@ class DataProcessorWidget(DataProcessorOpsMixin, BaseCalculatorWidget):
                 s.setCurrentText(curr)
 
     def refresh_statistics(self) -> None:
+        """Recalculate and display summary statistics for the loaded data."""
         if not self.engine.has_data():
             return
         stats = self.engine.get_statistics()
