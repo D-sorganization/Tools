@@ -289,9 +289,7 @@ class DataProcessorEngine(BaseCalculationEngine):
             raise DataNotLoadedError("No data loaded")
         missing = [c for c in columns if c not in self.data.columns]
         if missing:
-            raise ColumnNotFoundError(
-                missing[0], list(self.data.columns)
-            )
+            raise ColumnNotFoundError(missing[0], list(self.data.columns))
         self._save_undo_state()
         self.data = self.data.drop(columns=columns)
         return ProcessingResult(success=True, message="Dropped columns", data=self.data)
@@ -390,9 +388,7 @@ class DataProcessorEngine(BaseCalculationEngine):
                     savgol_filter(series, w if w % 2 else w + 1, p), index=series.index
                 )
             else:
-                raise UnsupportedOperationError(
-                    f"Unknown smoothing method: {method}"
-                )
+                raise UnsupportedOperationError(f"Unknown smoothing method: {method}")
 
             self.data[column] = result
             return ProcessingResult(success=True, message="Smoothed", data=self.data)
@@ -475,9 +471,7 @@ class DataProcessorEngine(BaseCalculationEngine):
         m = ~(np.isnan(x) | np.isnan(y))
         x, y = x[m], y[m]
         if len(x) < 2:
-            raise FitError(
-                f"Need >= 2 valid points, got {len(x)} after dropping NaNs"
-            )
+            raise FitError(f"Need >= 2 valid points, got {len(x)} after dropping NaNs")
 
         if fit_type == FitType.LINEAR:
             c = np.polyfit(x, y, 1)

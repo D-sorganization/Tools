@@ -14,6 +14,8 @@ import numpy as np
 from scipy import signal as scipy_signal
 from scipy.signal import (
     bessel as _scipy_bessel,
+)
+from scipy.signal import (
     butter,
     cheby1,
     cheby2,
@@ -172,9 +174,15 @@ class FilterDesigner:
         """
         wn, btype = _normalize_cutoff(filter_type, cutoff, fs)
         b, a = butter(order, wn, btype=btype)
-        return FilterSpec(b=b, a=a, filter_type=filter_type,
-                          design=FilterDesign.BUTTERWORTH, order=order,
-                          cutoff=cutoff, fs=fs)
+        return FilterSpec(
+            b=b,
+            a=a,
+            filter_type=filter_type,
+            design=FilterDesign.BUTTERWORTH,
+            order=order,
+            cutoff=cutoff,
+            fs=fs,
+        )
 
     @staticmethod
     def chebyshev1(
@@ -198,9 +206,15 @@ class FilterDesigner:
         """
         wn, btype = _normalize_cutoff(filter_type, cutoff, fs)
         b, a = cheby1(order, ripple_db, wn, btype=btype)
-        return FilterSpec(b=b, a=a, filter_type=filter_type,
-                          design=FilterDesign.CHEBYSHEV1, order=order,
-                          cutoff=cutoff, fs=fs)
+        return FilterSpec(
+            b=b,
+            a=a,
+            filter_type=filter_type,
+            design=FilterDesign.CHEBYSHEV1,
+            order=order,
+            cutoff=cutoff,
+            fs=fs,
+        )
 
     @staticmethod
     def chebyshev2(
@@ -224,9 +238,15 @@ class FilterDesigner:
         """
         wn, btype = _normalize_cutoff(filter_type, cutoff, fs)
         b, a = cheby2(order, attenuation_db, wn, btype=btype)
-        return FilterSpec(b=b, a=a, filter_type=filter_type,
-                          design=FilterDesign.CHEBYSHEV2, order=order,
-                          cutoff=cutoff, fs=fs)
+        return FilterSpec(
+            b=b,
+            a=a,
+            filter_type=filter_type,
+            design=FilterDesign.CHEBYSHEV2,
+            order=order,
+            cutoff=cutoff,
+            fs=fs,
+        )
 
     @staticmethod
     def elliptic(
@@ -252,9 +272,15 @@ class FilterDesigner:
         """
         wn, btype = _normalize_cutoff(filter_type, cutoff, fs)
         b, a = ellip(order, ripple_db, attenuation_db, wn, btype=btype)
-        return FilterSpec(b=b, a=a, filter_type=filter_type,
-                          design=FilterDesign.ELLIPTIC, order=order,
-                          cutoff=cutoff, fs=fs)
+        return FilterSpec(
+            b=b,
+            a=a,
+            filter_type=filter_type,
+            design=FilterDesign.ELLIPTIC,
+            order=order,
+            cutoff=cutoff,
+            fs=fs,
+        )
 
     @staticmethod
     def bessel(
@@ -276,9 +302,15 @@ class FilterDesigner:
         """
         wn, btype = _normalize_cutoff(filter_type, cutoff, fs)
         b, a = _scipy_bessel(order, wn, btype=btype, norm="phase")
-        return FilterSpec(b=b, a=a, filter_type=filter_type,
-                          design=FilterDesign.BESSEL, order=order,
-                          cutoff=cutoff, fs=fs)
+        return FilterSpec(
+            b=b,
+            a=a,
+            filter_type=filter_type,
+            design=FilterDesign.BESSEL,
+            order=order,
+            cutoff=cutoff,
+            fs=fs,
+        )
 
 
 def apply_filter(

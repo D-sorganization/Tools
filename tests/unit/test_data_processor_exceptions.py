@@ -26,7 +26,6 @@ from upstream_drift_tools.data_processing.exceptions import (
     UnsupportedOperationError,
 )
 
-
 # ── Fixtures ──────────────────────────────────────────────────────
 
 
@@ -142,33 +141,23 @@ class TestDataNotLoadedErrors:
 class TestColumnNotFoundErrors:
     """Operations targeting a missing column must raise ColumnNotFoundError."""
 
-    def test_rename_missing_column(
-        self, loaded_engine: DataProcessorEngine
-    ) -> None:
+    def test_rename_missing_column(self, loaded_engine: DataProcessorEngine) -> None:
         with pytest.raises(ColumnNotFoundError):
             loaded_engine.rename_column("nonexistent", "new")
 
-    def test_drop_missing_column(
-        self, loaded_engine: DataProcessorEngine
-    ) -> None:
+    def test_drop_missing_column(self, loaded_engine: DataProcessorEngine) -> None:
         with pytest.raises(ColumnNotFoundError):
             loaded_engine.drop_columns(["nonexistent"])
 
-    def test_transform_missing_column(
-        self, loaded_engine: DataProcessorEngine
-    ) -> None:
+    def test_transform_missing_column(self, loaded_engine: DataProcessorEngine) -> None:
         with pytest.raises(ColumnNotFoundError):
             loaded_engine.transform_column("nonexistent", "log")
 
-    def test_smooth_missing_column(
-        self, loaded_engine: DataProcessorEngine
-    ) -> None:
+    def test_smooth_missing_column(self, loaded_engine: DataProcessorEngine) -> None:
         with pytest.raises(ColumnNotFoundError):
             loaded_engine.smooth_column("nonexistent", "moving_average")
 
-    def test_filter_missing_column(
-        self, loaded_engine: DataProcessorEngine
-    ) -> None:
+    def test_filter_missing_column(self, loaded_engine: DataProcessorEngine) -> None:
         with pytest.raises(ColumnNotFoundError):
             loaded_engine.filter_data("nonexistent", "==", 1)
 
@@ -189,21 +178,15 @@ class TestColumnNotFoundErrors:
 
 
 class TestUnsupportedOperationErrors:
-    def test_unknown_transform(
-        self, loaded_engine: DataProcessorEngine
-    ) -> None:
+    def test_unknown_transform(self, loaded_engine: DataProcessorEngine) -> None:
         with pytest.raises(UnsupportedOperationError):
             loaded_engine.transform_column("age", "quantum_transform")
 
-    def test_unknown_smooth_method(
-        self, loaded_engine: DataProcessorEngine
-    ) -> None:
+    def test_unknown_smooth_method(self, loaded_engine: DataProcessorEngine) -> None:
         with pytest.raises(UnsupportedOperationError):
             loaded_engine.smooth_column("salary", "quantum_filter")
 
-    def test_unsupported_fit_type(
-        self, loaded_engine: DataProcessorEngine
-    ) -> None:
+    def test_unsupported_fit_type(self, loaded_engine: DataProcessorEngine) -> None:
         with pytest.raises(UnsupportedOperationError):
             loaded_engine.fit_curve("age", "salary", FitType.EXPONENTIAL)
 
@@ -231,9 +214,7 @@ class TestFitErrors:
 
 
 class TestFilterErrors:
-    def test_empty_query_expression(
-        self, loaded_engine: DataProcessorEngine
-    ) -> None:
+    def test_empty_query_expression(self, loaded_engine: DataProcessorEngine) -> None:
         with pytest.raises(FilterError):
             loaded_engine.query("")
 
@@ -261,9 +242,7 @@ class TestTransformationErrors:
         with pytest.raises(TransformationError):
             loaded_engine.add_calculated_column("bad", "??? invalid +++")
 
-    def test_add_column_empty_name(
-        self, loaded_engine: DataProcessorEngine
-    ) -> None:
+    def test_add_column_empty_name(self, loaded_engine: DataProcessorEngine) -> None:
         with pytest.raises(TransformationError):
             loaded_engine.add_calculated_column("", "salary / 1000")
 

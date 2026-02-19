@@ -188,7 +188,9 @@ def mass_to_molar(
     if not math.isfinite(mass_flow):
         raise ValueError(f"mass_flow must be finite, got {mass_flow}")
     if not math.isfinite(molecular_weight) or molecular_weight <= 0:
-        raise ValueError(f"molecular_weight must be positive and finite, got {molecular_weight}")
+        raise ValueError(
+            f"molecular_weight must be positive and finite, got {molecular_weight}"
+        )
     # Convert to kg/s
     kg_per_s = mass_flow * MASS_FLOW_CONVERSIONS[mass_unit]
 
@@ -231,7 +233,9 @@ def molar_to_mass(
     if not math.isfinite(molar_flow):
         raise ValueError(f"molar_flow must be finite, got {molar_flow}")
     if not math.isfinite(molecular_weight) or molecular_weight <= 0:
-        raise ValueError(f"molecular_weight must be positive and finite, got {molecular_weight}")
+        raise ValueError(
+            f"molecular_weight must be positive and finite, got {molecular_weight}"
+        )
     # Convert to mol/s
     mol_per_s = molar_flow * MOLAR_FLOW_CONVERSIONS[molar_unit]
 
@@ -377,7 +381,9 @@ def standard_volumetric_to_mass(
     if not math.isfinite(vol_flow_std):
         raise ValueError(f"vol_flow_std must be finite, got {vol_flow_std}")
     if not math.isfinite(molecular_weight) or molecular_weight <= 0:
-        raise ValueError(f"molecular_weight must be positive and finite, got {molecular_weight}")
+        raise ValueError(
+            f"molecular_weight must be positive and finite, got {molecular_weight}"
+        )
     if standard not in STANDARD_CONDITIONS:
         raise ValueError(
             f"Unknown standard condition: {standard}. Use one of {list(STANDARD_CONDITIONS.keys())}"
@@ -456,7 +462,9 @@ def mass_to_standard_volumetric(
     if not math.isfinite(mass_flow):
         raise ValueError(f"mass_flow must be finite, got {mass_flow}")
     if not math.isfinite(molecular_weight) or molecular_weight <= 0:
-        raise ValueError(f"molecular_weight must be positive and finite, got {molecular_weight}")
+        raise ValueError(
+            f"molecular_weight must be positive and finite, got {molecular_weight}"
+        )
     if standard not in STANDARD_CONDITIONS:
         raise ValueError(f"Unknown standard condition: {standard}")
 
