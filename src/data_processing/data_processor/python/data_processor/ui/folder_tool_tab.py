@@ -322,11 +322,28 @@ class FolderToolMixin:
         """Update the mode description based on selected operation."""
         mode = self.folder_operation_mode.get()
         descriptions = {
-            "combine": "Copies all files from source folders into the single destination folder.",
-            "flatten": "Finds deeply nested folders and copies them to the top level of the destination.",
-            "prune": "Copies source folders to the destination, preserving structure but skipping empty sub-folders.",
-            "deduplicate": "Deletes renamed duplicates within the source folder(s), keeping the newest version.",
-            "analyze": "Analyzes folder contents and generates a detailed report without making changes.",
+            "combine": (
+                "Copies all files from source folders"
+                " into the single destination folder."
+            ),
+            "flatten": (
+                "Finds deeply nested folders and copies"
+                " them to the top level of the destination."
+            ),
+            "prune": (
+                "Copies source folders to the destination,"
+                " preserving structure but skipping empty"
+                " sub-folders."
+            ),
+            "deduplicate": (
+                "Deletes renamed duplicates within the"
+                " source folder(s), keeping the newest"
+                " version."
+            ),
+            "analyze": (
+                "Analyzes folder contents and generates a"
+                " detailed report without making changes."
+            ),
         }
         self.folder_mode_description.configure(text=descriptions.get(mode, ""))
 
@@ -568,7 +585,10 @@ class FolderToolMixin:
                     total_size += sz
                     info.append((p, sz))
 
-        report = f"Analysis Report\nTotal Files: {len(info)}\nTotal Size: {total_size / 1e6:.2f} MB\n"
+        size_mb = total_size / 1e6
+        report = (
+            f"Analysis Report\nTotal Files: {len(info)}\nTotal Size: {size_mb:.2f} MB\n"
+        )
         largest = heapq.nlargest(10, info, key=lambda x: x[1])
         report += "\nLargest Files:\n"
         for p, sz in largest:
