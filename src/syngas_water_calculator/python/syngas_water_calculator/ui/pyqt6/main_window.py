@@ -331,6 +331,89 @@ class SyngasWaterCalculatorWindow(BaseCalculatorWindow):
 
         return group
 
+    _COMPOSITION_MAP = {
+        "Typical Syngas": "typical_syngas",
+        "Biomass Gasification": "biomass_syngas",
+        "Coal Gasification": "coal_syngas",
+        "Natural Gas Reforming": "natural_gas_reforming",
+    }
+
+    _METHOD_MAP = {
+        "Auto (Recommended)": "auto",
+        "Antoine": "antoine",
+        "Buck": "buck",
+        "IAPWS-IF97": "iapws",
+        "Magnus": "magnus",
+    }
+
+    _RISK_COLOR_MAP = {
+        "Critical": "red",
+        "High": "peach",
+        "Medium": "yellow",
+    }
+
+    def _display_water_content_results(self, result: object) -> None:
+        """Update result labels with calculated water content values."""
+        self.result_labels["mole_fraction"].setText(
+            f"{result.mole_fraction_water:.6f}"  # type: ignore[union-attr]
+        )
+        self.result_labels["mg_nm3"].setText(
+            f"{result.water_content_mg_per_nm3:,.2f}"  # type: ignore[union-attr]
+        )
+        self.result_labels["ppmv"].setText(f"{result.water_content_ppmv:,.1f}")  # type: ignore[union-attr]
+        self.result_labels["g_m3"].setText(f"{result.water_content_g_per_m3:,.4f}")  # type: ignore[union-attr]
+        self.result_labels["lb_mmscf"].setText(
+            f"{result.water_content_lb_per_mmscf:,.2f}"  # type: ignore[union-attr]
+        )
+        self.result_labels["vapor_pressure"].setText(
+            f"{result.vapor_pressure_bar:.4f}"  # type: ignore[union-attr]
+        )
+        self.result_labels["dew_point"].setText(f"{result.dew_point_c:.1f}")  # type: ignore[union-attr]
+
+        for key in self.result_labels:
+            self.result_labels[key].setStyleSheet(
+                f"color: {CATPPUCCIN_MOCHA['green']}; font-weight: bold;"
+            )
+
+    def _display_risk_assessment(self, risk: dict) -> None:
+        """Update risk assessment labels with color coding."""
+        margin = risk["temperature_margin_c"]
+        self.margin_label.setText(f"{margin:.1f}")
+
+        risk_level = str(risk["condensation_risk"])
+        self.risk_label.setText(risk_level)
+
+        # Determine color based on risk level
+        color_key = "green"  # default for Low
+        for keyword, mapped_color in self._RISK_COLOR_MAP.items():
+            if keyword in risk_level:
+                color_key = mapped_color
+                break
+
+        color = CATPPUCCIN_MOCHA[color_key]
+        style = f"color: {color}; font-weight: bold;"
+        self.risk_label.setStyleSheet(style)
+        self.margin_label.setStyleSheet(style)
+
+        self.recommended_temp_label.setText(
+            f"{risk['recommended_temperature_c']:.1f}"
+        )
+
+    def _display_calculation_error(self, error: Exception) -> None:
+        """Display error state in all result labels."""
+        error_msg = f"Error: {error}"
+        for label in self.result_labels.values():
+            label.setText("--")
+            label.setStyleSheet(
+                f"color: {CATPPUCCIN_MOCHA['red']}; font-weight: bold;"
+            )
+        self.margin_label.setText(error_msg[:30])
+        self.margin_label.setStyleSheet(
+            f"color: {CATPPUCCIN_MOCHA['red']}; font-weight: bold;"
+        )
+        self.risk_label.setText("--")
+        self.recommended_temp_label.setText("--")
+
     def _calculate(self) -> None:
         """Perform the water content calculation."""
         try:
@@ -339,116 +422,25 @@ class SyngasWaterCalculatorWindow(BaseCalculatorWindow):
                 estimate_condensation_risk,
             )
 
-            # Get inputs
             temperature_c = self.temp_input.value()
             pressure_bar = self.pressure_input.value()
-
-            # Map composition selection to preset key
-            composition_map = {
-                "Typical Syngas": "typical_syngas",
-                "Biomass Gasification": "biomass_syngas",
-                "Coal Gasification": "coal_syngas",
-                "Natural Gas Reforming": "natural_gas_reforming",
-            }
-            composition_key = composition_map.get(
+            composition_key = self._COMPOSITION_MAP.get(
                 self.composition_combo.currentText(), "typical_syngas"
             )
+            method = self._METHOD_MAP.get(self.method_combo.currentText(), "auto")
 
-            # Map method selection
-            method_map = {
-                "Auto (Recommended)": "auto",
-                "Antoine": "antoine",
-                "Buck": "buck",
-                "IAPWS-IF97": "iapws",
-                "Magnus": "magnus",
-            }
-            method = method_map.get(self.method_combo.currentText(), "auto")
-
-            # Calculate water content
             calculator = SyngasWaterCalculator()
             result = calculator.calculate_water_content(
                 temperature_c, pressure_bar, composition_key, method
             )
 
-            # Update result labels
-            self.result_labels["mole_fraction"].setText(
-                f"{result.mole_fraction_water:.6f}"
-            )
-            self.result_labels["mg_nm3"].setText(
-                f"{result.water_content_mg_per_nm3:,.2f}"
-            )
-            self.result_labels["ppmv"].setText(f"{result.water_content_ppmv:,.1f}")
-            self.result_labels["g_m3"].setText(f"{result.water_content_g_per_m3:,.4f}")
-            self.result_labels["lb_mmscf"].setText(
-                f"{result.water_content_lb_per_mmscf:,.2f}"
-            )
-            self.result_labels["vapor_pressure"].setText(
-                f"{result.vapor_pressure_bar:.4f}"
-            )
-            self.result_labels["dew_point"].setText(f"{result.dew_point_c:.1f}")
+            self._display_water_content_results(result)
 
-            # Update risk assessment
             risk = estimate_condensation_risk(temperature_c, pressure_bar)
-
-            margin = risk["temperature_margin_c"]
-            self.margin_label.setText(f"{margin:.1f}")
-
-            risk_level = str(risk["condensation_risk"])
-            self.risk_label.setText(risk_level)
-
-            # Color code risk level
-            if "Critical" in risk_level:
-                self.risk_label.setStyleSheet(
-                    f"color: {CATPPUCCIN_MOCHA['red']}; font-weight: bold;"
-                )
-                self.margin_label.setStyleSheet(
-                    f"color: {CATPPUCCIN_MOCHA['red']}; font-weight: bold;"
-                )
-            elif risk_level == "High":
-                self.risk_label.setStyleSheet(
-                    f"color: {CATPPUCCIN_MOCHA['peach']}; font-weight: bold;"
-                )
-                self.margin_label.setStyleSheet(
-                    f"color: {CATPPUCCIN_MOCHA['peach']}; font-weight: bold;"
-                )
-            elif risk_level == "Medium":
-                self.risk_label.setStyleSheet(
-                    f"color: {CATPPUCCIN_MOCHA['yellow']}; font-weight: bold;"
-                )
-                self.margin_label.setStyleSheet(
-                    f"color: {CATPPUCCIN_MOCHA['yellow']}; font-weight: bold;"
-                )
-            else:
-                self.risk_label.setStyleSheet(
-                    f"color: {CATPPUCCIN_MOCHA['green']}; font-weight: bold;"
-                )
-                self.margin_label.setStyleSheet(
-                    f"color: {CATPPUCCIN_MOCHA['green']}; font-weight: bold;"
-                )
-
-            recommended_temp = risk["recommended_temperature_c"]
-            self.recommended_temp_label.setText(f"{recommended_temp:.1f}")
-
-            # Set result colors to green for success
-            for key in self.result_labels:
-                self.result_labels[key].setStyleSheet(
-                    f"color: {CATPPUCCIN_MOCHA['green']}; font-weight: bold;"
-                )
+            self._display_risk_assessment(risk)
 
         except ImportError as e:
-            # Show error in results
-            error_msg = f"Error: {e}"
-            for label in self.result_labels.values():
-                label.setText("--")
-                label.setStyleSheet(
-                    f"color: {CATPPUCCIN_MOCHA['red']}; font-weight: bold;"
-                )
-            self.margin_label.setText(error_msg[:30])
-            self.margin_label.setStyleSheet(
-                f"color: {CATPPUCCIN_MOCHA['red']}; font-weight: bold;"
-            )
-            self.risk_label.setText("--")
-            self.recommended_temp_label.setText("--")
+            self._display_calculation_error(e)
 
 
 def main() -> int:

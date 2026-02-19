@@ -210,6 +210,78 @@ class ANOVAAnalyzer:
         """
         self.alpha = alpha
 
+    def _validate_and_prepare_groups(
+        self,
+        df: pd.DataFrame,
+        dependent_var: str,
+        group_var: str,
+    ) -> dict[str, np.ndarray]:
+        """Validate inputs and prepare group arrays for ANOVA.
+
+        Args:
+            df: DataFrame with data
+            dependent_var: Name of dependent variable column
+            group_var: Name of grouping variable column
+
+        Returns:
+            Dictionary mapping group names to NaN-filtered arrays
+
+        Raises:
+            ValueError: If columns missing or fewer than 2 groups
+        """
+        if dependent_var not in df.columns or group_var not in df.columns:
+            raise ValueError("Specified columns not found in DataFrame")
+
+        groups = df.groupby(group_var)[dependent_var].apply(list).to_dict()
+        if len(groups) < 2:
+            raise ValueError("ANOVA requires at least 2 groups")
+
+        return {
+            name: np.array([x for x in values if not np.isnan(x)])
+            for name, values in groups.items()
+        }
+
+    def _compute_anova_statistics(
+        self,
+        group_arrays: dict[str, np.ndarray],
+    ) -> tuple[float, float, float, float, float, float, int, int, int, float]:
+        """Compute core ANOVA sums of squares, F-statistic, and effect sizes.
+
+        Args:
+            group_arrays: Dictionary mapping group names to arrays
+
+        Returns:
+            Tuple of (ss_between, ss_within, ss_total, ms_between, ms_within,
+                       f_stat, df_between, df_within, df_total, grand_mean)
+        """
+        k = len(group_arrays)
+        n_total = sum(len(arr) for arr in group_arrays.values())
+        grand_mean = np.mean(np.concatenate(list(group_arrays.values())))
+
+        ss_between = sum(
+            len(arr) * (np.mean(arr) - grand_mean) ** 2 for arr in group_arrays.values()
+        )
+        ss_within = sum(
+            np.sum((arr - np.mean(arr)) ** 2) for arr in group_arrays.values()
+        )
+        ss_total = ss_between + ss_within
+
+        df_between = k - 1
+        df_within = n_total - k
+        df_total = n_total - 1
+
+        ms_between = ss_between / df_between
+        ms_within = ss_within / df_within
+
+        f_stat = ms_between / ms_within
+
+        return (
+            ss_between, ss_within, ss_total,
+            ms_between, ms_within, f_stat,
+            df_between, df_within, df_total,
+            grand_mean,
+        )
+
     def one_way_anova(
         self,
         df: pd.DataFrame,
@@ -230,62 +302,23 @@ class ANOVAAnalyzer:
         Returns:
             Complete one-way ANOVA results
         """
-        # Validate inputs
-        if dependent_var not in df.columns or group_var not in df.columns:
-            raise ValueError("Specified columns not found in DataFrame")
+        group_arrays = self._validate_and_prepare_groups(df, dependent_var, group_var)
 
-        # Get groups
-        groups = df.groupby(group_var)[dependent_var].apply(list).to_dict()
-        list(groups.keys())
-        k = len(groups)
+        (
+            ss_between, ss_within, ss_total,
+            ms_between, ms_within, f_stat,
+            df_between, df_within, df_total,
+            grand_mean,
+        ) = self._compute_anova_statistics(group_arrays)
 
-        if k < 2:
-            raise ValueError("ANOVA requires at least 2 groups")
-
-        # Convert to arrays and filter NaN
-        group_arrays = {
-            name: np.array([x for x in values if not np.isnan(x)])
-            for name, values in groups.items()
-        }
-
-        # Calculate statistics
         n_total = sum(len(arr) for arr in group_arrays.values())
-        grand_mean = np.mean(np.concatenate(list(group_arrays.values())))
-
-        # Group statistics
-        group_means = {name: np.mean(arr) for name, arr in group_arrays.items()}
-        group_stds = {name: np.std(arr, ddof=1) for name, arr in group_arrays.items()}
-        group_counts = {name: len(arr) for name, arr in group_arrays.items()}
-
-        # Sum of squares
-        ss_between = sum(
-            len(arr) * (np.mean(arr) - grand_mean) ** 2 for arr in group_arrays.values()
-        )
-        ss_within = sum(
-            np.sum((arr - np.mean(arr)) ** 2) for arr in group_arrays.values()
-        )
-        ss_total = ss_between + ss_within
-
-        # Degrees of freedom
-        df_between = k - 1
-        df_within = n_total - k
-        df_total = n_total - 1
-
-        # Mean squares
-        ms_between = ss_between / df_between
-        ms_within = ss_within / df_within
-
-        # F-statistic
-        f_stat = ms_between / ms_within
         p_value = 1 - stats.f.cdf(f_stat, df_between, df_within)
 
         # Effect sizes
         eta_squared = ss_between / ss_total
-        omega_squared = (ss_between - df_between * ms_within) / (ss_total + ms_within)
-        omega_squared = max(0, omega_squared)  # Can be negative for small effects
+        omega_squared = max(0, (ss_between - df_between * ms_within) / (ss_total + ms_within))
         cohens_f = np.sqrt(eta_squared / (1 - eta_squared)) if eta_squared < 1 else 0
 
-        # ANOVA table
         anova_table = ANOVATable(
             source=["Between Groups", "Within Groups", "Total"],
             sum_of_squares=[ss_between, ss_within, ss_total],
@@ -295,24 +328,17 @@ class ANOVAAnalyzer:
             p_value=[p_value, None, None],
         )
 
-        # Assumption tests
-        assumption_tests = []
-        if test_assumptions:
-            assumption_tests = self._test_anova_assumptions(group_arrays)
+        assumption_tests = (
+            self._test_anova_assumptions(group_arrays) if test_assumptions else []
+        )
+        post_hoc_results = (
+            self._post_hoc_tests(group_arrays, ms_within, df_within, post_hoc)
+            if post_hoc and p_value < self.alpha
+            else []
+        )
 
-        # Post-hoc tests
-        post_hoc_results = []
-        if post_hoc and p_value < self.alpha:
-            post_hoc_results = self._post_hoc_tests(
-                group_arrays, ms_within, df_within, post_hoc
-            )
-
-        # Observed power
         noncentrality = (
             np.sqrt(n_total * eta_squared / (1 - eta_squared)) if eta_squared < 1 else 0
-        )
-        observed_power = self._calculate_power(
-            f_stat, df_between, df_within, noncentrality
         )
 
         return OneWayANOVAResult(
@@ -324,13 +350,15 @@ class ANOVAAnalyzer:
             eta_squared=eta_squared,
             omega_squared=omega_squared,
             cohens_f=cohens_f,
-            group_means=group_means,
-            group_stds=group_stds,
-            group_counts=group_counts,
+            group_means={name: np.mean(arr) for name, arr in group_arrays.items()},
+            group_stds={name: np.std(arr, ddof=1) for name, arr in group_arrays.items()},
+            group_counts={name: len(arr) for name, arr in group_arrays.items()},
             grand_mean=grand_mean,
             post_hoc_results=post_hoc_results,
             assumption_tests=assumption_tests,
-            observed_power=observed_power,
+            observed_power=self._calculate_power(
+                f_stat, df_between, df_within, noncentrality
+            ),
         )
 
     def two_way_anova(

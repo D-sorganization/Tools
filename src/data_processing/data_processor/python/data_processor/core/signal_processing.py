@@ -503,6 +503,11 @@ def calculate_trendline(
     Returns:
         Dictionary with trend parameters and R-squared value
     """
+    # DbC preconditions
+    assert x_col in df.columns, f"x_col '{x_col}' not found in DataFrame columns"
+    assert y_col in df.columns, f"y_col '{y_col}' not found in DataFrame columns"
+    assert degree >= 1, f"Polynomial degree must be >= 1, got {degree}"
+
     # Filter to valid data
     mask = ~(np.isnan(df[x_col]) | np.isnan(df[y_col]))
 
