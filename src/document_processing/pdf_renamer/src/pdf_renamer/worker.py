@@ -42,6 +42,139 @@ class ProcessingResult:
         self.new_path = new_path
 
 
+def _extract_or_load_title(
+    file_path: Path,
+    file_hash: str,
+    cache: ResultCache,
+    llm: TitleLLM | None,
+) -> TitleResult:
+    """Extract title from PDF, using cache if available.
+
+    Args:
+        file_path: Path to the PDF file
+        file_hash: SHA-256 hash of the file
+        cache: ResultCache instance
+        llm: Optional LLM for title extraction
+
+    Returns:
+        TitleResult from cache or fresh extraction
+    """
+    cached = cache.get(file_hash)
+    if cached and cached.title:
+        logger.debug(f"[CACHE] {file_path.name} -> {cached.title}")
+        return cached
+
+    result = extract_title(file_path, llm)
+    model_name = getattr(llm, "DEFAULT_MODEL", "unknown") if llm else "local"
+    cache.save(
+        file_hash,
+        file_path,
+        result,
+        provider="gemini" if llm else "local",
+        model=model_name if llm else "heuristic",
+    )
+    logger.info(
+        f"[{result.method.upper()}] {file_path.name} -> {result.title} "
+        f"({result.confidence:.2f})"
+    )
+    return result
+
+
+def _handle_missing_title(
+    file_path: Path,
+    result: TitleResult,
+    move_failed: bool,
+    dry_run: bool,
+    failed_folder: str,
+    transaction_log: TransactionLog,
+) -> ProcessingResult:
+    """Handle the case where no title could be extracted.
+
+    Args:
+        file_path: Path to the PDF file
+        result: TitleResult with empty title
+        move_failed: Whether to move the file to a failed folder
+        dry_run: Whether this is a dry run
+        failed_folder: Name of the failed folder
+        transaction_log: TransactionLog instance
+
+    Returns:
+        ProcessingResult indicating failure
+    """
+    if move_failed and not dry_run:
+        failed_path = _move_to_failed_folder(
+            file_path, failed_folder, transaction_log
+        )
+        if failed_path:
+            return ProcessingResult(
+                file_path,
+                False,
+                f"Could not extract title from {file_path.name}: {result.details}. Moved to {failed_folder}/",
+                result,
+                failed_path,
+            )
+
+    return ProcessingResult(
+        file_path,
+        False,
+        f"Could not extract title from {file_path.name}: {result.details}",
+        result,
+    )
+
+
+def _rename_file_with_collision_handling(
+    file_path: Path,
+    target_path: Path,
+    file_hash: str,
+    result: TitleResult,
+    transaction_log: TransactionLog,
+) -> ProcessingResult:
+    """Rename a file with thread-safe collision handling.
+
+    Args:
+        file_path: Original file path
+        target_path: Desired target path
+        file_hash: SHA-256 hash for collision resolution
+        result: TitleResult for the file
+        transaction_log: TransactionLog instance
+
+    Returns:
+        ProcessingResult indicating success or failure
+    """
+    with _file_operation_lock:
+        if target_path.exists():
+            short_hash = file_hash[:6]
+            stem = target_path.stem
+            target_path = file_path.parent / f"{stem}_{short_hash}.pdf"
+
+            if target_path.exists():
+                return ProcessingResult(
+                    file_path,
+                    False,
+                    f"Target exists and collision resolution failed: {target_path.name}",
+                    result,
+                )
+
+        try:
+            file_path.rename(target_path)
+            transaction_log.log_rename(file_path, target_path, True)
+            return ProcessingResult(
+                file_path,
+                True,
+                f"Renamed: {file_path.name} -> {target_path.name}",
+                result,
+                target_path,
+            )
+        except OSError as e:
+            transaction_log.log_rename(file_path, target_path, False, str(e))
+            return ProcessingResult(
+                file_path,
+                False,
+                f"Failed to rename {file_path.name}: {e}",
+                result,
+            )
+
+
 def process_single_file(
     file_path: Path,
     cache: ResultCache,
@@ -55,6 +188,8 @@ def process_single_file(
 ) -> ProcessingResult:
     """
     Process a single PDF file: extract title and rename.
+
+    Orchestrates title extraction, filename generation, and renaming.
 
     Args:
         file_path: Path to PDF file
@@ -74,68 +209,18 @@ def process_single_file(
         if not file_path.exists():
             return ProcessingResult(file_path, False, f"File not found: {file_path}")
 
-        # 1. Calculate hash
         file_hash = sha256_file(file_path)
+        result = _extract_or_load_title(file_path, file_hash, cache, llm)
 
-        # 2. Check cache
-        cached = cache.get(file_hash)
-        result: TitleResult
-
-        if cached and cached.title:
-            result = cached
-            logger.debug(f"[CACHE] {file_path.name} -> {result.title}")
-        else:
-            # 3. Extract title
-            result = extract_title(file_path, llm)
-
-            # 4. Save to cache
-            model_name = getattr(llm, "DEFAULT_MODEL", "unknown") if llm else "local"
-            cache.save(
-                file_hash,
-                file_path,
-                result,
-                provider="gemini" if llm else "local",
-                model=model_name if llm else "heuristic",
-            )
-            logger.info(
-                f"[{result.method.upper()}] {file_path.name} -> {result.title} "
-                f"({result.confidence:.2f})"
-            )
-
-        # 5. Check if we have a valid title
         if not result.title:
-            # Move to failed folder if enabled
-            if move_failed and not dry_run:
-                failed_path = _move_to_failed_folder(
-                    file_path, failed_folder, transaction_log
-                )
-                if failed_path:
-                    return ProcessingResult(
-                        file_path,
-                        False,
-                        f"Could not extract title from {file_path.name}: {result.details}. Moved to {failed_folder}/",
-                        result,
-                        failed_path,
-                    )
-
-            return ProcessingResult(
-                file_path,
-                False,
-                f"Could not extract title from {file_path.name}: {result.details}",
-                result,
+            return _handle_missing_title(
+                file_path, result, move_failed, dry_run, failed_folder, transaction_log
             )
 
-        # 6. Extract author if needed
-        author = ""
-        if include_author:
-            author = author_from_metadata(file_path) or ""
-
-        # 7. Generate new filename
+        author = author_from_metadata(file_path) or "" if include_author else ""
         new_filename = _generate_filename(result.title, author, style, include_author)
-
         target_path = file_path.parent / new_filename
 
-        # 8. Check if already correctly named
         if target_path == file_path:
             return ProcessingResult(
                 file_path,
@@ -145,44 +230,7 @@ def process_single_file(
                 target_path,
             )
 
-        # 9. Rename with thread safety
-        if not dry_run:
-            with _file_operation_lock:
-                # Handle collisions
-                if target_path.exists():
-                    # Add hash suffix to prevent collisions
-                    short_hash = file_hash[:6]
-                    stem = target_path.stem
-                    target_path = file_path.parent / f"{stem}_{short_hash}.pdf"
-
-                    if target_path.exists():
-                        return ProcessingResult(
-                            file_path,
-                            False,
-                            f"Target exists and collision resolution failed: {target_path.name}",
-                            result,
-                        )
-
-                # Perform rename
-                try:
-                    file_path.rename(target_path)
-                    transaction_log.log_rename(file_path, target_path, True)
-                    return ProcessingResult(
-                        file_path,
-                        True,
-                        f"Renamed: {file_path.name} -> {target_path.name}",
-                        result,
-                        target_path,
-                    )
-                except OSError as e:
-                    transaction_log.log_rename(file_path, target_path, False, str(e))
-                    return ProcessingResult(
-                        file_path,
-                        False,
-                        f"Failed to rename {file_path.name}: {e}",
-                        result,
-                    )
-        else:
+        if dry_run:
             return ProcessingResult(
                 file_path,
                 True,
@@ -190,6 +238,10 @@ def process_single_file(
                 result,
                 target_path,
             )
+
+        return _rename_file_with_collision_handling(
+            file_path, target_path, file_hash, result, transaction_log
+        )
 
     except (PermissionError, OSError) as e:
         logger.error(f"Error processing {file_path}: {e}")

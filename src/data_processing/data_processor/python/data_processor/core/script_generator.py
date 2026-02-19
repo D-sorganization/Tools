@@ -410,112 +410,131 @@ class ScriptGenerator:
 
         return imports
 
+    def _generate_load_code(
+        self, params: dict, prefix: str,
+    ) -> list[str]:
+        """Generate code for a LOAD operation."""
+        file_path = params.get("file_path", "input_path")
+        file_format = params.get("file_format", "csv")
+        reader_map = {
+            "csv": "pd.read_csv",
+            "xlsx": "pd.read_excel",
+            "excel": "pd.read_excel",
+            "parquet": "pd.read_parquet",
+        }
+        reader = reader_map.get(file_format, "pd.read_csv")
+        return [f"{prefix}df = {reader}({file_path!r})"]
+
+    def _generate_filter_code(
+        self, params: dict, prefix: str,
+    ) -> list[str]:
+        """Generate code for a FILTER operation."""
+        filter_type = params.get("filter_type")
+        filter_params = params.get("filter_params", {})
+        signals = params.get("signals")
+        lines = [f"{prefix}filter_engine = VectorizedFilterEngine()"]
+        if signals:
+            lines.append(
+                f"{prefix}df = filter_engine.apply_filter_batch("
+                f"df, {filter_type!r}, {filter_params}, signal_names={signals})"
+            )
+        else:
+            lines.append(
+                f"{prefix}df = filter_engine.apply_filter_batch("
+                f"df, {filter_type!r}, {filter_params})"
+            )
+        return lines
+
+    def _generate_export_code(
+        self, params: dict, prefix: str,
+    ) -> list[str]:
+        """Generate code for an EXPORT operation."""
+        file_path = params.get("file_path", "output_path")
+        file_format = params.get("file_format", "csv")
+        writer_map = {
+            "csv": f"{prefix}df.to_csv({file_path!r}, index=False)",
+            "xlsx": f"{prefix}df.to_excel({file_path!r}, index=False)",
+            "excel": f"{prefix}df.to_excel({file_path!r}, index=False)",
+            "parquet": f"{prefix}df.to_parquet({file_path!r})",
+        }
+        line = writer_map.get(file_format)
+        return [line] if line else []
+
     def _generate_step_code(self, step: ProcessingStep, indent: int = 0) -> list[str]:
         """Generate Python code for a processing step."""
         prefix = " " * indent
-        lines: list[str] = []
         params = step.parameters
 
         if step.operation == OperationType.LOAD:
-            file_path = params.get("file_path", "input_path")
-            file_format = params.get("file_format", "csv")
-
-            if file_format == "csv":
-                lines.append(f"{prefix}df = pd.read_csv({file_path!r})")
-            elif file_format in ("xlsx", "excel"):
-                lines.append(f"{prefix}df = pd.read_excel({file_path!r})")
-            elif file_format == "parquet":
-                lines.append(f"{prefix}df = pd.read_parquet({file_path!r})")
-            else:
-                lines.append(f"{prefix}df = pd.read_csv({file_path!r})")
+            return self._generate_load_code(params, prefix)
 
         elif step.operation == OperationType.FILTER:
-            filter_type = params.get("filter_type")
-            filter_params = params.get("filter_params", {})
-            signals = params.get("signals")
-
-            lines.append(f"{prefix}filter_engine = VectorizedFilterEngine()")
-            if signals:
-                lines.append(
-                    f"{prefix}df = filter_engine.apply_filter_batch("
-                    f"df, {filter_type!r}, {filter_params}, signal_names={signals})"
-                )
-            else:
-                lines.append(
-                    f"{prefix}df = filter_engine.apply_filter_batch("
-                    f"df, {filter_type!r}, {filter_params})"
-                )
+            return self._generate_filter_code(params, prefix)
 
         elif step.operation == OperationType.CALCULATE:
             col_name = params.get("column_name")
             formula = params.get("formula")
-            lines.append(
+            return [
                 f"{prefix}df = apply_custom_variable(df, {col_name!r}, {formula!r})"
-            )
+            ]
 
         elif step.operation == OperationType.RESAMPLE:
             time_col = params.get("time_column")
             rule = params.get("rule")
             method = params.get("method", "mean")
-            lines.append(
+            return [
                 f"{prefix}df = resample_data("
                 f"df, {time_col!r}, {rule!r}, method={method!r})"
-            )
+            ]
 
         elif step.operation == OperationType.INTEGRATE:
             time_col = params.get("time_column")
             signals = params.get("signals")
             method = params.get("method", "trapezoidal")
-            lines.append(
+            return [
                 f"{prefix}df = integrate_signals("
                 f"df, {time_col!r}, {signals}, method={method!r})"
-            )
+            ]
 
         elif step.operation == OperationType.DIFFERENTIATE:
             time_col = params.get("time_column")
             signals = params.get("signals")
             method = params.get("method", "spline")
             orders = params.get("orders", [1])
-            lines.append(
+            return [
                 f"{prefix}df = differentiate_signals(df, {time_col!r}, {signals}, "
                 f"method={method!r}, orders={orders})"
-            )
+            ]
 
         elif step.operation == OperationType.TRIM:
             time_col = params.get("time_column")
             start = params.get("start_time")
             end = params.get("end_time")
-            lines.append(
+            return [
                 f"{prefix}df = trim_time_range(df, {time_col!r}, "
                 f"start_time={start!r}, end_time={end!r})"
-            )
+            ]
 
         elif step.operation == OperationType.SELECT:
             columns = params.get("columns", [])
-            lines.append(f"{prefix}df = df[{columns}]")
+            return [f"{prefix}df = df[{columns}]"]
 
         elif step.operation == OperationType.RENAME:
             mapping = params.get("mapping", {})
-            lines.append(f"{prefix}df = df.rename(columns={mapping})")
+            return [f"{prefix}df = df.rename(columns={mapping})"]
 
         elif step.operation == OperationType.EXPORT:
-            file_path = params.get("file_path", "output_path")
-            file_format = params.get("file_format", "csv")
-
-            if file_format == "csv":
-                lines.append(f"{prefix}df.to_csv({file_path!r}, index=False)")
-            elif file_format in ("xlsx", "excel"):
-                lines.append(f"{prefix}df.to_excel({file_path!r}, index=False)")
-            elif file_format == "parquet":
-                lines.append(f"{prefix}df.to_parquet({file_path!r})")
+            return self._generate_export_code(params, prefix)
 
         elif step.operation == OperationType.CUSTOM:
             op_name = params.get("operation_name", "custom_operation")
-            lines.append(f"{prefix}# Custom operation: {op_name}")
-            lines.append(f"{prefix}# Parameters: {params}")
-            lines.append(f"{prefix}# TODO: Implement custom operation")
+            return [
+                f"{prefix}# Custom operation: {op_name}",
+                f"{prefix}# Parameters: {params}",
+                f"{prefix}# TODO: Implement custom operation",
+            ]
 
-        return lines
+        return []
 
     def _generate_argparse(self, pipeline: ProcessingPipeline) -> list[str]:
         """Generate argparse setup code."""

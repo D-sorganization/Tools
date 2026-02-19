@@ -119,6 +119,106 @@ def collect_files(
     return files_to_pack
 
 
+def _collect_file_contents(
+    source_path: Path,
+    files_to_pack: list[Path],
+    package_data: dict[str, Any],
+    progress_callback: Any = None,
+    cancel_check: Any = None,
+) -> tuple[list[str], bool]:
+    """Read and base64-encode files into the package data dict.
+
+    Args:
+        source_path: Root source folder.
+        files_to_pack: List of files to include.
+        package_data: Package dict whose 'files' key will be populated.
+        progress_callback: Optional progress callable.
+        cancel_check: Optional cancellation callable.
+
+    Returns:
+        Tuple of (error_messages, was_cancelled).
+    """
+    errors: list[str] = []
+    total_files = len(files_to_pack)
+
+    for i, file_path in enumerate(files_to_pack):
+        if cancel_check and cancel_check():
+            return errors, True
+
+        try:
+            rel_path = file_path.relative_to(source_path)
+            with open(file_path, "rb") as f:
+                content = f.read()
+
+            package_data["files"][str(rel_path)] = base64.b64encode(
+                content,
+            ).decode("utf-8")
+
+            if progress_callback:
+                progress_callback(file_path.name, i + 1, total_files)
+
+        except (OSError, UnicodeDecodeError) as e:
+            error_msg = f"Error packing {file_path}: {e}"
+            logger.warning(error_msg)
+            errors.append(error_msg)
+
+    return errors, False
+
+
+def _serialize_and_write(
+    package_data: dict[str, Any],
+    output_path: Path,
+    compression: str,
+    encrypt: bool,
+    password: str,
+) -> None:
+    """Serialize package data to JSON, compress, optionally encrypt, and write.
+
+    Args:
+        package_data: The package dict to serialize.
+        output_path: Output file path.
+        compression: Compression level name.
+        encrypt: Whether to encrypt.
+        password: Encryption password.
+    """
+    json_data = json.dumps(package_data, indent=2).encode("utf-8")
+
+    compression_level = COMPRESSION_LEVELS[compression]
+    if compression_level > 0:
+        json_data = gzip.compress(json_data, compresslevel=compression_level)
+
+    if encrypt:
+        json_data = EncryptionManager.encrypt_data(json_data, password)
+
+    with open(output_path, "wb") as f:  # type: ignore[assignment]
+        f.write(json_data)
+
+
+def _write_manifest(
+    output_path: Path,
+    source_path: Path,
+    files_to_pack: list[Path],
+    total_files: int,
+) -> None:
+    """Write a sidecar manifest JSON file.
+
+    Args:
+        output_path: Path to the package file.
+        source_path: Root source folder.
+        files_to_pack: List of packed files.
+        total_files: Total file count.
+    """
+    manifest_path = output_path.with_suffix(".manifest.json")
+    manifest = {
+        "package_file": str(output_path),
+        "created_at": datetime.now().isoformat(),
+        "files": [str(f.relative_to(source_path)) for f in files_to_pack],
+        "total_files": total_files,
+        "package_size": output_path.stat().st_size,
+    }
+    safe_write_json(manifest_path, manifest, indent=2)
+
+
 def pack_files(
     source_path: Path,
     output_path: Path,
@@ -131,6 +231,8 @@ def pack_files(
     cancel_check: Any = None,
 ) -> PackResult:
     """Pack files into a single archive.
+
+    Orchestrates file collection, serialization, and manifest creation.
 
     Args:
         source_path: Root source folder.
@@ -150,7 +252,6 @@ def pack_files(
         total_files = len(files_to_pack)
         logger.info("Packing %d files...", total_files)
 
-        # Create package data
         package_data: dict[str, Any] = {
             "files": {},
             "metadata": {
@@ -162,60 +263,17 @@ def pack_files(
             },
         }
 
-        errors: list[str] = []
-
-        # Add files to package
-        for i, file_path in enumerate(files_to_pack):
-            if cancel_check and cancel_check():
-                return PackResult(success=False, error="Operation cancelled")
-
-            try:
-                rel_path = file_path.relative_to(source_path)
-                with open(file_path, "rb") as f:
-                    content = f.read()
-
-                package_data["files"][str(rel_path)] = base64.b64encode(
-                    content,
-                ).decode("utf-8")
-
-                if progress_callback:
-                    progress_callback(file_path.name, i + 1, total_files)
-
-            except (OSError, UnicodeDecodeError) as e:
-                error_msg = f"Error packing {file_path}: {e}"
-                logger.warning(error_msg)
-                errors.append(error_msg)
-
-        if cancel_check and cancel_check():
+        errors, cancelled = _collect_file_contents(
+            source_path, files_to_pack, package_data,
+            progress_callback, cancel_check,
+        )
+        if cancelled or (cancel_check and cancel_check()):
             return PackResult(success=False, error="Operation cancelled")
 
-        # Serialize to JSON
-        json_data = json.dumps(package_data, indent=2).encode("utf-8")
+        _serialize_and_write(package_data, output_path, compression, encrypt, password)
 
-        # Compress if needed
-        compression_level = COMPRESSION_LEVELS[compression]
-        if compression_level > 0:
-            json_data = gzip.compress(json_data, compresslevel=compression_level)
-
-        # Encrypt if needed
-        if encrypt:
-            json_data = EncryptionManager.encrypt_data(json_data, password)
-
-        # Write to file
-        with open(output_path, "wb") as f:  # type: ignore[assignment]
-            f.write(json_data)
-
-        # Create manifest if enabled
         if create_manifest:
-            manifest_path = output_path.with_suffix(".manifest.json")
-            manifest = {
-                "package_file": str(output_path),
-                "created_at": datetime.now().isoformat(),
-                "files": [str(f.relative_to(source_path)) for f in files_to_pack],
-                "total_files": total_files,
-                "package_size": output_path.stat().st_size,
-            }
-            safe_write_json(manifest_path, manifest, indent=2)
+            _write_manifest(output_path, source_path, files_to_pack, total_files)
 
         package_size = output_path.stat().st_size
         logger.info(

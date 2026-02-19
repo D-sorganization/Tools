@@ -63,37 +63,43 @@ if PYQT6_AVAILABLE:
 
         def _setup_ui(self) -> None:
             layout = QVBoxLayout(self)
+            layout.addWidget(self._create_axis_group())
+            layout.addWidget(self._create_grid_group())
+            layout.addWidget(self._create_interpolation_group())
+            layout.addWidget(self._create_smoothing_group())
+            layout.addWidget(self._create_outlier_group())
+            layout.addWidget(self._create_appearance_group())
 
-            # Axis selection
+            self.plot_btn = QPushButton("Create Surface Plot")
+            self.plot_btn.clicked.connect(self._create_plot)
+            layout.addWidget(self.plot_btn)
+
+        def _create_axis_group(self) -> QGroupBox:
+            """Create axis selection group."""
             axis_group = QGroupBox("Axis Selection")
             axis_layout = QFormLayout(axis_group)
-
             self.x_combo = QComboBox()
             axis_layout.addRow("X Axis:", self.x_combo)
-
             self.y_combo = QComboBox()
             axis_layout.addRow("Y Axis:", self.y_combo)
-
             self.z_combo = QComboBox()
             axis_layout.addRow("Z Axis:", self.z_combo)
+            return axis_group
 
-            layout.addWidget(axis_group)
-
-            # Grid settings
+        def _create_grid_group(self) -> QGroupBox:
+            """Create grid settings group."""
             grid_group = QGroupBox("Grid Settings")
             grid_layout = QFormLayout(grid_group)
-
             self.resolution_spin = QSpinBox()
             self.resolution_spin.setRange(10, 200)
             self.resolution_spin.setValue(50)
             grid_layout.addRow("Resolution:", self.resolution_spin)
+            return grid_group
 
-            layout.addWidget(grid_group)
-
-            # Interpolation
+        def _create_interpolation_group(self) -> QGroupBox:
+            """Create interpolation settings group."""
             interp_group = QGroupBox("Interpolation")
             interp_layout = QFormLayout(interp_group)
-
             self.interp_combo = QComboBox()
             self.interp_combo.addItems(
                 [
@@ -106,50 +112,44 @@ if PYQT6_AVAILABLE:
                 ]
             )
             interp_layout.addRow("Method:", self.interp_combo)
+            return interp_group
 
-            layout.addWidget(interp_group)
-
-            # Smoothing
+        def _create_smoothing_group(self) -> QGroupBox:
+            """Create smoothing settings group."""
             smooth_group = QGroupBox("Smoothing")
             smooth_layout = QFormLayout(smooth_group)
-
             self.smooth_combo = QComboBox()
             self.smooth_combo.addItems(
                 ["None", "Gaussian", "Median", "Uniform", "Savitzky-Golay"]
             )
             smooth_layout.addRow("Method:", self.smooth_combo)
-
             self.sigma_spin = QDoubleSpinBox()
             self.sigma_spin.setRange(0.1, 10)
             self.sigma_spin.setValue(1.0)
             smooth_layout.addRow("Sigma:", self.sigma_spin)
-
             self.kernel_spin = QSpinBox()
             self.kernel_spin.setRange(3, 21)
             self.kernel_spin.setValue(3)
             self.kernel_spin.setSingleStep(2)
             smooth_layout.addRow("Kernel Size:", self.kernel_spin)
+            return smooth_group
 
-            layout.addWidget(smooth_group)
-
-            # Outlier removal
+        def _create_outlier_group(self) -> QGroupBox:
+            """Create outlier handling group."""
             outlier_group = QGroupBox("Outlier Handling")
             outlier_layout = QFormLayout(outlier_group)
-
             self.remove_outliers_check = QCheckBox("Remove Outliers")
             outlier_layout.addRow("", self.remove_outliers_check)
-
             self.threshold_spin = QDoubleSpinBox()
             self.threshold_spin.setRange(1, 10)
             self.threshold_spin.setValue(3.0)
             outlier_layout.addRow("Z-Score Threshold:", self.threshold_spin)
+            return outlier_group
 
-            layout.addWidget(outlier_group)
-
-            # Appearance
+        def _create_appearance_group(self) -> QGroupBox:
+            """Create appearance settings group."""
             appear_group = QGroupBox("Appearance")
             appear_layout = QFormLayout(appear_group)
-
             self.colormap_combo = QComboBox()
             self.colormap_combo.addItems(
                 [
@@ -164,22 +164,14 @@ if PYQT6_AVAILABLE:
                 ]
             )
             appear_layout.addRow("Colormap:", self.colormap_combo)
-
             self.alpha_spin = QDoubleSpinBox()
             self.alpha_spin.setRange(0.1, 1.0)
             self.alpha_spin.setValue(0.8)
             appear_layout.addRow("Alpha:", self.alpha_spin)
-
             self.show_scatter_check = QCheckBox("Show Data Points")
             self.show_scatter_check.setChecked(True)
             appear_layout.addRow("", self.show_scatter_check)
-
-            layout.addWidget(appear_group)
-
-            # Plot button
-            self.plot_btn = QPushButton("Create Surface Plot")
-            self.plot_btn.clicked.connect(self._create_plot)
-            layout.addWidget(self.plot_btn)
+            return appear_group
 
         def set_dataframe(self, df: pd.DataFrame) -> None:
             """Set DataFrame and update variable combos."""
@@ -222,10 +214,24 @@ if PYQT6_AVAILABLE:
         def _setup_ui(self) -> None:
             layout = QVBoxLayout(self)
 
-            # Tabs for different sections
             tabs = QTabWidget()
+            tabs.addTab(self._create_architecture_tab(), "Architecture")
+            tabs.addTab(self._create_training_tab(), "Training")
+            tabs.addTab(self._create_data_tab(), "Data")
+            layout.addWidget(tabs)
 
-            # Architecture tab
+            layout.addLayout(self._create_action_buttons())
+
+            self.progress_bar = QProgressBar()
+            self.progress_bar.setVisible(False)
+            layout.addWidget(self.progress_bar)
+
+            self.results_text = QTextEdit()
+            self.results_text.setReadOnly(True)
+            layout.addWidget(self.results_text)
+
+        def _create_architecture_tab(self) -> QWidget:
+            """Create the network architecture configuration tab."""
             arch_widget = QWidget()
             arch_layout = QVBoxLayout(arch_widget)
 
@@ -251,9 +257,10 @@ if PYQT6_AVAILABLE:
             arch_form.addRow("Dropout:", self.dropout_spin)
 
             arch_layout.addWidget(arch_group)
-            tabs.addTab(arch_widget, "Architecture")
+            return arch_widget
 
-            # Training tab
+        def _create_training_tab(self) -> QWidget:
+            """Create the training settings tab."""
             train_widget = QWidget()
             train_layout = QVBoxLayout(train_widget)
 
@@ -286,9 +293,10 @@ if PYQT6_AVAILABLE:
             train_form.addRow("Early Stopping Patience:", self.early_stop_spin)
 
             train_layout.addWidget(train_group)
-            tabs.addTab(train_widget, "Training")
+            return train_widget
 
-            # Data tab
+        def _create_data_tab(self) -> QWidget:
+            """Create the data configuration tab."""
             data_widget = QWidget()
             data_layout = QVBoxLayout(data_widget)
 
@@ -312,11 +320,10 @@ if PYQT6_AVAILABLE:
             data_form.addRow("Validation Split:", self.val_split_spin)
 
             data_layout.addWidget(data_group)
-            tabs.addTab(data_widget, "Data")
+            return data_widget
 
-            layout.addWidget(tabs)
-
-            # Action buttons
+        def _create_action_buttons(self) -> QHBoxLayout:
+            """Create the action button row."""
             btn_layout = QHBoxLayout()
 
             self.train_btn = QPushButton("Train Model")
@@ -335,16 +342,7 @@ if PYQT6_AVAILABLE:
             )
             btn_layout.addWidget(self.export_tf_btn)
 
-            layout.addLayout(btn_layout)
-
-            # Progress and results
-            self.progress_bar = QProgressBar()
-            self.progress_bar.setVisible(False)
-            layout.addWidget(self.progress_bar)
-
-            self.results_text = QTextEdit()
-            self.results_text.setReadOnly(True)
-            layout.addWidget(self.results_text)
+            return btn_layout
 
         def set_dataframe(self, df: pd.DataFrame) -> None:
             """Set DataFrame and update variable lists."""

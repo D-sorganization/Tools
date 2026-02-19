@@ -85,47 +85,26 @@ class MeshExportPipeline:
     # Public interface
     # ------------------------------------------------------------------
 
-    def run(
+    def _prepare_mesh(
         self,
-        output_dir: str | Path,
-        formats: list[str] | None = None,
-        coarse: bool = True,
-        physical_names: dict[int, str] | None = None,
-    ) -> MeshExportResult:
-        """Execute the full pipeline.
+        coarse: bool,
+        warnings: list[str],
+    ) -> tuple[dict | None, list[str]]:
+        """Resolve config and generate mesh, collecting errors.
 
         Args:
-            output_dir: Directory where exported files will be written.
-            formats: List of export formats.  Supported: ``"msh"``,
-                ``"mat"``, ``"json"``.  Defaults to all three.
-            coarse: Whether to use a coarse mesh (faster, for development).
-            physical_names: Optional mapping of material IDs to region
-                names for the MSH exporter.
+            coarse: Whether to use a coarse mesh.
+            warnings: Warning list to append to.
 
         Returns:
-            A ``MeshExportResult`` summarising what was exported.
+            Tuple of (mesh_data_or_None, error_list).
         """
-        if formats is None:
-            formats = ["msh", "mat", "json"]
-
         errors: list[str] = []
-        warnings: list[str] = []
-        exported_files: list[str] = []
-        output_path = Path(output_dir)
-
-        # Step 1: Resolve configuration
         try:
             self.config = self._resolve_config(warnings)
         except (KeyError, ValueError, TypeError) as exc:
-            return MeshExportResult(
-                success=False,
-                mesh_stats={},
-                exported_files=[],
-                errors=[f"Configuration error: {exc}"],
-                warnings=warnings,
-            )
+            return None, [f"Configuration error: {exc}"]
 
-        # Step 2: Generate mesh
         try:
             self.mesh_data = self._generate_mesh(coarse)
         except ImportError:
@@ -134,26 +113,97 @@ class MeshExportPipeline:
             mesh_gen = MeshGenerator(self.config)
             self.mesh_data = mesh_gen.create_mock_mesh()
         except (KeyError, ValueError, TypeError) as exc:
-            return MeshExportResult(
-                success=False,
-                mesh_stats={},
-                exported_files=[],
-                errors=[f"Mesh generation error: {exc}"],
-                warnings=warnings,
-            )
+            return None, [f"Mesh generation error: {exc}"]
 
-        # Step 3: Validate mesh
         if not validate_mesh_data(self.mesh_data):
             errors.append("Mesh validation failed -- nodes or elements invalid")
+            return None, errors
+
+        return self.mesh_data, []
+
+    def _export_formats(
+        self,
+        output_path: Path,
+        formats: list[str],
+        physical_names: dict[int, str] | None,
+        quality: dict,
+    ) -> tuple[list[str], list[str]]:
+        """Export mesh to each requested format.
+
+        Args:
+            output_path: Output directory.
+            formats: List of format strings.
+            physical_names: MSH physical names mapping.
+            quality: Mesh quality dict.
+
+        Returns:
+            Tuple of (exported_file_paths, errors).
+        """
+        exported_files: list[str] = []
+        errors: list[str] = []
+
+        format_handlers: dict[str, tuple[str, Any]] = {}
+        if "msh" in formats:
+            format_handlers["msh"] = ("mesh.msh", lambda p: export_mesh_to_msh(
+                self.mesh_data, p, physical_names=physical_names
+            ))
+        if "mat" in formats:
+            format_handlers["mat"] = ("mesh.mat", lambda p: export_mesh_to_mat(
+                self.mesh_data, p
+            ))
+        if "json" in formats:
+            format_handlers["json"] = ("mesh_metadata.json", lambda p: self._export_json_metadata(
+                p, quality
+            ))
+
+        for fmt, (filename, handler) in format_handlers.items():
+            try:
+                path = output_path / filename
+                handler(path)
+                exported_files.append(str(path))
+                logger.info("Exported %s to %s", fmt.upper(), path)
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError) as exc:
+                errors.append(f"{fmt.upper()} export error: {exc}")
+
+        return exported_files, errors
+
+    def run(
+        self,
+        output_dir: str | Path,
+        formats: list[str] | None = None,
+        coarse: bool = True,
+        physical_names: dict[int, str] | None = None,
+    ) -> MeshExportResult:
+        """Execute the full mesh export pipeline.
+
+        Orchestrates config resolution, mesh generation, validation,
+        quality checking, and multi-format export.
+
+        Args:
+            output_dir: Directory where exported files will be written.
+            formats: List of export formats (``"msh"``, ``"mat"``, ``"json"``).
+            coarse: Whether to use a coarse mesh.
+            physical_names: Optional material ID to name mapping for MSH.
+
+        Returns:
+            A ``MeshExportResult`` summarising what was exported.
+        """
+        if formats is None:
+            formats = ["msh", "mat", "json"]
+
+        warnings: list[str] = []
+        output_path = Path(output_dir)
+
+        mesh_data, prep_errors = self._prepare_mesh(coarse, warnings)
+        if prep_errors:
             return MeshExportResult(
                 success=False,
-                mesh_stats=self._mesh_statistics(),
+                mesh_stats=self._mesh_statistics() if self.mesh_data else {},
                 exported_files=[],
-                errors=errors,
+                errors=prep_errors,
                 warnings=warnings,
             )
 
-        # Step 4: Quality check
         mesh_gen = MeshGenerator(self.config)
         quality = mesh_gen.check_mesh_quality(self.mesh_data)
         if quality.get("mean_quality", 0) < 0.1:
@@ -161,37 +211,10 @@ class MeshExportPipeline:
                 f"Low average mesh quality ({quality.get('mean_quality', 0):.3f})"
             )
 
-        # Step 5: Export to requested formats
         output_path.mkdir(parents=True, exist_ok=True)
-
-        if "msh" in formats:
-            try:
-                msh_path = output_path / "mesh.msh"
-                export_mesh_to_msh(
-                    self.mesh_data, msh_path, physical_names=physical_names
-                )
-                exported_files.append(str(msh_path))
-                logger.info("Exported MSH to %s", msh_path)
-            except (ValueError, ZeroDivisionError, OverflowError, TypeError) as exc:
-                errors.append(f"MSH export error: {exc}")
-
-        if "mat" in formats:
-            try:
-                mat_path = output_path / "mesh.mat"
-                export_mesh_to_mat(self.mesh_data, mat_path)
-                exported_files.append(str(mat_path))
-                logger.info("Exported MAT to %s", mat_path)
-            except (ValueError, ZeroDivisionError, OverflowError, TypeError) as exc:
-                errors.append(f"MAT export error: {exc}")
-
-        if "json" in formats:
-            try:
-                json_path = output_path / "mesh_metadata.json"
-                self._export_json_metadata(json_path, quality)
-                exported_files.append(str(json_path))
-                logger.info("Exported JSON metadata to %s", json_path)
-            except (ValueError, ZeroDivisionError, OverflowError, TypeError) as exc:
-                errors.append(f"JSON metadata export error: {exc}")
+        exported_files, errors = self._export_formats(
+            output_path, formats, physical_names, quality,
+        )
 
         return MeshExportResult(
             success=len(errors) == 0,
