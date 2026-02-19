@@ -469,13 +469,15 @@ class FolderToolMixin:
                 if processed_files % 10 == 0:
                     self.after(
                         0,
-                        lambda p=processed_files
-                        / total_files: self.folder_progress_bar.set(p),
+                        lambda p=processed_files / total_files: self.folder_progress_bar.set(
+                            p
+                        ),
                     )  # type: ignore
                     self.after(
                         0,
-                        lambda p=processed_files,
-                        t=total_files: self.folder_status_var.set(f"Processed {p}/{t}"),
+                        lambda p=processed_files, t=total_files: self.folder_status_var.set(
+                            f"Processed {p}/{t}"
+                        ),
                     )  # type: ignore
         except (OSError, PermissionError) as e:
             logger.error(f"Combine failed: {e}")
