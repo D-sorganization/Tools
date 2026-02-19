@@ -6,6 +6,8 @@ Design by Contract principles.
 
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 
 class TestDependencyStatusContract:
     """Design by Contract tests for DependencyStatus dataclass."""
@@ -76,19 +78,21 @@ class TestHasModuleContract:
 class TestHasModule:
     """Functional tests for has_module."""
 
-    def test_returns_true_for_stdlib(self):
-        """Test returning True for standard library modules."""
+    @pytest.mark.parametrize(
+        "module_name, expected",
+        [
+            ("sys", True),
+            ("os", True),
+            ("pathlib", True),
+            ("definitely_not_a_real_module_xyz", False),
+        ],
+        ids=["sys", "os", "pathlib", "nonexistent"],
+    )
+    def test_module_availability(self, module_name, expected):
+        """Test has_module returns correct bool for stdlib and nonexistent modules."""
         from utils.dependency_checker import has_module
 
-        assert has_module("sys") is True
-        assert has_module("os") is True
-        assert has_module("pathlib") is True
-
-    def test_returns_false_for_nonexistent(self):
-        """Test returning False for nonexistent modules."""
-        from utils.dependency_checker import has_module
-
-        assert has_module("definitely_not_a_real_module_xyz") is False
+        assert has_module(module_name) is expected
 
     def test_uses_custom_spec_finder(self):
         """Test using custom spec finder."""
