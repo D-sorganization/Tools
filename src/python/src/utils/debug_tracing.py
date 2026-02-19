@@ -140,7 +140,7 @@ def trace_calls(
         Decorator function
     """
     # Import here to avoid circular dependency at module level
-    from utils.debug_utils import _DEBUG_MODE
+    from utils.debug_utils import is_debug_mode
 
     def decorator(func: F) -> F:
         @functools.wraps(func)
@@ -152,7 +152,7 @@ def trace_calls(
             with tracer.trace() as trace_log:
                 result = func(*args, **kwargs)
 
-            if _DEBUG_MODE and trace_log:
+            if is_debug_mode() and trace_log:
                 logger.debug(
                     "Trace for %s:\n%s",
                     func.__name__,

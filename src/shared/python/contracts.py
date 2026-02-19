@@ -63,21 +63,36 @@ def _resolve_contract_level() -> ContractLevel:
     return ContractLevel.ENFORCE if __debug__ else ContractLevel.OFF
 
 
-DBC_LEVEL: ContractLevel = _resolve_contract_level()
-CONTRACTS_ENABLED = DBC_LEVEL != ContractLevel.OFF
+# Contract state holder (avoids mutable globals + global keyword)
+class _ContractState:
+    level: ContractLevel = _resolve_contract_level()
+
+    @classmethod
+    @property
+    def enabled(cls) -> bool:
+        return cls.level != ContractLevel.OFF
+
+
+# Module-level aliases for backward compatibility (read via property delegation)
+DBC_LEVEL: ContractLevel = _ContractState.level
+CONTRACTS_ENABLED: bool = _ContractState.level != ContractLevel.OFF
 
 
 def set_contract_level(level: ContractLevel) -> None:
     """Set the global contract enforcement level at runtime."""
-    global DBC_LEVEL, CONTRACTS_ENABLED  # noqa: PLW0603
-    DBC_LEVEL = level
-    CONTRACTS_ENABLED = level != ContractLevel.OFF
+    import sys
+
+    _ContractState.level = level
+    # Update module-level aliases so existing references see the new values
+    current_module = sys.modules[__name__]
+    current_module.DBC_LEVEL = level  # type: ignore[attr-defined]
+    current_module.CONTRACTS_ENABLED = level != ContractLevel.OFF  # type: ignore[attr-defined]
     logger.info("Contract enforcement level set to %s", level.value)
 
 
 def get_contract_level() -> ContractLevel:
     """Return the current global contract enforcement level."""
-    return DBC_LEVEL
+    return _ContractState.level
 
 
 # ─── Exception Hierarchy ───────────────────────────────────────

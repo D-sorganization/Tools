@@ -691,15 +691,17 @@ class UnitConversionService:
         return result
 
 
-_global_service: UnitConversionService | None = None
+class _ServiceHolder:
+    """Singleton holder for UnitConversionService (avoids global keyword)."""
+
+    instance: UnitConversionService | None = None
 
 
 def get_service() -> UnitConversionService:
     """Get global unit conversion service instance."""
-    global _global_service
-    if _global_service is None:
-        _global_service = UnitConversionService()
-    return _global_service
+    if _ServiceHolder.instance is None:
+        _ServiceHolder.instance = UnitConversionService()
+    return _ServiceHolder.instance
 
 
 def convert(value: float, from_unit: str, to_unit: str, **kwargs: Any) -> float:

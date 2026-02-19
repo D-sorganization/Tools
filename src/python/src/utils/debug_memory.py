@@ -83,7 +83,7 @@ def memory_tracker(
         MemoryStats object (populated after block completes)
     """
     # Import here to avoid circular dependency at module level
-    from utils.debug_utils import _DEBUG_MODE
+    from utils.debug_utils import is_debug_mode
 
     # Force garbage collection before measuring
     gc.collect()
@@ -115,7 +115,7 @@ def memory_tracker(
         stats.peak_mb = peak / (1024 * 1024)
         stats.diff_mb = end_memory - start_memory
 
-        if log_result and _DEBUG_MODE:
+        if log_result and is_debug_mode():
             logger.debug("Memory stats for '%s': %s", name, stats)
 
 

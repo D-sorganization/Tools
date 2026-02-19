@@ -17,9 +17,6 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-# Global manager instance
-_manager: PlotThemeManager | None = None
-
 
 class PlotThemeManager:
     """Manager for matplotlib plot themes with persistence support.
@@ -292,6 +289,12 @@ class PlotThemeManager:
         }
 
 
+class _ManagerHolder:
+    """Singleton holder for the global PlotThemeManager (avoids global keyword)."""
+
+    instance: PlotThemeManager | None = None
+
+
 def get_plot_theme_manager(
     settings_org: str = "D-sorganization",
     settings_app: str = "PlotTheme",
@@ -305,7 +308,6 @@ def get_plot_theme_manager(
     Returns:
         PlotThemeManager instance
     """
-    global _manager
-    if _manager is None:
-        _manager = PlotThemeManager(settings_org, settings_app)
-    return _manager
+    if _ManagerHolder.instance is None:
+        _ManagerHolder.instance = PlotThemeManager(settings_org, settings_app)
+    return _ManagerHolder.instance

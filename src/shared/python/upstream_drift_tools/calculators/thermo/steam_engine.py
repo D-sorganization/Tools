@@ -250,21 +250,39 @@ class SteamCalculationEngine:
     def calculate_properties(
         self, temperature: float, pressure: float, engine: str = "auto"
     ) -> SteamProperties:
+        """Calculate steam properties for given temperature and pressure.
+
+        Args:
+            temperature: Temperature in Kelvin (must be > 0)
+            pressure: Pressure in Pa (must be > 0)
+            engine: Calculation engine ('auto', 'coolprop', 'cantera', 'simplified')
+
+        Returns:
+            SteamProperties dataclass with all thermodynamic properties
         """
-        Calculate steam properties for given explanation
-        """
+        # DbC preconditions
+        assert temperature > 0, f"Temperature must be positive (K), got {temperature}"
+        assert pressure > 0, f"Pressure must be positive (Pa), got {pressure}"
+
         try:
             selected_engine = self._select_best_engine(engine)
 
             if selected_engine == "coolprop":
-                return self._calculate_coolprop_properties(temperature, pressure)
-            if selected_engine == "cantera":
-                return self._calculate_cantera_properties(temperature, pressure)
-            return self._calculate_simplified_properties(temperature, pressure)
+                result = self._calculate_coolprop_properties(temperature, pressure)
+            elif selected_engine == "cantera":
+                result = self._calculate_cantera_properties(temperature, pressure)
+            else:
+                result = self._calculate_simplified_properties(temperature, pressure)
 
         except (RuntimeError, ValueError, TypeError) as e:
             logger.exception("Steam calculation failed: %s", e)
-            return self._calculate_simplified_properties(temperature, pressure)
+            result = self._calculate_simplified_properties(temperature, pressure)
+
+        # DbC postcondition: enthalpy and entropy should be finite
+        assert np.isfinite(result.enthalpy), (
+            f"Enthalpy must be finite, got {result.enthalpy}"
+        )
+        return result
 
     def calculate_saturated_properties_from_temperature(
         self, temperature: float, engine: str = "auto"

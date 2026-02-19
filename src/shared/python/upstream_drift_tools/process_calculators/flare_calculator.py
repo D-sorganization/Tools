@@ -87,6 +87,12 @@ class FlareCalculator:
         Returns:
             FlareDesign object with calculated parameters
         """
+        # DbC preconditions
+        assert total_flow > 0, f"total_flow must be positive, got {total_flow}"
+        assert temperature > 0, f"temperature must be positive (K), got {temperature}"
+        assert pressure > 0, f"pressure must be positive (bar), got {pressure}"
+        assert len(gas_composition) > 0, "gas_composition must not be empty"
+
         # Normalize composition to fractions
         total_comp = sum(gas_composition.values())
         if total_comp == 0:
@@ -154,13 +160,21 @@ class FlareCalculator:
         # Ensure minimum height
         height = max(height, FLARE_MIN_HEIGHT)
 
-        return FlareDesign(
+        result = FlareDesign(
             height=height,
             diameter=diameter,
             exit_velocity=target_velocity,
             heat_release=heat_release,
             radiation_intensity=target_radiation,
         )
+        # DbC postconditions
+        assert result.height >= FLARE_MIN_HEIGHT, (
+            f"Flare height must be >= minimum ({FLARE_MIN_HEIGHT}), got {result.height}"
+        )
+        assert result.diameter >= 0, (
+            f"Flare diameter must be non-negative, got {result.diameter}"
+        )
+        return result
 
     def calculate_radiation_zones(self, flare_design: FlareDesign) -> dict[str, float]:
         """Calculate radiation zones around the flare.

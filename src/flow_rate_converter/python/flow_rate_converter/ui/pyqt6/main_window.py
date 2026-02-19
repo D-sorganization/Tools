@@ -17,13 +17,13 @@ from PyQt6.QtWidgets import (
     QGridLayout,
     QGroupBox,
     QLabel,
-    QMainWindow,
     QPushButton,
     QSizePolicy,
     QTabWidget,
     QVBoxLayout,
     QWidget,
 )
+from upstream_drift_tools.ui.widgets.base_calculator_widget import BaseCalculatorWindow
 
 # Catppuccin Mocha color palette
 CATPPUCCIN_MOCHA = {
@@ -200,28 +200,27 @@ QFrame[class="separator"] {{
 """
 
 
-class FlowRateConverterWindow(QMainWindow):
+class FlowRateConverterWindow(BaseCalculatorWindow):
     """Main window for Flow Rate Converter application."""
 
     def __init__(self) -> None:
         """Initialize the main window."""
-        super().__init__()
+        super().__init__(
+            calculator_name="FlowRateConverter",
+            window_title="Flow Rate Converter",
+            min_size=(600, 500),
+        )
         self.result_labels: dict[str, QLabel] = {}
         self._setup_ui()
 
     def _setup_ui(self) -> None:
         """Set up the user interface."""
-        self.setWindowTitle("Flow Rate Converter")
-        self.setMinimumSize(600, 500)
         self.setStyleSheet(STYLESHEET)
 
-        # Central widget
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
+        self.main_layout.setContentsMargins(16, 16, 16, 16)
+        self.main_layout.setSpacing(12)
 
-        main_layout = QVBoxLayout(central_widget)
-        main_layout.setContentsMargins(16, 16, 16, 16)
-        main_layout.setSpacing(12)
+        main_layout = self.main_layout
 
         # Title
         title_label = QLabel("Flow Rate Converter")

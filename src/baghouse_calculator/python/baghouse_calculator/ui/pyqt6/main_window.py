@@ -18,12 +18,12 @@ from PyQt6.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
     QLabel,
-    QMainWindow,
     QPushButton,
     QScrollArea,
     QVBoxLayout,
     QWidget,
 )
+from upstream_drift_tools.ui.widgets.base_calculator_widget import BaseCalculatorWindow
 
 # Catppuccin Mocha colors
 COLORS = {
@@ -155,14 +155,17 @@ class BaghouseCalculatorEngine:
         )
 
 
-class BaghouseCalculatorMainWindow(QMainWindow):
+class BaghouseCalculatorMainWindow(BaseCalculatorWindow):
     """Main window for Baghouse Calculator application."""
 
     def __init__(self, parent: QWidget | None = None) -> None:
         """Initialize the main window."""
-        super().__init__(parent)
-        self.setWindowTitle("Baghouse Calculator")
-        self.setMinimumSize(1000, 700)
+        super().__init__(
+            calculator_name="BaghouseCalculator",
+            window_title="Baghouse Calculator",
+            min_size=(1000, 700),
+            parent=parent,
+        )
         self.setStyleSheet(get_stylesheet())
 
         self.engine = BaghouseCalculatorEngine()
@@ -171,10 +174,8 @@ class BaghouseCalculatorMainWindow(QMainWindow):
 
     def _setup_ui(self) -> None:
         """Set up the user interface."""
-        central = QWidget()
-        self.setCentralWidget(central)
-
-        layout = QHBoxLayout(central)
+        layout = QHBoxLayout()
+        self.main_layout.addLayout(layout)
         layout.setSpacing(20)
         layout.setContentsMargins(20, 20, 20, 20)
 

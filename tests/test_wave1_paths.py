@@ -82,31 +82,31 @@ class TestEnsurePaths:
 
 
 class TestStateManagerLazy:
-    """Tests that StateManager uses lazy initialization."""
+    """Tests that StateManager uses lazy initialization via _StateManagerHolder."""
 
     def test_no_global_instance_on_import(self) -> None:
-        """Importing the module should NOT create a StateManager."""
+        """Importing the module should use _StateManagerHolder for lazy init."""
         import upstream_drift_tools.utils.state_manager as sm
 
-        assert sm._state_manager is None or isinstance(
-            sm._state_manager, sm.StateManager
+        assert sm._StateManagerHolder.instance is None or isinstance(
+            sm._StateManagerHolder.instance, sm.StateManager
         )
 
     def test_get_state_manager_creates_instance(self, tmp_path: Path) -> None:
         """get_state_manager() should create instance on first call."""
         import upstream_drift_tools.utils.state_manager as sm
 
-        # Reset global
-        sm._state_manager = None
+        # Reset holder
+        sm._StateManagerHolder.instance = None
         mgr = sm.get_state_manager(base_directory=str(tmp_path / "test_states"))
         assert isinstance(mgr, sm.StateManager)
-        assert sm._state_manager is mgr
+        assert sm._StateManagerHolder.instance is mgr
 
     def test_get_state_manager_returns_same_instance(self, tmp_path: Path) -> None:
         """Subsequent calls should return the same instance."""
         import upstream_drift_tools.utils.state_manager as sm
 
-        sm._state_manager = None
+        sm._StateManagerHolder.instance = None
         mgr1 = sm.get_state_manager(base_directory=str(tmp_path / "test_states"))
         mgr2 = sm.get_state_manager()
         assert mgr1 is mgr2
