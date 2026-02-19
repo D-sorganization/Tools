@@ -43,6 +43,7 @@ FONT_SCALE_FACTOR = 40.0
 
 # ---------- Layer 0: metadata ----------
 def title_from_metadata(pdf_path: Path) -> TitleResult:
+    """Extract a document title from PDF metadata using pypdf."""
     try:
         from pypdf import PdfReader
 
@@ -60,6 +61,7 @@ def title_from_metadata(pdf_path: Path) -> TitleResult:
 
 # ---------- Layer 1: first-page heuristic (layout-aware) ----------
 def title_from_first_page(pdf_path: Path) -> TitleResult:
+    """Heuristically extract a title from the largest text on the first page."""
     try:
         import fitz
 

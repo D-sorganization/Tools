@@ -71,19 +71,23 @@ class NotesDockWidget(QDockWidget):
         self.setWidget(container)
 
     def save_notes(self) -> None:
+        """Persist the current editor contents to the notes file on disk."""
         text = self._require_editor().toPlainText()
         self.storage.save_text(text)
         self._set_status("Saved")
 
     def reload_from_disk(self) -> None:
+        """Reload the editor contents from the notes file on disk."""
         self._require_editor().setPlainText(self.storage.load_text())
 
     def clear_editor(self) -> None:
+        """Clear the editor and remove the notes file from storage."""
         self._require_editor().setPlainText("")
         self.storage.clear()
         self._set_status("Cleared")
 
     def delete_to_recycle_bin(self) -> bool:
+        """Save, then move the notes file to the recycle bin. Return True on success."""
         self.save_notes()
         try:
             self.storage.move_to_recycle(reason="user_delete")
@@ -96,6 +100,7 @@ class NotesDockWidget(QDockWidget):
         return True
 
     def restore_latest_deleted(self) -> bool:
+        """Restore the most recently recycled notes file. Return True on success."""
         item_id = self.storage.latest_recycled_id()
         if item_id is None:
             self._set_status("Recycle bin empty")
@@ -111,10 +116,12 @@ class NotesDockWidget(QDockWidget):
         return True
 
     def pop_out(self) -> None:
+        """Detach the dock widget into a floating window."""
         self.setFloating(True)
         self.show()
 
     def embed_in(self, main_window: QWidget, area: Qt.DockWidgetArea) -> None:
+        """Re-dock the widget into *main_window* at the given *area*."""
         if not hasattr(main_window, "addDockWidget"):
             raise ValueError("main_window must support addDockWidget")
         main_window.addDockWidget(area, self)

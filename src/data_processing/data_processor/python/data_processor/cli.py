@@ -248,34 +248,38 @@ def run(
     data = loader.load_multiple_files(pipeline.files, combine=pipeline.combine)
 
     if pipeline.combine:
-        dataframe = _process_dataframe(
-            cast("pd.DataFrame", data),
-            pipeline,
-            processor,
-            source_label="combined dataset",
+        _run_combined(data, pipeline, processor, loader)
+    else:
+        _run_uncombined(data, pipeline, processor, loader)
+
+
+def _run_combined(
+    data: object, pipeline: object, processor: object, loader: DataLoader,
+) -> None:
+    """Process a combined dataset and optionally save the result."""
+    dataframe = _process_dataframe(
+        cast("pd.DataFrame", data), pipeline, processor,
+        source_label="combined dataset",
+    )
+    if pipeline.output:
+        output_path = pipeline.output.path
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        loader.save_dataframe(
+            dataframe, str(output_path), format_type=pipeline.output.format,
         )
+        console.print(f"[green]Saved processed data to {output_path}[/green]")
+    else:
+        console.print("[cyan]Pipeline completed (no output specified).[/cyan]")
 
-        if pipeline.output:
-            output_path = pipeline.output.path
-            target_format = pipeline.output.format
-            output_path.parent.mkdir(parents=True, exist_ok=True)
-            loader.save_dataframe(
-                dataframe,
-                str(output_path),
-                format_type=target_format,
-            )
-            console.print(f"[green]Saved processed data to {output_path}[/green]")
-        else:
-            console.print("[cyan]Pipeline completed (no output specified).[/cyan]")
-        return
 
-    # combine == False => process each file independently
+def _run_uncombined(
+    data: object, pipeline: object, processor: object, loader: DataLoader,
+) -> None:
+    """Process each file independently and optionally save results."""
     processed_frames: dict[str, pd.DataFrame] = {}
     for source_path, frame in cast("dict[str, pd.DataFrame]", data).items():
         processed_frames[source_path] = _process_dataframe(
-            frame,
-            pipeline,
-            processor,
+            frame, pipeline, processor,
             source_label=Path(source_path).name,
         )
 
@@ -286,13 +290,10 @@ def run(
 
         for source_path, processed_df in processed_frames.items():
             destination = output_path / _format_output_filename(
-                source_path,
-                target_format,
+                source_path, target_format,
             )
             loader.save_dataframe(
-                processed_df,
-                str(destination),
-                format_type=target_format,
+                processed_df, str(destination), format_type=target_format,
             )
 
         console.print(

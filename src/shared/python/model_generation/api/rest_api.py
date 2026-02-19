@@ -51,18 +51,22 @@ class APIResponse:
 
     @classmethod
     def ok(cls, data: dict[str, Any]) -> APIResponse:
+        """Create a 200 OK response with *data* as the JSON body."""
         return cls(status_code=200, body=data)
 
     @classmethod
     def created(cls, data: dict[str, Any]) -> APIResponse:
+        """Create a 201 Created response with *data* as the JSON body."""
         return cls(status_code=201, body=data)
 
     @classmethod
     def error(cls, message: str, status_code: int = 400) -> APIResponse:
+        """Create an error response with the given *status_code* (default 400)."""
         return cls(status_code=status_code, body={"error": message})
 
     @classmethod
     def not_found(cls, message: str = "Not found") -> APIResponse:
+        """Create a 404 Not Found response with *message*."""
         return cls(status_code=404, body={"error": message})
 
     @classmethod
@@ -72,6 +76,7 @@ class APIResponse:
         filename: str,
         content_type: str = "application/xml",
     ) -> APIResponse:
+        """Create a file-download response with a Content-Disposition header."""
         return cls(
             status_code=200,
             body=content if isinstance(content, bytes) else content.encode(),
