@@ -14,20 +14,30 @@ Subpackages (import by domain):
 """
 
 from .protocols import (
+    CalculationResult,
+    Calculator,
     DataTransformer,
+    InputValidator,
     ProcessCalculator,
     StateSerializable,
     UnitConverter,
+    ValidationResult,
 )
 
 __version__ = "0.1.0"
 
 __all__ = [
     # Protocols
+    "Calculator",
     "DataTransformer",
     "ProcessCalculator",
     "StateSerializable",
     "UnitConverter",
+    # Data classes
+    "CalculationResult",
+    "ValidationResult",
+    # Validation
+    "InputValidator",
     # Subpackages (explicit for discovery)
     "calculators",
     "data_processing",
