@@ -12,6 +12,7 @@ import pytest
 # chat_dock_widget.py imports PyQt6.QtWidgets at module level, which
 # requires libEGL.so.1 on Linux. Skip the entire file when unavailable.
 pytest.importorskip("PyQt6.QtWidgets", reason="PyQt6.QtWidgets requires display server")
+pytest.importorskip("pytestqt", reason="pytest-qt required for widget tests")
 
 from chat.chat_dock_widget import (  # noqa: E402
     _read_shared_session_id,

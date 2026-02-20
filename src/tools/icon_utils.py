@@ -97,7 +97,9 @@ def create_resized_images(
     """
     from PIL import Image
 
-    return [img.resize(size, Image.Resampling.LANCZOS) for size in sizes]
+    # Pillow >= 9.1.0 uses Image.Resampling; older versions use Image.LANCZOS
+    lanczos = getattr(Image, "Resampling", Image).LANCZOS
+    return [img.resize(size, lanczos) for size in sizes]
 
 
 def convert_png_to_ico(

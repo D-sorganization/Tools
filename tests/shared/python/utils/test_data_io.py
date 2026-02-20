@@ -17,6 +17,15 @@ import pandas as pd
 import pytest
 from upstream_drift_tools.data_io import read_data, write_data
 
+
+def _pyarrow_available() -> bool:
+    try:
+        import pyarrow  # noqa: F401
+
+        return True
+    except ImportError:
+        return False
+
 # ── read_data CSV ────────────────────────────────────────────────────────
 
 
@@ -59,6 +68,12 @@ class TestReadDataCSV:
 # ── read_data Parquet Preference ─────────────────────────────────────────
 
 
+_skip_no_pyarrow = pytest.mark.skipif(
+    not _pyarrow_available(), reason="pyarrow not installed"
+)
+
+
+@_skip_no_pyarrow
 class TestReadDataParquetPreference:
     """Test Parquet sibling preference behavior."""
 
@@ -118,6 +133,7 @@ class TestWriteData:
         df_read = pd.read_csv(csv_path)
         pd.testing.assert_frame_equal(df_read, df)
 
+    @_skip_no_pyarrow
     def test_write_parquet(self, tmp_path: Path) -> None:
         parquet_path = tmp_path / "output.parquet"
         df = pd.DataFrame({"x": [10, 20, 30]})
@@ -125,6 +141,7 @@ class TestWriteData:
         assert result == parquet_path
         assert parquet_path.exists()
 
+    @_skip_no_pyarrow
     def test_write_parquet_also_csv(self, tmp_path: Path) -> None:
         parquet_path = tmp_path / "output.parquet"
         csv_path = tmp_path / "output.csv"
@@ -147,6 +164,7 @@ class TestWriteData:
         assert list(df_read.columns) == ["a", "b"]
         assert len(df_read) == 2
 
+    @_skip_no_pyarrow
     def test_roundtrip_parquet(self, tmp_path: Path) -> None:
         parquet_path = tmp_path / "roundtrip.parquet"
         df = pd.DataFrame({"num": [100, 200], "text": ["a", "b"]})
