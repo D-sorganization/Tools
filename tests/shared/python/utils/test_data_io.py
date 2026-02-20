@@ -26,6 +26,7 @@ def _pyarrow_available() -> bool:
     except ImportError:
         return False
 
+
 # ── read_data CSV ────────────────────────────────────────────────────────
 
 

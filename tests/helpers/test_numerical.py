@@ -6,8 +6,6 @@ of the helper functions.
 
 from __future__ import annotations
 
-import math
-
 import pytest
 
 from tests.helpers.numerical import (
