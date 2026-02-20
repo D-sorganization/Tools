@@ -207,13 +207,32 @@ class C3DViewerWindow(QMainWindow):
         super().__init__()
         self._current_file: Path | None = None
         self._metadata: dict | None = None
+        self._notes_dock: Any | None = None
         self._setup_ui()
+
+    # -- Notes integration (shared workspace) --
+    def _toggle_notes(self) -> None:
+        """Show/hide the shared notes dock widget."""
+        try:
+            from notes.integration import attach_notes_dock
+        except ImportError:
+            return
+        if self._notes_dock is None:
+            project_dir = Path(__file__).resolve().parents[4]
+            self._notes_dock = attach_notes_dock(self, project_dir=project_dir)
+        self._notes_dock.setVisible(not self._notes_dock.isVisible())
 
     def _setup_ui(self) -> None:
         """Set up the user interface."""
         self.setWindowTitle("C3D Motion Capture Viewer")
         self.setMinimumSize(750, 800)
         self.setStyleSheet(STYLESHEET)
+
+        # Menu bar with Notes toggle
+        menu_bar = self.menuBar()
+        view_menu = menu_bar.addMenu("&View")
+        notes_action = view_menu.addAction("Toggle &Notes")
+        notes_action.triggered.connect(self._toggle_notes)
 
         # Central widget with scroll area
         scroll_area = QScrollArea()

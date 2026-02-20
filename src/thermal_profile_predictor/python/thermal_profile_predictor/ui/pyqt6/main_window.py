@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import sys
 from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 from PyQt6.QtCore import Qt
@@ -181,13 +182,34 @@ class ThermalProfilePredictorWindow(QMainWindow):
     def __init__(self) -> None:
         """Initialize the main window."""
         super().__init__()
+        self._notes_dock: Any | None = None
         self._setup_ui()
+
+    # -- Notes integration (shared workspace) --
+    def _toggle_notes(self) -> None:
+        """Show/hide the shared notes dock widget."""
+        try:
+            from pathlib import Path
+
+            from notes.integration import attach_notes_dock
+        except ImportError:
+            return
+        if self._notes_dock is None:
+            project_dir = Path(__file__).resolve().parents[4]
+            self._notes_dock = attach_notes_dock(self, project_dir=project_dir)
+        self._notes_dock.setVisible(not self._notes_dock.isVisible())
 
     def _setup_ui(self) -> None:
         """Set up the user interface."""
         self.setWindowTitle("Thermal Profile Predictor")
         self.setMinimumSize(650, 700)
         self.setStyleSheet(STYLESHEET)
+
+        # Menu bar with Notes toggle
+        menu_bar = self.menuBar()
+        view_menu = menu_bar.addMenu("&View")
+        notes_action = view_menu.addAction("Toggle &Notes")
+        notes_action.triggered.connect(self._toggle_notes)
 
         # Central widget with scroll area
         scroll_area = QScrollArea()

@@ -96,7 +96,7 @@ class SceneRenderMixin:
             renderer.render_body(self.sun, julian_date, self.selected_body == self.sun)
         if self.view_state.show_labels:
             sun_pos = np.array([0, 0, 0])
-            renderer.render_label("Sun", sun_pos)
+            renderer.render_label("Sun", sun_pos, priority=3)
 
     def _render_planets(self, renderer: Any, julian_date: float) -> None:
         """Render all visible planets with labels."""
@@ -108,7 +108,7 @@ class SceneRenderMixin:
             if self.view_state.show_labels:
                 state = planet.get_state_at_time(julian_date)
                 pos = state.position * renderer.distance_scale
-                renderer.render_label(planet.name, pos, priority=2)
+                renderer.render_label(planet.name, pos, priority=3)
 
     def _render_minor_bodies(self, renderer: Any, julian_date: float) -> None:
         """Render asteroids, comets, and the asteroid belt."""

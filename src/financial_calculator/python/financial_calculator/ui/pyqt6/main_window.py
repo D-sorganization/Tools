@@ -238,11 +238,32 @@ class FinancialCalculatorMainWindow(QMainWindow):
         self.setStyleSheet(get_stylesheet())
 
         self.engine = FinancialCalculatorEngine()
+        self._notes_dock: QWidget | None = None
 
         self._setup_ui()
 
+    # -- Notes integration (shared workspace) --
+    def _toggle_notes(self) -> None:
+        """Show/hide the shared notes dock widget."""
+        try:
+            from pathlib import Path
+
+            from notes.integration import attach_notes_dock
+        except ImportError:
+            return
+        if self._notes_dock is None:
+            project_dir = Path(__file__).resolve().parents[4]
+            self._notes_dock = attach_notes_dock(self, project_dir=project_dir)
+        self._notes_dock.setVisible(not self._notes_dock.isVisible())
+
     def _setup_ui(self) -> None:
         """Set up the user interface."""
+        # Menu bar with Notes toggle
+        menu_bar = self.menuBar()
+        view_menu = menu_bar.addMenu("&View")
+        notes_action = view_menu.addAction("Toggle &Notes")
+        notes_action.triggered.connect(self._toggle_notes)
+
         central = QWidget()
         self.setCentralWidget(central)
 
