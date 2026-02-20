@@ -201,14 +201,23 @@ class UIRenderer:
         text: str,
         position: tuple[int, int],
         color: tuple[int, int, int] = (255, 255, 255),
+        font_name: str = "default",
     ) -> None:
-        """Render a text label ensuring no overlap."""
+        """Render a text label ensuring no overlap via vertical offset.
+
+        Args:
+            text: The label string to render.
+            position: Target (x, y) screen coordinates.
+            color: RGB text colour.
+            font_name: Font size key -- "default" (large), "small", or "title".
+        """
         # Get dimensions without drawing
-        _, width, height = self.text_cache.get_text_data(text, "default", color)
+        _, width, height = self.text_cache.get_text_data(text, font_name, color)
 
         rect = pygame.Rect(position[0], position[1], width, height)
         original_y = rect.y
-        offsets = [0, height + 2, -(height + 2), (height + 2) * 2]
+        # Try original position, then offset vertically to dodge collisions
+        offsets = [0, height + 2, -(height + 2), (height + 2) * 2, -(height + 2) * 2]
 
         final_pos = position
         found_spot = False
@@ -233,10 +242,11 @@ class UIRenderer:
                 break
 
         if not found_spot:
-            final_pos = position
+            # All offsets collide -- skip this label entirely to reduce clutter
+            return
 
         self.drawn_labels.append(rect)
-        self.text_cache.render(text, final_pos[0], final_pos[1], "default", color)
+        self.text_cache.render(text, final_pos[0], final_pos[1], font_name, color)
 
     def render_status_bar(self, text: str) -> None:
         """Render a status bar at the bottom of the screen."""

@@ -729,6 +729,10 @@ class Renderer:
 
         glEnable(GL_LIGHTING)
 
+    # Distance thresholds per priority level (Issue #811)
+    # Priority 3 = planets (always visible), 2 = important, 1 = minor
+    _LABEL_MAX_DISTANCE = {1: 15.0, 2: 80.0, 3: 500.0}
+
     def render_label(
         self,
         text: str,
@@ -737,20 +741,23 @@ class Renderer:
         offset: tuple[int, int] = (10, -10),
         priority: int = 1,
     ) -> None:
-        """
-        Render a text label at a 3D position using UIRenderer with priority-based fading.
+        """Render a text label at a 3D position with priority-based visibility.
+
+        Priority levels control distance-based visibility and font size:
+            3 = planets/Sun (large font, visible from far away)
+            2 = important bodies (medium font, moderate distance)
+            1 = minor bodies (small font, only when nearby)
         """
         if not self.settings.show_labels:
             return
 
         # Calculate distance for fading (Issue #811)
         cam_pos = np.array(self.camera.position)
-        dist = np.linalg.norm(position_3d - cam_pos)
+        dist = float(np.linalg.norm(position_3d - cam_pos))
 
         # Distance clipping: lower priority labels disappear further away
-        if priority == 1 and dist > 20.0:
-            return
-        if priority == 2 and dist > 100.0:
+        max_dist = self._LABEL_MAX_DISTANCE.get(priority, 20.0)
+        if dist > max_dist:
             return
 
         # Project 3D to 2D screen coordinates
@@ -759,13 +766,10 @@ class Renderer:
         if screen_pos is None:
             return
 
-        # Fade alpha based on distance
-        # Reference distance of 5.0 for full brightness
-        alpha_scale = float(max(0.3, min(1.0, 8.0 / float(dist))))
-
-        # Priority boost
-        if priority > 1:
-            alpha_scale = float(min(1.0, alpha_scale * 1.5))
+        # Fade alpha based on distance -- reference distance of 5.0 for full
+        # brightness, with a priority multiplier so important labels stay bright
+        ref_dist = 5.0 * priority
+        alpha_scale = float(max(0.2, min(1.0, ref_dist / dist)))
 
         # Apply fading to color
         faded_color = tuple(int(c * alpha_scale) for c in color)
@@ -774,10 +778,19 @@ class Renderer:
         x += offset[0]
         y += offset[1]
 
-        # Render text using UI renderer
+        # Choose font name based on priority (Issue #811 - font size scaling)
+        # priority 3 = planets -> "default" (large font)
+        # priority 2 = dwarf planets, spacecraft -> "default" (medium)
+        # priority 1 = moons, asteroids -> "small" (small font)
+        font_name = "small" if priority <= 1 else "default"
+
+        # Render text using UI renderer with collision avoidance
         if self.ui_renderer:
             self.ui_renderer.render_label_2d(
-                text, (x, y), cast(tuple[int, int, int], faded_color)
+                text,
+                (x, y),
+                cast(tuple[int, int, int], faded_color),
+                font_name=font_name,
             )
 
     def _project_to_screen(self, position_3d: np.ndarray) -> tuple[int, int] | None:
