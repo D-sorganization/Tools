@@ -75,9 +75,7 @@ def get_apollo11_trajectory() -> list[StateVector]:
     moon_offset = np.array([0.002, 0.001, 0.0001]) * AU
 
     waypoints = [
-        StateVector(
-            earth_pos, np.array([0, 1000, 0]), 2440418.5
-        ),  # Launch from Earth
+        StateVector(earth_pos, np.array([0, 1000, 0]), 2440418.5),  # Launch from Earth
         StateVector(
             earth_pos + moon_offset * 0.5,
             np.array([500, 500, 50]),
@@ -98,9 +96,7 @@ def get_apollo11_trajectory() -> list[StateVector]:
             np.array([-500, -500, -50]),
             2440425.0,
         ),  # Return coast
-        StateVector(
-            earth_pos, np.array([0, -1000, 0]), 2440426.5
-        ),  # Splashdown
+        StateVector(earth_pos, np.array([0, -1000, 0]), 2440426.5),  # Splashdown
     ]
     return waypoints
 
@@ -198,9 +194,7 @@ def get_curiosity_trajectory() -> list[StateVector]:
         StateVector(
             midpoint, np.array([15000, 15000, 100]), 2456018.0
         ),  # Hohmann transfer midpoint
-        StateVector(
-            mars_arrival, np.array([24000, 0, 0]), 2456145.5
-        ),  # Mars arrival
+        StateVector(mars_arrival, np.array([24000, 0, 0]), 2456145.5),  # Mars arrival
     ]
     return waypoints
 

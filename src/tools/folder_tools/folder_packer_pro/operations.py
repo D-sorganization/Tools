@@ -10,7 +10,7 @@ import logging
 import os
 import threading
 from pathlib import Path
-from tkinter import filedialog, messagebox
+from tkinter import messagebox
 from typing import TYPE_CHECKING, Any
 
 from .file_ops import (
@@ -27,7 +27,7 @@ from .pack_engine import (
 )
 
 if TYPE_CHECKING:
-    from datetime import datetime
+    pass
 
 logger = logging.getLogger(__name__)
 

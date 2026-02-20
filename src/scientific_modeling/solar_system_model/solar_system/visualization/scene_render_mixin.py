@@ -11,7 +11,13 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 
 from ..core.celestial_body import BodyType
-from ..core.constants import AU, DWARF_PLANETS, INNER_PLANETS, OUTER_PLANETS, PLANET_ORDER
+from ..core.constants import (
+    AU,
+    DWARF_PLANETS,
+    INNER_PLANETS,
+    OUTER_PLANETS,
+    PLANET_ORDER,
+)
 
 if TYPE_CHECKING:
     pass
@@ -145,9 +151,7 @@ class SceneRenderMixin:
             if self.view_state.show_labels:
                 state = moon.get_state_at_time(julian_date)
                 pos = state.position * renderer.distance_scale
-                dist_to_cam = np.linalg.norm(
-                    pos - np.array(renderer.camera.position)
-                )
+                dist_to_cam = np.linalg.norm(pos - np.array(renderer.camera.position))
                 if is_selected or dist_to_cam < 0.5:
                     renderer.render_label(moon.name, pos, priority=1)
 
@@ -233,9 +237,7 @@ class SceneRenderMixin:
 
         if content_key == "planets":
             bodies: list[dict[str, Any]] = []
-            bodies.append(
-                {"name": "Sun", "selected": self.selected_body == self.sun}
-            )
+            bodies.append({"name": "Sun", "selected": self.selected_body == self.sun})
             for name in PLANET_ORDER:
                 if name in self.planets:
                     bodies.append(
@@ -252,9 +254,7 @@ class SceneRenderMixin:
         """Render the unified control panel."""
         if not self.unified_controls:
             return
-        time_data = (
-            self.time_nav_panel.get_render_data() if self.time_nav_panel else {}
-        )
+        time_data = self.time_nav_panel.get_render_data() if self.time_nav_panel else {}
         renderer.render_unified_controls(
             self.unified_controls.get_render_data(), time_data
         )

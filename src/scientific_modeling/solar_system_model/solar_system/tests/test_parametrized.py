@@ -7,7 +7,6 @@ forms for better coverage and readability. (Issue #866)
 from __future__ import annotations
 
 import math
-from typing import Any
 
 import numpy as np
 import pytest
@@ -21,7 +20,6 @@ from solar_system.data.historical_events import (
     get_events_by_year,
 )
 from solar_system.physics.orbital_mechanics import OrbitalMechanics
-
 
 # ---------------------------------------------------------------------------
 # Orbital mechanics parametrized tests
@@ -50,9 +48,9 @@ def test_orbital_period_planets(
     a = semi_major_au * AU
     t = OrbitalMechanics.orbital_period(a, GM["Sun"])
     t_days = t / 86400
-    assert abs(t_days - expected_period_days) < tolerance, (
-        f"{planet_name}: expected ~{expected_period_days}d, got {t_days:.1f}d"
-    )
+    assert (
+        abs(t_days - expected_period_days) < tolerance
+    ), f"{planet_name}: expected ~{expected_period_days}d, got {t_days:.1f}d"
 
 
 @pytest.mark.parametrize(
@@ -113,10 +111,10 @@ def test_eccentricity_from_apsides(
 @pytest.mark.parametrize(
     ("planet_a", "planet_b"),
     [
-        (1.0, 1.524),     # Earth vs Mars
-        (1.0, 5.203),     # Earth vs Jupiter
-        (0.387, 1.0),     # Mercury vs Earth
-        (1.524, 9.537),   # Mars vs Saturn
+        (1.0, 1.524),  # Earth vs Mars
+        (1.0, 5.203),  # Earth vs Jupiter
+        (0.387, 1.0),  # Mercury vs Earth
+        (1.524, 9.537),  # Mars vs Saturn
     ],
     ids=["Earth-Mars", "Earth-Jupiter", "Mercury-Earth", "Mars-Saturn"],
 )
@@ -195,9 +193,9 @@ def test_events_by_category(category: str) -> None:
 @pytest.mark.parametrize(
     ("year", "min_count"),
     [
-        (1969, 3),   # Apollo 11 year
-        (2021, 2),   # Perseverance + Ingenuity + JWST
-        (1977, 2),   # Voyager 1 + 2
+        (1969, 3),  # Apollo 11 year
+        (2021, 2),  # Perseverance + Ingenuity + JWST
+        (1977, 2),  # Voyager 1 + 2
     ],
     ids=["1969-Apollo", "2021-modern", "1977-Voyager"],
 )
