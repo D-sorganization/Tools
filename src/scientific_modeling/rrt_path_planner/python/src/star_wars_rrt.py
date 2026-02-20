@@ -15,15 +15,19 @@ import numpy.typing as npt
 import pygame
 import trimesh
 from OpenGL.GL import (
+    GL_AMBIENT,
     GL_COLOR_BUFFER_BIT,
     GL_COLOR_MATERIAL,
     GL_DEPTH_BUFFER_BIT,
     GL_DEPTH_TEST,
+    GL_DIFFUSE,
     GL_LIGHT0,
     GL_LIGHTING,
     GL_LINE_STRIP,
     GL_MODELVIEW,
+    GL_NORMALIZE,
     GL_POINTS,
+    GL_POSITION,
     GL_PROJECTION,
     GL_QUADS,
     GL_TRIANGLES,
@@ -33,9 +37,11 @@ from OpenGL.GL import (
     glDisable,
     glEnable,
     glEnd,
+    glLightfv,
     glLineWidth,
     glLoadIdentity,
     glMatrixMode,
+    glNormal3f,
     glPointSize,
     glPopMatrix,
     glPushMatrix,
@@ -241,9 +247,10 @@ class StarWarsRenderer:
         glEnable(GL_LIGHTING)
         glEnable(GL_LIGHT0)
         glEnable(GL_COLOR_MATERIAL)
+        glEnable(GL_NORMALIZE)  # Ensure normals are unit-length for lighting
 
-        # Camera setup
-        self.camera_pos = np.array([2.5, -2.5, 1.5])
+        # Camera setup - positioned to frame the scene bounds [-1,1,-0.6,0.6,-0.3,0.3]
+        self.camera_pos = np.array([0.0, -2.0, 1.0])
         self.camera_target = np.array([0.0, 0.0, 0.0])
         self.camera_up = np.array([0.0, 0.0, 1.0])
 
@@ -258,8 +265,16 @@ class StarWarsRenderer:
         self.stars = self._generate_starfield(1000)
 
     def _generate_starfield(self, num_stars: int) -> npt.NDArray[np.float64]:
-        """Generate dynamic starfield"""
-        return np.random.randn(num_stars, 3) * 3
+        """Generate dynamic starfield far from the scene to avoid overlap."""
+        # Place stars on a large sphere shell (radius 8-15) so they don't
+        # overlap with the scene bounds [-1, 1]
+        rng = np.random.default_rng(42)
+        directions = rng.standard_normal((num_stars, 3))
+        norms = np.linalg.norm(directions, axis=1, keepdims=True)
+        norms = np.where(norms == 0, 1, norms)
+        directions = directions / norms
+        radii = rng.uniform(8.0, 15.0, (num_stars, 1))
+        return directions * radii
 
     def render_frame(
         self,
@@ -324,6 +339,11 @@ class StarWarsRenderer:
                 1,
             )
 
+        # Position light near camera so objects facing the viewer are lit
+        glLightfv(GL_LIGHT0, GL_POSITION, [0.0, -2.0, 2.0, 0.0])
+        glLightfv(GL_LIGHT0, GL_AMBIENT, [0.4, 0.4, 0.4, 1.0])
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, [0.8, 0.8, 0.8, 1.0])
+
     def _render_starfield(self) -> None:
         """Render starfield with varying star sizes"""
         glDisable(GL_LIGHTING)
@@ -337,44 +357,54 @@ class StarWarsRenderer:
         glEnable(GL_LIGHTING)
 
     def _render_obstacle(self, obstacle: Obstacle) -> None:
-        """Render obstacle with proper lighting"""
+        """Render obstacle with proper lighting and normals."""
         glPushMatrix()
         glTranslatef(obstacle.position[0], obstacle.position[1], obstacle.position[2])
-        glColor3f(*obstacle.color)
+        # Brighten obstacle colors so they are visible against dark background
+        r = min(obstacle.color[0] + 0.3, 1.0)
+        g = min(obstacle.color[1] + 0.3, 1.0)
+        b = min(obstacle.color[2] + 0.3, 1.0)
+        glColor3f(r, g, b)
 
         if obstacle.type == 0:  # Sphere
             quad = gluNewQuadric()
             gluSphere(quad, obstacle.size, 16, 16)
             gluDeleteQuadric(quad)
-        else:  # Cube
+        else:  # Cube - with normals for proper lighting
             size = obstacle.size / 2
             glBegin(GL_QUADS)
-            # Front face
+            # Front face (normal +Z)
+            glNormal3f(0, 0, 1)
             glVertex3f(-size, -size, size)
             glVertex3f(size, -size, size)
             glVertex3f(size, size, size)
             glVertex3f(-size, size, size)
-            # Back face
+            # Back face (normal -Z)
+            glNormal3f(0, 0, -1)
             glVertex3f(-size, -size, -size)
             glVertex3f(-size, size, -size)
             glVertex3f(size, size, -size)
             glVertex3f(size, -size, -size)
-            # Top face
+            # Top face (normal +Y)
+            glNormal3f(0, 1, 0)
             glVertex3f(-size, size, -size)
             glVertex3f(-size, size, size)
             glVertex3f(size, size, size)
             glVertex3f(size, size, -size)
-            # Bottom face
+            # Bottom face (normal -Y)
+            glNormal3f(0, -1, 0)
             glVertex3f(-size, -size, -size)
             glVertex3f(size, -size, -size)
             glVertex3f(size, -size, size)
             glVertex3f(-size, -size, size)
-            # Right face
+            # Right face (normal +X)
+            glNormal3f(1, 0, 0)
             glVertex3f(size, -size, -size)
             glVertex3f(size, size, -size)
             glVertex3f(size, size, size)
             glVertex3f(size, -size, size)
-            # Left face
+            # Left face (normal -X)
+            glNormal3f(-1, 0, 0)
             glVertex3f(-size, -size, -size)
             glVertex3f(-size, -size, size)
             glVertex3f(-size, size, size)
@@ -402,14 +432,20 @@ class StarWarsRenderer:
         glPopMatrix()
 
     def _render_simple_ship(self) -> None:
-        """Render simple ship geometry"""
-        size = 0.05
+        """Render simple ship geometry with normals for lighting visibility."""
+        size = 0.08  # Larger so ships are visible
+        glDisable(GL_LIGHTING)  # Use flat color for ships to ensure visibility
         glBegin(GL_TRIANGLES)
-        # Ship body
-        glVertex3f(-size, 0, 0)  # Nose
-        glVertex3f(size, -size / 2, 0)  # Right wing
-        glVertex3f(size, size / 2, 0)  # Left wing
+        # Ship body (top face)
+        glVertex3f(-size, 0, 0.005)  # Nose
+        glVertex3f(size, -size / 2, 0.005)  # Right wing
+        glVertex3f(size, size / 2, 0.005)  # Left wing
+        # Ship body (bottom face for visibility from below)
+        glVertex3f(-size, 0, -0.005)
+        glVertex3f(size, size / 2, -0.005)
+        glVertex3f(size, -size / 2, -0.005)
         glEnd()
+        glEnable(GL_LIGHTING)
 
     def _render_path(self, path: npt.NDArray[np.float64]) -> None:
         """Render path as line"""
@@ -521,9 +557,9 @@ class StarWarsRRTApp:
             )
             size = random.uniform(0.02, 0.08)
             color = (
-                random.uniform(0.3, 0.7),
-                random.uniform(0.3, 0.7),
-                random.uniform(0.3, 0.7),
+                random.uniform(0.5, 1.0),
+                random.uniform(0.5, 1.0),
+                random.uniform(0.5, 1.0),
             )
 
             obstacles.append(Obstacle(obstacle_type, position, size, color))
