@@ -230,12 +230,129 @@ def get_pioneer10_trajectory() -> list[StateVector]:
     return waypoints
 
 
+def get_mariner2_trajectory() -> list[StateVector]:
+    """Simplified Mariner 2 trajectory: Earth to Venus flyby.
+
+    Approximate Julian dates:
+        Launch: 1962-08-27 (JD 2437894.5)
+        Venus flyby: 1962-12-14 (JD 2438012.5)
+    """
+    earth_launch = np.array([0.9, 0.45, 0.0]) * AU
+    venus_flyby = np.array([0.65, -0.3, 0.01]) * AU
+
+    waypoints = [
+        StateVector(earth_launch, np.array([-15000, 25000, 0]), 2437894.5),
+        StateVector(venus_flyby, np.array([-22000, -10000, 200]), 2438012.5),
+        StateVector(venus_flyby * 1.5, np.array([-20000, -15000, 300]), 2438100.0),
+    ]
+    return waypoints
+
+
+def get_mariner10_trajectory() -> list[StateVector]:
+    """Simplified Mariner 10 trajectory: Earth to Venus to Mercury.
+
+    Approximate Julian dates:
+        Launch: 1973-11-03 (JD 2441989.5)
+        Venus flyby: 1974-02-05 (JD 2442083.5)
+        Mercury 1: 1974-03-29 (JD 2442135.5)
+        Mercury 2: 1974-09-21 (JD 2442311.5)
+        Mercury 3: 1975-03-16 (JD 2442487.5)
+    """
+    earth_launch = np.array([0.15, 0.98, 0.0]) * AU
+    venus_flyby = np.array([-0.68, 0.25, 0.02]) * AU
+    mercury_1 = np.array([-0.35, -0.15, 0.01]) * AU
+    mercury_2 = np.array([0.38, 0.1, -0.01]) * AU
+    mercury_3 = np.array([-0.3, 0.25, 0.02]) * AU
+
+    waypoints = [
+        StateVector(earth_launch, np.array([-30000, 5000, 0]), 2441989.5),
+        StateVector(venus_flyby, np.array([-10000, -25000, 500]), 2442083.5),
+        StateVector(mercury_1, np.array([30000, -15000, -200]), 2442135.5),
+        StateVector(mercury_2, np.array([-25000, 30000, 300]), 2442311.5),
+        StateVector(mercury_3, np.array([35000, -10000, -400]), 2442487.5),
+    ]
+    return waypoints
+
+
+def get_galileo_trajectory() -> list[StateVector]:
+    """Simplified Galileo trajectory: complex gravity assists.
+
+    Approximate Julian dates:
+        Launch: 1989-10-18 (JD 2447817.5)
+        Venus: 1990-02-10 (JD 2447932.5)
+        Earth 1: 1990-12-08 (JD 2448233.5)
+        Earth 2: 1992-12-08 (JD 2448964.5)
+        Jupiter: 1995-12-07 (JD 2450058.5)
+    """
+    waypoints = [
+        StateVector(
+            np.array([-0.9, -0.3, 0.0]) * AU, np.array([0, 30000, 0]), 2447817.5
+        ),  # Earth launch
+        StateVector(
+            np.array([0.4, 0.6, 0.01]) * AU, np.array([30000, -10000, 0]), 2447932.5
+        ),  # Venus
+        StateVector(
+            np.array([0.2, 0.95, 0.0]) * AU, np.array([-30000, 10000, 0]), 2448233.5
+        ),  # Earth 1
+        StateVector(
+            np.array([1.0, 0.1, 0.0]) * AU, np.array([-5000, 30000, 0]), 2448964.5
+        ),  # Earth 2
+        StateVector(
+            np.array([3.0, -4.0, 0.1]) * AU, np.array([10000, 5000, 100]), 2450058.5
+        ),  # Jupiter
+    ]
+    return waypoints
+
+
 FAMOUS_MISSIONS = {
-    "Voyager 1": get_voyager1_trajectory,
-    "Voyager 2": get_voyager2_trajectory,
-    "Apollo 11": get_apollo11_trajectory,
-    "Cassini-Huygens": get_cassini_trajectory,
-    "New Horizons": get_new_horizons_trajectory,
-    "Curiosity": get_curiosity_trajectory,
-    "Pioneer 10": get_pioneer10_trajectory,
+    "Voyager 1": {
+        "get_trajectory": get_voyager1_trajectory,
+        "description": "Explored Jupiter and Saturn. First spacecraft to enter interstellar space.",
+        "launch_date": "1977-09-05",
+    },
+    "Voyager 2": {
+        "get_trajectory": get_voyager2_trajectory,
+        "description": "Only spacecraft to visit Uranus and Neptune. Utilized a rare planetary alignment.",
+        "launch_date": "1977-08-20",
+    },
+    "Apollo 11": {
+        "get_trajectory": get_apollo11_trajectory,
+        "description": "First crewed lunar landing. Neil Armstrong and Buzz Aldrin walked on the Moon.",
+        "launch_date": "1969-07-16",
+    },
+    "Cassini-Huygens": {
+        "get_trajectory": get_cassini_trajectory,
+        "description": "Studied Saturn and its moons for 13 years. Deployed Huygens probe to Titan.",
+        "launch_date": "1997-10-15",
+    },
+    "New Horizons": {
+        "get_trajectory": get_new_horizons_trajectory,
+        "description": "First mission to Pluto and the Kuiper Belt. Fastest spacecraft ever launched.",
+        "launch_date": "2006-01-19",
+    },
+    "Curiosity": {
+        "get_trajectory": get_curiosity_trajectory,
+        "description": "Mars Science Laboratory rover. Searching for past habitable environments on Mars.",
+        "launch_date": "2011-11-26",
+    },
+    "Pioneer 10": {
+        "get_trajectory": get_pioneer10_trajectory,
+        "description": "First spacecraft to travel through the asteroid belt and visit Jupiter.",
+        "launch_date": "1972-03-03",
+    },
+    "Mariner 2": {
+        "get_trajectory": get_mariner2_trajectory,
+        "description": "First successful planetary flyby (Venus). Confirmed the planet's high surface temperature.",
+        "launch_date": "1962-08-27",
+    },
+    "Mariner 10": {
+        "get_trajectory": get_mariner10_trajectory,
+        "description": "First to use gravity assist (Venus to Mercury). Visited Mercury three times.",
+        "launch_date": "1973-11-03",
+    },
+    "Galileo": {
+        "get_trajectory": get_galileo_trajectory,
+        "description": "Complex mission to Jupiter using Venus and Earth gravity assists.",
+        "launch_date": "1989-10-18",
+    },
 }

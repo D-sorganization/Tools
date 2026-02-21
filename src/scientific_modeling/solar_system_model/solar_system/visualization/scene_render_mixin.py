@@ -18,6 +18,7 @@ from ..core.constants import (
     OUTER_PLANETS,
     PLANET_ORDER,
 )
+from ..data.famous_missions import FAMOUS_MISSIONS
 
 if TYPE_CHECKING:
     pass
@@ -234,6 +235,9 @@ class SceneRenderMixin:
 
         if content_key == "history" and self.historical_events:
             return self.historical_events.get_render_data()
+
+        if content_key == "missions" and self.missions_panel:
+            return self.missions_panel.get_render_data(FAMOUS_MISSIONS)
 
         if content_key == "planets":
             bodies: list[dict[str, Any]] = []
