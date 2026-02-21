@@ -131,19 +131,19 @@ class Rotation:
 
     def as_rotation_matrix(self) -> np.ndarray:
         """Return 3x3 rotation matrix in SO(3)."""
-        return quaternion_to_rotation_matrix(self._q)
+        return quaternion_to_rotation_matrix(self._q)  # type: ignore[no-any-return]
 
     def as_euler(self, convention: str) -> tuple[float, float, float]:
         """Return Euler angles (a, b, c) for the given convention."""
-        return quaternion_to_euler(self._q, convention)
+        return quaternion_to_euler(self._q, convention)  # type: ignore[no-any-return]
 
     def as_axis_angle(self) -> tuple[np.ndarray, float]:
         """Return (axis, angle) where axis is unit and angle in [0, pi]."""
-        return quaternion_to_axis_angle(self._q)
+        return quaternion_to_axis_angle(self._q)  # type: ignore[no-any-return]
 
     def as_rodrigues(self) -> np.ndarray:
         """Return Rodrigues vector (axis * angle)."""
-        return quaternion_to_rodrigues(self._q)
+        return quaternion_to_rodrigues(self._q)  # type: ignore[no-any-return]
 
     # ── Composition ───────────────────────────────────────────────
 

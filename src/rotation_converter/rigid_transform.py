@@ -360,7 +360,7 @@ class RigidTransform:
 
         For identity transform returns (zeros(6), 0.0).
         """
-        return homogeneous_to_twist_angle(self._T)
+        return homogeneous_to_twist_angle(self._T)  # type: ignore[no-any-return]
 
     def as_screw(self) -> dict[str, Any]:
         """Return screw axis parameters {axis, point, pitch, theta}.
@@ -378,7 +378,7 @@ class RigidTransform:
             }
         screw = twist_to_screw(twist)
         screw["theta"] = theta
-        return screw
+        return screw  # type: ignore[no-any-return]
 
     # ── Predicates ────────────────────────────────────────────────
 
