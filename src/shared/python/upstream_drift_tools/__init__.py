@@ -9,6 +9,7 @@ Subpackages (import by domain):
     data_processing       - DataProcessorEngine, readers/writers, typed exceptions
     lab                   - Laboratory tools (bio/C3D reader)
     process_calculators   - Standalone process engineering calculators
+    theme                 - Fleet-wide color theme system (13+ themes, PyQt6 integration)
     ui                    - PyQt6 widgets, themes, managers, mixins
     utils                 - Logging, paths, state management, physical constants
 """
@@ -43,6 +44,7 @@ __all__ = [
     "data_processing",
     "lab",
     "process_calculators",
+    "theme",
     "ui",
     "utils",
 ]
