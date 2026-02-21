@@ -286,7 +286,9 @@ def screw_to_twist(screw: dict[str, Any]) -> np.ndarray:
     if pitch == float("inf"):
         # Pure translation — normalize axis to unit direction
         axis_norm = np.linalg.norm(axis)
-        require(bool(axis_norm > 1e-12), "screw axis must be non-zero for pure translation")
+        require(
+            bool(axis_norm > 1e-12), "screw axis must be non-zero for pure translation"
+        )
         omega = np.zeros(3)
         v = axis / axis_norm
     else:

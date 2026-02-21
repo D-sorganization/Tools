@@ -83,7 +83,9 @@ def _validate_rotation_matrix(R: Any, name: str = "rotation matrix") -> np.ndarr
     require(R.shape == (3, 3), f"{name} must be 3x3", R.shape)
     require_finite(R, name)
     orth_err = np.max(np.abs(R @ R.T - np.eye(3)))
-    require(bool(orth_err < 1e-6), f"{name} must be orthogonal (max err={orth_err:.2e})")
+    require(
+        bool(orth_err < 1e-6), f"{name} must be orthogonal (max err={orth_err:.2e})"
+    )
     det = np.linalg.det(R)
     require(bool(abs(det - 1.0) < 1e-6), f"{name} must have det=+1 (got {det:.6f})")
     return R  # type: ignore[no-any-return]
