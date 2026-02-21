@@ -4,10 +4,11 @@ Rotation Converter
 
 Comprehensive converter between rotational representations including
 quaternions, Euler angles, rotation matrices, axis-angle, Rodrigues vectors,
-twists, and screw axis representations.
+twists, screw axis representations, and Modern Robotics (Lynch & Park)
+kinematics functions.
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 from rotation_converter.converter import Rotation, RotationConverter
 from rotation_converter.core import (
@@ -36,6 +37,25 @@ from rotation_converter.twist_screw import (
     twist_to_screw,
     twist_vector_to_se3_matrix,
 )
+from rotation_converter.modern_robotics import (
+    FKinBody,
+    FKinSpace,
+    IKinBody,
+    JacobianBody,
+    JacobianSpace,
+    MatrixExp3,
+    MatrixExp6,
+    MatrixLog3,
+    MatrixLog6,
+    RpToTrans,
+    ScrewTrajectory,
+    TransInv,
+    TransToRp,
+    VecTose3,
+    VecToso3,
+    se3ToVec,
+    so3ToVec,
+)
 
 __all__ = [
     "Rotation",
@@ -62,4 +82,21 @@ __all__ = [
     "twist_angle_to_homogeneous",
     "twist_to_screw",
     "twist_vector_to_se3_matrix",
+    "FKinBody",
+    "FKinSpace",
+    "IKinBody",
+    "JacobianBody",
+    "JacobianSpace",
+    "MatrixExp3",
+    "MatrixExp6",
+    "MatrixLog3",
+    "MatrixLog6",
+    "RpToTrans",
+    "ScrewTrajectory",
+    "TransInv",
+    "TransToRp",
+    "VecTose3",
+    "VecToso3",
+    "se3ToVec",
+    "so3ToVec",
 ]
