@@ -3,6 +3,8 @@
 SRP: Styling only. No layout, no data, no logic.
 """
 
+from typing import Any
+
 import matplotlib
 
 COLORS = {
@@ -47,7 +49,7 @@ ELEMENT_COLORS = {
 }
 
 
-def apply_theme():
+def apply_theme() -> None:
     """Apply dark theme to matplotlib rcParams."""
     params = {
         "figure.facecolor": COLORS["bg"],
@@ -70,7 +72,7 @@ def apply_theme():
         matplotlib.rcParams[k] = v
 
 
-def style_slider(slider, color):
+def style_slider(slider: Any, color: str) -> None:
     """Apply consistent styling to a matplotlib Slider."""
     slider.label.set_color(COLORS["text"])
     slider.valtext.set_color(color)

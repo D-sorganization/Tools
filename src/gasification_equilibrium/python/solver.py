@@ -51,7 +51,7 @@ class ElementMatrix:
     ISP: provides only matrix-related queries.
     """
 
-    def __init__(self, species_keys, element_keys):
+    def __init__(self, species_keys: list[str], element_keys: list[str]) -> None:
         self.species_keys = list(species_keys)
         self.element_keys = list(element_keys)
         self.n_species = len(species_keys)
@@ -62,24 +62,24 @@ class ElementMatrix:
         )
 
     @staticmethod
-    def _build(species_keys, element_keys):
+    def _build(species_keys: list[str], element_keys: list[str]) -> np.ndarray:
         """Build A[j, i] = atoms of element j in species i."""
         A = np.zeros((len(element_keys), len(species_keys)))
         for i, sp_key in enumerate(species_keys):
-            sp = SPECIES_DB[sp_key]
+            elem_dict = dict(SPECIES_DB[sp_key]["elements"])
             for j, elem in enumerate(element_keys):
-                A[j, i] = sp["elements"].get(elem, 0)
+                A[j, i] = elem_dict.get(elem, 0)
         return A
 
     @classmethod
-    def from_species(cls, species_keys=None):
+    def from_species(cls, species_keys: list[str] | None = None) -> "ElementMatrix":
         """Factory: build from species list (defaults to all)."""
         if species_keys is None:
             species_keys = get_all_species()
         element_keys = get_elements_in_system(species_keys)
         return cls(species_keys, element_keys)
 
-    def build_balance_vector(self, feed_elements):
+    def build_balance_vector(self, feed_elements: dict[str, float]) -> np.ndarray:
         """Convert {element: moles} dict to numpy balance vector b.
 
         Postcondition: b.shape == (n_elements,)
@@ -89,7 +89,7 @@ class ElementMatrix:
             b[j] = feed_elements.get(elem, 0.0)
         return b
 
-    def species_index(self, key):
+    def species_index(self, key: str) -> int:
         """Return index of species key, or -1 if not found."""
         try:
             return self.species_keys.index(key)
@@ -97,7 +97,7 @@ class ElementMatrix:
             return -1
 
 
-def compute_gibbs(n, T, P, matrix):
+def compute_gibbs(n: np.ndarray, T: float, P: float, matrix: ElementMatrix) -> float:
     """Compute total dimensionless Gibbs energy G_total/(RT).
 
     For gas:   G_i = G°_i + RT[ln(P/P_ref) + ln(x_i)]
@@ -120,7 +120,9 @@ def compute_gibbs(n, T, P, matrix):
     return G
 
 
-def compute_gibbs_gradient(n, T, P, matrix):
+def compute_gibbs_gradient(
+    n: np.ndarray, T: float, P: float, matrix: ElementMatrix
+) -> np.ndarray:
     """Gradient of total Gibbs energy w.r.t. moles.
 
     Postcondition: returns array of shape (n_species,)
@@ -140,7 +142,7 @@ def compute_gibbs_gradient(n, T, P, matrix):
     return grad
 
 
-def initial_guess(matrix, b):
+def initial_guess(matrix: ElementMatrix, b: np.ndarray) -> np.ndarray:
     """Generate initial moles guess via NNLS.
 
     Precondition: b.shape == (n_elements,)
@@ -152,10 +154,17 @@ def initial_guess(matrix, b):
         n0 = np.full(matrix.n_species, max(np.sum(b), 1.0) / matrix.n_species)
     n0 = np.maximum(n0, MIN_MOLES * 10)
     uniform = np.full(matrix.n_species, max(np.sum(b), 1.0) / matrix.n_species / 10)
-    return 0.95 * n0 + 0.05 * uniform
+    return np.asarray(0.95 * n0 + 0.05 * uniform)
 
 
-def solve_equilibrium(T, P, feed_elements, matrix, tolerance=None, warm_start=None):
+def solve_equilibrium(
+    T: float,
+    P: float,
+    feed_elements: dict[str, float],
+    matrix: ElementMatrix,
+    tolerance: float | None = None,
+    warm_start: np.ndarray | None = None,
+) -> SolverResult:
     """Minimize Gibbs free energy subject to element balance constraints.
 
     Args:
@@ -192,7 +201,7 @@ def solve_equilibrium(T, P, feed_elements, matrix, tolerance=None, warm_start=No
     # Pin unconstrained species (all-zero columns in A, e.g. noble gases)
     # to MIN_MOLES unless explicitly provided in feed.
     col_sums = np.sum(np.abs(matrix.A), axis=0)
-    bounds = []
+    bounds: list[tuple[float, float | None]] = []
     for i in range(matrix.n_species):
         if col_sums[i] < 1e-15:
             bounds.append((MIN_MOLES, MIN_MOLES))

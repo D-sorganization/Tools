@@ -14,16 +14,16 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 
-def main():
+def main() -> None:
     if "--test" in sys.argv:
         import subprocess
 
         test_dir = os.path.join(os.path.dirname(__file__), "tests")
-        result = subprocess.run(
+        proc = subprocess.run(
             [sys.executable, "-m", "pytest", test_dir, "-v", "--tb=short"],
             cwd=os.path.dirname(__file__),
         )
-        sys.exit(result.returncode)
+        sys.exit(proc.returncode)
 
     elif "--headless" in sys.argv:
         from python.engine import GasificationEngine

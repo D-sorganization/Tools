@@ -169,19 +169,19 @@ class TestNASAPolynomials:
         """Uses low-T coefficients for T <= T_mid."""
         sp = SPECIES_DB["H2"]
         coeffs = get_coeffs("H2", sp["T_mid"] - 1)
-        assert coeffs is sp["coeff_low"]
+        assert coeffs == sp["coeff_low"]
 
     def test_coefficient_selection_high_range(self):
         """Uses high-T coefficients for T > T_mid."""
         sp = SPECIES_DB["H2"]
         coeffs = get_coeffs("H2", sp["T_mid"] + 1)
-        assert coeffs is sp["coeff_high"]
+        assert coeffs == sp["coeff_high"]
 
     def test_coefficient_selection_at_boundary(self):
         """At T_mid, uses low-T coefficients."""
         sp = SPECIES_DB["CO2"]
         coeffs = get_coeffs("CO2", sp["T_mid"])
-        assert coeffs is sp["coeff_low"]
+        assert coeffs == sp["coeff_low"]
 
     def test_cp_increases_with_temperature_for_co2(self):
         """CO2 Cp should generally increase with temperature."""

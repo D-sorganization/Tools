@@ -11,13 +11,14 @@ Design by Contract:
 """
 
 from dataclasses import dataclass, field
+from typing import Any
 
 from .thermo_data import ATOMIC_WEIGHTS
 
 # ─── Injection compounds (element breakdowns) ──────────────────────────────────
 # Each maps to {element: atoms_per_molecule}
 
-COMPOUND_ELEMENTS = {
+COMPOUND_ELEMENTS: dict[str, dict[str, float]] = {
     "H2O": {"H": 2, "O": 1},
     "O2": {"O": 2},
     "N2": {"N": 2},
@@ -41,7 +42,7 @@ class Injection:
     flow: float = 0.0  # mol/s (or mol per unit feed)
     elements: dict = field(default_factory=dict)
 
-    def element_contribution(self):
+    def element_contribution(self) -> dict[str, float]:
         """Return {element: moles} added by this injection.
 
         Postcondition: all values >= 0
@@ -59,7 +60,7 @@ class OxidantConfig:
     use_air: bool = False
     o2_flow: float = 0.0  # mol O2 per unit feed
 
-    def element_contribution(self):
+    def element_contribution(self) -> dict[str, float]:
         """Return elements from oxidant (O2 + N2 if air).
 
         Air composition: 20.95% O2, 78.08% N2, 0.93% Ar (by mole).
@@ -88,7 +89,7 @@ class FeedComposition:
     N: float = 0.0
     S: float = 0.0
 
-    def as_dict(self):
+    def as_dict(self) -> dict[str, float]:
         """Return {element: moles} for non-zero elements."""
         return {
             k: v
@@ -102,11 +103,11 @@ class FeedComposition:
             if v > 0
         }
 
-    def total_moles(self):
+    def total_moles(self) -> float:
         return self.C + self.H + self.O + self.N + self.S
 
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, d: dict[str, float]) -> "FeedComposition":
         """Create from {element: value} dict."""
         return cls(
             C=d.get("C", 0.0),
@@ -117,7 +118,7 @@ class FeedComposition:
         )
 
     @classmethod
-    def from_mass_fractions(cls, mass_fracs):
+    def from_mass_fractions(cls, mass_fracs: dict[str, float]) -> "FeedComposition":
         """Convert mass fractions to molar amounts (per kg basis).
 
         Precondition: mass_fracs values >= 0, keys are element symbols
@@ -164,7 +165,7 @@ class ProcessInputs:
     )
     feed_rate_kg_hr: float = 100.0  # kg/hr of solid feed
 
-    def all_injections(self):
+    def all_injections(self) -> list[Injection]:
         """Return list of all injection streams."""
         return [
             self.steam,
@@ -175,7 +176,9 @@ class ProcessInputs:
         ]
 
 
-def build_total_feed(base_feed, process_inputs):
+def build_total_feed(
+    base_feed: FeedComposition, process_inputs: ProcessInputs
+) -> dict[str, float]:
     """Combine base feed with all process injections into total element balance.
 
     This is the central feed-building function. It is pure (no side effects).
@@ -202,7 +205,7 @@ def build_total_feed(base_feed, process_inputs):
     return total
 
 
-def _merge_elements(target, source):
+def _merge_elements(target: dict[str, float], source: dict[str, float]) -> None:
     """Merge source element dict into target (in-place addition).
 
     Precondition: source values >= 0
@@ -213,7 +216,7 @@ def _merge_elements(target, source):
 
 # ─── Feed presets ───────────────────────────────────────────────────────────────
 
-FEED_PRESETS = {
+FEED_PRESETS: dict[str, dict[str, Any]] = {
     "Bituminous Coal": {
         "mass_fractions": {
             "C": 0.75,
@@ -291,7 +294,7 @@ FEED_PRESETS = {
 }
 
 
-def feed_from_preset(name):
+def feed_from_preset(name: str) -> FeedComposition:
     """Create FeedComposition from a named preset.
 
     Precondition: name is a key in FEED_PRESETS
@@ -299,5 +302,5 @@ def feed_from_preset(name):
     """
     preset = FEED_PRESETS[name]
     if "mass_fractions" in preset:
-        return FeedComposition.from_mass_fractions(preset["mass_fractions"])
-    return FeedComposition.from_dict(preset.get("elements", {}))
+        return FeedComposition.from_mass_fractions(dict(preset["mass_fractions"]))
+    return FeedComposition.from_dict(dict(preset.get("elements", {})))

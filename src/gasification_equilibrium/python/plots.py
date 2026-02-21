@@ -4,13 +4,17 @@ SRP: Takes data + axes, renders plots. No state, no callbacks, no layout.
 Each function is small (<25 lines) and focused on one visualization.
 """
 
+from typing import Any
+
 import numpy as np
 
 from .theme import COLORS, SPECIES_COLORS
 from .thermo_data import SPECIES_DB
 
 
-def plot_composition_bars(ax, comp_dict, species_keys):
+def plot_composition_bars(
+    ax: Any, comp_dict: dict[str, float], species_keys: list[str]
+) -> None:
     """Horizontal bar chart of gas-phase mole fractions."""
     ax.clear()
     ax.set_facecolor(COLORS["panel"])
@@ -55,7 +59,9 @@ def plot_composition_bars(ax, comp_dict, species_keys):
             )
 
 
-def plot_pie_chart(ax, comp_dict, threshold=0.005):
+def plot_pie_chart(
+    ax: Any, comp_dict: dict[str, float], threshold: float = 0.005
+) -> None:
     """Pie chart of significant gas species."""
     ax.clear()
     ax.set_facecolor(COLORS["bg"])
@@ -94,7 +100,7 @@ def plot_pie_chart(ax, comp_dict, threshold=0.005):
     )
 
 
-def plot_info_panel(ax, result):
+def plot_info_panel(ax: Any, result: Any) -> None:
     """Text info panel showing solver status and metrics."""
     ax.clear()
     ax.set_facecolor(COLORS["panel"])
@@ -136,7 +142,9 @@ def plot_info_panel(ax, result):
         )
 
 
-def plot_sweep_composition(ax, results, selected_species):
+def plot_sweep_composition(
+    ax: Any, results: list[Any], selected_species: list[str]
+) -> None:
     """Temperature sweep composition curves with glow effect."""
     ax.clear()
     ax.set_facecolor(COLORS["panel"])
@@ -173,7 +181,7 @@ def plot_sweep_composition(ax, results, selected_species):
     ax.set_ylim(bottom=0)
 
 
-def plot_sweep_metrics(ax, results):
+def plot_sweep_metrics(ax: Any, results: list[Any]) -> Any:
     """Dual-axis metrics plot: H2/CO + carbon conversion + CGE."""
     ax.clear()
     ax.set_facecolor(COLORS["panel"])
@@ -233,8 +241,15 @@ def plot_sweep_metrics(ax, results):
 
 
 def plot_surface_3d(
-    ax, t_grid, p_grid, z_data, x_label, y_label, z_label, cmap="viridis"
-):
+    ax: Any,
+    t_grid: np.ndarray,
+    p_grid: np.ndarray,
+    z_data: np.ndarray,
+    x_label: str,
+    y_label: str,
+    z_label: str,
+    cmap: str = "viridis",
+) -> None:
     """3D surface plot with wireframe overlay."""
     ax.clear()
     ax.set_facecolor(COLORS["bg"])
@@ -278,17 +293,17 @@ def plot_surface_3d(
 
 
 def plot_contour(
-    ax,
-    fig,
-    t_grid,
-    p_grid,
-    z_data,
-    x_label,
-    y_label,
-    z_label,
-    cmap="viridis",
-    existing_cbar=None,
-):
+    ax: Any,
+    fig: Any,
+    t_grid: np.ndarray,
+    p_grid: np.ndarray,
+    z_data: np.ndarray,
+    x_label: str,
+    y_label: str,
+    z_label: str,
+    cmap: str = "viridis",
+    existing_cbar: Any = None,
+) -> Any:
     """Filled contour plot with labels and colorbar."""
     ax.clear()
     ax.set_facecolor(COLORS["panel"])
@@ -322,7 +337,12 @@ def plot_contour(
     return cbar
 
 
-def plot_feed_bars(ax, feed_dict, title="Feed Composition", ylabel="Molar Amount"):
+def plot_feed_bars(
+    ax: Any,
+    feed_dict: dict[str, float],
+    title: str = "Feed Composition",
+    ylabel: str = "Molar Amount",
+) -> None:
     """Vertical bar chart of feed elements."""
     ax.clear()
     ax.set_facecolor(COLORS["panel"])
@@ -351,7 +371,7 @@ def plot_feed_bars(ax, feed_dict, title="Feed Composition", ylabel="Molar Amount
         )
 
 
-def plot_equilibrium_preview(ax, result):
+def plot_equilibrium_preview(ax: Any, result: Any) -> None:
     """Horizontal bar preview of significant equilibrium species."""
     ax.clear()
     ax.set_facecolor(COLORS["panel"])

@@ -9,6 +9,8 @@ Design by Contract:
 Data source: NASA Glenn coefficients (Burcat & Ruscic, Third Millennium Database)
 """
 
+from typing import Any
+
 import numpy as np
 
 # Universal gas constant [J/(mol·K)]
@@ -34,7 +36,7 @@ T_REF = 298.15
 #   'coeff_high': 7 NASA coefficients for T_mid..T_high,
 # }
 
-SPECIES_DB = {
+SPECIES_DB: dict[str, dict[str, Any]] = {
     "H2": {
         "name": "Hydrogen",
         "formula": "H2",
@@ -442,7 +444,7 @@ SPECIES_DB = {
 }
 
 
-def cp_over_r(T, coeffs):
+def cp_over_r(T: float, coeffs: list[float]) -> float:
     """Cp/R from NASA polynomial. T must be in valid range.
 
     Precondition: T > 0, coeffs has 7 elements
@@ -452,7 +454,7 @@ def cp_over_r(T, coeffs):
     return a[0] + a[1] * T + a[2] * T**2 + a[3] * T**3 + a[4] * T**4
 
 
-def h_over_rt(T, coeffs):
+def h_over_rt(T: float, coeffs: list[float]) -> float:
     """H/(RT) from NASA polynomial.
 
     Precondition: T > 0, coeffs has 7 elements
@@ -468,13 +470,13 @@ def h_over_rt(T, coeffs):
     )
 
 
-def s_over_r(T, coeffs):
+def s_over_r(T: float, coeffs: list[float]) -> float:
     """S/R from NASA polynomial.
 
     Precondition: T > 0, coeffs has 7 elements
     """
     a = coeffs
-    return (
+    return float(
         a[0] * np.log(T)
         + a[1] * T
         + a[2] * T**2 / 2
@@ -484,15 +486,15 @@ def s_over_r(T, coeffs):
     )
 
 
-def g_over_rt(T, coeffs):
+def g_over_rt(T: float, coeffs: list[float]) -> float:
     """G/(RT) = H/(RT) - S/R from NASA polynomial.
 
     Precondition: T > 0, coeffs has 7 elements
     """
-    return h_over_rt(T, coeffs) - s_over_r(T, coeffs)
+    return float(h_over_rt(T, coeffs) - s_over_r(T, coeffs))
 
 
-def get_coeffs(species_key, T):
+def get_coeffs(species_key: str, T: float) -> list[float]:
     """Get appropriate NASA coefficients for species at temperature T.
 
     Precondition: species_key in SPECIES_DB, T > 0
@@ -502,13 +504,13 @@ def get_coeffs(species_key, T):
     Clamps T to valid range with warning.
     """
     sp = SPECIES_DB[species_key]
-    T_clamped = np.clip(T, sp["T_low"], sp["T_high"])
-    if T_clamped <= sp["T_mid"]:
-        return sp["coeff_low"]
-    return sp["coeff_high"]
+    T_clamped = float(np.clip(T, float(sp["T_low"]), float(sp["T_high"])))
+    if T_clamped <= float(sp["T_mid"]):
+        return list(sp["coeff_low"])
+    return list(sp["coeff_high"])
 
 
-def gibbs_dimensionless(species_key, T):
+def gibbs_dimensionless(species_key: str, T: float) -> float:
     """Compute dimensionless Gibbs energy G°/(RT) for species at T.
 
     Precondition: species_key in SPECIES_DB, T > 0
@@ -518,7 +520,7 @@ def gibbs_dimensionless(species_key, T):
     return g_over_rt(T, coeffs)
 
 
-def enthalpy_j_per_mol(species_key, T):
+def enthalpy_j_per_mol(species_key: str, T: float) -> float:
     """Compute standard enthalpy H° [J/mol] for species at T.
 
     Precondition: species_key in SPECIES_DB, T > 0
@@ -527,7 +529,7 @@ def enthalpy_j_per_mol(species_key, T):
     return h_over_rt(T, coeffs) * R_GAS * T
 
 
-def entropy_j_per_mol_k(species_key, T):
+def entropy_j_per_mol_k(species_key: str, T: float) -> float:
     """Compute standard entropy S° [J/(mol·K)] for species at T.
 
     Precondition: species_key in SPECIES_DB, T > 0
@@ -536,7 +538,7 @@ def entropy_j_per_mol_k(species_key, T):
     return s_over_r(T, coeffs) * R_GAS
 
 
-def cp_j_per_mol_k(species_key, T):
+def cp_j_per_mol_k(species_key: str, T: float) -> float:
     """Compute heat capacity Cp [J/(mol·K)] for species at T.
 
     Precondition: species_key in SPECIES_DB, T > 0
@@ -574,22 +576,23 @@ HEATING_VALUES_LHV = {
 }
 
 
-def get_gas_species():
+def get_gas_species() -> list[str]:
     """Return list of gas-phase species keys."""
     return [k for k, v in SPECIES_DB.items() if v["phase"] == "gas"]
 
 
-def get_all_species():
+def get_all_species() -> list[str]:
     """Return list of all species keys."""
     return list(SPECIES_DB.keys())
 
 
-def get_elements_in_system(species_keys):
+def get_elements_in_system(species_keys: list[str]) -> list[str]:
     """Return sorted list of all elements present in given species.
 
     Precondition: all keys in species_keys exist in SPECIES_DB
     """
-    elements = set()
+    elements: set[str] = set()
     for key in species_keys:
-        elements.update(SPECIES_DB[key]["elements"].keys())
+        elem_dict = dict(SPECIES_DB[key]["elements"])
+        elements.update(elem_dict.keys())
     return sorted(elements)

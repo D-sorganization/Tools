@@ -4,10 +4,14 @@ SRP: Iterates over parameter spaces, delegates each point to the engine.
      No feed processing, no optimization, no plotting.
 """
 
+from typing import Any
+
 import numpy as np
 
 
-def temperature_sweep(engine, t_start, t_end, n_points, **solve_kwargs):
+def temperature_sweep(
+    engine: Any, t_start: float, t_end: float, n_points: int, **solve_kwargs: Any
+) -> list[Any]:
     """Run equilibrium across a temperature range with warm-starting.
 
     Args:
@@ -25,7 +29,7 @@ def temperature_sweep(engine, t_start, t_end, n_points, **solve_kwargs):
     assert n_points >= 2, "Need at least 2 points"
 
     temperatures = np.linspace(t_start, t_end, n_points)
-    results = []
+    results: list[Any] = []
     warm = None
 
     for t in temperatures:
@@ -38,8 +42,14 @@ def temperature_sweep(engine, t_start, t_end, n_points, **solve_kwargs):
 
 
 def surface_sweep(
-    engine, t_range, param_name, param_range, n_t=30, n_param=25, **solve_kwargs
-):
+    engine: Any,
+    t_range: tuple[float, float],
+    param_name: str,
+    param_range: tuple[float, float],
+    n_t: int = 30,
+    n_param: int = 25,
+    **solve_kwargs: Any,
+) -> dict[str, Any]:
     """Run 2D parameter sweep for surface plots.
 
     Args:

@@ -7,6 +7,9 @@ SRP: Tab layout, widget wiring, and callback routing only.
 Single-page, 4-tab interface with process injection controls.
 """
 
+from collections.abc import Callable
+from typing import Any
+
 import matplotlib
 import numpy as np
 
@@ -47,7 +50,17 @@ SURFACE_PARAM_LABELS = {key: lbl for lbl, key, _ in _SURFACE_PARAMS}
 # ─── Widget factory helpers ─────────────────────────────────────────────────────
 
 
-def make_slider(fig, rect, label, vmin, vmax, vinit, vstep, color, callback):
+def make_slider(
+    fig: Any,
+    rect: list[float],
+    label: str,
+    vmin: float,
+    vmax: float,
+    vinit: float,
+    vstep: float,
+    color: str,
+    callback: Callable[..., Any],
+) -> Slider:
     """Create a styled slider. Returns the Slider widget."""
     ax = fig.add_axes(rect)
     ax.set_facecolor(COLORS["panel"])
@@ -57,7 +70,9 @@ def make_slider(fig, rect, label, vmin, vmax, vinit, vstep, color, callback):
     return sl
 
 
-def make_button(fig, rect, label, color, callback):
+def make_button(
+    fig: Any, rect: list[float], label: str, color: str, callback: Callable[..., Any]
+) -> Button:
     """Create a styled button. Returns the Button widget."""
     ax = fig.add_axes(rect)
     btn = Button(ax, label, color=color, hovercolor=COLORS["grid"])
@@ -76,22 +91,24 @@ class AppState:
     SRP: Holds values only. No logic, no widgets.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.base_feed = FeedComposition(C=1.0, H=1.0, O=0.5, N=0.0, S=0.0)
         self.process = ProcessInputs()
         self.temperature = 1000.0
         self.pressure = 101325.0
         self.selected_species = ["H2", "CO", "CO2", "H2O", "CH4"]
         self.surface_param = "steam_carbon_ratio"
-        self.last_sweep = None
-        self.last_surface = None
-        self.last_result = None
+        self.last_sweep: list[Any] | None = None
+        self.last_surface: dict[str, Any] | None = None
+        self.last_result: Any = None
 
 
 # ─── Tab builders ───────────────────────────────────────────────────────────────
 
 
-def build_single_point_tab(fig, state, on_recalc):
+def build_single_point_tab(
+    fig: Any, state: AppState, on_recalc: Callable[[], None]
+) -> dict[str, Any]:
     """Build Tab 1: single-point equilibrium with process controls.
 
     Returns dict of {name: widget_or_axes} for visibility toggling.
@@ -217,7 +234,9 @@ def build_single_point_tab(fig, state, on_recalc):
     return widgets
 
 
-def build_sweep_tab(fig, state, on_sweep):
+def build_sweep_tab(
+    fig: Any, state: AppState, on_sweep: Callable[[], None]
+) -> dict[str, Any]:
     """Build Tab 2: temperature sweep with species selection."""
     widgets = {}
 
@@ -306,7 +325,7 @@ def build_sweep_tab(fig, state, on_sweep):
     return widgets
 
 
-def build_surface_tab(fig, on_surface):
+def build_surface_tab(fig: Any, on_surface: Callable[[], None]) -> dict[str, Any]:
     """Build Tab 3: 3D surface plots."""
     widgets = {}
 
@@ -345,7 +364,9 @@ def build_surface_tab(fig, on_surface):
     return widgets
 
 
-def build_feed_tab(fig, state, on_apply):
+def build_feed_tab(
+    fig: Any, state: AppState, on_apply: Callable[[], None]
+) -> dict[str, Any]:
     """Build Tab 4: CHONS feed editor with presets and injection summary."""
     widgets = {}
 
@@ -411,32 +432,38 @@ def build_feed_tab(fig, state, on_apply):
 # ─── Callback helpers (pure state mutations) ────────────────────────────────────
 
 
-def _set_and_recalc(state, attr, value, recalc):
+def _set_and_recalc(
+    state: AppState, attr: str, value: float, recalc: Callable[[], None]
+) -> None:
     setattr(state, attr, value)
     recalc()
 
 
-def _set_pressure(state, atm_value, recalc):
+def _set_pressure(
+    state: AppState, atm_value: float, recalc: Callable[[], None]
+) -> None:
     state.pressure = atm_value * 101325.0
     recalc()
 
 
-def _set_oxidant(state, o2_moles, recalc):
+def _set_oxidant(state: AppState, o2_moles: float, recalc: Callable[[], None]) -> None:
     state.process.oxidant.o2_flow = o2_moles
     recalc()
 
 
-def _set_air_mode(state, label, recalc):
+def _set_air_mode(state: AppState, label: str, recalc: Callable[[], None]) -> None:
     state.process.oxidant.use_air = "Air" in label
     recalc()
 
 
-def _set_injection(state, stream_name, flow, recalc):
+def _set_injection(
+    state: AppState, stream_name: str, flow: float, recalc: Callable[[], None]
+) -> None:
     getattr(state.process, stream_name).flow = flow
     recalc()
 
 
-def _set_feed_element(state, elem, value):
+def _set_feed_element(state: AppState, elem: str, value: float) -> None:
     setattr(state.base_feed, elem, value)
 
 
@@ -450,13 +477,16 @@ class GasificationApp:
     DIP: Depends on engine interface, not implementation.
     """
 
-    def __init__(self, engine=None):
+    def __init__(self, engine: GasificationEngine | None = None) -> None:
         apply_theme()
         self.engine = engine or GasificationEngine()
         self.state = AppState()
 
         self.fig = plt.figure(figsize=(16, 9.5))
-        self.fig.canvas.manager.set_window_title("Gasification Equilibrium Calculator")
+        if self.fig.canvas.manager is not None:
+            self.fig.canvas.manager.set_window_title(
+                "Gasification Equilibrium Calculator"
+            )
         self.fig.patch.set_facecolor(COLORS["bg"])
 
         self._build_tab_bar()
@@ -471,7 +501,7 @@ class GasificationApp:
         self._show_tab(0)
         self._run_single_point()
 
-    def _build_tab_bar(self):
+    def _build_tab_bar(self) -> None:
         """Create 4 tab navigation buttons."""
         names = [
             "  Single Point  ",
@@ -479,20 +509,20 @@ class GasificationApp:
             " Surface Plots ",
             "  Feed Editor  ",
         ]
-        self.tab_buttons = []
-        self.tab_axes = []
+        self.tab_buttons: list[Button] = []
+        self.tab_axes: list[Any] = []
         for i, name in enumerate(names):
-            ax = self.fig.add_axes([0.01 + i * 0.245, 0.955, 0.24, 0.04])
+            ax = self.fig.add_axes((0.01 + i * 0.245, 0.955, 0.24, 0.04))
             ax.set_facecolor(COLORS["panel"])
             btn = Button(ax, name, color=COLORS["panel"], hovercolor=COLORS["grid"])
             btn.label.set_color(COLORS["text"])
             btn.label.set_fontsize(10)
             btn.label.set_fontweight("bold")
-            btn.on_clicked(lambda _, idx=i: self._show_tab(idx))
+            btn.on_clicked(lambda _, idx=i: self._show_tab(idx))  # type: ignore[misc]
             self.tab_buttons.append(btn)
             self.tab_axes.append(ax)
 
-    def _show_tab(self, idx):
+    def _show_tab(self, idx: int) -> None:
         """Switch visible tab."""
         for i, ax in enumerate(self.tab_axes):
             active = i == idx
@@ -510,12 +540,12 @@ class GasificationApp:
                     widget.ax.set_visible(vis)
         self.fig.canvas.draw_idle()
 
-    def _setup_sweep_callbacks(self):
+    def _setup_sweep_callbacks(self) -> None:
         """Wire species checkbuttons in sweep tab."""
         sw = self.tabs[1]
         sw["check"].on_clicked(lambda lbl: self._toggle_species(lbl, sw))
 
-    def _toggle_species(self, label, sw):
+    def _toggle_species(self, label: str, sw: dict[str, Any]) -> None:
         sp_key = sw["species_map"].get(label, label)
         if sp_key in self.state.selected_species:
             self.state.selected_species.remove(sp_key)
@@ -526,7 +556,7 @@ class GasificationApp:
 
     # ─── Calculation callbacks ──────────────────────────────
 
-    def _run_single_point(self):
+    def _run_single_point(self) -> None:
         """Solve single-point equilibrium and update plots."""
         from .feed import build_total_feed
 
@@ -547,7 +577,7 @@ class GasificationApp:
         plots.plot_info_panel(t["ax_info"], result)
         self.fig.canvas.draw_idle()
 
-    def _run_sweep(self):
+    def _run_sweep(self) -> None:
         """Run temperature sweep and plot."""
         sw = self.tabs[1]
         t_s = sw["sl_Ts"].val
@@ -569,15 +599,18 @@ class GasificationApp:
         self.state.last_sweep = results
         self._plot_sweep_results()
 
-    def _plot_sweep_results(self):
+    def _plot_sweep_results(self) -> None:
         sw = self.tabs[1]
+        results = self.state.last_sweep
+        if results is None:
+            return
         plots.plot_sweep_composition(
-            sw["ax_comp"], self.state.last_sweep, self.state.selected_species
+            sw["ax_comp"], results, self.state.selected_species
         )
-        plots.plot_sweep_metrics(sw["ax_metrics"], self.state.last_sweep)
+        plots.plot_sweep_metrics(sw["ax_metrics"], results)
         self.fig.canvas.draw_idle()
 
-    def _run_surface(self):
+    def _run_surface(self) -> None:
         """Run 2D parameter surface sweep."""
         sf = self.tabs[2]
         param_label = sf["radio_param"].value_selected
@@ -601,9 +634,9 @@ class GasificationApp:
         self.state.last_surface = data
         self._plot_surface_results()
 
-    def _plot_surface_results(self):
+    def _plot_surface_results(self) -> None:
         sf = self.tabs[2]
-        data = self.state.last_surface
+        data: dict[str, Any] = self.state.last_surface  # type: ignore[assignment]
 
         sp_map = {
             "H\u2082": "H2",
@@ -657,7 +690,7 @@ class GasificationApp:
         )
         self.fig.canvas.draw_idle()
 
-    def _apply_feed(self):
+    def _apply_feed(self) -> None:
         """Apply feed editor changes and update preview."""
         fd = self.tabs[3]
 
@@ -681,11 +714,11 @@ class GasificationApp:
         self._run_single_point()
         self.fig.canvas.draw_idle()
 
-    def show(self):
+    def show(self) -> None:
         plt.show()
 
 
-def main():
+def main() -> None:
     app = GasificationApp()
     app.show()
 

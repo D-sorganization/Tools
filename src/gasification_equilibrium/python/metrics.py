@@ -11,29 +11,33 @@ import numpy as np
 from .thermo_data import HEATING_VALUES_HHV, SPECIES_DB
 
 
-def gas_mole_fractions(moles, species_keys):
+def gas_mole_fractions(
+    moles: np.ndarray, species_keys: list[str]
+) -> tuple[np.ndarray, float]:
     """Compute gas-phase mole fractions from absolute moles.
 
     Postcondition: fractions sum to ~1.0, all >= 0
     """
     gas_mask = np.array([SPECIES_DB[k]["phase"] == "gas" for k in species_keys])
     n_gas = moles * gas_mask
-    total = max(n_gas.sum(), 1e-15)
+    total = max(float(n_gas.sum()), 1e-15)
     return n_gas / total, total
 
 
-def h2_co_ratio(moles, species_keys):
+def h2_co_ratio(moles: np.ndarray, species_keys: list[str]) -> float:
     """Compute H2/CO molar ratio.
 
     Returns 0.0 if CO is negligible.
     """
     comp = dict(zip(species_keys, moles, strict=True))
-    h2 = comp.get("H2", 0.0)
-    co = comp.get("CO", 0.0)
+    h2 = float(comp.get("H2", 0.0))
+    co = float(comp.get("CO", 0.0))
     return h2 / co if co > 1e-12 else 0.0
 
 
-def carbon_conversion(moles, species_keys, feed_elements):
+def carbon_conversion(
+    moles: np.ndarray, species_keys: list[str], feed_elements: dict[str, float]
+) -> float:
     """Fraction of feed carbon converted to gas phase.
 
     Postcondition: 0.0 <= result <= 1.0
@@ -49,7 +53,12 @@ def carbon_conversion(moles, species_keys, feed_elements):
     return float(np.clip(1.0 - c_solid / c_feed, 0.0, 1.0))
 
 
-def cold_gas_efficiency(mole_fractions, total_gas_moles, species_keys, feed_elements):
+def cold_gas_efficiency(
+    mole_fractions: np.ndarray,
+    total_gas_moles: float,
+    species_keys: list[str],
+    feed_elements: dict[str, float],
+) -> float:
     """Cold gas efficiency on HHV basis.
 
     CGE = (energy in product gas) / (energy in feed)
@@ -65,15 +74,17 @@ def cold_gas_efficiency(mole_fractions, total_gas_moles, species_keys, feed_elem
     feed_energy = c_feed * 393.5 + h_feed * 0.5 * 285.8
     if feed_energy <= 0:
         return 0.0
-    return min(syngas_energy / feed_energy, 2.0)
+    return float(min(syngas_energy / feed_energy, 2.0))
 
 
-def composition_dict(mole_fractions, species_keys):
+def composition_dict(
+    mole_fractions: np.ndarray, species_keys: list[str]
+) -> dict[str, float]:
     """Convert arrays to {species: fraction} dict."""
     return dict(zip(species_keys, mole_fractions, strict=True))
 
 
-def dry_mole_fractions(comp_dict):
+def dry_mole_fractions(comp_dict: dict[str, float]) -> dict[str, float]:
     """Remove H2O and renormalize.
 
     Postcondition: 'H2O' not in result, values sum to ~1.0
