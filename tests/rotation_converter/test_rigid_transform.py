@@ -863,17 +863,13 @@ class TestApplyVectors:
         """Batch should match one-at-a-time."""
         R = Rotation.from_euler(0.3, 0.5, 0.7, "xyz").as_rotation_matrix()
         p = np.array([1.0, 2.0, 3.0])
-        T = RigidTransform.from_rotation_translation(
-            R, p, source="a", target="b"
-        )
+        T = RigidTransform.from_rotation_translation(R, p, source="a", target="b")
         rng = np.random.default_rng(42)
         vecs = rng.standard_normal((10, 3))
         batch_result = T.apply_vectors(vecs)
         for i in range(10):
             single_result = T.apply_vector(vecs[i])
-            np.testing.assert_allclose(
-                batch_result[i], single_result, atol=ATOL
-            )
+            np.testing.assert_allclose(batch_result[i], single_result, atol=ATOL)
 
 
 # ===========================================================================
@@ -934,19 +930,25 @@ class TestHomogeneousCoordinates:
         T = RigidTransform.from_rotation_translation(
             np.eye(3), [1, 2, 3], source="a", target="b"
         )
-        phs = np.array([
-            [1, 0, 0, 1],  # point
-            [0, 1, 0, 1],  # point
-            [1, 0, 0, 0],  # vector
-            [0, 1, 0, 0],  # vector
-        ], dtype=float)
+        phs = np.array(
+            [
+                [1, 0, 0, 1],  # point
+                [0, 1, 0, 1],  # point
+                [1, 0, 0, 0],  # vector
+                [0, 1, 0, 0],  # vector
+            ],
+            dtype=float,
+        )
         result = T.apply_homogeneous_batch(phs)
-        expected = np.array([
-            [2, 2, 3, 1],
-            [1, 3, 3, 1],
-            [1, 0, 0, 0],
-            [0, 1, 0, 0],
-        ], dtype=float)
+        expected = np.array(
+            [
+                [2, 2, 3, 1],
+                [1, 3, 3, 1],
+                [1, 0, 0, 0],
+                [0, 1, 0, 0],
+            ],
+            dtype=float,
+        )
         np.testing.assert_allclose(result, expected, atol=ATOL)
 
     def test_homogeneous_batch_wrong_shape(self) -> None:
