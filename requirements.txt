@@ -9,7 +9,7 @@ sympy>=1.12  # Symbolic mathematics and algebra
 pytest>=8.2.0  # Testing framework
 pytest-cov  # Coverage plugin for pytest (code coverage metrics)
 ruff  # Fast Python linter and formatter (replaces flake8/black)
-mypy  # Static type checker for Python
+mypy==1.13.0  # Static type checker for Python (pinned to match CI workflow)
 types-PyYAML  # Type stubs for PyYAML (static typing)
 types-requests  # Type stubs for requests library (static typing)
 types-python-dateutil  # Type stubs for python-dateutil (avoids mypy --install-types cache issue)
