@@ -99,21 +99,27 @@ class TestQuaternionRotationMatrix:
         angle = math.pi / 2
         q = np.array([math.cos(angle / 2), math.sin(angle / 2), 0.0, 0.0])
         R = quaternion_to_rotation_matrix(q)
-        expected = np.array([
-            [1, 0, 0],
-            [0, 0, -1],
-            [0, 1, 0],
-        ], dtype=float)
+        expected = np.array(
+            [
+                [1, 0, 0],
+                [0, 0, -1],
+                [0, 1, 0],
+            ],
+            dtype=float,
+        )
         np.testing.assert_allclose(R, expected, atol=ATOL)
 
     def test_180deg_z_rotation(self) -> None:
         q = np.array([0.0, 0.0, 0.0, 1.0])
         R = quaternion_to_rotation_matrix(q)
-        expected = np.array([
-            [-1, 0, 0],
-            [0, -1, 0],
-            [0, 0, 1],
-        ], dtype=float)
+        expected = np.array(
+            [
+                [-1, 0, 0],
+                [0, -1, 0],
+                [0, 0, 1],
+            ],
+            dtype=float,
+        )
         np.testing.assert_allclose(R, expected, atol=ATOL)
 
     def test_rotation_matrix_to_quaternion_identity(self) -> None:
@@ -171,22 +177,28 @@ class TestQuaternionEuler:
         """90-degree rotation about X via XYZ Euler."""
         q = euler_to_quaternion(math.pi / 2, 0.0, 0.0, "xyz")
         R = quaternion_to_rotation_matrix(q)
-        expected = np.array([
-            [1, 0, 0],
-            [0, 0, -1],
-            [0, 1, 0],
-        ], dtype=float)
+        expected = np.array(
+            [
+                [1, 0, 0],
+                [0, 0, -1],
+                [0, 1, 0],
+            ],
+            dtype=float,
+        )
         np.testing.assert_allclose(R, expected, atol=ATOL)
 
     def test_euler_zyx_known_value(self) -> None:
         """90-degree rotation about Z via ZYX Euler (yaw-pitch-roll)."""
         q = euler_to_quaternion(math.pi / 2, 0.0, 0.0, "zyx")
         R = quaternion_to_rotation_matrix(q)
-        expected = np.array([
-            [0, -1, 0],
-            [1, 0, 0],
-            [0, 0, 1],
-        ], dtype=float)
+        expected = np.array(
+            [
+                [0, -1, 0],
+                [1, 0, 0],
+                [0, 0, 1],
+            ],
+            dtype=float,
+        )
         np.testing.assert_allclose(R, expected, atol=ATOL)
 
     def test_invalid_convention_raises(self) -> None:
@@ -216,9 +228,7 @@ class TestQuaternionAxisAngle:
         axis = np.array([1.0, 0.0, 0.0])
         angle = math.pi / 2
         q = axis_angle_to_quaternion(axis, angle)
-        expected_q = np.array([
-            math.cos(angle / 2), math.sin(angle / 2), 0.0, 0.0
-        ])
+        expected_q = np.array([math.cos(angle / 2), math.sin(angle / 2), 0.0, 0.0])
         np.testing.assert_allclose(q, expected_q, atol=ATOL)
 
     def test_axis_angle_quaternion_roundtrip(self) -> None:
@@ -261,11 +271,14 @@ class TestAxisAngleRotationMatrix:
     def test_90deg_z_rotation(self) -> None:
         axis = np.array([0.0, 0.0, 1.0])
         R = axis_angle_to_rotation_matrix(axis, math.pi / 2)
-        expected = np.array([
-            [0, -1, 0],
-            [1, 0, 0],
-            [0, 0, 1],
-        ], dtype=float)
+        expected = np.array(
+            [
+                [0, -1, 0],
+                [1, 0, 0],
+                [0, 0, 1],
+            ],
+            dtype=float,
+        )
         np.testing.assert_allclose(R, expected, atol=ATOL)
 
     def test_rotation_matrix_to_axis_angle_roundtrip(self) -> None:

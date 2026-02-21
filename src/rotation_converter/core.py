@@ -22,9 +22,7 @@ import math
 from typing import Any
 
 import numpy as np
-
 from contracts import (
-    PreconditionError,
     ensure,
     require,
     require_finite,
@@ -41,11 +39,13 @@ _AXIS_INDEX = {"x": 0, "y": 1, "z": 2}
 
 def _skew_symmetric(v: np.ndarray) -> np.ndarray:
     """Return the 3x3 skew-symmetric matrix [v]x for cross-product."""
-    return np.array([
-        [0, -v[2], v[1]],
-        [v[2], 0, -v[0]],
-        [-v[1], v[0], 0],
-    ])
+    return np.array(
+        [
+            [0, -v[2], v[1]],
+            [v[2], 0, -v[0]],
+            [-v[1], v[0], 0],
+        ]
+    )
 
 
 def _elementary_quaternion(axis_char: str, angle: float) -> np.ndarray:
@@ -122,12 +122,14 @@ def quaternion_multiply(q1: Any, q2: Any) -> np.ndarray:
     q2 = _validate_quaternion_array(q2, "q2")
     w1, x1, y1, z1 = q1
     w2, x2, y2, z2 = q2
-    return np.array([
-        w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2,
-        w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2,
-        w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2,
-        w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2,
-    ])
+    return np.array(
+        [
+            w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2,
+            w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2,
+            w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2,
+            w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2,
+        ]
+    )
 
 
 # ===========================================================================
@@ -145,11 +147,13 @@ def quaternion_to_rotation_matrix(q: Any) -> np.ndarray:
     _validate_unit_quaternion(q)
 
     w, x, y, z = q
-    R = np.array([
-        [1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],
-        [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
-        [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)],
-    ])
+    R = np.array(
+        [
+            [1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],
+            [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
+            [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)],
+        ]
+    )
 
     ensure(
         abs(np.linalg.det(R) - 1.0) < 1e-9,
@@ -225,12 +229,14 @@ def axis_angle_to_quaternion(axis: Any, angle: float) -> np.ndarray:
     require_finite(np.array([angle]), "angle")
 
     half = angle / 2.0
-    q = np.array([
-        math.cos(half),
-        axis[0] * math.sin(half),
-        axis[1] * math.sin(half),
-        axis[2] * math.sin(half),
-    ])
+    q = np.array(
+        [
+            math.cos(half),
+            axis[0] * math.sin(half),
+            axis[1] * math.sin(half),
+            axis[2] * math.sin(half),
+        ]
+    )
 
     ensure(abs(np.linalg.norm(q) - 1.0) < 1e-9, "result must be unit quaternion")
     return q
@@ -340,8 +346,18 @@ def rodrigues_to_quaternion(r: Any) -> np.ndarray:
 
 # All 12 Tait-Bryan + proper Euler conventions
 _VALID_CONVENTIONS = {
-    "xyz", "xzy", "yxz", "yzx", "zxy", "zyx",  # Tait-Bryan
-    "xyx", "xzx", "yxy", "yzy", "zxz", "zyz",  # Proper Euler
+    "xyz",
+    "xzy",
+    "yxz",
+    "yzx",
+    "zxy",
+    "zyx",  # Tait-Bryan
+    "xyx",
+    "xzx",
+    "yxy",
+    "yzy",
+    "zxz",
+    "zyz",  # Proper Euler
 }
 
 
@@ -353,9 +369,7 @@ def _validate_euler_convention(convention: str) -> None:
     )
 
 
-def euler_to_quaternion(
-    a: float, b: float, c: float, convention: str
-) -> np.ndarray:
+def euler_to_quaternion(a: float, b: float, c: float, convention: str) -> np.ndarray:
     """Convert Euler angles to unit quaternion.
 
     Intrinsic rotations: R = R_first(a) * R_second(b) * R_third(c).
@@ -376,9 +390,7 @@ def euler_to_quaternion(
     return normalize_quaternion(q)
 
 
-def quaternion_to_euler(
-    q: Any, convention: str
-) -> tuple[float, float, float]:
+def quaternion_to_euler(q: Any, convention: str) -> tuple[float, float, float]:
     """Convert unit quaternion to Euler angles.
 
     Routes through rotation matrix for robust extraction.
@@ -423,8 +435,12 @@ def _rotation_matrix_to_euler_impl(
             # The sign factor depends on whether (i,j,other) is an even
             # permutation of (0,1,2)
             sign = 1.0 if (j - i) % 3 == 1 else -1.0
-            a = math.atan2(R[j, i] * sign, R[other, i] * (-sign if (j - i) % 3 == 1 else sign))
-            c = math.atan2(R[i, j] * sign, -R[i, other] * (-sign if (j - i) % 3 == 1 else sign))
+            a = math.atan2(
+                R[j, i] * sign, R[other, i] * (-sign if (j - i) % 3 == 1 else sign)
+            )
+            c = math.atan2(
+                R[i, j] * sign, -R[i, other] * (-sign if (j - i) % 3 == 1 else sign)
+            )
 
             # Re-derive properly using generic formulation
             # For proper Euler R_i(a) R_j(b) R_i(c):
@@ -470,9 +486,7 @@ def euler_to_rotation_matrix(
     return quaternion_to_rotation_matrix(q)
 
 
-def rotation_matrix_to_euler(
-    R: Any, convention: str
-) -> tuple[float, float, float]:
+def rotation_matrix_to_euler(R: Any, convention: str) -> tuple[float, float, float]:
     """Convert rotation matrix to Euler angles (via quaternion hub, DRY)."""
     R = _validate_rotation_matrix(R)
     q = rotation_matrix_to_quaternion(R)

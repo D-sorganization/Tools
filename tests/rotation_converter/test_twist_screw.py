@@ -45,24 +45,30 @@ class TestTwistMatrixConversion:
         """Twist with omega=[0,0,1], v=[0,0,0] -> rotation about z."""
         xi = np.array([0.0, 0.0, 1.0, 0.0, 0.0, 0.0])
         M = twist_vector_to_se3_matrix(xi)
-        expected = np.array([
-            [0, -1, 0, 0],
-            [1, 0, 0, 0],
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-        ], dtype=float)
+        expected = np.array(
+            [
+                [0, -1, 0, 0],
+                [1, 0, 0, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
+            ],
+            dtype=float,
+        )
         np.testing.assert_allclose(M, expected, atol=ATOL)
 
     def test_pure_translation_twist(self) -> None:
         """Twist with omega=[0,0,0], v=[1,0,0] -> translation along x."""
         xi = np.array([0.0, 0.0, 0.0, 1.0, 0.0, 0.0])
         M = twist_vector_to_se3_matrix(xi)
-        expected = np.array([
-            [0, 0, 0, 1],
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-        ], dtype=float)
+        expected = np.array(
+            [
+                [0, 0, 0, 1],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
+            ],
+            dtype=float,
+        )
         np.testing.assert_allclose(M, expected, atol=ATOL)
 
     def test_se3_matrix_roundtrip(self) -> None:
@@ -96,11 +102,14 @@ class TestTwistToHomogeneous:
     def test_pure_rotation_90deg_z(self) -> None:
         xi = np.array([0.0, 0.0, 1.0, 0.0, 0.0, 0.0])
         T = twist_angle_to_homogeneous(xi, math.pi / 2)
-        expected_R = np.array([
-            [0, -1, 0],
-            [1, 0, 0],
-            [0, 0, 1],
-        ], dtype=float)
+        expected_R = np.array(
+            [
+                [0, -1, 0],
+                [1, 0, 0],
+                [0, 0, 1],
+            ],
+            dtype=float,
+        )
         np.testing.assert_allclose(T[:3, :3], expected_R, atol=ATOL)
         np.testing.assert_allclose(T[:3, 3], [0, 0, 0], atol=ATOL)
         np.testing.assert_allclose(T[3, :], [0, 0, 0, 1], atol=ATOL)
@@ -202,11 +211,14 @@ class TestHomogeneousToTwist:
 
     def test_pure_rotation_decomposition(self) -> None:
         T = np.eye(4)
-        T[:3, :3] = np.array([
-            [0, -1, 0],
-            [1, 0, 0],
-            [0, 0, 1],
-        ], dtype=float)
+        T[:3, :3] = np.array(
+            [
+                [0, -1, 0],
+                [1, 0, 0],
+                [0, 0, 1],
+            ],
+            dtype=float,
+        )
         xi, theta = homogeneous_to_twist_angle(T)
         assert abs(theta - math.pi / 2) < ATOL
         omega = xi[:3]
@@ -242,11 +254,14 @@ class TestAdjointRepresentation:
 
     def test_adjoint_pure_rotation(self) -> None:
         T = np.eye(4)
-        R = np.array([
-            [0, -1, 0],
-            [1, 0, 0],
-            [0, 0, 1],
-        ], dtype=float)
+        R = np.array(
+            [
+                [0, -1, 0],
+                [1, 0, 0],
+                [0, 0, 1],
+            ],
+            dtype=float,
+        )
         T[:3, :3] = R
         Ad = adjoint_representation(T)
         # Top-left 3x3 should be R

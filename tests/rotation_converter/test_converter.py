@@ -111,9 +111,7 @@ class TestRotationComposition:
         r = Rotation.from_axis_angle([0, 0, 1], 0.5)
         r_inv = r.inverse()
         composed = r.compose(r_inv)
-        np.testing.assert_allclose(
-            composed.as_rotation_matrix(), np.eye(3), atol=ATOL
-        )
+        np.testing.assert_allclose(composed.as_rotation_matrix(), np.eye(3), atol=ATOL)
 
     def test_compose_order_matters(self) -> None:
         r1 = Rotation.from_axis_angle([1, 0, 0], math.pi / 2)

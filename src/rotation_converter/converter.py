@@ -15,12 +15,11 @@ methods guarantee postconditions (unit quaternion, SO(3), etc.).
 
 from __future__ import annotations
 
-import math
 from typing import Any
 
 import numpy as np
+from contracts import require, require_finite
 
-from contracts import PreconditionError, ensure, require, require_finite
 from rotation_converter.core import (
     axis_angle_to_quaternion,
     axis_angle_to_rotation_matrix,
@@ -92,9 +91,7 @@ class Rotation:
         return cls(q)
 
     @classmethod
-    def from_euler(
-        cls, a: float, b: float, c: float, convention: str
-    ) -> Rotation:
+    def from_euler(cls, a: float, b: float, c: float, convention: str) -> Rotation:
         """Create from Euler angles.
 
         Args:
@@ -122,9 +119,7 @@ class Rotation:
         Precondition: r has 3 elements.
         """
         r = np.asarray(r, dtype=float)
-        require(
-            r.shape == (3,), "Rodrigues vector must have 3 elements", r.shape
-        )
+        require(r.shape == (3,), "Rodrigues vector must have 3 elements", r.shape)
         q = rodrigues_to_quaternion(r)
         return cls(q)
 

@@ -19,12 +19,11 @@ import math
 from typing import Any
 
 import numpy as np
-
 from contracts import ensure, require, require_finite
+
 from rotation_converter.core import (
     _skew_symmetric,
     _validate_rotation_matrix,
-    axis_angle_to_rotation_matrix,
     rotation_matrix_to_axis_angle,
 )
 
@@ -193,9 +192,7 @@ def homogeneous_to_twist_angle(T: Any) -> tuple[np.ndarray, float]:
     # G_inv = (1/theta)*I - 0.5*K + (1/theta - 0.5*cot(theta/2))*K^2
     cot_half = math.cos(theta / 2) / math.sin(theta / 2)
     G_inv = (
-        (1.0 / theta) * np.eye(3)
-        - 0.5 * K
-        + (1.0 / theta - 0.5 * cot_half) * (K @ K)
+        (1.0 / theta) * np.eye(3) - 0.5 * K + (1.0 / theta - 0.5 * cot_half) * (K @ K)
     )
     v = G_inv @ p
 
@@ -247,10 +244,10 @@ def twist_to_screw(xi: Any) -> dict[str, Any]:
         }
 
     axis = omega / omega_norm
-    pitch = float(np.dot(omega, v) / (omega_norm ** 2))
+    pitch = float(np.dot(omega, v) / (omega_norm**2))
 
     # Find point on axis: q = omega x v / ||omega||^2
-    q = np.cross(omega, v) / (omega_norm ** 2)
+    q = np.cross(omega, v) / (omega_norm**2)
 
     return {
         "axis": axis,
