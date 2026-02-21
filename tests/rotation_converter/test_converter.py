@@ -13,6 +13,7 @@ import math
 import numpy as np
 import pytest
 
+from rotation_converter._contracts import PreconditionError
 from rotation_converter.converter import Rotation, RotationConverter
 
 ATOL = 1e-10
@@ -169,22 +170,22 @@ class TestContracts:
     """Verify DbC precondition enforcement."""
 
     def test_quaternion_wrong_length_raises(self) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             Rotation.from_quaternion([1, 0, 0])
 
     def test_rotation_matrix_wrong_shape_raises(self) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             Rotation.from_rotation_matrix(np.eye(4))
 
     def test_rotation_matrix_not_SO3_raises(self) -> None:
         bad = np.array([[1, 0, 0], [0, 1, 0], [0, 0, -1]], dtype=float)
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             Rotation.from_rotation_matrix(bad)
 
     def test_axis_angle_non_unit_axis_raises(self) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             Rotation.from_axis_angle([2, 0, 0], 0.5)
 
     def test_rodrigues_wrong_length_raises(self) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             Rotation.from_rodrigues([1, 2])

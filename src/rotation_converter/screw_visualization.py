@@ -422,7 +422,7 @@ class ScrewAxisAnimator:
         def update(frame_idx: int) -> None:
             self._draw_frame(ax, frame_idx)
 
-        anim = FuncAnimation(
+        _anim = FuncAnimation(  # noqa: F841 — must keep reference to prevent GC
             fig,
             update,
             frames=self.n_frames,

@@ -62,7 +62,7 @@ class TestQuaternionBasics:
         assert abs(np.linalg.norm(result) - 1.0) < ATOL
 
     def test_normalize_zero_quaternion_raises(self) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             normalize_quaternion(np.array([0.0, 0.0, 0.0, 0.0]))
 
     def test_conjugate(self) -> None:
@@ -146,7 +146,7 @@ class TestQuaternionRotationMatrix:
         assert abs(np.linalg.det(R) - 1.0) < ATOL
 
     def test_non_unit_quaternion_raises(self) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             quaternion_to_rotation_matrix(np.array([2.0, 0.0, 0.0, 0.0]))
 
 
@@ -203,7 +203,7 @@ class TestQuaternionEuler:
         np.testing.assert_allclose(R, expected, atol=ATOL)
 
     def test_invalid_convention_raises(self) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             euler_to_quaternion(0.0, 0.0, 0.0, "abc")
 
 
@@ -244,7 +244,7 @@ class TestQuaternionAxisAngle:
         np.testing.assert_allclose(q2, q, atol=ATOL)
 
     def test_non_unit_axis_raises(self) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             axis_angle_to_quaternion(np.array([2.0, 0.0, 0.0]), math.pi / 4)
 
     def test_180deg_rotation(self) -> None:

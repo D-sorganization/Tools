@@ -192,7 +192,7 @@ def frisbee_flight(
 
         # Align disc forward direction with velocity
         vx = speed * math.cos(launch_angle)
-        vz = speed * math.sin(launch_angle) - _GRAVITY * t
+        _vz = speed * math.sin(launch_angle) - _GRAVITY * t  # noqa: F841
         heading = math.atan2(0.0, vx)  # In x-y plane
         R_heading = MatrixExp3(VecToso3(np.array([0.0, 0.0, 1.0])) * heading)
 

@@ -79,11 +79,11 @@ class TestTwistMatrixConversion:
         np.testing.assert_allclose(xi2, xi, atol=ATOL)
 
     def test_invalid_matrix_shape_raises(self) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             se3_matrix_to_twist_vector(np.zeros((3, 3)))
 
     def test_invalid_twist_length_raises(self) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             twist_vector_to_se3_matrix(np.zeros(5))
 
 
@@ -326,7 +326,7 @@ class TestScrewToTwistValidation:
             "point": np.zeros(3),
             "pitch": 0.0,
         }
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             screw_to_twist(screw)
 
     def test_unit_axis_finite_pitch_ok(self) -> None:

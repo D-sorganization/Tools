@@ -18,6 +18,7 @@ import math
 import numpy as np
 import pytest
 
+from rotation_converter._contracts import PreconditionError
 from rotation_converter.converter import Rotation
 from rotation_converter.rigid_transform import (
     FrameError,
@@ -69,7 +70,7 @@ class TestRigidTransformConstruction:
     def test_from_matrix_rejects_non_SE3(self) -> None:
         M = np.eye(4)
         M[:3, :3] *= 2  # Not SO(3)
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             RigidTransform.from_matrix(M, source="a", target="b")
 
     def test_from_rotation_translation(self) -> None:
@@ -675,51 +676,51 @@ class TestContractViolations:
     """DbC precondition enforcement for bad inputs."""
 
     def test_from_matrix_wrong_shape(self) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             RigidTransform.from_matrix(np.eye(3), source="a", target="b")
 
     def test_from_matrix_bad_bottom_row(self) -> None:
         M = np.eye(4)
         M[3, 0] = 1  # Invalid SE(3)
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             RigidTransform.from_matrix(M, source="a", target="b")
 
     def test_from_rotation_translation_bad_R(self) -> None:
         R = np.eye(3) * 2  # Not SO(3)
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             RigidTransform.from_rotation_translation(
                 R, [0, 0, 0], source="a", target="b"
             )
 
     def test_from_quaternion_wrong_length(self) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             RigidTransform.from_quaternion_translation(
                 [1, 0, 0], [0, 0, 0], source="a", target="b"
             )
 
     def test_from_axis_angle_non_unit_axis(self) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             RigidTransform.from_axis_angle_translation(
                 [2, 0, 0], 0.5, [0, 0, 0], source="a", target="b"
             )
 
     def test_apply_point_wrong_shape(self) -> None:
         T = RigidTransform.identity("a")
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             T.apply_point([1, 2])
 
     def test_apply_vector_wrong_shape(self) -> None:
         T = RigidTransform.identity("a")
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             T.apply_vector([1, 2, 3, 4])
 
     def test_from_twist_wrong_length(self) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             RigidTransform.from_twist([1, 2, 3], 1.0, source="a", target="b")
 
     def test_body_to_space_twist_wrong_shape(self) -> None:
         T = RigidTransform.identity("a")
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             T.body_to_space_twist(np.array([1, 2, 3]))
 
 
@@ -856,7 +857,7 @@ class TestApplyVectors:
 
     def test_apply_vectors_wrong_shape_raises(self) -> None:
         T = RigidTransform.identity("a")
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             T.apply_vectors(np.zeros((3, 2)))
 
     def test_apply_vectors_consistent_with_apply_vector(self) -> None:
@@ -922,7 +923,7 @@ class TestHomogeneousCoordinates:
 
     def test_homogeneous_wrong_shape(self) -> None:
         T = RigidTransform.identity("a")
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             T.apply_homogeneous(np.array([1, 2, 3]))
 
     def test_homogeneous_batch(self) -> None:
@@ -953,7 +954,7 @@ class TestHomogeneousCoordinates:
 
     def test_homogeneous_batch_wrong_shape(self) -> None:
         T = RigidTransform.identity("a")
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             T.apply_homogeneous_batch(np.zeros((3, 3)))
 
     def test_homogeneous_batch_consistent_with_single(self) -> None:
@@ -1040,9 +1041,9 @@ class TestBatchTwistWrenchConversions:
         np.testing.assert_allclose(Fb_back, Fb_orig, atol=ATOL)
 
     def test_batch_wrong_shape_raises(self, transform: RigidTransform) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             transform.body_to_space_twists(np.zeros((3, 4)))
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             transform.space_to_body_twists(np.zeros((3,)))
 
 
@@ -1056,20 +1057,20 @@ class TestFiniteChecks:
 
     def test_apply_point_nan(self) -> None:
         T = RigidTransform.identity("a")
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             T.apply_point(np.array([1.0, float("nan"), 0.0]))
 
     def test_apply_point_inf(self) -> None:
         T = RigidTransform.identity("a")
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             T.apply_point(np.array([1.0, float("inf"), 0.0]))
 
     def test_apply_vector_nan(self) -> None:
         T = RigidTransform.identity("a")
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             T.apply_vector(np.array([float("nan"), 0.0, 0.0]))
 
     def test_apply_vector_inf(self) -> None:
         T = RigidTransform.identity("a")
-        with pytest.raises(Exception):
+        with pytest.raises(PreconditionError):
             T.apply_vector(np.array([0.0, 0.0, float("inf")]))
