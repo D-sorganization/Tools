@@ -22,7 +22,7 @@ import math
 from typing import Any
 
 import numpy as np
-from contracts import (
+from rotation_converter._contracts import (
     ensure,
     require,
     require_finite,

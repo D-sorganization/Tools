@@ -27,7 +27,7 @@ import math
 from typing import Any
 
 import numpy as np
-from contracts import ensure, require
+from rotation_converter._contracts import ensure, require
 
 # ---------------------------------------------------------------------------
 # Internal helpers (DRY — shared across multiple functions)

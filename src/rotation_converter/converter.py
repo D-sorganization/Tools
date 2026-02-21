@@ -18,7 +18,7 @@ from __future__ import annotations
 from typing import Any
 
 import numpy as np
-from contracts import require, require_finite
+from rotation_converter._contracts import require, require_finite
 
 from rotation_converter.core import (
     axis_angle_to_quaternion,

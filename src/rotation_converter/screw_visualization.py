@@ -23,7 +23,7 @@ import math
 from typing import Any
 
 import numpy as np
-from contracts import ensure, require
+from rotation_converter._contracts import ensure, require
 
 from rotation_converter.modern_robotics import (
     MatrixLog6,

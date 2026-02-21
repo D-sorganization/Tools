@@ -1,0 +1,62 @@
+# Standalone build configuration for rotation_converter.
+#
+# Use this when installing rotation_converter outside the Tools monorepo:
+#
+#   cd src/rotation_converter
+#   pip install .                  # core only (numpy)
+#   pip install .[viz]             # + matplotlib for screw axis visualization
+#   pip install .[dev]             # + pytest for running tests
+#   pip install .[all]             # everything
+#
+# Inside the monorepo this file is NOT used — the root pyproject.toml
+# and pytest.ini handle discovery and paths.
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rotation-converter"
+version = "1.3.0"
+description = "Comprehensive rotation/transform converter: quaternions, Euler angles, rotation matrices, axis-angle, Rodrigues, twists, screw axes, SE(3), frame-aware transforms, and Modern Robotics (Lynch & Park) kinematics."
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "UpstreamDrift Team"}
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
+dependencies = [
+    "numpy>=1.24.0",
+]
+
+[project.optional-dependencies]
+viz = [
+    "matplotlib>=3.7.0",
+]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+]
+all = [
+    "rotation-converter[viz,dev]",
+]
+
+[project.urls]
+Homepage = "https://github.com/D-sorganization/Tools"
+Repository = "https://github.com/D-sorganization/Tools"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["rotation_converter*"]
+exclude = ["tests*"]
