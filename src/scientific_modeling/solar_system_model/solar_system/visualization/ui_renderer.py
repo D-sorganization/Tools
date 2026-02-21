@@ -400,6 +400,59 @@ class UIRenderer:
                 self.render_historical_events(content_data)
             elif content_key == "planets":  # New Planet Selector
                 self.render_planet_selector(content_data)
+            elif content_key == "missions":
+                self.render_mission_list(content_data)
+
+    def render_mission_list(self, data: dict[str, Any]) -> None:
+        """Render the list of famous space missions."""
+        if not data.get("visible", False):
+            return
+
+        x, y = data.get("position", (0, 0))
+        missions = data.get("missions", [])
+
+        self.begin_2d()
+        current_y = y
+        self.text_cache.render(
+            "NASA Famous Missions", x, current_y, "default", self.theme.text_highlight
+        )
+        current_y += 35
+
+        for mission in missions:
+            name = mission.get("name", "Unknown")
+            launch = mission.get("launch_date", "")
+            desc = mission.get("description", "")
+
+            # Mission Title
+            self.text_cache.render(name, x, current_y, "default", (255, 255, 100))
+            current_y += 28
+
+            # Launch Date
+            self.text_cache.render(
+                f"Launched: {launch}", x + 10, current_y, "small", (150, 200, 255)
+            )
+            current_y += 20
+
+            # Description (wrapped)
+            words = desc.split()
+            line = ""
+            for word in words:
+                test_line = f"{line} {word}".strip()
+                if len(test_line) > 40:
+                    self.text_cache.render(
+                        line, x + 15, current_y, "small", (220, 220, 220)
+                    )
+                    current_y += 18
+                    line = word
+                else:
+                    line = test_line
+            if line:
+                self.text_cache.render(
+                    line, x + 15, current_y, "small", (220, 220, 220)
+                )
+                current_y += 25
+
+        self.end_2d()
 
     def render_educational_panel(self, edu_data: dict[str, Any]) -> None:
         """Render educational information about selected body."""

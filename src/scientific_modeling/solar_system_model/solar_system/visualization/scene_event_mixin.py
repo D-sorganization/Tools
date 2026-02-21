@@ -133,9 +133,7 @@ class SceneEventMixin:
         if key == K_d and self.date_picker:
             self.date_picker.toggle()
             if self.date_picker.visible:
-                self.date_picker.set_date(
-                    self.time_manager.current_time.datetime_utc
-                )
+                self.date_picker.set_date(self.time_manager.current_time.datetime_utc)
                 self._mark_immersion_task("navigate_time")
         elif key == K_n and self.time_nav_panel:
             self.time_nav_panel.toggle()
@@ -298,8 +296,10 @@ class SceneEventMixin:
             return False
 
         sx, sy = self.sidebar_panel.position
-        if not (sx <= x <= sx + self.sidebar_panel.width
-                and sy <= y <= sy + self.sidebar_panel.height):
+        if not (
+            sx <= x <= sx + self.sidebar_panel.width
+            and sy <= y <= sy + self.sidebar_panel.height
+        ):
             return False
 
         rel_x, rel_y = x - sx, y - sy
@@ -307,21 +307,36 @@ class SceneEventMixin:
         if action == "tab_changed":
             return True
 
-        current_tab = self.sidebar_panel.tabs[
-            self.sidebar_panel.current_tab_index
-        ]
+        current_tab = self.sidebar_panel.tabs[self.sidebar_panel.current_tab_index]
         if current_tab.content_renderer_key == "planets":
             list_start_y = 75
             if rel_y > list_start_y:
                 idx = (rel_y - list_start_y) // 25
-                bodies = ["Sun"] + [
-                    p for p in PLANET_ORDER if p in self.planets
-                ]
+                bodies = ["Sun"] + [p for p in PLANET_ORDER if p in self.planets]
                 if 0 <= idx < len(bodies):
                     name = bodies[idx]
                     body = self.get_body_by_name(name)
                     if body:
                         self.select_body(body)
+                        self._focus_on_selected()
+        elif current_tab.content_renderer_key == "missions":
+            list_start_y = 75
+            if rel_y > list_start_y:
+                # Approximate 90 pixels per mission entry in the list
+                idx = (rel_y - list_start_y) // 90
+                mission_names = list(FAMOUS_MISSIONS.keys())
+                if 0 <= idx < len(mission_names):
+                    name = mission_names[idx]
+                    data = FAMOUS_MISSIONS[name]
+                    launch_str = data.get("launch_date", "")
+                    if launch_str:
+                        launch_dt = datetime.strptime(launch_str, "%Y-%m-%d")
+                        self.time_manager.set_datetime(launch_dt)
+                        self._action_message = f"Simulating {name} launch..."
+
+                    # Focus on spacecraft if available
+                    if name in self.spacecraft:
+                        self.select_body(self.spacecraft[name])
                         self._focus_on_selected()
         return True
 

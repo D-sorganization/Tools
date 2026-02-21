@@ -44,6 +44,7 @@ from ..ui.widgets import (
     HelpOverlay,
     HistoricalEventsPanel,
     ImmersionChecklistPanel,
+    MissionListPanel,
     NavigationPanel,
     SettingsPanel,
     SidebarPanel,
@@ -176,6 +177,7 @@ class SolarSystemScene(SceneEventMixin, SceneRenderMixin):
         self.educational_panel: EducationalInfoPanel | None = None
         self.historical_events: HistoricalEventsPanel | None = None
         self.immersion_checklist: ImmersionChecklistPanel | None = None
+        self.missions_panel: MissionListPanel | None = None
 
         # Legacy references
         self.settings_panel: SettingsPanel | None = None
@@ -284,6 +286,7 @@ class SolarSystemScene(SceneEventMixin, SceneRenderMixin):
             position=(self.renderer.settings.window_width - 350, 20)
         )
         self.help_overlay.set_controls(self.controls)
+        self.missions_panel = MissionListPanel()
 
     # ================================================================
     # Solar System Creation
@@ -334,10 +337,12 @@ class SolarSystemScene(SceneEventMixin, SceneRenderMixin):
 
     def _load_famous_missions(self) -> None:
         """Load historical famous missions into the scene."""
-        for name, get_traj in FAMOUS_MISSIONS.items():
-            trajectory = get_traj()
-            craft = Spacecraft(name, trajectory)
-            self.spacecraft[name] = craft
+        for name, mission_data in FAMOUS_MISSIONS.items():
+            getter = mission_data.get("get_trajectory")
+            if getter and callable(getter):
+                trajectory = getter()
+                craft = Spacecraft(name, trajectory)
+                self.spacecraft[name] = craft
 
     # ================================================================
     # Body Queries & Selection
@@ -360,7 +365,11 @@ class SolarSystemScene(SceneEventMixin, SceneRenderMixin):
         if name == "Sun":
             return self.sun
         for collection in (
-            self.planets, self.moons, self.asteroids, self.comets, self.spacecraft
+            self.planets,
+            self.moons,
+            self.asteroids,
+            self.comets,
+            self.spacecraft,
         ):
             if name in collection:
                 return collection[name]

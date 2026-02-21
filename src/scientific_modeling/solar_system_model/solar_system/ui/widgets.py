@@ -855,9 +855,10 @@ class SidebarPanel:
         self.current_tab_index = 0
         self.tabs = [
             Tab("Info", "educational"),
-            Tab("Planets", "planets"),
-            Tab("Guide", "checklist"),
+            Tab("Missions", "missions"),
             Tab("History", "history"),
+            Tab("Guide", "checklist"),
+            Tab("Planets", "planets"),
         ]
 
     def set_tab(self, index: int) -> None:
@@ -957,6 +958,36 @@ class UnifiedControlPanel:
             "buttons": self.buttons,
             "modes": self.modes,
             "current_mode_index": self.current_mode_index,
+            "style": self.style,
+            "visible": self.visible,
+        }
+
+
+class MissionListPanel:
+    """Panel for selecting famous NASA missions."""
+
+    def __init__(
+        self, position: tuple[int, int] = (0, 0), style: PanelStyle | None = None
+    ):
+        self.position = position
+        self.style = style or PanelStyle()
+        self.visible = True
+        self.scroll_offset = 0
+
+    def get_render_data(self, missions_dict: dict[str, Any]) -> dict[str, Any]:
+        missions_info = []
+        for name, data in missions_dict.items():
+            missions_info.append(
+                {
+                    "name": name,
+                    "description": data.get("description", ""),
+                    "launch_date": data.get("launch_date", ""),
+                }
+            )
+
+        return {
+            "position": self.position,
+            "missions": missions_info,
             "style": self.style,
             "visible": self.visible,
         }
