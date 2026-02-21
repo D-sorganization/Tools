@@ -15,25 +15,22 @@ import math
 from typing import Any
 
 import numpy as np
-
-from PyQt6.QtCore import Qt, QTimer
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.figure import Figure
+from PyQt6.QtCore import QTimer
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
     QComboBox,
-    QDoubleSpinBox,
     QFormLayout,
-    QGridLayout,
     QGroupBox,
     QHBoxLayout,
     QLabel,
     QLineEdit,
     QMainWindow,
-    QMenu,
-    QMenuBar,
     QPushButton,
     QSizePolicy,
     QSpinBox,
-    QSplitter,
     QStatusBar,
     QTabWidget,
     QTextEdit,
@@ -41,25 +38,20 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
-from matplotlib.figure import Figure
-
 # ── Rotation converter imports ────────────────────────────────────
 import rotation_converter as rc
 from rotation_converter.converter import Rotation
-from rotation_converter.rigid_transform import FrameError, RigidTransform
+from rotation_converter.rigid_transform import RigidTransform
 
 # ── Theme integration (optional — graceful fallback) ──────────────
 _THEME_AVAILABLE = False
 try:
     from theme import (
-        get_theme_manager,
         create_theme_menu,
+        get_theme_manager,
         is_dark_theme,
-        get_matplotlib_colors,
-        CHART_COLORS,
     )
+
     _THEME_AVAILABLE = True
 except ImportError:
     pass
@@ -72,14 +64,25 @@ _DARK_SURFACE = "#313244"
 _AXIS_COLORS = ["#f38ba8", "#a6e3a1", "#89b4fa"]  # RGB axes
 
 EULER_CONVENTIONS = [
-    "xyz", "xzy", "yxz", "yzx", "zxy", "zyx",
-    "xyx", "xzx", "yxy", "yzy", "zxz", "zyz",
+    "xyz",
+    "xzy",
+    "yxz",
+    "yzx",
+    "zxy",
+    "zyx",
+    "xyx",
+    "xzx",
+    "yxy",
+    "yzy",
+    "zxz",
+    "zyz",
 ]
 
 
 # =====================================================================
 # Helpers
 # =====================================================================
+
 
 def _fmt_vec(v: np.ndarray, decimals: int = 6) -> str:
     """Format a numpy vector as a readable string."""
@@ -148,6 +151,7 @@ def _style_figure(fig: Figure, ax: Any = None) -> None:
 # Rotation Converter Tab
 # =====================================================================
 
+
 class RotationConverterTab(QWidget):
     """Live conversion between all rotation representations."""
 
@@ -166,13 +170,15 @@ class RotationConverterTab(QWidget):
 
         form = QFormLayout()
         self._repr_combo = QComboBox()
-        self._repr_combo.addItems([
-            "Quaternion (w,x,y,z)",
-            "Euler Angles (rad)",
-            "Axis-Angle",
-            "Rodrigues Vector",
-            "Rotation Matrix (row-major)",
-        ])
+        self._repr_combo.addItems(
+            [
+                "Quaternion (w,x,y,z)",
+                "Euler Angles (rad)",
+                "Axis-Angle",
+                "Rodrigues Vector",
+                "Rotation Matrix (row-major)",
+            ]
+        )
         form.addRow("Representation:", self._repr_combo)
 
         self._euler_conv = QComboBox()
@@ -207,7 +213,9 @@ class RotationConverterTab(QWidget):
         plot_layout = QVBoxLayout(plot_group)
         self._fig = Figure(figsize=(4, 3), dpi=100)
         self._canvas = FigureCanvas(self._fig)
-        self._canvas.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self._canvas.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
+        )
         plot_layout.addWidget(self._canvas)
         right.addWidget(plot_group, 3)
 
@@ -311,13 +319,26 @@ class RotationConverterTab(QWidget):
 
         for i in range(3):
             d = R[:, i]
-            ax.quiver(*origin, *d, color=colors[i], linewidth=2.5,
-                       arrow_length_ratio=0.12, label=f"body-{labels[i]}")
+            ax.quiver(
+                *origin,
+                *d,
+                color=colors[i],
+                linewidth=2.5,
+                arrow_length_ratio=0.12,
+                label=f"body-{labels[i]}",
+            )
             # World frame (faint)
             w = np.zeros(3)
             w[i] = 1.0
-            ax.quiver(*origin, *w, color=colors[i], linewidth=1.0,
-                       alpha=0.25, arrow_length_ratio=0.08, linestyle="--")
+            ax.quiver(
+                *origin,
+                *w,
+                color=colors[i],
+                linewidth=1.0,
+                alpha=0.25,
+                arrow_length_ratio=0.08,
+                linestyle="--",
+            )
 
         ax.set_xlim(-1.2, 1.2)
         ax.set_ylim(-1.2, 1.2)
@@ -334,6 +355,7 @@ class RotationConverterTab(QWidget):
 # =====================================================================
 # Rigid Transform Tab
 # =====================================================================
+
 
 class RigidTransformTab(QWidget):
     """Frame-aware SE(3) conversions with body/space twist display."""
@@ -352,12 +374,14 @@ class RigidTransformTab(QWidget):
 
         form = QFormLayout()
         self._tf_repr = QComboBox()
-        self._tf_repr.addItems([
-            "Quaternion + Translation",
-            "Euler (xyz) + Translation",
-            "Axis-Angle + Translation",
-            "4x4 SE(3) Matrix (row-major)",
-        ])
+        self._tf_repr.addItems(
+            [
+                "Quaternion + Translation",
+                "Euler (xyz) + Translation",
+                "Axis-Angle + Translation",
+                "4x4 SE(3) Matrix (row-major)",
+            ]
+        )
         form.addRow("Representation:", self._tf_repr)
 
         self._source_edit = QLineEdit("body")
@@ -367,8 +391,7 @@ class RigidTransformTab(QWidget):
 
         self._tf_input = QTextEdit()
         self._tf_input.setPlaceholderText(
-            "Quaternion: w x y z tx ty tz\n"
-            "(e.g. 1 0 0 0 1.0 2.0 3.0)"
+            "Quaternion: w x y z tx ty tz\n" "(e.g. 1 0 0 0 1.0 2.0 3.0)"
         )
         self._tf_input.setMaximumHeight(80)
         self._tf_input.setText("1 0 0 0 1.0 2.0 3.0")
@@ -393,7 +416,9 @@ class RigidTransformTab(QWidget):
         plot_layout = QVBoxLayout(plot_group)
         self._tf_fig = Figure(figsize=(4, 3), dpi=100)
         self._tf_canvas = FigureCanvas(self._tf_fig)
-        self._tf_canvas.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self._tf_canvas.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
+        )
         plot_layout.addWidget(self._tf_canvas)
         right.addWidget(plot_group, 3)
         layout.addLayout(right, 2)
@@ -416,23 +441,25 @@ class RigidTransformTab(QWidget):
                 if len(v) != 7:
                     raise ValueError("Need 7 values: w x y z tx ty tz")
                 T = RigidTransform.from_quaternion_translation(
-                    v[:4], v[4:], source=src, target=tgt)
+                    v[:4], v[4:], source=src, target=tgt
+                )
             elif idx == 1:  # Euler + translation
                 if len(v) != 6:
                     raise ValueError("Need 6 values: a b c tx ty tz")
                 T = RigidTransform.from_euler_translation(
-                    v[0], v[1], v[2], v[3:], convention="xyz", source=src, target=tgt)
+                    v[0], v[1], v[2], v[3:], convention="xyz", source=src, target=tgt
+                )
             elif idx == 2:  # Axis-angle + translation
                 if len(v) != 7:
                     raise ValueError("Need 7 values: ax ay az angle tx ty tz")
                 axis = v[:3] / np.linalg.norm(v[:3])
                 T = RigidTransform.from_axis_angle_translation(
-                    axis, v[3], v[4:], source=src, target=tgt)
+                    axis, v[3], v[4:], source=src, target=tgt
+                )
             elif idx == 3:  # 4x4 matrix
                 if len(v) != 16:
                     raise ValueError("Need 16 values (row-major 4x4)")
-                T = RigidTransform.from_matrix(
-                    v.reshape(4, 4), source=src, target=tgt)
+                T = RigidTransform.from_matrix(v.reshape(4, 4), source=src, target=tgt)
             else:
                 return
         except Exception as e:
@@ -508,9 +535,19 @@ class RigidTransformTab(QWidget):
         for i in range(3):
             d = np.zeros(3)
             d[i] = 1.0
-            ax.quiver(0, 0, 0, d[0], d[1], d[2],
-                       color=colors[i], linewidth=1, alpha=0.3,
-                       arrow_length_ratio=0.08, linestyle="--")
+            ax.quiver(
+                0,
+                0,
+                0,
+                d[0],
+                d[1],
+                d[2],
+                color=colors[i],
+                linewidth=1,
+                alpha=0.3,
+                arrow_length_ratio=0.08,
+                linestyle="--",
+            )
 
         # Transformed frame
         R = T.rotation_matrix
@@ -518,14 +555,30 @@ class RigidTransformTab(QWidget):
         scale = 0.5
         for i in range(3):
             d = R[:, i] * scale
-            ax.quiver(p[0], p[1], p[2], d[0], d[1], d[2],
-                       color=colors[i], linewidth=2.5, arrow_length_ratio=0.12,
-                       label=f"{labels[i]}'")
+            ax.quiver(
+                p[0],
+                p[1],
+                p[2],
+                d[0],
+                d[1],
+                d[2],
+                color=colors[i],
+                linewidth=2.5,
+                arrow_length_ratio=0.12,
+                label=f"{labels[i]}'",
+            )
 
         # Connection line
         c = _get_plot_colors()
-        ax.plot([0, p[0]], [0, p[1]], [0, p[2]],
-                 color=c["accent"], linewidth=1.5, alpha=0.5, linestyle=":")
+        ax.plot(
+            [0, p[0]],
+            [0, p[1]],
+            [0, p[2]],
+            color=c["accent"],
+            linewidth=1.5,
+            alpha=0.5,
+            linestyle=":",
+        )
 
         ax.scatter(*p, color=c["accent"], s=40, zorder=5)
 
@@ -545,6 +598,7 @@ class RigidTransformTab(QWidget):
 # =====================================================================
 # Trajectory Plots Tab
 # =====================================================================
+
 
 class TrajectoryPlotsTab(QWidget):
     """Generate trajectory plots: screw axes, Euler angles, quaternions."""
@@ -576,14 +630,16 @@ class TrajectoryPlotsTab(QWidget):
 
         ctrl.addWidget(QLabel("Plot:"))
         self._plot_combo = QComboBox()
-        self._plot_combo.addItems([
-            "Screw Axis Parameters",
-            "Euler Angles Over Time",
-            "Quaternion Components",
-            "Position Trajectory",
-            "Angular Velocity",
-            "Body vs Space Twist",
-        ])
+        self._plot_combo.addItems(
+            [
+                "Screw Axis Parameters",
+                "Euler Angles Over Time",
+                "Quaternion Components",
+                "Position Trajectory",
+                "Angular Velocity",
+                "Body vs Space Twist",
+            ]
+        )
         ctrl.addWidget(self._plot_combo)
 
         self._plot_btn = QPushButton("Plot")
@@ -677,8 +733,13 @@ class TrajectoryPlotsTab(QWidget):
         _style_figure(self._fig, ax)
         c = _get_plot_colors()
         for j, lbl in enumerate(["Roll (X)", "Pitch (Y)", "Yaw (Z)"]):
-            ax.plot(t, np.degrees(angles[:, j]), color=c["axes"][j],
-                     linewidth=1.5, label=lbl)
+            ax.plot(
+                t,
+                np.degrees(angles[:, j]),
+                color=c["axes"][j],
+                linewidth=1.5,
+                label=lbl,
+            )
         ax.set_title("Euler Angles (XYZ) Over Time", fontsize=10)
         ax.set_xlabel("Frame")
         ax.set_ylabel("Degrees")
@@ -724,8 +785,12 @@ class TrajectoryPlotsTab(QWidget):
         ax1.grid(True, alpha=0.3)
 
         ax2.plot(pos[:, 0], pos[:, 1], pos[:, 2], color=c["accent"], linewidth=1.5)
-        ax2.scatter(pos[0, 0], pos[0, 1], pos[0, 2], color=c["axes"][1], s=40, label="Start")
-        ax2.scatter(pos[-1, 0], pos[-1, 1], pos[-1, 2], color=c["axes"][0], s=40, label="End")
+        ax2.scatter(
+            pos[0, 0], pos[0, 1], pos[0, 2], color=c["axes"][1], s=40, label="Start"
+        )
+        ax2.scatter(
+            pos[-1, 0], pos[-1, 1], pos[-1, 2], color=c["axes"][0], s=40, label="End"
+        )
         ax2.set_title("3D Trajectory", fontsize=10)
         ax2.set_xlabel("X")
         ax2.set_ylabel("Y")
@@ -771,20 +836,42 @@ class TrajectoryPlotsTab(QWidget):
         labels_w = ["ωx", "ωy", "ωz"]
         labels_v = ["vx", "vy", "vz"]
         for j in range(3):
-            ax1.plot(t, body_tw[:len(t), j], color=c["axes"][j],
-                      linewidth=1.5, label=f"body {labels_w[j]}")
-            ax1.plot(t, space_tw[:len(t), j], color=c["axes"][j],
-                      linewidth=1.5, linestyle="--", label=f"space {labels_w[j]}")
+            ax1.plot(
+                t,
+                body_tw[: len(t), j],
+                color=c["axes"][j],
+                linewidth=1.5,
+                label=f"body {labels_w[j]}",
+            )
+            ax1.plot(
+                t,
+                space_tw[: len(t), j],
+                color=c["axes"][j],
+                linewidth=1.5,
+                linestyle="--",
+                label=f"space {labels_w[j]}",
+            )
         ax1.set_title("Angular: Body (solid) vs Space (dashed)", fontsize=9)
         ax1.set_xlabel("Step")
         ax1.legend(fontsize=6, ncol=2)
         ax1.grid(True, alpha=0.3)
 
         for j in range(3):
-            ax2.plot(t, body_tw[:len(t), 3 + j], color=c["axes"][j],
-                      linewidth=1.5, label=f"body {labels_v[j]}")
-            ax2.plot(t, space_tw[:len(t), 3 + j], color=c["axes"][j],
-                      linewidth=1.5, linestyle="--", label=f"space {labels_v[j]}")
+            ax2.plot(
+                t,
+                body_tw[: len(t), 3 + j],
+                color=c["axes"][j],
+                linewidth=1.5,
+                label=f"body {labels_v[j]}",
+            )
+            ax2.plot(
+                t,
+                space_tw[: len(t), 3 + j],
+                color=c["axes"][j],
+                linewidth=1.5,
+                linestyle="--",
+                label=f"space {labels_v[j]}",
+            )
         ax2.set_title("Linear: Body (solid) vs Space (dashed)", fontsize=9)
         ax2.set_xlabel("Step")
         ax2.legend(fontsize=6, ncol=2)
@@ -794,6 +881,7 @@ class TrajectoryPlotsTab(QWidget):
 # =====================================================================
 # 3D Screw Axis Visualiser Tab
 # =====================================================================
+
 
 class ScrewVisualiserTab(QWidget):
     """Interactive 3D screw axis animation (frame-by-frame)."""
@@ -908,6 +996,7 @@ class ScrewVisualiserTab(QWidget):
 # =====================================================================
 # Main Window
 # =====================================================================
+
 
 class RotationConverterMainWindow(QMainWindow):
     """Main window with tabbed interface and theme integration."""

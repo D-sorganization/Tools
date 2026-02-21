@@ -57,10 +57,6 @@ __version__ = "1.3.0"
 
 # ── High-level classes ────────────────────────────────────────────
 from rotation_converter.converter import Rotation, RotationConverter
-from rotation_converter.rigid_transform import (
-    FrameError,
-    RigidTransform,
-)
 
 # ── Core rotation conversions ────────────────────────────────────
 from rotation_converter.core import (
@@ -79,17 +75,6 @@ from rotation_converter.core import (
     rotation_matrix_to_axis_angle,
     rotation_matrix_to_euler,
     rotation_matrix_to_quaternion,
-)
-
-# ── Twist / screw axis conversions ───────────────────────────────
-from rotation_converter.twist_screw import (
-    adjoint_representation,
-    homogeneous_to_twist_angle,
-    screw_to_twist,
-    se3_matrix_to_twist_vector,
-    twist_angle_to_homogeneous,
-    twist_to_screw,
-    twist_vector_to_se3_matrix,
 )
 
 # ── Modern Robotics (Lynch & Park) ───────────────────────────────
@@ -118,10 +103,25 @@ from rotation_converter.motion_examples import (
     football_spiral,
     frisbee_flight,
 )
+from rotation_converter.rigid_transform import (
+    FrameError,
+    RigidTransform,
+)
 from rotation_converter.screw_visualization import (
     ScrewAxisAnimator,
     build_animation_frames,
     extract_screw_axes_from_trajectory,
+)
+
+# ── Twist / screw axis conversions ───────────────────────────────
+from rotation_converter.twist_screw import (
+    adjoint_representation,
+    homogeneous_to_twist_angle,
+    screw_to_twist,
+    se3_matrix_to_twist_vector,
+    twist_angle_to_homogeneous,
+    twist_to_screw,
+    twist_vector_to_se3_matrix,
 )
 
 __all__ = [

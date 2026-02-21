@@ -22,20 +22,17 @@ and ensures finite outputs.
 
 from __future__ import annotations
 
-import math
 from typing import Any
 
 import numpy as np
 
-from rotation_converter._contracts import ensure, require, require_finite
+from rotation_converter._contracts import require, require_finite
 from rotation_converter.converter import Rotation
 from rotation_converter.core import (
     _validate_rotation_matrix,
     axis_angle_to_rotation_matrix,
     euler_to_rotation_matrix,
     normalize_quaternion,
-    quaternion_to_axis_angle,
-    quaternion_to_euler,
     quaternion_to_rodrigues,
     quaternion_to_rotation_matrix,
     rodrigues_to_quaternion,
@@ -50,7 +47,6 @@ from rotation_converter.twist_screw import (
     twist_angle_to_homogeneous,
     twist_to_screw,
 )
-
 
 # ---------------------------------------------------------------------------
 # FrameError
@@ -144,9 +140,7 @@ class RigidTransform:
         return cls(np.eye(4), source_frame=frame, target_frame=frame)
 
     @classmethod
-    def from_matrix(
-        cls, T: Any, *, source: str, target: str
-    ) -> RigidTransform:
+    def from_matrix(cls, T: Any, *, source: str, target: str) -> RigidTransform:
         """Create from a 4x4 SE(3) homogeneous matrix."""
         T = np.asarray(T, dtype=float)
         return cls(T, source_frame=source, target_frame=target)
@@ -288,23 +282,17 @@ class RigidTransform:
         return cls.from_twist(twist, theta, source=source, target=target)
 
     @classmethod
-    def pure_translation(
-        cls, p: Any, *, source: str, target: str
-    ) -> RigidTransform:
+    def pure_translation(cls, p: Any, *, source: str, target: str) -> RigidTransform:
         """Create a pure translation (identity rotation)."""
         p = np.asarray(p, dtype=float)
-        return cls.from_rotation_translation(
-            np.eye(3), p, source=source, target=target
-        )
+        return cls.from_rotation_translation(np.eye(3), p, source=source, target=target)
 
     @classmethod
     def pure_rotation(
         cls, rotation: Rotation, *, source: str, target: str
     ) -> RigidTransform:
         """Create a pure rotation (zero translation)."""
-        return cls.from_rotation(
-            rotation, np.zeros(3), source=source, target=target
-        )
+        return cls.from_rotation(rotation, np.zeros(3), source=source, target=target)
 
     # ── Properties ────────────────────────────────────────────────
 

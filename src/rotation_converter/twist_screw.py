@@ -19,8 +19,8 @@ import math
 from typing import Any
 
 import numpy as np
-from rotation_converter._contracts import ensure, require, require_finite
 
+from rotation_converter._contracts import ensure, require, require_finite
 from rotation_converter.core import (
     _skew_symmetric,
     _validate_rotation_matrix,

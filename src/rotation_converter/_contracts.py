@@ -19,8 +19,8 @@ from typing import Any
 try:
     # Monorepo path — full-featured DbC from src/shared/python/contracts.py
     from contracts import (  # type: ignore[import-untyped]
-        PreconditionError,
         PostconditionError,
+        PreconditionError,
         ensure,
         require,
         require_finite,
@@ -69,9 +69,8 @@ except ImportError:
         """Require vector to have unit length."""
         norm = float(_np.linalg.norm(vector))
         if abs(norm - 1.0) > tol:
-            raise PreconditionError(
-                f"{name} must be a unit vector (norm = {norm})"
-            )
+            raise PreconditionError(f"{name} must be a unit vector (norm = {norm})")
+
 
 __all__ = [
     "PreconditionError",

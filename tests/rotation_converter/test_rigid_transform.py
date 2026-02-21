@@ -18,11 +18,11 @@ import math
 import numpy as np
 import pytest
 
+from rotation_converter.converter import Rotation
 from rotation_converter.rigid_transform import (
     FrameError,
     RigidTransform,
 )
-from rotation_converter.converter import Rotation
 
 ATOL = 1e-6
 
@@ -128,9 +128,7 @@ class TestRigidTransformConstruction:
     def test_from_rodrigues_translation(self) -> None:
         r = np.array([0.0, 0.0, 0.5])
         p = np.array([1.0, 2.0, 3.0])
-        T = RigidTransform.from_rodrigues_translation(
-            r, p, source="a", target="b"
-        )
+        T = RigidTransform.from_rodrigues_translation(r, p, source="a", target="b")
         r_out, p_out = T.as_rodrigues_translation()
         np.testing.assert_allclose(r_out, r, atol=ATOL)
         np.testing.assert_allclose(p_out, p, atol=ATOL)
@@ -140,9 +138,7 @@ class TestRigidTransformConstruction:
         # Pure rotation about z by pi/2
         twist = np.array([0.0, 0.0, 1.0, 0.0, 0.0, 0.0])
         theta = math.pi / 2
-        T = RigidTransform.from_twist(
-            twist, theta, source="a", target="b"
-        )
+        T = RigidTransform.from_twist(twist, theta, source="a", target="b")
         R = T.rotation_matrix
         expected_R = np.array([[0, -1, 0], [1, 0, 0], [0, 0, 1]], dtype=float)
         np.testing.assert_allclose(R, expected_R, atol=ATOL)
@@ -155,9 +151,7 @@ class TestRigidTransformConstruction:
             "pitch": 0.0,
         }
         theta = math.pi / 4
-        T = RigidTransform.from_screw(
-            screw, theta, source="a", target="b"
-        )
+        T = RigidTransform.from_screw(screw, theta, source="a", target="b")
         assert T.source_frame == "a"
         assert T.target_frame == "b"
 
@@ -275,9 +269,7 @@ class TestRoundtripConversions:
         q = np.array([0.7071068, 0.0, 0.7071068, 0.0])
         q = q / np.linalg.norm(q)
         p = np.array([10.0, -5.0, 3.0])
-        T = RigidTransform.from_quaternion_translation(
-            q, p, source="a", target="b"
-        )
+        T = RigidTransform.from_quaternion_translation(q, p, source="a", target="b")
         q_out, p_out = T.as_quaternion_translation()
         # Handle double-cover
         if np.dot(q, q_out) < 0:
@@ -310,9 +302,7 @@ class TestRoundtripConversions:
     def test_rodrigues_translation_roundtrip(self) -> None:
         r = np.array([0.1, 0.2, 0.3])
         p = np.array([7.0, 8.0, 9.0])
-        T = RigidTransform.from_rodrigues_translation(
-            r, p, source="a", target="b"
-        )
+        T = RigidTransform.from_rodrigues_translation(r, p, source="a", target="b")
         r_out, p_out = T.as_rodrigues_translation()
         np.testing.assert_allclose(r_out, r, atol=ATOL)
         np.testing.assert_allclose(p_out, p, atol=ATOL)
@@ -323,9 +313,7 @@ class TestRoundtripConversions:
         theta = math.pi / 4
         T1 = RigidTransform.from_twist(twist, theta, source="a", target="b")
         twist_out, theta_out = T1.as_twist()
-        T2 = RigidTransform.from_twist(
-            twist_out, theta_out, source="a", target="b"
-        )
+        T2 = RigidTransform.from_twist(twist_out, theta_out, source="a", target="b")
         np.testing.assert_allclose(T1.as_matrix(), T2.as_matrix(), atol=ATOL)
 
     @pytest.mark.parametrize("trial", range(10))
@@ -354,12 +342,8 @@ class TestFrameCheckedComposition:
 
     def test_compose_compatible_frames(self) -> None:
         """T_world_body @ T_body_tool = T_world_tool."""
-        T_wb = RigidTransform.pure_translation(
-            [1, 0, 0], source="body", target="world"
-        )
-        T_bt = RigidTransform.pure_translation(
-            [0, 1, 0], source="tool", target="body"
-        )
+        T_wb = RigidTransform.pure_translation([1, 0, 0], source="body", target="world")
+        T_bt = RigidTransform.pure_translation([0, 1, 0], source="tool", target="body")
         T_wt = T_wb.compose(T_bt)
         assert T_wt.source_frame == "tool"
         assert T_wt.target_frame == "world"
@@ -368,9 +352,7 @@ class TestFrameCheckedComposition:
     def test_compose_incompatible_raises_frame_error(self) -> None:
         """T_A_B @ T_C_D should raise FrameError because B != C."""
         T1 = RigidTransform.identity("a")  # a -> a
-        T2 = RigidTransform.pure_translation(
-            [1, 0, 0], source="c", target="d"
-        )
+        T2 = RigidTransform.pure_translation([1, 0, 0], source="c", target="d")
         # T1 is a->a, T2 is c->d.  T1.source_frame is 'a', T2.target_frame is 'd'
         # For T1.compose(T2): T1 @ T2 means T1.source must == T2.target for chain
         # T1 maps a->a, T2 maps c->d
@@ -382,38 +364,24 @@ class TestFrameCheckedComposition:
 
     def test_matmul_operator(self) -> None:
         """The @ operator should delegate to compose."""
-        T1 = RigidTransform.pure_translation(
-            [1, 0, 0], source="body", target="world"
-        )
-        T2 = RigidTransform.pure_translation(
-            [0, 1, 0], source="tool", target="body"
-        )
+        T1 = RigidTransform.pure_translation([1, 0, 0], source="body", target="world")
+        T2 = RigidTransform.pure_translation([0, 1, 0], source="tool", target="body")
         T3 = T1 @ T2
         assert isinstance(T3, RigidTransform)
         assert T3.source_frame == "tool"
         assert T3.target_frame == "world"
 
     def test_matmul_incompatible_raises(self) -> None:
-        T1 = RigidTransform.pure_translation(
-            [1, 0, 0], source="a", target="b"
-        )
-        T2 = RigidTransform.pure_translation(
-            [0, 1, 0], source="c", target="d"
-        )
+        T1 = RigidTransform.pure_translation([1, 0, 0], source="a", target="b")
+        T2 = RigidTransform.pure_translation([0, 1, 0], source="c", target="d")
         with pytest.raises(FrameError):
             T1 @ T2
 
     def test_compose_chain_of_three(self) -> None:
         """T_w_b @ T_b_t @ T_t_e = T_w_e."""
-        T_wb = RigidTransform.pure_translation(
-            [1, 0, 0], source="body", target="world"
-        )
-        T_bt = RigidTransform.pure_translation(
-            [0, 1, 0], source="tool", target="body"
-        )
-        T_te = RigidTransform.pure_translation(
-            [0, 0, 1], source="end", target="tool"
-        )
+        T_wb = RigidTransform.pure_translation([1, 0, 0], source="body", target="world")
+        T_bt = RigidTransform.pure_translation([0, 1, 0], source="tool", target="body")
+        T_te = RigidTransform.pure_translation([0, 0, 1], source="end", target="tool")
         T_we = T_wb @ T_bt @ T_te
         assert T_we.source_frame == "end"
         assert T_we.target_frame == "world"
@@ -429,9 +397,7 @@ class TestInverse:
     """Inverse flips source and target frames."""
 
     def test_inverse_swaps_frames(self) -> None:
-        T = RigidTransform.pure_translation(
-            [1, 2, 3], source="body", target="world"
-        )
+        T = RigidTransform.pure_translation([1, 2, 3], source="body", target="world")
         T_inv = T.inverse()
         assert T_inv.source_frame == "world"
         assert T_inv.target_frame == "body"
@@ -467,9 +433,7 @@ class TestPointVectorTransform:
     """Apply transforms to points and vectors."""
 
     def test_apply_point_pure_translation(self) -> None:
-        T = RigidTransform.pure_translation(
-            [1, 2, 3], source="body", target="world"
-        )
+        T = RigidTransform.pure_translation([1, 2, 3], source="body", target="world")
         p_body = np.array([0.0, 0.0, 0.0])
         p_world = T.apply_point(p_body)
         np.testing.assert_allclose(p_world, [1, 2, 3], atol=ATOL)
@@ -507,9 +471,7 @@ class TestPointVectorTransform:
 
     def test_apply_points_batch(self) -> None:
         """Transform multiple points at once."""
-        T = RigidTransform.pure_translation(
-            [1, 0, 0], source="body", target="world"
-        )
+        T = RigidTransform.pure_translation([1, 0, 0], source="body", target="world")
         points = np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0]], dtype=float)
         result = T.apply_points(points)
         expected = np.array([[1, 0, 0], [2, 0, 0], [1, 1, 0]], dtype=float)
@@ -642,15 +604,11 @@ class TestProperties:
         assert T.source_frame == "world"
 
     def test_target_frame(self) -> None:
-        T = RigidTransform.pure_translation(
-            [1, 0, 0], source="body", target="world"
-        )
+        T = RigidTransform.pure_translation([1, 0, 0], source="body", target="world")
         assert T.target_frame == "world"
 
     def test_translation_property(self) -> None:
-        T = RigidTransform.pure_translation(
-            [1, 2, 3], source="a", target="b"
-        )
+        T = RigidTransform.pure_translation([1, 2, 3], source="a", target="b")
         np.testing.assert_allclose(T.translation, [1, 2, 3], atol=ATOL)
 
     def test_rotation_matrix_property(self) -> None:
@@ -662,15 +620,11 @@ class TestProperties:
         assert T.is_identity()
 
     def test_is_not_identity(self) -> None:
-        T = RigidTransform.pure_translation(
-            [1, 0, 0], source="a", target="b"
-        )
+        T = RigidTransform.pure_translation([1, 0, 0], source="a", target="b")
         assert not T.is_identity()
 
     def test_is_pure_translation(self) -> None:
-        T = RigidTransform.pure_translation(
-            [1, 2, 3], source="a", target="b"
-        )
+        T = RigidTransform.pure_translation([1, 2, 3], source="a", target="b")
         assert T.is_pure_translation()
 
     def test_is_pure_rotation(self) -> None:
@@ -694,9 +648,7 @@ class TestImmutability:
     """RigidTransform should be immutable — output copies only."""
 
     def test_translation_returns_copy(self) -> None:
-        T = RigidTransform.pure_translation(
-            [1, 2, 3], source="a", target="b"
-        )
+        T = RigidTransform.pure_translation([1, 2, 3], source="a", target="b")
         p = T.translation
         p[0] = 999
         np.testing.assert_allclose(T.translation, [1, 2, 3], atol=ATOL)
@@ -763,9 +715,7 @@ class TestContractViolations:
 
     def test_from_twist_wrong_length(self) -> None:
         with pytest.raises(Exception):
-            RigidTransform.from_twist(
-                [1, 2, 3], 1.0, source="a", target="b"
-            )
+            RigidTransform.from_twist([1, 2, 3], 1.0, source="a", target="b")
 
     def test_body_to_space_twist_wrong_shape(self) -> None:
         T = RigidTransform.identity("a")
@@ -806,23 +756,24 @@ class TestCrossRepresentationConsistency:
 
         # Via rotation + translation
         R, p_out = T.as_rotation_translation()
-        T3 = RigidTransform.from_rotation_translation(
-            R, p_out, source="a", target="b"
-        )
+        T3 = RigidTransform.from_rotation_translation(R, p_out, source="a", target="b")
         np.testing.assert_allclose(T3.as_matrix(), M_orig, atol=ATOL)
 
         # Via Rotation object
         rot = T.as_rotation()
-        T4 = RigidTransform.from_rotation(
-            rot, T.translation, source="a", target="b"
-        )
+        T4 = RigidTransform.from_rotation(rot, T.translation, source="a", target="b")
         np.testing.assert_allclose(T4.as_matrix(), M_orig, atol=ATOL)
 
         # Via Euler + translation
         euler, p_out = T.as_euler_translation("zyx")
         T5 = RigidTransform.from_euler_translation(
-            euler[0], euler[1], euler[2], p_out,
-            convention="zyx", source="a", target="b"
+            euler[0],
+            euler[1],
+            euler[2],
+            p_out,
+            convention="zyx",
+            source="a",
+            target="b",
         )
         np.testing.assert_allclose(T5.as_matrix(), M_orig, atol=1e-5)
 
@@ -849,11 +800,13 @@ class TestCrossRepresentationConsistency:
         axis = axis / np.linalg.norm(axis)
         angle = rng.uniform(0.1, 2.5)
         c, s = math.cos(angle), math.sin(angle)
-        K = np.array([
-            [0, -axis[2], axis[1]],
-            [axis[2], 0, -axis[0]],
-            [-axis[1], axis[0], 0],
-        ])
+        K = np.array(
+            [
+                [0, -axis[2], axis[1]],
+                [axis[2], 0, -axis[0]],
+                [-axis[1], axis[0], 0],
+            ]
+        )
         R = np.eye(3) + s * K + (1 - c) * (K @ K)
         p = rng.standard_normal(3) * 3
 
