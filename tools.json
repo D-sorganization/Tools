@@ -223,6 +223,12 @@
             "path": "src/urdf_builder_gui/launch_pyqt6.py",
             "type": "python",
             "desc": "Generate parametric URDF models for robotics applications"
+        },
+        {
+            "name": "Rotation Converter",
+            "path": "src/rotation_converter/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Comprehensive rotation and rigid-body transform converter with interactive 3D visualization. Supports quaternions, Euler angles, rotation matrices, axis-angle, SE(3), twists, screw axes, and frame-aware transforms."
         }
     ],
     "Signal Processing": [

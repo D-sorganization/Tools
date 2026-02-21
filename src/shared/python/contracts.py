@@ -67,7 +67,7 @@ def _resolve_contract_level() -> ContractLevel:
 class _ContractState:
     level: ContractLevel = _resolve_contract_level()
 
-    @classmethod
+    @classmethod  # type: ignore[misc]  # @classmethod+@property deprecated in 3.12
     @property
     def enabled(cls) -> bool:
         return cls.level != ContractLevel.OFF

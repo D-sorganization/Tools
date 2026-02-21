@@ -57,6 +57,11 @@ process = [
     "pandas>=2.0.0",
     "matplotlib>=3.7.0",
 ]
+# Rotation converter / robotics kinematics
+robotics = [
+    "numpy>=1.24.0",
+    "matplotlib>=3.7.0",
+]
 # GUI components
 gui = [
     "PyQt6>=6.5.0",
@@ -92,6 +97,7 @@ include = [
     "model_generation*",
     "humanoid_character_builder*",
     "signal_toolkit*",
+    "rotation_converter*",
     "utils*",
     "tools*",
     "web_applications*",
