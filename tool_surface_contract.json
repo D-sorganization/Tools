@@ -197,7 +197,7 @@
       "description": "Comprehensive rotation/transform converter: quaternions, Euler angles, axis-angle, SE(3), twists, screw axes, frame-aware transforms, Modern Robotics kinematics",
       "category": "Robotics",
       "surfaces": {
-        "pyqt6": false,
+        "pyqt6": true,
         "web": false
       }
     },
