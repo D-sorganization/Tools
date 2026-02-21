@@ -23,17 +23,14 @@ import math
 from typing import Any
 
 import numpy as np
+from contracts import ensure, require
 
-from contracts import ensure, require, require_finite
 from rotation_converter.modern_robotics import (
-    MatrixLog3,
     MatrixLog6,
     TransInv,
     TransToRp,
-    so3ToVec,
     se3ToVec,
 )
-
 
 # ===========================================================================
 # Screw axis extraction
@@ -87,47 +84,53 @@ def extract_screw_axes_from_trajectory(
 
         if omega_norm < 1e-10 and v_norm < 1e-10:
             # No motion
-            screw_axes.append({
-                "axis": np.array([1.0, 0.0, 0.0]),
-                "point": midpoint,
-                "pitch": 0.0,
-                "theta": 0.0,
-                "midpoint": midpoint,
-            })
+            screw_axes.append(
+                {
+                    "axis": np.array([1.0, 0.0, 0.0]),
+                    "point": midpoint,
+                    "pitch": 0.0,
+                    "theta": 0.0,
+                    "midpoint": midpoint,
+                }
+            )
             continue
 
         if omega_norm < 1e-10:
             # Pure translation
             axis = v / v_norm
-            screw_axes.append({
-                "axis": axis,
-                "point": midpoint,
-                "pitch": float("inf"),
-                "theta": 0.0,
-                "midpoint": midpoint,
-            })
+            screw_axes.append(
+                {
+                    "axis": axis,
+                    "point": midpoint,
+                    "pitch": float("inf"),
+                    "theta": 0.0,
+                    "midpoint": midpoint,
+                }
+            )
             continue
 
         # General screw motion
         theta = omega_norm
         axis_body = omega / omega_norm
-        pitch = float(np.dot(omega, v) / (omega_norm ** 2))
+        pitch = float(np.dot(omega, v) / (omega_norm**2))
 
         # Point on screw axis (in body frame of T1)
-        q_body = np.cross(omega, v) / (omega_norm ** 2)
+        q_body = np.cross(omega, v) / (omega_norm**2)
 
         # Transform axis and point to world frame
         R1 = T1[:3, :3]
         axis_world = R1 @ axis_body
         point_world = R1 @ q_body + p1
 
-        screw_axes.append({
-            "axis": axis_world,
-            "point": point_world,
-            "pitch": pitch,
-            "theta": theta,
-            "midpoint": midpoint,
-        })
+        screw_axes.append(
+            {
+                "axis": axis_world,
+                "point": point_world,
+                "pitch": pitch,
+                "theta": theta,
+                "midpoint": midpoint,
+            }
+        )
 
     return screw_axes
 
@@ -160,7 +163,9 @@ def build_animation_frames(
     """
     require(len(trajectory) >= 1, "need at least 1 frame")
 
-    screw_axes = extract_screw_axes_from_trajectory(trajectory) if len(trajectory) > 1 else []
+    screw_axes = (
+        extract_screw_axes_from_trajectory(trajectory) if len(trajectory) > 1 else []
+    )
     frames: list[dict[str, Any]] = []
 
     for i, T in enumerate(trajectory):
@@ -168,10 +173,12 @@ def build_animation_frames(
         # Body frame axes in world coordinates
         body_axes = []
         for col in range(3):
-            body_axes.append({
-                "origin": p.copy(),
-                "direction": R[:, col] * body_axis_length,
-            })
+            body_axes.append(
+                {
+                    "origin": p.copy(),
+                    "direction": R[:, col] * body_axis_length,
+                }
+            )
 
         frame: dict[str, Any] = {
             "position": p,
@@ -283,16 +290,25 @@ class ScrewAxisAnimator:
 
         # Trail: draw past positions
         trail_start = max(0, frame_idx - self._trail_length)
-        trail = path[trail_start:frame_idx + 1]
+        trail = path[trail_start : frame_idx + 1]
         if len(trail) > 1:
             ax.plot(
-                trail[:, 0], trail[:, 1], trail[:, 2],
-                color="white", alpha=0.6, linewidth=1.5,
+                trail[:, 0],
+                trail[:, 1],
+                trail[:, 2],
+                color="white",
+                alpha=0.6,
+                linewidth=1.5,
             )
         # Full path (faint)
         ax.plot(
-            path[:, 0], path[:, 1], path[:, 2],
-            color="gray", alpha=0.15, linewidth=0.5, linestyle="--",
+            path[:, 0],
+            path[:, 1],
+            path[:, 2],
+            color="gray",
+            alpha=0.15,
+            linewidth=0.5,
+            linestyle="--",
         )
 
         # Current position marker
@@ -306,9 +322,15 @@ class ScrewAxisAnimator:
             origin = ax_data["origin"]
             direction = ax_data["direction"]
             ax.quiver(
-                origin[0], origin[1], origin[2],
-                direction[0], direction[1], direction[2],
-                color=colors[i], linewidth=2.0, arrow_length_ratio=0.15,
+                origin[0],
+                origin[1],
+                origin[2],
+                direction[0],
+                direction[1],
+                direction[2],
+                color=colors[i],
+                linewidth=2.0,
+                arrow_length_ratio=0.15,
                 label=f"body-{labels[i]}" if frame_idx == 1 else None,
             )
 
@@ -323,16 +345,24 @@ class ScrewAxisAnimator:
             p1 = s_point - s_axis * s_len
             p2 = s_point + s_axis * s_len
             ax.plot(
-                [p1[0], p2[0]], [p1[1], p2[1]], [p1[2], p2[2]],
-                color="magenta", linewidth=2.5, alpha=0.8,
+                [p1[0], p2[0]],
+                [p1[1], p2[1]],
+                [p1[2], p2[2]],
+                color="magenta",
+                linewidth=2.5,
+                alpha=0.8,
             )
             # Arrow head showing rotation direction
             ax.quiver(
-                s_point[0], s_point[1], s_point[2],
+                s_point[0],
+                s_point[1],
+                s_point[2],
                 s_axis[0] * s_len * 0.6,
                 s_axis[1] * s_len * 0.6,
                 s_axis[2] * s_len * 0.6,
-                color="magenta", linewidth=2.0, arrow_length_ratio=0.2,
+                color="magenta",
+                linewidth=2.0,
+                arrow_length_ratio=0.2,
                 alpha=0.9,
             )
 
@@ -343,13 +373,18 @@ class ScrewAxisAnimator:
                 for sign in [-0.3, 0.3]:
                     offset_pt = s_point + s_axis * sign * s_len
                     ax.scatter(
-                        offset_pt[0], offset_pt[1], offset_pt[2],
-                        color="cyan", s=15, alpha=0.6,
+                        offset_pt[0],
+                        offset_pt[1],
+                        offset_pt[2],
+                        color="cyan",
+                        s=15,
+                        alpha=0.6,
                     )
 
         # Frame counter
         ax.text2D(
-            0.02, 0.95,
+            0.02,
+            0.95,
             f"Frame {frame_idx + 1}/{self.n_frames}",
             transform=ax.transAxes,
             color="white",
@@ -358,12 +393,13 @@ class ScrewAxisAnimator:
         if screw is not None:
             theta_deg = math.degrees(screw["theta"])
             pitch_str = (
-                f"pitch=inf"
+                "pitch=inf"
                 if screw["pitch"] == float("inf")
                 else f"pitch={screw['pitch']:.3f}"
             )
             ax.text2D(
-                0.02, 0.90,
+                0.02,
+                0.90,
                 f"theta={theta_deg:.1f} deg  {pitch_str}",
                 transform=ax.transAxes,
                 color="magenta",

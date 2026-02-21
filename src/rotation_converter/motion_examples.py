@@ -17,13 +17,11 @@ DbC: postconditions verify every output frame is valid SE(3).
 from __future__ import annotations
 
 import math
-from typing import Any
 
 import numpy as np
-
 from contracts import ensure, require
-from rotation_converter.modern_robotics import MatrixExp3, VecToso3
 
+from rotation_converter.modern_robotics import MatrixExp3, VecToso3
 
 # ---------------------------------------------------------------------------
 # Shared physics helpers (DRY)
@@ -32,9 +30,7 @@ from rotation_converter.modern_robotics import MatrixExp3, VecToso3
 _GRAVITY = 9.81  # m/s^2
 
 
-def _ballistic_position(
-    v0: float, launch_angle: float, t: float
-) -> np.ndarray:
+def _ballistic_position(v0: float, launch_angle: float, t: float) -> np.ndarray:
     """Compute ballistic position (x, y, z) at time t.
 
     Launches along +x with vertical component +z.
@@ -43,7 +39,7 @@ def _ballistic_position(
     vx = v0 * math.cos(launch_angle)
     vz = v0 * math.sin(launch_angle)
     x = vx * t
-    z = vz * t - 0.5 * _GRAVITY * t ** 2
+    z = vz * t - 0.5 * _GRAVITY * t**2
     return np.array([x, 0.0, max(z, 0.0)])
 
 

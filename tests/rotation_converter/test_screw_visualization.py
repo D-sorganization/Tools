@@ -14,16 +14,15 @@ from __future__ import annotations
 import math
 
 import numpy as np
-import pytest
 
 from rotation_converter.motion_examples import (
-    frisbee_flight,
     football_spiral,
+    frisbee_flight,
 )
 from rotation_converter.screw_visualization import (
-    extract_screw_axes_from_trajectory,
-    build_animation_frames,
     ScrewAxisAnimator,
+    build_animation_frames,
+    extract_screw_axes_from_trajectory,
 )
 
 ATOL = 1e-6
