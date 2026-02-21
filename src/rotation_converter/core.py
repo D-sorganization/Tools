@@ -64,14 +64,14 @@ def _validate_quaternion_array(q: Any, name: str = "quaternion") -> np.ndarray:
     q = np.asarray(q, dtype=float)
     require(q.shape == (4,), f"{name} must have 4 elements", q.shape)
     require_finite(q, name)
-    return q
+    return q  # type: ignore[no-any-return]
 
 
 def _validate_unit_quaternion(q: np.ndarray, name: str = "quaternion") -> None:
     """Require that q is a unit quaternion."""
     norm = np.linalg.norm(q)
     require(
-        abs(norm - 1.0) < 1e-6,
+        bool(abs(norm - 1.0) < 1e-6),
         f"{name} must be a unit quaternion (norm={norm:.6f})",
         norm,
     )
@@ -83,10 +83,10 @@ def _validate_rotation_matrix(R: Any, name: str = "rotation matrix") -> np.ndarr
     require(R.shape == (3, 3), f"{name} must be 3x3", R.shape)
     require_finite(R, name)
     orth_err = np.max(np.abs(R @ R.T - np.eye(3)))
-    require(orth_err < 1e-6, f"{name} must be orthogonal (max err={orth_err:.2e})")
+    require(bool(orth_err < 1e-6), f"{name} must be orthogonal (max err={orth_err:.2e})")
     det = np.linalg.det(R)
-    require(abs(det - 1.0) < 1e-6, f"{name} must have det=+1 (got {det:.6f})")
-    return R
+    require(bool(abs(det - 1.0) < 1e-6), f"{name} must have det=+1 (got {det:.6f})")
+    return R  # type: ignore[no-any-return]
 
 
 # ===========================================================================
@@ -102,10 +102,10 @@ def normalize_quaternion(q: Any) -> np.ndarray:
     """
     q = _validate_quaternion_array(q)
     norm = np.linalg.norm(q)
-    require(norm > 1e-12, "cannot normalize zero quaternion", norm)
+    require(bool(norm > 1e-12), "cannot normalize zero quaternion", norm)
     result = q / norm
-    ensure(abs(np.linalg.norm(result) - 1.0) < 1e-12, "result must be unit norm")
-    return result
+    ensure(bool(abs(np.linalg.norm(result) - 1.0) < 1e-12), "result must be unit norm")
+    return result  # type: ignore[no-any-return]
 
 
 def quaternion_conjugate(q: Any) -> np.ndarray:
@@ -157,7 +157,7 @@ def quaternion_to_rotation_matrix(q: Any) -> np.ndarray:
     )
 
     ensure(
-        abs(np.linalg.det(R) - 1.0) < 1e-9,
+        bool(abs(np.linalg.det(R) - 1.0) < 1e-9),
         "result rotation matrix must have det=+1",
     )
     return R
@@ -208,7 +208,7 @@ def rotation_matrix_to_quaternion(R: Any) -> np.ndarray:
     if q[0] < 0:
         q = -q
 
-    ensure(abs(np.linalg.norm(q) - 1.0) < 1e-9, "result must be unit quaternion")
+    ensure(bool(abs(np.linalg.norm(q) - 1.0) < 1e-9), "result must be unit quaternion")
     return q
 
 
@@ -239,7 +239,7 @@ def axis_angle_to_quaternion(axis: Any, angle: float) -> np.ndarray:
         ]
     )
 
-    ensure(abs(np.linalg.norm(q) - 1.0) < 1e-9, "result must be unit quaternion")
+    ensure(bool(abs(np.linalg.norm(q) - 1.0) < 1e-9), "result must be unit quaternion")
     return q
 
 
@@ -292,8 +292,8 @@ def axis_angle_to_rotation_matrix(axis: Any, angle: float) -> np.ndarray:
     K = _skew_symmetric(axis)
     R = np.eye(3) + math.sin(angle) * K + (1.0 - math.cos(angle)) * (K @ K)
 
-    ensure(abs(np.linalg.det(R) - 1.0) < 1e-9, "result must be SO(3)")
-    return R
+    ensure(bool(abs(np.linalg.det(R) - 1.0) < 1e-9), "result must be SO(3)")
+    return R  # type: ignore[no-any-return]
 
 
 def rotation_matrix_to_axis_angle(R: Any) -> tuple[np.ndarray, float]:

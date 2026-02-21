@@ -106,13 +106,13 @@ def _parse_vec(text: str) -> np.ndarray | None:
         return None
 
 
-def _get_plot_colors() -> dict[str, str]:
+def _get_plot_colors() -> dict[str, Any]:
     """Get current plot colours from theme or defaults."""
     if _THEME_AVAILABLE:
         try:
             mgr = get_theme_manager()
             colors = mgr.get_current_colors()
-            _dark = is_dark_theme(colors)  # noqa: F841
+            _dark = is_dark_theme(colors)  # type: ignore[arg-type]  # noqa: F841
             return {
                 "bg": colors.get("bg", _DARK_BG),
                 "fg": colors.get("text", _DARK_FG),
@@ -582,7 +582,7 @@ class RigidTransformTab(QWidget):
 
         ax.scatter(*p, color=c["accent"], s=40, zorder=5)
 
-        margin = max(np.linalg.norm(p) * 1.3, 2.0)
+        margin = max(float(np.linalg.norm(p)) * 1.3, 2.0)
         ax.set_xlim(-margin, margin)
         ax.set_ylim(-margin, margin)
         ax.set_zlim(-margin, margin)
@@ -1028,9 +1028,11 @@ class RotationConverterMainWindow(QMainWindow):
 
     def _build_menus(self) -> None:
         menu_bar = self.menuBar()
+        assert menu_bar is not None
 
         # File menu
         file_menu = menu_bar.addMenu("&File")
+        assert file_menu is not None
         quit_action = QAction("&Quit", self)
         quit_action.setShortcut("Ctrl+Q")
         quit_action.triggered.connect(self.close)
@@ -1045,6 +1047,7 @@ class RotationConverterMainWindow(QMainWindow):
 
         # Help menu
         help_menu = menu_bar.addMenu("&Help")
+        assert help_menu is not None
         about = QAction("&About", self)
         about.triggered.connect(self._show_about)
         help_menu.addAction(about)
@@ -1062,6 +1065,8 @@ class RotationConverterMainWindow(QMainWindow):
         """Refresh all plots when the theme changes."""
         for i in range(self._tabs.count()):
             tab = self._tabs.widget(i)
+            if tab is None:
+                continue
             # Trigger re-draw on visible canvases
             for canvas in tab.findChildren(FigureCanvas):
                 canvas.draw()

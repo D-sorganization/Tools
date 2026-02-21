@@ -125,7 +125,7 @@ def twist_angle_to_homogeneous(xi: Any, theta: float) -> np.ndarray:
     else:
         # Rotation (possibly with translation)
         require(
-            abs(omega_norm - 1.0) < 1e-6,
+            bool(abs(omega_norm - 1.0) < 1e-6),
             "angular twist component must be unit length for rotation",
             omega_norm,
         )
@@ -177,7 +177,7 @@ def homogeneous_to_twist_angle(T: Any) -> tuple[np.ndarray, float]:
         else:
             # Pure translation
             v_hat = p / p_norm
-            xi, theta = np.concatenate([np.zeros(3), v_hat]), p_norm
+            xi, theta = np.concatenate([np.zeros(3), v_hat]), float(p_norm)
     else:
         # General case: extract axis-angle from R
         _validate_rotation_matrix(R)
@@ -190,7 +190,7 @@ def homogeneous_to_twist_angle(T: Any) -> tuple[np.ndarray, float]:
                 xi, theta = np.zeros(6), 0.0
             else:
                 v_hat = p / p_norm
-                xi, theta = np.concatenate([np.zeros(3), v_hat]), p_norm
+                xi, theta = np.concatenate([np.zeros(3), v_hat]), float(p_norm)
         else:
             omega = axis
             K = _skew_symmetric(omega)
@@ -243,7 +243,7 @@ def twist_to_screw(xi: Any) -> dict[str, Any]:
     if omega_norm < 1e-12:
         # Pure translation
         v_norm = np.linalg.norm(v)
-        require(v_norm > 1e-12, "twist cannot be zero for screw decomposition")
+        require(bool(v_norm > 1e-12), "twist cannot be zero for screw decomposition")
         return {
             "axis": v / v_norm,
             "point": np.zeros(3),
@@ -286,7 +286,7 @@ def screw_to_twist(screw: dict[str, Any]) -> np.ndarray:
     if pitch == float("inf"):
         # Pure translation — normalize axis to unit direction
         axis_norm = np.linalg.norm(axis)
-        require(axis_norm > 1e-12, "screw axis must be non-zero for pure translation")
+        require(bool(axis_norm > 1e-12), "screw axis must be non-zero for pure translation")
         omega = np.zeros(3)
         v = axis / axis_norm
     else:

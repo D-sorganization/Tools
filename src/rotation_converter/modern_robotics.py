@@ -96,7 +96,7 @@ def MatrixExp3(so3mat: Any) -> np.ndarray:
     require_finite(so3mat, "so(3) matrix")
 
     omega_vec = so3ToVec(so3mat)
-    theta = np.linalg.norm(omega_vec)
+    theta = float(np.linalg.norm(omega_vec))
 
     if _near_zero(theta):
         return np.eye(3)
@@ -109,7 +109,7 @@ def MatrixExp3(so3mat: Any) -> np.ndarray:
     )
 
     ensure(abs(np.linalg.det(R) - 1.0) < 1e-9, "result must be SO(3)")
-    return R
+    return R  # type: ignore[no-any-return]
 
 
 def MatrixLog3(R: Any) -> np.ndarray:
@@ -143,7 +143,7 @@ def MatrixLog3(R: Any) -> np.ndarray:
 
     theta = math.acos(cos_theta)
     omega_hat = (R - R.T) / (2.0 * math.sin(theta))
-    return omega_hat * theta
+    return omega_hat * theta  # type: ignore[no-any-return]
 
 
 # ===========================================================================
@@ -276,7 +276,7 @@ def MatrixExp6(se3mat: Any) -> np.ndarray:
     omega_mat = se3mat[:3, :3]
     omega_vec = so3ToVec(omega_mat)
     v = se3mat[:3, 3]
-    theta = np.linalg.norm(omega_vec)
+    theta = float(np.linalg.norm(omega_vec))
 
     T = np.eye(4)
 
@@ -319,7 +319,7 @@ def MatrixLog6(T: Any) -> np.ndarray:
     R, p = TransToRp(T)
     omega_mat = MatrixLog3(R)
     omega_vec = so3ToVec(omega_mat)
-    theta = np.linalg.norm(omega_vec)
+    theta = float(np.linalg.norm(omega_vec))
 
     result = np.zeros((4, 4))
 
@@ -410,7 +410,7 @@ def FKinBody(M: Any, Blist: Any, thetalist: Any) -> np.ndarray:
         T = T @ MatrixExp6(se3)
 
     ensure(abs(np.linalg.det(T[:3, :3]) - 1.0) < 1e-9, "result must be SE(3)")
-    return T
+    return T  # type: ignore[no-any-return]
 
 
 # ===========================================================================

@@ -424,7 +424,7 @@ class ScrewAxisAnimator:
 
         _anim = FuncAnimation(  # noqa: F841 — must keep reference to prevent GC
             fig,
-            update,
+            update,  # type: ignore[arg-type]
             frames=self.n_frames,
             interval=interval,
             repeat=True,
@@ -457,7 +457,7 @@ class ScrewAxisAnimator:
 
         anim = FuncAnimation(
             fig,
-            update,
+            update,  # type: ignore[arg-type]
             frames=self.n_frames,
             interval=1000 // fps,
             repeat=False,

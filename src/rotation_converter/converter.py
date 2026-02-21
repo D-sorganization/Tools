@@ -55,7 +55,7 @@ class Rotation:
         q = np.asarray(q, dtype=float)
         require(q.shape == (4,), "internal quaternion must have 4 elements")
         norm = np.linalg.norm(q)
-        require(abs(norm - 1.0) < 1e-6, "internal quaternion must be unit")
+        require(bool(abs(norm - 1.0) < 1e-6), "internal quaternion must be unit")
         # Canonical form
         if q[0] < 0:
             q = -q

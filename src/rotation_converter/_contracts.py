@@ -18,7 +18,7 @@ from typing import Any
 
 try:
     # Monorepo path — full-featured DbC from src/shared/python/contracts.py
-    from contracts import (  # type: ignore[import-untyped]
+    from contracts import (
         PostconditionError,
         PreconditionError,
         ensure,
@@ -48,22 +48,22 @@ except ImportError:
                 detail += f" (got: {value!r})"
             super().__init__(detail)
 
-    def require(condition: bool, message: str, value: Any = None) -> None:  # type: ignore[no-redef]
+    def require(condition: bool, message: str, value: Any = None) -> None:
         """Assert a pre-condition."""
         if not condition:
             raise PreconditionError(message, value)
 
-    def ensure(condition: bool, message: str, value: Any = None) -> None:  # type: ignore[no-redef]
+    def ensure(condition: bool, message: str, value: Any = None) -> None:
         """Assert a post-condition."""
         if not condition:
             raise PostconditionError(message, value)
 
-    def require_finite(array: Any, name: str = "array") -> None:  # type: ignore[no-redef]
+    def require_finite(array: Any, name: str = "array") -> None:
         """Require all elements to be finite (no NaN / Inf)."""
         if not _np.all(_np.isfinite(array)):
             raise PreconditionError(f"{name} contains NaN or Inf values")
 
-    def require_unit_vector(  # type: ignore[no-redef]
+    def require_unit_vector(
         vector: Any, name: str = "vector", tol: float = 1e-6
     ) -> None:
         """Require vector to have unit length."""
