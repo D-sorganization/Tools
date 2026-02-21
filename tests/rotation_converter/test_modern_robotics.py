@@ -635,18 +635,19 @@ class TestIKFailure:
         T_desired = np.eye(4)
         T_desired[:3, 3] = [100, 100, 100]
 
-        thetalist, success = IKinBody(
-            Blist, M, T_desired, np.array([0.0]), max_iter=5
-        )
+        thetalist, success = IKinBody(Blist, M, T_desired, np.array([0.0]), max_iter=5)
         assert success is False
 
     def test_convergence_with_good_guess(self) -> None:
         """IK should converge when target is reachable with good initial guess."""
         # 2-DOF planar arm
-        Blist = np.array([
-            [0, 0, 1, 0, 1, 0],
-            [0, 0, 1, 0, 0, 0],
-        ], dtype=float).T
+        Blist = np.array(
+            [
+                [0, 0, 1, 0, 1, 0],
+                [0, 0, 1, 0, 0, 0],
+            ],
+            dtype=float,
+        ).T
         M = np.eye(4)
         M[0, 3] = 2.0  # end-effector at (2,0,0) in home config
 
@@ -654,9 +655,7 @@ class TestIKFailure:
         theta_target = np.array([0.3, -0.2])
         T_desired = FKinBody(M, Blist, theta_target)
 
-        thetalist, success = IKinBody(
-            Blist, M, T_desired, np.array([0.0, 0.0])
-        )
+        thetalist, success = IKinBody(Blist, M, T_desired, np.array([0.0, 0.0]))
         assert success is True
 
 
