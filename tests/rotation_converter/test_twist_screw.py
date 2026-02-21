@@ -309,3 +309,40 @@ class TestRandomTwistScrewRoundTrips:
         screw = twist_to_screw(xi)
         xi2 = screw_to_twist(screw)
         np.testing.assert_allclose(xi2, xi, atol=1e-9)
+
+
+# ===========================================================================
+# Input validation on screw_to_twist
+# ===========================================================================
+
+
+class TestScrewToTwistValidation:
+    """screw_to_twist should reject non-unit axis for finite pitch."""
+
+    def test_non_unit_axis_finite_pitch_raises(self) -> None:
+        screw = {
+            "axis": np.array([2.0, 0.0, 0.0]),  # NOT unit
+            "point": np.zeros(3),
+            "pitch": 0.0,
+        }
+        with pytest.raises(Exception):
+            screw_to_twist(screw)
+
+    def test_unit_axis_finite_pitch_ok(self) -> None:
+        screw = {
+            "axis": np.array([1.0, 0.0, 0.0]),
+            "point": np.zeros(3),
+            "pitch": 0.0,
+        }
+        xi = screw_to_twist(screw)
+        assert xi.shape == (6,)
+
+    def test_non_unit_axis_infinite_pitch_normalized(self) -> None:
+        """Infinite pitch normalizes axis automatically."""
+        screw = {
+            "axis": np.array([3.0, 0.0, 0.0]),
+            "point": np.zeros(3),
+            "pitch": float("inf"),
+        }
+        xi = screw_to_twist(screw)
+        np.testing.assert_allclose(xi[3:], [1, 0, 0], atol=ATOL)

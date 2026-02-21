@@ -82,7 +82,7 @@ def extract_screw_axes_from_trajectory(
         p2 = T2[:3, 3]
         midpoint = (p1 + p2) / 2.0
 
-        if omega_norm < 1e-10 and v_norm < 1e-10:
+        if omega_norm < 1e-12 and v_norm < 1e-12:
             # No motion
             screw_axes.append(
                 {
@@ -95,7 +95,7 @@ def extract_screw_axes_from_trajectory(
             )
             continue
 
-        if omega_norm < 1e-10:
+        if omega_norm < 1e-12:
             # Pure translation
             axis = v / v_norm
             screw_axes.append(

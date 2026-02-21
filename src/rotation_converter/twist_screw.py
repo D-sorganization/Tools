@@ -20,7 +20,12 @@ from typing import Any
 
 import numpy as np
 
-from rotation_converter._contracts import ensure, require, require_finite
+from rotation_converter._contracts import (
+    ensure,
+    require,
+    require_finite,
+    require_unit_vector,
+)
 from rotation_converter.core import (
     _skew_symmetric,
     _validate_rotation_matrix,
@@ -277,10 +282,12 @@ def screw_to_twist(screw: dict[str, Any]) -> np.ndarray:
     require(axis.shape == (3,), "screw axis must have 3 elements")
 
     if pitch == float("inf"):
-        # Pure translation
+        # Pure translation — normalize axis to unit direction
         omega = np.zeros(3)
         v = axis / np.linalg.norm(axis)
     else:
+        # Rotation/helical — axis must be unit for valid twist
+        require_unit_vector(axis, "screw axis")
         omega = axis
         v = np.cross(-omega, point) + pitch * omega
 
