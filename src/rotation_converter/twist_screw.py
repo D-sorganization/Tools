@@ -173,35 +173,37 @@ def homogeneous_to_twist_angle(T: Any) -> tuple[np.ndarray, float]:
         p_norm = np.linalg.norm(p)
         if p_norm < 1e-12:
             # Identity transform
-            return np.zeros(6), 0.0
-        # Pure translation
-        v_hat = p / p_norm
-        xi = np.concatenate([np.zeros(3), v_hat])
-        return xi, p_norm
+            xi, theta = np.zeros(6), 0.0
+        else:
+            # Pure translation
+            v_hat = p / p_norm
+            xi, theta = np.concatenate([np.zeros(3), v_hat]), p_norm
+    else:
+        # General case: extract axis-angle from R
+        _validate_rotation_matrix(R)
+        axis, theta = rotation_matrix_to_axis_angle(R)
 
-    # General case: extract axis-angle from R
-    _validate_rotation_matrix(R)
-    axis, theta = rotation_matrix_to_axis_angle(R)
+        if theta < 1e-12:
+            # Near-identity rotation, treat as pure translation
+            p_norm = np.linalg.norm(p)
+            if p_norm < 1e-12:
+                xi, theta = np.zeros(6), 0.0
+            else:
+                v_hat = p / p_norm
+                xi, theta = np.concatenate([np.zeros(3), v_hat]), p_norm
+        else:
+            omega = axis
+            K = _skew_symmetric(omega)
+            # G_inv = (1/theta)*I - 0.5*K + (1/theta - 0.5*cot(theta/2))*K^2
+            cot_half = math.cos(theta / 2) / math.sin(theta / 2)
+            G_inv = (
+                (1.0 / theta) * np.eye(3)
+                - 0.5 * K
+                + (1.0 / theta - 0.5 * cot_half) * (K @ K)
+            )
+            v = G_inv @ p
+            xi = np.concatenate([omega, v])
 
-    if theta < 1e-12:
-        # Near-identity rotation, treat as pure translation
-        p_norm = np.linalg.norm(p)
-        if p_norm < 1e-12:
-            return np.zeros(6), 0.0
-        v_hat = p / p_norm
-        xi = np.concatenate([np.zeros(3), v_hat])
-        return xi, p_norm
-
-    omega = axis
-    K = _skew_symmetric(omega)
-    # G_inv = (1/theta)*I - 0.5*K + (1/theta - 0.5*cot(theta/2))*K^2
-    cot_half = math.cos(theta / 2) / math.sin(theta / 2)
-    G_inv = (
-        (1.0 / theta) * np.eye(3) - 0.5 * K + (1.0 / theta - 0.5 * cot_half) * (K @ K)
-    )
-    v = G_inv @ p
-
-    xi = np.concatenate([omega, v])
     ensure(xi.shape == (6,), "result twist must have 6 elements")
     ensure(theta >= 0, "angle must be non-negative")
     return xi, float(theta)
@@ -283,8 +285,10 @@ def screw_to_twist(screw: dict[str, Any]) -> np.ndarray:
 
     if pitch == float("inf"):
         # Pure translation — normalize axis to unit direction
+        axis_norm = np.linalg.norm(axis)
+        require(axis_norm > 1e-12, "screw axis must be non-zero for pure translation")
         omega = np.zeros(3)
-        v = axis / np.linalg.norm(axis)
+        v = axis / axis_norm
     else:
         # Rotation/helical — axis must be unit for valid twist
         require_unit_vector(axis, "screw axis")

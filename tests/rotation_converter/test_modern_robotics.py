@@ -20,6 +20,7 @@ import math
 import numpy as np
 import pytest
 
+from rotation_converter._contracts import PreconditionError
 from rotation_converter.modern_robotics import (
     FKinBody,
     FKinSpace,
@@ -584,3 +585,124 @@ class TestRandomMRRoundTrips:
         T_inv = TransInv(T)
         product = T @ T_inv
         np.testing.assert_allclose(product, np.eye(4), atol=1e-9)
+
+
+# ===========================================================================
+# Edge cases: MatrixLog3 pi-rotation branches, IK failure, NaN/Inf, contracts
+# ===========================================================================
+
+
+class TestMatrixLog3PiBranches:
+    """MatrixLog3 pi-rotation column selection (all 3 axes)."""
+
+    def test_pi_rotation_about_x(self) -> None:
+        R = np.diag([-1.0, -1.0, 1.0])  # Rz(pi) actually, let's do Rx(pi)
+        R = np.array([[1, 0, 0], [0, -1, 0], [0, 0, -1]], dtype=float)
+        so3 = MatrixLog3(R)
+        R_back = MatrixExp3(so3)
+        np.testing.assert_allclose(R_back, R, atol=1e-9)
+
+    def test_pi_rotation_about_y(self) -> None:
+        R = np.array([[-1, 0, 0], [0, 1, 0], [0, 0, -1]], dtype=float)
+        so3 = MatrixLog3(R)
+        R_back = MatrixExp3(so3)
+        np.testing.assert_allclose(R_back, R, atol=1e-9)
+
+    def test_pi_rotation_about_z(self) -> None:
+        R = np.array([[-1, 0, 0], [0, -1, 0], [0, 0, 1]], dtype=float)
+        so3 = MatrixLog3(R)
+        R_back = MatrixExp3(so3)
+        np.testing.assert_allclose(R_back, R, atol=1e-9)
+
+    def test_MatrixLog6_identity(self) -> None:
+        """MatrixLog6 of identity SE(3) should be zero."""
+        T = np.eye(4)
+        se3 = MatrixLog6(T)
+        np.testing.assert_allclose(se3, np.zeros((4, 4)), atol=1e-12)
+
+
+class TestIKFailure:
+    """Test that IKinBody returns success=False for unreachable targets."""
+
+    def test_unreachable_target(self) -> None:
+        """Target far outside workspace should fail to converge."""
+        # Simple 1-DOF revolute around z
+        Blist = np.array([[0, 0, 1, 0, 0, 0]], dtype=float).T
+        M = np.eye(4)
+        M[0, 3] = 1.0  # end-effector at (1,0,0)
+
+        # Unreachable target at (100, 100, 100)
+        T_desired = np.eye(4)
+        T_desired[:3, 3] = [100, 100, 100]
+
+        thetalist, success = IKinBody(
+            Blist, M, T_desired, np.array([0.0]), max_iter=5
+        )
+        assert success is False
+
+    def test_convergence_with_good_guess(self) -> None:
+        """IK should converge when target is reachable with good initial guess."""
+        # 2-DOF planar arm
+        Blist = np.array([
+            [0, 0, 1, 0, 1, 0],
+            [0, 0, 1, 0, 0, 0],
+        ], dtype=float).T
+        M = np.eye(4)
+        M[0, 3] = 2.0  # end-effector at (2,0,0) in home config
+
+        # Use FK to get a known reachable target
+        theta_target = np.array([0.3, -0.2])
+        T_desired = FKinBody(M, Blist, theta_target)
+
+        thetalist, success = IKinBody(
+            Blist, M, T_desired, np.array([0.0, 0.0])
+        )
+        assert success is True
+
+
+class TestModernRoboticsContracts:
+    """NaN/Inf and shape contract tests for modern_robotics functions."""
+
+    def test_nan_so3_raises(self) -> None:
+        so3 = np.array([[0, float("nan"), 0], [0, 0, 0], [0, 0, 0]])
+        with pytest.raises(PreconditionError):
+            MatrixExp3(so3)
+
+    def test_inf_rotation_matrix_log3_raises(self) -> None:
+        R = np.eye(3)
+        R[0, 0] = float("inf")
+        with pytest.raises(PreconditionError):
+            MatrixLog3(R)
+
+    def test_nan_se3_exp6_raises(self) -> None:
+        se3 = np.zeros((4, 4))
+        se3[0, 3] = float("nan")
+        with pytest.raises(PreconditionError):
+            MatrixExp6(se3)
+
+    def test_nan_se3_log6_raises(self) -> None:
+        T = np.eye(4)
+        T[0, 3] = float("inf")
+        with pytest.raises(PreconditionError):
+            MatrixLog6(T)
+
+    def test_nan_slist_fkin_raises(self) -> None:
+        M = np.eye(4)
+        Slist = np.array([[0, 0, 1, 0, 0, float("nan")]]).T
+        with pytest.raises(PreconditionError):
+            FKinSpace(M, Slist, np.array([0.0]))
+
+    def test_jacobian_shape_validation(self) -> None:
+        """JacobianSpace should reject wrong-shaped Slist."""
+        # 5 rows instead of 6
+        Slist = np.ones((5, 2))
+        with pytest.raises(PreconditionError):
+            JacobianSpace(Slist, np.array([0.0, 0.0]))
+
+    def test_ikin_positive_tolerance(self) -> None:
+        """IKinBody should reject non-positive tolerances."""
+        Blist = np.array([[0, 0, 1, 0, 0, 0]], dtype=float).T
+        M = np.eye(4)
+        T = np.eye(4)
+        with pytest.raises(PreconditionError):
+            IKinBody(Blist, M, T, np.array([0.0]), eomg=-1.0)

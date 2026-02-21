@@ -426,34 +426,21 @@ def _rotation_matrix_to_euler_impl(
         # R = Ri(a) Rj(b) Ri(c)
         # Find the third axis index that is neither i nor j
         other = 3 - i - j  # works because 0+1+2=3
+        # Sign factor: +1 if (i,j) is a cyclic pair (0->1, 1->2, 2->0), else -1
+        sign = 1.0 if (j - i) % 3 == 1 else -1.0
 
         cb = np.clip(R[i, i], -1.0, 1.0)
         b = math.acos(cb)
 
         if abs(math.sin(b)) > 1e-8:
-            sb = math.sin(b)
-            # Determine sign based on axis ordering
-            # The sign factor depends on whether (i,j,other) is an even
-            # permutation of (0,1,2)
-            sign = 1.0 if (j - i) % 3 == 1 else -1.0
-            a = math.atan2(
-                R[j, i] * sign, R[other, i] * (-sign if (j - i) % 3 == 1 else sign)
-            )
-            c = math.atan2(
-                R[i, j] * sign, -R[i, other] * (-sign if (j - i) % 3 == 1 else sign)
-            )
-
-            # Re-derive properly using generic formulation
-            # For proper Euler R_i(a) R_j(b) R_i(c):
-            # R[i,i] = cos(b)
-            # R[j,i] = sign * sin(b) * sin(a)  [sign depends on axis order]
-            # R[other,i] = -sign * cos(a) * sin(b) * ... (complex)
-            # Instead, just use a robust atan2 extraction.
+            # General case: extract a and c from the i-th column/row
+            # R[j,i] = sign * sin(b) * sin(a), R[other,i] = -sign * sin(b) * cos(a)
             a = math.atan2(R[j, i], -sign * R[other, i])
+            # R[i,j] = sign * sin(b) * sin(c), R[i,other] = sign * sin(b) * cos(c)
             c = math.atan2(R[i, j], sign * R[i, other])
         else:
             # Gimbal lock: b ≈ 0 or b ≈ pi
-            a = math.atan2(-R[j, other], R[j, j])
+            a = math.atan2(sign * R[other, j], R[j, j])
             c = 0.0
     else:
         # Tait-Bryan angles: all three axes distinct

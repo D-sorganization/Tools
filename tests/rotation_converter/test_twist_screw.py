@@ -15,6 +15,7 @@ import math
 import numpy as np
 import pytest
 
+from rotation_converter._contracts import PreconditionError
 from rotation_converter.twist_screw import (
     adjoint_representation,
     homogeneous_to_twist_angle,
@@ -346,3 +347,90 @@ class TestScrewToTwistValidation:
         }
         xi = screw_to_twist(screw)
         np.testing.assert_allclose(xi[3:], [1, 0, 0], atol=ATOL)
+
+    def test_zero_axis_infinite_pitch_raises(self) -> None:
+        """Zero axis with infinite pitch should raise."""
+        screw = {
+            "axis": np.zeros(3),
+            "point": np.zeros(3),
+            "pitch": float("inf"),
+        }
+        with pytest.raises(PreconditionError):
+            screw_to_twist(screw)
+
+
+# ===========================================================================
+# Near-pi rotation and twist contract edge cases
+# ===========================================================================
+
+
+class TestTwistScrewEdgeCases:
+    """Edge cases for twist/screw conversions."""
+
+    def test_near_pi_rotation_homogeneous_roundtrip(self) -> None:
+        """180-degree rotation should roundtrip through twist decomposition."""
+        omega = np.array([0.0, 0.0, 1.0])
+        theta = math.pi - 1e-10  # just under pi
+        xi = np.concatenate([omega, np.array([1.0, 0.0, 0.0])])
+        T = twist_angle_to_homogeneous(xi, theta)
+        xi2, theta2 = homogeneous_to_twist_angle(T)
+        T2 = twist_angle_to_homogeneous(xi2, theta2)
+        np.testing.assert_allclose(T2, T, atol=1e-7)
+
+    def test_zero_twist_to_screw_raises(self) -> None:
+        """All-zero twist should raise PreconditionError."""
+        with pytest.raises(PreconditionError):
+            twist_to_screw(np.zeros(6))
+
+    def test_non_unit_omega_twist_to_homogeneous_raises(self) -> None:
+        """Non-unit omega should raise PreconditionError."""
+        xi = np.array([2.0, 0.0, 0.0, 1.0, 0.0, 0.0])
+        with pytest.raises(PreconditionError):
+            twist_angle_to_homogeneous(xi, 1.0)
+
+    def test_bad_bottom_row_homogeneous_raises(self) -> None:
+        """Non-SE(3) bottom row should raise PreconditionError."""
+        T = np.eye(4)
+        T[3, 0] = 1.0
+        with pytest.raises(PreconditionError):
+            homogeneous_to_twist_angle(T)
+
+    def test_bad_bottom_row_se3_raises(self) -> None:
+        """se(3) matrix with non-zero bottom row should raise."""
+        M = np.zeros((4, 4))
+        M[3, 0] = 1.0
+        with pytest.raises(PreconditionError):
+            se3_matrix_to_twist_vector(M)
+
+    def test_pure_translation_homogeneous_roundtrip(self) -> None:
+        """Pure translation SE(3) matrix roundtrip through twist."""
+        T = np.eye(4)
+        T[:3, 3] = [3.0, 4.0, 0.0]
+        xi, theta = homogeneous_to_twist_angle(T)
+        T2 = twist_angle_to_homogeneous(xi, theta)
+        np.testing.assert_allclose(T2, T, atol=1e-9)
+
+    def test_adjoint_property(self) -> None:
+        """Adjoint should satisfy Ad_T * Vb = T * [Vb] * T^-1 (twist mapping)."""
+        rng = np.random.default_rng(42)
+        omega = rng.normal(size=3)
+        omega /= np.linalg.norm(omega)
+        xi = np.concatenate([omega, rng.normal(size=3)])
+        T = twist_angle_to_homogeneous(xi, 0.8)
+        Ad = adjoint_representation(T)
+
+        # Body twist
+        Vb = np.concatenate([omega, rng.normal(size=3)])
+        Vs = Ad @ Vb
+
+        # Verify via matrix form: [Vs] = T @ [Vb] @ T^-1
+        from rotation_converter.twist_screw import (
+            se3_matrix_to_twist_vector,
+            twist_vector_to_se3_matrix,
+        )
+
+        Vb_mat = twist_vector_to_se3_matrix(Vb)
+        T_inv = np.linalg.inv(T)
+        Vs_mat = T @ Vb_mat @ T_inv
+        Vs_check = se3_matrix_to_twist_vector(Vs_mat)
+        np.testing.assert_allclose(Vs, Vs_check, atol=1e-9)

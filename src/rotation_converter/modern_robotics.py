@@ -28,7 +28,7 @@ from typing import Any
 
 import numpy as np
 
-from rotation_converter._contracts import ensure, require
+from rotation_converter._contracts import ensure, require, require_finite
 
 # ---------------------------------------------------------------------------
 # Internal helpers (DRY — shared across multiple functions)
@@ -93,6 +93,7 @@ def MatrixExp3(so3mat: Any) -> np.ndarray:
     """
     so3mat = np.asarray(so3mat, dtype=float)
     require(so3mat.shape == (3, 3), "so(3) matrix must be 3x3")
+    require_finite(so3mat, "so(3) matrix")
 
     omega_vec = so3ToVec(so3mat)
     theta = np.linalg.norm(omega_vec)
@@ -122,6 +123,7 @@ def MatrixLog3(R: Any) -> np.ndarray:
     """
     R = np.asarray(R, dtype=float)
     require(R.shape == (3, 3), "rotation matrix must be 3x3")
+    require_finite(R, "rotation matrix")
 
     cos_theta = np.clip((np.trace(R) - 1.0) / 2.0, -1.0, 1.0)
 
@@ -269,6 +271,7 @@ def MatrixExp6(se3mat: Any) -> np.ndarray:
     """
     se3mat = np.asarray(se3mat, dtype=float)
     require(se3mat.shape == (4, 4), "se(3) matrix must be 4x4")
+    require_finite(se3mat, "se(3) matrix")
 
     omega_mat = se3mat[:3, :3]
     omega_vec = so3ToVec(omega_mat)
@@ -311,6 +314,7 @@ def MatrixLog6(T: Any) -> np.ndarray:
     """
     T = np.asarray(T, dtype=float)
     require(T.shape == (4, 4), "SE(3) matrix must be 4x4")
+    require_finite(T, "SE(3) matrix")
 
     R, p = TransToRp(T)
     omega_mat = MatrixLog3(R)
@@ -359,9 +363,12 @@ def FKinSpace(M: Any, Slist: Any, thetalist: Any) -> np.ndarray:
     Slist = np.asarray(Slist, dtype=float)
     thetalist = np.asarray(thetalist, dtype=float)
     require(M.shape == (4, 4), "M must be 4x4")
+    require_finite(M, "M")
     require(Slist.shape[0] == 6, "Slist must have 6 rows")
+    require_finite(Slist, "Slist")
     n = Slist.shape[1]
     require(thetalist.shape == (n,), f"thetalist must have {n} elements")
+    require_finite(thetalist, "thetalist")
 
     T = np.eye(4)
     for i in range(n):
@@ -390,9 +397,12 @@ def FKinBody(M: Any, Blist: Any, thetalist: Any) -> np.ndarray:
     Blist = np.asarray(Blist, dtype=float)
     thetalist = np.asarray(thetalist, dtype=float)
     require(M.shape == (4, 4), "M must be 4x4")
+    require_finite(M, "M")
     require(Blist.shape[0] == 6, "Blist must have 6 rows")
+    require_finite(Blist, "Blist")
     n = Blist.shape[1]
     require(thetalist.shape == (n,), f"thetalist must have {n} elements")
+    require_finite(thetalist, "thetalist")
 
     T = M.copy()
     for i in range(n):
@@ -422,7 +432,11 @@ def JacobianSpace(Slist: Any, thetalist: Any) -> np.ndarray:
     """
     Slist = np.asarray(Slist, dtype=float)
     thetalist = np.asarray(thetalist, dtype=float)
+    require(Slist.ndim == 2 and Slist.shape[0] == 6, "Slist must be 6×n")
+    require_finite(Slist, "Slist")
     n = Slist.shape[1]
+    require(thetalist.shape == (n,), f"thetalist must have {n} elements")
+    require_finite(thetalist, "thetalist")
 
     Js = np.copy(Slist)
     T = np.eye(4)
@@ -430,6 +444,8 @@ def JacobianSpace(Slist: Any, thetalist: Any) -> np.ndarray:
         se3 = VecTose3(Slist[:, i - 1]) * thetalist[i - 1]
         T = T @ MatrixExp6(se3)
         Js[:, i] = _Adjoint(T) @ Slist[:, i]
+
+    ensure(Js.shape == (6, n), "Jacobian must be 6×n")
     return Js
 
 
@@ -447,7 +463,11 @@ def JacobianBody(Blist: Any, thetalist: Any) -> np.ndarray:
     """
     Blist = np.asarray(Blist, dtype=float)
     thetalist = np.asarray(thetalist, dtype=float)
+    require(Blist.ndim == 2 and Blist.shape[0] == 6, "Blist must be 6×n")
+    require_finite(Blist, "Blist")
     n = Blist.shape[1]
+    require(thetalist.shape == (n,), f"thetalist must have {n} elements")
+    require_finite(thetalist, "thetalist")
 
     Jb = np.copy(Blist)
     T = np.eye(4)
@@ -455,6 +475,8 @@ def JacobianBody(Blist: Any, thetalist: Any) -> np.ndarray:
         se3 = VecTose3(-Blist[:, i + 1]) * thetalist[i + 1]
         T = T @ MatrixExp6(se3)
         Jb[:, i] = _Adjoint(T) @ Blist[:, i]
+
+    ensure(Jb.shape == (6, n), "Jacobian must be 6×n")
     return Jb
 
 
@@ -494,7 +516,15 @@ def IKinBody(
     thetalist = np.asarray(thetalist0, dtype=float).copy()
 
     require(M.shape == (4, 4), "M must be 4x4")
+    require_finite(M, "M")
     require(T_desired.shape == (4, 4), "T_desired must be 4x4")
+    require_finite(T_desired, "T_desired")
+    require(Blist.ndim == 2 and Blist.shape[0] == 6, "Blist must be 6×n")
+    require_finite(Blist, "Blist")
+    require_finite(thetalist, "thetalist0")
+    require(eomg > 0, "angular tolerance must be positive", eomg)
+    require(ev > 0, "linear tolerance must be positive", ev)
+    require(max_iter > 0, "max_iter must be positive", max_iter)
 
     for _ in range(max_iter):
         T_current = FKinBody(M, Blist, thetalist)

@@ -18,6 +18,7 @@ import math
 import numpy as np
 import pytest
 
+from rotation_converter._contracts import PreconditionError
 from rotation_converter.core import (
     axis_angle_to_quaternion,
     axis_angle_to_rotation_matrix,
@@ -410,3 +411,129 @@ class TestRandomRoundTrips:
         if np.dot(q, q2) < 0:
             q2 = -q2
         np.testing.assert_allclose(q2, q, atol=1e-9)
+
+
+# ===========================================================================
+# Gimbal lock edge cases
+# ===========================================================================
+
+
+class TestGimbalLock:
+    """Exercise gimbal lock code paths in Euler extraction."""
+
+    @pytest.mark.parametrize("convention", ["xyz", "xzy", "yxz", "yzx", "zxy", "zyx"])
+    def test_tait_bryan_gimbal_lock_positive(self, convention: str) -> None:
+        """Tait-Bryan at b = +pi/2 (cos(b) ~ 0)."""
+        a, c = 0.3, 0.0  # c is degenerate at gimbal lock
+        b = math.pi / 2.0
+        R = euler_to_rotation_matrix(a, b, c, convention)
+        a2, b2, c2 = rotation_matrix_to_euler(R, convention)
+        R2 = euler_to_rotation_matrix(a2, b2, c2, convention)
+        np.testing.assert_allclose(R2, R, atol=1e-9)
+
+    @pytest.mark.parametrize("convention", ["xyz", "xzy", "yxz", "yzx", "zxy", "zyx"])
+    def test_tait_bryan_gimbal_lock_negative(self, convention: str) -> None:
+        """Tait-Bryan at b = -pi/2."""
+        a, c = -0.5, 0.0
+        b = -math.pi / 2.0
+        R = euler_to_rotation_matrix(a, b, c, convention)
+        a2, b2, c2 = rotation_matrix_to_euler(R, convention)
+        R2 = euler_to_rotation_matrix(a2, b2, c2, convention)
+        np.testing.assert_allclose(R2, R, atol=1e-9)
+
+    @pytest.mark.parametrize("convention", ["xyx", "xzx", "yxy", "yzy", "zxz", "zyz"])
+    def test_proper_euler_gimbal_lock_zero(self, convention: str) -> None:
+        """Proper Euler at b = 0 (gimbal lock)."""
+        a, c = 0.7, 0.0
+        b = 0.0
+        R = euler_to_rotation_matrix(a, b, c, convention)
+        a2, b2, c2 = rotation_matrix_to_euler(R, convention)
+        R2 = euler_to_rotation_matrix(a2, b2, c2, convention)
+        np.testing.assert_allclose(R2, R, atol=1e-9)
+
+    @pytest.mark.parametrize("convention", ["xyx", "xzx", "yxy", "yzy", "zxz", "zyz"])
+    def test_proper_euler_gimbal_lock_pi(self, convention: str) -> None:
+        """Proper Euler at b = pi (gimbal lock)."""
+        a, c = -0.2, 0.0
+        b = math.pi
+        R = euler_to_rotation_matrix(a, b, c, convention)
+        a2, b2, c2 = rotation_matrix_to_euler(R, convention)
+        R2 = euler_to_rotation_matrix(a2, b2, c2, convention)
+        np.testing.assert_allclose(R2, R, atol=1e-9)
+
+
+# ===========================================================================
+# Contract type specificity and NaN/Inf edge cases
+# ===========================================================================
+
+
+class TestContractTypes:
+    """Tests that DbC contracts raise PreconditionError, not generic Exception."""
+
+    def test_normalize_zero_raises_precondition(self) -> None:
+        with pytest.raises(PreconditionError):
+            normalize_quaternion([0, 0, 0, 0])
+
+    def test_non_unit_quaternion_raises_precondition(self) -> None:
+        with pytest.raises(PreconditionError):
+            quaternion_to_rotation_matrix([2, 0, 0, 0])
+
+    def test_non_unit_axis_raises_precondition(self) -> None:
+        with pytest.raises(PreconditionError):
+            axis_angle_to_quaternion([2, 0, 0], 1.0)
+
+    def test_invalid_convention_raises_precondition(self) -> None:
+        with pytest.raises(PreconditionError):
+            euler_to_quaternion(0, 0, 0, "abc")
+
+    def test_nan_quaternion_raises_precondition(self) -> None:
+        with pytest.raises(PreconditionError):
+            quaternion_to_rotation_matrix([float("nan"), 0, 0, 0])
+
+    def test_inf_rotation_matrix_raises_precondition(self) -> None:
+        R = np.eye(3)
+        R[0, 0] = float("inf")
+        with pytest.raises(PreconditionError):
+            rotation_matrix_to_quaternion(R)
+
+    def test_nan_axis_raises_precondition(self) -> None:
+        with pytest.raises(PreconditionError):
+            axis_angle_to_quaternion([float("nan"), 0, 0], 1.0)
+
+    def test_nan_rodrigues_raises_precondition(self) -> None:
+        with pytest.raises(PreconditionError):
+            rodrigues_to_quaternion([float("inf"), 0, 0])
+
+
+# ===========================================================================
+# Shepperd branch coverage for 180-degree rotations
+# ===========================================================================
+
+
+class TestShepperdBranches:
+    """Ensure rotation_matrix_to_quaternion covers all Shepperd branches."""
+
+    def test_180_deg_about_x(self) -> None:
+        R = axis_angle_to_rotation_matrix([1, 0, 0], math.pi)
+        q = rotation_matrix_to_quaternion(R)
+        R2 = quaternion_to_rotation_matrix(q)
+        np.testing.assert_allclose(R2, R, atol=1e-9)
+
+    def test_180_deg_about_y(self) -> None:
+        R = axis_angle_to_rotation_matrix([0, 1, 0], math.pi)
+        q = rotation_matrix_to_quaternion(R)
+        R2 = quaternion_to_rotation_matrix(q)
+        np.testing.assert_allclose(R2, R, atol=1e-9)
+
+    def test_180_deg_about_z(self) -> None:
+        R = axis_angle_to_rotation_matrix([0, 0, 1], math.pi)
+        q = rotation_matrix_to_quaternion(R)
+        R2 = quaternion_to_rotation_matrix(q)
+        np.testing.assert_allclose(R2, R, atol=1e-9)
+
+    def test_180_deg_about_diagonal(self) -> None:
+        axis = np.array([1, 1, 1]) / math.sqrt(3)
+        R = axis_angle_to_rotation_matrix(axis, math.pi)
+        q = rotation_matrix_to_quaternion(R)
+        R2 = quaternion_to_rotation_matrix(q)
+        np.testing.assert_allclose(R2, R, atol=1e-9)
