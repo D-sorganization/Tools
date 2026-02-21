@@ -8,7 +8,7 @@ twists, screw axis representations, and Modern Robotics (Lynch & Park)
 kinematics functions.
 """
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 from rotation_converter.converter import Rotation, RotationConverter
 from rotation_converter.core import (
@@ -46,6 +46,15 @@ from rotation_converter.modern_robotics import (
     VecToso3,
     se3ToVec,
     so3ToVec,
+)
+from rotation_converter.motion_examples import (
+    football_spiral,
+    frisbee_flight,
+)
+from rotation_converter.screw_visualization import (
+    ScrewAxisAnimator,
+    build_animation_frames,
+    extract_screw_axes_from_trajectory,
 )
 from rotation_converter.twist_screw import (
     adjoint_representation,
@@ -99,4 +108,9 @@ __all__ = [
     "VecToso3",
     "se3ToVec",
     "so3ToVec",
+    "ScrewAxisAnimator",
+    "build_animation_frames",
+    "extract_screw_axes_from_trajectory",
+    "football_spiral",
+    "frisbee_flight",
 ]
