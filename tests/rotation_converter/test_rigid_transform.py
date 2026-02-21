@@ -818,3 +818,256 @@ class TestCrossRepresentationConsistency:
         twist, theta = T1.as_twist()
         T2 = RigidTransform.from_twist(twist, theta, source="a", target="b")
         np.testing.assert_allclose(T1.as_matrix(), T2.as_matrix(), atol=ATOL)
+
+
+# ===========================================================================
+# Batch vector transformations
+# ===========================================================================
+
+
+class TestApplyVectors:
+    """Batch direction-vector transformation (Nx3, rotation only)."""
+
+    def test_apply_vectors_ignores_translation(self) -> None:
+        T = RigidTransform.pure_translation(
+            [100, 200, 300], source="body", target="world"
+        )
+        vecs = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]], dtype=float)
+        result = T.apply_vectors(vecs)
+        np.testing.assert_allclose(result, vecs, atol=ATOL)
+
+    def test_apply_vectors_rotates(self) -> None:
+        angle = math.pi / 2
+        c, s = math.cos(angle), math.sin(angle)
+        R = np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]])
+        T = RigidTransform.from_rotation_translation(
+            R, [5, 10, 15], source="body", target="world"
+        )
+        vecs = np.array([[1, 0, 0], [0, 1, 0]], dtype=float)
+        result = T.apply_vectors(vecs)
+        expected = np.array([[0, 1, 0], [-1, 0, 0]], dtype=float)
+        np.testing.assert_allclose(result, expected, atol=ATOL)
+
+    def test_apply_vectors_shape(self) -> None:
+        T = RigidTransform.identity("a")
+        vecs = np.zeros((5, 3))
+        result = T.apply_vectors(vecs)
+        assert result.shape == (5, 3)
+
+    def test_apply_vectors_wrong_shape_raises(self) -> None:
+        T = RigidTransform.identity("a")
+        with pytest.raises(Exception):
+            T.apply_vectors(np.zeros((3, 2)))
+
+    def test_apply_vectors_consistent_with_apply_vector(self) -> None:
+        """Batch should match one-at-a-time."""
+        R = Rotation.from_euler(0.3, 0.5, 0.7, "xyz").as_rotation_matrix()
+        p = np.array([1.0, 2.0, 3.0])
+        T = RigidTransform.from_rotation_translation(
+            R, p, source="a", target="b"
+        )
+        rng = np.random.default_rng(42)
+        vecs = rng.standard_normal((10, 3))
+        batch_result = T.apply_vectors(vecs)
+        for i in range(10):
+            single_result = T.apply_vector(vecs[i])
+            np.testing.assert_allclose(
+                batch_result[i], single_result, atol=ATOL
+            )
+
+
+# ===========================================================================
+# Homogeneous coordinate transformations
+# ===========================================================================
+
+
+class TestHomogeneousCoordinates:
+    """Transform 4-vectors: [x,y,z,1] for points, [x,y,z,0] for vectors."""
+
+    def test_homogeneous_point_w1(self) -> None:
+        """w=1 should behave like apply_point."""
+        T = RigidTransform.from_rotation_translation(
+            np.eye(3), [1, 2, 3], source="a", target="b"
+        )
+        ph = np.array([10.0, 20.0, 30.0, 1.0])
+        result = T.apply_homogeneous(ph)
+        np.testing.assert_allclose(result, [11, 22, 33, 1], atol=ATOL)
+
+    def test_homogeneous_vector_w0(self) -> None:
+        """w=0 should behave like apply_vector (no translation)."""
+        T = RigidTransform.from_rotation_translation(
+            np.eye(3), [100, 200, 300], source="a", target="b"
+        )
+        vh = np.array([1.0, 0.0, 0.0, 0.0])
+        result = T.apply_homogeneous(vh)
+        np.testing.assert_allclose(result, [1, 0, 0, 0], atol=ATOL)
+
+    def test_homogeneous_rotation_point(self) -> None:
+        angle = math.pi / 2
+        c, s = math.cos(angle), math.sin(angle)
+        R = np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]])
+        T = RigidTransform.from_rotation_translation(
+            R, [1, 0, 0], source="a", target="b"
+        )
+        # Point [1,0,0,1] -> R@[1,0,0]+[1,0,0] = [0,1,0]+[1,0,0] = [1,1,0,1]
+        result = T.apply_homogeneous(np.array([1.0, 0.0, 0.0, 1.0]))
+        np.testing.assert_allclose(result, [1, 1, 0, 1], atol=ATOL)
+
+    def test_homogeneous_rotation_vector(self) -> None:
+        angle = math.pi / 2
+        c, s = math.cos(angle), math.sin(angle)
+        R = np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]])
+        T = RigidTransform.from_rotation_translation(
+            R, [1, 0, 0], source="a", target="b"
+        )
+        # Vector [1,0,0,0] -> R@[1,0,0] = [0,1,0,0] (no translation!)
+        result = T.apply_homogeneous(np.array([1.0, 0.0, 0.0, 0.0]))
+        np.testing.assert_allclose(result, [0, 1, 0, 0], atol=ATOL)
+
+    def test_homogeneous_wrong_shape(self) -> None:
+        T = RigidTransform.identity("a")
+        with pytest.raises(Exception):
+            T.apply_homogeneous(np.array([1, 2, 3]))
+
+    def test_homogeneous_batch(self) -> None:
+        """Batch Nx4 homogeneous transform."""
+        T = RigidTransform.from_rotation_translation(
+            np.eye(3), [1, 2, 3], source="a", target="b"
+        )
+        phs = np.array([
+            [1, 0, 0, 1],  # point
+            [0, 1, 0, 1],  # point
+            [1, 0, 0, 0],  # vector
+            [0, 1, 0, 0],  # vector
+        ], dtype=float)
+        result = T.apply_homogeneous_batch(phs)
+        expected = np.array([
+            [2, 2, 3, 1],
+            [1, 3, 3, 1],
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+        ], dtype=float)
+        np.testing.assert_allclose(result, expected, atol=ATOL)
+
+    def test_homogeneous_batch_wrong_shape(self) -> None:
+        T = RigidTransform.identity("a")
+        with pytest.raises(Exception):
+            T.apply_homogeneous_batch(np.zeros((3, 3)))
+
+    def test_homogeneous_batch_consistent_with_single(self) -> None:
+        R = Rotation.from_euler(0.3, 0.5, 0.7, "xyz").as_rotation_matrix()
+        T = RigidTransform.from_rotation_translation(
+            R, [1, 2, 3], source="a", target="b"
+        )
+        rng = np.random.default_rng(77)
+        phs = rng.standard_normal((8, 3))
+        # Add w column: alternate points and vectors
+        w = np.array([1, 0, 1, 0, 1, 0, 1, 0], dtype=float)
+        phs_h = np.column_stack([phs, w])
+        batch_result = T.apply_homogeneous_batch(phs_h)
+        for i in range(8):
+            single = T.apply_homogeneous(phs_h[i])
+            np.testing.assert_allclose(batch_result[i], single, atol=ATOL)
+
+
+# ===========================================================================
+# Batch twist/wrench conversions (motion data vectors)
+# ===========================================================================
+
+
+class TestBatchTwistWrenchConversions:
+    """Convert Nx6 arrays of twists and wrenches between frames."""
+
+    @pytest.fixture()
+    def transform(self) -> RigidTransform:
+        R = Rotation.from_euler(0.3, 0.5, 0.7, "xyz").as_rotation_matrix()
+        p = np.array([1.0, 2.0, 3.0])
+        return RigidTransform.from_rotation_translation(
+            R, p, source="body", target="space"
+        )
+
+    def test_body_to_space_twists_batch(self, transform: RigidTransform) -> None:
+        rng = np.random.default_rng(42)
+        Vb_batch = rng.standard_normal((5, 6))
+        Vs_batch = transform.body_to_space_twists(Vb_batch)
+        assert Vs_batch.shape == (5, 6)
+        # Verify matches single conversion
+        for i in range(5):
+            Vs_single = transform.body_to_space_twist(Vb_batch[i])
+            np.testing.assert_allclose(Vs_batch[i], Vs_single, atol=ATOL)
+
+    def test_space_to_body_twists_batch(self, transform: RigidTransform) -> None:
+        rng = np.random.default_rng(43)
+        Vs_batch = rng.standard_normal((5, 6))
+        Vb_batch = transform.space_to_body_twists(Vs_batch)
+        assert Vb_batch.shape == (5, 6)
+        for i in range(5):
+            Vb_single = transform.space_to_body_twist(Vs_batch[i])
+            np.testing.assert_allclose(Vb_batch[i], Vb_single, atol=ATOL)
+
+    def test_twist_batch_roundtrip(self, transform: RigidTransform) -> None:
+        rng = np.random.default_rng(44)
+        Vb_orig = rng.standard_normal((10, 6))
+        Vs = transform.body_to_space_twists(Vb_orig)
+        Vb_back = transform.space_to_body_twists(Vs)
+        np.testing.assert_allclose(Vb_back, Vb_orig, atol=ATOL)
+
+    def test_body_to_space_wrenches_batch(self, transform: RigidTransform) -> None:
+        rng = np.random.default_rng(45)
+        Fb_batch = rng.standard_normal((5, 6))
+        Fs_batch = transform.body_to_space_wrenches(Fb_batch)
+        assert Fs_batch.shape == (5, 6)
+        for i in range(5):
+            Fs_single = transform.body_to_space_wrench(Fb_batch[i])
+            np.testing.assert_allclose(Fs_batch[i], Fs_single, atol=ATOL)
+
+    def test_space_to_body_wrenches_batch(self, transform: RigidTransform) -> None:
+        rng = np.random.default_rng(46)
+        Fs_batch = rng.standard_normal((5, 6))
+        Fb_batch = transform.space_to_body_wrenches(Fs_batch)
+        assert Fb_batch.shape == (5, 6)
+        for i in range(5):
+            Fb_single = transform.space_to_body_wrench(Fs_batch[i])
+            np.testing.assert_allclose(Fb_batch[i], Fb_single, atol=ATOL)
+
+    def test_wrench_batch_roundtrip(self, transform: RigidTransform) -> None:
+        rng = np.random.default_rng(47)
+        Fb_orig = rng.standard_normal((10, 6))
+        Fs = transform.body_to_space_wrenches(Fb_orig)
+        Fb_back = transform.space_to_body_wrenches(Fs)
+        np.testing.assert_allclose(Fb_back, Fb_orig, atol=ATOL)
+
+    def test_batch_wrong_shape_raises(self, transform: RigidTransform) -> None:
+        with pytest.raises(Exception):
+            transform.body_to_space_twists(np.zeros((3, 4)))
+        with pytest.raises(Exception):
+            transform.space_to_body_twists(np.zeros((3,)))
+
+
+# ===========================================================================
+# Finiteness checks on apply_point / apply_vector
+# ===========================================================================
+
+
+class TestFiniteChecks:
+    """apply_point and apply_vector reject NaN/Inf inputs."""
+
+    def test_apply_point_nan(self) -> None:
+        T = RigidTransform.identity("a")
+        with pytest.raises(Exception):
+            T.apply_point(np.array([1.0, float("nan"), 0.0]))
+
+    def test_apply_point_inf(self) -> None:
+        T = RigidTransform.identity("a")
+        with pytest.raises(Exception):
+            T.apply_point(np.array([1.0, float("inf"), 0.0]))
+
+    def test_apply_vector_nan(self) -> None:
+        T = RigidTransform.identity("a")
+        with pytest.raises(Exception):
+            T.apply_vector(np.array([float("nan"), 0.0, 0.0]))
+
+    def test_apply_vector_inf(self) -> None:
+        T = RigidTransform.identity("a")
+        with pytest.raises(Exception):
+            T.apply_vector(np.array([0.0, 0.0, float("inf")]))

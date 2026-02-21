@@ -363,7 +363,11 @@ class RigidTransform:
         return homogeneous_to_twist_angle(self._T)
 
     def as_screw(self) -> dict[str, Any]:
-        """Return screw axis parameters {axis, point, pitch, theta}."""
+        """Return screw axis parameters {axis, point, pitch, theta}.
+
+        For the identity transform (theta ~ 0), returns a conventional
+        default axis of [1, 0, 0] with zero pitch and angle.
+        """
         twist, theta = self.as_twist()
         if abs(theta) < 1e-12 and np.linalg.norm(twist) < 1e-12:
             return {
@@ -450,6 +454,7 @@ class RigidTransform:
         """
         point = np.asarray(point, dtype=float)
         require(point.shape == (3,), "point must have 3 elements", point.shape)
+        require_finite(point, "point")
         return self._T[:3, :3] @ point + self._T[:3, 3]
 
     def apply_vector(self, vector: Any) -> np.ndarray:
@@ -465,6 +470,7 @@ class RigidTransform:
         """
         vector = np.asarray(vector, dtype=float)
         require(vector.shape == (3,), "vector must have 3 elements", vector.shape)
+        require_finite(vector, "vector")
         return self._T[:3, :3] @ vector
 
     def apply_points(self, points: Any) -> np.ndarray:
@@ -484,17 +490,77 @@ class RigidTransform:
         )
         return (self._T[:3, :3] @ points.T).T + self._T[:3, 3]
 
+    def apply_vectors(self, vectors: Any) -> np.ndarray:
+        """Transform a batch of 3D direction vectors (Nx3).
+
+        Translation is NOT applied — only the rotation is used.
+        This is the batch equivalent of ``apply_vector()``.
+
+        Args:
+            vectors: Nx3 array of direction vectors in the source frame.
+
+        Returns:
+            Nx3 array of direction vectors in the target frame.
+        """
+        vectors = np.asarray(vectors, dtype=float)
+        require(
+            vectors.ndim == 2 and vectors.shape[1] == 3,
+            "vectors must be Nx3",
+            vectors.shape,
+        )
+        return (self._T[:3, :3] @ vectors.T).T
+
+    def apply_homogeneous(self, ph: Any) -> np.ndarray:
+        """Transform a 4-vector in homogeneous coordinates.
+
+        The w-component distinguishes points from vectors:
+        - ``[x, y, z, 1]`` (point): result = R @ p + t, with w=1
+        - ``[x, y, z, 0]`` (vector): result = R @ v, with w=0
+
+        This is the standard robotics convention for uniformly handling
+        both points and direction vectors with a single 4x4 multiply.
+
+        Args:
+            ph: 4-vector ``[x, y, z, w]``.
+
+        Returns:
+            Transformed 4-vector.
+        """
+        ph = np.asarray(ph, dtype=float)
+        require(ph.shape == (4,), "homogeneous vector must have 4 elements", ph.shape)
+        return self._T @ ph
+
+    def apply_homogeneous_batch(self, phs: Any) -> np.ndarray:
+        """Transform a batch of 4-vectors in homogeneous coordinates (Nx4).
+
+        Each row ``[x, y, z, w]``: use w=1 for points, w=0 for vectors.
+
+        Args:
+            phs: Nx4 array of homogeneous coordinates.
+
+        Returns:
+            Nx4 array of transformed homogeneous coordinates.
+        """
+        phs = np.asarray(phs, dtype=float)
+        require(
+            phs.ndim == 2 and phs.shape[1] == 4,
+            "homogeneous batch must be Nx4",
+            phs.shape,
+        )
+        return (self._T @ phs.T).T
+
     # ── Body / Space twist conversions ────────────────────────────
 
     def body_twist(self) -> np.ndarray:
         """Return the body-frame twist Vb such that T = exp([Vb]).
 
-        The body twist is the twist expressed in the moving (body) frame.
-        Computed as: [Vb] = T^{-1} dT, or equivalently from MatrixLog6(T)
-        expressed as the right-invariant quantity.
+        Returns the full Lie algebra element with theta embedded (not a
+        unit twist).  Use ``as_twist()`` for the (unit_twist, theta) pair.
+
+        The body twist is the right-invariant velocity: [Vb] = log(T).
 
         Returns:
-            6-vector [omega_b; v_b].
+            6-vector [omega_b; v_b] (theta embedded in magnitude).
         """
         from rotation_converter.modern_robotics import MatrixLog6, se3ToVec
 
@@ -504,11 +570,13 @@ class RigidTransform:
     def space_twist(self) -> np.ndarray:
         """Return the space-frame twist Vs such that T = exp([Vs]).
 
-        The space twist is the twist expressed in the fixed (space) frame.
-        Vs = Ad_T @ Vb.
+        Returns the full Lie algebra element with theta embedded (not a
+        unit twist).  Use ``as_twist()`` for the (unit_twist, theta) pair.
+
+        Vs = Ad_T @ Vb where Vb = body_twist().
 
         Returns:
-            6-vector [omega_s; v_s].
+            6-vector [omega_s; v_s] (theta embedded in magnitude).
         """
         Vb = self.body_twist()
         Ad = adjoint_representation(self._T)
@@ -543,13 +611,52 @@ class RigidTransform:
         """
         Vs = np.asarray(Vs, dtype=float)
         require(Vs.shape == (6,), "space twist must have 6 elements", Vs.shape)
-        T_inv = np.eye(4)
-        R = self._T[:3, :3]
-        p = self._T[:3, 3]
-        T_inv[:3, :3] = R.T
-        T_inv[:3, 3] = -R.T @ p
-        Ad_inv = adjoint_representation(T_inv)
+        Ad_inv = adjoint_representation(self.inverse().as_matrix())
         return Ad_inv @ Vs
+
+    # ── Batch twist conversions (motion data vectors) ─────────────
+
+    def body_to_space_twists(self, Vb_batch: Any) -> np.ndarray:
+        """Convert a batch of twists from body frame to space frame (Nx6).
+
+        Vectorized version of ``body_to_space_twist()`` for efficiently
+        converting time-series of motion data.
+
+        Args:
+            Vb_batch: Nx6 array of body-frame twists.
+
+        Returns:
+            Nx6 array of space-frame twists.
+        """
+        Vb_batch = np.asarray(Vb_batch, dtype=float)
+        require(
+            Vb_batch.ndim == 2 and Vb_batch.shape[1] == 6,
+            "twist batch must be Nx6",
+            Vb_batch.shape,
+        )
+        Ad = adjoint_representation(self._T)
+        return (Ad @ Vb_batch.T).T
+
+    def space_to_body_twists(self, Vs_batch: Any) -> np.ndarray:
+        """Convert a batch of twists from space frame to body frame (Nx6).
+
+        Vectorized version of ``space_to_body_twist()`` for efficiently
+        converting time-series of motion data.
+
+        Args:
+            Vs_batch: Nx6 array of space-frame twists.
+
+        Returns:
+            Nx6 array of body-frame twists.
+        """
+        Vs_batch = np.asarray(Vs_batch, dtype=float)
+        require(
+            Vs_batch.ndim == 2 and Vs_batch.shape[1] == 6,
+            "twist batch must be Nx6",
+            Vs_batch.shape,
+        )
+        Ad_inv = adjoint_representation(self.inverse().as_matrix())
+        return (Ad_inv @ Vs_batch.T).T
 
     # ── Wrench transformations (co-adjoint) ───────────────────────
 
@@ -567,12 +674,7 @@ class RigidTransform:
         """
         Fb = np.asarray(Fb, dtype=float)
         require(Fb.shape == (6,), "body wrench must have 6 elements", Fb.shape)
-        T_inv = np.eye(4)
-        R = self._T[:3, :3]
-        p = self._T[:3, 3]
-        T_inv[:3, :3] = R.T
-        T_inv[:3, 3] = -R.T @ p
-        Ad_inv = adjoint_representation(T_inv)
+        Ad_inv = adjoint_representation(self.inverse().as_matrix())
         return Ad_inv.T @ Fb
 
     def space_to_body_wrench(self, Fs: Any) -> np.ndarray:
@@ -590,6 +692,50 @@ class RigidTransform:
         require(Fs.shape == (6,), "space wrench must have 6 elements", Fs.shape)
         Ad = adjoint_representation(self._T)
         return Ad.T @ Fs
+
+    # ── Batch wrench conversions (motion data vectors) ────────────
+
+    def body_to_space_wrenches(self, Fb_batch: Any) -> np.ndarray:
+        """Convert a batch of wrenches from body frame to space frame (Nx6).
+
+        Vectorized version of ``body_to_space_wrench()`` for efficiently
+        converting time-series of force/torque data.
+
+        Args:
+            Fb_batch: Nx6 array of body-frame wrenches.
+
+        Returns:
+            Nx6 array of space-frame wrenches.
+        """
+        Fb_batch = np.asarray(Fb_batch, dtype=float)
+        require(
+            Fb_batch.ndim == 2 and Fb_batch.shape[1] == 6,
+            "wrench batch must be Nx6",
+            Fb_batch.shape,
+        )
+        Ad_inv = adjoint_representation(self.inverse().as_matrix())
+        return (Ad_inv.T @ Fb_batch.T).T
+
+    def space_to_body_wrenches(self, Fs_batch: Any) -> np.ndarray:
+        """Convert a batch of wrenches from space frame to body frame (Nx6).
+
+        Vectorized version of ``space_to_body_wrench()`` for efficiently
+        converting time-series of force/torque data.
+
+        Args:
+            Fs_batch: Nx6 array of space-frame wrenches.
+
+        Returns:
+            Nx6 array of body-frame wrenches.
+        """
+        Fs_batch = np.asarray(Fs_batch, dtype=float)
+        require(
+            Fs_batch.ndim == 2 and Fs_batch.shape[1] == 6,
+            "wrench batch must be Nx6",
+            Fs_batch.shape,
+        )
+        Ad = adjoint_representation(self._T)
+        return (Ad.T @ Fs_batch.T).T
 
     # ── Dunder methods ────────────────────────────────────────────
 
