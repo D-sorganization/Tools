@@ -54,19 +54,25 @@ class TestSO3Helpers:
     def test_VecToso3_basic(self) -> None:
         omega = np.array([1.0, 2.0, 3.0])
         result = VecToso3(omega)
-        expected = np.array([
-            [0, -3, 2],
-            [3, 0, -1],
-            [-2, 1, 0],
-        ], dtype=float)
+        expected = np.array(
+            [
+                [0, -3, 2],
+                [3, 0, -1],
+                [-2, 1, 0],
+            ],
+            dtype=float,
+        )
         np.testing.assert_allclose(result, expected, atol=ATOL)
 
     def test_so3ToVec_basic(self) -> None:
-        M = np.array([
-            [0, -3, 2],
-            [3, 0, -1],
-            [-2, 1, 0],
-        ], dtype=float)
+        M = np.array(
+            [
+                [0, -3, 2],
+                [3, 0, -1],
+                [-2, 1, 0],
+            ],
+            dtype=float,
+        )
         result = so3ToVec(M)
         np.testing.assert_allclose(result, [1, 2, 3], atol=ATOL)
 
@@ -83,11 +89,14 @@ class TestSO3Helpers:
         omega_hat = VecToso3(np.array([0, 0, 1]))
         theta = math.pi / 2
         R = MatrixExp3(omega_hat * theta)
-        expected = np.array([
-            [0, -1, 0],
-            [1, 0, 0],
-            [0, 0, 1],
-        ], dtype=float)
+        expected = np.array(
+            [
+                [0, -1, 0],
+                [1, 0, 0],
+                [0, 0, 1],
+            ],
+            dtype=float,
+        )
         np.testing.assert_allclose(R, expected, atol=ATOL)
 
     def test_MatrixExp3_result_is_SO3(self) -> None:
@@ -113,11 +122,14 @@ class TestSO3Helpers:
 
     def test_MatrixLog3_180deg(self) -> None:
         """180-degree rotation about z-axis."""
-        R = np.array([
-            [-1, 0, 0],
-            [0, -1, 0],
-            [0, 0, 1],
-        ], dtype=float)
+        R = np.array(
+            [
+                [-1, 0, 0],
+                [0, -1, 0],
+                [0, 0, 1],
+            ],
+            dtype=float,
+        )
         log_R = MatrixLog3(R)
         R_back = MatrixExp3(log_R)
         np.testing.assert_allclose(R_back, R, atol=ATOL)
@@ -158,11 +170,14 @@ class TestSE3Helpers:
         V = np.array([0, 0, 1, 0, 0, 0], dtype=float)
         se3 = VecTose3(V) * (math.pi / 2)
         T = MatrixExp6(se3)
-        expected_R = np.array([
-            [0, -1, 0],
-            [1, 0, 0],
-            [0, 0, 1],
-        ], dtype=float)
+        expected_R = np.array(
+            [
+                [0, -1, 0],
+                [1, 0, 0],
+                [0, 0, 1],
+            ],
+            dtype=float,
+        )
         np.testing.assert_allclose(T[:3, :3], expected_R, atol=ATOL)
         np.testing.assert_allclose(T[:3, 3], [0, 0, 0], atol=ATOL)
 
@@ -245,24 +260,31 @@ class TestForwardKinematics:
         """
         L1, L2 = 1.0, 1.0
         # Home configuration: arm fully extended along x
-        M = np.array([
-            [1, 0, 0, L1 + L2],
-            [0, 1, 0, 0],
-            [0, 0, 1, 0],
-            [0, 0, 0, 1],
-        ], dtype=float)
+        M = np.array(
+            [
+                [1, 0, 0, L1 + L2],
+                [0, 1, 0, 0],
+                [0, 0, 1, 0],
+                [0, 0, 0, 1],
+            ],
+            dtype=float,
+        )
 
         # Space-form screw axes (at home position)
-        Slist = np.array([
-            [0, 0, 1, 0, 0, 0],       # Joint 1: rotate about z at origin
-            [0, 0, 1, 0, -L1, 0],     # Joint 2: rotate about z at (L1, 0, 0)
-        ]).T  # 6 x n
+        Slist = np.array(
+            [
+                [0, 0, 1, 0, 0, 0],  # Joint 1: rotate about z at origin
+                [0, 0, 1, 0, -L1, 0],  # Joint 2: rotate about z at (L1, 0, 0)
+            ]
+        ).T  # 6 x n
 
         # Body-form screw axes
-        Blist = np.array([
-            [0, 0, 1, 0, L1 + L2, 0],  # Joint 1 in body frame
-            [0, 0, 1, 0, L2, 0],       # Joint 2 in body frame
-        ]).T  # 6 x n
+        Blist = np.array(
+            [
+                [0, 0, 1, 0, L1 + L2, 0],  # Joint 1 in body frame
+                [0, 0, 1, 0, L2, 0],  # Joint 2 in body frame
+            ]
+        ).T  # 6 x n
 
         return {"M": M, "Slist": Slist, "Blist": Blist, "L1": L1, "L2": L2}
 
@@ -293,12 +315,8 @@ class TestForwardKinematics:
     def test_FKinSpace_FKinBody_agree(self, simple_2r_robot: dict) -> None:
         """Space and body FK should give the same SE(3) result."""
         thetalist = np.array([0.3, -0.7])
-        T_space = FKinSpace(
-            simple_2r_robot["M"], simple_2r_robot["Slist"], thetalist
-        )
-        T_body = FKinBody(
-            simple_2r_robot["M"], simple_2r_robot["Blist"], thetalist
-        )
+        T_space = FKinSpace(simple_2r_robot["M"], simple_2r_robot["Slist"], thetalist)
+        T_body = FKinBody(simple_2r_robot["M"], simple_2r_robot["Blist"], thetalist)
         np.testing.assert_allclose(T_space, T_body, atol=ATOL)
 
     def test_FKinSpace_both_joints_90deg(self, simple_2r_robot: dict) -> None:
@@ -327,20 +345,27 @@ class TestJacobians:
     @pytest.fixture
     def simple_2r_robot(self) -> dict:
         L1, L2 = 1.0, 1.0
-        M = np.array([
-            [1, 0, 0, L1 + L2],
-            [0, 1, 0, 0],
-            [0, 0, 1, 0],
-            [0, 0, 0, 1],
-        ], dtype=float)
-        Slist = np.array([
-            [0, 0, 1, 0, 0, 0],
-            [0, 0, 1, 0, -L1, 0],
-        ]).T
-        Blist = np.array([
-            [0, 0, 1, 0, L1 + L2, 0],
-            [0, 0, 1, 0, L2, 0],
-        ]).T
+        M = np.array(
+            [
+                [1, 0, 0, L1 + L2],
+                [0, 1, 0, 0],
+                [0, 0, 1, 0],
+                [0, 0, 0, 1],
+            ],
+            dtype=float,
+        )
+        Slist = np.array(
+            [
+                [0, 0, 1, 0, 0, 0],
+                [0, 0, 1, 0, -L1, 0],
+            ]
+        ).T
+        Blist = np.array(
+            [
+                [0, 0, 1, 0, L1 + L2, 0],
+                [0, 0, 1, 0, L2, 0],
+            ]
+        ).T
         return {"M": M, "Slist": Slist, "Blist": Blist}
 
     def test_JacobianSpace_at_zero(self, simple_2r_robot: dict) -> None:
@@ -379,20 +404,27 @@ class TestInverseKinematics:
     @pytest.fixture
     def simple_2r_robot(self) -> dict:
         L1, L2 = 1.0, 1.0
-        M = np.array([
-            [1, 0, 0, L1 + L2],
-            [0, 1, 0, 0],
-            [0, 0, 1, 0],
-            [0, 0, 0, 1],
-        ], dtype=float)
-        Blist = np.array([
-            [0, 0, 1, 0, L1 + L2, 0],
-            [0, 0, 1, 0, L2, 0],
-        ]).T
-        Slist = np.array([
-            [0, 0, 1, 0, 0, 0],
-            [0, 0, 1, 0, -L1, 0],
-        ]).T
+        M = np.array(
+            [
+                [1, 0, 0, L1 + L2],
+                [0, 1, 0, 0],
+                [0, 0, 1, 0],
+                [0, 0, 0, 1],
+            ],
+            dtype=float,
+        )
+        Blist = np.array(
+            [
+                [0, 0, 1, 0, L1 + L2, 0],
+                [0, 0, 1, 0, L2, 0],
+            ]
+        ).T
+        Slist = np.array(
+            [
+                [0, 0, 1, 0, 0, 0],
+                [0, 0, 1, 0, -L1, 0],
+            ]
+        ).T
         return {"M": M, "Blist": Blist, "Slist": Slist}
 
     def test_IKinBody_reaches_home(self, simple_2r_robot: dict) -> None:
@@ -409,19 +441,20 @@ class TestInverseKinematics:
         )
         assert success
         # Verify by forward kinematics
-        T_achieved = FKinBody(
-            simple_2r_robot["M"], simple_2r_robot["Blist"], result
-        )
+        T_achieved = FKinBody(simple_2r_robot["M"], simple_2r_robot["Blist"], result)
         np.testing.assert_allclose(T_achieved[:3, 3], T_desired[:3, 3], atol=1e-4)
 
     def test_IKinBody_reaches_known_config(self, simple_2r_robot: dict) -> None:
         """IK for end-effector at (0, 2, 0) -> joint1=pi/2, joint2=0."""
-        T_desired = np.array([
-            [0, -1, 0, 0],
-            [1, 0, 0, 2],
-            [0, 0, 1, 0],
-            [0, 0, 0, 1],
-        ], dtype=float)
+        T_desired = np.array(
+            [
+                [0, -1, 0, 0],
+                [1, 0, 0, 2],
+                [0, 0, 1, 0],
+                [0, 0, 0, 1],
+            ],
+            dtype=float,
+        )
         thetalist0 = np.array([1.0, 0.5])
         result, success = IKinBody(
             simple_2r_robot["Blist"],
@@ -432,17 +465,13 @@ class TestInverseKinematics:
             ev=1e-6,
         )
         assert success
-        T_achieved = FKinBody(
-            simple_2r_robot["M"], simple_2r_robot["Blist"], result
-        )
+        T_achieved = FKinBody(simple_2r_robot["M"], simple_2r_robot["Blist"], result)
         np.testing.assert_allclose(T_achieved[:3, 3], [0, 2, 0], atol=1e-4)
 
     def test_IKinBody_FK_roundtrip(self, simple_2r_robot: dict) -> None:
         """FK -> IK -> FK should recover original end-effector pose."""
         theta_orig = np.array([0.3, -0.5])
-        T_desired = FKinBody(
-            simple_2r_robot["M"], simple_2r_robot["Blist"], theta_orig
-        )
+        T_desired = FKinBody(simple_2r_robot["M"], simple_2r_robot["Blist"], theta_orig)
         thetalist0 = np.array([0.0, 0.0])
         result, success = IKinBody(
             simple_2r_robot["Blist"],
@@ -453,9 +482,7 @@ class TestInverseKinematics:
             ev=1e-6,
         )
         assert success
-        T_achieved = FKinBody(
-            simple_2r_robot["M"], simple_2r_robot["Blist"], result
-        )
+        T_achieved = FKinBody(simple_2r_robot["M"], simple_2r_robot["Blist"], result)
         np.testing.assert_allclose(T_achieved, T_desired, atol=1e-4)
 
 
@@ -546,9 +573,7 @@ class TestRandomMRRoundTrips:
         np.testing.assert_allclose(T_back, T, atol=1e-9)
 
     @pytest.mark.parametrize("trial", range(10))
-    def test_TransInv_random(
-        self, rng: np.random.Generator, trial: int
-    ) -> None:
+    def test_TransInv_random(self, rng: np.random.Generator, trial: int) -> None:
         omega = rng.normal(size=3)
         omega = omega / np.linalg.norm(omega)
         theta = rng.uniform(0.1, 2.0)

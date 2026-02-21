@@ -27,8 +27,7 @@ import math
 from typing import Any
 
 import numpy as np
-
-from contracts import ensure, require, require_finite
+from contracts import ensure, require
 
 # ---------------------------------------------------------------------------
 # Internal helpers (DRY — shared across multiple functions)
@@ -56,11 +55,13 @@ def VecToso3(omega: Any) -> np.ndarray:
     """
     omega = np.asarray(omega, dtype=float)
     require(omega.shape == (3,), "omega must have 3 elements", omega.shape)
-    return np.array([
-        [0, -omega[2], omega[1]],
-        [omega[2], 0, -omega[0]],
-        [-omega[1], omega[0], 0],
-    ])
+    return np.array(
+        [
+            [0, -omega[2], omega[1]],
+            [omega[2], 0, -omega[0]],
+            [-omega[1], omega[0], 0],
+        ]
+    )
 
 
 def so3ToVec(so3mat: Any) -> np.ndarray:
@@ -326,8 +327,7 @@ def MatrixLog6(T: Any) -> np.ndarray:
     G_inv = (
         np.eye(3) / theta
         - omega_hat / 2.0
-        + (1.0 / theta - 1.0 / (2.0 * math.tan(theta / 2.0)))
-        * (omega_hat @ omega_hat)
+        + (1.0 / theta - 1.0 / (2.0 * math.tan(theta / 2.0))) * (omega_hat @ omega_hat)
     )
 
     result[:3, :3] = omega_mat
@@ -519,12 +519,12 @@ def IKinBody(
 
 def _cubic_time_scaling(t: float) -> float:
     """Cubic polynomial time scaling s(t) with s(0)=0, s(1)=1."""
-    return 3.0 * t ** 2 - 2.0 * t ** 3
+    return 3.0 * t**2 - 2.0 * t**3
 
 
 def _quintic_time_scaling(t: float) -> float:
     """Quintic polynomial time scaling s(t) with s(0)=0, s(1)=1."""
-    return 10.0 * t ** 3 - 15.0 * t ** 4 + 6.0 * t ** 5
+    return 10.0 * t**3 - 15.0 * t**4 + 6.0 * t**5
 
 
 def ScrewTrajectory(
