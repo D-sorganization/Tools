@@ -23,7 +23,6 @@ import math
 from dataclasses import dataclass, field
 from typing import Any, Protocol, runtime_checkable
 
-
 # ---------------------------------------------------------------------------
 # Data classes
 # ---------------------------------------------------------------------------
@@ -182,21 +181,15 @@ class InputValidator:
             raise ValueError(f"{name} must be positive, got {value}")
 
     @staticmethod
-    def require_in_range(
-        name: str, value: float, low: float, high: float
-    ) -> None:
+    def require_in_range(name: str, value: float, low: float, high: float) -> None:
         """Raise :class:`ValueError` if *value* is outside [*low*, *high*]."""
         if value < low or value > high:
-            raise ValueError(
-                f"{name} must be in range [{low}, {high}], got {value}"
-            )
+            raise ValueError(f"{name} must be in range [{low}, {high}], got {value}")
 
     # -- dict checks -------------------------------------------------------
 
     @staticmethod
-    def require_keys(
-        inputs: dict[str, Any], required_keys: set[str]
-    ) -> None:
+    def require_keys(inputs: dict[str, Any], required_keys: set[str]) -> None:
         """Raise :class:`ValueError` if any *required_keys* are missing."""
         missing = required_keys - set(inputs)
         if missing:
@@ -208,9 +201,7 @@ class InputValidator:
     def validate_temperature(value: float) -> None:
         """Temperature must be > 0 K (absolute zero excluded)."""
         if value <= 0:
-            raise ValueError(
-                f"Temperature must be > 0 K, got {value}"
-            )
+            raise ValueError(f"Temperature must be > 0 K, got {value}")
 
     @staticmethod
     def validate_pressure(value: float) -> None:
@@ -229,12 +220,8 @@ class InputValidator:
         for species, fraction in composition.items():
             if fraction < 0:
                 raise ValueError(
-                    f"Composition fraction for '{species}' is negative: "
-                    f"{fraction}"
+                    f"Composition fraction for '{species}' is negative: " f"{fraction}"
                 )
         total = math.fsum(composition.values())
         if abs(total - 1.0) > tolerance:
-            raise ValueError(
-                f"Composition fractions must sum to 1.0 "
-                f"(got {total})"
-            )
+            raise ValueError(f"Composition fractions must sum to 1.0 " f"(got {total})")

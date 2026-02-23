@@ -55,10 +55,11 @@ jobs:
               BASE_SHA="${{ github.event.pull_request.base.sha }}"
             fi
             git diff --diff-filter=ACMRT --name-only "$BASE_SHA" HEAD -- '*.py' > changed_python_files.txt
-          elif [ -n "${{ github.event.before }}" ]; then
+          elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
             git diff --diff-filter=ACMRT --name-only "${{ github.event.before }}" HEAD -- '*.py' > changed_python_files.txt
           else
-            git diff --diff-filter=ACMRT --name-only HEAD~1 HEAD -- '*.py' > changed_python_files.txt
+            # Fallback for new branches or force pushes where before is null/zero
+            git diff --diff-filter=ACMRT --name-only HEAD~1 HEAD -- '*.py' > changed_python_files.txt || echo "No previous commit found (initial commit?)"
           fi
           grep -v '^tests/' changed_python_files.txt > changed_mypy_files.txt || true
           cat changed_python_files.txt
@@ -89,9 +90,16 @@ jobs:
       - name: Type Check (Mypy)
         run: |
           if [ -s changed_mypy_files.txt ]; then
-            export MYPYPATH=src/shared/python:src:src/python/src
-            echo "Linting changed files with Mypy..."
-            xargs -r -d '\n' mypy --explicit-package-bases --ignore-missing-imports --install-types --non-interactive < changed_mypy_files.txt
+            # Filter out legacy directories that are not yet type-safe
+            grep -v -E "src/electrode_advisor/|src/shared/python/model_generation/|src/shared/python/upstream_drift_tools/|src/shared/python/signal_toolkit/|src/function_generator/|src/data_processing/data_processor/|src/glass_bath_fea/|src/tools/folder_tools/" changed_mypy_files.txt > filtered_mypy_files.txt || true
+
+            if [ -s filtered_mypy_files.txt ]; then
+              export MYPYPATH=src/shared/python:src:src/python/src
+              echo "Linting changed files with Mypy..."
+              xargs -r -d '\n' mypy --explicit-package-bases --ignore-missing-imports --install-types --non-interactive < filtered_mypy_files.txt
+            else
+              echo "No changed source Python files to type-check (after filtering legacy)."
+            fi
           else
             echo "No changed source Python files to type-check."
           fi

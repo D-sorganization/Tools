@@ -115,7 +115,8 @@ class ProcessingMixin(AnalysisMixin, ArchiveMixin, UIProcessingMixin):
                 return False
         except OSError as e:
             messagebox.showerror(
-                "Error", f"An error occurred during bulk unzip: {e}",
+                "Error",
+                f"An error occurred during bulk unzip: {e}",
             )
             return False
         return True
@@ -137,13 +138,12 @@ class ProcessingMixin(AnalysisMixin, ArchiveMixin, UIProcessingMixin):
             return "Main Operation Complete!\n\n" + "\n".join(main_op_log)
         except OSError as e:
             messagebox.showerror(
-                "Error", f"An error occurred during the main operation: {e}",
+                "Error",
+                f"An error occurred during the main operation: {e}",
             )
             return None
 
-    def _run_post_processing(
-        self, final_summary: str, backup_path: str | None
-    ) -> str:
+    def _run_post_processing(self, final_summary: str, backup_path: str | None) -> str:
         """Run post-processing steps (dedup, zip, backup note)."""
         if self.deduplicate_var.get():
             try:

@@ -350,10 +350,14 @@ class ResultsPanel(QWidget):
         self.flows_table.setRowCount(n_comp + 1)
 
         flow_columns = [
-            results.flows.fresh_feed, results.flows.mixed_feed,
-            results.flows.exhaust, results.flows.interstage,
-            results.flows.s2_tail, results.flows.s2_tail_recycle,
-            results.flows.gross_product, results.flows.net_product,
+            results.flows.fresh_feed,
+            results.flows.mixed_feed,
+            results.flows.exhaust,
+            results.flows.interstage,
+            results.flows.s2_tail,
+            results.flows.s2_tail_recycle,
+            results.flows.gross_product,
+            results.flows.net_product,
         ]
 
         for i, name in enumerate(results.component_names):
@@ -366,10 +370,14 @@ class ResultsPanel(QWidget):
         # Totals row
         self.flows_table.setItem(n_comp, 0, QTableWidgetItem("TOTAL"))
         totals = [
-            results.total_feed_scfm, np.sum(results.flows.mixed_feed),
-            results.total_exhaust_scfm, np.sum(results.flows.interstage),
-            np.sum(results.flows.s2_tail), np.sum(results.flows.s2_tail_recycle),
-            np.sum(results.flows.gross_product), results.total_net_product_scfm,
+            results.total_feed_scfm,
+            np.sum(results.flows.mixed_feed),
+            results.total_exhaust_scfm,
+            np.sum(results.flows.interstage),
+            np.sum(results.flows.s2_tail),
+            np.sum(results.flows.s2_tail_recycle),
+            np.sum(results.flows.gross_product),
+            results.total_net_product_scfm,
         ]
         for col_idx, total in enumerate(totals):
             self.flows_table.setItem(
@@ -384,9 +392,12 @@ class ResultsPanel(QWidget):
         self.comp_table.setRowCount(n_comp + 1)
 
         comp_columns = [
-            results.compositions.fresh_feed, results.compositions.mixed_feed,
-            results.compositions.exhaust, results.compositions.interstage,
-            results.compositions.s2_tail, results.compositions.net_product,
+            results.compositions.fresh_feed,
+            results.compositions.mixed_feed,
+            results.compositions.exhaust,
+            results.compositions.interstage,
+            results.compositions.s2_tail,
+            results.compositions.net_product,
         ]
 
         for i, name in enumerate(results.component_names):

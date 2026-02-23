@@ -146,23 +146,27 @@ class ScriptGenerator:
         """Generate the if __name__ == '__main__' block."""
         lines = ["", "if __name__ == '__main__':"]
         if use_argparse:
-            lines.extend([
-                "    args = parse_args()",
-                "    result = process_data(",
-                "        input_path=args.input,",
-                "        output_path=args.output,",
-                "    )",
-                "    logger.info(f'Processing complete. Output shape: {result.shape}')",  # noqa: E501
-            ])
+            lines.extend(
+                [
+                    "    args = parse_args()",
+                    "    result = process_data(",
+                    "        input_path=args.input,",
+                    "        output_path=args.output,",
+                    "    )",
+                    "    logger.info(f'Processing complete. Output shape: {result.shape}')",  # noqa: E501
+                ]
+            )
         else:
-            lines.extend([
-                "    # Configure paths",
-                "    INPUT_PATH = 'input.csv'",
-                "    OUTPUT_PATH = 'output.csv'",
-                "",
-                "    result = process_data(INPUT_PATH, OUTPUT_PATH)",
-                "    print(f'Processing complete. Output shape: {result.shape}')",
-            ])
+            lines.extend(
+                [
+                    "    # Configure paths",
+                    "    INPUT_PATH = 'input.csv'",
+                    "    OUTPUT_PATH = 'output.csv'",
+                    "",
+                    "    result = process_data(INPUT_PATH, OUTPUT_PATH)",
+                    "    print(f'Processing complete. Output shape: {result.shape}')",
+                ]
+            )
         return lines
 
     def generate_cli_command(
@@ -212,9 +216,7 @@ class ScriptGenerator:
         lines: list[str] = []
         lines.extend(self._generate_batch_header(pipeline))
         lines.extend(self._generate_batch_process_func(pipeline))
-        lines.extend(
-            self._generate_batch_main(input_patterns, output_dir, parallel)
-        )
+        lines.extend(self._generate_batch_main(input_patterns, output_dir, parallel))
         return "\n".join(lines)
 
     @staticmethod
@@ -238,9 +240,7 @@ class ScriptGenerator:
             "",
         ]
 
-    def _generate_batch_process_func(
-        self, pipeline: ProcessingPipeline
-    ) -> list[str]:
+    def _generate_batch_process_func(self, pipeline: ProcessingPipeline) -> list[str]:
         """Generate the process_single_file function for batch script."""
         lines = [
             "def process_single_file(input_path: str, output_dir: str) -> str:",
@@ -254,18 +254,20 @@ class ScriptGenerator:
             if step.enabled:
                 lines.extend(self._generate_step_code(step, indent=8))
 
-        lines.extend([
-            "",
-            "        # Save output",
-            "        output_name = Path(input_path).stem + '_processed.csv'",
-            "        output_path = os.path.join(output_dir, output_name)",
-            "        df.to_csv(output_path, index=False)",
-            "        return output_path",
-            "    except Exception as e:",
-            "        print(f'Error processing {input_path}: {e}')",
-            "        return None",
-            "",
-        ])
+        lines.extend(
+            [
+                "",
+                "        # Save output",
+                "        output_name = Path(input_path).stem + '_processed.csv'",
+                "        output_path = os.path.join(output_dir, output_name)",
+                "        df.to_csv(output_path, index=False)",
+                "        return output_path",
+                "    except Exception as e:",
+                "        print(f'Error processing {input_path}: {e}')",
+                "        return None",
+                "",
+            ]
+        )
         return lines
 
     @staticmethod
@@ -291,28 +293,32 @@ class ScriptGenerator:
         ]
 
         if parallel:
-            lines.extend([
-                "    # Process files in parallel",
-                "    with ProcessPoolExecutor() as executor:",
-                "        futures = {",
-                "            executor.submit(process_single_file, f, output_dir): f",  # noqa: E501
-                "            for f in input_files",
-                "        }",
-                "",
-                "        for future in as_completed(futures):",
-                "            input_file = futures[future]",
-                "            result = future.result()",
-                "            if result:",
-                "                print(f'Processed: {input_file} -> {result}')",
-            ])
+            lines.extend(
+                [
+                    "    # Process files in parallel",
+                    "    with ProcessPoolExecutor() as executor:",
+                    "        futures = {",
+                    "            executor.submit(process_single_file, f, output_dir): f",  # noqa: E501
+                    "            for f in input_files",
+                    "        }",
+                    "",
+                    "        for future in as_completed(futures):",
+                    "            input_file = futures[future]",
+                    "            result = future.result()",
+                    "            if result:",
+                    "                print(f'Processed: {input_file} -> {result}')",
+                ]
+            )
         else:
-            lines.extend([
-                "    # Process files sequentially",
-                "    for input_file in input_files:",
-                "        result = process_single_file(input_file, output_dir)",
-                "        if result:",
-                "            print(f'Processed: {input_file} -> {result}')",
-            ])
+            lines.extend(
+                [
+                    "    # Process files sequentially",
+                    "    for input_file in input_files:",
+                    "        result = process_single_file(input_file, output_dir)",
+                    "        if result:",
+                    "            print(f'Processed: {input_file} -> {result}')",
+                ]
+            )
 
         lines.extend(["", "if __name__ == '__main__':", "    main()"])
         return lines
@@ -411,7 +417,9 @@ class ScriptGenerator:
         return imports
 
     def _generate_load_code(
-        self, params: dict, prefix: str,
+        self,
+        params: dict,
+        prefix: str,
     ) -> list[str]:
         """Generate code for a LOAD operation."""
         file_path = params.get("file_path", "input_path")
@@ -426,7 +434,9 @@ class ScriptGenerator:
         return [f"{prefix}df = {reader}({file_path!r})"]
 
     def _generate_filter_code(
-        self, params: dict, prefix: str,
+        self,
+        params: dict,
+        prefix: str,
     ) -> list[str]:
         """Generate code for a FILTER operation."""
         filter_type = params.get("filter_type")
@@ -446,7 +456,9 @@ class ScriptGenerator:
         return lines
 
     def _generate_export_code(
-        self, params: dict, prefix: str,
+        self,
+        params: dict,
+        prefix: str,
     ) -> list[str]:
         """Generate code for an EXPORT operation."""
         file_path = params.get("file_path", "output_path")

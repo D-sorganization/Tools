@@ -7,6 +7,7 @@ A PyQt6 GUI for calculating water content and dew point in syngas systems.
 from __future__ import annotations
 
 import sys
+from typing import Any
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
@@ -352,23 +353,17 @@ class SyngasWaterCalculatorWindow(BaseCalculatorWindow):
         "Medium": "yellow",
     }
 
-    def _display_water_content_results(self, result: object) -> None:
+    def _display_water_content_results(self, result: Any) -> None:
         """Update result labels with calculated water content values."""
-        self.result_labels["mole_fraction"].setText(
-            f"{result.mole_fraction_water:.6f}"  # type: ignore[union-attr]
-        )
-        self.result_labels["mg_nm3"].setText(
-            f"{result.water_content_mg_per_nm3:,.2f}"  # type: ignore[union-attr]
-        )
-        self.result_labels["ppmv"].setText(f"{result.water_content_ppmv:,.1f}")  # type: ignore[union-attr]
-        self.result_labels["g_m3"].setText(f"{result.water_content_g_per_m3:,.4f}")  # type: ignore[union-attr]
+        self.result_labels["mole_fraction"].setText(f"{result.mole_fraction_water:.6f}")
+        self.result_labels["mg_nm3"].setText(f"{result.water_content_mg_per_nm3:,.2f}")
+        self.result_labels["ppmv"].setText(f"{result.water_content_ppmv:,.1f}")
+        self.result_labels["g_m3"].setText(f"{result.water_content_g_per_m3:,.4f}")
         self.result_labels["lb_mmscf"].setText(
-            f"{result.water_content_lb_per_mmscf:,.2f}"  # type: ignore[union-attr]
+            f"{result.water_content_lb_per_mmscf:,.2f}"
         )
-        self.result_labels["vapor_pressure"].setText(
-            f"{result.vapor_pressure_bar:.4f}"  # type: ignore[union-attr]
-        )
-        self.result_labels["dew_point"].setText(f"{result.dew_point_c:.1f}")  # type: ignore[union-attr]
+        self.result_labels["vapor_pressure"].setText(f"{result.vapor_pressure_bar:.4f}")
+        self.result_labels["dew_point"].setText(f"{result.dew_point_c:.1f}")
 
         for key in self.result_labels:
             self.result_labels[key].setStyleSheet(
@@ -395,18 +390,14 @@ class SyngasWaterCalculatorWindow(BaseCalculatorWindow):
         self.risk_label.setStyleSheet(style)
         self.margin_label.setStyleSheet(style)
 
-        self.recommended_temp_label.setText(
-            f"{risk['recommended_temperature_c']:.1f}"
-        )
+        self.recommended_temp_label.setText(f"{risk['recommended_temperature_c']:.1f}")
 
     def _display_calculation_error(self, error: Exception) -> None:
         """Display error state in all result labels."""
         error_msg = f"Error: {error}"
         for label in self.result_labels.values():
             label.setText("--")
-            label.setStyleSheet(
-                f"color: {CATPPUCCIN_MOCHA['red']}; font-weight: bold;"
-            )
+            label.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']}; font-weight: bold;")
         self.margin_label.setText(error_msg[:30])
         self.margin_label.setStyleSheet(
             f"color: {CATPPUCCIN_MOCHA['red']}; font-weight: bold;"

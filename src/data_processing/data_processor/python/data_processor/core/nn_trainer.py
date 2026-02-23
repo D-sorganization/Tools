@@ -357,8 +357,13 @@ class NeuralNetworkTrainer:
                 break
 
         return (
-            train_losses, val_losses, best_val_loss,
-            best_epoch, patience_counter, weights, biases,
+            train_losses,
+            val_losses,
+            best_val_loss,
+            best_epoch,
+            patience_counter,
+            weights,
+            biases,
         )
 
     def _evaluate_test_set(
@@ -382,9 +387,7 @@ class NeuralNetworkTrainer:
         if "X_test" not in data or len(data["X_test"]) == 0:
             return None, None, None
 
-        test_activations = self._forward_pass(
-            data["X_test"], weights, biases, config
-        )
+        test_activations = self._forward_pass(data["X_test"], weights, biases, config)
         predictions = test_activations[-1]
         actual_values = data["y_test"]
         test_loss = float(
@@ -414,12 +417,21 @@ class NeuralNetworkTrainer:
 
         start_time = time.time()
         (
-            train_losses, val_losses, best_val_loss,
-            best_epoch, patience_counter, weights, biases,
+            train_losses,
+            val_losses,
+            best_val_loss,
+            best_epoch,
+            patience_counter,
+            weights,
+            biases,
         ) = self._run_training_loop(
-            data["X_train"], data["y_train"],
-            data["X_val"], data["y_val"],
-            weights, biases, config,
+            data["X_train"],
+            data["y_train"],
+            data["X_val"],
+            data["y_val"],
+            weights,
+            biases,
+            config,
         )
         training_time = time.time() - start_time
 

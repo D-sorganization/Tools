@@ -75,38 +75,58 @@ class VisualizationUpdateMixin:
             self.electrode_canvas.draw()
 
     def _draw_real_geom_layers(
-        self, ax: Any, bath_diameter: float,
-        glass_depth: float, metal_depth: float, refractory_thickness: float,
+        self,
+        ax: Any,
+        bath_diameter: float,
+        glass_depth: float,
+        metal_depth: float,
+        refractory_thickness: float,
     ) -> None:
         """Draw refractory, glass, metal, and shell layers for real geometry."""
         if self.show_refractory_checkbox.isChecked():
             self.visualizer.draw_cylinder(
-                ax, radius=(bath_diameter / 2 + refractory_thickness),
-                height=glass_depth + metal_depth, z0=0, color="#bfa46f",
+                ax,
+                radius=(bath_diameter / 2 + refractory_thickness),
+                height=glass_depth + metal_depth,
+                z0=0,
+                color="#bfa46f",
                 alpha=self.refractory_alpha_slider.value() / 100,
             )
         if self.show_glass_checkbox.isChecked():
             self.visualizer.draw_cylinder(
-                ax, radius=bath_diameter / 2, height=glass_depth,
-                z0=metal_depth, color="#ff8c00",
+                ax,
+                radius=bath_diameter / 2,
+                height=glass_depth,
+                z0=metal_depth,
+                color="#ff8c00",
                 alpha=self.glass_alpha_slider.value() / 100,
             )
         if self.show_metal_checkbox.isChecked():
             self.visualizer.draw_cylinder(
-                ax, radius=bath_diameter / 2, height=metal_depth,
-                z0=0, color="#888888",
+                ax,
+                radius=bath_diameter / 2,
+                height=metal_depth,
+                z0=0,
+                color="#888888",
                 alpha=self.metal_alpha_slider.value() / 100,
             )
         if self.show_metal_shell_checkbox.isChecked():
             self.visualizer.draw_cylinder(
-                ax, radius=(bath_diameter / 2 + refractory_thickness + 1),
-                height=glass_depth + metal_depth, z0=0, color="#444444",
+                ax,
+                radius=(bath_diameter / 2 + refractory_thickness + 1),
+                height=glass_depth + metal_depth,
+                z0=0,
+                color="#444444",
                 alpha=self.metal_shell_alpha_slider.value() / 100,
-                linewidth=1, wireframe=True,
+                linewidth=1,
+                wireframe=True,
             )
 
     def _draw_real_geom_electrodes(
-        self, ax: Any, positions: list[dict], tip_diameter: float,
+        self,
+        ax: Any,
+        positions: list[dict],
+        tip_diameter: float,
     ) -> None:
         """Draw electrode cylinders and optional labels for real geometry."""
         if not self.show_electrodes_checkbox.isChecked():
@@ -114,16 +134,31 @@ class VisualizationUpdateMixin:
         for pos in positions:
             base, tip = pos["base"], pos["tip"]
             self.visualizer.draw_cylinder_between(
-                ax, base, tip, radius=tip_diameter / 2, color="#888888",
+                ax,
+                base,
+                tip,
+                radius=tip_diameter / 2,
+                color="#888888",
                 alpha=self.electrode_alpha_slider.value() / 100,
             )
             if self.show_electrode_labels_checkbox.isChecked():
-                ax.text(tip[0], tip[1], tip[2], f"{pos['depth']:.1f}",
-                        color="k", fontsize=10)
+                ax.text(
+                    tip[0],
+                    tip[1],
+                    tip[2],
+                    f"{pos['depth']:.1f}",
+                    color="k",
+                    fontsize=10,
+                )
 
     def _draw_real_geom_paths(
-        self, ax: Any, results: dict, positions: list[dict],
-        bath_diameter: float, glass_depth: float, metal_depth: float,
+        self,
+        ax: Any,
+        results: dict,
+        positions: list[dict],
+        bath_diameter: float,
+        glass_depth: float,
+        metal_depth: float,
     ) -> None:
         """Draw conductive paths for real geometry view."""
         if not (self.show_paths_checkbox.isChecked() and "current_paths" in results):
@@ -131,18 +166,32 @@ class VisualizationUpdateMixin:
         for phase in results["current_paths"]:
             i, j = int(phase[0]) - 1, int(phase[2]) - 1
             self.visualizer.draw_trapezoidal_prism(
-                ax, positions[i], positions[j], bath_diameter / 2, glass_depth,
-                color="#4169E1", alpha=self.path_alpha_slider.value() / 100,
+                ax,
+                positions[i],
+                positions[j],
+                bath_diameter / 2,
+                glass_depth,
+                color="#4169E1",
+                alpha=self.path_alpha_slider.value() / 100,
             )
             self.visualizer.draw_via_metal_path(
-                ax, positions[i], positions[j], bath_diameter / 2,
-                metal_depth, glass_depth, color="#DC143C",
+                ax,
+                positions[i],
+                positions[j],
+                bath_diameter / 2,
+                metal_depth,
+                glass_depth,
+                color="#DC143C",
                 alpha=self.path_alpha_slider.value() / 100,
             )
 
     def _configure_real_geom_axes(
-        self, ax: Any, bath_diameter: float, refractory_thickness: float,
-        glass_depth: float, metal_depth: float,
+        self,
+        ax: Any,
+        bath_diameter: float,
+        refractory_thickness: float,
+        glass_depth: float,
+        metal_depth: float,
     ) -> None:
         """Set axis labels, limits, and camera angle for real geometry."""
         show_labels = self.show_axis_labels_checkbox.isChecked()
@@ -320,9 +369,7 @@ class VisualizationUpdateMixin:
             if hasattr(self.electrode_ax, "set_zlim"):
                 self.electrode_ax.set_zlim(0, total_height / zoom_factor * 1.2)
             if hasattr(self.electrode_ax, "set_box_aspect"):
-                self.electrode_ax.set_box_aspect(
-                    [1, 1, total_height / (2 * max_range)]
-                )
+                self.electrode_ax.set_box_aspect([1, 1, total_height / (2 * max_range)])
             if hasattr(self.electrode_ax, "view_init"):
                 self.electrode_ax.view_init(elev=20, azim=45)
 
@@ -367,8 +414,11 @@ class VisualizationUpdateMixin:
 
             direct_color = self._get_current_based_color("direct_glass", i)
             self._draw_correct_trapezoidal_path(
-                electrode_positions[i], electrode_positions[j],
-                conductive_height, bath_radius, color=direct_color,
+                electrode_positions[i],
+                electrode_positions[j],
+                conductive_height,
+                bath_radius,
+                color=direct_color,
                 alpha=path_alpha * 0.8,
                 label=f"Direct Glass {i + 1}-{j + 1}",
                 current_value=direct_current,
@@ -378,9 +428,13 @@ class VisualizationUpdateMixin:
             if metal_conductive:
                 metal_color = self._get_current_based_color("via_metal", i)
                 self._draw_correct_via_metal_path(
-                    electrode_positions[i], electrode_positions[j],
-                    metal_height, electrode_radius, bath_radius,
-                    color=metal_color, alpha=path_alpha * 0.6,
+                    electrode_positions[i],
+                    electrode_positions[j],
+                    metal_height,
+                    electrode_radius,
+                    bath_radius,
+                    color=metal_color,
+                    alpha=path_alpha * 0.6,
                     label=f"Via Metal {i + 1}-{j + 1}",
                     current_value=metal_current,
                     resistance_value=self._get_path_resistance("via_metal", i),
@@ -407,12 +461,14 @@ class VisualizationUpdateMixin:
             y_tip = (bath_radius - depth) * np.sin(angle_rad)
             x_base = total_length * np.cos(angle_rad)
             y_base = total_length * np.sin(angle_rad)
-            positions.append({
-                "tip": np.array([x_tip, y_tip, electrode_z]),
-                "base": np.array([x_base, y_base, electrode_z]),
-                "angle": angle_rad,
-                "depth": depth,
-            })
+            positions.append(
+                {
+                    "tip": np.array([x_tip, y_tip, electrode_z]),
+                    "base": np.array([x_base, y_base, electrode_z]),
+                    "angle": angle_rad,
+                    "depth": depth,
+                }
+            )
         return positions
 
     def _get_phase_current_data(self) -> tuple[dict, dict]:
@@ -492,7 +548,16 @@ class VisualizationUpdateMixin:
     ) -> None:
         """Annotate a path with a formatted value label."""
         annotate_path_value(
-            self, ax, mid_x, mid_y, mid_z, value, checkbox_name, fmt, bg_color, text_color
+            self,
+            ax,
+            mid_x,
+            mid_y,
+            mid_z,
+            value,
+            checkbox_name,
+            fmt,
+            bg_color,
+            text_color,
         )
 
     def _annotate_resistance_value(
@@ -508,8 +573,15 @@ class VisualizationUpdateMixin:
     ) -> None:
         """Annotate a path with resistance value."""
         annotate_resistance_value(
-            self, ax, mid_x, mid_y, electrode_z, resistance_value, current_value,
-            bg_color, text_color,
+            self,
+            ax,
+            mid_x,
+            mid_y,
+            electrode_z,
+            resistance_value,
+            current_value,
+            bg_color,
+            text_color,
         )
 
     def _draw_correct_via_metal_path(

@@ -488,6 +488,18 @@ SPECIFIC_HEAT_FACTORS: Mapping[str, float] = MappingProxyType(
     }
 )
 
+SPECIFIC_ENERGY_FACTORS: Mapping[str, float] = MappingProxyType(
+    {
+        "J/kg": 1.0,
+        "kJ/kg": KILOJOULE_TO_JOULE,
+        "MJ/kg": MEGAJOULE_TO_JOULE,
+        "GJ/kg": GIGAJOULE_TO_JOULE,
+        "BTU/lb": BTU_TO_JOULE / POUND_TO_KILOGRAM,
+        "cal/g": CALORIE_TO_JOULE / GRAM_TO_KILOGRAM,
+        "kcal/kg": KILOCALORIE_TO_JOULE,
+    }
+)
+
 CATEGORY_TABLES: Mapping[str, Mapping[str, float]] = MappingProxyType(
     {
         "length": LENGTH_FACTORS,
@@ -506,6 +518,7 @@ CATEGORY_TABLES: Mapping[str, Mapping[str, float]] = MappingProxyType(
         "thermal_conductivity": THERMAL_CONDUCTIVITY_FACTORS,
         "heat_transfer": HEAT_TRANSFER_COEFF_FACTORS,
         "specific_heat": SPECIFIC_HEAT_FACTORS,
+        "specific_energy": SPECIFIC_ENERGY_FACTORS,
     }
 )
 

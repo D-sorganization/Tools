@@ -26,7 +26,9 @@ class TextEditorDiffMixin:
         return self._compute_diff(self._original_content, self._content)
 
     def get_diff_between_versions(
-        self, version_a: int, version_b: int,
+        self,
+        version_a: int,
+        version_b: int,
     ) -> DiffResult:
         """Get diff between two versions in history.
 
@@ -66,8 +68,11 @@ class TextEditorDiffMixin:
 
         diff_lines = list(
             difflib.unified_diff(
-                original_lines, modified_lines,
-                fromfile="original", tofile="modified", lineterm="",
+                original_lines,
+                modified_lines,
+                fromfile="original",
+                tofile="modified",
+                lineterm="",
             )
         )
         unified_diff = "".join(diff_lines)
@@ -81,15 +86,20 @@ class TextEditorDiffMixin:
         for line in diff_lines:
             if line.startswith("@@"):
                 if current_hunk_lines:
-                    hunks.append(DiffHunk(
-                        old_start=old_start, old_count=old_count,
-                        new_start=new_start, new_count=new_count,
-                        lines=current_hunk_lines,
-                    ))
+                    hunks.append(
+                        DiffHunk(
+                            old_start=old_start,
+                            old_count=old_count,
+                            new_start=new_start,
+                            new_count=new_count,
+                            lines=current_hunk_lines,
+                        )
+                    )
                     current_hunk_lines = []
 
                 match = re.match(
-                    r"@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@", line,
+                    r"@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@",
+                    line,
                 )
                 if match:
                     old_start = int(match.group(1))
@@ -108,16 +118,23 @@ class TextEditorDiffMixin:
                 current_hunk_lines.append(line)
 
         if current_hunk_lines:
-            hunks.append(DiffHunk(
-                old_start=old_start, old_count=old_count,
-                new_start=new_start, new_count=new_count,
-                lines=current_hunk_lines,
-            ))
+            hunks.append(
+                DiffHunk(
+                    old_start=old_start,
+                    old_count=old_count,
+                    new_start=new_start,
+                    new_count=new_count,
+                    lines=current_hunk_lines,
+                )
+            )
 
         return DiffResult(
-            original_content=original, modified_content=modified,
-            hunks=hunks, unified_diff=unified_diff,
-            additions=additions, deletions=deletions,
+            original_content=original,
+            modified_content=modified,
+            hunks=hunks,
+            unified_diff=unified_diff,
+            additions=additions,
+            deletions=deletions,
             has_changes=original != modified,
         )
 

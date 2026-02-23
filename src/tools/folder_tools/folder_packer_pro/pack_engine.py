@@ -264,8 +264,11 @@ def pack_files(
         }
 
         errors, cancelled = _collect_file_contents(
-            source_path, files_to_pack, package_data,
-            progress_callback, cancel_check,
+            source_path,
+            files_to_pack,
+            package_data,
+            progress_callback,
+            cancel_check,
         )
         if cancelled or (cancel_check and cancel_check()):
             return PackResult(success=False, error="Operation cancelled")

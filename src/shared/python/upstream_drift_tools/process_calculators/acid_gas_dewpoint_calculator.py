@@ -90,7 +90,7 @@ except ImportError:
 
     # Fallback to QWidget if BaseCalculatorWidget is not available
     class BaseCalculatorWidget(QWidget):  # type: ignore
-        def __init__(self, *args, **kwargs):
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
             QWidget.__init__(self, *args, **kwargs)
 
 
@@ -327,12 +327,12 @@ class AcidGasDewpointCalculator:
             Vapor pressure in Pa
         """
         # DbC preconditions
-        assert isinstance(temperature_c, (int, float)), (
-            f"temperature_c must be numeric, got {type(temperature_c).__name__}"
-        )
-        assert isinstance(component, str) and len(component) > 0, (
-            "component must be a non-empty string"
-        )
+        assert isinstance(
+            temperature_c, (int, float)
+        ), f"temperature_c must be numeric, got {type(temperature_c).__name__}"
+        assert (
+            isinstance(component, str) and len(component) > 0
+        ), "component must be a non-empty string"
 
         if component not in self.antoine_constants:
             msg = f"Unknown component: {component}"
@@ -551,7 +551,9 @@ class AcidGasDewpointCalculator:
         # 3. Overall dewpoint determination
         valid_dewpoints = {k: v for k, v in dewpoints.items() if not np.isnan(v)}
         if valid_dewpoints:
-            limiting_component = max(valid_dewpoints, key=valid_dewpoints.get)
+            limiting_component = max(
+                valid_dewpoints.keys(), key=lambda k: valid_dewpoints[k]
+            )
             overall_dewpoint = valid_dewpoints[limiting_component]
         else:
             overall_dewpoint = np.nan

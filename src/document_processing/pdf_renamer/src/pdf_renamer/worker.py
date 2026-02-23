@@ -102,9 +102,7 @@ def _handle_missing_title(
         ProcessingResult indicating failure
     """
     if move_failed and not dry_run:
-        failed_path = _move_to_failed_folder(
-            file_path, failed_folder, transaction_log
-        )
+        failed_path = _move_to_failed_folder(file_path, failed_folder, transaction_log)
         if failed_path:
             return ProcessingResult(
                 file_path,

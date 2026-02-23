@@ -276,9 +276,15 @@ class ANOVAAnalyzer:
         f_stat = ms_between / ms_within
 
         return (
-            ss_between, ss_within, ss_total,
-            ms_between, ms_within, f_stat,
-            df_between, df_within, df_total,
+            ss_between,
+            ss_within,
+            ss_total,
+            ms_between,
+            ms_within,
+            f_stat,
+            df_between,
+            df_within,
+            df_total,
             grand_mean,
         )
 
@@ -305,9 +311,15 @@ class ANOVAAnalyzer:
         group_arrays = self._validate_and_prepare_groups(df, dependent_var, group_var)
 
         (
-            ss_between, ss_within, ss_total,
-            ms_between, ms_within, f_stat,
-            df_between, df_within, df_total,
+            ss_between,
+            ss_within,
+            ss_total,
+            ms_between,
+            ms_within,
+            f_stat,
+            df_between,
+            df_within,
+            df_total,
             grand_mean,
         ) = self._compute_anova_statistics(group_arrays)
 
@@ -316,7 +328,9 @@ class ANOVAAnalyzer:
 
         # Effect sizes
         eta_squared = ss_between / ss_total
-        omega_squared = max(0, (ss_between - df_between * ms_within) / (ss_total + ms_within))
+        omega_squared = max(
+            0, (ss_between - df_between * ms_within) / (ss_total + ms_within)
+        )
         cohens_f = np.sqrt(eta_squared / (1 - eta_squared)) if eta_squared < 1 else 0
 
         anova_table = ANOVATable(
@@ -351,7 +365,9 @@ class ANOVAAnalyzer:
             omega_squared=omega_squared,
             cohens_f=cohens_f,
             group_means={name: np.mean(arr) for name, arr in group_arrays.items()},
-            group_stds={name: np.std(arr, ddof=1) for name, arr in group_arrays.items()},
+            group_stds={
+                name: np.std(arr, ddof=1) for name, arr in group_arrays.items()
+            },
             group_counts={name: len(arr) for name, arr in group_arrays.items()},
             grand_mean=grand_mean,
             post_hoc_results=post_hoc_results,
@@ -395,40 +411,69 @@ class ANOVAAnalyzer:
         marginal_b = data.groupby(factor_b)[dependent_var].mean().to_dict()
 
         ss = self._two_way_sum_of_squares(
-            data, y, dependent_var, factor_a, factor_b,
-            levels_a, levels_b, marginal_a, marginal_b,
-            grand_mean, test_interaction,
+            data,
+            y,
+            dependent_var,
+            factor_a,
+            factor_b,
+            levels_a,
+            levels_b,
+            marginal_a,
+            marginal_b,
+            grand_mean,
+            test_interaction,
         )
-        ftest = self._two_way_f_tests(
-            ss, len(levels_a), len(levels_b), n_total
-        )
+        ftest = self._two_way_f_tests(ss, len(levels_a), len(levels_b), n_total)
         effect = self._two_way_effect_sizes(ss)
 
         interaction_label = f"{factor_a}\u00d7{factor_b}"
         anova_table = ANOVATable(
             source=[factor_a, factor_b, interaction_label, "Error", "Total"],
             sum_of_squares=[
-                ss["a"], ss["b"], ss["ab"], ss["error"], ss["total"],
+                ss["a"],
+                ss["b"],
+                ss["ab"],
+                ss["error"],
+                ss["total"],
             ],
             df=[
-                ftest["df_a"], ftest["df_b"], ftest["df_ab"],
-                ftest["df_error"], n_total - 1,
+                ftest["df_a"],
+                ftest["df_b"],
+                ftest["df_ab"],
+                ftest["df_error"],
+                n_total - 1,
             ],
             mean_square=[
-                ftest["ms_a"], ftest["ms_b"], ftest["ms_ab"],
-                ftest["ms_error"], np.nan,
+                ftest["ms_a"],
+                ftest["ms_b"],
+                ftest["ms_ab"],
+                ftest["ms_error"],
+                np.nan,
             ],
             f_statistic=[
-                ftest["f_a"], ftest["f_b"], ftest["f_ab"], None, None,
+                ftest["f_a"],
+                ftest["f_b"],
+                ftest["f_ab"],
+                None,
+                None,
             ],
             p_value=[
-                ftest["p_a"], ftest["p_b"], ftest["p_ab"], None, None,
+                ftest["p_a"],
+                ftest["p_b"],
+                ftest["p_ab"],
+                None,
+                None,
             ],
         )
 
         assumption_tests = self._two_way_assumption_tests(
-            data, dependent_var, factor_a, factor_b,
-            levels_a, levels_b, test_assumptions,
+            data,
+            dependent_var,
+            factor_a,
+            factor_b,
+            levels_a,
+            levels_b,
+            test_assumptions,
         )
 
         return TwoWayANOVAResult(
@@ -526,10 +571,20 @@ class ANOVAAnalyzer:
         p_ab = 1 - stats.f.cdf(f_ab, df_ab, df_error) if f_ab > 0 else 1.0
 
         return {
-            "df_a": df_a, "df_b": df_b, "df_ab": df_ab, "df_error": df_error,
-            "ms_a": ms_a, "ms_b": ms_b, "ms_ab": ms_ab, "ms_error": ms_error,
-            "f_a": f_a, "f_b": f_b, "f_ab": f_ab,
-            "p_a": float(p_a), "p_b": float(p_b), "p_ab": float(p_ab),
+            "df_a": df_a,
+            "df_b": df_b,
+            "df_ab": df_ab,
+            "df_error": df_error,
+            "ms_a": ms_a,
+            "ms_b": ms_b,
+            "ms_ab": ms_ab,
+            "ms_error": ms_error,
+            "f_a": f_a,
+            "f_b": f_b,
+            "f_ab": f_ab,
+            "p_a": float(p_a),
+            "p_b": float(p_b),
+            "p_ab": float(p_ab),
         }
 
     @staticmethod
@@ -544,9 +599,7 @@ class ANOVAAnalyzer:
             "partial_eta_a": ss["a"] / (ss["a"] + ss_e),
             "partial_eta_b": ss["b"] / (ss["b"] + ss_e),
             "partial_eta_ab": (
-                ss["ab"] / (ss["ab"] + ss_e)
-                if (ss["ab"] + ss_e) > 0
-                else 0
+                ss["ab"] / (ss["ab"] + ss_e) if (ss["ab"] + ss_e) > 0 else 0
             ),
         }
 

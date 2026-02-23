@@ -205,9 +205,7 @@ class VisualizationMixin:
             if hasattr(self.electrode_ax, "set_zlim"):
                 self.electrode_ax.set_zlim(0, total_height / zoom_factor * 1.2)
             if hasattr(self.electrode_ax, "set_box_aspect"):
-                self.electrode_ax.set_box_aspect(
-                    [1, 1, total_height / (2 * max_range)]
-                )
+                self.electrode_ax.set_box_aspect([1, 1, total_height / (2 * max_range)])
             if hasattr(self.electrode_ax, "view_init"):
                 self.electrode_ax.view_init(elev=20, azim=45)
 

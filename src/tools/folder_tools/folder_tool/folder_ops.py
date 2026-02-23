@@ -387,7 +387,10 @@ class FolderOperationsMixin:
                         break  # type: ignore[unreachable]
 
                     copied, failed = self._copy_single_file_in_prune(
-                        Path(root) / file, dest_path, file, log,
+                        Path(root) / file,
+                        dest_path,
+                        file,
+                        log,
                     )
                     file_count += copied
                     failed_count += failed

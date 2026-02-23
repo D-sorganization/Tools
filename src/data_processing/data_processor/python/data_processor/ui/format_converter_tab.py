@@ -586,17 +586,13 @@ class FormatConverterMixin:
                 )
                 output_path = Path(self.converter_output_path) / output_filename
                 DataWriter.write_file(combined_df, output_path, output_format)
-                self._log_conversion_message(
-                    f"Successfully created: {output_filename}"
-                )
+                self._log_conversion_message(f"Successfully created: {output_filename}")
                 self._log_conversion_message(
                     f"Combined data: {len(combined_df)} rows, "
                     f"{len(combined_df.columns)} columns"
                 )
             except (PermissionError, OSError) as e:
-                self._log_conversion_message(
-                    f"Error writing combined file: {str(e)}"
-                )
+                self._log_conversion_message(f"Error writing combined file: {str(e)}")
         else:
             self._log_conversion_message("No valid data to combine")
 

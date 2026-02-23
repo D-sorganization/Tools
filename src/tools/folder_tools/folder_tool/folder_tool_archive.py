@@ -49,19 +49,13 @@ class ArchiveMixin:
                 f"Destination folder does not exist: {self.dest_folder}",
             )
         if not dest.is_dir():
-            raise ValueError(
-                f"Destination path is not a directory: {self.dest_folder}"
-            )
+            raise ValueError(f"Destination path is not a directory: {self.dest_folder}")
         if not os.access(self.dest_folder, os.R_OK):
-            raise PermissionError(
-                f"Cannot read destination folder: {self.dest_folder}"
-            )
+            raise PermissionError(f"Cannot read destination folder: {self.dest_folder}")
 
         try:
             if not any(dest.iterdir()):
-                raise ValueError(
-                    "Destination folder is empty - nothing to archive"
-                )
+                raise ValueError("Destination folder is empty - nothing to archive")
         except (OSError, PermissionError) as e:
             raise PermissionError(
                 f"Cannot access destination folder contents: {self.dest_folder} - {e}",
@@ -172,8 +166,8 @@ class ArchiveMixin:
             )
 
             with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
-                processed_files, processed_size, failed_files = (
-                    self._add_files_to_zip(zipf, total_files)
+                processed_files, processed_size, failed_files = self._add_files_to_zip(
+                    zipf, total_files
                 )
 
                 if not zip_path.exists():
