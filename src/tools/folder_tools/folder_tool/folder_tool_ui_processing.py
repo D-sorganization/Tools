@@ -62,7 +62,7 @@ class UIProcessingMixin:
             dialog, dialog_width, dialog_height = self._create_dialog_window(
                 title, content
             )
-            text_widget = self._create_text_area(dialog, content)
+            self._create_text_area(dialog, content)
             self._create_dialog_buttons(dialog, content)
             self._finalize_dialog(dialog, dialog_width, dialog_height)
         except tk.TclError as e:
